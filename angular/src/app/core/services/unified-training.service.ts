@@ -2,6 +2,7 @@ import {
     DestroyRef,
     Injectable,
     computed,
+    effect,
     inject,
     signal,
 } from "@angular/core";
@@ -12,7 +13,6 @@ import {
     SmartRecommendationsResponse,
     TodayScheduleItem,
     TrainingSessionRecord,
-    UserMetadata,
 } from "../models/api.models";
 import type { ApiResponse } from "../models/common.models";
 import type { SupplementEntry } from "../models/supplement.models";
@@ -92,6 +92,37 @@ interface TodayOverviewData {
   trainingData?: TrainingDataResult;
 }
 
+const DEFAULT_DAILY_ROUTINE: DailyRoutineSlot[] = [
+  { id: "wake", label: "Wake Up", time: "07:00", icon: "pi-sun" },
+  { id: "breakfast", label: "Breakfast", time: "08:15", icon: "pi-apple" },
+  {
+    id: "work_start",
+    label: "Work/Study Start",
+    time: "09:00",
+    icon: "pi-briefcase",
+  },
+  { id: "lunch", label: "Lunch", time: "12:30", icon: "pi-utensils" },
+  {
+    id: "work_end",
+    label: "Work/Study End",
+    time: "17:00",
+    icon: "pi-home",
+  },
+  {
+    id: "training",
+    label: "Daily Training",
+    time: "18:00",
+    icon: "pi-bolt",
+  },
+  {
+    id: "shower",
+    label: "Shower (Hot)",
+    time: "20:00",
+    icon: "pi-info-circle",
+  },
+  { id: "sleep", label: "Sleep", time: "22:30", icon: "pi-moon" },
+];
+
 @Injectable({
   providedIn: "root",
 })
@@ -110,6 +141,9 @@ export class UnifiedTrainingService {
   private overviewRequest$: Observable<unknown> | null = null;
   private lastOverviewRequestKey: string | null = null;
   private authFailureCooldownUntil = 0;
+  private readonly _dailyRoutine = signal<DailyRoutineSlot[]>(
+    this.cloneDefaultDailyRoutine(),
+  );
 
   private isExpectedApiClientError(error: unknown): boolean {
     if (!error || typeof error !== "object") return false;
@@ -209,6 +243,7 @@ export class UnifiedTrainingService {
 
   private readonly _userPosition = signal<string>("");
   readonly userPosition = this._userPosition.asReadonly();
+  readonly dailyRoutine = this._dailyRoutine.asReadonly();
 
   private readonly _trainingStats = signal<TrainingStatCard[]>([]);
   readonly trainingStats = this._trainingStats.asReadonly();
@@ -220,56 +255,7 @@ export class UnifiedTrainingService {
     const weekly = this._weeklySchedule();
     const today = weekly.find((day) => day.isToday);
     const sessions = today?.sessions || [];
-
-    // Attempt to get user routine from settings
-    const user = this.authService.getUser();
-    const metadata = (user?.user_metadata || {}) as UserMetadata;
-
-    const defaultRoutine: DailyRoutineSlot[] = [
-      { id: "wake", label: "Wake Up", time: "07:00", icon: "pi-sun" },
-      { id: "breakfast", label: "Breakfast", time: "08:15", icon: "pi-apple" },
-      {
-        id: "mobility",
-        label: "Daily Mobility Routine",
-        time: "07:10",
-        icon: "pi-bolt",
-      },
-      {
-        id: "rolling",
-        label: "Morning Foam Rolling",
-        time: "07:30",
-        icon: "pi-refresh",
-      },
-      {
-        id: "work_start",
-        label: "Work/Study Start",
-        time: "09:00",
-        icon: "pi-briefcase",
-      },
-      { id: "lunch", label: "Lunch", time: "12:30", icon: "pi-utensils" },
-      {
-        id: "work_end",
-        label: "Work/Study End",
-        time: "17:00",
-        icon: "pi-home",
-      },
-      {
-        id: "training",
-        label: "Daily Training",
-        time: "18:00",
-        icon: "pi-bolt",
-      },
-      {
-        id: "shower",
-        label: "Shower (Hot)",
-        time: "20:00",
-        icon: "pi-info-circle",
-      },
-      { id: "sleep", label: "Sleep", time: "22:30", icon: "pi-moon" },
-    ];
-
-    const userRoutine: DailyRoutineSlot[] =
-      metadata.dailyRoutine || defaultRoutine;
+    const userRoutine = this._dailyRoutine();
 
     const todaysSupplements =
       this.performanceDataService.todaysSupplements() as SupplementEntry[];
@@ -363,49 +349,7 @@ export class UnifiedTrainingService {
     }
 
     const sessions = tomorrowSchedule.sessions;
-    // User metadata not available from performance data service
-    const metadata = null;
-
-    // Get user routine for tomorrow (same routine applies daily)
-    const defaultRoutine: DailyRoutineSlot[] = [
-      { id: "wake", label: "Wake Up", time: "07:00", icon: "pi-refresh" },
-      {
-        id: "breakfast",
-        label: "Breakfast",
-        time: "07:30",
-        icon: "pi-refresh",
-      },
-      {
-        id: "work_start",
-        label: "Work/Study Start",
-        time: "09:00",
-        icon: "pi-briefcase",
-      },
-      { id: "lunch", label: "Lunch", time: "12:30", icon: "pi-utensils" },
-      {
-        id: "work_end",
-        label: "Work/Study End",
-        time: "17:00",
-        icon: "pi-home",
-      },
-      {
-        id: "training",
-        label: "Daily Training",
-        time: "18:00",
-        icon: "pi-bolt",
-      },
-      {
-        id: "shower",
-        label: "Shower (Hot)",
-        time: "20:00",
-        icon: "pi-info-circle",
-      },
-      { id: "sleep", label: "Sleep", time: "22:30", icon: "pi-moon" },
-    ];
-
-    const userRoutine: DailyRoutineSlot[] =
-      (metadata as { dailyRoutine?: DailyRoutineSlot[] } | null)
-        ?.dailyRoutine || defaultRoutine;
+    const userRoutine = this._dailyRoutine();
 
     const getItemType = (slotId: string): TodayScheduleItem["type"] => {
       if (slotId === "breakfast" || slotId === "lunch") return "nutrition";
@@ -457,6 +401,18 @@ export class UnifiedTrainingService {
 
   private readonly _achievements = signal<Achievement[]>([]);
   readonly achievements = this._achievements.asReadonly();
+
+  constructor() {
+    effect(() => {
+      const currentUserId = this.userId();
+      if (!currentUserId) {
+        this._dailyRoutine.set(this.cloneDefaultDailyRoutine());
+        return;
+      }
+
+      void this.loadPlayerSettingsRoutine();
+    });
+  }
 
   private readonly _todayProtocol = signal<ProtocolMetricsSnapshot | null>(null);
   readonly todayProtocol = this._todayProtocol.asReadonly();
@@ -752,6 +708,20 @@ export class UnifiedTrainingService {
     );
     this.refreshAfterMutation({ refreshReadiness: true });
     return result;
+  }
+
+  applyPlayerSettingsSnapshot(settings: {
+    dailyRoutine?: DailyRoutineSlot[] | null;
+  }): void {
+    if (!settings.dailyRoutine) {
+      return;
+    }
+
+    this._dailyRoutine.set(this.normalizeDailyRoutine(settings.dailyRoutine));
+  }
+
+  async refreshPlayerSettings(): Promise<void> {
+    await this.loadPlayerSettingsRoutine();
   }
 
   /**
@@ -1115,11 +1085,67 @@ export class UnifiedTrainingService {
       this.readinessService.calculateToday(currentUserId).subscribe();
     }
 
+    void this.loadPlayerSettingsRoutine();
     void this.loadAllTrainingData();
   }
 
   private async refreshOverviewAfterWorkoutMutation(): Promise<void> {
     await firstValueFrom(this.getTodayOverview());
+  }
+
+  private async loadPlayerSettingsRoutine(): Promise<void> {
+    try {
+      const response = await firstValueFrom(
+        this.api.get<{ dailyRoutine?: DailyRoutineSlot[] }>(
+          API_ENDPOINTS.playerSettings.get,
+        ),
+      );
+      const payload = extractApiPayload<{ dailyRoutine?: DailyRoutineSlot[] }>(
+        response,
+      );
+      this._dailyRoutine.set(
+        this.normalizeDailyRoutine(payload?.dailyRoutine ?? null),
+      );
+    } catch (error) {
+      if (!this.isExpectedApiClientError(error)) {
+        this.logger.warn(
+          "[UnifiedTrainingService] Could not load player settings routine",
+          toLogContext(error),
+        );
+      }
+      this._dailyRoutine.set(this.cloneDefaultDailyRoutine());
+    }
+  }
+
+  private normalizeDailyRoutine(
+    value: DailyRoutineSlot[] | null | undefined,
+  ): DailyRoutineSlot[] {
+    if (!Array.isArray(value) || value.length === 0) {
+      return this.cloneDefaultDailyRoutine();
+    }
+
+    const normalized = value
+      .filter(
+        (slot): slot is DailyRoutineSlot =>
+          !!slot &&
+          typeof slot.id === "string" &&
+          typeof slot.label === "string" &&
+          typeof slot.time === "string",
+      )
+      .map((slot) => ({
+        id: slot.id,
+        label: slot.label,
+        time: slot.time,
+        ...(slot.icon ? { icon: slot.icon } : {}),
+      }));
+
+    return normalized.length > 0
+      ? normalized
+      : this.cloneDefaultDailyRoutine();
+  }
+
+  private cloneDefaultDailyRoutine(): DailyRoutineSlot[] {
+    return DEFAULT_DAILY_ROUTINE.map((slot) => ({ ...slot }));
   }
 
 }

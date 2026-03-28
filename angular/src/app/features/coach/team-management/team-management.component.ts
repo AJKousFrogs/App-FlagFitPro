@@ -9,40 +9,24 @@ import { CommonModule } from "@angular/common";
 import {
   ChangeDetectionStrategy,
   Component,
-  DestroyRef,
   OnInit,
   inject,
   signal,
 } from "@angular/core";
-import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { ToastService } from "../../../core/services/toast.service";
 import { InputText } from "primeng/inputtext";
-import { firstValueFrom } from "rxjs";
 
-import { ApiService, API_ENDPOINTS } from "../../../core/services/api.service";
 import { LoggerService } from "../../../core/services/logger.service";
-import { extractApiPayload } from "../../../core/utils/api-response-mapper";
 import { CardShellComponent } from "../../../shared/components/card-shell/card-shell.component";
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { AppLoadingComponent } from "../../../shared/components/loading/loading.component";
 import { PageErrorStateComponent } from "../../../shared/components/page-error-state/page-error-state.component";
-
-interface TeamSettings {
-  name: string;
-  logoUrl?: string;
-  primaryColor: string;
-  secondaryColor: string;
-  league: string;
-  homeField: string;
-  preferences: {
-    requireWellnessCheckin: boolean;
-    autoSendRsvpReminders: boolean;
-    allowPlayersViewAnalytics: boolean;
-    requireCoachApprovalPosts: boolean;
-  };
-}
+import {
+  TeamManagementDataService,
+  type TeamManagementSettings as TeamSettings,
+} from "../services/team-management-data.service";
 
 @Component({
   selector: "app-team-management",
@@ -216,10 +200,9 @@ interface TeamSettings {
   styleUrl: "./team-management.component.scss",
 })
 export class TeamManagementComponent implements OnInit {
-  private readonly api = inject(ApiService);
   private readonly logger = inject(LoggerService);
   private readonly toastService = inject(ToastService);
-  private readonly destroyRef = inject(DestroyRef);
+  private readonly teamManagementDataService = inject(TeamManagementDataService);
 
   readonly isLoading = signal(true);
   readonly loadError = signal<string | null>(null);
@@ -335,13 +318,11 @@ export class TeamManagementComponent implements OnInit {
     this.loadError.set(null);
 
     try {
-      const response = await firstValueFrom(
-        this.api.get<{ settings?: TeamSettings }>(API_ENDPOINTS.teamManagement),
-      );
-      const payload = extractApiPayload<{ settings?: TeamSettings }>(response);
-      if (payload?.settings) {
-        this.teamSettings.set(payload.settings);
+      const { data, error } = await this.teamManagementDataService.loadSettings();
+      if (error) {
+        throw error;
       }
+      this.teamSettings.set(data);
     } catch (err) {
       this.logger.error("Failed to load team settings", err);
       this.loadError.set(
@@ -356,18 +337,23 @@ export class TeamManagementComponent implements OnInit {
     void this.loadSettings();
   }
 
-  saveSettings(): void {
-    this.api
-      .put(API_ENDPOINTS.teamSettings, this.teamSettings())
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: () => {
-          this.toastService.success(
-            "Team settings have been updated",
-            "Settings Saved",
-          );
-        },
-        error: (err) => this.logger.error("Failed to save settings", err),
-      });
+  async saveSettings(): Promise<void> {
+    const { error } = await this.teamManagementDataService.saveSettings(
+      this.teamSettings(),
+    );
+
+    if (error) {
+      this.logger.error("Failed to save settings", error);
+      this.toastService.error(
+        "We couldn't save team settings. Please try again.",
+        "Save Failed",
+      );
+      return;
+    }
+
+    this.toastService.success(
+      "Team settings have been updated",
+      "Settings Saved",
+    );
   }
 }

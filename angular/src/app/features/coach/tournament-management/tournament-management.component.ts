@@ -31,13 +31,10 @@ import { TableModule } from "primeng/table";
 
 import { StatusTagComponent } from "../../../shared/components/status-tag/status-tag.component";
 import { Textarea } from "primeng/textarea";
-import { firstValueFrom } from "rxjs";
-
-import { ApiService, API_ENDPOINTS } from "../../../core/services/api.service";
 import { LoggerService } from "../../../core/services/logger.service";
-import { extractApiPayload } from "../../../core/utils/api-response-mapper";
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";
+import { CoachTournamentManagementDataService } from "../services/coach-tournament-management-data.service";
 
 // ===== Interfaces =====
 interface Tournament {
@@ -118,8 +115,6 @@ const POSITIONS = [
   { label: "Rush1", value: "Rush1" },
   { label: "Rush2", value: "Rush2" },
 ];
-
-const TOURNAMENT_LINEUP_STORAGE_KEY = "flagfit:tournament-lineup:";
 
 @Component({
   selector: "app-tournament-management",
@@ -635,10 +630,12 @@ const TOURNAMENT_LINEUP_STORAGE_KEY = "flagfit:tournament-lineup:";
   styleUrl: "./tournament-management.component.scss",
 })
 export class TournamentManagementComponent implements OnInit {
-  private readonly api = inject(ApiService);
   private readonly logger = inject(LoggerService);
   private readonly toastService = inject(ToastService);
   private readonly router = inject(Router);
+  private readonly tournamentManagementDataService = inject(
+    CoachTournamentManagementDataService,
+  );
 
   // State
   readonly tournaments = signal<Tournament[]>([]);
@@ -700,13 +697,12 @@ export class TournamentManagementComponent implements OnInit {
     this.loadError.set(null);
 
     try {
-      const response = await firstValueFrom(
-        this.api.get<{ tournaments?: Tournament[] }>(
-          API_ENDPOINTS.coach.tournaments,
-        ),
-      );
-      const payload = extractApiPayload<{ tournaments?: Tournament[] }>(response);
-      this.tournaments.set(payload?.tournaments ?? []);
+      const { data, error } =
+        await this.tournamentManagementDataService.listTournaments();
+      if (error) {
+        throw error;
+      }
+      this.tournaments.set(data);
     } catch (err) {
       this.logger.error("Failed to load tournaments", err);
       this.tournaments.set([]);
@@ -731,7 +727,7 @@ export class TournamentManagementComponent implements OnInit {
     );
 
     if (firstAvailableTournament) {
-      this.openTournamentDetail(firstAvailableTournament, "overview");
+      void this.openTournamentDetail(firstAvailableTournament, "overview");
       return;
     }
 
@@ -742,19 +738,19 @@ export class TournamentManagementComponent implements OnInit {
   }
 
   manageTournament(tournament: Tournament): void {
-    this.openTournamentDetail(tournament, "overview");
+    void this.openTournamentDetail(tournament, "overview");
   }
 
   viewRsvps(tournament: Tournament): void {
-    this.openTournamentDetail(tournament, "rsvps");
+    void this.openTournamentDetail(tournament, "rsvps");
   }
 
   setLineup(tournament: Tournament): void {
-    this.openTournamentDetail(tournament, "lineup");
+    void this.openTournamentDetail(tournament, "lineup");
   }
 
   sendReminders(tournament: Tournament): void {
-    this.openTournamentDetail(tournament, "rsvps");
+    void this.openTournamentDetail(tournament, "rsvps");
   }
 
   sendPendingReminders(): void {
@@ -775,21 +771,25 @@ export class TournamentManagementComponent implements OnInit {
     void this.openReminderComposer(draft, "Player Reminder Draft");
   }
 
-  saveLineup(): void {
+  async saveLineup(): Promise<void> {
     const tournament = this.selectedTournament();
     if (!tournament) {
       this.toastService.warn("Open a tournament before saving the lineup.");
       return;
     }
 
-    localStorage.setItem(
-      `${TOURNAMENT_LINEUP_STORAGE_KEY}${tournament.id}`,
-      JSON.stringify({
-        slots: this.lineupSlots(),
-        notes: this.lineupNotes,
-        savedAt: new Date().toISOString(),
-      }),
-    );
+    const { error } = await this.tournamentManagementDataService.saveLineup({
+      tournamentId: tournament.id,
+      slots: this.lineupSlots(),
+      notes: this.lineupNotes,
+    });
+
+    if (error) {
+      this.logger.error("Failed to save tournament lineup", error);
+      this.toastService.error("We couldn't save this lineup.", "Save Failed");
+      return;
+    }
+
     this.toastService.success(
       "Tournament lineup has been saved",
       "Lineup Saved",
@@ -822,12 +822,12 @@ export class TournamentManagementComponent implements OnInit {
     return this.selectedTournament()?.games?.filter((g) => g.day === day) || [];
   }
 
-  private openTournamentDetail(
+  private async openTournamentDetail(
     tournament: Tournament,
     tab: "overview" | "rsvps" | "lineup" | "schedule",
-  ): void {
+  ): Promise<void> {
     this.selectedTournament.set(tournament);
-    this.hydrateLineupState(tournament.id);
+    await this.hydrateLineupState(tournament.id);
     this.detailTab.set(tab);
     this.showDetailDialog = true;
   }
@@ -849,26 +849,23 @@ export class TournamentManagementComponent implements OnInit {
     );
   }
 
-  private hydrateLineupState(tournamentId: string): void {
-    const savedState = localStorage.getItem(
-      `${TOURNAMENT_LINEUP_STORAGE_KEY}${tournamentId}`,
-    );
-    if (savedState) {
-      try {
-        const parsed = JSON.parse(savedState) as {
-          slots?: LineupSlot[];
-          notes?: string;
-        };
-        this.lineupSlots.set(parsed.slots || this.getDefaultLineupSlots());
-        this.lineupNotes = parsed.notes || "";
-        return;
-      } catch (_error) {
-        // Fall back to defaults if the cached state is malformed.
-      }
+  private async hydrateLineupState(tournamentId: string): Promise<void> {
+    const { rsvps, lineup, error } =
+      await this.tournamentManagementDataService.loadTournamentDetail(
+        tournamentId,
+      );
+
+    if (error) {
+      this.logger.error("Failed to load tournament detail", error);
+      this.rsvps.set([]);
+      this.lineupSlots.set(this.getDefaultLineupSlots());
+      this.lineupNotes = "";
+      return;
     }
 
-    this.lineupSlots.set(this.getDefaultLineupSlots());
-    this.lineupNotes = "";
+    this.rsvps.set(rsvps);
+    this.lineupSlots.set(lineup?.slots?.length ? lineup.slots : this.getDefaultLineupSlots());
+    this.lineupNotes = lineup?.notes ?? "";
   }
 
   private getDefaultLineupSlots(): LineupSlot[] {

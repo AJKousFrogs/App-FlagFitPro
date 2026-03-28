@@ -36,11 +36,7 @@ import {
   goalStatusSeverityMap,
 } from "../../../shared/utils/status.utils";
 import { Textarea } from "primeng/textarea";
-import { firstValueFrom } from "rxjs";
-
-import { ApiService, API_ENDPOINTS } from "../../../core/services/api.service";
 import { LoggerService } from "../../../core/services/logger.service";
-import { extractApiPayload } from "../../../core/utils/api-response-mapper";
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";
 import { LazyChartComponent } from "../../../shared/components/lazy-chart/lazy-chart.component";
@@ -48,6 +44,7 @@ import { AppDialogComponent } from "../../../shared/components/dialog/dialog.com
 import { DialogHeaderComponent } from "../../../shared/components/dialog-header/dialog-header.component";
 import { DialogFooterComponent } from "../../../shared/components/dialog-footer/dialog-footer.component";
 import { CardShellComponent } from "../../../shared/components/card-shell/card-shell.component";
+import { CoachPlayerDevelopmentDataService } from "../services/coach-player-development-data.service";
 
 // ===== Interfaces =====
 interface Player {
@@ -77,6 +74,7 @@ interface DevelopmentGoal {
 }
 
 interface SkillAssessment {
+  playerId: string;
   skill: string;
   score: number;
   grade: string;
@@ -84,6 +82,7 @@ interface SkillAssessment {
 
 interface CoachNote {
   id: string;
+  playerId: string;
   date: string;
   coachName: string;
   content: string;
@@ -756,7 +755,9 @@ const COMPARE_OPTIONS = [
   styleUrl: "./player-development.component.scss",
 })
 export class PlayerDevelopmentComponent implements OnInit {
-  private readonly api = inject(ApiService);
+  private readonly playerDevelopmentDataService = inject(
+    CoachPlayerDevelopmentDataService,
+  );
   private readonly logger = inject(LoggerService);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
@@ -818,9 +819,15 @@ export class PlayerDevelopmentComponent implements OnInit {
     this.goals().filter((g) => g.playerId === this.selectedPlayerId),
   );
 
-  readonly skillAssessments = computed(() => this.assessments());
+  readonly skillAssessments = computed(() =>
+    this.assessments().filter(
+      (assessment) => assessment.playerId === this.selectedPlayerId,
+    ),
+  );
 
-  readonly coachNotes = computed(() => this.notes());
+  readonly coachNotes = computed(() =>
+    this.notes().filter((note) => note.playerId === this.selectedPlayerId),
+  );
 
   readonly radarChartData = computed(() => ({
     labels: [
@@ -977,27 +984,24 @@ export class PlayerDevelopmentComponent implements OnInit {
     this.loadError.set(null);
 
     try {
-      const response = await firstValueFrom(
-        this.api.get<{
-          players?: Player[];
-          goals?: DevelopmentGoal[];
-        }>(API_ENDPOINTS.coach.playerDevelopment),
-      );
-      const payload = extractApiPayload<{
-        players?: Player[];
-        goals?: DevelopmentGoal[];
-      }>(response);
-      if (payload) {
-        this.players.set(payload.players || []);
-        this.goals.set(payload.goals || []);
-        this.syncSelectionFromRoute();
-      } else {
-        throw new Error("Player development payload missing");
+      const { players, goals, notes, assessments, error } =
+        await this.playerDevelopmentDataService.loadPlayerDevelopment();
+
+      if (error) {
+        throw error;
       }
+
+      this.players.set(players);
+      this.goals.set(goals);
+      this.notes.set(notes);
+      this.assessments.set(assessments);
+      this.syncSelectionFromRoute();
     } catch (err) {
       this.logger.error("Failed to load player development data", err);
       this.players.set([]);
       this.goals.set([]);
+      this.notes.set([]);
+      this.assessments.set([]);
       this.loadError.set(
         "We couldn't load player development data. Please try again.",
       );
@@ -1140,54 +1144,41 @@ export class PlayerDevelopmentComponent implements OnInit {
     this.showGoalDialog = true;
   }
 
-  createGoal(): void {
+  async createGoal(): Promise<void> {
     const playerId = this.goalForm.playerId || this.selectedPlayerId;
     if (!playerId || !this.goalForm.metric || !this.goalForm.targetValue) return;
 
     const activeGoal = this.selectedGoal();
+    const { error } = await this.playerDevelopmentDataService.saveGoal({
+      id: this.goalDialogMode === "edit" ? activeGoal?.id : undefined,
+      playerId,
+      category: this.goalForm.category,
+      metric: this.goalForm.metric,
+      currentValue: this.goalForm.currentValue || activeGoal?.currentValue || "",
+      targetValue: this.goalForm.targetValue,
+      startValue: activeGoal?.startValue || this.goalForm.currentValue || "",
+      dueDate: this.toIsoDate(this.goalForm.dueDate),
+      progress: activeGoal?.progress ?? 0,
+      status: activeGoal?.status ?? "on-track",
+      notes: this.goalForm.notes,
+    });
 
-    if (this.goalDialogMode === "edit" && activeGoal) {
-      const goalId = activeGoal.id;
-      this.goals.update((goals) =>
-        goals.map((goal) =>
-          goal.id === goalId
-            ? {
-                ...goal,
-                playerId,
-                category: this.goalForm.category,
-                metric: this.goalForm.metric,
-                currentValue: this.goalForm.currentValue || goal.currentValue,
-                targetValue: this.goalForm.targetValue,
-                dueDate: this.formatGoalDueDate(this.goalForm.dueDate) || goal.dueDate,
-                notes: this.goalForm.notes,
-              }
-            : goal,
-        ),
+    if (error) {
+      this.logger.error("Failed to save development goal", error);
+      this.toastService.error(
+        "We couldn't save this development goal.",
+        "Save Failed",
       );
-      this.toastService.success("Development goal has been updated", "Goal Updated");
-    } else {
-      const nextGoal: DevelopmentGoal = {
-        id: `goal-${Date.now()}`,
-        playerId,
-        category: this.goalForm.category,
-        metric: this.goalForm.metric,
-        currentValue: this.goalForm.currentValue,
-        targetValue: this.goalForm.targetValue,
-        startValue: this.goalForm.currentValue,
-        dueDate:
-          this.formatGoalDueDate(this.goalForm.dueDate) ||
-          new Date().toLocaleDateString("en-US", {
-            month: "short",
-            day: "numeric",
-            year: "numeric",
-          }),
-        progress: 0,
-        status: "on-track",
-        notes: this.goalForm.notes,
-      };
-      this.goals.update((goals) => [nextGoal, ...goals]);
-      this.toastService.success("Development goal has been created", "Goal Created");
+      return;
     }
+
+    await this.loadData();
+    this.toastService.success(
+      this.goalDialogMode === "edit"
+        ? "Development goal has been updated"
+        : "Development goal has been created",
+      this.goalDialogMode === "edit" ? "Goal Updated" : "Goal Created",
+    );
 
     this.showGoalDialog = false;
     this.goalDialogMode = "create";
@@ -1220,21 +1211,28 @@ export class PlayerDevelopmentComponent implements OnInit {
     this.showNoteDialog = true;
   }
 
-  saveNote(): void {
+  async saveNote(): Promise<void> {
     const content = this.noteContent.trim();
     if (!content) return;
 
-    const nextNote: CoachNote = {
-      id: this.createClientId("note"),
-      date: new Date().toLocaleDateString("en-US", {
-        month: "short",
-        day: "numeric",
-        year: "numeric",
-      }),
-      coachName: "Coaching Staff",
+    const playerId = this.selectedPlayerId;
+    if (!playerId) {
+      this.toastService.warn("Select a player before saving a note.");
+      return;
+    }
+
+    const { data, error } = await this.playerDevelopmentDataService.saveNote({
+      playerId,
       content,
-    };
-    this.notes.update((notes) => [nextNote, ...notes]);
+    });
+
+    if (error || !data) {
+      this.logger.error("Failed to save development note", error);
+      this.toastService.error("We couldn't save this note.", "Save Failed");
+      return;
+    }
+
+    this.notes.update((notes) => [data, ...notes]);
     this.toastService.success(
       "Development note has been added",
       "Note Saved",
@@ -1288,7 +1286,7 @@ export class PlayerDevelopmentComponent implements OnInit {
     this.toastService.success("Development report downloaded.", "Export Ready");
   }
 
-  saveAssessment(): void {
+  async saveAssessment(): Promise<void> {
     const skill = this.assessmentSkill.trim();
     const score = Number(this.assessmentScore);
     if (!skill) {
@@ -1300,28 +1298,57 @@ export class PlayerDevelopmentComponent implements OnInit {
       return;
     }
 
+    const playerId = this.selectedPlayerId;
+    if (!playerId) {
+      this.toastService.warn("Select a player before saving an assessment.");
+      return;
+    }
+
     const nextAssessment: SkillAssessment = {
+      playerId,
       skill,
       score,
       grade: this.getAssessmentGrade(score),
     };
+    const { data, error } =
+      await this.playerDevelopmentDataService.saveAssessment(nextAssessment);
+
+    if (error || !data) {
+      this.logger.error("Failed to save assessment", error);
+      this.toastService.error(
+        "We couldn't save this assessment.",
+        "Save Failed",
+      );
+      return;
+    }
+
     this.assessments.update((assessments) => {
       const existingIndex = assessments.findIndex(
         (assessment) =>
+          assessment.playerId === playerId &&
           assessment.skill.toLowerCase() === skill.toLowerCase(),
       );
       if (existingIndex === -1) {
-        return [...assessments, nextAssessment].sort((a, b) =>
+        return [...assessments, data].sort((a, b) =>
           a.skill.localeCompare(b.skill),
         );
       }
 
       return assessments.map((assessment, index) =>
-        index === existingIndex ? nextAssessment : assessment,
+        index === existingIndex ? data : assessment,
       );
     });
+    await this.loadData();
     this.showAssessmentDialog = false;
     this.toastService.success("Assessment saved.", "Assessment Updated");
+  }
+
+  private toIsoDate(value: Date | null): string | null {
+    if (!value || Number.isNaN(value.getTime())) {
+      return null;
+    }
+
+    return value.toISOString().slice(0, 10);
   }
 
   // Helpers
@@ -1351,10 +1378,6 @@ export class PlayerDevelopmentComponent implements OnInit {
     if (score >= 70) return "B";
     if (score >= 60) return "C";
     return "Needs Work";
-  }
-
-  private createClientId(prefix: string): string {
-    return `${prefix}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
   }
 
   private downloadTextFile(filename: string, content: string): void {

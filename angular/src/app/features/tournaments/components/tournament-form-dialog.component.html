@@ -2,6 +2,7 @@
   [visible]="visible()"
   (visibleChange)="visibleChange.emit($event)"
   [modal]="true"
+  [closable]="false"
   [draggable]="false"
   [resizable]="false"
   [blockScroll]="true"
@@ -82,9 +83,9 @@
           ></app-input-number>
         </div>
       </div>
-      </div>
+    </div>
 
-      <div class="form-section">
+    <div class="form-section">
       <div class="section-header">
         <i class="pi pi-map-marker"></i>
         <span>Location</span>
@@ -120,7 +121,7 @@
           ></app-form-input>
         </div>
       </div>
-      </div>
+    </div>
 
 
     <div class="form-section">
@@ -129,36 +130,46 @@
         <span>Dates</span>
       </div>
       <div class="form-row two-col">
-        <div class="form-field">
-          <label for="tournament-startDate"><i class="pi pi-calendar-plus"></i> Start Date <span class="required">*</span></label>
+        <div class="form-field form-field--date">
+          <label class="field-label" for="tournament-startDate">
+            <i class="pi pi-calendar-plus"></i>
+            Start Date
+            <span class="required">*</span>
+          </label>
           <input
             id="tournament-startDate"
             type="date"
             [value]="getDateInputValue('start_date_obj')"
             (input)="onDateInputEvent('start_date_obj', $event)"
-            class="w-full"
+            class="native-date-input w-full"
           />
         </div>
-        <div class="form-field">
-          <label for="tournament-endDate"><i class="pi pi-calendar-minus"></i> End Date</label>
+        <div class="form-field form-field--date">
+          <label class="field-label" for="tournament-endDate">
+            <i class="pi pi-calendar-minus"></i>
+            End Date
+          </label>
           <input
             id="tournament-endDate"
             type="date"
             [value]="getDateInputValue('end_date_obj')"
             (input)="onDateInputEvent('end_date_obj', $event)"
-            class="w-full"
+            class="native-date-input w-full"
           />
         </div>
       </div>
       <div class="form-row">
-        <div class="form-field full-width">
-          <label for="tournament-deadline"><i class="pi pi-clock"></i> Registration Deadline</label>
+        <div class="form-field form-field--date full-width">
+          <label class="field-label" for="tournament-deadline">
+            <i class="pi pi-clock"></i>
+            Registration Deadline
+          </label>
           <input
             id="tournament-deadline"
             type="date"
             [value]="getDateInputValue('registration_deadline_obj')"
             (input)="onDateInputEvent('registration_deadline_obj', $event)"
-            class="w-full"
+            class="native-date-input w-full"
           />
         </div>
       </div>

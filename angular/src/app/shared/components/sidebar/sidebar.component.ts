@@ -9,7 +9,6 @@ import {
   input,
   OnInit,
   PLATFORM_ID,
-  Renderer2,
   signal,
 } from "@angular/core";
 import { NavigationEnd, Router, RouterModule } from "@angular/router";
@@ -25,6 +24,7 @@ import {
 } from "../../../core/navigation/app-navigation.config";
 import { AuthService } from "../../../core/services/auth.service";
 import { ConfirmDialogService } from "../../../core/services/confirm-dialog.service";
+import { ShellBodyStateService } from "../../../core/services/shell-body-state.service";
 import { BackdropComponent } from "../backdrop/backdrop.component";
 import { CloseButtonComponent } from "../close-button/close-button.component";
 import { NavItemComponent } from "../nav-item.component";
@@ -236,9 +236,10 @@ export class SidebarComponent implements OnInit {
   private readonly router = inject(Router);
   private readonly authService = inject(AuthService);
   private readonly confirmDialog = inject(ConfirmDialogService);
-  private readonly renderer = inject(Renderer2);
+  private readonly shellBodyState = inject(ShellBodyStateService);
   private readonly platformId = inject(PLATFORM_ID);
   private readonly destroyRef = inject(DestroyRef);
+  private releaseSidebarBodyLock: (() => void) | null = null;
 
   readonly collapsed = input(false);
   readonly mobileViewport = input(false);
@@ -248,21 +249,16 @@ export class SidebarComponent implements OnInit {
   );
 
   constructor() {
-    this.destroyRef.onDestroy(() => {
-      if (isPlatformBrowser(this.platformId)) {
-        this.renderer.removeClass(document.body, "sidebar-open");
-      }
-    });
+    this.destroyRef.onDestroy(() => this.releaseMobileBodyLock());
     // Effect to manage body scroll lock when sidebar is open on mobile
     if (isPlatformBrowser(this.platformId)) {
       effect(() => {
-        const isOpen = this.isOpen();
-        if (this.mobileViewport()) {
-          if (isOpen) {
-            this.renderer.addClass(document.body, "sidebar-open");
-          } else {
-            this.renderer.removeClass(document.body, "sidebar-open");
-          }
+        const shouldLockBody = this.mobileViewport() && this.isOpen();
+
+        if (shouldLockBody) {
+          this.ensureMobileBodyLock();
+        } else {
+          this.releaseMobileBodyLock();
         }
       });
     }
@@ -434,5 +430,14 @@ export class SidebarComponent implements OnInit {
       resolved.push("nav-item--collapsed");
     }
     return resolved.join(" ");
+  }
+
+  private ensureMobileBodyLock(): void {
+    this.releaseSidebarBodyLock ??= this.shellBodyState.acquireSidebarLock();
+  }
+
+  private releaseMobileBodyLock(): void {
+    this.releaseSidebarBodyLock?.();
+    this.releaseSidebarBodyLock = null;
   }
 }

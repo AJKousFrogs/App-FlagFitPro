@@ -33,7 +33,7 @@ function mapLegacyWellnessRecord(data) {
     sorenessAreas: data.soreness_areas || [],
     notes: data.notes,
     readinessScore: data.calculated_readiness ?? null,
-    motivationLevel: data.motivation_level ?? null,
+    motivationLevel: data.motivation_level ?? data.motivation ?? null,
     mood: data.mood ?? null,
     hydrationLevel: data.hydration_level ?? null,
   };
@@ -110,6 +110,7 @@ async function savePrimaryWellnessCheckin(supabase, userId, targetDate, payload)
     notes: payload.notes,
     calculated_readiness: payload.calculatedReadiness,
     motivation_level: payload.motivationLevel,
+    motivation: payload.motivationLevel,
     mood: payload.mood,
     hydration_level: payload.hydrationLevel,
     updated_at: new Date().toISOString(),

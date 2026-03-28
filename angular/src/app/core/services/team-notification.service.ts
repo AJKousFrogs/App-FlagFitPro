@@ -23,6 +23,7 @@ import {
 import { ToastService } from "./toast.service";
 import { TOAST } from "../constants/toast-messages.constants";
 import { formatDate } from "../../shared/utils/date.utils";
+import { isBenignSupabaseQueryError } from "../../shared/utils/error.utils";
 import {
   RealtimeChannel,
   RealtimePostgresChangesPayload,
@@ -112,6 +113,7 @@ export class TeamNotificationService {
   private readonly _activityFeed = signal<CoachActivityItem[]>([]);
   private readonly _unreadAnnouncements = signal<UnreadAnnouncement[]>([]);
   private readonly _loading = signal(false);
+  private channelsUnavailable = false;
 
   // Public signals
   readonly activityFeed = computed(() => this._activityFeed());
@@ -470,6 +472,11 @@ export class TeamNotificationService {
    */
   async loadUnreadAnnouncements(): Promise<UnreadAnnouncement[]> {
     try {
+      if (this.channelsUnavailable) {
+        this._unreadAnnouncements.set([]);
+        return [];
+      }
+
       const userId = this.authService.getUser()?.id;
       if (!userId) return [];
 
@@ -491,7 +498,11 @@ export class TeamNotificationService {
         .in("team_id", teamIds)
         .eq("channel_type", "announcements");
 
-      if (!channels || channels.length === 0) return [];
+      if (!channels) {
+        return [];
+      }
+
+      if (channels.length === 0) return [];
 
       const channelIds = channels.map((c) => c.id);
       const channelMap = new Map(channels.map((c) => [c.id, c.name]));
@@ -543,6 +554,11 @@ export class TeamNotificationService {
       this._unreadAnnouncements.set(unread);
       return unread;
     } catch (error) {
+      if (isBenignSupabaseQueryError(error)) {
+        this.channelsUnavailable = true;
+        this._unreadAnnouncements.set([]);
+        return [];
+      }
       this.logger.error("Error loading unread announcements:", error);
       return [];
     }

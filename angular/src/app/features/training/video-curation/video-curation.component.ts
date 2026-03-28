@@ -255,7 +255,7 @@ export class VideoCurationComponent implements OnInit {
   });
 
   ngOnInit(): void {
-    this.curationService.loadAllData();
+    void this.curationService.loadAllData();
   }
 
   // Filter handling
@@ -294,8 +294,8 @@ export class VideoCurationComponent implements OnInit {
     this.showPlaylistDialog.set(true);
   }
 
-  createPlaylist(form: PlaylistForm): void {
-    this.curationService.createPlaylist(form);
+  async createPlaylist(form: PlaylistForm): Promise<void> {
+    await this.curationService.createPlaylist(form);
   }
 
   editPlaylist(playlist: InstagramPlaylist): void {
@@ -313,8 +313,8 @@ export class VideoCurationComponent implements OnInit {
     await this.curationService.sharePlaylist(playlist);
   }
 
-  deletePlaylist(playlist: InstagramPlaylist): void {
-    this.curationService.deletePlaylist(playlist);
+  async deletePlaylist(playlist: InstagramPlaylist): Promise<void> {
+    await this.curationService.deletePlaylist(playlist);
   }
 
   // Player suggestion actions

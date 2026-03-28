@@ -2435,25 +2435,27 @@
      ================================================================ */
 
   .p-tooltip {
+    max-width: min(var(--p-tooltip-max-width), calc(100vw - var(--space-6)));
+
     .p-tooltip-text {
       background: var(--surface-primary);
       color: var(--color-text-primary);
       border: var(--border-1) solid var(--ds-primary-green);
-      border-radius: var(--radius-md);
+      border-radius: var(--radius-lg);
       /* TOOLTIP FIX: Consistent padding from design system */
       padding: var(--p-tooltip-padding);
       font-family: var(--font-family-sans);
-      font-size: var(--font-caption-size);
+      font-size: var(--font-body-sm-size);
       font-weight: var(--font-weight-medium);
       /* TOOLTIP FIX: Explicit line-height for readability */
       line-height: var(--p-tooltip-line-height);
       box-shadow: var(--p-tooltip-shadow);
       animation: tooltip-scale-in var(--transition-fast) var(--ease-decelerate);
       /* TOOLTIP FIX: Consistent max-width prevents overflow */
-      max-width: var(--p-tooltip-max-width);
+      max-width: inherit;
       /* TOOLTIP FIX: Proper text wrapping */
       overflow-wrap: break-word;
-      white-space: normal;
+      white-space: pre-line;
     }
 
     /* Tooltip arrow - make it match the border */

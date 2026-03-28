@@ -380,17 +380,18 @@ export class StatisticsCalculationService {
     let totalMinutes = 0;
     let recordedCount = 0;
     let estimatedCount = 0;
+    let estimatedMinutes = 0;
     const intensityPoints: number[] = [];
 
     weekWorkouts.forEach((workout) => {
-      if (workout.duration) {
-        totalMinutes += workout.duration * 60; // Convert hours to minutes
+      if (typeof workout.duration === "number" && workout.duration > 0) {
+        totalMinutes += workout.duration;
         recordedCount++;
       } else {
-        // Use type-specific default duration
         const defaultDuration = this.getDefaultDurationByType(workout.type);
         totalMinutes += defaultDuration;
         estimatedCount++;
+        estimatedMinutes += defaultDuration;
       }
 
       // Track intensity for variance calculation
@@ -433,7 +434,7 @@ export class StatisticsCalculationService {
       totalHours,
       totalMinutes,
       dataQuality,
-      estimatedHours: (estimatedCount * 45) / 60, // 45 min default per session
+      estimatedHours: Number((estimatedMinutes / 60).toFixed(1)),
       confidenceLevel: recordedPercentage * 100,
       weeklyLoad: {
         totalIntensityPoints: intensityPoints.reduce((a, b) => a + b, 0),

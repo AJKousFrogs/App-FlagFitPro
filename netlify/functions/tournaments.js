@@ -27,6 +27,12 @@ const VALID_VISIBILITY_SCOPES = new Set(["team", "personal"]);
 const VALID_LIST_STATUSES = new Set(["all", "upcoming", "ongoing", "completed"]);
 const ISO_DATE_REGEX = /^\d{4}-\d{2}-\d{2}$/;
 
+function isMissingTournamentResourceError(error) {
+  const code = error?.code;
+  const message = typeof error?.message === "string" ? error.message.toLowerCase() : "";
+  return code === "42P01" || code === "PGRST204" || message.includes("tournaments");
+}
+
 function assertValidIsoDate(value, fieldName) {
   if (value === undefined || value === null || value === "") {
     return;
@@ -62,14 +68,20 @@ function assertDateOrder(startDate, endDate) {
   }
 }
 
-async function getUserTeamRole(userId) {
+async function getUserMembershipContext(userId) {
   if (!userId) {
-    return "player";
+    return {
+      memberships: [],
+      teamIds: [],
+      primaryTeamId: null,
+      role: "player",
+      isCoachOrAdmin: false,
+    };
   }
 
   const membershipQuery = supabaseAdmin
     .from("team_members")
-    .select("role")
+    .select("team_id, role, updated_at, joined_at")
     .eq("user_id", userId)
     .eq("status", "active");
 
@@ -78,27 +90,85 @@ async function getUserTeamRole(userId) {
       ? membershipQuery.order("updated_at", { ascending: false })
       : membershipQuery;
 
-  if (typeof orderedQuery.limit === "function") {
-    const { data: memberData, error } = await orderedQuery.limit(1);
+  const { data: membershipData, error } = await orderedQuery;
 
-    if (error) {
-      throw error;
-    }
-
-    return memberData?.[0]?.role || "player";
+  if (error) {
+    throw error;
   }
 
-  if (typeof orderedQuery.maybeSingle === "function") {
-    const { data: memberData, error } = await orderedQuery.maybeSingle();
+  const memberships = Array.isArray(membershipData)
+    ? membershipData.filter((membership) => membership?.team_id)
+    : [];
+  const teamIds = [...new Set(memberships.map((membership) => membership.team_id))];
+  const primaryMembership = memberships[0] || null;
 
-    if (error) {
-      throw error;
-    }
+  return {
+    memberships,
+    teamIds,
+    primaryTeamId: primaryMembership?.team_id || null,
+    role: primaryMembership?.role || "player",
+    isCoachOrAdmin: memberships.some((membership) =>
+      isCoachOrAdminRole(membership.role),
+    ),
+  };
+}
 
-    return memberData?.role || "player";
+function getMembershipRoleForTeam(membershipContext, teamId) {
+  if (!teamId) {
+    return membershipContext?.role || "player";
   }
 
-  return "player";
+  return (
+    membershipContext?.memberships?.find((membership) => membership.team_id === teamId)
+      ?.role || null
+  );
+}
+
+function canAccessTournament(tournament, membershipContext, userId) {
+  if (!userId || !tournament) {
+    return false;
+  }
+
+  const visibilityScope = tournament.visibility_scope || "team";
+  const teamId = tournament.team_id || null;
+  const membershipRole = getMembershipRoleForTeam(membershipContext, teamId);
+  const hasTeamAccess =
+    !teamId || membershipContext?.teamIds?.includes(teamId) || false;
+  const isCoachOrAdmin = membershipRole
+    ? isCoachOrAdminRole(membershipRole)
+    : membershipContext?.isCoachOrAdmin || false;
+  const isOwner =
+    tournament.created_by === userId || tournament.player_id === userId;
+
+  if (!hasTeamAccess) {
+    return false;
+  }
+
+  if (visibilityScope === "personal") {
+    return isCoachOrAdmin || isOwner;
+  }
+
+  return true;
+}
+
+async function isActiveTeamMember(userId, teamId) {
+  if (!userId || !teamId) {
+    return false;
+  }
+
+  const { data, error } = await supabaseAdmin
+    .from("team_members")
+    .select("id")
+    .eq("team_id", teamId)
+    .eq("user_id", userId)
+    .eq("status", "active")
+    .maybeSingle();
+
+  if (error) {
+    throw error;
+  }
+
+  return !!data;
 }
 
 /**
@@ -136,9 +206,11 @@ async function getTournaments(event, _context, { userId, requestId }) {
     );
   }
 
-  // Get user role if userId is provided (for visibility filtering)
-  // Role is in team_members table, not users table
-  const userRole = await getUserTeamRole(userId);
+  const membershipContext = await getUserMembershipContext(userId);
+
+  if (membershipContext.teamIds.length === 0) {
+    return createSuccessResponse({ tournaments: [] }, requestId);
+  }
 
   // Get single tournament by ID
   if (id) {
@@ -149,20 +221,17 @@ async function getTournaments(event, _context, { userId, requestId }) {
       .single();
 
     if (error) {
+      if (isMissingTournamentResourceError(error)) {
+        return handleNotFoundError(`Tournament with ID ${id}`, requestId);
+      }
       if (error.code === "PGRST116") {
         return handleNotFoundError(`Tournament with ID ${id}`, requestId);
       }
       throw error;
     }
 
-    // Check visibility for personal tournaments
-    if (data && data.visibility_scope === "personal") {
-      const isCoachOrAdmin = isCoachOrAdminRole(userRole);
-      const isOwner = data.created_by === userId || data.player_id === userId;
-
-      if (!isCoachOrAdmin && !isOwner) {
-        return handleNotFoundError(`Tournament with ID ${id}`, requestId);
-      }
+    if (!canAccessTournament(data, membershipContext, userId)) {
+      return handleNotFoundError(`Tournament with ID ${id}`, requestId);
     }
 
     return createSuccessResponse({ tournament: data }, requestId);
@@ -172,6 +241,7 @@ async function getTournaments(event, _context, { userId, requestId }) {
   let query = supabaseAdmin
     .from("tournaments")
     .select("*")
+    .in("team_id", membershipContext.teamIds)
     .order("start_date", { ascending: true });
 
   // Filter by year if provided
@@ -202,29 +272,15 @@ async function getTournaments(event, _context, { userId, requestId }) {
   const { data, error } = await query;
 
   if (error) {
+    if (isMissingTournamentResourceError(error)) {
+      return createSuccessResponse({ tournaments: [] }, requestId);
+    }
     throw error;
   }
 
-  // Apply visibility filtering
-  const isCoachOrAdmin = isCoachOrAdminRole(userRole);
-
-  let filteredData = data || [];
-  if (!userId) {
-    // Public/unauthenticated reads can only access team-visible tournaments.
-    filteredData = filteredData.filter(
-      (t) => t.visibility_scope === "team" || t.visibility_scope === null,
-    );
-  } else if (!isCoachOrAdmin) {
-    // Players only see: team tournaments + their own personal tournaments
-    filteredData = filteredData.filter(
-      (t) =>
-        t.visibility_scope === "team" ||
-        t.visibility_scope === null || // Legacy tournaments
-        t.created_by === userId ||
-        t.player_id === userId,
-    );
-  }
-  // Coaches/managers/admins see all tournaments (team + all personal)
+  const filteredData = (data || []).filter((tournament) =>
+    canAccessTournament(tournament, membershipContext, userId),
+  );
 
   // Transform data to include calculated status
   const today = new Date().toISOString().split("T")[0];
@@ -300,14 +356,34 @@ async function createTournament(event, _context, { userId, requestId }) {
     );
   }
 
-  // Get user role to determine visibility scope
-  // Role is in team_members table, not users table
-  const userRole = await getUserTeamRole(userId);
+  const membershipContext = await getUserMembershipContext(userId);
+  const requestedTeamId =
+    body.team_id || body.teamId || membershipContext.primaryTeamId;
+
+  if (!requestedTeamId) {
+    return createErrorResponse(
+      "Active team membership is required to create tournaments",
+      403,
+      "authorization_error",
+      requestId,
+    );
+  }
+
+  const teamRole = getMembershipRoleForTeam(membershipContext, requestedTeamId);
+
+  if (!teamRole) {
+    return createErrorResponse(
+      "You can only create tournaments for a team you actively belong to",
+      403,
+      "authorization_error",
+      requestId,
+    );
+  }
 
   // Determine visibility scope based on user role
   // Coaches/managers/admins create team-wide tournaments
   // Players create personal tournaments (only visible to them + coaches)
-  const isCoachOrAdmin = isCoachOrAdminRole(userRole);
+  const isCoachOrAdmin = isCoachOrAdminRole(teamRole);
   const requestedScope =
     body.visibility_scope || (isCoachOrAdmin ? "team" : "personal");
   if (!VALID_VISIBILITY_SCOPES.has(requestedScope)) {
@@ -325,7 +401,7 @@ async function createTournament(event, _context, { userId, requestId }) {
   // - coaches may optionally assign to a player_id
   const playerId =
     visibilityScope === "personal"
-      ? (isCoachOrAdmin ? body.player_id || userId : userId)
+      ? (isCoachOrAdmin ? body.player_id || body.playerId || userId : userId)
       : null;
   if (visibilityScope === "personal" && !playerId) {
     return createErrorResponse(
@@ -336,8 +412,18 @@ async function createTournament(event, _context, { userId, requestId }) {
     );
   }
 
+  if (playerId && !(await isActiveTeamMember(playerId, requestedTeamId))) {
+    return createErrorResponse(
+      "player_id must belong to the selected team",
+      422,
+      "validation_error",
+      requestId,
+    );
+  }
+
   // Prepare tournament data
   const tournamentData = {
+    team_id: requestedTeamId,
     name: body.name,
     short_name: body.short_name || body.shortName || null,
     location: body.location || null,
@@ -500,7 +586,9 @@ async function updateTournament(
 
   const { data: existingTournament, error: existingError } = await supabaseAdmin
     .from("tournaments")
-    .select("id, created_by, player_id, visibility_scope, start_date, end_date")
+    .select(
+      "id, team_id, created_by, player_id, visibility_scope, start_date, end_date",
+    )
     .eq("id", id)
     .single();
 
@@ -508,13 +596,20 @@ async function updateTournament(
     return handleNotFoundError(`Tournament with ID ${id}`, requestId);
   }
 
-  const userRole = await getUserTeamRole(userId);
-  const isCoachOrAdmin = isCoachOrAdminRole(userRole);
+  const membershipContext = await getUserMembershipContext(userId);
+  const teamRole = getMembershipRoleForTeam(
+    membershipContext,
+    existingTournament.team_id,
+  );
+  const isCoachOrAdmin = teamRole ? isCoachOrAdminRole(teamRole) : false;
   const isOwner =
     existingTournament.created_by === userId ||
     existingTournament.player_id === userId;
 
-  if (!isCoachOrAdmin && !isOwner) {
+  if (
+    !canAccessTournament(existingTournament, membershipContext, userId) ||
+    (!isCoachOrAdmin && !isOwner)
+  ) {
     return createErrorResponse(
       "Not authorized to update this tournament",
       403,
@@ -593,6 +688,19 @@ async function updateTournament(
       requestId,
     );
   }
+
+  if (
+    effectivePlayerId &&
+    !(await isActiveTeamMember(effectivePlayerId, existingTournament.team_id))
+  ) {
+    return createErrorResponse(
+      "player_id must belong to the tournament team",
+      422,
+      "validation_error",
+      requestId,
+    );
+  }
+
   try {
     const effectiveStartDate = updateData.start_date ?? existingTournament.start_date;
     const effectiveEndDate = updateData.end_date ?? existingTournament.end_date;
@@ -651,7 +759,7 @@ async function deleteTournament(
   // First check if tournament exists
   const { data: existing, error: checkError } = await supabaseAdmin
     .from("tournaments")
-    .select("id, name, created_by, player_id, visibility_scope")
+    .select("id, name, team_id, created_by, player_id, visibility_scope")
     .eq("id", id)
     .single();
 
@@ -659,11 +767,15 @@ async function deleteTournament(
     return handleNotFoundError(`Tournament with ID ${id}`, requestId);
   }
 
-  const userRole = await getUserTeamRole(userId);
-  const isCoachOrAdmin = isCoachOrAdminRole(userRole);
+  const membershipContext = await getUserMembershipContext(userId);
+  const teamRole = getMembershipRoleForTeam(membershipContext, existing.team_id);
+  const isCoachOrAdmin = teamRole ? isCoachOrAdminRole(teamRole) : false;
   const isOwner = existing.created_by === userId || existing.player_id === userId;
 
-  if (!isCoachOrAdmin && !isOwner) {
+  if (
+    !canAccessTournament(existing, membershipContext, userId) ||
+    (!isCoachOrAdmin && !isOwner)
+  ) {
     return createErrorResponse(
       "Not authorized to delete this tournament",
       403,
@@ -774,13 +886,13 @@ const handler = async (event, context) => {
     });
   }
 
-  // GET requests - public, no auth required
+  // GET requests require auth because tournament visibility is team-scoped.
   if (method === "GET") {
     return baseHandler(event, context, {
       functionName: "tournaments-get",
       allowedMethods: ["GET"],
       rateLimitType: "READ",
-      requireAuth: false, // Public read access
+      requireAuth: true,
       handler: getTournaments,
     });
   }

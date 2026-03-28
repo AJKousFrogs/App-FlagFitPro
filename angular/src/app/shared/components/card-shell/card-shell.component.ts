@@ -108,6 +108,8 @@ import { CommonModule } from "@angular/common";
       <div
         class="card-shell__body"
         [class.card-shell__body--compact]="density() === 'compact'"
+        [class.card-shell__body--no-header]="!hasVisibleHeader"
+        [class.card-shell__body--with-header]="hasVisibleHeader"
         [class.card-shell__body--flush]="flush()"
       >
         <ng-content></ng-content>
@@ -171,6 +173,10 @@ export class CardShellComponent {
   isHovered = signal(false);
   isPressed = signal(false);
   hasHeaderSlot = false; // Set via content projection detection
+
+  get hasVisibleHeader(): boolean {
+    return Boolean(this.title() || this.hasHeaderSlot);
+  }
 
   // ============================================
   // COMPUTED - Class Generation

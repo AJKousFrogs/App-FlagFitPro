@@ -26,6 +26,13 @@ function toFiniteNumber(value) {
   return Number.isFinite(parsed) ? parsed : null;
 }
 
+function normalizePlayerStatsPath(pathname = "") {
+  return pathname
+    .replace(/^\/\.netlify\/functions\/player-stats\/?/, "")
+    .replace(/^\/api\/player-stats\/?/, "")
+    .replace(/^\/+|\/+$/g, "");
+}
+
 /**
  * Get player aggregated statistics across all games up to and including today
  * This is the single source of truth for player stats
@@ -218,7 +225,7 @@ function aggregateStatsFromPlays(plays, games, playerId) {
     }
 
     // Rushing stats
-    if (playType === "run" || playType === "rush") {
+    if ((playType === "run" || playType === "rush") && isPrimaryPlayer) {
       stats.rushingAttempts++;
 
       if (yardsGained !== null) {
@@ -232,7 +239,12 @@ function aggregateStatsFromPlays(plays, games, playerId) {
     }
 
     // Defensive stats
-    if (playType === "flag_pull" || playType === "tackle") {
+    const isDefensiveParticipant = isPrimaryPlayer || isSecondaryPlayer;
+
+    if (
+      (playType === "flag_pull" || playType === "tackle") &&
+      isDefensiveParticipant
+    ) {
       stats.flagPullAttempts++;
 
       if (playResult === "flag_pull" || play.is_successful) {
@@ -242,11 +254,19 @@ function aggregateStatsFromPlays(plays, games, playerId) {
       }
     }
 
-    if (playResult === "defended_pass") {
+    if (
+      playType === "defense" &&
+      playResult === "defended_pass" &&
+      isDefensiveParticipant
+    ) {
       stats.defendedPasses++;
     }
 
-    if (playResult === "interception" && playType === "defense") {
+    if (
+      playType === "defense" &&
+      playResult === "interception" &&
+      isDefensiveParticipant
+    ) {
       stats.interceptionsDef++;
     }
   });
@@ -423,7 +443,7 @@ const handler = async (event, context) => {
     requireAuth: true, // P0-001: Explicitly require authentication
     handler: async (event, _context, { userId }) => {
       const queryParams = event.queryStringParameters || {};
-      const path = event.path.replace("/.netlify/functions/player-stats", "");
+      const path = normalizePlayerStatsPath(event.path);
 
       // Get player ID (defaults to authenticated user)
       const {
@@ -487,16 +507,11 @@ const handler = async (event, context) => {
       let result;
 
       // Route handling
-      if (
-        path.includes("/aggregated") ||
-        path.endsWith("/aggregated") ||
-        path === "" ||
-        path === "/"
-      ) {
+      if (path === "" || path === "aggregated") {
         const { season } = queryParams;
         const { teamId } = queryParams;
         result = await getPlayerAggregatedStats(playerId, { season, teamId });
-      } else if (path.includes("/date-range") || path.endsWith("/date-range")) {
+      } else if (path === "date-range") {
         const startDate = queryParams.startDate
           ? new Date(queryParams.startDate)
           : new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);

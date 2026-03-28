@@ -20,7 +20,6 @@ import { CommonModule } from "@angular/common";
 import {
   ChangeDetectionStrategy,
   Component,
-  DestroyRef,
   OnDestroy,
   OnInit,
   computed,
@@ -94,7 +93,13 @@ interface NutritionRecommendation {
 interface HydrationLog {
   time: string;
   amount: number; // ml
-  type: "water" | "electrolyte" | "sports-drink" | "smoothie" | "protein-shake";
+  type:
+    | "water"
+    | "electrolyte"
+    | "sports-drink"
+    | "smoothie"
+    | "protein-shake"
+    | "coconut";
 }
 
 @Component({
@@ -120,10 +125,10 @@ export class TournamentNutritionComponent implements OnInit, OnDestroy {
   private router = inject(Router);
   private toastService = inject(ToastService);
   private logger = inject(LoggerService);
-  private destroyRef = inject(DestroyRef);
   private nutritionService = inject(NutritionService);
   private dialogService = inject(DialogService);
   private tournamentStateService = inject(TournamentNutritionStateService);
+  private unsubscribeTodayState: (() => void) | null = null;
 
   // State
   games = signal<GameSchedule[]>([]);
@@ -330,6 +335,11 @@ export class TournamentNutritionComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     void this.loadSavedSchedule();
+    this.unsubscribeTodayState = this.tournamentStateService.subscribeToTodayState(
+      () => {
+        void this.loadSavedSchedule();
+      },
+    );
 
     // Auto-refresh every minute to update "next game" countdown
     this.refreshInterval = setInterval(() => {
@@ -342,6 +352,8 @@ export class TournamentNutritionComponent implements OnInit, OnDestroy {
     if (this.refreshInterval) {
       clearInterval(this.refreshInterval);
     }
+    this.unsubscribeTodayState?.();
+    this.unsubscribeTodayState = null;
   }
 
   private async loadSavedSchedule(): Promise<void> {
@@ -397,6 +409,8 @@ export class TournamentNutritionComponent implements OnInit, OnDestroy {
 
     if (restoredFromLocalStorage) {
       await this.persistCurrentState();
+      localStorage.removeItem("tournament_schedule");
+      localStorage.removeItem("hydration_logs_" + new Date().toDateString());
     }
 
     // If no schedule, show empty state - user must create their own schedule
@@ -463,15 +477,6 @@ export class TournamentNutritionComponent implements OnInit, OnDestroy {
     this.games.set(sortedGames);
     this.tournamentName.set(this.editTournamentName);
     this.showScheduleEditor = false;
-
-    // Save to localStorage
-    localStorage.setItem(
-      "tournament_schedule",
-      JSON.stringify({
-        name: this.editTournamentName,
-        games: sortedGames,
-      }),
-    );
 
     // Generate nutrition windows
     const windows: NutritionWindow[] = [];
@@ -917,12 +922,6 @@ export class TournamentNutritionComponent implements OnInit, OnDestroy {
 
     this.hydrationLogs.update((logs) => [...logs, log]);
     this.selectedHydration = type;
-
-    // Save to localStorage
-    localStorage.setItem(
-      "hydration_logs_" + new Date().toDateString(),
-      JSON.stringify(this.hydrationLogs()),
-    );
     await this.tournamentStateService.logHydration(
       log as TournamentNutritionHydrationLog,
     );

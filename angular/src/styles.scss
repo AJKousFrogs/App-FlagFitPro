@@ -80,14 +80,12 @@ html.route-landing {
 
 /* Mobile-specific: Prevent scroll when sidebar is open */
 @layer mobile {
-  body.sidebar-open {
-    overflow: hidden;
-    position: fixed;
-    width: 100%;
-    height: 100%;
-
-    /* Prevent any touch scroll behavior on mobile */
-    @include respond-to(md) {
+  @include respond-to(md) {
+    body.sidebar-open {
+      overflow: hidden;
+      position: fixed;
+      width: 100%;
+      height: 100%;
       touch-action: none;
       overscroll-behavior: contain;
     }

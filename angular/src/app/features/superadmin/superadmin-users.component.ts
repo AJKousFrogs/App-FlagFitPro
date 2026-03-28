@@ -3,6 +3,7 @@ import {
   Component,
   inject,
   OnInit,
+  signal,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { RouterLink } from "@angular/router";
@@ -26,19 +27,13 @@ import {
   DialogFooterComponent,
   DialogHeaderComponent,
 } from "../../shared/components/ui-components";
-import { SuperadminService } from "../../core/services/superadmin.service";
+import {
+  ManagedUserAccount,
+  SuperadminService,
+} from "../../core/services/superadmin.service";
 import { ToastService } from "../../core/services/toast.service";
 
-interface User {
-  id: string;
-  email: string;
-  full_name: string;
-  role: "player" | "coach" | "admin" | "superadmin";
-  team_name?: string;
-  status: "active" | "suspended" | "pending";
-  created_at: string;
-  last_login?: string;
-}
+type User = ManagedUserAccount;
 
 const USER_ROLES = ["player", "coach", "admin", "superadmin"] as const;
 const USER_STATUSES = ["active", "suspended", "pending"] as const;
@@ -126,6 +121,12 @@ const USER_STATUSES = ["active", "suspended", "pending"] as const;
         <app-card-shell class="users-table-card" title="Users">
           @if (isLoading()) {
             <app-loading message="Loading users..." variant="inline" />
+          } @else if (loadError()) {
+            <app-empty-state
+              icon="pi-exclamation-triangle"
+              heading="Unable to Load Users"
+              [description]="loadError()!"
+            />
           } @else if (filteredUsers.length === 0) {
             <app-empty-state
               icon="pi-users"
@@ -294,7 +295,7 @@ const USER_STATUSES = ["active", "suspended", "pending"] as const;
           <app-dialog-header
             icon="user-edit"
             [title]="selectedUser?.full_name || 'Edit User'"
-            subtitle="Adjust the local review state for this user."
+            subtitle="Update this user account in the database."
             (close)="showEditDialog = false"
           />
           @if (selectedUser) {
@@ -354,7 +355,8 @@ export class SuperadminUsersComponent implements OnInit {
   selectedUser: User | null = null;
   editRole: User["role"] = "player";
   editStatus: User["status"] = "active";
-  isLoading = this.superadminService.isLoading;
+  readonly isLoading = signal(false);
+  readonly loadError = signal<string | null>(null);
   readonly roleOptions = [
     { label: "Player", value: "player" },
     { label: "Coach", value: "coach" },
@@ -384,44 +386,24 @@ export class SuperadminUsersComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.loadUsers();
+    void this.loadUsers();
   }
 
-  loadUsers(): void {
-    // Load users from service - for now use mock data
-    this.users = [
-      {
-        id: "1",
-        email: "coach@example.com",
-        full_name: "John Coach",
-        role: "coach",
-        team_name: "Slovenia National Team",
-        status: "active",
-        created_at: "2024-01-15",
-        last_login: "2024-12-20",
-      },
-      {
-        id: "2",
-        email: "player@example.com",
-        full_name: "Jane Player",
-        role: "player",
-        team_name: "Slovenia National Team",
-        status: "active",
-        created_at: "2024-03-10",
-        last_login: "2024-12-19",
-      },
-      {
-        id: "3",
-        email: "admin@example.com",
-        full_name: "Bob Admin",
-        role: "admin",
-        team_name: "Croatia Warriors",
-        status: "active",
-        created_at: "2024-02-20",
-        last_login: "2024-12-18",
-      },
-    ];
-    this.filterUsers();
+  async loadUsers(): Promise<void> {
+    this.isLoading.set(true);
+    this.loadError.set(null);
+
+    try {
+      this.users = await this.superadminService.getAllUsers();
+      this.filterUsers();
+    } catch (_error) {
+      this.users = [];
+      this.filteredUsers = [];
+      this.loadError.set("Unable to load users right now. Please try again.");
+      this.toast.error("Failed to load user management data.");
+    } finally {
+      this.isLoading.set(false);
+    }
   }
 
   filterUsers(): void {
@@ -483,14 +465,18 @@ export class SuperadminUsersComponent implements OnInit {
   getStatusSeverity = (status: string) =>
     getMappedStatusSeverity(status, accountStatusSeverityMap, "secondary");
 
-  suspendUser(user: User): void {
-    user.status = "suspended";
-    this.filterUsers();
+  async suspendUser(user: User): Promise<void> {
+    await this.persistUserUpdate(user, {
+      role: user.role,
+      status: "suspended",
+    });
   }
 
-  reactivateUser(user: User): void {
-    user.status = "active";
-    this.filterUsers();
+  async reactivateUser(user: User): Promise<void> {
+    await this.persistUserUpdate(user, {
+      role: user.role,
+      status: "active",
+    });
   }
 
   editUser(_user: User): void {
@@ -513,13 +499,14 @@ export class SuperadminUsersComponent implements OnInit {
     this.showEditDialog = true;
   }
 
-  saveUserEdits(): void {
+  async saveUserEdits(): Promise<void> {
     if (!this.selectedUser) return;
-    this.selectedUser.role = this.editRole;
-    this.selectedUser.status = this.editStatus;
-    this.filterUsers();
+
+    await this.persistUserUpdate(this.selectedUser, {
+      role: this.editRole,
+      status: this.editStatus,
+    });
     this.showEditDialog = false;
-    this.toast.success("User details updated locally.", "User Updated");
   }
 
   private isUserRole(value: string | undefined): value is User["role"] {
@@ -528,5 +515,20 @@ export class SuperadminUsersComponent implements OnInit {
 
   private isUserStatus(value: string | undefined): value is User["status"] {
     return Boolean(value && USER_STATUSES.includes(value as User["status"]));
+  }
+
+  private async persistUserUpdate(
+    user: User,
+    updates: Pick<User, "role" | "status">,
+  ): Promise<void> {
+    try {
+      await this.superadminService.updateUserAccount(user.id, updates);
+      await this.loadUsers();
+      this.selectedUser =
+        this.users.find((candidate) => candidate.id === user.id) ?? null;
+      this.toast.success("User account updated successfully.", "User Updated");
+    } catch (_error) {
+      this.toast.error("Failed to update this user. Please try again.");
+    }
   }
 }

@@ -128,6 +128,83 @@ describe("player-stats validation and aggregation hardening", () => {
     expect(body.data.receivingYards).toBe(0);
   });
 
+  it("does not credit rushing stats when the player is not the primary rusher", async () => {
+    dbState.games = [{ game_id: "game-1", game_date: "2026-02-10T12:00:00Z" }];
+    dbState.secondaryPlays = [
+      {
+        id: "play-2",
+        game_id: "game-1",
+        play_type: "run",
+        play_result: "gain",
+        primary_player_id: "runner-1",
+        secondary_player_ids: ["user-1"],
+        yards_gained: 12,
+      },
+    ];
+
+    const response = await handler(
+      {
+        httpMethod: "GET",
+        path: "/.netlify/functions/player-stats/aggregated",
+        headers: { authorization: "Bearer test-token" },
+        queryStringParameters: {},
+      },
+      {},
+    );
+
+    expect(response.statusCode).toBe(200);
+    const body = JSON.parse(response.body);
+    expect(body.data.rushingAttempts).toBe(0);
+    expect(body.data.rushingYards).toBe(0);
+    expect(body.data.yardsPerCarry).toBe(0);
+  });
+
+  it("does not credit defensive pass breakups to the targeted receiver", async () => {
+    dbState.games = [{ game_id: "game-1", game_date: "2026-02-10T12:00:00Z" }];
+    dbState.secondaryPlays = [
+      {
+        id: "play-3",
+        game_id: "game-1",
+        play_type: "pass",
+        play_result: "defended_pass",
+        primary_player_id: "qb-1",
+        secondary_player_ids: ["user-1"],
+        yards_gained: 0,
+      },
+    ];
+
+    const response = await handler(
+      {
+        httpMethod: "GET",
+        path: "/.netlify/functions/player-stats/aggregated",
+        headers: { authorization: "Bearer test-token" },
+        queryStringParameters: {},
+      },
+      {},
+    );
+
+    expect(response.statusCode).toBe(200);
+    const body = JSON.parse(response.body);
+    expect(body.data.defendedPasses).toBe(0);
+    expect(body.data.interceptionsDef).toBe(0);
+  });
+
+  it("serves the aggregated root path used by /api/player-stats", async () => {
+    const response = await handler(
+      {
+        httpMethod: "GET",
+        path: "/api/player-stats",
+        headers: { authorization: "Bearer test-token" },
+        queryStringParameters: {},
+      },
+      {},
+    );
+
+    expect(response.statusCode).toBe(200);
+    const body = JSON.parse(response.body);
+    expect(body.data.gamesPlayed).toBe(0);
+  });
+
   it("returns 422 when startDate is after endDate", async () => {
     const response = await handler(
       {

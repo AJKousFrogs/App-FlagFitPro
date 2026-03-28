@@ -36,7 +36,9 @@ describe("ThemeService", () => {
         upsert: () => Promise.resolve({ error: null }),
         select: () => ({
           eq: () => ({
-            single: () => Promise.resolve({ data: null, error: null }),
+            eq: () => ({
+              maybeSingle: () => Promise.resolve({ data: null, error: null }),
+            }),
           }),
         }),
       }),

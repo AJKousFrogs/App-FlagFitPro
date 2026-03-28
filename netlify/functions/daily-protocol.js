@@ -52,6 +52,73 @@ import {
 } from "./utils/daily-protocol-persistence.js";
 const TRAINING_SESSIONS_TABLE = "training_sessions";
 
+function isMissingProtocolPersistenceError(error) {
+  const code = error?.code;
+  const message = typeof error?.message === "string" ? error.message.toLowerCase() : "";
+  return (
+    code === "42P01" ||
+    code === "PGRST202" ||
+    code === "PGRST204" ||
+    message.includes("protocol_exercises") ||
+    message.includes("generate_protocol_transactional") ||
+    message.includes("protocol_generation_requests")
+  );
+}
+
+function buildTransientProtocolResponse({
+  userId,
+  date,
+  readinessScore,
+  acwrValue,
+  trainingFocus,
+  aiRationale,
+  adjustedLoadTarget,
+  confidenceMetadata,
+  protocolExercises,
+  headers,
+  sessionResolution = null,
+}) {
+  const timestamp = new Date().toISOString();
+  const transientProtocol = {
+    id: `transient-${userId}-${date}`,
+    user_id: userId,
+    protocol_date: date,
+    readiness_score: readinessScore,
+    acwr_value: acwrValue,
+    total_load_target_au: adjustedLoadTarget,
+    ai_rationale: aiRationale,
+    training_focus: trainingFocus,
+    overall_progress: 0,
+    completed_exercises: 0,
+    total_exercises: protocolExercises.length,
+    generated_at: timestamp,
+    updated_at: timestamp,
+    confidence_metadata: confidenceMetadata,
+  };
+
+  const responseExercises = protocolExercises.map((exercise, index) => ({
+    id: exercise.id || `transient-ex-${index + 1}`,
+    status: "pending",
+    ...exercise,
+  }));
+
+  return {
+    statusCode: 200,
+    headers,
+    body: JSON.stringify({
+      success: true,
+      data: transformProtocolResponse(
+        transientProtocol,
+        responseExercises,
+        null,
+        null,
+        sessionResolution,
+        { blockTypes: BLOCK_TYPES },
+      ),
+    }),
+  };
+}
+
 /**
  * Daily Protocol API
  *
@@ -1680,21 +1747,46 @@ async function generateProtocol(supabase, userId, payload, headers) {
   // This ensures we never leave a protocol with 0 exercises
   // ============================================================================
 
-  return await persistGeneratedProtocol({
-    supabase,
-    userId,
-    date,
-    readinessScore,
-    acwrValue,
-    trainingFocus,
-    aiRationale,
-    adjustedLoadTarget,
-    confidenceMetadata,
-    protocolExercises,
-    requestRecord,
-    headers,
-    getProtocol,
-  });
+  try {
+    return await persistGeneratedProtocol({
+      supabase,
+      userId,
+      date,
+      readinessScore,
+      acwrValue,
+      trainingFocus,
+      aiRationale,
+      adjustedLoadTarget,
+      confidenceMetadata,
+      protocolExercises,
+      requestRecord,
+      headers,
+      getProtocol,
+    });
+  } catch (error) {
+    if (!isMissingProtocolPersistenceError(error)) {
+      throw error;
+    }
+
+    console.warn(
+      "[daily-protocol] Persistence layer unavailable, returning transient protocol:",
+      error.message,
+    );
+
+    return buildTransientProtocolResponse({
+      userId,
+      date,
+      readinessScore,
+      acwrValue,
+      trainingFocus,
+      aiRationale,
+      adjustedLoadTarget,
+      confidenceMetadata,
+      protocolExercises,
+      headers,
+      sessionResolution: context.sessionResolution || null,
+    });
+  }
 }
 
 /**

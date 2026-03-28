@@ -1203,23 +1203,23 @@ export class OnboardingComponent implements OnInit, OnDestroy {
       // 2. Add user to team_members with appropriate role based on staff role
       // Map staff role to team member role
       const staffRoleToMemberRole: Record<string, string> = {
-        head_coach: "coach",
-        assistant_coach: "coach",
-        offensive_coordinator: "coach",
-        defensive_coordinator: "coach",
-        strength_coach: "staff",
-        athletic_trainer: "staff",
-        physiotherapist: "staff",
-        nutritionist: "staff",
-        sports_psychologist: "staff",
+        head_coach: "head_coach",
+        assistant_coach: "assistant_coach",
+        offensive_coordinator: "offense_coordinator",
+        defensive_coordinator: "defense_coordinator",
+        strength_coach: "strength_conditioning_coach",
+        athletic_trainer: "physiotherapist",
+        physiotherapist: "physiotherapist",
+        nutritionist: "nutritionist",
+        sports_psychologist: "psychologist",
         team_manager: "manager",
-        video_analyst: "staff",
-        equipment_manager: "staff",
-        other_staff: "staff",
+        video_analyst: "manager",
+        equipment_manager: "manager",
+        other_staff: "manager",
       };
 
       const memberRole =
-        staffRoleToMemberRole[this.state.formData.staffRole || ""] || "staff";
+        staffRoleToMemberRole[this.state.formData.staffRole || ""] || "manager";
 
       // Check if already a member
       // Per audit: use maybeSingle() since membership may not exist yet (avoids 406)

@@ -8,8 +8,8 @@ export function resolveScrollContainer(
   }
 
   const shellScrollContainer =
-    element?.closest(".app-main") ??
-    document.querySelector<HTMLElement>(".app-main");
+    element?.closest<HTMLElement>("[data-scroll-root]") ??
+    document.querySelector<HTMLElement>("[data-scroll-root]");
 
   if (shellScrollContainer instanceof HTMLElement) {
     return shellScrollContainer;

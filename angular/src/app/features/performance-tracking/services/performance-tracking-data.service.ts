@@ -1,5 +1,6 @@
 import { Injectable, inject } from "@angular/core";
 import { SupabaseService } from "../../../core/services/supabase.service";
+import { isBenignSupabaseQueryError } from "../../../shared/utils/error.utils";
 
 export interface PerformanceRecordRow {
   id?: string;
@@ -26,6 +27,7 @@ export interface PerformanceRecordRow {
 })
 export class PerformanceTrackingDataService {
   private readonly supabaseService = inject(SupabaseService);
+  private performanceRecordsUnavailable = false;
 
   getCurrentUser() {
     return this.supabaseService.getCurrentUser();
@@ -35,11 +37,20 @@ export class PerformanceTrackingDataService {
     records: PerformanceRecordRow[];
     error: { message?: string } | null;
   }> {
+    if (this.performanceRecordsUnavailable) {
+      return { records: [], error: null };
+    }
+
     const { data: records, error } = await this.supabaseService.client
       .from("performance_records")
       .select("*")
       .eq("user_id", userId)
       .order("recorded_at", { ascending: false });
+
+    if (error && isBenignSupabaseQueryError(error)) {
+      this.performanceRecordsUnavailable = true;
+      return { records: [], error: null };
+    }
 
     return { records: records ?? [], error };
   }
@@ -49,6 +60,10 @@ export class PerformanceTrackingDataService {
     score: number;
     payload: Omit<PerformanceRecordRow, "recorded_at">;
   }): Promise<{ error: { message?: string } | null }> {
+    if (this.performanceRecordsUnavailable) {
+      return { error: null };
+    }
+
     const { error } = await this.supabaseService.client
       .from("performance_records")
       .insert({
@@ -70,6 +85,11 @@ export class PerformanceTrackingDataService {
         overall_score: input.score,
         recorded_at: new Date().toISOString(),
       });
+
+    if (error && isBenignSupabaseQueryError(error)) {
+      this.performanceRecordsUnavailable = true;
+      return { error: null };
+    }
 
     return { error };
   }

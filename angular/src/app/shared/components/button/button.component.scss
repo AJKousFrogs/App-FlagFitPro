@@ -59,7 +59,7 @@ a.btn {
   box-sizing: border-box;
   font-size: var(--font-body-sm-size);
   font-weight: var(--font-weight-semibold);
-  line-height: var(--ds-line-height-1);
+  line-height: var(--font-body-sm-line-height);
   letter-spacing: var(--letter-spacing-normal);
   transition:
     background-color var(--transition-fast) var(--ease-standard),
@@ -169,6 +169,7 @@ a.btn {
   padding: 0 var(--component-button-padding-x-sm);
   font-size: var(--font-caption-size);
   gap: var(--space-2);
+  line-height: var(--font-caption-line-height);
 }
 
 .btn.btn-lg {
@@ -176,6 +177,7 @@ a.btn {
   padding: 0 var(--component-button-padding-x-lg);
   font-size: var(--font-body-size);
   gap: var(--space-3);
+  line-height: var(--font-body-line-height);
 }
 
 .btn-full-width {
@@ -220,6 +222,7 @@ a.btn {
   align-items: center;
   min-width: 0;
   color: inherit;
+  line-height: inherit;
 }
 
 .btn-content-loading {

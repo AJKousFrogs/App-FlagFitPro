@@ -2,6 +2,7 @@
 
 :host {
   display: block;
+  block-size: 100%;
   min-block-size: 100%;
   min-inline-size: 0;
 }
@@ -16,9 +17,11 @@
     "sidebar header"
     "sidebar main";
   inline-size: 100%;
+  block-size: 100%;
+  min-block-size: 100%;
   min-block-size: 100vh;
   min-block-size: 100dvh;
-  overflow: clip;
+  overflow: hidden;
   isolation: isolate;
   background: var(--surface-ground);
 }
@@ -56,9 +59,12 @@
 .app-shell__main {
   grid-area: main;
   min-inline-size: 0;
+  block-size: 100%;
   min-block-size: 0;
   overflow: auto;
   overflow-x: clip;
+  overscroll-behavior-y: contain;
+  -webkit-overflow-scrolling: touch;
   scrollbar-gutter: stable;
   background:
     linear-gradient(

@@ -3,8 +3,49 @@ import { baseHandler } from "./utils/base-handler.js";
 import { createErrorResponse, handleValidationError } from "./utils/error-handler.js";
 import { parseJsonObjectBody } from "./utils/input-validator.js";
 
+const DEFAULT_DAILY_ROUTINE = [
+  { id: "wake", label: "Wake Up", time: "07:00", icon: "pi-sun" },
+  { id: "breakfast", label: "Breakfast", time: "08:15", icon: "pi-apple" },
+  {
+    id: "work_start",
+    label: "Work/Study Start",
+    time: "09:00",
+    icon: "pi-briefcase",
+  },
+  { id: "lunch", label: "Lunch", time: "12:30", icon: "pi-utensils" },
+  {
+    id: "work_end",
+    label: "Work/Study End",
+    time: "17:00",
+    icon: "pi-home",
+  },
+  {
+    id: "training",
+    label: "Daily Training",
+    time: "18:00",
+    icon: "pi-bolt",
+  },
+  {
+    id: "shower",
+    label: "Shower (Hot)",
+    time: "20:00",
+    icon: "pi-info-circle",
+  },
+  { id: "sleep", label: "Sleep", time: "22:30", icon: "pi-moon" },
+];
+
 function isPlainObject(value) {
   return value !== null && typeof value === "object" && !Array.isArray(value);
+}
+
+function isMissingRelationError(error) {
+  const code = error?.code;
+  const message = `${error?.message || ""}`.toLowerCase();
+  return (
+    ["PGRST106", "PGRST116", "PGRST204", "42P01", "42703"].includes(code) ||
+    message.includes("does not exist") ||
+    message.includes("relation")
+  );
 }
 
 function isValidDateString(value) {
@@ -13,6 +54,53 @@ function isValidDateString(value) {
   }
   const parsed = new Date(value);
   return !Number.isNaN(parsed.getTime());
+}
+
+function isValidTimeString(value) {
+  return typeof value === "string" && /^([01]\d|2[0-3]):[0-5]\d$/.test(value);
+}
+
+function isValidRoutineSlot(value) {
+  return (
+    isPlainObject(value) &&
+    typeof value.id === "string" &&
+    value.id.trim().length > 0 &&
+    value.id.length <= 64 &&
+    typeof value.label === "string" &&
+    value.label.trim().length > 0 &&
+    value.label.length <= 120 &&
+    isValidTimeString(value.time) &&
+    (value.description === undefined ||
+      value.description === null ||
+      (typeof value.description === "string" && value.description.length <= 240)) &&
+    (value.icon === undefined ||
+      value.icon === null ||
+      (typeof value.icon === "string" && value.icon.length <= 64))
+  );
+}
+
+function sanitizeDailyRoutine(value) {
+  if (!Array.isArray(value) || value.length === 0) {
+    return DEFAULT_DAILY_ROUTINE.map((slot) => ({ ...slot }));
+  }
+
+  const normalized = value
+    .filter((slot) => isValidRoutineSlot(slot))
+    .map((slot) => ({
+    id: slot.id.trim(),
+    label: slot.label.trim(),
+    time: slot.time,
+    ...(typeof slot.description === "string" && slot.description.trim()
+      ? { description: slot.description.trim() }
+      : {}),
+    ...(typeof slot.icon === "string" && slot.icon.trim()
+      ? { icon: slot.icon.trim() }
+      : {}),
+    }));
+
+  return normalized.length > 0
+    ? normalized
+    : DEFAULT_DAILY_ROUTINE.map((slot) => ({ ...slot }));
 }
 
 function validateSettingsPayload(payload) {
@@ -98,6 +186,13 @@ function validateSettingsPayload(payload) {
   ) {
     return "currentLimitations must be an object, array, or null";
   }
+  if (
+    payload.dailyRoutine !== undefined &&
+    (!Array.isArray(payload.dailyRoutine) ||
+      payload.dailyRoutine.some((slot) => !isValidRoutineSlot(slot)))
+  ) {
+    return "dailyRoutine must be an array of routine slots with id, label, and time";
+  }
   return null;
 }
 
@@ -150,12 +245,12 @@ async function getSettings(supabase, userId) {
     .eq("user_id", userId)
     .single();
 
-  if (error && error.code !== "PGRST116") {
+  if (error && error.code !== "PGRST116" && !isMissingRelationError(error)) {
     throw error;
   }
 
   // If no config exists, return defaults
-  if (!config) {
+  if (!config || isMissingRelationError(error)) {
     // Try to get birth date from users table
     const { data: userData } = await supabase
       .from("users")
@@ -179,6 +274,7 @@ async function getSettings(supabase, userId) {
           hasGymAccess: true,
           hasFieldAccess: true,
           warmupFocus: null,
+          dailyRoutine: DEFAULT_DAILY_ROUTINE,
         },
       }),
     };
@@ -202,6 +298,7 @@ async function getSettings(supabase, userId) {
         preferredTrainingDays: config.preferred_training_days || [
           1, 2, 4, 5, 6,
         ],
+        dailyRoutine: sanitizeDailyRoutine(config.daily_routine),
         maxSessionsPerWeek: config.max_sessions_per_week || 5,
         hasGymAccess: config.has_gym_access !== false,
         hasFieldAccess: config.has_field_access !== false,
@@ -226,6 +323,7 @@ async function saveSettings(supabase, userId, payload) {
     birthDate,
     availabilitySchedule, // PROMPT 2.11: Renamed from flagPracticeSchedule
     preferredTrainingDays,
+    dailyRoutine,
     maxSessionsPerWeek,
     hasGymAccess,
     hasFieldAccess,
@@ -269,6 +367,7 @@ async function saveSettings(supabase, userId, payload) {
         birth_date: birthDate || null,
         flag_practice_schedule: flagPracticeSchedule || [],
         preferred_training_days: preferredTrainingDays || [1, 2, 4, 5, 6],
+        daily_routine: sanitizeDailyRoutine(dailyRoutine),
         max_sessions_per_week: maxSessionsPerWeek ?? 5,
         has_gym_access: hasGymAccess !== false,
         has_field_access: hasFieldAccess !== false,
@@ -315,6 +414,7 @@ async function saveSettings(supabase, userId, payload) {
         availabilityDisclaimer:
           "Availability does not schedule practice. Coaches schedule team activities.",
         preferredTrainingDays: config.preferred_training_days,
+        dailyRoutine: sanitizeDailyRoutine(config.daily_routine),
         maxSessionsPerWeek: config.max_sessions_per_week,
         hasGymAccess: config.has_gym_access,
         hasFieldAccess: config.has_field_access,

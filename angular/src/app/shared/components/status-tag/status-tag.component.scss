@@ -12,7 +12,7 @@
   padding: 0 var(--component-badge-padding-x-md);
   font-size: var(--component-badge-font-size-md);
   font-weight: var(--component-badge-font-weight);
-  line-height: var(--ds-line-height-1);
+  line-height: var(--font-caption-line-height);
   white-space: nowrap;
   text-transform: var(--ds-text-transform-none);
   text-decoration: none;
@@ -35,7 +35,7 @@
 }
 
 .status-tag-text {
-  line-height: var(--ds-line-height-1);
+  line-height: inherit;
   text-decoration: none;
 }
 

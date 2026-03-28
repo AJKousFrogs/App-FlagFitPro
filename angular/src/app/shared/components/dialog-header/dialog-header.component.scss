@@ -1,0 +1,73 @@
+@use "styles/mixins" as *;
+
+:host {
+  display: block;
+}
+
+.dialog-header {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: start;
+  gap: var(--space-4);
+}
+
+.dialog-icon {
+  display: grid;
+  place-items: center;
+  inline-size: 2.75rem;
+  block-size: 2.75rem;
+  border-radius: var(--radius-lg);
+  background: rgba(var(--ds-primary-green-rgb), 0.12);
+  color: var(--ds-primary-green);
+  flex-shrink: 0;
+}
+
+.dialog-icon i {
+  font-size: var(--ds-font-size-xl);
+}
+
+.dialog-title-section {
+  min-width: 0;
+  padding-top: var(--space-0-5);
+}
+
+.dialog-title-section h2 {
+  margin: 0;
+  color: var(--color-text-primary);
+  font-size: var(--font-h3-size);
+  line-height: var(--font-h3-line-height);
+  text-wrap: balance;
+}
+
+.dialog-title-section p {
+  margin: var(--space-1) 0 0;
+  color: var(--color-text-secondary);
+  font-size: var(--font-body-sm-size);
+  line-height: var(--line-height-normal);
+}
+
+app-close-button {
+  justify-self: end;
+  align-self: start;
+}
+
+.dialog-header.danger-header .dialog-icon,
+.dialog-icon.danger-icon {
+  background: rgba(var(--primitive-error-500-rgb), 0.1);
+  color: var(--color-status-error);
+}
+
+@include respond-to(sm) {
+  .dialog-header {
+    gap: var(--space-3);
+  }
+
+  .dialog-icon {
+    inline-size: 2.5rem;
+    block-size: 2.5rem;
+  }
+
+  .dialog-title-section h2 {
+    font-size: var(--font-h4-size);
+  }
+}

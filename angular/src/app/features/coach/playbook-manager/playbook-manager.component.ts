@@ -24,17 +24,15 @@ import { ProgressBar } from "primeng/progressbar";
 import { Select, type SelectChangeEvent } from "primeng/select";
 import { TableModule } from "primeng/table";
 import { Textarea } from "primeng/textarea";
-import { firstValueFrom } from "rxjs";
 import { StatusTagComponent } from "../../../shared/components/status-tag/status-tag.component";
 
-import { ApiService, API_ENDPOINTS } from "../../../core/services/api.service";
 import { LoggerService } from "../../../core/services/logger.service";
-import { extractApiPayload } from "../../../core/utils/api-response-mapper";
 import { AppDialogComponent } from "../../../shared/components/dialog/dialog.component";
 import { DialogFooterComponent } from "../../../shared/components/dialog-footer/dialog-footer.component";
 import { DialogHeaderComponent } from "../../../shared/components/dialog-header/dialog-header.component";
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";
+import { CoachPlaybookDataService } from "../services/coach-playbook-data.service";
 
 // ===== Interfaces =====
 interface Play {
@@ -651,9 +649,9 @@ const ROUTES = [
   styleUrl: "./playbook-manager.component.scss",
 })
 export class PlaybookManagerComponent implements OnInit {
-  private readonly api = inject(ApiService);
   private readonly logger = inject(LoggerService);
   private readonly toastService = inject(ToastService);
+  private readonly coachPlaybookDataService = inject(CoachPlaybookDataService);
 
   // State
   readonly activeTab = signal<
@@ -788,13 +786,15 @@ export class PlaybookManagerComponent implements OnInit {
     this.isLoading.set(true);
 
     try {
-      const response = await firstValueFrom(
-        this.api.get<{ plays?: Play[] }>(API_ENDPOINTS.coach.playbook),
-      );
-      const payload = extractApiPayload<{ plays?: Play[] }>(response);
-      if (payload?.plays) {
-        this.plays.set(payload.plays);
+      const { plays, memorization, error } =
+        await this.coachPlaybookDataService.loadPlaybook();
+
+      if (error) {
+        throw error;
       }
+
+      this.plays.set(plays);
+      this.memorizationData.set(memorization);
     } catch (err) {
       this.logger.error("Failed to load playbook", err);
       this.plays.set([]);
@@ -917,16 +917,37 @@ export class PlaybookManagerComponent implements OnInit {
     this.showPlayDialog = true;
   }
 
-  savePlay(): void {
+  async savePlay(): Promise<void> {
     if (!this.playForm.name) return;
 
-    this.toastService.success(
-      `${this.playForm.name} has been saved`,
-      "Play Saved",
-    );
+    const { data, error } = await this.coachPlaybookDataService.savePlay({
+      id: this.playForm.id || undefined,
+      name: this.playForm.name,
+      formation: this.playForm.formation,
+      situation: this.playForm.situation,
+      type: this.playForm.type,
+      assignments: this.playForm.assignments,
+      coachNotes: this.playForm.coachNotes,
+      status: "active",
+    });
+
+    if (error || !data) {
+      this.logger.error("Failed to save play", error);
+      this.toastService.error("We couldn't save this play.", "Save Failed");
+      return;
+    }
+
+    this.plays.update((plays) => {
+      const existingIndex = plays.findIndex((play) => play.id === data.id);
+      if (existingIndex === -1) {
+        return [data, ...plays];
+      }
+
+      return plays.map((play) => (play.id === data.id ? data : play));
+    });
+    this.toastService.success(`${data.name} has been saved`, "Play Saved");
     this.showPlayDialog = false;
     this.isViewing.set(false);
-    // Would submit to API
   }
 
   viewPlay(play: Play): void {
@@ -961,7 +982,17 @@ export class PlaybookManagerComponent implements OnInit {
     this.showStatsDialog = true;
   }
 
-  archivePlay(play: Play): void {
+  async archivePlay(play: Play): Promise<void> {
+    const { error } = await this.coachPlaybookDataService.archivePlay(play.id);
+    if (error) {
+      this.logger.error("Failed to archive play", error);
+      this.toastService.error(
+        "We couldn't archive this play.",
+        "Archive Failed",
+      );
+      return;
+    }
+
     this.plays.update((plays) =>
       plays.map((p) =>
         p.id === play.id ? { ...p, status: "archived" as const } : p,

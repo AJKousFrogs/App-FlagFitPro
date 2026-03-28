@@ -716,7 +716,17 @@ export class TodayComponent {
         next: (response) => {
           this.isGeneratingProtocol.set(false);
           if (isSuccessfulApiResponse(response)) {
-            // Generation succeeded, reload via GET
+            const payload = extractApiPayload<ProtocolJson>(response);
+            if (payload) {
+              this.fullProtocolData = payload as unknown as ProtocolApiResponse;
+              const protocolData = this.mapApiProtocolResponse(payload);
+              this.protocolJson.set(protocolData);
+              this.resolveAndUpdateViewModel(protocolData);
+              this.error.set(null);
+              return;
+            }
+
+            // Generation succeeded without inline payload, reload via GET
             this.loadTodayData();
           } else {
             // Generation failed, show explicit error

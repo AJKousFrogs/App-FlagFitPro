@@ -167,7 +167,7 @@ export class OnboardingDataService {
       .from("teams")
       .insert({
         name: input.name,
-        created_by: input.createdBy,
+        coach_id: input.createdBy,
       })
       .select()
       .single();

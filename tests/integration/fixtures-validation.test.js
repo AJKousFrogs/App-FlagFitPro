@@ -7,6 +7,11 @@ const authState = vi.hoisted(() => ({
 
 const dbState = vi.hoisted(() => ({
   fixturesError: null,
+  teamIdByUser: {
+    "athlete-1": "team-1",
+    "athlete-2": "team-2",
+  },
+  fixtures: [],
 }));
 
 vi.mock("../../netlify/functions/utils/base-handler.js", () => ({
@@ -22,13 +27,24 @@ vi.mock("../../netlify/functions/supabase-client.js", () => ({
   supabaseAdmin: {
     from: (table) => {
       if (table === "team_members") {
+        let requestedUserId = authState.userId;
         return {
           select: () => ({
-            eq: () => ({
-              limit: () => ({
-                maybeSingle: async () => ({ data: null, error: null }),
-              }),
-            }),
+            eq: (_field, value) => {
+              requestedUserId = value;
+              return {
+                eq: () => ({
+                  order: () => ({
+                    limit: () => ({
+                      maybeSingle: async () => ({
+                        data: { team_id: dbState.teamIdByUser[requestedUserId] ?? null },
+                        error: null,
+                      }),
+                    }),
+                  }),
+                }),
+              };
+            },
           }),
         };
       }
@@ -36,11 +52,11 @@ vi.mock("../../netlify/functions/supabase-client.js", () => ({
       if (table === "fixtures") {
         return {
           select: () => ({
-            or: () => ({
+            eq: () => ({
               gte: () => ({
                 lte: () => ({
                   order: async () => ({
-                    data: [],
+                    data: dbState.fixtures,
                     error: dbState.fixturesError,
                   }),
                 }),
@@ -71,6 +87,7 @@ describe("fixtures validation and authorization hardening", () => {
     authState.userId = "athlete-1";
     authState.role = "player";
     dbState.fixturesError = null;
+    dbState.fixtures = [];
     const mod = await import("../../netlify/functions/fixtures.js");
     handler = mod.handler;
   });
@@ -119,5 +136,34 @@ describe("fixtures validation and authorization hardening", () => {
     expect(response.statusCode).toBe(500);
     expect(parsed.error?.message).toBe("Failed to retrieve fixtures");
     expect(response.body).not.toContain("db password leaked");
+  });
+
+  it("maps team fixtures to the frontend game_start shape", async () => {
+    dbState.fixtures = [
+      {
+        id: "fixture-1",
+        team_id: "team-1",
+        opponent_team_name: "Wolves",
+        fixture_date: "2026-04-10",
+        fixture_time: "18:30",
+        is_home: true,
+      },
+    ];
+
+    const response = await handler(
+      {
+        httpMethod: "GET",
+        path: "/.netlify/functions/fixtures",
+        headers: { authorization: "Bearer test-token" },
+        queryStringParameters: {},
+      },
+      {},
+    );
+
+    expect(response.statusCode).toBe(200);
+    const parsed = JSON.parse(response.body);
+    expect(parsed.data[0].opponent_name).toBe("Wolves");
+    expect(parsed.data[0].game_start).toBe("2026-04-10T18:30:00");
+    expect(parsed.data[0].is_home_game).toBe(true);
   });
 });

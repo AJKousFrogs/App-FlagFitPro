@@ -9,6 +9,9 @@ import { isBenignSupabaseQueryError } from "../../../shared/utils/error.utils";
 export class ProfileDataService {
   private readonly supabaseService = inject(SupabaseService);
   private usersTableUnavailable = false;
+  private gameParticipationsUnavailable = false;
+  private gamesParticipantsFilterUnavailable = false;
+  private teamInvitationsUnavailable = false;
 
   async fetchTrainingSessions(userId: string): Promise<{
     sessions: Array<{
@@ -32,11 +35,20 @@ export class ProfileDataService {
     participations: Array<{ id: string }>;
     error: { message?: string } | null;
   }> {
+    if (this.gameParticipationsUnavailable) {
+      return { participations: [], error: null };
+    }
+
     const { data, error } = await this.supabaseService.client
       .from("game_participations")
       .select("id, game_id, status")
       .eq("player_id", userId)
       .eq("status", "played");
+
+    if (error && isBenignSupabaseQueryError(error)) {
+      this.gameParticipationsUnavailable = true;
+      return { participations: [], error: null };
+    }
 
     return { participations: (data as Array<{ id: string }>) ?? [], error };
   }
@@ -45,10 +57,19 @@ export class ProfileDataService {
     games: Array<{ id: string }>;
     error: { message?: string } | null;
   }> {
+    if (this.gamesParticipantsFilterUnavailable) {
+      return { games: [], error: null };
+    }
+
     const { data, error } = await this.supabaseService.client
       .from("games")
       .select("id")
       .contains("participants", [userId]);
+
+    if (error && isBenignSupabaseQueryError(error)) {
+      this.gamesParticipantsFilterUnavailable = true;
+      return { games: [], error: null };
+    }
 
     return { games: (data as Array<{ id: string }>) ?? [], error };
   }
@@ -148,6 +169,10 @@ export class ProfileDataService {
     invitations: Array<Record<string, unknown>>;
     error: { code?: string; message?: string } | null;
   }> {
+    if (this.teamInvitationsUnavailable) {
+      return { invitations: [], error: null };
+    }
+
     const { data, error } = await this.supabaseService.client
       .from("team_invitations")
       .select(
@@ -165,6 +190,11 @@ export class ProfileDataService {
       .eq("email", email)
       .in("status", ["pending", "expired"])
       .order("created_at", { ascending: false });
+
+    if (error && isBenignSupabaseQueryError(error)) {
+      this.teamInvitationsUnavailable = true;
+      return { invitations: [], error: null };
+    }
 
     return { invitations: (data as Record<string, unknown>[]) ?? [], error };
   }

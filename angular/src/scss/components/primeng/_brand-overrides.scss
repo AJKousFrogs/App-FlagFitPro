@@ -498,7 +498,7 @@
 
   .p-tooltip {
     z-index: var(--p-tooltip-z-index);
-    max-width: var(--p-tooltip-max-width);
+    max-width: min(var(--p-tooltip-max-width), calc(100vw - var(--space-6)));
 
     // Subtle fade-in and slide animation
     animation: tooltip-fade-in var(--transition-base) var(--ease-decelerate);
@@ -509,10 +509,12 @@
       border-radius: var(--p-tooltip-border-radius);
       padding: var(--p-tooltip-padding);
       font-size: var(--p-tooltip-font-size);
+      font-weight: var(--font-weight-medium);
       box-shadow: var(--p-tooltip-shadow);
       line-height: var(--p-tooltip-line-height);
-      letter-spacing: var(--ds-letter-spacing-label);
+      letter-spacing: var(--letter-spacing-normal);
       white-space: pre-line; // Preserve line breaks in tooltip text
+      overflow-wrap: break-word;
 
       // Icon styling within tooltips
       i,

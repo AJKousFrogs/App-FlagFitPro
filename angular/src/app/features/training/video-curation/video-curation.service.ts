@@ -12,7 +12,9 @@ import {
   InstagramVideo,
 } from "../../../core/services/instagram-video.service";
 import { AuthService } from "../../../core/services/auth.service";
+import { RealtimeService } from "../../../core/services/realtime.service";
 import { SupabaseService } from "../../../core/services/supabase.service";
+import { TeamMembershipService } from "../../../core/services/team-membership.service";
 import { ToastService } from "../../../core/services/toast.service";
 import { LoggerService } from "../../../core/services/logger.service";
 import { TOAST } from "../../../core/constants/toast-messages.constants";
@@ -28,15 +30,34 @@ import {
   VideoOption,
 } from "./video-curation.models";
 
+interface DatabaseVideoPlaylistRow {
+  id: string;
+  team_id: string | null;
+  created_by: string;
+  name: string;
+  description: string | null;
+  position: FlagPosition | null;
+  focus_areas: TrainingFocus[] | null;
+  video_ids: string[] | null;
+  is_public: boolean | null;
+  created_at: string;
+  updated_at: string;
+}
+
 @Injectable({
   providedIn: "root",
 })
 export class VideoCurationService {
   private instagramService = inject(InstagramVideoService);
   private authService = inject(AuthService);
+  private realtimeService = inject(RealtimeService);
   private supabaseService = inject(SupabaseService);
+  private teamMembershipService = inject(TeamMembershipService);
   private toastService = inject(ToastService);
   private logger = inject(LoggerService);
+  private playlistsSubscription: (() => void) | null = null;
+  private videoStatusSubscription: (() => void) | null = null;
+  private realtimeTeamId: string | null = null;
 
   // State signals
   readonly videoStatuses = signal<Map<string, VideoStatus>>(new Map());
@@ -182,35 +203,81 @@ export class VideoCurationService {
   }
 
   // Playlist operations
-  createPlaylist(form: PlaylistForm): InstagramPlaylist {
-    const options: { position?: FlagPosition; focus?: TrainingFocus[] } = {
-      focus: form.focus,
-    };
-    if (form.position) {
-      options.position = form.position;
+  async createPlaylist(form: PlaylistForm): Promise<InstagramPlaylist | null> {
+    const user = this.authService.getUser();
+    const membership = await this.teamMembershipService.loadMembership();
+
+    if (!user?.id || !membership?.teamId) {
+      this.toastService.error("Join a team before creating shared playlists");
+      return null;
     }
 
-    const playlist = this.instagramService.createPlaylist(
-      form.name,
-      form.description,
-      form.videoIds,
-      options,
-    );
+    try {
+      const payload = {
+        team_id: membership.teamId,
+        created_by: user.id,
+        name: form.name.trim(),
+        description: form.description.trim() || null,
+        position: form.position || null,
+        focus_areas: form.focus,
+        video_ids: form.videoIds,
+      };
 
-    this.playlists.update((p) => [...p, playlist]);
-    this.savePlaylistToStorage();
-    this.toastService.success(`Playlist "${playlist.name}" created`);
-    return playlist;
+      const { data, error } = await this.supabaseService.client
+        .from("video_playlists")
+        .insert(payload)
+        .select("*")
+        .single();
+
+      if (error) throw error;
+
+      const playlist = this.mapPlaylistRow(data as DatabaseVideoPlaylistRow);
+      this.playlists.update((existing) => [playlist, ...existing]);
+      this.toastService.success(`Playlist "${playlist.name}" created`);
+      return playlist;
+    } catch (error) {
+      this.logger.error("Failed to create playlist", error);
+      this.toastService.error("Failed to create playlist");
+      return null;
+    }
   }
 
   async sharePlaylist(playlist: InstagramPlaylist): Promise<void> {
-    this.toastService.success(`Playlist "${playlist.name}" shared with team`);
+    try {
+      const { error } = await this.supabaseService.client
+        .from("video_playlists")
+        .update({
+          is_public: true,
+          updated_at: new Date().toISOString(),
+        })
+        .eq("id", playlist.id);
+
+      if (error) throw error;
+
+      this.toastService.success(`Playlist "${playlist.name}" shared with team`);
+    } catch (error) {
+      this.logger.error("Failed to share playlist", error);
+      this.toastService.error("Failed to share playlist");
+    }
   }
 
-  deletePlaylist(playlist: InstagramPlaylist): void {
-    this.playlists.update((p) => p.filter((pl) => pl.id !== playlist.id));
-    this.savePlaylistToStorage();
-    this.toastService.info(`Playlist "${playlist.name}" deleted`);
+  async deletePlaylist(playlist: InstagramPlaylist): Promise<void> {
+    try {
+      const { error } = await this.supabaseService.client
+        .from("video_playlists")
+        .delete()
+        .eq("id", playlist.id);
+
+      if (error) throw error;
+
+      this.playlists.update((existing) =>
+        existing.filter((entry) => entry.id !== playlist.id),
+      );
+      this.toastService.info(`Playlist "${playlist.name}" deleted`);
+    } catch (error) {
+      this.logger.error("Failed to delete playlist", error);
+      this.toastService.error("Failed to delete playlist");
+    }
   }
 
   // Player suggestion operations
@@ -274,9 +341,14 @@ export class VideoCurationService {
   async loadAllData(): Promise<void> {
     this.isLoading.set(true);
     try {
+      const membership = await this.teamMembershipService.loadMembership();
+      const teamId = membership?.teamId || null;
+
+      this.initializeRealtimeSubscriptions(teamId);
+
       await Promise.all([
-        this.loadVideoStatuses(),
-        this.loadPlaylists(),
+        this.loadVideoStatuses(teamId),
+        this.loadPlaylists(teamId),
         this.loadPlayerSuggestions(),
       ]);
     } finally {
@@ -284,36 +356,68 @@ export class VideoCurationService {
     }
   }
 
-  async loadVideoStatuses(): Promise<void> {
+  async loadVideoStatuses(teamId?: string | null): Promise<void> {
     try {
-      const user = this.authService.getUser();
-      if (!user?.id) return;
+      const resolvedTeamId =
+        teamId || (await this.teamMembershipService.loadMembership())?.teamId;
+      if (!resolvedTeamId) {
+        this.videoStatuses.set(new Map());
+        return;
+      }
 
       const { data } = await this.supabaseService.client
         .from("video_curation_status")
         .select("video_id, status")
-        .eq("team_id", user.id);
+        .eq("team_id", resolvedTeamId);
 
-      if (data) {
-        const statuses = new Map<string, VideoStatus>();
-        data.forEach((item) => {
-          statuses.set(item.video_id, item.status);
-        });
-        this.videoStatuses.set(statuses);
-      }
+      const statuses = new Map<string, VideoStatus>();
+      (data || []).forEach((item) => {
+        statuses.set(item.video_id, item.status);
+      });
+      this.videoStatuses.set(statuses);
     } catch (error) {
       this.logger.error("Failed to load video statuses", error);
     }
   }
 
-  async loadPlaylists(): Promise<void> {
-    const saved = localStorage.getItem("flagfit_playlists");
-    if (saved) {
-      try {
-        this.playlists.set(JSON.parse(saved));
-      } catch {
-        // Invalid data
+  async loadPlaylists(teamId?: string | null): Promise<void> {
+    const user = this.authService.getUser();
+    const resolvedTeamId =
+      teamId || (await this.teamMembershipService.loadMembership())?.teamId;
+
+    if (!user?.id || !resolvedTeamId) {
+      this.playlists.set([]);
+      return;
+    }
+
+    try {
+      const { data, error } = await this.supabaseService.client
+        .from("video_playlists")
+        .select("*")
+        .eq("team_id", resolvedTeamId)
+        .order("created_at", { ascending: false });
+
+      if (error) throw error;
+
+      const playlistRows = (data as DatabaseVideoPlaylistRow[] | null) || [];
+
+      if (playlistRows.length === 0) {
+        const migrated = await this.migrateLegacyPlaylists(
+          resolvedTeamId,
+          user.id,
+        );
+        if (migrated) {
+          await this.loadPlaylists(resolvedTeamId);
+          return;
+        }
       }
+
+      this.playlists.set(
+        playlistRows.map((playlist) => this.mapPlaylistRow(playlist)),
+      );
+    } catch (error) {
+      this.logger.error("Failed to load playlists", error);
+      this.playlists.set([]);
     }
   }
 
@@ -338,10 +442,11 @@ export class VideoCurationService {
   ): Promise<void> {
     try {
       const user = this.authService.getUser();
-      if (!user?.id) return;
+      const membership = await this.teamMembershipService.loadMembership();
+      if (!user?.id || !membership?.teamId) return;
 
       await this.supabaseService.client.from("video_curation_status").upsert({
-        team_id: user.id,
+        team_id: membership.teamId,
         video_id: videoId,
         status,
         updated_by: user.id,
@@ -352,8 +457,118 @@ export class VideoCurationService {
     }
   }
 
-  private savePlaylistToStorage(): void {
-    const all = this.playlists();
-    localStorage.setItem("flagfit_playlists", JSON.stringify(all));
+  private mapPlaylistRow(playlist: DatabaseVideoPlaylistRow): InstagramPlaylist {
+    const videoIds = Array.isArray(playlist.video_ids) ? playlist.video_ids : [];
+    const videos = videoIds
+      .map((id) => this.instagramService.getVideoById(id))
+      .filter((video): video is InstagramVideo => !!video);
+
+    return {
+      id: playlist.id,
+      name: playlist.name,
+      description: playlist.description || "",
+      videos,
+      position: playlist.position || undefined,
+      focus: Array.isArray(playlist.focus_areas) ? playlist.focus_areas : [],
+      totalDuration: videos.reduce(
+        (sum, video) => sum + (video.duration || 60),
+        0,
+      ),
+      createdBy: playlist.created_by,
+      createdAt: playlist.created_at,
+    };
+  }
+
+  private async migrateLegacyPlaylists(
+    teamId: string,
+    userId: string,
+  ): Promise<boolean> {
+    const saved = localStorage.getItem("flagfit_playlists");
+    if (!saved) {
+      return false;
+    }
+
+    try {
+      const parsed = JSON.parse(saved) as InstagramPlaylist[];
+      if (!Array.isArray(parsed) || parsed.length === 0) {
+        return false;
+      }
+
+      const rows = parsed
+        .map((playlist) => ({
+          team_id: teamId,
+          created_by: userId,
+          name: String(playlist.name || "").trim(),
+          description: String(playlist.description || "").trim() || null,
+          position: playlist.position || null,
+          focus_areas: Array.isArray(playlist.focus) ? playlist.focus : [],
+          video_ids: Array.isArray(playlist.videos)
+            ? playlist.videos.map((video) => video.id).filter(Boolean)
+            : [],
+          is_public: false,
+          created_at: playlist.createdAt || new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+        }))
+        .filter((playlist) => playlist.name && playlist.video_ids.length > 0);
+
+      if (rows.length === 0) {
+        return false;
+      }
+
+      const { error } = await this.supabaseService.client
+        .from("video_playlists")
+        .insert(rows);
+
+      if (error) throw error;
+
+      localStorage.removeItem("flagfit_playlists");
+      this.logger.info("[VideoCuration] Migrated legacy playlists to Supabase", {
+        count: rows.length,
+      });
+      return true;
+    } catch (error) {
+      this.logger.warn("[VideoCuration] Failed to migrate legacy playlists", {
+        error,
+      });
+      return false;
+    }
+  }
+
+  private initializeRealtimeSubscriptions(teamId: string | null): void {
+    if (!teamId) {
+      this.cleanupRealtimeSubscriptions();
+      return;
+    }
+
+    this.cleanupRealtimeSubscriptions();
+    this.realtimeTeamId = teamId;
+
+    this.playlistsSubscription = this.realtimeService.subscribe(
+      "video_playlists",
+      `team_id=eq.${teamId}`,
+      {
+        onInsert: () => void this.loadPlaylists(teamId),
+        onUpdate: () => void this.loadPlaylists(teamId),
+        onDelete: () => void this.loadPlaylists(teamId),
+      },
+    );
+
+    this.videoStatusSubscription = this.realtimeService.subscribe(
+      "video_curation_status",
+      `team_id=eq.${teamId}`,
+      {
+        onInsert: () => void this.loadVideoStatuses(teamId),
+        onUpdate: () => void this.loadVideoStatuses(teamId),
+        onDelete: () => void this.loadVideoStatuses(teamId),
+      },
+    );
+  }
+
+  private cleanupRealtimeSubscriptions(): void {
+    this.playlistsSubscription?.();
+    this.videoStatusSubscription?.();
+    this.playlistsSubscription = null;
+    this.videoStatusSubscription = null;
+    this.realtimeTeamId = null;
   }
 }

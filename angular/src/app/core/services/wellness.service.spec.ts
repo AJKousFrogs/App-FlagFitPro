@@ -588,6 +588,93 @@ describe("WellnessService", () => {
         date: today,
       });
     });
+
+    it("should forward motivation, mood, hydration, and readiness fields", async () => {
+      let capturedPayload: Record<string, unknown> | null = null;
+      mockApiService.post.mockImplementation(
+        (_url: string, payload: Record<string, unknown>) => {
+          capturedPayload = payload;
+          return of({ success: true, data: { id: 1 } });
+        },
+      );
+
+      await firstValueFrom(
+        service.logWellness({
+          sleep: 8,
+          sleepHours: 7.5,
+          energy: 7,
+          stress: 3,
+          soreness: 2,
+          motivation: 9,
+          mood: 8,
+          hydration: 6,
+          readinessScore: 82,
+        }),
+      );
+
+      expect(capturedPayload).toMatchObject({
+        sleepQuality: 8,
+        sleepHours: 7.5,
+        energyLevel: 7,
+        stressLevel: 3,
+        muscleSoreness: 2,
+        motivationLevel: 9,
+        mood: 8,
+        hydrationLevel: 6,
+        readinessScore: 82,
+      });
+    });
+  });
+
+  describe("Wellness Data Loading", () => {
+    it("maps extended daily_wellness_checkin fields from the database", async () => {
+      mockSupabaseService.client.from.mockReturnValueOnce({
+        select: vi.fn(() => ({
+          eq: vi.fn(() => ({
+            gte: vi.fn(() => ({
+              order: vi.fn(() =>
+                Promise.resolve({
+                  data: [
+                    {
+                      id: 10,
+                      user_id: "user-123",
+                      checkin_date: "2024-01-15",
+                      sleep_quality: 8,
+                      sleep_hours: 7.5,
+                      energy_level: 7,
+                      stress_level: 3,
+                      muscle_soreness: 2,
+                      motivation_level: 9,
+                      mood: 8,
+                      hydration_level: 6,
+                      calculated_readiness: 82,
+                      notes: "Ready to train",
+                      created_at: "2024-01-15T06:00:00.000Z",
+                    },
+                  ],
+                  error: null,
+                }),
+              ),
+            })),
+          })),
+        })),
+      });
+
+      const response = await firstValueFrom(service.getWellnessData("7d"));
+
+      expect(response.success).toBe(true);
+      expect(response.data[0]).toMatchObject({
+        sleep: 8,
+        sleepHours: 7.5,
+        energy: 7,
+        stress: 3,
+        soreness: 2,
+        motivation: 9,
+        mood: 8,
+        hydration: 6,
+        readinessScore: 82,
+      });
+    });
   });
 
   // ============================================================================

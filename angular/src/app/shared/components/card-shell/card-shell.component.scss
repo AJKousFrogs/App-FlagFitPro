@@ -225,19 +225,30 @@
 // ============================================
 
 .card-shell__body {
+  --card-shell-body-padding-x: var(--component-card-padding);
+  --card-shell-body-padding-top: 0;
+  --card-shell-body-padding-bottom: var(--component-card-padding);
   padding: var(
     --app-card-shell-body-padding,
-    0 var(--component-card-padding) var(--component-card-padding)
+    var(--card-shell-body-padding-top) var(--card-shell-body-padding-x)
+      var(--card-shell-body-padding-bottom)
   );
   flex: 1;
+  min-width: 0;
 }
 
 .card-shell__body--compact {
+  --card-shell-body-padding-x: var(--component-card-padding-compact);
+  --card-shell-body-padding-bottom: var(--component-card-padding-compact);
   padding: var(
     --app-card-shell-body-padding-compact,
-    0 var(--component-card-padding-compact)
-      var(--component-card-padding-compact)
+    var(--card-shell-body-padding-top) var(--card-shell-body-padding-x)
+      var(--card-shell-body-padding-bottom)
   );
+}
+
+.card-shell__body--no-header {
+  --card-shell-body-padding-top: var(--card-shell-body-padding-x);
 }
 
 .card-shell__body--flush {

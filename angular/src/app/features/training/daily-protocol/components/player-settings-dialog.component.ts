@@ -38,6 +38,7 @@ import {
   LoggerService,
   toLogContext,
 } from "../../../../core/services/logger.service";
+import { UnifiedTrainingService } from "../../../../core/services/unified-training.service";
 import { extractApiPayload } from "../../../../core/utils/api-response-mapper";
 import { DIALOG_WIDTHS } from "../../../../core/utils/design-tokens.util";
 import { DesignTokens } from "../../../../shared/models/design-tokens";
@@ -367,6 +368,7 @@ export class PlayerSettingsDialogComponent {
   };
   private readonly api = inject(ApiService);
   private readonly logger = inject(LoggerService);
+  private readonly trainingService = inject(UnifiedTrainingService);
 
   // Angular 21 signal-based inputs/outputs
   readonly visible = model(false);
@@ -508,11 +510,15 @@ export class PlayerSettingsDialogComponent {
           payload.availabilitySchedule ||
           payload.flagPracticeSchedule ||
           [];
+        const dailyRoutine = Array.isArray(payload.dailyRoutine)
+          ? payload.dailyRoutine.map((slot) => ({ ...slot }))
+          : this.settings.dailyRoutine;
 
         this.settings = {
           ...this.settings,
           ...payload,
           flagPracticeSchedule: availabilitySchedule, // Map API field to component field
+          dailyRoutine,
           birthDate: payload.birthDate
             ? new Date(payload.birthDate)
             : undefined,
@@ -771,6 +777,7 @@ export class PlayerSettingsDialogComponent {
       // Map flagPracticeSchedule to availabilitySchedule for API
       const payload = {
         ...this.settings,
+        dailyRoutine: this.settings.dailyRoutine.map((slot) => ({ ...slot })),
         availabilitySchedule: this.settings.flagPracticeSchedule,
         birthDate: this.settings.birthDate?.toISOString().split("T")[0],
       };
@@ -782,6 +789,9 @@ export class PlayerSettingsDialogComponent {
         this.api.post(API_ENDPOINTS.playerSettings.save, finalPayload),
       );
 
+      this.trainingService.applyPlayerSettingsSnapshot({
+        dailyRoutine: this.settings.dailyRoutine,
+      });
       this.settingsSaved.emit(this.settings);
       this.visible.set(false);
     } catch (err) {

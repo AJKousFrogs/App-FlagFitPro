@@ -33,7 +33,6 @@ import { PageHeaderComponent } from "../../shared/components/page-header/page-he
 import { PageErrorStateComponent } from "../../shared/components/page-error-state/page-error-state.component";
 import { ButtonComponent } from "../../shared/components/ui-components";
 import { calculateAge } from "../../shared/utils/date.utils";
-import { SettingsDataService } from "./services/settings-data.service";
 import { SettingsAccountDeletionService } from "./services/settings-account-deletion.service";
 import { SettingsBirthdayService } from "./services/settings-birthday.service";
 import {
@@ -97,7 +96,6 @@ import {
 export class SettingsComponent implements OnInit {
   private destroyRef = inject(DestroyRef);
   private authService = inject(AuthService);
-  private settingsDataService = inject(SettingsDataService);
   private accountDeletionService = inject(SettingsAccountDeletionService);
   private birthdayService = inject(SettingsBirthdayService);
   private dataExportService = inject(SettingsDataExportService);
@@ -241,14 +239,14 @@ export class SettingsComponent implements OnInit {
     const user = this.authService.getUser();
 
     this.profileForm = this.formFactory.createProfileForm(user);
-
-    void this.loadInitialData();
-
     this.notificationForm = this.formFactory.createNotificationForm();
     this.privacyForm = this.formFactory.createPrivacyForm();
     this.preferencesForm = this.formFactory.createPreferencesForm(
       this.themeService.mode(),
     );
+    this.passwordForm = this.formFactory.createPasswordForm();
+
+    void this.loadInitialData();
 
     // Subscribe to theme changes from form
     this.preferencesForm
@@ -258,8 +256,6 @@ export class SettingsComponent implements OnInit {
           this.themeService.setMode(theme);
         }
       });
-
-    this.passwordForm = this.formFactory.createPasswordForm();
   }
 
   onBirthdayInputTyped(typedValue: string): void {
@@ -303,7 +299,17 @@ export class SettingsComponent implements OnInit {
     this.isPageLoading.set(true);
     this.pageErrorMessage.set(null);
 
-    const [{ profilePatch, membershipPatch, errorMessage }, teamsErrorMessage] =
+    const [
+      {
+        profilePatch,
+        membershipPatch,
+        notificationPatch,
+        privacyPatch,
+        preferencePatch,
+        errorMessage,
+      },
+      teamsErrorMessage,
+    ] =
       await Promise.all([
         this.profileInitService.loadProfileData(),
         this.teamRequestService.loadAvailableTeams(),
@@ -342,6 +348,18 @@ export class SettingsComponent implements OnInit {
         position: this.profileForm.get("position")?.value,
         jerseyNumber: this.profileForm.get("jerseyNumber")?.value,
       });
+    }
+
+    if (notificationPatch) {
+      this.notificationForm.patchValue(notificationPatch);
+    }
+
+    if (privacyPatch) {
+      this.privacyForm.patchValue(privacyPatch);
+    }
+
+    if (preferencePatch) {
+      this.preferencesForm.patchValue(preferencePatch);
     }
 
     this.isPageLoading.set(false);

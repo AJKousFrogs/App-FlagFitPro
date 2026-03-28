@@ -200,6 +200,7 @@ export class ChannelService {
   private readonly _messages = signal<ChatMessage[]>([]);
   private readonly _loading = signal(false);
   private readonly _error = signal<string | null>(null);
+  private channelsUnavailable = false;
 
   // Public computed signals
   readonly channels = computed(() => this._channels());
@@ -273,6 +274,11 @@ export class ChannelService {
     this._error.set(null);
 
     try {
+      if (this.channelsUnavailable) {
+        this._channels.set([]);
+        return [];
+      }
+
       let query = this.supabase.client
         .from("channels")
         .select(
@@ -306,6 +312,13 @@ export class ChannelService {
 
       return channels;
     } catch (error) {
+      if (isBenignSupabaseQueryError(error)) {
+        this.channelsUnavailable = true;
+        this._channels.set([]);
+        this._error.set(null);
+        this.logger.debug("Channels feature unavailable in current schema");
+        return [];
+      }
       const message = getErrorMessage(error, "Failed to load channels");
       this._error.set(message);
       this.logger.error("Error loading channels:", error);

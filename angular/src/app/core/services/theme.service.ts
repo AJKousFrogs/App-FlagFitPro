@@ -26,6 +26,7 @@ interface ThemeState {
 }
 
 const THEME_STORAGE_KEY = "flagfit_theme";
+const THEME_SETTING_KEY = "theme";
 
 /**
  * Theme-color meta tag values for mobile browser chrome
@@ -235,11 +236,12 @@ export class ThemeService implements OnDestroy {
       const { error } = await this.supabase.client.from("user_settings").upsert(
         {
           user_id: user.id,
-          theme: mode,
+          setting_key: THEME_SETTING_KEY,
+          setting_value: mode,
           updated_at: new Date().toISOString(),
         },
         {
-          onConflict: "user_id",
+          onConflict: "user_id,setting_key",
         },
       );
 
@@ -264,15 +266,20 @@ export class ThemeService implements OnDestroy {
 
       const { data, error: _error } = await this.supabase.client
         .from("user_settings")
-        .select("theme")
+        .select("setting_value")
         .eq("user_id", user.id)
-        .single();
+        .eq("setting_key", THEME_SETTING_KEY)
+        .maybeSingle();
 
-      if (data?.theme && ["light", "dark", "auto"].includes(data.theme)) {
-        this._mode.set(data.theme as ThemeMode);
-        localStorage.setItem(THEME_STORAGE_KEY, data.theme);
+      const storedTheme = data?.setting_value;
+      if (
+        typeof storedTheme === "string" &&
+        ["light", "dark", "auto"].includes(storedTheme)
+      ) {
+        this._mode.set(storedTheme as ThemeMode);
+        localStorage.setItem(THEME_STORAGE_KEY, storedTheme);
         this.logger.debug(
-          `[ThemeService] Loaded theme from Supabase: ${data.theme}`,
+          `[ThemeService] Loaded theme from Supabase: ${storedTheme}`,
         );
       }
     } catch (_error) {

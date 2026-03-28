@@ -1,11 +1,11 @@
 import {
   Component,
   ChangeDetectionStrategy,
+  DestroyRef,
   inject,
   OnInit,
   OnDestroy,
   PLATFORM_ID,
-  Renderer2,
   signal,
   viewChild,
 } from "@angular/core";
@@ -22,6 +22,7 @@ import { ScrollToTopComponent } from "../scroll-to-top/scroll-to-top.component";
 import { MobileHeaderComponent } from "./mobile-header.component";
 import { ThemeService } from "../../../core/services/theme.service";
 import { ProfileNotificationService } from "../../../core/services/profile-notification.service";
+import { ShellBodyStateService } from "../../../core/services/shell-body-state.service";
 
 @Component({
   selector: "app-main-layout",
@@ -58,7 +59,11 @@ import { ProfileNotificationService } from "../../../core/services/profile-notif
         (toggleSidebar)="toggleSidebar()"
       ></app-mobile-header>
 
-      <section class="app-shell__main app-main" aria-label="Application content">
+      <section
+        class="app-shell__main app-main"
+        data-scroll-root="app-shell-main"
+        aria-label="Application content"
+      >
         <div class="app-shell__page">
           <app-offline-banner></app-offline-banner>
           @if (!mobileNav()) {
@@ -89,15 +94,16 @@ import { ProfileNotificationService } from "../../../core/services/profile-notif
   host: {
     "(window:toggle-sidebar)": "onToggleSidebar()",
     "(window:toggle-theme)": "onToggleTheme()",
-    "(window:resize)": "onWindowResize()",
     "[class.app-shell--sidebar-collapsed]": "sidebarCollapsed() && !mobileNav()",
   },
 })
 export class MainLayoutComponent implements OnInit, OnDestroy {
   private themeService = inject(ThemeService);
   private profileNotificationService = inject(ProfileNotificationService);
-  private readonly renderer = inject(Renderer2);
+  private readonly shellBodyState = inject(ShellBodyStateService);
+  private readonly destroyRef = inject(DestroyRef);
   private readonly platformId = inject(PLATFORM_ID);
+  private releaseShellBodyClass: (() => void) | null = null;
   readonly sidebar = viewChild(SidebarComponent);
   readonly sidebarCollapsed = signal(this.loadSidebarCollapsedState());
   readonly mobileNav = signal(false);
@@ -106,12 +112,13 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
     // Check profile completion on every page load
     // This ensures users are reminded to complete their profile
     this.profileNotificationService.checkAndNotify();
-    this.syncViewportState();
-    this.applyShellBodyClass(true);
+    this.initViewportState();
+    this.releaseShellBodyClass = this.shellBodyState.acquireShell();
   }
 
   ngOnDestroy(): void {
-    this.applyShellBodyClass(false);
+    this.releaseShellBodyClass?.();
+    this.releaseShellBodyClass = null;
   }
 
   /**
@@ -138,29 +145,28 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
     });
   }
 
-  onWindowResize(): void {
-    this.syncViewportState();
-  }
-
-  private applyShellBodyClass(enabled: boolean): void {
+  private initViewportState(): void {
     if (!isPlatformBrowser(this.platformId)) return;
 
-    if (enabled) {
-      this.renderer.addClass(document.body, "app-shell-active");
-    } else {
-      this.renderer.removeClass(document.body, "app-shell-active");
-    }
-  }
+    const mediaQuery = window.matchMedia("(max-width: 48rem)");
+    const syncViewportState = (matches: boolean) => {
+      this.mobileNav.set(matches);
 
-  private syncViewportState(): void {
-    if (!isPlatformBrowser(this.platformId)) return;
+      if (!matches) {
+        this.sidebar()?.closeSidebar();
+      }
+    };
 
-    const isMobile = window.matchMedia("(max-width: 48rem)").matches;
-    this.mobileNav.set(isMobile);
+    syncViewportState(mediaQuery.matches);
 
-    if (!isMobile) {
-      this.sidebar()?.closeSidebar();
-    }
+    const onChange = (event: MediaQueryListEvent) => {
+      syncViewportState(event.matches);
+    };
+
+    mediaQuery.addEventListener("change", onChange);
+    this.destroyRef.onDestroy(() =>
+      mediaQuery.removeEventListener("change", onChange)
+    );
   }
 
   private loadSidebarCollapsedState(): boolean {

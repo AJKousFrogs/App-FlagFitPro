@@ -14,10 +14,8 @@ import {
   computed,
   inject,
   OnInit,
-  DestroyRef,
   signal,
 } from "@angular/core";
-import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { ToastService } from "../../../core/services/toast.service";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { CardShellComponent } from "../../../shared/components/card-shell/card-shell.component";
@@ -31,13 +29,10 @@ import { InputText } from "primeng/inputtext";
 import { Select, type SelectChangeEvent } from "primeng/select";
 
 import { Textarea } from "primeng/textarea";
-import { firstValueFrom } from "rxjs";
 import { StatusTagComponent } from "../../../shared/components/status-tag/status-tag.component";
 import { getStatusSeverity as getStatusSeverityValue } from "../../../shared/utils/status.utils";
 
-import { ApiService, API_ENDPOINTS } from "../../../core/services/api.service";
 import { LoggerService } from "../../../core/services/logger.service";
-import { extractApiPayload } from "../../../core/utils/api-response-mapper";
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";
 import {
@@ -45,6 +40,10 @@ import {
   DialogFooterComponent,
   DialogHeaderComponent,
 } from "../../../shared/components/ui-components";
+import {
+  CoachPlanningDataService,
+  type PracticePlanAttendance,
+} from "../services/coach-planning-data.service";
 
 // ===== Interfaces =====
 interface PracticePlan {
@@ -59,8 +58,14 @@ interface PracticePlan {
   equipment: EquipmentItem[];
   activities: ActivityBlock[];
   coachNotes: string;
-  attendance: { confirmed: number; pending: number; total: number };
-  status: "scheduled" | "in-progress" | "completed" | "cancelled";
+  attendance: PracticePlanAttendance;
+  status:
+    | "scheduled"
+    | "in-progress"
+    | "completed"
+    | "cancelled"
+    | "draft"
+    | "template";
 }
 
 interface ActivityBlock {
@@ -650,8 +655,7 @@ const DEFAULT_EQUIPMENT: EquipmentItem[] = [
   styleUrl: "./practice-planner.component.scss",
 })
 export class PracticePlannerComponent implements OnInit {
-  private readonly api = inject(ApiService);
-  private destroyRef = inject(DestroyRef);
+  private readonly coachPlanningDataService = inject(CoachPlanningDataService);
   private readonly logger = inject(LoggerService);
   private readonly toastService = inject(ToastService);
 
@@ -669,6 +673,7 @@ export class PracticePlannerComponent implements OnInit {
 
   // Form data
   formData: PracticeFormData = this.getEmptyFormData();
+  private editingAttendance: PracticePlanAttendance = this.getEmptyAttendance();
 
   // Options
   readonly activityTypeOptions = ACTIVITY_TYPES;
@@ -687,14 +692,23 @@ export class PracticePlannerComponent implements OnInit {
 
     if (tab === "upcoming") {
       return this.practices().filter(
-        (p) => p.date >= now && p.status !== "cancelled",
+        (p) =>
+          p.date >= now &&
+          p.status !== "cancelled" &&
+          p.status !== "draft" &&
+          p.status !== "template",
       );
     } else if (tab === "past") {
       return this.practices().filter(
-        (p) => p.date < now || p.status === "completed",
+        (p) =>
+          p.status !== "draft" &&
+          p.status !== "template" &&
+          (p.date < now || p.status === "completed"),
       );
     }
-    return [];
+    return this.practices().filter(
+      (p) => p.status === "draft" || p.status === "template",
+    );
   });
 
   readonly allocatedMinutes = computed(() =>
@@ -714,13 +728,14 @@ export class PracticePlannerComponent implements OnInit {
     this.loadError.set(null);
 
     try {
-      const response = await firstValueFrom(
-        this.api.get<{ practices?: PracticePlan[] }>("/api/coach/practices"),
-      );
-      const practices =
-        extractApiPayload<{ practices?: PracticePlan[] }>(response)
-          ?.practices ?? [];
-      this.practices.set(practices);
+      const { data, error } =
+        await this.coachPlanningDataService.listPracticePlans();
+
+      if (error) {
+        throw new Error(error.message || "Failed to load practice plans.");
+      }
+
+      this.practices.set(data);
     } catch (err) {
       this.logger.error("Failed to load practices", err);
       this.practices.set([]);
@@ -752,6 +767,14 @@ export class PracticePlannerComponent implements OnInit {
     };
   }
 
+  private getEmptyAttendance(): PracticePlanAttendance {
+    return {
+      confirmed: 0,
+      pending: 0,
+      total: 0,
+    };
+  }
+
   private generateTimeOptions() {
     const options = [];
     for (let h = 6; h <= 21; h++) {
@@ -769,6 +792,7 @@ export class PracticePlannerComponent implements OnInit {
   openCreateDialog(): void {
     this.isEditing.set(false);
     this.formData = this.getEmptyFormData();
+    this.editingAttendance = this.getEmptyAttendance();
     this.showDialog = true;
   }
 
@@ -776,6 +800,7 @@ export class PracticePlannerComponent implements OnInit {
 
   editPractice(practice: PracticePlan): void {
     this.isEditing.set(true);
+    this.editingAttendance = { ...practice.attendance };
     this.formData = {
       id: practice.id,
       title: practice.title,
@@ -797,6 +822,7 @@ export class PracticePlannerComponent implements OnInit {
 
   copyPractice(practice: PracticePlan): void {
     this.isEditing.set(false);
+    this.editingAttendance = { ...practice.attendance };
     this.formData = {
       id: "",
       title: `${practice.title} (Copy)`,
@@ -824,6 +850,10 @@ export class PracticePlannerComponent implements OnInit {
           ? { ...plan, status: "in-progress" as const }
           : plan,
       ),
+    );
+    void this.coachPlanningDataService.updatePracticePlanStatus(
+      practice.id,
+      "in-progress",
     );
     this.editPractice({
       ...practice,
@@ -1081,32 +1111,94 @@ export class PracticePlannerComponent implements OnInit {
   }
 
   // Save methods
-  saveDraft(): void {
-    this.toastService.success(
+  async saveDraft(): Promise<void> {
+    await this.persistPracticePlan(
+      "draft",
       `${this.formData.title} saved as draft`,
       "Draft Saved",
     );
-    this.showDialog = false;
   }
 
-  saveAsTemplate(): void {
-    this.toastService.success(
+  async saveAsTemplate(): Promise<void> {
+    await this.persistPracticePlan(
+      "template",
       `${this.formData.title} saved as template`,
       "Template Saved",
     );
   }
 
-  saveAndNotify(): void {
+  async saveAndNotify(): Promise<void> {
     if (!this.formData.title) return;
 
-    this.api.post(API_ENDPOINTS.coach.practices, this.formData).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-      next: () => {
-        this.toastService.success("Team has been notified", "Practice Saved");
-        this.showDialog = false;
-        this.loadData();
-      },
-      error: (err) => this.logger.error("Failed to save practice", err),
+    await this.persistPracticePlan(
+      "scheduled",
+      "Team practice has been saved.",
+      "Practice Saved",
+    );
+  }
+
+  private async persistPracticePlan(
+    status: PracticePlan["status"],
+    successMessage: string,
+    successTitle: string,
+  ): Promise<void> {
+    if (!this.formData.title.trim()) {
+      this.toastService.warn(
+        "Please add a title before saving this practice plan.",
+      );
+      return;
+    }
+
+    const { data, error } = await this.coachPlanningDataService.savePracticePlan({
+      id: this.getPersistedPracticeId(status),
+      title: this.formData.title,
+      date: this.formData.date.toISOString().split("T")[0],
+      startTime: this.formData.startTime,
+      endTime: this.formData.endTime,
+      durationMinutes: this.formData.durationMinutes,
+      location: this.formData.location,
+      focus: this.formData.focus,
+      equipment: this.formData.equipment,
+      activities: this.formData.activities,
+      coachNotes: this.formData.coachNotes,
+      attendance: this.editingAttendance,
+      status,
     });
+
+    if (error || !data) {
+      this.logger.error("Failed to save practice", error);
+      this.toastService.error(
+        error?.message || "Failed to save practice plan. Please try again.",
+      );
+      return;
+    }
+
+    this.toastService.success(successMessage, successTitle);
+    this.showDialog = false;
+    await this.loadData();
+  }
+
+  private getPersistedPracticeId(
+    nextStatus: PracticePlan["status"],
+  ): string | null {
+    if (!this.formData.id) {
+      return null;
+    }
+
+    const existing = this.practices().find((plan) => plan.id === this.formData.id);
+    if (!existing) {
+      return null;
+    }
+
+    if (
+      (nextStatus === "draft" || nextStatus === "template") &&
+      existing.status !== "draft" &&
+      existing.status !== "template"
+    ) {
+      return null;
+    }
+
+    return existing.id;
   }
 
   // Helper methods
@@ -1120,6 +1212,8 @@ export class PracticePlannerComponent implements OnInit {
       "in-progress": "In Progress",
       completed: "Completed",
       cancelled: "Cancelled",
+      draft: "Draft",
+      template: "Template",
     };
     return labels[status] || status;
   }

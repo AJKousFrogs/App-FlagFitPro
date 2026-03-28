@@ -1,13 +1,20 @@
 import { Injectable, inject } from "@angular/core";
 import { AuthService } from "../../../core/services/auth.service";
 import { LoggerService } from "../../../core/services/logger.service";
+import { RealtimeService } from "../../../core/services/realtime.service";
 import { SupabaseService } from "../../../core/services/supabase.service";
 import { TeamMembershipService } from "../../../core/services/team-membership.service";
 
 export interface TournamentNutritionHydrationLog {
   time: string;
   amount: number;
-  type: "water" | "electrolyte" | "sports-drink" | "smoothie" | "protein-shake";
+  type:
+    | "water"
+    | "electrolyte"
+    | "sports-drink"
+    | "smoothie"
+    | "protein-shake"
+    | "coconut";
 }
 
 export interface TournamentNutritionState {
@@ -17,11 +24,27 @@ export interface TournamentNutritionState {
   hydrationLogs: TournamentNutritionHydrationLog[];
 }
 
+interface TournamentDayPlanRow {
+  tournament_date?: string | null;
+  tournament_name: string | null;
+  games: unknown[] | null;
+  nutrition_windows: unknown[] | null;
+}
+
+interface HydrationLogRow {
+  fluid_ml: number | null;
+  fluid_type: TournamentNutritionHydrationLog["type"] | null;
+  log_time: string | null;
+  log_date?: string | null;
+  context?: string | null;
+}
+
 @Injectable({
   providedIn: "root",
 })
 export class TournamentNutritionStateService {
   private readonly authService = inject(AuthService);
+  private readonly realtimeService = inject(RealtimeService);
   private readonly supabaseService = inject(SupabaseService);
   private readonly teamMembershipService = inject(TeamMembershipService);
   private readonly logger = inject(LoggerService);
@@ -74,7 +97,7 @@ export class TournamentNutritionStateService {
       }
 
       const hydrationLogs = Array.isArray(hydrationResult.data)
-        ? hydrationResult.data
+        ? (hydrationResult.data as HydrationLogRow[])
         : [];
 
       return {
@@ -149,12 +172,14 @@ export class TournamentNutritionStateService {
     }
 
     const date = this.getTodayIsoDate();
+    const membership = await this.teamMembershipService.loadMembership();
 
     try {
       const { error } = await this.supabaseService.client
         .from("hydration_logs")
         .insert({
           user_id: userId,
+          team_id: membership?.teamId || null,
           fluid_ml: log.amount,
           fluid_type: log.type,
           log_date: date,
@@ -179,6 +204,61 @@ export class TournamentNutritionStateService {
         },
       );
     }
+  }
+
+  subscribeToTodayState(onChange: () => void): (() => void) | null {
+    const userId = this.authService.currentUser()?.id;
+    if (!userId) {
+      return null;
+    }
+
+    const date = this.getTodayIsoDate();
+    const context = this.getHydrationContext(date);
+
+    const unsubscribePlan = this.realtimeService.subscribe<TournamentDayPlanRow>(
+      "tournament_day_plans",
+      `user_id=eq.${userId}`,
+      {
+        onInsert: (event) => {
+          if (event.new?.tournament_date === date) {
+            onChange();
+          }
+        },
+        onUpdate: (event) => {
+          if (event.new?.tournament_date === date) {
+            onChange();
+          }
+        },
+        onDelete: () => {
+          onChange();
+        },
+      },
+    );
+
+    const unsubscribeHydration = this.realtimeService.subscribe<HydrationLogRow>(
+      "hydration_logs",
+      `user_id=eq.${userId}`,
+      {
+        onInsert: (event) => {
+          if (event.new?.log_date === date && event.new?.context === context) {
+            onChange();
+          }
+        },
+        onUpdate: (event) => {
+          if (event.new?.log_date === date && event.new?.context === context) {
+            onChange();
+          }
+        },
+        onDelete: () => {
+          onChange();
+        },
+      },
+    );
+
+    return () => {
+      unsubscribePlan();
+      unsubscribeHydration();
+    };
   }
 
   async clearTodayState(): Promise<void> {

@@ -48,9 +48,50 @@ function parseDaysStrict(event) {
   return { days: parsed };
 }
 
+async function getActiveTeamMembership(userId) {
+  const { data, error } = await supabaseAdmin
+    .from("team_members")
+    .select("team_id")
+    .eq("user_id", userId)
+    .eq("status", "active")
+    .order("updated_at", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
+  if (error) {
+    throw error;
+  }
+
+  return data?.team_id || null;
+}
+
+function toFixtureTimestamp(fixture) {
+  const datePart = typeof fixture.fixture_date === "string"
+    ? fixture.fixture_date
+    : null;
+  if (!datePart) {
+    return null;
+  }
+
+  const rawTime = typeof fixture.fixture_time === "string"
+    ? fixture.fixture_time.trim()
+    : "";
+  const normalizedTime =
+    rawTime && /^\d{2}:\d{2}(:\d{2})?$/.test(rawTime)
+      ? rawTime.length === 5
+        ? `${rawTime}:00`
+        : rawTime
+      : "12:00:00";
+
+  return `${datePart}T${normalizedTime}`;
+}
+
 async function verifyAthleteAccess(requestUserId, athleteId) {
   if (athleteId === requestUserId) {
-    return { authorized: true };
+    return {
+      authorized: true,
+      teamId: await getActiveTeamMembership(requestUserId),
+    };
   }
 
   const role = await getUserRole(requestUserId);
@@ -58,29 +99,20 @@ async function verifyAthleteAccess(requestUserId, athleteId) {
     return { authorized: false };
   }
 
-  const { data: requesterMembership, error: requesterError } = await supabaseAdmin
-    .from("team_members")
-    .select("team_id")
-    .eq("user_id", requestUserId)
-    .eq("status", "active")
-    .limit(1)
-    .maybeSingle();
-  if (requesterError || !requesterMembership?.team_id) {
+  const requesterTeamId = await getActiveTeamMembership(requestUserId);
+  if (!requesterTeamId) {
     return { authorized: false };
   }
 
-  const { data: targetMembership, error: targetError } = await supabaseAdmin
-    .from("team_members")
-    .select("team_id")
-    .eq("user_id", athleteId)
-    .eq("status", "active")
-    .limit(1)
-    .maybeSingle();
-  if (targetError || !targetMembership?.team_id) {
+  const targetTeamId = await getActiveTeamMembership(athleteId);
+  if (!targetTeamId) {
     return { authorized: false };
   }
 
-  return { authorized: targetMembership.team_id === requesterMembership.team_id };
+  return {
+    authorized: targetTeamId === requesterTeamId,
+    teamId: targetTeamId,
+  };
 }
 
 /**
@@ -125,16 +157,21 @@ const handler = async (event, context) => {
             requestId,
           );
         }
+        if (!access.teamId) {
+          return successResponse([]);
+        }
         const { endDate } = calculateDateRange(days, true); // Forward-looking
+        const startDate = new Date().toISOString().slice(0, 10);
+        const endDateString = endDate.toISOString().slice(0, 10);
 
-        // Get fixtures (either athlete-specific or team-based)
+        // Fixtures are stored per team in production schema.
         const { data, error } = await supabaseAdmin
           .from("fixtures")
           .select("*")
-          .or(`athlete_id.eq.${athleteId},athlete_id.is.null`)
-          .gte("game_start", new Date().toISOString())
-          .lte("game_start", endDate.toISOString())
-          .order("game_start", { ascending: true });
+          .eq("team_id", access.teamId)
+          .gte("fixture_date", startDate)
+          .lte("fixture_date", endDateString)
+          .order("fixture_date", { ascending: true });
 
         if (error) {
           console.error("[fixtures] Database error:", error);
@@ -146,7 +183,14 @@ const handler = async (event, context) => {
           );
         }
 
-        return successResponse(data || []);
+        const normalizedFixtures = (data || []).map((fixture) => ({
+          ...fixture,
+          game_start: toFixtureTimestamp(fixture),
+          opponent_name: fixture.opponent_team_name || null,
+          is_home_game: fixture.is_home ?? null,
+        }));
+
+        return successResponse(normalizedFixtures);
       } catch (error) {
         console.error("[fixtures] Unexpected handler error:", error);
         return createErrorResponse(

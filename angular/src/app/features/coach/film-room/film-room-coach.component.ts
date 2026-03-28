@@ -26,16 +26,13 @@ import { ProgressBar } from "primeng/progressbar";
 import { Select, type SelectChangeEvent } from "primeng/select";
 
 import { Textarea } from "primeng/textarea";
-import { firstValueFrom } from "rxjs";
-
-import { ApiService, API_ENDPOINTS } from "../../../core/services/api.service";
 import { LoggerService } from "../../../core/services/logger.service";
-import { extractApiPayload } from "../../../core/utils/api-response-mapper";
 import { AppDialogComponent } from "../../../shared/components/dialog/dialog.component";
 import { DialogFooterComponent } from "../../../shared/components/dialog-footer/dialog-footer.component";
 import { DialogHeaderComponent } from "../../../shared/components/dialog-header/dialog-header.component";
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";
+import { CoachFilmRoomDataService } from "../services/coach-film-room-data.service";
 
 // ===== Interfaces =====
 interface FilmSession {
@@ -671,9 +668,9 @@ const TAG_TYPES = [
   styleUrl: "./film-room-coach.component.scss",
 })
 export class FilmRoomCoachComponent implements OnInit {
-  private readonly api = inject(ApiService);
   private readonly logger = inject(LoggerService);
   private readonly toastService = inject(ToastService);
+  private readonly coachFilmRoomDataService = inject(CoachFilmRoomDataService);
 
   // State
   readonly sessions = signal<FilmSession[]>([]);
@@ -833,25 +830,15 @@ export class FilmRoomCoachComponent implements OnInit {
     this.loadError.set(null);
 
     try {
-      const response = await firstValueFrom(
-        this.api.get<{
-          sessions?: FilmSession[];
-          players?: Player[];
-          plays?: { id: string; name: string }[];
-        }>(API_ENDPOINTS.coach.film),
-      );
-      const payload = extractApiPayload<{
-        sessions?: FilmSession[];
-        players?: Player[];
-        plays?: { id: string; name: string }[];
-      }>(response);
-      if (payload) {
-        this.sessions.set(payload.sessions || []);
-        this.players.set(payload.players || []);
-        this.plays.set(payload.plays || []);
-      } else {
-        throw new Error("Film room payload missing");
+      const { sessions, players, plays, error } =
+        await this.coachFilmRoomDataService.loadFilmRoom();
+      if (error) {
+        throw error;
       }
+
+      this.sessions.set(sessions);
+      this.players.set(players);
+      this.plays.set(plays);
     } catch (err) {
       this.logger.error("Failed to load film data", err);
       this.sessions.set([]);
@@ -896,10 +883,26 @@ export class FilmRoomCoachComponent implements OnInit {
 
   readonly openUploadDialogHandler = (): void => this.openUploadDialog();
 
-  uploadFilm(): void {
+  async uploadFilm(): Promise<void> {
     if (!this.uploadForm.title) return;
+
+    const { data, error } = await this.coachFilmRoomDataService.saveSession({
+      source: this.uploadForm.source,
+      url: this.uploadForm.url,
+      title: this.uploadForm.title,
+      type: this.uploadForm.type,
+      description: this.uploadForm.description,
+    });
+
+    if (error || !data) {
+      this.logger.error("Failed to upload film", error);
+      this.toastService.error("We couldn't save this film.", "Upload Failed");
+      return;
+    }
+
+    this.sessions.update((sessions) => [data, ...sessions]);
     this.toastService.success(
-      `${this.uploadForm.title} has been uploaded`,
+      `${data.title} has been uploaded`,
       "Film Uploaded",
     );
     this.showUploadDialog = false;
@@ -940,8 +943,42 @@ export class FilmRoomCoachComponent implements OnInit {
     this.showTagDialog = true;
   }
 
-  saveTag(): void {
+  async saveTag(): Promise<void> {
     if (!this.tagForm.comment) return;
+
+    const session = this.selectedSession();
+    if (!session) {
+      this.toastService.warn("Open a film session before adding a tag.");
+      return;
+    }
+
+    const playerIds =
+      this.tagForm.target === "everyone"
+        ? this.players().map((player) => player.id)
+        : this.tagForm.playerIds;
+    const { error } = await this.coachFilmRoomDataService.saveTag({
+      sessionId: session.id,
+      timestamp: this.tagForm.timestamp,
+      type: this.tagForm.type,
+      target: this.tagForm.target,
+      playerIds,
+      playId: this.tagForm.playId,
+      comment: this.tagForm.comment,
+    });
+
+    if (error) {
+      this.logger.error("Failed to save film tag", error);
+      this.toastService.error("We couldn't save this tag.", "Save Failed");
+      return;
+    }
+
+    this.sessions.update((sessions) =>
+      sessions.map((entry) =>
+        entry.id === session.id
+          ? { ...entry, tagCount: entry.tagCount + 1 }
+          : entry,
+      ),
+    );
     this.toastService.success(
       "Timestamp tag has been added",
       "Tag Saved",

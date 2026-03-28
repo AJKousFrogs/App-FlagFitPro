@@ -25,6 +25,7 @@ export interface WellnessData {
   motivation?: number;
   mood?: number;
   hydration?: number;
+  readinessScore?: number;
   weight?: number;
   resting_hr?: number;
   notes?: string;
@@ -79,8 +80,12 @@ interface DailyWellnessCheckinEntry {
   energy_level?: number;
   stress_level?: number;
   muscle_soreness?: number;
+  motivation_level?: number;
+  mood?: number;
+  hydration_level?: number;
   soreness_areas?: string[];
   notes?: string;
+  calculated_readiness?: number;
   readiness_score?: number;
   created_at: string;
   updated_at?: string;
@@ -223,6 +228,11 @@ export class WellnessService {
             energy: entry.energy_level,
             stress: entry.stress_level,
             soreness: entry.muscle_soreness,
+            motivation: entry.motivation_level,
+            mood: entry.mood,
+            hydration: entry.hydration_level,
+            readinessScore:
+              entry.calculated_readiness ?? entry.readiness_score,
             notes: entry.notes,
             timestamp: entry.created_at,
           }),
@@ -382,6 +392,10 @@ export class WellnessService {
       energyLevel: data.energy,
       stressLevel: data.stress,
       muscleSoreness: data.soreness,
+      motivationLevel: data.motivation,
+      mood: data.mood,
+      hydrationLevel: data.hydration,
+      readinessScore: data.readinessScore,
       notes: data.notes,
       sorenessAreas: [] as string[],
     };
@@ -423,9 +437,14 @@ export class WellnessService {
                 detail: {
                   date: payload.date,
                   sleep: payload.sleepQuality,
+                  sleepHours: payload.sleepHours,
                   energy: payload.energyLevel,
                   stress: payload.stressLevel,
                   soreness: payload.muscleSoreness,
+                  motivation: payload.motivationLevel,
+                  mood: payload.mood,
+                  hydration: payload.hydrationLevel,
+                  readinessScore: payload.readinessScore,
                 },
               }),
             );
@@ -712,6 +731,10 @@ export class WellnessService {
       energy: entry.energy_level,
       stress: entry.stress_level,
       soreness: entry.muscle_soreness,
+      motivation: entry.motivation_level,
+      mood: entry.mood,
+      hydration: entry.hydration_level,
+      readinessScore: entry.calculated_readiness ?? entry.readiness_score,
       notes: entry.notes,
       timestamp: entry.created_at,
     };

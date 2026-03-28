@@ -164,8 +164,8 @@ describe("StatisticsCalculationService", () => {
   describe("Weekly Stats Calculation", () => {
     it("should calculate weekly stats with data quality", () => {
       const workouts = [
-        { date: new Date("2025-12-07"), type: "speed", duration: 1.0 },
-        { date: new Date("2025-12-06"), type: "strength", duration: 1.5 },
+        { date: new Date("2025-12-07"), type: "speed", duration: 60 },
+        { date: new Date("2025-12-06"), type: "strength", duration: 90 },
         { date: new Date("2025-12-05"), type: "agility" }, // Missing duration
       ];
 
@@ -175,7 +175,9 @@ describe("StatisticsCalculationService", () => {
       );
 
       expect(result.sessionsCompleted).toBe(3);
-      expect(result.totalHours).toBeGreaterThan(0);
+      expect(result.totalMinutes).toBe(180);
+      expect(result.totalHours).toBe(3);
+      expect(result.estimatedHours).toBe(0.5);
       expect(result.dataQuality).toBeDefined();
       expect(result.confidenceLevel).toBeGreaterThanOrEqual(0);
       expect(result.confidenceLevel).toBeLessThanOrEqual(100);
@@ -183,9 +185,9 @@ describe("StatisticsCalculationService", () => {
 
     it("should classify data quality correctly", () => {
       const completeData = [
-        { date: new Date(), type: "speed", duration: 1.0 },
-        { date: new Date(), type: "strength", duration: 1.5 },
-        { date: new Date(), type: "agility", duration: 0.5 },
+        { date: new Date(), type: "speed", duration: 60 },
+        { date: new Date(), type: "strength", duration: 90 },
+        { date: new Date(), type: "agility", duration: 30 },
       ];
 
       const result = service.calculateWeeklyStats(completeData);

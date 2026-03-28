@@ -32,7 +32,6 @@ import { MissingDataStatus } from "../../../core/services/missing-data-detection
       <app-card-shell
         class="missing-data-card"
         [class]="'severity-' + missingStatus()!.severity"
-        [flush]="true"
       >
         <div class="missing-data-header">
           <div class="header-content">

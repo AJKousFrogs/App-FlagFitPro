@@ -118,8 +118,7 @@ export class SettingsDataExportService {
 
       if (input.options.settings) {
         this.exportProgress.set((progress += 100 / totalSteps));
-        const localSettings = this.platform.getLocalStorage("user_settings");
-        exportData.settings = localSettings ? JSON.parse(localSettings) : {};
+        exportData.settings = await this.loadSettingsExport(user.id);
       }
 
       this.exportProgress.set(100);
@@ -247,5 +246,66 @@ export class SettingsDataExportService {
     }
 
     return lines.join("\n");
+  }
+
+  private async loadSettingsExport(
+    userId: string,
+  ): Promise<Record<string, unknown>> {
+    const { settings, error } =
+      await this.settingsDataService.fetchUserSettings(userId);
+
+    if (settings) {
+      return settings;
+    }
+
+    if (error) {
+      this.logger.warn(
+        "[exportUserData] Falling back to cached settings export",
+        toLogContext({ userId, error: error.message ?? "unknown error" }),
+      );
+    }
+
+    return this.readCachedSettings(userId) ?? {};
+  }
+
+  private readCachedSettings(userId: string): Record<string, unknown> | null {
+    const localSettings = this.platform.getLocalStorage("user_settings");
+    if (!localSettings) {
+      return null;
+    }
+
+    try {
+      const parsed = JSON.parse(localSettings) as unknown;
+      if (!this.isUserSettingsCacheForUser(parsed, userId)) {
+        return null;
+      }
+
+      return parsed;
+    } catch (error) {
+      this.logger.warn(
+        "[exportUserData] Ignoring invalid local settings cache",
+        toLogContext({ userId, error }),
+      );
+      return null;
+    }
+  }
+
+  private isUserSettingsCacheForUser(
+    value: unknown,
+    userId: string,
+  ): value is Record<string, unknown> {
+    if (!value || typeof value !== "object" || Array.isArray(value)) {
+      return false;
+    }
+
+    const candidate = value as Record<string, unknown>;
+    const cachedUserId =
+      typeof candidate["user_id"] === "string"
+        ? candidate["user_id"]
+        : typeof candidate["userId"] === "string"
+          ? candidate["userId"]
+          : null;
+
+    return cachedUserId === userId;
   }
 }

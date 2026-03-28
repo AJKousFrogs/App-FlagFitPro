@@ -15,6 +15,7 @@ import { LoggerService } from "./logger.service";
 import { SupabaseService } from "./supabase.service";
 import { TeamMembershipService } from "./team-membership.service";
 import { AchievementsService } from "./achievements.service";
+import { isBenignSupabaseQueryError } from "../../shared/utils/error.utils";
 
 /**
  * Performance metric types that can be ranked
@@ -102,6 +103,7 @@ export class TeamPerformanceRankingService {
   private readonly supabaseService = inject(SupabaseService);
   private readonly teamMembershipService = inject(TeamMembershipService);
   private readonly achievementsService = inject(AchievementsService);
+  private performanceRecordsUnavailable = false;
 
   // State signals
   private readonly _rankings = signal<TeamRankingOverview | null>(null);
@@ -145,6 +147,12 @@ export class TeamPerformanceRankingService {
     this._error.set(null);
 
     try {
+      if (this.performanceRecordsUnavailable) {
+        this._rankings.set(null);
+        this._isLoading.set(false);
+        return null;
+      }
+
       // Get all team members' latest performance records
       const { data: teamMembers, error: membersError } =
         await this.supabaseService.client
@@ -172,6 +180,12 @@ export class TeamPerformanceRankingService {
           .order("recorded_at", { ascending: false });
 
       if (recordsError) {
+        if (isBenignSupabaseQueryError(recordsError)) {
+          this.performanceRecordsUnavailable = true;
+          this._rankings.set(null);
+          this._isLoading.set(false);
+          return null;
+        }
         this.logger.error(
           "[TeamRanking] Error fetching records:",
           recordsError,

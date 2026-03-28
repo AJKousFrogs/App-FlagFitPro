@@ -9,6 +9,53 @@ export class SettingsDataService {
   private readonly supabaseService = inject(SupabaseService);
   private usersTableUnavailable = false;
 
+  private mapSettingsRows(
+    rows: Array<{ setting_key?: string | null; setting_value?: unknown }> | null,
+  ): Record<string, unknown> | null {
+    if (!rows || rows.length === 0) {
+      return null;
+    }
+
+    return rows.reduce<Record<string, unknown>>((acc, row) => {
+      if (row.setting_key) {
+        acc[row.setting_key] = row.setting_value;
+      }
+      return acc;
+    }, {});
+  }
+
+  private async upsertUserSettingsRows(userId: string, data: Record<string, unknown>) {
+    const timestamp =
+      typeof data.updated_at === "string"
+        ? data.updated_at
+        : new Date().toISOString();
+
+    const rows = Object.entries(data)
+      .filter(([key]) => key !== "user_id" && key !== "updated_at")
+      .map(([setting_key, setting_value]) => ({
+        user_id: userId,
+        setting_key,
+        setting_value,
+        updated_at: timestamp,
+      }));
+
+    if (rows.length === 0) {
+      return { data: null, error: null };
+    }
+
+    const { data: result, error } = await this.supabaseService.client
+      .from("user_settings")
+      .upsert(rows, { onConflict: "user_id,setting_key" })
+      .select("setting_key, setting_value");
+
+    return {
+      data: this.mapSettingsRows(
+        (result as Array<{ setting_key?: string | null; setting_value?: unknown }>) ?? null,
+      ),
+      error,
+    };
+  }
+
   getCurrentUser() {
     return this.supabaseService.getCurrentUser();
   }
@@ -223,41 +270,51 @@ export class SettingsDataService {
     return { data: (result as Record<string, unknown>) ?? null, error };
   }
 
+  async insertPhysicalMeasurement(data: Record<string, unknown>): Promise<{
+    data: Record<string, unknown> | null;
+    error: { message?: string } | null;
+  }> {
+    const { data: result, error } = await this.supabaseService.client
+      .from("physical_measurements")
+      .insert(data)
+      .select()
+      .maybeSingle();
+
+    return { data: (result as Record<string, unknown>) ?? null, error };
+  }
+
   async fetchUserSettings(userId: string): Promise<{
     settings: Record<string, unknown> | null;
     error: { message?: string } | null;
   }> {
     const { data, error } = await this.supabaseService.client
       .from("user_settings")
-      .select("user_id")
-      .eq("user_id", userId)
-      .maybeSingle();
-    return { settings: (data as Record<string, unknown>) ?? null, error };
+      .select("setting_key, setting_value")
+      .eq("user_id", userId);
+    return {
+      settings: this.mapSettingsRows(
+        (data as Array<{ setting_key?: string | null; setting_value?: unknown }>) ?? null,
+      ),
+      error,
+    };
   }
 
   async updateUserSettings(userId: string, data: Record<string, unknown>): Promise<{
     data: Record<string, unknown> | null;
     error: { message?: string } | null;
   }> {
-    const { data: result, error } = await this.supabaseService.client
-      .from("user_settings")
-      .update(data)
-      .eq("user_id", userId)
-      .select()
-      .maybeSingle();
-    return { data: (result as Record<string, unknown>) ?? null, error };
+    return await this.upsertUserSettingsRows(userId, data);
   }
 
   async insertUserSettings(data: Record<string, unknown>): Promise<{
     data: Record<string, unknown> | null;
     error: { message?: string } | null;
   }> {
-    const { data: result, error } = await this.supabaseService.client
-      .from("user_settings")
-      .insert(data)
-      .select()
-      .maybeSingle();
-    return { data: (result as Record<string, unknown>) ?? null, error };
+    const userId = typeof data.user_id === "string" ? data.user_id : null;
+    if (!userId) {
+      return { data: null, error: { message: "user_id is required" } };
+    }
+    return await this.upsertUserSettingsRows(userId, data);
   }
 
   async insertDeletionRequest(data: Record<string, unknown>): Promise<{
