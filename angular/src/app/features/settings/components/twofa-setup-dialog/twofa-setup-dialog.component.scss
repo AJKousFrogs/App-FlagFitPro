@@ -84,6 +84,11 @@
     border-color var(--transition-fast),
     background-color var(--transition-fast);
   cursor: pointer;
+
+  &:focus-visible {
+    outline: var(--focus-outline-width) solid var(--ds-primary-green);
+    outline-offset: var(--focus-outline-offset);
+  }
 }
 
 .app-list {

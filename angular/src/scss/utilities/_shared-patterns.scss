@@ -94,3 +94,56 @@
   text-align: center;
   color: var(--ds-primary-green);
 }
+
+// ============================================
+// TAB NAVIGATION (playbook-manager, tournament-management, practice-planner)
+// Horizontal scrollable tab bar with active state
+// ============================================
+
+@mixin tab-navigation {
+  .tab-navigation {
+    display: flex;
+    gap: var(--space-2);
+    border-bottom: var(--border-1) solid var(--ds-border-subtle);
+    padding-bottom: var(--space-2);
+    overflow-x: auto;
+
+    .tab-btn {
+      min-height: var(--component-button-height-sm);
+      padding: 0 var(--space-4);
+      background: var(--surface-secondary);
+      border: var(--border-1) solid transparent;
+      border-radius: var(--radius-md);
+      font-size: var(--ds-font-size-md);
+      font-weight: var(--ds-font-weight-medium);
+      color: var(--ds-text-secondary);
+      cursor: pointer;
+      transition:
+        background-color var(--motion-base) var(--ease-standard),
+        border-color var(--motion-base) var(--ease-standard),
+        color var(--motion-base) var(--ease-standard);
+      white-space: nowrap;
+
+      &:hover {
+        background: var(--surface-card);
+        border-color: var(--color-border-subtle);
+        color: var(--color-text-primary);
+      }
+
+      &:focus-visible {
+        outline: var(--focus-outline-width) solid var(--ds-primary-green);
+        outline-offset: var(--focus-outline-offset);
+      }
+
+      &.active {
+        background: var(--color-brand-primary-subtle);
+        color: var(--color-brand-primary);
+        border-color: color-mix(
+          in srgb,
+          var(--color-brand-primary) 22%,
+          transparent
+        );
+      }
+    }
+  }
+}

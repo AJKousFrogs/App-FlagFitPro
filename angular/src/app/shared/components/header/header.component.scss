@@ -96,10 +96,18 @@
     cursor: pointer;
     transition: all var(--transition-base);
 
-    &:hover {
-      border-color: var(--ds-primary-green);
-      background: var(--surface-card);
-      box-shadow: var(--shadow-sm);
+    @media (hover: hover) and (pointer: fine) {
+      &:hover {
+        border-color: var(--ds-primary-green);
+        background: var(--surface-card);
+        box-shadow: var(--shadow-sm);
+      }
+    }
+
+    &:focus-visible {
+      outline: var(--focus-outline-width) solid var(--ds-primary-green);
+      outline-offset: var(--focus-outline-offset);
+      box-shadow: var(--shadow-focus);
     }
 
     i {
@@ -155,9 +163,17 @@
   transition: all var(--transition-fast);
   height: var(--button-height-sm);
 
-  &:hover {
-    background: var(--ui-surface-subtle);
-    color: var(--ds-primary-green);
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      background: var(--ui-surface-subtle);
+      color: var(--ds-primary-green);
+    }
+  }
+
+  &:focus-visible {
+    outline: var(--focus-outline-width) solid var(--ds-primary-green);
+    outline-offset: var(--focus-outline-offset);
+    box-shadow: var(--shadow-focus);
   }
 
   i { font-size: 1.2rem; }
@@ -195,10 +211,19 @@
 .header-profile {
   cursor: pointer;
   transition: transform var(--transition-fast);
-  padding: 2px;
-  
-  &:hover {
-    transform: scale(1.05);
+  padding: var(--space-0-5);
+  border-radius: var(--radius-full);
+
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      transform: scale(1.05);
+    }
+  }
+
+  &:focus-visible {
+    outline: var(--focus-outline-width) solid var(--ds-primary-green);
+    outline-offset: var(--focus-outline-offset);
+    box-shadow: var(--shadow-focus);
   }
 }
 

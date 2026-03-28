@@ -428,6 +428,23 @@ height: 100dvh; // Modern: keyboard-aware
     transform var(--transition-fast),
     opacity var(--transition-fast),
     background var(--transition-fast);
+
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      transform: translateY(calc(var(--space-0-5) * -1));
+      box-shadow: var(--shadow-md);
+    }
+  }
+
+  &:focus-visible {
+    outline: var(--focus-outline-width) solid var(--ds-primary-green);
+    outline-offset: var(--focus-outline-offset);
+    box-shadow: var(--shadow-focus);
+  }
+
+  &:active {
+    transform: scale(0.98);
+  }
 }
 
 .video-thumbnail {

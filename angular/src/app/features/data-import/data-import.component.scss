@@ -30,10 +30,12 @@
   border: var(--border-2) solid transparent;
 
   &:hover {
-    transform: translateY(-var(--space-1));
+    transform: translateY(calc(-1 * var(--space-1)));
     box-shadow: var(--shadow-3);
     border-color: var(--ds-primary-green);
   }
+
+  @include ds-focus-ring;
 }
 
 .type-content {

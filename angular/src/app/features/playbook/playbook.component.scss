@@ -58,7 +58,7 @@
     .play-diagram-placeholder {
       position: relative;
       aspect-ratio: 4/3;
-      background: #1a1a1a; // Dark field background
+      background: var(--primitive-neutral-900);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -67,8 +67,8 @@
       
       .memorized-badge {
         position: absolute;
-        top: 8px;
-        right: 8px;
+        top: var(--space-2);
+        right: var(--space-2);
         background: var(--ds-primary-green);
         color: white;
         width: 24px;
@@ -84,14 +84,14 @@
     .play-info {
       padding: var(--space-4);
       
-      .play-name { margin: 0 0 4px; font-size: var(--ds-font-size-md); font-weight: var(--ds-font-weight-bold); }
-      .play-category { font-size: var(--ds-font-size-xs); color: var(--color-text-secondary); margin-bottom: 12px; }
-      
+      .play-name { margin: 0 0 var(--space-1); font-size: var(--ds-font-size-md); font-weight: var(--ds-font-weight-bold); }
+      .play-category { font-size: var(--ds-font-size-xs); color: var(--color-text-secondary); margin-bottom: var(--space-3); }
+
       .play-tags {
         display: flex;
         flex-wrap: wrap;
-        gap: 4px;
-        .tag { font-size: 10px; background: var(--ui-surface-subtle); padding: 2px 6px; border-radius: 4px; }
+        gap: var(--space-1);
+        .tag { font-size: 10px; background: var(--ui-surface-subtle); padding: var(--space-0-5) var(--space-1-5); border-radius: var(--radius-sm); }
       }
     }
   }

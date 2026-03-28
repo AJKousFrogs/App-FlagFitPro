@@ -185,6 +185,8 @@
     box-shadow: var(--shadow-sm);
   }
 
+  @include ds-focus-ring;
+
   @include respond-to(md) {
     flex-direction: column;
     gap: var(--space-3);
@@ -240,11 +242,6 @@
   font-weight: var(--ds-font-weight-medium);
   background: var(--surface-tertiary);
   color: var(--color-text-secondary);
-
-  &--replaced {
-    background: var(--surface-tertiary);
-    color: var(--color-text-secondary);
-  }
 
   &--logged {
     background: var(--color-status-success-subtle);

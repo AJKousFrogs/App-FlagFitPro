@@ -79,6 +79,24 @@ app-card-shell {
     opacity var(--transition-fast),
     background var(--transition-fast);
   text-align: center;
+
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      border-color: var(--color-brand-primary);
+      background: var(--color-brand-primary-subtle);
+      transform: translateY(calc(var(--space-0-5) * -1));
+    }
+  }
+
+  &:focus-visible {
+    outline: var(--focus-outline-width) solid var(--ds-primary-green);
+    outline-offset: var(--focus-outline-offset);
+    box-shadow: var(--shadow-focus);
+  }
+
+  &:active {
+    transform: scale(0.97);
+  }
 }
 
 .session-type-card.selected {

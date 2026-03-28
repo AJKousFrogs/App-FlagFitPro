@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, input, output } from "@angular/core
 import { AlertComponent } from "../../../../shared/components/alert/alert.component";
 import { ButtonComponent } from "../../../../shared/components/button/button.component";
 import { IconButtonComponent } from "../../../../shared/components/button/icon-button.component";
+import { AppLoadingComponent } from "../../../../shared/components/loading/loading.component";
 import {
   AppDialogComponent,
   DialogHeaderComponent,
@@ -17,6 +18,7 @@ import { MobileOptimizedImageDirective } from "../../../../shared/directives/mob
     ButtonComponent,
     IconButtonComponent,
     DialogHeaderComponent,
+    AppLoadingComponent,
     MobileOptimizedImageDirective,
   ],
   templateUrl: "./twofa-setup-dialog.component.html",

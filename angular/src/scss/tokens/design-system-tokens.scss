@@ -1723,27 +1723,27 @@ body.dark-theme {
   --color-chart-5: #f87171; /* Brighter red */
   --color-chart-6: #0ea5e9; /* Brighter sky */
 
-  /* PrimeNG Surface Variables - Dark Mode */
-  --p-surface-0: #171717;
-  --p-surface-50: #1f1f1f;
-  --p-surface-100: #262626;
-  --p-surface-200: #333;
-  --p-surface-300: #404040;
-  --p-surface-400: #525252;
-  --p-surface-500: #737373;
-  --p-surface-600: #a3a3a3;
-  --p-surface-700: #d4d4d4;
-  --p-surface-800: #e5e5e5;
-  --p-surface-900: #f5f5f5;
-  --p-text-color: #fff;
-  --p-text-color-secondary: #a3a3a3;
-  --p-surface-border: rgba(255, 255, 255, 0.1);
+  /* PrimeNG Surface Variables - Dark Mode (mapped to primitive tokens) */
+  --p-surface-0: var(--primitive-neutral-900);
+  --p-surface-50: var(--primitive-neutral-850);
+  --p-surface-100: var(--primitive-neutral-800);
+  --p-surface-200: var(--primitive-neutral-700);
+  --p-surface-300: var(--primitive-neutral-600);
+  --p-surface-400: var(--primitive-neutral-500);
+  --p-surface-500: var(--primitive-neutral-400);
+  --p-surface-600: var(--primitive-neutral-300);
+  --p-surface-700: var(--primitive-neutral-200);
+  --p-surface-800: var(--primitive-neutral-100);
+  --p-surface-900: var(--primitive-neutral-50);
+  --p-text-color: var(--color-text-on-inverse);
+  --p-text-color-secondary: var(--primitive-neutral-300);
+  --p-surface-border: var(--overlay-white-10);
 
   /* Card and Component Backgrounds */
   --p-card-background: var(--primitive-neutral-800);
   --p-content-background: var(--primitive-neutral-900);
-  --p-highlight-background: rgba(16, 201, 107, 0.2);
-  --p-highlight-text-color: #10c96b;
+  --p-highlight-background: rgba(var(--ds-primary-green-rgb), 0.2);
+  --p-highlight-text-color: var(--primitive-primary-500);
 
   /* Overlay consistency (surface-elevated for dark mode) */
   --p-dialog-background: var(--surface-elevated);
@@ -1828,8 +1828,8 @@ body.light-theme {
   /* Card and Component Backgrounds */
   --p-card-background: var(--surface-primary);
   --p-content-background: var(--surface-primary);
-  --p-highlight-background: rgba(16, 201, 107, 0.1);
-  --p-highlight-text-color: #089949;
+  --p-highlight-background: rgba(var(--ds-primary-green-rgb), 0.1);
+  --p-highlight-text-color: var(--ds-primary-green);
 }
 
 /* ================================================================

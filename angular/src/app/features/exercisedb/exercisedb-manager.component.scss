@@ -15,15 +15,15 @@
   border: var(--border-1) solid var(--surface-border);
 
   &.approved {
-    border-left: var(--space-1) solid var(--green-500);
+    border-left: var(--space-1) solid var(--color-status-success);
   }
 
   &.pending {
-    border-left: var(--space-1) solid var(--yellow-500);
+    border-left: var(--space-1) solid var(--color-status-warning);
   }
 
   &.curated {
-    border-left: var(--space-1) solid var(--blue-500);
+    border-left: var(--space-1) solid var(--color-status-info);
   }
 }
 
@@ -104,9 +104,11 @@
   overflow: hidden;
 
   &:hover {
-    transform: translateY(-var(--space-1));
+    transform: translateY(calc(-1 * var(--space-1)));
     box-shadow: var(--shadow-lg);
   }
+
+  @include ds-focus-ring;
 }
 
 .exercise-image-container {
@@ -293,19 +295,19 @@
 }
 
 .result-item.success {
-  background: var(--green-50);
+  background: var(--color-status-success-subtle);
 }
 
 .result-item.info {
-  background: var(--blue-50);
+  background: var(--color-status-info-subtle);
 }
 
 .result-item.warning {
-  background: var(--yellow-50);
+  background: var(--color-status-warning-subtle);
 }
 
 .result-item.error {
-  background: var(--red-50);
+  background: var(--color-status-error-subtle);
 }
 
 .result-value {
@@ -388,7 +390,7 @@
 }
 
 .queue-info {
-  background: var(--blue-50);
+  background: var(--color-status-info-subtle);
   border: var(--border-1) solid var(--blue-200);
   border-radius: var(--radius-md);
   padding: var(--space-4);
@@ -398,7 +400,7 @@
     display: flex;
     align-items: center;
     gap: var(--space-2);
-    color: var(--blue-700);
+    color: var(--color-status-info);
   }
 }
 
@@ -499,8 +501,8 @@
 }
 
 .focus-chip {
-  background: var(--blue-100);
-  color: var(--blue-700);
+  background: var(--color-status-info-subtle);
+  color: var(--color-status-info);
 }
 
 .instructions-list {
@@ -510,20 +512,20 @@
 }
 
 .detail-section.safety {
-  background: var(--yellow-50);
+  background: var(--color-status-warning-subtle);
   padding: var(--space-3);
   border-radius: var(--radius-md);
-  border-left: var(--space-1) solid var(--yellow-500);
+  border-left: var(--space-1) solid var(--color-status-warning);
 }
 
 .detail-section.safety h4 {
-  color: var(--yellow-700);
+  color: var(--color-status-warning);
 }
 
 .detail-section.safety ul {
   margin: 0;
   padding-left: var(--space-5);
-  color: var(--yellow-800);
+  color: var(--color-status-warning);
 }
 
 /* Approval Form */

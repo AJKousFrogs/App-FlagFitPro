@@ -16,6 +16,7 @@ import {
 import { IconButtonComponent } from "../../../shared/components/button/icon-button.component";
 import { AppDialogComponent } from "../../../shared/components/dialog/dialog.component";
 import { DialogHeaderComponent } from "../../../shared/components/dialog-header/dialog-header.component";
+import { AppLoadingComponent } from "../../../shared/components/loading/loading.component";
 import { StatusTagComponent } from "../../../shared/components/status-tag/status-tag.component";
 import { getInitials } from "../../../shared/utils/format.utils";
 
@@ -33,6 +34,7 @@ type ChatMemberWithPresence = ChannelMemberDetails & { is_online: boolean };
     Avatar,
     StatusTagComponent,
     IconButtonComponent,
+    AppLoadingComponent,
   ],
   templateUrl: "./chat-members-dialog.component.html",
   styleUrl: "./chat-members-dialog.component.scss",

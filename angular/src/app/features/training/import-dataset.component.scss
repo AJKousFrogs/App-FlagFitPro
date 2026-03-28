@@ -48,6 +48,8 @@
   transition:
     color var(--transition-fast),
     border-color var(--transition-fast);
+
+  @include ds-focus-ring;
 }
 
 .tab-button.active {
@@ -131,6 +133,11 @@
   transition:
     background-color var(--transition-fast),
     opacity var(--transition-fast);
+}
+
+.primary-button:focus-visible {
+  outline: var(--focus-outline-width) solid var(--color-brand-primary);
+  outline-offset: var(--focus-outline-offset);
 }
 
 .primary-button:hover:not(:disabled) {

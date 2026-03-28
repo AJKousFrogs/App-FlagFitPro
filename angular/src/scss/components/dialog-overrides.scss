@@ -3,83 +3,105 @@
  * Migrated from styles/_dialog-overrides.scss so the components layer owns the same cascade.
  */
 
-.rsvp-dialog {
-  width: var(--dialog-max-width-md);
+@mixin dialog-size($width) {
+  width: $width;
   max-width: calc(100vw - var(--space-6));
   max-height: var(--dialog-max-height);
 }
 
-.payments-instructions-dialog {
-  width: var(--dialog-max-width-lg);
-  max-width: calc(100vw - var(--space-6));
-  max-height: var(--dialog-max-height);
+// Small dialogs
+.officials-schedule-dialog,
+.chat-create-channel-dialog,
+.roster-invite-dialog,
+.equipment-return-dialog,
+.equipment-checkout-dialog,
+.roster-status-dialog,
+.roster-bulk-status-dialog,
+.location-dialog,
+.privacy-contact-dialog,
+.privacy-delete-dialog {
+  @include dialog-size(var(--dialog-max-width-sm));
 }
 
-.officials-standard-dialog {
-  width: var(--dialog-max-width-md);
-  max-width: calc(100vw - var(--space-6));
-  max-height: var(--dialog-max-height);
+// Medium dialogs
+.rsvp-dialog,
+.officials-standard-dialog,
+.chat-pinned-dialog,
+.game-tracker-play-dialog,
+.body-comp-dialog,
+.poll-dialog,
+.tournament-availability-dialog,
+.micro-session-dialog,
+.attendance-create-dialog,
+.training-tournament-dialog {
+  @include dialog-size(var(--dialog-max-width-md));
 }
 
-.officials-schedule-dialog {
-  width: var(--dialog-max-width-sm);
-  max-width: calc(100vw - var(--space-6));
-  max-height: var(--dialog-max-height);
+// Large dialogs
+.payments-instructions-dialog,
+.chat-members-dialog,
+.roster-invitations-dialog,
+.payment-record-dialog,
+.film-tag-dialog,
+.development-note-dialog,
+.team-invite-dialog,
+.injury-checkin-dialog,
+.play-stats-dialog,
+.physio-report-dialog,
+.nutritionist-report-dialog,
+.psychology-precomp-dialog,
+.equipment-add-dialog,
+.development-goal-dialog,
+.film-upload-dialog,
+.player-settings-dialog,
+.video-curation-playlist-dialog,
+.qb-throwing-log-dialog {
+  @include dialog-size(var(--dialog-max-width-lg));
 }
 
-.play-detail-dialog {
-  width: var(--dialog-max-width-2xl);
-  max-width: calc(100vw - var(--space-6));
-  max-height: var(--dialog-max-height);
+// Extra-large dialogs
+.roster-player-details-dialog,
+.roster-player-dialog,
+.payment-fee-dialog,
+.practice-activity-dialog,
+.knowledge-base-add-dialog,
+.team-edit-player-dialog,
+.injury-report-dialog,
+.exercise-details-dialog,
+.psychology-generate-dialog,
+.physio-athlete-dialog,
+.physio-risk-dialog,
+.nutritionist-tournament-dialog,
+.tournament-dialog,
+.tournament-budget-dialog,
+.coach-calendar-event-dialog,
+.coach-calendar-rsvp-dialog,
+.attendance-take-dialog,
+.exercisedb-approval-dialog,
+.video-preview-dialog {
+  @include dialog-size(var(--dialog-max-width-xl));
 }
 
-.quiz-dialog {
-  width: var(--dialog-max-width-xl);
-  max-width: calc(100vw - var(--space-6));
-  max-height: var(--dialog-max-height);
+// 2XL dialogs
+.play-detail-dialog,
+.quiz-dialog,
+.practice-dialog,
+.play-dialog,
+.program-dialog,
+.tournament-detail-dialog,
+.nutritionist-athlete-dialog,
+.tournament-team-availability-dialog,
+.film-detail-dialog,
+.exercisedb-detail-dialog,
+.la28-roadmap-dialog,
+.achievements-panel-dialog,
+.video-curation-preview-dialog,
+.video-dialog,
+.performance-dialog {
+  @include dialog-size(var(--dialog-max-width-2xl));
 }
 
-.chat-create-channel-dialog {
-  width: var(--dialog-max-width-sm);
-  max-width: calc(100vw - var(--space-6));
-  max-height: var(--dialog-max-height);
-}
-
-.chat-pinned-dialog {
-  width: var(--dialog-max-width-md);
-  max-width: calc(100vw - var(--space-6));
-  max-height: var(--dialog-max-height);
-}
-
-.chat-members-dialog {
-  width: var(--dialog-max-width-lg);
-  max-width: calc(100vw - var(--space-6));
-  max-height: var(--dialog-max-height);
-}
-
-.roster-player-details-dialog {
-  width: var(--dialog-max-width-xl);
-  max-width: calc(100vw - var(--space-6));
-  max-height: var(--dialog-max-height);
-}
-
-.roster-invite-dialog {
-  width: var(--dialog-max-width-sm);
-  max-width: calc(100vw - var(--space-6));
-  max-height: var(--dialog-max-height);
-}
-
-.roster-invitations-dialog {
-  width: var(--dialog-max-width-lg);
-  max-width: calc(100vw - var(--space-6));
-  max-height: var(--dialog-max-height);
-}
-
-.roster-player-dialog {
-  width: var(--dialog-max-width-xl);
-  max-width: calc(100vw - var(--space-6));
-  max-height: var(--dialog-max-height);
-}
+// --- Non-standard dialogs ---
 
 .wellness-dialog {
   width: var(--dialog-width-xl);
@@ -90,114 +112,31 @@
   padding-bottom: var(--space-4);
 }
 
-.superadmin-table {
-  min-width: var(--container-md);
+.dashboard-dialog {
+  width: var(--dialog-max-width-lg);
+  max-width: calc(100vw - var(--space-6));
 }
 
-.game-tracker-play-dialog {
-  width: var(--dialog-max-width-md);
-  max-width: calc(100vw - var(--space-6));
+.rtp-start-dialog {
+  width: var(--dialog-max-width-xl);
+  max-width: 95vw;
+}
+
+.la28-roadmap-dialog .p-dialog-content,
+.achievements-panel-dialog .p-dialog-content {
   max-height: var(--dialog-max-height);
+  overflow: auto;
+}
+
+// --- Non-dialog classes (should be relocated in future cleanup) ---
+
+.superadmin-table {
+  min-width: var(--container-md);
 }
 
 .hydration-progress-bar {
   height: var(--space-2);
   width: var(--layout-width-xxs);
-}
-
-.payment-fee-dialog {
-  width: var(--dialog-max-width-xl);
-  max-width: calc(100vw - var(--space-6));
-  max-height: var(--dialog-max-height);
-}
-
-.payment-record-dialog {
-  width: var(--dialog-max-width-lg);
-  max-width: calc(100vw - var(--space-6));
-  max-height: var(--dialog-max-height);
-}
-
-.practice-dialog {
-  width: var(--dialog-max-width-2xl);
-  max-width: calc(100vw - var(--space-6));
-  max-height: var(--dialog-max-height);
-}
-
-.practice-activity-dialog {
-  width: var(--dialog-max-width-xl);
-  max-width: calc(100vw - var(--space-6));
-  max-height: var(--dialog-max-height);
-}
-
-.film-tag-dialog {
-  width: var(--dialog-max-width-lg);
-  max-width: calc(100vw - var(--space-6));
-  max-height: var(--dialog-max-height);
-}
-
-.development-note-dialog {
-  width: var(--dialog-max-width-lg);
-  max-width: calc(100vw - var(--space-6));
-  max-height: var(--dialog-max-height);
-}
-
-.knowledge-base-add-dialog {
-  width: var(--dialog-max-width-xl);
-  max-width: calc(100vw - var(--space-6));
-  max-height: var(--dialog-max-height);
-}
-
-.team-invite-dialog {
-  width: var(--dialog-max-width-lg);
-  max-width: calc(100vw - var(--space-6));
-  max-height: var(--dialog-max-height);
-}
-
-.team-edit-player-dialog {
-  width: var(--dialog-max-width-xl);
-  max-width: calc(100vw - var(--space-6));
-  max-height: var(--dialog-max-height);
-}
-
-.injury-report-dialog {
-  width: var(--dialog-max-width-xl);
-  max-width: calc(100vw - var(--space-6));
-  max-height: var(--dialog-max-height);
-}
-
-.injury-checkin-dialog {
-  width: var(--dialog-max-width-lg);
-  max-width: calc(100vw - var(--space-6));
-  max-height: var(--dialog-max-height);
-}
-
-.play-dialog {
-  width: var(--dialog-max-width-2xl);
-  max-width: calc(100vw - var(--space-6));
-  max-height: var(--dialog-max-height);
-}
-
-.play-stats-dialog {
-  width: var(--dialog-max-width-lg);
-  max-width: calc(100vw - var(--space-6));
-  max-height: var(--dialog-max-height);
-}
-
-.program-dialog {
-  width: var(--dialog-max-width-2xl);
-  max-width: calc(100vw - var(--space-6));
-  max-height: var(--dialog-max-height);
-}
-
-.tournament-detail-dialog {
-  width: var(--dialog-max-width-2xl);
-  max-width: calc(100vw - var(--space-6));
-  max-height: var(--dialog-max-height);
-}
-
-.dashboard-dialog {
-  width: var(--dialog-max-width-lg);
-  max-width: calc(100vw - var(--space-6));
 }
 
 .performance-avatar--injured {
@@ -211,262 +150,4 @@
 .performance-avatar--standard {
   background: var(--ds-primary-green-subtle);
   color: var(--ds-primary-green-dark);
-}
-
-.exercise-details-dialog {
-  width: var(--dialog-max-width-xl);
-  max-width: calc(100vw - var(--space-6));
-  max-height: var(--dialog-max-height);
-}
-
-.rtp-start-dialog {
-  width: var(--dialog-max-width-xl);
-  max-width: 95vw;
-}
-
-.psychology-generate-dialog {
-  width: var(--dialog-max-width-xl);
-  max-width: calc(100vw - var(--space-6));
-  max-height: var(--dialog-max-height);
-}
-
-.psychology-precomp-dialog {
-  width: var(--dialog-max-width-lg);
-  max-width: calc(100vw - var(--space-6));
-  max-height: var(--dialog-max-height);
-}
-
-.physio-athlete-dialog {
-  width: var(--dialog-max-width-xl);
-  max-width: calc(100vw - var(--space-6));
-  max-height: var(--dialog-max-height);
-}
-
-.physio-report-dialog {
-  width: var(--dialog-max-width-lg);
-  max-width: calc(100vw - var(--space-6));
-  max-height: var(--dialog-max-height);
-}
-
-.physio-risk-dialog {
-  width: var(--dialog-max-width-xl);
-  max-width: calc(100vw - var(--space-6));
-  max-height: var(--dialog-max-height);
-}
-
-.nutritionist-athlete-dialog {
-  width: var(--dialog-max-width-2xl);
-  max-width: calc(100vw - var(--space-6));
-  max-height: var(--dialog-max-height);
-}
-
-.nutritionist-report-dialog {
-  width: var(--dialog-max-width-lg);
-  max-width: calc(100vw - var(--space-6));
-  max-height: var(--dialog-max-height);
-}
-
-.nutritionist-tournament-dialog {
-  width: var(--dialog-max-width-xl);
-  max-width: calc(100vw - var(--space-6));
-  max-height: var(--dialog-max-height);
-}
-
-.tournament-dialog {
-  width: var(--dialog-max-width-xl);
-  max-width: calc(100vw - var(--space-6));
-  max-height: var(--dialog-max-height);
-}
-
-.tournament-availability-dialog {
-  width: var(--dialog-max-width-md);
-  max-width: calc(100vw - var(--space-6));
-  max-height: var(--dialog-max-height);
-}
-
-.tournament-team-availability-dialog {
-  width: var(--dialog-max-width-2xl);
-  max-width: calc(100vw - var(--space-6));
-  max-height: var(--dialog-max-height);
-}
-
-.tournament-budget-dialog {
-  width: var(--dialog-max-width-xl);
-  max-width: calc(100vw - var(--space-6));
-  max-height: var(--dialog-max-height);
-}
-
-.equipment-add-dialog {
-  width: var(--dialog-max-width-lg);
-  max-width: calc(100vw - var(--space-6));
-  max-height: var(--dialog-max-height);
-}
-
-.equipment-return-dialog {
-  width: var(--dialog-max-width-sm);
-  max-width: calc(100vw - var(--space-6));
-  max-height: var(--dialog-max-height);
-}
-
-.equipment-checkout-dialog {
-  width: var(--dialog-max-width-sm);
-  max-width: calc(100vw - var(--space-6));
-  max-height: var(--dialog-max-height);
-}
-
-.development-goal-dialog {
-  width: var(--dialog-max-width-lg);
-  max-width: calc(100vw - var(--space-6));
-  max-height: var(--dialog-max-height);
-}
-
-.roster-status-dialog,
-.roster-bulk-status-dialog {
-  width: var(--dialog-max-width-sm);
-  max-width: calc(100vw - var(--space-6));
-  max-height: var(--dialog-max-height);
-}
-
-.coach-calendar-event-dialog,
-.coach-calendar-rsvp-dialog {
-  width: var(--dialog-max-width-xl);
-  max-width: calc(100vw - var(--space-6));
-  max-height: var(--dialog-max-height);
-}
-
-.film-upload-dialog {
-  width: var(--dialog-max-width-lg);
-  max-width: calc(100vw - var(--space-6));
-  max-height: var(--dialog-max-height);
-}
-
-.film-detail-dialog {
-  width: var(--dialog-max-width-2xl);
-  max-width: calc(100vw - var(--space-6));
-  max-height: var(--dialog-max-height);
-}
-
-.body-comp-dialog {
-  width: var(--dialog-max-width-md);
-  max-width: calc(100vw - var(--space-6));
-  max-height: var(--dialog-max-height);
-}
-
-.poll-dialog {
-  width: var(--dialog-max-width-md);
-  max-width: calc(100vw - var(--space-6));
-  max-height: var(--dialog-max-height);
-}
-
-.location-dialog {
-  width: var(--dialog-max-width-sm);
-  max-width: calc(100vw - var(--space-6));
-  max-height: var(--dialog-max-height);
-}
-
-.micro-session-dialog {
-  width: var(--dialog-max-width-md);
-  max-width: calc(100vw - var(--space-6));
-  max-height: var(--dialog-max-height);
-}
-
-.privacy-contact-dialog,
-.privacy-delete-dialog {
-  width: var(--dialog-max-width-sm);
-  max-width: calc(100vw - var(--space-6));
-  max-height: var(--dialog-max-height);
-}
-
-.exercisedb-detail-dialog {
-  width: var(--dialog-max-width-2xl);
-  max-width: calc(100vw - var(--space-6));
-  max-height: var(--dialog-max-height);
-}
-
-.exercisedb-approval-dialog {
-  width: var(--dialog-max-width-xl);
-  max-width: calc(100vw - var(--space-6));
-  max-height: var(--dialog-max-height);
-}
-
-.attendance-create-dialog {
-  width: var(--dialog-max-width-md);
-  max-width: calc(100vw - var(--space-6));
-  max-height: var(--dialog-max-height);
-}
-
-.attendance-take-dialog {
-  width: var(--dialog-max-width-xl);
-  max-width: calc(100vw - var(--space-6));
-  max-height: var(--dialog-max-height);
-}
-
-.la28-roadmap-dialog {
-  width: var(--dialog-max-width-2xl);
-  max-width: calc(100vw - var(--space-6));
-  max-height: var(--dialog-max-height);
-}
-
-.la28-roadmap-dialog .p-dialog-content {
-  max-height: var(--dialog-max-height);
-  overflow: auto;
-}
-
-.achievements-panel-dialog {
-  width: var(--dialog-max-width-2xl);
-  max-width: calc(100vw - var(--space-6));
-  max-height: var(--dialog-max-height);
-}
-
-.achievements-panel-dialog .p-dialog-content {
-  max-height: var(--dialog-max-height);
-  overflow: auto;
-}
-
-.player-settings-dialog {
-  width: var(--dialog-max-width-lg);
-  max-width: calc(100vw - var(--space-6));
-  max-height: var(--dialog-max-height);
-}
-
-.training-tournament-dialog {
-  width: var(--dialog-max-width-md);
-  max-width: calc(100vw - var(--space-6));
-  max-height: var(--dialog-max-height);
-}
-
-.video-curation-preview-dialog {
-  width: var(--dialog-max-width-2xl);
-  max-width: calc(100vw - var(--space-6));
-  max-height: var(--dialog-max-height);
-}
-
-.video-curation-playlist-dialog {
-  width: var(--dialog-max-width-lg);
-  max-width: calc(100vw - var(--space-6));
-  max-height: var(--dialog-max-height);
-}
-
-.video-dialog {
-  width: var(--dialog-max-width-2xl);
-  max-width: calc(100vw - var(--space-6));
-  max-height: var(--dialog-max-height);
-}
-
-.video-preview-dialog {
-  width: var(--dialog-max-width-xl);
-  max-width: calc(100vw - var(--space-6));
-  max-height: var(--dialog-max-height);
-}
-
-.qb-throwing-log-dialog {
-  width: var(--dialog-max-width-lg);
-  max-width: calc(100vw - var(--space-6));
-  max-height: var(--dialog-max-height);
-}
-
-.performance-dialog {
-  width: var(--dialog-max-width-2xl);
-  max-width: calc(100vw - var(--space-6));
-  max-height: var(--dialog-max-height);
 }

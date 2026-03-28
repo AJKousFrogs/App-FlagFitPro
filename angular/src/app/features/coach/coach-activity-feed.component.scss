@@ -98,6 +98,7 @@
   position: relative;
 
   @include ds-hover-state(var(--surface-secondary));
+  @include ds-focus-ring;
 }
 
 .activity-item.unread {
@@ -150,8 +151,8 @@
 
 .activity-icon-badge {
   position: absolute;
-  bottom: -var(--border-2);
-  right: -var(--border-2);
+  bottom: calc(-1 * var(--border-2));
+  right: calc(-1 * var(--border-2));
   width: var(--icon-base);
   height: var(--icon-base);
   border-radius: var(--radius-circle);

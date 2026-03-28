@@ -158,16 +158,6 @@
   }
 }
 
-@keyframes glow {
-  0%,
-  100% {
-    filter: brightness(1);
-  }
-  50% {
-    filter: brightness(1.15);
-  }
-}
-
 // Light labels (hidden by default, shown on hover)
 .light-label {
   position: absolute;

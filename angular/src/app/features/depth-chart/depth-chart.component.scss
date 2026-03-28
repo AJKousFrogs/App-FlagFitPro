@@ -90,6 +90,8 @@
     border-color: var(--color-brand-primary);
   }
 
+  @include ds-focus-ring;
+
   &.starter {
     background: var(--ds-primary-green-ultra-subtle);
     border-color: var(--primitive-primary-200);

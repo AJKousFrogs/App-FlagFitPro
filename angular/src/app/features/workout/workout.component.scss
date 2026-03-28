@@ -90,7 +90,18 @@
   transition: background var(--transition-base) var(--ease-standard);
 }
 
-.workout-item:hover {
+@media (hover: hover) and (pointer: fine) {
+  .workout-item:hover {
+    background: var(--surface-tertiary);
+  }
+}
+
+.workout-item:focus-visible {
+  outline: var(--focus-outline-width) solid var(--ds-primary-green);
+  outline-offset: var(--focus-outline-offset);
+}
+
+.workout-item:active {
   background: var(--surface-tertiary);
 }
 

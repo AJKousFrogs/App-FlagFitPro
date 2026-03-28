@@ -311,7 +311,7 @@
   display: grid;
   place-items: center;
   color: var(--ecc-color-text-secondary);
-  background: rgba(16, 103, 214, 0.05);
+  background: var(--color-status-info-subtle);
 }
 
 .settings-row {

@@ -32,6 +32,20 @@
   color: var(--text-color);
   cursor: pointer;
   user-select: none;
+  border-radius: var(--radius-sm);
+  padding: var(--space-1);
+  transition: color var(--transition-fast);
+
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      color: var(--ds-primary-green);
+    }
+  }
+
+  &:focus-visible {
+    outline: var(--focus-outline-width) solid var(--ds-primary-green);
+    outline-offset: var(--focus-outline-offset);
+  }
 }
 
 .faq-item p {

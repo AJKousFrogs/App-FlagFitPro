@@ -165,7 +165,7 @@
 }
 
 .empty-state.compact .empty-title {
-  font-size: var(--ds-font-size-2xl);
+  font-size: var(--ds-font-size-xl);
 }
 
 .empty-message {
@@ -177,7 +177,6 @@
 }
 
 .empty-state.compact .empty-message {
-  font-size: var(--ds-font-size-md);
   margin-bottom: var(--space-3);
 }
 
@@ -228,7 +227,7 @@
   display: none;
 }
 
-@media (min-width: var(--breakpoint-sm)) {
+@include respond-above(sm) {
   .empty-actions {
     flex-direction: row;
   }

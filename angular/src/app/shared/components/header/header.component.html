@@ -72,7 +72,15 @@
       }
 
       <!-- Notifications -->
-      <div class="header-utility notifications-trigger" (click)="toggleNotifications()">
+      <div
+        class="header-utility notifications-trigger"
+        (click)="toggleNotifications()"
+        (keydown.enter)="toggleNotifications()"
+        (keydown.space)="toggleNotifications()"
+        role="button"
+        tabindex="0"
+        aria-label="Notifications"
+      >
         <div class="icon-badge-container">
           <i class="pi pi-bell" aria-hidden="true"></i>
           @if (notificationCount() > 0) {
@@ -83,7 +91,16 @@
       </div>
 
       <!-- Theme Toggle -->
-      <div class="header-utility theme-toggle" (click)="cycleTheme()" [pTooltip]="themeTooltip()">
+      <div
+        class="header-utility theme-toggle"
+        (click)="cycleTheme()"
+        (keydown.enter)="cycleTheme()"
+        (keydown.space)="cycleTheme()"
+        [pTooltip]="themeTooltip()"
+        role="button"
+        tabindex="0"
+        aria-label="Toggle theme"
+      >
         <i [class]="'pi ' + themeIcon()" aria-hidden="true"></i>
         <span class="utility-label">{{ themeLabel() }}</span>
       </div>
@@ -99,7 +116,16 @@
       />
 
       <!-- User Avatar -->
-      <div class="header-profile" (click)="toggleUserMenu($event)">
+      <div
+        class="header-profile"
+        (click)="toggleUserMenu($event)"
+        (keydown.enter)="toggleUserMenu($event)"
+        (keydown.space)="toggleUserMenu($event)"
+        role="button"
+        tabindex="0"
+        aria-label="User menu"
+        aria-haspopup="menu"
+      >
         <p-avatar
           [label]="userInitials()"
           shape="circle"

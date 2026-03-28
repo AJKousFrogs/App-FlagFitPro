@@ -16,10 +16,7 @@
 
   <div class="sessions-content">
     @if (loadingSessions()) {
-      <div class="sessions-loading">
-        <i class="pi pi-spin pi-spinner"></i>
-        <span>Loading sessions...</span>
-      </div>
+      <app-loading message="Loading sessions..." [compact]="true" />
     } @else {
       <div class="sessions-list-new">
         @for (session of sessions(); track session.id) {

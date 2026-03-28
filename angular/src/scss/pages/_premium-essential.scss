@@ -19,13 +19,5 @@
     opacity: 1;
   }
 
-  /* Global reduced motion (a11y) */
-  *,
-  *::before,
-  *::after {
-    animation-duration: var(--transition-instant);
-    animation-iteration-count: 1;
-    transition-duration: var(--transition-instant);
-    scroll-behavior: auto;
-  }
+  /* Global reduced motion handled by design-system ds-reduced-motion mixin */
 }

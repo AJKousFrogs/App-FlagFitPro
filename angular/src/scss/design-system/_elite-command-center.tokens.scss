@@ -72,8 +72,10 @@
     background-color var(--motion-fast) var(--ease-standard),
     border-color var(--motion-fast) var(--ease-standard);
 
-  &:hover {
-    background: var(--ecc-color-state-hover);
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      background: var(--ecc-color-state-hover);
+    }
   }
 
   &:active {
@@ -103,5 +105,9 @@
   &.is-loading {
     cursor: progress;
     pointer-events: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
   }
 }

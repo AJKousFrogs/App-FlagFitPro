@@ -49,21 +49,12 @@
   --p-surface-800: var(--primitive-neutral-100);
   --p-surface-900: var(--primitive-neutral-50);
   --p-surface-950: var(--primitive-neutral-50); /* Lightest - align with inverted scale */
-  --p-content-background: var(
-    --primitive-neutral-800,
-    var(--primitive-neutral-800)
-  );
-  --p-card-background: var(
-    --primitive-neutral-800,
-    var(--primitive-neutral-800)
-  );
-  --p-surface-ground: var(
-    --primitive-neutral-950,
-    var(--primitive-neutral-950)
-  );
-  --p-surface-card: var(--primitive-neutral-800, var(--primitive-neutral-800));
+  --p-content-background: var(--primitive-neutral-800);
+  /* --p-card-background set by _token-mapping.scss + design-system-tokens.scss */
+  --p-surface-ground: var(--primitive-neutral-950);
+  --p-surface-card: var(--primitive-neutral-800);
   --p-surface-border: var(--surface-border, var(--primitive-neutral-700));
-  --p-surface-hover: var(--primitive-neutral-700, var(--primitive-neutral-700));
+  --p-surface-hover: var(--primitive-neutral-700);
 
   /* Component backgrounds */
   --p-datatable-header-background: var(
@@ -226,11 +217,9 @@
 @layer primeng-brand {
   .p-button:focus-visible,
   .p-inputtext:focus-visible,
-  .p-dropdown:focus-visible,
   .p-checkbox:focus-visible,
   .p-radiobutton:focus-visible,
   .p-multiselect:focus-visible,
-  .p-calendar:focus-visible,
   .p-toggleswitch:focus-visible,
   .p-slider:focus-visible {
     outline: var(--p-focus-ring-width) var(--p-focus-ring-style)
@@ -277,10 +266,8 @@
 
 /* Base Form Control Styles */
 .p-inputtext,
-.p-dropdown,
 .p-select,
 .p-multiselect,
-.p-calendar .p-inputtext,
 .p-datepicker .p-inputtext,
 .p-inputnumber .p-inputtext,
 .p-autocomplete .p-inputtext {
@@ -314,7 +301,6 @@
 
 /* Placeholder styling */
 .p-inputtext::placeholder,
-.p-dropdown .p-placeholder,
 .p-select .p-placeholder,
 .p-multiselect .p-placeholder {
   color: var(--p-input-placeholder-color);
@@ -324,10 +310,8 @@
 
 /* Hover state - subtle border change, NO size change */
 .p-inputtext:hover:not(:disabled):not(:focus-visible):not(.p-invalid),
-.p-dropdown:hover:not(.p-disabled):not(.p-focus),
 .p-select:hover:not(.p-disabled):not(.p-focus),
 .p-multiselect:hover:not(.p-disabled):not(.p-focus),
-.p-calendar:hover:not(.p-disabled) .p-inputtext:not(:focus-visible),
 .p-datepicker:hover:not(.p-disabled) .p-inputtext:not(:focus-visible),
 .p-inputnumber:hover:not(.p-disabled) .p-inputtext:not(:focus-visible) {
   border-color: var(--p-input-hover-border-color);
@@ -335,13 +319,10 @@
 
 /* Focus state - green border + green ring, NO size change */
 .p-inputtext:focus-visible,
-.p-dropdown.p-focus,
-.p-dropdown:focus-visible,
 .p-select.p-focus,
 .p-select:focus-visible,
 .p-multiselect.p-focus,
 .p-multiselect:focus-visible,
-.p-calendar .p-inputtext:focus-visible,
 .p-datepicker .p-inputtext:focus-visible,
 .p-inputnumber .p-inputtext:focus-visible {
   border-color: var(--p-input-focus-border-color);
@@ -354,16 +335,13 @@
 /* Invalid/Error state - red border + red ring */
 .p-inputtext.p-invalid,
 .p-inputtext.ng-invalid.ng-touched,
-.p-dropdown.p-invalid,
 .p-select.p-invalid,
-.p-multiselect.p-invalid,
-.p-calendar.p-invalid .p-inputtext {
+.p-multiselect.p-invalid {
   border-color: var(--p-input-invalid-border-color);
 }
 
 .p-inputtext.p-invalid:focus-visible,
 .p-inputtext.ng-invalid.ng-touched:focus-visible,
-.p-dropdown.p-invalid.p-focus,
 .p-select.p-invalid.p-focus,
 .p-multiselect.p-invalid.p-focus {
   border-color: var(--p-input-invalid-border-color);
@@ -374,10 +352,8 @@
 
 /* Disabled state - muted appearance */
 .p-inputtext:disabled,
-.p-dropdown.p-disabled,
 .p-select.p-disabled,
-.p-multiselect.p-disabled,
-.p-calendar.p-disabled .p-inputtext {
+.p-multiselect.p-disabled {
   background: var(--p-input-disabled-background);
   border-color: var(--p-input-disabled-border-color);
   opacity: var(--p-input-disabled-opacity, var(--opacity-muted));
@@ -385,7 +361,6 @@
 }
 
 .p-inputtext:disabled:hover,
-.p-dropdown.p-disabled:hover,
 .p-select.p-disabled:hover,
 .p-multiselect.p-disabled:hover {
   border-color: var(--p-input-disabled-border-color);
@@ -396,7 +371,6 @@
    Ensure label text is vertically centered in 2.75rem height
    ================================================================ */
 
-.p-dropdown .p-dropdown-label,
 .p-select .p-select-label,
 .p-multiselect .p-multiselect-label {
   padding: 0;
@@ -409,7 +383,6 @@
 }
 
 /* Dropdown trigger/arrow icon alignment */
-.p-dropdown .p-dropdown-trigger,
 .p-select .p-select-dropdown,
 .p-multiselect .p-multiselect-trigger {
   width: var(--space-10);
@@ -422,14 +395,12 @@
     transform 0.2s ease;
 }
 
-.p-dropdown.p-focus .p-dropdown-trigger,
 .p-select.p-focus .p-select-dropdown,
 .p-multiselect.p-focus .p-multiselect-trigger {
   color: var(--ds-primary-green);
 }
 
 /* Rotate arrow when open */
-.p-dropdown.p-dropdown-open .p-dropdown-trigger,
 .p-select.p-select-open .p-select-dropdown {
   transform: rotate(180deg);
 }
@@ -439,7 +410,6 @@
    Consistent panel styling for all dropdown types
    ================================================================ */
 
-.p-dropdown-panel,
 .p-select-overlay,
 .p-multiselect-panel,
 .p-autocomplete-panel {
@@ -452,7 +422,6 @@
 }
 
 /* Option list container */
-.p-dropdown-items-wrapper,
 .p-select-list-container,
 .p-multiselect-items-wrapper {
   padding: var(--space-2);
@@ -461,7 +430,6 @@
 }
 
 /* Individual option items */
-.p-dropdown-item,
 .p-select-option,
 .p-multiselect-item,
 .p-listbox-option {
@@ -481,7 +449,6 @@
 }
 
 /* Option hover */
-.p-dropdown-item:hover,
 .p-select-option:hover,
 .p-multiselect-item:hover,
 .p-listbox-option:hover {
@@ -489,7 +456,6 @@
 }
 
 /* Option selected/highlighted */
-.p-dropdown-item.p-highlight,
 .p-select-option.p-highlight,
 .p-select-option[aria-selected="true"],
 .p-multiselect-item.p-highlight,
@@ -500,7 +466,6 @@
 }
 
 /* Option focus */
-.p-dropdown-item.p-focus,
 .p-select-option.p-focus,
 .p-multiselect-item.p-focus {
   background: var(--surface-secondary);
@@ -511,18 +476,15 @@
    CALENDAR/DATEPICKER INPUT NORMALIZATION
    ================================================================ */
 
-.p-calendar,
 .p-datepicker {
   width: 100%;
 }
 
-.p-calendar .p-inputtext,
 .p-datepicker .p-inputtext {
   border-radius: var(--p-form-control-border-radius, var(--radius-lg));
   padding-right: var(--touch-target-md); /* Space for calendar icon */
 }
 
-.p-calendar .p-datepicker-trigger,
 .p-datepicker .p-datepicker-trigger {
   position: absolute;
   right: 0;
@@ -541,7 +503,6 @@
   transition: color 0.15s ease;
 }
 
-.p-calendar .p-datepicker-trigger:hover,
 .p-datepicker .p-datepicker-trigger:hover {
   color: var(--ds-primary-green);
 }
@@ -764,7 +725,7 @@
   --p-surface-900: var(--primitive-neutral-900);
   --p-surface-950: var(--primitive-neutral-950);
   --p-content-background: var(--surface-card, var(--surface-primary));
-  --p-card-background: var(--surface-card, var(--surface-primary));
+  /* --p-card-background set by _token-mapping.scss + design-system-tokens.scss */
   --p-surface-ground: var(--surface-ground, var(--primitive-neutral-50));
   --p-surface-section: var(--surface-card, var(--surface-primary));
   --p-surface-card: var(--surface-card, var(--surface-primary));
@@ -808,9 +769,7 @@
      COMPONENT-SPECIFIC VARIABLES
      ================================================================ */
 
-  /* Button */
-  --p-button-primary-background: var(--ds-primary-green);
-  --p-button-primary-border-color: var(--ds-primary-green);
+  /* Button (primary bg/border/color set in _token-mapping.scss) */
   --p-button-primary-color: var(
     --color-text-on-primary
   ); /* CRITICAL: White text */
@@ -846,7 +805,7 @@
   --p-button-raised-shadow:
     0 0.0625rem 0.125rem var(--color-border-subtle), 0 0.125rem 0.25rem var(--color-border-subtle);
   --p-button-gap: var(--space-2);
-  --p-button-font-weight: var(--font-weight-medium);
+  --p-button-font-weight: var(--font-weight-semibold);
   --p-button-sm-font-size: var(--font-body-sm-size);
   --p-button-sm-padding-y: var(--space-2);
   --p-button-sm-padding-x: var(--space-4);

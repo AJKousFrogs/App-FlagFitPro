@@ -55,9 +55,3 @@
   }
 }
 
-/* Reduced motion */
-@media (prefers-reduced-motion: reduce) {
-  .error-state {
-    transition: none;
-  }
-}

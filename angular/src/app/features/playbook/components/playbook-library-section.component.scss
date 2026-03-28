@@ -79,10 +79,22 @@
     box-shadow var(--motion-base) var(--ease-standard),
     transform var(--motion-base) var(--ease-standard);
 
-  &:hover {
-    transform: var(--transform-hover-lift);
-    box-shadow: var(--shadow-2);
-    border-color: var(--color-brand-primary);
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      transform: var(--transform-hover-lift);
+      box-shadow: var(--shadow-2);
+      border-color: var(--color-brand-primary);
+    }
+  }
+
+  &:focus-visible {
+    outline: var(--focus-outline-width) solid var(--ds-primary-green);
+    outline-offset: var(--focus-outline-offset);
+    box-shadow: var(--shadow-focus);
+  }
+
+  &:active {
+    transform: scale(0.98);
   }
 
   .play-header {

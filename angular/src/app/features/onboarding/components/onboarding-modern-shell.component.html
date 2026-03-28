@@ -1,0 +1,77 @@
+<div class="onboarding-shell-container">
+  <!-- Thin top-aligned progress bar -->
+  <div class="top-progress-container">
+    <app-progress-bar
+      [value]="completionStats().percent"
+      [showValue]="false"
+      class="onboarding-mini-progress"
+    ></app-progress-bar>
+  </div>
+
+  <div class="shell-header">
+    <div class="header-main">
+      <div class="step-badge">Step {{ stepPosition() }} of {{ steps().length }}</div>
+      <h2 class="current-step-title">{{ currentStepLabel() }}</h2>
+    </div>
+
+    <div class="header-meta">
+      @if (lastSaved()) {
+        <span class="save-status" [class.saving]="isSaving()">
+          @if (isSaving()) {
+            <i class="pi pi-spin pi-spinner"></i> Saving...
+          } @else {
+            <i class="pi pi-check-circle"></i> Draft saved
+          }
+        </span>
+      }
+      <div class="overall-progress">
+        <span class="percent-label">{{ completionStats().percent }}%</span>
+        <span class="tasks-count">{{ tasksRemainingText() }}</span>
+      </div>
+    </div>
+  </div>
+
+  @if (hasPendingRequirements()) {
+    <div class="requirements-banner">
+      <div class="banner-content">
+        <i class="pi pi-info-circle banner-icon"></i>
+        <div class="checklist-compact">
+          <span class="checklist-label">Next:</span>
+          <div class="checklist-pills">
+            @for (item of pendingRequirementLabels().slice(0, 3); track item) {
+              <span class="checklist-pill">{{ item }}</span>
+            }
+            @if (pendingRequirementLabels().length > 3) {
+              <span class="checklist-pill more">+{{ pendingRequirementLabels().length - 3 }}</span>
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+
+  <div class="stepper-nav-container">
+    <p-stepper
+      class="onboarding-modern-stepper"
+      [value]="currentStep()"
+      (valueChange)="onStepperValueChange($event)"
+      [linear]="false"
+    >
+      <p-step-list>
+        @for (step of steps(); track $index) {
+          <p-step [value]="$index">
+            <ng-template #content>
+              <div class="modern-step-dot" [class.active]="$index === currentStep()" [class.completed]="$index < currentStep()">
+                @if ($index < currentStep()) {
+                  <i class="pi pi-check"></i>
+                } @else {
+                  <span>{{ $index + 1 }}</span>
+                }
+              </div>
+            </ng-template>
+          </p-step>
+        }
+      </p-step-list>
+    </p-stepper>
+  </div>
+</div>

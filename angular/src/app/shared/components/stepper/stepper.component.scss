@@ -140,11 +140,9 @@
   text-overflow: ellipsis;
   max-width: 100%;
   transition:
-    opacity var(--transition-base),
+    color var(--transition-base),
     transform var(--transition-base),
-    background-color var(--transition-base),
-    border-color var(--transition-base),
-    box-shadow var(--transition-base);
+    font-weight var(--transition-base);
   line-height: var(--ds-line-height-h3);
 }
 
@@ -157,16 +155,6 @@
   background: var(--color-border-primary);
   z-index: 1;
   transition: background-color var(--transition-base);
-
-  .stepper-step.completed ~ .stepper-step &,
-  .stepper-step.active ~ .stepper-step & {
-    background: var(--color-border-primary);
-  }
-}
-
-// Active step - connector before it is completed
-.stepper-step.active ~ .stepper-step .step-connector {
-  background: var(--color-border-primary);
 }
 
 .stepper-step.completed ~ .stepper-step .step-connector {
@@ -227,19 +215,19 @@
 }
 
 // Dark mode support
-[data-theme="dark"] .stepper-container,
-.dark-theme .stepper-container {
-  background: rgba(var(--surface-primary-rgb), 0.95);
-  border-bottom-color: var(--color-border-secondary);
-}
+:host-context([data-theme="dark"]),
+:host-context(.dark-theme) {
+  .stepper-container {
+    background: rgba(var(--surface-primary-rgb), 0.95);
+    border-bottom-color: var(--color-border-secondary);
+  }
 
-[data-theme="dark"] .step-indicator,
-.dark-theme .step-indicator {
-  background: var(--surface-secondary);
-  border-color: var(--color-border-secondary);
-}
+  .step-indicator {
+    background: var(--surface-secondary);
+    border-color: var(--color-border-secondary);
+  }
 
-[data-theme="dark"] .step-connector,
-.dark-theme .step-connector {
-  background: var(--color-border-secondary);
+  .step-connector {
+    background: var(--color-border-secondary);
+  }
 }

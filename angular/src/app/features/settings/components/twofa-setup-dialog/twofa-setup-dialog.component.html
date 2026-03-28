@@ -72,10 +72,7 @@
                 class="qr-image"
               />
             } @else {
-              <div class="qr-loading">
-                <i class="pi pi-spin pi-spinner"></i>
-                <span>Generating...</span>
-              </div>
+              <app-loading message="Generating..." [compact]="true" />
             }
           </div>
           <div class="manual-code">

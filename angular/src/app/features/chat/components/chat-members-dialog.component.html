@@ -24,10 +24,7 @@
     }
 
     @if (loading) {
-      <div class="members-loading">
-        <i class="pi pi-spin pi-spinner icon-2xl"></i>
-        <p>Loading members...</p>
-      </div>
+      <app-loading message="Loading members..." [compact]="true" />
     } @else if (membersData) {
       <div class="members-search">
         <span class="p-input-icon-left w-full">

@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, input, output } from "@angular/core";
 import { IconButtonComponent } from "../../../../shared/components/button/icon-button.component";
+import { AppLoadingComponent } from "../../../../shared/components/loading/loading.component";
 import {
   AppDialogComponent,
   DialogFooterComponent,
@@ -23,6 +24,7 @@ type ActiveSession = {
     IconButtonComponent,
     DialogHeaderComponent,
     DialogFooterComponent,
+    AppLoadingComponent,
   ],
   templateUrl: "./active-sessions-dialog.component.html",
   styleUrl: "./active-sessions-dialog.component.scss",

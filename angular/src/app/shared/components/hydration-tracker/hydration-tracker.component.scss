@@ -60,13 +60,7 @@
     );
   }
 
-  &.high {
-    background: linear-gradient(
-      to top,
-      var(--color-status-info) 0%,
-      var(--primitive-info-400) 100%
-    );
-  }
+  // .high uses the same gradient as default - no override needed
 }
 
 .water-waves {
@@ -86,7 +80,7 @@
     transform: translateY(0);
   }
   50% {
-    transform: translateY(-var(--space-0-75));
+    transform: translateY(calc(-1 * var(--space-0-75)));
   }
 }
 

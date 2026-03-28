@@ -13,13 +13,13 @@
   color: var(--color-text-on-primary);
   background-color: var(--color-brand-primary);
 
-  // whitelisted colors from design system for markers
-  &[data-marker-color="#22C55E"], &[data-marker-color="green"] { background-color: #22C55E; }
-  &[data-marker-color="#3B82F6"], &[data-marker-color="blue"] { background-color: #3B82F6; }
-  &[data-marker-color="#F59E0B"], &[data-marker-color="orange"] { background-color: #F59E0B; }
-  &[data-marker-color="#EF4444"], &[data-marker-color="red"] { background-color: #EF4444; }
-  &[data-marker-color="#8B5CF6"], &[data-marker-color="purple"] { background-color: #8B5CF6; }
-  &[data-marker-color="#6366F1"], &[data-marker-color="indigo"] { background-color: #6366F1; }
+  // Semantic marker colors from design system
+  &[data-marker-color="green"] { background-color: var(--color-status-success); }
+  &[data-marker-color="blue"] { background-color: var(--color-status-info); }
+  &[data-marker-color="orange"] { background-color: var(--color-status-warning); }
+  &[data-marker-color="red"] { background-color: var(--color-status-error); }
+  &[data-marker-color="purple"] { background-color: var(--color-accent-purple); }
+  &[data-marker-color="indigo"] { background-color: var(--primitive-indigo-500); }
 }
 
 .timeline-marker i {

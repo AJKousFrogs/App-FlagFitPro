@@ -65,11 +65,7 @@
   border-left-color: var(--color-status-error);
 }
 
-.warning-danger {
-  background: var(--color-status-warning-subtle);
-  border-left-color: var(--color-status-warning);
-}
-
+.warning-danger,
 .warning-warning {
   background: var(--color-status-warning-subtle);
   border-left-color: var(--color-status-warning);

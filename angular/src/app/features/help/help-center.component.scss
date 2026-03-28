@@ -33,10 +33,22 @@
   border: var(--border-1) solid var(--surface-border);
 }
 
-.quick-link-card:hover {
-  background: var(--surface-hover);
-  transform: translateY(calc(var(--space-0-5) * -1));
-  box-shadow: var(--shadow-md);
+@media (hover: hover) and (pointer: fine) {
+  .quick-link-card:hover {
+    background: var(--surface-hover);
+    transform: translateY(calc(var(--space-0-5) * -1));
+    box-shadow: var(--shadow-md);
+  }
+}
+
+.quick-link-card:focus-visible {
+  outline: var(--focus-outline-width) solid var(--ds-primary-green);
+  outline-offset: var(--focus-outline-offset);
+  box-shadow: var(--shadow-focus);
+}
+
+.quick-link-card:active {
+  transform: scale(0.98);
 }
 
 .quick-link-card i {
@@ -69,4 +81,10 @@
 .support-content p {
   margin: 0 0 var(--spacing-lg) 0;
   color: var(--text-secondary);
+}
+
+@media (max-width: 480px) {
+  .quick-links {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }

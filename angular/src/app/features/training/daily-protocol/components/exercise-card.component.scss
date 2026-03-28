@@ -163,7 +163,7 @@
   gap: var(--space-1);
   margin-top: 0;
   font-size: var(--ds-font-size-xs);
-  color: var(--primitive-info-600);
+  color: var(--color-status-info);
   text-decoration: none;
 }
 
@@ -285,7 +285,7 @@
 }
 
 .instruction-block.how .instruction-label {
-  color: var(--primitive-info-600);
+  color: var(--color-status-info);
 }
 
 .instruction-block.feel .instruction-label {
@@ -293,7 +293,7 @@
 }
 
 .instruction-block.compensation .instruction-label {
-  color: var(--primitive-warning-600);
+  color: var(--color-status-warning);
 }
 
 .instruction-text {
@@ -309,14 +309,14 @@
   align-items: flex-start;
   gap: var(--space-2);
   padding: var(--component-card-padding-compact);
-  background: var(--primitive-info-50);
+  background: var(--color-status-info-surface);
   border-radius: var(--component-card-radius);
-  border-left: var(--border-3) solid var(--primitive-info-500);
+  border-left: var(--border-3) solid var(--color-status-info);
   margin: 0;
 }
 
 .ai-note i {
-  color: var(--primitive-info-500);
+  color: var(--color-status-info);
   margin-top: var(--space-1);
 }
 

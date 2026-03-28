@@ -153,8 +153,10 @@
   background: var(--color-text-muted);
 }
 
-.toggle-track:hover {
-  box-shadow: var(--shadow-inset), var(--hover-shadow-sm);
+@media (hover: hover) and (pointer: fine) {
+  .toggle-track:hover {
+    box-shadow: var(--shadow-inset), var(--hover-shadow-sm);
+  }
 }
 
 .toggle-track {
@@ -239,9 +241,16 @@
 
 /* stat-block value/label: use primitives _dashboard (--stat-block-value-card, --stat-block-label-compact) */
 
-.stat-box:hover {
-  border-color: rgba(var(--ds-primary-green-rgb), 0.2);
-  box-shadow: var(--shadow-2);
+@media (hover: hover) and (pointer: fine) {
+  .stat-box:hover {
+    border-color: rgba(var(--ds-primary-green-rgb), 0.2);
+    box-shadow: var(--shadow-2);
+  }
+}
+
+.stat-box:focus-visible {
+  outline: var(--focus-outline-width) solid var(--ds-primary-green);
+  outline-offset: var(--focus-outline-offset);
 }
 
 /* ================================================================
@@ -359,9 +368,20 @@
   justify-content: center;
 }
 
-.outcome-btn:hover {
-  transform: translateY(calc(-1 * var(--space-1) / 2));
-  box-shadow: var(--shadow-2);
+@media (hover: hover) and (pointer: fine) {
+  .outcome-btn:hover {
+    transform: translateY(calc(-1 * var(--space-1) / 2));
+    box-shadow: var(--shadow-2);
+  }
+}
+
+.outcome-btn:focus-visible {
+  outline: var(--focus-outline-width) solid var(--ds-primary-green);
+  outline-offset: var(--focus-outline-offset);
+}
+
+.outcome-btn:active {
+  transform: scale(0.97);
 }
 
 .outcome-btn.active {

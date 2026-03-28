@@ -33,7 +33,7 @@
 }
 
 .staff-hub-link:hover {
-  transform: translateY(-var(--border-2));
+  transform: translateY(calc(-1 * var(--border-2)));
   box-shadow: var(--shadow-sm);
 }
 

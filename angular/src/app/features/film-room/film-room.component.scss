@@ -111,7 +111,7 @@
       .watched-overlay {
         position: absolute;
         inset: 0;
-        background: rgba(0,0,0,0.4);
+        background: var(--surface-overlay-medium);
         display: flex;
         align-items: center;
         justify-content: center;
@@ -123,7 +123,7 @@
         position: absolute;
         bottom: var(--space-2);
         right: var(--space-2);
-        background: rgba(0,0,0,0.8);
+        background: var(--surface-overlay-darkest);
         color: white;
         padding: var(--space-0-5) var(--space-1-5);
         border-radius: var(--radius-sm);

@@ -157,10 +157,17 @@
   );
 }
 
-.quick-link-card:hover {
-  background: var(--surface-card);
-  border-color: var(--ds-primary-green);
-  box-shadow: var(--shadow-sm);
+@media (hover: hover) and (pointer: fine) {
+  .quick-link-card:hover {
+    background: var(--surface-card);
+    border-color: var(--ds-primary-green);
+    box-shadow: var(--shadow-sm);
+  }
+}
+
+.quick-link-card:focus-visible {
+  outline: var(--focus-outline-width) solid var(--ds-primary-green);
+  outline-offset: var(--focus-outline-offset);
 }
 
 .quick-link-card.selected {
@@ -181,8 +188,8 @@
 }
 
 .quick-link-icon.training {
-  background: var(--primitive-warning-50);
-  color: var(--primitive-warning-500);
+  background: var(--color-status-warning-surface);
+  color: var(--color-status-warning);
 }
 
 .quick-link-icon.exercises {
@@ -191,13 +198,13 @@
 }
 
 .quick-link-icon.analytics {
-  background: var(--primitive-blue-50);
-  color: var(--primitive-blue-500);
+  background: var(--color-status-info-subtle);
+  color: var(--color-status-info);
 }
 
 .quick-link-icon.roster {
-  background: var(--primitive-purple-50);
-  color: var(--primitive-purple-500);
+  background: var(--color-accent-purple-subtle);
+  color: var(--color-accent-purple);
 }
 
 .quick-link-text {
@@ -312,12 +319,19 @@
   text-align: left;
 }
 
-.popular-tag:hover {
-  background: var(--ds-primary-green);
-  border-color: var(--ds-primary-green);
-  color: var(--color-text-on-primary);
-  transform: translateY(-var(--border-1));
-  box-shadow: var(--shadow-md);
+@media (hover: hover) and (pointer: fine) {
+  .popular-tag:hover {
+    background: var(--ds-primary-green);
+    border-color: var(--ds-primary-green);
+    color: var(--color-text-on-primary);
+    transform: translateY(calc(-1 * var(--border-1)));
+    box-shadow: var(--shadow-md);
+  }
+}
+
+.popular-tag:focus-visible {
+  outline: var(--focus-outline-width) solid var(--ds-primary-green);
+  outline-offset: var(--focus-outline-offset);
 }
 
 .popular-tag i {
@@ -368,9 +382,19 @@
   border-radius: var(--radius-lg);
 }
 
-.search-result-item:hover,
+@media (hover: hover) and (pointer: fine) {
+  .search-result-item:hover {
+    background: var(--surface-ground);
+  }
+}
+
 .search-result-item.selected {
   background: var(--surface-ground);
+}
+
+.search-result-item:focus-visible {
+  outline: var(--focus-outline-width) solid var(--ds-primary-green);
+  outline-offset: calc(-1 * var(--focus-outline-width));
 }
 
 .result-icon-box {
@@ -385,8 +409,8 @@
 }
 
 .result-icon-box.type-exercise {
-  background: var(--primitive-blue-50);
-  color: var(--primitive-blue-500);
+  background: var(--color-status-info-subtle);
+  color: var(--color-status-info);
 }
 
 .result-icon-box.type-program {
@@ -395,18 +419,18 @@
 }
 
 .result-icon-box.type-player {
-  background: var(--primitive-purple-50);
-  color: var(--primitive-purple-500);
+  background: var(--color-accent-purple-subtle);
+  color: var(--color-accent-purple);
 }
 
 .result-icon-box.type-video {
-  background: var(--primitive-error-50);
-  color: var(--primitive-error-500);
+  background: var(--color-status-error-surface);
+  color: var(--color-status-error);
 }
 
 .result-icon-box.type-team {
-  background: var(--primitive-warning-50);
-  color: var(--primitive-warning-500);
+  background: var(--color-status-warning-surface);
+  color: var(--color-status-warning);
 }
 
 .result-info {
@@ -815,10 +839,17 @@
     box-shadow var(--transition-fast) var(--ease-standard);
 }
 
-.open-search-page-link:hover {
-  background: var(--surface-hover);
-  box-shadow: var(--shadow-sm);
-  transform: translateY(-1px);
+@media (hover: hover) and (pointer: fine) {
+  .open-search-page-link:hover {
+    background: var(--surface-hover);
+    box-shadow: var(--shadow-sm);
+    transform: translateY(-1px);
+  }
+}
+
+.open-search-page-link:focus-visible {
+  outline: var(--focus-outline-width) solid var(--ds-primary-green);
+  outline-offset: var(--focus-outline-offset);
 }
 
 /* ================================================================

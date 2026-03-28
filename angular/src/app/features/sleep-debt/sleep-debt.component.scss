@@ -41,38 +41,38 @@
   }
 
   &.debt-mild {
-    border-color: var(--primitive-blue-500);
+    border-color: var(--color-status-info);
 
     .debt-value,
     .debt-label {
-      color: var(--primitive-blue-500);
+      color: var(--color-status-info);
     }
   }
 
   &.debt-moderate {
-    border-color: var(--primitive-yellow-500);
+    border-color: var(--color-status-warning);
 
     .debt-value,
     .debt-label {
-      color: var(--primitive-yellow-500);
+      color: var(--color-status-warning);
     }
   }
 
   &.debt-severe {
-    border-color: var(--primitive-orange-500);
+    border-color: var(--color-status-warning);
 
     .debt-value,
     .debt-label {
-      color: var(--primitive-orange-500);
+      color: var(--color-status-warning);
     }
   }
 
   &.debt-critical {
-    border-color: var(--primitive-error-500);
+    border-color: var(--color-status-error);
 
     .debt-value,
     .debt-label {
-      color: var(--primitive-error-500);
+      color: var(--color-status-error);
     }
   }
 
@@ -146,11 +146,11 @@
       color: var(--ds-text-primary);
 
       &.danger {
-        color: var(--primitive-error-500);
+        color: var(--color-status-error);
       }
 
       &.warn {
-        color: var(--primitive-orange-500);
+        color: var(--color-status-warning);
       }
     }
 
@@ -170,7 +170,7 @@
 
     &.warning {
       padding: var(--space-3);
-      background: var(--primitive-error-50);
+      background: var(--color-status-error-surface);
       border-radius: var(--radius-md);
       border: var(--border-1) solid var(--primitive-error-200);
     }
@@ -217,7 +217,7 @@
 
 .rec-header__icon {
   font-size: var(--ds-font-size-2xl);
-  color: var(--primitive-yellow-500);
+  color: var(--color-status-warning);
 }
 
 .rec-list-icon {
