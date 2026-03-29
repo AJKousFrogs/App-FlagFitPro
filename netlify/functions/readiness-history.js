@@ -11,11 +11,62 @@ import { supabaseAdmin } from "./supabase-client.js";
 
 import { baseHandler } from "./utils/base-handler.js";
 import { createErrorResponse } from "./utils/error-handler.js";
-import { executeQuery, parseAthleteId, parseIntParam, calculateDateRange } from "./utils/db-query-helper.js";
+import { parseAthleteId, parseIntParam, calculateDateRange } from "./utils/db-query-helper.js";
 import { successResponse } from "./utils/response-helper.js";
 import { canCoachViewReadiness, filterReadinessForCoach } from "./utils/consent-guard.js";
 import { getUserRole } from "./utils/authorization-guard.js";
 import { hasAnyRole, LOAD_MANAGEMENT_ACCESS_ROLES } from "./utils/role-sets.js";
+
+function isOptionalSchemaError(error) {
+  const code = error?.code;
+  const message = `${error?.message || ""}`.toLowerCase();
+  return (
+    ["PGRST106", "PGRST116", "PGRST204", "42P01", "42703"].includes(code) ||
+    message.includes("relation") ||
+    message.includes("schema cache") ||
+    message.includes("does not exist") ||
+    message.includes("column")
+  );
+}
+
+async function fetchReadinessHistory(athleteId, startDate, endDate) {
+  const attempts = [
+    () =>
+      supabaseAdmin
+        .from("readiness_scores")
+        .select(
+          "day, score, level, suggestion, acwr, acute_load, chronic_load, data_mode",
+        )
+        .eq("athlete_id", athleteId)
+        .gte("day", startDate)
+        .lte("day", endDate)
+        .order("day", { ascending: false }),
+    () =>
+      supabaseAdmin
+        .from("readiness_scores")
+        .select(
+          "day, score, level, suggestion, acwr, acute_load, chronic_load, data_mode",
+        )
+        .eq("user_id", athleteId)
+        .gte("day", startDate)
+        .lte("day", endDate)
+        .order("day", { ascending: false }),
+  ];
+
+  let lastError = null;
+  for (const attempt of attempts) {
+    const result = await attempt();
+    if (!result.error) {
+      return result;
+    }
+    lastError = result.error;
+    if (!isOptionalSchemaError(result.error)) {
+      return result;
+    }
+  }
+
+  return { data: [], error: lastError };
+}
 
 /**
  * Get readiness history for an athlete
@@ -65,20 +116,12 @@ const handler = async (event, context) => {
           );
         }
 
-        // Get readiness scores
-        const query = supabaseAdmin
-          .from("readiness_scores")
-          .select("day, score, level, suggestion, acwr")
-          .eq("athlete_id", athleteId)
-          .gte("day", startDate.toISOString().slice(0, 10))
-          .lte("day", endDate.toISOString().slice(0, 10))
-          .order("day", { ascending: false });
-
-        const result = await executeQuery(
-          query,
-          "Failed to retrieve readiness history",
+        const result = await fetchReadinessHistory(
+          athleteId,
+          startDate.toISOString().slice(0, 10),
+          endDate.toISOString().slice(0, 10),
         );
-        if (!result.success) {
+        if (result.error) {
           return createErrorResponse(
             "Failed to retrieve readiness history",
             500,

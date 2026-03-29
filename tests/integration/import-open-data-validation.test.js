@@ -7,6 +7,8 @@ const authState = vi.hoisted(() => ({
 
 const dbState = vi.hoisted(() => ({
   insertError: null,
+  updateError: null,
+  rpcData: [{ session_id: "session-1" }],
 }));
 
 vi.mock("../../netlify/functions/utils/base-handler.js", () => ({
@@ -33,14 +35,12 @@ vi.mock("../../netlify/functions/supabase-client.js", () => ({
         };
       }
 
-      if (table === "sessions") {
+      if (table === "training_sessions") {
         return {
-          insert: () => ({
-            select: () => ({
-              single: async () => ({
-                data: { id: "session-1" },
-                error: dbState.insertError,
-              }),
+          update: () => ({
+            eq: async () => ({
+              data: null,
+              error: dbState.updateError,
             }),
           }),
         };
@@ -56,6 +56,10 @@ vi.mock("../../netlify/functions/supabase-client.js", () => ({
         }),
       };
     },
+    rpc: async () => ({
+      data: dbState.rpcData,
+      error: dbState.insertError,
+    }),
   },
 }));
 
@@ -67,6 +71,8 @@ describe("import-open-data validation and authorization hardening", () => {
     authState.userId = "athlete-1";
     authState.role = "player";
     dbState.insertError = null;
+    dbState.updateError = null;
+    dbState.rpcData = [{ session_id: "session-1" }];
     const mod = await import("../../netlify/functions/import-open-data.js");
     handler = mod.handler;
   });
@@ -132,5 +138,31 @@ describe("import-open-data validation and authorization hardening", () => {
     expect(response.statusCode).toBe(500);
     expect(parsed.error?.message).toBe("Failed to insert session");
     expect(response.body).not.toContain("db secret exposed");
+  });
+
+  it("returns canonical session metadata after successful import", async () => {
+    const response = await handler(
+      {
+        httpMethod: "POST",
+        path: "/.netlify/functions/import-open-data",
+        headers: { authorization: "Bearer test-token" },
+        body: JSON.stringify({
+          dataset: [
+            { speed_m_s: 7.5, distance_m: 20 },
+            { speed_m_s: 5.8, distance_m: 15 },
+            { speed_m_s: 4.2, distance_m: 10 },
+          ],
+        }),
+      },
+      {},
+    );
+
+    expect(response.statusCode).toBe(200);
+    const parsed = JSON.parse(response.body);
+    expect(parsed.data.ok).toBe(true);
+    expect(parsed.data.session_id).toBe("session-1");
+    expect(parsed.data.estimated_rpe).toBeGreaterThanOrEqual(1);
+    expect(parsed.data.metrics.total_volume).toBeGreaterThan(0);
+    expect(parsed.data.metrics.duration_minutes).toBeGreaterThanOrEqual(0);
   });
 });

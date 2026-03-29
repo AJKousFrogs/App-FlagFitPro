@@ -11,6 +11,14 @@ import {
 } from "../schemas/api-response.schema";
 import { ApiResponse } from "../models/common.models";
 
+type QueryParamPrimitive = string | number | boolean | Date;
+type QueryParamValue =
+  | QueryParamPrimitive
+  | QueryParamPrimitive[]
+  | null
+  | undefined;
+type QueryParams = Record<string, unknown>;
+
 /**
  * Options for API requests with optional schema validation.
  */
@@ -21,13 +29,24 @@ export interface ApiRequestOptions<T> {
   throwOnValidationError?: boolean;
 }
 
+export interface ApiDeleteOptions<T> extends ApiRequestOptions<T> {
+  body?: unknown;
+  headers?: HttpHeaders | Record<string, string | string[]>;
+  params?: QueryParams;
+}
+
+export interface ApiHeadOptions {
+  headers?: HttpHeaders | Record<string, string | string[]>;
+  params?: QueryParams | HttpParams;
+}
+
 @Injectable({
   providedIn: "root",
 })
 export class ApiService {
-  private http = inject(HttpClient);
-  private logger = inject(LoggerService);
-  private baseUrl = this.getApiBaseUrl();
+  private readonly http = inject(HttpClient);
+  private readonly logger = inject(LoggerService);
+  private readonly baseUrl = this.getApiBaseUrl();
 
   constructor() {
     this.logger.info(`[ApiService] Initialized with baseUrl: ${this.baseUrl}`);
@@ -85,6 +104,10 @@ export class ApiService {
   }
 
   private normalizeEndpoint(endpoint: string): string {
+    if (/^https?:\/\//.test(endpoint)) {
+      return endpoint;
+    }
+
     // If baseUrl is /.netlify/functions, keep /api/ prefix (redirects handle it)
     // If baseUrl ends with /api, remove /api/ prefix
     if (endpoint.startsWith("/api/")) {
@@ -95,6 +118,60 @@ export class ApiService {
       return endpoint;
     }
     return endpoint;
+  }
+
+  private serializeParamValue(value: QueryParamPrimitive): string {
+    if (value instanceof Date) {
+      return value.toISOString();
+    }
+    return String(value);
+  }
+
+  private buildHttpParams(
+    params?: QueryParams | HttpParams,
+  ): HttpParams {
+    if (!params) {
+      return new HttpParams();
+    }
+
+    if (params instanceof HttpParams) {
+      return params;
+    }
+
+    let httpParams = new HttpParams();
+
+    Object.entries(params).forEach(([key, value]) => {
+      if (value === null || value === undefined) {
+        return;
+      }
+
+      if (Array.isArray(value)) {
+        value.forEach((item) => {
+          if (
+            item !== null &&
+            item !== undefined &&
+            (typeof item === "string" ||
+              typeof item === "number" ||
+              typeof item === "boolean" ||
+              item instanceof Date)
+          ) {
+            httpParams = httpParams.append(key, this.serializeParamValue(item));
+          }
+        });
+        return;
+      }
+
+      if (
+        typeof value === "string" ||
+        typeof value === "number" ||
+        typeof value === "boolean" ||
+        value instanceof Date
+      ) {
+        httpParams = httpParams.set(key, this.serializeParamValue(value));
+      }
+    });
+
+    return httpParams;
   }
 
   /**
@@ -131,21 +208,11 @@ export class ApiService {
 
   get<T = unknown>(
     endpoint: string,
-    params?: Record<string, unknown>,
+    params?: QueryParams,
     options?: ApiRequestOptions<T>,
   ): Observable<ApiResponse<T>> {
     const normalizedEndpoint = this.normalizeEndpoint(endpoint);
-    let httpParams = new HttpParams();
-
-    if (params) {
-      Object.keys(params).forEach((key) => {
-        const value = params[key];
-        if (value !== null && value !== undefined) {
-          httpParams = httpParams.set(key, String(value));
-        }
-      });
-    }
-
+    const httpParams = this.buildHttpParams(params);
     const url = `${this.baseUrl}${normalizedEndpoint}`;
 
     return this.http.get<ApiResponse<T>>(url, { params: httpParams }).pipe(
@@ -200,12 +267,18 @@ export class ApiService {
 
   delete<T = unknown>(
     endpoint: string,
-    options?: ApiRequestOptions<T>,
+    options?: ApiDeleteOptions<T>,
   ): Observable<ApiResponse<T>> {
     const normalizedEndpoint = this.normalizeEndpoint(endpoint);
     const url = `${this.baseUrl}${normalizedEndpoint}`;
 
-    return this.http.delete<ApiResponse<T>>(url).pipe(
+    return this.http
+      .delete<ApiResponse<T>>(url, {
+        body: options?.body,
+        headers: options?.headers,
+        params: this.buildHttpParams(options?.params),
+      })
+      .pipe(
       map((response) => this.validateResponse(response, options)),
       catchError(this.handleError),
     );
@@ -213,10 +286,7 @@ export class ApiService {
 
   head(
     endpoint: string,
-    requestOptions?: {
-      headers?: HttpHeaders | Record<string, string | string[]>;
-      params?: HttpParams | Record<string, string | number | boolean>;
-    },
+    requestOptions?: ApiHeadOptions,
   ): Observable<unknown> {
     const normalizedEndpoint = this.normalizeEndpoint(endpoint);
     const url = `${this.baseUrl}${normalizedEndpoint}`;
@@ -224,7 +294,7 @@ export class ApiService {
     return this.http
       .head(url, {
         headers: requestOptions?.headers,
-        params: requestOptions?.params,
+        params: this.buildHttpParams(requestOptions?.params),
       })
       .pipe(catchError(this.handleError));
   }
@@ -316,7 +386,6 @@ export const API_ENDPOINTS = {
     programSessions: (id: string) => `/api/training/programs/${id}/sessions`,
     programExercises: (id: string) => `/api/training/programs/${id}/exercises`,
     programCurrentWeek: "/api/training/programs/current-week",
-    generateSubstitute: "/api/training/generate-substitute",
   },
   performance: {
     metrics: "/api/performance/metrics",

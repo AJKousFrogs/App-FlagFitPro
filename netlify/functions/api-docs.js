@@ -77,8 +77,8 @@ const API_ENDPOINTS = {
 
   // Training
   "training-sessions": {
-    path: "/api/training-sessions",
-    methods: ["GET", "POST"],
+    path: "/api/training/sessions",
+    method: "GET, POST",
     description: "Manage training sessions",
     auth: true,
     rateLimit: "READ/CREATE",
@@ -93,12 +93,38 @@ const API_ENDPOINTS = {
   "training-metrics": {
     path: "/api/training-metrics",
     method: "GET",
-    description: "Get training metrics for an athlete",
+    description:
+      "Get training metrics for an athlete from canonical training sessions, with legacy import compatibility",
     auth: true,
     rateLimit: "READ (100/min)",
     queryParams: {
       athleteId: "UUID (optional, defaults to current user)",
       startDate: "ISO date string",
+    },
+  },
+  "compute-acwr": {
+    path: "/api/compute-acwr",
+    method: "POST",
+    description:
+      "Compute ACWR timeline and current summary for an athlete from training-session load data",
+    auth: true,
+    rateLimit: "CREATE (50/min)",
+    body: {
+      athleteId: "UUID (optional, defaults to current user)",
+    },
+  },
+  "import-open-data": {
+    path: "/api/import-open-data",
+    method: "POST",
+    description:
+      "Import open tracking data into canonical training sessions and derive flag-football metrics",
+    auth: true,
+    rateLimit: "CREATE (50/min)",
+    body: {
+      athleteId: "UUID (optional, defaults to current user)",
+      sessionDate: "ISO date string (optional)",
+      sessionType: "string (optional)",
+      dataset: "array of { speed_m_s|speed, distance_m|distance }",
     },
   },
 
@@ -121,10 +147,14 @@ const API_ENDPOINTS = {
   // Readiness
   "calc-readiness": {
     path: "/api/calc-readiness",
-    method: "POST",
+    method: "GET, POST",
     description: "Calculate athlete readiness score",
     auth: true,
     rateLimit: "CREATE (50/min)",
+    queryParams: {
+      athleteId: "UUID (optional)",
+      day: "ISO date string (optional)",
+    },
     body: {
       athleteId: "UUID (optional)",
       day: "ISO date string (optional)",
@@ -146,6 +176,98 @@ const API_ENDPOINTS = {
       athleteId: "UUID (optional)",
       days: "number (default: 7, max: 365)",
     },
+  },
+  "team-calendar": {
+    path: "/api/team-calendar",
+    method: "GET, POST",
+    description:
+      "Player-facing team calendar with merged games, practice plans, team events, and RSVP persistence",
+    auth: true,
+    rateLimit: "READ/UPDATE",
+    subEndpoints: [
+      "GET / - List upcoming team events",
+      "POST /rsvp - Save player RSVP for a calendar item",
+      "GET /sync-url - Get calendar subscription URL",
+    ],
+  },
+  "return-to-play": {
+    path: "/api/return-to-play",
+    method: "GET, POST",
+    description:
+      "Return-to-play protocol state, stage advancement, criteria tracking, and daily rehab check-ins",
+    auth: true,
+    rateLimit: "READ/UPDATE",
+    subEndpoints: [
+      "GET / - Get active protocol and recent check-ins",
+      "POST /start - Start a new RTP protocol",
+      "POST /advance - Advance to the next stage",
+      "POST /criterion - Update completion of a progression criterion",
+      "POST /checkin - Save a daily RTP check-in",
+    ],
+  },
+  "cycle-tracking": {
+    path: "/api/cycle-tracking",
+    method: "GET, POST, DELETE",
+    description:
+      "Private menstrual-cycle tracking with cycle history, symptom logging, and phase-aware ACWR context",
+    auth: true,
+    rateLimit: "READ/UPDATE",
+    subEndpoints: [
+      "GET / - Get cycle status, history, and ACWR context",
+      "POST /period - Log a new cycle entry",
+      "POST /symptoms - Save daily symptoms",
+      "DELETE /all - Delete all cycle tracking data",
+    ],
+  },
+  "sleep-data": {
+    path: "/api/sleep-data",
+    method: "GET",
+    description:
+      "Sleep history sourced from wellness check-ins for sleep debt and recovery analysis",
+    auth: true,
+    rateLimit: "READ (100/min)",
+  },
+  roster: {
+    path: "/api/roster/players",
+    method: "GET",
+    description: "Get active roster players for the authenticated athlete's team",
+    auth: true,
+    rateLimit: "READ (100/min)",
+  },
+  "game-events": {
+    path: "/api/game-events",
+    method: "POST, DELETE",
+    description:
+      "Compatibility endpoints for recording, deleting, and marking participation for live game plays",
+    auth: true,
+    rateLimit: "UPDATE",
+    subEndpoints: [
+      "POST / - Create a game event/play",
+      "POST /mark-presence - Mark a player present for a game",
+      "DELETE /:eventId - Delete a recorded play",
+    ],
+  },
+  "wearables-status": {
+    path: "/api/wearables/status",
+    method: "GET",
+    description: "List wearable connection statuses exposed to the data import UI",
+    auth: true,
+    rateLimit: "READ (100/min)",
+  },
+  "import-fetch-url": {
+    path: "/api/import/fetch-url",
+    method: "POST",
+    description: "Validate and normalize an external data import URL",
+    auth: true,
+    rateLimit: "UPDATE",
+  },
+  "import-process": {
+    path: "/api/import/process",
+    method: "POST",
+    description:
+      "Persist mapped import rows into canonical training sessions using the training-session RPC",
+    auth: true,
+    rateLimit: "UPDATE",
   },
 
   // Games
@@ -224,14 +346,14 @@ const API_ENDPOINTS = {
 
   // User
   "user-profile": {
-    path: "/api/user-profile",
+    path: "/api/user/profile",
     method: "GET",
     description: "Get user profile with metrics and training data",
     auth: true,
     rateLimit: "READ (100/min)",
   },
   "user-context": {
-    path: "/api/user-context",
+    path: "/api/user/context",
     method: "GET",
     description: "Get user context for AI/chatbot",
     auth: true,
@@ -274,7 +396,7 @@ const API_ENDPOINTS = {
     path: "/api/ai/chat/session/:sessionId",
     method: "GET",
     description: "Get conversation history for a chat session",
-    auth: false,
+    auth: true,
     rateLimit: "READ (100/min)",
     response: {
       messages: "array - Conversation history",
@@ -322,7 +444,7 @@ const API_ENDPOINTS = {
   },
   "knowledge-governance": {
     path: "/api/knowledge-governance",
-    methods: ["GET", "POST", "PATCH"],
+    method: "GET, POST, PATCH",
     description:
       "Knowledge submission and nutritionist approval workflow. Merlin consumes only approved entries.",
     auth: true,

@@ -3,6 +3,8 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 const state = vi.hoisted(() => ({
   role: "player",
   dbErrorMessage: null,
+  attempts: 0,
+  fallbackOnly: false,
 }));
 
 vi.mock("../../netlify/functions/utils/base-handler.js", () => ({
@@ -17,10 +19,25 @@ vi.mock("../../netlify/functions/supabase-client.js", () => ({
         eq: () => ({
           gte: () => ({
             lte: () => ({
-              order: async () => ({
-                data: [],
-                error: state.dbErrorMessage ? { message: state.dbErrorMessage } : null,
-              }),
+              order: async () => {
+                state.attempts += 1;
+                if (state.dbErrorMessage && state.attempts === 1) {
+                  return {
+                    data: [],
+                    error: { code: "42703", message: state.dbErrorMessage },
+                  };
+                }
+                return {
+                  data:
+                    state.dbErrorMessage && state.fallbackOnly
+                      ? [{ day: "2026-03-28", score: 72 }]
+                      : [],
+                  error:
+                    state.dbErrorMessage && !state.fallbackOnly
+                      ? { message: state.dbErrorMessage }
+                      : null,
+                };
+              },
             }),
           }),
         }),
@@ -45,6 +62,8 @@ describe("readiness-history validation and authorization hardening", () => {
     vi.resetModules();
     state.role = "player";
     state.dbErrorMessage = null;
+    state.attempts = 0;
+    state.fallbackOnly = false;
     const mod = await import("../../netlify/functions/readiness-history.js");
     handler = mod.handler;
   });
@@ -93,5 +112,22 @@ describe("readiness-history validation and authorization hardening", () => {
     const body = JSON.parse(response.body);
     expect(body.error.message).toBe("Failed to retrieve readiness history");
     expect(body.error.message.includes("sensitive")).toBe(false);
+  });
+
+  it("falls back from athlete_id to user_id schema when needed", async () => {
+    state.dbErrorMessage = "column athlete_id does not exist";
+    state.fallbackOnly = true;
+    const response = await handler(
+      {
+        httpMethod: "GET",
+        path: "/.netlify/functions/readiness-history",
+        headers: { authorization: "Bearer test-token" },
+        queryStringParameters: {},
+      },
+      {},
+    );
+
+    expect(response.statusCode).toBe(200);
+    expect(state.attempts).toBe(2);
   });
 });

@@ -399,25 +399,35 @@ async function verifyAthleteAccess(requestUserId, athleteId) {
 const handler = async (event, context) => {
   return baseHandler(event, context, {
     functionName: "calc-readiness",
-    allowedMethods: ["POST"],
+    allowedMethods: ["GET", "POST"],
     rateLimitType: "CREATE",
     requireAuth: true, // SECURITY: Explicit auth for readiness calculation
     skipEnvCheck: true,
     handler: async (event, _context, { userId }) => {
       console.log("[calc-readiness] Starting function execution", {
+        method: event.httpMethod,
         userId,
         bodyLength: event.body?.length,
       });
 
-      const parsedBody = tryParseJsonObjectBody(event.body);
-      if (!parsedBody.ok) {
-        return parsedBody.error;
-      }
-      const body = parsedBody.data;
-      console.log("[calc-readiness] Parsed body:", body);
+      let body = {};
+      if (event.httpMethod === "POST") {
+        const parsedBody = tryParseJsonObjectBody(event.body);
+        if (!parsedBody.ok) {
+          return parsedBody.error;
+        }
+        body = parsedBody.data;
+        console.log("[calc-readiness] Parsed body:", body);
 
-      if (!isPlainObject(body)) {
-        return handleValidationError("Request body must be an object");
+        if (!isPlainObject(body)) {
+          return handleValidationError("Request body must be an object");
+        }
+      } else {
+        body = {
+          athleteId: event.queryStringParameters?.athleteId,
+          day: event.queryStringParameters?.day,
+        };
+        console.log("[calc-readiness] Parsed query params:", body);
       }
 
       // If athleteId not provided, use authenticated user's ID

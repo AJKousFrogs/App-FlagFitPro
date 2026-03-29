@@ -32,6 +32,7 @@ import { AppLoadingComponent } from "../../shared/components/loading/loading.com
 import { PageErrorStateComponent } from "../../shared/components/page-error-state/page-error-state.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
 import { SearchInputComponent } from "../../shared/components/search-input/search-input.component";
+import { SkeletonRepeatComponent } from "../../shared/components/skeleton-loader/skeleton-loader.component";
 
 interface Exercise {
   id: string;
@@ -80,6 +81,7 @@ interface Category {
     AppLoadingComponent,
     PageErrorStateComponent,
     PageHeaderComponent,
+    SkeletonRepeatComponent,
   ],
   template: `
     <app-main-layout>
@@ -91,13 +93,13 @@ interface Category {
         />
 
         @if (isLoading()) {
-          <section class="page-state-card ds-card-surface">
-            <app-loading
-              [visible]="true"
-              variant="skeleton"
-              message="Loading exercise library..."
+          <div class="exercises-grid">
+            <app-skeleton-repeat
+              variant="exercise-card"
+              [count]="8"
+              layout="grid"
             />
-          </section>
+          </div>
         } @else if (errorMessage()) {
           <section class="page-state-card ds-card-surface">
             <app-page-error-state

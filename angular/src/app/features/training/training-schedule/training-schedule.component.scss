@@ -570,8 +570,8 @@ app-alert.weather-alert {
   font-weight: var(--ds-font-weight-medium);
 
   &--info {
-    background: var(--primitive-blue-50);
-    color: var(--primitive-blue-700);
+    background: var(--color-status-info-surface);
+    color: var(--color-status-info);
   }
 
   &--secondary {
@@ -589,7 +589,7 @@ app-alert.weather-alert {
   margin: 0;
   font-size: var(--ds-font-size-md);
   color: var(--color-text-secondary);
-  line-height: var(--ds-line-height-1-6);
+  line-height: var(--ds-line-height-body);
 }
 
 .substitute-workout__equipment {
@@ -745,8 +745,8 @@ app-alert.weather-alert {
   justify-content: center;
   width: var(--space-5);
   height: var(--space-5);
-  background: var(--primitive-warning-50);
-  color: var(--primitive-warning-600);
+  background: var(--color-status-warning-surface);
+  color: var(--color-status-warning);
   border-radius: var(--radius-circle);
   margin-left: var(--space-2);
   vertical-align: middle;

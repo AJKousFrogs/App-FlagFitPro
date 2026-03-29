@@ -6,71 +6,89 @@
 @use "styles/mixins" as *;
 
 .smart-breadcrumbs {
-  padding: var(--space-4) 0 var(--space-2);
-  background: transparent;
-  border-bottom: none;
+  padding: var(--space-3) 0 var(--space-1);
 }
 
-.breadcrumbs-container {
+// Ordered list — reset browser defaults
+.bc-list {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: var(--space-4);
-  flex-wrap: wrap;
-  min-width: 0;
-}
-
-.custom-breadcrumb {
-  background: transparent;
-  border: none;
+  gap: 0;
+  list-style: none;
+  margin: 0;
   padding: 0;
+  flex-wrap: wrap;
 }
 
-// PrimeNG breadcrumb overrides moved to _component-overrides.scss (DS-EXC-033)
-.custom-breadcrumb {
-  // Component-specific styles remain here
-}
-
-.breadcrumb-item {
+// Each crumb + its separator
+.bc-item {
   display: flex;
   align-items: center;
-  gap: var(--space-3);
+  gap: var(--space-1);
+}
+
+// Separator chevron between items
+.bc-sep {
+  font-size: var(--ds-font-size-xs);
+  color: var(--color-text-tertiary);
+  margin: 0 var(--space-1);
+  flex-shrink: 0;
+}
+
+// Ancestor link
+.bc-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
   color: var(--color-text-secondary);
   font-size: var(--ds-font-size-sm);
-  padding: var(--space-1) 0;
-}
-
-.breadcrumb-item.current {
-  color: var(--color-text-primary);
-  font-weight: var(--ds-font-weight-semibold);
-}
-
-.breadcrumb-item i {
-  font-size: var(--ds-font-size-md);
-  opacity: var(--opacity-subtle);
-}
-
-.breadcrumb-item.current i {
-  opacity: 1;
-  color: var(--ds-primary-green);
-}
-
-.breadcrumb-link {
-  color: var(--color-text-secondary);
+  font-weight: var(--ds-font-weight-medium);
   text-decoration: none;
-  transition: color var(--transition-base);
+  border-radius: var(--radius-md);
+  padding: var(--space-1) var(--space-2);
+  transition: color var(--transition-base), background var(--transition-base);
+
+  .bc-icon {
+    font-size: var(--ds-font-size-sm);
+    opacity: 0.6;
+    transition: opacity var(--transition-base);
+  }
+
+  &:hover {
+    color: var(--ds-primary-green);
+    background: var(--ds-primary-green-ultra-subtle);
+
+    .bc-icon {
+      opacity: 1;
+    }
+  }
+
+  &:focus-visible {
+    outline: var(--focus-ring-width) solid var(--ds-primary-green);
+    outline-offset: var(--focus-ring-offset);
+  }
 }
 
-.breadcrumb-link:hover {
-  color: var(--ds-primary-green);
+// Current page — pill highlight
+.bc-current {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--color-text-primary);
+  font-size: var(--ds-font-size-sm);
+  font-weight: var(--ds-font-weight-semibold);
+  background: var(--surface-secondary);
+  border-radius: var(--radius-md);
+  padding: var(--space-1) var(--space-2);
+
+  .bc-icon {
+    font-size: var(--ds-font-size-sm);
+    color: var(--ds-primary-green);
+  }
 }
 
-.breadcrumb-text {
-  color: inherit;
-}
-
-.breadcrumb-badge {
-  margin-left: var(--space-2);
+.bc-badge {
+  margin-left: var(--space-1);
 }
 
 @include respond-to(md) {

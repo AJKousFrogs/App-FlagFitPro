@@ -24,18 +24,15 @@ export type SkeletonVariant =
   | "badge"
   | "metric"
   | "profile-header"
-  | "dashboard-widget";
+  | "dashboard-widget"
+  | "bento-item"
+  | "exercise-card";
 
 /**
  * Skeleton Loader Component - Angular 21 Premium Edition
  *
  * Premium skeleton loading states with smooth animations
  * Uses Angular 21 signals for reactive state management
- * Features:
- * - Shimmer animation effect
- * - Multiple variants for different content types
- * - Stagger animation support
- * - Dark mode compatible
  */
 @Component({
   selector: "app-skeleton-loader",
@@ -153,6 +150,38 @@ export type SkeletonVariant =
           </div>
           <div class="skeleton skeleton-stat-value"></div>
           <div class="skeleton skeleton-text skeleton-w-40"></div>
+        </div>
+      }
+      @case ("bento-item") {
+        <div
+          class="skeleton-bento-item"
+          [style.animation-delay]="animationDelay()"
+        >
+          <div class="bento-header">
+            <div class="skeleton skeleton-title skeleton-w-50"></div>
+            <div class="skeleton skeleton-avatar skeleton-avatar--sm"></div>
+          </div>
+          <div class="bento-content">
+            <div class="skeleton skeleton-text skeleton-w-100"></div>
+            <div class="skeleton skeleton-text skeleton-w-85"></div>
+            <div class="skeleton skeleton-text skeleton-w-60"></div>
+          </div>
+        </div>
+      }
+      @case ("exercise-card") {
+        <div
+          class="skeleton-exercise-card"
+          [style.animation-delay]="animationDelay()"
+        >
+          <div class="skeleton skeleton-thumbnail skeleton-h-40"></div>
+          <div class="exercise-info">
+            <div class="skeleton skeleton-title skeleton-w-70"></div>
+            <div class="skeleton skeleton-text skeleton-w-40"></div>
+            <div class="exercise-tags">
+              <div class="skeleton skeleton-badge"></div>
+              <div class="skeleton skeleton-badge"></div>
+            </div>
+          </div>
         </div>
       }
       @case ("workout-card") {

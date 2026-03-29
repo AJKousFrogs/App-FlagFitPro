@@ -177,6 +177,8 @@ export class RecoveryService {
 
   // State signals for recovery sessions
   private readonly _activeSessions = signal<RecoverySession[]>([]);
+  private realtimeUnsubscribe: (() => void) | null = null;
+  private lastRealtimeUserId: string | null = null;
   readonly activeSessions = this._activeSessions.asReadonly();
 
   constructor() {
@@ -185,17 +187,29 @@ export class RecoveryService {
       const userId = this.userId();
 
       if (userId) {
+        if (this.lastRealtimeUserId === userId) {
+          return;
+        }
+
+        this.cleanupRealtimeSubscription();
         this.logger.info(
           "[Recovery] User logged in, setting up realtime subscriptions",
         );
+        this.lastRealtimeUserId = userId;
         this.loadActiveSessions(userId);
         this.subscribeToSessionUpdates(userId);
       } else {
         this.logger.info("[Recovery] User logged out, cleaning up");
         this._activeSessions.set([]);
-        this.realtimeService.unsubscribe("recovery_sessions");
+        this.cleanupRealtimeSubscription();
       }
     });
+  }
+
+  private cleanupRealtimeSubscription(): void {
+    this.realtimeUnsubscribe?.();
+    this.realtimeUnsubscribe = null;
+    this.lastRealtimeUserId = null;
   }
 
   /**
@@ -234,7 +248,7 @@ export class RecoveryService {
    * Subscribe to realtime recovery session updates
    */
   private subscribeToSessionUpdates(userId: string): void {
-    this.realtimeService.subscribe<DatabaseRecoverySession>(
+    this.realtimeUnsubscribe = this.realtimeService.subscribe<DatabaseRecoverySession>(
       "recovery_sessions",
       `athlete_id=eq.${userId}`,
       {

@@ -210,6 +210,84 @@
   status = 200
   force = true
 
+[[redirects]]
+  from = "/api/team-calendar/*"
+  to = "/.netlify/functions/team-calendar"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/team-calendar"
+  to = "/.netlify/functions/team-calendar"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/roster/*"
+  to = "/.netlify/functions/roster"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/return-to-play/*"
+  to = "/.netlify/functions/return-to-play"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/return-to-play"
+  to = "/.netlify/functions/return-to-play"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/cycle-tracking/*"
+  to = "/.netlify/functions/cycle-tracking"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/cycle-tracking"
+  to = "/.netlify/functions/cycle-tracking"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/game-events/*"
+  to = "/.netlify/functions/game-events"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/game-events"
+  to = "/.netlify/functions/game-events"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/sleep-data"
+  to = "/.netlify/functions/sleep-data"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/wearables/status"
+  to = "/.netlify/functions/wearables-status"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/import/fetch-url"
+  to = "/.netlify/functions/import-process"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/import/process"
+  to = "/.netlify/functions/import-process"
+  status = 200
+  force = true
+
 # ============================================================================
 # CHAT & COMMUNITY API ROUTES
 # ============================================================================
@@ -294,7 +372,19 @@
   force = true
 
 [[redirects]]
+  from = "/api/training-sessions"
+  to = "/.netlify/functions/training-sessions"
+  status = 200
+  force = true
+
+[[redirects]]
   from = "/api/training/sessions/*"
+  to = "/.netlify/functions/training-sessions"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/training-sessions/*"
   to = "/.netlify/functions/training-sessions"
   status = 200
   force = true
@@ -886,7 +976,19 @@
   force = true
 
 [[redirects]]
+  from = "/api/user-context"
+  to = "/.netlify/functions/user-context"
+  status = 200
+  force = true
+
+[[redirects]]
   from = "/api/user/context/*"
+  to = "/.netlify/functions/user-context"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/user-context/*"
   to = "/.netlify/functions/user-context"
   status = 200
   force = true
@@ -1030,8 +1132,32 @@
   force = true
 
 [[redirects]]
+  from = "/api/user-profile"
+  to = "/.netlify/functions/user-profile"
+  status = 200
+  force = true
+
+[[redirects]]
   from = "/api/user/profile/*"
   to = "/.netlify/functions/user-profile"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/user-profile/*"
+  to = "/.netlify/functions/user-profile"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/training/programs"
+  to = "/.netlify/functions/training-programs"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/training/programs/*"
+  to = "/.netlify/functions/training-programs"
   status = 200
   force = true
 

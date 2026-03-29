@@ -94,6 +94,98 @@ function validateDataset(dataset) {
   return null;
 }
 
+function asFiniteNumber(value, fallback = 0) {
+  const parsed = Number(value);
+  return Number.isFinite(parsed) ? parsed : fallback;
+}
+
+function estimateSessionIntensity(metrics) {
+  const totalVolume = asFiniteNumber(metrics.total_volume);
+  const highSpeedDistance = asFiniteNumber(metrics.high_speed_distance);
+  const sprintCount = asFiniteNumber(metrics.sprint_count);
+  const durationMinutes = Math.max(asFiniteNumber(metrics.duration_minutes), 1);
+
+  const highSpeedRatio = totalVolume > 0 ? highSpeedDistance / totalVolume : 0;
+  const sprintRatePerMinute = sprintCount / durationMinutes;
+  const weightedScore = 3.5 + highSpeedRatio * 6 + sprintRatePerMinute * 2.5;
+
+  return Math.max(1, Math.min(10, Math.round(weightedScore)));
+}
+
+async function persistImportedSession({
+  athleteId,
+  metrics,
+  dataset,
+  sessionDate,
+  sessionType,
+  teamId,
+  notes,
+}) {
+  const estimatedRpe = estimateSessionIntensity(metrics);
+  const workload =
+    metrics.duration_minutes > 0 ? estimatedRpe * metrics.duration_minutes : null;
+
+  const rpcResult = await supabaseAdmin.rpc("log_training_session", {
+    p_user_id: athleteId,
+    p_session_date: sessionDate,
+    p_session_type: sessionType,
+    p_duration_minutes: Math.max(metrics.duration_minutes, 1),
+    p_intensity_level: estimatedRpe,
+    p_rpe: estimatedRpe,
+    p_workload: workload,
+    p_notes: notes,
+    p_team_id: teamId,
+    p_status: "completed",
+  });
+
+  if (rpcResult.error) {
+    return { data: null, error: rpcResult.error };
+  }
+
+  const sessionRecord = Array.isArray(rpcResult.data)
+    ? rpcResult.data[0]
+    : rpcResult.data;
+  const sessionId = sessionRecord?.session_id || sessionRecord?.id || null;
+
+  if (!sessionId) {
+    return {
+      data: null,
+      error: new Error("Training session import did not return a session id"),
+    };
+  }
+
+  const { error: updateError } = await supabaseAdmin
+    .from("training_sessions")
+    .update({
+      session_metrics: {
+        total_volume: metrics.total_volume,
+        high_speed_distance: metrics.high_speed_distance,
+        sprint_count: metrics.sprint_count,
+        duration_minutes: metrics.duration_minutes,
+        estimated_rpe: estimatedRpe,
+        data_source: "open_dataset",
+        source_samples: dataset.length,
+      },
+      notes:
+        notes ||
+        `Imported open dataset (${dataset.length} samples, ${metrics.total_volume}m total volume)`,
+    })
+    .eq("id", sessionId);
+
+  if (updateError) {
+    return { data: null, error: updateError };
+  }
+
+  return {
+    data: {
+      id: sessionId,
+      estimated_rpe: estimatedRpe,
+      workload,
+    },
+    error: null,
+  };
+}
+
 /**
  * Compute flag-football metrics from raw dataset
  * @param {Array} raw - Array of data entries with speed_m_s and distance_m
@@ -165,7 +257,14 @@ const handler = async (event, context) => {
       }
 
       // If athleteId not provided, use authenticated user's ID
-      const { athleteId = userId, dataset } = body;
+      const {
+        athleteId = userId,
+        dataset,
+        sessionDate,
+        sessionType = "Imported Open Data",
+        teamId = null,
+        notes = null,
+      } = body;
 
       // Validate required fields
       if (!isValidId(athleteId)) {
@@ -188,28 +287,29 @@ const handler = async (event, context) => {
         return handleValidationError(datasetValidationError);
       }
 
+      const normalizedSessionDate =
+        typeof sessionDate === "string" && sessionDate.trim()
+          ? sessionDate
+          : new Date().toISOString().slice(0, 10);
+
+      if (Number.isNaN(new Date(normalizedSessionDate).getTime())) {
+        return handleValidationError("sessionDate must be a valid date string");
+      }
+
       // Compute metrics from dataset
       const metrics = computeMetrics(dataset);
+      const persistResult = await persistImportedSession({
+        athleteId,
+        metrics,
+        dataset,
+        sessionDate: normalizedSessionDate,
+        sessionType,
+        teamId,
+        notes,
+      });
 
-      // Insert into sessions table
-      const { data, error } = await supabaseAdmin
-        .from("sessions")
-        .insert({
-          athlete_id: athleteId,
-          date: new Date().toISOString().slice(0, 10),
-          rpe: 0, // Athletes fill this post-session
-          total_volume: metrics.total_volume,
-          high_speed_distance: metrics.high_speed_distance,
-          sprint_count: metrics.sprint_count,
-          duration_minutes: metrics.duration_minutes,
-          data_source: "open_dataset",
-          raw_data: dataset,
-        })
-        .select()
-        .single();
-
-      if (error) {
-        console.error("Database error:", error);
+      if (persistResult.error) {
+        console.error("Database error:", persistResult.error);
         return createErrorResponse(
           "Failed to insert session",
           500,
@@ -220,7 +320,9 @@ const handler = async (event, context) => {
       return createSuccessResponse({
         ok: true,
         metrics,
-        session_id: data.id,
+        estimated_rpe: persistResult.data.estimated_rpe,
+        workload: persistResult.data.workload,
+        session_id: persistResult.data.id,
       });
     },
   });

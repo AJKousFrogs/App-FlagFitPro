@@ -134,6 +134,8 @@ export class NutritionService {
   // State signals
   private readonly _todaysMeals = signal<Meal[]>([]);
   private readonly _nutritionGoals = signal<NutritionGoal[]>([]);
+  private realtimeUnsubscribers: Array<() => void> = [];
+  private lastRealtimeUserId: string | null = null;
   readonly todaysMeals = this._todaysMeals.asReadonly();
   readonly nutritionGoals = this._nutritionGoals.asReadonly();
 
@@ -176,19 +178,30 @@ export class NutritionService {
       const userId = this.userId();
 
       if (userId) {
+        if (this.lastRealtimeUserId === userId) {
+          return;
+        }
+
+        this.cleanupRealtimeSubscriptions();
         this.logger.info(
           "[Nutrition] User logged in, setting up realtime subscriptions",
         );
+        this.lastRealtimeUserId = userId;
         this.loadTodaysNutrition();
         this.subscribeToNutritionUpdates(userId);
       } else {
         this.logger.info("[Nutrition] User logged out, cleaning up");
         this._todaysMeals.set([]);
         this._nutritionGoals.set([]);
-        this.realtimeService.unsubscribe("nutrition_logs");
-        this.realtimeService.unsubscribe("nutrition_goals");
+        this.cleanupRealtimeSubscriptions();
       }
     });
+  }
+
+  private cleanupRealtimeSubscriptions(): void {
+    this.realtimeUnsubscribers.forEach((unsubscribe) => unsubscribe());
+    this.realtimeUnsubscribers = [];
+    this.lastRealtimeUserId = null;
   }
 
   /**
@@ -223,7 +236,8 @@ export class NutritionService {
     const today = new Date().toISOString().split("T")[0];
 
     // Subscribe to nutrition logs
-    this.realtimeService.subscribe<DatabaseNutritionLog>(
+    this.realtimeUnsubscribers.push(
+      this.realtimeService.subscribe<DatabaseNutritionLog>(
       "nutrition_logs",
       `user_id=eq.${userId}`,
       {
@@ -252,23 +266,25 @@ export class NutritionService {
           this.refreshTodaysMeals();
         },
       },
-    );
+    ));
 
     // Subscribe to nutrition goals
-    this.realtimeService.subscribe("nutrition_goals", `user_id=eq.${userId}`, {
-      onInsert: () => {
-        this.logger.info("[Nutrition] New goal added via realtime");
-        this.refreshGoals();
-      },
-      onUpdate: () => {
-        this.logger.info("[Nutrition] Goal updated via realtime");
-        this.refreshGoals();
-      },
-      onDelete: () => {
-        this.logger.info("[Nutrition] Goal deleted via realtime");
-        this.refreshGoals();
-      },
-    });
+    this.realtimeUnsubscribers.push(
+      this.realtimeService.subscribe("nutrition_goals", `user_id=eq.${userId}`, {
+        onInsert: () => {
+          this.logger.info("[Nutrition] New goal added via realtime");
+          this.refreshGoals();
+        },
+        onUpdate: () => {
+          this.logger.info("[Nutrition] Goal updated via realtime");
+          this.refreshGoals();
+        },
+        onDelete: () => {
+          this.logger.info("[Nutrition] Goal deleted via realtime");
+          this.refreshGoals();
+        },
+      }),
+    );
   }
 
   /**

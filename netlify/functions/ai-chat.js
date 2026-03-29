@@ -1404,6 +1404,44 @@ async function getConversationHistory(sessionId, limit = 10) {
   }
 }
 
+async function getSessionMessages(userId, sessionId) {
+  const { data: session, error: sessionError } = await supabaseAdmin
+    .from("ai_chat_sessions")
+    .select("id")
+    .eq("id", sessionId)
+    .eq("user_id", userId)
+    .maybeSingle();
+
+  if (sessionError) {
+    console.error("[AI Chat] Error fetching session:", sessionError);
+    throw new Error("Failed to load chat session");
+  }
+
+  if (!session) {
+    return null;
+  }
+
+  const { data: messages, error: messagesError } = await supabaseAdmin
+    .from("ai_messages")
+    .select("id, role, content, created_at, risk_level, metadata")
+    .eq("session_id", sessionId)
+    .order("created_at", { ascending: true });
+
+  if (messagesError) {
+    console.error("[AI Chat] Error fetching session messages:", messagesError);
+    throw new Error("Failed to load chat messages");
+  }
+
+  return (messages || []).map((message) => ({
+    id: message.id,
+    role: message.role,
+    content: message.content,
+    timestamp: message.created_at,
+    riskLevel: message.risk_level || null,
+    metadata: message.metadata || null,
+  }));
+}
+
 /**
  * Create parent notification for youth athlete interactions
  *
@@ -3111,32 +3149,69 @@ async function checkAiProcessingConsent(userId) {
 }
 
 const handler = async (event, context) => {
-  // Apply Merlin guard - AI chat is POST only (mutation)
-  const req = {
-    method: event.httpMethod,
-    path: event.path,
-    headers: event.headers,
-    body: event.body,
-    user: context.user || {},
-  };
-  const blocked = guardMerlinRequest(req);
-  if (blocked && blocked.statusCode === 403) {
-    return blocked;
-  }
-
   // Extract sub-path to determine which endpoint is being called
   const path = event.path.replace("/.netlify/functions/ai-chat", "");
   const isAnalyzeContext =
     path.includes("/analyze-context") ||
     event.path.includes("/api/ai/analyze-context");
+  const isSessionFetch =
+    event.httpMethod === "GET" &&
+    (path.includes("/session/") || event.path.includes("/api/ai/chat/session/"));
+  const sessionMatch = path.match(/\/session\/([^/]+)$/);
+
+  if (event.httpMethod === "POST") {
+    const req = {
+      method: event.httpMethod,
+      path: event.path,
+      headers: event.headers,
+      body: event.body,
+      user: context.user || {},
+    };
+    const blocked = guardMerlinRequest(req);
+    if (blocked && blocked.statusCode === 403) {
+      return blocked;
+    }
+  }
 
   return baseHandler(event, context, {
     functionName: "ai-chat",
-    allowedMethods: ["POST"],
+    allowedMethods: ["GET", "POST"],
     rateLimitType: "CREATE", // More restrictive rate limiting for AI
     requireAuth: true,
     handler: async (event, _context, { userId, requestId }) => {
       checkEnvVars();
+
+      if (event.httpMethod === "GET") {
+        if (!isSessionFetch || !sessionMatch?.[1]) {
+          return createErrorResponse(
+            "GET is only supported for /api/ai/chat/session/:sessionId",
+            405,
+            "method_not_allowed",
+            requestId,
+          );
+        }
+
+        try {
+          const messages = await getSessionMessages(userId, sessionMatch[1]);
+          if (!messages) {
+            return createErrorResponse(
+              "Chat session not found",
+              404,
+              "not_found",
+              requestId,
+            );
+          }
+
+          return createSuccessResponse({ messages }, requestId);
+        } catch (error) {
+          return createErrorResponse(
+            error.message || "Failed to load chat session",
+            500,
+            "server_error",
+            requestId,
+          );
+        }
+      }
 
       // Handle /api/ai/analyze-context endpoint
       if (isAnalyzeContext) {

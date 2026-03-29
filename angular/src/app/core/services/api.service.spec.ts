@@ -114,6 +114,30 @@ describe("ApiService", () => {
       req.flush(mockResponse);
     });
 
+    it("should serialize array and date query params", () => {
+      const mockResponse: ApiResponse = { success: true };
+      const since = new Date("2026-03-29T10:00:00.000Z");
+
+      service
+        .get("/test-endpoint", {
+          tags: ["speed", "load"],
+          since,
+          includeArchived: false,
+        })
+        .subscribe();
+
+      const req = httpMock.expectOne((request) => {
+        return (
+          request.url.includes("/test-endpoint") &&
+          request.params.getAll("tags")?.join(",") === "speed,load" &&
+          request.params.get("since") === since.toISOString() &&
+          request.params.get("includeArchived") === "false"
+        );
+      });
+      expect(req.request.method).toBe("GET");
+      req.flush(mockResponse);
+    });
+
     it("should handle GET error response", () => {
       service.get("/test-endpoint").subscribe({
         error: (error) => {
@@ -278,6 +302,28 @@ describe("ApiService", () => {
         request.url.includes("/test-endpoint/999"),
       );
       req.flush({}, { status: 404, statusText: "Not Found" });
+    });
+
+    it("should support DELETE params and request body", () => {
+      const mockResponse: ApiResponse = { success: true };
+
+      service
+        .delete("/test-endpoint/1", {
+          body: { hardDelete: false },
+          params: { reason: "cleanup", ids: [1, 2] },
+        })
+        .subscribe();
+
+      const req = httpMock.expectOne((request) => {
+        return (
+          request.url.includes("/test-endpoint/1") &&
+          request.params.get("reason") === "cleanup" &&
+          request.params.getAll("ids")?.join(",") === "1,2"
+        );
+      });
+      expect(req.request.method).toBe("DELETE");
+      expect(req.request.body).toEqual({ hardDelete: false });
+      req.flush(mockResponse);
     });
   });
 

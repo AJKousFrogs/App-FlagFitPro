@@ -130,6 +130,12 @@ vi.mock("../../netlify/functions/supabase-client.js", () => {
       return this;
     }
     maybeSingle() {
+      if (this.table === "ai_chat_sessions") {
+        return Promise.resolve({
+          data: { id: "session-blocked-1", user_id: "user-1" },
+          error: null,
+        });
+      }
       return Promise.resolve({ data: null, error: null });
     }
     single() {
@@ -227,6 +233,24 @@ describe("ai-chat validation hardening", () => {
     expect(response.statusCode).toBe(422);
     const payload = JSON.parse(response.body);
     expect(payload.error?.code).toBe("validation_error");
+  });
+
+  it("returns session messages for GET /api/ai/chat/session/:sessionId", async () => {
+    const { handler } = await import("../../netlify/functions/ai-chat.js");
+    const response = await handler(
+      {
+        httpMethod: "GET",
+        path: "/.netlify/functions/ai-chat/session/session-blocked-1",
+        headers: {},
+        body: null,
+      },
+      {},
+    );
+
+    expect(response.statusCode).toBe(200);
+    const payload = JSON.parse(response.body);
+    expect(payload.success).toBe(true);
+    expect(Array.isArray(payload.data?.messages)).toBe(true);
   });
 
   it("returns 422 for non-object JSON on analyze-context endpoint", async () => {

@@ -169,8 +169,8 @@ export const teamRoutes: Routes = [
       import("../../../features/coach/knowledge-base/knowledge-base.component").then(
         (m) => m.KnowledgeBaseComponent,
       ),
-    canActivate: [authGuard, coachRoleGuard],
-    data: { preload: false, entry: "internal" }, // Reference feature
+    canActivate: [authGuard],
+    data: { preload: false, entry: "internal" }, // Shared knowledge feature
   },
   {
     path: "coach/knowledge",

@@ -2,6 +2,7 @@ import {
   ApplicationConfig,
   ErrorHandler,
   LOCALE_ID,
+  provideExperimentalZonelessChangeDetection,
 } from "@angular/core";
 import { provideClientHydration } from "@angular/platform-browser";
 import { provideAnimationsAsync } from "@angular/platform-browser/animations/async";
@@ -9,6 +10,7 @@ import {
   provideRouter,
   withComponentInputBinding,
   withPreloading,
+  withViewTransitions,
 } from "@angular/router";
 import { provideServiceWorker } from "@angular/service-worker";
 import {
@@ -41,15 +43,20 @@ export const appConfig: ApplicationConfig = {
     { provide: LOCALE_ID, useValue: "en-US" },
 
     // Angular 21+: Zoneless is the default change-detection mode.
-    // Keep provideZoneChangeDetection() out unless explicit Zone.js compatibility is required.
+    // Explicitly enabling stable experimental zoneless for performance.
+    provideExperimentalZonelessChangeDetection(),
+
     ...(environment.devtools.hydration ? [provideClientHydration()] : []),
 
     // Angular 21: Enhanced routing with component input binding and smart preloading
-    // View transitions DISABLED: was causing UI lag; re-add withViewTransitions() if smooth transitions needed
+    // View transitions ENABLED with performance optimizations
     provideRouter(
       routes,
       withComponentInputBinding(), // Enables route params as component inputs
       withPreloading(AuthAwarePreloadStrategy), // Custom preloading strategy for authenticated routes
+      withViewTransitions({
+        skipInitialTransition: true, // Performance: skip transition on first page load
+      }),
     ),
 
     // PERFORMANCE: Use async animations to reduce initial bundle
@@ -120,54 +127,18 @@ export const appConfig: ApplicationConfig = {
         ],
       },
 
-      // CSP Nonce: For Content Security Policy nonce support
-      // Uncomment and set nonce value if moving from 'unsafe-inline' to nonce-based CSP
-      // Currently using 'unsafe-inline' in netlify.toml for styles
-      // csp: {
-      //   nonce: 'your-nonce-value-here'
-      // },
-
       // Theme: PrimeNG 21 Styled Mode Configuration
-      //
-      // ARCHITECTURE:
-      // PrimeNG uses a design-agnostic theming system with three token tiers:
-      // 1. Primitive Tokens: Raw color palette (e.g., blue-500, green-400)
-      // 2. Semantic Tokens: Contextual design elements (e.g., primary.color, surface.ground)
-      // 3. Component Tokens: Component-specific (e.g., button.background, inputtext.border.color)
-      //
-      // CURRENT APPROACH:
-      // We use the Aura preset as the base and customize via CSS variables in:
-      // - angular/src/scss/components/primeng-theme.scss (component-specific overrides)
-      // - primeng-integration.scss (design token mapping)
-      //
       theme: {
         preset: FlagFitPreset,
 
         options: {
           // CSS variable prefix (e.g., --p-primary-color)
-          // All PrimeNG tokens use this prefix
           prefix: "p",
 
           // Dark mode selector: Use class-based toggle
-          // Toggle the .dark-theme class on document root to switch themes
-          //
-          // Options:
-          // - ".dark-theme" = class-based toggle (current)
-          // - "system" = prefers-color-scheme media query
-          // - false or "none" = disable dark mode completely
           darkModeSelector: ".dark-theme",
 
           // CSS Layer configuration for proper cascade order
-          // This ensures PrimeNG styles can be overridden cleanly without !important
-          //
-          // Layer order (lowest to highest specificity):
-          // 1. reset = Browser normalization
-          // 2. tokens = Reserved for PrimeNG/future (design-system uses unlayered :root)
-          // 3. primeng-base = PrimeNG default styles
-          // 4. primeng-brand = PrimeNG customization to match brand
-          // 5. primitives = Shared components (cards, typography, spacing)
-          // 6. features = Reserved for PrimeNG/future (pages use primeng-brand, overrides)
-          // 7. overrides = Temporary fixes only (with ticket + expiry)
           cssLayer: {
             name: "primeng-base",
             order:
@@ -175,14 +146,6 @@ export const appConfig: ApplicationConfig = {
           },
         },
       },
-
-      // Translation: For i18n support
-      // Uncomment and configure translations when implementing multi-language support
-      // translation: {
-      //   accept: 'Accept',
-      //   reject: 'Reject',
-      //   // Add more translations as needed
-      // },
     }),
 
     // CRITICAL SERVICES: Only register services needed at startup

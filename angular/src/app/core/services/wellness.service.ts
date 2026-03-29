@@ -4,13 +4,15 @@ import { catchError, map, tap } from "rxjs";
 import { STATUS_HEX_COLORS } from "../utils/design-tokens.util";
 import { ApiService } from "./api.service";
 import { LoggerService } from "./logger.service";
-import { RealtimeEvent, RealtimeService } from "./realtime.service";
+import { RealtimeChannel } from "@supabase/supabase-js";
+import { RealtimeService } from "./realtime.service";
 import { SupabaseService } from "./supabase.service";
 import {
   extractApiPayload,
   isApiResponse,
   isSuccessfulApiResponse,
 } from "../utils/api-response-mapper";
+import { RealtimeBroadcastPayload } from "../models/realtime-broadcast.model";
 
 export interface WellnessData {
   id?: number;
@@ -121,6 +123,7 @@ export class WellnessService {
 
   // Get current user ID reactively
   private userId = computed(() => this.supabaseService.userId());
+  private wellnessChannel: RealtimeChannel | null = null;
 
   private readonly _wellnessData = signal<WellnessData[]>([]);
   private readonly _averages = signal<WellnessAverages | null>(null);
@@ -136,8 +139,8 @@ export class WellnessService {
     return data.length > 0 ? data[0] : null;
   });
 
-  // MEMORY SAFETY: Track subscription cleanup function
-  private unsubscribeFromRealtime: (() => void) | null = null;
+  // MEMORY SAFETY: Track realtime channel + last user
+  private wellnessChannel: RealtimeChannel | null = null;
   private lastLoadedUserId: string | null = null;
 
   constructor() {
@@ -169,20 +172,21 @@ export class WellnessService {
    * MEMORY SAFETY: Centralized cleanup method
    */
   private cleanup(): void {
-    // Clean up realtime subscription
-    if (this.unsubscribeFromRealtime) {
-      this.unsubscribeFromRealtime();
-      this.unsubscribeFromRealtime = null;
-    }
-
-    // Also try generic unsubscribe
-    this.realtimeService.unsubscribe("daily_wellness_checkin");
+    this.cleanupWellnessChannel();
 
     // Clear cached data
     this.clearCache();
     this.lastLoadedUserId = null;
 
     this.logger.debug("[Wellness] Cleanup complete");
+  }
+
+  private cleanupWellnessChannel(): void {
+    if (this.wellnessChannel) {
+      this.supabaseService.unsubscribe(this.wellnessChannel);
+      this.wellnessChannel = null;
+      this.logger.debug("[Wellness] Broadcast channel closed");
+    }
   }
 
   /**
@@ -643,57 +647,96 @@ export class WellnessService {
    * MEMORY SAFETY: Stores unsubscribe function for cleanup
    */
   private subscribeToWellnessUpdates(userId: string): void {
-    // Clean up any existing subscription first
-    if (this.unsubscribeFromRealtime) {
-      this.unsubscribeFromRealtime();
-      this.unsubscribeFromRealtime = null;
+    this.cleanupWellnessChannel();
+
+    this.wellnessChannel = this.supabaseService.client
+      .channel(`wellness:${userId}`)
+      .on("broadcast", { event: "wellness_change" }, (payload) => {
+        this.handleWellnessBroadcast(payload.payload as RealtimeBroadcastPayload);
+      })
+      .subscribe((status) => {
+        if (status === "SUBSCRIBED") {
+          this.logger.info("[Wellness] Wellness broadcast channel subscribed");
+        } else {
+          this.logger.debug("[Wellness] Wellness broadcast status:", status);
+        }
+      });
+  }
+
+  private handleWellnessBroadcast(payload: RealtimeBroadcastPayload): void {
+    if (!payload || !payload.record) return;
+    this.logger.debug("[Wellness] Received wellness broadcast:", payload.operation);
+    switch (payload.operation) {
+      case "INSERT":
+        this.handleWellnessInsert(payload.record);
+        break;
+      case "UPDATE":
+        this.handleWellnessUpdate(payload.record);
+        break;
+      case "DELETE":
+        this.handleWellnessDelete(payload.record);
+        break;
     }
+  }
 
-    // Subscribe to changes for daily_wellness_checkin (canonical table)
-    // MEMORY SAFETY: Store the unsubscribe function
-    this.unsubscribeFromRealtime = this.realtimeService.subscribe(
-      "daily_wellness_checkin",
-      `user_id=eq.${userId}`,
-      {
-        onInsert: (payload: RealtimeEvent) => {
-          this.logger.info("[Wellness] New entry received via realtime");
-          const newEntry = this.transformCheckinEntry(
-            payload.new as unknown as DailyWellnessCheckinEntry,
-          );
-          const current = this._wellnessData();
-          // MEMORY SAFETY: Limit data size
-          const newData = [newEntry, ...current].slice(
-            0,
-            WELLNESS_MEMORY_LIMITS.MAX_ENTRIES,
-          );
-          this._wellnessData.set(newData);
-          this._averages.set(this.calculateAverages(newData));
-        },
-        onUpdate: (payload: RealtimeEvent) => {
-          this.logger.info("[Wellness] Entry updated via realtime");
-          const updatedEntry = this.transformCheckinEntry(
-            payload.new as unknown as DailyWellnessCheckinEntry,
-          );
-          const current = this._wellnessData();
-          const index = current.findIndex((e) => e.id === updatedEntry.id);
-
-          if (index !== -1) {
-            const updated = [...current];
-            updated[index] = updatedEntry;
-            this._wellnessData.set(updated);
-            this._averages.set(this.calculateAverages(updated));
-          }
-        },
-        onDelete: (payload: RealtimeEvent) => {
-          this.logger.info("[Wellness] Entry deleted via realtime");
-          const current = this._wellnessData();
-          const oldEntry = payload.old as unknown as DailyWellnessCheckinEntry;
-          const filtered = current.filter((e) => e.id !== oldEntry.id);
-          this._wellnessData.set(filtered);
-          this._averages.set(this.calculateAverages(filtered));
-        },
-      },
+  private handleWellnessInsert(record: Record<string, unknown>): void {
+    const newEntry = this.transformCheckinEntry(
+      this.mapRecordToCheckin(record),
     );
+    const current = this._wellnessData();
+    const newData = [newEntry, ...current].slice(
+      0,
+      WELLNESS_MEMORY_LIMITS.MAX_ENTRIES,
+    );
+    this._wellnessData.set(newData);
+    this._averages.set(this.calculateAverages(newData));
+  }
+
+  private handleWellnessUpdate(record: Record<string, unknown>): void {
+    const updatedEntry = this.transformCheckinEntry(
+      this.mapRecordToCheckin(record),
+    );
+    const current = this._wellnessData();
+    const index = current.findIndex((e) => e.id === updatedEntry.id);
+
+    if (index !== -1) {
+      const updated = [...current];
+      updated[index] = updatedEntry;
+      this._wellnessData.set(updated);
+      this._averages.set(this.calculateAverages(updated));
+    }
+  }
+
+  private handleWellnessDelete(record: Record<string, unknown>): void {
+    const oldEntry = this.mapRecordToCheckin(record);
+    const current = this._wellnessData();
+    const filtered = current.filter((e) => e.id !== oldEntry.id);
+    this._wellnessData.set(filtered);
+    this._averages.set(this.calculateAverages(filtered));
+  }
+
+  private mapRecordToCheckin(
+    record: Record<string, unknown>,
+  ): DailyWellnessCheckinEntry {
+    return {
+      id: Number(record["id"]),
+      user_id: String(record["user_id"]),
+      checkin_date: String(record["checkin_date"] ?? record["date"] ?? ""),
+      sleep_hours: Number(record["sleep_hours"] ?? record["sleep_quality"] ?? 0),
+      sleep_quality: Number(record["sleep_quality"] ?? 0),
+      energy_level: Number(record["energy_level"] ?? 0),
+      stress_level: Number(record["stress_level"] ?? 0),
+      muscle_soreness: Number(record["muscle_soreness"] ?? 0),
+      motivation_level: Number(record["motivation_level"] ?? 0),
+      mood: Number(record["mood"] ?? 0),
+      hydration_level: Number(record["hydration_level"] ?? 0),
+      soreness_areas: record["soreness_areas"] as string[] | undefined,
+      notes: record["notes"] as string | undefined,
+      calculated_readiness: Number(record["calculated_readiness"] ?? 0),
+      readiness_score: Number(record["readiness_score"] ?? 0),
+      created_at: String(record["created_at"] ?? new Date().toISOString()),
+      updated_at: record["updated_at"] as string | undefined,
+    };
   }
 
   /**

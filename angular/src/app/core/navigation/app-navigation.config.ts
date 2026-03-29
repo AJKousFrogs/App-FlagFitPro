@@ -88,7 +88,7 @@ const ATHLETE_NAV_ITEMS: readonly AppNavigationItem[] = [
   },
   {
     label: "Knowledge Base",
-    route: "/help",
+    route: "/knowledge",
     icon: "pi-bookmark",
     ariaLabel: "Knowledge Base - Browse training guidance and team resources",
     group: "secondary",

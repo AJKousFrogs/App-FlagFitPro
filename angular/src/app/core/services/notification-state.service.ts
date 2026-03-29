@@ -22,10 +22,7 @@ import {
   DestroyRef,
 } from "@angular/core";
 import { firstValueFrom } from "rxjs";
-import {
-  RealtimeChannel,
-  RealtimePostgresChangesPayload,
-} from "@supabase/supabase-js";
+import { RealtimeChannel } from "@supabase/supabase-js";
 import { ApiService, API_ENDPOINTS } from "./api.service";
 import { LoggerService } from "./logger.service";
 import { toLogContext } from "./logger.service";
@@ -38,6 +35,7 @@ import {
   isSuccessfulApiResponse,
   readNumericField,
 } from "../utils/api-response-mapper";
+import { RealtimeBroadcastPayload } from "../models/realtime-broadcast.model";
 
 /**
  * Notification categories specific to flag football app
@@ -267,52 +265,14 @@ export class NotificationStateService implements OnDestroy {
         this.realtimeChannel = null;
       }
 
-      // Subscribe to notifications table changes for this user
+      // Subscribe to notification broadcasts for this user
       const channelName = `notifications:${userId}`;
       this.realtimeChannel = this.supabaseService.client
         .channel(channelName)
-        .on(
-          "postgres_changes",
-          {
-            event: "INSERT",
-            schema: "public",
-            table: "notifications",
-            filter: `user_id=eq.${userId}`,
-          },
-          (
-            payload: RealtimePostgresChangesPayload<Record<string, unknown>>,
-          ) => {
-            this.handleNewNotification(payload);
-          },
-        )
-        .on(
-          "postgres_changes",
-          {
-            event: "UPDATE",
-            schema: "public",
-            table: "notifications",
-            filter: `user_id=eq.${userId}`,
-          },
-          (
-            payload: RealtimePostgresChangesPayload<Record<string, unknown>>,
-          ) => {
-            this.handleNotificationUpdate(payload);
-          },
-        )
-        .on(
-          "postgres_changes",
-          {
-            event: "DELETE",
-            schema: "public",
-            table: "notifications",
-            filter: `user_id=eq.${userId}`,
-          },
-          (
-            payload: RealtimePostgresChangesPayload<Record<string, unknown>>,
-          ) => {
-            this.handleNotificationDelete(payload);
-          },
-        )
+        .on("broadcast", { event: "notification_change" }, (payload) => {
+          const broadcast = payload.payload as NotificationBroadcastPayload;
+          this.handleNotificationBroadcast(broadcast);
+        })
         .subscribe((status) => {
           this.logger.debug(
             `[NotificationState] Realtime subscription status: ${status}`,
@@ -344,15 +304,29 @@ export class NotificationStateService implements OnDestroy {
     await this.initializeRealtimeSubscription();
   }
 
+  private handleNotificationBroadcast(
+    payload: RealtimeBroadcastPayload,
+  ): void {
+    if (!payload || !payload.record) return;
+
+    switch (payload.operation) {
+      case "INSERT":
+        this.handleNewNotification(payload.record);
+        break;
+      case "UPDATE":
+        this.handleNotificationUpdate(payload.record);
+        break;
+      case "DELETE":
+        this.handleNotificationDelete(payload.record);
+        break;
+    }
+  }
+
   /**
    * Handle new notification from realtime
    */
-  private handleNewNotification(
-    payload: RealtimePostgresChangesPayload<Record<string, unknown>>,
-  ): void {
-    const newNotification = this.mapPayloadToNotification(
-      payload.new as Record<string, unknown>,
-    );
+  private handleNewNotification(data: Record<string, unknown>): void {
+    const newNotification = this.mapPayloadToNotification(data);
 
     // Avoid duplicates
     const exists = this.notifications().some(
@@ -391,12 +365,8 @@ export class NotificationStateService implements OnDestroy {
   /**
    * Handle notification update from realtime
    */
-  private handleNotificationUpdate(
-    payload: RealtimePostgresChangesPayload<Record<string, unknown>>,
-  ): void {
-    const updatedNotification = this.mapPayloadToNotification(
-      payload.new as Record<string, unknown>,
-    );
+  private handleNotificationUpdate(data: Record<string, unknown>): void {
+    const updatedNotification = this.mapPayloadToNotification(data);
 
     this.notifications.update((notifications) =>
       notifications.map((n) =>
@@ -413,10 +383,8 @@ export class NotificationStateService implements OnDestroy {
   /**
    * Handle notification delete from realtime
    */
-  private handleNotificationDelete(
-    payload: RealtimePostgresChangesPayload<Record<string, unknown>>,
-  ): void {
-    const deletedId = (payload.old as Record<string, unknown>)?.id as string;
+  private handleNotificationDelete(data: Record<string, unknown>): void {
+    const deletedId = String(data?.id ?? "");
     if (deletedId) {
       this.notifications.update((notifications) =>
         notifications.filter((n) => n.id !== deletedId),

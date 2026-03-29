@@ -808,35 +808,19 @@ export class OnboardingComponent implements OnInit, OnDestroy {
         await this.onboardingDataService.upsertUserPreferences(preferences);
 
       if (error) {
-        this.logger.info(
-          "Saving preferences to localStorage:",
+        this.platform.removeLocalStorage("flagfit_preferences");
+        this.logger.error(
+          "Failed to save onboarding preferences to Supabase",
           toLogContext(error.message),
         );
-        this.platform.setLocalStorage(
-          "flagfit_preferences",
-          JSON.stringify(preferences),
+        throw new Error(
+          "Failed to save training preferences. Please try again.",
         );
-      } else {
-        this.platform.removeLocalStorage("flagfit_preferences");
       }
-    } catch (_e) {
-      const preferences = {
-        scheduleType: this.state.formData.scheduleType,
-        practicesPerWeek: this.state.formData.practicesPerWeek,
-        practiceDays: this.state.formData.practiceDays,
-        morningMobility: this.state.formData.morningMobility,
-        eveningMobility: this.state.formData.eveningMobility,
-        foamRollingTime: this.state.formData.foamRollingTime,
-        restDayPreference: this.state.formData.restDayPreference,
-        trainingGoals: this.state.formData.goals,
-        equipmentAvailable: this.state.formData.equipmentAvailable,
-        currentInjuries: this.state.formData.currentInjuries,
-        injuryHistory: this.state.formData.injuryHistory,
-      };
-      this.platform.setLocalStorage(
-        "flagfit_preferences",
-        JSON.stringify(preferences),
-      );
+      this.platform.removeLocalStorage("flagfit_preferences");
+    } catch (error) {
+      this.platform.removeLocalStorage("flagfit_preferences");
+      throw error;
     }
   }
 

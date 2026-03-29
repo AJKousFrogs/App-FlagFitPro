@@ -1,10 +1,11 @@
 /**
  * Mobile Performance - Image Optimization Directive
  * ================================================================
- * Automatic image optimization for mobile devices
- * - Lazy loading
- * - Explicit dimensions
- * - WebP format support
+ * High-performance image handling for Angular 21
+ * - Automatic lazy loading (default)
+ * - Fetch priority support for LCP
+ * - Async decoding
+ * - Touch-optimized (no drag)
  * ================================================================
  */
 
@@ -12,40 +13,29 @@ import { Directive, ElementRef, input, effect, inject } from "@angular/core";
 
 @Directive({
   selector: "img[appMobileOptimized]",
+  host: {
+    "[attr.loading]": "priority() ? 'eager' : 'lazy'",
+    "[attr.fetchpriority]": "priority() ? 'high' : 'auto'",
+    "[attr.decoding]": "'async'",
+    "[attr.draggable]": "'false'",
+    "[style.content-visibility]": "'auto'",
+  }
 })
 export class MobileOptimizedImageDirective {
   private el = inject(ElementRef<HTMLImageElement>);
 
   width = input<string | number | undefined>(undefined);
   height = input<string | number | undefined>(undefined);
-  lazy = input<boolean>(true);
+  priority = input<boolean>(false);
 
   constructor() {
-    // Use effect to react to input changes
     effect(() => {
       const img = this.el.nativeElement;
       const w = this.width();
       const h = this.height();
-      const isLazy = this.lazy();
 
-      // Add lazy loading
-      if (isLazy) {
-        img.loading = "lazy";
-      }
-
-      // Add explicit dimensions if provided
-      if (w) {
-        img.setAttribute("width", String(w));
-      }
-      if (h) {
-        img.setAttribute("height", String(h));
-      }
-
-      // Add decoding async for better performance
-      img.decoding = "async";
-
-      // Prevent dragging (better UX on mobile)
-      img.draggable = false;
+      if (w) img.setAttribute("width", String(w));
+      if (h) img.setAttribute("height", String(h));
     });
   }
 }

@@ -42,6 +42,7 @@ import {
 } from "../../core/services/exercisedb.service";
 import { MobileOptimizedImageDirective } from "../../shared/directives/mobile-optimized-image.directive";
 import { capitalize } from "../../shared/utils/format.utils";
+import { SkeletonRepeatComponent } from "../../shared/components/skeleton-loader/skeleton-loader.component";
 
 @Component({
   selector: "app-exercisedb-manager",
@@ -70,6 +71,7 @@ import { capitalize } from "../../shared/utils/format.utils";
     CardShellComponent,
     AppDialogComponent,
     DialogHeaderComponent,
+    SkeletonRepeatComponent,
   ],
   template: `
     <app-main-layout>
@@ -203,21 +205,11 @@ import { capitalize } from "../../shared/utils/format.utils";
                 <!-- Exercise Grid -->
                 @if (loading()) {
                   <div class="exercises-grid">
-                    @for (i of [1, 2, 3, 4, 5, 6]; track i) {
-                      <app-card-shell class="exercise-card skeleton-card" [flush]="true">
-                        <p-skeleton height="var(--size-200)"></p-skeleton>
-                        <p-skeleton
-                          width="70%"
-                          height="var(--space-6)"
-                          class="mt-3"
-                        ></p-skeleton>
-                        <p-skeleton
-                          width="40%"
-                          height="var(--space-4)"
-                          class="mt-2"
-                        ></p-skeleton>
-                      </app-card-shell>
-                    }
+                    <app-skeleton-repeat
+                      variant="exercise-card"
+                      [count]="6"
+                      layout="grid"
+                    />
                   </div>
                 } @else {
                   <div class="exercises-grid">

@@ -30,6 +30,7 @@ import {
   REALTIME_POSTGRES_CHANGES_LISTEN_EVENT,
   REALTIME_LISTEN_TYPES,
 } from "@supabase/supabase-js";
+import { RealtimeBroadcastPayload } from "../models/realtime-broadcast.model";
 
 // ============================================================================
 // TYPES
@@ -114,6 +115,7 @@ export class TeamNotificationService {
   private readonly _unreadAnnouncements = signal<UnreadAnnouncement[]>([]);
   private readonly _loading = signal(false);
   private channelsUnavailable = false;
+  private lastInitializedUserId: string | null = null;
 
   // Public signals
   readonly activityFeed = computed(() => this._activityFeed());
@@ -150,6 +152,9 @@ export class TeamNotificationService {
     effect(() => {
       const user = this.authService.currentUser();
       if (user) {
+        if (this.lastInitializedUserId === user.id) {
+          return;
+        }
         this.initializeSubscriptions();
       } else {
         this.cleanup();
@@ -168,6 +173,8 @@ export class TeamNotificationService {
     const userId = this.authService.getUser()?.id;
     if (!userId) return;
 
+    this.cleanup();
+    this.lastInitializedUserId = userId;
     this.logger.debug("Initializing team notification subscriptions");
 
     // Subscribe to notifications table
@@ -193,18 +200,14 @@ export class TeamNotificationService {
 
     this.notificationChannel = this.supabase.client
       .channel(`notifications:${userId}`)
-      .on<AppNotification>(
-        REALTIME_LISTEN_TYPES.POSTGRES_CHANGES,
-        {
-          event: REALTIME_POSTGRES_CHANGES_LISTEN_EVENT.INSERT,
-          schema: "public",
-          table: "notifications",
-          filter: `user_id=eq.${userId}`,
-        },
-        (payload: RealtimePostgresChangesPayload<AppNotification>) => {
-          this.handleNewNotification(payload.new as AppNotification);
-        },
-      )
+      .on("broadcast", { event: "notification_change" }, (payload) => {
+        const detail = payload.payload as NotificationBroadcastPayload;
+        if (detail.operation === "INSERT") {
+          this.handleNewNotification(
+            detail.record as unknown as AppNotification,
+          );
+        }
+      })
       .subscribe((status) => {
         if (status === "SUBSCRIBED") {
           this.logger.success("Subscribed to notifications");
@@ -235,28 +238,27 @@ export class TeamNotificationService {
     }
 
     // Subscribe to activity for all coach's teams
-    this.activityChannel = this.supabase.client
-      .channel(`activity:${userId}`)
-      .on<CoachActivityItem>(
+    let channel = this.supabase.client.channel(`activity:${userId}`);
+    for (const teamId of teamIds) {
+      channel = channel.on<CoachActivityItem>(
         REALTIME_LISTEN_TYPES.POSTGRES_CHANGES,
         {
           event: REALTIME_POSTGRES_CHANGES_LISTEN_EVENT.INSERT,
           schema: "public",
           table: "coach_activity_log",
+          filter: `team_id=eq.${teamId}`,
         },
         (payload: RealtimePostgresChangesPayload<CoachActivityItem>) => {
-          const activity = payload.new as CoachActivityItem;
-          // Only show if it's for one of coach's teams
-          if (teamIds.includes(activity.team_id)) {
-            this.handleNewActivity(activity);
-          }
+          this.handleNewActivity(payload.new as CoachActivityItem);
         },
-      )
-      .subscribe((status) => {
-        if (status === "SUBSCRIBED") {
-          this.logger.success("Subscribed to activity feed");
-        }
-      });
+      );
+    }
+
+    this.activityChannel = channel.subscribe((status) => {
+      if (status === "SUBSCRIBED") {
+        this.logger.success("Subscribed to activity feed");
+      }
+    });
 
     // Load initial activity
     await this.loadActivityFeed({ teamIds });
@@ -919,5 +921,6 @@ export class TeamNotificationService {
 
     this._activityFeed.set([]);
     this._unreadAnnouncements.set([]);
+    this.lastInitializedUserId = null;
   }
 }

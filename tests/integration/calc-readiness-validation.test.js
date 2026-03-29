@@ -64,6 +64,20 @@ describe("calc-readiness validation and authorization", () => {
     expect(response.statusCode).toBe(422);
   });
 
+  it("returns 422 for invalid GET day query parameter", async () => {
+    const response = await handler(
+      {
+        httpMethod: "GET",
+        path: "/.netlify/functions/calc-readiness",
+        headers: { authorization: "Bearer test-token" },
+        queryStringParameters: { day: "not-a-date" },
+      },
+      {},
+    );
+
+    expect(response.statusCode).toBe(422);
+  });
+
   it("returns 403 when a non-coach user targets another athlete", async () => {
     authState.role = "player";
     const response = await handler(
@@ -72,6 +86,24 @@ describe("calc-readiness validation and authorization", () => {
         path: "/.netlify/functions/calc-readiness",
         headers: { authorization: "Bearer test-token" },
         body: JSON.stringify({ athleteId: "athlete-2", day: "2026-02-13" }),
+      },
+      {},
+    );
+
+    expect(response.statusCode).toBe(403);
+  });
+
+  it("returns 403 for GET when a non-coach user targets another athlete", async () => {
+    authState.role = "player";
+    const response = await handler(
+      {
+        httpMethod: "GET",
+        path: "/.netlify/functions/calc-readiness",
+        headers: { authorization: "Bearer test-token" },
+        queryStringParameters: {
+          athleteId: "athlete-2",
+          day: "2026-02-13",
+        },
       },
       {},
     );

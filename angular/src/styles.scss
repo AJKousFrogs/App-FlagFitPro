@@ -41,6 +41,7 @@
 /* TIER 5: Always-on overrides required for accessibility and platform behavior */
 @use "./assets/styles/overrides/exceptions";
 @use "./assets/styles/overrides/color-guards";
+@use "./scss/components/modern-overrides" as *;
 
 /* ============================================
    ALL @IMPORT RULES (Must come after @use)

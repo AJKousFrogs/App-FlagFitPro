@@ -1,8 +1,8 @@
 # FlagFit Pro API Documentation
 
-**Version**: 2.2  
-**Last Updated**: 12 January 2026  
-**Last Verified Against Codebase**: 2026-01-12  
+**Version**: 2.3  
+**Last Updated**: 29 March 2026  
+**Last Verified Against Codebase**: 2026-03-29  
 **Status**: ✅ Production Ready
 
 ---
@@ -128,7 +128,33 @@ Based on 87 peer-reviewed studies with 12,453 athletes.
 | Method | Endpoint                 | Auth | Description               |
 | ------ | ------------------------ | ---- | ------------------------- |
 | GET    | `/api/calc-readiness`    | Yes  | Calculate readiness score |
+| POST   | `/api/calc-readiness`    | Yes  | Calculate readiness score |
 | GET    | `/api/readiness-history` | Yes  | Historical readiness data |
+
+### Athlete Workflow Compatibility
+
+| Method | Endpoint                     | Auth | Description                                        |
+| ------ | ---------------------------- | ---- | -------------------------------------------------- |
+| GET    | `/api/team-calendar`         | Yes  | Unified player team calendar (games, practices)    |
+| POST   | `/api/team-calendar/rsvp`    | Yes  | Save RSVP for a calendar item                      |
+| GET    | `/api/team-calendar/sync-url`| Yes  | Calendar subscription URL                          |
+| GET    | `/api/roster/players`        | Yes  | Active roster players for the current team         |
+| POST   | `/api/game-events`           | Yes  | Record a live game play                            |
+| POST   | `/api/game-events/mark-presence` | Yes | Mark a player present for a game                |
+| DELETE | `/api/game-events/{id}`      | Yes  | Delete a recorded game play                        |
+| GET    | `/api/return-to-play`        | Yes  | Active RTP protocol and recent rehab check-ins     |
+| POST   | `/api/return-to-play/start`  | Yes  | Start a return-to-play protocol                    |
+| POST   | `/api/return-to-play/advance`| Yes  | Advance to the next RTP stage                      |
+| POST   | `/api/return-to-play/criterion` | Yes | Update progression criterion completion         |
+| POST   | `/api/return-to-play/checkin` | Yes | Save daily RTP check-in                           |
+| GET    | `/api/cycle-tracking`        | Yes  | Cycle status, history, and ACWR context            |
+| POST   | `/api/cycle-tracking/period` | Yes  | Log a cycle entry                                  |
+| POST   | `/api/cycle-tracking/symptoms` | Yes | Save daily symptoms                               |
+| DELETE | `/api/cycle-tracking/all`    | Yes  | Delete all cycle tracking data                     |
+| GET    | `/api/sleep-data`            | Yes  | Sleep history for sleep debt calculations          |
+| GET    | `/api/wearables/status`      | Yes  | Wearable connection status                         |
+| POST   | `/api/import/fetch-url`      | Yes  | Validate external import URL                       |
+| POST   | `/api/import/process`        | Yes  | Persist mapped import rows into training sessions  |
 
 ### Wellness
 
@@ -368,7 +394,6 @@ Based on 87 peer-reviewed studies with 12,453 athletes.
 | Method | Endpoint            | Auth | Description      |
 | ------ | ------------------- | ---- | ---------------- |
 | GET    | `/api/user/profile` | Yes  | Get user profile |
-| PUT    | `/api/user/profile` | Yes  | Update profile   |
 | GET    | `/api/user/context` | Yes  | Get user context |
 
 ### Weather
@@ -399,9 +424,9 @@ Based on 87 peer-reviewed studies with 12,453 athletes.
 
 | Method | Endpoint                | Auth | Description      |
 | ------ | ----------------------- | ---- | ---------------- |
-| GET    | `/api/compute-acwr`     | Yes  | Compute ACWR     |
-| GET    | `/api/training-metrics` | Yes  | Training metrics |
-| POST   | `/api/import-open-data` | Yes  | Import open data |
+| POST   | `/api/compute-acwr`     | Yes  | Compute ACWR timeline and current summary |
+| GET    | `/api/training-metrics` | Yes  | Training metrics from canonical training sessions |
+| POST   | `/api/import-open-data` | Yes  | Import open data into canonical training sessions |
 
 ---
 

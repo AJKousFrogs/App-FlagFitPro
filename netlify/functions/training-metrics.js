@@ -11,10 +11,117 @@ import { supabaseAdmin } from "./supabase-client.js";
 
 import { baseHandler } from "./utils/base-handler.js";
 import { createErrorResponse } from "./utils/error-handler.js";
-import { executeQuery, parseAthleteId, parseDateParam } from "./utils/db-query-helper.js";
+import { parseAthleteId, parseDateParam } from "./utils/db-query-helper.js";
 import { successResponse } from "./utils/response-helper.js";
 import { getUserRole } from "./utils/authorization-guard.js";
 import { hasAnyRole, LOAD_MANAGEMENT_ACCESS_ROLES } from "./utils/role-sets.js";
+
+function isOptionalSchemaError(error) {
+  const code = error?.code;
+  const message = `${error?.message || ""}`.toLowerCase();
+  return (
+    ["PGRST106", "PGRST116", "PGRST204", "42P01", "42703"].includes(code) ||
+    message.includes("relation") ||
+    message.includes("schema cache") ||
+    message.includes("does not exist") ||
+    message.includes("column")
+  );
+}
+
+function asFiniteNumber(value, fallback = 0) {
+  const parsed = Number(value);
+  return Number.isFinite(parsed) ? parsed : fallback;
+}
+
+function normalizeCanonicalMetricRow(row) {
+  const metrics = row?.session_metrics || {};
+  return {
+    date: row.session_date,
+    total_volume: asFiniteNumber(metrics.total_volume),
+    high_speed_distance: asFiniteNumber(metrics.high_speed_distance),
+    sprint_count: Math.round(asFiniteNumber(metrics.sprint_count)),
+    duration_minutes: asFiniteNumber(row.duration_minutes),
+    session_load: asFiniteNumber(
+      row.workload,
+      asFiniteNumber(row.rpe) * asFiniteNumber(row.duration_minutes),
+    ),
+    data_source: metrics.data_source || "training_session",
+  };
+}
+
+function normalizeLegacyMetricRow(row) {
+  return {
+    date: row.date,
+    total_volume: asFiniteNumber(row.total_volume),
+    high_speed_distance: asFiniteNumber(row.high_speed_distance),
+    sprint_count: Math.round(asFiniteNumber(row.sprint_count)),
+    duration_minutes: asFiniteNumber(row.duration_minutes),
+    session_load: asFiniteNumber(
+      row.workload,
+      asFiniteNumber(row.rpe) * asFiniteNumber(row.duration_minutes),
+    ),
+    data_source: row.data_source || "legacy_session",
+  };
+}
+
+async function fetchCanonicalMetrics(athleteId, startDate) {
+  let query = supabaseAdmin
+    .from("training_sessions")
+    .select(
+      "session_date, duration_minutes, rpe, workload, session_metrics, status",
+    )
+    .or(`user_id.eq.${athleteId},athlete_id.eq.${athleteId}`)
+    .order("session_date", { ascending: false });
+
+  if (startDate) {
+    query = query.gte("session_date", startDate.toISOString().slice(0, 10));
+  }
+
+  const { data, error } = await query;
+  if (error) {
+    return { data: [], error };
+  }
+
+  const normalized = (data || [])
+    .filter(
+      (row) =>
+        row?.session_date &&
+        (!row.status || `${row.status}`.toLowerCase() === "completed"),
+    )
+    .map(normalizeCanonicalMetricRow)
+    .filter(
+      (row) =>
+        row.total_volume > 0 ||
+        row.high_speed_distance > 0 ||
+        row.sprint_count > 0,
+    );
+
+  return { data: normalized, error: null };
+}
+
+async function fetchLegacyMetrics(athleteId, startDate) {
+  let query = supabaseAdmin
+    .from("sessions")
+    .select(
+      "date, total_volume, high_speed_distance, sprint_count, duration_minutes, workload, rpe, data_source",
+    )
+    .eq("athlete_id", athleteId)
+    .order("date", { ascending: false });
+
+  if (startDate) {
+    query = query.gte("date", startDate.toISOString().slice(0, 10));
+  }
+
+  const { data, error } = await query;
+  if (error) {
+    return { data: [], error };
+  }
+
+  return {
+    data: (data || []).map(normalizeLegacyMetricRow),
+    error: null,
+  };
+}
 
 /**
  * Get training metrics for an athlete
@@ -104,19 +211,8 @@ const handler = async (event, context) => {
 
         const startDate = parseDateParam(event, "startDate", null);
 
-        // Build query
-        let query = supabaseAdmin
-          .from("sessions")
-          .select("date, total_volume, high_speed_distance, sprint_count")
-          .eq("athlete_id", athleteId)
-          .order("date", { ascending: false });
-
-        if (startDate) {
-          query = query.gte("date", startDate.toISOString().slice(0, 10));
-        }
-
-        const result = await executeQuery(query, "Failed to retrieve metrics");
-        if (!result.success) {
+        const canonicalResult = await fetchCanonicalMetrics(athleteId, startDate);
+        if (canonicalResult.error && !isOptionalSchemaError(canonicalResult.error)) {
           return createErrorResponse(
             "Failed to retrieve metrics",
             500,
@@ -125,7 +221,29 @@ const handler = async (event, context) => {
           );
         }
 
-        return successResponse(result.data);
+        const legacyResult = await fetchLegacyMetrics(athleteId, startDate);
+        if (legacyResult.error && !isOptionalSchemaError(legacyResult.error)) {
+          return createErrorResponse(
+            "Failed to retrieve metrics",
+            500,
+            "database_error",
+            requestId,
+          );
+        }
+
+        const mergedByDate = new Map();
+        for (const row of legacyResult.data || []) {
+          mergedByDate.set(row.date, row);
+        }
+        for (const row of canonicalResult.data || []) {
+          mergedByDate.set(row.date, row);
+        }
+
+        return successResponse(
+          Array.from(mergedByDate.values()).sort(
+            (left, right) => right.date.localeCompare(left.date),
+          ),
+        );
       } catch (error) {
         console.error("[training-metrics] Unexpected handler error:", error);
         return createErrorResponse(

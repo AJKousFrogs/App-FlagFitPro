@@ -3,9 +3,10 @@ import { Observable, from, of } from "rxjs";
 import { catchError, map } from "rxjs";
 import { AuthService } from "./auth.service";
 import { LoggerService } from "./logger.service";
-import { RealtimeService } from "./realtime.service";
 import { SupabaseService } from "./supabase.service";
 import { isBenignSupabaseQueryError } from "../../shared/utils/error.utils";
+import { RealtimeChannel } from "@supabase/supabase-js";
+import { RealtimeBroadcastPayload } from "../models/realtime-broadcast.model";
 
 // Physical Measurements Interfaces
 export interface PhysicalMeasurement {
@@ -157,7 +158,6 @@ interface TestSummary {
 export class PerformanceDataService {
   private supabaseService = inject(SupabaseService);
   private logger = inject(LoggerService);
-  private realtimeService = inject(RealtimeService);
   private authService = inject(AuthService);
 
   // Get current user ID reactively
@@ -167,6 +167,10 @@ export class PerformanceDataService {
   private readonly _recentMeasurements = signal<PhysicalMeasurement[]>([]);
   private readonly _recentTests = signal<PerformanceTest[]>([]);
   private readonly _todaysSupplements = signal<Supplement[]>([]);
+  private lastRealtimeUserId: string | null = null;
+  private measurementChannel: RealtimeChannel | null = null;
+  private testChannel: RealtimeChannel | null = null;
+  private supplementChannel: RealtimeChannel | null = null;
 
   readonly recentMeasurements = this._recentMeasurements.asReadonly();
   readonly recentTests = this._recentTests.asReadonly();
@@ -190,9 +194,15 @@ export class PerformanceDataService {
       const userId = this.userId();
 
       if (userId) {
+        if (this.lastRealtimeUserId === userId) {
+          return;
+        }
+
+        this.cleanupPerformanceChannels();
         this.logger.info(
           "[PerformanceData] User logged in, setting up realtime subscriptions",
         );
+        this.lastRealtimeUserId = userId;
         this.loadRecentData();
         this.subscribeToPerformanceUpdates(userId);
       } else {
@@ -200,11 +210,24 @@ export class PerformanceDataService {
         this._recentMeasurements.set([]);
         this._recentTests.set([]);
         this._todaysSupplements.set([]);
-        this.realtimeService.unsubscribe("physical_measurements");
-        this.realtimeService.unsubscribe("performance_tests");
-        this.realtimeService.unsubscribe("supplement_logs");
+        this.cleanupPerformanceChannels();
       }
     });
+  }
+
+  private cleanupPerformanceChannels(): void {
+    [this.measurementChannel, this.testChannel, this.supplementChannel].forEach(
+      (channel) => {
+        if (channel) {
+          this.supabaseService.unsubscribe(channel);
+        }
+      },
+    );
+
+    this.measurementChannel = null;
+    this.testChannel = null;
+    this.supplementChannel = null;
+    this.lastRealtimeUserId = null;
   }
 
   /**
@@ -258,119 +281,148 @@ export class PerformanceDataService {
    * Subscribe to realtime performance data updates
    */
   private subscribeToPerformanceUpdates(userId: string): void {
-    const today = new Date().toISOString().split("T")[0];
-
-    // Subscribe to physical measurements
-    this.realtimeService.subscribe<DatabaseMeasurement>(
-      "physical_measurements",
-      `user_id=eq.${userId}`,
-      {
-        onInsert: (payload) => {
-          this.logger.info("[PerformanceData] New measurement via realtime");
-          const measurement = this.transformMeasurement(payload.new);
-          const current = this._recentMeasurements();
-          this._recentMeasurements.set([measurement, ...current.slice(0, 9)]);
-        },
-        onUpdate: (payload) => {
-          this.logger.info(
-            "[PerformanceData] Measurement updated via realtime",
-          );
-          const measurement = this.transformMeasurement(payload.new);
-          const current = this._recentMeasurements();
-          const index = current.findIndex((m) => m.id === measurement.id);
-          if (index !== -1) {
-            const updated = [...current];
-            updated[index] = measurement;
-            this._recentMeasurements.set(updated);
-          }
-        },
-        onDelete: (payload) => {
-          this.logger.info(
-            "[PerformanceData] Measurement deleted via realtime",
-          );
-          const current = this._recentMeasurements();
-          this._recentMeasurements.set(
-            current.filter((m) => m.id !== payload.old.id),
-          );
-        },
-      },
-    );
-
-    // Subscribe to performance tests
-    this.realtimeService.subscribe<DatabaseTest>(
-      "performance_tests",
-      `user_id=eq.${userId}`,
-      {
-        onInsert: (payload) => {
-          this.logger.info("[PerformanceData] New test via realtime");
-          const test = this.transformTest(payload.new);
-          const current = this._recentTests();
-          this._recentTests.set([test, ...current]);
-        },
-        onUpdate: (payload) => {
-          this.logger.info("[PerformanceData] Test updated via realtime");
-          const test = this.transformTest(payload.new);
-          const current = this._recentTests();
-          const index = current.findIndex((t) => t.id === test.id);
-          if (index !== -1) {
-            const updated = [...current];
-            updated[index] = test;
-            this._recentTests.set(updated);
-          }
-        },
-        onDelete: (payload) => {
-          this.logger.info("[PerformanceData] Test deleted via realtime");
-          const current = this._recentTests();
-          this._recentTests.set(current.filter((t) => t.id !== payload.old.id));
-        },
-      },
-    );
-
-    // Subscribe to supplement logs
-    this.realtimeService.subscribe<DatabaseSupplement>(
-      "supplement_logs",
-      `user_id=eq.${userId}`,
-      {
-        onInsert: (payload) => {
-          const logDate = payload.new.date;
-          if (logDate === today) {
-            this.logger.info(
-              "[PerformanceData] New supplement log via realtime",
-            );
-            const supplement = this.transformSupplement(payload.new);
-            const current = this._todaysSupplements();
-            this._todaysSupplements.set([...current, supplement]);
-          }
-        },
-        onUpdate: (payload) => {
-          const logDate = payload.new.date;
-          if (logDate === today) {
-            this.logger.info(
-              "[PerformanceData] Supplement log updated via realtime",
-            );
-            const supplement = this.transformSupplement(payload.new);
-            const current = this._todaysSupplements();
-            const index = current.findIndex((s) => s.id === supplement.id);
-            if (index !== -1) {
-              const updated = [...current];
-              updated[index] = supplement;
-              this._todaysSupplements.set(updated);
-            }
-          }
-        },
-        onDelete: (payload) => {
-          this.logger.info(
-            "[PerformanceData] Supplement log deleted via realtime",
-          );
-          const current = this._todaysSupplements();
-          this._todaysSupplements.set(
-            current.filter((s) => s.id !== payload.old.id),
-          );
-        },
-      },
-    );
+    this.subscribeMeasurementChannel(userId);
+    this.subscribeTestChannel(userId);
+    this.subscribeSupplementChannel(userId);
   }
 
+  private subscribeMeasurementChannel(userId: string): void {
+    if (this.measurementChannel) {
+      this.supabaseService.unsubscribe(this.measurementChannel);
+    }
+
+    this.measurementChannel = this.supabaseService.client
+      .channel(`physical_measurements:${userId}`)
+      .on("broadcast", { event: "measurement_change" }, (payload) => {
+        this.handleMeasurementBroadcast(payload.payload as RealtimeBroadcastPayload);
+      })
+      .subscribe((status) => {
+        if (status === "SUBSCRIBED") {
+          this.logger.debug("[PerformanceData] Measurement broadcast subscribed");
+        }
+      });
+  }
+
+  private subscribeTestChannel(userId: string): void {
+    if (this.testChannel) {
+      this.supabaseService.unsubscribe(this.testChannel);
+    }
+
+    this.testChannel = this.supabaseService.client
+      .channel(`performance_tests:${userId}`)
+      .on("broadcast", { event: "performance_test_change" }, (payload) => {
+        this.handleTestBroadcast(payload.payload as RealtimeBroadcastPayload);
+      })
+      .subscribe((status) => {
+        if (status === "SUBSCRIBED") {
+          this.logger.debug("[PerformanceData] Performance test broadcast subscribed");
+        }
+      });
+  }
+
+  private subscribeSupplementChannel(userId: string): void {
+    if (this.supplementChannel) {
+      this.supabaseService.unsubscribe(this.supplementChannel);
+    }
+
+    this.supplementChannel = this.supabaseService.client
+      .channel(`supplement_logs:${userId}`)
+      .on("broadcast", { event: "supplement_change" }, (payload) => {
+        this.handleSupplementBroadcast(payload.payload as RealtimeBroadcastPayload);
+      })
+      .subscribe((status) => {
+        if (status === "SUBSCRIBED") {
+          this.logger.debug("[PerformanceData] Supplement broadcast subscribed");
+        }
+      });
+  }
+
+  private handleMeasurementBroadcast(payload: RealtimeBroadcastPayload): void {
+    if (!payload.record) return;
+    const measurement = this.transformMeasurement(
+      payload.record as DatabaseMeasurement,
+    );
+    const current = this._recentMeasurements();
+
+    if (payload.operation === "INSERT") {
+      this._recentMeasurements.set([measurement, ...current.slice(0, 9)]);
+      return;
+    }
+
+    if (payload.operation === "UPDATE") {
+      const index = current.findIndex((m) => m.id === measurement.id);
+      if (index !== -1) {
+        const updated = [...current];
+        updated[index] = measurement;
+        this._recentMeasurements.set(updated);
+      }
+      return;
+    }
+
+    if (payload.operation === "DELETE") {
+      this._recentMeasurements.set(
+        current.filter((m) => m.id !== measurement.id),
+      );
+    }
+  }
+
+  private handleTestBroadcast(payload: RealtimeBroadcastPayload): void {
+    if (!payload.record) return;
+    const test = this.transformTest(payload.record as DatabaseTest);
+    const current = this._recentTests();
+
+    if (payload.operation === "INSERT") {
+      this._recentTests.set([test, ...current]);
+      return;
+    }
+
+    if (payload.operation === "UPDATE") {
+      const index = current.findIndex((t) => t.id === test.id);
+      if (index !== -1) {
+        const updated = [...current];
+        updated[index] = test;
+        this._recentTests.set(updated);
+      }
+      return;
+    }
+
+    if (payload.operation === "DELETE") {
+      this._recentTests.set(current.filter((t) => t.id !== test.id));
+    }
+  }
+
+  private handleSupplementBroadcast(payload: RealtimeBroadcastPayload): void {
+    if (!payload.record) return;
+    const log = payload.record as Record<string, unknown>
+    const today = new Date().toISOString().split("T")[0];
+    const logDate =
+      (log["date"] as string | undefined) ??
+      new Date(String(log["logged_at"] ?? new Date().toISOString()))
+        .toISOString()
+        .split("T")[0];
+    const current = this._todaysSupplements();
+
+    if (payload.operation === "DELETE") {
+      const id = log["id"] as number;
+      this._todaysSupplements.set(current.filter((s) => s.id !== id));
+      return;
+    }
+
+    if (logDate !== today) return;
+
+    const supplement = this.transformSupplement(log as DatabaseSupplement);
+
+    if (payload.operation === "INSERT") {
+      this._todaysSupplements.set([...current, supplement]);
+    } else if (payload.operation === "UPDATE") {
+      const index = current.findIndex((s) => s.id === supplement.id);
+      if (index !== -1) {
+        const updated = [...current];
+        updated[index] = supplement;
+        this._todaysSupplements.set(updated);
+      }
+    }
+  }
   /**
    * Transform database measurement to PhysicalMeasurement
    */

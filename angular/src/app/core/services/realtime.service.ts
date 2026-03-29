@@ -51,6 +51,10 @@ export class RealtimeService {
   private supabase = inject(SupabaseService);
   private logger = inject(LoggerService);
   private channels = new Map<string, RealtimeChannel>();
+  private channelMeta = new Map<string, { table: string }>();
+  private tableSubscriptions = new Map<string, Set<string>>();
+  private readonly _subscriptionSummary = signal<Record<string, number>>({});
+  readonly subscriptionSummary = this._subscriptionSummary.asReadonly();
 
   // Connection status
   readonly isConnected = signal(false);
@@ -154,6 +158,9 @@ export class RealtimeService {
       .subscribe();
 
     this.channels.set(channelName, channel);
+    this.channelMeta.set(channelName, { table: tableName });
+    this.incrementTableSubscription(tableName, channelName);
+    this.logSubscriptionSummary();
     this.logger.debug(`Subscribed to ${channelName}`);
 
     return () => this.unsubscribe(channelName);
@@ -415,6 +422,8 @@ export class RealtimeService {
 
     // Store channel
     this.channels.set(channelName, channel);
+    this.channelMeta.set(channelName, { table: tableName });
+    this.incrementTableSubscription(tableName, channelName);
 
     // Return unsubscribe function
     return () => {
@@ -422,6 +431,8 @@ export class RealtimeService {
       if (ch) {
         this.supabase.client.removeChannel(ch);
         this.channels.delete(channelName);
+        this.decrementTableSubscription(channelName);
+        this.logSubscriptionSummary();
         this.logger.debug(`Unsubscribed from ${channelName}`);
       }
     };
@@ -434,20 +445,36 @@ export class RealtimeService {
     this.channels.forEach((channel, name) => {
       this.supabase.client.removeChannel(channel);
       this.logger.debug(`Unsubscribed from ${name}`);
+      this.decrementTableSubscription(name);
     });
     this.channels.clear();
+    this.channelMeta.clear();
+    this.tableSubscriptions.clear();
   }
 
   /**
    * Unsubscribe from a specific channel
    */
   unsubscribe(channelName: string): void {
-    const channel = this.channels.get(channelName);
-    if (channel) {
-      this.supabase.client.removeChannel(channel);
+    const exactChannel = this.channels.get(channelName);
+    if (exactChannel) {
+      this.supabase.client.removeChannel(exactChannel);
       this.channels.delete(channelName);
       this.logger.debug(`Unsubscribed from ${channelName}`);
+      return;
     }
+
+    const matchedChannels = Array.from(this.channels.entries()).filter(
+      ([name]) => name === channelName || name.startsWith(`${channelName}_`),
+    );
+
+    matchedChannels.forEach(([name, channel]) => {
+      this.supabase.client.removeChannel(channel);
+      this.channels.delete(name);
+      this.decrementTableSubscription(name);
+      this.logSubscriptionSummary();
+      this.logger.debug(`Unsubscribed from ${name}`);
+    });
   }
 
   /**
@@ -473,5 +500,51 @@ export class RealtimeService {
       channelCount: this.channels.size,
       channels: Array.from(this.channels.keys()),
     };
+  }
+
+  private incrementTableSubscription(tableName: string, channelName: string): void {
+    if (!tableName) return;
+
+    const set = this.tableSubscriptions.get(tableName) ?? new Set<string>();
+    set.add(channelName);
+    this.tableSubscriptions.set(tableName, set);
+
+    if (set.size > 3) {
+      this.logger.warn(
+        `[Realtime] ${tableName} has ${set.size} concurrent subscriptions; verify they are intended`,
+      );
+    }
+  }
+
+  private decrementTableSubscription(channelName: string): void {
+    const meta = this.channelMeta.get(channelName);
+    if (!meta) return;
+
+    const set = this.tableSubscriptions.get(meta.table);
+    if (!set) return;
+
+    set.delete(channelName);
+    if (set.size === 0) {
+      this.tableSubscriptions.delete(meta.table);
+    } else {
+      this.tableSubscriptions.set(meta.table, set);
+    }
+
+    this.channelMeta.delete(channelName);
+  }
+
+  getSubscriptionSummary(): Record<string, number> {
+    const summary: Record<string, number> = {};
+    this.tableSubscriptions.forEach((set, table) => {
+      summary[table] = set.size;
+    });
+    return summary;
+  }
+
+  private logSubscriptionSummary(): void {
+    const summary = this.getSubscriptionSummary();
+    this._subscriptionSummary.set(summary);
+    if (Object.keys(summary).length === 0) return;
+    this.logger.debug("[Realtime] Subscription summary", summary);
   }
 }

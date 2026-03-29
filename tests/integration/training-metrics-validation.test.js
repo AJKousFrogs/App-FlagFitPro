@@ -2,7 +2,10 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const state = vi.hoisted(() => ({
   role: "player",
-  sessionsError: null,
+  trainingSessionsError: null,
+  legacySessionsError: null,
+  trainingSessionsData: [],
+  legacySessionsData: [],
 }));
 
 vi.mock("../../netlify/functions/utils/base-handler.js", () => ({
@@ -17,6 +20,24 @@ vi.mock("../../netlify/functions/utils/authorization-guard.js", () => ({
 vi.mock("../../netlify/functions/supabase-client.js", () => ({
   supabaseAdmin: {
     from: (table) => {
+      if (table === "training_sessions") {
+        return {
+          select() {
+            return this;
+          },
+          or() {
+            return this;
+          },
+          order: async () => ({
+            data: state.trainingSessionsData,
+            error: state.trainingSessionsError,
+          }),
+          gte() {
+            return this;
+          },
+        };
+      }
+
       if (table === "sessions") {
         return {
           select() {
@@ -26,8 +47,8 @@ vi.mock("../../netlify/functions/supabase-client.js", () => ({
             return this;
           },
           order: async () => ({
-            data: [],
-            error: state.sessionsError,
+            data: state.legacySessionsData,
+            error: state.legacySessionsError,
           }),
           gte() {
             return this;
@@ -61,7 +82,10 @@ describe("training-metrics authorization and validation hardening", () => {
   beforeEach(async () => {
     vi.resetModules();
     state.role = "player";
-    state.sessionsError = null;
+    state.trainingSessionsError = null;
+    state.legacySessionsError = null;
+    state.trainingSessionsData = [];
+    state.legacySessionsData = [];
     const mod = await import("../../netlify/functions/training-metrics.js");
     handler = mod.handler;
   });
@@ -93,7 +117,7 @@ describe("training-metrics authorization and validation hardening", () => {
   });
 
   it("returns sanitized 500 when metrics query fails", async () => {
-    state.sessionsError = { message: "sensitive db detail" };
+    state.trainingSessionsError = { message: "sensitive db detail" };
     const response = await handler(
       {
         httpMethod: "GET",
@@ -107,5 +131,54 @@ describe("training-metrics authorization and validation hardening", () => {
     const body = JSON.parse(response.body);
     expect(body.error.message).toBe("Failed to retrieve metrics");
     expect(body.error.details).toBeFalsy();
+  });
+
+  it("prefers canonical training session metrics over legacy rows", async () => {
+    state.trainingSessionsData = [
+      {
+        session_date: "2026-03-20",
+        duration_minutes: 55,
+        rpe: 7,
+        workload: 385,
+        status: "completed",
+        session_metrics: {
+          total_volume: 1800,
+          high_speed_distance: 220,
+          sprint_count: 12,
+          data_source: "open_dataset",
+        },
+      },
+    ];
+    state.legacySessionsData = [
+      {
+        date: "2026-03-20",
+        total_volume: 900,
+        high_speed_distance: 90,
+        sprint_count: 4,
+        duration_minutes: 35,
+        data_source: "legacy_session",
+      },
+    ];
+
+    const response = await handler(
+      {
+        httpMethod: "GET",
+        path: "/.netlify/functions/training-metrics",
+        queryStringParameters: {},
+      },
+      {},
+    );
+
+    expect(response.statusCode).toBe(200);
+    const body = JSON.parse(response.body);
+    expect(body.data).toHaveLength(1);
+    expect(body.data[0]).toMatchObject({
+      date: "2026-03-20",
+      total_volume: 1800,
+      high_speed_distance: 220,
+      sprint_count: 12,
+      duration_minutes: 55,
+      session_load: 385,
+    });
   });
 });

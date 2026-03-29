@@ -6,7 +6,7 @@ import { SupabaseService } from "./supabase.service";
 import { AuthService } from "./auth.service";
 import { LoggerService, toLogContext } from "./logger.service";
 import { PrivacySettingsService } from "./privacy-settings.service";
-import { ApiService, API_ENDPOINTS } from "./api.service";
+import { ApiService } from "./api.service";
 import { extractApiPayload } from "../utils/api-response-mapper";
 
 /**
@@ -419,33 +419,21 @@ export class WeatherCancellationService {
 
     // Try AI-powered generation first (requires consent)
     return from(this.privacySettingsService.requireAiConsent()).pipe(
-      switchMap(() => {
-        return this.apiService
-          .post<SubstituteWorkout>(
-            API_ENDPOINTS.training?.generateSubstitute ||
-              "/api/training/generate-substitute",
-            {
-              originalSession,
-              weather,
-              reason,
-              preferredType: workoutType,
-              preferredLocation: locationType,
-            },
-          )
-          .pipe(
-            map((response) => {
-              const payload = extractApiPayload<SubstituteWorkout>(response);
-              if (payload) {
-                return payload;
-              }
-              throw new Error("AI generation failed");
-            }),
-          );
-      }),
+      switchMap(() =>
+        of(
+          this.generateLocalSubstitute(
+            originalSession,
+            weather,
+            reason,
+            workoutType,
+            locationType,
+          ),
+        ),
+      ),
       catchError(() => {
-        // Fallback to local generation if AI fails or consent not given
+        // Fallback to local generation if consent is not given.
         this.logger.info(
-          "Using local substitute workout generation (AI unavailable or no consent)",
+          "Using local substitute workout generation",
         );
         return of(
           this.generateLocalSubstitute(
