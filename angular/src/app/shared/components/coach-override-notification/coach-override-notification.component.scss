@@ -1,3 +1,5 @@
+@use "styles/mixins" as *;
+
 .override-notification-card {
   display: block;
   margin-bottom: var(--space-4);
@@ -37,27 +39,27 @@
 .contract-question {
   font-size: var(--ds-font-size-sm);
   font-weight: var(--ds-font-weight-semibold);
-  color: var(--text-color-secondary);
+  color: var(--color-text-secondary);
   margin-bottom: var(--space-2);
 }
 
 .contract-answer {
   margin: 0;
-  color: var(--text-color);
+  color: var(--color-text-primary);
 }
 
 .change-details {
   margin-top: var(--space-2);
   padding: var(--space-2);
-  background: var(--surface-100);
-  border-radius: var(--space-1);
+  background: var(--surface-secondary);
+  border-radius: var(--radius-sm);
   font-size: var(--ds-font-size-sm);
 }
 
 .timestamp {
   display: block;
   margin-top: var(--space-2);
-  color: var(--text-color-secondary);
+  color: var(--color-text-secondary);
   font-size: var(--ds-font-size-xs);
 }
 
@@ -70,7 +72,7 @@
 
 .transparency-panel {
   margin-top: var(--space-4);
-  border-top: var(--border-1) solid var(--surface-200);
+  border-top: var(--border-1) solid var(--color-border-subtle);
   padding-top: var(--space-4);
 }
 
@@ -81,15 +83,17 @@
   gap: var(--space-2);
   padding: var(--space-2);
   background: transparent;
-  border: var(--border-1) solid var(--surface-300);
-  border-radius: var(--space-1);
+  border: var(--border-1) solid var(--color-border-default);
+  border-radius: var(--radius-sm);
   cursor: pointer;
-  color: var(--text-color);
-  transition: background 0.2s, border-color 0.2s, color 0.2s;
-}
+  color: var(--color-text-primary);
+  transition:
+    background-color var(--transition-fast) var(--ease-standard),
+    border-color var(--transition-fast) var(--ease-standard),
+    color var(--transition-fast) var(--ease-standard);
 
-.transparency-toggle:hover {
-  background: var(--surface-100);
+  @include ds-hover-state(var(--surface-secondary));
+  @include ds-focus-ring;
 }
 
 .transparency-content {
@@ -107,17 +111,17 @@
 
 .comparison-item {
   padding: var(--space-3);
-  border-radius: var(--space-1);
+  border-radius: var(--radius-sm);
 }
 
 .comparison-item.ai {
-  background: var(--blue-50);
-  border-left: var(--space-0-75) solid var(--blue-500);
+  background: var(--color-status-info-surface);
+  border-left: var(--space-0-75) solid var(--color-status-info);
 }
 
 .comparison-item.coach {
-  background: var(--green-50);
-  border-left: var(--space-0-75) solid var(--green-500);
+  background: var(--color-status-success-surface);
+  border-left: var(--space-0-75) solid var(--color-status-success);
 }
 
 .comparison-item h5 {
@@ -142,7 +146,7 @@
 .history-item {
   padding: var(--space-3);
   background: var(--surface-secondary);
-  border-radius: var(--space-1);
+  border-radius: var(--radius-sm);
 }
 
 .history-header {
@@ -154,16 +158,16 @@
 
 .history-date {
   font-weight: var(--ds-font-weight-semibold);
-  color: var(--text-color);
+  color: var(--color-text-primary);
 }
 
 .history-reason {
   margin: 0;
-  color: var(--text-color-secondary);
+  color: var(--color-text-secondary);
   font-size: var(--ds-font-size-sm);
 }
 
-@media (max-width: 700px) {
+@include respond-to(md) {
   .comparison-row {
     grid-template-columns: 1fr;
   }

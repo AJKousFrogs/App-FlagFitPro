@@ -264,7 +264,8 @@ $ds-font-weight-extrabold: 800;
   --blur-md: 10px;
   --blur-lg: 20px;
 
-  /* Black Overlay Tokens (for modal backdrops) */
+  /* Black Overlay Tokens (for modal backdrops, scroll shadows) */
+  --overlay-black-20: rgba(0, 0, 0, 0.2);
   --overlay-black-50: rgba(0, 0, 0, 0.5);
   --overlay-black-60: rgba(0, 0, 0, 0.6);
   --overlay-black-80: rgba(0, 0, 0, 0.8);
@@ -347,6 +348,8 @@ $ds-font-weight-extrabold: 800;
   --color-status-success-subtle: rgba(var(--ds-primary-green-rgb), 0.05);
   --color-status-success-surface: rgba(var(--ds-primary-green-rgb), 0.1);
   --color-status-success-bg: var(--color-status-success-surface);
+  --ds-status-success-bg: rgba(var(--ds-primary-green-rgb), 0.08);
+  --ds-status-success-border: rgba(var(--ds-primary-green-rgb), 0.2);
 
   /* Warning: Yellow/Orange for potential problems or non-critical alerts */
   --color-status-warning: var(--ui-warning);
@@ -354,12 +357,16 @@ $ds-font-weight-extrabold: 800;
   --color-warning-bg: var(--color-status-warning-light); /* Alias for component compatibility */
   --color-status-warning-subtle: rgba(var(--primitive-warning-500-rgb), 0.05);
   --color-status-warning-surface: rgba(var(--primitive-warning-500-rgb), 0.1);
+  --ds-status-warning-bg: rgba(var(--primitive-warning-500-rgb), 0.08);
+  --ds-status-warning-border: rgba(var(--primitive-warning-500-rgb), 0.2);
 
   /* Error: Red for critical issues, deletions, or blocking actions */
   --color-status-error: var(--ui-danger);
   --color-status-error-light: rgba(var(--primitive-error-500-rgb), 0.1);
   --color-status-error-subtle: rgba(var(--primitive-error-500-rgb), 0.05);
   --color-status-error-surface: rgba(var(--primitive-error-500-rgb), 0.1);
+  --ds-status-danger-bg: rgba(var(--primitive-error-500-rgb), 0.08);
+  --ds-status-danger-border: rgba(var(--primitive-error-500-rgb), 0.2);
 
   /* Warning/Error text colors for use on light backgrounds */
   --color-status-warning-text: var(--primitive-warning-800); /* #92400e - dark amber for light mode */
@@ -369,6 +376,8 @@ $ds-font-weight-extrabold: 800;
   --color-status-info-light: rgba(var(--primitive-info-500-rgb), 0.1);
   --color-status-info-subtle: rgba(var(--primitive-info-500-rgb), 0.05);
   --color-status-info-surface: rgba(var(--primitive-info-500-rgb), 0.1);
+  --ds-status-info-bg: rgba(var(--primitive-info-500-rgb), 0.08);
+  --ds-status-info-border: rgba(var(--primitive-info-500-rgb), 0.2);
 
   /* Help/Purple: Secondary brand/PrimeNG help color */
   --color-status-help: var(--primitive-purple-500);
@@ -431,11 +440,20 @@ $ds-font-weight-extrabold: 800;
 
   /* White Overlay Tokens (for colored backgrounds) */
   --overlay-white-10: rgba(255, 255, 255, 0.1);
+  --overlay-white-12: rgba(255, 255, 255, 0.12);
+  --overlay-white-14: rgba(255, 255, 255, 0.14);
   --overlay-white-15: rgba(255, 255, 255, 0.15);
+  --overlay-white-16: rgba(255, 255, 255, 0.16);
+  --overlay-white-18: rgba(255, 255, 255, 0.18);
   --overlay-white-20: rgba(255, 255, 255, 0.2);
+  --overlay-white-22: rgba(255, 255, 255, 0.22);
+  --overlay-white-24: rgba(255, 255, 255, 0.24);
   --overlay-white-30: rgba(255, 255, 255, 0.3);
   --overlay-white-50: rgba(255, 255, 255, 0.5);
+  --overlay-white-56: rgba(255, 255, 255, 0.56);
   --overlay-white-80: rgba(255, 255, 255, 0.8);
+  --overlay-white-82: rgba(255, 255, 255, 0.82);
+  --overlay-white-86: rgba(255, 255, 255, 0.86);
   --overlay-white-90: rgba(255, 255, 255, 0.9);
   --overlay-white-95: rgba(255, 255, 255, 0.95);
 
@@ -1491,6 +1509,7 @@ $ds-font-weight-extrabold: 800;
     --color-status-success-surface: rgba(52, 211, 153, 0.1);
     --ds-status-success-solid: #34d399;
     --ds-status-success-bg: rgba(52, 211, 153, 0.15);
+    --ds-status-success-border: rgba(52, 211, 153, 0.25);
 
     --color-status-warning: #fbbf24; /* Brighter amber for visibility */
     --color-status-warning-text: var(--primitive-warning-300); /* #fcd34d */
@@ -1498,18 +1517,21 @@ $ds-font-weight-extrabold: 800;
     --color-status-warning-surface: rgba(251, 191, 36, 0.1);
     --ds-status-warning-solid: #fbbf24;
     --ds-status-warning-bg: rgba(251, 191, 36, 0.15);
+    --ds-status-warning-border: rgba(251, 191, 36, 0.25);
 
     --color-status-error: #f87171; /* Lighter red for dark */
     --color-status-error-light: rgba(248, 113, 113, 0.15);
     --color-status-error-surface: rgba(248, 113, 113, 0.1);
     --ds-status-danger-solid: #f87171;
     --ds-status-danger-bg: rgba(248, 113, 113, 0.15);
+    --ds-status-danger-border: rgba(248, 113, 113, 0.25);
 
     --color-status-info: #60a5fa; /* Lighter blue for dark */
     --color-status-info-light: rgba(96, 165, 250, 0.15);
     --color-status-info-surface: rgba(96, 165, 250, 0.1);
     --ds-status-info-solid: #60a5fa;
     --ds-status-info-bg: rgba(96, 165, 250, 0.15);
+    --ds-status-info-border: rgba(96, 165, 250, 0.25);
 
     /* Border Colors - Dark Mode */
     --color-border-primary: var(--ui-border-default);
@@ -1641,6 +1663,7 @@ body.dark-theme {
   --color-status-success-surface: rgba(52, 211, 153, 0.1);
   --ds-status-success-solid: #34d399;
   --ds-status-success-bg: rgba(52, 211, 153, 0.15);
+  --ds-status-success-border: rgba(52, 211, 153, 0.25);
 
   --color-status-warning: #fbbf24; /* Brighter amber for visibility */
   --color-status-warning-text: var(--primitive-warning-300); /* #fcd34d */
@@ -1648,18 +1671,21 @@ body.dark-theme {
   --color-status-warning-surface: rgba(251, 191, 36, 0.1);
   --ds-status-warning-solid: #fbbf24;
   --ds-status-warning-bg: rgba(251, 191, 36, 0.15);
+  --ds-status-warning-border: rgba(251, 191, 36, 0.25);
 
   --color-status-error: #f87171; /* Lighter red for dark */
   --color-status-error-light: rgba(248, 113, 113, 0.15);
   --color-status-error-surface: rgba(248, 113, 113, 0.1);
   --ds-status-danger-solid: #f87171;
   --ds-status-danger-bg: rgba(248, 113, 113, 0.15);
+  --ds-status-danger-border: rgba(248, 113, 113, 0.25);
 
   --color-status-info: #60a5fa; /* Lighter blue for dark */
   --color-status-info-light: rgba(96, 165, 250, 0.15);
   --color-status-info-surface: rgba(96, 165, 250, 0.1);
   --ds-status-info-solid: #60a5fa;
   --ds-status-info-bg: rgba(96, 165, 250, 0.15);
+  --ds-status-info-border: rgba(96, 165, 250, 0.25);
 
   /* Border Colors - Dark Mode */
   --color-border-primary: var(--ui-border-default);

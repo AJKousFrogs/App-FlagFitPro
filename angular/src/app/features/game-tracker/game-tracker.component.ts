@@ -35,6 +35,7 @@ import { extractApiArray } from "../../core/utils/api-response-mapper";
 import { formatTimeMMSS } from "../../shared/utils/format.utils";
 import { OfflineQueueService } from "../../core/services/offline-queue.service";
 import { NetworkStatusService } from "../../core/services/network-status.service";
+import { PlatformService } from "../../core/services/platform.service";
 import { ButtonComponent } from "../../shared/components/button/button.component";
 import { IconButtonComponent } from "../../shared/components/button/icon-button.component";
 import { EmptyStateComponent } from "../../shared/components/ui-components";
@@ -154,6 +155,7 @@ export class GameTrackerComponent implements OnInit {
   private offlineQueue = inject(OfflineQueueService);
   private networkStatus = inject(NetworkStatusService);
   private logger = inject(LoggerService);
+  private platform = inject(PlatformService);
 
   // ViewChild references for scroll operations
   private readonly gamesListCard =
@@ -340,7 +342,7 @@ export class GameTrackerComponent implements OnInit {
    * Load temperature unit preference from localStorage
    */
   private loadTemperaturePreference(): void {
-    const savedUnit = localStorage.getItem("temperatureUnit");
+    const savedUnit = this.platform.getLocalStorage("temperatureUnit");
     if (savedUnit === "C" || savedUnit === "F") {
       this.temperatureUnit = savedUnit;
     }
@@ -365,7 +367,7 @@ export class GameTrackerComponent implements OnInit {
     }
 
     this.temperatureUnit = unit;
-    localStorage.setItem("temperatureUnit", unit);
+    this.platform.setLocalStorage("temperatureUnit", unit);
   }
 
   loadPlayers(): void {

@@ -571,7 +571,13 @@ height: 100dvh; // Modern: keyboard-aware
 .feature-card-icon {
   display: flex;
   justify-content: center;
-  padding-top: var(--space-6);
+  margin-bottom: var(--space-3);
+}
+
+// Ensure card bodies flex-column so "Learn more" aligns at bottom across cards
+:host ::ng-deep .feature-card .card-shell__body {
+  display: flex;
+  flex-direction: column;
 }
 
 .feature-icon-wrapper {
@@ -647,12 +653,12 @@ height: 100dvh; // Modern: keyboard-aware
 .feature-card-title {
   font-size: var(--ds-font-size-2xl);
   font-weight: var(--ds-font-weight-semibold);
-  margin-bottom: var(--space-3);
+  margin-bottom: var(--space-2);
 }
 
 .feature-card-description {
   color: var(--color-text-secondary);
-  margin-bottom: var(--space-6);
+  margin-bottom: auto;
   line-height: var(--ds-line-height-1-6);
 }
 
@@ -660,17 +666,17 @@ height: 100dvh; // Modern: keyboard-aware
   display: inline-flex;
   align-items: center;
   gap: var(--space-2);
-  color: var(--ds-primary-green-dark);
+  color: var(--color-brand-primary);
   font-weight: var(--ds-font-weight-semibold);
   cursor: pointer;
   transition:
     background var(--transition-fast),
     gap var(--transition-fast);
-  padding: var(--space-2) var(--space-4);
+  padding: var(--space-3) var(--space-4) 0;
   border-radius: var(--radius-md);
 
   &:hover {
-    background: var(--color-status-info-light);
+    background: var(--ds-primary-green-subtle);
     gap: var(--space-3);
   }
 

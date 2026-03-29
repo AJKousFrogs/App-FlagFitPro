@@ -1,5 +1,6 @@
 import { Injectable, inject } from "@angular/core";
 import { SupabaseService } from "../../../core/services/supabase.service";
+import { isBenignSupabaseQueryError } from "../../../shared/utils/error.utils";
 
 export interface RecentSessionRecord {
   created_at: string;
@@ -18,6 +19,23 @@ export interface TeamEventRecord {
 })
 export class SmartTrainingDataService {
   private readonly supabaseService = inject(SupabaseService);
+  private teamEventsUnavailable = false;
+
+  private mapIntensityToLevel(intensity: string): number {
+    switch (`${intensity || ""}`.toLowerCase()) {
+      case "low":
+        return 3;
+      case "moderate":
+      case "medium":
+        return 5;
+      case "high":
+        return 8;
+      case "very_high":
+        return 9;
+      default:
+        return 5;
+    }
+  }
 
   async fetchRecentSessions(userId: string): Promise<{
     sessions: RecentSessionRecord[];
@@ -37,12 +55,21 @@ export class SmartTrainingDataService {
     events: TeamEventRecord[];
     error: { message?: string } | null;
   }> {
+    if (this.teamEventsUnavailable) {
+      return { events: [], error: null };
+    }
+
     const { data: events, error } = await this.supabaseService.client
       .from("team_events")
       .select("event_date, title, event_type")
       .gte("event_date", startDate)
       .order("event_date", { ascending: true })
       .limit(5);
+
+    if (error && isBenignSupabaseQueryError(error)) {
+      this.teamEventsUnavailable = true;
+      return { events: [], error: null };
+    }
 
     return { events: events ?? [], error };
   }
@@ -64,9 +91,8 @@ export class SmartTrainingDataService {
         user_id: input.userId,
         session_type: input.sessionType,
         duration_minutes: input.durationMinutes,
-        intensity: input.intensity,
-        is_outdoor: input.isOutdoor,
-        scheduled_date: input.scheduledDate,
+        intensity_level: this.mapIntensityToLevel(input.intensity),
+        session_date: input.scheduledDate,
         status: "scheduled",
         notes: input.notes,
       })

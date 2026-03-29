@@ -222,6 +222,27 @@ async function syncWorkoutLog(
   }
 }
 
+async function completeTrainingSessionViaRpc(userId, sessionId, completionData) {
+  const { data, error } = await supabaseAdmin.rpc("complete_training_session", {
+    p_user_id: userId,
+    p_session_id: sessionId,
+    p_duration_minutes: completionData.duration ?? null,
+    p_intensity_level: completionData.intensity ?? null,
+    p_rpe: completionData.rpe ?? null,
+    p_workload: completionData.workload ?? null,
+    p_notes: completionData.notes ?? null,
+  });
+
+  if (error) {
+    return { data: null, error };
+  }
+
+  return {
+    data: Array.isArray(data) ? data[0] || null : data,
+    error: null,
+  };
+}
+
 /**
  * Mark a training session as completed
  * Updates session status and calculates workload
@@ -275,6 +296,49 @@ async function completeTrainingSession(userId, sessionId, completionData) {
       };
     }
 
+    const rpcResult = await completeTrainingSessionViaRpc(
+      userId,
+      sessionId,
+      completionData,
+    );
+
+    if (!rpcResult.error) {
+      const { data: updatedSession, error: refreshError } = await supabaseAdmin
+        .from("training_sessions")
+        .select("*")
+        .eq("id", sessionId)
+        .eq("user_id", userId)
+        .single();
+
+      if (refreshError || !updatedSession) {
+        throw refreshError || new Error("Failed to reload completed session");
+      }
+
+      const pointsResult = await awardTrainingPoints(
+        userId,
+        duration || 0,
+        intensity || 0,
+      );
+
+      await createCompletionNotification(
+        userId,
+        updatedSession.session_type,
+        pointsResult.points,
+      );
+
+      return {
+        success: true,
+        session: updatedSession,
+        workload: rpcResult.data?.workload ?? computedWorkload,
+        pointsEarned: pointsResult.points,
+      };
+    }
+
+    if (rpcResult.error.code !== "PGRST202") {
+      console.error("Error completing training session via RPC:", rpcResult.error);
+      throw rpcResult.error;
+    }
+
     // Update session with completion data
     const completedAt = new Date().toISOString();
     const updateData = {
@@ -297,8 +361,6 @@ async function completeTrainingSession(userId, sessionId, completionData) {
         rpe !== null && {
           rpe,
         }),
-      // Store performance metrics if provided
-      ...(completionData.metrics && { metrics: completionData.metrics }),
     };
 
     const { data: updatedSession, error: updateError } = await supabaseAdmin

@@ -102,8 +102,8 @@
   align-items: stretch;
 }
 
-/* On wider screens, allow 3 columns if space permits */
-@media (min-width: 1400px) {
+/* On wider screens (≥1400px), allow 3 columns if space permits */
+@media (min-width: 87.5rem) {
   .quick-actions-grid {
     grid-template-columns: repeat(3, 1fr);
   }

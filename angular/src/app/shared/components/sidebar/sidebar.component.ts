@@ -24,6 +24,7 @@ import {
 } from "../../../core/navigation/app-navigation.config";
 import { AuthService } from "../../../core/services/auth.service";
 import { ConfirmDialogService } from "../../../core/services/confirm-dialog.service";
+import { PlatformService } from "../../../core/services/platform.service";
 import { ShellBodyStateService } from "../../../core/services/shell-body-state.service";
 import { BackdropComponent } from "../backdrop/backdrop.component";
 import { CloseButtonComponent } from "../close-button/close-button.component";
@@ -237,6 +238,7 @@ export class SidebarComponent implements OnInit {
   private readonly authService = inject(AuthService);
   private readonly confirmDialog = inject(ConfirmDialogService);
   private readonly shellBodyState = inject(ShellBodyStateService);
+  private readonly platform = inject(PlatformService);
   private readonly platformId = inject(PLATFORM_ID);
   private readonly destroyRef = inject(DestroyRef);
   private releaseSidebarBodyLock: (() => void) | null = null;
@@ -392,7 +394,7 @@ export class SidebarComponent implements OnInit {
    */
   private loadMeGroupState(): boolean {
     if (typeof window === "undefined") return false;
-    const saved = localStorage.getItem("sidebar-me-group-expanded");
+    const saved = this.platform.getLocalStorage("sidebar-me-group-expanded");
     return saved === "true";
   }
 
@@ -401,7 +403,10 @@ export class SidebarComponent implements OnInit {
    */
   private saveMeGroupState(isExpanded: boolean): void {
     if (typeof window === "undefined") return;
-    localStorage.setItem("sidebar-me-group-expanded", isExpanded.toString());
+    this.platform.setLocalStorage(
+      "sidebar-me-group-expanded",
+      isExpanded.toString(),
+    );
   }
 
   /**

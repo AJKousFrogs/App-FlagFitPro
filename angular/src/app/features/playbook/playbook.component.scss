@@ -4,15 +4,15 @@
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: var(--space-5);
-  max-width: 1200px;
+  max-width: var(--layout-page-max-width-wide);
   margin: 0 auto;
   width: 100%;
   padding-bottom: var(--space-8);
 
   .bento-item {
     background: var(--surface-primary);
-    border: 1px solid var(--ui-border-subtle);
-    border-radius: 16px;
+    border: var(--border-1) solid var(--ui-border-subtle);
+    border-radius: var(--radius-xl);
     padding: var(--space-5);
     box-shadow: var(--shadow-sm);
     min-width: 0;
@@ -44,7 +44,7 @@
   .play-card {
     background: var(--surface-primary);
     border: 1px solid var(--ui-border-subtle);
-    border-radius: 12px;
+    border-radius: var(--radius-lg);
     overflow: hidden;
     cursor: pointer;
     transition: all var(--transition-base);
@@ -71,13 +71,13 @@
         right: var(--space-2);
         background: var(--ds-primary-green);
         color: white;
-        width: 24px;
-        height: 24px;
+        width: var(--space-6);
+        height: var(--space-6);
         border-radius: var(--radius-full);
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 12px;
+        font-size: var(--ds-font-size-xs);
       }
     }
 
@@ -91,7 +91,7 @@
         display: flex;
         flex-wrap: wrap;
         gap: var(--space-1);
-        .tag { font-size: 10px; background: var(--ui-surface-subtle); padding: var(--space-0-5) var(--space-1-5); border-radius: var(--radius-sm); }
+        .tag { font-size: var(--ds-font-size-2xs); background: var(--ui-surface-subtle); padding: var(--space-0-5) var(--space-1-5); border-radius: var(--radius-sm); }
       }
     }
   }

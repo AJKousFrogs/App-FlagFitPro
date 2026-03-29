@@ -1,11 +1,13 @@
 import { Injectable, inject } from "@angular/core";
 import { SupabaseService } from "../../../core/services/supabase.service";
+import { isBenignSupabaseQueryError } from "../../../shared/utils/error.utils";
 
 @Injectable({
   providedIn: "root",
 })
 export class AiTrainingSchedulerDataService {
   private readonly supabaseService = inject(SupabaseService);
+  private legacyTrainingSessionsSchema = true;
 
   async getLatestReadiness(userId: string): Promise<{
     readiness: { score?: number | null } | null;
@@ -28,13 +30,16 @@ export class AiTrainingSchedulerDataService {
   }> {
     const { data, error } = await this.supabaseService.client
       .from("acwr_calculations")
-      .select("acwr_ratio")
+      .select("acwr, calculation_date")
       .eq("user_id", userId)
-      .order("calculated_at", { ascending: false })
+      .order("calculation_date", { ascending: false })
       .limit(1)
       .single();
 
-    return { acwr: (data as { acwr_ratio?: number }) ?? null, error };
+    return {
+      acwr: data ? { acwr_ratio: (data as { acwr?: number }).acwr ?? null } : null,
+      error,
+    };
   }
 
   async getSuggestions(userId: string): Promise<{
@@ -83,11 +88,31 @@ export class AiTrainingSchedulerDataService {
       .from("training_sessions")
       .select("*")
       .eq("user_id", input.userId)
-      .gte("scheduled_date", input.startDate)
-      .lte("scheduled_date", input.endDate)
-      .order("scheduled_date", { ascending: true });
+      .gte("session_date", input.startDate)
+      .lte("session_date", input.endDate)
+      .order("session_date", { ascending: true });
 
-    return { sessions: (data as typeof data) ?? [], error };
+    if (error && isBenignSupabaseQueryError(error)) {
+      this.legacyTrainingSessionsSchema = true;
+      return { sessions: [], error: null };
+    }
+
+    const sessions = ((data as Array<Record<string, unknown>>) ?? []).map((row) => ({
+      id: String(row["id"] ?? ""),
+      scheduled_date: (row["session_date"] as string | null) ?? null,
+      session_type: (row["session_type"] as string | null) ?? null,
+      duration_minutes: (row["duration_minutes"] as number | null) ?? null,
+      intensity:
+        row["intensity"] !== undefined
+          ? (row["intensity"] as string | null)
+          : row["intensity_level"] !== undefined
+            ? String(row["intensity_level"] ?? "")
+            : null,
+      status: (row["status"] as string | null) ?? null,
+      ai_optimized: (row["ai_optimized"] as boolean | null) ?? false,
+    }));
+
+    return { sessions, error };
   }
 
   async upsertSuggestion(input: {

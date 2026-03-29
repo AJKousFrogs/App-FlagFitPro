@@ -141,13 +141,13 @@
         linear-gradient(to right, transparent, var(--surface-primary) 70%) 0 100%,
         radial-gradient(
           farthest-side at 0% 50%,
-          rgba(0, 0, 0, 0.2),
-          rgba(0, 0, 0, 0)
+          var(--overlay-black-20),
+          transparent
         ),
         radial-gradient(
             farthest-side at 100% 50%,
-            rgba(0, 0, 0, 0.2),
-            rgba(0, 0, 0, 0)
+            var(--overlay-black-20),
+            transparent
           )
           0 100%;
       background-repeat: no-repeat;

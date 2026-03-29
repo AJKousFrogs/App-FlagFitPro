@@ -45,8 +45,6 @@ export class TeamInvitationDataService {
           team_id,
           email,
           role,
-          position,
-          jersey_number,
           status,
           expires_at,
           invited_by,
@@ -59,7 +57,16 @@ export class TeamInvitationDataService {
       .eq("token", token)
       .single();
 
-    return { invitation: invitation ?? null, error };
+    return {
+      invitation: invitation
+        ? ({
+            ...invitation,
+            position: null,
+            jersey_number: null,
+          } as InvitationRecord)
+        : null,
+      error,
+    };
   }
 
   async getInviter(inviterId: string): Promise<{

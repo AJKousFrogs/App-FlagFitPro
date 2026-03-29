@@ -113,6 +113,51 @@ async function getUserMembershipContext(userId) {
   };
 }
 
+async function ensurePersonalTournamentTeam(userId) {
+  const existingMembership = await getUserMembershipContext(userId);
+  if (existingMembership.primaryTeamId) {
+    return existingMembership;
+  }
+
+  const timestamp = new Date().toISOString();
+  const season = `${new Date().getUTCFullYear()}`;
+  const { data: createdTeam, error: teamError } = await supabaseAdmin
+    .from("teams")
+    .insert({
+      name: "Personal Team",
+      season,
+      coach_id: userId,
+      description: "Auto-provisioned personal workspace for tournament tracking.",
+      approval_status: "approved",
+      approved_by: userId,
+      approved_at: timestamp,
+    })
+    .select("id")
+    .single();
+
+  if (teamError) {
+    throw teamError;
+  }
+
+  const { error: membershipError } = await supabaseAdmin
+    .from("team_members")
+    .insert({
+      team_id: createdTeam.id,
+      user_id: userId,
+      role: "player",
+      status: "active",
+      role_approval_status: "approved",
+      role_approved_by: userId,
+      role_approved_at: timestamp,
+    });
+
+  if (membershipError) {
+    throw membershipError;
+  }
+
+  return getUserMembershipContext(userId);
+}
+
 function getMembershipRoleForTeam(membershipContext, teamId) {
   if (!teamId) {
     return membershipContext?.role || "player";
@@ -356,7 +401,10 @@ async function createTournament(event, _context, { userId, requestId }) {
     );
   }
 
-  const membershipContext = await getUserMembershipContext(userId);
+  let membershipContext = await getUserMembershipContext(userId);
+  if (!membershipContext.primaryTeamId) {
+    membershipContext = await ensurePersonalTournamentTeam(userId);
+  }
   const requestedTeamId =
     body.team_id || body.teamId || membershipContext.primaryTeamId;
 

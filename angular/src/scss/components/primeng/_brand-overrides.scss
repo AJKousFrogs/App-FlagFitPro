@@ -959,10 +959,9 @@
       }
 
       &.p-highlight {
-        background: var(--surface-primary);
+        background: transparent;
         color: var(--ds-primary-green);
         font-weight: var(--font-weight-semibold);
-        box-shadow: var(--hover-shadow-md);
 
         &::after {
           content: "";

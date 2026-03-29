@@ -9,10 +9,15 @@
   margin-bottom: 0;
 }
 
-/* Uses .ds-search-bar--flush variant from design-system/utilities.scss */
+/* search-box sits inside ds-toolbar--card which already provides the shell */
 .search-box {
   flex: 1;
   min-width: var(--input-min-width-lg);
+  --ds-search-border: none;
+  --ds-search-background: transparent;
+  --ds-search-padding-y: 0;
+  --ds-search-padding-x: 0;
+  --ds-search-radius: 0;
 }
 
 .filter-group {

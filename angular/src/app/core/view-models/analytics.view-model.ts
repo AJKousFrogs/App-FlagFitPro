@@ -9,7 +9,7 @@
 import { Injectable, computed, inject, signal } from "@angular/core";
 import { toSignal } from "@angular/core/rxjs-interop";
 import { interval } from "rxjs";
-import { map, shareReplay, startWith, switchMap } from "rxjs";
+import { shareReplay, startWith, switchMap } from "rxjs";
 import {
   AnalyticsDataService,
   PerformanceTrendsData,
@@ -50,10 +50,9 @@ export class AnalyticsViewModel extends ReactiveViewModel {
   );
 
   // Convert stream to signal for reactive updates
-  readonly livePerformanceTrends = toSignal(
-    this.performanceTrends$.pipe(map((data) => data)),
-    { initialValue: null },
-  );
+  readonly livePerformanceTrends = toSignal(this.performanceTrends$, {
+    initialValue: null,
+  });
 
   // Derived/computed signals
   readonly hasPerformanceData = computed(

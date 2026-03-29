@@ -497,7 +497,7 @@
                       </h4>
                       <!-- Date/time secondary -->
                       <p class="session-date">
-                        {{ session.date | date: "MMM d, y 'at' h:mm a" }}
+                        {{ formatSessionDate(session.date) }}
                       </p>
                       <!-- Duration tertiary -->
                       <p class="session-duration">

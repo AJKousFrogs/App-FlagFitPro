@@ -1,5 +1,5 @@
 import { CommonModule } from "@angular/common";
-import { Component, input, output } from "@angular/core";
+import { ChangeDetectionStrategy, Component, input, output } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { ProgressBar } from "primeng/progressbar";
 import { Select, type SelectChangeEvent } from "primeng/select";
@@ -48,6 +48,7 @@ interface MentalWellnessReport {
 @Component({
   selector: "app-psychology-wellness-section",
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
     FormsModule,

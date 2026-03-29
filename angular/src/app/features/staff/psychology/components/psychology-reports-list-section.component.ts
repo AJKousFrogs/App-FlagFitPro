@@ -1,5 +1,5 @@
 import { CommonModule } from "@angular/common";
-import { Component, input, output } from "@angular/core";
+import { ChangeDetectionStrategy, Component, input, output } from "@angular/core";
 
 import { ButtonComponent } from "../../../../shared/components/button/button.component";
 import { CardShellComponent } from "../../../../shared/components/card-shell/card-shell.component";
@@ -17,6 +17,7 @@ interface GeneratedReport {
 @Component({
   selector: "app-psychology-reports-list-section",
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
     ButtonComponent,

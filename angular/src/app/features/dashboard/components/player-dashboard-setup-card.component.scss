@@ -1,3 +1,5 @@
+@use "styles/mixins" as *;
+
 :host {
   display: block;
 }
@@ -9,8 +11,8 @@
 .no-program-card {
   inline-size: 100%;
   background: var(--surface-primary);
-  border: 1px solid var(--ui-border-subtle);
-  border-radius: 16px;
+  border: var(--border-1) solid var(--ui-border-subtle);
+  border-radius: var(--radius-xl);
   box-shadow: var(--shadow-sm);
 }
 
@@ -201,7 +203,7 @@
   color: var(--ds-primary-green);
 }
 
-@media (width <= 640px) {
+@include respond-to(sm) {
   .no-program-content {
     gap: var(--space-5);
     padding: var(--space-4);

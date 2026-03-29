@@ -24,15 +24,15 @@
         display: grid;
         grid-template-columns: repeat(3, 1fr);
         gap: var(--space-5);
-        max-width: 1200px;
+        max-width: var(--layout-page-max-width-wide);
         margin: 0 auto;
         width: 100%;
         padding-bottom: var(--space-8);
 
         .bento-item {
           background: var(--surface-primary);
-          border: 1px solid var(--ui-border-subtle);
-          border-radius: 16px;
+          border: none;
+          border-radius: var(--radius-xl);
           padding: var(--space-5);
           box-shadow: var(--shadow-sm);
           transition: transform var(--transition-base), box-shadow var(--transition-base);
@@ -85,7 +85,7 @@
         align-items: center;
         justify-content: center;
         font-size: var(--ds-font-size-2xl);
-        color: white;
+        color: var(--color-text-on-primary);
         box-shadow: var(--shadow-brand-icon);
 
         @include respond-to(md) {
@@ -145,7 +145,7 @@
         font-size: var(--ds-font-size-xs);
         font-weight: var(--ds-font-weight-bold);
         color: var(--ds-primary-green);
-        min-width: 50px;
+        min-width: var(--space-12);
       }
 
       .item-title {
@@ -155,26 +155,26 @@
       }
 
       .timeline-marker {
-        width: 20px;
-        height: 20px;
-        border-radius: 50%;
+        width: var(--space-5);
+        height: var(--space-5);
+        border-radius: var(--radius-full);
         background: var(--surface-tertiary);
         display: flex;
         align-items: center;
         justify-content: center;
-        i { font-size: 10px; }
+        i { font-size: var(--ds-font-size-xs); }
 
         &.completed {
           background: var(--ds-primary-green);
-          color: white;
+          color: var(--color-text-on-primary);
         }
       }
 
       .empty-schedule {
         padding: var(--space-8) var(--space-4);
         text-align: center;
-        i { 
-          font-size: 2rem;
+        i {
+          font-size: var(--ds-font-size-3xl);
           color: var(--color-text-tertiary);
           margin-bottom: var(--space-2);
         }

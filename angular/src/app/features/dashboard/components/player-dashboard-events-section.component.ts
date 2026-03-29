@@ -1,5 +1,5 @@
 import { CommonModule } from "@angular/common";
-import { Component, input } from "@angular/core";
+import { ChangeDetectionStrategy, Component, input } from "@angular/core";
 import { RouterModule } from "@angular/router";
 import { Timeline } from "primeng/timeline";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
@@ -36,6 +36,7 @@ interface DashboardUpcomingDisplayEvent {
 @Component({
   selector: "app-player-dashboard-events-section",
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
     RouterModule,

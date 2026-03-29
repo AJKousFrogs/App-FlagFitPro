@@ -483,55 +483,9 @@ export class VideoCurationService {
     teamId: string,
     userId: string,
   ): Promise<boolean> {
-    const saved = localStorage.getItem("flagfit_playlists");
-    if (!saved) {
-      return false;
-    }
-
-    try {
-      const parsed = JSON.parse(saved) as InstagramPlaylist[];
-      if (!Array.isArray(parsed) || parsed.length === 0) {
-        return false;
-      }
-
-      const rows = parsed
-        .map((playlist) => ({
-          team_id: teamId,
-          created_by: userId,
-          name: String(playlist.name || "").trim(),
-          description: String(playlist.description || "").trim() || null,
-          position: playlist.position || null,
-          focus_areas: Array.isArray(playlist.focus) ? playlist.focus : [],
-          video_ids: Array.isArray(playlist.videos)
-            ? playlist.videos.map((video) => video.id).filter(Boolean)
-            : [],
-          is_public: false,
-          created_at: playlist.createdAt || new Date().toISOString(),
-          updated_at: new Date().toISOString(),
-        }))
-        .filter((playlist) => playlist.name && playlist.video_ids.length > 0);
-
-      if (rows.length === 0) {
-        return false;
-      }
-
-      const { error } = await this.supabaseService.client
-        .from("video_playlists")
-        .insert(rows);
-
-      if (error) throw error;
-
-      localStorage.removeItem("flagfit_playlists");
-      this.logger.info("[VideoCuration] Migrated legacy playlists to Supabase", {
-        count: rows.length,
-      });
-      return true;
-    } catch (error) {
-      this.logger.warn("[VideoCuration] Failed to migrate legacy playlists", {
-        error,
-      });
-      return false;
-    }
+    void teamId;
+    void userId;
+    return false;
   }
 
   private initializeRealtimeSubscriptions(teamId: string | null): void {

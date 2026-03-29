@@ -2,9 +2,8 @@ import { CommonModule } from "@angular/common";
 import {
   ChangeDetectionStrategy,
   Component,
-  EventEmitter,
-  Input,
-  Output,
+  input,
+  output,
 } from "@angular/core";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { CardShellComponent } from "../../../shared/components/card-shell/card-shell.component";
@@ -28,11 +27,11 @@ interface WearableDeviceView {
   styleUrl: "./data-import-wearables-flow.component.scss",
 })
 export class DataImportWearablesFlowComponent {
-  @Input() connectedDevices: WearableDeviceView[] = [];
-  @Input() availableDevices: WearableDeviceView[] = [];
+  readonly connectedDevices = input<WearableDeviceView[]>([]);
+  readonly availableDevices = input<WearableDeviceView[]>([]);
 
-  @Output() reset = new EventEmitter<void>();
-  @Output() syncDevice = new EventEmitter<WearableDeviceView>();
-  @Output() disconnectDevice = new EventEmitter<WearableDeviceView>();
-  @Output() connectDevice = new EventEmitter<WearableDeviceView>();
+  readonly reset = output<void>();
+  readonly syncDevice = output<WearableDeviceView>();
+  readonly disconnectDevice = output<WearableDeviceView>();
+  readonly connectDevice = output<WearableDeviceView>();
 }

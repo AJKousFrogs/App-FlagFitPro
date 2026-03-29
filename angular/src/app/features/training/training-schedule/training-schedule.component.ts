@@ -1021,4 +1021,25 @@ export class TrainingScheduleComponent implements OnInit {
       ? firstLine.substring(0, 100) + "..."
       : firstLine;
   }
+
+  /**
+   * Format a session date, omitting time for midnight (template) sessions.
+   */
+  formatSessionDate(date: Date): string {
+    const months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+    const month = months[date.getMonth()];
+    const day = date.getDate();
+    const year = date.getFullYear();
+    const hours = date.getHours();
+    const minutes = date.getMinutes();
+
+    const datePart = `${month} ${day}, ${year}`;
+    if (hours === 0 && minutes === 0) {
+      return datePart;
+    }
+    const h = hours % 12 || 12;
+    const m = String(minutes).padStart(2, "0");
+    const ampm = hours < 12 ? "AM" : "PM";
+    return `${datePart} at ${h}:${m} ${ampm}`;
+  }
 }

@@ -9,15 +9,15 @@
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: var(--space-5);
-  max-width: 1200px;
+  max-width: var(--layout-page-max-width-wide);
   margin: 0 auto;
   width: 100%;
   padding-bottom: var(--space-8);
 
   .bento-item {
     background: var(--surface-primary);
-    border: 1px solid var(--ui-border-subtle);
-    border-radius: 16px;
+    border: none;
+    border-radius: var(--radius-xl);
     padding: var(--space-5);
     box-shadow: var(--shadow-sm);
     min-width: 0;
@@ -26,7 +26,6 @@
     &:hover {
       box-shadow: var(--shadow-md);
     }
-
 
     .bento-title {
       font-size: var(--ds-font-size-lg);
@@ -82,7 +81,7 @@
 .onboarding-banner {
   position: sticky;
   top: 0;
-  z-index: 10;
+  z-index: var(--z-index-sticky);
 }
 
 .onboarding-content {
@@ -334,7 +333,7 @@
 /* --------------------------------------------------------------------------
  RESPONSIVE ADJUSTMENTS
  -------------------------------------------------------------------------- */
-@media (max-width: var(--breakpoint-sm)) {
+@include respond-to(sm) {
   .today-page {
     padding: var(--space-3);
     gap: var(--space-4);
@@ -347,6 +346,7 @@
   .stats-grid {
     grid-template-columns: 1fr;
   }
+
   .onboarding-content {
     flex-direction: column;
     text-align: center;
@@ -423,11 +423,9 @@
     border-color var(--hover-transition-fast);
 }
 
-@media (hover: hover) and (pointer: fine) {
-  .mood-btn:hover {
-    border-color: var(--color-brand-primary);
-    background: var(--hover-bg-secondary);
-  }
+.mood-btn:hover {
+  border-color: var(--color-brand-primary);
+  background: var(--hover-bg-secondary);
 }
 
 .mood-btn:focus-visible {
@@ -503,10 +501,8 @@
   opacity: 1;
 }
 
-@media (hover: hover) and (pointer: fine) {
-  .energy-btn:hover {
-    border-color: var(--color-brand-primary);
-  }
+.energy-btn:hover {
+  border-color: var(--color-brand-primary);
 }
 
 .energy-btn:focus-visible {
@@ -551,10 +547,8 @@
   font-size: var(--ds-font-size-md);
 }
 
-@media (hover: hover) and (pointer: fine) {
-  .soreness-btn:hover {
-    border-color: var(--color-brand-primary);
-  }
+.soreness-btn:hover {
+  border-color: var(--color-brand-primary);
 }
 
 .soreness-btn:focus-visible {
@@ -859,12 +853,12 @@
 .tomorrow-rationale {
   font-size: var(--ds-font-size-sm);
   color: var(--color-text-secondary);
-  line-height: var(--ds-line-height-1-6);
+  line-height: var(--ds-line-height-body);
   margin: 0;
   padding: var(--space-3);
   background: var(--surface-tertiary);
   border-radius: var(--radius-md);
-  border-left: var(--space-1) solid var(--color-brand-primary);
+  border-left: var(--border-2) solid var(--color-brand-primary);
 }
 
 .tomorrow-blocks {

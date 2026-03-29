@@ -8,6 +8,7 @@ import { isBenignSupabaseQueryError } from "../../../shared/utils/error.utils";
 export class TrainingSafetyDataService {
   private readonly supabaseService = inject(SupabaseService);
   private usersTableUnavailable = false;
+  private injuryTrackingUnavailable = false;
 
   async getUserProfileDob(userId: string): Promise<{
     dateOfBirth: string | null;
@@ -106,6 +107,10 @@ export class TrainingSafetyDataService {
     } | null;
     error: { message?: string } | null;
   }> {
+    if (this.injuryTrackingUnavailable) {
+      return { protocol: null, error: null };
+    }
+
     const { data: rtpProtocol, error } = await this.supabaseService.client
       .from("injury_tracking")
       .select("*")
@@ -114,6 +119,11 @@ export class TrainingSafetyDataService {
       .order("injury_date", { ascending: false })
       .limit(1)
       .single();
+
+    if (error && isBenignSupabaseQueryError(error)) {
+      this.injuryTrackingUnavailable = true;
+      return { protocol: null, error: null };
+    }
 
     return { protocol: (rtpProtocol as { injury_type?: string; injury_date?: string }) ?? null, error };
   }

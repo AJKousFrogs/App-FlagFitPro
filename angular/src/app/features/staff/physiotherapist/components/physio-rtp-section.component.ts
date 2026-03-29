@@ -1,5 +1,5 @@
 import { CommonModule } from "@angular/common";
-import { Component, input, output } from "@angular/core";
+import { ChangeDetectionStrategy, Component, input, output } from "@angular/core";
 import { ProgressBarComponent } from "../../../../shared/components/progress-bar/progress-bar.component";
 
 import { ButtonComponent } from "../../../../shared/components/button/button.component";
@@ -37,6 +37,7 @@ interface ReturnToPlayDataView {
 @Component({
   selector: "app-physio-rtp-section",
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
     ProgressBarComponent,

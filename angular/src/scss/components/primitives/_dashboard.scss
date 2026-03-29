@@ -273,7 +273,7 @@
   .stats-overview--6col {
     grid-template-columns: repeat(6, 1fr);
 
-    @media (max-width: 1280px) {
+    @include respond-to(xl) {
       grid-template-columns: repeat(4, 1fr);
     }
 

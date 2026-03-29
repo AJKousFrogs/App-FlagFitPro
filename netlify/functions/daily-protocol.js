@@ -51,6 +51,72 @@ import {
   persistGeneratedProtocol,
 } from "./utils/daily-protocol-persistence.js";
 const TRAINING_SESSIONS_TABLE = "training_sessions";
+const EXERCISE_CATEGORY_ALIASES = {
+  isometrics: ["isometric", "Isometric", "Strength"],
+  plyometrics: ["plyometric", "Plyometric", "Power"],
+  strength: ["strength", "Strength"],
+  conditioning: ["conditioning", "Conditioning", "Speed"],
+  skill_drills: ["skill", "Skill", "agility", "Agility", "Position-Specific"],
+};
+
+function dedupeExercisesById(exercises) {
+  const seen = new Set();
+  return (exercises || []).filter((exercise) => {
+    const key = exercise?.id;
+    if (!key || seen.has(key)) {
+      return false;
+    }
+    seen.add(key);
+    return true;
+  });
+}
+
+function includesKeyword(value, keywords) {
+  const normalized = `${value || ""}`.toLowerCase();
+  return keywords.some((keyword) => normalized.includes(keyword));
+}
+
+function prioritizeExercises(exercises, keywords, fallbackCount = 5) {
+  const pool = dedupeExercisesById(exercises);
+  const preferred = pool.filter((exercise) =>
+    keywords.some((keyword) =>
+      includesKeyword(
+        `${exercise?.name || ""} ${exercise?.slug || ""} ${exercise?.movement_pattern || ""} ${exercise?.subcategory || ""}`,
+        [keyword],
+      ),
+    ),
+  );
+
+  if (preferred.length >= fallbackCount) {
+    return preferred;
+  }
+
+  const preferredIds = new Set(preferred.map((exercise) => exercise.id));
+  return preferred.concat(
+    pool.filter((exercise) => !preferredIds.has(exercise.id)),
+  );
+}
+
+async function fetchExercisesByCategories(supabase, categories, limit = 20) {
+  const normalizedCategories = [...new Set(categories.filter(Boolean))];
+  if (normalizedCategories.length === 0) {
+    return [];
+  }
+
+  const { data, error } = await supabase
+    .from("exercises")
+    .select("*")
+    .in("category", normalizedCategories)
+    .eq("active", true)
+    .limit(limit);
+
+  if (error) {
+    console.warn("[daily-protocol] Failed to fetch exercises by category:", error.message);
+    return [];
+  }
+
+  return Array.isArray(data) ? data : [];
+}
 
 function isMissingProtocolPersistenceError(error) {
   const code = error?.code;
@@ -1216,49 +1282,24 @@ async function generateProtocol(supabase, userId, payload, headers) {
     // ============================================================================
 
     // Query from both exercises table (isometric category) and isometrics_exercises table
-    const { data: isometricExercisesMain } = await supabase
-      .from("exercises")
-      .select("*")
-      .eq("category", "isometric")
-      .eq("active", true)
-      .limit(15);
-
-    const { data: isometricExercisesSpecialized } = await supabase
-      .from("isometrics_exercises")
-      .select("*")
-      .limit(15);
-
-    // Combine and format exercises
-    let allIsometrics = [];
-
-    if (isometricExercisesMain && isometricExercisesMain.length > 0) {
-      allIsometrics = allIsometrics.concat(
-        isometricExercisesMain.map((ex) => ({
-          ...ex,
-          source: "exercises",
-        })),
-      );
-    }
-
-    if (
-      isometricExercisesSpecialized &&
-      isometricExercisesSpecialized.length > 0
-    ) {
-      allIsometrics = allIsometrics.concat(
-        isometricExercisesSpecialized.map((ex) => ({
-          id: ex.id,
-          name: ex.name,
-          description: ex.description,
-          video_url: ex.video_url,
-          category: ex.category,
-          source: "isometrics_exercises",
-          default_sets: EVIDENCE_BASED_PROTOCOLS.isometrics.sets.min,
-          default_hold_seconds:
-            EVIDENCE_BASED_PROTOCOLS.isometrics.holdSeconds.max,
-          load_contribution_au: 15, // Moderate load for isometrics
-        })),
-      );
-    }
+    const allIsometrics = prioritizeExercises(
+      await fetchExercisesByCategories(
+        supabase,
+        EXERCISE_CATEGORY_ALIASES.isometrics,
+        30,
+      ),
+      [
+        "isometric",
+        "hold",
+        "plank",
+        "pallof",
+        "copenhagen",
+        "activation",
+        "wall",
+        "adductor",
+      ],
+      5,
+    );
 
     if (allIsometrics.length > 0) {
       // Select 4-5 isometric exercises for ~15 min block
@@ -1273,8 +1314,7 @@ async function generateProtocol(supabase, userId, payload, headers) {
         const holdSeconds = EVIDENCE_BASED_PROTOCOLS.isometrics.holdSeconds.max;
 
         protocolExercises.push({
-          // protocol_id will be assigned by RPC
-          exercise_id: ex.source === "exercises" ? ex.id : null,
+          exercise_id: ex.id,
           block_type: "isometrics",
           sequence_order: idx + 1,
           prescribed_sets: sets,
@@ -1303,45 +1343,15 @@ async function generateProtocol(supabase, userId, payload, headers) {
       EVIDENCE_BASED_PROTOCOLS.plyometrics.intensityLevels.medium;
 
     // Query from both exercises table and plyometrics_exercises table
-    const { data: plyoExercisesMain } = await supabase
-      .from("exercises")
-      .select("*")
-      .eq("category", "plyometric")
-      .eq("active", true)
-      .limit(20);
-
-    const { data: plyoExercisesSpecialized } = await supabase
-      .from("plyometrics_exercises")
-      .select("*")
-      .limit(20);
-
-    let allPlyometrics = [];
-
-    if (plyoExercisesMain && plyoExercisesMain.length > 0) {
-      allPlyometrics = allPlyometrics.concat(
-        plyoExercisesMain.map((ex) => ({
-          ...ex,
-          source: "exercises",
-        })),
-      );
-    }
-
-    if (plyoExercisesSpecialized && plyoExercisesSpecialized.length > 0) {
-      allPlyometrics = allPlyometrics.concat(
-        plyoExercisesSpecialized.map((ex) => ({
-          id: ex.id,
-          name: ex.exercise_name || ex.name,
-          description: ex.description,
-          video_url: ex.video_url,
-          category: ex.exercise_category,
-          intensity_level: ex.intensity_level,
-          source: "plyometrics_exercises",
-          default_sets: 3,
-          default_reps: 6,
-          load_contribution_au: 20, // Higher load for plyometrics
-        })),
-      );
-    }
+    let allPlyometrics = prioritizeExercises(
+      await fetchExercisesByCategories(
+        supabase,
+        EXERCISE_CATEGORY_ALIASES.plyometrics,
+        20,
+      ),
+      ["jump", "bound", "hop", "skater", "medicine ball", "explosive"],
+      5,
+    );
 
     if (allPlyometrics.length > 0) {
       // Calculate contacts per session (divide weekly target by ~3 sessions)
@@ -1384,8 +1394,7 @@ async function generateProtocol(supabase, userId, payload, headers) {
 
       selectedPlyos.forEach((ex, idx) => {
         protocolExercises.push({
-          // protocol_id will be assigned by RPC
-          exercise_id: ex.source === "exercises" ? ex.id : null,
+          exercise_id: ex.id,
           block_type: "plyometrics",
           sequence_order: idx + 1,
           prescribed_sets: 3,
@@ -1407,12 +1416,11 @@ async function generateProtocol(supabase, userId, payload, headers) {
     // Source: VALD Practitioner's Guide to Hamstrings
     // ============================================================================
 
-    const { data: strengthExercises } = await supabase
-      .from("exercises")
-      .select("*")
-      .eq("category", "strength")
-      .eq("active", true)
-      .limit(30);
+    const strengthExercises = await fetchExercisesByCategories(
+      supabase,
+      EXERCISE_CATEGORY_ALIASES.strength,
+      30,
+    );
 
     if (strengthExercises && strengthExercises.length > 0) {
       const selectedStrength = [];
@@ -1517,12 +1525,11 @@ async function generateProtocol(supabase, userId, payload, headers) {
     // Source: VALD Practitioner's Guide to Preseason, Gabbett 2016
     // ============================================================================
 
-    const { data: conditioningExercises } = await supabase
-      .from("exercises")
-      .select("*")
-      .eq("category", "conditioning")
-      .eq("active", true)
-      .limit(20);
+    const conditioningExercises = await fetchExercisesByCategories(
+      supabase,
+      EXERCISE_CATEGORY_ALIASES.conditioning,
+      20,
+    );
 
     if (conditioningExercises && conditioningExercises.length > 0) {
       // Filter based on safe intensity
@@ -1578,12 +1585,11 @@ async function generateProtocol(supabase, userId, payload, headers) {
     // ============================================================================
 
     // Combine skill and agility exercises
-    const { data: skillExercises } = await supabase
-      .from("exercises")
-      .select("*")
-      .or("category.eq.skill,category.eq.agility")
-      .eq("active", true)
-      .limit(20);
+    const skillExercises = await fetchExercisesByCategories(
+      supabase,
+      EXERCISE_CATEGORY_ALIASES.skill_drills,
+      20,
+    );
 
     if (skillExercises && skillExercises.length > 0) {
       // Filter for position-specific where available

@@ -1,5 +1,5 @@
 import { CommonModule } from "@angular/common";
-import { Component, input } from "@angular/core";
+import { ChangeDetectionStrategy, Component, input } from "@angular/core";
 import { CardShellComponent } from "../../../shared/components/card-shell/card-shell.component";
 import { StatusTagComponent } from "../../../shared/components/status-tag/status-tag.component";
 
@@ -19,6 +19,7 @@ interface ProfilePerformanceStat {
 @Component({
   selector: "app-profile-statistics-section",
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule, CardShellComponent, StatusTagComponent],
   templateUrl: "./profile-statistics-section.component.html",
   styleUrl: "./profile-statistics-section.component.scss",

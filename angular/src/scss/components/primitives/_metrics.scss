@@ -132,7 +132,7 @@
     min-width: 0;
   }
 
-  @media (max-width: 640px) {
+  @include respond-to(sm) {
     .metric-insight__value,
     .metric-tile__value {
       font-size: var(--ds-font-size-xl);

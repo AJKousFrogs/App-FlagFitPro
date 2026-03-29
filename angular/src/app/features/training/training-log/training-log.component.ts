@@ -710,11 +710,11 @@ export class TrainingLogComponent implements OnInit {
       if (!session) return;
 
       this.activeSessionId = session.id || null;
-      const sessionDate = session.session_date || session.date || this.today;
+      const sessionDate = session.session_date || this.today;
       this.sessionForm.patchValue({
-        sessionType: session.session_type || session.type || "practice",
+        sessionType: session.session_type || "practice",
         sessionDate,
-        durationMinutes: session.duration_minutes ?? session.duration ?? 60,
+        durationMinutes: session.duration_minutes ?? 60,
         rpe: session.rpe ?? 5,
         notes: session.notes || "",
       });
@@ -929,7 +929,7 @@ export class TrainingLogComponent implements OnInit {
       );
 
       const match = sessions.find((session) => {
-        const date = session.session_date || session.date;
+        const date = session.session_date;
         const status = session.status || "";
         return (
           date === sessionDate &&

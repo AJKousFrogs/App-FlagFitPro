@@ -101,46 +101,22 @@
   --ds-search-input-focus-transform: translateY(calc(var(--border-1) * -1));
 }
 
-/* Search input wrapper (contains icon + input) */
-.ds-search-input {
-  flex: 1;
-  min-width: 0;
-}
-
 /* Search icon */
 .ds-search-icon {
   color: var(--ds-search-icon-color, var(--color-text-muted));
+  flex-shrink: 0;
 }
 
-/* The actual input field */
+/* The actual input field — borderless; the host .ds-search-bar provides the shell */
 .ds-search-input-field {
-  width: 100%;
+  flex: 1;
+  min-width: 0;
   height: var(--ds-search-input-height, var(--input-height-md));
-  padding-left: var(--ds-search-input-padding-left, var(--space-10));
-  padding-right: var(--ds-search-input-padding-right, var(--space-4));
-  border-radius: var(--ds-search-input-radius, var(--radius-lg));
-  border: var(
-    --ds-search-input-border,
-    var(--border-1) solid var(--color-border-secondary)
-  );
-  background: var(--ds-search-input-background, var(--surface-primary));
+  padding: 0;
+  border: none;
+  background: transparent;
   font-size: var(--ds-search-input-font-size, var(--ds-font-size-md));
   color: var(--ds-search-input-color, var(--color-text-primary));
-  box-shadow: var(--ds-search-input-shadow, none);
-  transition:
-    border-color var(--transition-fast),
-    box-shadow var(--transition-fast),
-    transform var(--transition-fast);
-}
-
-.ds-search-input-field:focus-visible {
-  border-color: var(--ds-search-input-focus-border, var(--ds-primary-green));
-  box-shadow: var(--ds-search-input-focus-shadow, var(--shadow-focus));
-  transform: var(--ds-search-input-focus-transform, none);
-  outline: none;
-}
-
-.ds-search-input-field:focus:not(:focus-visible) {
   outline: none;
 }
 
@@ -150,6 +126,12 @@
     --ds-search-input-placeholder-weight,
     var(--ds-font-weight-regular)
   );
+}
+
+/* Focus ring on the container when any child is focused */
+.ds-search-bar:focus-within {
+  border-color: var(--ds-primary-green);
+  box-shadow: var(--shadow-focus);
 }
 
 /* Clear button */

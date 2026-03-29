@@ -17,6 +17,7 @@ import { LoggerService } from "./logger.service";
 import { ToastService } from "./toast.service";
 import { TIMEOUTS } from "../constants/app.constants";
 import { TOAST } from "../constants/toast-messages.constants";
+import { SupabaseService } from "./supabase.service";
 
 /**
  * Supported action types for offline queue
@@ -56,6 +57,7 @@ export class OfflineQueueService {
   private readonly http = inject(HttpClient);
   private readonly logger = inject(LoggerService);
   private readonly toastService = inject(ToastService);
+  private readonly supabase = inject(SupabaseService);
 
   // State
   private readonly _queue = signal<QueuedAction[]>([]);
@@ -84,8 +86,7 @@ export class OfflineQueueService {
       window.addEventListener("offline", () => this.handleOffline());
     }
 
-    // Load queue from localStorage on init
-    this.loadQueueFromStorage();
+    // Browser storage persistence is disabled; queue remains in-memory.
   }
 
   /**
@@ -366,11 +367,7 @@ export class OfflineQueueService {
    * Get auth headers (if available)
    */
   private getAuthHeaders(): Record<string, string> {
-    // Try to get auth token from localStorage or sessionStorage
-    // This is a simplified version - adjust based on your auth implementation
-    const token =
-      localStorage.getItem("auth_token") ||
-      sessionStorage.getItem("auth_token");
+    const token = this.supabase.getSession()?.access_token;
     if (token) {
       return {
         Authorization: `Bearer ${token}`,
@@ -383,42 +380,14 @@ export class OfflineQueueService {
    * Save queue to localStorage
    */
   private saveQueueToStorage(): void {
-    try {
-      const queueData = this._queue().map((action) => ({
-        ...action,
-        timestamp: action.timestamp.toISOString(),
-      }));
-      localStorage.setItem("offline_queue", JSON.stringify(queueData));
-    } catch (error) {
-      this.logger.error("[OfflineQueue] Error saving queue to storage:", error);
-    }
+    this.logger.debug("[OfflineQueue] Queue persistence disabled; keeping queue in memory only");
   }
 
   /**
    * Load queue from localStorage
    */
   private loadQueueFromStorage(): void {
-    try {
-      const stored = localStorage.getItem("offline_queue");
-      if (stored) {
-        const queueData = JSON.parse(stored) as Array<
-          Omit<QueuedAction, "timestamp"> & { timestamp: string }
-        >;
-        const queue: QueuedAction[] = queueData.map((action) => ({
-          ...action,
-          timestamp: new Date(action.timestamp),
-        }));
-        this._queue.set(queue);
-        this.logger.info(
-          `[OfflineQueue] Loaded ${queue.length} queued action(s) from storage`,
-        );
-      }
-    } catch (error) {
-      this.logger.error(
-        "[OfflineQueue] Error loading queue from storage:",
-        error,
-      );
-    }
+    this.logger.debug("[OfflineQueue] Queue persistence disabled; no storage restore performed");
   }
 
   /**
@@ -426,7 +395,6 @@ export class OfflineQueueService {
    */
   clearQueue(): void {
     this._queue.set([]);
-    localStorage.removeItem("offline_queue");
     this.logger.info("[OfflineQueue] Queue cleared");
   }
 

@@ -1,5 +1,5 @@
 import { CommonModule } from "@angular/common";
-import { Component, input } from "@angular/core";
+import { ChangeDetectionStrategy, Component, input } from "@angular/core";
 import { ProgressBarComponent } from "../../../../shared/components/progress-bar/progress-bar.component";
 
 import { CardShellComponent } from "../../../../shared/components/card-shell/card-shell.component";
@@ -21,6 +21,7 @@ interface SupplementComplianceView {
 @Component({
   selector: "app-nutritionist-supplement-section",
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule, ProgressBarComponent, CardShellComponent, EmptyStateComponent, StatusTagComponent],
   templateUrl: "./nutritionist-supplement-section.component.html",
   styleUrl: "./nutritionist-supplement-section.component.scss",

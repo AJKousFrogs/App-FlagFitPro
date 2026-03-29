@@ -2,9 +2,9 @@ import { CommonModule } from "@angular/common";
 import {
   ChangeDetectionStrategy,
   Component,
-  EventEmitter,
-  Input,
-  Output,
+  input,
+  model,
+  output,
 } from "@angular/core";
 import { ChatMessage } from "../../../core/services/channel.service";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
@@ -26,15 +26,14 @@ import { getTimeAgo } from "../../../shared/utils/date.utils";
   styleUrl: "./chat-pinned-messages-dialog.component.scss",
 })
 export class ChatPinnedMessagesDialogComponent {
-  @Input() visible = false;
-  @Input() pinnedMessages: ChatMessage[] = [];
-  @Input() canPinMessages = false;
+  readonly visible = model(false);
+  readonly pinnedMessages = input<ChatMessage[]>([]);
+  readonly canPinMessages = input(false);
 
-  @Output() visibleChange = new EventEmitter<boolean>();
-  @Output() togglePin = new EventEmitter<ChatMessage>();
+  readonly togglePin = output<ChatMessage>();
 
   onClose(): void {
-    this.visibleChange.emit(false);
+    this.visible.set(false);
   }
 
   onTogglePin(message: ChatMessage): void {

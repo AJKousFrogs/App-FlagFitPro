@@ -65,3 +65,16 @@
 .r-dot.readiness-low {
   background: var(--color-status-error);
 }
+
+.performance-avatar--injured {
+  background: var(--color-status-error);
+}
+
+.performance-avatar--high-risk {
+  background: var(--color-status-warning);
+}
+
+.performance-avatar--standard {
+  background: var(--ds-primary-green-subtle);
+  color: var(--ds-primary-green-dark);
+}

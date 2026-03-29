@@ -37,7 +37,7 @@
 
     // Custom scrollbar for WebKit browsers
     &::-webkit-scrollbar {
-      height: 8px;
+      height: var(--space-2);
     }
 
     &::-webkit-scrollbar-track {
@@ -372,7 +372,7 @@
   // RESPONSIVE TABLE (Decision 35)
   // ============================================
 
-  @media (max-width: 768px) {
+  @include respond-to(md) {
     .table-wrapper {
       margin: 0 calc(-1 * var(--page-padding-tablet));
       padding: 0 var(--page-padding-tablet);
@@ -422,7 +422,7 @@
     }
   }
 
-  @media (max-width: 640px) {
+  @include respond-to(sm) {
     .table-wrapper {
       margin: 0 calc(-1 * var(--page-padding-mobile));
       padding: 0 var(--page-padding-mobile);

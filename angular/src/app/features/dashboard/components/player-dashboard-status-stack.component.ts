@@ -1,5 +1,5 @@
 import { CommonModule } from "@angular/common";
-import { Component, input, output } from "@angular/core";
+import { ChangeDetectionStrategy, Component, input, output } from "@angular/core";
 import { CloseButtonComponent } from "../../../shared/components/close-button/close-button.component";
 import { CoachOverrideNotificationComponent } from "../../../shared/components/coach-override-notification/coach-override-notification.component";
 import { MissingDataExplanationComponent } from "../../../shared/components/missing-data-explanation/missing-data-explanation.component";
@@ -26,6 +26,7 @@ interface OverrideDisplayItem {
 @Component({
   selector: "app-player-dashboard-status-stack",
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
     CloseButtonComponent,

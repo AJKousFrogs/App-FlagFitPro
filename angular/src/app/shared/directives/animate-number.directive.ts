@@ -1,14 +1,12 @@
 import {
   Directive,
   ElementRef,
-  Input,
-  OnChanges,
-  OnInit,
-  SimpleChanges,
-  inject,
   effect,
+  input,
   signal,
+  inject,
   DestroyRef,
+  OnInit,
 } from "@angular/core";
 
 /**
@@ -60,42 +58,43 @@ import {
   selector: "[appAnimateNumber]",
   standalone: true,
 })
-export class AnimateNumberDirective implements OnInit, OnChanges {
+export class AnimateNumberDirective implements OnInit {
   private readonly el = inject(ElementRef<HTMLElement>);
   private readonly destroyRef = inject(DestroyRef);
 
-  // Input signals
-  @Input({ required: true }) appAnimateNumber!: number;
-  @Input() animDuration = 800; // ms
-  @Input() animDecimals = 0;
-  @Input() animPrefix = "";
-  @Input() animSuffix = "";
-  @Input() animSeparator = ",";
-  @Input() animEasing: "linear" | "ease-out" | "ease-in-out" = "ease-out";
-  @Input() animAutoplay = true;
+  readonly appAnimateNumber = input.required<number>();
+  readonly animDuration = input(800);
+  readonly animDecimals = input(0);
+  readonly animPrefix = input("");
+  readonly animSuffix = input("");
+  readonly animSeparator = input(",");
+  readonly animEasing = input<"linear" | "ease-out" | "ease-in-out">("ease-out");
+  readonly animAutoplay = input(true);
 
   private animationFrameId: number | null = null;
   private startValue = 0;
   private startTime = 0;
+  private initialized = false;
   private prefersReducedMotion = signal(false);
+
+  constructor() {
+    // React to appAnimateNumber changes after initialization
+    effect(() => {
+      const target = this.appAnimateNumber();
+      if (this.initialized) {
+        this.startAnimation(target);
+      }
+    });
+  }
 
   ngOnInit(): void {
     this.initReducedMotionPreference();
     this.setupAccessibility();
 
-    if (this.animAutoplay) {
-      this.startAnimation();
+    if (this.animAutoplay()) {
+      this.startAnimation(this.appAnimateNumber());
     }
-  }
-
-  ngOnChanges(changes: SimpleChanges): void {
-    // Animate to new value when target changes
-    if (
-      changes["appAnimateNumber"] &&
-      !changes["appAnimateNumber"].firstChange
-    ) {
-      this.startAnimation();
-    }
+    this.initialized = true;
   }
 
   private initReducedMotionPreference(): void {
@@ -118,75 +117,64 @@ export class AnimateNumberDirective implements OnInit, OnChanges {
   }
 
   private setupAccessibility(): void {
-    // Set aria-live for screen reader announcements
     if (!this.el.nativeElement.hasAttribute("aria-live")) {
       this.el.nativeElement.setAttribute("aria-live", "polite");
     }
 
-    // Ensure semantic meaning is preserved
     if (!this.el.nativeElement.hasAttribute("role")) {
       this.el.nativeElement.setAttribute("role", "status");
     }
   }
 
-  private startAnimation(): void {
-    // Cancel existing animation
+  private startAnimation(target: number): void {
     if (this.animationFrameId !== null) {
       cancelAnimationFrame(this.animationFrameId);
     }
 
-    // If reduced motion, instantly set final value
     if (this.prefersReducedMotion()) {
-      this.updateDisplay(this.appAnimateNumber);
+      this.updateDisplay(target);
       return;
     }
 
-    // Get current value from DOM (for smooth transitions when value changes mid-animation)
     const currentText = this.el.nativeElement.textContent || "0";
     const currentNumber = parseFloat(
-      currentText.replace(this.animPrefix, "").replace(this.animSuffix, "").replace(/,/g, ""),
+      currentText.replace(this.animPrefix(), "").replace(this.animSuffix(), "").replace(/,/g, ""),
     );
 
     this.startValue = isNaN(currentNumber) ? 0 : currentNumber;
     this.startTime = performance.now();
 
-    this.animate();
+    this.animate(target);
   }
 
-  private animate(): void {
+  private animate(target: number): void {
     const currentTime = performance.now();
     const elapsed = currentTime - this.startTime;
-    const progress = Math.min(elapsed / this.animDuration, 1);
+    const progress = Math.min(elapsed / this.animDuration(), 1);
 
-    // Apply easing function
     const easedProgress = this.applyEasing(progress);
 
-    // Calculate current value
     const currentValue =
       this.startValue +
-      (this.appAnimateNumber - this.startValue) * easedProgress;
+      (target - this.startValue) * easedProgress;
 
     this.updateDisplay(currentValue);
 
-    // Continue animation if not complete
     if (progress < 1) {
-      this.animationFrameId = requestAnimationFrame(() => this.animate());
+      this.animationFrameId = requestAnimationFrame(() => this.animate(target));
     } else {
       this.animationFrameId = null;
-      // Ensure final value is exact (avoid floating point errors)
-      this.updateDisplay(this.appAnimateNumber);
+      this.updateDisplay(target);
     }
   }
 
   private applyEasing(t: number): number {
-    switch (this.animEasing) {
+    switch (this.animEasing()) {
       case "linear":
         return t;
       case "ease-out":
-        // Cubic ease-out: fast start, slow end
         return 1 - Math.pow(1 - t, 3);
       case "ease-in-out":
-        // Cubic ease-in-out: slow start, fast middle, slow end
         return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
       default:
         return t;
@@ -196,27 +184,25 @@ export class AnimateNumberDirective implements OnInit, OnChanges {
   private updateDisplay(value: number): void {
     const formatted = this.formatNumber(value);
     this.el.nativeElement.textContent =
-      this.animPrefix + formatted + this.animSuffix;
+      this.animPrefix() + formatted + this.animSuffix();
   }
 
   private formatNumber(value: number): string {
-    // Round to specified decimals
+    const decimals = this.animDecimals();
     const rounded =
-      this.animDecimals === 0
+      decimals === 0
         ? Math.round(value)
-        : parseFloat(value.toFixed(this.animDecimals));
+        : parseFloat(value.toFixed(decimals));
 
-    // Convert to string with decimals
-    const parts = rounded.toFixed(this.animDecimals).split(".");
+    const parts = rounded.toFixed(decimals).split(".");
     const integerPart = parts[0];
     const decimalPart = parts[1];
 
-    // Add thousands separator
-    const withSeparator = this.animSeparator
-      ? integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, this.animSeparator)
+    const separator = this.animSeparator();
+    const withSeparator = separator
+      ? integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, separator)
       : integerPart;
 
-    // Combine integer and decimal parts
     return decimalPart ? `${withSeparator}.${decimalPart}` : withSeparator;
   }
 }

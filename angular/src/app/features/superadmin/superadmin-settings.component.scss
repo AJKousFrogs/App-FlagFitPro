@@ -66,6 +66,11 @@
   color: var(--color-text-primary);
 }
 
+// PrimeNG tableStyleClass - needs ::ng-deep to pierce encapsulation
+:host ::ng-deep .superadmin-table {
+  min-width: var(--container-md);
+}
+
 .superadmin-actions-col {
   width: calc(var(--space-16) + var(--space-10));
 }

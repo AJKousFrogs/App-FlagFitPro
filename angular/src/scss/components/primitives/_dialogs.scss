@@ -574,7 +574,7 @@ height: 100dvh; // Modern: keyboard-aware
   // MOBILE RESPONSIVE (Decision 35)
   // ============================================
 
-  @media (max-width: 768px) {
+  @include respond-to(md) {
     .dialog-sm,
     .dialog-md,
     .dialog-lg {

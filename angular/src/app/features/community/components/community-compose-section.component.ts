@@ -1,5 +1,5 @@
 import { CommonModule } from "@angular/common";
-import { Component, input, output } from "@angular/core";
+import { ChangeDetectionStrategy, Component, input, output } from "@angular/core";
 import { Avatar } from "primeng/avatar";
 import { Textarea } from "primeng/textarea";
 import { Tooltip } from "primeng/tooltip";
@@ -10,6 +10,7 @@ import { ButtonComponent } from "../../../shared/components/button/button.compon
 @Component({
   selector: "app-community-compose-section",
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
     Avatar,

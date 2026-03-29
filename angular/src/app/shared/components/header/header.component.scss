@@ -43,12 +43,12 @@
 
 .mobile-hamburger {
   display: none;
-  min-width: 44px; // Touch target
-  min-height: 44px;
+  min-width: var(--touch-target-min, 2.75rem);
+  min-height: var(--touch-target-min, 2.75rem);
 
   @include respond-to(sm) {
-    min-width: 48px; // Larger on mobile
-    min-height: 48px;
+    min-width: var(--touch-target-md);
+    min-height: var(--touch-target-md);
   }
 
   // Touch feedback
@@ -81,18 +81,18 @@
 .header-center {
   flex: 1;
   justify-content: center;
-  max-width: 600px;
+  max-width: var(--layout-page-max-width-sm, 37.5rem);
 
   .search-container {
     display: flex;
     align-items: center;
-    gap: var(--space-3);
+    gap: var(--space-2);
     background: var(--ui-surface-subtle);
-    border: var(--border-1) solid var(--ui-border-default);
+    border: var(--border-1) solid var(--color-border-subtle);
     border-radius: var(--radius-xl);
-    padding: var(--space-2) var(--space-4);
+    padding: var(--space-2) var(--space-3);
     width: 100%;
-    max-width: 400px;
+    max-width: 22rem;
     cursor: pointer;
     transition: all var(--transition-base);
 
@@ -111,8 +111,8 @@
     }
 
     i {
-      color: var(--ds-primary-green);
-      font-size: 1rem;
+      color: var(--color-text-tertiary);
+      font-size: var(--ds-font-size-sm);
     }
 
     input {
@@ -132,15 +132,15 @@
     .search-shortcut {
       display: flex;
       gap: var(--space-1);
-      
+
       kbd {
-        background: var(--surface-tertiary);
-        border: var(--border-1) solid var(--ui-border-default);
+        background: var(--surface-secondary);
+        border: var(--border-1) solid var(--color-border-subtle);
         border-radius: var(--radius-sm);
-        padding: 0 var(--space-1-5);
-        font-size: 10px;
+        padding: 0 var(--space-1);
+        font-size: var(--ds-font-size-xs);
         font-family: var(--ds-font-family-mono);
-        color: var(--color-text-secondary);
+        color: var(--color-text-tertiary);
       }
     }
   }
@@ -176,7 +176,7 @@
     box-shadow: var(--shadow-focus);
   }
 
-  i { font-size: 1.2rem; }
+  i { font-size: var(--ds-font-size-lg); }
 }
 
 .utility-label {
@@ -192,20 +192,20 @@
 
 .notification-badge {
   position: absolute;
-  top: -6px;
-  right: -8px;
+  top: calc(-1 * var(--space-2));
+  right: calc(-1 * var(--space-2));
   background: var(--color-status-error);
   color: white;
-  font-size: 10px;
+  font-size: var(--ds-font-size-xs);
   font-weight: var(--ds-font-weight-bold);
-  min-width: 16px;
-  height: 16px;
+  min-width: var(--space-4);
+  height: var(--space-4);
   border-radius: var(--radius-full);
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0 4px;
-  border: 2px solid var(--surface-primary);
+  padding: 0 var(--space-1);
+  border: var(--border-2) solid var(--surface-primary);
 }
 
 .header-profile {
@@ -224,6 +224,21 @@
     outline: var(--focus-outline-width) solid var(--ds-primary-green);
     outline-offset: var(--focus-outline-offset);
     box-shadow: var(--shadow-focus);
+  }
+}
+
+/* THEME TOGGLE — compact pill */
+.theme-toggle {
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-full);
+  gap: var(--space-2);
+  background: var(--ui-surface-subtle);
+  border: var(--border-1) solid var(--color-border-subtle);
+  height: auto;
+
+  &:hover {
+    background: var(--surface-card);
+    border-color: var(--ds-primary-green);
   }
 }
 
@@ -251,7 +266,7 @@
     &::before {
       content: '\e908'; // pi-search
       font-family: 'primeicons';
-      font-size: 1.2rem;
+      font-size: var(--ds-font-size-lg);
       padding: var(--space-2);
       cursor: pointer;
       color: var(--color-text-secondary);

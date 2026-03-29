@@ -1,5 +1,5 @@
 import { CommonModule } from "@angular/common";
-import { Component, input } from "@angular/core";
+import { ChangeDetectionStrategy, Component, input } from "@angular/core";
 import { ProgressBar } from "primeng/progressbar";
 import { CardShellComponent } from "../../../shared/components/card-shell/card-shell.component";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
@@ -26,6 +26,7 @@ interface DashboardQuickAction {
 @Component({
   selector: "app-player-dashboard-insights-grid",
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
     ProgressBar,

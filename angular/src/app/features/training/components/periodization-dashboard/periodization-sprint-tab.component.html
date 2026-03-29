@@ -1,45 +1,45 @@
 <div class="sprint-protocols">
-  @if (guidelines) {
+  @if (guidelines(); as g) {
     <div class="sprint-header">
-      <h3>{{ guidelines.phase }}</h3>
+      <h3>{{ g.phase }}</h3>
       <p>
         Weekly Sprint Volume:
-        {{ guidelines.weeklySprintVolume[0] }} -
-        {{ guidelines.weeklySprintVolume[1] }}
+        {{ g.weeklySprintVolume[0] }} -
+        {{ g.weeklySprintVolume[1] }}
         sprints
       </p>
     </div>
 
     <div class="sprint-features">
-      <div class="feature" [class.active]="guidelines.accelerationWork">
+      <div class="feature" [class.active]="g.accelerationWork">
         <i
           class="pi"
-          [class.pi-check]="guidelines.accelerationWork"
-          [class.pi-times]="!guidelines.accelerationWork"
+          [class.pi-check]="g.accelerationWork"
+          [class.pi-times]="!g.accelerationWork"
         ></i>
         Acceleration Work
       </div>
-      <div class="feature" [class.active]="guidelines.maxVelocityWork">
+      <div class="feature" [class.active]="g.maxVelocityWork">
         <i
           class="pi"
-          [class.pi-check]="guidelines.maxVelocityWork"
-          [class.pi-times]="!guidelines.maxVelocityWork"
+          [class.pi-check]="g.maxVelocityWork"
+          [class.pi-times]="!g.maxVelocityWork"
         ></i>
         Max Velocity
       </div>
-      <div class="feature" [class.active]="guidelines.resistedSprints">
+      <div class="feature" [class.active]="g.resistedSprints">
         <i
           class="pi"
-          [class.pi-check]="guidelines.resistedSprints"
-          [class.pi-times]="!guidelines.resistedSprints"
+          [class.pi-check]="g.resistedSprints"
+          [class.pi-times]="!g.resistedSprints"
         ></i>
         Resisted Sprints
       </div>
-      <div class="feature" [class.active]="guidelines.flyingSprints">
+      <div class="feature" [class.active]="g.flyingSprints">
         <i
           class="pi"
-          [class.pi-check]="guidelines.flyingSprints"
-          [class.pi-times]="!guidelines.flyingSprints"
+          [class.pi-check]="g.flyingSprints"
+          [class.pi-times]="!g.flyingSprints"
         ></i>
         Flying Sprints
       </div>
@@ -47,15 +47,15 @@
 
     <h4>Recommended Protocols</h4>
     <div class="protocols-list">
-      @for (protocol of recommendedProtocols; track protocol) {
+      @for (protocol of recommendedProtocols(); track protocol) {
         <p-chip [label]="protocol" class="protocol-chip"></p-chip>
       }
     </div>
 
-    @if (avoidProtocols.length) {
+    @if (avoidProtocols().length) {
       <h4>Avoid This Phase</h4>
       <div class="protocols-list avoid">
-        @for (protocol of avoidProtocols; track protocol) {
+        @for (protocol of avoidProtocols(); track protocol) {
           <p-chip [label]="protocol" class="protocol-chip avoid"></p-chip>
         }
       </div>
@@ -65,7 +65,7 @@
   <div class="sprint-tips">
     <h4><i class="pi pi-flag"></i> Flag Football Sprint Tips</h4>
     <ul>
-      @for (tip of tips; track tip) {
+      @for (tip of tips(); track tip) {
         <li>{{ tip }}</li>
       }
     </ul>

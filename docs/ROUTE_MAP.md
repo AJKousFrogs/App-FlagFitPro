@@ -4,7 +4,7 @@ This document maps frontend routes to their primary data sources and backend API
 endpoints. The canonical API endpoint list lives in:
 `angular/src/app/core/services/api.service.ts` (`API_ENDPOINTS`).
 
-_Version 2.1 | Last Updated: March 2026_
+_Version 3.4 | Last Updated: March 2026_
 
 This route map reflects the consolidated `2.1` product surface.
 Several older routes still exist as compatibility redirects, but they are not

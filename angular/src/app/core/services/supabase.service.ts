@@ -86,6 +86,11 @@ export class SupabaseService {
     this.supabase = createClient(
       environment.supabase.url,
       environment.supabase.anonKey,
+      {
+        auth: {
+          persistSession: false,
+        },
+      },
     );
 
     // Initialize session and set up auth listener

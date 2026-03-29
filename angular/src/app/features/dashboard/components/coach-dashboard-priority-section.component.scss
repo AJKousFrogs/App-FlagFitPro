@@ -137,6 +137,12 @@
   gap: var(--space-3);
   cursor: pointer;
   border: var(--border-1) solid transparent;
+  transition:
+    background-color var(--transition-fast) var(--ease-standard),
+    border-color var(--transition-fast) var(--ease-standard);
+
+  @include ds-hover-state(var(--surface-secondary), $border-color: var(--color-border-subtle));
+  @include ds-focus-ring;
 }
 
 .pa-info {

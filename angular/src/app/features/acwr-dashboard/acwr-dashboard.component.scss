@@ -4,7 +4,7 @@
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: var(--space-5);
-  max-width: 1200px;
+  max-width: var(--layout-page-max-width-wide);
   margin: 0 auto;
   width: 100%;
   padding-bottom: var(--space-8);
@@ -32,7 +32,7 @@
       align-items: center;
       gap: var(--space-3);
       
-      i { color: var(--ds-primary-green); font-size: 1.25rem; }
+      i { color: var(--ds-primary-green); font-size: var(--ds-font-size-xl); }
     }
   }
 
@@ -55,9 +55,9 @@
   }
 
   .ratio-circle {
-    width: 160px;
-    height: 160px;
-    border-radius: 50%;
+    width: var(--space-40, 10rem);
+    height: var(--space-40, 10rem);
+    border-radius: var(--radius-full);
     border: var(--border-8) solid var(--ui-border-default);
     display: flex;
     flex-direction: column;
@@ -65,7 +65,7 @@
     justify-content: center;
     position: relative;
 
-    .ratio-value { font-size: 2.5rem; font-weight: var(--ds-font-weight-bold); line-height: 1; }
+    .ratio-value { font-size: var(--ds-font-size-3xl); font-weight: var(--ds-font-weight-bold); line-height: 1; }
     .ratio-label { font-size: var(--font-caption-size); font-weight: var(--ds-font-weight-bold); color: var(--color-text-tertiary); letter-spacing: 0.1em; }
 
     .confidence-indicator-bento { position: absolute; bottom: calc(-1 * var(--space-2-5)); background: var(--surface-primary); border-radius: var(--radius-full); padding: var(--space-0-5); }

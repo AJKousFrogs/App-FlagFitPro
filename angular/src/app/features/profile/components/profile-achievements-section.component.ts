@@ -1,5 +1,5 @@
 import { CommonModule } from "@angular/common";
-import { Component, input } from "@angular/core";
+import { ChangeDetectionStrategy, Component, input } from "@angular/core";
 import { CardShellComponent } from "../../../shared/components/card-shell/card-shell.component";
 import { EmptyStateComponent } from "../../../shared/components/empty-state/empty-state.component";
 
@@ -13,6 +13,7 @@ interface ProfileAchievement {
 @Component({
   selector: "app-profile-achievements-section",
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule, EmptyStateComponent, CardShellComponent],
   templateUrl: "./profile-achievements-section.component.html",
   styleUrl: "./profile-achievements-section.component.scss",

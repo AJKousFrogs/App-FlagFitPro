@@ -6,7 +6,7 @@
   </p>
 
   <div class="research-cards">
-    @for (ref of references; track ref.title) {
+    @for (ref of references(); track ref.title) {
       <div class="research-card">
         <div class="research-header">
           <span class="research-authors">{{ ref.authors }}</span>

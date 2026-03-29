@@ -1,5 +1,5 @@
 import { CommonModule } from "@angular/common";
-import { Component, input, output } from "@angular/core";
+import { ChangeDetectionStrategy, Component, input, output } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { Select, type SelectChangeEvent } from "primeng/select";
 
@@ -15,6 +15,7 @@ interface InjuryHistoryView {
 @Component({
   selector: "app-physio-history-section",
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule, FormsModule, Select, CardShellComponent],
   templateUrl: "./physio-history-section.component.html",
   styleUrl: "./physio-history-section.component.scss",

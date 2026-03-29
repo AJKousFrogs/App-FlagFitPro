@@ -31,7 +31,7 @@
   .bento-grid {
     display: grid;
     gap: var(--space-5);
-    max-width: 1200px;
+    max-width: var(--layout-page-max-width-wide);
     margin: 0 auto;
     width: 100%;
     padding-bottom: var(--space-8);
@@ -97,8 +97,8 @@
 
     /* Visual styling */
     background: var(--surface-primary);
-    border: 1px solid var(--ui-border-subtle);
-    border-radius: 16px;
+    border: none;
+    border-radius: var(--radius-xl);
     padding: var(--space-5);
     box-shadow: var(--shadow-sm);
 
@@ -116,11 +116,7 @@
       box-shadow: var(--shadow-md);
     }
 
-    /* Focus state for accessibility */
-    &:focus-within {
-      outline: var(--focus-outline-width) solid var(--color-focus-ring);
-      outline-offset: var(--focus-outline-offset);
-    }
+    /* Focus state: only on clickable cards, not on every child focus */
 
     /* Mobile padding adjustment */
     @include respond-to(sm) {
@@ -133,6 +129,11 @@
    */
   .bento-item--clickable {
     cursor: pointer;
+
+    &:focus-visible {
+      outline: var(--focus-outline-width) solid var(--color-focus-ring);
+      outline-offset: var(--focus-outline-offset);
+    }
 
     &:active {
       transform: scale(0.99);
@@ -161,7 +162,7 @@
 
     &:hover {
       box-shadow: var(--shadow-lg);
-      transform: translateY(-2px);
+      transform: var(--transform-hover-lift);
     }
   }
 
@@ -286,10 +287,10 @@
     overflow-y: auto;
     -webkit-overflow-scrolling: touch; // Smooth scrolling on iOS
     scroll-behavior: smooth;
-    max-height: 400px; // Default max height
+    max-height: var(--scrollable-body-max-height, 25rem);
 
     @include respond-to(md) {
-      max-height: 300px;
+      max-height: var(--scrollable-body-max-height-md, 18.75rem);
     }
   }
 
@@ -303,7 +304,7 @@
     gap: var(--space-3);
     margin-top: var(--space-4);
     padding-top: var(--space-4);
-    border-top: 1px solid var(--ui-border-subtle);
+    border-top: var(--border-1) solid var(--ui-border-subtle);
   }
 
   /* ============================================
@@ -316,17 +317,17 @@
 
   /* Success/positive state */
   .bento-item--status-success {
-    border-left: 4px solid var(--ui-success);
+    border-left: var(--border-accent, 4px) solid var(--ui-success);
   }
 
   /* Warning state */
   .bento-item--status-warning {
-    border-left: 4px solid var(--ui-warning);
+    border-left: var(--border-accent, 4px) solid var(--ui-warning);
   }
 
   /* Danger/error state */
   .bento-item--status-danger {
-    border-left: 4px solid var(--ui-danger);
+    border-left: var(--border-accent, 4px) solid var(--ui-danger);
     background: color-mix(
       in srgb,
       var(--ui-danger) 4%,
@@ -336,7 +337,7 @@
 
   /* Info state */
   .bento-item--status-info {
-    border-left: 4px solid var(--ui-info);
+    border-left: var(--border-accent, 4px) solid var(--ui-info);
   }
 
   /* ============================================
@@ -392,7 +393,7 @@
    */
   .bento-item__stats-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(var(--grid-card-min-xs, 7.5rem), 1fr));
     gap: var(--space-3);
   }
 

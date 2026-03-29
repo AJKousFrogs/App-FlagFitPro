@@ -1,5 +1,5 @@
 import { CommonModule } from "@angular/common";
-import { Component, input, output } from "@angular/core";
+import { ChangeDetectionStrategy, Component, input, output } from "@angular/core";
 import { ProgressBar } from "primeng/progressbar";
 
 import { ButtonComponent } from "../../../../shared/components/button/button.component";
@@ -21,6 +21,7 @@ interface RiskIndicatorView {
 @Component({
   selector: "app-physio-risk-section",
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
     ProgressBar,

@@ -2,7 +2,7 @@
 
 ## Complete Technical & Business Logic Guide
 
-_Version 2.1 | Last Updated: March 2026_
+_Version 3.4 | Last Updated: March 2026_
 
 ---
 

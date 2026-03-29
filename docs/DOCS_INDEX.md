@@ -104,6 +104,7 @@
 
 | Document                                         | Description                                           |
 | ------------------------------------------------ | ----------------------------------------------------- |
+| [RELEASE_NOTES_3.4.0.md](./RELEASE_NOTES_3.4.0.md) | Frontend polish, SCSS cleanup, onboarding shell, and schema alignment |
 | [RELEASE_NOTES_2.1.0.md](./RELEASE_NOTES_2.1.0.md) | Product consolidation, route cleanup, and release alignment |
 | [RELEASE_NOTES_1.5.0.md](./RELEASE_NOTES_1.5.0.md) | Role integrity, route guards, and authorization alignment |
 | [RELEASE_NOTES_1.2.0.md](./RELEASE_NOTES_1.2.0.md) | Route-state consistency and workflow completion update |
@@ -174,6 +175,7 @@
 ├── DESIGN_SYSTEM_RULES.md
 ├── UI_STATE_CONTRACT.md        ← Loading/error/empty-state contract
 ├── UX_READY_CRITERIA.md         ← UI polish gate
+├── RELEASE_NOTES_3.4.0.md
 ├── RELEASE_NOTES_2.1.0.md
 ├── RELEASE_NOTES_1.5.0.md
 ├── RELEASE_NOTES_1.2.0.md

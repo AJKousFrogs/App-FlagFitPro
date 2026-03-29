@@ -1,5 +1,5 @@
 import { CommonModule } from "@angular/common";
-import { Component, input, output } from "@angular/core";
+import { ChangeDetectionStrategy, Component, input, output } from "@angular/core";
 import { RouterModule } from "@angular/router";
 import { ProgressBar } from "primeng/progressbar";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
@@ -9,6 +9,7 @@ import { MobileOptimizedImageDirective } from "../../../shared/directives/mobile
 @Component({
   selector: "app-profile-header-section",
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
     RouterModule,

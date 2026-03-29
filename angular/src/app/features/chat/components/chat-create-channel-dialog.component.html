@@ -1,12 +1,11 @@
 <app-dialog
-  [visible]="visible"
+  [(visible)]="visible"
   [modal]="true"
   [closable]="false"
   [draggable]="false"
   [resizable]="false"
   [dismissableMask]="true"
   [styleClass]="'chat-create-channel-dialog'"
-  (visibleChange)="visibleChange.emit($event)"
 >
   <app-dialog-header
     icon="plus-circle"
@@ -48,7 +47,7 @@
       <p-select
         inputId="chat-channelType"
         (onChange)="onChannelTypeSelect($event)"
-        [options]="channelTypeOptions"
+        [options]="channelTypeOptions()"
         optionLabel="label"
         optionValue="value"
         placeholder="Select type"
@@ -63,7 +62,7 @@
         <p-select
           inputId="chat-channelPosition"
           (onChange)="onChannelPositionSelect($event)"
-          [options]="positionOptions"
+          [options]="positionOptions()"
           optionLabel="label"
           optionValue="value"
           placeholder="Select position"

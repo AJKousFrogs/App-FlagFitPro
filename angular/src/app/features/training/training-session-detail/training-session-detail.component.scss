@@ -1,3 +1,5 @@
+@use "styles/mixins" as *;
+
 .session-detail-page {
   display: flex;
   flex-direction: column;
@@ -119,7 +121,7 @@
   color: var(--text-primary);
 }
 
-@media (max-width: 640px) {
+@include respond-to(sm) {
   .session-detail-page {
     padding: var(--space-3);
   }

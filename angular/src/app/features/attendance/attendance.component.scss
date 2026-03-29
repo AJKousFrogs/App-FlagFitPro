@@ -4,15 +4,15 @@
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: var(--space-5);
-  max-width: 1200px;
+  max-width: var(--layout-page-max-width-wide);
   margin: 0 auto;
   width: 100%;
   padding-bottom: var(--space-8);
 
   .bento-item {
     background: var(--surface-primary);
-    border: 1px solid var(--ui-border-subtle);
-    border-radius: 16px;
+    border: var(--border-1) solid var(--ui-border-subtle);
+    border-radius: var(--radius-xl);
     padding: var(--space-6);
     box-shadow: var(--shadow-sm);
     min-width: 0;
@@ -32,7 +32,7 @@
       align-items: center;
       gap: var(--space-3);
       
-      i { color: var(--ds-primary-green); font-size: 1.25rem; }
+      i { color: var(--ds-primary-green); font-size: var(--ds-font-size-xl); }
     }
   }
 
@@ -99,29 +99,29 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      width: 48px;
-      height: 48px;
+      width: var(--space-12);
+      height: var(--space-12);
       background: var(--surface-primary);
-      border-radius: 8px;
-      border: 1px solid var(--ui-border-subtle);
-      .m { font-size: 10px; font-weight: var(--ds-font-weight-bold); text-transform: uppercase; color: var(--ds-primary-green); }
+      border-radius: var(--radius-sm);
+      border: var(--border-1) solid var(--ui-border-subtle);
+      .m { font-size: var(--ds-font-size-xs); font-weight: var(--ds-font-weight-bold); text-transform: uppercase; color: var(--ds-primary-green); }
       .d { font-size: var(--ds-font-size-md); font-weight: var(--ds-font-weight-bold); }
     }
 
     .event-info {
       flex: 1;
       .title { display: block; font-size: var(--ds-font-size-sm); font-weight: var(--ds-font-weight-bold); }
-      .time { font-size: 10px; color: var(--color-text-tertiary); }
+      .time { font-size: var(--ds-font-size-xs); color: var(--color-text-tertiary); }
     }
 
-    i { font-size: 12px; color: var(--color-text-tertiary); }
+    i { font-size: var(--ds-font-size-sm); color: var(--color-text-tertiary); }
   }
 
   /* Table */
   .attendance-table {
     width: 100%;
     .player-cell { display: flex; align-items: center; gap: var(--space-3); }
-    .streak-tag { font-size: 12px; font-weight: var(--ds-font-weight-bold); color: var(--color-status-warning); }
+    .streak-tag { font-size: var(--ds-font-size-xs); font-weight: var(--ds-font-weight-bold); color: var(--color-status-warning); }
   }
 }
 

@@ -220,7 +220,7 @@ height: 100dvh; // Modern: keyboard-aware
   padding-block: var(--space-1);
 }
 
-@media (max-width: 1024px) {
+@include respond-to(lg) {
   .elite-auth-shell {
     place-items: start;
     padding: var(--space-5) var(--space-4);
@@ -236,7 +236,7 @@ height: 100dvh; // Modern: keyboard-aware
   }
 }
 
-@media (max-width: 768px) {
+@include respond-to(md) {
   .elite-auth-shell {
     padding: var(--space-4) var(--space-3);
     padding-top: calc(var(--space-5) + var(--safe-area-top));

@@ -6,6 +6,11 @@
 
 @include stat-block;
 
+.hydration-progress-bar {
+  height: var(--space-2);
+  width: var(--layout-width-xxs);
+}
+
 .supplements-section,
 .tips-section {
   display: flex;

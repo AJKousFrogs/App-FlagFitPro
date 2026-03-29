@@ -19,6 +19,87 @@ function isOptionalSchemaError(error) {
   );
 }
 
+function splitDisplayName(value) {
+  const normalized = `${value || ""}`.trim();
+  if (!normalized) {
+    return { firstName: "User", lastName: "Account" };
+  }
+
+  const parts = normalized.split(/\s+/).filter(Boolean);
+  if (parts.length === 1) {
+    return { firstName: parts[0], lastName: "Account" };
+  }
+
+  return {
+    firstName: parts[0],
+    lastName: parts.slice(1).join(" "),
+  };
+}
+
+async function ensurePublicUserProfile(supabase, userId) {
+  if (!userId) {
+    return;
+  }
+
+  const existingProfile = await supabase
+    .from("users")
+    .select("id")
+    .eq("id", userId)
+    .maybeSingle();
+
+  if (existingProfile.data || !existingProfile.error || existingProfile.error.code === "PGRST116") {
+    if (existingProfile.data) {
+      return;
+    }
+  } else {
+    console.warn("[Wellness] Failed to inspect public.users profile:", existingProfile.error.message);
+    return;
+  }
+
+  try {
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.admin.getUserById(userId);
+
+    if (authError || !user) {
+      console.warn(
+        "[Wellness] Unable to load auth user for profile sync:",
+        authError?.message || "missing auth user",
+      );
+      return;
+    }
+
+    const fullName =
+      user.user_metadata?.full_name ||
+      user.user_metadata?.name ||
+      user.email ||
+      "User";
+    const { firstName, lastName } = splitDisplayName(fullName);
+    const profilePayload = {
+      id: user.id,
+      email: user.email,
+      password_hash: null,
+      first_name: firstName,
+      last_name: lastName,
+      position: user.user_metadata?.position || null,
+      full_name: fullName,
+      name: fullName,
+      email_verified: user.email_confirmed_at !== null,
+      onboarding_completed: false,
+      is_active: true,
+      last_login: user.last_sign_in_at || null,
+      avatar_url: user.user_metadata?.avatar_url || null,
+      profile_photo_url: user.user_metadata?.avatar_url || null,
+      updated_at: new Date().toISOString(),
+    };
+
+    await supabase.from("users").upsert(profilePayload, { onConflict: "id" });
+  } catch (error) {
+    console.warn("[Wellness] Failed to backfill public.users profile:", error?.message || error);
+  }
+}
+
 function mapLegacyWellnessRecord(data) {
   if (!data) {
     return null;
@@ -123,6 +204,50 @@ async function savePrimaryWellnessCheckin(supabase, userId, targetDate, payload)
     })
     .select()
     .single();
+}
+
+async function saveWellnessCheckinTransactional(supabase, userId, targetDate, payload) {
+  const { error: rpcError } = await supabase.rpc("upsert_wellness_checkin", {
+    p_user_id: userId,
+    p_checkin_date: targetDate,
+    p_sleep_quality: payload.sleepQuality ?? null,
+    p_sleep_hours: payload.sleepHours ?? null,
+    p_energy_level: payload.energyLevel ?? null,
+    p_muscle_soreness: payload.muscleSoreness ?? null,
+    p_stress_level: payload.stressLevel ?? null,
+    p_soreness_areas: payload.sorenessAreas || [],
+    p_notes: payload.notes ?? null,
+    p_calculated_readiness: payload.calculatedReadiness ?? null,
+    p_motivation_level: payload.motivationLevel ?? null,
+    p_mood: payload.mood ?? null,
+    p_hydration_level: payload.hydrationLevel ?? null,
+  });
+
+  if (rpcError) {
+    if (rpcError.code !== "PGRST202") {
+      return { data: null, error: rpcError, usedRpc: false };
+    }
+
+    const fallbackResult = await savePrimaryWellnessCheckin(
+      supabase,
+      userId,
+      targetDate,
+      payload,
+    );
+
+    return {
+      data: fallbackResult.data,
+      error: fallbackResult.error,
+      usedRpc: false,
+    };
+  }
+
+  const persisted = await fetchWellnessCheckinRecord(supabase, userId, targetDate);
+  return {
+    data: persisted.data,
+    error: persisted.error,
+    usedRpc: true,
+  };
 }
 
 const handler = async (event, context) =>
@@ -241,6 +366,8 @@ async function saveCheckin(supabase, userId, payload, requestId) {
   } = payload;
 
   const targetDate = date || new Date().toISOString().split("T")[0];
+
+  await ensurePublicUserProfile(supabase, userId);
 
   // Safety override: Check for pain triggers (muscleSoreness >3/10)
   if (
@@ -361,7 +488,7 @@ async function saveCheckin(supabase, userId, payload, requestId) {
   }
 
   // Upsert the checkin to daily_wellness_checkin (primary table)
-  const { data, error } = await savePrimaryWellnessCheckin(
+  const { data, error, usedRpc } = await saveWellnessCheckinTransactional(
     supabase,
     userId,
     targetDate,
@@ -392,35 +519,35 @@ async function saveCheckin(supabase, userId, payload, requestId) {
   // PHASE 2: Dual-write to wellness_entries for historical continuity
   // This ensures legacy reads (exports, trends, historical data) continue to work
   // while we migrate all reads to daily_wellness_checkin in Phase 3
-  try {
-    await supabase.from("wellness_entries").upsert(
-      {
-        athlete_id: userId,
-        user_id: userId,
-        date: targetDate,
-        sleep_quality: sleepQuality,
-        energy_level: energyLevel,
-        stress_level: stressLevel,
-        muscle_soreness: muscleSoreness,
-        motivation_level: motivationLevel,
-        mood,
-        hydration_level: hydrationLevel,
-        notes,
-        updated_at: new Date().toISOString(),
-      },
-      {
-        onConflict: "athlete_id,date",
-      },
-    );
-    console.log("[Wellness] Dual-write to wellness_entries successful");
-  } catch (dualWriteError) {
-    // Non-fatal - log warning but don't fail the request
-    // The primary write to daily_wellness_checkin succeeded
-    if (!isOptionalSchemaError(dualWriteError)) {
-      console.warn(
-        "[Wellness] Dual-write to wellness_entries failed (non-fatal):",
-        dualWriteError.message,
+  if (!usedRpc) {
+    try {
+      await supabase.from("wellness_entries").upsert(
+        {
+          athlete_id: userId,
+          user_id: userId,
+          date: targetDate,
+          sleep_quality: sleepQuality,
+          energy_level: energyLevel,
+          stress_level: stressLevel,
+          muscle_soreness: muscleSoreness,
+          motivation_level: motivationLevel,
+          mood,
+          hydration_level: hydrationLevel,
+          notes,
+          updated_at: new Date().toISOString(),
+        },
+        {
+          onConflict: "athlete_id,date",
+        },
       );
+      console.log("[Wellness] Dual-write to wellness_entries successful");
+    } catch (dualWriteError) {
+      if (!isOptionalSchemaError(dualWriteError)) {
+        console.warn(
+          "[Wellness] Dual-write to wellness_entries failed (non-fatal):",
+          dualWriteError.message,
+        );
+      }
     }
   }
 

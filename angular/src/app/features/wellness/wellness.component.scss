@@ -9,15 +9,15 @@
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: var(--space-5);
-  max-width: 1200px;
+  max-width: var(--layout-page-max-width-wide);
   margin: 0 auto;
   width: 100%;
   padding-bottom: var(--space-8);
 
   .bento-item {
     background: var(--surface-primary);
-    border: 1px solid var(--ui-border-subtle);
-    border-radius: 16px;
+    border: none;
+    border-radius: var(--radius-xl);
     padding: var(--space-5);
     box-shadow: var(--shadow-sm);
     min-width: 0;
@@ -103,7 +103,7 @@
   padding: var(--space-4);
   background: var(--surface-secondary);
   border-radius: var(--radius-lg);
-  border-left: var(--space-1) solid var(--ds-primary-green);
+  border-left: var(--border-2) solid var(--ds-primary-green);
 }
 
 .section-label {
@@ -176,8 +176,8 @@ app-alert.wellness-route-alert {
   }
 
   ul {
-    margin: var(--space-3) 0 0 var(--space-6);
-    padding: 0;
+    margin: var(--space-3) 0 0 0;
+    padding: 0 0 0 var(--space-5);
     list-style: none;
     font-size: var(--ds-font-size-md);
     color: var(--color-text-primary);

@@ -21,6 +21,7 @@
  */
 
 // Design system tokens are already available via main styles.scss import
+@use "./mixins" as *;
 
 @layer utilities {
   /* ============================================
@@ -259,7 +260,7 @@
    * Mobile-specific spacing adjustments
    * Format: .sm:{utility}
    */
-  @media (max-width: 768px) {
+  @include respond-to(md) {
     /* Reset padding on mobile */
     .sm\:p-0 { padding: 0; }
     .sm\:px-3 { padding-left: var(--space-3); padding-right: var(--space-3); }

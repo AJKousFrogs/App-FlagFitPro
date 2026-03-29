@@ -1,5 +1,6 @@
 import { Injectable, signal, computed, isDevMode, inject } from "@angular/core";
 import { LoggerService } from "./logger.service";
+import { PlatformService } from "./platform.service";
 
 /**
  * Cookie Consent Service
@@ -27,6 +28,7 @@ const CONSENT_VERSION = "1.0";
 })
 export class CookieConsentService {
   private readonly logger = inject(LoggerService);
+  private readonly platform = inject(PlatformService);
 
   private readonly defaultPreferences: CookiePreferences = {
     necessary: true,
@@ -112,7 +114,7 @@ export class CookieConsentService {
    * Withdraw consent and show banner again
    */
   withdrawConsent(): void {
-    localStorage.removeItem(CONSENT_STORAGE_KEY);
+    this.platform.removeLocalStorage(CONSENT_STORAGE_KEY);
     this._preferences.set(this.defaultPreferences);
     this._showBanner.set(true);
   }
@@ -130,7 +132,7 @@ export class CookieConsentService {
    */
   forceShowBanner(): void {
     if (isDevMode()) {
-      localStorage.removeItem(CONSENT_STORAGE_KEY);
+      this.platform.removeLocalStorage(CONSENT_STORAGE_KEY);
       this._preferences.set(this.defaultPreferences);
       this._showBanner.set(true);
       this.logger?.debug("[Cookie Service] Banner forced to show (dev mode)");
@@ -152,7 +154,7 @@ export class CookieConsentService {
    */
   private loadPreferences(): CookiePreferences {
     try {
-      const stored = localStorage.getItem(CONSENT_STORAGE_KEY);
+      const stored = this.platform.getLocalStorage(CONSENT_STORAGE_KEY);
       if (stored) {
         return JSON.parse(stored);
       }
@@ -167,10 +169,12 @@ export class CookieConsentService {
    */
   private savePreferences(preferences: CookiePreferences): void {
     try {
-      localStorage.setItem(CONSENT_STORAGE_KEY, JSON.stringify(preferences));
+      this.platform.setLocalStorage(
+        CONSENT_STORAGE_KEY,
+        JSON.stringify(preferences),
+      );
     } catch {
-      // localStorage not available (e.g., private browsing)
-      this.logger.warn("Could not save cookie preferences to localStorage");
+      this.logger.warn("Could not save cookie preferences");
     }
   }
 }

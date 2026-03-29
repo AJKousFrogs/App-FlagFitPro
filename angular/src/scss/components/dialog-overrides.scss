@@ -128,26 +128,3 @@
   overflow: auto;
 }
 
-// --- Non-dialog classes (should be relocated in future cleanup) ---
-
-.superadmin-table {
-  min-width: var(--container-md);
-}
-
-.hydration-progress-bar {
-  height: var(--space-2);
-  width: var(--layout-width-xxs);
-}
-
-.performance-avatar--injured {
-  background: var(--color-status-error);
-}
-
-.performance-avatar--high-risk {
-  background: var(--color-status-warning);
-}
-
-.performance-avatar--standard {
-  background: var(--ds-primary-green-subtle);
-  color: var(--ds-primary-green-dark);
-}

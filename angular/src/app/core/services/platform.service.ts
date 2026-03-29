@@ -27,6 +27,8 @@ import { LoggerService } from "./logger.service";
 export class PlatformService {
   private platformId = inject(PLATFORM_ID);
   private logger = inject(LoggerService);
+  private readonly localMemory = new Map<string, string>();
+  private readonly sessionMemory = new Map<string, string>();
 
   /**
    * Check if code is running in browser
@@ -60,110 +62,56 @@ export class PlatformService {
    * Safely get localStorage item
    */
   getLocalStorage(key: string): string | null {
-    if (!this.isBrowser) {
-      return null;
-    }
-    try {
-      return localStorage.getItem(key);
-    } catch (error) {
-      this.logger.warn(`Failed to read from localStorage: ${key}`, error);
-      return null;
-    }
+    return this.localMemory.get(key) ?? null;
   }
 
   /**
    * Safely set localStorage item
    */
   setLocalStorage(key: string, value: string): boolean {
-    if (!this.isBrowser) {
-      return false;
-    }
-    try {
-      localStorage.setItem(key, value);
-      return true;
-    } catch (error) {
-      this.logger.warn(`Failed to write to localStorage: ${key}`, error);
-      return false;
-    }
+    this.localMemory.set(key, value);
+    this.logger.debug(`[PlatformService] Stored in memory only: ${key}`);
+    return true;
   }
 
   /**
    * Safely remove localStorage item
    */
   removeLocalStorage(key: string): boolean {
-    if (!this.isBrowser) {
-      return false;
-    }
-    try {
-      localStorage.removeItem(key);
-      return true;
-    } catch (error) {
-      this.logger.warn(`Failed to remove from localStorage: ${key}`, error);
-      return false;
-    }
+    this.localMemory.delete(key);
+    return true;
   }
 
   /**
    * Safely clear all localStorage
    */
   clearLocalStorage(): boolean {
-    if (!this.isBrowser) {
-      return false;
-    }
-    try {
-      localStorage.clear();
-      return true;
-    } catch (error) {
-      this.logger.warn("Failed to clear localStorage", error);
-      return false;
-    }
+    this.localMemory.clear();
+    return true;
   }
 
   /**
    * Safely get sessionStorage item
    */
   getSessionStorage(key: string): string | null {
-    if (!this.isBrowser) {
-      return null;
-    }
-    try {
-      return sessionStorage.getItem(key);
-    } catch (error) {
-      this.logger.warn(`Failed to read from sessionStorage: ${key}`, error);
-      return null;
-    }
+    return this.sessionMemory.get(key) ?? null;
   }
 
   /**
    * Safely set sessionStorage item
    */
   setSessionStorage(key: string, value: string): boolean {
-    if (!this.isBrowser) {
-      return false;
-    }
-    try {
-      sessionStorage.setItem(key, value);
-      return true;
-    } catch (error) {
-      this.logger.warn(`Failed to write to sessionStorage: ${key}`, error);
-      return false;
-    }
+    this.sessionMemory.set(key, value);
+    this.logger.debug(`[PlatformService] Session value stored in memory only: ${key}`);
+    return true;
   }
 
   /**
    * Safely remove sessionStorage item
    */
   removeSessionStorage(key: string): boolean {
-    if (!this.isBrowser) {
-      return false;
-    }
-    try {
-      sessionStorage.removeItem(key);
-      return true;
-    } catch (error) {
-      this.logger.warn(`Failed to remove from sessionStorage: ${key}`, error);
-      return false;
-    }
+    this.sessionMemory.delete(key);
+    return true;
   }
 
   /**

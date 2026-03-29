@@ -372,47 +372,6 @@ export class TournamentNutritionComponent implements OnInit, OnDestroy {
       return;
     }
 
-    // Try to load from localStorage first (for quick access)
-    const saved = localStorage.getItem("tournament_schedule");
-    let restoredFromLocalStorage = false;
-    if (saved) {
-      try {
-        const data = JSON.parse(saved);
-        this.tournamentName.set(data.name || "Tournament Day");
-        this.games.set(data.games || []);
-        this.editTournamentName = data.name || "Tournament Day";
-        this.editGames = [...(data.games || [])];
-        restoredFromLocalStorage = true;
-
-        if (data.games?.length > 0) {
-          this.generateNutritionPlan();
-        }
-      } catch (_e) {
-        this.logger.warn(
-          "[TournamentNutrition] Could not parse saved schedule",
-        );
-      }
-    }
-
-    // Load hydration logs for today
-    const todayLogs = localStorage.getItem(
-      "hydration_logs_" + new Date().toDateString(),
-    );
-    if (todayLogs) {
-      try {
-        this.hydrationLogs.set(JSON.parse(todayLogs));
-        restoredFromLocalStorage = true;
-      } catch (_e) {
-        // Ignore
-      }
-    }
-
-    if (restoredFromLocalStorage) {
-      await this.persistCurrentState();
-      localStorage.removeItem("tournament_schedule");
-      localStorage.removeItem("hydration_logs_" + new Date().toDateString());
-    }
-
     // If no schedule, show empty state - user must create their own schedule
     // No default example games to avoid misleading calculations
   }

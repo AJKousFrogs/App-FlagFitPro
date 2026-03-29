@@ -1,5 +1,5 @@
 import { CommonModule } from "@angular/common";
-import { Component, input } from "@angular/core";
+import { ChangeDetectionStrategy, Component, input } from "@angular/core";
 import { CardShellComponent } from "../../../shared/components/card-shell/card-shell.component";
 import { EmptyStateComponent } from "../../../shared/components/empty-state/empty-state.component";
 
@@ -12,6 +12,7 @@ interface ProfileActivity {
 @Component({
   selector: "app-profile-overview-section",
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule, CardShellComponent, EmptyStateComponent],
   templateUrl: "./profile-overview-section.component.html",
   styleUrl: "./profile-overview-section.component.scss",

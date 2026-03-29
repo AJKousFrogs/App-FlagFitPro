@@ -58,19 +58,6 @@
     }
   }
 
-  @keyframes breathe {
-    0%,
-    100% {
-      transform: scale(1);
-      opacity: 1;
-    }
-
-    50% {
-      transform: scale(1.05);
-      opacity: 0.9;
-    }
-  }
-
   .app-focus-ring:focus-visible,
   .focus-ring:focus-visible {
     outline: var(--focus-outline-width) solid var(--color-focus-ring);
@@ -103,9 +90,6 @@
       box-shadow var(--motion-feedback-duration-fast) var(--ease-standard),
       transform var(--motion-feedback-duration-fast) var(--ease-standard);
 
-    // Breathing animation for subtle attention
-    animation: breathe 3s ease-in-out infinite;
-
     i {
       font-size: var(--icon-base);
       color: inherit;
@@ -116,7 +100,6 @@
       background: var(--close-button-bg-hover);
       color: var(--close-button-color-hover);
       transform: scale(1.1);
-      animation: none; // Stop breathing on hover
     }
 
     &:active {
@@ -127,14 +110,12 @@
       outline: var(--focus-outline-width) solid var(--color-focus-ring);
       outline-offset: var(--focus-outline-offset);
       box-shadow: var(--shadow-focus);
-      animation: none; // Stop breathing on focus
     }
 
     &:disabled {
       opacity: var(--opacity-dimmed);
       cursor: not-allowed;
       pointer-events: none;
-      animation: none; // No animation when disabled
     }
   }
 
@@ -154,8 +135,8 @@
   }
 
   .app-close-button--inverse {
-    --close-button-bg: rgba(255, 255, 255, 0.1);
-    --close-button-bg-hover: rgba(255, 255, 255, 0.18);
+    --close-button-bg: var(--overlay-white-10);
+    --close-button-bg-hover: var(--overlay-white-18);
     --close-button-color: var(--color-text-on-primary);
     --close-button-color-hover: var(--color-text-on-primary);
   }
@@ -183,7 +164,7 @@
   }
 
   .app-backdrop--light {
-    background: rgba(255, 255, 255, 0.56);
+    background: var(--overlay-white-56);
   }
 
   .app-backdrop--blur {
@@ -263,7 +244,7 @@
     width: var(--space-8);
     height: var(--space-8);
     flex-shrink: 0;
-    font-size: var(--font-h3-size);
+    font-size: var(--ds-font-size-xl);
     color: var(--ui-info);
   }
 
@@ -285,27 +266,38 @@
     display: flex;
     flex: 1;
     flex-direction: column;
-    gap: var(--space-1);
+    gap: var(--space-2);
     min-width: 0;
+  }
+
+  .app-alert__body > :last-child:not(.app-alert__title):not(.app-alert__message) {
+    margin-top: var(--space-2);
   }
 
   .app-alert__title {
     margin: 0;
-    font-size: var(--font-body-size);
+    font-size: var(--ds-font-size-sm);
     font-weight: var(--font-weight-semibold);
-    line-height: var(--line-height-snug);
+    line-height: var(--ds-line-height-snug);
   }
 
   .app-alert__message {
     margin: 0;
     color: var(--color-text-secondary);
-    line-height: var(--line-height-normal);
+    line-height: var(--ds-line-height-body);
   }
 
   .app-alert__dismiss {
     position: relative;
     z-index: 1;
     flex-shrink: 0;
+    min-width: var(--touch-target-min);
+    min-height: var(--touch-target-min);
+
+    &:focus-visible {
+      outline: var(--focus-ring-width) solid var(--ds-primary-green);
+      outline-offset: var(--focus-ring-offset);
+    }
   }
 
   .app-toast.p-toast {
@@ -356,16 +348,12 @@
     transition: transform var(--motion-feedback-duration-fast) var(--ease-standard),
       background-color var(--motion-feedback-duration-fast) var(--ease-standard),
       color var(--motion-feedback-duration-fast) var(--ease-standard);
-
-    // Breathing animation
-    animation: breathe 3s ease-in-out infinite;
   }
 
   .app-toast .p-toast-close-button:hover {
     background: var(--surface-secondary);
     color: var(--color-text-primary);
     transform: scale(1.1);
-    animation: none; // Stop breathing on hover
   }
 
   .app-toast .p-toast-close-button:active {
@@ -376,7 +364,6 @@
     outline: var(--focus-outline-width) solid var(--color-focus-ring);
     outline-offset: var(--focus-outline-offset);
     box-shadow: var(--shadow-focus);
-    animation: none; // Stop breathing on focus
   }
 
   .toast-content {
@@ -413,7 +400,7 @@
   }
 
   .toast-icon-error {
-    background: var(--ds-status-danger-bg);
+    background: rgba(var(--primitive-error-500-rgb), 0.08);
     color: var(--ui-danger);
   }
 
@@ -530,7 +517,7 @@
 
   .data-source-banner {
     overflow: hidden;
-    border: var(--border-1) solid rgba(255, 255, 255, 0.12);
+    border: var(--border-1) solid var(--overlay-white-12);
   }
 
   .data-source-banner .banner-content {
@@ -544,7 +531,7 @@
     width: var(--space-12);
     height: var(--space-12);
     border-radius: var(--radius-lg);
-    background: rgba(255, 255, 255, 0.14);
+    background: var(--overlay-white-14);
     color: var(--color-text-on-primary);
   }
 
@@ -558,7 +545,7 @@
   .data-source-banner .banner-message,
   .data-source-banner .progress-text,
   .data-source-banner .warning-item {
-    color: rgba(255, 255, 255, 0.86);
+    color: var(--overlay-white-86);
   }
 
   .data-source-banner .banner-header {
@@ -585,7 +572,7 @@
     flex: 1;
     height: var(--space-2);
     border-radius: var(--radius-full);
-    background: rgba(255, 255, 255, 0.24);
+    background: var(--overlay-white-24);
     overflow: hidden;
   }
 
@@ -643,13 +630,13 @@
       var(--ui-primary) 0%,
       var(--ui-primary-hover) 100%
     );
-    border: var(--border-1) solid rgba(255, 255, 255, 0.12);
+    border: var(--border-1) solid var(--overlay-white-12);
     animation: feedback-slide-down var(--motion-feedback-duration)
       var(--ease-standard);
   }
 
   .announcements-banner.important {
-    border-color: rgba(255, 255, 255, 0.18);
+    border-color: var(--overlay-white-18);
     box-shadow: var(--shadow-md);
   }
 
@@ -661,12 +648,12 @@
     height: var(--space-10);
     border-radius: var(--radius-lg);
     flex-shrink: 0;
-    background: rgba(255, 255, 255, 0.16);
+    background: var(--overlay-white-16);
     color: var(--color-text-on-primary);
   }
 
   .announcements-banner.important .banner-icon {
-    background: rgba(255, 255, 255, 0.22);
+    background: var(--overlay-white-22);
     animation: feedback-pulse-soft 2s ease-in-out infinite;
   }
 
@@ -695,7 +682,7 @@
 
   .announcements-banner .announcement-author,
   .announcements-banner .announcement-time {
-    color: rgba(255, 255, 255, 0.82);
+    color: var(--overlay-white-82);
   }
 
   .announcements-banner .announcement-time {
@@ -719,7 +706,7 @@
   .announcements-banner .banner-actions app-button,
   .announcements-banner .banner-actions app-icon-button {
     --btn-text-color: var(--color-text-on-primary);
-    --btn-hover-bg: rgba(255, 255, 255, 0.16);
+    --btn-hover-bg: var(--overlay-white-16);
   }
 
   .announcements-banner .more-count {
@@ -728,7 +715,7 @@
     min-height: var(--component-close-button-size-sm);
     padding: 0 var(--space-3);
     border-radius: var(--radius-full);
-    background: rgba(255, 255, 255, 0.16);
+    background: var(--overlay-white-16);
     color: var(--color-text-on-primary);
     font-size: var(--font-body-sm-size);
     font-weight: var(--font-weight-medium);
@@ -759,7 +746,7 @@
     width: var(--space-8);
     height: var(--space-8);
     border-radius: var(--radius-full);
-    background: rgba(255, 255, 255, 0.14);
+    background: var(--overlay-white-14);
   }
 
   .offline-banner .status-text {
@@ -997,7 +984,7 @@
   }
 
   .filter-tab.active .tab-badge {
-    background: rgba(255, 255, 255, 0.22);
+    background: var(--overlay-white-22);
   }
 
   .panel-content {

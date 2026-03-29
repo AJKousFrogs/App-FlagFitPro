@@ -1,37 +1,36 @@
 <app-dialog
-  [visible]="visible"
+  [(visible)]="visible"
   [modal]="true"
   [closable]="false"
   [draggable]="false"
   [resizable]="false"
   [dismissableMask]="true"
   [styleClass]="'chat-members-dialog'"
-  (visibleChange)="visibleChange.emit($event)"
 >
   <app-dialog-header
     icon="users"
     title="Channel Members"
-    [subtitle]="subtitle"
+    [subtitle]="subtitle()"
     (close)="onClose()"
   />
 
   <div class="members-dialog-content">
-    @if (membersData) {
+    @if (membersData()) {
       <div class="visibility-info">
         <i class="pi pi-info-circle"></i>
-        <span>{{ membersData.visibility_description }}</span>
+        <span>{{ membersData()!.visibility_description }}</span>
       </div>
     }
 
-    @if (loading) {
+    @if (loading()) {
       <app-loading message="Loading members..." [compact]="true" />
-    } @else if (membersData) {
+    } @else if (membersData()) {
       <div class="members-search">
         <span class="p-input-icon-left w-full">
           <i class="pi pi-search"></i>
           <input
             pInputText
-            [value]="memberSearchQuery"
+            [value]="memberSearchQuery()"
             (input)="onMemberSearchInput($event)"
             placeholder="Search members..."
             class="w-full"
@@ -40,20 +39,20 @@
         </span>
       </div>
 
-      @if (coaches.length > 0) {
+      @if (coaches().length > 0) {
         <div class="members-section">
           <h4 class="section-header">
             <i class="pi pi-shield"></i>
-            Coaches ({{ coaches.length }})
-            @if (onlineCoachCount > 0) {
+            Coaches ({{ coaches().length }})
+            @if (onlineCoachCount() > 0) {
               <span class="online-count-badge">
                 <span class="online-dot"></span>
-                {{ onlineCoachCount }} online
+                {{ onlineCoachCount() }} online
               </span>
             }
           </h4>
           <div class="members-grid">
-            @for (member of coaches; track member.user_id) {
+            @for (member of coaches(); track member.user_id) {
               <div class="member-card" [class.is-online]="member.is_online">
                 <div class="member-avatar-container">
                   <p-avatar
@@ -90,20 +89,20 @@
         </div>
       }
 
-      @if (athletes.length > 0) {
+      @if (athletes().length > 0) {
         <div class="members-section">
           <h4 class="section-header">
             <i class="pi pi-users"></i>
-            Athletes ({{ athletes.length }})
-            @if (onlineAthleteCount > 0) {
+            Athletes ({{ athletes().length }})
+            @if (onlineAthleteCount() > 0) {
               <span class="online-count-badge">
                 <span class="online-dot"></span>
-                {{ onlineAthleteCount }} online
+                {{ onlineAthleteCount() }} online
               </span>
             }
           </h4>
           <div class="members-grid">
-            @for (member of athletes; track member.user_id) {
+            @for (member of athletes(); track member.user_id) {
               <div class="member-card" [class.is-online]="member.is_online">
                 <div class="member-avatar-container">
                   <p-avatar
@@ -152,10 +151,10 @@
         </div>
       }
 
-      @if (coaches.length === 0 && athletes.length === 0) {
+      @if (coaches().length === 0 && athletes().length === 0) {
         <div class="no-members-found">
           <i class="pi pi-search icon-2xl icon-secondary"></i>
-          <p>No members found matching "{{ memberSearchQuery }}"</p>
+          <p>No members found matching "{{ memberSearchQuery() }}"</p>
         </div>
       }
     }

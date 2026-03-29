@@ -37,24 +37,22 @@ import { IconButtonComponent } from "../button/icon-button.component";
     class: "ds-search-bar",
   },
   template: `
-    <span class="p-input-icon-left ds-search-input">
-      <i class="pi pi-search ds-search-icon" aria-hidden="true"></i>
-      <input
-        #inputField
-        pInputText
-        [id]="inputId() || null"
-        [name]="name() || null"
-        [type]="type()"
-        [placeholder]="placeholder() || ''"
-        [readonly]="readonly()"
-        [disabled]="disabled()"
-        [value]="value()"
-        (input)="onInput($event)"
-        (blur)="onBlur()"
-        class="ds-search-input-field search-input"
-        [attr.aria-label]="ariaLabel() || placeholder() || 'Search'"
-      />
-    </span>
+    <i class="pi pi-search ds-search-icon" aria-hidden="true"></i>
+    <input
+      #inputField
+      pInputText
+      [id]="inputId() || null"
+      [name]="name() || null"
+      [type]="type()"
+      [placeholder]="placeholder() || ''"
+      [readonly]="readonly()"
+      [disabled]="disabled()"
+      [value]="value()"
+      (input)="onInput($event)"
+      (blur)="onBlur()"
+      class="ds-search-input-field search-input"
+      [attr.aria-label]="ariaLabel() || placeholder() || 'Search'"
+    />
     @if (clearable() && value()) {
       <app-icon-button
         icon="pi-times"

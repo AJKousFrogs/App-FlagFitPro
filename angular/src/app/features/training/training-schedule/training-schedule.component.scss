@@ -51,8 +51,8 @@
   color: inherit;
   text-decoration: none;
   transition:
-    transform var(--duration-2) ease,
-    box-shadow var(--duration-2) ease;
+    transform var(--transition-base),
+    box-shadow var(--transition-base);
 }
 
 .training-hub-link:hover {
@@ -137,7 +137,7 @@
   padding: var(--space-3);
   background: var(--surface-ground);
   border-radius: var(--radius-md);
-  border-left: var(--border-3) solid var(--ds-primary-green);
+  border-left: var(--border-2) solid var(--ds-primary-green);
   margin-bottom: var(--space-3);
 
   &:last-child {
@@ -169,7 +169,7 @@
   gap: var(--space-4);
   padding: var(--space-4);
   background: var(--surface-secondary);
-  border-left: var(--border-4) solid var(--ds-primary-green);
+  border-left: var(--border-accent, 4px) solid var(--ds-primary-green);
   border-radius: var(--radius-md);
   cursor: pointer;
   transition:
@@ -442,11 +442,11 @@
     }
 
     &.legend-in-progress {
-      color: var(--primitive-warning-500);
+      color: var(--color-status-warning);
     }
 
     &.legend-missed {
-      color: var(--primitive-error-500);
+      color: var(--color-status-error);
     }
 
     &.legend-replaced {

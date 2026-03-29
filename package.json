@@ -1,8 +1,8 @@
 {
   "name": "flagfit-pro",
-  "version": "2.1.0",
+  "version": "3.4.0",
   "type": "module",
-  "description": "FlagFit Pro v2.1 - consolidated flag football performance, wellness, and team operations platform",
+  "description": "FlagFit Pro v3.4 - consolidated flag football performance, wellness, and team operations platform",
   "main": "index.js",
   "engines": {
     "node": ">=22.0.0"

@@ -339,14 +339,10 @@ export class AuthCallbackComponent implements OnInit {
       const channel = new BroadcastChannel("flagfit-auth");
       channel.postMessage({ type: "EMAIL_VERIFIED", timestamp: Date.now() });
       channel.close();
-
-      // Also set localStorage flag for tabs that might not support BroadcastChannel
-      localStorage.setItem("flagfit_email_verified", Date.now().toString());
     } catch (_error) {
       this.logger.debug(
-        "[Auth] BroadcastChannel not supported, using localStorage only",
+        "[Auth] BroadcastChannel not supported; local storage fallback disabled",
       );
-      localStorage.setItem("flagfit_email_verified", Date.now().toString());
     }
   }
 }

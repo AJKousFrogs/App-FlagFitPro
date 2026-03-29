@@ -1,6 +1,6 @@
-@if (template) {
+@if (template(); as t) {
   <div class="weekly-schedule">
-    @for (day of template.days; track day.dayName) {
+    @for (day of t.days; track day.dayName) {
       <div class="day-card" [class]="'session-' + day.sessionType">
         <div class="day-header">
           <span class="day-name">{{ day.dayName }}</span>
@@ -33,24 +33,24 @@
     }
   </div>
 
-  @if (template.weeklyTotals) {
+  @if (t.weeklyTotals) {
     <div class="weekly-totals">
       <h4>Weekly Totals</h4>
       <div class="totals-grid">
         <div class="total-item">
-          <span class="total-value">{{ template.weeklyTotals.totalSprints }}</span>
+          <span class="total-value">{{ t.weeklyTotals.totalSprints }}</span>
           <span class="total-label">Sprints</span>
         </div>
         <div class="total-item">
-          <span class="total-value">{{ template.weeklyTotals.totalCuts }}</span>
+          <span class="total-value">{{ t.weeklyTotals.totalCuts }}</span>
           <span class="total-label">Cuts</span>
         </div>
         <div class="total-item">
-          <span class="total-value">{{ template.weeklyTotals.totalPlyoContacts }}</span>
+          <span class="total-value">{{ t.weeklyTotals.totalPlyoContacts }}</span>
           <span class="total-label">Plyo Contacts</span>
         </div>
         <div class="total-item">
-          <span class="total-value">{{ template.weeklyTotals.trainingDays }}</span>
+          <span class="total-value">{{ t.weeklyTotals.trainingDays }}</span>
           <span class="total-label">Training Days</span>
         </div>
       </div>

@@ -2,9 +2,9 @@ import { CommonModule } from "@angular/common";
 import {
   ChangeDetectionStrategy,
   Component,
-  EventEmitter,
-  Input,
-  Output,
+  input,
+  model,
+  output,
 } from "@angular/core";
 import { Avatar } from "primeng/avatar";
 import { InputText } from "primeng/inputtext";
@@ -40,28 +40,26 @@ type ChatMemberWithPresence = ChannelMemberDetails & { is_online: boolean };
   styleUrl: "./chat-members-dialog.component.scss",
 })
 export class ChatMembersDialogComponent {
-  @Input() visible = false;
-  @Input() subtitle = "";
-  @Input() membersData: ChannelMembersResponse | null = null;
-  @Input() loading = false;
-  @Input() memberSearchQuery = "";
-  @Input() coaches: ChatMemberWithPresence[] = [];
-  @Input() athletes: ChatMemberWithPresence[] = [];
-  @Input() onlineCoachCount = 0;
-  @Input() onlineAthleteCount = 0;
+  readonly visible = model(false);
+  readonly subtitle = input("");
+  readonly membersData = input<ChannelMembersResponse | null>(null);
+  readonly loading = input(false);
+  readonly memberSearchQuery = model("");
+  readonly coaches = input<ChatMemberWithPresence[]>([]);
+  readonly athletes = input<ChatMemberWithPresence[]>([]);
+  readonly onlineCoachCount = input(0);
+  readonly onlineAthleteCount = input(0);
 
-  @Output() visibleChange = new EventEmitter<boolean>();
-  @Output() memberSearchQueryChange = new EventEmitter<string>();
-  @Output() startDirectMessage = new EventEmitter<ChannelMemberDetails>();
+  readonly startDirectMessage = output<ChannelMemberDetails>();
 
   onClose(): void {
-    this.visibleChange.emit(false);
+    this.visible.set(false);
   }
 
   onMemberSearchInput(event: Event): void {
     const target = event.target;
     const value = target instanceof HTMLInputElement ? target.value : "";
-    this.memberSearchQueryChange.emit(value);
+    this.memberSearchQuery.set(value);
   }
 
   onStartDirectMessage(member: ChannelMemberDetails): void {

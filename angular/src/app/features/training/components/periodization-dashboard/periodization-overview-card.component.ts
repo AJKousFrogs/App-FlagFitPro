@@ -1,5 +1,5 @@
 import { CommonModule } from "@angular/common";
-import { ChangeDetectionStrategy, Component, Input } from "@angular/core";
+import { ChangeDetectionStrategy, Component, input } from "@angular/core";
 import { ProgressBar } from "primeng/progressbar";
 import {
   ACWRCalculation,
@@ -25,14 +25,14 @@ import { Chip } from "primeng/chip";
   styleUrl: "./periodization-overview-card.component.scss",
 })
 export class PeriodizationOverviewCardComponent {
-  @Input() currentPhase: PhaseConfig | null = null;
-  @Input() currentWeek = 1;
-  @Input() currentDate = new Date();
-  @Input() loadRecommendation: LoadRecommendation | null = null;
-  @Input() acwrStatus: ACWRCalculation | null = null;
+  readonly currentPhase = input<PhaseConfig | null>(null);
+  readonly currentWeek = input(1);
+  readonly currentDate = input(new Date());
+  readonly loadRecommendation = input<LoadRecommendation | null>(null);
+  readonly acwrStatus = input<ACWRCalculation | null>(null);
 
   getPhaseSeverity(): "success" | "info" | "warning" | "danger" | "secondary" {
-    const phase = this.currentPhase;
+    const phase = this.currentPhase();
     if (!phase) return "info";
 
     switch (phase.type) {
@@ -51,7 +51,7 @@ export class PeriodizationOverviewCardComponent {
   }
 
   getAcwrSeverity(): "success" | "info" | "warning" | "danger" {
-    const status = this.acwrStatus;
+    const status = this.acwrStatus();
     if (!status) return "info";
 
     switch (status.riskZone) {
@@ -67,7 +67,7 @@ export class PeriodizationOverviewCardComponent {
   }
 
   getLoadProgress(): number {
-    if (!this.loadRecommendation) return 50;
+    if (!this.loadRecommendation()) return 50;
     return 65;
   }
 

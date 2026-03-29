@@ -48,26 +48,25 @@ export type SessionState =
  * - Type field: session_type (canonical, not 'type')
  * - Intensity field: intensity_level (canonical, not 'intensity')
  *
- * Legacy aliases are preserved for backward compatibility but deprecated.
  */
 export interface TrainingSession {
   id?: string;
   /** User/Athlete ID - maps to user_id in DB */
   user_id: string;
-  /** @deprecated Use session_date instead */
+  /** Legacy date field — prefer session_date for new code */
   date?: string;
   /** Canonical date field (YYYY-MM-DD format) */
   session_date?: string;
-  /** @deprecated Use session_type instead */
+  /** Legacy type field — prefer session_type for new code */
   type?: string;
   /** Canonical session type field */
   session_type?: string;
-  /** @deprecated Use duration_minutes instead */
+  /** Legacy duration field — prefer duration_minutes for new code */
   duration?: number;
   /** Canonical duration field (in minutes) */
   duration_minutes?: number;
-  /** @deprecated Use intensity_level instead */
-  intensity?: string;
+  /** Legacy intensity field — prefer intensity_level for new code */
+  intensity?: string | number;
   /** Canonical intensity field (1-10 scale) */
   intensity_level?: number;
   /** Rate of Perceived Exertion (1-10 scale) */

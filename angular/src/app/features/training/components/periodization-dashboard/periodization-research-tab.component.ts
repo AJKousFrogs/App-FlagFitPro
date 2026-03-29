@@ -1,5 +1,5 @@
 import { CommonModule } from "@angular/common";
-import { ChangeDetectionStrategy, Component, Input } from "@angular/core";
+import { ChangeDetectionStrategy, Component, input } from "@angular/core";
 
 import { EvidenceReference } from "../../../../core/services/flag-football-periodization.service";
 
@@ -12,5 +12,5 @@ import { EvidenceReference } from "../../../../core/services/flag-football-perio
   styleUrl: "./periodization-research-tab.component.scss",
 })
 export class PeriodizationResearchTabComponent {
-  @Input() references: EvidenceReference[] = [];
+  readonly references = input<EvidenceReference[]>([]);
 }

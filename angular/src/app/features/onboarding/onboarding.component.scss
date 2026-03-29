@@ -2,10 +2,10 @@
 
 .onboarding-auth-shell {
   min-height: 100dvh;
-  padding: clamp(1.25rem, 3vw, 2.5rem);
+  padding: clamp(var(--space-5), 3vw, var(--space-10));
   background:
     radial-gradient(circle at top, rgba(var(--ds-primary-green-rgb), 0.12), transparent 32%),
-    linear-gradient(180deg, rgba(7, 12, 10, 0.98), rgba(9, 15, 12, 0.94));
+    linear-gradient(180deg, var(--surface-page-dark, #070c0a) 0%, rgba(9, 15, 12, 0.94) 100%);
 }
 
 .onboarding-page {

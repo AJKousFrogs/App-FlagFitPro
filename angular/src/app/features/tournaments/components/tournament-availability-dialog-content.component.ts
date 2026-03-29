@@ -1,4 +1,4 @@
-import { Component, input, output } from "@angular/core";
+import { ChangeDetectionStrategy, Component, input, output } from "@angular/core";
 import { DecimalPipe } from "@angular/common";
 import { FormGroup, ReactiveFormsModule } from "@angular/forms";
 import { CheckboxComponent } from "../../../shared/components/checkbox/checkbox.component";
@@ -16,6 +16,7 @@ interface AvailabilityOption {
 @Component({
   selector: "app-tournament-availability-dialog-content",
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ReactiveFormsModule,
     CheckboxComponent,

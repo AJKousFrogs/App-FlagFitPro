@@ -84,7 +84,7 @@
     var(--app-shell-gutter-block)
     var(--app-shell-gutter-inline)
     calc(var(--app-shell-gutter-block) * 2);
-  max-width: 1200px;
+  max-width: var(--layout-page-max-width-wide);
   margin: 0 auto;
   width: 100%;
 }

@@ -420,20 +420,18 @@
 
     @defer (when showCreateChannelDialog) {
       <app-chat-create-channel-dialog
-        [visible]="showCreateChannelDialog"
+        [(visible)]="showCreateChannelDialog"
         [channelTypeOptions]="channelTypeOptions"
         [positionOptions]="positionOptions"
-        (visibleChange)="showCreateChannelDialog = $event"
         (createChannel)="createChannel($event)"
       />
     }
 
     @defer (when showPinnedMessages) {
       <app-chat-pinned-messages-dialog
-        [visible]="showPinnedMessages"
+        [(visible)]="showPinnedMessages"
         [pinnedMessages]="pinnedMessages()"
         [canPinMessages]="canPinMessages()"
-        (visibleChange)="showPinnedMessages = $event"
         (togglePin)="togglePin($event)"
       />
     }

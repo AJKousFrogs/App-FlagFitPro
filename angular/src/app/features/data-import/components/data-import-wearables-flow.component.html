@@ -6,10 +6,10 @@
   <app-card-shell class="wearables-card">
     <h3>Connect Wearable Devices</h3>
 
-    @if (connectedDevices.length > 0) {
+    @if (connectedDevices().length > 0) {
       <div class="section">
         <h4>Connected Devices</h4>
-        @for (device of connectedDevices; track device.id) {
+        @for (device of connectedDevices(); track device.id) {
           <div class="device-card connected">
             <div class="device-info">
               <span class="device-name">⌚ {{ device.name }}</span>
@@ -40,7 +40,7 @@
     <div class="section">
       <h4>Available to Connect</h4>
       <div class="devices-grid">
-        @for (device of availableDevices; track device.id) {
+        @for (device of availableDevices(); track device.id) {
           <div class="device-card available">
             <div class="device-icon">⌚</div>
             <h5>{{ device.name }}</h5>

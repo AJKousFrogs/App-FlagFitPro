@@ -200,15 +200,9 @@ export class ThemeService implements OnDestroy {
    * Load saved preference from localStorage
    */
   private loadSavedPreference(): void {
-    try {
-      const saved = localStorage.getItem(THEME_STORAGE_KEY);
-      if (saved && ["light", "dark", "auto"].includes(saved)) {
-        this._mode.set(saved as ThemeMode);
-        this.logger.debug(`[ThemeService] Loaded saved theme: ${saved}`);
-      }
-    } catch (_error) {
-      this.logger.warn("[ThemeService] Failed to load saved theme preference");
-    }
+    this.logger.debug(
+      "[ThemeService] Browser storage persistence disabled; using in-memory or Supabase theme state",
+    );
   }
 
   /**
@@ -216,9 +210,7 @@ export class ThemeService implements OnDestroy {
    */
   private savePreference(mode: ThemeMode): void {
     try {
-      localStorage.setItem(THEME_STORAGE_KEY, mode);
-
-      // Also save to Supabase if user is authenticated
+      // Persist only to Supabase when authenticated. Otherwise this remains in-memory.
       this.saveToSupabase(mode);
     } catch (_error) {
       this.logger.warn("[ThemeService] Failed to save theme preference");
@@ -277,7 +269,6 @@ export class ThemeService implements OnDestroy {
         ["light", "dark", "auto"].includes(storedTheme)
       ) {
         this._mode.set(storedTheme as ThemeMode);
-        localStorage.setItem(THEME_STORAGE_KEY, storedTheme);
         this.logger.debug(
           `[ThemeService] Loaded theme from Supabase: ${storedTheme}`,
         );

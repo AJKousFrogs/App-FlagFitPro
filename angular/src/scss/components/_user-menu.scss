@@ -40,11 +40,11 @@
 
     // Standardize icon size
     i, svg, .menu-icon {
-      width: 20px;
-      height: 20px;
-      min-width: 20px;
-      min-height: 20px;
-      font-size: 20px;
+      width: var(--space-5);
+      height: var(--space-5);
+      min-width: var(--space-5);
+      min-height: var(--space-5);
+      font-size: var(--ds-font-size-xl);
       flex-shrink: 0;
       color: var(--color-text-secondary);
       transition: color var(--transition-fast);
@@ -121,9 +121,9 @@
       }
 
       .p-menuitem-icon {
-        width: 20px;
-        height: 20px;
-        font-size: 20px;
+        width: var(--space-5);
+        height: var(--space-5);
+        font-size: var(--ds-font-size-xl);
         color: var(--color-text-secondary);
       }
 

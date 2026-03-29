@@ -23,6 +23,7 @@ import { MobileHeaderComponent } from "./mobile-header.component";
 import { ThemeService } from "../../../core/services/theme.service";
 import { ProfileNotificationService } from "../../../core/services/profile-notification.service";
 import { ShellBodyStateService } from "../../../core/services/shell-body-state.service";
+import { PlatformService } from "../../../core/services/platform.service";
 
 @Component({
   selector: "app-main-layout",
@@ -103,6 +104,7 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
   private readonly shellBodyState = inject(ShellBodyStateService);
   private readonly destroyRef = inject(DestroyRef);
   private readonly platformId = inject(PLATFORM_ID);
+  private readonly platform = inject(PlatformService);
   private releaseShellBodyClass: (() => void) | null = null;
   readonly sidebar = viewChild(SidebarComponent);
   readonly sidebarCollapsed = signal(this.loadSidebarCollapsedState());
@@ -171,11 +173,14 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
 
   private loadSidebarCollapsedState(): boolean {
     if (!isPlatformBrowser(this.platformId)) return false;
-    return localStorage.getItem("app-shell-sidebar-collapsed") === "true";
+    return this.platform.getLocalStorage("app-shell-sidebar-collapsed") === "true";
   }
 
   private saveSidebarCollapsedState(collapsed: boolean): void {
     if (!isPlatformBrowser(this.platformId)) return;
-    localStorage.setItem("app-shell-sidebar-collapsed", String(collapsed));
+    this.platform.setLocalStorage(
+      "app-shell-sidebar-collapsed",
+      String(collapsed),
+    );
   }
 }

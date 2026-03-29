@@ -2,9 +2,9 @@ import { CommonModule } from "@angular/common";
 import {
   ChangeDetectionStrategy,
   Component,
-  EventEmitter,
-  Input,
-  Output,
+  input,
+  model,
+  output,
 } from "@angular/core";
 import { InputText } from "primeng/inputtext";
 import { Select, type SelectChangeEvent } from "primeng/select";
@@ -38,12 +38,11 @@ export interface ChatChannelCreateRequest {
   styleUrl: "./chat-create-channel-dialog.component.scss",
 })
 export class ChatCreateChannelDialogComponent {
-  @Input() visible = false;
-  @Input() channelTypeOptions: Array<{ label: string; value: string }> = [];
-  @Input() positionOptions: Array<{ label: string; value: string }> = [];
+  readonly visible = model(false);
+  readonly channelTypeOptions = input<Array<{ label: string; value: string }>>([]);
+  readonly positionOptions = input<Array<{ label: string; value: string }>>([]);
 
-  @Output() visibleChange = new EventEmitter<boolean>();
-  @Output() createChannel = new EventEmitter<ChatChannelCreateRequest>();
+  readonly createChannel = output<ChatChannelCreateRequest>();
 
   channelName = "";
   channelDescription = "";
@@ -51,7 +50,7 @@ export class ChatCreateChannelDialogComponent {
   channelPosition = "";
 
   onClose(): void {
-    this.visibleChange.emit(false);
+    this.visible.set(false);
     this.resetForm();
   }
 

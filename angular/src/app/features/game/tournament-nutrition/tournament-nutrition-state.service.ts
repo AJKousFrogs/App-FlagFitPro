@@ -24,14 +24,14 @@ export interface TournamentNutritionState {
   hydrationLogs: TournamentNutritionHydrationLog[];
 }
 
-interface TournamentDayPlanRow {
+interface TournamentDayPlanRow extends Record<string, unknown> {
   tournament_date?: string | null;
   tournament_name: string | null;
   games: unknown[] | null;
   nutrition_windows: unknown[] | null;
 }
 
-interface HydrationLogRow {
+interface HydrationLogRow extends Record<string, unknown> {
   fluid_ml: number | null;
   fluid_type: TournamentNutritionHydrationLog["type"] | null;
   log_time: string | null;

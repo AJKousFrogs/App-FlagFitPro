@@ -4,15 +4,15 @@
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: var(--space-5);
-  max-width: 1200px;
+  max-width: var(--layout-page-max-width-wide);
   margin: 0 auto;
   width: 100%;
   padding-bottom: var(--space-8);
 
   .bento-item {
     background: var(--surface-primary);
-    border: 1px solid var(--ui-border-subtle);
-    border-radius: 16px;
+    border: var(--border-1) solid var(--ui-border-subtle);
+    border-radius: var(--radius-xl);
     padding: var(--space-5);
     box-shadow: var(--shadow-sm);
     min-width: 0;
@@ -62,8 +62,8 @@
     border-radius: var(--radius-lg);
 
     .rank-badge {
-      min-width: 32px;
-      height: 32px;
+      min-width: var(--space-8);
+      height: var(--space-8);
       display: flex;
       align-items: center;
       justify-content: center;

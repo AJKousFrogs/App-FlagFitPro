@@ -308,9 +308,9 @@
 
     --p-tooltip-background: var(--color-surface-inverse, var(--surface-elevated));
     --p-tooltip-color: var(--color-text-on-inverse);
-    --p-tooltip-border-radius: var(--radius-lg);
-    --p-tooltip-padding: var(--space-3) var(--space-4);
-    --p-tooltip-font-size: var(--font-body-sm-size);
+    --p-tooltip-border-radius: var(--radius-md);
+    --p-tooltip-padding: var(--space-2) var(--space-3);
+    --p-tooltip-font-size: var(--ds-font-size-xs);
     --p-tooltip-max-width: var(--tooltip-max-width);
     --p-tooltip-shadow: var(--shadow-lg, var(--shadow-3));
     --p-tooltip-line-height: var(--font-body-sm-line-height);

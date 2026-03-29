@@ -38,9 +38,9 @@
     ::ng-deep {
       .p-checkbox {
         .p-checkbox-box {
-          width: 20px;
-          height: 20px;
-          border: 2px solid var(--ui-border-default);
+          width: var(--space-5);
+          height: var(--space-5);
+          border: var(--border-2) solid var(--ui-border-default);
           background: var(--surface-secondary);
           border-radius: var(--radius-sm);
           transition: all var(--transition-fast);
