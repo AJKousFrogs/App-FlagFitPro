@@ -132,7 +132,7 @@
     "css:coverage": "node scripts/css-coverage.mjs"
   },
   "dependencies": {
-    "@supabase/supabase-js": "^2.99.1",
+    "@supabase/supabase-js": "^2.100.1",
     "ajv": "^8.17.1",
     "chart.js": "^4.5.1",
     "chartjs-adapter-date-fns": "^3.0.0",
@@ -160,7 +160,7 @@
   "devDependencies": {
     "@eslint/js": "^9.39.2",
     "@playwright/test": "^1.58.2",
-    "@supabase/mcp-server-supabase": "^0.6.3",
+    "@supabase/mcp-server-supabase": "^0.7.0",
     "@types/node": "^22.15.0",
     "chokidar": "^5.0.0",
     "concurrently": "^9.2.1",
