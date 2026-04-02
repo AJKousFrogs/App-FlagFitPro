@@ -173,11 +173,7 @@
       var(--app-shell-gutter-block-mobile)
       var(--app-shell-gutter-inline-mobile)
       calc(
-        var(--app-shell-gutter-block-mobile) +
-        var(--bottom-nav-height) +
-        var(--safe-area-bottom) +
-        var(--space-4)
-      );
+        var(--app-shell-gutter-block-mobile) + var(--bottom-nav-height) + var(--safe-area-bottom) + var(--space-4)      );
   }
 
   .app-shell__content-stack {

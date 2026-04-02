@@ -168,6 +168,7 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-4);
+  padding: 0 var(--space-5) var(--space-5);
 }
 
 .form-description {
@@ -191,6 +192,11 @@
 @include respond-to(sm) {
   .metrics-grid {
     grid-template-columns: 1fr;
+  }
+
+  .measurement-form {
+    padding-inline: var(--space-4);
+    padding-bottom: var(--space-4);
   }
 }
 

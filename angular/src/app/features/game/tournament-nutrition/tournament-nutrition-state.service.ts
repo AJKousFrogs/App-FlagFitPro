@@ -1,5 +1,4 @@
 import { Injectable, inject } from "@angular/core";
-import { AuthService } from "../../../core/services/auth.service";
 import { LoggerService } from "../../../core/services/logger.service";
 import { RealtimeService } from "../../../core/services/realtime.service";
 import { SupabaseService } from "../../../core/services/supabase.service";
@@ -43,14 +42,13 @@ interface HydrationLogRow extends Record<string, unknown> {
   providedIn: "root",
 })
 export class TournamentNutritionStateService {
-  private readonly authService = inject(AuthService);
   private readonly realtimeService = inject(RealtimeService);
   private readonly supabaseService = inject(SupabaseService);
   private readonly teamMembershipService = inject(TeamMembershipService);
   private readonly logger = inject(LoggerService);
 
   async loadTodayState(): Promise<TournamentNutritionState | null> {
-    const userId = this.authService.currentUser()?.id;
+    const userId = this.supabaseService.userId();
     if (!userId) {
       return null;
     }
@@ -127,7 +125,7 @@ export class TournamentNutritionStateService {
     games: unknown[];
     nutritionWindows: unknown[];
   }): Promise<void> {
-    const userId = this.authService.currentUser()?.id;
+    const userId = this.supabaseService.userId();
     if (!userId) {
       return;
     }
@@ -166,7 +164,7 @@ export class TournamentNutritionStateService {
   }
 
   async logHydration(log: TournamentNutritionHydrationLog): Promise<void> {
-    const userId = this.authService.currentUser()?.id;
+    const userId = this.supabaseService.userId();
     if (!userId) {
       return;
     }
@@ -207,7 +205,7 @@ export class TournamentNutritionStateService {
   }
 
   subscribeToTodayState(onChange: () => void): (() => void) | null {
-    const userId = this.authService.currentUser()?.id;
+    const userId = this.supabaseService.userId();
     if (!userId) {
       return null;
     }
@@ -262,7 +260,7 @@ export class TournamentNutritionStateService {
   }
 
   async clearTodayState(): Promise<void> {
-    const userId = this.authService.currentUser()?.id;
+    const userId = this.supabaseService.userId();
     if (!userId) {
       return;
     }

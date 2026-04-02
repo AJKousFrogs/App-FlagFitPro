@@ -1,6 +1,5 @@
 import { Injectable, inject, signal, computed } from "@angular/core";
 import { SupabaseService } from "./supabase.service";
-import { AuthService } from "./auth.service";
 import { LoggerService } from "./logger.service";
 import { ToastService } from "./toast.service";
 import { Router } from "@angular/router";
@@ -42,7 +41,6 @@ export interface DeletionRequest {
 })
 export class AccountDeletionService {
   private supabase = inject(SupabaseService);
-  private authService = inject(AuthService);
   private logger = inject(LoggerService);
   private toastService = inject(ToastService);
   private router = inject(Router);
@@ -76,7 +74,7 @@ export class AccountDeletionService {
    * Check if user has a pending deletion request
    */
   async checkDeletionStatus(): Promise<DeletionStatus | null> {
-    const userId = this.authService.getUser()?.id;
+    const userId = this.getCurrentUserId();
     if (!userId) {
       return null;
     }
@@ -129,58 +127,36 @@ export class AccountDeletionService {
    * This initiates the soft-delete and starts the 30-day countdown
    */
   async requestDeletion(request: DeletionRequest): Promise<boolean> {
-    const userId = this.authService.getUser()?.id;
-    if (!userId) {
-      this.toastService.error(TOAST.ERROR.NOT_AUTHENTICATED);
-      return false;
-    }
-
     // Verify confirmation text
     if (request.confirmText !== "DELETE") {
       this.toastService.error(TOAST.ERROR.TYPE_DELETE_TO_CONFIRM);
       return false;
     }
 
-    this._loading.set(true);
-    this._error.set(null);
+    return this.runAuthenticatedDeletionAction(
+      async (userId) => {
+        const { data: requestId, error } = await this.supabase.client.rpc(
+          "initiate_account_deletion",
+          {
+            p_user_id: userId,
+            p_reason: request.reason || null,
+          },
+        );
 
-    try {
-      // Call the database function to initiate deletion
-      const { data: requestId, error } = await this.supabase.client.rpc(
-        "initiate_account_deletion",
-        {
-          p_user_id: userId,
-          p_reason: request.reason || null,
-        },
-      );
+        if (error) {
+          throw error;
+        }
 
-      if (error) {
-        throw error;
-      }
-
-      // Sign out the user
-      await this.supabase.signOut();
-
-      this.toastService.success(TOAST.SUCCESS.ACCOUNT_DELETION_REQUESTED);
-
-      this.logger.info("Account deletion initiated", { requestId });
-
-      // Redirect to login
-      this.router.navigate(["/login"]);
-
-      return true;
-    } catch (err) {
-      const message =
-        err instanceof Error
-          ? err.message
-          : TOAST.ERROR.DELETION_REQUEST_FAILED;
-      this._error.set(message);
-      this.toastService.error(message);
-      this.logger.error("Error requesting deletion:", err);
-      return false;
-    } finally {
-      this._loading.set(false);
-    }
+        await this.supabase.signOut();
+        this.logger.info("Account deletion initiated", { requestId });
+        await this.router.navigate(["/login"]);
+      },
+      {
+        successMessage: TOAST.SUCCESS.ACCOUNT_DELETION_REQUESTED,
+        failureMessage: TOAST.ERROR.DELETION_REQUEST_FAILED,
+        errorLogMessage: "Error requesting deletion:",
+      },
+    );
   }
 
   // ============================================================================
@@ -192,7 +168,7 @@ export class AccountDeletionService {
    * Only possible within the 30-day grace period
    */
   async cancelDeletion(): Promise<boolean> {
-    const userId = this.authService.getUser()?.id;
+    const userId = this.getCurrentUserId();
     const status = this._deletionStatus();
 
     if (!userId || !status?.requestId) {
@@ -261,7 +237,7 @@ export class AccountDeletionService {
       createdAt: string;
     }>
   > {
-    const userId = this.authService.getUser()?.id;
+    const userId = this.getCurrentUserId();
     if (!userId) {
       return [];
     }
@@ -304,40 +280,90 @@ export class AccountDeletionService {
     medicalData: Record<string, unknown>,
     locationData?: Record<string, unknown>,
   ): Promise<string | null> {
-    const userId = this.authService.getUser()?.id;
+    return this.runAuthenticatedAction(
+      null,
+      async (userId) => {
+        const { data: recordId, error } = await this.supabase.client.rpc(
+          "create_emergency_medical_record",
+          {
+            p_user_id: userId,
+            p_event_type: eventType,
+            p_medical_data: medicalData,
+            p_location_data: locationData || null,
+          },
+        );
+
+        if (error) {
+          throw error;
+        }
+
+        this.logger.info("Emergency medical record created", {
+          recordId,
+          eventType,
+        });
+        return recordId;
+      },
+      {
+        failureMessage: "Failed to create emergency record",
+        errorLogMessage: "Error creating emergency record:",
+      },
+    );
+  }
+
+  private async runAuthenticatedDeletionAction(
+    operation: (userId: string) => Promise<void>,
+    options: {
+      successMessage: string;
+      failureMessage: string;
+      errorLogMessage: string;
+    },
+  ): Promise<boolean> {
+    return this.runAuthenticatedAction(
+      false,
+      async (userId) => {
+        this._loading.set(true);
+        this._error.set(null);
+
+        await operation(userId);
+        this.toastService.success(options.successMessage);
+        return true;
+      },
+      {
+        failureMessage: options.failureMessage,
+        errorLogMessage: options.errorLogMessage,
+        onError: (message) => this._error.set(message),
+        onFinally: () => this._loading.set(false),
+      },
+    );
+  }
+
+  private async runAuthenticatedAction<TResult>(
+    unauthenticatedResult: TResult,
+    operation: (userId: string) => Promise<TResult>,
+    options: {
+      failureMessage: string;
+      errorLogMessage: string;
+      onError?: (message: string) => void;
+      onFinally?: () => void;
+    },
+  ): Promise<TResult> {
+    const userId = this.getCurrentUserId();
     if (!userId) {
       this.toastService.error(TOAST.ERROR.NOT_AUTHENTICATED);
-      return null;
+      return unauthenticatedResult;
     }
 
     try {
-      const { data: recordId, error } = await this.supabase.client.rpc(
-        "create_emergency_medical_record",
-        {
-          p_user_id: userId,
-          p_event_type: eventType,
-          p_medical_data: medicalData,
-          p_location_data: locationData || null,
-        },
-      );
-
-      if (error) {
-        throw error;
-      }
-
-      this.logger.info("Emergency medical record created", {
-        recordId,
-        eventType,
-      });
-      return recordId;
+      return await operation(userId);
     } catch (err) {
       const message =
-        err instanceof Error
-          ? err.message
-          : "Failed to create emergency record";
+        err instanceof Error ? err.message : options.failureMessage;
+      options.onError?.(message);
       this.toastService.error(message);
-      this.logger.error("Error creating emergency record:", err);
-      return null;
+      this.logger.error(options.errorLogMessage, err);
+      return unauthenticatedResult;
+    } finally {
+      options.onFinally?.();
     }
   }
 
@@ -354,7 +380,7 @@ export class AccountDeletionService {
       retentionExpiresAt: string;
     }>
   > {
-    const userId = this.authService.getUser()?.id;
+    const userId = this.getCurrentUserId();
     if (!userId) {
       return [];
     }
@@ -382,5 +408,9 @@ export class AccountDeletionService {
       this.logger.error("Error fetching emergency records:", err);
       return [];
     }
+  }
+
+  private getCurrentUserId(): string | null {
+    return this.supabase.userId();
   }
 }

@@ -8,7 +8,6 @@
 import { Injectable, inject } from "@angular/core";
 import { LoggerService } from "./logger.service";
 import { SupabaseService } from "./supabase.service";
-import { isBenignSupabaseQueryError } from "../../shared/utils/error.utils";
 
 export interface MissingDataStatus {
   missing: boolean;
@@ -33,8 +32,6 @@ export interface PlayerMissingData {
 export class MissingDataDetectionService {
   private readonly supabaseService = inject(SupabaseService);
   private readonly logger = inject(LoggerService);
-  private notificationsUnavailable = false;
-  private readonly directCoachReminderWritesSupported = false;
 
   /**
    * Check if player has missing wellness data
@@ -102,17 +99,6 @@ export class MissingDataDetectionService {
    * Check for players missing wellness 3+ days and create coach reminders
    */
   async checkAndCreateCoachReminders(teamId: string): Promise<void> {
-    if (this.notificationsUnavailable) {
-      return;
-    }
-
-    if (!this.directCoachReminderWritesSupported) {
-      this.logger.debug(
-        "[MissingData] Skipping direct browser coach reminder writes; backend-managed notification flow required",
-      );
-      return;
-    }
-
     try {
       const playersWithMissing =
         await this.getPlayersWithMissingWellness(teamId);
@@ -126,52 +112,8 @@ export class MissingDataDetectionService {
         return;
       }
 
-      // Get coaches for the team
-      const { data: coaches } = await this.supabaseService.client
-        .from("team_members")
-        .select("user_id")
-        .eq("team_id", teamId)
-        .eq("role", "coach")
-        .limit(5);
-
-      if (!coaches || coaches.length === 0) {
-        return;
-      }
-
-      // Create notifications for coaches
-      const notifications = coaches.flatMap((coach) =>
-        criticalPlayers.map((player) => ({
-          user_id: coach.user_id,
-          notification_type: "wellness",
-          message: `${player.playerName} has been missing wellness data for ${player.daysMissing} day(s). Follow-up recommended.`,
-          priority: player.severity === "critical" ? "high" : "normal",
-          metadata: {
-            playerId: player.playerId,
-            playerName: player.playerName,
-            daysMissing: player.daysMissing,
-          },
-        })),
-      );
-
-      const { error } = await this.supabaseService.client
-        .from("notifications")
-        .insert(notifications);
-
-      if (error) {
-        const status = Number((error as { status?: number }).status);
-        if (
-          isBenignSupabaseQueryError(error) ||
-          (error as { code?: string }).code === "23505" ||
-          status === 409
-        ) {
-          this.notificationsUnavailable = true;
-          return;
-        }
-        throw error;
-      }
-
       this.logger.info(
-        `[MissingData] Created ${notifications.length} coach reminders for ${criticalPlayers.length} players with missing wellness`,
+        `[MissingData] Found ${criticalPlayers.length} players with missing wellness data. Coach reminder delivery is backend-managed.`,
       );
     } catch (error) {
       this.logger.error("[MissingData] Error creating coach reminders:", error);

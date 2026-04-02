@@ -222,7 +222,7 @@
 }
 
 /* Large Screens (75rem - 87.4375rem / xl-min to xl-max) */
-@media (min-width: var(--breakpoint-xl-min)) and (max-width: var(--breakpoint-xl-max)) {
+@include respond-between(xl-min, xl-max) {
   .tournaments-grid {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -233,7 +233,7 @@
 }
 
 /* Medium-Large Screens (64rem - 74.9375rem) */
-@media (min-width: var(--breakpoint-lg)) and (max-width: var(--breakpoint-lg-max)) {
+@include respond-between(lg, lg-max) {
   .tournaments-grid {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -248,7 +248,7 @@
 }
 
 /* Tablet Landscape (48.0625rem - 63.9375rem) */
-@media (min-width: var(--breakpoint-md-min)) and (max-width: var(--breakpoint-lg)) {
+@include respond-between(md-min, lg) {
   .tournaments-grid {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -321,7 +321,7 @@
 }
 
 /* Mobile Large (30rem - 48rem) */
-@media (min-width: var(--breakpoint-xs-narrow)) and (max-width: var(--breakpoint-md)) {
+@include respond-between(xs-narrow, md) {
   .availability-options {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -392,7 +392,7 @@
 }
 
 /* Touch Device Optimizations */
-@media (hover: none) and (pointer: coarse) {
+@include touch-device {
   .availability-option,
   .header-actions button {
     min-height: var(--touch-target-md);

@@ -9,7 +9,7 @@ export const gameRoutes: Routes = [
         (m) => m.GameDayReadinessComponent,
       ),
     canActivate: [authGuard],
-    data: { preload: false, entry: "internal" }, // Only needed on game days - load on demand
+    data: { preload: false, entry: "internal", headerPreset: "analytics" }, // Only needed on game days - load on demand
   },
   {
     path: "game/nutrition",
@@ -36,7 +36,7 @@ export const gameRoutes: Routes = [
         (m) => m.TournamentsComponent,
       ),
     canActivate: [authGuard],
-    data: { preload: false, entry: "internal" }, // Seasonal feature
+    data: { preload: false, entry: "internal", headerPreset: "analytics" }, // Seasonal feature
   },
   // === NEW ROUTE: Live Game Tracker ===
   {

@@ -139,7 +139,7 @@ interface Team {
               [rows]="10"
               [virtualScroll]="filteredTeams.length > 50"
               [virtualScrollItemSize]="46"
-              class="p-datatable-sm table-standard"
+              class="table-compact table-standard"
               [scrollable]="true"
             >
               <ng-template #header>
@@ -219,7 +219,7 @@ interface Team {
             icon="building"
             [title]="selectedTeam?.name || 'Team Details'"
             subtitle="Review team status and onboarding context."
-            (close)="showTeamDialog = false"
+            (close)="closeTeamDialog()"
           />
           @if (selectedTeam; as team) {
             <div class="goal-details">
@@ -246,8 +246,8 @@ interface Team {
             cancelLabel="Close"
             primaryLabel="Done"
             primaryIcon="check"
-            (cancel)="showTeamDialog = false"
-            (primary)="showTeamDialog = false"
+            (cancel)="closeTeamDialog()"
+            (primary)="closeTeamDialog()"
           />
         </app-dialog>
       </div>
@@ -332,25 +332,44 @@ export class SuperadminTeamsComponent implements OnInit {
     return tracks[track] || track;
   }
 
+  private applyLocalTeamStatusUpdate(
+    team: Team,
+    status: Team["status"],
+    successMessage?: string,
+  ): void {
+    team.status = status;
+    this.filterTeams();
+    if (this.selectedTeam?.id === team.id) {
+      this.selectedTeam = { ...team };
+    }
+    if (successMessage) {
+      this.toast.success(successMessage);
+    }
+  }
+
+  closeTeamDialog(): void {
+    this.showTeamDialog = false;
+  }
+
   approveTeam(team: Team): void {
-    this.superadminService.approveTeam(team.id, "Approved").pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
-      team.status = "active";
-      this.filterTeams();
-    });
+    this.superadminService
+      .approveTeam(team.id, "Approved")
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => {
+        this.applyLocalTeamStatusUpdate(team, "active", "Team approved successfully.");
+      });
   }
 
   suspendTeam(team: Team): void {
-    team.status = "suspended";
-    this.filterTeams();
+    this.applyLocalTeamStatusUpdate(team, "suspended", "Team suspended.");
   }
 
   reactivateTeam(team: Team): void {
-    team.status = "active";
-    this.filterTeams();
+    this.applyLocalTeamStatusUpdate(team, "active", "Team reactivated.");
   }
 
-  viewTeam(_team: Team): void {
-    this.selectedTeam = _team;
+  viewTeam(team: Team): void {
+    this.selectedTeam = team;
     this.showTeamDialog = true;
   }
 }

@@ -19,11 +19,11 @@ import { StatusTagComponent } from "../../shared/components/status-tag/status-ta
 import { EmptyStateComponent } from "../../shared/components/empty-state/empty-state.component";
 import { AppLoadingComponent } from "../../shared/components/loading/loading.component";
 import { ApiService } from "../../core/services/api.service";
-import { AuthService } from "../../core/services/auth.service";
 import { ToastService } from "../../core/services/toast.service";
 import { TOAST } from "../../core/constants/toast-messages.constants";
 import { LoggerService } from "../../core/services/logger.service";
 import { toLogContext } from "../../core/services/logger.service";
+import { SupabaseService } from "../../core/services/supabase.service";
 import { formatDate } from "../../shared/utils/date.utils";
 import { WorkoutDataService } from "./services/workout-data.service";
 
@@ -171,7 +171,7 @@ interface Workout {
 })
 export class WorkoutComponent implements OnInit {
   private apiService = inject(ApiService);
-  private authService = inject(AuthService);
+  private supabase = inject(SupabaseService);
   private toastService = inject(ToastService);
   private logger = inject(LoggerService);
   private destroyRef = inject(DestroyRef);
@@ -181,13 +181,17 @@ export class WorkoutComponent implements OnInit {
   workoutHistory = signal<Workout[]>([]);
   isLoading = signal(true);
 
+  private currentUserId(): string | null {
+    return this.supabase.userId();
+  }
+
   ngOnInit(): void {
     this.loadWorkouts();
   }
 
   async loadWorkouts(): Promise<void> {
-    const user = this.authService.getUser();
-    if (!user?.id) {
+    const userId = this.currentUserId();
+    if (!userId) {
       this.isLoading.set(false);
       return;
     }
@@ -195,7 +199,7 @@ export class WorkoutComponent implements OnInit {
     try {
       // Load workout logs from Supabase
       const { workoutLogs, error } =
-        await this.workoutDataService.fetchWorkoutLogs(user.id);
+        await this.workoutDataService.fetchWorkoutLogs(userId);
 
       if (error) {
         this.logger.warn(
@@ -338,8 +342,8 @@ export class WorkoutComponent implements OnInit {
   async saveWorkout(): Promise<void> {
     if (!this.activeWorkout()) return;
 
-    const user = this.authService.getUser();
-    if (!user?.id) {
+    const userId = this.currentUserId();
+    if (!userId) {
       this.toastService.error(TOAST.ERROR.LOGIN_TO_SAVE_WORKOUTS);
       return;
     }
@@ -350,7 +354,7 @@ export class WorkoutComponent implements OnInit {
     try {
       // Save as workout log
       const { error } = await this.workoutDataService.createWorkoutLog({
-        playerId: user.id,
+        playerId: userId,
         durationMinutes: workout.duration || 60,
         rpe: 5,
         notes: `${workout.name}: ${workout.exercises.map((e) => e.name).join(", ")}`,
@@ -368,8 +372,8 @@ export class WorkoutComponent implements OnInit {
   async completeWorkout(): Promise<void> {
     if (!this.activeWorkout()) return;
 
-    const user = this.authService.getUser();
-    if (!user?.id) {
+    const userId = this.currentUserId();
+    if (!userId) {
       this.toastService.error(TOAST.ERROR.LOGIN_TO_COMPLETE_WORKOUTS);
       return;
     }
@@ -381,7 +385,7 @@ export class WorkoutComponent implements OnInit {
     try {
       // Save completed workout to database
       const { error } = await this.workoutDataService.createWorkoutLog({
-        playerId: user.id,
+        playerId: userId,
         durationMinutes: workout.duration || 60,
         rpe: 6,
         notes: `Completed: ${workout.name} - ${workout.exercises.filter((e) => e.completed).length}/${workout.exercises.length} exercises`,

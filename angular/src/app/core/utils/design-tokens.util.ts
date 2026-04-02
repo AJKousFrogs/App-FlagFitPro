@@ -57,6 +57,14 @@ export function resolveCssVariable(value: string): string {
   return value;
 }
 
+/**
+ * Create a CSS custom property reference.
+ * Use this instead of duplicating literal token values in TypeScript.
+ */
+export function cssToken(tokenName: `--${string}`): string {
+  return `var(${tokenName})`;
+}
+
 // ============================================================================
 // DESIGN TOKEN CONSTANTS
 // These map directly to CSS variables in design-system-tokens.scss
@@ -335,34 +343,51 @@ export function getInvertedStatusHexColor(
 // ============================================================================
 
 /**
+ * Breakpoint bridge constants for TS-only APIs such as PrimeNG dialog breakpoint maps.
+ * These mirror the canonical CSS token values in design-system-tokens.scss.
+ */
+export const BREAKPOINTS = {
+  xs: "374px",
+  sm: "640px",
+  md: "768px",
+  lg: "1024px",
+  xl: "1280px",
+  "2xl": "1536px",
+  mobile: "640px",
+  tablet: "768px",
+  desktop: "1024px",
+  wide: "1280px",
+} as const;
+
+/**
  * Spacing scale (maps to --space-* CSS variables)
  * Use these for programmatic spacing calculations
  */
 export const SPACING = {
   0: "0",
-  1: "0.25rem", // 4px
-  2: "0.5rem", // 8px
-  3: "0.75rem", // 12px
-  4: "1rem", // 16px
-  5: "1.25rem", // 20px
-  6: "1.5rem", // 24px
-  8: "2rem", // 32px
-  10: "2.5rem", // 40px
-  12: "3rem", // 48px
-  16: "4rem", // 64px
+  1: cssToken("--space-1"),
+  2: cssToken("--space-2"),
+  3: cssToken("--space-3"),
+  4: cssToken("--space-4"),
+  5: cssToken("--space-5"),
+  6: cssToken("--space-6"),
+  8: cssToken("--space-8"),
+  10: cssToken("--space-10"),
+  12: cssToken("--space-12"),
+  16: cssToken("--space-16"),
 } as const;
 
 /**
  * Icon sizes (maps to --icon-* CSS variables)
  */
 export const ICON_SIZES = {
-  xs: "0.75rem", // 12px
-  sm: "0.875rem", // 14px
-  md: "1rem", // 16px
-  lg: "1.25rem", // 20px
-  xl: "1.5rem", // 24px
-  "2xl": "2rem", // 32px
-  "3xl": "3rem", // 48px
+  xs: cssToken("--icon-xs"),
+  sm: cssToken("--icon-sm"),
+  md: cssToken("--icon-md"),
+  lg: cssToken("--icon-lg"),
+  xl: cssToken("--icon-xl"),
+  "2xl": cssToken("--icon-2xl"),
+  "3xl": cssToken("--icon-3xl"),
 } as const;
 
 /**
@@ -370,23 +395,23 @@ export const ICON_SIZES = {
  */
 export const COMPONENT_SIZES = {
   avatar: {
-    xs: "24px",
-    sm: "32px",
-    md: "40px",
-    lg: "48px",
-    xl: "64px",
-    "2xl": "80px",
+    xs: cssToken("--avatar-size-xs"),
+    sm: cssToken("--avatar-size-sm"),
+    md: cssToken("--avatar-size-md"),
+    lg: cssToken("--avatar-size-lg"),
+    xl: cssToken("--avatar-size-xl"),
+    "2xl": cssToken("--avatar-size-2xl"),
   },
   icon: {
-    sm: "36px",
-    md: "40px",
-    lg: "48px",
-    xl: "56px",
+    sm: cssToken("--icon-container-sm"),
+    md: cssToken("--icon-container-md"),
+    lg: cssToken("--icon-container-lg"),
+    xl: cssToken("--icon-container-xl"),
   },
   button: {
-    sm: "36px",
-    md: "44px",
-    lg: "52px",
+    sm: cssToken("--button-height-sm"),
+    md: cssToken("--button-height-md"),
+    lg: cssToken("--button-height-lg"),
   },
 } as const;
 
@@ -409,14 +434,32 @@ export const COMPONENT_SIZES = {
  * - full: Maximum viewport width with margin
  */
 export const DIALOG_WIDTHS = {
-  xs: "320px",
-  sm: "400px",
-  md: "500px",
-  lg: "600px",
-  xl: "700px",
-  "2xl": "800px",
-  "3xl": "900px",
+  xs: cssToken("--dialog-max-width-xs"),
+  sm: cssToken("--dialog-max-width-sm"),
+  md: cssToken("--dialog-max-width-md"),
+  lg: cssToken("--dialog-max-width-lg"),
+  xl: cssToken("--dialog-max-width-xl"),
+  "2xl": cssToken("--dialog-max-width-2xl"),
+  "3xl": cssToken("--dialog-max-width-3xl"),
   full: "95vw",
+} as const;
+
+export const DIALOG_BREAKPOINTS = {
+  mobileFull: {
+    [BREAKPOINTS.mobile]: DIALOG_WIDTHS.full,
+  },
+  standard: {
+    "960px": "92vw",
+    [BREAKPOINTS.mobile]: "96vw",
+  },
+  wide: {
+    "1200px": "92vw",
+    [BREAKPOINTS.mobile]: "96vw",
+  },
+  wideComfortable: {
+    "1200px": "94vw",
+    "960px": "96vw",
+  },
 } as const;
 
 /**
@@ -481,11 +524,11 @@ export const DIALOG_STYLES = {
  * Dropdown/Select widths for inline controls
  */
 export const DROPDOWN_WIDTHS = {
-  xs: "100px",
-  sm: "140px",
-  md: "160px",
-  lg: "200px",
-  xl: "250px",
+  xs: cssToken("--dropdown-width-xs"),
+  sm: cssToken("--dropdown-width-sm"),
+  md: cssToken("--dropdown-width-md"),
+  lg: cssToken("--dropdown-width-lg"),
+  xl: cssToken("--dropdown-width-xl"),
   auto: "auto",
 } as const;
 
@@ -494,15 +537,15 @@ export const DROPDOWN_WIDTHS = {
  */
 export const TABLE_COLUMN_WIDTHS = {
   /** Checkbox/action column */
-  action: "60px",
+  action: cssToken("--table-column-width-action"),
   /** Small badge/status column */
-  badge: "80px",
+  badge: cssToken("--table-column-width-badge"),
   /** Standard icon column */
-  icon: "50px",
+  icon: cssToken("--table-column-width-icon"),
   /** Rank/number column */
-  rank: "60px",
+  rank: cssToken("--table-column-width-rank"),
   /** Points/score column */
-  score: "100px",
+  score: cssToken("--table-column-width-score"),
   /** Avatar + name column */
-  avatar: "50px",
+  avatar: cssToken("--table-column-width-avatar"),
 } as const;

@@ -1,5 +1,7 @@
 import { Injectable, signal } from "@angular/core";
 
+export type HeaderPreset = "default" | "dashboard" | "training" | "analytics";
+
 export interface HeaderConfig {
   showLogo?: boolean;
   searchPlaceholder?: string;
@@ -44,6 +46,23 @@ export class HeaderService {
    */
   setConfig(newConfig: Partial<HeaderConfig>) {
     this.updateConfig(newConfig);
+  }
+
+  applyPreset(preset: HeaderPreset | null | undefined) {
+    switch (preset) {
+      case "dashboard":
+        this.setDashboardHeader();
+        break;
+      case "training":
+        this.setTrainingHeader();
+        break;
+      case "analytics":
+        this.setAnalyticsHeader();
+        break;
+      default:
+        this.resetToDefault();
+        break;
+    }
   }
 
   // Preset configurations

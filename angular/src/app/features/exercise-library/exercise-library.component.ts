@@ -28,7 +28,6 @@ import { DialogFooterComponent } from "../../shared/components/dialog-footer/dia
 import { DialogHeaderComponent } from "../../shared/components/dialog-header/dialog-header.component";
 import { EmptyStateComponent } from "../../shared/components/empty-state/empty-state.component";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
-import { AppLoadingComponent } from "../../shared/components/loading/loading.component";
 import { PageErrorStateComponent } from "../../shared/components/page-error-state/page-error-state.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
 import { SearchInputComponent } from "../../shared/components/search-input/search-input.component";
@@ -78,7 +77,6 @@ interface Category {
     DialogHeaderComponent,
     SearchInputComponent,
     EmptyStateComponent,
-    AppLoadingComponent,
     PageErrorStateComponent,
     PageHeaderComponent,
     SkeletonRepeatComponent,
@@ -294,14 +292,14 @@ interface Category {
         [resizable]="false"
         [closeOnEscape]="true"
         [dismissableMask]="true"
-        [styleClass]="'exercise-details-dialog'"
+        dialogSize="xl"
       >
         @if (selectedExercise()) {
           <app-dialog-header
             icon="book"
             title="Exercise Details"
             subtitle="Movement guidance, prescription, and coaching cues."
-            (close)="showDetailsDialog.set(false)"
+            (close)="closeDetailsDialog()"
           />
         }
         @if (selectedExercise()) {
@@ -479,10 +477,8 @@ interface Category {
             cancelLabel="Close"
             primaryLabel="Add to Workout"
             primaryIcon="plus"
-            (cancel)="showDetailsDialog.set(false)"
-            (primary)="
-              addToWorkout(selectedExercise()!); showDetailsDialog.set(false)
-            "
+            (cancel)="closeDetailsDialog()"
+            (primary)="addSelectedExerciseToWorkout()"
           />
         }
       </app-dialog>
@@ -746,9 +742,24 @@ export class ExerciseLibraryComponent implements OnInit {
     return tooltips[difficulty] || "";
   }
 
+  closeDetailsDialog(): void {
+    this.showDetailsDialog.set(false);
+    this.selectedExercise.set(null);
+  }
+
   viewExerciseDetails(exercise: Exercise): void {
+    this.closeDetailsDialog();
     this.selectedExercise.set(exercise);
     this.showDetailsDialog.set(true);
+  }
+
+  addSelectedExerciseToWorkout(): void {
+    const exercise = this.selectedExercise();
+    if (!exercise) {
+      return;
+    }
+    this.addToWorkout(exercise);
+    this.closeDetailsDialog();
   }
 
   addToWorkout(exercise: Exercise): void {

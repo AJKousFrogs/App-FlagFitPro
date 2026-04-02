@@ -20,8 +20,8 @@ import {
 } from "../../core/constants/app.constants";
 import { AcwrService } from "../../core/services/acwr.service";
 import { API_ENDPOINTS, ApiService } from "../../core/services/api.service";
-import { AuthService } from "../../core/services/auth.service";
 import { LoggerService } from "../../core/services/logger.service";
+import { SupabaseService } from "../../core/services/supabase.service";
 import { extractApiPayload } from "../../core/utils/api-response-mapper";
 import {
   PlayerGameStats,
@@ -111,7 +111,7 @@ export class AnalyticsComponent implements AfterViewInit {
   private readonly apiService = inject(ApiService);
   private destroyRef = inject(DestroyRef);
   private readonly playerStatsService = inject(PlayerStatisticsService);
-  private readonly authService = inject(AuthService);
+  private readonly supabase = inject(SupabaseService);
   private readonly trainingStatsService = inject(
     TrainingStatsCalculationService,
   );
@@ -237,6 +237,8 @@ export class AnalyticsComponent implements AfterViewInit {
   // Chart instances map for export/zoom functionality
   private chartInstances = new Map<string, Chart>();
 
+  private readonly currentUserId = computed(() => this.supabase.userId());
+
   constructor() {
     // Initialize on construction (Angular 21 pattern)
     this.initializePage();
@@ -319,8 +321,8 @@ export class AnalyticsComponent implements AfterViewInit {
   }
 
   loadTrainingStatistics(): void {
-    const currentUser = this.authService.getUser();
-    if (!currentUser?.id) return;
+    const currentUserId = this.currentUserId();
+    if (!currentUserId) return;
 
     // Load comprehensive training stats
     this.trainingStatsService.getTrainingStats().pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
@@ -388,11 +390,11 @@ export class AnalyticsComponent implements AfterViewInit {
   }
 
   loadPlayerStatistics(): void {
-    const currentUser = this.authService.getUser();
-    if (!currentUser?.id) return;
+    const currentUserId = this.currentUserId();
+    if (!currentUserId) return;
 
     // Load all games for current player
-    this.playerStatsService.getPlayerAllGames(currentUser.id).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+    this.playerStatsService.getPlayerAllGames(currentUserId).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (games) => {
         this.playerGameStats.set(games);
       },
@@ -404,7 +406,7 @@ export class AnalyticsComponent implements AfterViewInit {
     // Load current season stats
     const currentSeason = new Date().getFullYear().toString();
     this.playerStatsService
-      .getPlayerSeasonStats(currentUser.id, currentSeason)
+      .getPlayerSeasonStats(currentUserId, currentSeason)
       .pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
         next: (stats) => {
           this.playerSeasonStats.set(stats);
@@ -416,7 +418,7 @@ export class AnalyticsComponent implements AfterViewInit {
 
     // Load multi-season stats
     this.playerStatsService
-      .getPlayerMultiSeasonStats(currentUser.id)
+      .getPlayerMultiSeasonStats(currentUserId)
       .pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
         next: (stats) => {
           this.playerMultiSeasonStats.set(stats);
@@ -439,8 +441,8 @@ export class AnalyticsComponent implements AfterViewInit {
   }
 
   loadAnalyticsData(): void {
-    const currentUser = this.authService.getUser();
-    if (!currentUser?.id) {
+    const currentUserId = this.currentUserId();
+    if (!currentUserId) {
       this.loadFallbackData();
       return;
     }
@@ -448,7 +450,7 @@ export class AnalyticsComponent implements AfterViewInit {
     // Load analytics summary for metrics
     this.apiService
       .get<{ metrics?: Metric[] }>(API_ENDPOINTS.analytics.summary, {
-        userId: currentUser.id,
+        userId: currentUserId,
       })
       .pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
         next: (response) => {
@@ -467,7 +469,7 @@ export class AnalyticsComponent implements AfterViewInit {
     // Load performance trends
     this.apiService
       .get<AnalyticsSeriesPayload>(API_ENDPOINTS.analytics.performanceTrends, {
-        userId: currentUser.id,
+        userId: currentUserId,
         weeks: 7,
       })
       .pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
@@ -500,7 +502,7 @@ export class AnalyticsComponent implements AfterViewInit {
     // Load team chemistry
     this.apiService
       .get<AnalyticsSeriesPayload>(API_ENDPOINTS.analytics.teamChemistry, {
-        userId: currentUser.id,
+        userId: currentUserId,
       })
       .pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
         next: (response) => {
@@ -530,7 +532,7 @@ export class AnalyticsComponent implements AfterViewInit {
     // Load training distribution
     this.apiService
       .get<AnalyticsSeriesPayload>(API_ENDPOINTS.analytics.trainingDistribution, {
-        userId: currentUser.id,
+        userId: currentUserId,
         period: "30days",
       })
       .pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
@@ -561,7 +563,7 @@ export class AnalyticsComponent implements AfterViewInit {
     // Load position performance
     this.apiService
       .get<AnalyticsSeriesPayload>(API_ENDPOINTS.analytics.positionPerformance, {
-        userId: currentUser.id,
+        userId: currentUserId,
       })
       .pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
         next: (response) => {
@@ -589,7 +591,7 @@ export class AnalyticsComponent implements AfterViewInit {
     // Load speed development
     this.apiService
       .get<AnalyticsSpeedPayload>(API_ENDPOINTS.analytics.speedDevelopment, {
-        userId: currentUser.id,
+        userId: currentUserId,
         weeks: 7,
       })
       .pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
@@ -896,8 +898,8 @@ Tip: Hover over data points to see trend information!`;
    * Load development goals from API
    */
   private loadDevelopmentGoals(): void {
-    const currentUser = this.authService.getUser();
-    if (!currentUser?.id) return;
+    const currentUserId = this.currentUserId();
+    if (!currentUserId) return;
 
     this.apiService
       .get<{
@@ -909,7 +911,7 @@ Tip: Hover over data points to see trend information!`;
         }[];
       }>(API_ENDPOINTS.analytics.summary, {
         type: "goals",
-        userId: currentUser.id,
+        userId: currentUserId,
       })
       .pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
         next: (response) => {
@@ -943,8 +945,8 @@ Tip: Hover over data points to see trend information!`;
    * Load gap analysis data comparing player metrics to Olympic benchmarks
    */
   private loadGapAnalysis(): void {
-    const currentUser = this.authService.getUser();
-    if (!currentUser?.id) {
+    const currentUserId = this.currentUserId();
+    if (!currentUserId) {
       this.gapAnalysisData.set([]);
       return;
     }
@@ -955,7 +957,7 @@ Tip: Hover over data points to see trend information!`;
         API_ENDPOINTS.analytics.summary,
         {
         type: "gap_analysis",
-        userId: currentUser.id,
+        userId: currentUserId,
       })
       .pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
         next: (response) => {

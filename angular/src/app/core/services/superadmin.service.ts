@@ -1,6 +1,5 @@
 import { Injectable, inject, signal, computed } from "@angular/core";
 import { SupabaseService } from "./supabase.service";
-import { AuthService } from "./auth.service";
 import { from, Observable, of } from "rxjs";
 import { catchError, map, tap } from "rxjs";
 import { LoggerService } from "./logger.service";
@@ -69,7 +68,6 @@ export interface ManagedUserAccount {
 })
 export class SuperadminService {
   private supabaseService = inject(SupabaseService);
-  private authService = inject(AuthService);
   private logger = inject(LoggerService);
 
   // Signals for reactive state
@@ -98,7 +96,7 @@ export class SuperadminService {
    * Check if current user is a superadmin
    */
   async checkSuperadminStatus(): Promise<boolean> {
-    const user = this.authService.currentUser();
+    const user = this.supabaseService.currentUser();
     if (!user) {
       this.isSuperadmin.set(false);
       return false;
@@ -343,7 +341,7 @@ export class SuperadminService {
     }
 
     if (input.role === "superadmin") {
-      const currentUser = this.authService.currentUser();
+      const currentUser = this.supabaseService.currentUser();
       const { data: existingSuperadmin, error: existingSuperadminError } =
         await this.supabaseService.client
           .from("superadmins")
@@ -473,7 +471,7 @@ export class SuperadminService {
    */
   async addSuperadmin(userId: string, notes?: string): Promise<boolean> {
     try {
-      const currentUser = this.authService.currentUser();
+      const currentUser = this.supabaseService.currentUser();
 
       const { error } = await this.supabaseService.client
         .from("superadmins")

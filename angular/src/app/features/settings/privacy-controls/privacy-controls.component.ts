@@ -16,7 +16,6 @@ import { Tooltip } from "primeng/tooltip";
 import { StatusTagComponent } from "../../../shared/components/status-tag/status-tag.component";
 import { TOAST } from "../../../core/constants/toast-messages.constants";
 import { AccountDeletionService } from "../../../core/services/account-deletion.service";
-import { AuthService } from "../../../core/services/auth.service";
 import { DataExportService } from "../../../core/services/data-export.service";
 import {
   EmergencyContact,
@@ -24,6 +23,7 @@ import {
   METRIC_CATEGORIES,
   PrivacySettingsService,
 } from "../../../core/services/privacy-settings.service";
+import { SupabaseService } from "../../../core/services/supabase.service";
 import { ToastService } from "../../../core/services/toast.service";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { IconButtonComponent } from "../../../shared/components/button/icon-button.component";
@@ -544,6 +544,7 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
         [modal]="true"
         [blockScroll]="true"
         [draggable]="false"
+        dialogSize="sm"
         ariaLabel="Add emergency contact"
         styleClass="privacy-contact-dialog"
       >
@@ -605,6 +606,7 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
         [modal]="true"
         [blockScroll]="true"
         [draggable]="false"
+        dialogSize="sm"
         ariaLabel="Delete account"
         styleClass="privacy-delete-dialog"
       >
@@ -733,7 +735,7 @@ export class PrivacyControlsComponent implements OnInit {
   private privacyService = inject(PrivacySettingsService);
   private dataExportService = inject(DataExportService);
   private deletionService = inject(AccountDeletionService);
-  private authService = inject(AuthService);
+  private supabase = inject(SupabaseService);
   private toastService = inject(ToastService);
 
   // Design system tokens
@@ -1019,7 +1021,7 @@ export class PrivacyControlsComponent implements OnInit {
     this.exportStep.set("Collecting your data...");
 
     try {
-      const user = this.authService.getUser();
+      const user = this.supabase.currentUser();
       if (!user?.id) {
         this.toastService.error(TOAST.ERROR.NOT_AUTHENTICATED);
         return;

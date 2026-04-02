@@ -17,6 +17,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
+  DestroyRef,
   ElementRef,
   inject,
   OnDestroy,
@@ -24,13 +25,13 @@ import {
   signal,
   viewChild,
 } from "@angular/core";
-import { ActivatedRoute } from "@angular/router";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
+import { ActivatedRoute, ParamMap } from "@angular/router";
 import { Avatar } from "primeng/avatar";
 import { Badge } from "primeng/badge";
 import { Tooltip } from "primeng/tooltip";
 import { TIMEOUTS } from "../../core/constants/app.constants";
 import { TOAST } from "../../core/constants/toast-messages.constants";
-import { AuthService } from "../../core/services/auth.service";
 import {
   Channel,
   ChannelMemberDetails,
@@ -40,7 +41,7 @@ import {
   ChatMessage,
 } from "../../core/services/channel.service";
 import { PresenceService } from "../../core/services/presence.service";
-import { TeamNotificationService } from "../../core/services/team-notification.service";
+import { SupabaseService } from "../../core/services/supabase.service";
 import { ToastService } from "../../core/services/toast.service";
 import { DialogService } from "../../core/ui/dialog.service";
 import { AlertComponent } from "../../shared/components/alert/alert.component";
@@ -90,12 +91,12 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
 
   // Services
   private toastService = inject(ToastService);
-  private authService = inject(AuthService);
+  private supabase = inject(SupabaseService);
   private channelService = inject(ChannelService);
   private presenceService = inject(PresenceService);
-  private notificationService = inject(TeamNotificationService);
   private dialogService = inject(DialogService);
   private route = inject(ActivatedRoute);
+  private destroyRef = inject(DestroyRef);
 
   // State from services
   readonly currentChannel = this.channelService.currentChannel;
@@ -245,7 +246,7 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   // Current user - per audit: use currentUser() signal for reactivity
-  readonly currentUserId = computed(() => this.authService.currentUser()?.id);
+  readonly currentUserId = computed(() => this.supabase.userId());
   readonly isCoach = this.channelService.isCoach;
 
   // New features
@@ -288,6 +289,7 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
 
   // Realtime subscription cleanup
   private channelSubscription: (() => void) | null = null;
+  private currentTeamId: string | null = null;
 
   // Computed for important message banner
   readonly currentImportantMessage = computed(() => {
@@ -298,10 +300,10 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
 
   async ngOnInit(): Promise<void> {
     await this.loadChannels();
-    await this.applyRouteContext();
+    this.observeRouteContext();
 
     // Start presence tracking for the team
-    const teamId = await this.getCurrentTeamId();
+    const teamId = await this.resolveCurrentTeamId();
     if (teamId) {
       await this.presenceService.startTeamPresence(teamId);
     }
@@ -341,8 +343,15 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
-  private async applyRouteContext(): Promise<void> {
-    const queryMap = this.route.snapshot.queryParamMap;
+  private observeRouteContext(): void {
+    this.route.queryParamMap
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((queryMap) => {
+        void this.applyRouteContext(queryMap);
+      });
+  }
+
+  private async applyRouteContext(queryMap: ParamMap): Promise<void> {
     const requestedChannelId = queryMap.get("channel");
     const source = queryMap.get("source");
     const group = queryMap.get("group");
@@ -400,10 +409,8 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
 
   async createChannel(request: ChatChannelCreateRequest): Promise<void> {
     try {
-      // Get team ID (would come from current context in real app)
-      const teamId = await this.getCurrentTeamId();
+      const teamId = await this.requireCurrentTeamId(TOAST.ERROR.NO_TEAM_SELECTED);
       if (!teamId) {
-        this.toastService.error(TOAST.ERROR.NO_TEAM_SELECTED);
         return;
       }
 
@@ -421,7 +428,7 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
       this.toastService.success(
         TOAST.SUCCESS.CHANNEL_CREATED.replace("{name}", channel.name),
       );
-      this.showCreateChannelDialog = false;
+      this.closeCreateChannelDialog();
 
       // Select the new channel
       await this.selectChannel(channel);
@@ -553,7 +560,7 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
 
   async searchMembers(query: string): Promise<void> {
     try {
-      const teamId = await this.getCurrentTeamId();
+      const teamId = await this.resolveCurrentTeamId();
       if (!teamId) {
         this._showMentionSuggestions.set(false);
         return;
@@ -699,7 +706,7 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
   openChannelSettings(): void {
     const channel = this.currentChannel();
     if (channel) {
-      this.showMembersDialog = true;
+      this.openMembersDialog();
       void this.loadChannelMembers();
     }
   }
@@ -734,19 +741,18 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
       void this.loadChannelMembers();
       return;
     }
-    this.memberSearchQuery = "";
+    this.resetMembersDialogState();
   }
 
   async startDirectMessage(member: ChannelMemberDetails): Promise<void> {
-    const currentUserId = this.authService.getUser()?.id;
+    const currentUserId = this.currentUserId();
     if (!currentUserId || member.user_id === currentUserId) {
       return;
     }
 
     try {
-      const teamId = await this.getCurrentTeamId();
+      const teamId = await this.requireCurrentTeamId(TOAST.ERROR.NO_TEAM_FOUND);
       if (!teamId) {
-        this.toastService.error(TOAST.ERROR.NO_TEAM_FOUND);
         return;
       }
 
@@ -756,8 +762,7 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
         teamId,
       );
 
-      // Close the members dialog
-      this.showMembersDialog = false;
+      this.closeMembersDialog();
 
       // Select the DM channel
       await this.selectChannel(dmChannel);
@@ -770,17 +775,55 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
-  private async getCurrentTeamId(): Promise<string | null> {
-    // Would get from current context/route
-    // For now, get first team user belongs to
-    const userId = this.authService.getUser()?.id;
+  private async resolveCurrentTeamId(): Promise<string | null> {
+    if (this.currentTeamId) {
+      return this.currentTeamId;
+    }
+
+    const userId = this.currentUserId();
     if (!userId) return null;
 
-    return await this.channelService.fetchCurrentTeamId();
+    this.currentTeamId = await this.channelService.fetchCurrentTeamId();
+    return this.currentTeamId;
+  }
+
+  private async requireCurrentTeamId(
+    errorMessage: string,
+  ): Promise<string | null> {
+    const teamId = await this.resolveCurrentTeamId();
+    if (!teamId) {
+      this.toastService.error(errorMessage);
+    }
+    return teamId;
   }
 
   sendQuickReply(reply: string): void {
     this.newMessage = reply;
     this.sendMessage();
+  }
+
+  openCreateChannelDialog(): void {
+    this.showCreateChannelDialog = true;
+  }
+
+  closeCreateChannelDialog(): void {
+    this.showCreateChannelDialog = false;
+  }
+
+  openPinnedMessagesDialog(): void {
+    this.showPinnedMessages = true;
+  }
+
+  openMembersDialog(): void {
+    this.showMembersDialog = true;
+  }
+
+  closeMembersDialog(): void {
+    this.showMembersDialog = false;
+    this.resetMembersDialogState();
+  }
+
+  private resetMembersDialogState(): void {
+    this.memberSearchQuery = "";
   }
 }

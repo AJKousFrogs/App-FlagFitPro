@@ -1,5 +1,5 @@
-import { Component, ChangeDetectionStrategy } from "@angular/core";
-import { RouterModule } from "@angular/router";
+import { Component, ChangeDetectionStrategy, inject } from "@angular/core";
+import { Router, RouterModule } from "@angular/router";
 import { ButtonComponent } from "../../shared/components/button/button.component";
 import { PageErrorStateComponent } from "../../shared/components/page-error-state/page-error-state.component";
 
@@ -46,12 +46,13 @@ import { PageErrorStateComponent } from "../../shared/components/page-error-stat
   styleUrl: "./not-found.component.scss",
 })
 export class NotFoundComponent {
+  private readonly router = inject(Router);
+
   goBack(): void {
     if (typeof window !== "undefined" && window.history.length > 1) {
       window.history.back();
     } else {
-      // Fallback to dashboard if no history
-      window.location.href = "/dashboard";
+      void this.router.navigate(["/dashboard"]);
     }
   }
 }

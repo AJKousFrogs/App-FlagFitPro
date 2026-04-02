@@ -11,7 +11,6 @@ import {
   InstagramPlaylist,
   InstagramVideo,
 } from "../../../core/services/instagram-video.service";
-import { AuthService } from "../../../core/services/auth.service";
 import { RealtimeService } from "../../../core/services/realtime.service";
 import { SupabaseService } from "../../../core/services/supabase.service";
 import { TeamMembershipService } from "../../../core/services/team-membership.service";
@@ -49,7 +48,6 @@ interface DatabaseVideoPlaylistRow {
 })
 export class VideoCurationService {
   private instagramService = inject(InstagramVideoService);
-  private authService = inject(AuthService);
   private realtimeService = inject(RealtimeService);
   private supabaseService = inject(SupabaseService);
   private teamMembershipService = inject(TeamMembershipService);
@@ -143,6 +141,10 @@ export class VideoCurationService {
   );
 
   // Methods
+  private currentUserId(): string | null {
+    return this.supabaseService.userId();
+  }
+
   getAllVideos(): InstagramVideo[] {
     return this.instagramService.getAllVideos();
   }
@@ -204,10 +206,10 @@ export class VideoCurationService {
 
   // Playlist operations
   async createPlaylist(form: PlaylistForm): Promise<InstagramPlaylist | null> {
-    const user = this.authService.getUser();
+    const userId = this.currentUserId();
     const membership = await this.teamMembershipService.loadMembership();
 
-    if (!user?.id || !membership?.teamId) {
+    if (!userId || !membership?.teamId) {
       this.toastService.error("Join a team before creating shared playlists");
       return null;
     }
@@ -215,7 +217,7 @@ export class VideoCurationService {
     try {
       const payload = {
         team_id: membership.teamId,
-        created_by: user.id,
+        created_by: userId,
         name: form.name.trim(),
         description: form.description.trim() || null,
         position: form.position || null,
@@ -283,13 +285,13 @@ export class VideoCurationService {
   // Player suggestion operations
   async approveSuggestion(suggestion: PlayerSuggestion): Promise<void> {
     try {
-      const user = this.authService.getUser();
+      const userId = this.currentUserId();
 
       const { error } = await this.supabaseService.client
         .from("video_suggestions")
         .update({
           status: "approved",
-          reviewed_by: user?.id,
+          reviewed_by: userId,
           reviewed_at: new Date().toISOString(),
         })
         .eq("id", suggestion.id);
@@ -312,13 +314,13 @@ export class VideoCurationService {
 
   async rejectSuggestion(suggestion: PlayerSuggestion): Promise<void> {
     try {
-      const user = this.authService.getUser();
+      const userId = this.currentUserId();
 
       const { error } = await this.supabaseService.client
         .from("video_suggestions")
         .update({
           status: "rejected",
-          reviewed_by: user?.id,
+          reviewed_by: userId,
           reviewed_at: new Date().toISOString(),
         })
         .eq("id", suggestion.id);
@@ -381,11 +383,11 @@ export class VideoCurationService {
   }
 
   async loadPlaylists(teamId?: string | null): Promise<void> {
-    const user = this.authService.getUser();
+    const userId = this.currentUserId();
     const resolvedTeamId =
       teamId || (await this.teamMembershipService.loadMembership())?.teamId;
 
-    if (!user?.id || !resolvedTeamId) {
+    if (!userId || !resolvedTeamId) {
       this.playlists.set([]);
       return;
     }
@@ -404,7 +406,7 @@ export class VideoCurationService {
       if (playlistRows.length === 0) {
         const migrated = await this.migrateLegacyPlaylists(
           resolvedTeamId,
-          user.id,
+          userId,
         );
         if (migrated) {
           await this.loadPlaylists(resolvedTeamId);
@@ -441,15 +443,15 @@ export class VideoCurationService {
     status: "approved" | "rejected",
   ): Promise<void> {
     try {
-      const user = this.authService.getUser();
+      const userId = this.currentUserId();
       const membership = await this.teamMembershipService.loadMembership();
-      if (!user?.id || !membership?.teamId) return;
+      if (!userId || !membership?.teamId) return;
 
       await this.supabaseService.client.from("video_curation_status").upsert({
         team_id: membership.teamId,
         video_id: videoId,
         status,
-        updated_by: user.id,
+        updated_by: userId,
         updated_at: new Date().toISOString(),
       });
     } catch (error) {

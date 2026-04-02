@@ -36,9 +36,9 @@ import { Router, RouterModule } from "@angular/router";
 import { Timeline } from "primeng/timeline";
 import { of } from "rxjs";
 import { catchError } from "rxjs";
-import { AuthService } from "../../core/services/auth.service";
 import { HeaderService } from "../../core/services/header.service";
 import { LoggerService } from "../../core/services/logger.service";
+import { SupabaseService } from "../../core/services/supabase.service";
 import { TrainingStatsCalculationService } from "../../core/services/training-stats-calculation.service";
 import { UnifiedTrainingService } from "../../core/services/unified-training.service";
 import { WellnessService } from "../../core/services/wellness.service";
@@ -151,7 +151,7 @@ interface AnnouncementBanner {
 })
 export class PlayerDashboardComponent {
   private readonly router = inject(Router);
-  private readonly authService = inject(AuthService);
+  private readonly supabase = inject(SupabaseService);
   private readonly headerService = inject(HeaderService);
   private readonly trainingStatsService = inject(
     TrainingStatsCalculationService,
@@ -189,8 +189,8 @@ export class PlayerDashboardComponent {
 
   // User info
   userName = signal("Athlete");
-  // Per audit: use currentUser() signal for reactivity, not getUser() method
-  currentUserId = computed(() => this.authService.currentUser()?.id ?? "");
+  private readonly currentUser = computed(() => this.supabase.currentUser());
+  currentUserId = computed(() => this.currentUser()?.id ?? "");
   private overviewLoadedForUser = signal<string | null>(null);
 
   // Announcement
@@ -516,9 +516,13 @@ export class PlayerDashboardComponent {
     this.hasError.set(false);
 
     // Load user info
-    const user = this.authService.getUser();
-    if (user?.name) {
-      this.userName.set(user.name.split(" ")[0]);
+    const user = this.currentUser();
+    const metadata = user?.user_metadata as
+      | { fullName?: string; firstName?: string }
+      | undefined;
+    const fullName = metadata?.fullName || metadata?.firstName;
+    if (fullName) {
+      this.userName.set(fullName.split(" ")[0]);
     }
 
     // Initialize week days
@@ -544,57 +548,58 @@ export class PlayerDashboardComponent {
         }),
       )
       .subscribe((stats) => {
-        // CRITICAL: Only set ACWR if we have real data - no fallback defaults
-        if (stats?.acwr !== undefined && typeof stats.acwr === "number") {
-          this.acwr.set(stats.acwr);
-        } else {
-          this.acwr.set(null); // No data - show empty state
-        }
-
-        this.currentStreak.set(stats?.currentStreak ?? 0);
-        this.weeklySessionsCompleted.set(stats?.weeklySessions ?? 0);
-
-        // Training days logged: use when backend provides it; fallback to null
-        const statsWithDays = stats as
-          | (typeof stats & { trainingDaysLogged?: number | null })
-          | null;
-        this.trainingDaysLogged.set(statsWithDays?.trainingDaysLogged ?? null);
-
-        // Load readiness score from wellness service
-        this.loadReadinessScore();
-
-        // Load continuity events
-        this.loadContinuityEvents();
-
-        // Load privacy settings
-        // Note: loadTeamSettings is a private method, handled internally by the service
-
-        // Load ACWR spike detection if ACWR is high
-        this.checkAcwrSpike();
-
-        // Phase 2.1 - Load recent coach override notifications
-        this.loadRecentOverrides();
-
-        // Phase 2.1 - Load active ownership transitions
-        this.loadActiveTransitions();
-
-        // Phase 2.2 - Load missing wellness data status
-        this.loadMissingWellnessStatus();
-
-        // The chart data (weeklyData with label/value) will come from the API
-        // this.performanceService.getWeeklyTrend().subscribe(...)
-        // For now, performanceChartData remains null (shows empty state)
-
-        // Today's schedule is loaded via UnifiedTrainingService.todaysScheduleItems()
-        // which is computed from weeklySchedule signal. Data is loaded by getTodayOverview()
-        // or loadAllTrainingData() which is called during component initialization.
-
-        // The events data (day, month, title, type, typeLabel) will come from the API
-        // this.eventsService.getUpcomingEvents().subscribe(...)
-        // For now, upcomingEvents remains empty (section hidden)
-
+        this.applyTrainingStats(stats);
+        this.refreshDashboardInsights();
         this.isLoading.set(false);
       });
+  }
+
+  private applyTrainingStats(
+    stats:
+      | {
+          acwr?: number | null;
+          currentStreak?: number;
+          weeklySessions?: number;
+          trainingDaysLogged?: number | null;
+        }
+      | null
+      | undefined,
+  ): void {
+    // CRITICAL: Only set ACWR if we have real data - no fallback defaults
+    if (stats?.acwr !== undefined && typeof stats.acwr === "number") {
+      this.acwr.set(stats.acwr);
+    } else {
+      this.acwr.set(null);
+    }
+
+    this.currentStreak.set(stats?.currentStreak ?? 0);
+    this.weeklySessionsCompleted.set(stats?.weeklySessions ?? 0);
+    this.trainingDaysLogged.set(stats?.trainingDaysLogged ?? null);
+  }
+
+  private refreshDashboardInsights(): void {
+    this.loadReadinessScore();
+    this.loadContinuityEvents();
+    this.checkAcwrSpike();
+    this.loadRecentOverrides();
+    this.loadActiveTransitions();
+    this.loadMissingWellnessStatus();
+
+    // The chart data (weeklyData with label/value) will come from the API
+    // this.performanceService.getWeeklyTrend().subscribe(...)
+    // For now, performanceChartData remains null (shows empty state)
+
+    // Today's schedule is loaded via UnifiedTrainingService.todaysScheduleItems()
+    // which is computed from weeklySchedule signal. Data is loaded by getTodayOverview()
+    // or loadAllTrainingData() which is called during component initialization.
+
+    // The events data (day, month, title, type, typeLabel) will come from the API
+    // this.eventsService.getUpcomingEvents().subscribe(...)
+    // For now, upcomingEvents remains empty (section hidden)
+  }
+
+  private getCurrentUserId(): string | null {
+    return this.currentUserId() || null;
   }
 
   private loadReadinessScore(): void {
@@ -612,11 +617,11 @@ export class PlayerDashboardComponent {
   }
 
   private async loadContinuityEvents(): Promise<void> {
-    const user = this.authService.getUser();
-    if (!user?.id) return;
+    const userId = this.getCurrentUserId();
+    if (!userId) return;
 
     try {
-      const events = await this.continuityService.getPlayerContinuity(user.id);
+      const events = await this.continuityService.getPlayerContinuity(userId);
       this.continuityEvents.set(events);
     } catch (error) {
       this.logger.error("[Dashboard] Error loading continuity events:", error);
@@ -624,13 +629,13 @@ export class PlayerDashboardComponent {
   }
 
   private async checkAcwrSpike(): Promise<void> {
-    const user = this.authService.getUser();
-    if (!user?.id) return;
+    const userId = this.getCurrentUserId();
+    if (!userId) return;
 
     const acwrValue = this.acwr();
     if (acwrValue !== null && acwrValue > 1.5) {
       try {
-        await this.acwrSpikeDetection.checkAndCapLoad(user.id, acwrValue);
+        await this.acwrSpikeDetection.checkAndCapLoad(userId, acwrValue);
         // Reload continuity events to show the new load cap
         await this.loadContinuityEvents();
       } catch (error) {
@@ -898,37 +903,38 @@ export class PlayerDashboardComponent {
    */
   async contactCoach(): Promise<void> {
     try {
-      const teamId = this.teamMembershipService.teamId();
-      if (!teamId) {
-        this.toastService.warn(TOAST.WARN.NO_TEAM);
-        this.router.navigate(["/team-chat"]);
-        return;
-      }
-
-      // Get coach using centralized service
-      const coach = await this.teamMembershipService.getTeamCoach();
-      if (!coach?.userId) {
-        this.toastService.warn(TOAST.WARN.NO_COACH);
-        this.router.navigate(["/team-chat"]);
-        return;
-      }
-
-      // Create or find existing DM channel with the coach
-      const dmChannel = await this.channelService.createDirectMessage(
-        coach.userId,
-        teamId,
-      );
-
-      // Navigate to team chat with the DM channel selected
-      this.router.navigate(["/team-chat"], {
-        queryParams: { channel: dmChannel.id },
-      });
+      const dmChannelId = await this.resolveCoachDirectMessageChannel();
+      this.navigateToTeamChat(dmChannelId ? { channel: dmChannelId } : undefined);
     } catch (error) {
       this.logger.error("Error contacting coach:", error);
       this.toastService.error(TOAST.ERROR.CHAT_START_FAILED);
-      // Fallback to team chat
-      this.router.navigate(["/team-chat"]);
+      this.navigateToTeamChat();
     }
+  }
+
+  private async resolveCoachDirectMessageChannel(): Promise<string | null> {
+    const teamId = this.teamMembershipService.teamId();
+    if (!teamId) {
+      this.toastService.warn(TOAST.WARN.NO_TEAM);
+      return null;
+    }
+
+    const coach = await this.teamMembershipService.getTeamCoach();
+    if (!coach?.userId) {
+      this.toastService.warn(TOAST.WARN.NO_COACH);
+      return null;
+    }
+
+    const dmChannel = await this.channelService.createDirectMessage(
+      coach.userId,
+      teamId,
+    );
+
+    return dmChannel.id;
+  }
+
+  private navigateToTeamChat(queryParams?: { channel: string }): void {
+    this.router.navigate(["/team-chat"], queryParams ? { queryParams } : undefined);
   }
 
   /**

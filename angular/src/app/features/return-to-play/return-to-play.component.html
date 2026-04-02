@@ -363,7 +363,7 @@
               <app-table
                 [data]="recentCheckins()"
                 [rows]="5"
-                styleClass="p-datatable-sm"
+                density="sm"
               >
                 <ng-template #header>
                   <tr>
@@ -396,7 +396,7 @@
       <!-- Start Protocol Dialog -->
       <app-dialog
         [visible]="showStartDialog()"
-        (visibleChange)="showStartDialog.set($event)"
+        (visibleChange)="onStartDialogVisibleChange($event)"
         [modal]="true"
         [closable]="false"
         [draggable]="false"

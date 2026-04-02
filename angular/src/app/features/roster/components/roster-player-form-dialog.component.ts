@@ -69,7 +69,7 @@ export interface PlayerFormData {
       [blockScroll]="true"
       [draggable]="false"
       [ariaLabel]="editingPlayer() ? 'Edit player dialog' : 'Add new player dialog'"
-      styleClass="roster-player-dialog"
+      dialogSize="xl"
     >
       <app-dialog-header
         icon="user-edit"

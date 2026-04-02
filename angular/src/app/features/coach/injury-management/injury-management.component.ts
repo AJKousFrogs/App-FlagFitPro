@@ -533,23 +533,7 @@ export class InjuryManagementComponent implements OnInit {
     });
   }
 
-  private generateTimeOptions() {
-    const options = [];
-    for (let h = 6; h <= 21; h++) {
-      for (const m of ["00", "30"]) {
-        const hour = h > 12 ? h - 12 : h === 0 ? 12 : h;
-        const ampm = h >= 12 ? "PM" : "AM";
-        options.push({
-          label: `${hour}:${m} ${ampm}`,
-          value: `${hour}:${m} ${ampm}`,
-        });
-      }
-    }
-    return options;
-  }
-
-  // Dialog methods
-  openReportDialog(): void {
+  private resetReportForm(): void {
     const defaults = this.getEmptyReportForm();
     this.reportFormGroup.reset({
       playerId: defaults.playerId,
@@ -566,6 +550,48 @@ export class InjuryManagementComponent implements OnInit {
       actionMedicalContacted: defaults.actions.medicalContacted,
       actionSentForImaging: defaults.actions.sentForImaging,
     });
+  }
+
+  private resetCheckinForm(injury?: InjuryRecord | null): void {
+    const defaults: CheckinForm =
+      injury?.todayCheckin
+        ? { ...injury.todayCheckin }
+        : { painLevel: 0, functionLevel: 5, confidenceLevel: 5, notes: "" };
+    this.checkinFormGroup.reset(defaults);
+  }
+
+  private generateTimeOptions() {
+    const options = [];
+    for (let h = 6; h <= 21; h++) {
+      for (const m of ["00", "30"]) {
+        const hour = h > 12 ? h - 12 : h === 0 ? 12 : h;
+        const ampm = h >= 12 ? "PM" : "AM";
+        options.push({
+          label: `${hour}:${m} ${ampm}`,
+          value: `${hour}:${m} ${ampm}`,
+        });
+      }
+    }
+    return options;
+  }
+
+  // Dialog methods
+  closeReportDialog(): void {
+    this.showReportDialog = false;
+    this.resetReportForm();
+  }
+
+  closeCheckinDialog(): void {
+    this.showCheckinDialog = false;
+    this.resetCheckinForm(this.selectedInjury);
+  }
+
+  closeRtpDetailsDialog(): void {
+    this.showRtpDetailsDialog = false;
+  }
+
+  openReportDialog(): void {
+    this.resetReportForm();
     this.showReportDialog = true;
   }
 
@@ -575,22 +601,19 @@ export class InjuryManagementComponent implements OnInit {
       return;
     }
     this.toastService.success("RTP protocol has been initiated", "Injury Reported");
-    this.showReportDialog = false;
+    this.closeReportDialog();
     // Would submit to API
   }
 
   openCheckinDialog(injury: InjuryRecord): void {
     this.selectedInjury = injury;
-    const defaults: CheckinForm = injury.todayCheckin
-      ? { ...injury.todayCheckin }
-      : { painLevel: 0, functionLevel: 5, confidenceLevel: 5, notes: "" };
-    this.checkinFormGroup.reset(defaults);
+    this.resetCheckinForm(injury);
     this.showCheckinDialog = true;
   }
 
   submitCheckin(): void {
     this.toastService.success("Progress has been recorded", "Check-in Saved");
-    this.showCheckinDialog = false;
+    this.closeCheckinDialog();
   }
 
   // Actions

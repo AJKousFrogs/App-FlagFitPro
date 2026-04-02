@@ -18,9 +18,7 @@
   display: flex;
   align-items: center;
   gap: var(--space-3);
-  padding: var(--space-3);
-  background: var(--surface-secondary);
-  border-radius: var(--radius-md);
+  @include surface-panel();
 }
 
 .car-protocol-dashboard {
@@ -54,22 +52,17 @@
 }
 
 .olympic-btn {
-  display: flex;
-  flex-direction: row; /* Icon left of text */
-  align-items: center;
-  gap: var(--space-4);
-  min-height: calc(var(--card-min-height-sm) + var(--space-4));
-  padding: var(--component-card-padding-compact);
-  border: var(--border-1) solid var(--surface-border);
-  border-radius: var(--component-card-radius);
-  background: var(--surface-primary);
-  cursor: pointer;
+  @include selectable-panel(
+    $padding: var(--component-card-padding-compact),
+    $radius: var(--component-card-radius),
+    $border-color: var(--surface-border),
+    $min-height: calc(var(--card-min-height-sm) + var(--space-4))
+  );
+  border-width: var(--border-1);
   transition:
     border-color var(--transition-fast) var(--ease-standard),
     box-shadow var(--transition-fast) var(--ease-standard),
     transform var(--transition-fast) var(--ease-standard);
-  box-shadow: var(--shadow-sm);
-  text-align: left;
 
   &:hover {
     border-color: var(--ds-primary-green);
@@ -290,22 +283,17 @@
 }
 
 .type-btn {
-  display: flex;
-  flex-direction: row; /* Icon left of text */
-  align-items: center;
-  gap: var(--space-4);
-  min-height: calc(var(--card-min-height-sm) + var(--space-4));
-  padding: var(--component-card-padding-compact);
-  border: var(--border-1) solid var(--surface-border);
-  border-radius: var(--component-card-radius);
-  background: var(--surface-primary);
-  cursor: pointer;
+  @include selectable-panel(
+    $padding: var(--component-card-padding-compact),
+    $radius: var(--component-card-radius),
+    $border-color: var(--surface-border),
+    $min-height: calc(var(--card-min-height-sm) + var(--space-4))
+  );
+  border-width: var(--border-1);
   transition:
     border-color var(--transition-fast) var(--ease-standard),
     box-shadow var(--transition-fast) var(--ease-standard),
     transform var(--transition-fast) var(--ease-standard);
-  box-shadow: var(--shadow-sm);
-  text-align: left;
 
   &:hover {
     border-color: var(--ds-primary-green);
@@ -457,9 +445,7 @@
 
 .risk-factors,
 .risk-recommendations {
-  padding: var(--space-3);
-  background: var(--surface-secondary);
-  border-radius: var(--radius-md);
+  @include surface-panel();
 
   h4 {
     margin: 0 0 var(--space-2) 0;
@@ -574,9 +560,7 @@
 .timing-item {
   display: flex;
   gap: var(--space-3);
-  padding: var(--space-3);
-  background: var(--surface-secondary);
-  border-radius: var(--radius-md);
+  @include surface-panel();
 
   i {
     font-size: var(--ds-font-size-3xl);
@@ -596,9 +580,9 @@
 }
 
 .compression-cautions {
-  padding: var(--space-3);
-  background: rgba(var(--primitive-amber-500-rgb), 0.1);
-  border-radius: var(--radius-md);
+  @include surface-panel(
+    $background: rgba(var(--primitive-amber-500-rgb), 0.1)
+  );
   margin-bottom: var(--space-3);
 
   h4 {
@@ -620,9 +604,10 @@
   display: flex;
   align-items: flex-start;
   gap: var(--space-2);
-  padding: var(--space-2);
-  background: var(--surface-secondary);
-  border-radius: var(--radius-sm);
+  @include surface-panel(
+    $padding: var(--space-2),
+    $radius: var(--radius-sm)
+  );
   font-style: italic;
 
   i {
@@ -665,9 +650,7 @@
 }
 
 .muscle-item {
-  padding: var(--space-3);
-  background: var(--surface-secondary);
-  border-radius: var(--radius-md);
+  @include surface-panel();
 }
 
 .muscle-header {
@@ -698,9 +681,9 @@
 }
 
 .massage-cautions {
-  padding: var(--space-3);
-  background: rgba(var(--primitive-error-500-rgb), 0.1);
-  border-radius: var(--radius-md);
+  @include surface-panel(
+    $background: rgba(var(--primitive-error-500-rgb), 0.1)
+  );
   margin-bottom: var(--space-3);
 
   h5 {
@@ -735,9 +718,10 @@
 }
 
 .exercise-card {
-  padding: var(--space-4);
-  background: var(--surface-secondary);
-  border-radius: var(--radius-lg);
+  @include surface-panel(
+    $padding: var(--space-4),
+    $radius: var(--radius-lg)
+  );
   border-left: var(--space-1) solid var(--color-brand-primary);
 }
 
@@ -800,9 +784,10 @@
 .rest-stop-item {
   display: flex;
   gap: var(--space-4);
-  padding: var(--space-4);
-  background: var(--surface-secondary);
-  border-radius: var(--radius-lg);
+  @include surface-panel(
+    $padding: var(--space-4),
+    $radius: var(--radius-lg)
+  );
 }
 
 .stop-marker {
@@ -831,8 +816,11 @@
   display: flex;
   align-items: center;
   gap: var(--space-2);
-  padding: var(--space-2);
-  border-radius: var(--radius-sm);
+  @include surface-panel(
+    $padding: var(--space-2),
+    $background: transparent,
+    $radius: var(--radius-sm)
+  );
 
   &.importance-critical {
     background: rgba(var(--primitive-error-500-rgb), 0.1);
@@ -874,9 +862,9 @@
   }
 
   .recommendation {
-    padding: var(--space-3);
-    background: var(--color-brand-light);
-    border-radius: var(--radius-md);
+    @include surface-panel(
+      $background: var(--color-brand-light)
+    );
     font-size: var(--ds-font-size-md);
   }
 }
@@ -907,7 +895,7 @@
   }
 }
 
-@media (min-width: var(--breakpoint-xl-min)) and (max-width: var(--breakpoint-xl-max)) {
+@include respond-between(xl-min, xl-max) {
   .protocol-grid {
     grid-template-columns: repeat(3, 1fr);
   }
@@ -917,7 +905,7 @@
   }
 }
 
-@media (min-width: var(--breakpoint-lg)) and (max-width: var(--breakpoint-lg-max)) {
+@include respond-between(lg, lg-max) {
   .protocol-grid {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -927,7 +915,7 @@
   }
 }
 
-@media (min-width: var(--breakpoint-md-min)) and (max-width: var(--breakpoint-lg)) {
+@include respond-between(md-min, lg) {
   .protocol-grid {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -947,6 +935,22 @@
 }
 
 @include respond-to(md) {
+  .driver-toggle,
+  .form-actions,
+  .timeline-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .timeline-day {
+    min-width: 0;
+  }
+
+  .timeline-summary {
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+
   .severity-content {
     flex-direction: column;
     align-items: center;
@@ -1001,7 +1005,7 @@
   }
 }
 
-@media (min-width: var(--breakpoint-xs-narrow)) and (max-width: var(--breakpoint-md)) {
+@include respond-between(xs-narrow, md) {
   .olympic-buttons {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -1052,7 +1056,7 @@
 }
 
 // Touch Device Optimizations
-@media (hover: none) and (pointer: coarse) {
+@include touch-device {
   .olympic-btn:hover {
     transform: none;
   }

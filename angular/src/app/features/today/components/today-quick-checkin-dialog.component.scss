@@ -1,0 +1,10 @@
+.quick-checkin-form {
+  padding: 0 var(--space-4) var(--space-4);
+}
+
+@media (max-width: 26.875rem) {
+  .quick-checkin-form {
+    padding-inline: var(--space-3);
+    padding-bottom: var(--space-3);
+  }
+}

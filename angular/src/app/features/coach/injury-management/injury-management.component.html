@@ -394,17 +394,16 @@
       <app-dialog
         [(visible)]="showReportDialog"
         [modal]="true"
-        styleClass="injury-report-dialog"
+        dialogSize="xl"
         [blockScroll]="true"
         [draggable]="false"
-        [breakpoints]="{ '960px': '92vw', '640px': '96vw' }"
         ariaLabel="Report injury"
       >
         <app-dialog-header
           icon="heart"
           title="Report Injury"
           subtitle="Capture the incident details and start the return-to-play process."
-          (close)="showReportDialog = false"
+          (close)="closeReportDialog()"
         />
         <form [formGroup]="reportFormGroup" class="report-form">
           <div class="form-field">
@@ -600,7 +599,7 @@
           primaryLabel="Report & Start RTP"
           primaryIcon="check"
           [disabled]="reportFormGroup.invalid"
-          (cancel)="showReportDialog = false"
+          (cancel)="closeReportDialog()"
           (primary)="submitReport()"
         />
       </app-dialog>
@@ -609,17 +608,16 @@
       <app-dialog
         [(visible)]="showCheckinDialog"
         [modal]="true"
-        styleClass="injury-checkin-dialog"
+        dialogSize="lg"
         [blockScroll]="true"
         [draggable]="false"
-        [breakpoints]="{ '960px': '92vw', '640px': '96vw' }"
         ariaLabel="Update injury progress"
       >
         <app-dialog-header
           icon="chart-line"
           title="Update Progress"
           subtitle="Log today's recovery pain, function, and confidence scores."
-          (close)="showCheckinDialog = false"
+          (close)="closeCheckinDialog()"
         />
         <form [formGroup]="checkinFormGroup" class="checkin-form">
           <div class="form-field">
@@ -665,7 +663,7 @@
           cancelLabel="Cancel"
           primaryLabel="Save Check-in"
           primaryIcon="check"
-          (cancel)="showCheckinDialog = false"
+          (cancel)="closeCheckinDialog()"
           (primary)="submitCheckin()"
         />
       </app-dialog>
@@ -676,14 +674,13 @@
         styleClass="injury-rtp-dialog"
         [blockScroll]="true"
         [draggable]="false"
-        [breakpoints]="{ '960px': '92vw', '640px': '96vw' }"
         ariaLabel="Return to play details"
       >
         <app-dialog-header
           icon="heart"
           [title]="selectedInjury?.playerName ? selectedInjury?.playerName + ' RTP Plan' : 'Return-to-Play Plan'"
           subtitle="Review recovery stage, restrictions, and progression criteria."
-          (close)="showRtpDetailsDialog = false"
+          (close)="closeRtpDetailsDialog()"
         />
 
         @if (selectedInjury; as injury) {
@@ -759,7 +756,7 @@
           cancelLabel="Close"
           primaryLabel="Update Progress"
           primaryIcon="chart-line"
-          (cancel)="showRtpDetailsDialog = false"
+          (cancel)="closeRtpDetailsDialog()"
           (primary)="selectedInjury && openCheckinDialog(selectedInjury)"
         />
       </app-dialog>

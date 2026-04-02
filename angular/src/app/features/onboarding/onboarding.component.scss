@@ -183,32 +183,10 @@
 
   .unit-option {
     flex: 1;
-    padding: var(--space-5) var(--space-4);
-    border: var(--border-2) solid var(--color-border-muted);
-    border-radius: var(--radius-xl);
-    text-align: center;
-    cursor: pointer;
-
-    @include card-transition;
-    display: flex;
-    align-items: center;
-    gap: var(--space-4);
-    background: var(--surface-primary);
-    box-shadow: var(--shadow-sm);
-    min-height: var(--card-min-height-sm);
+    @include selectable-panel($padding: var(--space-5) var(--space-4), $text-align: center);
 
     .unit-radio {
-      width: var(--avatar-size-sm);
-      height: var(--avatar-size-sm);
-      border-radius: var(--radius-circle);
-      border: var(--border-2) solid var(--color-border-primary);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-
-      @include card-transition;
-      background: var(--surface-secondary);
+      @include selectable-indicator();
 
       i {
         font-size: var(--ds-font-size-xs);
@@ -293,33 +271,15 @@
 
   .arm-option {
     flex: 1;
-    padding: var(--space-4) var(--space-5);
-    border: var(--border-2) solid var(--color-border-muted);
-    border-radius: var(--radius-xl);
-    cursor: pointer;
-
-    @include card-transition;
-    font-weight: var(--ds-font-weight-medium);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: var(--space-3);
-    background: var(--surface-primary);
-    box-shadow: var(--shadow-sm);
-    min-height: var(--card-min-height-sm);
+    @include selectable-panel(
+      $padding: var(--space-4) var(--space-5),
+      $gap: var(--space-3),
+      $justify: center,
+      $font-weight: var(--ds-font-weight-medium)
+    );
 
     .arm-radio {
-      width: var(--space-6);
-      height: var(--space-6);
-      border-radius: var(--radius-circle);
-      border: var(--border-2) solid var(--color-border-primary);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-
-      @include card-transition;
-      background: var(--surface-secondary);
-      flex-shrink: 0;
+      @include selectable-indicator($size: var(--space-6));
 
       i {
         font-size: var(--ds-font-size-xs);
@@ -377,20 +337,12 @@
   }
 
   .user-type-option {
-    padding: var(--space-6);
-    border: var(--border-2) solid var(--color-border-muted);
-    border-radius: var(--radius-xl);
-    cursor: pointer;
-
-    @include card-transition;
-    display: flex;
-    align-items: flex-start;
-    gap: var(--space-4);
-    background: var(--surface-primary);
-    text-align: left;
-    box-shadow: var(--shadow-sm);
-    position: relative;
-    overflow: hidden;
+    @include selectable-panel(
+      $padding: var(--space-6),
+      $align: flex-start,
+      $position: relative,
+      $overflow: hidden
+    );
 
     &::before {
       content: "";
@@ -405,19 +357,10 @@
     }
 
     .type-radio {
-      width: var(--avatar-size-sm);
-      height: var(--avatar-size-sm);
-      min-width: var(--avatar-size-sm);
-      border-radius: var(--radius-circle);
-      border: var(--border-2) solid var(--color-border-primary);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-
-      @include card-transition;
-      margin-top: var(--space-1);
-      background: var(--surface-secondary);
-      flex-shrink: 0;
+      @include selectable-indicator(
+        $min-width: var(--avatar-size-sm),
+        $margin-top: var(--space-1)
+      );
 
       i {
         font-size: var(--ds-font-size-xs);
@@ -551,20 +494,14 @@
   }
 
   .goal-card {
-    padding: var(--space-6);
-    border: var(--border-2) solid var(--color-border-muted);
-    border-radius: var(--radius-xl);
-    cursor: pointer;
-
-    @include card-transition;
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: var(--space-3);
-    background: var(--surface-primary);
-    box-shadow: var(--shadow-sm);
-    min-height: var(--card-min-height-lg);
+    @include selectable-panel(
+      $padding: var(--space-6),
+      $gap: var(--space-3),
+      $direction: column,
+      $text-align: center,
+      $position: relative,
+      $min-height: var(--card-min-height-lg)
+    );
 
     .goal-check {
       position: absolute;
@@ -651,19 +588,14 @@
   }
 
   .day-chip {
-    padding: var(--space-3) var(--space-5);
-    border: var(--border-2) solid var(--color-border-muted);
-    border-radius: var(--radius-full);
-    cursor: pointer;
-
-    @include card-transition;
+    @include selectable-panel(
+      $padding: var(--space-3) var(--space-5),
+      $gap: var(--space-2),
+      $radius: var(--radius-full),
+      $text-align: center
+    );
     font-size: var(--ds-font-size-sm);
     font-weight: var(--ds-font-weight-semibold);
-    background: var(--surface-primary);
-    display: flex;
-    align-items: center;
-    gap: var(--space-2);
-    box-shadow: var(--shadow-sm);
     min-height: var(--input-height);
 
     .day-label {
@@ -672,17 +604,10 @@
     }
 
     .day-check {
-      width: var(--avatar-size-xs);
-      height: var(--avatar-size-xs);
-      min-width: var(--avatar-size-xs);
-      border-radius: var(--radius-circle);
-      background: var(--surface-secondary);
-      border: var(--border-2) solid var(--color-border-primary);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-
-      @include card-transition;
+      @include selectable-indicator(
+        $size: var(--avatar-size-xs),
+        $min-width: var(--avatar-size-xs)
+      );
 
       i {
         font-size: var(--ds-font-size-xs);
@@ -734,20 +659,14 @@
   }
 
   .equipment-card {
-    padding: var(--space-5);
-    border: var(--border-2) solid var(--color-border-muted);
-    border-radius: var(--radius-xl);
-    cursor: pointer;
-
-    @include card-transition;
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: var(--space-3);
-    background: var(--surface-primary);
-    box-shadow: var(--shadow-sm);
-    min-height: var(--card-min-height-md);
+    @include selectable-panel(
+      $padding: var(--space-5),
+      $gap: var(--space-3),
+      $direction: column,
+      $text-align: center,
+      $position: relative,
+      $min-height: var(--card-min-height-md)
+    );
 
     .equipment-check {
       position: absolute;
@@ -931,25 +850,23 @@
   }
 
   .preference-card {
-    padding: var(--space-3);
-    border: var(--border-2) solid var(--color-border-secondary);
-    border-radius: var(--radius-lg);
-    cursor: pointer;
-    transition: background-color var(--motion-base) var(--ease-standard),border-color var(--motion-base) var(--ease-standard),box-shadow var(--motion-base) var(--ease-standard),transform var(--motion-base) var(--ease-standard);
-    display: flex;
-    align-items: center;
-    gap: var(--space-3);
-    background: var(--surface-primary);
+    @include selectable-panel(
+      $padding: var(--space-3),
+      $gap: var(--space-3),
+      $radius: var(--radius-lg),
+      $border-color: var(--color-border-secondary)
+    );
+    transition:
+      background-color var(--motion-base) var(--ease-standard),
+      border-color var(--motion-base) var(--ease-standard),
+      box-shadow var(--motion-base) var(--ease-standard),
+      transform var(--motion-base) var(--ease-standard);
 
     .preference-radio {
-      width: var(--avatar-size-xs);
-      height: var(--avatar-size-xs);
-      border-radius: var(--radius-circle);
-      border: var(--border-2) solid var(--color-border-secondary);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
+      @include selectable-indicator(
+        $size: var(--avatar-size-xs),
+        $border-color: var(--color-border-secondary)
+      );
       transition: background-color var(--motion-base) var(--ease-standard),transform var(--motion-base) var(--ease-standard);
 
       i {
@@ -1025,22 +942,24 @@
     display: flex;
     align-items: flex-start;
     gap: var(--space-4);
-    padding: var(--space-5) var(--space-6);
-    background: linear-gradient(135deg,rgba(var(--primitive-info-500-rgb),.1),rgba(var(--primitive-info-500-rgb),.05));
-    border: var(--border-1) solid rgba(var(--primitive-info-500-rgb), 0.2);
-    border-radius: var(--radius-xl);
-    color: var(--color-status-info);
+    @include callout-panel(
+      linear-gradient(135deg, rgba(var(--primitive-info-500-rgb), .1), rgba(var(--primitive-info-500-rgb), .05)),
+      var(--border-1) solid rgba(var(--primitive-info-500-rgb), 0.2),
+      var(--color-status-info),
+      $shadow: 0 var(--border-2) var(--space-2) rgba(var(--primitive-info-500-rgb), 0.1)
+    );
     font-size: var(--ds-font-size-md);
     font-weight: var(--ds-font-weight-medium);
     margin-top: var(--space-5);
     line-height: var(--ds-line-height-relaxed);
-    box-shadow: 0 var(--border-2) var(--space-2) rgba(var(--primitive-info-500-rgb), 0.1);
 
     &.success {
-      background: linear-gradient(135deg,rgba(var(--ds-primary-green-rgb),.12),rgba(var(--ds-primary-green-rgb),.06));
-      border-color: rgba(var(--ds-primary-green-rgb), 0.25);
-      color: var(--ds-primary-green);
-      box-shadow: 0 var(--border-2) var(--space-2) rgba(var(--ds-primary-green-rgb), 0.1);
+      @include callout-panel(
+        linear-gradient(135deg, rgba(var(--ds-primary-green-rgb), .12), rgba(var(--ds-primary-green-rgb), .06)),
+        var(--border-1) solid rgba(var(--ds-primary-green-rgb), 0.25),
+        var(--ds-primary-green),
+        $shadow: 0 var(--border-2) var(--space-2) rgba(var(--ds-primary-green-rgb), 0.1)
+      );
     }
 
     i {
@@ -1380,34 +1299,19 @@
 }
 
 .onboarding-page .checkbox-card {
-  padding: var(--space-5);
-  border: var(--border-2) solid var(--color-border-muted);
-  border-radius: var(--radius-xl);
-  cursor: pointer;
-
-  @include card-transition;
-  display: flex;
-  align-items: center;
-  gap: var(--space-3);
+  @include selectable-panel(
+    $padding: var(--space-5),
+    $gap: var(--space-3)
+  );
   font-size: var(--ds-font-size-md);
-  background: var(--surface-primary);
-  box-shadow: var(--shadow-sm);
-  min-height: var(--card-min-height-sm);
 }
 
 .onboarding-page .checkbox-indicator {
-  width: var(--space-6);
-  height: var(--space-6);
-  min-width: var(--space-6);
-  border-radius: var(--radius-md);
-  border: var(--border-2) solid var(--color-border-primary);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-
-  @include card-transition;
-  background: var(--surface-secondary);
+  @include selectable-indicator(
+    $size: var(--space-6),
+    $radius: var(--radius-md),
+    $min-width: var(--space-6)
+  );
 }
 
 .onboarding-page .checkbox-indicator i {

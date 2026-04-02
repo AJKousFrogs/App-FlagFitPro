@@ -72,12 +72,7 @@
 
     <section class="kpi-strip" aria-label="Global KPI strip">
       @for (kpi of kpis(); track kpi.id) {
-        <article
-          class="kpi-card interactive-surface"
-          tabindex="0"
-          role="button"
-          [attr.aria-label]="kpi.label + ' ' + kpi.value"
-        >
+        <article class="kpi-card interactive-surface" [attr.aria-label]="kpi.label + ' ' + kpi.value">
           <header>
             <span class="type-caption">{{ kpi.label }}</span>
             <app-status-tag [severity]="kpi.status" [value]="kpi.status === 'danger' ? 'Critical' : (kpi.status | titlecase)"></app-status-tag>
@@ -189,13 +184,7 @@
             </ng-template>
 
             <ng-template #body let-row>
-              <tr
-                tabindex="0"
-                class="interactive-surface queue-row"
-                (click)="openDetails(row)"
-                (keydown.enter)="openDetails(row)"
-                [attr.aria-label]="'Open details for ' + row.athlete"
-              >
+              <tr class="queue-row">
                 <td>{{ row.athlete }}</td>
                 <td>
                   <app-status-tag [severity]="getSeverityTag(row.severity)" [value]="row.severity"></app-status-tag>
@@ -219,14 +208,7 @@
         <app-card-shell title="Training & Event Timeline" class="elite-card">
           <p-timeline [value]="timeline()" align="left" styleClass="elite-timeline">
             <ng-template #content let-event>
-              <div
-                pTooltip="Click for drill-down"
-                tooltipPosition="top"
-                class="timeline-card interactive-surface"
-                role="button"
-                tabindex="0"
-                aria-label="Timeline event"
-              >
+              <div class="timeline-card interactive-surface" aria-label="Timeline event">
                 <strong>{{ event.title }}</strong>
                 <p>{{ event.detail }}</p>
                 <small>{{ event.ts }}</small>

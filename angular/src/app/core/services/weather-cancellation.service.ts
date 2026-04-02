@@ -3,7 +3,6 @@ import { Observable, firstValueFrom, from, of } from "rxjs";
 import { catchError, map, switchMap, tap } from "rxjs";
 import { WeatherData, WeatherService } from "./weather.service";
 import { SupabaseService } from "./supabase.service";
-import { AuthService } from "./auth.service";
 import { LoggerService, toLogContext } from "./logger.service";
 import { PrivacySettingsService } from "./privacy-settings.service";
 import { ApiService } from "./api.service";
@@ -141,7 +140,6 @@ const WEATHER_THRESHOLDS = {
 export class WeatherCancellationService {
   private weatherService = inject(WeatherService);
   private supabaseService = inject(SupabaseService);
-  private authService = inject(AuthService);
   private logger = inject(LoggerService);
   private privacySettingsService = inject(PrivacySettingsService);
   private apiService = inject(ApiService);
@@ -311,7 +309,7 @@ export class WeatherCancellationService {
     session: WeatherSensitiveSession,
     weather: WeatherData,
   ): Observable<SubstituteWorkout | null> {
-    const user = this.authService.getUser();
+    const user = this.supabaseService.currentUser();
     if (!user?.id) {
       this.logger.error("Cannot cancel session: No user logged in");
       return of(null);
@@ -1020,7 +1018,7 @@ The exercises are selected to maintain your training goals while adapting to ind
   private async loadTodaysWeatherSensitiveSessions(): Promise<
     WeatherSensitiveSession[]
   > {
-    const user = this.authService.getUser();
+    const user = this.supabaseService.currentUser();
     if (!user?.id) {
       return [];
     }

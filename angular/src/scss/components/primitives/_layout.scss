@@ -22,6 +22,31 @@
  */
 
 @layer primitives {
+  @mixin responsive-inline-padding($breakpoint, $padding) {
+    @include respond-to($breakpoint) {
+      .container {
+        padding-left: $padding;
+        padding-right: $padding;
+      }
+    }
+  }
+
+  @mixin collapse-grid-columns-at($breakpoint, $selectors, $columns) {
+    @include respond-to($breakpoint) {
+      #{$selectors} {
+        grid-template-columns: repeat($columns, 1fr);
+      }
+    }
+  }
+
+  @mixin bento-span-at($breakpoint, $selectors, $columns) {
+    @include respond-to($breakpoint) {
+      #{$selectors} {
+        grid-column: span $columns;
+      }
+    }
+  }
+
   // ============================================
   // CONTAINER (Decision 21)
   // ============================================
@@ -56,19 +81,8 @@
   }
 
   // Responsive container padding
-  @include respond-to(md) {
-    .container {
-      padding-left: var(--page-padding-tablet);
-      padding-right: var(--page-padding-tablet);
-    }
-  }
-
-  @include respond-to(sm) {
-    .container {
-      padding-left: var(--page-padding-mobile);
-      padding-right: var(--page-padding-mobile);
-    }
-  }
+  @include responsive-inline-padding(md, var(--page-padding-tablet));
+  @include responsive-inline-padding(sm, var(--page-padding-mobile));
 
   // ============================================
   // SECTION PADDING
@@ -204,37 +218,18 @@
   }
 
   // Responsive bento (Decision 35)
-  @include respond-to(lg) {
-    .bento {
-      grid-template-columns: repeat(6, 1fr);
-    }
+  @include collapse-grid-columns-at(lg, ".bento", 6);
+  @include bento-span-at(lg, ".bento-span-4, .bento-span-6, .bento-span-8", 6);
+  @include bento-span-at(lg, ".bento-span-3", 3);
 
-    .bento-span-4,
-    .bento-span-6,
-    .bento-span-8 {
-      grid-column: span 6;
-    }
-
-    .bento-span-3 {
-      grid-column: span 3;
-    }
-  }
+  @include collapse-grid-columns-at(md, ".bento", 1);
+  @include bento-span-at(
+    md,
+    ".bento-span-1, .bento-span-2, .bento-span-3, .bento-span-4, .bento-span-6, .bento-span-8, .bento-span-12",
+    1
+  );
 
   @include respond-to(md) {
-    .bento {
-      grid-template-columns: repeat(1, 1fr);
-    }
-
-    .bento-span-1,
-    .bento-span-2,
-    .bento-span-3,
-    .bento-span-4,
-    .bento-span-6,
-    .bento-span-8,
-    .bento-span-12 {
-      grid-column: span 1;
-    }
-
     .bento-row-2,
     .bento-row-3 {
       grid-row: span 1;
@@ -412,21 +407,7 @@
   // RESPONSIVE GRID OVERRIDES
   // ============================================
 
-  @include respond-to(md) {
-    .grid-cols-2,
-    .grid-cols-3,
-    .grid-cols-4 {
-      grid-template-columns: repeat(1, 1fr);
-    }
-
-    .md\:grid-cols-2 {
-      grid-template-columns: repeat(2, 1fr);
-    }
-  }
-
-  @include respond-to(sm) {
-    .md\:grid-cols-2 {
-      grid-template-columns: repeat(1, 1fr);
-    }
-  }
+  @include collapse-grid-columns-at(md, ".grid-cols-2, .grid-cols-3, .grid-cols-4", 1);
+  @include collapse-grid-columns-at(md, ".md\\:grid-cols-2", 2);
+  @include collapse-grid-columns-at(sm, ".md\\:grid-cols-2", 1);
 }

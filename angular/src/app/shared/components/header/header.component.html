@@ -1,145 +1,29 @@
 <header class="app-header-shell" role="banner">
   <div class="header-container">
     <!-- LEFT GROUP: Logo/Menu & Breadcrumbs -->
-    <div class="header-left">
-      <app-icon-button
-        class="mobile-hamburger"
-        [icon]="sidebarToggleIcon()"
-        (clicked)="onToggleSidebar()"
-        [ariaLabel]="sidebarToggleAriaLabel()"
-      />
-      
-      @if (config().showLogo) {
-        <div class="header-logo" routerLink="/" pTooltip="Go to Dashboard">
-          <app-status-tag
-            value="LA28"
-            icon="pi-flag"
-            severity="success"
-            size="sm"
-          />
-        </div>
-      }
-
-      @if (config().showBreadcrumbs) {
-        <nav class="breadcrumbs" aria-label="Breadcrumb">
-          <span class="breadcrumb-item">{{ currentSection() }}</span>
-          @if (currentPage()) {
-            <i class="pi pi-chevron-right separator" aria-hidden="true"></i>
-            <span class="breadcrumb-item current">{{ currentPage() }}</span>
-          }
-        </nav>
-      }
-    </div>
+    <app-header-left
+      class="header-left"
+      [sidebarToggleIcon]="sidebarToggleIcon()"
+      [sidebarToggleAriaLabel]="sidebarToggleAriaLabel()"
+      [showLogo]="config().showLogo ?? false"
+      [showBreadcrumbs]="config().showBreadcrumbs ?? false"
+      (toggleSidebar)="onToggleSidebar()"
+    />
 
     <!-- CENTER GROUP: Global Search (Hidden on Mobile) -->
     <div class="header-center">
-      <div
-        class="search-container"
-        (click)="onSearch()"
-        (keydown.enter)="onSearch()"
-        (keydown.space)="onSearch()"
-        tabindex="0"
-        role="button"
-        aria-haspopup="dialog"
-        aria-label="Open search"
-      >
-        <i class="pi pi-search" aria-hidden="true"></i>
-        <input
-          type="text"
-          [placeholder]="searchPlaceholder()"
-          readonly
-          class="search-input-stub"
-        />
-        <span class="search-shortcut">
-          <kbd>{{ searchShortcutModifier() }}</kbd><kbd>K</kbd>
-        </span>
-      </div>
+      <app-header-search
+        [placeholder]="searchPlaceholder()"
+        [shortcutModifier]="searchShortcutModifier()"
+        (search)="onSearch()"
+      />
     </div>
 
     <!-- RIGHT GROUP: Actions & Utilities -->
-    <div class="header-right">
-      <!-- Weather Widget -->
-      @if (weatherData()) {
-        <div
-          class="header-utility weather-widget"
-          [class]="getWeatherSeverityClass()"
-          [pTooltip]="weatherTooltip()"
-          tooltipPosition="bottom"
-        >
-          <i [class]="'pi ' + weatherIcon()" aria-hidden="true"></i>
-          <span class="utility-label">{{ weatherData()!.temp }}°</span>
-        </div>
-      }
-
-      <!-- Notifications -->
-      <div
-        class="header-utility notifications-trigger"
-        (click)="toggleNotifications()"
-        (keydown.enter)="toggleNotifications()"
-        (keydown.space)="toggleNotifications()"
-        role="button"
-        tabindex="0"
-        aria-label="Notifications"
-      >
-        <div class="icon-badge-container">
-          <i class="pi pi-bell" aria-hidden="true"></i>
-          @if (notificationCount() > 0) {
-            <span class="notification-badge">{{ notificationCount() > 9 ? '9+' : notificationCount() }}</span>
-          }
-        </div>
-        <span class="utility-label">Alerts</span>
-      </div>
-
-      <!-- Theme Toggle -->
-      <div
-        class="header-utility theme-toggle"
-        (click)="cycleTheme()"
-        (keydown.enter)="cycleTheme()"
-        (keydown.space)="cycleTheme()"
-        [pTooltip]="themeTooltip()"
-        role="button"
-        tabindex="0"
-        aria-label="Toggle theme"
-      >
-        <i [class]="'pi ' + themeIcon()" aria-hidden="true"></i>
-        <span class="utility-label">{{ themeLabel() }}</span>
-      </div>
-
-      <!-- Settings (Desktop Only) -->
-      <app-icon-button
-        class="desktop-only-util"
-        icon="pi-cog"
-        variant="text"
-        ariaLabel="Settings"
-        tooltip="Settings"
-        (clicked)="openSettings()"
-      />
-
-      <!-- User Avatar -->
-      <div
-        class="header-profile"
-        (click)="toggleUserMenu($event)"
-        (keydown.enter)="toggleUserMenu($event)"
-        (keydown.space)="toggleUserMenu($event)"
-        role="button"
-        tabindex="0"
-        aria-label="User menu"
-        aria-haspopup="menu"
-      >
-        <p-avatar
-          [label]="userInitials()"
-          shape="circle"
-          class="user-avatar"
-        />
-      </div>
-
-      <p-menu
-        #userMenu
-        [model]="userMenuItems()"
-        [popup]="true"
-        appendTo="body"
-      />
-    </div>
+    <app-header-actions
+      class="header-right"
+      (toggleNotifications)="toggleNotifications()"
+    />
   </div>
 </header>
 

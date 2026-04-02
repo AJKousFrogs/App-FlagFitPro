@@ -199,7 +199,7 @@
 
   /* PrimeNG Tab Active */
   .p-tabview .p-tabview-nav .p-tabview-nav-link:not(.p-disabled):focus-visible {
-    box-shadow: inset 0 0 0 0.2rem rgba(var(--ds-primary-green-rgb), 0.5);
+    box-shadow: var(--shadow-focus-inset);
   }
 
   .p-tabview .p-tabview-nav li.p-highlight .p-tabview-nav-link {
@@ -225,8 +225,7 @@
     outline: var(--p-focus-ring-width) var(--p-focus-ring-style)
       var(--p-focus-ring-color);
     outline-offset: var(--p-focus-ring-offset);
-    box-shadow: 0 0 0 var(--p-focus-ring-offset)
-      rgba(var(--ds-primary-green-rgb), 0.2);
+    box-shadow: var(--shadow-focus-subtle);
   }
 }
 
@@ -283,7 +282,7 @@
   border: var(--p-input-border-width, var(--border-1)) solid
     var(--p-input-border-color);
   color: var(--p-input-text-color, var(--color-text-primary));
-  box-shadow: inset 0 1px 2px rgba(15, 23, 42, 0.03);
+  box-shadow: var(--component-input-shadow-rest);
   transition:
     border-color 0.15s ease,
     box-shadow 0.15s ease,
@@ -627,9 +626,7 @@
 /* Focus state - accessibility */
 .p-inputswitch:focus-visible .p-inputswitch-slider {
   outline: none;
-  box-shadow:
-    0 0 0 0.2rem rgba(var(--ds-primary-green-rgb), 0.2),
-    0 0.125rem 0.25rem rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-inputswitch-focus);
 }
 
 /* Disabled state */
@@ -802,8 +799,7 @@
   --p-button-border-radius: var(--radius-button, var(--radius-lg));
   --p-button-icon-only-width: var(--touch-target-md);
   --p-button-icon-only-height: var(--touch-target-md);
-  --p-button-raised-shadow:
-    0 0.0625rem 0.125rem var(--color-border-subtle), 0 0.125rem 0.25rem var(--color-border-subtle);
+  --p-button-raised-shadow: var(--shadow-button-raised);
   --p-button-gap: var(--space-2);
   --p-button-font-weight: var(--font-weight-semibold);
   --p-button-sm-font-size: var(--font-body-sm-size);
@@ -865,7 +861,7 @@
   --p-input-hover-border-color: var(--primitive-neutral-400);
   --p-input-focus-border-color: var(--ds-primary-green);
   --p-input-focus-ring-color: rgba(var(--ds-primary-green-rgb), 0.15);
-  --p-input-focus-ring-width: var(--focus-ring-width, 3px);
+  --p-input-focus-ring-width: var(--focus-ring-width);
   --p-input-padding-y: var(--p-form-control-padding-y);
   --p-input-padding-x: var(--p-form-control-padding-x);
   --p-input-border-radius: var(--p-form-control-border-radius);
@@ -939,7 +935,7 @@
   --p-checkbox-width: var(--space-5);
   --p-checkbox-height: var(--space-5);
   --p-checkbox-border-radius: var(--radius-md);
-  --p-checkbox-focus-ring: 0 0 0 var(--focus-ring-width, 3px)
+  --p-checkbox-focus-ring: 0 0 0 var(--focus-ring-width)
     rgba(var(--ds-primary-green-rgb), 0.15);
   --p-control-row-min-height: var(--touch-target-md);
   --p-control-disabled-opacity: var(--opacity-muted);
@@ -952,7 +948,7 @@
   --p-checkbox-icon-checked-color: var(--color-text-on-primary);
   --p-toggleswitch-width: var(--touch-target-md);
   --p-toggleswitch-height: var(--space-6);
-  --p-toggleswitch-focus-ring: 0 0 0 var(--focus-ring-width, 3px)
+  --p-toggleswitch-focus-ring: 0 0 0 var(--focus-ring-width)
     rgba(var(--ds-primary-green-rgb), 0.15);
 
   /* Tag/Badge */
@@ -1144,13 +1140,13 @@
      Use design-system focus ring tokens (3px, not 2px)
      ================================================================ */
 
-  --p-focus-ring-width: var(--focus-ring-width, 3px);
-  --p-focus-ring-color: var(--focus-ring-color, var(--ds-primary-green));
-  --p-focus-ring-offset: var(--focus-ring-offset, 2px);
+  --p-focus-ring-width: var(--focus-ring-width);
+  --p-focus-ring-color: var(--focus-ring-color);
+  --p-focus-ring-offset: var(--focus-ring-offset);
   --p-focus-ring-style: solid;
-  --p-inputtext-focus-ring-width: var(--focus-ring-width, 3px);
+  --p-inputtext-focus-ring-width: var(--focus-ring-width);
   --p-inputtext-focus-ring-color: rgba(var(--ds-primary-green-rgb), 0.25);
-  --p-inputtext-focus-ring-offset: var(--focus-ring-offset, 2px);
+  --p-inputtext-focus-ring-offset: var(--focus-ring-offset);
   --p-inputtext-focus-border-color: var(--ds-primary-green);
 
   /* ================================================================

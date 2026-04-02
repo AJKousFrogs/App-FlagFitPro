@@ -15,6 +15,7 @@ import { inject, Injectable } from "@angular/core";
 import { NavigationError, Router } from "@angular/router";
 import { environment } from "../../../environments/environment";
 import { LoggerService } from "./logger.service";
+import { isExpectedApiClientError } from "../../shared/utils/error.utils";
 
 /**
  * Error severity levels
@@ -104,20 +105,7 @@ export class ErrorTrackingService {
   private readonly recentErrorSignatures = new Map<string, number>();
 
   private shouldIgnoreError(error: Error | unknown): boolean {
-    if (!error || typeof error !== "object") return false;
-    const e = error as {
-      status?: unknown;
-      url?: unknown;
-      isExpectedApiFailure?: unknown;
-    };
-
-    if (e.isExpectedApiFailure === true) return true;
-
-    const status = typeof e.status === "number" ? e.status : undefined;
-    if (!status || ![400, 401, 403, 404].includes(status)) return false;
-
-    const url = typeof e.url === "string" ? e.url : "";
-    return url.includes("/api/") || url === "";
+    return isExpectedApiClientError(error);
   }
 
   private toError(error: Error | unknown): Error {

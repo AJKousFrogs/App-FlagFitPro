@@ -13,17 +13,6 @@
   border-radius: var(--radius-xl);
   border: var(--border-1) solid var(--surface-border);
   box-shadow: var(--shadow-sm);
-
-  @include respond-to(lg) {
-    flex-direction: row;
-    text-align: left;
-  }
-
-  @include respond-to(md) {
-    flex-direction: column;
-    text-align: center;
-    gap: var(--space-3);
-  }
 }
 
 .header-info {
@@ -138,11 +127,6 @@
   display: flex;
   align-items: center;
   gap: var(--space-3);
-
-  @include respond-to(md) {
-    font-size: var(--ds-font-size-2xl);
-    justify-content: center;
-  }
 }
 
 .team-icon {
@@ -155,15 +139,6 @@
   display: flex;
   align-items: center;
   gap: var(--space-2);
-
-  @include respond-to(lg) {
-    justify-content: center;
-  }
-
-  @include respond-to(md) {
-    flex-wrap: wrap;
-    font-size: var(--ds-font-size-md);
-  }
 }
 
 .streak-badge {
@@ -184,16 +159,6 @@
 .header-actions {
   display: flex;
   gap: var(--space-2);
-
-  @include respond-to(lg) {
-    width: 100%;
-    justify-content: center;
-  }
-
-  @include respond-to(md) {
-    flex-direction: column;
-    gap: var(--space-2);
-  }
 }
 
 .stats-compact-row {
@@ -206,19 +171,6 @@
   margin-bottom: var(--space-6);
   box-shadow: var(--shadow-sm);
   overflow-x: auto;
-
-  @include respond-to(lg) {
-    padding: var(--space-3) var(--space-4);
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-  }
-
-  @include respond-to(md) {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: var(--space-3);
-    padding: var(--space-4);
-  }
 }
 
 .sc-item {
@@ -228,13 +180,6 @@
   align-items: center;
   text-align: center;
   min-width: calc(var(--space-24) * 1.042);
-
-  @include respond-to(md) {
-    min-width: auto;
-    padding: var(--space-2);
-    background: var(--surface-secondary);
-    border-radius: var(--radius-lg);
-  }
 }
 
 .sc-label {
@@ -277,8 +222,60 @@
   background: var(--surface-border);
   margin: 0 var(--space-4);
   flex-shrink: 0;
+}
 
-  @include respond-to(md) {
+@include respond-to(lg) {
+  .header-subtitle {
+    justify-content: center;
+  }
+
+  .header-actions {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .stats-compact-row {
+    padding: var(--space-3) var(--space-4);
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+@include respond-to(md) {
+  .dashboard-header {
+    flex-direction: column;
+    text-align: center;
+    gap: var(--space-3);
+  }
+
+  .team-name {
+    justify-content: center;
+  }
+
+  .header-subtitle {
+    flex-wrap: wrap;
+    font-size: var(--ds-font-size-md);
+  }
+
+  .header-actions {
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+
+  .stats-compact-row {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-3);
+    padding: var(--space-4);
+  }
+
+  .sc-item {
+    min-width: auto;
+    padding: var(--space-2);
+    background: var(--surface-secondary);
+    border-radius: var(--radius-lg);
+  }
+
+  .sc-divider {
     display: none;
   }
 }

@@ -156,7 +156,7 @@
             [blockScroll]="true"
             [draggable]="false"
             ariaLabel="Player details dialog"
-            styleClass="roster-player-details-dialog"
+            dialogSize="xl"
           >
           <app-dialog-header
             icon="user"
@@ -455,7 +455,7 @@
             [blockScroll]="true"
             [draggable]="false"
             ariaLabel="Change player status dialog"
-            styleClass="roster-status-dialog"
+            dialogSize="sm"
           >
           <app-dialog-header
             icon="sync"
@@ -472,22 +472,19 @@
             </p>
             <div class="status-options">
               @for (option of statusOptions; track option.value) {
-                <div
+                <button
+                  type="button"
                   class="status-option"
                   [class.selected]="newStatus() === option.value"
                   (click)="newStatus.set(option.value)"
-                  role="button"
-                  tabindex="0"
                   [attr.aria-label]="'Set status to ' + option.label"
-                  (keydown.enter)="newStatus.set(option.value)"
-                  (keydown.space)="newStatus.set(option.value); $event.preventDefault()"
                 >
                   <div
                     class="status-indicator"
                     [class]="'status-' + option.value"
                   ></div>
                   <span>{{ option.label }}</span>
-                </div>
+                </button>
               }
             </div>
           </div>
@@ -512,7 +509,7 @@
             [blockScroll]="true"
             [draggable]="false"
             ariaLabel="Change status for selected players dialog"
-            styleClass="roster-bulk-status-dialog"
+            dialogSize="sm"
           >
           <app-dialog-header
             icon="users"
@@ -528,22 +525,19 @@
             </p>
             <div class="status-options">
               @for (option of statusOptions; track option.value) {
-                <div
+                <button
+                  type="button"
                   class="status-option"
                   [class.selected]="bulkStatus() === option.value"
                   (click)="bulkStatus.set(option.value)"
-                  role="button"
-                  tabindex="0"
                   [attr.aria-label]="'Set bulk status to ' + option.label"
-                  (keydown.enter)="bulkStatus.set(option.value)"
-                  (keydown.space)="bulkStatus.set(option.value); $event.preventDefault()"
                 >
                   <div
                     class="status-indicator"
                     [class]="'status-' + option.value"
                   ></div>
                   <span>{{ option.label }}</span>
-                </div>
+                </button>
               }
             </div>
           </div>

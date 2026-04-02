@@ -810,6 +810,13 @@ $ds-font-weight-extrabold: 800;
   --shadow-success-focus: 0 0 0 var(--focus-ring-width) rgba(var(--ds-primary-green-rgb), 0.2);
   --shadow-warning-focus: 0 0 0 var(--focus-ring-width) rgba(var(--primitive-warning-500-rgb), 0.2);
   --shadow-focus-inset: inset 0 0 0 0.2rem rgba(var(--ds-primary-green-rgb), 0.2);
+  --shadow-focus-subtle: 0 0 0 var(--focus-ring-offset) rgba(var(--ds-primary-green-rgb), 0.2);
+  --shadow-button-raised:
+    0 0.0625rem 0.125rem var(--color-border-subtle),
+    0 0.125rem 0.25rem var(--color-border-subtle);
+  --shadow-inputswitch-focus:
+    var(--shadow-success-focus),
+    var(--shadow-sm);
 
   /* Specialty Shadows */
   --shadow-toast:
@@ -1223,6 +1230,19 @@ $ds-font-weight-extrabold: 800;
 
   /* Dropdown/Menu Max Heights */
   --dropdown-max-height: 20rem; /* 320px */
+  --dropdown-width-xs: 6.25rem; /* 100px */
+  --dropdown-width-sm: 8.75rem; /* 140px */
+  --dropdown-width-md: 10rem; /* 160px */
+  --dropdown-width-lg: 12.5rem; /* 200px */
+  --dropdown-width-xl: 15.625rem; /* 250px */
+
+  /* Table Column Widths */
+  --table-column-width-action: 3.75rem; /* 60px */
+  --table-column-width-badge: 5rem; /* 80px */
+  --table-column-width-icon: 3.125rem; /* 50px */
+  --table-column-width-rank: 3.75rem; /* 60px */
+  --table-column-width-score: 6.25rem; /* 100px */
+  --table-column-width-avatar: 3.125rem; /* 50px */
 
   /* Scrollbar Widths */
   --scrollbar-width-thin: 0.375rem; /* 6px - thin scrollbar */
@@ -1285,6 +1305,7 @@ $ds-font-weight-extrabold: 800;
   --dialog-max-width-lg: 31.25rem; /* 500px - large forms */
   --dialog-max-width-xl: 35rem; /* 560px - extra large dialogs */
   --dialog-max-width-2xl: 50rem; /* 800px - full dialogs */
+  --dialog-max-width-3xl: 56.25rem; /* 900px - extra wide dialogs */
 
   /* Element Max Widths */
   --element-max-width-sm: 18.75rem; /* 300px */

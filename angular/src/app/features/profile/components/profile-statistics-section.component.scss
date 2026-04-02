@@ -1,4 +1,5 @@
 @use "styles/mixins" as *;
+@use "styles/foundations" as *;
 
 :host {
   display: block;
@@ -27,6 +28,7 @@
 }
 
 .stat-block__value {
+  @extend %stat-value;
   font-size: var(--stat-block-value-card);
   font-weight: var(--ds-font-weight-semibold);
   color: var(--color-text-primary);
@@ -34,6 +36,7 @@
 }
 
 .stat-block__label {
+  @extend %stat-label;
   font-size: var(--stat-block-label-compact-lg);
   font-weight: var(--ds-font-weight-regular);
   color: var(--color-text-muted);

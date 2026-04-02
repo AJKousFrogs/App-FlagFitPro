@@ -16,6 +16,7 @@ import {
   ReactiveFormsModule,
   Validators,
 } from "@angular/forms";
+import { Router } from "@angular/router";
 
 import { CardShellComponent } from "../../shared/components/card-shell/card-shell.component";
 import { DatePicker } from "primeng/datepicker";
@@ -26,8 +27,8 @@ import { SelectComponent } from "../../shared/components/select/select.component
 import { TableComponent } from "../../shared/components/table/table.component";
 import { TextareaComponent } from "../../shared/components/textarea/textarea.component";
 import { ApiService, API_ENDPOINTS } from "../../core/services/api.service";
-import { AuthService } from "../../core/services/auth.service";
 import { LoggerService } from "../../core/services/logger.service";
+import { SupabaseService } from "../../core/services/supabase.service";
 import { ToastService } from "../../core/services/toast.service";
 import { TeamMembershipService } from "../../core/services/team-membership.service";
 import { TOAST } from "../../core/constants/toast-messages.constants";
@@ -147,8 +148,9 @@ interface Play {
 })
 export class GameTrackerComponent implements OnInit {
   private fb = inject(NonNullableFormBuilder);
+  private router = inject(Router);
   private apiService = inject(ApiService);
-  private authService = inject(AuthService);
+  private supabase = inject(SupabaseService);
   private teamMembershipService = inject(TeamMembershipService);
   private destroyRef = inject(DestroyRef);
   private toastService = inject(ToastService);
@@ -303,9 +305,9 @@ export class GameTrackerComponent implements OnInit {
    * Sets currentUserId for tracking who recorded plays
    */
   private detectUserRole(): void {
-    const user = this.authService.getUser();
-    if (user) {
-      this.currentUserId.set(user.id);
+    const userId = this.supabase.userId();
+    if (userId) {
+      this.currentUserId.set(userId);
     }
   }
 
@@ -334,8 +336,7 @@ export class GameTrackerComponent implements OnInit {
   }
 
   viewPracticeSchedule(): void {
-    // Navigate to training schedule
-    window.location.href = "/training";
+    void this.router.navigate(["/training"]);
   }
 
   /**
@@ -644,13 +645,29 @@ export class GameTrackerComponent implements OnInit {
     this.loadPlayers();
   }
 
+  private resetGameForm(): void {
+    this.gameForm.reset();
+  }
+
+  private closeGameForm(): void {
+    this.showGameForm.set(false);
+    this.resetGameForm();
+  }
+
+  private resetPlayForm(): void {
+    this.playForm.reset({
+      playType: "",
+      half: this.playForm.get("half")?.value || 1,
+      timeRemaining: null,
+    });
+  }
+
   openNewGame(): void {
     this.showGameForm.set(true);
   }
 
   cancelGame(): void {
-    this.showGameForm.set(false);
-    this.gameForm.reset();
+    this.closeGameForm();
   }
 
   submitGame(): void {
@@ -718,8 +735,7 @@ export class GameTrackerComponent implements OnInit {
             }
           }
           this.toastService.success(TOAST.SUCCESS.GAME_CREATED);
-          this.showGameForm.set(false);
-          this.gameForm.reset();
+          this.closeGameForm();
           this.loadGames();
           this.startTrackingGame(gameId);
         },
@@ -735,8 +751,7 @@ export class GameTrackerComponent implements OnInit {
               "high",
             );
             this.toastService.info(TOAST.INFO.GAME_SAVED_OFFLINE);
-            this.showGameForm.set(false);
-            this.gameForm.reset();
+            this.closeGameForm();
           } else {
             this.logger.error("Error creating game", err);
             this.toastService.error(TOAST.ERROR.GAME_CREATE_FAILED);
@@ -761,14 +776,8 @@ export class GameTrackerComponent implements OnInit {
       return;
     }
 
-    const currentUser = this.authService.getUser();
-    const userRole = currentUser?.role || "player";
-    const recorderRole =
-      userRole === "coach" ||
-      userRole === "assistant_coach" ||
-      userRole === "admin"
-        ? "coach"
-        : "player";
+    const currentUserId = this.currentUserId();
+    const recorderRole = this.isCoachOrAdmin() ? "coach" : "player";
 
     const formValue = this.playForm.value;
 
@@ -785,7 +794,7 @@ export class GameTrackerComponent implements OnInit {
       ...formValue,
       gameId: this.activeGameId() || "",
       id: `play-${Date.now()}`,
-      recordedBy: currentUser?.id || "unknown",
+      recordedBy: currentUserId || "unknown",
       recorderRole: recorderRole,
       timestamp: new Date(),
     };
@@ -816,11 +825,7 @@ export class GameTrackerComponent implements OnInit {
       );
       this.toastService.info(TOAST.INFO.PLAY_SAVED_OFFLINE);
       this.plays.update((plays) => [...plays, playData as Play]);
-      this.playForm.reset({
-        playType: "",
-        half: this.playForm.get("half")?.value || 1,
-        timeRemaining: null,
-      });
+      this.resetPlayForm();
       return;
     }
 
@@ -839,11 +844,7 @@ export class GameTrackerComponent implements OnInit {
           // but we can show local feedback)
           this.showStatsUploadedFeedback(playData);
 
-          this.playForm.reset({
-            playType: "",
-            half: this.playForm.get("half")?.value || 1,
-            timeRemaining: null,
-          });
+          this.resetPlayForm();
         },
         error: (error) => {
           // If network error, queue for retry
@@ -858,11 +859,7 @@ export class GameTrackerComponent implements OnInit {
             );
             this.toastService.info(TOAST.INFO.PLAY_SAVED_OFFLINE);
             this.plays.update((plays) => [...plays, playData as Play]);
-            this.playForm.reset({
-              playType: "",
-              half: this.playForm.get("half")?.value || 1,
-              timeRemaining: null,
-            });
+            this.resetPlayForm();
           }
         },
       });
@@ -904,10 +901,10 @@ export class GameTrackerComponent implements OnInit {
     if (typeof deflectedBy === "string") playersInPlay.push(deflectedBy);
 
     // If a player is recording their own stats, mark them as present
-    const currentUser = this.authService.getUser();
     const recorderRole = playData["recorderRole"];
-    if (currentUser && recorderRole === "player" && currentUser.id) {
-      playersInPlay.push(currentUser.id);
+    const currentUserId = this.currentUserId();
+    if (currentUserId && recorderRole === "player") {
+      playersInPlay.push(currentUserId);
     }
 
     // Mark each player as present in the game

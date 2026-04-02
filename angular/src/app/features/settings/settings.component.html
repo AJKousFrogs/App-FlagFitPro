@@ -153,7 +153,7 @@
     [visible]="showChangePasswordDialog"
     [passwordForm]="passwordForm"
     [loading]="isChangingPassword()"
-    (visibleChange)="showChangePasswordDialog = $event"
+    (visibleChange)="!$event && closeChangePasswordDialog()"
     (submit)="changePassword()"
   ></app-change-password-dialog>
 }
@@ -164,7 +164,7 @@
     [visible]="showDeleteAccountDialog"
     [confirmText]="deleteConfirmText"
     [loading]="isDeletingAccount()"
-    (visibleChange)="showDeleteAccountDialog = $event"
+    (visibleChange)="!$event && closeDeleteAccountDialog()"
     (confirmTextChange)="deleteConfirmText = $event"
     (submit)="deleteAccount()"
   ></app-delete-account-dialog>
@@ -196,7 +196,7 @@
     [visible]="showDisable2FADialog"
     [disableCode]="disable2FACode"
     [loading]="isDisabling2FA()"
-    (visibleChange)="showDisable2FADialog = $event"
+    (visibleChange)="!$event && closeDisable2FADialog()"
     (disableCodeChange)="disable2FACode = $event"
     (submit)="disable2FA()"
   ></app-disable-twofa-dialog>
@@ -209,7 +209,7 @@
     [loadingSessions]="loadingSessions()"
     [sessions]="activeSessions()"
     [isRevokingAll]="isRevokingAll()"
-    (visibleChange)="showSessionsDialog = $event"
+    (visibleChange)="!$event && closeSessionsDialog()"
     (revokeSession)="revokeSession($event)"
     (revokeAllSessions)="revokeAllSessions()"
   ></app-active-sessions-dialog>
@@ -224,7 +224,7 @@
     [isExportingData]="isExportingData()"
     [exportProgress]="exportProgress()"
     [exportTakingLong]="exportTakingLong()"
-    (visibleChange)="showDataExportDialog = $event"
+    (visibleChange)="!$event && closeDataExportDialog()"
     (exportFormatChange)="exportFormat = $event"
     (exportOptionsChange)="exportOptions = $event"
     (submit)="exportUserData()"

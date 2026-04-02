@@ -1,6 +1,5 @@
 import { Routes } from "@angular/router";
 import { authGuard } from "../../guards/auth.guard";
-import { headerConfigGuard } from "../../guards/header-config.guard";
 import { analyticsPrefetchResolver } from "../../resolvers/analytics-prefetch.resolver";
 
 export const analyticsRoutes: Routes = [
@@ -10,9 +9,9 @@ export const analyticsRoutes: Routes = [
       import("../../../features/analytics/analytics.component").then(
         (m) => m.AnalyticsComponent,
       ),
-    canActivate: [authGuard, headerConfigGuard],
+    canActivate: [authGuard],
     resolve: { prefetch: analyticsPrefetchResolver },
-    data: { preload: false, entry: "hub" },
+    data: { preload: false, entry: "hub", headerPreset: "analytics" },
   },
   {
     path: "analytics",
@@ -33,7 +32,7 @@ export const analyticsRoutes: Routes = [
         (m) => m.PerformanceTrackingComponent,
       ),
     canActivate: [authGuard],
-    data: { preload: false, entry: "internal" },
+    data: { preload: false, entry: "internal", headerPreset: "analytics" },
   },
   {
     path: "performance-tracking",

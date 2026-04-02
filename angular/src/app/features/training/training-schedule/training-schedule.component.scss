@@ -15,14 +15,6 @@
 :host {
   display: block;
   padding: var(--space-4);
-
-  @include respond-to(md) {
-    padding: var(--space-3);
-  }
-
-  @include respond-to(sm) {
-    padding: var(--space-2);
-  }
 }
 
 .training-schedule-page {
@@ -94,17 +86,6 @@
   gap: var(--space-6);
   align-items: start;
 
-  // Tablet: Smaller gap, still 2 columns
-  @include respond-to(lg) {
-    gap: var(--space-4);
-  }
-
-  // Mobile: Stack vertically
-  @include respond-to(md) {
-    grid-template-columns: 1fr;
-    gap: var(--space-4);
-  }
-
   // Calendar card (first child) - left column
   app-card-shell:first-child {
     grid-column: 1;
@@ -119,11 +100,6 @@
   app-card-shell:last-child {
     grid-column: 2;
     grid-row: 1 / -1; // Span all rows
-
-    @include respond-to(md) {
-      grid-column: 1;
-      grid-row: auto;
-    }
   }
 }
 
@@ -134,19 +110,14 @@
 /* monthly-stats: PrimeNG overrides in _component-overrides.scss (DS-EXC-020) */
 
 .stat-item {
-  padding: var(--space-3);
-  background: var(--surface-ground);
-  border-radius: var(--radius-md);
+  @include surface-panel(
+    $background: var(--surface-ground)
+  );
   border-left: var(--border-2) solid var(--ds-primary-green);
   margin-bottom: var(--space-3);
 
   &:last-child {
     margin-bottom: 0;
-  }
-
-  @include respond-to(md) {
-    padding: var(--space-2);
-    margin-bottom: 0; // Grid handles spacing
   }
 }
 
@@ -164,13 +135,18 @@
 
 .session-item {
   display: flex;
+  width: 100%;
   justify-content: space-between;
   align-items: flex-start;
   gap: var(--space-4);
   padding: var(--space-4);
   background: var(--surface-secondary);
   border-left: var(--border-accent, 4px) solid var(--ds-primary-green);
+  border-right: none;
+  border-top: none;
+  border-bottom: none;
   border-radius: var(--radius-md);
+  text-align: left;
   cursor: pointer;
   transition:
     opacity var(--transition-fast),
@@ -186,12 +162,6 @@
   }
 
   @include ds-focus-ring;
-
-  @include respond-to(md) {
-    flex-direction: column;
-    gap: var(--space-3);
-    padding: var(--space-3);
-  }
 }
 
 .session-item-skeleton {
@@ -271,11 +241,6 @@
   align-items: flex-end;
   gap: var(--space-2);
   flex-shrink: 0;
-
-  @include respond-to(md) {
-    width: 100%;
-    align-items: stretch;
-  }
 }
 
 .status-tag {
@@ -375,16 +340,11 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-4);
-  padding: var(--space-4);
-  background: var(--surface-ground);
-  border-radius: var(--radius-md);
+  @include surface-panel(
+    $padding: var(--space-4),
+    $background: var(--surface-ground)
+  );
   margin-top: var(--space-4);
-
-  @include respond-to(md) {
-    gap: var(--space-3);
-    padding: var(--space-3);
-    margin-top: var(--space-3);
-  }
 }
 
 .legend-today {
@@ -418,18 +378,10 @@
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-3);
-
-  @include respond-to(md) {
-    gap: var(--space-2);
-  }
 }
 
 /* legend-item: use primitives; responsive override */
 .legend-item {
-  @include respond-to(md) {
-    font-size: var(--ds-font-size-xs);
-  }
-
   i {
     font-size: var(--ds-font-size-md);
 
@@ -520,11 +472,6 @@ app-alert.weather-alert {
   gap: var(--space-2);
   margin-top: var(--space-3);
   flex-shrink: 0;
-
-  @include respond-to(md) {
-    width: 100%;
-    flex-direction: column;
-  }
 }
 
 // ================================================================
@@ -711,9 +658,72 @@ app-alert.weather-alert {
   gap: var(--space-3);
   padding-top: var(--space-3);
   border-top: var(--border-1) solid var(--surface-border);
+}
 
-  @include respond-to(md) {
+@include respond-to(lg) {
+  .schedule-content {
+    gap: var(--space-4);
+  }
+}
+
+@include respond-to(md) {
+  :host {
+    padding: var(--space-3);
+  }
+
+  .schedule-content {
+    grid-template-columns: 1fr;
+    gap: var(--space-4);
+
+    app-card-shell:last-child {
+      grid-column: 1;
+      grid-row: auto;
+    }
+  }
+
+  .stat-item {
+    padding: var(--space-2);
+    margin-bottom: 0;
+  }
+
+  .session-item {
     flex-direction: column;
+    gap: var(--space-3);
+    padding: var(--space-3);
+  }
+
+  .session-actions {
+    width: 100%;
+    align-items: stretch;
+  }
+
+  .calendar-legend {
+    gap: var(--space-3);
+    padding: var(--space-3);
+    margin-top: var(--space-3);
+  }
+
+  .legend-items {
+    gap: var(--space-2);
+  }
+
+  .legend-item {
+    font-size: var(--ds-font-size-xs);
+  }
+
+  .weather-alert__actions {
+    width: 100%;
+    flex-direction: column;
+  }
+
+  .substitute-workout__actions {
+    flex-direction: column;
+  }
+}
+
+@include respond-to(sm) {
+  :host {
+    padding: var(--space-2);
   }
 }
 

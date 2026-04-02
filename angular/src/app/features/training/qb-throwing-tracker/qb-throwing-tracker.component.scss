@@ -4,6 +4,7 @@
 // ============================================================================
 
 @use "styles/mixins" as *;
+@use "styles/foundations" as *;
 
 .qb-throwing-tracker {
   width: min(100%, var(--content-max-width-lg));
@@ -310,12 +311,12 @@ app-alert.preview-alert {
 }
 
 .form-field {
-  display: flex;
-  flex-direction: column;
+  @extend %form-field;
   gap: var(--space-1);
 }
 
 .form-field label {
+  @extend %form-label;
   font-size: var(--ds-font-size-sm);
   font-weight: var(--ds-font-weight-medium);
   color: var(--color-text-secondary);
@@ -327,7 +328,7 @@ app-alert.preview-alert {
 }
 
 .form-row {
-  display: grid;
+  @extend %form-row;
   grid-template-columns: repeat(3, 1fr);
   gap: var(--space-3);
 }

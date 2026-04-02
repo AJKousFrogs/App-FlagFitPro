@@ -12,6 +12,33 @@
 @use "../tokens/design-system-tokens" as *;
 @use "./mixins" as *;
 
+@mixin dynamic-viewport-min-height {
+  min-height: 100vh;
+  min-height: 100dvh;
+  min-height: -webkit-fill-available;
+}
+
+@mixin dynamic-viewport-height {
+  height: 100vh;
+  height: 100dvh;
+}
+
+@mixin responsive-grid-base($gap) {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: $gap;
+}
+
+@mixin responsive-grid-step($breakpoint, $columns, $gap: null) {
+  @include respond-min($breakpoint) {
+    grid-template-columns: repeat($columns, 1fr);
+
+    @if $gap != null {
+      gap: $gap;
+    }
+  }
+}
+
 /* ================================================================
    PAGE HEADER
    Consistent page header pattern
@@ -164,9 +191,7 @@
 
 .dashboard-layout {
   display: flex;
-  min-height: 100vh;
-  min-height: 100dvh; // Modern: keyboard-aware
-height: 100dvh; // Modern: keyboard-aware
+  @include dynamic-viewport-min-height;
   background-color: var(--surface-secondary);
 
   .dashboard-sidebar {
@@ -174,8 +199,7 @@ height: 100dvh; // Modern: keyboard-aware
     top: 0;
     left: 0;
     width: var(--layout-width-sm);
-    height: 100vh;
-    height: 100dvh; // Modern: keyboard-aware
+    @include dynamic-viewport-height;
     background-color: var(--surface-primary);
     border-right: var(--border-1) solid var(--color-border-primary);
     overflow-y: auto;
@@ -414,13 +438,8 @@ height: 100dvh; // Modern: keyboard-aware
    ================================================================ */
 
 /* Safari 100vh fix - use dynamic viewport height */
-.dashboard-layout,
 .full-height-layout {
-  min-height: 100vh;
-  min-height: 100dvh; // Modern: keyboard-aware
-height: 100dvh; // Modern: keyboard-aware
-  min-height: -webkit-fill-available;
-  min-height: 100dvh;
+  @include dynamic-viewport-min-height;
 }
 
 /* iOS Safari fixed position fix */
@@ -515,42 +534,20 @@ height: 100dvh; // Modern: keyboard-aware
    ================================================================ */
 
 .grid-responsive-2 {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: var(--space-4);
-
-  @include respond-to(sm) {
-    grid-template-columns: repeat(2, 1fr);
-  }
+  @include responsive-grid-base(var(--space-4));
+  @include responsive-grid-step(sm, 2);
 }
 
 .grid-responsive-3 {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: var(--space-4);
-
-  @include respond-to(md) {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  @include respond-to(lg) {
-    grid-template-columns: repeat(3, 1fr);
-  }
+  @include responsive-grid-base(var(--space-4));
+  @include responsive-grid-step(md, 2);
+  @include responsive-grid-step(lg, 3);
 }
 
 .grid-responsive-4 {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: var(--space-3);
-
-  @include respond-to(sm) {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  @include respond-to(lg) {
-    grid-template-columns: repeat(4, 1fr);
-    gap: var(--space-4);
-  }
+  @include responsive-grid-base(var(--space-3));
+  @include responsive-grid-step(sm, 2);
+  @include responsive-grid-step(lg, 4, var(--space-4));
 }
 
 /* Safe area support for fixed elements */

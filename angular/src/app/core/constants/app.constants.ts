@@ -3,6 +3,8 @@
  * Single source of truth for configuration values
  */
 
+import { BREAKPOINTS as TOKEN_BREAKPOINTS } from "../utils/design-tokens.util";
+
 /**
  * Pagination configuration
  */
@@ -273,11 +275,11 @@ export const TRAINING = {
  * UI breakpoints (pixels)
  */
 export const BREAKPOINTS = {
-  MOBILE: 576,
-  TABLET: 768,
-  DESKTOP: 992,
-  WIDE: 1200,
-  ULTRA_WIDE: 1600,
+  MOBILE: Number.parseInt(TOKEN_BREAKPOINTS.mobile, 10),
+  TABLET: Number.parseInt(TOKEN_BREAKPOINTS.tablet, 10),
+  DESKTOP: Number.parseInt(TOKEN_BREAKPOINTS.desktop, 10),
+  WIDE: Number.parseInt(TOKEN_BREAKPOINTS.wide, 10),
+  ULTRA_WIDE: Number.parseInt(TOKEN_BREAKPOINTS["2xl"], 10),
 } as const;
 
 /**

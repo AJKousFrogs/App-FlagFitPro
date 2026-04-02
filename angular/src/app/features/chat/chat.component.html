@@ -43,7 +43,7 @@
               <app-icon-button
                 icon="pi-bookmark"
                 variant="text"
-                (clicked)="showPinnedMessages = true"
+                (clicked)="openPinnedMessagesDialog()"
                 ariaLabel="View pinned messages"
                 tooltip="Pinned messages"
               />
@@ -51,7 +51,7 @@
             <app-icon-button
               icon="pi-users"
               variant="text"
-              (clicked)="showMembersDialog = true"
+              (clicked)="openMembersDialog()"
               ariaLabel="View channel members"
               tooltip="Members"
             />
@@ -92,7 +92,7 @@
               <app-button
                 variant="outlined"
                 iconLeft="pi-plus"
-                (clicked)="showCreateChannelDialog = true"
+                (clicked)="openCreateChannelDialog()"
                 >New Channel</app-button
               >
             }
@@ -104,11 +104,13 @@
                   <i class="pi pi-megaphone"></i> Announcements
                 </h4>
                 @for (channel of announcementChannels(); track channel.id) {
-                  <div
+                  <button
+                    type="button"
                     class="channel-item"
                     [class.active]="channel.id === currentChannel()?.id"
                     [class.has-unread]="(channel.unread_count || 0) > 0"
                     (click)="selectChannel(channel)"
+                    [attr.aria-label]="'Open channel ' + channel.name"
                   >
                     <i class="pi pi-megaphone"></i>
                     <span class="channel-name">{{ channel.name }}</span>
@@ -118,7 +120,7 @@
                         severity="danger"
                       ></p-badge>
                     }
-                  </div>
+                  </button>
                 }
               </div>
             }
@@ -135,12 +137,14 @@
                 }
               </h4>
               @for (channel of teamChannels(); track channel.id) {
-                <div
+                <button
+                  type="button"
                   class="channel-item"
                   [class.active]="channel.id === currentChannel()?.id"
                   [class.has-unread]="(channel.unread_count || 0) > 0"
                   [class.has-online]="getChannelOnlineCount(channel.id) > 0"
                   (click)="selectChannel(channel)"
+                  [attr.aria-label]="'Open channel ' + channel.name"
                 >
                   <i [class]="getChannelIcon(channel.channel_type)"></i>
                   <span class="channel-name">{{ channel.name }}</span>
@@ -160,7 +164,7 @@
                       ></p-badge>
                     }
                   </div>
-                </div>
+                </button>
               }
             </div>
 
@@ -170,15 +174,12 @@
                   <i [class]="section.sectionIcon"></i> {{ section.title }}
                 </h4>
                 @for (channel of section.channels; track channel.id) {
-                  <div
+                  <button
+                    type="button"
                     class="channel-item"
                     [class.active]="channel.id === currentChannel()?.id"
                     (click)="selectChannel(channel)"
-                    role="button"
-                    tabindex="0"
                     [attr.aria-label]="'Open channel ' + channel.name"
-                    (keydown.enter)="selectChannel(channel)"
-                    (keydown.space)="selectChannel(channel); $event.preventDefault()"
                   >
                     <i [class]="section.itemIcon"></i>
                     <span class="channel-name">{{ channel.name }}</span>
@@ -188,7 +189,7 @@
                         severity="danger"
                       ></p-badge>
                     }
-                  </div>
+                  </button>
                 }
               </div>
             }
@@ -337,21 +338,18 @@
                   @if (showMentionSuggestions()) {
                     <div class="mention-suggestions">
                       @for (member of mentionSuggestions(); track member.id) {
-                        <div
+                        <button
+                          type="button"
                           class="mention-item"
                           (click)="insertMention(member)"
-                          role="button"
-                          tabindex="0"
                           [attr.aria-label]="'Mention ' + member.full_name"
-                          (keydown.enter)="insertMention(member)"
-                          (keydown.space)="insertMention(member); $event.preventDefault()"
                         >
                           <p-avatar
                             [label]="getInitialsStr(member.full_name)"
                             size="normal"
                           ></p-avatar>
                           <span>{{ member.full_name }}</span>
-                        </div>
+                        </button>
                       }
                     </div>
                   }

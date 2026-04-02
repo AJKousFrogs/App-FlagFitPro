@@ -8,6 +8,7 @@ import {
   DestroyRef,
   OnInit,
 } from "@angular/core";
+import { MotionPreferencesService } from "../../core/services/motion-preferences.service";
 
 /**
  * Animate Number Directive
@@ -61,6 +62,7 @@ import {
 export class AnimateNumberDirective implements OnInit {
   private readonly el = inject(ElementRef<HTMLElement>);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly motionPreferencesService = inject(MotionPreferencesService);
 
   readonly appAnimateNumber = input.required<number>();
   readonly animDuration = input(800);
@@ -88,32 +90,22 @@ export class AnimateNumberDirective implements OnInit {
   }
 
   ngOnInit(): void {
-    this.initReducedMotionPreference();
+    this.motionPreferencesService.watchReducedMotion(
+      (prefersReducedMotion) =>
+        this.prefersReducedMotion.set(prefersReducedMotion),
+      this.destroyRef,
+    );
+    this.destroyRef.onDestroy(() => {
+      if (this.animationFrameId !== null) {
+        cancelAnimationFrame(this.animationFrameId);
+      }
+    });
     this.setupAccessibility();
 
     if (this.animAutoplay()) {
       this.startAnimation(this.appAnimateNumber());
     }
     this.initialized = true;
-  }
-
-  private initReducedMotionPreference(): void {
-    if (typeof window === "undefined" || !("matchMedia" in window)) return;
-
-    const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
-    this.prefersReducedMotion.set(mediaQuery.matches);
-
-    const onChange = (event: MediaQueryListEvent) => {
-      this.prefersReducedMotion.set(event.matches);
-    };
-
-    mediaQuery.addEventListener("change", onChange);
-    this.destroyRef.onDestroy(() => {
-      mediaQuery.removeEventListener("change", onChange);
-      if (this.animationFrameId !== null) {
-        cancelAnimationFrame(this.animationFrameId);
-      }
-    });
   }
 
   private setupAccessibility(): void {

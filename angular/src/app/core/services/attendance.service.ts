@@ -2,8 +2,8 @@ import { Injectable, inject } from "@angular/core";
 import { Observable, of } from "rxjs";
 import { catchError, map } from "rxjs";
 import { ApiService } from "./api.service";
-import { AuthService } from "./auth.service";
 import { LoggerService } from "./logger.service";
+import { SupabaseService } from "./supabase.service";
 import { extractApiArray, extractApiPayload } from "../utils/api-response-mapper";
 
 export interface TeamEvent {
@@ -88,7 +88,7 @@ export interface RecordAttendancePayload {
 })
 export class AttendanceService {
   private apiService = inject(ApiService);
-  private authService = inject(AuthService);
+  private supabaseService = inject(SupabaseService);
   private logger = inject(LoggerService);
 
   /**
@@ -265,7 +265,7 @@ export class AttendanceService {
     eventId: string,
     reason: string,
   ): Observable<AbsenceRequest | null> {
-    const playerId = this.authService.getUser()?.id;
+    const playerId = this.supabaseService.userId();
     if (!playerId) {
       this.logger.warn("No user logged in, cannot submit absence request");
       return of(null);
@@ -328,7 +328,7 @@ export class AttendanceService {
    * Quick check-in for the current user at an event
    */
   quickCheckIn(eventId: string): Observable<AttendanceRecord | null> {
-    const playerId = this.authService.getUser()?.id;
+    const playerId = this.supabaseService.userId();
     if (!playerId) {
       this.logger.warn("No user logged in, cannot check in");
       return of(null);

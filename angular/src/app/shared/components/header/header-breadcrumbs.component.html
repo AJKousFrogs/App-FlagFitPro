@@ -1,0 +1,8 @@
+<nav class="breadcrumbs" aria-label="Breadcrumb">
+  <span class="breadcrumb-item">{{ currentSection() }}</span>
+  @if (currentPage()) {
+    <i class="pi pi-chevron-right separator" aria-hidden="true"></i>
+    <span class="breadcrumb-item current">{{ currentPage() }}</span>
+  }
+</nav>
+

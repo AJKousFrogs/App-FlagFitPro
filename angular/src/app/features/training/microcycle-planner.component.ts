@@ -9,8 +9,8 @@ import {
 import { DatePipe, DecimalPipe, TitleCasePipe } from "@angular/common";
 import { TrainingPlanService } from "../../core/services/training-plan.service";
 import { UnifiedTrainingService } from "../../core/services/unified-training.service";
-import { AuthService } from "../../core/services/auth.service";
 import { LoggerService } from "../../core/services/logger.service";
+import { SupabaseService } from "../../core/services/supabase.service";
 import { TrafficLightRiskComponent } from "../../shared/components/traffic-light-risk/traffic-light-risk.component";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
@@ -219,7 +219,7 @@ interface DayPlan {
   styleUrl: "./microcycle-planner.component.scss",
 })
 export class MicrocyclePlannerComponent {
-  private readonly authService = inject(AuthService);
+  private readonly supabase = inject(SupabaseService);
   private readonly trainingService = inject(UnifiedTrainingService);
   private readonly trainingPlanService = inject(TrainingPlanService);
   private readonly logger = inject(LoggerService);
@@ -229,7 +229,7 @@ export class MicrocyclePlannerComponent {
 
   readonly weeklyPlan = signal<DayPlan[]>([]);
   readonly gameDays = signal<Date[]>([]);
-  readonly currentUserId = computed(() => this.authService.currentUser()?.id ?? null);
+  readonly currentUserId = computed(() => this.supabase.userId());
   readonly todayProtocol = this.trainingService.todayProtocol;
   readonly acwrDisplay = computed(() =>
     getProtocolAcwrDisplay(

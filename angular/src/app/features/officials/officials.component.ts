@@ -21,7 +21,6 @@ import {
   officialAssignmentStatusSeverityMap,
 } from "../../shared/utils/status.utils";
 import { TOAST } from "../../core/constants/toast-messages.constants";
-import { AuthService } from "../../core/services/auth.service";
 import { LoggerService } from "../../core/services/logger.service";
 import {
   GameOfficial,
@@ -111,7 +110,7 @@ type AssignmentStatus = "scheduled" | "confirmed" | "declined" | "no_show";
               [value]="filteredOfficials()"
               [paginator]="true"
               [rows]="10"
-              class="p-datatable-sm"
+              class="table-compact"
               [rowHover]="true"
               [scrollable]="true"
             >
@@ -295,7 +294,7 @@ type AssignmentStatus = "scheduled" | "confirmed" | "declined" | "no_show";
             <app-card-shell class="payment-card" title="Payment Summary">
               <p-table
                 [value]="paymentSummary()"
-                class="p-datatable-sm"
+                class="table-compact"
                 [scrollable]="true"
               >
                 <ng-template #header>
@@ -325,17 +324,16 @@ type AssignmentStatus = "scheduled" | "confirmed" | "declined" | "no_show";
         <app-dialog
           [(visible)]="showOfficialDialog"
           [modal]="true"
-          styleClass="officials-standard-dialog"
+          dialogSize="md"
           [blockScroll]="true"
           [draggable]="false"
-          [breakpoints]="{ '960px': '92vw', '640px': '96vw' }"
           [ariaLabel]="editingOfficial ? 'Edit official' : 'Add official'"
         >
-          <app-dialog-header
-            icon="user-plus"
-            [title]="editingOfficial ? 'Edit Official' : 'Add Official'"
-            subtitle="Manage referee contact details, certification, and availability notes."
-            (close)="showOfficialDialog = false"
+        <app-dialog-header
+          icon="user-plus"
+          [title]="editingOfficial ? 'Edit Official' : 'Add Official'"
+          subtitle="Manage referee contact details, certification, and availability notes."
+            (close)="closeOfficialDialog()"
           />
           <div class="officials-dialog-form">
             <div class="form-field">
@@ -408,7 +406,7 @@ type AssignmentStatus = "scheduled" | "confirmed" | "declined" | "no_show";
             primaryLabel="Save Official"
             primaryIcon="check"
             [disabled]="!officialForm.name"
-            (cancel)="showOfficialDialog = false"
+            (cancel)="closeOfficialDialog()"
             (primary)="saveOfficial()"
           />
         </app-dialog>
@@ -417,17 +415,16 @@ type AssignmentStatus = "scheduled" | "confirmed" | "declined" | "no_show";
         <app-dialog
           [(visible)]="showScheduleDialog"
           [modal]="true"
-          styleClass="officials-schedule-dialog"
+          dialogSize="sm"
           [blockScroll]="true"
           [draggable]="false"
-          [breakpoints]="{ '960px': '92vw', '640px': '96vw' }"
           ariaLabel="Schedule official for game"
         >
           <app-dialog-header
             icon="calendar-plus"
             title="Schedule Official for Game"
             subtitle="Assign the official to an upcoming game and record the expected payment."
-            (close)="showScheduleDialog = false"
+            (close)="closeScheduleDialog()"
           />
           @if (selectedOfficial()) {
             <div class="officials-dialog-form">
@@ -475,7 +472,7 @@ type AssignmentStatus = "scheduled" | "confirmed" | "declined" | "no_show";
             primaryLabel="Schedule"
             primaryIcon="check"
             [disabled]="!scheduleForm.game_id || !scheduleForm.role"
-            (cancel)="showScheduleDialog = false"
+            (cancel)="closeScheduleDialog()"
             (primary)="scheduleOfficial()"
           />
         </app-dialog>
@@ -486,7 +483,6 @@ type AssignmentStatus = "scheduled" | "confirmed" | "declined" | "no_show";
 })
 export class OfficialsComponent implements OnInit {
   private officialsService = inject(OfficialsService);
-  private authService = inject(AuthService);
   private teamMembershipService = inject(TeamMembershipService);
   private toastService = inject(ToastService);
   private dialogService = inject(DialogService);
@@ -561,8 +557,11 @@ export class OfficialsComponent implements OnInit {
   }
 
   loadUpcomingGames(): void {
-    const user = this.authService.getUser();
-    const teamId = user?.id || "default"; // Use user ID as team ID for now
+    const teamId = this.teamMembershipService.teamId();
+    if (!teamId) {
+      this.upcomingGames.set([]);
+      return;
+    }
 
     this.officialsService
       .getUpcomingGames(teamId)
@@ -781,9 +780,28 @@ export class OfficialsComponent implements OnInit {
     );
   }
 
-  openAddOfficialDialog(): void {
+  private refreshAssignmentsOverview(): void {
+    this.loadPaymentSummary();
+  }
+
+  closeOfficialDialog(): void {
+    this.showOfficialDialog = false;
     this.editingOfficial = null;
     this.officialForm = this.getEmptyOfficialForm();
+  }
+
+  closeScheduleDialog(): void {
+    this.showScheduleDialog = false;
+    this.selectedOfficial.set(null);
+    this.scheduleForm = {
+      game_id: "",
+      role: "" as OfficialRole,
+      payment_amount: 0,
+    };
+  }
+
+  openAddOfficialDialog(): void {
+    this.closeOfficialDialog();
     this.showOfficialDialog = true;
   }
 
@@ -821,7 +839,7 @@ export class OfficialsComponent implements OnInit {
         .subscribe({
           next: () => {
             this.toastService.success(TOAST.SUCCESS.OFFICIAL_UPDATED);
-            this.showOfficialDialog = false;
+            this.closeOfficialDialog();
             this.loadOfficials();
           },
           error: () =>
@@ -834,7 +852,7 @@ export class OfficialsComponent implements OnInit {
         .subscribe({
           next: () => {
             this.toastService.success(TOAST.SUCCESS.OFFICIAL_ADDED);
-            this.showOfficialDialog = false;
+            this.closeOfficialDialog();
             this.loadOfficials();
           },
           error: () => this.toastService.error(TOAST.ERROR.OFFICIAL_ADD_FAILED),
@@ -843,12 +861,8 @@ export class OfficialsComponent implements OnInit {
   }
 
   openScheduleDialog(official: Official): void {
+    this.closeScheduleDialog();
     this.selectedOfficial.set(official);
-    this.scheduleForm = {
-      game_id: "",
-      role: "" as OfficialRole,
-      payment_amount: 0,
-    };
     this.showScheduleDialog = true;
   }
 
@@ -868,8 +882,8 @@ export class OfficialsComponent implements OnInit {
       .subscribe({
         next: () => {
           this.toastService.success(TOAST.SUCCESS.OFFICIAL_SCHEDULED);
-          this.showScheduleDialog = false;
-          this.loadPaymentSummary();
+          this.closeScheduleDialog();
+          this.refreshAssignmentsOverview();
         },
         error: () =>
           this.toastService.error(TOAST.ERROR.OFFICIAL_SCHEDULE_FAILED),
@@ -910,7 +924,7 @@ export class OfficialsComponent implements OnInit {
           this.gameAssignments.update((list) =>
             list.filter((a) => a.id !== assignment.id),
           );
-          this.loadPaymentSummary();
+          this.refreshAssignmentsOverview();
         },
         error: () =>
           this.toastService.error(TOAST.ERROR.ASSIGNMENT_REMOVE_FAILED),

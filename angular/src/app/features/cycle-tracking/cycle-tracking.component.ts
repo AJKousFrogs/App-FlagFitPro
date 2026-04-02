@@ -37,8 +37,9 @@ import { firstValueFrom } from "rxjs";
 import { ApiService, API_ENDPOINTS } from "../../core/services/api.service";
 import { LoggerService } from "../../core/services/logger.service";
 import { extractApiPayload } from "../../core/utils/api-response-mapper";
-import { DIALOG_WIDTHS } from "../../core/utils/design-tokens.util";
-import { DesignTokens } from "../../shared/models/design-tokens";
+import {
+  DIALOG_BREAKPOINTS,
+} from "../../core/utils/design-tokens.util";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
 import { EmptyStateComponent } from "../../shared/components/empty-state/empty-state.component";
@@ -316,9 +317,7 @@ import { FormsModule, ReactiveFormsModule } from "@angular/forms";
   styleUrl: "./cycle-tracking.component.scss",
 })
 export class CycleTrackingComponent implements OnInit {
-  readonly dialogBreakpoints = {
-    [DesignTokens.breakpoints.mobile]: DIALOG_WIDTHS.full,
-  };
+  readonly dialogBreakpoints = DIALOG_BREAKPOINTS.mobileFull;
   private readonly api = inject(ApiService);
   private readonly logger = inject(LoggerService);
   private readonly toastService = inject(ToastService);
@@ -574,13 +573,38 @@ export class CycleTrackingComponent implements OnInit {
     this.newPeriod = { ...this.newPeriod, notes: value };
   }
 
-  openLogDialog(): void {
+  private resetPeriodForm(): void {
     this.newPeriod = this.getEmptyPeriodForm();
+  }
+
+  openLogDialog(): void {
+    this.resetPeriodForm();
     this.showLogDialog.set(true);
   }
 
   closeLogDialog(): void {
     this.showLogDialog.set(false);
+    this.resetPeriodForm();
+  }
+
+  closeDeleteDialog(): void {
+    this.showDeleteDialog.set(false);
+  }
+
+  onLogDialogVisibleChange(visible: boolean): void {
+    if (visible) {
+      this.showLogDialog.set(true);
+      return;
+    }
+    this.closeLogDialog();
+  }
+
+  onDeleteDialogVisibleChange(visible: boolean): void {
+    if (visible) {
+      this.showDeleteDialog.set(true);
+      return;
+    }
+    this.closeDeleteDialog();
   }
 
   async savePeriod(): Promise<void> {
@@ -677,7 +701,7 @@ export class CycleTrackingComponent implements OnInit {
       await firstValueFrom(this.api.delete(API_ENDPOINTS.cycleTracking.clearAll));
 
       this.cycleHistory.set([]);
-      this.showDeleteDialog.set(false);
+      this.closeDeleteDialog();
 
       this.toastService.success("All your cycle tracking data has been deleted.", "Data Deleted");
     } catch (err) {

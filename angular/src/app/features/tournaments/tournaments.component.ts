@@ -19,12 +19,12 @@ import { ConfirmDialog } from "primeng/confirmdialog";
 import { TabsComponent, AppTabPanelDirective } from "../../shared/components/tabs/tabs.component";
 import { IconButtonComponent } from "../../shared/components/button/icon-button.component";
 
-import { AuthService } from "../../core/services/auth.service";
 import { ConfirmDialogService } from "../../core/services/confirm-dialog.service";
 import {
     LoggerService,
     toLogContext,
 } from "../../core/services/logger.service";
+import { SupabaseService } from "../../core/services/supabase.service";
 import { TeamMembershipService } from "../../core/services/team-membership.service";
 import {
     CreateTournamentDto,
@@ -250,7 +250,7 @@ const toDateOrNull = (value: unknown): Date | null => {
 })
 export class TournamentsComponent implements OnInit {
   tournamentService = inject(TournamentService);
-  private authService = inject(AuthService);
+  private supabase = inject(SupabaseService);
   private teamMembershipService = inject(TeamMembershipService);
   private tournamentsDataService = inject(TournamentsDataService);
   private toastService = inject(ToastService);
@@ -392,7 +392,11 @@ export class TournamentsComponent implements OnInit {
   }
 
   isAuthenticated(): boolean {
-    return this.authService.isAuthenticated();
+    return this.supabase.isAuthenticated();
+  }
+
+  private currentUserId(): string | null {
+    return this.supabase.userId();
   }
 
   getEmptyFormData(): TournamentFormData {
@@ -718,7 +722,7 @@ export class TournamentsComponent implements OnInit {
   canViewTeamAvailability(): boolean {
     // Check if user is a coach or higher
     // This would need to check the user's role in their team
-    return this.authService.isAuthenticated();
+    return this.supabase.isAuthenticated();
   }
 
   async openAvailabilityDialog(tournament: Tournament): Promise<void> {
@@ -732,7 +736,7 @@ export class TournamentsComponent implements OnInit {
 
   async loadMyAvailability(tournamentId: string): Promise<void> {
     try {
-      const user = this.authService.currentUser();
+      const user = this.supabase.currentUser();
       if (!user) return;
 
       const { data } =
@@ -799,7 +803,7 @@ export class TournamentsComponent implements OnInit {
     this.savingAvailability.set(true);
 
     try {
-      const user = this.authService.currentUser();
+      const user = this.supabase.currentUser();
       if (!user) throw new Error("Not authenticated");
 
       const teamId = await this.getCurrentTeamId();
@@ -1115,7 +1119,7 @@ export class TournamentsComponent implements OnInit {
         sponsor_contribution: budget.sponsorContribution,
         player_share_per_person: this.calculatePlayerShare(),
         budget_status: "draft",
-        created_by: this.authService.currentUser()?.id,
+        created_by: this.currentUserId(),
       };
 
       const { error } = await this.tournamentsDataService.upsertTournamentBudget({
@@ -1144,7 +1148,7 @@ export class TournamentsComponent implements OnInit {
   // ============================================================================
 
   private async getCurrentTeamId(): Promise<string | null> {
-    const user = this.authService.currentUser();
+    const user = this.supabase.currentUser();
     if (!user) return null;
 
     try {

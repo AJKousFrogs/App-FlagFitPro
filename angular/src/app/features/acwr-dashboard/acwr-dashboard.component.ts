@@ -39,10 +39,10 @@ import {
 } from "@angular/core";
 import { Router, RouterModule } from "@angular/router";
 import { AcwrAlertsService } from "../../core/services/acwr-alerts.service";
-import { AuthService } from "../../core/services/auth.service";
 import { LoadMonitoringService } from "../../core/services/load-monitoring.service";
 import { LoggerService } from "../../core/services/logger.service";
 import { toLogContext } from "../../core/services/logger.service";
+import { SupabaseService } from "../../core/services/supabase.service";
 import { ToastService } from "../../core/services/toast.service";
 import { TOAST } from "../../core/constants/toast-messages.constants";
 import { UnifiedTrainingService } from "../../core/services/unified-training.service";
@@ -101,6 +101,7 @@ export class AcwrDashboardComponent implements OnInit {
   private readonly loadService = inject(LoadMonitoringService);
   private readonly alertsService = inject(AcwrAlertsService);
   private readonly confidenceService = inject(DataConfidenceService);
+  private readonly supabase = inject(SupabaseService);
   private readonly ownershipTransitionService = inject(
     OwnershipTransitionService,
   );
@@ -361,7 +362,6 @@ export class AcwrDashboardComponent implements OnInit {
   }
 
   private router = inject(Router);
-  private authService = inject(AuthService);
   private toastService = inject(ToastService);
   private acwrDashboardDataService = inject(AcwrDashboardDataService);
 
@@ -408,51 +408,20 @@ export class AcwrDashboardComponent implements OnInit {
 
   public async downloadReport(): Promise<void> {
     try {
-      const user = this.authService.getUser();
-      if (!user?.id) {
-        this.toastService.error(TOAST.ERROR.LOGIN_TO_DOWNLOAD_REPORTS);
+      const userId = this.requireReportUserId();
+      if (!userId) {
         return;
       }
 
       this.toastService.info(TOAST.INFO.ACWR_REPORT_GENERATING);
-
-      // Get current ACWR data from the training service
-      const acwrData = {
-        ratio: this.acwrRatio(),
-        riskZone: this.riskZone(),
-        acute: this.acuteLoad(),
-        chronic: this.chronicLoad(),
-        weeklyProgression: this.weeklyProgression(),
-      };
-      const alerts = this.alerts();
-
-      // Build report data
-      const reportData = {
-        generatedAt: new Date().toISOString(),
-        userId: user.id,
-        acwr: {
-          current: acwrData.ratio,
-          riskZone: acwrData.riskZone.label,
-          acuteLoad: acwrData.acute,
-          chronicLoad: acwrData.chronic,
-          weeklyProgression: acwrData.weeklyProgression,
-        },
-        alerts: alerts.map((a) => ({
-          message: a.message,
-          severity: a.severity,
-          recommendation: a.recommendation,
-        })),
-        recommendations: this.getRecommendationsForRiskZone(
-          acwrData.riskZone.label,
-        ),
-      };
+      const reportData = this.buildReportData(userId);
 
       // Save report to Supabase
       const { error } = await this.acwrDashboardDataService.saveReport({
-        userId: user.id,
+        userId,
         reportData,
-        acwrValue: acwrData.ratio,
-        riskZone: acwrData.riskZone,
+        acwrValue: reportData.acwr.current,
+        riskZone: this.riskZone(),
       });
 
       if (error) {
@@ -469,7 +438,7 @@ export class AcwrDashboardComponent implements OnInit {
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = `acwr-report-${new Date().toISOString().split("T")[0]}.json`;
+      a.download = `${this.getReportFileBaseName()}.json`;
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
@@ -527,13 +496,50 @@ export class AcwrDashboardComponent implements OnInit {
     }
   }
 
+  private requireReportUserId(): string | null {
+    const userId = this.supabase.userId();
+    if (!userId) {
+      this.toastService.error(TOAST.ERROR.LOGIN_TO_DOWNLOAD_REPORTS);
+      return null;
+    }
+
+    return userId;
+  }
+
+  private getReportFileBaseName(): string {
+    return `acwr-report-${new Date().toISOString().split("T")[0]}`;
+  }
+
+  private buildReportData(userId: string) {
+    const riskZone = this.riskZone();
+    const alerts = this.alerts();
+
+    return {
+      generatedAt: new Date().toISOString(),
+      userId,
+      acwr: {
+        current: this.acwrRatio(),
+        riskZone: riskZone.label,
+        acuteLoad: this.acuteLoad(),
+        chronicLoad: this.chronicLoad(),
+        weeklyProgression: this.weeklyProgression(),
+      },
+      alerts: alerts.map((alert) => ({
+        message: alert.message,
+        severity: alert.severity,
+        recommendation: alert.recommendation,
+      })),
+      recommendations: this.getRecommendationsForRiskZone(riskZone.label),
+    };
+  }
+
   /**
    * Load historical ACWR trend data for the chart
    */
   private async loadTrendData(): Promise<void> {
     try {
-      const user = this.authService.getUser();
-      if (!user?.id) return;
+      const userId = this.supabase.userId();
+      if (!userId) return;
 
       // Get last 28 days of training sessions
       const endDate = new Date();
@@ -542,7 +548,7 @@ export class AcwrDashboardComponent implements OnInit {
 
       const { sessions, error } =
         await this.acwrDashboardDataService.getTrendSessions({
-          userId: user.id,
+          userId,
           startDate: startDate.toISOString().split("T")[0],
           endDate: endDate.toISOString().split("T")[0],
         });
@@ -655,8 +661,8 @@ export class AcwrDashboardComponent implements OnInit {
    */
   private async loadOwnershipTransition(): Promise<void> {
     try {
-      const user = this.authService.getUser();
-      if (!user?.id) return;
+      const userId = this.supabase.userId();
+      if (!userId) return;
 
       const currentACWR = this.acwrRatio();
       if (!currentACWR || currentACWR <= 1.3) {
@@ -665,7 +671,7 @@ export class AcwrDashboardComponent implements OnInit {
 
       // Get recent ownership transitions for ACWR alerts
       const transitions =
-        await this.ownershipTransitionService.getPlayerTransitions(user.id, 10);
+        await this.ownershipTransitionService.getPlayerTransitions(userId, 10);
 
       // Filter for ACWR-related transitions
       const acwrTransitions = transitions.filter(
@@ -689,8 +695,8 @@ export class AcwrDashboardComponent implements OnInit {
    */
   private async loadCauseAttribution(): Promise<void> {
     try {
-      const user = this.authService.getUser();
-      if (!user?.id) return;
+      const userId = this.supabase.userId();
+      if (!userId) return;
 
       const currentACWR = this.acwrRatio();
       if (!currentACWR || currentACWR <= 1.3) {
@@ -705,7 +711,7 @@ export class AcwrDashboardComponent implements OnInit {
 
       const { sessions } = await this.acwrDashboardDataService.getRecentSessions(
         {
-          userId: user.id,
+          userId,
           startDate: startDate.toISOString().split("T")[0],
           endDate: endDate.toISOString().split("T")[0],
           limit: 10,
@@ -747,15 +753,14 @@ export class AcwrDashboardComponent implements OnInit {
     try {
       this.toastService.info(TOAST.INFO.PDF_REPORT_GENERATING);
 
-      const dashboardRef = this.dashboardElement();
-      const dashboard = dashboardRef?.nativeElement as HTMLElement;
+      const dashboard = this.getDashboardElement();
       if (!dashboard) {
         this.toastService.error(TOAST.ERROR.DASHBOARD_NOT_FOUND);
         return;
       }
 
       await this.lazyPdf.exportElementToPDF(dashboard, {
-        filename: `acwr-report-${new Date().toISOString().split("T")[0]}.pdf`,
+        filename: `${this.getReportFileBaseName()}.pdf`,
         headerText: "ACWR Dashboard Report",
         subtitleText: `Generated: ${formatDate(new Date(), "P")}`,
         imageFormat: "png",
@@ -770,5 +775,10 @@ export class AcwrDashboardComponent implements OnInit {
         "Failed to generate PDF. Make sure jspdf and html2canvas are installed.",
       );
     }
+  }
+
+  private getDashboardElement(): HTMLElement | null {
+    const dashboardRef = this.dashboardElement();
+    return (dashboardRef?.nativeElement as HTMLElement | undefined) ?? null;
   }
 }

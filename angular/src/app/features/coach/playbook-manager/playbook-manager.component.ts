@@ -325,7 +325,7 @@ const ROUTES = [
       <app-dialog
         [(visible)]="showPlayDialog"
         [modal]="true"
-        styleClass="play-dialog"
+        dialogSize="2xl"
         [blockScroll]="true"
         [draggable]="false"
         [breakpoints]="{ '1200px': '94vw', '640px': '96vw' }"
@@ -351,7 +351,7 @@ const ROUTES = [
               ? 'Review the formation, assignments, and coaching notes for this play.'
               : 'Define the formation, assignments, and coaching notes for this play.'
           "
-          (close)="showPlayDialog = false"
+          (close)="closePlayDialog()"
         />
         <div class="play-form">
           <div class="form-columns">
@@ -548,7 +548,7 @@ const ROUTES = [
             cancelLabel="Close"
             primaryLabel="Edit Play"
             primaryIcon="pencil"
-            (cancel)="showPlayDialog = false"
+            (cancel)="closePlayDialog()"
             (primary)="editViewedPlay()"
           />
         } @else {
@@ -558,7 +558,7 @@ const ROUTES = [
             primaryLabel="Save Play"
             primaryIcon="check"
             [disabled]="!playForm.name"
-            (cancel)="showPlayDialog = false"
+            (cancel)="closePlayDialog()"
             (primary)="savePlay()"
           />
         }
@@ -568,17 +568,16 @@ const ROUTES = [
       <app-dialog
         [(visible)]="showStatsDialog"
         [modal]="true"
-        styleClass="play-stats-dialog"
+        dialogSize="lg"
         [blockScroll]="true"
         [draggable]="false"
-        [breakpoints]="{ '1200px': '92vw', '640px': '96vw' }"
         ariaLabel="Memorization stats"
       >
         <app-dialog-header
           icon="chart-bar"
           title="Memorization Stats"
           subtitle="Review who has memorized the play and who still needs a reminder."
-          (close)="showStatsDialog = false"
+          (close)="closeStatsDialog()"
         />
         @if (selectedPlay()) {
           <div class="stats-content">
@@ -822,6 +821,32 @@ export class PlaybookManagerComponent implements OnInit {
     };
   }
 
+  private populatePlayForm(play: Play): void {
+    this.playForm = {
+      id: play.id,
+      name: play.name,
+      formation: play.formation,
+      situation: play.situation,
+      type: play.type,
+      assignments: play.assignments.map((assignment) => ({
+        ...assignment,
+        instructions: [...assignment.instructions],
+      })),
+      coachNotes: play.coachNotes,
+    };
+  }
+
+  closePlayDialog(): void {
+    this.showPlayDialog = false;
+    this.isEditing.set(false);
+    this.isViewing.set(false);
+    this.playForm = this.getEmptyPlayForm();
+  }
+
+  closeStatsDialog(): void {
+    this.showStatsDialog = false;
+  }
+
   onPlayNameChange(value: string): void {
     this.playForm = { ...this.playForm, name: value };
   }
@@ -890,9 +915,7 @@ export class PlaybookManagerComponent implements OnInit {
 
   // Dialog methods
   openCreateDialog(): void {
-    this.isEditing.set(false);
-    this.isViewing.set(false);
-    this.playForm = this.getEmptyPlayForm();
+    this.closePlayDialog();
     this.showPlayDialog = true;
   }
 
@@ -902,18 +925,7 @@ export class PlaybookManagerComponent implements OnInit {
     this.isEditing.set(true);
     this.isViewing.set(false);
     this.selectedPlay.set(play);
-    this.playForm = {
-      id: play.id,
-      name: play.name,
-      formation: play.formation,
-      situation: play.situation,
-      type: play.type,
-      assignments: play.assignments.map((a) => ({
-        ...a,
-        instructions: [...a.instructions],
-      })),
-      coachNotes: play.coachNotes,
-    };
+    this.populatePlayForm(play);
     this.showPlayDialog = true;
   }
 
@@ -946,26 +958,14 @@ export class PlaybookManagerComponent implements OnInit {
       return plays.map((play) => (play.id === data.id ? data : play));
     });
     this.toastService.success(`${data.name} has been saved`, "Play Saved");
-    this.showPlayDialog = false;
-    this.isViewing.set(false);
+    this.closePlayDialog();
   }
 
   viewPlay(play: Play): void {
     this.selectedPlay.set(play);
     this.isEditing.set(false);
     this.isViewing.set(true);
-    this.playForm = {
-      id: play.id,
-      name: play.name,
-      formation: play.formation,
-      situation: play.situation,
-      type: play.type,
-      assignments: play.assignments.map((a) => ({
-        ...a,
-        instructions: [...a.instructions],
-      })),
-      coachNotes: play.coachNotes,
-    };
+    this.populatePlayForm(play);
     this.showPlayDialog = true;
   }
 

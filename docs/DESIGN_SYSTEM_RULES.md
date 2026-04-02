@@ -94,7 +94,7 @@ Every exception MUST include:
 
 ## 4. Design Tokens (Single Source of Truth)
 
-> **Finding legacy/deprecated token usage:** Run `npm run lint:tokens` or see [LEGACY_CODE_GUIDE.md](./LEGACY_CODE_GUIDE.md).
+> **Finding legacy or deprecated token usage:** Run `npm run lint:tokens`, review [ANGULAR_PRIMENG_GUIDE.md](./ANGULAR_PRIMENG_GUIDE.md), and inspect the canonical token source in `angular/src/scss/tokens/design-system-tokens.scss`.
 
 ### 4.1 Token Authority
 

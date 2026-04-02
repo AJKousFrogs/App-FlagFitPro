@@ -20,6 +20,7 @@ import {
   computed,
   OnDestroy,
   DestroyRef,
+  effect,
 } from "@angular/core";
 import { firstValueFrom } from "rxjs";
 import { RealtimeChannel } from "@supabase/supabase-js";
@@ -200,7 +201,9 @@ export class NotificationStateService implements OnDestroy {
   // Guard to prevent duplicate subscription initialization
   private _realtimeInitialized = false;
   private _initializationInProgress = false;
+  private activeRealtimeUserId: string | null = null;
   private notificationsApiUnavailable = false;
+  private notificationsApiRetryAt = 0;
 
   private isConflictOrUnavailableError(error: unknown): boolean {
     const status =
@@ -210,9 +213,46 @@ export class NotificationStateService implements OnDestroy {
     return [409, 500, 502, 503].includes(status);
   }
 
+  private shouldBypassNotificationsApi(): boolean {
+    if (!this.notificationsApiUnavailable) {
+      return false;
+    }
+
+    if (Date.now() >= this.notificationsApiRetryAt) {
+      this.resetNotificationsApiAvailability();
+      return false;
+    }
+
+    return true;
+  }
+
+  private markNotificationsApiUnavailable(): void {
+    this.notificationsApiUnavailable = true;
+    this.notificationsApiRetryAt = Date.now() + 30_000;
+  }
+
+  private resetNotificationsApiAvailability(): void {
+    this.notificationsApiUnavailable = false;
+    this.notificationsApiRetryAt = 0;
+  }
+
   constructor() {
-    // Initialize realtime subscription when user is authenticated
-    this.initializeRealtimeSubscription();
+    effect(() => {
+      const userId = this.supabaseService.userId();
+
+      if (!userId) {
+        this.resetRealtimeSubscription();
+        this.clearNotifications();
+        this.resetNotificationsApiAvailability();
+        return;
+      }
+
+      if (this.activeRealtimeUserId === userId && this._realtimeInitialized) {
+        return;
+      }
+
+      void this.reinitializeRealtime();
+    });
   }
 
   ngOnDestroy(): void {
@@ -247,6 +287,8 @@ export class NotificationStateService implements OnDestroy {
         return;
       }
 
+      this.activeRealtimeUserId = userId;
+
       // Double-check we haven't initialized while waiting
       if (this._realtimeInitialized) {
         this.logger.debug(
@@ -270,7 +312,7 @@ export class NotificationStateService implements OnDestroy {
       this.realtimeChannel = this.supabaseService.client
         .channel(channelName)
         .on("broadcast", { event: "notification_change" }, (payload) => {
-          const broadcast = payload.payload as NotificationBroadcastPayload;
+          const broadcast = payload.payload as RealtimeBroadcastPayload;
           this.handleNotificationBroadcast(broadcast);
         })
         .subscribe((status) => {
@@ -299,9 +341,14 @@ export class NotificationStateService implements OnDestroy {
    * Reinitialize realtime subscription (e.g., after user change)
    */
   async reinitializeRealtime(): Promise<void> {
-    this._realtimeInitialized = false;
-    this.unsubscribeFromRealtime();
+    this.resetRealtimeSubscription();
     await this.initializeRealtimeSubscription();
+  }
+
+  private resetRealtimeSubscription(): void {
+    this._realtimeInitialized = false;
+    this.activeRealtimeUserId = null;
+    this.unsubscribeFromRealtime();
   }
 
   private handleNotificationBroadcast(
@@ -503,7 +550,7 @@ export class NotificationStateService implements OnDestroy {
   async loadNotifications(
     options: { lastOpenedAt?: string } = {},
   ): Promise<Notification[]> {
-    if (this.notificationsApiUnavailable) {
+    if (this.shouldBypassNotificationsApi()) {
       return this.notifications();
     }
 
@@ -543,7 +590,7 @@ export class NotificationStateService implements OnDestroy {
       return notifications;
     } catch (error) {
       if (this.isConflictOrUnavailableError(error)) {
-        this.notificationsApiUnavailable = true;
+        this.markNotificationsApiUnavailable();
         this.loading.set(false);
         this.error.set(null);
         this.logger.warn(
@@ -600,7 +647,7 @@ export class NotificationStateService implements OnDestroy {
       return true;
     } catch (error) {
       if (this.isConflictOrUnavailableError(error)) {
-        this.notificationsApiUnavailable = true;
+        this.markNotificationsApiUnavailable();
         return true;
       }
 
@@ -650,7 +697,7 @@ export class NotificationStateService implements OnDestroy {
       return true;
     } catch (error) {
       if (this.isConflictOrUnavailableError(error)) {
-        this.notificationsApiUnavailable = true;
+        this.markNotificationsApiUnavailable();
         return true;
       }
 
@@ -701,7 +748,7 @@ export class NotificationStateService implements OnDestroy {
       return true;
     } catch (error) {
       if (this.isConflictOrUnavailableError(error)) {
-        this.notificationsApiUnavailable = true;
+        this.markNotificationsApiUnavailable();
         return true;
       }
 
@@ -721,7 +768,7 @@ export class NotificationStateService implements OnDestroy {
    * Refresh badge count from API
    */
   async refreshBadgeCount(): Promise<number> {
-    if (this.notificationsApiUnavailable) {
+    if (this.shouldBypassNotificationsApi()) {
       return this.unreadCount();
     }
 
@@ -751,7 +798,7 @@ export class NotificationStateService implements OnDestroy {
       return count;
     } catch (error) {
       if (this.isConflictOrUnavailableError(error)) {
-        this.notificationsApiUnavailable = true;
+        this.markNotificationsApiUnavailable();
         return this.unreadCount();
       }
       this.logger.warn("Error refreshing badge count:", toLogContext(error));
@@ -764,7 +811,7 @@ export class NotificationStateService implements OnDestroy {
    * Update last opened timestamp
    */
   async updateLastOpenedAt(): Promise<void> {
-    if (this.notificationsApiUnavailable) {
+    if (this.shouldBypassNotificationsApi()) {
       return;
     }
 
@@ -779,7 +826,7 @@ export class NotificationStateService implements OnDestroy {
       this.lastOpenedAt.set(new Date().toISOString());
     } catch (error) {
       if (this.isConflictOrUnavailableError(error)) {
-        this.notificationsApiUnavailable = true;
+        this.markNotificationsApiUnavailable();
         return;
       }
       this.logger.warn(

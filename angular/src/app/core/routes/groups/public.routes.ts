@@ -7,7 +7,15 @@ export const publicRoutes: Routes = [
       import("../../../features/landing/landing.component").then(
         (m) => m.LandingComponent,
       ),
-    data: { preload: true, priority: "high", entry: "public", animation: "fade" }, // Landing page loads immediately
+    data: {
+      preload: true,
+      priority: "high",
+      entry: "public",
+      animation: "fade",
+      showBottomNav: false,
+      showFab: false,
+      headerPreset: "default",
+    }, // Landing page loads immediately
   },
   {
     path: "login",
@@ -15,7 +23,14 @@ export const publicRoutes: Routes = [
       import("../../../features/auth/login/login.component").then(
         (m) => m.LoginComponent,
       ),
-    data: { preload: false, entry: "public", animation: "slideUp" }, // On-demand from public CTAs to reduce landing-page background JS
+    data: {
+      preload: false,
+      entry: "public",
+      animation: "slideUp",
+      showBottomNav: false,
+      showFab: false,
+      headerPreset: "default",
+    }, // On-demand from public CTAs to reduce landing-page background JS
   },
   {
     path: "register",
@@ -23,7 +38,14 @@ export const publicRoutes: Routes = [
       import("../../../features/auth/register/register.component").then(
         (m) => m.RegisterComponent,
       ),
-    data: { preload: false, entry: "public", animation: "slideUp" }, // On-demand from public CTAs to reduce landing-page background JS
+    data: {
+      preload: false,
+      entry: "public",
+      animation: "slideUp",
+      showBottomNav: false,
+      showFab: false,
+      headerPreset: "default",
+    }, // On-demand from public CTAs to reduce landing-page background JS
   },
   {
     path: "reset-password",
@@ -31,7 +53,14 @@ export const publicRoutes: Routes = [
       import("../../../features/auth/reset-password/reset-password.component").then(
         (m) => m.ResetPasswordComponent,
       ),
-    data: { preload: false, entry: "deeplink", animation: "slideUp" }, // On-demand - rarely accessed
+    data: {
+      preload: false,
+      entry: "deeplink",
+      animation: "slideUp",
+      showBottomNav: false,
+      showFab: false,
+      headerPreset: "default",
+    }, // On-demand - rarely accessed
   },
   {
     path: "update-password",
@@ -39,7 +68,13 @@ export const publicRoutes: Routes = [
       import("../../../features/auth/update-password/update-password.component").then(
         (m) => m.UpdatePasswordComponent,
       ),
-    data: { preload: false, entry: "deeplink" }, // On-demand - rarely accessed
+    data: {
+      preload: false,
+      entry: "deeplink",
+      showBottomNav: false,
+      showFab: false,
+      headerPreset: "default",
+    }, // On-demand - rarely accessed
   },
   {
     path: "verify-email",
@@ -47,7 +82,13 @@ export const publicRoutes: Routes = [
       import("../../../features/auth/verify-email/verify-email.component").then(
         (m) => m.VerifyEmailComponent,
       ),
-    data: { preload: false, entry: "deeplink" }, // On-demand - one-time use
+    data: {
+      preload: false,
+      entry: "deeplink",
+      showBottomNav: false,
+      showFab: false,
+      headerPreset: "default",
+    }, // On-demand - one-time use
   },
   {
     path: "auth/callback",
@@ -55,7 +96,13 @@ export const publicRoutes: Routes = [
       import("../../../features/auth/auth-callback/auth-callback.component").then(
         (m) => m.AuthCallbackComponent,
       ),
-    data: { preload: false, entry: "deeplink" }, // On-demand - OAuth callback
+    data: {
+      preload: false,
+      entry: "deeplink",
+      showBottomNav: false,
+      showFab: false,
+      headerPreset: "default",
+    }, // On-demand - OAuth callback
   },
   {
     path: "onboarding",
@@ -63,7 +110,13 @@ export const publicRoutes: Routes = [
       import("../../../features/onboarding/onboarding.component").then(
         (m) => m.OnboardingComponent,
       ),
-    data: { preload: false, entry: "deeplink" }, // One-time setup flow outside the main app shell
+    data: {
+      preload: false,
+      entry: "deeplink",
+      showBottomNav: false,
+      showFab: false,
+      headerPreset: "default",
+    }, // One-time setup flow outside the main app shell
   },
   {
     path: "accept-invitation",
@@ -71,7 +124,13 @@ export const publicRoutes: Routes = [
       import("../../../features/team/accept-invitation/accept-invitation.component").then(
         (m) => m.AcceptInvitationComponent,
       ),
-    data: { preload: false, entry: "deeplink" }, // On-demand - rarely accessed
+    data: {
+      preload: false,
+      entry: "deeplink",
+      showBottomNav: false,
+      showFab: false,
+      headerPreset: "default",
+    }, // On-demand - rarely accessed
   },
   {
     path: "terms",
@@ -79,7 +138,14 @@ export const publicRoutes: Routes = [
       import("../../../features/legal/legal-doc.component").then(
         (m) => m.LegalDocComponent,
       ),
-    data: { preload: false, legalDoc: "terms", entry: "public" },
+    data: {
+      preload: false,
+      legalDoc: "terms",
+      entry: "public",
+      showBottomNav: false,
+      showFab: false,
+      headerPreset: "default",
+    },
     title: "Terms of Use - FlagFit Pro",
   },
   {
@@ -88,7 +154,14 @@ export const publicRoutes: Routes = [
       import("../../../features/legal/legal-doc.component").then(
         (m) => m.LegalDocComponent,
       ),
-    data: { preload: false, legalDoc: "privacy", entry: "public" },
+    data: {
+      preload: false,
+      legalDoc: "privacy",
+      entry: "public",
+      showBottomNav: false,
+      showFab: false,
+      headerPreset: "default",
+    },
     title: "Privacy Policy - FlagFit Pro",
   },
   {

@@ -170,6 +170,7 @@ interface Milestone {
         [(visible)]="showFullDialog"
         [blockScroll]="true"
         [draggable]="false"
+        dialogSize="2xl"
         styleClass="la28-roadmap-dialog"
         ariaLabel="Road to LA28 Olympics"
       >

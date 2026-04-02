@@ -23,13 +23,13 @@ import { MainLayoutComponent } from "../../../shared/components/layout/main-layo
 import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";
 import { EmptyStateComponent } from "../../../shared/components/empty-state/empty-state.component";
 import { AiConsentRequiredComponent } from "../../../shared/components/ai-consent-required/ai-consent-required.component";
-import { AuthService } from "../../../core/services/auth.service";
 import { ToastService } from "../../../core/services/toast.service";
 import { TOAST } from "../../../core/constants/toast-messages.constants";
 import { ApiService } from "../../../core/services/api.service";
 import { LoggerService } from "../../../core/services/logger.service";
 import { toLogContext } from "../../../core/services/logger.service";
 import { PrivacySettingsService } from "../../../core/services/privacy-settings.service";
+import { SupabaseService } from "../../../core/services/supabase.service";
 import { AiTrainingSchedulerDataService } from "../services/ai-training-scheduler-data.service";
 import { extractApiPayload } from "../../../core/utils/api-response-mapper";
 
@@ -377,7 +377,7 @@ interface AthleteMetrics {
 })
 export class AiTrainingSchedulerComponent implements OnInit {
   private aiTrainingSchedulerDataService = inject(AiTrainingSchedulerDataService);
-  private authService = inject(AuthService);
+  private supabase = inject(SupabaseService);
   private toastService = inject(ToastService);
   private logger = inject(LoggerService);
   private privacyService = inject(PrivacySettingsService);
@@ -421,24 +421,28 @@ export class AiTrainingSchedulerComponent implements OnInit {
     this.loadData();
   }
 
+  private currentUserId(): string | null {
+    return this.supabase.userId();
+  }
+
   async loadData(): Promise<void> {
     this.isLoading.set(true);
 
     try {
-      const user = this.authService.getUser();
-      if (!user?.id) {
+      const userId = this.currentUserId();
+      if (!userId) {
         this.logger.warn("No user found");
         return;
       }
 
       // Load athlete metrics
-      await this.loadAthleteMetrics(user.id);
+      await this.loadAthleteMetrics(userId);
 
       // Load AI suggestions
-      await this.loadSuggestions(user.id);
+      await this.loadSuggestions(userId);
 
       // Load scheduled sessions
-      await this.loadScheduledSessions(user.id);
+      await this.loadScheduledSessions(userId);
     } catch (error) {
       this.logger.error("Error loading AI scheduler data:", error);
       this.toastService.error(TOAST.ERROR.LOAD_FAILED);
@@ -673,8 +677,8 @@ export class AiTrainingSchedulerComponent implements OnInit {
     this.isGenerating.set(true);
 
     try {
-      const user = this.authService.getUser();
-      if (!user?.id) return;
+      const userId = this.currentUserId();
+      if (!userId) return;
 
       // Regenerate suggestions based on current metrics
       this.generateLocalSuggestions();
@@ -692,14 +696,14 @@ export class AiTrainingSchedulerComponent implements OnInit {
     this.applyingId.set(suggestion.id);
 
     try {
-      const user = this.authService.getUser();
-      if (!user?.id) return;
+      const userId = this.currentUserId();
+      if (!userId) return;
 
       // Save to database if table exists
       try {
         await this.aiTrainingSchedulerDataService.upsertSuggestion({
           id: suggestion.id,
-          userId: user.id,
+          userId,
           suggestionType: suggestion.type,
           priority: suggestion.priority,
           message: suggestion.message,
@@ -729,14 +733,14 @@ export class AiTrainingSchedulerComponent implements OnInit {
 
   async dismissSuggestion(suggestion: AISuggestion): Promise<void> {
     try {
-      const user = this.authService.getUser();
-      if (!user?.id) return;
+      const userId = this.currentUserId();
+      if (!userId) return;
 
       // Save dismissal to database if table exists
       try {
         await this.aiTrainingSchedulerDataService.upsertSuggestion({
           id: suggestion.id,
-          userId: user.id,
+          userId,
           suggestionType: suggestion.type,
           message: suggestion.message,
           dismissed: true,

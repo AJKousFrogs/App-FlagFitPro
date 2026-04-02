@@ -29,7 +29,7 @@ import {
   TrainingSafetyService,
   WarningSeverity,
 } from "../../../core/services/training-safety.service";
-import { AuthService } from "../../../core/services/auth.service";
+import { SupabaseService } from "../../../core/services/supabase.service";
 
 @Component({
   selector: "app-safety-warnings",
@@ -141,7 +141,7 @@ import { AuthService } from "../../../core/services/auth.service";
 })
 export class SafetyWarningsComponent implements OnInit {
   private safetyService = inject(TrainingSafetyService);
-  private authService = inject(AuthService);
+  private supabase = inject(SupabaseService);
 
   // Expose service signals
   hasWarnings = computed(() => this.safetyService.warningCount() > 0);
@@ -173,17 +173,17 @@ export class SafetyWarningsComponent implements OnInit {
   }
 
   private async loadSafetyData(): Promise<void> {
-    const user = this.authService.getUser();
-    if (!user?.id) return;
+    const userId = this.supabase.userId();
+    if (!userId) return;
 
     // Load athlete data
-    await this.safetyService.loadAthleteAge(user.id);
-    await this.safetyService.loadWeeklyMovements(user.id);
+    await this.safetyService.loadAthleteAge(userId);
+    await this.safetyService.loadWeeklyMovements(userId);
 
     // Perform initial safety check with a hypothetical medium session
     await this.safetyService.performSafetyCheck(
       { intensity: "medium", duration: 60 },
-      user.id,
+      userId,
     );
   }
 

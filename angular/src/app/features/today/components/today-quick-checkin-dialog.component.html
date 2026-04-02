@@ -8,7 +8,14 @@
   [closeOnEscape]="true"
   [focusOnShow]="true"
   [ariaLabel]="'Quick wellness check-in dialog'"
-  [styleClass]="'quick-checkin-modal'"
+  shell="settings"
+  dialogSize="sm"
+  [scrollableContent]="true"
+  [scrollMaxHeight]="
+    'calc(80dvh - (var(--space-24) + var(--space-10) + var(--space-1)))'
+  "
+  [mobileStickyFooter]="true"
+  [mobileMaxHeight]="'80dvh'"
 >
   <app-dialog-header
     icon="heart"

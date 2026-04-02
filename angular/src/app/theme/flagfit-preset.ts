@@ -1,9 +1,9 @@
 /**
- * FlagFit Pro - PrimeNG 21 Aura Preset Customization
+ * FlagFit Pro - PrimeNG preset bridge
  *
- * Uses definePreset to brand Aura with our green palette (#089949).
- * Design tokens flow through the component tree; CSS vars in token-mapping
- * provide additional overrides for edge cases.
+ * PrimeNG still needs a preset object at app bootstrap, but the actual visual
+ * values come from the canonical CSS design tokens. This avoids maintaining a
+ * second hardcoded palette in TypeScript.
  */
 
 import { definePreset } from "@primeuix/themes";
@@ -12,26 +12,26 @@ import Aura from "@primeuix/themes/aura";
 export const FlagFitPreset = definePreset(Aura, {
   semantic: {
     primary: {
-      color: "#089949",
-      contrastColor: "#ffffff",
-      hoverColor: "#036d35",
-      activeColor: "#067a3c",
-      50: "#f0f9f7",
-      100: "#d0f0eb",
-      200: "#a0e4d7",
-      300: "#70d8c3",
-      400: "#40ccaf",
-      500: "#10c96b",
-      600: "#0ab85a",
-      700: "#089949",
-      800: "#067a3c",
-      900: "#036d35",
-      950: "#024d21",
+      color: "var(--color-brand-primary)",
+      contrastColor: "var(--color-text-on-primary)",
+      hoverColor: "var(--color-brand-primary-hover)",
+      activeColor: "var(--color-brand-primary-active)",
+      50: "var(--primitive-primary-50)",
+      100: "var(--primitive-primary-100)",
+      200: "var(--primitive-primary-200)",
+      300: "var(--primitive-primary-300)",
+      400: "var(--primitive-primary-400)",
+      500: "var(--primitive-primary-500)",
+      600: "var(--primitive-primary-600)",
+      700: "var(--primitive-primary-700)",
+      800: "var(--primitive-primary-800)",
+      900: "var(--primitive-primary-900)",
+      950: "var(--primitive-primary-900)",
     },
     focusRing: {
-      width: "3px",
-      color: "#089949",
-      offset: "2px",
+      width: "var(--focus-ring-width)",
+      color: "var(--color-brand-primary)",
+      offset: "var(--focus-ring-offset)",
     },
   },
 });

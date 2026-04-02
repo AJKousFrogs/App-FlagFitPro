@@ -12,7 +12,6 @@
 import { Injectable, inject, signal, computed } from "@angular/core";
 import { SupabaseService } from "./supabase.service";
 import { LoggerService } from "./logger.service";
-import { AuthService } from "./auth.service";
 
 export interface SharedInsight {
   id: string;
@@ -46,7 +45,6 @@ export interface InsightFilter {
 export class SharedInsightFeedService {
   private readonly supabaseService = inject(SupabaseService);
   private readonly logger = inject(LoggerService);
-  private readonly authService = inject(AuthService);
 
   // State
   private readonly _insights = signal<SharedInsight[]>([]);
@@ -62,8 +60,7 @@ export class SharedInsightFeedService {
   readonly filteredInsights = computed(() => {
     const allInsights = this._insights();
     const filter = this._filter();
-    const user = this.authService.getUser();
-    const userRole = user?.role || "player";
+    const userRole = this.getCurrentUserRole();
 
     return allInsights.filter((insight) => {
       // Role-based filtering
@@ -99,14 +96,14 @@ export class SharedInsightFeedService {
   async loadInsights(teamId?: string): Promise<void> {
     this._loading.set(true);
     try {
-      const user = this.authService.getUser();
+      const user = this.supabaseService.currentUser();
       if (!user?.id) {
         this._insights.set([]);
         return;
       }
 
       // Get user's role
-      const userRole = user.role || "player";
+      const userRole = this.getCurrentUserRole(user);
 
       // Query shared insights table
       let query = this.supabaseService.client
@@ -165,7 +162,7 @@ export class SharedInsightFeedService {
     insight: Omit<SharedInsight, "id" | "createdAt" | "status">,
   ): Promise<string | null> {
     try {
-      const user = this.authService.getUser();
+      const user = this.supabaseService.currentUser();
       if (!user?.id) {
         throw new Error("Not authenticated");
       }
@@ -214,5 +211,12 @@ export class SharedInsightFeedService {
    */
   clearFilter(): void {
     this._filter.set({});
+  }
+
+  private getCurrentUserRole(
+    user: ReturnType<SupabaseService["currentUser"]> = this.supabaseService.currentUser(),
+  ): string {
+    const metadata = user?.user_metadata as { role?: string } | undefined;
+    return metadata?.role || "player";
   }
 }

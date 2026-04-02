@@ -2,7 +2,7 @@ import {
   ApplicationConfig,
   ErrorHandler,
   LOCALE_ID,
-  provideExperimentalZonelessChangeDetection,
+  provideZonelessChangeDetection,
 } from "@angular/core";
 import { provideClientHydration } from "@angular/platform-browser";
 import { provideAnimationsAsync } from "@angular/platform-browser/animations/async";
@@ -44,7 +44,7 @@ export const appConfig: ApplicationConfig = {
 
     // Angular 21+: Zoneless is the default change-detection mode.
     // Explicitly enabling stable experimental zoneless for performance.
-    provideExperimentalZonelessChangeDetection(),
+    provideZonelessChangeDetection(),
 
     ...(environment.devtools.hydration ? [provideClientHydration()] : []),
 

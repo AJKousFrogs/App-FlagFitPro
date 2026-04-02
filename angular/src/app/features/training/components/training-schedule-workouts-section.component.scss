@@ -72,12 +72,14 @@
 .workout-card-compact {
   display: flex;
   align-items: center;
+  width: 100%;
   gap: var(--space-3);
   padding: var(--space-3);
   border: var(--border-1) solid var(--ui-border-subtle);
   border-left: var(--border-3) solid;
   border-radius: var(--radius-xl);
   background: var(--ui-surface-card-alt);
+  text-align: left;
   cursor: pointer;
   transition:
     background-color var(--motion-base) var(--ease-standard),

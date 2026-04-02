@@ -88,7 +88,7 @@ export class SupabaseService {
       environment.supabase.anonKey,
       {
         auth: {
-          persistSession: false,
+          persistSession: true,
         },
       },
     );
@@ -233,6 +233,33 @@ export class SupabaseService {
    */
   getCurrentUser(): User | null {
     return this._currentUser();
+  }
+
+  /**
+   * Refresh the current user from Supabase auth and update local signals.
+   */
+  async refreshCurrentUser(): Promise<User | null> {
+    try {
+      const {
+        data: { user },
+        error,
+      } = await this.supabase.auth.getUser();
+
+      if (error) {
+        this.logger.warn("[Supabase] Failed to refresh current user", {
+          error,
+        });
+        return null;
+      }
+
+      this._currentUser.set(user ?? null);
+      return user ?? null;
+    } catch (error) {
+      this.logger.error("[Supabase] Unexpected current user refresh error", {
+        error,
+      });
+      return null;
+    }
   }
 
   /**

@@ -15,14 +15,9 @@
  */
 
 import { Injectable, signal, computed, effect, inject } from "@angular/core";
-import { HttpClient } from "@angular/common/http";
-import { firstValueFrom } from "rxjs";
 import { LoggerService } from "./logger.service";
 import { toLogContext } from "./logger.service";
-import { AuthService } from "./auth.service";
 import { SupabaseService } from "./supabase.service";
-import { TeamMembershipService } from "./team-membership.service";
-import { NotificationStateService } from "./notification-state.service";
 import {
   LoadAlert,
   ACWRData,
@@ -31,9 +26,6 @@ import {
 } from "../models/acwr.models";
 import { AcwrService } from "./acwr.service";
 import { OwnershipTransitionService } from "./ownership-transition.service";
-import { environment } from "../../../environments/environment";
-import { isBenignSupabaseQueryError } from "../../shared/utils/error.utils";
-import { isSuccessfulApiResponse } from "../utils/api-response-mapper";
 
 @Injectable({
   providedIn: "root",
@@ -45,12 +37,7 @@ export class AcwrAlertsService {
     OwnershipTransitionService,
   );
   private logger = inject(LoggerService);
-  private authService = inject(AuthService);
   private supabaseService = inject(SupabaseService);
-  private teamMembershipService = inject(TeamMembershipService);
-  private notificationService = inject(NotificationStateService);
-  private http = inject(HttpClient);
-  private readonly apiBaseUrl = environment.apiUrl || "";
 
   // Active alerts
   private readonly alerts = signal<LoadAlert[]>([]);
@@ -61,9 +48,6 @@ export class AcwrAlertsService {
   // Notification preferences
   private readonly notificationEnabled = signal<boolean>(true);
   private readonly coachNotificationEnabled = signal<boolean>(true);
-  private usersTableUnavailable = false;
-  private notificationsUnavailable = false;
-  private readonly directNotificationWritesSupported = false;
 
   // Alert counters - readonly computed signal
   public readonly alertStats = computed(() => {
@@ -161,7 +145,7 @@ export class AcwrAlertsService {
     }
 
     // Get player info from auth service
-    const user = this.authService.getUser();
+    const user = this.supabaseService.currentUser();
     const playerId = user?.id || "anonymous";
     const rawMetadata =
       (user as { user_metadata?: { full_name?: string } } | null)
@@ -208,50 +192,9 @@ export class AcwrAlertsService {
   private async sendNotification(alert: LoadAlert): Promise<void> {
     this.logger.info("🔔 Alert:", toLogContext(alert.message));
 
-    // Save notification to database
-    const user = this.authService.getUser();
-    if (user?.id && this.directNotificationWritesSupported) {
-      try {
-        if (!this.notificationsUnavailable) {
-          const { error: notificationError } = await this.supabaseService.client
-            .from("notifications")
-            .insert({
-              user_id: user.id,
-              notification_type: "acwr_alert",
-              title: `Load Alert: ${alert.type.replace(/_/g, " ")}`,
-              message: alert.message,
-              is_read: false,
-              data: {
-                alertId: alert.id,
-                severity: alert.severity,
-                recommendation: alert.recommendation,
-                acwrValue: alert.acwrValue,
-              },
-            });
-
-          if (notificationError) {
-            const status = Number((notificationError as { status?: number }).status);
-            if (
-              isBenignSupabaseQueryError(notificationError) ||
-              notificationError.code === "23505" ||
-              status === 409
-            ) {
-              this.notificationsUnavailable = true;
-            } else {
-              throw notificationError;
-            }
-          }
-        }
-
-        // Refresh notification badge
-        this.notificationService.refreshBadgeCount();
-      } catch (error) {
-        this.logger.warn(
-          "Failed to save notification to database:",
-          toLogContext(error),
-        );
-      }
-    }
+    this.logger.debug(
+      `[AcwrAlerts] In-app persistence for alert ${alert.id} is backend-managed.`,
+    );
 
     // Trigger browser notification if permitted
     if ("Notification" in window && Notification.permission === "granted") {
@@ -266,9 +209,7 @@ export class AcwrAlertsService {
 
   /**
    * Notify coach of critical alert
-   * Sends database notification, push notification, and email notification
-   * Falls back gracefully if push/email fail - DB notification always succeeds
-   * Uses TeamMembershipService for centralized team queries
+   * Coach-facing delivery is handled by backend workflows.
    */
   private async notifyCoach(alert: LoadAlert): Promise<void> {
     this.logger.info(
@@ -276,247 +217,9 @@ export class AcwrAlertsService {
       toLogContext(alert.message),
     );
 
-    const user = this.authService.getUser();
-    if (!user?.id) return;
-
-    if (!this.directNotificationWritesSupported) {
-      this.logger.debug(
-        "[AcwrAlerts] Skipping direct browser coach notification writes; backend-managed notification flow required",
-      );
-      return;
-    }
-
-    try {
-      // Get team ID and coaches using centralized service
-      const teamId = this.teamMembershipService.teamId();
-      if (!teamId) return;
-
-      const coaches = await this.teamMembershipService.getTeamCoaches();
-      if (coaches && coaches.length > 0) {
-        // Create database notification for each coach (always succeeds)
-        const coachNotifications = coaches.map((coach) => ({
-          user_id: coach.userId,
-          notification_type: "player_alert",
-          title: `Critical Alert: ${alert.playerName}`,
-          message: alert.message,
-          priority: alert.severity === "critical" ? "high" : "normal",
-          is_read: false,
-          data: {
-            alertId: alert.id,
-            playerId: alert.playerId,
-            playerName: alert.playerName,
-            severity: alert.severity,
-            recommendation: alert.recommendation,
-            acwrValue: alert.acwrValue,
-          },
-        }));
-
-        // Always create DB notifications first (fallback)
-        if (!this.notificationsUnavailable) {
-          const { error: coachNotificationError } =
-            await this.supabaseService.client
-              .from("notifications")
-              .insert(coachNotifications);
-
-          if (coachNotificationError) {
-            const status = Number(
-              (coachNotificationError as { status?: number }).status,
-            );
-            if (
-              isBenignSupabaseQueryError(coachNotificationError) ||
-              coachNotificationError.code === "23505" ||
-              status === 409
-            ) {
-              this.notificationsUnavailable = true;
-            } else {
-              throw coachNotificationError;
-            }
-          }
-        }
-
-        // Refresh notification badge
-        this.notificationService.refreshBadgeCount();
-
-        // Send push and email notifications to each coach (with fallback)
-        const dashboardUrl = `${window.location.origin}/coach/dashboard`;
-
-        for (const coach of coaches) {
-          const coachUserId = coach.userId;
-
-          // Use coach name from centralized service
-          let coachEmail: string | null = null;
-          const coachName = coach.fullName || "Coach";
-
-          try {
-            // Use 'users' table for email
-            if (!this.usersTableUnavailable) {
-              const { data: profile, error: profileError } =
-                await this.supabaseService.client
-                  .from("users")
-                  .select("email")
-                  .eq("id", coachUserId)
-                  .single();
-
-              if (profileError) {
-                if (isBenignSupabaseQueryError(profileError)) {
-                  this.usersTableUnavailable = true;
-                } else {
-                  throw profileError;
-                }
-              } else if (profile) {
-                coachEmail = profile.email || null;
-              }
-            }
-          } catch (_profileError) {
-            this.logger.debug(
-              `[ACWR Alert] Could not fetch email for coach ${coachUserId}, will skip email`,
-            );
-          }
-
-          // Send push notification (non-blocking, failures logged but don't stop process)
-          this.sendPushNotificationToCoach(
-            coachUserId,
-            alert,
-            dashboardUrl,
-          ).catch((error) => {
-            this.logger.warn(
-              `[ACWR Alert] Failed to send push notification to coach ${coachUserId}:`,
-              error,
-            );
-          });
-
-          // Send email notification (non-blocking, failures logged but don't stop process)
-          if (coachEmail) {
-            this.sendEmailNotificationToCoach(
-              coachEmail,
-              coachName,
-              alert,
-              dashboardUrl,
-            ).catch((error) => {
-              this.logger.warn(
-                `[ACWR Alert] Failed to send email notification to coach ${coachEmail}:`,
-                error,
-              );
-            });
-          } else {
-            this.logger.warn(
-              `[ACWR Alert] Coach ${coachUserId} has no email address, skipping email notification`,
-            );
-          }
-        }
-      }
-    } catch (error) {
-      // Even if everything fails, log but don't throw - DB notification is the fallback
-      this.logger.error("[ACWR Alert] Failed to notify coach:", error);
-    }
-  }
-
-  /**
-   * Send push notification to coach
-   * Non-blocking - failures are logged but don't prevent DB notification
-   */
-  private async sendPushNotificationToCoach(
-    coachUserId: string,
-    alert: LoadAlert,
-    dashboardUrl: string,
-  ): Promise<void> {
-    try {
-      const isCritical = alert.acwrValue > 1.5;
-      const pushEndpoint = `${this.apiBaseUrl}/api/push/send-to-user`;
-
-      const pushPayload = {
-        targetUserId: coachUserId,
-        title: `${isCritical ? "CRITICAL" : "Warning"}: ACWR Alert - ${alert.playerName}`,
-        body: alert.message,
-        icon: "/assets/icons/alert-icon.png",
-        badge: "/assets/icons/badge.png",
-        tag: `acwr-alert-${alert.id}`,
-        type: "acwr_alert",
-        url: dashboardUrl,
-        urgency: isCritical ? "high" : "normal",
-        requireInteraction: isCritical,
-        data: {
-          alertId: alert.id,
-          playerId: alert.playerId,
-          playerName: alert.playerName,
-          acwrValue: alert.acwrValue,
-          severity: alert.severity,
-        },
-      };
-
-      const response = await firstValueFrom(
-        this.http.post<{ success: boolean; message?: string }>(
-          pushEndpoint,
-          pushPayload,
-        ),
-      );
-
-      if (isSuccessfulApiResponse(response)) {
-        this.logger.info(
-          `[ACWR Alert] Push notification sent to coach ${coachUserId}`,
-        );
-      } else {
-        throw new Error(response.message || "Push notification failed");
-      }
-    } catch (error: unknown) {
-      // Log but don't throw - push failures are acceptable
-      this.logger.warn(
-        `[ACWR Alert] Push notification error for coach ${coachUserId}:`,
-        error instanceof Error ? error.message : error,
-      );
-      throw error; // Re-throw so caller can handle gracefully
-    }
-  }
-
-  /**
-   * Send email notification to coach
-   * Non-blocking - failures are logged but don't prevent DB notification
-   */
-  private async sendEmailNotificationToCoach(
-    coachEmail: string,
-    coachName: string,
-    alert: LoadAlert,
-    dashboardUrl: string,
-  ): Promise<void> {
-    try {
-      const emailEndpoint = `${this.apiBaseUrl}/api/send-email`;
-
-      const emailPayload = {
-        type: "acwr_alert",
-        to: coachEmail,
-        coachName: coachName,
-        playerName: alert.playerName,
-        acwrValue: alert.acwrValue,
-        alertMessage: alert.message,
-        recommendation: alert.recommendation,
-        dashboardUrl: dashboardUrl,
-      };
-
-      const response = await firstValueFrom(
-        this.http.post<{
-          success: boolean;
-          messageId?: string;
-          error?: string;
-        }>(emailEndpoint, emailPayload),
-      );
-      const responseError =
-        typeof response.error === "string" ? response.error : undefined;
-
-      if (isSuccessfulApiResponse(response)) {
-        this.logger.info(
-          `[ACWR Alert] Email notification sent to coach ${coachEmail} (messageId: ${response.messageId})`,
-        );
-      } else {
-        throw new Error(responseError || "Email notification failed");
-      }
-    } catch (error: unknown) {
-      // Log but don't throw - email failures are acceptable
-      this.logger.warn(
-        `[ACWR Alert] Email notification error for coach ${coachEmail}:`,
-        error instanceof Error ? error.message : error,
-      );
-      throw error; // Re-throw so caller can handle gracefully
-    }
+    this.logger.debug(
+      `[AcwrAlerts] Coach notification delivery for alert ${alert.id} is backend-managed.`,
+    );
   }
 
   /**
@@ -704,7 +407,7 @@ export class AcwrAlertsService {
     trigger: string,
     acwrValue: number,
   ): Promise<void> {
-    const user = this.authService.getUser();
+    const user = this.supabaseService.currentUser();
     if (!user?.id) return;
 
     try {

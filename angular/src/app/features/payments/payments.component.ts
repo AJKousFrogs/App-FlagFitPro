@@ -370,6 +370,7 @@ const PAYMENT_METHOD_CONFIG: Record<
         [draggable]="false"
         [resizable]="false"
         [dismissableMask]="true"
+        dialogSize="lg"
         [styleClass]="'payments-instructions-dialog'"
       >
         <app-dialog-header

@@ -20,11 +20,11 @@ import {
     TIMEOUTS,
     TOAST,
 } from "../../core/constants";
-import { AuthService } from "../../core/services/auth.service";
 import {
     LoggerService,
     toLogContext,
 } from "../../core/services/logger.service";
+import { SupabaseService } from "../../core/services/supabase.service";
 import { ThemeMode, ThemeService } from "../../core/services/theme.service";
 import { ToastService } from "../../core/services/toast.service";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
@@ -95,7 +95,7 @@ import {
 })
 export class SettingsComponent implements OnInit {
   private destroyRef = inject(DestroyRef);
-  private authService = inject(AuthService);
+  private supabase = inject(SupabaseService);
   private accountDeletionService = inject(SettingsAccountDeletionService);
   private birthdayService = inject(SettingsBirthdayService);
   private dataExportService = inject(SettingsDataExportService);
@@ -236,7 +236,20 @@ export class SettingsComponent implements OnInit {
   ];
 
   ngOnInit(): void {
-    const user = this.authService.getUser();
+    const currentUser = this.supabase.currentUser();
+    const user = currentUser
+      ? {
+          name:
+            (currentUser.user_metadata?.["name"] as string | undefined) ??
+            (currentUser.user_metadata?.["full_name"] as string | undefined) ??
+            currentUser.email ??
+            "",
+          email: currentUser.email ?? "",
+          position:
+            (currentUser.user_metadata?.["position"] as string | undefined) ??
+            "",
+        }
+      : null;
 
     this.profileForm = this.formFactory.createProfileForm(user);
     this.notificationForm = this.formFactory.createNotificationForm();
@@ -413,8 +426,7 @@ export class SettingsComponent implements OnInit {
       String(newPassword ?? ""),
     );
     if (changed) {
-      this.showChangePasswordDialog = false;
-      this.passwordForm.reset();
+      this.closeChangePasswordDialog();
     }
   }
 
@@ -426,7 +438,7 @@ export class SettingsComponent implements OnInit {
 
     const submitted = await this.accountDeletionService.requestDeletion();
     if (submitted) {
-      this.showDeleteAccountDialog = false;
+      this.closeDeleteAccountDialog();
     }
   }
 
@@ -458,8 +470,7 @@ export class SettingsComponent implements OnInit {
   async disable2FA(): Promise<void> {
     const disabled = await this.twoFactorService.disable(this.disable2FACode);
     if (disabled) {
-      this.showDisable2FADialog = false;
-      this.disable2FACode = "";
+      this.closeDisable2FADialog();
     }
   }
 
@@ -475,7 +486,7 @@ export class SettingsComponent implements OnInit {
   async revokeAllSessions(): Promise<void> {
     const revoked = await this.sessionManagementService.revokeAllSessions();
     if (revoked) {
-      this.showSessionsDialog = false;
+      this.closeSessionsDialog();
     }
   }
 
@@ -492,7 +503,7 @@ export class SettingsComponent implements OnInit {
       options: this.exportOptions,
     });
     if (exported) {
-      this.showDataExportDialog = false;
+      this.closeDataExportDialog();
     }
   }
 
@@ -550,4 +561,27 @@ export class SettingsComponent implements OnInit {
 
   // Inject ElementRef for scoped DOM queries
   private elementRef = inject(ElementRef);
+
+  closeChangePasswordDialog(): void {
+    this.showChangePasswordDialog = false;
+    this.passwordForm.reset();
+  }
+
+  closeDeleteAccountDialog(): void {
+    this.showDeleteAccountDialog = false;
+    this.deleteConfirmText = "";
+  }
+
+  closeDisable2FADialog(): void {
+    this.showDisable2FADialog = false;
+    this.disable2FACode = "";
+  }
+
+  closeSessionsDialog(): void {
+    this.showSessionsDialog = false;
+  }
+
+  closeDataExportDialog(): void {
+    this.showDataExportDialog = false;
+  }
 }

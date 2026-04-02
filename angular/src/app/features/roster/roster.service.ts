@@ -5,7 +5,6 @@
  */
 import { Injectable, computed, inject, signal } from "@angular/core";
 import { TIME } from "../../core/constants/app.constants";
-import { AuthService } from "../../core/services/auth.service";
 import { LoggerService } from "../../core/services/logger.service";
 import { SupabaseService } from "../../core/services/supabase.service";
 import { TeamMembershipService } from "../../core/services/team-membership.service";
@@ -129,7 +128,6 @@ interface _InvitationRecord {
 })
 export class RosterService {
   private supabaseService = inject(SupabaseService);
-  private authService = inject(AuthService);
   private logger = inject(LoggerService);
   private teamMembershipService = inject(TeamMembershipService);
   private usersTableUnavailable = false;
@@ -165,7 +163,7 @@ export class RosterService {
   async loadRosterData(): Promise<void> {
     this.isLoading.set(true);
     this.error.set(null);
-    const userId = this.authService.currentUser()?.id;
+    const userId = this.supabaseService.userId();
 
     this.logger.warn(`[RosterService] Loading roster for user: ${userId}`);
 
@@ -412,7 +410,7 @@ export class RosterService {
   async addPlayer(
     playerData: Partial<Player>,
   ): Promise<{ success: boolean; error?: string }> {
-    const userId = this.authService.currentUser()?.id;
+    const userId = this.supabaseService.userId();
     if (!userId) {
       return { success: false, error: "You must be logged in" };
     }
@@ -631,7 +629,7 @@ export class RosterService {
           email,
           role,
           message: message || null,
-          invited_by: this.authService.currentUser()?.id,
+          invited_by: this.supabaseService.userId(),
           status: "pending",
           expires_at: new Date(
             Date.now() + TIME.INVITATION_EXPIRY_DAYS * TIME.MS_PER_DAY,

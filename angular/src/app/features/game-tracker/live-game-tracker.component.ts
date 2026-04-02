@@ -31,7 +31,6 @@ import { HapticFeedbackService } from "../../core/services/haptic-feedback.servi
 import { ApiService, API_ENDPOINTS } from "../../core/services/api.service";
 import { LoggerService } from "../../core/services/logger.service";
 import { extractApiArray } from "../../core/utils/api-response-mapper";
-import { AuthService } from "../../core/services/auth.service";
 import { timer, Subscription } from "rxjs";
 
 interface Game {
@@ -222,6 +221,7 @@ interface Play {
         [modal]="true"
         [blockScroll]="true"
         [draggable]="false"
+        dialogSize="md"
         ariaLabel="Play details"
         styleClass="game-tracker-play-dialog"
       >
@@ -287,7 +287,6 @@ export class LiveGameTrackerComponent implements OnInit, OnDestroy {
   private fb = inject(NonNullableFormBuilder);
   private hapticService = inject(HapticFeedbackService);
   private apiService = inject(ApiService);
-  private authService = inject(AuthService);
   private destroyRef = inject(DestroyRef);
   private logger = inject(LoggerService);
 

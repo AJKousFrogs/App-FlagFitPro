@@ -22,7 +22,7 @@ import {
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { ProgressBarComponent } from "../progress-bar/progress-bar.component";
 import { Tooltip } from "primeng/tooltip";
-import { AuthService } from "../../../core/services/auth.service";
+import { SupabaseService } from "../../../core/services/supabase.service";
 import { ToastService } from "../../../core/services/toast.service";
 import { UnifiedTrainingService } from "../../../core/services/unified-training.service";
 import { isSuccessfulApiResponse } from "../../../core/utils/api-response-mapper";
@@ -144,7 +144,7 @@ interface HydrationLog {
 })
 export class HydrationTrackerComponent implements OnInit {
   private trainingService = inject(UnifiedTrainingService);
-  private authService = inject(AuthService);
+  private supabase = inject(SupabaseService);
   private toastService = inject(ToastService);
   private destroyRef = inject(DestroyRef);
 
@@ -214,7 +214,7 @@ export class HydrationTrackerComponent implements OnInit {
    * Load today's hydration logs
    */
   private loadTodayLogs(): void {
-    const userId = this.authService.getUser()?.id;
+    const userId = this.supabase.userId();
     if (!userId) return;
 
     this.isLoading.set(true);
@@ -238,7 +238,7 @@ export class HydrationTrackerComponent implements OnInit {
    * Add water intake
    */
   addWater(amount: number): void {
-    const userId = this.authService.getUser()?.id;
+    const userId = this.supabase.userId();
     if (!userId) return;
 
     this.isLoading.set(true);

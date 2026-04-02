@@ -1,91 +1,57 @@
-# FlagFit Pro — Tech Stack (Single Source of Truth)
+# FlagFit Pro Tech Stack
 
-**Last Updated:** February 2026  
-**Status:** Enforced — All new code must align with this stack  
+This file is the canonical high-level stack summary. For detailed setup and workflow commands, see [LOCAL_DEVELOPMENT_SETUP.md](./LOCAL_DEVELOPMENT_SETUP.md).
 
-Machine-readable summary: [tech-stack.json](./tech-stack.json)
+## Runtime Baseline
 
----
-
-## Module System: ESM Only
-
-- **Root `package.json`:** `"type": "module"` — `.js` files are ESM by default
-- **Netlify Functions:** All use `import`/`export` (`.js` extension)
-- **Scripts:** ESM (`import`/`export`); no `require()` or `module.exports`
-- **Exception:** `netlify/plugins/cache-purge/index.cjs` — Netlify build plugins may require CommonJS; do not convert without verifying Netlify support
-
----
+- Node.js 22+
+- npm 11+
+- ESM-first repo (`"type": "module"` at the root)
 
 ## Frontend
 
-| Layer | Technology | Version |
-|-------|------------|---------|
-| Framework | Angular | 21.2.x |
-| UI Library | PrimeNG | 21.1.x |
-| Themes | @primeuix/themes | 2.0.x |
-| State | Angular Signals | Built-in |
-| Change Detection | Zoneless (optional) | - |
-| Styling | SCSS + CSS custom properties | - |
-| Package Manager | npm | 11.x |
-
----
+| Layer | Technology |
+| --- | --- |
+| Framework | Angular 21 |
+| UI library | PrimeNG 21 |
+| State | Angular signals |
+| Change detection | zoneless-first app configuration |
+| Styling | SCSS + CSS custom properties |
+| Testing | Vitest + Playwright |
 
 ## Backend
 
 | Layer | Technology |
-|-------|-------------|
-| Runtime | Node.js 22+ |
+| --- | --- |
 | Hosting | Netlify Functions |
-| Module | ESM (`import`/`export`) |
-| Bundler | esbuild (Netlify default) |
-
----
-
-## Database
-
-| Layer | Technology |
-|-------|-------------|
-| Database | Supabase (PostgreSQL) |
+| Runtime | Node.js |
+| Module format | ESM |
+| Database | Supabase PostgreSQL |
 | Auth | Supabase Auth |
-| Real-time | Supabase Realtime |
-
----
+| Realtime | Supabase Realtime |
 
 ## Design System
 
-| Resource | Location |
-|----------|----------|
-| Tokens | `angular/src/scss/tokens/design-system-tokens.scss` |
-| Rules | [docs/DESIGN_SYSTEM_RULES.md](./DESIGN_SYSTEM_RULES.md) |
-| Deprecated token list | `scripts/lint-design-tokens.js` → `CONFIG.deprecatedTokens` |
+Canonical sources:
 
----
+- Tokens: `angular/src/scss/tokens/design-system-tokens.scss`
+- TS bridge: `angular/src/app/core/utils/design-tokens.util.ts`
+- Rules: [DESIGN_SYSTEM_RULES.md](./DESIGN_SYSTEM_RULES.md)
+- Angular implementation patterns: [ANGULAR_PRIMENG_GUIDE.md](./ANGULAR_PRIMENG_GUIDE.md)
 
-## Testing
+## Verification Commands
 
-| Type | Runner | Location |
-|------|--------|--------|
-| Unit | Vitest | angular/ |
-| E2E | Playwright | angular/e2e/ |
-| Backend | Vitest | tests/integration/ |
-| Privacy | Vitest | tests/privacy-safety/ |
-| ACWR Logic | Node (ESM) | tests/logic/acwr-regression.test.js |
+```bash
+npm run build
+npm run type-check
+npm run lint
+npm run lint:css
+npm run lint:tokens
+```
 
----
+## Related Docs
 
-## Commands Reference
-
-| Purpose | Command |
-|---------|---------|
-| Find legacy dark variables | `npm run refactor:find-dark` |
-| Lint design tokens | `npm run lint:tokens` |
-| Lint design tokens (CI) | `npm run lint:tokens:ci` |
-| Design system check | `npm run lint:design-system` |
-
----
-
-## Related Documentation
-
-- [ARCHITECTURE.md](./ARCHITECTURE.md) — System architecture
-- [DESIGN_SYSTEM_RULES.md](./DESIGN_SYSTEM_RULES.md) — UI rules and tokens
-- [LEGACY_CODE_GUIDE.md](./LEGACY_CODE_GUIDE.md) — Finding and removing legacy code
+- [ARCHITECTURE.md](./ARCHITECTURE.md)
+- [SINGLE_SOURCE_OF_TRUTH.md](./SINGLE_SOURCE_OF_TRUTH.md)
+- [LOCAL_DEVELOPMENT_SETUP.md](./LOCAL_DEVELOPMENT_SETUP.md)
+- [DESIGN_SYSTEM_RULES.md](./DESIGN_SYSTEM_RULES.md)

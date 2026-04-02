@@ -461,7 +461,7 @@ const BALANCE_FILTERS = [
 
               <p-table
                 [value]="filteredBalances()"
-                class="p-datatable-sm"
+                class="table-compact"
                 [scrollable]="true"
               >
                 <ng-template #header>
@@ -542,7 +542,7 @@ const BALANCE_FILTERS = [
             <app-card-shell class="payment-shell-card" title="Payment History">
               <p-table
                 [value]="payments()"
-                class="p-datatable-sm"
+                class="table-compact"
                 [scrollable]="true"
               >
                 <ng-template #header>
@@ -576,10 +576,9 @@ const BALANCE_FILTERS = [
       <app-dialog
         [(visible)]="showFeeDialog"
         [modal]="true"
-        styleClass="payment-fee-dialog"
+        dialogSize="xl"
         [blockScroll]="true"
         [draggable]="false"
-        [breakpoints]="{ '960px': '92vw', '640px': '96vw' }"
         ariaLabel="Create fee"
       >
         <app-dialog-header
@@ -732,10 +731,9 @@ const BALANCE_FILTERS = [
       <app-dialog
         [(visible)]="showPaymentDialog"
         [modal]="true"
-        styleClass="payment-record-dialog"
+        dialogSize="lg"
         [blockScroll]="true"
         [draggable]="false"
-        [breakpoints]="{ '960px': '92vw', '640px': '96vw' }"
         ariaLabel="Record payment"
       >
         <app-dialog-header
@@ -834,7 +832,6 @@ const BALANCE_FILTERS = [
         styleClass="payment-fee-details-dialog"
         [blockScroll]="true"
         [draggable]="false"
-        [breakpoints]="{ '960px': '92vw', '640px': '96vw' }"
         ariaLabel="Fee details"
       >
         <app-dialog-header

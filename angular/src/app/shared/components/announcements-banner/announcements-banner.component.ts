@@ -85,7 +85,7 @@ import { StatusTagComponent } from "../status-tag/status-tag.component";
           <app-button
             variant="text"
             size="sm"
-            routerLink="/chat"
+            routerLink="/team-chat"
             (clicked)="onViewClick()"
             >View</app-button
           >

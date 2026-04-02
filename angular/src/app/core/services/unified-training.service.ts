@@ -31,7 +31,6 @@ import {
 } from "../models/training.models";
 import { AcwrService } from "./acwr.service";
 import { ApiService, API_ENDPOINTS } from "./api.service";
-import { AuthService } from "./auth.service";
 import { LoggerService, toLogContext } from "./logger.service";
 import {
     PerformanceDataService,
@@ -80,6 +79,7 @@ import { ReadinessService } from "./readiness.service";
 import { SupabaseService } from "./supabase.service";
 import { TrainingDataService } from "./training-data.service";
 import { WellnessService } from "./wellness.service";
+import { isExpectedApiClientError } from "../../shared/utils/error.utils";
 // Note: WellnessCheckinData is defined locally below
 
 /**
@@ -133,7 +133,6 @@ export class UnifiedTrainingService {
   private performanceDataService = inject(PerformanceDataService);
   private wellnessService = inject(WellnessService);
   private api = inject(ApiService);
-  private authService = inject(AuthService);
   private logger = inject(LoggerService);
   private playerProgramService = inject(PlayerProgramService);
   private supabase = inject(SupabaseService);
@@ -146,17 +145,7 @@ export class UnifiedTrainingService {
   );
 
   private isExpectedApiClientError(error: unknown): boolean {
-    if (!error || typeof error !== "object") return false;
-    const e = error as {
-      status?: unknown;
-      url?: unknown;
-      isExpectedApiFailure?: unknown;
-    };
-    if (e.isExpectedApiFailure === true) return true;
-    const status = typeof e.status === "number" ? e.status : undefined;
-    if (!status || ![400, 401, 403, 404].includes(status)) return false;
-    const url = typeof e.url === "string" ? e.url : "";
-    return url.includes("/api/") || url === "";
+    return isExpectedApiClientError(error);
   }
 
   // Program assignment state
@@ -179,8 +168,7 @@ export class UnifiedTrainingService {
   // CORE REACTIVE STATE (Signals)
   // ============================================================================
 
-  // Per audit: use currentUser() signal for reactivity, not getUser() method
-  private userId = computed(() => this.authService.currentUser()?.id);
+  private userId = computed(() => this.supabase.currentUser()?.id);
 
   // Expose key metrics as signals (facade pattern)
   readonly acwrRatio = this.acwrService.acwrRatio;
@@ -472,7 +460,7 @@ export class UnifiedTrainingService {
       return null;
     }
 
-    if (!this.authService.isAuthenticated()) {
+    if (!this.supabase.isAuthenticated()) {
       this._todayProtocol.set(null);
       return null;
     }
@@ -632,7 +620,7 @@ export class UnifiedTrainingService {
    */
   loadProgramAssignment(): void {
     // Only attempt to load if user is authenticated
-    if (!this.authService.isAuthenticated()) {
+    if (!this.supabase.isAuthenticated()) {
       this.logger.info(
         "[UnifiedTrainingService] Skipping program load - user not authenticated",
       );

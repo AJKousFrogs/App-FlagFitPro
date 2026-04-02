@@ -14,12 +14,12 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
 import { AiConsentRequiredComponent } from "../../../shared/components/ai-consent-required/ai-consent-required.component";
 import { EmptyStateComponent } from "../../../shared/components/empty-state/empty-state.component";
 import { CardShellComponent } from "../../../shared/components/card-shell/card-shell.component";
-import { AuthService } from "../../../core/services/auth.service";
 import { ToastService } from "../../../core/services/toast.service";
 import { TOAST } from "../../../core/constants/toast-messages.constants";
 import { LoggerService } from "../../../core/services/logger.service";
 import { toLogContext } from "../../../core/services/logger.service";
 import { PrivacySettingsService } from "../../../core/services/privacy-settings.service";
+import { SupabaseService } from "../../../core/services/supabase.service";
 import { LazyChartComponent } from "../../../shared/components/lazy-chart/lazy-chart.component";
 import { EnhancedAnalyticsDataService } from "../services/enhanced-analytics-data.service";
 import {
@@ -135,7 +135,7 @@ import {
 })
 export class EnhancedAnalyticsComponent implements OnInit {
   private analyticsDataService = inject(EnhancedAnalyticsDataService);
-  private authService = inject(AuthService);
+  private supabase = inject(SupabaseService);
   private toastService = inject(ToastService);
   private logger = inject(LoggerService);
   private privacyService = inject(PrivacySettingsService);
@@ -184,7 +184,7 @@ export class EnhancedAnalyticsComponent implements OnInit {
     this.isLoading.set(true);
 
     try {
-      const user = this.authService.getUser();
+      const user = this.supabase.currentUser();
       if (!user?.id) {
         this.logger.warn("No user found for performance workspace");
         this.setDefaultChartData();

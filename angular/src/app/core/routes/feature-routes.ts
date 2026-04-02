@@ -2,68 +2,37 @@
  * Feature Route Groups Composition
  *
  * Route groups are split by domain to keep each file small and maintainable.
+ * They are flattened here so route matching happens against the concrete route
+ * records directly instead of through multiple empty-path wrappers.
  */
 
 import { Routes } from "@angular/router";
+import { analyticsRoutes } from "./groups/analytics.routes";
+import { dashboardRoutes } from "./groups/dashboard.routes";
+import { gameRoutes } from "./groups/game.routes";
+import { helpRoutes } from "./groups/help.routes";
+import { profileRoutes } from "./groups/profile.routes";
+import { publicRoutes } from "./groups/public.routes";
+import { socialRoutes } from "./groups/social.routes";
+import { staffRoutes } from "./groups/staff.routes";
+import { superadminRoutes } from "./groups/superadmin.routes";
+import { teamRoutes } from "./groups/team.routes";
+import { trainingRoutes } from "./groups/training.routes";
+import { wellnessRoutes } from "./groups/wellness.routes";
 
 export const featureRoutes: Routes = [
-  {
-    path: "",
-    loadChildren: () =>
-      import("./groups/public.routes").then((m) => m.publicRoutes),
-  },
-  {
-    path: "",
-    loadChildren: () =>
-      import("./groups/superadmin.routes").then((m) => m.superadminRoutes),
-  }, // Superadmin routes first (most specific)
-  {
-    path: "",
-    loadChildren: () =>
-      import("./groups/dashboard.routes").then((m) => m.dashboardRoutes),
-  },
-  {
-    path: "",
-    loadChildren: () =>
-      import("./groups/training.routes").then((m) => m.trainingRoutes),
-  },
-  {
-    path: "",
-    loadChildren: () =>
-      import("./groups/analytics.routes").then((m) => m.analyticsRoutes),
-  },
-  {
-    path: "",
-    loadChildren: () => import("./groups/team.routes").then((m) => m.teamRoutes),
-  },
-  {
-    path: "",
-    loadChildren: () => import("./groups/game.routes").then((m) => m.gameRoutes),
-  },
-  {
-    path: "",
-    loadChildren: () =>
-      import("./groups/wellness.routes").then((m) => m.wellnessRoutes),
-  },
-  {
-    path: "",
-    loadChildren: () =>
-      import("./groups/social.routes").then((m) => m.socialRoutes),
-  },
-  {
-    path: "",
-    loadChildren: () =>
-      import("./groups/staff.routes").then((m) => m.staffRoutes),
-  },
-  {
-    path: "",
-    loadChildren: () =>
-      import("./groups/profile.routes").then((m) => m.profileRoutes),
-  },
-  {
-    path: "",
-    loadChildren: () => import("./groups/help.routes").then((m) => m.helpRoutes),
-  }, // Help redirects before wildcard
+  ...publicRoutes,
+  ...superadminRoutes,
+  ...dashboardRoutes,
+  ...trainingRoutes,
+  ...analyticsRoutes,
+  ...teamRoutes,
+  ...gameRoutes,
+  ...wellnessRoutes,
+  ...socialRoutes,
+  ...staffRoutes,
+  ...profileRoutes,
+  ...helpRoutes,
   {
     path: "**",
     loadComponent: () =>

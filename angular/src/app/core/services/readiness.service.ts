@@ -38,8 +38,7 @@ import {
   extractApiPayload,
 } from "../utils/api-response-mapper";
 import {
-  mapEvidenceCitations,
-  getPresetDisplay,
+  buildBaseEvidenceInfo,
 } from "../../shared/utils/evidence-info.utils";
 
 export type ReadinessLevel = "low" | "moderate" | "high";
@@ -351,10 +350,13 @@ export class ReadinessService {
   } {
     const preset = this.evidenceConfigService.getActivePreset();
     const readinessConfig = preset.readiness;
+    const baseEvidenceInfo = buildBaseEvidenceInfo(
+      preset,
+      readinessConfig.citations,
+    );
 
     return {
-      preset: getPresetDisplay(preset),
-      citations: mapEvidenceCitations(readinessConfig.citations),
+      ...baseEvidenceInfo,
       scienceNotes: {
         weightings: readinessConfig.scienceNotes.weightings,
         cutPoints: readinessConfig.scienceNotes.cutPoints,

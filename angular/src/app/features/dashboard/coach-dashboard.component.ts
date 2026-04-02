@@ -14,7 +14,6 @@ import { Select, type SelectChangeEvent } from "primeng/select";
 import { Textarea } from "primeng/textarea";
 import { forkJoin } from "rxjs";
 import { firstValueFrom } from "rxjs";
-import { AuthService } from "../../core/services/auth.service";
 import { ApiService, API_ENDPOINTS } from "../../core/services/api.service";
 import { HeaderService } from "../../core/services/header.service";
 import { LoggerService } from "../../core/services/logger.service";
@@ -39,6 +38,7 @@ import {
   TrainingSession,
   UpcomingGame,
 } from "../../core/services/team-statistics.service";
+import { TeamMembershipService } from "../../core/services/team-membership.service";
 import { ToastService } from "../../core/services/toast.service";
 import { TOAST } from "../../core/constants/toast-messages.constants";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
@@ -95,6 +95,14 @@ interface ConsentInfo {
 
 type PlayerFilterType = "all" | "starters" | "injured" | "at_risk";
 
+interface NewSessionDraft {
+  title: string;
+  type: string;
+  date: Date;
+  duration: number;
+  notes: string;
+}
+
 @Component({
   selector: "app-coach-dashboard",
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -127,8 +135,8 @@ export class CoachDashboardComponent {
   readonly UI_LIMITS = UI_LIMITS;
   private readonly router = inject(Router);
   private readonly api = inject(ApiService);
-  private readonly authService = inject(AuthService);
   private readonly headerService = inject(HeaderService);
+  private readonly teamMembershipService = inject(TeamMembershipService);
   private readonly teamStatsService = inject(TeamStatisticsService);
   private readonly toastService = inject(ToastService);
   private readonly missingDataService = inject(MissingDataDetectionService);
@@ -231,13 +239,7 @@ export class CoachDashboardComponent {
   requestAccessMessage = "";
 
   // New session form
-  newSession = {
-    title: "",
-    type: "practice",
-    date: new Date(),
-    duration: 90,
-    notes: "",
-  };
+  newSession: NewSessionDraft = this.createDefaultSessionDraft();
 
   sessionTypes = [
     { label: "Practice", value: "practice" },
@@ -434,9 +436,15 @@ export class CoachDashboardComponent {
   }
 
   loadDashboardData(): void {
-    const user = this.authService.getUser();
-    // Use user ID as team identifier for now, or default
-    const teamId = user?.id || "default";
+    const teamId = this.teamMembershipService.teamId();
+    if (!teamId) {
+      this.isPageLoading.set(false);
+      this.hasPageError.set(true);
+      this.pageErrorMessage.set(
+        "You need an active team membership to view the coach dashboard.",
+      );
+      return;
+    }
 
     // Load all data in parallel
     forkJoin({
@@ -573,20 +581,19 @@ export class CoachDashboardComponent {
 
   // Navigation methods
   viewPlayer(playerId: string): void {
-    this.router.navigate(["/roster"], { queryParams: { player: playerId } });
+    this.navigateToRoster({ player: playerId });
   }
 
   viewPlayerStats(playerId: string): void {
-    this.router.navigate(["/coach/analytics"], {
-      queryParams: { player: playerId, source: "dashboard-stats" },
+    this.navigateToCoachAnalytics({
+      player: playerId,
+      source: "dashboard-stats",
     });
   }
 
   adjustPlayerLoad(playerId: string): void {
     this.toastService.info(TOAST.INFO.OPENING_LOAD_ADJUSTMENT);
-    this.router.navigate(["/coach/analytics"], {
-      queryParams: { player: playerId, source: "dashboard" },
-    });
+    this.navigateToCoachAnalytics({ player: playerId, source: "dashboard" });
   }
 
   /**
@@ -605,28 +612,24 @@ export class CoachDashboardComponent {
   }
 
   navigateToAnalytics(): void {
-    this.router.navigate(["/coach/analytics"]);
+    this.navigateToCoachAnalytics();
   }
 
   viewAllStats(): void {
-    this.router.navigate(["/coach/analytics"]);
+    this.navigateToCoachAnalytics();
   }
 
   viewInjuryReport(): void {
-    this.router.navigate(["/roster"], { queryParams: { filter: "injured" } });
+    this.navigateToRoster({ filter: "injured" });
   }
 
   manageRoster(): void {
-    this.router.navigate(["/roster"]);
+    this.navigateToRoster();
   }
 
   planTomorrow(): void {
-    // Navigate to calendar with tomorrow's date pre-selected
-    const tomorrow = new Date();
-    tomorrow.setDate(tomorrow.getDate() + 1);
-    const dateStr = tomorrow.toISOString().split("T")[0];
     this.router.navigate(["/coach/planning"], {
-      queryParams: { date: dateStr },
+      queryParams: { date: this.getTomorrowPlanningDate() },
     });
   }
 
@@ -636,13 +639,7 @@ export class CoachDashboardComponent {
 
   // Dialog methods
   openCreateSession(): void {
-    this.newSession = {
-      title: "",
-      type: "practice",
-      date: new Date(),
-      duration: 90,
-      notes: "",
-    };
+    this.resetCreateSessionDialog();
     this.showCreateSessionDialog = true;
   }
 
@@ -715,20 +712,19 @@ export class CoachDashboardComponent {
   }
 
   createSession(): void {
-    if (!this.newSession.title) {
+    const title = this.newSession.title.trim();
+    if (!title) {
       this.toastService.warn(TOAST.WARN.ENTER_SESSION_TITLE);
       return;
     }
 
-    this.toastService.success(
-      `Training session "${this.newSession.title}" created`,
-    );
-    this.showCreateSessionDialog = false;
+    this.toastService.success(`Training session "${title}" created`);
+    this.resetCreateSessionDialog();
     // In real implementation, would call API to create session
   }
 
   openTeamMessage(): void {
-    this.teamMessageContent = "";
+    this.resetTeamMessageDialog();
     this.showTeamMessageDialog = true;
   }
 
@@ -741,25 +737,20 @@ export class CoachDashboardComponent {
   }
 
   async sendTeamMessage(): Promise<void> {
-    if (!this.teamMessageContent.trim()) {
+    const message = this.teamMessageContent.trim();
+    if (!message) {
       this.toastService.warn(TOAST.WARN.ENTER_MESSAGE);
       return;
     }
 
-    try {
-      await firstValueFrom(
-        this.api.post(API_ENDPOINTS.coach.teamMessage, {
-          message: this.teamMessageContent.trim(),
-        }),
-      );
-
-      this.toastService.success(TOAST.SUCCESS.MESSAGE_SENT_TO_TEAM);
-      this.showTeamMessageDialog = false;
-      this.teamMessageContent = "";
-    } catch (error) {
-      this.logger.error("[CoachDashboard] Failed to send team message", error);
-      this.toastService.error(TOAST.ERROR.MESSAGE_SEND_FAILED);
-    }
+    await this.runCoachMutation({
+      endpoint: API_ENDPOINTS.coach.teamMessage,
+      payload: { message },
+      successMessage: TOAST.SUCCESS.MESSAGE_SENT_TO_TEAM,
+      errorMessage: TOAST.ERROR.MESSAGE_SEND_FAILED,
+      logContext: "send team message",
+      onSuccess: () => this.resetTeamMessageDialog(),
+    });
   }
 
   requestDataAccess(playerId: string, event: Event): void {
@@ -775,33 +766,25 @@ export class CoachDashboardComponent {
   }
 
   async sendAccessRequest(): Promise<void> {
-    if (!this.requestAccessPlayerId || !this.requestAccessMessage.trim()) {
+    const playerId = this.requestAccessPlayerId;
+    const message = this.requestAccessMessage.trim();
+    if (!playerId || !message) {
       this.toastService.warn(TOAST.WARN.ENTER_MESSAGE);
       return;
     }
 
-    try {
-      await firstValueFrom(
-        this.api.post(API_ENDPOINTS.coach.accessRequest, {
-          playerId: this.requestAccessPlayerId,
-          message: this.requestAccessMessage.trim(),
-        }),
-      );
-
-      this.toastService.success(TOAST.SUCCESS.ACCESS_REQUEST_SENT);
-      this.showRequestAccessDialog = false;
-      this.requestAccessPlayerId = null;
-      this.requestAccessMessage = "";
-    } catch (error) {
-      this.logger.error("[CoachDashboard] Failed to send access request", error);
-      this.toastService.error(TOAST.ERROR.MESSAGE_SEND_FAILED);
-    }
+    await this.runCoachMutation({
+      endpoint: API_ENDPOINTS.coach.accessRequest,
+      payload: { playerId, message },
+      successMessage: TOAST.SUCCESS.ACCESS_REQUEST_SENT,
+      errorMessage: TOAST.ERROR.MESSAGE_SEND_FAILED,
+      logContext: "send access request",
+      onSuccess: () => this.resetAccessRequestDialog(),
+    });
   }
 
   cancelAccessRequest(): void {
-    this.showRequestAccessDialog = false;
-    this.requestAccessPlayerId = null;
-    this.requestAccessMessage = "";
+    this.resetAccessRequestDialog();
   }
 
   onRequestAccessMessageChange(value: string): void {
@@ -818,6 +801,79 @@ export class CoachDashboardComponent {
       return target.value;
     }
     return "";
+  }
+
+  private resetTeamMessageDialog(): void {
+    this.showTeamMessageDialog = false;
+    this.teamMessageContent = "";
+  }
+
+  resetCreateSessionDialog(): void {
+    this.showCreateSessionDialog = false;
+    this.newSession = this.createDefaultSessionDraft();
+  }
+
+  private resetAccessRequestDialog(): void {
+    this.showRequestAccessDialog = false;
+    this.requestAccessPlayerId = null;
+    this.requestAccessMessage = "";
+  }
+
+  private createDefaultSessionDraft(): NewSessionDraft {
+    return {
+      title: "",
+      type: "practice",
+      date: new Date(),
+      duration: 90,
+      notes: "",
+    };
+  }
+
+  private navigateToCoachAnalytics(
+    queryParams?: Record<string, string>,
+  ): void {
+    this.router.navigate(
+      ["/coach/analytics"],
+      queryParams ? { queryParams } : undefined,
+    );
+  }
+
+  private navigateToRoster(queryParams?: Record<string, string>): void {
+    this.router.navigate(
+      ["/roster"],
+      queryParams ? { queryParams } : undefined,
+    );
+  }
+
+  private getTomorrowPlanningDate(): string {
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    return tomorrow.toISOString().split("T")[0];
+  }
+
+  private async runCoachMutation({
+    endpoint,
+    payload,
+    successMessage,
+    errorMessage,
+    logContext,
+    onSuccess,
+  }: {
+    endpoint: string;
+    payload: Record<string, unknown>;
+    successMessage: string;
+    errorMessage: string;
+    logContext: string;
+    onSuccess?: () => void;
+  }): Promise<void> {
+    try {
+      await firstValueFrom(this.api.post(endpoint, payload));
+      this.toastService.success(successMessage);
+      onSuccess?.();
+    } catch (error) {
+      this.logger.error(`[CoachDashboard] Failed to ${logContext}`, error);
+      this.toastService.error(errorMessage);
+    }
   }
 
   // Helper methods

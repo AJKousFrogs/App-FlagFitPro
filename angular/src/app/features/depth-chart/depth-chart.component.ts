@@ -21,7 +21,6 @@ import { Tab, TabList, TabPanel, TabPanels, Tabs } from "primeng/tabs";
 
 import { StatusTagComponent } from "../../shared/components/status-tag/status-tag.component";
 import { TOAST } from "../../core/constants/toast-messages.constants";
-import { AuthService } from "../../core/services/auth.service";
 import {
   DepthChartEntry,
   DepthChartService,
@@ -257,7 +256,7 @@ interface PositionGroup {
             icon="users"
             title="Assign Player"
             subtitle="Add an unassigned player to the selected depth slot"
-            (close)="showAssignDialog = false"
+            (close)="closeAssignDialog()"
           />
           <div class="assign-dialog">
             <p class="assign-info">
@@ -282,7 +281,7 @@ interface PositionGroup {
             primaryLabel="Assign"
             primaryIcon="check"
             [disabled]="!selectedPlayerId"
-            (cancel)="showAssignDialog = false"
+            (cancel)="closeAssignDialog()"
             (primary)="assignPlayer()"
           />
         </app-dialog>
@@ -293,7 +292,6 @@ interface PositionGroup {
 })
 export class DepthChartComponent implements OnInit {
   private depthChartService = inject(DepthChartService);
-  private authService = inject(AuthService);
   private teamMembershipService = inject(TeamMembershipService);
   private toastService = inject(ToastService);
   private destroyRef = inject(DestroyRef);
@@ -365,7 +363,7 @@ export class DepthChartComponent implements OnInit {
   }
 
   loadDepthCharts(): void {
-    const teamId = this.authService.getUser()?.user_metadata?.team_id;
+    const teamId = this.teamMembershipService.teamId();
     if (!teamId) return;
 
     this.depthChartService
@@ -400,7 +398,7 @@ export class DepthChartComponent implements OnInit {
   }
 
   loadUnassignedPlayers(templateId: string): void {
-    const teamId = this.authService.getUser()?.user_metadata?.team_id;
+    const teamId = this.teamMembershipService.teamId();
     if (!teamId) return;
 
     this.depthChartService
@@ -441,7 +439,7 @@ export class DepthChartComponent implements OnInit {
     this.initializeDepthCharts();
 
   initializeDepthCharts(): void {
-    const teamId = this.authService.getUser()?.user_metadata?.team_id;
+    const teamId = this.teamMembershipService.teamId();
     if (!teamId) return;
 
     this.depthChartService
@@ -478,9 +476,22 @@ export class DepthChartComponent implements OnInit {
 
   openAssignDialog(entry: DepthChartEntry): void {
     if (!this.isCoach()) return;
+    this.closeAssignDialog();
     this.selectedEntry.set(entry);
-    this.selectedPlayerId = null;
     this.showAssignDialog = true;
+  }
+
+  closeAssignDialog(): void {
+    this.showAssignDialog = false;
+    this.selectedPlayerId = null;
+    this.selectedEntry.set(null);
+  }
+
+  private refreshActiveChart(): void {
+    const chart = this.activeChart();
+    if (chart) {
+      this.loadChartDetails(chart.id);
+    }
   }
 
   onSelectedPlayerChange(value: string | null | undefined): void {
@@ -503,12 +514,8 @@ export class DepthChartComponent implements OnInit {
       .subscribe({
         next: () => {
           this.toastService.success(TOAST.SUCCESS.PLAYER_ASSIGNED);
-          this.showAssignDialog = false;
-          // Reload chart to get updated data
-          const chart = this.activeChart();
-          if (chart) {
-            this.loadChartDetails(chart.id);
-          }
+          this.closeAssignDialog();
+          this.refreshActiveChart();
         },
         error: () => this.toastService.error(TOAST.ERROR.PLAYER_ASSIGN_FAILED),
       });
@@ -523,10 +530,7 @@ export class DepthChartComponent implements OnInit {
       .subscribe({
         next: () => {
           this.toastService.success(TOAST.SUCCESS.PLAYER_REMOVED);
-          const chart = this.activeChart();
-          if (chart) {
-            this.loadChartDetails(chart.id);
-          }
+          this.refreshActiveChart();
         },
         error: () => this.toastService.error(TOAST.ERROR.PLAYER_REMOVE_FAILED),
       });

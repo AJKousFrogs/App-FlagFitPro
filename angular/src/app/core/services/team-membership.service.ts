@@ -1,7 +1,6 @@
 import { Injectable, computed, inject, signal } from "@angular/core";
 import { normalizePlayerName } from "../../shared/utils/format.utils";
 import { isBenignSupabaseQueryError } from "../../shared/utils/error.utils";
-import { AuthService } from "./auth.service";
 import { LoggerService, toLogContext } from "./logger.service";
 import { SupabaseService } from "./supabase.service";
 
@@ -71,7 +70,6 @@ export interface CoachInfo {
   providedIn: "root",
 })
 export class TeamMembershipService {
-  private readonly authService = inject(AuthService);
   private readonly supabaseService = inject(SupabaseService);
   private readonly logger = inject(LoggerService);
 
@@ -186,12 +184,12 @@ export class TeamMembershipService {
    * Deduplicates concurrent calls and returns cached data if fresh (< 30s)
    */
   async loadMembership(forceRefresh = false): Promise<TeamMembership | null> {
-    if (!this.authService.isAuthenticated()) {
+    if (!this.supabaseService.isAuthenticated()) {
       this._membership.set(null);
       return null;
     }
 
-    const user = this.authService.getUser();
+    const user = this.supabaseService.currentUser();
     if (!user?.id) {
       this.logger.warn("[TeamMembership] No authenticated user");
       this._membership.set(null);

@@ -274,14 +274,14 @@ interface DiscussionMessage {
         [draggable]="false"
         [resizable]="false"
         [dismissableMask]="true"
-        [styleClass]="'film-detail-dialog'"
+        dialogSize="2xl"
       >
         @if (selectedFilm(); as film) {
           <app-dialog-header
             icon="video"
             [title]="film.title"
             [subtitle]="'vs ' + film.opponent"
-            (close)="showFilmDetail = false"
+            (close)="closeFilmDetail()"
           />
         }
         @if (selectedFilm(); as film) {
@@ -536,9 +536,16 @@ export class FilmRoomComponent implements OnInit {
   }
 
   selectFilm(film: FilmSession): void {
+    this.closeFilmDetail();
     this.selectedFilm.set(film);
     this.showFilmDetail = true;
+  }
+
+  closeFilmDetail(): void {
+    this.showFilmDetail = false;
+    this.selectedFilm.set(null);
     this.expandedMoment.set(null);
+    this.replyMessage.set("");
   }
 
   toggleWatched(film: FilmSession): void {
@@ -619,40 +626,26 @@ export class FilmRoomComponent implements OnInit {
       timestamp: new Date().toISOString(),
     };
 
-    // Update local state
-    this.films.update((films) =>
-      films.map((f) =>
-        f.id === film.id
+    const appendReply = (candidateFilm: FilmSession): FilmSession => ({
+      ...candidateFilm,
+      taggedMoments: candidateFilm.taggedMoments.map((moment) =>
+        moment.id === momentId
           ? {
-              ...f,
-              taggedMoments: f.taggedMoments.map((m) =>
-                m.id === momentId
-                  ? {
-                      ...m,
-                      discussionThread: [...m.discussionThread, newMessage],
-                    }
-                  : m,
-              ),
+              ...moment,
+              discussionThread: [...moment.discussionThread, newMessage],
             }
-          : f,
+          : moment,
+      ),
+    });
+
+    this.films.update((films) =>
+      films.map((candidateFilm) =>
+        candidateFilm.id === film.id ? appendReply(candidateFilm) : candidateFilm,
       ),
     );
 
-    // Update selected film
-    this.selectedFilm.update((f) =>
-      f
-        ? {
-            ...f,
-            taggedMoments: f.taggedMoments.map((m) =>
-              m.id === momentId
-                ? {
-                    ...m,
-                    discussionThread: [...m.discussionThread, newMessage],
-                  }
-                : m,
-            ),
-          }
-        : null,
+    this.selectedFilm.update((candidateFilm) =>
+      candidateFilm ? appendReply(candidateFilm) : null,
     );
 
     this.api

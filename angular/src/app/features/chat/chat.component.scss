@@ -50,6 +50,7 @@
   max-width: var(--content-max-width-2xl);
   margin: 0 auto;
   width: 100%;
+  min-width: 0;
 }
 
 .header-badges {
@@ -83,6 +84,7 @@
   display: flex;
   align-items: center;
   gap: var(--space-3);
+  min-width: 0;
 }
 
 .channel-icon {
@@ -113,6 +115,7 @@
 .chat-actions {
   display: flex;
   gap: var(--space-2);
+  flex-shrink: 0;
 }
 
 .chat-container {
@@ -124,6 +127,7 @@
   max-width: var(--content-max-width-2xl);
   margin: 0 auto;
   width: 100%;
+  min-width: 0;
 }
 
 .chat-page-state {
@@ -143,6 +147,7 @@
 
 .channels-sidebar {
   width: var(--chart-min-height-md); /* var(--chart-min-height-md) */
+  min-width: 0;
   border-right: none;
   background: var(--surface-primary);
   padding: var(--space-5);
@@ -179,12 +184,19 @@
 }
 
 .channel-item {
+  appearance: none;
+  border: 0;
+  background: none;
+  width: 100%;
   display: flex;
   align-items: center;
   gap: var(--space-3);
   padding: var(--space-3) var(--space-4);
   border-radius: var(--radius-lg);
   cursor: pointer;
+  text-align: left;
+  font: inherit;
+  color: inherit;
   transition:
     background-color var(--transition-fast),
     transform var(--transition-fast);
@@ -272,6 +284,7 @@
 
 .messages-area {
   flex: 1;
+  min-width: 0;
   display: flex;
   flex-direction: column;
   background: var(--surface-primary);
@@ -570,11 +583,18 @@
 }
 
 .mention-item {
+  appearance: none;
+  border: 0;
+  background: none;
+  width: 100%;
   display: flex;
   align-items: center;
   gap: var(--space-2);
   padding: var(--space-2) var(--space-3);
   cursor: pointer;
+  text-align: left;
+  font: inherit;
+  color: inherit;
   transition: background-color var(--transition-fast);
 
   @include ds-hover-state(var(--surface-secondary));

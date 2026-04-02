@@ -85,7 +85,7 @@ import { PlaybookQuizDialogContentComponent } from "./components/playbook-quiz-d
         [draggable]="false"
         [resizable]="false"
         [blockScroll]="true"
-        [styleClass]="'play-detail-dialog'"
+        dialogSize="2xl"
         ariaLabel="Play Details"
       >
         <app-dialog-header
@@ -109,7 +109,7 @@ import { PlaybookQuizDialogContentComponent } from "./components/playbook-quiz-d
         [draggable]="false"
         [resizable]="false"
         [blockScroll]="true"
-        [styleClass]="'quiz-dialog'"
+        dialogSize="2xl"
         ariaLabel="Playbook Quiz"
       >
         <app-dialog-header

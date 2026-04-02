@@ -354,14 +354,15 @@ const POSITIONS = [
       <!-- Tournament Detail Dialog -->
       <app-dialog
         [(visible)]="showDetailDialog"
+        dialogSize="2xl"
         class="tournament-detail-dialog"
-        (hide)="showDetailDialog = false"
+        (hide)="closeDetailDialog()"
       >
         <app-dialog-header
           [title]="selectedTournament()?.name || 'Tournament Detail'"
           subtitle="RSVPs, lineups, and schedule for your selected event"
           icon="calendar"
-          (close)="showDetailDialog = false"
+          (close)="closeDetailDialog()"
         ></app-dialog-header>
         @if (selectedTournament()) {
           <div class="detail-tabs">
@@ -818,8 +819,17 @@ export class TournamentManagementComponent implements OnInit {
     this.lineupNotes = input?.value ?? "";
   }
 
+  closeDetailDialog(): void {
+    this.showDetailDialog = false;
+  }
+
   getGamesForDay(day: number): TournamentGame[] {
     return this.selectedTournament()?.games?.filter((g) => g.day === day) || [];
+  }
+
+  private showDetailDialogForTab(tab: "overview" | "rsvps" | "lineup" | "schedule"): void {
+    this.detailTab.set(tab);
+    this.showDetailDialog = true;
   }
 
   private async openTournamentDetail(
@@ -828,15 +838,14 @@ export class TournamentManagementComponent implements OnInit {
   ): Promise<void> {
     this.selectedTournament.set(tournament);
     await this.hydrateLineupState(tournament.id);
-    this.detailTab.set(tab);
-    this.showDetailDialog = true;
+    this.showDetailDialogForTab(tab);
   }
 
   private async openReminderComposer(
     draft: string,
     toastTitle: string,
   ): Promise<void> {
-    this.showDetailDialog = false;
+    this.closeDetailDialog();
     await this.router.navigate(["/team-chat"], {
       queryParams: {
         source: "tournaments",

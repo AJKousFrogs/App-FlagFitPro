@@ -1,9 +1,9 @@
 import { Injectable, inject, signal } from "@angular/core";
 import { TOAST } from "../../../core/constants";
-import { AuthService } from "../../../core/services/auth.service";
 import { LoggerService, toLogContext } from "../../../core/services/logger.service";
 import { PlatformService } from "../../../core/services/platform.service";
 import { ProfileCompletionService } from "../../../core/services/profile-completion.service";
+import { SupabaseService } from "../../../core/services/supabase.service";
 import { TeamMembershipService } from "../../../core/services/team-membership.service";
 import { ThemeMode, ThemeService } from "../../../core/services/theme.service";
 import { ToastService } from "../../../core/services/toast.service";
@@ -62,7 +62,6 @@ interface SettingsPreferenceInput {
   providedIn: "root",
 })
 export class SettingsSaveSettingsService {
-  private readonly authService = inject(AuthService);
   private readonly settingsDataService = inject(SettingsDataService);
   private readonly toastService = inject(ToastService);
   private readonly themeService = inject(ThemeService);
@@ -70,6 +69,7 @@ export class SettingsSaveSettingsService {
   private readonly profileCompletionService = inject(ProfileCompletionService);
   private readonly teamMembershipService = inject(TeamMembershipService);
   private readonly platform = inject(PlatformService);
+  private readonly supabase = inject(SupabaseService);
 
   readonly isSavingSettings = signal(false);
 
@@ -354,7 +354,7 @@ export class SettingsSaveSettingsService {
       this.logger.info("User settings saved successfully:", settingsResult);
       this.cacheSavedSettingsSnapshot(settingsData);
 
-      if (settings.profile.email !== this.authService.getUser()?.email) {
+      if (settings.profile.email !== this.supabase.currentUser()?.email) {
         try {
           this.logger.info("Updating email to:", settings.profile.email);
           const { error: emailError } =
@@ -376,7 +376,7 @@ export class SettingsSaveSettingsService {
       }
 
       this.logger.info("Refreshing centralized services...");
-      await this.authService.refreshUser();
+      await this.supabase.refreshCurrentUser();
       await this.profileCompletionService.refresh();
       await this.teamMembershipService.refresh();
       this.logger.info("Services refreshed successfully");

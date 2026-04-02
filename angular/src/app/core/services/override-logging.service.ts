@@ -7,8 +7,6 @@
 import { Injectable, inject } from "@angular/core";
 import { SupabaseService } from "./supabase.service";
 import { LoggerService } from "./logger.service";
-import { AuthService } from "./auth.service";
-import { isBenignSupabaseQueryError } from "../../shared/utils/error.utils";
 
 export interface CoachOverride {
   id?: string;
@@ -33,14 +31,10 @@ export interface CoachOverride {
 export class OverrideLoggingService {
   private readonly supabaseService = inject(SupabaseService);
   private readonly logger = inject(LoggerService);
-  private readonly authService = inject(AuthService);
-  private usersTableUnavailable = false;
-  private notificationsUnavailable = false;
-  private readonly directPlayerNotificationWritesSupported = false;
 
   /**
-   * Log coach override of AI recommendation
-   * Also creates notification for player (Phase 2.1 - Trust Repair)
+   * Log coach override of AI recommendation.
+   * Player-facing notification delivery is handled by backend workflows.
    */
   async logOverride(
     override: Omit<CoachOverride, "id" | "createdAt">,
@@ -70,117 +64,14 @@ export class OverrideLoggingService {
         `[OverrideLogging] Logged override: ${override.overrideType} for player ${override.playerId}`,
       );
 
-      // Phase 2.1: Create notification for player about the override
-      await this.createPlayerNotification(data.id, override);
+      this.logger.debug(
+        `[OverrideLogging] Override ${data.id} recorded. Player notification delivery is backend-managed.`,
+      );
 
       return data.id;
     } catch (error) {
       this.logger.error("[OverrideLogging] Error logging override:", error);
       return null;
-    }
-  }
-
-  /**
-   * Create notification for player when coach overrides training plan
-   * Phase 2.1 - Trust Repair: Mandatory notification system
-   */
-  private async createPlayerNotification(
-    overrideId: string,
-    override: Omit<CoachOverride, "id" | "createdAt">,
-  ): Promise<void> {
-    if (!this.directPlayerNotificationWritesSupported) {
-      this.logger.debug(
-        "[OverrideLogging] Skipping direct browser player notification write; backend-managed notification flow required",
-      );
-      return;
-    }
-
-    try {
-      // Get coach name for notification (use 'users' table - profiles doesn't exist)
-      let coachName = "Your coach";
-      if (!this.usersTableUnavailable) {
-        const { data: coachData, error: coachError } =
-          await this.supabaseService.client
-            .from("users")
-            .select("full_name")
-            .eq("id", override.coachId)
-            .single();
-
-        if (coachError) {
-          if (isBenignSupabaseQueryError(coachError)) {
-            this.usersTableUnavailable = true;
-          } else {
-            throw coachError;
-          }
-        } else {
-          coachName = coachData?.full_name || coachName;
-        }
-      }
-
-      // Determine what changed based on override type
-      let changeDescription = "";
-      if (override.overrideType === "training_load") {
-        const aiLoad = override.aiRecommendation.load as number;
-        const coachLoad = override.coachDecision.load as number;
-        changeDescription = `Training load adjusted from ${aiLoad}% to ${coachLoad}%`;
-      } else if (override.overrideType === "session_modification") {
-        changeDescription = "Training session modified";
-      } else if (override.overrideType === "acwr_override") {
-        changeDescription = "ACWR calculation adjusted";
-      } else {
-        changeDescription = "Training plan adjusted";
-      }
-
-      // Create notification following 5-Question Contract
-      const notificationMessage = `${coachName} adjusted your training plan. ${changeDescription}`;
-
-      // Note: notifications table uses 'data' not 'metadata', 'is_read' not 'read'
-      if (this.notificationsUnavailable) {
-        return;
-      }
-
-      const { error: notificationError } = await this.supabaseService.client
-        .from("notifications")
-        .insert({
-          user_id: override.playerId,
-          notification_type: "coach_override",
-          title: "Training Plan Adjusted",
-          message: notificationMessage,
-          priority: "high",
-          is_read: false,
-          data: {
-            overrideId,
-            overrideType: override.overrideType,
-            coachId: override.coachId,
-            coachName,
-            reason: override.reason,
-            context: override.context,
-          },
-          created_at: new Date().toISOString(),
-        });
-
-      if (notificationError) {
-        const status = Number((notificationError as { status?: number }).status);
-        if (
-          isBenignSupabaseQueryError(notificationError) ||
-          notificationError.code === "23505" ||
-          status === 409
-        ) {
-          this.notificationsUnavailable = true;
-          return;
-        }
-        throw notificationError;
-      }
-
-      this.logger.info(
-        `[OverrideLogging] Created notification for player ${override.playerId} about override ${overrideId}`,
-      );
-    } catch (error) {
-      this.logger.error(
-        "[OverrideLogging] Error creating player notification:",
-        error,
-      );
-      // Don't fail the override logging if notification fails
     }
   }
 

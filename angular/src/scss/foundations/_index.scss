@@ -9,7 +9,8 @@
  * 2. _typography.scss – %rich-text for article/modal content
  * 3. _forms.scss     – %form-label, %form-field, %form-row placeholders
  * 4. _stats.scss     – %stat-block, %stat-icon, %stat-label, %stat-value
- * 5. _breakpoints.scss – breakpoint map + respond-to (re-exports from utilities)
+ * 5. _bento.scss     – %bento-surface-card, %bento-header-shell, %bento-title
+ * 6. _breakpoints.scss – breakpoint map + respond-to (re-exports from utilities)
  *
  * Load order: After utilities (mixins/vars), before components.
  */
@@ -18,4 +19,5 @@
 @forward "typography";
 @forward "forms";
 @forward "stats";
+@forward "bento";
 @forward "breakpoints";

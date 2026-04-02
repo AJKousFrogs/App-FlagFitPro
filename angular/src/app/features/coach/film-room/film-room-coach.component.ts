@@ -307,17 +307,16 @@ const TAG_TYPES = [
       <app-dialog
         [(visible)]="showUploadDialog"
         [modal]="true"
-        styleClass="film-upload-dialog"
+        dialogSize="lg"
         [blockScroll]="true"
         [draggable]="false"
-        [breakpoints]="{ '960px': '92vw', '640px': '96vw' }"
         ariaLabel="Upload film"
       >
         <app-dialog-header
           icon="upload"
           title="Upload Film"
           subtitle="Add a new game, practice, scouting, or training video to the film room."
-          (close)="showUploadDialog = false"
+          (close)="closeUploadDialog()"
         />
         <div class="upload-form">
           <div class="form-field">
@@ -410,7 +409,7 @@ const TAG_TYPES = [
           cancelLabel="Cancel"
           primaryLabel="Upload & Open"
           primaryIcon="upload"
-          (cancel)="showUploadDialog = false"
+          (cancel)="closeUploadDialog()"
           (primary)="uploadFilm()"
         />
       </app-dialog>
@@ -419,17 +418,17 @@ const TAG_TYPES = [
       <app-dialog
         [(visible)]="showTagDialog"
         [modal]="true"
+        dialogSize="lg"
         styleClass="film-tag-dialog"
         [blockScroll]="true"
         [draggable]="false"
-        [breakpoints]="{ '960px': '92vw', '640px': '96vw' }"
         ariaLabel="Add film tag"
       >
         <app-dialog-header
           icon="tag"
           title="Add Tag"
           subtitle="Highlight a film moment and connect it to the right player, play, or teaching point."
-          (close)="showTagDialog = false"
+          (close)="closeTagDialog()"
         />
         <div class="tag-form">
           <p class="tag-timestamp">
@@ -532,7 +531,7 @@ const TAG_TYPES = [
           cancelLabel="Cancel"
           primaryLabel="Save Tag"
           primaryIcon="check"
-          (cancel)="showTagDialog = false"
+          (cancel)="closeTagDialog()"
           (primary)="saveTag()"
         />
       </app-dialog>
@@ -544,7 +543,6 @@ const TAG_TYPES = [
         styleClass="film-session-dialog"
         [blockScroll]="true"
         [draggable]="false"
-        [breakpoints]="{ '960px': '92vw', '640px': '96vw' }"
         ariaLabel="Film session details"
       >
         <app-dialog-header
@@ -607,7 +605,6 @@ const TAG_TYPES = [
         styleClass="film-compliance-dialog"
         [blockScroll]="true"
         [draggable]="false"
-        [breakpoints]="{ '960px': '92vw', '640px': '96vw' }"
         ariaLabel="Film compliance details"
       >
         <app-dialog-header
@@ -875,9 +872,19 @@ export class FilmRoomCoachComponent implements OnInit {
     };
   }
 
+  closeUploadDialog(): void {
+    this.showUploadDialog = false;
+    this.uploadForm = this.getEmptyUploadForm();
+  }
+
+  closeTagDialog(): void {
+    this.showTagDialog = false;
+    this.tagForm = this.getEmptyTagForm();
+  }
+
   // Actions
   openUploadDialog(): void {
-    this.uploadForm = this.getEmptyUploadForm();
+    this.closeUploadDialog();
     this.showUploadDialog = true;
   }
 
@@ -905,21 +912,23 @@ export class FilmRoomCoachComponent implements OnInit {
       `${data.title} has been uploaded`,
       "Film Uploaded",
     );
-    this.showUploadDialog = false;
+    this.closeUploadDialog();
   }
 
   watchFilm(session: FilmSession): void {
+    this.closeSessionDialog();
     this.selectedSession.set(session);
     this.showSessionDialog = true;
   }
 
   editTags(session: FilmSession): void {
+    this.closeTagDialog();
     this.selectedSession.set(session);
-    this.tagForm = this.getEmptyTagForm();
     this.showTagDialog = true;
   }
 
   viewCompliance(session: FilmSession): void {
+    this.closeComplianceDialog();
     this.selectedSession.set(session);
     this.showComplianceDialog = true;
   }
@@ -939,7 +948,7 @@ export class FilmRoomCoachComponent implements OnInit {
   }
 
   openAddTag(): void {
-    this.tagForm = this.getEmptyTagForm();
+    this.closeTagDialog();
     this.showTagDialog = true;
   }
 
@@ -983,7 +992,7 @@ export class FilmRoomCoachComponent implements OnInit {
       "Timestamp tag has been added",
       "Tag Saved",
     );
-    this.showTagDialog = false;
+    this.closeTagDialog();
   }
 
   private readInputValue(event: Event): string {

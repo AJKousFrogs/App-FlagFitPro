@@ -86,7 +86,7 @@
                     [loading]="loading()"
                     [paginator]="true"
                     [rows]="10"
-                    styleClass="p-datatable-sm"
+                    styleClass="table-compact"
                   >
                     <ng-template #header>
                       <tr>
@@ -264,10 +264,9 @@
           [modal]="true"
           [blockScroll]="true"
           [draggable]="false"
-          [breakpoints]="{ '1200px': '92vw', '640px': '96vw' }"
           ariaLabel="Athlete nutrition details"
           [dismissableMask]="true"
-          styleClass="nutritionist-athlete-dialog"
+          dialogSize="2xl"
         >
           <app-dialog-header
             icon="apple"
@@ -346,10 +345,9 @@
           [modal]="true"
           [blockScroll]="true"
           [draggable]="false"
-          [breakpoints]="{ '960px': '92vw', '640px': '96vw' }"
           ariaLabel="Generate nutrition report"
           [dismissableMask]="true"
-          styleClass="nutritionist-report-dialog"
+          dialogSize="lg"
         >
           <app-dialog-header
             icon="file-pdf"
@@ -405,10 +403,9 @@
           [modal]="true"
           [blockScroll]="true"
           [draggable]="false"
-          [breakpoints]="{ '960px': '92vw', '640px': '96vw' }"
           ariaLabel="Create tournament nutrition brief"
           [dismissableMask]="true"
-          styleClass="nutritionist-tournament-dialog"
+          dialogSize="xl"
         >
           <app-dialog-header
             icon="calendar-plus"

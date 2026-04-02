@@ -1,4 +1,5 @@
 @use "styles/mixins" as *;
+@use "styles/foundations" as *;
 
 .roster-page.bento-grid {
   display: grid;
@@ -485,11 +486,13 @@
 .status-option {
   display: flex;
   align-items: center;
+  width: 100%;
   gap: var(--space-3);
   padding: var(--space-3) var(--space-4);
   border: var(--border-1) solid var(--ui-border-subtle);
   border-radius: var(--radius-xl);
   background: var(--ui-surface-card-alt);
+  text-align: left;
   cursor: pointer;
   transition:
     background-color var(--transition-fast),
@@ -537,12 +540,11 @@
 }
 
 .form-field {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2);
+  @extend %form-field;
 }
 
 .form-field label {
+  @extend %form-label;
   font-weight: var(--ds-font-weight-medium);
   font-size: var(--ds-font-size-md);
   color: var(--color-text-secondary);
@@ -667,6 +669,7 @@
   .header-actions {
     width: 100%;
     justify-content: flex-start;
+    flex-wrap: wrap;
   }
 
   .header-actions app-button {
@@ -711,6 +714,15 @@
     gap: var(--space-1);
   }
 
+  .invitation-actions {
+    width: 100%;
+    flex-direction: column;
+  }
+
+  .invitation-actions app-button {
+    width: 100%;
+  }
+
   .invitations-list {
     max-height: var(--panel-max-height-md);
   }
@@ -744,7 +756,7 @@
 }
 
 /* Touch devices */
-@media (hover: none) and (pointer: coarse) {
+@include touch-device {
   .header-actions button {
     min-height: var(--touch-target-md); /* 2.calc(var(--size-200) * 6) */
     min-width: var(--touch-target-md);

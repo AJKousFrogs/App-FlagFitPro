@@ -20,7 +20,7 @@ import {
 } from "../../core/services/training-plan.service";
 import { UnifiedTrainingService } from "../../core/services/unified-training.service";
 import { LoggerService } from "../../core/services/logger.service";
-import { AuthService } from "../../core/services/auth.service";
+import { SupabaseService } from "../../core/services/supabase.service";
 import { ToastService } from "../../core/services/toast.service";
 import { TrafficLightRiskComponent } from "../../shared/components/traffic-light-risk/traffic-light-risk.component";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
@@ -316,7 +316,7 @@ import {
   styleUrl: "./goal-based-planner.component.scss",
 })
 export class GoalBasedPlannerComponent {
-  private readonly authService = inject(AuthService);
+  private readonly supabase = inject(SupabaseService);
   private readonly router = inject(Router);
   private readonly trainingPlanService = inject(TrainingPlanService);
   private readonly trainingService = inject(UnifiedTrainingService);
@@ -332,7 +332,7 @@ export class GoalBasedPlannerComponent {
   saving = signal(false);
   gameDays = signal<Date[]>([]);
 
-  readonly currentUserId = computed(() => this.authService.currentUser()?.id ?? null);
+  readonly currentUserId = computed(() => this.supabase.userId());
   readonly todayProtocol = this.trainingService.todayProtocol;
   readonly fallbackReadinessLevel = this.trainingService.readinessLevel;
   readonly acwrDisplay = computed(() =>

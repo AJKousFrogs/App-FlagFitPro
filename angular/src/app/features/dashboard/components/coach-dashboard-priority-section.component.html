@@ -28,14 +28,11 @@
       </div>
       <div class="athlete-scroll">
         @for (alert of riskAlerts(); track alert.playerId) {
-          <div
+          <button
+            type="button"
             class="priority-athlete-card"
             (click)="viewPlayer.emit(alert.playerId)"
-            role="button"
-            tabindex="0"
             [attr.aria-label]="'View player ' + alert.playerName"
-            (keydown.enter)="viewPlayer.emit(alert.playerId)"
-            (keydown.space)="viewPlayer.emit(alert.playerId); $event.preventDefault()"
           >
             <p-avatar
               [label]="getPlayerInitials(alert.playerName)"
@@ -73,7 +70,7 @@
               />
             }
             <i class="pi pi-chevron-right"></i>
-          </div>
+          </button>
         }
       </div>
     </div>
@@ -93,14 +90,11 @@
       </div>
       <div class="athlete-scroll">
         @for (player of playersWithMissingData(); track player.playerId) {
-          <div
+          <button
+            type="button"
             class="priority-athlete-card"
             (click)="viewPlayer.emit(player.playerId)"
-            role="button"
-            tabindex="0"
             [attr.aria-label]="'View player ' + player.playerName"
-            (keydown.enter)="viewPlayer.emit(player.playerId)"
-            (keydown.space)="viewPlayer.emit(player.playerId); $event.preventDefault()"
           >
             <p-avatar
               [label]="getPlayerInitials(player.playerName)"
@@ -123,7 +117,7 @@
               size="sm"
             />
             <i class="pi pi-chevron-right"></i>
-          </div>
+          </button>
         }
       </div>
     </div>

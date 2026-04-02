@@ -860,7 +860,7 @@
   // PrimeNG dialog responsive overrides moved to _component-overrides.scss (DS-EXC-013)
 
   .search-panel {
-    max-height: 100vh;
+    max-height: 100dvh;
 height: 100dvh; // Modern: keyboard-aware
     max-height: 100dvh;
   }

@@ -83,6 +83,13 @@ export class DecisionLedgerService {
     return payload;
   }
 
+  private handleRequestError(error: unknown, context: string): never {
+    const errorMessage = getErrorMessage(error, "Unknown error");
+    this.error.set(errorMessage);
+    this.logger.error(`[DecisionLedger] Error ${context}:`, error);
+    throw error;
+  }
+
   // Computed values
   readonly activeDecisions = computed(() =>
     this.decisions().filter((d) => d.status === "active"),
@@ -136,11 +143,7 @@ export class DecisionLedgerService {
       this.decisions.set(decisions);
       return decisions;
     } catch (error) {
-      const errorMessage =
-        getErrorMessage(error, "Unknown error");
-      this.error.set(errorMessage);
-      this.logger.error("[DecisionLedger] Error fetching decisions:", error);
-      throw error;
+      return this.handleRequestError(error, "fetching decisions");
     } finally {
       this.isLoading.set(false);
     }
@@ -164,11 +167,7 @@ export class DecisionLedgerService {
       this.stats.set(stats);
       return stats;
     } catch (error) {
-      const errorMessage =
-        getErrorMessage(error, "Unknown error");
-      this.error.set(errorMessage);
-      this.logger.error("[DecisionLedger] Error fetching stats:", error);
-      throw error;
+      return this.handleRequestError(error, "fetching stats");
     } finally {
       this.isLoading.set(false);
     }
@@ -203,11 +202,7 @@ export class DecisionLedgerService {
       this.reminders.set(reminders);
       return reminders;
     } catch (error) {
-      const errorMessage =
-        getErrorMessage(error, "Unknown error");
-      this.error.set(errorMessage);
-      this.logger.error("[DecisionLedger] Error fetching reminders:", error);
-      throw error;
+      return this.handleRequestError(error, "fetching reminders");
     } finally {
       this.isLoading.set(false);
     }
@@ -230,11 +225,7 @@ export class DecisionLedgerService {
         this.unwrapApiPayload<DecisionLedgerEntry>(response, "Decision not found"),
       );
     } catch (error) {
-      const errorMessage =
-        getErrorMessage(error, "Unknown error");
-      this.error.set(errorMessage);
-      this.logger.error("[DecisionLedger] Error fetching decision:", error);
-      throw error;
+      return this.handleRequestError(error, "fetching decision");
     } finally {
       this.isLoading.set(false);
     }
@@ -268,11 +259,7 @@ export class DecisionLedgerService {
 
       return decision;
     } catch (error) {
-      const errorMessage =
-        getErrorMessage(error, "Unknown error");
-      this.error.set(errorMessage);
-      this.logger.error("[DecisionLedger] Error creating decision:", error);
-      throw error;
+      return this.handleRequestError(error, "creating decision");
     } finally {
       this.isLoading.set(false);
     }
@@ -312,11 +299,7 @@ export class DecisionLedgerService {
 
       return decision;
     } catch (error) {
-      const errorMessage =
-        getErrorMessage(error, "Unknown error");
-      this.error.set(errorMessage);
-      this.logger.error("[DecisionLedger] Error reviewing decision:", error);
-      throw error;
+      return this.handleRequestError(error, "reviewing decision");
     } finally {
       this.isLoading.set(false);
     }

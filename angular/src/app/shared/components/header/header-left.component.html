@@ -1,0 +1,22 @@
+<app-icon-button
+  class="mobile-hamburger"
+  [icon]="sidebarToggleIcon()"
+  (clicked)="toggleSidebar.emit()"
+  [ariaLabel]="sidebarToggleAriaLabel()"
+/>
+
+@if (showLogo()) {
+  <a class="header-logo" routerLink="/" pTooltip="Go to Dashboard">
+    <app-status-tag
+      value="LA28"
+      icon="pi-flag"
+      severity="success"
+      size="sm"
+    />
+  </a>
+}
+
+@if (showBreadcrumbs()) {
+  <app-header-breadcrumbs />
+}
+

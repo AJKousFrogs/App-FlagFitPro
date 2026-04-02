@@ -15,7 +15,6 @@ import {
 import { LoggerService } from "./logger.service";
 import { toLogContext } from "./logger.service";
 import { SupabaseService } from "./supabase.service";
-import { AuthService } from "./auth.service";
 
 @Injectable({
   providedIn: "root",
@@ -23,7 +22,6 @@ import { AuthService } from "./auth.service";
 export class EvidenceConfigService {
   private logger = inject(LoggerService);
   private supabaseService = inject(SupabaseService);
-  private authService = inject(AuthService);
 
   // Active preset ID
   private readonly activePresetId = signal<string>("adult_flag_competitive_v1");
@@ -86,7 +84,7 @@ export class EvidenceConfigService {
     this.logger.info(`[EvidenceConfig] Preset changed to: ${presetId}`);
 
     // Log to Supabase for analytics
-    const user = this.authService.getUser();
+    const user = this.supabaseService.currentUser();
     if (user?.id) {
       try {
         await this.supabaseService.client.from("user_activity_logs").insert({

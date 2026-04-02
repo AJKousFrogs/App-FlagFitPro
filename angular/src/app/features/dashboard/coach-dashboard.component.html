@@ -210,14 +210,13 @@
           styleClass="dashboard-dialog"
           [blockScroll]="true"
           [draggable]="false"
-          [breakpoints]="{ '960px': '92vw', '640px': '96vw' }"
           ariaLabel="Create training session"
         >
           <app-dialog-header
             icon="calendar-plus"
             title="Create Training Session"
             subtitle="Schedule a new practice, prep block, or recovery session."
-            (close)="showCreateSessionDialog = false"
+            (close)="resetCreateSessionDialog()"
           />
           <div class="session-form">
             <div class="form-field">
@@ -292,7 +291,7 @@
             cancelLabel="Cancel"
             primaryLabel="Create"
             primaryIcon="check"
-            (cancel)="showCreateSessionDialog = false"
+            (cancel)="resetCreateSessionDialog()"
             (primary)="createSession()"
           />
         </app-dialog>
@@ -306,7 +305,6 @@
           styleClass="dashboard-dialog"
           [blockScroll]="true"
           [draggable]="false"
-          [breakpoints]="{ '960px': '92vw', '640px': '96vw' }"
           ariaLabel="Send team message"
         >
           <app-dialog-header
@@ -348,7 +346,6 @@
           styleClass="dashboard-dialog"
           [blockScroll]="true"
           [draggable]="false"
-          [breakpoints]="{ '960px': '92vw', '640px': '96vw' }"
           ariaLabel="Request data access"
         >
           <app-dialog-header

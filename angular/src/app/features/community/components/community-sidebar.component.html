@@ -34,17 +34,14 @@
 <app-card-shell title="Trending Topics" headerIcon="pi-bolt">
   <div class="topics-list">
     @for (topic of trendingTopics(); track topic.name) {
-      <div
+      <button
+        type="button"
         class="topic-item"
         [class.active]="selectedTopic() === topic.name"
         (click)="selectTopic.emit(topic.name)"
         pTooltip="View posts about #{{ topic.name }}"
         tooltipPosition="left"
-        role="button"
-        tabindex="0"
         [attr.aria-label]="'Filter posts by topic ' + topic.name"
-        (keydown.enter)="selectTopic.emit(topic.name)"
-        (keydown.space)="selectTopic.emit(topic.name); $event.preventDefault()"
       >
         <div class="topic-info">
           <span class="topic-hashtag">#{{ topic.name }}</span>
@@ -53,7 +50,7 @@
         <div class="topic-trend">
           <i class="pi pi-arrow-up"></i>
         </div>
-      </div>
+      </button>
     }
     @if (selectedTopic()) {
       <button type="button" class="clear-filter-btn" (click)="clearTopicFilter.emit()">

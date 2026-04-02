@@ -579,13 +579,26 @@ export class ReturnToPlayComponent implements OnInit {
     }
   }
 
-  openStartDialog(): void {
+  private resetStartProtocolForm(): void {
     this.newProtocol = this.getEmptyProtocolForm();
+  }
+
+  openStartDialog(): void {
+    this.resetStartProtocolForm();
     this.showStartDialog.set(true);
   }
 
   closeStartDialog(): void {
     this.showStartDialog.set(false);
+    this.resetStartProtocolForm();
+  }
+
+  onStartDialogVisibleChange(visible: boolean): void {
+    if (visible) {
+      this.showStartDialog.set(true);
+      return;
+    }
+    this.closeStartDialog();
   }
 
   onSeverityChange(): void {

@@ -332,7 +332,7 @@
             <app-table
               [data]="cycleHistory()"
               [rows]="5"
-              styleClass="p-datatable-sm"
+              density="sm"
             >
               <ng-template #header>
                 <tr>
@@ -440,7 +440,7 @@
       <!-- Log Period Dialog -->
       <app-dialog
         [visible]="showLogDialog()"
-        (visibleChange)="showLogDialog.set($event)"
+        (visibleChange)="onLogDialogVisibleChange($event)"
         [modal]="true"
         [closable]="false"
         [draggable]="false"
@@ -546,7 +546,7 @@
       <!-- Delete Confirmation Dialog -->
       <app-dialog
         [visible]="showDeleteDialog()"
-        (visibleChange)="showDeleteDialog.set($event)"
+        (visibleChange)="onDeleteDialogVisibleChange($event)"
         [modal]="true"
         [closable]="false"
         [draggable]="false"
@@ -559,7 +559,7 @@
           title="Delete All Cycle Data"
           subtitle="This permanently removes your private cycle history."
           [danger]="true"
-          (close)="showDeleteDialog.set(false)"
+          (close)="closeDeleteDialog()"
         />
         <div class="delete-warning">
           <i class="pi pi-exclamation-triangle"></i>
@@ -574,7 +574,7 @@
           primaryLabel="Delete All Data"
           primaryIcon="trash"
           primaryVariant="danger"
-          (cancel)="showDeleteDialog.set(false)"
+          (cancel)="closeDeleteDialog()"
           (primary)="deleteAllData()"
         />
       </app-dialog>

@@ -208,6 +208,7 @@ interface StatsPayload {
         [(visible)]="showFullDialog"
         [blockScroll]="true"
         [draggable]="false"
+        dialogSize="2xl"
         styleClass="achievements-panel-dialog"
         ariaLabel="Achievements and progress"
       >

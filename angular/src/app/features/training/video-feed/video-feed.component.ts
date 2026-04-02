@@ -45,7 +45,6 @@ import { formatDate as formatDateValue } from "../../../shared/utils/date.utils"
 import { VideoFeedHeaderSectionComponent } from "./components/video-feed-header-section.component";
 
 // Services
-import { AuthService } from "../../../core/services/auth.service";
 import { HapticFeedbackService } from "../../../core/services/haptic-feedback.service";
 import {
   InstagramCreator,
@@ -53,6 +52,7 @@ import {
   InstagramVideoService,
 } from "../../../core/services/instagram-video.service";
 import { LoggerService } from "../../../core/services/logger.service";
+import { SupabaseService } from "../../../core/services/supabase.service";
 import { ToastService } from "../../../core/services/toast.service";
 import { TOAST } from "../../../core/constants/toast-messages.constants";
 import { VideoBookmarkDataService } from "../services/video-bookmark-data.service";
@@ -323,17 +323,17 @@ import { FilterChip } from "./video-feed.models";
         <!-- Video Player Dialog -->
         <app-dialog
           [(visible)]="showVideoDialog"
-          class="video-dialog"
+          dialogSize="2xl"
           [draggable]="false"
           [resizable]="false"
           [dismissableMask]="true"
-          (hide)="showVideoDialog.set(false)"
+          (hide)="closeVideoDialog()"
         >
           <app-dialog-header
             icon="film"
             [title]="selectedVideo()?.title || 'Training Video'"
             subtitle="Watch coach-led sessions in premium resolution"
-            (close)="showVideoDialog.set(false)"
+            (close)="closeVideoDialog()"
           ></app-dialog-header>
           @if (selectedVideo(); as video) {
             <div class="video-dialog-content">
@@ -402,7 +402,7 @@ export class VideoFeedComponent {
   private instagramService = inject(InstagramVideoService);
   private toastService = inject(ToastService);
   private hapticService = inject(HapticFeedbackService);
-  private authService = inject(AuthService);
+  private supabase = inject(SupabaseService);
   private videoBookmarkDataService = inject(VideoBookmarkDataService);
   private router = inject(Router);
   private logger = inject(LoggerService);
@@ -634,8 +634,14 @@ export class VideoFeedComponent {
   readonly clearAllFiltersHandler = (): void => this.clearAllFilters();
 
   // Video actions
+  closeVideoDialog(): void {
+    this.showVideoDialog.set(false);
+    this.selectedVideo.set(null);
+  }
+
   openVideo(video: InstagramVideo): void {
     this.hapticService.medium();
+    this.closeVideoDialog();
     this.selectedVideo.set(video);
     this.showVideoDialog.set(true);
   }
@@ -756,14 +762,18 @@ export class VideoFeedComponent {
     creatorsSection?.scrollIntoView({ behavior: "smooth", block: "start" });
   }
 
+  private getBookmarkUserId(): string | null {
+    return this.supabase.userId();
+  }
+
   // Bookmark persistence
   private async loadBookmarks(): Promise<void> {
     try {
-      const user = this.authService.getUser();
-      if (!user?.id) return;
+      const userId = this.getBookmarkUserId();
+      if (!userId) return;
 
       const { bookmarks } =
-        await this.videoBookmarkDataService.fetchBookmarks(user.id);
+        await this.videoBookmarkDataService.fetchBookmarks(userId);
 
       if (bookmarks) {
         this.bookmarkedIds.set(new Set(bookmarks.map((b) => b.video_id)));
@@ -775,11 +785,11 @@ export class VideoFeedComponent {
 
   private async saveBookmark(video: InstagramVideo): Promise<void> {
     try {
-      const user = this.authService.getUser();
-      if (!user?.id) return;
+      const userId = this.getBookmarkUserId();
+      if (!userId) return;
 
       await this.videoBookmarkDataService.saveBookmark({
-        userId: user.id,
+        userId,
         videoId: video.id,
         videoTitle: video.title,
         videoUrl: video.url,
@@ -792,11 +802,11 @@ export class VideoFeedComponent {
 
   private async removeBookmark(videoId: string): Promise<void> {
     try {
-      const user = this.authService.getUser();
-      if (!user?.id) return;
+      const userId = this.getBookmarkUserId();
+      if (!userId) return;
 
       await this.videoBookmarkDataService.removeBookmark({
-        userId: user.id,
+        userId,
         videoId,
       });
     } catch (error) {

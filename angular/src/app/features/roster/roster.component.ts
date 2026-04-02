@@ -39,7 +39,7 @@ import {
   signal,
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
-import { ActivatedRoute, Router } from "@angular/router";
+import { ActivatedRoute, ParamMap, Router } from "@angular/router";
 
 import { ConfirmDialog } from "primeng/confirmdialog";
 import { ButtonComponent } from "../../shared/components/button/button.component";
@@ -297,8 +297,8 @@ export class RosterComponent implements OnInit {
   ngOnInit(): void {
     this.route.queryParamMap
       .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(() => {
-        this.applyRouteState();
+      .subscribe((queryParamMap) => {
+        this.applyRouteState(queryParamMap);
       });
 
     this.initializePage();
@@ -314,19 +314,21 @@ export class RosterComponent implements OnInit {
       this.hasPageError.set(true);
     }
 
-    this.applyRouteState();
+    this.applyRouteState(this.route.snapshot.queryParamMap);
     this.isPageLoading.set(false);
   }
 
-  private applyRouteState(): void {
-    const playerId = this.route.snapshot.queryParamMap.get("player");
-    const routeFilter = this.route.snapshot.queryParamMap.get("filter");
+  private applyRouteState(queryParamMap: ParamMap): void {
+    const playerId = queryParamMap.get("player");
+    const routeFilter = queryParamMap.get("filter");
 
     if (this.isPlayerStatus(routeFilter)) {
       this.statusFilter = routeFilter;
     }
 
     if (!playerId) {
+      this.showDetailsDialog.set(false);
+      this.selectedPlayer.set(null);
       return;
     }
 
@@ -377,29 +379,21 @@ export class RosterComponent implements OnInit {
       return;
     }
 
-    this.isSaving.set(true);
-
     const editingPlayer = this.editingPlayer();
-    const result = editingPlayer
-      ? await this.rosterService.updatePlayer(
-          editingPlayer.id,
-          formData as Partial<Player>,
-        )
-      : await this.rosterService.addPlayer(formData as Partial<Player>);
-
-    if (result.success) {
-      this.toastService.success(
-        this.editingPlayer()
-          ? TOAST.SUCCESS.PLAYER_UPDATED
-          : TOAST.SUCCESS.PLAYER_ADDED,
-      );
-      this.showPlayerDialog.set(false);
-      this.editingPlayer.set(null);
-    } else {
-      this.toastService.error(result.error || TOAST.ERROR.PLAYER_SAVE_FAILED);
-    }
-
-    this.isSaving.set(false);
+    await this.runRosterMutation({
+      request: () =>
+        editingPlayer
+          ? this.rosterService.updatePlayer(
+              editingPlayer.id,
+              formData as Partial<Player>,
+            )
+          : this.rosterService.addPlayer(formData as Partial<Player>),
+      successMessage: editingPlayer
+        ? TOAST.SUCCESS.PLAYER_UPDATED
+        : TOAST.SUCCESS.PLAYER_ADDED,
+      errorMessage: TOAST.ERROR.PLAYER_SAVE_FAILED,
+      onSuccess: () => this.closePlayerDialog(),
+    });
   }
 
   async confirmRemovePlayer(player: Player): Promise<void> {
@@ -462,20 +456,13 @@ export class RosterComponent implements OnInit {
     const player = this.statusChangePlayer();
     if (!player) return;
 
-    this.isSaving.set(true);
-    const result = await this.rosterService.updatePlayerStatus(
-      player.id,
-      this.newStatus(),
-    );
-
-    if (result.success) {
-      this.toastService.success(`${player.name}'s status updated`);
-      this.showStatusDialog.set(false);
-    } else {
-      this.toastService.error(result.error || TOAST.ERROR.STATUS_UPDATE_FAILED);
-    }
-
-    this.isSaving.set(false);
+    await this.runRosterMutation({
+      request: () =>
+        this.rosterService.updatePlayerStatus(player.id, this.newStatus()),
+      successMessage: `${player.name}'s status updated`,
+      errorMessage: TOAST.ERROR.STATUS_UPDATE_FAILED,
+      onSuccess: () => this.closeStatusDialog(),
+    });
   }
 
   // Bulk operations
@@ -509,21 +496,15 @@ export class RosterComponent implements OnInit {
     const ids = Array.from(this.selectedPlayerIds());
     if (ids.length === 0) return;
 
-    this.isSaving.set(true);
-    const result = await this.rosterService.bulkUpdateStatus(
-      ids,
-      this.bulkStatus(),
-    );
-
-    if (result.success) {
-      this.toastService.success(`Updated status for ${ids.length} players`);
-      this.showBulkStatusDialog.set(false);
-      this.clearSelection();
-    } else {
-      this.toastService.error(result.error || TOAST.ERROR.STATUS_UPDATE_FAILED);
-    }
-
-    this.isSaving.set(false);
+    await this.runRosterMutation({
+      request: () => this.rosterService.bulkUpdateStatus(ids, this.bulkStatus()),
+      successMessage: `Updated status for ${ids.length} players`,
+      errorMessage: TOAST.ERROR.STATUS_UPDATE_FAILED,
+      onSuccess: () => {
+        this.closeBulkStatusDialog();
+        this.clearSelection();
+      },
+    });
   }
 
   async confirmBulkRemove(): Promise<void> {
@@ -580,6 +561,46 @@ export class RosterComponent implements OnInit {
     document.body.removeChild(link);
 
     this.toastService.success(TOAST.SUCCESS.ROSTER_EXPORTED);
+  }
+
+  closePlayerDialog(): void {
+    this.showPlayerDialog.set(false);
+    this.editingPlayer.set(null);
+  }
+
+  closeStatusDialog(): void {
+    this.showStatusDialog.set(false);
+    this.statusChangePlayer.set(null);
+  }
+
+  closeBulkStatusDialog(): void {
+    this.showBulkStatusDialog.set(false);
+  }
+
+  private async runRosterMutation({
+    request,
+    successMessage,
+    errorMessage,
+    onSuccess,
+  }: {
+    request: () => Promise<{ success: boolean; error?: string }>;
+    successMessage: string;
+    errorMessage: string;
+    onSuccess?: () => void;
+  }): Promise<void> {
+    this.isSaving.set(true);
+
+    try {
+      const result = await request();
+      if (result.success) {
+        this.toastService.success(successMessage);
+        onSuccess?.();
+      } else {
+        this.toastService.error(result.error || errorMessage);
+      }
+    } finally {
+      this.isSaving.set(false);
+    }
   }
 
 }

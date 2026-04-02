@@ -9,6 +9,7 @@ import {
   signal,
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
+import { Observable } from "rxjs";
 import { Badge } from "primeng/badge";
 import { InputNumber, type InputNumberInputEvent } from "primeng/inputnumber";
 import { InputText } from "primeng/inputtext";
@@ -18,7 +19,6 @@ import { TableModule } from "primeng/table";
 import { StatusTagComponent } from "../../shared/components/status-tag/status-tag.component";
 
 import { TOAST } from "../../core/constants/toast-messages.constants";
-import { AuthService } from "../../core/services/auth.service";
 import {
   EquipmentAssignment,
   EquipmentItem,
@@ -26,6 +26,7 @@ import {
   EquipmentSummary,
 } from "../../core/services/equipment.service";
 import { LoggerService } from "../../core/services/logger.service";
+import { SupabaseService } from "../../core/services/supabase.service";
 import { TeamMembershipService } from "../../core/services/team-membership.service";
 import { TeamStatisticsService } from "../../core/services/team-statistics.service";
 import { ToastService } from "../../core/services/toast.service";
@@ -177,7 +178,7 @@ type ReturnData = { condition: Condition; notes: string };
               [value]="filteredEquipment()"
               [paginator]="true"
               [rows]="10"
-              class="p-datatable-sm"
+              class="table-compact"
               [rowHover]="true"
               [scrollable]="true"
             >
@@ -298,7 +299,7 @@ type ReturnData = { condition: Condition; notes: string };
                   [value]="activeAssignments()"
                   [paginator]="true"
                   [rows]="5"
-                  class="p-datatable-sm"
+                  class="table-compact"
                   [scrollable]="true"
                 >
                   <ng-template #header>
@@ -337,17 +338,16 @@ type ReturnData = { condition: Condition; notes: string };
         <app-dialog
           [(visible)]="showAddDialog"
           [modal]="true"
-          styleClass="equipment-add-dialog"
+          dialogSize="lg"
           [blockScroll]="true"
           [draggable]="false"
-          [breakpoints]="{ '960px': '92vw', '640px': '96vw' }"
           [ariaLabel]="editingItem ? 'Edit equipment' : 'Add equipment'"
         >
           <app-dialog-header
             icon="box"
             [title]="editingItem ? 'Edit Equipment' : 'Add Equipment'"
             subtitle="Track inventory, condition, and available quantities."
-            (close)="showAddDialog = false"
+            (close)="closeAddDialog()"
           />
           <div class="dialog-form">
             <div class="form-field">
@@ -428,7 +428,7 @@ type ReturnData = { condition: Condition; notes: string };
             primaryLabel="Save Equipment"
             primaryIcon="check"
             [disabled]="!canSaveItem()"
-            (cancel)="showAddDialog = false"
+            (cancel)="closeAddDialog()"
             (primary)="saveItem()"
           />
         </app-dialog>
@@ -437,17 +437,16 @@ type ReturnData = { condition: Condition; notes: string };
         <app-dialog
           [(visible)]="showCheckoutDialog"
           [modal]="true"
-          styleClass="equipment-checkout-dialog"
+          dialogSize="sm"
           [blockScroll]="true"
           [draggable]="false"
-          [breakpoints]="{ '960px': '92vw', '640px': '96vw' }"
           ariaLabel="Checkout equipment"
         >
           <app-dialog-header
             icon="arrow-right-arrow-left"
             title="Checkout Equipment"
             subtitle="Assign team gear to a player and track quantity."
-            (close)="showCheckoutDialog = false"
+            (close)="closeCheckoutDialog()"
           />
           @if (checkoutItem()) {
             <div class="dialog-form">
@@ -497,7 +496,7 @@ type ReturnData = { condition: Condition; notes: string };
             primaryLabel="Checkout"
             primaryIcon="check"
             [disabled]="!checkoutData.player_id"
-            (cancel)="showCheckoutDialog = false"
+            (cancel)="closeCheckoutDialog()"
             (primary)="checkout()"
           />
         </app-dialog>
@@ -506,17 +505,16 @@ type ReturnData = { condition: Condition; notes: string };
         <app-dialog
           [(visible)]="showReturnDialog"
           [modal]="true"
-          styleClass="equipment-return-dialog"
+          dialogSize="sm"
           [blockScroll]="true"
           [draggable]="false"
-          [breakpoints]="{ '960px': '92vw', '640px': '96vw' }"
           ariaLabel="Return equipment"
         >
           <app-dialog-header
             icon="undo"
             title="Return Equipment"
             subtitle="Record the condition of gear as it comes back in."
-            (close)="showReturnDialog = false"
+            (close)="closeReturnDialog()"
           />
           @if (returnAssignment()) {
             <div class="dialog-form">
@@ -552,7 +550,7 @@ type ReturnData = { condition: Condition; notes: string };
             cancelLabel="Cancel"
             primaryLabel="Process Return"
             primaryIcon="check"
-            (cancel)="showReturnDialog = false"
+            (cancel)="closeReturnDialog()"
             (primary)="processReturn()"
           />
         </app-dialog>
@@ -564,7 +562,7 @@ type ReturnData = { condition: Condition; notes: string };
 export class EquipmentComponent implements OnInit {
   private equipmentService = inject(EquipmentService);
   private teamStatsService = inject(TeamStatisticsService);
-  private authService = inject(AuthService);
+  private supabase = inject(SupabaseService);
   private teamMembershipService = inject(TeamMembershipService);
   private toastService = inject(ToastService);
   private destroyRef = inject(DestroyRef);
@@ -623,8 +621,12 @@ export class EquipmentComponent implements OnInit {
   }
 
   loadTeamPlayers(): void {
-    const teamId =
-      this.authService.getUser()?.user_metadata?.team_id || "default";
+    const teamId = this.teamMembershipService.teamId();
+    if (!teamId) {
+      this.teamPlayers.set([]);
+      return;
+    }
+
     this.teamStatsService
       .getTeamPlayersStats(teamId)
       .pipe(takeUntilDestroyed(this.destroyRef))
@@ -658,7 +660,7 @@ export class EquipmentComponent implements OnInit {
   }
 
   loadEquipment(): void {
-    const teamId = this.authService.getUser()?.user_metadata?.team_id;
+    const teamId = this.teamMembershipService.teamId();
     if (!teamId) return;
 
     this.equipmentService
@@ -671,7 +673,7 @@ export class EquipmentComponent implements OnInit {
   }
 
   loadAssignments(): void {
-    const teamId = this.authService.getUser()?.user_metadata?.team_id;
+    const teamId = this.teamMembershipService.teamId();
     if (!teamId) return;
 
     this.equipmentService
@@ -684,7 +686,7 @@ export class EquipmentComponent implements OnInit {
   }
 
   loadSummary(): void {
-    const teamId = this.authService.getUser()?.user_metadata?.team_id;
+    const teamId = this.teamMembershipService.teamId();
     if (!teamId) return;
 
     this.equipmentService
@@ -855,13 +857,60 @@ export class EquipmentComponent implements OnInit {
     return severities[condition] || "info";
   }
 
-  openAddDialog(): void {
+  private refreshEquipmentOverview(includeAssignments = false): void {
+    this.loadEquipment();
+    this.loadSummary();
+    if (includeAssignments) {
+      this.loadAssignments();
+    }
+  }
+
+  private handleEquipmentMutation(
+    operation$: Observable<unknown>,
+    options: {
+      successMessage: string;
+      errorMessage: string;
+      closeDialog?: () => void;
+      includeAssignments?: boolean;
+    },
+  ): void {
+    operation$
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: () => {
+          this.toastService.success(options.successMessage);
+          options.closeDialog?.();
+          this.refreshEquipmentOverview(options.includeAssignments ?? false);
+        },
+        error: () => this.toastService.error(options.errorMessage),
+      });
+  }
+
+  closeAddDialog(): void {
+    this.showAddDialog = false;
     this.editingItem = null;
     this.newItem = this.getEmptyItem();
+  }
+
+  closeCheckoutDialog(): void {
+    this.showCheckoutDialog = false;
+    this.checkoutItem.set(null);
+    this.checkoutData = { player_id: "", quantity: 1, notes: "" };
+  }
+
+  closeReturnDialog(): void {
+    this.showReturnDialog = false;
+    this.returnAssignment.set(null);
+    this.returnData = { condition: "good", notes: "" };
+  }
+
+  openAddDialog(): void {
+    this.closeAddDialog();
     this.showAddDialog = true;
   }
 
   openEditDialog(item: EquipmentItem): void {
+    this.closeAddDialog();
     this.editingItem = item;
     this.newItem = {
       name: item.name,
@@ -884,36 +933,29 @@ export class EquipmentComponent implements OnInit {
   }
 
   saveItem(): void {
-    const teamId = this.authService.getUser()?.user_metadata?.team_id;
+    const teamId = this.teamMembershipService.teamId();
     if (!teamId || !this.canSaveItem()) return;
 
     if (this.editingItem) {
-      this.equipmentService
-        .updateEquipmentItem(this.editingItem.id, this.newItem)
-        .pipe(takeUntilDestroyed(this.destroyRef))
-        .subscribe({
-          next: () => {
-            this.toastService.success(TOAST.SUCCESS.UPDATED);
-            this.showAddDialog = false;
-            this.loadEquipment();
-            this.loadSummary();
-          },
-          error: () => this.toastService.error(TOAST.ERROR.UPDATE_FAILED),
-        });
-    } else {
-      this.equipmentService
-        .createEquipmentItem({ ...this.newItem, team_id: teamId })
-        .pipe(takeUntilDestroyed(this.destroyRef))
-        .subscribe({
-          next: () => {
-            this.toastService.success(TOAST.SUCCESS.CREATED);
-            this.showAddDialog = false;
-            this.loadEquipment();
-            this.loadSummary();
-          },
-          error: () => this.toastService.error(TOAST.ERROR.CREATE_FAILED),
-        });
+      this.handleEquipmentMutation(
+        this.equipmentService.updateEquipmentItem(this.editingItem.id, this.newItem),
+        {
+          successMessage: TOAST.SUCCESS.UPDATED,
+          errorMessage: TOAST.ERROR.UPDATE_FAILED,
+          closeDialog: () => this.closeAddDialog(),
+        },
+      );
+      return;
     }
+
+    this.handleEquipmentMutation(
+      this.equipmentService.createEquipmentItem({ ...this.newItem, team_id: teamId }),
+      {
+        successMessage: TOAST.SUCCESS.CREATED,
+        errorMessage: TOAST.ERROR.CREATE_FAILED,
+        closeDialog: () => this.closeAddDialog(),
+      },
+    );
   }
 
   async deleteItem(item: EquipmentItem): Promise<void> {
@@ -923,22 +965,15 @@ export class EquipmentComponent implements OnInit {
     );
     if (!confirmed) return;
 
-    this.equipmentService
-      .deleteEquipmentItem(item.id)
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: () => {
-          this.toastService.success(TOAST.SUCCESS.DELETED);
-          this.loadEquipment();
-          this.loadSummary();
-        },
-        error: () => this.toastService.error(TOAST.ERROR.DELETE_FAILED),
-      });
+    this.handleEquipmentMutation(this.equipmentService.deleteEquipmentItem(item.id), {
+      successMessage: TOAST.SUCCESS.DELETED,
+      errorMessage: TOAST.ERROR.DELETE_FAILED,
+    });
   }
 
   openCheckoutDialog(item: EquipmentItem): void {
+    this.closeCheckoutDialog();
     this.checkoutItem.set(item);
-    this.checkoutData = { player_id: "", quantity: 1, notes: "" };
     this.showCheckoutDialog = true;
   }
 
@@ -946,29 +981,25 @@ export class EquipmentComponent implements OnInit {
     const item = this.checkoutItem();
     if (!item || !this.checkoutData.player_id) return;
 
-    this.equipmentService
-      .checkoutEquipment({
+    this.handleEquipmentMutation(
+      this.equipmentService.checkoutEquipment({
         equipment_id: item.id,
         player_id: this.checkoutData.player_id,
         quantity: this.checkoutData.quantity,
         notes: this.checkoutData.notes || undefined,
-      })
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: () => {
-          this.toastService.success(TOAST.SUCCESS.UPDATED);
-          this.showCheckoutDialog = false;
-          this.loadEquipment();
-          this.loadAssignments();
-          this.loadSummary();
-        },
-        error: () => this.toastService.error(TOAST.ERROR.UPDATE_FAILED),
-      });
+      }),
+      {
+        successMessage: TOAST.SUCCESS.UPDATED,
+        errorMessage: TOAST.ERROR.UPDATE_FAILED,
+        closeDialog: () => this.closeCheckoutDialog(),
+        includeAssignments: true,
+      },
+    );
   }
 
   openReturnDialog(assignment: EquipmentAssignment): void {
+    this.closeReturnDialog();
     this.returnAssignment.set(assignment);
-    this.returnData = { condition: "good", notes: "" };
     this.showReturnDialog = true;
   }
 
@@ -976,22 +1007,18 @@ export class EquipmentComponent implements OnInit {
     const assignment = this.returnAssignment();
     if (!assignment) return;
 
-    this.equipmentService
-      .returnEquipment({
+    this.handleEquipmentMutation(
+      this.equipmentService.returnEquipment({
         assignment_id: assignment.id,
         condition_at_return: this.returnData.condition,
         notes: this.returnData.notes || undefined,
-      })
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: () => {
-          this.toastService.success(TOAST.SUCCESS.UPDATED);
-          this.showReturnDialog = false;
-          this.loadEquipment();
-          this.loadAssignments();
-          this.loadSummary();
-        },
-        error: () => this.toastService.error(TOAST.ERROR.UPDATE_FAILED),
-      });
+      }),
+      {
+        successMessage: TOAST.SUCCESS.UPDATED,
+        errorMessage: TOAST.ERROR.UPDATE_FAILED,
+        closeDialog: () => this.closeReturnDialog(),
+        includeAssignments: true,
+      },
+    );
   }
 }

@@ -7,7 +7,7 @@ export const helpRoutes: Routes = [
       import("../../../features/help/help-center.component").then(
         (m) => m.HelpCenterComponent,
       ),
-    data: { preload: false, entry: "internal" }, // On-demand
+    data: { preload: false, entry: "internal", headerPreset: "default" }, // On-demand
   },
   // Topic-specific routes all go to help center (component handles routing)
   {
@@ -16,6 +16,6 @@ export const helpRoutes: Routes = [
       import("../../../features/help/help-center.component").then(
         (m) => m.HelpCenterComponent,
       ),
-    data: { preload: false, entry: "deeplink" },
+    data: { preload: false, entry: "deeplink", headerPreset: "default" },
   },
 ];

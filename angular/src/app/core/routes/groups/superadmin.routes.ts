@@ -9,7 +9,13 @@ export const superadminRoutes: Routes = [
         (m) => m.SuperadminDashboardComponent,
       ),
     canActivate: [superadminGuard],
-    data: { preload: false, entry: "hub" }, // Don't preload admin routes
+    data: {
+      preload: false,
+      entry: "hub",
+      headerPreset: "default",
+      showBottomNav: false,
+      showFab: false,
+    }, // Don't preload admin routes
   },
   {
     path: "superadmin/settings",
@@ -18,7 +24,13 @@ export const superadminRoutes: Routes = [
         (m) => m.SuperadminSettingsComponent,
       ),
     canActivate: [superadminGuard],
-    data: { preload: false, entry: "internal" }, // Admin only
+    data: {
+      preload: false,
+      entry: "internal",
+      headerPreset: "default",
+      showBottomNav: false,
+      showFab: false,
+    }, // Admin only
   },
   {
     path: "superadmin/teams",
@@ -27,7 +39,13 @@ export const superadminRoutes: Routes = [
         (m) => m.SuperadminTeamsComponent,
       ),
     canActivate: [superadminGuard],
-    data: { preload: false, entry: "internal" }, // Admin only
+    data: {
+      preload: false,
+      entry: "internal",
+      headerPreset: "default",
+      showBottomNav: false,
+      showFab: false,
+    }, // Admin only
   },
   {
     path: "superadmin/users",
@@ -36,6 +54,12 @@ export const superadminRoutes: Routes = [
         (m) => m.SuperadminUsersComponent,
       ),
     canActivate: [superadminGuard],
-    data: { preload: false, entry: "internal" }, // Admin only
+    data: {
+      preload: false,
+      entry: "internal",
+      headerPreset: "default",
+      showBottomNav: false,
+      showFab: false,
+    }, // Admin only
   },
 ];

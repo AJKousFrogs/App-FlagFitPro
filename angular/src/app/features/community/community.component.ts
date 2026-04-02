@@ -27,10 +27,9 @@ import { InputText } from "primeng/inputtext";
 import { Tooltip } from "primeng/tooltip";
 import { COLORS } from "../../core/constants/app.constants";
 import { ApiService } from "../../core/services/api.service";
-import { AuthService } from "../../core/services/auth.service";
 import { LoggerService } from "../../core/services/logger.service";
 import { toLogContext } from "../../core/services/logger.service";
-import { TeamNotificationService } from "../../core/services/team-notification.service";
+import { SupabaseService } from "../../core/services/supabase.service";
 import { ToastService } from "../../core/services/toast.service";
 import { TOAST } from "../../core/constants/toast-messages.constants";
 import {
@@ -185,8 +184,7 @@ type PostMedia = Post["media"];
 })
 export class CommunityComponent implements OnInit {
   private apiService = inject(ApiService);
-  private authService = inject(AuthService);
-  private notificationService = inject(TeamNotificationService);
+  private supabase = inject(SupabaseService);
   private destroyRef = inject(DestroyRef);
   private logger = inject(LoggerService);
   private toastService = inject(ToastService);
@@ -272,7 +270,7 @@ export class CommunityComponent implements OnInit {
   });
 
   currentUserInitials = computed(() => {
-    const user = this.authService.getUser();
+    const user = this.supabase.currentUser();
     if (user?.email) {
       return user.email.substring(0, 2).toUpperCase();
     }
@@ -281,9 +279,9 @@ export class CommunityComponent implements OnInit {
 
   // Check if user is a coach
   readonly isCoach = computed(() => {
-    const user = this.authService.getUser();
-    const metadata = (user as { user_metadata?: UserMetadata } | null)
-      ?.user_metadata;
+    const metadata = this.supabase.currentUser()?.user_metadata as
+      | UserMetadata
+      | undefined;
     return metadata?.role === "coach" || metadata?.role === "assistant_coach";
   });
 
@@ -552,26 +550,14 @@ export class CommunityComponent implements OnInit {
             content?: string;
           }>(response);
           if (data) {
-            const newPost: Post = {
-              id: data.id || Date.now().toString(),
-              author: data.authorName || "You",
-              authorInitials: this.currentUserInitials(),
-              timeAgo: "Just now",
+            const newPost = this.buildOptimisticPost({
+              id: data.id,
+              author: data.authorName,
               location: data.location,
               content: data.content || content,
-              likes: 0,
-              comments: 0,
-              shares: 0,
-              isLiked: false,
-              isBookmarked: false,
-              showComments: false,
-              commentsList: [],
-              newComment: "",
-              media: mediaUrl
-                ? { type: mediaType as "image" | "video", url: mediaUrl }
-                : undefined,
-              poll: this.pendingPoll || undefined,
-            };
+              mediaUrl,
+              mediaType,
+            });
 
             // Update posts signal with new post at the beginning
             this.posts.update((posts) => [newPost, ...posts]);
@@ -583,37 +569,19 @@ export class CommunityComponent implements OnInit {
               posts: stats.posts + 1,
             }));
           }
-          this.newPostContent = "";
-          this.pendingPoll = null;
-          this.pendingMedia = null;
+          this.resetComposer();
         },
         error: (err) => {
           this.logger.error("Error creating post:", err);
           // Fallback to optimistic update if API fails
-          const newPost: Post = {
-            id: Date.now().toString(),
-            author: "You",
-            authorInitials: this.currentUserInitials(),
-            timeAgo: "Just now",
+          const newPost = this.buildOptimisticPost({
             location: location || undefined,
-            content: content,
-            likes: 0,
-            comments: 0,
-            shares: 0,
-            isLiked: false,
-            isBookmarked: false,
-            showComments: false,
-            commentsList: [],
-            newComment: "",
-            media: mediaUrl
-              ? { type: mediaType as "image" | "video", url: mediaUrl }
-              : undefined,
-            poll: this.pendingPoll || undefined,
-          };
+            content,
+            mediaUrl,
+            mediaType,
+          });
           this.posts.update((posts) => [newPost, ...posts]);
-          this.newPostContent = "";
-          this.pendingPoll = null;
-          this.pendingMedia = null;
+          this.resetComposer();
           this.toastService.warn(TOAST.WARN.POST_SAVED);
         },
       });
@@ -622,17 +590,13 @@ export class CommunityComponent implements OnInit {
   toggleLike(post: Post): void {
     // Optimistically update UI
     const wasLiked = post.isLiked;
-    this.posts.update((posts) =>
-      posts.map((p) =>
-        p.id === post.id
-          ? {
-              ...p,
-              isLiked: !p.isLiked,
-              likes: p.isLiked ? p.likes - 1 : p.likes + 1,
-            }
-          : p,
-      ),
-    );
+    this.updatePost(post.id, (candidatePost) => ({
+      ...candidatePost,
+      isLiked: !candidatePost.isLiked,
+      likes: candidatePost.isLiked
+        ? candidatePost.likes - 1
+        : candidatePost.likes + 1,
+    }));
 
     // Call API to persist like
     this.apiService
@@ -653,17 +617,13 @@ export class CommunityComponent implements OnInit {
         error: (err) => {
           this.logger.error("Error toggling like:", err);
           // Revert optimistic update on error
-          this.posts.update((posts) =>
-            posts.map((p) =>
-              p.id === post.id
-                ? {
-                    ...p,
-                    isLiked: wasLiked,
-                    likes: wasLiked ? p.likes + 1 : p.likes - 1,
-                  }
-                : p,
-            ),
-          );
+          this.updatePost(post.id, (candidatePost) => ({
+            ...candidatePost,
+            isLiked: wasLiked,
+            likes: wasLiked
+              ? candidatePost.likes + 1
+              : candidatePost.likes - 1,
+          }));
         },
       });
   }
@@ -672,16 +632,10 @@ export class CommunityComponent implements OnInit {
     const willShow = !post.showComments;
 
     // Create a new posts array with the updated post
-    this.posts.update((posts) =>
-      posts.map((p) =>
-        p.id === post.id
-          ? {
-              ...p,
-              showComments: willShow,
-            }
-          : p,
-      ),
-    );
+    this.updatePost(post.id, (candidatePost) => ({
+      ...candidatePost,
+      showComments: willShow,
+    }));
 
     // Load comments from API when expanding
     if (willShow && post.commentsList.length === 0 && post.comments > 0) {
@@ -695,23 +649,17 @@ export class CommunityComponent implements OnInit {
             const comments = extractApiPayload<{ comments?: Comment[] }>(response)
               ?.comments;
             if (comments) {
-              this.posts.update((posts) =>
-                posts.map((p) =>
-                  p.id === post.id
-                    ? {
-                        ...p,
-                        commentsList: comments.map((c: Comment) => ({
-                          id: c.id,
-                          author: c.author,
-                          authorInitials: this.getInitialsStr(c.author || "??"),
-                          content: c.content,
-                          timeAgo: c.timeAgo,
-                          likes: c.likes || 0,
-                        })),
-                      }
-                    : p,
-                ),
-              );
+              this.updatePost(post.id, (candidatePost) => ({
+                ...candidatePost,
+                commentsList: comments.map((comment: Comment) => ({
+                  id: comment.id,
+                  author: comment.author,
+                  authorInitials: this.getInitialsStr(comment.author || "??"),
+                  content: comment.content,
+                  timeAgo: comment.timeAgo,
+                  likes: comment.likes || 0,
+                })),
+              }));
             }
           },
           error: (err) => {
@@ -724,16 +672,10 @@ export class CommunityComponent implements OnInit {
   toggleBookmark(post: Post): void {
     // Optimistically update UI
     const wasBookmarked = post.isBookmarked;
-    this.posts.update((posts) =>
-      posts.map((p) =>
-        p.id === post.id
-          ? {
-              ...p,
-              isBookmarked: !p.isBookmarked,
-            }
-          : p,
-      ),
-    );
+    this.updatePost(post.id, (candidatePost) => ({
+      ...candidatePost,
+      isBookmarked: !candidatePost.isBookmarked,
+    }));
 
     // Call API to persist bookmark
     this.apiService
@@ -750,16 +692,10 @@ export class CommunityComponent implements OnInit {
         error: (err) => {
           this.logger.error("Error toggling bookmark:", err);
           // Revert optimistic update on error
-          this.posts.update((posts) =>
-            posts.map((p) =>
-              p.id === post.id
-                ? {
-                    ...p,
-                    isBookmarked: wasBookmarked,
-                  }
-                : p,
-            ),
-          );
+          this.updatePost(post.id, (candidatePost) => ({
+            ...candidatePost,
+            isBookmarked: wasBookmarked,
+          }));
           this.toastService.error(TOAST.ERROR.BOOKMARK_UPDATE_FAILED);
         },
       });
@@ -771,27 +707,14 @@ export class CommunityComponent implements OnInit {
     const commentContent = post.newComment.trim();
 
     // Optimistically add comment to UI
-    const tempComment: Comment = {
-      id: `temp-${Date.now()}`,
-      author: "You",
-      authorInitials: this.currentUserInitials(),
-      content: commentContent,
-      timeAgo: "Just now",
-      likes: 0,
-    };
+    const tempComment = this.buildOptimisticComment(commentContent);
 
-    this.posts.update((posts) =>
-      posts.map((p) =>
-        p.id === post.id
-          ? {
-              ...p,
-              commentsList: [...p.commentsList, tempComment],
-              comments: p.comments + 1,
-              newComment: "",
-            }
-          : p,
-      ),
-    );
+    this.updatePost(post.id, (candidatePost) => ({
+      ...candidatePost,
+      commentsList: [...candidatePost.commentsList, tempComment],
+      comments: candidatePost.comments + 1,
+      newComment: "",
+    }));
 
     // Call API to persist comment
     this.apiService
@@ -807,24 +730,18 @@ export class CommunityComponent implements OnInit {
           // Replace temp comment with real one from server
           const responseData = extractApiPayload<ApiCommentResponse>(response);
           if (responseData?.id) {
-            this.posts.update((posts) =>
-              posts.map((p) =>
-                p.id === post.id
+            this.updatePost(post.id, (candidatePost) => ({
+              ...candidatePost,
+              commentsList: candidatePost.commentsList.map((comment) =>
+                comment.id === tempComment.id
                   ? {
-                      ...p,
-                      commentsList: p.commentsList.map((c) =>
-                        c.id === tempComment.id
-                          ? {
-                              ...c,
-                              id: responseData.id,
-                              author: responseData.author || c.author,
-                            }
-                          : c,
-                      ),
+                      ...comment,
+                      id: responseData.id,
+                      author: responseData.author || comment.author,
                     }
-                  : p,
+                  : comment,
               ),
-            );
+            }));
           }
 
           // Update user stats
@@ -836,22 +753,33 @@ export class CommunityComponent implements OnInit {
         error: (err) => {
           this.logger.error("Error adding comment:", err);
           // Remove optimistic comment on error
-          this.posts.update((posts) =>
-            posts.map((p) =>
-              p.id === post.id
-                ? {
-                    ...p,
-                    commentsList: p.commentsList.filter(
-                      (c) => c.id !== tempComment.id,
-                    ),
-                    comments: p.comments - 1,
-                  }
-                : p,
+          this.updatePost(post.id, (candidatePost) => ({
+            ...candidatePost,
+            commentsList: candidatePost.commentsList.filter(
+              (comment) => comment.id !== tempComment.id,
             ),
-          );
+            comments: candidatePost.comments - 1,
+          }));
           this.toastService.error(TOAST.ERROR.COMMENT_ADD_FAILED);
         },
       });
+  }
+
+  private updatePost(postId: string, updater: (post: Post) => Post): void {
+    this.posts.update((posts) =>
+      posts.map((post) => (post.id === postId ? updater(post) : post)),
+    );
+  }
+
+  private buildOptimisticComment(content: string): Comment {
+    return {
+      id: `temp-${Date.now()}`,
+      author: "You",
+      authorInitials: this.currentUserInitials(),
+      content,
+      timeAgo: "Just now",
+      likes: 0,
+    };
   }
 
   // Pending media for post
@@ -965,6 +893,49 @@ export class CommunityComponent implements OnInit {
       };
       reader.readAsDataURL(file);
     });
+  }
+
+  private resetComposer(): void {
+    this.newPostContent = "";
+    this.pendingPoll = null;
+    this.pendingMedia = null;
+  }
+
+  private buildOptimisticPost({
+    id,
+    author,
+    location,
+    content,
+    mediaUrl,
+    mediaType,
+  }: {
+    id?: string;
+    author?: string;
+    location?: string;
+    content: string;
+    mediaUrl: string | null;
+    mediaType: string | null;
+  }): Post {
+    return {
+      id: id || Date.now().toString(),
+      author: author || "You",
+      authorInitials: this.currentUserInitials(),
+      timeAgo: "Just now",
+      location,
+      content,
+      likes: 0,
+      comments: 0,
+      shares: 0,
+      isLiked: false,
+      isBookmarked: false,
+      showComments: false,
+      commentsList: [],
+      newComment: "",
+      media: mediaUrl
+        ? { type: mediaType as "image" | "video", url: mediaUrl }
+        : undefined,
+      poll: this.pendingPoll || undefined,
+    };
   }
 
   createPoll(): void {

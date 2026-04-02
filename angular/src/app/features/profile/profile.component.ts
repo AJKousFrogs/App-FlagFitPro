@@ -16,12 +16,12 @@ import { UI_LIMITS } from "../../core/constants/app.constants";
 import { TOAST } from "../../core/constants/toast-messages.constants";
 import { AccountDeletionService } from "../../core/services/account-deletion.service";
 import { ApiService } from "../../core/services/api.service";
-import { AuthService } from "../../core/services/auth.service";
 import {
   LoggerService,
   toLogContext,
 } from "../../core/services/logger.service";
 import { ProfileCompletionService } from "../../core/services/profile-completion.service";
+import { SupabaseService } from "../../core/services/supabase.service";
 import { TeamMembershipService } from "../../core/services/team-membership.service";
 import { ToastService } from "../../core/services/toast.service";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
@@ -71,7 +71,7 @@ interface PendingInvitation {
   styleUrl: "./profile.component.scss",
 })
 export class ProfileComponent implements OnInit {
-  private authService = inject(AuthService);
+  private supabase = inject(SupabaseService);
   private apiService = inject(ApiService);
   private toastService = inject(ToastService);
   private profileDataService = inject(ProfileDataService);
@@ -152,6 +152,8 @@ export class ProfileComponent implements OnInit {
     };
   });
 
+  private readonly currentUser = computed(() => this.supabase.currentUser());
+
   ngOnInit(): void {
     this.initializePage();
   }
@@ -182,22 +184,38 @@ export class ProfileComponent implements OnInit {
 
   async loadProfileData(): Promise<void> {
     this.isLoading.set(true);
-    const user = this.authService.getUser();
+    const user = this.currentUser();
+    const metadata = user?.user_metadata as
+      | {
+          fullName?: string;
+          firstName?: string;
+          lastName?: string;
+          role?: string;
+          position?: string;
+          avatarUrl?: string;
+          avatar_url?: string;
+        }
+      | undefined;
+    const displayName =
+      metadata?.fullName ||
+      [metadata?.firstName, metadata?.lastName].filter(Boolean).join(" ") ||
+      user?.email ||
+      "User";
 
     if (user) {
-      this.userName.set(user.name || user.email || "User");
+      this.userName.set(displayName);
       this.userEmail.set(user.email || "");
-      this.userRole.set(user.role || "Player");
+      this.userRole.set(metadata?.role || "Player");
       this.userInitials.set(getInitials(this.userName()));
 
       // Load position from user data or profile
-      if (user.position) {
-        this.userPosition.set(user.position);
+      if (metadata?.position) {
+        this.userPosition.set(metadata.position);
       }
 
       // Load avatar URL
-      if (user.avatar_url) {
-        this.avatarUrl.set(user.avatar_url);
+      if (metadata?.avatarUrl || metadata?.avatar_url) {
+        this.avatarUrl.set(metadata?.avatarUrl || metadata?.avatar_url || null);
       }
     }
 
@@ -631,7 +649,7 @@ export class ProfileComponent implements OnInit {
     this.isUploadingAvatar.set(true);
 
     try {
-      const user = this.authService.getUser();
+      const user = this.currentUser();
       if (!user?.id) throw new Error("Not logged in");
 
       // Create unique filename
@@ -791,7 +809,7 @@ export class ProfileComponent implements OnInit {
     this.loadingInvitations.set(true);
 
     try {
-      const user = this.authService.currentUser();
+      const user = this.currentUser();
       if (!user?.email) {
         this.loadingInvitations.set(false);
         return;

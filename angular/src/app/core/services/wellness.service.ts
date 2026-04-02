@@ -123,7 +123,6 @@ export class WellnessService {
 
   // Get current user ID reactively
   private userId = computed(() => this.supabaseService.userId());
-  private wellnessChannel: RealtimeChannel | null = null;
 
   private readonly _wellnessData = signal<WellnessData[]>([]);
   private readonly _averages = signal<WellnessAverages | null>(null);

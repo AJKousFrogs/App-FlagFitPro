@@ -10,7 +10,7 @@
  * --color-text-on-primary. Block dark text on green. Tokens live in
  * design-system-tokens.scss.
  *
- * IMPORT: Must be imported LAST (overrides/index → color-guards).
+ * IMPORT: Must be imported last in the overrides chain from styles.scss.
  *
  * ⚠️ THIS FILE MUST NOT GROW. Add new rules only when design-system tokens
  *    change. Prefer fixing violations at source over expanding guards.

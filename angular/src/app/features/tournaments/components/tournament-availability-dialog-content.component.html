@@ -16,20 +16,17 @@
       <label>Will you be attending?</label>
       <div class="availability-options">
         @for (option of availabilityOptions(); track option.value) {
-          <div
+          <button
+            type="button"
             class="availability-option"
             [class.selected]="currentStatus() === option.value"
             [class]="'option-' + option.value"
             (click)="setStatus.emit(option.value)"
-            role="button"
-            tabindex="0"
             [attr.aria-label]="'Set availability to ' + option.label"
-            (keydown.enter)="setStatus.emit(option.value)"
-            (keydown.space)="setStatus.emit(option.value); $event.preventDefault()"
           >
             <i [class]="option.icon"></i>
             <span>{{ option.label }}</span>
-          </div>
+          </button>
         }
       </div>
     </div>

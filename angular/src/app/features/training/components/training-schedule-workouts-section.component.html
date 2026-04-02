@@ -28,15 +28,12 @@
     <div class="workouts-list-compact">
       @for (workout of previewWorkouts(); track trackByWorkoutTitle($index, workout)) {
         <!-- eslint-disable-next-line @angular-eslint/template/no-inline-styles -->
-        <div
+        <button
+          type="button"
           class="workout-card-compact"
           [style.border-left-color]="workout.iconBg"
           (click)="selectWorkout.emit(workout)"
-          role="button"
-          tabindex="0"
           [attr.aria-label]="'Start workout ' + workout.title"
-          (keydown.enter)="selectWorkout.emit(workout)"
-          (keydown.space)="selectWorkout.emit(workout); $event.preventDefault()"
         >
           <!-- eslint-disable-next-line @angular-eslint/template/no-inline-styles -->
           <div class="workout-icon-small" [style.background]="workout.iconBg">
@@ -47,7 +44,7 @@
             <span class="workout-meta-compact">{{ workout.duration }} • {{ workout.intensity }}</span>
           </div>
           <i class="pi pi-play"></i>
-        </div>
+        </button>
       }
     </div>
     @if (workouts().length > 4) {

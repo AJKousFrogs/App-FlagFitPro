@@ -78,3 +78,15 @@
   background: var(--ds-primary-green-subtle);
   color: var(--ds-primary-green-dark);
 }
+
+.override-badge-trigger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+
+  @include ds-focus-ring;
+}

@@ -18,14 +18,11 @@
       >
         <div class="protocol-players">
           @for (player of teamContinuity().gameDayRecovery; track player.playerId) {
-            <div
+            <button
+              type="button"
               class="protocol-player-item"
               (click)="viewPlayer.emit(player.playerId)"
-              role="button"
-              tabindex="0"
               [attr.aria-label]="'View player ' + player.playerName"
-              (keydown.enter)="viewPlayer.emit(player.playerId)"
-              (keydown.space)="viewPlayer.emit(player.playerId); $event.preventDefault()"
             >
               <span class="player-name">{{ player.playerName }}</span>
               <app-status-tag
@@ -34,7 +31,7 @@
                 severity="info"
                 size="sm"
               />
-            </div>
+            </button>
           }
         </div>
       </app-card-shell>
@@ -49,14 +46,11 @@
       >
         <div class="protocol-players">
           @for (player of teamContinuity().loadCaps; track player.playerId) {
-            <div
+            <button
+              type="button"
               class="protocol-player-item"
               (click)="viewPlayer.emit(player.playerId)"
-              role="button"
-              tabindex="0"
               [attr.aria-label]="'View player ' + player.playerName"
-              (keydown.enter)="viewPlayer.emit(player.playerId)"
-              (keydown.space)="viewPlayer.emit(player.playerId); $event.preventDefault()"
             >
               <span class="player-name">{{ player.playerName }}</span>
               <app-status-tag
@@ -65,7 +59,7 @@
                 severity="warning"
                 size="sm"
               />
-            </div>
+            </button>
           }
         </div>
       </app-card-shell>
@@ -80,14 +74,11 @@
       >
         <div class="protocol-players">
           @for (player of teamContinuity().travelRecovery; track player.playerId) {
-            <div
+            <button
+              type="button"
               class="protocol-player-item"
               (click)="viewPlayer.emit(player.playerId)"
-              role="button"
-              tabindex="0"
               [attr.aria-label]="'View player ' + player.playerName"
-              (keydown.enter)="viewPlayer.emit(player.playerId)"
-              (keydown.space)="viewPlayer.emit(player.playerId); $event.preventDefault()"
             >
               <span class="player-name">{{ player.playerName }}</span>
               <app-status-tag
@@ -96,7 +87,7 @@
                 severity="info"
                 size="sm"
               />
-            </div>
+            </button>
           }
         </div>
       </app-card-shell>

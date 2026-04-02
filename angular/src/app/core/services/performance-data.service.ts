@@ -1,7 +1,6 @@
 import { Injectable, computed, effect, inject, signal } from "@angular/core";
 import { Observable, from, of } from "rxjs";
 import { catchError, map } from "rxjs";
-import { AuthService } from "./auth.service";
 import { LoggerService } from "./logger.service";
 import { SupabaseService } from "./supabase.service";
 import { isBenignSupabaseQueryError } from "../../shared/utils/error.utils";
@@ -158,7 +157,6 @@ interface TestSummary {
 export class PerformanceDataService {
   private supabaseService = inject(SupabaseService);
   private logger = inject(LoggerService);
-  private authService = inject(AuthService);
 
   // Get current user ID reactively
   private userId = computed(() => this.supabaseService.userId());
@@ -1021,7 +1019,7 @@ export class PerformanceDataService {
     timeframe: string,
     format: "json" | "csv",
   ): Promise<{ success: boolean; message?: string; data?: unknown }> {
-    const user = this.authService.getUser();
+    const user = this.supabaseService.currentUser();
     if (!user?.id) {
       return { success: false, message: "Please log in to export data" };
     }

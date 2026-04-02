@@ -13,8 +13,8 @@ import { NavigationEnd, Router } from "@angular/router";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { filter } from "rxjs";
 import { isCoachNavigationRole } from "../../../core/navigation/app-navigation.config";
-import { AuthService } from "../../../core/services/auth.service";
-import { LoggerService } from "../../../core/services/logger.service";
+import { RouteShellService } from "../../../core/services/route-shell.service";
+import { SupabaseService } from "../../../core/services/supabase.service";
 
 interface QuickActionItem {
   icon: string;
@@ -79,35 +79,27 @@ interface QuickActionItem {
 })
 export class QuickActionsFABComponent implements OnInit {
   private readonly router = inject(Router);
-  private readonly authService = inject(AuthService);
-  private readonly logger = inject(LoggerService);
+  private readonly supabase = inject(SupabaseService);
+  private readonly routeShell = inject(RouteShellService);
   private readonly destroyRef = inject(DestroyRef);
 
   isExpanded = signal(false);
-  currentRoute = signal("");
-
-  // Routes where FAB should be hidden
-  private hiddenRoutes = [
-    "/login",
-    "/register",
-    "/reset-password",
-    "/update-password",
-    "/",
-    "/onboarding",
-  ];
 
   showFAB = computed(() => {
-    const route = this.currentRoute();
-    const isAuthenticated = this.authService.isAuthenticated();
-    return (
-      isAuthenticated &&
-      !this.hiddenRoutes.some((r) => route === r || route.startsWith("/auth"))
-    );
+    const isAuthenticated = this.supabase.isAuthenticated();
+    return isAuthenticated && this.routeShell.showFab();
+  });
+
+  private readonly currentUserRole = computed(() => {
+    const metadata = this.supabase.currentUser()?.user_metadata as
+      | { role?: string }
+      | undefined;
+    return metadata?.role;
   });
 
   // Quick actions - always show these core actions
   quickActions = computed<QuickActionItem[]>(() => {
-    const role = this.authService.getUser()?.role;
+    const role = this.currentUserRole();
 
     if (isCoachNavigationRole(role)) {
       return [
@@ -169,15 +161,12 @@ export class QuickActionsFABComponent implements OnInit {
   });
 
   ngOnInit(): void {
-    this.currentRoute.set(this.router.url);
-
     this.router.events
       .pipe(
         filter((event) => event instanceof NavigationEnd),
         takeUntilDestroyed(this.destroyRef),
       )
-      .subscribe((event) => {
-        this.currentRoute.set((event as NavigationEnd).urlAfterRedirects);
+      .subscribe(() => {
         this.isExpanded.set(false);
       });
   }

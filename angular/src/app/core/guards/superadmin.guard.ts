@@ -1,7 +1,6 @@
 import { inject } from "@angular/core";
 import { Router, CanActivateFn } from "@angular/router";
 import { SuperadminService } from "../services/superadmin.service";
-import { AuthService } from "../services/auth.service";
 import { SupabaseService } from "../services/supabase.service";
 
 /**
@@ -10,7 +9,6 @@ import { SupabaseService } from "../services/supabase.service";
  */
 export const superadminGuard: CanActivateFn = async (route, state) => {
   const superadminService = inject(SuperadminService);
-  const authService = inject(AuthService);
   const supabaseService = inject(SupabaseService);
   const router = inject(Router);
 
@@ -19,9 +17,10 @@ export const superadminGuard: CanActivateFn = async (route, state) => {
 
   // First check if authenticated
   const hasSession = !!supabaseService.session();
-  if (!hasSession && !authService.isAuthenticated()) {
-    router.navigate(["/login"], { queryParams: { returnUrl: state.url } });
-    return false;
+  if (!hasSession) {
+    return router.createUrlTree(["/login"], {
+      queryParams: { returnUrl: state.url },
+    });
   }
 
   // Check superadmin status
@@ -29,8 +28,7 @@ export const superadminGuard: CanActivateFn = async (route, state) => {
 
   if (!isSuperadmin) {
     // Redirect to regular dashboard if not superadmin
-    router.navigate(["/dashboard"]);
-    return false;
+    return router.createUrlTree(["/dashboard"]);
   }
 
   return true;

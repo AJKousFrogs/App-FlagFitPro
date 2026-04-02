@@ -32,12 +32,17 @@
 
 /* Header */
 .block-header {
+  appearance: none;
+  border: 0;
+  background: none;
+  width: 100%;
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: var(--component-card-padding-compact);
   cursor: pointer;
   user-select: none;
+  text-align: left;
   transition: background-color var(--transition-fast);
 }
 
@@ -110,9 +115,6 @@
 }
 
 .expand-toggle {
-  border: none;
-  background: transparent;
-  cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -120,8 +122,6 @@
   color: var(--color-text-secondary);
   transition: color var(--transition-fast);
   border-radius: var(--radius-sm);
-
-  @include ds-focus-ring(var(--focus-ring-color));
   @include ds-hover-state(
     var(--hover-bg-tertiary),
     $color: var(--color-text-primary)

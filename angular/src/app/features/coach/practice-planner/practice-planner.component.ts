@@ -31,6 +31,7 @@ import { Select, type SelectChangeEvent } from "primeng/select";
 import { Textarea } from "primeng/textarea";
 import { StatusTagComponent } from "../../../shared/components/status-tag/status-tag.component";
 import { getStatusSeverity as getStatusSeverityValue } from "../../../shared/utils/status.utils";
+import { DIALOG_BREAKPOINTS } from "../../../core/utils/design-tokens.util";
 
 import { LoggerService } from "../../../core/services/logger.service";
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
@@ -320,10 +321,10 @@ const DEFAULT_EQUIPMENT: EquipmentItem[] = [
       <app-dialog
         [(visible)]="showDialog"
         [modal]="true"
-        styleClass="practice-dialog"
+        dialogSize="2xl"
         [blockScroll]="true"
         [draggable]="false"
-        [breakpoints]="{ '1200px': '94vw', '960px': '96vw' }"
+        [breakpoints]="dialogBreakpoints.wideComfortable"
         [ariaLabel]="
           isEditing() ? 'Edit practice plan' : 'Create practice plan'
         "
@@ -541,10 +542,9 @@ const DEFAULT_EQUIPMENT: EquipmentItem[] = [
       <app-dialog
         [(visible)]="showActivityDialog"
         [modal]="true"
-        styleClass="practice-activity-dialog"
+        dialogSize="xl"
         [blockScroll]="true"
         [draggable]="false"
-        [breakpoints]="{ '960px': '92vw', '640px': '96vw' }"
         [ariaLabel]="'Edit activity ' + (editingActivity?.title || '')"
       >
         <app-dialog-header
@@ -658,6 +658,7 @@ export class PracticePlannerComponent implements OnInit {
   private readonly coachPlanningDataService = inject(CoachPlanningDataService);
   private readonly logger = inject(LoggerService);
   private readonly toastService = inject(ToastService);
+  protected readonly dialogBreakpoints = DIALOG_BREAKPOINTS;
 
   // State
   readonly activeTab = signal<"upcoming" | "past" | "templates">("upcoming");

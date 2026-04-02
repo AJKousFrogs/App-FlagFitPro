@@ -2,6 +2,7 @@ import { CommonModule } from "@angular/common";
 import {
   ChangeDetectionStrategy,
   Component,
+  computed,
   contentChild,
   input,
   output,
@@ -38,8 +39,8 @@ import { TableModule, TablePageEvent, TableRowSelectEvent, TableRowUnSelectEvent
         [responsiveLayout]="responsiveLayout()"
         [attr.aria-label]="ariaLabel()"
         [scrollable]="scrollable()"
-        styleClass="p-datatable-gridlines p-datatable-striped {{ styleClass() }}"
-        [tableStyle]="{ 'min-width': '50rem' }"
+        [styleClass]="tableClasses()"
+        [tableStyle]="tableStyle()"
       >
         <!-- Header Template -->
         <ng-template pTemplate="header" let-columns>
@@ -115,6 +116,17 @@ import { TableModule, TablePageEvent, TableRowSelectEvent, TableRowUnSelectEvent
       :host ::ng-deep .p-datatable-header {
         @apply bg-surface-50 dark:bg-surface-800 border-b border-surface-200 dark:border-surface-700;
       }
+      :host ::ng-deep .app-table-surface-standard {
+        --p-datatable-header-cell-padding: var(--space-4) var(--space-5);
+        --p-datatable-body-cell-padding: var(--space-4) var(--space-5);
+        --p-datatable-row-background: var(--surface-primary);
+        --p-datatable-row-hover-background: var(--surface-secondary);
+        --p-paginator-padding: var(--space-4) var(--space-5);
+        --p-paginator-background: var(--surface-secondary);
+        --p-paginator-border-color: transparent;
+        --p-paginator-item-border-radius: var(--radius-md);
+        --p-paginator-item-hover-background: var(--surface-tertiary);
+      }
     `,
   ],
 })
@@ -137,10 +149,15 @@ export class TableComponent<T = unknown> {
   selection = input<T | T[] | null>(null);
   emptyMessage = input("No records found");
   styleClass = input("");
+  density = input<"md" | "sm">("md");
+  surface = input<"default" | "standard">("default");
+  stripedRows = input(true);
+  gridlines = input(true);
   sortMode = input<"single" | "multiple">("single");
   responsiveLayout = input<"scroll" | "stack">("scroll");
   ariaLabel = input("");
   scrollable = input(false);
+  minTableWidth = input("50rem");
 
   // Template Inputs
   bodyTemplate = contentChild<TemplateRef<{ $implicit: T; columns: unknown[] }>>("body");
@@ -154,6 +171,20 @@ export class TableComponent<T = unknown> {
 
   // Internal State for Two-Way Binding shim
   protected _selection: T | T[] | null = null;
+  protected readonly tableClasses = computed(() =>
+    [
+      this.gridlines() ? "p-datatable-gridlines" : "",
+      this.stripedRows() ? "p-datatable-striped" : "",
+      this.density() === "sm" ? "p-datatable-sm" : "",
+      this.surface() === "standard" ? "app-table-surface-standard" : "",
+      this.styleClass(),
+    ]
+      .filter(Boolean)
+      .join(" "),
+  );
+  protected readonly tableStyle = computed(() => ({
+    "min-width": this.minTableWidth(),
+  }));
 
   get selectionValue() {
     return this.selection() ?? this._selection;

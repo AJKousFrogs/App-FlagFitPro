@@ -1,6 +1,5 @@
 import { Injectable, computed, inject, signal } from "@angular/core";
 import { isBenignSupabaseQueryError } from "../../shared/utils/error.utils";
-import { AuthService } from "./auth.service";
 import { LoggerService } from "./logger.service";
 import { SupabaseService } from "./supabase.service";
 
@@ -62,7 +61,6 @@ export interface UserProfileData {
   providedIn: "root",
 })
 export class ProfileCompletionService {
-  private readonly authService = inject(AuthService);
   private readonly supabaseService = inject(SupabaseService);
   private readonly logger = inject(LoggerService);
 
@@ -126,12 +124,12 @@ export class ProfileCompletionService {
    * Deduplicates concurrent calls and returns cached data if fresh (< 30s)
    */
   async loadProfileData(forceRefresh = false): Promise<UserProfileData | null> {
-    if (!this.authService.isAuthenticated()) {
+    if (!this.supabaseService.isAuthenticated()) {
       this._profileData.set(null);
       return null;
     }
 
-    const user = this.authService.getUser();
+    const user = this.supabaseService.currentUser();
     if (!user?.id) {
       this.logger.warn("[ProfileCompletion] No authenticated user");
       this._profileData.set(null);
@@ -392,7 +390,7 @@ export class ProfileCompletionService {
    * Returns the most recent weight from body_measurements or users table
    */
   async getCurrentWeight(): Promise<number | null> {
-    const user = this.authService.getUser();
+    const user = this.supabaseService.currentUser();
     if (!user?.id) return null;
 
     try {
@@ -422,7 +420,7 @@ export class ProfileCompletionService {
    * Update weight (creates physical_measurement entry for tracking)
    */
   async updateWeight(weightKg: number): Promise<boolean> {
-    const user = this.authService.getUser();
+    const user = this.supabaseService.currentUser();
     if (!user?.id) return false;
 
     try {

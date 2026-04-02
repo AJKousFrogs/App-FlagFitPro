@@ -18,7 +18,7 @@ import {
   signal,
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
-import { ActivatedRoute, Router } from "@angular/router";
+import { ActivatedRoute, ParamMap, Router } from "@angular/router";
 import { ToastService } from "../../../core/services/toast.service";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { EmptyStateComponent } from "../../../shared/components/empty-state/empty-state.component";
@@ -461,10 +461,9 @@ const COMPARE_OPTIONS = [
       <app-dialog
         [(visible)]="showGoalDialog"
         [modal]="true"
-        styleClass="development-goal-dialog"
+        dialogSize="lg"
         [blockScroll]="true"
         [draggable]="false"
-        [breakpoints]="{ '960px': '92vw', '640px': '96vw' }"
         ariaLabel="Add development goal"
       >
         <app-dialog-header
@@ -475,7 +474,7 @@ const COMPARE_OPTIONS = [
               ? 'Adjust progress, target values, or notes for the selected athlete.'
               : 'Set a measurable development target for the selected athlete.'
           "
-          (close)="showGoalDialog = false"
+          (close)="closeGoalDialog()"
         />
         <div class="goal-form">
           <div class="form-field">
@@ -577,7 +576,7 @@ const COMPARE_OPTIONS = [
           cancelLabel="Cancel"
           [primaryLabel]="goalDialogMode === 'edit' ? 'Save Goal' : 'Create Goal'"
           [primaryIcon]="goalDialogMode === 'edit' ? 'save' : 'check'"
-          (cancel)="showGoalDialog = false"
+          (cancel)="closeGoalDialog()"
           (primary)="createGoal()"
         />
       </app-dialog>
@@ -589,14 +588,13 @@ const COMPARE_OPTIONS = [
         styleClass="development-goal-details-dialog"
         [blockScroll]="true"
         [draggable]="false"
-        [breakpoints]="{ '960px': '92vw', '640px': '96vw' }"
         ariaLabel="Development goal details"
       >
         <app-dialog-header
           icon="bullseye"
           title="Goal Details"
           subtitle="Review progress, timing, and coaching notes for this development target."
-          (close)="showGoalDetailsDialog = false"
+          (close)="closeGoalDetailsDialog()"
         />
         @if (selectedGoal(); as goal) {
           <div class="goal-details">
@@ -657,7 +655,7 @@ const COMPARE_OPTIONS = [
           cancelLabel="Close"
           primaryLabel="Edit Goal"
           primaryIcon="pencil"
-          (cancel)="showGoalDetailsDialog = false"
+          (cancel)="closeGoalDetailsDialog()"
           (primary)="editSelectedGoal()"
         />
       </app-dialog>
@@ -666,17 +664,17 @@ const COMPARE_OPTIONS = [
       <app-dialog
         [(visible)]="showNoteDialog"
         [modal]="true"
+        dialogSize="lg"
         styleClass="development-note-dialog"
         [blockScroll]="true"
         [draggable]="false"
-        [breakpoints]="{ '960px': '92vw', '640px': '96vw' }"
         ariaLabel="Add development note"
       >
         <app-dialog-header
           icon="file-edit"
           title="Add Development Note"
           subtitle="Capture progress context, coaching observations, or follow-up actions."
-          (close)="showNoteDialog = false"
+          (close)="closeNoteDialog()"
         />
         <div class="note-form">
           <div class="form-field">
@@ -696,7 +694,7 @@ const COMPARE_OPTIONS = [
           cancelLabel="Cancel"
           primaryLabel="Save Note"
           primaryIcon="check"
-          (cancel)="showNoteDialog = false"
+          (cancel)="closeNoteDialog()"
           (primary)="saveNote()"
         />
       </app-dialog>
@@ -707,14 +705,13 @@ const COMPARE_OPTIONS = [
         styleClass="development-assessment-dialog"
         [blockScroll]="true"
         [draggable]="false"
-        [breakpoints]="{ '960px': '92vw', '640px': '96vw' }"
         ariaLabel="Add skill assessment"
       >
         <app-dialog-header
           icon="chart-bar"
           title="Record Skill Assessment"
           subtitle="Add or update a player skill grade from the current review session."
-          (close)="showAssessmentDialog = false"
+          (close)="closeAssessmentDialog()"
         />
         <div class="note-form">
           <div class="form-field">
@@ -746,7 +743,7 @@ const COMPARE_OPTIONS = [
           cancelLabel="Cancel"
           primaryLabel="Save Assessment"
           primaryIcon="check"
-          (cancel)="showAssessmentDialog = false"
+          (cancel)="closeAssessmentDialog()"
           (primary)="saveAssessment()"
         />
       </app-dialog>
@@ -924,8 +921,8 @@ export class PlayerDevelopmentComponent implements OnInit {
   ngOnInit(): void {
     this.route.queryParamMap
       .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(() => {
-        this.syncSelectionFromRoute();
+      .subscribe((queryParamMap) => {
+        this.syncSelectionFromRoute(queryParamMap);
       });
 
     this.loadData();
@@ -995,7 +992,7 @@ export class PlayerDevelopmentComponent implements OnInit {
       this.goals.set(goals);
       this.notes.set(notes);
       this.assessments.set(assessments);
-      this.syncSelectionFromRoute();
+      this.syncSelectionFromRoute(this.route.snapshot.queryParamMap);
     } catch (err) {
       this.logger.error("Failed to load player development data", err);
       this.players.set([]);
@@ -1014,8 +1011,8 @@ export class PlayerDevelopmentComponent implements OnInit {
     void this.loadData();
   }
 
-  private syncSelectionFromRoute(): void {
-    const playerId = this.route.snapshot.queryParamMap.get("player");
+  private syncSelectionFromRoute(queryParamMap: ParamMap): void {
+    const playerId = queryParamMap.get("player");
     if (!playerId) {
       return;
     }
@@ -1039,6 +1036,33 @@ export class PlayerDevelopmentComponent implements OnInit {
       dueDate: null as Date | null,
       notes: "",
     };
+  }
+
+  private resetGoalDialogState(): void {
+    this.goalDialogMode = "create";
+    this.selectedGoal.set(null);
+    this.goalForm = this.getEmptyGoalForm();
+    this.goalForm.playerId = this.selectedPlayerId || "";
+  }
+
+  closeGoalDialog(): void {
+    this.showGoalDialog = false;
+    this.resetGoalDialogState();
+  }
+
+  closeGoalDetailsDialog(): void {
+    this.showGoalDetailsDialog = false;
+  }
+
+  closeNoteDialog(): void {
+    this.showNoteDialog = false;
+    this.noteContent = "";
+  }
+
+  closeAssessmentDialog(): void {
+    this.showAssessmentDialog = false;
+    this.assessmentSkill = "";
+    this.assessmentScore = "75";
   }
 
   onGoalPlayerIdChange(value: string | null): void {
@@ -1137,10 +1161,7 @@ export class PlayerDevelopmentComponent implements OnInit {
   }
 
   openGoalDialog(): void {
-    this.goalDialogMode = "create";
-    this.selectedGoal.set(null);
-    this.goalForm = this.getEmptyGoalForm();
-    this.goalForm.playerId = this.selectedPlayerId || "";
+    this.resetGoalDialogState();
     this.showGoalDialog = true;
   }
 
@@ -1180,9 +1201,7 @@ export class PlayerDevelopmentComponent implements OnInit {
       this.goalDialogMode === "edit" ? "Goal Updated" : "Goal Created",
     );
 
-    this.showGoalDialog = false;
-    this.goalDialogMode = "create";
-    this.selectedGoal.set(null);
+    this.closeGoalDialog();
   }
 
   updateGoal(goal: DevelopmentGoal): void {
@@ -1197,7 +1216,7 @@ export class PlayerDevelopmentComponent implements OnInit {
       dueDate: this.parseGoalDueDate(goal.dueDate),
       notes: goal.notes || "",
     };
-    this.showGoalDetailsDialog = false;
+    this.closeGoalDetailsDialog();
     this.showGoalDialog = true;
   }
 
@@ -1207,7 +1226,7 @@ export class PlayerDevelopmentComponent implements OnInit {
   }
 
   openNoteDialog(): void {
-    this.noteContent = "";
+    this.closeNoteDialog();
     this.showNoteDialog = true;
   }
 
@@ -1237,13 +1256,11 @@ export class PlayerDevelopmentComponent implements OnInit {
       "Development note has been added",
       "Note Saved",
     );
-    this.showNoteDialog = false;
-    this.noteContent = "";
+    this.closeNoteDialog();
   }
 
   newAssessment(): void {
-    this.assessmentSkill = "";
-    this.assessmentScore = "75";
+    this.closeAssessmentDialog();
     this.showAssessmentDialog = true;
   }
 
@@ -1339,7 +1356,7 @@ export class PlayerDevelopmentComponent implements OnInit {
       );
     });
     await this.loadData();
-    this.showAssessmentDialog = false;
+    this.closeAssessmentDialog();
     this.toastService.success("Assessment saved.", "Assessment Updated");
   }
 

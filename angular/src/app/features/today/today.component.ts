@@ -64,11 +64,11 @@ import {
 
 // Services
 import { ApiService } from "../../core/services/api.service";
-import { AuthService } from "../../core/services/auth.service";
 import { DataSourceService } from "../../core/services/data-source.service";
 import { HeaderService } from "../../core/services/header.service";
 import { LoggerService } from "../../core/services/logger.service";
 import { ScreenReaderAnnouncerService } from "../../core/services/screen-reader-announcer.service";
+import { SupabaseService } from "../../core/services/supabase.service";
 import { UnifiedTrainingService } from "../../core/services/unified-training.service";
 import {
   ContinuityEvent,
@@ -202,7 +202,7 @@ interface QuickFormData {
 export class TodayComponent {
   // Dependency Injection (Angular 21 pattern)
   private readonly router = inject(Router);
-  private readonly authService = inject(AuthService);
+  private readonly supabase = inject(SupabaseService);
   private readonly trainingService = inject(UnifiedTrainingService);
   private readonly headerService = inject(HeaderService);
   private readonly logger = inject(LoggerService);
@@ -226,7 +226,7 @@ export class TodayComponent {
 
   // Computed userId from auth service - uses signal for reactivity
   // Per audit: use currentUser() signal, not getUser() method
-  private readonly userId = computed(() => this.authService.currentUser()?.id);
+  private readonly userId = computed(() => this.supabase.userId());
 
   // ============================================================================
   // STATE SIGNALS
@@ -551,6 +551,15 @@ export class TodayComponent {
   });
 
   private readonly pendingFocus = signal<string | null>(null);
+  private readonly defaultQuickFormData: QuickFormData = {
+    overallFeeling: null,
+    energyLevel: null,
+    hasSoreness: null,
+    sleepHours: null,
+    sorenessLevel: null,
+    stressLevel: null,
+    sorenessAreas: [],
+  };
 
   // ============================================================================
   // CONSTRUCTOR
@@ -802,12 +811,11 @@ export class TodayComponent {
   // EVENT HANDLERS
   // ============================================================================
   onWellnessComplete(result: { readinessScore: number }): void {
-    this.toastService.success(
-      `Readiness: ${result.readinessScore}%. Let's optimize your session.`,
+    this.handleWellnessSaved(
+      result.readinessScore,
       "Wellness Logged",
+      `Readiness: ${result.readinessScore}%. Let's optimize your session.`,
     );
-    // Refresh protocol data after check-in
-    this.refreshProtocol();
   }
 
   scrollToProtocolBlocks(): void {
@@ -822,16 +830,13 @@ export class TodayComponent {
   // QUICK CHECK-IN METHODS
   // ============================================================================
   openQuickCheckin(): void {
-    this.quickFormData.set({
-      overallFeeling: null,
-      energyLevel: null,
-      hasSoreness: null,
-      sleepHours: null,
-      sorenessLevel: null,
-      stressLevel: null,
-      sorenessAreas: [],
-    });
+    this.resetQuickCheckinForm();
     this.showQuickCheckin.set(true);
+  }
+
+  closeQuickCheckin(): void {
+    this.showQuickCheckin.set(false);
+    this.resetQuickCheckinForm();
   }
 
   setQuickField<K extends keyof QuickFormData>(
@@ -898,16 +903,12 @@ export class TodayComponent {
         const typedResponse = response as { success?: boolean };
 
         if (typedResponse?.success) {
-          this.showQuickCheckin.set(false);
-          this.toastService.success(
-            `Readiness: ${readiness}%. Ready to train!`,
+          this.closeQuickCheckin();
+          this.handleWellnessSaved(
+            readiness,
             "Quick Check-in Complete",
+            `Readiness: ${readiness}%. Ready to train!`,
           );
-          // Announce to screen readers
-          this.screenReaderAnnouncer.announceSuccess(
-            `Quick check-in saved. Your readiness is ${readiness} percent.`,
-          );
-          this.refreshProtocol();
         } else {
           this.toastService.error("Failed to save check-in. Please try again.");
           // Announce error to screen readers
@@ -923,6 +924,25 @@ export class TodayComponent {
         this.isSavingQuickCheckin.set(false);
       },
     });
+  }
+
+  private resetQuickCheckinForm(): void {
+    this.quickFormData.set({
+      ...this.defaultQuickFormData,
+      sorenessAreas: [...this.defaultQuickFormData.sorenessAreas],
+    });
+  }
+
+  private handleWellnessSaved(
+    readiness: number,
+    title: string,
+    message: string,
+  ): void {
+    this.toastService.success(message, title);
+    this.screenReaderAnnouncer.announceSuccess(
+      `Quick check-in saved. Your readiness is ${readiness} percent.`,
+    );
+    this.refreshProtocol();
   }
 
   // ============================================================================
@@ -996,6 +1016,26 @@ export class TodayComponent {
     this.router.navigate(["/wellness"]);
   }
 
+  private navigateToTodayTraining(): void {
+    this.router.navigate(["/training"], {
+      queryParams: { date: this.todayDate() },
+    });
+  }
+
+  private navigateToTodayTrainingLog(): void {
+    this.router.navigate(["/training/log"], {
+      queryParams: { date: this.todayDate() },
+    });
+  }
+
+  private navigateToTrainingWorkspace(): void {
+    this.router.navigate(["/training/workspace"]);
+  }
+
+  private navigateToTeamChat(): void {
+    this.router.navigate(["/team-chat"]);
+  }
+
   // ============================================================================
   // CTA HANDLERS (Contract-Compliant)
   // ============================================================================
@@ -1009,7 +1049,7 @@ export class TodayComponent {
       case "start_checkin":
       case "update_checkin":
         // Open the Quick Check-in dialog (not scroll to wellness section)
-        this.showQuickCheckin.set(true);
+        this.openQuickCheckin();
         break;
 
       case "start_training":
@@ -1020,13 +1060,11 @@ export class TodayComponent {
         break;
 
       case "view_practice_details":
-        this.router.navigate(["/training"], {
-          queryParams: { date: this.todayDate() },
-        });
+        this.navigateToTodayTraining();
         break;
 
       case "view_film_room_details":
-        this.router.navigate(["/training/workspace"]);
+        this.navigateToTrainingWorkspace();
         break;
 
       case "view_rehab":
@@ -1035,27 +1073,18 @@ export class TodayComponent {
         break;
 
       case "contact_coach":
-        this.router.navigate(["/team-chat"]);
-        break;
-
       case "contact_physio":
-        this.router.navigate(["/team-chat"]);
+        this.navigateToTeamChat();
         break;
 
       case "view_taper":
       case "view_taper_plan":
-        this.router.navigate(["/training/workspace"]);
+        this.navigateToTrainingWorkspace();
         break;
 
       case "log_session":
-        this.router.navigate(["/training/log"], {
-          queryParams: { date: this.todayDate() },
-        });
-        break;
       case "log_workout":
-        this.router.navigate(["/training/log"], {
-          queryParams: { date: this.todayDate() },
-        });
+        this.navigateToTodayTrainingLog();
         break;
 
       case "read_coach_alert":
@@ -1095,34 +1124,32 @@ export class TodayComponent {
   }
 
   private showCoachAlertDialog(): void {
-    const vm = this.todayViewModel();
     const protocol = this.protocolJson();
 
-    if (!vm || !protocol) {
+    if (!protocol) {
       return;
     }
 
     // Show coach alert message in a dialog or toast
     const alertMessage =
       protocol.coach_alert_message || "Coach has updated your plan.";
-    const coachName = protocol.modified_by_coach_name || "Your coach";
+    const coachName = this.getCoachMessageAuthor();
 
-    this.toastService.info(alertMessage, `Coach Alert from ${coachName}`, 10000);
+    this.showCoachMessage(alertMessage, `Coach Alert from ${coachName}`);
 
     // If there's a coach note, show that too
     if (protocol.coach_note?.content) {
       const noteContent = protocol.coach_note.content;
       setTimeout(() => {
-        this.toastService.info(noteContent, `Coach Note from ${coachName}`, 10000);
+        this.showCoachMessage(noteContent, `Coach Note from ${coachName}`);
       }, 500);
     }
   }
 
   private acknowledgeCoachAlert(): void {
-    const vm = this.todayViewModel();
     const protocol = this.protocolJson();
 
-    if (!vm || !protocol || !protocol.id) {
+    if (!protocol || !protocol.id) {
       this.toastService.error("Unable to acknowledge alert. Please refresh the page.");
       return;
     }
@@ -1159,14 +1186,22 @@ export class TodayComponent {
 
   private showCoachNoteDialog(): void {
     const noteContent = this.protocolJson()?.coach_note?.content?.trim();
-    const coachName = this.protocolJson()?.modified_by_coach_name || "Your coach";
+    const coachName = this.getCoachMessageAuthor();
 
     if (!noteContent) {
       this.toastService.info("No coach note is attached to today's plan.", "Coach Note");
       return;
     }
 
-    this.toastService.info(noteContent, `Coach Note from ${coachName}`, 10000);
+    this.showCoachMessage(noteContent, `Coach Note from ${coachName}`);
+  }
+
+  private getCoachMessageAuthor(): string {
+    return this.protocolJson()?.modified_by_coach_name || "Your coach";
+  }
+
+  private showCoachMessage(message: string, title: string): void {
+    this.toastService.info(message, title, 10000);
   }
 
   private formatFocusLabel(focus: string): string {

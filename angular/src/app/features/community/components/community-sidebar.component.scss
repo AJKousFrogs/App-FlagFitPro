@@ -97,8 +97,12 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  width: 100%;
   padding: var(--space-3);
   border-radius: var(--radius-lg);
+  border: none;
+  background: transparent;
+  text-align: left;
   cursor: pointer;
   transition:
     background-color var(--transition-fast),

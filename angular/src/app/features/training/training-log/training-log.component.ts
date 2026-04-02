@@ -31,7 +31,7 @@ import {
   Validators,
   ReactiveFormsModule,
 } from "@angular/forms";
-import { ActivatedRoute, Router } from "@angular/router";
+import { ActivatedRoute, ParamMap, Router } from "@angular/router";
 import { CommonModule } from "@angular/common";
 import { AlertComponent } from "../../../shared/components/alert/alert.component";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
@@ -44,11 +44,11 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
 import { CardShellComponent } from "../../../shared/components/card-shell/card-shell.component";
 import { ToastService } from "../../../core/services/toast.service";
 import { TOAST } from "../../../core/constants/toast-messages.constants";
-import { AuthService } from "../../../core/services/auth.service";
 import { TrainingDataService } from "../../../core/services/training-data.service";
 import { AcwrService } from "../../../core/services/acwr.service";
 import { LoggerService } from "../../../core/services/logger.service";
 import { OfflineQueueService } from "../../../core/services/offline-queue.service";
+import { SupabaseService } from "../../../core/services/supabase.service";
 import { SessionType as AcwrSessionType } from "../../../core/models/acwr.models";
 
 interface SessionType {
@@ -56,6 +56,16 @@ interface SessionType {
   value: string;
   icon: string;
   description: string;
+}
+
+interface ExistingTrainingSession {
+  id?: string | null;
+  session_date?: string | null;
+  session_type?: string | null;
+  duration_minutes?: number | null;
+  rpe?: number | null;
+  notes?: string | null;
+  session_metrics?: Record<string, unknown> | null;
 }
 
 @Component({
@@ -542,7 +552,7 @@ export class TrainingLogComponent implements OnInit {
   private destroyRef = inject(DestroyRef);
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
-  private readonly authService = inject(AuthService);
+  private readonly supabase = inject(SupabaseService);
   private readonly trainingDataService = inject(TrainingDataService);
   private readonly acwrService = inject(AcwrService);
   private readonly toastService = inject(ToastService);
@@ -554,6 +564,8 @@ export class TrainingLogComponent implements OnInit {
   readonly isReadOnly = signal(false);
   readonly overrideMessage = signal<string | null>(null);
   private activeSessionId: string | null = null;
+
+  private readonly dashboardRoute = ["/dashboard"] as const;
 
   readonly sessionTypes: SessionType[] = [
     {
@@ -655,16 +667,36 @@ export class TrainingLogComponent implements OnInit {
     // this.sessionForm.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
     //   this.detectLateLoggingAndConflicts();
     // });
-
-    // Pre-fill athlete ID if available
-    const user = this.authService.getUser();
-    if (!user) {
-      this.router.navigate(["/login"]);
-    }
   }
 
   ngOnInit(): void {
-    const query = this.route.snapshot.queryParamMap;
+    const user = this.supabase.currentUser();
+    if (!user) {
+      void this.router.navigate(["/login"]);
+      return;
+    }
+
+    this.observeRouteContext();
+
+    this.sessionForm
+      .get("sessionDate")
+      ?.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => this.updateOverrideMessage());
+    void this.updateOverrideMessage();
+  }
+
+  toggleDetails(): void {
+    this.showDetails.update((value) => !value);
+  }
+
+  private observeRouteContext(): void {
+    this.route.queryParamMap
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((query) => {
+        void this.applyRouteContext(query);
+      });
+  }
+
+  private async applyRouteContext(query: ParamMap): Promise<void> {
     const sessionId = query.get("sessionId");
     const type = query.get("type");
     const duration = query.get("duration");
@@ -683,23 +715,11 @@ export class TrainingLogComponent implements OnInit {
       this.sessionForm.patchValue({ sessionDate: date });
     }
 
-    if (sessionId) {
-      void this.loadExistingSession(sessionId);
+    this.setReadOnlyState(viewMode);
+
+    if (sessionId && sessionId !== this.activeSessionId) {
+      await this.loadExistingSession(sessionId);
     }
-
-    if (viewMode) {
-      this.isReadOnly.set(true);
-      this.sessionForm.disable({ emitEvent: false });
-    }
-
-    this.sessionForm
-      .get("sessionDate")
-      ?.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => this.updateOverrideMessage());
-    void this.updateOverrideMessage();
-  }
-
-  toggleDetails(): void {
-    this.showDetails.update((value) => !value);
   }
 
   private async loadExistingSession(sessionId: string): Promise<void> {
@@ -710,28 +730,7 @@ export class TrainingLogComponent implements OnInit {
       if (!session) return;
 
       this.activeSessionId = session.id || null;
-      const sessionDate = session.session_date || this.today;
-      this.sessionForm.patchValue({
-        sessionType: session.session_type || "practice",
-        sessionDate,
-        durationMinutes: session.duration_minutes ?? 60,
-        rpe: session.rpe ?? 5,
-        notes: session.notes || "",
-      });
-
-      const metrics = (session.session_metrics || {}) as Record<
-        string,
-        unknown
-      >;
-      if (Object.keys(metrics).length > 0) {
-        this.showDetails.set(true);
-        this.sessionForm.patchValue({
-          sprintReps: metrics.sprint_reps ?? 0,
-          cuttingMovements: metrics.cutting_movements ?? 0,
-          throwCount: metrics.throw_count ?? 0,
-          jumpCount: metrics.jump_count ?? 0,
-        });
-      }
+      this.applyExistingSession(session);
       await this.updateOverrideMessage();
     } catch (error) {
       this.logger.error("Failed to load existing training session", error);
@@ -771,123 +770,19 @@ export class TrainingLogComponent implements OnInit {
     this.isSubmitting.set(true);
 
     try {
-      const formValue = this.sessionForm.value;
-      const user = this.authService.getUser();
-      const sessionDate =
-        formValue.sessionDate || new Date().toISOString().split("T")[0];
-
-      const sessionMetrics = {
-        sprint_reps: formValue.sprintReps || 0,
-        cutting_movements: formValue.cuttingMovements || 0,
-        throw_count: formValue.throwCount || 0,
-        jump_count: formValue.jumpCount || 0,
-      };
-
-      const sessionData = {
-        user_id: user?.id,
-        session_type: formValue.sessionType,
-        session_date: sessionDate,
-        duration_minutes: formValue.durationMinutes,
-        rpe: formValue.rpe,
-        training_load: formValue.durationMinutes * formValue.rpe,
-        session_metrics: sessionMetrics,
-        notes: formValue.notes,
-      };
-
+      const sessionData = this.buildSessionData();
       const existingSessionId =
-        this.activeSessionId || (await this.findExistingSessionId(sessionDate));
+        this.activeSessionId ||
+        (await this.findExistingSessionId(sessionData.session_date));
 
-      if (existingSessionId) {
-        await firstValueFrom(
-          this.trainingDataService.updateTrainingSession(existingSessionId, {
-            session_date: sessionData.session_date,
-            session_type: sessionData.session_type,
-            duration_minutes: sessionData.duration_minutes,
-            rpe: sessionData.rpe,
-            notes: sessionData.notes,
-            session_metrics: sessionMetrics,
-            status: "completed",
-            completed_at: new Date().toISOString(),
-          }),
-        );
-      } else {
-        // Save to database via service (includes late logging and conflict detection)
-        await firstValueFrom(
-          this.trainingDataService.createTrainingSession({
-            user_id: user?.id || "",
-            session_date: sessionData.session_date,
-            session_type: sessionData.session_type,
-            duration_minutes: sessionData.duration_minutes,
-            rpe: sessionData.rpe,
-            notes: sessionData.notes,
-            status: "completed",
-            completed_at: new Date().toISOString(),
-            session_metrics: sessionMetrics,
-          }),
-        );
-      }
-
-      // Show warning if retroactive approval required
-      if (this.requiresApproval()) {
-        this.toastService.warn(TOAST.WARN.RETROACTIVE_LOGGING_WARNING);
-      }
-
-      // Update ACWR calculations
-      this.acwrService.addSession({
-        playerId: user?.id || "",
-        date: new Date(sessionDate),
-        sessionType: this.mapSessionType(sessionData.session_type),
-        metrics: {
-          type: "internal",
-          internal: {
-            sessionRPE: sessionData.rpe,
-            duration: sessionData.duration_minutes,
-            workload: sessionData.training_load,
-          },
-          calculatedLoad: sessionData.training_load,
-        },
-        load: sessionData.training_load,
-        completed: true,
-      });
-
-      this.toastService.success(TOAST.SUCCESS.SESSION_LOGGED_SUCCESS);
-      this.router.navigate(["/dashboard"]);
+      await this.persistSession(sessionData, existingSessionId);
+      this.handleSuccessfulSubmit(sessionData);
     } catch (error) {
       this.logger.error("Failed to log training session", error);
 
       // Check if we should queue this action for offline sync
       if (this.offlineQueue.shouldQueue(error)) {
-        const formValue = this.sessionForm.value;
-        const sessionData = {
-          session_type: formValue.sessionType,
-          session_date:
-            formValue.sessionDate || new Date().toISOString().split("T")[0],
-          duration_minutes: formValue.durationMinutes,
-          rpe: formValue.rpe,
-          notes: formValue.notes,
-          session_metrics: {
-            sprint_reps: formValue.sprintReps || 0,
-            cutting_movements: formValue.cuttingMovements || 0,
-            throw_count: formValue.throwCount || 0,
-            jump_count: formValue.jumpCount || 0,
-          },
-          status: "completed",
-        };
-
-        if (this.activeSessionId) {
-          this.offlineQueue.queueGenericRequest(
-            "/.netlify/functions/training-sessions",
-            "PUT",
-            { sessionId: this.activeSessionId, ...sessionData },
-            "high",
-          );
-        } else {
-          this.offlineQueue.queueAction("training_log", sessionData, "high");
-        }
-        this.toastService.info(
-          "You're offline. Session queued for sync when connection is restored.",
-        );
-        this.router.navigate(["/dashboard"]);
+        this.queueOfflineSubmission();
       } else {
         this.toastService.error(TOAST.ERROR.SESSION_LOG_FAILED);
       }
@@ -897,7 +792,181 @@ export class TrainingLogComponent implements OnInit {
   }
 
   cancel(): void {
-    this.router.navigate(["/dashboard"]);
+    this.navigateToDashboard();
+  }
+
+  private buildSessionData(): {
+    user_id: string;
+    session_type: string;
+    session_date: string;
+    duration_minutes: number;
+    rpe: number;
+    training_load: number;
+    session_metrics: {
+      sprint_reps: number;
+      cutting_movements: number;
+      throw_count: number;
+      jump_count: number;
+    };
+    notes: string;
+  } {
+    const formValue = this.sessionForm.getRawValue();
+    const userId = this.supabase.userId() ?? "";
+    const sessionDate = formValue.sessionDate || this.today;
+    const duration = formValue.durationMinutes ?? 0;
+    const rpe = formValue.rpe ?? 0;
+
+    return {
+      user_id: userId,
+      session_type: formValue.sessionType,
+      session_date: sessionDate,
+      duration_minutes: duration,
+      rpe,
+      training_load: duration * rpe,
+      session_metrics: {
+        sprint_reps: formValue.sprintReps || 0,
+        cutting_movements: formValue.cuttingMovements || 0,
+        throw_count: formValue.throwCount || 0,
+        jump_count: formValue.jumpCount || 0,
+      },
+      notes: formValue.notes,
+    };
+  }
+
+  private async persistSession(
+    sessionData: ReturnType<TrainingLogComponent["buildSessionData"]>,
+    existingSessionId: string | null,
+  ): Promise<void> {
+    const completedAt = new Date().toISOString();
+
+    if (existingSessionId) {
+      await firstValueFrom(
+        this.trainingDataService.updateTrainingSession(existingSessionId, {
+          session_date: sessionData.session_date,
+          session_type: sessionData.session_type,
+          duration_minutes: sessionData.duration_minutes,
+          rpe: sessionData.rpe,
+          notes: sessionData.notes,
+          session_metrics: sessionData.session_metrics,
+          status: "completed",
+          completed_at: completedAt,
+        }),
+      );
+      return;
+    }
+
+    await firstValueFrom(
+      this.trainingDataService.createTrainingSession({
+        user_id: sessionData.user_id,
+        session_date: sessionData.session_date,
+        session_type: sessionData.session_type,
+        duration_minutes: sessionData.duration_minutes,
+        rpe: sessionData.rpe,
+        notes: sessionData.notes,
+        status: "completed",
+        completed_at: completedAt,
+        session_metrics: sessionData.session_metrics,
+      }),
+    );
+  }
+
+  private handleSuccessfulSubmit(
+    sessionData: ReturnType<TrainingLogComponent["buildSessionData"]>,
+  ): void {
+    if (this.requiresApproval()) {
+      this.toastService.warn(TOAST.WARN.RETROACTIVE_LOGGING_WARNING);
+    }
+
+    this.acwrService.addSession({
+      playerId: sessionData.user_id,
+      date: new Date(sessionData.session_date),
+      sessionType: this.mapSessionType(sessionData.session_type),
+      metrics: {
+        type: "internal",
+        internal: {
+          sessionRPE: sessionData.rpe,
+          duration: sessionData.duration_minutes,
+          workload: sessionData.training_load,
+        },
+        calculatedLoad: sessionData.training_load,
+      },
+      load: sessionData.training_load,
+      completed: true,
+    });
+
+    this.toastService.success(TOAST.SUCCESS.SESSION_LOGGED_SUCCESS);
+    this.navigateToDashboard();
+  }
+
+  private queueOfflineSubmission(): void {
+    const sessionData = this.buildSessionData();
+    const offlinePayload = {
+      session_type: sessionData.session_type,
+      session_date: sessionData.session_date,
+      duration_minutes: sessionData.duration_minutes,
+      rpe: sessionData.rpe,
+      notes: sessionData.notes,
+      session_metrics: sessionData.session_metrics,
+      status: "completed",
+    };
+
+    if (this.activeSessionId) {
+      this.offlineQueue.queueGenericRequest(
+        "/.netlify/functions/training-sessions",
+        "PUT",
+        { sessionId: this.activeSessionId, ...offlinePayload },
+        "high",
+      );
+    } else {
+      this.offlineQueue.queueAction("training_log", offlinePayload, "high");
+    }
+
+    this.toastService.info(
+      "You're offline. Session queued for sync when connection is restored.",
+    );
+    this.navigateToDashboard();
+  }
+
+  private setReadOnlyState(readOnly: boolean): void {
+    this.isReadOnly.set(readOnly);
+    if (readOnly) {
+      this.sessionForm.disable({ emitEvent: false });
+      return;
+    }
+
+    this.sessionForm.enable({ emitEvent: false });
+  }
+
+  private applyExistingSession(
+    session: ExistingTrainingSession,
+  ): void {
+    const sessionDate = session.session_date || this.today;
+    this.sessionForm.patchValue({
+      sessionType: session.session_type || "practice",
+      sessionDate,
+      durationMinutes: session.duration_minutes ?? 60,
+      rpe: session.rpe ?? 5,
+      notes: session.notes || "",
+    });
+
+    const metrics = (session.session_metrics || {}) as Record<string, unknown>;
+    const hasMetrics = Object.keys(metrics).length > 0;
+    this.showDetails.set(hasMetrics);
+
+    if (!hasMetrics) {
+      return;
+    }
+
+    this.sessionForm.patchValue({
+      sprintReps: metrics.sprint_reps ?? 0,
+      cuttingMovements: metrics.cutting_movements ?? 0,
+      throwCount: metrics.throw_count ?? 0,
+      jumpCount: metrics.jump_count ?? 0,
+    });
+  }
+
+  private navigateToDashboard(): void {
+    this.router.navigate([...this.dashboardRoute]);
   }
 
   /**

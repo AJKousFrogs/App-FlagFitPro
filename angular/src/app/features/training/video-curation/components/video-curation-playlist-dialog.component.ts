@@ -45,6 +45,7 @@ import { POSITION_OPTIONS, FOCUS_OPTIONS } from "../video-curation-utils";
       [modal]="true"
       [blockScroll]="true"
       [draggable]="false"
+      dialogSize="lg"
       ariaLabel="Create playlist"
       class="video-curation-playlist-dialog"
     >

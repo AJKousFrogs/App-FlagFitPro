@@ -1,10 +1,12 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  DestroyRef,
   inject,
   OnInit,
   signal,
 } from "@angular/core";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { ActivatedRoute, Router } from "@angular/router";
 import { CommonModule } from "@angular/common";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
@@ -14,7 +16,7 @@ import { PageErrorStateComponent } from "../../../shared/components/page-error-s
 import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";
 import { StatusTagComponent } from "../../../shared/components/status-tag/status-tag.component";
 import { SkeletonLoaderComponent } from "../../../shared/components/skeleton-loader/skeleton-loader.component";
-import { AuthService } from "../../../core/services/auth.service";
+import { SupabaseService } from "../../../core/services/supabase.service";
 import { TrainingSessionDetailDataService } from "../services/training-session-detail-data.service";
 import { ToastService } from "../../../core/services/toast.service";
 import { LoggerService } from "../../../core/services/logger.service";
@@ -222,13 +224,15 @@ export class TrainingSessionDetailComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private sessionDataService = inject(TrainingSessionDetailDataService);
-  private authService = inject(AuthService);
+  private supabase = inject(SupabaseService);
   private toastService = inject(ToastService);
   private logger = inject(LoggerService);
+  private destroyRef = inject(DestroyRef);
 
   sessionDetails = signal<SessionDetails | null>(null);
   isLoading = signal<boolean>(true);
   error = signal<string | null>(null);
+  private currentSessionId = signal<string | null>(null);
 
   getSubtitle(): string {
     const session = this.sessionDetails();
@@ -238,18 +242,26 @@ export class TrainingSessionDetailComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    const sessionId = this.route.snapshot.paramMap.get("id");
-    if (!sessionId) {
-      this.error.set("No session ID provided");
-      this.isLoading.set(false);
-      return;
-    }
-    this.loadSession();
+    this.route.paramMap
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((paramMap) => {
+        const sessionId = paramMap.get("id");
+        this.currentSessionId.set(sessionId);
+
+        if (!sessionId) {
+          this.sessionDetails.set(null);
+          this.error.set("No session ID provided");
+          this.isLoading.set(false);
+          return;
+        }
+
+        void this.loadSession(sessionId);
+      });
   }
 
-  async loadSession(): Promise<void> {
-    const sessionId = this.route.snapshot.paramMap.get("id");
+  async loadSession(sessionId = this.currentSessionId()): Promise<void> {
     if (!sessionId) {
+      this.sessionDetails.set(null);
       this.error.set("No session ID provided");
       this.isLoading.set(false);
       return;
@@ -259,7 +271,7 @@ export class TrainingSessionDetailComponent implements OnInit {
     this.error.set(null);
 
     try {
-      const user = this.authService.getUser();
+      const user = this.supabase.currentUser();
       if (!user?.id) {
         throw new Error("User not authenticated");
       }
@@ -385,7 +397,7 @@ export class TrainingSessionDetailComponent implements OnInit {
     const session = this.sessionDetails();
     if (!session || !session.isTemplate) return;
 
-    const user = this.authService.getUser();
+    const user = this.supabase.currentUser();
     if (!user?.id) {
       this.toastService.error(TOAST.ERROR.LOGIN_TO_START);
       return;
@@ -409,12 +421,10 @@ export class TrainingSessionDetailComponent implements OnInit {
       this.toastService.success(TOAST.SUCCESS.SESSION_STARTED);
 
       // Navigate to the training log to complete the session
-      this.router.navigate(["/training/log"], {
-        queryParams: {
-          sessionId: id,
-          type: session.sessionType,
-          duration: session.duration,
-        },
+      this.navigateToTrainingLog({
+        sessionId: id ?? session.id,
+        type: session.sessionType,
+        duration: session.duration,
       });
     } catch (error) {
       this.logger.error("Error starting session:", error);
@@ -426,28 +436,16 @@ export class TrainingSessionDetailComponent implements OnInit {
     const session = this.sessionDetails();
     if (!session) return;
 
-    // Navigate to training log to continue/complete the session
-    this.router.navigate(["/training/log"], {
-      queryParams: {
-        sessionId: session.id,
-        type: session.sessionType,
-        duration: session.duration,
-      },
-    });
+    this.navigateToTrainingLog(this.buildSessionLogQueryParams(session));
   }
 
   editSession(): void {
     const session = this.sessionDetails();
     if (!session) return;
 
-    // Navigate to training log to edit the session
-    this.router.navigate(["/training/log"], {
-      queryParams: {
-        sessionId: session.id,
-        type: session.sessionType,
-        duration: session.duration,
-        edit: "true",
-      },
+    this.navigateToTrainingLog({
+      ...this.buildSessionLogQueryParams(session),
+      edit: "true",
     });
   }
 
@@ -455,12 +453,9 @@ export class TrainingSessionDetailComponent implements OnInit {
     const session = this.sessionDetails();
     if (!session) return;
 
-    // Navigate to training log to view completed session
-    this.router.navigate(["/training/log"], {
-      queryParams: {
-        sessionId: session.id,
-        view: "true",
-      },
+    this.navigateToTrainingLog({
+      sessionId: session.id,
+      view: "true",
     });
   }
 
@@ -468,20 +463,41 @@ export class TrainingSessionDetailComponent implements OnInit {
     const session = this.sessionDetails();
     const dateStr = session?.date.toISOString().split("T")[0];
 
-    // Navigate to create form with optional pre-filled data
-    this.router.navigate(["/training/smart-form"], {
-      queryParams: {
-        date: dateStr,
-        ...(session && {
-          type: session.sessionType,
-          duration: session.duration,
-        }),
-      },
+    this.navigateToSmartForm({
+      date: dateStr,
+      ...(session && {
+        type: session.sessionType,
+        duration: session.duration,
+      }),
     });
   }
 
   goBack(): void {
     this.router.navigate(["/training"]);
+  }
+
+  private buildSessionLogQueryParams(session: SessionDetails): {
+    sessionId: string;
+    type: string;
+    duration: number;
+  } {
+    return {
+      sessionId: session.id,
+      type: session.sessionType,
+      duration: session.duration,
+    };
+  }
+
+  private navigateToTrainingLog(
+    queryParams: Record<string, string | number | undefined>,
+  ): void {
+    this.router.navigate(["/training/log"], { queryParams });
+  }
+
+  private navigateToSmartForm(
+    queryParams: Record<string, string | number | undefined>,
+  ): void {
+    this.router.navigate(["/training/smart-form"], { queryParams });
   }
 
   getStatusLabel(status: string): string {

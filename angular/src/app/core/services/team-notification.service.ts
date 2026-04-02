@@ -13,7 +13,6 @@
 
 import { Injectable, inject, signal, computed, effect } from "@angular/core";
 import { SupabaseService } from "./supabase.service";
-import { AuthService } from "./auth.service";
 import { LoggerService } from "./logger.service";
 import { toLogContext } from "./logger.service";
 import {
@@ -92,6 +91,15 @@ interface LoadActivityFeedOptions {
   append?: boolean;
 }
 
+interface AnnouncementChannelRecord {
+  id: string;
+  name: string;
+}
+
+interface AnnouncementReadRecord {
+  message_id: string;
+}
+
 // ============================================================================
 // SERVICE
 // ============================================================================
@@ -101,7 +109,6 @@ interface LoadActivityFeedOptions {
 })
 export class TeamNotificationService {
   private supabase = inject(SupabaseService);
-  private authService = inject(AuthService);
   private logger = inject(LoggerService);
   private notificationState = inject(NotificationStateService);
   private toastService = inject(ToastService);
@@ -148,17 +155,19 @@ export class TeamNotificationService {
   });
 
   constructor() {
-    // Auto-subscribe when user logs in
     effect(() => {
-      const user = this.authService.currentUser();
-      if (user) {
-        if (this.lastInitializedUserId === user.id) {
-          return;
-        }
-        this.initializeSubscriptions();
-      } else {
+      const userId = this.supabase.userId();
+
+      if (!userId) {
         this.cleanup();
+        return;
       }
+
+      if (this.lastInitializedUserId === userId) {
+        return;
+      }
+
+      void this.initializeSubscriptions(userId);
     });
   }
 
@@ -169,10 +178,7 @@ export class TeamNotificationService {
   /**
    * Initialize realtime subscriptions for notifications
    */
-  private async initializeSubscriptions(): Promise<void> {
-    const userId = this.authService.getUser()?.id;
-    if (!userId) return;
-
+  private async initializeSubscriptions(userId: string): Promise<void> {
     this.cleanup();
     this.lastInitializedUserId = userId;
     this.logger.debug("Initializing team notification subscriptions");
@@ -183,7 +189,7 @@ export class TeamNotificationService {
     // If coach, subscribe to activity feed
     const isCoach = await this.checkIsCoach();
     if (isCoach) {
-      await this.subscribeToActivityFeed();
+      await this.subscribeToActivityFeed(userId);
     }
 
     // Load initial data
@@ -201,7 +207,7 @@ export class TeamNotificationService {
     this.notificationChannel = this.supabase.client
       .channel(`notifications:${userId}`)
       .on("broadcast", { event: "notification_change" }, (payload) => {
-        const detail = payload.payload as NotificationBroadcastPayload;
+        const detail = payload.payload as RealtimeBroadcastPayload;
         if (detail.operation === "INSERT") {
           this.handleNewNotification(
             detail.record as unknown as AppNotification,
@@ -218,20 +224,11 @@ export class TeamNotificationService {
   /**
    * Subscribe to coach activity feed in realtime
    */
-  private async subscribeToActivityFeed(): Promise<void> {
-    const userId = this.authService.getUser()?.id;
-    if (!userId) return;
-
-    // Get coach's team(s)
-    const { data: teams } = await this.supabase.client
-      .from("team_members")
-      .select("team_id")
-      .eq("user_id", userId)
-      .in("role", ["coach", "assistant_coach"]);
-
-    if (!teams || teams.length === 0) return;
-
-    const teamIds = teams.map((t) => t.team_id);
+  private async subscribeToActivityFeed(userId: string): Promise<void> {
+    const teamIds = await this.loadTeamIdsForUser(userId, {
+      roles: ["coach", "assistant_coach"],
+    });
+    if (teamIds.length === 0) return;
 
     if (this.activityChannel) {
       this.supabase.client.removeChannel(this.activityChannel);
@@ -356,7 +353,7 @@ export class TeamNotificationService {
     this._loading.set(true);
 
     try {
-      const userId = this.authService.getUser()?.id;
+      const userId = this.requireCurrentUserId();
       if (!userId) return [];
 
       const {
@@ -368,14 +365,9 @@ export class TeamNotificationService {
 
       // Get team IDs if not provided
       if (!teamIds) {
-        const { data: teams } = await this.supabase.client
-          .from("team_members")
-          .select("team_id")
-          .eq("user_id", userId)
-          .eq("status", "active")
-          .in("role", ["coach", "assistant_coach"]);
-
-        teamIds = teams?.map((t) => t.team_id) || [];
+        teamIds = await this.loadTeamIdsForUser(userId, {
+          roles: ["coach", "assistant_coach"],
+        });
       }
 
       if (teamIds.length === 0) return [];
@@ -479,45 +471,19 @@ export class TeamNotificationService {
         return [];
       }
 
-      const userId = this.authService.getUser()?.id;
+      const userId = this.requireCurrentUserId();
       if (!userId) return [];
 
-      // Get user's teams
-      const { data: teams } = await this.supabase.client
-        .from("team_members")
-        .select("team_id")
-        .eq("user_id", userId)
-        .eq("status", "active");
+      const teamIds = await this.loadTeamIdsForUser(userId);
+      if (teamIds.length === 0) return [];
 
-      if (!teams || teams.length === 0) return [];
-
-      const teamIds = teams.map((t) => t.team_id);
-
-      // Get announcement channels
-      const { data: channels } = await this.supabase.client
-        .from("channels")
-        .select("id, name")
-        .in("team_id", teamIds)
-        .eq("channel_type", "announcements");
-
-      if (!channels) {
-        return [];
-      }
-
+      const channels = await this.loadAnnouncementChannels(teamIds);
       if (channels.length === 0) return [];
 
       const channelIds = channels.map((c) => c.id);
       const channelMap = new Map(channels.map((c) => [c.id, c.name]));
 
-      // Get messages user hasn't read
-      const { data: readMessages } = await this.supabase.client
-        .from("announcement_reads")
-        .select("message_id")
-        .eq("user_id", userId);
-
-      const readMessageIds = new Set(
-        (readMessages || []).map((r) => r.message_id),
-      );
+      const readMessageIds = await this.loadReadAnnouncementIds(userId);
 
       // Get unread announcements
       const { data: messages } = await this.supabase.client
@@ -602,7 +568,7 @@ export class TeamNotificationService {
    */
   async markAllActivityRead(): Promise<void> {
     try {
-      const userId = this.authService.getUser()?.id;
+      const userId = this.requireCurrentUserId();
       if (!userId) return;
 
       const unreadIds = this._activityFeed()
@@ -640,7 +606,7 @@ export class TeamNotificationService {
    */
   async markAnnouncementRead(messageId: string): Promise<void> {
     try {
-      const userId = this.authService.getUser()?.id;
+      const userId = this.requireCurrentUserId();
       if (!userId) return;
 
       await this.supabase.client.from("announcement_reads").upsert(
@@ -709,7 +675,7 @@ export class TeamNotificationService {
     isImportant: boolean = false,
   ): Promise<void> {
     try {
-      const userId = this.authService.getUser()?.id;
+      const userId = this.requireCurrentUserId();
       if (!userId) throw new Error("Not authenticated");
 
       // Insert message - database trigger will create notifications
@@ -746,7 +712,7 @@ export class TeamNotificationService {
    */
   async getPreferences(): Promise<TeamNotificationPreferences> {
     try {
-      const userId = this.authService.getUser()?.id;
+      const userId = this.requireCurrentUserId();
       if (!userId) throw new Error("Not authenticated");
 
       const { data } = await this.supabase.client
@@ -794,7 +760,7 @@ export class TeamNotificationService {
     prefs: Partial<TeamNotificationPreferences>,
   ): Promise<void> {
     try {
-      const userId = this.authService.getUser()?.id;
+      const userId = this.requireCurrentUserId();
       if (!userId) throw new Error("Not authenticated");
 
       // Map preferences to notification types
@@ -830,17 +796,15 @@ export class TeamNotificationService {
    * Check if current user is a coach
    */
   private async checkIsCoach(): Promise<boolean> {
-    const userId = this.authService.getUser()?.id;
+    const userId = this.requireCurrentUserId();
     if (!userId) return false;
 
-    const { data } = await this.supabase.client
-      .from("team_members")
-      .select("role")
-      .eq("user_id", userId)
-      .in("role", ["coach", "assistant_coach"])
-      .limit(1);
+    const teamIds = await this.loadTeamIdsForUser(userId, {
+      roles: ["coach", "assistant_coach"],
+      limit: 1,
+    });
 
-    return (data?.length || 0) > 0;
+    return teamIds.length > 0;
   }
 
   /**
@@ -922,5 +886,54 @@ export class TeamNotificationService {
     this._activityFeed.set([]);
     this._unreadAnnouncements.set([]);
     this.lastInitializedUserId = null;
+  }
+
+  private requireCurrentUserId(): string | null {
+    return this.supabase.userId();
+  }
+
+  private async loadTeamIdsForUser(
+    userId: string,
+    options: { roles?: string[]; limit?: number } = {},
+  ): Promise<string[]> {
+    let query = this.supabase.client
+      .from("team_members")
+      .select("team_id")
+      .eq("user_id", userId)
+      .eq("status", "active");
+
+    if (options.roles && options.roles.length > 0) {
+      query = query.in("role", options.roles);
+    }
+
+    if (options.limit) {
+      query = query.limit(options.limit);
+    }
+
+    const { data } = await query;
+    return (data || []).map((team) => team.team_id);
+  }
+
+  private async loadAnnouncementChannels(
+    teamIds: string[],
+  ): Promise<AnnouncementChannelRecord[]> {
+    const { data } = await this.supabase.client
+      .from("channels")
+      .select("id, name")
+      .in("team_id", teamIds)
+      .eq("channel_type", "announcements");
+
+    return (data || []) as AnnouncementChannelRecord[];
+  }
+
+  private async loadReadAnnouncementIds(userId: string): Promise<Set<string>> {
+    const { data } = await this.supabase.client
+      .from("announcement_reads")
+      .select("message_id")
+      .eq("user_id", userId);
+
+    return new Set(
+      ((data || []) as AnnouncementReadRecord[]).map((row) => row.message_id),
+    );
   }
 }

@@ -1,0 +1,67 @@
+<ng-container>
+  <!-- Weather Widget -->
+  <app-header-weather-widget />
+
+  <!-- Notifications -->
+  <button
+    class="header-utility notifications-trigger"
+    (click)="toggleNotifications.emit()"
+    aria-label="Notifications"
+    type="button"
+  >
+    <div class="icon-badge-container">
+      <i class="pi pi-bell" aria-hidden="true"></i>
+      @if (notificationCount() > 0) {
+        <span class="notification-badge">{{
+          notificationCount() > 9 ? "9+" : notificationCount()
+        }}</span>
+      }
+    </div>
+    <span class="utility-label">Alerts</span>
+  </button>
+
+  <!-- Theme Toggle -->
+  <button
+    class="header-utility theme-toggle"
+    (click)="cycleTheme()"
+    [pTooltip]="themeTooltip()"
+    aria-label="Toggle theme"
+    type="button"
+  >
+    <i [class]="'pi ' + themeIcon()" aria-hidden="true"></i>
+    <span class="utility-label">{{ themeLabel() }}</span>
+  </button>
+
+  <!-- Settings (Desktop Only) -->
+  <app-icon-button
+    class="desktop-only-util"
+    icon="pi-cog"
+    variant="text"
+    ariaLabel="Settings"
+    tooltip="Settings"
+    (clicked)="openSettings()"
+  />
+
+  <!-- User Avatar -->
+  <button
+    class="header-profile"
+    (click)="toggleUserMenu($event)"
+    aria-label="User menu"
+    aria-haspopup="menu"
+    type="button"
+  >
+    <p-avatar
+      [label]="userInitials()"
+      shape="circle"
+      class="user-avatar"
+    />
+  </button>
+
+  <p-menu
+    #userMenu
+    [model]="userMenuItems()"
+    [popup]="true"
+    appendTo="body"
+  />
+</ng-container>
+

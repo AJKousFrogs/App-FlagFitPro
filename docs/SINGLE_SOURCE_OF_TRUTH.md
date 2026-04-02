@@ -142,11 +142,16 @@ Rules:
 - Canonical authority: token system and design rules
 - Key docs:
   - `docs/DESIGN_SYSTEM_RULES.md`
-  - `angular/src/styles`
+  - `docs/ANGULAR_PRIMENG_GUIDE.md`
+- Key code:
+  - `angular/src/scss/tokens/design-system-tokens.scss`
+  - `angular/src/app/core/utils/design-tokens.util.ts`
+  - `angular/src/styles.scss`
 
 Rules:
 - Semantic UI decisions should flow from tokenized design rules, not one-off component overrides.
-- `2.0` UI polish and `3.0` redesign must still respect one token authority.
+- SCSS tokens are the canonical source. TS consumers must read them through the bridge layer instead of redefining values.
+- PrimeNG theme and shared wrappers must consume the same token system rather than inventing parallel palettes or spacing scales.
 
 ## Drift Register
 

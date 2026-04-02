@@ -1,63 +1,38 @@
-# FlagFit Pro Design System Contract
+# FlagFit Pro Design System Implementation Guide
 
-**Enforced:** 2026-02-10 | **Single source:** `angular/src/scss/README.design-system.md`
+This file explains where the design system lives in code. It is an implementation guide, not a competing policy document.
+
+Canonical policy docs:
+
+- [docs/DESIGN_SYSTEM_RULES.md](../../../docs/DESIGN_SYSTEM_RULES.md)
+- [docs/SINGLE_SOURCE_OF_TRUTH.md](../../../docs/SINGLE_SOURCE_OF_TRUTH.md)
+- [docs/ANGULAR_PRIMENG_GUIDE.md](../../../docs/ANGULAR_PRIMENG_GUIDE.md)
 
 ## Canonical Paths
 
-| Asset | Path |
-|-------|------|
-| **Tokens** | `angular/src/scss/tokens/design-system-tokens.scss` |
-| **Global entry** | `angular/src/styles.scss` (only entrypoint in angular.json) |
-| **Import order** | tokens (`scss/design-system/index`) → utilities → components (PrimeNG) → pages → overrides |
-| **Spacing utilities** | `.p-*`, `.m-*`, `.gap-*` in design-system-tokens.scss |
-| **Flex utilities** | `angular/src/scss/utilities/layout-system.scss` |
-| **Non-spacing utilities** | `angular/src/scss/utilities/_utilities.scss` |
-| **PrimeNG overrides** | `angular/src/assets/styles/overrides/_component-overrides.scss` (DS-EXC-* / DS-PNGO-* tickets) |
-| **Color guards** | `angular/src/assets/styles/overrides/_color-guards.scss` |
+| Concern | Path |
+| --- | --- |
+| Tokens | `angular/src/scss/tokens/design-system-tokens.scss` |
+| Global entrypoint | `angular/src/styles.scss` |
+| Foundations | `angular/src/scss/foundations/` |
+| Utilities | `angular/src/scss/utilities/` |
+| Primitives | `angular/src/scss/components/primitives/` |
+| PrimeNG theme/integration | `angular/src/scss/components/primeng-theme.scss`, `angular/src/scss/components/primeng-integration.scss` |
+| PrimeNG exception layer | `angular/src/assets/styles/overrides/_component-overrides.scss` |
+| Color guard layer | `angular/src/assets/styles/overrides/_color-guards.scss` |
 
-## PrimeNG Overrides
+## Rules In Practice
 
-1. **Token mapping:** `primeng/_token-mapping.scss` – prefer token mapping over exceptions
-2. **Exceptions:** `_component-overrides.scss` – every block requires ticket header (DS-EXC-* or DS-PNGO-*) + removal date
-3. **Rules:** Component SCSS may NOT style `.p-*` internals; use overrides layer only
-4. **No `::ng-deep` or `:global()`** – refactor to proper selectors in _component-overrides
+- Tokens originate in `design-system-tokens.scss`.
+- TS consumers use `design-tokens.util.ts` as the runtime bridge instead of redefining tokens.
+- Component SCSS should not style raw PrimeNG internals unless the change belongs in the shared override layer.
+- Prefer foundations, utilities, and primitives before adding feature-local CSS recipes.
 
-## Adding Tokens
-
-1. Add primitive in `:root` (`scss/tokens/design-system-tokens.scss`) if new raw value
-2. Add semantic alias if needed (e.g. `--color-*`, `--surface-*`)
-3. For PrimeNG: add to `_token-mapping.scss` first before creating exception
-
-## Verification Commands
+## Verification
 
 ```bash
-cd angular && npm run build
-npm run lint
+npm run lint:tokens
 npm run lint:css
-npm run test
+npm run audit:scss-duplications
+cd angular && npm run build
 ```
-
-## CSS Layer Order (app.config.ts)
-
-```
-reset, tokens, primeng-base, primeng-brand, primitives, features, overrides
-```
-
-## Rules (Stylelint)
-
-1. No raw hex outside tokens; use `var(--token)`
-2. No hardcoded px for radius/shadow/z-index/transition
-3. No `!important` outside `@layer overrides`
-4. No PrimeNG selectors in component SCSS
-
-## Component Pattern
-
-1. `:host` + layout; spacing via tokens
-2. Use canonical utilities (`.p-*`, `.m-*`, `.gap-*`)
-3. PrimeNG internals → _component-overrides.scss only
-
-## Current Style Root Boundary
-
-- **Canonical design-system modules:** `angular/src/scss/design-system/**`
-- New imports should use `scss/design-system/...`
-- The legacy `angular/src/styles/design-system/**` shim layer has been removed

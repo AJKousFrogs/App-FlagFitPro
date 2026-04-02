@@ -20,8 +20,8 @@ import { DialogFooterComponent } from "../../shared/components/dialog-footer/dia
 import { DialogHeaderComponent } from "../../shared/components/dialog-header/dialog-header.component";
 import { CardShellComponent } from "../../shared/components/card-shell/card-shell.component";
 import { SuperadminService } from "../../core/services/superadmin.service";
-import { AuthService } from "../../core/services/auth.service";
 import { LoggerService } from "../../core/services/logger.service";
+import { SupabaseService } from "../../core/services/supabase.service";
 import { ToastService } from "../../core/services/toast.service";
 import { ConfirmDialogService } from "../../core/services/confirm-dialog.service";
 
@@ -102,7 +102,7 @@ interface SuperadminUser {
 
         <!-- Manage Superadmins -->
         <app-card-shell title="Manage Superadmins" headerIcon="pi-users">
-          <app-button header-actions iconLeft="pi-plus" (clicked)="showAddModal = true"
+          <app-button header-actions iconLeft="pi-plus" (clicked)="openAddModal()"
             >Add Superadmin</app-button
           >
 
@@ -254,7 +254,7 @@ interface SuperadminUser {
       <!-- Add Superadmin Modal -->
       <app-dialog
         [visible]="showAddModal"
-        (visibleChange)="showAddModal = $event"
+        (visibleChange)="onAddModalVisibleChange($event)"
         (hide)="closeAddModal()"
         [modal]="true"
         [closable]="false"
@@ -316,7 +316,7 @@ interface SuperadminUser {
 })
 export class SuperadminSettingsComponent implements OnInit {
   private superadminService = inject(SuperadminService);
-  private authService = inject(AuthService);
+  private supabase = inject(SupabaseService);
   private logger = inject(LoggerService);
   private toastService = inject(ToastService);
   private confirmDialog = inject(ConfirmDialogService);
@@ -337,7 +337,7 @@ export class SuperadminSettingsComponent implements OnInit {
   currentUserEmail = signal("");
 
   ngOnInit(): void {
-    this.currentUserEmail.set(this.authService.currentUser()?.email || "");
+    this.currentUserEmail.set(this.supabase.currentUser()?.email || "");
     this.loadSuperadmins();
   }
 
@@ -352,7 +352,7 @@ export class SuperadminSettingsComponent implements OnInit {
           granted_at: a.granted_at,
           notes: a.notes || "",
           email:
-            a.user_id === this.authService.currentUser()?.id
+            a.user_id === this.supabase.userId()
               ? this.currentUserEmail()
               : "aljosa@ljubljanafrogs.si",
         })),
@@ -387,22 +387,41 @@ export class SuperadminSettingsComponent implements OnInit {
       (event.target as HTMLTextAreaElement | null)?.value ?? "";
   }
 
+  openAddModal(): void {
+    this.closeAddModal();
+    this.showAddModal = true;
+  }
+
   closeAddModal(): void {
     this.showAddModal = false;
     this.newAdminEmail = "";
     this.newAdminNotes = "";
   }
 
-  async removeSuperadmin(userId: string): Promise<void> {
-    const confirmed = await this.confirmDialog.confirm({
+  onAddModalVisibleChange(visible: boolean): void {
+    if (visible) {
+      this.showAddModal = true;
+      return;
+    }
+    this.closeAddModal();
+  }
+
+  private buildRemoveSuperadminConfirmation() {
+    return {
       title: "Remove Superadmin",
       message: "Are you sure you want to remove this superadmin?",
       icon: "pi pi-exclamation-triangle",
       acceptLabel: "Remove",
       rejectLabel: "Cancel",
-      acceptSeverity: "danger",
-      defaultFocus: "reject",
-    });
+      acceptSeverity: "danger" as const,
+      defaultFocus: "reject" as const,
+    };
+  }
+
+  async removeSuperadmin(userId: string): Promise<void> {
+    const confirmed = await this.confirmDialog.confirm(
+      this.buildRemoveSuperadminConfirmation(),
+    );
     if (!confirmed) return;
 
     const success = await this.superadminService.removeSuperadmin(userId);

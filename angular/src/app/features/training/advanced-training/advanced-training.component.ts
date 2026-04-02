@@ -46,94 +46,94 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
             <!-- Tab 0: Planning & Periodization -->
             <p-tabpanel value="0">
               <div class="tab-content-grid">
-                <div class="tool-card" routerLink="/training/goal-planner">
+                <a class="tool-card" routerLink="/training/goal-planner">
                   <i class="pi pi-target"></i>
                   <h3>Goal Planner</h3>
                   <p>Define your LA28 objectives and track progress.</p>
-                </div>
-                <div class="tool-card" routerLink="/training/microcycle">
+                </a>
+                <a class="tool-card" routerLink="/training/microcycle">
                   <i class="pi pi-sync"></i>
                   <h3>Microcycle Planner</h3>
                   <p>Detailed weekly training block management.</p>
-                </div>
-                <div class="tool-card" routerLink="/training/ai-scheduler">
+                </a>
+                <a class="tool-card" routerLink="/training/ai-scheduler">
                   <i class="pi pi-sparkles"></i>
                   <h3>AI Scheduler</h3>
                   <p>Auto-generate optimal training slots.</p>
-                </div>
-                <div class="tool-card" routerLink="/training/periodization">
+                </a>
+                <a class="tool-card" routerLink="/training/periodization">
                   <i class="pi pi-chart-line"></i>
                   <h3>Periodization</h3>
                   <p>Season-long load management view.</p>
-                </div>
+                </a>
               </div>
             </p-tabpanel>
 
             <!-- Tab 1: QB Specific Tools -->
             <p-tabpanel value="1">
               <div class="tab-content-grid">
-                <div class="tool-card" routerLink="/training/qb">
+                <a class="tool-card" routerLink="/training/qb">
                   <i class="pi pi-send"></i>
                   <h3>Throwing Tracker</h3>
                   <p>Monitor volume and accuracy per distance.</p>
-                </div>
-                <div class="tool-card" routerLink="/training/qb">
+                </a>
+                <a class="tool-card" routerLink="/training/qb">
                   <i class="pi pi-check-square"></i>
                   <h3>Skills Assessment</h3>
                   <p>Evaluate mechanical consistency and vision.</p>
-                </div>
-                <div class="tool-card" routerLink="/training/qb">
+                </a>
+                <a class="tool-card" routerLink="/training/qb">
                   <i class="pi pi-calendar"></i>
                   <h3>QB Schedule</h3>
                   <p>Position-specific drills and sessions.</p>
-                </div>
+                </a>
               </div>
             </p-tabpanel>
 
             <!-- Tab 2: Logs & History -->
             <p-tabpanel value="2">
               <div class="tab-content-grid">
-                <div class="tool-card" routerLink="/todays-practice">
+                <a class="tool-card" routerLink="/todays-practice">
                   <i class="pi pi-book"></i>
                   <h3>Today's Practice</h3>
                   <p>Log today’s session before you leave.</p>
-                </div>
-                <div class="tool-card" routerLink="/training/schedule">
+                </a>
+                <a class="tool-card" routerLink="/training/schedule">
                   <i class="pi pi-calendar"></i>
                   <h3>Full Calendar</h3>
                   <p>View past and future planned events.</p>
-                </div>
-                <div class="tool-card" routerLink="/training/import">
+                </a>
+                <a class="tool-card" routerLink="/training/import">
                   <i class="pi pi-upload"></i>
                   <h3>Import Data</h3>
                   <p>Upload sessions from external sources.</p>
-                </div>
+                </a>
               </div>
             </p-tabpanel>
 
             <!-- Tab 3: Safety & Load -->
             <p-tabpanel value="3">
               <div class="tab-content-grid">
-                <div class="tool-card" routerLink="/training/safety">
+                <a class="tool-card" routerLink="/training/safety">
                   <i class="pi pi-shield"></i>
                   <h3>Safety Guidelines</h3>
                   <p>Injury prevention protocols and warm-ups.</p>
-                </div>
-                <div class="tool-card" routerLink="/training/load-analysis">
+                </a>
+                <a class="tool-card" routerLink="/training/load-analysis">
                   <i class="pi pi-chart-bar"></i>
                   <h3>Load Analysis</h3>
                   <p>Deep dive into acute/chronic imbalances.</p>
-                </div>
-                <div class="tool-card" routerLink="/wellness">
+                </a>
+                <a class="tool-card" routerLink="/wellness">
                   <i class="pi pi-heart"></i>
                   <h3>Nutrition & Wellness</h3>
                   <p>Fueling, hydration, and recovery check-ins.</p>
-                </div>
-                <div class="tool-card" routerLink="/wellness">
+                </a>
+                <a class="tool-card" routerLink="/wellness">
                   <i class="pi pi-map"></i>
                   <h3>Recovery Protocols</h3>
                   <p>Recovery readiness and travel-impact check-ins.</p>
-                </div>
+                </a>
               </div>
             </p-tabpanel>
           </p-tabpanels>

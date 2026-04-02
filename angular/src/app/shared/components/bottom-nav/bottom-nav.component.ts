@@ -16,8 +16,9 @@ import {
   getMobilePrimaryNavigationItems,
   isExactNavigationRoute,
 } from "../../../core/navigation/app-navigation.config";
-import { AuthService } from "../../../core/services/auth.service";
 import { NotificationStateService } from "../../../core/services/notification-state.service";
+import { RouteShellService } from "../../../core/services/route-shell.service";
+import { SupabaseService } from "../../../core/services/supabase.service";
 import { NavItemComponent } from "../nav-item.component";
 import { BackdropComponent } from "../backdrop/backdrop.component";
 import { CloseButtonComponent } from "../close-button/close-button.component";
@@ -100,35 +101,27 @@ import { CloseButtonComponent } from "../close-button/close-button.component";
 })
 export class BottomNavComponent implements OnInit {
   private router = inject(Router);
-  private authService = inject(AuthService);
+  private supabase = inject(SupabaseService);
   private notificationState = inject(NotificationStateService);
+  private routeShell = inject(RouteShellService);
   private readonly destroyRef = inject(DestroyRef);
 
   showMoreMenu = signal(false);
-  currentRoute = signal("");
-
-  // Routes where bottom nav should be hidden (like login, landing)
-  private hiddenRoutes = [
-    "/",
-    "/login",
-    "/register",
-    "/reset-password",
-    "/update-password",
-    "/verify-email",
-    "/onboarding",
-  ];
 
   isVisible = computed(() => {
-    const route = this.currentRoute();
-    const isAuthenticated = this.authService.isAuthenticated();
-    return (
-      isAuthenticated &&
-      !this.hiddenRoutes.some((r) => route === r || route.startsWith("/auth"))
-    );
+    const isAuthenticated = this.supabase.isAuthenticated();
+    return isAuthenticated && this.routeShell.showBottomNav();
+  });
+
+  private readonly currentUserRole = computed(() => {
+    const metadata = this.supabase.currentUser()?.user_metadata as
+      | { role?: string }
+      | undefined;
+    return metadata?.role || "player";
   });
 
   visibleNavItems = computed(() => {
-    const userRole = this.authService.getUser()?.role || "player";
+    const userRole = this.currentUserRole();
     const unreadCount = this.notificationState.unreadCount();
     const items = getMobilePrimaryNavigationItems(userRole);
 
@@ -139,7 +132,7 @@ export class BottomNavComponent implements OnInit {
   });
 
   moreNavItems = computed(() => {
-    const userRole = this.authService.getUser()?.role || "player";
+    const userRole = this.currentUserRole();
     const unreadCount = this.notificationState.unreadCount();
 
     return getMobileMoreNavigationItems(userRole)
@@ -152,15 +145,12 @@ export class BottomNavComponent implements OnInit {
   hasMoreItems = computed(() => this.moreNavItems().length > 0);
 
   ngOnInit(): void {
-    this.currentRoute.set(this.router.url);
-
     this.router.events
       .pipe(
         filter((event) => event instanceof NavigationEnd),
         takeUntilDestroyed(this.destroyRef),
       )
-      .subscribe((event) => {
-        this.currentRoute.set((event as NavigationEnd).urlAfterRedirects);
+      .subscribe(() => {
         this.showMoreMenu.set(false);
       });
   }

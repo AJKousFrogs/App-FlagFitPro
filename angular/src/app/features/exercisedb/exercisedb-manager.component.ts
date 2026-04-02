@@ -20,7 +20,6 @@ import { MultiSelect, type MultiSelectChangeEvent } from "primeng/multiselect";
 import { ProgressBar } from "primeng/progressbar";
 import { Tabs, TabList, Tab, TabPanels, TabPanel } from "primeng/tabs";
 import { Chip } from "primeng/chip";
-import { Skeleton } from "primeng/skeleton";
 import { Badge } from "primeng/badge";
 
 import { ToastService } from "../../core/services/toast.service";
@@ -59,7 +58,6 @@ import { SkeletonRepeatComponent } from "../../shared/components/skeleton-loader
     TabPanels,
     TabPanel,
     Chip,
-    Skeleton,
     Badge,
     MainLayoutComponent,
     PageHeaderComponent,
@@ -566,6 +564,7 @@ import { SkeletonRepeatComponent } from "../../shared/components/skeleton-loader
           [ariaLabel]="selectedExercise()?.name || 'Exercise Details'"
           [draggable]="false"
           [resizable]="false"
+          dialogSize="2xl"
           class="exercisedb-detail-dialog"
         >
           <app-dialog-header
@@ -742,6 +741,7 @@ import { SkeletonRepeatComponent } from "../../shared/components/skeleton-loader
           ariaLabel="Approve Exercise"
           [draggable]="false"
           [resizable]="false"
+          dialogSize="xl"
           class="exercisedb-approval-dialog"
         >
           <app-dialog-header

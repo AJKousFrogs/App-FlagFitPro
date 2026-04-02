@@ -349,7 +349,7 @@ interface TeamOption {
               <p-table
                 [value]="leaderboard()"
                 [rows]="5"
-                class="p-datatable-sm"
+                class="table-compact"
                 [scrollable]="true"
               >
                 <ng-template #header>

@@ -1,0 +1,12 @@
+@if (weatherData()) {
+  <div
+    class="header-utility weather-widget"
+    [ngClass]="weatherSeverityClass()"
+    [pTooltip]="weatherTooltip()"
+    tooltipPosition="bottom"
+  >
+    <i [class]="'pi ' + weatherIcon()" aria-hidden="true"></i>
+    <span class="utility-label">{{ weatherData()!.temp }}°</span>
+  </div>
+}
+

@@ -35,9 +35,9 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
 import { SafetyWarningsComponent } from "../../../shared/components/safety-warnings/safety-warnings.component";
 import { TrafficLightRiskComponent } from "../../../shared/components/traffic-light-risk/traffic-light-risk.component";
 import { UnifiedTrainingService } from "../../../core/services/unified-training.service";
-import { AuthService } from "../../../core/services/auth.service";
 import { LoggerService } from "../../../core/services/logger.service";
 import { toLogContext } from "../../../core/services/logger.service";
+import { SupabaseService } from "../../../core/services/supabase.service";
 import { TrainingSafetyDataService } from "../services/training-safety-data.service";
 import {
   METRIC_INSUFFICIENT_DATA,
@@ -368,7 +368,7 @@ import {
 })
 export class TrainingSafetyComponent implements OnInit {
   private trainingService = inject(UnifiedTrainingService);
-  private authService = inject(AuthService);
+  private supabase = inject(SupabaseService);
   private logger = inject(LoggerService);
   private trainingSafetyDataService = inject(TrainingSafetyDataService);
   private destroyRef = inject(DestroyRef);
@@ -466,7 +466,7 @@ export class TrainingSafetyComponent implements OnInit {
   }
 
   private async loadSafetyData(): Promise<void> {
-    const user = this.authService.getUser();
+    const user = this.supabase.currentUser();
     if (!user?.id) {
       this.showEmptyState();
       return;

@@ -16,6 +16,48 @@
  */
 
 @layer overrides {
+  @mixin override-card-body-padding($padding) {
+    .p-card-body {
+      padding: $padding;
+    }
+  }
+
+  @mixin override-card-content-padding($padding) {
+    .p-card-content {
+      padding: $padding;
+    }
+  }
+
+  @mixin override-card-shell($body-padding, $content-padding: 0) {
+    @include override-card-body-padding($body-padding);
+    @include override-card-content-padding($content-padding);
+  }
+
+  @mixin override-card-header-padding($padding) {
+    .p-card-header {
+      padding: $padding;
+    }
+  }
+
+  @mixin override-card-fill-layout() {
+    .p-card {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+    }
+
+    .p-card-body {
+      flex: 1;
+    }
+  }
+
+  @mixin override-form-label($color: var(--color-text-secondary), $display: block) {
+    display: $display;
+    font-size: var(--font-h4-size);
+    font-weight: var(--font-weight-medium);
+    color: $color;
+  }
 
   /* ------------------------------------------------
    * COMPONENT: acwr-baseline.component
@@ -53,12 +95,8 @@
    *         styling and milestone tag font-size override.
    * ------------------------------------------------ */
   .player-dashboard {
-    .stat-card .p-card-body {
-      padding: var(--space-5);
-    }
-
-    .stat-card .p-card-content {
-      padding: 0;
+    .stat-card {
+      @include override-card-shell(var(--space-5));
     }
 
     canvas {
@@ -233,9 +271,7 @@
       .play-tracker-card,
       .plays-list-card,
       .games-list-card {
-        .p-card-body {
-          padding: var(--space-3);
-        }
+        @include override-card-body-padding(var(--space-3));
       }
 
       .score-group input {
@@ -656,64 +692,6 @@
   }
 
   /* ------------------------------------------------
-   * COMPONENT: body-composition-card.component (dialog layout)
-   * Ticket: DS-EXC-054
-   * Owner: @design-system-team
-   * Scope: body composition dialog overlay
-   * Remove by: 2026-06-01
-   * Reason: Dialog overlay max-height for scrollable content.
-   * ------------------------------------------------ */
-  .body-comp-dialog .p-dialog-content {
-    max-height: calc(80dvh - var(--space-12));
-    overflow-y: auto;
-  }
-
-  @include respond-to(sm) {
-    .body-comp-dialog.p-dialog {
-      max-height: var(--overlay-max-height-dialog);
-      max-height: 80dvh;
-      display: flex;
-      flex-direction: column;
-    }
-
-    .body-comp-dialog .p-dialog-content {
-      flex: 1 1 auto;
-      min-height: 0;
-      -webkit-overflow-scrolling: touch;
-    }
-
-    .body-comp-dialog .p-dialog-footer {
-      flex-shrink: 0;
-      position: sticky;
-      bottom: 0;
-      background: var(--surface-primary);
-      padding-bottom: max(var(--space-4), env(safe-area-inset-bottom));
-      border-top: var(--border-1) solid var(--color-border-muted);
-    }
-  }
-
-  /* ------------------------------------------------
-   * COMPONENT: today.component (quick check-in dialog)
-   * Ticket: DS-EXC-055
-   * Owner: @design-system-team
-   * Scope: quick check-in dialog overlay
-   * Remove by: 2026-06-01
-   * Reason: Replace inline dialog styles with documented overrides.
-   * ------------------------------------------------ */
-  .quick-checkin-modal {
-    width: 95vw;
-    max-width: var(--dialog-max-width-sm);
-  }
-
-  .quick-checkin-modal .p-dialog-content {
-    padding: var(--space-4);
-    max-height: calc(
-      80dvh - (var(--space-24) + var(--space-10) + var(--space-1))
-    );
-    overflow-y: auto;
-  }
-
-  /* ------------------------------------------------
    * COMPONENT: chat.component
    * Ticket: DS-EXC-006
    * Owner: @design-system-team
@@ -1010,7 +988,7 @@
       .p-dialog-content {
         border-radius: 0;
         max-height: 100vh;
-height: 100dvh; // Modern: keyboard-aware
+        height: 100dvh; // Modern: keyboard-aware
       }
     }
   }
@@ -1772,14 +1750,10 @@ height: 100dvh; // Modern: keyboard-aware
 }
 
 .monthly-stats {
-  :global(.p-card-body) {
-    padding: var(--space-4);
-  }
+  @include override-card-body-padding(var(--space-4));
 
   @include respond-to(md) {
-    :global(.p-card-body) {
-      padding: var(--space-3);
-    }
+    @include override-card-body-padding(var(--space-3));
   }
 }
 
@@ -1916,13 +1890,7 @@ app-daily-readiness {
    * Reason: Card body and content padding overrides.
    * ------------------------------------------------ */
 .stat-card {
-  .p-card-body {
-    padding: var(--space-4);
-  }
-
-  .p-card-content {
-    padding: 0;
-  }
+  @include override-card-shell(var(--space-4));
 }
 
 /* ------------------------------------------------
@@ -2099,98 +2067,6 @@ app-daily-readiness {
 
   .p-dialog-content {
     padding: 0 var(--space-4) var(--space-4);
-  }
-}
-
-/* ------------------------------------------------
-   * COMPONENT: today.component Quick Check-in Modal
-   * Ticket: DS-EXC-036b
-   * Owner: @design-system-team
-   * Scope: Quick check-in modal in today component
-   * Remove by: 2026-04-01
-   * Reason: Mobile Safari footer visibility fix for iPhone 14 Pro Max and similar devices.
-   *         Ensures dialog footer with save button is always visible.
-   * ------------------------------------------------ */
-.quick-checkin-modal {
-  &.p-dialog {
-    @media (max-width: 26.875rem) {
-      max-height: var(--overlay-max-height-dialog);
-      max-height: 80dvh;
-      display: flex;
-      flex-direction: column;
-    }
-  }
-
-  .p-dialog-header {
-    flex-shrink: 0;
-  }
-
-  .p-dialog-content {
-    @media (max-width: 26.875rem) {
-      flex: 1 1 auto;
-      min-height: 0;
-      overflow-y: auto;
-      -webkit-overflow-scrolling: touch;
-    }
-  }
-
-  .p-dialog-footer {
-    @media (max-width: 26.875rem) {
-      flex-shrink: 0;
-      position: sticky;
-      bottom: 0;
-      background: var(--surface-primary);
-      padding: var(--space-3) var(--space-4);
-      padding-bottom: max(var(--space-3), env(safe-area-inset-bottom));
-      border-top: var(--border-1) solid var(--color-border-muted);
-      z-index: 10;
-    }
-  }
-}
-
-/* ------------------------------------------------
-   * COMPONENT: body-composition-card.component Dialog
-   * Ticket: DS-EXC-036c
-   * Owner: @design-system-team
-   * Scope: Body composition dialog
-   * Remove by: 2026-04-01
-   * Reason: Mobile Safari footer visibility fix for iPhone 14 Pro Max and similar devices.
-   *         Ensures dialog footer with save button is always visible.
-   * ------------------------------------------------ */
-.body-comp-dialog {
-  &.p-dialog {
-    @media (max-width: 26.875rem) {
-      max-height: var(--overlay-max-height-dialog);
-      max-height: 80dvh;
-      display: flex;
-      flex-direction: column;
-    }
-  }
-
-  .p-dialog-header {
-    flex-shrink: 0;
-  }
-
-  .p-dialog-content {
-    @media (max-width: 26.875rem) {
-      flex: 1 1 auto;
-      min-height: 0;
-      overflow-y: auto;
-      -webkit-overflow-scrolling: touch;
-    }
-  }
-
-  .p-dialog-footer {
-    @media (max-width: 26.875rem) {
-      flex-shrink: 0;
-      position: sticky;
-      bottom: 0;
-      background: var(--surface-primary);
-      padding: var(--space-3) var(--space-4);
-      padding-bottom: max(var(--space-3), env(safe-area-inset-bottom));
-      border-top: var(--border-1) solid var(--color-border-muted);
-      z-index: 10;
-    }
   }
 }
 
@@ -2444,8 +2320,7 @@ app-daily-readiness {
     gap: var(--space-2);
 
     label {
-      font-size: var(--font-h4-size);
-      font-weight: var(--font-weight-medium);
+      @include override-form-label(inherit, inline);
     }
   }
 }
@@ -2461,10 +2336,7 @@ app-daily-readiness {
 .performance-tracking {
   .form-field {
     label {
-      display: block;
-      font-size: var(--font-h4-size);
-      font-weight: var(--font-weight-medium);
-      color: var(--color-text-secondary);
+      @include override-form-label;
     }
   }
 }
@@ -2574,16 +2446,7 @@ app-daily-readiness {
 .settings-grid {
   .settings-section {
     app-card {
-      .p-card {
-        height: 100%;
-        display: flex;
-        flex-direction: column;
-        flex: 1;
-      }
-
-      .p-card-body {
-        flex: 1;
-      }
+      @include override-card-fill-layout;
     }
   }
 }
@@ -2612,11 +2475,8 @@ app-daily-readiness {
     margin-bottom: var(--space-5);
 
     .p-label {
-      display: block;
       margin-bottom: var(--space-2);
-      font-weight: var(--font-weight-medium);
-      color: var(--color-text-primary);
-      font-size: var(--font-h4-size);
+      @include override-form-label(var(--color-text-primary));
     }
   }
 
@@ -2631,73 +2491,6 @@ app-daily-readiness {
     }
   }
 
-  .password-dialog {
-    .p-dialog {
-      width: calc(var(--dialog-max-width-md) + var(--space-8));
-      max-width: 95vw;
-      border-radius: var(--radius-2xl);
-      overflow: hidden;
-      box-shadow: var(--shadow-3);
-      border: var(--border-1) solid var(--color-border-muted);
-    }
-
-    .p-dialog-content {
-      padding: 0;
-      background: var(--surface-primary);
-    }
-  }
-
-  .delete-dialog {
-    .p-dialog {
-      width: calc(var(--dialog-max-width-md) + var(--space-8));
-      max-width: 95vw;
-      border-radius: var(--radius-3xl);
-      overflow: hidden;
-      box-shadow: var(--shadow-lg);
-    }
-
-    .p-dialog-content {
-      padding: 0;
-      background: var(--surface-primary);
-    }
-  }
-
-  .twofa-dialog {
-    .p-dialog {
-      width: var(--dialog-max-width-lg);
-      max-width: 95vw;
-      border-radius: var(--radius-3xl);
-      overflow: hidden;
-      box-shadow: var(--shadow-lg);
-    }
-
-    .p-dialog-content {
-      padding: 0;
-      background: var(--surface-primary);
-    }
-  }
-
-  .sessions-dialog {
-    .p-dialog {
-      width: var(--dialog-max-width-xl);
-      max-width: 95vw;
-      border-radius: var(--radius-3xl);
-      overflow: hidden;
-      box-shadow: var(--shadow-lg);
-    }
-
-    .p-dialog-content {
-      padding: 0;
-      background: var(--surface-primary);
-    }
-  }
-
-  .export-dialog {
-    .p-dialog {
-      width: var(--modal-width-responsive);
-      max-width: var(--dialog-max-width-lg);
-    }
-  }
 }
 
   /* ------------------------------------------------
@@ -2712,36 +2505,26 @@ app-daily-readiness {
    * ------------------------------------------------ */
   .analytics {
     .metric-card {
-      .p-card-body {
-        padding: var(--space-3);
-      }
+      @include override-card-body-padding(var(--space-3));
     }
 
     .chart-card {
-      .p-card-header {
-        padding: var(--space-3);
-      }
-
-      .p-card-body {
-        padding: var(--space-3);
-      }
+      @include override-card-header-padding(var(--space-3));
+      @include override-card-body-padding(var(--space-3));
 
       @include respond-to(md) {
-        .p-card-header,
-        .p-card-body {
-          padding: var(--space-2);
-        }
+        @include override-card-header-padding(var(--space-2));
+        @include override-card-body-padding(var(--space-2));
       }
 
       @media (min-width: 64rem) {
+        @include override-card-header-padding(var(--space-5));
+
         .p-card-header {
-          padding: var(--space-5);
           border-bottom: var(--border-1) solid var(--color-border-secondary);
         }
 
-        .p-card-body {
-          padding: var(--space-5);
-        }
+        @include override-card-body-padding(var(--space-5));
       }
 
       // Canvas responsive styling
@@ -2751,13 +2534,7 @@ app-daily-readiness {
       }
     }
 
-    .p-card-body {
-      padding: var(--space-5);
-    }
-
-    .p-card-content {
-      padding: 0;
-    }
+    @include override-card-shell(var(--space-5));
 
     .share-dialog {
       :global(.p-dialog) {
@@ -2809,9 +2586,7 @@ app-daily-readiness {
 
     @include respond-to(md) {
       .metric-card {
-        .p-card-body {
-          padding: var(--space-2);
-        }
+        @include override-card-body-padding(var(--space-2));
       }
 
       // Textarea font-size override to prevent iOS zoom

@@ -31,6 +31,7 @@ interface QuickFormData {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule, AppDialogComponent, DialogHeaderComponent, DialogFooterComponent],
   templateUrl: "./today-quick-checkin-dialog.component.html",
+  styleUrl: "./today-quick-checkin-dialog.component.scss",
 })
 export class TodayQuickCheckinDialogComponent {
   readonly visible = input(false);

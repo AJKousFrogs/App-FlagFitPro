@@ -586,7 +586,7 @@ console.log("Viewport:", {
 1. Check service is initialized:
 
    ```javascript
-   console.log("Service initialized:", window.angularDebug);
+   console.log("Route shell ready:", document.body.className);
    ```
 
 2. Check body classes:

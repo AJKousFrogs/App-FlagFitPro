@@ -140,7 +140,7 @@ const USER_STATUSES = ["active", "suspended", "pending"] as const;
               [rows]="10"
               [virtualScroll]="filteredUsers.length > 50"
               [virtualScrollItemSize]="46"
-              class="p-datatable-sm table-standard"
+              class="table-compact table-standard"
               [scrollable]="true"
             >
               <ng-template #header>
@@ -252,7 +252,7 @@ const USER_STATUSES = ["active", "suspended", "pending"] as const;
             icon="users"
             [title]="selectedUser?.full_name || 'User Details'"
             subtitle="Review user account information and membership context."
-            (close)="showUserDialog = false"
+            (close)="closeUserDialog()"
           />
           @if (selectedUser; as user) {
             <div class="goal-details">
@@ -279,7 +279,7 @@ const USER_STATUSES = ["active", "suspended", "pending"] as const;
             cancelLabel="Close"
             primaryLabel="Edit User"
             primaryIcon="pencil"
-            (cancel)="showUserDialog = false"
+            (cancel)="closeUserDialog()"
             (primary)="openEditUserDialog()"
           />
         </app-dialog>
@@ -296,7 +296,7 @@ const USER_STATUSES = ["active", "suspended", "pending"] as const;
             icon="user-edit"
             [title]="selectedUser?.full_name || 'Edit User'"
             subtitle="Update this user account in the database."
-            (close)="showEditDialog = false"
+            (close)="closeEditDialog()"
           />
           @if (selectedUser) {
             <div class="goal-form">
@@ -333,7 +333,7 @@ const USER_STATUSES = ["active", "suspended", "pending"] as const;
             cancelLabel="Cancel"
             primaryLabel="Save Changes"
             primaryIcon="check"
-            (cancel)="showEditDialog = false"
+            (cancel)="closeEditDialog()"
             (primary)="saveUserEdits()"
           />
         </app-dialog>
@@ -479,24 +479,42 @@ export class SuperadminUsersComponent implements OnInit {
     });
   }
 
-  editUser(_user: User): void {
-    this.selectedUser = _user;
-    this.editRole = _user.role;
-    this.editStatus = _user.status;
+  private syncEditDraftFromSelectedUser(user = this.selectedUser): void {
+    if (!user) return;
+    this.editRole = user.role;
+    this.editStatus = user.status;
+  }
+
+  closeUserDialog(): void {
+    this.showUserDialog = false;
+  }
+
+  closeEditDialog(): void {
+    this.showEditDialog = false;
+    this.syncEditDraftFromSelectedUser();
+  }
+
+  private openEditDialogForUser(user: User, closeUserDialog = false): void {
+    this.selectedUser = user;
+    this.syncEditDraftFromSelectedUser(user);
+    if (closeUserDialog) {
+      this.closeUserDialog();
+    }
     this.showEditDialog = true;
   }
 
-  viewUser(_user: User): void {
-    this.selectedUser = _user;
+  editUser(user: User): void {
+    this.openEditDialogForUser(user);
+  }
+
+  viewUser(user: User): void {
+    this.selectedUser = user;
     this.showUserDialog = true;
   }
 
   openEditUserDialog(): void {
     if (!this.selectedUser) return;
-    this.editRole = this.selectedUser.role;
-    this.editStatus = this.selectedUser.status;
-    this.showUserDialog = false;
-    this.showEditDialog = true;
+    this.openEditDialogForUser(this.selectedUser, true);
   }
 
   async saveUserEdits(): Promise<void> {
@@ -505,8 +523,7 @@ export class SuperadminUsersComponent implements OnInit {
     await this.persistUserUpdate(this.selectedUser, {
       role: this.editRole,
       status: this.editStatus,
-    });
-    this.showEditDialog = false;
+    }, () => this.closeEditDialog());
   }
 
   private isUserRole(value: string | undefined): value is User["role"] {
@@ -520,12 +537,14 @@ export class SuperadminUsersComponent implements OnInit {
   private async persistUserUpdate(
     user: User,
     updates: Pick<User, "role" | "status">,
+    onSuccess?: () => void,
   ): Promise<void> {
     try {
       await this.superadminService.updateUserAccount(user.id, updates);
       await this.loadUsers();
       this.selectedUser =
         this.users.find((candidate) => candidate.id === user.id) ?? null;
+      onSuccess?.();
       this.toast.success("User account updated successfully.", "User Updated");
     } catch (_error) {
       this.toast.error("Failed to update this user. Please try again.");

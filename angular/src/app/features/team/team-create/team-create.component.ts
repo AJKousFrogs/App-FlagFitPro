@@ -21,7 +21,7 @@ import { MainLayoutComponent } from "../../../shared/components/layout/main-layo
 import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";
 import { ToastService } from "../../../core/services/toast.service";
 import { TOAST } from "../../../core/constants/toast-messages.constants";
-import { AuthService } from "../../../core/services/auth.service";
+import { SupabaseService } from "../../../core/services/supabase.service";
 import { TeamCreateDataService } from "../services/team-create-data.service";
 
 type TeamCreateForm = FormGroup<{
@@ -145,7 +145,7 @@ export class TeamCreateComponent {
   private router = inject(Router);
   private fb = inject(NonNullableFormBuilder);
   private toastService = inject(ToastService);
-  private authService = inject(AuthService);
+  private supabase = inject(SupabaseService);
   private teamCreateDataService = inject(TeamCreateDataService);
 
   isSubmitting = signal(false);
@@ -198,7 +198,7 @@ export class TeamCreateComponent {
 
     try {
       const formData = this.teamForm.getRawValue();
-      const currentUser = this.authService.getUser();
+      const currentUser = this.supabase.currentUser();
 
       if (!currentUser?.id) {
         this.toastService.error(TOAST.ERROR.MUST_BE_LOGGED_IN);

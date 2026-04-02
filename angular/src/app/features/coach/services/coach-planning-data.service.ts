@@ -1,5 +1,4 @@
 import { Injectable, inject } from "@angular/core";
-import { AuthService } from "../../../core/services/auth.service";
 import { LoggerService, toLogContext } from "../../../core/services/logger.service";
 import { SupabaseService } from "../../../core/services/supabase.service";
 import { TeamMembershipService } from "../../../core/services/team-membership.service";
@@ -86,7 +85,6 @@ type ServiceError = { message?: string } | null;
   providedIn: "root",
 })
 export class CoachPlanningDataService {
-  private readonly authService = inject(AuthService);
   private readonly supabaseService = inject(SupabaseService);
   private readonly teamMembershipService = inject(TeamMembershipService);
   private readonly logger = inject(LoggerService);
@@ -219,7 +217,7 @@ export class CoachPlanningDataService {
     userId: string;
     teamId: string;
   }> {
-    const user = this.authService.getUser();
+    const user = this.supabaseService.currentUser();
     if (!user?.id) {
       throw new Error("You must be logged in to manage practice plans.");
     }

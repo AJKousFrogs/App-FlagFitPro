@@ -22,10 +22,10 @@ import {
   getSecondaryNavigationItems,
   isExactNavigationRoute,
 } from "../../../core/navigation/app-navigation.config";
-import { AuthService } from "../../../core/services/auth.service";
 import { ConfirmDialogService } from "../../../core/services/confirm-dialog.service";
 import { PlatformService } from "../../../core/services/platform.service";
 import { ShellBodyStateService } from "../../../core/services/shell-body-state.service";
+import { SupabaseService } from "../../../core/services/supabase.service";
 import { BackdropComponent } from "../backdrop/backdrop.component";
 import { CloseButtonComponent } from "../close-button/close-button.component";
 import { NavItemComponent } from "../nav-item.component";
@@ -235,7 +235,7 @@ import { NavItemComponent } from "../nav-item.component";
 })
 export class SidebarComponent implements OnInit {
   private readonly router = inject(Router);
-  private readonly authService = inject(AuthService);
+  private readonly supabase = inject(SupabaseService);
   private readonly confirmDialog = inject(ConfirmDialogService);
   private readonly shellBodyState = inject(ShellBodyStateService);
   private readonly platform = inject(PlatformService);
@@ -278,11 +278,20 @@ export class SidebarComponent implements OnInit {
   // State persistence for "Me" group expansion
   meGroupExpanded = signal(this.loadMeGroupState());
 
+  private readonly currentUser = computed(() => this.supabase.currentUser());
+
+  private readonly currentUserRole = computed(() => {
+    const metadata = this.currentUser()?.user_metadata as
+      | { role?: string }
+      | undefined;
+    return metadata?.role || "player";
+  });
+
   /**
    * Primary navigation items based on user role
    */
   primaryNavItems = computed(() => {
-    const userRole = this.authService.getUser()?.role || "player";
+    const userRole = this.currentUserRole();
     return getPrimaryNavigationItems(userRole);
   });
 
@@ -290,7 +299,7 @@ export class SidebarComponent implements OnInit {
    * Additional navigation items filtered by role
    */
   additionalItems = computed(() => {
-    const userRole = this.authService.getUser()?.role || "player";
+    const userRole = this.currentUserRole();
     return getSecondaryNavigationItems(userRole);
   });
 
@@ -298,7 +307,7 @@ export class SidebarComponent implements OnInit {
    * "Me" group items (always same for all roles)
    */
   meItems = computed(() => {
-    const userRole = this.authService.getUser()?.role || "player";
+    const userRole = this.currentUserRole();
     return getMeNavigationItems(userRole);
   });
 
@@ -311,8 +320,14 @@ export class SidebarComponent implements OnInit {
   ];
 
   userName = computed(() => {
-    const user = this.authService.getUser();
-    return user?.name || user?.email?.split("@")[0] || "User";
+    const user = this.currentUser();
+    const metadata = user?.user_metadata as
+      | { fullName?: string; firstName?: string; lastName?: string }
+      | undefined;
+    const fullName =
+      metadata?.fullName ||
+      [metadata?.firstName, metadata?.lastName].filter(Boolean).join(" ");
+    return fullName || user?.email?.split("@")[0] || "User";
   });
 
   userInitials = computed(() => {
@@ -326,8 +341,7 @@ export class SidebarComponent implements OnInit {
   });
 
   userRoleLabel = computed(() => {
-    const user = this.authService.getUser();
-    const role = user?.role || "player";
+    const role = this.currentUserRole();
     return role.replace(/_/g, " ");
   });
 
@@ -363,10 +377,9 @@ export class SidebarComponent implements OnInit {
   async logout(): Promise<void> {
     const confirmed = await this.confirmDialog.confirmLogout();
     if (!confirmed) return;
-    this.authService
-      .logout()
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe();
+
+    await this.supabase.signOut();
+    await this.router.navigate(["/login"]);
     this.closeSidebar();
   }
 

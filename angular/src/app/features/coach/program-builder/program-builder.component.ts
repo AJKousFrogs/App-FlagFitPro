@@ -413,14 +413,15 @@ const PHASE_PRESETS = [
       <!-- Create/Edit Program Dialog -->
       <app-dialog
         [(visible)]="showCreateDialog"
+        dialogSize="2xl"
         class="program-dialog"
-        (hide)="showCreateDialog = false"
+        (hide)="closeCreateDialog()"
       >
         <app-dialog-header
           [title]="isEditing() ? 'Edit Program' : 'Create Training Program'"
           subtitle="Build multi-week programs with phases, assigns, and weekly templates"
           icon="list"
-          (close)="showCreateDialog = false"
+          (close)="closeCreateDialog()"
         ></app-dialog-header>
         <div class="program-form">
           <!-- Program Details -->
@@ -631,13 +632,13 @@ const PHASE_PRESETS = [
       <app-dialog
         [(visible)]="showProgramDetailsDialog"
         class="program-detail-dialog"
-        (hide)="showProgramDetailsDialog = false"
+        (hide)="closeProgramDetailsDialog()"
       >
         <app-dialog-header
           [title]="selectedProgram()?.name || 'Program Details'"
           subtitle="Review structure, phase timing, and assignment context."
           icon="list"
-          (close)="showProgramDetailsDialog = false"
+          (close)="closeProgramDetailsDialog()"
         ></app-dialog-header>
         @if (selectedProgram(); as program) {
           <div class="program-detail-content">
@@ -695,7 +696,7 @@ const PHASE_PRESETS = [
           secondaryVariant="secondary"
           primaryLabel="Edit Program"
           primaryIcon="pencil"
-          (secondary)="showProgramDetailsDialog = false"
+          (secondary)="closeProgramDetailsDialog()"
           (primary)="editSelectedProgram()"
         />
       </app-dialog>
@@ -703,13 +704,13 @@ const PHASE_PRESETS = [
       <app-dialog
         [(visible)]="showComplianceDialog"
         class="program-compliance-dialog"
-        (hide)="showComplianceDialog = false"
+        (hide)="closeComplianceDialog()"
       >
         <app-dialog-header
           [title]="selectedProgram()?.name || 'Compliance Report'"
           subtitle="Track completion risk and assignment coverage for this program."
           icon="chart-bar"
-          (close)="showComplianceDialog = false"
+          (close)="closeComplianceDialog()"
         ></app-dialog-header>
         @if (selectedProgram(); as program) {
           <div class="program-compliance-content">
@@ -743,8 +744,8 @@ const PHASE_PRESETS = [
           secondaryVariant="secondary"
           primaryLabel="View Program"
           primaryIcon="eye"
-          (secondary)="showComplianceDialog = false"
-          (primary)="showComplianceDialog = false; showProgramDetailsDialog = true"
+          (secondary)="closeComplianceDialog()"
+          (primary)="showProgramDetailsFromCompliance()"
         />
       </app-dialog>
     </app-main-layout>
@@ -1030,20 +1031,72 @@ export class ProgramBuilderComponent implements OnInit {
     };
   }
 
-  // Dialog methods
-  openCreateDialog(): void {
+  private resetCreateDialogState(): void {
     this.isEditing.set(false);
     this.formData = this.getEmptyFormData();
     this.teamMembers.update((members) =>
-      members.map((m) => ({ ...m, selected: false })),
+      members.map((member) => ({ ...member, selected: false })),
     );
     this.selectAllPlayers = false;
+  }
+
+  closeCreateDialog(): void {
+    this.showCreateDialog = false;
+    this.resetCreateDialogState();
+  }
+
+  closeProgramDetailsDialog(): void {
+    this.showProgramDetailsDialog = false;
+  }
+
+  closeComplianceDialog(): void {
+    this.showComplianceDialog = false;
+  }
+
+  private refreshPrograms(): void {
+    this.loadData();
+  }
+
+  private showProgramDetailsDialogFor(program: TrainingProgram): void {
+    this.closeProgramDetailsDialog();
+    this.selectedProgram.set(program);
+    this.showProgramDetailsDialog = true;
+  }
+
+  private showComplianceDialogFor(program: TrainingProgram): void {
+    this.closeComplianceDialog();
+    this.selectedProgram.set(program);
+    this.showComplianceDialog = true;
+  }
+
+  private handleProgramMutation(
+    operation$: ReturnType<ApiService["post"]> | ReturnType<ApiService["put"]>,
+    options: {
+      successTitle: string;
+      successMessage: string;
+      closeDialog?: () => void;
+    },
+  ): void {
+    operation$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+      next: () => {
+        this.toastService.success(options.successMessage, options.successTitle);
+        options.closeDialog?.();
+        this.refreshPrograms();
+      },
+      error: (err) => this.logger.error(`Failed to ${options.successTitle.toLowerCase()}`, err),
+    });
+  }
+
+  // Dialog methods
+  openCreateDialog(): void {
+    this.resetCreateDialogState();
     this.showCreateDialog = true;
   }
 
   readonly openCreateDialogHandler = (): void => this.openCreateDialog();
 
   editProgram(program: TrainingProgram): void {
+    this.closeCreateDialog();
     this.isEditing.set(true);
     this.formData = {
       id: program.id,
@@ -1089,22 +1142,15 @@ export class ProgramBuilderComponent implements OnInit {
       startDate: this.formData.startDate.toISOString(),
     };
 
-    this.api.post(API_ENDPOINTS.coach.programsDraft, program).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-      next: () => {
-        this.toastService.success(
-          `${this.formData.name} saved as draft`,
-          "Draft Saved",
-        );
-        this.showCreateDialog = false;
-        this.loadData();
-      },
-      error: (err) => this.logger.error("Failed to save draft", err),
+    this.handleProgramMutation(this.api.post(API_ENDPOINTS.coach.programsDraft, program), {
+      successMessage: `${this.formData.name} saved as draft`,
+      successTitle: "Draft Saved",
+      closeDialog: () => this.closeCreateDialog(),
     });
   }
 
   previewProgram(): void {
-    this.selectedProgram.set(this.buildPreviewProgram());
-    this.showProgramDetailsDialog = true;
+    this.showProgramDetailsDialogFor(this.buildPreviewProgram());
   }
 
   publishNewProgram(): void {
@@ -1117,30 +1163,21 @@ export class ProgramBuilderComponent implements OnInit {
       assignedCount: this.selectedPlayerCount(),
     };
 
-    this.api.post(API_ENDPOINTS.coach.programs, program).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-      next: () => {
-        this.toastService.success(
-          `${this.formData.name} is now active`,
-          "Program Published",
-        );
-        this.showCreateDialog = false;
-        this.loadData();
-      },
-      error: (err) => this.logger.error("Failed to publish program", err),
+    this.handleProgramMutation(this.api.post(API_ENDPOINTS.coach.programs, program), {
+      successMessage: `${this.formData.name} is now active`,
+      successTitle: "Program Published",
+      closeDialog: () => this.closeCreateDialog(),
     });
   }
 
   publishProgram(program: TrainingProgram): void {
-    this.api.put(API_ENDPOINTS.coach.programPublish(program.id), {}).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-      next: () => {
-        this.toastService.success(
-          `${program.name} is now active`,
-          "Program Published",
-        );
-        this.loadData();
+    this.handleProgramMutation(
+      this.api.put(API_ENDPOINTS.coach.programPublish(program.id), {}),
+      {
+        successMessage: `${program.name} is now active`,
+        successTitle: "Program Published",
       },
-      error: (err) => this.logger.error("Failed to publish program", err),
-    });
+    );
   }
 
   async deleteProgram(program: TrainingProgram): Promise<void> {
@@ -1155,6 +1192,7 @@ export class ProgramBuilderComponent implements OnInit {
     this.api.delete(API_ENDPOINTS.coach.programDelete(program.id)).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: () => {
         this.toastService.info("Program deleted", "Program Deleted");
+        this.refreshPrograms();
       },
       error: (err) => this.logger.error("Failed to delete program", err),
     });
@@ -1168,13 +1206,17 @@ export class ProgramBuilderComponent implements OnInit {
   }
 
   viewProgramDetails(program: TrainingProgram): void {
-    this.selectedProgram.set(program);
-    this.showProgramDetailsDialog = true;
+    this.showProgramDetailsDialogFor(program);
   }
 
   viewCompliance(program: TrainingProgram): void {
-    this.selectedProgram.set(program);
-    this.showComplianceDialog = true;
+    this.showComplianceDialogFor(program);
+  }
+
+  showProgramDetailsFromCompliance(): void {
+    const program = this.selectedProgram();
+    if (!program) return;
+    this.showProgramDetailsDialogFor(program);
   }
 
   openProgramMenu(_event: Event, program: TrainingProgram): void {
@@ -1227,7 +1269,7 @@ export class ProgramBuilderComponent implements OnInit {
   editSelectedProgram(): void {
     const program = this.selectedProgram();
     if (!program) return;
-    this.showProgramDetailsDialog = false;
+    this.closeProgramDetailsDialog();
     this.editProgram(program);
   }
 

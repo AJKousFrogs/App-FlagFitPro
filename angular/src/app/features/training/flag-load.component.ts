@@ -16,7 +16,7 @@ import {
   FlagMetrics,
 } from "../../core/services/training-metrics.service";
 import { LoggerService } from "../../core/services/logger.service";
-import { AuthService } from "../../core/services/auth.service";
+import { SupabaseService } from "../../core/services/supabase.service";
 import { LazyChartComponent } from "../../shared/components/lazy-chart/lazy-chart.component";
 import { EmptyStateComponent } from "../../shared/components/empty-state/empty-state.component";
 import { formatDate } from "../../shared/utils/date.utils";
@@ -160,7 +160,7 @@ import { formatDate } from "../../shared/utils/date.utils";
   styleUrl: "./flag-load.component.scss",
 })
 export class FlagLoadComponent {
-  private readonly authService = inject(AuthService);
+  private readonly supabase = inject(SupabaseService);
   private readonly metricsService = inject(TrainingMetricsService);
   private readonly logger = inject(LoggerService);
   private lastLoadedAthleteId: string | null = null;
@@ -169,7 +169,7 @@ export class FlagLoadComponent {
   flagMetrics = signal<FlagMetrics[]>([]);
   isLoading = signal(true);
   hasData = signal(false);
-  readonly athleteId = computed(() => this.authService.currentUser()?.id ?? null);
+  readonly athleteId = computed(() => this.supabase.userId());
 
   chartData = signal<{
     labels: string[];

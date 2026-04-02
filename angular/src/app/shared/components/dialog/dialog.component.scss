@@ -7,6 +7,87 @@
     var(--ease-standard);
 }
 
+:host ::ng-deep {
+  .app-dialog-shell--settings.p-dialog {
+    max-width: 95vw;
+    border-radius: var(--radius-3xl);
+    overflow: hidden;
+    box-shadow: var(--shadow-lg);
+  }
+
+  .app-dialog-shell--settings.p-dialog .p-dialog-content {
+    padding: 0;
+    background: var(--surface-primary);
+  }
+
+  .app-dialog-shell--settings .p-dialog {
+    max-width: 95vw;
+    border-radius: var(--radius-3xl);
+    overflow: hidden;
+    box-shadow: var(--shadow-lg);
+  }
+
+  .app-dialog-shell--settings .p-dialog-content {
+    padding: 0;
+    background: var(--surface-primary);
+  }
+
+  .app-dialog-size--sm.p-dialog {
+    width: var(--dialog-max-width-sm);
+  }
+
+  .app-dialog-size--md.p-dialog {
+    width: calc(var(--dialog-max-width-md) + var(--space-8));
+  }
+
+  .app-dialog-size--lg.p-dialog {
+    width: var(--dialog-max-width-lg);
+  }
+
+  .app-dialog-size--xl.p-dialog {
+    width: var(--dialog-max-width-xl);
+  }
+
+  .app-dialog-size--2xl.p-dialog {
+    width: var(--dialog-max-width-2xl);
+  }
+
+  .app-dialog-scrollable.p-dialog .p-dialog-content {
+    max-height: var(--app-dialog-scroll-max-height, 80dvh);
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  @media (max-width: 26.875rem) {
+    .app-dialog-mobile-sticky-footer.p-dialog {
+      max-height: var(--app-dialog-mobile-max-height, 80dvh);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .app-dialog-mobile-sticky-footer.p-dialog .p-dialog-header {
+      flex-shrink: 0;
+    }
+
+    .app-dialog-mobile-sticky-footer.p-dialog .p-dialog-content {
+      flex: 1 1 auto;
+      min-height: 0;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .app-dialog-mobile-sticky-footer.p-dialog .p-dialog-footer {
+      flex-shrink: 0;
+      position: sticky;
+      bottom: 0;
+      background: var(--surface-primary);
+      padding-bottom: max(var(--space-3), env(safe-area-inset-bottom));
+      border-top: var(--border-1) solid var(--color-border-muted);
+      z-index: 10;
+    }
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .dialog-body {
     animation: none;

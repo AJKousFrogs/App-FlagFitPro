@@ -7,6 +7,7 @@
         [draggable]="false"
         [resizable]="false"
         [dismissableMask]="true"
+        dialogSize="md"
         [styleClass]="'poll-dialog'"
       >
         <app-dialog-header
@@ -82,6 +83,7 @@
         [draggable]="false"
         [resizable]="false"
         [dismissableMask]="true"
+        dialogSize="sm"
         [styleClass]="'location-dialog'"
       >
         <app-dialog-header
@@ -299,17 +301,14 @@
                       ></i>
                       <span>{{ post.likes }}</span>
                     </div>
-                    <div
+                    <button
+                      type="button"
                       class="stat-item clickable"
                       (click)="toggleComments(post)"
-                      role="button"
-                      tabindex="0"
                       aria-label="Toggle comments"
-                      (keydown.enter)="toggleComments(post)"
-                      (keydown.space)="toggleComments(post); $event.preventDefault()"
                     >
                       <span>{{ post.comments }} comments</span>
-                    </div>
+                    </button>
                     <div class="stat-item">
                       <span>{{ post.shares }} shares</span>
                     </div>

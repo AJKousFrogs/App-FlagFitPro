@@ -8,36 +8,23 @@ import {
   inject,
   signal,
 } from "@angular/core";
-import { toSignal } from "@angular/core/rxjs-interop";
-import {
-  ActivatedRouteSnapshot,
-  NavigationEnd,
-  Router,
-  RouterOutlet,
-} from "@angular/router";
+import { RouterOutlet } from "@angular/router";
 import { CookieConsentBannerComponent } from "./shared/components/cookie-consent-banner/cookie-consent-banner.component";
 import { DeferredFeedbackStylesComponent } from "./shared/components/deferred-feedback-styles/deferred-feedback-styles.component";
 import { DeferredGlobalStylesComponent } from "./shared/components/deferred-global-styles/deferred-global-styles.component";
 import { LoadingOverlayComponent } from "./shared/components/loading-overlay/loading-overlay.component";
 import { SkipToContentComponent } from "./shared/components/skip-to-content/skip-to-content.component";
 import { ConfirmDialog } from "primeng/confirmdialog";
-import { filter, map, startWith } from "rxjs";
 import { ToastComponent } from "./shared/components/toast/toast.component";
 import { CookieConsentService } from "./core/services/cookie-consent.service";
+import { MotionPreferencesService } from "./core/services/motion-preferences.service";
+import { RouteEntry, RouteShellService } from "./core/services/route-shell.service";
 import { ThemeService } from "./core/services/theme.service";
 import { ensurePrimeIconsStylesheet } from "./core/utils/primeicons-loader";
 import {
   routeAnimations,
   getRouteAnimationState,
 } from "./core/animations/route-animations";
-
-type RouteEntry =
-  | "deeplink"
-  | "hub"
-  | "internal"
-  | "legacy"
-  | "public"
-  | null;
 
 @Component({
   selector: "app-root",
@@ -88,25 +75,10 @@ export class AppComponent {
     optional: true,
   });
   private readonly destroyRef = inject(DestroyRef);
-  private readonly router = inject(Router);
   private readonly cookieConsentService = inject(CookieConsentService);
+  private readonly motionPreferencesService = inject(MotionPreferencesService);
+  private readonly routeShell = inject(RouteShellService);
   private readonly prefersReducedMotion = signal(false);
-  private readonly currentUrlPath = toSignal(
-    this.router.events.pipe(
-      filter((event): event is NavigationEnd => event instanceof NavigationEnd),
-      map(() => this.getCurrentUrlPath()),
-      startWith(this.getCurrentUrlPath()),
-    ),
-    { initialValue: this.getCurrentUrlPath() },
-  );
-  private readonly activeRouteEntry = toSignal(
-    this.router.events.pipe(
-      filter((event): event is NavigationEnd => event instanceof NavigationEnd),
-      map(() => this.getCurrentRouteEntry()),
-      startWith(this.getCurrentRouteEntry()),
-    ),
-    { initialValue: this.getCurrentRouteEntry() },
-  );
   private readonly cookieBannerReady = signal(false);
   private readonly feedbackStylesReady = signal(false);
   private cookieBannerTimer: number | null = null;
@@ -117,9 +89,9 @@ export class AppComponent {
       this.prefersReducedMotion() ||
       this.animationModuleType === "NoopAnimations",
   );
-  readonly isLandingRoute = computed(() => this.currentUrlPath() === "/");
+  readonly isLandingRoute = computed(() => this.routeShell.currentPath() === "/");
   readonly shouldLoadDeferredGlobalStyles = computed(() => {
-    const entry = this.activeRouteEntry();
+    const entry = this.routeShell.entry();
     return entry === "hub" || entry === "internal";
   });
   readonly shouldLoadDeferredFeedbackStyles = computed(
@@ -137,7 +109,11 @@ export class AppComponent {
     this.applyPlatformClasses();
     this.syncRouteClasses();
     this.initPrimeIconsLoading();
-    this.initReducedMotionPreference();
+    this.motionPreferencesService.watchReducedMotion(
+      (prefersReducedMotion) =>
+        this.prefersReducedMotion.set(prefersReducedMotion),
+      this.destroyRef,
+    );
     this.initFeedbackStylesScheduling();
     this.initCookieBannerScheduling();
   }
@@ -176,18 +152,6 @@ export class AppComponent {
     }
   }
 
-  private initReducedMotionPreference(): void {
-    if (typeof window === "undefined" || !("matchMedia" in window)) return;
-    const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
-    this.prefersReducedMotion.set(mediaQuery.matches);
-
-    const onChange = (event: MediaQueryListEvent) => {
-      this.prefersReducedMotion.set(event.matches);
-    };
-    mediaQuery.addEventListener("change", onChange);
-    this.destroyRef.onDestroy(() => mediaQuery.removeEventListener("change", onChange));
-  }
-
   private initPrimeIconsLoading(): void {
     effect(() => {
       if (!this.isLandingRoute()) {
@@ -213,7 +177,7 @@ export class AppComponent {
     this.destroyRef.onDestroy(() => this.clearCookieBannerTimer());
 
     effect(() => {
-      const entry = this.activeRouteEntry();
+      const entry = this.routeShell.entry();
       const shouldShowBanner = this.cookieConsentService.showBanner();
 
       if (!shouldShowBanner) {
@@ -286,27 +250,5 @@ export class AppComponent {
 
     window.clearTimeout(this.feedbackStylesTimer);
     this.feedbackStylesTimer = null;
-  }
-
-  private getCurrentRouteEntry(): RouteEntry {
-    let snapshot: ActivatedRouteSnapshot | null = this.router.routerState
-      .snapshot.root;
-    let entry: RouteEntry = null;
-
-    while (snapshot) {
-      const currentEntry = snapshot.data["entry"];
-      if (typeof currentEntry === "string") {
-        entry = currentEntry as RouteEntry;
-      }
-      snapshot = snapshot.firstChild ?? null;
-    }
-
-    return entry;
-  }
-
-  private getCurrentUrlPath(): string {
-    const [pathWithHash] = this.router.url.split("?");
-    const [path] = pathWithHash.split("#");
-    return path || "/";
   }
 }

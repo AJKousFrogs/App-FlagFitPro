@@ -220,14 +220,11 @@
                 </div>
 
                 <div class="timeline-content">
-                  <div
+                  <button
+                    type="button"
                     class="window-header"
                     (click)="toggleWindowExpanded(window.id)"
-                    role="button"
-                    tabindex="0"
                     [attr.aria-label]="'Toggle details for ' + window.title"
-                    (keydown.enter)="toggleWindowExpanded(window.id)"
-                    (keydown.space)="toggleWindowExpanded(window.id); $event.preventDefault()"
                   >
                     <div class="window-time">
                       <span class="item-time"
@@ -264,7 +261,7 @@
                         </button>
                       }
                     </div>
-                  </div>
+                  </button>
 
                   @if (!window.completed || isWindowExpanded(window.id)) {
                     <div class="window-details">

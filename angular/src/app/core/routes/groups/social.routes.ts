@@ -9,7 +9,7 @@ export const socialRoutes: Routes = [
         (m) => m.SearchComponent,
       ),
     canActivate: [authGuard],
-    data: { preload: false, entry: "internal" },
+    data: { preload: false, entry: "internal", headerPreset: "default" },
   },
   {
     path: "community",
@@ -25,7 +25,7 @@ export const socialRoutes: Routes = [
         (m) => m.AiCoachChatComponent,
       ),
     canActivate: [authGuard],
-    data: { preload: false, entry: "internal" }, // Secondary workflow in 2.0
+    data: { preload: false, entry: "internal", headerPreset: "default" }, // Secondary workflow in 2.0
   },
   // Redirect old ai-coach path to new /chat
   {
@@ -40,6 +40,6 @@ export const socialRoutes: Routes = [
     loadComponent: () =>
       import("../../../features/chat/chat.component").then((m) => m.ChatComponent),
     canActivate: [authGuard],
-    data: { preload: false, entry: "internal" }, // On-demand collaboration surface
+    data: { preload: false, entry: "internal", headerPreset: "default" }, // On-demand collaboration surface
   },
 ];

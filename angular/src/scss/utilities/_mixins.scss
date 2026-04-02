@@ -529,6 +529,121 @@
     box-shadow var(--transition-base);
 }
 
+// Shared padded surface panel for cards, callouts, and secondary containers.
+@mixin surface-panel(
+  $padding: var(--space-3),
+  $background: var(--surface-secondary),
+  $radius: var(--radius-md),
+  $border: null
+) {
+  padding: $padding;
+  background: $background;
+  border-radius: $radius;
+
+  @if $border {
+    border: $border;
+  }
+}
+
+// Shared selectable panel for onboarding/travel option cards.
+@mixin selectable-panel(
+  $padding: var(--space-5),
+  $gap: var(--space-4),
+  $radius: var(--radius-xl),
+  $border-color: var(--color-border-muted),
+  $background: var(--surface-primary),
+  $shadow: var(--shadow-sm),
+  $min-height: var(--card-min-height-sm),
+  $align: center,
+  $justify: null,
+  $direction: row,
+  $text-align: left,
+  $font-weight: null,
+  $position: null,
+  $overflow: null
+) {
+  padding: $padding;
+  border: var(--border-2) solid $border-color;
+  border-radius: $radius;
+  cursor: pointer;
+  display: flex;
+  flex-direction: $direction;
+  align-items: $align;
+  gap: $gap;
+  background: $background;
+  box-shadow: $shadow;
+  min-height: $min-height;
+  text-align: $text-align;
+
+  @if $justify {
+    justify-content: $justify;
+  }
+
+  @if $font-weight {
+    font-weight: $font-weight;
+  }
+
+  @if $position {
+    position: $position;
+  }
+
+  @if $overflow {
+    overflow: $overflow;
+  }
+
+  @include card-transition;
+}
+
+// Shared indicator shell for radio/check/toggle affordances inside selectable panels.
+@mixin selectable-indicator(
+  $size: var(--avatar-size-sm),
+  $radius: var(--radius-circle),
+  $border-color: var(--color-border-primary),
+  $background: var(--surface-secondary),
+  $min-width: null,
+  $margin-top: null
+) {
+  width: $size;
+  height: $size;
+  border-radius: $radius;
+  border: var(--border-2) solid $border-color;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  background: $background;
+
+  @if $min-width {
+    min-width: $min-width;
+  }
+
+  @if $margin-top {
+    margin-top: $margin-top;
+  }
+
+  @include card-transition;
+}
+
+// Shared callout / notice panel for informational and success states.
+@mixin callout-panel(
+  $background,
+  $border,
+  $color,
+  $padding: var(--space-5) var(--space-6),
+  $radius: var(--radius-xl),
+  $shadow: null
+) {
+  padding: $padding;
+  background: $background;
+  border: $border;
+  border-radius: $radius;
+  color: $color;
+
+  @if $shadow {
+    box-shadow: $shadow;
+  }
+}
+
 // ================================
 // INTERACTION STATE MIXINS
 // Angular 21 Best Practices

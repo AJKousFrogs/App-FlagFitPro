@@ -432,7 +432,8 @@
                 <!-- STEP 3: Session rows as card-like items -->
                 @for (session of filteredSessions(); track session.id) {
                   <!-- eslint-disable-next-line @angular-eslint/template/no-inline-styles -->
-                  <div
+                  <button
+                    type="button"
                     class="session-item"
                     [style.border-left-color]="
                       getSessionTypeColor(session.type)
@@ -443,10 +444,6 @@
                         : null
                     "
                     (click)="viewSession(session)"
-                    (keydown.enter)="viewSession(session)"
-                    (keydown.space)="viewSession(session)"
-                    tabindex="0"
-                    role="button"
                     [attr.aria-label]="
                       session.type +
                       ' on ' +
@@ -560,7 +557,7 @@
                         >
                       }
                     </div>
-                  </div>
+                  </button>
                 }
               }
             </div>

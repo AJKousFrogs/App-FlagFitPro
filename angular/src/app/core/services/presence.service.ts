@@ -14,7 +14,6 @@
 import { Injectable, inject, signal, computed, OnDestroy } from "@angular/core";
 import { RealtimeChannel } from "@supabase/supabase-js";
 import { SupabaseService } from "./supabase.service";
-import { AuthService } from "./auth.service";
 import { LoggerService } from "./logger.service";
 import { TIMEOUTS } from "../constants/app.constants";
 import { formatDate } from "../../shared/utils/date.utils";
@@ -56,7 +55,6 @@ export interface TeamPresence {
 })
 export class PresenceService implements OnDestroy {
   private supabase = inject(SupabaseService);
-  private authService = inject(AuthService);
   private logger = inject(LoggerService);
 
   // Presence channels
@@ -129,7 +127,7 @@ export class PresenceService implements OnDestroy {
       return;
     }
 
-    const user = this.authService.getUser();
+    const user = this.supabase.currentUser();
     if (!user) {
       this.logger.warn("Cannot start presence: No user logged in");
       return;

@@ -8,6 +8,7 @@
    ============================================ */
 
 @use "styles/mixins" as *;
+@use "styles/foundations" as *;
 
 .suggestion-page {
   min-height: 100vh;
@@ -194,15 +195,16 @@ height: 100dvh; // Modern: keyboard-aware
 
 /* Form Fields */
 .form-field {
+  @extend %form-field;
   margin-bottom: var(--space-6);
 }
 
 .form-field label {
-  display: block;
+  @extend %form-label;
   font-weight: var(--ds-font-weight-semibold);
-  color: var(--color-text-primary);
   margin-bottom: var(--space-3);
   font-size: var(--ds-font-size-md);
+  color: var(--color-text-primary);
 }
 
 .form-field input,
@@ -211,7 +213,7 @@ height: 100dvh; // Modern: keyboard-aware
 }
 
 .form-row {
-  display: grid;
+  @extend %form-row;
   grid-template-columns: 1fr 1fr;
   gap: var(--space-6);
 }

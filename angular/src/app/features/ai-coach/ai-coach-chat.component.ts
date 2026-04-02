@@ -32,12 +32,12 @@ import { ActivatedRoute } from "@angular/router";
 import { firstValueFrom } from "rxjs";
 import { TIMEOUTS, UI_LIMITS } from "../../core/constants/app.constants";
 import { ApiService, API_ENDPOINTS } from "../../core/services/api.service";
-import { AuthService } from "../../core/services/auth.service";
 import {
   LoggerService,
   toLogContext,
 } from "../../core/services/logger.service";
 import { MissingDataDetectionService } from "../../core/services/missing-data-detection.service";
+import { SupabaseService } from "../../core/services/supabase.service";
 import { TeamMembershipService } from "../../core/services/team-membership.service";
 import { ToastService } from "../../core/services/toast.service";
 import { UnifiedTrainingService } from "../../core/services/unified-training.service";
@@ -162,7 +162,7 @@ interface AutocompleteSuggestion {
 })
 export class AiCoachChatComponent implements OnInit, AfterViewChecked {
   private readonly apiService = inject(ApiService);
-  private readonly authService = inject(AuthService);
+  private readonly supabase = inject(SupabaseService);
   private readonly logger = inject(LoggerService);
   private readonly toast = inject(ToastService);
   private readonly destroyRef = inject(DestroyRef);
@@ -475,9 +475,11 @@ export class AiCoachChatComponent implements OnInit, AfterViewChecked {
 
   // User's first name for personalized greeting
   userName = computed(() => {
-    const user = this.authService.getUser();
-    if (!user?.name) return "";
-    return user.name.split(" ")[0];
+    const metadata = this.supabase.currentUser()?.user_metadata as
+      | { fullName?: string; firstName?: string }
+      | undefined;
+    const fullName = metadata?.fullName || metadata?.firstName || "";
+    return fullName ? fullName.split(" ")[0] : "";
   });
 
   // Micro-session signal wrapper
@@ -631,12 +633,12 @@ export class AiCoachChatComponent implements OnInit, AfterViewChecked {
    */
   async loadAIModeStatus(): Promise<void> {
     try {
-      const user = this.authService.getUser();
-      if (!user?.id) return;
+      const userId = this.supabase.userId();
+      if (!userId) return;
 
       // Check data confidence
       const wellnessStatus = await this.missingDataService.checkMissingWellness(
-        user.id,
+        userId,
       );
       const trainingDays =
         (this.acwrDisplay().trainingDaysLogged ??
@@ -714,9 +716,12 @@ export class AiCoachChatComponent implements OnInit, AfterViewChecked {
   }
 
   userInitials(): string {
-    const user = this.authService.getUser();
-    if (!user?.name) return "U";
-    const parts = user.name.split(" ");
+    const metadata = this.supabase.currentUser()?.user_metadata as
+      | { fullName?: string; firstName?: string }
+      | undefined;
+    const fullName = metadata?.fullName || metadata?.firstName;
+    if (!fullName) return "U";
+    const parts = fullName.split(" ");
     return parts
       .map((p) => p[0])
       .join("")

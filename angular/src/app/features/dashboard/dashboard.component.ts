@@ -7,9 +7,9 @@ import {
   signal,
 } from "@angular/core";
 import { Router } from "@angular/router";
-import { AuthService } from "../../core/services/auth.service";
 import { AppLoadingComponent } from "../../shared/components/loading/loading.component";
 import { DashboardRoleService } from "./services/dashboard-role.service";
+import { SupabaseService } from "../../core/services/supabase.service";
 
 /**
  * Dashboard Switcher
@@ -31,33 +31,34 @@ import { DashboardRoleService } from "./services/dashboard-role.service";
   `,
 })
 export class DashboardComponent implements OnInit {
-  private authService = inject(AuthService);
-  private dashboardRoleService = inject(DashboardRoleService);
-  private router = inject(Router);
+  private readonly supabase = inject(SupabaseService);
+  private readonly dashboardRoleService = inject(DashboardRoleService);
+  private readonly router = inject(Router);
 
   loadingMessage = signal("Redirecting...");
 
   async ngOnInit(): Promise<void> {
-    const user = this.authService.getUser();
+    const user = this.supabase.currentUser();
 
     if (!user) {
-      this.router.navigate(["/login"], { replaceUrl: true });
+      await this.router.navigate(["/login"], { replaceUrl: true });
       return;
     }
 
     // Check auth metadata role first
-    const authRole = user.role;
+    const metadata = user.user_metadata as { role?: string } | undefined;
+    const authRole = metadata?.role;
 
     // If auth metadata has a valid role, use it
     if (this.isCoachRole(authRole)) {
       this.loadingMessage.set("Loading your Coach Dashboard...");
-      this.router.navigate(["/coach/dashboard"], { replaceUrl: true });
+      await this.router.navigate(["/coach/dashboard"], { replaceUrl: true });
       return;
     }
 
     if (authRole === "player" || authRole === "athlete") {
       this.loadingMessage.set("Loading your Dashboard...");
-      this.router.navigate(["/player-dashboard"], { replaceUrl: true });
+      await this.router.navigate(["/player-dashboard"], { replaceUrl: true });
       return;
     }
 
@@ -70,7 +71,7 @@ export class DashboardComponent implements OnInit {
 
       if (role && this.isCoachRole(role)) {
         this.loadingMessage.set("Loading your Coach Dashboard...");
-        this.router.navigate(["/coach/dashboard"], { replaceUrl: true });
+        await this.router.navigate(["/coach/dashboard"], { replaceUrl: true });
         return;
       }
     } catch {
@@ -79,7 +80,7 @@ export class DashboardComponent implements OnInit {
 
     // Default: Player dashboard for unset roles
     this.loadingMessage.set("Loading your Dashboard...");
-    this.router.navigate(["/player-dashboard"], { replaceUrl: true });
+    await this.router.navigate(["/player-dashboard"], { replaceUrl: true });
   }
 
   /**

@@ -15,7 +15,7 @@ import { Injectable, inject } from "@angular/core";
 import { PreloadingStrategy, Route, Router } from "@angular/router";
 import { Observable, of } from "rxjs";
 import { DOCUMENT } from "@angular/common";
-import { DesignTokens } from "../../shared/models/design-tokens";
+import { SPACING } from "../utils/design-tokens.util";
 
 @Injectable({
   providedIn: "root",
@@ -25,7 +25,7 @@ export class QuickLinkPreloadStrategy implements PreloadingStrategy {
   private document = inject(DOCUMENT);
   private preloadedRoutes = new Set<string>();
   private observer?: IntersectionObserver;
-  private readonly preloadMargin = DesignTokens.spacing[12];
+  private readonly preloadMargin = SPACING[12];
 
   constructor() {
     // Initialize Intersection Observer for link visibility detection

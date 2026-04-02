@@ -1,6 +1,5 @@
 import { Routes } from "@angular/router";
 import { authGuard } from "../../guards/auth.guard";
-import { headerConfigGuard } from "../../guards/header-config.guard";
 
 export const trainingRoutes: Routes = [
   // Main training page - monthly calendar view for managing/logging sessions
@@ -10,12 +9,13 @@ export const trainingRoutes: Routes = [
       import("../../../features/training/training-schedule/training-schedule.component").then(
         (m) => m.TrainingScheduleComponent,
       ),
-    canActivate: [authGuard, headerConfigGuard],
+    canActivate: [authGuard],
     data: {
       preload: true,
       priority: "high",
       entry: "hub",
       animation: "slideLeft",
+      headerPreset: "training",
     },
   },
   {
@@ -24,8 +24,13 @@ export const trainingRoutes: Routes = [
       import("../../../features/training/training.component").then(
         (m) => m.TrainingComponent,
       ),
-    canActivate: [authGuard, headerConfigGuard],
-    data: { preload: false, entry: "internal", animation: "slideLeft" },
+    canActivate: [authGuard],
+    data: {
+      preload: false,
+      entry: "internal",
+      animation: "slideLeft",
+      headerPreset: "training",
+    },
   },
   {
     path: "training/builder",
@@ -59,8 +64,8 @@ export const trainingRoutes: Routes = [
       import("../../../features/training/advanced-training/advanced-training.component").then(
         (m) => m.AdvancedTrainingComponent,
       ),
-    canActivate: [authGuard, headerConfigGuard],
-    data: { preload: false, entry: "internal" },
+    canActivate: [authGuard],
+    data: { preload: false, entry: "internal", headerPreset: "training" },
   },
   // Sub-tools accessible via direct route but visually orphaned without hub
   {
@@ -70,7 +75,7 @@ export const trainingRoutes: Routes = [
         (m) => m.WorkoutComponent,
       ),
     canActivate: [authGuard],
-    data: { preload: false, entry: "internal" }, // Secondary entry under training workspace
+    data: { preload: false, entry: "internal", headerPreset: "training" }, // Secondary entry under training workspace
   },
   {
     path: "exercise-library",
@@ -79,7 +84,7 @@ export const trainingRoutes: Routes = [
         (m) => m.ExerciseLibraryComponent,
       ),
     canActivate: [authGuard],
-    data: { preload: false, entry: "internal" }, // Reference library
+    data: { preload: false, entry: "internal", headerPreset: "training" }, // Reference library
   },
   {
     path: "exercisedb",
@@ -88,7 +93,7 @@ export const trainingRoutes: Routes = [
         (m) => m.ExerciseDBManagerComponent,
       ),
     canActivate: [authGuard],
-    data: { preload: false, entry: "internal" }, // Coach-only feature, load on demand
+    data: { preload: false, entry: "internal", headerPreset: "training" }, // Coach-only feature, load on demand
   },
   // Redirect duplicate route to canonical /training
   {
@@ -104,7 +109,7 @@ export const trainingRoutes: Routes = [
         (m) => m.QbHubComponent,
       ),
     canActivate: [authGuard],
-    data: { preload: false, entry: "internal" }, // Position-specific
+    data: { preload: false, entry: "internal", headerPreset: "training" }, // Position-specific
   },
   {
     path: "training/qb/schedule",
@@ -131,7 +136,7 @@ export const trainingRoutes: Routes = [
         (m) => m.AiTrainingSchedulerComponent,
       ),
     canActivate: [authGuard],
-    data: { preload: false, entry: "internal" }, // Advanced feature
+    data: { preload: false, entry: "internal", headerPreset: "training" }, // Advanced feature
   },
   {
     path: "training/log",
@@ -140,7 +145,7 @@ export const trainingRoutes: Routes = [
         (m) => m.TrainingLogComponent,
       ),
     canActivate: [authGuard],
-    data: { preload: false, entry: "internal" }, // Accessed from training workflow
+    data: { preload: false, entry: "internal", headerPreset: "training" }, // Accessed from training workflow
   },
   {
     path: "training/safety",
@@ -149,7 +154,7 @@ export const trainingRoutes: Routes = [
         (m) => m.TrainingSafetyComponent,
       ),
     canActivate: [authGuard],
-    data: { preload: false, entry: "internal" }, // Safety feature - on demand
+    data: { preload: false, entry: "internal", headerPreset: "training" }, // Safety feature - on demand
   },
   {
     path: "training/smart-form",
@@ -158,7 +163,7 @@ export const trainingRoutes: Routes = [
         (m) => m.SmartTrainingFormComponent,
       ),
     canActivate: [authGuard],
-    data: { preload: false, entry: "internal" }, // Form feature - on demand
+    data: { preload: false, entry: "internal", headerPreset: "training" }, // Form feature - on demand
   },
   // Session detail route - shows session details
   {
@@ -168,7 +173,7 @@ export const trainingRoutes: Routes = [
         (m) => m.TrainingSessionDetailComponent,
       ),
     canActivate: [authGuard],
-    data: { preload: false, entry: "deeplink" },
+    data: { preload: false, entry: "deeplink", headerPreset: "training" },
   },
   {
     path: "training/videos",
@@ -177,7 +182,7 @@ export const trainingRoutes: Routes = [
         (m) => m.VideoFeedComponent,
       ),
     canActivate: [authGuard],
-    data: { preload: false, entry: "internal" }, // Heavy component - load on demand
+    data: { preload: false, entry: "internal", headerPreset: "training" }, // Heavy component - load on demand
   },
   {
     path: "training/videos/curation",
@@ -192,7 +197,7 @@ export const trainingRoutes: Routes = [
         (m) => m.VideoSuggestionComponent,
       ),
     canActivate: [authGuard],
-    data: { preload: false, entry: "internal" }, // Load on demand
+    data: { preload: false, entry: "internal", headerPreset: "training" }, // Load on demand
   },
   // Advanced tool redirects - consolidate orphaned routes
   {
@@ -208,7 +213,7 @@ export const trainingRoutes: Routes = [
         (m) => m.FlagLoadComponent,
       ),
     canActivate: [authGuard],
-    data: { preload: false, entry: "internal" }, // Advanced feature
+    data: { preload: false, entry: "internal", headerPreset: "training" }, // Advanced feature
   },
   {
     path: "training/goal-planner",
@@ -217,7 +222,7 @@ export const trainingRoutes: Routes = [
         (m) => m.GoalBasedPlannerComponent,
       ),
     canActivate: [authGuard],
-    data: { preload: false, entry: "internal" }, // Advanced feature
+    data: { preload: false, entry: "internal", headerPreset: "training" }, // Advanced feature
   },
   {
     path: "goals",
@@ -232,7 +237,7 @@ export const trainingRoutes: Routes = [
         (m) => m.MicrocyclePlannerComponent,
       ),
     canActivate: [authGuard],
-    data: { preload: false, entry: "internal" }, // Advanced feature
+    data: { preload: false, entry: "internal", headerPreset: "training" }, // Advanced feature
   },
   {
     path: "training/import",
@@ -241,7 +246,7 @@ export const trainingRoutes: Routes = [
         (m) => m.ImportDatasetComponent,
       ),
     canActivate: [authGuard],
-    data: { preload: false, entry: "internal" }, // Utility feature
+    data: { preload: false, entry: "internal", headerPreset: "training" }, // Utility feature
   },
   {
     path: "training/periodization",
@@ -250,6 +255,6 @@ export const trainingRoutes: Routes = [
         (m) => m.PeriodizationDashboardComponent,
       ),
     canActivate: [authGuard],
-    data: { preload: false, entry: "internal" }, // Advanced feature - load on demand
+    data: { preload: false, entry: "internal", headerPreset: "training" }, // Advanced feature - load on demand
   },
 ];

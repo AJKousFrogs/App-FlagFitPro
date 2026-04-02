@@ -3,15 +3,12 @@
        COMPLETION CELEBRATION OVERLAY (keep existing)
        ======================================================================== -->
   @if (showCelebration()) {
-    <div
+    <button
+      type="button"
       class="celebration-overlay"
       @celebrationFade
       (click)="dismissCelebration()"
-      role="button"
-      tabindex="0"
       aria-label="Dismiss celebration"
-      (keydown.enter)="dismissCelebration()"
-      (keydown.space)="dismissCelebration(); $event.preventDefault()"
     >
       <div class="celebration-content" @celebrationBounce>
         <div class="celebration-confetti">
@@ -45,7 +42,7 @@
           >Continue</app-button
         >
       </div>
-    </div>
+    </button>
   }
 
   <!-- ========================================================================

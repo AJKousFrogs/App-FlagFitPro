@@ -51,15 +51,18 @@ import { ExerciseCardComponent } from "./exercise-card.component";
       [attr.data-testid]="'protocol-block-' + block().type"
     >
       <!-- Block Header -->
-      <div
+      <button
+        type="button"
         class="block-header"
         data-testid="protocol-block-header"
         (click)="toggleExpand()"
         [style.--block-color]="blockConfig().color"
-        role="button"
-        tabindex="0"
-        (keydown.enter)="toggleExpand()"
-        (keydown.space)="toggleExpand(); $event.preventDefault()"
+        [attr.aria-expanded]="isExpanded()"
+        [attr.aria-label]="
+          isExpanded()
+            ? 'Collapse ' + block().title
+            : 'Expand ' + block().title
+        "
       >
         <div class="header-left">
           <div class="block-icon" [style.background]="blockConfig().color">
@@ -109,22 +112,13 @@ import { ExerciseCardComponent } from "./exercise-card.component";
           }
 
           <!-- Expand Toggle -->
-          <button
-            class="expand-toggle"
-            [attr.aria-expanded]="isExpanded()"
-            [attr.aria-label]="
-              isExpanded()
-                ? 'Collapse ' + block().title
-                : 'Expand ' + block().title
-            "
-            (click)="toggleExpand(); $event.stopPropagation()"
-          >
+          <span class="expand-toggle" aria-hidden="true">
             <span class="expand-text" aria-hidden="true">{{
               isExpanded() ? "▲ Collapse" : "▼ Expand"
             }}</span>
-          </button>
+          </span>
         </div>
-      </div>
+      </button>
 
       <!-- Progress Bar (only in detailed view) -->
       @if (!simpleView() && block().totalCount > 0) {

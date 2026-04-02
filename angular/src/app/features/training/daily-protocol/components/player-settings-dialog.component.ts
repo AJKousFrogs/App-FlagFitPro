@@ -40,8 +40,9 @@ import {
 } from "../../../../core/services/logger.service";
 import { UnifiedTrainingService } from "../../../../core/services/unified-training.service";
 import { extractApiPayload } from "../../../../core/utils/api-response-mapper";
-import { DIALOG_WIDTHS } from "../../../../core/utils/design-tokens.util";
-import { DesignTokens } from "../../../../shared/models/design-tokens";
+import {
+  DIALOG_BREAKPOINTS,
+} from "../../../../core/utils/design-tokens.util";
 
 export interface FlagPracticeSlot {
   day: number; // 0-6 (Sunday-Saturday)
@@ -107,7 +108,7 @@ interface DayOption {
       [breakpoints]="dialogBreakpoints"
       [draggable]="false"
       [resizable]="false"
-      styleClass="player-settings-dialog"
+      dialogSize="lg"
       ariaLabel="Training settings"
     >
       <app-dialog-header
@@ -363,9 +364,7 @@ interface DayOption {
   styleUrl: "./player-settings-dialog.component.scss",
 })
 export class PlayerSettingsDialogComponent {
-  readonly dialogBreakpoints = {
-    [DesignTokens.breakpoints.mobile]: DIALOG_WIDTHS.full,
-  };
+  readonly dialogBreakpoints = DIALOG_BREAKPOINTS.mobileFull;
   private readonly api = inject(ApiService);
   private readonly logger = inject(LoggerService);
   private readonly trainingService = inject(UnifiedTrainingService);

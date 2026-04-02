@@ -272,7 +272,7 @@ const EVENT_TYPE_CONFIG: Record<
         [draggable]="false"
         [resizable]="false"
         [dismissableMask]="true"
-        [styleClass]="'rsvp-dialog'"
+        dialogSize="md"
       >
         @if (selectedEvent(); as event) {
           <app-dialog-header

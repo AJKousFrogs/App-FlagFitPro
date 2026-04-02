@@ -137,7 +137,7 @@
   }
 
   /* Hover state for pointer devices */
-  @media (hover: hover) and (pointer: fine) {
+  @include hover-support {
     .p-button:hover:not(:disabled) {
       transform: translateY(calc(-1 * var(--space-1) / 2));
     }
@@ -182,7 +182,7 @@
     /* Raised button elevation */
     box-shadow: var(--shadow-md);
 
-    @media (hover: hover) and (pointer: fine) {
+    @include hover-support {
       &:hover:not(:disabled) {
         /* HOVER: White background + darker green text (WCAG AA) */
         background: var(--color-text-on-primary);
@@ -225,7 +225,7 @@
       background: none;
     }
 
-    @media (hover: hover) and (pointer: fine) {
+    @include hover-support {
       &:hover:not(:disabled) {
         background: var(--surface-tertiary);
         border-color: var(--ds-primary-green);
@@ -264,7 +264,7 @@
       background: none;
     }
 
-    @media (hover: hover) and (pointer: fine) {
+    @include hover-support {
       &:hover:not(:disabled) {
         background: var(--ds-primary-green-subtle);
         border-color: var(--ds-primary-green);
@@ -289,7 +289,7 @@
       border-color: var(--color-border-primary);
       color: var(--color-text-secondary);
 
-      @media (hover: hover) and (pointer: fine) {
+      @include hover-support {
         &:hover:not(:disabled) {
           background: var(--surface-secondary);
           border-color: var(--color-text-secondary);
@@ -302,7 +302,7 @@
       border-color: var(--color-status-success);
       color: var(--color-status-success);
 
-      @media (hover: hover) and (pointer: fine) {
+      @include hover-support {
         &:hover:not(:disabled) {
           background: var(--color-status-success-light);
         }
@@ -313,7 +313,7 @@
       border-color: var(--color-status-error);
       color: var(--color-status-error);
 
-      @media (hover: hover) and (pointer: fine) {
+      @include hover-support {
         &:hover:not(:disabled) {
           background: var(--color-status-error-light);
         }
@@ -324,7 +324,7 @@
       border-color: var(--color-status-warning);
       color: var(--color-status-warning-text);
 
-      @media (hover: hover) and (pointer: fine) {
+      @include hover-support {
         &:hover:not(:disabled) {
           background: var(--color-status-warning-light);
         }
@@ -335,7 +335,7 @@
       border-color: var(--color-status-info);
       color: var(--color-status-info);
 
-      @media (hover: hover) and (pointer: fine) {
+      @include hover-support {
         &:hover:not(:disabled) {
           background: var(--color-status-info-light);
         }
@@ -346,7 +346,7 @@
       border-color: var(--color-status-help);
       color: var(--color-status-help);
 
-      @media (hover: hover) and (pointer: fine) {
+      @include hover-support {
         &:hover:not(:disabled) {
           background: var(--color-status-help-light);
         }
@@ -357,7 +357,7 @@
       border-color: var(--color-text-primary);
       color: var(--color-text-primary);
 
-      @media (hover: hover) and (pointer: fine) {
+      @include hover-support {
         &:hover:not(:disabled) {
           background: var(--color-text-primary);
           color: var(--surface-primary);
@@ -381,7 +381,7 @@
       background: none;
     }
 
-    @media (hover: hover) and (pointer: fine) {
+    @include hover-support {
       &:hover:not(:disabled) {
         background: var(--ds-primary-green-subtle);
         color: var(--ds-primary-green-hover);
@@ -397,7 +397,7 @@
     &.p-button-secondary {
       color: var(--color-text-secondary);
 
-      @media (hover: hover) and (pointer: fine) {
+      @include hover-support {
         &:hover:not(:disabled) {
           background: var(--surface-secondary);
           color: var(--color-text-primary);
@@ -408,7 +408,7 @@
     &.p-button-success {
       color: var(--color-status-success);
 
-      @media (hover: hover) and (pointer: fine) {
+      @include hover-support {
         &:hover:not(:disabled) {
           background: var(--color-status-success-light);
         }
@@ -418,7 +418,7 @@
     &.p-button-danger {
       color: var(--color-status-error);
 
-      @media (hover: hover) and (pointer: fine) {
+      @include hover-support {
         &:hover:not(:disabled) {
           background: var(--color-status-error-light);
         }
@@ -428,7 +428,7 @@
     &.p-button-warning {
       color: var(--color-status-warning-text);
 
-      @media (hover: hover) and (pointer: fine) {
+      @include hover-support {
         &:hover:not(:disabled) {
           background: var(--color-status-warning-light);
         }
@@ -438,7 +438,7 @@
     &.p-button-info {
       color: var(--color-status-info);
 
-      @media (hover: hover) and (pointer: fine) {
+      @include hover-support {
         &:hover:not(:disabled) {
           background: var(--color-status-info-light);
         }
@@ -448,7 +448,7 @@
     &.p-button-help {
       color: var(--color-status-help);
 
-      @media (hover: hover) and (pointer: fine) {
+      @include hover-support {
         &:hover:not(:disabled) {
           background: var(--color-status-help-light);
         }
@@ -458,7 +458,7 @@
     &.p-button-contrast {
       color: var(--color-text-primary);
 
-      @media (hover: hover) and (pointer: fine) {
+      @include hover-support {
         &:hover:not(:disabled) {
           background: var(--surface-secondary);
         }
@@ -484,7 +484,7 @@
       var(--shadow-md),
       inset 0 var(--border-1) 0 var(--overlay-white-20);
 
-    @media (hover: hover) and (pointer: fine) {
+    @include hover-support {
       &:hover:not(:disabled) {
         background: linear-gradient(
           180deg,
@@ -523,7 +523,7 @@
       var(--shadow-md),
       inset 0 var(--border-1) 0 var(--overlay-white-20);
 
-    @media (hover: hover) and (pointer: fine) {
+    @include hover-support {
       &:hover:not(:disabled) {
         background: linear-gradient(
           180deg,
@@ -571,7 +571,7 @@
       );
     }
 
-    @media (hover: hover) and (pointer: fine) {
+    @include hover-support {
       &:hover:not(:disabled) {
         background: linear-gradient(
           180deg,
@@ -610,7 +610,7 @@
       var(--shadow-md),
       inset 0 var(--border-1) 0 var(--overlay-white-15);
 
-    @media (hover: hover) and (pointer: fine) {
+    @include hover-support {
       &:hover:not(:disabled) {
         background: linear-gradient(
           180deg,
@@ -649,7 +649,7 @@
       var(--shadow-md),
       inset 0 var(--border-1) 0 var(--overlay-white-15);
 
-    @media (hover: hover) and (pointer: fine) {
+    @include hover-support {
       &:hover:not(:disabled) {
         background: linear-gradient(
           180deg,
@@ -686,7 +686,7 @@
       var(--shadow-md),
       inset 0 var(--border-1) 0 var(--overlay-white-10);
 
-    @media (hover: hover) and (pointer: fine) {
+    @include hover-support {
       &:hover:not(:disabled) {
         background: linear-gradient(
           180deg,
@@ -850,7 +850,7 @@
         background: none;
       }
 
-      @media (hover: hover) and (pointer: fine) {
+      @include hover-support {
         &:hover:not(:disabled) {
           background: var(--surface-tertiary);
           border-color: var(--ds-primary-green);
@@ -860,7 +860,7 @@
     }
 
     .p-button-outlined {
-      @media (hover: hover) and (pointer: fine) {
+      @include hover-support {
         &:hover:not(:disabled) {
           background: var(--ds-primary-green-subtle);
         }
@@ -870,7 +870,7 @@
         border-color: var(--surface-primary);
         color: var(--surface-primary);
 
-        @media (hover: hover) and (pointer: fine) {
+        @include hover-support {
           &:hover:not(:disabled) {
             background: var(--surface-primary);
             color: var(--color-text-primary);
@@ -880,7 +880,7 @@
     }
 
     .p-button-text {
-      @media (hover: hover) and (pointer: fine) {
+      @include hover-support {
         &:hover:not(:disabled) {
           background: var(--ds-primary-green-subtle);
         }
@@ -896,7 +896,7 @@
       border-color: var(--primitive-neutral-300);
       color: var(--primitive-neutral-900);
 
-      @media (hover: hover) and (pointer: fine) {
+      @include hover-support {
         &:hover:not(:disabled) {
           background: linear-gradient(
             180deg,
@@ -1109,7 +1109,7 @@
       var(--shadow-sm);
 
     /* Hover state - Green accent */
-    @media (hover: hover) and (pointer: fine) {
+    @include hover-support {
       &:hover {
         background: var(--ds-primary-green-ultra-subtle);
         border-color: var(--ds-primary-green-subtle);
@@ -1154,7 +1154,7 @@
   /* Danger variant - for destructive dialogs */
   .close-button-danger,
   .p-dialog-header-close.danger {
-    @media (hover: hover) and (pointer: fine) {
+    @include hover-support {
       &:hover {
         background: var(--color-status-error-light);
         border-color: var(--color-status-error);
@@ -1187,7 +1187,7 @@
     border-color: transparent;
     box-shadow: none;
 
-    @media (hover: hover) and (pointer: fine) {
+    @include hover-support {
       &:hover {
         background: var(--surface-secondary);
         border-color: transparent;
@@ -1251,7 +1251,7 @@
         inset 0 var(--border-1) 0 var(--overlay-white-10),
         var(--shadow-sm);
 
-      @media (hover: hover) and (pointer: fine) {
+      @include hover-support {
         &:hover {
           background: var(--hover-bg-tertiary);
           border-color: var(--hover-border-subtle);

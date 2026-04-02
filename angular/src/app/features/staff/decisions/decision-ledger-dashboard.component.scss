@@ -1,4 +1,5 @@
 @use "styles/mixins" as *;
+@use "styles/foundations" as *;
 
 .decision-ledger-dashboard {
   padding: var(--space-6);
@@ -15,6 +16,7 @@
 }
 
 .stat-block__value {
+  @extend %stat-value;
   font-size: var(--ds-font-size-3xl);
   font-weight: var(--ds-font-weight-bold);
   color: var(--color-text-primary);
@@ -30,6 +32,7 @@
 }
 
 .stat-block__label {
+  @extend %stat-label;
   font-size: var(--ds-font-size-sm);
   color: var(--color-text-secondary);
 }

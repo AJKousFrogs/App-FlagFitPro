@@ -3,13 +3,21 @@
  * Used by ACWR and Readiness services to avoid duplication
  */
 
-import type { ResearchCitation } from "../../core/config/evidence-config";
+import type {
+  EvidencePreset,
+  ResearchCitation,
+} from "../../core/config/evidence-config";
 
 export interface EvidenceCitation {
   authors: string;
   year: number;
   title: string;
   doi?: string;
+}
+
+export interface BaseEvidenceInfo {
+  preset: string;
+  citations: EvidenceCitation[];
 }
 
 /**
@@ -34,4 +42,14 @@ export function getPresetDisplay(preset: {
   version: string;
 }): string {
   return `${preset.name} (${preset.version})`;
+}
+
+export function buildBaseEvidenceInfo(
+  preset: Pick<EvidencePreset, "name" | "version">,
+  citations: ResearchCitation[],
+): BaseEvidenceInfo {
+  return {
+    preset: getPresetDisplay(preset),
+    citations: mapEvidenceCitations(citations),
+  };
 }

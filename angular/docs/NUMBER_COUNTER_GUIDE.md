@@ -502,7 +502,7 @@ export class MyComponent {
 ## Related Documentation
 
 - [Animation Primitives Guide](/docs/ANIMATION_PRIMITIVES.md) - Base animation classes
-- [Route Animations Guide](/docs/ROUTE_ANIMATIONS_GUIDE.md) - Page transitions
+- [Route Animations Guide](./ROUTE_ANIMATIONS_GUIDE.md) - Page transitions
 - [Design System Tokens](/src/scss/tokens/design-system-tokens.scss) - Motion tokens
 
 ---

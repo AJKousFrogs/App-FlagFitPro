@@ -40,6 +40,29 @@ interface ErrorLikeRecord {
 const fallbackLogger = new LoggerService();
 
 /**
+ * Identify expected client-side API failures that should not be logged as
+ * unexpected application errors.
+ */
+export function isExpectedApiClientError(error: unknown): boolean {
+  if (!error || typeof error !== "object") return false;
+
+  const candidate = error as {
+    status?: unknown;
+    url?: unknown;
+    isExpectedApiFailure?: unknown;
+  };
+
+  if (candidate.isExpectedApiFailure === true) return true;
+
+  const status =
+    typeof candidate.status === "number" ? candidate.status : undefined;
+  if (!status || ![400, 401, 403, 404].includes(status)) return false;
+
+  const url = typeof candidate.url === "string" ? candidate.url : "";
+  return url.includes("/api/") || url === "";
+}
+
+/**
  * Extract a user-friendly error message from any error type
  *
  * Handles:

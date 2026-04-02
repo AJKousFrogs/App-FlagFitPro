@@ -9,11 +9,8 @@
   position: relative;
   display: grid;
   place-items: center;
-  min-height: 100vh;
-  min-height: 100dvh; // Modern: keyboard-aware
-height: 100dvh; // Modern: keyboard-aware
-  min-height: 100dvh;
-  padding: var(--layout-page-padding-y) var(--layout-page-padding-x);
+  min-height: 100vh; // Fallback for older browsers
+  height: 100dvh;     // Modern: keyboard-aware  padding: var(--layout-page-padding-y) var(--layout-page-padding-x);
   background:
     radial-gradient(
       120% 90% at 12% 0%,

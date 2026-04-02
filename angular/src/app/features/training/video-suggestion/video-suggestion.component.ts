@@ -60,10 +60,10 @@ import { EmptyStateComponent } from "../../../shared/components/empty-state/empt
 import { StatusTagComponent } from "../../../shared/components/status-tag/status-tag.component";
 
 // Services
-import { AuthService } from "../../../core/services/auth.service";
 import { HapticFeedbackService } from "../../../core/services/haptic-feedback.service";
 import { InstagramVideoService } from "../../../core/services/instagram-video.service";
 import { LoggerService } from "../../../core/services/logger.service";
+import { SupabaseService } from "../../../core/services/supabase.service";
 import { ToastService } from "../../../core/services/toast.service";
 import { TOAST } from "../../../core/constants/toast-messages.constants";
 import { VideoSuggestionDataService } from "../services/video-suggestion-data.service";
@@ -553,6 +553,7 @@ interface VideoSuggestion {
         <!-- Video Preview Dialog -->
         <app-dialog
           [(visible)]="showVideoDialog"
+          dialogSize="xl"
           class="video-preview-dialog"
           [draggable]="false"
           [dismissableMask]="true"
@@ -606,7 +607,7 @@ export class VideoSuggestionComponent implements OnInit {
   private instagramService = inject(InstagramVideoService);
   private toastService = inject(ToastService);
   private hapticService = inject(HapticFeedbackService);
-  private authService = inject(AuthService);
+  private supabase = inject(SupabaseService);
   private videoSuggestionDataService = inject(VideoSuggestionDataService);
   private logger = inject(LoggerService);
 
@@ -749,7 +750,7 @@ export class VideoSuggestionComponent implements OnInit {
     this.hapticService.medium();
 
     try {
-      const user = this.authService.getUser();
+      const user = this.supabase.currentUser();
       if (!user?.id) {
         this.toastService.error(TOAST.ERROR.LOGIN_TO_SUBMIT);
         return;
@@ -801,7 +802,7 @@ export class VideoSuggestionComponent implements OnInit {
   // Load suggestions
   private async loadMySuggestions(): Promise<void> {
     try {
-      const user = this.authService.getUser();
+      const user = this.supabase.currentUser();
       if (!user?.id) {
         this.isLoadingSuggestions.set(false);
         return;

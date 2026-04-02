@@ -1,6 +1,5 @@
 import { Routes } from "@angular/router";
 import { authGuard } from "../../guards/auth.guard";
-import { headerConfigGuard } from "../../guards/header-config.guard";
 
 export const dashboardRoutes: Routes = [
   {
@@ -9,12 +8,13 @@ export const dashboardRoutes: Routes = [
       import("../../../features/today/today.component").then(
         (m) => m.TodayComponent,
       ),
-    canActivate: [authGuard, headerConfigGuard],
+    canActivate: [authGuard],
     data: {
       preload: true,
       priority: "high",
       entry: "internal",
       animation: "fade",
+      headerPreset: "dashboard",
     },
   },
   {
@@ -29,6 +29,7 @@ export const dashboardRoutes: Routes = [
       priority: "high",
       entry: "internal",
       animation: "fade",
+      headerPreset: "dashboard",
     },
   },
   {
@@ -43,12 +44,13 @@ export const dashboardRoutes: Routes = [
       import("../../../features/dashboard/player-dashboard.component").then(
         (m) => m.PlayerDashboardComponent,
       ),
-    canActivate: [authGuard, headerConfigGuard],
+    canActivate: [authGuard],
     data: {
       preload: true,
       priority: "high",
       entry: "internal",
       animation: "fade",
+      headerPreset: "dashboard",
     },
   },
   {

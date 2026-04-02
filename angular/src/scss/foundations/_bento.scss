@@ -1,0 +1,35 @@
+/**
+ * Foundations: Bento Card Placeholders
+ * ====================================
+ *
+ * Shared bento shell patterns repeatedly redefined in feature-level pages.
+ */
+
+%bento-surface-card {
+  background: var(--surface-primary);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-sm);
+  min-width: 0;
+  transition:
+    transform var(--transition-base),
+    box-shadow var(--transition-base);
+
+  &:hover {
+    box-shadow: var(--shadow-md);
+  }
+}
+
+%bento-header-shell {
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  padding: 0;
+}
+
+%bento-title {
+  font-size: var(--ds-font-size-lg);
+  font-weight: var(--ds-font-weight-bold);
+  color: var(--color-text-primary);
+  display: flex;
+  align-items: center;
+}

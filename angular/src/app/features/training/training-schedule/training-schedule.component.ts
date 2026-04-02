@@ -11,15 +11,15 @@ import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
-import { ActivatedRoute, Router, RouterModule } from "@angular/router";
+import { ActivatedRoute, ParamMap, Router, RouterModule } from "@angular/router";
 import { Checkbox, type CheckboxChangeEvent } from "primeng/checkbox";
 import { DatePicker } from "primeng/datepicker";
 import { Skeleton } from "primeng/skeleton";
 
 import { UI_LIMITS } from "../../../core/constants/app.constants";
-import { AuthService } from "../../../core/services/auth.service";
 import { LoggerService } from "../../../core/services/logger.service";
 import { toLogContext } from "../../../core/services/logger.service";
+import { SupabaseService } from "../../../core/services/supabase.service";
 import { TrainingScheduleDataService } from "../services/training-schedule-data.service";
 import { ToastService } from "../../../core/services/toast.service";
 import { TOAST } from "../../../core/constants/toast-messages.constants";
@@ -104,7 +104,7 @@ interface MonthlyStats {
 })
 export class TrainingScheduleComponent implements OnInit {
   private trainingScheduleDataService = inject(TrainingScheduleDataService);
-  private authService = inject(AuthService);
+  private supabase = inject(SupabaseService);
   private toastService = inject(ToastService);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
@@ -147,8 +147,17 @@ export class TrainingScheduleComponent implements OnInit {
     "Failed to load training sessions. Please try again.",
   );
 
+  private readonly currentUser = computed(() => this.supabase.currentUser());
+
+  private readonly currentUserRole = computed(() => {
+    const metadata = this.currentUser()?.user_metadata as
+      | { role?: string }
+      | undefined;
+    return metadata?.role || "player";
+  });
+
   readonly isCoach = computed(() => {
-    const role = this.authService.getUser()?.role || "player";
+    const role = this.currentUserRole();
     return ["coach", "assistant_coach", "admin"].includes(role);
   });
 
@@ -220,26 +229,53 @@ export class TrainingScheduleComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // Check for date query parameter
-    const dateParam = this.route.snapshot.queryParams["date"];
-    if (dateParam) {
-      try {
-        const parsedDate = new Date(dateParam);
-        if (!isNaN(parsedDate.getTime())) {
-          this.selectedDate.set(parsedDate);
-          this.logger.debug("Initialized with date from query param", {
-            date: dateParam,
-          });
-        }
-      } catch (_error) {
-        this.logger.warn("Invalid date query parameter", { date: dateParam });
-      }
-    }
+    this.observeRouteDate();
 
     this.loadSessions();
     this.loadMonthlyStats();
     this.loadDateMarkers();
     this.checkWeatherForTodaysSessions();
+  }
+
+  private observeRouteDate(): void {
+    this.route.queryParamMap
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((queryParams) => {
+        void this.applyRouteDate(queryParams);
+      });
+  }
+
+  private async applyRouteDate(queryParams: ParamMap): Promise<void> {
+    const dateParam = queryParams.get("date");
+    if (!dateParam) {
+      return;
+    }
+
+    try {
+      const parsedDate = new Date(dateParam);
+      if (isNaN(parsedDate.getTime())) {
+        this.logger.warn("Invalid date query parameter", { date: dateParam });
+        return;
+      }
+
+      const previousDate = toLocalDateKey(this.selectedDate());
+      const nextDate = toLocalDateKey(parsedDate);
+      if (previousDate === nextDate) {
+        return;
+      }
+
+      this.selectedDate.set(parsedDate);
+      this.logger.debug("Updated schedule date from query param", {
+        date: dateParam,
+      });
+
+      await this.loadSessions();
+      await this.loadMonthlyStats();
+      await this.loadDateMarkers();
+      this.checkWeatherForTodaysSessions();
+    } catch (_error) {
+      this.logger.warn("Invalid date query parameter", { date: dateParam });
+    }
   }
 
   /**
@@ -301,7 +337,7 @@ export class TrainingScheduleComponent implements OnInit {
     this.hasError.set(false);
 
     try {
-      const user = this.authService.getUser();
+      const user = this.currentUser();
       if (!user?.id) {
         this.logger.warn("No user found, cannot load sessions");
         this.isLoading.set(false);
@@ -518,9 +554,7 @@ export class TrainingScheduleComponent implements OnInit {
       return;
     }
     const selectedDateStr = toLocalDateKey(this.selectedDate());
-    this.router.navigate(["/training/smart-form"], {
-      queryParams: selectedDateStr ? { date: selectedDateStr } : {},
-    });
+    this.navigateToSmartForm(selectedDateStr ? { date: selectedDateStr } : {});
     this.logger.debug("Navigating to session creation form", {
       date: selectedDateStr,
     });
@@ -550,9 +584,7 @@ export class TrainingScheduleComponent implements OnInit {
 
       // Update local state
       this.sessions.update((sessions) =>
-        sessions.map((s) =>
-          s.id === session.id ? { ...s, status: "completed" as const } : s,
-        ),
+        this.updateSessionStatus(sessions, session.id, "completed"),
       );
 
       this.toastService.success(TOAST.SUCCESS.SESSION_COMPLETED);
@@ -572,7 +604,7 @@ export class TrainingScheduleComponent implements OnInit {
   ): Promise<void> {
     event.stopPropagation();
 
-    const user = this.authService.getUser();
+    const user = this.currentUser();
     if (!user?.id) {
       this.toastService.error(TOAST.ERROR.LOGIN_TO_START);
       return;
@@ -611,12 +643,10 @@ export class TrainingScheduleComponent implements OnInit {
 
       // Navigate to the training log to complete the session
       // The training log allows logging RPE, duration, and completing the session
-      this.router.navigate(["/training/log"], {
-        queryParams: {
-          sessionId: sessionId ?? session.id,
-          type: session.type,
-          duration: session.duration,
-        },
+      this.navigateToTrainingLog({
+        sessionId: sessionId ?? session.id,
+        type: session.type,
+        duration: session.duration,
       });
     } catch (error) {
       this.logger.error("Error starting session:", error);
@@ -704,26 +734,16 @@ export class TrainingScheduleComponent implements OnInit {
    */
   async loadDateMarkers(): Promise<void> {
     try {
-      const user = this.authService.getUser();
-      if (!user?.id) return;
+      const userId = this.getCurrentUserId();
+      if (!userId) return;
 
-      const selected = this.selectedDate();
-      const startOfMonth = new Date(
-        selected.getFullYear(),
-        selected.getMonth(),
-        1,
-      );
-      const endOfMonth = new Date(
-        selected.getFullYear(),
-        selected.getMonth() + 1,
-        0,
-      );
+      const { startDate, endDate } = this.getSelectedMonthRange();
 
       const { sessions, error } =
         await this.trainingScheduleDataService.fetchDateMarkers({
-          userId: user.id,
-          startDate: toLocalDateKey(startOfMonth),
-          endDate: toLocalDateKey(endOfMonth),
+          userId,
+          startDate,
+          endDate,
         });
 
       if (error) {
@@ -749,26 +769,16 @@ export class TrainingScheduleComponent implements OnInit {
    */
   async loadMonthlyStats(): Promise<void> {
     try {
-      const user = this.authService.getUser();
-      if (!user?.id) return;
+      const userId = this.getCurrentUserId();
+      if (!userId) return;
 
-      const selected = this.selectedDate();
-      const startOfMonth = new Date(
-        selected.getFullYear(),
-        selected.getMonth(),
-        1,
-      );
-      const endOfMonth = new Date(
-        selected.getFullYear(),
-        selected.getMonth() + 1,
-        0,
-      );
+      const { startDate, endDate } = this.getSelectedMonthRange();
 
       const { sessions, error } =
         await this.trainingScheduleDataService.fetchMonthlyStats({
-          userId: user.id,
-          startDate: toLocalDateKey(startOfMonth),
-          endDate: toLocalDateKey(endOfMonth),
+          userId,
+          startDate,
+          endDate,
         });
 
       if (error) {
@@ -902,9 +912,7 @@ export class TrainingScheduleComponent implements OnInit {
             );
             // Update the session in local state to show as cancelled
             this.sessions.update((sessions) =>
-              sessions.map((s) =>
-                s.id === session.id ? { ...s, status: "missed" as const } : s,
-              ),
+              this.updateSessionStatus(sessions, session.id, "missed"),
             );
           } else {
             this.toastService.error("Failed to cancel session");
@@ -925,11 +933,9 @@ export class TrainingScheduleComponent implements OnInit {
     if (!substitute?.id) {
       // If no ID, the substitute wasn't saved yet - just navigate to start it
       this.toastService.success("Starting substitute workout...");
-      this.router.navigate(["/training/smart-form"], {
-        queryParams: {
-          substituteType: substitute?.workoutType,
-          duration: substitute?.durationMinutes,
-        },
+      this.navigateToSmartForm({
+        substituteType: substitute?.workoutType,
+        duration: substitute?.durationMinutes,
       });
       this.weatherCancellationService.clearSuggestedSubstitute();
       return;
@@ -943,11 +949,9 @@ export class TrainingScheduleComponent implements OnInit {
           if (success) {
             this.toastService.success("Workout accepted! Let's go!");
             // Navigate to workout execution page or show workout details
-            this.router.navigate(["/training/smart-form"], {
-              queryParams: {
-                substituteId: substitute.id,
-                substituteType: substitute.workoutType,
-              },
+            this.navigateToSmartForm({
+              substituteId: substitute.id,
+              substituteType: substitute.workoutType,
             });
           } else {
             this.toastService.error("Failed to accept workout");
@@ -998,6 +1002,58 @@ export class TrainingScheduleComponent implements OnInit {
       default:
         return "Indoor";
     }
+  }
+
+  private getCurrentUserId(): string | null {
+    return this.currentUser()?.id ?? null;
+  }
+
+  private getSelectedMonthRange(): {
+    startDate: string;
+    endDate: string;
+  } {
+    const selected = this.selectedDate();
+    const startOfMonth = new Date(
+      selected.getFullYear(),
+      selected.getMonth(),
+      1,
+    );
+    const endOfMonth = new Date(
+      selected.getFullYear(),
+      selected.getMonth() + 1,
+      0,
+    );
+
+    return {
+      startDate: toLocalDateKey(startOfMonth),
+      endDate: toLocalDateKey(endOfMonth),
+    };
+  }
+
+  private navigateToSmartForm(
+    queryParams: Record<string, string | number | undefined>,
+  ): void {
+    this.router.navigate(["/training/smart-form"], {
+      queryParams,
+    });
+  }
+
+  private navigateToTrainingLog(
+    queryParams: Record<string, string | number | undefined>,
+  ): void {
+    this.router.navigate(["/training/log"], {
+      queryParams,
+    });
+  }
+
+  private updateSessionStatus(
+    sessions: TrainingSession[],
+    sessionId: string,
+    status: TrainingSession["status"],
+  ): TrainingSession[] {
+    return sessions.map((session) =>
+      session.id === sessionId ? { ...session, status } : session,
+    );
   }
 
   /**

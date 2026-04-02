@@ -22,7 +22,6 @@ import {
   getErrorMessage,
   isBenignSupabaseQueryError,
 } from "../../shared/utils/error.utils";
-import { AuthService } from "./auth.service";
 import { LoggerService, toLogContext } from "./logger.service";
 import { RealtimeCallback, RealtimeService } from "./realtime.service";
 import { SupabaseService } from "./supabase.service";
@@ -188,7 +187,6 @@ export interface ChannelMembersResponse {
 })
 export class ChannelService {
   private supabase = inject(SupabaseService);
-  private authService = inject(AuthService);
   private logger = inject(LoggerService);
   private realtimeService = inject(RealtimeService);
   private teamMembershipService = inject(TeamMembershipService);
@@ -210,7 +208,7 @@ export class ChannelService {
   readonly error = computed(() => this._error());
 
   async fetchCurrentTeamId(): Promise<string | null> {
-    const userId = this.authService.getUser()?.id;
+    const userId = this.getCurrentUserId();
     if (!userId) return null;
 
     const membership = await this.teamMembershipService.loadMembership();
@@ -336,7 +334,7 @@ export class ChannelService {
     this._error.set(null);
 
     try {
-      const userId = this.authService.getUser()?.id;
+      const userId = this.getCurrentUserId();
       if (!userId) throw new Error("Not authenticated");
 
       // Validate permissions for non-DM channels
@@ -548,7 +546,7 @@ export class ChannelService {
    */
   async sendMessage(request: SendMessageRequest): Promise<ChatMessage> {
     try {
-      const userId = this.authService.getUser()?.id;
+      const userId = this.getCurrentUserId();
       if (!userId) throw new Error("Not authenticated");
 
       // Parse mentions from message text (@username)
@@ -636,7 +634,7 @@ export class ChannelService {
    */
   async togglePinMessage(messageId: string): Promise<void> {
     try {
-      const userId = this.authService.getUser()?.id;
+      const userId = this.getCurrentUserId();
       if (!userId) throw new Error("Not authenticated");
 
       const message = this._messages().find((m) => m.id === messageId);
@@ -713,7 +711,7 @@ export class ChannelService {
    */
   async editMessage(messageId: string, newContent: string): Promise<void> {
     try {
-      const userId = this.authService.getUser()?.id;
+      const userId = this.getCurrentUserId();
       const message = this._messages().find((m) => m.id === messageId);
 
       if (!message) throw new Error("Message not found");
@@ -770,7 +768,7 @@ export class ChannelService {
    */
   async markMessageRead(messageId: string): Promise<void> {
     try {
-      const userId = this.authService.getUser()?.id;
+      const userId = this.getCurrentUserId();
       if (!userId) return;
 
       await this.supabase.client.from("message_read_receipts").upsert(
@@ -791,7 +789,7 @@ export class ChannelService {
    */
   async acknowledgeAnnouncement(messageId: string): Promise<void> {
     try {
-      const userId = this.authService.getUser()?.id;
+      const userId = this.getCurrentUserId();
       if (!userId) return;
 
       await this.supabase.client.from("announcement_reads").upsert(
@@ -935,7 +933,7 @@ export class ChannelService {
    */
   private async updateLastRead(channelId: string): Promise<void> {
     try {
-      const userId = this.authService.getUser()?.id;
+      const userId = this.getCurrentUserId();
       if (!userId) return;
 
       await this.supabase.client.from("channel_members").upsert(
@@ -1064,7 +1062,7 @@ export class ChannelService {
    */
   async getUnreadCount(channelId: string): Promise<number> {
     try {
-      const userId = this.authService.getUser()?.id;
+      const userId = this.getCurrentUserId();
       if (!userId) return 0;
 
       // Get last read timestamp
@@ -1121,7 +1119,7 @@ export class ChannelService {
     otherUserId: string,
     teamId: string,
   ): Promise<Channel> {
-    const userId = this.authService.getUser()?.id;
+    const userId = this.getCurrentUserId();
     if (!userId) throw new Error("Not authenticated");
 
     // Check if DM already exists
@@ -1373,5 +1371,9 @@ export class ChannelService {
       this.logger.error("Error searching team members:", error);
       return [];
     }
+  }
+
+  private getCurrentUserId(): string | null {
+    return this.supabase.userId();
   }
 }

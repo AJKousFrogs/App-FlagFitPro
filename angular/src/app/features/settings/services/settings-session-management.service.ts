@@ -1,7 +1,7 @@
 import { Injectable, inject, signal } from "@angular/core";
 import { TIMEOUTS, TOAST } from "../../../core/constants";
-import { AuthService } from "../../../core/services/auth.service";
 import { LoggerService } from "../../../core/services/logger.service";
+import { SupabaseService } from "../../../core/services/supabase.service";
 import { ToastService } from "../../../core/services/toast.service";
 
 type DeviceType = "desktop" | "mobile" | "tablet";
@@ -19,7 +19,7 @@ export interface ActiveSession {
   providedIn: "root",
 })
 export class SettingsSessionManagementService {
-  private readonly authService = inject(AuthService);
+  private readonly supabase = inject(SupabaseService);
   private readonly logger = inject(LoggerService);
   private readonly toastService = inject(ToastService);
 
@@ -31,7 +31,7 @@ export class SettingsSessionManagementService {
     this.loadingSessions.set(true);
 
     try {
-      const user = this.authService.getUser();
+      const user = this.supabase.currentUser();
       if (!user) {
         this.activeSessions.set([]);
         return;

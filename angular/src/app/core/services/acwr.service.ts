@@ -60,8 +60,7 @@ import {
   RealtimePostgresUpdatePayload,
 } from "@supabase/supabase-js";
 import {
-  mapEvidenceCitations,
-  getPresetDisplay,
+  buildBaseEvidenceInfo,
 } from "../../shared/utils/evidence-info.utils";
 import {
   roundToPrecision,
@@ -89,6 +88,13 @@ interface WorkoutLog {
   rpe?: number;
   duration_minutes?: number;
   notes?: string;
+}
+
+interface ToleranceDetectionSnapshot {
+  cfg: ACWRConfig;
+  recentHistory: Array<{ date: Date; ratio: number; chronic: number }>;
+  daysAboveThreshold: number;
+  averageACWRAboveThreshold: number;
 }
 
 /**
@@ -578,48 +584,12 @@ export class AcwrService {
    * Note: Injury checking is done asynchronously via checkToleranceWithInjuryData()
    */
   private detectTolerance(): ToleranceDetection | undefined {
-    const cfg = this.config();
-    if (!cfg.toleranceDetection.enabled) return undefined;
-
-    const history = this.historicalACWR();
-    if (history.length < cfg.toleranceDetection.consecutiveHighDays) {
+    const snapshot = this.buildToleranceDetectionSnapshot();
+    if (!snapshot) {
       return undefined;
     }
 
-    // Check recent history for consecutive days above danger threshold
-    const recentHistory = history.slice(
-      0,
-      cfg.toleranceDetection.consecutiveHighDays,
-    );
-    const daysAboveThreshold = recentHistory.filter(
-      (h) => h.ratio > cfg.thresholds.dangerHigh,
-    ).length;
-
-    if (daysAboveThreshold >= cfg.toleranceDetection.consecutiveHighDays) {
-      const averageACWR =
-        recentHistory
-          .filter((h) => h.ratio > cfg.thresholds.dangerHigh)
-          .reduce((sum, h) => sum + h.ratio, 0) / daysAboveThreshold;
-
-      // Default to investigate - injury check can be done separately via checkToleranceWithInjuryData()
-      const recommendation: "maintain" | "adjust" | "investigate" =
-        "investigate";
-      const message =
-        `Athlete has trained above ${cfg.thresholds.dangerHigh} ACWR for ${daysAboveThreshold} consecutive days. ` +
-        `This may indicate: (1) Higher individual tolerance, (2) Underestimated chronic load, or (3) Need for personalized thresholds. ` +
-        `Monitor closely and consider adjusting thresholds if pattern continues.`;
-
-      return {
-        detected: true,
-        daysAboveThreshold,
-        averageACWRAboveThreshold: averageACWR,
-        injuryOccurred: false, // Will be updated async if needed
-        recommendation,
-        message,
-      };
-    }
-
-    return undefined;
+    return this.createToleranceDetectionResult(snapshot, false);
   }
 
   /**
@@ -629,66 +599,79 @@ export class AcwrService {
   public async checkToleranceWithInjuryData(): Promise<
     ToleranceDetection | undefined
   > {
-    const cfg = this.config();
-    if (!cfg.toleranceDetection.enabled) return undefined;
-
-    const history = this.historicalACWR();
-    if (history.length < cfg.toleranceDetection.consecutiveHighDays) {
+    const snapshot = this.buildToleranceDetectionSnapshot();
+    if (!snapshot) {
       return undefined;
     }
 
-    const recentHistory = history.slice(
-      0,
-      cfg.toleranceDetection.consecutiveHighDays,
-    );
-    const daysAboveThreshold = recentHistory.filter(
-      (h) => h.ratio > cfg.thresholds.dangerHigh,
-    ).length;
+    const playerId = this.currentPlayerId();
+    const startDate = snapshot.recentHistory[snapshot.recentHistory.length - 1]?.date;
+    const endDate = snapshot.recentHistory[0]?.date;
 
-    if (daysAboveThreshold >= cfg.toleranceDetection.consecutiveHighDays) {
-      const averageACWR =
-        recentHistory
-          .filter((h) => h.ratio > cfg.thresholds.dangerHigh)
-          .reduce((sum, h) => sum + h.ratio, 0) / daysAboveThreshold;
+    const injuryOccurred = playerId
+      ? await this.checkForRecentInjury(
+          playerId,
+          startDate?.toISOString(),
+          endDate?.toISOString(),
+        )
+      : false;
 
-      const playerId = this.currentPlayerId();
-      const startDate = recentHistory[recentHistory.length - 1]?.date;
-      const endDate = recentHistory[0]?.date;
+    return this.createToleranceDetectionResult(snapshot, injuryOccurred);
+  }
 
-      // Check if injury occurred during this high-load period
-      const injuryOccurred = playerId
-        ? await this.checkForRecentInjury(
-            playerId,
-            startDate?.toISOString(),
-            endDate?.toISOString(),
-          )
-        : false;
-
-      let recommendation: "maintain" | "adjust" | "investigate" = "investigate";
-      let message = "";
-
-      if (injuryOccurred) {
-        recommendation = "adjust";
-        message = `Training above ${cfg.thresholds.dangerHigh} ACWR for ${daysAboveThreshold} days preceded injury. Reduce load immediately.`;
-      } else {
-        recommendation = "investigate";
-        message =
-          `Athlete has trained above ${cfg.thresholds.dangerHigh} ACWR for ${daysAboveThreshold} consecutive days without apparent issues. ` +
-          `This may indicate: (1) Higher individual tolerance, (2) Underestimated chronic load, or (3) Need for personalized thresholds. ` +
-          `Monitor closely and consider adjusting thresholds if pattern continues.`;
-      }
-
-      return {
-        detected: true,
-        daysAboveThreshold,
-        averageACWRAboveThreshold: averageACWR,
-        injuryOccurred,
-        recommendation,
-        message,
-      };
+  private buildToleranceDetectionSnapshot():
+    | ToleranceDetectionSnapshot
+    | undefined {
+    const cfg = this.config();
+    if (!cfg.toleranceDetection.enabled) {
+      return undefined;
     }
 
-    return undefined;
+    const history = this.historicalACWR();
+    const requiredDays = cfg.toleranceDetection.consecutiveHighDays;
+    if (history.length < requiredDays) {
+      return undefined;
+    }
+
+    const recentHistory = history.slice(0, requiredDays);
+    const entriesAboveThreshold = recentHistory.filter(
+      (entry) => entry.ratio > cfg.thresholds.dangerHigh,
+    );
+    const daysAboveThreshold = entriesAboveThreshold.length;
+
+    if (daysAboveThreshold < requiredDays) {
+      return undefined;
+    }
+
+    const averageACWRAboveThreshold =
+      entriesAboveThreshold.reduce((sum, entry) => sum + entry.ratio, 0) /
+      daysAboveThreshold;
+
+    return {
+      cfg,
+      recentHistory,
+      daysAboveThreshold,
+      averageACWRAboveThreshold,
+    };
+  }
+
+  private createToleranceDetectionResult(
+    snapshot: ToleranceDetectionSnapshot,
+    injuryOccurred: boolean,
+  ): ToleranceDetection {
+    const recommendation = injuryOccurred ? "adjust" : "investigate";
+    const message = injuryOccurred
+      ? `Training above ${snapshot.cfg.thresholds.dangerHigh} ACWR for ${snapshot.daysAboveThreshold} days preceded injury. Reduce load immediately.`
+      : `Athlete has trained above ${snapshot.cfg.thresholds.dangerHigh} ACWR for ${snapshot.daysAboveThreshold} consecutive days without apparent issues. This may indicate: (1) Higher individual tolerance, (2) Underestimated chronic load, or (3) Need for personalized thresholds. Monitor closely and consider adjusting thresholds if pattern continues.`;
+
+    return {
+      detected: true,
+      daysAboveThreshold: snapshot.daysAboveThreshold,
+      averageACWRAboveThreshold: snapshot.averageACWRAboveThreshold,
+      injuryOccurred,
+      recommendation,
+      message,
+    };
   }
 
   /**
@@ -995,10 +978,10 @@ export class AcwrService {
   } {
     const preset = this.evidenceConfigService.getActivePreset();
     const acwrConfig = preset.acwr;
+    const baseEvidenceInfo = buildBaseEvidenceInfo(preset, acwrConfig.citations);
 
     return {
-      preset: getPresetDisplay(preset),
-      citations: mapEvidenceCitations(acwrConfig.citations),
+      ...baseEvidenceInfo,
       scienceNotes: acwrConfig.scienceNotes.thresholds,
       coachOverride: acwrConfig.scienceNotes.coachOverride,
     };

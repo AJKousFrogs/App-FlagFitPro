@@ -489,6 +489,9 @@
 }
 
 .stat-item.clickable {
+  border: none;
+  background: transparent;
+  padding: 0;
   cursor: pointer;
 }
 

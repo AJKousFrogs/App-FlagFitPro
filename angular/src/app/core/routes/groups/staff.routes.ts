@@ -10,7 +10,13 @@ export const staffRoutes: Routes = [
         (m) => m.StaffHubComponent,
       ),
     canActivate: [authGuard, staffRoleGuard],
-    data: { preload: false, entry: "hub" },
+    data: {
+      preload: false,
+      entry: "hub",
+      headerPreset: "analytics",
+      showBottomNav: false,
+      showFab: false,
+    },
   },
   {
     path: "staff/nutritionist",
@@ -19,7 +25,13 @@ export const staffRoutes: Routes = [
         (m) => m.NutritionistDashboardComponent,
       ),
     canActivate: [authGuard, staffRoleGuard],
-    data: { preload: false, entry: "internal" },
+    data: {
+      preload: false,
+      entry: "internal",
+      headerPreset: "analytics",
+      showBottomNav: false,
+      showFab: false,
+    },
   },
   {
     path: "staff/physiotherapist",
@@ -28,7 +40,13 @@ export const staffRoutes: Routes = [
         (m) => m.PhysiotherapistDashboardComponent,
       ),
     canActivate: [authGuard, staffRoleGuard],
-    data: { preload: false, entry: "internal" },
+    data: {
+      preload: false,
+      entry: "internal",
+      headerPreset: "analytics",
+      showBottomNav: false,
+      showFab: false,
+    },
   },
   {
     path: "staff/psychology",
@@ -37,7 +55,13 @@ export const staffRoutes: Routes = [
         (m) => m.PsychologyReportsComponent,
       ),
     canActivate: [authGuard, staffRoleGuard],
-    data: { preload: false, entry: "internal" },
+    data: {
+      preload: false,
+      entry: "internal",
+      headerPreset: "analytics",
+      showBottomNav: false,
+      showFab: false,
+    },
   },
   {
     path: "staff/decisions",
@@ -46,7 +70,13 @@ export const staffRoutes: Routes = [
         (m) => m.DecisionLedgerDashboardComponent,
       ),
     canActivate: [authGuard, staffRoleGuard],
-    data: { preload: false, entry: "internal" },
+    data: {
+      preload: false,
+      entry: "internal",
+      headerPreset: "analytics",
+      showBottomNav: false,
+      showFab: false,
+    },
   },
   {
     path: "staff/decisions/:id",
@@ -55,6 +85,12 @@ export const staffRoutes: Routes = [
         (m) => m.DecisionDetailComponent,
       ),
     canActivate: [authGuard, staffRoleGuard],
-    data: { preload: false, entry: "deeplink" },
+    data: {
+      preload: false,
+      entry: "deeplink",
+      headerPreset: "analytics",
+      showBottomNav: false,
+      showFab: false,
+    },
   },
 ];

@@ -83,7 +83,8 @@
   justify-content: center;
   max-width: var(--layout-page-max-width-sm, 37.5rem);
 
-  .search-container {
+  .ui-search-trigger {
+    @include reset-button;
     display: flex;
     align-items: center;
     gap: var(--space-2);
@@ -95,6 +96,7 @@
     max-width: 22rem;
     cursor: pointer;
     transition: all var(--transition-base);
+    text-align: left;
 
     @media (hover: hover) and (pointer: fine) {
       &:hover {
@@ -115,18 +117,13 @@
       font-size: var(--ds-font-size-sm);
     }
 
-    input {
-      border: none;
-      background: transparent;
+    .search-input-stub {
       flex: 1;
       font-size: var(--ds-font-size-sm);
       color: var(--color-text-primary);
-      cursor: pointer;
-      pointer-events: none;
-
-      &::placeholder {
-        color: var(--color-text-tertiary);
-      }
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     .search-shortcut {
@@ -152,6 +149,12 @@
   flex: 0 0 auto;
 }
 
+.header-right app-header-weather-widget {
+  /* Weather widget is a component host; make it behave like an inline control in the header row. */
+  display: inline-flex;
+  align-items: center;
+}
+
 .header-utility {
   display: flex;
   align-items: center;
@@ -162,6 +165,9 @@
   color: var(--color-text-secondary);
   transition: all var(--transition-fast);
   height: var(--button-height-sm);
+  background: transparent;
+  border: none;
+  font: inherit;
 
   @media (hover: hover) and (pointer: fine) {
     &:hover {
@@ -177,6 +183,12 @@
   }
 
   i { font-size: var(--ds-font-size-lg); }
+}
+
+.header-logo {
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none;
 }
 
 .utility-label {
@@ -213,6 +225,9 @@
   transition: transform var(--transition-fast);
   padding: var(--space-0-5);
   border-radius: var(--radius-full);
+  background: transparent;
+  border: none;
+  font: inherit;
 
   @media (hover: hover) and (pointer: fine) {
     &:hover {
@@ -234,11 +249,60 @@
   gap: var(--space-2);
   background: var(--ui-surface-subtle);
   border: var(--border-1) solid var(--color-border-subtle);
-  height: auto;
+  height: var(--button-height-sm);
 
   &:hover {
     background: var(--surface-card);
     border-color: var(--ds-primary-green);
+  }
+}
+
+/* Weather severity (header widget) */
+.weather-widget {
+  &.weather-excellent {
+    background: var(--color-status-success-subtle);
+    border: var(--border-1) solid var(--color-status-success);
+    color: var(--color-status-success);
+  }
+
+  &.weather-good {
+    background: var(--color-status-success-subtle);
+    border: var(--border-1) solid var(--color-status-success-light);
+    color: var(--color-status-success);
+  }
+
+  &.weather-fair {
+    background: var(--color-status-warning-subtle);
+    border: var(--border-1) solid var(--color-status-warning);
+    color: var(--color-status-warning);
+  }
+
+  &.weather-poor {
+    background: var(--color-status-error-subtle);
+    border: var(--border-1) solid var(--color-status-error);
+    color: var(--color-status-error);
+  }
+
+  // Keep severity colors on hover (otherwise `.header-utility` forces green)
+  @media (hover: hover) and (pointer: fine) {
+    &.weather-excellent:hover,
+    &.weather-good:hover {
+      background: var(--color-status-success-subtle);
+      color: var(--color-status-success);
+      border-color: var(--color-status-success);
+    }
+
+    &.weather-fair:hover {
+      background: var(--color-status-warning-subtle);
+      color: var(--color-status-warning);
+      border-color: var(--color-status-warning);
+    }
+
+    &.weather-poor:hover {
+      background: var(--color-status-error-subtle);
+      color: var(--color-status-error);
+      border-color: var(--color-status-error);
+    }
   }
 }
 
@@ -262,14 +326,5 @@
 
   .header-right {
     gap: var(--space-1);
-
-    &::before {
-      content: '\e908'; // pi-search
-      font-family: 'primeicons';
-      font-size: var(--ds-font-size-lg);
-      padding: var(--space-2);
-      cursor: pointer;
-      color: var(--color-text-secondary);
-    }
   }
 }

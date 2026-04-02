@@ -96,7 +96,7 @@ import {
         [showCurrentPageReport]="true"
         currentPageReportTemplate="Showing {first} to {last} of {totalRecords} videos"
         [rowsPerPageOptions]="[10, 25, 50]"
-        class="p-datatable-sm"
+        class="table-compact"
       >
         <ng-template #header>
           <tr>

@@ -16,7 +16,12 @@ export const wellnessRoutes: Routes = [
         (m) => m.WellnessComponent,
       ),
     canActivate: [authGuard],
-    data: { preload: true, priority: "high", entry: "internal" }, // Daily feature
+    data: {
+      preload: true,
+      priority: "high",
+      entry: "internal",
+      headerPreset: "default",
+    }, // Daily feature
   },
   {
     path: "acwr",
@@ -25,7 +30,12 @@ export const wellnessRoutes: Routes = [
         (m) => m.AcwrDashboardComponent,
       ),
     canActivate: [authGuard],
-    data: { preload: true, priority: "medium", entry: "internal" }, // Load monitoring
+    data: {
+      preload: true,
+      priority: "medium",
+      entry: "internal",
+      headerPreset: "analytics",
+    }, // Load monitoring
   },
   {
     path: "return-to-play",
@@ -34,7 +44,7 @@ export const wellnessRoutes: Routes = [
         (m) => m.ReturnToPlayComponent,
       ),
     canActivate: [authGuard],
-    data: { preload: false, entry: "internal" }, // Load on demand - not frequently accessed
+    data: { preload: false, entry: "internal", headerPreset: "analytics" }, // Load on demand - not frequently accessed
   },
   {
     path: "cycle-tracking",
@@ -43,7 +53,7 @@ export const wellnessRoutes: Routes = [
         (m) => m.CycleTrackingComponent,
       ),
     canActivate: [authGuard, femaleAthleteGuard],
-    data: { preload: false, entry: "internal" }, // Load on demand - female athletes only
+    data: { preload: false, entry: "internal", headerPreset: "default" }, // Load on demand - female athletes only
   },
   {
     path: "sleep-debt",
@@ -52,7 +62,7 @@ export const wellnessRoutes: Routes = [
         (m) => m.SleepDebtComponent,
       ),
     canActivate: [authGuard],
-    data: { preload: false, entry: "internal" }, // Load on demand
+    data: { preload: false, entry: "internal", headerPreset: "default" }, // Load on demand
   },
   {
     path: "achievements",
@@ -61,7 +71,7 @@ export const wellnessRoutes: Routes = [
         (m) => m.AchievementsComponent,
       ),
     canActivate: [authGuard],
-    data: { preload: false, entry: "internal" }, // Load on demand
+    data: { preload: false, entry: "internal", headerPreset: "default" }, // Load on demand
   },
   {
     path: "playbook",
@@ -70,7 +80,7 @@ export const wellnessRoutes: Routes = [
         (m) => m.PlaybookComponent,
       ),
     canActivate: [authGuard],
-    data: { preload: false, entry: "internal" }, // Load on demand
+    data: { preload: false, entry: "internal", headerPreset: "training" }, // Load on demand
   },
   {
     path: "film",
@@ -79,7 +89,7 @@ export const wellnessRoutes: Routes = [
         (m) => m.FilmRoomComponent,
       ),
     canActivate: [authGuard],
-    data: { preload: false, entry: "internal" }, // Load on demand
+    data: { preload: false, entry: "internal", headerPreset: "training" }, // Load on demand
   },
   {
     path: "film-room",
@@ -94,7 +104,7 @@ export const wellnessRoutes: Routes = [
         (m) => m.TeamCalendarComponent,
       ),
     canActivate: [authGuard],
-    data: { preload: false, entry: "internal" }, // Load on demand
+    data: { preload: false, entry: "internal", headerPreset: "training" }, // Load on demand
   },
   {
     path: "payments",
@@ -103,7 +113,7 @@ export const wellnessRoutes: Routes = [
         (m) => m.PaymentsComponent,
       ),
     canActivate: [authGuard],
-    data: { preload: false, entry: "internal" }, // Load on demand
+    data: { preload: false, entry: "internal", headerPreset: "default" }, // Load on demand
   },
   {
     path: "import",
@@ -112,7 +122,7 @@ export const wellnessRoutes: Routes = [
         (m) => m.DataImportComponent,
       ),
     canActivate: [authGuard],
-    data: { preload: false, entry: "internal" }, // Load on demand
+    data: { preload: false, entry: "internal", headerPreset: "training" }, // Load on demand
   },
   {
     path: "load-monitoring",

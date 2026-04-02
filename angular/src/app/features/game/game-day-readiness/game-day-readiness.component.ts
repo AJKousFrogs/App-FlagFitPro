@@ -20,7 +20,7 @@ import {
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 
-import { ActivatedRoute, Router, RouterModule } from "@angular/router";
+import { ActivatedRoute, ParamMap, Router, RouterModule } from "@angular/router";
 
 // PrimeNG Components
 
@@ -35,11 +35,11 @@ import { MainLayoutComponent } from "../../../shared/components/layout/main-layo
 
 // Services
 import { TOAST } from "../../../core/constants/toast-messages.constants";
-import { AuthService } from "../../../core/services/auth.service";
 import {
   LoggerService,
   toLogContext,
 } from "../../../core/services/logger.service";
+import { SupabaseService } from "../../../core/services/supabase.service";
 import { TeamMembershipService } from "../../../core/services/team-membership.service";
 import { ToastService } from "../../../core/services/toast.service";
 import { UnifiedTrainingService } from "../../../core/services/unified-training.service";
@@ -257,7 +257,7 @@ interface ReadinessMetric {
 })
 export class GameDayReadinessComponent implements OnInit {
   private readonly trainingService = inject(UnifiedTrainingService);
-  private readonly authService = inject(AuthService);
+  private readonly supabase = inject(SupabaseService);
   private readonly toastService = inject(ToastService);
   private readonly logger = inject(LoggerService);
   private readonly gameDayReadinessDataService = inject(
@@ -508,11 +508,11 @@ export class GameDayReadinessComponent implements OnInit {
   });
 
   ngOnInit(): void {
-    // Get game info from route if available
-    const gameParam = this.route.snapshot.queryParamMap.get("game");
-    if (gameParam) {
-      this.gameInfo.set(gameParam);
-    }
+    this.route.queryParamMap
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((queryParamMap) => {
+        this.applyRouteState(queryParamMap);
+      });
 
     this.trainingService
       .getTodayOverview()
@@ -525,6 +525,10 @@ export class GameDayReadinessComponent implements OnInit {
           );
         },
       });
+  }
+
+  private applyRouteState(queryParamMap: ParamMap): void {
+    this.gameInfo.set(queryParamMap.get("game") ?? "");
   }
 
   updateMetric(key: string, value: number): void {
@@ -546,7 +550,7 @@ export class GameDayReadinessComponent implements OnInit {
     this.isSubmitting.set(true);
 
     try {
-      const user = this.authService.getUser();
+      const user = this.supabase.currentUser();
       if (!user?.id) {
         this.toastService.error(TOAST.ERROR.LOGIN_TO_SUBMIT_READINESS);
         return;
@@ -628,8 +632,12 @@ export class GameDayReadinessComponent implements OnInit {
       const coaches = await this.teamMembershipService.getTeamCoaches();
       if (!coaches?.length) return;
 
-      const user = this.authService.getUser();
-      const athleteName = user?.name || user?.email || "An athlete";
+      const user = this.supabase.currentUser();
+      const metadata = user?.user_metadata as
+        | { fullName?: string; firstName?: string }
+        | undefined;
+      const athleteName =
+        metadata?.fullName || metadata?.firstName || user?.email || "An athlete";
 
       // Create notifications for coaches
       for (const coach of coaches) {

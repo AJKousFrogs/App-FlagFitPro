@@ -31,13 +31,13 @@ import { AppDialogComponent } from "../dialog/dialog.component";
 import { DialogFooterComponent } from "../dialog-footer/dialog-footer.component";
 import { DialogHeaderComponent } from "../dialog-header/dialog-header.component";
 
-import { AuthService } from "../../../core/services/auth.service";
 import { TOAST } from "../../../core/constants/toast-messages.constants";
 import { ToastService } from "../../../core/services/toast.service";
 import { LoggerService } from "../../../core/services/logger.service";
 import { ProfileCompletionService } from "../../../core/services/profile-completion.service";
 import { ApiService, API_ENDPOINTS } from "../../../core/services/api.service";
 import { extractApiPayload } from "../../../core/utils/api-response-mapper";
+import { SupabaseService } from "../../../core/services/supabase.service";
 import { DailyReadinessFormContentComponent } from "./daily-readiness-form-content.component";
 
 // Centralized wellness constants
@@ -154,7 +154,7 @@ interface DailyState {
 })
 export class DailyReadinessComponent implements OnInit {
   private api = inject(ApiService);
-  private authService = inject(AuthService);
+  private supabase = inject(SupabaseService);
   private toastService = inject(ToastService);
   private logger = inject(LoggerService);
   private profileCompletionService = inject(ProfileCompletionService);
@@ -235,8 +235,8 @@ export class DailyReadinessComponent implements OnInit {
    * If not, show the prompt
    */
   async checkAndShowPrompt(): Promise<void> {
-    const user = this.authService.getUser();
-    if (!user?.id) return;
+    const userId = this.supabase.userId();
+    if (!userId) return;
 
     try {
       const today = new Date().toISOString().split("T")[0];
@@ -290,8 +290,8 @@ export class DailyReadinessComponent implements OnInit {
    * Also saves weight to body_measurements and users table
    */
   async saveState(): Promise<void> {
-    const user = this.authService.getUser();
-    if (!user?.id) {
+    const userId = this.supabase.userId();
+    if (!userId) {
       this.toastService.error(TOAST.ERROR.LOGIN_TO_SAVE);
       return;
     }

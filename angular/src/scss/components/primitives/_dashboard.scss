@@ -20,6 +20,22 @@
  */
 
 @layer primitives {
+  @mixin collapse-grid-at($breakpoint, $selectors, $columns, $gap: null) {
+    @include respond-to($breakpoint) {
+      #{$selectors} {
+        grid-template-columns: repeat($columns, 1fr);
+
+        @if $gap != null {
+          gap: $gap;
+        }
+      }
+    }
+  }
+
+  @mixin stack-grid-at($breakpoint, $selectors, $gap: null) {
+    @include collapse-grid-at($breakpoint, $selectors, 1, $gap);
+  }
+
   // ============================================
   // DASHBOARD HEADER SUBTITLE
   // Shared by acwr-dashboard, periodization-dashboard
@@ -36,31 +52,14 @@
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(var(--grid-card-min-sm), 1fr));
     gap: var(--space-4);
-
-    @include respond-to(sm) {
-      grid-template-columns: 1fr;
-      gap: var(--space-3);
-    }
   }
 
   .stats-grid--2col {
     grid-template-columns: repeat(2, 1fr);
-
-    @include respond-to(sm) {
-      grid-template-columns: 1fr;
-    }
   }
 
   .stats-grid--3col {
     grid-template-columns: repeat(3, 1fr);
-
-    @include respond-to(md) {
-      grid-template-columns: repeat(2, 1fr);
-    }
-
-    @include respond-to(sm) {
-      grid-template-columns: 1fr;
-    }
   }
 
   // ============================================
@@ -185,22 +184,12 @@
     grid-template-columns: repeat(4, 1fr);
   }
 
-  @include respond-to(lg) {
-    .metrics-grid--3col,
-    .metrics-grid--4col {
-      grid-template-columns: repeat(2, 1fr);
-    }
-  }
-
-  @include respond-to(sm) {
-    .metrics-grid,
-    .metrics-grid--2col,
-    .metrics-grid--3col,
-    .metrics-grid--4col {
-      grid-template-columns: 1fr;
-      gap: var(--space-3);
-    }
-  }
+  @include collapse-grid-at(lg, ".metrics-grid--3col, .metrics-grid--4col", 2);
+  @include stack-grid-at(
+    sm,
+    ".metrics-grid, .metrics-grid--2col, .metrics-grid--3col, .metrics-grid--4col",
+    var(--space-3)
+  );
 
   // ============================================
   // METRIC DISPLAY (metric-value + metric-label)
@@ -230,23 +219,11 @@
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: var(--space-5);
-
-    @include respond-to(lg) {
-      grid-template-columns: 1fr;
-    }
   }
 
   // 3-column variant for wider layouts
   .dashboard-grid--3col {
     grid-template-columns: repeat(3, 1fr);
-
-    @include respond-to(lg) {
-      grid-template-columns: repeat(2, 1fr);
-    }
-
-    @include respond-to(sm) {
-      grid-template-columns: 1fr;
-    }
   }
 
   // ============================================
@@ -258,37 +235,17 @@
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: var(--space-3);
-
-    @include respond-to(lg) {
-      grid-template-columns: repeat(2, 1fr);
-    }
-
-    @include respond-to(sm) {
-      grid-template-columns: 1fr;
-      gap: var(--space-2);
-    }
   }
 
   // 6-column variant for coach dashboards
   .stats-overview--6col {
     grid-template-columns: repeat(6, 1fr);
-
-    @include respond-to(xl) {
-      grid-template-columns: repeat(4, 1fr);
-    }
-
-    @include respond-to(lg) {
-      grid-template-columns: repeat(3, 1fr);
-    }
-
-    @include respond-to(md) {
-      grid-template-columns: repeat(2, 1fr);
-    }
-
-    @include respond-to(sm) {
-      grid-template-columns: 1fr;
-    }
   }
+
+  @include collapse-grid-at(xl, ".stats-overview--6col", 4);
+  @include collapse-grid-at(lg, ".stats-overview--6col", 3);
+  @include collapse-grid-at(md, ".stats-overview--6col", 2);
+  @include stack-grid-at(sm, ".stats-overview--6col");
 
   // ============================================
   // STAT CARD CONTENT (Decision 33)
@@ -414,14 +371,6 @@
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: var(--space-3);
-
-    @include respond-to(lg) {
-      grid-template-columns: repeat(2, 1fr);
-    }
-
-    @include respond-to(sm) {
-      grid-template-columns: 1fr;
-    }
   }
 
   // Event card content layout
@@ -494,11 +443,6 @@
     display: flex;
     gap: var(--space-4);
     align-items: flex-start;
-
-    @include respond-to(sm) {
-      flex-direction: column;
-      text-align: center;
-    }
   }
 
   .merlin-avatar,
@@ -514,10 +458,6 @@
     font-size: var(--font-h2-size);
     color: var(--color-text-on-primary);
     flex-shrink: 0;
-
-    @include respond-to(sm) {
-      margin: 0 auto;
-    }
   }
 
   .welcome-content {
@@ -546,10 +486,6 @@
     gap: var(--space-2);
     flex-wrap: wrap;
     align-items: center;
-
-    @include respond-to(sm) {
-      justify-content: center;
-    }
   }
 
   // ============================================
@@ -606,7 +542,7 @@
     &.interactive {
       cursor: pointer;
 
-      @media (hover: hover) and (pointer: fine) {
+      @include hover-support {
         &:hover:not(.future) {
           transform: scale(1.1);
           box-shadow: var(--shadow-sm);
@@ -673,7 +609,7 @@
     &.interactive {
       cursor: pointer;
 
-      @media (hover: hover) and (pointer: fine) {
+      @include hover-support {
         &:hover {
           transform: scale(1.15);
           box-shadow: var(--shadow-sm);
@@ -712,7 +648,7 @@
         background-color var(--motion-fast) var(--ease-standard),
         opacity var(--motion-fast) var(--ease-standard);
 
-      @media (hover: hover) and (pointer: fine) {
+      @include hover-support {
         &:hover {
           background: var(--color-surface-hover);
         }
@@ -798,10 +734,6 @@
     grid-template-columns: repeat(3, 1fr);
     gap: var(--space-3);
 
-    @include respond-to(sm) {
-      grid-template-columns: repeat(2, 1fr);
-    }
-
     app-button {
       display: block;
       width: 100%;
@@ -812,6 +744,13 @@
   .quick-actions-grid--2col {
     grid-template-columns: repeat(2, 1fr);
   }
+
+  @include collapse-grid-at(lg, ".dashboard-grid", 1);
+  @include collapse-grid-at(lg, ".dashboard-grid--3col, .stats-overview, .events-strip", 2);
+  @include collapse-grid-at(md, ".stats-grid--3col", 2);
+  @include stack-grid-at(sm, ".stats-grid, .stats-grid--2col, .stats-grid--3col", var(--space-3));
+  @include stack-grid-at(sm, ".dashboard-grid--3col, .stats-overview, .events-strip");
+  @include collapse-grid-at(sm, ".quick-actions-grid", 2);
 
   // ============================================
   // ANNOUNCEMENT BANNER
@@ -824,11 +763,6 @@
     gap: var(--space-3);
     width: 100%;
     flex-wrap: wrap;
-
-    @include respond-to(sm) {
-      flex-direction: column;
-      align-items: flex-start;
-    }
   }
 
   .announcement-text {
@@ -854,15 +788,40 @@
     opacity: var(--opacity-muted);
     margin-left: 0;
     white-space: nowrap;
-
-    @include respond-to(sm) {
-      margin-left: var(--space-5);
-    }
   }
 
   // ============================================
   // REDUCED MOTION (Decision 51)
   // ============================================
+
+  @include respond-to(sm) {
+    .stats-overview {
+      gap: var(--space-2);
+    }
+
+    .welcome-wrapper {
+      flex-direction: column;
+      text-align: center;
+    }
+
+    .merlin-avatar,
+    .welcome-avatar {
+      margin: 0 auto;
+    }
+
+    .welcome-actions {
+      justify-content: center;
+    }
+
+    .announcement-content {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .announcement-meta {
+      margin-left: var(--space-5);
+    }
+  }
 
   @media (prefers-reduced-motion: reduce) {
     .day-indicator {

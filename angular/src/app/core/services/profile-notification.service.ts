@@ -1,6 +1,5 @@
 import { Injectable, inject, signal } from "@angular/core";
 import { Router } from "@angular/router";
-import { AuthService } from "./auth.service";
 import { LoggerService } from "./logger.service";
 import { ProfileCompletionService } from "./profile-completion.service";
 import { SupabaseService } from "./supabase.service";
@@ -24,7 +23,6 @@ import { isBenignSupabaseQueryError } from "../../shared/utils/error.utils";
 })
 export class ProfileNotificationService {
   private readonly profileService = inject(ProfileCompletionService);
-  private readonly authService = inject(AuthService);
   private readonly logger = inject(LoggerService);
   private readonly toastService = inject(ToastService);
   private readonly supabaseService = inject(SupabaseService);
@@ -36,6 +34,7 @@ export class ProfileNotificationService {
   // Track if check is in progress
   private readonly isChecking = signal(false);
   private notificationsUnavailable = false;
+  private notificationsRetryAt = 0;
   private readonly toastSuppressedRoutes = new Set([
     "/dashboard",
     "/onboarding",
@@ -57,8 +56,8 @@ export class ProfileNotificationService {
     this.isChecking.set(true);
 
     try {
-      const user = this.authService.getUser();
-      if (!user?.id) {
+      const userId = this.requireCurrentUserId();
+      if (!userId) {
         this.logger.debug(
           "[ProfileNotification] No authenticated user, skipping check",
         );
@@ -144,22 +143,22 @@ export class ProfileNotificationService {
     missingFields: string[],
     percentage: number,
   ): Promise<void> {
-    const user = this.authService.getUser();
-    if (!user?.id || this.notificationsUnavailable) return;
+    const userId = this.requireCurrentUserId();
+    if (!userId || this.shouldBypassNotifications()) return;
 
     try {
       // Check if there's already an active profile completion notification
       const { data: existing, error: existingError } = await this.supabaseService.client
         .from("notifications")
         .select("id")
-        .eq("user_id", user.id)
+        .eq("user_id", userId)
         .eq("notification_type", "profile_incomplete")
         .eq("dismissed", false)
         .maybeSingle();
 
       if (existingError) {
         if (isBenignSupabaseQueryError(existingError)) {
-          this.notificationsUnavailable = true;
+          this.markNotificationsUnavailable();
           return;
         }
         throw existingError;
@@ -183,7 +182,7 @@ export class ProfileNotificationService {
 
         if (updateError) {
           if (isBenignSupabaseQueryError(updateError)) {
-            this.notificationsUnavailable = true;
+            this.markNotificationsUnavailable();
             return;
           }
           throw updateError;
@@ -197,18 +196,18 @@ export class ProfileNotificationService {
         const { error: insertError } = await this.supabaseService.client
           .from("notifications")
           .insert({
-          user_id: user.id,
-          notification_type: "profile_incomplete",
-          title: "Complete Your Profile",
-          message: `Your profile is ${percentage}% complete. Add your ${missingFields[0]?.toLowerCase() || "missing information"} to unlock all features.`,
-          priority: "normal",
-          data: {
-            percentage,
-            missingFields,
-            actionRoute: "/settings/profile",
-            actionLabel: "Complete Profile",
-          },
-        });
+            user_id: userId,
+            notification_type: "profile_incomplete",
+            title: "Complete Your Profile",
+            message: `Your profile is ${percentage}% complete. Add your ${missingFields[0]?.toLowerCase() || "missing information"} to unlock all features.`,
+            priority: "normal",
+            data: {
+              percentage,
+              missingFields,
+              actionRoute: "/settings/profile",
+              actionLabel: "Complete Profile",
+            },
+          });
 
         if (insertError) {
           if (
@@ -216,7 +215,7 @@ export class ProfileNotificationService {
             insertError.code === "23505" ||
             Number((insertError as { status?: number }).status) === 409
           ) {
-            this.notificationsUnavailable = true;
+            this.markNotificationsUnavailable();
             return;
           }
           throw insertError;
@@ -244,19 +243,19 @@ export class ProfileNotificationService {
    * Note: This only dismisses for the current session - it will show again on next login
    */
   async dismissNotification(): Promise<void> {
-    const user = this.authService.getUser();
-    if (!user?.id || this.notificationsUnavailable) return;
+    const userId = this.requireCurrentUserId();
+    if (!userId || this.shouldBypassNotifications()) return;
 
     try {
       const { error } = await this.supabaseService.client
         .from("notifications")
         .update({ dismissed: true })
-        .eq("user_id", user.id)
+        .eq("user_id", userId)
         .eq("notification_type", "profile_incomplete");
 
       if (error) {
         if (isBenignSupabaseQueryError(error)) {
-          this.notificationsUnavailable = true;
+          this.markNotificationsUnavailable();
           return;
         }
         throw error;
@@ -276,5 +275,32 @@ export class ProfileNotificationService {
    */
   reset(): void {
     this.hasShownNotification.set(false);
+  }
+
+  private requireCurrentUserId(): string | null {
+    return this.supabaseService.userId();
+  }
+
+  private shouldBypassNotifications(): boolean {
+    if (!this.notificationsUnavailable) {
+      return false;
+    }
+
+    if (Date.now() >= this.notificationsRetryAt) {
+      this.resetNotificationsAvailability();
+      return false;
+    }
+
+    return true;
+  }
+
+  private markNotificationsUnavailable(): void {
+    this.notificationsUnavailable = true;
+    this.notificationsRetryAt = Date.now() + 30_000;
+  }
+
+  private resetNotificationsAvailability(): void {
+    this.notificationsUnavailable = false;
+    this.notificationsRetryAt = 0;
   }
 }

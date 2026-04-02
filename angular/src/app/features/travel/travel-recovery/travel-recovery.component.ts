@@ -37,7 +37,6 @@ import { StatusTagComponent } from "../../../shared/components/status-tag/status
 
 // Services
 import { TOAST } from "../../../core/constants/toast-messages.constants";
-import { AuthService } from "../../../core/services/auth.service";
 import { LoggerService } from "../../../core/services/logger.service";
 import { ToastService } from "../../../core/services/toast.service";
 import {
@@ -118,7 +117,6 @@ interface FlightTripForm {
 export class TravelRecoveryComponent implements OnInit {
   private travelService = inject(TravelRecoveryService);
   private toastService = inject(ToastService);
-  private authService = inject(AuthService);
   private logger = inject(LoggerService);
 
   // Constants exposed to template

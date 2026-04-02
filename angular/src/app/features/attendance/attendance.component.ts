@@ -23,7 +23,6 @@ import {
   PlayerAttendanceStats,
   TeamEvent,
 } from "../../core/services/attendance.service";
-import { AuthService } from "../../core/services/auth.service";
 import { TeamMembershipService } from "../../core/services/team-membership.service";
 import { ToastService } from "../../core/services/toast.service";
 import { ButtonComponent } from "../../shared/components/button/button.component";
@@ -162,10 +161,9 @@ type AttendanceStatus = "present" | "absent" | "late" | "excused";
       <app-dialog
         [(visible)]="showCreateEventDialog"
         [modal]="true"
-        styleClass="attendance-create-dialog"
+        dialogSize="md"
         [blockScroll]="true"
         [draggable]="false"
-        [breakpoints]="{ '960px': '92vw', '640px': '96vw' }"
         ariaLabel="Create event"
       >
         <app-dialog-header
@@ -273,7 +271,6 @@ type AttendanceStatus = "present" | "absent" | "late" | "excused";
 })
 export class AttendanceComponent implements OnInit {
   private attendanceService = inject(AttendanceService);
-  private authService = inject(AuthService);
   private teamMembershipService = inject(TeamMembershipService);
   private toastService = inject(ToastService);
   private destroyRef = inject(DestroyRef);
@@ -377,7 +374,7 @@ export class AttendanceComponent implements OnInit {
   }
 
   loadEvents(): void {
-    const teamId = this.authService.getUser()?.user_metadata?.team_id;
+    const teamId = this.teamMembershipService.teamId();
     if (!teamId) return;
 
     this.attendanceService
@@ -390,7 +387,7 @@ export class AttendanceComponent implements OnInit {
   }
 
   loadPlayerStats(): void {
-    const teamId = this.authService.getUser()?.user_metadata?.team_id;
+    const teamId = this.teamMembershipService.teamId();
     if (!teamId) return;
 
     this.attendanceService
@@ -580,7 +577,7 @@ export class AttendanceComponent implements OnInit {
   }
 
   createEvent(): void {
-    const teamId = this.authService.getUser()?.user_metadata?.team_id;
+    const teamId = this.teamMembershipService.teamId();
     if (!teamId || !this.canCreateEvent()) return;
 
     this.attendanceService

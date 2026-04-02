@@ -10,7 +10,7 @@
     [loading]="isLoading()"
     [paginator]="filteredPlayers().length > 10"
     [rows]="10"
-    styleClass="p-datatable-sm"
+    density="sm"
     [rowHover]="true"
     selectionMode="single"
     (rowSelect)="openPlayer($event.data.id)"
@@ -75,19 +75,20 @@
         </td>
         <td>
           @if (getPlayerOverrideCount(player.playerId) > 0) {
-            <p-badge
-              [value]="getPlayerOverrideCount(player.playerId).toString()"
-              severity="info"
+            <button
+              type="button"
+              class="override-badge-trigger"
               [pTooltip]="'View override history for ' + player.playerName"
               tooltipPosition="top"
               (click)="openOverrideHistory(player.playerId, $event)"
-              role="button"
-              tabindex="0"
               [attr.aria-label]="'View override history for ' + player.playerName"
-              (keydown.enter)="openOverrideHistory(player.playerId, $event)"
-              (keydown.space)="openOverrideHistory(player.playerId, $event); $event.preventDefault()"
-              class="override-badge"
-            ></p-badge>
+            >
+              <p-badge
+                [value]="getPlayerOverrideCount(player.playerId).toString()"
+                severity="info"
+                class="override-badge"
+              ></p-badge>
+            </button>
           } @else {
             <span class="no-overrides">—</span>
           }

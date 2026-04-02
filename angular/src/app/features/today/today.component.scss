@@ -1,4 +1,5 @@
 @use "styles/mixins" as *;
+@use "styles/foundations" as *;
 
 /* ==========================================================================
  TODAY'S PRACTICE - Design System Compliant Styles
@@ -15,25 +16,13 @@
   padding-bottom: var(--space-8);
 
   .bento-item {
-    background: var(--surface-primary);
+    @extend %bento-surface-card;
     border: none;
-    border-radius: var(--radius-xl);
     padding: var(--space-5);
-    box-shadow: var(--shadow-sm);
-    min-width: 0;
-    transition: transform var(--transition-base), box-shadow var(--transition-base);
-
-    &:hover {
-      box-shadow: var(--shadow-md);
-    }
 
     .bento-title {
-      font-size: var(--ds-font-size-lg);
-      font-weight: var(--ds-font-weight-bold);
+      @extend %bento-title;
       margin-bottom: var(--space-4);
-      color: var(--color-text-primary);
-      display: flex;
-      align-items: center;
       gap: var(--space-2);
       
       i { color: var(--ds-primary-green); }
@@ -44,10 +33,7 @@
   .full-width { grid-column: 1 / -1; }
 
   .header-bento {
-    background: transparent;
-    border: none;
-    box-shadow: none;
-    padding: 0;
+    @extend %bento-header-shell;
   }
 }
 
@@ -178,6 +164,7 @@
 }
 
 .stat-block__value {
+  @extend %stat-value;
   font-size: var(--ds-font-size-2xl); /* Metric: KPI numbers - 24px */
   font-weight: var(--ds-font-weight-bold); /* Metric: Bold (700) */
   line-height: var(--ds-line-height-tight); /* Metric: 1.2 */
@@ -209,6 +196,7 @@
 }
 
 .stat-block__label {
+  @extend %stat-label;
   font-size: var(--ds-font-size-xs); /* Caption: Helper text - 13px */
   font-weight: var(--ds-font-weight-regular); /* Caption: Regular (400) */
   color: var(--color-text-muted);
@@ -616,6 +604,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  border: none;
   background: var(--surface-overlay-darkest);
   backdrop-filter: blur(var(--overlay-blur));
   padding: var(--space-4);

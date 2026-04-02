@@ -11,7 +11,6 @@ import { Injectable, inject } from "@angular/core";
 import { Observable, from, of } from "rxjs";
 import { catchError } from "rxjs";
 import { AcwrService } from "./acwr.service";
-import { AuthService } from "./auth.service";
 import { LoggerService, toLogContext } from "./logger.service";
 import { SupabaseService } from "./supabase.service";
 import { TrainingDataService, TrainingSession } from "./training-data.service";
@@ -104,7 +103,6 @@ export class TrainingStatsCalculationService {
   private logger = inject(LoggerService);
   private acwrService = inject(AcwrService);
   private supabase = inject(SupabaseService);
-  private authService = inject(AuthService);
 
   /**
    * Get comprehensive training statistics
@@ -134,7 +132,7 @@ export class TrainingStatsCalculationService {
     startDate?: string;
     endDate?: string;
   }): Promise<TrainingStatsData> {
-    const user = this.authService.getUser();
+    const user = this.supabase.currentUser();
     if (!user?.id) {
       return this.getEmptyStats();
     }

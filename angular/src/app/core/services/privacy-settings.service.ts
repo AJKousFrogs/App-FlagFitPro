@@ -1,6 +1,5 @@
 import { Injectable, inject, signal, computed } from "@angular/core";
 import { SupabaseService } from "./supabase.service";
-import { AuthService } from "./auth.service";
 import { LoggerService } from "./logger.service";
 import { toLogContext } from "./logger.service";
 import { ToastService } from "./toast.service";
@@ -135,7 +134,6 @@ export const METRIC_CATEGORIES = [
 })
 export class PrivacySettingsService {
   private supabase = inject(SupabaseService);
-  private authService = inject(AuthService);
   private logger = inject(LoggerService);
   private toastService = inject(ToastService);
 
@@ -175,7 +173,7 @@ export class PrivacySettingsService {
    * Load user's privacy settings
    */
   async loadSettings(): Promise<void> {
-    const userId = this.authService.getUser()?.id;
+    const userId = this.getCurrentUserId();
     if (!userId) {
       this._error.set("Not authenticated");
       return;
@@ -233,7 +231,7 @@ export class PrivacySettingsService {
    * Load team-specific sharing settings
    */
   private async loadTeamSettings(): Promise<void> {
-    const userId = this.authService.getUser()?.id;
+    const userId = this.getCurrentUserId();
     if (!userId) return;
 
     try {
@@ -293,7 +291,7 @@ export class PrivacySettingsService {
    * Check parental consent status for minors
    */
   private async checkParentalConsentStatus(): Promise<void> {
-    const userId = this.authService.getUser()?.id;
+    const userId = this.getCurrentUserId();
     if (!userId) return;
 
     try {
@@ -428,31 +426,22 @@ export class PrivacySettingsService {
   private async updateSetting(
     updates: Record<string, unknown>,
   ): Promise<boolean> {
-    const userId = this.authService.getUser()?.id;
-    if (!userId) {
-      this.toastService.error(TOAST.ERROR.NOT_AUTHENTICATED);
-      return false;
-    }
+    return this.runAuthenticatedPrivacyMutation(
+      async (userId) => {
+        const { error } = await this.supabase.client
+          .from("privacy_settings")
+          .update(updates)
+          .eq("user_id", userId);
 
-    try {
-      const { error } = await this.supabase.client
-        .from("privacy_settings")
-        .update(updates)
-        .eq("user_id", userId);
-
-      if (error) throw error;
-
-      // Reload settings to get updated values
-      await this.loadSettings();
-      this.toastService.success(TOAST.SUCCESS.PRIVACY_UPDATED);
-      return true;
-    } catch (err) {
-      const message =
-        err instanceof Error ? err.message : "Failed to update settings";
-      this.toastService.error(message);
-      this.logger.error("Error updating privacy settings:", err);
-      return false;
-    }
+        if (error) throw error;
+      },
+      {
+        successMessage: TOAST.SUCCESS.PRIVACY_UPDATED,
+        failureMessage: "Failed to update settings",
+        errorLogMessage: "Error updating privacy settings:",
+        afterSuccess: () => this.loadSettings(),
+      },
+    );
   }
 
   // ============================================================================
@@ -470,45 +459,37 @@ export class PrivacySettingsService {
       allowedMetricCategories?: string[];
     },
   ): Promise<boolean> {
-    const userId = this.authService.getUser()?.id;
-    if (!userId) {
-      this.toastService.error(TOAST.ERROR.NOT_AUTHENTICATED);
-      return false;
-    }
+    return this.runAuthenticatedPrivacyMutation(
+      async (userId) => {
+        const updateData = {
+          user_id: userId,
+          team_id: teamId,
+          ...(settings.performanceSharingEnabled !== undefined && {
+            performance_sharing_enabled: settings.performanceSharingEnabled,
+          }),
+          ...(settings.healthSharingEnabled !== undefined && {
+            health_sharing_enabled: settings.healthSharingEnabled,
+          }),
+          ...(settings.allowedMetricCategories !== undefined && {
+            allowed_metric_categories: settings.allowedMetricCategories,
+          }),
+        };
 
-    try {
-      const updateData = {
-        user_id: userId,
-        team_id: teamId,
-        ...(settings.performanceSharingEnabled !== undefined && {
-          performance_sharing_enabled: settings.performanceSharingEnabled,
-        }),
-        ...(settings.healthSharingEnabled !== undefined && {
-          health_sharing_enabled: settings.healthSharingEnabled,
-        }),
-        ...(settings.allowedMetricCategories !== undefined && {
-          allowed_metric_categories: settings.allowedMetricCategories,
-        }),
-      };
+        const { error } = await this.supabase.client
+          .from("team_sharing_settings")
+          .upsert(updateData, {
+            onConflict: "user_id,team_id",
+          });
 
-      const { error } = await this.supabase.client
-        .from("team_sharing_settings")
-        .upsert(updateData, {
-          onConflict: "user_id,team_id",
-        });
-
-      if (error) throw error;
-
-      await this.loadTeamSettings();
-      this.toastService.success(TOAST.SUCCESS.UPDATED);
-      return true;
-    } catch (err) {
-      const message =
-        err instanceof Error ? err.message : "Failed to update team sharing";
-      this.toastService.error(message);
-      this.logger.error("Error updating team sharing:", err);
-      return false;
-    }
+        if (error) throw error;
+      },
+      {
+        successMessage: TOAST.SUCCESS.UPDATED,
+        failureMessage: "Failed to update team sharing",
+        errorLogMessage: "Error updating team sharing:",
+        afterSuccess: () => this.loadTeamSettings(),
+      },
+    );
   }
 
   // ============================================================================
@@ -522,40 +503,61 @@ export class PrivacySettingsService {
     guardianEmail: string,
     guardianName?: string,
   ): Promise<boolean> {
-    const userId = this.authService.getUser()?.id;
+    return this.runAuthenticatedPrivacyMutation(
+      async (userId) => {
+        const verificationToken = crypto.randomUUID();
+
+        const { error } = await this.supabase.client
+          .from("parental_consent")
+          .insert({
+            minor_user_id: userId,
+            guardian_email: guardianEmail,
+            guardian_name: guardianName,
+            verification_token: verificationToken,
+            verification_sent_at: new Date().toISOString(),
+            consent_status: "pending",
+          });
+
+        if (error) throw error;
+      },
+      {
+        successMessage: TOAST.SUCCESS.CONSENT_REQUEST_SENT,
+        failureMessage: "Failed to request consent",
+        errorLogMessage: "Error requesting parental consent:",
+        afterSuccess: () => this.checkParentalConsentStatus(),
+      },
+    );
+  }
+
+  private async runAuthenticatedPrivacyMutation(
+    operation: (userId: string) => Promise<void>,
+    options: {
+      successMessage: string;
+      failureMessage: string;
+      errorLogMessage: string;
+      afterSuccess?: () => Promise<void>;
+    },
+  ): Promise<boolean> {
+    const userId = this.getCurrentUserId();
     if (!userId) {
       this.toastService.error(TOAST.ERROR.NOT_AUTHENTICATED);
       return false;
     }
 
     try {
-      // Generate verification token
-      const verificationToken = crypto.randomUUID();
+      await operation(userId);
 
-      const { error } = await this.supabase.client
-        .from("parental_consent")
-        .insert({
-          minor_user_id: userId,
-          guardian_email: guardianEmail,
-          guardian_name: guardianName,
-          verification_token: verificationToken,
-          verification_sent_at: new Date().toISOString(),
-          consent_status: "pending",
-        });
+      if (options.afterSuccess) {
+        await options.afterSuccess();
+      }
 
-      if (error) throw error;
-
-      // Send email to guardian with verification link (requires email service integration)
-      // This would typically be done via an Edge Function
-
-      await this.checkParentalConsentStatus();
-      this.toastService.success(TOAST.SUCCESS.CONSENT_REQUEST_SENT);
+      this.toastService.success(options.successMessage);
       return true;
     } catch (err) {
       const message =
-        err instanceof Error ? err.message : "Failed to request consent";
+        err instanceof Error ? err.message : options.failureMessage;
       this.toastService.error(message);
-      this.logger.error("Error requesting parental consent:", err);
+      this.logger.error(options.errorLogMessage, err);
       return false;
     }
   }
@@ -584,7 +586,7 @@ export class PrivacySettingsService {
     canProcess: boolean;
     reason: string;
   }> {
-    const userId = this.authService.getUser()?.id;
+    const userId = this.getCurrentUserId();
     if (!userId) {
       return {
         aiEnabled: false,
@@ -625,7 +627,7 @@ export class PrivacySettingsService {
    * Use this before any AI processing to fail fast
    */
   async requireAiConsent(): Promise<void> {
-    const userId = this.authService.getUser()?.id;
+    const userId = this.getCurrentUserId();
     if (!userId) {
       throw new Error("Not authenticated");
     }
@@ -750,6 +752,10 @@ export class PrivacySettingsService {
       default:
         return false;
     }
+  }
+
+  private getCurrentUserId(): string | null {
+    return this.supabase.userId();
   }
 
   // ============================================================================

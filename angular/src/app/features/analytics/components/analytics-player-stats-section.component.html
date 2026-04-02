@@ -15,7 +15,7 @@
           <div class="stat-block__value">{{ attendanceRate() }}%</div>
         </div>
       </div>
-      <app-table [data]="playerGameStats()" [loading]="isLoading()" [paginator]="true" [rows]="10" styleClass="p-datatable-sm">
+      <app-table [data]="playerGameStats()" [loading]="isLoading()" [paginator]="true" [rows]="10" density="sm">
         <ng-template #header>
           <tr>
             <th>Date</th>

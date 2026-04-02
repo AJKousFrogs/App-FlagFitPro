@@ -37,8 +37,7 @@ import { ApiService, API_ENDPOINTS } from "../../../core/services/api.service";
 import { LoggerService } from "../../../core/services/logger.service";
 import { FeatureFlagsService } from "../../../core/services/feature-flags.service";
 import { extractApiPayload } from "../../../core/utils/api-response-mapper";
-import { DIALOG_WIDTHS } from "../../../core/utils/design-tokens.util";
-import { DesignTokens } from "../../../shared/models/design-tokens";
+import { DIALOG_BREAKPOINTS } from "../../../core/utils/design-tokens.util";
 
 interface ThrowingSession {
   id: string;
@@ -349,6 +348,7 @@ interface SessionTypeOption {
       (visibleChange)="showLogDialog.set($event)"
       (hide)="closeLogDialog()"
       [breakpoints]="dialogBreakpoints"
+      dialogSize="lg"
       class="qb-throwing-log-dialog"
     >
       <app-dialog-header
@@ -505,9 +505,7 @@ interface SessionTypeOption {
   styleUrl: "./qb-throwing-tracker.component.scss",
 })
 export class QbThrowingTrackerComponent {
-  readonly dialogBreakpoints = {
-    [DesignTokens.breakpoints.mobile]: DIALOG_WIDTHS.full,
-  };
+  readonly dialogBreakpoints = DIALOG_BREAKPOINTS.mobileFull;
   private readonly api = inject(ApiService);
   private readonly logger = inject(LoggerService);
   private readonly toastService = inject(ToastService);

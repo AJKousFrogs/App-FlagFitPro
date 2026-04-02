@@ -28,11 +28,12 @@ import {
   AIService,
   TrainingSuggestion,
 } from "../../../core/services/ai.service";
-import { AuthService } from "../../../core/services/auth.service";
 import {
   LoggerService,
   toLogContext,
 } from "../../../core/services/logger.service";
+import { SupabaseService } from "../../../core/services/supabase.service";
+import { TeamMembershipService } from "../../../core/services/team-membership.service";
 import { ToastService } from "../../../core/services/toast.service";
 import {
   WeatherData,
@@ -202,7 +203,8 @@ export class SmartTrainingFormComponent implements OnInit {
   private fb = inject(NonNullableFormBuilder);
   private aiService = inject(AIService);
   private weatherService = inject(WeatherService);
-  private authService = inject(AuthService);
+  private supabase = inject(SupabaseService);
+  private teamMembershipService = inject(TeamMembershipService);
   private smartTrainingDataService = inject(SmartTrainingDataService);
   private toastService = inject(ToastService);
   private logger = inject(LoggerService);
@@ -296,16 +298,20 @@ export class SmartTrainingFormComponent implements OnInit {
     this.setupFormWatchers();
   }
 
+  private currentUserId(): string | null {
+    return this.supabase.userId();
+  }
+
   private async loadAISuggestions() {
-    const user = this.authService.getUser();
-    if (!user) return;
+    const userId = this.currentUserId();
+    if (!userId) return;
 
     // Load recent performance data from Supabase
     let recentPerformance: Array<{ date: string; rpe: number; type: string }> =
       [];
     try {
       const { sessions } =
-        await this.smartTrainingDataService.fetchRecentSessions(user.id);
+        await this.smartTrainingDataService.fetchRecentSessions(userId);
 
       if (sessions.length > 0) {
         recentPerformance = sessions.map((s) => ({
@@ -352,7 +358,7 @@ export class SmartTrainingFormComponent implements OnInit {
 
     this.aiService
       .getTrainingSuggestions({
-        userId: user.id,
+        userId,
         recentPerformance,
         upcomingGames,
       })
@@ -480,8 +486,8 @@ export class SmartTrainingFormComponent implements OnInit {
     this.isSubmitting.set(true);
 
     try {
-      const user = this.authService.getUser();
-      if (!user?.id) {
+      const userId = this.currentUserId();
+      if (!userId) {
         this.toastService.error(TOAST.ERROR.NOT_AUTHENTICATED);
         return;
       }
@@ -499,8 +505,8 @@ export class SmartTrainingFormComponent implements OnInit {
 
       const { error } = await this.smartTrainingDataService.createTrainingSession(
         {
-          athleteId: user.id,
-          userId: user.id,
+          athleteId: userId,
+          userId,
           sessionType: formValue.sessionType,
           durationMinutes: formValue.duration,
           intensity: this.getIntensityFromDuration(formValue.duration),
@@ -542,8 +548,9 @@ export class SmartTrainingFormComponent implements OnInit {
     this.toastService.info(TOAST.INFO.SESSION_CANCELLED);
 
     // Navigate back to appropriate dashboard based on user role
-    const user = this.authService.getUser();
-    const dashboardRoute = user?.role === "coach" ? "/coach" : "/dashboard";
+    const dashboardRoute = this.teamMembershipService.canManageRoster()
+      ? "/coach"
+      : "/dashboard";
     this.router.navigate([dashboardRoute]);
   }
 }

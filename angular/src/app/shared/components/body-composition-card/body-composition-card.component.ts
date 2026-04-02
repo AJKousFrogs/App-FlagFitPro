@@ -25,7 +25,6 @@ import { RouterModule } from "@angular/router";
 import { InputNumberComponent } from "../input-number/input-number.component";
 
 import { Tooltip } from "primeng/tooltip";
-import { AuthService } from "../../../core/services/auth.service";
 import { LoggerService } from "../../../core/services/logger.service";
 import { ToastService } from "../../../core/services/toast.service";
 import { UnifiedTrainingService } from "../../../core/services/unified-training.service";
@@ -210,7 +209,12 @@ interface BodyCompositionData {
       [draggable]="false"
       [resizable]="false"
       [blockScroll]="true"
-      [styleClass]="'body-comp-dialog'"
+      shell="settings"
+      dialogSize="md"
+      [scrollableContent]="true"
+      [scrollMaxHeight]="'calc(80dvh - var(--space-12))'"
+      [mobileStickyFooter]="true"
+      [mobileMaxHeight]="'80dvh'"
       ariaLabel="Log Body Composition"
     >
       <app-dialog-header
@@ -310,7 +314,6 @@ interface BodyCompositionData {
 })
 export class BodyCompositionCardComponent implements OnInit {
   private trainingService = inject(UnifiedTrainingService);
-  private authService = inject(AuthService);
   private destroyRef = inject(DestroyRef);
   private logger = inject(LoggerService);
   private toastService = inject(ToastService);

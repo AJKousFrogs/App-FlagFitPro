@@ -18,7 +18,6 @@ import { Router } from "@angular/router";
 import { Stepper, StepList, Step } from "primeng/stepper";
 import { COLORS } from "../../../core/constants/app.constants";
 import { AIService } from "../../../core/services/ai.service";
-import { AuthService } from "../../../core/services/auth.service";
 import { LoadMonitoringService } from "../../../core/services/load-monitoring.service";
 import { LoggerService } from "../../../core/services/logger.service";
 import { toLogContext } from "../../../core/services/logger.service";
@@ -119,7 +118,6 @@ export class TrainingBuilderComponent {
   private fb = inject(NonNullableFormBuilder);
   private aiService = inject(AIService);
   private weatherService = inject(WeatherService);
-  private authService = inject(AuthService);
   private logger = inject(LoggerService);
   private loadMonitoringService = inject(LoadMonitoringService);
   private toastService = inject(ToastService);
@@ -285,8 +283,8 @@ export class TrainingBuilderComponent {
   }
 
   private async loadAISuggestions() {
-    const user = this.authService.getUser();
-    if (!user?.id) {
+    const userId = this.supabaseService.userId();
+    if (!userId) {
       return;
     }
 
@@ -297,7 +295,7 @@ export class TrainingBuilderComponent {
       const { data: sessions } = await this.supabaseService.client
         .from("training_sessions")
         .select("created_at, rpe, session_type")
-        .eq("user_id", user.id)
+        .eq("user_id", userId)
         .order("created_at", { ascending: false })
         .limit(10);
 
@@ -343,7 +341,7 @@ export class TrainingBuilderComponent {
     // Load AI suggestions based on user's recent performance
     this.aiService
       .getTrainingSuggestions({
-        userId: user.id,
+        userId,
         recentPerformance,
         upcomingGames,
       })
@@ -392,11 +390,11 @@ export class TrainingBuilderComponent {
       : [];
 
     // Try AI service first
-    const user = this.authService.getUser();
-    if (user?.id) {
+    const userId = this.supabaseService.userId();
+    if (userId) {
       this.aiService
         .getTrainingSuggestions({
-          userId: user.id,
+          userId,
           recentPerformance: [],
           upcomingGames: [],
         })
@@ -597,8 +595,8 @@ export class TrainingBuilderComponent {
 
   async startSession() {
     // Save session to database and start tracking
-    const user = this.authService.getUser();
-    if (!user?.id) {
+    const userId = this.supabaseService.userId();
+    if (!userId) {
       this.toastService.error(TOAST.ERROR.LOGIN_TO_START_SESSION);
       return;
     }
@@ -623,7 +621,7 @@ export class TrainingBuilderComponent {
 
       // Save workout log to database
       const session = await this.loadMonitoringService.createQuickSession(
-        user.id,
+        userId,
         sessionType,
         rpe,
         duration,
@@ -651,8 +649,8 @@ export class TrainingBuilderComponent {
 
   async saveSession() {
     // Save session template to database
-    const user = this.authService.getUser();
-    if (!user?.id) {
+    const userId = this.supabaseService.userId();
+    if (!userId) {
       this.toastService.error(TOAST.ERROR.LOGIN_TO_SAVE_SESSION);
       return;
     }

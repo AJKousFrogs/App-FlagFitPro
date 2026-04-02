@@ -62,7 +62,6 @@
 import { Injectable, inject, signal, computed, effect } from "@angular/core";
 import { LoggerService } from "./logger.service";
 import { SupabaseService } from "./supabase.service";
-import { AuthService } from "./auth.service";
 import { RecoveryService } from "./recovery.service";
 
 // ============================================================================
@@ -311,7 +310,6 @@ const OLYMPIC_VENUES = {
 export class TravelRecoveryService {
   private logger = inject(LoggerService);
   private supabaseService = inject(SupabaseService);
-  private authService = inject(AuthService);
   private recoveryService = inject(RecoveryService);
 
   // State
@@ -363,7 +361,7 @@ export class TravelRecoveryService {
 
   constructor() {
     effect(() => {
-      const userId = this.authService.currentUser()?.id;
+      const userId = this.supabaseService.userId();
       if (!userId) {
         this._currentPlan.set(null);
         this._recoveryProtocol.set([]);
@@ -390,7 +388,7 @@ export class TravelRecoveryService {
     this.logger.debug("[TravelRecoveryService] createTravelPlan called", {
       planData,
     });
-    const userId = this.authService.getUser()?.id || "anonymous";
+    const userId = this.supabaseService.userId() || "anonymous";
 
     // Calculate timezone difference
     const depTz = MAJOR_TIMEZONES[planData.departureTimezone];

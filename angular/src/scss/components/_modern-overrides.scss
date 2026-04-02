@@ -16,10 +16,10 @@
   .p-breadcrumb,
   .breadcrumbs,
   .smart-breadcrumbs {
-    background: transparent !important;
-    border: none !important;
-    padding: var(--space-2) 0 !important;
-    margin: 0 !important;
+    background: transparent;
+    border: none;
+    padding: var(--space-2) 0;
+    margin: 0;
 
     .p-breadcrumb-list,
     .bc-list {
@@ -89,106 +89,68 @@
   }
 
   /* ================================================================
-     2. GLOBAL SEARCH CONTAINER
-     Command palette style with better affordance
+     2. GLOBAL SEARCH CONTAINER (REMOVED)
+     ================================================================
+     This block was styling the generic `.search-container` class globally with
+     heavy `!important`, causing cross-page collisions.
+     
+     Replacement strategy:
+     - Header search trigger uses `.ui-search-trigger` and is styled locally in
+       `app/shared/components/header/header.component.scss`.
+     - Any PrimeNG search inputgroup overrides should live in
+       `assets/styles/overrides/_component-overrides.scss` scoped by component.
      ================================================================ */
-
-  .search-container {
-    display: flex;
-    align-items: center;
-    gap: var(--space-3) !important;
-    background: var(--surface-secondary) !important;
-    border: var(--border-1) solid var(--color-border-subtle) !important;
-    border-radius: var(--radius-2xl) !important;
-    padding: var(--space-2) var(--space-4) !important;
-    transition: all var(--transition-base) !important;
-    box-shadow: var(--shadow-sm) !important;
-    cursor: pointer;
-
-    i.pi-search {
-      color: var(--ds-primary-green) !important;
-      font-size: var(--ds-font-size-md) !important;
-      opacity: 0.8;
-    }
-
-    .search-input-stub {
-      font-size: var(--ds-font-size-sm) !important;
-      color: var(--color-text-secondary) !important;
-      font-weight: var(--ds-font-weight-medium) !important;
-      flex: 1;
-    }
-
-    .search-shortcut {
-      display: flex;
-      align-items: center;
-      gap: var(--space-1) !important;
-      opacity: 0.6;
-
-      kbd {
-        background: var(--surface-primary) !important;
-        border: var(--border-1) solid var(--color-border-subtle) !important;
-        border-radius: var(--radius-md) !important;
-        padding: 2px var(--space-2) !important;
-        font-size: 10px !important;
-        font-family: var(--ds-font-family-mono) !important;
-        color: var(--color-text-primary) !important;
-        box-shadow: 0 1px 0 rgba(0,0,0,0.05) !important;
-        min-width: 20px;
-        text-align: center;
-      }
-    }
-
-    &:hover {
-      background: var(--surface-primary) !important;
-      border-color: var(--ds-primary-green) !important;
-      box-shadow: var(--shadow-md) !important;
-      transform: translateY(-1px);
-
-      i.pi-search { opacity: 1; }
-    }
-
-    &:active {
-      transform: translateY(0);
-      box-shadow: var(--shadow-sm) !important;
-    }
-  }
 
   /* ================================================================
      3. BENTO ITEMS & STAT CARDS
      Consistent, modern elevation and spacing
      ================================================================ */
 
-  .bento-item,
-  .stat-card,
-  .kpi-card {
-    background: var(--surface-primary) !important;
-    border: var(--border-1) solid var(--color-border-subtle) !important;
-    border-radius: var(--radius-2xl) !important;
-    padding: var(--space-6) !important;
-    box-shadow: var(--shadow-sm) !important;
-    transition: all var(--transition-base) !important;
+  /* Scoped to bento-grid pages to avoid global collisions */
+  :where(
+      .player-dashboard,
+      .coach-dashboard,
+      .analytics-page,
+      .acwr-dashboard,
+      .elite-command-center
+    )
+    :is(.bento-item, .stat-card, .kpi-card) {
+    background: var(--surface-primary);
+    border: var(--border-1) solid var(--color-border-subtle);
+    border-radius: var(--radius-2xl);
+    padding: var(--space-6);
+    box-shadow: var(--shadow-sm);
+    transition: all var(--transition-base);
     position: relative;
     overflow: hidden;
 
     &:hover {
-      box-shadow: var(--shadow-md) !important;
-      border-color: var(--ds-primary-green-subtle) !important;
+      box-shadow: var(--shadow-md);
+      border-color: var(--ds-primary-green-subtle);
     }
 
     /* Bento variants */
-    &.full-width { grid-column: 1 / -1; }
-    &.span-2 { grid-column: span 2; }
-    
-    &.no-padding { padding: 0 !important; }
+    &.full-width {
+      grid-column: 1 / -1;
+    }
+    &.span-2 {
+      grid-column: span 2;
+    }
+
+    &.no-padding {
+      padding: 0;
+    }
 
     /* Header in bento */
-    .bento-header, .stat-card-header {
+    .bento-header,
+    .stat-card-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
       margin-bottom: var(--space-4);
 
-      h3, .title {
+      h3,
+      .title {
         font-size: var(--ds-font-size-lg);
         font-weight: var(--ds-font-weight-semibold);
         color: var(--color-text-primary);
@@ -197,9 +159,17 @@
     }
   }
 
-  /* Specific Stat Card Improvements */
-  .stat-card, .kpi-card {
-    .stat-value, .kpi-value {
+  /* Specific Stat Card Improvements (scoped) */
+  :where(
+      .player-dashboard,
+      .coach-dashboard,
+      .analytics-page,
+      .acwr-dashboard,
+      .elite-command-center
+    )
+    :is(.stat-card, .kpi-card) {
+    .stat-value,
+    .kpi-value {
       font-size: var(--ds-font-size-3xl);
       font-weight: var(--ds-font-weight-bold);
       color: var(--color-text-primary);
@@ -207,7 +177,8 @@
       margin: var(--space-2) 0;
     }
 
-    .stat-label, .type-caption {
+    .stat-label,
+    .type-caption {
       font-size: var(--ds-font-size-xs);
       color: var(--color-text-secondary);
       text-transform: uppercase;
@@ -221,9 +192,13 @@
       gap: var(--space-1);
       font-size: var(--ds-font-size-sm);
       font-weight: var(--ds-font-weight-semibold);
-      
-      &.up { color: var(--color-status-success); }
-      &.down { color: var(--color-status-error); }
+
+      &.up {
+        color: var(--color-status-success);
+      }
+      &.down {
+        color: var(--color-status-error);
+      }
     }
   }
 
@@ -445,13 +420,17 @@
   }
 
   /* Card & Bento Elevation (Lift Effect) */
-  .stat-card,
-  .bento-item,
-  .exercise-card,
-  .p-card {
+  :where(
+      .player-dashboard,
+      .coach-dashboard,
+      .analytics-page,
+      .acwr-dashboard,
+      .elite-command-center
+    )
+    :is(.stat-card, .bento-item, .kpi-card) {
     &:hover {
-      transform: translateY(-4px) scale(1.01) !important;
-      box-shadow: var(--shadow-lg) !important;
+      transform: translateY(-4px) scale(1.01);
+      box-shadow: var(--shadow-lg);
       z-index: 2;
     }
   }

@@ -4,6 +4,7 @@
 // ============================================================================
 
 @use "styles/mixins" as *;
+@use "styles/foundations" as *;
 @include stat-block;
 
 .microcycle-planner-page {
@@ -41,6 +42,7 @@
 }
 
 .stat-block__label {
+  @extend %stat-label;
   font-size: var(--ds-font-size-xs);
   text-transform: var(--ds-text-transform-uppercase);
   letter-spacing: var(--ds-letter-spacing-0-03em);
@@ -49,6 +51,7 @@
 }
 
 .stat-block__value {
+  @extend %stat-value;
   font-size: var(--ds-font-size-md);
   font-weight: var(--ds-font-weight-bold);
   color: var(--color-text-primary);

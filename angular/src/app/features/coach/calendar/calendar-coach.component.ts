@@ -407,17 +407,16 @@ const RECURRING_OPTIONS = [
       <app-dialog
         [(visible)]="showCreateDialog"
         [modal]="true"
-        styleClass="coach-calendar-event-dialog"
+        dialogSize="xl"
         [blockScroll]="true"
         [draggable]="false"
-        [breakpoints]="{ '960px': '92vw', '640px': '96vw' }"
         [ariaLabel]="isEditing() ? 'Edit event' : 'Create event'"
       >
         <app-dialog-header
           icon="calendar-plus"
           [title]="isEditing() ? 'Edit Event' : 'Create Event'"
           subtitle="Create practices, games, tournaments, and team events with RSVP settings."
-          (close)="showCreateDialog = false"
+          (close)="closeCreateDialog()"
         />
         <div class="event-form">
           <div class="form-field">
@@ -589,7 +588,7 @@ const RECURRING_OPTIONS = [
           cancelLabel="Cancel"
           primaryLabel="Save Event"
           primaryIcon="check"
-          (cancel)="showCreateDialog = false"
+          (cancel)="closeCreateDialog()"
           (primary)="saveEvent()"
         />
       </app-dialog>
@@ -598,17 +597,16 @@ const RECURRING_OPTIONS = [
       <app-dialog
         [(visible)]="showRsvpDialog"
         [modal]="true"
-        styleClass="coach-calendar-rsvp-dialog"
+        dialogSize="xl"
         [blockScroll]="true"
         [draggable]="false"
-        [breakpoints]="{ '960px': '92vw', '640px': '96vw' }"
         [ariaLabel]="'RSVP management for ' + (selectedEvent()?.title || 'event')"
       >
         <app-dialog-header
           icon="users"
           [title]="'RSVP Management: ' + (selectedEvent()?.title || '')"
           subtitle="Review who is going, who declined, and who still needs a reminder."
-          (close)="showRsvpDialog = false"
+          (close)="closeRsvpDialog()"
         />
         @if (selectedEvent()) {
           <div class="rsvp-content">
@@ -697,7 +695,7 @@ const RECURRING_OPTIONS = [
                 (clicked)="exportRsvpList()"
                 >Export List</app-button
               >
-              <app-button (clicked)="showRsvpDialog = false">Close</app-button>
+              <app-button (clicked)="closeRsvpDialog()">Close</app-button>
             </div>
           </div>
         }
@@ -710,14 +708,13 @@ const RECURRING_OPTIONS = [
         styleClass="coach-calendar-event-detail-dialog"
         [blockScroll]="true"
         [draggable]="false"
-        [breakpoints]="{ '960px': '92vw', '640px': '96vw' }"
         [ariaLabel]="'Event details for ' + (selectedEvent()?.title || 'event')"
       >
         <app-dialog-header
           icon="calendar"
           [title]="selectedEvent()?.title || 'Event Details'"
           subtitle="Review event logistics, RSVP summary, and next actions."
-          (close)="showEventDetailDialog = false"
+          (close)="closeEventDetailDialog()"
         />
         @if (selectedEvent()) {
           <div class="event-detail-content">
@@ -803,7 +800,7 @@ const RECURRING_OPTIONS = [
               >
               <app-button
                 variant="text"
-                (clicked)="showEventDetailDialog = false"
+                (clicked)="closeEventDetailDialog()"
                 >Close</app-button
               >
             </div>
@@ -1087,15 +1084,47 @@ export class CalendarCoachComponent implements OnInit {
   }
 
   // Actions
-  openCreateDialog(): void {
+  closeCreateDialog(): void {
+    this.showCreateDialog = false;
     this.isEditing.set(false);
     this.eventForm = this.getEmptyEventForm();
+  }
+
+  closeRsvpDialog(): void {
+    this.showRsvpDialog = false;
+  }
+
+  closeEventDetailDialog(): void {
+    this.showEventDetailDialog = false;
+  }
+
+  private refreshCalendarData(): Promise<void> {
+    return this.loadData();
+  }
+
+  private showEventDetail(event: TeamEvent): void {
+    this.closeEventDetailDialog();
+    this.selectedEvent.set(event);
+    this.showEventDetailDialog = true;
+  }
+
+  private showRsvpManagement(event: TeamEvent): void {
+    this.closeEventDetailDialog();
+    this.closeRsvpDialog();
+    this.selectedEvent.set(event);
+    this.rsvps.set([]);
+    this.showRsvpDialog = true;
+  }
+
+  openCreateDialog(): void {
+    this.closeCreateDialog();
     this.showCreateDialog = true;
   }
 
   readonly openCreateDialogHandler = (): void => this.openCreateDialog();
 
   editEvent(event: TeamEvent): void {
+    this.closeCreateDialog();
     this.isEditing.set(true);
     this.eventForm = {
       ...this.getEmptyEventForm(),
@@ -1145,7 +1174,7 @@ export class CalendarCoachComponent implements OnInit {
             `${this.eventForm.title} has been updated`,
             "Event Updated",
           );
-          await this.loadData();
+          await this.refreshCalendarData();
         }
       } else {
         // Create new event
@@ -1157,10 +1186,10 @@ export class CalendarCoachComponent implements OnInit {
             `${this.eventForm.title} has been created`,
             "Event Created",
           );
-          await this.loadData();
+          await this.refreshCalendarData();
         }
       }
-      this.showCreateDialog = false;
+      this.closeCreateDialog();
     } catch (err) {
       this.logger.error("Failed to save event", err);
       this.toastService.error("Failed to save event. Please try again.");
@@ -1168,17 +1197,11 @@ export class CalendarCoachComponent implements OnInit {
   }
 
   viewEvent(event: TeamEvent): void {
-    this.selectedEvent.set(event);
-    this.showEventDetailDialog = true;
+    this.showEventDetail(event);
   }
 
   async viewRsvps(event: TeamEvent): Promise<void> {
-    this.selectedEvent.set(event);
-    this.showEventDetailDialog = false;
-    // Load RSVPs from backend when endpoint is available
-    // For now, using empty array
-    this.rsvps.set([]);
-    this.showRsvpDialog = true;
+    this.showRsvpManagement(event);
   }
 
   openRsvpDialogFromDetails(): void {
@@ -1194,12 +1217,12 @@ export class CalendarCoachComponent implements OnInit {
     if (!event) {
       return;
     }
-    this.showEventDetailDialog = false;
+    this.closeEventDetailDialog();
     this.editEvent(event);
   }
 
   setLineup(event: TeamEvent): void {
-    this.showEventDetailDialog = false;
+    this.closeEventDetailDialog();
     void this.router.navigate(["/coach/tournaments"], {
       queryParams: { event: event.id, focus: "lineup" },
     });
@@ -1223,7 +1246,7 @@ export class CalendarCoachComponent implements OnInit {
           `${event.title} has been cancelled`,
           "Event Cancelled",
         );
-        await this.loadData();
+        await this.refreshCalendarData();
       }
     } catch (err) {
       this.logger.error("Failed to cancel event", err);
@@ -1240,7 +1263,7 @@ export class CalendarCoachComponent implements OnInit {
     }
 
     const draft = `Reminder: ${pendingCount} RSVP responses are still pending for ${event.title} on ${event.date}. Please update your availability.`;
-    this.showRsvpDialog = false;
+    this.closeRsvpDialog();
     void this.router.navigate(["/team-chat"], {
       queryParams: {
         source: "calendar",
@@ -1257,7 +1280,7 @@ export class CalendarCoachComponent implements OnInit {
 
   messageAll(group: string): void {
     const eventId = this.selectedEvent()?.id;
-    this.showRsvpDialog = false;
+    this.closeRsvpDialog();
     void this.router.navigate(["/team-chat"], {
       queryParams: {
         source: "calendar",

@@ -36,8 +36,9 @@ import { ApiService, API_ENDPOINTS } from "../../../../core/services/api.service
 import { LoggerService } from "../../../../core/services/logger.service";
 import { DialogService } from "../../../../core/ui/dialog.service";
 import { extractApiPayload } from "../../../../core/utils/api-response-mapper";
-import { DIALOG_WIDTHS } from "../../../../core/utils/design-tokens.util";
-import { DesignTokens } from "../../../../shared/models/design-tokens";
+import {
+  DIALOG_BREAKPOINTS,
+} from "../../../../core/utils/design-tokens.util";
 import {
   AppDialogComponent,
   DialogFooterComponent,
@@ -266,6 +267,7 @@ interface EventTypeOption {
       [blockScroll]="true"
       [breakpoints]="dialogBreakpoints"
       [draggable]="false"
+      dialogSize="md"
       styleClass="training-tournament-dialog"
       [ariaLabel]="isEditing() ? 'Edit tournament' : 'Add tournament'"
     >
@@ -445,9 +447,7 @@ interface EventTypeOption {
   styleUrl: "./tournament-calendar.component.scss",
 })
 export class TournamentCalendarComponent {
-  readonly dialogBreakpoints = {
-    [DesignTokens.breakpoints.mobile]: DIALOG_WIDTHS.full,
-  };
+  readonly dialogBreakpoints = DIALOG_BREAKPOINTS.mobileFull;
   private readonly api = inject(ApiService);
   private readonly logger = inject(LoggerService);
   private readonly dialogService = inject(DialogService);

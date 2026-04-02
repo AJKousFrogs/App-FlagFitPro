@@ -16,7 +16,7 @@ import {
   OnInit,
   signal,
 } from "@angular/core";
-import { AuthService } from "../../../core/services/auth.service";
+import { SupabaseService } from "../../../core/services/supabase.service";
 import { ToastService } from "../../../core/services/toast.service";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { EmptyStateComponent } from "../../../shared/components/empty-state/empty-state.component";
@@ -638,17 +638,16 @@ const VISIBILITY_OPTIONS = [
       <app-dialog
         [(visible)]="showAddDialog"
         [modal]="true"
-        styleClass="knowledge-base-add-dialog"
+        dialogSize="xl"
         [blockScroll]="true"
         [draggable]="false"
-        [breakpoints]="{ '960px': '92vw', '640px': '96vw' }"
         ariaLabel="Add knowledge resource"
       >
         <app-dialog-header
           icon="plus-circle"
           title="Add Resource"
           subtitle="Submit a coaching resource for review and Merlin AI approval."
-          (close)="showAddDialog = false"
+          (close)="closeAddDialog()"
         />
         <div class="add-form">
           <div class="form-field">
@@ -760,7 +759,7 @@ const VISIBILITY_OPTIONS = [
           primaryLabel="Submit for Review"
           primaryIcon="check"
           [disabled]="isSubmitting()"
-          (cancel)="showAddDialog = false"
+          (cancel)="closeAddDialog()"
           (primary)="saveResource()"
         />
       </app-dialog>
@@ -768,17 +767,16 @@ const VISIBILITY_OPTIONS = [
       <app-dialog
         [(visible)]="showApproveDialog"
         [modal]="true"
-        styleClass="knowledge-base-add-dialog"
+        dialogSize="xl"
         [blockScroll]="true"
         [draggable]="false"
-        [breakpoints]="{ '960px': '92vw', '640px': '96vw' }"
         ariaLabel="Approve knowledge entry"
       >
         <app-dialog-header
           icon="check-circle"
           title="Approve Knowledge Entry"
           subtitle="Review quality checks and finalize approval for Merlin knowledge."
-          (close)="showApproveDialog = false"
+          (close)="closeApproveDialog()"
         />
         @if (selectedPendingEntry()) {
           <div class="add-form">
@@ -826,7 +824,7 @@ const VISIBILITY_OPTIONS = [
           primaryLabel="Approve Entry"
           primaryIcon="check"
           [disabled]="isReviewSubmitting()"
-          (cancel)="showApproveDialog = false"
+          (cancel)="closeApproveDialog()"
           (primary)="confirmApprove()"
         />
       </app-dialog>
@@ -837,14 +835,13 @@ const VISIBILITY_OPTIONS = [
         styleClass="knowledge-base-resource-dialog"
         [blockScroll]="true"
         [draggable]="false"
-        [breakpoints]="{ '960px': '92vw', '640px': '96vw' }"
         ariaLabel="Knowledge resource details"
       >
         <app-dialog-header
           icon="book"
           [title]="selectedResource()?.title || 'Resource Details'"
           subtitle="Review resource context, tags, and sharing actions."
-          (close)="showResourceDialog = false"
+          (close)="closeResourceDialog()"
         />
         @if (selectedResource()) {
           <div class="resource-detail-content">
@@ -903,7 +900,7 @@ const VISIBILITY_OPTIONS = [
           cancelLabel="Close"
           primaryLabel="Share"
           primaryIcon="share-alt"
-          (cancel)="showResourceDialog = false"
+          (cancel)="closeResourceDialog()"
           (primary)="shareSelectedResource()"
         />
       </app-dialog>
@@ -915,7 +912,7 @@ export class KnowledgeBaseComponent implements OnInit {
   private readonly api = inject(ApiService);
   private readonly logger = inject(LoggerService);
   private readonly toastService = inject(ToastService);
-  private readonly authService = inject(AuthService);
+  private readonly supabase = inject(SupabaseService);
   private readonly teamMembershipService = inject(TeamMembershipService);
 
   // State
@@ -1174,9 +1171,52 @@ export class KnowledgeBaseComponent implements OnInit {
     };
   }
 
+  private resetReviewForm(): void {
+    this.reviewForm = {
+      notes: "",
+      overrideQualityGate: false,
+    };
+  }
+
+  private async refreshReviewQueues(): Promise<void> {
+    const refreshTasks: Promise<unknown>[] = [this.loadMySubmissions()];
+    if (this.isNutritionistReviewer()) {
+      refreshTasks.push(this.loadPendingEntries());
+    }
+    await Promise.all(refreshTasks);
+  }
+
+  private applyResourceToForm(resource: KnowledgeResource): void {
+    this.resourceForm = {
+      type: resource.type,
+      title: resource.title,
+      category: resource.category,
+      url: "",
+      content: resource.description,
+      visibility: resource.isTeamResource ? "team" : "coaches",
+      tags: resource.tags?.join(", ") || "",
+    };
+  }
+
+  closeAddDialog(): void {
+    this.showAddDialog = false;
+    this.resourceForm = this.getEmptyForm();
+  }
+
+  closeApproveDialog(): void {
+    this.showApproveDialog = false;
+    this.selectedPendingEntry.set(null);
+    this.resetReviewForm();
+  }
+
+  closeResourceDialog(): void {
+    this.showResourceDialog = false;
+    this.selectedResource.set(null);
+  }
+
   // Actions
   openAddDialog(isTeam = false): void {
-    this.resourceForm = this.getEmptyForm();
+    this.closeAddDialog();
     if (isTeam) {
       this.resourceForm.visibility = "team";
     }
@@ -1184,10 +1224,10 @@ export class KnowledgeBaseComponent implements OnInit {
   }
 
   private getEffectiveRole(): string {
-    const user = this.authService.getUser();
-    const metadata = user?.user_metadata || {};
+    const user = this.supabase.currentUser();
+    const metadata = user?.user_metadata ?? {};
     const roleFromMeta = String(
-      metadata["staff_role"] || metadata["role"] || user?.role || "",
+      metadata["staff_role"] || metadata["role"] || "",
     )
       .trim()
       .toLowerCase();
@@ -1254,13 +1294,8 @@ export class KnowledgeBaseComponent implements OnInit {
         "Knowledge submitted for nutritionist review",
         "Submitted",
       );
-      this.showAddDialog = false;
-      this.resourceForm = this.getEmptyForm();
-      await this.loadMySubmissions();
-
-      if (this.isNutritionistReviewer()) {
-        await this.loadPendingEntries();
-      }
+      this.closeAddDialog();
+      await this.refreshReviewQueues();
     } catch (error) {
       this.logger.error("Failed to submit knowledge entry", error);
       this.toastService.error(
@@ -1358,7 +1393,7 @@ export class KnowledgeBaseComponent implements OnInit {
         `Entry ${action}d successfully`,
         "Review Complete",
       );
-      await this.loadPendingEntries();
+      await this.refreshReviewQueues();
     } catch (error) {
       this.logger.error("Failed to review pending entry", error);
       this.toastService.error(
@@ -1369,11 +1404,8 @@ export class KnowledgeBaseComponent implements OnInit {
   }
 
   openApproveDialog(entry: PendingKnowledgeEntry): void {
+    this.closeApproveDialog();
     this.selectedPendingEntry.set(entry);
-    this.reviewForm = {
-      notes: "",
-      overrideQualityGate: false,
-    };
     this.showApproveDialog = true;
   }
 
@@ -1494,9 +1526,8 @@ export class KnowledgeBaseComponent implements OnInit {
         throw new Error("Review failed");
       }
       this.toastService.success("Entry approved successfully", "Review Complete");
-      this.showApproveDialog = false;
-      this.selectedPendingEntry.set(null);
-      await Promise.all([this.loadPendingEntries(), this.loadMySubmissions()]);
+      this.closeApproveDialog();
+      await this.refreshReviewQueues();
     } catch (error) {
       this.logger.error("Failed to approve pending entry", error);
       this.toastService.error(
@@ -1509,21 +1540,14 @@ export class KnowledgeBaseComponent implements OnInit {
   }
 
   openResource(resource: KnowledgeResource): void {
+    this.closeResourceDialog();
     this.selectedResource.set(resource);
     this.showResourceDialog = true;
   }
 
   editResource(resource: KnowledgeResource): void {
-    this.resourceForm = {
-      type: resource.type,
-      title: resource.title,
-      category: resource.category,
-      url: "",
-      content: resource.description,
-      visibility: resource.isTeamResource ? "team" : "coaches",
-      tags: resource.tags?.join(", ") || "",
-    };
-    this.showResourceDialog = false;
+    this.applyResourceToForm(resource);
+    this.closeResourceDialog();
     this.showAddDialog = true;
   }
 
@@ -1550,8 +1574,7 @@ export class KnowledgeBaseComponent implements OnInit {
       this.logger.warn("Clipboard copy failed, falling back to dialog", error);
     }
 
-    this.selectedResource.set(resource);
-    this.showResourceDialog = true;
+    this.openResource(resource);
     this.toastService.info(
       "Clipboard is unavailable, so the resource is open for manual sharing.",
       "Share Resource",

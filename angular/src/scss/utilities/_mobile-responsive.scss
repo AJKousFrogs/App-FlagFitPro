@@ -88,6 +88,20 @@
   }
 }
 
+// iPhone 11-17 portrait range without very small phones.
+@mixin iphone-standard-range {
+  @media (min-width: 23.4375rem) and (max-width: 26.875rem) {
+    @content;
+  }
+}
+
+// Samsung S23-S25 portrait range.
+@mixin samsung-standard-range {
+  @media (min-width: 22.5rem) and (max-width: 25.75rem) {
+    @content;
+  }
+}
+
 // ================================================================
 // MOBILE LAYER - Higher specificity than base styles
 // ================================================================
@@ -97,7 +111,7 @@
   // MOBILE-SPECIFIC RESETS (Chrome & Safari iOS)
   // ================================================================
 
-  @media (max-width: 47.9375rem) {
+  @include mobile-md {
     // Note: Input font-size: 1rem and touch targets (2.75rem)
     // are defined in _mobile-touch-components.scss
 
@@ -115,7 +129,7 @@
   // ================================================================
 
   .mobile-card-compact {
-    @media (max-width: 47.9375rem) {
+    @include mobile-md {
       .p-card-body {
         padding: var(--space-3);
       }
@@ -132,7 +146,7 @@
   // ================================================================
 
   .mobile-table-scroll {
-    @media (max-width: 47.9375rem) {
+    @include mobile-md {
       overflow-x: auto;
 
       // Scroll shadow indicators
@@ -179,7 +193,7 @@
   // ================================================================
 
   .mobile-button-large {
-    @media (max-width: 47.9375rem) {
+    @include mobile-md {
       min-height: calc(var(--touch-target-md) + var(--space-1));
       padding: var(--space-3) var(--space-4);
       font-size: var(--ds-font-size-md);
@@ -195,7 +209,7 @@
   // ================================================================
 
   .mobile-chart-responsive {
-    @media (max-width: 47.9375rem) {
+    @include mobile-md {
       canvas {
         max-width: 100%;
         height: auto;
@@ -215,19 +229,19 @@
 
   @supports (padding: max(0rem)) {
     .mobile-safe-bottom {
-      @media (max-width: 47.9375rem) {
+      @include mobile-md {
         padding-bottom: max(var(--space-4), env(safe-area-inset-bottom));
       }
     }
 
     .mobile-safe-top {
-      @media (max-width: 47.9375rem) {
+      @include mobile-md {
         padding-top: max(var(--space-4), env(safe-area-inset-top));
       }
     }
 
     .mobile-safe-inline {
-      @media (max-width: 47.9375rem) {
+      @include mobile-md {
         padding-left: max(var(--space-4), env(safe-area-inset-left));
         padding-right: max(var(--space-4), env(safe-area-inset-right));
       }
@@ -235,7 +249,7 @@
 
     // Full safe area wrapper
     .mobile-safe-all {
-      @media (max-width: 47.9375rem) {
+      @include mobile-md {
         padding-top: max(var(--space-4), env(safe-area-inset-top));
         padding-bottom: max(var(--space-4), env(safe-area-inset-bottom));
         padding-left: max(var(--space-4), env(safe-area-inset-left));
@@ -253,8 +267,7 @@
   .keyboard-viewport {
     min-height: 100vh;
     min-height: 100dvh; // Modern: keyboard-aware
-height: 100dvh; // Modern: keyboard-aware
-    min-height: 100dvh; // Dynamic viewport - excludes keyboard
+    min-height: -webkit-fill-available;
 
     @supports (height: 100svh) {
       // Small viewport - always excludes keyboard
@@ -282,7 +295,7 @@ height: 100dvh; // Modern: keyboard-aware
   }
 
   // Input focus scroll adjustment
-  @media (max-width: 47.9375rem) {
+  @include mobile-md {
     // Scroll input into view when focused
     input:focus-visible,
     textarea:focus-visible,
@@ -305,7 +318,7 @@ height: 100dvh; // Modern: keyboard-aware
   // Viewport: 390-26.875rem width
   // ================================================================
 
-  @media (max-width: 26.875rem) and (min-width: 23.4375rem) {
+  @include iphone-standard-range {
     // iPhone notch area padding
     .iphone-notch-aware {
       padding-top: max(var(--space-4), env(safe-area-inset-top));
@@ -322,7 +335,7 @@ height: 100dvh; // Modern: keyboard-aware
   // Viewport: 360-25.75rem width
   // ================================================================
 
-  @media (max-width: 25.75rem) and (min-width: 22.5rem) {
+  @include samsung-standard-range {
     // Samsung navigation bar area
     .samsung-nav-aware {
       padding-bottom: max(var(--space-3), env(safe-area-inset-bottom));
@@ -333,7 +346,7 @@ height: 100dvh; // Modern: keyboard-aware
   // MOBILE-OPTIMIZED DIALOG/MODAL
   // ================================================================
 
-  @media (max-width: 47.9375rem) {
+  @include mobile-md {
     // Full-screen dialogs on mobile
     .p-dialog {
       width: 95vw;
@@ -344,6 +357,11 @@ height: 100dvh; // Modern: keyboard-aware
       flex-direction: column;
 
       // CRITICAL: Ensure dialog doesn't block touches
+      pointer-events: auto;
+    }
+
+    .p-dialog-header {
+      flex-shrink: 0;
       pointer-events: auto;
     }
 
@@ -383,6 +401,18 @@ height: 100dvh; // Modern: keyboard-aware
       }
     }
 
+    .dialog-actions {
+      pointer-events: auto;
+
+      button,
+      .p-button,
+      app-button {
+        pointer-events: auto;
+        position: relative;
+        z-index: var(--z-index-dropdown);
+      }
+    }
+
     // CRITICAL: Dialog mask should allow clicks through to dialog
     .p-dialog-mask {
       pointer-events: auto;
@@ -403,7 +433,7 @@ height: 100dvh; // Modern: keyboard-aware
   // ================================================================
 
   // iPhone 15-17 Pro Max, Samsung S25 Ultra (26.875rem)
-  @media (max-width: 26.875rem) {
+  @include iphone-pro-max {
     .p-dialog {
       width: 100vw;
       max-width: 100vw;
@@ -411,27 +441,10 @@ height: 100dvh; // Modern: keyboard-aware
       max-height: 80dvh; /* Modern: accounts for mobile browser chrome */
       margin: 0;
       border-radius: var(--radius-lg) var(--radius-lg) 0 0;
-      display: flex;
-      flex-direction: column;
-
-      // CRITICAL: Ensure dialog receives touches
-      pointer-events: auto;
-    }
-
-    .p-dialog-header {
-      flex-shrink: 0;
-      pointer-events: auto;
     }
 
     .p-dialog-content {
       padding: var(--space-4);
-      flex: 1 1 auto;
-      min-height: 0;
-      overflow-y: auto;
-      -webkit-overflow-scrolling: touch;
-
-      // CRITICAL: All form elements must be touchable
-      pointer-events: auto;
 
       * {
         pointer-events: auto;
@@ -439,59 +452,31 @@ height: 100dvh; // Modern: keyboard-aware
     }
 
     .p-dialog-footer {
-      pointer-events: auto;
-      position: relative;
-      z-index: var(--z-index-base);
-      flex-shrink: 0;
       padding: var(--space-4);
       padding-bottom: max(var(--space-4), env(safe-area-inset-bottom));
-      background: var(--surface-primary);
-      border-top: var(--border-1) solid var(--color-border-muted);
     }
 
     // Ensure dialog actions don't get cut off
     .dialog-actions {
       padding-bottom: max(var(--space-4), env(safe-area-inset-bottom));
-      pointer-events: auto;
-
-      // CRITICAL: All action buttons must be touchable
-      button,
-      .p-button,
-      app-button {
-        pointer-events: auto;
-        position: relative;
-        z-index: var(--z-index-dropdown);
-      }
     }
   }
 
   // iPhone 11-14, Samsung S23/S24 (412-25.875rem) - Even more compact
-  @media (max-width: 25.875rem) {
+  @include iphone-standard {
     .p-dialog {
       width: 100vw;
       max-width: 100vw;
       max-height: 80vh;
       max-height: 80dvh; /* Modern: accounts for mobile browser chrome */
-      display: flex;
-      flex-direction: column;
-
-      // CRITICAL: Ensure dialog receives touches
-      pointer-events: auto;
     }
 
     .p-dialog-header {
       padding: var(--space-3);
-      flex-shrink: 0;
-      pointer-events: auto;
     }
 
     .p-dialog-content {
       padding: var(--space-3);
-      flex: 1 1 auto;
-      min-height: 0;
-      overflow-y: auto;
-      -webkit-overflow-scrolling: touch;
-      pointer-events: auto;
 
       // CRITICAL: All interactive elements must be touchable
       * {
@@ -502,25 +487,15 @@ height: 100dvh; // Modern: keyboard-aware
     .p-dialog-footer {
       padding: var(--space-3);
       padding-bottom: max(var(--space-3), env(safe-area-inset-bottom));
-      pointer-events: auto;
-      position: relative;
-      z-index: var(--z-index-base);
-      flex-shrink: 0;
-      background: var(--surface-primary);
-      border-top: var(--border-1) solid var(--color-border-muted);
     }
 
     // Stack dialog action buttons on very narrow screens
     .dialog-actions {
       flex-direction: column;
       gap: var(--space-2);
-      pointer-events: auto;
 
       app-button {
         width: 100%;
-        pointer-events: auto;
-        position: relative;
-        z-index: var(--z-index-dropdown);
       }
     }
   }
@@ -542,7 +517,7 @@ height: 100dvh; // Modern: keyboard-aware
 // ================================================================
 
 @layer mobile {
-  @media (max-width: 47.9375rem) {
+  @include mobile-md {
     // DatePicker full width
     .p-datepicker {
       max-width: calc(100vw - var(--space-6));
@@ -590,7 +565,7 @@ height: 100dvh; // Modern: keyboard-aware
   // iPhone 11-17 (414-26.875rem), Samsung S23-S25 (412-26.875rem)
   // ================================================================
 
-  @media (max-width: 26.875rem) {
+  @include iphone-pro-max {
     // Full-width select overlays on target devices
     .p-select-overlay,
     .p-dropdown-panel,
@@ -646,7 +621,7 @@ height: 100dvh; // Modern: keyboard-aware
     }
   }
 
-  @media (max-width: 25.875rem) {
+  @include iphone-standard {
     // Even more compact for iPhone 11-14 / Samsung S23/S24
     .p-select-overlay,
     .p-dropdown-panel {
@@ -661,30 +636,6 @@ height: 100dvh; // Modern: keyboard-aware
       max-height: 60dvh; /* Modern: accounts for mobile browser chrome */
     }
 
-    // Password dialog specific fixes
-    .password-dialog .p-dialog {
-      width: 100vw;
-      margin: 0;
-    }
-
-    // 2FA dialog fixes
-    .twofa-dialog .p-dialog {
-      width: 100vw;
-
-      .qr-wrapper {
-        width: 10rem; /* 10rem - QR code size */
-        height: 10rem; /* 10rem - QR code size */
-      }
-    }
-
-    // Export dialog fixes
-    .export-dialog .p-dialog {
-      width: 100vw;
-
-      .format-options {
-        grid-template-columns: 1fr;
-      }
-    }
   }
 }
 
@@ -692,7 +643,7 @@ height: 100dvh; // Modern: keyboard-aware
 // MOBILE SCROLLBAR STYLING (Webkit - Chrome & Safari)
 // ================================================================
 
-@media (max-width: 47.9375rem) {
+@include mobile-md {
   // Thin scrollbars for mobile
   * {
     scrollbar-width: thin;
@@ -723,7 +674,7 @@ height: 100dvh; // Modern: keyboard-aware
 // PERFORMANCE OPTIMIZATIONS FOR MOBILE
 // ================================================================
 
-@media (max-width: 47.9375rem) {
+@include mobile-md {
   // Use GPU acceleration for animations
   .mobile-gpu-accelerated {
     transform: translateZ(0);

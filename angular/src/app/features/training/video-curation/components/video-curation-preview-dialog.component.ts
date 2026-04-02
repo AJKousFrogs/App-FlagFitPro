@@ -27,6 +27,7 @@ import { InstagramVideo } from "../video-curation.models";
       [modal]="true"
       [blockScroll]="true"
       [draggable]="false"
+      dialogSize="2xl"
       ariaLabel="Video preview"
       class="video-curation-preview-dialog"
     >

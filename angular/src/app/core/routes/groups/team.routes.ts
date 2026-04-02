@@ -10,7 +10,12 @@ export const teamRoutes: Routes = [
         (m) => m.RosterComponent,
       ),
     canActivate: [authGuard],
-    data: { preload: true, priority: "high", entry: "internal" },
+    data: {
+      preload: true,
+      priority: "high",
+      entry: "internal",
+      headerPreset: "dashboard",
+    },
   },
   {
     path: "team/workspace",
@@ -19,7 +24,12 @@ export const teamRoutes: Routes = [
         (m) => m.TeamWorkspaceComponent,
       ),
     canActivate: [authGuard],
-    data: { preload: true, priority: "high", entry: "internal" }, // Core team hub in 2.0
+    data: {
+      preload: true,
+      priority: "high",
+      entry: "internal",
+      headerPreset: "dashboard",
+    }, // Core team hub in 2.0
   },
   {
     path: "coach",
@@ -34,7 +44,12 @@ export const teamRoutes: Routes = [
         (m) => m.CoachDashboardComponent,
       ),
     canActivate: [authGuard, coachRoleGuard],
-    data: { preload: true, priority: "high", entry: "internal" }, // Coach main dashboard
+    data: {
+      preload: true,
+      priority: "high",
+      entry: "internal",
+      headerPreset: "dashboard",
+    }, // Coach main dashboard
   },
   // === NEW ROUTE: Coach Activity Feed ===
   {
@@ -50,7 +65,12 @@ export const teamRoutes: Routes = [
         (m) => m.CoachAnalyticsComponent,
       ),
     canActivate: [authGuard, coachRoleGuard],
-    data: { preload: true, priority: "high", entry: "internal" }, // Core coach workflow
+    data: {
+      preload: true,
+      priority: "high",
+      entry: "internal",
+      headerPreset: "analytics",
+    }, // Core coach workflow
   },
   {
     path: "coach/planning",
@@ -77,7 +97,7 @@ export const teamRoutes: Routes = [
         (m) => m.TeamManagementComponent,
       ),
     canActivate: [authGuard, coachRoleGuard],
-    data: { preload: false, entry: "internal" }, // Operational tool
+    data: { preload: false, entry: "internal", headerPreset: "dashboard" }, // Operational tool
   },
   {
     path: "coach/team-management",
@@ -104,7 +124,7 @@ export const teamRoutes: Routes = [
         (m) => m.PracticePlannerComponent,
       ),
     canActivate: [authGuard, coachRoleGuard],
-    data: { preload: false, entry: "internal" }, // Planning sub-tool
+    data: { preload: false, entry: "internal", headerPreset: "training" }, // Planning sub-tool
   },
   {
     path: "coach/practice-planner",
@@ -149,7 +169,7 @@ export const teamRoutes: Routes = [
         (m) => m.TournamentManagementComponent,
       ),
     canActivate: [authGuard, coachRoleGuard],
-    data: { preload: false, entry: "internal" }, // Seasonal feature
+    data: { preload: false, entry: "internal", headerPreset: "dashboard" }, // Seasonal feature
   },
   {
     path: "coach/payments",
@@ -170,7 +190,7 @@ export const teamRoutes: Routes = [
         (m) => m.KnowledgeBaseComponent,
       ),
     canActivate: [authGuard],
-    data: { preload: false, entry: "internal" }, // Shared knowledge feature
+    data: { preload: false, entry: "internal", headerPreset: "default" }, // Shared knowledge feature
   },
   {
     path: "coach/knowledge",
@@ -197,7 +217,7 @@ export const teamRoutes: Routes = [
         (m) => m.CalendarCoachComponent,
       ),
     canActivate: [authGuard, coachRoleGuard],
-    data: { preload: false, entry: "internal" }, // Planning sub-tool
+    data: { preload: false, entry: "internal", headerPreset: "training" }, // Planning sub-tool
   },
   {
     path: "coach/scouting",
@@ -224,7 +244,7 @@ export const teamRoutes: Routes = [
         (m) => m.AttendanceComponent,
       ),
     canActivate: [authGuard, coachRoleGuard],
-    data: { preload: false, entry: "internal" }, // Team operations tool
+    data: { preload: false, entry: "internal", headerPreset: "dashboard" }, // Team operations tool
   },
   {
     path: "depth-chart",

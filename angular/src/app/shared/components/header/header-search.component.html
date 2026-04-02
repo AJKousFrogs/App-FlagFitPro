@@ -1,0 +1,14 @@
+<button
+  class="ui-search-trigger"
+  (click)="search.emit()"
+  aria-haspopup="dialog"
+  aria-label="Open search"
+  type="button"
+>
+  <i class="pi pi-search" aria-hidden="true"></i>
+  <span class="search-input-stub" aria-hidden="true">{{ placeholder() }}</span>
+  <span class="search-shortcut">
+    <kbd>{{ shortcutModifier() }}</kbd><kbd>K</kbd>
+  </span>
+</button>
+

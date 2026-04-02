@@ -14,7 +14,6 @@
 import { Injectable, inject, signal, computed } from "@angular/core";
 import { Observable, from, of } from "rxjs";
 import { catchError, map } from "rxjs";
-import { AuthService } from "./auth.service";
 import { LoggerService } from "./logger.service";
 import { SupabaseService } from "./supabase.service";
 
@@ -61,7 +60,6 @@ interface BMICategory {
 })
 export class BodyCompositionService {
   private supabase = inject(SupabaseService);
-  private auth = inject(AuthService);
   private logger = inject(LoggerService);
 
   // Reactive state
@@ -97,7 +95,7 @@ export class BodyCompositionService {
     this._isLoading.set(true);
     this._error.set(null);
 
-    const userId = this.auth.currentUser()?.id;
+    const userId = this.supabase.userId();
     if (!userId) {
       return of({ data: [], error: "Not authenticated" });
     }
@@ -140,7 +138,7 @@ export class BodyCompositionService {
   logMeasurement(
     measurement: Partial<PhysicalMeasurement>,
   ): Observable<{ success: boolean; error?: string }> {
-    const userId = this.auth.currentUser()?.id;
+    const userId = this.supabase.userId();
     if (!userId) {
       return of({ success: false, error: "Not authenticated" });
     }

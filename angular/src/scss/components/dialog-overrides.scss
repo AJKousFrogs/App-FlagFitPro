@@ -10,94 +10,18 @@
 }
 
 // Small dialogs
-.officials-schedule-dialog,
-.chat-create-channel-dialog,
-.roster-invite-dialog,
-.equipment-return-dialog,
-.equipment-checkout-dialog,
-.roster-status-dialog,
-.roster-bulk-status-dialog,
-.location-dialog,
-.privacy-contact-dialog,
-.privacy-delete-dialog {
-  @include dialog-size(var(--dialog-max-width-sm));
-}
-
-// Medium dialogs
-.rsvp-dialog,
-.officials-standard-dialog,
-.chat-pinned-dialog,
-.game-tracker-play-dialog,
-.body-comp-dialog,
-.poll-dialog,
-.tournament-availability-dialog,
-.micro-session-dialog,
-.attendance-create-dialog,
-.training-tournament-dialog {
+.micro-session-dialog {
   @include dialog-size(var(--dialog-max-width-md));
 }
 
 // Large dialogs
-.payments-instructions-dialog,
-.chat-members-dialog,
-.roster-invitations-dialog,
-.payment-record-dialog,
-.film-tag-dialog,
-.development-note-dialog,
-.team-invite-dialog,
-.injury-checkin-dialog,
-.play-stats-dialog,
-.physio-report-dialog,
-.nutritionist-report-dialog,
-.psychology-precomp-dialog,
-.equipment-add-dialog,
-.development-goal-dialog,
-.film-upload-dialog,
-.player-settings-dialog,
-.video-curation-playlist-dialog,
-.qb-throwing-log-dialog {
-  @include dialog-size(var(--dialog-max-width-lg));
-}
-
-// Extra-large dialogs
-.roster-player-details-dialog,
-.roster-player-dialog,
-.payment-fee-dialog,
-.practice-activity-dialog,
-.knowledge-base-add-dialog,
-.team-edit-player-dialog,
-.injury-report-dialog,
-.exercise-details-dialog,
-.psychology-generate-dialog,
-.physio-athlete-dialog,
-.physio-risk-dialog,
-.nutritionist-tournament-dialog,
-.tournament-dialog,
-.tournament-budget-dialog,
-.coach-calendar-event-dialog,
-.coach-calendar-rsvp-dialog,
-.attendance-take-dialog,
-.exercisedb-approval-dialog,
 .video-preview-dialog {
   @include dialog-size(var(--dialog-max-width-xl));
 }
 
 // 2XL dialogs
-.play-detail-dialog,
-.quiz-dialog,
-.practice-dialog,
-.play-dialog,
-.program-dialog,
-.tournament-detail-dialog,
-.nutritionist-athlete-dialog,
-.tournament-team-availability-dialog,
-.film-detail-dialog,
-.exercisedb-detail-dialog,
 .la28-roadmap-dialog,
-.achievements-panel-dialog,
-.video-curation-preview-dialog,
-.video-dialog,
-.performance-dialog {
+.achievements-panel-dialog {
   @include dialog-size(var(--dialog-max-width-2xl));
 }
 
@@ -127,4 +51,3 @@
   max-height: var(--dialog-max-height);
   overflow: auto;
 }
-
