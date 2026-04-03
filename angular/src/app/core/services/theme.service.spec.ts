@@ -29,19 +29,23 @@ describe("ThemeService", () => {
     error: vi.fn(),
   };
 
+  const mockUser = { id: "user-123" };
+  const mockSaveUpsert = vi.fn(() => Promise.resolve({ error: null }));
+  const mockMaybeSingle = vi.fn(() =>
+    Promise.resolve({ data: null, error: null }),
+  );
+  const mockSelectChain = {
+    eq: vi.fn(() => mockSelectChain),
+    maybeSingle: mockMaybeSingle,
+  };
+  const mockFrom = vi.fn(() => ({
+    upsert: mockSaveUpsert,
+    select: () => mockSelectChain,
+  }));
   const mockSupabaseService = {
-    currentUser: vi.fn(() => null),
+    currentUser: vi.fn(() => mockUser),
     client: {
-      from: () => ({
-        upsert: () => Promise.resolve({ error: null }),
-        select: () => ({
-          eq: () => ({
-            eq: () => ({
-              maybeSingle: () => Promise.resolve({ data: null, error: null }),
-            }),
-          }),
-        }),
-      }),
+      from: mockFrom,
     },
   };
 
@@ -180,26 +184,36 @@ describe("ThemeService", () => {
     });
   });
 
-  describe("LocalStorage Persistence", () => {
-    it("should save preference to localStorage", () => {
+  describe("Supabase Persistence", () => {
+    it("should save preference to Supabase when authenticated", async () => {
       service.setMode("dark");
-      expect(localStorage.getItem("flagfit_theme")).toBe("dark");
+      await waitFor();
+
+      expect(mockFrom).toHaveBeenCalledWith("user_settings");
+      expect(mockSaveUpsert).toHaveBeenCalled();
     });
 
-    it("should load preference from localStorage", () => {
-      localStorage.setItem("flagfit_theme", "dark");
+    it("should load preference from Supabase when stored", async () => {
+      mockMaybeSingle.mockResolvedValueOnce({
+        data: { setting_value: "dark" },
+        error: null,
+      });
 
-      // Create a new instance to test loading
-      const _newService = TestBed.inject(ThemeService);
+      await service.loadFromSupabase();
+      await waitFor();
 
-      // Note: The service loads on construction, so we check the stored value
-      expect(localStorage.getItem("flagfit_theme")).toBe("dark");
+      expect(service.mode()).toBe("dark");
     });
 
-    it("should handle invalid localStorage values", () => {
-      localStorage.setItem("flagfit_theme", "invalid-value");
+    it("should handle invalid Supabase values gracefully", async () => {
+      mockMaybeSingle.mockResolvedValueOnce({
+        data: { setting_value: "invalid" },
+        error: null,
+      });
 
-      // Service should handle gracefully and use default
+      await service.loadFromSupabase();
+      await waitFor();
+
       const state = service.getState();
       expect(["light", "dark", "auto"]).toContain(state.mode);
     });
@@ -353,12 +367,12 @@ describe("ThemeService", () => {
     it("should handle Supabase errors gracefully", async () => {
       const mockUser = { id: "test-user-id" };
       mockSupabaseService.currentUser.mockReturnValue(mockUser as any);
+      mockSaveUpsert.mockRejectedValueOnce(new Error("supabase down"));
 
-      // Even if Supabase fails, localStorage should work
       service.setMode("dark");
       await waitFor();
 
-      expect(localStorage.getItem("flagfit_theme")).toBe("dark");
+      expect(service.mode()).toBe("dark");
     });
   });
 

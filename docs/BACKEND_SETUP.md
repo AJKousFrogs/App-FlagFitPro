@@ -303,7 +303,7 @@ curl http://localhost:8888/api/my-function \
 
 The `netlify.toml` file configures:
 
-1. **Build command**: `npm ci && cd angular && npm ci --legacy-peer-deps && npm run build`
+1. **Build command**: `npm ci && cd angular && npm ci && npm run build`
 2. **Publish directory**: `angular/dist/flagfit-pro/browser`
 3. **API redirects**: `/api/*` → `/.netlify/functions/*`
 4. **Security headers**: CSP, HSTS, X-Frame-Options

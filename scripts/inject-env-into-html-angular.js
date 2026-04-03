@@ -16,8 +16,8 @@ const rootDir = path.join(__dirname, "..");
 
 // Path to Angular build output
 // Angular may output either:
-// - angular/dist/flagfit-pro (default browser build)
-// - angular/dist/flagfit-pro/browser (SSR/prerender layouts)
+// - angular/dist/flagfit-pro (current static application build)
+// - angular/dist/flagfit-pro/browser (older SSR/prerender layouts)
 const distCandidates = [
   path.join(rootDir, "angular/dist/flagfit-pro"),
   path.join(rootDir, "angular/dist/flagfit-pro/browser"),

@@ -11,7 +11,7 @@
   },
   "backend": {
     "runtime": "Node.js",
-    "framework": "Express",
+    "framework": "Netlify Functions",
     "database": "Supabase PostgreSQL",
     "authentication": "Supabase Auth",
     "functions": "Netlify Functions",

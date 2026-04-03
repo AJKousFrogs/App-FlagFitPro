@@ -24,11 +24,20 @@ const mockLoggerService = {
 };
 
 // Mock SupabaseService to avoid environment dependency
+const mockUser = { id: "user-123" };
+const mockInsert = vi.fn(() => Promise.resolve({ error: null }));
 const mockSupabaseService = {
+  currentUser: vi.fn(() => mockUser),
   client: {
     from: vi.fn(() => ({
-      insert: vi.fn(() => Promise.resolve({ error: null })),
-      select: vi.fn(() => ({ eq: vi.fn(() => ({ single: vi.fn(() => Promise.resolve({ data: null, error: null })) })) })),
+      insert: mockInsert,
+      select: vi.fn(() => ({
+        eq: vi.fn(() => ({
+          single: vi.fn(() =>
+            Promise.resolve({ data: null, error: null }),
+          ),
+        })),
+      })),
     })),
   },
 };

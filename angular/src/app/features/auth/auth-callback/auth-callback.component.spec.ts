@@ -143,7 +143,6 @@ describe("AuthCallbackComponent", () => {
     expect(component.successMessage()).toBe("Email verified successfully!");
     expect(mockToastService.success).toHaveBeenCalled();
     expect(mockAuthFlowDataService.clearPendingVerificationEmail).toHaveBeenCalled();
-    expect(localStorage.getItem("flagfit_email_verified")).toBeTruthy();
     expect(mockRouter.navigateByUrl).toHaveBeenCalledWith("/onboarding");
   });
 

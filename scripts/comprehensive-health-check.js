@@ -92,10 +92,9 @@ class HealthChecker {
       // Check critical dependencies
       const criticalDeps = [
         "@supabase/supabase-js",
-        "express",
         "chart.js",
         "vitest",
-        "react",
+        "netlify-cli",
       ];
 
       let foundDeps = 0;

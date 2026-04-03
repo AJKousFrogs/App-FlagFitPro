@@ -14,21 +14,23 @@ import { mockUser, mockAuthService } from "./auth.service.spec";
 import { mockSupabaseService } from "./supabase.service.spec";
 import { mockApiService } from "./api.service.spec";
 import { mockReadinessService } from "./readiness.service.spec";
-import { mockPlayerProgramService } from "./player-program.service.spec";
+import { mockPlayerProgramService } from "./player-program.service.mock";
 import { mockWellnessService } from "./wellness.service.spec";
 import { mockTrainingDataService } from "./training-data.service.spec";
 import { mockPerformanceDataService } from "./performance-data.service.spec";
-import { mockLoggerService } from "./logger.service.spec";
+import { mockLoggerService } from "./logger.service.mock";
 import { mockAcwrService } from "./acwr.service.spec";
 import { AcwrService } from "./acwr.service";
-import { mockDailyRoutine } from "../../../test/mock-data/unified-training.mock";
-import { mockProtocolMetricsSnapshot } from "../../../test/mock-data/protocol-metrics.mock";
-import { mockWeeklySchedule } from "../../../test/mock-data/weekly-schedule.mock";
-import { mockWorkout } from "../../../test/mock-data/workout.mock";
-import { mockImportLogs } from "../../../test/mock-data/import-logs.mock";
-import { mockProgramAssignment } from "../../../test/mock-data/program-assignment.mock";
+import { mockDailyRoutine } from "../../../../test/mock-data/unified-training.mock";
+import { mockProtocolMetricsSnapshot } from "../../../../test/mock-data/protocol-metrics.mock";
+import { mockWeeklySchedule } from "../../../../test/mock-data/weekly-schedule.mock";
+import { mockWorkout } from "../../../../test/mock-data/workout.mock";
+import { mockImportLogs } from "../../../../test/mock-data/import-logs.mock";
+import { mockProgramAssignment } from "../../../../test/mock-data/program-assignment.mock";
 import { signal } from "@angular/core";
-import { USERS } from "../../../test/mock-data/users.mock"; // Assuming USERS is available
+import { USERS } from "../../../../test/mock-data/users.mock"; // Assuming USERS is available
+import { vi } from "vitest";
+import { vi } from "vitest";
 
 // Mock Data (if not globally available or needs specific override)
 const mockUserForAuth = USERS[0]; // Use a specific user for auth tests
@@ -36,18 +38,18 @@ const mockUserForAuth = USERS[0]; // Use a specific user for auth tests
 // Mock Supabase Service for Auth Service
 const mockSupabaseAuthService = {
   // Mock signIn and signUp methods
-  signIn: jest.fn().mockResolvedValue({
+  signIn: vi.fn().mockResolvedValue({
     data: { user: mockUserForAuth, session: { access_token: "fake-token" } },
     error: null,
   }),
-  signUp: jest.fn().mockResolvedValue({
+  signUp: vi.fn().mockResolvedValue({
     data: { user: mockUserForAuth, session: { access_token: "fake-token" } },
     error: null,
   }),
-  signOut: jest.fn().mockResolvedValue({ error: null }),
-  getUser: jest.fn().mockResolvedValue({ data: { user: mockUserForAuth } }),
-  session: jest.fn().mockReturnValue({ access_token: "fake-token" }),
-  getToken: jest.fn().mockResolvedValue("fake-token"),
+  signOut: vi.fn().mockResolvedValue({ error: null }),
+  getUser: vi.fn().mockResolvedValue({ data: { user: mockUserForAuth } }),
+  session: vi.fn().mockReturnValue({ access_token: "fake-token" }),
+  getToken: vi.fn().mockResolvedValue("fake-token"),
 };
 
 // Mock AuthService using the mocked Supabase Auth
@@ -55,12 +57,12 @@ const mockAuthServiceInstance = {
   currentUser: signal(mockUserForAuth),
   isAuthenticated: signal(true),
   isLoading: signal(false),
-  getUser: jest.fn().mockReturnValue(mockUserForAuth),
-  getToken: jest.fn().mockResolvedValue("fake-token"),
-  redirectToDashboard: jest.fn(),
-  redirectToLogin: jest.fn(),
-  checkAuth: jest.fn().mockReturnValue(true),
-  logout: jest.fn().mockReturnValue(of(null)),
+  getUser: vi.fn().mockReturnValue(mockUserForAuth),
+  getToken: vi.fn().mockResolvedValue("fake-token"),
+  redirectToDashboard: vi.fn(),
+  redirectToLogin: vi.fn(),
+  checkAuth: vi.fn().mockReturnValue(true),
+  logout: vi.fn().mockReturnValue(of(null)),
   // Add other methods/signals if they are directly used by UnifiedTrainingService
   // Ensure these mocks match the expected return types and values.
   // For example, if currentUser signal is accessed directly, ensure it's mocked.
@@ -89,7 +91,7 @@ describe("UnifiedTrainingService", () => {
           provide: AuthService,
           useValue: {
             ...mockAuthServiceInstance,
-            currentUser: jest.fn().mockReturnValue(mockUserForAuth), // Ensure this matches signal usage
+            currentUser: vi.fn().mockReturnValue(mockUserForAuth), // Ensure this matches signal usage
           },
         },
         { provide: ApiService, useValue: mockApiService() },
@@ -117,14 +119,14 @@ describe("UnifiedTrainingService", () => {
     acwrService = TestBed.inject(AcwrService);
 
     // Ensure mocks are reset and properly configured for each test
-    jest.clearAllMocks();
+    vi.clearAllMocks();
 
     // Mock Supabase currentUser signal and session
     supabaseService.currentUser = signal(mockUserForAuth);
-    supabaseService.session = jest.fn().mockReturnValue({ access_token: "mock-token", user: mockUserForAuth });
+    supabaseService.session = vi.fn().mockReturnValue({ access_token: "mock-token", user: mockUserForAuth });
     authService.currentUser = signal(mockUserForAuth); // Ensure authService's signal is also set
     authService.isAuthenticated = signal(true);
-    authService.getUser = jest.fn().mockReturnValue(mockUserForAuth);
+    authService.getUser = vi.fn().mockReturnValue(mockUserForAuth);
 
     // Mock API service responses globally if needed
     mockApiService.get.mockReturnValue(of({ success: true, data: {} }));
@@ -134,22 +136,22 @@ describe("UnifiedTrainingService", () => {
     // Mock Supabase client methods used by the service
     supabaseService.client = {
       auth: {
-        getUser: jest.fn().mockResolvedValue({ data: { user: mockUserForAuth } }),
-        signOut: jest.fn().mockResolvedValue({ error: null }),
+        getUser: vi.fn().mockResolvedValue({ data: { user: mockUserForAuth } }),
+        signOut: vi.fn().mockResolvedValue({ error: null }),
       },
-      from: jest.fn().mockReturnThis(),
-      select: jest.fn().mockReturnThis(),
-      eq: jest.fn().mockReturnThis(),
-      maybeSingle: jest.fn().mockResolvedValue({ data: { first_name: "John" } }),
+      from: vi.fn().mockReturnThis(),
+      select: vi.fn().mockReturnThis(),
+      eq: vi.fn().mockReturnThis(),
+      maybeSingle: vi.fn().mockResolvedValue({ data: { first_name: "John" } }),
     } as any;
 
     // Mock other services
-    mockReadinessService.current = jest.fn().mockReturnValue({
+    mockReadinessService.current = vi.fn().mockReturnValue({
       score: 80,
       level: "high",
       wellnessIndex: { completeness: 1 },
     });
-    mockPlayerProgramService.getMyProgramAssignment = jest.fn().mockReturnValue(of(mockProgramAssignment));
+    mockPlayerProgramService.getMyProgramAssignment = vi.fn().mockReturnValue(of(mockProgramAssignment));
     mockWellnessService.latestWellnessEntry = signal({
       hydration: 8,
       sleepQuality: 7,
@@ -157,8 +159,8 @@ describe("UnifiedTrainingService", () => {
       stressLevel: 4,
       muscleSoreness: 5,
     });
-    mockTrainingDataService.createTrainingSession = jest.fn().mockReturnValue(of({ success: true, data: {} }));
-    mockPerformanceDataService.logMeasurement = jest.fn().mockReturnValue(of({ success: true, data: {} }));
+    mockTrainingDataService.createTrainingSession = vi.fn().mockReturnValue(of({ success: true, data: {} }));
+    mockPerformanceDataService.logMeasurement = vi.fn().mockReturnValue(of({ success: true, data: {} }));
     mockPerformanceDataService.todaysSupplements = signal([]);
     mockAcwrService.acwrRatio = signal(1.0);
     mockAcwrService.acuteLoad = signal(500);
@@ -204,7 +206,7 @@ describe("UnifiedTrainingService", () => {
       // For now, let's mock the combineLatest part of the call
       // Mock loadDailyProtocolSnapshot, loadTrainingRecommendationsSnapshot, etc.
       // Simplified: Mock the output of combineLatest inside getTodayOverview
-      jest.spyOn(service as any, "createTodayOverviewRequest").mockReturnValue(
+      vi.spyOn(service as any, "createTodayOverviewRequest").mockReturnValue(
         of({
           protocol: { data: mockProtocolMetricsSnapshot },
           readiness: { score: 80, level: "high", wellnessIndex: { completeness: 1 } },
@@ -230,7 +232,7 @@ describe("UnifiedTrainingService", () => {
 
     it("should handle API errors gracefully", (done) => {
       // Mock an error during API calls
-      jest.spyOn(service as any, "createTodayOverviewRequest").mockReturnValue(
+      vi.spyOn(service as any, "createTodayOverviewRequest").mockReturnValue(
         throwError(() => new Error("API error")),
       );
 
@@ -294,13 +296,13 @@ describe("UnifiedTrainingService", () => {
 
   describe("logTrainingSession", () => {
     it("should call the API to log a training session", async () => {
-      trainingDataService.createTrainingSession = jest.fn().mockReturnValue(of({ success: true, data: {} }));
+      trainingDataService.createTrainingSession = vi.fn().mockReturnValue(of({ success: true, data: {} }));
       await service.logTrainingSession({ title: "Test Workout" } as any);
       expect(trainingDataService.createTrainingSession).toHaveBeenCalled();
     });
 
     it("should refresh readiness after logging", async () => {
-      trainingDataService.createTrainingSession = jest.fn().mockReturnValue(of({ success: true, data: {} }));
+      trainingDataService.createTrainingSession = vi.fn().mockReturnValue(of({ success: true, data: {} }));
       await service.logTrainingSession({ title: "Test Workout" } as any);
       expect(readinessService.calculateToday).toHaveBeenCalled();
     });
@@ -308,13 +310,13 @@ describe("UnifiedTrainingService", () => {
 
   describe("submitWellness", () => {
     it("should call the API to submit wellness data", async () => {
-      wellnessService.logWellness = jest.fn().mockReturnValue(of({ success: true, data: {} }));
+      wellnessService.logWellness = vi.fn().mockReturnValue(of({ success: true, data: {} }));
       await service.submitWellness({ hydration: 8 });
       expect(wellnessService.logWellness).toHaveBeenCalledWith({ hydration: 8 });
     });
 
     it("should refresh readiness after submitting wellness", async () => {
-      wellnessService.logWellness = jest.fn().mockReturnValue(of({ success: true, data: {} }));
+      wellnessService.logWellness = vi.fn().mockReturnValue(of({ success: true, data: {} }));
       await service.submitWellness({ hydration: 8 });
       expect(readinessService.calculateToday).toHaveBeenCalled();
     });
@@ -324,7 +326,7 @@ describe("UnifiedTrainingService", () => {
     it("should update hydration level", async () => {
       const currentWellness = { hydration: 8 };
       wellnessService.latestWellnessEntry = signal(currentWellness);
-      wellnessService.logWellness = jest.fn().mockReturnValue(of({ success: true, data: {} }));
+      wellnessService.logWellness = vi.fn().mockReturnValue(of({ success: true, data: {} }));
 
       await service.addHydration(500); // 500ml = 2 glasses
       expect(wellnessService.logWellness).toHaveBeenCalledWith(
@@ -335,7 +337,7 @@ describe("UnifiedTrainingService", () => {
 
   describe("logSupplement", () => {
     it("should call performanceDataService.logSupplement", () => {
-      performanceDataService.logSupplement = jest.fn();
+      performanceDataService.logSupplement = vi.fn();
       service.logSupplement({
         name: "Protein Powder",
         taken: true,
@@ -348,7 +350,7 @@ describe("UnifiedTrainingService", () => {
 
   describe("logBodyComp", () => {
     it("should call performanceDataService.logMeasurement", async () => {
-      performanceDataService.logMeasurement = jest.fn().mockReturnValue(of({ success: true, data: {} }));
+      performanceDataService.logMeasurement = vi.fn().mockReturnValue(of({ success: true, data: {} }));
       await service.logBodyComp({ weight_kg: 70 });
       expect(performanceDataService.logMeasurement).toHaveBeenCalledWith({ weight_kg: 70 });
     });
@@ -367,8 +369,8 @@ describe("UnifiedTrainingService", () => {
       const workout = mockWorkout[0];
       workout.id = "test-workout-id";
       // Mock snapshot mutation
-      (service as any).supabase.client.from = jest.fn().mockReturnThis();
-      (service as any).supabase.client.update = jest.fn().mockResolvedValue({
+      (service as any).supabase.client.from = vi.fn().mockReturnThis();
+      (service as any).supabase.client.update = vi.fn().mockResolvedValue({
         success: true,
         data: [],
       });
@@ -381,11 +383,11 @@ describe("UnifiedTrainingService", () => {
       const workout = mockWorkout[0];
       workout.id = "test-workout-id";
       // Mock snapshot mutation success
-      (service as any).supabase.client.update = jest.fn().mockResolvedValue({
+      (service as any).supabase.client.update = vi.fn().mockResolvedValue({
         success: true,
         data: [],
       });
-      jest.spyOn(service as any, "refreshOverviewAfterWorkoutMutation");
+      vi.spyOn(service as any, "refreshOverviewAfterWorkoutMutation");
       await service.markWorkoutComplete(workout);
       expect((service as any).refreshOverviewAfterWorkoutMutation).toHaveBeenCalled();
     });
@@ -396,8 +398,8 @@ describe("UnifiedTrainingService", () => {
       const workout = mockWorkout[0];
       workout.id = "test-workout-id";
       // Mock snapshot mutation
-      (service as any).supabase.client.from = jest.fn().mockReturnThis();
-      (service as any).supabase.client.update = jest.fn().mockResolvedValue({
+      (service as any).supabase.client.from = vi.fn().mockReturnThis();
+      (service as any).supabase.client.update = vi.fn().mockResolvedValue({
         success: true,
         data: [],
       });
@@ -410,11 +412,11 @@ describe("UnifiedTrainingService", () => {
       const workout = mockWorkout[0];
       workout.id = "test-workout-id";
       // Mock snapshot mutation success
-      (service as any).supabase.client.update = jest.fn().mockResolvedValue({
+      (service as any).supabase.client.update = vi.fn().mockResolvedValue({
         success: true,
         data: [],
       });
-      jest.spyOn(service as any, "refreshOverviewAfterWorkoutMutation");
+      vi.spyOn(service as any, "refreshOverviewAfterWorkoutMutation");
       await service.postponeWorkout(workout);
       expect((service as any).refreshOverviewAfterWorkoutMutation).toHaveBeenCalled();
     });
@@ -507,7 +509,7 @@ describe("UnifiedTrainingService", () => {
     it("should update hydration level", async () => {
       const currentWellness = { hydration: 8 };
       wellnessService.latestWellnessEntry = signal(currentWellness);
-      wellnessService.logWellness = jest.fn().mockReturnValue(of({ success: true, data: {} }));
+      wellnessService.logWellness = vi.fn().mockReturnValue(of({ success: true, data: {} }));
 
       await service.addHydration(500); // 500ml = 2 glasses
       expect(wellnessService.logWellness).toHaveBeenCalledWith(
@@ -531,8 +533,8 @@ describe("UnifiedTrainingService", () => {
 
   describe("refreshAfterMutation", () => {
     it("should refresh readiness and training data", () => {
-      jest.spyOn(service as any, "loadPlayerSettingsRoutine");
-      jest.spyOn(service as any, "loadAllTrainingData");
+      vi.spyOn(service as any, "loadPlayerSettingsRoutine");
+      vi.spyOn(service as any, "loadAllTrainingData");
       (service as any).refreshAfterMutation({ refreshReadiness: true });
       expect(readinessService.calculateToday).toHaveBeenCalled();
       expect((service as any).loadPlayerSettingsRoutine).toHaveBeenCalled();

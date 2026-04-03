@@ -2,7 +2,13 @@ import { createReadStream, existsSync, statSync } from "node:fs";
 import { extname, join, normalize, resolve } from "node:path";
 import { createServer } from "node:http";
 
-const DIST_ROOT = resolve(process.cwd(), "dist/flagfit-pro/browser");
+const DIST_CANDIDATES = [
+  resolve(process.cwd(), "dist/flagfit-pro/browser"),
+  resolve(process.cwd(), "dist/flagfit-pro"),
+];
+const DIST_ROOT =
+  DIST_CANDIDATES.find((candidate) => existsSync(candidate)) ??
+  DIST_CANDIDATES[0];
 const PORT = Number(process.env["PORT"] || "4200");
 const HOST = process.env["HOST"] || "127.0.0.1";
 

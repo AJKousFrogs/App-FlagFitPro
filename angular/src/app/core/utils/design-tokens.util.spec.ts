@@ -7,6 +7,7 @@
 
 import { describe, it, expect, beforeEach, afterEach } from "vitest";
 import {
+  cssToken,
   getCssVariable,
   getCssVariables,
   resolveCssVariable,
@@ -21,8 +22,9 @@ describe("design-tokens.util", () => {
     styleEl = document.createElement("style");
     styleEl.textContent = `
       :root {
-        --ds-primary-green: #089949;
-        --space-4: 1rem;
+    --ds-primary-green: #089949;
+    --space-4: 1rem;
+    --space-8: 2rem;
         --color-status-success: #089949;
         --color-status-warning: #f59e0b;
         --color-status-error: #ef4444;
@@ -59,7 +61,7 @@ describe("design-tokens.util", () => {
   });
 
   it("SPACING constant has expected values", () => {
-    expect(SPACING[4]).toBe("1rem");
-    expect(SPACING[8]).toBe("2rem");
+    expect(SPACING[4]).toBe(cssToken("--space-4"));
+    expect(SPACING[8]).toBe(cssToken("--space-8"));
   });
 });

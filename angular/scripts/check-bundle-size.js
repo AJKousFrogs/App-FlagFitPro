@@ -15,7 +15,16 @@ import { fileURLToPath } from "url";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const DIST_DIR = path.join(__dirname, "../dist/flagfit-pro/browser");
+const DIST_CANDIDATES = [
+  path.join(__dirname, "../dist/flagfit-pro/browser"),
+  path.join(__dirname, "../dist/flagfit-pro"),
+];
+const DIST_DIR =
+  DIST_CANDIDATES.find((candidate) =>
+    fs.existsSync(candidate) &&
+    fs.readdirSync(candidate).some((file) => file.endsWith(".js") || file.endsWith(".css")),
+  ) ??
+  DIST_CANDIDATES[0];
 const SIZE_LIMITS = {
   // Main bundle limits (in KB)
   main: 500,

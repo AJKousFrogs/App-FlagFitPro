@@ -9,7 +9,12 @@ export default defineConfig({
     globals: true,
     environment: "jsdom",
     include: ["src/**/*.spec.ts"],
-    exclude: ["node_modules", "dist"],
+    exclude: [
+      "node_modules",
+      "dist",
+      "e2e/**",
+      "src/app/playwright-tests/**",
+    ],
     setupFiles: ["src/test-setup.ts"],
     coverage: {
       provider: "v8",

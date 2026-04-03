@@ -18,6 +18,7 @@ import {
   RegisterData,
 } from "./auth.service";
 import { SupabaseService } from "./supabase.service";
+import { PlatformService } from "./platform.service";
 
 // Mock Supabase service - use 'as unknown as SupabaseService' to avoid strict type checking
 const mockSupabaseService = {
@@ -41,22 +42,18 @@ const mockRouter = {
   navigate: vi.fn(),
 };
 
-// Mock sessionStorage
-const mockSessionStorage: Record<string, string> = {};
-vi.stubGlobal("sessionStorage", {
-  getItem: vi.fn((key: string) => mockSessionStorage[key] || null),
-  setItem: vi.fn((key: string, value: string) => {
-    mockSessionStorage[key] = value;
+const mockPlatformStorage = new Map<string, string>();
+const mockPlatformService = {
+  getSessionStorage: vi.fn((key: string) => mockPlatformStorage.get(key) ?? null),
+  setSessionStorage: vi.fn((key: string, value: string) => {
+    mockPlatformStorage.set(key, value);
+    return true;
   }),
-  removeItem: vi.fn((key: string) => {
-    delete mockSessionStorage[key];
+  removeSessionStorage: vi.fn((key: string) => {
+    mockPlatformStorage.delete(key);
+    return true;
   }),
-  clear: vi.fn(() => {
-    Object.keys(mockSessionStorage).forEach(
-      (key) => delete mockSessionStorage[key],
-    );
-  }),
-});
+};
 
 // Mock crypto for CSRF token generation
 vi.stubGlobal("crypto", {
@@ -73,15 +70,14 @@ describe("AuthService", () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    Object.keys(mockSessionStorage).forEach(
-      (key) => delete mockSessionStorage[key],
-    );
+    mockPlatformStorage.clear();
 
     TestBed.configureTestingModule({
       providers: [
         AuthService,
-        { provide: SupabaseService, useValue: mockSupabaseService },
-        { provide: Router, useValue: mockRouter },
+      { provide: SupabaseService, useValue: mockSupabaseService },
+      { provide: Router, useValue: mockRouter },
+      { provide: PlatformService, useValue: mockPlatformService },
       ],
     });
 
@@ -338,7 +334,9 @@ describe("AuthService", () => {
       (mockSupabaseService as any).signOut.mockResolvedValue({ error: null });
       await firstValueFrom(service.logout());
 
-      expect(sessionStorage.removeItem).toHaveBeenCalledWith("csrfToken");
+      expect(mockPlatformService.removeSessionStorage).toHaveBeenCalledWith(
+        "csrfToken",
+      );
     });
   });
 
@@ -452,15 +450,21 @@ describe("AuthService", () => {
 
       expect(token).toBeDefined();
       expect(token.length).toBe(64); // 32 bytes = 64 hex chars
-      expect(sessionStorage.setItem).toHaveBeenCalledWith("csrfToken", token);
+      expect(mockPlatformService.setSessionStorage).toHaveBeenCalledWith(
+        "csrfToken",
+        token,
+      );
     });
 
     it("should get stored CSRF token", () => {
       const generatedToken = service.generateCsrfToken();
-      mockSessionStorage["csrfToken"] = generatedToken;
+      mockPlatformStorage.set("csrfToken", generatedToken);
 
       const retrievedToken = service.getCsrfToken();
 
+      expect(mockPlatformService.getSessionStorage).toHaveBeenCalledWith(
+        "csrfToken",
+      );
       expect(retrievedToken).toBe(generatedToken);
     });
 

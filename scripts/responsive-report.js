@@ -138,7 +138,6 @@ configs.forEach(([path, desc]) => {
 printHeader("🎨 Responsive Styles");
 const styles = [
   ["angular/src/styles.scss", "Main styles"],
-  ["tailwind.config.js", "Tailwind configuration"],
 ];
 
 let stylesOk = 0;

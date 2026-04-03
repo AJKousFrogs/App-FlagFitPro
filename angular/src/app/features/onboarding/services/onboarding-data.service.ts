@@ -9,6 +9,7 @@ import { isBenignSupabaseQueryError } from "../../../shared/utils/error.utils";
 export class OnboardingDataService {
   private readonly supabaseService = inject(SupabaseService);
   private usersTableUnavailable = false;
+  private preferencesTableUnavailable = false;
 
   getCurrentUser() {
     return this.supabaseService.currentUser();
@@ -128,9 +129,19 @@ export class OnboardingDataService {
   async upsertUserPreferences(
     preferences: Record<string, unknown>,
   ): Promise<{ error: { message?: string } | null }> {
+    if (this.preferencesTableUnavailable) {
+      return { error: null };
+    }
+
     const { error } = await this.supabaseService.client
       .from("user_preferences")
       .upsert(preferences, { onConflict: "user_id" });
+
+    if (error && isBenignSupabaseQueryError(error)) {
+      this.preferencesTableUnavailable = true;
+      return { error: null };
+    }
+
     return { error };
   }
 
