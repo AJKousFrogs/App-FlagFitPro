@@ -96,7 +96,7 @@
     "@storybook/addon-links": "^10.2.8",
     "@storybook/angular": "^10.2.8",
     "@types/express": "^5.0.1",
-    "@types/node": "^22.15.0",
+    "@types/node": "^25.5.1",
     "@vitest/coverage-v8": "^4.1.2",
     "@vitest/ui": "^4.0.18",
     "angular-eslint": "^21.3.0",
