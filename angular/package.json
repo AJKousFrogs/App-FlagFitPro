@@ -68,7 +68,7 @@
     "@angular/ssr": "~21.2.2",
     "@primeuix/themes": "^2.0.3",
     "@standard-schema/spec": "^1.0.0",
-    "@supabase/supabase-js": "^2.99.1",
+    "@supabase/supabase-js": "^2.101.1",
     "chart.js": "^4.5.1",
     "date-fns": "^4.1.0",
     "express": "^5.1.0",
