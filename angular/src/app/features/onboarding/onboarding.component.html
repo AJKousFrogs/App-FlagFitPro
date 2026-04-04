@@ -1,145 +1,150 @@
-<div class="onboarding-auth-shell">
-      <div class="onboarding-page ui-page-shell ui-page-stack">
-        <app-page-header
-          title="Set Up Your FlagFit Profile"
-          subtitle="Takes about 2-3 minutes. We'll set up your training baseline and team access."
-          icon="pi-user-plus"
-        ></app-page-header>
+<div class="ob-shell" [class.ob-shell--welcome]="showWelcome()">
 
-        <app-card-shell class="onboarding-card" [flush]="true">
-          @defer (on idle) {
-            <app-onboarding-progress-shell
-              [completionStats]="getCompletionStats()"
-              [currentStep]="state.currentStep()"
-              [stepPosition]="getStepPosition()"
-              [currentStepLabel]="getCurrentStepLabel()"
-              [lastSaved]="state.lastSaved()"
-              [isSaving]="state.isSaving()"
-              [hasPendingRequirements]="hasPendingRequirements()"
-              [pendingRequirementLabels]="getPendingRequirementLabels()"
-              [steps]="state.steps()"
-              (stepperChange)="onStepperChange($event)"
+  @if (showWelcome()) {
+
+    <!-- ── Welcome screen ────────────────────────────────────────────── -->
+    <app-onboarding-step-welcome (getStarted)="startOnboarding()" />
+
+  } @else {
+
+    <!-- ── Top bar ────────────────────────────────────────────────────── -->
+    <header class="ob-topbar" role="banner">
+      <button
+        class="ob-back"
+        type="button"
+        aria-label="Go back"
+        [class.ob-back--hidden]="state.currentStep() === 0"
+        (click)="state.previousStep()"
+      >
+        <i class="pi pi-arrow-left" aria-hidden="true"></i>
+      </button>
+
+      @defer (on idle) {
+        <app-onboarding-progress-shell
+          [completionStats]="getCompletionStats()"
+          [currentStep]="state.currentStep()"
+          [stepPosition]="getStepPosition()"
+          [currentStepLabel]="getCurrentStepLabel()"
+          [lastSaved]="state.lastSaved()"
+          [isSaving]="state.isSaving()"
+          [hasPendingRequirements]="hasPendingRequirements()"
+          [pendingRequirementLabels]="getPendingRequirementLabels()"
+          [steps]="state.steps()"
+          (stepperChange)="onStepperChange($event)"
+        />
+      } @placeholder {
+        <div class="ob-progress-placeholder" aria-hidden="true"></div>
+      }
+
+      <div class="ob-topbar-end">
+        @if (state.isSaving()) {
+          <span class="ob-autosave ob-autosave--saving" aria-live="polite" aria-label="Saving progress">
+            <i class="pi pi-spin pi-spinner" aria-hidden="true"></i>
+          </span>
+        } @else if (state.lastSaved()) {
+          <span class="ob-autosave ob-autosave--saved" aria-live="polite" aria-label="Progress saved">
+            <i class="pi pi-check-circle" aria-hidden="true"></i>
+          </span>
+        } @else {
+          <span class="ob-step-counter" aria-hidden="true">
+            {{ state.currentStep() + 1 }}/{{ state.steps().length }}
+          </span>
+        }
+      </div>
+    </header>
+
+    <!-- ── Scrollable step content ───────────────────────────────────── -->
+    <main class="ob-content" role="main" id="main-content">
+      <div
+        class="ob-step-wrapper"
+        [@.disabled]="prefersReducedMotion()"
+        [@onboardingStepAnim]="state.currentStep()"
+      >
+        @if (state.currentStep() === 0) {
+          @defer (when state.currentStep() === 0) {
+            <app-onboarding-step-personal
+              [maxDate]="maxDate"
+              [minDate]="minDate"
+              [isEmailVerified]="isEmailVerified()"
+              [isResendingVerification]="isResendingVerification()"
+              (resendVerification)="resendVerificationEmail()"
+              (refreshVerification)="refreshVerificationStatus()"
             />
           } @placeholder {
-            <app-loading
-              [visible]="true"
-              variant="skeleton"
-              message="Loading progress…"
-            />
+            <div class="ob-step-skeleton"></div>
           }
-
-          <div class="onboarding-content">
-            <div
-              class="onboarding-step-anim"
-              [@.disabled]="prefersReducedMotion()"
-              [@onboardingStepAnim]="state.currentStep()"
-            >
-              @if (state.currentStep() === 0) {
-                @defer (when state.currentStep() === 0) {
-                  <app-onboarding-step-personal
-                    [maxDate]="maxDate"
-                    [minDate]="minDate"
-                    [isEmailVerified]="isEmailVerified()"
-                    [isResendingVerification]="isResendingVerification()"
-                    (resendVerification)="resendVerificationEmail()"
-                    (refreshVerification)="refreshVerificationStatus()"
-                  />
-                } @placeholder {
-                  <app-loading
-                    [visible]="true"
-                    variant="skeleton"
-                    message="Loading personal details…"
-                  />
-                }
-              } @else if (state.currentStep() === 1) {
-                @defer (when state.currentStep() === 1) {
-                  <app-onboarding-step-role />
-                } @placeholder {
-                  <app-loading
-                    [visible]="true"
-                    variant="skeleton"
-                    message="Loading role…"
-                  />
-                }
-              } @else if (state.currentStep() === 2 && state.isPlayer()) {
-                @defer (when state.currentStep() === 2 && state.isPlayer()) {
-                  <app-onboarding-step-physical />
-                } @placeholder {
-                  <app-loading
-                    [visible]="true"
-                    variant="skeleton"
-                    message="Loading physical profile…"
-                  />
-                }
-              } @else if (state.currentStep() === 3 && state.isPlayer()) {
-                @defer (when state.currentStep() === 3 && state.isPlayer()) {
-                  <app-onboarding-step-health />
-                } @placeholder {
-                  <app-loading
-                    [visible]="true"
-                    variant="skeleton"
-                    message="Loading health…"
-                  />
-                }
-              } @else if (state.currentStep() === 4 && state.isPlayer()) {
-                @defer (when state.currentStep() === 4 && state.isPlayer()) {
-                  <app-onboarding-step-goals />
-                } @placeholder {
-                  <app-loading
-                    [visible]="true"
-                    variant="skeleton"
-                    message="Loading goals…"
-                  />
-                }
-              } @else if (state.currentStep() === 5 && state.isPlayer()) {
-                @defer (when state.currentStep() === 5 && state.isPlayer()) {
-                  <app-onboarding-step-schedule />
-                } @placeholder {
-                  <app-loading
-                    [visible]="true"
-                    variant="skeleton"
-                    message="Loading schedule…"
-                  />
-                }
-              } @else if (isSummaryStep()) {
-                @defer (when isSummaryStep()) {
-                  <app-onboarding-step-summary
-                    (consentChange)="onSummaryConsentChange($event)"
-                  />
-                } @placeholder {
-                  <app-loading
-                    [visible]="true"
-                    variant="skeleton"
-                    message="Loading summary…"
-                  />
-                }
-              }
-            </div>
-
-            <div class="onboarding-actions">
-              @if (state.currentStep() > 0) {
-                <app-button
-                  variant="outlined"
-                  iconLeft="pi-arrow-left"
-                  (clicked)="state.previousStep()"
-                  >Previous</app-button
-                >
-              }
-              @if (state.currentStep() < state.steps().length - 1) {
-                <app-button iconLeft="pi-arrow-right" (clicked)="nextStep()"
-                  >Save & Continue</app-button
-                >
-              } @else {
-                <app-button
-                  iconLeft="pi-check"
-                  [loading]="isCompleting()"
-                  [disabled]="!canCompleteOnboarding()"
-                  (clicked)="completeOnboarding()"
-                  >Finish Onboarding</app-button
-                >
-              }
-            </div>
-          </div>
-        </app-card-shell>
+        } @else if (state.currentStep() === 1) {
+          @defer (when state.currentStep() === 1) {
+            <app-onboarding-step-role />
+          } @placeholder {
+            <div class="ob-step-skeleton"></div>
+          }
+        } @else if (state.currentStep() === 2 && state.isPlayer()) {
+          @defer (when state.currentStep() === 2 && state.isPlayer()) {
+            <app-onboarding-step-physical />
+          } @placeholder {
+            <div class="ob-step-skeleton"></div>
+          }
+        } @else if (state.currentStep() === 3 && state.isPlayer()) {
+          @defer (when state.currentStep() === 3 && state.isPlayer()) {
+            <app-onboarding-step-health />
+          } @placeholder {
+            <div class="ob-step-skeleton"></div>
+          }
+        } @else if (state.currentStep() === 4 && state.isPlayer()) {
+          @defer (when state.currentStep() === 4 && state.isPlayer()) {
+            <app-onboarding-step-goals />
+          } @placeholder {
+            <div class="ob-step-skeleton"></div>
+          }
+        } @else if (state.currentStep() === 5 && state.isPlayer()) {
+          @defer (when state.currentStep() === 5 && state.isPlayer()) {
+            <app-onboarding-step-schedule />
+          } @placeholder {
+            <div class="ob-step-skeleton"></div>
+          }
+        } @else if (isSummaryStep()) {
+          @defer (when isSummaryStep()) {
+            <app-onboarding-step-summary
+              (consentChange)="onSummaryConsentChange($event)"
+            />
+          } @placeholder {
+            <div class="ob-step-skeleton"></div>
+          }
+        }
       </div>
-    </div>
+    </main>
+
+    <!-- ── Sticky footer CTA ─────────────────────────────────────────── -->
+    <footer class="ob-footer" role="contentinfo">
+      @if (!isSummaryStep()) {
+        <button
+          class="ob-cta"
+          type="button"
+          (click)="nextStep()"
+          aria-label="Save and continue to next step"
+        >
+          <span>Continue</span>
+          <i class="pi pi-arrow-right" aria-hidden="true"></i>
+        </button>
+      } @else {
+        <button
+          class="ob-cta"
+          type="button"
+          [disabled]="!canCompleteOnboarding() || isCompleting()"
+          (click)="completeOnboarding()"
+          [attr.aria-label]="isCompleting() ? 'Setting up your profile' : 'Enter FlagFit Pro'"
+        >
+          @if (isCompleting()) {
+            <i class="pi pi-spin pi-spinner" aria-hidden="true"></i>
+            <span>Setting up…</span>
+          } @else {
+            <i class="pi pi-check" aria-hidden="true"></i>
+            <span>Enter FlagFit Pro</span>
+          }
+        </button>
+      }
+    </footer>
+
+  }
+</div>

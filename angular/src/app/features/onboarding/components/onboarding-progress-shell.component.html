@@ -1,78 +1,17 @@
-<div class="progress-section">
-  <div class="progress-bar-block">
-    <app-progress-bar
-      [value]="completionStats().percent"
-      [showValue]="false"
-      severity="primary"
-      class="onboarding-progress"
-    ></app-progress-bar>
-  </div>
-  <div class="progress-summary">
-    <div class="progress-summary__line" aria-live="polite">
-      <span class="progress-text">{{ completionStats().percent }}% complete</span>
-      <span class="progress-sep" aria-hidden="true">·</span>
-      <span class="progress-meta">
-        {{ completionStats().completed }}/{{ completionStats().total }} required tasks
-      </span>
-    </div>
-    @if (lastSaved()) {
-      <span class="auto-save-indicator" [class.saving]="isSaving()">
-        @if (isSaving()) {
-          <i class="pi pi-spin pi-spinner" aria-hidden="true"></i>
-          <span>Saving…</span>
-        } @else {
-          <i class="pi pi-check-circle" aria-hidden="true"></i>
-          <span>Draft saved</span>
-        }
-      </span>
-    }
-  </div>
-</div>
-
-@if (hasPendingRequirements()) {
-  <app-alert
-    class="completion-checklist"
-    variant="warning"
-    density="compact"
-    title="Next tasks to finish"
-  >
-    <div class="checklist-body">
-      <div class="checklist-items">
-        @for (item of pendingRequirementLabels(); track item) {
-          <span class="checklist-item">{{ item }}</span>
-        }
-        @if (completionStats().remaining > 4) {
-          <span class="checklist-item more"
-            >+{{ completionStats().remaining - 4 }} more</span
-          >
-        }
-      </div>
-    </div>
-  </app-alert>
-}
-
-<div class="step-indicator" aria-label="Step progress">
-  <div class="step-dots" role="list">
-    @for (step of steps(); track $index) {
-      <button
-        class="step-dot"
-        [class.step-dot--active]="$index === currentStep()"
-        [class.step-dot--completed]="step.completed"
-        [attr.aria-label]="step.label + ($index === currentStep() ? ' (current)' : step.completed ? ' (completed)' : ' (upcoming)')"
-        [attr.aria-current]="$index === currentStep() ? 'step' : null"
-        [disabled]="!step.completed || $index === currentStep()"
-        (click)="navigateToStep($index)"
-        role="listitem"
-        type="button"
-      >
-        @if (step.completed && $index !== currentStep()) {
-          <i class="pi pi-check step-dot__check"></i>
-        }
-      </button>
-    }
-  </div>
-  <span class="step-position-label">
-    Step {{ currentStep() + 1 }} of {{ steps().length }}
-    <span class="step-name">— {{ currentStepLabel() }}</span>
-  </span>
+<!-- Segmented progress bar — rendered inside ob-topbar via content projection -->
+<div class="ob-seg-track" role="progressbar"
+     [attr.aria-valuenow]="completionStats().percent"
+     aria-valuemin="0" aria-valuemax="100"
+     [attr.aria-label]="'Step ' + (currentStep() + 1) + ' of ' + steps().length + ': ' + currentStepLabel()">
+  @for (step of steps(); track $index) {
+    <button
+      class="ob-seg"
+      type="button"
+      [class.ob-seg--done]="$index < currentStep()"
+      [class.ob-seg--active]="$index === currentStep()"
+      [disabled]="!step.completed || $index === currentStep()"
+      [attr.aria-label]="step.label + ($index < currentStep() ? ' (completed)' : $index === currentStep() ? ' (current)' : ' (upcoming)')"
+      (click)="navigateToStep($index)"
+    ></button>
+  }
 </div>

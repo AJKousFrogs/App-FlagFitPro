@@ -2,6 +2,16 @@
   display: inline-block;
 }
 
+:host(.status-tag-host--full-width) {
+  display: block;
+  width: 100%;
+}
+
+:host(.status-tag-host--full-width) .status-tag {
+  width: 100%;
+  justify-content: center;
+}
+
 .status-tag {
   display: inline-flex;
   align-items: center;
@@ -93,6 +103,23 @@
   padding: 0 var(--component-badge-padding-x-lg);
   font-size: var(--component-badge-font-size-lg);
   border-radius: var(--component-badge-radius-lg);
+}
+
+.status-tag--wrap {
+  white-space: normal;
+  height: auto;
+  min-height: var(--component-badge-height-md);
+  max-width: 100%;
+  padding-block: var(--space-1);
+  text-align: center;
+}
+
+.status-tag-sm.status-tag--wrap {
+  min-height: var(--component-badge-height-sm);
+}
+
+.status-tag-lg.status-tag--wrap {
+  min-height: var(--component-badge-height-lg);
 }
 
 :host-context([data-theme="dark"]),

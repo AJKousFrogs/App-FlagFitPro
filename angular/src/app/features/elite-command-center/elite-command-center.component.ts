@@ -33,6 +33,7 @@ import { MenubarComponent } from "../../shared/components/menubar/menubar.compon
 import { StatusTagComponent } from "../../shared/components/status-tag/status-tag.component";
 import { PlatformService } from "../../core/services/platform.service";
 import { ELITE_INTERACTION_BEHAVIORS } from "./elite-interaction.behaviors";
+import { BREAKPOINTS } from "../../core/utils/design-tokens.util";
 
 interface KpiMetric {
   id: string;
@@ -104,6 +105,9 @@ interface ProtocolStep {
 })
 export class EliteCommandCenterComponent {
   private readonly platform = inject(PlatformService);
+
+  /** PrimeNG responsive strings — aligned with `BREAKPOINTS` / CSS tokens */
+  readonly breakpoints = BREAKPOINTS;
 
   readonly interactionBehaviorSpecs = ELITE_INTERACTION_BEHAVIORS;
 

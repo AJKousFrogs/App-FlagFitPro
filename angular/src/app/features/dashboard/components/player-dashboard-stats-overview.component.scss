@@ -17,6 +17,27 @@
   gap: var(--space-4);
 }
 
+/* When a status tag is present, use a stable 3-column track so chips align */
+.stat-card-content:has(> app-status-tag) {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) minmax(11.5rem, 1fr);
+  align-items: center;
+  flex-wrap: nowrap;
+}
+
+.stat-card-content:has(> app-status-tag) > .next-gen-preview-tag {
+  grid-column: 1 / -1;
+  margin-inline-start: 0;
+  justify-self: stretch;
+}
+
+.stat-card-content:has(> app-status-tag) > app-status-tag {
+  margin-inline-start: 0;
+  justify-self: stretch;
+  width: 100%;
+  max-width: none;
+}
+
 .stat-icon {
   display: flex;
   width: var(--space-11);
@@ -58,8 +79,9 @@
   gap: var(--space-1);
 }
 
-.stat-card-content > app-status-tag,
-.stat-card-content > .next-gen-preview-tag {
+/* Flex layout only — grid rows set alignment in :has() block above */
+.stat-card-content:not(:has(> app-status-tag)) > app-status-tag,
+.stat-card-content:not(:has(> app-status-tag)) > .next-gen-preview-tag {
   margin-inline-start: auto;
 }
 

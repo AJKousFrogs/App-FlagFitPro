@@ -42,14 +42,14 @@
   grid-area: sidebar;
   min-inline-size: 0;
   min-block-size: 0;
-  z-index: 2;
+  z-index: var(--z-index-app-shell-stacking-sidebar);
 }
 
 .app-shell__header {
   grid-area: header;
   min-inline-size: 0;
   min-block-size: 0;
-  z-index: 3;
+  z-index: var(--z-index-app-shell-stacking-header);
 }
 
 .app-shell__mobile-header {
@@ -159,7 +159,7 @@
     grid-area: mobile-header;
     min-inline-size: 0;
     min-block-size: 0;
-    z-index: 3;
+    z-index: var(--z-index-app-shell-stacking-header);
   }
 
   .app-shell__main {

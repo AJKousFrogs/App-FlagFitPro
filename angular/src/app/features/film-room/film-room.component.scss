@@ -76,13 +76,18 @@
     align-items: center;
     
     app-search-input { flex: 1; }
-    .filter-select { min-width: 200px; }
+    .filter-select {
+      min-width: var(--dropdown-width-lg);
+    }
   }
 
   /* Film Grid */
   .film-cards-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    grid-template-columns: repeat(
+      auto-fill,
+      minmax(min(100%, var(--grid-card-min-md-plus)), 1fr)
+    );
     gap: var(--space-5);
     padding: var(--space-5);
   }
@@ -93,7 +98,10 @@
     border-radius: var(--radius-lg);
     overflow: hidden;
     cursor: pointer;
-    transition: all var(--transition-base);
+    transition:
+      transform var(--transition-base),
+      box-shadow var(--transition-base),
+      border-color var(--transition-base);
 
     &:hover {
       transform: translateY(calc(-1 * var(--space-1)));

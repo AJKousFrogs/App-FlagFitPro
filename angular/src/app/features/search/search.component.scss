@@ -23,8 +23,7 @@
 }
 
 .search-page__suggestions {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  @include grid-cols-equal(2);
   gap: var(--space-4);
 }
 
@@ -54,8 +53,7 @@
 }
 
 .quick-links-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  @include grid-cols-equal(2);
   gap: var(--space-3);
 }
 

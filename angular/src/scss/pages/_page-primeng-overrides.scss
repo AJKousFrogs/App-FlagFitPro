@@ -67,7 +67,7 @@
     }
 
     &.p-focus {
-      box-shadow: 0 0 0 3px var(--ds-primary-green-ultra-subtle);
+      box-shadow: 0 0 0 var(--focus-ring-width) var(--ds-primary-green-ultra-subtle);
       border-color: var(--ds-primary-green);
     }
   }
@@ -111,7 +111,7 @@
 
   /* Training — stats grid inside bento */
   .training-page.bento-grid app-stats-grid .stats-grid {
-    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(var(--grid-card-min-xs), 1fr));
     gap: var(--space-3);
   }
 
@@ -125,11 +125,5 @@
   /* Superadmin — table min width (tableStyleClass) */
   .superadmin-table {
     min-width: var(--container-md);
-  }
-
-  /* Landing — feature cards flex column body */
-  .features-section app-card-shell.feature-card .card-shell__body {
-    display: flex;
-    flex-direction: column;
   }
 }

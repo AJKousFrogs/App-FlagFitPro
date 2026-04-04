@@ -525,9 +525,11 @@ $ds-font-weight-extrabold: 800;
   --space-4: var(--ds-space-4, 1rem);
   --space-5: var(--ds-space-5, 1.25rem);
   --space-6: var(--ds-space-6, 1.5rem);
+  --space-7: var(--ds-space-7, 1.75rem); /* 28px — between 6 and 8 */
   --space-8: var(--ds-space-8, 2rem);
   --space-9: var(--ds-space-9, 2.25rem);
   --space-10: var(--ds-space-10, 2.5rem);
+  --space-11: var(--ds-space-11, 2.75rem); /* 44px — between 10 and 12; common touch target */
   --space-12: var(--ds-space-12, 3rem);
   --space-16: var(--ds-space-16, 4rem);
   --space-20: var(--ds-space-20, 5rem);
@@ -797,6 +799,10 @@ $ds-font-weight-extrabold: 800;
   --shadow-2: var(--shadow-md);
   --shadow-3: var(--shadow-lg);
   --shadow-inner: inset 0 0.125rem 0.25rem 0 rgba(0, 0, 0, 0.06);
+  /** Selectable chips/cards (onboarding) — neutral tint, hairline elevation */
+  --shadow-selectable-flat:
+    0 var(--border-1) var(--border-2) rgba(0, 0, 0, 0.04),
+    0 var(--border-1) var(--border-3) rgba(0, 0, 0, 0.06);
   --text-shadow-subtle: 0 1px 1px rgba(0, 0, 0, 0.1);
 
   /* Elevation Aliases */
@@ -827,15 +833,23 @@ $ds-font-weight-extrabold: 800;
 
   /* Motion Tokens (Decision 19) - See TRANSITIONS & MOTION section below */
 
-  /* Container Widths (Decision 8.1) */
+  /* Container Widths (Decision 8.1)
+     Canonical app content width: --layout-app-content-max-width (single numeric source).
+     --layout-page-max-width-wide and --app-shell-content-max-width MUST alias it only. */
   --container-sm: 640px;
   --container-md: 768px;
   --container-lg: 1024px;
   --container-xl: 1280px;
   --container-max: 1440px;
+  --layout-app-content-max-width: 90rem;
   --layout-page-max-width: 86rem;
   --layout-page-max-width-narrow: 34rem;
-  --layout-page-max-width-wide: 90rem;
+  --layout-page-max-width-wide: var(--layout-app-content-max-width);
+  /* Focused UI columns (header search cluster, chat layout, etc.) — no ad-hoc rem fallbacks in components */
+  --layout-page-max-width-sm: 37.5rem;
+  --layout-page-max-width-default: 62.5rem;
+  /* Onboarding wizard, cookie bar content — between narrow forms and full page width */
+  --layout-onboarding-max-width: 72rem;
   --layout-page-padding-x: clamp(var(--space-4), 3vw, var(--space-8));
   --layout-page-padding-y: clamp(var(--space-5), 3vw, var(--space-8));
   --layout-page-section-gap: var(--layout-gap-xl);
@@ -863,8 +877,10 @@ $ds-font-weight-extrabold: 800;
   --app-shell-sidebar-width: clamp(15rem, 17vw, 16.5rem);
   --app-shell-sidebar-width-collapsed: var(--sidebar-collapsed-width);
   --app-shell-mobile-drawer-width: min(78vw, 18.5rem);
-  --app-shell-content-max-width: 96rem;
-  --app-shell-content-max-width-narrow: 72rem;
+  --app-shell-content-max-width: var(--layout-app-content-max-width);
+  /* Narrower shell reading column: same as standard page width (not a separate magic rem) */
+  --app-shell-content-max-width-narrow: var(--layout-page-max-width);
+  --layout-header-search-trigger-max-width: 22rem;
   --app-shell-gutter-inline: clamp(var(--space-3), 2vw, var(--space-6));
   --app-shell-gutter-block: clamp(var(--space-4), 2vw, var(--space-5));
   --app-shell-gutter-inline-mobile: var(--space-3);
@@ -873,6 +889,9 @@ $ds-font-weight-extrabold: 800;
   --z-index-app-sidebar: calc(var(--z-index-fixed) - 1);
   --z-index-app-header: calc(var(--z-index-fixed) + 2);
   --z-index-app-bottom-nav: var(--z-index-fixed);
+  /* Isolated stacking context inside .app-shell grid (sidebar vs header vs main) */
+  --z-index-app-shell-stacking-sidebar: 2;
+  --z-index-app-shell-stacking-header: 3;
 
   /* ================================
      GRADIENT TOKENS
@@ -1072,8 +1091,8 @@ $ds-font-weight-extrabold: 800;
   --motion-feedback-duration: 220ms;
   --motion-feedback-duration-slow: 280ms;
 
-  /* Touch Target Minimum */
-  --touch-target-min: 44px;
+  /* Touch Target Minimum — same as --touch-target-md / --space-11 (WCAG 44px) */
+  --touch-target-min: var(--touch-target-md);
 
   /* ================================
      PRIMENG THEME INTEGRATION
@@ -1165,11 +1184,11 @@ $ds-font-weight-extrabold: 800;
   --icon-container-lg: 3rem; /* 48px */
   --icon-container-xl: 3.5rem; /* 56px */
 
-  /* Touch Target Sizes */
+  /* Touch Target Sizes (md/tag align with --space-11 / --space-7) */
   --touch-target-sm: 2.25rem; /* 36px - minimum for secondary actions */
-  --touch-target-md: 2.75rem; /* 44px - recommended minimum */
+  --touch-target-md: var(--space-11); /* 44px - recommended minimum */
   --touch-target-lg: 3.25rem; /* 52px - comfortable touch */
-  --tag-height-md: 1.75rem; /* 28px - compact tags */
+  --tag-height-md: var(--space-7); /* 28px - compact tags */
   --tag-height-sm: 1.5rem; /* 24px - small tags */
   --tag-height-xs: 1.375rem; /* 22px - micro tags */
   --dialog-max-height: 90vh;
@@ -1219,7 +1238,7 @@ $ds-font-weight-extrabold: 800;
   /* Badge/Chip Heights */
   --badge-sm: 1.25rem; /* 20px */
   --badge-md: 1.5rem; /* 24px */
-  --badge-lg: 1.75rem; /* 28px */
+  --badge-lg: var(--space-7); /* 28px */
 
   /* Input/Button Heights */
   --input-height-sm: var(--ds-input-height-sm, var(--component-input-height-sm));
@@ -1244,6 +1263,8 @@ $ds-font-weight-extrabold: 800;
   --table-column-width-rank: 3.75rem; /* 60px */
   --table-column-width-score: 6.25rem; /* 100px */
   --table-column-width-avatar: 3.125rem; /* 50px */
+  /** Min width for default/compact datatables inside horizontal scroll wrappers */
+  --table-datatable-min-width: 37.5rem; /* 600px */
 
   /* Scrollbar Widths */
   --scrollbar-width-thin: 0.375rem; /* 6px - thin scrollbar */
@@ -1267,6 +1288,8 @@ $ds-font-weight-extrabold: 800;
   /* Grid Card Min Widths (for minmax in auto-fit grids) */
   --grid-card-min-xs: 8.75rem; /* 140px - compact stats */
   --grid-card-min-sm: 12.5rem; /* 200px - small cards */
+  /** Between `--grid-card-min-sm` and `--grid-card-min-md` (e.g. dense exercise grids) */
+  --grid-card-min-sm-plus: 16.25rem; /* 260px */
   --grid-card-min-md: 17.5rem; /* 280px - standard cards */
   --grid-card-min-md-plus: 18.75rem; /* 300px - spacious cards */
   --grid-card-min-md-wide: 21.875rem; /* 350px - wide cards */
@@ -2474,6 +2497,79 @@ body.light-theme {
 
 .card-content-compact {
   padding: var(--space-4); /* 16px - tighter card padding */
+}
+
+/* ================================================================
+   ONBOARDING REDESIGN TOKENS  (ob-*)
+   Apple-style full-screen onboarding shell
+   ================================================================ */
+:root {
+  /* Shell */
+  --ob-bg:               #ffffff;
+  --ob-topbar-h:         56px;
+  --ob-content-pad:      var(--space-6);          /* 24px */
+
+  /* Segmented progress bar */
+  --ob-seg-h:            4px;
+  --ob-seg-gap:          3px;
+  --ob-seg-done:         var(--ds-primary-green);
+  --ob-seg-active:       rgba(var(--ds-primary-green-rgb), 0.4);
+  --ob-seg-track:        #e5e5e5;
+
+  /* Step hero icon */
+  --ob-icon-size:        80px;
+  --ob-icon-radius:      var(--radius-2xl);
+  --ob-icon-bg:          rgba(var(--ds-primary-green-rgb), 0.1);
+  --ob-icon-color:       var(--ds-primary-green);
+  --ob-icon-font-size:   2rem;
+
+  /* Step typography */
+  --ob-heading-size:     clamp(1.5rem, 4vw, 1.875rem);
+  --ob-heading-weight:   700;
+  --ob-heading-color:    var(--ui-text-primary, #0f1728);
+  --ob-heading-tracking: -0.025em;
+  --ob-subtext-color:    var(--ui-text-secondary, #344054);
+  --ob-subtext-size:     var(--ds-font-size-md);
+
+  /* Selection cards (role, goals) */
+  --ob-card-radius:      var(--radius-xl);         /* 16px */
+  --ob-card-border:      rgba(15, 23, 42, 0.1);
+  --ob-card-bg:          #ffffff;
+  --ob-card-sel-bg:      rgba(var(--ds-primary-green-rgb), 0.06);
+  --ob-card-sel-border:  var(--ds-primary-green);
+  --ob-card-sel-shadow:  0 0 0 3px rgba(var(--ds-primary-green-rgb), 0.12);
+
+  /* Segmented control (units, days/week) */
+  --ob-ctrl-bg:          #f0f0f0;
+  --ob-ctrl-fill:        var(--ds-primary-green);
+  --ob-ctrl-radius:      var(--radius-full);
+  --ob-ctrl-h:           44px;
+
+  /* Day chips */
+  --ob-chip-radius:      var(--radius-full);
+  --ob-chip-h:           44px;
+  --ob-chip-bg:          #f5f5f5;
+  --ob-chip-sel-bg:      var(--ds-primary-green);
+  --ob-chip-sel-color:   #ffffff;
+
+  /* Inputs */
+  --ob-input-h:          56px;
+  --ob-input-radius:     var(--radius-lg);         /* 12px */
+  --ob-input-bg:         #f9fbfa;
+  --ob-input-border:     #d0d5dd;
+
+  /* Footer / CTA */
+  --ob-footer-blur:      12px;
+  --ob-cta-h:            56px;
+  --ob-cta-radius:       var(--radius-full);
+
+  /* Welcome screen */
+  --ob-welcome-bg:       #f8faf8;
+  --ob-welcome-accent:   var(--ds-primary-green);
+
+  /* Easing */
+  --ob-spring:           cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ob-ease-out:         cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 /* ================================================================

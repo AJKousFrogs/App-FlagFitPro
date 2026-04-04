@@ -154,6 +154,7 @@ import { ensurePrimeIconsStylesheet } from "../../core/utils/primeicons-loader";
           @for (feature of features; track trackByFeatureId($index, feature)) {
             <app-card-shell
               class="feature-card"
+              [stretchBody]="true"
               state="interactive"
               (cardClick)="navigateToFeature(feature.id)"
             >

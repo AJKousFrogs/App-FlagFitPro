@@ -214,8 +214,8 @@
       content: '';
       position: absolute;
       width: 100%;
-      height: 1px;
-      bottom: -2px;
+      height: var(--border-1);
+      bottom: calc(-1 * var(--space-0-5));
       left: 0;
       background-color: var(--ds-primary-green);
       transform: scaleX(0);
@@ -234,8 +234,8 @@
 
   /* Improved Focus Visibility (A11y) */
   :focus-visible {
-    outline: 2px solid var(--ds-primary-green);
-    outline-offset: 4px;
+    outline: var(--border-2) solid var(--ds-primary-green);
+    outline-offset: var(--space-1);
     border-radius: var(--radius-sm);
   }
 
@@ -249,7 +249,7 @@
   @keyframes ui-fade-in-up {
     from {
       opacity: 0;
-      transform: translateY(10px);
+      transform: translateY(calc(var(--space-2) + var(--space-0-5)));
     }
     to {
       opacity: 1;

@@ -65,8 +65,8 @@
     background: none;
     border: none;
     padding: var(--space-1);
-    min-width: 44px; // Touch target minimum
-    min-height: 44px;
+    min-width: var(--touch-target-md);
+    min-height: var(--touch-target-md);
     cursor: pointer;
     color: inherit;
     opacity: var(--opacity-subtle);
@@ -470,7 +470,7 @@
   }
 
   .skeleton--button {
-    height: 2.75rem;
+    height: var(--touch-target-md);
     width: 7.5rem;
     border-radius: var(--radius-lg);
   }

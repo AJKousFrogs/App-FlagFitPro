@@ -11,30 +11,7 @@
 // ================================
 // SPACING SCALE
 // ================================
-
-/* 8-point grid - aligned with design-system-tokens --space-* (prefer var(--space-X) directly) */
-$spacing-scale: (
-  0: 0,
-  1: var(--space-1),
-  2: var(--space-2),
-  3: var(--space-3),
-  4: var(--space-4),
-  5: var(--space-5),
-  6: var(--space-6),
-  7: 1.75rem,
-  // 28px - no token, use rem
-  8: var(--space-8),
-  9: var(--space-9),
-  10: var(--space-10),
-  11: 2.75rem,
-  // 44px - no token
-  12: var(--space-12),
-);
-
-/** @deprecated Prefer var(--space-X) directly. Kept for mixins that use space() */
-@function space($key) {
-  @return map.get($spacing-scale, $key);
-}
+// Use `var(--space-0)` … `var(--space-16)` from design-system-tokens.scss (8-point grid).
 
 // ================================
 // TYPOGRAPHY SCALE
@@ -103,7 +80,8 @@ $breakpoints: (
   xxl-wide: 87.5rem,
   // Wide desktop (1400px)
   xxl: 96rem,
-  // Extra large - 1536px         — matches --breakpoint-2xl
+  // Viewport max-width breakpoint (~1536px) — matches --breakpoint-2xl. Not content width;
+  // app max inline size is --layout-app-content-max-width in design-system-tokens.scss
 );
 
 // ================================

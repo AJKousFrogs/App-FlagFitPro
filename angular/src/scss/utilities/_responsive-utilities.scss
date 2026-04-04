@@ -136,7 +136,7 @@ $touch-target-large: calc(var(--touch-target-lg) + var(--space-1));
     gap: var(--space-3);
   }
 
-  @media (max-width: 640px) {
+  @media (max-width: var(--breakpoint-sm)) {
     grid-template-columns: 1fr;
     gap: var(--space-3);
   }
@@ -154,7 +154,7 @@ $touch-target-large: calc(var(--touch-target-lg) + var(--space-1));
     grid-template-columns: repeat(2, 1fr);
   }
 
-  @media (max-width: 640px) {
+  @media (max-width: var(--breakpoint-sm)) {
     grid-template-columns: 1fr;
   }
 }
@@ -174,7 +174,7 @@ $touch-target-large: calc(var(--touch-target-lg) + var(--space-1));
     grid-template-columns: repeat(3, 1fr);
   }
 
-  @media (max-width: 640px) {
+  @media (max-width: var(--breakpoint-sm)) {
     grid-template-columns: repeat(2, 1fr);
   }
 }
@@ -193,7 +193,7 @@ $touch-target-large: calc(var(--touch-target-lg) + var(--space-1));
     font-size: get-font-size($tablet-size);
   }
 
-  @media (max-width: 640px) {
+  @media (max-width: var(--breakpoint-sm)) {
     font-size: get-font-size($mobile-size);
   }
 }
@@ -223,7 +223,7 @@ $touch-target-large: calc(var(--touch-target-lg) + var(--space-1));
     padding: $tablet;
   }
 
-  @media (max-width: 640px) {
+  @media (max-width: var(--breakpoint-sm)) {
     padding: $mobile;
   }
 }
@@ -238,7 +238,7 @@ $touch-target-large: calc(var(--touch-target-lg) + var(--space-1));
     margin-bottom: var(--space-6);
   }
 
-  @media (max-width: 640px) {
+  @media (max-width: var(--breakpoint-sm)) {
     margin-bottom: var(--space-4);
   }
 }
@@ -257,7 +257,7 @@ $touch-target-large: calc(var(--touch-target-lg) + var(--space-1));
     padding: var(--space-4);
   }
 
-  @media (max-width: 640px) {
+  @media (max-width: var(--breakpoint-sm)) {
     padding: var(--space-3);
     border-radius: get-radius(lg);
   }
@@ -275,7 +275,7 @@ $touch-target-large: calc(var(--touch-target-lg) + var(--space-1));
     max-height: 85vh;
   }
 
-  @media (max-width: 640px) {
+  @media (max-width: var(--breakpoint-sm)) {
     width: 100%;
     max-width: 100%;
     max-height: 100vh;
@@ -295,7 +295,7 @@ height: 100dvh; // Modern: keyboard-aware
     width: calc(var(--sidebar-width) - var(--space-2));
   }
 
-  @media (max-width: 1024px) {
+  @media (max-width: var(--breakpoint-lg)) {
     position: fixed;
     left: 0;
     top: 0;
@@ -322,7 +322,7 @@ height: 100dvh; // Modern: keyboard-aware
   border-collapse: collapse;
 
   // Desktop/Tablet: Regular table
-  @media (min-width: 769px) {
+  @media (min-width: var(--breakpoint-md-min)) {
     th,
     td {
       padding: var(--space-3) var(--space-4);
@@ -338,7 +338,7 @@ height: 100dvh; // Modern: keyboard-aware
   }
 
   // Mobile: Card layout
-  @media (max-width: 768px) {
+  @media (max-width: var(--breakpoint-md)) {
     display: block;
 
     thead {
@@ -392,7 +392,7 @@ height: 100dvh; // Modern: keyboard-aware
   grid-template-columns: repeat(2, 1fr);
   gap: var(--space-4);
 
-  @media (max-width: 768px) {
+  @media (max-width: var(--breakpoint-md)) {
     grid-template-columns: 1fr;
   }
 
@@ -423,7 +423,7 @@ height: 100dvh; // Modern: keyboard-aware
 @mixin bottom-nav {
   display: none;
 
-  @media (max-width: 1024px) {
+  @media (max-width: var(--breakpoint-lg)) {
     display: flex;
     position: fixed;
     bottom: 0;
@@ -506,14 +506,14 @@ height: 100dvh; // Modern: keyboard-aware
 
 // Responsive text alignment
 .text-center-mobile {
-  @media (max-width: 640px) {
+  @media (max-width: var(--breakpoint-sm)) {
     text-align: center;
   }
 }
 
 // Responsive flex direction
 .flex-col-mobile {
-  @media (max-width: 640px) {
+  @media (max-width: var(--breakpoint-sm)) {
     flex-direction: column;
   }
 }

@@ -100,6 +100,14 @@
   gap: $gap;
 }
 
+/// Equal-width columns (`minmax(0, 1fr)` avoids grid overflow). Prefer this over
+/// repeating `repeat(N, minmax(0, 1fr))` across feature SCSS. For utility-class
+/// markup, see `.ui-grid-2` / `.ui-grid-3` in `design-system/utilities.scss`.
+@mixin grid-cols-equal($columns: 2) {
+  display: grid;
+  grid-template-columns: repeat($columns, minmax(0, 1fr));
+}
+
 // Search bar container (shared layout rhythm)
 @mixin search-bar(
   $padding-y: var(--space-3),
@@ -227,7 +235,7 @@
   padding-left: var(--space-4);
   padding-right: var(--space-4);
 
-  @media (max-width: 768px) {
+  @media (max-width: var(--breakpoint-md)) {
     padding-left: var(--space-3);
     padding-right: var(--space-3);
   }
@@ -789,7 +797,7 @@
 }
 
 // Touch-friendly tap target
-@mixin tap-target($min-size: 2.75rem) {
+@mixin tap-target($min-size: var(--touch-target-md)) {
   min-height: $min-size;
   min-width: $min-size;
 

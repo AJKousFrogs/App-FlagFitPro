@@ -1012,7 +1012,7 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      min-height: 400px;
+      min-height: var(--chart-min-height-lg);
       padding: var(--space-8) var(--space-5);
 
       .empty-state-icon {
@@ -1024,7 +1024,7 @@
         border-radius: var(--radius-full);
         background: var(--ui-surface-subtle);
         color: var(--color-text-tertiary);
-        font-size: 3rem;
+        font-size: var(--icon-3xl);
         margin-bottom: var(--space-4);
       }
 
@@ -1039,7 +1039,7 @@
         font-size: var(--font-body-size);
         color: var(--color-text-secondary);
         text-align: center;
-        max-width: 320px;
+        max-width: var(--element-max-width-md);
         line-height: var(--line-height-normal);
       }
     }

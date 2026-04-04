@@ -52,12 +52,8 @@
 }
 
 .nav-item--bottom {
-  --nav-item-bg-hover: var(--color-brand-light);
-  --nav-item-bg-active: color-mix(
-    in srgb,
-    var(--color-brand-light) 80%,
-    var(--surface-card)
-  );
+  --nav-item-bg-hover: transparent;
+  --nav-item-bg-active: transparent;
   --nav-item-shadow-hover: none;
   flex-direction: column;
   justify-content: center;
@@ -84,9 +80,14 @@
 }
 
 .nav-item--sidebar.active,
-.nav-item--menu.active,
-.nav-item--bottom.active {
+.nav-item--menu.active {
   --nav-item-bg: var(--color-brand-light);
+  --nav-item-color: var(--color-brand-primary);
+  color: var(--nav-item-color);
+}
+
+.nav-item--bottom.active {
+  --nav-item-bg: transparent;
   --nav-item-color: var(--color-brand-primary);
   color: var(--nav-item-color);
 }
@@ -125,8 +126,20 @@
   }
 }
 
+// iOS-style: pill background behind active bottom-nav icon
+.nav-item--bottom.active .nav-item-icon {
+  background: color-mix(in srgb, var(--color-brand-primary) 14%, transparent);
+  border-radius: var(--radius-full);
+  padding: var(--space-1) var(--space-4);
+  width: auto;
+  min-width: var(--space-12);
+  transition:
+    background var(--ds-state-transition),
+    padding var(--ds-state-transition);
+}
+
 .nav-item--bottom.active .nav-item-icon i {
-  transform: scale(1.1);
+  transform: scale(1.05);
 }
 
 .nav-item:active:not(:disabled):not([aria-disabled="true"]) {
@@ -223,7 +236,7 @@
 @include respond-to(sm) {
   .nav-item--sidebar {
     padding: var(--space-3);
-    min-height: 2.75rem;
+    min-height: var(--touch-target-md);
   }
 
   .nav-item--bottom {

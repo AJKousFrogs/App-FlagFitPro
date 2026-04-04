@@ -36,21 +36,24 @@
   /* Play Cards Grid */
   .play-cards-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(var(--grid-card-min-md), 1fr));
     gap: var(--space-5);
     padding: var(--space-5);
   }
 
   .play-card {
     background: var(--surface-primary);
-    border: 1px solid var(--ui-border-subtle);
+    border: var(--border-1) solid var(--ui-border-subtle);
     border-radius: var(--radius-lg);
     overflow: hidden;
     cursor: pointer;
-    transition: all var(--transition-base);
+    transition:
+      transform var(--transition-base),
+      box-shadow var(--transition-base),
+      border-color var(--transition-base);
 
     &:hover {
-      transform: translateY(-4px);
+      transform: translateY(calc(-1 * var(--space-1)));
       box-shadow: var(--shadow-md);
       border-color: var(--ds-primary-green);
     }

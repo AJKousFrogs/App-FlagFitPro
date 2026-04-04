@@ -1,142 +1,130 @@
 import { ChangeDetectionStrategy, Component, inject } from "@angular/core";
-import { FormInputComponent } from "../../../shared/components/form-input/form-input.component";
 import { OnboardingStateService } from "../services/onboarding-state.service";
 
 @Component({
   selector: "app-onboarding-step-physical",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [FormInputComponent],
+  imports: [],
   template: `
-    <div class="step-content animate-fade-in">
-      <div class="step-header">
-        <i class="pi pi-heart step-icon"></i>
-        <div>
-          <h3>Physical Measurements</h3>
-          <p class="step-description">
-            Used for load calculations and benchmarks
-          </p>
-        </div>
+    <div class="ob-step">
+      <div class="ob-hero-icon" aria-hidden="true">
+        <i class="pi pi-heart"></i>
       </div>
 
-      <div class="form-group">
-        <label id="unit-system-label">Preferred Units</label>
-        <div
-          class="unit-toggle"
-          role="radiogroup"
-          aria-labelledby="unit-system-label"
+      <h2 class="ob-heading">Physical profile</h2>
+      <p class="ob-subtext">
+        Used for load calculations and position benchmarks.
+      </p>
+
+      <!-- Unit segmented control -->
+      <div
+        class="ob-seg-ctrl"
+        role="radiogroup"
+        aria-label="Preferred measurement units"
+      >
+        <button
+          type="button"
+          role="radio"
+          class="ob-seg-opt"
+          [class.ob-seg-opt--active]="state.formData.unitSystem === 'metric'"
+          [attr.aria-checked]="state.formData.unitSystem === 'metric'"
+          data-cy="unit-metric"
+          (click)="state.formData.unitSystem = 'metric'"
+          (keydown.enter)="state.formData.unitSystem = 'metric'"
+          (keydown.space)="state.formData.unitSystem = 'metric'; $event.preventDefault()"
         >
-          <button
-            type="button"
-            role="radio"
-            class="unit-option"
-            [class.selected]="state.formData.unitSystem === 'metric'"
-            [attr.aria-checked]="state.formData.unitSystem === 'metric'"
-            data-cy="unit-metric"
-            (click)="state.formData.unitSystem = 'metric'"
-            (keydown.enter)="state.formData.unitSystem = 'metric'"
-            (keydown.space)="
-              state.formData.unitSystem = 'metric';
-              $event.preventDefault()
-            "
-          >
-            <span class="unit-radio">
-              @if (state.formData.unitSystem === 'metric') {
-                <i class="pi pi-check"></i>
-              }
-            </span>
-            <span class="unit-content">
-              <i class="pi pi-globe"></i>
-              <span>Metric</span>
-              <small>cm / kg</small>
-            </span>
-          </button>
-          <button
-            type="button"
-            role="radio"
-            class="unit-option"
-            [class.selected]="state.formData.unitSystem === 'imperial'"
-            [attr.aria-checked]="state.formData.unitSystem === 'imperial'"
-            data-cy="unit-imperial"
-            (click)="state.formData.unitSystem = 'imperial'"
-            (keydown.enter)="state.formData.unitSystem = 'imperial'"
-            (keydown.space)="
-              state.formData.unitSystem = 'imperial';
-              $event.preventDefault()
-            "
-          >
-            <span class="unit-radio">
-              @if (state.formData.unitSystem === 'imperial') {
-                <i class="pi pi-check"></i>
-              }
-            </span>
-            <span class="unit-content">
-              <i class="pi pi-flag"></i>
-              <span>Imperial</span>
-              <small>ft-in / lbs</small>
-            </span>
-          </button>
-        </div>
+          <i class="pi pi-globe" aria-hidden="true"></i> Metric (cm / kg)
+        </button>
+        <button
+          type="button"
+          role="radio"
+          class="ob-seg-opt"
+          [class.ob-seg-opt--active]="state.formData.unitSystem === 'imperial'"
+          [attr.aria-checked]="state.formData.unitSystem === 'imperial'"
+          data-cy="unit-imperial"
+          (click)="state.formData.unitSystem = 'imperial'"
+          (keydown.enter)="state.formData.unitSystem = 'imperial'"
+          (keydown.space)="state.formData.unitSystem = 'imperial'; $event.preventDefault()"
+        >
+          <i class="pi pi-flag" aria-hidden="true"></i> Imperial (ft / lbs)
+        </button>
       </div>
 
       @if (state.formData.unitSystem === 'metric') {
-        <div class="form-grid">
-          <div class="form-group">
-            <app-form-input
-              label="Height (cm) *"
-              [value]="state.formData.heightCm?.toString() ?? ''"
-              (valueChange)="onHeightCmInput($event)"
+        <div class="ob-input-row">
+          <div class="ob-field">
+            <label class="ob-label" for="ob-height-cm">
+              Height (cm) <span class="req" aria-hidden="true">*</span>
+            </label>
+            <input
+              id="ob-height-cm"
+              type="number"
+              class="ob-input"
               placeholder="e.g. 180"
-              styleClass="w-full"
+              [value]="state.formData.heightCm ?? ''"
+              (input)="onHeightCm($event)"
             />
           </div>
-          <div class="form-group">
-            <app-form-input
-              label="Weight (kg) *"
-              [value]="state.formData.weightKg?.toString() ?? ''"
-              (valueChange)="onWeightKgInput($event)"
+          <div class="ob-field">
+            <label class="ob-label" for="ob-weight-kg">
+              Weight (kg) <span class="req" aria-hidden="true">*</span>
+            </label>
+            <input
+              id="ob-weight-kg"
+              type="number"
+              class="ob-input"
               placeholder="e.g. 75"
-              styleClass="w-full"
+              [value]="state.formData.weightKg ?? ''"
+              (input)="onWeightKg($event)"
             />
           </div>
         </div>
       } @else {
-        <div class="form-grid imperial-grid">
-          <div class="form-group">
-            <app-form-input
-              label="Height (ft)"
-              [value]="state.formData.heightFt?.toString() ?? ''"
-              (valueChange)="onHeightFtInput($event)"
+        <div class="ob-input-row">
+          <div class="ob-field">
+            <label class="ob-label" for="ob-height-ft">Height (ft)</label>
+            <input
+              id="ob-height-ft"
+              type="number"
+              class="ob-input"
               placeholder="5"
-              styleClass="w-full"
+              [value]="state.formData.heightFt ?? ''"
+              (input)="onHeightFt($event)"
             />
           </div>
-          <div class="form-group">
-            <app-form-input
-              label="Inches"
-              [value]="state.formData.heightIn?.toString() ?? ''"
-              (valueChange)="onHeightInInput($event)"
+          <div class="ob-field">
+            <label class="ob-label" for="ob-height-in">Inches</label>
+            <input
+              id="ob-height-in"
+              type="number"
+              class="ob-input"
               placeholder="10"
-              styleClass="w-full"
-            />
-          </div>
-          <div class="form-group">
-            <app-form-input
-              label="Weight (lbs) *"
-              [value]="state.formData.weightLbs?.toString() ?? ''"
-              (valueChange)="onWeightLbsInput($event)"
-              placeholder="e.g. 165"
-              styleClass="w-full"
+              [value]="state.formData.heightIn ?? ''"
+              (input)="onHeightIn($event)"
             />
           </div>
         </div>
+        <div class="ob-field">
+          <label class="ob-label" for="ob-weight-lbs">
+            Weight (lbs) <span class="req" aria-hidden="true">*</span>
+          </label>
+          <input
+            id="ob-weight-lbs"
+            type="number"
+            class="ob-input"
+            placeholder="e.g. 165"
+            [value]="state.formData.weightLbs ?? ''"
+            (input)="onWeightLbs($event)"
+          />
+        </div>
       }
 
-      <div class="info-box">
-        <i class="pi pi-info-circle"></i>
-        <span
-          >Your measurements help us calculate appropriate training
-          loads and provide position-specific benchmarks.</span
-        >
+      <div class="ob-info-box">
+        <i class="pi pi-info-circle" aria-hidden="true"></i>
+        <span>
+          Your measurements help personalise training loads and
+          position-specific benchmarks. You can update them anytime.
+        </span>
       </div>
     </div>
   `,
@@ -144,29 +132,16 @@ import { OnboardingStateService } from "../services/onboarding-state.service";
 export class OnboardingStepPhysicalComponent {
   readonly state = inject(OnboardingStateService);
 
-  onHeightCmInput(raw: string): void {
-    this.state.formData.heightCm = this.parseNumberString(raw);
-  }
+  onHeightCm(e: Event): void  { this.state.formData.heightCm  = this.num(e); }
+  onWeightKg(e: Event): void  { this.state.formData.weightKg  = this.num(e); }
+  onHeightFt(e: Event): void  { this.state.formData.heightFt  = this.num(e); }
+  onHeightIn(e: Event): void  { this.state.formData.heightIn  = this.num(e); }
+  onWeightLbs(e: Event): void { this.state.formData.weightLbs = this.num(e); }
 
-  onWeightKgInput(raw: string): void {
-    this.state.formData.weightKg = this.parseNumberString(raw);
-  }
-
-  onHeightFtInput(raw: string): void {
-    this.state.formData.heightFt = this.parseNumberString(raw);
-  }
-
-  onHeightInInput(raw: string): void {
-    this.state.formData.heightIn = this.parseNumberString(raw);
-  }
-
-  onWeightLbsInput(raw: string): void {
-    this.state.formData.weightLbs = this.parseNumberString(raw);
-  }
-
-  private parseNumberString(raw: string): number | null {
+  private num(e: Event): number | null {
+    const raw = (e.target as HTMLInputElement).value;
     if (raw === "") return null;
-    const parsed = Number(raw);
-    return Number.isFinite(parsed) ? parsed : null;
+    const n = Number(raw);
+    return Number.isFinite(n) ? n : null;
   }
 }

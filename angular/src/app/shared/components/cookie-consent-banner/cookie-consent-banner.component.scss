@@ -25,7 +25,7 @@
 }
 
 .cookie-content {
-  max-width: min(var(--container-max-lg), 72rem);
+  max-width: min(100%, var(--layout-onboarding-max-width));
   margin: 0 auto;
   padding: var(--space-5) var(--space-4);
   display: flex;

@@ -1,132 +1,137 @@
 import { ChangeDetectionStrategy, Component, inject, input, output } from "@angular/core";
-import { FormInputComponent } from "../../../shared/components/form-input/form-input.component";
 import { SelectComponent } from "../../../shared/components/select/select.component";
 import { COUNTRY_OPTIONS } from "../../../core/constants";
 import { GENDER_OPTIONS } from "../constants/onboarding-options";
-import { AlertComponent } from "../../../shared/components/alert/alert.component";
-import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { OnboardingStateService } from "../services/onboarding-state.service";
 
 @Component({
   selector: "app-onboarding-step-personal",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [
-    FormInputComponent,
-    SelectComponent,
-    AlertComponent,
-    ButtonComponent,
-  ],
+  imports: [SelectComponent],
   template: `
-    <div class="step-content animate-fade-in">
-      <div class="step-header">
-        <i class="pi pi-user step-icon"></i>
-        <div>
-          <h3>Personal Information</h3>
-          <p class="step-description">Let's start with the basics</p>
-        </div>
+    <div class="ob-step">
+      <div class="ob-hero-icon" aria-hidden="true">
+        <i class="pi pi-user"></i>
       </div>
 
-      <div class="form-grid">
-        <div class="form-group span-2">
-          <app-form-input
-            label="Full Name *"
-            [value]="state.formData.name"
-            (valueChange)="state.formData.name = $event"
-            placeholder="Enter your full name"
-            styleClass="w-full"
-          />
-        </div>
+      <h2 class="ob-heading">What's your name?</h2>
+      <p class="ob-subtext">We'll use this for your profile and team roster.</p>
 
-        <div class="form-group">
-          <label for="onboarding-dob"
-            >Date of Birth <span class="required">*</span></label
-          >
+      <!-- Name -->
+      <div class="ob-field">
+        <label class="ob-label" for="ob-name">
+          Full Name <span class="req" aria-hidden="true">*</span>
+        </label>
+        <input
+          id="ob-name"
+          type="text"
+          class="ob-input"
+          placeholder="First and last name"
+          autocomplete="name"
+          [value]="state.formData.name"
+          (input)="state.formData.name = $any($event.target).value"
+        />
+      </div>
+
+      <!-- DOB + Gender row -->
+      <div class="ob-input-row">
+        <div class="ob-field">
+          <label class="ob-label" for="ob-dob">
+            Date of Birth <span class="req" aria-hidden="true">*</span>
+          </label>
           <input
-            id="onboarding-dob"
+            id="ob-dob"
             type="date"
-            [value]="getDateOfBirthInputValue()"
-            [max]="getMaxDateInputValue()"
-            [min]="getMinDateInputValue()"
-            (input)="onDateOfBirthInput($event)"
-            class="w-full"
+            class="ob-input"
+            [value]="getDateInputValue()"
+            [max]="getMaxDateValue()"
+            [min]="getMinDateValue()"
+            (input)="onDateInput($event)"
           />
           @if (state.calculatedAge()) {
-            <small class="age-hint"
-              >Age: {{ state.calculatedAge() }} years ({{
-                state.getAgeGroup()
-              }})</small
-            >
+            <span class="ob-field-hint">
+              {{ state.calculatedAge() }} yrs · {{ state.getAgeGroup() }}
+            </span>
           }
         </div>
 
-        <div class="form-group">
+        <div class="ob-field">
+          <label class="ob-label" for="ob-gender">Gender</label>
           <app-select
-            label="Gender"
+            label=""
             [options]="genderOptions"
             (change)="onGenderSelect($event)"
-            placeholder="Select gender"
-            styleClass="w-full"
+            placeholder="Select"
+            styleClass="ob-select-wrap"
           />
-        </div>
-
-        <div class="form-group">
-          <app-select
-            label="Country *"
-            [options]="countryOptions"
-            (change)="onCountrySelect($event)"
-            placeholder="Select your country"
-            [filter]="true"
-            styleClass="w-full"
-          />
-        </div>
-
-        <div class="form-group">
-          <app-form-input
-            label="Phone Number (optional)"
-            [value]="state.formData.phone"
-            (valueChange)="state.formData.phone = $event"
-            placeholder="+1 234 567 8900"
-            styleClass="w-full"
-          />
-        </div>
-
-        <!-- Email Verification Status -->
-        <div class="form-group span-2">
-          @if (isEmailVerified()) {
-            <app-alert
-              variant="success"
-              density="compact"
-              title="Email verified"
-              message="You can proceed to the next step."
-            />
-          } @else {
-            <app-alert
-              variant="warning"
-              density="compact"
-              title="Email verification required"
-              message="Please verify your email to continue. Check your inbox for a verification link."
-            >
-              <div class="form-inline-split">
-                <app-button
-                  variant="outlined"
-                  size="sm"
-                  iconLeft="pi-refresh"
-                  [loading]="isResendingVerification()"
-                  (clicked)="resendVerification.emit()"
-                  >Resend Email</app-button
-                >
-                <app-button
-                  variant="text"
-                  size="sm"
-                  iconLeft="pi-sync"
-                  (clicked)="refreshVerification.emit()"
-                  >I've Verified</app-button
-                >
-              </div>
-            </app-alert>
-          }
         </div>
       </div>
+
+      <!-- Country + Phone row -->
+      <div class="ob-input-row">
+        <div class="ob-field">
+          <label class="ob-label">
+            Country <span class="req" aria-hidden="true">*</span>
+          </label>
+          <app-select
+            label=""
+            [options]="countryOptions"
+            (change)="onCountrySelect($event)"
+            placeholder="Select country"
+            [filter]="true"
+            styleClass="ob-select-wrap"
+          />
+        </div>
+
+        <div class="ob-field">
+          <label class="ob-label" for="ob-phone">Phone (optional)</label>
+          <input
+            id="ob-phone"
+            type="tel"
+            class="ob-input"
+            placeholder="+1 234 567 8900"
+            autocomplete="tel"
+            [value]="state.formData.phone"
+            (input)="state.formData.phone = $any($event.target).value"
+          />
+        </div>
+      </div>
+
+      <!-- Email verification -->
+      @if (isEmailVerified()) {
+        <div class="ob-email-alert ob-email-alert--success">
+          <div class="ob-email-alert-title">
+            <i class="pi pi-check-circle"></i> Email verified
+          </div>
+          You're good to continue.
+        </div>
+      } @else {
+        <div class="ob-email-alert">
+          <div class="ob-email-alert-title">
+            <i class="pi pi-envelope"></i> Verify your email to continue
+          </div>
+          Check your inbox for a verification link.
+          <div class="ob-email-actions">
+            <button
+              class="ob-email-btn"
+              type="button"
+              [disabled]="isResendingVerification()"
+              (click)="resendVerification.emit()"
+            >
+              <i class="pi pi-refresh"></i>
+              {{ isResendingVerification() ? 'Sending…' : 'Resend email' }}
+            </button>
+            <button
+              class="ob-email-btn"
+              type="button"
+              (click)="refreshVerification.emit()"
+            >
+              <i class="pi pi-sync"></i>
+              I've verified
+            </button>
+          </div>
+        </div>
+      }
     </div>
   `,
 })
@@ -144,25 +149,6 @@ export class OnboardingStepPersonalComponent {
   readonly genderOptions = GENDER_OPTIONS;
   readonly countryOptions = COUNTRY_OPTIONS;
 
-  onDateOfBirthChange(value: Date | null): void {
-    this.state.formData.dateOfBirth = value ?? null;
-  }
-
-  onDateOfBirthInput(event: Event): void {
-    const input = event.target as HTMLInputElement | null;
-    const parsed = this.parseDateInputValue(input?.value ?? "");
-    if (parsed === null) {
-      this.onDateOfBirthChange(null);
-      return;
-    }
-    const min = this.minDate();
-    const max = this.maxDate();
-    if (parsed < min || parsed > max) {
-      return;
-    }
-    this.onDateOfBirthChange(parsed);
-  }
-
   onGenderSelect(value: string | null | undefined): void {
     this.state.formData.gender = typeof value === "string" ? value : null;
   }
@@ -171,35 +157,33 @@ export class OnboardingStepPersonalComponent {
     this.state.formData.country = typeof value === "string" ? value : null;
   }
 
-  getDateOfBirthInputValue(): string {
-    return this.formatDateInputValue(this.state.formData.dateOfBirth);
+  onDateInput(event: Event): void {
+    const input = event.target as HTMLInputElement | null;
+    const parsed = this.parseDateValue(input?.value ?? "");
+    if (parsed === null) { this.state.formData.dateOfBirth = null; return; }
+    const min = this.minDate();
+    const max = this.maxDate();
+    if (parsed < min || parsed > max) return;
+    this.state.formData.dateOfBirth = parsed;
   }
 
-  getMinDateInputValue(): string {
-    return this.formatDateInputValue(this.minDate());
+  getDateInputValue(): string {
+    return this.formatDateValue(this.state.formData.dateOfBirth);
   }
 
-  getMaxDateInputValue(): string {
-    return this.formatDateInputValue(this.maxDate());
+  getMinDateValue(): string { return this.formatDateValue(this.minDate()); }
+  getMaxDateValue(): string { return this.formatDateValue(this.maxDate()); }
+
+  private formatDateValue(value: Date | null | undefined): string {
+    if (!(value instanceof Date) || Number.isNaN(value.getTime())) return "";
+    const y = value.getFullYear();
+    const m = String(value.getMonth() + 1).padStart(2, "0");
+    const d = String(value.getDate()).padStart(2, "0");
+    return `${y}-${m}-${d}`;
   }
 
-  private formatDateInputValue(value: Date | null | undefined): string {
-    if (!(value instanceof Date) || Number.isNaN(value.getTime())) {
-      return "";
-    }
-
-    const year = value.getFullYear();
-    const month = String(value.getMonth() + 1).padStart(2, "0");
-    const day = String(value.getDate()).padStart(2, "0");
-
-    return `${year}-${month}-${day}`;
-  }
-
-  private parseDateInputValue(value: string): Date | null {
-    if (!value) {
-      return null;
-    }
-
+  private parseDateValue(value: string): Date | null {
+    if (!value) return null;
     const parsed = new Date(`${value}T00:00:00`);
     return Number.isNaN(parsed.getTime()) ? null : parsed;
   }

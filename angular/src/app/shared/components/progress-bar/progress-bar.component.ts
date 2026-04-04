@@ -30,12 +30,12 @@ import { ProgressBarModule } from "primeng/progressbar";
       width: 100%;
     }
     .app-progress-bar-host .p-progressbar {
-      height: 0.5rem;
-      border-radius: 999px;
+      height: var(--progress-md);
+      border-radius: var(--radius-full);
       background: var(--surface-200);
     }
     .app-progress-bar-host .p-progressbar-value {
-      border-radius: 999px;
+      border-radius: var(--radius-full);
       transition: width var(--transition-slow, 300ms) var(--ease-decelerate, cubic-bezier(0, 0, 0.2, 1));
     }
     .app-progress-bar-host .app-pb-primary .p-progressbar-value {

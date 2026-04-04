@@ -155,7 +155,7 @@
   /* Outlined variant - emphasis on border */
   .bento-item--outlined {
     background: transparent;
-    border-width: 2px;
+    border-width: var(--border-2);
     border-color: var(--ui-border);
 
     &:hover {
@@ -298,17 +298,17 @@
 
   /* Success/positive state */
   .bento-item--status-success {
-    border-left: var(--border-accent, 4px) solid var(--ui-success);
+    border-left: var(--border-accent, var(--border-4)) solid var(--ui-success);
   }
 
   /* Warning state */
   .bento-item--status-warning {
-    border-left: var(--border-accent, 4px) solid var(--ui-warning);
+    border-left: var(--border-accent, var(--border-4)) solid var(--ui-warning);
   }
 
   /* Danger/error state */
   .bento-item--status-danger {
-    border-left: var(--border-accent, 4px) solid var(--ui-danger);
+    border-left: var(--border-accent, var(--border-4)) solid var(--ui-danger);
     background: color-mix(
       in srgb,
       var(--ui-danger) 4%,
@@ -318,7 +318,7 @@
 
   /* Info state */
   .bento-item--status-info {
-    border-left: var(--border-accent, 4px) solid var(--ui-info);
+    border-left: var(--border-accent, var(--border-4)) solid var(--ui-info);
   }
 
   /* ============================================
@@ -387,7 +387,7 @@
    */
   @media (prefers-contrast: high) {
     .bento-item {
-      border-width: 2px;
+      border-width: var(--border-2);
     }
   }
 

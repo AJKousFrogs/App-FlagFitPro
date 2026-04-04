@@ -195,7 +195,7 @@
   @include respond-to(md) {
     .card--interactive {
       // Ensure touch-friendly sizing on mobile
-      min-height: 44px;
+      min-height: var(--touch-target-md);
 
       // Touch feedback on mobile devices
       @media (hover: none) and (pointer: coarse) {
@@ -227,11 +227,11 @@
 
   @media (forced-colors: active) {
     .card {
-      border-width: 2px;
+      border-width: var(--border-2);
     }
 
     .card--interactive:focus-visible {
-      outline: 3px solid CanvasText;
+      outline: var(--border-3) solid CanvasText;
     }
   }
 }

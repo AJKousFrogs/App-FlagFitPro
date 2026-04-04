@@ -13,6 +13,16 @@
 // BASE CARD SHELL
 // ============================================
 
+/* Equal-height grids: shell fills host; body becomes column flex for spacer children */
+.card-shell--stretch-body {
+  min-height: 100%;
+}
+
+.card-shell--stretch-body .card-shell__body {
+  display: flex;
+  flex-direction: column;
+}
+
 .card-shell {
   position: relative;
   display: flex;

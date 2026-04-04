@@ -6,7 +6,12 @@
           <span class="stat-block__value">{{ stat.value }}</span>
           <span class="stat-block__label">{{ stat.label }}</span>
         </div>
-        <app-status-tag [value]="stat.trend" [severity]="stat.trendType" size="sm" />
+        <app-status-tag
+          [value]="stat.trend"
+          [severity]="stat.trendType"
+          size="sm"
+          [wrap]="true"
+        />
       </div>
     }
   </div>

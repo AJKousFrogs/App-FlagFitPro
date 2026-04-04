@@ -412,12 +412,12 @@
     // Ensure default tables scroll horizontally on mobile
     .table-default,
     .table-compact {
-      min-width: 600px; // Minimum width to enable horizontal scroll
+      min-width: var(--table-datatable-min-width);
 
       .p-datatable-thead > tr > th,
       .p-datatable-tbody > tr > td {
         white-space: nowrap;
-        min-width: 100px;
+        min-width: var(--table-column-width-score);
       }
     }
   }

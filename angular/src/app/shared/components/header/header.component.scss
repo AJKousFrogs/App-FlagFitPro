@@ -43,8 +43,8 @@
 
 .mobile-hamburger {
   display: none;
-  min-width: var(--touch-target-min, 2.75rem);
-  min-height: var(--touch-target-min, 2.75rem);
+  min-width: var(--touch-target-md);
+  min-height: var(--touch-target-md);
 
   @include respond-to(sm) {
     min-width: var(--touch-target-md);
@@ -81,7 +81,7 @@
 .header-center {
   flex: 1;
   justify-content: center;
-  max-width: var(--layout-page-max-width-sm, 37.5rem);
+  max-width: var(--layout-page-max-width-sm);
 
   .ui-search-trigger {
     @include reset-button;
@@ -93,9 +93,12 @@
     border-radius: var(--radius-xl);
     padding: var(--space-2) var(--space-3);
     width: 100%;
-    max-width: 22rem;
+    max-width: var(--layout-header-search-trigger-max-width);
     cursor: pointer;
-    transition: all var(--transition-base);
+    transition:
+      border-color var(--transition-base),
+      background-color var(--transition-base),
+      box-shadow var(--transition-base);
     text-align: left;
 
     @media (hover: hover) and (pointer: fine) {
@@ -163,7 +166,9 @@
   border-radius: var(--radius-md);
   cursor: pointer;
   color: var(--color-text-secondary);
-  transition: all var(--transition-fast);
+  transition:
+    background-color var(--transition-fast),
+    color var(--transition-fast);
   height: var(--button-height-sm);
   background: transparent;
   border: none;

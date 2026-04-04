@@ -7,19 +7,16 @@ import { OnboardingStateService } from "../services/onboarding-state.service";
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [],
   template: `
-    <div class="step-content animate-fade-in">
-      <div class="step-header">
-        <i class="pi pi-flag step-icon"></i>
-        <div>
-          <h3>Training Goals</h3>
-          <p class="step-description">
-            What do you want to achieve? (select all that apply)
-          </p>
-        </div>
+    <div class="ob-step">
+      <div class="ob-hero-icon" aria-hidden="true">
+        <i class="pi pi-flag"></i>
       </div>
 
+      <h2 class="ob-heading">What are your goals?</h2>
+      <p class="ob-subtext">Pick all that apply. We'll tailor your plan around these.</p>
+
       <div
-        class="goals-grid"
+        class="ob-card-grid ob-card-grid--3col"
         role="group"
         aria-label="Training goals"
       >
@@ -27,26 +24,27 @@ import { OnboardingStateService } from "../services/onboarding-state.service";
           <button
             type="button"
             role="checkbox"
-            class="goal-card"
-            [class.selected]="state.formData.goals.includes(goal.id)"
+            class="ob-card"
             [attr.aria-checked]="state.formData.goals.includes(goal.id)"
             [attr.data-cy]="'goal-' + goal.id"
             (click)="state.toggleGoal(goal.id)"
             (keydown.enter)="state.toggleGoal(goal.id)"
-            (keydown.space)="
-              state.toggleGoal(goal.id); $event.preventDefault()
-            "
+            (keydown.space)="state.toggleGoal(goal.id); $event.preventDefault()"
           >
-            <span class="goal-check">
-              @if (state.formData.goals.includes(goal.id)) {
-                <i class="pi pi-check"></i>
-              }
+            <i [class]="goal.icon" class="ob-card__icon" aria-hidden="true"></i>
+            <span class="ob-card__label">{{ goal.label }}</span>
+            <span class="ob-card__check" aria-hidden="true">
+              <i class="pi pi-check"></i>
             </span>
-            <i [class]="goal.icon" class="goal-icon"></i>
-            <span class="goal-label">{{ goal.label }}</span>
           </button>
         }
       </div>
+
+      @if (state.formData.goals.length === 0) {
+        <p class="ob-field-hint" style="text-align:center;margin-top:var(--space-3)">
+          Select at least one goal to continue.
+        </p>
+      }
     </div>
   `,
 })

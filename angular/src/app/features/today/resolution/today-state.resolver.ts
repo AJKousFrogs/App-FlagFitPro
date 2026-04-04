@@ -90,8 +90,6 @@ export interface ProtocolJson {
     note?: string | null;
   } | null;
 
-  // DEPRECATED: availability is informational only; team_activities is authority.
-
   // Taper context
   taper_active?: boolean;
   taper_days_until?: number;

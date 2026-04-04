@@ -24,6 +24,8 @@
           [value]="idleStatusTag"
           severity="info"
           size="sm"
+          [wrap]="true"
+          [fullWidth]="true"
         ></app-status-tag>
       }
       @if (showNextGenNa && nextGenEnabled()) {
@@ -53,6 +55,8 @@
           [value]="readinessLabel()"
           [severity]="readinessSeverity()"
           size="sm"
+          [wrap]="true"
+          [fullWidth]="true"
         ></app-status-tag>
         @if (nextGenEnabled()) {
           <span class="next-gen-preview-tag">
@@ -79,7 +83,13 @@
           <span class="stat-block__label">Readiness</span>
         </div>
         @if (!isDataLoading()) {
-          <app-status-tag value="No data" severity="info" size="sm"></app-status-tag>
+          <app-status-tag
+            value="No data"
+            severity="info"
+            size="sm"
+            [wrap]="true"
+            [fullWidth]="true"
+          ></app-status-tag>
         }
         @if (nextGenEnabled()) {
           <span class="next-gen-preview-tag">Preview: N/A</span>
@@ -146,6 +156,8 @@
           [value]="acwrDisplay().label"
           [severity]="acwrDisplay().severity"
           size="sm"
+          [wrap]="true"
+          [fullWidth]="true"
         ></app-status-tag>
       </div>
     } @else if (acwrDisplay().trainingDaysLogged !== null) {
@@ -179,6 +191,7 @@
               severity="success"
               size="sm"
               class="milestone-tag"
+              [wrap]="true"
             ></app-status-tag>
           } @else if (
             acwrDisplay().trainingDaysLogged! >= 14 &&
@@ -189,6 +202,7 @@
               severity="info"
               size="sm"
               class="milestone-tag"
+              [wrap]="true"
             ></app-status-tag>
           } @else if (
             acwrDisplay().trainingDaysLogged! < TRAINING.ACUTE_LOAD_DAYS

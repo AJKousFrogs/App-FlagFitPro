@@ -63,7 +63,7 @@
   .stat-box {
     padding: var(--space-4);
     background: var(--surface-primary);
-    border: 1px solid var(--ui-border-subtle);
+    border: var(--border-1) solid var(--ui-border-subtle);
     border-radius: var(--radius-lg);
     display: flex;
     flex-direction: column;
@@ -90,9 +90,12 @@
     background: var(--ui-surface-subtle);
     border-radius: var(--radius-lg);
     cursor: pointer;
-    transition: all var(--transition-fast);
+    transition:
+      background-color var(--transition-fast),
+      border-color var(--transition-fast),
+      transform var(--transition-fast);
 
-    &:hover { background: var(--surface-primary); border-color: var(--ds-primary-green); transform: translateX(4px); }
+    &:hover { background: var(--surface-primary); border-color: var(--ds-primary-green); transform: translateX(var(--space-1)); }
 
     .event-date {
       display: flex;

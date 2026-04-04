@@ -55,7 +55,10 @@
     }
 
     &.progress-box {
-      p-progressBar { height: 6px; margin-top: var(--space-2); }
+      p-progressBar {
+        height: var(--slider-track-height);
+        margin-top: var(--space-2);
+      }
     }
   }
 
@@ -152,7 +155,11 @@
     font-weight: var(--ds-font-weight-medium);
     white-space: nowrap;
     cursor: pointer;
-    transition: all var(--transition-fast);
+    transition:
+      background-color var(--transition-fast),
+      border-color var(--transition-fast),
+      transform var(--transition-fast),
+      color var(--transition-fast);
     min-height: var(--space-8);
     display: inline-flex;
     align-items: center;
@@ -160,7 +167,7 @@
 
     // Touch target minimum
     @include respond-to(md) {
-      min-height: 44px;
+      min-height: var(--touch-target-md);
       padding: var(--space-2-5) var(--space-4);
     }
 
@@ -189,7 +196,7 @@
 
   .badges-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(var(--input-min-width-md), 1fr));
     gap: var(--space-4);
     padding: 0 var(--space-5) var(--space-5);
     overflow: visible;
@@ -198,12 +205,12 @@
 
     // Ensure proper scrolling on all devices
     @include respond-to(lg) {
-      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(var(--dropdown-width-md), 1fr));
       gap: var(--space-3);
     }
 
     @include respond-to(md) {
-      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(var(--grid-card-min-xs), 1fr));
       padding: 0 var(--space-4) var(--space-4);
       gap: var(--space-3);
     }
@@ -215,13 +222,16 @@
     border-radius: var(--radius-lg);
     text-align: center;
     border: var(--border-1) solid transparent;
-    transition: all var(--transition-base);
+    transition:
+      transform var(--transition-base),
+      box-shadow var(--transition-base),
+      border-color var(--transition-base);
     position: relative;
 
     // Hover state for unlocked badges
     &:not(.locked) {
       &:hover {
-        transform: translateY(-2px);
+        transform: translateY(calc(-1 * var(--space-0-5)));
         box-shadow: var(--shadow-md);
         border-color: var(--ds-primary-green-subtle);
       }
@@ -263,8 +273,8 @@
 
       .check {
         position: absolute;
-        bottom: -2px;
-        right: -2px;
+        bottom: calc(-1 * var(--space-0-5));
+        right: calc(-1 * var(--space-0-5));
         color: var(--color-status-success);
         font-size: var(--ds-font-size-lg);
         background: var(--surface-primary);
@@ -377,8 +387,8 @@
       }
 
       .badge-visual {
-        width: 3.5rem;
-        height: 3.5rem;
+        width: var(--layout-height-lg);
+        height: var(--layout-height-lg);
 
         .emoji,
         .badge-icon {
@@ -401,13 +411,13 @@
       padding: var(--space-3);
 
       .badge-visual {
-        width: 48px;
-        height: 48px;
+        width: var(--space-12);
+        height: var(--space-12);
         margin-bottom: var(--space-2);
 
         .emoji,
         .badge-icon {
-          font-size: 1.5rem;
+          font-size: var(--ds-font-size-2xl);
         }
       }
 

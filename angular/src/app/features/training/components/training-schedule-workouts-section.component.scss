@@ -1,8 +1,7 @@
 @use "styles/mixins" as *;
 
 .training-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  @include grid-cols-equal(2);
   gap: var(--layout-gap-lg);
 }
 

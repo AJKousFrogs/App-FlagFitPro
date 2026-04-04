@@ -30,15 +30,12 @@ import {
     normalizePositionForModifiers,
 } from "../../core/services/player-program.service";
 import { ToastService } from "../../core/services/toast.service";
-import { ButtonComponent } from "../../shared/components/button/button.component";
-import { CardShellComponent } from "../../shared/components/card-shell/card-shell.component";
-import { AppLoadingComponent } from "../../shared/components/loading/loading.component";
-import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
 import { AuthFlowDataService } from "../auth/services/auth-flow-data.service";
 import { RosterService } from "../roster/roster.service";
 import { OnboardingProgressShellComponent } from "./components/onboarding-progress-shell.component";
 import { OnboardingDataService } from "./services/onboarding-data.service";
 import { OnboardingStateService } from "./services/onboarding-state.service";
+import { OnboardingStepWelcomeComponent } from "./steps/onboarding-step-welcome.component";
 import { OnboardingStepPersonalComponent } from "./steps/onboarding-step-personal.component";
 import { OnboardingStepRoleComponent } from "./steps/onboarding-step-role.component";
 import { OnboardingStepPhysicalComponent } from "./steps/onboarding-step-physical.component";
@@ -56,9 +53,9 @@ import { OnboardingStepSummaryComponent } from "./steps/onboarding-step-summary.
       transition(
         ":increment",
         [
-          style({ opacity: 0, transform: "translateY(10px)" }),
+          style({ opacity: 0, transform: "translateX(28px)" }),
           animate(
-            "240ms cubic-bezier(0.2, 0.8, 0.2, 1)",
+            "320ms cubic-bezier(0.16, 1, 0.3, 1)",
             style({ opacity: 1, transform: "none" }),
           ),
         ],
@@ -66,9 +63,9 @@ import { OnboardingStepSummaryComponent } from "./steps/onboarding-step-summary.
       transition(
         ":decrement",
         [
-          style({ opacity: 0, transform: "translateY(-8px)" }),
+          style({ opacity: 0, transform: "translateX(-28px)" }),
           animate(
-            "200ms cubic-bezier(0.2, 0.8, 0.2, 1)",
+            "280ms cubic-bezier(0.16, 1, 0.3, 1)",
             style({ opacity: 1, transform: "none" }),
           ),
         ],
@@ -77,11 +74,8 @@ import { OnboardingStepSummaryComponent } from "./steps/onboarding-step-summary.
   ],
   imports: [
     RouterModule,
-    CardShellComponent,
-    PageHeaderComponent,
-    ButtonComponent,
-    AppLoadingComponent,
     OnboardingProgressShellComponent,
+    OnboardingStepWelcomeComponent,
     OnboardingStepPersonalComponent,
     OnboardingStepRoleComponent,
     OnboardingStepPhysicalComponent,
@@ -96,6 +90,9 @@ import { OnboardingStepSummaryComponent } from "./steps/onboarding-step-summary.
 export class OnboardingComponent implements OnInit, OnDestroy {
   /** Respect system preference; disables Angular step transitions when true. */
   readonly prefersReducedMotion = signal(false);
+
+  /** Controls whether the welcome splash screen is shown before step 0. */
+  readonly showWelcome = signal(true);
 
   readonly state = inject(OnboardingStateService);
   private router = inject(Router);
@@ -593,6 +590,11 @@ export class OnboardingComponent implements OnInit, OnDestroy {
 
   onSummaryConsentChange(event: { type: string; checked: boolean }): void {
     this.onConsentChange(event.type, { checked: event.checked });
+  }
+
+  /** Dismiss welcome screen and enter the step flow. */
+  startOnboarding(): void {
+    this.showWelcome.set(false);
   }
 
   // Wrapper for next step with validation (used by Next button)

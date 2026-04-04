@@ -5,6 +5,7 @@ import {
   computed,
   signal,
   ChangeDetectionStrategy,
+  booleanAttribute,
 } from "@angular/core";
 /**
  * Card Shell Component - Unified Card Container
@@ -20,6 +21,7 @@ import {
  * @see docs/CARD_SHELL_CONTRACT.md for full specification
  *
  * Features:
+ * - `[stretchBody]` for equal-height grids (e.g. landing feature cards; body becomes column flex)
  * - Enforces design tokens (radius, shadow, padding, typography)
  * - Header with icon, title, and actions slots (NO subtitle in canonical pattern)
  * - Body slot (required)
@@ -157,6 +159,12 @@ export class CardShellComponent {
   /** Remove body padding (for flush content like tables) */
   flush = input<boolean>(false);
 
+  /**
+   * Shell fills grid row height; body is a column flex so children can use
+   * `margin-top/bottom: auto` (e.g. marketing feature cards).
+   */
+  stretchBody = input(false, { transform: booleanAttribute });
+
   // ============================================
   // OUTPUTS - Events
   // ============================================
@@ -198,6 +206,10 @@ export class CardShellComponent {
     // Tone
     if (this.tone() !== "default") {
       classes.push(`card-shell--tone-${this.tone()}`);
+    }
+
+    if (this.stretchBody()) {
+      classes.push("card-shell--stretch-body");
     }
 
     return classes.join(" ");

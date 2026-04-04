@@ -30,7 +30,7 @@
 
 
     &.skeleton-placeholder {
-      min-height: 200px;
+      min-height: var(--grid-card-min-sm);
       background: var(--ui-surface-subtle);
       border-style: dashed;
     }

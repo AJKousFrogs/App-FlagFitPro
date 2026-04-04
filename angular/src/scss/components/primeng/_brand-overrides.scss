@@ -801,7 +801,7 @@
         background-color var(--transition-base),
         color var(--transition-base),
         box-shadow var(--transition-base);
-      min-height: 36px;
+      min-height: var(--touch-target-sm);
       white-space: nowrap;
       outline: none;
       display: inline-flex;

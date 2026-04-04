@@ -8,11 +8,11 @@
 .user-menu,
 .profile-menu {
   background: var(--surface-secondary);
-  border: 1px solid var(--ui-border-subtle);
+  border: var(--border-1) solid var(--ui-border-subtle);
   border-radius: var(--radius-lg);
   padding: var(--space-2) 0;
   box-shadow: var(--shadow-lg);
-  min-width: 200px;
+  min-width: var(--dropdown-width-lg);
 
   .menu-item,
   .p-menuitem {
@@ -67,8 +67,8 @@
     &.menu-divider {
       padding: 0;
       margin: var(--space-2) var(--space-4);
-      border-top: 1px solid var(--ui-border-subtle);
-      height: 1px;
+      border-top: var(--border-1) solid var(--ui-border-subtle);
+      height: var(--border-1);
 
       &:hover {
         background: transparent;
@@ -98,7 +98,7 @@
 .p-menu.user-menu-overlay,
 .p-menu.profile-menu-overlay {
   background: var(--surface-secondary);
-  border: 1px solid var(--ui-border-subtle);
+  border: var(--border-1) solid var(--ui-border-subtle);
   border-radius: var(--radius-lg);
   padding: var(--space-2) 0;
   box-shadow: var(--shadow-lg);
@@ -136,16 +136,16 @@
 @include respond-to(md) {
   .user-menu,
   .profile-menu {
-    min-width: 180px;
+    min-width: calc(var(--dropdown-width-lg) - var(--space-5));
 
     .menu-item,
     .p-menuitem {
       padding: var(--space-2-5) var(--space-3);
 
       i, svg, .menu-icon {
-        width: 18px;
-        height: 18px;
-        font-size: 18px;
+        width: var(--icon-base);
+        height: var(--icon-base);
+        font-size: var(--icon-base);
       }
 
       span, .menu-text {

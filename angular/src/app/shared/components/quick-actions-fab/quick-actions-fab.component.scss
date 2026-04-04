@@ -105,16 +105,18 @@
 
 /* Action Label - Raised style (0.5rem radius), Poppins font */
 .action-label {
-  min-width: var(--input-min-width-sm); /* var(--size-120) */
+  /* Fixed width so label boxes share one column (avoids staggered left edges). */
+  width: min(16rem, 72vw);
+  min-width: min(14rem, 72vw);
   max-width: min(90vw, calc(var(--grid-card-min-sm) + var(--space-6)));
   padding: var(--space-4) var(--space-5);
+  text-align: end;
   background: var(--surface-card);
   border-radius: var(--radius-lg); /* Raised style - NOT pill */
   font-size: var(--ds-font-size-md);
   font-weight: var(--ds-font-weight-semibold);
   color: var(--color-text-primary);
   white-space: nowrap;
-  text-align: center;
   overflow: hidden;
   text-overflow: ellipsis;
   box-shadow: var(--shadow-sm), var(--shadow-md);
@@ -174,9 +176,12 @@
    ================================================================ */
 
 .main-fab {
-  width: var(--avatar-size-xl); // 3.5rem / 3.5rem
-  height: var(--avatar-size-xl); // 3.5rem / 3.5rem
-  border-radius: var(--radius-xl); /* Raised style - NOT fully round */
+  /* Match .action-icon footprint so primary control uses same primitive size */
+  width: var(--space-12);
+  height: var(--space-12);
+  min-width: var(--space-12);
+  min-height: var(--space-12);
+  border-radius: var(--radius-lg); /* same family as row action icons */
   border: none;
   padding: 0;
   cursor: pointer;
@@ -213,7 +218,7 @@
 
 .main-fab.active {
   background: var(--surface-900);
-  border-radius: var(--radius-xl);
+  border-radius: var(--radius-lg);
 }
 
 /* FAB Icon Container */

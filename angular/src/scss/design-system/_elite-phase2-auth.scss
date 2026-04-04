@@ -9,72 +9,51 @@
   position: relative;
   display: grid;
   place-items: center;
-  min-height: 100vh; // Fallback for older browsers
-  height: 100dvh;     // Modern: keyboard-aware  padding: var(--layout-page-padding-y) var(--layout-page-padding-x);
+  min-height: 100vh;
+  height: 100dvh;
+  padding: var(--space-6) var(--space-4);
   background:
     radial-gradient(
-      120% 90% at 12% 0%,
-      rgba(var(--ds-primary-green-rgb), 0.16) 0%,
-      transparent 55%
-    ),
-    radial-gradient(
-      95% 70% at 88% 100%,
-      rgba(var(--primitive-info-500-rgb), 0.12) 0%,
+      ellipse 80% 60% at 20% -5%,
+      rgba(var(--ds-primary-green-rgb), 0.12) 0%,
       transparent 60%
     ),
-    linear-gradient(
-      160deg,
-      color-mix(in srgb, var(--surface-ground) 86%, white 14%) 0%,
-      var(--surface-ground) 100%
-    );
+    radial-gradient(
+      ellipse 60% 50% at 80% 105%,
+      rgba(var(--ds-primary-green-rgb), 0.07) 0%,
+      transparent 55%
+    ),
+    var(--surface-ground);
 }
 
-.elite-auth-shell::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  background-image:
-    linear-gradient(
-      to right,
-      color-mix(in srgb, var(--color-text-tertiary) 14%, transparent)
-        var(--border-1),
-      transparent var(--border-1)
-    ),
-    linear-gradient(
-      to bottom,
-      color-mix(in srgb, var(--color-text-tertiary) 12%, transparent)
-        var(--border-1),
-      transparent var(--border-1)
-    );
-  background-size: var(--space-16) var(--space-16);
-  opacity: var(--state-active-opacity);
-}
 
 .elite-auth-card {
   position: relative;
   z-index: 1;
-  width: min(100%, var(--layout-page-max-width-narrow));
-  max-width: 34rem;
+  width: min(100%, 34rem);
 
-  --app-card-shell-bg: color-mix(in srgb, var(--surface-card) 96%, transparent);
+  --app-card-shell-bg: var(--surface-card);
   --app-card-shell-border: var(--component-card-border);
-  --component-card-shadow: var(--shadow-lg);
-  --app-card-shell-body-padding: var(--space-8) var(--component-card-padding)
-    var(--component-card-padding);
+  --component-card-shadow: var(--shadow-xl);
+  --app-card-shell-body-padding: var(--space-8) var(--space-8) var(--space-8);
+}
+
+.elite-auth-card .card-shell {
+  overflow: hidden;
 }
 
 .elite-auth-card .card-shell::before {
   content: "";
   position: absolute;
   inset: 0 0 auto;
-  height: var(--border-4);
+  height: 3px;
   background: linear-gradient(
     90deg,
-    var(--color-status-success) 0%,
-    var(--color-brand-primary) 55%,
-    var(--color-status-warning) 100%
+    var(--ds-primary-green) 0%,
+    color-mix(in srgb, var(--ds-primary-green) 70%, #34d399) 55%,
+    #10b981 100%
   );
+  border-radius: var(--radius-full) var(--radius-full) 0 0;
 }
 
 .elite-auth-card .card-shell__body {
@@ -90,23 +69,30 @@
 .elite-auth-logo {
   display: grid;
   place-items: center;
-  width: var(--avatar-size-3xl);
-  height: var(--avatar-size-3xl);
-  margin: 0 auto var(--space-4);
-  border-radius: var(--radius-xl);
-  color: var(--color-brand-primary);
-  background: rgba(var(--ds-primary-green-rgb), 0.1);
-  font-size: var(--font-size-2xl);
-  box-shadow: inset 0 0 0 var(--border-1) rgba(var(--ds-primary-green-rgb), 0.08);
+  width: 72px;
+  height: 72px;
+  margin: 0 auto var(--space-5);
+  border-radius: var(--radius-2xl);
+  color: #fff;
+  background: linear-gradient(
+    135deg,
+    var(--ds-primary-green) 0%,
+    color-mix(in srgb, var(--ds-primary-green) 75%, #065f46) 100%
+  );
+  font-size: 1.75rem;
+  box-shadow:
+    0 8px 24px rgba(8, 153, 73, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.18);
 }
 
 .elite-auth-title {
   margin: 0;
   text-align: center;
   color: var(--color-text-primary);
-  font-size: clamp(var(--font-h2-size), 3vw, 2rem);
-  line-height: var(--font-h1-line-height);
-  letter-spacing: var(--letter-spacing-tight);
+  font-size: clamp(1.35rem, 4vw, 1.75rem);
+  line-height: 1.2;
+  letter-spacing: -0.025em;
+  font-weight: var(--ds-font-weight-bold);
 }
 
 .elite-auth-field {
@@ -160,7 +146,7 @@
 .elite-auth-form {
   display: flex;
   flex-direction: column;
-  gap: var(--space-4);
+  gap: var(--space-5);
 }
 
 .elite-auth-form > .elite-auth-field,
@@ -220,39 +206,36 @@
 @include respond-to(lg) {
   .elite-auth-shell {
     place-items: start;
+    height: auto;
+    min-height: 100dvh;
     padding: var(--space-5) var(--space-4);
     padding-bottom: calc(var(--space-8) + var(--safe-area-bottom));
   }
 
   .elite-auth-card {
     width: 100%;
-    max-width: none;
 
-    --app-card-shell-body-padding: var(--space-6) var(--space-5)
-      var(--space-5);
+    --app-card-shell-body-padding: var(--space-6) var(--space-6) var(--space-6);
   }
 }
 
 @include respond-to(md) {
   .elite-auth-shell {
+    height: auto;
+    min-height: 100dvh;
     padding: var(--space-4) var(--space-3);
     padding-top: calc(var(--space-5) + var(--safe-area-top));
     padding-bottom: calc(var(--space-7) + var(--safe-area-bottom));
   }
 
   .elite-auth-card {
-    --app-card-shell-body-padding: var(--space-5) var(--space-4)
-      var(--space-4);
+    --app-card-shell-body-padding: var(--space-5) var(--space-5) var(--space-5);
   }
 
   .elite-auth-logo {
-    width: var(--avatar-size-2xl);
-    height: var(--avatar-size-2xl);
-    font-size: var(--font-size-xl);
-  }
-
-  .elite-auth-title {
-    font-size: var(--font-size-2xl);
+    width: 60px;
+    height: 60px;
+    font-size: 1.5rem;
   }
 
   .elite-auth-sticky-cta {
@@ -263,5 +246,6 @@
     border-radius: var(--radius-xl);
     background: color-mix(in srgb, var(--surface-card) 94%, transparent);
     box-shadow: var(--shadow-lg);
+    backdrop-filter: blur(8px);
   }
 }

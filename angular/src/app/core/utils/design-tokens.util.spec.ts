@@ -7,11 +7,13 @@
 
 import { describe, it, expect, beforeEach, afterEach } from "vitest";
 import {
+  BREAKPOINTS,
   cssToken,
   getCssVariable,
   getCssVariables,
   resolveCssVariable,
   getStatusColor,
+  LAYOUT_CSS_VARS,
   SPACING,
 } from "./design-tokens.util";
 
@@ -62,6 +64,27 @@ describe("design-tokens.util", () => {
 
   it("SPACING constant has expected values", () => {
     expect(SPACING[4]).toBe(cssToken("--space-4"));
+    expect(SPACING[7]).toBe(cssToken("--space-7"));
     expect(SPACING[8]).toBe(cssToken("--space-8"));
+    expect(SPACING[11]).toBe(cssToken("--space-11"));
+  });
+
+  it("BREAKPOINTS.mdMax matches CSS --breakpoint-md-max (767px) for PrimeNG APIs", () => {
+    expect(BREAKPOINTS.mdMax).toBe("767px");
+  });
+
+  it("LAYOUT_CSS_VARS aliases point at the same canonical width chain", () => {
+    expect(LAYOUT_CSS_VARS.appContentMaxWidth).toBe(
+      "var(--layout-app-content-max-width)",
+    );
+    expect(LAYOUT_CSS_VARS.pageMaxWidthWide).toBe(
+      "var(--layout-page-max-width-wide)",
+    );
+    expect(LAYOUT_CSS_VARS.shellContentMaxWidth).toBe(
+      "var(--app-shell-content-max-width)",
+    );
+    expect(LAYOUT_CSS_VARS.onboardingMaxWidth).toBe(
+      "var(--layout-onboarding-max-width)",
+    );
   });
 });

@@ -48,7 +48,7 @@
   border-top: var(--border-1) solid var(--color-border-primary);
 }
 
-@media (width <= 768px) {
+@media (width <= var(--breakpoint-md)) {
   .step-actions {
     flex-direction: column;
   }

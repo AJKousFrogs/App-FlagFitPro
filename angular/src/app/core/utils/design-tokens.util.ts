@@ -65,6 +65,17 @@ export function cssToken(tokenName: `--${string}`): string {
   return `var(${tokenName})`;
 }
 
+/**
+ * Main app layout widths — CSS var references only.
+ * Single numeric source: `--layout-app-content-max-width` in design-system-tokens.scss
+ */
+export const LAYOUT_CSS_VARS = {
+  appContentMaxWidth: cssToken("--layout-app-content-max-width"),
+  pageMaxWidthWide: cssToken("--layout-page-max-width-wide"),
+  shellContentMaxWidth: cssToken("--app-shell-content-max-width"),
+  onboardingMaxWidth: cssToken("--layout-onboarding-max-width"),
+} as const;
+
 // ============================================================================
 // DESIGN TOKEN CONSTANTS
 // These map directly to CSS variables in design-system-tokens.scss
@@ -350,6 +361,8 @@ export const BREAKPOINTS = {
   xs: "374px",
   sm: "640px",
   md: "768px",
+  /** Just below `md` — matches `--breakpoint-md-max` (767px) for PrimeNG `breakpoint` props */
+  mdMax: "767px",
   lg: "1024px",
   xl: "1280px",
   "2xl": "1536px",
@@ -371,8 +384,11 @@ export const SPACING = {
   4: cssToken("--space-4"),
   5: cssToken("--space-5"),
   6: cssToken("--space-6"),
+  7: cssToken("--space-7"),
   8: cssToken("--space-8"),
+  9: cssToken("--space-9"),
   10: cssToken("--space-10"),
+  11: cssToken("--space-11"),
   12: cssToken("--space-12"),
   16: cssToken("--space-16"),
 } as const;

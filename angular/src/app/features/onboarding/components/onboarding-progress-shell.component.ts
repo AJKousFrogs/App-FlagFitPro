@@ -4,8 +4,6 @@ import {
   input,
   output,
 } from "@angular/core";
-import { ProgressBarComponent } from "../../../shared/components/progress-bar/progress-bar.component";
-import { AlertComponent } from "../../../shared/components/alert/alert.component";
 
 type OnboardingStepSummary = {
   label: string;
@@ -24,7 +22,7 @@ type CompletionStats = {
   selector: "app-onboarding-progress-shell",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ProgressBarComponent, AlertComponent],
+  imports: [],
   templateUrl: "./onboarding-progress-shell.component.html",
   styleUrl: "./onboarding-progress-shell.component.scss",
 })
@@ -47,7 +45,6 @@ export class OnboardingProgressShellComponent {
   stepperChange = output<number>();
 
   navigateToStep(index: number): void {
-    // Only allow navigating to completed steps
     if (this.steps()[index]?.completed) {
       this.stepperChange.emit(index);
     }

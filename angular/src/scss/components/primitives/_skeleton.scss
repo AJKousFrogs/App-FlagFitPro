@@ -231,13 +231,13 @@
 
   .skeleton-stat-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(var(--grid-min-width-md), 1fr));
     gap: var(--space-4);
   }
 
   .skeleton-stat {
     @extend .skeleton-card;
-    min-height: 100px;
+    min-height: var(--size-100);
   }
 
   .skeleton-stat__value {

@@ -14,8 +14,8 @@
 .dialog-icon {
   display: grid;
   place-items: center;
-  inline-size: 2.75rem;
-  block-size: 2.75rem;
+  inline-size: var(--touch-target-md);
+  block-size: var(--touch-target-md);
   border-radius: var(--radius-lg);
   background: rgba(var(--ds-primary-green-rgb), 0.12);
   color: var(--ds-primary-green);

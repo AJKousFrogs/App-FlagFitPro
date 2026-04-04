@@ -140,8 +140,11 @@ Single spacing system for padding, margin, gap, grid:
 --space-4: 1rem; /* 16px */
 --space-5: 1.25rem; /* 20px */
 --space-6: 1.5rem; /* 24px */
+--space-7: 1.75rem; /* 28px */
 --space-8: 2rem; /* 32px */
+--space-9: 2.25rem; /* 36px */
 --space-10: 2.5rem; /* 40px */
+--space-11: 2.75rem; /* 44px — aligns with --touch-target-md */
 --space-12: 3rem; /* 48px */
 ```
 

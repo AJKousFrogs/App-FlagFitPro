@@ -843,7 +843,7 @@
   .open-search-page-link:hover {
     background: var(--surface-hover);
     box-shadow: var(--shadow-sm);
-    transform: translateY(-1px);
+    transform: translateY(calc(-1 * var(--border-1)));
   }
 }
 

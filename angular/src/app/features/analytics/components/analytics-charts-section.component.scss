@@ -1,8 +1,7 @@
 @use "styles/mixins" as *;
 
 .charts-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  @include grid-cols-equal(2);
   gap: var(--space-6);
 }
 
@@ -153,7 +152,7 @@
 .benchmark-marker::before {
   content: "";
   position: absolute;
-  top: -2px;
+  top: calc(-1 * var(--space-0-5));
   left: 50%;
   width: var(--space-2);
   height: var(--space-2);
@@ -191,8 +190,7 @@
 }
 
 .gap-summary {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  @include grid-cols-equal(4);
   gap: var(--space-4);
 }
 
@@ -264,7 +262,7 @@
   }
 
   .gap-summary {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    @include grid-cols-equal(2);
   }
 
   .gap-legend {

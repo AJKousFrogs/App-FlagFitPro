@@ -96,7 +96,7 @@
   padding: var(--space-3) var(--space-4);
   background: color-mix(in srgb, var(--color-status-warning-surface) 40%, var(--surface-primary));
   border-radius: var(--radius-lg);
-  border: 1px solid var(--color-status-warning-border);
+  border: var(--border-1) solid var(--color-status-warning-border);
 }
 
 .banner-content {
@@ -133,9 +133,9 @@
 .checklist-pill {
   font-size: var(--ds-font-size-2xs);
   font-weight: var(--ds-font-weight-semibold);
-  padding: 2px var(--space-2);
+  padding: var(--space-0-5) var(--space-2);
   background: var(--surface-primary);
-  border: 1px solid var(--color-status-warning-border);
+  border: var(--border-1) solid var(--color-status-warning-border);
   border-radius: var(--radius-sm);
   color: var(--color-text-primary);
 
@@ -161,19 +161,23 @@
   font-weight: var(--ds-font-weight-bold);
   background: var(--surface-secondary);
   color: var(--color-text-secondary);
-  border: 2px solid transparent;
-  transition: all 0.3s ease;
+  border: var(--border-2) solid transparent;
+  transition:
+    background-color var(--transition-slow) var(--ease-standard),
+    border-color var(--transition-slow) var(--ease-standard),
+    color var(--transition-slow) var(--ease-standard),
+    box-shadow var(--transition-slow) var(--ease-standard);
 
   &.active {
     background: var(--surface-primary);
     border-color: var(--ds-primary-green);
     color: var(--ds-primary-green);
-    box-shadow: 0 0 0 4px rgba(var(--ds-primary-green-rgb), 0.1);
+    box-shadow: 0 0 0 var(--space-1) rgba(var(--ds-primary-green-rgb), 0.1);
   }
 
   &.completed {
     background: var(--ds-primary-green);
-    color: white;
+    color: var(--color-text-on-primary);
 
     i {
       font-size: var(--ds-font-size-2xs);
@@ -193,7 +197,7 @@
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
-    border-top: 1px solid var(--color-border-muted);
+    border-top: var(--border-1) solid var(--color-border-muted);
     padding-top: var(--space-3);
   }
 

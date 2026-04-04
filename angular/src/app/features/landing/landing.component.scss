@@ -24,25 +24,25 @@
 
 .hero-section {
   position: relative;
-  min-height: 100vh;
-  min-height: 100dvh; // Modern: keyboard-aware
-height: 100dvh; // Modern: keyboard-aware
   min-height: 100dvh;
+  height: 100dvh;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-
-  // FIX: Changed from overflow: hidden to overflow-x: hidden
-  // This prevents horizontal scroll from animations while allowing
-  // vertical content (scroll indicator) to remain visible
   overflow-x: hidden;
   padding-bottom: var(--space-8);
-  background: linear-gradient(
-    135deg,
-    var(--surface-primary) 0%,
-    var(--surface-secondary) 100%
-  );
+
+  // Always-dark hero — Apple event style
+  // Override design tokens locally so child elements adapt automatically
+  --color-text-primary: #f5f5f7;
+  --color-text-secondary: rgba(245, 245, 247, 0.68);
+  --color-text-muted: rgba(245, 245, 247, 0.42);
+  --color-border-subtle: rgba(255, 255, 255, 0.08);
+  color-scheme: dark;
+  color: #f5f5f7;
+
+  background: linear-gradient(160deg, #0c1a12 0%, #0a1525 50%, #0c1a12 100%);
 }
 
 .hero-background {
@@ -57,7 +57,7 @@ height: 100dvh; // Modern: keyboard-aware
   position: absolute;
   border-radius: var(--radius-full);
   filter: blur(var(--size-120));
-  opacity: var(--opacity-minimal);
+  opacity: 0.2;
   animation: float 20s ease-in-out infinite;
 }
 
@@ -239,18 +239,14 @@ height: 100dvh; // Modern: keyboard-aware
   align-items: center;
   gap: var(--space-2);
   padding: var(--space-2) var(--space-5);
-  background: linear-gradient(
-    135deg,
-    rgba(var(--color-brand-primary-rgb), 0.1) 0%,
-    rgba(var(--color-brand-secondary-rgb), 0.1) 100%
-  );
-  border: var(--border-1) solid
-    rgba(var(--color-brand-primary-rgb), 0.2);
+  background: rgba(8, 153, 73, 0.14);
+  border: var(--border-1) solid rgba(8, 153, 73, 0.32);
   border-radius: var(--radius-full);
-  font-size: var(--ds-font-size-md);
+  font-size: var(--ds-font-size-sm);
   font-weight: var(--ds-font-weight-semibold);
   letter-spacing: var(--ds-letter-spacing-wide);
   text-transform: var(--ds-text-transform-uppercase);
+  color: #6ee2a2;
   animation: badge-glow 2s ease-in-out infinite alternate;
 }
 
@@ -280,13 +276,17 @@ height: 100dvh; // Modern: keyboard-aware
   gap: var(--space-8);
   margin-bottom: var(--space-12);
   padding: var(--space-8) var(--space-10);
-  background: var(--surface-primary);
   border-radius: var(--radius-2xl);
-
-  // Use design system shadow tokens
-  box-shadow: var(--shadow-lg);
   flex-wrap: wrap;
-  border: var(--border-1) solid var(--color-border-subtle);
+
+  // Glass morphism on dark hero
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(20px) saturate(1.4);
+  -webkit-backdrop-filter: blur(20px) saturate(1.4);
+  border: var(--border-1) solid rgba(255, 255, 255, 0.09);
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.04),
+    0 24px 48px rgba(0, 0, 0, 0.35);
 }
 
 .countdown-label {
@@ -339,6 +339,8 @@ height: 100dvh; // Modern: keyboard-aware
 
 .countdown-days .countdown-value {
   min-width: 2.5ch;
+  color: var(--ds-primary-green);
+  text-shadow: 0 0 24px rgba(8, 153, 73, 0.6);
 }
 
 .countdown-unit {
@@ -360,11 +362,11 @@ height: 100dvh; // Modern: keyboard-aware
 }
 
 .hero-title {
-  font-size: clamp(var(--ds-font-size-2xl), 8vw, var(--ds-font-size-3xl));
+  font-size: clamp(2.25rem, 8vw, 4.75rem);
   font-weight: var(--ds-font-weight-bold);
   margin-bottom: var(--space-6);
-  line-height: var(--ds-line-height-1-1);
-  letter-spacing: var(--ds-letter-spacing-tight);
+  line-height: 1.08;
+  letter-spacing: -0.03em;
 }
 
 .hero-title-accent {
@@ -379,21 +381,44 @@ height: 100dvh; // Modern: keyboard-aware
 }
 
 .hero-description {
-  font-size: var(--ds-font-size-2xl);
+  font-size: clamp(1rem, 2.5vw, 1.25rem);
   color: var(--color-text-secondary);
   margin-bottom: var(--space-10);
-  max-width: var(--dialog-max-width-2xl);
+  max-width: 54ch;
   margin-left: auto;
   margin-right: auto;
-  line-height: var(--ds-line-height-1-7);
+  line-height: 1.65;
 }
 
 .hero-actions {
   display: flex;
-  gap: var(--space-5);
+  gap: var(--space-4);
   justify-content: center;
   flex-wrap: wrap;
   margin-bottom: var(--space-16);
+
+  // Apple-style pill CTAs — override ButtonComponent defaults
+  ::ng-deep .btn-lg {
+    border-radius: var(--radius-full);
+    min-height: 54px;
+    padding-inline: var(--space-10);
+    font-weight: var(--ds-font-weight-semibold);
+    letter-spacing: -0.01em;
+    font-size: var(--ds-font-size-lg);
+  }
+
+  ::ng-deep .btn-outlined.btn-lg,
+  ::ng-deep a.btn-outlined.btn-lg {
+    border-color: rgba(255, 255, 255, 0.28);
+    color: rgba(255, 255, 255, 0.92);
+    background: transparent;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: rgba(255, 255, 255, 0.52);
+      color: #fff;
+    }
+  }
 }
 
 .hero-stats {
@@ -534,7 +559,7 @@ height: 100dvh; // Modern: keyboard-aware
 /* ===== FEATURES SECTION ===== */
 .features-section {
   padding: var(--space-20) var(--space-6);
-  background: var(--surface-secondary);
+  background: var(--surface-primary);
   position: relative;
 }
 
@@ -549,10 +574,10 @@ height: 100dvh; // Modern: keyboard-aware
 }
 
 .features-title {
-  font-size: var(--ds-font-size-3xl);
+  font-size: clamp(1.75rem, 5vw, 3rem);
   font-weight: var(--ds-font-weight-bold);
   margin-bottom: var(--space-4);
-  letter-spacing: var(--ds-letter-spacing-tight);
+  letter-spacing: -0.025em;
 }
 
 .features-subtitle {
@@ -566,6 +591,11 @@ height: 100dvh; // Modern: keyboard-aware
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(var(--grid-card-min-md), 1fr));
   gap: var(--space-8);
+  align-items: stretch;
+}
+
+.features-grid > app-card-shell.feature-card {
+  height: 100%;
 }
 
 .feature-card-icon {
@@ -577,12 +607,25 @@ height: 100dvh; // Modern: keyboard-aware
 .feature-icon-wrapper {
   width: var(--size-80);
   height: var(--size-80);
+  min-width: var(--size-80);
+  min-height: var(--size-80);
+  flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: center;
   border-radius: var(--radius-full);
   font-size: var(--ds-font-size-2xl);
   transition: transform var(--transition-normal);
+}
+
+/* Modifiers only swap surfaces; shape stays identical for every feature */
+.feature-icon-analytics,
+.feature-icon-tournament,
+.feature-icon-community,
+.feature-icon-training,
+.feature-icon-ai-coach,
+.feature-icon-progress {
+  border-radius: var(--radius-full);
 }
 
 .feature-icon-glyph {
@@ -901,6 +944,14 @@ height: 100dvh; // Modern: keyboard-aware
 // Hover state for icon (card-shell handles card hover)
 @media (hover: hover) and (pointer: fine) {
   .feature-card:hover .feature-icon-wrapper {
-    transform: scale(1.05);
+    transform: scale(1.08);
+  }
+
+  .feature-card:hover {
+    ::ng-deep .card-shell {
+      box-shadow:
+        0 0 0 1.5px rgba(8, 153, 73, 0.18),
+        var(--shadow-lg);
+    }
   }
 }

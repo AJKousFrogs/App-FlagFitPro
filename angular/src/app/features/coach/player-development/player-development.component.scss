@@ -310,16 +310,15 @@
 
 // Form Styles
 .goal-form,
-.note-form,
-.goal-details {
+.note-form {
   display: flex;
   flex-direction: column;
   gap: var(--space-3);
 }
 
 .goal-details {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  @include grid-cols-equal(2);
+  gap: var(--space-3);
 }
 
 .goal-detail-card {

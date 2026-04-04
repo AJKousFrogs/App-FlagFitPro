@@ -161,8 +161,8 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    min-width: 2.75rem; // iOS minimum touch target
-    min-height: 2.75rem;
+    min-width: var(--touch-target-md);
+    min-height: var(--touch-target-md);
     padding: var(--space-2);
     background: transparent;
     border: none;

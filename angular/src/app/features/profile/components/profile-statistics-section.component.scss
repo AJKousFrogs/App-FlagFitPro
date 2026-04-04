@@ -12,13 +12,18 @@
 }
 
 .stat-block {
-  display: flex;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(11.5rem, 38%);
   align-items: center;
-  justify-content: space-between;
   padding: var(--space-4);
   background: var(--surface-secondary);
   border-radius: var(--radius-lg);
   gap: var(--space-3);
+}
+
+.stat-block app-status-tag {
+  justify-self: end;
+  max-width: 100%;
 }
 
 .stat-block__content {

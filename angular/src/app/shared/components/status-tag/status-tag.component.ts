@@ -9,7 +9,7 @@
  * - Background: var(--color-status-success) for success
  * - Text: var(--color-text-on-primary) white on colored backgrounds
  * - Font weight: var(--ds-font-weight-semibold) (600)
- * - Fixed height: var(--touch-target-sm) (36px)
+ * - Default fixed height; use `[wrap]="true"` for multi-line stat / CTA copy
  * - Horizontal padding: var(--space-3)
  * - RAISED RECTANGULAR shape: var(--radius-md) (8px)
  * - Subtle shadow for depth
@@ -30,6 +30,7 @@ import {
   input,
   computed,
   ChangeDetectionStrategy,
+  booleanAttribute,
 } from "@angular/core";
 export type StatusTagSeverity =
   | "success"
@@ -45,6 +46,9 @@ export type StatusTagSeverity =
   selector: "app-status-tag",
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [],
+  host: {
+    "[class.status-tag-host--full-width]": "hostFullWidth",
+  },
   template: `
     <span
       [class]="tagClass()"
@@ -75,12 +79,32 @@ export class StatusTagComponent {
   /** Accessibility label */
   ariaLabel = input<string>();
 
+  /**
+   * Allow text to wrap (e.g. stat tiles with long CTA copy).
+   * Default remains single-line for dense UI (tables, compact rows).
+   */
+  wrap = input(false, { transform: booleanAttribute });
+
+  /**
+   * Fill the host width and center label (e.g. stat tile grid column).
+   * Avoids piercing encapsulation from parent layouts (use with `[fullWidth]`).
+   */
+  fullWidth = input(false, { transform: booleanAttribute });
+
+  /** Host class binding — see `host` on component */
+  get hostFullWidth(): boolean {
+    return this.fullWidth();
+  }
+
   /** Computed CSS class */
   tagClass = computed(() => {
     const classes = ["status-tag", `status-tag-${this.severity()}`];
 
     if (this.size() !== "md") {
       classes.push(`status-tag-${this.size()}`);
+    }
+    if (this.wrap()) {
+      classes.push("status-tag--wrap");
     }
     return classes.join(" ");
   });
