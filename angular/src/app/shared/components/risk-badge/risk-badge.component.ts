@@ -14,7 +14,6 @@ import {
   computed,
   ChangeDetectionStrategy,
 } from "@angular/core";
-import { CommonModule } from "@angular/common";
 import { Tooltip } from "primeng/tooltip";
 import { StatusTagComponent } from "../status-tag/status-tag.component";
 import { getStatusSeverity } from "../../utils/status.utils";
@@ -25,7 +24,7 @@ export type RiskPlacement = "top-right" | "top-left" | "inline" | "banner";
 @Component({
   selector: "app-risk-badge",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, Tooltip, StatusTagComponent],
+  imports: [Tooltip, StatusTagComponent],
   template: `
     <div
       class="risk-badge"

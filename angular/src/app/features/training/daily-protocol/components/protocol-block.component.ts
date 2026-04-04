@@ -19,7 +19,6 @@ import {
   computed,
   ChangeDetectionStrategy,
 } from "@angular/core";
-import { CommonModule } from "@angular/common";
 import { ButtonComponent } from "../../../../shared/components/button/button.component";
 
 import { formatDate } from "../../../../shared/utils/date.utils";
@@ -37,7 +36,6 @@ import { ExerciseCardComponent } from "./exercise-card.component";
   selector: "app-protocol-block",
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CommonModule,
     StatusTagComponent,
     ExerciseCardComponent,
     ButtonComponent,

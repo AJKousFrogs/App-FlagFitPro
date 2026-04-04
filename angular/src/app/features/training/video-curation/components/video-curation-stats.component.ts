@@ -5,12 +5,10 @@
  */
 
 import { Component, ChangeDetectionStrategy, input } from "@angular/core";
-import { CommonModule } from "@angular/common";
-
 @Component({
   selector: "app-video-curation-stats",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule],
+  imports: [],
   template: `
     <section class="stats-section" aria-label="Video curation statistics">
       <div class="stats-grid">

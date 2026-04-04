@@ -414,6 +414,10 @@
         [positionOptions]="positionOptions"
         (createChannel)="createChannel($event)"
       />
+    } @placeholder {
+      <div class="defer-dialog-chunk-placeholder" role="status" aria-live="polite">
+        <app-loading [visible]="true" variant="skeleton" message="Loading channel dialog…" />
+      </div>
     }
 
     @defer (when showPinnedMessages) {
@@ -423,6 +427,10 @@
         [canPinMessages]="canPinMessages()"
         (togglePin)="togglePin($event)"
       />
+    } @placeholder {
+      <div class="defer-dialog-chunk-placeholder" role="status" aria-live="polite">
+        <app-loading [visible]="true" variant="skeleton" message="Loading pinned messages…" />
+      </div>
     }
 
     @defer (when showMembersDialog) {
@@ -444,5 +452,9 @@
         (memberSearchQueryChange)="onMemberSearchQueryChange($event)"
         (startDirectMessage)="startDirectMessage($event)"
       />
+    } @placeholder {
+      <div class="defer-dialog-chunk-placeholder" role="status" aria-live="polite">
+        <app-loading [visible]="true" variant="skeleton" message="Loading members…" />
+      </div>
     }
   

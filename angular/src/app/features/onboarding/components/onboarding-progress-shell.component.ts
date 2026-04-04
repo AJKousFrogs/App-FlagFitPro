@@ -1,4 +1,3 @@
-import { CommonModule } from "@angular/common";
 import {
   ChangeDetectionStrategy,
   Component,
@@ -25,7 +24,7 @@ type CompletionStats = {
   selector: "app-onboarding-progress-shell",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, ProgressBarComponent, AlertComponent],
+  imports: [ProgressBarComponent, AlertComponent],
   templateUrl: "./onboarding-progress-shell.component.html",
   styleUrl: "./onboarding-progress-shell.component.scss",
 })

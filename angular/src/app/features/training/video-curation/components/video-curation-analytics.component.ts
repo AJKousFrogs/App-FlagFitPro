@@ -5,8 +5,6 @@
  */
 
 import { Component, ChangeDetectionStrategy, input } from "@angular/core";
-import { CommonModule } from "@angular/common";
-
 // PrimeNG
 import { ProgressBarComponent } from "../../../../shared/components/progress-bar/progress-bar.component";
 import { AvatarComponent } from "../../../../shared/components/avatar/avatar.component";
@@ -18,7 +16,7 @@ import { CardShellComponent } from "../../../../shared/components/card-shell/car
 @Component({
   selector: "app-video-curation-analytics",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, CardShellComponent, ProgressBarComponent, AvatarComponent],
+  imports: [CardShellComponent, ProgressBarComponent, AvatarComponent],
   template: `
     <div class="tab-content">
       <div class="analytics-grid">

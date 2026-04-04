@@ -1,4 +1,3 @@
-import { CommonModule } from "@angular/common";
 import {
   ChangeDetectionStrategy,
   Component,
@@ -8,6 +7,7 @@ import {
   Directive,
   inject,
 } from "@angular/core";
+import { NgTemplateOutlet } from "@angular/common";
 import { AccordionModule } from "primeng/accordion";
 
 @Directive({
@@ -29,7 +29,7 @@ type AccordionModelValue = AccordionValue | string[] | number[] | null;
   selector: "app-accordion",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, AccordionModule],
+  imports: [AccordionModule, NgTemplateOutlet],
   template: `
     <p-accordion [multiple]="multiple()" [value]="value()">
       @for (panel of panels(); track panel.value()) {

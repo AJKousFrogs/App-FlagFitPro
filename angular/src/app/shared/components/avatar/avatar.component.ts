@@ -1,11 +1,10 @@
 import { ChangeDetectionStrategy, Component, input, ViewEncapsulation } from "@angular/core";
-import { CommonModule } from "@angular/common";
 import { Avatar } from "primeng/avatar";
 
 @Component({
   selector: "app-avatar",
   standalone: true,
-  imports: [CommonModule, Avatar],
+  imports: [Avatar],
   changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.None,
   template: `

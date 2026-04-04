@@ -7,7 +7,6 @@ import {
   ChangeDetectionStrategy,
   DestroyRef,
 } from "@angular/core";
-import { CommonModule } from "@angular/common";
 import { RouterModule } from "@angular/router";
 import { ButtonComponent } from "../../shared/components/button/button.component";
 import { Carousel } from "primeng/carousel";
@@ -113,7 +112,6 @@ declare global {
   selector: "app-ai-training-companion",
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CommonModule,
     RouterModule,
     Carousel,
     Knob,

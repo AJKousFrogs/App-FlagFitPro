@@ -14,8 +14,6 @@ import {
   forwardRef,
 } from "@angular/core";
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from "@angular/forms";
-import { CommonModule } from "@angular/common";
-
 let nextFormInputId = 0;
 
 export type InputType =
@@ -31,7 +29,7 @@ export type ValidationState = "idle" | "validating" | "valid" | "invalid";
 @Component({
   selector: "app-form-input",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule],
+  imports: [],
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,

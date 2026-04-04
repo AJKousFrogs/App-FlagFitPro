@@ -11,7 +11,7 @@
 
 import { isDevMode } from "@angular/core";
 import { LoggerService } from "@core/services/logger.service";
-import {
+import type {
   ChartOptions,
   TooltipItem,
   Chart,

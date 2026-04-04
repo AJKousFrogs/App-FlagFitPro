@@ -1,8 +1,9 @@
-import { CommonModule } from "@angular/common";
 import {
   ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
   forwardRef,
+  inject,
   input,
   output,
   signal,
@@ -15,7 +16,7 @@ import { ToggleSwitchModule, ToggleSwitchChangeEvent } from "primeng/toggleswitc
   selector: "app-toggle-switch",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, ToggleSwitchModule, FormsModule],
+  imports: [ToggleSwitchModule, FormsModule],
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,
@@ -26,7 +27,7 @@ import { ToggleSwitchModule, ToggleSwitchChangeEvent } from "primeng/toggleswitc
   template: `
     <div class="app-toggle-switch-wrapper flex align-items-center gap-2">
       <p-toggleswitch
-        [(ngModel)]="modelValue"
+        [ngModel]="checked"
         [inputId]="inputId()"
         [disabled]="isDisabled()"
         (onChange)="onChange($event)"
@@ -50,6 +51,8 @@ import { ToggleSwitchModule, ToggleSwitchChangeEvent } from "primeng/toggleswitc
   `]
 })
 export class ToggleSwitchComponent implements ControlValueAccessor {
+  private readonly cdr = inject(ChangeDetectorRef);
+
   // Inputs
   label = input<string>("");
   disabled = input(false);
@@ -58,8 +61,8 @@ export class ToggleSwitchComponent implements ControlValueAccessor {
   // Outputs
   change = output<ToggleSwitchChangeEvent>();
 
-  // Internal
-  protected modelValue = signal<boolean>(false);
+  /** Plain boolean — NgModel + p-toggleswitch does not work with WritableSignal two-way binding. */
+  protected checked = false;
   private _cvaDisabled = signal(false);
 
   protected isDisabled = computed(() => this.disabled() || this._cvaDisabled());
@@ -69,14 +72,16 @@ export class ToggleSwitchComponent implements ControlValueAccessor {
   private onModelTouched: () => void = () => {};
 
   onChange(event: ToggleSwitchChangeEvent) {
-    this.modelValue.set(event.checked);
-    this.onModelChange(event.checked);
+    this.checked = Boolean(event.checked);
+    this.onModelChange(this.checked);
     this.change.emit(event);
     this.onModelTouched();
+    this.cdr.markForCheck();
   }
 
   writeValue(value: boolean): void {
-    this.modelValue.set(!!value);
+    this.checked = Boolean(value);
+    this.cdr.markForCheck();
   }
 
   registerOnChange(fn: (value: boolean) => void): void {

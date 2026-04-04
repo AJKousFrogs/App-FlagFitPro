@@ -145,6 +145,10 @@
             (visibleChange)="showPlayerDialog.set($event)"
             (save)="savePlayer($event)"
           ></app-roster-player-form-dialog>
+        } @placeholder {
+          <div class="defer-dialog-chunk-placeholder" role="status" aria-live="polite">
+            <app-loading [visible]="true" variant="skeleton" message="Loading player form…" />
+          </div>
         }
 
         <!-- Player Details Dialog (Phase 1 Enhanced) -->
@@ -444,6 +448,10 @@
             />
           }
           </app-dialog>
+        } @placeholder {
+          <div class="defer-dialog-chunk-placeholder" role="status" aria-live="polite">
+            <app-loading [visible]="true" variant="skeleton" message="Loading player details…" />
+          </div>
         }
 
         <!-- Status Change Dialog -->
@@ -486,6 +494,10 @@
             (primary)="updatePlayerStatus()"
           />
           </app-dialog>
+        } @placeholder {
+          <div class="defer-dialog-chunk-placeholder" role="status" aria-live="polite">
+            <app-loading [visible]="true" variant="skeleton" message="Loading status dialog…" />
+          </div>
         }
 
         <!-- Bulk Status Change Dialog -->
@@ -527,6 +539,10 @@
             (primary)="updateBulkStatus()"
           />
           </app-dialog>
+        } @placeholder {
+          <div class="defer-dialog-chunk-placeholder" role="status" aria-live="polite">
+            <app-loading [visible]="true" variant="skeleton" message="Loading bulk status…" />
+          </div>
         }
 
         <!-- Confirmation Dialog -->

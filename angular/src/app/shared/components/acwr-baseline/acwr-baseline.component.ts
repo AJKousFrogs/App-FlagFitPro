@@ -11,12 +11,11 @@ import {
   computed,
   ChangeDetectionStrategy,
 } from "@angular/core";
-import { CommonModule } from "@angular/common";
 import { ProgressBarComponent } from "../progress-bar/progress-bar.component";
 
 @Component({
   selector: "app-acwr-baseline",
-  imports: [CommonModule, ProgressBarComponent],
+  imports: [ProgressBarComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: "./acwr-baseline.component.html",
   styleUrl: "./acwr-baseline.component.scss",

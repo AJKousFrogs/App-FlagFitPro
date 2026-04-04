@@ -11,6 +11,7 @@
     "ng": "ng",
     "start": "ng serve",
     "start:ssr": "ng serve-ssr",
+    "prebuild": "npm run check:ngmodel-cva",
     "build": "ng build --progress=false",
     "build:analyze": "ng build && node scripts/check-bundle-size.js",
     "serve:dist": "node scripts/serve-dist.mjs",
@@ -23,6 +24,7 @@
     "e2e:ui": "playwright test --ui",
     "e2e:headed": "playwright test --headed",
     "e2e:smoke": "playwright test e2e/smoke.spec.ts",
+    "e2e:onboarding": "playwright test e2e/onboarding-route.spec.ts",
     "e2e:critical": "playwright test e2e/critical-flow-morning-training.spec.ts",
     "e2e:navigation": "playwright test e2e/navigation-routing.spec.ts",
     "e2e:navigation:watch": "playwright test e2e/navigation-routing.spec.ts --headed",
@@ -50,7 +52,8 @@
     "type-check": "tsc --noEmit",
     "audit:a11y": "npx tsx src/scripts/accessibility-audit.ts",
     "audit:a11y:ci": "BASE_URL=${BASE_URL:-http://127.0.0.1:4200} npm run audit:a11y",
-    "audit:primeng-bindings": "node scripts/audit-primeng-bindings.js"
+    "audit:primeng-bindings": "node scripts/audit-primeng-bindings.js",
+    "check:ngmodel-cva": "node scripts/check-no-bidirectional-ngmodel.mjs"
   },
   "private": true,
   "dependencies": {

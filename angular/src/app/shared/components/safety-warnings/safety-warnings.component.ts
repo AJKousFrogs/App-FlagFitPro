@@ -19,8 +19,6 @@ import {
   inject,
   computed,
 } from "@angular/core";
-import { CommonModule } from "@angular/common";
-
 import { ButtonComponent } from "../button/button.component";
 
 import { StatusTagComponent } from "../status-tag/status-tag.component";
@@ -34,7 +32,7 @@ import { SupabaseService } from "../../../core/services/supabase.service";
 @Component({
   selector: "app-safety-warnings",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, StatusTagComponent, RouterModule, ButtonComponent],
+  imports: [StatusTagComponent, RouterModule, ButtonComponent],
   template: `
     @if (hasWarnings()) {
       <div class="safety-warnings-container">

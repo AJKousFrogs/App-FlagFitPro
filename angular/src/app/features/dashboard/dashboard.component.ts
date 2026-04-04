@@ -1,4 +1,3 @@
-import { CommonModule } from "@angular/common";
 import {
   ChangeDetectionStrategy,
   Component,
@@ -25,7 +24,7 @@ import { SupabaseService } from "../../core/services/supabase.service";
 @Component({
   selector: "app-dashboard",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [AppLoadingComponent, CommonModule],
+  imports: [AppLoadingComponent],
   template: `
     <app-loading [visible]="true" [message]="loadingMessage()"></app-loading>
   `,

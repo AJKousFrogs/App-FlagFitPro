@@ -10,8 +10,6 @@ import {
   input,
   output,
 } from "@angular/core";
-import { CommonModule } from "@angular/common";
-
 // PrimeNG
 
 import { EmptyStateComponent } from "../../../../shared/components/empty-state/empty-state.component";
@@ -29,7 +27,6 @@ import { formatFocus, formatDuration } from "../video-curation-utils";
   selector: "app-video-curation-playlists",
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CommonModule,
     EmptyStateComponent,
     StatusTagComponent,
     CardShellComponent,

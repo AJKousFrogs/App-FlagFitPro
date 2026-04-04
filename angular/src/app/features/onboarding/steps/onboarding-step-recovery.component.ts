@@ -1,5 +1,4 @@
 import { ChangeDetectionStrategy, Component, inject } from "@angular/core";
-import { CommonModule } from "@angular/common";
 import {
   MOBILITY_TIME_OPTIONS,
   FOAM_ROLLING_OPTIONS,
@@ -10,7 +9,7 @@ import { OnboardingStateService } from "../services/onboarding-state.service";
 @Component({
   selector: "app-onboarding-step-recovery",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule],
+  imports: [],
   template: `
     <div class="step-content animate-fade-in">
       <div class="step-header">

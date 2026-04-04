@@ -1,4 +1,3 @@
-import { CommonModule } from "@angular/common";
 import { ChangeDetectionStrategy, Component, input } from "@angular/core";
 import { RouterModule } from "@angular/router";
 import { Timeline } from "primeng/timeline";
@@ -38,7 +37,6 @@ interface DashboardUpcomingDisplayEvent {
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CommonModule,
     RouterModule,
     Timeline,
     ButtonComponent,

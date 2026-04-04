@@ -42,16 +42,34 @@
           <div *appTabPanel="let panel; header: 'Overview'; value: 'overview'; icon: 'pi-chart-line'">
               @defer (when activeTab() === 'overview') {
                 <app-profile-overview-section [activities]="activities()" />
+              } @placeholder {
+                <app-loading
+                  [visible]="true"
+                  variant="skeleton"
+                  message="Loading overview…"
+                />
               }
           </div>
           <div *appTabPanel="let panel; header: 'Achievements'; value: 'achievements'; icon: 'pi-trophy'">
               @defer (when activeTab() === 'achievements') {
                 <app-profile-achievements-section [achievements]="achievements()" />
+              } @placeholder {
+                <app-loading
+                  [visible]="true"
+                  variant="skeleton"
+                  message="Loading achievements…"
+                />
               }
           </div>
           <div *appTabPanel="let panel; header: 'Statistics'; value: 'statistics'; icon: 'pi-chart-bar'">
               @defer (when activeTab() === 'statistics') {
                 <app-profile-statistics-section [performanceStats]="performanceStats()" />
+              } @placeholder {
+                <app-loading
+                  [visible]="true"
+                  variant="skeleton"
+                  message="Loading statistics…"
+                />
               }
           </div>
         </app-tabs>

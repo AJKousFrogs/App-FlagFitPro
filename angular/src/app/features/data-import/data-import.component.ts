@@ -7,8 +7,6 @@
  *
  * Design System Compliant (DESIGN_SYSTEM_RULES.md)
  */
-
-import { CommonModule } from "@angular/common";
 import {
   ChangeDetectionStrategy,
   Component,
@@ -188,7 +186,6 @@ const WEARABLE_DEVICES: WearableDevice[] = [
   selector: "app-data-import",
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CommonModule,
     AlertComponent,
     CardShellComponent,
     FileUpload,

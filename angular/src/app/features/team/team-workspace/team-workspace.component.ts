@@ -1,4 +1,3 @@
-import { CommonModule } from "@angular/common";
 import { ChangeDetectionStrategy, Component, computed, inject } from "@angular/core";
 import { toSignal } from "@angular/core/rxjs-interop";
 import { ActivatedRoute, Router, RouterModule } from "@angular/router";
@@ -11,7 +10,6 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
   selector: "app-team-workspace",
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CommonModule,
     RouterModule,
     Tabs,
     TabPanel,

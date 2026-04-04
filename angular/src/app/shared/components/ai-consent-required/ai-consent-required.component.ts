@@ -5,8 +5,6 @@ import {
   output,
   ChangeDetectionStrategy,
 } from "@angular/core";
-import { CommonModule } from "@angular/common";
-
 import { ButtonComponent } from "../button/button.component";
 import {
   AI_PROCESSING_MESSAGES,
@@ -34,7 +32,7 @@ import { AlertComponent, type AlertVariant } from "../alert/alert.component";
 @Component({
   selector: "app-ai-consent-required",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, ButtonComponent, AlertComponent],
+  imports: [ButtonComponent, AlertComponent],
   template: `
     <div [class]="wrapperClasses()">
       <app-alert

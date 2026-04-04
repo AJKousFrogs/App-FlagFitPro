@@ -52,13 +52,15 @@ import { SupabaseService } from "./supabase.service";
 import { LoggerService } from "./logger.service";
 import { toLogContext } from "./logger.service";
 import { AcwrSpikeDetectionService } from "./acwr-spike-detection.service";
-import {
+import type {
   RealtimeChannel,
-  REALTIME_LISTEN_TYPES,
-  REALTIME_POSTGRES_CHANGES_LISTEN_EVENT,
   RealtimePostgresInsertPayload,
   RealtimePostgresUpdatePayload,
 } from "@supabase/supabase-js";
+import {
+  REALTIME_LISTEN_TYPES,
+  REALTIME_POSTGRES_CHANGES_LISTEN_EVENT,
+} from "../supabase-realtime-constants";
 import {
   buildBaseEvidenceInfo,
 } from "../../shared/utils/evidence-info.utils";

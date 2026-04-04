@@ -1,12 +1,11 @@
 import { ChangeDetectionStrategy, Component, inject } from "@angular/core";
-import { CommonModule } from "@angular/common";
 import { FormInputComponent } from "../../../shared/components/form-input/form-input.component";
 import { OnboardingStateService } from "../services/onboarding-state.service";
 
 @Component({
   selector: "app-onboarding-step-physical",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, FormInputComponent],
+  imports: [FormInputComponent],
   template: `
     <div class="step-content animate-fade-in">
       <div class="step-header">

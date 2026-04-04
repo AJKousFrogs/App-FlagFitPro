@@ -8,7 +8,6 @@ import {
   viewChild,
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
-import { CommonModule } from "@angular/common";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { RouterModule } from "@angular/router";
 import { InputNumberComponent } from "../../shared/components/input-number/input-number.component";
@@ -70,7 +69,6 @@ interface WellnessMetric {
   selector: "app-wellness",
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CommonModule,
     FormsModule,
     ReactiveFormsModule,
     RouterModule,

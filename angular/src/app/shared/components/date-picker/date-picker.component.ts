@@ -1,4 +1,3 @@
-import { CommonModule } from "@angular/common";
 import {
   ChangeDetectionStrategy,
   Component,
@@ -18,7 +17,7 @@ import { DatePickerModule } from "primeng/datepicker";
   changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.None,
   host: { class: "app-date-picker-host" },
-  imports: [CommonModule, DatePickerModule, FormsModule],
+  imports: [DatePickerModule, FormsModule],
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,

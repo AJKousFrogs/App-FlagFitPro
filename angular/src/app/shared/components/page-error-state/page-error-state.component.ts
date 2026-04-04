@@ -9,8 +9,6 @@
  * @author FlagFit Pro Team
  * @version 2.0.0 - Angular 21 Signals
  */
-
-import { CommonModule } from "@angular/common";
 import {
   ChangeDetectionStrategy,
   Component,
@@ -22,7 +20,7 @@ import { ButtonComponent } from "../button/button.component";
 @Component({
   selector: "app-page-error-state",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, ButtonComponent],
+  imports: [ButtonComponent],
   template: `
     <div class="error-state" role="alert" aria-live="polite">
       <div class="error-state__icon">

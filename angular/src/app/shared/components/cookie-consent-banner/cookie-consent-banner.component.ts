@@ -1,4 +1,3 @@
-import { CommonModule } from "@angular/common";
 import { DOCUMENT } from "@angular/common";
 import {
   ChangeDetectionStrategy,
@@ -31,7 +30,7 @@ import { ButtonComponent } from "../button/button.component";
 @Component({
   selector: "app-cookie-consent-banner",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, RouterLink, ButtonComponent],
+  imports: [RouterLink, ButtonComponent],
   template: `
     @if (cookieService.showBanner()) {
       <div

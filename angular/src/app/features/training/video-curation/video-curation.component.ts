@@ -23,8 +23,6 @@ import {
   ChangeDetectionStrategy,
   viewChild,
 } from "@angular/core";
-import { CommonModule } from "@angular/common";
-
 // PrimeNG Components
 import { ConfirmDialog } from "primeng/confirmdialog";
 import { Tabs, TabList, Tab, TabPanels, TabPanel } from "primeng/tabs";
@@ -62,8 +60,6 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
   selector: "app-video-curation",
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CommonModule,
-
     ConfirmDialog,
     Tabs,
     TabList,

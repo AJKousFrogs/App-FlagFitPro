@@ -18,6 +18,7 @@
         <div class="options-list">
           @for (option of q.options; track option; let i = $index) {
             <button
+              type="button"
               class="option-btn"
               [class.selected]="selectedAnswer() === i"
               [class.correct]="answerSubmitted() && i === q.correctIndex"

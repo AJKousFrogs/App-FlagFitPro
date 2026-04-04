@@ -1,4 +1,3 @@
-import { CommonModule } from "@angular/common";
 import { ChangeDetectionStrategy, Component, input } from "@angular/core";
 
 import { EvidenceReference } from "../../../../core/services/flag-football-periodization.service";
@@ -7,7 +6,7 @@ import { EvidenceReference } from "../../../../core/services/flag-football-perio
   selector: "app-periodization-research-tab",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule],
+  imports: [],
   templateUrl: "./periodization-research-tab.component.html",
   styleUrl: "./periodization-research-tab.component.scss",
 })

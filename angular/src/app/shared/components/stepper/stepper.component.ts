@@ -4,8 +4,6 @@ import {
   output,
   ChangeDetectionStrategy,
 } from "@angular/core";
-import { CommonModule } from "@angular/common";
-
 export interface StepperStep {
   id: string;
   label: string;
@@ -17,7 +15,7 @@ export interface StepperStep {
 @Component({
   selector: "app-stepper",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule],
+  imports: [],
   template: `
     <div class="stepper-container">
       <nav class="stepper-nav" role="navigation" aria-label="Step navigation">

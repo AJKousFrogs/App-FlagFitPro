@@ -1,4 +1,3 @@
-import { CommonModule } from "@angular/common";
 import { ChangeDetectionStrategy, Component, input, output } from "@angular/core";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { CardShellComponent } from "../../../shared/components/card-shell/card-shell.component";
@@ -10,7 +9,6 @@ import { TeamEvent, EventType, RsvpStatus, EVENT_TYPE_CONFIG } from "../team-cal
   selector: "app-team-calendar-events-section",
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CommonModule,
     ButtonComponent,
     CardShellComponent,
     EmptyStateComponent,

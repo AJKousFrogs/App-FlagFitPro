@@ -4,7 +4,6 @@ import {
   DestroyRef,
   inject,
 } from "@angular/core";
-import { CommonModule } from "@angular/common";
 import { FormControl, ReactiveFormsModule } from "@angular/forms";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { AutoComplete } from "primeng/autocomplete";
@@ -23,7 +22,7 @@ import { OnboardingStateService } from "../services/onboarding-state.service";
 @Component({
   selector: "app-onboarding-step-role",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, ReactiveFormsModule, AutoComplete, FormInputComponent, SelectComponent],
+  imports: [ReactiveFormsModule, AutoComplete, FormInputComponent, SelectComponent],
   template: `
     <div class="step-content animate-fade-in">
       <div class="step-header">

@@ -1,6 +1,4 @@
 import { Component, ChangeDetectionStrategy, input } from "@angular/core";
-import { CommonModule } from "@angular/common";
-
 /**
  * Control Row Component
  *
@@ -24,7 +22,7 @@ import { CommonModule } from "@angular/common";
 @Component({
   selector: "app-control-row",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule],
+  imports: [],
   template: `
     <div class="notification-item control-row">
       <div class="notification-info control-row__label">

@@ -7,7 +7,6 @@ import {
   signal,
 } from "@angular/core";
 
-import { CommonModule } from "@angular/common";
 import { RouterModule } from "@angular/router";
 
 import { TabsComponent, AppTabPanelDirective } from "../../shared/components/tabs/tabs.component";
@@ -25,6 +24,7 @@ import { SupabaseService } from "../../core/services/supabase.service";
 import { TeamMembershipService } from "../../core/services/team-membership.service";
 import { ToastService } from "../../core/services/toast.service";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
+import { AppLoadingComponent } from "../../shared/components/loading/loading.component";
 import { StatsGridComponent } from "../../shared/components/stats-grid/stats-grid.component";
 import { getTimeAgo } from "../../shared/utils/date.utils";
 import { getErrorMessage } from "../../shared/utils/error.utils";
@@ -55,11 +55,11 @@ interface PendingInvitation {
   selector: "app-profile",
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CommonModule,
     RouterModule,
     TabsComponent,
     AppTabPanelDirective,
     MainLayoutComponent,
+    AppLoadingComponent,
     StatsGridComponent,
     ProfileHeaderSectionComponent,
     ProfileOverviewSectionComponent,

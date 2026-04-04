@@ -1,4 +1,3 @@
-import { CommonModule } from "@angular/common";
 import { ChangeDetectionStrategy, Component, input } from "@angular/core";
 import { ProgressBarComponent } from "../../../../shared/components/progress-bar/progress-bar.component";
 
@@ -22,7 +21,7 @@ interface SupplementComplianceView {
   selector: "app-nutritionist-supplement-section",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, ProgressBarComponent, CardShellComponent, EmptyStateComponent, StatusTagComponent],
+  imports: [ProgressBarComponent, CardShellComponent, EmptyStateComponent, StatusTagComponent],
   templateUrl: "./nutritionist-supplement-section.component.html",
   styleUrl: "./nutritionist-supplement-section.component.scss",
 })

@@ -1,5 +1,4 @@
 import { ChangeDetectionStrategy, Component } from "@angular/core";
-import { CommonModule } from "@angular/common";
 import { RouterLink } from "@angular/router";
 
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
@@ -19,7 +18,6 @@ interface HelpTopic {
   selector: "app-help-center",
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CommonModule,
     RouterLink,
     MainLayoutComponent,
     PageHeaderComponent,

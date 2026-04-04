@@ -14,7 +14,6 @@ import {
   ChangeDetectionStrategy,
   OnDestroy,
 } from "@angular/core";
-import { CommonModule } from "@angular/common";
 import { Tooltip } from "primeng/tooltip";
 import {
   getScrollTop,
@@ -25,7 +24,7 @@ import {
 @Component({
   selector: "app-scroll-to-top",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, Tooltip],
+  imports: [Tooltip],
   template: `
     @if (isVisible()) {
       <button

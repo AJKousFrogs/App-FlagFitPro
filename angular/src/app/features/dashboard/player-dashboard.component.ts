@@ -1,6 +1,5 @@
 /** Athlete home: readiness, training, schedule, insights. */
 
-import { CommonModule } from "@angular/common";
 import {
   ChangeDetectionStrategy,
   Component,
@@ -109,7 +108,6 @@ interface AnnouncementBanner {
   selector: "app-player-dashboard",
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CommonModule,
     RouterModule,
     ButtonComponent,
     CardShellComponent,

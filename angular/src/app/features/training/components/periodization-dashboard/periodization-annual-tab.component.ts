@@ -1,4 +1,3 @@
-import { CommonModule } from "@angular/common";
 import { ChangeDetectionStrategy, Component, input } from "@angular/core";
 import {
   Accordion,
@@ -24,7 +23,6 @@ interface TimelineEvent {
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CommonModule,
     Timeline,
     Divider,
     Accordion,

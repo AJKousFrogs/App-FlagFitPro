@@ -4,8 +4,6 @@
  * Phase 2.2 - Data Literacy
  * Explains why missing wellness data matters, shows impact, and provides clear actions
  */
-
-import { CommonModule } from "@angular/common";
 import {
   ChangeDetectionStrategy,
   Component,
@@ -21,7 +19,6 @@ import { MissingDataStatus } from "../../../core/services/missing-data-detection
   selector: "app-missing-data-explanation",
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CommonModule,
     RouterModule,
     ButtonComponent,
     CardShellComponent,

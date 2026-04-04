@@ -5,8 +5,6 @@
  * Displays ownership transition status to players following the 5-Question Contract:
  * Shows who is responsible now and what happens next
  */
-
-import { CommonModule } from "@angular/common";
 import {
   ChangeDetectionStrategy,
   Component,
@@ -22,7 +20,7 @@ import { getTimeAgo } from "../../utils/date.utils";
 @Component({
   selector: "app-ownership-transition-badge",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, StatusTagComponent],
+  imports: [StatusTagComponent],
   template: `
     @if (transition()) {
       <div class="ownership-badge" [class]="'status-' + transition()!.status">

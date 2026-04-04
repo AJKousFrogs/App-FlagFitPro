@@ -157,6 +157,10 @@
     (visibleChange)="!$event && closeChangePasswordDialog()"
     (submit)="changePassword()"
   ></app-change-password-dialog>
+} @placeholder {
+  <div class="defer-dialog-chunk-placeholder" role="status" aria-live="polite">
+    <app-loading [visible]="true" variant="skeleton" message="Loading dialog…" />
+  </div>
 }
 
 <!-- Delete Account Dialog -->
@@ -169,6 +173,10 @@
     (confirmTextChange)="deleteConfirmText = $event"
     (submit)="deleteAccount()"
   ></app-delete-account-dialog>
+} @placeholder {
+  <div class="defer-dialog-chunk-placeholder" role="status" aria-live="polite">
+    <app-loading [visible]="true" variant="skeleton" message="Loading dialog…" />
+  </div>
 }
 
 <!-- 2FA Setup Dialog -->
@@ -189,6 +197,10 @@
     (verify)="verify2FA()"
     (downloadBackupCodes)="downloadBackupCodes()"
   ></app-twofa-setup-dialog>
+} @placeholder {
+  <div class="defer-dialog-chunk-placeholder" role="status" aria-live="polite">
+    <app-loading [visible]="true" variant="skeleton" message="Loading 2FA setup…" />
+  </div>
 }
 
 <!-- Disable 2FA Dialog -->
@@ -201,6 +213,10 @@
     (disableCodeChange)="disable2FACode = $event"
     (submit)="disable2FA()"
   ></app-disable-twofa-dialog>
+} @placeholder {
+  <div class="defer-dialog-chunk-placeholder" role="status" aria-live="polite">
+    <app-loading [visible]="true" variant="skeleton" message="Loading dialog…" />
+  </div>
 }
 
 <!-- Active Sessions Dialog -->
@@ -214,6 +230,10 @@
     (revokeSession)="revokeSession($event)"
     (revokeAllSessions)="revokeAllSessions()"
   ></app-active-sessions-dialog>
+} @placeholder {
+  <div class="defer-dialog-chunk-placeholder" role="status" aria-live="polite">
+    <app-loading [visible]="true" variant="skeleton" message="Loading sessions…" />
+  </div>
 }
 
 <!-- Data Export Dialog -->
@@ -230,4 +250,8 @@
     (exportOptionsChange)="exportOptions = $event"
     (submit)="exportUserData()"
   ></app-data-export-dialog>
+} @placeholder {
+  <div class="defer-dialog-chunk-placeholder" role="status" aria-live="polite">
+    <app-loading [visible]="true" variant="skeleton" message="Loading export…" />
+  </div>
 }

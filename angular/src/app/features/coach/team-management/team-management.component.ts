@@ -4,8 +4,6 @@
  * Canonical settings surface for team profile and preferences.
  * Roster, depth chart, and invitations are managed in their dedicated routes.
  */
-
-import { CommonModule } from "@angular/common";
 import {
   ChangeDetectionStrategy,
   Component,
@@ -32,7 +30,6 @@ import {
   selector: "app-team-management",
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CommonModule,
     CardShellComponent,
     FormInputComponent,
     MainLayoutComponent,

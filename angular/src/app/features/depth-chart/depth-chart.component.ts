@@ -3,7 +3,6 @@ import {
   DragDropModule,
   moveItemInArray,
 } from "@angular/cdk/drag-drop";
-import { CommonModule } from "@angular/common";
 import {
   ChangeDetectionStrategy,
   Component,
@@ -51,7 +50,6 @@ interface PositionGroup {
   selector: "app-depth-chart",
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CommonModule,
     DragDropModule,
     Tabs,
     TabList,

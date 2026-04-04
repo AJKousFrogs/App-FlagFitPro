@@ -8,7 +8,6 @@ import {
   DestroyRef,
   effect,
 } from "@angular/core";
-import { CommonModule } from "@angular/common";
 import {
   NonNullableFormBuilder,
   FormGroup,
@@ -68,7 +67,6 @@ interface Play {
   selector: "app-live-game-tracker",
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CommonModule,
     ReactiveFormsModule,
     AppDialogComponent,
     DialogHeaderComponent,

@@ -23,12 +23,14 @@ import { ToastService } from "./toast.service";
 import { TOAST } from "../constants/toast-messages.constants";
 import { formatDate } from "../../shared/utils/date.utils";
 import { isBenignSupabaseQueryError } from "../../shared/utils/error.utils";
-import {
+import type {
   RealtimeChannel,
   RealtimePostgresChangesPayload,
-  REALTIME_POSTGRES_CHANGES_LISTEN_EVENT,
-  REALTIME_LISTEN_TYPES,
 } from "@supabase/supabase-js";
+import {
+  REALTIME_LISTEN_TYPES,
+  REALTIME_POSTGRES_CHANGES_LISTEN_EVENT,
+} from "../supabase-realtime-constants";
 import { RealtimeBroadcastPayload } from "../models/realtime-broadcast.model";
 
 // ============================================================================

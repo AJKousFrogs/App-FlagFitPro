@@ -4,7 +4,7 @@ import { catchError, map } from "rxjs";
 import { LoggerService } from "./logger.service";
 import { SupabaseService } from "./supabase.service";
 import { isBenignSupabaseQueryError } from "../../shared/utils/error.utils";
-import { RealtimeChannel } from "@supabase/supabase-js";
+import type { RealtimeChannel } from "@supabase/supabase-js";
 import { RealtimeBroadcastPayload } from "../models/realtime-broadcast.model";
 
 // Physical Measurements Interfaces

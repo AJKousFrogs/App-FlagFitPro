@@ -1,4 +1,3 @@
-import { CommonModule } from "@angular/common";
 import { ChangeDetectionStrategy, Component, input, output } from "@angular/core";
 import { AppDialogComponent } from "../../../shared/components/dialog/dialog.component";
 import { DialogFooterComponent } from "../../../shared/components/dialog-footer/dialog-footer.component";
@@ -29,7 +28,7 @@ interface QuickFormData {
   selector: "app-today-quick-checkin-dialog",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, AppDialogComponent, DialogHeaderComponent, DialogFooterComponent],
+  imports: [AppDialogComponent, DialogHeaderComponent, DialogFooterComponent],
   templateUrl: "./today-quick-checkin-dialog.component.html",
   styleUrl: "./today-quick-checkin-dialog.component.scss",
 })

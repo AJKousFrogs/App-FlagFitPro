@@ -11,7 +11,6 @@
  */
 
 import { ScrollingModule } from "@angular/cdk/scrolling";
-import { CommonModule } from "@angular/common";
 import {
   AfterViewInit,
   ChangeDetectionStrategy,
@@ -65,7 +64,6 @@ import { ChatPinnedMessagesDialogComponent } from "./components/chat-pinned-mess
   selector: "app-chat",
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CommonModule,
     AvatarComponent,
     BadgeComponent,
     ScrollingModule,

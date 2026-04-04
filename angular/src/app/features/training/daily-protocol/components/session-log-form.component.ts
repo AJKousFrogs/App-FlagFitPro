@@ -10,8 +10,6 @@
  *
  * Design System Compliant (DESIGN_SYSTEM_RULES.md)
  */
-
-import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import {
   ChangeDetectionStrategy,
@@ -36,7 +34,6 @@ export interface SessionLogData {
   selector: "app-session-log-form",
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CommonModule,
     FormsModule,
     Slider,
     InputNumber,

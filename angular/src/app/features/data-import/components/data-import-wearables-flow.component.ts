@@ -1,4 +1,3 @@
-import { CommonModule } from "@angular/common";
 import {
   ChangeDetectionStrategy,
   Component,
@@ -22,7 +21,7 @@ interface WearableDeviceView {
   selector: "app-data-import-wearables-flow",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, CardShellComponent, ButtonComponent, StatusTagComponent],
+  imports: [CardShellComponent, ButtonComponent, StatusTagComponent],
   templateUrl: "./data-import-wearables-flow.component.html",
   styleUrl: "./data-import-wearables-flow.component.scss",
 })

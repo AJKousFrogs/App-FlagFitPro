@@ -14,7 +14,6 @@ import {
   computed,
   ChangeDetectionStrategy,
 } from "@angular/core";
-import { CommonModule } from "@angular/common";
 import { ButtonComponent } from "../button/button.component";
 import { Divider } from "primeng/divider";
 import { AppDialogComponent } from "../dialog/dialog.component";
@@ -23,7 +22,7 @@ import { KeyboardShortcutsService } from "../../../core/services/keyboard-shortc
 @Component({
   selector: "app-keyboard-shortcuts-modal",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, AppDialogComponent, Divider, ButtonComponent],
+  imports: [AppDialogComponent, Divider, ButtonComponent],
   template: `
     <app-dialog
       [visible]="shortcutsService.isHelpModalOpen()"

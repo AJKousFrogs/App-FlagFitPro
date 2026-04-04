@@ -1,8 +1,9 @@
-import { CommonModule } from "@angular/common";
 import {
   ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
   forwardRef,
+  inject,
   input,
   output,
   signal,
@@ -15,7 +16,7 @@ import { RadioButtonModule, RadioButtonClickEvent } from "primeng/radiobutton";
   selector: "app-radio-button",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, RadioButtonModule, FormsModule],
+  imports: [RadioButtonModule, FormsModule],
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,
@@ -30,7 +31,7 @@ import { RadioButtonModule, RadioButtonClickEvent } from "primeng/radiobutton";
         [value]="value()"
         [inputId]="inputId()"
         [disabled]="isDisabled()"
-        [(ngModel)]="modelValue"
+        [ngModel]="innerValue"
         (onClick)="onClick($event)"
         styleClass="app-radio-button"
       ></p-radioButton>
@@ -52,6 +53,8 @@ import { RadioButtonModule, RadioButtonClickEvent } from "primeng/radiobutton";
   `]
 })
 export class RadioButtonComponent<T = unknown> implements ControlValueAccessor {
+  private readonly cdr = inject(ChangeDetectorRef);
+
   // Inputs
   name = input<string>("");
   value = input<T | null>(null);
@@ -63,8 +66,11 @@ export class RadioButtonComponent<T = unknown> implements ControlValueAccessor {
   click = output<RadioButtonClickEvent>();
   valueChange = output<T | null>();
 
-  // Internal
-  protected modelValue = signal<T | null>(null);
+  /**
+   * Selected value for the radio group (from CVA). Plain field — NgModel + p-radioButton
+   * does not work with WritableSignal two-way binding.
+   */
+  protected innerValue: T | null = null;
   private _cvaDisabled = signal(false);
 
   protected isDisabled = computed(() => this.disabled() || this._cvaDisabled());
@@ -74,15 +80,18 @@ export class RadioButtonComponent<T = unknown> implements ControlValueAccessor {
   private onModelTouched: () => void = () => {};
 
   onClick(event: RadioButtonClickEvent): void {
-    this.modelValue.set(this.value());
-    this.onModelChange(this.value());
+    const v = this.value();
+    this.innerValue = v;
+    this.onModelChange(v);
     this.click.emit(event);
-    this.valueChange.emit(this.value());
+    this.valueChange.emit(v);
     this.onModelTouched();
+    this.cdr.markForCheck();
   }
 
   writeValue(value: T | null): void {
-    this.modelValue.set(value);
+    this.innerValue = value;
+    this.cdr.markForCheck();
   }
 
   registerOnChange(fn: (value: T | null) => void): void {

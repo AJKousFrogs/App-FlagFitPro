@@ -1,4 +1,3 @@
-import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import {
   ChangeDetectionStrategy,
@@ -128,7 +127,6 @@ interface TournamentNutritionBrief {
   selector: "app-nutritionist-dashboard",
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CommonModule,
     FormsModule,
     RouterModule,
     LazyChartComponent,

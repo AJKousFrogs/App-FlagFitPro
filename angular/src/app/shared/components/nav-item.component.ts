@@ -1,4 +1,3 @@
-import { CommonModule } from "@angular/common";
 import {
   ChangeDetectionStrategy,
   Component,
@@ -14,7 +13,7 @@ export type NavItemVariant = "sidebar" | "bottom" | "menu";
 @Component({
   selector: "app-nav-item",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, RouterModule, BadgeComponent, Tooltip],
+  imports: [RouterModule, BadgeComponent, Tooltip],
   template: `
     @if (route()) {
       <a

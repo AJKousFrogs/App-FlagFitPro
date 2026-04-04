@@ -29,7 +29,6 @@ import {
   effect,
   DestroyRef,
 } from "@angular/core";
-import { CommonModule } from "@angular/common";
 import {
   SemanticMeaning,
   MeaningMetadata,
@@ -47,7 +46,7 @@ import { CoachOverrideBadgeComponent } from "../coach-override-badge/coach-overr
 @Component({
   selector: "app-semantic-meaning-renderer",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule],
+  imports: [],
   template: ` <ng-container #renderTarget></ng-container> `,
   styleUrl: "./semantic-meaning-renderer.component.scss",
 })

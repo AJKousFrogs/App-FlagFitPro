@@ -12,7 +12,6 @@ import {
   computed,
   ChangeDetectionStrategy,
 } from "@angular/core";
-import { CommonModule } from "@angular/common";
 import { ActivatedRoute, Router, RouterModule } from "@angular/router";
 
 import { ButtonComponent } from "@shared/components/button/button.component";
@@ -45,7 +44,6 @@ import type {
   selector: "app-decision-detail",
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CommonModule,
     RouterModule,
     ButtonComponent,
     Accordion,

@@ -9,7 +9,6 @@ import {
   ChangeDetectionStrategy,
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
-import { CommonModule } from "@angular/common";
 import { ButtonComponent } from "../../shared/components/button/button.component";
 import { EmptyStateComponent } from "../../shared/components/empty-state/empty-state.component";
 import { StatusTagComponent } from "../../shared/components/status-tag/status-tag.component";
@@ -46,7 +45,6 @@ import { SkeletonRepeatComponent } from "../../shared/components/skeleton-loader
   selector: "app-exercisedb-manager",
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CommonModule,
     FormInputComponent,
     SelectComponent,
     MultiSelect,

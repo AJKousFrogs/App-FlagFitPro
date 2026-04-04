@@ -1,4 +1,3 @@
-import { CommonModule } from "@angular/common";
 import { ChangeDetectionStrategy, Component, input, output } from "@angular/core";
 import { ProgressBarComponent } from "../../../../shared/components/progress-bar/progress-bar.component";
 
@@ -39,7 +38,6 @@ interface ReturnToPlayDataView {
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CommonModule,
     ProgressBarComponent,
     ButtonComponent,
     CardShellComponent,

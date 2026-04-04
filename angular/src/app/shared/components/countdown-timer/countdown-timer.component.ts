@@ -32,13 +32,12 @@ import {
   inject,
   DestroyRef,
 } from "@angular/core";
-import { CommonModule } from "@angular/common";
 import { IconButtonComponent } from "../button/icon-button.component";
 
 @Component({
   selector: "app-countdown-timer",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, IconButtonComponent],
+  imports: [IconButtonComponent],
   template: `
     <div class="countdown-timer" [class]="'status-' + status()">
       <!-- Progress ring -->

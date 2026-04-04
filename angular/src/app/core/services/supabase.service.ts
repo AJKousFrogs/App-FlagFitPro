@@ -1,7 +1,6 @@
 import { computed, inject, Injectable, signal } from "@angular/core";
-import {
+import type {
   AuthChangeEvent,
-  createClient,
   RealtimeChannel,
   RealtimePostgresChangesPayload,
   Session,
@@ -27,7 +26,9 @@ export interface UserMetadata {
 })
 export class SupabaseService {
   private logger = inject(LoggerService);
-  private supabase: SupabaseClient;
+  /** Populated after `import("@supabase/supabase-js")` resolves. */
+  private supabase: SupabaseClient | null = null;
+  private readonly bootstrapPromise: Promise<void>;
 
   private readonly _currentUser = signal<User | null>(null);
   private readonly _session = signal<Session | null>(null);
@@ -83,6 +84,22 @@ export class SupabaseService {
       );
     }
 
+    // Load `@supabase/supabase-js` in a separate async chunk so it is not part of the
+    // initial bundle (saves ~170KB+ gzipped transfer vs eager static import).
+    this.bootstrapPromise = this.bootstrapClient().catch((error: unknown) => {
+      this.logger.error("[SupabaseService] Bootstrap failed", { error });
+      if (!this._isInitialized()) {
+        this._isInitialized.set(true);
+      }
+    });
+  }
+
+  /**
+   * Dynamic import + client creation + auth listener. Keeps the heavy Supabase SDK
+   * out of the main synchronous graph.
+   */
+  private async bootstrapClient(): Promise<void> {
+    const { createClient } = await import("@supabase/supabase-js");
     this.supabase = createClient(
       environment.supabase.url,
       environment.supabase.anonKey,
@@ -92,15 +109,17 @@ export class SupabaseService {
         },
       },
     );
-
-    // Initialize session and set up auth listener
-    this.initializeAuth();
+    await this.initializeAuth();
   }
 
   private async initializeAuth() {
     try {
+      const client = this.supabase;
+      if (!client) {
+        throw new Error("[SupabaseService] Client missing during initializeAuth");
+      }
       // Get initial session
-      const { data } = await this.supabase.auth.getSession();
+      const { data } = await client.auth.getSession();
 
       this.logger.debug("[SupabaseService] Initial session", {
         hasSession: !!data.session,
@@ -111,7 +130,7 @@ export class SupabaseService {
       this._currentUser.set(data.session?.user ?? null);
 
       // Listen for auth changes
-      this.supabase.auth.onAuthStateChange(
+      client.auth.onAuthStateChange(
         (event: AuthChangeEvent, session: Session | null) => {
           this.logger.debug("Auth state changed:", toLogContext(event));
           this._session.set(session);
@@ -169,6 +188,11 @@ export class SupabaseService {
    * Use this in guards to avoid race conditions
    */
   async waitForInit(): Promise<void> {
+    try {
+      await this.bootstrapPromise;
+    } catch {
+      // bootstrapPromise rejection is handled in constructor .catch
+    }
     if (this._isInitialized()) return;
 
     // Poll until initialized (max 5 seconds)
@@ -218,6 +242,11 @@ export class SupabaseService {
    * Get the Supabase client instance
    */
   get client(): SupabaseClient {
+    if (!this.supabase) {
+      throw new Error(
+        "[SupabaseService] Client not ready. Call await waitForInit() before using .client.",
+      );
+    }
     return this.supabase;
   }
 
@@ -239,11 +268,12 @@ export class SupabaseService {
    * Refresh the current user from Supabase auth and update local signals.
    */
   async refreshCurrentUser(): Promise<User | null> {
+    await this.waitForInit();
     try {
       const {
         data: { user },
         error,
-      } = await this.supabase.auth.getUser();
+      } = await this.client.auth.getUser();
 
       if (error) {
         this.logger.warn("[Supabase] Failed to refresh current user", {
@@ -273,7 +303,8 @@ export class SupabaseService {
    * Sign in with email and password
    */
   async signIn(email: string, password: string) {
-    return await this.supabase.auth.signInWithPassword({
+    await this.waitForInit();
+    return await this.client.auth.signInWithPassword({
       email,
       password,
     });
@@ -288,7 +319,8 @@ export class SupabaseService {
     metadata?: UserMetadata,
     options?: { emailRedirectTo?: string },
   ) {
-    return await this.supabase.auth.signUp({
+    await this.waitForInit();
+    return await this.client.auth.signUp({
       email,
       password,
       options: {
@@ -302,29 +334,33 @@ export class SupabaseService {
    * Sign out
    */
   async signOut() {
-    return await this.supabase.auth.signOut();
+    await this.waitForInit();
+    return await this.client.auth.signOut();
   }
 
   /**
    * Reset password
    */
   async resetPassword(email: string) {
-    return await this.supabase.auth.resetPasswordForEmail(email);
+    await this.waitForInit();
+    return await this.client.auth.resetPasswordForEmail(email);
   }
 
   /**
    * Update user metadata
    */
   async updateUser(attributes: UserAttributes) {
-    return await this.supabase.auth.updateUser(attributes);
+    await this.waitForInit();
+    return await this.client.auth.updateUser(attributes);
   }
 
   /**
    * Get auth token
    */
   async getToken(): Promise<string | null> {
+    await this.waitForInit();
     try {
-      const { data, error } = await this.supabase.auth.getSession();
+      const { data, error } = await this.client.auth.getSession();
 
       if (error) {
         this.logger.warn("[Supabase] Error getting session token", { error });
@@ -343,7 +379,7 @@ export class SupabaseService {
         this.logger.debug("[Supabase] Token expiring soon, refreshing session");
 
         const { data: refreshData, error: refreshError } =
-          await this.supabase.auth.refreshSession();
+          await this.client.auth.refreshSession();
 
         if (refreshError || !refreshData.session) {
           this.logger.warn("[Supabase] Failed to refresh session token", {
@@ -388,7 +424,7 @@ export class SupabaseService {
   ): RealtimeChannel {
     const channelName = `coach-inbox:${coachId}`;
 
-    let channel = this.supabase.channel(channelName);
+    let channel = this.client.channel(channelName);
 
     // Subscribe to INSERT events
     if (onInsert) {
@@ -448,7 +484,7 @@ export class SupabaseService {
 
     // Note: Supabase doesn't support IN filters for realtime, so we subscribe to all
     // and filter client-side. For performance, consider server-side filtering.
-    let channel = this.supabase.channel(channelName);
+    let channel = this.client.channel(channelName);
 
     if (onInsert) {
       channel = channel.on(
@@ -501,7 +537,7 @@ export class SupabaseService {
    */
   unsubscribe(channel: RealtimeChannel): void {
     if (channel) {
-      this.supabase.removeChannel(channel);
+      this.client.removeChannel(channel);
       this.logger.debug("[SupabaseService] Unsubscribed from realtime channel");
     }
   }

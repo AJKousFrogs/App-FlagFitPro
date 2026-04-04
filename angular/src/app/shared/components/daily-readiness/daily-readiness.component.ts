@@ -23,7 +23,6 @@ import {
   DestroyRef,
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
-import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { ButtonComponent } from "../button/button.component";
 import { CardShellComponent } from "../card-shell/card-shell.component";
@@ -60,7 +59,6 @@ interface DailyState {
   selector: "app-daily-readiness",
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CommonModule,
     FormsModule,
     ButtonComponent,
     CardShellComponent,

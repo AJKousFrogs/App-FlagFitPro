@@ -20,7 +20,6 @@ import {
   inject,
   ChangeDetectionStrategy,
 } from "@angular/core";
-import { CommonModule } from "@angular/common";
 import { ButtonComponent } from "../../../../shared/components/button/button.component";
 import { CountdownTimerComponent } from "../../../../shared/components/countdown-timer/countdown-timer.component";
 
@@ -40,7 +39,7 @@ import {
 @Component({
   selector: "app-exercise-card",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, ButtonComponent, CountdownTimerComponent],
+  imports: [ButtonComponent, CountdownTimerComponent],
   template: `
     <div
       class="exercise-card"

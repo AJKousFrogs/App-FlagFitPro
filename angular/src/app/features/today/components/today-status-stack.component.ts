@@ -1,5 +1,4 @@
 import { ChangeDetectionStrategy, Component, input, output } from "@angular/core";
-import { CommonModule } from "@angular/common";
 import { AcwrBaselineComponent } from "../../../shared/components/acwr-baseline/acwr-baseline.component";
 import { AppBannerComponent } from "../../../shared/components/app-banner/app-banner.component";
 import { CardShellComponent } from "../../../shared/components/card-shell/card-shell.component";
@@ -10,7 +9,6 @@ import { ContinuityEvent } from "../../../core/services/continuity-indicators.se
   selector: "app-today-status-stack",
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CommonModule,
     AppBannerComponent,
     AcwrBaselineComponent,
     CardShellComponent,

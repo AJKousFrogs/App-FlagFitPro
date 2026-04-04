@@ -1,4 +1,3 @@
-import { CommonModule } from "@angular/common";
 import { ChangeDetectionStrategy, Component, output } from "@angular/core";
 import { RouterModule } from "@angular/router";
 
@@ -8,7 +7,7 @@ import { ButtonComponent } from "../../../shared/components/button/button.compon
   selector: "app-community-header",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, RouterModule, ButtonComponent],
+  imports: [RouterModule, ButtonComponent],
   templateUrl: "./community-header.component.html",
   styleUrl: "./community-header.component.scss",
 })

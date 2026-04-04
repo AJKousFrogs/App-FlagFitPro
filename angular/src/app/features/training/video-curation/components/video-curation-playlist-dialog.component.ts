@@ -11,7 +11,6 @@ import {
   output,
   model,
 } from "@angular/core";
-import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { AppDialogComponent } from "../../../../shared/components/dialog/dialog.component";
 import { DialogFooterComponent } from "../../../../shared/components/dialog-footer/dialog-footer.component";
@@ -29,7 +28,6 @@ import { POSITION_OPTIONS, FOCUS_OPTIONS } from "../video-curation-utils";
   selector: "app-video-curation-playlist-dialog",
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CommonModule,
     FormsModule,
     AppDialogComponent,
     DialogHeaderComponent,

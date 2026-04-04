@@ -2,7 +2,8 @@
  * Lazy Chart Component
  * =====================
  * Dynamically loads Chart.js only when a chart needs to be rendered
- * This prevents Chart.js (~200 KB) from being in the initial bundle
+ * This prevents Chart.js from being in the initial bundle.
+ * Registers only controllers/scales needed for supported chart types (not full `registerables`).
  *
  * PrimeNG 21 Update:
  * - Uses direct UIChart import instead of dynamic createComponent
@@ -22,7 +23,6 @@ import {
   viewChild,
   inject,
 } from "@angular/core";
-import { CommonModule } from "@angular/common";
 import { ChartSkeletonComponent } from "../chart-skeleton/chart-skeleton.component";
 import { LoggerService } from "../../../core/services/logger.service";
 import type { SimpleChartData } from "../../../core/models/chart.models";
@@ -82,7 +82,7 @@ interface ChartInstance {
 @Component({
   selector: "app-lazy-chart",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, ChartSkeletonComponent],
+  imports: [ChartSkeletonComponent],
   template: `
     <div class="lazy-chart-container">
       @if (loading()) {
@@ -149,9 +149,47 @@ export class LazyChartComponent implements OnInit, OnDestroy {
 
   async ngOnInit() {
     try {
-      // Dynamically import Chart.js
-      const { Chart, registerables } = await import("chart.js");
-      Chart.register(...registerables);
+      const chart = await import("chart.js");
+      const {
+        Chart,
+        LineController,
+        LineElement,
+        PointElement,
+        BarElement,
+        BarController,
+        ArcElement,
+        PieController,
+        DoughnutController,
+        RadarController,
+        PolarAreaController,
+        CategoryScale,
+        LinearScale,
+        RadialLinearScale,
+        Legend,
+        Tooltip,
+        Title,
+        Filler,
+      } = chart;
+
+      Chart.register(
+        LineController,
+        LineElement,
+        PointElement,
+        BarElement,
+        BarController,
+        ArcElement,
+        PieController,
+        DoughnutController,
+        RadarController,
+        PolarAreaController,
+        CategoryScale,
+        LinearScale,
+        RadialLinearScale,
+        Legend,
+        Tooltip,
+        Title,
+        Filler,
+      );
       this.ChartJS = Chart;
 
       this.loading.set(false);

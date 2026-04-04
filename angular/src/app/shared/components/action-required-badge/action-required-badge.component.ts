@@ -14,7 +14,6 @@ import {
   computed,
   ChangeDetectionStrategy,
 } from "@angular/core";
-import { CommonModule } from "@angular/common";
 import { RouterModule } from "@angular/router";
 import { Tooltip } from "primeng/tooltip";
 import { StatusTagComponent } from "../status-tag/status-tag.component";
@@ -35,7 +34,6 @@ export type ActionType =
   selector: "app-action-required-badge",
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CommonModule,
     RouterModule,
     Tooltip,
     ButtonComponent,

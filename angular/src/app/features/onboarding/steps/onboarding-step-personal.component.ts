@@ -1,5 +1,4 @@
 import { ChangeDetectionStrategy, Component, inject, input, output } from "@angular/core";
-import { CommonModule } from "@angular/common";
 import { FormInputComponent } from "../../../shared/components/form-input/form-input.component";
 import { SelectComponent } from "../../../shared/components/select/select.component";
 import { COUNTRY_OPTIONS } from "../../../core/constants";
@@ -12,7 +11,6 @@ import { OnboardingStateService } from "../services/onboarding-state.service";
   selector: "app-onboarding-step-personal",
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CommonModule,
     FormInputComponent,
     SelectComponent,
     AlertComponent,

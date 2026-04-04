@@ -1,4 +1,3 @@
-import { CommonModule } from "@angular/common";
 import { ChangeDetectionStrategy, Component, input } from "@angular/core";
 import { CardShellComponent } from "../../../shared/components/card-shell/card-shell.component";
 import { EmptyStateComponent } from "../../../shared/components/empty-state/empty-state.component";
@@ -11,7 +10,6 @@ import { SimpleChartData } from "../../../core/models/chart.models";
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CommonModule,
     LazyChartComponent,
     CardShellComponent,
     EmptyStateComponent,

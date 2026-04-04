@@ -1,4 +1,3 @@
-import { CommonModule } from "@angular/common";
 import {
   ChangeDetectionStrategy,
   Component,
@@ -18,7 +17,7 @@ type AppDialogSize = "auto" | "sm" | "md" | "lg" | "xl" | "2xl";
   selector: "app-dialog",
   changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.None,
-  imports: [CommonModule, Dialog],
+  imports: [Dialog],
   template: `
     <p-dialog
       [visible]="visible()"

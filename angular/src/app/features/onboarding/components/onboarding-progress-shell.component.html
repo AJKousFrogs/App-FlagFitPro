@@ -1,22 +1,28 @@
 <div class="progress-section">
-  <app-progress-bar
-    [value]="completionStats().percent"
-    [showValue]="false"
-    class="onboarding-progress"
-  ></app-progress-bar>
-  <div class="progress-info">
-    <span class="progress-text">{{ completionStats().percent }}% complete</span>
-    <span class="progress-meta">
-      {{ completionStats().completed }} / {{ completionStats().total }}
-      required tasks done
-    </span>
-    <span class="progress-meta">Now: Step {{ stepPosition() }} - {{ currentStepLabel() }}</span>
+  <div class="progress-bar-block">
+    <app-progress-bar
+      [value]="completionStats().percent"
+      [showValue]="false"
+      severity="primary"
+      class="onboarding-progress"
+    ></app-progress-bar>
+  </div>
+  <div class="progress-summary">
+    <div class="progress-summary__line" aria-live="polite">
+      <span class="progress-text">{{ completionStats().percent }}% complete</span>
+      <span class="progress-sep" aria-hidden="true">·</span>
+      <span class="progress-meta">
+        {{ completionStats().completed }}/{{ completionStats().total }} required tasks
+      </span>
+    </div>
     @if (lastSaved()) {
       <span class="auto-save-indicator" [class.saving]="isSaving()">
         @if (isSaving()) {
-          <i class="pi pi-spin pi-spinner"></i> Saving...
+          <i class="pi pi-spin pi-spinner" aria-hidden="true"></i>
+          <span>Saving…</span>
         } @else {
-          <i class="pi pi-check-circle"></i> Draft saved
+          <i class="pi pi-check-circle" aria-hidden="true"></i>
+          <span>Draft saved</span>
         }
       </span>
     }

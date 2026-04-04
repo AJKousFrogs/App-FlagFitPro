@@ -6,7 +6,6 @@ import {
   computed,
   ViewEncapsulation,
 } from "@angular/core";
-import { CommonModule } from "@angular/common";
 import { ProgressBarComponent } from "../../../shared/components/progress-bar/progress-bar.component";
 import { AlertComponent } from "../../../shared/components/alert/alert.component";
 import { StepperModule } from "primeng/stepper";
@@ -15,7 +14,7 @@ import type { OnboardingStep } from "../models/onboarding.model";
 @Component({
   selector: "app-onboarding-modern-shell",
   standalone: true,
-  imports: [CommonModule, ProgressBarComponent, AlertComponent, StepperModule],
+  imports: [ProgressBarComponent, AlertComponent, StepperModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.None,
   templateUrl: "./onboarding-modern-shell.component.html",

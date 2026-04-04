@@ -1,4 +1,3 @@
-import { CommonModule } from "@angular/common";
 import { ChangeDetectionStrategy, Component, input, output } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 
@@ -13,7 +12,7 @@ import { formatTimeMMSS } from "../../utils/format.utils";
 @Component({
   selector: "app-micro-session-active-section",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, FormsModule, ProgressBarComponent, Slider, TextareaComponent, ButtonComponent],
+  imports: [FormsModule, ProgressBarComponent, Slider, TextareaComponent, ButtonComponent],
   templateUrl: "./micro-session-active-section.component.html",
   styleUrl: "./micro-session-active-section.component.scss",
 })

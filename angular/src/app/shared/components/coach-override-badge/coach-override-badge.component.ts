@@ -14,7 +14,6 @@ import {
   computed,
   ChangeDetectionStrategy,
 } from "@angular/core";
-import { CommonModule } from "@angular/common";
 import { Tooltip } from "primeng/tooltip";
 import { StatusTagComponent } from "../status-tag/status-tag.component";
 import { getTimeAgo } from "../../utils/date.utils";
@@ -34,7 +33,7 @@ export type CoachOverridePlacement =
 @Component({
   selector: "app-coach-override-badge",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, Tooltip, StatusTagComponent],
+  imports: [Tooltip, StatusTagComponent],
   template: `
     <div
       class="coach-override-badge"

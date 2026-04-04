@@ -1,4 +1,3 @@
-import { CommonModule } from "@angular/common";
 import { ChangeDetectionStrategy, Component, input, output } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { InputNumber } from "primeng/inputnumber";
@@ -15,7 +14,7 @@ interface DailyState {
 @Component({
   selector: "app-daily-readiness-form-content",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, FormsModule, Slider, InputNumber],
+  imports: [FormsModule, Slider, InputNumber],
   templateUrl: "./daily-readiness-form-content.component.html",
   styleUrl: "./daily-readiness-form-content.component.scss",
 })

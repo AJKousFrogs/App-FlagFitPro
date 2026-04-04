@@ -23,7 +23,6 @@ import {
   ElementRef,
   inject,
 } from "@angular/core";
-import { CommonModule } from "@angular/common";
 import { CloseButtonComponent } from "../close-button/close-button.component";
 
 export interface FormError {
@@ -43,7 +42,7 @@ export interface FormError {
 @Component({
   selector: "app-form-error-summary",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, CloseButtonComponent],
+  imports: [CloseButtonComponent],
   template: `
     @if (errors().length > 0) {
       <div

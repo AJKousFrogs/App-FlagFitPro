@@ -1234,6 +1234,17 @@
       width: 100%;
     }
 
+    /* Integrated dropdown: stable padding so text never collides with trigger */
+    .p-autocomplete.p-autocomplete-dd .p-autocomplete-input,
+    .p-autocomplete.p-autocomplete-dd .p-inputtext {
+      padding-inline-end: var(--space-12);
+    }
+
+    .p-autocomplete .p-inputtext,
+    .p-autocomplete .p-autocomplete-input {
+      padding-inline-start: var(--space-4);
+    }
+
     .team-autocomplete {
       .p-autocomplete {
         width: 100%;

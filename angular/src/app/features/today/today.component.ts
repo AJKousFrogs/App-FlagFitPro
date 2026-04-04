@@ -12,7 +12,6 @@ import {
   viewChild,
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
-import { CommonModule } from "@angular/common";
 import { ActivatedRoute, Router, RouterModule } from "@angular/router";
 import { ToastService } from "../../core/services/toast.service";
 
@@ -116,7 +115,6 @@ interface QuickFormData {
   selector: "app-today",
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CommonModule,
     RouterModule,
     SkeletonLoaderComponent,
     PageErrorStateComponent,

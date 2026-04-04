@@ -616,5 +616,30 @@ body.app-shell-active app-root > main {
   }
 }
 
+/* Full-screen overlay while a deferred dialog chunk loads (brief flash). */
+.defer-dialog-chunk-placeholder {
+  position: fixed;
+  inset: 0;
+  z-index: 1100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-lg, 1.5rem);
+  pointer-events: none;
+}
+
+/* Header: idle-deferred notifications panel — fixed slot matching slide-out intent */
+.defer-header-notifications-placeholder {
+  position: fixed;
+  top: calc(var(--header-height, 3.5rem) + 0.5rem);
+  right: 0.75rem;
+  width: min(22rem, calc(100vw - 1.5rem));
+  min-height: 10rem;
+  z-index: 1090;
+  pointer-events: none;
+  border-radius: var(--radius-lg, 0.75rem);
+  overflow: hidden;
+}
+
 /* COMPONENT STYLES MOVED */
 /* See src/scss/components/ for component-level overrides and deferred bundles. */

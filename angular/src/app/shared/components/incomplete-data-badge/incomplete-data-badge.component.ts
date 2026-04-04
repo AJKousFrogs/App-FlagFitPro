@@ -14,7 +14,6 @@ import {
   computed,
   ChangeDetectionStrategy,
 } from "@angular/core";
-import { CommonModule } from "@angular/common";
 import { RouterModule } from "@angular/router";
 import { Tooltip } from "primeng/tooltip";
 import { StatusTagComponent } from "../status-tag/status-tag.component";
@@ -35,7 +34,7 @@ export type IncompleteDataPlacement =
 @Component({
   selector: "app-incomplete-data-badge",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, RouterModule, Tooltip, StatusTagComponent],
+  imports: [RouterModule, Tooltip, StatusTagComponent],
   template: `
     <div
       class="incomplete-data-badge"

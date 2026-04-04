@@ -1,4 +1,3 @@
-import { CommonModule } from "@angular/common";
 import { ChangeDetectionStrategy, Component, input, output } from "@angular/core";
 import { Tooltip } from "primeng/tooltip";
 import { AlertComponent } from "../../../shared/components/alert/alert.component";
@@ -29,7 +28,6 @@ export interface TrainingWellnessAlertView {
   selector: "app-training-overview-section",
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CommonModule,
     Tooltip,
     AlertComponent,
     ButtonComponent,

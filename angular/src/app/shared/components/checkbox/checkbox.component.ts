@@ -1,8 +1,9 @@
-import { CommonModule } from "@angular/common";
 import {
   ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
   forwardRef,
+  inject,
   input,
   output,
   signal,
@@ -15,7 +16,7 @@ import { CheckboxModule, CheckboxChangeEvent } from "primeng/checkbox";
   selector: "app-checkbox",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, CheckboxModule, FormsModule],
+  imports: [CheckboxModule, FormsModule],
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,
@@ -30,7 +31,7 @@ import { CheckboxModule, CheckboxChangeEvent } from "primeng/checkbox";
         [name]="name()"
         [value]="value()"
         [disabled]="isDisabled()"
-        [(ngModel)]="modelValue"
+        [ngModel]="checked"
         (onChange)="onCheckboxChange($event)"
         [inputId]="inputId()"
         styleClass="app-checkbox"
@@ -54,6 +55,8 @@ import { CheckboxModule, CheckboxChangeEvent } from "primeng/checkbox";
   `]
 })
 export class CheckboxComponent<T = unknown> implements ControlValueAccessor {
+  private readonly cdr = inject(ChangeDetectorRef);
+
   // Inputs
   label = input<string>("");
   name = input<string>("");
@@ -67,8 +70,8 @@ export class CheckboxComponent<T = unknown> implements ControlValueAccessor {
   change = output<CheckboxChangeEvent>();
   checkedChange = output<boolean>();
 
-  // Internal
-  protected modelValue = signal<boolean | T | null>(false);
+  /** Plain boolean — NgModel on p-checkbox does not support two-way binding to WritableSignal. */
+  protected checked = false;
   private _cvaDisabled = signal(false);
 
   // Computed
@@ -79,16 +82,18 @@ export class CheckboxComponent<T = unknown> implements ControlValueAccessor {
   private onModelTouched: () => void = () => {};
 
   onCheckboxChange(event: CheckboxChangeEvent): void {
-    const checked = Boolean(event.checked);
-    this.modelValue.set(event.checked);
-    this.onModelChange(event.checked);
+    const next = Boolean(event.checked);
+    this.checked = next;
+    this.onModelChange(next);
     this.change.emit(event);
-    this.checkedChange.emit(checked);
+    this.checkedChange.emit(next);
     this.onModelTouched();
+    this.cdr.markForCheck();
   }
 
   writeValue(value: boolean | T | null): void {
-    this.modelValue.set(value);
+    this.checked = Boolean(value);
+    this.cdr.markForCheck();
   }
 
   registerOnChange(fn: (value: boolean | T | null) => void): void {

@@ -30,5 +30,14 @@
 <!-- Search Panel -->
 <app-search-panel />
 
-<!-- Notifications Panel -->
-<app-notifications-panel #notificationsPanel />
+@defer (on idle) {
+  <app-notifications-panel #notificationsPanel />
+} @placeholder {
+  <div class="defer-header-notifications-placeholder" role="status" aria-live="polite">
+    <app-loading
+      [visible]="true"
+      variant="skeleton"
+      message="Loading notifications…"
+    />
+  </div>
+}

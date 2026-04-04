@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, input, output } from "@angular/core";
-import { CommonModule, DecimalPipe } from "@angular/common";
+import { DecimalPipe } from "@angular/common";
 import { AvatarComponent } from "../../../shared/components/avatar/avatar.component";
 import { Tooltip } from "primeng/tooltip";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
@@ -28,7 +28,6 @@ interface UserStats {
   selector: "app-community-sidebar",
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CommonModule,
     DecimalPipe,
     AvatarComponent,
     Tooltip,

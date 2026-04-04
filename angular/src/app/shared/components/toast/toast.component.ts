@@ -3,7 +3,6 @@ import {
   ChangeDetectionStrategy,
   input,
 } from "@angular/core";
-import { CommonModule } from "@angular/common";
 import { Toast } from "primeng/toast";
 
 /**
@@ -19,7 +18,7 @@ import { Toast } from "primeng/toast";
 @Component({
   selector: "app-toast",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, Toast],
+  imports: [Toast],
   template: `
     <p-toast
       [position]="position()"

@@ -4,8 +4,6 @@ import {
   computed,
   ChangeDetectionStrategy,
 } from "@angular/core";
-import { CommonModule } from "@angular/common";
-
 export type SkeletonVariant =
   | "text"
   | "title"
@@ -37,7 +35,7 @@ export type SkeletonVariant =
 @Component({
   selector: "app-skeleton-loader",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule],
+  imports: [],
   template: `
     @switch (variant()) {
       @case ("text") {
@@ -333,7 +331,7 @@ export class SkeletonLoaderComponent {
 @Component({
   selector: "app-skeleton-repeat",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, SkeletonLoaderComponent],
+  imports: [SkeletonLoaderComponent],
   template: `
     <div class="skeleton-repeat" [class]="containerClass()">
       @for (item of items(); track $index) {

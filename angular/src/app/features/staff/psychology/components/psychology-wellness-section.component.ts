@@ -1,4 +1,3 @@
-import { CommonModule } from "@angular/common";
 import { ChangeDetectionStrategy, Component, input, output } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { ProgressBarComponent } from "../../../../shared/components/progress-bar/progress-bar.component";
@@ -50,7 +49,6 @@ interface MentalWellnessReport {
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CommonModule,
     FormsModule,
     CardShellComponent,
     LazyChartComponent,

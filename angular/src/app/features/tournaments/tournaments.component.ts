@@ -1,4 +1,3 @@
-import { CommonModule } from "@angular/common";
 import {
     ChangeDetectionStrategy,
     Component,
@@ -228,7 +227,6 @@ const toDateOrNull = (value: unknown): Date | null => {
   selector: "app-tournaments",
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CommonModule,
     ReactiveFormsModule,
     TabsComponent,
     AppTabPanelDirective,

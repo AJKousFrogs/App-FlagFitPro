@@ -3,8 +3,6 @@
  *
  * Main dashboard for viewing and managing decisions
  */
-
-import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import {
   ChangeDetectionStrategy,
@@ -41,7 +39,6 @@ import { ReviewDecisionDialogComponent } from "./review-decision-dialog.componen
   selector: "app-decision-ledger-dashboard",
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CommonModule,
     FormsModule,
     RouterModule,
     ButtonComponent,
@@ -270,7 +267,7 @@ export class DecisionLedgerDashboardComponent implements OnInit {
   decisionService = inject(DecisionLedgerService);
   private logger = inject(LoggerService);
 
-  // State
+  /** Immutable: always `filters.update` / `filters.set` — never mutate `filters()` snapshot. */
   filters = signal<DecisionFilters>({});
   showCreateDialog = signal(false);
   showReviewDialog = signal(false);
@@ -331,12 +328,16 @@ export class DecisionLedgerDashboardComponent implements OnInit {
     this.applyFilters();
   }
 
-  onCategoryFilterSelect(value: DecisionFilters["decisionCategory"] | undefined): void {
+  onCategoryFilterSelect(
+    value: DecisionFilters["decisionCategory"] | undefined,
+  ): void {
     this.filters.update((current) => ({ ...current, decisionCategory: value }));
     this.applyFilters();
   }
 
-  onPriorityFilterSelect(value: DecisionFilters["reviewPriority"] | undefined): void {
+  onPriorityFilterSelect(
+    value: DecisionFilters["reviewPriority"] | undefined,
+  ): void {
     this.filters.update((current) => ({ ...current, reviewPriority: value }));
     this.applyFilters();
   }

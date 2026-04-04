@@ -1,4 +1,3 @@
-import { CommonModule } from "@angular/common";
 import {
   ChangeDetectionStrategy,
   Component,
@@ -14,7 +13,7 @@ export type AlertDensity = "default" | "compact";
 @Component({
   selector: "app-alert",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, CloseButtonComponent],
+  imports: [CloseButtonComponent],
   template: `
     <div
       [class]="alertClasses()"

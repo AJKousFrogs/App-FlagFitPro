@@ -1,5 +1,4 @@
 import { ChangeDetectionStrategy, Component, input, output } from "@angular/core";
-import { CommonModule } from "@angular/common";
 import { RouterModule } from "@angular/router";
 import { ProgressBarComponent } from "../../../shared/components/progress-bar/progress-bar.component";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
@@ -15,7 +14,6 @@ import {
   selector: "app-today-protocol-section",
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CommonModule,
     RouterModule,
     ProgressBarComponent,
     ButtonComponent,

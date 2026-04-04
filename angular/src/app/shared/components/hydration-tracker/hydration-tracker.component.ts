@@ -8,8 +8,6 @@
  * - Decision 14: Border-first cards
  * - Decision 33: Card header pattern (title left, actions right)
  */
-
-import { CommonModule } from "@angular/common";
 import {
   ChangeDetectionStrategy,
   Component,
@@ -40,7 +38,6 @@ interface HydrationLog {
   selector: "app-hydration-tracker",
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CommonModule,
     ButtonComponent,
     CardShellComponent,
     ProgressBarComponent,

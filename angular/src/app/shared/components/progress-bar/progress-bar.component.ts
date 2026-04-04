@@ -1,4 +1,3 @@
-import { CommonModule } from "@angular/common";
 import {
   ChangeDetectionStrategy,
   Component,
@@ -14,7 +13,7 @@ import { ProgressBarModule } from "primeng/progressbar";
   changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.None,
   host: { class: "app-progress-bar-host" },
-  imports: [CommonModule, ProgressBarModule],
+  imports: [ProgressBarModule],
   template: `
     <div class="app-progress-bar-wrapper w-full">
       <p-progressBar

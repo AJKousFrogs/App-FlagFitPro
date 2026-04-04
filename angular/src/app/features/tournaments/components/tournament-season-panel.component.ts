@@ -1,5 +1,4 @@
 import { ChangeDetectionStrategy, Component, inject, input, output } from "@angular/core";
-import { CommonModule } from "@angular/common";
 import { Tournament, TournamentService } from "../../../core/services/tournament.service";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { IconButtonComponent } from "../../../shared/components/button/icon-button.component";
@@ -11,7 +10,6 @@ import { CardShellComponent } from "../../../shared/components/card-shell/card-s
   selector: "app-tournament-season-panel",
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CommonModule,
     ButtonComponent,
     IconButtonComponent,
     StatusTagComponent,

@@ -1,4 +1,3 @@
-import { CommonModule } from "@angular/common";
 import {
   ChangeDetectionStrategy,
   Component,
@@ -16,7 +15,7 @@ import { TextareaModule } from "primeng/textarea";
   selector: "app-textarea",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, TextareaModule, FormsModule],
+  imports: [TextareaModule, FormsModule],
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,

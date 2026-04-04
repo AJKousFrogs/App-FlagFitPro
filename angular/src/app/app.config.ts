@@ -5,7 +5,7 @@ import {
   provideZonelessChangeDetection,
 } from "@angular/core";
 import { provideClientHydration } from "@angular/platform-browser";
-import { provideNoopAnimations } from "@angular/platform-browser/animations";
+import { provideAnimations } from "@angular/platform-browser/animations";
 import {
   provideRouter,
   withComponentInputBinding,
@@ -67,8 +67,8 @@ export const appConfig: ApplicationConfig = {
       }),
     ),
 
-    /** No @angular/animations triggers in app; PrimeNG v21 uses CSS motion. */
-    provideNoopAnimations(),
+    /** Onboarding step transitions; PrimeNG v21 uses CSS for component micro-motion. */
+    provideAnimations(),
 
     provideHttpClient(
       withFetch(), // Angular 21: Use fetch API for better performance and streaming support

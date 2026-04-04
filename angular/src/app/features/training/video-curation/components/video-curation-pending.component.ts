@@ -10,8 +10,6 @@ import {
   input,
   output,
 } from "@angular/core";
-import { CommonModule } from "@angular/common";
-
 import { EmptyStateComponent } from "../../../../shared/components/empty-state/empty-state.component";
 
 // PrimeNG
@@ -25,7 +23,6 @@ import { InstagramVideo } from "../video-curation.models";
   selector: "app-video-curation-pending",
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CommonModule,
     EmptyStateComponent,
     StatusTagComponent,
     ButtonComponent,

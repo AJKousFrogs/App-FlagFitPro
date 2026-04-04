@@ -6,12 +6,10 @@
  */
 
 import { Component, input, ChangeDetectionStrategy } from "@angular/core";
-import { CommonModule } from "@angular/common";
-
 @Component({
   selector: "app-chart-skeleton",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule],
+  imports: [],
   template: `
     <div class="chart-skeleton" [style.height]="height()">
       <div class="skeleton-header">

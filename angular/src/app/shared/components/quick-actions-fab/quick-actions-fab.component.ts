@@ -1,4 +1,3 @@
-import { CommonModule } from "@angular/common";
 import {
   ChangeDetectionStrategy,
   Component,
@@ -27,7 +26,7 @@ interface QuickActionItem {
 @Component({
   selector: "app-quick-actions-fab",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule],
+  imports: [],
   template: `
     @if (showFAB()) {
       <!-- Backdrop -->

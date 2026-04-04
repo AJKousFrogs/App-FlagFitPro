@@ -1,5 +1,4 @@
 import { ChangeDetectionStrategy, Component, input } from "@angular/core";
-import { CommonModule } from "@angular/common";
 import { StatusTagComponent } from "../status-tag/status-tag.component";
 import { formatNumber, formatStat } from "../../utils/format.utils";
 import { CardShellComponent } from "../card-shell/card-shell.component";
@@ -28,7 +27,7 @@ export interface StatItem {
 @Component({
   selector: "app-stats-grid",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, CardShellComponent, StatusTagComponent],
+  imports: [CardShellComponent, StatusTagComponent],
   template: `
     <section class="stats-overview" aria-label="Statistics">
       @for (stat of stats(); track trackByLabel($index, stat)) {

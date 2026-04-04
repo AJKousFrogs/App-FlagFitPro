@@ -6,7 +6,6 @@ import {
   inject,
   signal,
 } from "@angular/core";
-import { CommonModule } from "@angular/common";
 import { HttpClient } from "@angular/common/http";
 import { ActivatedRoute, RouterLink } from "@angular/router";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
@@ -43,7 +42,6 @@ const LEGAL_DOCS: Record<
   selector: "app-legal-doc",
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CommonModule,
     RouterLink,
     PageHeaderComponent,
     ButtonComponent,

@@ -1,4 +1,3 @@
-import { CommonModule } from "@angular/common";
 import { ChangeDetectionStrategy, Component, input, output } from "@angular/core";
 import { ChannelMemberDetails } from "../../../core/services/channel.service";
 import { AvatarComponent } from "../../../shared/components/avatar/avatar.component";
@@ -12,7 +11,7 @@ export type ChatMemberRowPresence = ChannelMemberDetails & { is_online: boolean 
   selector: "app-chat-member-row",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, AvatarComponent, StatusTagComponent, IconButtonComponent],
+  imports: [AvatarComponent, StatusTagComponent, IconButtonComponent],
   templateUrl: "./chat-member-row.component.html",
   styleUrl: "./chat-member-row.component.scss",
 })

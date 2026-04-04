@@ -10,8 +10,6 @@
  * - Links to full announcement in chat
  * - Visual priority for important messages
  */
-
-import { CommonModule } from "@angular/common";
 import {
   ChangeDetectionStrategy,
   Component,
@@ -34,7 +32,6 @@ import { StatusTagComponent } from "../status-tag/status-tag.component";
   selector: "app-announcements-banner",
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CommonModule,
     RouterModule,
     ButtonComponent,
     CloseButtonComponent,

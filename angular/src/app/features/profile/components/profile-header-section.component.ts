@@ -1,4 +1,3 @@
-import { CommonModule } from "@angular/common";
 import { ChangeDetectionStrategy, Component, input, output } from "@angular/core";
 import { RouterModule } from "@angular/router";
 import { ProgressBarComponent } from "../../../shared/components/progress-bar/progress-bar.component";
@@ -11,7 +10,6 @@ import { MobileOptimizedImageDirective } from "../../../shared/directives/mobile
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CommonModule,
     RouterModule,
     ProgressBarComponent,
     ButtonComponent,

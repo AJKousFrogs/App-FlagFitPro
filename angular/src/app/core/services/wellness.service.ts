@@ -4,7 +4,7 @@ import { catchError, map, tap } from "rxjs";
 import { STATUS_HEX_COLORS } from "../utils/design-tokens.util";
 import { ApiService } from "./api.service";
 import { LoggerService } from "./logger.service";
-import { RealtimeChannel } from "@supabase/supabase-js";
+import type { RealtimeChannel } from "@supabase/supabase-js";
 import { RealtimeService } from "./realtime.service";
 import { SupabaseService } from "./supabase.service";
 import {

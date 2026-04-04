@@ -23,7 +23,7 @@ import {
   effect,
 } from "@angular/core";
 import { firstValueFrom } from "rxjs";
-import { RealtimeChannel } from "@supabase/supabase-js";
+import type { RealtimeChannel } from "@supabase/supabase-js";
 import { ApiService, API_ENDPOINTS } from "./api.service";
 import { LoggerService } from "./logger.service";
 import { toLogContext } from "./logger.service";

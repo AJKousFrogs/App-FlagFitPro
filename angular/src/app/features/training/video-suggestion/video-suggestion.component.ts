@@ -20,8 +20,6 @@
  * @version 1.0.0
  * @angular 21
  */
-
-import { CommonModule } from "@angular/common";
 import {
   ChangeDetectionStrategy,
   Component,
@@ -52,7 +50,6 @@ import { Chip } from "primeng/chip";
 import { Divider } from "primeng/divider";
 import { MultiSelect } from "primeng/multiselect";
 import { Skeleton } from "primeng/skeleton";
-
 
 import { CardShellComponent } from "../../../shared/components/card-shell/card-shell.component";
 import { EmptyStateComponent } from "../../../shared/components/empty-state/empty-state.component";
@@ -96,7 +93,6 @@ interface VideoSuggestion {
   selector: "app-video-suggestion",
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CommonModule,
     FormsModule,
     ReactiveFormsModule,
     FormInputComponent,

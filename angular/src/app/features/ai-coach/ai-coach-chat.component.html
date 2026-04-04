@@ -40,7 +40,7 @@
 
           <div class="suggestion-grid-bento">
             @for (suggestion of quickSuggestions(); track suggestion.query) {
-              <button class="suggestion-card-bento" (click)="askQuestion(suggestion.query)">
+              <button type="button" class="suggestion-card-bento" (click)="askQuestion(suggestion.query)">
                 <i [class]="'pi ' + suggestion.icon"></i>
                 <div class="suggestion-content">
                   <span class="lbl">{{ suggestion.category }}</span>
@@ -81,7 +81,7 @@
             (input)="onCurrentMessageInput($event)"
             rows="1"
           ></textarea>
-          <button class="send-btn-bento" [disabled]="!currentMessage.trim()" (click)="sendMessage()">
+          <button type="button" class="send-btn-bento" [disabled]="!currentMessage.trim()" (click)="sendMessage()">
             <i class="pi pi-send"></i>
           </button>
         </div>
@@ -128,6 +128,14 @@
                 (closed)="onMicroSessionClosed()"
               ></app-micro-session>
             </app-dialog>
+          } @placeholder {
+            <div class="defer-dialog-chunk-placeholder" role="status" aria-live="polite">
+              <app-loading
+                [visible]="true"
+                variant="skeleton"
+                message="Loading micro-session…"
+              />
+            </div>
           }
         }
     </app-main-layout>

@@ -9,13 +9,12 @@
  */
 
 import { Component, ChangeDetectionStrategy } from "@angular/core";
-import { CommonModule } from "@angular/common";
 import { SkeletonComponent } from "../skeleton/skeleton.component";
 
 @Component({
   selector: "app-dashboard-skeleton",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, SkeletonComponent],
+  imports: [SkeletonComponent],
   template: `
     <div class="dashboard-skeleton" aria-label="Loading dashboard...">
       <!-- Header Skeleton -->

@@ -6,8 +6,6 @@
  *
  * Design System Compliant (DESIGN_SYSTEM_RULES.md)
  */
-
-import { CommonModule } from "@angular/common";
 import {
   ChangeDetectionStrategy,
   Component,
@@ -183,7 +181,6 @@ const BALANCE_FILTERS = [
   selector: "app-payment-management",
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CommonModule,
     ReactiveFormsModule,
     CardShellComponent,
     CheckboxComponent,

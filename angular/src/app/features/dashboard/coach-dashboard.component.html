@@ -292,6 +292,10 @@
             (primary)="createSession()"
           />
         </app-dialog>
+        } @placeholder {
+          <div class="defer-dialog-chunk-placeholder" role="status" aria-live="polite">
+            <app-loading [visible]="true" variant="skeleton" message="Loading session dialog…" />
+          </div>
         }
 
         <!-- Team Message Dialog -->
@@ -332,6 +336,10 @@
             (primary)="sendTeamMessage()"
           />
         </app-dialog>
+        } @placeholder {
+          <div class="defer-dialog-chunk-placeholder" role="status" aria-live="polite">
+            <app-loading [visible]="true" variant="skeleton" message="Loading message dialog…" />
+          </div>
         }
 
         <!-- Request Access Dialog -->
@@ -376,6 +384,10 @@
             (primary)="sendAccessRequest()"
           />
         </app-dialog>
+        } @placeholder {
+          <div class="defer-dialog-chunk-placeholder" role="status" aria-live="polite">
+            <app-loading [visible]="true" variant="skeleton" message="Loading request dialog…" />
+          </div>
         }
       }
       <!-- End of @else for content -->

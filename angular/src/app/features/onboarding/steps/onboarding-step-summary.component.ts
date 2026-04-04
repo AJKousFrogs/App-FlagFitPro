@@ -1,5 +1,4 @@
 import { ChangeDetectionStrategy, Component, inject, output } from "@angular/core";
-import { CommonModule } from "@angular/common";
 import { RouterLink } from "@angular/router";
 import { type CheckboxChangeEvent } from "primeng/checkbox";
 import { CheckboxComponent } from "../../../shared/components/checkbox/checkbox.component";
@@ -9,7 +8,7 @@ import { OnboardingStateService } from "../services/onboarding-state.service";
 @Component({
   selector: "app-onboarding-step-summary",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, RouterLink, CheckboxComponent, FormsModule],
+  imports: [RouterLink, CheckboxComponent, FormsModule],
   template: `
     <div class="step-content animate-fade-in">
       <div class="step-header">
@@ -169,12 +168,25 @@ import { OnboardingStateService } from "../services/onboarding-state.service";
         }
       </div>
 
-      <div class="consent-section">
-        <h4 class="consent-title"><i class="pi pi-shield"></i> Required Consents</h4>
-        <p class="consent-description">To finish onboarding, accept the required policies. Optional choices can be changed anytime.</p>
+      <section
+        class="consent-section"
+        role="group"
+        aria-labelledby="onboarding-consent-heading"
+      >
+        <h4 class="consent-title" id="onboarding-consent-heading">
+          <i class="pi pi-shield" aria-hidden="true"></i> Required Consents
+        </h4>
+        <p id="onboarding-consent-desc" class="consent-description">
+          To finish onboarding, accept the required policies. Optional choices
+          can be changed anytime.
+        </p>
 
-        <div class="consent-list">
-          <div class="consent-item required">
+        <div
+          class="consent-list"
+          role="list"
+          aria-describedby="onboarding-consent-desc"
+        >
+          <div class="consent-item required" role="listitem">
             <div class="consent-checkbox-wrapper">
               <app-checkbox
                 [ngModel]="state.formData.consentTermsOfService"
@@ -190,7 +202,7 @@ import { OnboardingStateService } from "../services/onboarding-state.service";
             </div>
           </div>
 
-          <div class="consent-item required">
+          <div class="consent-item required" role="listitem">
             <div class="consent-checkbox-wrapper">
               <app-checkbox
                 [ngModel]="state.formData.consentPrivacyPolicy"
@@ -206,7 +218,7 @@ import { OnboardingStateService } from "../services/onboarding-state.service";
             </div>
           </div>
 
-          <div class="consent-item required">
+          <div class="consent-item required" role="listitem">
             <div class="consent-checkbox-wrapper">
               <app-checkbox
                 [ngModel]="state.formData.consentDataUsage"
@@ -223,7 +235,7 @@ import { OnboardingStateService } from "../services/onboarding-state.service";
             </div>
           </div>
 
-          <div class="consent-item optional">
+          <div class="consent-item optional" role="listitem">
             <div class="consent-checkbox-wrapper">
               <app-checkbox
                 [ngModel]="state.formData.consentAICoach"
@@ -239,7 +251,7 @@ import { OnboardingStateService } from "../services/onboarding-state.service";
             </div>
           </div>
 
-          <div class="consent-item optional">
+          <div class="consent-item optional" role="listitem">
             <div class="consent-checkbox-wrapper">
               <app-checkbox
                 [ngModel]="state.formData.consentEmailUpdates"
@@ -257,15 +269,15 @@ import { OnboardingStateService } from "../services/onboarding-state.service";
         </div>
 
         @if (!state.formData.consentTermsOfService || !state.formData.consentPrivacyPolicy || !state.formData.consentDataUsage) {
-          <div class="consent-error">
-            <i class="pi pi-exclamation-triangle"></i>
+          <div class="consent-error" role="alert">
+            <i class="pi pi-exclamation-triangle" aria-hidden="true"></i>
             <span>Please accept all 3 required consents to finish onboarding.</span>
           </div>
         }
-      </div>
+      </section>
 
       <div class="summary-note success">
-        <i class="pi pi-check-circle"></i>
+        <i class="pi pi-check-circle" aria-hidden="true"></i>
         @if (state.isStaff()) {
           <span>You're ready to manage your team. You can update these settings anytime in your profile.</span>
         } @else {

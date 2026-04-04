@@ -1,8 +1,9 @@
-import { CommonModule } from "@angular/common";
 import {
   ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
   forwardRef,
+  inject,
   input,
   output,
   signal,
@@ -18,7 +19,7 @@ type SelectResolvedValue<T> = T extends { value: infer V } ? V | null : T | null
   selector: "app-select",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, SelectModule, FormsModule],
+  imports: [SelectModule, FormsModule],
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,
@@ -37,7 +38,7 @@ type SelectResolvedValue<T> = T extends { value: infer V } ? V | null : T | null
         </label>
       }
       <p-select
-        [(ngModel)]="value"
+        [ngModel]="innerValue"
         [options]="options()"
         [optionLabel]="optionLabel()"
         [optionValue]="optionValue()"
@@ -68,6 +69,8 @@ type SelectResolvedValue<T> = T extends { value: infer V } ? V | null : T | null
   `]
 })
 export class SelectComponent<T = unknown> implements ControlValueAccessor {
+  private readonly cdr = inject(ChangeDetectorRef);
+
   // Inputs
   label = input<string>("");
   options = input.required<T[]>();
@@ -95,8 +98,11 @@ export class SelectComponent<T = unknown> implements ControlValueAccessor {
   /** Emits resolved option value — for templates using `(ngModelChange)`. */
   ngModelChange = output<SelectResolvedValue<T>>();
 
-  // Internal
-  protected value = signal<SelectValue>(null);
+  /**
+   * Plain value — NgModel + p-select does not work with WritableSignal two-way
+   * binding.
+   */
+  protected innerValue: SelectValue = null;
   private _cvaDisabled = signal(false);
 
   protected isDisabled = computed(() => this.disabled() || this._cvaDisabled());
@@ -106,6 +112,7 @@ export class SelectComponent<T = unknown> implements ControlValueAccessor {
   private onModelTouched: () => void = () => {};
 
   onSelectChange(event: SelectChangeEvent): void {
+    this.innerValue = event.value;
     this.onModelChange(event.value);
     this.change.emit(event.value);
     const resolved = this.resolveValue(event.value);
@@ -113,6 +120,7 @@ export class SelectComponent<T = unknown> implements ControlValueAccessor {
     this.onChange.emit(event);
     this.ngModelChange.emit(resolved);
     this.onModelTouched();
+    this.cdr.markForCheck();
   }
 
   onBlur(): void {
@@ -120,7 +128,8 @@ export class SelectComponent<T = unknown> implements ControlValueAccessor {
   }
 
   writeValue(value: SelectValue): void {
-    this.value.set(value);
+    this.innerValue = value;
+    this.cdr.markForCheck();
   }
 
   registerOnChange(fn: (value: SelectValue) => void): void {

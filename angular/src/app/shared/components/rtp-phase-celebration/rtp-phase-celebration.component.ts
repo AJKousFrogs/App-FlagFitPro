@@ -4,8 +4,6 @@
  * Phase 2.3 - Motivation & Safety
  * Celebrates RTP phase advancement with progress context, clear instructions, and next phase unlock info
  */
-
-import { CommonModule } from "@angular/common";
 import {
   ChangeDetectionStrategy,
   Component,
@@ -35,7 +33,7 @@ export interface RTPPhaseInfo {
 @Component({
   selector: "app-rtp-phase-celebration",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, RouterModule, CardShellComponent, ButtonComponent],
+  imports: [RouterModule, CardShellComponent, ButtonComponent],
   template: `
     @if (showCelebration()) {
       <app-card-shell class="celebration-card" [flush]="true">

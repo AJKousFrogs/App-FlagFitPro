@@ -1,12 +1,11 @@
 import { ChangeDetectionStrategy, Component, inject } from "@angular/core";
-import { CommonModule } from "@angular/common";
 import { GOALS } from "../constants/onboarding-options";
 import { OnboardingStateService } from "../services/onboarding-state.service";
 
 @Component({
   selector: "app-onboarding-step-goals",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule],
+  imports: [],
   template: `
     <div class="step-content animate-fade-in">
       <div class="step-header">

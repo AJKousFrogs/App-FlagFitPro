@@ -1,4 +1,3 @@
-import { CommonModule } from "@angular/common";
 import {
   ChangeDetectionStrategy,
   Component,
@@ -27,7 +26,6 @@ type ChatMemberWithPresence = ChannelMemberDetails & { is_online: boolean };
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CommonModule,
     FormsModule,
     AppDialogComponent,
     DialogHeaderComponent,

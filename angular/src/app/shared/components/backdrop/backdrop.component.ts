@@ -1,4 +1,3 @@
-import { CommonModule } from "@angular/common";
 import {
   ChangeDetectionStrategy,
   Component,
@@ -12,7 +11,7 @@ export type BackdropTone = "default" | "light";
 @Component({
   selector: "app-backdrop",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule],
+  imports: [],
   template: `
     @if (visible()) {
       <div

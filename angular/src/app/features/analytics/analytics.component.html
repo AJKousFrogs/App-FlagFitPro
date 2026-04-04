@@ -48,6 +48,14 @@
           [goalsPreviewCount]="UI_LIMITS.GOALS_PREVIEW_COUNT"
         />
       </div>
+    } @placeholder {
+      <div class="bento-item full-width overview-bento no-padding">
+        <app-loading
+          [visible]="true"
+          variant="skeleton"
+          message="Loading overview…"
+        ></app-loading>
+      </div>
     }
 
     <!-- Primary Charts (Span 2) -->

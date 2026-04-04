@@ -1,4 +1,3 @@
-import { CommonModule } from "@angular/common";
 import {
   ChangeDetectionStrategy,
   Component,
@@ -27,7 +26,6 @@ export interface ChatChannelCreateRequest {
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CommonModule,
     AppDialogComponent,
     DialogHeaderComponent,
     DialogFooterComponent,

@@ -1,6 +1,6 @@
 import { Injectable, effect, inject, signal, untracked } from "@angular/core";
 import { Router } from "@angular/router";
-import { Session, User as SupabaseUser } from "@supabase/supabase-js";
+import type { Session, User as SupabaseUser } from "@supabase/supabase-js";
 import { Observable, from, of, throwError } from "rxjs";
 import { catchError, map, tap } from "rxjs";
 import { LoggerService } from "./logger.service";

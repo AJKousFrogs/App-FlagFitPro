@@ -1,4 +1,3 @@
-import { CommonModule } from "@angular/common";
 import {
   ChangeDetectionStrategy,
   Component,
@@ -9,6 +8,7 @@ import {
   Directive,
   inject,
 } from "@angular/core";
+import { NgTemplateOutlet } from "@angular/common";
 import { TabsModule } from "primeng/tabs";
 
 @Directive({
@@ -28,7 +28,7 @@ export class AppTabPanelDirective {
   selector: "app-tabs",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, TabsModule],
+  imports: [TabsModule, NgTemplateOutlet],
   template: `
     <p-tabs [value]="value()" (valueChange)="onValueChange($event)">
       <p-tablist>

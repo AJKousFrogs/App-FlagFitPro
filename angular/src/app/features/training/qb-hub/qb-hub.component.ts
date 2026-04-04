@@ -1,4 +1,3 @@
-import { CommonModule } from "@angular/common";
 import { ChangeDetectionStrategy, Component } from "@angular/core";
 import { Tab, TabList, TabPanel, TabPanels, Tabs } from "primeng/tabs";
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
@@ -11,7 +10,6 @@ import { QbTrainingScheduleComponent } from "../qb-training-schedule/qb-training
   selector: "app-qb-hub",
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CommonModule,
     Tabs,
     TabPanel,
     TabPanels,

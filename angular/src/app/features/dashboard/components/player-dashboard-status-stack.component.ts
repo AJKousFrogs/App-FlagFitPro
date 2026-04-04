@@ -1,4 +1,3 @@
-import { CommonModule } from "@angular/common";
 import { ChangeDetectionStrategy, Component, input, output } from "@angular/core";
 import { CloseButtonComponent } from "../../../shared/components/close-button/close-button.component";
 import { CoachOverrideNotificationComponent } from "../../../shared/components/coach-override-notification/coach-override-notification.component";
@@ -28,7 +27,6 @@ interface OverrideDisplayItem {
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CommonModule,
     CloseButtonComponent,
     CoachOverrideNotificationComponent,
     MissingDataExplanationComponent,

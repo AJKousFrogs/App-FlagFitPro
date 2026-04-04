@@ -9,12 +9,10 @@
  */
 
 import { Component, input, ChangeDetectionStrategy } from "@angular/core";
-import { CommonModule } from "@angular/common";
-
 @Component({
   selector: "app-skeleton",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule],
+  imports: [],
   template: `
     <div
       class="skeleton"

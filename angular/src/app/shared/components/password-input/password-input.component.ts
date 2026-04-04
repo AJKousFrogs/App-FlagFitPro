@@ -1,13 +1,13 @@
-import { CommonModule } from "@angular/common";
 import {
   ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
   forwardRef,
+  inject,
   input,
   output,
   signal,
   computed,
-  ViewEncapsulation,
 } from "@angular/core";
 import { ControlValueAccessor, NG_VALUE_ACCESSOR, FormsModule } from "@angular/forms";
 import { PasswordModule } from "primeng/password";
@@ -16,7 +16,7 @@ import { PasswordModule } from "primeng/password";
   selector: "app-password-input",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, PasswordModule, FormsModule],
+  imports: [PasswordModule, FormsModule],
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,
@@ -35,7 +35,8 @@ import { PasswordModule } from "primeng/password";
         </label>
       }
       <p-password
-        [(ngModel)]="modelValue"
+        [ngModel]="passwordValue"
+        (ngModelChange)="onPasswordNgModelChange($event)"
         [toggleMask]="toggleMask()"
         [feedback]="feedback()"
         [placeholder]="placeholder()"
@@ -43,7 +44,6 @@ import { PasswordModule } from "primeng/password";
         [styleClass]="'w-full ' + styleClass()"
         [inputStyleClass]="'w-full ' + inputStyleClass()"
         [autocomplete]="autocomplete()"
-        (onInput)="onInput($event)"
         [disabled]="isDisabled()"
         [weakLabel]="weakLabel()"
         [mediumLabel]="mediumLabel()"
@@ -77,6 +77,8 @@ import { PasswordModule } from "primeng/password";
   `]
 })
 export class PasswordInputComponent implements ControlValueAccessor {
+  private readonly cdr = inject(ChangeDetectorRef);
+
   // Inputs
   label = input<string>("");
   placeholder = input<string>("");
@@ -99,8 +101,8 @@ export class PasswordInputComponent implements ControlValueAccessor {
   // Outputs
   change = output<string>();
 
-  // Internal
-  protected modelValue = signal<string>("");
+  /** Plain string — NgModel + p-password does not work with WritableSignal two-way binding. */
+  protected passwordValue = "";
   private _cvaDisabled = signal(false);
 
   protected isDisabled = computed(() => this.disabled() || this._cvaDisabled());
@@ -109,15 +111,17 @@ export class PasswordInputComponent implements ControlValueAccessor {
   private onModelChange: (value: string) => void = () => {};
   private onModelTouched: () => void = () => {};
 
-  onInput(event: Event) {
-    const val = (event.target as HTMLInputElement).value;
-    this.onModelChange(val);
-    this.change.emit(val);
+  onPasswordNgModelChange(val: string): void {
+    this.passwordValue = val ?? "";
+    this.onModelChange(this.passwordValue);
+    this.change.emit(this.passwordValue);
     this.onModelTouched();
+    this.cdr.markForCheck();
   }
 
   writeValue(value: string): void {
-    this.modelValue.set(value || "");
+    this.passwordValue = value || "";
+    this.cdr.markForCheck();
   }
 
   registerOnChange(fn: (value: string) => void): void {

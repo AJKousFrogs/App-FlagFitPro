@@ -1,4 +1,3 @@
-import { CommonModule } from "@angular/common";
 import { ChangeDetectionStrategy, Component, input, output } from "@angular/core";
 import { SelectComponent } from "../../../../shared/components/select/select.component";
 import { CardShellComponent } from "../../../../shared/components/card-shell/card-shell.component";
@@ -36,7 +35,7 @@ export interface ScoutingTendenciesView {
 @Component({
   selector: "app-scouting-tendencies-section",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, SelectComponent, CardShellComponent],
+  imports: [SelectComponent, CardShellComponent],
   templateUrl: "./scouting-tendencies-section.component.html",
   styleUrl: "./scouting-tendencies-section.component.scss",
 })

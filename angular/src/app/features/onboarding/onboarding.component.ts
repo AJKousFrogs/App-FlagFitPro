@@ -1,4 +1,5 @@
 import {
+    afterNextRender,
     ChangeDetectionStrategy,
     Component,
     OnDestroy,
@@ -7,7 +8,7 @@ import {
     signal,
 } from "@angular/core";
 
-import { CommonModule } from "@angular/common";
+import { animate, style, transition, trigger } from "@angular/animations";
 import { Router, RouterModule } from "@angular/router";
 
 import { firstValueFrom } from "rxjs";
@@ -31,6 +32,7 @@ import {
 import { ToastService } from "../../core/services/toast.service";
 import { ButtonComponent } from "../../shared/components/button/button.component";
 import { CardShellComponent } from "../../shared/components/card-shell/card-shell.component";
+import { AppLoadingComponent } from "../../shared/components/loading/loading.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
 import { AuthFlowDataService } from "../auth/services/auth-flow-data.service";
 import { RosterService } from "../roster/roster.service";
@@ -47,13 +49,38 @@ import { OnboardingStepSummaryComponent } from "./steps/onboarding-step-summary.
 
 @Component({
   selector: "app-onboarding",
+  host: { class: "onboarding" },
   changeDetection: ChangeDetectionStrategy.OnPush,
+  animations: [
+    trigger("onboardingStepAnim", [
+      transition(
+        ":increment",
+        [
+          style({ opacity: 0, transform: "translateY(10px)" }),
+          animate(
+            "240ms cubic-bezier(0.2, 0.8, 0.2, 1)",
+            style({ opacity: 1, transform: "none" }),
+          ),
+        ],
+      ),
+      transition(
+        ":decrement",
+        [
+          style({ opacity: 0, transform: "translateY(-8px)" }),
+          animate(
+            "200ms cubic-bezier(0.2, 0.8, 0.2, 1)",
+            style({ opacity: 1, transform: "none" }),
+          ),
+        ],
+      ),
+    ]),
+  ],
   imports: [
-    CommonModule,
     RouterModule,
     CardShellComponent,
     PageHeaderComponent,
     ButtonComponent,
+    AppLoadingComponent,
     OnboardingProgressShellComponent,
     OnboardingStepPersonalComponent,
     OnboardingStepRoleComponent,
@@ -67,6 +94,9 @@ import { OnboardingStepSummaryComponent } from "./steps/onboarding-step-summary.
   styleUrl: "./onboarding.component.scss",
 })
 export class OnboardingComponent implements OnInit, OnDestroy {
+  /** Respect system preference; disables Angular step transitions when true. */
+  readonly prefersReducedMotion = signal(false);
+
   readonly state = inject(OnboardingStateService);
   private router = inject(Router);
   private toastService = inject(ToastService);
@@ -169,6 +199,20 @@ export class OnboardingComponent implements OnInit, OnDestroy {
     ];
 
     return [...shared, ...playerOnly];
+  }
+
+  constructor() {
+    afterNextRender(() => {
+      if (typeof globalThis.matchMedia !== "function") {
+        return;
+      }
+      const mq = globalThis.matchMedia("(prefers-reduced-motion: reduce)");
+      const apply = (): void => {
+        this.prefersReducedMotion.set(mq.matches);
+      };
+      apply();
+      mq.addEventListener("change", apply);
+    });
   }
 
   async ngOnInit(): Promise<void> {

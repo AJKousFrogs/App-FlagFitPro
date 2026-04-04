@@ -1,4 +1,3 @@
-import { CommonModule } from "@angular/common";
 import { ChangeDetectionStrategy, Component, input } from "@angular/core";
 import { Chip } from "primeng/chip";
 
@@ -8,7 +7,7 @@ import { SprintPhaseGuidelines } from "../../../../core/services/sprint-training
   selector: "app-periodization-sprint-tab",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, Chip],
+  imports: [Chip],
   templateUrl: "./periodization-sprint-tab.component.html",
   styleUrl: "./periodization-sprint-tab.component.scss",
 })

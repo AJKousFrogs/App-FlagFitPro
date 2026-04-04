@@ -1,24 +1,44 @@
+@use "styles/mixins" as *;
+
 .progress-section {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  align-items: center;
-  gap: var(--layout-page-section-gap-tight);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
   margin-bottom: 0;
   padding: var(--component-card-padding);
   background: linear-gradient(
     135deg,
-    rgba(var(--ds-primary-green-rgb), 0.04),
-    rgba(var(--ds-primary-green-rgb), 0.015)
+    rgba(var(--ds-primary-green-rgb), 0.05),
+    rgba(var(--ds-primary-green-rgb), 0.02)
   );
   border-bottom: var(--border-1) solid var(--color-border-muted);
   border-radius: var(--component-card-radius) var(--component-card-radius) 0 0;
 }
 
-.progress-info {
+.progress-bar-block {
+  width: 100%;
+  min-width: 0;
+}
+
+.progress-summary {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: var(--space-4);
+  justify-content: space-between;
+  gap: var(--space-3) var(--space-5);
+}
+
+.progress-summary__line {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--space-2);
+  min-width: 0;
+}
+
+.progress-sep {
+  color: var(--color-text-tertiary);
+  user-select: none;
 }
 
 .progress-text {
@@ -69,7 +89,7 @@
 }
 
 .auto-save-indicator {
-  display: flex;
+  display: inline-flex;
   align-items: center;
   gap: var(--space-2);
   font-size: var(--ds-font-size-xs);
@@ -154,4 +174,20 @@
 .step-name {
   font-weight: var(--ds-font-weight-regular);
   color: var(--color-text-tertiary);
+}
+
+@include respond-to(md) {
+  .progress-section {
+    padding: var(--component-card-padding-compact);
+  }
+
+  .completion-checklist {
+    margin-inline: var(--component-card-padding-compact);
+  }
+
+  .step-indicator {
+    flex-wrap: wrap;
+    row-gap: var(--space-2);
+    padding-inline: var(--component-card-padding-compact);
+  }
 }

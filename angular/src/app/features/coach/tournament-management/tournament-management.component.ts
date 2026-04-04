@@ -6,8 +6,6 @@
  *
  * Design System Compliant (DESIGN_SYSTEM_RULES.md)
  */
-
-import { CommonModule } from "@angular/common";
 import {
   ChangeDetectionStrategy,
   Component,
@@ -120,7 +118,6 @@ const POSITIONS = [
   selector: "app-tournament-management",
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CommonModule,
     ProgressBar,
     SelectComponent,
     TableModule,
@@ -811,7 +808,6 @@ export class TournamentManagementComponent implements OnInit {
     }
     slot.playerId = String(value);
   }
-
 
   closeDetailDialog(): void {
     this.showDetailDialog = false;

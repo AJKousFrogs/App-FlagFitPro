@@ -22,8 +22,6 @@ import {
   inject,
   signal,
 } from "@angular/core";
-import { CommonModule } from "@angular/common";
-
 // PrimeNG
 import { Tabs, TabList, Tab, TabPanels, TabPanel } from "primeng/tabs";
 
@@ -70,7 +68,6 @@ interface TimelineEvent {
   selector: "app-periodization-dashboard",
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CommonModule,
     Tabs,
     TabList,
     Tab,

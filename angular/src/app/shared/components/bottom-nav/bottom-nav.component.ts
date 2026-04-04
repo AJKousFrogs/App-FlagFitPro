@@ -1,4 +1,3 @@
-import { CommonModule } from "@angular/common";
 import {
   ChangeDetectionStrategy,
   Component,
@@ -27,7 +26,6 @@ import { CloseButtonComponent } from "../close-button/close-button.component";
   selector: "app-bottom-nav",
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CommonModule,
     NavItemComponent,
     BackdropComponent,
     CloseButtonComponent,

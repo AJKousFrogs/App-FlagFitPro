@@ -3,8 +3,6 @@
  *
  * Displays a single decision in card format
  */
-
-import { CommonModule } from "@angular/common";
 import {
   ChangeDetectionStrategy,
   Component,
@@ -25,7 +23,6 @@ import { StatusTagComponent } from "../../../shared/components/status-tag/status
   selector: "app-decision-card",
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CommonModule,
     RouterModule,
     ButtonComponent,
     StatusTagComponent,

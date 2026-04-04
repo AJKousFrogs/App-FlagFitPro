@@ -1,4 +1,4 @@
-import { CommonModule, DatePipe } from "@angular/common";
+import { DatePipe } from "@angular/common";
 import { ChangeDetectionStrategy, Component, input } from "@angular/core";
 import { AvatarComponent } from "../../../shared/components/avatar/avatar.component";
 import { getInitials } from "../../../shared/utils/format.utils";
@@ -21,7 +21,7 @@ export interface InjuryPlayerSummaryModel {
   selector: "app-injury-player-summary",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, DatePipe, AvatarComponent],
+  imports: [DatePipe, AvatarComponent],
   templateUrl: "./injury-player-summary.component.html",
 })
 export class InjuryPlayerSummaryComponent {

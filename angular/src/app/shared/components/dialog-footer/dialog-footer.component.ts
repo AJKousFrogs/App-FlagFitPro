@@ -1,4 +1,3 @@
-import { CommonModule } from "@angular/common";
 import {
   ChangeDetectionStrategy,
   Component,
@@ -43,7 +42,7 @@ import { ButtonComponent } from "../button/button.component";
 @Component({
   selector: "app-dialog-footer",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, ButtonComponent],
+  imports: [ButtonComponent],
   template: `
     <div class="dialog-actions">
       <ng-content select="[dialogFooterStart]"></ng-content>

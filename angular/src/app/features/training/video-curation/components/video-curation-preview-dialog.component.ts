@@ -10,7 +10,6 @@ import {
   input,
   model,
 } from "@angular/core";
-import { CommonModule } from "@angular/common";
 import { AppDialogComponent } from "../../../../shared/components/dialog/dialog.component";
 import { DialogHeaderComponent } from "../../../../shared/components/dialog-header/dialog-header.component";
 
@@ -19,7 +18,7 @@ import { InstagramVideo } from "../video-curation.models";
 @Component({
   selector: "app-video-curation-preview-dialog",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, AppDialogComponent, DialogHeaderComponent],
+  imports: [AppDialogComponent, DialogHeaderComponent],
   template: `
     <app-dialog
       [visible]="visible()"

@@ -1,5 +1,4 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from "@angular/core";
-import { CommonModule } from "@angular/common";
 import { TextareaComponent } from "../../../shared/components/textarea/textarea.component";
 import { SelectComponent } from "../../../shared/components/select/select.component";
 import { IconButtonComponent } from "../../../shared/components/button/icon-button.component";
@@ -16,7 +15,7 @@ const SEVERITY_OPTIONS = [
 @Component({
   selector: "app-onboarding-step-health",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, TextareaComponent, SelectComponent, IconButtonComponent],
+  imports: [TextareaComponent, SelectComponent, IconButtonComponent],
   template: `
     <div class="step-content animate-fade-in">
       <div class="step-header">

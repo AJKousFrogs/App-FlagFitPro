@@ -12,7 +12,7 @@
  */
 
 import { Injectable, inject, signal, computed, OnDestroy } from "@angular/core";
-import { RealtimeChannel } from "@supabase/supabase-js";
+import type { RealtimeChannel } from "@supabase/supabase-js";
 import { SupabaseService } from "./supabase.service";
 import { LoggerService } from "./logger.service";
 import { TIMEOUTS } from "../constants/app.constants";

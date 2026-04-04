@@ -1,4 +1,3 @@
-import { CommonModule } from "@angular/common";
 import { ChangeDetectionStrategy, Component } from "@angular/core";
 import { RouterModule } from "@angular/router";
 import { Tab, TabList, TabPanel, TabPanels, Tabs } from "primeng/tabs";
@@ -9,7 +8,6 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
   selector: "app-advanced-training",
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CommonModule,
     RouterModule,
     Tabs,
     TabPanel,

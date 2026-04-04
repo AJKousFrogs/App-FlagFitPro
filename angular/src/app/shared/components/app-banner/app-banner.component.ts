@@ -11,7 +11,6 @@ import {
   output,
   ChangeDetectionStrategy,
 } from "@angular/core";
-import { CommonModule } from "@angular/common";
 import { ButtonComponent } from "../button/button.component";
 
 export interface BannerCta {
@@ -22,7 +21,7 @@ export interface BannerCta {
 
 @Component({
   selector: "app-banner",
-  imports: [CommonModule, ButtonComponent],
+  imports: [ButtonComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: "./app-banner.component.html",
   styleUrl: "./app-banner.component.scss",

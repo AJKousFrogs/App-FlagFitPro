@@ -4,8 +4,6 @@ import {
   computed,
   ChangeDetectionStrategy,
 } from "@angular/core";
-import { CommonModule } from "@angular/common";
-
 /**
  * Badge Component - Angular 21
  *
@@ -15,7 +13,7 @@ import { CommonModule } from "@angular/common";
 @Component({
   selector: "app-badge",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule],
+  imports: [],
   template: `
     <span [class]="badgeClass()" [attr.aria-label]="ariaLabel() || undefined">
       @if (dot()) {

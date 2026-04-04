@@ -13,7 +13,6 @@ import {
   ChangeDetectionStrategy,
   inject,
 } from "@angular/core";
-import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 
 import { ButtonComponent } from "@shared/components/button/button.component";
@@ -40,7 +39,6 @@ import type {
   selector: "app-review-decision-dialog",
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CommonModule,
     FormsModule,
     ButtonComponent,
     SelectComponent,

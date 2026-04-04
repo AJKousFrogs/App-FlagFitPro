@@ -5,7 +5,6 @@ import {
   input,
   output,
 } from "@angular/core";
-import { CommonModule } from "@angular/common";
 import { CardShellComponent } from "../../../shared/components/card-shell/card-shell.component";
 import { StatusTagComponent } from "../../../shared/components/status-tag/status-tag.component";
 
@@ -35,7 +34,7 @@ export interface CoachDashboardTeamContinuity {
 @Component({
   selector: "app-coach-dashboard-protocols-section",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, CardShellComponent, StatusTagComponent],
+  imports: [CardShellComponent, StatusTagComponent],
   templateUrl: "./coach-dashboard-protocols-section.component.html",
   styleUrl: "./coach-dashboard-protocols-section.component.scss",
 })

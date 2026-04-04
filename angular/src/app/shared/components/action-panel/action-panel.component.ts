@@ -31,7 +31,6 @@ import {
   output,
   ChangeDetectionStrategy,
 } from "@angular/core";
-import { CommonModule } from "@angular/common";
 import { RouterModule } from "@angular/router";
 import { ButtonComponent } from "../button/button.component";
 
@@ -48,7 +47,7 @@ export type ActionPanelType =
 @Component({
   selector: "app-action-panel",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, RouterModule, ButtonComponent],
+  imports: [RouterModule, ButtonComponent],
   template: `
     <div
       class="action-panel"

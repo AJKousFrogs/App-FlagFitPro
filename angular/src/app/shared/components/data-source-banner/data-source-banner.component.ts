@@ -4,7 +4,6 @@ import {
   computed,
   ChangeDetectionStrategy,
 } from "@angular/core";
-import { CommonModule } from "@angular/common";
 import { StatusTagComponent } from "../status-tag/status-tag.component";
 import { CloseButtonComponent } from "../close-button/close-button.component";
 import { DataState } from "../../../core/services/data-source.service";
@@ -33,7 +32,7 @@ import {
 @Component({
   selector: "app-data-source-banner",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, StatusTagComponent, CloseButtonComponent],
+  imports: [StatusTagComponent, CloseButtonComponent],
   template: `
     @if (shouldShow()) {
       <div

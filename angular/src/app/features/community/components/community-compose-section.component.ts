@@ -1,4 +1,3 @@
-import { CommonModule } from "@angular/common";
 import { ChangeDetectionStrategy, Component, input, output } from "@angular/core";
 import { AvatarComponent } from "../../../shared/components/avatar/avatar.component";
 import { TextareaComponent } from "../../../shared/components/textarea/textarea.component";
@@ -12,7 +11,6 @@ import { ButtonComponent } from "../../../shared/components/button/button.compon
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CommonModule,
     AvatarComponent,
     TextareaComponent,
     Tooltip,

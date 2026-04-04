@@ -1,8 +1,9 @@
-import { CommonModule } from "@angular/common";
 import {
   ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
   forwardRef,
+  inject,
   input,
   output,
   signal,
@@ -10,7 +11,7 @@ import {
   ViewEncapsulation,
 } from "@angular/core";
 import { ControlValueAccessor, NG_VALUE_ACCESSOR, FormsModule } from "@angular/forms";
-import { InputNumberModule, InputNumberInputEvent } from "primeng/inputnumber";
+import { InputNumberModule } from "primeng/inputnumber";
 
 @Component({
   selector: "app-input-number",
@@ -18,7 +19,7 @@ import { InputNumberModule, InputNumberInputEvent } from "primeng/inputnumber";
   changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.None,
   host: { class: "app-input-number-host" },
-  imports: [CommonModule, InputNumberModule, FormsModule],
+  imports: [InputNumberModule, FormsModule],
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,
@@ -37,7 +38,8 @@ import { InputNumberModule, InputNumberInputEvent } from "primeng/inputnumber";
         </label>
       }
       <p-inputNumber
-        [(ngModel)]="value"
+        [ngModel]="innerValue"
+        (ngModelChange)="onInnerNgModelChange($event)"
         [min]="min()"
         [max]="max()"
         [step]="step()"
@@ -54,7 +56,6 @@ import { InputNumberModule, InputNumberInputEvent } from "primeng/inputnumber";
         [suffix]="suffix()"
         [minFractionDigits]="minFractionDigits()"
         [maxFractionDigits]="maxFractionDigits()"
-        (onInput)="onInputValueChange($event)"
         (onBlur)="onBlur()"
       ></p-inputNumber>
       @if (hint()) {
@@ -73,6 +74,8 @@ import { InputNumberModule, InputNumberInputEvent } from "primeng/inputnumber";
   `]
 })
 export class InputNumberComponent implements ControlValueAccessor {
+  private readonly cdr = inject(ChangeDetectorRef);
+
   // Inputs
   label = input<string>("");
   placeholder = input<string>("");
@@ -98,8 +101,11 @@ export class InputNumberComponent implements ControlValueAccessor {
   change = output<number | null>();
   valueChange = output<number | null>();
 
-  // Internal
-  protected value = signal<number | null>(null);
+  /**
+   * Plain value — NgModel + p-inputNumber does not work with WritableSignal
+   * two-way binding.
+   */
+  protected innerValue: number | null = null;
   private _cvaDisabled = signal(false);
 
   protected isDisabled = computed(() => this.disabled() || this._cvaDisabled());
@@ -108,11 +114,12 @@ export class InputNumberComponent implements ControlValueAccessor {
   private onModelChange: (value: number | null) => void = () => {};
   private onModelTouched: () => void = () => {};
 
-  onInputValueChange(event: InputNumberInputEvent): void {
-    const val = event.value as number | null;
+  onInnerNgModelChange(val: number | null): void {
+    this.innerValue = val;
     this.onModelChange(val);
     this.change.emit(val);
     this.valueChange.emit(val);
+    this.cdr.markForCheck();
   }
 
   onBlur(): void {
@@ -120,7 +127,8 @@ export class InputNumberComponent implements ControlValueAccessor {
   }
 
   writeValue(value: number | null): void {
-    this.value.set(value);
+    this.innerValue = value;
+    this.cdr.markForCheck();
   }
 
   registerOnChange(fn: (value: number | null) => void): void {

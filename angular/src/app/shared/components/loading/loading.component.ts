@@ -1,5 +1,4 @@
 import { Component, input, ChangeDetectionStrategy } from "@angular/core";
-import { CommonModule } from "@angular/common";
 import { ProgressSpinner } from "primeng/progressspinner";
 import { SkeletonLoaderComponent } from "../skeleton-loader/skeleton-loader.component";
 
@@ -14,7 +13,7 @@ export type LoadingVariant = "spinner" | "skeleton" | "overlay" | "inline";
 @Component({
   selector: "app-loading",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, ProgressSpinner, SkeletonLoaderComponent],
+  imports: [ProgressSpinner, SkeletonLoaderComponent],
   template: `
     @if (visible()) {
       <div

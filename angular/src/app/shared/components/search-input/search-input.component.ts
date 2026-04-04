@@ -1,4 +1,3 @@
-import { CommonModule } from "@angular/common";
 import {
   ChangeDetectionStrategy,
   Component,
@@ -26,7 +25,7 @@ import { IconButtonComponent } from "../button/icon-button.component";
 @Component({
   selector: "app-search-input",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, InputText, IconButtonComponent],
+  imports: [InputText, IconButtonComponent],
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,

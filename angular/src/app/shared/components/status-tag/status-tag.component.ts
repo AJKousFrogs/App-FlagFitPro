@@ -31,8 +31,6 @@ import {
   computed,
   ChangeDetectionStrategy,
 } from "@angular/core";
-import { CommonModule } from "@angular/common";
-
 export type StatusTagSeverity =
   | "success"
   | "warning"
@@ -46,7 +44,7 @@ export type StatusTagSeverity =
 @Component({
   selector: "app-status-tag",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule],
+  imports: [],
   template: `
     <span
       [class]="tagClass()"

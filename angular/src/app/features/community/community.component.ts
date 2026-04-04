@@ -1,5 +1,4 @@
 import { ScrollingModule } from "@angular/cdk/scrolling";
-import { CommonModule } from "@angular/common";
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -157,7 +156,6 @@ type PostMedia = Post["media"];
   selector: "app-community",
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CommonModule,
     RouterModule,
     ScrollingModule,
     AppDialogComponent,

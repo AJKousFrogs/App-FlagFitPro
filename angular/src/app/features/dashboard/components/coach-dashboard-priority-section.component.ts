@@ -1,5 +1,4 @@
 import { ChangeDetectionStrategy, Component, input, output } from "@angular/core";
-import { CommonModule } from "@angular/common";
 import { RouterModule } from "@angular/router";
 import { AvatarComponent } from "../../../shared/components/avatar/avatar.component";
 import { BadgeComponent } from "../../../shared/components/badge/badge.component";
@@ -14,7 +13,6 @@ import { RiskMeaning } from "../../../core/semantics/semantic-meaning.types";
   selector: "app-coach-dashboard-priority-section",
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CommonModule,
     RouterModule,
     AvatarComponent,
     BadgeComponent,

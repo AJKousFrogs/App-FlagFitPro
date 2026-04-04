@@ -1,4 +1,3 @@
-import { CommonModule } from "@angular/common";
 import { ChangeDetectionStrategy, Component, input, output } from "@angular/core";
 import { Tooltip } from "primeng/tooltip";
 import { ButtonComponent } from "../../../../shared/components/button/button.component";
@@ -28,7 +27,7 @@ export interface ScoutingOpponentProfileView {
 @Component({
   selector: "app-scouting-opponents-section",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, Tooltip, ButtonComponent, CardShellComponent, EmptyStateComponent],
+  imports: [Tooltip, ButtonComponent, CardShellComponent, EmptyStateComponent],
   templateUrl: "./scouting-opponents-section.component.html",
   styleUrl: "./scouting-opponents-section.component.scss",
 })

@@ -6,8 +6,6 @@
  *
  * Design System Compliant (DESIGN_SYSTEM_RULES.md)
  */
-
-import { CommonModule } from "@angular/common";
 import {
   ChangeDetectionStrategy,
   Component,
@@ -43,7 +41,6 @@ import { PlaybookQuizDialogContentComponent } from "./components/playbook-quiz-d
   selector: "app-playbook",
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CommonModule,
     MainLayoutComponent,
     AppDialogComponent,
     DialogFooterComponent,

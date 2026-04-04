@@ -1,4 +1,3 @@
-import { CommonModule } from "@angular/common";
 import {
   ChangeDetectionStrategy,
   Component,
@@ -17,7 +16,6 @@ import { getTimeAgo } from "../../../shared/utils/date.utils";
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CommonModule,
     AppDialogComponent,
     DialogHeaderComponent,
     ButtonComponent,

@@ -10,6 +10,7 @@
     <div class="header-actions">
       <div class="header-stats">
         <button
+          type="button"
           class="stat-pill stat-pill-interactive"
           pTooltip="Browse all training videos"
           tooltipPosition="bottom"
@@ -21,6 +22,7 @@
           <i class="pi pi-chevron-down stat-action-icon"></i>
         </button>
         <button
+          type="button"
           class="stat-pill stat-pill-interactive"
           pTooltip="View all creators"
           tooltipPosition="bottom"
@@ -59,6 +61,7 @@
     <div class="filter-chips">
       @for (chip of positionChips(); track chip.value) {
         <button
+          type="button"
           class="filter-chip"
           [class.active]="chip.active"
           (click)="togglePositionFilter.emit(chip)"
@@ -82,6 +85,7 @@
     <div class="filter-chips scrollable">
       @for (chip of focusChips(); track chip.value) {
         <button
+          type="button"
           class="filter-chip"
           [class.active]="chip.active"
           (click)="toggleFocusFilter.emit(chip)"

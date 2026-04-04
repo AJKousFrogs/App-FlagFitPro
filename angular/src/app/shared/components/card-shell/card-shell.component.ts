@@ -6,8 +6,6 @@ import {
   signal,
   ChangeDetectionStrategy,
 } from "@angular/core";
-import { CommonModule } from "@angular/common";
-
 /**
  * Card Shell Component - Unified Card Container
  *
@@ -50,7 +48,7 @@ import { CommonModule } from "@angular/common";
 @Component({
   selector: "app-card-shell",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule],
+  imports: [],
   template: `
     <article
       [class]="shellClass()"

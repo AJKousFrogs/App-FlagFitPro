@@ -8,10 +8,43 @@
     linear-gradient(180deg, var(--surface-page-dark, #070c0a) 0%, rgba(9, 15, 12, 0.94) 100%);
 }
 
+.onboarding-step-anim {
+  display: block;
+  will-change: opacity, transform;
+  /* Angular step animations can block clicks on children during/after transition */
+  pointer-events: auto;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .onboarding-step-anim {
+    will-change: auto;
+  }
+}
+
 .onboarding-page {
   width: 100%;
   max-width: 72rem;
   margin: 0 auto;
+
+  /* Flatten selectable primitives (hairline border + soft lift vs heavy border-2) */
+  .user-type-option,
+  .unit-option,
+  .arm-option,
+  .goal-card,
+  .day-chip,
+  .equipment-card,
+  .preference-card {
+    border-width: var(--border-1);
+    border-style: solid;
+    box-shadow:
+      0 1px 2px rgba(0, 0, 0, 0.04),
+      0 1px 3px rgba(0, 0, 0, 0.06);
+  }
+
+  .user-type-option .type-content {
+    flex: 1;
+    min-width: 0;
+  }
 
   .onboarding-card {
     margin-top: 0;
@@ -1096,11 +1129,14 @@
 
   /* Consent Section */
   .consent-section {
+    position: relative;
+    z-index: 2;
     margin: var(--space-6) 0;
     padding: var(--space-6);
     background: var(--surface-secondary);
     border-radius: var(--radius-xl);
     border: var(--border-1) solid var(--color-border-secondary);
+    pointer-events: auto;
   }
 
   .consent-title {
@@ -1138,6 +1174,7 @@
     @include card-transition;
     position: relative;
     z-index: 1;
+    pointer-events: auto;
 
     &.required {
       border-left: var(--space-0-75) solid var(--ds-primary-green);
@@ -1303,6 +1340,10 @@
     $padding: var(--space-5),
     $gap: var(--space-3)
   );
+  border-width: var(--border-1);
+  box-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.04),
+    0 1px 3px rgba(0, 0, 0, 0.06);
   font-size: var(--ds-font-size-md);
 }
 
@@ -1440,12 +1481,6 @@
 
   .onboarding-page .step-header h3 {
     font-size: clamp(var(--ds-font-size-xl), 6vw, var(--ds-font-size-2xl));
-  }
-
-  .progress-section {
-    grid-template-columns: 1fr;
-    align-items: flex-start;
-    padding: var(--component-card-padding-compact);
   }
 
   .completion-checklist {

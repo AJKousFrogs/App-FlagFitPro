@@ -1,5 +1,4 @@
 import { ChangeDetectionStrategy, Component, inject } from "@angular/core";
-import { CommonModule } from "@angular/common";
 import { SelectComponent } from "../../../shared/components/select/select.component";
 import {
   SCHEDULE_TYPES,
@@ -11,7 +10,7 @@ import { OnboardingStateService } from "../services/onboarding-state.service";
 @Component({
   selector: "app-onboarding-step-schedule",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, SelectComponent],
+  imports: [SelectComponent],
   template: `
     <div class="step-content animate-fade-in">
       <div class="step-header">

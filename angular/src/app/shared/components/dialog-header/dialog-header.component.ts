@@ -1,4 +1,3 @@
-import { CommonModule } from "@angular/common";
 import {
   ChangeDetectionStrategy,
   Component,
@@ -37,7 +36,7 @@ import { CloseButtonComponent } from "../close-button/close-button.component";
 @Component({
   selector: "app-dialog-header",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, CloseButtonComponent],
+  imports: [CloseButtonComponent],
   template: `
     <div class="dialog-header" [class.danger-header]="danger()">
       <div class="dialog-icon" [class.danger-icon]="danger()">

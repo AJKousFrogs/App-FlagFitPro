@@ -6,8 +6,6 @@
  *
  * Design System Compliant (DESIGN_SYSTEM_RULES.md)
  */
-
-import { CommonModule } from "@angular/common";
 import {
   ChangeDetectionStrategy,
   Component,
@@ -101,7 +99,6 @@ const ROUTES = [
   selector: "app-playbook-manager",
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CommonModule,
     AppDialogComponent,
     DialogFooterComponent,
     DialogHeaderComponent,

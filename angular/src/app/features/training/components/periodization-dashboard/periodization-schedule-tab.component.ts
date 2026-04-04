@@ -1,4 +1,3 @@
-import { CommonModule } from "@angular/common";
 import { ChangeDetectionStrategy, Component, input } from "@angular/core";
 
 import { WeeklyTrainingTemplate } from "../../../../core/services/flag-football-periodization.service";
@@ -8,7 +7,7 @@ import { StatusTagComponent } from "../../../../shared/components/status-tag/sta
   selector: "app-periodization-schedule-tab",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, StatusTagComponent],
+  imports: [StatusTagComponent],
   templateUrl: "./periodization-schedule-tab.component.html",
   styleUrl: "./periodization-schedule-tab.component.scss",
 })

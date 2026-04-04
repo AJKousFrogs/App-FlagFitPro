@@ -1,4 +1,3 @@
-import { CommonModule } from "@angular/common";
 import {
   ChangeDetectionStrategy,
   Component,
@@ -14,7 +13,7 @@ export type CloseButtonTone = "default" | "inverse" | "danger";
 @Component({
   selector: "app-close-button",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, Tooltip],
+  imports: [Tooltip],
   template: `
     <button
       type="button"

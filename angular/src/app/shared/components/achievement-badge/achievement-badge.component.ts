@@ -30,7 +30,6 @@ import {
   computed,
   ChangeDetectionStrategy,
 } from "@angular/core";
-import { CommonModule } from "@angular/common";
 import { Tooltip } from "primeng/tooltip";
 
 export type BadgeTier = "bronze" | "silver" | "gold" | "platinum" | "diamond";
@@ -39,7 +38,7 @@ export type BadgeRarity = "common" | "uncommon" | "rare" | "epic" | "legendary";
 @Component({
   selector: "app-achievement-badge",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, Tooltip],
+  imports: [Tooltip],
   template: `
     <div
       class="achievement-badge"

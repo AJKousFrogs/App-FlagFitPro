@@ -7,8 +7,6 @@
  *
  * Design System Compliant (DESIGN_SYSTEM_RULES.md)
  */
-
-import { CommonModule } from "@angular/common";
 import {
   ChangeDetectionStrategy,
   Component,
@@ -103,7 +101,6 @@ const PRACTICE_DURATIONS = [
   selector: "app-ai-scheduler",
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CommonModule,
     CardShellComponent,
     ProgressBar,
     SelectComponent,

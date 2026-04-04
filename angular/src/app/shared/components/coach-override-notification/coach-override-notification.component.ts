@@ -9,8 +9,6 @@
  * 4. Who is responsible now
  * 5. What happens next
  */
-
-import { CommonModule } from "@angular/common";
 import {
   ChangeDetectionStrategy,
   Component,
@@ -36,7 +34,6 @@ import { DialogHeaderComponent } from "../dialog-header/dialog-header.component"
   selector: "app-coach-override-notification",
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CommonModule,
     RouterModule,
     ButtonComponent,
     CoachOverrideBadgeComponent,

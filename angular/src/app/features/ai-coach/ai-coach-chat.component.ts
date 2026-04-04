@@ -39,6 +39,7 @@ import {
 } from "../../shared/components/ai-mode-explanation/ai-mode-explanation.component";
 import { CloseButtonComponent } from "../../shared/components/close-button/close-button.component";
 import { AppDialogComponent } from "../../shared/components/dialog/dialog.component";
+import { AppLoadingComponent } from "../../shared/components/loading/loading.component";
 import { IconButtonComponent } from "../../shared/components/button/icon-button.component";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { MicroSessionComponent } from "../../shared/components/micro-session/micro-session.component";
@@ -125,6 +126,7 @@ interface AutocompleteSuggestion {
   imports: [
     ReactiveFormsModule,
     AppDialogComponent,
+    AppLoadingComponent,
     MainLayoutComponent,
     IconButtonComponent,
     CloseButtonComponent,
