@@ -13,7 +13,7 @@ import {
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { FormControl, ReactiveFormsModule } from "@angular/forms";
-import { Select, type SelectChangeEvent } from "primeng/select";
+import { SelectComponent } from "../../../shared/components/select/select.component";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { IconButtonComponent } from "../../../shared/components/button/icon-button.component";
 import { SearchInputComponent } from "../../../shared/components/search-input/search-input.component";
@@ -24,7 +24,7 @@ import { POSITION_FILTER_OPTIONS, STATUS_OPTIONS } from "../roster.models";
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ReactiveFormsModule,
-    Select,
+    SelectComponent,
     ButtonComponent,
     IconButtonComponent,
     SearchInputComponent,
@@ -40,21 +40,21 @@ import { POSITION_FILTER_OPTIONS, STATUS_OPTIONS } from "../roster.models";
       />
 
       <div class="filter-group">
-        <p-select
+        <app-select
           [options]="positionOptions"
           placeholder="All Positions"
           [showClear]="true"
-          class="filter-select"
-          (onChange)="onPositionFilterSelect($event)"
-        ></p-select>
+          styleClass="filter-select"
+          (change)="onPositionFilterSelect($event)"
+        />
 
-        <p-select
+        <app-select
           [options]="statusOptions"
           placeholder="All Status"
           [showClear]="true"
-          class="filter-select"
-          (onChange)="onStatusFilterSelect($event)"
-        ></p-select>
+          styleClass="filter-select"
+          (change)="onStatusFilterSelect($event)"
+        />
       </div>
 
       <!-- Bulk Actions -->
@@ -130,8 +130,8 @@ export class RosterFiltersComponent {
     this.positionFilterChange.emit(nextValue);
   }
 
-  onPositionFilterSelect(event: SelectChangeEvent): void {
-    this.onPositionFilterChange((event.value as string | null | undefined) ?? null);
+  onPositionFilterSelect(value: string | null | undefined): void {
+    this.onPositionFilterChange(value ?? null);
   }
 
   onStatusFilterChange(value: string | null | undefined): void {
@@ -140,7 +140,7 @@ export class RosterFiltersComponent {
     this.statusFilterChange.emit(nextValue);
   }
 
-  onStatusFilterSelect(event: SelectChangeEvent): void {
-    this.onStatusFilterChange((event.value as string | null | undefined) ?? null);
+  onStatusFilterSelect(value: string | null | undefined): void {
+    this.onStatusFilterChange(value ?? null);
   }
 }

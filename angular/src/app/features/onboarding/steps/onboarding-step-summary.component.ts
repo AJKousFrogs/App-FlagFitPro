@@ -1,14 +1,15 @@
 import { ChangeDetectionStrategy, Component, inject, output } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { RouterLink } from "@angular/router";
-import { CheckboxModule, type CheckboxChangeEvent } from "primeng/checkbox";
+import { type CheckboxChangeEvent } from "primeng/checkbox";
+import { CheckboxComponent } from "../../../shared/components/checkbox/checkbox.component";
 import { FormsModule } from "@angular/forms";
 import { OnboardingStateService } from "../services/onboarding-state.service";
 
 @Component({
   selector: "app-onboarding-step-summary",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, RouterLink, CheckboxModule, FormsModule],
+  imports: [CommonModule, RouterLink, CheckboxComponent, FormsModule],
   template: `
     <div class="step-content animate-fade-in">
       <div class="step-header">
@@ -175,62 +176,82 @@ import { OnboardingStateService } from "../services/onboarding-state.service";
         <div class="consent-list">
           <div class="consent-item required">
             <div class="consent-checkbox-wrapper">
-              <p-checkbox [value]="state.formData.consentTermsOfService" [binary]="true" variant="filled"
-                inputId="consent-terms" name="consentTermsOfService"
-                (onChange)="onConsentTermsChange($event)" />
-              <label for="consent-terms" class="consent-label">
-                I accept the <a [routerLink]="['/terms']" target="_blank" class="consent-link" (click)="$event.stopPropagation()">Terms of Service</a>
-                <span class="required-indicator">*</span>
-              </label>
+              <app-checkbox
+                [ngModel]="state.formData.consentTermsOfService"
+                [binary]="true"
+                inputId="consent-terms"
+                (change)="onConsentTermsChange($event)"
+              >
+                <span class="consent-label">
+                  I accept the <a [routerLink]="['/terms']" target="_blank" class="consent-link" (click)="$event.stopPropagation()">Terms of Service</a>
+                  <span class="required-indicator">*</span>
+                </span>
+              </app-checkbox>
             </div>
           </div>
 
           <div class="consent-item required">
             <div class="consent-checkbox-wrapper">
-              <p-checkbox [value]="state.formData.consentPrivacyPolicy" [binary]="true" variant="filled"
-                inputId="consent-privacy" name="consentPrivacyPolicy"
-                (onChange)="onConsentPrivacyChange($event)" />
-              <label for="consent-privacy" class="consent-label">
-                I accept the <a [routerLink]="['/privacy']" target="_blank" class="consent-link" (click)="$event.stopPropagation()">Privacy Policy</a>
-                <span class="required-indicator">*</span>
-              </label>
+              <app-checkbox
+                [ngModel]="state.formData.consentPrivacyPolicy"
+                [binary]="true"
+                inputId="consent-privacy"
+                (change)="onConsentPrivacyChange($event)"
+              >
+                <span class="consent-label">
+                  I accept the <a [routerLink]="['/privacy']" target="_blank" class="consent-link" (click)="$event.stopPropagation()">Privacy Policy</a>
+                  <span class="required-indicator">*</span>
+                </span>
+              </app-checkbox>
             </div>
           </div>
 
           <div class="consent-item required">
             <div class="consent-checkbox-wrapper">
-              <p-checkbox [value]="state.formData.consentDataUsage" [binary]="true" variant="filled"
-                inputId="consent-data" name="consentDataUsage"
-                (onChange)="onConsentDataUsageChange($event)" />
-              <label for="consent-data" class="consent-label">
-                I consent to my data being used to personalize my training experience
-                <span class="consent-hint">(required for app functionality)</span>
-                <span class="required-indicator">*</span>
-              </label>
+              <app-checkbox
+                [ngModel]="state.formData.consentDataUsage"
+                [binary]="true"
+                inputId="consent-data"
+                (change)="onConsentDataUsageChange($event)"
+              >
+                <span class="consent-label">
+                  I consent to my data being used to personalize my training experience
+                  <span class="consent-hint">(required for app functionality)</span>
+                  <span class="required-indicator">*</span>
+                </span>
+              </app-checkbox>
             </div>
           </div>
 
           <div class="consent-item optional">
             <div class="consent-checkbox-wrapper">
-              <p-checkbox [value]="state.formData.consentAICoach" [binary]="true" variant="filled"
-                inputId="consent-ai" name="consentAICoach"
-                (onChange)="onConsentAiCoachChange($event)" />
-              <label for="consent-ai" class="consent-label">
-                I consent to Merlin AI providing personalized advice based on my training and wellness data
-                <span class="consent-hint">(optional)</span>
-              </label>
+              <app-checkbox
+                [ngModel]="state.formData.consentAICoach"
+                [binary]="true"
+                inputId="consent-ai"
+                (change)="onConsentAiCoachChange($event)"
+              >
+                <span class="consent-label">
+                  I consent to Merlin AI providing personalized advice based on my training and wellness data
+                  <span class="consent-hint">(optional)</span>
+                </span>
+              </app-checkbox>
             </div>
           </div>
 
           <div class="consent-item optional">
             <div class="consent-checkbox-wrapper">
-              <p-checkbox [value]="state.formData.consentEmailUpdates" [binary]="true" variant="filled"
-                inputId="consent-email" name="consentEmailUpdates"
-                (onChange)="onConsentEmailUpdatesChange($event)" />
-              <label for="consent-email" class="consent-label">
-                I want to receive email updates about new features and tips
-                <span class="consent-hint">(optional)</span>
-              </label>
+              <app-checkbox
+                [ngModel]="state.formData.consentEmailUpdates"
+                [binary]="true"
+                inputId="consent-email"
+                (change)="onConsentEmailUpdatesChange($event)"
+              >
+                <span class="consent-label">
+                  I want to receive email updates about new features and tips
+                  <span class="consent-hint">(optional)</span>
+                </span>
+              </app-checkbox>
             </div>
           </div>
         </div>

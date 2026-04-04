@@ -57,14 +57,14 @@ async function login(page: Page): Promise<void> {
   await dismissCookieBanner(page);
 
   const emailInput = page.locator(
-    'input[type="email"], [data-testid="email-input"]',
+    '[data-testid="email-input"] input, input[type="email"]',
   );
   await emailInput.click();
   await emailInput.fill(TEST_USER.email);
   await emailInput.press("Tab");
 
   const passwordInput = page.locator(
-    'input[type="password"], [data-testid="password-input"]',
+    '[data-testid="password-input"] input, input[type="password"]',
   );
   await passwordInput.click();
   await passwordInput.fill(TEST_USER.password);

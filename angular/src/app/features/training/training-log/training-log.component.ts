@@ -37,8 +37,7 @@ import { AlertComponent } from "../../../shared/components/alert/alert.component
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { Slider } from "primeng/slider";
 import { InputNumber } from "primeng/inputnumber";
-
-import { Textarea } from "primeng/textarea";
+import { TextareaComponent } from "../../../shared/components/textarea/textarea.component";
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";
 import { CardShellComponent } from "../../../shared/components/card-shell/card-shell.component";
@@ -76,7 +75,7 @@ interface ExistingTrainingSession {
     ReactiveFormsModule,
     Slider,
     InputNumber,
-    Textarea,
+    TextareaComponent,
 
     MainLayoutComponent,
     PageHeaderComponent,
@@ -343,12 +342,11 @@ interface ExistingTrainingSession {
             <!-- Notes -->
             <app-card-shell title="Notes" headerIcon="pi-pencil">
               <div class="form-field">
-                <textarea
-                  pTextarea
+                <app-textarea
                   formControlName="notes"
                   [rows]="4"
                   placeholder="Add any notes about this session (injuries, fatigue, weather, etc.)"
-                ></textarea>
+                ></app-textarea>
               </div>
             </app-card-shell>
           }

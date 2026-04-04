@@ -12,7 +12,8 @@ import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { ActivatedRoute, ParamMap, Router, RouterModule } from "@angular/router";
-import { Checkbox, type CheckboxChangeEvent } from "primeng/checkbox";
+import { type CheckboxChangeEvent } from "primeng/checkbox";
+import { CheckboxComponent } from "../../../shared/components/checkbox/checkbox.component";
 import { DatePicker } from "primeng/datepicker";
 import { Skeleton } from "primeng/skeleton";
 
@@ -88,7 +89,7 @@ interface MonthlyStats {
     FormsModule,
     DatePicker,
     Skeleton,
-    Checkbox,
+    CheckboxComponent,
     MainLayoutComponent,
     PageHeaderComponent,
     AlertComponent,

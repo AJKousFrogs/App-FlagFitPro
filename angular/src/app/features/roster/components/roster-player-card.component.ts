@@ -16,10 +16,12 @@ import {
   ChangeDetectionStrategy,
 } from "@angular/core";
 import { TitleCasePipe, DecimalPipe } from "@angular/common";
+import { FormsModule } from "@angular/forms";
 
-import { Checkbox, type CheckboxChangeEvent } from "primeng/checkbox";
+import { type CheckboxChangeEvent } from "primeng/checkbox";
+import { CheckboxComponent } from "../../../shared/components/checkbox/checkbox.component";
 import { Tooltip } from "primeng/tooltip";
-import { ProgressBar } from "primeng/progressbar";
+import { ProgressBarComponent } from "../../../shared/components/progress-bar/progress-bar.component";
 import { IconButtonComponent } from "../../../shared/components/button/icon-button.component";
 import { CardShellComponent } from "../../../shared/components/card-shell/card-shell.component";
 import { SemanticMeaningRendererComponent } from "../../../shared/components/semantic-meaning-renderer/semantic-meaning-renderer.component";
@@ -47,9 +49,10 @@ import { TRAINING } from "../../../core/constants/app.constants";
   selector: "app-roster-player-card",
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    Checkbox,
+    FormsModule,
+    CheckboxComponent,
     Tooltip,
-    ProgressBar,
+    ProgressBarComponent,
     TitleCasePipe,
     DecimalPipe,
     CardShellComponent,
@@ -69,12 +72,11 @@ import { TRAINING } from "../../../core/constants/app.constants";
       <!-- Selection Checkbox (Coach+ only) -->
       @if (canManage()) {
         <div class="card-checkbox">
-          <p-checkbox
+          <app-checkbox
             [binary]="true"
-            variant="filled"
-            [value]="isSelected()"
-            (onChange)="onSelectionToggleChange($event)"
-          ></p-checkbox>
+            [ngModel]="isSelected()"
+            (change)="onSelectionToggleChange($event)"
+          />
         </div>
       }
 
@@ -138,14 +140,11 @@ import { TRAINING } from "../../../core/constants/app.constants";
               }
             </span>
           </div>
-          <p-progressBar
+          <app-progress-bar
             [value]="enrichedPlayer().readiness ?? 0"
             [showValue]="false"
-            [class]="
-              'readiness-bar ' +
-              getReadinessClass(enrichedPlayer().readiness ?? 0)
-            "
-          ></p-progressBar>
+            [styleClass]="'readiness-bar ' + getReadinessClass(enrichedPlayer().readiness ?? 0)"
+          />
         </div>
 
         <!-- ACWR -->

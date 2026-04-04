@@ -18,6 +18,9 @@
 /* TIER 1: Tokens + design-system typography/states/utilities (single source) */
 @use "./scss/design-system/index" as *;
 @use "./scss/design-system/elite-phase2-auth";
+/* Command-center ECC aliases + page layout grids (critical; previously deferred — Phase 0) */
+@use "./scss/design-system/elite-command-center.tokens" as *;
+@use "./scss/design-system/elite-phase2-layout" as *;
 /* TIER 2: Utilities - mixins, responsive, layout, typography-system */
 @use "./scss/utilities" as *;
 @use "./assets/fonts/poppins";
@@ -37,11 +40,20 @@
 
 /* TIER 4: Always-on page accessibility fixes */
 @use "./scss/pages/color-contrast-fixes";
+@use "./scss/pages/page-primeng-overrides";
 
 /* TIER 5: Always-on overrides required for accessibility and platform behavior */
 @use "./assets/styles/overrides/exceptions";
 @use "./assets/styles/overrides/color-guards";
 @use "./scss/components/modern-overrides" as *;
+@use "./scss/components/view-transitions";
+
+/*
+ * Canonical @layer order — must match providePrimeNG({ theme: { options: { cssLayer: { order }}}})
+ * in app.config.ts. Establishes cascade between PrimeNG base, design-system layers, and overrides.
+ */
+@layer reset, tokens, primeng-base, primeng-brand, primitives, components, utilities, mobile, features,
+  overrides;
 
 /* ============================================
    ALL @IMPORT RULES (Must come after @use)

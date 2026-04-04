@@ -23,10 +23,11 @@ import { AppDialogComponent } from "../../../shared/components/dialog/dialog.com
 import { DialogHeaderComponent } from "../../../shared/components/dialog-header/dialog-header.component";
 import { DialogFooterComponent } from "../../../shared/components/dialog-footer/dialog-footer.component";
 import { InputNumber } from "primeng/inputnumber";
-import { InputText } from "primeng/inputtext";
 import { ProgressBar } from "primeng/progressbar";
-import { Select, type SelectChangeEvent } from "primeng/select";
+import { type SelectChangeEvent } from "primeng/select";
 import { Slider } from "primeng/slider";
+import { SelectComponent } from "../../../shared/components/select/select.component";
+import { TextareaComponent } from "../../../shared/components/textarea/textarea.component";
 
 import { StatusTagComponent } from "../../../shared/components/status-tag/status-tag.component";
 import { EmptyStateComponent } from "../../../shared/components/empty-state/empty-state.component";
@@ -95,10 +96,10 @@ interface SessionTypeOption {
     DialogHeaderComponent,
     DialogFooterComponent,
     InputNumber,
-    InputText,
     ProgressBar,
-    Select,
+    SelectComponent,
     Slider,
+    TextareaComponent,
     StatusTagComponent,
 
     Tooltip,
@@ -360,15 +361,15 @@ interface SessionTypeOption {
         <!-- Session Type -->
         <div class="form-field">
           <label>Session Type *</label>
-          <p-select
+          <app-select
             [options]="sessionTypes"
             [ngModel]="formData.sessionType"
             (onChange)="onSessionTypeSelect($event)"
             optionLabel="label"
             optionValue="value"
             placeholder="Select type"
-            class="w-full"
-          ></p-select>
+            styleClass="w-full"
+          ></app-select>
         </div>
 
         <!-- Total Throws -->
@@ -481,14 +482,11 @@ interface SessionTypeOption {
         <!-- Notes -->
         <div class="form-field">
           <label>Notes / Mechanics Focus</label>
-          <textarea
-            pInputText
+          <app-textarea
             [value]="formData.notes"
-            (input)="onNotesInput($event)"
-            rows="2"
+            (valueChange)="onNotesChange($event)"
             placeholder="What did you work on?"
-            class="w-full"
-          ></textarea>
+          />
         </div>
       </div>
 
@@ -651,18 +649,6 @@ export class QbThrowingTrackerComponent {
 
   onNotesChange(value: string): void {
     this.updateFormData({ notes: value });
-  }
-
-  onNotesInput(event: Event): void {
-    this.onNotesChange(this.readInputValue(event));
-  }
-
-  private readInputValue(event: Event): string {
-    const target = event.target;
-    if (target instanceof HTMLInputElement || target instanceof HTMLTextAreaElement) {
-      return target.value;
-    }
-    return "";
   }
 
   private readChecked(event: Event): boolean {

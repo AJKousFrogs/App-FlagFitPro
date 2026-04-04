@@ -16,20 +16,7 @@
       <!-- Dashboard Content -->
       @if (!isLoading() && !hasError()) {
         <div class="player-dashboard bento-grid">
-          <!-- Priority Status (Full Width) -->
-          <app-player-dashboard-status-stack
-            class="bento-item full-width no-padding"
-            [announcement]="announcement()"
-            [announcementDismissed]="announcementDismissed()"
-            [announcementTimeAgo]="announcementTimeAgo()"
-            [overrideItems]="overrideDisplayItems()"
-            [currentUserId]="currentUserId()"
-            [activeTransitions]="activeTransitions()"
-            [missingWellnessStatus]="missingWellnessStatus()"
-            (dismissAnnouncement)="dismissAnnouncement()"
-          />
-
-          <!-- SECTION 2: Welcome Header (Spans 2 columns) -->
+          <!-- SECTION 1: Welcome Header (Spans 2 columns) -->
           <section class="welcome-section bento-item span-2">
             <div class="welcome-wrapper">
               <div class="merlin-avatar" aria-hidden="true">
@@ -87,6 +74,20 @@
             (navigateToWellness)="navigateToWellness()"
             (navigateToAcwr)="navigateToACWR()"
           />
+
+          <!-- Priority Status (Full Width) — rendered after welcome so stats appear first -->
+          <app-player-dashboard-status-stack
+            class="bento-item full-width no-padding"
+            [announcement]="announcement()"
+            [announcementDismissed]="announcementDismissed()"
+            [announcementTimeAgo]="announcementTimeAgo()"
+            [overrideItems]="overrideDisplayItems()"
+            [currentUserId]="currentUserId()"
+            [activeTransitions]="activeTransitions()"
+            [missingWellnessStatus]="missingWellnessStatus()"
+            (dismissAnnouncement)="dismissAnnouncement()"
+          />
+
 
           <!-- Insights Grid (Spans 2 columns) -->
           @defer (on viewport) {
@@ -171,19 +172,6 @@
             />
           }
 
-          <!-- Critical Wellness Alert (Full Width Bottom) -->
-          @if (missingWellnessStatus()) {
-            <div class="bento-item full-width critical-wellness-card">
-              <app-alert
-                variant="error"
-                title="Critical: Missing Wellness Data"
-                message="Please complete your daily wellness check-in to ensure safe training intensity."
-                icon="pi-exclamation-triangle"
-              >
-                <app-button size="sm" (clicked)="navigateToWellness()">Check-in Now</app-button>
-              </app-alert>
-            </div>
-          }
         </div>
       }
     </app-main-layout>

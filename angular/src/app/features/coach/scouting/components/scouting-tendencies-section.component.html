@@ -1,11 +1,11 @@
 <div class="tendencies-section">
   <div class="section-header">
     <h3>Team Tendencies Analysis</h3>
-    <p-select
+    <app-select
       [options]="filterOptions()"
-      (onChange)="emitFilterChange($event)"
+      (valueChange)="emitFilterChange($event)"
       placeholder="Select opponent"
-    ></p-select>
+    />
   </div>
 
   @if (selectedOpponentId() && tendencies()) {

@@ -1,7 +1,3 @@
-/**
- * Animations Module - Public API
- *
- * Export animations for easy importing
- */
+/** Motion tokens shared with CSS (`scss/utilities/_motion.scss`). */
 
 export * from "./app.animations";

@@ -47,11 +47,11 @@
               {{ loadRecommendation()?.loadRange?.[1] || 0 }} AU</span
             >
           </div>
-          <p-progressBar
+          <app-progress-bar
             [value]="getLoadProgress()"
             [showValue]="false"
-            class="load-bar"
-          ></p-progressBar>
+            styleClass="load-bar"
+          />
         </div>
       </div>
 

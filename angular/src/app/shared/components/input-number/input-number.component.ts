@@ -7,6 +7,7 @@ import {
   output,
   signal,
   computed,
+  ViewEncapsulation,
 } from "@angular/core";
 import { ControlValueAccessor, NG_VALUE_ACCESSOR, FormsModule } from "@angular/forms";
 import { InputNumberModule, InputNumberInputEvent } from "primeng/inputnumber";
@@ -15,6 +16,8 @@ import { InputNumberModule, InputNumberInputEvent } from "primeng/inputnumber";
   selector: "app-input-number",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
+  encapsulation: ViewEncapsulation.None,
+  host: { class: "app-input-number-host" },
   imports: [CommonModule, InputNumberModule, FormsModule],
   providers: [
     {
@@ -60,12 +63,12 @@ import { InputNumberModule, InputNumberInputEvent } from "primeng/inputnumber";
     </div>
   `,
   styles: [`
-    :host {
+    .app-input-number-host {
       display: block;
       width: 100%;
     }
-    :host ::ng-deep .p-inputnumber {
-        width: 100%;
+    .app-input-number-host .p-inputnumber {
+      width: 100%;
     }
   `]
 })

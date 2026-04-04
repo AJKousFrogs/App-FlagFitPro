@@ -1,5 +1,4 @@
 import {
-  ANIMATION_MODULE_TYPE,
   ChangeDetectionStrategy,
   Component,
   computed,
@@ -8,7 +7,6 @@ import {
   inject,
   signal,
 } from "@angular/core";
-import { RouterOutlet } from "@angular/router";
 import { CookieConsentBannerComponent } from "./shared/components/cookie-consent-banner/cookie-consent-banner.component";
 import { DeferredFeedbackStylesComponent } from "./shared/components/deferred-feedback-styles/deferred-feedback-styles.component";
 import { DeferredGlobalStylesComponent } from "./shared/components/deferred-global-styles/deferred-global-styles.component";
@@ -17,14 +15,10 @@ import { SkipToContentComponent } from "./shared/components/skip-to-content/skip
 import { ConfirmDialog } from "primeng/confirmdialog";
 import { ToastComponent } from "./shared/components/toast/toast.component";
 import { CookieConsentService } from "./core/services/cookie-consent.service";
-import { MotionPreferencesService } from "./core/services/motion-preferences.service";
 import { RouteEntry, RouteShellService } from "./core/services/route-shell.service";
 import { ThemeService } from "./core/services/theme.service";
 import { ensurePrimeIconsStylesheet } from "./core/utils/primeicons-loader";
-import {
-  routeAnimations,
-  getRouteAnimationState,
-} from "./core/animations/route-animations";
+import { RouterOutlet } from "@angular/router";
 
 @Component({
   selector: "app-root",
@@ -39,19 +33,13 @@ import {
     ConfirmDialog,
     ToastComponent,
   ],
-  animations: [routeAnimations],
   template: `
     <app-skip-to-content />
-    <main
-      id="main-content"
-      tabindex="-1"
-      [@.disabled]="animationsDisabled()"
-      [@routeAnimations]="getRouteAnimationState(outlet)"
-    >
-      <router-outlet #outlet="outlet"></router-outlet>
+    <main id="main-content" tabindex="-1">
+      <router-outlet />
     </main>
     @if (shouldLoadDeferredGlobalStyles()) {
-      @defer (on timer(300ms)) {
+      @defer (on idle) {
         <app-deferred-global-styles />
       }
     }
@@ -64,32 +52,23 @@ import {
     <app-loading-overlay />
     @defer (on idle) {
       <p-confirmDialog></p-confirmDialog>
-      <!-- UX AUDIT FIX: Global toast component - prevents duplicate toasts across components -->
       <app-toast position="top-right" [preventDuplicates]="true"></app-toast>
     }
   `,
   styleUrl: "./app.component.scss",
 })
 export class AppComponent {
-  private readonly animationModuleType = inject(ANIMATION_MODULE_TYPE, {
-    optional: true,
-  });
   private readonly destroyRef = inject(DestroyRef);
   private readonly cookieConsentService = inject(CookieConsentService);
-  private readonly motionPreferencesService = inject(MotionPreferencesService);
   private readonly routeShell = inject(RouteShellService);
-  private readonly prefersReducedMotion = signal(false);
   private readonly cookieBannerReady = signal(false);
   private readonly feedbackStylesReady = signal(false);
   private cookieBannerTimer: number | null = null;
   private feedbackStylesTimer: number | null = null;
 
-  readonly animationsDisabled = computed(
-    () =>
-      this.prefersReducedMotion() ||
-      this.animationModuleType === "NoopAnimations",
+  readonly isLandingRoute = computed(
+    () => this.routeShell.currentPath() === "/",
   );
-  readonly isLandingRoute = computed(() => this.routeShell.currentPath() === "/");
   readonly shouldLoadDeferredGlobalStyles = computed(() => {
     const entry = this.routeShell.entry();
     return entry === "hub" || entry === "internal";
@@ -102,28 +81,14 @@ export class AppComponent {
       this.cookieBannerReady() && this.cookieConsentService.showBanner(),
   );
 
-  // Side-effect: ensures ThemeService initializes on bootstrap so theme (light/dark) applies before first paint
   private readonly _themeService = inject(ThemeService);
 
   constructor() {
     this.applyPlatformClasses();
     this.syncRouteClasses();
     this.initPrimeIconsLoading();
-    this.motionPreferencesService.watchReducedMotion(
-      (prefersReducedMotion) =>
-        this.prefersReducedMotion.set(prefersReducedMotion),
-      this.destroyRef,
-    );
     this.initFeedbackStylesScheduling();
     this.initCookieBannerScheduling();
-  }
-
-  /**
-   * Gets animation state for route transitions
-   * Used by [@routeAnimations] trigger in template
-   */
-  getRouteAnimationState(outlet: RouterOutlet): string {
-    return getRouteAnimationState(outlet);
   }
 
   private applyPlatformClasses(): void {

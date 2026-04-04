@@ -5,7 +5,7 @@ import {
   input,
   output,
 } from "@angular/core";
-import { ProgressBar } from "primeng/progressbar";
+import { ProgressBarComponent } from "../../../shared/components/progress-bar/progress-bar.component";
 import { Tooltip } from "primeng/tooltip";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { CardShellComponent } from "../../../shared/components/card-shell/card-shell.component";
@@ -14,7 +14,7 @@ import { TeamOverviewStats } from "../../../core/services/team-statistics.servic
 @Component({
   selector: "app-coach-dashboard-summary-section",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ButtonComponent, CardShellComponent, ProgressBar, Tooltip, DecimalPipe],
+  imports: [ButtonComponent, CardShellComponent, ProgressBarComponent, Tooltip, DecimalPipe],
   templateUrl: "./coach-dashboard-summary-section.component.html",
   styleUrl: "./coach-dashboard-summary-section.component.scss",
 })

@@ -71,7 +71,7 @@ async function login(page: Page): Promise<void> {
 
   // Fill email
   const emailInput = page.locator(
-    'input[type="email"], [data-testid="email-input"]',
+    '[data-testid="email-input"] input, input[type="email"]',
   );
   await emailInput.click();
   await emailInput.fill(testUser.email);
@@ -79,7 +79,7 @@ async function login(page: Page): Promise<void> {
 
   // Fill password
   const passwordInput = page.locator(
-    'input[type="password"], [data-testid="password-input"]',
+    '[data-testid="password-input"] input, input[type="password"]',
   );
   await passwordInput.click();
   await passwordInput.fill(testUser.password);

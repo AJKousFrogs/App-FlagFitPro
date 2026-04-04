@@ -6,9 +6,10 @@ import {
   model,
   output,
 } from "@angular/core";
-import { InputText } from "primeng/inputtext";
-import { Select, type SelectChangeEvent } from "primeng/select";
-import { Textarea } from "primeng/textarea";
+import { type SelectChangeEvent } from "primeng/select";
+import { FormInputComponent } from "../../../shared/components/form-input/form-input.component";
+import { TextareaComponent } from "../../../shared/components/textarea/textarea.component";
+import { SelectComponent } from "../../../shared/components/select/select.component";
 import { ChannelType } from "../../../core/services/channel.service";
 import { AppDialogComponent } from "../../../shared/components/dialog/dialog.component";
 import { DialogFooterComponent } from "../../../shared/components/dialog-footer/dialog-footer.component";
@@ -30,9 +31,9 @@ export interface ChatChannelCreateRequest {
     AppDialogComponent,
     DialogHeaderComponent,
     DialogFooterComponent,
-    InputText,
-    Textarea,
-    Select,
+    FormInputComponent,
+    TextareaComponent,
+    SelectComponent,
   ],
   templateUrl: "./chat-create-channel-dialog.component.html",
   styleUrl: "./chat-create-channel-dialog.component.scss",
@@ -54,12 +55,12 @@ export class ChatCreateChannelDialogComponent {
     this.resetForm();
   }
 
-  onChannelNameInput(event: Event): void {
-    this.channelName = this.readInputValue(event);
+  onChannelNameInput(value: string): void {
+    this.channelName = value;
   }
 
-  onChannelDescriptionInput(event: Event): void {
-    this.channelDescription = this.readInputValue(event);
+  onChannelDescriptionInput(value: string): void {
+    this.channelDescription = value;
   }
 
   onChannelTypeChange(value: ChannelType | null): void {
@@ -96,17 +97,6 @@ export class ChatCreateChannelDialogComponent {
       channelType: this.channelType,
       position: this.channelPosition,
     });
-  }
-
-  private readInputValue(event: Event): string {
-    const target = event.target;
-    if (
-      target instanceof HTMLInputElement ||
-      target instanceof HTMLTextAreaElement
-    ) {
-      return target.value;
-    }
-    return "";
   }
 
   private resetForm(): void {

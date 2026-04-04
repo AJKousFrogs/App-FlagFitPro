@@ -70,17 +70,6 @@
     }
   }
 
-  /* Stats/Tabs Overrides */
-  ::ng-deep {
-    .stats-bento app-stats-grid .stats-grid {
-      grid-template-columns: repeat(2, 1fr);
-      padding: var(--space-6);
-    }
-    
-    .tabs-bento app-tabs {
-      .p-tabview-panels { background: transparent; }
-    }
-  }
 }
 
 @include respond-to(lg) {

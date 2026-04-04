@@ -32,6 +32,10 @@
 %stat-label {
   font-size: var(--font-label-size);
   color: var(--text-secondary, var(--color-text-secondary));
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
 }
 
 %stat-value {

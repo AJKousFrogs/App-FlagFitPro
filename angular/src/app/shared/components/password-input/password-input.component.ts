@@ -6,7 +6,8 @@ import {
   input,
   output,
   signal,
-  computed
+  computed,
+  ViewEncapsulation,
 } from "@angular/core";
 import { ControlValueAccessor, NG_VALUE_ACCESSOR, FormsModule } from "@angular/forms";
 import { PasswordModule } from "primeng/password";
@@ -62,18 +63,16 @@ import { PasswordModule } from "primeng/password";
     </div>
   `,
   styles: [`
-    :host {
+    .app-password-input-host {
       display: block;
       width: 100%;
     }
     .app-password-input-wrapper {
       width: 100%;
     }
-    :host ::ng-deep .p-password {
-        width: 100%;
-    }
-    :host ::ng-deep .p-password-input {
-        width: 100%;
+    .app-password-input-host .p-password,
+    .app-password-input-host .p-password-input {
+      width: 100%;
     }
   `]
 })

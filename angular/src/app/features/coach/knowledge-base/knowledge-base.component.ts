@@ -24,10 +24,9 @@ import { AppLoadingComponent } from "../../../shared/components/loading/loading.
 import { PageErrorStateComponent } from "../../../shared/components/page-error-state/page-error-state.component";
 import { SearchInputComponent } from "../../../shared/components/search-input/search-input.component";
 
-import { InputText } from "primeng/inputtext";
-import { Select, type SelectChangeEvent } from "primeng/select";
-
-import { Textarea } from "primeng/textarea";
+import { FormInputComponent } from "../../../shared/components/form-input/form-input.component";
+import { SelectComponent } from "../../../shared/components/select/select.component";
+import { TextareaComponent } from "../../../shared/components/textarea/textarea.component";
 import { firstValueFrom } from "rxjs";
 
 import { ApiService, API_ENDPOINTS } from "../../../core/services/api.service";
@@ -138,9 +137,9 @@ const VISIBILITY_OPTIONS = [
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
-    InputText,
-    Select,
-    Textarea,
+    FormInputComponent,
+    SelectComponent,
+    TextareaComponent,
 
     MainLayoutComponent,
     PageHeaderComponent,
@@ -676,50 +675,44 @@ const VISIBILITY_OPTIONS = [
           </div>
 
           <div class="form-field">
-            <label>Title</label>
-            <input
-              type="text"
-              pInputText
+            <app-form-input
+              label="Title"
               [value]="resourceForm.title"
-              (input)="onResourceTitleInput($event)"
+              (valueChange)="onResourceTitleChange($event)"
               placeholder="Resource title"
             />
           </div>
 
           <div class="form-field">
-            <label>Category</label>
-            <p-select
+            <app-select
+              label="Category"
               [options]="categoryOptions"
-              (onChange)="onResourceCategorySelect($event)"
+              (valueChange)="onResourceCategoryChange($event)"
               optionLabel="name"
               optionValue="id"
               placeholder="Select category"
-              class="w-full"
-            ></p-select>
+            />
           </div>
 
           @if (resourceForm.type === "link" || resourceForm.type === "video") {
             <div class="form-field">
-              <label>URL</label>
-              <input
-                type="text"
-                pInputText
+              <app-form-input
+                label="URL"
                 [value]="resourceForm.url"
-                (input)="onResourceUrlInput($event)"
+                (valueChange)="onResourceUrlChange($event)"
                 placeholder="https://..."
               />
             </div>
           }
 
           <div class="form-field">
-            <label>Content / Description</label>
-            <textarea
-              pTextarea
+            <app-textarea
+              label="Content / Description"
               [value]="resourceForm.content"
-              (input)="onResourceContentInput($event)"
-              rows="6"
+              (valueChange)="onResourceContentChange($event)"
+              [rows]="6"
               placeholder="Describe the resource or enter content (Markdown supported)..."
-            ></textarea>
+            />
           </div>
 
           <div class="form-field">
@@ -742,12 +735,10 @@ const VISIBILITY_OPTIONS = [
           </div>
 
           <div class="form-field">
-            <label>Tags (comma separated)</label>
-            <input
-              type="text"
-              pInputText
+            <app-form-input
+              label="Tags (comma separated)"
               [value]="resourceForm.tags"
-              (input)="onResourceTagsInput($event)"
+              (valueChange)="onResourceTagsChange($event)"
               placeholder="playbook, strategy, defense"
             />
           </div>
@@ -807,14 +798,13 @@ const VISIBILITY_OPTIONS = [
               }
             </div>
             <div class="form-field">
-              <label>Reviewer Notes</label>
-              <textarea
-                pTextarea
-                rows="4"
+              <app-textarea
+                label="Reviewer Notes"
+                [rows]="4"
                 [value]="reviewForm.notes"
-                (input)="onReviewNotesInput($event)"
+                (valueChange)="onReviewNotesChange($event)"
                 placeholder="Optional notes (required for override)"
-              ></textarea>
+              />
             </div>
           </div>
         }
@@ -1033,34 +1023,20 @@ export class KnowledgeBaseComponent implements OnInit {
     this.resourceForm = { ...this.resourceForm, title: value };
   }
 
-  onResourceTitleInput(event: Event): void {
-    this.onResourceTitleChange(this.readInputValue(event));
-  }
-
-  onResourceCategoryChange(value: string | null): void {
-    this.resourceForm = { ...this.resourceForm, category: value ?? "" };
-  }
-
-  onResourceCategorySelect(event: SelectChangeEvent): void {
-    this.onResourceCategoryChange(
-      typeof event.value === "string" ? event.value : null,
-    );
+  onResourceCategoryChange(value: unknown): void {
+    const category =
+      typeof value === "object" && value !== null && "id" in value
+        ? String((value as { id: string }).id)
+        : String(value ?? "");
+    this.resourceForm = { ...this.resourceForm, category };
   }
 
   onResourceUrlChange(value: string): void {
     this.resourceForm = { ...this.resourceForm, url: value };
   }
 
-  onResourceUrlInput(event: Event): void {
-    this.onResourceUrlChange(this.readInputValue(event));
-  }
-
   onResourceContentChange(value: string): void {
     this.resourceForm = { ...this.resourceForm, content: value };
-  }
-
-  onResourceContentInput(event: Event): void {
-    this.onResourceContentChange(this.readInputValue(event));
   }
 
   onResourceVisibilityChange(value: string): void {
@@ -1071,40 +1047,17 @@ export class KnowledgeBaseComponent implements OnInit {
     this.resourceForm = { ...this.resourceForm, tags: value };
   }
 
-  onResourceTagsInput(event: Event): void {
-    this.onResourceTagsChange(this.readInputValue(event));
-  }
-
   onReviewOverrideQualityGateChange(value: boolean): void {
     this.reviewForm = { ...this.reviewForm, overrideQualityGate: value };
   }
 
   onReviewOverrideQualityGateToggle(event: Event): void {
-    this.onReviewOverrideQualityGateChange(this.readChecked(event));
+    const checked = (event.target as HTMLInputElement | null)?.checked ?? false;
+    this.onReviewOverrideQualityGateChange(checked);
   }
 
   onReviewNotesChange(value: string): void {
     this.reviewForm = { ...this.reviewForm, notes: value };
-  }
-
-  onReviewNotesInput(event: Event): void {
-    this.onReviewNotesChange(this.readInputValue(event));
-  }
-
-  private readInputValue(event: Event): string {
-    const target = event.target;
-    if (target instanceof HTMLInputElement || target instanceof HTMLTextAreaElement) {
-      return target.value;
-    }
-    return "";
-  }
-
-  private readChecked(event: Event): boolean {
-    const target = event.target;
-    if (target instanceof HTMLInputElement) {
-      return target.checked;
-    }
-    return false;
   }
 
   private async bootstrap(): Promise<void> {

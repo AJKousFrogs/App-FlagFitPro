@@ -14,7 +14,6 @@ export const trainingRoutes: Routes = [
       preload: true,
       priority: "high",
       entry: "hub",
-      animation: "slideLeft",
       headerPreset: "training",
     },
   },
@@ -28,7 +27,6 @@ export const trainingRoutes: Routes = [
     data: {
       preload: false,
       entry: "internal",
-      animation: "slideLeft",
       headerPreset: "training",
     },
   },

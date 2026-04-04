@@ -1,6 +1,6 @@
 import { CommonModule } from "@angular/common";
 import { ChangeDetectionStrategy, Component, input, output } from "@angular/core";
-import { Select, type SelectChangeEvent } from "primeng/select";
+import { SelectComponent } from "../../../../shared/components/select/select.component";
 import { CardShellComponent } from "../../../../shared/components/card-shell/card-shell.component";
 
 export interface ScoutingTendencyFilterOption {
@@ -36,7 +36,7 @@ export interface ScoutingTendenciesView {
 @Component({
   selector: "app-scouting-tendencies-section",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, Select, CardShellComponent],
+  imports: [CommonModule, SelectComponent, CardShellComponent],
   templateUrl: "./scouting-tendencies-section.component.html",
   styleUrl: "./scouting-tendencies-section.component.scss",
 })
@@ -47,9 +47,7 @@ export class ScoutingTendenciesSectionComponent {
 
   readonly filterChange = output<string | null>();
 
-  emitFilterChange(event: SelectChangeEvent): void {
-    this.filterChange.emit(
-      typeof event.value === "string" ? event.value : null,
-    );
+  emitFilterChange(value: string | null): void {
+    this.filterChange.emit(value);
   }
 }

@@ -1,27 +1,5 @@
-/**
- * Today's Practice Component
- *
- * The primary daily training hub for athletes. Displays:
- * - Personalized greeting based on time of day
- * - Key metrics (ACWR, Readiness)
- * - Weekly progress overview
- * - Phase-aware content (check-in → protocol → wrap-up)
- * - Daily schedule timeline
- *
- * Design System: PrimeNG 21+ with Aura preset
- * @see docs/PRIMENG_DESIGN_SYSTEM_RULES.md
- *
- * @author FlagFit Pro Team
- * @version 2.0.0 - Angular 21 Signals Architecture
- */
+/** Daily practice hub: protocol, schedule, metrics. */
 
-import {
-  animate,
-  keyframes,
-  style,
-  transition,
-  trigger,
-} from "@angular/animations";
 import {
   ChangeDetectionStrategy,
   Component,
@@ -148,53 +126,6 @@ interface QuickFormData {
     TodayQuickCheckinDialogComponent,
     TodayProtocolSectionComponent,
     TodayStatusStackComponent,
-  ],
-  animations: [
-    trigger("fadeSlideIn", [
-      transition(":enter", [
-        style({
-          opacity: 0,
-          transform: "translateY(calc(var(--space-3) * -1))",
-        }),
-        animate(
-          "300ms ease-out",
-          style({ opacity: 1, transform: "translateY(0)" }),
-        ),
-      ]),
-    ]),
-    trigger("celebrationFade", [
-      transition(":enter", [
-        style({ opacity: 0 }),
-        animate("300ms ease-out", style({ opacity: 1 })),
-      ]),
-      transition(":leave", [animate("200ms ease-in", style({ opacity: 0 }))]),
-    ]),
-    trigger("celebrationBounce", [
-      transition(":enter", [
-        animate(
-          "600ms cubic-bezier(0.34, 1.56, 0.64, 1)",
-          keyframes([
-            style({
-              opacity: 0,
-              transform:
-                "scale(0.3) translateY(calc(var(--size-200) * 0.25))",
-              offset: 0,
-            }),
-            style({
-              opacity: 1,
-              transform:
-                "scale(1.1) translateY(calc((var(--space-2) + var(--space-0-5)) * -1))",
-              offset: 0.6,
-            }),
-            style({
-              opacity: 1,
-              transform: "scale(1) translateY(0)",
-              offset: 1,
-            }),
-          ]),
-        ),
-      ]),
-    ]),
   ],
   templateUrl: "./today.component.html",
   styleUrl: "./today.component.scss",

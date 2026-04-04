@@ -63,7 +63,7 @@ async function login(page: Page): Promise<void> {
   await dismissCookieBanner(page);
 
   const emailInput = page.locator(
-    'input[type="email"], [data-testid="email-input"]',
+    '[data-testid="email-input"] input, input[type="email"]',
   );
   await emailInput.waitFor({ state: "visible", timeout: 10000 });
   await emailInput.click();
@@ -71,7 +71,7 @@ async function login(page: Page): Promise<void> {
   await emailInput.press("Tab");
 
   const passwordInput = page.locator(
-    'input[type="password"], [data-testid="password-input"]',
+    '[data-testid="password-input"] input, input[type="password"]',
   );
   await passwordInput.click();
   await passwordInput.fill(TEST_USER.password);
@@ -117,12 +117,34 @@ const ALLOWED_BORDER_RADIUS = new Set([
   "2px",
   "6px",
   "8px",
+  "10px", // --radius-lg (buttons / PrimeNG defaults)
   "12px",
   "16px",
   "24px",
   "9999px",
   "50%",
 ]);
+
+/** Normalize computed border-radius for token comparison (rem → px, round fractional px). */
+function isAllowedBorderRadiusValue(raw: string): boolean {
+  const t = raw.trim();
+  if (ALLOWED_BORDER_RADIUS.has(t)) return true;
+  if (t === "0" || t === "0px") return true;
+
+  const rem = /^([\d.]+)rem$/i.exec(t);
+  if (rem) {
+    const px = Math.round(parseFloat(rem[1]) * 16);
+    return ALLOWED_BORDER_RADIUS.has(`${px}px`);
+  }
+
+  const px = /^([\d.]+)px$/i.exec(t);
+  if (px) {
+    const n = Math.round(parseFloat(px[1]));
+    return ALLOWED_BORDER_RADIUS.has(`${n}px`);
+  }
+
+  return false;
+}
 
 /**
  * Check if a color value uses CSS variable (design token)
@@ -218,14 +240,8 @@ test.describe("Design System Compliance", () => {
   test("should have design tokens available on document root (light mode)", async ({
     page,
   }) => {
+    await page.emulateMedia({ colorScheme: "light" });
     await page.goto(`${BASE_URL}/`);
-    await page.waitForLoadState("domcontentloaded");
-
-    // Ensure light theme so tokens are verified in light mode
-    await page.evaluate(() => {
-      localStorage.setItem("flagfit_theme", "light");
-    });
-    await page.reload();
     await page.waitForLoadState("networkidle");
     await page.waitForSelector("[data-theme-ready='light']", { timeout: 10000 });
 
@@ -251,14 +267,10 @@ test.describe("Design System Compliance", () => {
   test("should have design tokens in dark mode and apply dark-theme class", async ({
     page,
   }) => {
+    // ThemeService no longer reads flagfit_theme from localStorage; default mode is "auto",
+    // which follows prefers-color-scheme. Emulate dark so resolved theme is dark.
+    await page.emulateMedia({ colorScheme: "dark" });
     await page.goto(`${BASE_URL}/`);
-    await page.waitForLoadState("domcontentloaded");
-
-    // Set dark theme preference and reload so ThemeService applies it
-    await page.evaluate(() => {
-      localStorage.setItem("flagfit_theme", "dark");
-    });
-    await page.reload();
     await page.waitForLoadState("networkidle");
 
     // Wait for ThemeService to apply dark theme (data-theme-ready is set when applyTheme runs)
@@ -697,7 +709,7 @@ test.describe("Design System Compliance", () => {
     );
 
     const violations = uniqueBorderRadius.filter(
-      (v) => !ALLOWED_BORDER_RADIUS.has(v),
+      (v) => !isAllowedBorderRadiusValue(v),
     );
     if (violations.length > 0) {
       console.warn(

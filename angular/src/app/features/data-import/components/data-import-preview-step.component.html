@@ -43,14 +43,14 @@
           </td>
           <td>
             @if (mapping.status === "unmapped") {
-              <p-select
+              <app-select
                 [options]="availableMappings()"
-                (onChange)="emitMappingChange(mapping, $event)"
+                (change)="emitMappingChange(mapping, $event)"
                 optionLabel="label"
                 optionValue="value"
                 placeholder="Select mapping"
-                class="mapping-select"
-              ></p-select>
+                styleClass="mapping-select"
+              ></app-select>
             } @else {
               {{ mapping.mapsTo }}
             }

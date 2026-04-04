@@ -19,7 +19,7 @@ import {
 import { Router } from "@angular/router";
 
 import { CardShellComponent } from "../../shared/components/card-shell/card-shell.component";
-import { DatePicker } from "primeng/datepicker";
+import { DatePickerComponent } from "../../shared/components/date-picker/date-picker.component";
 import { RadioButton } from "primeng/radiobutton";
 import { FormInputComponent } from "../../shared/components/form-input/form-input.component";
 import { InputNumberComponent } from "../../shared/components/input-number/input-number.component";
@@ -129,7 +129,7 @@ interface Play {
     FormInputComponent,
     TextareaComponent,
     InputNumberComponent,
-    DatePicker,
+    DatePickerComponent,
     SelectComponent,
     TableComponent,
     RadioButton,

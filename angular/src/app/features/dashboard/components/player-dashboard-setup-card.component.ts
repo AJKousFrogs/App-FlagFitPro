@@ -1,4 +1,4 @@
-import { CommonModule } from "@angular/common";
+import { CommonModule, NgTemplateOutlet } from "@angular/common";
 import { ChangeDetectionStrategy, Component, input, output } from "@angular/core";
 import { RouterModule } from "@angular/router";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
@@ -12,6 +12,7 @@ import type { ActionRequiredMeaning } from "../../../core/semantics/semantic-mea
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
+    NgTemplateOutlet,
     RouterModule,
     ButtonComponent,
     CardShellComponent,

@@ -12,7 +12,6 @@ import { RouterModule } from "@angular/router";
 import { ButtonComponent } from "../../shared/components/button/button.component";
 import { Carousel } from "primeng/carousel";
 import { Knob } from "primeng/knob";
-import { scaleInOut } from "../../shared/animations/app.animations";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { AIService, AnalysisContext } from "../../core/services/ai.service";
 import { ContextService } from "../../core/services/context.service";
@@ -122,7 +121,6 @@ declare global {
     ButtonComponent,
     AiConsentRequiredComponent,
   ],
-  animations: [scaleInOut],
   template: `
     <!-- AI Disabled Banner -->
     @if (!aiEnabled()) {
@@ -153,7 +151,7 @@ declare global {
 
           <!-- Speech bubble -->
           @if (currentMessage()) {
-            <div class="speech-bubble" [@fadeInOut]>
+            <div class="speech-bubble">
               <p>{{ currentMessage() }}</p>
               @if (hasQuickActions()) {
                 <div class="bubble-actions">

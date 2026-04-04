@@ -54,14 +54,14 @@
           <!-- Row 1: Date, Time, Opponent, Location -->
           <div class="form-row four-col">
             <div class="form-field">
-              <label for="gameDate">Game Date</label>
-              <p-datepicker
+              <app-date-picker
+                label="Game Date"
                 id="gameDate"
                 formControlName="gameDate"
                 dateFormat="mm/dd/yy"
                 [showIcon]="true"
                 appendTo="body"
-              ></p-datepicker>
+              ></app-date-picker>
             </div>
             <div class="form-field">
               <app-form-input

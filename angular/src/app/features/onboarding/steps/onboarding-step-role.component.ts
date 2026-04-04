@@ -8,8 +8,8 @@ import { CommonModule } from "@angular/common";
 import { FormControl, ReactiveFormsModule } from "@angular/forms";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { AutoComplete } from "primeng/autocomplete";
-import { InputText } from "primeng/inputtext";
-import { Select, type SelectChangeEvent } from "primeng/select";
+import { FormInputComponent } from "../../../shared/components/form-input/form-input.component";
+import { SelectComponent } from "../../../shared/components/select/select.component";
 import {
   USER_TYPE_OPTIONS,
   STAFF_ROLE_OPTIONS,
@@ -23,7 +23,7 @@ import { OnboardingStateService } from "../services/onboarding-state.service";
 @Component({
   selector: "app-onboarding-step-role",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, ReactiveFormsModule, AutoComplete, InputText, Select],
+  imports: [CommonModule, ReactiveFormsModule, AutoComplete, FormInputComponent, SelectComponent],
   template: `
     <div class="step-content animate-fade-in">
       <div class="step-header">
@@ -77,17 +77,13 @@ import { OnboardingStateService } from "../services/onboarding-state.service";
         <!-- Staff Role Selection -->
         @if (state.formData.userType === "staff") {
           <div class="form-group span-2">
-            <label for="onboarding-staffRole"
-              >Staff Role <span class="required">*</span></label
-            >
-            <p-select
-              inputId="onboarding-staffRole"
+            <app-select
+              label="Staff Role *"
               [options]="staffRoleOptions"
-              (onChange)="onStaffRoleSelect($event)"
+              (change)="onStaffRoleSelect($event)"
               placeholder="Select your role"
-              class="w-full"
-              [attr.aria-label]="'Select your staff role'"
-            ></p-select>
+              styleClass="w-full"
+            />
           </div>
 
           <div class="form-group span-2">
@@ -165,49 +161,34 @@ import { OnboardingStateService } from "../services/onboarding-state.service";
 
         @if (state.formData.userType === "player") {
           <div class="form-group jersey-input">
-            <label for="onboarding-jerseyNumber">Jersey #</label>
-            <input
-              id="onboarding-jerseyNumber"
-              name="jerseyNumber"
-              type="number"
-              pInputText
-              [value]="state.formData.jerseyNumber"
-              (input)="onJerseyNumberInput($event)"
+            <app-form-input
+              label="Jersey #"
+              [value]="state.formData.jerseyNumber?.toString() ?? ''"
+              (valueChange)="onJerseyNumberInput($event)"
               placeholder="#"
-              min="0"
-              max="99"
-              class="w-full jersey-field"
-              autocomplete="off"
+              styleClass="w-full jersey-field"
             />
           </div>
 
           <div class="form-group">
-            <label for="onboarding-position"
-              >Primary Position <span class="required">*</span></label
-            >
-            <p-select
-              inputId="onboarding-position"
+            <app-select
+              label="Primary Position *"
               [options]="positions"
-              (onChange)="onPositionSelect($event)"
+              (change)="onPositionSelect($event)"
               placeholder="Select position"
-              class="w-full"
-              [attr.aria-label]="'Select primary position'"
-            ></p-select>
+              styleClass="w-full"
+            />
           </div>
 
           <div class="form-group">
-            <label for="onboarding-secondaryPosition"
-              >Secondary Position</label
-            >
-            <p-select
-              inputId="onboarding-secondaryPosition"
+            <app-select
+              label="Secondary Position"
               [options]="positions"
-              (onChange)="onSecondaryPositionSelect($event)"
+              (change)="onSecondaryPositionSelect($event)"
               placeholder="Optional"
               [showClear]="true"
-              class="w-full"
-              [attr.aria-label]="'Select secondary position'"
-            ></p-select>
+              styleClass="w-full"
+            />
           </div>
 
           @if (state.isQBSelected()) {
@@ -250,17 +231,13 @@ import { OnboardingStateService } from "../services/onboarding-state.service";
           }
 
           <div class="form-group span-2">
-            <label for="onboarding-experience"
-              >Experience Level <span class="required">*</span></label
-            >
-            <p-select
-              inputId="onboarding-experience"
+            <app-select
+              label="Experience Level *"
               [options]="experienceLevels"
-              (onChange)="onExperienceSelect($event)"
+              (change)="onExperienceSelect($event)"
               placeholder="Select your experience"
-              class="w-full"
-              [attr.aria-label]="'Select your experience level'"
-            ></p-select>
+              styleClass="w-full"
+            />
           </div>
         }
       </div>
@@ -298,30 +275,24 @@ export class OnboardingStepRoleComponent {
     this.state.searchTeams(query);
   }
 
-  onStaffRoleSelect(event: SelectChangeEvent): void {
-    this.state.formData.staffRole = this.getStringValue(event);
+  onStaffRoleSelect(value: string | null | undefined): void {
+    this.state.formData.staffRole = typeof value === "string" ? value : null;
   }
 
-  onJerseyNumberInput(event: Event): void {
-    const input = event.target as HTMLInputElement | null;
-    const raw = input?.value ?? "";
+  onJerseyNumberInput(raw: string): void {
     this.state.formData.jerseyNumber =
       raw === "" ? null : Number.isFinite(Number(raw)) ? Number(raw) : null;
   }
 
-  onPositionSelect(event: SelectChangeEvent): void {
-    this.state.formData.position = this.getStringValue(event);
+  onPositionSelect(value: string | null | undefined): void {
+    this.state.formData.position = typeof value === "string" ? value : null;
   }
 
-  onSecondaryPositionSelect(event: SelectChangeEvent): void {
-    this.state.formData.secondaryPosition = this.getStringValue(event);
+  onSecondaryPositionSelect(value: string | null | undefined): void {
+    this.state.formData.secondaryPosition = typeof value === "string" ? value : null;
   }
 
-  onExperienceSelect(event: SelectChangeEvent): void {
-    this.state.formData.experience = this.getStringValue(event);
-  }
-
-  private getStringValue(event: SelectChangeEvent): string | null {
-    return typeof event.value === "string" ? event.value : null;
+  onExperienceSelect(value: string | null | undefined): void {
+    this.state.formData.experience = typeof value === "string" ? value : null;
   }
 }

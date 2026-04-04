@@ -46,13 +46,12 @@ import { IconButtonComponent } from "../../../shared/components/button/icon-butt
 import { AppDialogComponent } from "../../../shared/components/dialog/dialog.component";
 import { DialogHeaderComponent } from "../../../shared/components/dialog-header/dialog-header.component";
 import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";
+import { FormInputComponent } from "../../../shared/components/form-input/form-input.component";
+import { TextareaComponent } from "../../../shared/components/textarea/textarea.component";
 import { Chip } from "primeng/chip";
 import { Divider } from "primeng/divider";
-import { InputText } from "primeng/inputtext";
 import { MultiSelect } from "primeng/multiselect";
 import { Skeleton } from "primeng/skeleton";
-
-import { Textarea } from "primeng/textarea";
 
 
 import { CardShellComponent } from "../../../shared/components/card-shell/card-shell.component";
@@ -100,8 +99,8 @@ interface VideoSuggestion {
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
-    InputText,
-    Textarea,
+    FormInputComponent,
+    TextareaComponent,
     MultiSelect,
 
     Skeleton,
@@ -168,7 +167,6 @@ interface VideoSuggestion {
                       <i class="pi pi-instagram"></i>
                       <input
                         type="text"
-                        pInputText
                         formControlName="instagramUrl"
                         placeholder="https://www.instagram.com/reel/..."
                         class="url-input"
@@ -213,25 +211,20 @@ interface VideoSuggestion {
                   </div>
 
                   <div class="form-field">
-                    <label for="title">Video Title</label>
-                    <input
-                      id="title"
-                      type="text"
-                      pInputText
+                    <app-form-input
+                      label="Video Title"
                       formControlName="title"
                       placeholder="e.g., Elite Route Running Drill"
                     />
                   </div>
 
                   <div class="form-field">
-                    <label for="description">Brief Description</label>
-                    <textarea
-                      id="description"
-                      pTextarea
+                    <app-textarea
+                      label="Brief Description"
                       formControlName="description"
                       [rows]="2"
                       placeholder="What's shown in the video?"
-                    ></textarea>
+                    ></app-textarea>
                   </div>
                 </div>
 
@@ -286,12 +279,11 @@ interface VideoSuggestion {
                   </div>
 
                   <div class="form-field">
-                    <textarea
-                      pTextarea
+                    <app-textarea
                       formControlName="whyValuable"
                       [rows]="3"
                       placeholder="Tell your coaches why this video would help the team..."
-                    ></textarea>
+                    ></app-textarea>
                   </div>
                 </div>
 

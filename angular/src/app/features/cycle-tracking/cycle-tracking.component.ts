@@ -25,7 +25,7 @@ import { CardShellComponent } from "../../shared/components/card-shell/card-shel
 import { AppDialogComponent } from "../../shared/components/dialog/dialog.component";
 import { DialogFooterComponent } from "../../shared/components/dialog-footer/dialog-footer.component";
 import { DialogHeaderComponent } from "../../shared/components/dialog-header/dialog-header.component";
-import { DatePicker } from "primeng/datepicker";
+import { DatePickerComponent } from "../../shared/components/date-picker/date-picker.component";
 
 import { SelectComponent } from "../../shared/components/select/select.component";
 import { TableComponent } from "../../shared/components/table/table.component";
@@ -298,7 +298,7 @@ import { FormsModule, ReactiveFormsModule } from "@angular/forms";
     AlertComponent,
     ButtonComponent,
     CardShellComponent,
-    DatePicker,
+    DatePickerComponent,
     DialogFooterComponent,
     DialogHeaderComponent,
     SelectComponent,
@@ -538,12 +538,14 @@ export class CycleTrackingComponent implements OnInit {
     };
   }
 
-  onNewPeriodStartDateChange(value: Date | null): void {
-    this.newPeriod = { ...this.newPeriod, startDate: value };
+  onNewPeriodStartDateChange(value: Date | Date[] | null): void {
+    const d = Array.isArray(value) ? value[0] ?? null : value;
+    this.newPeriod = { ...this.newPeriod, startDate: d };
   }
 
-  onNewPeriodEndDateChange(value: Date | null): void {
-    this.newPeriod = { ...this.newPeriod, endDate: value };
+  onNewPeriodEndDateChange(value: Date | Date[] | null): void {
+    const d = Array.isArray(value) ? value[0] ?? null : value;
+    this.newPeriod = { ...this.newPeriod, endDate: d };
   }
 
   onNewPeriodFlowIntensityChange(value: string): void {

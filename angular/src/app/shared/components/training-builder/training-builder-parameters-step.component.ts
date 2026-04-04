@@ -1,9 +1,9 @@
 import { ChangeDetectionStrategy, Component, input, output } from "@angular/core";
 import { FormGroup, ReactiveFormsModule } from "@angular/forms";
 
-import { InputText } from "primeng/inputtext";
-import { Select } from "primeng/select";
 import { Slider } from "primeng/slider";
+import { FormInputComponent } from "../form-input/form-input.component";
+import { SelectComponent } from "../select/select.component";
 
 import { AlertComponent, AlertVariant } from "../alert/alert.component";
 import { ButtonComponent } from "../button/button.component";
@@ -18,8 +18,8 @@ import {
   imports: [
     ReactiveFormsModule,
     Slider,
-    Select,
-    InputText,
+    SelectComponent,
+    FormInputComponent,
     AlertComponent,
     ButtonComponent,
     StatusTagComponent,

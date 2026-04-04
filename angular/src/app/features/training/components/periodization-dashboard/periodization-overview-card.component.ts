@@ -1,6 +1,6 @@
 import { CommonModule } from "@angular/common";
 import { ChangeDetectionStrategy, Component, input } from "@angular/core";
-import { ProgressBar } from "primeng/progressbar";
+import { ProgressBarComponent } from "../../../../shared/components/progress-bar/progress-bar.component";
 import {
   ACWRCalculation,
   LoadRecommendation,
@@ -18,7 +18,7 @@ import { Chip } from "primeng/chip";
     CommonModule,
     CardShellComponent,
     StatusTagComponent,
-    ProgressBar,
+    ProgressBarComponent,
     Chip,
   ],
   templateUrl: "./periodization-overview-card.component.html",

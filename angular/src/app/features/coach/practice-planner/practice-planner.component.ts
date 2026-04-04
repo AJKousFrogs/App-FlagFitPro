@@ -22,13 +22,11 @@ import { CardShellComponent } from "../../../shared/components/card-shell/card-s
 import { EmptyStateComponent } from "../../../shared/components/empty-state/empty-state.component";
 import { AppLoadingComponent } from "../../../shared/components/loading/loading.component";
 import { PageErrorStateComponent } from "../../../shared/components/page-error-state/page-error-state.component";
-import { DatePicker } from "primeng/datepicker";
 import { InputNumber, type InputNumberInputEvent } from "primeng/inputnumber";
-import { InputText } from "primeng/inputtext";
-
-import { Select, type SelectChangeEvent } from "primeng/select";
-
-import { Textarea } from "primeng/textarea";
+import { DatePickerComponent } from "../../../shared/components/date-picker/date-picker.component";
+import { FormInputComponent } from "../../../shared/components/form-input/form-input.component";
+import { SelectComponent } from "../../../shared/components/select/select.component";
+import { TextareaComponent } from "../../../shared/components/textarea/textarea.component";
 import { StatusTagComponent } from "../../../shared/components/status-tag/status-tag.component";
 import { getStatusSeverity as getStatusSeverityValue } from "../../../shared/utils/status.utils";
 import { DIALOG_BREAKPOINTS } from "../../../core/utils/design-tokens.util";
@@ -140,12 +138,12 @@ const DEFAULT_EQUIPMENT: EquipmentItem[] = [
     CommonModule,
     DatePipe,
     CardShellComponent,
-    DatePicker,
+    DatePickerComponent,
+    FormInputComponent,
     InputNumber,
-    InputText,
-    Select,
+    SelectComponent,
     StatusTagComponent,
-    Textarea,
+    TextareaComponent,
 
     MainLayoutComponent,
     PageHeaderComponent,
@@ -341,72 +339,58 @@ const DEFAULT_EQUIPMENT: EquipmentItem[] = [
             <h4>Practice Details</h4>
 
             <div class="form-field">
-              <label for="practiceTitle">Practice Title</label>
-              <input
-                id="practiceTitle"
-                type="text"
-                pInputText
+              <app-form-input
+                label="Practice Title"
                 [value]="formData.title"
-                (input)="onFormDataTextInput('title', $event)"
+                (valueChange)="updateFormDataTextField('title', $event)"
                 placeholder="e.g., Tuesday Practice - Red Zone Focus"
-                class="w-full"
               />
             </div>
 
             <div class="form-row three-col">
               <div class="form-field">
-                <label for="practiceDate">Date</label>
-                <p-datepicker
-                  inputId="practiceDate"
-                  (onSelect)="updatePracticeDate($event)"
-                  [showIcon]="true"
-                  dateFormat="M d, yy"
-                ></p-datepicker>
+                <app-date-picker
+                  label="Date"
+                  (select)="updatePracticeDate($event)"
+                />
               </div>
               <div class="form-field">
-                <label for="startTime">Start Time</label>
-                <p-select
-                  inputId="startTime"
+                <app-select
+                  label="Start Time"
                   [options]="timeOptions"
-                  (onChange)="onFormDataTextSelect('startTime', $event)"
+                  (valueChange)="updateFormDataTextField('startTime', $event)"
                   optionLabel="label"
                   optionValue="value"
-                ></p-select>
+                />
               </div>
               <div class="form-field">
-                <label for="endTime">End Time</label>
-                <p-select
-                  inputId="endTime"
+                <app-select
+                  label="End Time"
                   [options]="timeOptions"
-                  (onChange)="onFormDataTextSelect('endTime', $event)"
+                  (valueChange)="updateFormDataTextField('endTime', $event)"
                   optionLabel="label"
                   optionValue="value"
-                ></p-select>
+                />
               </div>
             </div>
 
             <div class="form-field">
-              <label for="location">Location</label>
-              <p-select
-                inputId="location"
+              <app-select
+                label="Location"
                 [options]="locationOptions"
-                (onChange)="onFormDataTextSelect('location', $event)"
+                (valueChange)="updateFormDataTextField('location', $event)"
                 optionLabel="label"
                 optionValue="value"
                 [editable]="true"
-              ></p-select>
+              />
             </div>
 
             <div class="form-field">
-              <label for="focus">Practice Focus (main objectives)</label>
-              <input
-                id="focus"
-                type="text"
-                pInputText
+              <app-form-input
+                label="Practice Focus (main objectives)"
                 [value]="formData.focus"
-                (input)="onFormDataTextInput('focus', $event)"
+                (valueChange)="updateFormDataTextField('focus', $event)"
                 placeholder="e.g., Red zone offense, Defensive rotations"
-                class="w-full"
               />
             </div>
           </div>
@@ -434,11 +418,9 @@ const DEFAULT_EQUIPMENT: EquipmentItem[] = [
                   <div class="activity-header">
                     <span class="item-time">{{ activity.startTime }}</span>
                     <span class="activity-icon"><i [class]="'pi ' + getActivityIcon(activity.type)" aria-hidden="true"></i></span>
-                    <input
-                      type="text"
-                      pInputText
+                    <app-form-input
                       [value]="activity.title"
-                      (input)="onActivityTitleInput(i, $event)"
+                      (valueChange)="updateActivityTitle(i, $event)"
                       class="activity-title-input"
                     />
                     <p-inputNumber
@@ -505,13 +487,12 @@ const DEFAULT_EQUIPMENT: EquipmentItem[] = [
           <!-- Coach Notes -->
           <div class="form-section">
             <h4>Notes for Coaches</h4>
-            <textarea
-              pTextarea
+            <app-textarea
               [value]="formData.coachNotes"
-              (input)="onFormDataTextInput('coachNotes', $event)"
+              (valueChange)="updateFormDataTextField('coachNotes', $event)"
               placeholder="• Player-specific instructions&#10;• Key coaching points&#10;• Modifications needed"
-              rows="4"
-            ></textarea>
+              [rows]="4"
+            />
           </div>
         </div>
 
@@ -557,14 +538,13 @@ const DEFAULT_EQUIPMENT: EquipmentItem[] = [
           <div class="activity-form">
             <div class="form-row">
               <div class="form-field">
-                <label for="actType">Activity Type</label>
-                <p-select
-                  inputId="actType"
+                <app-select
+                  label="Activity Type"
                   [options]="activityTypeOptions"
-                  (onChange)="onEditingActivityTypeSelect($event)"
+                  (valueChange)="updateEditingActivityType($event)"
                   optionLabel="label"
                   optionValue="value"
-                ></p-select>
+                />
               </div>
               <div class="form-field">
                 <label for="actDuration">Duration (min)</label>
@@ -586,12 +566,9 @@ const DEFAULT_EQUIPMENT: EquipmentItem[] = [
                   let i = $index
                 ) {
                   <div class="detail-row">
-                    <input
-                      type="text"
-                      pInputText
+                    <app-form-input
                       [value]="editingActivity.details[i]"
-                      (input)="onEditingActivityDetailInput(i, $event)"
-                      class="w-full"
+                      (valueChange)="updateEditingActivityDetail(i, $event)"
                     />
                     <app-button
                       variant="text"
@@ -613,25 +590,23 @@ const DEFAULT_EQUIPMENT: EquipmentItem[] = [
 
             @if (editingActivity.type === "offense") {
               <div class="form-field">
-                <label>Plays to Run</label>
-                <textarea
-                  pTextarea
+                <app-textarea
+                  label="Plays to Run"
                   [value]="editingActivity.plays?.join('\n') ?? ''"
-                  (input)="onPlaysInput($event)"
+                  (valueChange)="updatePlays($event)"
                   placeholder="One play per line"
-                  rows="4"
-                ></textarea>
+                  [rows]="4"
+                />
               </div>
 
               <div class="form-field">
-                <label>Key Coaching Points</label>
-                <textarea
-                  pTextarea
+                <app-textarea
+                  label="Key Coaching Points"
                   [value]="editingActivity.keyPoints?.join('\n') ?? ''"
-                  (input)="onKeyPointsInput($event)"
+                  (valueChange)="updateKeyPoints($event)"
                   placeholder="One point per line"
-                  rows="3"
-                ></textarea>
+                  [rows]="3"
+                />
               </div>
             }
           </div>
@@ -954,62 +929,17 @@ export class PracticePlannerComponent implements OnInit {
     this.formData = { ...this.formData, activities: updatedActivities };
   }
 
-  onFormDataTextInput(
-    field: "title" | "focus" | "coachNotes",
-    event: Event,
-  ): void {
-    this.updateFormDataTextField(field, this.readInputValue(event));
-  }
-
-  onFormDataTextSelect(
-    field: "startTime" | "endTime" | "location",
-    event: SelectChangeEvent,
-  ): void {
-    this.updateFormDataTextField(
-      field,
-      typeof event.value === "string" ? event.value : "",
-    );
-  }
-
-  onActivityTitleInput(index: number, event: Event): void {
-    this.updateActivityTitle(index, this.readInputValue(event));
-  }
-
   onActivityDurationInput(index: number, event: InputNumberInputEvent): void {
     this.updateActivityDuration(index, event.value ?? null);
   }
 
   onEquipmentCheckedChange(equipmentName: string, event: Event): void {
-    this.updateEquipmentChecked(equipmentName, this.readChecked(event));
-  }
-
-  onEditingActivityTypeSelect(event: SelectChangeEvent): void {
-    this.updateEditingActivityType(event.value as ActivityType | null | undefined);
+    const checked = (event.target as HTMLInputElement | null)?.checked ?? false;
+    this.updateEquipmentChecked(equipmentName, checked);
   }
 
   onEditingActivityDurationInput(event: InputNumberInputEvent): void {
     this.updateEditingActivityDuration(event.value ?? null);
-  }
-
-  onEditingActivityDetailInput(index: number, event: Event): void {
-    this.updateEditingActivityDetail(index, this.readInputValue(event));
-  }
-
-  onPlaysInput(event: Event): void {
-    this.updatePlays(this.readInputValue(event));
-  }
-
-  onKeyPointsInput(event: Event): void {
-    this.updateKeyPoints(this.readInputValue(event));
-  }
-
-  private readInputValue(event: Event): string {
-    return (event.target as HTMLInputElement | HTMLTextAreaElement | null)
-      ?.value ?? "";
-  }
-
-  private readChecked(event: Event): boolean {
-    return (event.target as HTMLInputElement | null)?.checked ?? false;
   }
 
   updateFormDataTextField(
@@ -1022,8 +952,9 @@ export class PracticePlannerComponent implements OnInit {
     }
   }
 
-  updatePracticeDate(value: Date | null | undefined): void {
-    this.formData = { ...this.formData, date: value ?? new Date() };
+  updatePracticeDate(value: Date | Date[] | null | undefined): void {
+    const d = Array.isArray(value) ? value[0] ?? null : value ?? null;
+    this.formData = { ...this.formData, date: d ?? new Date() };
   }
 
   updateActivityTitle(index: number, value: string | null | undefined): void {

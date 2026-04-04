@@ -7,7 +7,8 @@
  *   2. Token mapping (design → PrimeNG --p-* variables)
  *   3. Brand constraints (token-based component rules)
  *   4. Theme glue + dark mode
- *   5. Component-level PrimeNG overrides
+ *   5. Component-level PrimeNG overrides (primeng-theme.scss)
+ *   5b. Overlays / datepicker / panels (theme-overlays-panels.scss)
  *   6. Exceptions (overrides layer)
  *   7. Color guards (overrides layer, must be last)
  *
@@ -26,3 +27,6 @@
 
 // 5. Component-level PrimeNG overrides
 @forward "../primeng-theme";
+
+// 5b. Overlays, datepicker shell, dropdown panels (split for maintainability)
+@forward "theme-overlays-panels";

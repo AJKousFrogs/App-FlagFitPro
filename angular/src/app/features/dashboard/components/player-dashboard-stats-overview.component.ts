@@ -1,6 +1,6 @@
-import { CommonModule, DecimalPipe } from "@angular/common";
+import { CommonModule, DecimalPipe, NgTemplateOutlet } from "@angular/common";
 import { ChangeDetectionStrategy, Component, input, output } from "@angular/core";
-import { ProgressBar } from "primeng/progressbar";
+import { ProgressBarComponent } from "../../../shared/components/progress-bar/progress-bar.component";
 import { Tooltip } from "primeng/tooltip";
 import { TRAINING } from "../../../core/constants/app.constants";
 import type { IncompleteDataMeaning } from "../../../core/semantics/semantic-meaning.types";
@@ -8,6 +8,7 @@ import { ConfidenceIndicatorComponent } from "../../../shared/components/confide
 import { CardShellComponent } from "../../../shared/components/card-shell/card-shell.component";
 import { SemanticMeaningRendererComponent } from "../../../shared/components/semantic-meaning-renderer/semantic-meaning-renderer.component";
 import { StatusTagComponent } from "../../../shared/components/status-tag/status-tag.component";
+import { SkeletonComponent } from "../../../shared/components/skeleton/skeleton.component";
 
 type StatusSeverity =
   | "success"
@@ -31,19 +32,24 @@ interface AcwrDisplayInput {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
+    NgTemplateOutlet,
     DecimalPipe,
-    ProgressBar,
+    ProgressBarComponent,
     Tooltip,
     CardShellComponent,
     StatusTagComponent,
     ConfidenceIndicatorComponent,
     SemanticMeaningRendererComponent,
+    SkeletonComponent,
   ],
   templateUrl: "./player-dashboard-stats-overview.component.html",
   styleUrl: "./player-dashboard-stats-overview.component.scss",
 })
 export class PlayerDashboardStatsOverviewComponent {
   readonly TRAINING = TRAINING;
+
+  /** True when individual card data is refreshing (after initial page load) */
+  readonly isDataLoading = input(false);
 
   readonly readinessScore = input<number | null>(null);
   readonly readinessLabel = input.required<string>();

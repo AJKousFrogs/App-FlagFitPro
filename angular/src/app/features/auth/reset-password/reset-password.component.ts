@@ -12,7 +12,7 @@ import {
   Validators,
 } from "@angular/forms";
 import { Router, RouterModule } from "@angular/router";
-import { InputText } from "primeng/inputtext";
+import { FormInputComponent } from "../../../shared/components/form-input/form-input.component";
 
 import { LoggerService } from "../../../core/services/logger.service";
 import { ToastService } from "../../../core/services/toast.service";
@@ -28,7 +28,7 @@ import { AuthFlowDataService } from "../services/auth-flow-data.service";
     ReactiveFormsModule,
     ButtonComponent,
     CardShellComponent,
-    InputText,
+    FormInputComponent,
   ],
   template: `
 <div class="reset-password-page elite-auth-shell">
@@ -47,21 +47,11 @@ import { AuthFlowDataService } from "../services/auth-flow-data.service";
 
         <form [formGroup]="resetForm" (ngSubmit)="onSubmit()" class="elite-auth-form">
           <div class="form-field elite-auth-field">
-            <label for="reset-email" class="p-label elite-auth-label required">Email</label>
-            <input
-              id="reset-email"
-              name="email"
-              type="email"
-              pInputText
+            <app-form-input
+              label="Email"
               formControlName="email"
               placeholder="Enter your email"
-              [class.ng-invalid]="isFieldInvalid('email')"
-              autocomplete="email"
-              aria-required="true"
-              [attr.aria-invalid]="isFieldInvalid('email') ? 'true' : null"
-              [attr.aria-describedby]="
-                isFieldInvalid('email') ? 'reset-email-error' : null
-              "
+              styleClass="w-full"
             />
             @if (isFieldInvalid("email")) {
               <small id="reset-email-error" class="form-error" role="alert">

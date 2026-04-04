@@ -293,7 +293,7 @@ export const DATA_STATE_MESSAGES = {
     actionLabel: "Learn About Data Requirements",
     helpLink: "/help/data-requirements",
     icon: "pi-chart-line",
-    severity: "info" as const,
+    severity: "warning" as const,
   },
 
   /**

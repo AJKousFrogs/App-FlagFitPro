@@ -1,12 +1,12 @@
 import { ChangeDetectionStrategy, Component, inject } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { InputText } from "primeng/inputtext";
+import { FormInputComponent } from "../../../shared/components/form-input/form-input.component";
 import { OnboardingStateService } from "../services/onboarding-state.service";
 
 @Component({
   selector: "app-onboarding-step-physical",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, InputText],
+  imports: [CommonModule, FormInputComponent],
   template: `
     <div class="step-content animate-fade-in">
       <div class="step-header">
@@ -82,92 +82,51 @@ import { OnboardingStateService } from "../services/onboarding-state.service";
       @if (state.formData.unitSystem === 'metric') {
         <div class="form-grid">
           <div class="form-group">
-            <label for="onboarding-height"
-              >Height (cm) <span class="required">*</span></label
-            >
-            <input
-              id="onboarding-height"
-              name="height"
-              type="number"
-              pInputText
-              [value]="state.formData.heightCm"
-              (input)="onHeightCmInput($event)"
+            <app-form-input
+              label="Height (cm) *"
+              [value]="state.formData.heightCm?.toString() ?? ''"
+              (valueChange)="onHeightCmInput($event)"
               placeholder="e.g. 180"
-              min="100"
-              max="250"
-              class="w-full"
-              autocomplete="off"
+              styleClass="w-full"
             />
           </div>
           <div class="form-group">
-            <label for="onboarding-weight"
-              >Weight (kg) <span class="required">*</span></label
-            >
-            <input
-              id="onboarding-weight"
-              name="weight"
-              type="number"
-              pInputText
-              [value]="state.formData.weightKg"
-              (input)="onWeightKgInput($event)"
+            <app-form-input
+              label="Weight (kg) *"
+              [value]="state.formData.weightKg?.toString() ?? ''"
+              (valueChange)="onWeightKgInput($event)"
               placeholder="e.g. 75"
-              min="30"
-              max="200"
-              class="w-full"
-              autocomplete="off"
+              styleClass="w-full"
             />
           </div>
         </div>
       } @else {
         <div class="form-grid imperial-grid">
           <div class="form-group">
-            <label for="onboarding-heightFt">Height (ft)</label>
-            <input
-              id="onboarding-heightFt"
-              name="heightFt"
-              type="number"
-              pInputText
-              [value]="state.formData.heightFt"
-              (input)="onHeightFtInput($event)"
+            <app-form-input
+              label="Height (ft)"
+              [value]="state.formData.heightFt?.toString() ?? ''"
+              (valueChange)="onHeightFtInput($event)"
               placeholder="5"
-              min="3"
-              max="8"
-              class="w-full"
-              autocomplete="off"
+              styleClass="w-full"
             />
           </div>
           <div class="form-group">
-            <label for="onboarding-heightIn">Inches</label>
-            <input
-              id="onboarding-heightIn"
-              name="heightIn"
-              type="number"
-              pInputText
-              [value]="state.formData.heightIn"
-              (input)="onHeightInInput($event)"
+            <app-form-input
+              label="Inches"
+              [value]="state.formData.heightIn?.toString() ?? ''"
+              (valueChange)="onHeightInInput($event)"
               placeholder="10"
-              min="0"
-              max="11"
-              class="w-full"
-              autocomplete="off"
+              styleClass="w-full"
             />
           </div>
           <div class="form-group">
-            <label for="onboarding-weightLbs"
-              >Weight (lbs) <span class="required">*</span></label
-            >
-            <input
-              id="onboarding-weightLbs"
-              name="weightLbs"
-              type="number"
-              pInputText
-              [value]="state.formData.weightLbs"
-              (input)="onWeightLbsInput($event)"
+            <app-form-input
+              label="Weight (lbs) *"
+              [value]="state.formData.weightLbs?.toString() ?? ''"
+              (valueChange)="onWeightLbsInput($event)"
               placeholder="e.g. 165"
-              min="66"
-              max="440"
-              class="w-full"
-              autocomplete="off"
+              styleClass="w-full"
             />
           </div>
         </div>
@@ -186,29 +145,27 @@ import { OnboardingStateService } from "../services/onboarding-state.service";
 export class OnboardingStepPhysicalComponent {
   readonly state = inject(OnboardingStateService);
 
-  onHeightCmInput(event: Event): void {
-    this.state.formData.heightCm = this.parseNumberInput(event);
+  onHeightCmInput(raw: string): void {
+    this.state.formData.heightCm = this.parseNumberString(raw);
   }
 
-  onWeightKgInput(event: Event): void {
-    this.state.formData.weightKg = this.parseNumberInput(event);
+  onWeightKgInput(raw: string): void {
+    this.state.formData.weightKg = this.parseNumberString(raw);
   }
 
-  onHeightFtInput(event: Event): void {
-    this.state.formData.heightFt = this.parseNumberInput(event);
+  onHeightFtInput(raw: string): void {
+    this.state.formData.heightFt = this.parseNumberString(raw);
   }
 
-  onHeightInInput(event: Event): void {
-    this.state.formData.heightIn = this.parseNumberInput(event);
+  onHeightInInput(raw: string): void {
+    this.state.formData.heightIn = this.parseNumberString(raw);
   }
 
-  onWeightLbsInput(event: Event): void {
-    this.state.formData.weightLbs = this.parseNumberInput(event);
+  onWeightLbsInput(raw: string): void {
+    this.state.formData.weightLbs = this.parseNumberString(raw);
   }
 
-  private parseNumberInput(event: Event): number | null {
-    const input = event.target as HTMLInputElement | null;
-    const raw = input?.value ?? "";
+  private parseNumberString(raw: string): number | null {
     if (raw === "") return null;
     const parsed = Number(raw);
     return Number.isFinite(parsed) ? parsed : null;

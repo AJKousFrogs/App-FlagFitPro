@@ -17,7 +17,7 @@ import {
   signal,
 } from "@angular/core";
 
-import { ProgressBar } from "primeng/progressbar";
+import { ProgressBarComponent } from "../../shared/components/progress-bar/progress-bar.component";
 import { StatusTagComponent } from "../../shared/components/status-tag/status-tag.component";
 import { firstValueFrom } from "rxjs";
 
@@ -78,7 +78,7 @@ const DEBT_THRESHOLDS = {
     CommonModule,
     DecimalPipe,
     LazyChartComponent,
-    ProgressBar,
+    ProgressBarComponent,
     CardShellComponent,
     MainLayoutComponent,
     PageHeaderComponent,
@@ -224,11 +224,11 @@ const DEBT_THRESHOLDS = {
                     }}%</span
                   >
                 </div>
-                <p-progressBar
+                <app-progress-bar
                   [value]="multipliers.trainingCapacity * 100"
                   [showValue]="false"
-                  class="impact-bar"
-                ></p-progressBar>
+                  styleClass="impact-bar"
+                />
                 <p class="impact-description">
                   Your body can only absorb
                   {{ multipliers.trainingCapacity * 100 | number: "1.0-0" }}% of
@@ -245,11 +245,11 @@ const DEBT_THRESHOLDS = {
                     }}%</span
                   >
                 </div>
-                <p-progressBar
+                <app-progress-bar
                   [value]="multipliers.recoveryRate * 100"
                   [showValue]="false"
-                  class="impact-bar"
-                ></p-progressBar>
+                  styleClass="impact-bar"
+                />
                 <p class="impact-description">
                   Recovery between sessions is
                   {{ 100 - multipliers.recoveryRate * 100 | number: "1.0-0" }}%
@@ -267,13 +267,11 @@ const DEBT_THRESHOLDS = {
                     }}%</span
                   >
                 </div>
-                <p-progressBar
-                  [value]="
-                    Math.min((multipliers.injuryRiskMultiplier - 1) * 100, 100)
-                  "
+                <app-progress-bar
+                  [value]="Math.min((multipliers.injuryRiskMultiplier - 1) * 100, 100)"
                   [showValue]="false"
-                  class="impact-bar danger"
-                ></p-progressBar>
+                  styleClass="impact-bar danger"
+                />
                 <p class="impact-description">
                   Injury risk increased by
                   {{
@@ -293,16 +291,11 @@ const DEBT_THRESHOLDS = {
                     }}%</span
                   >
                 </div>
-                <p-progressBar
-                  [value]="
-                    Math.min(
-                      (multipliers.reactionTimeMultiplier - 1) * 100,
-                      100
-                    )
-                  "
+                <app-progress-bar
+                  [value]="Math.min((multipliers.reactionTimeMultiplier - 1) * 100, 100)"
                   [showValue]="false"
-                  class="impact-bar warn"
-                ></p-progressBar>
+                  styleClass="impact-bar warn"
+                />
                 <p class="impact-description">
                   Reaction time is
                   {{

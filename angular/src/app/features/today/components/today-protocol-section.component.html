@@ -6,10 +6,10 @@
         @if (protocol(); as p) {
           @if (p.overallProgress !== undefined) {
             <div class="protocol-progress-wrapper">
-              <p-progressBar
+              <app-progress-bar
                 [value]="p.overallProgress"
                 [showValue]="false"
-                class="protocol-bar"
+                styleClass="protocol-bar"
               />
               <div class="protocol-meta">
                 <span>{{ p.completedExercises }}/{{ p.totalExercises }} Exercises</span>

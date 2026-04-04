@@ -15,7 +15,6 @@ import {
   Component,
   DestroyRef,
   effect,
-  ElementRef,
   inject,
   OnDestroy,
   signal,
@@ -23,8 +22,7 @@ import {
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { Router, RouterModule } from "@angular/router";
-import { IconButtonComponent } from "../button/icon-button.component";
-import { InputText } from "primeng/inputtext";
+import { SearchInputComponent } from "../search-input/search-input.component";
 import { TIMEOUTS } from "../../../core/constants/app.constants";
 import { AppDialogComponent } from "../dialog/dialog.component";
 
@@ -43,7 +41,7 @@ const SUGGESTION_DEBOUNCE_MS = 150;
 @Component({
   selector: "app-search-panel",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterModule, InputText, AppDialogComponent, IconButtonComponent],
+  imports: [RouterModule, SearchInputComponent, AppDialogComponent],
   templateUrl: "./search-panel.component.html",
   styleUrl: "./search-panel.component.scss",
   host: {
@@ -52,7 +50,7 @@ const SUGGESTION_DEBOUNCE_MS = 150;
   },
 })
 export class SearchPanelComponent implements OnDestroy {
-  searchInput = viewChild.required<ElementRef<HTMLInputElement>>("searchInput");
+  searchInput = viewChild.required<SearchInputComponent>("searchInput");
 
   readonly searchService = inject(SearchService);
   private readonly router = inject(Router);
@@ -188,10 +186,7 @@ export class SearchPanelComponent implements OnDestroy {
   }
 
   private focusInput(): void {
-    const input = this.searchInput();
-    if (input?.nativeElement) {
-      input.nativeElement.focus();
-    }
+    this.searchInput()?.focus();
   }
 
   onSearchChange(query: string): void {

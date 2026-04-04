@@ -1,26 +1,8 @@
 @use "styles/mixins" as *;
 
-/**
-     * Player Dashboard Styles
-     * =======================
-     * ⭐ CANONICAL PAGE — Design System Exemplar
-     * 
-     * This stylesheet is FROZEN as a design system exemplar.
-     * All future pages should copy patterns FROM this file.
-     * 
-     * Design System Compliant - All tokens from design-system-tokens.scss
-     * PrimeNG overrides moved to primeng/_brand-overrides.scss
-     * 
-     * NOTE: Encapsulation hacks and !important removed per DESIGN_SYSTEM_RULES.md
-     * PrimeNG component styling is handled globally via styleClass bindings
-     * 
-     * See docs/CANONICAL_PAGES.md for usage guidelines.
-     */
+/* Player dashboard layout — design tokens only. */
 
-      /* ==========================================
-       BENTO GRID LAYOUT
-       ========================================== */
-      .player-dashboard.bento-grid {
+.player-dashboard.bento-grid {
         display: grid;
         grid-template-columns: repeat(3, 1fr);
         gap: var(--space-5);
@@ -46,21 +28,6 @@
         /* Span Logic */
         .span-2 { grid-column: span 2; }
         .full-width { grid-column: 1 / -1; }
-
-        /* Component Overrides within Bento */
-        ::ng-deep {
-          app-card-shell .p-card {
-            background: transparent;
-            border: none;
-            box-shadow: none;
-            padding: 0;
-          }
-          
-          .p-card-body {
-            padding: 0;
-          }
-        }
-      }
 
       .bento-item.critical-wellness-card {
         background: color-mix(in srgb, var(--color-status-error) 8%, var(--surface-primary));
@@ -103,17 +70,9 @@
 
       .welcome-greeting {
         margin: 0;
-        font-size: var(--ds-font-size-2xl);
+        font-size: clamp(var(--ds-font-size-lg), 4vw, var(--ds-font-size-2xl));
         font-weight: var(--ds-font-weight-bold);
         color: var(--color-text-primary);
-
-        @include respond-to(md) {
-          font-size: var(--ds-font-size-xl);
-        }
-
-        @include respond-to(sm) {
-          font-size: var(--ds-font-size-lg);
-        }
       }
 
       .merlin-insight {
@@ -143,8 +102,8 @@
 
       .item-time {
         font-size: var(--ds-font-size-xs);
-        font-weight: var(--ds-font-weight-bold);
-        color: var(--ds-primary-green);
+        font-weight: var(--ds-font-weight-semibold);
+        color: var(--color-text-secondary);
         min-width: var(--space-12);
       }
 
@@ -178,44 +137,43 @@
           color: var(--color-text-tertiary);
           margin-bottom: var(--space-2);
         }
-      }
 
-      /* ==========================================
-       RESPONSIVE OVERRIDES
-       ========================================== */
-      
-      /* Tablet: 2 Columns */
-      @include respond-to(lg) {
-        .player-dashboard.bento-grid {
-          grid-template-columns: repeat(2, 1fr);
-          padding: var(--space-4);
-
-          .span-2, .stats-overview {
-            grid-column: span 2;
-          }
+        @include respond-to(md) {
+          padding: var(--space-5) var(--space-4);
         }
       }
 
-      /* Mobile: 1 Column */
-      @include respond-to(md) {
-        .player-dashboard.bento-grid {
-          grid-template-columns: 1fr;
-          gap: var(--space-4);
+  @include respond-to(lg) {
+    grid-template-columns: repeat(2, 1fr);
+    padding: var(--space-4);
 
-          .bento-item {
-            grid-column: span 1;
-            padding: var(--space-4);
-          }
+    .span-2,
+    .stats-overview {
+      grid-column: span 2;
+    }
+  }
 
-          .welcome-wrapper {
-            flex-direction: column;
-            text-align: center;
-          }
+  @include respond-to(md) {
+    grid-template-columns: 1fr;
+    gap: var(--space-4);
 
-          .welcome-actions {
-            justify-content: center;
-            flex-direction: column;
-            app-button { width: 100%; }
-          }
-        }
+    .bento-item {
+      grid-column: span 1;
+      padding: var(--space-4);
+    }
+
+    .welcome-wrapper {
+      flex-direction: column;
+      text-align: center;
+    }
+
+    .welcome-actions {
+      justify-content: center;
+      flex-direction: column;
+
+      app-button {
+        width: 100%;
       }
+    }
+  }
+}

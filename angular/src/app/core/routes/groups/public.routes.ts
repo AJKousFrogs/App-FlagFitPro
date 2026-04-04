@@ -11,7 +11,6 @@ export const publicRoutes: Routes = [
       preload: true,
       priority: "high",
       entry: "public",
-      animation: "fade",
       showBottomNav: false,
       showFab: false,
       headerPreset: "default",
@@ -26,7 +25,6 @@ export const publicRoutes: Routes = [
     data: {
       preload: false,
       entry: "public",
-      animation: "slideUp",
       showBottomNav: false,
       showFab: false,
       headerPreset: "default",
@@ -41,7 +39,6 @@ export const publicRoutes: Routes = [
     data: {
       preload: false,
       entry: "public",
-      animation: "slideUp",
       showBottomNav: false,
       showFab: false,
       headerPreset: "default",
@@ -56,7 +53,6 @@ export const publicRoutes: Routes = [
     data: {
       preload: false,
       entry: "deeplink",
-      animation: "slideUp",
       showBottomNav: false,
       showFab: false,
       headerPreset: "default",

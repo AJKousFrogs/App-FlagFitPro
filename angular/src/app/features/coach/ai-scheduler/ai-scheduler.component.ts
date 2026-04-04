@@ -19,7 +19,7 @@ import {
 } from "@angular/core";
 import { ToastService } from "../../../core/services/toast.service";
 import { ProgressBar } from "primeng/progressbar";
-import { Select, type SelectChangeEvent } from "primeng/select";
+import { SelectComponent } from "../../../shared/components/select/select.component";
 
 import { firstValueFrom } from "rxjs";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
@@ -106,7 +106,7 @@ const PRACTICE_DURATIONS = [
     CommonModule,
     CardShellComponent,
     ProgressBar,
-    Select,
+    SelectComponent,
 
     MainLayoutComponent,
     PageHeaderComponent,
@@ -164,17 +164,14 @@ const PRACTICE_DURATIONS = [
                 formData.targetType === "game"
               ) {
                 <div class="event-selector">
-                  <label for="event-select">Select event:</label>
-                  <p-select
-                    inputId="event-select"
+                  <app-select
+                    label="Select event"
                     [options]="upcomingEvents()"
-                    (onChange)="onEventSelect($event)"
+                    (valueChange)="onEventIdChange($event)"
                     optionLabel="name"
                     optionValue="id"
                     placeholder="Select upcoming event"
-                    class="w-full"
-                    [attr.aria-label]="'Select upcoming event'"
-                  ></p-select>
+                  />
                   @if (selectedEvent()) {
                     <p class="event-info">
                       Time until event:
@@ -234,27 +231,23 @@ const PRACTICE_DURATIONS = [
 
               <div class="constraints-row">
                 <div class="constraint-field">
-                  <label for="practice-duration">Practice duration:</label>
-                  <p-select
-                    inputId="practice-duration"
+                  <app-select
+                    label="Practice duration"
                     [options]="practiceDurations"
-                    (onChange)="onDurationSelect($event)"
+                    (valueChange)="onDurationChange($event)"
                     optionLabel="label"
                     optionValue="value"
-                    [attr.aria-label]="'Select practice duration'"
-                  ></p-select>
+                  />
                 </div>
                 <div class="constraint-field">
-                  <label for="facility-select">Facility:</label>
-                  <p-select
-                    inputId="facility-select"
+                  <app-select
+                    label="Facility"
                     [options]="facilities()"
-                    (onChange)="onFacilitySelect($event)"
+                    (valueChange)="onFacilityChange($event)"
                     optionLabel="name"
                     optionValue="id"
                     placeholder="Select facility"
-                    [attr.aria-label]="'Select facility'"
-                  ></p-select>
+                  />
                 </div>
               </div>
 
@@ -618,10 +611,6 @@ export class AiSchedulerComponent implements OnInit {
     this.formData = { ...this.formData, eventId: value ?? "" };
   }
 
-  onEventSelect(event: SelectChangeEvent): void {
-    this.onEventIdChange(typeof event.value === "string" ? event.value : null);
-  }
-
   onFocusAreasChange(value: string[] | null): void {
     this.formData = { ...this.formData, focusAreas: value ?? [] };
   }
@@ -676,16 +665,8 @@ export class AiSchedulerComponent implements OnInit {
     this.formData = { ...this.formData, duration: value ?? this.formData.duration };
   }
 
-  onDurationSelect(event: SelectChangeEvent): void {
-    this.onDurationChange(typeof event.value === "string" ? event.value : null);
-  }
-
   onFacilityChange(value: string | null): void {
     this.formData = { ...this.formData, facility: value ?? "" };
-  }
-
-  onFacilitySelect(event: SelectChangeEvent): void {
-    this.onFacilityChange(typeof event.value === "string" ? event.value : null);
   }
 
   onConsiderRtpChange(value: boolean): void {

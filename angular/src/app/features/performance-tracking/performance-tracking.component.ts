@@ -9,7 +9,7 @@ import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 
 import { DatePipe } from "@angular/common";
 import { RouterModule } from "@angular/router";
-import { ProgressBar } from "primeng/progressbar";
+import { ProgressBarComponent } from "../../shared/components/progress-bar/progress-bar.component";
 import { TableComponent } from "../../shared/components/table/table.component";
 import { InputNumberComponent } from "../../shared/components/input-number/input-number.component";
 import { FormInputComponent } from "../../shared/components/form-input/form-input.component";
@@ -177,7 +177,7 @@ const TRAINING_RECOMMENDATIONS: Record<string, string[]> = {
     DialogHeaderComponent,
     InputNumberComponent,
     FormInputComponent,
-    ProgressBar,
+    ProgressBarComponent,
     MainLayoutComponent,
     PageHeaderComponent,
     StatsGridComponent,

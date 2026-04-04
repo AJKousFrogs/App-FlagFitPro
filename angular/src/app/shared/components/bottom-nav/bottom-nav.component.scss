@@ -40,7 +40,7 @@
   display: none;
 }
 
-@include respond-to(md) {
+@media (max-width: 40rem) {
   .bottom-nav {
     display: flex;
   }

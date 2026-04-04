@@ -29,7 +29,7 @@ import { RouterModule } from "@angular/router";
 import { UI_LIMITS } from "@core/constants";
 
 // PrimeNG Components
-import { Badge } from "primeng/badge";
+import { BadgeComponent } from "../../../shared/components/badge/badge.component";
 import { Chip } from "primeng/chip";
 import { DatePickerComponent } from "../../../shared/components/date-picker/date-picker.component";
 
@@ -101,7 +101,7 @@ interface FlightTripForm {
     AccordionComponent,
     AppAccordionPanelDirective,
     CheckboxComponent,
-    Badge,
+    BadgeComponent,
     ButtonComponent,
     CardShellComponent,
     MainLayoutComponent,

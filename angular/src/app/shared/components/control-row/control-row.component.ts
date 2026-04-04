@@ -49,6 +49,53 @@ import { CommonModule } from "@angular/common";
       </div>
     </div>
   `,
+  styles: [`
+    :host {
+      display: block;
+    }
+    .control-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      padding: 0.75rem 0;
+      min-height: 2.75rem;
+    }
+    .control-row__label {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      flex: 1;
+      min-width: 0;
+    }
+    .notification-icon {
+      flex-shrink: 0;
+      width: 1.25rem;
+      text-align: center;
+      color: var(--color-text-tertiary, #667085);
+    }
+    .notification-text {
+      display: flex;
+      flex-direction: column;
+      gap: 0.125rem;
+      min-width: 0;
+    }
+    .notification-label {
+      font-size: var(--ds-font-size-sm, 0.875rem);
+      font-weight: var(--ds-font-weight-semibold, 600);
+      color: var(--color-text-primary, #0f1728);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .notification-desc {
+      font-size: var(--ds-font-size-xs, 0.75rem);
+      color: var(--color-text-tertiary, #667085);
+    }
+    .control-row__control {
+      flex-shrink: 0;
+    }
+  `]
 })
 export class ControlRowComponent {
   /**

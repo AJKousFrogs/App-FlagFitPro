@@ -1,11 +1,7 @@
 @use "../tokens/design-system-tokens" as *;
 @use "../utilities/mixins" as *;
 
-/**
- * FlagFit Pro - Modern Design Overrides
- * Comprehensive refactoring for core UI components
- */
-
+/** App-wide overrides (@layer overrides). */
 @layer overrides {
 
   /* ================================================================
@@ -84,270 +80,59 @@
         display: inline-block;
       }
       
-      i, svg { display: none !important; }
-    }
-  }
-
-  /* ================================================================
-     2. GLOBAL SEARCH CONTAINER (REMOVED)
-     ================================================================
-     This block was styling the generic `.search-container` class globally with
-     heavy `!important`, causing cross-page collisions.
-     
-     Replacement strategy:
-     - Header search trigger uses `.ui-search-trigger` and is styled locally in
-       `app/shared/components/header/header.component.scss`.
-     - Any PrimeNG search inputgroup overrides should live in
-       `assets/styles/overrides/_component-overrides.scss` scoped by component.
-     ================================================================ */
-
-  /* ================================================================
-     3. BENTO ITEMS & STAT CARDS
-     Consistent, modern elevation and spacing
-     ================================================================ */
-
-  /* Scoped to bento-grid pages to avoid global collisions */
-  :where(
-      .player-dashboard,
-      .coach-dashboard,
-      .analytics-page,
-      .acwr-dashboard,
-      .elite-command-center
-    )
-    :is(.bento-item, .stat-card, .kpi-card) {
-    background: var(--surface-primary);
-    border: var(--border-1) solid var(--color-border-subtle);
-    border-radius: var(--radius-2xl);
-    padding: var(--space-6);
-    box-shadow: var(--shadow-sm);
-    transition: all var(--transition-base);
-    position: relative;
-    overflow: hidden;
-
-    &:hover {
-      box-shadow: var(--shadow-md);
-      border-color: var(--ds-primary-green-subtle);
-    }
-
-    /* Bento variants */
-    &.full-width {
-      grid-column: 1 / -1;
-    }
-    &.span-2 {
-      grid-column: span 2;
-    }
-
-    &.no-padding {
-      padding: 0;
-    }
-
-    /* Header in bento */
-    .bento-header,
-    .stat-card-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: var(--space-4);
-
-      h3,
-      .title {
-        font-size: var(--ds-font-size-lg);
-        font-weight: var(--ds-font-weight-semibold);
-        color: var(--color-text-primary);
-        margin: 0;
-      }
-    }
-  }
-
-  /* Specific Stat Card Improvements (scoped) */
-  :where(
-      .player-dashboard,
-      .coach-dashboard,
-      .analytics-page,
-      .acwr-dashboard,
-      .elite-command-center
-    )
-    :is(.stat-card, .kpi-card) {
-    .stat-value,
-    .kpi-value {
-      font-size: var(--ds-font-size-3xl);
-      font-weight: var(--ds-font-weight-bold);
-      color: var(--color-text-primary);
-      line-height: 1.1;
-      margin: var(--space-2) 0;
-    }
-
-    .stat-label,
-    .type-caption {
-      font-size: var(--ds-font-size-xs);
-      color: var(--color-text-secondary);
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      font-weight: var(--ds-font-weight-medium);
-    }
-
-    .stat-delta {
-      display: inline-flex;
-      align-items: center;
-      gap: var(--space-1);
-      font-size: var(--ds-font-size-sm);
-      font-weight: var(--ds-font-weight-semibold);
-
-      &.up {
-        color: var(--color-status-success);
-      }
-      &.down {
-        color: var(--color-status-error);
+      i, svg {
+        display: none;
       }
     }
   }
 
   /* ================================================================
-     4. TABS (p-tabs)
-     Pill-shaped, modern, high-contrast active states
-     ================================================================ */
-
-  .p-tabs, .elite-tabs, .training-tabs {
-    .p-tablist {
-      background: var(--surface-secondary) !important;
-      padding: var(--space-1) !important;
-      border-radius: var(--radius-xl) !important;
-      border: var(--border-1) solid var(--color-border-subtle) !important;
-      display: inline-flex !important;
-      margin-bottom: var(--space-6) !important;
-    }
-
-    .p-tablist-tab-list {
-      gap: var(--space-1) !important;
-      border: none !important;
-    }
-
-    .p-tab {
-      border: none !important;
-      background: transparent !important;
-      border-radius: var(--radius-lg) !important;
-      padding: var(--space-2) var(--space-5) !important;
-      font-size: var(--ds-font-size-sm) !important;
-      font-weight: var(--ds-font-weight-medium) !important;
-      color: var(--color-text-secondary) !important;
-      transition: all var(--transition-base) !important;
-      min-height: 36px !important;
-
-      &:hover:not(.p-tab-active) {
-        background: var(--surface-primary) !important;
-        color: var(--color-text-primary) !important;
-      }
-
-      &.p-tab-active, &[data-p-active="true"] {
-        background: var(--surface-primary) !important;
-        color: var(--ds-primary-green) !important;
-        box-shadow: var(--shadow-sm) !important;
-        font-weight: var(--ds-font-weight-semibold) !important;
-      }
-    }
-
-    .p-tablist-active-bar {
-      display: none !important;
-    }
-
-    .p-tabpanels {
-      background: transparent !important;
-      padding: 0 !important;
-    }
-  }
-
-  /* ================================================================
-     5. MENU LIST (p-menu)
-     Clean lines, better spacing, modern hover
-     ================================================================ */
-
-  .p-menu {
-    border-radius: var(--radius-xl) !important;
-    padding: var(--space-2) !important;
-    box-shadow: var(--shadow-lg) !important;
-    border: var(--border-1) solid var(--color-border-subtle) !important;
-
-    .p-menu-list {
-      display: grid !important;
-      gap: var(--space-1) !important;
-    }
-
-    .p-menuitem {
-      .p-menuitem-link {
-        padding: var(--space-3) var(--space-4) !important;
-        border-radius: var(--radius-lg) !important;
-        transition: all var(--transition-fast) !important;
-
-        .p-menuitem-icon {
-          color: var(--color-text-tertiary) !important;
-          font-size: var(--ds-font-size-md) !important;
-        }
-
-        .p-menuitem-text {
-          color: var(--color-text-secondary) !important;
-          font-weight: var(--ds-font-weight-medium) !important;
-        }
-
-        &:hover {
-          background: var(--ds-primary-green-subtle) !important;
-          
-          .p-menuitem-icon, .p-menuitem-text {
-            color: var(--ds-primary-green) !important;
-          }
-        }
-      }
-
-      &.p-focus .p-menuitem-link {
-        background: var(--ds-primary-green-subtle) !important;
-      }
-    }
-  }
-
-  /* ================================================================
-     6. BANNER ICONS
+     2. BANNER ICONS
      Consistent sizing and refined appearance
      ================================================================ */
 
   .i.banner-icons, .pi.banner-icon {
-    font-size: 2.5rem !important;
-    margin-bottom: var(--space-4) !important;
-    display: inline-flex !important;
-    background: var(--ds-primary-green-gradient) !important;
-    -webkit-background-clip: text !important;
-    -webkit-text-fill-color: transparent !important;
+    font-size: 2.5rem;
+    margin-bottom: var(--space-4);
+    display: inline-flex;
+    background: var(--ds-primary-green-gradient);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
   }
 
   /* ================================================================
-     7. APP SHELL & MAIN LAYOUT
+     3. APP SHELL & MAIN LAYOUT
      Refined page transitions and spacing
      ================================================================ */
 
   .app-shell__main {
-    background: var(--surface-ground) !important;
-    background-image: 
+    background: var(--surface-ground);
+    background-image:
       radial-gradient(at 0% 0%, rgba(var(--ds-primary-green-rgb), 0.03) 0px, transparent 50%),
-      radial-gradient(at 100% 0%, rgba(var(--primitive-info-500-rgb), 0.03) 0px, transparent 50%) !important;
+      radial-gradient(at 100% 0%, rgba(var(--primitive-info-500-rgb), 0.03) 0px, transparent 50%);
   }
 
   .app-shell__page {
-    gap: var(--space-8) !important;
-    padding-top: var(--space-8) !important;
+    gap: var(--space-8);
+    padding-top: var(--space-8);
   }
 
   .app-shell__content-stack {
-    gap: var(--space-8) !important;
+    gap: var(--space-8);
   }
 
   @include respond-to(md) {
     .app-shell__page,
     .app-shell__content-stack {
-      gap: var(--space-6) !important;
-      padding-top: var(--space-6) !important;
+      gap: var(--space-6);
+      padding-top: var(--space-6);
     }
   }
 
   /* ================================================================
-     8. ZERO-SPACING AUDIT & REFACTORING
+     4. ZERO-SPACING
      Fixing cramped layouts and enforcing design system tokens
      ================================================================ */
 
@@ -359,36 +144,36 @@
   .history-details,
   .protocol-copy,
   .brand-block {
-    gap: var(--space-1) !important; /* Minimum breathing room for vertical stacks */
+    gap: var(--space-1); /* Minimum breathing room for vertical stacks */
   }
 
   /* Ensure semantic zero uses tokens for strict alignment */
-  .no-margin, .m-0 { margin: var(--space-0) !important; }
-  .no-padding, .p-0 { padding: var(--space-0) !important; }
+  .no-margin, .m-0 { margin: var(--space-0); }
+  .no-padding, .p-0 { padding: var(--space-0); }
 
   /* Addressing cramped headings/text with 0 margin */
-  .bento-title, 
-  .section-title, 
-  .setting-info h4, 
+  .bento-title,
+  .section-title,
+  .setting-info h4,
   .approval-info h4,
   .detail-section h4,
   .import-title,
   .history-title {
-    margin-bottom: var(--space-2) !important; /* Standardized heading separation */
+    margin-bottom: var(--space-2); /* Standardized heading separation */
   }
 
   .section-subtitle,
   .setting-info p,
   .import-description,
   .progress-text {
-    margin-bottom: var(--space-4) !important; /* Better paragraph separation */
+    margin-bottom: var(--space-4); /* Better paragraph separation */
   }
 
   /* Fix table cells and list items with 0 padding */
   .p-datatable-tbody > tr > td,
   .p-listbox-item,
   .p-multiselect-item {
-    padding: var(--space-3) var(--space-4) !important; /* Modern touch-friendly padding */
+    padding: var(--space-3) var(--space-4); /* Modern touch-friendly padding */
   }
 
   /* Improved separation for inline-flex groups with 0 gap */
@@ -398,40 +183,24 @@
   .status-row,
   .event-date,
   .breadcrumb-item {
-    gap: var(--space-2) !important;
+    gap: var(--space-2);
   }
 
   /* ================================================================
-     9. MICRO-INTERACTIONS & FEEDBACK
+     5. MICRO-INTERACTIONS
      Premium, responsive tactile feedback
      ================================================================ */
 
   /* Button Haptics */
-  .p-button, 
+  .p-button,
   .app-button,
   .action-btn,
   .p-tab,
   .header-utility,
   .filter-chip {
     &:active {
-      transform: scale(0.97) !important;
-      transition: transform var(--transition-fast) !important;
-    }
-  }
-
-  /* Card & Bento Elevation (Lift Effect) */
-  :where(
-      .player-dashboard,
-      .coach-dashboard,
-      .analytics-page,
-      .acwr-dashboard,
-      .elite-command-center
-    )
-    :is(.stat-card, .bento-item, .kpi-card) {
-    &:hover {
-      transform: translateY(-4px) scale(1.01);
-      box-shadow: var(--shadow-lg);
-      z-index: 2;
+      transform: scale(0.97);
+      transition: transform var(--transition-fast);
     }
   }
 
@@ -465,9 +234,9 @@
 
   /* Improved Focus Visibility (A11y) */
   :focus-visible {
-    outline: 2px solid var(--ds-primary-green) !important;
-    outline-offset: 4px !important;
-    border-radius: var(--radius-sm) !important;
+    outline: 2px solid var(--ds-primary-green);
+    outline-offset: 4px;
+    border-radius: var(--radius-sm);
   }
 
   /* Smooth Entrance for Dynamic Content */

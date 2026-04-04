@@ -27,9 +27,10 @@ import {
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { ActivatedRoute, ParamMap } from "@angular/router";
-import { Avatar } from "primeng/avatar";
-import { Badge } from "primeng/badge";
+import { AvatarComponent } from "../../shared/components/avatar/avatar.component";
+import { BadgeComponent } from "../../shared/components/badge/badge.component";
 import { Tooltip } from "primeng/tooltip";
+import { FormInputComponent } from "../../shared/components/form-input/form-input.component";
 import { TIMEOUTS } from "../../core/constants/app.constants";
 import { TOAST } from "../../core/constants/toast-messages.constants";
 import {
@@ -65,8 +66,8 @@ import { ChatPinnedMessagesDialogComponent } from "./components/chat-pinned-mess
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
-    Avatar,
-    Badge,
+    AvatarComponent,
+    BadgeComponent,
     ScrollingModule,
     Tooltip,
     MainLayoutComponent,
@@ -79,6 +80,7 @@ import { ChatPinnedMessagesDialogComponent } from "./components/chat-pinned-mess
     ChatCreateChannelDialogComponent,
     ChatMembersDialogComponent,
     ChatPinnedMessagesDialogComponent,
+    FormInputComponent,
   ],
   templateUrl: "./chat.component.html",
 
@@ -437,10 +439,9 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
-  onMessageFieldInput(event: Event): void {
-    const inputValue = this.readInputValue(event);
-    this.newMessage = inputValue;
-    this.updateMentionSuggestions(inputValue);
+  onMessageFieldInput(value: string): void {
+    this.newMessage = value;
+    this.updateMentionSuggestions(value);
   }
 
   onMemberSearchQueryChange(value: string): void {

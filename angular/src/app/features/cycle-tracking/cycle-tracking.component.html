@@ -459,28 +459,28 @@
           <!-- Dates -->
           <div class="form-row">
             <div class="form-field">
-              <label for="start-date">Period Start Date *</label>
-              <p-datepicker
+              <app-date-picker
+                label="Period Start Date *"
                 id="start-date"
-                (onSelect)="onNewPeriodStartDateChange($event)"
+                (select)="onNewPeriodStartDateChange($event)"
                 [maxDate]="today"
                 dateFormat="M dd, yy"
                 [showIcon]="true"
-                class="w-full"
-              ></p-datepicker>
+                styleClass="w-full"
+              ></app-date-picker>
             </div>
             <div class="form-field">
-              <label for="end-date">Period End Date (optional)</label>
-              <p-datepicker
+              <app-date-picker
+                label="Period End Date (optional)"
                 id="end-date"
-                (onSelect)="onNewPeriodEndDateChange($event)"
-                [minDate]="newPeriod.startDate"
+                (select)="onNewPeriodEndDateChange($event)"
+                [minDate]="newPeriod.startDate ?? undefined"
                 [maxDate]="today"
                 dateFormat="M dd, yy"
                 [showIcon]="true"
-                class="w-full"
+                styleClass="w-full"
                 placeholder="Select date"
-              ></p-datepicker>
+              ></app-date-picker>
             </div>
           </div>
 

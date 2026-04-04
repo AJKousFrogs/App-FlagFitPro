@@ -10,10 +10,10 @@ import {
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { Observable } from "rxjs";
-import { Badge } from "primeng/badge";
+import { BadgeComponent } from "../../shared/components/badge/badge.component";
 import { InputNumber, type InputNumberInputEvent } from "primeng/inputnumber";
-import { InputText } from "primeng/inputtext";
-import { Select, type SelectChangeEvent } from "primeng/select";
+import { FormInputComponent } from "../../shared/components/form-input/form-input.component";
+import { SelectComponent } from "../../shared/components/select/select.component";
 import { TableModule } from "primeng/table";
 
 import { StatusTagComponent } from "../../shared/components/status-tag/status-tag.component";
@@ -72,10 +72,10 @@ type ReturnData = { condition: Condition; notes: string };
     CommonModule,
     TableModule,
     StatusTagComponent,
-    InputText,
+    FormInputComponent,
     InputNumber,
-    Select,
-    Badge,
+    SelectComponent,
+    BadgeComponent,
     MainLayoutComponent,
     PageHeaderComponent,
     DatePipe,
@@ -165,13 +165,13 @@ type ReturnData = { condition: Condition; notes: string };
           <!-- Equipment Inventory -->
           <app-card-shell class="inventory-card" title="Equipment Inventory">
             <div header-actions class="filter-actions">
-              <p-select
+              <app-select
                 [options]="typeOptions"
-                (onChange)="onSelectedTypeSelect($event)"
+                (change)="onSelectedTypeChange($event)"
                 placeholder="All Types"
                 [showClear]="true"
                 class="equipment-filter-select"
-              ></p-select>
+              ></app-select>
             </div>
 
             <p-table
@@ -283,10 +283,7 @@ type ReturnData = { condition: Condition; notes: string };
           <!-- Active Assignments -->
           @if (isCoach()) {
             <app-card-shell class="assignments-card" title="Active Assignments">
-              <p-badge
-                header-actions
-                [value]="activeAssignments().length.toString()"
-              ></p-badge>
+              <app-badge header-actions variant="primary">{{ activeAssignments().length }}</app-badge>
 
               @if (activeAssignments().length === 0) {
                 <app-empty-state
@@ -351,55 +348,52 @@ type ReturnData = { condition: Condition; notes: string };
           />
           <div class="dialog-form">
             <div class="form-field">
-              <label>Name *</label>
-              <input
-                pInputText
+              <app-form-input
+                label="Name *"
                 [value]="newItem.name"
-                (input)="onNewItemNameInput($event)"
+                (valueChange)="updateNewItemName($event)"
                 placeholder="e.g., Home Jersey"
-              />
+              ></app-form-input>
             </div>
 
             <div class="form-row two-col">
               <div class="form-field">
-                <label>Type *</label>
-                <p-select
+                <app-select
+                  label="Type *"
                   [options]="typeOptions"
-                  (onChange)="onNewItemTypeSelect($event)"
+                  (change)="updateNewItemType($event)"
                   placeholder="Select type"
                   class="w-full"
-                ></p-select>
+                ></app-select>
               </div>
 
               <div class="form-field">
-                <label>Condition</label>
-                <p-select
+                <app-select
+                  label="Condition"
                   [options]="conditionOptions"
-                  (onChange)="onNewItemConditionSelect($event)"
+                  (change)="updateNewItemCondition($event)"
                   class="w-full"
-                ></p-select>
+                ></app-select>
               </div>
             </div>
 
             <div class="form-row two-col">
               <div class="form-field">
-                <label>Size</label>
-                <input
-                  pInputText
+                <app-form-input
+                  label="Size"
                   [value]="newItem.size"
-                  (input)="onNewItemSizeInput($event)"
+                  (valueChange)="updateNewItemSize($event)"
                   placeholder="e.g., Large, 42"
-                />
+                ></app-form-input>
               </div>
 
               <div class="form-field">
-                <label>Color</label>
-                <input
-                  pInputText
+                <app-form-input
+                  label="Color"
                   [value]="newItem.color"
-                  (input)="onNewItemColorInput($event)"
+                  (valueChange)="updateNewItemColor($event)"
                   placeholder="e.g., Red"
-                />
+                ></app-form-input>
               </div>
             </div>
 
@@ -412,13 +406,12 @@ type ReturnData = { condition: Condition; notes: string };
             </div>
 
             <div class="form-field">
-              <label>Description</label>
-              <input
-                pInputText
+              <app-form-input
+                label="Description"
                 [value]="newItem.description"
-                (input)="onNewItemDescriptionInput($event)"
+                (valueChange)="updateNewItemDescription($event)"
                 placeholder="Optional notes..."
-              />
+              ></app-form-input>
             </div>
           </div>
 
@@ -457,16 +450,16 @@ type ReturnData = { condition: Condition; notes: string };
               </p>
 
               <div class="form-field">
-                <label>Player *</label>
-                <p-select
+                <app-select
+                  label="Player *"
                   [options]="teamPlayers()"
-                  (onChange)="onCheckoutPlayerSelect($event)"
+                  (change)="updateCheckoutPlayerId($event)"
                   optionLabel="name"
                   optionValue="id"
                   placeholder="Select player"
                   [filter]="true"
                   class="w-full"
-                ></p-select>
+                ></app-select>
               </div>
 
               <div class="form-field">
@@ -479,13 +472,12 @@ type ReturnData = { condition: Condition; notes: string };
               </div>
 
               <div class="form-field">
-                <label>Notes</label>
-                <input
-                  pInputText
+                <app-form-input
+                  label="Notes"
                   [value]="checkoutData.notes"
-                  (input)="onCheckoutNotesInput($event)"
+                  (valueChange)="updateCheckoutNotes($event)"
                   placeholder="Optional..."
-                />
+                ></app-form-input>
               </div>
             </div>
           }
@@ -525,22 +517,21 @@ type ReturnData = { condition: Condition; notes: string };
               </p>
 
               <div class="form-field">
-                <label>Condition at Return *</label>
-                <p-select
+                <app-select
+                  label="Condition at Return *"
                   [options]="conditionOptions"
-                  (onChange)="onReturnConditionSelect($event)"
+                  (change)="updateReturnCondition($event)"
                   class="w-full"
-                ></p-select>
+                ></app-select>
               </div>
 
               <div class="form-field">
-                <label>Notes</label>
-                <input
-                  pInputText
+                <app-form-input
+                  label="Notes"
                   [value]="returnData.notes"
-                  (input)="onReturnNotesInput($event)"
+                  (valueChange)="updateReturnNotes($event)"
                   placeholder="Any damage or issues..."
-                />
+                ></app-form-input>
               </div>
             </div>
           }
@@ -706,10 +697,6 @@ export class EquipmentComponent implements OnInit {
     return (event.target as HTMLInputElement | null)?.value ?? "";
   }
 
-  onSelectedTypeSelect(event: SelectChangeEvent): void {
-    this.onSelectedTypeChange((event.value as ItemType | null | undefined) ?? null);
-  }
-
   onSelectedTypeChange(value: ItemType | null): void {
     this.selectedType = value;
     this.filterEquipment();
@@ -723,16 +710,8 @@ export class EquipmentComponent implements OnInit {
     this.updateNewItemName(this.readInputValue(event));
   }
 
-  onNewItemTypeSelect(event: SelectChangeEvent): void {
-    this.updateNewItemType(event.value as ItemType | null | undefined);
-  }
-
   updateNewItemType(value: ItemType | null | undefined): void {
     this.newItem = { ...this.newItem, item_type: value ?? "jersey" };
-  }
-
-  onNewItemConditionSelect(event: SelectChangeEvent): void {
-    this.updateNewItemCondition(event.value as Condition | null | undefined);
   }
 
   updateNewItemCondition(value: Condition | null | undefined): void {
@@ -771,12 +750,6 @@ export class EquipmentComponent implements OnInit {
     this.updateNewItemDescription(this.readInputValue(event));
   }
 
-  onCheckoutPlayerSelect(event: SelectChangeEvent): void {
-    this.updateCheckoutPlayerId(
-      typeof event.value === "string" ? event.value : null,
-    );
-  }
-
   updateCheckoutPlayerId(value: string | null | undefined): void {
     this.checkoutData = { ...this.checkoutData, player_id: value ?? "" };
   }
@@ -795,10 +768,6 @@ export class EquipmentComponent implements OnInit {
 
   onCheckoutNotesInput(event: Event): void {
     this.updateCheckoutNotes(this.readInputValue(event));
-  }
-
-  onReturnConditionSelect(event: SelectChangeEvent): void {
-    this.updateReturnCondition(event.value as Condition | null | undefined);
   }
 
   updateReturnCondition(value: Condition | null | undefined): void {

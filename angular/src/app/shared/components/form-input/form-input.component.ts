@@ -5,6 +5,7 @@
 
 import {
   Component,
+  effect,
   input,
   output,
   signal,
@@ -77,7 +78,7 @@ export type ValidationState = "idle" | "validating" | "valid" | "invalid";
           [disabled]="isDisabled()"
           [readonly]="readonly()"
           [autocomplete]="autocomplete()"
-          [value]="value()"
+          [value]="textValue()"
           (input)="onInputEvent($event)"
           (blur)="onBlur()"
           (focus)="onFocus()"
@@ -159,7 +160,7 @@ export type ValidationState = "idle" | "validating" | "valid" | "invalid";
       <!-- Character Count -->
       @if (maxLength() && showCharCount()) {
         <div class="char-count" [class.near-limit]="isNearLimit()">
-          {{ value().length }} / {{ maxLength() }}
+          {{ textValue().length }} / {{ maxLength() }}
         </div>
       }
     </div>
@@ -167,6 +168,11 @@ export type ValidationState = "idle" | "validating" | "valid" | "invalid";
   styleUrl: "./form-input.component.scss",
 })
 export class FormInputComponent implements ControlValueAccessor {
+  /**
+   * One-way value from parent (`[value]`). When omitted, ControlValueAccessor drives the field.
+   */
+  value = input<string | undefined>(undefined, { alias: "value" });
+
   // Configuration inputs
   inputId = input<string>(`form-input-${++nextFormInputId}`);
   label = input<string>("");
@@ -193,7 +199,7 @@ export class FormInputComponent implements ControlValueAccessor {
   blurred = output<void>();
 
   // Internal state
-  value = signal<string>("");
+  textValue = signal<string>("");
   isDisabled = signal<boolean>(false);
   isTouched = signal<boolean>(false);
   showPassword = signal<boolean>(false);
@@ -217,9 +223,18 @@ export class FormInputComponent implements ControlValueAccessor {
 
   isNearLimit = computed(() => {
     const max = this.maxLength();
-    const len = this.value().length;
+    const len = this.textValue().length;
     return max > 0 && len >= max * 0.9;
   });
+
+  constructor() {
+    effect(() => {
+      const v = this.value();
+      if (v !== undefined) {
+        this.textValue.set(v);
+      }
+    });
+  }
 
   /**
    * Get aria-describedby value
@@ -242,7 +257,7 @@ export class FormInputComponent implements ControlValueAccessor {
    * Handle input change
    */
   onInput(newValue: string): void {
-    this.value.set(newValue);
+    this.textValue.set(newValue);
     this.onChange(newValue);
     this.valueChange.emit(newValue);
   }
@@ -280,7 +295,7 @@ export class FormInputComponent implements ControlValueAccessor {
 
   // ControlValueAccessor implementation
   writeValue(value: string): void {
-    this.value.set(value || "");
+    this.textValue.set(value || "");
   }
 
   registerOnChange(fn: (value: string) => void): void {

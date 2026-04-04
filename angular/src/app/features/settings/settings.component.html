@@ -36,6 +36,7 @@
         <h3 class="bento-title"><i class="pi pi-compass"></i> Navigation</h3>
         <app-settings-nav-section
           [items]="settingsNavItems"
+          [activeId]="activeSettingsSection()"
           (selectSection)="scrollToSection($event)"
         ></app-settings-nav-section>
       </div>

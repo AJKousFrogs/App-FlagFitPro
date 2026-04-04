@@ -1,8 +1,8 @@
 import { ChangeDetectionStrategy, Component, input, output } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { RouterModule } from "@angular/router";
-import { Avatar } from "primeng/avatar";
-import { Badge } from "primeng/badge";
+import { AvatarComponent } from "../../../shared/components/avatar/avatar.component";
+import { BadgeComponent } from "../../../shared/components/badge/badge.component";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { SemanticMeaningRendererComponent } from "../../../shared/components/semantic-meaning-renderer/semantic-meaning-renderer.component";
 import { StatusTagComponent } from "../../../shared/components/status-tag/status-tag.component";
@@ -16,8 +16,8 @@ import { RiskMeaning } from "../../../core/semantics/semantic-meaning.types";
   imports: [
     CommonModule,
     RouterModule,
-    Avatar,
-    Badge,
+    AvatarComponent,
+    BadgeComponent,
     ButtonComponent,
     SemanticMeaningRendererComponent,
     StatusTagComponent,

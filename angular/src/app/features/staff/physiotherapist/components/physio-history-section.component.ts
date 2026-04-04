@@ -1,7 +1,7 @@
 import { CommonModule } from "@angular/common";
 import { ChangeDetectionStrategy, Component, input, output } from "@angular/core";
 import { FormsModule } from "@angular/forms";
-import { Select, type SelectChangeEvent } from "primeng/select";
+import { SelectComponent } from "../../../../shared/components/select/select.component";
 
 import { CardShellComponent } from "../../../../shared/components/card-shell/card-shell.component";
 
@@ -16,7 +16,7 @@ interface InjuryHistoryView {
   selector: "app-physio-history-section",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, FormsModule, Select, CardShellComponent],
+  imports: [CommonModule, FormsModule, SelectComponent, CardShellComponent],
   templateUrl: "./physio-history-section.component.html",
   styleUrl: "./physio-history-section.component.scss",
 })
@@ -27,7 +27,7 @@ export class PhysioHistorySectionComponent {
 
   readonly athleteChange = output<string | null>();
 
-  emitAthleteChange(event: SelectChangeEvent): void {
-    this.athleteChange.emit((event.value as string | null | undefined) ?? null);
+  emitAthleteChange(value: string | null | undefined): void {
+    this.athleteChange.emit(value ?? null);
   }
 }

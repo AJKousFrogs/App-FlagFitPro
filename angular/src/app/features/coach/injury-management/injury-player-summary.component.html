@@ -1,0 +1,40 @@
+<div class="injury-content">
+  <app-avatar
+    [image]="injury().avatarUrl"
+    [label]="
+      !injury().avatarUrl ? getInitialsStr(injury().playerName) : ''
+    "
+    size="large"
+    shape="circle"
+  />
+  <div class="injury-info">
+    <h4>
+      {{ injury().playerName }} (#{{ injury().jerseyNumber }})
+    </h4>
+    <p>Position: {{ injury().playerPosition }}</p>
+    @if (variant() === "active") {
+      <p>
+        <strong>Injury:</strong> {{ injury().bodyPart }}
+        {{ injury().injuryType }} ({{ injury().severity }})
+      </p>
+      <p>
+        <strong>Reported:</strong>
+        {{ injury().injuryDate | date: "MMM d, y, h:mm a" }}
+      </p>
+      <p class="description">"{{ injury().description }}"</p>
+      <p class="status">
+        <i class="pi pi-exclamation-triangle"></i> Awaiting medical evaluation
+      </p>
+    } @else {
+      <p>
+        <strong>Injury:</strong> {{ injury().bodyPart }}
+        {{ injury().injuryType }}
+      </p>
+      <p>
+        <strong>Injury Date:</strong>
+        {{ injury().injuryDate | date: "MMM d, y" }}
+      </p>
+      <p>Days in Protocol: {{ injury().daysInProtocol }}</p>
+    }
+  </div>
+</div>

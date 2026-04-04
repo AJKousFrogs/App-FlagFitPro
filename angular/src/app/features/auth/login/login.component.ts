@@ -19,7 +19,7 @@ import {
   Validators,
 } from "@angular/forms";
 import { ActivatedRoute, Router, RouterModule } from "@angular/router";
-import { InputText } from "primeng/inputtext";
+import { FormInputComponent } from "../../../shared/components/form-input/form-input.component";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { CardShellComponent } from "../../../shared/components/card-shell/card-shell.component";
 import {
@@ -50,14 +50,14 @@ type LoginForm = FormGroup<{
     FormsModule,
     ButtonComponent,
     CardShellComponent,
-    InputText,
+    FormInputComponent,
   ],
   template: `
 <div class="login-page elite-auth-shell">
       <app-card-shell class="login-card elite-auth-card elite-auth-card--login">
         <div class="elite-auth-intro">
           <div class="login-logo elite-auth-logo">
-            <i class="pi pi-activity"></i>
+            <i class="pi pi-flag-fill"></i>
           </div>
           <span class="elite-auth-kicker">Welcome Back</span>
           <h1 class="login-title elite-auth-title">Sign in to FlagFit Pro</h1>
@@ -97,21 +97,12 @@ type LoginForm = FormGroup<{
           }
 
           <div class="form-field elite-auth-field">
-            <label for="email" class="form-label elite-auth-label required"
-              >Email</label
-            >
-            <input
-              id="email"
-              type="email"
-              pInputText
+            <app-form-input
+              label="Email"
               formControlName="email"
               placeholder="Enter your email"
               data-testid="email-input"
-              [class.ng-invalid]="emailError()"
-              autocomplete="email"
-              aria-required="true"
-              [attr.aria-invalid]="emailError() ? 'true' : null"
-              [attr.aria-describedby]="emailError() ? 'email-error' : null"
+              styleClass="w-full"
             />
             @if (emailError()) {
               <small id="email-error" class="form-error" role="alert">
@@ -121,38 +112,26 @@ type LoginForm = FormGroup<{
           </div>
 
           <div class="form-field elite-auth-field">
-            <label for="password" class="form-label elite-auth-label required"
-              >Password</label
+            <app-form-input
+              label="Password"
+              formControlName="password"
+              [type]="showPassword() ? 'text' : 'password'"
+              placeholder="Enter your password"
+              data-testid="password-input"
+              styleClass="w-full"
+            />
+            <button
+              type="button"
+              class="form-field__toggle"
+              (click)="togglePasswordVisibility()"
+              [attr.aria-label]="
+                showPassword() ? 'Hide password' : 'Show password'
+              "
             >
-            <div class="password-field form-field__control">
-              <input
-                id="password"
-                [type]="showPassword() ? 'text' : 'password'"
-                pInputText
-                formControlName="password"
-                placeholder="Enter your password"
-                data-testid="password-input"
-                [class.ng-invalid]="passwordError()"
-                autocomplete="current-password"
-                aria-required="true"
-                [attr.aria-invalid]="passwordError() ? 'true' : null"
-                [attr.aria-describedby]="
-                  passwordError() ? 'password-error' : null
-                "
-              />
-              <button
-                type="button"
-                class="form-field__toggle"
-                (click)="togglePasswordVisibility()"
-                [attr.aria-label]="
-                  showPassword() ? 'Hide password' : 'Show password'
-                "
-              >
-                <i
-                  [class]="showPassword() ? 'pi pi-eye-slash' : 'pi pi-eye'"
-                ></i>
-              </button>
-            </div>
+              <i
+                [class]="showPassword() ? 'pi pi-eye-slash' : 'pi pi-eye'"
+              ></i>
+            </button>
             @if (passwordError()) {
               <small id="password-error" class="form-error" role="alert">
                 {{ passwordError() }}

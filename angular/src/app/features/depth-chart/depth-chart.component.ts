@@ -14,7 +14,7 @@ import {
   signal,
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
-import { Avatar } from "primeng/avatar";
+import { AvatarComponent } from "../../shared/components/avatar/avatar.component";
 
 import { Select, type SelectChangeEvent } from "primeng/select";
 import { Tab, TabList, TabPanel, TabPanels, Tabs } from "primeng/tabs";
@@ -59,7 +59,7 @@ interface PositionGroup {
     TabPanels,
     TabPanel,
     Select,
-    Avatar,
+    AvatarComponent,
     StatusTagComponent,
     MainLayoutComponent,
     PageHeaderComponent,
@@ -154,7 +154,7 @@ interface PositionGroup {
                                       {{ j + 1 }}
                                     </div>
                                     @if (entry.player_id) {
-                                      <p-avatar
+                                      <app-avatar
                                         [label]="
                                           getInitialsStr(
                                             entry.player_name || 'U'
@@ -162,7 +162,7 @@ interface PositionGroup {
                                         "
                                         shape="circle"
                                         size="normal"
-                                      ></p-avatar>
+                                      />
                                       <div class="player-info">
                                         <span class="player-name">{{
                                           entry.player_name
@@ -229,10 +229,10 @@ interface PositionGroup {
                 <div class="unassigned-list">
                   @for (player of unassignedPlayers(); track player.id) {
                     <div class="unassigned-player">
-                      <p-avatar
+                      <app-avatar
                         [label]="getInitialsStr(player.name || 'U')"
                         shape="circle"
-                      ></p-avatar>
+                      />
                       <span>{{ player.name }}</span>
                     </div>
                   }

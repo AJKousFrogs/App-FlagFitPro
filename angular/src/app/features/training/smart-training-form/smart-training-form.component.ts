@@ -17,7 +17,8 @@ import {
 } from "@angular/forms";
 import { Router } from "@angular/router";
 import { Chip } from "primeng/chip";
-import { Select, type SelectChangeEvent } from "primeng/select";
+import { type SelectChangeEvent } from "primeng/select";
+import { SelectComponent } from "../../../shared/components/select/select.component";
 import { SelectButton } from "primeng/selectbutton";
 import { Slider } from "primeng/slider";
 
@@ -62,7 +63,7 @@ interface EquipmentOption {
   imports: [
     CommonModule,
     ReactiveFormsModule,
-    Select,
+    SelectComponent,
     Slider,
     ToggleSwitch,
     Chip,
@@ -99,28 +100,15 @@ interface EquipmentOption {
         <!-- Dynamic Form Fields -->
         <div class="form-grid">
           <div class="form-field">
-            <label for="sessionType">Session Type</label>
-            <p-select
-              id="sessionType"
+            <app-select
+              label="Session Type"
               formControlName="sessionType"
               [options]="sessionTypes"
               optionLabel="label"
               optionValue="value"
               placeholder="Select session type"
               (onChange)="onSessionTypeSelect($event)"
-            >
-              <ng-template let-option #item>
-                <div class="session-type-option">
-                  <i [class]="option.icon"></i>
-                  <div>
-                    <div class="option-label">{{ option.label }}</div>
-                    <small class="option-description">{{
-                      option.description
-                    }}</small>
-                  </div>
-                </div>
-              </ng-template>
-            </p-select>
+            ></app-select>
           </div>
 
           <!-- Context-aware duration field -->

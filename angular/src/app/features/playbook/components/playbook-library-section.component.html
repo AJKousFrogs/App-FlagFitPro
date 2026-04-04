@@ -26,40 +26,36 @@
       Quiz Mode
     </app-button>
   </div>
-  <p-progressBar [value]="progressPercent()" [showValue]="false" class="progress-overall"></p-progressBar>
+  <app-progress-bar [value]="progressPercent()" [showValue]="false" styleClass="progress-overall" />
 </app-card-shell>
 
 <div class="filters-row">
-  <span class="p-input-icon-left filter-search">
-    <i class="pi pi-search"></i>
-    <input
-      type="text"
-      pInputText
-      placeholder="Search plays..."
-      [value]="searchQuery()"
-      (input)="searchInput.emit($event)"
-    />
-  </span>
+  <app-search-input
+    class="filter-search"
+    placeholder="Search plays..."
+    [value]="searchQuery()"
+    (valueChange)="searchInput.emit($event)"
+  />
 
-  <p-select
+  <app-select
     [options]="categoryOptions()"
-    (onChange)="emitCategoryChange($event)"
+    (change)="emitCategoryChange($event)"
     optionLabel="label"
     optionValue="value"
     placeholder="Category"
     [showClear]="true"
-    class="playbook-filter-select"
-  ></p-select>
+    styleClass="playbook-filter-select"
+  ></app-select>
 
-  <p-select
+  <app-select
     [options]="statusOptions()"
-    (onChange)="emitStatusChange($event)"
+    (change)="emitStatusChange($event)"
     optionLabel="label"
     optionValue="value"
     placeholder="Status"
     [showClear]="true"
-    class="playbook-filter-select"
-  ></p-select>
+    styleClass="playbook-filter-select"
+  ></app-select>
 </div>
 
 @if (filteredPlays().length > 0) {

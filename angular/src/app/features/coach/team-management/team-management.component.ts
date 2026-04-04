@@ -14,7 +14,7 @@ import {
   signal,
 } from "@angular/core";
 import { ToastService } from "../../../core/services/toast.service";
-import { InputText } from "primeng/inputtext";
+import { FormInputComponent } from "../../../shared/components/form-input/form-input.component";
 
 import { LoggerService } from "../../../core/services/logger.service";
 import { CardShellComponent } from "../../../shared/components/card-shell/card-shell.component";
@@ -34,7 +34,7 @@ import {
   imports: [
     CommonModule,
     CardShellComponent,
-    InputText,
+    FormInputComponent,
     MainLayoutComponent,
     PageHeaderComponent,
     ButtonComponent,
@@ -70,15 +70,13 @@ import {
               <h4><i class="pi pi-flag"></i> Team Information</h4>
 
               <div class="form-field">
-                <label for="teamName">Team Name</label>
-                <input
+                <app-form-input
+                  label="Team Name"
                   id="teamName"
-                  type="text"
-                  pInputText
                   [value]="teamSettings().name"
-                  (input)="onTeamNameInput($event)"
+                  (valueChange)="onTeamNameChange($event)"
                   class="w-full"
-                />
+                ></app-form-input>
               </div>
 
               <div class="form-row">
@@ -109,27 +107,23 @@ import {
               </div>
 
               <div class="form-field">
-                <label for="league">League / Division</label>
-                <input
+                <app-form-input
+                  label="League / Division"
                   id="league"
-                  type="text"
-                  pInputText
                   [value]="teamSettings().league"
-                  (input)="onLeagueInput($event)"
+                  (valueChange)="onLeagueChange($event)"
                   class="w-full"
-                />
+                ></app-form-input>
               </div>
 
               <div class="form-field">
-                <label for="homeField">Home Field</label>
-                <input
+                <app-form-input
+                  label="Home Field"
                   id="homeField"
-                  type="text"
-                  pInputText
                   [value]="teamSettings().homeField"
-                  (input)="onHomeFieldInput($event)"
+                  (valueChange)="onHomeFieldChange($event)"
                   class="w-full"
-                />
+                ></app-form-input>
               </div>
             </div>
 
@@ -224,10 +218,6 @@ export class TeamManagementComponent implements OnInit {
     this.loadSettings();
   }
 
-  onTeamNameInput(event: Event): void {
-    this.onTeamNameChange(this.readInputValue(event));
-  }
-
   onTeamNameChange(value: string): void {
     this.teamSettings.update((settings) => ({ ...settings, name: value }));
   }
@@ -248,16 +238,8 @@ export class TeamManagementComponent implements OnInit {
     this.teamSettings.update((settings) => ({ ...settings, secondaryColor: value }));
   }
 
-  onLeagueInput(event: Event): void {
-    this.onLeagueChange(this.readInputValue(event));
-  }
-
   onLeagueChange(value: string): void {
     this.teamSettings.update((settings) => ({ ...settings, league: value }));
-  }
-
-  onHomeFieldInput(event: Event): void {
-    this.onHomeFieldChange(this.readInputValue(event));
   }
 
   onHomeFieldChange(value: string): void {

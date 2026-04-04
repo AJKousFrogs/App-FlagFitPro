@@ -24,7 +24,7 @@ import {
   input,
   output,
 } from "@angular/core";
-import { Checkbox, type CheckboxChangeEvent } from "primeng/checkbox";
+import { CheckboxComponent } from "../checkbox/checkbox.component";
 
 import { StatusTagComponent } from "../status-tag/status-tag.component";
 import { firstValueFrom } from "rxjs";
@@ -53,7 +53,7 @@ import { CardShellComponent } from "../card-shell/card-shell.component";
   imports: [
     CommonModule,
     FormsModule,
-    Checkbox,
+    CheckboxComponent,
     ButtonComponent,
     StatusTagComponent,
     MicroSessionActiveSectionComponent,
@@ -174,14 +174,12 @@ import { CardShellComponent } from "../card-shell/card-shell.component";
                 let i = $index
               ) {
                 <div class="checklist-item">
-                  <p-checkbox
+                  <app-checkbox
                     [ngModel]="equipmentChecked[i]"
-                    (onChange)="onEquipmentCheckToggle(i, $event)"
+                    (checkedChange)="onEquipmentCheckChange(i, $event)"
                     [binary]="true"
-                    variant="filled"
-                    [inputId]="'equipment-' + i"
-                  ></p-checkbox>
-                  <label [for]="'equipment-' + i">{{ item }}</label>
+                    [label]="item"
+                  />
                 </div>
               }
             </div>
@@ -393,17 +391,12 @@ export class MicroSessionComponent implements OnInit, OnDestroy {
     this.equipmentChecked[index] = !!checked;
   }
 
-  onEquipmentCheckToggle(index: number, event: CheckboxChangeEvent): void {
-    this.onEquipmentCheckChange(index, event.checked);
-  }
-
   onFollowUpRatingChange(value: number | null | undefined): void {
     this.followUpRating = value ?? 0;
   }
 
-  onFollowUpNotesInput(event: Event): void {
-    const input = event.target as HTMLTextAreaElement | null;
-    this.followUpNotes = input?.value ?? "";
+  onFollowUpNotesInput(value: string): void {
+    this.followUpNotes = value;
   }
 
   private async beginSession(): Promise<void> {

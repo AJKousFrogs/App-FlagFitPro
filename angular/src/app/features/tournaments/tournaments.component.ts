@@ -2,6 +2,7 @@ import { CommonModule } from "@angular/common";
 import {
     ChangeDetectionStrategy,
     Component,
+    computed,
     ElementRef,
     OnInit,
     inject,
@@ -263,6 +264,23 @@ export class TournamentsComponent implements OnInit {
   tournaments2026 = this.tournamentService.tournaments2026;
   tournaments2027 = this.tournamentService.tournaments2027;
   nextTournament = this.tournamentService.nextTournament;
+
+  readonly tournamentSeasonPanels = computed(() => [
+    {
+      header: "2026 Season",
+      tabValue: 0,
+      seasonYear: "2026" as const,
+      tournaments: this.tournaments2026(),
+      showExtendedDetails: true,
+    },
+    {
+      header: "2027 Season",
+      tabValue: 1,
+      seasonYear: "2027" as const,
+      tournaments: this.tournaments2027(),
+      showExtendedDetails: false,
+    },
+  ]);
 
   // Dialog state
   showDialog = false;

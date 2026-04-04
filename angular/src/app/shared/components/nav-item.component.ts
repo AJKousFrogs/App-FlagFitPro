@@ -6,7 +6,7 @@ import {
   output,
 } from "@angular/core";
 import { RouterModule } from "@angular/router";
-import { Badge } from "primeng/badge";
+import { BadgeComponent } from "./badge/badge.component";
 import { Tooltip } from "primeng/tooltip";
 
 export type NavItemVariant = "sidebar" | "bottom" | "menu";
@@ -14,7 +14,7 @@ export type NavItemVariant = "sidebar" | "bottom" | "menu";
 @Component({
   selector: "app-nav-item",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, RouterModule, Badge, Tooltip],
+  imports: [CommonModule, RouterModule, BadgeComponent, Tooltip],
   template: `
     @if (route()) {
       <a
@@ -36,11 +36,10 @@ export type NavItemVariant = "sidebar" | "bottom" | "menu";
         <span class="nav-item-icon">
           <i [class]="'pi ' + icon()" aria-hidden="true"></i>
           @if (badge() !== null && badge() !== undefined) {
-            <p-badge
-              [value]="badge()!.toString()"
-              [severity]="normalizedBadgeSeverity()"
+            <app-badge
+              [variant]="normalizedBadgeSeverity()"
               class="nav-badge"
-            ></p-badge>
+            >{{ badge()!.toString() }}</app-badge>
           }
         </span>
         <span class="nav-item-label">{{ label() }}</span>
@@ -63,11 +62,10 @@ export type NavItemVariant = "sidebar" | "bottom" | "menu";
         <span class="nav-item-icon">
           <i [class]="'pi ' + icon()" aria-hidden="true"></i>
           @if (badge() !== null && badge() !== undefined) {
-            <p-badge
-              [value]="badge()!.toString()"
-              [severity]="normalizedBadgeSeverity()"
+            <app-badge
+              [variant]="normalizedBadgeSeverity()"
               class="nav-badge"
-            ></p-badge>
+            >{{ badge()!.toString() }}</app-badge>
           }
         </span>
         <span class="nav-item-label">{{ label() }}</span>
@@ -112,15 +110,15 @@ export class NavItemComponent {
   }
 
   normalizedBadgeSeverity():
+    | "primary"
     | "success"
     | "info"
-    | "warn"
+    | "warning"
     | "danger"
-    | "secondary"
-    | "contrast" {
+    | "secondary" {
     const severity = this.badgeSeverity();
-    // Map "warning" to "warn" for PrimeNG Badge compatibility
-    return severity === "warning" ? "warn" : severity;
+    // Map "contrast" to "secondary" for app-badge compatibility
+    return severity === "contrast" ? "secondary" : severity;
   }
 
   resolveClass(

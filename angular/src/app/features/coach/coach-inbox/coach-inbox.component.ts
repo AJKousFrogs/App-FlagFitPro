@@ -16,8 +16,8 @@ import {
 import { Router } from "@angular/router";
 import type { RealtimeChannel } from "@supabase/supabase-js";
 import { firstValueFrom } from "rxjs";
-import { Avatar } from "primeng/avatar";
-import { Badge } from "primeng/badge";
+import { AvatarComponent } from "../../../shared/components/avatar/avatar.component";
+import { BadgeComponent } from "../../../shared/components/badge/badge.component";
 import { TabPanel, Tabs } from "primeng/tabs";
 import { ApiService, API_ENDPOINTS } from "../../../core/services/api.service";
 import { LoggerService } from "../../../core/services/logger.service";
@@ -93,8 +93,8 @@ type InboxActionMode = "note" | "override";
     Tabs,
     TabPanel,
     StatusTagComponent,
-    Badge,
-    Avatar,
+    BadgeComponent,
+    AvatarComponent,
     MainLayoutComponent,
     AppLoadingComponent,
     PageErrorStateComponent,
@@ -139,11 +139,7 @@ type InboxActionMode = "note" | "override";
               <ng-template #header>
                 <span>Safety Alerts</span>
                 @if (stats().safety_alerts > 0) {
-                  <p-badge
-                    [value]="stats().safety_alerts.toString()"
-                    severity="danger"
-                    class="ml-2"
-                  ></p-badge>
+                  <app-badge variant="danger" class="ml-2">{{ stats().safety_alerts }}</app-badge>
                 }
               </ng-template>
               <div class="items-list">
@@ -156,15 +152,15 @@ type InboxActionMode = "note" | "override";
                   @for (item of safetyAlerts(); track item.id) {
                     <article class="inbox-item-card" [class.is-new]="item.is_new">
                       <div class="item-header">
-                        <p-avatar
+                        <app-avatar
                           [label]="item.player?.name?.charAt(0) || 'A'"
                           shape="circle"
-                        ></p-avatar>
+                        />
                         <div class="item-meta">
                           <div class="item-title-row">
                             <h3>{{ item.player?.name || "Athlete" }}</h3>
                             @if (item.is_new) {
-                              <p-badge value="New" severity="info"></p-badge>
+                              <app-badge variant="info">New</app-badge>
                             }
                           </div>
                           <span class="timestamp">{{
@@ -214,11 +210,7 @@ type InboxActionMode = "note" | "override";
               <ng-template #header>
                 <span>Review Needed</span>
                 @if (stats().review_needed > 0) {
-                  <p-badge
-                    [value]="stats().review_needed.toString()"
-                    severity="warn"
-                    class="ml-2"
-                  ></p-badge>
+                  <app-badge variant="warning" class="ml-2">{{ stats().review_needed }}</app-badge>
                 }
               </ng-template>
               <div class="items-list">
@@ -231,15 +223,15 @@ type InboxActionMode = "note" | "override";
                   @for (item of reviewNeeded(); track item.id) {
                     <article class="inbox-item-card" [class.is-new]="item.is_new">
                       <div class="item-header">
-                        <p-avatar
+                        <app-avatar
                           [label]="item.player?.name?.charAt(0) || 'A'"
                           shape="circle"
-                        ></p-avatar>
+                        />
                         <div class="item-meta">
                           <div class="item-title-row">
                             <h3>{{ item.player?.name || "Athlete" }}</h3>
                             @if (item.is_new) {
-                              <p-badge value="New" severity="info"></p-badge>
+                              <app-badge variant="info">New</app-badge>
                             }
                           </div>
                           <span class="timestamp">{{
@@ -288,11 +280,7 @@ type InboxActionMode = "note" | "override";
               <ng-template #header>
                 <span>Wins</span>
                 @if (stats().wins > 0) {
-                  <p-badge
-                    [value]="stats().wins.toString()"
-                    severity="success"
-                    class="ml-2 status-tag status-tag--success"
-                  ></p-badge>
+                  <app-badge variant="success" class="ml-2 status-tag status-tag--success">{{ stats().wins }}</app-badge>
                 }
               </ng-template>
               <div class="items-list">
@@ -305,15 +293,15 @@ type InboxActionMode = "note" | "override";
                   @for (item of wins(); track item.id) {
                     <article class="inbox-item-card" [class.is-new]="item.is_new">
                       <div class="item-header">
-                        <p-avatar
+                        <app-avatar
                           [label]="item.player?.name?.charAt(0) || 'A'"
                           shape="circle"
-                        ></p-avatar>
+                        />
                         <div class="item-meta">
                           <div class="item-title-row">
                             <h3>{{ item.player?.name || "Athlete" }}</h3>
                             @if (item.is_new) {
-                              <p-badge value="New" severity="info"></p-badge>
+                              <app-badge variant="info">New</app-badge>
                             }
                           </div>
                           <span class="timestamp">{{

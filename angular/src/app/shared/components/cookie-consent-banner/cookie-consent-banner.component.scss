@@ -209,27 +209,22 @@
 }
 
 /* ================================
- RESPONSIVE
+ RESPONSIVE — TABLET (≤ 768px)
  ================================ */
 @include respond-to(md) {
   .cookie-banner {
-    max-height: 56vh;
+    max-height: 50vh;
     overscroll-behavior: contain;
     -webkit-overflow-scrolling: touch;
   }
 
   .cookie-content {
-    padding: var(--space-4) var(--space-3);
-    gap: var(--space-3);
-  }
-
-  .cookie-header {
-    flex-direction: row;
-    align-items: center;
+    padding: var(--space-3) var(--space-3);
+    gap: var(--space-2);
   }
 
   .cookie-title {
-    font-size: var(--ds-font-size-lg);
+    font-size: var(--ds-font-size-md);
   }
 
   .cookie-description {
@@ -258,21 +253,72 @@
   }
 }
 
+/* ================================
+ RESPONSIVE — MOBILE (≤ 640px)
+ Compact single-row layout: icon + text + two action buttons.
+ Must not exceed 30vh so page content remains visible.
+ ================================ */
 @include respond-to(sm) {
   .cookie-banner {
-    max-height: 68vh;
+    max-height: 30vh;
+    overflow: hidden;
   }
 
   .cookie-content {
-    padding: var(--space-4) var(--space-3);
+    padding: var(--space-3) var(--space-3) var(--space-2);
+    gap: var(--space-2);
+  }
+
+  /* Inline header row */
+  .cookie-header {
+    flex-direction: row;
+    align-items: center;
+    gap: var(--space-2);
   }
 
   .cookie-icon {
-    font-size: var(--ds-font-size-2xl);
+    font-size: var(--ds-font-size-lg);
+    flex-shrink: 0;
   }
 
   .cookie-title {
-    font-size: var(--ds-font-size-md);
+    font-size: var(--ds-font-size-sm);
+    font-weight: var(--ds-font-weight-bold);
+  }
+
+  /* Keep description to 2 lines max */
+  .cookie-description {
+    font-size: var(--ds-font-size-xs);
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    max-width: 100%;
+  }
+
+  /* Two-button row: Accept All (primary, flex-1) + Necessary Only (outlined) */
+  .cookie-actions {
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: stretch;
+    gap: var(--space-2);
+  }
+
+  .cookie-actions app-button {
+    display: block;
+    flex: 1;
+  }
+
+  /* Hide the "Customize" button on mobile — move to preferences link */
+  .cookie-actions app-button:first-child:not(:last-child) {
+    display: none;
+  }
+
+  .cookie-details {
+    max-height: 0;
+    overflow: hidden;
+    margin: 0;
+    padding: 0;
   }
 }
 

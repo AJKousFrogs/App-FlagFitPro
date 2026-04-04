@@ -9,9 +9,9 @@ import {
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { Router, RouterModule } from "@angular/router";
 
-import { InputText } from "primeng/inputtext";
-import { Select, type SelectChangeEvent } from "primeng/select";
-import { Textarea } from "primeng/textarea";
+import { FormInputComponent } from "../../shared/components/form-input/form-input.component";
+import { SelectComponent } from "../../shared/components/select/select.component";
+import { TextareaComponent } from "../../shared/components/textarea/textarea.component";
 import { forkJoin } from "rxjs";
 import { firstValueFrom } from "rxjs";
 import { ApiService, API_ENDPOINTS } from "../../core/services/api.service";
@@ -108,9 +108,9 @@ interface NewSessionDraft {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     RouterModule,
-    InputText,
-    Textarea,
-    Select,
+    FormInputComponent,
+    TextareaComponent,
+    SelectComponent,
     AppLoadingComponent,
     AppDialogComponent,
     ButtonComponent,
@@ -647,17 +647,17 @@ export class CoachDashboardComponent {
     this.newSession = { ...this.newSession, title: value };
   }
 
-  onNewSessionTitleInput(event: Event): void {
-    this.onNewSessionTitleChange(this.readInputValue(event));
+  onNewSessionTitleInput(value: string): void {
+    this.onNewSessionTitleChange(value);
   }
 
   onNewSessionTypeChange(value: string | null): void {
     this.newSession = { ...this.newSession, type: value ?? "practice" };
   }
 
-  onNewSessionTypeSelect(event: SelectChangeEvent): void {
+  onNewSessionTypeSelect(value: unknown): void {
     this.onNewSessionTypeChange(
-      typeof event.value === "string" ? event.value : null,
+      typeof value === "string" ? value : null,
     );
   }
 
@@ -699,16 +699,16 @@ export class CoachDashboardComponent {
     };
   }
 
-  onNewSessionDurationInput(event: Event): void {
-    this.onNewSessionDurationChange(this.readInputValue(event));
+  onNewSessionDurationInput(value: string): void {
+    this.onNewSessionDurationChange(value);
   }
 
   onNewSessionNotesChange(value: string): void {
     this.newSession = { ...this.newSession, notes: value };
   }
 
-  onNewSessionNotesInput(event: Event): void {
-    this.onNewSessionNotesChange(this.readInputValue(event));
+  onNewSessionNotesInput(value: string): void {
+    this.onNewSessionNotesChange(value);
   }
 
   createSession(): void {
@@ -732,8 +732,8 @@ export class CoachDashboardComponent {
     this.teamMessageContent = value;
   }
 
-  onTeamMessageContentInput(event: Event): void {
-    this.onTeamMessageContentChange(this.readInputValue(event));
+  onTeamMessageContentInput(value: string): void {
+    this.onTeamMessageContentChange(value);
   }
 
   async sendTeamMessage(): Promise<void> {
@@ -791,8 +791,8 @@ export class CoachDashboardComponent {
     this.requestAccessMessage = value;
   }
 
-  onRequestAccessMessageInput(event: Event): void {
-    this.onRequestAccessMessageChange(this.readInputValue(event));
+  onRequestAccessMessageInput(value: string): void {
+    this.onRequestAccessMessageChange(value);
   }
 
   private readInputValue(event: Event): string {

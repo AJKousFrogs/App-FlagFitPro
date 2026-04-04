@@ -3,6 +3,8 @@
     <button
       type="button"
       class="settings-nav-item ui-page-nav__item"
+      [class.settings-nav-item--active]="item.id === activeId()"
+      [attr.aria-current]="item.id === activeId() ? 'true' : null"
       (click)="onSelect(item.id)"
     >
       <i [class]="'pi ' + item.icon"></i>

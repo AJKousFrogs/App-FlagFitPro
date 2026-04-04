@@ -1,11 +1,19 @@
 import { CommonModule } from "@angular/common";
-import { ChangeDetectionStrategy, Component, input, computed } from "@angular/core";
+import {
+  ChangeDetectionStrategy,
+  Component,
+  input,
+  computed,
+  ViewEncapsulation,
+} from "@angular/core";
 import { ProgressBarModule } from "primeng/progressbar";
 
 @Component({
   selector: "app-progress-bar",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
+  encapsulation: ViewEncapsulation.None,
+  host: { class: "app-progress-bar-host" },
   imports: [CommonModule, ProgressBarModule],
   template: `
     <div class="app-progress-bar-wrapper w-full">
@@ -18,29 +26,32 @@ import { ProgressBarModule } from "primeng/progressbar";
     </div>
   `,
   styles: [`
-    :host {
+    .app-progress-bar-host {
       display: block;
       width: 100%;
     }
-    :host ::ng-deep .p-progressbar {
+    .app-progress-bar-host .p-progressbar {
       height: 0.5rem;
       border-radius: 999px;
       background: var(--surface-200);
     }
-    :host ::ng-deep .p-progressbar-value {
+    .app-progress-bar-host .p-progressbar-value {
       border-radius: 999px;
+      transition: width var(--transition-slow, 300ms) var(--ease-decelerate, cubic-bezier(0, 0, 0.2, 1));
     }
-    /* Severity overrides using design tokens if needed */
-    :host ::ng-deep .app-pb-success .p-progressbar-value {
+    .app-progress-bar-host .app-pb-primary .p-progressbar-value {
+      background: var(--ds-primary-green);
+    }
+    .app-progress-bar-host .app-pb-success .p-progressbar-value {
       background: var(--color-status-success);
     }
-    :host ::ng-deep .app-pb-warning .p-progressbar-value {
+    .app-progress-bar-host .app-pb-warning .p-progressbar-value {
       background: var(--primitive-warning-500);
     }
-    :host ::ng-deep .app-pb-danger .p-progressbar-value {
+    .app-progress-bar-host .app-pb-danger .p-progressbar-value {
       background: var(--primitive-error-500);
     }
-    :host ::ng-deep .app-pb-info .p-progressbar-value {
+    .app-progress-bar-host .app-pb-info .p-progressbar-value {
       background: var(--color-status-info);
     }
   `]
@@ -50,7 +61,7 @@ export class ProgressBarComponent {
   showValue = input(true);
   unit = input("%");
   styleClass = input("");
-  severity = input<"success" | "warning" | "danger" | "info" | "primary">("info");
+  severity = input<"success" | "warning" | "danger" | "info" | "primary">("primary");
 
   severityClass = computed(() => `app-pb-${this.severity()}`);
 }

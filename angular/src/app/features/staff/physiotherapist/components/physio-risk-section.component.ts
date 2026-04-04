@@ -1,6 +1,6 @@
 import { CommonModule } from "@angular/common";
 import { ChangeDetectionStrategy, Component, input, output } from "@angular/core";
-import { ProgressBar } from "primeng/progressbar";
+import { ProgressBarComponent } from "../../../../shared/components/progress-bar/progress-bar.component";
 
 import { ButtonComponent } from "../../../../shared/components/button/button.component";
 import { CardShellComponent } from "../../../../shared/components/card-shell/card-shell.component";
@@ -24,7 +24,7 @@ interface RiskIndicatorView {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
-    ProgressBar,
+    ProgressBarComponent,
     ButtonComponent,
     CardShellComponent,
     EmptyStateComponent,

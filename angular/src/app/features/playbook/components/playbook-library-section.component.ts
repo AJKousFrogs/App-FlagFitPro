@@ -1,8 +1,8 @@
 import { CommonModule } from "@angular/common";
 import { ChangeDetectionStrategy, Component, input, output } from "@angular/core";
-import { InputText } from "primeng/inputtext";
-import { ProgressBar } from "primeng/progressbar";
-import { Select, type SelectChangeEvent } from "primeng/select";
+import { SearchInputComponent } from "../../../shared/components/search-input/search-input.component";
+import { ProgressBarComponent } from "../../../shared/components/progress-bar/progress-bar.component";
+import { SelectComponent } from "../../../shared/components/select/select.component";
 import { EmptyStateComponent } from "../../../shared/components/empty-state/empty-state.component";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { CardShellComponent } from "../../../shared/components/card-shell/card-shell.component";
@@ -14,9 +14,9 @@ import { Play, PlayCategory } from "../playbook.models";
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
-    InputText,
-    ProgressBar,
-    Select,
+    SearchInputComponent,
+    ProgressBarComponent,
+    SelectComponent,
     EmptyStateComponent,
     ButtonComponent,
     CardShellComponent,
@@ -35,21 +35,21 @@ export class PlaybookLibrarySectionComponent {
   readonly statusOptions = input.required<{ label: string; value: "memorized" | "learning" }[]>();
   readonly emptyDescription = input.required<string>();
 
-  readonly searchInput = output<Event>();
+  readonly searchInput = output<string>();
   readonly categoryChange = output<PlayCategory | null | undefined>();
   readonly statusChange = output<"memorized" | "learning" | null | undefined>();
   readonly selectPlay = output<Play>();
   readonly startQuiz = output<void>();
 
-  emitCategoryChange(event: SelectChangeEvent): void {
+  emitCategoryChange(value: unknown): void {
     this.categoryChange.emit(
-      (event.value as PlayCategory | null | undefined) ?? null,
+      (value as PlayCategory | null | undefined) ?? null,
     );
   }
 
-  emitStatusChange(event: SelectChangeEvent): void {
+  emitStatusChange(value: unknown): void {
     this.statusChange.emit(
-      (event.value as "memorized" | "learning" | null | undefined) ?? null,
+      (value as "memorized" | "learning" | null | undefined) ?? null,
     );
   }
 

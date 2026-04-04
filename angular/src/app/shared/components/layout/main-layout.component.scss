@@ -32,7 +32,7 @@
     minmax(0, 1fr);
 }
 
-@media (width <= 64rem) and (width > 48rem) {
+@media (width <= 64rem) and (width > 40rem) {
   .app-shell {
     --app-shell-sidebar-width: 13.5rem;
   }
@@ -128,12 +128,12 @@
 .desktop-only {
   display: block;
 
-  @include respond-to(md) {
+  @media (max-width: 40rem) {
     display: none;
   }
 }
 
-@include respond-to(md) {
+@media (max-width: 40rem) {
   .app-shell {
     grid-template-columns: minmax(0, 1fr);
     grid-template-rows:
@@ -196,7 +196,7 @@
   }
 }
 
-@media (width <= 30rem) {
+@media (max-width: 30rem) {
   .app-shell__page {
     padding-block-end: calc(
       var(--app-shell-gutter-block-mobile) +

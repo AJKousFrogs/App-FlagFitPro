@@ -45,22 +45,28 @@
   </app-alert>
 }
 
-<p-stepper
-  class="onboarding-stepper"
-  [value]="currentStep()"
-  (valueChange)="onStepperValueChange($event)"
-  [linear]="false"
->
-  <p-step-list>
+<div class="step-indicator" aria-label="Step progress">
+  <div class="step-dots" role="list">
     @for (step of steps(); track $index) {
-      <p-step [value]="$index">
-        <ng-template #content>
-          <div class="step-with-icon">
-            <i [class]="'pi ' + step.icon"></i>
-            <span>{{ step.label }}</span>
-          </div>
-        </ng-template>
-      </p-step>
+      <button
+        class="step-dot"
+        [class.step-dot--active]="$index === currentStep()"
+        [class.step-dot--completed]="step.completed"
+        [attr.aria-label]="step.label + ($index === currentStep() ? ' (current)' : step.completed ? ' (completed)' : ' (upcoming)')"
+        [attr.aria-current]="$index === currentStep() ? 'step' : null"
+        [disabled]="!step.completed || $index === currentStep()"
+        (click)="navigateToStep($index)"
+        role="listitem"
+        type="button"
+      >
+        @if (step.completed && $index !== currentStep()) {
+          <i class="pi pi-check step-dot__check"></i>
+        }
+      </button>
     }
-  </p-step-list>
-</p-stepper>
+  </div>
+  <span class="step-position-label">
+    Step {{ currentStep() + 1 }} of {{ steps().length }}
+    <span class="step-name">— {{ currentStepLabel() }}</span>
+  </span>
+</div>

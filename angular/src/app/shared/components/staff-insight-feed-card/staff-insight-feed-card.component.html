@@ -1,0 +1,45 @@
+<app-card-shell
+  class="insight-card"
+  [class]="'priority-' + insight().priority"
+>
+  <div class="insight-header">
+    <div class="insight-meta">
+      <app-status-tag
+        [value]="insight().fromRole"
+        [severity]="getRoleSeverity(insight().fromRole)"
+        size="sm"
+      />
+      <span class="insight-type">{{
+        getInsightTypeLabel(insight().insightType)
+      }}</span>
+      @if (insight().playerName) {
+        <span class="player-name">{{ insight().playerName }}</span>
+      }
+    </div>
+    <div class="insight-actions">
+      <app-status-tag
+        [value]="insight().priority"
+        [severity]="getPrioritySeverity(insight().priority)"
+        size="sm"
+      />
+      <span class="insight-date">{{ formatDate(insight().createdAt) }}</span>
+    </div>
+  </div>
+  <div class="insight-content">
+    <h4 class="insight-title">{{ insight().title }}</h4>
+    <p class="insight-text">{{ insight().content }}</p>
+    @if (insight().metadata && hasMetadata(insight().metadata!)) {
+      <div class="insight-metadata">
+        @for (
+          entry of getMetadataEntries(insight().metadata!);
+          track entry.key
+        ) {
+          <div class="metadata-item">
+            <strong>{{ entry.key }}:</strong>
+            {{ entry.value }}
+          </div>
+        }
+      </div>
+    }
+  </div>
+</app-card-shell>

@@ -4,7 +4,7 @@
       <span>
         Question {{ currentQuestionIndex() + 1 }} of {{ quizQuestions().length }}
       </span>
-      <p-progressBar
+      <app-progress-bar
         [value]="((currentQuestionIndex() + 1) / quizQuestions().length) * 100"
         [showValue]="false"
       />

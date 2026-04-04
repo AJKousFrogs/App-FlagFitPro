@@ -14,6 +14,7 @@ export interface SettingsNavItem {
 })
 export class SettingsNavSectionComponent {
   readonly items = input.required<SettingsNavItem[]>();
+  readonly activeId = input<string>("");
 
   readonly selectSection = output<string>();
 

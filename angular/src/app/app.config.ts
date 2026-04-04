@@ -5,7 +5,7 @@ import {
   provideZonelessChangeDetection,
 } from "@angular/core";
 import { provideClientHydration } from "@angular/platform-browser";
-import { provideAnimationsAsync } from "@angular/platform-browser/animations/async";
+import { provideNoopAnimations } from "@angular/platform-browser/animations";
 import {
   provideRouter,
   withComponentInputBinding,
@@ -48,20 +48,27 @@ export const appConfig: ApplicationConfig = {
 
     ...(environment.devtools.hydration ? [provideClientHydration()] : []),
 
-    // Angular 21: Enhanced routing with component input binding and smart preloading
-    // View transitions ENABLED with performance optimizations
     provideRouter(
       routes,
-      withComponentInputBinding(), // Enables route params as component inputs
-      withPreloading(AuthAwarePreloadStrategy), // Custom preloading strategy for authenticated routes
+      withComponentInputBinding(),
+      withPreloading(AuthAwarePreloadStrategy),
       withViewTransitions({
-        skipInitialTransition: true, // Performance: skip transition on first page load
+        skipInitialTransition: true,
+        onViewTransitionCreated: ({ transition }) => {
+          if (typeof window === "undefined") {
+            return;
+          }
+          if (
+            window.matchMedia("(prefers-reduced-motion: reduce)").matches
+          ) {
+            transition.skipTransition();
+          }
+        },
       }),
     ),
 
-    // PERFORMANCE: Use async animations to reduce initial bundle
-    // Animations are loaded asynchronously, reducing TBT
-    provideAnimationsAsync(),
+    /** No @angular/animations triggers in app; PrimeNG v21 uses CSS motion. */
+    provideNoopAnimations(),
 
     provideHttpClient(
       withFetch(), // Angular 21: Use fetch API for better performance and streaming support
@@ -138,11 +145,11 @@ export const appConfig: ApplicationConfig = {
           // Dark mode selector: Use class-based toggle
           darkModeSelector: ".dark-theme",
 
-          // CSS Layer configuration for proper cascade order
+          // CSS Layer configuration for proper cascade order (sync: styles.scss @layer prelude)
           cssLayer: {
             name: "primeng-base",
             order:
-              "reset, tokens, primeng-base, primeng-brand, primitives, features, overrides",
+              "reset, tokens, primeng-base, primeng-brand, primitives, components, utilities, mobile, features, overrides",
           },
         },
       },

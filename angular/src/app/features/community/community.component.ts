@@ -15,14 +15,14 @@ import {
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { RouterModule } from "@angular/router";
-import { Avatar } from "primeng/avatar";
+import { AvatarComponent } from "../../shared/components/avatar/avatar.component";
 
 import { ButtonComponent } from "../../shared/components/button/button.component";
 import { AppDialogComponent } from "../../shared/components/dialog/dialog.component";
 import { DialogFooterComponent } from "../../shared/components/dialog-footer/dialog-footer.component";
 import { DialogHeaderComponent } from "../../shared/components/dialog-header/dialog-header.component";
 
-import { InputText } from "primeng/inputtext";
+import { FormInputComponent } from "../../shared/components/form-input/form-input.component";
 
 import { Tooltip } from "primeng/tooltip";
 import { COLORS } from "../../core/constants/app.constants";
@@ -41,7 +41,6 @@ import { EmptyStateComponent } from "../../shared/components/empty-state/empty-s
 import { AppLoadingComponent } from "../../shared/components/loading/loading.component";
 import { PageErrorStateComponent } from "../../shared/components/page-error-state/page-error-state.component";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
-import { fadeInOut } from "../../shared/animations/app.animations";
 import { getInitials } from "../../shared/utils/format.utils";
 import {
   getScrollHeight,
@@ -162,8 +161,8 @@ type PostMedia = Post["media"];
     RouterModule,
     ScrollingModule,
     AppDialogComponent,
-    Avatar,
-    InputText,
+    AvatarComponent,
+    FormInputComponent,
     Tooltip,
     MainLayoutComponent,
     AnnouncementsBannerComponent,
@@ -177,7 +176,6 @@ type PostMedia = Post["media"];
     CommunityHeaderComponent,
     CommunitySidebarComponent,
   ],
-  animations: [fadeInOut],
   templateUrl: "./community.component.html",
 
   styleUrl: "./community.component.scss",
@@ -949,8 +947,8 @@ export class CommunityComponent implements OnInit {
     this.pollQuestion = value;
   }
 
-  onPollQuestionInput(event: Event): void {
-    this.setPollQuestion(this.readInputValue(event));
+  onPollQuestionInput(value: string): void {
+    this.setPollQuestion(value);
   }
 
   setPollOption(index: number, value: string): void {
@@ -959,8 +957,8 @@ export class CommunityComponent implements OnInit {
     );
   }
 
-  onPollOptionInput(index: number, event: Event): void {
-    this.setPollOption(index, this.readInputValue(event));
+  onPollOptionInput(index: number, value: string): void {
+    this.setPollOption(index, value);
   }
 
   addOption(): void {
@@ -1119,8 +1117,8 @@ export class CommunityComponent implements OnInit {
     this.locationInput = value;
   }
 
-  onLocationInput(event: Event): void {
-    this.setLocationInput(this.readInputValue(event));
+  onLocationInput(value: string): void {
+    this.setLocationInput(value);
   }
 
   setNewPostContent(value: string): void {
@@ -1133,8 +1131,8 @@ export class CommunityComponent implements OnInit {
     );
   }
 
-  onPostCommentInput(postId: string, event: Event): void {
-    this.setPostComment(postId, this.readInputValue(event));
+  onPostCommentInput(postId: string, value: string): void {
+    this.setPostComment(postId, value);
   }
 
   private readInputValue(event: Event): string {

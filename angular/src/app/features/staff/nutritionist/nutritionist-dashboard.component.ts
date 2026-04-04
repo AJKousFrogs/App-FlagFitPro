@@ -28,8 +28,7 @@ import { extractApiPayload } from "../../../core/utils/api-response-mapper";
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
 import { LazyChartComponent } from "../../../shared/components/lazy-chart/lazy-chart.component";
 import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";
-import { AppLoadingComponent } from "../../../shared/components/loading/loading.component";
-import { PageErrorStateComponent } from "../../../shared/components/page-error-state/page-error-state.component";
+import { StaffDashboardLoadStateComponent } from "../../../shared/components/staff-dashboard-load-state/staff-dashboard-load-state.component";
 import { AppDialogComponent } from "../../../shared/components/dialog/dialog.component";
 import { DialogHeaderComponent } from "../../../shared/components/dialog-header/dialog-header.component";
 import { DialogFooterComponent } from "../../../shared/components/dialog-footer/dialog-footer.component";
@@ -151,8 +150,7 @@ interface TournamentNutritionBrief {
     PageHeaderComponent,
     ButtonComponent,
     IconButtonComponent,
-    AppLoadingComponent,
-    PageErrorStateComponent,
+    StaffDashboardLoadStateComponent,
   ],
   templateUrl: "./nutritionist-dashboard.component.html",
   styleUrl: "./nutritionist-dashboard.component.scss",

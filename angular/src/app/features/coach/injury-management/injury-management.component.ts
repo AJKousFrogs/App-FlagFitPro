@@ -23,7 +23,7 @@ import {
   Validators,
 } from "@angular/forms";
 import { ToastService } from "../../../core/services/toast.service";
-import { Avatar } from "primeng/avatar";
+import { AvatarComponent } from "../../../shared/components/avatar/avatar.component";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { CardShellComponent } from "../../../shared/components/card-shell/card-shell.component";
 import { EmptyStateComponent } from "../../../shared/components/empty-state/empty-state.component";
@@ -54,6 +54,7 @@ import {
   DialogFooterComponent,
   DialogHeaderComponent,
 } from "../../../shared/components/ui-components";
+import { InjuryPlayerSummaryComponent } from "./injury-player-summary.component";
 
 // ===== Interfaces =====
 interface InjuryRecord {
@@ -265,7 +266,7 @@ const RTP_STAGES: RtpStage[] = [
     CommonModule,
     ReactiveFormsModule,
     DatePipe,
-    Avatar,
+    AvatarComponent,
     CardShellComponent,
     CheckboxComponent,
     DatePicker,
@@ -284,6 +285,7 @@ const RTP_STAGES: RtpStage[] = [
     AppDialogComponent,
     DialogHeaderComponent,
     DialogFooterComponent,
+    InjuryPlayerSummaryComponent,
   ],
   templateUrl: "./injury-management.component.html",
   styleUrl: "./injury-management.component.scss",
@@ -377,6 +379,20 @@ export class InjuryManagementComponent implements OnInit {
       .map(([position, count]) => ({ position, count }))
       .sort((a, b) => b.count - a.count);
   });
+
+  readonly injuryAnalyticsCharts = computed(() => [
+    {
+      title: "Injury by Type (This Season)",
+      rows: this.injuryByType().map((s) => ({ label: s.type, count: s.count })),
+    },
+    {
+      title: "Injury by Position",
+      rows: this.injuryByPosition().map((s) => ({
+        label: s.position,
+        count: s.count,
+      })),
+    },
+  ]);
 
   ngOnInit(): void {
     this.loadData();

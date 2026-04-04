@@ -18,27 +18,25 @@
         />
         <div class="poll-form">
           <div class="form-field">
-            <label for="pollQuestion">Poll Question</label>
-            <input
-              pInputText
+            <app-form-input
+              label="Poll Question"
               id="pollQuestion"
               [value]="pollQuestion"
-              (input)="onPollQuestionInput($event)"
+              (valueChange)="onPollQuestionInput($event)"
               placeholder="What would you like to ask?"
-              class="poll-input"
+              styleClass="poll-input"
             />
           </div>
           <div class="form-field">
             <label>Options</label>
             @for (option of pollOptions; track $index; let i = $index) {
               <div class="option-row">
-                <input
-                  pInputText
+                <app-form-input
                   [value]="pollOptions[i]"
-                  (input)="onPollOptionInput(i, $event)"
+                  (valueChange)="onPollOptionInput(i, $event)"
                   [placeholder]="'Option ' + (i + 1)"
-                  class="poll-input"
-                  [attr.aria-label]="'Poll option ' + (i + 1)"
+                  styleClass="poll-input"
+                  [ariaLabel]="'Poll option ' + (i + 1)"
                 />
                 @if (pollOptions.length > 2) {
                   <button
@@ -94,14 +92,13 @@
         />
         <div class="location-form">
           <div class="form-field">
-            <label for="locationInput">Where are you?</label>
-            <input
-              pInputText
+            <app-form-input
+              label="Where are you?"
               id="locationInput"
               [value]="locationInput"
-              (input)="onLocationInput($event)"
+              (valueChange)="onLocationInput($event)"
               placeholder="e.g., Training Field, Stadium, Gym..."
-              class="location-input"
+              styleClass="location-input"
             />
           </div>
         </div>
@@ -171,14 +168,14 @@
                   <!-- Post Header -->
                   <div class="post-header">
                     <div class="author-info">
-                      <p-avatar
+                      <app-avatar
                         [label]="post.authorInitials"
                         shape="circle"
-                        [class]="
+                        [styleClass]="
                           'author-avatar ' +
                           getAvatarColorClass(post.authorInitials)
                         "
-                      ></p-avatar>
+                      />
                       <div class="author-details">
                         <div class="author-name">
                           {{ post.author }}
@@ -361,7 +358,7 @@
 
                   <!-- Comments Section -->
                   @if (post.showComments) {
-                    <div class="comments-section" @fadeInOut>
+                    <div class="comments-section">
                       <!-- Existing Comments -->
                       @if (post.commentsList.length > 0) {
                         <div class="comments-list">
@@ -370,14 +367,14 @@
                             track comment.id
                           ) {
                             <div class="comment-item">
-                              <p-avatar
+                              <app-avatar
                                 [label]="comment.authorInitials"
                                 shape="circle"
-                                [class]="
+                                [styleClass]="
                                   'comment-avatar ' +
                                   getAvatarColorClass(comment.authorInitials)
                                 "
-                              ></p-avatar>
+                              />
                               <div class="comment-body">
                                 <div class="comment-bubble">
                                   <span class="comment-author">{{
@@ -411,23 +408,22 @@
 
                       <!-- Add Comment Input -->
                       <div class="add-comment">
-                        <p-avatar
+                        <app-avatar
                           [label]="currentUserInitials()"
                           shape="circle"
-                          [class]="
+                          [styleClass]="
                             'comment-avatar ' +
                             getAvatarColorClass(currentUserInitials())
                           "
-                        ></p-avatar>
+                        />
                         <div class="comment-input-wrapper">
-                          <input
-                            pInputText
+                          <app-form-input
                             type="text"
                             [value]="post.newComment ?? ''"
-                            (input)="onPostCommentInput(post.id, $event)"
+                            (valueChange)="onPostCommentInput(post.id, $event)"
                             placeholder="Write a comment..."
-                            class="comment-input"
-                            aria-label="Write a comment"
+                            styleClass="comment-input"
+                            ariaLabel="Write a comment"
                             (keyup.enter)="addComment(post)"
                           />
                           <button type="button"

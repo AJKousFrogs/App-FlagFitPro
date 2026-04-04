@@ -57,41 +57,30 @@
         <!-- Tournament Tabs -->
         @if (!tournamentService.loading() && !tournamentService.error() && tournaments().length > 0) {
           <app-tabs [value]="0">
-            <div *appTabPanel="let panel; header: '2026 Season'; value: 0; icon: 'pi-calendar'">
-              <app-tournament-season-panel
-                [tournaments]="tournaments2026()"
-                seasonYear="2026"
-                [isAuthenticated]="isAuthenticated()"
-                [canViewTeamAvailability]="canViewTeamAvailability()"
-                [showExtendedDetails]="true"
-                [isPlayerView]="isPlayer()"
-                (addTournament)="openCreateDialog()"
-                (edit)="openEditDialog($event)"
-                (delete)="confirmDelete($event)"
-                (availability)="openAvailabilityDialog($event)"
-                (teamAvailability)="openTeamAvailabilityDialog($event)"
-                (viewDetails)="viewDetails($event)"
-                (openWebsite)="openWebsite($event)"
-              />
-            </div>
-
-            <div *appTabPanel="let panel; header: '2027 Season'; value: 1; icon: 'pi-calendar'">
-              <app-tournament-season-panel
-                [tournaments]="tournaments2027()"
-                seasonYear="2027"
-                [isAuthenticated]="isAuthenticated()"
-                [canViewTeamAvailability]="canViewTeamAvailability()"
-                [showExtendedDetails]="false"
-                [isPlayerView]="isPlayer()"
-                (addTournament)="openCreateDialog()"
-                (edit)="openEditDialog($event)"
-                (delete)="confirmDelete($event)"
-                (availability)="openAvailabilityDialog($event)"
-                (teamAvailability)="openTeamAvailabilityDialog($event)"
-                (viewDetails)="viewDetails($event)"
-                (openWebsite)="openWebsite($event)"
-              />
-            </div>
+            @for (season of tournamentSeasonPanels(); track season.tabValue) {
+              <ng-template
+                appTabPanel
+                [appTabPanelHeader]="season.header"
+                [appTabPanelValue]="season.tabValue"
+                appTabPanelIcon="pi-calendar"
+              >
+                <app-tournament-season-panel
+                  [tournaments]="season.tournaments"
+                  [seasonYear]="season.seasonYear"
+                  [isAuthenticated]="isAuthenticated()"
+                  [canViewTeamAvailability]="canViewTeamAvailability()"
+                  [showExtendedDetails]="season.showExtendedDetails"
+                  [isPlayerView]="isPlayer()"
+                  (addTournament)="openCreateDialog()"
+                  (edit)="openEditDialog($event)"
+                  (delete)="confirmDelete($event)"
+                  (availability)="openAvailabilityDialog($event)"
+                  (teamAvailability)="openTeamAvailabilityDialog($event)"
+                  (viewDetails)="viewDetails($event)"
+                  (openWebsite)="openWebsite($event)"
+                />
+              </ng-template>
+            }
           </app-tabs>
         }
       </div>

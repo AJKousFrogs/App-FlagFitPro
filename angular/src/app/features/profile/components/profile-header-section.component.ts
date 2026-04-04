@@ -1,7 +1,7 @@
 import { CommonModule } from "@angular/common";
 import { ChangeDetectionStrategy, Component, input, output } from "@angular/core";
 import { RouterModule } from "@angular/router";
-import { ProgressBar } from "primeng/progressbar";
+import { ProgressBarComponent } from "../../../shared/components/progress-bar/progress-bar.component";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { IconButtonComponent } from "../../../shared/components/button/icon-button.component";
 import { MobileOptimizedImageDirective } from "../../../shared/directives/mobile-optimized-image.directive";
@@ -13,7 +13,7 @@ import { MobileOptimizedImageDirective } from "../../../shared/directives/mobile
   imports: [
     CommonModule,
     RouterModule,
-    ProgressBar,
+    ProgressBarComponent,
     ButtonComponent,
     IconButtonComponent,
     MobileOptimizedImageDirective,

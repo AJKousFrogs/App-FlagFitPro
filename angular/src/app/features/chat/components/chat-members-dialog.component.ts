@@ -6,8 +6,9 @@ import {
   model,
   output,
 } from "@angular/core";
-import { Avatar } from "primeng/avatar";
-import { InputText } from "primeng/inputtext";
+import { FormsModule } from "@angular/forms";
+import { SearchInputComponent } from "../../../shared/components/search-input/search-input.component";
+
 
 import {
   ChannelMemberDetails,
@@ -17,8 +18,7 @@ import { IconButtonComponent } from "../../../shared/components/button/icon-butt
 import { AppDialogComponent } from "../../../shared/components/dialog/dialog.component";
 import { DialogHeaderComponent } from "../../../shared/components/dialog-header/dialog-header.component";
 import { AppLoadingComponent } from "../../../shared/components/loading/loading.component";
-import { StatusTagComponent } from "../../../shared/components/status-tag/status-tag.component";
-import { getInitials } from "../../../shared/utils/format.utils";
+import { ChatMemberRowComponent } from "./chat-member-row.component";
 
 type ChatMemberWithPresence = ChannelMemberDetails & { is_online: boolean };
 
@@ -28,12 +28,11 @@ type ChatMemberWithPresence = ChannelMemberDetails & { is_online: boolean };
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
+    FormsModule,
     AppDialogComponent,
     DialogHeaderComponent,
-    InputText,
-    Avatar,
-    StatusTagComponent,
-    IconButtonComponent,
+    SearchInputComponent,
+    ChatMemberRowComponent,
     AppLoadingComponent,
   ],
   templateUrl: "./chat-members-dialog.component.html",
@@ -64,15 +63,5 @@ export class ChatMembersDialogComponent {
 
   onStartDirectMessage(member: ChannelMemberDetails): void {
     this.startDirectMessage.emit(member);
-  }
-
-  getInitialsStr(name: string): string {
-    return getInitials(name);
-  }
-
-  getAvatarColorClass(name: string): string {
-    const paletteSize = 6;
-    const index = name.charCodeAt(0) % paletteSize;
-    return `avatar-color-${index + 1}`;
   }
 }

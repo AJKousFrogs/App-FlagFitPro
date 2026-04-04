@@ -1,24 +1,23 @@
 <div class="create-post-card">
   <div class="create-post-header">
-    <p-avatar
+    <app-avatar
       [label]="currentUserInitials()"
       shape="circle"
-      class="user-avatar"
-    ></p-avatar>
+      styleClass="user-avatar"
+    />
     <div class="post-prompt">What's on your mind?</div>
   </div>
 
   <div class="create-post-body">
-    <textarea
-      pInputTextarea
+    <app-textarea
       [value]="newPostContent()"
-      (input)="onInput($event)"
+      (valueChange)="onInput($event)"
       placeholder="Share your training progress, game highlights, or tips with the community..."
-      rows="3"
+      [rows]="3"
       [autoResize]="true"
-      class="post-textarea"
-      aria-label="Create post content"
-    ></textarea>
+      styleClass="post-textarea"
+      ariaLabel="Create post content"
+    ></app-textarea>
   </div>
 
   <div class="create-post-footer">

@@ -17,7 +17,7 @@ import {
   getMappedStatusSeverity,
 } from "../../shared/utils/status.utils";
 import { TableModule } from "primeng/table";
-import { InputText } from "primeng/inputtext";
+import { SearchInputComponent } from "../../shared/components/search-input/search-input.component";
 import { EmptyStateComponent } from "../../shared/components/empty-state/empty-state.component";
 import { AppLoadingComponent } from "../../shared/components/loading/loading.component";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
@@ -47,7 +47,7 @@ const USER_STATUSES = ["active", "suspended", "pending"] as const;
     CardShellComponent,
     StatusTagComponent,
     TableModule,
-    InputText,
+    SearchInputComponent,
     MainLayoutComponent,
     PageHeaderComponent,
     ButtonComponent,
@@ -78,16 +78,12 @@ const USER_STATUSES = ["active", "suspended", "pending"] as const;
         <!-- Filters -->
         <app-card-shell class="filters-card">
           <div class="filters-row">
-            <span class="p-input-icon-left users-search">
-              <i class="pi pi-search"></i>
-              <input
-                type="text"
-                pInputText
-                [value]="searchQuery"
-                (input)="onSearchInput($event)"
-                placeholder="Search users..."
-              />
-            </span>
+            <app-search-input
+              class="users-search"
+              [value]="searchQuery"
+              (valueChange)="searchQuery = $event; filterUsers()"
+              placeholder="Search users..."
+            ></app-search-input>
             <div class="filter-buttons">
               <app-button
                 [variant]="roleFilter === 'all' ? 'primary' : 'outlined'"
@@ -417,10 +413,7 @@ export class SuperadminUsersComponent implements OnInit {
     });
   }
 
-  onSearchInput(event: Event): void {
-    this.searchQuery = (event.target as HTMLInputElement | null)?.value ?? "";
-    this.filterUsers();
-  }
+
 
   onEditRoleChange(event: Event): void {
     const value = (event.target as HTMLSelectElement | null)?.value;

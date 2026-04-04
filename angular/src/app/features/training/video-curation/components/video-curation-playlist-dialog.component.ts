@@ -16,10 +16,11 @@ import { FormsModule } from "@angular/forms";
 import { AppDialogComponent } from "../../../../shared/components/dialog/dialog.component";
 import { DialogFooterComponent } from "../../../../shared/components/dialog-footer/dialog-footer.component";
 import { DialogHeaderComponent } from "../../../../shared/components/dialog-header/dialog-header.component";
-import { InputText } from "primeng/inputtext";
-import { Textarea } from "primeng/textarea";
-import { Select, type SelectChangeEvent } from "primeng/select";
+import { type SelectChangeEvent } from "primeng/select";
 import { MultiSelect, type MultiSelectChangeEvent } from "primeng/multiselect";
+import { FormInputComponent } from "../../../../shared/components/form-input/form-input.component";
+import { TextareaComponent } from "../../../../shared/components/textarea/textarea.component";
+import { SelectComponent } from "../../../../shared/components/select/select.component";
 
 import { PlaylistForm, VideoOption } from "../video-curation.models";
 import { POSITION_OPTIONS, FOCUS_OPTIONS } from "../video-curation-utils";
@@ -33,9 +34,9 @@ import { POSITION_OPTIONS, FOCUS_OPTIONS } from "../video-curation-utils";
     AppDialogComponent,
     DialogHeaderComponent,
     DialogFooterComponent,
-    InputText,
-    Textarea,
-    Select,
+    FormInputComponent,
+    TextareaComponent,
+    SelectComponent,
     MultiSelect,
   ],
   template: `
@@ -57,40 +58,32 @@ import { POSITION_OPTIONS, FOCUS_OPTIONS } from "../video-curation-utils";
       />
       <div class="playlist-form">
         <div class="form-field">
-          <label for="playlistName">Playlist Name</label>
-          <input
-            id="playlistName"
-            type="text"
-            pInputText
+          <app-form-input
+            label="Playlist Name"
             [value]="form.name"
-            (input)="onNameInput($event)"
+            (valueChange)="onNameChange($event)"
             placeholder="e.g., QB Pre-Game Drills"
           />
         </div>
 
         <div class="form-field">
-          <label for="playlistDescription">Description</label>
-          <textarea
-            id="playlistDescription"
-            pTextarea
+          <app-textarea
+            label="Description"
             [value]="form.description"
-            (input)="onDescriptionInput($event)"
-            [rows]="3"
+            (valueChange)="onDescriptionChange($event)"
             placeholder="Describe this playlist..."
-          ></textarea>
+          />
         </div>
 
         <div class="form-field">
-          <label for="playlistPosition">Target Position</label>
-          <p-select
-            inputId="playlistPosition"
+          <app-select
+            label="Target Position"
             [ngModel]="form.position"
             (onChange)="onPositionSelect($event)"
             [options]="positionOptions"
             placeholder="Select position (optional)"
             [showClear]="true"
-            [attr.aria-label]="'Select target position for playlist'"
-          ></p-select>
+          ></app-select>
         </div>
 
         <div class="form-field">
@@ -186,14 +179,12 @@ export class VideoCurationPlaylistDialogComponent {
     this.resetForm();
   }
 
-  onNameInput(event: Event): void {
-    const input = event.target as HTMLInputElement | null;
-    this.form.name = input?.value ?? "";
+  onNameChange(value: string): void {
+    this.form.name = value;
   }
 
-  onDescriptionInput(event: Event): void {
-    const input = event.target as HTMLTextAreaElement | null;
-    this.form.description = input?.value ?? "";
+  onDescriptionChange(value: string): void {
+    this.form.description = value;
   }
 
   onPositionChange(value: PlaylistForm["position"] | undefined): void {

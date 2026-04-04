@@ -12,7 +12,6 @@ export const profileRoutes: Routes = [
     data: {
       preload: false,
       entry: "internal",
-      animation: "fadeScale",
       headerPreset: "default",
     }, // User profile - on demand
   },
@@ -26,7 +25,6 @@ export const profileRoutes: Routes = [
     data: {
       preload: false,
       entry: "internal",
-      animation: "fadeScale",
       headerPreset: "default",
     }, // Settings - on demand
   },
@@ -40,7 +38,6 @@ export const profileRoutes: Routes = [
     data: {
       preload: false,
       entry: "internal",
-      animation: "fadeScale",
       headerPreset: "default",
     }, // Settings - on demand
   },
@@ -54,7 +51,6 @@ export const profileRoutes: Routes = [
     title: "Privacy Controls - FlagFit Pro",
     data: {
       entry: "internal",
-      animation: "fadeScale",
       headerPreset: "default",
     },
   },

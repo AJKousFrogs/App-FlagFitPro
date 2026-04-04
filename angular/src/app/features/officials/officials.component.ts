@@ -9,11 +9,11 @@ import {
   signal,
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
-import { Avatar } from "primeng/avatar";
+import { AvatarComponent } from "../../shared/components/avatar/avatar.component";
 import { InputNumber, type InputNumberInputEvent } from "primeng/inputnumber";
-import { InputText } from "primeng/inputtext";
-import { Select, type SelectChangeEvent } from "primeng/select";
 import { TableModule } from "primeng/table";
+import { FormInputComponent } from "../../shared/components/form-input/form-input.component";
+import { SelectComponent } from "../../shared/components/select/select.component";
 
 import { StatusTagComponent } from "../../shared/components/status-tag/status-tag.component";
 import {
@@ -61,10 +61,10 @@ type AssignmentStatus = "scheduled" | "confirmed" | "declined" | "no_show";
     CommonModule,
     TableModule,
     StatusTagComponent,
-    InputText,
     InputNumber,
-    Select,
-    Avatar,
+    FormInputComponent,
+    SelectComponent,
+    AvatarComponent,
     MainLayoutComponent,
     PageHeaderComponent,
     DatePipe,
@@ -97,13 +97,13 @@ type AssignmentStatus = "scheduled" | "confirmed" | "declined" | "no_show";
           <!-- Officials Directory -->
           <app-card-shell class="directory-card" title="Officials Directory">
             <div header-actions class="filter-actions">
-              <p-select
+              <app-select
                 [options]="certificationOptions"
-                (onChange)="onSelectedCertificationSelect($event)"
+                (change)="onSelectedCertificationChange($event)"
                 placeholder="All Levels"
                 [showClear]="true"
                 class="officials-filter-select"
-              ></p-select>
+              ></app-select>
             </div>
 
             <p-table
@@ -128,11 +128,10 @@ type AssignmentStatus = "scheduled" | "confirmed" | "declined" | "no_show";
                 <tr>
                   <td>
                     <div class="official-cell">
-                      <p-avatar
+                      <app-avatar
                         [label]="getInitialsStr(official.name)"
                         shape="circle"
-                        size="normal"
-                      ></p-avatar>
+                      />
                       <span class="official-name">{{ official.name }}</span>
                     </div>
                   </td>
@@ -337,33 +336,30 @@ type AssignmentStatus = "scheduled" | "confirmed" | "declined" | "no_show";
           />
           <div class="officials-dialog-form">
             <div class="form-field">
-              <label>Name *</label>
-              <input
-                pInputText
+              <app-form-input
+                label="Name *"
                 [value]="officialForm.name"
-                (input)="onOfficialNameInput($event)"
+                (valueChange)="onOfficialNameChange($event)"
                 placeholder="Full name"
               />
             </div>
 
             <div class="form-row two-col">
               <div class="form-field">
-                <label>Email</label>
-                <input
-                  pInputText
+                <app-form-input
+                  label="Email"
                   [value]="officialForm.email"
-                  (input)="onOfficialEmailInput($event)"
+                  (valueChange)="onOfficialEmailChange($event)"
                   type="email"
                   placeholder="email@example.com"
                 />
               </div>
 
               <div class="form-field">
-                <label>Phone</label>
-                <input
-                  pInputText
+                <app-form-input
+                  label="Phone"
                   [value]="officialForm.phone"
-                  (input)="onOfficialPhoneInput($event)"
+                  (valueChange)="onOfficialPhoneChange($event)"
                   placeholder="(555) 123-4567"
                 />
               </div>
@@ -371,13 +367,13 @@ type AssignmentStatus = "scheduled" | "confirmed" | "declined" | "no_show";
 
             <div class="form-row two-col">
               <div class="form-field">
-                <label>Certification Level</label>
-                <p-select
+                <app-select
+                  label="Certification Level"
                   [options]="certificationOptions"
-                  (onChange)="onOfficialCertificationSelect($event)"
+                  (change)="onOfficialCertificationChange($event)"
                   placeholder="Select level"
                   class="w-full"
-                ></p-select>
+                ></app-select>
               </div>
 
               <div class="form-field">
@@ -390,11 +386,10 @@ type AssignmentStatus = "scheduled" | "confirmed" | "declined" | "no_show";
             </div>
 
             <div class="form-field">
-              <label>Notes</label>
-              <input
-                pInputText
+              <app-form-input
+                label="Notes"
                 [value]="officialForm.notes"
-                (input)="onOfficialNotesInput($event)"
+                (valueChange)="onOfficialNotesChange($event)"
                 placeholder="Additional notes..."
               />
             </div>
@@ -433,25 +428,25 @@ type AssignmentStatus = "scheduled" | "confirmed" | "declined" | "no_show";
               </p>
 
               <div class="form-field">
-                <label>Game *</label>
-                <p-select
+                <app-select
+                  label="Game *"
                   [options]="upcomingGames()"
-                  (onChange)="onScheduleGameSelect($event)"
+                  (change)="onScheduleGameIdChange($event)"
                   optionLabel="label"
                   optionValue="value"
                   placeholder="Select game"
                   class="w-full"
-                ></p-select>
+                ></app-select>
               </div>
 
               <div class="form-field">
-                <label>Role *</label>
-                <p-select
+                <app-select
+                  label="Role *"
                   [options]="roleOptions"
-                  (onChange)="onScheduleRoleSelect($event)"
+                  (change)="onScheduleRoleChange($event)"
                   placeholder="Select role"
                   class="w-full"
-                ></p-select>
+                ></app-select>
               </div>
 
               <div class="form-field">
@@ -622,12 +617,6 @@ export class OfficialsComponent implements OnInit {
     // Computed handles filtering
   }
 
-  onSelectedCertificationSelect(event: SelectChangeEvent): void {
-    this.onSelectedCertificationChange(
-      (event.value as CertificationLevel | null | undefined) ?? null,
-    );
-  }
-
   onSelectedCertificationChange(value: CertificationLevel | null): void {
     this.selectedCertification = value;
     this.filterOfficials();
@@ -657,12 +646,6 @@ export class OfficialsComponent implements OnInit {
     this.onOfficialPhoneChange(this.readInputValue(event));
   }
 
-  onOfficialCertificationSelect(event: SelectChangeEvent): void {
-    this.onOfficialCertificationChange(
-      (event.value as CertificationLevel | null | undefined) ?? null,
-    );
-  }
-
   onOfficialCertificationChange(value: CertificationLevel | null): void {
     this.officialForm = {
       ...this.officialForm,
@@ -689,20 +672,8 @@ export class OfficialsComponent implements OnInit {
     this.onOfficialNotesChange(this.readInputValue(event));
   }
 
-  onScheduleGameSelect(event: SelectChangeEvent): void {
-    this.onScheduleGameIdChange(
-      typeof event.value === "string" ? event.value : null,
-    );
-  }
-
   onScheduleGameIdChange(value: string | null): void {
     this.scheduleForm = { ...this.scheduleForm, game_id: value ?? "" };
-  }
-
-  onScheduleRoleSelect(event: SelectChangeEvent): void {
-    this.onScheduleRoleChange(
-      (event.value as OfficialRole | null | undefined) ?? null,
-    );
   }
 
   onScheduleRoleChange(value: OfficialRole | null): void {

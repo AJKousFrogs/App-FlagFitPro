@@ -1,8 +1,8 @@
 import { CommonModule } from "@angular/common";
 import { ChangeDetectionStrategy, Component, input, output } from "@angular/core";
 import { FormsModule } from "@angular/forms";
-import { ProgressBar } from "primeng/progressbar";
-import { Select, type SelectChangeEvent } from "primeng/select";
+import { ProgressBarComponent } from "../../../../shared/components/progress-bar/progress-bar.component";
+import { SelectComponent } from "../../../../shared/components/select/select.component";
 
 import { CardShellComponent } from "../../../../shared/components/card-shell/card-shell.component";
 import {
@@ -54,8 +54,8 @@ interface MentalWellnessReport {
     FormsModule,
     CardShellComponent,
     LazyChartComponent,
-    ProgressBar,
-    Select,
+    ProgressBarComponent,
+    SelectComponent,
     StatusTagComponent,
   ],
   templateUrl: "./psychology-wellness-section.component.html",
@@ -81,7 +81,7 @@ export class PsychologyWellnessSectionComponent {
 
   readonly periodChange = output<string>();
 
-  emitPeriodChange(event: SelectChangeEvent): void {
-    this.periodChange.emit((event.value as string | null | undefined) ?? "30days");
+  emitPeriodChange(value: string | null | undefined): void {
+    this.periodChange.emit(value ?? "30days");
   }
 }

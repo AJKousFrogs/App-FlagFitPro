@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, inject, OnInit, output, signal, viewChild, ViewEncapsulation } from "@angular/core";
 import { Router } from "@angular/router";
 import { MenuItem } from "primeng/api";
-import { Avatar } from "primeng/avatar";
+import { AvatarComponent } from "../avatar/avatar.component";
 import { Menu } from "primeng/menu";
 import { Tooltip } from "primeng/tooltip";
 
@@ -12,12 +12,12 @@ import { LoggerService } from "../../../core/services/logger.service";
 import { SupabaseService } from "../../../core/services/supabase.service";
 
 import { HeaderWeatherWidgetComponent } from "./header-weather-widget.component";
-import { IconButtonComponent } from "../button/icon-button.component";
+
 
 @Component({
   selector: "app-header-actions",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [Menu, Avatar, Tooltip, IconButtonComponent, HeaderWeatherWidgetComponent],
+  imports: [Menu, AvatarComponent, Tooltip, HeaderWeatherWidgetComponent],
   templateUrl: "./header-actions.component.html",
   encapsulation: ViewEncapsulation.None,
   host: {

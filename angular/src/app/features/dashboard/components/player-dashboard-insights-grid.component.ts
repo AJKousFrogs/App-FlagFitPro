@@ -1,6 +1,6 @@
 import { CommonModule } from "@angular/common";
 import { ChangeDetectionStrategy, Component, input } from "@angular/core";
-import { ProgressBar } from "primeng/progressbar";
+import { ProgressBarComponent } from "../../../shared/components/progress-bar/progress-bar.component";
 import { CardShellComponent } from "../../../shared/components/card-shell/card-shell.component";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { LazyChartComponent } from "../../../shared/components/lazy-chart/lazy-chart.component";
@@ -29,7 +29,7 @@ interface DashboardQuickAction {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
-    ProgressBar,
+    ProgressBarComponent,
     CardShellComponent,
     ButtonComponent,
     LazyChartComponent,

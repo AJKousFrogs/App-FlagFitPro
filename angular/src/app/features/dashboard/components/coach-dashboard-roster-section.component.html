@@ -31,7 +31,7 @@
       <tr [pSelectableRow]="player" class="clickable-row">
         <td>
           <div class="player-cell">
-            <p-avatar [label]="player.avatarInitials" shape="circle" [class]="getAvatarClass(player)"></p-avatar>
+            <app-avatar [label]="player.avatarInitials" shape="circle" [styleClass]="getAvatarClass(player)" />
             <div class="player-info">
               <span class="player-name">{{ player.playerName }}</span>
               <span class="jersey-number">#{{ player.jerseyNumber || "--" }}</span>
@@ -83,11 +83,7 @@
               (click)="openOverrideHistory(player.playerId, $event)"
               [attr.aria-label]="'View override history for ' + player.playerName"
             >
-              <p-badge
-                [value]="getPlayerOverrideCount(player.playerId).toString()"
-                severity="info"
-                class="override-badge"
-              ></p-badge>
+              <app-badge variant="info" class="override-badge">{{ getPlayerOverrideCount(player.playerId) }}</app-badge>
             </button>
           } @else {
             <span class="no-overrides">—</span>

@@ -7,6 +7,7 @@ import {
   output,
   signal,
   computed,
+  ViewEncapsulation,
 } from "@angular/core";
 import { ControlValueAccessor, NG_VALUE_ACCESSOR, FormsModule } from "@angular/forms";
 import { DatePickerModule } from "primeng/datepicker";
@@ -15,6 +16,8 @@ import { DatePickerModule } from "primeng/datepicker";
   selector: "app-date-picker",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
+  encapsulation: ViewEncapsulation.None,
+  host: { class: "app-date-picker-host" },
   imports: [CommonModule, DatePickerModule, FormsModule],
   providers: [
     {
@@ -34,7 +37,8 @@ import { DatePickerModule } from "primeng/datepicker";
         </label>
       }
       <p-datepicker
-        [(ngModel)]="value"
+        [ngModel]="dateValue()"
+        (ngModelChange)="onDateNgModelChange($event)"
         [inputId]="inputId()"
         [placeholder]="placeholder()"
         [minDate]="minDate()"
@@ -54,15 +58,13 @@ import { DatePickerModule } from "primeng/datepicker";
     </div>
   `,
   styles: [`
-    :host {
+    .app-date-picker-host {
       display: block;
       width: 100%;
     }
-    :host ::ng-deep .p-datepicker {
-        width: 100%;
-    }
-    :host ::ng-deep .p-datepicker-input {
-        width: 100%;
+    .app-date-picker-host .p-datepicker,
+    .app-date-picker-host .p-datepicker-input {
+      width: 100%;
     }
   `]
 })
@@ -84,9 +86,10 @@ export class DatePickerComponent implements ControlValueAccessor {
 
   // Outputs
   select = output<Date | Date[] | null>();
+  ngModelChange = output<Date | Date[] | null>();
 
   // Internal
-  protected value = signal<Date | Date[] | null>(null);
+  protected dateValue = signal<Date | Date[] | null>(null);
   private _cvaDisabled = signal(false);
 
   protected isDisabled = computed(() => this.disabled() || this._cvaDisabled());
@@ -96,8 +99,14 @@ export class DatePickerComponent implements ControlValueAccessor {
   private onModelTouched: () => void = () => {};
 
   onSelect(value: Date | Date[] | null) {
-    this.onModelChange(value);
+    this.dateValue.set(value);
     this.select.emit(value);
+  }
+
+  onDateNgModelChange(value: Date | Date[] | null) {
+    this.dateValue.set(value);
+    this.onModelChange(value);
+    this.ngModelChange.emit(value);
     this.onModelTouched();
   }
 
@@ -110,11 +119,11 @@ export class DatePickerComponent implements ControlValueAccessor {
     if (value && typeof value === 'string') {
         const date = new Date(value);
         if (!isNaN(date.getTime())) {
-            this.value.set(date);
+            this.dateValue.set(date);
             return;
         }
     }
-    this.value.set(value as Date | Date[] | null);
+    this.dateValue.set(value as Date | Date[] | null);
   }
 
   registerOnChange(fn: (value: Date | Date[] | null) => void): void {

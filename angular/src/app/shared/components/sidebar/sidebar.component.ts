@@ -18,8 +18,7 @@ import { UI_LIMITS } from "../../../core/constants/app.constants";
 import {
   AppNavigationItem,
   getMeNavigationItems,
-  getPrimaryNavigationItems,
-  getSecondaryNavigationItems,
+  getNavGroupsForRole,
   isExactNavigationRoute,
 } from "../../../core/navigation/app-navigation.config";
 import { ConfirmDialogService } from "../../../core/services/confirm-dialog.service";
@@ -82,36 +81,13 @@ import { NavItemComponent } from "../nav-item.component";
       </div>
 
       <nav class="nav-section" aria-label="Main navigation">
-        <div class="nav-group">
-          <div class="nav-group-title">{{ navGroups[0].label }}</div>
-          <div class="nav-group-items">
-            @for (item of primaryNavItems(); track trackByRoute($index, item)) {
-              <app-nav-item
-                [route]="item.route"
-                [label]="item.label"
-                [icon]="item.icon"
-                [ariaLabel]="item.ariaLabel"
-                [testId]="getNavTestId(item.route)"
-                [itemId]="'nav-' + item.route.replace('/', '')"
-                [exact]="isExactRoute(item.route)"
-                variant="sidebar"
-                [itemClass]="navItemClass('nav-item-primary')"
-                [tooltipDisabled]="!isCollapsed()"
-                tooltipPosition="right"
-                (clicked)="onNavItemClick()"
-              />
-            }
-          </div>
-        </div>
-
-        @if (additionalItems().length > 0) {
+        @for (group of navGroupsForRole(); track group.id) {
           <div class="nav-group">
-            <div class="nav-group-title">More</div>
+            @if (!isCollapsed()) {
+              <div class="nav-group-title">{{ group.label }}</div>
+            }
             <div class="nav-group-items">
-              @for (
-                item of additionalItems();
-                track trackByRoute($index, item)
-              ) {
+              @for (item of group.items; track trackByRoute($index, item)) {
                 <app-nav-item
                   [route]="item.route"
                   [label]="item.label"
@@ -119,6 +95,7 @@ import { NavItemComponent } from "../nav-item.component";
                   [ariaLabel]="item.ariaLabel"
                   [testId]="getNavTestId(item.route)"
                   [itemId]="'nav-' + item.route.replace('/', '')"
+                  [exact]="isExactRoute(item.route)"
                   variant="sidebar"
                   [itemClass]="navItemClass()"
                   [tooltipDisabled]="!isCollapsed()"
@@ -288,19 +265,10 @@ export class SidebarComponent implements OnInit {
   });
 
   /**
-   * Primary navigation items based on user role
+   * Ordered nav groups for the sidebar — 4 semantic groups for athletes, 2 for coaches.
    */
-  primaryNavItems = computed(() => {
-    const userRole = this.currentUserRole();
-    return getPrimaryNavigationItems(userRole);
-  });
-
-  /**
-   * Additional navigation items filtered by role
-   */
-  additionalItems = computed(() => {
-    const userRole = this.currentUserRole();
-    return getSecondaryNavigationItems(userRole);
+  navGroupsForRole = computed(() => {
+    return getNavGroupsForRole(this.currentUserRole());
   });
 
   /**
@@ -310,14 +278,6 @@ export class SidebarComponent implements OnInit {
     const userRole = this.currentUserRole();
     return getMeNavigationItems(userRole);
   });
-
-  /**
-   * Navigation groups for organized display
-   */
-  navGroups = [
-    { id: "primary", label: "Main", icon: "pi-home" },
-    { id: "me", label: "Me", icon: "pi-user" },
-  ];
 
   userName = computed(() => {
     const user = this.currentUser();
@@ -434,12 +394,8 @@ export class SidebarComponent implements OnInit {
    * Get navigation items for a specific group
    */
   getGroupItems(groupId: string): AppNavigationItem[] {
-    if (groupId === "primary") {
-      return this.primaryNavItems();
-    } else if (groupId === "me") {
-      return this.meItems();
-    }
-    return [];
+    const group = this.navGroupsForRole().find((g) => g.id === groupId);
+    return group?.items ?? [];
   }
 
   navItemClass(...classes: string[]): string {

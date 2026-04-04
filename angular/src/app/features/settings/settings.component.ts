@@ -235,6 +235,8 @@ export class SettingsComponent implements OnInit {
     { id: "preferences-settings", icon: "pi-sliders-h", label: "Preferences" },
   ];
 
+  readonly activeSettingsSection = signal("account-settings");
+
   ngOnInit(): void {
     const currentUser = this.supabase.currentUser();
     const user = currentUser
@@ -540,15 +542,14 @@ export class SettingsComponent implements OnInit {
    * @param sectionId The ID of the section to scroll to
    */
   scrollToSection(sectionId: string, event?: Event): void {
-    // Prevent any navigation behavior
     if (event) {
       event.preventDefault();
       event.stopPropagation();
     }
 
-    // Use setTimeout to ensure the DOM is stable before scrolling
+    this.activeSettingsSection.set(sectionId);
+
     setTimeout(() => {
-      // Use the component's ElementRef to find the section (stays within Angular's scope)
       const settingsContainer = this.elementRef?.nativeElement;
       if (settingsContainer) {
         const element = settingsContainer.querySelector(`#${sectionId}`);

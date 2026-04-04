@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, input, output } from "@angular/core";
-import { ProgressBar } from "primeng/progressbar";
+import { ProgressBarComponent } from "../../../shared/components/progress-bar/progress-bar.component";
 
 import { AlertComponent } from "../../../shared/components/alert/alert.component";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
@@ -8,7 +8,7 @@ import { QuizQuestion } from "../playbook.models";
 @Component({
   selector: "app-playbook-quiz-dialog-content",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ProgressBar, AlertComponent, ButtonComponent],
+  imports: [ProgressBarComponent, AlertComponent, ButtonComponent],
   templateUrl: "./playbook-quiz-dialog-content.component.html",
   styleUrl: "./playbook-quiz-dialog-content.component.scss",
 })

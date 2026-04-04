@@ -32,9 +32,9 @@
         [showWhenReal]="true"
       />
       <div class="data-freshness">
-        <span class="data-source">Source: Training & Wellness Data.</span>
+        <span class="data-source">Source: Training &amp; Wellness Data</span>
         @if (lastRefreshed()) {
-          <span class="data-updated">Last updated: {{ lastRefreshed() | date: "short" }}</span>
+          <span class="data-updated"> · Last updated: {{ lastRefreshed() | date: "short" }}</span>
         }
       </div>
     </div>

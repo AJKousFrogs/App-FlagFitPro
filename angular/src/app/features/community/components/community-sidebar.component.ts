@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, input, output } from "@angular/core";
 import { CommonModule, DecimalPipe } from "@angular/common";
-import { Avatar } from "primeng/avatar";
+import { AvatarComponent } from "../../../shared/components/avatar/avatar.component";
 import { Tooltip } from "primeng/tooltip";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { CardShellComponent } from "../../../shared/components/card-shell/card-shell.component";
@@ -30,7 +30,7 @@ interface UserStats {
   imports: [
     CommonModule,
     DecimalPipe,
-    Avatar,
+    AvatarComponent,
     Tooltip,
     ButtonComponent,
     CardShellComponent,

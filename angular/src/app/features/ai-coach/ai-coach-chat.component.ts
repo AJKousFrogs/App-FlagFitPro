@@ -1,17 +1,5 @@
-/**
- * Merlin AI Chat Component - Premium UX Edition
- *
- * Best-in-class chat interface for Merlin Merlin AI:
- * - Modern, fluid animations and micro-interactions
- * - Accessibility-first with ARIA labels and keyboard navigation
- * - Smart suggestions and context-aware features
- * - Feedback collection (thumbs up/down)
- * - Voice input support
- * - Message copy and share functionality
- * - Progressive loading states
- */
+/** Merlin AI chat UI. */
 
-import { animate, style, transition, trigger } from "@angular/animations";
 import {
   AfterViewChecked,
   ChangeDetectionStrategy,
@@ -134,17 +122,6 @@ interface AutocompleteSuggestion {
 @Component({
   selector: "app-ai-coach-chat",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  animations: [
-    trigger("slideDown", [
-      transition(":enter", [
-        style({ opacity: 0, height: 0 }),
-        animate("200ms ease-out", style({ opacity: 1, height: "*" })),
-      ]),
-      transition(":leave", [
-        animate("150ms ease-in", style({ opacity: 0, height: 0 })),
-      ]),
-    ]),
-  ],
   imports: [
     ReactiveFormsModule,
     AppDialogComponent,

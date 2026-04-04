@@ -20,10 +20,11 @@ import {
   signal,
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
-import { DatePicker } from "primeng/datepicker";
-import { InputText } from "primeng/inputtext";
 import { MultiSelect, type MultiSelectChangeEvent } from "primeng/multiselect";
-import { Select, type SelectChangeEvent } from "primeng/select";
+import { type SelectChangeEvent } from "primeng/select";
+import { DatePickerComponent } from "../../../../shared/components/date-picker/date-picker.component";
+import { FormInputComponent } from "../../../../shared/components/form-input/form-input.component";
+import { SelectComponent } from "../../../../shared/components/select/select.component";
 import { firstValueFrom } from "rxjs";
 import { ButtonComponent } from "../../../../shared/components/button/button.component";
 import { IconButtonComponent } from "../../../../shared/components/button/icon-button.component";
@@ -90,10 +91,10 @@ interface DayOption {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     FormsModule,
-    Select,
-    DatePicker,
-    InputText,
     MultiSelect,
+    DatePickerComponent,
+    FormInputComponent,
+    SelectComponent,
     IconButtonComponent,
     AppDialogComponent,
     DialogHeaderComponent,
@@ -123,17 +124,15 @@ interface DayOption {
         <div class="form-section">
           <h4>Position</h4>
           <div class="form-field">
-            <label for="position">Primary Position *</label>
-            <p-select
-              id="position"
+            <app-select
+              label="Primary Position *"
               [options]="positions"
               [ngModel]="settings.primaryPosition"
               (onChange)="onPrimaryPositionSelect($event)"
               optionLabel="label"
               optionValue="value"
               placeholder="Select position"
-              class="w-full"
-            ></p-select>
+            ></app-select>
             @if (selectedPositionDescription()) {
               <small class="field-hint">{{
                 selectedPositionDescription()
@@ -142,9 +141,8 @@ interface DayOption {
           </div>
 
           <div class="form-field">
-            <label for="secondaryPosition">Secondary Position</label>
-            <p-select
-              id="secondaryPosition"
+            <app-select
+              label="Secondary Position"
               [options]="positions"
               [ngModel]="settings.secondaryPosition"
               (onChange)="onSecondaryPositionSelect($event)"
@@ -152,8 +150,7 @@ interface DayOption {
               optionValue="value"
               placeholder="Optional"
               [showClear]="true"
-              class="w-full"
-            ></p-select>
+            ></app-select>
           </div>
         </div>
 
@@ -161,17 +158,15 @@ interface DayOption {
         <div class="form-section">
           <h4>Age-Based Recovery</h4>
           <div class="form-field">
-            <label for="birthDate">Birth Date</label>
-            <p-datepicker
-              id="birthDate"
+            <app-date-picker
+              label="Birth Date"
               [ngModel]="settings.birthDate"
               (onSelect)="onBirthDateChange($event)"
               dateFormat="yy-mm-dd"
               [showIcon]="true"
               [maxDate]="maxBirthDate"
-              class="full-width"
               placeholder="Select birth date"
-            ></p-datepicker>
+            ></app-date-picker>
             <small class="field-hint">
               Used to calculate age-based recovery recommendations.
               @if (calculatedAge() !== null) {
@@ -212,34 +207,29 @@ interface DayOption {
               </div>
               <div class="slot-times">
                 <div class="time-field">
-                  <label>Start</label>
-                  <input
-                    pInputText
-                    type="time"
+                  <app-form-input
+                    label="Start"
+                    type="text"
                     [value]="slot.startTime"
-                    (input)="onSlotStartTimeInput(slot.day, $event)"
+                    (valueChange)="onSlotStartTimeChange(slot.day, $event)"
                   />
                 </div>
                 <div class="time-field">
-                  <label>End</label>
-                  <input
-                    pInputText
-                    type="time"
+                  <app-form-input
+                    label="End"
+                    type="text"
                     [value]="slot.endTime"
-                    (input)="onSlotEndTimeInput(slot.day, $event)"
+                    (valueChange)="onSlotEndTimeChange(slot.day, $event)"
                   />
                 </div>
                 @if (settings.primaryPosition === "quarterback") {
                   <div class="time-field">
-                    <label>Expected Throws</label>
-                    <input
-                      pInputText
+                    <app-form-input
+                      label="Expected Throws"
                       type="number"
-                      [value]="slot.expectedThrows ?? ''"
-                      (input)="onSlotExpectedThrowsInput(slot.day, $event)"
+                      [value]="(slot.expectedThrows ?? '') + ''"
+                      (valueChange)="onSlotExpectedThrowsChange(slot.day, $event)"
                       placeholder="40-50"
-                      min="0"
-                      max="200"
                     />
                   </div>
                 }
@@ -250,15 +240,14 @@ interface DayOption {
           <!-- Add Practice Button -->
           @if (availableDays.length > 0) {
             <div class="add-practice">
-              <p-select
+              <app-select
                 [options]="availableDays"
                 [ngModel]="selectedNewDay"
                 (onChange)="onSelectedNewDaySelect($event)"
                 optionLabel="label"
                 optionValue="value"
                 placeholder="Add practice day..."
-                class="w-full"
-              ></p-select>
+              ></app-select>
               <app-button
                 iconLeft="pi-plus"
                 [disabled]="selectedNewDay === null"
@@ -283,12 +272,11 @@ interface DayOption {
                   <i [class]="slot.icon" class="mr-2"></i>
                   <span>{{ slot.label }}</span>
                 </div>
-                <input
-                  pInputText
-                  type="time"
+                <app-form-input
+                  type="text"
                   [value]="slot.time"
-                  (input)="onRoutineTimeInput(slot.id, $event)"
-                  class="routine-time-input"
+                  (valueChange)="onRoutineTimeChange(slot.id, $event)"
+                  styleClass="routine-time-input"
                 />
               </div>
             }
@@ -333,17 +321,15 @@ interface DayOption {
           </div>
 
           <div class="form-field">
-            <label for="warmupFocus">Warm-up Focus</label>
-            <p-select
-              id="warmupFocus"
+            <app-select
+              label="Warm-up Focus"
               [options]="warmupFocusOptions"
               [ngModel]="settings.warmupFocus"
               (onChange)="onWarmupFocusSelect($event)"
               optionLabel="label"
               optionValue="value"
               placeholder="Auto (use position)"
-              class="w-full"
-            ></p-select>
+            ></app-select>
             <small class="field-hint">
               Overrides the warm-up flow without changing your primary position.
             </small>

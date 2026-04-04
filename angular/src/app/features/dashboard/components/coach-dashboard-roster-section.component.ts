@@ -1,7 +1,7 @@
 import { DecimalPipe } from "@angular/common";
 import { ChangeDetectionStrategy, Component, input, output } from "@angular/core";
-import { Avatar } from "primeng/avatar";
-import { Badge } from "primeng/badge";
+import { AvatarComponent } from "../../../shared/components/avatar/avatar.component";
+import { BadgeComponent } from "../../../shared/components/badge/badge.component";
 import { Tooltip } from "primeng/tooltip";
 import { TableModule } from "primeng/table";
 
@@ -22,8 +22,8 @@ export type CoachDashboardPlayerFilter = "all" | "starters" | "injured" | "at_ri
   imports: [
     DecimalPipe,
     Tooltip,
-    Avatar,
-    Badge,
+    AvatarComponent,
+    BadgeComponent,
     ButtonComponent,
     StatusTagComponent,
     TableComponent,

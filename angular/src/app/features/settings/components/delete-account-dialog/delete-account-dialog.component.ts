@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, input, output } from "@angular/core";
-import { InputText } from "primeng/inputtext";
+import { FormInputComponent } from "../../../../shared/components/form-input/form-input.component";
 import {
   AppDialogComponent,
   DialogFooterComponent,
@@ -12,7 +12,7 @@ import { AlertComponent } from "../../../../shared/components/alert/alert.compon
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     AppDialogComponent,
-    InputText,
+    FormInputComponent,
     DialogHeaderComponent,
     DialogFooterComponent,
     AlertComponent,
@@ -31,10 +31,5 @@ export class DeleteAccountDialogComponent {
 
   closeDialog(): void {
     this.visibleChange.emit(false);
-  }
-
-  onConfirmTextInput(event: Event): void {
-    const value = (event.target as HTMLInputElement | null)?.value ?? "";
-    this.confirmTextChange.emit(value);
   }
 }

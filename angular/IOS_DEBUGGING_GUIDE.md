@@ -607,7 +607,7 @@ console.log("Viewport:", {
 3. Try margin-based approach:
    ```scss
    .platform-ios .my-flex {
-     gap: 0 !important;
+     gap: 0;
      margin: -0.5rem;
      > * {
        margin: 0.5rem;

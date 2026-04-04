@@ -155,13 +155,11 @@
               ariaLabel="Filter by roster"
             ></p-multiSelect>
 
-            <input
-              pInputText
-              type="text"
+            <app-search-input
               [ngModel]="tableFilter()"
               (ngModelChange)="tableFilter.set($event)"
               placeholder="Search athlete or issue"
-              aria-label="Search queue"
+              ariaLabel="Search queue"
             />
           </div>
 

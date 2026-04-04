@@ -23,38 +23,24 @@
     />
 
     <div class="form-field">
-      <label for="new-team-name">
-        <i class="pi pi-tag"></i>
-        Team Name <span class="required">*</span>
-      </label>
-      <input
-        id="new-team-name"
-        name="newTeamName"
-        type="text"
-        pInputText
+      <app-form-input
+        label="Team Name *"
         [value]="teamName()"
-        (input)="onTeamNameInput($event)"
+        (valueChange)="teamNameChange.emit($event)"
         placeholder="Enter your team name"
-        class="w-full"
-        autocomplete="organization"
+        styleClass="w-full"
       />
     </div>
 
     <div class="form-field">
-      <label for="new-team-notes">
-        <i class="pi pi-file-edit"></i>
-        Additional Notes (Optional)
-      </label>
-      <textarea
-        id="new-team-notes"
-        name="newTeamNotes"
-        pInputText
+      <app-textarea
+        label="Additional Notes (Optional)"
         [value]="teamNotes()"
-        (input)="onTeamNotesInput($event)"
+        (valueChange)="teamNotesChange.emit($event)"
         placeholder="Tell us about your team (e.g., location, league, number of members)"
-        rows="3"
-        class="w-full"
-      ></textarea>
+        [rows]="3"
+        styleClass="w-full"
+      />
     </div>
   </div>
 

@@ -308,32 +308,24 @@ export class WellnessComponent {
         value: noDataValue,
         icon: "pi-moon",
         color: "var(--color-status-info)",
-        trend: this.noDataMessage.actionLabel,
-        trendType: "neutral",
       },
       {
         label: "Recovery Score",
         value: noDataValue,
         icon: "pi-heart",
         color: "var(--ds-primary-green)",
-        trend: this.noDataMessage.actionLabel,
-        trendType: "neutral",
       },
       {
         label: "Energy Level",
         value: noDataValue,
         icon: "pi-bolt",
         color: "var(--color-status-warning)",
-        trend: this.noDataMessage.actionLabel,
-        trendType: "neutral",
       },
       {
         label: "Stress Level",
         value: noDataValue,
         icon: "pi-shield",
         color: "var(--color-status-success)",
-        trend: this.noDataMessage.actionLabel,
-        trendType: "neutral",
       },
     ]);
 

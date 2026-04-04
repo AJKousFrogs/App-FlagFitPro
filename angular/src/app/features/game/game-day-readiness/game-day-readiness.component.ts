@@ -26,7 +26,7 @@ import { ActivatedRoute, ParamMap, Router, RouterModule } from "@angular/router"
 
 import { Slider } from "primeng/slider";
 
-import { Textarea } from "primeng/textarea";
+import { TextareaComponent } from "../../../shared/components/textarea/textarea.component";
 
 import { AlertComponent } from "../../../shared/components/alert/alert.component";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
@@ -63,7 +63,7 @@ interface ReadinessMetric {
     CommonModule,
     RouterModule,
     Slider,
-    Textarea,
+    TextareaComponent,
     AlertComponent,
     ButtonComponent,
     ConfidenceIndicatorComponent,
@@ -121,14 +121,13 @@ interface ReadinessMetric {
 
             <!-- Additional Notes -->
             <div class="notes-section">
-              <label>Any concerns or notes for today?</label>
-              <textarea
-                pInputTextarea
+              <app-textarea
+                label="Any concerns or notes for today?"
                 [value]="notes"
-                (input)="onNotesInput($event)"
+                (valueChange)="onNotesChange($event)"
                 [rows]="3"
                 placeholder="E.g., slight tightness in hamstring, nervous about opponent..."
-              ></textarea>
+              ></app-textarea>
             </div>
 
             <!-- Readiness Score Preview -->
@@ -539,6 +538,10 @@ export class GameDayReadinessComponent implements OnInit {
 
   onMetricChange(key: string, event: { value?: number | null }): void {
     this.updateMetric(key, event.value || 1);
+  }
+
+  onNotesChange(value: string): void {
+    this.notes = value;
   }
 
   onNotesInput(event: Event): void {

@@ -1,0 +1,56 @@
+<div class="member-card" [class.is-online]="member().is_online">
+  <div class="member-avatar-container">
+    <app-avatar
+      [label]="member().initials || getInitialsStr(member().full_name)"
+      shape="circle"
+      size="large"
+      [styleClass]="'avatar-token ' + getAvatarColorClass(member().full_name)"
+    />
+    @if (member().is_online) {
+      <span class="online-indicator"></span>
+    }
+  </div>
+  <div class="member-info">
+    @if (variant() === "coach") {
+      <span class="member-name">{{ member().full_name }}</span>
+      <div class="member-meta">
+        <app-status-tag
+          [value]="
+            member().role === 'coach' ? 'Head Coach' : 'Assistant'
+          "
+          severity="success"
+          size="sm"
+        />
+      </div>
+    } @else {
+      <span class="member-name">
+        {{ member().full_name }}
+        @if (member().jersey_number) {
+          <span class="jersey-number">#{{ member().jersey_number }}</span>
+        }
+      </span>
+      <div class="member-meta">
+        @if (member().position) {
+          <app-status-tag
+            [value]="member().position!"
+            severity="secondary"
+            size="sm"
+          />
+        }
+        @if (!member().can_post) {
+          <span class="read-only-badge">
+            <i class="pi pi-eye"></i> View only
+          </span>
+        }
+      </div>
+    }
+  </div>
+  <app-icon-button
+    icon="pi-comment"
+    variant="text"
+    size="sm"
+    (clicked)="onMessage()"
+    ariaLabel="Send direct message"
+    tooltip="Message"
+  />
+</div>

@@ -9,10 +9,10 @@ import {
   signal,
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
-import { Avatar } from "primeng/avatar";
-import { InputText } from "primeng/inputtext";
-import { Select, type SelectChangeEvent } from "primeng/select";
-import { Textarea } from "primeng/textarea";
+import { AvatarComponent } from "../../shared/components/avatar/avatar.component";
+import { FormInputComponent } from "../../shared/components/form-input/form-input.component";
+import { SelectComponent } from "../../shared/components/select/select.component";
+import { TextareaComponent } from "../../shared/components/textarea/textarea.component";
 import { TableModule } from "primeng/table";
 
 import { StatusTagComponent } from "../../shared/components/status-tag/status-tag.component";
@@ -51,10 +51,10 @@ type AttendanceStatus = "present" | "absent" | "late" | "excused";
   imports: [
     CommonModule,
     StatusTagComponent,
-    InputText,
-    Textarea,
-    Select,
-    Avatar,
+    FormInputComponent,
+    TextareaComponent,
+    SelectComponent,
+    AvatarComponent,
     MainLayoutComponent,
     PageHeaderComponent,
     DatePipe,
@@ -101,7 +101,7 @@ type AttendanceStatus = "present" | "absent" | "late" | "excused";
         <div class="bento-item events-bento">
           <div class="bento-header-row">
             <h3 class="bento-title"><i class="pi pi-calendar"></i> Events</h3>
-            <p-select [options]="eventTypeOptions" (onChange)="onSelectedEventTypeSelect($event)" placeholder="Type" class="mini-select" />
+            <app-select [options]="eventTypeOptions" (change)="onSelectedEventTypeChange($event)" placeholder="Type" styleClass="mini-select" />
           </div>
           
           <div class="events-list">
@@ -144,7 +144,7 @@ type AttendanceStatus = "present" | "absent" | "late" | "excused";
               <tr>
                 <td>
                   <div class="player-cell">
-                    <p-avatar [label]="getInitialsStr(stat.player_name || 'U')" shape="circle" size="normal" />
+                    <app-avatar [label]="getInitialsStr(stat.player_name || 'U')" shape="circle" />
                     <span>{{ stat.player_name || "Unknown" }}</span>
                   </div>
                 </td>
@@ -174,26 +174,21 @@ type AttendanceStatus = "present" | "absent" | "late" | "excused";
         />
         <div class="attendance-dialog-form">
           <div class="form-field">
-            <label for="eventTitle">Title *</label>
-            <input
-              id="eventTitle"
-              type="text"
-              pInputText
+            <app-form-input
+              label="Title *"
               [value]="newEvent.title"
-              (input)="onNewEventTitleInput($event)"
+              (valueChange)="onNewEventTitleChange($event)"
               placeholder="e.g., Team Practice"
             />
           </div>
 
           <div class="form-field">
-            <label for="eventType">Type *</label>
-            <p-select
-              id="eventType"
+            <app-select
+              label="Type *"
               [options]="eventTypeOptions"
-              (onChange)="onNewEventTypeSelect($event)"
+              (change)="onNewEventTypeChange($event)"
               placeholder="Select type"
-              class="w-full"
-            ></p-select>
+            />
           </div>
 
           <div class="form-row two-col">
@@ -221,27 +216,22 @@ type AttendanceStatus = "present" | "absent" | "late" | "excused";
           </div>
 
           <div class="form-field">
-            <label for="location">Location</label>
-            <input
-              id="location"
-              type="text"
-              pInputText
+            <app-form-input
+              label="Location"
               [value]="newEvent.location"
-              (input)="onNewEventLocationInput($event)"
+              (valueChange)="onNewEventLocationChange($event)"
               placeholder="e.g., Main Field"
             />
           </div>
 
           <div class="form-field">
-            <label for="description">Description</label>
-            <textarea
-              id="description"
-              pInputTextarea
+            <app-textarea
+              label="Description"
               [value]="newEvent.description"
-              (input)="onNewEventDescriptionInput($event)"
-              rows="3"
+              (valueChange)="onNewEventDescriptionChange($event)"
+              [rows]="3"
               placeholder="Optional details..."
-            ></textarea>
+            />
           </div>
 
           <div class="form-field checkbox-field">
@@ -406,14 +396,8 @@ export class AttendanceComponent implements OnInit {
     // Computed signal handles filtering
   }
 
-  onSelectedEventTypeSelect(event: SelectChangeEvent): void {
-    this.onSelectedEventTypeChange(
-      (event.value as EventType | null | undefined) ?? null,
-    );
-  }
-
-  onSelectedEventTypeChange(value: EventType | null): void {
-    this.selectedEventType = value;
+  onSelectedEventTypeChange(value: unknown): void {
+    this.selectedEventType = (value as EventType | null | undefined) ?? null;
     this.filterEvents();
   }
 
@@ -467,18 +451,8 @@ export class AttendanceComponent implements OnInit {
     this.newEvent = { ...this.newEvent, title: value };
   }
 
-  onNewEventTitleInput(event: Event): void {
-    this.onNewEventTitleChange(this.readInputValue(event));
-  }
-
-  onNewEventTypeSelect(event: SelectChangeEvent): void {
-    this.onNewEventTypeChange(
-      (event.value as EventType | null | undefined) ?? null,
-    );
-  }
-
-  onNewEventTypeChange(value: EventType | null): void {
-    this.newEvent = { ...this.newEvent, event_type: value ?? "practice" };
+  onNewEventTypeChange(value: unknown): void {
+    this.newEvent = { ...this.newEvent, event_type: (value as EventType | null | undefined) ?? "practice" };
   }
 
   onNewEventStartTimeChange(value: Date | null): void {
@@ -509,16 +483,8 @@ export class AttendanceComponent implements OnInit {
     this.newEvent = { ...this.newEvent, location: value };
   }
 
-  onNewEventLocationInput(event: Event): void {
-    this.onNewEventLocationChange(this.readInputValue(event));
-  }
-
   onNewEventDescriptionChange(value: string): void {
     this.newEvent = { ...this.newEvent, description: value };
-  }
-
-  onNewEventDescriptionInput(event: Event): void {
-    this.onNewEventDescriptionChange(this.readInputValue(event));
   }
 
   onNewEventMandatoryChange(value: boolean): void {

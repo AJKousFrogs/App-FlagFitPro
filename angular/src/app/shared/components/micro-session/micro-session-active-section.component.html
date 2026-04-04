@@ -5,11 +5,11 @@
         >Step {{ currentStepIndex() + 1 }} of
         {{ session().steps.length }}</span
       >
-      <p-progressBar
+      <app-progress-bar
         [value]="overallProgress()"
         [showValue]="false"
-        class="overall-bar"
-      ></p-progressBar>
+        styleClass="overall-bar"
+      />
     </div>
 
     <div class="current-step" [class.paused]="currentStatus() === 'paused'">
@@ -26,11 +26,11 @@
         </div>
       </div>
 
-      <p-progressBar
+      <app-progress-bar
         [value]="stepProgress()"
         [showValue]="false"
-        class="step-bar"
-      ></p-progressBar>
+        styleClass="step-bar"
+      />
     </div>
 
     <div class="session-controls">
@@ -105,14 +105,13 @@
           ></p-slider>
           <div class="slider-value">{{ followUpRating() }}/10</div>
         </div>
-        <textarea
-          pInputTextarea
+        <app-textarea
           [value]="followUpNotes()"
-          (input)="followUpNotesInput.emit($event)"
+          (valueChange)="followUpNotesInput.emit($event)"
           placeholder="Any additional notes? (optional)"
           [rows]="2"
-          class="follow-up-notes"
-        ></textarea>
+          styleClass="follow-up-notes"
+        />
         <app-button
           iconLeft="pi-send"
           [loading]="submitting()"

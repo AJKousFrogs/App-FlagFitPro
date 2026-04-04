@@ -20,11 +20,11 @@ import {
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { ToastService } from "../../core/services/toast.service";
 import { ButtonComponent } from "../../shared/components/button/button.component";
-import { InputText } from "primeng/inputtext";
 import { ProgressBar } from "primeng/progressbar";
-import { Select, type SelectChangeEvent } from "primeng/select";
 
-import { Textarea } from "primeng/textarea";
+import { SearchInputComponent } from "../../shared/components/search-input/search-input.component";
+import { SelectComponent } from "../../shared/components/select/select.component";
+import { TextareaComponent } from "../../shared/components/textarea/textarea.component";
 import { firstValueFrom } from "rxjs";
 import { StatusTagComponent } from "../../shared/components/status-tag/status-tag.component";
 
@@ -81,11 +81,11 @@ interface DiscussionMessage {
   imports: [
     CommonModule,
     DatePipe,
-    InputText,
     ProgressBar,
-    Select,
     StatusTagComponent,
-    Textarea,
+    SearchInputComponent,
+    SelectComponent,
+    TextareaComponent,
 
     MainLayoutComponent,
     AppLoadingComponent,
@@ -162,26 +162,22 @@ interface DiscussionMessage {
 
           <!-- Filters -->
           <div class="filters-row">
-            <span class="p-input-icon-left filter-search">
-              <i class="pi pi-search"></i>
-              <input
-                type="text"
-                pInputText
-                placeholder="Search film sessions..."
-                [value]="searchQuery()"
-                (input)="onSearchInput($event)"
-              />
-            </span>
+            <app-search-input
+              class="filter-search"
+              placeholder="Search film sessions..."
+              [value]="searchQuery()"
+              (valueChange)="searchQuery.set($event)"
+            />
 
-            <p-select
+            <app-select
               [options]="statusOptions"
-              (onChange)="onStatusSelect($event)"
+              (change)="onStatusChange($event)"
               optionLabel="label"
               optionValue="value"
               placeholder="Status"
               [showClear]="true"
               class="filter-select"
-            ></p-select>
+            ></app-select>
           </div>
 
           <!-- Film Sessions List -->
@@ -361,13 +357,12 @@ interface DiscussionMessage {
 
                           @if (expandedMoment() === moment.id) {
                             <div class="reply-form">
-                              <textarea
-                                pTextarea
+                              <app-textarea
                                 [value]="replyMessage()"
-                                (input)="onReplyInput($event)"
+                                (valueChange)="replyMessage.set($event)"
                                 placeholder="Add a comment..."
-                                rows="2"
-                              ></textarea>
+                                [rows]="2"
+                              ></app-textarea>
                               <app-button
                                 iconLeft="pi-send"
                                 [disabled]="!replyMessage().trim()"
@@ -489,24 +484,8 @@ export class FilmRoomComponent implements OnInit {
       : "Your coach hasn't assigned any film yet";
   }
 
-  onSearchInput(event: Event): void {
-    const input = event.target as HTMLInputElement | null;
-    this.searchQuery.set(input?.value ?? "");
-  }
-
   onStatusChange(value: "watched" | "unwatched" | null | undefined): void {
     this.selectedStatus.set(value ?? null);
-  }
-
-  onStatusSelect(event: SelectChangeEvent): void {
-    this.onStatusChange(
-      (event.value as "watched" | "unwatched" | null | undefined) ?? null,
-    );
-  }
-
-  onReplyInput(event: Event): void {
-    const input = event.target as HTMLTextAreaElement | null;
-    this.replyMessage.set(input?.value ?? "");
   }
 
   ngOnInit(): void {

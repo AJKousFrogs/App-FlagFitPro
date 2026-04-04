@@ -250,9 +250,8 @@ export class PlaybookComponent implements OnInit {
       : "Your coach hasn't added any plays yet";
   }
 
-  onSearchInput(event: Event): void {
-    const input = event.target as HTMLInputElement | null;
-    this.searchQuery.set(input?.value ?? "");
+  onSearchInput(value: string): void {
+    this.searchQuery.set(value);
   }
 
   onCategoryChange(value: PlayCategory | null | undefined): void {

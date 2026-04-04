@@ -60,6 +60,7 @@
   position: relative;
   width: var(--profile-avatar-size, var(--grid-card-min-xs));
   height: var(--profile-avatar-size, var(--grid-card-min-xs));
+  flex-shrink: 0;
 }
 
 .profile-avatar-img,

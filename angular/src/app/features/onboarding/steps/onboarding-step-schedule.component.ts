@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { Select, type SelectChangeEvent } from "primeng/select";
+import { SelectComponent } from "../../../shared/components/select/select.component";
 import {
   SCHEDULE_TYPES,
   PRACTICE_FREQUENCIES,
@@ -11,7 +11,7 @@ import { OnboardingStateService } from "../services/onboarding-state.service";
 @Component({
   selector: "app-onboarding-step-schedule",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, Select],
+  imports: [CommonModule, SelectComponent],
   template: `
     <div class="step-content animate-fade-in">
       <div class="step-header">
@@ -26,33 +26,23 @@ import { OnboardingStateService } from "../services/onboarding-state.service";
 
       <div class="form-grid">
         <div class="form-group span-2">
-          <label for="scheduleType"
-            >Work Schedule Type <span class="required">*</span></label
-          >
-          <p-select
-            inputId="scheduleType"
+          <app-select
+            label="Work Schedule Type *"
             [options]="scheduleTypes"
-            (onChange)="onScheduleTypeSelect($event)"
+            (change)="onScheduleTypeSelect($event)"
             placeholder="Select your schedule type"
-            class="w-full"
-            [attr.aria-label]="'Select work schedule type'"
-          ></p-select>
+            styleClass="w-full"
+          />
         </div>
 
         <div class="form-group span-2">
-          <label for="practicesPerWeek"
-            >Team Practices Per Week</label
-          >
-          <p-select
-            inputId="practicesPerWeek"
+          <app-select
+            label="Team Practices Per Week"
             [options]="practiceFrequencies"
-            (onChange)="onPracticesPerWeekSelect($event)"
+            (change)="onPracticesPerWeekSelect($event)"
             placeholder="How many team practices?"
-            class="w-full"
-            [attr.aria-label]="
-              'Select number of team practices per week'
-            "
-          ></p-select>
+            styleClass="w-full"
+          />
         </div>
 
         <div class="form-group span-2">
@@ -100,13 +90,11 @@ export class OnboardingStepScheduleComponent {
   readonly practiceFrequencies = PRACTICE_FREQUENCIES;
   readonly weekDays = WEEK_DAYS;
 
-  onScheduleTypeSelect(event: SelectChangeEvent): void {
-    this.state.formData.scheduleType =
-      typeof event.value === "string" ? event.value : "";
+  onScheduleTypeSelect(value: string | null | undefined): void {
+    this.state.formData.scheduleType = typeof value === "string" ? value : "";
   }
 
-  onPracticesPerWeekSelect(event: SelectChangeEvent): void {
-    this.state.formData.practicesPerWeek =
-      typeof event.value === "number" ? event.value : 0;
+  onPracticesPerWeekSelect(value: number | null | undefined): void {
+    this.state.formData.practicesPerWeek = typeof value === "number" ? value : 0;
   }
 }

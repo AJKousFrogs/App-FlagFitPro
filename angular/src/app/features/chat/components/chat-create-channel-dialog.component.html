@@ -16,59 +16,49 @@
 
   <div class="create-channel-form">
     <div class="form-field">
-      <label for="chat-channelName">Channel Name</label>
-      <input
-        id="chat-channelName"
-        name="channelName"
-        pInputText
+      <app-form-input
+        label="Channel Name"
         [value]="channelName"
-        (input)="onChannelNameInput($event)"
+        (valueChange)="onChannelNameInput($event)"
         placeholder="e.g., qb-room"
-        autocomplete="off"
       />
     </div>
 
     <div class="form-field">
-      <label for="chat-channelDescription">Description</label>
-      <textarea
-        id="chat-channelDescription"
-        name="channelDescription"
-        pInputTextarea
+      <app-textarea
+        label="Description"
         [value]="channelDescription"
-        (input)="onChannelDescriptionInput($event)"
-        rows="2"
+        (valueChange)="onChannelDescriptionInput($event)"
+        [rows]="2"
         placeholder="What's this channel about?"
-        autocomplete="off"
-      ></textarea>
+      />
     </div>
 
     <div class="form-field">
-      <label for="chat-channelType">Channel Type</label>
-      <p-select
-        inputId="chat-channelType"
+      <app-select
+        label="Channel Type"
         (onChange)="onChannelTypeSelect($event)"
         [options]="channelTypeOptions()"
         optionLabel="label"
         optionValue="value"
         placeholder="Select type"
-        class="w-full"
+        styleClass="w-full"
         appendTo="body"
-      ></p-select>
+      />
     </div>
 
     @if (channelType === "position_group") {
       <div class="form-field">
-        <label for="chat-channelPosition">Position</label>
-        <p-select
-          inputId="chat-channelPosition"
+        <app-select
+          label="Position"
           (onChange)="onChannelPositionSelect($event)"
           [options]="positionOptions()"
           optionLabel="label"
           optionValue="value"
           placeholder="Select position"
-          class="w-full"
+          styleClass="w-full"
           appendTo="body"
-        ></p-select>
+        />
       </div>
     }
   </div>

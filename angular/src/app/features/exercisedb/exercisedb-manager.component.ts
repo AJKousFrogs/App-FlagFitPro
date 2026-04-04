@@ -12,15 +12,14 @@ import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { CommonModule } from "@angular/common";
 import { ButtonComponent } from "../../shared/components/button/button.component";
 import { EmptyStateComponent } from "../../shared/components/empty-state/empty-state.component";
-import { InputText } from "primeng/inputtext";
-
 import { StatusTagComponent } from "../../shared/components/status-tag/status-tag.component";
-import { Select, type SelectChangeEvent } from "primeng/select";
+import { FormInputComponent } from "../../shared/components/form-input/form-input.component";
+import { SelectComponent } from "../../shared/components/select/select.component";
 import { MultiSelect, type MultiSelectChangeEvent } from "primeng/multiselect";
-import { ProgressBar } from "primeng/progressbar";
+import { ProgressBarComponent } from "../../shared/components/progress-bar/progress-bar.component";
 import { Tabs, TabList, Tab, TabPanels, TabPanel } from "primeng/tabs";
 import { Chip } from "primeng/chip";
-import { Badge } from "primeng/badge";
+import { BadgeComponent } from "../../shared/components/badge/badge.component";
 
 import { ToastService } from "../../core/services/toast.service";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
@@ -48,17 +47,17 @@ import { SkeletonRepeatComponent } from "../../shared/components/skeleton-loader
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
-    InputText,
-    Select,
+    FormInputComponent,
+    SelectComponent,
     MultiSelect,
-    ProgressBar,
+    ProgressBarComponent,
     Tabs,
     TabList,
     Tab,
     TabPanels,
     TabPanel,
     Chip,
-    Badge,
+    BadgeComponent,
     MainLayoutComponent,
     PageHeaderComponent,
     MobileOptimizedImageDirective,
@@ -145,57 +144,57 @@ import { SkeletonRepeatComponent } from "../../shared/components/skeleton-loader
                       />
                     </div>
                     <div class="filter-group">
-                      <label for="body-part-filter">Body Part</label>
-                      <p-select
+                      <app-select
+                        label="Body Part"
                         inputId="body-part-filter"
                         [options]="bodyPartOptions()"
-                        (onChange)="onSelectedBodyPartSelect($event)"
+                        (change)="updateSelectedBodyPart($event)"
                         placeholder="All Body Parts"
                         [showClear]="true"
                         [attr.aria-label]="'Filter by body part'"
-                      ></p-select>
+                      ></app-select>
                     </div>
                     <div class="filter-group">
-                      <label for="equipment-filter">Equipment</label>
-                      <p-select
+                      <app-select
+                        label="Equipment"
                         inputId="equipment-filter"
                         [options]="equipmentOptions()"
-                        (onChange)="onSelectedEquipmentSelect($event)"
+                        (change)="updateSelectedEquipment($event)"
                         placeholder="All Equipment"
                         [showClear]="true"
                         [attr.aria-label]="'Filter by equipment'"
-                      ></p-select>
+                      ></app-select>
                     </div>
                     <div class="filter-group">
-                      <label for="position-filter">Position</label>
-                      <p-select
+                      <app-select
+                        label="Position"
                         inputId="position-filter"
                         [options]="positionOptions"
-                        (onChange)="onSelectedPositionSelect($event)"
+                        (change)="updateSelectedPosition($event)"
                         placeholder="All Positions"
                         [showClear]="true"
                         [attr.aria-label]="'Filter by position'"
-                      ></p-select>
+                      ></app-select>
                     </div>
                     <div class="filter-group">
-                      <label for="category-filter">Category</label>
-                      <p-select
+                      <app-select
+                        label="Category"
                         inputId="category-filter"
                         [options]="categoryOptions()"
-                        (onChange)="onSelectedCategorySelect($event)"
+                        (change)="updateSelectedCategory($event)"
                         placeholder="All Categories"
                         [showClear]="true"
                         [attr.aria-label]="'Filter by category'"
-                      ></p-select>
+                      ></app-select>
                     </div>
                     <div class="filter-group status-filter">
-                      <label for="status-filter">Status</label>
-                      <p-select
+                      <app-select
+                        label="Status"
                         inputId="status-filter"
                         [options]="statusOptions"
-                        (onChange)="onSelectedStatusSelect($event)"
+                        (change)="updateSelectedStatus($event)"
                         [attr.aria-label]="'Filter by status'"
-                      ></p-select>
+                      ></app-select>
                     </div>
                   </div>
                 </app-card-shell>
@@ -234,29 +233,22 @@ import { SkeletonRepeatComponent } from "../../shared/components/skeleton-loader
                           }
                           <div class="exercise-badges">
                             @if (exercise.is_approved) {
-                              <p-badge
-                                value="Approved"
-                                severity="success"
+                              <app-badge
+                                variant="success"
                                 class="status-tag status-tag--success"
-                              ></p-badge>
+                              >Approved</app-badge>
                             }
                             @if (exercise.is_curated && !exercise.is_approved) {
-                              <p-badge
-                                value="Curated"
-                                severity="info"
-                              ></p-badge>
+                              <app-badge variant="info">Curated</app-badge>
                             }
                             @if (exercise.flag_football_relevance) {
-                              <p-badge
-                                [value]="
-                                  exercise.flag_football_relevance + '/10'
-                                "
-                                [severity]="
+                              <app-badge
+                                [variant]="
                                   getRelevanceSeverity(
                                     exercise.flag_football_relevance
                                   )
                                 "
-                              ></p-badge>
+                              >{{ exercise.flag_football_relevance + '/10' }}</app-badge>
                             }
                           </div>
                         </div>
@@ -348,17 +340,15 @@ import { SkeletonRepeatComponent } from "../../shared/components/skeleton-loader
                       ></p-multiSelect>
                     </div>
                     <div class="option-group">
-                      <label for="import-equipment-filter"
-                        >Equipment Filter</label
-                      >
-                      <p-select
+                      <app-select
+                        label="Equipment Filter"
                         inputId="import-equipment-filter"
                         [options]="importEquipmentOptions"
-                        (onChange)="onImportEquipmentSelect($event)"
+                        (change)="updateImportEquipment($event)"
                         placeholder="All equipment"
                         [showClear]="true"
                         [attr.aria-label]="'Filter import by equipment'"
-                      ></p-select>
+                      ></app-select>
                     </div>
                     <div class="option-group checkbox-group">
                       <label>
@@ -374,10 +364,11 @@ import { SkeletonRepeatComponent } from "../../shared/components/skeleton-loader
 
                   @if (importing()) {
                     <div class="import-progress">
-                      <p-progressBar
-                        mode="indeterminate"
-                        class="import-bar"
-                      ></p-progressBar>
+                      <app-progress-bar
+                        [value]="0"
+                        [showValue]="false"
+                        styleClass="import-bar"
+                      />
                       <p class="progress-text">
                         Importing exercises from ExerciseDB...
                       </p>
@@ -770,14 +761,14 @@ import { SkeletonRepeatComponent } from "../../shared/components/skeleton-loader
               </div>
 
               <div class="form-group">
-                <label for="approval-category">Category</label>
-                <p-select
+                <app-select
+                  label="Category"
                   inputId="approval-category"
                   [options]="ffCategoryOptions"
-                  (onChange)="onApprovalCategorySelect($event)"
+                  (change)="updateApprovalCategory($event)"
                   placeholder="Select category"
                   [attr.aria-label]="'Select flag football category'"
-                ></p-select>
+                ></app-select>
               </div>
 
               <div class="form-group">
@@ -805,35 +796,37 @@ import { SkeletonRepeatComponent } from "../../shared/components/skeleton-loader
               </div>
 
               <div class="form-group">
-                <label for="approval-difficulty">Difficulty Level</label>
-                <p-select
+                <app-select
+                  label="Difficulty Level"
                   inputId="approval-difficulty"
                   [options]="difficultyOptions"
-                  (onChange)="onApprovalDifficultySelect($event)"
+                  (change)="updateApprovalDifficulty($event)"
                   placeholder="Select difficulty"
                   [attr.aria-label]="'Select difficulty level'"
-                ></p-select>
+                ></app-select>
               </div>
 
               <div class="form-row">
                 <div class="form-group half">
-                  <label>Recommended Sets</label>
-                  <input
-                    pInputText
+                  <app-form-input
+                    label="Recommended Sets"
                     type="number"
-                    [value]="approvalData.recommended_sets"
-                    (input)="onApprovalRecommendedSetsInput($event)"
+                    [value]="
+                      approvalData.recommended_sets != null
+                        ? '' + approvalData.recommended_sets
+                        : undefined
+                    "
+                    (valueChange)="updateApprovalRecommendedSets($event)"
                     placeholder="e.g., 3"
-                  />
+                  ></app-form-input>
                 </div>
                 <div class="form-group half">
-                  <label>Recommended Reps</label>
-                  <input
-                    pInputText
+                  <app-form-input
+                    label="Recommended Reps"
                     [value]="approvalData.recommended_reps"
-                    (input)="onApprovalRecommendedRepsInput($event)"
+                    (valueChange)="updateApprovalRecommendedReps($event)"
                     placeholder="e.g., 8-12"
-                  />
+                  ></app-form-input>
                 </div>
               </div>
             </div>
@@ -1057,21 +1050,9 @@ export class ExerciseDBManagerComponent implements OnInit {
     this.applyFilters();
   }
 
-  onSelectedBodyPartSelect(event: SelectChangeEvent): void {
-    this.updateSelectedBodyPart(
-      typeof event.value === "string" ? event.value : null,
-    );
-  }
-
   updateSelectedEquipment(value: string | null | undefined): void {
     this.selectedEquipment = value ?? null;
     this.applyFilters();
-  }
-
-  onSelectedEquipmentSelect(event: SelectChangeEvent): void {
-    this.updateSelectedEquipment(
-      typeof event.value === "string" ? event.value : null,
-    );
   }
 
   updateSelectedPosition(value: string | null | undefined): void {
@@ -1079,32 +1060,14 @@ export class ExerciseDBManagerComponent implements OnInit {
     this.applyFilters();
   }
 
-  onSelectedPositionSelect(event: SelectChangeEvent): void {
-    this.updateSelectedPosition(
-      typeof event.value === "string" ? event.value : null,
-    );
-  }
-
   updateSelectedCategory(value: string | null | undefined): void {
     this.selectedCategory = value ?? null;
     this.applyFilters();
   }
 
-  onSelectedCategorySelect(event: SelectChangeEvent): void {
-    this.updateSelectedCategory(
-      typeof event.value === "string" ? event.value : null,
-    );
-  }
-
   updateSelectedStatus(value: string | null | undefined): void {
     this.selectedStatus = value ?? "all";
     this.applyFilters();
-  }
-
-  onSelectedStatusSelect(event: SelectChangeEvent): void {
-    this.updateSelectedStatus(
-      typeof event.value === "string" ? event.value : null,
-    );
   }
 
   updateImportBodyParts(value: string[] | null | undefined): void {
@@ -1119,12 +1082,6 @@ export class ExerciseDBManagerComponent implements OnInit {
 
   updateImportEquipment(value: string | null | undefined): void {
     this.importEquipment = value ?? null;
-  }
-
-  onImportEquipmentSelect(event: SelectChangeEvent): void {
-    this.updateImportEquipment(
-      typeof event.value === "string" ? event.value : null,
-    );
   }
 
   updateAutoApprove(value: boolean | null | undefined): void {
@@ -1148,12 +1105,6 @@ export class ExerciseDBManagerComponent implements OnInit {
 
   updateApprovalCategory(value: string | null | undefined): void {
     this.approvalData = { ...this.approvalData, ff_category: value ?? "" };
-  }
-
-  onApprovalCategorySelect(event: SelectChangeEvent): void {
-    this.updateApprovalCategory(
-      typeof event.value === "string" ? event.value : null,
-    );
   }
 
   updateApprovalTrainingFocus(value: string[] | null | undefined): void {
@@ -1189,12 +1140,6 @@ export class ExerciseDBManagerComponent implements OnInit {
       ...this.approvalData,
       difficulty_level: value ?? "Intermediate",
     };
-  }
-
-  onApprovalDifficultySelect(event: SelectChangeEvent): void {
-    this.updateApprovalDifficulty(
-      typeof event.value === "string" ? event.value : null,
-    );
   }
 
   updateApprovalRecommendedSets(value: string | null | undefined): void {
@@ -1369,10 +1314,10 @@ export class ExerciseDBManagerComponent implements OnInit {
 
   getRelevanceSeverity(
     relevance: number,
-  ): "success" | "info" | "warn" | "danger" | "secondary" {
+  ): "success" | "info" | "warning" | "danger" | "secondary" {
     if (relevance >= 8) return "success";
     if (relevance >= 6) return "info";
-    if (relevance >= 4) return "warn";
+    if (relevance >= 4) return "warning";
     return "secondary";
   }
 

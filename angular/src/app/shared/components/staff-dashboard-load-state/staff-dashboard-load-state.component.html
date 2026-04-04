@@ -1,0 +1,11 @@
+@if (loading()) {
+  <app-loading [message]="loadingMessage()" variant="inline" />
+} @else if (loadError()) {
+  <app-page-error-state
+    [title]="errorTitle()"
+    [message]="loadError()!"
+    (retry)="retry.emit()"
+  />
+} @else {
+  <ng-content />
+}

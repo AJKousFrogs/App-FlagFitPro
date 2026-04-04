@@ -1,0 +1,16 @@
+/**
+ * Router View Transitions API (see provideRouter(withViewTransitions(...))).
+ * Global pseudo-elements — not scoped to a component.
+ */
+@layer components {
+  @media (prefers-reduced-motion: no-preference) {
+    ::view-transition-old(root),
+    ::view-transition-new(root) {
+      animation-duration: 280ms;
+      animation-timing-function: var(
+        --ease-standard,
+        cubic-bezier(0.4, 0, 0.2, 1)
+      );
+    }
+  }
+}

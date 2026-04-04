@@ -1,90 +1,30 @@
-@if (
-  teamContinuity().gameDayRecovery.length > 0 ||
-  teamContinuity().loadCaps.length > 0 ||
-  teamContinuity().travelRecovery.length > 0
-) {
+@if (hasProtocolSections()) {
   <section class="active-protocols-section">
     <h3 class="section-title">
       <i class="pi pi-calendar-clock" aria-hidden="true"></i>
       Active Protocols
     </h3>
 
-    @if (teamContinuity().gameDayRecovery.length > 0) {
+    @for (section of protocolSections(); track section.title) {
       <app-card-shell
         class="protocol-group"
         density="compact"
-        title="Game Day Recovery"
-        [subtitle]="teamContinuity().gameDayRecovery.length + ' players'"
+        [title]="section.title"
+        [subtitle]="section.subtitle"
       >
         <div class="protocol-players">
-          @for (player of teamContinuity().gameDayRecovery; track player.playerId) {
+          @for (row of section.rows; track row.playerId) {
             <button
               type="button"
               class="protocol-player-item"
-              (click)="viewPlayer.emit(player.playerId)"
-              [attr.aria-label]="'View player ' + player.playerName"
+              (click)="viewPlayer.emit(row.playerId)"
+              [attr.aria-label]="'View player ' + row.playerName"
             >
-              <span class="player-name">{{ player.playerName }}</span>
+              <span class="player-name">{{ row.playerName }}</span>
               <app-status-tag
                 class="protocol-tag"
-                [value]="'Day ' + player.dayNumber"
-                severity="info"
-                size="sm"
-              />
-            </button>
-          }
-        </div>
-      </app-card-shell>
-    }
-
-    @if (teamContinuity().loadCaps.length > 0) {
-      <app-card-shell
-        class="protocol-group"
-        density="compact"
-        title="ACWR Load Caps"
-        [subtitle]="teamContinuity().loadCaps.length + ' players'"
-      >
-        <div class="protocol-players">
-          @for (player of teamContinuity().loadCaps; track player.playerId) {
-            <button
-              type="button"
-              class="protocol-player-item"
-              (click)="viewPlayer.emit(player.playerId)"
-              [attr.aria-label]="'View player ' + player.playerName"
-            >
-              <span class="player-name">{{ player.playerName }}</span>
-              <app-status-tag
-                class="protocol-tag"
-                [value]="player.sessionsRemaining + ' sessions remaining'"
-                severity="warning"
-                size="sm"
-              />
-            </button>
-          }
-        </div>
-      </app-card-shell>
-    }
-
-    @if (teamContinuity().travelRecovery.length > 0) {
-      <app-card-shell
-        class="protocol-group"
-        density="compact"
-        title="Travel Recovery"
-        [subtitle]="teamContinuity().travelRecovery.length + ' players'"
-      >
-        <div class="protocol-players">
-          @for (player of teamContinuity().travelRecovery; track player.playerId) {
-            <button
-              type="button"
-              class="protocol-player-item"
-              (click)="viewPlayer.emit(player.playerId)"
-              [attr.aria-label]="'View player ' + player.playerName"
-            >
-              <span class="player-name">{{ player.playerName }}</span>
-              <app-status-tag
-                class="protocol-tag"
-                [value]="player.daysRemaining + ' day(s) remaining'"
-                severity="info"
+                [value]="row.tagValue"
+                [severity]="row.tagSeverity"
                 size="sm"
               />
             </button>

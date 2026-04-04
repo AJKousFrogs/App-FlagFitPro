@@ -220,31 +220,30 @@
           />
           <div class="session-form">
             <div class="form-field">
-              <label for="coach-sessionTitle">Session Title</label>
-              <input
+              <app-form-input
+                label="Session Title"
                 id="coach-sessionTitle"
                 name="sessionTitle"
                 type="text"
-                pInputText
                 [value]="newSession.title"
-                (input)="onNewSessionTitleInput($event)"
+                (valueChange)="onNewSessionTitleInput($event)"
                 placeholder="e.g., Offensive Drills"
-                class="w-full"
+                styleClass="w-full"
                 autocomplete="off"
               />
             </div>
             <div class="form-field">
-              <label for="coach-sessionType">Type</label>
-              <p-select
+              <app-select
+                label="Type"
                 inputId="coach-sessionType"
-                (onChange)="onNewSessionTypeSelect($event)"
+                (change)="onNewSessionTypeSelect($event)"
                 [options]="sessionTypes"
                 optionLabel="label"
                 optionValue="value"
                 placeholder="Select type"
-                class="w-full"
+                styleClass="w-full"
                 appendTo="body"
-              ></p-select>
+              ></app-select>
             </div>
             <div class="form-field">
               <label for="coach-sessionDate">Date & Time</label>
@@ -258,32 +257,30 @@
               />
             </div>
             <div class="form-field">
-              <label for="coach-sessionDuration">Duration (minutes)</label>
-              <input
+              <app-form-input
+                label="Duration (minutes)"
                 id="coach-sessionDuration"
                 name="sessionDuration"
                 type="number"
-                pInputText
-                [value]="newSession.duration"
-                (input)="onNewSessionDurationInput($event)"
+                [value]="'' + newSession.duration"
+                (valueChange)="onNewSessionDurationInput($event)"
                 placeholder="90"
-                class="w-full"
+                styleClass="w-full"
                 autocomplete="off"
               />
             </div>
             <div class="form-field">
-              <label for="coach-sessionNotes">Notes</label>
-              <textarea
-                pTextarea
+              <app-textarea
+                label="Notes"
                 id="coach-sessionNotes"
                 name="sessionNotes"
                 [value]="newSession.notes"
-                (input)="onNewSessionNotesInput($event)"
+                (valueChange)="onNewSessionNotesInput($event)"
                 placeholder="Session notes..."
-                rows="3"
-                class="w-full"
+                [rows]="3"
+                styleClass="w-full"
                 autocomplete="off"
-              ></textarea>
+              ></app-textarea>
             </div>
           </div>
           <app-dialog-footer
@@ -315,16 +312,15 @@
           />
           <div class="message-form">
             <div class="form-field">
-              <label for="messageContent">Message</label>
-              <textarea
-                pTextarea
+              <app-textarea
+                label="Message"
                 id="messageContent"
                 [value]="teamMessageContent"
-                (input)="onTeamMessageContentInput($event)"
+                (valueChange)="onTeamMessageContentInput($event)"
                 placeholder="Type your message to the team..."
-                rows="5"
-                class="w-full"
-              ></textarea>
+                [rows]="5"
+                styleClass="w-full"
+              ></app-textarea>
             </div>
           </div>
           <app-dialog-footer
@@ -360,16 +356,15 @@
               training data.
             </p>
             <div class="form-field">
-              <label for="accessMessage">Message</label>
-              <textarea
-                pTextarea
+              <app-textarea
+                label="Message"
                 id="accessMessage"
                 [value]="requestAccessMessage"
-                (input)="onRequestAccessMessageInput($event)"
+                (valueChange)="onRequestAccessMessageInput($event)"
                 placeholder="Type your request message..."
-                rows="4"
-                class="w-full"
-              ></textarea>
+                [rows]="4"
+                styleClass="w-full"
+              ></app-textarea>
             </div>
           </div>
           <app-dialog-footer

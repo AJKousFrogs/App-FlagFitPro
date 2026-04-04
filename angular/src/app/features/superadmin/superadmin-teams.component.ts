@@ -18,7 +18,7 @@ import {
   getMappedStatusSeverity,
 } from "../../shared/utils/status.utils";
 import { TableModule } from "primeng/table";
-import { InputText } from "primeng/inputtext";
+import { SearchInputComponent } from "../../shared/components/search-input/search-input.component";
 import { EmptyStateComponent } from "../../shared/components/empty-state/empty-state.component";
 import { AppLoadingComponent } from "../../shared/components/loading/loading.component";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
@@ -50,7 +50,7 @@ interface Team {
     CardShellComponent,
     StatusTagComponent,
     TableModule,
-    InputText,
+    SearchInputComponent,
     MainLayoutComponent,
     PageHeaderComponent,
     ButtonComponent,
@@ -81,16 +81,12 @@ interface Team {
         <!-- Filters -->
         <app-card-shell class="filters-card">
           <div class="filters-row">
-            <span class="p-input-icon-left teams-search">
-              <i class="pi pi-search"></i>
-              <input
-                type="text"
-                pInputText
-                [value]="searchQuery"
-                (input)="onSearchInput($event)"
-                placeholder="Search teams..."
-              />
-            </span>
+            <app-search-input
+              class="teams-search"
+              [value]="searchQuery"
+              (valueChange)="searchQuery = $event; filterTeams()"
+              placeholder="Search teams..."
+            ></app-search-input>
             <div class="filter-buttons">
               <app-button
                 [variant]="statusFilter === 'all' ? 'primary' : 'outlined'"
@@ -308,10 +304,7 @@ export class SuperadminTeamsComponent implements OnInit {
     });
   }
 
-  onSearchInput(event: Event): void {
-    this.searchQuery = (event.target as HTMLInputElement | null)?.value ?? "";
-    this.filterTeams();
-  }
+
 
   setStatusFilter(status: "all" | "active" | "pending" | "suspended"): void {
     this.statusFilter = status;

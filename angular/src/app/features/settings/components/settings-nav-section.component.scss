@@ -1,5 +1,8 @@
 .settings-nav-item {
   justify-content: flex-start;
+  transition:
+    background-color var(--transition-fast) var(--ease-standard),
+    color var(--transition-fast) var(--ease-standard);
 }
 
 .settings-nav-item i {
@@ -7,4 +10,14 @@
   color: inherit;
   line-height: var(--ds-line-height-1);
   flex-shrink: 0;
+}
+
+.settings-nav-item--active {
+  background: var(--ds-primary-green-subtle, rgba(var(--ds-primary-green-rgb), 0.08));
+  color: var(--ds-primary-green);
+  font-weight: var(--ds-font-weight-semibold);
+}
+
+.settings-nav-item--active i {
+  color: var(--ds-primary-green);
 }

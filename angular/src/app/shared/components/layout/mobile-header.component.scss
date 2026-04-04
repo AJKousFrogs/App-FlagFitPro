@@ -3,7 +3,7 @@
 .mobile-header-shell {
   display: none; // Hidden by default
 
-  @include respond-to(md) {
+  @media (max-width: 40rem) {
     display: grid;
     grid-template-columns: auto 1fr auto;
     align-items: center;

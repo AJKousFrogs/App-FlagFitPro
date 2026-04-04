@@ -8,6 +8,7 @@
  */
 
 import { CommonModule } from "@angular/common";
+import { FormsModule } from "@angular/forms";
 import {
   ChangeDetectionStrategy,
   Component,
@@ -19,11 +20,10 @@ import {
 import { Router } from "@angular/router";
 import { ToastService } from "../../../core/services/toast.service";
 import { CardShellComponent } from "../../../shared/components/card-shell/card-shell.component";
-import { DatePicker } from "primeng/datepicker";
-import { InputText } from "primeng/inputtext";
-
-import { Select, type SelectChangeEvent } from "primeng/select";
-import { Textarea } from "primeng/textarea";
+import { DatePickerComponent } from "../../../shared/components/date-picker/date-picker.component";
+import { FormInputComponent } from "../../../shared/components/form-input/form-input.component";
+import { SelectComponent } from "../../../shared/components/select/select.component";
+import { TextareaComponent } from "../../../shared/components/textarea/textarea.component";
 import { firstValueFrom } from "rxjs";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { EmptyStateComponent } from "../../../shared/components/empty-state/empty-state.component";
@@ -136,11 +136,12 @@ const RECURRING_OPTIONS = [
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
+    FormsModule,
     CardShellComponent,
-    DatePicker,
-    InputText,
-    Select,
-    Textarea,
+    DatePickerComponent,
+    FormInputComponent,
+    SelectComponent,
+    TextareaComponent,
 
     MainLayoutComponent,
     PageHeaderComponent,
@@ -439,46 +440,42 @@ const RECURRING_OPTIONS = [
           </div>
 
           <div class="form-field">
-            <label>Event Title</label>
-            <input
-              type="text"
-              pInputText
-              [value]="eventForm.title"
-              (input)="onEventTextInput('title', $event)"
+            <app-form-input
+              label="Event Title"
               placeholder="Tuesday Practice"
+              [value]="eventForm.title"
+              (valueChange)="onEventTextInput('title', $event)"
             />
           </div>
 
           <div class="form-row">
             <div class="form-field">
-              <label>Date</label>
-              <p-datepicker
-                (onSelect)="onEventDateChange($event)"
+              <app-date-picker
+                label="Date"
                 [showIcon]="true"
-                class="w-full"
-              ></p-datepicker>
+                [ngModel]="eventForm.date"
+                (ngModelChange)="onEventDateChange($event)"
+              />
             </div>
             <div class="form-field">
-              <label>Start Time</label>
-              <p-select
+              <app-select
+                label="Start Time"
                 [options]="timeOptions"
-                (onChange)="onEventTextSelect('startTime', $event)"
                 optionLabel="label"
                 optionValue="value"
                 placeholder="Select time"
-                class="w-full"
-              ></p-select>
+                (valueChange)="onEventTextSelect('startTime', $event)"
+              />
             </div>
             <div class="form-field">
-              <label>End Time</label>
-              <p-select
+              <app-select
+                label="End Time"
                 [options]="timeOptions"
-                (onChange)="onEventTextSelect('endTime', $event)"
                 optionLabel="label"
                 optionValue="value"
                 placeholder="Select time"
-                class="w-full"
-              ></p-select>
+                (valueChange)="onEventTextSelect('endTime', $event)"
+              />
             </div>
           </div>
 
@@ -493,26 +490,24 @@ const RECURRING_OPTIONS = [
           </div>
 
           <div class="form-field">
-            <label>Location</label>
-            <p-select
+            <app-select
+              label="Location"
               [options]="locations"
-              (onChange)="onEventTextSelect('location', $event)"
               optionLabel="name"
               optionValue="id"
               placeholder="Select location"
-              class="w-full"
-            ></p-select>
+              (valueChange)="onEventTextSelect('location', $event)"
+            />
           </div>
 
           <div class="form-field">
-            <label>Description / Notes</label>
-            <textarea
-              pTextarea
-              [value]="eventForm.description"
-              (input)="onEventTextInput('description', $event)"
-              rows="3"
+            <app-textarea
+              label="Description / Notes"
               placeholder="Regular practice. Focus on red zone offense..."
-            ></textarea>
+              [value]="eventForm.description"
+              (valueChange)="onEventTextInput('description', $event)"
+              [rows]="3"
+            />
           </div>
 
           <div class="form-section">
@@ -989,25 +984,28 @@ export class CalendarCoachComponent implements OnInit {
     this.onEventTypeChange(value as EventForm["type"]);
   }
 
-  onEventDateChange(value: Date | null | undefined): void {
-    this.eventForm = { ...this.eventForm, date: value ?? null };
+  onEventDateChange(value: Date | Date[] | null | undefined): void {
+    const d = Array.isArray(value) ? value[0] ?? null : value ?? null;
+    this.eventForm = { ...this.eventForm, date: d };
   }
 
-  onEventTextInput(
-    field: "title" | "description",
-    event: Event,
-  ): void {
-    this.onEventTextFieldChange(field, this.readInputValue(event));
+  onEventTextInput(field: "title" | "description", value: string): void {
+    this.onEventTextFieldChange(field, value);
   }
 
   onEventTextSelect(
     field: "startTime" | "endTime" | "location",
-    event: SelectChangeEvent,
+    value: unknown,
   ): void {
-    this.onEventTextFieldChange(
-      field,
-      typeof event.value === "string" ? event.value : "",
-    );
+    let str = "";
+    if (value == null) {
+      str = "";
+    } else if (typeof value === "object" && value !== null && "id" in value) {
+      str = String((value as { id: string }).id);
+    } else {
+      str = String(value);
+    }
+    this.onEventTextFieldChange(field, str);
   }
 
   onEventTextFieldChange(

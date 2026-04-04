@@ -301,7 +301,7 @@ app-close-button.sidebar-close-btn {
 // TABLET: Collapsed sidebar (icons only)
 // Design System: --bp-tablet: 48rem, --bp-laptop: 64rem
 // ============================================
-@media (max-width: var(--breakpoint-lg)) and (min-width: var(--breakpoint-md-min)) {
+@media (max-width: 64rem) and (min-width: 48.0625rem) {
   .sidebar {
     width: 100%;
   }

@@ -7,6 +7,7 @@ import {
   input,
   output,
   TemplateRef,
+  ViewEncapsulation,
 } from "@angular/core";
 import { TableModule, TablePageEvent, TableRowSelectEvent, TableRowUnSelectEvent } from "primeng/table";
 
@@ -14,6 +15,8 @@ import { TableModule, TablePageEvent, TableRowSelectEvent, TableRowUnSelectEvent
   selector: "app-table",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
+  encapsulation: ViewEncapsulation.None,
+  host: { class: "app-table-host" },
   imports: [CommonModule, TableModule],
   template: `
     <div class="app-table-container">
@@ -106,17 +109,17 @@ import { TableModule, TablePageEvent, TableRowSelectEvent, TableRowUnSelectEvent
   `,
   styles: [
     `
-      :host {
+      .app-table-host {
         display: block;
         width: 100%;
       }
       .app-table-container {
         @apply w-full overflow-hidden rounded-lg border border-surface-200 dark:border-surface-700;
       }
-      :host ::ng-deep .p-datatable-header {
+      .app-table-host .p-datatable-header {
         @apply bg-surface-50 dark:bg-surface-800 border-b border-surface-200 dark:border-surface-700;
       }
-      :host ::ng-deep .app-table-surface-standard {
+      .app-table-host .app-table-surface-standard {
         --p-datatable-header-cell-padding: var(--space-4) var(--space-5);
         --p-datatable-body-cell-padding: var(--space-4) var(--space-5);
         --p-datatable-row-background: var(--surface-primary);

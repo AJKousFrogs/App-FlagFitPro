@@ -1,25 +1,4 @@
-/**
- * Player Dashboard Component
- *
- * ⭐ CANONICAL PAGE — Design System Exemplar
- * ==========================================
- * This page is FROZEN as a design system exemplar.
- *
- * RULES:
- * - Future refactors copy FROM this page, never INTO it
- * - Changes require design system curator approval
- * - This page demonstrates correct design system usage
- *
- * See docs/CANONICAL_PAGES.md for full documentation.
- *
- * The main overview page for athletes showing:
- * - Announcement banner (important team messages)
- * - Today's readiness and wellness status
- * - Weekly training progress
- * - Upcoming schedule highlights
- * - Quick access to key features
- * - Merlin AI Merlin insights
- */
+/** Athlete home: readiness, training, schedule, insights. */
 
 import { CommonModule } from "@angular/common";
 import {
@@ -54,7 +33,6 @@ import { AcwrSpikeDetectionService } from "../../core/services/acwr-spike-detect
 import {
   PrivacySettingsService,
 } from "../../core/services/privacy-settings.service";
-import { AlertComponent } from "../../shared/components/alert/alert.component";
 import { ButtonComponent } from "../../shared/components/button/button.component";
 import { CardShellComponent } from "../../shared/components/card-shell/card-shell.component";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
@@ -133,7 +111,6 @@ interface AnnouncementBanner {
   imports: [
     CommonModule,
     RouterModule,
-    AlertComponent,
     ButtonComponent,
     CardShellComponent,
     PlayerDashboardSetupCardComponent,

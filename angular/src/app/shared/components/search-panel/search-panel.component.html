@@ -13,37 +13,23 @@
   <div class="search-panel">
     <!-- Search Input -->
     <div class="search-input-wrapper">
-      <i class="pi pi-search search-icon"></i>
-      <input
+      <app-search-input
         #searchInput
-        type="text"
-        pInputText
         [value]="searchQuery"
-        (input)="onSearchInput($event)"
+        placeholder="Search exercises, programs..."
+        ariaLabel="Search commands and content"
+        [clearable]="!!searchQuery"
+        (valueChange)="searchQuery = $event; onSearchChange($event)"
+        (cleared)="clearSearch()"
         (keydown.enter)="onEnter()"
         (keydown.escape)="close()"
         (keydown.arrowdown)="onArrowDown($event)"
         (keydown.arrowup)="onArrowUp($event)"
         (keydown.arrowleft)="onArrowLeft($event)"
         (keydown.arrowright)="onArrowRight($event)"
-        placeholder="Search exercises, programs..."
-        class="search-input"
-        aria-label="Search commands and content"
-        autocomplete="off"
-        role="combobox"
-        aria-autocomplete="list"
-        [attr.aria-expanded]="showSuggestions() || searchService.hasResults()"
-        aria-controls="search-results-list"
       />
       <div class="input-actions">
-        @if (searchQuery) {
-          <app-icon-button
-            icon="pi-times"
-            ariaLabel="Clear search"
-            tooltip="Clear search (Esc)"
-            (clicked)="clearSearch()"
-          />
-        } @else {
+        @if (!searchQuery) {
           <div class="esc-hint">ESC</div>
         }
       </div>

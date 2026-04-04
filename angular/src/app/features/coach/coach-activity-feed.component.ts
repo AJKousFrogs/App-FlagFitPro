@@ -30,8 +30,8 @@ import {
 import { ButtonComponent } from "../../shared/components/button/button.component";
 import { EmptyStateComponent } from "../../shared/components/empty-state/empty-state.component";
 import { IconButtonComponent } from "../../shared/components/button/icon-button.component";
-import { Avatar } from "primeng/avatar";
-import { Badge } from "primeng/badge";
+import { AvatarComponent } from "../../shared/components/avatar/avatar.component";
+import { BadgeComponent } from "../../shared/components/badge/badge.component";
 
 import { StatusTagComponent } from "../../shared/components/status-tag/status-tag.component";
 import { Skeleton } from "primeng/skeleton";
@@ -48,8 +48,8 @@ const ACTIVITY_PAGE_SIZE = 20;
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     RouterModule,
-    Avatar,
-    Badge,
+    AvatarComponent,
+    BadgeComponent,
     StatusTagComponent,
     Skeleton,
     ScrollPanel,
@@ -65,7 +65,7 @@ const ACTIVITY_PAGE_SIZE = 20;
           <i class="pi pi-bell"></i>
           <h3>Player Activity</h3>
           @if (unreadCount() > 0) {
-            <p-badge [value]="unreadCount()" severity="danger"></p-badge>
+            <app-badge variant="danger">{{ unreadCount() }}</app-badge>
           }
         </div>
         <div class="header-actions">
@@ -136,13 +136,13 @@ const ACTIVITY_PAGE_SIZE = 20;
                       class="activity-avatar"
                       [class]="getActivityTypeClass(activity.activity_type)"
                     >
-                      <p-avatar
+                      <app-avatar
                         [label]="
                           getInitialsStr(activity.player?.full_name || 'P')
                         "
                         shape="circle"
-                        class="activity-avatar-icon"
-                      ></p-avatar>
+                        styleClass="activity-avatar-icon"
+                      />
                       <div class="activity-icon-badge">
                         <i
                           [class]="getActivityIcon(activity.activity_type)"

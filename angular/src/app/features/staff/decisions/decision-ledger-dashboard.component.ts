@@ -31,7 +31,7 @@ import { EmptyStateComponent } from "@shared/components/empty-state/empty-state.
 import { AppLoadingComponent } from "@shared/components/loading/loading.component";
 import { PageErrorStateComponent } from "@shared/components/page-error-state/page-error-state.component";
 
-import { Select, type SelectChangeEvent } from "primeng/select";
+import { SelectComponent } from "@shared/components/select/select.component";
 
 import { CreateDecisionDialogComponent } from "./create-decision-dialog.component";
 import { DecisionCardComponent } from "./decision-card.component";
@@ -48,7 +48,7 @@ import { ReviewDecisionDialogComponent } from "./review-decision-dialog.componen
     EmptyStateComponent,
     AppLoadingComponent,
     PageErrorStateComponent,
-    Select,
+    SelectComponent,
     PageHeaderComponent,
     CardShellComponent,
     DecisionCardComponent,
@@ -129,33 +129,33 @@ import { ReviewDecisionDialogComponent } from "./review-decision-dialog.componen
           <app-card-shell title="Filters" headerIcon="pi-filter">
             <div class="filters-grid">
               <div class="filter-item">
-                <label>Status</label>
-                <p-select
+                <app-select
+                  label="Status"
                   [options]="statusOptions"
                   [ngModel]="filters().status"
-                  (onChange)="onStatusFilterSelect($event)"
+                  (change)="onStatusFilterSelect($event)"
                   placeholder="All Statuses"
-                ></p-select>
+                />
               </div>
 
               <div class="filter-item">
-                <label>Category</label>
-                <p-select
+                <app-select
+                  label="Category"
                   [options]="categoryOptions"
                   [ngModel]="filters().decisionCategory"
-                  (onChange)="onCategoryFilterSelect($event)"
+                  (change)="onCategoryFilterSelect($event)"
                   placeholder="All Categories"
-                ></p-select>
+                />
               </div>
 
               <div class="filter-item">
-                <label>Priority</label>
-                <p-select
+                <app-select
+                  label="Priority"
                   [options]="priorityOptions"
                   [ngModel]="filters().reviewPriority"
-                  (onChange)="onPriorityFilterSelect($event)"
+                  (change)="onPriorityFilterSelect($event)"
                   placeholder="All Priorities"
-                ></p-select>
+                />
               </div>
 
               <div class="filter-item">
@@ -326,20 +326,17 @@ export class DecisionLedgerDashboardComponent implements OnInit {
     await this.decisionService.getDecisions(currentFilters);
   }
 
-  onStatusFilterSelect(event: SelectChangeEvent): void {
-    const value = event.value as DecisionFilters["status"] | undefined;
+  onStatusFilterSelect(value: DecisionFilters["status"] | undefined): void {
     this.filters.update((current) => ({ ...current, status: value }));
     this.applyFilters();
   }
 
-  onCategoryFilterSelect(event: SelectChangeEvent): void {
-    const value = event.value as DecisionFilters["decisionCategory"] | undefined;
+  onCategoryFilterSelect(value: DecisionFilters["decisionCategory"] | undefined): void {
     this.filters.update((current) => ({ ...current, decisionCategory: value }));
     this.applyFilters();
   }
 
-  onPriorityFilterSelect(event: SelectChangeEvent): void {
-    const value = event.value as DecisionFilters["reviewPriority"] | undefined;
+  onPriorityFilterSelect(value: DecisionFilters["reviewPriority"] | undefined): void {
     this.filters.update((current) => ({ ...current, reviewPriority: value }));
     this.applyFilters();
   }

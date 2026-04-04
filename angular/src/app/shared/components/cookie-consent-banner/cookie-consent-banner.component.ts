@@ -58,7 +58,7 @@ import { ButtonComponent } from "../button/button.component";
 
           <!-- Detailed Preferences (expandable) -->
           @if (showDetails()) {
-            <div class="cookie-details" @fadeIn>
+            <div class="cookie-details">
               <div class="cookie-preference">
                 <div class="preference-info">
                   <span class="preference-name">Necessary Cookies</span>

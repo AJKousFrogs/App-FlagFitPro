@@ -454,7 +454,9 @@ export class ContextService {
    */
   buildBreadcrumbItems(route: string): BreadcrumbItem[] {
     const items: BreadcrumbItem[] = [];
-    const segments = route.split("/").filter((s) => s);
+    // Strip query params and fragments before parsing path segments
+    const path = route.split("?")[0].split("#")[0];
+    const segments = path.split("/").filter((s) => s);
 
     // If we're on the dashboard, don't show breadcrumbs at all (just one item makes no sense)
     if (route === "/dashboard" || route === "/" || segments.length === 0) {

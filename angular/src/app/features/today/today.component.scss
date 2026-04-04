@@ -608,6 +608,7 @@
   background: var(--surface-overlay-darkest);
   backdrop-filter: blur(var(--overlay-blur));
   padding: var(--space-4);
+  animation: today-celebration-overlay-in 300ms ease-out forwards;
 }
 
 .celebration-content {
@@ -619,6 +620,52 @@
   max-width: var(--dialog-max-width-sm);
   width: 100%;
   box-shadow: var(--shadow-xl);
+  animation: today-celebration-content-bounce 600ms cubic-bezier(0.34, 1.56, 0.64, 1)
+    forwards;
+}
+
+@keyframes today-celebration-overlay-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes today-celebration-content-bounce {
+  0% {
+    opacity: 0;
+    transform: scale(0.3) translateY(calc(var(--size-200) * 0.25));
+  }
+
+  60% {
+    opacity: 1;
+    transform: scale(1.1)
+      translateY(calc((var(--space-2) + var(--space-0-5)) * -1));
+  }
+
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .celebration-overlay,
+  .celebration-content {
+    animation: none;
+  }
+
+  .celebration-overlay {
+    opacity: 1;
+  }
+
+  .celebration-content {
+    opacity: 1;
+    transform: none;
+  }
 }
 
 .celebration-confetti {

@@ -28,7 +28,7 @@ import { CommonModule } from "@angular/common";
 // PrimeNG Components
 import { ConfirmDialog } from "primeng/confirmdialog";
 import { Tabs, TabList, Tab, TabPanels, TabPanel } from "primeng/tabs";
-import { Badge } from "primeng/badge";
+import { BadgeComponent } from "../../../shared/components/badge/badge.component";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 // Services
 import { VideoCurationService } from "./video-curation.service";
@@ -70,7 +70,7 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
     Tab,
     TabPanels,
     TabPanel,
-    Badge,
+    BadgeComponent,
     ButtonComponent,
     MainLayoutComponent,
     PageHeaderComponent,
@@ -113,33 +113,22 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
             <p-tab value="videos">
               <i class="pi pi-video"></i>
               All Videos
-              <p-badge
-                [value]="curationService.totalVideos().toString()"
-                severity="info"
-              ></p-badge>
+              <app-badge variant="info">{{ curationService.totalVideos() }}</app-badge>
             </p-tab>
             <p-tab value="suggestions">
               <i class="pi pi-lightbulb"></i>
               Player Suggestions
-              <p-badge
-                [value]="curationService.playerSuggestionsCount().toString()"
-                severity="warn"
-              ></p-badge>
+              <app-badge variant="warning">{{ curationService.playerSuggestionsCount() }}</app-badge>
             </p-tab>
             <p-tab value="pending">
               <i class="pi pi-clock"></i>
               Pending Review
-              <p-badge
-                [value]="curationService.pendingCount().toString()"
-                severity="warn"
-              ></p-badge>
+              <app-badge variant="warning">{{ curationService.pendingCount() }}</app-badge>
             </p-tab>
             <p-tab value="playlists">
               <i class="pi pi-list"></i>
               Playlists
-              <p-badge
-                [value]="curationService.playlists().length.toString()"
-              ></p-badge>
+              <app-badge variant="secondary">{{ curationService.playlists().length }}</app-badge>
             </p-tab>
             <p-tab value="analytics">
               <i class="pi pi-chart-bar"></i>

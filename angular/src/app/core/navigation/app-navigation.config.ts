@@ -1,4 +1,11 @@
-export type NavigationGroup = "primary" | "secondary" | "me";
+export type NavigationGroup =
+  | "primary"
+  | "secondary"
+  | "home"
+  | "athlete"
+  | "team"
+  | "tools"
+  | "me";
 
 export interface AppNavigationItem {
   label: string;
@@ -18,12 +25,13 @@ const EXACT_NAV_ROUTES = new Set([
 ]);
 
 const ATHLETE_NAV_ITEMS: readonly AppNavigationItem[] = [
+  // ── HOME ──────────────────────────────────────────────────────────
   {
     label: "Dashboard",
     route: "/player-dashboard",
     icon: "pi-home",
     ariaLabel: "Dashboard - Overview of your training and progress",
-    group: "primary",
+    group: "home",
     mobilePrimary: true,
   },
   {
@@ -31,15 +39,16 @@ const ATHLETE_NAV_ITEMS: readonly AppNavigationItem[] = [
     route: "/todays-practice",
     icon: "pi-calendar",
     ariaLabel: "Today's Practice - Your training for today",
-    group: "primary",
+    group: "home",
     mobilePrimary: true,
   },
+  // ── ATHLETE ───────────────────────────────────────────────────────
   {
     label: "Training",
     route: "/training",
     icon: "pi-bolt",
     ariaLabel: "Training Schedule - View and manage your training calendar",
-    group: "primary",
+    group: "athlete",
     mobilePrimary: true,
   },
   {
@@ -47,7 +56,7 @@ const ATHLETE_NAV_ITEMS: readonly AppNavigationItem[] = [
     route: "/wellness",
     icon: "pi-heart",
     ariaLabel: "Wellness & Recovery - Daily check-in and recovery metrics",
-    group: "primary",
+    group: "athlete",
     mobilePrimary: true,
   },
   {
@@ -55,43 +64,45 @@ const ATHLETE_NAV_ITEMS: readonly AppNavigationItem[] = [
     route: "/performance/insights",
     icon: "pi-chart-line",
     ariaLabel: "Performance - Metrics, tests, and performance insights",
-    group: "primary",
+    group: "athlete",
     mobilePrimary: true,
   },
+  // ── TEAM ──────────────────────────────────────────────────────────
   {
     label: "Team",
     route: "/roster",
     icon: "pi-users",
     ariaLabel: "Roster - Teammates, roles, and availability",
-    group: "secondary",
+    group: "team",
   },
   {
-    label: "Team Chat",
+    label: "Chat",
     route: "/team-chat",
     icon: "pi-comments",
     ariaLabel: "Team Chat - Communicate with your team",
-    group: "secondary",
+    group: "team",
   },
   {
     label: "Competition",
     route: "/tournaments",
     icon: "pi-trophy",
     ariaLabel: "Tournaments - Games and competitions",
-    group: "secondary",
+    group: "team",
   },
+  // ── TOOLS ─────────────────────────────────────────────────────────
   {
     label: "Merlin AI",
     route: "/chat",
     icon: "pi-sparkles",
     ariaLabel: "Merlin AI - Chat with your Merlin AI",
-    group: "secondary",
+    group: "tools",
   },
   {
-    label: "Knowledge Base",
+    label: "Knowledge",
     route: "/knowledge",
     icon: "pi-bookmark",
     ariaLabel: "Knowledge Base - Browse training guidance and team resources",
-    group: "secondary",
+    group: "tools",
   },
   {
     label: "Profile",
@@ -293,7 +304,13 @@ export function getRoleNavigationItems(role: string | undefined): AppNavigationI
 export function getPrimaryNavigationItems(
   role: string | undefined,
 ): AppNavigationItem[] {
-  return getRoleNavigationItems(role).filter((item) => item.group === "primary");
+  // Coaches use legacy "primary" group; athletes use semantic groups.
+  if (isCoachNavigationRole(role)) {
+    return getRoleNavigationItems(role).filter((item) => item.group === "primary");
+  }
+  return getRoleNavigationItems(role).filter((item) =>
+    (["home", "athlete", "team", "tools"] as NavigationGroup[]).includes(item.group),
+  );
 }
 
 export function getSecondaryNavigationItems(
@@ -311,13 +328,32 @@ export function getMeNavigationItems(role: string | undefined): AppNavigationIte
 export function getMobilePrimaryNavigationItems(
   role: string | undefined,
 ): AppNavigationItem[] {
-  return getPrimaryNavigationItems(role).filter((item) => item.mobilePrimary);
+  return getRoleNavigationItems(role).filter((item) => item.mobilePrimary);
 }
 
 export function getMobileMoreNavigationItems(
   role: string | undefined,
 ): AppNavigationItem[] {
   return getRoleNavigationItems(role).filter((item) => !item.mobilePrimary);
+}
+
+/** Returns ordered nav groups for the sidebar — 4 semantic groups for athletes, 2 for coaches. */
+export function getNavGroupsForRole(
+  role: string | undefined,
+): { id: string; label: string; items: AppNavigationItem[] }[] {
+  const all = getRoleNavigationItems(role);
+  if (isCoachNavigationRole(role)) {
+    return [
+      { id: "primary", label: "Main", items: all.filter((i) => i.group === "primary") },
+      { id: "secondary", label: "Tools", items: all.filter((i) => i.group === "secondary") },
+    ].filter((g) => g.items.length > 0);
+  }
+  return [
+    { id: "home",    label: "Home",    items: all.filter((i) => i.group === "home") },
+    { id: "athlete", label: "Athlete", items: all.filter((i) => i.group === "athlete") },
+    { id: "team",    label: "Team",    items: all.filter((i) => i.group === "team") },
+    { id: "tools",   label: "Tools",   items: all.filter((i) => i.group === "tools") },
+  ].filter((g) => g.items.length > 0);
 }
 
 export function isExactNavigationRoute(route: string): boolean {

@@ -1,0 +1,102 @@
+:host {
+  display: block;
+}
+
+.member-card {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  background: var(--surface-primary);
+  border: var(--border-1) solid var(--color-border-secondary);
+  border-radius: var(--radius-md);
+  transition:
+    background-color var(--transition-fast),
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast);
+}
+
+.member-card.is-online {
+  border-left: var(--space-1) solid var(--color-brand-primary);
+}
+
+.member-avatar-container {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.avatar-token {
+  color: var(--color-text-on-primary);
+}
+
+.avatar-color-1 {
+  background: var(--color-chart-1);
+}
+
+.avatar-color-2 {
+  background: var(--color-chart-2);
+}
+
+.avatar-color-3 {
+  background: var(--color-chart-3);
+}
+
+.avatar-color-4 {
+  background: var(--color-chart-4);
+}
+
+.avatar-color-5 {
+  background: var(--color-chart-5);
+}
+
+.avatar-color-6 {
+  background: var(--color-chart-6);
+}
+
+.online-indicator {
+  position: absolute;
+  bottom: calc(var(--space-1) / 2);
+  right: calc(var(--space-1) / 2);
+  width: var(--space-3);
+  height: var(--space-3);
+  background: var(--color-brand-primary);
+  border: var(--border-2) solid var(--surface-primary);
+  border-radius: var(--radius-full);
+}
+
+.member-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.member-name {
+  font-weight: var(--ds-font-weight-medium);
+  color: var(--color-text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.jersey-number {
+  color: var(--color-text-secondary);
+  font-weight: var(--ds-font-weight-regular);
+  margin-left: var(--space-1);
+}
+
+.member-meta {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+
+.read-only-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  font-size: var(--ds-font-size-xs);
+  color: var(--color-text-tertiary);
+}

@@ -470,23 +470,11 @@
               <strong>{{ statusChangePlayer()?.name }}</strong
               >:
             </p>
-            <div class="status-options">
-              @for (option of statusOptions; track option.value) {
-                <button
-                  type="button"
-                  class="status-option"
-                  [class.selected]="newStatus() === option.value"
-                  (click)="newStatus.set(option.value)"
-                  [attr.aria-label]="'Set status to ' + option.label"
-                >
-                  <div
-                    class="status-indicator"
-                    [class]="'status-' + option.value"
-                  ></div>
-                  <span>{{ option.label }}</span>
-                </button>
-              }
-            </div>
+            <app-roster-status-options
+              [selected]="newStatus()"
+              (selectedChange)="newStatus.set($event)"
+              ariaLabelPrefix="Set status to"
+            />
           </div>
 
           <app-dialog-footer
@@ -523,23 +511,11 @@
               Update status for
               <strong>{{ selectedPlayerIds().size }} players</strong>:
             </p>
-            <div class="status-options">
-              @for (option of statusOptions; track option.value) {
-                <button
-                  type="button"
-                  class="status-option"
-                  [class.selected]="bulkStatus() === option.value"
-                  (click)="bulkStatus.set(option.value)"
-                  [attr.aria-label]="'Set bulk status to ' + option.label"
-                >
-                  <div
-                    class="status-indicator"
-                    [class]="'status-' + option.value"
-                  ></div>
-                  <span>{{ option.label }}</span>
-                </button>
-              }
-            </div>
+            <app-roster-status-options
+              [selected]="bulkStatus()"
+              (selectedChange)="bulkStatus.set($event)"
+              ariaLabelPrefix="Set bulk status to"
+            />
           </div>
 
           <app-dialog-footer

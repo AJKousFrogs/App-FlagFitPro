@@ -127,20 +127,20 @@
           Attendance
           <span>{{ teamOverview().practiceAttendanceRate }}%</span>
         </div>
-        <p-progressBar
+        <app-progress-bar
           [value]="teamOverview().practiceAttendanceRate"
           [showValue]="false"
-        ></p-progressBar>
+        />
       </div>
       <div class="preview-bar">
         <div class="preview-bar-label">
           Consistency
           <span>{{ teamOverview().trainingConsistency }}</span>
         </div>
-        <p-progressBar
+        <app-progress-bar
           [value]="teamOverview().trainingConsistency"
           [showValue]="false"
-        ></p-progressBar>
+        />
       </div>
     </div>
     <ul class="preview-insights">

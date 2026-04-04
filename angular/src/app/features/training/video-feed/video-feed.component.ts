@@ -33,7 +33,7 @@ import { FormControl, ReactiveFormsModule } from "@angular/forms";
 import { Router } from "@angular/router";
 
 // PrimeNG Components
-import { Avatar } from "primeng/avatar";
+import { AvatarComponent } from "../../../shared/components/avatar/avatar.component";
 
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { EmptyStateComponent } from "../../../shared/components/empty-state/empty-state.component";
@@ -73,7 +73,7 @@ import { FilterChip } from "./video-feed.models";
     Skeleton,
     Tooltip,
 
-    Avatar,
+    AvatarComponent,
     MainLayoutComponent,
     ButtonComponent,
     EmptyStateComponent,
@@ -227,12 +227,12 @@ import { FilterChip } from "./video-feed.models";
 
                     <!-- Creator Info -->
                     <div class="creator-row">
-                      <p-avatar
+                      <app-avatar
                         [label]="video.creator.displayName.charAt(0)"
                         shape="circle"
                         size="normal"
-                        class="creator-avatar"
-                      ></p-avatar>
+                        styleClass="creator-avatar"
+                      />
                       <div class="creator-info">
                         <span class="creator-name">
                           {{ video.creator.displayName }}
@@ -287,12 +287,12 @@ import { FilterChip } from "./video-feed.models";
           <div class="creators-scroll">
             @for (creator of featuredCreators(); track creator.username) {
               <div class="creator-card" (click)="filterByCreator(creator)">
-                <p-avatar
+                <app-avatar
                   [label]="creator.displayName.charAt(0)"
                   shape="circle"
                   size="xlarge"
-                  class="creator-avatar-large"
-                ></p-avatar>
+                  styleClass="creator-avatar-large"
+                />
                 <div class="creator-details">
                   <span class="creator-display-name">
                     {{ creator.displayName }}

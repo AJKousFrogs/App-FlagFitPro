@@ -10,8 +10,8 @@ import {
 import { Accordion, AccordionPanel } from "primeng/accordion";
 import { Chip } from "primeng/chip";
 import { Divider } from "primeng/divider";
-import { InputText } from "primeng/inputtext";
-import { Select, type SelectChangeEvent } from "primeng/select";
+import { SelectComponent } from "../../../shared/components/select/select.component";
+import { FormInputComponent } from "../../../shared/components/form-input/form-input.component";
 import { Tooltip } from "primeng/tooltip";
 import { StatusTagComponent } from "../../../shared/components/status-tag/status-tag.component";
 import { TOAST } from "../../../core/constants/toast-messages.constants";
@@ -57,8 +57,8 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
   imports: [
     CommonModule,
     FormsModule,
-    Select,
-    InputText,
+    SelectComponent,
+    FormInputComponent,
     Divider,
     Tooltip,
     Chip,
@@ -341,14 +341,12 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
                   </p>
                 </div>
                 <div class="setting-control wide">
-                  <p-select
+                  <app-select
                     [ngModel]="emergencyLevel"
                     [options]="emergencyLevelOptions"
-                    optionLabel="label"
-                    optionValue="value"
                     placeholder="Select level"
-                    (onChange)="onEmergencyLevelSelect($event)"
-                  ></p-select>
+                    (change)="onEmergencyLevelSelect($event)"
+                  />
                 </div>
               </div>
 
@@ -556,36 +554,29 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
         />
         <div class="contact-form privacy-dialog-stack">
           <div class="form-field">
-            <label for="contactName">Name</label>
-            <input
-              id="contactName"
-              type="text"
-              pInputText
+            <app-form-input
+              label="Name"
               [value]="newContact.name ?? ''"
-              (input)="onNewContactNameInput($event)"
+              (valueChange)="onNewContactNameChange($event)"
               placeholder="Contact name"
             />
           </div>
           <div class="form-field">
-            <label for="contactPhone">Phone</label>
-            <input
-              id="contactPhone"
-              type="tel"
-              pInputText
+            <app-form-input
+              label="Phone"
               [value]="newContact.phone ?? ''"
-              (input)="onNewContactPhoneInput($event)"
+              (valueChange)="onNewContactPhoneChange($event)"
               placeholder="+1 234 567 8900"
             />
           </div>
           <div class="form-field">
-            <label for="contactRelationship">Relationship</label>
-            <p-select
-              id="contactRelationship"
+            <app-select
+              label="Relationship"
               [ngModel]="newContact.relationship"
-              (onChange)="onNewContactRelationshipSelect($event)"
+              (change)="onNewContactRelationshipSelect($event)"
               [options]="relationshipOptions"
               placeholder="Select relationship"
-            ></p-select>
+            />
           </div>
         </div>
         <app-dialog-footer
@@ -642,23 +633,18 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
             </div>
           </div>
           <div class="form-field">
-            <label for="deletionReason">Reason for leaving (optional):</label>
-            <input
-              id="deletionReason"
-              type="text"
-              pInputText
+            <app-form-input
+              label="Reason for leaving (optional):"
               [value]="deletionReason"
-              (input)="onDeletionReasonInput($event)"
+              (valueChange)="onDeletionReasonChange($event)"
               placeholder="Help us improve..."
             />
           </div>
           <div class="form-field">
-            <label>Type <strong>DELETE</strong> to confirm:</label>
-            <input
-              type="text"
-              pInputText
+            <app-form-input
+              label="Type DELETE to confirm:"
               [value]="deleteConfirmText"
-              (input)="onDeleteConfirmTextInput($event)"
+              (valueChange)="onDeleteConfirmTextChange($event)"
               placeholder="DELETE"
             />
           </div>
@@ -823,50 +809,24 @@ export class PrivacyControlsComponent implements OnInit {
     }
   }
 
-  onNewContactNameInput(event: Event): void {
-    this.onNewContactNameChange(this.readInputValue(event));
-  }
-
   onNewContactNameChange(value: string): void {
     this.newContact = { ...this.newContact, name: value };
-  }
-
-  onNewContactPhoneInput(event: Event): void {
-    this.onNewContactPhoneChange(this.readInputValue(event));
   }
 
   onNewContactPhoneChange(value: string): void {
     this.newContact = { ...this.newContact, phone: value };
   }
 
-  onNewContactRelationshipSelect(event: SelectChangeEvent): void {
-    this.onNewContactRelationshipChange(
-      typeof event.value === "string" ? event.value : "",
-    );
-  }
-
-  onNewContactRelationshipChange(value: string): void {
-    this.newContact = { ...this.newContact, relationship: value };
-  }
-
-  onDeletionReasonInput(event: Event): void {
-    this.onDeletionReasonChange(this.readInputValue(event));
+  onNewContactRelationshipSelect(value: string | null | undefined): void {
+    this.newContact = { ...this.newContact, relationship: typeof value === "string" ? value : "" };
   }
 
   onDeletionReasonChange(value: string): void {
     this.deletionReason = value;
   }
 
-  onDeleteConfirmTextInput(event: Event): void {
-    this.onDeleteConfirmTextChange(this.readInputValue(event));
-  }
-
   onDeleteConfirmTextChange(value: string): void {
     this.deleteConfirmText = value;
-  }
-
-  private readInputValue(event: Event): string {
-    return (event.target as HTMLInputElement | null)?.value ?? "";
   }
 
   private readChecked(event: Event): boolean {
@@ -903,14 +863,12 @@ export class PrivacyControlsComponent implements OnInit {
     await this.privacyService.updateMarketingOptIn(optIn);
   }
 
-  async onEmergencyLevelSelect(event: SelectChangeEvent): Promise<void> {
-    const level = event.value as EmergencySharingLevel | undefined;
-
-    if (!level) {
+  async onEmergencyLevelSelect(value: EmergencySharingLevel | null | undefined): Promise<void> {
+    if (!value) {
       return;
     }
 
-    await this.onEmergencyLevelChange(level);
+    await this.onEmergencyLevelChange(value);
   }
 
   async onEmergencyLevelChange(level: EmergencySharingLevel): Promise<void> {

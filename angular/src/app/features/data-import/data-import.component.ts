@@ -28,8 +28,8 @@ import { DataImportResultStepComponent } from "./components/data-import-result-s
 import { DataImportWearablesFlowComponent } from "./components/data-import-wearables-flow.component";
 
 import { FileUpload } from "primeng/fileupload";
-import { InputText } from "primeng/inputtext";
 import { Stepper, StepList, Step } from "primeng/stepper";
+import { FormInputComponent } from "../../shared/components/form-input/form-input.component";
 import { firstValueFrom } from "rxjs";
 
 import { ApiService, API_ENDPOINTS } from "../../core/services/api.service";
@@ -192,7 +192,7 @@ const WEARABLE_DEVICES: WearableDevice[] = [
     AlertComponent,
     CardShellComponent,
     FileUpload,
-    InputText,
+    FormInputComponent,
     Stepper,
     StepList,
     Step,
@@ -292,15 +292,14 @@ const WEARABLE_DEVICES: WearableDevice[] = [
                 </div>
 
                 <div class="url-import">
-                  <label>Import from URL</label>
                   <div class="url-input-group">
-                    <input
-                      type="text"
-                      pInputText
+                    <app-form-input
+                      label="Import from URL"
+                      type="url"
                       [value]="importUrl"
-                      (input)="onImportUrlInput($event)"
+                      (valueChange)="importUrl = $event"
                       placeholder="https://example.com/data.json"
-                    />
+                    ></app-form-input>
                     <app-button
                       iconLeft="pi-download"
                       [disabled]="!importUrl"
@@ -444,11 +443,6 @@ export class DataImportComponent implements OnInit {
     this.importPreview.set(null);
     this.importResult.set(null);
     this.importUrl = "";
-  }
-
-  onImportUrlInput(event: Event): void {
-    const input = event.target as HTMLInputElement | null;
-    this.importUrl = input?.value ?? "";
   }
 
   onMappingChange(mapping: FieldMapping, value: string | null): void {

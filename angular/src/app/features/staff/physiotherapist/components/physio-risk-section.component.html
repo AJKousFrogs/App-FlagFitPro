@@ -60,7 +60,7 @@
             <span class="soreness-label">Avg Soreness</span>
             <div class="soreness-bar">
               @if (risk.soreness !== null) {
-                <p-progressBar [value]="risk.soreness * 10" [showValue]="false" />
+                <app-progress-bar [value]="risk.soreness * 10" [showValue]="false" />
                 <span>{{ risk.soreness.toFixed(1) }}/10</span>
               } @else {
                 <span class="no-data">No data</span>

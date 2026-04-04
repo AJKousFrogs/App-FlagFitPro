@@ -39,13 +39,6 @@
   /* Grid Logic */
   .span-2 { grid-column: span 2; }
   .full-width { grid-column: 1 / -1; }
-
-  ::ng-deep {
-    app-stats-grid .stats-grid {
-      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-      gap: var(--space-3);
-    }
-  }
 }
 
 /* Tablet: 2 Columns */

@@ -67,6 +67,7 @@ import {
   RosterPlayerCardComponent,
   RosterStaffCardComponent,
 } from "./components";
+import { RosterStatusOptionsComponent } from "./components/roster-status-options.component";
 import { getPositionDisplayName } from "../../core/constants";
 import { getCountryFlag } from "../../core/constants";
 import {
@@ -85,7 +86,6 @@ import {
   PlayerRiskLevel,
   PlayerStatus,
   PositionGroup,
-  STATUS_OPTIONS,
 } from "./roster.models";
 import { RosterService } from "./roster.service";
 import {
@@ -120,6 +120,7 @@ import {
     DialogHeaderComponent,
     DialogFooterComponent,
     ButtonComponent,
+    RosterStatusOptionsComponent,
   ],
   templateUrl: "./roster.component.html",
 
@@ -163,8 +164,6 @@ export class RosterComponent implements OnInit {
   statusFilter: string | null = null;
 
   // Options
-  statusOptions = STATUS_OPTIONS;
-
   // Expose utility functions
   getPositionDisplayName = getPositionDisplayName;
   getPositionIcon = getPositionIcon;

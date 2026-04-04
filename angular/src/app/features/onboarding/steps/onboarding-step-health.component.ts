@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { InputText } from "primeng/inputtext";
-import { Select, type SelectChangeEvent } from "primeng/select";
+import { TextareaComponent } from "../../../shared/components/textarea/textarea.component";
+import { SelectComponent } from "../../../shared/components/select/select.component";
 import { IconButtonComponent } from "../../../shared/components/button/icon-button.component";
 import { OnboardingStateService } from "../services/onboarding-state.service";
 import { INJURY_AREAS, INJURY_HISTORY_OPTIONS } from "../constants/onboarding-options";
@@ -16,7 +16,7 @@ const SEVERITY_OPTIONS = [
 @Component({
   selector: "app-onboarding-step-health",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, InputText, Select, IconButtonComponent],
+  imports: [CommonModule, TextareaComponent, SelectComponent, IconButtonComponent],
   template: `
     <div class="step-content animate-fade-in">
       <div class="step-header">
@@ -31,8 +31,8 @@ const SEVERITY_OPTIONS = [
         <label>Current Injuries or Pain Areas</label>
         <p class="field-hint">Add any areas where you're currently experiencing pain or recovering from injury</p>
         <div class="injury-input-row">
-          <p-select [options]="injuryAreas" (onChange)="onInjuryAreaSelect($event)" placeholder="Select area" class="injury-area-select"></p-select>
-          <p-select [options]="severityOptions" (onChange)="onInjurySeveritySelect($event)" placeholder="Severity" class="injury-severity-select"></p-select>
+          <app-select [options]="injuryAreas" (change)="onInjuryAreaSelect($event)" placeholder="Select area" styleClass="injury-area-select" />
+          <app-select [options]="severityOptions" (change)="onInjurySeveritySelect($event)" placeholder="Severity" styleClass="injury-severity-select" />
           <app-icon-button icon="pi-plus" [disabled]="!newInjury().area" (clicked)="addCurrentInjury()" ariaLabel="Add injury" tooltip="Add" />
         </div>
         @if (state.formData.currentInjuries.length > 0) {
@@ -71,9 +71,14 @@ const SEVERITY_OPTIONS = [
       </div>
 
       <div class="form-group">
-        <label for="medicalNotes">Additional Medical Notes <small>(optional)</small></label>
-        <textarea id="medicalNotes" pInputText [value]="state.formData.medicalNotes" (input)="onMedicalNotesInput($event)"
-          placeholder="Any other health conditions, allergies, or notes..." rows="3" class="w-full"></textarea>
+        <app-textarea
+          label="Additional Medical Notes (optional)"
+          [value]="state.formData.medicalNotes"
+          (valueChange)="state.formData.medicalNotes = $event"
+          placeholder="Any other health conditions, allergies, or notes..."
+          [rows]="3"
+          styleClass="w-full"
+        />
       </div>
     </div>
   `,
@@ -97,23 +102,16 @@ export class OnboardingStepHealthComponent {
     this.state.formData.currentInjuries.splice(index, 1);
   }
 
-  onInjuryAreaSelect(event: SelectChangeEvent): void {
+  onInjuryAreaSelect(value: string | null | undefined): void {
     this.newInjury.update((injury) => ({
       ...injury,
-      area: typeof event.value === "string" ? event.value : "",
+      area: typeof value === "string" ? value : "",
     }));
   }
 
-  onInjurySeveritySelect(event: SelectChangeEvent): void {
+  onInjurySeveritySelect(value: string | null | undefined): void {
     const severity =
-      event.value === "moderate" || event.value === "severe"
-        ? event.value
-        : "minor";
+      value === "moderate" || value === "severe" ? value : "minor";
     this.newInjury.update((injury) => ({ ...injury, severity }));
-  }
-
-  onMedicalNotesInput(event: Event): void {
-    const input = event.target as HTMLTextAreaElement | null;
-    this.state.formData.medicalNotes = input?.value ?? "";
   }
 }

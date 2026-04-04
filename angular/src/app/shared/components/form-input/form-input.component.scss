@@ -50,6 +50,8 @@ input.has-suffix {
 
 .prefix-icon {
   left: var(--space-3);
+  top: 50%;
+  transform: translateY(-50%);
 }
 
 .suffix-icon {

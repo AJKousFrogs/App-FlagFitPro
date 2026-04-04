@@ -70,11 +70,11 @@
             <div class="hydration-header">
               <div class="hydration-progress">
                 <span>{{ hydrationProgress() }}%</span>
-                <p-progressBar
+                <app-progress-bar
                   [value]="hydrationProgress()"
                   [showValue]="false"
-                  class="hydration-progress-bar"
-                ></p-progressBar>
+                  styleClass="hydration-progress-bar"
+                />
                 <span class="target">/ {{ dailyHydrationTarget() }}ml</span>
               </div>
             </div>
@@ -115,14 +115,12 @@
             />
             <div class="schedule-form">
               <div class="form-row">
-                <label>Tournament Name</label>
-                <input
-                  type="text"
-                  pInputText
+                <app-form-input
+                  label="Tournament Name"
                   [value]="editTournamentName"
-                  (input)="onEditTournamentNameInput($event)"
+                  (valueChange)="onEditTournamentNameInput($event)"
                   placeholder="e.g., Regional Championship"
-                  aria-label="Tournament name"
+                  ariaLabel="Tournament name"
                 />
               </div>
 
@@ -137,24 +135,19 @@
                       class="time-input"
                       aria-label="Game time"
                     />
-                    <input
-                      type="text"
-                      pInputText
+                    <app-form-input
                       [value]="game.opponent"
-                      (input)="onEditGameOpponentInput(game, $event)"
+                      (valueChange)="onEditGameOpponentInput(game, $event)"
                       placeholder="Opponent (optional)"
-                      class="opponent-input"
-                      aria-label="Game opponent"
+                      styleClass="opponent-input"
+                      ariaLabel="Game opponent"
                     />
-                    <label class="referee-label">
-                      <p-checkbox
-                        [value]="!!game.isReferee"
-                        (onChange)="onEditGameRefereeToggle(game, $event)"
-                        [binary]="true"
-                        variant="filled"
-                      ></p-checkbox>
-                      <span>Referee</span>
-                    </label>
+                    <app-checkbox
+                      label="Referee"
+                      [binary]="true"
+                      [ngModel]="!!game.isReferee"
+                      (checkedChange)="onEditGameRefereeToggle(game, $event)"
+                    ></app-checkbox>
                     <app-icon-button
                       icon="pi-trash"
                       variant="text"

@@ -24,10 +24,7 @@ import { ButtonComponent } from "../../../shared/components/button/button.compon
 import { EmptyStateComponent } from "../../../shared/components/empty-state/empty-state.component";
 import { AppLoadingComponent } from "../../../shared/components/loading/loading.component";
 import { PageErrorStateComponent } from "../../../shared/components/page-error-state/page-error-state.component";
-import { DatePicker } from "primeng/datepicker";
-import { InputText } from "primeng/inputtext";
 import { ProgressBar } from "primeng/progressbar";
-import { Select, type SelectChangeEvent } from "primeng/select";
 import { TableModule } from "primeng/table";
 
 import { StatusTagComponent } from "../../../shared/components/status-tag/status-tag.component";
@@ -35,7 +32,10 @@ import {
   getMappedStatusSeverity,
   goalStatusSeverityMap,
 } from "../../../shared/utils/status.utils";
-import { Textarea } from "primeng/textarea";
+import { DatePickerComponent } from "../../../shared/components/date-picker/date-picker.component";
+import { FormInputComponent } from "../../../shared/components/form-input/form-input.component";
+import { SelectComponent } from "../../../shared/components/select/select.component";
+import { TextareaComponent } from "../../../shared/components/textarea/textarea.component";
 import { LoggerService } from "../../../core/services/logger.service";
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";
@@ -121,17 +121,17 @@ const COMPARE_OPTIONS = [
   imports: [
     CommonModule,
     LazyChartComponent,
-    DatePicker,
+    DatePickerComponent,
     AppDialogComponent,
     DialogHeaderComponent,
     DialogFooterComponent,
     CardShellComponent,
-    InputText,
+    FormInputComponent,
     ProgressBar,
-    Select,
+    SelectComponent,
     TableModule,
     StatusTagComponent,
-    Textarea,
+    TextareaComponent,
 
     MainLayoutComponent,
     PageHeaderComponent,
@@ -159,30 +159,24 @@ const COMPARE_OPTIONS = [
         <!-- Player/Compare Selection -->
         <div class="selection-row">
           <div class="selection-field">
-            <label for="player-select">Player</label>
-            <p-select
-              inputId="player-select"
+            <app-select
+              label="Player"
               [options]="playerOptions()"
-              (onChange)="onSelectedPlayerSelect($event)"
+              (valueChange)="onSelectedPlayerIdChange($event)"
               optionLabel="name"
               optionValue="id"
               placeholder="Select Player"
-              class="w-full"
-              [attr.aria-label]="'Select player'"
-            ></p-select>
+            />
           </div>
           <div class="selection-field">
-            <label for="compare-select">Compare To</label>
-            <p-select
-              inputId="compare-select"
+            <app-select
+              label="Compare To"
               [options]="compareOptions"
-              (onChange)="onCompareToValueSelect($event)"
+              (valueChange)="onCompareToValueChange($event)"
               optionLabel="label"
               optionValue="value"
               placeholder="Position Avg"
-              class="w-full"
-              [attr.aria-label]="'Select comparison baseline'"
-            ></p-select>
+            />
           </div>
         </div>
 
@@ -354,24 +348,20 @@ const COMPARE_OPTIONS = [
           <!-- Performance History -->
           <app-card-shell class="history-card" title="Performance History">
             <div class="history-filters">
-              <p-select
-                inputId="metric-filter"
+              <app-select
                 [options]="physicalMetrics"
-                (onChange)="onSelectedMetricSelect($event)"
+                (valueChange)="onSelectedMetricChange($event)"
                 optionLabel="label"
                 optionValue="value"
                 placeholder="Select Metric"
-                [attr.aria-label]="'Select performance metric'"
-              ></p-select>
-              <p-select
-                inputId="period-filter"
+              />
+              <app-select
                 [options]="periodOptions"
-                (onChange)="onSelectedPeriodSelect($event)"
+                (valueChange)="onSelectedPeriodChange($event)"
                 optionLabel="label"
                 optionValue="value"
                 placeholder="Period"
-                [attr.aria-label]="'Select time period'"
-              ></p-select>
+              />
             </div>
             <div class="history-chart">
               <app-lazy-chart
@@ -478,17 +468,14 @@ const COMPARE_OPTIONS = [
         />
         <div class="goal-form">
           <div class="form-field">
-            <label for="goal-player-select">Player</label>
-            <p-select
-              inputId="goal-player-select"
+            <app-select
+              label="Player"
               [options]="playerOptions()"
-              (onChange)="onGoalPlayerSelect($event)"
+              (valueChange)="onGoalPlayerIdChange($event)"
               optionLabel="name"
               optionValue="id"
               placeholder="Select Player"
-              class="w-full"
-              [attr.aria-label]="'Select player for goal'"
-            ></p-select>
+            />
           </div>
 
           <div class="form-field">
@@ -512,25 +499,20 @@ const COMPARE_OPTIONS = [
 
           <div class="form-row">
             <div class="form-field">
-              <label for="goal-metric-select">Metric</label>
-              <p-select
-                inputId="goal-metric-select"
+              <app-select
+                label="Metric"
                 [options]="physicalMetrics"
-                (onChange)="onGoalMetricSelect($event)"
+                (valueChange)="onGoalMetricChange($event)"
                 optionLabel="label"
                 optionValue="value"
                 placeholder="Select Metric"
-                class="w-full"
-                [attr.aria-label]="'Select goal metric'"
-              ></p-select>
+              />
             </div>
             <div class="form-field">
-              <label>Current Value</label>
-              <input
-                type="text"
-                pInputText
+              <app-form-input
+                label="Current Value"
                 [value]="goalForm.currentValue"
-                (input)="onGoalCurrentValueInput($event)"
+                (valueChange)="onGoalCurrentValueChange($event)"
                 placeholder="e.g., 4.52s"
               />
             </div>
@@ -538,36 +520,29 @@ const COMPARE_OPTIONS = [
 
           <div class="form-row">
             <div class="form-field">
-              <label>Target Value</label>
-              <input
-                type="text"
-                pInputText
+              <app-form-input
+                label="Target Value"
                 [value]="goalForm.targetValue"
-                (input)="onGoalTargetValueInput($event)"
+                (valueChange)="onGoalTargetValueChange($event)"
                 placeholder="e.g., 4.45s"
               />
             </div>
             <div class="form-field">
-              <label for="goal-due-date">Target Date</label>
-              <p-datepicker
-                inputId="goal-due-date"
-                (onSelect)="onGoalDueDateChange($event)"
-                [showIcon]="true"
-                class="w-full"
-                [attr.aria-label]="'Select target date for goal'"
-              ></p-datepicker>
+              <app-date-picker
+                label="Target Date"
+                (select)="onGoalDueDateChange($event)"
+              />
             </div>
           </div>
 
           <div class="form-field">
-            <label>Notes (optional)</label>
-            <textarea
-              pTextarea
+            <app-textarea
+              label="Notes (optional)"
               [value]="goalForm.notes"
-              (input)="onGoalNotesInput($event)"
-              rows="3"
+              (valueChange)="onGoalNotesChange($event)"
+              [rows]="3"
               placeholder="Additional notes..."
-            ></textarea>
+            />
           </div>
         </div>
 
@@ -678,14 +653,13 @@ const COMPARE_OPTIONS = [
         />
         <div class="note-form">
           <div class="form-field">
-            <label>Note</label>
-            <textarea
-              pTextarea
+            <app-textarea
+              label="Note"
               [value]="noteContent"
-              (input)="onNoteContentInput($event)"
-              rows="5"
+              (valueChange)="onNoteContentChange($event)"
+              [rows]="5"
               placeholder="Enter your development notes..."
-            ></textarea>
+            />
           </div>
         </div>
 
@@ -715,24 +689,18 @@ const COMPARE_OPTIONS = [
         />
         <div class="note-form">
           <div class="form-field">
-            <label>Skill</label>
-            <input
-              type="text"
-              pInputText
+            <app-form-input
+              label="Skill"
               [value]="assessmentSkill"
-              (input)="onAssessmentSkillInput($event)"
+              (valueChange)="onAssessmentSkillChange($event)"
               placeholder="e.g. Route Running"
             />
           </div>
           <div class="form-field">
-            <label>Score</label>
-            <input
-              type="number"
-              pInputText
-              min="0"
-              max="100"
+            <app-form-input
+              label="Score"
               [value]="assessmentScore"
-              (input)="onAssessmentScoreInput($event)"
+              (valueChange)="onAssessmentScoreChange($event)"
               placeholder="0-100"
             />
           </div>
@@ -938,20 +906,8 @@ export class PlayerDevelopmentComponent implements OnInit {
     this.onPlayerChange();
   }
 
-  onSelectedPlayerSelect(event: SelectChangeEvent): void {
-    this.onSelectedPlayerIdChange(
-      typeof event.value === "string" ? event.value : null,
-    );
-  }
-
   onCompareToValueChange(value: string | null): void {
     this.compareToValue = value ?? "position-avg";
-  }
-
-  onCompareToValueSelect(event: SelectChangeEvent): void {
-    this.onCompareToValueChange(
-      typeof event.value === "string" ? event.value : null,
-    );
   }
 
   onSelectedMetricChange(value: string | null): void {
@@ -959,21 +915,9 @@ export class PlayerDevelopmentComponent implements OnInit {
     this.onMetricChange();
   }
 
-  onSelectedMetricSelect(event: SelectChangeEvent): void {
-    this.onSelectedMetricChange(
-      typeof event.value === "string" ? event.value : null,
-    );
-  }
-
   onSelectedPeriodChange(value: string | null): void {
     this.selectedPeriod = value ?? "6-months";
     this.onMetricChange();
-  }
-
-  onSelectedPeriodSelect(event: SelectChangeEvent): void {
-    this.onSelectedPeriodChange(
-      typeof event.value === "string" ? event.value : null,
-    );
   }
 
   async loadData(): Promise<void> {
@@ -1069,46 +1013,20 @@ export class PlayerDevelopmentComponent implements OnInit {
     this.goalForm = { ...this.goalForm, playerId: value ?? "" };
   }
 
-  onGoalPlayerSelect(event: SelectChangeEvent): void {
-    this.onGoalPlayerIdChange(
-      typeof event.value === "string" ? event.value : null,
-    );
-  }
-
   onGoalCategoryChange(value: "physical" | "skill" | "stats" | "compliance"): void {
     this.goalForm = { ...this.goalForm, category: value };
-  }
-
-  onGoalCategoryOptionChange(value: string): void {
-    this.onGoalCategoryChange(
-      value as "physical" | "skill" | "stats" | "compliance",
-    );
   }
 
   onGoalMetricChange(value: string | null): void {
     this.goalForm = { ...this.goalForm, metric: value ?? "" };
   }
 
-  onGoalMetricSelect(event: SelectChangeEvent): void {
-    this.onGoalMetricChange(
-      typeof event.value === "string" ? event.value : null,
-    );
-  }
-
   onGoalCurrentValueChange(value: string): void {
     this.goalForm = { ...this.goalForm, currentValue: value };
   }
 
-  onGoalCurrentValueInput(event: Event): void {
-    this.onGoalCurrentValueChange(this.readInputValue(event));
-  }
-
   onGoalTargetValueChange(value: string): void {
     this.goalForm = { ...this.goalForm, targetValue: value };
-  }
-
-  onGoalTargetValueInput(event: Event): void {
-    this.onGoalTargetValueChange(this.readInputValue(event));
   }
 
   onGoalDueDateChange(value: Date | null): void {
@@ -1119,37 +1037,16 @@ export class PlayerDevelopmentComponent implements OnInit {
     this.goalForm = { ...this.goalForm, notes: value };
   }
 
-  onGoalNotesInput(event: Event): void {
-    this.onGoalNotesChange(this.readInputValue(event));
-  }
-
   onNoteContentChange(value: string): void {
     this.noteContent = value;
-  }
-
-  onNoteContentInput(event: Event): void {
-    this.onNoteContentChange(this.readInputValue(event));
   }
 
   onAssessmentSkillChange(value: string): void {
     this.assessmentSkill = value;
   }
 
-  onAssessmentSkillInput(event: Event): void {
-    this.onAssessmentSkillChange(this.readInputValue(event));
-  }
-
   onAssessmentScoreChange(value: string): void {
     this.assessmentScore = value;
-  }
-
-  onAssessmentScoreInput(event: Event): void {
-    this.onAssessmentScoreChange(this.readInputValue(event));
-  }
-
-  private readInputValue(event: Event): string {
-    return (event.target as HTMLInputElement | HTMLTextAreaElement | null)
-      ?.value ?? "";
   }
 
   onPlayerChange(): void {

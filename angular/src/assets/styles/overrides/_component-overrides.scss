@@ -770,6 +770,11 @@
       border-radius: var(--radius-full);
       box-shadow: var(--shadow-1);
       margin-top: calc((var(--space-1) + var(--space-0-5)) * -1);
+      /* PrimeNG 21 token fallbacks */
+      --p-slider-handle-background: var(--surface-elevated);
+      --p-slider-handle-hover-background: var(--surface-elevated);
+      --p-slider-handle-border-color: var(--ds-primary-green);
+      --p-slider-handle-shadow: var(--shadow-1);
     }
   }
 

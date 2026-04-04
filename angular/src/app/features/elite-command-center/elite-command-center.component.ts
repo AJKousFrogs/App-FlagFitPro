@@ -11,7 +11,7 @@ import { Breadcrumb } from "primeng/breadcrumb";
 import { DataView } from "primeng/dataview";
 import { Dock } from "primeng/dock";
 import { Drawer } from "primeng/drawer";
-import { InputText } from "primeng/inputtext";
+import { SearchInputComponent } from "../../shared/components/search-input/search-input.component";
 import { MultiSelect } from "primeng/multiselect";
 import { Paginator } from "primeng/paginator";
 import { PickList } from "primeng/picklist";
@@ -94,7 +94,7 @@ interface ProtocolStep {
     Tabs,
     TabPanel,
     MultiSelect,
-    InputText,
+    SearchInputComponent,
     Paginator,
     Drawer,
     PickList,

@@ -22,8 +22,8 @@ import {
 } from "@angular/core";
 import { InputNumber } from "primeng/inputnumber";
 import { Slider } from "primeng/slider";
-import { Textarea } from "primeng/textarea";
 import { Tooltip } from "primeng/tooltip";
+import { TextareaComponent } from "../../../../shared/components/textarea/textarea.component";
 import { ButtonComponent } from "../../../../shared/components/button/button.component";
 
 export interface SessionLogData {
@@ -40,7 +40,7 @@ export interface SessionLogData {
     FormsModule,
     Slider,
     InputNumber,
-    Textarea,
+    TextareaComponent,
     Tooltip,
 
     ButtonComponent,
@@ -111,15 +111,14 @@ export interface SessionLogData {
 
         <!-- Notes Textarea -->
         <div class="form-field">
-          <label for="notes">Session Notes (optional)</label>
-          <textarea
-            pTextarea
+          <app-textarea
+            label="Session Notes (optional)"
             [value]="notesValue()"
-            (input)="onNotesInput($event)"
+            (valueChange)="notesValue.set($event)"
             [rows]="3"
             placeholder="How did you feel? Any issues or highlights?"
-            class="notes-textarea"
-          ></textarea>
+            styleClass="notes-textarea"
+          ></app-textarea>
         </div>
       </div>
 

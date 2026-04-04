@@ -21,11 +21,11 @@ import { ButtonComponent } from "../../../shared/components/button/button.compon
 import { EmptyStateComponent } from "../../../shared/components/empty-state/empty-state.component";
 import { AppLoadingComponent } from "../../../shared/components/loading/loading.component";
 import { PageErrorStateComponent } from "../../../shared/components/page-error-state/page-error-state.component";
-import { InputText } from "primeng/inputtext";
 import { ProgressBar } from "primeng/progressbar";
-import { Select, type SelectChangeEvent } from "primeng/select";
-
-import { Textarea } from "primeng/textarea";
+import { type SelectChangeEvent } from "primeng/select";
+import { FormInputComponent } from "../../../shared/components/form-input/form-input.component";
+import { SelectComponent } from "../../../shared/components/select/select.component";
+import { TextareaComponent } from "../../../shared/components/textarea/textarea.component";
 import { LoggerService } from "../../../core/services/logger.service";
 import { AppDialogComponent } from "../../../shared/components/dialog/dialog.component";
 import { DialogFooterComponent } from "../../../shared/components/dialog-footer/dialog-footer.component";
@@ -92,10 +92,10 @@ const TAG_TYPES = [
     AppDialogComponent,
     DialogFooterComponent,
     DialogHeaderComponent,
-    InputText,
     ProgressBar,
-    Select,
-    Textarea,
+    FormInputComponent,
+    SelectComponent,
+    TextareaComponent,
 
     MainLayoutComponent,
     PageHeaderComponent,
@@ -349,25 +349,21 @@ const TAG_TYPES = [
 
           @if (uploadForm.source === "url") {
             <div class="form-field">
-              <label>Video URL</label>
-              <input
-                type="text"
-                pInputText
-                [value]="uploadForm.url"
-                (input)="onUploadUrlInput($event)"
+              <app-form-input
+                label="Video URL"
                 placeholder="https://youtube.com/watch?v=..."
+                [value]="uploadForm.url"
+                (valueChange)="onUploadUrlChange($event)"
               />
             </div>
           }
 
           <div class="form-field">
-            <label>Title</label>
-            <input
-              type="text"
-              pInputText
-              [value]="uploadForm.title"
-              (input)="onUploadTitleInput($event)"
+            <app-form-input
+              label="Title"
               placeholder="Week 3 vs Panthers - Offense"
+              [value]="uploadForm.title"
+              (valueChange)="onUploadTitleChange($event)"
             />
           </div>
 
@@ -393,14 +389,13 @@ const TAG_TYPES = [
           </div>
 
           <div class="form-field">
-            <label>Description</label>
-            <textarea
-              pTextarea
-              [value]="uploadForm.description"
-              (input)="onUploadDescriptionInput($event)"
-              rows="3"
+            <app-textarea
+              label="Description"
               placeholder="Brief description of the film..."
-            ></textarea>
+              [value]="uploadForm.description"
+              (valueChange)="onUploadDescriptionChange($event)"
+              [rows]="3"
+            />
           </div>
         </div>
 
@@ -502,27 +497,25 @@ const TAG_TYPES = [
           </div>
 
           <div class="form-field">
-            <label>Link to Play (optional)</label>
-            <p-select
+            <app-select
+              label="Link to Play (optional)"
               [options]="plays()"
-              (onChange)="onTagPlaySelect($event)"
               optionLabel="name"
               optionValue="id"
               placeholder="Select play"
               [showClear]="true"
-              class="w-full"
-            ></p-select>
+              (ngModelChange)="onTagPlayIdChange($event)"
+            />
           </div>
 
           <div class="form-field">
-            <label>Comment</label>
-            <textarea
-              pTextarea
-              [value]="tagForm.comment"
-              (input)="onTagCommentInput($event)"
-              rows="4"
+            <app-textarea
+              label="Comment"
               placeholder="What should the player learn from this moment?"
-            ></textarea>
+              [value]="tagForm.comment"
+              (valueChange)="onTagCommentChange($event)"
+              [rows]="4"
+            />
           </div>
         </div>
 

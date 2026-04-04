@@ -1,4 +1,37 @@
 <section class="stats-overview" aria-label="Key statistics">
+  <ng-template
+    #emptyStatMetric
+    let-iconClass="iconClass"
+    let-piIcon="piIcon"
+    let-label="label"
+    let-idleStatusTag="idleStatusTag"
+    let-showNextGenNa="showNextGenNa"
+  >
+    <div class="stat-card-content">
+      <div class="stat-icon" [ngClass]="iconClass">
+        <i [class]="'pi ' + piIcon"></i>
+      </div>
+      <div class="stat-details">
+        @if (isDataLoading()) {
+          <app-skeleton width="3rem" height="1.75rem" borderRadius="var(--radius-sm)"></app-skeleton>
+        } @else {
+          <span class="stat-block__value">--</span>
+        }
+        <span class="stat-block__label">{{ label }}</span>
+      </div>
+      @if (!isDataLoading()) {
+        <app-status-tag
+          [value]="idleStatusTag"
+          severity="info"
+          size="sm"
+        ></app-status-tag>
+      }
+      @if (showNextGenNa && nextGenEnabled()) {
+        <span class="next-gen-preview-tag">Preview: N/A</span>
+      }
+    </div>
+  </ng-template>
+
   <app-card-shell
     class="stat-card stat-readiness stat-card--clickable"
     state="interactive"
@@ -38,10 +71,16 @@
           <i class="pi pi-heart"></i>
         </div>
         <div class="stat-details">
-          <span class="stat-block__value">--</span>
+          @if (isDataLoading()) {
+            <app-skeleton width="3rem" height="1.75rem" borderRadius="var(--radius-sm)"></app-skeleton>
+          } @else {
+            <span class="stat-block__value">--</span>
+          }
           <span class="stat-block__label">Readiness</span>
         </div>
-        <app-status-tag value="No data" severity="info" size="sm"></app-status-tag>
+        @if (!isDataLoading()) {
+          <app-status-tag value="No data" severity="info" size="sm"></app-status-tag>
+        }
         @if (nextGenEnabled()) {
           <span class="next-gen-preview-tag">Preview: N/A</span>
         }
@@ -117,15 +156,15 @@
         <div class="acwr-progress-details">
           <span class="acwr-progress-title">Load Monitoring</span>
           <div class="acwr-progress-bar-container">
-            <p-progressBar
-              class="acwr-progress-bar"
+            <app-progress-bar
+              styleClass="acwr-progress-bar"
               [value]="
                 (acwrDisplay().trainingDaysLogged! /
                   TRAINING.MIN_DAYS_FOR_CHRONIC) *
                 100
               "
               [showValue]="false"
-            ></p-progressBar>
+            />
             <span class="acwr-progress-text">
               {{ acwrDisplay().trainingDaysLogged }}/{{ TRAINING.MIN_DAYS_FOR_CHRONIC }}
               days
@@ -159,20 +198,15 @@
         </div>
       </div>
     } @else {
-      <div class="stat-card-content">
-        <div class="stat-icon acwr-icon">
-          <i class="pi pi-chart-line"></i>
-        </div>
-        <div class="stat-details">
-          <span class="stat-block__value">--</span>
-          <span class="stat-block__label">ACWR</span>
-        </div>
-        <app-status-tag
-          value="Log training sessions"
-          severity="info"
-          size="sm"
-        ></app-status-tag>
-      </div>
+      <ng-container
+        *ngTemplateOutlet="emptyStatMetric; context: {
+          iconClass: 'acwr-icon',
+          piIcon: 'pi-chart-line',
+          label: 'ACWR',
+          idleStatusTag: 'Log training sessions',
+          showNextGenNa: false,
+        }"
+      />
     }
 
     @if (acwrDisplay().hasData || acwrDisplay().trainingDaysLogged !== null) {

@@ -1,7 +1,7 @@
 import { CommonModule } from "@angular/common";
 import { ChangeDetectionStrategy, Component, input, output } from "@angular/core";
-import { Avatar } from "primeng/avatar";
-import { Textarea } from "primeng/textarea";
+import { AvatarComponent } from "../../../shared/components/avatar/avatar.component";
+import { TextareaComponent } from "../../../shared/components/textarea/textarea.component";
 import { Tooltip } from "primeng/tooltip";
 
 import { AlertComponent } from "../../../shared/components/alert/alert.component";
@@ -13,8 +13,8 @@ import { ButtonComponent } from "../../../shared/components/button/button.compon
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
-    Avatar,
-    Textarea,
+    AvatarComponent,
+    TextareaComponent,
     Tooltip,
     AlertComponent,
     ButtonComponent,
@@ -35,8 +35,7 @@ export class CommunityComposeSectionComponent {
   readonly submitPost = output<void>();
   readonly clearTopicFilter = output<void>();
 
-  onInput(event: Event): void {
-    const target = event.target as HTMLTextAreaElement | null;
-    this.updateContent.emit(target?.value ?? "");
+  onInput(value: string): void {
+    this.updateContent.emit(value);
   }
 }

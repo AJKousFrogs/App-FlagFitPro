@@ -10,6 +10,8 @@ import {
   viewChild,
 } from "@angular/core";
 import { isPlatformBrowser } from "@angular/common";
+import { Router, NavigationEnd } from "@angular/router";
+import { filter, take } from "rxjs/operators";
 
 import { SidebarComponent } from "../sidebar/sidebar.component";
 import { HeaderComponent } from "../header/header.component";
@@ -105,15 +107,23 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
   private readonly destroyRef = inject(DestroyRef);
   private readonly platformId = inject(PLATFORM_ID);
   private readonly platform = inject(PlatformService);
+  private readonly router = inject(Router);
   private releaseShellBodyClass: (() => void) | null = null;
   readonly sidebar = viewChild(SidebarComponent);
   readonly sidebarCollapsed = signal(this.loadSidebarCollapsedState());
   readonly mobileNav = signal(false);
 
   ngOnInit(): void {
-    // Check profile completion on every page load
-    // This ensures users are reminded to complete their profile
-    this.profileNotificationService.checkAndNotify();
+    // Wait for the first NavigationEnd so router.url reflects the actual destination
+    // before the profile notification service checks the current route for suppression.
+    this.router.events
+      .pipe(
+        filter((e) => e instanceof NavigationEnd),
+        take(1),
+      )
+      .subscribe(() => {
+        this.profileNotificationService.checkAndNotify();
+      });
     this.initViewportState();
     this.releaseShellBodyClass = this.shellBodyState.acquireShell();
   }
@@ -150,7 +160,7 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
   private initViewportState(): void {
     if (!isPlatformBrowser(this.platformId)) return;
 
-    const mediaQuery = window.matchMedia("(max-width: 48rem)");
+    const mediaQuery = window.matchMedia("(max-width: 40rem)");
     const syncViewportState = (matches: boolean) => {
       this.mobileNav.set(matches);
 

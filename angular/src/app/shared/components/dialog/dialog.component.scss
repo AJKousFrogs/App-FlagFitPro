@@ -1,25 +1,15 @@
-.dialog-body {
-  display: grid;
-  gap: var(--component-dialog-body-gap);
-  margin-top: var(--component-dialog-body-margin-top);
-  max-width: var(--component-dialog-body-max-width);
-  animation: feedback-fade-in var(--motion-feedback-duration-fast)
-    var(--ease-standard);
-}
-
-:host ::ng-deep {
-  .app-dialog-shell--settings.p-dialog {
-    max-width: 95vw;
-    border-radius: var(--radius-3xl);
-    overflow: hidden;
-    box-shadow: var(--shadow-lg);
+@layer components {
+  .dialog-body {
+    display: grid;
+    gap: var(--component-dialog-body-gap);
+    margin-top: var(--component-dialog-body-margin-top);
+    max-width: var(--component-dialog-body-max-width);
+    animation: feedback-fade-in var(--motion-feedback-duration-fast)
+      var(--ease-standard);
   }
 
-  .app-dialog-shell--settings.p-dialog .p-dialog-content {
-    padding: 0;
-    background: var(--surface-primary);
-  }
-
+  /* Dialog shell: classes on p-dialog (may overlay body). */
+  .app-dialog-shell--settings.p-dialog,
   .app-dialog-shell--settings .p-dialog {
     max-width: 95vw;
     border-radius: var(--radius-3xl);
@@ -27,6 +17,7 @@
     box-shadow: var(--shadow-lg);
   }
 
+  .app-dialog-shell--settings.p-dialog .p-dialog-content,
   .app-dialog-shell--settings .p-dialog-content {
     padding: 0;
     background: var(--surface-primary);

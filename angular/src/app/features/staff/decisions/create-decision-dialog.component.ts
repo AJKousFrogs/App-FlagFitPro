@@ -30,13 +30,14 @@ import { StepperComponent } from "@shared/components/stepper/stepper.component";
 import { ButtonComponent } from "@shared/components/button/button.component";
 import { AppDialogComponent } from "@shared/components/dialog/dialog.component";
 import { DialogHeaderComponent } from "@shared/components/dialog-header/dialog-header.component";
-import { Checkbox, type CheckboxChangeEvent } from "primeng/checkbox";
+import { CheckboxComponent } from "@shared/components/checkbox/checkbox.component";
+import { type CheckboxChangeEvent } from "primeng/checkbox";
 
-import { InputText } from "primeng/inputtext";
-import { Select, type SelectChangeEvent } from "primeng/select";
+import { FormInputComponent } from "@shared/components/form-input/form-input.component";
+import { SelectComponent } from "@shared/components/select/select.component";
 
 import { StatusTagComponent } from "@shared/components/status-tag/status-tag.component";
-import { Textarea } from "primeng/textarea";
+import { TextareaComponent } from "@shared/components/textarea/textarea.component";
 
 @Component({
   selector: "app-create-decision-dialog",
@@ -45,10 +46,10 @@ import { Textarea } from "primeng/textarea";
     CommonModule,
     FormsModule,
     ButtonComponent,
-    Select,
-    InputText,
-    Textarea,
-    Checkbox,
+    SelectComponent,
+    FormInputComponent,
+    TextareaComponent,
+    CheckboxComponent,
     StatusTagComponent,
     AppDialogComponent,
     DialogHeaderComponent,
@@ -87,20 +88,18 @@ import { Textarea } from "primeng/textarea";
           <div class="step-panel">
             <h3>Select Athlete</h3>
             <div class="field">
-              <label for="athlete-select" class="block mb-2">Athlete</label>
-              <p-select
-                inputId="athlete-select"
+              <app-select
+                label="Athlete"
                 [options]="athletes()"
                 [ngModel]="formData.athleteId"
-                (onChange)="onAthleteSelect($event)"
+                (change)="onAthleteSelect($event)"
                 optionLabel="name"
                 optionValue="id"
                 placeholder="Select an athlete"
                 [filter]="true"
                 [showClear]="true"
-                class="w-full"
-                [attr.aria-label]="'Select athlete'"
-              ></p-select>
+                styleClass="w-full"
+              />
             </div>
             @if (formData.athleteId) {
               <div class="athlete-info">
@@ -115,18 +114,14 @@ import { Textarea } from "primeng/textarea";
           <div class="step-panel">
             <h3>Select Decision Type</h3>
             <div class="field">
-              <label for="decision-type-select" class="block mb-2"
-                >Decision Type</label
-              >
-              <p-select
-                inputId="decision-type-select"
+              <app-select
+                label="Decision Type"
                 [options]="decisionTypeOptions"
                 [ngModel]="formData.decisionType"
-                (onChange)="onDecisionTypeSelect($event)"
+                (change)="onDecisionTypeSelect($event)"
                 placeholder="Select decision type"
-                class="w-full"
-                [attr.aria-label]="'Select decision type'"
-              ></p-select>
+                styleClass="w-full"
+              />
             </div>
             @if (formData.decisionType) {
               <div class="info-box">
@@ -144,21 +139,14 @@ import { Textarea } from "primeng/textarea";
           <div class="step-panel">
             <h3>Decision Summary</h3>
             <div class="field">
-              <label for="decision-summary" class="block mb-2">
-                Provide a clear, concise summary of the decision
-              </label>
-              <textarea
-                pInputTextarea
-                id="decision-summary"
+              <app-textarea
+                label="Provide a clear, concise summary of the decision"
                 [value]="formData.decisionSummary"
-                (input)="onDecisionSummaryInput($event)"
+                (valueChange)="formData.decisionSummary = $event"
                 placeholder="e.g., Reduced sprint volume by 50% due to elevated ACWR"
-                rows="3"
-                maxlength="500"
-                class="w-full"
-                [attr.aria-label]="'Decision summary'"
-                [attr.aria-describedby]="'decision-summary-hint'"
-              ></textarea>
+                [rows]="3"
+                styleClass="w-full"
+              />
               <small id="decision-summary-hint" class="p-field-hint">
                 Maximum 500 characters
               </small>
@@ -177,15 +165,13 @@ import { Textarea } from "primeng/textarea";
             <div class="data-points-grid">
               @for (point of availableDataPoints(); track point) {
                 <div class="data-point-item">
-                  <p-checkbox
+                  <app-checkbox
                     [ngModel]="point.selected"
-                    (onChange)="onDataPointToggle(point.label, $event)"
+                    (change)="onDataPointToggle(point.label, $event)"
                     [binary]="true"
-                    variant="filled"
                     [inputId]="point.id"
-                  ></p-checkbox>
-                  <label [for]="point.id">
-                    {{ point.label }}
+                    [label]="point.label"
+                  >
                     @if (point.required) {
                       <app-status-tag
                         value="Required"
@@ -193,7 +179,7 @@ import { Textarea } from "primeng/textarea";
                         size="sm"
                       />
                     }
-                  </label>
+                  </app-checkbox>
                 </div>
               }
             </div>
@@ -211,13 +197,11 @@ import { Textarea } from "primeng/textarea";
                 track $index
               ) {
                 <div class="constraint-item">
-                  <input
-                    type="text"
-                    pInputText
+                  <app-form-input
                     [value]="formData.decisionBasis.constraints[$index]"
-                    (input)="onConstraintInput($index, $event)"
+                    (valueChange)="formData.decisionBasis.constraints[$index] = $event"
                     placeholder="e.g., RTP Phase 2, No sprinting >80%"
-                    class="w-full"
+                    styleClass="w-full"
                   />
                   <app-button
                     iconLeft="pi-times"
@@ -244,18 +228,14 @@ import { Textarea } from "primeng/textarea";
           <div class="step-panel">
             <h3>Review Trigger</h3>
             <div class="field">
-              <label for="review-trigger-select" class="block mb-2">
-                When should this decision be reviewed?
-              </label>
-              <p-select
-                inputId="review-trigger-select"
+              <app-select
+                label="When should this decision be reviewed?"
                 [options]="reviewTriggerOptions"
                 [ngModel]="formData.reviewTrigger"
-                (onChange)="onReviewTriggerSelect($event)"
+                (change)="onReviewTriggerSelect($event)"
                 placeholder="Select review trigger"
-                class="w-full"
-                [attr.aria-label]="'Select review trigger'"
-              ></p-select>
+                styleClass="w-full"
+              />
             </div>
             @if (formData.reviewTrigger) {
               <div class="review-info">
@@ -614,14 +594,12 @@ export class CreateDecisionDialogComponent {
     this.formData.decisionBasis.constraints.push("");
   }
 
-  onAthleteSelect(event: SelectChangeEvent): void {
-    this.formData.athleteId =
-      typeof event.value === "string" ? event.value : "";
+  onAthleteSelect(value: string | null | undefined): void {
+    this.formData.athleteId = typeof value === "string" ? value : "";
   }
 
-  onDecisionTypeSelect(event: SelectChangeEvent): void {
-    this.formData.decisionType =
-      (event.value as DecisionType | null | undefined) ?? ("other" as DecisionType);
+  onDecisionTypeSelect(value: DecisionType | null | undefined): void {
+    this.formData.decisionType = value ?? ("other" as DecisionType);
     this.onDecisionTypeChange();
   }
 
@@ -643,14 +621,8 @@ export class CreateDecisionDialogComponent {
     }
   }
 
-  onConstraintInput(index: number, event: Event): void {
-    const input = event.target as HTMLInputElement | null;
-    this.formData.decisionBasis.constraints[index] = input?.value ?? "";
-  }
-
-  onReviewTriggerSelect(event: SelectChangeEvent): void {
-    this.formData.reviewTrigger =
-      (event.value as ReviewTrigger | null | undefined) ?? ("in_7d" as ReviewTrigger);
+  onReviewTriggerSelect(value: ReviewTrigger | null | undefined): void {
+    this.formData.reviewTrigger = value ?? ("in_7d" as ReviewTrigger);
     this.onReviewTriggerChange();
   }
 

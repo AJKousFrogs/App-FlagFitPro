@@ -17,10 +17,12 @@ import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 
 import { ButtonComponent } from "@shared/components/button/button.component";
-import { Select, type SelectChangeEvent } from "primeng/select";
-import { Textarea } from "primeng/textarea";
-import { Checkbox, type CheckboxChangeEvent } from "primeng/checkbox";
-import { DatePicker } from "primeng/datepicker";
+import { SelectComponent } from "@shared/components/select/select.component";
+import { TextareaComponent } from "@shared/components/textarea/textarea.component";
+import { CheckboxComponent } from "@shared/components/checkbox/checkbox.component";
+import { type CheckboxChangeEvent } from "primeng/checkbox";
+import { DatePickerComponent } from "@shared/components/date-picker/date-picker.component";
+import { FormInputComponent } from "@shared/components/form-input/form-input.component";
 
 import { StatusTagComponent } from "@shared/components/status-tag/status-tag.component";
 import { AppDialogComponent } from "@shared/components/dialog/dialog.component";
@@ -41,10 +43,11 @@ import type {
     CommonModule,
     FormsModule,
     ButtonComponent,
-    Select,
-    Textarea,
-    Checkbox,
-    DatePicker,
+    SelectComponent,
+    TextareaComponent,
+    CheckboxComponent,
+    DatePickerComponent,
+    FormInputComponent,
     StatusTagComponent,
     AppDialogComponent,
     DialogHeaderComponent,
@@ -102,29 +105,24 @@ import type {
         <!-- Review Options -->
         <div class="review-options">
           <h3>Review Outcome</h3>
-          <p-select
-            inputId="review-outcome-select"
+          <app-select
             [options]="reviewOutcomeOptions"
             [ngModel]="formData.reviewOutcome"
-            (onChange)="onReviewOutcomeSelect($event)"
+            (change)="onReviewOutcomeSelect($event)"
             placeholder="Select review outcome"
-            class="w-full"
-            [attr.aria-label]="'Select review outcome'"
-          ></p-select>
+            styleClass="w-full"
+          />
 
           @if (formData.reviewOutcome === "extended") {
             <div class="extension-options">
-              <label for="new-review-date">New Review Date</label>
-              <p-datepicker
-                inputId="new-review-date"
+              <app-date-picker
+                label="New Review Date"
                 [ngModel]="formData.newReviewDate"
-                (onSelect)="onNewReviewDateChange($event)"
+                (select)="onNewReviewDateChange($event)"
                 [minDate]="minDate"
                 [showIcon]="true"
                 dateFormat="mm/dd/yy"
-                class="w-full"
-                [attr.aria-label]="'Select new review date'"
-              ></p-datepicker>
+              />
             </div>
           }
         </div>
@@ -132,28 +130,27 @@ import type {
         <!-- Review Notes -->
         <div class="review-notes">
           <h3>Review Notes</h3>
-          <textarea
-            pInputTextarea
+          <app-textarea
+            label="Review Notes"
             [value]="formData.reviewNotes"
-            (input)="onReviewNotesInput($event)"
+            (valueChange)="formData.reviewNotes = $event"
             placeholder="Add notes about this review..."
-            rows="4"
-            class="w-full"
-          ></textarea>
+            [rows]="4"
+            styleClass="w-full"
+          />
         </div>
 
         <!-- Outcome Tracking -->
         <div class="outcome-tracking">
           <h3>Outcome Tracking</h3>
           <div class="outcome-item">
-            <p-checkbox
+            <app-checkbox
               [ngModel]="formData.outcomeData.goalAchieved"
-              (onChange)="onGoalAchievedChange($event)"
+              (change)="onGoalAchievedChange($event)"
               [binary]="true"
-              variant="filled"
+              label="Goal was achieved"
               inputId="goal-achieved"
-            ></p-checkbox>
-            <label for="goal-achieved">Goal was achieved</label>
+            />
           </div>
 
           <div class="consequences-list">
@@ -163,13 +160,11 @@ import type {
               track $index
             ) {
               <div class="consequence-item">
-                <input
-                  type="text"
-                  pInputText
+                <app-form-input
                   [value]="formData.outcomeData.unintendedConsequences[$index]"
-                  (input)="onConsequenceInput($index, $event)"
+                  (valueChange)="formData.outcomeData.unintendedConsequences[$index] = $event"
                   placeholder="Describe any unintended consequences"
-                  class="w-full"
+                  styleClass="w-full"
                 />
                 <app-button
                   iconLeft="pi-times"
@@ -187,15 +182,14 @@ import type {
           </div>
 
           <div class="lessons-learned">
-            <label>Lessons Learned</label>
-            <textarea
-              pInputTextarea
+            <app-textarea
+              label="Lessons Learned"
               [value]="formData.outcomeData.lessonsLearned"
-              (input)="onLessonsLearnedInput($event)"
+              (valueChange)="formData.outcomeData.lessonsLearned = $event"
               placeholder="What did we learn from this decision?"
-              rows="3"
-              class="w-full"
-            ></textarea>
+              [rows]="3"
+              styleClass="w-full"
+            />
           </div>
         </div>
       }
@@ -281,34 +275,18 @@ export class ReviewDecisionDialogComponent {
     this.formData.outcomeData.unintendedConsequences.splice(index, 1);
   }
 
-  onReviewOutcomeSelect(event: SelectChangeEvent): void {
-    this.formData.reviewOutcome =
-      (event.value as ReviewOutcome | null | undefined) ?? ("maintained" as ReviewOutcome);
+  onReviewOutcomeSelect(value: ReviewOutcome | null | undefined): void {
+    this.formData.reviewOutcome = value ?? ("maintained" as ReviewOutcome);
     this.onOutcomeChange();
   }
 
-  onNewReviewDateChange(value: Date | null): void {
-    this.formData.newReviewDate = value ?? undefined;
-  }
-
-  onReviewNotesInput(event: Event): void {
-    const input = event.target as HTMLTextAreaElement | null;
-    this.formData.reviewNotes = input?.value ?? "";
+  onNewReviewDateChange(value: Date | Date[] | null): void {
+    const d = Array.isArray(value) ? value[0] ?? null : value;
+    this.formData.newReviewDate = d ?? undefined;
   }
 
   onGoalAchievedChange(event: CheckboxChangeEvent): void {
     this.formData.outcomeData.goalAchieved = Boolean(event.checked);
-  }
-
-  onConsequenceInput(index: number, event: Event): void {
-    const input = event.target as HTMLInputElement | null;
-    this.formData.outcomeData.unintendedConsequences[index] =
-      input?.value ?? "";
-  }
-
-  onLessonsLearnedInput(event: Event): void {
-    const input = event.target as HTMLTextAreaElement | null;
-    this.formData.outcomeData.lessonsLearned = input?.value ?? "";
   }
 
   canSubmit(): boolean {

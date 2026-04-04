@@ -1,11 +1,11 @@
 <div class="wellness-section">
   <div class="section-header">
     <h3>Mental Wellness Trends</h3>
-    <p-select
+    <app-select
       [options]="timePeriods()"
       [ngModel]="selectedPeriod()"
-      (onChange)="emitPeriodChange($event)"
-    ></p-select>
+      (change)="emitPeriodChange($event)"
+    />
   </div>
 
   @if (data(); as wellness) {
@@ -21,7 +21,7 @@
             />
           </div>
           <span class="metric-value">{{ wellness.wellnessTrends.avgMoodScore.toFixed(1) }}/10</span>
-          <p-progressBar [value]="wellness.wellnessTrends.avgMoodScore * 10" [showValue]="false" />
+          <app-progress-bar [value]="wellness.wellnessTrends.avgMoodScore * 10" [showValue]="false" />
         </div>
 
         <div class="metric-card">
@@ -34,10 +34,10 @@
             />
           </div>
           <span class="metric-value">{{ wellness.wellnessTrends.avgStressLevel.toFixed(1) }}/10</span>
-          <p-progressBar
+          <app-progress-bar
             [value]="wellness.wellnessTrends.avgStressLevel * 10"
             [showValue]="false"
-            class="stress-bar"
+            styleClass="stress-bar"
           />
         </div>
 
@@ -46,7 +46,7 @@
             <span class="metric-label">Motivation</span>
           </div>
           <span class="metric-value">{{ wellness.wellnessTrends.avgMotivation.toFixed(1) }}/10</span>
-          <p-progressBar [value]="wellness.wellnessTrends.avgMotivation * 10" [showValue]="false" />
+          <app-progress-bar [value]="wellness.wellnessTrends.avgMotivation * 10" [showValue]="false" />
         </div>
 
         <div class="metric-card">
@@ -54,7 +54,7 @@
             <span class="metric-label">Confidence</span>
           </div>
           <span class="metric-value">{{ wellness.wellnessTrends.avgConfidence.toFixed(1) }}/10</span>
-          <p-progressBar [value]="wellness.wellnessTrends.avgConfidence * 10" [showValue]="false" />
+          <app-progress-bar [value]="wellness.wellnessTrends.avgConfidence * 10" [showValue]="false" />
         </div>
       </div>
 

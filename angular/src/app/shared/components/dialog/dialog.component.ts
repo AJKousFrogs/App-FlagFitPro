@@ -6,6 +6,7 @@ import {
   input,
   model,
   output,
+  ViewEncapsulation,
 } from "@angular/core";
 import { Dialog } from "primeng/dialog";
 import { DIALOG_BREAKPOINTS } from "../../../core/utils/design-tokens.util";
@@ -16,6 +17,7 @@ type AppDialogSize = "auto" | "sm" | "md" | "lg" | "xl" | "2xl";
 @Component({
   selector: "app-dialog",
   changeDetection: ChangeDetectionStrategy.OnPush,
+  encapsulation: ViewEncapsulation.None,
   imports: [CommonModule, Dialog],
   template: `
     <p-dialog

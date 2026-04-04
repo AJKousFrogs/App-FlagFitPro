@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/angular";
 import { applicationConfig } from "@storybook/angular";
-import { provideAnimationsAsync } from "@angular/platform-browser/animations/async";
+import { provideNoopAnimations } from "@angular/platform-browser/animations";
 import { Card } from "primeng/card";
 import { CommonModule } from "@angular/common";
 import { ButtonComponent } from "../app/shared/components/button/button.component";
@@ -19,7 +19,7 @@ const meta: Meta = {
   title: "Design System/Showcase",
   decorators: [
     applicationConfig({
-      providers: [provideAnimationsAsync()],
+      providers: [provideNoopAnimations()],
     }),
   ],
   parameters: {

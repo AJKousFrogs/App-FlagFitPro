@@ -32,19 +32,12 @@
     </app-alert>
 
     <div class="confirm-field">
-      <label for="settings-deleteConfirm">
-        Type <strong>DELETE</strong> to confirm
-      </label>
-      <input
-        id="settings-deleteConfirm"
-        name="deleteConfirm"
-        type="text"
-        pInputText
+      <app-form-input
+        label="Type DELETE to confirm"
         [value]="confirmText()"
-        (input)="onConfirmTextInput($event)"
+        (valueChange)="confirmTextChange.emit($event)"
         placeholder="Type DELETE"
-        class="delete-input"
-        autocomplete="off"
+        styleClass="delete-input"
       />
     </div>
   </div>

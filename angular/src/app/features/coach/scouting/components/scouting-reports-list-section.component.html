@@ -2,12 +2,12 @@
   <div class="section-header">
     <h3>Scouting Reports</h3>
     <div class="filter-group">
-      <p-select
+      <app-select
         [options]="filterOptions()"
-        (onChange)="emitFilterChange($event)"
+        (valueChange)="emitFilterChange($event)"
         placeholder="Filter by opponent"
         [showClear]="true"
-      ></p-select>
+      />
     </div>
   </div>
 

@@ -19,11 +19,8 @@ import {
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { ToastService } from "../../../core/services/toast.service";
-import { DatePicker } from "primeng/datepicker";
 import { InputNumber, type InputNumberInputEvent } from "primeng/inputnumber";
-import { InputText } from "primeng/inputtext";
 import { ProgressBar } from "primeng/progressbar";
-import { Select, type SelectChangeEvent } from "primeng/select";
 import { TableModule } from "primeng/table";
 
 import { StatusTagComponent } from "../../../shared/components/status-tag/status-tag.component";
@@ -31,7 +28,10 @@ import {
   getMappedStatusSeverity,
   programStatusSeverityMap,
 } from "../../../shared/utils/status.utils";
-import { Textarea } from "primeng/textarea";
+import { DatePickerComponent } from "../../../shared/components/date-picker/date-picker.component";
+import { FormInputComponent } from "../../../shared/components/form-input/form-input.component";
+import { SelectComponent } from "../../../shared/components/select/select.component";
+import { TextareaComponent } from "../../../shared/components/textarea/textarea.component";
 import { firstValueFrom } from "rxjs";
 import { AppDialogComponent } from "../../../shared/components/dialog/dialog.component";
 import { DialogFooterComponent } from "../../../shared/components/dialog-footer/dialog-footer.component";
@@ -156,14 +156,14 @@ const PHASE_PRESETS = [
   imports: [
     CommonModule,
     DatePipe,
-    DatePicker,
+    DatePickerComponent,
+    FormInputComponent,
     InputNumber,
-    InputText,
     ProgressBar,
-    Select,
+    SelectComponent,
     TableModule,
     StatusTagComponent,
-    Textarea,
+    TextareaComponent,
 
     MainLayoutComponent,
     PageHeaderComponent,
@@ -429,73 +429,59 @@ const PHASE_PRESETS = [
             <h4>Program Details</h4>
 
             <div class="form-field">
-              <label for="programName">Program Name *</label>
-              <input
-                id="programName"
-                type="text"
-                pInputText
+              <app-form-input
+                label="Program Name *"
                 [value]="formData.name"
-                (input)="onProgramNameInput($event)"
+                (valueChange)="onProgramNameChange($event)"
                 placeholder="e.g., Spring Championship Prep"
-                class="w-full"
               />
             </div>
 
             <div class="form-field">
-              <label for="programDesc">Description</label>
-              <textarea
-                pTextarea
-                id="programDesc"
+              <app-textarea
+                label="Description"
                 [value]="formData.description"
-                (input)="onProgramDescriptionInput($event)"
+                (valueChange)="onProgramDescriptionChange($event)"
                 placeholder="Program goals and focus areas..."
-                rows="3"
-              ></textarea>
+                [rows]="3"
+              />
             </div>
 
             <div class="form-row">
               <div class="form-field">
-                <label for="startDate">Start Date</label>
-                <p-datepicker
-                  inputId="startDate"
-                  (onSelect)="onProgramStartDateChange($event)"
-                  [showIcon]="true"
-                  dateFormat="M d, yy"
-                ></p-datepicker>
+                <app-date-picker
+                  label="Start Date"
+                  (select)="onProgramStartDateChange($event)"
+                />
               </div>
               <div class="form-field">
-                <label for="duration">Duration</label>
-                <p-select
-                  inputId="duration"
+                <app-select
+                  label="Duration"
                   [options]="durationOptions"
-                  (onChange)="onProgramDurationWeeksSelect($event)"
+                  (valueChange)="onProgramDurationWeeksChange($event)"
                   optionLabel="label"
                   optionValue="value"
-                ></p-select>
+                />
               </div>
             </div>
 
             <div class="form-row">
               <div class="form-field">
-                <label for="goalEvent">Goal Event</label>
-                <input
-                  id="goalEvent"
-                  type="text"
-                  pInputText
+                <app-form-input
+                  label="Goal Event"
                   [value]="formData.goalEvent"
-                  (input)="onProgramGoalEventInput($event)"
+                  (valueChange)="onProgramGoalEventChange($event)"
                   placeholder="e.g., Spring Championship"
                 />
               </div>
               <div class="form-field">
-                <label for="programType">Program Type</label>
-                <p-select
-                  inputId="programType"
+                <app-select
+                  label="Program Type"
                   [options]="programTypeOptions"
-                  (onChange)="onProgramTypeSelect($event)"
+                  (valueChange)="onProgramTypeChange($event)"
                   optionLabel="label"
                   optionValue="value"
-                ></p-select>
+                />
               </div>
             </div>
           </div>
@@ -538,14 +524,14 @@ const PHASE_PRESETS = [
               @for (day of DAYS; track day) {
                 <div class="day-row">
                   <span class="day-label">{{ day }}</span>
-                  <p-select
+                  <app-select
                     [options]="sessionTypeOptions"
-                    (onChange)="onWeekTemplateSessionTypeSelect(day, $event)"
+                    (valueChange)="onWeekTemplateSessionTypeChange(day, $event)"
                     optionLabel="label"
                     optionValue="value"
                     placeholder="Session type"
                     class="week-session-select"
-                  ></p-select>
+                  />
                   <p-inputNumber
                     (onInput)="onWeekTemplateDurationInput(day, $event)"
                     suffix=" min"
@@ -829,16 +815,8 @@ export class ProgramBuilderComponent implements OnInit {
     this.formData = { ...this.formData, name: value };
   }
 
-  onProgramNameInput(event: Event): void {
-    this.onProgramNameChange(this.readInputValue(event));
-  }
-
   onProgramDescriptionChange(value: string): void {
     this.formData = { ...this.formData, description: value };
-  }
-
-  onProgramDescriptionInput(event: Event): void {
-    this.onProgramDescriptionChange(this.readInputValue(event));
   }
 
   onProgramStartDateChange(value: Date | null): void {
@@ -846,12 +824,6 @@ export class ProgramBuilderComponent implements OnInit {
       ...this.formData,
       startDate: value ?? this.formData.startDate,
     };
-  }
-
-  onProgramDurationWeeksSelect(event: SelectChangeEvent): void {
-    this.onProgramDurationWeeksChange(
-      typeof event.value === "number" ? event.value : null,
-    );
   }
 
   onProgramDurationWeeksChange(value: number | null): void {
@@ -865,28 +837,11 @@ export class ProgramBuilderComponent implements OnInit {
     this.formData = { ...this.formData, goalEvent: value };
   }
 
-  onProgramGoalEventInput(event: Event): void {
-    this.onProgramGoalEventChange(this.readInputValue(event));
-  }
-
-  onProgramTypeSelect(event: SelectChangeEvent): void {
-    this.onProgramTypeChange(
-      (event.value as ProgramType | null | undefined) ?? null,
-    );
-  }
-
   onProgramTypeChange(value: ProgramType | null): void {
     this.formData = {
       ...this.formData,
       type: value ?? this.formData.type,
     };
-  }
-
-  onWeekTemplateSessionTypeSelect(
-    day: DayOfWeek,
-    event: SelectChangeEvent,
-  ): void {
-    this.onWeekTemplateSessionTypeChange(day, event.value as SessionType);
   }
 
   onWeekTemplateSessionTypeChange(day: DayOfWeek, value: SessionType): void {
@@ -1221,11 +1176,6 @@ export class ProgramBuilderComponent implements OnInit {
 
   openProgramMenu(_event: Event, program: TrainingProgram): void {
     this.viewProgramDetails(program);
-  }
-
-  private readInputValue(event: Event): string {
-    return (event.target as HTMLInputElement | HTMLTextAreaElement | null)
-      ?.value ?? "";
   }
 
   private readChecked(event: Event): boolean {

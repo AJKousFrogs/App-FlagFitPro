@@ -15,32 +15,20 @@
         >
       </div>
       <div class="form-field">
-        <label>Intensity Level</label>
-        <p-select
+        <app-select
+          label="Intensity Level"
           formControlName="intensity"
           [options]="$any(intensityLevels())"
           optionLabel="label"
           optionValue="value"
           placeholder="Select intensity"
-        >
-          <ng-template let-option #item>
-            <div class="intensity-option">
-              <span
-                class="intensity-indicator"
-                [class]="'intensity-' + option.value"
-              ></span>
-              <span>{{ option.label }}</span>
-            </div>
-          </ng-template>
-        </p-select>
+        />
       </div>
     </div>
 
     <div class="form-field">
-      <label>Available Equipment (comma-separated)</label>
-      <input
-        type="text"
-        pInputText
+      <app-form-input
+        label="Available Equipment (comma-separated)"
         formControlName="equipment"
         placeholder="e.g., cones, football, agility ladder"
       />

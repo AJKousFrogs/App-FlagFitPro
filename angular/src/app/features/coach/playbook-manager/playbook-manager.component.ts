@@ -19,11 +19,12 @@ import {
 import { ToastService } from "../../../core/services/toast.service";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { EmptyStateComponent } from "../../../shared/components/empty-state/empty-state.component";
-import { InputText } from "primeng/inputtext";
 import { ProgressBar } from "primeng/progressbar";
-import { Select, type SelectChangeEvent } from "primeng/select";
 import { TableModule } from "primeng/table";
-import { Textarea } from "primeng/textarea";
+import { FormInputComponent } from "../../../shared/components/form-input/form-input.component";
+import { SearchInputComponent } from "../../../shared/components/search-input/search-input.component";
+import { SelectComponent } from "../../../shared/components/select/select.component";
+import { TextareaComponent } from "../../../shared/components/textarea/textarea.component";
 import { StatusTagComponent } from "../../../shared/components/status-tag/status-tag.component";
 
 import { LoggerService } from "../../../core/services/logger.service";
@@ -104,11 +105,12 @@ const ROUTES = [
     AppDialogComponent,
     DialogFooterComponent,
     DialogHeaderComponent,
-    InputText,
+    FormInputComponent,
+    SearchInputComponent,
     ProgressBar,
-    Select,
+    SelectComponent,
     TableModule,
-    Textarea,
+    TextareaComponent,
 
     MainLayoutComponent,
     PageHeaderComponent,
@@ -171,30 +173,25 @@ const ROUTES = [
 
         <!-- Filters -->
         <div class="filters-row">
-          <span class="p-input-icon-left filter-search">
-            <i class="pi pi-search"></i>
-            <input
-              type="text"
-              pInputText
-              placeholder="Search plays..."
-              [value]="searchQuery"
-              (input)="onSearchQueryInput($event)"
-            />
-          </span>
-          <p-select
+          <app-search-input
+            class="filter-search"
+            placeholder="Search plays..."
+            (valueChange)="onSearchQueryChange($event)"
+          />
+          <app-select
             [options]="formationOptions"
-            (onChange)="onFormationFilterSelect($event)"
+            (valueChange)="onFormationFilterChange($event)"
             placeholder="Formation"
             [showClear]="true"
             class="playbook-filter-select"
-          ></p-select>
-          <p-select
+          />
+          <app-select
             [options]="situationOptions"
-            (onChange)="onSituationFilterSelect($event)"
+            (valueChange)="onSituationFilterChange($event)"
             placeholder="Situation"
             [showClear]="true"
             class="playbook-filter-select"
-          ></p-select>
+          />
         </div>
 
         <!-- Stats Summary -->
@@ -425,45 +422,37 @@ const ROUTES = [
             <div class="details-column">
               <h4>Play Details</h4>
               <div class="form-field">
-                <label for="playName">Play Name</label>
-                <input
-                  id="playName"
-                  type="text"
-                  pInputText
+                <app-form-input
+                  label="Play Name"
                   [value]="playForm.name"
                   [readonly]="isViewing()"
-                  (input)="onPlayNameInput($event)"
+                  (valueChange)="onPlayNameChange($event)"
                   placeholder="e.g., Mesh Right"
-                  class="w-full"
                 />
               </div>
 
               <div class="form-field">
-                <label for="formation">Formation</label>
-                <p-select
-                  inputId="formation"
+                <app-select
+                  label="Formation"
                   [options]="formationOptions"
-                  (onChange)="onPlayFormationSelect($event)"
+                  (valueChange)="onPlayFormationChange($event)"
                   optionLabel="label"
                   optionValue="value"
                   placeholder="Select formation"
-                  class="w-full"
                   [disabled]="isViewing()"
-                ></p-select>
+                />
               </div>
 
               <div class="form-field">
-                <label for="situation">Situation</label>
-                <p-select
-                  inputId="situation"
+                <app-select
+                  label="Situation"
                   [options]="situationOptions"
-                  (onChange)="onPlaySituationSelect($event)"
+                  (valueChange)="onPlaySituationChange($event)"
                   optionLabel="label"
                   optionValue="value"
                   placeholder="Select situation"
-                  class="w-full"
                   [disabled]="isViewing()"
-                ></p-select>
+                />
               </div>
 
               <div class="form-field">
@@ -517,27 +506,25 @@ const ROUTES = [
                         />
                       }
                     </div>
-                    <textarea
-                      pTextarea
+                    <app-textarea
                       [value]="assignment.instructions[0]"
-                      [readonly]="isViewing()"
-                      (input)="onAssignmentInstructionInput(i, $event)"
+                      [disabled]="isViewing()"
+                      (valueChange)="onAssignmentInstructionChange(i, $event)"
                       placeholder="Instructions for this position..."
-                      rows="2"
-                    ></textarea>
+                      [rows]="2"
+                    />
                   </div>
                 }
               </div>
 
               <h4>Coach Notes</h4>
-              <textarea
-                pTextarea
+              <app-textarea
                 [value]="playForm.coachNotes"
-                [readonly]="isViewing()"
-                (input)="onPlayCoachNotesInput($event)"
+                [disabled]="isViewing()"
+                (valueChange)="onPlayCoachNotesChange($event)"
                 placeholder="When to call this play, key coaching points..."
-                rows="4"
-              ></textarea>
+                [rows]="4"
+              />
             </div>
           </div>
         </div>
@@ -757,28 +744,12 @@ export class PlaybookManagerComponent implements OnInit {
     this.searchQuery = value;
   }
 
-  onSearchQueryInput(event: Event): void {
-    this.onSearchQueryChange(this.readInputValue(event));
-  }
-
   onFormationFilterChange(value: string | null): void {
     this.formationFilter = value;
   }
 
-  onFormationFilterSelect(event: SelectChangeEvent): void {
-    this.onFormationFilterChange(
-      typeof event.value === "string" ? event.value : null,
-    );
-  }
-
   onSituationFilterChange(value: string | null): void {
     this.situationFilter = value;
-  }
-
-  onSituationFilterSelect(event: SelectChangeEvent): void {
-    this.onSituationFilterChange(
-      typeof event.value === "string" ? event.value : null,
-    );
   }
 
   async loadData(): Promise<void> {
@@ -851,28 +822,12 @@ export class PlaybookManagerComponent implements OnInit {
     this.playForm = { ...this.playForm, name: value };
   }
 
-  onPlayNameInput(event: Event): void {
-    this.onPlayNameChange(this.readInputValue(event));
-  }
-
   onPlayFormationChange(value: string | null): void {
     this.playForm = { ...this.playForm, formation: value ?? "trips-right" };
   }
 
-  onPlayFormationSelect(event: SelectChangeEvent): void {
-    this.onPlayFormationChange(
-      typeof event.value === "string" ? event.value : null,
-    );
-  }
-
   onPlaySituationChange(value: string | null): void {
     this.playForm = { ...this.playForm, situation: value ?? "base" };
-  }
-
-  onPlaySituationSelect(event: SelectChangeEvent): void {
-    this.onPlaySituationChange(
-      typeof event.value === "string" ? event.value : null,
-    );
   }
 
   onPlayTypeChange(value: "offense" | "defense" | "special"): void {
@@ -893,24 +848,8 @@ export class PlaybookManagerComponent implements OnInit {
     };
   }
 
-  onAssignmentInstructionInput(index: number, event: Event): void {
-    this.onAssignmentInstructionChange(index, this.readInputValue(event));
-  }
-
   onPlayCoachNotesChange(value: string): void {
     this.playForm = { ...this.playForm, coachNotes: value };
-  }
-
-  onPlayCoachNotesInput(event: Event): void {
-    this.onPlayCoachNotesChange(this.readInputValue(event));
-  }
-
-  private readInputValue(event: Event): string {
-    const target = event.target;
-    if (target instanceof HTMLInputElement || target instanceof HTMLTextAreaElement) {
-      return target.value;
-    }
-    return "";
   }
 
   // Dialog methods

@@ -27,10 +27,10 @@ import { DialogHeaderComponent } from "../../shared/components/dialog-header/dia
 import { EmptyStateComponent } from "../../shared/components/empty-state/empty-state.component";
 import { CardShellComponent } from "../../shared/components/card-shell/card-shell.component";
 import { InputNumber } from "primeng/inputnumber";
-import { Select, type SelectChangeEvent } from "primeng/select";
 
 import { StatusTagComponent } from "../../shared/components/status-tag/status-tag.component";
-import { Textarea } from "primeng/textarea";
+import { SelectComponent } from "../../shared/components/select/select.component";
+import { TextareaComponent } from "../../shared/components/textarea/textarea.component";
 import { firstValueFrom } from "rxjs";
 
 import { ApiService, API_ENDPOINTS } from "../../core/services/api.service";
@@ -99,9 +99,9 @@ const EVENT_TYPE_CONFIG: Record<
     FormsModule,
     DatePipe,
     InputNumber,
-    Select,
     StatusTagComponent,
-    Textarea,
+    SelectComponent,
+    TextareaComponent,
 
     MainLayoutComponent,
     PageHeaderComponent,
@@ -124,16 +124,16 @@ const EVENT_TYPE_CONFIG: Record<
 
         <!-- Calendar Actions -->
         <div class="calendar-actions ui-section-card ui-section-card--compact">
-          <p-select
+          <app-select
             [options]="typeFilterOptions"
             [ngModel]="selectedType"
-            (onChange)="onSelectedTypeSelect($event)"
+            (change)="onSelectedTypeChange($event)"
             optionLabel="label"
             optionValue="value"
             placeholder="All Events"
             [showClear]="true"
             class="calendar-filter-select"
-          ></p-select>
+          ></app-select>
 
           <app-button
             variant="secondary"
@@ -421,15 +421,14 @@ const EVENT_TYPE_CONFIG: Record<
 
             <!-- Notes -->
             <div class="notes-section">
-              <label for="notes">Notes (optional)</label>
-              <textarea
-                pTextarea
+              <app-textarea
+                label="Notes (optional)"
                 id="notes"
                 [value]="rsvpForm.notes"
-                (input)="onRsvpNotesInput($event)"
+                (valueChange)="onRsvpNotesChange($event)"
                 placeholder="Any notes for the coach..."
-                rows="2"
-              ></textarea>
+                [rows]="2"
+              ></app-textarea>
             </div>
 
           </div>
@@ -528,12 +527,8 @@ export class TeamCalendarComponent implements OnInit {
     this.loadData();
   }
 
-  onSelectedTypeChange(value: EventType | null): void {
-    this.selectedType = value;
-  }
-
-  onSelectedTypeSelect(event: SelectChangeEvent): void {
-    this.onSelectedTypeChange((event.value as EventType | null | undefined) ?? null);
+  onSelectedTypeChange(value: EventType | null | undefined): void {
+    this.selectedType = value ?? null;
   }
 
   async loadData(): Promise<void> {

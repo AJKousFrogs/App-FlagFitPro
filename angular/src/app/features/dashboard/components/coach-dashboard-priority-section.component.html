@@ -24,7 +24,7 @@
             <span class="strip-preview-badge">Preview</span>
           }
         </span>
-        <p-badge [value]="riskAlerts().length.toString()" severity="danger" />
+        <app-badge variant="danger">{{ riskAlerts().length }}</app-badge>
       </div>
       <div class="athlete-scroll">
         @for (alert of riskAlerts(); track alert.playerId) {
@@ -34,10 +34,10 @@
             (click)="viewPlayer.emit(alert.playerId)"
             [attr.aria-label]="'View player ' + alert.playerName"
           >
-            <p-avatar
+            <app-avatar
               [label]="getPlayerInitials(alert.playerName)"
               shape="circle"
-              [class]="
+              [styleClass]="
                 alert.severity === 'critical'
                   ? 'priority-avatar priority-avatar--critical'
                   : 'priority-avatar priority-avatar--warning'
@@ -83,10 +83,7 @@
           <i class="pi pi-exclamation-circle strip-title-icon"></i>
           Data Incomplete
         </span>
-        <p-badge
-          [value]="playersWithMissingData().length.toString()"
-          severity="warn"
-        />
+        <app-badge variant="warning">{{ playersWithMissingData().length }}</app-badge>
       </div>
       <div class="athlete-scroll">
         @for (player of playersWithMissingData(); track player.playerId) {
@@ -96,10 +93,10 @@
             (click)="viewPlayer.emit(player.playerId)"
             [attr.aria-label]="'View player ' + player.playerName"
           >
-            <p-avatar
+            <app-avatar
               [label]="getPlayerInitials(player.playerName)"
               shape="circle"
-              [class]="
+              [styleClass]="
                 player.severity === 'critical'
                   ? 'priority-avatar priority-avatar--critical'
                   : 'priority-avatar priority-avatar--warning'

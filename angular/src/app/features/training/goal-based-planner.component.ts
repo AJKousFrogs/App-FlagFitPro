@@ -9,7 +9,8 @@ import {
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { Router } from "@angular/router";
-import { Select, type SelectChangeEvent } from "primeng/select";
+import { type SelectChangeEvent } from "primeng/select";
+import { SelectComponent } from "../../shared/components/select/select.component";
 import { ButtonComponent } from "../../shared/components/button/button.component";
 
 import { StatusTagComponent } from "../../shared/components/status-tag/status-tag.component";
@@ -38,7 +39,7 @@ import {
   imports: [
     CommonModule,
     FormsModule,
-    Select,
+    SelectComponent,
     StatusTagComponent,
     TrafficLightRiskComponent,
     MainLayoutComponent,
@@ -59,18 +60,15 @@ import {
         <div class="goal-planner-content ui-page-stack">
           <!-- Goal Selection -->
           <div class="goal-selection">
-            <label class="goal-selection__label"
-              >Select Training Goal</label
-            >
-            <p-select
+            <app-select
+              label="Select Training Goal"
               [ngModel]="selectedGoal()"
               [options]="goalOptions"
               optionLabel="label"
               optionValue="value"
               placeholder="Choose your primary goal"
               (onChange)="onGoalSelect($event)"
-            >
-            </p-select>
+            ></app-select>
             <p class="goal-selection__hint">
               The plan will auto-adjust based on your ACWR and readiness scores
             </p>

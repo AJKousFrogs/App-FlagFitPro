@@ -16,7 +16,7 @@ PrimeNG component overrides in `src/assets/styles/overrides/_component-overrides
 ## Migration Path
 
 1. **PrimeNG theme first** – Update `primeng-theme.scss` and `primeng-integration.scss` to support component-specific tokens (e.g. `--progress-bar-height-md`).
-2. **Component encapsulation** – Move scoped overrides into component `:host ::ng-deep` or `:host-context` only where design system cannot provide tokens.
+2. **Component styling** – Prefer theme tokens, `@layer` page rules, or a single host-scoped class with `ViewEncapsulation.None`.
 3. **Remove override block** – Delete from `_component-overrides.scss` once equivalent styling exists in theme or component.
 
 ## Exceptions by Ticket

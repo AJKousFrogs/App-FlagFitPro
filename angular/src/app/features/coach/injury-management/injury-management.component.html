@@ -91,35 +91,7 @@
                     size="sm"
                   />
                 </div>
-                <div class="injury-content">
-                  <p-avatar
-                    [image]="injury.avatarUrl"
-                    [label]="
-                      !injury.avatarUrl ? getInitialsStr(injury.playerName) : ''
-                    "
-                    size="large"
-                    shape="circle"
-                  ></p-avatar>
-                  <div class="injury-info">
-                    <h4>
-                      {{ injury.playerName }} (#{{ injury.jerseyNumber }})
-                    </h4>
-                    <p>Position: {{ injury.playerPosition }}</p>
-                    <p>
-                      <strong>Injury:</strong> {{ injury.bodyPart }}
-                      {{ injury.injuryType }} ({{ injury.severity }})
-                    </p>
-                    <p>
-                      <strong>Reported:</strong>
-                      {{ injury.injuryDate | date: "MMM d, y, h:mm a" }}
-                    </p>
-                    <p class="description">"{{ injury.description }}"</p>
-                    <p class="status">
-                      <i class="pi pi-exclamation-triangle"></i> Awaiting
-                      medical evaluation
-                    </p>
-                  </div>
-                </div>
+                <app-injury-player-summary [injury]="injury" variant="active" />
                 <div class="injury-actions">
                   <app-button iconLeft="pi-play" (clicked)="startRtp(injury)"
                     >Evaluate & Start RTP</app-button
@@ -157,31 +129,7 @@
                     size="sm"
                   />
                 </div>
-                <div class="injury-content">
-                  <p-avatar
-                    [image]="injury.avatarUrl"
-                    [label]="
-                      !injury.avatarUrl ? getInitialsStr(injury.playerName) : ''
-                    "
-                    size="large"
-                    shape="circle"
-                  ></p-avatar>
-                  <div class="injury-info">
-                    <h4>
-                      {{ injury.playerName }} (#{{ injury.jerseyNumber }})
-                    </h4>
-                    <p>Position: {{ injury.playerPosition }}</p>
-                    <p>
-                      <strong>Injury:</strong> {{ injury.bodyPart }}
-                      {{ injury.injuryType }}
-                    </p>
-                    <p>
-                      <strong>Injury Date:</strong>
-                      {{ injury.injuryDate | date: "MMM d, y" }}
-                    </p>
-                    <p>Days in Protocol: {{ injury.daysInProtocol }}</p>
-                  </div>
-                </div>
+                <app-injury-player-summary [injury]="injury" variant="rtp" />
 
                 <!-- RTP Progress -->
                 <div class="rtp-progress-section">
@@ -260,11 +208,11 @@
             @for (injury of clearedInjuries(); track injury.id) {
               <app-card-shell class="injury-card cleared">
                 <div class="injury-content">
-                  <p-avatar
+                  <app-avatar
                     [label]="getInitialsStr(injury.playerName)"
                     size="large"
                     shape="circle"
-                  ></p-avatar>
+                  />
                   <div class="injury-info">
                     <h4>
                       {{ injury.playerName }} (#{{ injury.jerseyNumber }})
@@ -340,42 +288,26 @@
             <h3>Injury Analytics</h3>
             <app-card-shell class="analytics-card" title="Injury Analytics">
               <div class="analytics-grid">
-                <div class="analytics-chart">
-                  <h5>Injury by Type (This Season)</h5>
-                  @for (stat of injuryByType(); track stat.type) {
-                    <div class="stat-bar">
-                      <span class="bar-label">{{ stat.type }}</span>
-                      <div class="bar-track">
-                        <!-- eslint-disable-next-line @angular-eslint/template/no-inline-styles -->
-                        <div
-                          class="bar-fill"
-                          [style.width.%]="
-                            (stat.count / totalSeasonCount()) * 100
-                          "
-                        ></div>
+                @for (chart of injuryAnalyticsCharts(); track chart.title) {
+                  <div class="analytics-chart">
+                    <h5>{{ chart.title }}</h5>
+                    @for (stat of chart.rows; track stat.label) {
+                      <div class="stat-bar">
+                        <span class="bar-label">{{ stat.label }}</span>
+                        <div class="bar-track">
+                          <!-- eslint-disable-next-line @angular-eslint/template/no-inline-styles -->
+                          <div
+                            class="bar-fill"
+                            [style.width.%]="
+                              (stat.count / totalSeasonCount()) * 100
+                            "
+                          ></div>
+                        </div>
+                        <span class="bar-count">{{ stat.count }}</span>
                       </div>
-                      <span class="bar-count">{{ stat.count }}</span>
-                    </div>
-                  }
-                </div>
-                <div class="analytics-chart">
-                  <h5>Injury by Position</h5>
-                  @for (stat of injuryByPosition(); track stat.position) {
-                    <div class="stat-bar">
-                      <span class="bar-label">{{ stat.position }}</span>
-                      <div class="bar-track">
-                        <!-- eslint-disable-next-line @angular-eslint/template/no-inline-styles -->
-                        <div
-                          class="bar-fill"
-                          [style.width.%]="
-                            (stat.count / totalSeasonCount()) * 100
-                          "
-                        ></div>
-                      </div>
-                      <span class="bar-count">{{ stat.count }}</span>
-                    </div>
-                  }
-                </div>
+                    }
+                  </div>
+                }
               </div>
               <div class="insight-box">
                 <i class="pi pi-lightbulb"></i>

@@ -14,8 +14,9 @@ import {
   ReactiveFormsModule,
 } from "@angular/forms";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
-import { InputText } from "primeng/inputtext";
-import { Select } from "primeng/select";
+import { FormInputComponent } from "../../../shared/components/form-input/form-input.component";
+import { SelectComponent } from "../../../shared/components/select/select.component";
+import { TextareaComponent } from "../../../shared/components/textarea/textarea.component";
 import { CardShellComponent } from "../../../shared/components/card-shell/card-shell.component";
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";
@@ -38,8 +39,9 @@ type TeamCreateForm = FormGroup<{
   imports: [
     RouterModule,
     ReactiveFormsModule,
-    InputText,
-    Select,
+    FormInputComponent,
+    SelectComponent,
+    TextareaComponent,
     CardShellComponent,
     MainLayoutComponent,
     PageHeaderComponent,
@@ -57,15 +59,11 @@ type TeamCreateForm = FormGroup<{
         <app-card-shell class="team-create-card">
           <form [formGroup]="teamForm" (ngSubmit)="onSubmit()">
             <div class="form-group">
-              <label for="name" class="required">Team Name</label>
-              <input
-                id="name"
-                type="text"
-                pInputText
+              <app-form-input
+                label="Team Name *"
                 formControlName="name"
                 placeholder="Enter team name"
-                [class.ng-invalid]="isFieldInvalid('name')"
-                class="w-full"
+                styleClass="w-full"
               />
               @if (isFieldInvalid("name")) {
                 <small class="p-error">
@@ -75,52 +73,42 @@ type TeamCreateForm = FormGroup<{
             </div>
 
             <div class="form-group">
-              <label for="description">Description (Optional)</label>
-              <textarea
-                id="description"
+              <app-textarea
+                label="Description (Optional)"
                 formControlName="description"
                 placeholder="Tell us about your team..."
-                rows="4"
-                class="w-full p-inputtextarea"
-              ></textarea>
-            </div>
-
-            <div class="form-group">
-              <label for="location">Location (Optional)</label>
-              <input
-                id="location"
-                type="text"
-                pInputText
-                formControlName="location"
-                placeholder="City, State"
-                class="w-full"
+                [rows]="4"
+                styleClass="w-full"
               />
             </div>
 
             <div class="form-group">
-              <label for="sport">Sport</label>
-              <p-select
-                id="sport"
-                formControlName="sport"
-                [options]="sportOptions"
-                optionLabel="label"
-                optionValue="value"
-                placeholder="Select sport"
-                class="w-full"
-              ></p-select>
+              <app-form-input
+                label="Location (Optional)"
+                formControlName="location"
+                placeholder="City, State"
+                styleClass="w-full"
+              />
             </div>
 
             <div class="form-group">
-              <label for="visibility">Team Visibility</label>
-              <p-select
-                id="visibility"
+              <app-select
+                label="Sport"
+                formControlName="sport"
+                [options]="sportOptions"
+                placeholder="Select sport"
+                styleClass="w-full"
+              />
+            </div>
+
+            <div class="form-group">
+              <app-select
+                label="Team Visibility"
                 formControlName="visibility"
                 [options]="visibilityOptions"
-                optionLabel="label"
-                optionValue="value"
                 placeholder="Select visibility"
-                class="w-full"
-              ></p-select>
+                styleClass="w-full"
+              />
             </div>
 
             <div class="form-actions">

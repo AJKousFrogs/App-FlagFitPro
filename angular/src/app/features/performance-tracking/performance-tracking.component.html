@@ -86,7 +86,7 @@
               @for (benchmark of positionBenchmarks().slice(0, 4); track benchmark.metric) {
                 <div class="benchmark-item">
                   <span class="metric-name">{{ benchmark.metric }}</span>
-                  <p-progressBar [value]="benchmark.percentOfElite" [showValue]="false" />
+                  <app-progress-bar [value]="benchmark.percentOfElite" [showValue]="false" />
                 </div>
               }
             </div>

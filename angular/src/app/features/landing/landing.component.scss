@@ -574,12 +574,6 @@ height: 100dvh; // Modern: keyboard-aware
   margin-bottom: var(--space-3);
 }
 
-// Ensure card bodies flex-column so "Learn more" aligns at bottom across cards
-:host ::ng-deep .feature-card .card-shell__body {
-  display: flex;
-  flex-direction: column;
-}
-
 .feature-icon-wrapper {
   width: var(--size-80);
   height: var(--size-80);

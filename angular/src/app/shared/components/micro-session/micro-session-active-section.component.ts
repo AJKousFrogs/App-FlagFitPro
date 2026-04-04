@@ -2,9 +2,9 @@ import { CommonModule } from "@angular/common";
 import { ChangeDetectionStrategy, Component, input, output } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 
-import { ProgressBar } from "primeng/progressbar";
+import { ProgressBarComponent } from "../progress-bar/progress-bar.component";
 import { Slider } from "primeng/slider";
-import { Textarea } from "primeng/textarea";
+import { TextareaComponent } from "../textarea/textarea.component";
 
 import { ButtonComponent } from "../button/button.component";
 import { MicroSessionData, MicroSessionStep, SessionStatus } from "./micro-session.models";
@@ -13,7 +13,7 @@ import { formatTimeMMSS } from "../../utils/format.utils";
 @Component({
   selector: "app-micro-session-active-section",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, FormsModule, ProgressBar, Slider, Textarea, ButtonComponent],
+  imports: [CommonModule, FormsModule, ProgressBarComponent, Slider, TextareaComponent, ButtonComponent],
   templateUrl: "./micro-session-active-section.component.html",
   styleUrl: "./micro-session-active-section.component.scss",
 })
@@ -37,7 +37,7 @@ export class MicroSessionActiveSectionComponent {
   nextStep = output<void>();
   complete = output<void>();
   followUpRatingChange = output<number | null | undefined>();
-  followUpNotesInput = output<Event>();
+  followUpNotesInput = output<string>();
   submitFollowUp = output<void>();
   done = output<void>();
 

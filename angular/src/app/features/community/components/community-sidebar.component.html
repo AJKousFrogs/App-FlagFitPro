@@ -9,10 +9,10 @@
             {{ entry.rank }}
           }
         </div>
-        <p-avatar
+        <app-avatar
           [label]="entry.initials"
           shape="circle"
-          [class]="'leaderboard-avatar ' + getAvatarColorClass(entry.initials)"
+          [styleClass]="'leaderboard-avatar ' + getAvatarColorClass(entry.initials)"
         />
         <div class="player-info">
           <div class="player-name">{{ entry.name }}</div>

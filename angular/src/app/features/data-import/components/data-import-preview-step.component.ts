@@ -1,7 +1,7 @@
 import { CommonModule } from "@angular/common";
 import { ChangeDetectionStrategy, Component, input, output } from "@angular/core";
 import { TableModule } from "primeng/table";
-import { Select, type SelectChangeEvent } from "primeng/select";
+import { SelectComponent } from "../../../shared/components/select/select.component";
 
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { CardShellComponent } from "../../../shared/components/card-shell/card-shell.component";
@@ -30,7 +30,7 @@ export interface DataImportPreview {
     CommonModule,
     CardShellComponent,
     TableModule,
-    Select,
+    SelectComponent,
     StatusTagComponent,
     ButtonComponent,
   ],
@@ -48,11 +48,11 @@ export class DataImportPreviewStepComponent {
 
   emitMappingChange(
     mapping: DataImportFieldMapping,
-    event: SelectChangeEvent,
+    value: unknown,
   ): void {
     this.mappingChange.emit({
       mapping,
-      value: (event.value as string | null | undefined) ?? null,
+      value: (value as string | null | undefined) ?? null,
     });
   }
 

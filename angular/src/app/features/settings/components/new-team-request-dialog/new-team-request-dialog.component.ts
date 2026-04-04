@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, input, output } from "@angular/core";
-import { InputText } from "primeng/inputtext";
+import { FormInputComponent } from "../../../../shared/components/form-input/form-input.component";
+import { TextareaComponent } from "../../../../shared/components/textarea/textarea.component";
 import {
   AppDialogComponent,
   DialogFooterComponent,
@@ -12,7 +13,8 @@ import { AlertComponent } from "../../../../shared/components/alert/alert.compon
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     AppDialogComponent,
-    InputText,
+    FormInputComponent,
+    TextareaComponent,
     DialogHeaderComponent,
     DialogFooterComponent,
     AlertComponent,
@@ -33,15 +35,5 @@ export class NewTeamRequestDialogComponent {
 
   closeDialog(): void {
     this.visibleChange.emit(false);
-  }
-
-  onTeamNameInput(event: Event): void {
-    const input = event.target as HTMLInputElement | null;
-    this.teamNameChange.emit(input?.value ?? "");
-  }
-
-  onTeamNotesInput(event: Event): void {
-    const input = event.target as HTMLTextAreaElement | null;
-    this.teamNotesChange.emit(input?.value ?? "");
   }
 }

@@ -18,7 +18,7 @@ import { ChangeDetectionStrategy, Component, signal } from "@angular/core";
 import type { ChartOptions } from "chart.js";
 import { Divider } from "primeng/divider";
 import { ProgressBar } from "primeng/progressbar";
-import { Select, type SelectChangeEvent } from "primeng/select";
+import { SelectComponent } from "../../../shared/components/select/select.component";
 import { Skeleton } from "primeng/skeleton";
 import { TableModule } from "primeng/table";
 import { COLORS } from "../../../core/constants/app.constants";
@@ -99,7 +99,7 @@ interface TeamOption {
     LazyChartComponent,
     Divider,
     ProgressBar,
-    Select,
+    SelectComponent,
     Skeleton,
     TableModule,
     StatusTagComponent,
@@ -116,16 +116,16 @@ interface TeamOption {
           icon="pi-chart-bar"
         >
           <div class="header-filters">
-            <p-select
+            <app-select
               [options]="teamOptions"
-              (onChange)="onTeamSelect($event)"
+              (valueChange)="onTeamChange($event)"
               placeholder="Select Team"
-            ></p-select>
-            <p-select
+            />
+            <app-select
               [options]="timeRangeOptions"
-              (onChange)="onTimeRangeSelect($event)"
+              (valueChange)="onTimeRangeChange($event)"
               placeholder="Select Period"
-            ></p-select>
+            />
             <app-icon-button
               icon="pi-refresh"
               variant="outlined"
@@ -525,17 +525,9 @@ export class CoachAnalyticsComponent {
     this.loadAnalytics();
   }
 
-  onTeamSelect(event: SelectChangeEvent): void {
-    this.onTeamChange((event.value as string | null | undefined) ?? null);
-  }
-
   onTimeRangeChange(value: string | null | undefined): void {
     this.selectedTimeRange = value ?? "30d";
     this.loadAnalytics();
-  }
-
-  onTimeRangeSelect(event: SelectChangeEvent): void {
-    this.onTimeRangeChange((event.value as string | null | undefined) ?? null);
   }
 
   private initChartOptions(): void {

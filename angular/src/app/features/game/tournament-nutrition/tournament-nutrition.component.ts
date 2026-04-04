@@ -30,9 +30,11 @@ import { Router } from "@angular/router";
 
 // PrimeNG Components
 
+import { FormsModule } from "@angular/forms";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { IconButtonComponent } from "../../../shared/components/button/icon-button.component";
-import { Checkbox, type CheckboxChangeEvent } from "primeng/checkbox";
+import { FormInputComponent } from "../../../shared/components/form-input/form-input.component";
+import { CheckboxComponent } from "../../../shared/components/checkbox/checkbox.component";
 
 import { ProgressBar } from "primeng/progressbar";
 import { Tooltip } from "primeng/tooltip";
@@ -107,7 +109,9 @@ interface HydrationLog {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
-    Checkbox,
+    FormsModule,
+    CheckboxComponent,
+    FormInputComponent,
     StatusTagComponent,
     Tooltip,
     ProgressBar,
@@ -398,9 +402,8 @@ export class TournamentNutritionComponent implements OnInit, OnDestroy {
     this.editGames.splice(index, 1);
   }
 
-  onEditTournamentNameInput(event: Event): void {
-    const input = event.target as HTMLInputElement | null;
-    this.editTournamentName = input?.value ?? "";
+  onEditTournamentNameInput(value: string): void {
+    this.editTournamentName = value;
   }
 
   onEditGameTimeInput(game: GameSchedule, event: Event): void {
@@ -408,9 +411,8 @@ export class TournamentNutritionComponent implements OnInit, OnDestroy {
     game.time = input?.value ?? "";
   }
 
-  onEditGameOpponentInput(game: GameSchedule, event: Event): void {
-    const input = event.target as HTMLInputElement | null;
-    game.opponent = input?.value ?? "";
+  onEditGameOpponentInput(game: GameSchedule, value: string): void {
+    game.opponent = value;
   }
 
   onEditGameRefereeChange(
@@ -422,9 +424,9 @@ export class TournamentNutritionComponent implements OnInit, OnDestroy {
 
   onEditGameRefereeToggle(
     game: GameSchedule,
-    event: CheckboxChangeEvent,
+    checked: boolean,
   ): void {
-    this.onEditGameRefereeChange(game, event.checked);
+    this.onEditGameRefereeChange(game, checked);
   }
 
   async generateNutritionPlan(): Promise<void> {

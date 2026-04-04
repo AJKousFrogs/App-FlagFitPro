@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, inject, input, output } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { InputText } from "primeng/inputtext";
-import { Select, type SelectChangeEvent } from "primeng/select";
+import { FormInputComponent } from "../../../shared/components/form-input/form-input.component";
+import { SelectComponent } from "../../../shared/components/select/select.component";
 import { COUNTRY_OPTIONS } from "../../../core/constants";
 import { GENDER_OPTIONS } from "../constants/onboarding-options";
 import { AlertComponent } from "../../../shared/components/alert/alert.component";
@@ -13,8 +13,8 @@ import { OnboardingStateService } from "../services/onboarding-state.service";
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
-    InputText,
-    Select,
+    FormInputComponent,
+    SelectComponent,
     AlertComponent,
     ButtonComponent,
   ],
@@ -30,19 +30,12 @@ import { OnboardingStateService } from "../services/onboarding-state.service";
 
       <div class="form-grid">
         <div class="form-group span-2">
-          <label for="onboarding-name"
-            >Full Name <span class="required">*</span></label
-          >
-          <input
-            id="onboarding-name"
-            name="name"
-            type="text"
-            pInputText
+          <app-form-input
+            label="Full Name *"
             [value]="state.formData.name"
-            (input)="onNameInput($event)"
+            (valueChange)="state.formData.name = $event"
             placeholder="Enter your full name"
-            class="w-full"
-            autocomplete="name"
+            styleClass="w-full"
           />
         </div>
 
@@ -69,47 +62,33 @@ import { OnboardingStateService } from "../services/onboarding-state.service";
         </div>
 
         <div class="form-group">
-          <label for="onboarding-gender">Gender</label>
-          <p-select
-            inputId="onboarding-gender"
+          <app-select
+            label="Gender"
             [options]="genderOptions"
-            (onChange)="onGenderSelect($event)"
+            (change)="onGenderSelect($event)"
             placeholder="Select gender"
-            class="w-full"
-            [attr.aria-label]="'Select gender'"
-          ></p-select>
+            styleClass="w-full"
+          />
         </div>
 
         <div class="form-group">
-          <label for="onboarding-country"
-            >Country <span class="required">*</span></label
-          >
-          <p-select
-            inputId="onboarding-country"
+          <app-select
+            label="Country *"
             [options]="countryOptions"
-            (onChange)="onCountrySelect($event)"
+            (change)="onCountrySelect($event)"
             placeholder="Select your country"
             [filter]="true"
-            filterPlaceholder="Search countries..."
-            class="w-full"
-            [attr.aria-label]="'Select your country'"
-          ></p-select>
+            styleClass="w-full"
+          />
         </div>
 
         <div class="form-group">
-          <label for="onboarding-phone"
-            >Phone Number <small>(optional)</small></label
-          >
-          <input
-            id="onboarding-phone"
-            name="phone"
-            type="tel"
-            pInputText
+          <app-form-input
+            label="Phone Number (optional)"
             [value]="state.formData.phone"
-            (input)="onPhoneInput($event)"
+            (valueChange)="state.formData.phone = $event"
             placeholder="+1 234 567 8900"
-            class="w-full"
-            autocomplete="tel"
+            styleClass="w-full"
           />
         </div>
 
@@ -167,31 +146,31 @@ export class OnboardingStepPersonalComponent {
   readonly genderOptions = GENDER_OPTIONS;
   readonly countryOptions = COUNTRY_OPTIONS;
 
-  onNameInput(event: Event): void {
-    const input = event.target as HTMLInputElement | null;
-    this.state.formData.name = input?.value ?? "";
-  }
-
   onDateOfBirthChange(value: Date | null): void {
     this.state.formData.dateOfBirth = value ?? null;
   }
 
   onDateOfBirthInput(event: Event): void {
     const input = event.target as HTMLInputElement | null;
-    this.onDateOfBirthChange(this.parseDateInputValue(input?.value ?? ""));
+    const parsed = this.parseDateInputValue(input?.value ?? "");
+    if (parsed === null) {
+      this.onDateOfBirthChange(null);
+      return;
+    }
+    const min = this.minDate();
+    const max = this.maxDate();
+    if (parsed < min || parsed > max) {
+      return;
+    }
+    this.onDateOfBirthChange(parsed);
   }
 
-  onGenderSelect(event: SelectChangeEvent): void {
-    this.state.formData.gender = this.getStringValue(event);
+  onGenderSelect(value: string | null | undefined): void {
+    this.state.formData.gender = typeof value === "string" ? value : null;
   }
 
-  onCountrySelect(event: SelectChangeEvent): void {
-    this.state.formData.country = this.getStringValue(event);
-  }
-
-  onPhoneInput(event: Event): void {
-    const input = event.target as HTMLInputElement | null;
-    this.state.formData.phone = input?.value ?? "";
+  onCountrySelect(value: string | null | undefined): void {
+    this.state.formData.country = typeof value === "string" ? value : null;
   }
 
   getDateOfBirthInputValue(): string {
@@ -216,10 +195,6 @@ export class OnboardingStepPersonalComponent {
     const day = String(value.getDate()).padStart(2, "0");
 
     return `${year}-${month}-${day}`;
-  }
-
-  private getStringValue(event: SelectChangeEvent): string | null {
-    return typeof event.value === "string" ? event.value : null;
   }
 
   private parseDateInputValue(value: string): Date | null {

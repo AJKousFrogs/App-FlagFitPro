@@ -344,6 +344,8 @@
     min-width: var(--component-close-button-size-md);
     min-height: var(--component-close-button-size-md);
     border-radius: var(--radius-full);
+    border: none;
+    background: transparent;
     color: var(--color-text-secondary);
     transition: transform var(--motion-feedback-duration-fast) var(--ease-standard),
       background-color var(--motion-feedback-duration-fast) var(--ease-standard),
@@ -601,12 +603,24 @@
   }
 
   .data-source-banner.insufficient {
-    background: linear-gradient(
-      135deg,
-      var(--ui-warning) 0%,
-      var(--primitive-warning-600) 100%
-    );
-    border-color: var(--primitive-warning-700);
+    background: var(--primitive-warning-50);
+    border-color: var(--primitive-warning-200);
+    color: var(--primitive-warning-800);
+
+    .banner-title,
+    .banner-message,
+    .progress-text,
+    .warning-item {
+      color: var(--primitive-warning-800);
+    }
+
+    .progress-bar {
+      background: var(--primitive-warning-200);
+    }
+
+    .progress-fill {
+      background: var(--primitive-warning-500);
+    }
   }
 
   .data-source-banner.real {

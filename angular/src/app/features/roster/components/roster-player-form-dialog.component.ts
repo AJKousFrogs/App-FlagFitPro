@@ -20,8 +20,8 @@ import {
   Validators,
   ReactiveFormsModule,
 } from "@angular/forms";
-import { InputText } from "primeng/inputtext";
-import { Select } from "primeng/select";
+import { FormInputComponent } from "../../../shared/components/form-input/form-input.component";
+import { SelectComponent } from "../../../shared/components/select/select.component";
 import { InputNumber } from "primeng/inputnumber";
 import {
   FormErrorSummaryComponent,
@@ -54,8 +54,8 @@ export interface PlayerFormData {
   imports: [
     ReactiveFormsModule,
     AppDialogComponent,
-    InputText,
-    Select,
+    FormInputComponent,
+    SelectComponent,
     InputNumber,
     FormErrorSummaryComponent,
     DialogHeaderComponent,
@@ -86,44 +86,32 @@ export interface PlayerFormData {
 
       <form [formGroup]="playerForm" class="player-form">
         <div class="form-field">
-          <label for="roster-player-name">Full Name *</label>
-          <input
-            pInputText
-            id="roster-player-name"
-            name="name"
+          <app-form-input
+            label="Full Name *"
             formControlName="name"
             placeholder="e.g., John Smith"
-            class="w-full"
-            autocomplete="name"
+            styleClass="w-full"
           />
           <small class="field-hint">First and last name</small>
         </div>
 
         <div class="form-row">
           <div class="form-field">
-            <label for="roster-player-position">Position *</label>
-            <p-select
-              inputId="roster-player-position"
+            <app-select
+              label="Position *"
               formControlName="position"
               [options]="positionOptions"
-              optionLabel="label"
-              optionValue="value"
               placeholder="Select primary position"
-              class="w-full"
-              [attr.aria-label]="'Select player position'"
-            ></p-select>
+              styleClass="w-full"
+            />
           </div>
 
           <div class="form-field">
-            <label for="roster-player-jersey">Jersey # *</label>
-            <input
-              pInputText
-              id="roster-player-jersey"
-              name="jersey"
+            <app-form-input
+              label="Jersey # *"
               formControlName="jersey"
               placeholder="00-99"
-              class="w-full"
-              autocomplete="off"
+              styleClass="w-full"
             />
             <small class="field-hint">Number between 0-99</small>
           </div>
@@ -131,15 +119,11 @@ export interface PlayerFormData {
 
         <div class="form-row">
           <div class="form-field">
-            <label for="roster-player-country">Country</label>
-            <input
-              pInputText
-              id="roster-player-country"
-              name="country"
+            <app-form-input
+              label="Country"
               formControlName="country"
               placeholder="e.g., United States"
-              class="w-full"
-              autocomplete="country-name"
+              styleClass="w-full"
             />
           </div>
 
@@ -159,29 +143,21 @@ export interface PlayerFormData {
 
         <div class="form-row">
           <div class="form-field">
-            <label for="roster-player-height">Height</label>
-            <input
-              pInputText
-              id="roster-player-height"
-              name="height"
+            <app-form-input
+              label="Height"
               formControlName="height"
               placeholder="e.g., 6'2&quot; or 188cm"
-              class="w-full"
-              autocomplete="off"
+              styleClass="w-full"
             />
             <small class="field-hint">Format: 6'2" or 188cm</small>
           </div>
 
           <div class="form-field">
-            <label for="roster-player-weight">Weight</label>
-            <input
-              pInputText
-              id="roster-player-weight"
-              name="weight"
+            <app-form-input
+              label="Weight"
               formControlName="weight"
               placeholder="e.g., 210 lbs or 95kg"
-              class="w-full"
-              autocomplete="off"
+              styleClass="w-full"
             />
             <small class="field-hint">Format: 210 lbs or 95kg</small>
           </div>
@@ -190,45 +166,33 @@ export interface PlayerFormData {
         @if (showContactFields()) {
           <div class="form-row">
             <div class="form-field">
-              <label for="roster-player-email">Email</label>
-              <input
-                pInputText
-                id="roster-player-email"
-                name="email"
+              <app-form-input
+                label="Email"
                 formControlName="email"
                 placeholder="player@example.com"
-                class="w-full"
-                autocomplete="email"
+                styleClass="w-full"
               />
               <small class="field-hint">Must be a valid email address</small>
             </div>
 
             <div class="form-field">
-              <label for="roster-player-phone">Phone</label>
-              <input
-                pInputText
-                id="roster-player-phone"
-                name="phone"
+              <app-form-input
+                label="Phone"
                 formControlName="phone"
                 placeholder="+1 234-567-8900"
-                class="w-full"
-                autocomplete="tel"
+                styleClass="w-full"
               />
             </div>
           </div>
 
           <div class="form-field">
-            <label for="roster-player-status">Status</label>
-            <p-select
-              inputId="roster-player-status"
+            <app-select
+              label="Status"
               formControlName="status"
               [options]="statusOptions"
-              optionLabel="label"
-              optionValue="value"
               placeholder="Select status"
-              class="w-full"
-              [attr.aria-label]="'Select player status'"
-            ></p-select>
+              styleClass="w-full"
+            />
           </div>
         }
       </form>

@@ -31,7 +31,7 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
 import { AppLoadingComponent } from "../../../shared/components/loading/loading.component";
 import { EmptyStateComponent } from "../../../shared/components/empty-state/empty-state.component";
 import { PageErrorStateComponent } from "../../../shared/components/page-error-state/page-error-state.component";
-import { formatDate } from "../../../shared/utils/date.utils";
+import { StaffInsightFeedCardComponent } from "../../../shared/components/staff-insight-feed-card/staff-insight-feed-card.component";
 import { AppDialogComponent } from "../../../shared/components/dialog/dialog.component";
 import { DialogHeaderComponent } from "../../../shared/components/dialog-header/dialog-header.component";
 import { DialogFooterComponent } from "../../../shared/components/dialog-footer/dialog-footer.component";
@@ -177,6 +177,7 @@ type PreCompSignificance = PreCompForm["significance"];
     PageErrorStateComponent,
     PsychologyReportsListSectionComponent,
     PsychologyWellnessSectionComponent,
+    StaffInsightFeedCardComponent,
   ],
   templateUrl: "./psychology-reports.component.html",
 
@@ -838,64 +839,4 @@ export class PsychologyReportsComponent implements OnInit {
     };
   }
 
-  getRoleSeverity(role: string): "success" | "info" | "warning" | "danger" {
-    const roleMap: Record<string, "success" | "info" | "warning" | "danger"> = {
-      coach: "info",
-      physiotherapist: "success",
-      nutritionist: "warning",
-      psychologist: "danger",
-    };
-    return roleMap[role] || "info";
-  }
-
-  getInsightTypeLabel(type: string): string {
-    const typeMap: Record<string, string> = {
-      physio_note: "Physio Note",
-      nutrition_compliance: "Nutrition Compliance",
-      psychology_flag: "Psychology Flag",
-      coach_note: "Coach Note",
-    };
-    return typeMap[type] || type;
-  }
-
-  getPrioritySeverity(
-    priority: string,
-  ): "success" | "info" | "warning" | "danger" {
-    const priorityMap: Record<
-      string,
-      "success" | "info" | "warning" | "danger"
-    > = {
-      low: "info",
-      medium: "warning",
-      high: "danger",
-    };
-    return priorityMap[priority] || "info";
-  }
-
-  formatDate(date: Date): string {
-    const now = new Date();
-    const diffMs = now.getTime() - date.getTime();
-    const diffMins = Math.floor(diffMs / 60000);
-    const diffHours = Math.floor(diffMs / 3600000);
-    const diffDays = Math.floor(diffMs / 86400000);
-
-    if (diffMins < 1) return "Just now";
-    if (diffMins < 60) return `${diffMins}m ago`;
-    if (diffHours < 24) return `${diffHours}h ago`;
-    if (diffDays < 7) return `${diffDays}d ago`;
-    return formatDate(date, "P");
-  }
-
-  getMetadataEntries(
-    metadata: Record<string, unknown>,
-  ): Array<{ key: string; value: string }> {
-    return Object.entries(metadata).map(([key, value]) => ({
-      key: key.replace(/_/g, " ").replace(/\b\w/g, (l) => l.toUpperCase()),
-      value: String(value),
-    }));
-  }
-
-  hasMetadata(metadata: Record<string, unknown>): boolean {
-    return Object.keys(metadata).length > 0;
-  }
 }

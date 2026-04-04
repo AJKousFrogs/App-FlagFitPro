@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, input, output } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { RouterModule } from "@angular/router";
-import { ProgressBar } from "primeng/progressbar";
+import { ProgressBarComponent } from "../../../shared/components/progress-bar/progress-bar.component";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { CardShellComponent } from "../../../shared/components/card-shell/card-shell.component";
 import { EmptyStateComponent } from "../../../shared/components/ui-components";
@@ -17,7 +17,7 @@ import {
   imports: [
     CommonModule,
     RouterModule,
-    ProgressBar,
+    ProgressBarComponent,
     ButtonComponent,
     CardShellComponent,
     EmptyStateComponent,

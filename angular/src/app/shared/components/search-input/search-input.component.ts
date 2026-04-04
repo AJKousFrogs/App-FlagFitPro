@@ -2,6 +2,7 @@ import { CommonModule } from "@angular/common";
 import {
   ChangeDetectionStrategy,
   Component,
+  effect,
   ElementRef,
   forwardRef,
   input,
@@ -47,13 +48,13 @@ import { IconButtonComponent } from "../button/icon-button.component";
       [placeholder]="placeholder() || ''"
       [readonly]="readonly()"
       [disabled]="disabled()"
-      [value]="value()"
+      [value]="textValue()"
       (input)="onInput($event)"
       (blur)="onBlur()"
       class="ds-search-input-field search-input"
       [attr.aria-label]="ariaLabel() || placeholder() || 'Search'"
     />
-    @if (clearable() && value()) {
+    @if (clearable() && textValue()) {
       <app-icon-button
         icon="pi-times"
         ariaLabel="Clear search"
@@ -67,6 +68,8 @@ import { IconButtonComponent } from "../button/icon-button.component";
   styleUrl: "./search-input.component.scss",
 })
 export class SearchInputComponent implements ControlValueAccessor {
+  value = input<string | undefined>(undefined, { alias: "value" });
+
   placeholder = input<string>("");
   ariaLabel = input<string>("");
   inputId = input<string>();
@@ -83,14 +86,23 @@ export class SearchInputComponent implements ControlValueAccessor {
   private readonly inputField =
     viewChild<ElementRef<HTMLInputElement>>("inputField");
 
-  value = signal<string>("");
+  textValue = signal<string>("");
   private onChangeFn = (_value: string) => {};
   private onTouchedFn = () => {};
+
+  constructor() {
+    effect(() => {
+      const v = this.value();
+      if (v !== undefined) {
+        this.textValue.set(v);
+      }
+    });
+  }
 
   onInput(event: Event): void {
     const target = event.target as HTMLInputElement;
     const nextValue = target.value ?? "";
-    this.value.set(nextValue);
+    this.textValue.set(nextValue);
     this.valueChange.emit(nextValue);
     this.onChangeFn(nextValue);
   }
@@ -100,14 +112,14 @@ export class SearchInputComponent implements ControlValueAccessor {
   }
 
   clear(): void {
-    this.value.set("");
+    this.textValue.set("");
     this.valueChange.emit("");
     this.onChangeFn("");
     this.cleared.emit();
   }
 
   writeValue(value: string | null | undefined): void {
-    this.value.set(value ?? "");
+    this.textValue.set(value ?? "");
   }
 
   registerOnChange(fn: (value: string) => void): void {

@@ -84,11 +84,11 @@
         <span class="completion-label">Profile Completion</span>
         <span class="completion-percentage">{{ profileCompletionPercentage() }}%</span>
       </div>
-      <p-progressBar
+      <app-progress-bar
         [value]="profileCompletionPercentage()"
         [showValue]="false"
-        class="completion-progress"
-      ></p-progressBar>
+        styleClass="completion-progress"
+      />
       @if (profileCompletionMissingFields().length > 0) {
         <div class="completion-hint">
           <i class="pi pi-info-circle"></i>

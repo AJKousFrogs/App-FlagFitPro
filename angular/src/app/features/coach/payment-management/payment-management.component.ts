@@ -29,13 +29,9 @@ import { ButtonComponent } from "../../../shared/components/button/button.compon
 import { AppLoadingComponent } from "../../../shared/components/loading/loading.component";
 import { CardShellComponent } from "../../../shared/components/card-shell/card-shell.component";
 import { PageErrorStateComponent } from "../../../shared/components/page-error-state/page-error-state.component";
-import { Checkbox } from "primeng/checkbox";
-import { DatePicker } from "primeng/datepicker";
 import { InputNumber } from "primeng/inputnumber";
-import { InputText } from "primeng/inputtext";
 import { ProgressBar } from "primeng/progressbar";
 import { RadioButton } from "primeng/radiobutton";
-import { Select } from "primeng/select";
 import { TableModule } from "primeng/table";
 
 import { StatusTagComponent } from "../../../shared/components/status-tag/status-tag.component";
@@ -43,7 +39,12 @@ import {
   getMappedStatusSeverity,
   paymentStatusSeverityMap,
 } from "../../../shared/utils/status.utils";
-import { Textarea } from "primeng/textarea";
+import { CheckboxComponent } from "../../../shared/components/checkbox/checkbox.component";
+import { DatePickerComponent } from "../../../shared/components/date-picker/date-picker.component";
+import { FormInputComponent } from "../../../shared/components/form-input/form-input.component";
+import { SearchInputComponent } from "../../../shared/components/search-input/search-input.component";
+import { SelectComponent } from "../../../shared/components/select/select.component";
+import { TextareaComponent } from "../../../shared/components/textarea/textarea.component";
 import { firstValueFrom, startWith } from "rxjs";
 
 import { ApiService, API_ENDPOINTS } from "../../../core/services/api.service";
@@ -185,16 +186,17 @@ const BALANCE_FILTERS = [
     CommonModule,
     ReactiveFormsModule,
     CardShellComponent,
-    Checkbox,
-    DatePicker,
+    CheckboxComponent,
+    DatePickerComponent,
+    FormInputComponent,
+    SearchInputComponent,
     InputNumber,
-    InputText,
     ProgressBar,
     RadioButton,
-    Select,
+    SelectComponent,
     TableModule,
     StatusTagComponent,
-    Textarea,
+    TextareaComponent,
 
     MainLayoutComponent,
     PageHeaderComponent,
@@ -442,21 +444,16 @@ const BALANCE_FILTERS = [
             <!-- Player Balances -->
             <app-card-shell class="payment-shell-card" title="Player Balances">
               <div header-actions class="balance-filters">
-                <span class="p-input-icon-left">
-                  <i class="pi pi-search"></i>
-                  <input
-                    type="text"
-                    pInputText
-                    [formControl]="balanceSearchControl"
-                    placeholder="Search players..."
-                  />
-                </span>
-                <p-select
+                <app-search-input
+                  [formControl]="balanceSearchControl"
+                  placeholder="Search players..."
+                />
+                <app-select
                   [options]="balanceFilters"
                   [formControl]="balanceFilterControl"
                   optionLabel="label"
                   optionValue="value"
-                ></p-select>
+                />
               </div>
 
               <p-table
@@ -589,10 +586,8 @@ const BALANCE_FILTERS = [
         />
         <form class="fee-form" [formGroup]="feeFormGroup">
           <div class="form-field">
-            <label>Fee Name</label>
-            <input
-              type="text"
-              pInputText
+            <app-form-input
+              label="Fee Name"
               formControlName="name"
               placeholder="e.g., February Team Dues"
             />
@@ -639,22 +634,19 @@ const BALANCE_FILTERS = [
           </div>
 
           <div class="form-field">
-            <label>Due Date</label>
-            <p-datepicker
+            <app-date-picker
+              label="Due Date"
               formControlName="dueDate"
-              [showIcon]="true"
-              class="w-full"
-            ></p-datepicker>
+            />
           </div>
 
           <div class="form-field">
-            <label>Description / Breakdown</label>
-            <textarea
-              pTextarea
+            <app-textarea
+              label="Description / Breakdown"
               formControlName="description"
-              rows="4"
+              [rows]="4"
               placeholder="What this fee covers..."
-            ></textarea>
+            />
           </div>
 
           <div class="form-field">
@@ -687,31 +679,22 @@ const BALANCE_FILTERS = [
             <label>Reminders</label>
             <div class="checkbox-group">
               <div class="checkbox-option">
-                <p-checkbox
+                <app-checkbox
                   formControlName="notifyOnCreate"
-                  [binary]="true"
-                  variant="filled"
-                  inputId="notifyCreate"
-                ></p-checkbox>
-                <label for="notifyCreate">Send notification when created</label>
+                  label="Send notification when created"
+                />
               </div>
               <div class="checkbox-option">
-                <p-checkbox
+                <app-checkbox
                   formControlName="remind3Days"
-                  [binary]="true"
-                  variant="filled"
-                  inputId="remind3"
-                ></p-checkbox>
-                <label for="remind3">Send reminder 3 days before due</label>
+                  label="Send reminder 3 days before due"
+                />
               </div>
               <div class="checkbox-option">
-                <p-checkbox
+                <app-checkbox
                   formControlName="remindOverdue"
-                  [binary]="true"
-                  variant="filled"
-                  inputId="remindOverdue"
-                ></p-checkbox>
-                <label for="remindOverdue">Send reminder when overdue</label>
+                  label="Send reminder when overdue"
+                />
               </div>
             </div>
           </div>
@@ -744,15 +727,14 @@ const BALANCE_FILTERS = [
         />
         <form class="payment-form" [formGroup]="paymentFormGroup">
           <div class="form-field">
-            <label>Player</label>
-            <p-select
+            <app-select
+              label="Player"
               [options]="playerOptions()"
               formControlName="playerId"
               optionLabel="name"
               optionValue="id"
               placeholder="Select Player"
-              class="w-full"
-            ></p-select>
+            />
           </div>
 
           @if (selectedPaymentPlayerId()) {
@@ -775,44 +757,36 @@ const BALANCE_FILTERS = [
               ></p-inputNumber>
             </div>
             <div class="form-field">
-              <label>Payment Method</label>
-              <p-select
+              <app-select
+                label="Payment Method"
                 [options]="paymentMethods"
                 formControlName="method"
                 optionLabel="label"
                 optionValue="value"
-                class="w-full"
-              ></p-select>
+              />
             </div>
           </div>
 
           <div class="form-field">
-            <label>Date Received</label>
-            <p-datepicker
+            <app-date-picker
+              label="Date Received"
               formControlName="date"
-              [showIcon]="true"
-              class="w-full"
-            ></p-datepicker>
+            />
           </div>
 
           <div class="form-field">
-            <label>Reference / Notes (optional)</label>
-            <input
-              type="text"
-              pInputText
+            <app-form-input
+              label="Reference / Notes (optional)"
               formControlName="reference"
               placeholder="e.g., Venmo txn #12345"
             />
           </div>
 
           <div class="checkbox-option">
-            <p-checkbox
+            <app-checkbox
               formControlName="sendConfirmation"
-              [binary]="true"
-              variant="filled"
-              inputId="sendConfirm"
-            ></p-checkbox>
-            <label for="sendConfirm">Send confirmation to player</label>
+              label="Send confirmation to player"
+            />
           </div>
         </form>
 

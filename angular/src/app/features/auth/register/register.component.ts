@@ -19,7 +19,7 @@ import {
 import { HttpBackend, HttpClient, HttpHeaders } from "@angular/common/http";
 import { firstValueFrom } from "rxjs";
 import { ActivatedRoute, Router, RouterModule } from "@angular/router";
-import { InputText } from "primeng/inputtext";
+import { FormInputComponent } from "../../../shared/components/form-input/form-input.component";
 
 import { AuthService } from "../../../core/services/auth.service";
 import { LoggerService } from "../../../core/services/logger.service";
@@ -43,14 +43,14 @@ import { CardShellComponent } from "../../../shared/components/card-shell/card-s
     ReactiveFormsModule,
     ButtonComponent,
     CardShellComponent,
-    InputText,
+    FormInputComponent,
   ],
   template: `
 <div class="register-page elite-auth-shell">
       <app-card-shell class="register-card elite-auth-card elite-auth-card--register">
         <div class="elite-auth-intro">
           <div class="register-logo elite-auth-logo">
-            <i class="pi pi-activity"></i>
+            <i class="pi pi-flag-fill"></i>
           </div>
           <span class="elite-auth-kicker">Get Started</span>
           <h1 class="register-title elite-auth-title">Create Your Account</h1>
@@ -62,22 +62,12 @@ import { CardShellComponent } from "../../../shared/components/card-shell/card-s
 
         <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="elite-auth-form">
           <div class="form-field elite-auth-field">
-            <label for="register-name" class="p-label elite-auth-label">Full Name</label>
-            <input
-              id="register-name"
-              name="name"
-              type="text"
-              pInputText
+            <app-form-input
+              label="Full Name"
               formControlName="name"
               placeholder="Enter your full name"
-              autocomplete="name"
-              maxlength="80"
               data-testid="name-input"
-              [class.ng-invalid]="isFieldInvalid('name')"
-              [attr.aria-invalid]="isFieldInvalid('name') ? 'true' : null"
-              [attr.aria-describedby]="
-                isFieldInvalid('name') ? 'name-error' : null
-              "
+              styleClass="w-full"
             />
             @if (isFieldInvalid("name")) {
               <small id="name-error" class="form-error" role="alert">
@@ -87,22 +77,12 @@ import { CardShellComponent } from "../../../shared/components/card-shell/card-s
           </div>
 
           <div class="form-field elite-auth-field">
-            <label for="register-email" class="p-label elite-auth-label required">Email</label>
-            <input
-              id="register-email"
-              name="email"
-              type="email"
-              pInputText
+            <app-form-input
+              label="Email"
               formControlName="email"
               placeholder="Enter your email"
               data-testid="email-input"
-              [class.ng-invalid]="isFieldInvalid('email')"
-              autocomplete="email"
-              aria-required="true"
-              [attr.aria-invalid]="isFieldInvalid('email') ? 'true' : null"
-              [attr.aria-describedby]="
-                isFieldInvalid('email') ? 'register-email-error' : null
-              "
+              styleClass="w-full"
             />
             @if (isFieldInvalid("email")) {
               <small id="register-email-error" class="form-error" role="alert">
@@ -112,26 +92,13 @@ import { CardShellComponent } from "../../../shared/components/card-shell/card-s
           </div>
 
           <div class="form-field elite-auth-field">
-            <label for="register-password" class="p-label elite-auth-label required"
-              >Password</label
-            >
-            <input
-              id="register-password"
-              name="password"
-              type="password"
-              pInputText
+            <app-form-input
+              label="Password"
               formControlName="password"
+              type="password"
               placeholder="Create a password"
               data-testid="password-input"
-              [class.ng-invalid]="isFieldInvalid('password')"
-              autocomplete="new-password"
-              aria-required="true"
-              [attr.aria-invalid]="isFieldInvalid('password') ? 'true' : null"
-              [attr.aria-describedby]="
-                isFieldInvalid('password')
-                  ? 'register-password-error register-password-hint'
-                  : 'register-password-hint'
-              "
+              styleClass="w-full"
             />
             @if (isFieldInvalid("password")) {
               <small id="register-password-error" class="form-error" role="alert">
@@ -145,28 +112,13 @@ import { CardShellComponent } from "../../../shared/components/card-shell/card-s
           </div>
 
           <div class="form-field elite-auth-field">
-            <label for="register-confirmPassword" class="p-label elite-auth-label required"
-              >Confirm Password</label
-            >
-            <input
-              id="register-confirmPassword"
-              name="confirmPassword"
-              type="password"
-              pInputText
+            <app-form-input
+              label="Confirm Password"
               formControlName="confirmPassword"
+              type="password"
               placeholder="Confirm your password"
               data-testid="confirm-password-input"
-              [class.ng-invalid]="isFieldInvalid('confirmPassword')"
-              autocomplete="new-password"
-              aria-required="true"
-              [attr.aria-invalid]="
-                isFieldInvalid('confirmPassword') ? 'true' : null
-              "
-              [attr.aria-describedby]="
-                isFieldInvalid('confirmPassword')
-                  ? 'register-confirmPassword-error'
-                  : null
-              "
+              styleClass="w-full"
             />
             @if (isFieldInvalid("confirmPassword")) {
               <small

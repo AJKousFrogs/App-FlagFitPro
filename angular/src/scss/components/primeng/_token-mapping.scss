@@ -400,16 +400,16 @@
     --p-accordion-border-color: var(--color-border-muted);
 
     // ============================================
-    // TABS
+    // TABS (pill tablist — structure in _brand-overrides.scss)
     // ============================================
 
     --p-tabs-nav-padding: 0;
     --p-tabs-nav-gap: var(--space-1);
-    --p-tabs-tab-padding: var(--space-3) var(--space-4);
-    --p-tabs-tab-border-radius: var(--radius-lg) var(--radius-lg) 0 0;
-    --p-tabs-tab-active-border-color: var(--ds-primary-green);
+    --p-tabs-tab-padding: var(--space-2) var(--space-5);
+    --p-tabs-tab-border-radius: var(--radius-lg);
+    --p-tabs-tab-active-border-color: transparent;
     --p-tabs-tab-active-color: var(--ds-primary-green);
-    --p-tabs-content-padding: var(--space-4);
+    --p-tabs-content-padding: 0;
 
     // ============================================
     // MENU
@@ -417,11 +417,11 @@
 
     --p-menu-background: var(--color-surface-primary);
     --p-menu-border-radius: var(--radius-xl);
-    --p-menu-shadow: var(--shadow-3);
+    --p-menu-shadow: var(--shadow-lg);
     --p-menu-padding: var(--space-2);
-    --p-menu-item-padding: var(--space-2) var(--space-3);
-    --p-menu-item-border-radius: var(--radius-md);
-    --p-menu-item-hover-background: var(--color-surface-hover);
+    --p-menu-item-padding: var(--space-3) var(--space-4);
+    --p-menu-item-border-radius: var(--radius-lg);
+    --p-menu-item-hover-background: var(--ds-primary-green-subtle);
 
     // ============================================
     // AVATAR

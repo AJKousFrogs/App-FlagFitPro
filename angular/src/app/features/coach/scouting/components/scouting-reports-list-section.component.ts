@@ -1,6 +1,6 @@
 import { CommonModule, DatePipe } from "@angular/common";
 import { ChangeDetectionStrategy, Component, input, output } from "@angular/core";
-import { Select, type SelectChangeEvent } from "primeng/select";
+import { SelectComponent } from "../../../../shared/components/select/select.component";
 import { ButtonComponent } from "../../../../shared/components/button/button.component";
 import { IconButtonComponent } from "../../../../shared/components/button/icon-button.component";
 import { CardShellComponent } from "../../../../shared/components/card-shell/card-shell.component";
@@ -30,7 +30,7 @@ export interface ScoutingOpponentFilterOption {
   imports: [
     CommonModule,
     DatePipe,
-    Select,
+    SelectComponent,
     ButtonComponent,
     IconButtonComponent,
     CardShellComponent,
@@ -50,9 +50,7 @@ export class ScoutingReportsListSectionComponent {
   readonly shareReport = output<ScoutingReportListItem>();
   readonly editReport = output<ScoutingReportListItem>();
 
-  emitFilterChange(event: SelectChangeEvent): void {
-    this.filterChange.emit(
-      typeof event.value === "string" ? event.value : null,
-    );
+  emitFilterChange(value: string | null): void {
+    this.filterChange.emit(value);
   }
 }

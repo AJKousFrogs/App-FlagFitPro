@@ -9,7 +9,7 @@ import {
   computed,
 } from "@angular/core";
 import { ControlValueAccessor, NG_VALUE_ACCESSOR, FormsModule } from "@angular/forms";
-import { SelectModule, SelectChangeEvent } from "primeng/select";
+import { SelectModule, type SelectChangeEvent } from "primeng/select";
 
 type SelectValue = SelectChangeEvent["value"];
 type SelectResolvedValue<T> = T extends { value: infer V } ? V | null : T | null;
@@ -84,10 +84,16 @@ export class SelectComponent<T = unknown> implements ControlValueAccessor {
   panelStyleClass = input<string>("");
   appendTo = input<string | HTMLElement>("body");
   hint = input<string>("");
+  /** When true, allows custom text entry (PrimeNG Select). */
+  editable = input(false);
 
   // Outputs
   change = output<SelectValue>();
   valueChange = output<SelectResolvedValue<T>>();
+  /** Same payload as PrimeNG `onChange` — for templates using `(onChange)`. */
+  onChange = output<SelectChangeEvent>();
+  /** Emits resolved option value — for templates using `(ngModelChange)`. */
+  ngModelChange = output<SelectResolvedValue<T>>();
 
   // Internal
   protected value = signal<SelectValue>(null);
@@ -102,7 +108,10 @@ export class SelectComponent<T = unknown> implements ControlValueAccessor {
   onSelectChange(event: SelectChangeEvent): void {
     this.onModelChange(event.value);
     this.change.emit(event.value);
-    this.valueChange.emit(this.resolveValue(event.value));
+    const resolved = this.resolveValue(event.value);
+    this.valueChange.emit(resolved);
+    this.onChange.emit(event);
+    this.ngModelChange.emit(resolved);
     this.onModelTouched();
   }
 

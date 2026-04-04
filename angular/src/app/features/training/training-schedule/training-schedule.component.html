@@ -100,19 +100,12 @@
 
               <!-- Show Week Numbers Checkbox -->
               <div class="show-week-toggle">
-                <p-checkbox
+                <app-checkbox
+                  label="Show Week Numbers"
                   [ngModel]="showWeekNumbers()"
-                  (onChange)="onShowWeekToggleChange($event)"
+                  (change)="onShowWeekToggleChange($event)"
                   [binary]="true"
-                  variant="filled"
-                  inputId="showWeekNumbers"
-                ></p-checkbox>
-                <label
-                  for="showWeekNumbers"
-                  [attr.aria-label]="'Toggle week numbers display on calendar'"
-                >
-                  Show Week Numbers
-                </label>
+                ></app-checkbox>
               </div>
 
               <!-- View Mode Toggle -->

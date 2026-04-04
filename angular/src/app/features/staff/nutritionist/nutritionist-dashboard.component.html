@@ -12,15 +12,13 @@
           >
         </app-page-header>
 
-        @if (loading()) {
-          <app-loading message="Loading nutrition data..." variant="inline" />
-        } @else if (loadError()) {
-          <app-page-error-state
-            title="Unable to load nutrition data"
-            [message]="loadError()!"
-            (retry)="loadData()"
-          />
-        } @else {
+        <app-staff-dashboard-load-state
+          [loading]="loading()"
+          [loadError]="loadError()"
+          loadingMessage="Loading nutrition data..."
+          errorTitle="Unable to load nutrition data"
+          (retry)="loadData()"
+        >
           <!-- Overview Stats -->
           <div class="stats-grid">
             <div class="stat-card">
@@ -131,8 +129,8 @@
                             <app-progress-bar
                               [value]="getAthleteCompliance(athlete.id)"
                               [showValue]="false"
-                              class="compliance-bar"
-                            ></app-progress-bar>
+                              styleClass="compliance-bar"
+                            />
                             <span>{{ getAthleteCompliance(athlete.id) }}%</span>
                           </div>
                         </td>
@@ -256,7 +254,7 @@
                 />
             </div>
           </app-tabs>
-        }
+        </app-staff-dashboard-load-state>
 
         <!-- Athlete Details Dialog -->
         <app-dialog

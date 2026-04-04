@@ -1,22 +1,7 @@
 @use "styles/mixins" as *;
 
-/**
- * Bento Grid Component - Shared Dashboard Layout System
- *
- * Purpose: Eliminate 29+ duplicate bento-item patterns across 16 files
- * Usage: Apply .bento-grid and .bento-item classes to dashboard layouts
- *
- * @layer components
- * @see FRONTEND_AUDIT_REPORT.md Section 1.2.3
- *
- * Architecture:
- * - Mobile-first responsive design
- * - Uses CSS Grid with auto-flow
- * - No !important declarations (uses CSS layers for proper cascade)
- * - Follows design system spacing tokens
- */
+/** Shared bento grid patterns (@layer components). */
 
-// Design system tokens and mixins are already available via main styles.scss import
 @use "../utilities" as *;
 
 @layer components {
@@ -136,7 +121,8 @@
     }
 
     &:active {
-      transform: scale(0.99);
+      transform: scale(var(--motion-scale-press));
+      transition-duration: var(--transition-fast);
     }
   }
 
@@ -196,11 +182,6 @@
   /* ============================================
      GRID ITEM SIZING
      ============================================ */
-
-  /**
-   * Span utilities - control how many columns an item takes
-   * Uses CSS layers to avoid !important
-   */
 
   .bento-item--span-2 {
     grid-column: span 2;

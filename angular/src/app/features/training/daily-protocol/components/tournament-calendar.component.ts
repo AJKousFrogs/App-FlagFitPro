@@ -24,10 +24,12 @@ import { EmptyStateComponent } from "../../../../shared/components/empty-state/e
 import { AppLoadingComponent } from "../../../../shared/components/loading/loading.component";
 import { IconButtonComponent } from "../../../../shared/components/button/icon-button.component";
 import { PageErrorStateComponent } from "../../../../shared/components/page-error-state/page-error-state.component";
-import { DatePicker } from "primeng/datepicker";
 import { InputNumber } from "primeng/inputnumber";
-import { InputText } from "primeng/inputtext";
-import { Select, type SelectChangeEvent } from "primeng/select";
+import { type SelectChangeEvent } from "primeng/select";
+import { FormInputComponent } from "../../../../shared/components/form-input/form-input.component";
+import { TextareaComponent } from "../../../../shared/components/textarea/textarea.component";
+import { SelectComponent } from "../../../../shared/components/select/select.component";
+import { DatePickerComponent } from "../../../../shared/components/date-picker/date-picker.component";
 import { Tag } from "primeng/tag";
 import { StatusTagComponent } from "../../../../shared/components/status-tag/status-tag.component";
 import { Tooltip } from "primeng/tooltip";
@@ -76,10 +78,11 @@ interface EventTypeOption {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     FormsModule,
-    InputText,
+    FormInputComponent,
+    TextareaComponent,
     InputNumber,
-    DatePicker,
-    Select,
+    DatePickerComponent,
+    SelectComponent,
     Tag,
     StatusTagComponent,
     Tooltip,
@@ -280,78 +283,63 @@ interface EventTypeOption {
 
       <div class="tournament-form">
         <div class="form-field">
-          <label for="name">Tournament Name *</label>
-          <input
-            pInputText
-            id="name"
+          <app-form-input
+            label="Tournament Name *"
             [value]="formData.name ?? ''"
-            (input)="onFormNameInput($event)"
+            (valueChange)="onFormNameChange($event)"
             placeholder="e.g., Adria Bowl 2026"
-            class="w-full"
           />
         </div>
 
         <div class="form-row">
           <div class="form-field">
-            <label for="startDate">Start Date *</label>
-            <p-datepicker
-              id="startDate"
+            <app-date-picker
+              label="Start Date *"
               [ngModel]="formData.startDate"
               (onSelect)="onFormStartDateChange($event)"
               dateFormat="yy-mm-dd"
               [showIcon]="true"
-              class="w-full"
-            ></p-datepicker>
+            />
           </div>
           <div class="form-field">
-            <label for="endDate">End Date *</label>
-            <p-datepicker
-              id="endDate"
+            <app-date-picker
+              label="End Date *"
               [ngModel]="formData.endDate"
               (onSelect)="onFormEndDateChange($event)"
               dateFormat="yy-mm-dd"
               [showIcon]="true"
-              class="w-full"
-            ></p-datepicker>
+            />
           </div>
         </div>
 
         <div class="form-row">
           <div class="form-field">
-            <label for="country">Country</label>
-            <input
-              pInputText
-              id="country"
+            <app-form-input
+              label="Country"
               [value]="formData.country ?? ''"
-              (input)="onFormCountryInput($event)"
+              (valueChange)="onFormCountryChange($event)"
               placeholder="e.g., Croatia"
-              class="w-full"
             />
           </div>
           <div class="form-field">
-            <label for="city">City</label>
-            <input
-              pInputText
-              id="city"
+            <app-form-input
+              label="City"
               [value]="formData.city ?? ''"
-              (input)="onFormCityInput($event)"
+              (valueChange)="onFormCityChange($event)"
               placeholder="e.g., Zagreb"
-              class="w-full"
             />
           </div>
         </div>
 
         <div class="form-field">
-          <label for="eventType">Event Type</label>
-          <p-select
-            id="eventType"
+          <app-select
+            label="Event Type"
             [options]="eventTypes"
             [ngModel]="formData.eventType"
             (onChange)="onFormEventTypeSelect($event)"
             optionLabel="label"
             optionValue="value"
-            class="w-full"
-          ></p-select>
+          ></app-select>
         </div>
 
         <div class="form-row">
@@ -408,28 +396,21 @@ interface EventTypeOption {
         }
 
         <div class="form-field">
-          <label for="externalUrl">External URL (optional)</label>
-          <input
-            pInputText
-            id="externalUrl"
+          <app-form-input
+            label="External URL (optional)"
             [value]="formData.externalUrl ?? ''"
-            (input)="onFormExternalUrlInput($event)"
+            (valueChange)="onFormExternalUrlChange($event)"
             placeholder="https://..."
-            class="w-full"
           />
         </div>
 
         <div class="form-field">
-          <label for="notes">Notes</label>
-          <textarea
-            pInputText
-            id="notes"
+          <app-textarea
+            label="Notes"
             [value]="formData.notes ?? ''"
-            (input)="onFormNotesInput($event)"
-            rows="2"
+            (valueChange)="onFormNotesChange($event)"
             placeholder="Any additional notes..."
-            class="w-full"
-          ></textarea>
+          />
         </div>
       </div>
 
@@ -485,10 +466,6 @@ export class TournamentCalendarComponent {
 
   onFormNameChange(value: string): void {
     this.formData = { ...this.formData, name: value };
-  }
-
-  onFormNameInput(event: Event): void {
-    this.onFormNameChange(this.readInputValue(event));
   }
 
   onFormStartDateChange(value: string | Date | null): void {

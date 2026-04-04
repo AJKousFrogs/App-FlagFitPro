@@ -14,19 +14,6 @@
   background: var(--surface-secondary);
 }
 
-::ng-deep .onboarding-mini-progress {
-  .p-progressbar {
-    height: var(--space-1) !important;
-    border-radius: 0;
-    background: transparent;
-
-    .p-progressbar-value {
-      background: var(--ds-primary-green);
-      transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-  }
-}
-
 .shell-header {
   padding: var(--space-6) var(--component-card-padding) var(--space-4);
   display: flex;
@@ -161,30 +148,6 @@
 .stepper-nav-container {
   padding: 0 var(--component-card-padding) var(--space-4);
   overflow-x: auto;
-}
-
-::ng-deep .onboarding-modern-stepper {
-  .p-stepper-nav {
-    justify-content: center;
-    gap: var(--space-4);
-    background: transparent;
-    border: none;
-    padding: 0;
-  }
-
-  .p-stepper-header {
-    background: transparent !important;
-    padding: 0 !important;
-  }
-
-  .p-stepper-action {
-    background: transparent !important;
-    padding: 0 !important;
-  }
-
-  .p-stepper-separator {
-    display: none;
-  }
 }
 
 .modern-step-dot {

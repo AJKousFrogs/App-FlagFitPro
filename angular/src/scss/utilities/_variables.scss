@@ -74,33 +74,36 @@ $line-heights: (
 // BREAKPOINTS - Aligned with design-system-tokens where overlapping
 // ================================
 
+// IMPORTANT: Media query expressions cannot use CSS custom properties (var()).
+// These must be hardcoded rem values that match the token values in
+// design-system-tokens.scss. Update both places if breakpoints change.
 $breakpoints: (
   xs: 23.375rem,
-  // Extra small mobile (374px)
+  // Extra small mobile (374px)  — matches --breakpoint-xs
   xs-narrow: 30rem,
-  // Narrow mobile (480px, e.g. feedback toast)
-  sm: var(--breakpoint-sm),
-  // Mobile - 640px
-  md: var(--breakpoint-md),
-  // Tablet - 768px
+  // Narrow mobile (480px)
+  sm: 40rem,
+  // Mobile - 640px               — matches --breakpoint-sm
+  md: 48rem,
+  // Tablet - 768px               — matches --breakpoint-md
   md-min: 48.0625rem,
   // Just above md (769px)
-  lg: var(--breakpoint-lg),
-  // Desktop - 1024px
+  lg: 64rem,
+  // Desktop - 1024px             — matches --breakpoint-lg
   lg-min: 63.9375rem,
   // Just below lg (1023px)
   lg-max: 74.9375rem,
   // Desktop upper (1199px) - 2-col grid transition
   xl-min: 75rem,
   // XL lower (1200px)
-  xl: var(--breakpoint-xl),
-  // Large desktop - 1280px
+  xl: 80rem,
+  // Large desktop - 1280px       — matches --breakpoint-xl
   xl-max: 87.4375rem,
   // XL upper (1399px) - roster 3-col transition
   xxl-wide: 87.5rem,
   // Wide desktop (1400px)
-  xxl: var(--breakpoint-2xl),
-  // Extra large - 1536px
+  xxl: 96rem,
+  // Extra large - 1536px         — matches --breakpoint-2xl
 );
 
 // ================================

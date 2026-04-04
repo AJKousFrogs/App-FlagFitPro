@@ -26,11 +26,11 @@ import { AppLoadingComponent } from "../../../shared/components/loading/loading.
 import { PageErrorStateComponent } from "../../../shared/components/page-error-state/page-error-state.component";
 
 import { ProgressBar } from "primeng/progressbar";
-import { Select, type SelectChangeEvent } from "primeng/select";
 import { TableModule } from "primeng/table";
 
 import { StatusTagComponent } from "../../../shared/components/status-tag/status-tag.component";
-import { Textarea } from "primeng/textarea";
+import { SelectComponent } from "../../../shared/components/select/select.component";
+import { TextareaComponent } from "../../../shared/components/textarea/textarea.component";
 import { LoggerService } from "../../../core/services/logger.service";
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";
@@ -122,10 +122,10 @@ const POSITIONS = [
   imports: [
     CommonModule,
     ProgressBar,
-    Select,
+    SelectComponent,
     TableModule,
     StatusTagComponent,
-    Textarea,
+    TextareaComponent,
 
     MainLayoutComponent,
     PageHeaderComponent,
@@ -506,14 +506,13 @@ const POSITIONS = [
                   @for (slot of starterSlots(); track slot.position) {
                     <div class="lineup-slot">
                       <span class="slot-position">{{ slot.position }}</span>
-                      <p-select
+                      <app-select
                         [options]="availablePlayers()"
-                        (onChange)="onLineupSlotSelect(slot, $event)"
+                        (valueChange)="onLineupSlotChange(slot, $event)"
                         optionLabel="name"
                         optionValue="id"
                         placeholder="Select Player"
-                        class="w-full"
-                      ></p-select>
+                      />
                       @if (slot.note) {
                         <span class="slot-note">{{ slot.note }}</span>
                       }
@@ -526,14 +525,13 @@ const POSITIONS = [
                   @for (slot of rotationSlots(); track slot.position) {
                     <div class="lineup-slot">
                       <span class="slot-position">{{ slot.position }}</span>
-                      <p-select
+                      <app-select
                         [options]="availablePlayers()"
-                        (onChange)="onLineupSlotSelect(slot, $event)"
+                        (valueChange)="onLineupSlotChange(slot, $event)"
                         optionLabel="name"
                         optionValue="id"
                         placeholder="Select Player"
-                        class="w-full"
-                      ></p-select>
+                      />
                       @if (slot.note) {
                         <span
                           class="slot-note"
@@ -547,13 +545,12 @@ const POSITIONS = [
 
                 <div class="lineup-notes">
                   <h5>💡 Lineup Notes</h5>
-                  <textarea
-                    pTextarea
+                  <app-textarea
                     [value]="lineupNotes"
-                    (input)="onLineupNotesInput($event)"
-                    rows="3"
+                    (valueChange)="lineupNotes = $event"
+                    [rows]="3"
                     placeholder="Add lineup notes..."
-                  ></textarea>
+                  />
                 </div>
               </div>
             }
@@ -803,21 +800,18 @@ export class TournamentManagementComponent implements OnInit {
 
   readonly browseTournamentsHandler = (): void => this.browseTournaments();
 
-  onLineupSlotChange(slot: LineupSlot, playerId: string | null | undefined): void {
-    slot.playerId = playerId ?? null;
+  onLineupSlotChange(slot: LineupSlot, value: unknown): void {
+    if (value == null) {
+      slot.playerId = null;
+      return;
+    }
+    if (typeof value === "object" && "id" in value) {
+      slot.playerId = String((value as { id: string }).id);
+      return;
+    }
+    slot.playerId = String(value);
   }
 
-  onLineupSlotSelect(slot: LineupSlot, event: SelectChangeEvent): void {
-    this.onLineupSlotChange(
-      slot,
-      (event.value as string | null | undefined) ?? null,
-    );
-  }
-
-  onLineupNotesInput(event: Event): void {
-    const input = event.target as HTMLTextAreaElement | null;
-    this.lineupNotes = input?.value ?? "";
-  }
 
   closeDetailDialog(): void {
     this.showDetailDialog = false;

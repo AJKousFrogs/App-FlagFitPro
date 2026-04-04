@@ -115,10 +115,7 @@
                     <i class="pi pi-megaphone"></i>
                     <span class="channel-name">{{ channel.name }}</span>
                     @if (channel.unread_count) {
-                      <p-badge
-                        [value]="channel.unread_count"
-                        severity="danger"
-                      ></p-badge>
+                      <app-badge variant="danger">{{ channel.unread_count }}</app-badge>
                     }
                   </button>
                 }
@@ -158,10 +155,7 @@
                       ></span>
                     }
                     @if (channel.unread_count) {
-                      <p-badge
-                        [value]="channel.unread_count"
-                        severity="danger"
-                      ></p-badge>
+                      <app-badge variant="danger">{{ channel.unread_count }}</app-badge>
                     }
                   </div>
                 </button>
@@ -184,10 +178,7 @@
                     <i [class]="section.itemIcon"></i>
                     <span class="channel-name">{{ channel.name }}</span>
                     @if (channel.unread_count) {
-                      <p-badge
-                        [value]="channel.unread_count"
-                        severity="danger"
-                      ></p-badge>
+                      <app-badge variant="danger">{{ channel.unread_count }}</app-badge>
                     }
                   </button>
                 }
@@ -199,9 +190,11 @@
           <div class="messages-area">
             @if (!currentChannel()) {
               <div class="no-channel-selected">
-                <i class="pi pi-comments icon-3xl icon-secondary"></i>
-                <h3>Select a channel</h3>
-                <p>Choose a channel from the sidebar to start chatting</p>
+                <i class="pi pi-comments"></i>
+                <div class="no-channel-text">
+                  <h3>No channel selected</h3>
+                  <p>Pick a channel from the sidebar to view messages and chat with your team.</p>
+                </div>
               </div>
             } @else {
               <!-- Important/Pinned Banner -->
@@ -240,7 +233,7 @@
                       }
 
                       <div class="message-row">
-                      <p-avatar
+                      <app-avatar
                         [label]="
                           getInitialsStr(
                             message.author?.full_name ||
@@ -248,12 +241,12 @@
                               'U'
                           )
                         "
-                        [class]="
+                        [styleClass]="
                           'mr-2 avatar-token ' +
                           getAvatarColorClass(message.author?.full_name || '')
                         "
                         shape="circle"
-                      ></p-avatar>
+                      />
 
                         <div class="message-content">
                           <div class="message-header">
@@ -344,10 +337,9 @@
                           (click)="insertMention(member)"
                           [attr.aria-label]="'Mention ' + member.full_name"
                         >
-                          <p-avatar
+                          <app-avatar
                             [label]="getInitialsStr(member.full_name)"
-                            size="normal"
-                          ></p-avatar>
+                          />
                           <span>{{ member.full_name }}</span>
                         </button>
                       }
@@ -379,15 +371,14 @@
                       ></app-button>
                     }
 
-                    <input
+                    <app-form-input
                       id="chat-newMessage"
                       name="message"
-                      pInputText
                       [value]="newMessage"
-                      (input)="onMessageFieldInput($event)"
+                      (valueChange)="onMessageFieldInput($event)"
                       (keydown.enter)="sendMessage()"
                       [placeholder]="getInputPlaceholder()"
-                      class="message-input"
+                      styleClass="message-input"
                       autocomplete="off"
                     />
 

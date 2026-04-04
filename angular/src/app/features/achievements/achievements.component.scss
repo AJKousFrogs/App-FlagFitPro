@@ -12,7 +12,6 @@
 
   .bento-item {
     @extend %bento-surface-card;
-    border: var(--border-1) solid var(--ui-border-subtle);
     padding: var(--space-5);
 
     .bento-title {
@@ -51,7 +50,7 @@
 
     &.highlight {
       background: var(--gradient-primary);
-      color: white;
+      color: var(--color-text-on-primary);
       .lbl { color: var(--overlay-white-80); }
     }
 
@@ -147,7 +146,7 @@
   .cat-chip {
     padding: var(--space-2) var(--space-3);
     border-radius: var(--radius-full);
-    border: 1px solid var(--ui-border-default);
+    border: var(--border-1) solid var(--ui-border-default);
     background: transparent;
     font-size: var(--ds-font-size-xs);
     font-weight: var(--ds-font-weight-medium);
@@ -184,7 +183,7 @@
     &[aria-selected="true"] {
       background: var(--ds-primary-green);
       border-color: var(--ds-primary-green);
-      color: white;
+      color: var(--color-text-on-primary);
     }
   }
 
@@ -215,7 +214,7 @@
     background: var(--ui-surface-subtle);
     border-radius: var(--radius-lg);
     text-align: center;
-    border: 1px solid transparent;
+    border: var(--border-1) solid transparent;
     transition: all var(--transition-base);
     position: relative;
 
@@ -239,8 +238,8 @@
     }
 
     .badge-visual {
-      width: 64px;
-      height: 64px;
+      width: var(--space-16);
+      height: var(--space-16);
       margin: 0 auto var(--space-3);
       background: var(--surface-primary);
       border-radius: var(--radius-full);
@@ -251,13 +250,13 @@
 
       // Emoji styling
       .emoji {
-        font-size: 2rem;
+        font-size: var(--ds-font-size-3xl);
         line-height: 1;
       }
 
       // PrimeIcon styling
       .badge-icon {
-        font-size: 2rem;
+        font-size: var(--ds-font-size-3xl);
         color: var(--ds-primary-green);
         line-height: 1;
       }
@@ -267,9 +266,9 @@
         bottom: -2px;
         right: -2px;
         color: var(--color-status-success);
-        font-size: 1.125rem;
-        background: white;
-        border-radius: 50%;
+        font-size: var(--ds-font-size-lg);
+        background: var(--surface-primary);
+        border-radius: var(--radius-full);
         padding: var(--space-0-5);
         box-shadow: var(--shadow-sm);
       }
@@ -287,7 +286,7 @@
       font-size: var(--ds-font-size-xs);
       color: var(--color-text-secondary);
       line-height: var(--line-height-normal);
-      min-height: 2.5rem;
+      min-height: var(--space-10);
       display: -webkit-box;
       -webkit-line-clamp: 2;
       -webkit-box-orient: vertical;
@@ -374,16 +373,16 @@
 
       p {
         font-size: var(--ds-font-size-xs);
-        min-height: 2.2rem;
+        min-height: auto;
       }
 
       .badge-visual {
-        width: 56px;
-        height: 56px;
+        width: 3.5rem;
+        height: 3.5rem;
 
         .emoji,
         .badge-icon {
-          font-size: 1.75rem;
+          font-size: var(--ds-font-size-2xl);
         }
       }
     }

@@ -2,6 +2,7 @@ import { CommonModule } from "@angular/common";
 import {
   ChangeDetectionStrategy,
   Component,
+  effect,
   forwardRef,
   input,
   output,
@@ -35,14 +36,14 @@ import { TextareaModule } from "primeng/textarea";
       }
       <textarea
         pTextarea
-        [(ngModel)]="value"
+        [ngModel]="textValue()"
+        (ngModelChange)="onTextChange($event)"
         [placeholder]="placeholder()"
         [disabled]="isDisabled()"
         [id]="inputId()"
         [rows]="rows()"
         [autoResize]="autoResize()"
         [class]="'w-full ' + styleClass()"
-        (input)="onInput($event)"
         (blur)="onBlur()"
       ></textarea>
       @if (hint()) {
@@ -58,6 +59,8 @@ import { TextareaModule } from "primeng/textarea";
   `]
 })
 export class TextareaComponent implements ControlValueAccessor {
+  value = input<string | undefined>(undefined, { alias: "value" });
+
   // Inputs
   label = input<string>("");
   placeholder = input<string>("");
@@ -74,7 +77,7 @@ export class TextareaComponent implements ControlValueAccessor {
   valueChange = output<string>();
 
   // Internal
-  protected value = signal<string>("");
+  protected textValue = signal<string>("");
   private _cvaDisabled = signal(false);
 
   protected isDisabled = computed(() => this.disabled() || this._cvaDisabled());
@@ -83,8 +86,17 @@ export class TextareaComponent implements ControlValueAccessor {
   private onModelChange: (value: string) => void = () => {};
   private onModelTouched: () => void = () => {};
 
-  onInput(event: Event): void {
-    const val = (event.target as HTMLTextAreaElement).value;
+  constructor() {
+    effect(() => {
+      const v = this.value();
+      if (v !== undefined) {
+        this.textValue.set(v);
+      }
+    });
+  }
+
+  onTextChange(val: string): void {
+    this.textValue.set(val);
     this.onModelChange(val);
     this.change.emit(val);
     this.valueChange.emit(val);
@@ -95,7 +107,7 @@ export class TextareaComponent implements ControlValueAccessor {
   }
 
   writeValue(value: string): void {
-    this.value.set(value || "");
+    this.textValue.set(value || "");
   }
 
   registerOnChange(fn: (value: string) => void): void {

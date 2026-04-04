@@ -15,9 +15,10 @@ import {
 } from "@angular/core";
 
 // PrimeNG
-import { Avatar } from "primeng/avatar";
-import { InputText } from "primeng/inputtext";
-import { Select, type SelectChangeEvent } from "primeng/select";
+import { AvatarComponent } from "../../../../shared/components/avatar/avatar.component";
+import { type SelectChangeEvent } from "primeng/select";
+import { SearchInputComponent } from "../../../../shared/components/search-input/search-input.component";
+import { SelectComponent } from "../../../../shared/components/select/select.component";
 import { TableModule } from "primeng/table";
 
 import { IconButtonComponent } from "../../../../shared/components/button/icon-button.component";
@@ -43,28 +44,22 @@ import {
     FormsModule,
     TableModule,
     StatusTagComponent,
-    InputText,
-    Select,
-    Avatar,
+    SearchInputComponent,
+    SelectComponent,
+    AvatarComponent,
     IconButtonComponent,
   ],
   template: `
     <div class="tab-content">
       <!-- Filters -->
       <div class="table-filters">
-        <span class="p-input-icon-left">
-          <i class="pi pi-search" aria-hidden="true"></i>
-          <input
-            type="text"
-            pInputText
-            [value]="searchValue()"
-            (input)="onSearchInput($event)"
-            placeholder="Search videos..."
-            aria-label="Search videos by title or description"
-            class="filter-input"
-          />
-        </span>
-        <p-select
+        <app-search-input
+          [ngModel]="searchValue()"
+          (ngModelChange)="onSearchValueChange($event)"
+          placeholder="Search videos..."
+          class="filter-input"
+        />
+        <app-select
           inputId="position-filter"
           [ngModel]="positionValue()"
           (onChange)="onPositionFilterSelect($event)"
@@ -72,9 +67,8 @@ import {
           placeholder="All Positions"
           [showClear]="true"
           class="filter-select"
-          [attr.aria-label]="'Filter videos by position'"
-        ></p-select>
-        <p-select
+        ></app-select>
+        <app-select
           inputId="status-filter"
           [ngModel]="statusValue()"
           (onChange)="onStatusFilterSelect($event)"
@@ -82,8 +76,7 @@ import {
           placeholder="All Statuses"
           [showClear]="true"
           class="filter-select"
-          [attr.aria-label]="'Filter videos by status'"
-        ></p-select>
+        ></app-select>
       </div>
 
       <!-- Videos Table -->
@@ -117,12 +110,11 @@ import {
         <ng-template #body let-video>
           <tr>
             <td>
-              <p-avatar
-                icon="pi pi-play"
+              <app-avatar
                 shape="circle"
-                class="video-avatar"
+                styleClass="video-avatar"
                 ariaLabel="Video thumbnail"
-              ></p-avatar>
+              />
             </td>
             <td>
               <div class="video-title-cell">
@@ -276,9 +268,8 @@ export class VideoCurationVideoTableComponent {
     });
   }
 
-  onSearchInput(event: Event): void {
-    const input = event.target as HTMLInputElement | null;
-    this.searchValue.set(input?.value ?? "");
+  onSearchValueChange(value: string): void {
+    this.searchValue.set(value);
     this.onFilterChange();
   }
 

@@ -28,11 +28,11 @@
       }
     </div>
     <div class="progress-summary">
-      <p-progressBar
+      <app-progress-bar
         [value]="weeklyProgress()"
         [showValue]="false"
-        class="custom-progress"
-      ></p-progressBar>
+        styleClass="custom-progress"
+      />
       <span class="progress-text">{{ weeklyProgress() }}% completed</span>
     </div>
   </app-card-shell>

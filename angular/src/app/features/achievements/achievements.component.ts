@@ -16,7 +16,7 @@ import {
   OnInit,
   signal,
 } from "@angular/core";
-import { ProgressBar } from "primeng/progressbar";
+import { ProgressBarComponent } from "../../shared/components/progress-bar/progress-bar.component";
 import { TableModule } from "primeng/table";
 
 import { StatusTagComponent } from "../../shared/components/status-tag/status-tag.component";
@@ -259,7 +259,7 @@ const CATEGORY_LABELS: Record<
     CommonModule,
     DatePipe,
     DecimalPipe,
-    ProgressBar,
+    ProgressBarComponent,
     TableModule,
     StatusTagComponent,
     MainLayoutComponent,
@@ -283,7 +283,9 @@ const CATEGORY_LABELS: Record<
             <div class="stat-box highlight">
               <span class="lbl">Total Points</span>
               <span class="val">{{ totalPoints() | number }}</span>
-              <app-status-tag [value]="'Top ' + userRankPercentile() + '%'" severity="info" size="sm" />
+              @if (totalPoints() > 0) {
+                <app-status-tag [value]="'Top ' + userRankPercentile() + '%'" severity="info" size="sm" />
+              }
             </div>
             <div class="stat-box">
               <span class="lbl">Badges Earned</span>
@@ -296,7 +298,7 @@ const CATEGORY_LABELS: Record<
             <div class="stat-box progress-box">
               <span class="lbl">Season Progress</span>
               <span class="val">{{ progressPercent() }}%</span>
-              <p-progressBar [value]="progressPercent()" [showValue]="false" />
+              <app-progress-bar [value]="progressPercent()" [showValue]="false" />
             </div>
           </div>
         </div>
@@ -386,10 +388,9 @@ const CATEGORY_LABELS: Record<
                 <footer class="badge-footer">
                   <span class="pts" aria-label="{{ achievement.points }} points">{{ achievement.points }} PTS</span>
                   @if (!achievement.isUnlocked && achievement.target) {
-                    <p-progressBar
+                    <app-progress-bar
                       [value]="(achievement.progress || 0) / achievement.target * 100"
                       [showValue]="false"
-                      [attr.aria-label]="'Progress: ' + (achievement.progress || 0) + ' of ' + achievement.target"
                     />
                   }
                 </footer>
