@@ -476,8 +476,11 @@ label,
 
 /* Menu Items - Body (1rem/400) */
 .p-menu .p-menuitem-text,
+.p-menu .p-menu-item-label,
 .p-tieredmenu .p-menuitem-text,
-.p-contextmenu .p-menuitem-text {
+.p-tieredmenu .p-tieredmenu-item-label,
+.p-contextmenu .p-menuitem-text,
+.p-contextmenu .p-contextmenu-item-label {
   font-family: var(--font-family-sans);
   font-size: var(--font-body-size);
   font-weight: var(--font-body-weight, 400);

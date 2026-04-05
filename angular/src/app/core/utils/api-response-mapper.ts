@@ -61,6 +61,10 @@ export function mapDailyProtocolResponse<T>(data: T): T {
     mapped.ai_rationale = source.aiRationale;
   }
 
+  if ("trainingFocus" in source && !("training_focus" in source)) {
+    mapped.training_focus = source.trainingFocus;
+  }
+
   // coach_alert fields
   if ("coachAlertActive" in source && !("coach_alert_active" in source)) {
     mapped.coach_alert_active = source.coachAlertActive;

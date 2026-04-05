@@ -121,7 +121,7 @@
 
 .dialog-textarea {
   width: 100%;
-  min-height: 8rem;
+  min-height: calc(var(--space-4) * 8);
   padding: var(--space-4);
   border: none;
   border-radius: var(--radius-lg);

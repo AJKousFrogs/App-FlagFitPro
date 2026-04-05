@@ -40,16 +40,24 @@
                 class="phase-badge"
                 [style.backgroundColor]="getCurrentPhase().color"
               >
-                <span class="phase-icon">{{ getCurrentPhase().icon }}</span>
+                <span class="phase-icon" aria-hidden="true"
+                  ><i [class]="'pi ' + getCurrentPhase().icon"></i
+                ></span>
                 <span class="phase-name">{{ getCurrentPhase().name }}</span>
               </div>
               <div class="phase-performance">
                 @if (getCurrentPhase().intensityModifier >= 100) {
-                  <span class="performance-label">🔥 Peak Performance</span>
+                  <span class="performance-label"
+                    ><i class="pi pi-bolt" aria-hidden="true"></i> Peak Performance</span
+                  >
                 } @else if (getCurrentPhase().intensityModifier >= 90) {
-                  <span class="performance-label">💪 Good Energy</span>
+                  <span class="performance-label"
+                    ><i class="pi pi-chart-line" aria-hidden="true"></i> Good Energy</span
+                  >
                 } @else {
-                  <span class="performance-label">🛋️ Recovery Focus</span>
+                  <span class="performance-label"
+                    ><i class="pi pi-heart" aria-hidden="true"></i> Recovery Focus</span
+                  >
                 }
               </div>
             </div>
@@ -199,7 +207,9 @@
                   track nutrient.name
                 ) {
                   <div class="nutrient-card">
-                    <span class="nutrient-icon">{{ nutrient.icon }}</span>
+                    <span class="nutrient-icon" aria-hidden="true"
+                      ><i [class]="'pi ' + nutrient.icon"></i
+                    ></span>
                     <span class="nutrient-name">{{ nutrient.name }}</span>
                     <span class="nutrient-benefit">{{ nutrient.benefit }}</span>
                   </div>
@@ -210,7 +220,7 @@
             <app-alert
               variant="info"
               density="compact"
-              [message]="'💡 ' + getNutritionTip()"
+              [message]="getNutritionTip()"
               styleClass="nutrition-tip status-message"
             />
           </app-card-shell>

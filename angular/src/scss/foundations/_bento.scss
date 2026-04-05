@@ -9,16 +9,21 @@
 
 %bento-surface-card {
   background: var(--surface-primary);
+  border: var(--border-1) solid transparent;
   border-radius: var(--radius-xl);
   box-shadow: var(--shadow-sm);
   padding: var(--space-5);
   min-width: 0;
   transition:
     transform var(--transition-base),
+    border-color var(--transition-base),
     box-shadow var(--transition-base);
 
-  &:hover {
-    box-shadow: var(--shadow-md);
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      border-color: var(--color-border-secondary);
+      box-shadow: var(--shadow-sm);
+    }
   }
 
   @include respond-to(sm) {

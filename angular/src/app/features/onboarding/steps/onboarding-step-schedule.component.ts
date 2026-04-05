@@ -19,7 +19,8 @@ import { SelectComponent } from "../../../shared/components/select/select.compon
 
       <h2 class="ob-heading">Training schedule</h2>
       <p class="ob-subtext">
-        Helps us recommend the best training windows for you.
+        We use your work schedule for reminders, and your team practice days to
+        line up your training plan on the days you actually practice.
       </p>
 
       <!-- Work schedule -->
@@ -60,7 +61,9 @@ import { SelectComponent } from "../../../shared/components/select/select.compon
 
       <!-- Practice days -->
       <div class="ob-field">
-        <label class="ob-label" id="ob-days-label">Preferred practice days</label>
+        <label class="ob-label" id="ob-days-label"
+          >Team practice days (flag football)</label
+        >
         <div
           class="ob-chips"
           role="group"

@@ -120,11 +120,16 @@
     }
   }
 
-  /* PrimeNG Card with green background */
+  /* PrimeNG Card with green background — class or token-based inline styles (no hex fragment) */
   .p-card {
-    &[style*="089949"],
+    &.card-primary,
     &.bg-primary,
-    &.card-primary {
+    &.bg-primary-green,
+    &.bg-brand,
+    &.p-card--brand,
+    &[style*="var(--ds-primary-green)"],
+    &[style*="var(--color-brand-primary)"],
+    &[style*="rgb(8, 153, 73)"] {
       background: var(--ds-primary-green);
       color: var(--color-text-on-primary);
 
@@ -187,12 +192,15 @@
   }
 
   /* PrimeNG Menu Item Active */
-  .p-menu .p-menuitem.p-highlight {
+  .p-menu .p-menuitem.p-highlight,
+  .p-menu .p-menu-item.p-highlight .p-menu-item-content {
     background: rgba(var(--ds-primary-green-rgb), 0.1);
     color: var(--ds-primary-green);
 
     .p-menuitem-text,
-    .p-menuitem-icon {
+    .p-menuitem-icon,
+    .p-menu-item-label,
+    .p-menu-item-icon {
       color: var(--ds-primary-green);
     }
   }
@@ -365,44 +373,7 @@
   border-color: var(--p-input-disabled-border-color);
 }
 
-/* ================================================================
-   DROPDOWN/SELECT LABEL ALIGNMENT
-   Ensure label text is vertically centered in 2.75rem height
-   ================================================================ */
-
-.p-select .p-select-label,
-.p-multiselect .p-multiselect-label {
-  padding: var(--space-0);
-  display: flex;
-  align-items: center;
-  height: 100%;
-  font-size: var(--p-form-control-font-size, var(--font-body-size));
-  font-weight: var(--p-form-control-font-weight, var(--font-weight-regular));
-  color: var(--p-input-text-color, var(--color-text-primary));
-}
-
-/* Dropdown trigger/arrow icon alignment */
-.p-select .p-select-dropdown,
-.p-multiselect .p-multiselect-trigger {
-  width: var(--space-10);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--color-text-secondary);
-  transition:
-    color 0.15s ease,
-    transform 0.2s ease;
-}
-
-.p-select.p-focus .p-select-dropdown,
-.p-multiselect.p-focus .p-multiselect-trigger {
-  color: var(--ds-primary-green);
-}
-
-/* Rotate arrow when open */
-.p-select.p-select-open .p-select-dropdown {
-  transform: rotate(180deg);
-}
+/* Label alignment, trigger width, open chevron: primeng-theme.scss (.p-select / .p-multiselect) */
 
 /* ================================================================
    DROPDOWN PANEL NORMALIZATION
@@ -426,6 +397,7 @@
   padding: var(--space-2);
   max-height: var(--panel-max-height-md);
   overflow-y: auto;
+  scrollbar-gutter: stable;
 }
 
 /* Individual option items */
@@ -464,11 +436,13 @@
   font-weight: var(--font-weight-medium);
 }
 
-/* Option focus */
+/* Option focus — keyboard: distinct from hover (WCAG 2.4.7) */
 .p-select-option.p-focus,
-.p-multiselect-item.p-focus {
+.p-multiselect-item.p-focus,
+.p-listbox-option.p-focus {
   background: var(--surface-secondary);
   outline: none;
+  box-shadow: inset 0 0 0 2px var(--p-input-focus-border-color, var(--ds-primary-green));
 }
 
 /* ================================================================
@@ -639,20 +613,14 @@
   cursor: not-allowed;
 }
 
-/* Hide the native input */
-.p-inputswitch .p-inputswitch-input {
-  position: absolute;
-  opacity: 0;
-  width: 0;
-  height: 0;
-}
+/* Native input hidden in @layer primeng-brand above (single source). */
 
 /* ================================================================
    MOBILE TOUCH FIXES - CRITICAL for button clicks on mobile
    ================================================================ */
 
-/* 3. This eliminates the need for encapsulation hacks
- * 4. Color inheritance works properly through the cascade
+/* Touch-friendly controls rely on min-heights above; theme cascade keeps
+ * colors consistent without view encapsulation hacks.
  */
 
 :root {
@@ -702,7 +670,8 @@
     --color-text-on-primary
   ); /* White text on primary/success/etc */
 
-  --p-primary-text-color: var(--ds-primary-green);
+  /* WCAG AA on white: bright #089949 fails at 14px; use primary-800 for body/link-style primary text */
+  --p-primary-text-color: var(--color-brand-primary);
 
   /* ================================================================
      SURFACE COLORS - Backgrounds, cards, panels
@@ -978,7 +947,7 @@
   --p-dialog-header-font-weight: var(--font-weight-semibold);
   --p-dialog-header-line-height: var(--font-h2-line-height);
   --p-dialog-content-padding: var(--component-dialog-padding);
-  --p-dialog-footer-padding: var(--space-4) var(--component-dialog-padding);
+  --p-dialog-footer-padding: var(--space-6) var(--component-dialog-padding);
   --p-dialog-footer-gap: var(--space-3);
 
   /* Toast */
@@ -1159,4 +1128,29 @@
     var(--primitive-neutral-100)
   );
   --p-disabled-color: var(--color-text-muted, var(--primitive-neutral-400));
+}
+
+/* ================================================================
+   REDUCED MOTION — respect system preference (comfort + vestibular safety)
+   PrimeNG form/dropdown transitions in this file only
+   ================================================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  .p-inputtext,
+  .p-select,
+  .p-multiselect,
+  .p-datepicker .p-inputtext,
+  .p-inputnumber .p-inputtext,
+  .p-autocomplete .p-inputtext,
+  .p-inputnumber-button,
+  .p-datepicker .p-datepicker-trigger,
+  .p-select .p-select-dropdown,
+  .p-multiselect .p-multiselect-trigger,
+  .p-select-option,
+  .p-multiselect-item,
+  .p-listbox-option,
+  .p-inputswitch .p-inputswitch-slider,
+  .p-inputswitch .p-inputswitch-slider::before {
+    transition: none;
+  }
 }

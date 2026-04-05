@@ -152,7 +152,9 @@ interface Milestone {
               track milestone.title
             ) {
               <div class="milestone-item" [class]="milestone.status">
-                <span class="milestone-icon">{{ milestone.icon }}</span>
+                <span class="milestone-icon" aria-hidden="true"
+                  ><i [class]="'pi ' + milestone.icon"></i
+                ></span>
                 <div class="milestone-info">
                   <span class="milestone-title">{{ milestone.title }}</span>
                   <span class="milestone-date">{{
@@ -284,7 +286,9 @@ interface Milestone {
                 </app-card-shell>
               </ng-template>
               <ng-template #opposite let-event>
-                <span class="milestone-icon-large">{{ event.icon }}</span>
+                <span class="milestone-icon-large" aria-hidden="true"
+                  ><i [class]="'pi ' + event.icon"></i
+                ></span>
               </ng-template>
             </p-timeline>
           </div>
@@ -397,10 +401,10 @@ export class La28RoadmapComponent {
             : "upcoming",
         icon:
           cycle.status === "completed"
-            ? "✅"
+            ? "pi-check"
             : cycle.status === "in_progress"
-              ? "🏃"
-              : "📅",
+              ? "pi-forward"
+              : "pi-calendar",
       });
     });
 
@@ -411,7 +415,7 @@ export class La28RoadmapComponent {
       type: "olympics",
       description: "Flag Football Olympic Debut - Los Angeles",
       status: "upcoming",
-      icon: "🏅",
+      icon: "pi-trophy",
     });
 
     return milestones.sort(

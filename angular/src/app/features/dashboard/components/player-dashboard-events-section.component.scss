@@ -37,6 +37,11 @@
 .event-icon {
   font-size: var(--ds-font-size-2xl);
   flex-shrink: 0;
+  color: var(--color-brand-primary);
+
+  .pi {
+    font-size: inherit;
+  }
 }
 
 .event-details {

@@ -60,11 +60,39 @@
 .field-label {
   display: inline-flex;
   align-items: center;
-  gap: var(--space-2);
+  gap: var(--space-3);
 }
 
 .field-label i {
   color: var(--color-text-muted);
+  flex-shrink: 0;
+}
+
+/* Select / custom labels with leading icons */
+.tournament-form .form-field > label:has(> i.pi) {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-bottom: var(--space-2);
+}
+
+.tournament-form .form-field > label:has(> i.pi) i {
+  flex-shrink: 0;
+}
+
+/* Home tournament: checkbox + inline icon + copy */
+.tournament-form .checkbox-field {
+  align-items: center;
+}
+
+.tournament-form .checkbox-field ::ng-deep .app-checkbox-wrapper,
+.tournament-form .checkbox-field ::ng-deep label.cursor-pointer {
+  gap: var(--space-3);
+  align-items: center;
+}
+
+.tournament-form .checkbox-field ::ng-deep label i.pi {
+  flex-shrink: 0;
 }
 
 .native-date-input {

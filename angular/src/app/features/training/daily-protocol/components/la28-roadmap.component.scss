@@ -147,6 +147,11 @@
 
     .milestone-icon {
       font-size: var(--ds-font-size-md);
+      color: var(--color-brand-primary);
+
+      .pi {
+        font-size: inherit;
+      }
     }
 
     .milestone-info {
@@ -308,6 +313,11 @@
 
   .milestone-icon-large {
     font-size: var(--ds-font-size-2xl);
+    color: var(--color-brand-primary);
+
+    .pi {
+      font-size: inherit;
+    }
   }
 
   /* Ukraine/Olympic colors - intentional brand styling */

@@ -49,6 +49,7 @@ import { GameDayReadinessDataService } from "../services/game-day-readiness-data
 interface ReadinessMetric {
   key: string;
   label: string;
+  /** PrimeIcons suffix, e.g. `pi-moon` */
   icon: string;
   value: number;
   weight: number;
@@ -97,7 +98,9 @@ interface ReadinessMetric {
             @for (metric of metrics(); track metric.key) {
               <div class="metric-card">
                 <div class="metric-header">
-                  <span class="metric-icon">{{ metric.icon }}</span>
+                  <span class="metric-icon" aria-hidden="true"
+                    ><i [class]="'pi ' + metric.icon"></i
+                  ></span>
                   <span class="metric-label">{{ metric.label }}</span>
                   <span class="metric-value" [class.warning]="metric.value < 5"
                     >{{ metric.value }}/10</span
@@ -190,14 +193,14 @@ interface ReadinessMetric {
             <div class="confirmation-icon" [class]="readinessStatus()">
               @if (readinessScore() !== null) {
                 @if (readinessScore()! >= 85) {
-                  ✅
+                  <i class="pi pi-check-circle" aria-hidden="true"></i>
                 } @else if (readinessScore()! >= 70) {
-                  👍
+                  <i class="pi pi-thumbs-up" aria-hidden="true"></i>
                 } @else {
-                  ⚠️
+                  <i class="pi pi-exclamation-triangle" aria-hidden="true"></i>
                 }
               } @else {
-                ⚠️
+                <i class="pi pi-exclamation-triangle" aria-hidden="true"></i>
               }
             </div>
 
@@ -299,7 +302,7 @@ export class GameDayReadinessComponent implements OnInit {
     {
       key: "energy",
       label: "Energy Level",
-      icon: "⚡",
+      icon: "pi-bolt",
       value: 0, // Start at 0 - user must set value
       weight: 15,
       description: "How energized do you feel right now?",
@@ -308,7 +311,7 @@ export class GameDayReadinessComponent implements OnInit {
     {
       key: "soreness",
       label: "Muscle Soreness",
-      icon: "💪",
+      icon: "pi-chart-line",
       value: 0, // Start at 0 - user must set value
       weight: 20,
       description: "1 = No soreness, 10 = Very sore",
@@ -317,7 +320,7 @@ export class GameDayReadinessComponent implements OnInit {
     {
       key: "hydration",
       label: "Hydration",
-      icon: "💧",
+      icon: "pi-heart",
       value: 0, // Start at 0 - user must set value
       weight: 15,
       description: "How well hydrated do you feel?",
@@ -326,7 +329,7 @@ export class GameDayReadinessComponent implements OnInit {
     {
       key: "mental",
       label: "Mental Focus",
-      icon: "🧠",
+      icon: "pi-lightbulb",
       value: 0, // Start at 0 - user must set value
       weight: 15,
       description: "How focused and mentally prepared are you?",
@@ -335,7 +338,7 @@ export class GameDayReadinessComponent implements OnInit {
     {
       key: "confidence",
       label: "Confidence",
-      icon: "🔥",
+      icon: "pi-bolt",
       value: 0, // Start at 0 - user must set value
       weight: 15,
       description: "How confident do you feel about today's competition?",
@@ -399,13 +402,13 @@ export class GameDayReadinessComponent implements OnInit {
     if (status === "info") return "Complete Check-in";
     switch (status) {
       case "excellent":
-        return "🟢 Competition Ready";
+        return "Competition Ready";
       case "good":
-        return "🔵 Good to Compete";
+        return "Good to Compete";
       case "caution":
-        return "🟡 Proceed with Caution";
+        return "Proceed with Caution";
       case "concern":
-        return "🔴 Concerns Identified";
+        return "Concerns Identified";
       default:
         return "Complete Check-in";
     }

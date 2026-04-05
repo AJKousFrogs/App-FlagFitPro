@@ -100,7 +100,7 @@ const CYCLE_PHASES: CyclePhase[] = [
     hydrationModifier: 110,
     recoveryModifier: 130,
     color: CYCLE_PHASE_COLORS.menstrual, // --primitive-error-500 (red)
-    icon: "🌸",
+    icon: "pi-heart",
     focusAreas: [
       "Recovery",
       "Mobility work",
@@ -114,9 +114,9 @@ const CYCLE_PHASES: CyclePhase[] = [
       "😴 Extra sleep supports recovery",
     ],
     priorityNutrients: [
-      { name: "Iron", icon: "🥩", benefit: "Replaces losses" },
-      { name: "Vitamin C", icon: "🍊", benefit: "Iron absorption" },
-      { name: "Magnesium", icon: "🥬", benefit: "Reduces cramps" },
+      { name: "Iron", icon: "pi-heart", benefit: "Replaces losses" },
+      { name: "Vitamin C", icon: "pi-sun", benefit: "Iron absorption" },
+      { name: "Magnesium", icon: "pi-circle", benefit: "Reduces cramps" },
     ],
   },
   {
@@ -129,7 +129,7 @@ const CYCLE_PHASES: CyclePhase[] = [
     hydrationModifier: 100,
     recoveryModifier: 90,
     color: CYCLE_PHASE_COLORS.follicular, // --color-status-success (green)
-    icon: "🌱",
+    icon: "pi-sun",
     focusAreas: [
       "Strength training",
       "Skill work",
@@ -143,9 +143,9 @@ const CYCLE_PHASES: CyclePhase[] = [
       "🏋️ Strength gains are optimized",
     ],
     priorityNutrients: [
-      { name: "Protein", icon: "🥩", benefit: "Muscle building" },
-      { name: "Complex Carbs", icon: "🍚", benefit: "Energy fuel" },
-      { name: "B Vitamins", icon: "🥑", benefit: "Energy metabolism" },
+      { name: "Protein", icon: "pi-bolt", benefit: "Muscle building" },
+      { name: "Complex Carbs", icon: "pi-chart-bar", benefit: "Energy fuel" },
+      { name: "B Vitamins", icon: "pi-tablet", benefit: "Energy metabolism" },
     ],
   },
   {
@@ -158,7 +158,7 @@ const CYCLE_PHASES: CyclePhase[] = [
     hydrationModifier: 105,
     recoveryModifier: 85,
     color: CYCLE_PHASE_COLORS.ovulation, // --primitive-warning-500 (amber)
-    icon: "🔥",
+    icon: "pi-bolt",
     focusAreas: [
       "Power & explosive movements",
       "Speed work & sprints",
@@ -184,9 +184,9 @@ const CYCLE_PHASES: CyclePhase[] = [
       ],
     },
     priorityNutrients: [
-      { name: "Omega-3", icon: "🐟", benefit: "Anti-inflammatory" },
-      { name: "Protein", icon: "🥩", benefit: "Performance" },
-      { name: "Antioxidants", icon: "🫐", benefit: "Recovery" },
+      { name: "Omega-3", icon: "pi-circle", benefit: "Anti-inflammatory" },
+      { name: "Protein", icon: "pi-bolt", benefit: "Performance" },
+      { name: "Antioxidants", icon: "pi-star", benefit: "Recovery" },
     ],
   },
   {
@@ -199,7 +199,7 @@ const CYCLE_PHASES: CyclePhase[] = [
     hydrationModifier: 115,
     recoveryModifier: 100,
     color: CYCLE_PHASE_COLORS.luteal, // --color-status-help (purple)
-    icon: "🌿",
+    icon: "pi-chart-line",
     focusAreas: [
       "Endurance work",
       "Moderate strength",
@@ -213,9 +213,9 @@ const CYCLE_PHASES: CyclePhase[] = [
       "🚫 Avoid extreme heat training",
     ],
     priorityNutrients: [
-      { name: "Complex Carbs", icon: "🍚", benefit: "Sustain energy" },
-      { name: "Magnesium", icon: "🥬", benefit: "Reduces PMS" },
-      { name: "B Vitamins", icon: "🥑", benefit: "Mood support" },
+      { name: "Complex Carbs", icon: "pi-chart-bar", benefit: "Sustain energy" },
+      { name: "Magnesium", icon: "pi-circle", benefit: "Reduces PMS" },
+      { name: "B Vitamins", icon: "pi-tablet", benefit: "Mood support" },
     ],
   },
   {
@@ -228,7 +228,7 @@ const CYCLE_PHASES: CyclePhase[] = [
     hydrationModifier: 110,
     recoveryModifier: 120,
     color: CYCLE_PHASE_COLORS.late_luteal, // --color-staff-coaching (indigo)
-    icon: "🌙",
+    icon: "pi-moon",
     focusAreas: [
       "Technique refinement",
       "Flexibility",
@@ -242,10 +242,10 @@ const CYCLE_PHASES: CyclePhase[] = [
       "🧘 Great time for yoga and mobility",
     ],
     priorityNutrients: [
-      { name: "Magnesium", icon: "🥬", benefit: "Cramp relief" },
-      { name: "Calcium", icon: "🥛", benefit: "PMS symptoms" },
-      { name: "Omega-3", icon: "🐟", benefit: "Mood balance" },
-      { name: "Vitamin B6", icon: "🍌", benefit: "Water retention" },
+      { name: "Magnesium", icon: "pi-circle", benefit: "Cramp relief" },
+      { name: "Calcium", icon: "pi-heart", benefit: "PMS symptoms" },
+      { name: "Omega-3", icon: "pi-circle", benefit: "Mood balance" },
+      { name: "Vitamin B6", icon: "pi-tablet", benefit: "Water retention" },
     ],
   },
 ];

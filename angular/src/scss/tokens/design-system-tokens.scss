@@ -23,7 +23,8 @@
      for layout rhythm except this file’s scale definitions.
    
    COLOR RULES (STRICTLY ENFORCED):
-   - Green on white: Use --color-brand-primary (#089949) on white backgrounds
+   - Green on white (body text / links): Use --color-brand-primary (primary-800) on white — WCAG AA 4.5:1+
+   - Brand fills / buttons: --ds-primary-green / --ui-primary (may differ for emphasis)
    - White on green: Use --color-text-on-primary (#ffffff) on green backgrounds
    - Black on white: Use --color-text-primary (#1a1a1a) on white backgrounds
    - NO black on green: Never use --color-text-primary on green backgrounds
@@ -202,10 +203,10 @@ $ds-font-weight-extrabold: 800;
      ================================ */
 
   /* Brand Colors - Main Colors (Branding & UI) */
-  /* Primary: Main brand color, used most frequently */
-  --color-brand-primary: var(--ds-color-brand, var(--ds-primary-green));
-  --color-brand-primary-hover: var(--ds-primary-green-hover);
-  --color-brand-primary-active: var(--ds-primary-green-hover);
+  /* Primary text/link on light surfaces: primary-800 meets WCAG AA vs white (bright #089949 does not). */
+  --color-brand-primary: var(--primitive-primary-800);
+  --color-brand-primary-hover: var(--primitive-primary-900);
+  --color-brand-primary-active: var(--primitive-primary-900);
   --color-brand-primary-light: var(--ds-primary-green-light);
   --color-brand-primary-subtle: var(--ds-primary-green-subtle);
   /* Secondary/Accent: Provides accents for important elements, applied sparingly */
@@ -321,7 +322,7 @@ $ds-font-weight-extrabold: 800;
   --color-text-on-primary: var(--ui-text-inverse); /* White - for green backgrounds ONLY (contrast: 4.7:1 on #089949) */
   --on-primary: var(--color-text-on-primary); /* Alias for text on green */
   --green-bg-text: var(--color-text-on-primary); /* Alias for text on green */
-  --color-text-on-white: var(--ds-primary-green); /* Green - for white backgrounds (contrast: 4.7:1) */
+  --color-text-on-white: var(--color-brand-primary);
 
   /* Border Colors */
   --ui-border-subtle: rgba(15, 23, 42, 0.08);
@@ -423,10 +424,10 @@ $ds-font-weight-extrabold: 800;
      ================================ */
 
   /* Interactive Colors - Primary */
-  --color-interactive-primary: var(--ds-primary-green);
-  --color-interactive-primary-hover: var(--ds-primary-green-hover);
-  --color-interactive-primary-active: var(--ds-primary-green-hover);
-  --color-interactive-primary-focus: var(--ds-primary-green);
+  --color-interactive-primary: var(--color-brand-primary);
+  --color-interactive-primary-hover: var(--color-brand-primary-hover);
+  --color-interactive-primary-active: var(--color-brand-primary-active);
+  --color-interactive-primary-focus: var(--color-brand-primary);
   --color-interactive-disabled: #d4d4d4;
   --color-interactive-disabled-text: #9ca3af;
 
@@ -1929,7 +1930,7 @@ body.light-theme {
   --p-card-background: var(--surface-primary);
   --p-content-background: var(--surface-primary);
   --p-highlight-background: rgba(var(--ds-primary-green-rgb), 0.1);
-  --p-highlight-text-color: var(--ds-primary-green);
+  --p-highlight-text-color: var(--color-brand-primary);
 }
 
 /* ================================================================

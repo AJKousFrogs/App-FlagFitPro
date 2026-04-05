@@ -18,7 +18,6 @@ import {
   DestroyRef,
   OnInit,
   Renderer2,
-  afterNextRender,
   computed,
   effect,
   inject,
@@ -275,12 +274,10 @@ export class SupplementTrackerComponent implements OnInit {
   );
 
   constructor() {
-    afterNextRender(() => {
-      effect(() => {
-        const fill = this.progressFill()?.nativeElement;
-        if (!fill) return;
-        this.renderer.setStyle(fill, "width", `${this.progressPercent()}%`);
-      });
+    effect(() => {
+      const fill = this.progressFill()?.nativeElement;
+      if (!fill) return;
+      this.renderer.setStyle(fill, "width", `${this.progressPercent()}%`);
     });
   }
 

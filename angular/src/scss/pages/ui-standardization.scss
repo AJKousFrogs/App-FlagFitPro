@@ -587,7 +587,7 @@
     /* Reduce dialog padding on mobile */
     --p-dialog-header-padding: var(--space-3); /* 0.75rem */
     --p-dialog-content-padding: var(--space-3); /* 0.75rem */
-    --p-dialog-footer-padding: var(--space-3); /* 0.75rem */
+    --p-dialog-footer-padding: var(--space-4) var(--space-3); /* vertical / horizontal */
   }
 
   .toolbar-row {

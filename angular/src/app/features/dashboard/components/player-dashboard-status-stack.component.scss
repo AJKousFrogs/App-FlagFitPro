@@ -1,7 +1,9 @@
 @use "styles/mixins" as *;
 
 :host {
-  display: block;
+  display: flex;
+  flex-direction: column;
+  gap: var(--layout-gap-sm);
 }
 
 .announcement-section {

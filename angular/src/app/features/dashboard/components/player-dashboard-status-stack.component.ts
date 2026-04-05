@@ -3,23 +3,14 @@ import { CloseButtonComponent } from "../../../shared/components/close-button/cl
 import { CoachOverrideNotificationComponent } from "../../../shared/components/coach-override-notification/coach-override-notification.component";
 import { MissingDataExplanationComponent } from "../../../shared/components/missing-data-explanation/missing-data-explanation.component";
 import { OwnershipTransitionBadgeComponent } from "../../../shared/components/ownership-transition-badge/ownership-transition-badge.component";
-import { SemanticMeaningRendererComponent } from "../../../shared/components/semantic-meaning-renderer/semantic-meaning-renderer.component";
 import type { MissingDataStatus } from "../../../core/services/missing-data-detection.service";
 import type { CoachOverride } from "../../../core/services/override-logging.service";
 import type { OwnershipTransition } from "../../../core/services/ownership-transition.service";
-import type { CoachOverrideMeaning } from "../../../core/semantics/semantic-meaning.types";
-
-interface AnnouncementBanner {
-  message: string | null;
-  coachName: string | null;
-  postedAt: Date | null;
-  priority: "info" | "important";
-}
+import type { DashboardAnnouncementBanner } from "../models/dashboard-announcement.types";
 
 interface OverrideDisplayItem {
   override: CoachOverride;
   coachName: string;
-  meaning: CoachOverrideMeaning | null;
 }
 
 @Component({
@@ -31,13 +22,12 @@ interface OverrideDisplayItem {
     CoachOverrideNotificationComponent,
     MissingDataExplanationComponent,
     OwnershipTransitionBadgeComponent,
-    SemanticMeaningRendererComponent,
   ],
   templateUrl: "./player-dashboard-status-stack.component.html",
   styleUrl: "./player-dashboard-status-stack.component.scss",
 })
 export class PlayerDashboardStatusStackComponent {
-  readonly announcement = input<AnnouncementBanner | null>(null);
+  readonly announcement = input<DashboardAnnouncementBanner | null>(null);
   readonly announcementDismissed = input(false);
   readonly announcementTimeAgo = input("");
   readonly overrideItems = input<OverrideDisplayItem[]>([]);

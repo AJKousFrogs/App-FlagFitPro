@@ -18,16 +18,19 @@
   border-radius: var(--radius-lg);
 }
 
-/* Native input styling defers to global form control system (2.calc(var(--size-200) * 6) height, 0.5rem radius) */
-input {
+input.p-inputtext {
   width: 100%;
+  text-align: start;
 }
 
-input.has-prefix {
-  padding-left: var(--space-10); /* 2.5rem for icon + padding */
+/* Icon inset + glyph width + gap — prevents placeholder/text overlapping the prefix icon */
+input.p-inputtext.has-prefix {
+  padding-left: calc(
+    var(--space-3) + var(--icon-base, 1.125rem) + var(--space-3)
+  );
 }
 
-input.has-suffix {
+input.p-inputtext.has-suffix {
   padding-right: var(--space-10);
 }
 
@@ -52,6 +55,10 @@ input.has-suffix {
   left: var(--space-3);
   top: 50%;
   transform: translateY(-50%);
+  width: var(--icon-base, 1.125rem);
+  text-align: center;
+  line-height: 1;
+  pointer-events: none;
 }
 
 .suffix-icon {

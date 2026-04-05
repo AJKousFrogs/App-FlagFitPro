@@ -191,13 +191,24 @@ export class ProfileCompletionService {
         return null;
       }
 
-      // Load team membership
-      const { data: teamMember } = await this.supabaseService.client
-        .from("team_members")
-        .select("team_id, position, jersey_number, teams(id, name)")
-        .eq("user_id", userId)
-        .eq("role", "player")
-        .maybeSingle();
+      // Load team membership (users may have multiple teams; .maybeSingle() returns 406)
+      const { data: teamRows, error: teamMemberError } =
+        await this.supabaseService.client
+          .from("team_members")
+          .select("team_id, position, jersey_number, teams(id, name)")
+          .eq("user_id", userId)
+          .eq("role", "player")
+          .order("updated_at", { ascending: false })
+          .limit(1);
+
+      if (teamMemberError) {
+        this.logger.warn("profile_completion_team_member_load_failed", {
+          userId,
+          message: teamMemberError.message,
+        });
+      }
+
+      const teamMember = Array.isArray(teamRows) ? teamRows[0] : null;
 
       // Extract team name from joined data
       const teamsData = teamMember?.teams as { name?: string } | null | undefined;

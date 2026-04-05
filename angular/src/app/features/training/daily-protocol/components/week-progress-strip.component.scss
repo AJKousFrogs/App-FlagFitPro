@@ -134,6 +134,16 @@
   color: var(--primitive-warning-600);
 }
 
+.streak-value {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.streak-flame {
+  font-size: var(--ds-font-size-sm);
+}
+
 .stat-block__label {
   font-size: var(--ds-font-size-xs);
   color: var(--color-text-secondary);

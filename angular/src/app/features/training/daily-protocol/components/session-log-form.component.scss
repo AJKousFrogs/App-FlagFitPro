@@ -90,8 +90,13 @@
   border-radius: var(--component-card-radius);
 }
 
-.rpe-emoji {
-  font-size: var(--ds-font-size-2xl);
+.rpe-range-icon {
+  font-size: var(--ds-font-size-lg);
+  color: var(--ds-primary-green);
+
+  .pi {
+    font-size: inherit;
+  }
 }
 
 .rpe-slider {

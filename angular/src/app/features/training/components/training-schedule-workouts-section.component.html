@@ -11,8 +11,11 @@
           </div>
           @if (day.sessions.length > 0) {
             <div class="day-session-preview">{{ day.sessions[0].title }}</div>
+            @if (day.sessions[0].duration != null) {
+              <div class="day-session-meta">{{ day.sessions[0].duration }} min</div>
+            }
           } @else {
-            <div class="day-session-preview empty">Rest</div>
+            <div class="day-session-preview empty">No sessions</div>
           }
         </div>
       }

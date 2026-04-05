@@ -17,7 +17,6 @@ import {
   computed,
   ElementRef,
   Renderer2,
-  afterNextRender,
   effect,
   inject,
   viewChild,
@@ -63,16 +62,10 @@ export class TrafficLightRiskComponent {
   });
 
   constructor() {
-    afterNextRender(() => {
-      effect(() => {
-        const marker = this.scaleMarker()?.nativeElement;
-        if (!marker) return;
-        this.renderer.setStyle(
-          marker,
-          "left",
-          `${this.markerPosition()}%`,
-        );
-      });
+    effect(() => {
+      const marker = this.scaleMarker()?.nativeElement;
+      if (!marker) return;
+      this.renderer.setStyle(marker, "left", `${this.markerPosition()}%`);
     });
   }
 

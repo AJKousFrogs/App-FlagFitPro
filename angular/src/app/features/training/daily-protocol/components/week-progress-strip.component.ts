@@ -79,9 +79,10 @@ export interface WeekStats {
         @if (stats().currentStreak > 0) {
           <div class="stat-item streak stat-block stat-block--compact">
             <div class="stat-block__content">
-              <span class="stat-block__value"
-                >{{ stats().currentStreak }} 🔥</span
-              >
+              <span class="stat-block__value streak-value">
+                {{ stats().currentStreak }}
+                <i class="pi pi-bolt streak-flame" aria-hidden="true"></i>
+              </span>
               <span class="stat-block__label">Day Streak</span>
             </div>
           </div>

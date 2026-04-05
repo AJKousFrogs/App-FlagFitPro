@@ -46,6 +46,11 @@
     font-size: var(--ds-font-size-3xl);
     display: block;
     margin-bottom: var(--space-3);
+    color: var(--color-brand-primary);
+
+    .pi {
+      font-size: inherit;
+    }
   }
 
   h3 {

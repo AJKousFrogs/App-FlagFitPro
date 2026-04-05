@@ -1,3 +1,4 @@
+/** PrimeIcons class suffix (e.g. `pi-flag` → render as `class="pi pi-flag"`). */
 export interface TrainingPositionQuickAction {
   icon: string;
   label: string;
@@ -21,28 +22,28 @@ export interface TrainingPositionUIConfig {
 
 const QUARTERBACK_CONFIG: TrainingPositionUIConfig = {
   label: "Quarterback",
-  icon: "🎯",
+  icon: "pi-bullseye",
   quickActions: [
     {
-      icon: "🎯",
+      icon: "pi-bullseye",
       label: "Throwing",
       route: "/training/qb",
       tooltip: "Track throwing sessions & arm care",
     },
     {
-      icon: "💪",
+      icon: "pi-heart",
       label: "Arm Care",
       route: "/training/qb",
       tooltip: "Rotator cuff & arm health",
     },
     {
-      icon: "🦵",
+      icon: "pi-arrows-h",
       label: "Hip Mobility",
       route: "/training",
       tooltip: "Hip & shoulder mobility",
     },
     {
-      icon: "🏆",
+      icon: "pi-star",
       label: "Achievements",
       route: "/training",
       tooltip: "View all achievements",
@@ -52,25 +53,25 @@ const QUARTERBACK_CONFIG: TrainingPositionUIConfig = {
     {
       title: "Throwing Progression",
       description: "Structured throw count with arm care",
-      icon: "🎯",
+      icon: "pi-bullseye",
       priority: "high",
     },
     {
       title: "Hip 90/90 Mobility",
       description: "QB-specific hip rotation",
-      icon: "🦵",
+      icon: "pi-arrows-h",
       priority: "high",
     },
     {
       title: "Rotator Cuff Warm-up",
       description: "Pre-throwing arm prep",
-      icon: "💪",
+      icon: "pi-heart",
       priority: "high",
     },
     {
       title: "Footwork Drills",
       description: "Drop-back & pocket movement",
-      icon: "👟",
+      icon: "pi-arrow-right",
       priority: "medium",
     },
   ],
@@ -78,28 +79,28 @@ const QUARTERBACK_CONFIG: TrainingPositionUIConfig = {
 
 const CENTER_CONFIG: TrainingPositionUIConfig = {
   label: "Center",
-  icon: "🎯",
+  icon: "pi-bullseye",
   quickActions: [
     {
-      icon: "🎯",
+      icon: "pi-bullseye",
       label: "Snap Drills",
       route: "/training",
       tooltip: "Snap mechanics & accuracy",
     },
     {
-      icon: "💪",
+      icon: "pi-heart",
       label: "Core Work",
       route: "/training",
       tooltip: "Core stability for snapping",
     },
     {
-      icon: "🏃",
+      icon: "pi-forward",
       label: "Blocking",
       route: "/training",
       tooltip: "Pass protection drills",
     },
     {
-      icon: "🏆",
+      icon: "pi-star",
       label: "Achievements",
       route: "/training",
       tooltip: "View all achievements",
@@ -109,25 +110,25 @@ const CENTER_CONFIG: TrainingPositionUIConfig = {
     {
       title: "Snap Mechanics",
       description: "Shotgun & under-center snaps",
-      icon: "🎯",
+      icon: "pi-bullseye",
       priority: "high",
     },
     {
       title: "Core Stability",
       description: "Anti-rotation & bracing",
-      icon: "💪",
+      icon: "pi-heart",
       priority: "high",
     },
     {
       title: "Hip Hinge Drills",
       description: "Proper snap position",
-      icon: "🦵",
+      icon: "pi-arrows-h",
       priority: "high",
     },
     {
       title: "Hand-Eye Coordination",
       description: "Snap accuracy under pressure",
-      icon: "👁️",
+      icon: "pi-eye",
       priority: "medium",
     },
   ],
@@ -135,28 +136,28 @@ const CENTER_CONFIG: TrainingPositionUIConfig = {
 
 const RUSHER_CONFIG: TrainingPositionUIConfig = {
   label: "Blitzer",
-  icon: "⚡",
+  icon: "pi-bolt",
   quickActions: [
     {
-      icon: "⚡",
+      icon: "pi-bolt",
       label: "Decel Drills",
       route: "/training",
       tooltip: "Deceleration & change of direction",
     },
     {
-      icon: "🏃",
+      icon: "pi-forward",
       label: "Sprint Work",
       route: "/training",
       tooltip: "Acceleration & top speed",
     },
     {
-      icon: "🦵",
+      icon: "pi-arrows-h",
       label: "Agility",
       route: "/training",
       tooltip: "Lateral movement & cuts",
     },
     {
-      icon: "🏆",
+      icon: "pi-star",
       label: "Achievements",
       route: "/training",
       tooltip: "View all achievements",
@@ -166,25 +167,25 @@ const RUSHER_CONFIG: TrainingPositionUIConfig = {
     {
       title: "3-Step Deceleration",
       description: "Controlled stopping at speed",
-      icon: "⚡",
+      icon: "pi-bolt",
       priority: "high",
     },
     {
       title: "Change of Direction",
       description: "Quick cuts & redirects",
-      icon: "↩️",
+      icon: "pi-replay",
       priority: "high",
     },
     {
       title: "Sprint Mechanics",
       description: "Acceleration technique",
-      icon: "🏃",
+      icon: "pi-forward",
       priority: "high",
     },
     {
       title: "Reactive Agility",
       description: "Read & react drills",
-      icon: "👁️",
+      icon: "pi-eye",
       priority: "medium",
     },
   ],
@@ -192,28 +193,28 @@ const RUSHER_CONFIG: TrainingPositionUIConfig = {
 
 const WIDE_RECEIVER_CONFIG: TrainingPositionUIConfig = {
   label: "Wide Receiver",
-  icon: "🏃",
+  icon: "pi-forward",
   quickActions: [
     {
-      icon: "🏃",
+      icon: "pi-forward",
       label: "Route Running",
       route: "/training",
       tooltip: "Route technique & timing",
     },
     {
-      icon: "⚡",
+      icon: "pi-bolt",
       label: "Speed Work",
       route: "/training",
       tooltip: "Sprint & acceleration",
     },
     {
-      icon: "🤲",
+      icon: "pi-circle",
       label: "Catching",
       route: "/training",
       tooltip: "Hand-eye coordination",
     },
     {
-      icon: "🏆",
+      icon: "pi-star",
       label: "Achievements",
       route: "/training",
       tooltip: "View all achievements",
@@ -223,25 +224,25 @@ const WIDE_RECEIVER_CONFIG: TrainingPositionUIConfig = {
     {
       title: "Route Trees",
       description: "Full route combinations",
-      icon: "🗺️",
+      icon: "pi-map",
       priority: "high",
     },
     {
       title: "Release Moves",
       description: "Off the line techniques",
-      icon: "💨",
+      icon: "pi-cloud",
       priority: "high",
     },
     {
       title: "Sprint Training",
       description: "Top-end speed development",
-      icon: "🏃",
+      icon: "pi-forward",
       priority: "high",
     },
     {
       title: "Catching Drills",
       description: "Contested & over-shoulder",
-      icon: "🤲",
+      icon: "pi-circle",
       priority: "medium",
     },
   ],
@@ -249,28 +250,28 @@ const WIDE_RECEIVER_CONFIG: TrainingPositionUIConfig = {
 
 const DEFENSIVE_BACK_CONFIG: TrainingPositionUIConfig = {
   label: "Defensive Back",
-  icon: "🛡️",
+  icon: "pi-shield",
   quickActions: [
     {
-      icon: "🛡️",
+      icon: "pi-shield",
       label: "Coverage",
       route: "/training",
       tooltip: "Man & zone techniques",
     },
     {
-      icon: "🏃",
+      icon: "pi-forward",
       label: "Backpedal",
       route: "/training",
       tooltip: "Backpedal & transition",
     },
     {
-      icon: "👁️",
+      icon: "pi-eye",
       label: "Ball Drills",
       route: "/training",
       tooltip: "Interception technique",
     },
     {
-      icon: "🏆",
+      icon: "pi-star",
       label: "Achievements",
       route: "/training",
       tooltip: "View all achievements",
@@ -280,25 +281,25 @@ const DEFENSIVE_BACK_CONFIG: TrainingPositionUIConfig = {
     {
       title: "Backpedal & Break",
       description: "Hip turn & transition",
-      icon: "↩️",
+      icon: "pi-replay",
       priority: "high",
     },
     {
       title: "Mirror Drills",
       description: "Shadowing receivers",
-      icon: "🪞",
+      icon: "pi-sync",
       priority: "high",
     },
     {
       title: "Sprint Training",
       description: "Recovery speed",
-      icon: "🏃",
+      icon: "pi-forward",
       priority: "high",
     },
     {
       title: "Ball Skills",
       description: "High-point & intercept",
-      icon: "🏈",
+      icon: "pi-flag",
       priority: "medium",
     },
   ],
@@ -306,28 +307,28 @@ const DEFENSIVE_BACK_CONFIG: TrainingPositionUIConfig = {
 
 const ATHLETE_CONFIG: TrainingPositionUIConfig = {
   label: "Athlete",
-  icon: "🏈",
+  icon: "pi-flag",
   quickActions: [
     {
-      icon: "🏃",
+      icon: "pi-forward",
       label: "Speed",
       route: "/training",
       tooltip: "Sprint & acceleration",
     },
     {
-      icon: "📊",
+      icon: "pi-chart-bar",
       label: "Periodization",
       route: "/training/periodization",
       tooltip: "View your training plan",
     },
     {
-      icon: "💚",
+      icon: "pi-heart",
       label: "Recovery",
       route: "/wellness",
       tooltip: "Recovery protocols",
     },
     {
-      icon: "🏆",
+      icon: "pi-star",
       label: "Achievements",
       route: "/training",
       tooltip: "View all achievements",
@@ -337,25 +338,25 @@ const ATHLETE_CONFIG: TrainingPositionUIConfig = {
     {
       title: "Sprint Training",
       description: "Speed development",
-      icon: "🏃",
+      icon: "pi-forward",
       priority: "high",
     },
     {
       title: "Agility Drills",
       description: "Change of direction",
-      icon: "↩️",
+      icon: "pi-replay",
       priority: "high",
     },
     {
       title: "Core Stability",
       description: "Athletic foundation",
-      icon: "💪",
+      icon: "pi-heart",
       priority: "medium",
     },
     {
       title: "Mobility Work",
       description: "Flexibility & range",
-      icon: "🧘",
+      icon: "pi-sun",
       priority: "medium",
     },
   ],

@@ -5,7 +5,7 @@ import { DialogHeaderComponent } from "../../../shared/components/dialog-header/
 
 interface QuickMood {
   value: number;
-  emoji: string;
+  icon: string;
   label: string;
 }
 

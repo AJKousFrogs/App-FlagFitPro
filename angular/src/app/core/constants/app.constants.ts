@@ -256,6 +256,8 @@ export const TRAINING = {
   ACUTE_LOAD_DAYS: 7,
   CHRONIC_LOAD_DAYS: 28,
   MIN_DAYS_FOR_CHRONIC: 21, // Minimum days needed for ACWR calculation
+  /** Midpoint milestone toward full ACWR baseline (UI progress messaging) */
+  ACWR_HALF_BASELINE_DAYS: 14,
 
   // Flag football specifics
   TARGET_LOAD_AU: 2000, // Target arbitrary units for load

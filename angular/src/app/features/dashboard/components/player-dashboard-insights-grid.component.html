@@ -3,37 +3,40 @@
     class="progress-card"
     title="Weekly Progress"
     headerIcon="pi-chart-bar"
+    [stretchBody]="true"
   >
-    <div class="week-progress">
-      @for (day of weekDays(); track day.name) {
-        <div class="day-column">
-          <div
-            class="day-indicator"
-            [class.completed]="day.completed"
-            [class.today]="day.isToday"
-            [class.future]="day.isFuture"
-            [attr.aria-label]="
-              day.name +
-              (day.completed ? ', completed' : day.isToday ? ', today' : '')
-            "
-          >
-            @if (day.completed) {
-              <i class="pi pi-check"></i>
-            } @else if (day.isToday) {
-              <i class="pi pi-circle"></i>
-            }
+    <div class="progress-card-body">
+      <div class="week-progress">
+        @for (day of weekDays(); track day.name) {
+          <div class="day-column">
+            <div
+              class="day-indicator"
+              [class.completed]="day.completed"
+              [class.today]="day.isToday"
+              [class.future]="day.isFuture"
+              [attr.aria-label]="
+                day.name +
+                (day.completed ? ', completed' : day.isToday ? ', today' : '')
+              "
+            >
+              @if (day.completed) {
+                <i class="pi pi-check"></i>
+              } @else if (day.isToday) {
+                <i class="pi pi-circle"></i>
+              }
+            </div>
+            <span class="day-name">{{ day.short }}</span>
           </div>
-          <span class="day-name">{{ day.short }}</span>
-        </div>
-      }
-    </div>
-    <div class="progress-summary">
-      <app-progress-bar
-        [value]="weeklyProgress()"
-        [showValue]="false"
-        styleClass="custom-progress"
-      />
-      <span class="progress-text">{{ weeklyProgress() }}% completed</span>
+        }
+      </div>
+      <div class="progress-summary">
+        <app-progress-bar
+          [value]="weeklyProgress()"
+          [showValue]="false"
+          styleClass="custom-progress"
+        />
+        <span class="progress-text">{{ weeklyProgress() }}% completed</span>
+      </div>
     </div>
   </app-card-shell>
 
@@ -41,6 +44,7 @@
     class="actions-card"
     title="Quick Actions"
     headerIcon="pi-bolt"
+    [stretchBody]="true"
   >
     <div class="quick-actions-grid">
       @for (action of quickActions(); track action.route) {
@@ -69,17 +73,17 @@
             type="line"
             [data]="performanceChartData()"
             [options]="chartOptions()"
-            height="calc(var(--space-6) * 7.5)"
+            height="var(--dashboard-chart-height)"
           ></app-lazy-chart>
         } @placeholder {
           <app-chart-skeleton
             type="line"
-            height="calc(var(--space-6) * 7.5)"
+            height="var(--dashboard-chart-height)"
           />
         } @loading (minimum 500ms) {
           <app-chart-skeleton
             type="line"
-            height="calc(var(--space-6) * 7.5)"
+            height="var(--dashboard-chart-height)"
           />
         }
       </div>
@@ -88,6 +92,7 @@
           variant="text"
           iconRight="pi-arrow-right"
           routerLink="/performance/insights"
+          size="sm"
           >View Performance Details</app-button
         >
       </div>

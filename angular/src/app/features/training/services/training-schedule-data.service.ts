@@ -93,6 +93,28 @@ export class TrainingScheduleDataService {
     return { sessions: (sessions as TrainingSessionRow[]) ?? [], error };
   }
 
+  async fetchPracticeDays(userId: string): Promise<{
+    practiceDays: string[];
+    error: { message?: string } | null;
+  }> {
+    const { data, error } = await this.supabaseService.client
+      .from("user_preferences")
+      .select("practice_days")
+      .eq("user_id", userId)
+      .maybeSingle();
+
+    if (error) {
+      return { practiceDays: [], error };
+    }
+
+    const raw = data?.practice_days;
+    const practiceDays = Array.isArray(raw)
+      ? raw.filter((d): d is string => typeof d === "string")
+      : [];
+
+    return { practiceDays, error: null };
+  }
+
   async fetchScheduledTemplates(input: {
     userId: string;
     startDate: string;

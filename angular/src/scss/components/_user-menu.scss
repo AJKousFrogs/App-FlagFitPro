@@ -102,13 +102,60 @@
   border-radius: var(--radius-lg);
   padding: var(--space-2) 0;
   box-shadow: var(--shadow-lg);
+  color: var(--color-text-primary);
 
+  /* PrimeNG 21+ */
+  .p-menu-item-content {
+    color: var(--color-text-primary);
+  }
+
+  .p-menu-item-link {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-3) var(--space-4);
+    color: inherit;
+    text-decoration: none;
+
+    &:hover,
+    &:focus-visible {
+      text-decoration: none;
+    }
+
+    .p-menu-item-icon {
+      width: var(--space-5);
+      height: var(--space-5);
+      font-size: var(--ds-font-size-xl);
+      color: var(--color-text-secondary);
+    }
+
+    .p-menu-item-label {
+      font-size: var(--ds-font-size-md);
+      font-weight: var(--ds-font-weight-medium);
+      color: var(--color-text-primary);
+    }
+  }
+
+  .p-menu-item:not(.p-disabled) .p-menu-item-content:hover {
+    .p-menu-item-icon,
+    .p-menu-item-label {
+      color: var(--ds-primary-green);
+    }
+  }
+
+  /* Legacy */
   .p-menuitem-link {
     display: flex;
     align-items: center;
     gap: var(--space-3);
     padding: var(--space-3) var(--space-4);
     color: var(--color-text-primary);
+    text-decoration: none;
+
+    &:hover,
+    &:focus-visible {
+      text-decoration: none;
+    }
 
     &:hover {
       background: var(--ui-surface-subtle);

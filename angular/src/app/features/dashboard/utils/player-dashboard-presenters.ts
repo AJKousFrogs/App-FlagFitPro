@@ -92,16 +92,47 @@ export function hasCompletedDashboardOnboarding(
   return status.missingRequired.length === 0 || status.percentage >= 80;
 }
 
-export function getDashboardEventIcon(type: string): string {
-  const icons: Record<string, string> = {
-    recovery_protocol: "🏈",
-    load_cap: "⚠️",
-    travel_recovery: "🛫",
-    rtp_protocol: "🏥",
-    wellness_focus: "💚",
+/** Consecutive calendar days with wellness check-ins, ordered from most recent. */
+export function computeWellnessCheckinStreak(
+  entries: Array<{ date: string }>,
+): number {
+  if (!entries.length) return 0;
+  const sorted = [...new Set(entries.map((e) => e.date).filter(Boolean))].sort(
+    (a, b) => b.localeCompare(a),
+  );
+  if (sorted.length === 0) return 0;
+
+  const parseYmd = (ymd: string): Date => {
+    const [y, m, d] = ymd.split("-").map(Number);
+    return new Date(y, m - 1, d, 12, 0, 0, 0);
   };
 
-  return icons[type] || "📋";
+  let streak = 1;
+  for (let i = 1; i < sorted.length; i++) {
+    const prev = parseYmd(sorted[i - 1]);
+    const curr = parseYmd(sorted[i]);
+    const diff =
+      (prev.getTime() - curr.getTime()) / (1000 * 60 * 60 * 24);
+    if (diff === 1) {
+      streak++;
+    } else {
+      break;
+    }
+  }
+  return streak;
+}
+
+/** PrimeIcons class suffix (e.g. `pi-flag` → `class="pi pi-flag"` in the template). */
+export function getDashboardEventIcon(type: string): string {
+  const icons: Record<string, string> = {
+    recovery_protocol: "pi-flag",
+    load_cap: "pi-exclamation-triangle",
+    travel_recovery: "pi-send",
+    rtp_protocol: "pi-plus-circle",
+    wellness_focus: "pi-heart",
+  };
+
+  return icons[type] || "pi-clipboard";
 }
 
 export function getDashboardEventSeverity(
@@ -115,4 +146,50 @@ export function getDashboardEventSeverity(
     default:
       return "success";
   }
+}
+
+export type DashboardUpcomingEventDisplay = {
+  id: string;
+  day: string;
+  month: string;
+  title: string;
+  type: string;
+  typeLabel: string;
+  severity: ReturnType<typeof getDashboardEventSeverity>;
+};
+
+/** Maps Supabase `team_events` rows to dashboard “Coming up” cards. */
+export function mapTeamEventToDashboardDisplay(
+  e: { event_date: string; title?: string | null; event_type?: string | null },
+  index: number,
+): DashboardUpcomingEventDisplay {
+  const safeDate = e.event_date.includes("T")
+    ? e.event_date
+    : `${e.event_date}T12:00:00`;
+  const d = new Date(safeDate);
+  const day = Number.isNaN(d.getTime()) ? "—" : String(d.getDate());
+  const month = Number.isNaN(d.getTime())
+    ? ""
+    : d.toLocaleString("en-US", { month: "short" });
+  const rawType = (e.event_type || "event").toLowerCase();
+  const title = (e.title && e.title.trim()) || "Team event";
+  return {
+    id: `${e.event_date}-${index}-${title}`,
+    day,
+    month,
+    title,
+    type: rawType,
+    typeLabel: formatTeamEventTypeLabel(rawType),
+    severity: getDashboardEventSeverity(rawType),
+  };
+}
+
+function formatTeamEventTypeLabel(type: string): string {
+  const t = type.toLowerCase();
+  if (t === "game" || t === "match") return "Game";
+  if (t === "tournament") return "Tournament";
+  if (t === "practice" || t === "team_practice") return "Practice";
+  return t
+    .replace(/_/g, " ")
+    .replace(/\b\w/g, (c) => c.toUpperCase());
 }

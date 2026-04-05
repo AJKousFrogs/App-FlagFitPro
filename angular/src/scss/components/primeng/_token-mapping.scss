@@ -144,8 +144,8 @@
     // Dialog content
     --p-dialog-content-padding: var(--component-dialog-padding);
 
-    // Dialog footer (secondary left, primary right)
-    --p-dialog-footer-padding: var(--space-4) var(--component-dialog-padding);
+    // Dialog footer (secondary left, primary right) — extra vertical space below border-top
+    --p-dialog-footer-padding: var(--space-6) var(--component-dialog-padding);
     --p-dialog-footer-border-top: var(--border-1) solid
       var(--color-border-muted);
     --p-dialog-footer-gap: var(--space-3);

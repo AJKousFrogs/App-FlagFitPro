@@ -104,7 +104,10 @@
           <span>Checked in today</span>
         </div>
         @if (checkinStreak() > 0) {
-          <div class="checkin-streak">🔥 {{ checkinStreak() }}-day streak!</div>
+          <div class="checkin-streak">
+            <i class="pi pi-bolt" aria-hidden="true"></i>
+            <span>{{ checkinStreak() }}-day streak</span>
+          </div>
         }
       } @else if (checkinOverdue()) {
         <div class="checkin-status checkin-overdue">
@@ -126,17 +129,17 @@
     (cardClick)="navigateToAcwr.emit()"
     [pTooltip]="
       acwrDataSufficient()
-        ? '📊 Acute:Chronic Workload Ratio tracks your injury risk by comparing recent training load (' +
+        ? 'Acute:Chronic Workload Ratio tracks your injury risk by comparing recent training load (' +
           TRAINING.ACUTE_LOAD_DAYS +
           ' days) to long-term fitness (' +
           TRAINING.CHRONIC_LOAD_DAYS +
-          ' days).\n\n✅ Optimal range: ' +
+          ' days).\n\nOptimal range: ' +
           TRAINING.ACWR_SAFE_RANGE_MIN +
           '–' +
           TRAINING.ACWR_SAFE_RANGE_MAX
-        : '💡 ACWR requires ' +
+        : 'ACWR requires ' +
           TRAINING.MIN_DAYS_FOR_CHRONIC +
-          ' days of training data to calculate.\n\nKeep logging sessions to unlock this injury prevention metric!'
+          ' days of training data to calculate.\n\nKeep logging sessions to unlock this injury prevention metric.'
     "
     tooltipPosition="bottom"
     [showDelay]="500"
@@ -184,17 +187,17 @@
           </div>
           @if (
             acwrDisplay().trainingDaysLogged! >= TRAINING.ACUTE_LOAD_DAYS &&
-            acwrDisplay().trainingDaysLogged! < 14
+            acwrDisplay().trainingDaysLogged! < TRAINING.ACWR_HALF_BASELINE_DAYS
           ) {
             <app-status-tag
-              value="7-day milestone! 🎉"
+              value="7-day milestone reached"
               severity="success"
               size="sm"
               class="milestone-tag"
               [wrap]="true"
             ></app-status-tag>
           } @else if (
-            acwrDisplay().trainingDaysLogged! >= 14 &&
+            acwrDisplay().trainingDaysLogged! >= TRAINING.ACWR_HALF_BASELINE_DAYS &&
             acwrDisplay().trainingDaysLogged! < TRAINING.MIN_DAYS_FOR_CHRONIC
           ) {
             <app-status-tag
@@ -245,7 +248,7 @@
   </app-card-shell>
 
   <app-card-shell
-    class="stat-card stat-streak cursor-pointer"
+    class="stat-card stat-streak"
     pTooltip="Consecutive days with training logged. Building a streak helps maintain consistency and prevents gaps in your progress tracking."
     tooltipPosition="bottom"
     [showDelay]="500"
@@ -261,7 +264,7 @@
     </div>
   </app-card-shell>
 
-  <app-card-shell class="stat-card stat-sessions cursor-pointer">
+  <app-card-shell class="stat-card stat-sessions">
     <div class="stat-card-content">
       <div class="stat-icon sessions-icon">
         <i class="pi pi-calendar-plus"></i>

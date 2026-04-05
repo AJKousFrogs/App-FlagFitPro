@@ -67,8 +67,9 @@ export type ValidationState = "idle" | "validating" | "valid" | "invalid";
           <i [class]="'prefix-icon pi ' + prefixIcon()"></i>
         }
 
-        <!-- Input Field -->
+        <!-- Input Field — p-inputtext: shared padding/height/border with Prime form controls -->
         <input
+          class="p-inputtext"
           [id]="inputId()"
           [name]="inputId()"
           [type]="showPassword() ? 'text' : type()"

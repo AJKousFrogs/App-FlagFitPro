@@ -23,10 +23,22 @@
                 <i class="pi pi-sparkles"></i>
               </div>
               <div class="welcome-content">
-                <h2 class="welcome-greeting">
+                <h1 class="welcome-greeting">
                   {{ greeting() }}, <span class="greeting-name">{{ userName() }}</span>!
-                </h2>
+                </h1>
                 <p class="merlin-insight">{{ merlinInsight() }}</p>
+                @if (privacySharingStatus().totalMetrics > 0) {
+                  <p class="welcome-privacy">
+                    <a routerLink="/settings/privacy" class="welcome-privacy__link"
+                      >Team sharing</a
+                    >:
+                    {{ privacySharingStatus().sharedMetrics }} of
+                    {{ privacySharingStatus().totalMetrics }} metric groups enabled
+                    @if (!privacySharingStatus().sharingEnabled) {
+                      <span class="welcome-privacy__muted">(none active)</span>
+                    }
+                  </p>
+                }
                 <div class="welcome-actions">
                   <app-button iconLeft="pi-play" routerLink="/todays-practice" size="sm"
                     >Start Training</app-button
@@ -47,8 +59,8 @@
           <app-player-dashboard-stats-overview
             class="bento-item stats-overview"
             [readinessScore]="dashboardReadinessPresentation().score"
-            [readinessLabel]="getReadinessStatus()"
-            [readinessSeverity]="getReadinessSeverity()"
+            [readinessLabel]="dashboardReadinessPresentation().label"
+            [readinessSeverity]="dashboardReadinessPresentation().severity"
             [nextGenEnabled]="nextGenEnabled()"
             [nextGenReadinessScore]="nextGenReadinessScore()"
             [wellnessCheckedInToday]="wellnessCheckedInToday()"
@@ -58,8 +70,8 @@
             [acwrDataSufficient]="acwrDataSufficient()"
             [acwrDisplay]="{
               value: dashboardAcwrDisplay().value,
-              label: getAcwrStatus(),
-              severity: getAcwrSeverity(),
+              label: dashboardAcwrDisplay().label,
+              severity: dashboardAcwrDisplay().severity,
               hasData: dashboardAcwrDisplay().hasData,
               trainingDaysLogged: dashboardAcwrDisplay().trainingDaysLogged,
             }"
@@ -86,6 +98,20 @@
             (dismissAnnouncement)="dismissAnnouncement()"
           />
 
+          @defer (on viewport) {
+            <app-player-dashboard-events-section
+              class="bento-item full-width no-padding"
+              [schedulePreviewCount]="UI_LIMITS.SCHEDULE_PREVIEW_COUNT"
+              [eventsPreviewCount]="UI_LIMITS.SCHEDULE_PREVIEW_COUNT"
+              [continuityEvents]="continuityDisplayEvents()"
+              [tomorrowSchedule]="tomorrowSchedule()"
+              [upcomingEvents]="upcomingEvents()"
+            />
+          } @placeholder {
+            <div
+              class="player-dashboard-events-placeholder bento-item full-width"
+            ></div>
+          }
 
           <!-- Insights Grid (Spans 2 columns) -->
           @defer (on viewport) {
@@ -152,7 +178,7 @@
                 } @else {
                   <div class="empty-schedule">
                     <i class="pi pi-calendar-minus empty-icon"></i>
-                    <p class="text-sm text-muted">No training today</p>
+                    <p class="empty-schedule__message">No training today</p>
                   </div>
                 }
             </app-card-shell>

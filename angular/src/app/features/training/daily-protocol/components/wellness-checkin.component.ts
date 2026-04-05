@@ -64,7 +64,9 @@ export interface ReadinessResult {
     <!-- Quick Checkin Button -->
     @if (!hasCheckedIn()) {
       <div class="checkin-prompt" (click)="showDialog.set(true)">
-        <span class="prompt-icon">💚</span>
+        <span class="prompt-icon" aria-hidden="true"
+          ><i class="pi pi-heart-fill"></i
+        ></span>
         <div class="prompt-content">
           <span class="prompt-title">Complete Wellness Check-in</span>
           <span class="prompt-subtitle">Track your readiness for today</span>
@@ -83,19 +85,25 @@ export interface ReadinessResult {
         </div>
         <div class="wellness-summary">
           <div class="meta-row" pTooltip="Sleep Quality">
-            <span class="meta-row__icon" aria-hidden="true">😴</span>
+            <span class="meta-row__icon" aria-hidden="true"
+              ><i class="pi pi-moon"></i
+            ></span>
             <span class="meta-row__text">{{
               getSleepLabel(wellnessData().sleepQuality)
             }}</span>
           </div>
           <div class="meta-row" pTooltip="Energy Level">
-            <span class="meta-row__icon" aria-hidden="true">⚡</span>
+            <span class="meta-row__icon" aria-hidden="true"
+              ><i class="pi pi-bolt"></i
+            ></span>
             <span class="meta-row__text">{{
               getEnergyLabel(wellnessData().energyLevel)
             }}</span>
           </div>
           <div class="meta-row" pTooltip="Muscle Soreness">
-            <span class="meta-row__icon" aria-hidden="true">💪</span>
+            <span class="meta-row__icon" aria-hidden="true"
+              ><i class="pi pi-chart-line"></i
+            ></span>
             <span class="meta-row__text">{{
               getSorenessLabel(wellnessData().muscleSoreness)
             }}</span>
@@ -139,7 +147,9 @@ export interface ReadinessResult {
         <!-- Sleep Quality -->
         <div class="form-section">
           <label class="section-label">
-            <span class="label-icon">😴</span>
+            <span class="label-icon" aria-hidden="true"
+              ><i class="pi pi-moon"></i
+            ></span>
             <span>Sleep Quality</span>
             <span class="value-badge">{{
               getSleepLabel(formData().sleepQuality)
@@ -171,7 +181,9 @@ export interface ReadinessResult {
         <!-- Sleep Hours -->
         <div class="form-section">
           <label class="section-label">
-            <span class="label-icon">🕐</span>
+            <span class="label-icon" aria-hidden="true"
+              ><i class="pi pi-clock"></i
+            ></span>
             <span>Hours of Sleep</span>
             <span class="value-badge">{{ formData().sleepHours }}h</span>
           </label>
@@ -208,7 +220,9 @@ export interface ReadinessResult {
         <!-- Energy Level -->
         <div class="form-section">
           <label class="section-label">
-            <span class="label-icon">⚡</span>
+            <span class="label-icon" aria-hidden="true"
+              ><i class="pi pi-bolt"></i
+            ></span>
             <span>Energy Level</span>
             <span class="value-badge">{{
               getEnergyLabel(formData().energyLevel)
@@ -240,7 +254,9 @@ export interface ReadinessResult {
         <!-- Muscle Soreness -->
         <div class="form-section">
           <label class="section-label">
-            <span class="label-icon">💪</span>
+            <span class="label-icon" aria-hidden="true"
+              ><i class="pi pi-chart-line"></i
+            ></span>
             <span>Muscle Soreness</span>
             <span class="value-badge">{{
               getSorenessLabel(formData().muscleSoreness)

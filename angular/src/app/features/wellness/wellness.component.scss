@@ -97,6 +97,24 @@
   width: 100%;
 }
 
+/* Prevent title/actions overlap when the shell header wraps */
+:host ::ng-deep app-card-shell.checkin-card .card-shell__header {
+  flex-wrap: wrap;
+  align-items: flex-start;
+  row-gap: var(--space-2);
+  column-gap: var(--space-4);
+  padding-top: var(--space-5);
+  padding-bottom: var(--space-3);
+}
+
+:host ::ng-deep app-card-shell.checkin-card .card-shell__header-text {
+  min-width: 0;
+}
+
+:host ::ng-deep app-card-shell.checkin-card .card-shell__title {
+  line-height: var(--ds-line-height-snug);
+}
+
 // ── Check-in form shell ──────────────────────────────────────────────────────
 .checkin-form {
   display: flex;
@@ -116,11 +134,11 @@
   align-items: flex-start;
   gap: var(--space-3);
   margin: 0;
-  padding: var(--space-3) var(--space-4);
+  padding: var(--space-4) var(--space-5);
   font-size: var(--ds-font-size-sm);
   color: var(--color-text-secondary);
   background: var(--surface-secondary);
-  border: var(--border-1) solid var(--color-border-primary);
+  border: var(--border-1) solid color-mix(in srgb, var(--ds-primary-green) 12%, var(--color-border-primary));
   border-radius: var(--radius-lg);
   line-height: var(--ds-line-height-relaxed);
 
@@ -139,8 +157,12 @@
 .checkin-section {
   padding: var(--space-5);
   background: color-mix(in srgb, var(--ds-primary-green) 4%, var(--surface-card));
-  border: var(--border-1) solid color-mix(in srgb, var(--ds-primary-green) 16%, var(--color-border-primary));
+  border: var(--border-1) solid color-mix(in srgb, var(--ds-primary-green) 10%, var(--color-border-primary));
   border-radius: var(--radius-xl);
+}
+
+.checkin-section .checkin-row + .checkin-row {
+  margin-top: var(--space-4);
 }
 
 // Section label — icon badge + label text
@@ -171,15 +193,16 @@
 // ── Field grid ───────────────────────────────────────────────────────────────
 .checkin-row {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(var(--grid-card-min-sm), 1fr));
-  gap: var(--space-4);
-  align-items: stretch;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-4) var(--space-5);
+  align-items: start;
 }
 
 .checkin-item {
   display: flex;
   flex-direction: column;
   gap: var(--space-2);
+  min-width: 0;
 
   label {
     font-weight: var(--ds-font-weight-medium);

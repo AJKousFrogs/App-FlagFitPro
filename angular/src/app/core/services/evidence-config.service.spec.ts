@@ -126,7 +126,8 @@ describe("EvidenceConfigService", () => {
       if (presets.length > 0) {
         service.setActivePreset(presets[0].id);
         expect(mockLoggerService.info).toHaveBeenCalledWith(
-          expect.stringContaining("Preset changed to:"),
+          "evidence_config_preset_changed",
+          expect.objectContaining({ presetId: presets[0].id }),
         );
       }
     });

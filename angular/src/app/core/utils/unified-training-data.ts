@@ -6,6 +6,7 @@ import {
   Workout,
 } from "../models/training.models";
 import { TrainingSessionRecord } from "../models/api.models";
+import { mergeWeeklyScheduleWithLoggedSessions } from "./unified-training-transforms";
 
 interface WellnessTrainingDataLike {
   alert: TrainingDataResult["wellnessData"]["alert"];
@@ -71,6 +72,11 @@ export async function loadUnifiedTrainingData({
     checkWellnessForTraining(userId),
   ]);
 
+  const mergedSchedule = mergeWeeklyScheduleWithLoggedSessions(
+    schedule,
+    sessions,
+  );
+
   const stats = calculateTrainingStats(sessions);
   const streak = calculateTrainingStreak(sessions);
   const achievements = loadAchievements(userId, streak, sessions.length);
@@ -78,7 +84,7 @@ export async function loadUnifiedTrainingData({
 
   return {
     stats,
-    schedule,
+    schedule: mergedSchedule,
     workouts,
     achievements,
     wellnessData,

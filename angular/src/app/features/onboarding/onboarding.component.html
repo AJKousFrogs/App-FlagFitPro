@@ -41,12 +41,23 @@
           <span class="ob-autosave ob-autosave--saving" aria-live="polite" aria-label="Saving progress">
             <i class="pi pi-spin pi-spinner" aria-hidden="true"></i>
           </span>
+          <span class="sr-only">
+            Step {{ state.currentStep() + 1 }} of {{ state.steps().length }}
+          </span>
         } @else if (state.lastSaved()) {
           <span class="ob-autosave ob-autosave--saved" aria-live="polite" aria-label="Progress saved">
             <i class="pi pi-check-circle" aria-hidden="true"></i>
           </span>
+          <span class="sr-only">
+            Step {{ state.currentStep() + 1 }} of {{ state.steps().length }}
+          </span>
         } @else {
-          <span class="ob-step-counter" aria-hidden="true">
+          <span
+            class="ob-step-counter"
+            [attr.aria-label]="
+              'Step ' + (state.currentStep() + 1) + ' of ' + state.steps().length
+            "
+          >
             {{ state.currentStep() + 1 }}/{{ state.steps().length }}
           </span>
         }

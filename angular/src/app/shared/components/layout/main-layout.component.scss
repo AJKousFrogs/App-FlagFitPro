@@ -34,7 +34,7 @@
 }
 
 /* Tablet: Collapsed icon-only sidebar (768px-1024px) */
-@media (width <= 64rem) and (width > 48rem) {
+@include respond-between(md, lg) {
   .app-shell {
     --app-shell-sidebar-width: 4.5rem;
   }
@@ -45,7 +45,7 @@
 }
 
 /* Small tablet / large mobile: Slightly narrower collapsed sidebar */
-@media (width <= 48rem) and (width > 40rem) {
+@include respond-between(sm, md) {
   .app-shell {
     --app-shell-sidebar-width: 4rem;
   }
@@ -145,12 +145,12 @@
 .desktop-only {
   display: block;
 
-  @media (max-width: 40rem) {
+  @include respond-to(sm) {
     display: none;
   }
 }
 
-@media (max-width: 40rem) {
+@include respond-to(sm) {
   .app-shell {
     grid-template-columns: minmax(0, 1fr);
     grid-template-rows:
@@ -213,7 +213,7 @@
   }
 }
 
-@media (max-width: 30rem) {
+@include respond-to(xs-narrow) {
   .app-shell__page {
     padding-block-end: calc(
       var(--app-shell-gutter-block-mobile) +

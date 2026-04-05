@@ -21,8 +21,11 @@ import { Avatar } from "primeng/avatar";
     </p-avatar>
   `,
   styles: [`
-    .app-avatar-host {
-      display: inline-block;
+    /* Must not override .p-avatar { display: inline-flex } — inline-block breaks label centering */
+    .app-avatar-host.p-avatar {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
     }
 
     .app-avatar-host .p-avatar {

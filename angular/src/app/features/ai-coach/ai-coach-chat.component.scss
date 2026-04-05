@@ -105,12 +105,17 @@
   .welcome-hero {
     margin-bottom: var(--space-10);
     .hero-icon {
-      font-size: 3rem;
+      font-size: var(--ds-font-size-3rem);
       margin-bottom: var(--space-4);
+      color: var(--color-brand-primary);
+
+      .pi {
+        font-size: inherit;
+      }
     }
     h2 {
       margin: var(--space-0) var(--space-0) var(--space-2);
-      font-size: 1.5rem;
+      font-size: var(--ds-font-size-2xl);
       font-weight: var(--ds-font-weight-bold);
       letter-spacing: -0.025em;
     }
@@ -369,12 +374,12 @@
       margin-bottom: var(--space-6);
 
       .hero-icon {
-        font-size: 2.5rem;
+        font-size: var(--ds-font-size-2-25rem);
         margin-bottom: var(--space-3);
       }
 
       h2 {
-        font-size: 1.25rem;
+        font-size: var(--ds-font-size-xl);
       }
     }
   }
@@ -463,11 +468,11 @@
       margin-bottom: var(--space-4);
 
       .hero-icon {
-        font-size: 2rem;
+        font-size: var(--ds-font-size-3xl);
       }
 
       h2 {
-        font-size: 1.125rem;
+        font-size: var(--ds-font-size-lg);
       }
 
       p {
@@ -587,7 +592,7 @@
     padding: var(--space-3);
     .welcome-hero {
       .hero-icon { font-size: var(--ds-font-size-1-75rem); }
-      h2 { font-size: 1rem; }
+      h2 { font-size: var(--ds-font-size-md); }
     }
   }
 

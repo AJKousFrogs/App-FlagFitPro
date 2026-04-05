@@ -36,6 +36,7 @@ import {
   StatItem,
   StatsGridComponent,
 } from "../../shared/components/stats-grid/stats-grid.component";
+import { StatusTagSeverity } from "../../shared/components/status-tag/status-tag.component";
 import { SupplementTrackerComponent } from "../../shared/components/supplement-tracker/supplement-tracker.component";
 import {
   AppLoadingComponent,
@@ -187,52 +188,61 @@ export class WellnessComponent {
               this.wellnessService.getWellnessScore(latestData);
             const status = this.wellnessService.getWellnessStatus(overallScore);
 
+            const sleepTrend = this.calculateTrend(wellnessEntries, "sleep");
+            const energyTrend = this.calculateTrend(wellnessEntries, "energy");
+
             this.wellnessStats.set([
               {
                 label: "Sleep Quality",
                 value: latestData.sleep ? `${latestData.sleep}h` : "N/A",
                 icon: "pi-moon",
                 color: "var(--color-status-info)",
-                trend: this.calculateTrend(wellnessEntries, "sleep"),
-                trendType: "positive",
+                ...(sleepTrend !== "N/A"
+                  ? {
+                      trend: sleepTrend,
+                      trendType: "positive" as const,
+                    }
+                  : {}),
               },
               {
                 label: "Recovery Score",
                 value: `${Math.round(overallScore * 10)}%`,
                 icon: "pi-heart",
                 color: status.color,
-                trend: status.status,
+                trend: this.formatWellnessStatusLabel(status.status),
+                trendSeverity: this.recoveryTrendSeverity(status.status),
                 trendType:
                   status.status === "good" || status.status === "excellent"
                     ? "positive"
-                    : "neutral",
+                    : status.status === "poor"
+                      ? "negative"
+                      : "neutral",
               },
               {
                 label: "Energy Level",
                 value: latestData.energy ? `${latestData.energy}/10` : "N/A",
                 icon: "pi-bolt",
                 color: "var(--color-status-warning)",
-                trend: this.calculateTrend(wellnessEntries, "energy"),
-                trendType: "positive",
+                ...(energyTrend !== "N/A"
+                  ? {
+                      trend: energyTrend,
+                      trendType: "positive" as const,
+                    }
+                  : {}),
               },
               {
                 label: "Stress Level",
-                value: latestData.stress
-                  ? this.getStressLabel(latestData.stress)
-                  : "N/A",
+                value:
+                  latestData.stress != null
+                    ? this.getStressLabel(latestData.stress)
+                    : "N/A",
                 icon: "pi-shield",
                 color:
-                  latestData.stress && latestData.stress <= 3
+                  latestData.stress != null && latestData.stress <= 3
                     ? "var(--color-status-success)"
-                    : "var(--color-status-warning)",
-                trend:
-                  latestData.stress && latestData.stress <= 3
-                    ? "Low"
-                    : "Moderate",
-                trendType:
-                  latestData.stress && latestData.stress <= 3
-                    ? "positive"
-                    : "neutral",
+                    : latestData.stress != null
+                      ? "var(--color-status-warning)"
+                      : "var(--color-text-tertiary)",
               },
             ]);
 
@@ -352,6 +362,28 @@ export class WellnessComponent {
     if (stress <= 3) return "Low";
     if (stress <= 6) return "Moderate";
     return "High";
+  }
+
+  private formatWellnessStatusLabel(
+    status: "excellent" | "good" | "fair" | "poor",
+  ): string {
+    return status.charAt(0).toUpperCase() + status.slice(1);
+  }
+
+  private recoveryTrendSeverity(
+    status: "excellent" | "good" | "fair" | "poor",
+  ): StatusTagSeverity {
+    switch (status) {
+      case "excellent":
+      case "good":
+        return "success";
+      case "fair":
+        return "warning";
+      case "poor":
+        return "danger";
+      default:
+        return "info";
+    }
   }
 
   openCheckIn(): void {

@@ -9,7 +9,7 @@
   display: flex;
   align-items: center;
   gap: var(--space-6);
-  margin-bottom: var(--space-5);
+  margin-bottom: var(--space-4);
 }
 
 .water-visual {
@@ -134,8 +134,18 @@
 
 .quick-add-buttons {
   display: flex;
-  gap: var(--space-2);
+  gap: var(--space-3);
   flex-wrap: wrap;
+}
+
+/* Outlined quick-add: stronger label contrast on dark surfaces */
+:host ::ng-deep .quick-add-buttons .btn.btn-outlined {
+  --btn-color: var(--color-text-primary);
+  --btn-border: color-mix(
+    in srgb,
+    var(--color-border-default) 85%,
+    var(--ds-primary-green) 15%
+  );
 }
 
 .recent-logs {
@@ -168,34 +178,46 @@
 .hydration-tip {
   display: flex;
   align-items: flex-start;
-  gap: var(--space-2);
-  padding: var(--space-3);
+  gap: var(--space-3);
+  padding: var(--space-4) var(--space-5);
+  margin-bottom: var(--space-5);
   background: var(--primitive-info-50);
   border-radius: var(--radius-lg);
-  border-left: var(--space-0-75) solid var(--color-status-info);
+  border: var(--border-1) solid color-mix(in srgb, var(--color-status-info) 35%, transparent);
+  border-left-width: var(--space-1);
 
   i {
     font-size: var(--ds-font-size-md);
-    color: var(--color-status-info);
-    margin-top: var(--space-1);
+    color: var(--primitive-info-500);
+    margin-top: 2px;
+    flex-shrink: 0;
   }
 
   span {
     font-size: var(--ds-font-size-md);
-    color: var(--primitive-info-800);
-    line-height: var(--ds-line-height-normal);
+    color: var(--primitive-neutral-900);
+    line-height: var(--ds-line-height-relaxed);
   }
 
   &.warning {
-    background: var(--primitive-warning-100);
-    border-left-color: var(--color-status-warning);
+    background: color-mix(
+      in srgb,
+      var(--primitive-warning-100) 88%,
+      var(--surface-card) 12%
+    );
+    border-color: color-mix(
+      in srgb,
+      var(--primitive-warning-400) 55%,
+      var(--color-border-default)
+    );
+    border-left-color: var(--primitive-warning-600);
 
     i {
-      color: var(--color-status-warning);
+      color: var(--primitive-warning-800);
     }
 
     span {
-      color: var(--color-status-warning-text);
+      color: var(--primitive-warning-900);
     }
   }
 }

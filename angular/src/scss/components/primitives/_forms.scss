@@ -281,25 +281,42 @@
   }
 
   .form-check {
+    position: relative;
     display: inline-flex;
-    align-items: flex-start;
+    align-items: center;
     gap: var(--space-3);
-    min-height: var(--input-height-md);
+    min-height: var(--touch-target-md);
     cursor: pointer;
     user-select: none;
     color: var(--color-text-secondary);
   }
 
+  // Full WCAG touch target on the real input (avoids 1×1 "visually hidden" hit box in devtools
+  // and unreliable taps). Links inside the label stay above via z-index.
   .form-check__input {
-    @include visually-hidden;
+    position: absolute;
+    left: 0;
+    top: 50%;
+    z-index: 1;
+    width: var(--touch-target-md);
+    height: var(--touch-target-md);
+    margin: 0;
+    padding: 0;
+    opacity: 0;
+    cursor: pointer;
+    transform: translateY(-50%);
+    clip-path: none;
+    overflow: visible;
+    border: 0;
+    white-space: normal;
   }
 
   .form-check__box {
     position: relative;
-    width: 1.125rem;
-    height: 1.125rem;
+    z-index: 0;
+    width: 1.25rem;
+    height: 1.25rem;
     flex-shrink: 0;
-    margin-top: calc((var(--input-height-md) - 1.125rem) / 2);
     border-radius: var(--radius-sm);
     border: var(--border-1) solid var(--color-border-default);
     background: var(--surface-primary);
@@ -338,38 +355,39 @@
 
   // Hover state only on hover-capable devices (Decision 52)
   @media (hover: hover) and (pointer: fine) {
-    .form-check__input:hover + .form-check__box {
+    .form-check:hover .form-check__input:not(:checked) + .form-check__box {
       background: var(--color-surface-hover);
       border-color: var(--color-border);
     }
 
-    .form-check__input:checked:hover + .form-check__box {
+    .form-check:hover .form-check__input:checked + .form-check__box {
       background: var(--ds-primary-green-hover);
       border-color: var(--ds-primary-green-hover);
     }
   }
 
-  .form-check__input:active + .form-check__box {
+  .form-check:active .form-check__box {
     transform: scale(0.95);
   }
 
   // Touch device optimization
   @media (hover: none) and (pointer: coarse) {
-    .form-check__input:active + .form-check__box {
+    .form-check:active .form-check__box {
       transform: scale(0.92);
     }
   }
 
-  // Larger click area for checkboxes/radios (Decision 42)
-  // Touch target minimum 44px (--touch-target-md)
+  // Extra hit padding beyond the painted box (input overlay is primary target)
   .form-check__box::before {
     content: "";
     position: absolute;
-    inset: calc((var(--touch-target-md) - 1.125rem) / -2);
+    inset: calc((var(--touch-target-md) - 1.25rem) / -2);
     cursor: pointer;
   }
 
   .form-check__label {
+    position: relative;
+    z-index: 0;
     display: flex;
     flex-direction: column;
     gap: var(--space-1);
@@ -381,6 +399,11 @@
   .form-check__label strong,
   .form-check__label a {
     color: var(--color-text-primary);
+  }
+
+  .form-check__label a {
+    position: relative;
+    z-index: 2;
   }
 
   // Animated entrance

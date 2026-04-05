@@ -7,7 +7,7 @@
 .stats-overview {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 16.5rem), 1fr));
-  gap: var(--layout-gap-md);
+  gap: var(--layout-gap-sm);
 }
 
 .stat-card-content {
@@ -151,7 +151,9 @@
 }
 
 .checkin-streak {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
   margin-top: var(--space-2);
   padding: var(--space-1) var(--space-2);
   border-radius: var(--radius-sm);
@@ -159,15 +161,11 @@
   color: var(--primitive-warning-600);
   font-size: var(--ds-font-size-xs);
   font-weight: var(--ds-font-weight-semibold);
-}
 
-.stat-readiness {
-  transition: transform var(--transition-fast) var(--ease-standard);
-}
-
-.stat-readiness:hover {
-  transform: var(--transform-hover-lift);
-  box-shadow: var(--shadow-2);
+  .pi {
+    font-size: var(--ds-font-size-sm);
+    opacity: var(--opacity-strong);
+  }
 }
 
 .acwr-progress-content,

@@ -11,9 +11,9 @@
 .no-program-card {
   inline-size: 100%;
   background: var(--surface-card);
-  border: var(--border-1) solid var(--color-border-primary);
-  border-radius: var(--radius-xl);
-  box-shadow: var(--shadow-sm);
+  border: var(--component-card-border);
+  border-radius: var(--component-card-radius);
+  box-shadow: var(--component-card-shadow);
 }
 
 .no-program-content {

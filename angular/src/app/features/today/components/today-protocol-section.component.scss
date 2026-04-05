@@ -1,5 +1,60 @@
 @use "styles/mixins" as *;
 
+.protocol-callout {
+  padding: var(--space-4);
+  border-radius: var(--radius-lg);
+  margin-bottom: var(--space-4);
+  border: var(--border-1) solid var(--color-border-secondary);
+  background: var(--color-surface-secondary);
+}
+
+.protocol-callout--error {
+  border-color: color-mix(in srgb, var(--ds-color-danger) 35%, var(--color-border-primary));
+  background: color-mix(in srgb, var(--ds-color-danger) 8%, var(--surface-card));
+}
+
+.protocol-callout--recovery {
+  border-color: color-mix(in srgb, var(--ds-primary-green) 28%, var(--color-border-primary));
+  background: color-mix(in srgb, var(--ds-primary-green) 7%, var(--surface-card));
+}
+
+.protocol-callout--acwr {
+  border-color: color-mix(in srgb, var(--ds-color-warning) 35%, var(--color-border-primary));
+  background: color-mix(in srgb, var(--ds-color-warning) 10%, var(--surface-card));
+}
+
+.protocol-callout__title {
+  display: block;
+  margin-bottom: var(--space-2);
+  font-size: var(--ds-font-size-md);
+}
+
+.protocol-callout__body {
+  margin: 0;
+  font-size: var(--ds-font-size-sm);
+  color: var(--color-text-secondary);
+  line-height: 1.45;
+}
+
+.protocol-callout__text {
+  margin: 0 0 var(--space-3);
+  font-size: var(--ds-font-size-sm);
+  color: var(--color-text-primary);
+}
+
+.protocol-callout__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.protocol-muted {
+  margin: 0 0 var(--space-3);
+  font-size: var(--ds-font-size-sm);
+  color: var(--color-text-secondary);
+  line-height: 1.45;
+}
+
 .content-section {
   display: flex;
   flex-direction: column;

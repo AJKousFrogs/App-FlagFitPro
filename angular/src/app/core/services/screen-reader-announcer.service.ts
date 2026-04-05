@@ -132,37 +132,36 @@ export class ScreenReaderAnnouncerService {
    * Create the live region elements in the DOM
    */
   private createLiveRegions(): void {
-    // Check if already created
-    const existingPolite = this.document.getElementById("sr-announcer-polite");
-    const existingAssertive = this.document.getElementById(
+    let polite = this.document.getElementById(
+      "sr-announcer-polite",
+    ) as HTMLElement | null;
+    let assertive = this.document.getElementById(
       "sr-announcer-assertive",
-    );
+    ) as HTMLElement | null;
 
-    if (existingPolite && existingAssertive) {
-      this.liveElement = existingPolite;
-      this.assertiveElement = existingAssertive;
-      return;
+    // Reuse or create each region independently so we never duplicate IDs when
+    // only one element already exists (e.g. partial DOM state or HMR).
+    if (!polite) {
+      polite = this.document.createElement("div");
+      polite.id = "sr-announcer-polite";
+      polite.setAttribute("role", "status");
+      polite.setAttribute("aria-live", "polite");
+      polite.setAttribute("aria-atomic", "true");
+      this.applyHiddenStyles(polite);
+      this.document.body.appendChild(polite);
     }
+    this.liveElement = polite;
 
-    // Create polite live region
-    this.liveElement = this.document.createElement("div");
-    this.liveElement.id = "sr-announcer-polite";
-    this.liveElement.setAttribute("role", "status");
-    this.liveElement.setAttribute("aria-live", "polite");
-    this.liveElement.setAttribute("aria-atomic", "true");
-    this.applyHiddenStyles(this.liveElement);
-
-    // Create assertive live region
-    this.assertiveElement = this.document.createElement("div");
-    this.assertiveElement.id = "sr-announcer-assertive";
-    this.assertiveElement.setAttribute("role", "alert");
-    this.assertiveElement.setAttribute("aria-live", "assertive");
-    this.assertiveElement.setAttribute("aria-atomic", "true");
-    this.applyHiddenStyles(this.assertiveElement);
-
-    // Append to body
-    this.document.body.appendChild(this.liveElement);
-    this.document.body.appendChild(this.assertiveElement);
+    if (!assertive) {
+      assertive = this.document.createElement("div");
+      assertive.id = "sr-announcer-assertive";
+      assertive.setAttribute("role", "alert");
+      assertive.setAttribute("aria-live", "assertive");
+      assertive.setAttribute("aria-atomic", "true");
+      this.applyHiddenStyles(assertive);
+      this.document.body.appendChild(assertive);
+    }
+    this.assertiveElement = assertive;
   }
 
   /**

@@ -34,7 +34,7 @@ import { MissingDataStatus } from "../../../core/services/missing-data-detection
           <div class="header-content">
             <i [class]="getIconClass()"></i>
             <div class="header-text">
-              <h3>{{ getTitle() }}</h3>
+              <h2 class="missing-data-title">{{ getTitle() }}</h2>
               <p class="days-missing">
                 {{ missingStatus()!.daysMissing }} day{{
                   missingStatus()!.daysMissing > 1 ? "s" : ""
@@ -53,13 +53,13 @@ import { MissingDataStatus } from "../../../core/services/missing-data-detection
         <div class="missing-data-content">
           <!-- Why it matters -->
           <div class="explanation-section">
-            <strong>Why this matters:</strong>
+            <h3 class="missing-data-section-heading">Why this matters</h3>
             <p>{{ getWhyItMatters() }}</p>
           </div>
 
           <!-- Impact on ACWR -->
           <div class="impact-section">
-            <strong>Impact on your ACWR:</strong>
+            <h3 class="missing-data-section-heading">Impact on your ACWR</h3>
             <ul class="impact-list">
               @for (impact of getImpactList(); track impact) {
                 <li>{{ impact }}</li>
@@ -88,11 +88,11 @@ import { MissingDataStatus } from "../../../core/services/missing-data-detection
             <app-button iconLeft="pi-heart" [routerLink]="['/wellness']"
               >Complete Wellness Check-in</app-button
             >
-            @if (showCoachLink()) {
+            @if (detailsRoute(); as route) {
               <app-button
                 iconLeft="pi-info-circle"
                 variant="outlined"
-                [routerLink]="['/dashboard']"
+                [routerLink]="route"
                 >View Missing Data Details</app-button
               >
             }
@@ -105,7 +105,12 @@ import { MissingDataStatus } from "../../../core/services/missing-data-detection
 })
 export class MissingDataExplanationComponent {
   missingStatus = input<MissingDataStatus | null>(null);
-  showCoachLink = input<boolean>(false);
+
+  /**
+   * Secondary CTA target. Defaults to ACWR load monitoring (explains how missing
+   * wellness data affects calculations). Set to null to hide the button.
+   */
+  detailsRoute = input<string | string[] | null>(["/acwr"]);
 
   getTitle(): string {
     const days = this.missingStatus()?.daysMissing || 0;

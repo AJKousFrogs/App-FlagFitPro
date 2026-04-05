@@ -12,7 +12,10 @@
       </div>
       <div class="banner-stats">
         @if (streakCount() > 0) {
-          <div class="streak-badge" pTooltip="Training streak">🔥 {{ streakCount() }}</div>
+          <div class="streak-badge" pTooltip="Training streak">
+            <i class="pi pi-bolt" aria-hidden="true"></i>
+            <span>{{ streakCount() }}</span>
+          </div>
         }
       </div>
     </div>
@@ -21,7 +24,7 @@
   <div class="page-header ui-page-hero">
     <div class="header-content ui-page-hero__content">
       <div class="position-indicator ui-page-hero__eyebrow">
-        <span class="position-icon">{{ positionIcon() }}</span>
+        <i class="position-icon" [class]="'pi ' + positionIcon()" aria-hidden="true"></i>
         <span class="position-label">{{ positionLabel() }}</span>
       </div>
       <h1 class="page-title">Custom Session Builder</h1>
@@ -64,7 +67,7 @@
         (cardClick)="selectAction.emit(action.route)"
       >
         <div class="action-card-content" [pTooltip]="action.tooltip">
-          <span class="action-icon">{{ action.icon }}</span>
+          <i class="action-icon" [class]="'pi ' + action.icon" aria-hidden="true"></i>
           <span class="action-label">{{ action.label }}</span>
           @if (action.label === "Achievements" && totalAchievements() > 0) {
             <span class="action-badge">{{ totalAchievements() }}</span>
@@ -75,7 +78,10 @@
   </div>
 
   @if (priorityWorkouts().length > 0) {
-    <app-card-shell [title]="positionIcon() + ' ' + positionLabel() + ' Priority Training'">
+    <app-card-shell
+      [title]="positionLabel() + ' Priority Training'"
+      [headerIcon]="positionIcon()"
+    >
       <ng-container header-actions>
         <app-status-tag value="Position-Specific" severity="info" size="sm" />
       </ng-container>
@@ -91,7 +97,7 @@
               [class.high]="workout.priority === 'high'"
               [class.medium]="workout.priority === 'medium'"
             >
-              <span class="priority-icon">{{ workout.icon }}</span>
+              <i class="priority-icon" [class]="'pi ' + workout.icon" aria-hidden="true"></i>
               <div class="priority-info">
                 <span class="priority-title">{{ workout.title }}</span>
                 <span class="priority-desc">{{ workout.description }}</span>

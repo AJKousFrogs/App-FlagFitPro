@@ -51,6 +51,16 @@ app-close-button {
   align-self: start;
 }
 
+/* Optical center for PrimeIcons “times” inside circular hit target */
+app-close-button .app-close-button.dialog-close-btn i.pi-times {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.25em;
+  height: 1.25em;
+  line-height: 1;
+}
+
 .dialog-header.danger-header .dialog-icon,
 .dialog-icon.danger-icon {
   background: rgba(var(--primitive-error-500-rgb), 0.1);

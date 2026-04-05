@@ -100,6 +100,8 @@ type LoginForm = FormGroup<{
             <app-form-input
               label="Email"
               formControlName="email"
+              type="email"
+              autocomplete="email"
               placeholder="Enter your email"
               data-testid="email-input"
               styleClass="w-full"
@@ -115,23 +117,11 @@ type LoginForm = FormGroup<{
             <app-form-input
               label="Password"
               formControlName="password"
-              [type]="showPassword() ? 'text' : 'password'"
+              type="password"
               placeholder="Enter your password"
               data-testid="password-input"
               styleClass="w-full"
             />
-            <button
-              type="button"
-              class="form-field__toggle"
-              (click)="togglePasswordVisibility()"
-              [attr.aria-label]="
-                showPassword() ? 'Hide password' : 'Show password'
-              "
-            >
-              <i
-                [class]="showPassword() ? 'pi pi-eye-slash' : 'pi pi-eye'"
-              ></i>
-            </button>
             @if (passwordError()) {
               <small id="password-error" class="form-error" role="alert">
                 {{ passwordError() }}
@@ -197,7 +187,6 @@ export class LoginComponent implements OnInit {
   csrfToken = signal("");
   isDemoMode = signal(false);
   submitted = signal(false);
-  showPassword = signal(false);
   submitError = signal<string | null>(null);
 
   // Track form validity as a signal (updated on statusChanges)
@@ -267,10 +256,6 @@ export class LoginComponent implements OnInit {
     if (this.authService.checkAuth()) {
       void this.redirectAuthenticatedUser();
     }
-  }
-
-  togglePasswordVisibility(): void {
-    this.showPassword.update((v) => !v);
   }
 
   onSubmit(): void {

@@ -91,7 +91,7 @@ const IMPORT_TYPES: ImportType[] = [
     id: "training-program",
     name: "Training Program",
     description: "Import a structured training plan (JSON/CSV)",
-    icon: "📋",
+    icon: "pi-clipboard",
     formats: [".json", ".csv"],
     perfectFor: "National team plans, coach-provided programs",
   },
@@ -99,7 +99,7 @@ const IMPORT_TYPES: ImportType[] = [
     id: "training-history",
     name: "Training History",
     description: "Import past sessions from spreadsheet/app",
-    icon: "📁",
+    icon: "pi-folder",
     formats: [".csv", ".json"],
     perfectFor: "Migrating from another app, your own Excel logs",
   },
@@ -107,7 +107,7 @@ const IMPORT_TYPES: ImportType[] = [
     id: "wearables",
     name: "Wearable Devices",
     description: "Connect Garmin, Whoop, Apple Watch, Oura Ring",
-    icon: "⌚",
+    icon: "pi-clock",
     formats: ["API"],
     perfectFor: "Syncs: HR, HRV, sleep, activity data",
   },
@@ -115,7 +115,7 @@ const IMPORT_TYPES: ImportType[] = [
     id: "performance",
     name: "Performance Records",
     description: "Import historical benchmarks (40yd, etc.)",
-    icon: "📊",
+    icon: "pi-chart-bar",
     formats: [".csv"],
     perfectFor: "Building your performance trend history",
   },
@@ -123,7 +123,7 @@ const IMPORT_TYPES: ImportType[] = [
     id: "body-composition",
     name: "Body Composition",
     description: "Import weight history, body fat measurements",
-    icon: "⚖️",
+    icon: "pi-percentage",
     formats: [".csv"],
     perfectFor: "Building weight trend data",
   },
@@ -131,7 +131,7 @@ const IMPORT_TYPES: ImportType[] = [
     id: "injury-history",
     name: "Injury History",
     description: "Import past injuries for RTP tracking",
-    icon: "🏥",
+    icon: "pi-plus-circle",
     formats: [".csv", ".json"],
     perfectFor: "Complete medical profile",
   },
@@ -219,7 +219,9 @@ const WEARABLE_DEVICES: WearableDevice[] = [
                 (click)="selectImportType(type)"
               >
                 <div class="type-content">
-                  <span class="type-icon">{{ type.icon }}</span>
+                  <span class="type-icon" aria-hidden="true"
+                    ><i [class]="'pi ' + type.icon"></i
+                  ></span>
                   <h3>{{ type.name }}</h3>
                   <p>{{ type.description }}</p>
                   <span class="type-formats">
@@ -309,7 +311,7 @@ const WEARABLE_DEVICES: WearableDevice[] = [
                 <app-alert
                   variant="info"
                   density="compact"
-                  message="💡 Tip: Ask your coach for an export file in the supported format"
+                  message="Tip: Ask your coach for an export file in the supported format"
                   styleClass="tip-message status-message"
                 />
               </app-card-shell>

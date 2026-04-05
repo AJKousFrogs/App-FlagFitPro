@@ -132,7 +132,7 @@ export class TrainingComponent {
   // Position-specific signals
   readonly playerPosition = signal<string | null>(null);
   readonly positionLabel = signal("Athlete");
-  readonly positionIcon = signal("🏈");
+  readonly positionIcon = signal("pi-flag");
   readonly positionQuickActions = signal<TrainingPositionQuickAction[]>([]);
   readonly positionWorkouts = signal<TrainingPositionWorkout[]>([]);
 

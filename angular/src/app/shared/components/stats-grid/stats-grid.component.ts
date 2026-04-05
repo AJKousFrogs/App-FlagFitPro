@@ -1,5 +1,8 @@
 import { ChangeDetectionStrategy, Component, input } from "@angular/core";
-import { StatusTagComponent } from "../status-tag/status-tag.component";
+import {
+  StatusTagComponent,
+  StatusTagSeverity,
+} from "../status-tag/status-tag.component";
 import { formatNumber, formatStat } from "../../utils/format.utils";
 import { CardShellComponent } from "../card-shell/card-shell.component";
 
@@ -13,6 +16,8 @@ export interface StatItem {
   color?: string;
   trend?: string;
   trendType?: "positive" | "negative" | "neutral";
+  /** When set, overrides automatic mapping from trendType (e.g. wellness recovery labels). */
+  trendSeverity?: StatusTagSeverity;
   /**
    * Format type for automatic formatting
    * If provided, value will be formatted according to this type
@@ -45,7 +50,10 @@ export interface StatItem {
             @if (stat.trend) {
               <app-status-tag
                 [value]="stat.trend"
-                [severity]="getTrendSeverity(stat.trendType)"
+                [severity]="
+                  stat.trendSeverity ??
+                  getTrendSeverity(stat.trendType, stat.trend)
+                "
                 size="sm"
               />
             }
@@ -75,11 +83,13 @@ export class StatsGridComponent {
 
   getTrendSeverity(
     trendType?: string,
-  ): "success" | "secondary" | "info" | "warning" | "danger" | "contrast" {
-    const severities: Record<
-      string,
-      "success" | "secondary" | "info" | "warning" | "danger" | "contrast"
-    > = {
+    trend?: string,
+  ): StatusTagSeverity {
+    const t = trend?.trim();
+    if (t === "N/A" || t === "—" || t === "-" || t === "") {
+      return "secondary";
+    }
+    const severities: Record<string, StatusTagSeverity> = {
       positive: "success",
       negative: "danger",
       neutral: "info",

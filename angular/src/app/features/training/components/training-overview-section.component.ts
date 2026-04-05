@@ -40,7 +40,7 @@ export interface TrainingWellnessAlertView {
 export class TrainingOverviewSectionComponent {
   readonly isRefreshing = input(false);
   readonly streakCount = input(0);
-  readonly positionIcon = input("🏈");
+  readonly positionIcon = input("pi-flag");
   readonly positionLabel = input("Athlete");
   readonly readinessScore = input<number | null>(null);
   readonly readinessStatus = input("good");

@@ -427,7 +427,18 @@ export class WellnessService {
           throw error;
         }
         this.logger.success("wellness_entry_saved");
-        return { success: true as const, data: row };
+        const rowObj = Array.isArray(row) ? row[0] : row;
+        const data =
+          rowObj && typeof rowObj === "object"
+            ? {
+                ...rowObj,
+                checkin_date:
+                  (rowObj as { checkin_date?: string; saved_checkin_date?: string })
+                    .checkin_date ??
+                  (rowObj as { saved_checkin_date?: string }).saved_checkin_date,
+              }
+            : rowObj;
+        return { success: true as const, data };
       }),
       tap((result) => {
         if (result.success) {

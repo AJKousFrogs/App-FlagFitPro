@@ -174,7 +174,13 @@
     min-height: var(--space-8);
     display: inline-flex;
     align-items: center;
-    gap: var(--space-1);
+    gap: var(--space-2);
+
+    .cat-chip__icon {
+      font-size: var(--ds-font-size-sm);
+      line-height: 1;
+      flex-shrink: 0;
+    }
 
     // Touch target minimum
     @include respond-to(md) {

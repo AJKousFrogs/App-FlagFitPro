@@ -65,7 +65,9 @@ export interface SessionLogData {
             }}</span>
           </label>
           <div class="rpe-slider-container">
-            <span class="rpe-emoji">😌</span>
+            <span class="rpe-range-icon" aria-hidden="true"
+              ><i class="pi pi-arrow-down"></i
+            ></span>
             <p-slider
               [ngModel]="rpeValue()"
               [min]="1"
@@ -74,7 +76,9 @@ export interface SessionLogData {
               class="rpe-slider"
               (ngModelChange)="onRpeChange($event)"
             ></p-slider>
-            <span class="rpe-emoji">🔥</span>
+            <span class="rpe-range-icon" aria-hidden="true"
+              ><i class="pi pi-arrow-up"></i
+            ></span>
           </div>
           <div class="rpe-value">{{ rpeValue() }}/10</div>
         </div>

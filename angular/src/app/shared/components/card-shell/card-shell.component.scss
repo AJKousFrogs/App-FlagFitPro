@@ -9,6 +9,20 @@
   display: block;
 }
 
+/* Fill parent when used in CSS grid / flex rows (pair with [stretchBody]) */
+:host.card-shell-host--stretch-body {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+}
+
+:host.card-shell-host--stretch-body .card-shell.card-shell--stretch-body {
+  flex: 1 1 auto;
+  min-height: 0;
+  height: 100%;
+}
+
 // ============================================
 // BASE CARD SHELL
 // ============================================
@@ -21,6 +35,8 @@
 .card-shell--stretch-body .card-shell__body {
   display: flex;
   flex-direction: column;
+  flex: 1 1 auto;
+  min-height: 0;
 }
 
 .card-shell {

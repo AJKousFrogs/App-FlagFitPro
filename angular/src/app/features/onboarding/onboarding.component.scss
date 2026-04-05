@@ -205,6 +205,11 @@
   .ob-welcome__emoji {
     font-size: var(--ob-welcome-emoji-size);
     line-height: 1;
+    color: var(--color-brand-primary);
+
+    &.pi {
+      font-size: var(--ob-welcome-emoji-size);
+    }
   }
 
   .ob-welcome__title {

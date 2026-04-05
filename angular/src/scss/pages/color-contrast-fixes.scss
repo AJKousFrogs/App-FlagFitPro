@@ -29,7 +29,7 @@
 // 6. Placeholder text: var(--p-surface-400) on #ffffff = 2.98:1 (FAIL)
 //
 // ✅ PASSED:
-// - --ds-primary-green (var(--p-highlight-text-color)) on white: 4.54:1 ✓
+// - --color-brand-primary (primary-800) on white: ≥4.5:1 ✓ (bright --ds-primary-green does not)
 // - --color-text-primary (var(--p-text-color)) on white: 16.1:1 ✓
 // - --color-status-error (var(--color-chart-quinary)) on white: 4.0:1 (OK for large text/UI)
 // - --color-status-success (var(--color-phase-competition)) on white: 3.1:1 (OK for large text/UI)
@@ -165,15 +165,15 @@ textarea::placeholder,
   cursor: not-allowed;
 }
 
-// Fix link contrast
+// Fix link contrast (WCAG AA: use primary-800 for default link text on white, not bright brand green)
 a:not([class*="p-button"]) {
-  color: var(--ds-primary-green);
+  color: var(--color-brand-primary);
   text-decoration: underline;
   text-decoration-thickness: var(--border-1);
   text-underline-offset: var(--space-0-5);
 
   &:hover {
-    color: var(--ds-primary-green-hover);
+    color: var(--color-brand-primary-hover);
   }
 
   &:visited {
@@ -182,7 +182,7 @@ a:not([class*="p-button"]) {
 
   // Ensure links are distinguishable without color alone
   &:focus-visible {
-    outline: var(--border-2) solid var(--ds-primary-green);
+    outline: var(--border-2) solid var(--color-brand-primary);
     outline-offset: var(--space-0-5);
     border-radius: var(--radius-sm);
   }
@@ -196,7 +196,7 @@ a:not([class*="p-button"]) {
         color: var(--color-text-secondary-accessible);
 
         &:hover {
-          color: var(--ds-primary-green);
+          color: var(--color-brand-primary);
         }
       }
 

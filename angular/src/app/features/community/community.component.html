@@ -294,6 +294,7 @@
                     <div class="stat-item">
                       <i
                         class="pi pi-heart-fill"
+                        aria-hidden="true"
                         [class.liked]="post.isLiked"
                       ></i>
                       <span>{{ post.likes }}</span>
@@ -320,6 +321,7 @@
                       aria-label="Like post"
                     >
                       <i
+                        aria-hidden="true"
                         [class]="
                           post.isLiked ? 'pi pi-heart-fill' : 'pi pi-heart'
                         "

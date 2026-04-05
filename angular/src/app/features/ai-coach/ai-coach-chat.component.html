@@ -33,7 +33,9 @@
       @if (messages().length === 0) {
         <div class="bento-item full-width welcome-bento">
           <div class="welcome-hero">
-            <div class="hero-icon">🏈</div>
+            <div class="hero-icon" aria-hidden="true">
+              <i class="pi pi-flag"></i>
+            </div>
             <h2>Ready to train{{ userName() ? ', ' + userName() : '' }}?</h2>
             <p>Ask me about your roster, practice planning, or injury risk analysis.</p>
           </div>

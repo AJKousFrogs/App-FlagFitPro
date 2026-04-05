@@ -307,7 +307,8 @@
 
       &.p-toast-message-info {
         background: var(--p-toast-info-background);
-        border-left: var(--space-1) solid var(--p-toast-info-border-color);
+        /* Rely on PrimeNG’s leading icon for semantics; avoid a second green accent bar */
+        border-left: var(--border-1) solid var(--color-border-primary);
         color: var(--p-toast-info-color);
       }
 
@@ -693,26 +694,78 @@
     overflow: hidden;
     animation: menu-scale-in var(--transition-fast) var(--ease-decelerate);
     transform-origin: top left;
+    /* PrimeNG 21+: root `color` feeds dt(menu.color) / item inheritance */
+    color: var(--color-text-primary);
 
     .p-menu-list {
       display: grid;
       gap: var(--space-1);
     }
 
+    /* PrimeNG 21+ (Aura / @primeuix/styles: p-menu-item-*) */
+    .p-menu-item .p-menu-item-content {
+      color: var(--color-text-primary);
+      border-radius: var(--p-menu-item-border-radius);
+      transition:
+        background-color var(--transition-fast),
+        color var(--transition-fast);
+    }
+
+    .p-menu-item .p-menu-item-link {
+      padding: var(--p-menu-item-padding);
+      border-radius: var(--p-menu-item-border-radius);
+      text-decoration: none;
+
+      &:hover,
+      &:focus,
+      &:focus-visible {
+        text-decoration: none;
+      }
+    }
+
+    .p-menu-item-icon {
+      color: var(--color-text-secondary);
+      font-size: var(--ds-font-size-md);
+    }
+
+    .p-menu-item-label {
+      color: var(--color-text-primary);
+      font-weight: var(--ds-font-weight-medium);
+    }
+
+    .p-menu-item:not(.p-disabled) .p-menu-item-content:hover {
+      background: var(--p-menu-item-hover-background);
+
+      .p-menu-item-icon,
+      .p-menu-item-label {
+        color: var(--ds-primary-green);
+      }
+    }
+
+    .p-menu-item.p-focus .p-menu-item-content {
+      background: var(--ds-primary-green-subtle);
+    }
+
+    .p-menu-item .p-menu-item-link:focus-visible {
+      box-shadow: inset 0 0 0 var(--border-2) var(--ds-primary-green);
+    }
+
+    /* Legacy class names (some overlays / older builds) */
     .p-menuitem .p-menuitem-link {
       padding: var(--p-menu-item-padding);
       border-radius: var(--p-menu-item-border-radius);
       transition:
         background-color var(--transition-fast),
         color var(--transition-fast);
+      text-decoration: none;
 
       .p-menuitem-icon {
-        color: var(--color-text-tertiary);
+        color: var(--color-text-secondary);
         font-size: var(--ds-font-size-md);
       }
 
       .p-menuitem-text {
-        color: var(--color-text-secondary);
+        color: var(--color-text-primary);
         font-weight: var(--ds-font-weight-medium);
       }
 
@@ -964,6 +1017,7 @@
     .p-inputtext,
     .p-select,
     .p-datatable .p-datatable-tbody > tr,
+    .p-menu .p-menu-item-link,
     .p-menu .p-menuitem-link,
     .p-checkbox .p-checkbox-box,
     .p-toggleswitch .p-toggleswitch-slider {

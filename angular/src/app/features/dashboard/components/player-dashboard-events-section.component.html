@@ -5,10 +5,12 @@
       What's Next
     </h3>
     <div class="continuity-events">
-      @for (event of continuityEvents(); track event.type) {
+      @for (event of continuityEvents(); track $index) {
         <app-card-shell class="continuity-event-card">
           <div class="continuity-event">
-            <span class="event-icon">{{ event.icon }}</span>
+            <span class="event-icon" aria-hidden="true"
+              ><i [class]="'pi ' + event.icon"></i
+            ></span>
             <div class="event-details">
               <h4>{{ event.title }}</h4>
               <p>{{ event.description }}</p>
@@ -62,16 +64,16 @@
           </div>
         </ng-template>
       </p-timeline>
-      @if (tomorrowSchedule().length > 3) {
+      @if (tomorrowSchedule().length > schedulePreviewCount()) {
         <p class="more-items">
-          +{{ tomorrowSchedule().length - 3 }} more items
+          +{{ tomorrowSchedule().length - schedulePreviewCount() }} more items
         </p>
       }
       <div class="card-footer-action">
         <app-button
           variant="text"
           iconRight="pi-arrow-right"
-          routerLink="/calendar"
+          routerLink="/training"
           >View Full Schedule</app-button
         >
       </div>

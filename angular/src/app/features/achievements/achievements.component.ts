@@ -74,7 +74,7 @@ const ACHIEVEMENT_DEFINITIONS: Achievement[] = [
     name: "First Check-in",
     description: "Complete your first wellness check-in",
     category: "wellness",
-    icon: "💚",
+    icon: "pi-heart",
     points: 10,
     isUnlocked: false,
   },
@@ -83,7 +83,7 @@ const ACHIEVEMENT_DEFINITIONS: Achievement[] = [
     name: "7-Day Streak",
     description: "7 consecutive wellness check-ins",
     category: "wellness",
-    icon: "💚",
+    icon: "pi-heart",
     points: 25,
     isUnlocked: false,
   },
@@ -92,7 +92,7 @@ const ACHIEVEMENT_DEFINITIONS: Achievement[] = [
     name: "30-Day Streak",
     description: "30 consecutive wellness check-ins",
     category: "wellness",
-    icon: "💚",
+    icon: "pi-heart",
     points: 50,
     isUnlocked: false,
   },
@@ -101,7 +101,7 @@ const ACHIEVEMENT_DEFINITIONS: Achievement[] = [
     name: "ACWR Sweet Spot",
     description: "Stay in optimal ACWR zone for 7 consecutive days",
     category: "wellness",
-    icon: "🎯",
+    icon: "pi-bullseye",
     points: 50,
     isUnlocked: false,
   },
@@ -110,7 +110,7 @@ const ACHIEVEMENT_DEFINITIONS: Achievement[] = [
     name: "Early Bird",
     description: "10 check-ins before 6:00 AM",
     category: "wellness",
-    icon: "🌅",
+    icon: "pi-sun",
     points: 25,
     isUnlocked: false,
   },
@@ -119,7 +119,7 @@ const ACHIEVEMENT_DEFINITIONS: Achievement[] = [
     name: "Night Owl",
     description: "10 check-ins after 10:00 PM",
     category: "wellness",
-    icon: "🌙",
+    icon: "pi-moon",
     points: 25,
     isUnlocked: false,
   },
@@ -139,7 +139,7 @@ const ACHIEVEMENT_DEFINITIONS: Achievement[] = [
     name: "Halfway There",
     description: "Complete 50 training sessions",
     category: "training",
-    icon: "🏋️",
+    icon: "pi-replay",
     points: 35,
     isUnlocked: false,
   },
@@ -157,7 +157,7 @@ const ACHIEVEMENT_DEFINITIONS: Achievement[] = [
     name: "Iron Warrior",
     description: "Complete 500 training sessions",
     category: "training",
-    icon: "🏋️",
+    icon: "pi-replay",
     points: 150,
     isUnlocked: false,
   },
@@ -168,7 +168,7 @@ const ACHIEVEMENT_DEFINITIONS: Achievement[] = [
     name: "Speed Demon",
     description: "Beat your 40-yard PR by 0.1s",
     category: "performance",
-    icon: "⚡",
+    icon: "pi-bolt",
     points: 50,
     isUnlocked: false,
   },
@@ -177,7 +177,7 @@ const ACHIEVEMENT_DEFINITIONS: Achievement[] = [
     name: "Vertical King",
     description: "Vertical jump PR > 36 inches",
     category: "performance",
-    icon: "🦘",
+    icon: "pi-arrow-up",
     points: 50,
     isUnlocked: false,
   },
@@ -195,7 +195,7 @@ const ACHIEVEMENT_DEFINITIONS: Achievement[] = [
     name: "TD Scorer",
     description: "Score your first touchdown",
     category: "performance",
-    icon: "🎯",
+    icon: "pi-bullseye",
     points: 50,
     isUnlocked: false,
   },
@@ -206,7 +206,7 @@ const ACHIEVEMENT_DEFINITIONS: Achievement[] = [
     name: "Team Player",
     description: "Complete 10 team practices",
     category: "social",
-    icon: "👥",
+    icon: "pi-users",
     points: 20,
     isUnlocked: false,
   },
@@ -215,7 +215,7 @@ const ACHIEVEMENT_DEFINITIONS: Achievement[] = [
     name: "Mentor",
     description: "Help a teammate with their training",
     category: "social",
-    icon: "🤝",
+    icon: "pi-user-plus",
     points: 40,
     isUnlocked: false,
   },
@@ -226,7 +226,7 @@ const ACHIEVEMENT_DEFINITIONS: Achievement[] = [
     name: "Perfect Week",
     description: "Complete all scheduled activities for a week",
     category: "special",
-    icon: "⭐",
+    icon: "pi-star",
     points: 75,
     isUnlocked: false,
   },
@@ -235,7 +235,7 @@ const ACHIEVEMENT_DEFINITIONS: Achievement[] = [
     name: "Comeback",
     description: "Complete return-to-play protocol successfully",
     category: "special",
-    icon: "💪",
+    icon: "pi-heart",
     points: 100,
     isUnlocked: false,
   },
@@ -245,11 +245,11 @@ const CATEGORY_LABELS: Record<
   AchievementCategory,
   { label: string; icon: string }
 > = {
-  wellness: { label: "Wellness", icon: "💚" },
-  training: { label: "Training", icon: "🏋️" },
-  performance: { label: "Performance", icon: "🏆" },
-  social: { label: "Social", icon: "👥" },
-  special: { label: "Special", icon: "⭐" },
+  wellness: { label: "Wellness", icon: "pi-heart" },
+  training: { label: "Training", icon: "pi-chart-line" },
+  performance: { label: "Performance", icon: "pi-trophy" },
+  social: { label: "Social", icon: "pi-users" },
+  special: { label: "Special", icon: "pi-star" },
 };
 
 @Component({
@@ -364,7 +364,12 @@ const CATEGORY_LABELS: Record<
                   [attr.aria-label]="'Filter by ' + cat.label + ' achievements'"
                   (click)="selectedCategory.set(cat.value)"
                 >
-                  <span aria-hidden="true">{{ cat.icon }}</span> {{ cat.label }}
+                  <i
+                    class="cat-chip__icon"
+                    [class]="normalizePrimeIcon(cat.icon)"
+                    aria-hidden="true"
+                  ></i>
+                  {{ cat.label }}
                 </button>
               }
             </nav>
@@ -426,7 +431,7 @@ export class AchievementsComponent implements OnInit {
 
   // Constants
   readonly categories = [
-    { value: "all" as const, label: "All", icon: "🏅" },
+    { value: "all" as const, label: "All", icon: "pi-th-large" },
     ...Object.entries(CATEGORY_LABELS).map(([value, { label, icon }]) => ({
       value: value as AchievementCategory,
       label,

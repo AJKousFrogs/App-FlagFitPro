@@ -82,6 +82,24 @@ interface HydrationLog {
         </div>
       </div>
 
+      @if (showTip()) {
+        <div
+          class="hydration-tip"
+          [class.warning]="needsMoreWater()"
+          role="status"
+        >
+          <i
+            [class]="
+              needsMoreWater()
+                ? 'pi pi-exclamation-triangle'
+                : 'pi pi-info-circle'
+            "
+            aria-hidden="true"
+          ></i>
+          <span>{{ hydrationTip() }}</span>
+        </div>
+      }
+
       <!-- Quick Add Buttons -->
       <div class="quick-add-section">
         <span class="quick-add-label" id="quick-add-label">Quick Add:</span>
@@ -119,22 +137,6 @@ interface HydrationLog {
           </div>
         </div>
       }
-
-      <!-- Hydration Tips -->
-      <div header-actions>
-        @if (showTip()) {
-          <div class="hydration-tip" [class.warning]="needsMoreWater()">
-            <i
-              [class]="
-                needsMoreWater()
-                  ? 'pi pi-exclamation-triangle'
-                  : 'pi-info-circle'
-              "
-            ></i>
-            <span>{{ hydrationTip() }}</span>
-          </div>
-        }
-      </div>
     </app-card-shell>
   `,
   styleUrl: "./hydration-tracker.component.scss",

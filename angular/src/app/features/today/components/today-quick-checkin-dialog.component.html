@@ -39,7 +39,9 @@
             role="radio"
             [attr.aria-checked]="quickFormData().overallFeeling === mood.value"
           >
-            <span class="mood-emoji" aria-hidden="true">{{ mood.emoji }}</span>
+            <span class="mood-icon" aria-hidden="true"
+              ><i [class]="'pi ' + mood.icon"></i
+            ></span>
             <span class="mood-text">{{ mood.label }}</span>
           </button>
         }

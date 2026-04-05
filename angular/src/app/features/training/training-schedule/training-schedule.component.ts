@@ -1,11 +1,14 @@
+import { isPlatformBrowser } from "@angular/common";
 import {
   ChangeDetectionStrategy,
   Component,
   computed,
+  DestroyRef,
+  HostListener,
   inject,
   OnInit,
+  PLATFORM_ID,
   signal,
-  DestroyRef,
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 
@@ -36,7 +39,7 @@ import { MainLayoutComponent } from "../../../shared/components/layout/main-layo
 import { PageErrorStateComponent } from "../../../shared/components/page-error-state/page-error-state.component";
 import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";
 import { getStatusSeverity as getStatusSeverityValue } from "../../../shared/utils/status.utils";
-import { getTemplateSessionDateFromWeekRange } from "../../../shared/utils/training-template.utils";
+import { mapProgramTemplatesToUserPracticeDays } from "../../../shared/utils/training-template.utils";
 
 function toLocalDateKey(date: Date | null | undefined): string {
   if (!date) {
@@ -112,6 +115,7 @@ export class TrainingScheduleComponent implements OnInit {
   private logger = inject(LoggerService);
   private weatherCancellationService = inject(WeatherCancellationService);
   private destroyRef = inject(DestroyRef);
+  private readonly platformId = inject(PLATFORM_ID);
 
   selectedDate = signal<Date>(new Date());
   sessions = signal<TrainingSession[]>([]);
@@ -147,6 +151,38 @@ export class TrainingScheduleComponent implements OnInit {
   errorMessage = signal<string>(
     "Failed to load training sessions. Please try again.",
   );
+
+  /** Saved onboarding / Settings: team practice days (aligns program to these days). */
+  readonly userPracticeDays = signal<string[]>([]);
+
+  /** Weeks in the loaded range where program sessions exceeded selected practice days. */
+  readonly scheduleTrimmedWeeksCount = signal<number>(0);
+
+  readonly upcomingSessionsSubtitle = computed(() => {
+    if (this.isLoading()) {
+      return "";
+    }
+    const days = this.userPracticeDays();
+    if (days.length > 0) {
+      return `Program workouts are placed on your team practice days (${this.formatPracticeDaysShort(
+        days,
+      )}), in weekly order.`;
+    }
+    return "From your assigned program, scheduled on each week’s planned weekdays.";
+  });
+
+  readonly scheduleTrimNotice = computed(() => {
+    if (this.isLoading()) {
+      return null;
+    }
+    const n = this.scheduleTrimmedWeeksCount();
+    if (n <= 0) {
+      return null;
+    }
+    return n === 1
+      ? "At least one week here has more programmed workouts than your selected practice days. Extra sessions are not listed."
+      : `${n} weeks in this range have more programmed workouts than your selected practice days. Extra sessions are not listed.`;
+  });
 
   private readonly currentUser = computed(() => this.supabase.currentUser());
 
@@ -236,6 +272,49 @@ export class TrainingScheduleComponent implements OnInit {
     this.loadMonthlyStats();
     this.loadDateMarkers();
     this.checkWeatherForTodaysSessions();
+  }
+
+  /**
+   * Inline PrimeNG datepicker often handles wheel for month navigation, which
+   * prevents the app shell scroll root from receiving scroll. Forward wheel
+   * delta to the main scroll container when the pointer is over the calendar.
+   */
+  @HostListener("wheel", ["$event"])
+  onWheelOverDatepicker(event: WheelEvent): void {
+    if (!isPlatformBrowser(this.platformId)) {
+      return;
+    }
+    const target = event.target as HTMLElement | null;
+    if (!target?.closest("p-datepicker")) {
+      return;
+    }
+    const root = document.querySelector(
+      '[data-scroll-root="app-shell-main"]',
+    ) as HTMLElement | null;
+    if (!root) {
+      return;
+    }
+    root.scrollTop += event.deltaY;
+    event.preventDefault();
+  }
+
+  trackSession(session: TrainingSession): string {
+    return `${session.id}-${session.date.getTime()}`;
+  }
+
+  private formatPracticeDaysShort(labels: string[]): string {
+    const short: Record<string, string> = {
+      monday: "Mon",
+      tuesday: "Tue",
+      wednesday: "Wed",
+      thursday: "Thu",
+      friday: "Fri",
+      saturday: "Sat",
+      sunday: "Sun",
+    };
+    return labels
+      .map((l) => short[l.trim().toLowerCase()] ?? l.trim())
+      .join(", ");
   }
 
   private observeRouteDate(): void {
@@ -336,6 +415,8 @@ export class TrainingScheduleComponent implements OnInit {
   async loadSessions(): Promise<void> {
     this.isLoading.set(true);
     this.hasError.set(false);
+    this.userPracticeDays.set([]);
+    this.scheduleTrimmedWeeksCount.set(0);
 
     try {
       const user = this.currentUser();
@@ -370,26 +451,36 @@ export class TrainingScheduleComponent implements OnInit {
       const startOfWeek = startDate;
       const endOfWeek = endDate;
 
-      // 1. Fetch actual training sessions (logged/completed sessions)
-      const { sessions: actualSessions, error: sessionsError } =
-        await this.trainingScheduleDataService.fetchActualSessions({
+      // 1–2. Actual sessions, program templates, and onboarding practice days
+      const [
+        { sessions: actualSessions, error: sessionsError },
+        { templates: scheduledTemplates, error: templatesError },
+        { practiceDays, error: prefsError },
+      ] = await Promise.all([
+        this.trainingScheduleDataService.fetchActualSessions({
           userId: user.id,
           startDate: toLocalDateKey(startOfWeek),
           endDate: toLocalDateKey(endOfWeek),
+        }),
+        this.trainingScheduleDataService.fetchScheduledTemplates({
+          userId: user.id,
+          startDate: toLocalDateKey(startOfWeek),
+          endDate: toLocalDateKey(endOfWeek),
+        }),
+        this.trainingScheduleDataService.fetchPracticeDays(user.id),
+      ]);
+
+      if (prefsError) {
+        this.logger.debug("Could not load practice days for schedule mapping", {
+          message: prefsError.message,
         });
+      }
+
+      this.userPracticeDays.set(practiceDays);
 
       if (sessionsError) {
         throw new Error(sessionsError.message);
       }
-
-      // 2. Fetch scheduled sessions from training templates (52-week program)
-      // Find weeks that contain any day in our selected week range
-      const { templates: scheduledTemplates, error: templatesError } =
-        await this.trainingScheduleDataService.fetchScheduledTemplates({
-          userId: user.id,
-          startDate: toLocalDateKey(startOfWeek),
-          endDate: toLocalDateKey(endOfWeek),
-        });
 
       // Map actual sessions
       const mappedActualSessions: TrainingSession[] = (
@@ -414,49 +505,40 @@ export class TrainingScheduleComponent implements OnInit {
           mappedActualSessions.map((session) => toLocalDateKey(session.date)),
         );
 
-        mappedScheduledSessions = scheduledTemplates
-          .filter((template) => {
-            // training_weeks can be an array or single object from Supabase join
-            const weeks = template.training_weeks;
-            // Check if it's an array with data OR a single object with start_date
-            const hasWeekData = Array.isArray(weeks)
-              ? weeks.length > 0
-              : weeks && typeof weeks === "object" && "start_date" in weeks;
-            return hasWeekData;
-          })
-          .map((template) => {
-            // Handle both array and single object response from Supabase
-            const weeks = template.training_weeks;
-            const weekData = Array.isArray(weeks)
-              ? (weeks[0] as { start_date: string; end_date: string })
-              : (weeks as { start_date: string; end_date: string });
-            const sessionDate = getTemplateSessionDateFromWeekRange({
-              weekStart: weekData.start_date,
-              weekEnd: weekData.end_date,
-              dayOfWeek: template.day_of_week,
-            });
+        const withWeekData = scheduledTemplates.filter((template) => {
+          const weeks = template.training_weeks;
+          return Array.isArray(weeks)
+            ? weeks.length > 0
+            : !!(weeks && typeof weeks === "object" && "start_date" in weeks);
+        });
 
-            const templateRecord =
-              template as unknown as Record<string, unknown>;
+        const mapped = mapProgramTemplatesToUserPracticeDays(
+          withWeekData,
+          practiceDays,
+        );
 
-            return {
-              id: template.id,
-              date: sessionDate,
-              type:
-                template.session_name || template.session_type || "Training",
-              duration: template.duration_minutes || 60,
-              status: actualDates.has(toLocalDateKey(sessionDate))
-                ? "replaced"
-                : ("scheduled" as const),
-              isTemplate: true,
-              isTeamPractice:
-                (templateRecord.is_team_practice as boolean) || false,
-              isOutdoor:
-                (templateRecord.is_outdoor as boolean) || false,
-              weatherSensitive:
-                (templateRecord.weather_sensitive as boolean) || false,
-            };
-          });
+        this.scheduleTrimmedWeeksCount.set(mapped.weeksWhereSessionsWereTrimmed);
+
+        mappedScheduledSessions = mapped.placed.map(({ template, sessionDate }) => {
+          const templateRecord = template as unknown as Record<string, unknown>;
+
+          return {
+            id: template.id,
+            date: sessionDate,
+            type:
+              template.session_name || template.session_type || "Training",
+            duration: template.duration_minutes || 60,
+            status: actualDates.has(toLocalDateKey(sessionDate))
+              ? "replaced"
+              : ("scheduled" as const),
+            isTemplate: true,
+            isTeamPractice:
+              (templateRecord.is_team_practice as boolean) || false,
+            isOutdoor: (templateRecord.is_outdoor as boolean) || false,
+            weatherSensitive:
+              (templateRecord.weather_sensitive as boolean) || false,
+          };
+        });
 
         this.logger.debug("Mapped scheduled sessions", {
           count: mappedScheduledSessions.length,

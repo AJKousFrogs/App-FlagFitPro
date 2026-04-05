@@ -15,34 +15,29 @@
         <app-card-shell title="Training Hub" headerIcon="pi-compass">
           <div class="training-hub-grid">
             <a routerLink="/todays-practice" class="training-hub-link">
-              <span class="training-hub-icon">🗓️</span>
+              <span class="training-hub-icon" aria-hidden="true"><i class="pi pi-calendar"></i></span>
               <span class="training-hub-title">Today's Practice</span>
               <span class="training-hub-subtitle">Log today’s session</span>
             </a>
             <a routerLink="/training/workspace" class="training-hub-link">
-              <span class="training-hub-icon">🛠️</span>
-              <span class="training-hub-title">Session Builder</span>
-              <span class="training-hub-subtitle">Custom workouts</span>
+              <span class="training-hub-icon" aria-hidden="true"><i class="pi pi-briefcase"></i></span>
+              <span class="training-hub-title">Workout workspace</span>
+              <span class="training-hub-subtitle">Custom workouts, plans & saved sessions</span>
             </a>
             <a routerLink="/training/advanced" class="training-hub-link">
-              <span class="training-hub-icon">🧠</span>
+              <span class="training-hub-icon" aria-hidden="true"><i class="pi pi-sliders-h"></i></span>
               <span class="training-hub-title">Advanced Tools</span>
               <span class="training-hub-subtitle">Periodization & AI</span>
             </a>
             @if (isCoach()) {
               <a routerLink="/training/smart-form" class="training-hub-link">
-                <span class="training-hub-icon">⚡</span>
+                <span class="training-hub-icon" aria-hidden="true"><i class="pi pi-file-edit"></i></span>
                 <span class="training-hub-title">Smart Form</span>
                 <span class="training-hub-subtitle">Coach quick logging</span>
               </a>
             }
-            <a routerLink="/training/workspace" class="training-hub-link">
-              <span class="training-hub-icon">🏋️</span>
-              <span class="training-hub-title">Workout Workspace</span>
-              <span class="training-hub-subtitle">Ready-made plans & custom sessions</span>
-            </a>
             <a routerLink="/training/videos" class="training-hub-link">
-              <span class="training-hub-icon">🎥</span>
+              <span class="training-hub-icon" aria-hidden="true"><i class="pi pi-video"></i></span>
               <span class="training-hub-title">Video Feed</span>
               <span class="training-hub-subtitle">Technique library</span>
             </a>
@@ -377,7 +372,16 @@
           }
 
           <!-- STEP 3: Sessions List Card -->
-          <app-card-shell title="Upcoming Sessions" headerIcon="pi-clipboard">
+          <app-card-shell
+            title="Upcoming Sessions"
+            headerIcon="pi-clipboard"
+            [subtitle]="upcomingSessionsSubtitle()"
+          >
+            @if (scheduleTrimNotice()) {
+              <app-alert variant="info" density="compact" class="schedule-trim-alert">
+                <p class="schedule-trim-alert__text">{{ scheduleTrimNotice() }}</p>
+              </app-alert>
+            }
             <div class="sessions-list">
               <!-- STEP 4: Error State with p-message and retry -->
               @if (hasError()) {
@@ -424,7 +428,7 @@
                 ></app-empty-state>
               } @else {
                 <!-- STEP 3: Session rows as card-like items -->
-                @for (session of filteredSessions(); track session.id) {
+                @for (session of filteredSessions(); track trackSession(session)) {
                   <!-- eslint-disable-next-line @angular-eslint/template/no-inline-styles -->
                   <button
                     type="button"
@@ -472,9 +476,12 @@
                             Logged
                           </span>
                         }
+                        @if (session.isTemplate && !session.isTeamPractice) {
+                          <span class="program-badge">Program</span>
+                        }
                         @if (session.isTeamPractice) {
                           <span class="team-badge">
-                            <i class="pi pi-users"></i> Team
+                            <i class="pi pi-users"></i> Team practice
                           </span>
                         }
                         @if (session.isOutdoor && session.weatherSensitive) {

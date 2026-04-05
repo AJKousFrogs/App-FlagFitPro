@@ -285,7 +285,9 @@ interface StatsPayload {
 
           <p-tabpanel value="streaks">
             <ng-template #header>
-              <span>🔥 Streaks</span>
+              <span
+                ><i class="pi pi-bolt" aria-hidden="true"></i> Streaks</span
+              >
             </ng-template>
 
             <div class="streaks-detail">
@@ -296,9 +298,9 @@ interface StatsPayload {
                   [class.at-risk]="streak.atRisk"
                 >
                   <div class="streak-header">
-                    <span class="streak-type-icon">{{
-                      getStreakIcon(streak.streak_type)
-                    }}</span>
+                    <span class="streak-type-icon" aria-hidden="true"
+                      ><i [class]="'pi ' + getStreakIcon(streak.streak_type)"></i
+                    ></span>
                     <span class="streak-type-name">{{
                       getStreakLabel(streak.streak_type)
                     }}</span>
@@ -319,7 +321,8 @@ interface StatsPayload {
                   </div>
                   @if (streak.atRisk) {
                     <div class="risk-warning">
-                      ⚠️ Complete today to keep your streak!
+                      <i class="pi pi-exclamation-triangle" aria-hidden="true"></i>
+                      Complete today to keep your streak!
                     </div>
                   }
                   @if (!streak.isActive && streak.current_streak === 0) {
@@ -332,13 +335,17 @@ interface StatsPayload {
 
           <p-tabpanel value="stats">
             <ng-template #header>
-              <span>📊 Stats</span>
+              <span
+                ><i class="pi pi-chart-bar" aria-hidden="true"></i> Stats</span
+              >
             </ng-template>
 
             <div class="stats-detail">
               <div class="stats-grid">
                 <div class="stat-card">
-                  <span class="stat-icon">🏃</span>
+                  <span class="stat-icon"
+                    ><i class="pi pi-replay" aria-hidden="true"></i
+                  ></span>
                   <div class="stat-block__content">
                     <span class="stat-block__value">{{
                       stats()?.total_sessions || 0
@@ -347,7 +354,9 @@ interface StatsPayload {
                   </div>
                 </div>
                 <div class="stat-card">
-                  <span class="stat-icon">💪</span>
+                  <span class="stat-icon"
+                    ><i class="pi pi-chart-line" aria-hidden="true"></i
+                  ></span>
                   <div class="stat-block__content">
                     <span class="stat-block__value">{{
                       stats()?.total_exercises || 0
@@ -356,7 +365,9 @@ interface StatsPayload {
                   </div>
                 </div>
                 <div class="stat-card">
-                  <span class="stat-icon">⏱️</span>
+                  <span class="stat-icon"
+                    ><i class="pi pi-stopwatch" aria-hidden="true"></i
+                  ></span>
                   <div class="stat-block__content">
                     <span class="stat-block__value">{{
                       formatMinutes(stats()?.total_training_minutes || 0)
@@ -553,13 +564,13 @@ export class AchievementsPanelComponent {
 
   getCategoryLabel(category: string): string {
     const labels: Record<string, string> = {
-      streak: "🔥 Streak Achievements",
-      volume: "🏃 Training Volume",
-      milestone: "⭐ Milestones",
-      position: "🎯 Position-Specific",
-      tournament: "🏆 Tournament",
-      recovery: "💚 Recovery & Wellness",
-      social: "👥 Social",
+      streak: "Streak Achievements",
+      volume: "Training Volume",
+      milestone: "Milestones",
+      position: "Position-Specific",
+      tournament: "Tournament",
+      recovery: "Recovery & Wellness",
+      social: "Social",
     };
     return labels[category] || category;
   }
@@ -581,13 +592,13 @@ export class AchievementsPanelComponent {
 
   getStreakIcon(type: string): string {
     const icons: Record<string, string> = {
-      training: "🔥",
-      protocol: "📋",
-      wellness: "💚",
-      qb_throwing: "🎯",
-      arm_care: "💪",
+      training: "pi-bolt",
+      protocol: "pi-clipboard",
+      wellness: "pi-heart",
+      qb_throwing: "pi-bullseye",
+      arm_care: "pi-chart-line",
     };
-    return icons[type] || "📊";
+    return icons[type] || "pi-chart-bar";
   }
 
   getStreakLabel(type: string): string {

@@ -63,10 +63,12 @@ export class TodayProtocolFacade {
     }
 
     const block = protocol[prop] as ProtocolBlock | undefined;
-    if (!block || !block.exercises || block.exercises.length === 0) {
+    if (!block) {
       return null;
     }
 
+    // Include blocks even when exercises are not yet populated so Today's Practice
+    // is not a blank card when the API returns block shells before exercises load.
     return block;
   }
 
@@ -108,19 +110,21 @@ export class TodayProtocolFacade {
       .map((blockType) => this.getBlockByType(protocol, blockType))
       .filter((block): block is ProtocolBlock => block !== null);
 
-    if (blocks.length === 0) {
+    const substantiveBlocks = blocks.filter((block) => block.totalCount > 0);
+
+    if (substantiveBlocks.length === 0) {
       return null;
     }
 
-    const exerciseCount = blocks.reduce(
+    const exerciseCount = substantiveBlocks.reduce(
       (total, block) => total + block.totalCount,
       0,
     );
-    const estimatedMinutes = blocks.reduce(
+    const estimatedMinutes = substantiveBlocks.reduce(
       (total, block) => total + (block.estimatedDurationMinutes ?? 0),
       0,
     );
-    const videoCount = blocks.reduce(
+    const videoCount = substantiveBlocks.reduce(
       (total, block) =>
         total +
         block.exercises.filter((exercise) =>
@@ -134,7 +138,7 @@ export class TodayProtocolFacade {
       0,
     );
 
-    const firstBlock = blocks[0];
+    const firstBlock = substantiveBlocks[0];
     const firstExercise = firstBlock.exercises[0]?.exercise.name ?? null;
     const practiceTime = todayViewModel.headerContext?.practiceTime;
     const filmRoomTime = todayViewModel.headerContext?.filmRoomTime;
@@ -155,7 +159,7 @@ export class TodayProtocolFacade {
         "Your exact individual session is ready to execute.",
       startBlock: firstBlock.title,
       firstExercise,
-      blockCount: blocks.length,
+      blockCount: substantiveBlocks.length,
       exerciseCount,
       estimatedMinutes,
       videoCount,

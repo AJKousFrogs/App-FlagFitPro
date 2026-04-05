@@ -43,7 +43,7 @@ import { ensurePrimeIconsStylesheet } from "../../core/utils/primeicons-loader";
         <div class="hero-content" [class.hero-content-visible]="isLoaded()">
           <div class="hero-logo-wrapper animate-item animate-delay-0">
             <div class="hero-logo">
-              <span class="merlin-icon">🏈</span>
+              <i class="pi pi-flag merlin-icon" aria-hidden="true"></i>
             </div>
             <div class="hero-badge">
               <span class="hero-badge-marker" aria-hidden="true"></span>
@@ -164,9 +164,11 @@ import { ensurePrimeIconsStylesheet } from "../../core/utils/primeicons-loader";
                   class="feature-icon-wrapper"
                   [class]="'feature-icon-' + feature.id"
                 >
-                  <span class="feature-icon-glyph" aria-hidden="true">{{
-                    feature.glyph
-                  }}</span>
+                  <i
+                    class="feature-icon-glyph"
+                    [class]="'pi ' + feature.icon"
+                    aria-hidden="true"
+                  ></i>
                 </div>
               </div>
               <h3 class="feature-card-title">{{ feature.title }}</h3>
@@ -188,7 +190,7 @@ import { ensurePrimeIconsStylesheet } from "../../core/utils/primeicons-loader";
           <!-- Brand -->
           <div class="footer-brand">
             <div class="footer-logo">
-              <span class="footer-logo-mark" aria-hidden="true">🏈</span>
+              <i class="pi pi-flag footer-logo-mark" aria-hidden="true"></i>
               <span class="footer-logo-text">FlagFit Pro</span>
             </div>
             <p class="footer-tagline">
@@ -276,42 +278,42 @@ export class LandingComponent implements OnInit {
       title: "Performance Analytics",
       description:
         "Track every training session and game statistic. Get insights that help you identify strengths and areas for improvement.",
-      glyph: "📊",
+      icon: "pi-chart-bar",
     },
     {
       id: "tournament",
       title: "Tournament System",
       description:
         "Join competitive tournaments, climb leaderboards, and compete against the best players in your region.",
-      glyph: "🏆",
+      icon: "pi-trophy",
     },
     {
       id: "community",
       title: "Community Hub",
       description:
         "Connect with players, coaches, and teams. Share strategies, celebrate wins, and build lasting relationships.",
-      glyph: "👥",
+      icon: "pi-users",
     },
     {
       id: "training",
       title: "Training Programs",
       description:
         "Access structured workouts and skill development plans designed by professional coaches and trainers.",
-      glyph: "⚡",
+      icon: "pi-bolt",
     },
     {
       id: "ai-coach",
       title: "Merlin AI - Merlin",
       description:
         "Get personalized training advice from Merlin, your Merlin AI. Ask questions, get drill recommendations, and improve faster.",
-      glyph: "✦",
+      icon: "pi-sparkles",
     },
     {
       id: "progress",
       title: "Progress Reports",
       description:
         "Get detailed weekly and monthly reports on your development. Visualize your journey from beginner to elite athlete.",
-      glyph: "📈",
+      icon: "pi-chart-line",
     },
   ];
 

@@ -99,6 +99,10 @@ export interface ProtocolJson {
   weather_override?: boolean;
   weather_condition?: string;
 
+  /** Backend training focus (e.g. recovery when ACWR/readiness warrant reduced load) */
+  training_focus?: string;
+  ai_rationale?: string | null;
+
   // Blocks (simplified for resolution)
   blocks?: Array<{
     type: string;

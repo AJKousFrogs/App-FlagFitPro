@@ -127,6 +127,9 @@ import {
     </article>
   `,
   styleUrl: "./card-shell.component.scss",
+  host: {
+    "[class.card-shell-host--stretch-body]": "stretchBodyHost",
+  },
 })
 export class CardShellComponent {
   // ============================================
@@ -164,6 +167,11 @@ export class CardShellComponent {
    * `margin-top/bottom: auto` (e.g. marketing feature cards).
    */
   stretchBody = input(false, { transform: booleanAttribute });
+
+  /** Host class for stretchBody layout (fills grid / flex parents). */
+  get stretchBodyHost(): boolean {
+    return this.stretchBody();
+  }
 
   // ============================================
   // OUTPUTS - Events

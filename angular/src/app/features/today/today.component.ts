@@ -92,7 +92,8 @@ type TagSeverity =
 // Quick Check-in Types
 interface QuickMood {
   value: number;
-  emoji: string;
+  /** PrimeIcons suffix, e.g. `pi-star-fill` → `class="pi pi-star-fill"` */
+  icon: string;
   label: string;
 }
 
@@ -189,11 +190,11 @@ export class TodayComponent {
   readonly isGeneratingProtocol = signal(false);
   // Quick Check-in Options
   readonly quickMoods: QuickMood[] = [
-    { value: 1, emoji: "😫", label: "Rough" },
-    { value: 2, emoji: "😐", label: "Okay" },
-    { value: 3, emoji: "🙂", label: "Good" },
-    { value: 4, emoji: "😊", label: "Great" },
-    { value: 5, emoji: "🤩", label: "Amazing" },
+    { value: 1, icon: "pi-times", label: "Rough" },
+    { value: 2, icon: "pi-minus", label: "Okay" },
+    { value: 3, icon: "pi-circle", label: "Good" },
+    { value: 4, icon: "pi-check-circle", label: "Great" },
+    { value: 5, icon: "pi-star-fill", label: "Amazing" },
   ];
 
   readonly quickEnergyLevels: QuickEnergyLevel[] = [
@@ -446,7 +447,44 @@ export class TodayComponent {
 
     return vm.blocksDisplayed
       .map((blockType) => this.getBlockByType(protocol, blockType))
-      .filter((block): block is ProtocolBlock => Boolean(block));
+      .filter((block): block is ProtocolBlock => Boolean(block))
+      .filter((block) => block.totalCount > 0);
+  });
+
+  /**
+   * When the backend sets recovery focus (low readiness or high ACWR) or ACWR
+   * is in a high-risk band, explain why today is mobility / light work.
+   */
+  readonly practiceDayCallout = computed(() => {
+    const pj = this.protocolJson();
+    const focus =
+      pj?.training_focus ??
+      (this.protocol()?.trainingFocus as string | undefined);
+    const acwrLevel = pj?.acwr_presentation?.level;
+
+    if (focus === "recovery") {
+      const rationale =
+        typeof pj?.ai_rationale === "string" ? pj.ai_rationale.trim() : "";
+      return {
+        variant: "recovery" as const,
+        title: "Recovery day",
+        body:
+          rationale ||
+          "Today emphasizes mobility and light work because readiness is low or workload (ACWR) is high. Skip heavy training.",
+      };
+    }
+
+    if (acwrLevel === "elevated-risk" || acwrLevel === "danger-zone") {
+      return {
+        variant: "acwr-rest" as const,
+        title: "Recovery emphasis",
+        body:
+          pj?.acwr_presentation?.text ??
+          "Your workload ratio is elevated. Prioritize easy movement and recovery today.",
+      };
+    }
+
+    return null;
   });
 
   // ============================================================================
@@ -879,6 +917,19 @@ export class TodayComponent {
   // ============================================================================
   dismissCelebration(): void {
     this.showCelebration.set(false);
+  }
+
+  onCelebrationBackdropClick(event: MouseEvent): void {
+    if (event.target === event.currentTarget) {
+      this.dismissCelebration();
+    }
+  }
+
+  onCelebrationKeydown(event: KeyboardEvent): void {
+    if (event.key === "Escape") {
+      event.preventDefault();
+      this.dismissCelebration();
+    }
   }
 
   // ============================================================================

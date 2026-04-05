@@ -417,7 +417,7 @@ describe("AnalyticsComponent", () => {
       expect(component.isPageLoading()).toBe(false);
       expect(component.hasPageError()).toBe(true);
       expect(mockLoggerService.error).toHaveBeenCalledWith(
-        "[Analytics] Init error:",
+        "analytics_init_failed",
         error,
       );
     });

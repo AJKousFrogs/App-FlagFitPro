@@ -110,7 +110,7 @@
   min-width: min(14rem, 72vw);
   max-width: min(90vw, calc(var(--grid-card-min-sm) + var(--space-6)));
   padding: var(--space-4) var(--space-5);
-  text-align: end;
+  text-align: center;
   background: var(--surface-card);
   border-radius: var(--radius-lg); /* Raised style - NOT pill */
   font-size: var(--ds-font-size-md);

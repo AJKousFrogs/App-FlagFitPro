@@ -5,28 +5,40 @@
 .player-dashboard.bento-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: var(--space-4);
+  gap: var(--layout-gap-sm);
   max-width: var(--layout-page-max-width-wide);
   margin: var(--space-0) auto;
   width: 100%;
   padding: var(--space-5) 0 var(--space-10);
 
-  // ── Bento card baseline ──────────────────────────────────────
+  // ── Bento card baseline (aligned with app-card-shell / --component-card-*) ──
   .bento-item {
     background: var(--surface-card);
-    border: var(--border-1) solid var(--color-border-primary);
-    border-radius: var(--radius-xl);
+    border: var(--component-card-border);
+    border-radius: var(--component-card-radius);
     padding: var(--space-5);
-    box-shadow: var(--shadow-sm);
+    box-shadow: var(--component-card-shadow);
     transition:
-      transform var(--transition-fast) var(--ease-standard),
-      box-shadow var(--transition-fast) var(--ease-standard);
+      transform var(--motion-base) var(--ease-standard),
+      box-shadow var(--motion-base) var(--ease-standard);
     min-width: 0;
 
     @media (hover: hover) and (pointer: fine) {
       &:hover {
-        transform: translateY(-1px);
-        box-shadow: var(--shadow-md);
+        transform: translateY(calc(-1 * var(--border-1)));
+        box-shadow: var(--component-card-shadow-hover);
+      }
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .bento-item {
+      transition: none;
+
+      @media (hover: hover) and (pointer: fine) {
+        &:hover {
+          transform: none;
+        }
       }
     }
   }
@@ -84,13 +96,23 @@
     color: var(--color-text-on-primary);
     flex-shrink: 0;
     box-shadow:
-      0 4px 16px rgba(8, 153, 73, 0.3),
-      0 1px 4px rgba(8, 153, 73, 0.15);
-    transition: transform var(--transition-fast) var(--ease-standard);
+      0 4px 16px color-mix(in srgb, var(--ds-primary-green) 30%, transparent),
+      0 1px 4px color-mix(in srgb, var(--ds-primary-green) 15%, transparent);
+    transition: transform var(--motion-base) var(--ease-standard);
 
     @media (hover: hover) and (pointer: fine) {
       &:hover {
         transform: scale(1.04);
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      transition: none;
+
+      @media (hover: hover) and (pointer: fine) {
+        &:hover {
+          transform: none;
+        }
       }
     }
 
@@ -117,7 +139,7 @@
   }
 
   .greeting-name {
-    color: var(--ds-primary-green);
+    color: var(--color-brand-primary);
   }
 
   .merlin-insight {
@@ -127,10 +149,38 @@
     line-height: var(--ds-line-height-relaxed);
   }
 
+  .welcome-privacy {
+    margin: var(--space-0) var(--space-0) var(--space-3);
+    font-size: var(--ds-font-size-xs);
+    color: var(--color-text-secondary);
+    line-height: var(--ds-line-height-relaxed);
+  }
+
+  .welcome-privacy__link {
+    color: var(--color-brand-primary);
+    font-weight: var(--ds-font-weight-semibold);
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
+  .welcome-privacy__muted {
+    color: var(--color-text-tertiary);
+  }
+
   .welcome-actions {
     display: flex;
     gap: var(--space-3);
     flex-wrap: wrap;
+  }
+
+  .player-dashboard-events-placeholder {
+    border-radius: var(--component-card-radius);
+    min-height: clamp(10rem, 22vh, 18rem);
+    background: var(--surface-secondary);
+    border: var(--component-card-border);
   }
 
   // ── Schedule & Timeline ──────────────────────────────────────
@@ -178,13 +228,13 @@
     flex-shrink: 0;
 
     i {
-      font-size: 0.6rem;
+      font-size: var(--ds-font-size-xs);
       color: var(--color-text-tertiary);
     }
 
     &.completed {
-      background: var(--ds-primary-green);
-      border-color: var(--ds-primary-green);
+      background: var(--color-brand-primary);
+      border-color: var(--color-brand-primary);
 
       i { color: var(--color-text-on-primary); }
     }
@@ -214,13 +264,37 @@
     }
   }
 
-  // ── Placeholder skeletons ────────────────────────────────────
+  .empty-schedule__message {
+    margin: var(--space-0);
+    color: var(--color-text-secondary);
+    font-size: var(--ds-font-size-sm);
+    line-height: var(--ds-line-height-normal);
+  }
+
+  // ── Placeholder skeletons (approx. loaded layout to limit CLS) ─────────────
+  .player-dashboard-insights-placeholder {
+    border-radius: var(--component-card-radius);
+    min-height: clamp(24rem, 52vh, 40rem);
+  }
+
+  .player-dashboard-schedule-placeholder {
+    border-radius: var(--component-card-radius);
+    min-height: clamp(14rem, 28vh, 22rem);
+  }
+
   .player-dashboard-insights-placeholder,
   .player-dashboard-schedule-placeholder {
     background: var(--surface-secondary);
-    border: var(--border-1) solid var(--color-border-primary);
-    min-height: 12rem;
+    border: var(--component-card-border);
     animation: bento-shimmer 1.8s ease-in-out infinite;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .player-dashboard-insights-placeholder,
+    .player-dashboard-schedule-placeholder {
+      animation: none;
+      opacity: 0.92;
+    }
   }
 
   // ── Tablet: 2 columns ────────────────────────────────────────

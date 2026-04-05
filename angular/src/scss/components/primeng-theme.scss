@@ -1851,8 +1851,13 @@
         transform var(--motion-base) var(--ease-standard);
     }
 
-    &.p-focus .p-multiselect-trigger {
+    &.p-focus .p-multiselect-trigger,
+    &.p-multiselect-open .p-multiselect-trigger {
       color: var(--ds-primary-green);
+    }
+
+    &.p-multiselect-open .p-multiselect-trigger {
+      transform: rotate(180deg);
     }
   }
 
@@ -3008,7 +3013,7 @@
 
 /* ================================================================
    GREEN CONTAINER RULE - BULLETPROOF OVERRIDE SYSTEM
-   This catches ALL possible green background scenarios
+   Token/RGB inline backgrounds — hex fragments live in _color-guards.scss (layer 7)
    ================================================================ */
 
 /* Inline style green backgrounds - highest specificity */
@@ -3017,7 +3022,9 @@
 *[style*="background: var(--ds-primary-green)"],
 *[style*="background:var(--ds-primary-green)"],
 *[style*="background-color: var(--ds-primary-green)"],
-*[style*="089949"] {
+*[style*="background-color: var(--color-brand-primary)"],
+*[style*="background: var(--color-brand-primary)"],
+*[style*="background:var(--color-brand-primary)"] {
   color: var(--color-text-on-primary);
   text-shadow: var(--text-shadow-subtle);
 
@@ -3065,9 +3072,13 @@
   .p-chip,
   .p-message
 ) {
-  &[style*="089949"],
+  &[style*="var(--ds-primary-green)"],
+  &[style*="var(--color-brand-primary)"],
+  &[style*="rgb(8, 153, 73)"],
   &.p-button-green,
-  &.bg-primary {
+  &.bg-primary,
+  &.bg-primary-green,
+  &.p-card--brand {
     --text-color: var(--color-text-on-primary);
     --p-button-text-color: var(--color-text-on-primary);
     color: var(--color-text-on-primary);

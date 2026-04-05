@@ -1098,7 +1098,7 @@ async function generateProtocol(supabase, userId, payload, headers, log = logger
     .lte("checkin_date", date)
     .order("checkin_date", { ascending: false })
     .limit(1)
-    .single();
+    .maybeSingle();
 
   const hasActiveInjuries =
     wellnessCheckin?.soreness_areas &&
@@ -1115,8 +1115,8 @@ async function generateProtocol(supabase, userId, payload, headers, log = logger
       supabase,
       userId,
       date,
-      context,
       wellnessCheckin,
+      headers,
     );
   }
   // ============================================================================

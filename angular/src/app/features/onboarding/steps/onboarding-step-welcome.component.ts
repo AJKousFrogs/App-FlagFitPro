@@ -8,7 +8,7 @@ import { ChangeDetectionStrategy, Component, output } from "@angular/core";
     <div class="ob-welcome">
       <div class="ob-welcome__body">
         <div class="ob-welcome__icon-wrap" aria-hidden="true">
-          <span class="ob-welcome__emoji">🏈</span>
+          <i class="pi pi-flag ob-welcome__emoji" aria-hidden="true"></i>
         </div>
 
         <h1 class="ob-welcome__title">Welcome to<br>FlagFit Pro</h1>

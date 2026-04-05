@@ -57,9 +57,60 @@ export function transformSessionsToWeeklySchedule(
         time: session.scheduled_time || "TBD",
         title: session.title || "Session",
         type: session.session_type as WeeklyScheduleDay["sessions"][0]["type"],
+        duration:
+          typeof session.duration === "number" ? session.duration : undefined,
       })),
       isToday: date.toDateString() === new Date(referenceDate).toDateString(),
     };
+  });
+}
+
+/**
+ * Combines program template days with sessions logged this week so the workspace
+ * shows real activity even when templates are missing or incomplete.
+ */
+export function mergeWeeklyScheduleWithLoggedSessions(
+  programSchedule: WeeklyScheduleDay[],
+  sessions: TrainingSessionRecord[],
+  referenceDate = new Date(),
+): WeeklyScheduleDay[] {
+  const loggedWeek = transformSessionsToWeeklySchedule(sessions, referenceDate);
+  if (!programSchedule.length) {
+    return loggedWeek;
+  }
+
+  return programSchedule.map((day, index) => {
+    const loggedDay = loggedWeek[index];
+    const programSessions = day.sessions;
+    const loggedSessions = loggedDay?.sessions ?? [];
+
+    if (programSessions.length > 0) {
+      const merged = [...programSessions];
+      for (const ls of loggedSessions) {
+        if (
+          !merged.some(
+            (m) => m.title.toLowerCase() === ls.title.toLowerCase(),
+          )
+        ) {
+          merged.push(ls);
+        }
+      }
+      return {
+        ...day,
+        sessions: merged,
+        isToday: loggedDay?.isToday ?? day.isToday,
+      };
+    }
+
+    if (loggedSessions.length > 0) {
+      return {
+        ...day,
+        sessions: loggedSessions,
+        isToday: loggedDay?.isToday ?? day.isToday,
+      };
+    }
+
+    return { ...day, isToday: loggedDay?.isToday ?? day.isToday };
   });
 }
 

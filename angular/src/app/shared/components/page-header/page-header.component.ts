@@ -26,7 +26,7 @@ import { ChangeDetectionStrategy, Component, input } from "@angular/core";
         }
         <h1 class="page-title">
           @if (icon()) {
-            <i [class]="'pi ' + icon()"></i>
+            <i [class]="'pi ' + icon()" aria-hidden="true"></i>
           }
           {{ title() }}
         </h1>

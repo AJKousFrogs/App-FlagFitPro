@@ -86,14 +86,12 @@ async function login(page: Page): Promise<void> {
   // Dismiss cookie banner if present (blocks interactions on mobile)
   await dismissCookieBanner(page);
 
-  // Clear and fill email field, then trigger blur to update Angular form
-  const emailInput = page.locator('input[type="email"]');
+  const emailInput = page.getByTestId("email-input").locator("input");
   await emailInput.click();
   await emailInput.fill(TEST_USER.email);
   await emailInput.press("Tab"); // Trigger blur/change detection
 
-  // Clear and fill password field, then trigger blur
-  const passwordInput = page.locator('input[type="password"]');
+  const passwordInput = page.getByTestId("password-input").locator("input");
   await passwordInput.click();
   await passwordInput.fill(TEST_USER.password);
   await passwordInput.press("Tab"); // Trigger blur/change detection
@@ -138,22 +136,22 @@ test.describe("Authentication Flow", () => {
     await expect(page.locator("h1, h2").first()).toContainText(
       /login|sign in/i,
     );
-    await expect(page.locator('input[type="email"]')).toBeVisible();
-    await expect(page.locator('input[type="password"]')).toBeVisible();
+    await expect(page.getByTestId("email-input").locator("input")).toBeVisible();
+    await expect(
+      page.getByTestId("password-input").locator("input"),
+    ).toBeVisible();
   });
 
   test("should show error for invalid credentials", async ({ page }) => {
     await page.goto(`${BASE_URL}/login`);
     await dismissCookieBanner(page);
 
-    // Fill email with blur
-    const emailInput = page.locator('input[type="email"]');
+    const emailInput = page.getByTestId("email-input").locator("input");
     await emailInput.click();
     await emailInput.fill("invalid@example.com");
     await emailInput.press("Tab");
 
-    // Fill password with blur (must be 8+ chars to pass validation)
-    const passwordInput = page.locator('input[type="password"]');
+    const passwordInput = page.getByTestId("password-input").locator("input");
     await passwordInput.click();
     await passwordInput.fill("wrongpassword123");
     await passwordInput.press("Tab");

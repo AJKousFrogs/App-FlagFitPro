@@ -12,12 +12,18 @@ import {
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { Router, RouterModule } from "@angular/router";
 import { Timeline } from "primeng/timeline";
-import { of } from "rxjs";
+import { forkJoin, of } from "rxjs";
 import { catchError } from "rxjs";
 import { HeaderService } from "../../core/services/header.service";
 import { LoggerService } from "../../core/services/logger.service";
 import { SupabaseService } from "../../core/services/supabase.service";
-import { TrainingStatsCalculationService } from "../../core/services/training-stats-calculation.service";
+import {
+  TrainingStatsCalculationService,
+  type TrainingStatsData,
+} from "../../core/services/training-stats-calculation.service";
+import { TrainingDataService } from "../../core/services/training-data.service";
+import type { TrainingSession } from "../../core/services/training-data.service";
+import { TeamNotificationService } from "../../core/services/team-notification.service";
 import { UnifiedTrainingService } from "../../core/services/unified-training.service";
 import { WellnessService } from "../../core/services/wellness.service";
 import { ChannelService } from "../../core/services/channel.service";
@@ -50,10 +56,9 @@ import {
   MissingDataDetectionService,
   MissingDataStatus,
 } from "../../core/services/missing-data-detection.service";
-import {
-  CoachOverrideMeaning,
-  IncompleteDataMeaning,
+import type {
   ActionRequiredMeaning,
+  IncompleteDataMeaning,
 } from "../../core/semantics/semantic-meaning.types";
 import { ProfileCompletionService } from "../../core/services/profile-completion.service";
 import { TeamMembershipService } from "../../core/services/team-membership.service";
@@ -70,38 +75,28 @@ import { PlayerDashboardSetupCardComponent } from "./components/player-dashboard
 import { PlayerDashboardInsightsGridComponent } from "./components/player-dashboard-insights-grid.component";
 import { PlayerDashboardStatsOverviewComponent } from "./components/player-dashboard-stats-overview.component";
 import { PlayerDashboardStatusStackComponent } from "./components/player-dashboard-status-stack.component";
+import { PlayerDashboardEventsSectionComponent } from "./components/player-dashboard-events-section.component";
+import { SmartTrainingDataService } from "../training/services/smart-training-data.service";
 import {
+  computeWellnessCheckinStreak,
   getDashboardEventIcon,
-  getDashboardEventSeverity,
   getDashboardGreeting,
   getDashboardMerlinInsight,
   getDashboardPrivacySharingStatus,
   getWeeklyProgress,
   hasCompletedDashboardOnboarding,
+  mapTeamEventToDashboardDisplay,
+  type DashboardUpcomingEventDisplay,
 } from "./utils/player-dashboard-presenters";
 import type { SimpleChartData } from "../../core/models/chart.models";
+import { getStartOfTrainingWeek } from "../../core/utils/unified-training-transforms";
+import type { DashboardAnnouncementBanner } from "./models/dashboard-announcement.types";
 
 interface QuickAction {
   label: string;
   icon: string;
   route: string;
   description: string;
-}
-
-interface _ScheduleItem {
-  id: string;
-  time: string;
-  title: string;
-  duration: number;
-  completed: boolean;
-  icon?: string;
-}
-
-interface AnnouncementBanner {
-  message: string | null; // From backend
-  coachName: string | null; // From backend
-  postedAt: Date | null; // From backend
-  priority: "info" | "important";
 }
 
 @Component({
@@ -120,6 +115,7 @@ interface AnnouncementBanner {
     PageErrorStateComponent,
     PlayerDashboardStatsOverviewComponent,
     PlayerDashboardStatusStackComponent,
+    PlayerDashboardEventsSectionComponent,
   ],
   templateUrl: "./player-dashboard.component.html",
   styleUrl: "./player-dashboard.component.scss",
@@ -151,8 +147,18 @@ export class PlayerDashboardComponent {
   private readonly teamMembershipService = inject(TeamMembershipService);
   private readonly featureFlags = inject(FeatureFlagsService);
   private readonly nextGenMetricsService = inject(NextGenMetricsService);
+  private readonly trainingDataService = inject(TrainingDataService);
+  private readonly teamNotificationService = inject(TeamNotificationService);
+  private readonly smartTrainingDataService = inject(SmartTrainingDataService);
   private readonly destroyRef = inject(DestroyRef);
   private readonly logger = inject(LoggerService);
+
+  /** Dates (YYYY-MM-DD) in the current ISO week with a completed training session */
+  private readonly weekLoggedDateKeys = signal<ReadonlySet<string>>(
+    new Set(),
+  );
+
+  private lastAnnouncementSyncId: string | null = null;
 
   // Expose UI_LIMITS for template usage
   readonly UI_LIMITS = UI_LIMITS;
@@ -168,8 +174,8 @@ export class PlayerDashboardComponent {
   currentUserId = computed(() => this.currentUser()?.id ?? "");
   private overviewLoadedForUser = signal<string | null>(null);
 
-  // Announcement
-  announcement = signal<AnnouncementBanner | null>(null);
+  // Announcement (first unread team chat announcement)
+  announcement = signal<DashboardAnnouncementBanner | null>(null);
   announcementDismissed = signal(false);
 
   // Phase 2.1 - Coach Override Notifications
@@ -188,16 +194,10 @@ export class PlayerDashboardComponent {
   );
 
   // Stats - CRITICAL: No defaults - only real data
-  readinessScore = signal<number | null>(null); // Load from wellness service
   acwr = signal<number | null>(null); // Load from training stats - no fallback
   currentStreak = signal(0);
   weeklySessionsCompleted = signal(0);
   weeklySessionsPlanned = signal(7);
-
-  // Wellness check-in tracking (UX Audit Fix #4)
-  wellnessCheckedInToday = signal(false);
-  lastWellnessCheckin = signal<Date | null>(null);
-  checkinStreak = signal(0);
 
   // Next-gen preview
   nextGenEnabled = this.featureFlags.nextGenMetricsPreview;
@@ -205,6 +205,46 @@ export class PlayerDashboardComponent {
   nextGenReadinessScore = computed(() => {
     const preview = this.nextGenPreview();
     return preview?.readiness?.score ?? null;
+  });
+
+  /** 0–100 readiness from latest wellness entry (fallback when protocol has no score) */
+  readonly wellnessReadinessFallback = computed(() => {
+    const latest = this.wellnessService.latestWellnessEntry();
+    if (!latest) return null;
+    const score = this.wellnessService.getWellnessScore(latest);
+    return Math.round(score * 10);
+  });
+
+  private readonly todayLocalDateKey = computed(() =>
+    this.formatDateOnlyLocal(new Date()),
+  );
+
+  readonly wellnessCheckedInToday = computed(() => {
+    const latest = this.wellnessService.latestWellnessEntry();
+    if (!latest?.date) return false;
+    return latest.date === this.todayLocalDateKey();
+  });
+
+  readonly checkinStreak = computed(() =>
+    computeWellnessCheckinStreak(this.wellnessService.wellnessData()),
+  );
+
+  readonly daysSinceLastCheckin = computed(() => {
+    const latest = this.wellnessService.latestWellnessEntry();
+    if (!latest?.date) return 0;
+    const last = this.parseLocalDateOnly(latest.date);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    last.setHours(0, 0, 0, 0);
+    return Math.floor(
+      (today.getTime() - last.getTime()) / (1000 * 60 * 60 * 24),
+    );
+  });
+
+  readonly checkinOverdue = computed(() => {
+    const latest = this.wellnessService.latestWellnessEntry();
+    if (!latest?.date) return false;
+    return this.daysSinceLastCheckin() > 1;
   });
 
   readonly todayProtocol = this.unifiedTrainingService.todayProtocol;
@@ -225,16 +265,62 @@ export class PlayerDashboardComponent {
   // Expose TRAINING constant for template usage
   readonly TRAINING = TRAINING;
 
-  // Week days
-  weekDays = signal<
-    Array<{
+  /** Mon–Sun: completed = logged training session that calendar day */
+  readonly weekDays = computed(() => {
+    const schedule = this.unifiedTrainingService.weeklySchedule();
+    const logged = this.weekLoggedDateKeys();
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const mapDay = (
+      name: string,
+      dayDate: Date,
+    ): {
       name: string;
       short: string;
       completed: boolean;
       isToday: boolean;
       isFuture: boolean;
-    }>
-  >([]);
+    } => {
+      const dateKey = this.formatDateOnlyLocal(dayDate);
+      const d = new Date(dayDate);
+      d.setHours(0, 0, 0, 0);
+      const completed = logged.has(dateKey) && d.getTime() <= today.getTime();
+      const isToday = d.getTime() === today.getTime();
+      const isFuture = d.getTime() > today.getTime();
+      return {
+        name,
+        short: name.slice(0, 3),
+        completed,
+        isToday,
+        isFuture,
+      };
+    };
+
+    if (schedule.length >= 7) {
+      return schedule.map((day) => {
+        const dayDate =
+          day.date instanceof Date ? day.date : new Date(day.date ?? "");
+        return mapDay(day.name, dayDate);
+      });
+    }
+
+    const weekStart = getStartOfTrainingWeek();
+    const names = [
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday",
+      "Friday",
+      "Saturday",
+      "Sunday",
+    ];
+    return names.map((name, i) => {
+      const d = new Date(weekStart);
+      d.setDate(d.getDate() + i);
+      return mapDay(name, d);
+    });
+  });
 
   // Schedule - use computed from UnifiedTrainingService
   todaySchedule = computed(() => {
@@ -263,17 +349,7 @@ export class PlayerDashboardComponent {
     }));
   });
 
-  // Events
-  upcomingEvents = signal<
-    Array<{
-      id: string;
-      day: string;
-      month: string;
-      title: string;
-      type: string;
-      typeLabel: string;
-    }>
-  >([]);
+  upcomingEvents = signal<DashboardUpcomingEventDisplay[]>([]);
 
   // Performance chart - uses Chart.js format
   performanceChartData = signal<SimpleChartData | null>(null);
@@ -350,7 +426,7 @@ export class PlayerDashboardComponent {
   readonly dashboardReadinessPresentation = computed(() =>
     getProtocolReadinessPresentation(
       this.todayProtocol(),
-      this.readinessScore(),
+      this.wellnessReadinessFallback(),
     ),
   );
 
@@ -402,7 +478,6 @@ export class PlayerDashboardComponent {
     this.recentOverrides().map((override) => ({
       override,
       coachName: this.getCoachName(override.coachId),
-      meaning: this.getCoachOverrideMeaning(override),
     })),
   );
   readonly announcementTimeAgo = computed(() =>
@@ -416,19 +491,13 @@ export class PlayerDashboardComponent {
     })),
   );
 
-  readonly upcomingDisplayEvents = computed(() =>
-    this.upcomingEvents().map((event) => ({
-      ...event,
-      severity: getDashboardEventSeverity(event.type),
-    })),
-  );
-
   constructor() {
     this.headerService.setDashboardHeader();
 
     // Load centralized services first (for consistent data across views)
     this.profileCompletionService.loadProfileData();
     this.teamMembershipService.loadMembership();
+    void this.privacySettingsService.loadSettings();
 
     this.loadData();
 
@@ -484,13 +553,33 @@ export class PlayerDashboardComponent {
           },
         });
     });
+
+    effect(() => {
+      const unread = this.teamNotificationService.unreadAnnouncements();
+      const first = unread[0];
+      if (!first) {
+        this.announcement.set(null);
+        this.lastAnnouncementSyncId = null;
+        return;
+      }
+      if (first.id !== this.lastAnnouncementSyncId) {
+        this.lastAnnouncementSyncId = first.id;
+        this.announcementDismissed.set(false);
+      }
+      this.announcement.set({
+        id: first.id,
+        message: first.message,
+        coachName: first.author_name?.trim() || null,
+        postedAt: first.created_at ? new Date(first.created_at) : null,
+        priority: first.is_important ? "important" : "info",
+      });
+    });
   }
 
   loadData(): void {
     this.isLoading.set(true);
     this.hasError.set(false);
 
-    // Load user info
     const user = this.currentUser();
     const metadata = user?.user_metadata as
       | { fullName?: string; firstName?: string }
@@ -500,45 +589,73 @@ export class PlayerDashboardComponent {
       this.userName.set(fullName.split(" ")[0]);
     }
 
-    // Initialize week days
-    this.initializeWeekDays();
+    const today = new Date();
+    const weekStart = getStartOfTrainingWeek(today);
+    const weekEnd = new Date(weekStart);
+    weekEnd.setDate(weekEnd.getDate() + 6);
+    const weekStartStr = this.formatDateOnlyLocal(weekStart);
+    const weekEndStr = this.formatDateOnlyLocal(weekEnd);
 
-    // this.announcementService.getLatestAnnouncement().subscribe(announcement => this.announcement.set(announcement));
-    // For now, set structure with null values - will be populated from backend
-    this.announcement.set({
-      message: null, // From backend: e.g., "Practice tomorrow moved to 6PM due to field availability."
-      coachName: null, // From backend: e.g., "Coach Smith"
-      postedAt: null, // From backend: e.g., new Date()
-      priority: "info", // From backend: 'info' | 'important'
-    });
+    const trendStart = new Date(today);
+    trendStart.setDate(trendStart.getDate() - 13);
+    const trendStartStr = this.formatDateOnlyLocal(trendStart);
+    const todayStr = this.formatDateOnlyLocal(today);
 
-    // Load training stats
-    this.trainingStatsService
-      .getTrainingStats()
-      .pipe(
-        takeUntilDestroyed(this.destroyRef),
+    forkJoin({
+      stats: this.trainingStatsService.getTrainingStats().pipe(
         catchError((error) => {
-          this.logger.error("Failed to load training stats:", error);
-          return of(null);
+          this.logger.error("player_dashboard_training_stats_failed", error);
+          return of(null as TrainingStatsData | null);
         }),
-      )
-      .subscribe((stats) => {
+      ),
+      weekSessions: this.trainingDataService
+        .getTrainingSessions({
+          startDate: weekStartStr,
+          endDate: weekEndStr,
+        })
+        .pipe(
+          catchError((error) => {
+            this.logger.error("player_dashboard_week_sessions_failed", error);
+            return of([] as TrainingSession[]);
+          }),
+        ),
+      trendSessions: this.trainingDataService
+        .getTrainingSessions({
+          startDate: trendStartStr,
+          endDate: todayStr,
+        })
+        .pipe(
+          catchError((error) => {
+            this.logger.error(
+              "player_dashboard_trend_sessions_failed",
+              error,
+            );
+            return of([] as TrainingSession[]);
+          }),
+        ),
+    })
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(({ stats, weekSessions, trendSessions }) => {
+        if (stats === null) {
+          this.hasError.set(true);
+          this.errorMessage.set(
+            "Failed to load dashboard. Please try again.",
+          );
+          this.isLoading.set(false);
+          return;
+        }
+
         this.applyTrainingStats(stats);
-        this.refreshDashboardInsights();
+        this.applyWeekLoggedDates(weekSessions);
+        this.performanceChartData.set(this.buildLoadTrendChart(trendSessions));
+        void this.refreshDashboardInsights();
+        void this.loadUpcomingTeamEventsForDashboard();
         this.isLoading.set(false);
       });
   }
 
   private applyTrainingStats(
-    stats:
-      | {
-          acwr?: number | null;
-          currentStreak?: number;
-          weeklySessions?: number;
-          trainingDaysLogged?: number | null;
-        }
-      | null
-      | undefined,
+    stats: TrainingStatsData | null | undefined,
   ): void {
     // CRITICAL: Only set ACWR if we have real data - no fallback defaults
     if (stats?.acwr !== undefined && typeof stats.acwr === "number") {
@@ -549,46 +666,122 @@ export class PlayerDashboardComponent {
 
     this.currentStreak.set(stats?.currentStreak ?? 0);
     this.weeklySessionsCompleted.set(stats?.weeklySessions ?? 0);
-    this.trainingDaysLogged.set(stats?.trainingDaysLogged ?? null);
+    this.trainingDaysLogged.set(null);
+  }
+
+  private applyWeekLoggedDates(sessions: TrainingSession[]): void {
+    const keys = new Set<string>();
+    for (const s of sessions) {
+      if (!this.isSessionCompleted(s)) continue;
+      const raw = s.session_date || s.date;
+      if (!raw) continue;
+      const key =
+        typeof raw === "string"
+          ? raw.split("T")[0]
+          : this.formatDateOnlyLocal(new Date(raw));
+      keys.add(key);
+    }
+    this.weekLoggedDateKeys.set(keys);
+  }
+
+  private isSessionCompleted(s: TrainingSession): boolean {
+    if (s.status === "deleted" || s.status === "cancelled") return false;
+    if (s.status === "completed") return true;
+    return Boolean(s.completed_at);
+  }
+
+  private buildLoadTrendChart(sessions: TrainingSession[]): SimpleChartData | null {
+    const byDay = new Map<string, number>();
+    const labelsOrdered: string[] = [];
+    for (let i = 6; i >= 0; i--) {
+      const d = new Date();
+      d.setDate(d.getDate() - i);
+      d.setHours(12, 0, 0, 0);
+      const key = this.formatDateOnlyLocal(d);
+      byDay.set(key, 0);
+      labelsOrdered.push(
+        d.toLocaleDateString("en-US", { month: "short", day: "numeric" }),
+      );
+    }
+
+    for (const s of sessions) {
+      const raw = s.session_date || s.date;
+      if (!raw || !this.isSessionCompleted(s)) continue;
+      const key =
+        typeof raw === "string"
+          ? raw.split("T")[0]
+          : this.formatDateOnlyLocal(new Date(raw));
+      if (!byDay.has(key)) continue;
+      const duration = s.duration_minutes ?? s.duration ?? 0;
+      const rpe = s.rpe ?? s.intensity_level ?? 5;
+      byDay.set(key, (byDay.get(key) ?? 0) + duration * rpe);
+    }
+
+    const data = labelsOrdered.map((_, i) => {
+      const d = new Date();
+      d.setDate(d.getDate() - (6 - i));
+      const key = this.formatDateOnlyLocal(d);
+      return byDay.get(key) ?? 0;
+    });
+
+    if (data.every((v) => v === 0)) {
+      return null;
+    }
+
+    return {
+      labels: labelsOrdered,
+      datasets: [
+        {
+          label: "Training load",
+          data,
+          borderColor: "var(--ds-primary-green)",
+          backgroundColor: "var(--ds-primary-green-subtle)",
+          fill: true,
+          tension: 0.4,
+        },
+      ],
+    };
+  }
+
+  private async loadUpcomingTeamEventsForDashboard(): Promise<void> {
+    const todayStr = this.formatDateOnlyLocal(new Date());
+    try {
+      const { events, error } =
+        await this.smartTrainingDataService.fetchUpcomingTeamEvents(todayStr);
+      if (error) {
+        this.logger.warn("player_dashboard_team_events_query", error);
+      }
+      this.upcomingEvents.set(
+        events.map((e, i) => mapTeamEventToDashboardDisplay(e, i)),
+      );
+    } catch (error) {
+      this.logger.error("player_dashboard_team_events_failed", error);
+      this.upcomingEvents.set([]);
+    }
+  }
+
+  private formatDateOnlyLocal(d: Date): string {
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, "0");
+    const day = String(d.getDate()).padStart(2, "0");
+    return `${y}-${m}-${day}`;
+  }
+
+  private parseLocalDateOnly(ymd: string): Date {
+    const [y, m, d] = ymd.split("-").map(Number);
+    return new Date(y, m - 1, d, 12, 0, 0, 0);
   }
 
   private refreshDashboardInsights(): void {
-    this.loadReadinessScore();
-    this.loadContinuityEvents();
-    this.checkAcwrSpike();
-    this.loadRecentOverrides();
-    this.loadActiveTransitions();
-    this.loadMissingWellnessStatus();
-
-    // The chart data (weeklyData with label/value) will come from the API
-    // this.performanceService.getWeeklyTrend().subscribe(...)
-    // For now, performanceChartData remains null (shows empty state)
-
-    // Today's schedule is loaded via UnifiedTrainingService.todaysScheduleItems()
-    // which is computed from weeklySchedule signal. Data is loaded by getTodayOverview()
-    // or loadAllTrainingData() which is called during component initialization.
-
-    // The events data (day, month, title, type, typeLabel) will come from the API
-    // this.eventsService.getUpcomingEvents().subscribe(...)
-    // For now, upcomingEvents remains empty (section hidden)
+    void this.loadContinuityEvents();
+    void this.checkAcwrSpike();
+    void this.loadRecentOverrides();
+    void this.loadActiveTransitions();
+    void this.loadMissingWellnessStatus();
   }
 
   private getCurrentUserId(): string | null {
     return this.currentUserId() || null;
-  }
-
-  private loadReadinessScore(): void {
-    // Load latest wellness entry and calculate readiness score
-    const latestWellness = this.wellnessService.latestWellnessEntry();
-    if (latestWellness) {
-      const score = this.wellnessService.getWellnessScore(latestWellness);
-      // Wellness score is 0-10; dashboard readiness uses 0-100 scale.
-      const normalizedScore = Math.round(score * 10);
-      this.readinessScore.set(normalizedScore);
-    } else {
-      // No wellness data - set to null (show empty state)
-      this.readinessScore.set(null);
-    }
   }
 
   private async loadContinuityEvents(): Promise<void> {
@@ -638,36 +831,6 @@ export class PlayerDashboardComponent {
     } catch (error) {
       this.logger.error("player_dashboard_overrides_load_failed", error);
     }
-  }
-
-  /**
-   * Phase 3: Convert MissingDataStatus to semantic IncompleteDataMeaning
-   */
-  getIncompleteDataMeaning(): IncompleteDataMeaning | null {
-    const status = this.missingWellnessStatus();
-    if (!status || !status.missing) {
-      return null;
-    }
-
-    // Calculate confidence impact based on days missing
-    let confidenceImpact = 0.1; // Base impact
-    if (status.daysMissing >= 7) {
-      confidenceImpact = 0.4; // Critical impact
-    } else if (status.daysMissing >= 3) {
-      confidenceImpact = 0.3; // High impact
-    } else if (status.daysMissing >= 2) {
-      confidenceImpact = 0.2; // Moderate impact
-    }
-
-    return {
-      type: "incomplete-data",
-      severity: status.severity === "critical" ? "critical" : "warning",
-      dataType: "wellness",
-      daysMissing: status.daysMissing,
-      affectedMetric: "acwr",
-      confidenceImpact,
-      message: `Missing wellness data for ${status.daysMissing} day${status.daysMissing > 1 ? "s" : ""}. This reduces ACWR calculation accuracy.`,
-    };
   }
 
   /**
@@ -723,41 +886,6 @@ export class PlayerDashboardComponent {
       affectedMetric: "acwr",
       confidenceImpact,
       message: `ACWR calculation confidence is ${(confidence.score * 100).toFixed(0)}%. Missing: ${confidence.missingInputs.join(", ")}.`,
-    };
-  }
-
-  /**
-   * Phase 3: Convert CoachOverride to semantic CoachOverrideMeaning
-   */
-  getCoachOverrideMeaning(
-    override: CoachOverride,
-  ): CoachOverrideMeaning | null {
-    if (!override.aiRecommendation || !override.coachDecision) {
-      return null;
-    }
-
-    // Map override type to semantic override type
-    const overrideTypeMap: Record<
-      string,
-      CoachOverrideMeaning["overrideType"]
-    > = {
-      training_load: "load-adjustment",
-      session_modification: "session-modification",
-      acwr_override: "threshold-override",
-      recovery_protocol: "plan-change",
-      other: "general",
-    };
-
-    return {
-      type: "coach-override",
-      overrideType: overrideTypeMap[override.overrideType] || "general",
-      affectedEntity: `player-${override.playerId}`,
-      aiRecommendation: override.aiRecommendation,
-      coachDecision: override.coachDecision,
-      coachId: override.coachId,
-      coachName: this.getCoachName(override.coachId),
-      reason: override.reason,
-      timestamp: override.createdAt ? new Date(override.createdAt) : new Date(),
     };
   }
 
@@ -842,32 +970,15 @@ export class PlayerDashboardComponent {
     }
   }
 
-  private initializeWeekDays(): void {
-    const today = new Date();
-    const dayOfWeek = today.getDay();
-    const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-    const fullDays = [
-      "Sunday",
-      "Monday",
-      "Tuesday",
-      "Wednesday",
-      "Thursday",
-      "Friday",
-      "Saturday",
-    ];
-
-    const weekDays = days.map((short, index) => ({
-      name: fullDays[index],
-      short,
-      completed: index < dayOfWeek,
-      isToday: index === dayOfWeek,
-      isFuture: index > dayOfWeek,
-    }));
-
-    this.weekDays.set(weekDays);
-  }
-
-  dismissAnnouncement(): void {
+  async dismissAnnouncement(): Promise<void> {
+    const ann = this.announcement();
+    if (ann?.id) {
+      try {
+        await this.teamNotificationService.markAnnouncementRead(ann.id);
+      } catch (error) {
+        this.logger.error("player_dashboard_announcement_dismiss_failed", error);
+      }
+    }
     this.announcementDismissed.set(true);
   }
 
@@ -940,60 +1051,9 @@ export class PlayerDashboardComponent {
   }
 
   /**
-   * Check if wellness check-in is overdue (> 1 day since last check-in)
-   * UX Audit Fix #4
-   */
-  checkinOverdue(): boolean {
-    return this.daysSinceLastCheckin() > 1;
-  }
-
-  /**
-   * Calculate days since last wellness check-in
-   * UX Audit Fix #4
-   */
-  daysSinceLastCheckin(): number {
-    const lastCheckin = this.lastWellnessCheckin();
-    if (!lastCheckin) return 99; // Never checked in
-
-    const now = new Date();
-    const diffMs = now.getTime() - lastCheckin.getTime();
-    const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-    return diffDays;
-  }
-
-  /**
    * Get time ago string using centralized utility
    */
   getTimeAgoStr(date: Date | null | undefined): string {
     return getTimeAgo(date);
   }
-
-  getReadinessStatus(): string {
-    return this.dashboardReadinessPresentation().label;
-  }
-
-  getReadinessSeverity():
-    | "success"
-    | "warning"
-    | "danger"
-    | "info"
-    | "secondary"
-    | "primary" {
-    return this.dashboardReadinessPresentation().severity;
-  }
-
-  getAcwrStatus(): string {
-    return this.dashboardAcwrDisplay().label;
-  }
-
-  getAcwrSeverity():
-    | "success"
-    | "warning"
-    | "danger"
-    | "info"
-    | "secondary"
-    | "primary" {
-    return this.dashboardAcwrDisplay().severity;
-  }
-
 }

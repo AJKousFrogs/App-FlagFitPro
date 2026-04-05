@@ -32,6 +32,11 @@
   .prompt-icon {
     font-size: var(--ds-font-size-2xl);
     line-height: var(--ds-line-height-1);
+    color: var(--color-brand-primary);
+
+    .pi {
+      font-size: inherit;
+    }
   }
 
   .prompt-content {
@@ -127,6 +132,22 @@
     display: flex;
     gap: var(--layout-page-section-gap-tight);
     flex-wrap: wrap;
+
+    .meta-row {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-1);
+      font-size: var(--ds-font-size-sm);
+      color: var(--color-text-secondary);
+
+      .meta-row__icon {
+        color: var(--color-brand-primary);
+
+        .pi {
+          font-size: var(--ds-font-size-md);
+        }
+      }
+    }
   }
 }
 
@@ -182,8 +203,13 @@
     color: var(--color-text-primary);
 
     .label-icon {
-      font-size: var(--ds-font-size-2xl);
+      font-size: var(--ds-font-size-lg);
       line-height: var(--ds-line-height-1);
+      color: var(--color-brand-primary);
+
+      .pi {
+        font-size: inherit;
+      }
     }
 
     .value-badge {

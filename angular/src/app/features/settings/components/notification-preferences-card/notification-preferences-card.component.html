@@ -104,11 +104,7 @@
     >
       <app-select
         formControlName="digestFrequency"
-        [options]="[
-          { label: 'Real-time (Instant)', value: 'realtime' },
-          { label: 'Daily Digest', value: 'daily' },
-          { label: 'Weekly Summary', value: 'weekly' },
-        ]"
+        [options]="digestFrequencyOptions"
         optionLabel="label"
         optionValue="value"
         placeholder="Select frequency"

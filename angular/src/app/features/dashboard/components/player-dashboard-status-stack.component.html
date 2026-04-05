@@ -14,7 +14,10 @@
           <span class="announcement-message">{{ announcement()?.message }}</span>
         </div>
         <span class="announcement-meta">
-          — {{ announcement()?.coachName }} · {{ announcementTimeAgo() }}
+          @if (announcement()?.coachName) {
+            — {{ announcement()?.coachName }} ·
+          }
+          {{ announcementTimeAgo() }}
         </span>
       </div>
       <app-close-button
@@ -30,16 +33,6 @@
 @if (overrideItems().length > 0) {
   <section class="override-notifications-section">
     @for (item of overrideItems(); track item.override.id) {
-      @if (item.meaning) {
-        <app-semantic-meaning-renderer
-          [meaning]="item.meaning"
-          [context]="{
-            container: 'card',
-            priority: 'medium',
-            dismissible: false,
-          }"
-        ></app-semantic-meaning-renderer>
-      }
       <app-coach-override-notification
         [override]="item.override"
         [coachName]="item.coachName"
@@ -64,7 +57,6 @@
   <section class="missing-data-section">
     <app-missing-data-explanation
       [missingStatus]="missingWellnessStatus()!"
-      [showCoachLink]="true"
     ></app-missing-data-explanation>
   </section>
 }

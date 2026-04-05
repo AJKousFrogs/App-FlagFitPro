@@ -323,7 +323,8 @@ describe("ThemeService", () => {
       service.setMode("dark");
 
       expect(mockLoggerService.debug).toHaveBeenCalledWith(
-        expect.stringContaining("Theme mode set to"),
+        "theme_mode_set",
+        expect.objectContaining({ mode: "dark" }),
       );
     });
 
@@ -332,7 +333,8 @@ describe("ThemeService", () => {
       await waitFor();
 
       expect(mockLoggerService.debug).toHaveBeenCalledWith(
-        expect.stringContaining("Applied theme"),
+        "theme_applied",
+        expect.objectContaining({ theme: "dark" }),
       );
     });
   });
