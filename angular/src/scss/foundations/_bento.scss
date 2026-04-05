@@ -5,10 +5,13 @@
  * Shared bento shell patterns repeatedly redefined in feature-level pages.
  */
 
+@use "../utilities/mixins" as *;
+
 %bento-surface-card {
   background: var(--surface-primary);
   border-radius: var(--radius-xl);
   box-shadow: var(--shadow-sm);
+  padding: var(--space-5);
   min-width: 0;
   transition:
     transform var(--transition-base),
@@ -17,19 +20,57 @@
   &:hover {
     box-shadow: var(--shadow-md);
   }
+
+  @include respond-to(sm) {
+    padding: var(--space-4);
+    border-radius: var(--radius-lg);
+  }
 }
 
 %bento-header-shell {
   background: transparent;
   border: none;
   box-shadow: none;
-  padding: 0;
+  padding: var(--space-0);
 }
 
 %bento-title {
-  font-size: var(--ds-font-size-lg);
-  font-weight: var(--ds-font-weight-bold);
+  font-size: var(--ds-font-size-md);
+  font-weight: var(--ds-font-weight-semibold);
+  letter-spacing: -0.015em;
   color: var(--color-text-primary);
   display: flex;
   align-items: center;
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
+
+  i {
+    color: var(--ds-primary-green);
+    font-size: var(--ds-font-size-md);
+  }
+
+  @include respond-to(sm) {
+    font-size: var(--ds-font-size-md);
+    gap: var(--space-2);
+    margin-bottom: var(--space-3);
+
+    i {
+      font-size: var(--ds-font-size-lg);
+    }
+  }
+}
+
+%bento-section-title {
+  font-size: var(--ds-font-size-md);
+  font-weight: var(--ds-font-weight-semibold);
+  color: var(--color-text-primary);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-3);
+
+  i {
+    color: var(--ds-primary-green);
+    font-size: var(--ds-font-size-md);
+  }
 }

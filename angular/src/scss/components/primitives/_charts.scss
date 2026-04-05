@@ -78,7 +78,7 @@
     font-size: var(--font-h3-size);
     font-weight: var(--font-weight-semibold);
     color: var(--color-text-primary);
-    margin: 0;
+    margin: var(--space-0);
   }
 
   .chart-subtitle {
@@ -144,7 +144,7 @@
 
   .chart-empty-text {
     font-size: var(--font-body-size);
-    margin: 0;
+    margin: var(--space-0);
   }
 
   // ============================================

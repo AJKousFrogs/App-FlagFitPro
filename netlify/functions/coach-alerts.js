@@ -17,6 +17,19 @@ import { supabaseAdmin } from "./supabase-client.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
 import { parseJsonObjectBody } from "./utils/input-validator.js";
+import { buildRequestLogContext, createLogger } from "./utils/structured-logger.js";
+
+const logger = createLogger({ service: "netlify.coach-alerts" });
+
+function createRequestLogger(event, meta = {}) {
+  return logger.child(
+    buildRequestLogContext(event, {
+      request_id: meta.requestId,
+      correlation_id: meta.correlationId,
+      trace_id: meta.traceId ?? meta.correlationId,
+    }),
+  );
+}
 
 const isValidDateOnly = (value) => {
   if (typeof value !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(value)) {
@@ -37,7 +50,13 @@ const isValidDateOnly = (value) => {
  * - Must update any "ack_required" gate so TODAY unlocks immediately after success
  * - Must never silently fail (return {success:false, error, code})
  */
-async function acknowledgeCoachAlert(supabase, userId, alertId, sessionDate) {
+async function acknowledgeCoachAlert(
+  supabase,
+  userId,
+  alertId,
+  sessionDate,
+  log = logger,
+) {
   // Step 1: Verify alert exists and belongs to this athlete
   // For now, we'll check daily_protocols table for coach alerts
   // In the future, this might be a separate coach_alerts table
@@ -104,7 +123,14 @@ async function acknowledgeCoachAlert(supabase, userId, alertId, sessionDate) {
     .single();
 
   if (updateError) {
-    console.error("[coach-alerts] Error updating acknowledgment:", updateError);
+    log.error(
+      "coach_alerts_update_failed",
+      updateError,
+      {
+        alert_id: alertId,
+        user_id: userId,
+      },
+    );
     return {
       success: false,
       error: "Failed to acknowledge alert",
@@ -129,22 +155,28 @@ async function acknowledgeCoachAlert(supabase, userId, alertId, sessionDate) {
       .single();
 
     if (auditError) {
-      // Table might not exist - log to console for now
-      console.log("[coach-alerts] Audit log (table may not exist):", {
+      log.warn(
+        "coach_alerts_audit_table_missing",
+        {
+          protocol_id: alertId,
+          user_id: userId,
+          protocol_date: protocol.protocol_date || sessionDate,
+          acknowledged_at: new Date().toISOString(),
+        },
+        auditError,
+      );
+    }
+  } catch (err) {
+    log.warn(
+      "coach_alerts_audit_log_failed",
+      {
         protocol_id: alertId,
         user_id: userId,
         protocol_date: protocol.protocol_date || sessionDate,
         acknowledged_at: new Date().toISOString(),
-      });
-    }
-  } catch (err) {
-    // Audit logging failed - log to console
-    console.log("[coach-alerts] Audit log (fallback):", {
-      protocol_id: alertId,
-      user_id: userId,
-      protocol_date: protocol.protocol_date || sessionDate,
-      acknowledged_at: new Date().toISOString(),
-    });
+      },
+      err,
+    );
   }
 
   return {
@@ -169,7 +201,11 @@ const handler = async (event, context) => {
     allowedMethods: ["POST", "OPTIONS"],
     rateLimitType,
     requireAuth: true,
-    handler: async (event, _context, { userId }) => {
+    handler: async (event, _context, { userId, requestId, correlationId }) => {
+      const requestLogger = createRequestLogger(event, {
+        requestId,
+        correlationId,
+      });
       const path = event.path
         .replace(/^\/\.netlify\/functions\/coach-alerts\/?/, "")
         .replace(/^\/api\/coach-alerts\/?/, "");
@@ -216,6 +252,7 @@ const handler = async (event, context) => {
             userId,
             alertId,
             sessionDate,
+            requestLogger,
           );
 
           if (!result.success) {
@@ -237,7 +274,14 @@ const handler = async (event, context) => {
 
         return createErrorResponse("Endpoint not found", 404, "not_found");
       } catch (error) {
-        console.error("[coach-alerts] Error:", error);
+        requestLogger.error(
+          "coach_alerts_handler_error",
+          error,
+          {
+            http_method: event.httpMethod,
+            path: event.path,
+          },
+        );
         return createErrorResponse(
           "Internal server error",
           500,

@@ -39,7 +39,6 @@ import {
 } from "../../shared/components/ai-mode-explanation/ai-mode-explanation.component";
 import { CloseButtonComponent } from "../../shared/components/close-button/close-button.component";
 import { AppDialogComponent } from "../../shared/components/dialog/dialog.component";
-import { AppLoadingComponent } from "../../shared/components/loading/loading.component";
 import { IconButtonComponent } from "../../shared/components/button/icon-button.component";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { MicroSessionComponent } from "../../shared/components/micro-session/micro-session.component";
@@ -126,7 +125,6 @@ interface AutocompleteSuggestion {
   imports: [
     ReactiveFormsModule,
     AppDialogComponent,
-    AppLoadingComponent,
     MainLayoutComponent,
     IconButtonComponent,
     CloseButtonComponent,
@@ -461,23 +459,6 @@ export class AiCoachChatComponent implements OnInit, AfterViewChecked {
     return fullName ? fullName.split(" ")[0] : "";
   });
 
-  // Micro-session signal wrapper
-  get activeMicroSessionSignal() {
-    return signal(
-      this.activeMicroSession() || {
-        title: "",
-        session_type: "recovery",
-        estimated_duration_minutes: 5,
-        equipment_needed: [],
-        intensity_level: "low",
-        position_relevance: ["ALL"],
-        steps: [],
-        coaching_cues: [],
-        follow_up_prompt: "How do you feel? (0-10)",
-      },
-    );
-  }
-
   constructor() {
     effect(() => {
       const score = this.readinessPresentation().score;
@@ -668,7 +649,7 @@ export class AiCoachChatComponent implements OnInit, AfterViewChecked {
         this.aiModeStatus.set(null);
       }
     } catch (error) {
-      this.logger.error("[AI Chat] Error loading AI mode status:", error);
+      this.logger.error("ai_chat_mode_status_load_failed", error);
     }
   }
 

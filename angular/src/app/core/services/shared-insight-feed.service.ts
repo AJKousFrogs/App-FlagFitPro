@@ -148,7 +148,7 @@ export class SharedInsightFeedService {
 
       this._insights.set(insights);
     } catch (error) {
-      this.logger.error("[SharedInsightFeed] Error loading insights:", error);
+      this.logger.error("shared_insight_feed_load_failed", error);
       this._insights.set([]);
     } finally {
       this._loading.set(false);
@@ -194,7 +194,7 @@ export class SharedInsightFeedService {
 
       return data.id;
     } catch (error) {
-      this.logger.error("[SharedInsightFeed] Error creating insight:", error);
+      this.logger.error("shared_insight_feed_create_failed", error);
       return null;
     }
   }

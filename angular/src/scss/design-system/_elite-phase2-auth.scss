@@ -45,15 +45,11 @@
 .elite-auth-card .card-shell::before {
   content: "";
   position: absolute;
-  inset: 0 0 auto;
-  height: 3px;
-  background: linear-gradient(
-    90deg,
-    var(--ds-primary-green) 0%,
-    color-mix(in srgb, var(--ds-primary-green) 70%, #34d399) 55%,
-    #10b981 100%
-  );
-  border-radius: var(--radius-full) var(--radius-full) 0 0;
+  inset: var(--space-0) var(--space-0) auto;
+  height: var(--space-0-75);
+  background: var(--elite-auth-card-top-gradient);
+  border-radius: var(--radius-full) var(--radius-full) var(--radius-none)
+    var(--radius-none);
 }
 
 .elite-auth-card .card-shell__body {
@@ -71,22 +67,18 @@
   place-items: center;
   width: 72px;
   height: 72px;
-  margin: 0 auto var(--space-5);
+  margin: var(--space-0) auto var(--space-5);
   border-radius: var(--radius-2xl);
-  color: #fff;
-  background: linear-gradient(
-    135deg,
-    var(--ds-primary-green) 0%,
-    color-mix(in srgb, var(--ds-primary-green) 75%, #065f46) 100%
-  );
+  color: var(--color-text-on-primary);
+  background: var(--elite-auth-logo-gradient);
   font-size: 1.75rem;
   box-shadow:
-    0 8px 24px rgba(8, 153, 73, 0.35),
-    inset 0 1px 0 rgba(255, 255, 255, 0.18);
+    0 var(--space-2) var(--space-6) rgba(var(--ds-primary-green-rgb), 0.35),
+    inset 0 var(--border-1) 0 rgba(255, 255, 255, 0.18);
 }
 
 .elite-auth-title {
-  margin: 0;
+  margin: var(--space-0);
   text-align: center;
   color: var(--color-text-primary);
   font-size: clamp(1.35rem, 4vw, 1.75rem);
@@ -96,12 +88,12 @@
 }
 
 .elite-auth-field {
-  margin-bottom: 0;
+  margin-bottom: var(--space-0);
 }
 
 .elite-auth-label {
   display: block;
-  margin-bottom: 0;
+  margin-bottom: var(--space-0);
   color: var(--color-text-primary);
   font-size: var(--font-label-size);
   font-weight: var(--font-label-weight);
@@ -113,7 +105,7 @@
 }
 
 .elite-auth-note {
-  margin-bottom: 0;
+  margin-bottom: var(--space-0);
   padding: var(--space-3) var(--space-4);
   border-radius: var(--radius-lg);
   border: var(--border-1) solid rgba(var(--primitive-info-500-rgb), 0.2);
@@ -136,7 +128,7 @@
 
 .elite-auth-subtitle {
   max-width: 30ch;
-  margin: var(--space-2) auto 0;
+  margin: var(--space-2) auto var(--space-0);
   text-align: center;
   color: var(--color-text-secondary);
   font-size: var(--font-body-sm-size);
@@ -152,7 +144,7 @@
 .elite-auth-form > .elite-auth-field,
 .elite-auth-form > .form-inline-split,
 .elite-auth-form > .form-error-summary {
-  margin-bottom: 0;
+  margin-bottom: var(--space-0);
 }
 
 .elite-auth-meta {
@@ -167,7 +159,7 @@
   display: flex;
   align-items: center;
   gap: var(--space-3);
-  margin: 0;
+  margin: var(--space-0);
   color: var(--color-text-secondary);
   font-size: var(--font-body-sm-size);
 }

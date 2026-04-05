@@ -323,7 +323,7 @@ export class CoachOverrideNotificationComponent {
   }
 
   async askCoach(): Promise<void> {
-    this.logger.info("[OverrideNotification] Ask coach clicked");
+    this.logger.info("override_notification_ask_coach_clicked");
     this.router.navigate(["/team-chat"]);
   }
 
@@ -335,7 +335,7 @@ export class CoachOverrideNotificationComponent {
       );
       this.overrideHistory.set(history);
     } catch (error) {
-      this.logger.error("[OverrideNotification] Error loading history:", error);
+      this.logger.error("override_notification_history_load_failed", error);
     }
   }
 

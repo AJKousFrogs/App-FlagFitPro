@@ -5,14 +5,14 @@
   grid-template-rows: auto 1fr auto;
   gap: var(--space-4);
   max-width: var(--layout-page-max-width-default);
-  margin: 0 auto;
+  margin: var(--space-0) auto;
   height: calc(100vh - var(--header-height) - var(--space-10));
   height: calc(100dvh - var(--header-height) - var(--space-10)); // Modern: keyboard-aware
   width: 100%;
 
   .bento-item {
-    background: var(--surface-primary);
-    border: var(--border-1) solid var(--ui-border-subtle);
+    background: var(--surface-card);
+    border: var(--border-1) solid var(--color-border-primary);
     border-radius: var(--radius-xl);
     box-shadow: var(--shadow-sm);
     overflow: hidden;
@@ -27,7 +27,7 @@
   align-items: center;
   justify-content: space-between;
   padding: var(--space-4) var(--space-6);
-  background: var(--surface-primary);
+  background: var(--surface-card);
 }
 
 .header-brand {
@@ -39,13 +39,14 @@
     width: var(--avatar-md, var(--space-12));
     height: var(--avatar-md, var(--space-12));
     background: var(--gradient-primary);
-    border-radius: var(--radius-full);
+    border-radius: var(--radius-2xl);
     display: flex;
     align-items: center;
     justify-content: center;
     position: relative;
-    color: white;
+    color: var(--color-text-on-primary);
     font-size: var(--ds-font-size-2xl);
+    box-shadow: 0 4px 14px rgba(8, 153, 73, 0.28);
 
     .online-indicator {
       position: absolute;
@@ -54,20 +55,21 @@
       width: var(--space-3);
       height: var(--space-3);
       background: var(--color-status-success);
-      border: var(--border-2) solid var(--surface-primary);
+      border: var(--border-2) solid var(--surface-card);
       border-radius: 50%;
     }
   }
 
   .brand-info {
     h1 {
-      margin: 0;
+      margin: var(--space-0);
       font-size: var(--ds-font-size-lg);
       font-weight: var(--ds-font-weight-bold);
+      letter-spacing: -0.02em;
     }
 
     p {
-      margin: 0;
+      margin: var(--space-0);
       font-size: var(--font-caption-size);
       color: var(--color-text-tertiary);
       text-transform: uppercase;
@@ -107,12 +109,14 @@
       margin-bottom: var(--space-4);
     }
     h2 {
-      margin: 0 0 var(--space-2);
+      margin: var(--space-0) var(--space-0) var(--space-2);
       font-size: 1.5rem;
+      font-weight: var(--ds-font-weight-bold);
+      letter-spacing: -0.025em;
     }
     p {
       color: var(--color-text-secondary);
-      margin: 0;
+      margin: var(--space-0);
     }
   }
 }
@@ -122,7 +126,7 @@
   grid-template-columns: repeat(2, 1fr);
   gap: var(--space-4);
   max-width: var(--layout-page-max-width-sm);
-  margin: 0 auto;
+  margin: var(--space-0) auto;
 }
 
 .suggestion-card-bento {
@@ -130,15 +134,15 @@
   align-items: center;
   gap: var(--space-4);
   padding: var(--space-4);
-  background: var(--ui-surface-subtle);
-  border: var(--border-1) solid var(--ui-border-default);
-  border-radius: var(--radius-lg);
+  background: var(--surface-card);
+  border: var(--border-1) solid var(--color-border-primary);
+  border-radius: var(--radius-xl);
   cursor: pointer;
   text-align: left;
   transition:
-    border-color var(--transition-base),
-    background-color var(--transition-base),
-    transform var(--transition-base);
+    border-color var(--transition-fast) var(--ease-standard),
+    background-color var(--transition-fast) var(--ease-standard),
+    transform var(--transition-fast) var(--ease-standard);
   min-height: var(--touch-target-lg); // Touch target size
 
   @include respond-to(md) {
@@ -179,11 +183,13 @@
     flex-shrink: 0;
   }
 
-  &:hover {
-    border-color: var(--ds-primary-green);
-    background: var(--surface-primary);
-    transform: translateY(calc(-1 * var(--space-0-5)));
-    .arrow { opacity: 1; transform: translateX(0); }
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      border-color: var(--ds-primary-green);
+      background: color-mix(in srgb, var(--ds-primary-green) 4%, var(--surface-card));
+      transform: translateY(-1px);
+      .arrow { opacity: 1; transform: translateX(0); }
+    }
   }
 
   // Touch feedback for mobile
@@ -198,7 +204,7 @@
 /* Messages Area */
 .messages-area {
   overflow-y: auto;
-  background: var(--ui-surface-muted);
+  background: var(--surface-secondary);
   padding: var(--space-6);
 }
 
@@ -218,9 +224,9 @@
   .msg-avatar {
     width: var(--space-8);
     height: var(--space-8);
-    background: var(--ds-primary-green);
-    color: white;
-    border-radius: 50%;
+    background: var(--gradient-primary);
+    color: var(--color-text-on-primary);
+    border-radius: var(--radius-lg);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -229,8 +235,8 @@
 }
 
 .message-bubble-bento {
-  background: var(--surface-primary);
-  border: var(--border-1) solid var(--ui-border-subtle);
+  background: var(--surface-card);
+  border: var(--border-1) solid var(--color-border-primary);
   border-radius: var(--radius-xl);
   padding: var(--space-4) var(--space-5);
   box-shadow: var(--shadow-sm);
@@ -266,27 +272,27 @@
 /* Input Section */
 .input-section-bento {
   padding: var(--space-4) var(--space-6);
-  background: var(--surface-primary);
-  border-top: var(--border-1) solid var(--ui-border-subtle);
+  background: var(--surface-card);
+  border-top: var(--border-1) solid var(--color-border-primary);
 }
 
 .input-wrapper {
   display: flex;
   gap: var(--space-4);
   align-items: flex-end;
-  background: var(--ui-surface-subtle);
-  border: var(--border-1) solid var(--ui-border-default);
+  background: var(--surface-secondary);
+  border: var(--border-1) solid var(--color-border-primary);
   border-radius: var(--radius-3xl);
   padding: var(--space-2) var(--space-2) var(--space-2) var(--space-5);
   transition:
-    border-color var(--transition-base),
-    box-shadow var(--transition-base),
-    background-color var(--transition-base);
+    border-color var(--transition-fast) var(--ease-standard),
+    box-shadow var(--transition-fast) var(--ease-standard),
+    background-color var(--transition-fast) var(--ease-standard);
 
   &:focus-within {
     border-color: var(--ds-primary-green);
     box-shadow: 0 0 0 var(--space-1) var(--ds-primary-green-ultra-subtle);
-    background: var(--surface-primary);
+    background: var(--surface-card);
   }
 
   textarea {
@@ -297,9 +303,7 @@
     font-size: var(--ds-font-size-md);
     resize: none;
     max-height: var(--layout-height-sm);
-    &:focus-visible {
-      outline: none;
-    }
+    @include ds-focus-none;
   }
 
   .send-btn-bento {
@@ -378,7 +382,7 @@
   .chat-container.bento-grid {
     height: calc(100vh - var(--header-height));
     height: calc(100dvh - var(--header-height)); // Keyboard-aware
-    gap: 0;
+    gap: var(--space-0);
     .bento-item { border-radius: 0; border-inline: none; }
   }
 

@@ -131,7 +131,7 @@ export class ProfileCompletionService {
 
     const user = this.supabaseService.currentUser();
     if (!user?.id) {
-      this.logger.warn("[ProfileCompletion] No authenticated user");
+      this.logger.warn("profile_completion_no_authenticated_user");
       this._profileData.set(null);
       return null;
     }
@@ -181,16 +181,13 @@ export class ProfileCompletionService {
           this._profileData.set(null);
           return null;
         }
-        this.logger.error("[ProfileCompletion] Error loading user:", userError);
+        this.logger.error("profile_completion_user_load_failed", userError);
         return null;
       }
 
       // If user doesn't exist in users table yet, return null gracefully
       if (!userData) {
-        this.logger.warn(
-        "[ProfileCompletion] User not found in users table:",
-        userId,
-        );
+        this.logger.warn("profile_completion_user_row_missing", { userId });
         return null;
       }
 
@@ -229,15 +226,14 @@ export class ProfileCompletionService {
 
       this._profileData.set(profileData);
       this._lastUpdated.set(new Date());
-      this.logger.debug(
-        "[ProfileCompletion] Profile loaded:",
-        profileData.email,
-      );
+      this.logger.debug("profile_completion_profile_loaded", {
+        userId: profileData.id,
+      });
 
       return profileData;
     } catch (error) {
       if (!isBenignSupabaseQueryError(error)) {
-        this.logger.error("[ProfileCompletion] Unexpected error:", error);
+        this.logger.error("profile_completion_unexpected_error", error);
       }
       return null;
     } finally {
@@ -394,6 +390,7 @@ export class ProfileCompletionService {
     if (!user?.id) return null;
 
     try {
+      await this.supabaseService.waitForInit();
       // Get most recent weight from physical_measurements
       const { data: measurement } = await this.supabaseService.client
         .from("physical_measurements")
@@ -411,7 +408,7 @@ export class ProfileCompletionService {
       const profileData = this._profileData();
       return profileData?.weightKg || null;
     } catch (error) {
-      this.logger.error("[ProfileCompletion] Error getting weight:", error);
+      this.logger.error("profile_completion_get_weight_failed", error);
       return null;
     }
   }
@@ -424,18 +421,39 @@ export class ProfileCompletionService {
     if (!user?.id) return false;
 
     try {
-      // Insert to physical_measurements for daily tracking
-      // Table has: user_id (UUID), weight (NUMERIC), created_at (TIMESTAMP)
-      const { error: measurementError } = await this.supabaseService.client
+      await this.supabaseService.waitForInit();
+      const client = this.supabaseService.client;
+
+      const dayStart = new Date();
+      dayStart.setUTCHours(0, 0, 0, 0);
+      const dayEnd = new Date(dayStart);
+      dayEnd.setUTCDate(dayEnd.getUTCDate() + 1);
+
+      const { data: existing } = await client
         .from("physical_measurements")
-        .insert({
-          user_id: user.id,
-          weight: weightKg,
-        });
+        .select("id")
+        .eq("user_id", user.id)
+        .gte("created_at", dayStart.toISOString())
+        .lt("created_at", dayEnd.toISOString())
+        .maybeSingle();
+
+      const nowIso = new Date().toISOString();
+      const { error: measurementError } = existing?.id
+        ? await client
+            .from("physical_measurements")
+            .update({
+              weight: weightKg,
+              updated_at: nowIso,
+            })
+            .eq("id", existing.id)
+        : await client.from("physical_measurements").insert({
+            user_id: user.id,
+            weight: weightKg,
+          });
 
       if (measurementError) {
         this.logger.error(
-          "[ProfileCompletion] Error saving measurement:",
+          "profile_completion_save_measurement_failed",
           measurementError,
         );
         // Don't fail if measurement insert fails - continue to update user table
@@ -459,7 +477,7 @@ export class ProfileCompletionService {
       await this.loadProfileData(true);
       return true;
     } catch (error) {
-      this.logger.error("[ProfileCompletion] Error updating weight:", error);
+      this.logger.error("profile_completion_update_weight_failed", error);
       return false;
     }
   }

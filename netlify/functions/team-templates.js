@@ -3,6 +3,19 @@ import { supabaseAdmin, checkEnvVars } from "./supabase-client.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
 import { parseJsonObjectBody } from "./utils/input-validator.js";
+import { buildRequestLogContext, createLogger } from "./utils/structured-logger.js";
+
+const logger = createLogger({ service: "netlify.team-templates" });
+
+function createRequestLogger(event, meta = {}) {
+  return logger.child(
+    buildRequestLogContext(event, {
+      request_id: meta.requestId,
+      correlation_id: meta.correlationId,
+      trace_id: meta.traceId ?? meta.correlationId,
+    }),
+  );
+}
 
 /**
  * Netlify Function: Team Templates
@@ -40,7 +53,7 @@ function createHttpError(message, statusCode, code) {
  * @param {string} userId - User ID
  * @returns {Object} - { isCoach: boolean, teamIds: string[] }
  */
-async function verifyCoachAndGetTeams(userId) {
+async function verifyCoachAndGetTeams(userId, log = logger) {
   const { data: coachTeams, error } = await supabaseAdmin
     .from("team_members")
     .select("team_id, role")
@@ -49,7 +62,9 @@ async function verifyCoachAndGetTeams(userId) {
     .or("is_active.eq.true,status.eq.active");
 
   if (error) {
-    console.error("[Team Templates] Error verifying coach status:", error);
+    log.error("team_templates_coach_verification_failed", error, {
+      user_id: userId,
+    });
     return { isCoach: false, teamIds: [] };
   }
 
@@ -65,7 +80,7 @@ async function verifyCoachAndGetTeams(userId) {
  * @param {string} userId - Creator user ID
  * @returns {Object} - Created template
  */
-async function createTemplate(templateData, userId) {
+async function createTemplate(templateData, userId, log = logger) {
   const {
     team_id,
     name,
@@ -99,7 +114,10 @@ async function createTemplate(templateData, userId) {
     .single();
 
   if (error) {
-    console.error("[Team Templates] Error creating template:", error);
+    log.error("team_templates_create_failed", error, {
+      team_id: templateData.team_id,
+      user_id: userId,
+    });
     throw error;
   }
 
@@ -212,7 +230,7 @@ async function createTemplateFromInbox(
  * @param {Object} filters - Query filters
  * @returns {Array} - Templates
  */
-async function listTemplates(teamIds, filters = {}) {
+async function listTemplates(teamIds, filters = {}, log = logger) {
   const {
     team_id,
     category,
@@ -250,7 +268,10 @@ async function listTemplates(teamIds, filters = {}) {
   const { data, error } = await query;
 
   if (error) {
-    console.error("[Team Templates] Error listing templates:", error);
+    log.error("team_templates_list_failed", error, {
+      team_ids: teamIds,
+      filters,
+    });
     throw error;
   }
 
@@ -263,7 +284,7 @@ async function listTemplates(teamIds, filters = {}) {
  * @param {string[]} teamIds - Allowed team IDs
  * @returns {Object|null} - Template or null
  */
-async function getTemplateById(templateId, teamIds) {
+async function getTemplateById(templateId, teamIds, log = logger) {
   const { data, error } = await supabaseAdmin
     .from("team_templates")
     .select(
@@ -281,7 +302,9 @@ async function getTemplateById(templateId, teamIds) {
     if (error.code === "PGRST116") {
       return null;
     }
-    console.error("[Team Templates] Error fetching template:", error);
+    log.error("team_templates_fetch_failed", error, {
+      template_id: templateId,
+    });
     throw error;
   }
 
@@ -295,7 +318,7 @@ async function getTemplateById(templateId, teamIds) {
  * @param {Object} updates - Fields to update
  * @returns {Object} - Updated template
  */
-async function updateTemplate(templateId, teamIds, updates) {
+async function updateTemplate(templateId, teamIds, updates, log = logger) {
   const {
     name,
     description,
@@ -346,7 +369,9 @@ async function updateTemplate(templateId, teamIds, updates) {
     .single();
 
   if (error) {
-    console.error("[Team Templates] Error updating template:", error);
+    log.error("team_templates_update_failed", error, {
+      template_id: templateId,
+    });
     throw error;
   }
 
@@ -370,6 +395,8 @@ async function assignTemplate(
   allowedTeamIds,
   reason = null,
   sourceInboxItemId = null,
+) {
+  const log = arguments[7] ?? logger;
 ) {
   // Get the template
   const { data: template, error: templateError } = await supabaseAdmin
@@ -502,14 +529,25 @@ const handler = async (event, context) => {
     allowedMethods: ["GET", "POST", "PATCH", "DELETE"],
 rateLimitType,
     requireAuth: true,
-    handler: async (event, _context, { userId, requestId }) => {
+    handler: async (
+      event,
+      _context,
+      { userId, requestId, correlationId },
+    ) => {
       checkEnvVars();
 
       const { path } = event;
       const method = event.httpMethod;
+      const requestLogger = createRequestLogger(event, {
+        requestId,
+        correlationId,
+      });
 
       // Verify user is a coach
-      const { isCoach, teamIds } = await verifyCoachAndGetTeams(userId);
+      const { isCoach, teamIds } = await verifyCoachAndGetTeams(
+        userId,
+        requestLogger,
+      );
 
       if (!isCoach) {
         return createErrorResponse(
@@ -616,7 +654,11 @@ rateLimitType,
 
         // GET /api/team-templates/:id - Single template detail
         if (method === "GET" && templateId) {
-          const template = await getTemplateById(templateId, teamIds);
+          const template = await getTemplateById(
+            templateId,
+            teamIds,
+            requestLogger,
+          );
           if (!template) {
             return createErrorResponse(
               "Template not found",
@@ -631,7 +673,11 @@ rateLimitType,
         // GET /api/team-templates - List templates
         if (method === "GET") {
           const filters = event.queryStringParameters || {};
-          const templates = await listTemplates(teamIds, filters);
+          const templates = await listTemplates(
+            teamIds,
+            filters,
+            requestLogger,
+          );
           return createSuccessResponse(
             {
               templates,
@@ -674,7 +720,7 @@ rateLimitType,
             );
           }
 
-          const template = await createTemplate(body, userId);
+          const template = await createTemplate(body, userId, requestLogger);
           return createSuccessResponse(template, requestId);
         }
 

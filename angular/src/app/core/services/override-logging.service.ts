@@ -56,21 +56,22 @@ export class OverrideLoggingService {
         .single();
 
       if (error) {
-        this.logger.error("[OverrideLogging] Error logging override:", error);
+        this.logger.error("override_logging_write_failed", error);
         return null;
       }
 
-      this.logger.info(
-        `[OverrideLogging] Logged override: ${override.overrideType} for player ${override.playerId}`,
-      );
+      this.logger.info("override_logging_recorded", {
+        overrideType: override.overrideType,
+        playerId: override.playerId,
+      });
 
-      this.logger.debug(
-        `[OverrideLogging] Override ${data.id} recorded. Player notification delivery is backend-managed.`,
-      );
+      this.logger.debug("override_logging_record_detail", {
+        overrideId: data.id,
+      });
 
       return data.id;
     } catch (error) {
-      this.logger.error("[OverrideLogging] Error logging override:", error);
+      this.logger.error("override_logging_write_failed", error);
       return null;
     }
   }
@@ -91,7 +92,7 @@ export class OverrideLoggingService {
         .limit(limit);
 
       if (error) {
-        this.logger.error("[OverrideLogging] Error fetching overrides:", error);
+        this.logger.error("override_logging_fetch_failed", error);
         return [];
       }
 
@@ -109,7 +110,7 @@ export class OverrideLoggingService {
         })) || []
       );
     } catch (error) {
-      this.logger.error("[OverrideLogging] Error fetching overrides:", error);
+      this.logger.error("override_logging_fetch_failed", error);
       return [];
     }
   }
@@ -132,13 +133,13 @@ export class OverrideLoggingService {
         .gte("created_at", cutoff.toISOString());
 
       if (error) {
-        this.logger.error("[OverrideLogging] Error counting overrides:", error);
+        this.logger.error("override_logging_count_failed", error);
         return 0;
       }
 
       return count || 0;
     } catch (error) {
-      this.logger.error("[OverrideLogging] Error counting overrides:", error);
+      this.logger.error("override_logging_count_failed", error);
       return 0;
     }
   }

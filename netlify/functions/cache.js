@@ -1,3 +1,5 @@
+import { createLogger } from "./utils/structured-logger.js";
+
 /**
  * In-Memory Caching Utility for Netlify Functions
  * Provides simple caching to reduce database queries and improve response times
@@ -5,6 +7,8 @@
  * Note: Netlify functions are stateless, so this cache only persists within
  * a single function execution container. For production, consider Redis or similar.
  */
+
+const logger = createLogger({ service: "netlify.cache" });
 
 class SimpleCache {
   constructor() {
@@ -173,7 +177,7 @@ async function getOrFetch(key, fetcher, ttl = 300) {
 
     return data;
   } catch (error) {
-    console.error(`Error fetching data for cache key ${key}:`, error);
+    logger.error("cache_fetch_failed", error, { cache_key: key });
     throw error;
   }
 }
@@ -246,7 +250,7 @@ setInterval(
   () => {
     const removed = cache.cleanup();
     if (removed > 0) {
-      console.log(`Cache cleanup: Removed ${removed} expired entries`);
+      logger.info("cache_cleanup_completed", { removed });
     }
   },
   5 * 60 * 1000,

@@ -21,8 +21,9 @@
           <!-- Page Header (Full Width) -->
           <div class="bento-item full-width no-padding header-bento">
             <app-page-header
+              eyebrow="PERFORMANCE"
               title="Performance Tracking"
-              subtitle="Track and analyze your performance metrics over time"
+              subtitle="Long-term trends in speed, strength, and game impact."
               icon="pi-bullseye"
             >
               <app-button iconLeft="pi-plus" (clicked)="openLogDialog()" size="sm"
@@ -305,7 +306,7 @@
           </div>
           <app-dialog-footer
             cancelLabel="Cancel"
-            primaryLabel="Save Performance"
+            primaryLabel="Save Weight &amp; Metrics"
             primaryIcon="check"
             [loading]="isSaving()"
             (cancel)="showLogDialog = false"

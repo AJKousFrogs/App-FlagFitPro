@@ -3,8 +3,8 @@
 .security-actions {
   display: flex;
   flex-direction: column;
-  gap: 0;
-  padding: 0;
+  gap: var(--space-0);
+  padding: var(--space-0);
 }
 
 .security-item {
@@ -12,7 +12,7 @@
   justify-content: space-between;
   align-items: center;
   padding: var(--component-card-padding-compact) 0;
-  margin: 0;
+  margin: var(--space-0);
   border-radius: var(--component-card-radius);
   border: var(--border-2) solid transparent;
   transition:
@@ -22,7 +22,9 @@
     transform var(--transition-fast);
   min-height: var(--card-min-height-sm);
 
-  @include ds-hover-state(var(--surface-secondary));
+  @media (hover: hover) and (pointer: fine) {
+    &:hover { background: var(--surface-secondary); }
+  }
 }
 
 .security-info {
@@ -34,22 +36,22 @@
 }
 
 .security-info h4 {
-  margin: 0 0 var(--space-1) 0;
+  margin: var(--space-0) var(--space-0) var(--space-1) var(--space-0);
   font-size: var(--ds-font-size-md);
   font-weight: var(--ds-font-weight-semibold);
   color: var(--color-text-primary);
   line-height: var(--ds-line-height-h3);
   letter-spacing: var(--ds-letter-spacing-0-01em);
-  padding: 0;
+  padding: var(--space-0);
 }
 
 .security-info p {
-  margin: 0;
+  margin: var(--space-0);
   font-size: var(--ds-font-size-compact-lg);
   font-weight: var(--ds-font-weight-regular);
   color: var(--color-text-muted);
   line-height: var(--ds-line-height-body-sm);
-  padding: 0;
+  padding: var(--space-0);
 }
 
 .security-item.danger .security-info h4 {
@@ -57,7 +59,9 @@
 }
 
 .security-item.danger {
-  @include ds-hover-state(var(--color-status-error-light));
+  @media (hover: hover) and (pointer: fine) {
+    &:hover { background: var(--color-status-error-light); }
+  }
 }
 
 .status-badge {

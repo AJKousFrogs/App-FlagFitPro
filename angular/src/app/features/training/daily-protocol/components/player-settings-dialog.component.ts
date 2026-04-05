@@ -86,6 +86,33 @@ interface DayOption {
   value: number;
 }
 
+const DEFAULT_PREFERRED_TRAINING_DAYS: number[] = [1, 2, 4, 5, 6];
+
+/** PrimeNG multiselect and API JSON may yield numeric strings; server expects 0–6 integers. */
+function normalizePreferredTrainingDays(
+  value: unknown,
+  fallback: number[],
+): number[] {
+  if (!Array.isArray(value)) {
+    return [...fallback];
+  }
+  const seen = new Set<number>();
+  const out: number[] = [];
+  for (const raw of value) {
+    const n =
+      typeof raw === "string" ? Number.parseInt(raw, 10) : Number(raw);
+    if (!Number.isInteger(n) || n < 0 || n > 6) {
+      continue;
+    }
+    if (!seen.has(n)) {
+      seen.add(n);
+      out.push(n);
+    }
+  }
+  out.sort((a, b) => a - b);
+  return out.length > 0 ? out : [...fallback];
+}
+
 @Component({
   selector: "app-player-settings-dialog",
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -504,6 +531,10 @@ export class PlayerSettingsDialogComponent {
           ...payload,
           flagPracticeSchedule: availabilitySchedule, // Map API field to component field
           dailyRoutine,
+          preferredTrainingDays: normalizePreferredTrainingDays(
+            payload.preferredTrainingDays,
+            DEFAULT_PREFERRED_TRAINING_DAYS,
+          ),
           birthDate: payload.birthDate
             ? new Date(payload.birthDate)
             : undefined,
@@ -630,7 +661,10 @@ export class PlayerSettingsDialogComponent {
   onPreferredTrainingDaysChange(value: number[] | null): void {
     this.settings = {
       ...this.settings,
-      preferredTrainingDays: value ?? [],
+      preferredTrainingDays: normalizePreferredTrainingDays(
+        value ?? [],
+        DEFAULT_PREFERRED_TRAINING_DAYS,
+      ),
     };
   }
 
@@ -765,6 +799,10 @@ export class PlayerSettingsDialogComponent {
         dailyRoutine: this.settings.dailyRoutine.map((slot) => ({ ...slot })),
         availabilitySchedule: this.settings.flagPracticeSchedule,
         birthDate: this.settings.birthDate?.toISOString().split("T")[0],
+        preferredTrainingDays: normalizePreferredTrainingDays(
+          this.settings.preferredTrainingDays,
+          DEFAULT_PREFERRED_TRAINING_DAYS,
+        ),
       };
       // Remove flagPracticeSchedule from payload (API expects availabilitySchedule)
       const { flagPracticeSchedule: _flagPracticeSchedule, ...finalPayload } =

@@ -92,7 +92,7 @@
 
 .missing-list {
   margin: var(--space-1) 0 0 var(--space-4);
-  padding: 0;
+  padding: var(--space-0);
   list-style: disc;
   color: var(--color-text-secondary);
   font-size: var(--ds-font-size-md);

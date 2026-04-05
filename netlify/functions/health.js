@@ -11,6 +11,7 @@ import { lookup } from "node:dns/promises";
 
 import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
 import { baseHandler } from "./utils/base-handler.js";
+import { buildRequestLogContext, createLogger } from "./utils/structured-logger.js";
 
 function isMissingResourceError(error) {
   const code = error?.code;
@@ -20,6 +21,18 @@ function isMissingResourceError(error) {
     message.includes("relation") ||
     message.includes("schema cache") ||
     message.includes("does not exist")
+  );
+}
+
+const logger = createLogger({ service: "netlify.health" });
+
+function createRequestLogger(event, meta = {}) {
+  return logger.child(
+    buildRequestLogContext(event, {
+      request_id: meta.requestId,
+      correlation_id: meta.correlationId,
+      trace_id: meta.traceId ?? meta.correlationId,
+    }),
   );
 }
 
@@ -38,7 +51,7 @@ function getSupabaseConfigStatus() {
   };
 }
 
-async function checkDatabase() {
+async function checkDatabase(log = logger) {
   try {
     const config = getSupabaseConfigStatus();
     if (!config.hasAdminClient) {
@@ -88,7 +101,9 @@ async function checkDatabase() {
       error: lastError?.message || "Database check failed",
     };
   } catch (error) {
-    console.error("[health] Database health check error:", error);
+    log.error("health_database_check_error", error, {
+      step: "database_probe",
+    });
     return {
       status: "unhealthy",
       error: "Database check failed",
@@ -97,7 +112,7 @@ async function checkDatabase() {
 }
 
 // Check Supabase Auth service
-async function checkAuth() {
+async function checkAuth(log = logger) {
   try {
     const startTime = Date.now();
     // Just verify the auth client is configured
@@ -109,7 +124,9 @@ async function checkAuth() {
       latency,
     };
   } catch (error) {
-    console.error("[health] Auth health check error:", error);
+    log.error("health_auth_check_error", error, {
+      step: "auth_probe",
+    });
     return {
       status: "unhealthy",
       error: "Auth check failed",
@@ -140,14 +157,18 @@ const handler = async (event, context) => {
     rateLimitType: "READ",
     requireAuth: false, // Health checks should be public
     skipEnvCheck: true,
-    handler: async (_event, _context, { requestId }) => {
+    handler: async (_event, _context, { requestId, correlationId }) => {
+      const requestLogger = createRequestLogger(event, {
+        requestId,
+        correlationId,
+      });
       try {
         const startTime = Date.now();
 
         // Run health checks in parallel
         const [dbHealth, authHealth] = await Promise.all([
-          checkDatabase(),
-          checkAuth(),
+          checkDatabase(requestLogger),
+          checkAuth(requestLogger),
         ]);
 
         const totalLatency = Date.now() - startTime;
@@ -176,7 +197,9 @@ const handler = async (event, context) => {
 
         return createSuccessResponse(response, statusCode);
       } catch (error) {
-        console.error("[health] Unexpected handler error:", error);
+        requestLogger.error("health_handler_error", error, {
+          path: event.path,
+        });
         return createErrorResponse(
           "Health check failed",
           500,

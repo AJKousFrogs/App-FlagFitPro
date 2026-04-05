@@ -5,6 +5,7 @@ import { authenticateRequest } from "./utils/auth-helper.js";
 import { getUserRole } from "./utils/authorization-guard.js";
 import { createErrorResponse } from "./utils/error-handler.js";
 import { parseJsonObjectBody } from "./utils/input-validator.js";
+import { buildRequestLogContext, createLogger } from "./utils/structured-logger.js";
 
 /**
  * USDA FoodData Central API Sync Function
@@ -26,9 +27,26 @@ const USDA_BASE_URL = "https://api.nal.usda.gov/fdc/v1";
 // Check if USDA API key is configured
 const isUSDAConfigured = !!USDA_API_KEY;
 
+const logger = createLogger({ service: "netlify.usda-sync" });
+
+function createRequestLogger(event, meta = {}) {
+  return logger.child(
+    buildRequestLogContext(event, {
+      request_id: meta.requestId,
+      correlation_id: meta.correlationId,
+      trace_id: meta.traceId ?? meta.correlationId,
+      ...meta.extraContext,
+    }),
+  );
+}
+
 if (!isUSDAConfigured) {
-  console.warn(
-    "[USDA Sync] USDA_API_KEY not configured. USDA food sync features will be unavailable. Get a free key at: https://fdc.nal.usda.gov/api-key-signup.html",
+  logger.warn(
+    "usda_api_key_missing",
+    {
+      hint: "Set USDA_API_KEY in environment",
+    },
+    new Error("USDA_API_KEY not configured"),
   );
 }
 
@@ -223,7 +241,7 @@ function generateSearchKeywords(food) {
 /**
  * Log sync operation
  */
-async function logSync(supabase, source, result, details) {
+async function logSync(supabase, requestLogger, source, result, details) {
   try {
     await supabase.from("sync_logs").insert({
       source,
@@ -245,14 +263,29 @@ async function logSync(supabase, source, result, details) {
       metadata: details.metadata || {},
     });
   } catch (error) {
-    console.error("Failed to log sync:", error);
+    requestLogger.warn(
+      "sync_log_insert_failed",
+      {
+        source,
+        result,
+        metadata: details.metadata,
+      },
+      error,
+    );
   }
 }
 
 /**
  * Main sync handler
  */
-async function handleSync(event) {
+async function handleSync(
+  event,
+  {
+    requestLogger,
+    requestId,
+    correlationId,
+  } = {},
+) {
   const startTime = Date.now();
   const supabase = getSupabaseClient();
 
@@ -282,32 +315,58 @@ async function handleSync(event) {
     metadata: { mode, dataType, searchQuery, category },
   };
 
+  const baseLogger =
+    requestLogger ?? createRequestLogger(event, { requestId, correlationId });
+  const syncLogger = baseLogger.child({
+    action: "usda_sync",
+    mode,
+    data_type: dataType ?? undefined,
+    page_size: pageSize,
+    search_query: searchQuery ?? undefined,
+    category: category ?? undefined,
+  });
+
   try {
     let foods = [];
 
     if (mode === "search" && searchQuery) {
       // Search mode - fetch specific foods
-      console.log(`Searching USDA for: ${searchQuery}`);
+      syncLogger.info("usda_search_initiated", {
+        search_query: searchQuery,
+        page_size: pageSize,
+      });
       const searchResult = await searchUSDAFoods(searchQuery, 1, pageSize);
       foods = searchResult.foods || [];
       syncDetails.metadata.totalHits = searchResult.totalHits;
     } else if (mode === "category" && category) {
       // Category mode - fetch foods by category
-      console.log(`Fetching USDA category: ${category}`);
+      syncLogger.info("usda_category_fetch", {
+        category,
+        page_size: pageSize,
+      });
       const searchResult = await searchUSDAFoods(category, 1, pageSize);
       foods = searchResult.foods || [];
     } else {
       // Full or incremental sync - paginated list
-      console.log(
-        `Starting ${mode} sync, pages: ${maxPages}, pageSize: ${pageSize}`,
-      );
+      syncLogger.info("usda_sync_started", {
+        mode,
+        max_pages: maxPages,
+        page_size: pageSize,
+        data_type: dataType,
+      });
 
       for (let page = 1; page <= maxPages; page++) {
-        console.log(`Fetching page ${page}/${maxPages}...`);
+        syncLogger.debug("usda_sync_page_fetching", {
+          page,
+          max_pages: maxPages,
+        });
         const pageData = await fetchUSDAFoods(page, pageSize, dataType);
 
         if (!pageData || pageData.length === 0) {
-          console.log("No more data, stopping pagination");
+          syncLogger.info("usda_sync_pagination_complete", {
+            remaining_page: page,
+            max_pages: maxPages,
+          });
           break;
         }
 
@@ -320,7 +379,9 @@ async function handleSync(event) {
       }
     }
 
-    console.log(`Processing ${foods.length} foods...`);
+    syncLogger.info("usda_sync_processing_foods", {
+      total_foods: foods.length,
+    });
 
     // Process foods in batches
     const batchSize = 100;
@@ -338,7 +399,10 @@ async function handleSync(event) {
         .select("id");
 
       if (error) {
-        console.error(`Batch ${i / batchSize + 1} error:`, error);
+        syncLogger.error("usda_sync_batch_upsert_failed", error, {
+          batch: i / batchSize + 1,
+          batch_size: batchSize,
+        });
         syncDetails.recordsFailed += batch.length;
         syncDetails.hasErrors = true;
         syncDetails.errorMessage = error.message;
@@ -351,7 +415,7 @@ async function handleSync(event) {
     syncDetails.durationMs = Date.now() - startTime;
 
     // Log the sync operation
-    await logSync(supabase, "usda_foods", "success", syncDetails);
+    await logSync(supabase, syncLogger, "usda_foods", "success", syncDetails);
 
     // Get current stats
     const { count: totalFoods } = await supabase
@@ -375,13 +439,14 @@ async function handleSync(event) {
       }),
     };
   } catch (error) {
-    console.error("USDA sync error:", error);
-
     syncDetails.hasErrors = true;
     syncDetails.errorMessage = error.message;
     syncDetails.durationMs = Date.now() - startTime;
+    syncLogger.error("usda_sync_failed", error, {
+      stats: syncDetails,
+    });
 
-    await logSync(supabase, "usda_foods", "failure", syncDetails);
+    await logSync(supabase, syncLogger, "usda_foods", "failure", syncDetails);
 
     return {
       statusCode: 500,
@@ -567,7 +632,11 @@ const handler = async (event, context) =>
         allowedMethods: ["POST"],
         rateLimitType: "UPDATE",
         requireAuth: true,
-        handler: async (evt) => {
+        handler: async (evt, _ctx, { requestId, correlationId }) => {
+          const requestLogger = createRequestLogger(evt, {
+            requestId,
+            correlationId,
+          });
           if (!isUSDAConfigured) {
             return {
               statusCode: 503,
@@ -594,9 +663,20 @@ const handler = async (event, context) =>
                 "authorization_error",
               );
             }
-            return handleSync(evt);
+            return handleSync(evt, {
+              requestLogger,
+              requestId,
+              correlationId,
+            });
           } catch (error) {
-            console.error("Handler error:", error);
+            requestLogger.error(
+              "usda_sync_handler_failed",
+              error,
+              {
+                http_method: evt.httpMethod,
+                path: evt.path,
+              },
+            );
             return createErrorResponse(
               "Failed to handle USDA sync request",
               500,
@@ -611,51 +691,66 @@ const handler = async (event, context) =>
         allowedMethods: ["GET"],
         rateLimitType: "READ",
         requireAuth: false,
-        handler: async (evt) => {
-      if (!isUSDAConfigured) {
-        return {
-          statusCode: 503,
-          body: JSON.stringify({
-            success: false,
-            error: "USDA API key not configured",
-            message:
-              "USDA food sync features are unavailable. Set USDA_API_KEY environment variable.",
-            setupUrl: "https://fdc.nal.usda.gov/api-key-signup.html",
-          }),
-        };
-      }
+        handler: async (evt, _ctx, { requestId, correlationId }) => {
+          const requestLogger = createRequestLogger(evt, {
+            requestId,
+            correlationId,
+          });
+          if (!isUSDAConfigured) {
+            return {
+              statusCode: 503,
+              body: JSON.stringify({
+                success: false,
+                error: "USDA API key not configured",
+                message:
+                  "USDA food sync features are unavailable. Set USDA_API_KEY environment variable.",
+                setupUrl: "https://fdc.nal.usda.gov/api-key-signup.html",
+              }),
+            };
+          }
 
-      const path = evt.path.replace("/.netlify/functions/usda-sync", "");
+          const path = evt.path.replace("/.netlify/functions/usda-sync", "");
 
-      try {
-        if (evt.httpMethod === "GET" && (path === "/status" || path === "")) {
-          return handleStatus();
-        }
+          try {
+            if (evt.httpMethod === "GET" && (path === "/status" || path === "")) {
+              return handleStatus();
+            }
 
-        if (evt.httpMethod === "GET" && path === "/search") {
-          return handleSearch(evt);
-        }
+            if (evt.httpMethod === "GET" && path === "/search") {
+              return handleSearch(evt);
+            }
 
-        if (evt.httpMethod === "POST" && (path === "/sync" || path === "")) {
-          return createErrorResponse("Method not allowed", 405, "method_not_allowed");
-        }
+            if (evt.httpMethod === "POST" && (path === "/sync" || path === "")) {
+              return createErrorResponse(
+                "Method not allowed",
+                405,
+                "method_not_allowed",
+              );
+            }
 
-        return createErrorResponse("Not found", 404, "not_found", {
-          details: [
-            "GET /status - Get sync status and stats",
-            "GET /search?q=query - Search foods in database",
-            "POST /sync - Trigger USDA data sync",
-          ],
-        });
-      } catch (error) {
-        console.error("Handler error:", error);
-        return createErrorResponse(
-          "Failed to handle USDA sync request",
-          500,
-          "server_error",
-          {},
-        );
-      }
+            return createErrorResponse("Not found", 404, "not_found", {
+              details: [
+                "GET /status - Get sync status and stats",
+                "GET /search?q=query - Search foods in database",
+                "POST /sync - Trigger USDA data sync",
+              ],
+            });
+          } catch (error) {
+            requestLogger.error(
+              "usda_sync_handler_failed",
+              error,
+              {
+                http_method: evt.httpMethod,
+                path: evt.path,
+              },
+            );
+            return createErrorResponse(
+              "Failed to handle USDA sync request",
+              500,
+              "server_error",
+              {},
+            );
+          }
         },
       });
 

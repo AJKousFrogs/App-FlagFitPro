@@ -35,7 +35,14 @@
  */
 
 import { Injectable, signal, DestroyRef, inject } from "@angular/core";
-import { Observable, Subject, catchError, finalize, tap } from "rxjs";
+import {
+  EMPTY,
+  Observable,
+  Subject,
+  catchError,
+  finalize,
+  tap,
+} from "rxjs";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { LoggerService } from "../services/logger.service";
 import { getErrorMessage } from "../../shared/utils/error.utils";
@@ -112,14 +119,15 @@ export abstract class BaseViewModel {
             this.error.set(null);
           }
         }),
-        catchError((err) => {
+        catchError((err): Observable<T> => {
           hasSucceeded = false;
           if (error) {
             error(err);
           } else {
             this.handleError(err);
           }
-          return [];
+          // Do not emit a fake "empty" value to `next`; complete without emission.
+          return EMPTY;
         }),
         finalize(() => {
           if (showLoading) {
@@ -149,7 +157,7 @@ export abstract class BaseViewModel {
   protected handleError(error: unknown): void {
     const errorMessage = getErrorMessage(error, "An error occurred");
     this.error.set(errorMessage);
-    this.logger.error("[ViewModel Error]", error);
+    this.logger.error("view_model_error", error);
   }
 
   /**

@@ -254,9 +254,9 @@ export class OnboardingComponent implements OnInit, OnDestroy {
       this.isEmailVerified.set(isVerified);
 
       if (isVerified) {
-        this.logger.info("[Onboarding] Email is verified");
+        this.logger.info("onboarding_email_verified");
       } else {
-        this.logger.info("[Onboarding] Email not yet verified");
+        this.logger.info("onboarding_email_not_verified");
       }
     } catch (error) {
       this.logger.error(
@@ -347,7 +347,7 @@ export class OnboardingComponent implements OnInit, OnDestroy {
         }
       };
     } catch {
-      this.logger.debug("[Onboarding] BroadcastChannel not supported");
+      this.logger.debug("onboarding_broadcast_channel_unsupported");
     }
 
     // Also listen to localStorage changes as fallback
@@ -403,7 +403,7 @@ export class OnboardingComponent implements OnInit, OnDestroy {
 
       // Per audit: use maybeSingle() since user profile may not exist yet (avoids 406)
       if (!user.email) {
-        this.logger.warn("[Onboarding] User email missing for profile lookup");
+        this.logger.warn("onboarding_email_missing_profile_lookup");
         return;
       }
 
@@ -699,6 +699,7 @@ export class OnboardingComponent implements OnInit, OnDestroy {
       if (updateError) {
         const { error: insertError } =
           await this.onboardingDataService.insertUserProfile({
+            id: user.id,
             email: user.email,
             ...profileDataWithOnboarding,
             is_active: true,
@@ -872,6 +873,7 @@ export class OnboardingComponent implements OnInit, OnDestroy {
 
   private async seedCanonicalPlayerSettings(): Promise<void> {
     try {
+      const preferredDayIndices = this.getPreferredTrainingDayIndices();
       const payload = {
         primaryPosition: normalizePositionForModifiers(
           this.state.formData.position || "WR",
@@ -881,12 +883,20 @@ export class OnboardingComponent implements OnInit, OnDestroy {
           : null,
         birthDate:
           this.state.formData.dateOfBirth?.toISOString().split("T")[0] || null,
-        availabilitySchedule: this.getPreferredTrainingDays().map((day) => ({
-          dayOfWeek: day,
+        availabilitySchedule: preferredDayIndices.map((dayOfWeek) => ({
+          dayOfWeek,
           available: true,
         })),
-        preferredTrainingDays: this.getPreferredTrainingDays(),
-        maxSessionsPerWeek: this.state.formData.practicesPerWeek || 3,
+        preferredTrainingDays: preferredDayIndices,
+        maxSessionsPerWeek: Math.min(
+          14,
+          Math.max(
+            1,
+            Math.round(
+              Number(this.state.formData.practicesPerWeek ?? 3) || 3,
+            ),
+          ),
+        ),
         hasGymAccess:
           this.state.formData.equipmentAvailable?.includes("gym") || false,
         hasFieldAccess:
@@ -928,6 +938,7 @@ export class OnboardingComponent implements OnInit, OnDestroy {
       // Availability schedule is set separately via player-settings API
       // Coaches schedule team activities via team_activities table (authority)
 
+      const preferredDayIndices = this.getPreferredTrainingDayIndices();
       const config = {
         user_id: userId,
         primary_position: normalizedPosition,
@@ -936,8 +947,16 @@ export class OnboardingComponent implements OnInit, OnDestroy {
           : null,
         birth_date:
           this.state.formData.dateOfBirth?.toISOString().split("T")[0] || null,
-        preferred_training_days: this.getPreferredTrainingDays(),
-        max_sessions_per_week: this.state.formData.practicesPerWeek || 3,
+        preferred_training_days: preferredDayIndices,
+        max_sessions_per_week: Math.min(
+          14,
+          Math.max(
+            1,
+            Math.round(
+              Number(this.state.formData.practicesPerWeek ?? 3) || 3,
+            ),
+          ),
+        ),
         available_equipment: this.state.formData.equipmentAvailable || [],
         has_gym_access:
           this.state.formData.equipmentAvailable?.includes("gym") || false,
@@ -1082,7 +1101,7 @@ export class OnboardingComponent implements OnInit, OnDestroy {
           return;
         }
         if (!newTeam) {
-          this.logger.warn("[Onboarding] Team creation returned no team");
+          this.logger.warn("onboarding_team_creation_empty");
           return;
         }
         teamId = newTeam.id;
@@ -1092,7 +1111,7 @@ export class OnboardingComponent implements OnInit, OnDestroy {
       }
 
       if (!teamId) {
-        this.logger.warn("[Onboarding] Could not determine team ID");
+        this.logger.warn("onboarding_team_id_unknown");
         return;
       }
 
@@ -1119,7 +1138,7 @@ export class OnboardingComponent implements OnInit, OnDestroy {
             memberError.message,
           );
         } else {
-          this.logger.info(`[Onboarding] Added user to team_members as player`);
+          this.logger.info("onboarding_team_member_player_added");
         }
       }
 
@@ -1216,7 +1235,7 @@ export class OnboardingComponent implements OnInit, OnDestroy {
           return;
         }
         if (!newTeam) {
-          this.logger.warn("[Onboarding] Team creation returned no team");
+          this.logger.warn("onboarding_team_creation_empty");
           return;
         }
         teamId = newTeam.id;
@@ -1226,7 +1245,7 @@ export class OnboardingComponent implements OnInit, OnDestroy {
       }
 
       if (!teamId) {
-        this.logger.warn("[Onboarding] Could not determine team ID for staff");
+        this.logger.warn("onboarding_team_id_unknown_staff");
         return;
       }
 
@@ -1301,6 +1320,14 @@ export class OnboardingComponent implements OnInit, OnDestroy {
       saturday: 6,
     };
     return days[dayName.toLowerCase()] ?? 1;
+  }
+
+  /**
+   * Day indices 0–6 (Sun–Sat) for APIs and {@link athlete_training_config.preferred_training_days}.
+   * Player-settings validates integers; Supabase stores integer[].
+   */
+  private getPreferredTrainingDayIndices(): number[] {
+    return this.getPreferredTrainingDays().map((day) => this.getDayNumber(day));
   }
 
   /**

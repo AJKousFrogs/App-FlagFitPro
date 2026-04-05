@@ -25,7 +25,7 @@
 
 .ring-svg {
   position: absolute;
-  inset: 0;
+  inset: var(--space-0);
   transform: rotate(-90deg);
 }
 
@@ -59,7 +59,7 @@
 /* Timer display */
 .timer-display {
   position: absolute;
-  inset: 0;
+  inset: var(--space-0);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -138,11 +138,13 @@
     opacity var(--transition-fast),
     background var(--transition-fast);
 
-  @include ds-hover-state(
-    var(--surface-tertiary),
-    $color: var(--color-brand-primary),
-    $border-color: var(--color-brand-primary)
-  );
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      background: var(--surface-tertiary);
+      color: var(--color-brand-primary);
+      border-color: var(--color-brand-primary);
+    }
+  }
 }
 
 .preset-btn.active {

@@ -555,7 +555,7 @@ export class CoachDashboardComponent {
         await this.missingDataService.getPlayersWithMissingWellness(teamId);
       this.playersWithMissingData.set(playersWithMissing);
     } catch (error) {
-      this.logger.error("[CoachDashboard] Error loading missing data:", error);
+      this.logger.error("coach_dashboard_missing_data_load_failed", error);
     }
   }
 
@@ -871,7 +871,9 @@ export class CoachDashboardComponent {
       this.toastService.success(successMessage);
       onSuccess?.();
     } catch (error) {
-      this.logger.error(`[CoachDashboard] Failed to ${logContext}`, error);
+      this.logger.error("coach_dashboard_operation_failed", error, {
+        operation: logContext,
+      });
       this.toastService.error(errorMessage);
     }
   }

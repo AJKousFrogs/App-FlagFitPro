@@ -11,13 +11,10 @@ import { ConfirmDialogService } from "../../../core/services/confirm-dialog.serv
 import { LoggerService } from "../../../core/services/logger.service";
 import { SupabaseService } from "../../../core/services/supabase.service";
 
-import { HeaderWeatherWidgetComponent } from "./header-weather-widget.component";
-
-
 @Component({
   selector: "app-header-actions",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [Menu, AvatarComponent, Tooltip, HeaderWeatherWidgetComponent],
+  imports: [Menu, AvatarComponent, Tooltip],
   templateUrl: "./header-actions.component.html",
   encapsulation: ViewEncapsulation.None,
   host: {
@@ -73,6 +70,12 @@ export class HeaderActionsComponent implements OnInit {
       label: "Settings",
       icon: "pi pi-cog",
       command: () => this.navigateTo("/settings"),
+    },
+    { separator: true },
+    {
+      label: this.themeLabel() + " mode",
+      icon: this.themeIcon(),
+      command: () => this.cycleTheme(),
     },
     { separator: true },
     {

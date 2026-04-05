@@ -16,17 +16,17 @@
 
 .settings-section {
   padding: var(--space-4);
-  background: var(--ds-surface-base);
+  background: var(--surface-secondary);
   border-radius: var(--radius-lg);
 
   h4 {
     display: flex;
     align-items: center;
     gap: var(--space-2);
-    margin: 0 0 var(--space-4) 0;
+    margin: var(--space-0) var(--space-0) var(--space-4) var(--space-0);
     font-size: var(--ds-font-size-md);
     font-weight: var(--ds-font-weight-semibold);
-    color: var(--ds-text-primary);
+    color: var(--color-text-primary);
 
     i {
       color: var(--ds-primary-green);
@@ -42,7 +42,7 @@
     margin-bottom: var(--space-1);
     font-size: var(--ds-font-size-md);
     font-weight: var(--ds-font-weight-medium);
-    color: var(--ds-text-primary);
+    color: var(--color-text-primary);
   }
 }
 
@@ -55,7 +55,7 @@
 .color-code {
   margin-left: var(--space-2);
   font-size: var(--ds-font-size-md);
-  color: var(--ds-text-tertiary);
+  color: var(--color-text-tertiary);
   font-family: var(--ds-font-family-mono); /* ds-exception: monospace */
 }
 
@@ -66,7 +66,7 @@
   padding: var(--space-2) 0;
 
   label {
-    margin: 0;
+    margin: var(--space-0);
     cursor: pointer;
   }
 }

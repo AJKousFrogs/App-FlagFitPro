@@ -16,6 +16,7 @@ import { baseHandler } from "./utils/base-handler.js";
 import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
 import { parseJsonObjectBody } from "./utils/input-validator.js";
 import { supabaseAdmin } from "./supabase-client.js";
+import { buildRequestLogContext, createLogger } from "./utils/structured-logger.js";
 
 // =============================================================================
 // NUTRITION CALCULATION CONSTANTS
@@ -79,6 +80,18 @@ const CALORIE_ADJUSTMENTS = {
   aggressive_bulk: 500, // Faster muscle gain (more fat gain risk)
   maintenance: 0, // No change
 };
+
+const logger = createLogger({ service: "netlify.nutrition" });
+
+function createRequestLogger(event, meta = {}) {
+  return logger.child(
+    buildRequestLogContext(event, {
+      request_id: meta.requestId,
+      correlation_id: meta.correlationId,
+      trace_id: meta.traceId ?? meta.correlationId,
+    }),
+  );
+}
 
 // Protein per kg body weight by goal
 const PROTEIN_PER_KG = {
@@ -679,13 +692,17 @@ async function searchFoods(searchQuery, limit = 20) {
 // REQUEST HANDLER
 // =============================================================================
 
-async function handleRequest(event, _context, { userId }) {
+async function handleRequest(event, _context, { userId, requestId, correlationId }) {
   const path =
     event.path
       .replace("/.netlify/functions/nutrition", "")
       .replace(/^\/api\/nutrition\/?/, "")
       .replace(/^\//, "") || "";
 
+  const requestLogger = createRequestLogger(event, {
+    requestId,
+    correlationId,
+  });
   let body = {};
   if (event.body && ["POST", "PUT"].includes(event.httpMethod)) {
     try {
@@ -896,7 +913,11 @@ async function handleRequest(event, _context, { userId }) {
 
     return createErrorResponse("Endpoint not found", 404, "not_found");
   } catch (error) {
-    console.error("Nutrition API error:", error);
+    requestLogger.error("nutrition_api_error", error, {
+      path,
+      method: event.httpMethod,
+      user_id: userId,
+    });
     if (error.isValidation) {
       return createErrorResponse(error.message, 422, "validation_error");
     }

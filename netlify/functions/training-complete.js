@@ -10,6 +10,12 @@ import { createSuccessResponse, createErrorResponse } from "./utils/error-handle
 import { parseJsonObjectBody } from "./utils/input-validator.js";
 import { supabaseAdmin } from "./supabase-client.js";
 import { guardMerlinRequest } from "./utils/merlin-guard.js";
+import {
+  buildRequestLogContext,
+  createLogger,
+} from "./utils/structured-logger.js";
+
+const logger = createLogger({ service: "netlify.training-complete" });
 
 function parseOptionalBoundedNumber(value, { field, min, max, integer = false }) {
   if (value === undefined || value === null || value === "") {
@@ -92,7 +98,7 @@ function parseCompletionPayload(body) {
  * Award points for completing a training session
  * Points are based on duration and intensity
  */
-async function awardTrainingPoints(userId, duration, intensity) {
+async function awardTrainingPoints(userId, duration, intensity, log = logger) {
   // Base points: 5 per 15 minutes + bonus for high intensity
   const basePoints = Math.floor(duration / 15) * 5;
   const intensityBonus = intensity >= 7 ? 10 : intensity >= 5 ? 5 : 0;
@@ -129,12 +135,21 @@ async function awardTrainingPoints(userId, duration, intensity) {
       });
     }
 
-    console.log(
-      `[Training Complete] Awarded ${totalPoints} points to user ${userId}`,
-    );
+    log.info("training_points_awarded", {
+      user_id: userId,
+      duration_minutes: duration,
+      intensity,
+      points_awarded: totalPoints,
+    });
     return { points: totalPoints };
   } catch (error) {
-    console.warn("[Training Complete] Could not award points:", error.message);
+    log.warn(
+      "training_points_award_failed",
+      {
+        user_id: userId,
+      },
+      error,
+    );
     return { points: 0 };
   }
 }
@@ -142,7 +157,12 @@ async function awardTrainingPoints(userId, duration, intensity) {
 /**
  * Create a notification for training completion
  */
-async function createCompletionNotification(userId, sessionType, points) {
+async function createCompletionNotification(
+  userId,
+  sessionType,
+  points,
+  log = logger,
+) {
   try {
     const message =
       points > 0
@@ -156,9 +176,13 @@ async function createCompletionNotification(userId, sessionType, points) {
       priority: "normal",
     });
   } catch (error) {
-    console.warn(
-      "[Training Complete] Could not create notification:",
-      error.message,
+    log.warn(
+      "training_completion_notification_failed",
+      {
+        user_id: userId,
+        session_type: sessionType,
+      },
+      error,
     );
   }
 }
@@ -174,6 +198,7 @@ async function syncWorkoutLog(
   completedAt,
   rpe,
   durationMinutes,
+  log = logger,
 ) {
   try {
     const { data: existing, error: fetchError } = await supabaseAdmin
@@ -184,9 +209,13 @@ async function syncWorkoutLog(
       .maybeSingle();
 
     if (fetchError) {
-      console.warn(
-        "[Training Complete] Failed to check workout log:",
-        fetchError.message,
+      log.warn(
+        "training_workout_log_check_failed",
+        {
+          user_id: userId,
+          session_id: sessionId,
+        },
+        fetchError,
       );
       return false;
     }
@@ -208,16 +237,31 @@ async function syncWorkoutLog(
       });
 
     if (insertError) {
-      console.warn(
-        "[Training Complete] Failed to sync workout log:",
-        insertError.message,
+      log.warn(
+        "training_workout_log_sync_failed",
+        {
+          user_id: userId,
+          session_id: sessionId,
+        },
+        insertError,
       );
       return false;
     }
 
+    log.info("training_workout_log_synced", {
+      user_id: userId,
+      session_id: sessionId,
+    });
     return true;
   } catch (error) {
-    console.warn("[Training Complete] Workout log sync error:", error.message);
+    log.warn(
+      "training_workout_log_sync_exception",
+      {
+        user_id: userId,
+        session_id: sessionId,
+      },
+      error,
+    );
     return false;
   }
 }
@@ -247,7 +291,12 @@ async function completeTrainingSessionViaRpc(userId, sessionId, completionData) 
  * Mark a training session as completed
  * Updates session status and calculates workload
  */
-async function completeTrainingSession(userId, sessionId, completionData) {
+async function completeTrainingSession(
+  userId,
+  sessionId,
+  completionData,
+  log = logger,
+) {
   try {
     // Get the session first to verify ownership
     const { data: session, error: fetchError } = await supabaseAdmin
@@ -318,13 +367,21 @@ async function completeTrainingSession(userId, sessionId, completionData) {
         userId,
         duration || 0,
         intensity || 0,
+        log,
       );
 
       await createCompletionNotification(
         userId,
         updatedSession.session_type,
         pointsResult.points,
+        log,
       );
+
+      log.info("training_completion_rpc_succeeded", {
+        user_id: userId,
+        session_id: sessionId,
+        workload: rpcResult.data?.workload ?? computedWorkload,
+      });
 
       return {
         success: true,
@@ -335,7 +392,10 @@ async function completeTrainingSession(userId, sessionId, completionData) {
     }
 
     if (rpcResult.error.code !== "PGRST202") {
-      console.error("Error completing training session via RPC:", rpcResult.error);
+      log.error("training_completion_rpc_failed", rpcResult.error, {
+        user_id: userId,
+        session_id: sessionId,
+      });
       throw rpcResult.error;
     }
 
@@ -372,7 +432,10 @@ async function completeTrainingSession(userId, sessionId, completionData) {
       .single();
 
     if (updateError) {
-      console.error("Error updating training session:", updateError);
+      log.error("training_session_update_failed", updateError, {
+        user_id: userId,
+        session_id: sessionId,
+      });
       throw updateError;
     }
 
@@ -385,6 +448,7 @@ async function completeTrainingSession(userId, sessionId, completionData) {
       completedAt,
       rpe,
       duration,
+      log,
     );
 
     // Award points for completing the session
@@ -392,6 +456,7 @@ async function completeTrainingSession(userId, sessionId, completionData) {
       userId,
       duration || 0,
       intensity || 0,
+      log,
     );
 
     // Create completion notification
@@ -399,7 +464,15 @@ async function completeTrainingSession(userId, sessionId, completionData) {
       userId,
       session.workout_type,
       pointsResult.points,
+      log,
     );
+
+    log.info("training_completion_fallback_succeeded", {
+      user_id: userId,
+      session_id: sessionId,
+      workload: computedWorkload,
+      points_earned: pointsResult.points,
+    });
 
     return {
       success: true,
@@ -408,7 +481,10 @@ async function completeTrainingSession(userId, sessionId, completionData) {
       pointsEarned: pointsResult.points,
     };
   } catch (error) {
-    console.error("Error completing training session:", error);
+    log.error("training_completion_failed", error, {
+      user_id: userId,
+      session_id: sessionId,
+    });
     throw error;
   }
 }
@@ -416,8 +492,22 @@ async function completeTrainingSession(userId, sessionId, completionData) {
 /**
  * Main handler function
  */
-async function handleRequest(event, context, { userId }) {
+async function handleRequest(event, context, { userId, requestId, correlationId }) {
+  const requestLogger = logger.child(
+    buildRequestLogContext(event, {
+      function_name: "training-complete",
+      user_id: userId,
+      request_id: requestId,
+      correlation_id: correlationId,
+      trace_id: correlationId,
+    }),
+  );
+
   try {
+    requestLogger.info("training_completion_request_started", {
+      body_length: event.body?.length,
+    });
+
     // Only POST is allowed for completing sessions
     if (event.httpMethod !== "POST") {
       return createErrorResponse("Method not allowed. Use POST.", 405);
@@ -451,6 +541,9 @@ async function handleRequest(event, context, { userId }) {
       userId,
       sessionId,
       completionData,
+      requestLogger.child({
+        session_id: sessionId,
+      }),
     );
 
     if (!result.success) {
@@ -460,6 +553,12 @@ async function handleRequest(event, context, { userId }) {
       );
     }
 
+    requestLogger.info("training_completion_request_succeeded", {
+      session_id: sessionId,
+      points_earned: result.pointsEarned || 0,
+      workload: result.workload,
+    });
+
     return createSuccessResponse({
       session: result.session,
       workload: result.workload,
@@ -467,7 +566,9 @@ async function handleRequest(event, context, { userId }) {
       message: "Training session completed successfully",
     });
   } catch (error) {
-    console.error("Error in training-complete handler:", error);
+    requestLogger.error("training_completion_request_failed", error, {
+      user_id: userId,
+    });
     throw error;
   }
 }

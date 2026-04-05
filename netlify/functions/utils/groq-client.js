@@ -15,6 +15,10 @@
  * @see https://console.groq.com/docs/quickstart
  */
 
+import { createLogger } from "./structured-logger.js";
+
+const logger = createLogger({ service: "netlify.groq-client" });
+
 const GROQ_API_URL = "https://api.groq.com/openai/v1/chat/completions";
 
 // Available free models (as of Dec 2024)
@@ -207,13 +211,18 @@ async function chatCompletion({
       const errorMessage = errorData.error?.message || response.statusText;
 
       if (response.status === 429) {
-        console.error("[Groq] Rate limit exceeded:", errorMessage);
+        logger.error("groq_rate_limit_exceeded", undefined, {
+          error_message: errorMessage,
+        });
         throw new Error(
           "AI service rate limit exceeded. Please try again in a moment.",
         );
       }
 
-      console.error("[Groq] API error:", response.status, errorMessage);
+      logger.error("groq_api_request_failed", undefined, {
+        status_code: response.status,
+        error_message: errorMessage,
+      });
       throw new Error(`AI service error: ${errorMessage}`);
     }
 
@@ -229,7 +238,7 @@ async function chatCompletion({
     if (error.message.includes("AI service")) {
       throw error;
     }
-    console.error("[Groq] Request failed:", error);
+    logger.error("groq_request_failed", error);
     throw new Error("Failed to connect to AI service");
   }
 }
@@ -552,10 +561,10 @@ async function generateCoachingResponse({
 
 Respond as Merlin would - naturally, helpfully, and as a real coach would in a 1-on-1 conversation.`;
 
-  console.log(
-    "[Groq] Generating conversational response for:",
-    query.substring(0, 50),
-  );
+  logger.debug("groq_coaching_response_generation_started", {
+    query_preview: query.substring(0, 50),
+    risk_level: riskLevel,
+  });
 
   try {
     const response = await chatCompletion({
@@ -573,7 +582,7 @@ Respond as Merlin would - naturally, helpfully, and as a real coach would in a 1
       source: "groq-ai",
     };
   } catch (error) {
-    console.error("[Groq] Coaching response failed:", error);
+    logger.error("groq_coaching_response_failed", error);
     throw error;
   }
 }
@@ -618,7 +627,7 @@ Keep it brief and conversational - like a coach would ask in person.`;
       source: "groq-ai",
     };
   } catch (error) {
-    console.error("[Groq] Clarifying question failed:", error);
+    logger.error("groq_clarifying_question_failed", error);
     throw error;
   }
 }
@@ -656,7 +665,7 @@ Return your analysis as valid JSON.`;
       };
     }
   } catch (error) {
-    console.error("[Groq] Analysis failed:", error);
+    logger.error("groq_analysis_failed", error);
     throw error;
   }
 }
@@ -679,7 +688,7 @@ async function quickSuggestion(context) {
 
     return response.content;
   } catch (error) {
-    console.error("[Groq] Quick suggestion failed:", error);
+    logger.error("groq_quick_suggestion_failed", error);
     throw error;
   }
 }
@@ -721,7 +730,7 @@ Example: ["Can you show me a specific drill?", "How often should I practice this
       return [];
     }
   } catch (error) {
-    console.error("[Groq] Follow-up generation failed:", error);
+    logger.error("groq_follow_up_generation_failed", error);
     return [];
   }
 }

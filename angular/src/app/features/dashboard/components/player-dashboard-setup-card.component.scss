@@ -10,8 +10,8 @@
 
 .no-program-card {
   inline-size: 100%;
-  background: var(--surface-primary);
-  border: var(--border-1) solid var(--ui-border-subtle);
+  background: var(--surface-card);
+  border: var(--border-1) solid var(--color-border-primary);
   border-radius: var(--radius-xl);
   box-shadow: var(--shadow-sm);
 }
@@ -51,14 +51,14 @@
 }
 
 .no-program-title {
-  margin: 0;
+  margin: var(--space-0);
   color: var(--color-text-primary);
   font-size: clamp(var(--ds-font-size-xl), 3vw, var(--ds-font-size-2xl));
   font-weight: var(--ds-font-weight-bold);
 }
 
 .no-program-message {
-  margin: 0;
+  margin: var(--space-0);
   color: var(--color-text-secondary);
   font-size: var(--ds-font-size-sm);
   line-height: var(--ds-line-height-body);
@@ -82,7 +82,7 @@
   width: 100%;
   flex-direction: column;
   gap: var(--space-3);
-  margin: 0;
+  margin: var(--space-0);
 }
 
 .checklist-item {
@@ -90,7 +90,7 @@
   align-items: start;
   gap: var(--space-3);
   padding: var(--space-4);
-  border-left: var(--border-4) solid var(--ui-border-default);
+  border-left: var(--border-4) solid var(--color-border-primary);
   border-radius: var(--radius-lg);
   background: var(--surface-secondary);
 }
@@ -121,7 +121,7 @@
 }
 
 .checklist-icon.checklist-waiting {
-  background: var(--surface-border);
+  background: var(--color-border-primary);
   color: var(--color-text-secondary);
 }
 
@@ -148,18 +148,18 @@
   padding: var(--space-4);
   border-radius: var(--radius-lg);
   background: var(--surface-secondary);
-  margin: 0;
+  margin: var(--space-0);
 }
 
 .next-steps-title {
-  margin: 0 0 var(--space-3);
+  margin: var(--space-0) var(--space-0) var(--space-3);
   color: var(--color-text-primary);
   font-size: var(--ds-font-size-md);
   font-weight: var(--ds-font-weight-semibold);
 }
 
 .next-steps-list {
-  margin: 0;
+  margin: var(--space-0);
   padding-left: var(--space-5);
   list-style: decimal;
 }
@@ -172,14 +172,14 @@
 }
 
 .next-steps-message {
-  margin: 0 0 var(--space-3);
+  margin: var(--space-0) var(--space-0) var(--space-3);
   color: var(--color-text-primary);
   font-size: var(--ds-font-size-sm);
   line-height: var(--ds-line-height-1-6);
 }
 
 .next-steps-tip {
-  margin: 0;
+  margin: var(--space-0);
   padding: var(--space-3);
   border-left: var(--border-4) solid var(--ds-primary-green);
   border-radius: var(--radius-sm);

@@ -80,7 +80,7 @@
 
 .rank-badge {
   font-size: var(--ds-font-size-2xl);
-  transition: transform var(--transition-base);
+  transition: transform var(--transition-fast);
 }
 
 .leaderboard-item:hover .rank-badge {
@@ -195,11 +195,13 @@
     border-color var(--transition-fast),
     color var(--transition-fast);
 
-  @include ds-hover-state(
-    var(--surface-secondary),
-    $color: var(--color-text-primary),
-    $border-color: var(--color-text-muted)
-  );
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      background: var(--surface-secondary);
+      color: var(--color-text-primary);
+      border-color: var(--color-text-muted);
+    }
+  }
 }
 
 .quick-stats {

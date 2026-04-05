@@ -5,14 +5,14 @@
 }
 
 .visibility-info-banner {
-  margin-bottom: 0;
+  margin-bottom: var(--space-0);
 }
 
 .tournament-form {
   display: flex;
   flex-direction: column;
   gap: var(--space-5);
-  padding: 0;
+  padding: var(--space-0);
 }
 
 .form-section {
@@ -48,13 +48,13 @@
 }
 
 .tournament-form .form-row:last-child {
-  margin-bottom: 0;
+  margin-bottom: var(--space-0);
 }
 
 .tournament-form .form-field {
   flex: 1;
   min-width: 0;
-  margin-bottom: 0;
+  margin-bottom: var(--space-0);
 }
 
 .field-label {
@@ -94,7 +94,7 @@
   align-items: center;
   min-height: calc(var(--touch-target-md) + var(--space-4));
   padding: var(--space-4) var(--space-5);
-  background: var(--surface-primary);
+  background: var(--surface-card);
 }
 
 .tournament-form .form-field.checkbox-field app-checkbox {

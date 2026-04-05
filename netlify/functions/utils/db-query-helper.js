@@ -1,4 +1,7 @@
 import { createErrorResponse, handleValidationError } from "./error-handler.js";
+import { createLogger } from "./structured-logger.js";
+
+const logger = createLogger({ service: "netlify.db-query-helper" });
 
 /**
  * Database Query Helper Utilities
@@ -34,7 +37,9 @@ async function executeQuery(queryPromise, errorMessage) {
     const { data, error } = await queryPromise;
 
     if (error) {
-      console.error("Database error:", error);
+      logger.error("database_query_failed", error, {
+        error_message: errorMessage,
+      });
       return {
         success: false,
         error: createErrorResponse(
@@ -50,7 +55,9 @@ async function executeQuery(queryPromise, errorMessage) {
       data: data || [],
     };
   } catch (error) {
-    console.error("Query execution error:", error);
+    logger.error("database_query_execution_failed", error, {
+      error_message: errorMessage,
+    });
     return {
       success: false,
       error: createErrorResponse(

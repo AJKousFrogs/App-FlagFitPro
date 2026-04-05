@@ -51,7 +51,9 @@ import { EvidenceConfigService } from "./evidence-config.service";
 import { SupabaseService } from "./supabase.service";
 import { LoggerService } from "./logger.service";
 import { toLogContext } from "./logger.service";
+import { CorrelationContextService } from "./correlation-context.service";
 import { AcwrSpikeDetectionService } from "./acwr-spike-detection.service";
+import { RemoteTelemetryService } from "./remote-telemetry.service";
 import type {
   RealtimeChannel,
   RealtimePostgresInsertPayload,
@@ -120,6 +122,8 @@ export class AcwrService {
   private supabaseService = inject(SupabaseService);
   private logger = inject(LoggerService);
   private acwrSpikeDetection = inject(AcwrSpikeDetectionService);
+  private readonly correlation = inject(CorrelationContextService);
+  private readonly remoteTelemetry = inject(RemoteTelemetryService);
 
   // Realtime subscription channel
   private realtimeChannel: RealtimeChannel | null = null;
@@ -195,17 +199,16 @@ export class AcwrService {
       if (userId) {
         // Prevent duplicate loading for same user (memory optimization)
         if (this.lastLoadedUserId === userId) {
-          this.logger.debug("[ACWR] User already loaded, skipping reload");
           return;
         }
 
-        this.logger.info("[ACWR] User authenticated, loading training data...");
+        this.logger.info("acwr_training_data_load_start", { userId });
         this.lastLoadedUserId = userId;
         this.setPlayer(userId);
         this.loadPlayerSessions(userId);
         this.subscribeToWorkoutLogs(userId);
       } else {
-        this.logger.debug("[ACWR] No user authenticated, cleaning up");
+        this.logger.debug("acwr_session_cleanup_no_user");
         this.lastLoadedUserId = null;
         this.unsubscribeFromWorkoutLogs();
         this.clearSessions();
@@ -741,7 +744,9 @@ export class AcwrService {
         this.acwrSpikeDetection
           .checkAndCapLoad(session.playerId, currentData.ratio)
           .catch((error) => {
-            this.logger.error("[ACWR] Error checking spike:", error);
+            this.logger.error("acwr_spike_check_failed", error, {
+              playerId: session.playerId,
+            });
           });
       }
 
@@ -750,7 +755,9 @@ export class AcwrService {
         this.acwrSpikeDetection
           .decrementLoadCap(session.playerId)
           .catch((error) => {
-            this.logger.error("[ACWR] Error decrementing load cap:", error);
+            this.logger.error("acwr_load_cap_decrement_failed", error, {
+              playerId: session.playerId,
+            });
           });
       }
 
@@ -786,7 +793,6 @@ export class AcwrService {
     this.historicalACWR.set([]);
     this.currentPlayerId.set(null);
     this.lastLoadedUserId = null;
-    this.logger.debug("[ACWR] Sessions and history cleared");
   }
 
   /**
@@ -1075,6 +1081,7 @@ export class AcwrService {
    * Fetches workout logs for the last 35 days (chronic window + buffer)
    */
   private async loadPlayerSessions(userId: string): Promise<void> {
+    this.correlation.startTrace();
     try {
       const cfg = this.config();
       const daysToLoad = cfg.chronicWindowDays + 7; // Extra buffer
@@ -1082,9 +1089,10 @@ export class AcwrService {
       cutoffDate.setDate(cutoffDate.getDate() - daysToLoad);
       const cutoffDateKey = cutoffDate.toISOString().slice(0, 10);
 
-      this.logger.debug(
-        `[ACWR] Loading ${daysToLoad} days of training data...`,
-      );
+      this.logger.debug("acwr_load_player_sessions_query", {
+        userId,
+        daysToLoad,
+      });
 
       const [workoutLogsResult, loadMonitoringResult] = await Promise.all([
         this.supabaseService.client
@@ -1115,15 +1123,15 @@ export class AcwrService {
         loadMonitoringResult;
 
       if (error) {
-        this.logger.error("[ACWR] Error loading workout logs:", error);
+        this.logger.error("acwr_workout_logs_load_failed", error, { userId });
         return;
       }
 
       if (loadMonitoringError) {
-        this.logger.warn(
-          "[ACWR] Error loading load monitoring history:",
-          loadMonitoringError,
-        );
+        this.logger.warn("acwr_load_monitoring_history_failed", {
+          userId,
+          ...toLogContext(loadMonitoringError),
+        });
       }
 
       const loadMonitoringByDate = new Map(
@@ -1143,7 +1151,7 @@ export class AcwrService {
 
       if (!workoutLogs || workoutLogs.length === 0) {
         this.trainingSessions.set([]);
-        this.logger.info("[ACWR] No workout logs found for player");
+        this.logger.info("acwr_no_workout_logs", { userId });
         return;
       }
 
@@ -1177,9 +1185,14 @@ export class AcwrService {
       );
 
       this.addSessions(sessions);
-      this.logger.success(`[ACWR] Loaded ${sessions.length} training sessions`);
+      this.logger.success("acwr_training_sessions_loaded", {
+        userId,
+        sessionCount: sessions.length,
+      });
     } catch (error) {
-      this.logger.error("[ACWR] Failed to load player sessions:", error);
+      this.logger.error("acwr_player_sessions_load_failed", error, { userId });
+    } finally {
+      this.correlation.endTrace();
     }
   }
 
@@ -1188,13 +1201,10 @@ export class AcwrService {
    */
   private subscribeToWorkoutLogs(userId: string): void {
     if (this.realtimeChannel) {
-      this.logger.debug("[ACWR] Unsubscribing from previous channel");
       this.unsubscribeFromWorkoutLogs();
     }
 
-    this.logger.info(
-      `[ACWR] Subscribing to realtime updates for player ${userId}`,
-    );
+    this.logger.info("acwr_realtime_subscribe", { userId });
 
     this.realtimeChannel = this.supabaseService.client
       .channel(`workout_logs:${userId}`)
@@ -1207,10 +1217,10 @@ export class AcwrService {
           filter: `player_id=eq.${userId}`,
         },
         (payload: RealtimePostgresInsertPayload<WorkoutLog>) => {
-          this.logger.info(
-            "[ACWR] New workout log received",
-            toLogContext(payload.new),
-          );
+          this.logger.info("acwr_realtime_workout_insert", {
+            userId,
+            ...toLogContext(payload.new),
+          });
           const log = payload.new;
 
           const session: TrainingSession = {
@@ -1233,9 +1243,7 @@ export class AcwrService {
           };
 
           this.addSession(session);
-          this.logger.success(
-            "[ACWR] Training session added from realtime update",
-          );
+          this.logger.success("acwr_session_added_from_realtime", { userId });
         },
       )
       .on<WorkoutLog>(
@@ -1247,29 +1255,23 @@ export class AcwrService {
           filter: `player_id=eq.${userId}`,
         },
         (payload: RealtimePostgresUpdatePayload<WorkoutLog>) => {
-          this.logger.info(
-            "[ACWR] Workout log updated",
-            toLogContext(payload.new),
-          );
+          this.logger.info("acwr_realtime_workout_update", {
+            userId,
+            ...toLogContext(payload.new),
+          });
           // Reload sessions to update calculations
           this.loadPlayerSessions(userId);
         },
       )
       .subscribe((status) => {
         if (status === "SUBSCRIBED") {
-          this.logger.success("[ACWR] Realtime subscription active");
+          this.logger.success("acwr_realtime_subscribed", { userId });
         } else if (status === "CHANNEL_ERROR") {
-          // Channel errors are common during page transitions and network issues
-          // Log as debug instead of error to reduce console noise
-          this.logger.debug(
-            "[ACWR] Realtime subscription channel error (connection may have been lost)",
-          );
+          this.logger.debug("acwr_realtime_channel_error", { userId });
         } else if (status === "CLOSED") {
-          this.logger.debug("[ACWR] Realtime subscription closed");
+          this.logger.debug("acwr_realtime_closed", { userId });
         } else if (status === "TIMED_OUT") {
-          this.logger.debug(
-            "[ACWR] Realtime subscription timed out (will auto-reconnect)",
-          );
+          this.logger.debug("acwr_realtime_timed_out", { userId });
         }
       });
   }
@@ -1281,7 +1283,6 @@ export class AcwrService {
     if (this.realtimeChannel) {
       this.supabaseService.client.removeChannel(this.realtimeChannel);
       this.realtimeChannel = null;
-      this.logger.debug("[ACWR] Unsubscribed from realtime updates");
     }
   }
 
@@ -1347,13 +1348,18 @@ export class AcwrService {
    * Save ACWR data back to database (for analytics/reporting)
    * Note: The database trigger already calculates ACWR, but this can be used
    * for storing additional computed metrics or overrides
+   *
+   * Callers should wrap the operation with {@link CorrelationContextService.startTrace}
+   * / `endTrace` (e.g. from a button click) so Supabase requests carry a stable `x-trace-id`.
    */
-  public async saveACWRToDatabase(userId: string): Promise<void> {
+  public async saveACWRToDatabase(
+    userId: string,
+  ): Promise<{ ok: boolean; errorMessage?: string }> {
     const acwrData = this.acwrData();
 
     if (acwrData.ratio === 0) {
-      this.logger.debug("[ACWR] Skipping save - insufficient data");
-      return;
+      this.logger.debug("acwr_save_skipped_insufficient_data", { userId });
+      return { ok: true };
     }
 
     try {
@@ -1371,17 +1377,44 @@ export class AcwrService {
         });
 
       if (error) {
-        this.logger.error("[ACWR] Error saving to database:", error);
-      } else {
-        this.logger.debug("[ACWR] Saved to database successfully");
-
-        // Check for ACWR spike and create load cap if needed
-        if (acwrData.ratio > 1.5) {
-          await this.acwrSpikeDetection.checkAndCapLoad(userId, acwrData.ratio);
-        }
+        const msg =
+          typeof error.message === "string" && error.message.length > 0
+            ? error.message
+            : "load_monitoring upsert failed";
+        this.logger.error("acwr_load_monitoring_upsert_failed", error, {
+          userId,
+        });
+        void this.remoteTelemetry.error(msg, {
+          source: "acwr_service",
+          operation: "saveACWRToDatabase",
+          userId,
+          ...toLogContext(error),
+        });
+        return { ok: false, errorMessage: msg };
       }
-    } catch (error) {
-      this.logger.error("[ACWR] Failed to save ACWR data:", error);
+
+      this.logger.debug("acwr_load_monitoring_upsert_ok", {
+        userId,
+        ratio: acwrData.ratio,
+      });
+
+      // Check for ACWR spike and create load cap if needed
+      if (acwrData.ratio > 1.5) {
+        await this.acwrSpikeDetection.checkAndCapLoad(userId, acwrData.ratio);
+      }
+
+      return { ok: true };
+    } catch (error: unknown) {
+      const msg =
+        error instanceof Error ? error.message : "acwr_save_failed";
+      this.logger.error("acwr_save_failed", error, { userId });
+      void this.remoteTelemetry.error(msg, {
+        source: "acwr_service",
+        operation: "saveACWRToDatabase",
+        userId,
+        unexpected: true,
+      });
+      return { ok: false, errorMessage: msg };
     }
   }
 
@@ -1411,19 +1444,19 @@ export class AcwrService {
         .limit(1);
 
       if (error) {
-        this.logger.warn(
-          "[ACWR] Error checking injury history:",
-          toLogContext(error),
-        );
+        this.logger.warn("acwr_injury_history_query_failed", {
+          playerId,
+          ...toLogContext(error),
+        });
         return false;
       }
 
       return (data && data.length > 0) || false;
     } catch (error) {
-      this.logger.warn(
-        "[ACWR] Failed to check injury history:",
-        toLogContext(error),
-      );
+      this.logger.warn("acwr_injury_history_check_failed", {
+        playerId,
+        ...toLogContext(error),
+      });
       return false;
     }
   }

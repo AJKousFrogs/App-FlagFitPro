@@ -21,7 +21,7 @@
 
 // Pending Alert
 .pending-alert {
-  margin-bottom: 0;
+  margin-bottom: var(--space-0);
 }
 
 // Date Groups
@@ -31,12 +31,12 @@
   gap: var(--space-3);
 
   .date-header {
-    margin: 0;
+    margin: var(--space-0);
     font-size: var(--ds-font-size-md);
     font-weight: var(--ds-font-weight-semibold);
-    color: var(--ds-text-primary);
+    color: var(--color-text-primary);
     padding-bottom: var(--space-2);
-    border-bottom: var(--border-1) solid var(--ds-border-subtle);
+    border-bottom: var(--border-1) solid var(--color-border-secondary);
   }
 }
 
@@ -46,11 +46,11 @@
 
 // Event Card
 .event-card {
-  border-left: var(--space-1) solid var(--ds-border-default);
+  border-left: var(--space-1) solid var(--color-border-primary);
   transition:
-    background-color var(--motion-base) var(--ease-standard),
-    border-color var(--motion-base) var(--ease-standard),
-    box-shadow var(--motion-base) var(--ease-standard);
+    background-color var(--transition-fast) var(--ease-standard),
+    border-color var(--transition-fast) var(--ease-standard),
+    box-shadow var(--transition-fast) var(--ease-standard);
 
   &.type-practice {
     border-left-color: var(--ds-primary-green);
@@ -87,20 +87,20 @@
   min-width: var(--badge-min-width-md);
   text-align: center;
   padding: var(--space-2);
-  background: var(--ds-surface-base);
+  background: var(--surface-secondary);
   border-radius: var(--radius-md);
 
   .item-time {
     display: block;
     font-weight: var(--ds-font-weight-semibold);
     font-size: var(--ds-font-size-md);
-    color: var(--ds-text-primary);
+    color: var(--color-text-primary);
   }
 
   .duration {
     display: block;
     font-size: var(--ds-font-size-xs);
-    color: var(--ds-text-tertiary);
+    color: var(--color-text-tertiary);
     margin-top: var(--space-1);
   }
 }
@@ -117,10 +117,10 @@
     flex-wrap: wrap;
 
     h4 {
-      margin: 0;
+      margin: var(--space-0);
       font-size: var(--ds-font-size-md);
       font-weight: var(--ds-font-weight-semibold);
-      color: var(--ds-text-primary);
+      color: var(--color-text-primary);
     }
   }
 
@@ -128,9 +128,9 @@
     display: flex;
     align-items: center;
     gap: var(--space-1);
-    margin: 0 0 var(--space-1) 0;
+    margin: var(--space-0) var(--space-0) var(--space-1) var(--space-0);
     font-size: var(--ds-font-size-md);
-    color: var(--ds-text-secondary);
+    color: var(--color-text-secondary);
 
     i {
       font-size: var(--ds-font-size-xs);
@@ -138,9 +138,9 @@
   }
 
   .event-description {
-    margin: 0;
+    margin: var(--space-0);
     font-size: var(--ds-font-size-md);
-    color: var(--ds-text-secondary);
+    color: var(--color-text-secondary);
     line-height: var(--ds-line-height-normal);
   }
 }
@@ -156,7 +156,7 @@
     align-items: center;
     gap: var(--space-1);
     font-size: var(--ds-font-size-xs);
-    color: var(--ds-text-tertiary);
+    color: var(--color-text-tertiary);
 
     &.going {
       color: var(--ds-primary-green);
@@ -191,7 +191,7 @@
     font-weight: var(--ds-font-weight-medium);
     padding: var(--space-1) var(--space-2);
     border-radius: var(--radius-full);
-    background: var(--ds-surface-base);
+    background: var(--surface-secondary);
 
     &.status-going {
       background: var(--color-status-success-subtle);
@@ -227,7 +227,7 @@
 }
 
 .event-summary {
-  background: var(--ds-surface-base);
+  background: var(--surface-secondary);
   padding: var(--space-3);
   border-radius: var(--radius-md);
 
@@ -235,10 +235,10 @@
     display: flex;
     align-items: center;
     gap: var(--space-2);
-    margin: 0;
+    margin: var(--space-0);
     padding: var(--space-1) 0;
     font-size: var(--ds-font-size-md);
-    color: var(--ds-text-secondary);
+    color: var(--color-text-secondary);
 
     i {
       color: var(--ds-primary-green);
@@ -249,10 +249,10 @@
 
 .rsvp-options {
   h4 {
-    margin: 0 0 var(--space-3) 0;
+    margin: var(--space-0) var(--space-0) var(--space-3) var(--space-0);
     font-size: var(--ds-font-size-md);
     font-weight: var(--ds-font-weight-semibold);
-    color: var(--ds-text-primary);
+    color: var(--color-text-primary);
   }
 
   .options-group {
@@ -269,14 +269,14 @@
     align-items: center;
     gap: var(--space-2);
     padding: var(--space-3);
-    background: var(--ds-surface-base);
-    border: var(--border-2) solid var(--ds-border-default);
+    background: var(--surface-secondary);
+    border: var(--border-2) solid var(--color-border-primary);
     border-radius: var(--radius-md);
     cursor: pointer;
     transition:
-      background-color var(--motion-base) var(--ease-standard),
-      border-color var(--motion-base) var(--ease-standard),
-      box-shadow var(--motion-base) var(--ease-standard);
+      background-color var(--transition-fast) var(--ease-standard),
+      border-color var(--transition-fast) var(--ease-standard),
+      box-shadow var(--transition-fast) var(--ease-standard);
 
     &:hover {
       border-color: var(--ds-primary-green);
@@ -296,13 +296,13 @@
 
       i {
         font-size: var(--ds-font-size-2xl);
-        color: var(--ds-text-secondary);
+        color: var(--color-text-secondary);
       }
 
       span {
         font-size: var(--ds-font-size-md);
         font-weight: var(--ds-font-weight-medium);
-        color: var(--ds-text-primary);
+        color: var(--color-text-primary);
       }
     }
   }
@@ -313,7 +313,7 @@
   flex-direction: column;
   gap: var(--space-3);
   padding: var(--space-3);
-  background: var(--ds-surface-base);
+  background: var(--surface-secondary);
   border-radius: var(--radius-md);
 
   .option-row {
@@ -324,7 +324,7 @@
 
     label {
       font-size: var(--ds-font-size-md);
-      color: var(--ds-text-primary);
+      color: var(--color-text-primary);
     }
 
     &.checkbox-row {
@@ -344,7 +344,7 @@
     margin-bottom: var(--space-2);
     font-size: var(--ds-font-size-md);
     font-weight: var(--ds-font-weight-medium);
-    color: var(--ds-text-primary);
+    color: var(--color-text-primary);
   }
 
   textarea {
@@ -357,14 +357,14 @@
   justify-content: flex-end;
   gap: var(--space-2);
   padding-top: var(--space-3);
-  border-top: var(--border-1) solid var(--ds-border-subtle);
+  border-top: var(--border-1) solid var(--color-border-secondary);
 }
 
 // Responsive
 
 @include respond-to(md) {
   .calendar-page {
-    padding: 0;
+    padding: var(--space-0);
   }
 
   .event-content {

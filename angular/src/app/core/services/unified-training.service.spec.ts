@@ -9,19 +9,13 @@ import { WellnessService } from "./wellness.service";
 import { TrainingDataService } from "./training-data.service";
 import { PerformanceDataService } from "./performance-data.service";
 import { LoggerService } from "./logger.service";
-import { Observable, of, throwError } from "rxjs";
+import { firstValueFrom, Observable, of, throwError } from "rxjs";
 import { mockUser, mockAuthService } from "./auth.service.spec";
 import { mockSupabaseService } from "./supabase.service.spec";
-import { mockApiService } from "./api.service.spec";
-import { mockReadinessService } from "./readiness.service.spec";
 import { mockPlayerProgramService } from "./player-program.service.mock";
-import { mockWellnessService } from "./wellness.service.spec";
-import { mockTrainingDataService } from "./training-data.service.spec";
-import { mockPerformanceDataService } from "./performance-data.service.spec";
 import { mockLoggerService } from "./logger.service.mock";
-import { mockAcwrService } from "./acwr.service.spec";
 import { AcwrService } from "./acwr.service";
-import { mockDailyRoutine } from "../../../../test/mock-data/unified-training.mock";
+import type { Workout } from "../models/training.models";
 import { mockProtocolMetricsSnapshot } from "../../../../test/mock-data/protocol-metrics.mock";
 import { mockWeeklySchedule } from "../../../../test/mock-data/weekly-schedule.mock";
 import { mockWorkout } from "../../../../test/mock-data/workout.mock";
@@ -30,13 +24,101 @@ import { mockProgramAssignment } from "../../../../test/mock-data/program-assign
 import { signal } from "@angular/core";
 import { USERS } from "../../../../test/mock-data/users.mock"; // Assuming USERS is available
 import { vi } from "vitest";
-import { vi } from "vitest";
 
 // Mock Data (if not globally available or needs specific override)
 const mockUserForAuth = USERS[0]; // Use a specific user for auth tests
 
+/** Mirrors `DEFAULT_DAILY_ROUTINE` in unified-training.service.ts (for expectations). */
+const DEFAULT_DAILY_ROUTINE_EXPECTED = [
+  { id: "wake", label: "Wake Up", time: "07:00", icon: "pi-sun" },
+  { id: "breakfast", label: "Breakfast", time: "08:15", icon: "pi-apple" },
+  {
+    id: "work_start",
+    label: "Work/Study Start",
+    time: "09:00",
+    icon: "pi-briefcase",
+  },
+  { id: "lunch", label: "Lunch", time: "12:30", icon: "pi-utensils" },
+  {
+    id: "work_end",
+    label: "Work/Study End",
+    time: "17:00",
+    icon: "pi-home",
+  },
+  {
+    id: "training",
+    label: "Daily Training",
+    time: "18:00",
+    icon: "pi-bolt",
+  },
+  {
+    id: "shower",
+    label: "Shower (Hot)",
+    time: "20:00",
+    icon: "pi-info-circle",
+  },
+  { id: "sleep", label: "Sleep", time: "22:30", icon: "pi-moon" },
+];
+
+const mockApiService = {
+  get: vi.fn(),
+  post: vi.fn(),
+  patch: vi.fn(),
+  put: vi.fn(),
+  delete: vi.fn(),
+};
+
+const mockReadinessService = {
+  current: vi.fn().mockReturnValue({
+    score: 80,
+    level: "high",
+    wellnessIndex: { completeness: 1 },
+  }),
+  calculateToday: vi.fn().mockReturnValue(
+    of({
+      score: 80,
+      level: "high",
+      wellnessIndex: { completeness: 1 },
+    }),
+  ),
+};
+
+const mockWellnessService = {
+  latestWellnessEntry: signal({
+    hydration: 8,
+    sleepQuality: 7,
+    energyLevel: 7,
+    stressLevel: 4,
+    muscleSoreness: 5,
+  }),
+  logWellness: vi.fn().mockReturnValue(of({ success: true, data: {} })),
+};
+
+const mockTrainingDataService = {
+  createTrainingSession: vi.fn().mockReturnValue(of({ success: true, data: {} })),
+};
+
+const mockPerformanceDataService = {
+  logMeasurement: vi.fn().mockReturnValue(of({ success: true, data: {} })),
+  logSupplement: vi.fn().mockReturnValue(of({ success: true, data: {} })),
+  todaysSupplements: signal([] as unknown[]),
+  latestMeasurement: signal(null),
+  recentMeasurements: signal([]),
+};
+
+const mockAcwrService = {
+  acwrRatio: signal(1.0),
+  acuteLoad: signal(500),
+  chronicLoad: signal(500),
+  weeklyProgression: signal(0),
+  riskZone: signal("optimal"),
+  getTrainingModification: vi.fn().mockReturnValue(of(null)),
+  acwrData: vi.fn().mockReturnValue({}),
+};
+
 // Mock Supabase Service for Auth Service
 const mockSupabaseAuthService = {
+  isAuthenticated: vi.fn().mockReturnValue(true),
   // Mock signIn and signUp methods
   signIn: vi.fn().mockResolvedValue({
     data: { user: mockUserForAuth, session: { access_token: "fake-token" } },
@@ -81,8 +163,12 @@ describe("UnifiedTrainingService", () => {
   let performanceDataService: PerformanceDataService;
   let loggerService: LoggerService;
   let acwrService: AcwrService;
+  let mockPlayerProgram: ReturnType<typeof mockPlayerProgramService>;
+  let mockLoggerInstance: ReturnType<typeof mockLoggerService>;
 
   beforeEach(() => {
+    mockPlayerProgram = mockPlayerProgramService();
+    mockLoggerInstance = mockLoggerService();
     TestBed.configureTestingModule({
       providers: [
         UnifiedTrainingService,
@@ -94,15 +180,15 @@ describe("UnifiedTrainingService", () => {
             currentUser: vi.fn().mockReturnValue(mockUserForAuth), // Ensure this matches signal usage
           },
         },
-        { provide: ApiService, useValue: mockApiService() },
+        { provide: ApiService, useValue: mockApiService },
         { provide: SupabaseService, useValue: mockSupabaseAuthService },
-        { provide: ReadinessService, useValue: mockReadinessService() },
-        { provide: PlayerProgramService, useValue: mockPlayerProgramService() },
-        { provide: WellnessService, useValue: mockWellnessService() },
-        { provide: TrainingDataService, useValue: mockTrainingDataService() },
-        { provide: PerformanceDataService, useValue: mockPerformanceDataService() },
-        { provide: LoggerService, useValue: mockLoggerService() },
-        { provide: AcwrService, useValue: mockAcwrService() },
+        { provide: ReadinessService, useValue: mockReadinessService },
+        { provide: PlayerProgramService, useValue: mockPlayerProgram },
+        { provide: WellnessService, useValue: mockWellnessService },
+        { provide: TrainingDataService, useValue: mockTrainingDataService },
+        { provide: PerformanceDataService, useValue: mockPerformanceDataService },
+        { provide: LoggerService, useValue: mockLoggerInstance },
+        { provide: AcwrService, useValue: mockAcwrService },
       ],
     });
 
@@ -120,6 +206,7 @@ describe("UnifiedTrainingService", () => {
 
     // Ensure mocks are reset and properly configured for each test
     vi.clearAllMocks();
+    mockSupabaseAuthService.isAuthenticated.mockReturnValue(true);
 
     // Mock Supabase currentUser signal and session
     supabaseService.currentUser = signal(mockUserForAuth);
@@ -146,12 +233,12 @@ describe("UnifiedTrainingService", () => {
     } as any;
 
     // Mock other services
-    mockReadinessService.current = vi.fn().mockReturnValue({
+    mockReadinessService.current.mockReturnValue({
       score: 80,
       level: "high",
       wellnessIndex: { completeness: 1 },
     });
-    mockPlayerProgramService.getMyProgramAssignment = vi.fn().mockReturnValue(of(mockProgramAssignment));
+    mockPlayerProgram.getMyProgramAssignment.mockReturnValue(of(mockProgramAssignment));
     mockWellnessService.latestWellnessEntry = signal({
       hydration: 8,
       sleepQuality: 7,
@@ -175,7 +262,7 @@ describe("UnifiedTrainingService", () => {
 
   describe("programAssignment", () => {
     it("should return null if no program assigned", () => {
-      mockPlayerProgramService.getMyProgramAssignment.mockReturnValue(of(null));
+      mockPlayerProgram.getMyProgramAssignment.mockReturnValue(of(null));
       service.loadProgramAssignment();
       expect(service.programAssignment()).toBeNull();
     });
@@ -188,7 +275,7 @@ describe("UnifiedTrainingService", () => {
 
   describe("hasProgramAssignment", () => {
     it("should return false if no program assigned", () => {
-      mockPlayerProgramService.getMyProgramAssignment.mockReturnValue(of(null));
+      mockPlayerProgram.getMyProgramAssignment.mockReturnValue(of(null));
       service.loadProgramAssignment();
       expect(service.hasProgramAssignment()).toBe(false);
     });
@@ -200,7 +287,7 @@ describe("UnifiedTrainingService", () => {
   });
 
   describe("getTodayOverview", () => {
-    it("should fetch overview data", (done) => {
+    it("should fetch overview data", async () => {
       // Mock the API responses for each service call within loadAllTrainingData
       // This mock should be adjusted based on the actual API calls made by loadAllTrainingData
       // For now, let's mock the combineLatest part of the call
@@ -223,34 +310,24 @@ describe("UnifiedTrainingService", () => {
         }),
       );
 
-      service.getTodayOverview().subscribe((data) => {
-        expect(data).not.toBeNull();
-        expect(data?.aiInsight).toBe("Looks good!");
-        done();
-      });
+      const data = await firstValueFrom(service.getTodayOverview());
+      expect(data).not.toBeNull();
+      expect(data?.aiInsight).toBe("Looks good!");
     });
 
-    it("should handle API errors gracefully", (done) => {
+    it("should handle API errors gracefully", async () => {
       // Mock an error during API calls
       vi.spyOn(service as any, "createTodayOverviewRequest").mockReturnValue(
         throwError(() => new Error("API error")),
       );
 
-      service.getTodayOverview().subscribe({
-        next: (data) => {
-          expect(data).toBeNull();
-          done();
-        },
-        error: (err) => {
-          expect(err.message).toBe("API error");
-          done();
-        },
-      });
+      await expect(firstValueFrom(service.getTodayOverview())).rejects.toThrow("API error");
     });
 
     it("should return null if user is not authenticated", () => {
       // Simulate user not authenticated
       authService.isAuthenticated = signal(false);
+      mockSupabaseAuthService.isAuthenticated.mockReturnValue(false);
       // Supabase service signal also needs to be updated if it directly reflects auth state
       supabaseService.currentUser = signal(null);
       authService.currentUser = signal(null);
@@ -268,29 +345,25 @@ describe("UnifiedTrainingService", () => {
   });
 
   describe("generateDailyProtocol", () => {
-    it("should call the API to generate daily protocol", (done) => {
+    it("should call the API to generate daily protocol", async () => {
       apiService.post.mockReturnValue(of({ success: true, data: {} }));
-      service.generateDailyProtocol("2023-10-26").subscribe((response) => {
-        expect(apiService.post).toHaveBeenCalledWith(
-          API_ENDPOINTS.dailyProtocol.generate,
-          { date: "2023-10-26" },
-        );
-        expect(response.success).toBe(true);
-        done();
-      });
+      const response = await firstValueFrom(service.generateDailyProtocol("2023-10-26"));
+      expect(apiService.post).toHaveBeenCalledWith(
+        API_ENDPOINTS.dailyProtocol.generate,
+        { date: "2023-10-26" },
+      );
+      expect(response.success).toBe(true);
     });
   });
 
   describe("getProtocolForDate", () => {
-    it("should call the API to get protocol for a specific date", (done) => {
+    it("should call the API to get protocol for a specific date", async () => {
       apiService.get.mockReturnValue(of({ success: true, data: {} }));
-      service.getProtocolForDate("2023-10-26").subscribe((response) => {
-        expect(apiService.get).toHaveBeenCalledWith(
-          `${API_ENDPOINTS.dailyProtocol.byDate("2023-10-26")}`,
-        );
-        expect(response.success).toBe(true);
-        done();
-      });
+      const response = await firstValueFrom(service.getProtocolForDate("2023-10-26"));
+      expect(apiService.get).toHaveBeenCalledWith(
+        `${API_ENDPOINTS.dailyProtocol.byDate("2023-10-26")}`,
+      );
+      expect(response.success).toBe(true);
     });
   });
 
@@ -365,59 +438,72 @@ describe("UnifiedTrainingService", () => {
   });
 
   describe("markWorkoutComplete", () => {
+    const sampleWorkout: Workout = {
+      id: "test-workout-id",
+      type: "strength",
+      title: mockWorkout.name,
+      description: "",
+      duration: String(mockWorkout.duration),
+      intensity: "medium",
+      location: "gym",
+      icon: "pi-bolt",
+      iconBg: "#fff",
+    };
+
     it("should call snapshot mutation", async () => {
-      const workout = mockWorkout[0];
-      workout.id = "test-workout-id";
-      // Mock snapshot mutation
-      (service as any).supabase.client.from = vi.fn().mockReturnThis();
-      (service as any).supabase.client.update = vi.fn().mockResolvedValue({
-        success: true,
-        data: [],
+      const insertMock = vi.fn().mockResolvedValue({ error: null });
+      (service as any).supabase.client.from = vi.fn().mockReturnValue({
+        insert: insertMock,
       });
-      await service.markWorkoutComplete(workout);
+      await service.markWorkoutComplete(sampleWorkout);
       expect((service as any).supabase.client.from).toHaveBeenCalledWith("training_sessions");
-      expect((service as any).supabase.client.update).toHaveBeenCalled();
+      expect(insertMock).toHaveBeenCalled();
     });
 
     it("should refresh overview after mutation", async () => {
-      const workout = mockWorkout[0];
-      workout.id = "test-workout-id";
-      // Mock snapshot mutation success
-      (service as any).supabase.client.update = vi.fn().mockResolvedValue({
-        success: true,
-        data: [],
+      const insertMock = vi.fn().mockResolvedValue({ error: null });
+      (service as any).supabase.client.from = vi.fn().mockReturnValue({
+        insert: insertMock,
       });
-      vi.spyOn(service as any, "refreshOverviewAfterWorkoutMutation");
-      await service.markWorkoutComplete(workout);
+      vi.spyOn(service as any, "refreshOverviewAfterWorkoutMutation").mockResolvedValue(undefined);
+      await service.markWorkoutComplete(sampleWorkout);
       expect((service as any).refreshOverviewAfterWorkoutMutation).toHaveBeenCalled();
     });
   });
 
   describe("postponeWorkout", () => {
+    const sampleWorkout: Workout = {
+      id: "test-workout-id",
+      type: "strength",
+      title: mockWorkout.name,
+      description: "",
+      duration: String(mockWorkout.duration),
+      intensity: "medium",
+      location: "gym",
+      icon: "pi-bolt",
+      iconBg: "#fff",
+    };
+
     it("should call snapshot mutation", async () => {
-      const workout = mockWorkout[0];
-      workout.id = "test-workout-id";
-      // Mock snapshot mutation
-      (service as any).supabase.client.from = vi.fn().mockReturnThis();
-      (service as any).supabase.client.update = vi.fn().mockResolvedValue({
-        success: true,
-        data: [],
+      const eqMock = vi.fn().mockResolvedValue({ error: null });
+      const updateMock = vi.fn().mockReturnValue({ eq: eqMock });
+      (service as any).supabase.client.from = vi.fn().mockReturnValue({
+        update: updateMock,
       });
-      await service.postponeWorkout(workout);
+      await service.postponeWorkout(sampleWorkout);
       expect((service as any).supabase.client.from).toHaveBeenCalledWith("training_sessions");
-      expect((service as any).supabase.client.update).toHaveBeenCalled();
+      expect(updateMock).toHaveBeenCalled();
+      expect(eqMock).toHaveBeenCalledWith("id", "test-workout-id");
     });
 
     it("should refresh overview after mutation", async () => {
-      const workout = mockWorkout[0];
-      workout.id = "test-workout-id";
-      // Mock snapshot mutation success
-      (service as any).supabase.client.update = vi.fn().mockResolvedValue({
-        success: true,
-        data: [],
+      const eqMock = vi.fn().mockResolvedValue({ error: null });
+      const updateMock = vi.fn().mockReturnValue({ eq: eqMock });
+      (service as any).supabase.client.from = vi.fn().mockReturnValue({
+        update: updateMock,
       });
-      vi.spyOn(service as any, "refreshOverviewAfterWorkoutMutation");
-      await service.postponeWorkout(workout);
+      vi.spyOn(service as any, "refreshOverviewAfterWorkoutMutation").mockResolvedValue(undefined);
+      await service.postponeWorkout(sampleWorkout);
       expect((service as any).refreshOverviewAfterWorkoutMutation).toHaveBeenCalled();
     });
   });
@@ -455,10 +541,20 @@ describe("UnifiedTrainingService", () => {
       };
       // Mock acwrService.acwrRatio signal
       (service as any).acwrService.acwrRatio = signal(1.2);
-      expect(service['generateAiInsight'](mockData as any)).toContain("Stay hydrated");
-      expect(service['generateAiInsight'](mockData as any)).toContain("ACWR: 1.2");
-      expect(service['generateAiInsight'](mockData as any)).toContain("Readiness: High");
-      expect(service['generateAiInsight'](mockData as any)).toContain("Streak: 5 days");
+      (service as any)._trainingStats.set([
+        {
+          label: "Current Streak",
+          value: "5",
+          icon: "",
+          color: "",
+          trend: "",
+          trendType: "neutral",
+        },
+      ]);
+      const insight = service["generateAiInsight"](mockData as any);
+      expect(insight).toContain("5");
+      expect(insight).toContain("streak");
+      expect(insight).toContain("momentum");
     });
 
     it("should handle missing data gracefully", () => {
@@ -476,9 +572,8 @@ describe("UnifiedTrainingService", () => {
         },
       };
       (service as any).acwrService.acwrRatio = signal(0.8);
-      expect(service['generateAiInsight'](mockData as any)).toContain("ACWR: 0.8");
-      expect(service['generateAiInsight'](mockData as any)).toContain("Readiness: Unknown");
-      expect(service['generateAiInsight'](mockData as any)).toContain("No specific recommendations today.");
+      const insight = service["generateAiInsight"](mockData as any);
+      expect(insight).toContain("Consistency is your superpower");
     });
   });
 
@@ -487,21 +582,21 @@ describe("UnifiedTrainingService", () => {
       const mockDailyRoutine = [
         { id: "wake", label: "Wake Up", time: "07:00", icon: "pi-sun" },
       ];
-      api.get.mockReturnValue(of({ success: true, data: { dailyRoutine: mockDailyRoutine } }));
+      mockApiService.get.mockReturnValue(of({ success: true, data: { dailyRoutine: mockDailyRoutine } }));
       await service.loadPlayerSettingsRoutine();
       expect(service.dailyRoutine()).toEqual(mockDailyRoutine);
     });
 
     it("should use default routine if none is loaded", async () => {
-      api.get.mockReturnValue(of({ success: true, data: {} })); // No dailyRoutine
+      mockApiService.get.mockReturnValue(of({ success: true, data: {} })); // No dailyRoutine
       await service.loadPlayerSettingsRoutine();
-      expect(service.dailyRoutine()).toEqual(DEFAULT_DAILY_ROUTINE);
+      expect(service.dailyRoutine()).toEqual(DEFAULT_DAILY_ROUTINE_EXPECTED);
     });
 
     it("should handle API errors gracefully", async () => {
-      api.get.mockReturnValue(throwError(() => new Error("API error")));
+      mockApiService.get.mockReturnValue(throwError(() => new Error("API error")));
       await service.loadPlayerSettingsRoutine();
-      expect(service.dailyRoutine()).toEqual(DEFAULT_DAILY_ROUTINE); // Falls back to default
+      expect(service.dailyRoutine()).toEqual(DEFAULT_DAILY_ROUTINE_EXPECTED); // Falls back to default
     });
   });
 
@@ -525,7 +620,7 @@ describe("UnifiedTrainingService", () => {
     });
 
     it("should set hasProgramAssignment to false if no assignment", () => {
-      mockPlayerProgramService.getMyProgramAssignment.mockReturnValue(of(null));
+      mockPlayerProgram.getMyProgramAssignment.mockReturnValue(of(null));
       service.loadProgramAssignment();
       expect(service.hasProgramAssignment()).toBe(false);
     });
@@ -551,13 +646,9 @@ describe("UnifiedTrainingService", () => {
       expect(service["isExpectedApiClientError"]({ status: 500 })).toBe(false); // Unexpected server error
     });
 
-    it("should return true for network errors", () => {
-      expect(service["isExpectedApiClientError"](new Error("Network error"))).toBe(
-        true,
-      );
-      expect(service["isExpectedApiClientError"]({ message: "Failed to fetch" })).toBe(
-        true,
-      );
+    it("should return false for generic Errors and plain objects (not API-shaped)", () => {
+      expect(service["isExpectedApiClientError"](new Error("Network error"))).toBe(false);
+      expect(service["isExpectedApiClientError"]({ message: "Failed to fetch" })).toBe(false);
     });
 
     it("should return false for unexpected errors", () => {

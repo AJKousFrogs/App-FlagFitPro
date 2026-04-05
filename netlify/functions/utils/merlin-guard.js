@@ -1,5 +1,7 @@
 import { createClient } from "@supabase/supabase-js";
+import { createLogger } from "./structured-logger.js";
 const TRAINING_SESSIONS_TABLE = "training_sessions";
+const logger = createLogger({ service: "netlify.merlin-guard" });
 
 /**
  * Merlin AI Guard - Hard Technical Enforcement
@@ -126,7 +128,11 @@ function guardMerlinRequest(req, res, next) {
   if (isMutationEndpoint(req.method, req.path)) {
     // Log violation IMMEDIATELY
     logMerlinViolation(req, "MUTATION_ATTEMPT").catch((err) => {
-      console.error("[Merlin Guard] Failed to log violation:", err);
+      logger.error("merlin_violation_log_failed", err, {
+        violation_type: "MUTATION_ATTEMPT",
+        method: req.method,
+        path: req.path,
+      });
     });
 
     if (res && res.status) {
@@ -175,9 +181,7 @@ async function logMerlinViolation(req, violationType) {
   // CRITICAL: Do NOT fallback to service_role key - it has write access
   const merlinKey = process.env.MERLIN_READONLY_KEY;
   if (!merlinKey) {
-    console.error(
-      "[Merlin Guard] MERLIN_READONLY_KEY not configured - cannot log violation",
-    );
+    logger.error("merlin_readonly_key_missing_for_violation_log");
     return; // Fail silently - don't use service_role as fallback
   }
 
@@ -196,8 +200,11 @@ async function logMerlinViolation(req, violationType) {
       timestamp: new Date().toISOString(),
     })
     .catch(() => {
-      // Table may not exist yet, log to console
-      console.error("Merlin violation:", violationType, req.method, req.path);
+      logger.error("merlin_violation_log_table_write_failed", undefined, {
+        violation_type: violationType,
+        method: req.method,
+        path: req.path,
+      });
     });
 }
 
@@ -208,7 +215,7 @@ async function logMerlinViolation(req, violationType) {
 async function checkCoachLockedForMerlin(sessionId) {
   const merlinKey = process.env.MERLIN_READONLY_KEY;
   if (!merlinKey) {
-    console.error("[Merlin Guard] MERLIN_READONLY_KEY not configured");
+    logger.error("merlin_readonly_key_missing_for_coach_lock_check");
     return { locked: false, error: "MERLIN_READONLY_KEY not configured" };
   }
 

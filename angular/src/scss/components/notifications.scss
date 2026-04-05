@@ -149,7 +149,7 @@
 
   .app-backdrop {
     position: fixed;
-    inset: 0;
+    inset: var(--space-0);
     z-index: var(--z-index-modal-backdrop);
     background: var(--ui-surface-overlay);
     opacity: 1;
@@ -189,7 +189,7 @@
   .app-alert::before {
     content: "";
     position: absolute;
-    inset: 0 auto 0 0;
+    inset: var(--space-0) auto var(--space-0) var(--space-0);
     width: var(--component-alert-accent-width);
     background: var(--ui-info);
   }
@@ -275,14 +275,14 @@
   }
 
   .app-alert__title {
-    margin: 0;
+    margin: var(--space-0);
     font-size: var(--ds-font-size-sm);
     font-weight: var(--font-weight-semibold);
     line-height: var(--ds-line-height-snug);
   }
 
   .app-alert__message {
-    margin: 0;
+    margin: var(--space-0);
     color: var(--color-text-secondary);
     line-height: var(--ds-line-height-body);
   }
@@ -415,7 +415,7 @@
   }
 
   .toast-summary {
-    margin: 0;
+    margin: var(--space-0);
     font-size: var(--font-body-size);
     font-weight: var(--font-weight-semibold);
     color: var(--color-text-primary);
@@ -423,7 +423,7 @@
   }
 
   .toast-detail {
-    margin: 0;
+    margin: var(--space-0);
     color: var(--color-text-secondary);
     line-height: var(--line-height-normal);
   }
@@ -504,7 +504,7 @@
   }
 
   .banner-message {
-    margin: 0;
+    margin: var(--space-0);
     font-size: var(--font-body-sm-size);
     color: var(--color-text-primary);
     line-height: var(--font-body-sm-line-height);
@@ -538,7 +538,7 @@
   }
 
   .data-source-banner .banner-title {
-    margin: 0;
+    margin: var(--space-0);
     font-size: var(--font-body-size);
     font-weight: var(--font-weight-semibold);
     color: var(--color-text-on-primary);
@@ -737,7 +737,7 @@
 
   .offline-banner {
     position: fixed;
-    inset: 0 0 auto;
+    inset: var(--space-0) var(--space-0) auto;
     z-index: var(--z-index-notification);
     display: flex;
     align-items: center;
@@ -816,7 +816,7 @@
 
   .notifications-panel {
     position: fixed;
-    inset: 0 0 0 auto;
+    inset: var(--space-0) var(--space-0) var(--space-0) auto;
     width: min(26rem, 100vw);
     height: 100vh;
     height: 100dvh;
@@ -870,7 +870,7 @@
   }
 
   .panel-header h3 {
-    margin: 0;
+    margin: var(--space-0);
     font-size: var(--font-body-size);
     font-weight: var(--font-weight-semibold);
     color: var(--color-text-primary);
@@ -1004,7 +1004,7 @@
   .panel-content {
     flex: 1;
     overflow-y: auto;
-    padding: 0;
+    padding: var(--space-0);
 
     /* Enhanced empty state styling */
     .empty-state-container {
@@ -1214,7 +1214,7 @@
   }
 
   .notification-title {
-    margin: 0 0 var(--space-1);
+    margin: var(--space-0) var(--space-0) var(--space-1);
     font-size: var(--font-body-size);
     font-weight: var(--font-weight-semibold);
     color: var(--color-text-primary);
@@ -1222,7 +1222,7 @@
   }
 
   .notification-message {
-    margin: 0 0 var(--space-2);
+    margin: var(--space-0) var(--space-0) var(--space-2);
     color: var(--color-text-secondary);
     line-height: var(--line-height-normal);
   }

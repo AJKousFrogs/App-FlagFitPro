@@ -23,13 +23,13 @@
   width: var(--card-min-height-lg);
   height: var(--card-min-height-lg);
   border-radius: var(--radius-circle);
-  margin: 0 auto var(--space-3);
+  margin: var(--space-0) auto var(--space-3);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   border: var(--border-4) solid;
-  background: var(--ds-surface-elevated);
+  background: var(--surface-card);
 
   &.debt-none {
     border-color: var(--ds-primary-green);
@@ -84,7 +84,7 @@
 
   .debt-unit {
     font-size: var(--ds-font-size-md);
-    color: var(--ds-text-secondary);
+    color: var(--color-text-secondary);
     margin-top: var(--space-1);
   }
 
@@ -97,9 +97,9 @@
 }
 
 .debt-description {
-  color: var(--ds-text-secondary);
+  color: var(--color-text-secondary);
   font-size: var(--ds-font-size-md);
-  margin: 0;
+  margin: var(--space-0);
 }
 
 .stat-card {
@@ -138,12 +138,12 @@
 
     .impact-label {
       font-weight: var(--ds-font-weight-medium);
-      color: var(--ds-text-primary);
+      color: var(--color-text-primary);
     }
 
     .impact-value {
       font-weight: var(--ds-font-weight-semibold);
-      color: var(--ds-text-primary);
+      color: var(--color-text-primary);
 
       &.danger {
         color: var(--color-status-error);
@@ -164,8 +164,8 @@
 
     .impact-description {
       font-size: var(--ds-font-size-md);
-      color: var(--ds-text-secondary);
-      margin: 0;
+      color: var(--color-text-secondary);
+      margin: var(--space-0);
     }
 
     &.warning {
@@ -185,20 +185,20 @@
     gap: var(--space-2);
     padding: var(--space-4);
     font-weight: var(--ds-font-weight-semibold);
-    color: var(--ds-text-primary);
+    color: var(--color-text-primary);
 
   }
 
   .recommendation-content {
     .rec-intro {
-      margin: 0 0 var(--space-3) 0;
-      color: var(--ds-text-primary);
+      margin: var(--space-0) var(--space-0) var(--space-3) var(--space-0);
+      color: var(--color-text-primary);
     }
 
     .rec-list {
       list-style: none;
-      padding: 0;
-      margin: 0;
+      padding: var(--space-0);
+      margin: var(--space-0);
       display: flex;
       flex-direction: column;
       gap: var(--space-2);
@@ -208,7 +208,7 @@
         align-items: flex-start;
         gap: var(--space-3);
         padding: var(--space-2);
-        background: var(--ds-surface-base);
+        background: var(--surface-secondary);
         border-radius: var(--radius-md);
       }
     }
@@ -241,7 +241,7 @@
     gap: var(--space-2);
     padding: var(--space-4);
     font-weight: var(--ds-font-weight-semibold);
-    color: var(--ds-text-primary);
+    color: var(--color-text-primary);
 
     i {
       color: var(--ds-primary-green);
@@ -256,15 +256,15 @@
 
   .research-item {
     font-size: var(--ds-font-size-md);
-    color: var(--ds-text-secondary);
+    color: var(--color-text-secondary);
 
     strong {
-      color: var(--ds-text-primary);
+      color: var(--color-text-primary);
     }
 
     .citation {
       font-size: var(--ds-font-size-xs);
-      color: var(--ds-text-tertiary);
+      color: var(--color-text-tertiary);
       font-style: italic;
     }
   }

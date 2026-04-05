@@ -79,13 +79,13 @@ async function login(page: Page): Promise<void> {
   await page.waitForLoadState("networkidle");
   await dismissCookieBanner(page);
 
-  const emailInput = page.locator('input[type="email"]');
+  const emailInput = page.locator('[data-testid="email-input"] input');
   await emailInput.waitFor({ state: "visible", timeout: 10000 });
   await emailInput.click();
   await emailInput.fill(_TEST_USER.email);
   await emailInput.press("Tab");
 
-  const passwordInput = page.locator('input[type="password"]');
+  const passwordInput = page.locator('[data-testid="password-input"] input');
   await passwordInput.click();
   await passwordInput.fill(_TEST_USER.password);
   await passwordInput.press("Tab");
@@ -174,11 +174,11 @@ test.describe("Smoke Test - App Shell", () => {
     // Should redirect to login page
     await expect(page).toHaveURL(/.*login.*/, { timeout: 10000 });
 
-    // Login page should have email and password inputs
-    await expect(page.locator('input[type="email"]')).toBeVisible({
+    // Login page should have email and password inputs (app-form-input defaults email to type="text")
+    await expect(page.locator('[data-testid="email-input"] input')).toBeVisible({
       timeout: 5000,
     });
-    await expect(page.locator('input[type="password"]')).toBeVisible({
+    await expect(page.locator('[data-testid="password-input"] input')).toBeVisible({
       timeout: 5000,
     });
   });
@@ -188,10 +188,10 @@ test.describe("Smoke Test - App Shell", () => {
     await dismissCookieBanner(page);
 
     // Verify login form elements
-    await expect(page.locator('input[type="email"]')).toBeVisible({
+    await expect(page.locator('[data-testid="email-input"] input')).toBeVisible({
       timeout: 5000,
     });
-    await expect(page.locator('input[type="password"]')).toBeVisible({
+    await expect(page.locator('[data-testid="password-input"] input')).toBeVisible({
       timeout: 5000,
     });
     await expect(page.locator('button[type="submit"]')).toBeVisible({
@@ -207,7 +207,9 @@ test.describe("Smoke Test - App Shell", () => {
     await page.goto(`${BASE_URL}/reset-password`);
     await dismissCookieBanner(page);
 
-    await expect(page.locator('input[type="email"]')).toBeVisible({
+    await expect(
+      page.locator("form.elite-auth-form app-form-input input").first(),
+    ).toBeVisible({
       timeout: 5000,
     });
     await expect(page.locator('button[type="submit"]')).toBeVisible({

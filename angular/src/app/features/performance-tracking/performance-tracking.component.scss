@@ -5,18 +5,18 @@
   grid-template-columns: repeat(3, 1fr);
   gap: var(--space-5);
   max-width: var(--layout-page-max-width-wide);
-  margin: 0 auto;
+  margin: var(--space-0) auto;
   width: 100%;
   padding-bottom: var(--space-8);
 
   .bento-item {
-    background: var(--surface-primary);
-    border: var(--border-1) solid var(--ui-border-subtle);
+    background: var(--surface-card);
+    border: var(--border-1) solid var(--color-border-primary);
     border-radius: var(--radius-xl);
     padding: var(--space-5);
     box-shadow: var(--shadow-sm);
     min-width: 0;
-    transition: transform var(--transition-base), box-shadow var(--transition-base);
+    transition: transform var(--transition-fast), box-shadow var(--transition-fast);
 
     &:hover {
       box-shadow: var(--shadow-md);
@@ -24,8 +24,8 @@
 
 
     .bento-title {
-      font-size: var(--ds-font-size-lg);
-      font-weight: var(--ds-font-weight-bold);
+      font-size: var(--ds-font-size-md);
+      font-weight: var(--ds-font-weight-semibold);
       margin-bottom: var(--space-4);
       color: var(--color-text-primary);
       display: flex;
@@ -43,7 +43,7 @@
     background: transparent;
     border: none;
     box-shadow: none;
-    padding: 0;
+    padding: var(--space-0);
   }
 
   /* Rankings List */
@@ -58,7 +58,7 @@
     align-items: center;
     gap: var(--space-3);
     padding: var(--space-3);
-    background: var(--ui-surface-subtle);
+    background: var(--surface-secondary);
     border-radius: var(--radius-lg);
 
     .rank-badge {
@@ -70,13 +70,13 @@
       border-radius: var(--radius-full);
       background: var(--surface-tertiary);
       font-size: var(--ds-font-size-xs);
-      font-weight: var(--ds-font-weight-bold);
+      font-weight: var(--ds-font-weight-semibold);
 
       &.gold { background: var(--color-medal-gold-gradient); color: var(--color-medal-gold-text); }
     }
 
     .metric-name { flex: 1; font-weight: var(--ds-font-weight-medium); }
-    .your-value { font-weight: var(--ds-font-weight-bold); color: var(--ds-primary-green); }
+    .your-value { font-weight: var(--ds-font-weight-semibold); color: var(--ds-primary-green); }
   }
 
   /* Benchmarks */
@@ -94,7 +94,7 @@
 
   .priority-card {
     padding: var(--space-4);
-    background: var(--ui-surface-subtle);
+    background: var(--surface-secondary);
     border-radius: var(--radius-lg);
     border-left: var(--border-4) solid var(--color-status-warning);
 
@@ -102,11 +102,11 @@
       display: flex;
       justify-content: space-between;
       margin-bottom: var(--space-2);
-      .metric { font-weight: var(--ds-font-weight-bold); }
+      .metric { font-weight: var(--ds-font-weight-semibold); }
     }
 
     .rec-list {
-      margin: 0;
+      margin: var(--space-0);
       padding-left: var(--space-4);
       font-size: var(--ds-font-size-xs);
       color: var(--color-text-secondary);
@@ -138,7 +138,7 @@
 }
 
 .performance-preview-banner {
-  margin: 0;
+  margin: var(--space-0);
 }
 
 .team-rankings-card,
@@ -270,7 +270,7 @@
   }
 
   ul {
-    margin: 0;
+    margin: var(--space-0);
     padding-left: var(--space-6);
     color: var(--color-text-secondary);
 
@@ -361,7 +361,7 @@
 }
 
 .achievements-title {
-  margin: 0 0 var(--space-3) 0;
+  margin: var(--space-0) var(--space-0) var(--space-3) var(--space-0);
   font-size: var(--ds-font-size-md);
   font-weight: var(--ds-font-weight-semibold);
   color: var(--color-text-primary);
@@ -378,7 +378,7 @@
 }
 
 .rankings-subtitle {
-  margin: 0 0 var(--space-3) 0;
+  margin: var(--space-0) var(--space-0) var(--space-3) var(--space-0);
   font-size: var(--ds-font-size-md);
   font-weight: var(--ds-font-weight-semibold);
   color: var(--color-text-primary);
@@ -423,7 +423,7 @@
   padding: var(--space-1) var(--space-2);
   border-radius: var(--radius-full);
   font-size: var(--ds-font-size-xs);
-  font-weight: var(--ds-font-weight-bold);
+  font-weight: var(--ds-font-weight-semibold);
   background: var(--surface-tertiary);
   color: var(--color-text-secondary);
 

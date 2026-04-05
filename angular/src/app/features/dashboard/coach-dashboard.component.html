@@ -293,9 +293,7 @@
           />
         </app-dialog>
         } @placeholder {
-          <div class="defer-dialog-chunk-placeholder" role="status" aria-live="polite">
-            <app-loading [visible]="true" variant="skeleton" message="Loading session dialog…" />
-          </div>
+          <span class="defer-dialog-chunk-placeholder"></span>
         }
 
         <!-- Team Message Dialog -->
@@ -337,9 +335,7 @@
           />
         </app-dialog>
         } @placeholder {
-          <div class="defer-dialog-chunk-placeholder" role="status" aria-live="polite">
-            <app-loading [visible]="true" variant="skeleton" message="Loading message dialog…" />
-          </div>
+          <span class="defer-dialog-chunk-placeholder"></span>
         }
 
         <!-- Request Access Dialog -->
@@ -385,9 +381,7 @@
           />
         </app-dialog>
         } @placeholder {
-          <div class="defer-dialog-chunk-placeholder" role="status" aria-live="polite">
-            <app-loading [visible]="true" variant="skeleton" message="Loading request dialog…" />
-          </div>
+          <span class="defer-dialog-chunk-placeholder"></span>
         }
       }
       <!-- End of @else for content -->

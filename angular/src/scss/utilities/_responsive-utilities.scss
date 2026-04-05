@@ -281,7 +281,7 @@ $touch-target-large: calc(var(--touch-target-lg) + var(--space-1));
     max-height: 100vh;
 height: 100dvh; // Modern: keyboard-aware
     border-radius: 0;
-    margin: 0;
+    margin: var(--space-0);
   }
 }
 

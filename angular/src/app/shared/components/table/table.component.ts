@@ -114,7 +114,8 @@ import { TableModule, TablePageEvent, TableRowSelectEvent, TableRowUnSelectEvent
         width: 100%;
       }
       .app-table-container {
-        @apply w-full overflow-hidden rounded-lg border border-surface-200 dark:border-surface-700;
+        @apply w-full overflow-x-auto rounded-lg border border-surface-200 dark:border-surface-700;
+        -webkit-overflow-scrolling: touch;
       }
       .app-table-host .p-datatable-header {
         @apply bg-surface-50 dark:bg-surface-800 border-b border-surface-200 dark:border-surface-700;
@@ -129,6 +130,10 @@ import { TableModule, TablePageEvent, TableRowSelectEvent, TableRowUnSelectEvent
         --p-paginator-border-color: transparent;
         --p-paginator-item-border-radius: var(--radius-md);
         --p-paginator-item-hover-background: var(--surface-tertiary);
+      }
+      .app-table-host th,
+      .app-table-host td {
+        white-space: nowrap;
       }
     `,
   ],

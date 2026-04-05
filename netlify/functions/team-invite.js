@@ -5,6 +5,19 @@ import { getSupabaseClient } from "./utils/auth-helper.js";
 import { createSuccessResponse, createErrorResponse, handleNotFoundError } from "./utils/error-handler.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { parseJsonObjectBody } from "./utils/input-validator.js";
+import { buildRequestLogContext, createLogger } from "./utils/structured-logger.js";
+
+const logger = createLogger({ service: "netlify.team-invite" });
+
+function createRequestLogger(event, meta = {}) {
+  return logger.child(
+    buildRequestLogContext(event, {
+      request_id: meta.requestId,
+      correlation_id: meta.correlationId,
+      trace_id: meta.traceId ?? meta.correlationId,
+    }),
+  );
+}
 
 // Netlify Function: Team Invitation
 // Sends email invitations to join a team
@@ -175,7 +188,11 @@ const handler = async (event, context) => {
     allowedMethods: ["POST"],
     rateLimitType: "CREATE",
     requireAuth: true,
-    handler: async (event, _context, { userId, requestId }) => {
+    handler: async (event, _context, { userId, requestId, correlationId }) => {
+      const requestLogger = createRequestLogger(event, {
+        requestId,
+        correlationId,
+      });
       let body;
       try {
         body = parseJsonObjectBody(event.body);
@@ -353,7 +370,14 @@ const handler = async (event, context) => {
             );
           }
         }
-        console.error("Error creating invitation:", inviteError);
+        requestLogger.error(
+          "team_invitation_insert_failed",
+          inviteError,
+          {
+            team_id: teamId,
+            email: normalizedEmail,
+          },
+        );
         throw new Error("Failed to create invitation");
       }
 
@@ -387,10 +411,23 @@ const handler = async (event, context) => {
       } catch (mailError) {
         // Avoid leaving pending invitations that were never delivered.
         await supabase.from("team_invitations").delete().eq("id", invitation.id);
+        requestLogger.error(
+          "team_invitation_email_send_failed",
+          mailError,
+          {
+            team_id: teamId,
+            email: normalizedEmail,
+          },
+        );
         throw mailError;
       }
 
-      console.log(`✅ Team invitation sent to ${email} for team ${team.name}`);
+      requestLogger.info("team_invitation_sent", {
+        email,
+        team_id: teamId,
+        team_name: team.name,
+        invitation_id: invitation.id,
+      });
 
       return createSuccessResponse(
         {

@@ -1,11 +1,9 @@
 <ng-container>
-  <!-- Weather Widget -->
-  <app-header-weather-widget />
-
   <!-- Notifications -->
   <button
     class="header-utility notifications-trigger"
     (click)="toggleNotifications.emit()"
+    [pTooltip]="notificationCount() > 0 ? notificationCount() + ' unread' : 'Notifications'"
     aria-label="Notifications"
     type="button"
   >
@@ -17,37 +15,13 @@
         }}</span>
       }
     </div>
-    <span class="utility-label">Alerts</span>
-  </button>
-
-  <!-- Theme Toggle -->
-  <button
-    class="header-utility theme-toggle"
-    (click)="cycleTheme()"
-    [pTooltip]="themeTooltip()"
-    aria-label="Toggle theme"
-    type="button"
-  >
-    <i [class]="'pi ' + themeIcon()" aria-hidden="true"></i>
-    <span class="utility-label">{{ themeLabel() }}</span>
-  </button>
-
-  <!-- Settings (Desktop Only) -->
-  <button
-    class="header-utility desktop-only-util"
-    (click)="openSettings()"
-    pTooltip="Settings"
-    aria-label="Settings"
-    type="button"
-  >
-    <i class="pi pi-cog" aria-hidden="true"></i>
-    <span class="utility-label">Settings</span>
   </button>
 
   <!-- User Avatar -->
   <button
     class="header-profile"
     (click)="toggleUserMenu($event)"
+    [pTooltip]="'Account'"
     aria-label="User menu"
     aria-haspopup="menu"
     type="button"

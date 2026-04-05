@@ -14,15 +14,20 @@
   width: var(--space-12);
   height: var(--space-12);
   min-width: var(--space-12);
-  background: var(--ui-surface-subtle);
-  border-radius: var(--radius-xl);
+  background: linear-gradient(
+    135deg,
+    var(--ds-primary-green-light) 0%,
+    var(--ds-primary-green) 100%
+  );
+  border-radius: var(--radius-2xl);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--color-text-secondary);
+  color: var(--color-text-on-primary);
   font-size: var(--ds-font-size-md);
-  border: var(--border-1) solid var(--color-border-subtle);
-  box-shadow: inset 0 0 0 var(--border-1) var(--overlay-white-15);
+  border: none;
+  box-shadow: 0 4px 14px rgba(8, 153, 73, 0.28);
+  flex-shrink: 0;
 }
 
 .welcome-text {
@@ -32,10 +37,11 @@
 
 .welcome-greeting {
   font-size: clamp(var(--ds-font-size-2xl), 4vw, var(--ds-font-size-3xl));
-  font-weight: var(--ds-font-weight-semibold);
-  margin: 0;
+  font-weight: var(--ds-font-weight-bold);
+  margin: var(--space-0);
   color: var(--color-text-primary);
   line-height: var(--ds-line-height-tight);
+  letter-spacing: -0.025em;
 }
 
 .welcome-name {
@@ -60,7 +66,7 @@
 }
 
 .exact-training-kicker {
-  margin: 0;
+  margin: var(--space-0);
   font-size: var(--ds-font-size-xs);
   font-weight: var(--ds-font-weight-semibold);
   letter-spacing: var(--ds-letter-spacing-caption);
@@ -69,15 +75,16 @@
 }
 
 .exact-training-title {
-  margin: 0;
+  margin: var(--space-0);
   font-size: clamp(var(--ds-font-size-xl), 2.4vw, var(--ds-font-size-2xl));
   font-weight: var(--ds-font-weight-bold);
   color: var(--color-text-primary);
   line-height: var(--ds-line-height-tight);
+  letter-spacing: -0.025em;
 }
 
 .exact-training-description {
-  margin: 0;
+  margin: var(--space-0);
   font-size: var(--ds-font-size-sm);
   line-height: var(--ds-line-height-1-6);
   color: var(--color-text-secondary);
@@ -91,12 +98,19 @@
 
 .exact-training-metric {
   padding: var(--component-card-padding-compact);
-  border: var(--component-card-border);
-  border-radius: var(--component-card-radius);
-  background: var(--ui-surface-subtle);
+  border: var(--border-1) solid var(--color-border-primary);
+  border-radius: var(--radius-xl);
+  background: var(--surface-secondary);
   display: flex;
   flex-direction: column;
   gap: var(--space-1);
+  transition: border-color var(--transition-fast) var(--ease-standard);
+
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      border-color: var(--ds-primary-green);
+    }
+  }
 }
 
 .exact-training-metric__label {
@@ -124,7 +138,7 @@
   align-items: center;
   padding: var(--space-2) var(--space-3);
   border-radius: var(--radius-pill);
-  background: var(--ui-surface-subtle);
+  background: var(--surface-secondary);
   border: var(--border-1) solid var(--color-border-secondary);
   color: var(--color-text-secondary);
   font-size: var(--ds-font-size-xs);

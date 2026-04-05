@@ -11,14 +11,11 @@
   align-items: center;
   margin-bottom: var(--page-header-margin-bottom, 0);
   gap: var(--page-header-gap, var(--component-section-gap));
-  padding: var(--page-header-padding, var(--space-5) var(--space-6));
-  background: var(--page-header-bg, var(--surface-primary));
-  border: var(
-    --page-header-border,
-    var(--border-1) solid var(--color-border-primary)
-  );
-  border-radius: var(--page-header-radius, var(--radius-xl));
-  box-shadow: var(--page-header-shadow, var(--shadow-1));
+  padding: var(--page-header-padding, var(--space-2) 0 var(--space-6) 0);
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
 
   // Support explicit hiding via input binding
   &.hidden-in-composite {
@@ -28,7 +25,7 @@
   &.page-header--hero {
     align-items: flex-start;
     flex-direction: column;
-    padding: var(--page-header-padding, var(--space-8) var(--space-6));
+    padding: var(--page-header-padding, var(--space-8) 0);
   }
 }
 
@@ -36,6 +33,15 @@
   flex: 1;
   min-width: 0;
   max-width: var(--page-header-content-max-width, none);
+}
+
+.page-eyebrow {
+  font-size: var(--ds-font-size-xs);
+  font-weight: var(--ds-font-weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--ds-primary-green);
+  margin: var(--space-0) var(--space-0) var(--space-2) var(--space-0);
 }
 
 .page-header > :not(.header-content) {
@@ -50,38 +56,26 @@
   display: flex;
   align-items: center;
   gap: var(--space-3);
-  font-size: var(
-    --page-header-title-size,
-    var(--component-section-title-size)
-  );
-  font-weight: var(
-    --page-header-title-weight,
-    var(--component-section-title-weight)
-  );
+  font-size: var(--page-header-title-size, var(--ds-font-size-3xl));
+  font-weight: var(--ds-font-weight-bold);
+  letter-spacing: -0.04em;
   line-height: var(--ds-line-height-tight);
-  margin: 0 0 var(--space-2) 0;
-  color: var(--page-header-title-color, var(--component-section-title-color));
+  margin: var(--space-0) var(--space-0) var(--space-2) var(--space-0);
+  color: var(--page-header-title-color, var(--color-text-primary));
 
   i {
-    color: var(--page-header-icon-color, var(--component-section-icon-color));
+    color: var(--page-header-icon-color, var(--ds-primary-green));
+    font-size: var(--ds-font-size-2xl);
   }
 }
 
 .page-subtitle {
-  font-size: var(
-    --page-header-subtitle-size,
-    var(--component-section-subtitle-size)
-  );
-  font-weight: var(
-    --page-header-subtitle-weight,
-    var(--component-section-subtitle-weight)
-  );
-  line-height: var(--ds-line-height-normal);
-  color: var(
-    --page-header-subtitle-color,
-    var(--component-section-subtitle-color)
-  );
-  margin: 0;
+  font-size: var(--page-header-subtitle-size, var(--ds-font-size-md));
+  font-weight: var(--ds-font-weight-regular);
+  line-height: var(--ds-line-height-relaxed);
+  color: var(--page-header-subtitle-color, var(--color-text-secondary));
+  margin: var(--space-0);
+  max-width: 52ch;
 }
 
 .page-header--hero .header-content {
@@ -97,7 +91,8 @@
 
 .page-header--hero .page-title {
   align-items: flex-start;
-  font-size: var(--page-header-title-size, var(--ds-font-size-3xl));
+  font-size: var(--page-header-title-size, var(--ds-font-size-3rem));
+  letter-spacing: -0.05em;
 }
 
 .page-header--hero .page-title i {
@@ -133,7 +128,9 @@
 }
 
 .page-header--hero .page-subtitle {
-  color: var(--page-header-subtitle-color, var(--color-text-on-primary));
+  font-size: var(--ds-font-size-lg);
+  color: var(--page-header-subtitle-color, var(--color-text-secondary));
+  max-width: 60ch;
 }
 
 @include respond-to(md) {
@@ -141,6 +138,33 @@
     flex-direction: column;
     align-items: flex-start;
     gap: var(--space-4);
+    padding: var(--page-header-padding, var(--space-2) 0 var(--space-5) 0);
+  }
+
+  .page-title {
+    font-size: var(--ds-font-size-2xl);
+    letter-spacing: -0.03em;
+    gap: var(--space-2);
+  }
+
+  .page-subtitle {
+    font-size: var(--ds-font-size-sm);
+  }
+}
+
+@include respond-to(sm) {
+  .page-header {
+    padding: var(--page-header-padding, var(--space-2) 0 var(--space-4) 0);
+    gap: var(--space-3);
+  }
+
+  .page-title {
+    font-size: var(--ds-font-size-xl);
+    letter-spacing: -0.025em;
+  }
+
+  .page-header--hero .page-title {
+    font-size: var(--ds-font-size-2xl);
   }
 }
 

@@ -5,13 +5,13 @@
   grid-template-columns: repeat(3, 1fr);
   gap: var(--space-5);
   max-width: var(--layout-page-max-width-wide);
-  margin: 0 auto;
+  margin: var(--space-0) auto;
   width: 100%;
   padding-bottom: var(--space-8);
 
   .bento-item {
-    background: var(--surface-primary);
-    border: var(--border-1) solid var(--ui-border-subtle);
+    background: var(--surface-card);
+    border: var(--border-1) solid var(--color-border-primary);
     border-radius: var(--radius-xl);
     padding: var(--space-5);
     box-shadow: var(--shadow-sm);
@@ -41,15 +41,15 @@
     justify-content: center;
     gap: var(--space-2);
     padding: var(--space-4) var(--space-2);
-    background: var(--ui-surface-subtle);
-    border: var(--border-1) solid var(--ui-border-default);
+    background: var(--surface-secondary);
+    border: var(--border-1) solid var(--color-border-primary);
     border-radius: var(--radius-lg);
     cursor: pointer;
     transition:
-      border-color var(--transition-base),
-      background-color var(--transition-base),
-      transform var(--transition-base),
-      color var(--transition-base);
+      border-color var(--transition-fast),
+      background-color var(--transition-fast),
+      transform var(--transition-fast),
+      color var(--transition-fast);
     color: var(--color-text-secondary);
 
     i {
@@ -64,12 +64,12 @@
 
     &:hover {
       border-color: var(--cat-color, var(--ds-primary-green));
-      background: var(--surface-primary);
+      background: var(--surface-card);
       transform: translateY(calc(-1 * var(--space-0-5)));
     }
 
     &.active {
-      background: var(--surface-primary);
+      background: var(--surface-card);
       border-color: var(--cat-color, var(--ds-primary-green));
       box-shadow: var(--shadow-sm);
       border-width: var(--border-2);
@@ -86,15 +86,15 @@
   }
 
   .exercise-card {
-    background: var(--surface-primary);
-    border: var(--border-1) solid var(--ui-border-subtle);
+    background: var(--surface-card);
+    border: var(--border-1) solid var(--color-border-primary);
     border-radius: var(--radius-lg);
     overflow: hidden;
     cursor: pointer;
     transition:
-      transform var(--transition-base),
-      box-shadow var(--transition-base),
-      border-color var(--transition-base);
+      transform var(--transition-fast),
+      box-shadow var(--transition-fast),
+      border-color var(--transition-fast);
 
     &:hover {
       transform: translateY(calc(-1 * var(--space-1)));
@@ -105,7 +105,7 @@
     .ex-image-placeholder {
       position: relative;
       aspect-ratio: 16/9;
-      background: var(--ui-surface-muted);
+      background: var(--surface-secondary);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -142,7 +142,7 @@
     }
 
     .ex-name {
-      margin: 0 0 var(--space-1);
+      margin: var(--space-0) var(--space-0) var(--space-1);
       font-size: var(--ds-font-size-md);
       font-weight: var(--ds-font-weight-bold);
       color: var(--color-text-primary);
@@ -165,7 +165,7 @@
 
     .ex-tag {
       font-size: var(--font-caption-size);
-      background: var(--ui-surface-subtle);
+      background: var(--surface-secondary);
       color: var(--color-text-secondary);
       padding: var(--space-0-5) var(--space-1-5);
       border-radius: var(--radius-sm);

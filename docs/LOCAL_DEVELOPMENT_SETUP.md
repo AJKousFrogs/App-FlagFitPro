@@ -1,7 +1,8 @@
 # Local Development Setup
 
-**Version:** 3.0  
-**Last Updated:** January 2026  
+**Document version:** 4.0  
+**Application release:** 4.0.0 (see [RELEASE_NOTES_4.0.0.md](./RELEASE_NOTES_4.0.0.md))  
+**Last Updated:** April 2026  
 **Stack:** Angular 21 + PrimeNG 21 + Supabase + Netlify Functions
 
 ---

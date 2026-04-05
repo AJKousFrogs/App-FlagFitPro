@@ -14,6 +14,7 @@ import { LoadingOverlayComponent } from "./shared/components/loading-overlay/loa
 import { SkipToContentComponent } from "./shared/components/skip-to-content/skip-to-content.component";
 import { ConfirmDialog } from "primeng/confirmdialog";
 import { ToastComponent } from "./shared/components/toast/toast.component";
+import { HttpCacheService } from "./core/interceptors/cache.interceptor";
 import { CookieConsentService } from "./core/services/cookie-consent.service";
 import { RouteEntry, RouteShellService } from "./core/services/route-shell.service";
 import { ThemeService } from "./core/services/theme.service";
@@ -84,6 +85,9 @@ export class AppComponent {
   private readonly _themeService = inject(ThemeService);
 
   constructor() {
+    this.destroyRef.onDestroy(() => {
+      HttpCacheService.destroy();
+    });
     this.applyPlatformClasses();
     this.syncRouteClasses();
     this.initPrimeIconsLoading();

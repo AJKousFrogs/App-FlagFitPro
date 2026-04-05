@@ -74,7 +74,7 @@
 .assignments-list {
   display: flex;
   flex-direction: column;
-  gap: 0;
+  gap: var(--space-0);
 }
 
 .assignment-item {
@@ -170,12 +170,12 @@
   padding: var(--space-3);
   background: var(--color-surface-secondary);
   border-radius: var(--radius-lg);
-  margin: 0;
+  margin: var(--space-0);
 }
 
 @include respond-to(md) {
   .officials-page {
-    padding: 0;
+    padding: var(--space-0);
   }
 
   .officials-content {

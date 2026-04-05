@@ -6,7 +6,7 @@
  * Features:
  * - 4 sliders: Pain, Fatigue, Sleep Quality, Motivation (0-10)
  * - Auto-computed readiness score
- * - Saves via /api/wellness/checkin (single source of truth)
+ * - Saves via Supabase RPC `upsert_wellness_checkin`
  * - Can be shown as modal or inline card
  * - "Skip for now" option with gentle reminder
  */
@@ -20,9 +20,7 @@ import {
   ChangeDetectionStrategy,
   input,
   output,
-  DestroyRef,
 } from "@angular/core";
-import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { FormsModule } from "@angular/forms";
 import { ButtonComponent } from "../button/button.component";
 import { CardShellComponent } from "../card-shell/card-shell.component";
@@ -34,10 +32,13 @@ import { TOAST } from "../../../core/constants/toast-messages.constants";
 import { ToastService } from "../../../core/services/toast.service";
 import { LoggerService } from "../../../core/services/logger.service";
 import { ProfileCompletionService } from "../../../core/services/profile-completion.service";
-import { ApiService, API_ENDPOINTS } from "../../../core/services/api.service";
-import { extractApiPayload } from "../../../core/utils/api-response-mapper";
+import {
+  AcwrCalculationResult,
+  WellnessService,
+} from "../../../core/services/wellness.service";
 import { SupabaseService } from "../../../core/services/supabase.service";
 import { DailyReadinessFormContentComponent } from "./daily-readiness-form-content.component";
+import { firstValueFrom } from "rxjs";
 
 // Centralized wellness constants
 import {
@@ -95,6 +96,7 @@ interface DailyState {
           [readinessHint]="readinessHint()"
           [riskFlags]="riskFlags()"
           [lastWeight]="lastWeight()"
+          [acwrResult]="acwrSnapshot()"
           (sliderChange)="onSliderStateChange($event)"
           (weightChange)="onWeightChange($event)"
         />
@@ -131,6 +133,7 @@ interface DailyState {
           [readinessHint]="readinessHint()"
           [riskFlags]="riskFlags()"
           [lastWeight]="lastWeight()"
+          [acwrResult]="acwrSnapshot()"
           (sliderChange)="onSliderStateChange($event)"
           (weightChange)="onWeightChange($event)"
         />
@@ -151,12 +154,14 @@ interface DailyState {
   styleUrl: "./daily-readiness.component.scss",
 })
 export class DailyReadinessComponent implements OnInit {
-  private api = inject(ApiService);
   private supabase = inject(SupabaseService);
   private toastService = inject(ToastService);
   private logger = inject(LoggerService);
   private profileCompletionService = inject(ProfileCompletionService);
-  private destroyRef = inject(DestroyRef);
+  private wellnessService = inject(WellnessService);
+
+  /** Prevents duplicate saves before `saving` signal updates the view. */
+  private saveLocked = false;
 
   readonly mode = input<"modal" | "card">("modal");
   readonly showOnInit = input<boolean>(true);
@@ -167,6 +172,8 @@ export class DailyReadinessComponent implements OnInit {
   dialogVisible = false;
   saving = signal(false);
   lastWeight = signal<number | null>(null);
+  /** Latest ACWR from `calculate_acwr` after a successful save. */
+  acwrSnapshot = signal<AcwrCalculationResult | null>(null);
 
   state = signal<DailyState>({
     pain_level: WELLNESS.DEFAULT_PAIN_LEVEL,
@@ -237,24 +244,23 @@ export class DailyReadinessComponent implements OnInit {
     if (!userId) return;
 
     try {
+      await this.supabase.waitForInit();
       const today = new Date().toISOString().split("T")[0];
-      // Check daily_wellness_checkin via API (single source of truth)
-      this.api
-        .get(`/api/wellness/checkin?date=${today}`)
-        .pipe(takeUntilDestroyed(this.destroyRef))
-        .subscribe({
-          next: (response) => {
-            if (!extractApiPayload(response)) {
-              this.dialogVisible = true;
-            }
-          },
-          error: () => {
-            // No entry for today, show prompt
-            this.dialogVisible = true;
-          },
-        });
+      const { data, error } = await this.supabase.client
+        .from("daily_wellness_checkin")
+        .select("id")
+        .eq("user_id", userId)
+        .eq("checkin_date", today)
+        .maybeSingle();
+
+      if (error) {
+        this.dialogVisible = true;
+        return;
+      }
+      if (!data) {
+        this.dialogVisible = true;
+      }
     } catch {
-      // No entry for today, show prompt
       this.dialogVisible = true;
     }
   }
@@ -283,93 +289,94 @@ export class DailyReadinessComponent implements OnInit {
   }
 
   /**
-   * Save the daily state via /api/wellness/checkin (single source of truth)
-   * Maps: pain_level → muscleSoreness, fatigue_level → energyLevel (inverted)
-   * Also saves weight to body_measurements and users table
+   * Save via `upsert_wellness_checkin` RPC; refresh ACWR via `calculate_acwr`.
+   * Maps: pain_level → soreness, fatigue → energy (inverted).
    */
   async saveState(): Promise<void> {
+    if (this.saveLocked) {
+      return;
+    }
+
     const userId = this.supabase.userId();
     if (!userId) {
       this.toastService.error(TOAST.ERROR.LOGIN_TO_SAVE);
       return;
     }
 
+    this.saveLocked = true;
     this.saving.set(true);
 
+    const previous = { ...this.state() };
     const today = new Date().toISOString().split("T")[0];
     const state = this.state();
 
-    // Map daily check-in fields to wellness checkin API format
-    // pain_level (0-10 where 10 is severe) → muscleSoreness (0-10)
-    // fatigue_level (0-10 where 10 is exhausted) → energyLevel (inverted: 10 - fatigue)
-    const wellnessPayload = {
-      date: today,
-      sleepQuality: state.sleep_quality,
-      sleepHours: 7, // Default if not captured
-      energyLevel: 10 - state.fatigue_level, // Invert: high fatigue = low energy
-      muscleSoreness: state.pain_level,
-      stressLevel: 5, // Default neutral if not captured
-      sorenessAreas: state.pain_level > 3 ? ["general"] : [],
-      notes: `Quick check-in via Merlin AI prompt`,
-      // readinessScore will be calculated server-side
-    };
+    try {
+      const logResult = await firstValueFrom(
+        this.wellnessService.logWellness({
+          date: today,
+          sleep: state.sleep_quality,
+          sleepHours: 7,
+          energy: 10 - state.fatigue_level,
+          soreness: state.pain_level,
+          stress: 5,
+          sorenessAreas: state.pain_level > 3 ? ["general"] : [],
+          notes: `Quick check-in via Merlin AI prompt`,
+          readinessScore: this.readinessScore(),
+        }),
+      );
 
-    // POST to /api/wellness/checkin (UPSERT on user_id, checkin_date)
-    this.api
-      .post(API_ENDPOINTS.wellness.checkin, wellnessPayload)
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: async () => {
-          // Save weight if provided (updates both body_measurements for history + users for profile)
-          if (state.weight_kg && state.weight_kg > 0) {
-            await this.profileCompletionService.updateWeight(state.weight_kg);
-            this.logger.info(
-              `[DailyReadiness] Weight updated: ${state.weight_kg} kg`,
-            );
-          }
+      if (!logResult.success) {
+        throw new Error(logResult.error || "Failed to save check-in");
+      }
 
-          this.toastService.success(TOAST.SUCCESS.DAILY_CHECKIN_SAVED);
-          this.dialogVisible = false;
-          this.completed.emit(this.state());
-          this.saving.set(false);
-        },
-        error: (error: unknown) => {
-          this.logger.error("Error saving wellness entry:", error);
+      if (state.weight_kg && state.weight_kg > 0) {
+        await this.profileCompletionService.updateWeight(state.weight_kg);
+        this.logger.info(
+          `[DailyReadiness] Weight updated: ${state.weight_kg} kg`,
+        );
+      }
 
-          // Provide user-friendly error messages based on error type
-          let errorMessage = "Failed to save check-in.";
+      const acwrResult = await firstValueFrom(
+        this.wellnessService.calculateAcwr(),
+      );
+      if (acwrResult.success && acwrResult.data) {
+        this.acwrSnapshot.set(acwrResult.data);
+      }
 
-          const err = error as { code?: string; message?: string };
+      this.toastService.success(TOAST.SUCCESS.DAILY_CHECKIN_SAVED);
+      this.dialogVisible = false;
+      this.completed.emit(this.state());
+    } catch (error: unknown) {
+      this.state.set(previous);
+      this.logger.error("Error saving wellness entry:", error);
 
-          if (err?.code === "PGRST116" || err?.message?.includes("401")) {
-            // Authentication error
-            errorMessage = "Permission denied. Please log out and log back in.";
-          } else if (
-            err?.code === "23505" ||
-            err?.message?.includes("already exists")
-          ) {
-            // Unique constraint violation - entry already exists
-            errorMessage =
-              "You've already submitted a check-in today. Refresh to see it.";
-          } else if (
-            err?.message?.includes("network") ||
-            err?.message?.includes("fetch")
-          ) {
-            errorMessage =
-              "Network error. Check your connection and try again.";
-          } else if (err?.code === "42P01") {
-            // Table doesn't exist
-            errorMessage =
-              "System configuration error. Please contact support.";
-          } else {
-            errorMessage =
-              "Failed to save check-in. Please try again in a moment.";
-          }
+      let errorMessage = "Failed to save check-in.";
+      const err = error as { code?: string; message?: string };
 
-          this.toastService.error(errorMessage);
-          this.saving.set(false);
-        },
-    });
+      if (err?.code === "PGRST116" || err?.message?.includes("401")) {
+        errorMessage = "Permission denied. Please log out and log back in.";
+      } else if (
+        err?.code === "23505" ||
+        err?.message?.includes("already exists")
+      ) {
+        errorMessage =
+          "You've already submitted a check-in today. Refresh to see it.";
+      } else if (
+        err?.message?.includes("network") ||
+        err?.message?.includes("fetch")
+      ) {
+        errorMessage = "Network error. Check your connection and try again.";
+      } else if (err?.code === "42P01") {
+        errorMessage = "System configuration error. Please contact support.";
+      } else if (typeof err?.message === "string" && err.message.length > 0) {
+        errorMessage = err.message;
+      }
+
+      this.toastService.error(errorMessage);
+    } finally {
+      this.saveLocked = false;
+      this.saving.set(false);
+    }
   }
 
   onSliderStateChange(change: {

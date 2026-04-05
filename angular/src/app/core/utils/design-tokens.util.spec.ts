@@ -8,9 +8,12 @@
 import { describe, it, expect, beforeEach, afterEach } from "vitest";
 import {
   BREAKPOINTS,
+  CANVAS_CHART_FALLBACK_HEX,
+  CHART_SERIES_CSS_VARS,
   cssToken,
   getCssVariable,
   getCssVariables,
+  hexToRgba,
   resolveCssVariable,
   getStatusColor,
   LAYOUT_CSS_VARS,
@@ -54,6 +57,16 @@ describe("design-tokens.util", () => {
   it("resolveCssVariable resolves var() reference", () => {
     const resolved = resolveCssVariable("var(--ds-primary-green)");
     expect(resolved).toBeTruthy();
+  });
+
+  it("hexToRgba resolves var() then applies alpha", () => {
+    const rgba = hexToRgba("var(--ds-primary-green)", 0.5);
+    expect(rgba).toMatch(/^rgba\(8,\s*153,\s*73,\s*0\.5\)$/);
+  });
+
+  it("CHART_SERIES_CSS_VARS and CANVAS_CHART_FALLBACK_HEX stay aligned in length", () => {
+    expect(CHART_SERIES_CSS_VARS.length).toBe(6);
+    expect(CANVAS_CHART_FALLBACK_HEX.length).toBe(6);
   });
 
   it("getStatusColor returns correct token for thresholds", () => {

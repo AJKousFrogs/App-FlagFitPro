@@ -478,7 +478,7 @@ export class CoachInboxComponent {
         );
       })
       .catch((error: unknown) => {
-        this.logger.error("[CoachInbox] Failed to load inbox", error);
+        this.logger.error("coach_inbox_load_failed", error);
         this.pageError.set("Coach inbox could not be loaded right now.");
       })
       .finally(() => {
@@ -511,7 +511,7 @@ export class CoachInboxComponent {
       });
       this.toastService.success("Inbox item approved.");
     } catch (error) {
-      this.logger.error("[CoachInbox] Failed to approve inbox item", error, {
+      this.logger.error("coach_inbox_approve_failed", error, {
         itemId: item.id,
       });
       this.toastService.error("Unable to approve inbox item. Please try again.");
@@ -545,7 +545,7 @@ export class CoachInboxComponent {
         queryParams: destination.queryParams,
       });
     } catch (error) {
-      this.logger.error("[CoachInbox] Failed to open inbox item", error, {
+      this.logger.error("coach_inbox_open_failed", error, {
         itemId: item.id,
       });
       this.toastService.error("Unable to open inbox item. Please try again.");
@@ -642,7 +642,7 @@ export class CoachInboxComponent {
       );
       this.closeActionDialog();
     } catch (error) {
-      this.logger.error("[CoachInbox] Failed to update inbox item", error, {
+      this.logger.error("coach_inbox_update_failed", error, {
         itemId: item.id,
         mode: this.actionDialogMode(),
       });

@@ -1,15 +1,21 @@
 import { createRuntimeV2Handler } from "./utils/runtime-v2-adapter.js";
-
-// Netlify Function: Notifications Count
-// Returns unread notification count for the current user using Supabase authentication
-//
-// REFACTORED: Uses base-handler for standardized authentication and error handling
-
 import { db } from "./supabase-client.js";
-
 import { baseHandler } from "./utils/base-handler.js";
 import { createErrorResponse } from "./utils/error-handler.js";
 import { successObjectResponse } from "./utils/response-helper.js";
+import { buildRequestLogContext, createLogger } from "./utils/structured-logger.js";
+
+const logger = createLogger({ service: "netlify.notifications-count" });
+
+function createRequestLogger(event, meta = {}) {
+  return logger.child(
+    buildRequestLogContext(event, {
+      request_id: meta.requestId,
+      correlation_id: meta.correlationId,
+      trace_id: meta.traceId ?? meta.correlationId,
+    }),
+  );
+}
 
 function normalizeUnreadCount(value) {
   if (!Number.isInteger(value) || value < 0) {
@@ -38,7 +44,11 @@ const handler = async (event, context) => {
     allowedMethods: ["GET"],
     rateLimitType: "READ",
     requireAuth: true, // Explicit auth requirement for notification data
-    handler: async (event, context, { userId, requestId }) => {
+    handler: async (event, context, { userId, requestId, correlationId }) => {
+      const requestLogger = createRequestLogger(event, {
+        requestId,
+        correlationId,
+      });
       try {
         // Get unread count (already filters muted types)
         const unreadCount = normalizeUnreadCount(
@@ -55,11 +65,14 @@ const handler = async (event, context) => {
           lastOpenedAt,
         });
       } catch (dbError) {
-        if (dbError?.code) {
-          console.error("Database error in notifications-count", { code: dbError.code });
-        } else {
-          console.error("Database error in notifications-count");
-        }
+        requestLogger.error(
+          "notifications_count_query_failed",
+          dbError,
+          {
+            user_id: userId,
+            db_error_code: dbError?.code,
+          },
+        );
         return createErrorResponse(
           "Failed to get notification count",
           500,

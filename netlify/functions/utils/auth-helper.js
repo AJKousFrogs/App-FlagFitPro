@@ -3,6 +3,7 @@ import {
   handleAuthenticationError,
   handleAuthorizationError,
 } from "./error-handler.js";
+import { createLogger } from "./structured-logger.js";
 
 /**
  * Shared Authentication Helper for Netlify Functions
@@ -10,6 +11,8 @@ import {
  *
  * SECURITY: Uses Supabase auth instead of JWT_SECRET
  */
+
+const logger = createLogger({ service: "netlify.auth-helper" });
 
 /**
  * Get Supabase client with service role key
@@ -45,7 +48,9 @@ async function authenticateRequest(event) {
     } = await supabase.auth.getUser(token);
 
     if (authError || !user) {
-      console.error("[Auth] Supabase auth error:", authError?.message);
+      logger.warn("auth_supabase_user_lookup_failed", {
+        message: authError?.message,
+      });
       return {
         success: false,
         error: handleAuthenticationError("Invalid or expired token"),
@@ -69,7 +74,7 @@ async function authenticateRequest(event) {
       },
     };
   } catch (error) {
-    console.error("[Auth] Unexpected error during authentication:", error);
+    logger.error("auth_request_failed", error);
     return {
       success: false,
       error: handleAuthenticationError("Authentication failed"),
@@ -130,7 +135,10 @@ async function checkTeamMembership(userId, teamId) {
       teamId: data.team_id || teamId,
     };
   } catch (error) {
-    console.error("[Auth] Error checking team membership:", error);
+    logger.error("auth_team_membership_check_failed", error, {
+      user_id: userId,
+      team_id: teamId,
+    });
     return {
       authorized: false,
       error: handleAuthorizationError("Failed to verify team membership"),
@@ -160,7 +168,9 @@ async function getUserTeamId(userId) {
 
     return data.team_id;
   } catch (error) {
-    console.error("[Auth] Error getting user team:", error);
+    logger.error("auth_get_user_team_failed", error, {
+      user_id: userId,
+    });
     return `TEAM_${userId}`;
   }
 }

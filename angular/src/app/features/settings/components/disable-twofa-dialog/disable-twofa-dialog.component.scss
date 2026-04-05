@@ -1,5 +1,5 @@
 .dialog-container {
-  padding: 0;
+  padding: var(--space-0);
 }
 
 .twofa-content {
@@ -11,7 +11,7 @@
 }
 
 .step-desc {
-  margin: 0 0 var(--space-6) 0;
+  margin: var(--space-0) var(--space-0) var(--space-6) var(--space-0);
   font-size: var(--ds-font-size-md);
   color: var(--color-text-secondary);
   line-height: var(--ds-line-height-normal);
@@ -19,7 +19,7 @@
 
 .code-input-wrapper {
   max-width: var(--input-min-width-lg);
-  margin: 0 auto var(--space-4);
+  margin: var(--space-0) auto var(--space-4);
 }
 
 .verification-code-input {

@@ -9,6 +9,7 @@ import { createSuccessResponse, createErrorResponse } from "./utils/error-handle
 import { baseHandler } from "./utils/base-handler.js";
 import { authenticateRequest } from "./utils/auth-helper.js";
 import { parseJsonObjectBody } from "./utils/input-validator.js";
+import { buildRequestLogContext, createLogger } from "./utils/structured-logger.js";
 
 // Allowed file types
 const ALLOWED_IMAGE_TYPES = [
@@ -29,8 +30,26 @@ const createUploadValidationError = (message) => {
   return error;
 };
 
+const logger = createLogger({ service: "netlify.upload" });
+
+function createRequestLogger(event, meta = {}) {
+  return logger.child(
+    buildRequestLogContext(event, {
+      request_id: meta.requestId,
+      correlation_id: meta.correlationId,
+      trace_id: meta.traceId ?? meta.correlationId,
+    }),
+  );
+}
+
 // Upload file to Supabase Storage
-const uploadFile = async (userId, fileData, fileType, fileName) => {
+const uploadFile = async (
+  userId,
+  fileData,
+  fileType,
+  fileName,
+  log = logger,
+) => {
   try {
     checkEnvVars();
 
@@ -100,13 +119,17 @@ const uploadFile = async (userId, fileData, fileType, fileName) => {
       size: buffer.length,
     };
   } catch (error) {
-    console.error("Error uploading file:", error);
+    log.error("upload_file_error", error, {
+      user_id: userId,
+      file_type: fileType,
+      file_name: fileName,
+    });
     throw error;
   }
 };
 
 // Delete file from Supabase Storage
-const deleteFile = async (filePath) => {
+const deleteFile = async (filePath, log = logger) => {
   try {
     checkEnvVars();
 
@@ -120,7 +143,9 @@ const deleteFile = async (filePath) => {
 
     return { success: true };
   } catch (error) {
-    console.error("Error deleting file:", error);
+    log.error("upload_delete_error", error, {
+      file_path: filePath,
+    });
     throw error;
   }
 };
@@ -131,7 +156,7 @@ const handler = async (event, context) => {
     allowedMethods: ["POST", "DELETE"],
     rateLimitType: "CREATE",
     requireAuth: true,
-    handler: async (event, _context, { requestId }) => {
+    handler: async (event, _context, { requestId, correlationId }) => {
       // Authenticate request
       const auth = await authenticateRequest(event);
       if (!auth.success) {
@@ -144,6 +169,11 @@ const handler = async (event, context) => {
       }
 
       const userId = auth.user.id;
+
+      const requestLogger = createRequestLogger(event, {
+        requestId,
+        correlationId,
+      });
 
       // Handle POST (upload)
       if (event.httpMethod === "POST") {
@@ -179,6 +209,11 @@ const handler = async (event, context) => {
             "File uploaded successfully",
           );
         } catch (error) {
+          requestLogger.error("upload_handler_upload_failed", error, {
+            user_id: userId,
+            file_name: fileName,
+            file_type: fileType,
+          });
           if (error?.code === "UPLOAD_VALIDATION") {
             return createErrorResponse(
               error.message,
@@ -238,6 +273,10 @@ const handler = async (event, context) => {
             200,
           );
         } catch (error) {
+          requestLogger.error("upload_handler_delete_failed", error, {
+            user_id: userId,
+            file_path: normalizedPath,
+          });
           return createErrorResponse(
             "Delete failed",
             500,

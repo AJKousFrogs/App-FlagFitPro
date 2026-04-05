@@ -11,6 +11,7 @@ import { baseHandler } from "./utils/base-handler.js";
 import { getUserRole } from "./utils/authorization-guard.js";
 import { hasAnyRole, LOAD_MANAGEMENT_ACCESS_ROLES } from "./utils/role-sets.js";
 import { parseJsonObjectBody } from "./utils/input-validator.js";
+import { buildRequestLogContext, createLogger } from "./utils/structured-logger.js";
 
 function asFiniteNumber(value, fallback = 0) {
   const parsed = Number(value);
@@ -102,6 +103,18 @@ function calculateSeriesFromSessions(sessions, rangeDays = 42) {
   return rows;
 }
 
+const logger = createLogger({ service: "netlify.compute-acwr" });
+
+function createRequestLogger(event, meta = {}) {
+  return logger.child(
+    buildRequestLogContext(event, {
+      request_id: meta.requestId,
+      correlation_id: meta.correlationId,
+      trace_id: meta.traceId ?? meta.correlationId,
+    }),
+  );
+}
+
 async function fetchTrainingSessionsForAcwr(athleteId) {
   const startDate = new Date();
   startDate.setDate(startDate.getDate() - 41);
@@ -180,7 +193,7 @@ const handler = async (event, context) => {
     allowedMethods: ["POST"],
     rateLimitType: "CREATE",
     requireAuth: true,
-    handler: async (event, _context, { userId, requestId }) => {
+    handler: async (event, _context, { userId, requestId, correlationId }) => {
       let body;
       try {
         body = parseJsonObjectBody(event.body);
@@ -223,9 +236,16 @@ const handler = async (event, context) => {
         );
       }
 
+      const requestLogger = createRequestLogger(event, {
+        requestId,
+        correlationId,
+      });
+
       const sessionsResult = await fetchTrainingSessionsForAcwr(athleteId);
       if (sessionsResult.error) {
-        console.error("Database error:", sessionsResult.error);
+        requestLogger.error("acwr_training_sessions_fetch_failed", sessionsResult.error, {
+          athlete_id: athleteId,
+        });
         return createErrorResponse(
           "Failed to compute ACWR",
           500,
@@ -240,7 +260,9 @@ const handler = async (event, context) => {
       });
 
       if (error) {
-        console.error("Database error:", error);
+        requestLogger.error("acwr_rpc_failed", error, {
+          athlete_id: athleteId,
+        });
       }
 
       const series = calculateSeriesFromSessions(sessionsResult.data || []);

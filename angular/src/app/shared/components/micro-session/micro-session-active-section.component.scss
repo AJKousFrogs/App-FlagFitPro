@@ -106,12 +106,12 @@
 }
 
 .completed-state h3 {
-  margin: 0 0 var(--space-2) 0;
+  margin: var(--space-0) var(--space-0) var(--space-2) var(--space-0);
   color: var(--ds-primary-green);
 }
 
 .completed-state > p {
-  margin: 0 0 var(--space-4) 0;
+  margin: var(--space-0) var(--space-0) var(--space-4) var(--space-0);
   color: var(--color-text-secondary);
 }
 
@@ -136,7 +136,7 @@
 }
 
 .follow-up-section h4 {
-  margin: 0 0 var(--space-4) 0;
+  margin: var(--space-0) var(--space-0) var(--space-4) var(--space-0);
   font-size: var(--ds-font-size-md);
 }
 

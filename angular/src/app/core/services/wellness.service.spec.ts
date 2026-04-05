@@ -14,7 +14,6 @@ import { WellnessService, WellnessData } from "./wellness.service";
 import { SupabaseService } from "./supabase.service";
 import { LoggerService } from "./logger.service";
 import { RealtimeService } from "./realtime.service";
-import { ApiService } from "./api.service";
 import { NORMAL_ATHLETE } from "../../../testing/athlete-fixtures";
 
 // Mock data
@@ -63,7 +62,14 @@ const MOCK_WELLNESS_ENTRIES: WellnessData[] = [
 // Mock services - use 'as unknown as SupabaseService' to avoid strict type checking
 const mockSupabaseService = {
   userId: vi.fn(() => "user-123"),
+  waitForInit: vi.fn(() => Promise.resolve()),
   client: {
+    rpc: vi.fn(() =>
+      Promise.resolve({
+        data: [{ checkin_id: "c1", legacy_entry_id: null, checkin_date: "2024-01-15" }],
+        error: null,
+      }),
+    ),
     from: vi.fn(() => ({
       select: vi.fn(() => ({
         or: vi.fn(() => ({
@@ -105,10 +111,6 @@ const mockRealtimeService = {
   unsubscribe: vi.fn(),
 };
 
-const mockApiService = {
-  post: vi.fn(),
-};
-
 describe("WellnessService", () => {
   let service: WellnessService;
 
@@ -121,7 +123,6 @@ describe("WellnessService", () => {
         { provide: SupabaseService, useValue: mockSupabaseService },
         { provide: LoggerService, useValue: mockLoggerService },
         { provide: RealtimeService, useValue: mockRealtimeService },
-        { provide: ApiService, useValue: mockApiService },
       ],
     });
 
@@ -539,10 +540,6 @@ describe("WellnessService", () => {
 
   describe("Log Wellness", () => {
     it("should log wellness entry successfully", async () => {
-      mockApiService.post.mockReturnValue(
-        of({ success: true, data: { id: 1 } }),
-      );
-
       const result = await firstValueFrom(
         service.logWellness({
           sleep: 8,
@@ -552,6 +549,7 @@ describe("WellnessService", () => {
       );
 
       expect(result.success).toBe(true);
+      expect(mockSupabaseService.client.rpc).toHaveBeenCalled();
     });
 
     it("should return error when not logged in", async () => {
@@ -573,31 +571,17 @@ describe("WellnessService", () => {
       // Reset userId to valid user
       (mockSupabaseService as any).userId.mockReturnValue("user-123");
 
-      let capturedPayload: unknown = null;
-      mockApiService.post.mockImplementation(
-        (url: string, payload: unknown) => {
-          capturedPayload = payload;
-          return of({ success: true, data: { id: 1, date: today } });
-        },
-      );
-
       await firstValueFrom(service.logWellness({ sleep: 8 }));
 
-      expect(mockApiService.post).toHaveBeenCalled();
-      expect(capturedPayload).toMatchObject({
-        date: today,
+      expect(mockSupabaseService.client.rpc).toHaveBeenCalled();
+      const call = (mockSupabaseService.client.rpc as ReturnType<typeof vi.fn>).mock
+        .calls[0];
+      expect(call[1]).toMatchObject({
+        p_checkin_date: today,
       });
     });
 
     it("should forward motivation, mood, hydration, and readiness fields", async () => {
-      let capturedPayload: Record<string, unknown> | null = null;
-      mockApiService.post.mockImplementation(
-        (_url: string, payload: Record<string, unknown>) => {
-          capturedPayload = payload;
-          return of({ success: true, data: { id: 1 } });
-        },
-      );
-
       await firstValueFrom(
         service.logWellness({
           sleep: 8,
@@ -612,17 +596,54 @@ describe("WellnessService", () => {
         }),
       );
 
-      expect(capturedPayload).toMatchObject({
-        sleepQuality: 8,
-        sleepHours: 7.5,
-        energyLevel: 7,
-        stressLevel: 3,
-        muscleSoreness: 2,
-        motivationLevel: 9,
-        mood: 8,
-        hydrationLevel: 6,
-        readinessScore: 82,
+      const call = (mockSupabaseService.client.rpc as ReturnType<typeof vi.fn>).mock
+        .calls[0];
+      expect(call[1]).toMatchObject({
+        p_sleep_quality: 8,
+        p_sleep_hours: 7.5,
+        p_energy_level: 7,
+        p_stress_level: 3,
+        p_muscle_soreness: 2,
+        p_motivation_level: 9,
+        p_mood: 8,
+        p_hydration_level: 6,
+        p_calculated_readiness: 82,
       });
+    });
+
+    it("calculateAcwr returns ratio from RPC", async () => {
+      const rpc = mockSupabaseService.client.rpc as ReturnType<typeof vi.fn>;
+      const defaultImpl = () =>
+        Promise.resolve({
+          data: [{ checkin_id: "c1", legacy_entry_id: null, checkin_date: "2024-01-15" }],
+          error: null,
+        });
+      rpc.mockImplementation((name: string) => {
+        if (name === "calculate_acwr") {
+          return Promise.resolve({
+            data: {
+              acute_load: 100,
+              chronic_load: 100,
+              ratio: 1.0,
+              sufficient: true,
+              days_with_data: 22,
+              sessions_in_window: 14,
+              computed_at: "2026-01-01T00:00:00.000Z",
+            },
+            error: null,
+          });
+        }
+        return defaultImpl();
+      });
+
+      const result = await firstValueFrom(service.calculateAcwr());
+      expect(result.success).toBe(true);
+      expect(result.data?.ratio).toBe(1.0);
+      expect(mockSupabaseService.client.rpc).toHaveBeenCalledWith(
+        "calculate_acwr",
+        { p_user_id: "user-123" },
+      );
+      rpc.mockImplementation(defaultImpl);
     });
   });
 

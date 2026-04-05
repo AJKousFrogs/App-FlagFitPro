@@ -3,6 +3,19 @@ import { getSupabaseClient } from "./utils/auth-helper.js";
 import { validateRequestBody } from "./validation.js";
 import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
 import { baseHandler } from "./utils/base-handler.js";
+import { buildRequestLogContext, createLogger } from "./utils/structured-logger.js";
+
+const logger = createLogger({ service: "netlify.auth-login" });
+
+function createRequestLogger(event, meta = {}) {
+  return logger.child(
+    buildRequestLogContext(event, {
+      request_id: meta.requestId,
+      correlation_id: meta.correlationId,
+      trace_id: meta.traceId ?? meta.correlationId,
+    }),
+  );
+}
 
 // Netlify Function: Login
 // Authenticates user with email and password via Supabase
@@ -13,7 +26,8 @@ const handler = async (event, context) => {
     allowedMethods: ["POST"],
     rateLimitType: "AUTH",
     requireAuth: false, // Login doesn't require prior auth
-    handler: async (event, _context, { requestId }) => {
+    handler: async (event, _context, { requestId, correlationId }) => {
+      const requestLogger = createRequestLogger(event, { requestId, correlationId });
       // Validate request body
       const validation = validateRequestBody(event.body, "login");
       if (!validation.valid) {
@@ -45,7 +59,9 @@ const handler = async (event, context) => {
       });
 
       if (error) {
-        console.error("Supabase login error:", error.message);
+        requestLogger.error("supabase_login_failed", error, {
+          email: normalizedEmail,
+        });
         return createErrorResponse(
           error.message,
           401,

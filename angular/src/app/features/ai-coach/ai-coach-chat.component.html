@@ -121,7 +121,7 @@
                 </div>
               }
               <app-micro-session
-                [session]="activeMicroSessionSignal()"
+                [session]="activeMicroSession()!"
                 [mode]="microSessionDisplayMode()"
                 (sessionCompleted)="onMicroSessionCompleted($event)"
                 (sessionSkipped)="onMicroSessionSkipped()"
@@ -129,13 +129,7 @@
               ></app-micro-session>
             </app-dialog>
           } @placeholder {
-            <div class="defer-dialog-chunk-placeholder" role="status" aria-live="polite">
-              <app-loading
-                [visible]="true"
-                variant="skeleton"
-                message="Loading micro-session…"
-              />
-            </div>
+            <span class="defer-dialog-chunk-placeholder"></span>
           }
         }
     </app-main-layout>

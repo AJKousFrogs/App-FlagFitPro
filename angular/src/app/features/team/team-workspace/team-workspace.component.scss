@@ -47,8 +47,8 @@
 
 .tool-card {
   background: var(--surface-card);
-  border: var(--border-1) solid var(--surface-border);
-  border-radius: var(--radius-lg);
+  border: var(--border-1) solid var(--color-border-primary);
+  border-radius: var(--radius-xl);
   padding: var(--space-6);
   display: flex;
   flex-direction: column;
@@ -56,22 +56,24 @@
   text-align: center;
   cursor: pointer;
   transition:
-    border-color var(--transition-fast),
-    transform var(--transition-fast),
-    box-shadow var(--transition-fast),
-    background-color var(--transition-fast);
+    border-color var(--transition-fast) var(--ease-standard),
+    transform var(--transition-fast) var(--ease-standard),
+    box-shadow var(--transition-fast) var(--ease-standard),
+    background-color var(--transition-fast) var(--ease-standard);
   min-height: calc(var(--space-20) * 2 + var(--space-5));
   justify-content: center;
 
-  &:hover {
-    border-color: var(--ds-primary-green);
-    transform: translateY(-var(--space-1));
-    box-shadow: var(--shadow-md);
-    background: var(--surface-hover);
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      border-color: var(--ds-primary-green);
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-md);
+      background: color-mix(in srgb, var(--ds-primary-green) 4%, var(--surface-card));
+    }
   }
 
   &:active {
-    transform: translateY(-var(--border-2));
+    transform: translateY(0);
   }
 
   @include respond-to(lg) {
@@ -105,14 +107,14 @@
     font-size: var(--ds-font-size-2xl); // var(--icon-base)
     font-weight: var(--ds-font-weight-semibold); // 600
     color: var(--color-text-primary);
-    margin: 0 0 var(--space-2) 0;
+    margin: var(--space-0) var(--space-0) var(--space-2) var(--space-0);
     line-height: var(--ds-line-height-h3);
   }
 
   p {
     font-size: var(--ds-font-size-md); // 0.875rem
     color: var(--color-text-secondary);
-    margin: 0;
+    margin: var(--space-0);
     line-height: var(--ds-line-height-body);
   }
 }

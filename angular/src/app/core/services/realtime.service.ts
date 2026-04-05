@@ -547,6 +547,6 @@ export class RealtimeService {
     const summary = this.getSubscriptionSummary();
     this._subscriptionSummary.set(summary);
     if (Object.keys(summary).length === 0) return;
-    this.logger.debug("[Realtime] Subscription summary", summary);
+    this.logger.debug("realtime_subscription_summary", summary as object);
   }
 }

@@ -16,16 +16,16 @@
 }
 
 .form-section h4 {
-  margin: 0;
+  margin: var(--space-0);
   font-size: var(--ds-font-size-md);
   font-weight: var(--ds-font-weight-semibold);
   color: var(--color-text-primary);
   padding-bottom: var(--space-3);
-  border-bottom: var(--border-1) solid var(--ui-border-subtle);
+  border-bottom: var(--border-1) solid var(--color-border-primary);
 }
 
 .section-description {
-  margin: 0;
+  margin: var(--space-0);
   font-size: var(--ds-font-size-sm);
   color: var(--color-text-secondary);
 }
@@ -76,7 +76,7 @@
   justify-content: space-between;
   align-items: center;
   gap: var(--space-3);
-  margin: 0;
+  margin: var(--space-0);
 }
 
 .day-name {

@@ -5,13 +5,13 @@
 }
 
 .evidence-section > h3 {
-  margin: 0;
+  margin: var(--space-0);
   font-size: var(--font-h3-size);
   color: var(--color-text-primary);
 }
 
 .evidence-intro {
-  margin: 0;
+  margin: var(--space-0);
   color: var(--color-text-secondary);
   line-height: var(--ds-line-height-relaxed);
 }

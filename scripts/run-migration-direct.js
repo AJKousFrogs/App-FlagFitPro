@@ -10,6 +10,7 @@ import path from "node:path";
 import fs from "node:fs";
 import "dotenv/config";
 import { createClient } from "@supabase/supabase-js";
+import { createLogger } from "../netlify/functions/utils/structured-logger.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const migrationCandidates = [
@@ -26,16 +27,33 @@ function resolveMigrationPath() {
   return path.join(__dirname, migrationCandidates[0]);
 }
 
+const migrationPath = resolveMigrationPath();
+const migrationSql = fs.readFileSync(migrationPath, "utf8");
+const logger = createLogger({
+  service: "migration_tool",
+  context: { tool: "run_migration_direct" },
+});
+
 // Check environment variables
 const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_KEY;
 
-console.log("🔧 Database Migration Tool\n");
-console.log("Supabase URL:", supabaseUrl || "❌ NOT SET");
-console.log("Service Key:", supabaseServiceKey ? "✅ SET" : "❌ NOT SET");
-console.log("");
+logger.info("migration_tool_invoked", {
+  supabaseUrl: supabaseUrl ?? null,
+  serviceKeyPresent: Boolean(supabaseServiceKey),
+  migrationPath,
+});
 
 if (!supabaseUrl || !supabaseServiceKey) {
+  logger.error(
+    "migration_tool_missing_env",
+    undefined,
+    {
+      missingSupabaseUrl: !supabaseUrl,
+      missingServiceKey: !supabaseServiceKey,
+    },
+  );
+
   console.error("❌ Error: Missing Supabase environment variables");
   console.error(
     "Please ensure SUPABASE_URL and SUPABASE_SERVICE_KEY are set in .env file\n",
@@ -53,10 +71,8 @@ if (!supabaseUrl || !supabaseServiceKey) {
   console.log("SQL Preview:");
   console.log("─".repeat(80));
 
-  const migrationPath = resolveMigrationPath();
   console.log(`Selected migration path: ${migrationPath}`);
-  const sql = fs.readFileSync(migrationPath, "utf8");
-  console.log(sql);
+  console.log(migrationSql);
   console.log("─".repeat(80));
 
   process.exit(1);
@@ -72,7 +88,9 @@ const _supabase = createClient(supabaseUrl, supabaseServiceKey, {
 
 async function checkAndApplyMigration() {
   try {
-    console.log("🔍 Checking current database schema...\n");
+    logger.info("migration_tool_schema_check_start", {
+      migrationPath,
+    });
 
     // Check if columns already exist
     const _checks = {
@@ -84,6 +102,12 @@ async function checkAndApplyMigration() {
 
     // We can't query information_schema directly with Supabase JS client
     // So we'll attempt to read from users table and catch errors
+    logger.warn(
+      "migration_tool_schema_check_limitation",
+      {
+        reason: "Supabase JS client cannot query information_schema",
+      },
+    );
     console.log(
       "⚠️  Note: Cannot check schema directly with Supabase JS client",
     );
@@ -92,10 +116,8 @@ async function checkAndApplyMigration() {
     );
 
     console.log("─".repeat(80));
-    const migrationPath = resolveMigrationPath();
     console.log(`Using migration path: ${migrationPath}`);
-    const sql = fs.readFileSync(migrationPath, "utf8");
-    console.log(sql);
+    console.log(migrationSql);
     console.log("─".repeat(80));
 
     console.log("\n📝 Instructions:");
@@ -110,7 +132,13 @@ async function checkAndApplyMigration() {
       "✅ This migration is safe to run multiple times (it checks before adding columns)",
     );
   } catch (error) {
-    console.error("❌ Error:", error.message);
+    logger.error(
+      "migration_tool_schema_check_failed",
+      error,
+      {
+        migrationPath,
+      },
+    );
   }
 }
 

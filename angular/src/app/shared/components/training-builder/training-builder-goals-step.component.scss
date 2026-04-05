@@ -56,7 +56,7 @@
 }
 
 .goal-card p {
-  margin: 0;
+  margin: var(--space-0);
   color: var(--color-text-secondary);
   font-size: var(--ds-font-size-md);
 }

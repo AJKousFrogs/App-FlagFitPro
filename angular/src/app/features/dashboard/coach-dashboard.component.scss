@@ -9,7 +9,7 @@
 @use "styles/mixins" as *;
 
 .dashboard-content {
-  padding: 0;
+  padding: var(--space-0);
   background: transparent;
   min-height: auto;
 
@@ -67,8 +67,8 @@
     justify-content: space-between;
     align-items: center;
     padding: var(--space-2) var(--space-4);
-    background: var(--surface-100);
-    border-bottom: var(--border-1) solid var(--surface-border);
+    background: var(--surface-secondary);
+    border-bottom: var(--border-1) solid var(--color-border-secondary);
 
     .tab-triggers {
       display: flex;
@@ -94,8 +94,8 @@
       align-items: center;
       gap: var(--space-2);
       transition:
-        background-color var(--motion-fast) var(--ease-standard),
-        color var(--motion-fast) var(--ease-standard);
+        background-color var(--transition-fast) var(--ease-standard),
+        color var(--transition-fast) var(--ease-standard);
 
       &:hover {
         color: var(--color-text-primary);
@@ -132,13 +132,17 @@
     padding: var(--space-3) var(--space-4);
     display: flex;
     gap: var(--space-2);
-    border-bottom: var(--border-1) solid var(--surface-border);
+    border-bottom: var(--border-1) solid var(--color-border-secondary);
   }
 
   .clickable-row {
     cursor: pointer;
 
-    @include ds-hover-state(var(--surface-ground));
+    @media (hover: hover) and (pointer: fine) {
+      &:hover {
+        background: var(--surface-secondary);
+      }
+    }
   }
 
   .readiness-compact {
@@ -177,8 +181,8 @@
     gap: var(--space-3);
     padding: var(--space-2);
     border-radius: var(--radius-md);
-    background: var(--surface-ground);
-    border-left: var(--border-4) solid var(--surface-border); /* var(--space-1) - closest token */
+    background: var(--surface-secondary);
+    border-left: var(--border-4) solid var(--color-border-primary); /* var(--space-1) - closest token */
 
     &.game {
       border-left-color: var(--color-status-warning);

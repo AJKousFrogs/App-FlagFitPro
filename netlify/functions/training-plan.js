@@ -8,6 +8,19 @@ import { checkEnvVars as _checkEnvVars, supabaseAdmin } from "./supabase-client.
 
 import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
 import { baseHandler } from "./utils/base-handler.js";
+import { buildRequestLogContext, createLogger } from "./utils/structured-logger.js";
+
+const logger = createLogger({ service: "netlify.training-plan" });
+
+function createRequestLogger(event, meta = {}) {
+  return logger.child(
+    buildRequestLogContext(event, {
+      request_id: meta.requestId,
+      correlation_id: meta.correlationId,
+      trace_id: meta.traceId ?? meta.correlationId,
+    }),
+  );
+}
 
 function isIsoDateOnly(value) {
   return typeof value === "string" && /^\d{4}-\d{2}-\d{2}$/.test(value);
@@ -34,7 +47,7 @@ function _getTodayStartOfDay() {
 /**
  * Calculate ACWR for a player
  */
-async function calculateACWR(userId, date) {
+async function calculateACWR(userId, date, requestLogger = logger) {
   try {
     const _endDate = new Date(date);
     const acuteStartDate = new Date(date);
@@ -127,7 +140,10 @@ async function calculateACWR(userId, date) {
       chronicLoads: chronicLoads.length,
     };
   } catch (error) {
-    console.error("Error calculating ACWR:", error);
+    requestLogger.error("training_plan_acwr_calculation_failed", error, {
+      user_id: userId,
+      date: date?.toISOString?.() ?? null,
+    });
     return {
       acwr: 0,
       riskZone: "insufficient_data",
@@ -140,7 +156,7 @@ async function calculateACWR(userId, date) {
 /**
  * Determine periodization phase based on date and stored program
  */
-async function determinePeriodizationPhase(userId, date) {
+async function determinePeriodizationPhase(userId, date, requestLogger = logger) {
   try {
     // Get active training program for user
     const { data: programs, error: programError } = await supabaseAdmin
@@ -209,7 +225,10 @@ async function determinePeriodizationPhase(userId, date) {
       isInProgram: false,
     };
   } catch (error) {
-    console.error("Error determining phase:", error);
+    requestLogger.error("training_plan_phase_calc_failed", error, {
+      user_id: userId,
+      date: date?.toISOString?.() ?? null,
+    });
     return {
       phase: "off_season",
       phaseOrder: 0,
@@ -222,7 +241,12 @@ async function determinePeriodizationPhase(userId, date) {
 /**
  * Get upcoming games/tournaments (domestic and international separately)
  */
-async function getUpcomingGames(userId, date, daysAhead = 14) {
+async function getUpcomingGames(
+  userId,
+  date,
+  daysAhead = 14,
+  requestLogger = logger,
+) {
   try {
     const endDate = new Date(date);
     endDate.setDate(endDate.getDate() + daysAhead);
@@ -292,7 +316,11 @@ async function getUpcomingGames(userId, date, daysAhead = 14) {
 
     return { domestic, international };
   } catch (error) {
-    console.error("Error getting upcoming games:", error);
+    requestLogger.error("training_plan_upcoming_games_failed", error, {
+      user_id: userId,
+      date: date?.toISOString?.() ?? null,
+      days_ahead: daysAhead,
+    });
     return { domestic: [], international: [] };
   }
 }
@@ -301,7 +329,7 @@ async function getUpcomingGames(userId, date, daysAhead = 14) {
  * Get today's training sessions (real data only)
  * Only returns sessions for dates up to and including today
  */
-async function getTodaySessions(userId, date) {
+async function getTodaySessions(userId, date, requestLogger = logger) {
   try {
     const dateStr = date.toISOString().split("T")[0];
     const today = new Date();
@@ -326,7 +354,10 @@ async function getTodaySessions(userId, date) {
 
     return sessions || [];
   } catch (error) {
-    console.error("Error getting today's sessions:", error);
+    requestLogger.error("training_plan_today_sessions_failed", error, {
+      user_id: userId,
+      date: date?.toISOString?.() ?? null,
+    });
     return [];
   }
 }
@@ -335,7 +366,7 @@ async function getTodaySessions(userId, date) {
  * Get training history (up to and including today)
  * Uses consistent date filtering: only sessions up to and including today
  */
-async function getTrainingHistory(userId, daysBack = 30) {
+async function getTrainingHistory(userId, daysBack = 30, requestLogger = logger) {
   try {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
@@ -363,7 +394,10 @@ async function getTrainingHistory(userId, daysBack = 30) {
 
     return sessions || [];
   } catch (error) {
-    console.error("Error getting training history:", error);
+    requestLogger.error("training_plan_history_fetch_failed", error, {
+      user_id: userId,
+      days_back: daysBack,
+    });
     return [];
   }
 }
@@ -371,7 +405,7 @@ async function getTrainingHistory(userId, daysBack = 30) {
 /**
  * Generate training plan for today
  */
-async function generateTrainingPlan(userId, date = new Date()) {
+async function generateTrainingPlan(userId, date = new Date(), requestLogger = logger) {
   try {
     // Normalize date to start of day
     const today = new Date(date);
@@ -380,11 +414,11 @@ async function generateTrainingPlan(userId, date = new Date()) {
     // Get all required data
     const [acwr, phase, upcomingGames, todaySessions, history] =
       await Promise.all([
-        calculateACWR(userId, today),
-        determinePeriodizationPhase(userId, today),
-        getUpcomingGames(userId, today, 14),
-        getTodaySessions(userId, today),
-        getTrainingHistory(userId, 30),
+        calculateACWR(userId, today, requestLogger),
+        determinePeriodizationPhase(userId, today, requestLogger),
+        getUpcomingGames(userId, today, 14, requestLogger),
+        getTodaySessions(userId, today, requestLogger),
+        getTrainingHistory(userId, 30, requestLogger),
       ]);
 
     // Determine if there's a game today
@@ -461,7 +495,10 @@ async function generateTrainingPlan(userId, date = new Date()) {
       },
     };
   } catch (error) {
-    console.error("Error generating training plan:", error);
+    requestLogger.error("training_plan_generation_failed", error, {
+      user_id: userId,
+      date: date?.toISOString?.() ?? null,
+    });
     throw error;
   }
 }
@@ -862,7 +899,6 @@ function generateTomorrowGuidance({
     sessions: [],
   };
 }
-
 // Main handler
 const handler = async (event, context) => {
   return baseHandler(event, context, {
@@ -870,7 +906,7 @@ const handler = async (event, context) => {
     allowedMethods: ["GET"],
     rateLimitType: "READ",
     requireAuth: true,
-    handler: async (event, _context, { userId, requestId }) => {
+    handler: async (event, _context, { userId, requestId, correlationId }) => {
       const queryParams = event.queryStringParameters || {};
 
       // Parse date (defaults to today)
@@ -905,13 +941,25 @@ const handler = async (event, context) => {
         }
       }
 
+      const requestLogger = createRequestLogger(event, {
+        requestId,
+        correlationId,
+      });
+
       try {
         // Generate training plan
-        const plan = await generateTrainingPlan(userId, targetDate);
+        const plan = await generateTrainingPlan(
+          userId,
+          targetDate,
+          requestLogger,
+        );
 
         return createSuccessResponse(plan, requestId);
       } catch (error) {
-        console.error("[training-plan] Unexpected handler error:", error);
+        requestLogger.error("training_plan_handler_failed", error, {
+          user_id: userId,
+          date: targetDate?.toISOString?.() ?? null,
+        });
         return createErrorResponse(
           "Failed to generate training plan",
           500,

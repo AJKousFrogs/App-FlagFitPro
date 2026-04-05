@@ -131,8 +131,8 @@
 .stat-item {
   text-align: center;
   padding: var(--space-3);
-  background: var(--ui-surface-card-alt);
-  border: var(--border-1) solid var(--ui-border-subtle);
+  background: var(--surface-card);
+  border: var(--border-1) solid var(--color-border-primary);
   border-radius: var(--radius-xl);
 }
 
@@ -154,7 +154,7 @@
 .achievements {
   margin-top: var(--space-4);
   padding-top: var(--space-4);
-  border-top: var(--border-1) solid var(--ui-border-subtle);
+  border-top: var(--border-1) solid var(--color-border-secondary);
 }
 
 .achievements-title {

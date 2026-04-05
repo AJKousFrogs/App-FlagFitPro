@@ -1,23 +1,25 @@
+@use "styles/mixins" as *;
+
 .ob-seg-track {
   display: flex;
   flex: 1;
   align-items: center;
-  gap: var(--ob-seg-gap, 3px);
+  gap: var(--ob-seg-gap, var(--space-0-75));
 }
 
 .ob-seg {
   flex: 1;
-  height: var(--ob-seg-h, 4px);
-  padding: 0;
+  height: var(--ob-seg-h, var(--space-1));
+  padding: var(--space-0);
   border: none;
-  border-radius: var(--radius-full, 9999px);
-  background: var(--ob-seg-track, #e5e5e5);
+  border-radius: var(--radius-full);
+  background: var(--ob-seg-track);
   cursor: default;
   transition: background 300ms ease;
   min-width: 0;
 
   &--done {
-    background: var(--ob-seg-done, #089949);
+    background: var(--ob-seg-done);
     cursor: pointer;
 
     &:hover:not(:disabled) {
@@ -26,12 +28,12 @@
   }
 
   &--active {
-    background: var(--ob-seg-active, rgba(8, 153, 73, 0.4));
+    background: var(--ob-seg-active);
   }
 
-  &:focus-visible {
-    outline: 2px solid var(--ds-primary-green);
-    outline-offset: 3px;
-    border-radius: 2px;
-  }
+  @include ds-focus-ring(
+    var(--ds-primary-green),
+    var(--space-0-75),
+    var(--space-0-5)
+  );
 }

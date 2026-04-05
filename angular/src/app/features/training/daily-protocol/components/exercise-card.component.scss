@@ -75,7 +75,7 @@
 }
 
 .exercise-name {
-  margin: 0 0 var(--space-1) 0;
+  margin: var(--space-0) var(--space-0) var(--space-1) var(--space-0);
   font-size: var(--ds-font-size-md);
   font-weight: var(--ds-font-weight-semibold);
   color: var(--color-text-primary);
@@ -99,7 +99,9 @@
   color: var(--color-text-secondary);
   transition: background-color var(--transition-fast) var(--ease-standard);
 
-  @include ds-hover-state(var(--primitive-neutral-200));
+  @media (hover: hover) and (pointer: fine) {
+    &:hover { background: var(--primitive-neutral-200); }
+  }
 }
 
 /* Body */
@@ -116,8 +118,8 @@
   display: grid;
   grid-template-columns: 1fr var(--grid-card-min-sm);
   gap: var(--layout-page-section-gap-tight);
-  margin: 0;
-  padding-top: 0;
+  margin: var(--space-0);
+  padding-top: var(--space-0);
 }
 
 @include respond-to(md) {
@@ -161,7 +163,7 @@
   display: inline-flex;
   align-items: center;
   gap: var(--space-1);
-  margin-top: 0;
+  margin-top: var(--space-0);
   font-size: var(--ds-font-size-xs);
   color: var(--color-status-info);
   text-decoration: none;
@@ -182,7 +184,7 @@
 }
 
 .prescription-title {
-  margin: 0;
+  margin: var(--space-0);
   font-size: var(--ds-font-size-sm);
   font-weight: var(--ds-font-weight-semibold);
   color: var(--color-text-secondary);
@@ -194,14 +196,14 @@
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-2);
-  margin: 0;
+  margin: var(--space-0);
 }
 
 .badge-item {
   display: flex;
   flex-direction: column;
   align-items: center;
-  background: var(--surface-primary);
+  background: var(--surface-card);
   border-radius: var(--component-card-radius);
   padding: var(--space-3);
   min-width: var(--badge-min-width-md);
@@ -230,7 +232,7 @@
   border-radius: var(--component-card-radius);
   font-size: var(--ds-font-size-sm);
   color: var(--color-text-on-primary);
-  margin: 0;
+  margin: var(--space-0);
 }
 
 .progression-note i {
@@ -248,7 +250,7 @@
 
 /* Instructions */
 .instructions-section {
-  margin: 0;
+  margin: var(--space-0);
   display: flex;
   flex-direction: column;
   gap: var(--space-3);
@@ -258,7 +260,7 @@
   background: var(--primitive-neutral-50);
   border-radius: var(--component-card-radius);
   padding: var(--component-card-padding-compact);
-  margin: 0;
+  margin: var(--space-0);
 }
 
 .instruction-row {
@@ -277,7 +279,7 @@
   display: flex;
   align-items: center;
   gap: var(--space-2);
-  margin: 0 0 var(--space-2);
+  margin: var(--space-0) var(--space-0) var(--space-2);
   font-size: var(--ds-font-size-sm);
   font-weight: var(--ds-font-weight-semibold);
   text-transform: var(--ds-text-transform-uppercase);
@@ -297,7 +299,7 @@
 }
 
 .instruction-text {
-  margin: 0;
+  margin: var(--space-0);
   font-size: var(--ds-font-size-sm);
   color: var(--color-text-primary);
   line-height: var(--ds-line-height-normal);
@@ -312,7 +314,7 @@
   background: var(--color-status-info-surface);
   border-radius: var(--component-card-radius);
   border-left: var(--border-3) solid var(--color-status-info);
-  margin: 0;
+  margin: var(--space-0);
 }
 
 .ai-note i {
@@ -328,7 +330,7 @@
 
 /* Exercise Timer Section */
 .exercise-timer-section {
-  margin: 0;
+  margin: var(--space-0);
   padding: var(--component-card-padding-compact);
   background: var(--surface-secondary);
   border-radius: var(--component-card-radius);
@@ -345,7 +347,7 @@
   font-size: var(--ds-font-size-md);
   font-weight: var(--ds-font-weight-semibold);
   color: var(--color-text-primary);
-  margin: 0;
+  margin: var(--space-0);
 
   i {
     color: var(--ds-primary-green);

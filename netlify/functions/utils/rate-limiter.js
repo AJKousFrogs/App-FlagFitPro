@@ -17,6 +17,9 @@ import {
   ErrorType,
   getCorsHeaders,
 } from "./error-handler.js";
+import { createLogger } from "./structured-logger.js";
+
+const logger = createLogger({ service: "netlify.rate-limiter" });
 
 // Rate limit configuration
 // Can be overridden via environment variables
@@ -75,7 +78,9 @@ const cleanupTimer = setInterval(() => {
     }
   }
   if (cleaned > 0) {
-    console.log(`[RATE LIMITER] Cleaned ${cleaned} expired entries`);
+    logger.debug("rate_limiter_cleanup_completed", {
+      cleaned_entries: cleaned,
+    });
   }
 }, CLEANUP_INTERVAL);
 cleanupTimer.unref?.();
@@ -175,7 +180,11 @@ function applyRateLimit(event, limitType = "DEFAULT", userId = null) {
   const result = checkRateLimit(identifier, limit);
 
   if (!result.allowed) {
-    console.warn(`[RATE LIMIT] Exceeded for ${identifier} (${limitType})`);
+    logger.warn("rate_limit_exceeded", {
+      identifier,
+      limit_type: limitType,
+      retry_after_seconds: result.retryAfter,
+    });
 
     const response = createErrorResponse(
       `Too many requests. Please try again in ${result.retryAfter} seconds.`,

@@ -271,8 +271,8 @@ const CATEGORY_LABELS: Record<
         <!-- Header (Full Width) -->
         <div class="bento-item full-width no-padding header-bento">
           <app-page-header
-            title="Achievements"
-            subtitle="Earn badges and points for your training milestones"
+            title="Milestones" eyebrow="MILESTONES"
+            subtitle="Badges earned, streaks held, goals crushed."
             icon="pi-trophy"
           ></app-page-header>
         </div>
@@ -306,11 +306,17 @@ const CATEGORY_LABELS: Record<
         <!-- Recently Unlocked (Span 2) -->
         @if (recentUnlocks().length > 0) {
           <div class="bento-item span-2 recent-locks-bento">
-            <h3 class="bento-title"><i class="pi pi-bolt"></i> Recently Unlocked</h3>
+            <h3 class="bento-title"><i class="pi pi-bolt"></i> Just Unlocked</h3>
             <div class="recent-list">
               @for (achievement of recentUnlocks().slice(0, 3); track achievement.id) {
                 <div class="unlock-item">
-                  <span class="icon">{{ achievement.icon }}</span>
+                  <span class="icon">
+                    @if (isPrimeIcon(achievement.icon)) {
+                      <i [class]="normalizePrimeIcon(achievement.icon)" aria-hidden="true"></i>
+                    } @else {
+                      {{ achievement.icon }}
+                    }
+                  </span>
                   <div class="info">
                     <h4>{{ achievement.name }}</h4>
                     <p>{{ achievement.unlockedAt | date }}</p>
@@ -324,7 +330,7 @@ const CATEGORY_LABELS: Record<
 
         <!-- Points Leaderboard Preview (Span 1) -->
         <div class="bento-item leaderboard-preview-bento">
-          <h3 class="bento-title"><i class="pi pi-list"></i> Top Players</h3>
+          <h3 class="bento-title"><i class="pi pi-list"></i> Leaderboard</h3>
           <div class="leaderboard-mini">
             @for (entry of leaderboard().slice(0, 2); track entry.playerId) {
               <div class="leader-row">
@@ -373,9 +379,8 @@ const CATEGORY_LABELS: Record<
                 [attr.aria-label]="achievement.name + ': ' + achievement.description + '. ' + achievement.points + ' points. ' + (achievement.isUnlocked ? 'Unlocked' : 'Locked')"
               >
                 <div class="badge-visual" [attr.aria-hidden]="true">
-                  <!-- Handle both emoji strings and PrimeIcon class names -->
-                  @if (achievement.icon && achievement.icon.startsWith('pi-')) {
-                    <i class="pi {{ achievement.icon }} badge-icon"></i>
+                  @if (isPrimeIcon(achievement.icon)) {
+                    <i [class]="normalizePrimeIcon(achievement.icon) + ' badge-icon'" aria-hidden="true"></i>
                   } @else {
                     <span class="emoji" role="img" [attr.aria-label]="achievement.name + ' icon'">{{ achievement.icon }}</span>
                   }
@@ -533,5 +538,25 @@ export class AchievementsComponent implements OnInit {
    */
   getTimeAgoStr(dateStr: string): string {
     return getTimeAgo(dateStr);
+  }
+
+  /**
+   * Check if an icon string is a PrimeIcon (handles both "pi-play" and "pi pi-play" formats)
+   */
+  isPrimeIcon(icon: string | undefined | null): boolean {
+    if (!icon) return false;
+    return icon.startsWith("pi-") || icon.startsWith("pi ");
+  }
+
+  /**
+   * Normalize PrimeIcon class string to proper "pi pi-xxx" format
+   * Handles: "pi-play" → "pi pi-play", "pi pi-play" → "pi pi-play"
+   */
+  normalizePrimeIcon(icon: string): string {
+    if (!icon) return "pi pi-star";
+    if (icon.startsWith("pi pi-")) return icon;
+    if (icon.startsWith("pi-")) return `pi ${icon}`;
+    if (icon.startsWith("pi ")) return icon.replace("pi ", "pi pi-").replace("pi-pi-", "pi-");
+    return `pi pi-${icon}`;
   }
 }

@@ -112,13 +112,13 @@
     font-size: var(--font-h4-size);
     font-weight: var(--font-weight-semibold);
     color: var(--color-text-primary);
-    margin: 0;
+    margin: var(--space-0);
   }
 
   .card__subtitle {
     font-size: var(--font-body-sm-size);
     color: var(--color-text-muted);
-    margin: 0;
+    margin: var(--space-0);
   }
 
   .card__actions {

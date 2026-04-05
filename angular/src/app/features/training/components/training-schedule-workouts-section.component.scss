@@ -17,8 +17,8 @@
   align-items: center;
   padding: var(--space-2) var(--space-1);
   border-radius: var(--radius-xl);
-  border: var(--border-1) solid var(--ui-border-subtle);
-  background: var(--ui-surface-card-alt);
+  border: var(--border-1) solid var(--color-border-primary);
+  background: var(--surface-card);
 }
 
 .schedule-day-compact.today {
@@ -74,19 +74,26 @@
   width: 100%;
   gap: var(--space-3);
   padding: var(--space-3);
-  border: var(--border-1) solid var(--ui-border-subtle);
+  border: var(--border-1) solid var(--color-border-primary);
   border-left: var(--border-3) solid;
   border-radius: var(--radius-xl);
-  background: var(--ui-surface-card-alt);
+  background: var(--surface-card);
   text-align: left;
   cursor: pointer;
   transition:
-    background-color var(--motion-base) var(--ease-standard),
-    border-color var(--motion-base) var(--ease-standard),
-    box-shadow var(--motion-base) var(--ease-standard),
-    transform var(--motion-base) var(--ease-standard);
+    background-color var(--transition-fast) var(--ease-standard),
+    border-color var(--transition-fast) var(--ease-standard),
+    box-shadow var(--transition-fast) var(--ease-standard),
+    transform var(--transition-fast) var(--ease-standard);
 
-  @include ds-hover-state(var(--surface-secondary), $border-color: var(--ui-border-default));
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      background: color-mix(in srgb, var(--ds-primary-green) 4%, var(--surface-card));
+      border-color: color-mix(in srgb, var(--ds-primary-green) 30%, var(--color-border-primary));
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-sm);
+    }
+  }
 }
 
 .workout-icon-small {
@@ -113,13 +120,13 @@
 
 .workout-meta-compact {
   font-size: var(--font-body-sm-size);
-  color: var(--ui-text-secondary);
+  color: var(--color-text-secondary);
 }
 
 .workout-card-compact .pi-play {
   color: var(--color-brand-primary);
   opacity: 0;
-  transition: opacity var(--motion-base) var(--ease-standard);
+  transition: opacity var(--transition-fast) var(--ease-standard);
 }
 
 .workout-card-compact:focus-visible {

@@ -1,7 +1,7 @@
 import { Injectable, computed, inject, signal } from "@angular/core";
 import { normalizePlayerName } from "../../shared/utils/format.utils";
 import { isBenignSupabaseQueryError } from "../../shared/utils/error.utils";
-import { LoggerService, toLogContext } from "./logger.service";
+import { LoggerService } from "./logger.service";
 import { SupabaseService } from "./supabase.service";
 
 /**
@@ -191,7 +191,7 @@ export class TeamMembershipService {
 
     const user = this.supabaseService.currentUser();
     if (!user?.id) {
-      this.logger.warn("[TeamMembership] No authenticated user");
+      this.logger.warn("team_membership_no_authenticated_user");
       this._membership.set(null);
       return null;
     }
@@ -242,12 +242,12 @@ export class TeamMembershipService {
           this._membership.set(null);
           return null;
         }
-        this.logger.error("[TeamMembership] Error loading membership:", error);
+        this.logger.error("team_membership_load_failed", error);
         return null;
       }
 
       if (!teamMember) {
-        this.logger.debug("[TeamMembership] No team membership found for user");
+        this.logger.debug("team_membership_none_found");
         this._membership.set(null);
         return null;
       }
@@ -270,7 +270,7 @@ export class TeamMembershipService {
 
       this._membership.set(membership);
       this._lastUpdated.set(new Date());
-      this.logger.debug("[TeamMembership] Membership loaded:", {
+      this.logger.debug("team_membership_loaded", {
         role: membership.role,
         teamName,
       });
@@ -278,7 +278,7 @@ export class TeamMembershipService {
       return membership;
     } catch (error) {
       if (!isBenignSupabaseQueryError(error)) {
-        this.logger.error("[TeamMembership] Unexpected error:", error);
+        this.logger.error("team_membership_unexpected_error", error);
       }
       return null;
     } finally {
@@ -300,7 +300,7 @@ export class TeamMembershipService {
   async getTeamCoach(): Promise<CoachInfo | null> {
     const teamId = this.teamId();
     if (!teamId) {
-      this.logger.warn("[TeamMembership] No team ID for coach lookup");
+      this.logger.warn("team_membership_no_team_for_coach_lookup");
       return null;
     }
 
@@ -320,10 +320,9 @@ export class TeamMembershipService {
         .maybeSingle();
 
       if (error || !coach) {
-        this.logger.warn(
-          "[TeamMembership] No coach found for team:",
-          toLogContext(teamId),
-        );
+        this.logger.warn("team_membership_no_coach_for_team", {
+          teamId,
+        });
         return null;
       }
 
@@ -350,7 +349,7 @@ export class TeamMembershipService {
         role: coach.role as TeamRole,
       };
     } catch (error) {
-      this.logger.error("[TeamMembership] Error getting coach:", error);
+      this.logger.error("team_membership_get_coach_failed", error);
       return null;
     }
   }
@@ -408,7 +407,7 @@ export class TeamMembershipService {
         };
       });
     } catch (error) {
-      this.logger.error("[TeamMembership] Error getting coaches:", error);
+      this.logger.error("team_membership_get_coaches_failed", error);
       return [];
     }
   }
@@ -442,13 +441,13 @@ export class TeamMembershipService {
       const { data, error } = await query;
 
       if (error) {
-        this.logger.error("[TeamMembership] Error getting member IDs:", error);
+        this.logger.error("team_membership_get_member_ids_failed", error);
         return [];
       }
 
       return (data || []).map((m) => m.user_id);
     } catch (error) {
-      this.logger.error("[TeamMembership] Unexpected error:", error);
+      this.logger.error("team_membership_unexpected_error", error);
       return [];
     }
   }
@@ -463,7 +462,7 @@ export class TeamMembershipService {
   ): Promise<boolean> {
     const membership = this._membership();
     if (!membership?.id) {
-      this.logger.warn("[TeamMembership] No membership to update");
+      this.logger.warn("team_membership_no_membership_to_update");
       return false;
     }
 
@@ -478,7 +477,7 @@ export class TeamMembershipService {
         .eq("id", membership.id);
 
       if (error) {
-        this.logger.error("[TeamMembership] Error updating membership:", error);
+        this.logger.error("team_membership_update_failed", error);
         return false;
       }
 
@@ -486,7 +485,7 @@ export class TeamMembershipService {
       await this.loadMembership(true);
       return true;
     } catch (error) {
-      this.logger.error("[TeamMembership] Unexpected error:", error);
+      this.logger.error("team_membership_unexpected_error", error);
       return false;
     }
   }

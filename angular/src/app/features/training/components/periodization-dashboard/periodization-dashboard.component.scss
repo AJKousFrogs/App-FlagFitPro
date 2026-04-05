@@ -9,16 +9,16 @@
 }
 
 .training-tabs {
-  margin: 0;
+  margin: var(--space-0);
 }
 
 .adjustments-card {
-  margin: 0;
+  margin: var(--space-0);
 
   .adjustments-list {
     list-style: none;
-    padding: 0;
-    margin: 0;
+    padding: var(--space-0);
+    margin: var(--space-0);
 
     li {
       padding: var(--space-3) 0;

@@ -1,7 +1,7 @@
 @use "styles/mixins" as *;
 
 .player-stats-card {
-  margin-top: 0;
+  margin-top: var(--space-0);
 
   --app-card-shell-header-padding: var(--space-4);
   --app-card-shell-header-border-bottom: var(--border-1) solid
@@ -33,7 +33,7 @@
 
 .stat-card h4,
 .stat-card h5 {
-  margin: 0 0 var(--space-4);
+  margin: var(--space-0) var(--space-0) var(--space-4);
   font-size: var(--ds-font-size-md);
   font-weight: var(--ds-font-weight-semibold);
   color: var(--color-text-primary);

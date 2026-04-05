@@ -362,30 +362,13 @@ export const UI_LIMITS = {
 } as const;
 
 /**
- * Design system colors (HEX values for Chart.js/Canvas rendering)
+ * Design system color references (CSS custom properties)
  *
- * ⚠️ IMPORTANT: For DOM elements (styles, classes), use CSS variable references from:
- * `@core/utils/design-tokens.util` - BRAND_COLORS, STATUS_COLORS
+ * For DOM: prefer BRAND_COLORS / STATUS_COLORS from `@core/utils/design-tokens.util`.
+ * For Chart.js canvas datasets: use ThemeService.getChartColors() or
+ * CANVAS_CHART_FALLBACK_HEX from design-tokens.util (see design-system-tokens CONTRACT).
  *
- * This COLORS constant contains HEX VALUES for specific scenarios:
- * - Chart.js/Canvas rendering (cannot read CSS variables)
- * - Server-side rendering fallbacks
- * - External APIs that require hex values
- *
- * For DOM elements, use CSS variable references instead:
- * - Import { BRAND_COLORS, STATUS_COLORS } from '@core/utils/design-tokens.util'
- *
- * Maps to CSS custom properties in design-system-tokens.scss
- *
- * @example
- * // ✅ For Chart.js (hex values required)
- * import { COLORS } from '@core/constants';
- * backgroundColor: COLORS.SUCCESS
- *
- * @example
- * // ✅ For DOM elements (use CSS variables)
- * import { STATUS_COLORS } from '@core/utils/design-tokens.util';
- * style.color = STATUS_COLORS.success;
+ * Maps to design-system-tokens.scss — avoid duplicating raw hex in feature code.
  */
 export const COLORS = {
   // Brand colors (use BRAND_COLORS from design-tokens.util for DOM)

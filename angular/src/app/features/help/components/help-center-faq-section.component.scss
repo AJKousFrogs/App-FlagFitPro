@@ -1,3 +1,5 @@
+@use "styles/mixins" as *;
+
 // Ensure FAQ container allows scrolling
 :host {
   display: block;
@@ -16,10 +18,8 @@
 }
 
 .faq-item {
-  padding: var(--spacing-md) 0;
-  border-bottom: var(--border-1) solid var(--surface-border);
-
-  // Ensure content can expand
+  padding: var(--space-4) 0;
+  border-bottom: var(--border-1) solid var(--color-border-primary);
   overflow: visible;
 }
 
@@ -28,12 +28,14 @@
 }
 
 .faq-item h4 {
-  margin: 0 0 var(--spacing-sm) 0;
-  color: var(--text-color);
+  margin: var(--space-0) var(--space-0) var(--space-2) var(--space-0);
+  color: var(--color-text-primary);
   cursor: pointer;
   user-select: none;
   border-radius: var(--radius-sm);
   padding: var(--space-1);
+  font-size: var(--ds-font-size-md);
+  font-weight: var(--ds-font-weight-semibold);
   transition: color var(--transition-fast);
 
   @media (hover: hover) and (pointer: fine) {
@@ -42,18 +44,14 @@
     }
   }
 
-  &:focus-visible {
-    outline: var(--focus-outline-width) solid var(--ds-primary-green);
-    outline-offset: var(--focus-outline-offset);
-  }
+  @include focus-visible;
 }
 
 .faq-item p {
-  margin: 0;
-  color: var(--text-secondary);
+  margin: var(--space-0);
+  color: var(--color-text-secondary);
   line-height: var(--ds-line-height-1-6);
-
-  // Ensure text wraps properly
+  font-size: var(--ds-font-size-sm);
   word-wrap: break-word;
   overflow-wrap: break-word;
 }

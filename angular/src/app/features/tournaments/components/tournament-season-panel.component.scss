@@ -39,7 +39,7 @@
 }
 
 .tournament-title {
-  margin: 0;
+  margin: var(--space-0);
   font-size: var(--font-h3-size);
   font-weight: var(--font-h2-weight);
   line-height: var(--font-h3-line-height);
@@ -126,7 +126,7 @@
 }
 
 .tournament-notes {
-  margin: 0;
+  margin: var(--space-0);
   color: var(--color-text-secondary);
   font-size: var(--font-body-sm-size);
   line-height: 1.6;

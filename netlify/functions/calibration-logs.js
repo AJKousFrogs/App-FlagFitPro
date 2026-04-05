@@ -5,6 +5,19 @@ import { supabaseAdmin } from "./supabase-client.js";
 import { getUserRole } from "./utils/authorization-guard.js";
 import { hasAnyRole, LOAD_MANAGEMENT_ACCESS_ROLES } from "./utils/role-sets.js";
 import { parseJsonObjectBody } from "./utils/input-validator.js";
+import { buildRequestLogContext, createLogger } from "./utils/structured-logger.js";
+
+const logger = createLogger({ service: "netlify.calibration-logs" });
+
+function createRequestLogger(event, meta = {}) {
+  return logger.child(
+    buildRequestLogContext(event, {
+      request_id: meta.requestId,
+      correlation_id: meta.correlationId,
+      trace_id: meta.traceId ?? meta.correlationId,
+    }),
+  );
+}
 
 /**
  * Netlify Function: Calibration Logs API
@@ -22,7 +35,7 @@ import { parseJsonObjectBody } from "./utils/input-validator.js";
  * Log a training recommendation
  * POST /api/calibration-logs
  */
-async function logRecommendation(userId, data) {
+async function logRecommendation(userId, data, log = logger) {
   try {
     const { athleteId, timestamp, recommendation, context } = data;
 
@@ -64,7 +77,10 @@ async function logRecommendation(userId, data) {
       .single();
 
     if (error) {
-      console.error("Error logging recommendation:", error);
+      log.error("calibration_log_recommendation_insert_failed", error, {
+        athlete_id: data.athleteId,
+        user_id: userId,
+      });
       throw error;
     }
 
@@ -76,7 +92,9 @@ async function logRecommendation(userId, data) {
       createdAt: result.created_at,
     };
   } catch (error) {
-    console.error("Error in logRecommendation:", error);
+    log.error("calibration_log_recommendation_failed", error, {
+      user_id: userId,
+    });
     throw error;
   }
 }
@@ -205,7 +223,7 @@ function validateOutcomePayload(data) {
  * Log outcome for a previous recommendation
  * POST /api/calibration-logs/outcome
  */
-async function logOutcome(userId, data) {
+async function logOutcome(userId, data, log = logger) {
   try {
     const { athleteId, timestamp, outcomes } = data;
 
@@ -235,7 +253,13 @@ async function logOutcome(userId, data) {
       .single();
 
     if (findError && findError.code !== "PGRST116") {
-      console.error("Error finding calibration log:", findError);
+      log.error(
+        "calibration_log_lookup_failed",
+        findError,
+        {
+          athlete_id: athleteId,
+        },
+      );
       throw findError;
     }
 
@@ -259,10 +283,13 @@ async function logOutcome(userId, data) {
         .select()
         .single();
 
-      if (error) {
-        console.error("Error creating outcome log:", error);
-        throw error;
-      }
+        if (error) {
+          log.error("calibration_log_outcome_insert_failed", error, {
+            athlete_id: athleteId,
+            user_id: userId,
+          });
+          throw error;
+        }
 
       return {
         id: result.id,
@@ -287,10 +314,13 @@ async function logOutcome(userId, data) {
       .select()
       .single();
 
-    if (error) {
-      console.error("Error updating outcome:", error);
-      throw error;
-    }
+        if (error) {
+          log.error("calibration_log_outcome_update_failed", error, {
+            athlete_id: athleteId,
+            user_id: userId,
+          });
+          throw error;
+        }
 
     return {
       id: result.id,
@@ -298,7 +328,9 @@ async function logOutcome(userId, data) {
       outcomeRecordedAt: result.outcome_recorded_at,
     };
   } catch (error) {
-    console.error("Error in logOutcome:", error);
+    log.error("calibration_log_outcome_failed", error, {
+      user_id: userId,
+    });
     throw error;
   }
 }
@@ -307,7 +339,7 @@ async function logOutcome(userId, data) {
  * Get calibration statistics for an athlete
  * GET /api/calibration-logs/stats/:athleteId
  */
-async function getAthleteStats(athleteId) {
+async function getAthleteStats(athleteId, log = logger) {
   try {
     const { data: logs, error } = await supabaseAdmin
       .from("calibration_logs")
@@ -316,7 +348,11 @@ async function getAthleteStats(athleteId) {
       .order("timestamp", { ascending: false });
 
     if (error) {
-      console.error("Error fetching calibration logs:", error);
+      log.error(
+        "calibration_logs_fetch_failed",
+        error,
+        { athlete_id: athleteId },
+      );
       throw error;
     }
 
@@ -395,7 +431,9 @@ async function getAthleteStats(athleteId) {
       averagePerformanceRating,
     };
   } catch (error) {
-    console.error("Error in getAthleteStats:", error);
+    log.error("calibration_athlete_stats_failed", error, {
+      athlete_id: athleteId,
+    });
     throw error;
   }
 }
@@ -404,7 +442,7 @@ async function getAthleteStats(athleteId) {
  * Get calibration statistics for a preset
  * GET /api/calibration-logs/preset-stats/:presetId
  */
-async function getPresetStats(presetId) {
+async function getPresetStats(presetId, log = logger) {
   try {
     const { data: logs, error } = await supabaseAdmin
       .from("calibration_logs")
@@ -414,7 +452,11 @@ async function getPresetStats(presetId) {
       .order("timestamp", { ascending: false });
 
     if (error) {
-      console.error("Error fetching preset calibration logs:", error);
+      log.error(
+        "calibration_preset_logs_fetch_failed",
+        error,
+        { preset_id: presetId },
+      );
       throw error;
     }
 
@@ -488,7 +530,9 @@ async function getPresetStats(presetId) {
       },
     };
   } catch (error) {
-    console.error("Error in getPresetStats:", error);
+    log.error("calibration_preset_stats_failed", error, {
+      preset_id: presetId,
+    });
     throw error;
   }
 }
@@ -502,10 +546,15 @@ const handler = async (event, context) => {
     allowedMethods: ["GET", "POST"],
     rateLimitType: event.httpMethod === "POST" ? "CREATE" : "READ",
     requireAuth: true, // SECURITY: Explicit auth for calibration data
-    handler: async (event, _context, { userId, requestId }) => {
-      if (event.httpMethod === "POST") {
-        // Handle POST /api/calibration-logs/outcome
-        if (path.includes("/outcome")) {
+    handler: async (event, _context, { userId, requestId, correlationId }) => {
+      const requestLogger = createRequestLogger(event, {
+        requestId,
+        correlationId,
+      });
+      try {
+        if (event.httpMethod === "POST") {
+          // Handle POST /api/calibration-logs/outcome
+          if (path.includes("/outcome")) {
           let outcomeData;
           try {
             outcomeData = parseJsonObjectBody(event.body);
@@ -536,7 +585,11 @@ const handler = async (event, context) => {
             );
           }
 
-          const access = await verifyAthleteAccess(userId, outcomeData.athleteId);
+          const access = await verifyAthleteAccess(
+            userId,
+            outcomeData.athleteId,
+            requestLogger,
+          );
           if (!access.authorized) {
             return createErrorResponse(
               "Not authorized to log outcomes for this athlete",
@@ -546,7 +599,7 @@ const handler = async (event, context) => {
             );
           }
 
-          const result = await logOutcome(userId, outcomeData);
+          const result = await logOutcome(userId, outcomeData, requestLogger);
           return createSuccessResponse(
             result,
             requestId,
@@ -586,7 +639,11 @@ const handler = async (event, context) => {
           );
         }
 
-        const access = await verifyAthleteAccess(userId, recommendationData.athleteId);
+        const access = await verifyAthleteAccess(
+          userId,
+          recommendationData.athleteId,
+          requestLogger,
+        );
         if (!access.authorized) {
           return createErrorResponse(
             "Not authorized to log recommendations for this athlete",
@@ -596,17 +653,21 @@ const handler = async (event, context) => {
           );
         }
 
-        const result = await logRecommendation(userId, recommendationData);
+        const result = await logRecommendation(
+          userId,
+          recommendationData,
+          requestLogger,
+        );
         return createSuccessResponse(
           result,
           requestId,
           "Recommendation logged successfully",
         );
-      }
+        }
 
-      // Handle GET requests
-      // GET /api/calibration-logs/stats/:athleteId
-      if (path.includes("/stats/")) {
+        // Handle GET requests
+        // GET /api/calibration-logs/stats/:athleteId
+        if (path.includes("/stats/")) {
         const athleteId = path.split("/stats/")[1]?.split("/")[0];
         if (!isValidId(athleteId)) {
           return createErrorResponse(
@@ -617,7 +678,11 @@ const handler = async (event, context) => {
           );
         }
 
-        const access = await verifyAthleteAccess(userId, athleteId);
+        const access = await verifyAthleteAccess(
+          userId,
+          athleteId,
+          requestLogger,
+        );
         if (!access.authorized) {
           return createErrorResponse(
             "Not authorized to view calibration stats for this athlete",
@@ -627,12 +692,12 @@ const handler = async (event, context) => {
           );
         }
 
-        const result = await getAthleteStats(athleteId);
+        const result = await getAthleteStats(athleteId, requestLogger);
         return createSuccessResponse(result, requestId);
-      }
+        }
 
-      // GET /api/calibration-logs/preset-stats/:presetId
-      if (path.includes("/preset-stats/")) {
+        // GET /api/calibration-logs/preset-stats/:presetId
+        if (path.includes("/preset-stats/")) {
         const presetId = path.split("/preset-stats/")[1]?.split("/")[0];
         if (!isValidId(presetId)) {
           return createErrorResponse(
@@ -653,16 +718,38 @@ const handler = async (event, context) => {
           );
         }
 
-        const result = await getPresetStats(presetId);
+        const result = await getPresetStats(presetId, requestLogger);
         return createSuccessResponse(result, requestId);
+        }
+        return createErrorResponse(
+          "Endpoint not found",
+          404,
+          "not_found",
+          requestId,
+        );
+      } catch (error) {
+        requestLogger.error(
+          "calibration_logs_handler_failed",
+          error,
+          {
+            http_method: event.httpMethod,
+            path,
+            user_id: userId,
+          },
+        );
+        if (
+          error?.message?.includes("must be") ||
+          error?.message?.includes("Request body must be an object")
+        ) {
+          return createErrorResponse(
+            error.message,
+            422,
+            "validation_error",
+            requestId,
+          );
+        }
+        throw error;
       }
-
-      return createErrorResponse(
-        "Endpoint not found",
-        404,
-        "not_found",
-        requestId,
-      );
     },
   });
 };

@@ -4,36 +4,48 @@
 .roster-page.bento-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: var(--space-5);
+  gap: var(--space-4);
   max-width: var(--layout-page-max-width-wide);
-  margin: 0 auto;
+  margin: var(--space-0) auto;
   width: 100%;
-  padding-bottom: var(--space-8);
+  padding-bottom: var(--space-10);
 
   .bento-item {
-    background: var(--surface-primary);
-    border: var(--border-1) solid var(--ui-border-subtle);
+    background: var(--surface-card);
+    border: var(--border-1) solid var(--color-border-primary);
     border-radius: var(--radius-xl);
-    padding: var(--space-5);
+    padding: var(--space-6);
     box-shadow: var(--shadow-sm);
     min-width: 0;
-    transition: transform var(--transition-base), box-shadow var(--transition-base);
+    transition:
+      transform var(--transition-fast) var(--ease-standard),
+      box-shadow var(--transition-fast) var(--ease-standard);
 
-    &:hover {
-      box-shadow: var(--shadow-md);
+    @media (hover: hover) and (pointer: fine) {
+      &:not(.no-padding):hover {
+        transform: translateY(-1px);
+        box-shadow: var(--shadow-md);
+      }
     }
 
+    &.no-padding {
+      border: none;
+      box-shadow: none;
+      padding: var(--space-0);
+      background: transparent;
+    }
 
     .bento-title {
-      font-size: var(--ds-font-size-lg);
-      font-weight: var(--ds-font-weight-bold);
+      font-size: var(--ds-font-size-md);
+      font-weight: var(--ds-font-weight-semibold);
       margin-bottom: var(--space-4);
       color: var(--color-text-primary);
       display: flex;
       align-items: center;
       gap: var(--space-2);
-      
-      i { color: var(--ds-primary-green); }
+      letter-spacing: -0.015em;
+
+      i { color: var(--ds-primary-green); font-size: var(--ds-font-size-md); }
     }
   }
 
@@ -43,19 +55,20 @@
     background: transparent;
     border: none;
     box-shadow: none;
-    padding: 0;
+    padding: var(--space-0);
   }
 
   .stats-bento, .toolbar-bento {
     background: transparent;
     border: none;
     box-shadow: none;
+    padding: var(--space-0);
   }
 
   /* Players Section Content */
   .position-group {
     padding: var(--space-6);
-    border-bottom: var(--border-1) solid var(--ui-border-subtle);
+    border-bottom: var(--border-1) solid var(--color-border-secondary);
 
     &:last-child { border-bottom: none; }
   }
@@ -72,7 +85,7 @@
     }
 
     h4 {
-      margin: 0;
+      margin: var(--space-0);
       font-size: var(--ds-font-size-md);
       font-weight: var(--ds-font-weight-bold);
       text-transform: uppercase;
@@ -80,7 +93,7 @@
     }
 
     .count {
-      background: var(--ui-surface-subtle);
+      background: var(--surface-secondary);
       padding: var(--space-0-5) var(--space-2-5);
       border-radius: var(--radius-full);
       font-size: var(--ds-font-size-xs);
@@ -101,7 +114,7 @@
   gap: var(--space-2);
 }
 
-/* Tablet: 2 Columns */
+/* Tablet + smaller desktop: 2 Columns */
 @include respond-to(lg) {
   .roster-page.bento-grid {
     grid-template-columns: repeat(2, 1fr);
@@ -110,14 +123,19 @@
 }
 
 /* Mobile: 1 Column */
-@include respond-to(md) {
+@include respond-to(sm) {
   .roster-page.bento-grid {
     grid-template-columns: 1fr;
     gap: var(--space-4);
+    padding: var(--space-3);
 
     .bento-item {
       grid-column: span 1;
       padding: var(--space-4);
+
+      .bento-title {
+        font-size: var(--ds-font-size-md);
+      }
     }
 
     .header-actions {
@@ -138,9 +156,9 @@
   gap: var(--space-6);
   margin-bottom: var(--space-6);
   padding: var(--space-5);
-  background: var(--ui-surface-card-alt);
-  border: var(--border-1) solid var(--ui-border-subtle);
-  border-radius: var(--component-card-radius);
+  background: var(--surface-card);
+  border: var(--border-1) solid var(--color-border-primary);
+  border-radius: var(--radius-xl);
 }
 
 .details-jersey {
@@ -157,13 +175,13 @@
 }
 
 .details-info h2 {
-  margin: 0 0 var(--space-2);
+  margin: var(--space-0) var(--space-0) var(--space-2);
   font-size: var(--ds-font-size-3xl);
 }
 
 .details-position {
-  color: var(--ui-text-secondary);
-  margin: 0 0 var(--space-2);
+  color: var(--color-text-secondary);
+  margin: var(--space-0) var(--space-0) var(--space-2);
 }
 
 .details-grid {
@@ -178,8 +196,8 @@
   flex-direction: column;
   gap: var(--space-1);
   padding: var(--space-4);
-  background: var(--ui-surface-card-alt);
-  border: var(--border-1) solid var(--ui-border-subtle);
+  background: var(--surface-card);
+  border: var(--border-1) solid var(--color-border-primary);
   border-radius: var(--radius-xl);
 }
 
@@ -203,7 +221,7 @@
 }
 
 .details-stats h3 {
-  margin: 0 0 var(--space-3);
+  margin: var(--space-0) var(--space-0) var(--space-3);
 }
 
 .stats-chips {
@@ -218,9 +236,9 @@
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 9rem), 1fr));
   gap: var(--space-4);
   padding: var(--space-4);
-  background: var(--ui-surface-card-alt);
-  border: var(--border-1) solid var(--ui-border-subtle);
-  border-radius: var(--component-card-radius);
+  background: var(--surface-card);
+  border: var(--border-1) solid var(--color-border-primary);
+  border-radius: var(--radius-xl);
   margin-bottom: var(--space-6);
 }
 
@@ -290,17 +308,16 @@
 .details-panel {
   padding: var(--space-5);
   margin-bottom: var(--space-6);
-  background: var(--ui-surface-card-alt);
-  border: var(--border-1) solid var(--ui-border-subtle);
-  border-radius: var(--component-card-radius);
-  box-shadow: inset 0 0 0 var(--border-1) rgba(var(--ds-primary-green-rgb), 0.02);
+  background: var(--surface-card);
+  border: var(--border-1) solid var(--color-border-primary);
+  border-radius: var(--radius-xl);
 }
 
 .details-section-title {
   display: flex;
   align-items: center;
   gap: var(--space-2);
-  margin: 0 0 var(--space-4);
+  margin: var(--space-0) var(--space-0) var(--space-4);
   font-size: var(--ds-font-size-md);
   font-weight: var(--ds-font-weight-semibold);
   color: var(--color-text-primary);
@@ -322,9 +339,9 @@
 
 .benchmark-item {
   padding: var(--space-3);
-  background: var(--ui-surface-card-alt);
+  background: var(--surface-card);
   border-radius: var(--radius-xl);
-  border: var(--border-1) solid var(--ui-border-subtle);
+  border: var(--border-1) solid var(--color-border-primary);
 }
 
 .benchmark-header {
@@ -336,7 +353,7 @@
 }
 
 .benchmark-title {
-  margin: 0;
+  margin: var(--space-0);
   font-size: var(--ds-font-size-md);
   font-weight: var(--ds-font-weight-medium);
   color: var(--color-text-primary);
@@ -397,7 +414,7 @@
 }
 
 .priorities-list {
-  margin: 0;
+  margin: var(--space-0);
   padding-left: var(--space-5);
   color: var(--color-text-secondary);
 
@@ -427,7 +444,7 @@
   }
 
   h3 {
-    margin: 0 0 var(--space-3);
+    margin: var(--space-0) var(--space-0) var(--space-3);
 
     i {
       color: inherit;
@@ -463,7 +480,7 @@
   }
 
   ul {
-    margin: 0;
+    margin: var(--space-0);
     padding-left: var(--space-5);
   }
 
@@ -474,7 +491,7 @@
 
 /* Status Dialog */
 .status-dialog-content p {
-  margin: 0 0 var(--space-4);
+  margin: var(--space-0) var(--space-0) var(--space-4);
 }
 
 /* Invite Form */
@@ -525,7 +542,7 @@
 }
 
 .empty-invitations p {
-  margin: 0 0 var(--space-4);
+  margin: var(--space-0) var(--space-0) var(--space-4);
 }
 
 .invitation-item {
@@ -533,17 +550,19 @@
   justify-content: space-between;
   align-items: center;
   padding: var(--space-4);
-  border: var(--border-1) solid var(--ui-border-subtle);
+  border: var(--border-1) solid var(--color-border-primary);
   border-radius: var(--radius-xl);
-  background: var(--ui-surface-card-alt);
+  background: var(--surface-card);
   transition:
-    border-color var(--transition-fast),
-    background-color var(--transition-fast);
+    border-color var(--transition-fast) var(--ease-standard),
+    background-color var(--transition-fast) var(--ease-standard);
 
-  @include ds-hover-state(
-    var(--surface-primary),
-    $border-color: var(--ds-primary-green)
-  );
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      border-color: var(--ds-primary-green);
+      background: color-mix(in srgb, var(--ds-primary-green) 4%, var(--surface-card));
+    }
+  }
 }
 
 .invitation-item.expired {

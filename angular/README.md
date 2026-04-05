@@ -2,6 +2,8 @@
 
 This directory contains the primary Angular application for athlete, coach, staff, and team workflows.
 
+**Package version:** `4.0.0` (see root [RELEASE_NOTES_4.0.0.md](../docs/RELEASE_NOTES_4.0.0.md)).
+
 ## Canonical References
 
 - Documentation index: [../docs/DOCS_INDEX.md](../docs/DOCS_INDEX.md)

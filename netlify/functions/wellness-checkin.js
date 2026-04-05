@@ -7,6 +7,9 @@ import { baseHandler } from "./utils/base-handler.js";
 import { createErrorResponse } from "./utils/error-handler.js";
 import { tryParseJsonObjectBody } from "./utils/input-validator.js";
 import { hasAnyRole, HEALTH_DATA_ACCESS_ROLES } from "./utils/role-sets.js";
+import { buildRequestLogContext, createLogger } from "./utils/structured-logger.js";
+
+const logger = createLogger({ service: "netlify.wellness-checkin" });
 
 function isOptionalSchemaError(error) {
   const code = error?.code;
@@ -36,7 +39,7 @@ function splitDisplayName(value) {
   };
 }
 
-async function ensurePublicUserProfile(supabase, userId) {
+async function ensurePublicUserProfile(supabase, userId, log = logger) {
   if (!userId) {
     return;
   }
@@ -52,7 +55,9 @@ async function ensurePublicUserProfile(supabase, userId) {
       return;
     }
   } else {
-    console.warn("[Wellness] Failed to inspect public.users profile:", existingProfile.error.message);
+    log.warn("wellness_public_user_profile_lookup_failed", {
+      user_id: userId,
+    }, existingProfile.error);
     return;
   }
 
@@ -63,10 +68,10 @@ async function ensurePublicUserProfile(supabase, userId) {
     } = await supabase.auth.admin.getUserById(userId);
 
     if (authError || !user) {
-      console.warn(
-        "[Wellness] Unable to load auth user for profile sync:",
-        authError?.message || "missing auth user",
-      );
+      log.warn("wellness_auth_user_lookup_failed_for_profile_sync", {
+        user_id: userId,
+        has_user: Boolean(user),
+      }, authError || new Error("missing auth user"));
       return;
     }
 
@@ -96,7 +101,9 @@ async function ensurePublicUserProfile(supabase, userId) {
 
     await supabase.from("users").upsert(profilePayload, { onConflict: "id" });
   } catch (error) {
-    console.warn("[Wellness] Failed to backfill public.users profile:", error?.message || error);
+    log.warn("wellness_public_user_profile_backfill_failed", {
+      user_id: userId,
+    }, error);
   }
 }
 
@@ -256,7 +263,15 @@ const handler = async (event, context) =>
     allowedMethods: ["GET", "POST"],
     rateLimitType: "UPDATE",
     requireAuth: true,
-    handler: async (evt, _ctx, { userId, requestId }) => {
+    handler: async (evt, _ctx, { userId, requestId, correlationId }) => {
+      const requestLogger = logger.child(
+        buildRequestLogContext(evt, {
+          user_id: userId,
+          request_id: requestId,
+          correlation_id: correlationId,
+          trace_id: correlationId,
+        }),
+      );
       try {
         if (evt.httpMethod === "GET") {
           const params = evt.queryStringParameters || {};
@@ -270,9 +285,11 @@ const handler = async (event, context) =>
           return parsedPayload.error;
         }
         const payload = parsedPayload.data;
-        return saveCheckin(supabaseAdmin, userId, payload, requestId);
+        return saveCheckin(supabaseAdmin, userId, payload, requestId, requestLogger);
       } catch (error) {
-        console.error("Wellness checkin error:", error);
+        requestLogger.error("wellness_checkin_request_failed", error, {
+          http_method: evt.httpMethod,
+        });
         return createErrorResponse(
           "Failed to process wellness check-in request",
           500,
@@ -348,7 +365,7 @@ async function getCheckin(supabase, userId, requestedAthleteId, date, requestId)
   };
 }
 
-async function saveCheckin(supabase, userId, payload, requestId) {
+async function saveCheckin(supabase, userId, payload, requestId, log = logger) {
   const {
     date,
     sleepQuality,
@@ -367,7 +384,7 @@ async function saveCheckin(supabase, userId, payload, requestId) {
 
   const targetDate = date || new Date().toISOString().split("T")[0];
 
-  await ensurePublicUserProfile(supabase, userId);
+  await ensurePublicUserProfile(supabase, userId, log);
 
   // Safety override: Check for pain triggers (muscleSoreness >3/10)
   if (
@@ -429,10 +446,11 @@ async function saveCheckin(supabase, userId, payload, requestId) {
         });
       }
     } catch (recoveryError) {
-      console.warn(
-        "[Wellness] Error creating recovery focus:",
-        recoveryError.message,
-      );
+      log.warn("wellness_recovery_focus_creation_failed", {
+        user_id: userId,
+        target_date: targetDate,
+        calculated_readiness: calculatedReadiness,
+      }, recoveryError);
       // Non-fatal - continue with check-in
     }
   }
@@ -479,10 +497,11 @@ async function saveCheckin(supabase, userId, payload, requestId) {
         }
       }
     } catch (transitionError) {
-      console.warn(
-        "[Wellness] Error logging ownership transition:",
-        transitionError.message,
-      );
+      log.warn("wellness_ownership_transition_logging_failed", {
+        user_id: userId,
+        target_date: targetDate,
+        calculated_readiness: calculatedReadiness,
+      }, transitionError);
       // Non-fatal - continue with check-in
     }
   }
@@ -540,13 +559,13 @@ async function saveCheckin(supabase, userId, payload, requestId) {
           onConflict: "athlete_id,date",
         },
       );
-      console.log("[Wellness] Dual-write to wellness_entries successful");
     } catch (dualWriteError) {
       if (!isOptionalSchemaError(dualWriteError)) {
-        console.warn(
-          "[Wellness] Dual-write to wellness_entries failed (non-fatal):",
-          dualWriteError.message,
-        );
+        log.warn("wellness_legacy_dual_write_failed", {
+          user_id: userId,
+          target_date: targetDate,
+          table: "wellness_entries",
+        }, dualWriteError);
       }
     }
   }
@@ -559,7 +578,10 @@ async function saveCheckin(supabase, userId, payload, requestId) {
       p_activity_date: targetDate,
     });
   } catch (streakError) {
-    console.warn("Could not update wellness streak:", streakError.message);
+    log.warn("wellness_streak_update_failed", {
+      user_id: userId,
+      target_date: targetDate,
+    }, streakError);
   }
 
   // Check for mental fatigue indicators
@@ -658,10 +680,10 @@ async function saveCheckin(supabase, userId, payload, requestId) {
       }
     }
   } catch (mentalFatigueError) {
-    console.warn(
-      "[Wellness] Error detecting mental fatigue:",
-      mentalFatigueError.message,
-    );
+    log.warn("wellness_mental_fatigue_detection_failed", {
+      user_id: userId,
+      target_date: targetDate,
+    }, mentalFatigueError);
     // Non-fatal - continue
   }
 
@@ -797,10 +819,10 @@ async function saveCheckin(supabase, userId, payload, requestId) {
       }
     }
   } catch (nutritionError) {
-    console.warn(
-      "[Wellness] Error detecting nutrition deviation:",
-      nutritionError.message,
-    );
+    log.warn("wellness_tournament_nutrition_detection_failed", {
+      user_id: userId,
+      target_date: targetDate,
+    }, nutritionError);
     // Non-fatal - continue
   }
 
@@ -839,7 +861,10 @@ async function saveCheckin(supabase, userId, payload, requestId) {
       });
     }
   } catch (achievementError) {
-    console.warn("Could not check achievements:", achievementError.message);
+    log.warn("wellness_achievement_check_failed", {
+      user_id: userId,
+      target_date: targetDate,
+    }, achievementError);
   }
 
   return {
@@ -891,9 +916,6 @@ function calculateReadiness(data) {
     energyLevel === null ||
     energyLevel === undefined
   ) {
-    console.log(
-      "[wellness-checkin] Cannot calculate readiness: missing required fields",
-    );
     return null;
   }
 

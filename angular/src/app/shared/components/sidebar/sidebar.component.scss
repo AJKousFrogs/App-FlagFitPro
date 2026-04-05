@@ -1,6 +1,5 @@
 // ============================================================================
-// sidebar.component Styles
-// Design System Compliant
+// sidebar.component Styles — Apple-style redesign
 // ============================================================================
 
 @use "styles/mixins" as *;
@@ -11,12 +10,15 @@
   min-height: 0;
 }
 
-/* Reset any potential styling bleeding through */
 :host::before,
 :host::after {
   display: none;
   content: none;
 }
+
+// ============================================================
+// SHELL
+// ============================================================
 
 .sidebar {
   position: relative;
@@ -29,7 +31,8 @@
   z-index: var(--z-index-app-sidebar);
   transition:
     transform var(--motion-feedback-duration) var(--ease-standard),
-    box-shadow var(--motion-feedback-duration) var(--ease-standard);
+    box-shadow var(--motion-feedback-duration) var(--ease-standard),
+    width var(--transition-slow) var(--ease-standard);
   overflow: hidden;
   display: flex;
   flex-direction: column;
@@ -54,6 +57,10 @@ app-close-button.sidebar-close-btn {
   --close-button-bg-hover: var(--surface-secondary);
 }
 
+// ============================================================
+// LOGO
+// ============================================================
+
 .sidebar-logo {
   padding: var(--space-4) var(--space-5);
   display: flex;
@@ -63,20 +70,20 @@ app-close-button.sidebar-close-btn {
   background: var(--surface-primary);
   border-bottom: var(--border-1) solid var(--color-border-primary);
   transition:
-    transform var(--transition-fast) var(--ease-standard),
-    opacity var(--transition-fast) var(--ease-standard),
     background-color var(--transition-fast) var(--ease-standard),
     box-shadow var(--transition-fast) var(--ease-standard);
   min-height: var(--header-height, 4rem);
   text-decoration: none;
 
-  @include ds-hover-state(var(--surface-secondary));
+  @media (hover: hover) and (pointer: fine) {
+    &:hover { background: var(--surface-secondary); }
+  }
 }
 
 @media (hover: hover) and (pointer: fine) {
   .sidebar-logo:hover .logo-icon-wrapper {
     transform: scale(1.05);
-    box-shadow: var(--shadow-2);
+    box-shadow: var(--shadow-md);
   }
 }
 
@@ -94,10 +101,8 @@ app-close-button.sidebar-close-btn {
   justify-content: center;
   transition:
     transform var(--transition-fast) var(--ease-standard),
-    opacity var(--transition-fast) var(--ease-standard),
-    background-color var(--transition-fast) var(--ease-standard),
     box-shadow var(--transition-fast) var(--ease-standard);
-  box-shadow: var(--shadow-1);
+  box-shadow: var(--shadow-sm);
   flex-shrink: 0;
 }
 
@@ -110,82 +115,51 @@ app-close-button.sidebar-close-btn {
   font-size: var(--ds-font-size-md);
   font-weight: var(--ds-font-weight-bold);
   color: var(--color-text-primary);
-  letter-spacing: var(--ds-letter-spacing-0-01em);
+  letter-spacing: -0.01em;
 }
 
-.user-section {
-  display: flex;
-  align-items: center;
-  gap: var(--space-3);
-  padding: var(--space-4);
-  border-bottom: var(--border-1) solid var(--color-border-secondary);
-  background: var(--surface-secondary);
-  transition:
-    padding var(--motion-feedback-duration) var(--ease-standard),
-    gap var(--motion-feedback-duration) var(--ease-standard);
-}
-
-.user-avatar {
-  width: var(--touch-target-md);
-  height: var(--touch-target-md);
-  border-radius: var(--radius-full);
-  background: var(--color-brand-primary);
-  color: var(--color-text-on-primary);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: var(--ds-font-weight-semibold);
-  font-size: var(--ds-font-size-md);
-}
-
-.user-info {
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-}
-
-.user-name {
-  font-weight: var(--ds-font-weight-semibold);
-  color: var(--color-text-primary);
-  font-size: var(--ds-font-size-md);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.user-role {
-  font-size: var(--ds-font-size-xs);
-  color: var(--color-text-secondary);
-  text-transform: var(--ds-text-transform-capitalize);
-}
+// ============================================================
+// NAV SECTION
+// ============================================================
 
 .nav-section {
-  padding: var(--space-2);
+  padding: var(--space-2) var(--space-2);
   flex: 1;
   overflow-y: auto;
   min-height: 0;
   display: flex;
   flex-direction: column;
-  gap: var(--space-4);
-}
-
-// Navigation grouping
-.nav-group {
-  display: flex;
-  flex-direction: column;
   gap: var(--space-2);
 }
 
+.nav-group {
+  display: flex;
+  flex-direction: column;
+}
+
+// Refined group labels — dot prefix, subtle, no uppercase
 .nav-group-title {
-  padding: var(--space-2) var(--space-4);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-4) var(--space-1);
   font-size: var(--ds-font-size-xs);
-  font-weight: var(--ds-font-weight-semibold);
+  font-weight: var(--ds-font-weight-medium);
   color: var(--color-text-tertiary);
-  text-transform: var(--ds-text-transform-uppercase);
-  letter-spacing: var(--ds-letter-spacing-0-08em);
-  transition:
-    opacity var(--motion-feedback-duration-fast) var(--ease-standard),
-    transform var(--motion-feedback-duration-fast) var(--ease-standard);
+  letter-spacing: 0.02em;
+  user-select: none;
+  transition: opacity var(--motion-feedback-duration-fast) var(--ease-standard);
+
+  &::before {
+    content: "";
+    display: inline-block;
+    width: 4px;
+    height: 4px;
+    border-radius: var(--radius-full);
+    background: currentColor;
+    flex-shrink: 0;
+    opacity: 0.55;
+  }
 }
 
 .nav-group-items {
@@ -193,77 +167,130 @@ app-close-button.sidebar-close-btn {
   flex-direction: column;
 }
 
-// "Me" collapsible group
+// "Me" section — subtle top separator
 .me-group-container {
   margin-top: var(--space-2);
-  padding-top: var(--space-4);
+  padding-top: var(--space-2);
   border-top: var(--border-1) solid var(--color-border-secondary);
 }
 
-.me-group-header {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-  padding: var(--space-3) var(--space-4);
-  width: 100%;
-  border: none;
-  background: transparent;
-  color: var(--color-text-secondary);
-  font-size: var(--ds-font-size-md);
-  font-weight: var(--ds-font-weight-semibold);
-  cursor: pointer;
-  border-radius: var(--radius-md);
-  transition:
-    background-color var(--transition-fast) var(--ease-standard),
-    color var(--transition-fast) var(--ease-standard),
-    box-shadow var(--transition-fast) var(--ease-standard);
-  min-height: var(--touch-target-md); /* 2.calc(var(--size-200) * 6) WCAG */
+// ============================================================
+// FOOTER — user card + logout
+// ============================================================
 
-  @include ds-focus-ring;
-  @include ds-hover-state(
-    var(--surface-secondary),
-    $color: var(--color-text-primary)
-  );
+.sidebar-footer {
+  padding: var(--space-3) var(--space-2);
+  border-top: var(--border-1) solid var(--color-border-secondary);
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
 }
 
-.me-group-icon {
+.user-card {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-lg);
+  transition: background-color var(--transition-fast) var(--ease-standard);
+  min-height: var(--touch-target-md);
+
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      background: var(--surface-secondary);
+    }
+  }
+}
+
+.user-card--collapsed {
+  justify-content: center;
+  padding: var(--space-2);
+  gap: var(--space-0);
+}
+
+.user-avatar {
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: var(--radius-full);
+  background: linear-gradient(
+    135deg,
+    var(--ds-primary-green-light) 0%,
+    var(--ds-primary-green) 100%
+  );
+  color: var(--color-text-on-primary);
   display: flex;
   align-items: center;
   justify-content: center;
-  width: var(--indicator-size-lg); /* 1rem */
-  transition: transform var(--transition-fast) var(--ease-standard);
+  font-weight: var(--ds-font-weight-semibold);
+  font-size: var(--ds-font-size-sm);
+  flex-shrink: 0;
+  box-shadow: 0 2px 8px rgba(8, 153, 73, 0.28);
 }
 
-.me-group-label {
+.user-info {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
   flex: 1;
-  text-align: left;
+  min-width: 0;
 }
 
-.me-group-items {
-  padding-left: var(--space-2);
-  animation: ui-motion-enter-y var(--motion-feedback-duration-fast)
-    var(--ease-standard);
-}
-
-.me-group-header[aria-expanded="true"] {
+.user-name {
+  font-weight: var(--ds-font-weight-semibold);
   color: var(--color-text-primary);
-  background: color-mix(in srgb, var(--surface-secondary) 86%, transparent);
-  box-shadow: inset 0 0 0 var(--border-1) var(--color-border-secondary);
+  font-size: var(--ds-font-size-sm);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.3;
 }
 
-.me-group-header[aria-expanded="true"] .me-group-icon {
-  transform: rotate(90deg);
+.user-role {
+  font-size: var(--ds-font-size-xs);
+  color: var(--color-text-secondary);
+  text-transform: capitalize;
+  line-height: 1.3;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-.sidebar-footer {
-  padding: var(--space-4);
-  border-top: var(--border-1) solid var(--color-border-secondary);
-  margin-top: auto;
+.user-settings-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--space-8);
+  height: var(--space-8);
+  border: none;
+  background: transparent;
+  border-radius: var(--radius-md);
+  color: var(--color-text-tertiary);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition:
+    background-color var(--transition-fast) var(--ease-standard),
+    color var(--transition-fast) var(--ease-standard);
+
+  @include ds-focus-ring;
+
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      background: var(--surface-tertiary);
+      color: var(--ds-primary-green);
+    }
+  }
+
+  i {
+    font-size: var(--ds-font-size-md);
+  }
 }
+
+// ============================================================
+// COLLAPSED STATE
+// ============================================================
 
 .sidebar.sidebar-collapsed .logo-text,
-.sidebar.sidebar-collapsed .user-info,
-.sidebar.sidebar-collapsed .me-group-label,
 .sidebar.sidebar-collapsed .nav-group-title {
   display: none;
 }
@@ -273,65 +300,41 @@ app-close-button.sidebar-close-btn {
   padding: var(--space-3);
 }
 
-.sidebar.sidebar-collapsed .user-section {
-  justify-content: center;
-  padding: var(--space-3);
-}
-
-.sidebar.sidebar-collapsed .me-group-header {
-  justify-content: center;
-  padding: var(--space-3);
-}
-
-.sidebar.sidebar-collapsed .me-group-items {
-  display: none;
-}
-
-.sidebar.sidebar-collapsed .me-group-icon {
-  margin: 0;
-}
-
 .sidebar-backdrop {
   display: none;
-  z-index: calc(var(--z-modal) + 5); /* Below sidebar but above content */
-  -webkit-tap-highlight-color: transparent; /* Remove tap highlight on mobile */
+  z-index: calc(var(--z-modal) + 5);
+  -webkit-tap-highlight-color: transparent;
 }
 
-// ============================================
+// ============================================================
 // TABLET: Collapsed sidebar (icons only)
-// Design System: --bp-tablet: 48rem, --bp-laptop: 64rem
-// ============================================
+// ============================================================
 @media (max-width: 64rem) and (min-width: 48.0625rem) {
   .sidebar {
     width: 100%;
   }
 
   .sidebar-logo,
-  .user-section,
   .sidebar-footer {
     padding-inline: var(--space-3);
   }
 
   .nav-section {
-    gap: var(--space-3);
     padding-inline: var(--space-2);
   }
 
-  .nav-group-title,
-  .me-group-header {
+  .nav-group-title {
     padding-inline: var(--space-3);
   }
 
-  // Close button NOT shown at tablet width
   app-close-button.sidebar-close-btn {
     display: none;
   }
 }
 
-// ============================================
+// ============================================================
 // MOBILE: Hidden sidebar with overlay
-// Design System: --bp-tablet: 48rem (≤48rem is mobile)
-// ============================================
+// ============================================================
 @include respond-to(md) {
   .sidebar {
     position: fixed;
@@ -345,8 +348,8 @@ app-close-button.sidebar-close-btn {
     border-top-right-radius: var(--radius-2xl);
     border-bottom-right-radius: var(--radius-2xl);
     box-shadow: var(--shadow-xl);
-    will-change: transform; /* Optimize animation performance */
-    -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+    will-change: transform;
+    -webkit-overflow-scrolling: touch;
   }
 
   .sidebar.sidebar-open {
@@ -358,13 +361,12 @@ app-close-button.sidebar-close-btn {
     padding: var(--space-3) var(--space-4);
   }
 
-  .user-section,
   .sidebar-footer {
-    padding: var(--space-3) var(--space-4);
+    padding: var(--space-3);
   }
 
   .nav-section {
-    gap: var(--space-3);
+    gap: var(--space-2);
     padding: var(--space-2) var(--space-3) var(--space-4);
   }
 
@@ -372,16 +374,8 @@ app-close-button.sidebar-close-btn {
     padding-inline: var(--space-3);
   }
 
-  .nav-group {
-    gap: var(--space-1);
-  }
-
   .me-group-container {
-    padding-top: var(--space-3);
-  }
-
-  .me-group-header {
-    padding-inline: var(--space-3);
+    padding-top: var(--space-2);
   }
 
   app-close-button.sidebar-close-btn {
@@ -400,41 +394,28 @@ app-close-button.sidebar-close-btn {
   .sidebar,
   .sidebar-logo,
   .logo-icon-wrapper,
-  .me-group-header,
-  .me-group-icon {
+  .user-settings-btn {
     transition: none;
-  }
-
-  .me-group-items {
-    animation: none;
   }
 }
 
-// ============================================
-// MOBILE: Specific fixes for Samsung Galaxy S24 and similar devices
-// Samsung Galaxy S24: 1080x146.25rem (360x780 logical)
-// Samsung Galaxy S24 Ultra: 1440x193rem (480x1029 logical)
-// ============================================
+// ============================================================
+// MOBILE: Samsung Galaxy fixes
+// ============================================================
 @media (max-width: var(--breakpoint-md)) and (min-height: var(--breakpoint-min-height-tablet)) {
   .sidebar {
-    /* Ensure full height coverage on tall mobile screens */
     height: calc(100dvh - var(--app-shell-header-height-mobile));
     max-height: calc(100dvh - var(--app-shell-header-height-mobile));
   }
 
   .sidebar-backdrop {
-    /* Prevent any overflow or scroll on overlay */
     overflow: hidden;
     touch-action: none;
     overscroll-behavior: contain;
   }
 }
 
-// ============================================
-// MOBILE: Prevent content shift and ensure proper layering
-// ============================================
 @include respond-to(md) {
-  /* Applied via Renderer2 in component when sidebar opens */
   :host-context(body.sidebar-open) {
     overflow: hidden;
   }

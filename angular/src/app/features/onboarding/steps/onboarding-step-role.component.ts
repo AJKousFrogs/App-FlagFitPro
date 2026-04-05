@@ -125,7 +125,7 @@ import { OnboardingStateService } from "../services/onboarding-state.service";
         >
           <ng-template let-team #item>
             <div style="display:flex;align-items:center;gap:8px">
-              <i class="pi pi-users" style="color:#089949"></i>
+              <i class="pi pi-users" style="color:var(--ds-primary-green)"></i>
               <span>{{ team.label }}</span>
             </div>
           </ng-template>

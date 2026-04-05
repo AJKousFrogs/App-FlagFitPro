@@ -4,12 +4,12 @@
   gap: var(--space-3);
 
   .date-header {
-    margin: 0;
+    margin: var(--space-0);
     font-size: var(--ds-font-size-md);
     font-weight: var(--ds-font-weight-semibold);
-    color: var(--ds-text-primary);
+    color: var(--color-text-primary);
     padding-bottom: var(--space-2);
-    border-bottom: var(--border-1) solid var(--ds-border-subtle);
+    border-bottom: var(--border-1) solid var(--color-border-secondary);
   }
 }
 
@@ -18,11 +18,11 @@
 }
 
 .event-card {
-  border-left: var(--space-1) solid var(--ds-border-default);
+  border-left: var(--space-1) solid var(--color-border-primary);
   transition:
-    background-color var(--motion-base) var(--ease-standard),
-    border-color var(--motion-base) var(--ease-standard),
-    box-shadow var(--motion-base) var(--ease-standard);
+    background-color var(--transition-fast) var(--ease-standard),
+    border-color var(--transition-fast) var(--ease-standard),
+    box-shadow var(--transition-fast) var(--ease-standard);
 
   &.type-practice {
     border-left-color: var(--ds-primary-green);
@@ -59,20 +59,20 @@
   min-width: var(--badge-min-width-md);
   text-align: center;
   padding: var(--space-2);
-  background: var(--ds-surface-base);
+  background: var(--surface-secondary);
   border-radius: var(--radius-md);
 
   .item-time {
     display: block;
     font-weight: var(--ds-font-weight-semibold);
     font-size: var(--ds-font-size-md);
-    color: var(--ds-text-primary);
+    color: var(--color-text-primary);
   }
 
   .duration {
     display: block;
     font-size: var(--ds-font-size-xs);
-    color: var(--ds-text-tertiary);
+    color: var(--color-text-tertiary);
     margin-top: var(--space-1);
   }
 }
@@ -89,10 +89,10 @@
     flex-wrap: wrap;
 
     h4 {
-      margin: 0;
+      margin: var(--space-0);
       font-size: var(--ds-font-size-md);
       font-weight: var(--ds-font-weight-semibold);
-      color: var(--ds-text-primary);
+      color: var(--color-text-primary);
     }
   }
 
@@ -100,9 +100,9 @@
     display: flex;
     align-items: center;
     gap: var(--space-1);
-    margin: 0 0 var(--space-1) 0;
+    margin: var(--space-0) var(--space-0) var(--space-1) var(--space-0);
     font-size: var(--ds-font-size-md);
-    color: var(--ds-text-secondary);
+    color: var(--color-text-secondary);
 
     i {
       font-size: var(--ds-font-size-xs);
@@ -110,9 +110,9 @@
   }
 
   .event-description {
-    margin: 0;
+    margin: var(--space-0);
     font-size: var(--ds-font-size-md);
-    color: var(--ds-text-secondary);
+    color: var(--color-text-secondary);
     line-height: var(--ds-line-height-normal);
   }
 }
@@ -128,7 +128,7 @@
     align-items: center;
     gap: var(--space-1);
     font-size: var(--ds-font-size-xs);
-    color: var(--ds-text-tertiary);
+    color: var(--color-text-tertiary);
 
     &.going {
       color: var(--ds-primary-green);
@@ -163,7 +163,7 @@
     font-weight: var(--ds-font-weight-medium);
     padding: var(--space-1) var(--space-2);
     border-radius: var(--radius-full);
-    background: var(--ds-surface-base);
+    background: var(--surface-secondary);
 
     &.status-going {
       background: var(--color-status-success-subtle);

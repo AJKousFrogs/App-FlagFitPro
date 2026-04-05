@@ -84,7 +84,7 @@ export class ProfileNotificationService {
         );
       }
     } catch (error) {
-      this.logger.error("[ProfileNotification] Error checking profile:", error);
+      this.logger.error("profile_notification_check_failed", error);
     } finally {
       this.isChecking.set(false);
     }
@@ -190,9 +190,7 @@ export class ProfileNotificationService {
           throw updateError;
         }
 
-        this.logger.debug(
-          "[ProfileNotification] Updated existing notification",
-        );
+        this.logger.debug("profile_notification_updated");
       } else {
         // Create new notification
         const { error: insertError } = await this.supabaseService.client
@@ -223,13 +221,10 @@ export class ProfileNotificationService {
           throw insertError;
         }
 
-        this.logger.debug("[ProfileNotification] Created new notification");
+        this.logger.debug("profile_notification_created");
       }
     } catch (error) {
-      this.logger.warn(
-        "[ProfileNotification] Failed to save notification to database:",
-        error,
-      );
+      this.logger.warn("profile_notification_save_failed", error);
     }
   }
 
@@ -263,12 +258,9 @@ export class ProfileNotificationService {
         throw error;
       }
 
-      this.logger.debug("[ProfileNotification] Notification dismissed");
+      this.logger.debug("profile_notification_dismissed");
     } catch (error) {
-      this.logger.warn(
-        "[ProfileNotification] Failed to dismiss notification:",
-        error,
-      );
+      this.logger.warn("profile_notification_dismiss_failed", error);
     }
   }
 

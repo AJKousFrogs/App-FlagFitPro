@@ -10,6 +10,7 @@ import type {
 } from "@supabase/supabase-js";
 import { environment } from "../../../environments/environment";
 import { LoggerService, toLogContext } from "./logger.service";
+import { CorrelationContextService } from "./correlation-context.service";
 
 export interface UserMetadata {
   firstName?: string;
@@ -26,6 +27,7 @@ export interface UserMetadata {
 })
 export class SupabaseService {
   private logger = inject(LoggerService);
+  private readonly correlation = inject(CorrelationContextService);
   /** Populated after `import("@supabase/supabase-js")` resolves. */
   private supabase: SupabaseClient | null = null;
   private readonly bootstrapPromise: Promise<void>;
@@ -46,39 +48,24 @@ export class SupabaseService {
   constructor() {
     // Validate Supabase configuration
     if (!environment.supabase.url || !environment.supabase.anonKey) {
-      this.logger.error("[SupabaseService] Missing Supabase configuration!");
-      this.logger.error(
-        "[SupabaseService] URL:",
-        environment.supabase.url || "MISSING",
-      );
-      this.logger.error(
-        "[SupabaseService] AnonKey:",
-        environment.supabase.anonKey ? "SET" : "MISSING",
-      );
-      this.logger.error(
-        "[SupabaseService] For local dev, ensure dev server injects window._env",
-      );
-      this.logger.error(
-        "[SupabaseService] For production, use Angular file replacement to inject values",
-      );
+      this.logger.error("supabase_config_missing", undefined, {
+        urlConfigured: !!environment.supabase.url,
+        anonKeyConfigured: !!environment.supabase.anonKey,
+      });
       throw new Error(
         "Supabase configuration is required. Set SUPABASE_URL and SUPABASE_ANON_KEY.",
       );
     }
 
     if (this.isServiceRoleKey(environment.supabase.anonKey)) {
-      this.logger.error(
-        "[SupabaseService] Service role key detected in client configuration.",
-      );
+      this.logger.error("supabase_service_role_key_in_client");
       throw new Error(
         "Supabase service role keys must not be used in the client.",
       );
     }
 
     if (this.isClearlyInvalidPublicKey(environment.supabase.anonKey)) {
-      this.logger.error(
-        "[SupabaseService] Invalid Supabase public key format in client configuration.",
-      );
+      this.logger.error("supabase_invalid_anon_key_format");
       throw new Error(
         "Supabase anon/publishable key is invalid. Check SUPABASE_ANON_KEY or VITE_SUPABASE_ANON_KEY.",
       );
@@ -87,7 +74,7 @@ export class SupabaseService {
     // Load `@supabase/supabase-js` in a separate async chunk so it is not part of the
     // initial bundle (saves ~170KB+ gzipped transfer vs eager static import).
     this.bootstrapPromise = this.bootstrapClient().catch((error: unknown) => {
-      this.logger.error("[SupabaseService] Bootstrap failed", { error });
+      this.logger.error("supabase_bootstrap_failed", error);
       if (!this._isInitialized()) {
         this._isInitialized.set(true);
       }
@@ -107,6 +94,15 @@ export class SupabaseService {
         auth: {
           persistSession: true,
         },
+        global: {
+          fetch: (input: RequestInfo | URL, init?: RequestInit): Promise<Response> => {
+            const traceId =
+              this.correlation.traceId() ?? this.correlation.getOrCreateForRequest();
+            const headers = new Headers(init?.headers ?? undefined);
+            headers.set("x-trace-id", traceId);
+            return fetch(input, { ...init, headers });
+          },
+        },
       },
     );
     await this.initializeAuth();
@@ -121,7 +117,7 @@ export class SupabaseService {
       // Get initial session
       const { data } = await client.auth.getSession();
 
-      this.logger.debug("[SupabaseService] Initial session", {
+      this.logger.debug("supabase_initial_session", {
         hasSession: !!data.session,
         userId: data.session?.user?.id,
       });
@@ -132,40 +128,37 @@ export class SupabaseService {
       // Listen for auth changes
       client.auth.onAuthStateChange(
         (event: AuthChangeEvent, session: Session | null) => {
-          this.logger.debug("Auth state changed:", toLogContext(event));
+          this.logger.debug("supabase_auth_state_changed", toLogContext(event));
           this._session.set(session);
           this._currentUser.set(session?.user ?? null);
 
           // Handle specific auth events
           switch (event) {
             case "SIGNED_OUT":
-              this.logger.info("[Supabase] User signed out", {
+              this.logger.info("supabase_signed_out", {
                 userId: session?.user?.id,
                 timestamp: new Date().toISOString(),
               });
               break;
             case "TOKEN_REFRESHED":
-              this.logger.debug(
-                "[Supabase] Session token refreshed automatically",
-                {
-                  userId: session?.user?.id,
-                  expiresAt: session?.expires_at,
-                  timestamp: new Date().toISOString(),
-                },
-              );
+              this.logger.debug("supabase_token_refreshed", {
+                userId: session?.user?.id,
+                expiresAt: session?.expires_at,
+                timestamp: new Date().toISOString(),
+              });
               break;
             case "USER_UPDATED":
-              this.logger.debug("[Supabase] User profile updated", {
+              this.logger.debug("supabase_user_updated", {
                 userId: session?.user?.id,
               });
               break;
             case "PASSWORD_RECOVERY":
-              this.logger.info("[Supabase] Password recovery initiated", {
+              this.logger.info("supabase_password_recovery", {
                 userId: session?.user?.id,
               });
               break;
             case "SIGNED_IN":
-              this.logger.info("[Supabase] User signed in", {
+              this.logger.info("supabase_signed_in", {
                 userId: session?.user?.id,
                 email: session?.user?.email,
                 timestamp: new Date().toISOString(),
@@ -175,7 +168,7 @@ export class SupabaseService {
         },
       );
     } catch (error) {
-      this.logger.error("[Supabase] Auth initialization error", { error });
+      this.logger.error("supabase_auth_init_failed", error);
       throw error;
     } finally {
       // Mark as initialized even if there's no session
@@ -276,18 +269,14 @@ export class SupabaseService {
       } = await this.client.auth.getUser();
 
       if (error) {
-        this.logger.warn("[Supabase] Failed to refresh current user", {
-          error,
-        });
+        this.logger.warn("supabase_refresh_user_failed", toLogContext(error));
         return null;
       }
 
       this._currentUser.set(user ?? null);
       return user ?? null;
     } catch (error) {
-      this.logger.error("[Supabase] Unexpected current user refresh error", {
-        error,
-      });
+      this.logger.error("supabase_refresh_user_unexpected_error", error);
       return null;
     }
   }
@@ -363,7 +352,7 @@ export class SupabaseService {
       const { data, error } = await this.client.auth.getSession();
 
       if (error) {
-        this.logger.warn("[Supabase] Error getting session token", { error });
+        this.logger.warn("supabase_get_session_token_failed", toLogContext(error));
         return null;
       }
 
@@ -376,15 +365,16 @@ export class SupabaseService {
       const now = Math.floor(Date.now() / 1000);
 
       if (expiresAt && expiresAt - now < 60) {
-        this.logger.debug("[Supabase] Token expiring soon, refreshing session");
+        this.logger.debug("supabase_token_expiring_refresh");
 
         const { data: refreshData, error: refreshError } =
           await this.client.auth.refreshSession();
 
         if (refreshError || !refreshData.session) {
-          this.logger.warn("[Supabase] Failed to refresh session token", {
-            error: refreshError,
-          });
+          this.logger.warn(
+            "supabase_refresh_session_token_failed",
+            toLogContext(refreshError),
+          );
           return null;
         }
 
@@ -393,10 +383,37 @@ export class SupabaseService {
 
       return session.access_token;
     } catch (error) {
-      this.logger.error("[Supabase] Exception getting session token", {
-        error,
-      });
+      this.logger.error("supabase_get_session_token_exception", error);
       return null;
+    }
+  }
+
+  /**
+   * Force a session refresh after HTTP 401 so the client can retry with a new access token.
+   * Does not sign out on failure — callers decide (e.g. retry once, then sign out).
+   */
+  async refreshSessionForHttpRetry(): Promise<boolean> {
+    await this.waitForInit();
+    if (!this.client) {
+      return false;
+    }
+    try {
+      const { data, error } = await this.client.auth.refreshSession();
+      if (error || !data.session) {
+        this.logger.warn(
+          "supabase_refresh_session_http_recovery_failed",
+          error ? toLogContext(error) : undefined,
+        );
+        return false;
+      }
+      return true;
+    } catch (error) {
+      this.logger.error(
+        "supabase_refresh_session_http_recovery_exception",
+        error,
+        toLogContext(error),
+      );
+      return false;
     }
   }
 
@@ -455,9 +472,9 @@ export class SupabaseService {
     }
 
     channel.subscribe((status) => {
-      this.logger.debug(
-        `[SupabaseService] Coach inbox subscription status: ${status}`,
-      );
+      this.logger.debug("supabase_coach_inbox_subscription_status", {
+        status,
+      });
     });
 
     return channel;
@@ -522,9 +539,9 @@ export class SupabaseService {
     }
 
     channel.subscribe((status) => {
-      this.logger.debug(
-        `[SupabaseService] Daily wellness checkin subscription status: ${status}`,
-      );
+      this.logger.debug("supabase_daily_wellness_subscription_status", {
+        status,
+      });
     });
 
     return channel;
@@ -538,7 +555,6 @@ export class SupabaseService {
   unsubscribe(channel: RealtimeChannel): void {
     if (channel) {
       this.client.removeChannel(channel);
-      this.logger.debug("[SupabaseService] Unsubscribed from realtime channel");
     }
   }
 }

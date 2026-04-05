@@ -21,13 +21,13 @@
   font-size: var(--ds-font-size-3xl);
   font-weight: var(--ds-font-weight-bold);
   color: var(--color-text-primary);
-  margin: 0 0 var(--space-2) 0;
+  margin: var(--space-0) var(--space-0) var(--space-2) var(--space-0);
 }
 
 .subtitle {
   color: var(--color-text-secondary);
   font-size: var(--ds-font-size-md);
-  margin: 0;
+  margin: var(--space-0);
 }
 
 .acwr-badge {
@@ -78,11 +78,11 @@
 }
 
 .metric-card {
-  background: var(--surface-primary);
+  background: var(--surface-card);
   border-radius: var(--radius-xl);
   padding: var(--space-4);
   box-shadow: var(--shadow-sm);
-  border: var(--border-1) solid var(--surface-border);
+  border: var(--border-1) solid var(--color-border-primary);
 }
 
 .metric-header {
@@ -168,7 +168,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background: var(--surface-primary);
+  background: var(--surface-card);
   box-shadow: var(--shadow-md);
 }
 
@@ -185,12 +185,12 @@
 
 .score-info {
   h3 {
-    margin: 0 0 var(--space-2) 0;
+    margin: var(--space-0) var(--space-0) var(--space-2) var(--space-0);
     font-size: var(--ds-font-size-2xl);
   }
 
   p {
-    margin: 0;
+    margin: var(--space-0);
     color: var(--color-text-secondary);
   }
 }
@@ -270,17 +270,17 @@ app-alert.coach-alert-warning {
 
 .recommendations {
   text-align: left;
-  background: var(--surface-primary);
+  background: var(--surface-card);
   border-radius: var(--radius-xl);
   padding: var(--space-6);
   margin-bottom: var(--space-6);
 
   h3 {
-    margin: 0 0 var(--space-4) 0;
+    margin: var(--space-0) var(--space-0) var(--space-4) var(--space-0);
   }
 
   ul {
-    margin: 0;
+    margin: var(--space-0);
     padding-left: var(--space-5);
   }
 

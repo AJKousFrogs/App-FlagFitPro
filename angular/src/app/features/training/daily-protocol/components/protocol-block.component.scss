@@ -10,7 +10,7 @@
   border: var(--component-card-border);
   border-radius: var(--component-card-radius);
   overflow: hidden;
-  margin: 0;
+  margin: var(--space-0);
   transition:
     border-color var(--transition-fast),
     box-shadow var(--transition-fast);
@@ -47,11 +47,15 @@
 }
 
 .block-header {
-  @include ds-hover-state(var(--hover-bg-secondary));
+  @media (hover: hover) and (pointer: fine) {
+    &:hover { background: var(--hover-bg-secondary); }
+  }
 }
 
 .protocol-block.completed .block-header {
-  @include ds-hover-state(var(--color-status-success-subtle));
+  @media (hover: hover) and (pointer: fine) {
+    &:hover { background: var(--color-status-success-subtle); }
+  }
 }
 
 .header-left {
@@ -81,7 +85,7 @@
 }
 
 .block-title {
-  margin: 0;
+  margin: var(--space-0);
   font-size: var(--ds-font-size-md);
   font-weight: var(--ds-font-weight-semibold);
   color: var(--color-text-primary);
@@ -122,10 +126,12 @@
   color: var(--color-text-secondary);
   transition: color var(--transition-fast);
   border-radius: var(--radius-sm);
-  @include ds-hover-state(
-    var(--hover-bg-tertiary),
-    $color: var(--color-text-primary)
-  );
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      background: var(--hover-bg-tertiary);
+      color: var(--color-text-primary);
+    }
+  }
 }
 
 .expand-text {
@@ -163,7 +169,7 @@
   background: var(--color-status-info-light);
   border-radius: var(--component-card-radius);
   border-left: var(--border-3) solid var(--color-status-info);
-  margin: 0;
+  margin: var(--space-0);
 }
 
 .block-ai-note i {
@@ -258,7 +264,7 @@
 .block-actions {
   display: flex;
   gap: var(--space-3);
-  margin: 0;
+  margin: var(--space-0);
   padding-top: var(--space-3);
   border-top: var(--border-1) solid var(--color-border-secondary);
   flex-wrap: wrap;
@@ -275,7 +281,7 @@
   border-radius: var(--component-card-radius);
   color: var(--color-status-success);
   font-weight: var(--ds-font-weight-medium);
-  margin: 0;
+  margin: var(--space-0);
 }
 
 .completion-info i {
@@ -321,7 +327,7 @@
   }
 
   .video-link {
-    margin-left: 0;
+    margin-left: var(--space-0);
     width: 100%;
   }
 }

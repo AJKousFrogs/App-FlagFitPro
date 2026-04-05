@@ -43,6 +43,8 @@ import { LoadMonitoringService } from "../../core/services/load-monitoring.servi
 import { LoggerService } from "../../core/services/logger.service";
 import { toLogContext } from "../../core/services/logger.service";
 import { SupabaseService } from "../../core/services/supabase.service";
+import { AcwrService } from "../../core/services/acwr.service";
+import { CorrelationContextService } from "../../core/services/correlation-context.service";
 import { ToastService } from "../../core/services/toast.service";
 import { TOAST } from "../../core/constants/toast-messages.constants";
 import { UnifiedTrainingService } from "../../core/services/unified-training.service";
@@ -102,6 +104,8 @@ export class AcwrDashboardComponent implements OnInit {
   private readonly alertsService = inject(AcwrAlertsService);
   private readonly confidenceService = inject(DataConfidenceService);
   private readonly supabase = inject(SupabaseService);
+  private readonly acwrService = inject(AcwrService);
+  private readonly correlation = inject(CorrelationContextService);
   private readonly ownershipTransitionService = inject(
     OwnershipTransitionService,
   );
@@ -345,7 +349,7 @@ export class AcwrDashboardComponent implements OnInit {
         "[ACWR Dashboard] Initialized - waiting for real training data",
       );
     } catch (error) {
-      this.logger.error("[ACWR Dashboard] Init error:", error);
+      this.logger.error("acwr_dashboard_init_failed", error);
       this.hasPageError.set(true);
       this.pageErrorMessage.set(
         "Failed to initialize ACWR dashboard. Please try again.",
@@ -404,6 +408,33 @@ export class AcwrDashboardComponent implements OnInit {
   public viewHistory(): void {
     // Navigate to training schedule to view history
     this.router.navigate(["/training"]);
+  }
+
+  /** Persists current ACWR snapshot to `load_monitoring` with a fresh trace id for request correlation. */
+  readonly isSavingLoadSnapshot = signal(false);
+
+  async saveLoadSnapshot(): Promise<void> {
+    const user = this.supabase.getCurrentUser();
+    if (!user) {
+      this.toastService.error(TOAST.ERROR.LOGIN_TO_DOWNLOAD_REPORTS);
+      return;
+    }
+
+    this.correlation.startTrace();
+    this.isSavingLoadSnapshot.set(true);
+    try {
+      const result = await this.acwrService.saveACWRToDatabase(user.id);
+      if (result.ok) {
+        this.toastService.success(TOAST.SUCCESS.SAVED);
+      } else {
+        this.toastService.error(
+          result.errorMessage ?? TOAST.ERROR.SAVE_FAILED,
+        );
+      }
+    } finally {
+      this.correlation.endTrace();
+      this.isSavingLoadSnapshot.set(false);
+    }
   }
 
   public async downloadReport(): Promise<void> {

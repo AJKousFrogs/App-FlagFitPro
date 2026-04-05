@@ -31,7 +31,7 @@ export class AngularGlobalErrorHandler implements ErrorHandler {
       isExpectedApiClientError(error)
     ) {
       if (!environment.production) {
-        this.logger.debug("[GlobalErrorHandler] Ignored expected HTTP error", {
+        this.logger.debug("global_error_handler_ignored_expected_http", {
           status:
             error instanceof HttpErrorResponse
               ? error.status
@@ -46,7 +46,7 @@ export class AngularGlobalErrorHandler implements ErrorHandler {
     }
 
     if (!environment.production) {
-      this.logger.error("Unhandled error:", error);
+      this.logger.error("global_error_handler_unhandled", error);
     }
 
     // Lazy-load error tracking to keep startup bundle lean.

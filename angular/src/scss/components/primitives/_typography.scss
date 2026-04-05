@@ -48,7 +48,7 @@
     line-height: var(--line-height-tight);
     color: var(--color-text-primary);
     letter-spacing: var(--letter-spacing-tight);
-    margin: 0;
+    margin: var(--space-0);
   }
 
   .section-title {
@@ -57,7 +57,7 @@
     line-height: var(--line-height-tight);
     color: var(--color-text-primary);
     letter-spacing: var(--letter-spacing-normal);
-    margin: 0;
+    margin: var(--space-0);
   }
 
   .subsection-title {
@@ -65,7 +65,7 @@
     font-weight: var(--font-weight-semibold); // Changed from regular for consistency
     line-height: var(--line-height-base);
     color: var(--color-text-primary);
-    margin: 0;
+    margin: var(--space-0);
   }
 
   .group-title {
@@ -73,7 +73,7 @@
     font-weight: var(--font-weight-medium); // Changed from light for better readability
     line-height: var(--line-height-base);
     color: var(--color-text-primary);
-    margin: 0;
+    margin: var(--space-0);
   }
 
   // ============================================

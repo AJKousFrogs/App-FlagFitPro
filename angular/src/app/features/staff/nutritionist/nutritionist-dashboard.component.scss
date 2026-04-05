@@ -19,7 +19,7 @@
   padding: var(--ds-spacing-lg);
   background: var(--surface-card);
   border-radius: var(--ds-radius-lg);
-  border: var(--border-1) solid var(--surface-border);
+  border: var(--border-1) solid var(--color-border-primary);
 
   .stat-icon {
     width: var(--space-12);
@@ -31,7 +31,7 @@
 
     i {
       font-size: var(--ds-font-size-2xl);
-      color: var(--surface-0);
+      color: var(--color-text-on-primary);
     }
 
     &.athletes {
@@ -61,7 +61,7 @@
   gap: var(--ds-spacing-md);
 
   h3 {
-    margin: 0;
+    margin: var(--space-0);
     font-size: var(--ds-font-size-2xl);
     font-weight: var(--ds-font-weight-semibold);
   }
@@ -70,7 +70,7 @@
     display: flex;
     align-items: center;
     gap: var(--ds-spacing-sm);
-    background: var(--surface-ground);
+    background: var(--surface-secondary);
     padding: var(--ds-spacing-sm) var(--ds-spacing-md);
     border-radius: var(--ds-radius-md);
 
@@ -137,7 +137,7 @@
     height: var(--space-6);
     border-radius: var(--radius-circle);
     background: var(--red-500);
-    color: var(--surface-0);
+    color: var(--color-text-on-primary);
     font-size: var(--ds-font-size-xs);
     font-weight: var(--ds-font-weight-medium);
   }
@@ -169,7 +169,7 @@
       display: flex;
       align-items: center;
       gap: var(--ds-spacing-sm);
-      margin: 0 0 var(--ds-spacing-sm);
+      margin: var(--space-0) var(--space-0) var(--ds-spacing-sm);
       color: var(--orange-700);
 
       i {
@@ -178,7 +178,7 @@
     }
 
     .alert-list {
-      margin: 0;
+      margin: var(--space-0);
       padding-left: var(--ds-spacing-lg);
 
       .alert-item {
@@ -203,7 +203,7 @@
     }
 
     p {
-      margin: 0;
+      margin: var(--space-0);
     }
   }
 }
@@ -218,11 +218,11 @@
 
     .athlete-info {
       h3 {
-        margin: 0 0 var(--ds-spacing-xs);
+        margin: var(--space-0) var(--space-0) var(--ds-spacing-xs);
       }
 
       p {
-        margin: 0;
+        margin: var(--space-0);
         color: var(--color-text-secondary);
       }
     }
@@ -254,21 +254,21 @@
       flex-direction: column;
       align-items: center;
       padding: var(--ds-spacing-md);
-      background: var(--surface-ground);
+      background: var(--surface-secondary);
       border-radius: var(--ds-radius-md);
     }
   }
 
   .recommendations-section {
     h4 {
-      margin: 0 0 var(--ds-spacing-sm);
+      margin: var(--space-0) var(--space-0) var(--ds-spacing-sm);
       display: flex;
       align-items: center;
       gap: var(--ds-spacing-sm);
     }
 
     .recommendations-list {
-      margin: 0;
+      margin: var(--space-0);
       padding-left: var(--ds-spacing-lg);
 
       li {

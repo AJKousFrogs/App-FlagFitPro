@@ -50,12 +50,12 @@
 }
 
 .link-info h4 {
-  margin: 0;
+  margin: var(--space-0);
   font-size: var(--ds-font-size-md);
 }
 
 .link-info p {
-  margin: 0;
+  margin: var(--space-0);
   color: var(--color-text-secondary);
 }
 

@@ -23,8 +23,8 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
     <app-main-layout>
       <div class="team-workspace-page ui-page-shell ui-page-shell--wide ui-page-stack">
         <app-page-header
-          title="Team Workspace"
-          subtitle="Roster, operations, and shared team settings"
+          title="Team Workspace" eyebrow="TEAM"
+          subtitle="Your squad, tools, and settings — all in one place."
           icon="pi-users"
         ></app-page-header>
 

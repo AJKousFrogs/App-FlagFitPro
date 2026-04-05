@@ -11,7 +11,7 @@
 
 .payment-management-page {
   width: 100%;
-  padding: 0;
+  padding: var(--space-0);
   display: flex;
   flex-direction: column;
   gap: var(--layout-page-section-gap);
@@ -43,9 +43,9 @@
     color: var(--color-text-secondary);
     cursor: pointer;
     transition:
-      background-color var(--motion-base) var(--ease-standard),
-      border-color var(--motion-base) var(--ease-standard),
-      box-shadow var(--motion-base) var(--ease-standard);
+      background-color var(--transition-fast) var(--ease-standard),
+      border-color var(--transition-fast) var(--ease-standard),
+      box-shadow var(--transition-fast) var(--ease-standard);
     white-space: nowrap;
 
     &:hover {
@@ -78,7 +78,7 @@
   align-items: center;
   gap: var(--space-3);
   padding: var(--space-4);
-  background: var(--ds-surface-elevated);
+  background: var(--surface-card);
   border-radius: var(--radius-lg);
   border-left: var(--border-4) solid var(--color-border-default);
 
@@ -148,7 +148,7 @@
 
 .fee-preview-card {
   padding: var(--space-3);
-  background: var(--ds-surface-base);
+  background: var(--surface-secondary);
   border-radius: var(--radius-md);
   border-left: var(--border-3) solid var(--color-brand-primary);
 
@@ -167,7 +167,7 @@
     }
 
     h4 {
-      margin: 0;
+      margin: var(--space-0);
       font-size: var(--ds-font-size-md);
       font-weight: var(--ds-font-weight-medium);
       color: var(--color-text-primary);
@@ -193,7 +193,7 @@
 }
 
 .fee-card {
-  background: var(--ds-surface-elevated);
+  background: var(--surface-card);
   border-radius: var(--radius-lg);
   border: var(--border-1) solid var(--color-border-default);
   overflow: hidden;
@@ -209,7 +209,7 @@
   align-items: center;
   gap: var(--space-3);
   padding: var(--space-3) var(--space-4);
-  background: var(--ds-surface-base);
+  background: var(--surface-secondary);
   border-bottom: var(--border-1) solid var(--color-border-subtle);
 
   .fee-title {
@@ -222,7 +222,7 @@
     }
 
     h3 {
-      margin: 0;
+      margin: var(--space-0);
       font-size: var(--ds-font-size-md);
       font-weight: var(--ds-font-weight-semibold);
       color: var(--color-text-primary);
@@ -240,7 +240,7 @@
   border-bottom: var(--border-1) solid var(--color-border-subtle);
 
   p {
-    margin: 0 0 var(--space-1) 0;
+    margin: var(--space-0) var(--space-0) var(--space-1) var(--space-0);
     font-size: var(--ds-font-size-md);
     color: var(--color-text-secondary);
 
@@ -265,7 +265,7 @@
   border-bottom: var(--border-1) solid var(--color-border-subtle);
 
   h4 {
-    margin: 0 0 var(--space-2) 0;
+    margin: var(--space-0) var(--space-0) var(--space-2) var(--space-0);
     font-size: var(--ds-font-size-md);
     font-weight: var(--ds-font-weight-semibold);
     color: var(--color-text-primary);
@@ -290,14 +290,14 @@
   border-bottom: var(--border-1) solid var(--color-border-subtle);
 
   h4 {
-    margin: 0 0 var(--space-2) 0;
+    margin: var(--space-0) var(--space-0) var(--space-2) var(--space-0);
     font-size: var(--ds-font-size-md);
     font-weight: var(--ds-font-weight-semibold);
     color: var(--color-text-primary);
   }
 
   .outstanding-list {
-    margin: 0;
+    margin: var(--space-0);
     padding-left: var(--space-4);
 
     li {
@@ -350,7 +350,7 @@
   flex-direction: column;
   gap: var(--space-2);
   padding: var(--space-3);
-  background: var(--ds-surface-base);
+  background: var(--surface-secondary);
   border-radius: var(--radius-md);
 }
 
@@ -383,7 +383,7 @@
 .fee-outstanding-summary {
   h4,
   p {
-    margin: 0;
+    margin: var(--space-0);
   }
 }
 
@@ -403,7 +403,7 @@
 
   &:first-child {
     border-top: none;
-    padding-top: 0;
+    padding-top: var(--space-0);
   }
 }
 
@@ -437,7 +437,7 @@
   flex-direction: column;
   gap: var(--space-2);
   padding: var(--space-2);
-  background: var(--ds-surface-base);
+  background: var(--surface-secondary);
   border-radius: var(--radius-md);
 
   .radio-option {
@@ -446,7 +446,7 @@
     gap: var(--space-2);
 
     label {
-      margin: 0;
+      margin: var(--space-0);
       cursor: pointer;
     }
   }
@@ -457,7 +457,7 @@
   flex-direction: column;
   gap: var(--space-2);
   padding: var(--space-2);
-  background: var(--ds-surface-base);
+  background: var(--surface-secondary);
   border-radius: var(--radius-md);
 }
 
@@ -467,14 +467,14 @@
   gap: var(--space-2);
 
   label {
-    margin: 0;
+    margin: var(--space-0);
     cursor: pointer;
   }
 }
 
 .current-balance {
   padding: var(--space-3);
-  background: var(--ds-surface-base);
+  background: var(--surface-secondary);
   border-radius: var(--radius-md);
   font-size: var(--ds-font-size-md);
   color: var(--color-text-secondary);

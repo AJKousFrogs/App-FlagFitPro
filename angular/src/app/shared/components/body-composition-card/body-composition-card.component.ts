@@ -432,12 +432,12 @@ export class BodyCompositionCardComponent implements OnInit {
         const errorMsg = result?.error
           ? `Failed to save: ${typeof result.error === "string" ? result.error : (result.error as { message?: string })?.message || "Unknown error"}`
           : "Failed to save measurement. Are you logged in?";
-        this.logger.error("[BodyComposition] Save failed:", result?.error);
+        this.logger.error("body_composition_save_failed", result?.error);
         this.toastService.error(errorMsg);
       }
     } catch (err) {
       this.isSaving.set(false);
-      this.logger.error("[BodyComposition] Error saving measurement:", err);
+      this.logger.error("body_composition_measurement_save_failed", err);
       this.toastService.error("Failed to save measurement. Please try again.");
     }
   }

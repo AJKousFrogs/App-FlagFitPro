@@ -132,8 +132,8 @@ const PAYMENT_METHOD_CONFIG: Record<
     <app-main-layout>
 <div class="payments-page ui-page-shell ui-page-shell--content-lg ui-page-stack">
         <app-page-header
-          title="My Payments"
-          subtitle="View fees and payment history"
+          title="Billing" eyebrow="BILLING"
+          subtitle="Dues, fees, and payment history."
           icon="pi-wallet"
         ></app-page-header>
 

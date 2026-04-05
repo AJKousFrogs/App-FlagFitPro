@@ -34,6 +34,20 @@ interface DataTableRowContext {
   };
 }
 
+/** PrimeNG Tabs tab pass-through context */
+interface TabsTabPTContext {
+  context?: {
+    active?: boolean;
+  };
+}
+
+/** PrimeNG Paginator page pass-through context */
+interface PaginatorPagePTContext {
+  context?: {
+    active?: boolean;
+  };
+}
+
 /** Design-system utility classes (from scss/utilities + design-system-tokens) */
 const DS = {
   button: {
@@ -157,7 +171,7 @@ export const PRIMENG_PT_CONFIG = {
     tablist: {
       class: DS.tabs.root,
     },
-    tab: ({ context }: any) => ({
+    tab: ({ context }: TabsTabPTContext = {}) => ({
       class: [
         DS.tabs.tab,
         context?.active ? DS.tabs.active : "text-secondary hover:text-primary hover:bg-primary-alpha-50",
@@ -211,7 +225,7 @@ export const PRIMENG_PT_CONFIG = {
     pages: {
       class: "d-flex align-center gap-1",
     },
-    page: ({ context }: any) => ({
+    page: ({ context }: PaginatorPagePTContext = {}) => ({
       class: [
         "w-10 h-10 d-flex align-center justify-center rounded-lg transition-all",
         context?.active ? "bg-brand text-on-brand shadow-sm font-bold" : "text-secondary hover:bg-secondary",

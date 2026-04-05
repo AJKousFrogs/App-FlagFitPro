@@ -16,7 +16,7 @@ export const authGuard: CanActivateFn = async (route, state) => {
 
   let session = supabaseService.session();
 
-  logger.debug("[AuthGuard] Checking access", {
+  logger.debug("auth_guard_check", {
     url: state.url,
     hasSession: !!session,
     isInitialized: supabaseService.isInitialized(),
@@ -30,12 +30,12 @@ export const authGuard: CanActivateFn = async (route, state) => {
       } = await supabaseService.client.auth.getSession();
 
       if (error) {
-        logger.warn("[AuthGuard] Error getting session:", error.message);
+        logger.warn("auth_guard_session_error", { message: error.message });
       } else {
         session = refreshedSession;
       }
     } catch (err) {
-      logger.error("[AuthGuard] Exception checking session:", err);
+      logger.error("auth_guard_session_exception", err);
     }
   }
 
@@ -43,7 +43,7 @@ export const authGuard: CanActivateFn = async (route, state) => {
   const emailConfirmed = !!sessionUser?.email_confirmed_at;
 
   if (session && !emailConfirmed) {
-    logger.info("[AuthGuard] Blocking unverified session from app shell", {
+    logger.info("auth_guard_block_unverified", {
       url: state.url,
       email: sessionUser?.email,
     });
@@ -51,7 +51,7 @@ export const authGuard: CanActivateFn = async (route, state) => {
     try {
       await authFlowDataService.signOut();
     } catch (error) {
-      logger.warn("[AuthGuard] Failed to clear unverified session cleanly", {
+      logger.warn("auth_guard_unverified_signout_failed", {
         error,
       });
     }
@@ -59,11 +59,11 @@ export const authGuard: CanActivateFn = async (route, state) => {
   }
 
   if (session) {
-    logger.debug(`[AuthGuard] Access granted to ${state.url}`);
+    logger.debug("auth_guard_access_granted", { url: state.url });
     return true;
   }
 
-  logger.info(`[AuthGuard] Redirecting to login, requested URL: ${state.url}`);
+  logger.info("auth_guard_redirect_login", { returnUrl: state.url });
   return router.createUrlTree(["/login"], {
     queryParams: { returnUrl: state.url },
   });

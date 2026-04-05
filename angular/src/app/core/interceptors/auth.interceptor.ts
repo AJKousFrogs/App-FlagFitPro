@@ -1,12 +1,14 @@
 import { HttpInterceptorFn } from "@angular/common/http";
 import { inject } from "@angular/core";
 import { from, switchMap } from "rxjs";
+import { CorrelationContextService } from "../services/correlation-context.service";
 import { LoggerService } from "../services/logger.service";
 import { SupabaseService } from "../services/supabase.service";
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const logger = inject(LoggerService);
   const supabaseService = inject(SupabaseService);
+  const correlation = inject(CorrelationContextService);
 
   // For Supabase REST API requests, use apikey header and fetch fresh token
   // Must check this FIRST before skipAuthUrls (which includes supabase.co for auth endpoints)
@@ -28,7 +30,12 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
           headers["Authorization"] = `Bearer ${token}`;
         }
 
-        const clonedReq = req.clone({ setHeaders: headers });
+        const clonedReq = req.clone({
+          setHeaders: {
+            ...headers,
+            "X-Correlation-Id": correlation.getOrCreateForRequest(),
+          },
+        });
         return next(clonedReq);
       }),
     );
@@ -42,7 +49,13 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const shouldSkipAuth = skipAuthUrls.some((url) => req.url.includes(url));
 
   if (shouldSkipAuth) {
-    return next(req);
+    return next(
+      req.clone({
+        setHeaders: {
+          "X-Correlation-Id": correlation.getOrCreateForRequest(),
+        },
+      }),
+    );
   }
 
   // For API endpoints, wait for auth initialization and add Authorization header
@@ -56,6 +69,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
             Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
             Accept: "application/json",
+            "X-Correlation-Id": correlation.getOrCreateForRequest(),
           },
         });
         return next(clonedReq);
@@ -67,14 +81,20 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
       if (hasSession) {
         // Session exists but token retrieval failed - this is an error condition
         // Log warning but proceed - backend will return 401 which error interceptor handles
-        logger.warn(
-          "[AuthInterceptor] Session exists but token unavailable - request may fail",
-        );
+        logger.warn("auth_session_token_unavailable", {
+          url: req.url,
+        });
       }
 
       // Proceed without auth header - backend will return 401 if auth required
       // Error interceptor will handle redirect to login
-      return next(req);
+      return next(
+        req.clone({
+          setHeaders: {
+            "X-Correlation-Id": correlation.getOrCreateForRequest(),
+          },
+        }),
+      );
     }),
   );
 };

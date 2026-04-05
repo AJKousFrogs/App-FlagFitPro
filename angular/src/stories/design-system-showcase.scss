@@ -13,7 +13,7 @@
 .ds-showcase__title {
   font-size: var(--ds-font-size-2xl);
   font-weight: var(--ds-font-weight-semibold);
-  margin: 0;
+  margin: var(--space-0);
 }
 
 .ds-showcase__section-title {
@@ -140,13 +140,13 @@
 .ds-showcase__spacing-bar--8 { width: var(--space-8); }
 
 .ds-showcase__typography-block {
-  margin: 0 0 var(--space-2) 0;
+  margin: var(--space-0) var(--space-0) var(--space-2) var(--space-0);
 }
 
 .ds-showcase__typography-caption {
   font-size: var(--ds-font-size-sm);
   color: var(--p-surface-400);
-  margin: 0;
+  margin: var(--space-0);
 }
 
 .ds-showcase__heading-xl {

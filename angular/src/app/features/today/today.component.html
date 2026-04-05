@@ -162,13 +162,6 @@
       (setHasSoreness)="setQuickField('hasSoreness', $event)"
     />
   } @placeholder {
-    <div class="defer-dialog-chunk-placeholder" role="status" aria-live="polite">
-      <app-skeleton-loader
-        variant="block"
-        width="min(28rem, 94vw)"
-        height="14rem"
-        borderRadius="var(--radius-lg)"
-      />
-    </div>
+    <span class="defer-dialog-chunk-placeholder"></span>
   }
 </app-main-layout>

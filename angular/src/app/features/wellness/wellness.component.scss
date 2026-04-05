@@ -1,6 +1,5 @@
 // ============================================================================
-// Wellness Component Styles
-// Design System Compliant - All tokens from design-system-tokens.scss
+// Wellness Component Styles — Apple-style redesign
 // ============================================================================
 
 @use "styles/mixins" as *;
@@ -8,30 +7,36 @@
 .wellness-page.bento-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: var(--space-5);
+  gap: var(--space-4);
   max-width: var(--layout-page-max-width-wide);
-  margin: 0 auto;
+  margin: var(--space-0) auto;
   width: 100%;
-  padding-bottom: var(--space-8);
+  padding-bottom: var(--space-10);
 
   .bento-item {
-    background: var(--surface-primary);
-    border: none;
+    background: var(--surface-card);
+    border: var(--border-1) solid var(--color-border-primary);
     border-radius: var(--radius-xl);
     padding: var(--space-5);
     box-shadow: var(--shadow-sm);
     min-width: 0;
-    transition: transform var(--transition-base), box-shadow var(--transition-base);
+    transition:
+      transform var(--transition-fast) var(--ease-standard),
+      box-shadow var(--transition-fast) var(--ease-standard);
 
-    &:hover {
-      box-shadow: var(--shadow-md);
+    @media (hover: hover) and (pointer: fine) {
+      &:hover {
+        transform: translateY(-1px);
+        box-shadow: var(--shadow-md);
+      }
     }
 
     .bento-title {
-      font-size: var(--ds-font-size-lg);
-      font-weight: var(--ds-font-weight-bold);
+      font-size: var(--ds-font-size-md);
+      font-weight: var(--ds-font-weight-semibold);
       margin-bottom: var(--space-4);
       color: var(--color-text-primary);
+      letter-spacing: -0.015em;
     }
   }
 
@@ -44,12 +49,12 @@
     gap: var(--space-3);
     background: transparent;
     border: none;
-    padding: 0;
+    padding: var(--space-0);
     box-shadow: none;
   }
 }
 
-/* Tablet: 2 Columns */
+/* Tablet + smaller desktop: 2 Columns */
 @include respond-to(lg) {
   .wellness-page.bento-grid {
     grid-template-columns: repeat(2, 1fr);
@@ -62,41 +67,41 @@
 }
 
 /* Mobile: 1 Column */
-@include respond-to(md) {
+@include respond-to(sm) {
   .wellness-page.bento-grid {
     grid-template-columns: 1fr;
-    gap: var(--space-4);
-    padding-bottom: var(--space-6);
+    gap: var(--space-3);
+    padding: var(--space-3);
+    padding-bottom: var(--space-8);
 
     .bento-item {
       grid-column: span 1;
       padding: var(--space-4);
+
+      .bento-title {
+        font-size: var(--ds-font-size-md);
+        margin-bottom: var(--space-3);
+      }
     }
   }
 }
 
+// ── Confidence card ──────────────────────────────────────────────────────────
 .confidence-card {
   width: 100%;
 }
 
-.checkin-card {
-  width: 100%;
-}
-
+// ── Check-in card + anchor ───────────────────────────────────────────────────
+.checkin-card,
 .checkin-card-anchor {
   width: 100%;
 }
 
+// ── Check-in form shell ──────────────────────────────────────────────────────
 .checkin-form {
-  .checkin-impact-note {
-    margin: 0 0 var(--space-4);
-    font-size: var(--ds-font-size-sm);
-    color: var(--color-text-secondary);
-  }
-
   display: flex;
   flex-direction: column;
-  gap: var(--space-6);
+  gap: var(--space-5);
   padding: var(--space-6);
 
   @include respond-to(md) {
@@ -105,33 +110,70 @@
   }
 }
 
-.checkin-section {
-  padding: var(--space-4);
+// Impact note — subtle callout box
+.checkin-impact-note {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  margin: 0;
+  padding: var(--space-3) var(--space-4);
+  font-size: var(--ds-font-size-sm);
+  color: var(--color-text-secondary);
   background: var(--surface-secondary);
+  border: var(--border-1) solid var(--color-border-primary);
   border-radius: var(--radius-lg);
-  border-left: var(--border-2) solid var(--ds-primary-green);
+  line-height: var(--ds-line-height-relaxed);
 
-  &:active {
-    opacity: 0.85;
-    transition-duration: var(--transition-fast);
+  &::before {
+    content: "\e974"; // pi-info-circle unicode
+    font-family: "primeicons";
+    font-size: var(--ds-font-size-md);
+    color: var(--ds-primary-green);
+    opacity: 0.75;
+    flex-shrink: 0;
+    margin-top: 1px;
   }
 }
 
+// ── Check-in sections ────────────────────────────────────────────────────────
+.checkin-section {
+  padding: var(--space-5);
+  background: color-mix(in srgb, var(--ds-primary-green) 4%, var(--surface-card));
+  border: var(--border-1) solid color-mix(in srgb, var(--ds-primary-green) 16%, var(--color-border-primary));
+  border-radius: var(--radius-xl);
+}
+
+// Section label — icon badge + label text
 .section-label {
   display: flex;
   align-items: center;
   gap: var(--space-2);
-  font-size: var(--ds-font-size-md);
+  font-size: var(--ds-font-size-sm);
   font-weight: var(--ds-font-weight-semibold);
-  color: var(--ds-primary-green);
-  margin: 0 0 var(--space-4) 0;
+  color: var(--color-text-primary);
+  margin: 0 0 var(--space-4);
+  letter-spacing: -0.01em;
+
+  i {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--space-7);
+    height: var(--space-7);
+    background: color-mix(in srgb, var(--ds-primary-green) 14%, transparent);
+    border-radius: var(--radius-md);
+    color: var(--ds-primary-green);
+    font-size: var(--ds-font-size-sm);
+    flex-shrink: 0;
+  }
 }
 
+// ── Field grid ───────────────────────────────────────────────────────────────
 .checkin-row {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(var(--grid-card-min-sm), 1fr));
   gap: var(--space-4);
-  align-items: stretch; /* Ensure equal card heights */
+  align-items: stretch;
 }
 
 .checkin-item {
@@ -142,7 +184,7 @@
   label {
     font-weight: var(--ds-font-weight-medium);
     color: var(--color-text-primary);
-    font-size: var(--ds-font-size-md);
+    font-size: var(--ds-font-size-sm);
   }
 }
 
@@ -152,21 +194,30 @@
   margin-top: var(--space-1);
 }
 
+// ── Submit area — green-tinted CTA card ──────────────────────────────────────
 .checkin-submit {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: var(--space-3);
-  padding-top: var(--space-4);
-  border-top: var(--border-1) solid var(--color-border-secondary);
+  padding: var(--space-5);
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--ds-primary-green) 8%, var(--surface-card)) 0%,
+    var(--surface-card) 100%
+  );
+  border: var(--border-1) solid color-mix(in srgb, var(--ds-primary-green) 20%, var(--color-border-primary));
+  border-radius: var(--radius-xl);
+  margin-top: var(--space-2);
 }
 
 .submit-note {
   font-size: var(--ds-font-size-xs);
-  color: var(--color-text-secondary);
+  color: var(--color-text-tertiary);
+  text-align: center;
 }
 
-// ===== Alerts Section =====
+// ── Alerts section ───────────────────────────────────────────────────────────
 .alerts-section {
   display: flex;
   flex-direction: column;
@@ -190,7 +241,7 @@ app-alert.wellness-route-alert {
     margin: var(--space-3) 0 0 0;
     padding: 0 0 0 var(--space-5);
     list-style: none;
-    font-size: var(--ds-font-size-md);
+    font-size: var(--ds-font-size-sm);
     color: var(--color-text-primary);
 
     li {
@@ -215,9 +266,51 @@ app-alert.wellness-route-alert {
   margin-top: var(--space-4);
 }
 
-// ===== Responsive =====
-@include respond-to(md) {
+// ── Cycle tracking card ──────────────────────────────────────────────────────
+.cycle-tracking-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.cycle-description {
+  font-size: var(--ds-font-size-sm);
+  color: var(--color-text-secondary);
+  line-height: var(--ds-line-height-relaxed);
+  margin: 0;
+}
+
+.cycle-benefits {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.benefit-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--ds-font-size-sm);
+  color: var(--color-text-secondary);
+
+  i {
+    color: var(--ds-primary-green);
+    font-size: var(--ds-font-size-sm);
+    flex-shrink: 0;
+  }
+}
+
+// ── Mobile overrides ─────────────────────────────────────────────────────────
+@include respond-to(sm) {
   .checkin-row {
     grid-template-columns: 1fr;
+  }
+
+  .checkin-section {
+    padding: var(--space-4);
+  }
+
+  .checkin-submit {
+    padding: var(--space-4);
   }
 }

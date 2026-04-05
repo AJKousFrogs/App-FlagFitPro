@@ -9,9 +9,6 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 100vh;
-  min-height: 100dvh; // Modern: keyboard-aware
-height: 100dvh; // Modern: keyboard-aware
   min-height: 100dvh;
   padding: var(--space-6);
   background: var(--surface-secondary);
@@ -41,7 +38,7 @@ height: 100dvh; // Modern: keyboard-aware
 .accept-invitation-logo {
   display: flex;
   justify-content: center;
-  margin: 0;
+  margin: var(--space-0);
 }
 
 .accept-invitation-logo i {
@@ -53,7 +50,7 @@ height: 100dvh; // Modern: keyboard-aware
   text-align: center;
   font-size: var(--ds-font-size-2xl);
   font-weight: var(--ds-font-weight-semibold);
-  margin: 0;
+  margin: var(--space-0);
   color: var(--color-text-primary);
 }
 

@@ -3,7 +3,7 @@
 
 .injury-management-page {
   width: 100%;
-  padding: 0;
+  padding: var(--space-0);
   display: flex;
   flex-direction: column;
   gap: var(--layout-page-section-gap);
@@ -14,7 +14,7 @@
 .tab-navigation {
   display: flex;
   gap: var(--space-2);
-  border-bottom: var(--border-1) solid var(--ds-border-subtle);
+  border-bottom: var(--border-1) solid var(--color-border-secondary);
   padding-bottom: var(--space-2);
   overflow-x: auto;
 
@@ -26,12 +26,12 @@
     border-radius: var(--radius-md);
     font-size: var(--ds-font-size-md);
     font-weight: var(--ds-font-weight-medium);
-    color: var(--ds-text-secondary);
+    color: var(--color-text-secondary);
     cursor: pointer;
     transition:
-      background-color var(--motion-base) var(--ease-standard),
-      border-color var(--motion-base) var(--ease-standard),
-      box-shadow var(--motion-base) var(--ease-standard);
+      background-color var(--transition-fast) var(--ease-standard),
+      border-color var(--transition-fast) var(--ease-standard),
+      box-shadow var(--transition-fast) var(--ease-standard);
     white-space: nowrap;
 
     &:hover {
@@ -64,9 +64,9 @@
   align-items: center;
   gap: var(--space-3);
   padding: var(--space-4);
-  background: var(--ds-surface-elevated);
+  background: var(--surface-card);
   border-radius: var(--radius-lg);
-  border-left: var(--space-1) solid var(--ds-border-default);
+  border-left: var(--space-1) solid var(--color-border-primary);
 
   &.danger {
     border-left-color: var(--primitive-error-500);
@@ -95,18 +95,18 @@
     .stat-block__value {
       font-size: var(--ds-font-size-2xl);
       font-weight: var(--ds-font-weight-bold);
-      color: var(--ds-text-primary);
+      color: var(--color-text-primary);
     }
 
     .stat-block__label {
       font-size: var(--ds-font-size-md);
       font-weight: var(--ds-font-weight-medium);
-      color: var(--ds-text-primary);
+      color: var(--color-text-primary);
     }
 
     .stat-sub {
       font-size: var(--ds-font-size-xs);
-      color: var(--ds-text-tertiary);
+      color: var(--color-text-tertiary);
     }
   }
 }
@@ -118,17 +118,17 @@
   gap: var(--layout-page-section-gap-tight);
 
   h3 {
-    margin: 0;
+    margin: var(--space-0);
     font-size: var(--ds-font-size-md);
     font-weight: var(--ds-font-weight-semibold);
-    color: var(--ds-text-primary);
+    color: var(--color-text-primary);
   }
 }
 
 // Injury Card
 .injury-card {
-  margin-bottom: 0;
-  border-left: var(--space-1) solid var(--ds-border-default);
+  margin-bottom: var(--space-0);
+  border-left: var(--space-1) solid var(--color-border-primary);
 
   &.new {
     border-left-color: var(--primitive-error-500);
@@ -147,7 +147,7 @@
 .analytics-card {
   --app-card-shell-header-padding: var(--space-4);
   --app-card-shell-header-border-bottom: var(--border-1) solid
-    var(--ds-border-subtle);
+    var(--color-border-secondary);
 }
 
 .injury-header {
@@ -163,25 +163,25 @@
     flex: 1;
 
     h4 {
-      margin: 0 0 var(--space-1) 0;
+      margin: var(--space-0) var(--space-0) var(--space-1) var(--space-0);
       font-size: var(--ds-font-size-md);
       font-weight: var(--ds-font-weight-semibold);
-      color: var(--ds-text-primary);
+      color: var(--color-text-primary);
     }
 
     p {
-      margin: 0 0 var(--space-1) 0;
+      margin: var(--space-0) var(--space-0) var(--space-1) var(--space-0);
       font-size: var(--ds-font-size-md);
-      color: var(--ds-text-secondary);
+      color: var(--color-text-secondary);
 
       strong {
-        color: var(--ds-text-primary);
+        color: var(--color-text-primary);
       }
     }
 
     .description {
       font-style: italic;
-      color: var(--ds-text-tertiary);
+      color: var(--color-text-tertiary);
     }
 
     .status {
@@ -199,14 +199,14 @@
 .rtp-progress-section {
   margin: var(--space-4) 0;
   padding: var(--space-3);
-  background: var(--ds-surface-base);
+  background: var(--surface-secondary);
   border-radius: var(--radius-md);
 
   h5 {
-    margin: 0 0 var(--space-2) 0;
+    margin: var(--space-0) var(--space-0) var(--space-2) var(--space-0);
     font-size: var(--ds-font-size-md);
     font-weight: var(--ds-font-weight-semibold);
-    color: var(--ds-text-primary);
+    color: var(--color-text-primary);
   }
 }
 
@@ -222,24 +222,24 @@
   align-items: center;
   min-width: var(--badge-min-width-sm);
   padding: var(--space-2);
-  background: var(--ds-surface-elevated);
-  border: var(--border-1) solid var(--ds-border-default);
+  background: var(--surface-card);
+  border: var(--border-1) solid var(--color-border-primary);
   border-radius: var(--radius-md);
   text-align: center;
 
   .stage-num {
     font-weight: var(--ds-font-weight-bold);
-    color: var(--ds-text-tertiary);
+    color: var(--color-text-tertiary);
   }
 
   .stage-check {
     font-size: var(--ds-font-size-xs);
-    color: var(--ds-text-tertiary);
+    color: var(--color-text-tertiary);
   }
 
   .stage-name {
     font-size: var(--ds-font-size-xs);
-    color: var(--ds-text-tertiary);
+    color: var(--color-text-tertiary);
   }
 
   &.completed {
@@ -269,17 +269,17 @@
   margin: var(--space-3) 0;
 
   h5 {
-    margin: 0 0 var(--space-1) 0;
+    margin: var(--space-0) var(--space-0) var(--space-1) var(--space-0);
     font-size: var(--ds-font-size-md);
     font-weight: var(--ds-font-weight-semibold);
-    color: var(--ds-text-primary);
+    color: var(--color-text-primary);
   }
 
   .checkin-metrics {
     display: flex;
     gap: var(--space-4);
     font-size: var(--ds-font-size-md);
-    color: var(--ds-text-secondary);
+    color: var(--color-text-secondary);
   }
 }
 
@@ -302,7 +302,7 @@
   flex-direction: column;
   gap: var(--space-2);
   padding: var(--space-3);
-  background: var(--ds-surface-base);
+  background: var(--surface-secondary);
   border-radius: var(--radius-md);
 }
 
@@ -315,19 +315,19 @@
 .rtp-detail-label {
   font-size: var(--ds-font-size-sm);
   font-weight: var(--ds-font-weight-medium);
-  color: var(--ds-text-tertiary);
+  color: var(--color-text-tertiary);
 }
 
 .rtp-detail-value {
   font-size: var(--ds-font-size-md);
-  color: var(--ds-text-primary);
+  color: var(--color-text-primary);
 }
 
 .rtp-stage-card,
 .rtp-checkin-detail {
   ul,
   p {
-    margin: 0;
+    margin: var(--space-0);
   }
 
   ul {
@@ -338,7 +338,7 @@
 .estimated-return {
   margin: var(--space-2) 0;
   font-size: var(--ds-font-size-md);
-  color: var(--ds-text-tertiary);
+  color: var(--color-text-tertiary);
 }
 
 .injury-actions {
@@ -347,16 +347,16 @@
   flex-wrap: wrap;
   margin-top: var(--space-3);
   padding-top: var(--space-3);
-  border-top: var(--border-1) solid var(--ds-border-subtle);
+  border-top: var(--border-1) solid var(--color-border-secondary);
 }
 
 // Analytics Section
 .analytics-section {
   h3 {
-    margin: 0 0 var(--space-3) 0;
+    margin: var(--space-0) var(--space-0) var(--space-3) var(--space-0);
     font-size: var(--ds-font-size-md);
     font-weight: var(--ds-font-weight-semibold);
-    color: var(--ds-text-primary);
+    color: var(--color-text-primary);
   }
 }
 
@@ -368,10 +368,10 @@
 
 .analytics-chart {
   h5 {
-    margin: 0 0 var(--space-2) 0;
+    margin: var(--space-0) var(--space-0) var(--space-2) var(--space-0);
     font-size: var(--ds-font-size-md);
     font-weight: var(--ds-font-weight-semibold);
-    color: var(--ds-text-primary);
+    color: var(--color-text-primary);
   }
 }
 
@@ -384,13 +384,13 @@
   .bar-label {
     min-width: var(--badge-min-width-lg);
     font-size: var(--ds-font-size-md);
-    color: var(--ds-text-secondary);
+    color: var(--color-text-secondary);
   }
 
   .bar-track {
     flex: 1;
     height: var(--indicator-size-md);
-    background: var(--ds-surface-base);
+    background: var(--surface-secondary);
     border-radius: var(--radius-full);
     overflow: hidden;
 
@@ -406,7 +406,7 @@
     min-width: var(--avatar-size-xs);
     font-size: var(--ds-font-size-md);
     font-weight: var(--ds-font-weight-medium);
-    color: var(--ds-text-primary);
+    color: var(--color-text-primary);
   }
 }
 
@@ -444,7 +444,7 @@
     margin-bottom: var(--space-1);
     font-size: var(--ds-font-size-md);
     font-weight: var(--ds-font-weight-medium);
-    color: var(--ds-text-primary);
+    color: var(--color-text-primary);
   }
 
   input,
@@ -465,7 +465,7 @@
   flex-direction: column;
   gap: var(--space-2);
   padding: var(--space-2);
-  background: var(--ds-surface-base);
+  background: var(--surface-secondary);
   border-radius: var(--radius-md);
 
   .radio-option,
@@ -475,7 +475,7 @@
     gap: var(--space-2);
 
     label {
-      margin: 0;
+      margin: var(--space-0);
       cursor: pointer;
     }
   }

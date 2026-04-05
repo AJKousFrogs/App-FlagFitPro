@@ -4,6 +4,10 @@
 
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { corsHeaders } from "../_shared/cors.ts";
+import {
+  buildRequestContext,
+  createLogger,
+} from "../_shared/structured-logger.ts";
 
 interface USDASearchRequest {
   query: string;
@@ -12,7 +16,11 @@ interface USDASearchRequest {
   dataType?: string[];
 }
 
+const logger = createLogger("supabase.search-usda-foods");
+
 serve(async (req) => {
+  const requestLogger = logger.child(buildRequestContext(req));
+
   // Handle CORS preflight
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -39,7 +47,7 @@ serve(async (req) => {
     // Get USDA API key from environment
     const usdaApiKey = Deno.env.get("USDA_API_KEY");
     if (!usdaApiKey) {
-      console.error("USDA_API_KEY not configured");
+      requestLogger.error("usda_api_key_missing");
       return new Response(
         JSON.stringify({ error: "USDA API not configured" }),
         {
@@ -70,7 +78,10 @@ serve(async (req) => {
     });
 
     if (!usdaResponse.ok) {
-      console.error(`USDA API error: ${usdaResponse.status}`);
+      requestLogger.error("usda_api_request_failed", undefined, {
+        query,
+        status_code: usdaResponse.status,
+      });
       return new Response(
         JSON.stringify({
           error: "USDA API error",
@@ -144,7 +155,7 @@ serve(async (req) => {
       },
     );
   } catch (error) {
-    console.error("Edge function error:", error);
+    requestLogger.error("usda_search_handler_failed", error);
     return new Response(
       JSON.stringify({
         error: "Internal server error",

@@ -31,7 +31,7 @@
 }
 
 .header-text h1 {
-  margin: 0 0 var(--space-1);
+  margin: var(--space-0) var(--space-0) var(--space-1);
   font-size: var(--ds-font-size-3xl);
   font-weight: var(--ds-font-weight-semibold);
   line-height: var(--ds-line-height-tight);
@@ -39,7 +39,7 @@
 }
 
 .header-text p {
-  margin: 0;
+  margin: var(--space-0);
   font-size: var(--ds-font-size-sm);
   line-height: var(--ds-line-height-normal);
   color: var(--color-text-muted);

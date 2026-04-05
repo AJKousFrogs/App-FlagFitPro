@@ -21,6 +21,7 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { AppLoadingComponent } from "../../../shared/components/loading/loading.component";
 import { PageErrorStateComponent } from "../../../shared/components/page-error-state/page-error-state.component";
+import { DEFAULT_TEAM_BRAND_HEX } from "../../../core/utils/design-tokens.util";
 import {
   TeamManagementDataService,
   type TeamManagementSettings as TeamSettings,
@@ -82,7 +83,7 @@ import {
                   <input
                     type="color"
                     class="color-input"
-                    [value]="toHexColor(teamSettings().primaryColor, '#16a34a')"
+                    [value]="toHexColor(teamSettings().primaryColor, teamBrandDefaultHex.primary)"
                     (input)="onPrimaryColorInput($event)"
                   />
                   <span class="color-code">{{
@@ -94,7 +95,7 @@ import {
                   <input
                     type="color"
                     class="color-input"
-                    [value]="toHexColor(teamSettings().secondaryColor, '#0f172a')"
+                    [value]="toHexColor(teamSettings().secondaryColor, teamBrandDefaultHex.secondary)"
                     (input)="onSecondaryColorInput($event)"
                   />
                   <span class="color-code">{{
@@ -191,6 +192,9 @@ import {
   styleUrl: "./team-management.component.scss",
 })
 export class TeamManagementComponent implements OnInit {
+  /** Color-input fallbacks — single source in design-tokens.util */
+  readonly teamBrandDefaultHex = DEFAULT_TEAM_BRAND_HEX;
+
   private readonly logger = inject(LoggerService);
   private readonly toastService = inject(ToastService);
   private readonly teamManagementDataService = inject(TeamManagementDataService);

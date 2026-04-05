@@ -11,7 +11,7 @@
   padding: var(--space-3) var(--space-4);
   background: var(--surface-card);
   border-radius: var(--radius-xl);
-  border: var(--border-1) solid var(--surface-border);
+  border: var(--border-1) solid var(--color-border-primary);
   box-shadow: var(--shadow-sm);
 }
 
@@ -56,15 +56,15 @@
 }
 
 .preview-note {
-  margin: 0;
+  margin: var(--space-0);
 
   @include preview-callout($font-size: var(--ds-font-size-xs));
 }
 
 .preview-insights {
   list-style: none;
-  padding: 0;
-  margin: 0 0 var(--space-3);
+  padding: var(--space-0);
+  margin: var(--space-0) var(--space-0) var(--space-3);
   display: grid;
   gap: var(--space-2);
   font-size: var(--ds-font-size-sm);
@@ -101,7 +101,7 @@
   font-size: var(--ds-font-size-xs);
   background: var(--surface-secondary);
   color: var(--color-text-secondary);
-  border: var(--border-1) solid var(--surface-border);
+  border: var(--border-1) solid var(--color-border-primary);
 
   &.good {
     color: var(--color-status-success);
@@ -123,7 +123,7 @@
   font-size: var(--ds-font-size-2xl);
   font-weight: var(--ds-font-weight-bold);
   color: var(--color-text-primary);
-  margin: 0;
+  margin: var(--space-0);
   display: flex;
   align-items: center;
   gap: var(--space-3);
@@ -167,7 +167,7 @@
   background: var(--surface-card);
   padding: var(--space-3) var(--space-6);
   border-radius: var(--radius-xl);
-  border: var(--border-1) solid var(--surface-border);
+  border: var(--border-1) solid var(--color-border-primary);
   margin-bottom: var(--space-6);
   box-shadow: var(--shadow-sm);
   overflow-x: auto;
@@ -219,7 +219,7 @@
 .sc-divider {
   width: var(--border-1);
   height: var(--space-10);
-  background: var(--surface-border);
+  background: var(--color-border-secondary);
   margin: 0 var(--space-4);
   flex-shrink: 0;
 }

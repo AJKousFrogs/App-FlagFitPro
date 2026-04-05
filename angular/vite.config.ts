@@ -1,8 +1,23 @@
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
 import { defineConfig, loadEnv } from "vite";
 import { fileURLToPath, URL } from "node:url";
 
+function readAngularPackageVersion(): string {
+  try {
+    const pkgPath = join(process.cwd(), "package.json");
+    const pkg = JSON.parse(readFileSync(pkgPath, "utf8")) as {
+      version?: string;
+    };
+    return pkg.version ?? "4.0.0";
+  } catch {
+    return "4.0.0";
+  }
+}
+
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), "");
+  const defaultAppVersion = readAngularPackageVersion();
 
   return {
     resolve: {
@@ -24,7 +39,7 @@ export default defineConfig(({ mode }) => {
         env["VITE_APP_NAME"] || "FlagFit Pro",
       ),
       "import.meta.env.VITE_APP_VERSION": JSON.stringify(
-        env["VITE_APP_VERSION"] || "1.0.0",
+        env["VITE_APP_VERSION"] || defaultAppVersion,
       ),
     },
   };

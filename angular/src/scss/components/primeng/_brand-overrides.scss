@@ -589,8 +589,8 @@
       overflow: hidden; // CRITICAL: Clip thumb to track bounds
       transition: background-color var(--motion-base) var(--ease-standard);
       box-sizing: border-box;
-      padding: 0;
-      margin: 0;
+      padding: var(--space-0);
+      margin: var(--space-0);
 
       // Thumb/handle - white circle with subtle shadow
       &::before {
@@ -609,8 +609,8 @@
         box-shadow: var(--p-toggleswitch-handle-shadow);
         transition: left var(--motion-base) var(--ease-standard);
         box-sizing: border-box;
-        margin: 0;
-        padding: 0;
+        margin: var(--space-0);
+        padding: var(--space-0);
         border: none;
       }
 
@@ -630,8 +630,8 @@
         box-shadow: var(--p-toggleswitch-handle-shadow);
         transition: left var(--motion-base) var(--ease-standard);
         box-sizing: border-box;
-        margin: 0;
-        padding: 0;
+        margin: var(--space-0);
+        padding: var(--space-0);
         border: none;
       }
     }
@@ -763,7 +763,7 @@
       display: inline-flex;
       align-items: center;
       flex-wrap: nowrap;
-      gap: 0;
+      gap: var(--space-0);
       padding: var(--space-1);
       background: var(--surface-secondary);
       border-radius: var(--radius-xl);
@@ -783,8 +783,8 @@
       display: flex;
       gap: var(--space-1);
       border: none;
-      margin: 0;
-      padding: 0;
+      margin: var(--space-0);
+      padding: var(--space-0);
       list-style: none;
     }
 
@@ -847,12 +847,12 @@
     }
 
     .p-tabpanels {
-      padding: 0;
+      padding: var(--space-0);
       background: transparent;
     }
 
     .p-tabpanel {
-      padding: 0;
+      padding: var(--space-0);
       animation: tab-panel-fade-in var(--motion-fast) var(--ease-standard);
     }
 
@@ -1033,7 +1033,7 @@
     box-shadow: var(--shadow-1);
 
     .p-card-header {
-      padding: 0;
+      padding: var(--space-0);
     }
 
     @include card-shell-padding(var(--space-4));
@@ -1444,6 +1444,6 @@
   }
 
   .p-card-content {
-    padding: 0;
+    padding: var(--space-0);
   }
 }

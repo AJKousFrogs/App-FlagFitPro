@@ -21,6 +21,9 @@ import { ChangeDetectionStrategy, Component, input } from "@angular/core";
       [class.page-header--hero]="variant() === 'hero'"
     >
       <div class="header-content">
+        @if (eyebrow()) {
+          <p class="page-eyebrow">{{ eyebrow() }}</p>
+        }
         <h1 class="page-title">
           @if (icon()) {
             <i [class]="'pi ' + icon()"></i>
@@ -39,6 +42,7 @@ import { ChangeDetectionStrategy, Component, input } from "@angular/core";
 export class PageHeaderComponent {
   title = input<string>("");
   subtitle = input<string | undefined>(undefined);
+  eyebrow = input<string | undefined>(undefined);
   icon = input<string | undefined>(undefined);
   variant = input<"default" | "hero">("default");
 

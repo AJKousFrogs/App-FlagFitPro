@@ -192,7 +192,7 @@
 /* Locked overlay */
 .locked-overlay {
   position: absolute;
-  inset: 0;
+  inset: var(--space-0);
   background: var(--surface-overlay);
   border-radius: var(--radius-full);
   display: flex;
@@ -294,7 +294,7 @@
 }
 
 .badge-title {
-  margin: 0;
+  margin: var(--space-0);
   font-size: var(--ds-font-size-md);
   font-weight: var(--ds-font-weight-semibold);
   color: var(--color-text-primary);
@@ -365,7 +365,7 @@
 /* Particles */
 .particles {
   position: absolute;
-  inset: 0;
+  inset: var(--space-0);
   pointer-events: none;
 }
 

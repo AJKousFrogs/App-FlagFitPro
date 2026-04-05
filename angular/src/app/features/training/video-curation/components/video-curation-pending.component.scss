@@ -9,7 +9,7 @@
   display: flex;
   flex-direction: column;
   gap: var(--layout-page-section-gap-tight);
-  padding: 0;
+  padding: var(--space-0);
 }
 
 .pending-grid {
@@ -48,14 +48,14 @@
   h4 {
     font-size: var(--ds-font-size-md);
     font-weight: var(--ds-font-weight-semibold);
-    margin: 0 0 var(--space-2);
+    margin: var(--space-0) var(--space-0) var(--space-2);
     color: var(--color-text-primary);
   }
 
   p {
     font-size: var(--ds-font-size-md);
     color: var(--color-text-secondary);
-    margin: 0 0 var(--space-3);
+    margin: var(--space-0) var(--space-0) var(--space-3);
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;

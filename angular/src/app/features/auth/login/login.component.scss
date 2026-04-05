@@ -10,7 +10,7 @@
   .form-error-summary--auth {
     display: grid;
     gap: var(--space-3);
-    margin-bottom: 0;
+    margin-bottom: var(--space-0);
     padding: var(--space-4) var(--space-5);
   }
 
@@ -28,13 +28,13 @@
   }
 
   .form-error-summary__title {
-    margin: 0;
+    margin: var(--space-0);
     font-size: var(--font-body-lg-size);
     line-height: var(--line-height-tight);
   }
 
   .form-error-summary__body {
-    margin: 0;
+    margin: var(--space-0);
     padding-left: calc(var(--font-body-lg-size) + var(--space-3));
     color: var(--color-text-primary);
     font-size: var(--font-body-size);
@@ -71,7 +71,7 @@
     }
 
     .forgot-link {
-      margin-left: 0;
+      margin-left: var(--space-0);
     }
   }
 }

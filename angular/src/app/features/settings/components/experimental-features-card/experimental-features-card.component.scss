@@ -14,7 +14,7 @@
 }
 
 .experimental-features-help {
-  margin-top: 0;
+  margin-top: var(--space-0);
 }
 
 @media (width <= var(--breakpoint-md)) {

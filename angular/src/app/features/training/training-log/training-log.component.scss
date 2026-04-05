@@ -19,13 +19,13 @@
 }
 
 .form-requirements {
-  margin: 0 0 var(--space-4);
+  margin: var(--space-0) var(--space-0) var(--space-4);
   font-size: var(--ds-font-size-sm);
   color: var(--color-text-secondary);
 }
 
 .override-message {
-  margin: 0;
+  margin: var(--space-0);
   font-size: var(--ds-font-size-sm);
   color: var(--color-text-secondary);
 }
@@ -88,11 +88,7 @@ app-card-shell {
     }
   }
 
-  &:focus-visible {
-    outline: var(--focus-outline-width) solid var(--ds-primary-green);
-    outline-offset: var(--focus-outline-offset);
-    box-shadow: var(--shadow-focus);
-  }
+  @include focus-visible;
 
   &:active {
     transform: scale(0.97);
@@ -268,7 +264,7 @@ app-alert.late-log-alert {
 }
 
 .impact-note {
-  margin: 0;
+  margin: var(--space-0);
   font-size: var(--ds-font-size-md);
   color: var(--color-text-secondary);
   font-style: italic;
@@ -300,7 +296,7 @@ app-alert.late-log-alert {
 }
 
 .status-note {
-  margin: 0;
+  margin: var(--space-0);
   font-size: var(--ds-font-size-md);
   color: var(--color-text-secondary);
   line-height: var(--ds-line-height-body);
@@ -338,7 +334,7 @@ app-alert.late-log-alert {
   border-radius: var(--radius-md);
 
   .state-narration {
-    margin-top: 0;
+    margin-top: var(--space-0);
   }
 }
 

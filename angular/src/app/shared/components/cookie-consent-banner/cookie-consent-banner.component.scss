@@ -26,7 +26,7 @@
 
 .cookie-content {
   max-width: min(100%, var(--layout-onboarding-max-width));
-  margin: 0 auto;
+  margin: var(--space-0) auto;
   padding: var(--space-5) var(--space-4);
   display: flex;
   flex-direction: column;
@@ -51,7 +51,7 @@
   font-size: var(--ds-font-size-xl);
   font-weight: var(--ds-font-weight-bold);
   color: var(--color-text-primary);
-  margin: 0;
+  margin: var(--space-0);
   letter-spacing: var(--ds-letter-spacing-tight);
 }
 
@@ -62,7 +62,7 @@
   font-size: var(--ds-font-size-md);
   color: var(--color-text-secondary);
   line-height: var(--ds-line-height-1-5);
-  margin: 0;
+  margin: var(--space-0);
   max-width: 64ch;
 }
 
@@ -72,7 +72,9 @@
   text-underline-offset: var(--space-1);
   font-weight: var(--ds-font-weight-medium);
 
-  @include ds-hover-state(transparent, $color: var(--ds-primary-green));
+  @media (hover: hover) and (pointer: fine) {
+    &:hover { color: var(--ds-primary-green); }
+  }
 }
 
 /* ================================
@@ -198,7 +200,7 @@
   color: var(
     --color-text-secondary
   ); /* Changed from tertiary to secondary for better contrast */
-  margin: 0;
+  margin: var(--space-0);
   padding-top: var(--space-3);
   border-top: var(--border-1) solid var(--color-border-muted);
   text-align: center;
@@ -317,8 +319,8 @@
   .cookie-details {
     max-height: 0;
     overflow: hidden;
-    margin: 0;
-    padding: 0;
+    margin: var(--space-0);
+    padding: var(--space-0);
   }
 }
 

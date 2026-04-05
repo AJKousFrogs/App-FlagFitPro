@@ -6,10 +6,16 @@ import { baseHandler } from "./utils/base-handler.js";
 import { getUserRole } from "./utils/authorization-guard.js";
 import { hasAnyRole, LOAD_MANAGEMENT_ACCESS_ROLES } from "./utils/role-sets.js";
 import { tryParseJsonObjectBody } from "./utils/input-validator.js";
+import {
+  buildRequestLogContext,
+  createLogger,
+} from "./utils/structured-logger.js";
 
 // Netlify Function: Calculate Readiness Score
 // Evidence-based readiness scoring combining session-RPE, ACWR, wellness, and game proximity
 // Endpoint: /api/calc-readiness
+
+const logger = createLogger({ service: "netlify.calc-readiness" });
 
 // Note: authenticateRequest, applyRateLimit are handled by baseHandler
 
@@ -403,11 +409,18 @@ const handler = async (event, context) => {
     rateLimitType: "CREATE",
     requireAuth: true, // SECURITY: Explicit auth for readiness calculation
     skipEnvCheck: true,
-    handler: async (event, _context, { userId }) => {
-      console.log("[calc-readiness] Starting function execution", {
-        method: event.httpMethod,
-        userId,
-        bodyLength: event.body?.length,
+    handler: async (event, _context, { userId, requestId, correlationId }) => {
+      const requestLogger = logger.child(
+        buildRequestLogContext(event, {
+          function_name: "calc-readiness",
+          user_id: userId,
+          request_id: requestId,
+          correlation_id: correlationId,
+          trace_id: correlationId,
+        }),
+      );
+      requestLogger.info("readiness_calculation_started", {
+        body_length: event.body?.length,
       });
 
       let body = {};
@@ -417,7 +430,9 @@ const handler = async (event, context) => {
           return parsedBody.error;
         }
         body = parsedBody.data;
-        console.log("[calc-readiness] Parsed body:", body);
+        requestLogger.debug("readiness_request_body_parsed", {
+          body,
+        });
 
         if (!isPlainObject(body)) {
           return handleValidationError("Request body must be an object");
@@ -427,20 +442,21 @@ const handler = async (event, context) => {
           athleteId: event.queryStringParameters?.athleteId,
           day: event.queryStringParameters?.day,
         };
-        console.log("[calc-readiness] Parsed query params:", body);
+        requestLogger.debug("readiness_query_params_parsed", {
+          body,
+        });
       }
 
       // If athleteId not provided, use authenticated user's ID
       const { athleteId = userId, day } = body;
 
-      console.log("[calc-readiness] Request parameters:", {
+      requestLogger.debug("readiness_request_validated", {
         athleteId,
         day,
         userId,
       });
 
       if (!athleteId) {
-        console.error("[calc-readiness] Missing athleteId");
         return handleValidationError("athleteId is required");
       }
 
@@ -460,7 +476,10 @@ const handler = async (event, context) => {
       }
 
       const dayStr = targetDate.toISOString().slice(0, 10);
-      console.log("[calc-readiness] Target date:", dayStr);
+      requestLogger.debug("readiness_target_date_resolved", {
+        athlete_id: athleteId,
+        day: dayStr,
+      });
 
       const access = await verifyAthleteAccess(userId, athleteId);
       if (!access.authorized) {
@@ -478,7 +497,7 @@ const handler = async (event, context) => {
       // Include both rpe and intensity_level (fallback for RPE)
       // Note: athlete_id is the canonical user reference column (NOT NULL)
       // Use session_date as the standardized date column
-      console.log("[calc-readiness] Fetching sessions:", {
+      requestLogger.debug("readiness_training_sessions_fetch_started", {
         athleteId,
         startChronic: startChronic.toISOString().slice(0, 10),
         endDate: dayStr,
@@ -492,7 +511,11 @@ const handler = async (event, context) => {
       );
 
       if (sessErr) {
-        console.error("[calc-readiness] Error fetching sessions:", sessErr);
+        requestLogger.error("readiness_training_sessions_fetch_failed", sessErr, {
+          athlete_id: athleteId,
+          start_date: startChronic.toISOString().slice(0, 10),
+          end_date: dayStr,
+        });
         if (!isOptionalSchemaError(sessErr)) {
           return createErrorResponse(
             `Failed to fetch sessions: ${sessErr.message}`,
@@ -500,12 +523,16 @@ const handler = async (event, context) => {
             "database_error",
           );
         }
-        console.warn(
-          "[calc-readiness] Training session history unavailable, falling back to wellness-only scoring",
-        );
+        requestLogger.warn("readiness_training_history_unavailable", {
+          athlete_id: athleteId,
+          fallback_mode: "wellness_only",
+        });
       }
 
-      console.log(`[calc-readiness] Fetched ${sessions?.length || 0} sessions`);
+      requestLogger.debug("readiness_training_sessions_fetch_completed", {
+        athlete_id: athleteId,
+        session_count: sessions?.length || 0,
+      });
 
       // Calculate daily loads (session-RPE = RPE × duration)
       // Use rpe if available, fallback to intensity_level (assuming 1-10 scale maps to RPE)
@@ -555,7 +582,7 @@ const handler = async (event, context) => {
       const acwr = chronicLoad > 0 ? acuteLoad / chronicLoad : 0;
 
       // 2) Get wellness log for the day
-      console.log("[calc-readiness] Fetching wellness log for:", {
+      requestLogger.debug("readiness_wellness_fetch_started", {
         athleteId,
         dayStr,
       });
@@ -565,7 +592,10 @@ const handler = async (event, context) => {
         await fetchWellnessForReadiness(athleteId, dayStr);
 
       if (wellErr) {
-        console.error("[calc-readiness] Error fetching wellness log:", wellErr);
+        requestLogger.error("readiness_wellness_fetch_failed", wellErr, {
+          athlete_id: athleteId,
+          day: dayStr,
+        });
         if (!isOptionalSchemaError(wellErr)) {
           return createErrorResponse(
             `Failed to fetch wellness log: ${wellErr.message}`,
@@ -589,10 +619,11 @@ const handler = async (event, context) => {
         });
       }
 
-      console.log("[calc-readiness] Wellness log found:", !!wellness);
-
       if (!wellness) {
-        console.log("[calc-readiness] No wellness log found for date:", dayStr);
+        requestLogger.info("readiness_wellness_missing", {
+          athlete_id: athleteId,
+          day: dayStr,
+        });
         // Return a graceful response with null score instead of error
         // This allows the frontend to handle missing wellness data gracefully
         return createSuccessResponse({
@@ -750,7 +781,12 @@ const handler = async (event, context) => {
       });
 
       if (upsertErr) {
-        console.error("Error upserting readiness score:", upsertErr);
+        requestLogger.error("readiness_score_upsert_failed", upsertErr, {
+          athlete_id: athleteId,
+          day: dayStr,
+          score,
+          level,
+        });
         if (!isOptionalSchemaError(upsertErr)) {
           return createErrorResponse(
             `Failed to save readiness score: ${upsertErr.message}`,
@@ -758,23 +794,25 @@ const handler = async (event, context) => {
             "database_error",
           );
         }
-        console.warn(
-          "[calc-readiness] readiness_scores persistence unavailable, returning computed score without storing it",
-        );
+        requestLogger.warn("readiness_score_persistence_unavailable", {
+          athlete_id: athleteId,
+          day: dayStr,
+        });
       }
 
       // Safety override: Check ACWR danger zone
       if (acwr > 1.5 || acwr < 0.8) {
-        console.log("[calc-readiness] ACWR in danger zone, triggering check:", {
+        requestLogger.info("readiness_acwr_danger_zone_detected", {
+          athlete_id: athleteId,
           acwr,
         });
         try {
           await detectACWRTrigger(athleteId);
         } catch (triggerError) {
-          console.error(
-            "[calc-readiness] Error in detectACWRTrigger:",
-            triggerError,
-          );
+          requestLogger.error("readiness_acwr_trigger_failed", triggerError, {
+            athlete_id: athleteId,
+            acwr,
+          });
           // Don't fail the whole request if safety override check fails
         }
       }
@@ -785,7 +823,8 @@ const handler = async (event, context) => {
         `are evidence-based starting points. Teams should calibrate these thresholds using their own ` +
         `injury and performance history over time for optimal accuracy.`;
 
-      console.log("[calc-readiness] Calculation complete:", {
+      requestLogger.info("readiness_calculation_completed", {
+        athlete_id: athleteId,
         score,
         level,
         acwr: Math.round(acwr * 100) / 100,

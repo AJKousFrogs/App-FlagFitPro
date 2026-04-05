@@ -187,7 +187,7 @@ export class TravelRecoveryComponent implements OnInit {
   Math = Math;
 
   ngOnInit(): void {
-    this.logger.debug("[TravelRecovery] Component initialized");
+    this.logger.debug("travel_recovery_component_init");
     this.timezones = this.travelService.getAvailableTimezones();
     this.travelChecklist = this.travelService.getTravelChecklist();
 
@@ -197,7 +197,7 @@ export class TravelRecoveryComponent implements OnInit {
     this.carTravelChecklist = this.travelService.getCarTravelChecklist();
     this.researchSummary = this.travelService.getCarTravelResearchSummary();
 
-    this.logger.debug("[TravelRecovery] State", {
+    this.logger.debug("travel_recovery_state", {
       hasActivePlan: this.hasActivePlan(),
       currentPlan: this.currentPlan(),
     });
@@ -437,15 +437,13 @@ export class TravelRecoveryComponent implements OnInit {
   }
 
   async createPlan(): Promise<void> {
-    this.logger.debug("[TravelRecovery] createPlan() called", {
+    this.logger.debug("travel_recovery_create_plan_called", {
       formData: this.tripForm,
       canCreate: this.canCreatePlan(),
     });
 
     if (!this.canCreatePlan()) {
-      this.logger.warn(
-        "[TravelRecovery] Cannot create plan - validation failed",
-      );
+      this.logger.warn("travel_recovery_validation_failed");
       this.toastService.warn(TOAST.WARN.REQUIRED_FIELDS);
       return;
     }
@@ -454,7 +452,7 @@ export class TravelRecoveryComponent implements OnInit {
     const arrivalDate = this.tripForm.arrivalDate;
 
     if (!departureDate || !arrivalDate) {
-      this.logger.warn("[TravelRecovery] Missing dates", {
+      this.logger.warn("travel_recovery_missing_dates", {
         departureDate,
         arrivalDate,
       });
@@ -463,7 +461,7 @@ export class TravelRecoveryComponent implements OnInit {
     }
 
     try {
-      this.logger.debug("[TravelRecovery] Creating travel plan...");
+      this.logger.debug("travel_recovery_creating_plan");
       const plan = await this.travelService.createTravelPlan({
         tripName: this.tripForm.tripName,
         departureDate: departureDate,
@@ -475,7 +473,7 @@ export class TravelRecoveryComponent implements OnInit {
         layovers: this.tripForm.layovers,
       });
 
-      this.logger.debug("[TravelRecovery] Plan created successfully", {
+      this.logger.debug("travel_recovery_plan_created", {
         plan,
         hasActivePlan: this.hasActivePlan(),
         currentPlan: this.currentPlan(),
@@ -484,7 +482,7 @@ export class TravelRecoveryComponent implements OnInit {
 
       this.toastService.success(TOAST.SUCCESS.RECOVERY_PROTOCOL_GENERATED);
     } catch (error) {
-      this.logger.error("[TravelRecovery] Error creating plan", { error });
+      this.logger.error("travel_recovery_plan_create_failed", error);
       this.toastService.error(
         "Failed to generate recovery protocol. Please try again.",
       );

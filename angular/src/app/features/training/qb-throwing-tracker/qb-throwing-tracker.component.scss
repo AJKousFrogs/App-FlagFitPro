@@ -9,17 +9,17 @@
 .qb-throwing-tracker {
   width: min(100%, var(--content-max-width-lg));
   margin-inline: auto;
-  padding: 0;
+  padding: var(--space-0);
   gap: var(--layout-page-section-gap-tight);
 }
 
 /* Status Card - Dashboard consistent */
 .status-card {
-  background: var(--surface-primary);
-  border: var(--border-1) solid var(--surface-border);
+  background: var(--surface-card);
+  border: var(--border-1) solid var(--color-border-primary);
   border-radius: var(--radius-xl);
   padding: var(--space-4);
-  margin-bottom: 0;
+  margin-bottom: var(--space-0);
   box-shadow: var(--shadow-sm);
 }
 
@@ -82,7 +82,7 @@ app-alert.preview-alert {
   align-items: flex-start;
   gap: var(--space-2);
   padding: var(--space-3);
-  background: var(--surface-primary);
+  background: var(--surface-card);
   border-radius: var(--radius-md);
   font-size: var(--ds-font-size-sm);
 }
@@ -93,16 +93,16 @@ app-alert.preview-alert {
 
 /* Sections - Dashboard consistent */
 .section {
-  background: var(--surface-primary);
-  border: var(--border-1) solid var(--surface-border);
+  background: var(--surface-card);
+  border: var(--border-1) solid var(--color-border-primary);
   border-radius: var(--radius-xl);
   padding: var(--space-4);
-  margin-bottom: 0;
+  margin-bottom: var(--space-0);
   box-shadow: var(--shadow-sm);
 }
 
 .section-title {
-  margin: 0 0 var(--space-4) 0;
+  margin: var(--space-0) var(--space-0) var(--space-4) var(--space-0);
   font-size: var(--ds-font-size-md);
   font-weight: var(--ds-font-weight-semibold);
 }
@@ -164,7 +164,7 @@ app-alert.preview-alert {
 }
 
 .session-card {
-  border: var(--border-1) solid var(--surface-border);
+  border: var(--border-1) solid var(--color-border-primary);
   border-radius: var(--radius-lg); /* 0.5rem */
   padding: var(--space-4);
   box-shadow: var(--shadow-sm);
@@ -281,7 +281,7 @@ app-alert.preview-alert {
   background: var(--primitive-warning-50);
   border: var(--border-1) solid var(--primitive-warning-300);
   border-radius: var(--radius-lg);
-  margin-bottom: 0;
+  margin-bottom: var(--space-0);
 }
 
 .reminder-icon {
@@ -293,12 +293,12 @@ app-alert.preview-alert {
 }
 
 .reminder-content h4 {
-  margin: 0 0 var(--space-1) 0;
+  margin: var(--space-0) var(--space-0) var(--space-1) var(--space-0);
   font-size: var(--ds-font-size-md);
 }
 
 .reminder-content p {
-  margin: 0;
+  margin: var(--space-0);
   font-size: var(--ds-font-size-sm);
   color: var(--primitive-warning-700);
 }

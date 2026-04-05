@@ -31,7 +31,7 @@
 
 .tool-card {
   background: var(--surface-card);
-  border: var(--border-1) solid var(--surface-border);
+  border: var(--border-1) solid var(--color-border-primary);
   border-radius: var(--radius-lg);
   padding: var(--space-6);
   display: flex;
@@ -51,7 +51,7 @@
     border-color: var(--ds-primary-green);
     transform: translateY(calc(-1 * var(--space-1)));
     box-shadow: var(--shadow-md);
-    background: var(--surface-hover);
+    background: var(--surface-secondary);
   }
 
   &:active {
@@ -78,7 +78,7 @@
     font-size: var(--ds-font-size-2xl); // var(--icon-base)
     font-weight: var(--ds-font-weight-semibold); // 600
     color: var(--color-text-primary);
-    margin: 0 0 var(--space-2) 0;
+    margin: var(--space-0) var(--space-0) var(--space-2) var(--space-0);
     line-height: var(--ds-line-height-h3);
   }
 
@@ -86,7 +86,7 @@
   p {
     font-size: var(--ds-font-size-md); // 0.875rem
     color: var(--color-text-secondary);
-    margin: 0;
+    margin: var(--space-0);
     line-height: var(--ds-line-height-body);
   }
 }

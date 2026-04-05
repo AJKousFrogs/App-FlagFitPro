@@ -204,7 +204,7 @@
 }
 
 .card-shell__title {
-  margin: 0;
+  margin: var(--space-0);
   font-size: var(--font-h3-size);
   font-weight: var(--font-h2-weight);
   color: var(--app-card-shell-title-color, var(--color-text-primary));
@@ -236,7 +236,7 @@
 
 .card-shell__body {
   --card-shell-body-padding-x: var(--component-card-padding);
-  --card-shell-body-padding-top: 0;
+  --card-shell-body-padding-top: var(--space-0);
   --card-shell-body-padding-bottom: var(--component-card-padding);
   padding: var(
     --app-card-shell-body-padding,
@@ -262,7 +262,7 @@
 }
 
 .card-shell__body--flush {
-  padding: 0;
+  padding: var(--space-0);
 }
 
 // ============================================

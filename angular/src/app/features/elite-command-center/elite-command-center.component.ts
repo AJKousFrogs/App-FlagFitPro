@@ -326,7 +326,7 @@ export class EliteCommandCenterComponent {
       datasets: [
         {
           data: points,
-          borderColor: "var(--color-primary)",
+          borderColor: "var(--ds-primary-green)",
           borderWidth: 2,
           fill: false,
           tension: 0.4,

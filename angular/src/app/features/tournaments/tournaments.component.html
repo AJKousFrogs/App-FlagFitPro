@@ -3,8 +3,9 @@
 
       <div class="tournaments-page ui-page-shell ui-page-shell--wide ui-page-stack">
         <app-page-header
-          title="Tournament Schedule"
-          subtitle="View and manage upcoming flag football tournaments"
+          eyebrow="SEASON"
+          title="Tournaments"
+          subtitle="Upcoming competitions, travel plans, and budget tracking."
           icon="pi-trophy"
         >
           <div class="header-actions">
@@ -101,9 +102,7 @@
           (save)="saveTournament()"
         />
       } @placeholder {
-        <div class="defer-dialog-chunk-placeholder" role="status" aria-live="polite">
-          <app-loading [visible]="true" variant="skeleton" message="Loading tournament form…" />
-        </div>
+        <span class="defer-dialog-chunk-placeholder"></span>
       }
 
       @defer (when showAvailabilityDialog) {
@@ -128,9 +127,7 @@
           (save)="saveAvailability()"
         />
       } @placeholder {
-        <div class="defer-dialog-chunk-placeholder" role="status" aria-live="polite">
-          <app-loading [visible]="true" variant="skeleton" message="Loading availability…" />
-        </div>
+        <span class="defer-dialog-chunk-placeholder"></span>
       }
 
       @defer (when showTeamAvailabilityDialog) {
@@ -154,9 +151,7 @@
           (exportReport)="exportAvailabilityReport()"
         />
       } @placeholder {
-        <div class="defer-dialog-chunk-placeholder" role="status" aria-live="polite">
-          <app-loading [visible]="true" variant="skeleton" message="Loading team availability…" />
-        </div>
+        <span class="defer-dialog-chunk-placeholder"></span>
       }
 
       @defer (when showBudgetDialog) {
@@ -175,9 +170,7 @@
           (save)="saveBudget()"
         />
       } @placeholder {
-        <div class="defer-dialog-chunk-placeholder" role="status" aria-live="polite">
-          <app-loading [visible]="true" variant="skeleton" message="Loading budget…" />
-        </div>
+        <span class="defer-dialog-chunk-placeholder"></span>
       }
     </app-main-layout>
   

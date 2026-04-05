@@ -36,7 +36,7 @@ export class AuthAwarePreloadStrategy implements PreloadingStrategy {
     const isAuthenticated =
       this.supabaseService.isAuthenticated() || !!this.supabaseService.session();
 
-    // v3.4: only explicitly opted-in routes should preload.
+    // v4.0: only explicitly opted-in routes should preload.
     if (preload !== true) {
       return of(null);
     }

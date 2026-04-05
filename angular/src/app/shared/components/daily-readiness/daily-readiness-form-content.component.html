@@ -7,6 +7,24 @@
     <p class="score-hint">{{ readinessHint() }}</p>
   </div>
 
+  @if (acwrResult(); as acwr) {
+    <div class="acwr-strip" role="status">
+      @if (acwr.sufficient) {
+        <span class="acwr-value">ACWR {{ acwr.ratio.toFixed(2) }}</span>
+        <span class="acwr-meta"
+          >Acute {{ acwr.acute_load }} / Chronic {{ acwr.chronic_load }}</span
+        >
+      } @else {
+        <span class="acwr-muted"
+          >ACWR unavailable — need more training data ({{
+            acwr.days_with_data
+          }}/21+ distinct days, {{ acwr.sessions_in_window }} sessions in
+          28d)</span
+        >
+      }
+    </div>
+  }
+
   <div class="slider-group">
     <div class="slider-item">
       <div class="slider-header">

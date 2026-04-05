@@ -65,7 +65,7 @@ const parseBoundedInt = (value, fieldName, { min = 0, max = 200 } = {}) => {
  * @param {string} userId - User ID
  * @returns {Object} - { isCoach: boolean, teamIds: string[] }
  */
-async function verifyCoachAndGetTeams(userId) {
+async function verifyCoachAndGetTeams(userId, log = logger) {
   const { data: coachTeams, error } = await supabaseAdmin
     .from("team_members")
     .select("team_id, role")
@@ -74,7 +74,11 @@ async function verifyCoachAndGetTeams(userId) {
     .eq("status", "active");
 
   if (error) {
-    console.error("[Coach Inbox] Error verifying coach status:", error);
+    log.error(
+      "coach_inbox_verify_coach_failed",
+      error,
+      { user_id: userId },
+    );
     return { isCoach: false, teamIds: [] };
   }
 
@@ -94,7 +98,7 @@ async function verifyCoachAndGetTeams(userId) {
  * @param {string[]} teamIds - Team IDs the coach belongs to
  * @returns {Object} - Stats by inbox type
  */
-async function getInboxStats(coachId, teamIds) {
+async function getInboxStats(coachId, teamIds, log = logger) {
   const { data: items, error } = await supabaseAdmin
     .from("coach_inbox_items")
     .select("inbox_type, status, priority")
@@ -102,7 +106,14 @@ async function getInboxStats(coachId, teamIds) {
     .in("team_id", teamIds);
 
   if (error) {
-    console.error("[Coach Inbox] Error fetching stats:", error);
+    log.error(
+      "coach_inbox_stats_fetch_failed",
+      error,
+      {
+        coach_id: coachId,
+        team_count: teamIds.length,
+      },
+    );
     return {
       safety_alerts: 0,
       review_needed: 0,
@@ -136,7 +147,7 @@ async function getInboxStats(coachId, teamIds) {
  * @param {Object} filters - Query filters
  * @returns {Array} - Inbox items with player info
  */
-async function listInboxItems(coachId, teamIds, filters = {}) {
+async function listInboxItems(coachId, teamIds, filters = {}, log = logger) {
   const {
     inbox_type,
     status,
@@ -197,7 +208,14 @@ async function listInboxItems(coachId, teamIds, filters = {}) {
   const { data: items, error } = await query;
 
   if (error) {
-    console.error("[Coach Inbox] Error listing items:", error);
+    log.error(
+      "coach_inbox_list_items_failed",
+      error,
+      {
+        coach_id: coachId,
+        filters,
+      },
+    );
     throw error;
   }
 
@@ -244,7 +262,7 @@ async function listInboxItems(coachId, teamIds, filters = {}) {
  * @param {Object} updates - Fields to update
  * @returns {Object} - Updated item
  */
-async function updateInboxItem(itemId, coachId, updates) {
+async function updateInboxItem(itemId, coachId, updates, log = logger) {
   const { action, status, notes, override_reason, override_alternative } =
     updates;
 
@@ -284,7 +302,14 @@ async function updateInboxItem(itemId, coachId, updates) {
     if (!data) {
       throw new Error("Inbox item not found");
     }
-    console.error("[Coach Inbox] Error updating item:", error);
+    log.error(
+      "coach_inbox_update_failed",
+      error,
+      {
+        coach_id: coachId,
+        item_id: itemId,
+      },
+    );
     throw error;
   }
 
@@ -298,9 +323,10 @@ async function updateInboxItem(itemId, coachId, updates) {
       })
       .eq("id", data.source_id);
 
-    console.log(
-      `[Coach Inbox] Stamped ai_message ${data.source_id} as reviewed by coach`,
-    );
+    log.info("coach_inbox_ai_message_stamped", {
+      source_id: data.source_id,
+      coach_id: coachId,
+    });
   }
 
   // If approving, also stamp the message
@@ -323,7 +349,7 @@ async function updateInboxItem(itemId, coachId, updates) {
  * @param {string} coachId - Coach user ID
  * @returns {Object} - Updated item
  */
-async function markItemViewed(itemId, coachId) {
+async function markItemViewed(itemId, coachId, log = logger) {
   const { data, error } = await supabaseAdmin
     .from("coach_inbox_items")
     .update({
@@ -339,7 +365,14 @@ async function markItemViewed(itemId, coachId) {
     if (!data) {
       throw new Error("Inbox item not found");
     }
-    console.error("[Coach Inbox] Error marking item viewed:", error);
+    log.error(
+      "coach_inbox_mark_viewed_failed",
+      error,
+      {
+        coach_id: coachId,
+        item_id: itemId,
+      },
+    );
     throw error;
   }
 
@@ -417,14 +450,22 @@ const handler = async (event, context) => {
     allowedMethods: ["GET", "PATCH", "POST"],
 rateLimitType,
     requireAuth: true,
-    handler: async (event, _context, { userId, requestId }) => {
+    handler: async (event, _context, { userId, requestId, correlationId }) => {
       checkEnvVars();
+
+      const requestLogger = createRequestLogger(event, {
+        requestId,
+        correlationId,
+      });
 
       const { path } = event;
       const method = event.httpMethod;
 
       // Verify user is a coach
-      const { isCoach, teamIds } = await verifyCoachAndGetTeams(userId);
+      const { isCoach, teamIds } = await verifyCoachAndGetTeams(
+        userId,
+        requestLogger,
+      );
 
       if (!isCoach) {
         return createErrorResponse(
@@ -448,7 +489,7 @@ rateLimitType,
       try {
         // GET /api/coach-inbox/stats - Get inbox statistics
         if (method === "GET" && subPath === "stats") {
-          const stats = await getInboxStats(userId, teamIds);
+          const stats = await getInboxStats(userId, teamIds, requestLogger);
           return createSuccessResponse(stats, requestId);
         }
 
@@ -493,7 +534,12 @@ rateLimitType,
               requestId,
             );
           }
-          const items = await listInboxItems(userId, teamIds, filters);
+          const items = await listInboxItems(
+            userId,
+            teamIds,
+            filters,
+            requestLogger,
+          );
           return createSuccessResponse(
             {
               items,
@@ -506,7 +552,7 @@ rateLimitType,
 
         // POST /api/coach-inbox/:id/mark-viewed - Mark item as viewed
         if (method === "POST" && itemId && action === "mark-viewed") {
-          const item = await markItemViewed(itemId, userId);
+          const item = await markItemViewed(itemId, userId, requestLogger);
           return createSuccessResponse(item, requestId);
         }
 
@@ -617,7 +663,12 @@ rateLimitType,
             }
           }
 
-          const updatedItem = await updateInboxItem(itemId, userId, body);
+          const updatedItem = await updateInboxItem(
+            itemId,
+            userId,
+            body,
+            requestLogger,
+          );
           return createSuccessResponse(updatedItem, requestId);
         }
 
@@ -628,6 +679,7 @@ rateLimitType,
           "method_not_allowed",
           requestId,
         );
+      } catch (error) {
       } catch (error) {
         if (error.code === "invalid_json") {
           return createErrorResponse(
@@ -651,7 +703,14 @@ rateLimitType,
         if (error.message?.includes("Inbox item not found")) {
           return createErrorResponse(error.message, 404, "not_found", requestId);
         }
-        console.error("[Coach Inbox] Error:", error);
+        requestLogger.error(
+          "coach_inbox_handler_failed",
+          error,
+          {
+            http_method: event.httpMethod,
+            path: path,
+          },
+        );
         return createErrorResponse(
           error.message || "Failed to process request",
           500,

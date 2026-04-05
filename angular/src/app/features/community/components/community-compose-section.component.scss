@@ -7,7 +7,7 @@
 }
 
 .create-post-card {
-  background: var(--surface-primary);
+  background: var(--surface-card);
   border: var(--border-1) solid var(--color-border-secondary);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-sm);
@@ -87,7 +87,7 @@
 
 .media-btn span {
   max-width: 0;
-  margin-left: 0;
+  margin-left: var(--space-0);
   overflow: hidden;
   opacity: 0;
   white-space: nowrap;
@@ -173,7 +173,7 @@
 
   .media-btn span {
     max-width: 0;
-    margin-left: 0;
+    margin-left: var(--space-0);
     opacity: 0;
   }
 }

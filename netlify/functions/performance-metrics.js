@@ -2,6 +2,7 @@ import { createRuntimeV2Handler } from "./utils/runtime-v2-adapter.js";
 import { supabaseAdmin } from "./supabase-client.js";
 import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
 import { baseHandler } from "./utils/base-handler.js";
+import { buildRequestLogContext, createLogger } from "./utils/structured-logger.js";
 
 // Netlify Function: Performance Metrics API
 // Returns real-time performance metrics for the Performance Dashboard component
@@ -29,7 +30,7 @@ function calculateTrend(currentValue, previousValue) {
 /**
  * Get performance metrics for an athlete
  */
-async function getPerformanceMetrics(userId) {
+async function getPerformanceMetrics(userId, log = logger) {
   try {
     // Get recent training sessions
     const { data: sessions, error: sessionsError } = await supabaseAdmin
@@ -59,7 +60,9 @@ async function getPerformanceMetrics(userId) {
         performanceTests = tests;
       }
     } catch (error) {
-      console.warn("Performance tests table not available:", error);
+      log.warn("performance_metrics_tests_table_unavailable", error, {
+        user_id: userId,
+      });
     }
 
     // Calculate metrics from training data
@@ -183,7 +186,9 @@ async function getPerformanceMetrics(userId) {
 
     return metrics;
   } catch (error) {
-    console.error("Error fetching performance metrics:", error);
+    log.error("performance_metrics_fetch_failed", error, {
+      user_id: userId,
+    });
     // Return default metrics on error
     return getDefaultMetrics();
   }
@@ -230,13 +235,29 @@ function getDefaultMetrics() {
   ];
 }
 
+const logger = createLogger({ service: "netlify.performance-metrics" });
+
+function createRequestLogger(event, meta = {}) {
+  return logger.child(
+    buildRequestLogContext(event, {
+      request_id: meta.requestId,
+      correlation_id: meta.correlationId,
+      trace_id: meta.traceId ?? meta.correlationId,
+    }),
+  );
+}
+
 const handler = async (event, context) => {
   return baseHandler(event, context, {
     functionName: "performance-metrics",
     allowedMethods: ["GET"],
     rateLimitType: "READ",
     requireAuth: true,
-    handler: async (event, _context, { userId, requestId }) => {
+    handler: async (event, _context, { userId, requestId, correlationId }) => {
+      const requestLogger = createRequestLogger(event, {
+        requestId,
+        correlationId,
+      });
       try {
         const athleteId = event.queryStringParameters?.athleteId || userId;
         if (athleteId !== userId) {
@@ -249,11 +270,13 @@ const handler = async (event, context) => {
         }
 
         // Get performance metrics
-        const metrics = await getPerformanceMetrics(athleteId);
+        const metrics = await getPerformanceMetrics(athleteId, requestLogger);
 
         return createSuccessResponse({ metrics }, requestId);
       } catch (error) {
-        console.error("[performance-metrics] Unexpected handler error:", error);
+        requestLogger.error("performance_metrics_handler_error", error, {
+          user_id: userId,
+        });
         return createErrorResponse(
           "Failed to fetch performance metrics",
           500,

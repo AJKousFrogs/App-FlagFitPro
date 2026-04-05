@@ -10,7 +10,7 @@
   border: var(--component-card-border);
   border-radius: var(--component-card-radius);
   padding: var(--component-card-padding-compact);
-  margin: 0;
+  margin: var(--space-0);
   display: flex;
   flex-direction: column;
   gap: var(--layout-page-section-gap-tight);
@@ -21,12 +21,12 @@
   justify-content: space-between;
   align-items: center;
   gap: var(--space-3);
-  margin: 0;
+  margin: var(--space-0);
   flex-wrap: wrap;
 }
 
 .calendar-header h3 {
-  margin: 0;
+  margin: var(--space-0);
   font-size: var(--ds-font-size-md);
   font-weight: var(--ds-font-weight-semibold);
   color: var(--color-text-primary);
@@ -89,7 +89,7 @@
   align-items: center;
   gap: var(--space-2);
   flex-wrap: wrap;
-  margin: 0;
+  margin: var(--space-0);
 }
 
 .tournament-details {
@@ -142,14 +142,14 @@
 /* Taper Banners */
 app-alert.taper-banner {
   display: block;
-  margin: 0;
+  margin: var(--space-0);
 }
 
 .taper-info {
   display: flex;
   align-items: center;
   gap: var(--space-2);
-  margin: 0;
+  margin: var(--space-0);
   font-size: var(--ds-font-size-xs);
   color: var(--color-text-muted);
 }
@@ -159,7 +159,7 @@ app-alert.taper-banner {
   display: flex;
   justify-content: flex-end;
   gap: var(--space-1);
-  margin: 0;
+  margin: var(--space-0);
   border-top: var(--border-1) solid var(--primitive-neutral-100);
   padding-top: var(--space-3);
 }

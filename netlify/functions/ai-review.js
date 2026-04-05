@@ -3,6 +3,7 @@ import { baseHandler } from "./utils/base-handler.js";
 import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
 import { parseJsonObjectBody } from "./utils/input-validator.js";
 import { supabaseAdmin } from "./supabase-client.js";
+import { createLogger } from "./utils/structured-logger.js";
 
 // Netlify Function: AI Human Review Workflow API
 // Handles flagging, reviewing, and managing AI decisions that require human oversight
@@ -13,6 +14,8 @@ import { supabaseAdmin } from "./supabase-client.js";
 // - Audit trail for AI decisions
 // - Review queue management
 //
+const logger = createLogger({ service: "netlify.ai-review" });
+
 // =============================================================================
 
 // =============================================================================
@@ -741,7 +744,7 @@ async function handleRequest(event, _context, { userId, authUser }) {
 
     return createErrorResponse("Endpoint not found", 404, "not_found");
   } catch (error) {
-    console.error("AI Review API error:", error);
+    logger.error("ai_review_api_error", error);
     if (error.isValidation) {
       return createErrorResponse(error.message, 422, "validation_error");
     }

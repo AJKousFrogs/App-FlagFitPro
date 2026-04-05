@@ -15,30 +15,43 @@ const STATIC_ASSETS = [
   // Angular assets are handled by Angular Service Worker (ngsw-worker.js)
 ];
 
+function logServiceWorker(level, eventName, context = {}) {
+  const entry = {
+    timestamp: new Date().toISOString(),
+    level,
+    event_name: eventName,
+    context
+  };
+  const line = JSON.stringify(entry);
+
+  if (level === 'error') {
+    console.error(line);
+    return;
+  }
+
+  if (level === 'warn') {
+    console.warn(line);
+  }
+}
+
 // Install event - cache static assets
 self.addEventListener('install', (event) => {
-  console.log('[Service Worker] Installing...');
-
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then((cache) => {
-        console.log('[Service Worker] Caching static assets');
         return cache.addAll(STATIC_ASSETS);
       })
-      .then(() => {
-        console.log('[Service Worker] Skip waiting');
-        return self.skipWaiting();
-      })
+      .then(() => self.skipWaiting())
       .catch((error) => {
-        console.error('[Service Worker] Installation failed:', error);
+        logServiceWorker('error', 'service_worker_install_failed', {
+          error: error instanceof Error ? error.message : String(error)
+        });
       })
   );
 });
 
 // Activate event - clean up old caches
 self.addEventListener('activate', (event) => {
-  console.log('[Service Worker] Activating...');
-
   event.waitUntil(
     caches.keys()
       .then((cacheNames) => {
@@ -48,16 +61,10 @@ self.addEventListener('activate', (event) => {
               // Delete old caches
               return cacheName !== CACHE_NAME && cacheName !== RUNTIME_CACHE;
             })
-            .map((cacheName) => {
-              console.log('[Service Worker] Deleting old cache:', cacheName);
-              return caches.delete(cacheName);
-            })
+            .map((cacheName) => caches.delete(cacheName))
         );
       })
-      .then(() => {
-        console.log('[Service Worker] Claiming clients');
-        return self.clients.claim();
-      })
+      .then(() => self.clients.claim())
   );
 });
 
@@ -87,7 +94,6 @@ async function cacheFirstStrategy(request) {
     const cachedResponse = await caches.match(request);
 
     if (cachedResponse) {
-      console.log('[Service Worker] Serving from cache:', request.url);
       return cachedResponse;
     }
 
@@ -102,7 +108,10 @@ async function cacheFirstStrategy(request) {
 
     return networkResponse;
   } catch (error) {
-    console.error('[Service Worker] Fetch failed:', error);
+    logServiceWorker('error', 'service_worker_fetch_failed', {
+      url: request.url,
+      error: error instanceof Error ? error.message : String(error)
+    });
 
     // Return offline page if available (Angular route)
     const offlinePage = await caches.match('/offline');
@@ -135,14 +144,11 @@ async function networkFirstStrategy(request) {
 
     return networkResponse;
   } catch (_error) {
-    console.log('[Service Worker] Network failed, trying cache:', request.url);
-
     // Only try cache for GET requests
     if (request.method === 'GET') {
       const cachedResponse = await caches.match(request);
 
       if (cachedResponse) {
-        console.log('[Service Worker] Serving API response from cache');
         return cachedResponse;
       }
     }
@@ -167,8 +173,6 @@ async function networkFirstStrategy(request) {
 
 // Push notification event
 self.addEventListener('push', (event) => {
-  console.log('[Service Worker] Push notification received');
-
   let notificationData = {
     title: 'FlagFit Pro',
     body: 'You have a new notification',
@@ -202,8 +206,6 @@ self.addEventListener('push', (event) => {
 
 // Notification click event
 self.addEventListener('notificationclick', (event) => {
-  console.log('[Service Worker] Notification clicked');
-
   event.notification.close();
 
   const urlToOpen = event.notification.data?.url || '/dashboard';
@@ -321,8 +323,6 @@ async function getPendingTrainingData() {
 
 // Message event - for communication with main app
 self.addEventListener('message', (event) => {
-  console.log('[Service Worker] Message received:', event.data);
-
   if (event.data && event.data.type === 'SKIP_WAITING') {
     self.skipWaiting();
   }
@@ -345,5 +345,3 @@ self.addEventListener('message', (event) => {
     );
   }
 });
-
-console.log('[Service Worker] Loaded and ready');

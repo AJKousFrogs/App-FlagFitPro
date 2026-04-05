@@ -3,6 +3,19 @@ import { emailService } from "./utils/email-service.js";
 import { validateRequestBody } from "./validation.js";
 import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
 import { baseHandler } from "./utils/base-handler.js";
+import { buildRequestLogContext, createLogger } from "./utils/structured-logger.js";
+
+const logger = createLogger({ service: "netlify.auth-reset-password" });
+
+function createRequestLogger(event, meta = {}) {
+  return logger.child(
+    buildRequestLogContext(event, {
+      request_id: meta.requestId,
+      correlation_id: meta.correlationId,
+      trace_id: meta.traceId ?? meta.correlationId,
+    }),
+  );
+}
 
 // Password reset endpoint
 const handler = async (event, context) => {
@@ -11,7 +24,8 @@ const handler = async (event, context) => {
     allowedMethods: ["POST"],
     rateLimitType: "AUTH",
     requireAuth: false, // Password reset doesn't require prior auth
-    handler: async (event, _context, { requestId }) => {
+    handler: async (event, _context, { requestId, correlationId }) => {
+      const requestLogger = createRequestLogger(event, { requestId, correlationId });
       // Validate request body
       const validation = validateRequestBody(event.body, "resetPassword");
       if (!validation.valid) {
@@ -34,7 +48,7 @@ const handler = async (event, context) => {
         if (!emailService.isInitialized) {
           const initialized = await emailService.initialize("smtp");
           if (!initialized) {
-            console.error("Failed to initialize email service");
+            requestLogger.warn("email_service_initialization_failed");
             return createErrorResponse(
               "Unable to send reset email at this time. Please try again later.",
               503,
@@ -58,7 +72,13 @@ const handler = async (event, context) => {
             requestId,
           );
         } catch (emailError) {
-          console.error("Email sending failed:", emailError);
+          requestLogger.error(
+            "password_reset_email_send_failed",
+            emailError,
+            {
+              email,
+            },
+          );
 
           // Return success to prevent email enumeration attacks
           return createSuccessResponse(

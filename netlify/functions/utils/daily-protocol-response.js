@@ -1,4 +1,7 @@
 import { resolveYouTubeVideoMetadata } from "./youtube.js";
+import { createLogger } from "./structured-logger.js";
+
+const logger = createLogger({ service: "netlify.daily-protocol-response" });
 
 export function buildAcwrPresentation(acwrValue, confidenceMetadata = null) {
   const trainingDaysLogged =
@@ -87,7 +90,11 @@ export async function computeReadinessDaysStale(
     .maybeSingle();
 
   if (error && error.code !== "PGRST116") {
-    console.warn("[daily-protocol] Failed to compute readiness staleness:", error);
+    logger.warn("daily_protocol_readiness_staleness_failed", {
+      user_id: userId,
+      date,
+      error: error.message,
+    });
     return readinessScore !== null ? 0 : null;
   }
 
@@ -123,10 +130,11 @@ export async function computeTrainingDaysLogged(
     .lte("session_date", date);
 
   if (error) {
-    console.warn(
-      "[daily-protocol] Failed to compute training days logged:",
-      error.message,
-    );
+    logger.warn("daily_protocol_training_days_logged_failed", {
+      user_id: userId,
+      date,
+      error: error.message,
+    });
     return null;
   }
 
@@ -161,7 +169,11 @@ export async function computeDynamicConfidenceMetadata(
     .maybeSingle();
 
   if (wellnessError && wellnessError.code !== "PGRST116") {
-    console.warn("[daily-protocol] Error checking wellness:", wellnessError);
+    logger.warn("daily_protocol_wellness_check_failed", {
+      user_id: userId,
+      date,
+      error: wellnessError.message,
+    });
   }
 
   const hasCheckinToday = !!todayWellness;
@@ -190,7 +202,7 @@ export async function computeDynamicConfidenceMetadata(
 
   const storedMeta = protocol.confidence_metadata || {};
 
-  console.log("[daily-protocol] Dynamic confidence metadata computed:", {
+  logger.debug("daily_protocol_dynamic_confidence_computed", {
     hasCheckinToday,
     readinessScore,
     daysStale,

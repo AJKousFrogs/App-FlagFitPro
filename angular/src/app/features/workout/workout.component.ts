@@ -203,7 +203,7 @@ export class WorkoutComponent implements OnInit {
 
       if (error) {
         this.logger.warn(
-          "[Workout] Error loading workouts:",
+          "workout_load_error",
           toLogContext(error),
         );
         this.isLoading.set(false);
@@ -239,7 +239,7 @@ export class WorkoutComponent implements OnInit {
                 }),
               );
             } catch (_e) {
-              this.logger.debug("[Workout] Could not parse exercises");
+              this.logger.debug("workout_parse_exercises_failed");
             }
           }
 
@@ -292,7 +292,7 @@ export class WorkoutComponent implements OnInit {
         this.workoutHistory.set(workouts);
       }
     } catch (error) {
-      this.logger.error("[Workout] Failed to load workouts:", error);
+      this.logger.error("workout_load_failed", error);
     } finally {
       this.isLoading.set(false);
     }
@@ -364,7 +364,7 @@ export class WorkoutComponent implements OnInit {
 
       this.toastService.success(TOAST.SUCCESS.WORKOUT_SAVED);
     } catch (error) {
-      this.logger.error("[Workout] Error saving:", error);
+      this.logger.error("workout_save_failed", error);
       this.toastService.error(TOAST.ERROR.WORKOUT_SAVE_FAILED);
     }
   }
@@ -398,7 +398,7 @@ export class WorkoutComponent implements OnInit {
       this.activeWorkout.set(null);
       this.toastService.success(TOAST.SUCCESS.WORKOUT_COMPLETED_EMOJI);
     } catch (error) {
-      this.logger.error("[Workout] Error completing:", error);
+      this.logger.error("workout_complete_failed", error);
       this.toastService.error(TOAST.ERROR.WORKOUT_COMPLETE_FAILED);
 
       // Still update local state

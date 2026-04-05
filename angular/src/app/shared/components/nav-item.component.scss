@@ -44,11 +44,10 @@
   );
   --nav-item-shadow-hover: var(--shadow-sm);
   gap: var(--space-3);
-  padding: var(--space-3) var(--space-4);
-  margin-bottom: var(--space-1);
+  padding: var(--space-2) var(--space-4);
   width: 100%;
-  min-height: var(--touch-target-md);
-  font-size: var(--ds-font-size-md);
+  min-height: var(--touch-target-sm);
+  font-size: var(--ds-font-size-sm);
 }
 
 .nav-item--bottom {
@@ -208,10 +207,15 @@
 }
 
 .nav-item--bottom .nav-item-label {
-  font-size: var(--ds-font-size-xs);
+  font-size: var(--ds-font-size-2xs);
   font-weight: var(--ds-font-weight-medium);
   text-transform: none;
   letter-spacing: 0;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-align: center;
 }
 
 .nav-item--menu .nav-item-label {
@@ -235,8 +239,8 @@
 
 @include respond-to(sm) {
   .nav-item--sidebar {
-    padding: var(--space-3);
-    min-height: var(--touch-target-md);
+    padding: var(--space-2) var(--space-3);
+    min-height: var(--touch-target-sm);
   }
 
   .nav-item--bottom {

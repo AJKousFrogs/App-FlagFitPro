@@ -24,6 +24,7 @@
   overflow: hidden;
   isolation: isolate;
   background: var(--surface-ground);
+  transition: grid-template-columns var(--transition-slow) var(--ease-standard);
 }
 
 :host(.app-shell--sidebar-collapsed) .app-shell {
@@ -32,9 +33,25 @@
     minmax(0, 1fr);
 }
 
-@media (width <= 64rem) and (width > 40rem) {
+/* Tablet: Collapsed icon-only sidebar (768px-1024px) */
+@media (width <= 64rem) and (width > 48rem) {
   .app-shell {
-    --app-shell-sidebar-width: 13.5rem;
+    --app-shell-sidebar-width: 4.5rem;
+  }
+
+  .app-shell__page {
+    padding: var(--space-5) var(--space-6) var(--space-8);
+  }
+}
+
+/* Small tablet / large mobile: Slightly narrower collapsed sidebar */
+@media (width <= 48rem) and (width > 40rem) {
+  .app-shell {
+    --app-shell-sidebar-width: 4rem;
+  }
+
+  .app-shell__page {
+    padding: var(--space-4) var(--space-5) var(--space-6);
   }
 }
 
@@ -85,7 +102,7 @@
     var(--app-shell-gutter-inline)
     calc(var(--app-shell-gutter-block) * 2);
   max-width: var(--layout-page-max-width-wide);
-  margin: 0 auto;
+  margin: var(--space-0) auto;
   width: 100%;
 }
 
@@ -113,7 +130,7 @@
 .app-shell__content-stack > :where(.ui-page-shell) {
   inline-size: min(100%, var(--ui-page-shell-max-width));
   margin-inline: auto;
-  padding: 0;
+  padding: var(--space-0);
 }
 
 .app-shell__content-stack > :where(:not(.ui-page-shell)) {
@@ -219,7 +236,7 @@
   }
 
   .app-shell__page {
-    padding: 0;
+    padding: var(--space-0);
   }
 
   .desktop-only {

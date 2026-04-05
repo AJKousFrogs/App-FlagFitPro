@@ -3,6 +3,7 @@ import { checkEnvVars, getSupabaseClient, runWithAuthContext } from "../utils/su
 import { createErrorResponse, handleServerError, logFunctionCall, getCorsHeaders } from "./error-handler.js";
 import { authenticateRequest } from "./auth-helper.js";
 import { applyRateLimit, getRateLimitHeaders } from "./rate-limiter.js";
+import { createLogger, extractCorrelationId } from "./structured-logger.js";
 
 /**
  * Base Handler Middleware for Netlify Functions
@@ -37,6 +38,8 @@ import { applyRateLimit, getRateLimitHeaders } from "./rate-limiter.js";
  */
 
 "use strict";
+
+const logger = createLogger({ service: "netlify.base-handler" });
 
 /**
  * Generate a unique request ID for tracking
@@ -92,7 +95,8 @@ async function baseHandler(event, context, options = {}) {
   } = options;
 
   // Generate unique request ID for tracking
-  const requestId = event.headers?.["x-request-id"] || generateRequestId();
+  const correlationId = extractCorrelationId(event.headers) || generateRequestId();
+  const requestId = correlationId;
   const corsHeaders = getCorsHeaders(event);
 
   // Performance monitoring - start timer
@@ -116,7 +120,11 @@ async function baseHandler(event, context, options = {}) {
   }
 
   // Log function call
-  logFunctionCall(functionName, event);
+  logFunctionCall(functionName, event, {
+    request_id: requestId,
+    correlation_id: correlationId,
+    trace_id: correlationId,
+  });
 
   let userId = null;
 
@@ -134,11 +142,12 @@ async function baseHandler(event, context, options = {}) {
           `Method not allowed. Use ${allowedMethods.join(" or ")}.`,
           405,
           "method_not_allowed",
-          { requestId },
+          { requestId, correlationId },
         ),
         event,
       );
       methodNotAllowedResponse.headers["X-Request-Id"] = requestId;
+      methodNotAllowedResponse.headers["X-Correlation-Id"] = correlationId;
       return methodNotAllowedResponse;
     }
 
@@ -151,6 +160,7 @@ async function baseHandler(event, context, options = {}) {
       if (!auth.success) {
         const authError = withStandardHeaders(auth.error, event);
         authError.headers["X-Request-Id"] = requestId;
+        authError.headers["X-Correlation-Id"] = correlationId;
         return authError;
       }
       userId = auth.user.id;
@@ -174,6 +184,7 @@ async function baseHandler(event, context, options = {}) {
     if (rateLimitResponse) {
       const limitedResponse = withStandardHeaders(rateLimitResponse, event);
       limitedResponse.headers["X-Request-Id"] = requestId;
+      limitedResponse.headers["X-Correlation-Id"] = correlationId;
       return limitedResponse;
     }
 
@@ -181,6 +192,7 @@ async function baseHandler(event, context, options = {}) {
       handler(event, context, {
         userId,
         requestId,
+        correlationId,
         authToken,
         authUser,
         supabase,
@@ -217,7 +229,7 @@ async function baseHandler(event, context, options = {}) {
             fallbackMessage,
             response.statusCode,
             fallbackType,
-            { requestId },
+            { requestId, correlationId },
           );
         }
       } catch (_parseError) {
@@ -225,7 +237,7 @@ async function baseHandler(event, context, options = {}) {
           "Request failed",
           response.statusCode,
           "unknown_error",
-          { requestId },
+          { requestId, correlationId },
         );
       }
     }
@@ -234,13 +246,15 @@ async function baseHandler(event, context, options = {}) {
     const duration = Date.now() - startTime;
 
     // Log performance metrics with request ID
-    console.log(`[PERFORMANCE] ${functionName} [${requestId}]: ${duration}ms`, {
-      requestId,
-      method: event.httpMethod,
+    logger.info("function_request_completed", {
+      function_name: functionName,
+      request_id: requestId,
+      correlation_id: correlationId,
+      trace_id: correlationId,
+      http_method: event.httpMethod,
       path: event.path,
-      userId: userId || "anonymous",
-      duration,
-      timestamp: new Date().toISOString(),
+      user_id: userId || "anonymous",
+      duration_ms: duration,
     });
 
     const rateLimitIdentifier = getClientIdentifier(event, userId);
@@ -254,33 +268,37 @@ async function baseHandler(event, context, options = {}) {
     response.headers["X-Response-Time"] = `${duration}ms`;
     response.headers["X-Function-Name"] = functionName;
     response.headers["X-Request-Id"] = requestId;
+    response.headers["X-Correlation-Id"] = correlationId;
     Object.assign(response.headers, rateLimitHeaders);
 
     // Alert on slow responses (>1000ms)
     if (duration > 1000) {
-      console.warn(
-        `[SLOW RESPONSE] ${functionName} [${requestId}] took ${duration}ms`,
-      );
+      logger.warn("function_request_slow", {
+        function_name: functionName,
+        request_id: requestId,
+        correlation_id: correlationId,
+        trace_id: correlationId,
+        duration_ms: duration,
+      });
     }
 
     return response;
   } catch (error) {
     // Calculate duration even for errors
     const duration = Date.now() - startTime;
-    console.error(
-      `[ERROR] ${functionName} [${requestId}] failed after ${duration}ms:`,
-      {
-        requestId,
-        error: error.message,
-        stack: error.stack,
-        duration,
-      },
-    );
+    logger.error("function_request_failed", error, {
+      function_name: functionName,
+      request_id: requestId,
+      correlation_id: correlationId,
+      trace_id: correlationId,
+      duration_ms: duration,
+    });
 
     const errorResponse = handleServerError(error, functionName);
     // Add request ID to error response for debugging
     const normalizedErrorResponse = withStandardHeaders(errorResponse, event);
     normalizedErrorResponse.headers["X-Request-Id"] = requestId;
+    normalizedErrorResponse.headers["X-Correlation-Id"] = correlationId;
     const rateLimitIdentifier = getClientIdentifier(event, userId);
     Object.assign(
       normalizedErrorResponse.headers,

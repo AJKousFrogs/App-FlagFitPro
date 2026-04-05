@@ -6,7 +6,7 @@
   gap: var(--layout-page-section-gap);
   width: min(100%, var(--content-max-width-lg));
   margin-inline: auto;
-  padding: 0;
+  padding: var(--space-0);
 }
 
 // Merlin Intro
@@ -16,12 +16,12 @@
   padding: var(--component-card-padding-compact);
   background: linear-gradient(
     135deg,
-    var(--ds-surface-base),
-    var(--ds-surface-elevated)
+    var(--surface-secondary),
+    var(--surface-card)
   );
   border-radius: var(--radius-lg);
   border: var(--border-1) solid var(--ds-primary-green);
-  margin-bottom: 0;
+  margin-bottom: var(--space-0);
 
   .merlin-avatar {
     font-size: var(--ds-font-size-3xl);
@@ -30,15 +30,15 @@
 
   .merlin-message {
     h3 {
-      margin: 0 0 var(--space-2) 0;
+      margin: var(--space-0) var(--space-0) var(--space-2) var(--space-0);
       font-size: var(--ds-font-size-md);
       font-weight: var(--ds-font-weight-semibold);
       color: var(--ds-primary-green);
     }
 
     p {
-      margin: 0;
-      color: var(--ds-text-secondary);
+      margin: var(--space-0);
+      color: var(--color-text-secondary);
       font-style: italic;
     }
   }
@@ -48,19 +48,19 @@
 .form-step {
   margin-bottom: var(--layout-page-section-gap-tight);
   padding-bottom: var(--space-4);
-  border-bottom: var(--border-1) solid var(--ds-border-subtle);
+  border-bottom: var(--border-1) solid var(--color-border-secondary);
 
   h4 {
-    margin: 0 0 var(--space-1) 0;
+    margin: var(--space-0) var(--space-0) var(--space-1) var(--space-0);
     font-size: var(--ds-font-size-md);
     font-weight: var(--ds-font-weight-semibold);
-    color: var(--ds-text-primary);
+    color: var(--color-text-primary);
   }
 
   .step-description {
-    margin: 0 0 var(--space-3) 0;
+    margin: var(--space-0) var(--space-0) var(--space-3) var(--space-0);
     font-size: var(--ds-font-size-md);
-    color: var(--ds-text-secondary);
+    color: var(--color-text-secondary);
   }
 }
 
@@ -69,7 +69,7 @@
   flex-direction: column;
   gap: var(--space-2);
   padding: var(--space-3);
-  background: var(--ds-surface-base);
+  background: var(--surface-secondary);
   border-radius: var(--radius-md);
 
   .radio-option {
@@ -90,14 +90,14 @@
     display: block;
     font-size: var(--ds-font-size-md);
     font-weight: var(--ds-font-weight-medium);
-    color: var(--ds-text-primary);
+    color: var(--color-text-primary);
     margin-bottom: var(--space-1);
   }
 
   .event-info {
     margin-top: var(--space-2);
     font-size: var(--ds-font-size-md);
-    color: var(--ds-text-secondary);
+    color: var(--color-text-secondary);
 
     strong {
       color: var(--ds-primary-green);
@@ -113,7 +113,7 @@
   );
   gap: var(--space-2);
   padding: var(--space-3);
-  background: var(--ds-surface-base);
+  background: var(--surface-secondary);
   border-radius: var(--radius-md);
 
   .checkbox-option {
@@ -133,7 +133,7 @@
   flex-wrap: wrap;
   gap: var(--space-3);
   padding: var(--space-3);
-  background: var(--ds-surface-base);
+  background: var(--surface-secondary);
   border-radius: var(--radius-md);
 
   .day-checkbox {
@@ -162,7 +162,7 @@
       display: block;
       font-size: var(--ds-font-size-md);
       font-weight: var(--ds-font-weight-medium);
-      color: var(--ds-text-primary);
+      color: var(--color-text-primary);
       margin-bottom: var(--space-1);
     }
   }
@@ -171,7 +171,7 @@
 .special-considerations {
   margin-top: var(--space-3);
   padding: var(--space-3);
-  background: var(--ds-surface-base);
+  background: var(--surface-secondary);
   border-radius: var(--radius-md);
 
   .checkbox-option {
@@ -181,7 +181,7 @@
     margin-bottom: var(--space-2);
 
     &:last-child {
-      margin-bottom: 0;
+      margin-bottom: var(--space-0);
     }
 
     label {
@@ -211,8 +211,8 @@
     padding: var(--space-3);
     background: linear-gradient(
       135deg,
-      var(--ds-surface-base),
-      var(--ds-surface-elevated)
+      var(--surface-secondary),
+      var(--surface-card)
     );
     border-radius: var(--radius-md);
     border-left: var(--space-1) solid var(--ds-primary-green);
@@ -224,15 +224,15 @@
 
     .recommendation-content {
       h3 {
-        margin: 0 0 var(--space-2) 0;
+        margin: var(--space-0) var(--space-0) var(--space-2) var(--space-0);
         font-size: var(--ds-font-size-md);
         font-weight: var(--ds-font-weight-semibold);
         color: var(--ds-primary-green);
       }
 
       p {
-        margin: 0;
-        color: var(--ds-text-secondary);
+        margin: var(--space-0);
+        color: var(--color-text-secondary);
         font-style: italic;
       }
     }
@@ -255,7 +255,7 @@
   flex: 1;
   min-width: var(--input-min-width-md);
   padding: var(--space-3);
-  background: var(--ds-surface-base);
+  background: var(--surface-secondary);
   border-radius: var(--radius-md);
   text-align: center;
 
@@ -269,14 +269,14 @@
     .phase-dates {
       display: block;
       font-size: var(--ds-font-size-xs);
-      color: var(--ds-text-tertiary);
+      color: var(--color-text-tertiary);
     }
 
     .phase-name {
       display: block;
       font-size: var(--ds-font-size-md);
       font-weight: var(--ds-font-weight-semibold);
-      color: var(--ds-text-primary);
+      color: var(--color-text-primary);
     }
   }
 
@@ -285,7 +285,7 @@
       display: block;
       margin-top: var(--space-1);
       font-size: var(--ds-font-size-xs);
-      color: var(--ds-text-secondary);
+      color: var(--color-text-secondary);
     }
   }
 }
@@ -302,12 +302,12 @@
   display: flex;
   gap: var(--space-4);
   padding: var(--space-3);
-  background: var(--ds-surface-base);
+  background: var(--surface-secondary);
   border-radius: var(--radius-md);
   border-left: var(--space-1) solid var(--ds-primary-green);
 
   &.rest-day {
-    border-left-color: var(--ds-text-tertiary);
+    border-left-color: var(--color-text-tertiary);
     opacity: var(--opacity-subtle);
   }
 }
@@ -319,19 +319,19 @@
   .day-name {
     display: block;
     font-weight: var(--ds-font-weight-bold);
-    color: var(--ds-text-primary);
+    color: var(--color-text-primary);
   }
 
   .day-date {
     display: block;
     font-size: var(--ds-font-size-md);
-    color: var(--ds-text-secondary);
+    color: var(--color-text-secondary);
   }
 
   .item-time {
     display: block;
     font-size: var(--ds-font-size-xs);
-    color: var(--ds-text-tertiary);
+    color: var(--color-text-tertiary);
   }
 }
 
@@ -349,24 +349,24 @@
     }
 
     h4 {
-      margin: 0;
+      margin: var(--space-0);
       flex: 1;
       font-size: var(--ds-font-size-md);
       font-weight: var(--ds-font-weight-semibold);
-      color: var(--ds-text-primary);
+      color: var(--color-text-primary);
     }
 
     .session-duration {
       font-size: var(--ds-font-size-md);
-      color: var(--ds-text-tertiary);
+      color: var(--color-text-tertiary);
     }
   }
 
   .session-activities {
-    margin: 0 0 var(--space-2) 0;
+    margin: var(--space-0) var(--space-0) var(--space-2) var(--space-0);
     padding-left: var(--space-4);
     font-size: var(--ds-font-size-md);
-    color: var(--ds-text-secondary);
+    color: var(--color-text-secondary);
 
     li {
       margin-bottom: var(--space-1);
@@ -377,13 +377,13 @@
     display: flex;
     gap: var(--space-3);
     font-size: var(--ds-font-size-md);
-    color: var(--ds-text-tertiary);
+    color: var(--color-text-tertiary);
   }
 
   .session-location {
     margin: var(--space-2) 0 0 0;
     font-size: var(--ds-font-size-md);
-    color: var(--ds-text-secondary);
+    color: var(--color-text-secondary);
   }
 }
 
@@ -402,33 +402,33 @@
   margin-bottom: var(--space-4);
 
   &:last-child {
-    margin-bottom: 0;
+    margin-bottom: var(--space-0);
   }
 
   h4 {
-    margin: 0 0 var(--space-3) 0;
+    margin: var(--space-0) var(--space-0) var(--space-3) var(--space-0);
     font-size: var(--ds-font-size-md);
     font-weight: var(--ds-font-weight-semibold);
-    color: var(--ds-text-primary);
+    color: var(--color-text-primary);
   }
 }
 
 .mod-card {
   padding: var(--space-3);
-  background: var(--ds-surface-base);
+  background: var(--surface-secondary);
   border-radius: var(--radius-md);
   margin-bottom: var(--space-2);
 
   strong {
     display: block;
     margin-bottom: var(--space-1);
-    color: var(--ds-text-primary);
+    color: var(--color-text-primary);
   }
 
   p {
-    margin: 0;
+    margin: var(--space-0);
     font-size: var(--ds-font-size-md);
-    color: var(--ds-text-secondary);
+    color: var(--color-text-secondary);
 
     &.cleared {
       color: var(--ds-primary-green);

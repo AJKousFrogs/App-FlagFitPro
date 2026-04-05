@@ -2,6 +2,19 @@ import { createRuntimeV2Handler } from "./utils/runtime-v2-adapter.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { createErrorResponse, handleValidationError } from "./utils/error-handler.js";
 import { tryParseJsonObjectBody } from "./utils/input-validator.js";
+import { buildRequestLogContext, createLogger } from "./utils/structured-logger.js";
+
+const logger = createLogger({ service: "netlify.exercise-progression" });
+
+function createRequestLogger(event, meta = {}) {
+  return logger.child(
+    buildRequestLogContext(event, {
+      request_id: meta.requestId,
+      correlation_id: meta.correlationId,
+      trace_id: meta.traceId ?? meta.correlationId,
+    }),
+  );
+}
 
 /**
  * Exercise Progression Calculator
@@ -149,7 +162,11 @@ const handler = async (event, context) =>
     allowedMethods: ["POST"],
     rateLimitType: "UPDATE",
     requireAuth: true,
-    handler: async (evt, _ctx, { userId, supabase }) => {
+    handler: async (evt, _ctx, { userId, supabase, requestId, correlationId }) => {
+      const requestLogger = createRequestLogger(evt, {
+        requestId,
+        correlationId,
+      });
       try {
         const parsedPayload = tryParseJsonObjectBody(evt.body);
         if (!parsedPayload.ok) {
@@ -259,7 +276,9 @@ const handler = async (event, context) =>
           }),
         };
       } catch (err) {
-        console.error("Progression calculation error:", err);
+        requestLogger.error("exercise_progression_error", err, {
+          user_id: userId,
+        });
         return createErrorResponse("Internal server error", 500, "server_error");
       }
     },

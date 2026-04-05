@@ -1,16 +1,17 @@
 /**
- * Angular Logger Service
- * Provides consistent logging with environment-aware levels for Angular components
- * Enhanced with structured logging, context tracking, and log aggregation
- *
- * @module core/logging/logger
- * @version 2.0.0
+ * Angular structured logger — JSON lines with `event_name`, PII redaction, optional trace correlation.
  */
 
 import { Injectable, inject, isDevMode } from "@angular/core";
 
-import type { LogLevel } from "@core/logging/logger";
+import {
+  createStructuredLogEntry,
+  type LogLevel,
+  type StructuredJsonLogEntry,
+} from "@core/logging/logger";
 import { LOGGER } from "@core/logging/logger.token";
+import { redactForLog } from "@core/logging/redact-pii.util";
+import { CorrelationContextService } from "@core/services/correlation-context.service";
 
 export interface LogContext {
   component?: string;
@@ -18,23 +19,20 @@ export interface LogContext {
   userId?: string;
   teamId?: string;
   sessionId?: string;
+  trace_id?: string;
   [key: string]: unknown;
 }
 
 /**
  * Helper to convert any value to LogContext
- * @param value - Value to convert
- * @returns LogContext object
  */
 export function toLogContext(value: unknown): LogContext {
   if (!value) return {};
   if (typeof value === "string") return { message: value };
   if (typeof value === "object" && value !== null) {
-    // If it's already a plain object, try to use it
     if (Object.getPrototypeOf(value) === Object.prototype) {
       return value as LogContext;
     }
-    // For complex objects (errors, etc.), extract useful info
     const ctx: LogContext = {};
     if ("message" in value) ctx.message = String(value.message);
     if ("code" in value) ctx.code = String(value.code);
@@ -44,210 +42,93 @@ export function toLogContext(value: unknown): LogContext {
   return { value: String(value) };
 }
 
-export interface StructuredLog {
-  level: "debug" | "info" | "warning" | "error";
-  message: string;
-  timestamp: string;
-  context?: LogContext;
-  data?: unknown;
-  error?: Error;
-}
+/** @deprecated Prefer StructuredJsonLogEntry from `./logger` */
+export type StructuredLog = StructuredJsonLogEntry;
+
+type InternalLevel = "debug" | "info" | "warning" | "error";
 
 @Injectable({
   providedIn: "root",
 })
 export class LoggerService {
   private readonly adapter = this.resolveAdapter();
+  private readonly correlation = this.resolveCorrelation();
   private isDevelopment = isDevMode();
-  private logLevel: "debug" | "info" | "warning" | "error" | "silent" = this
-    .isDevelopment
+  private logLevel: InternalLevel | "silent" = this.isDevelopment
     ? "debug"
     : "error";
 
-  // Log buffer for error recovery and debugging
-  private logBuffer: StructuredLog[] = [];
+  private logBuffer: StructuredJsonLogEntry[] = [];
   private readonly MAX_BUFFER_SIZE = 100;
 
-  // Global context that applies to all logs
   private globalContext: LogContext = {};
 
   private resolveAdapter() {
     try {
       return inject(LOGGER, { optional: true });
     } catch {
-      // Allow LoggerService usage in non-Angular contexts (plain module imports/tests).
       return null;
     }
   }
 
-  /**
-   * Set log level: 'debug', 'info', 'warn', 'error', 'silent'
-   * @param level - Log level to set
-   */
-  setLevel(level: "debug" | "info" | "warning" | "error" | "silent"): void {
+  private resolveCorrelation(): CorrelationContextService | null {
+    try {
+      return inject(CorrelationContextService, { optional: true }) ?? null;
+    } catch {
+      return null;
+    }
+  }
+
+  setLevel(level: InternalLevel | "silent"): void {
     this.logLevel = level;
   }
 
-  /**
-   * Set global context for all subsequent logs
-   * @param context - Context object to merge with global context
-   */
   setGlobalContext(context: Partial<LogContext>): void {
     this.globalContext = { ...this.globalContext, ...context };
   }
 
-  /**
-   * Clear global context
-   */
   clearGlobalContext(): void {
     this.globalContext = {};
   }
 
-  /**
-   * Get recent logs from buffer (useful for debugging)
-   * @param count - Number of recent logs to return
-   */
-  getRecentLogs(count: number = 50): StructuredLog[] {
+  getRecentLogs(count: number = 50): StructuredJsonLogEntry[] {
     return this.logBuffer.slice(-count);
   }
 
-  /**
-   * Clear log buffer
-   */
   clearLogBuffer(): void {
     this.logBuffer = [];
   }
 
-  /**
-   * Check if level should be logged
-   * @param level - Log level to check
-   * @returns Whether the level should be logged
-   */
-  private shouldLog(level: "debug" | "info" | "warning" | "error"): boolean {
+  private shouldLog(level: InternalLevel): boolean {
     if (this.logLevel === "silent") return false;
 
-    const levels: ("debug" | "info" | "warning" | "error")[] = [
-      "debug",
-      "info",
-      "warning",
-      "error",
-    ];
-    const currentLevelIndex = levels.indexOf(this.logLevel);
+    const levels: InternalLevel[] = ["debug", "info", "warning", "error"];
+    const currentLevelIndex = levels.indexOf(this.logLevel as InternalLevel);
     const messageLevelIndex = levels.indexOf(level);
 
     return messageLevelIndex >= currentLevelIndex;
   }
 
-  /**
-   * Add log to buffer
-   */
-  private addToBuffer(log: StructuredLog): void {
-    this.logBuffer.push(log);
+  private pushBuffer(entry: StructuredJsonLogEntry): void {
+    this.logBuffer.push(entry);
     if (this.logBuffer.length > this.MAX_BUFFER_SIZE) {
-      this.logBuffer.shift(); // Remove oldest log
+      this.logBuffer.shift();
     }
   }
 
-  /**
-   * Create structured log entry
-   */
-  private createLog(
-    level: "debug" | "info" | "warning" | "error",
-    message: string,
-    context?: LogContext,
-    data?: unknown,
-    error?: Error,
-  ): StructuredLog {
-    const log: StructuredLog = {
-      level,
-      message,
-      timestamp: new Date().toISOString(),
-      context: { ...this.globalContext, ...context },
-    };
-
-    if (data !== undefined) {
-      log.data = data;
-    }
-
-    if (error) {
-      log.error = error;
-    }
-
-    this.addToBuffer(log);
-    return log;
+  private toJsonLevel(level: InternalLevel): LogLevel {
+    return level === "warning" ? "warn" : level;
   }
 
-  /**
-   * Redact sensitive information from log data
-   */
-  private redactSensitiveData(data: unknown): unknown {
-    if (typeof data !== "object" || data === null) {
-      return data;
-    }
-
-    const sensitiveKeys = [
-      "password",
-      "token",
-      "secret",
-      "apiKey",
-      "ssn",
-      "creditCard",
-      "cvv",
-    ];
-
-    const redacted = { ...data } as Record<string, unknown>;
-
-    for (const key in redacted) {
-      if (sensitiveKeys.some((sk) => key.toLowerCase().includes(sk))) {
-        redacted[key] = "[REDACTED]";
-      } else if (typeof redacted[key] === "object" && redacted[key] !== null) {
-        redacted[key] = this.redactSensitiveData(redacted[key]);
-      }
-    }
-
-    return redacted;
-  }
-
-  private emitToAdapter(
-    level: "debug" | "info" | "warning" | "error",
-    message: string,
-    context?: LogContext,
-    data?: unknown,
-    error?: Error,
-  ): void {
-    const logger = this.adapter;
-    if (!logger) return;
-
-    const meta = {
-      context,
-      data,
-      error: error
-        ? {
-            name: error.name,
-            message: error.message,
-            stack: error.stack,
-            ...(error as unknown as { code?: string | number; details?: unknown }),
-          }
-        : undefined,
-    };
-    const logLevel: LogLevel = level === "warning" ? "warn" : level;
-    logger[logLevel](message, meta);
-  }
-
-  /**
-   * Normalize context parameter to LogContext
-   */
   private normalizeContext(context?: unknown): LogContext | undefined {
     if (context === undefined || context === null) {
       return undefined;
     }
 
-    // If it's already a valid LogContext, return it
     if (typeof context === "object" && !Array.isArray(context)) {
       return context as LogContext;
     }
 
-    // Wrap primitive values
     if (
       typeof context === "string" ||
       typeof context === "number" ||
@@ -256,13 +137,9 @@ export class LoggerService {
       return { data: context };
     }
 
-    // For arrays or other types, stringify
     return { data: String(context) };
   }
 
-  /**
-   * Normalize error parameter to Error object
-   */
   private normalizeError(error?: unknown): Error | undefined {
     if (error === undefined || error === null) {
       return undefined;
@@ -277,7 +154,6 @@ export class LoggerService {
     }
 
     if (typeof error === "object") {
-      // Handle PostgrestError and similar objects
       if ("message" in error && typeof error.message === "string") {
         const err = new Error(error.message);
         type ErrorWithDetails = Error & {
@@ -295,77 +171,105 @@ export class LoggerService {
         return err;
       }
 
-      // When non-Error objects are thrown, preserve useful shape for diagnostics.
       try {
         const serialized = JSON.stringify(error);
         if (serialized && serialized !== "{}") {
           return new Error(serialized);
         }
       } catch {
-        // Fall through to String(error)
+        // fall through
       }
     }
 
     return new Error(String(error));
   }
 
-  /**
-   * Debug logging (development only)
-   * @param message - Log message
-   * @param context - Optional context
-   * @param data - Optional data to log
-   */
-  debug(message: string, context?: unknown, data?: unknown): void {
+  private buildContextPayload(
+    normalizedContext?: LogContext,
+    data?: unknown,
+    error?: Error,
+  ): Record<string, unknown> {
+    const merged: Record<string, unknown> = {
+      ...(this.globalContext as Record<string, unknown>),
+      ...(normalizedContext as Record<string, unknown> | undefined),
+    };
+
+    const traceId = this.correlation?.traceId();
+    if (traceId) {
+      merged.trace_id = traceId;
+    }
+
+    if (data !== undefined) {
+      merged.data = data;
+    }
+
+    if (error) {
+      merged.error = {
+        name: error.name,
+        message: error.message,
+        stack: error.stack,
+        ...(error as unknown as { code?: string | number; details?: unknown }),
+      };
+    }
+
+    return redactForLog(merged) as Record<string, unknown>;
+  }
+
+  private emit(
+    internalLevel: InternalLevel,
+    eventName: string,
+    normalizedContext?: LogContext,
+    data?: unknown,
+    error?: Error,
+  ): StructuredJsonLogEntry {
+    const sanitizedData = redactForLog(data);
+    const normalizedError = error;
+
+    const contextPayload = this.buildContextPayload(
+      normalizedContext,
+      sanitizedData,
+      normalizedError,
+    );
+
+    const entry = createStructuredLogEntry(
+      this.toJsonLevel(internalLevel),
+      eventName,
+      contextPayload,
+    );
+
+    this.pushBuffer(entry);
+
+    const sink = this.adapter;
+    if (sink) {
+      sink.write(entry);
+    }
+
+    return entry;
+  }
+
+  debug(eventName: string, context?: unknown, data?: unknown): void {
     if (!this.shouldLog("debug")) return;
 
     const normalizedContext = this.normalizeContext(context);
-    const sanitizedData = this.redactSensitiveData(data);
-
-    this.createLog("debug", message, normalizedContext, sanitizedData);
-    this.emitToAdapter("debug", message, normalizedContext, sanitizedData);
+    this.emit("debug", eventName, normalizedContext, data);
   }
 
-  /**
-   * Info logging
-   * @param message - Log message
-   * @param context - Optional context
-   * @param data - Optional data to log
-   */
-  info(message: string, context?: unknown, data?: unknown): void {
+  info(eventName: string, context?: unknown, data?: unknown): void {
     if (!this.shouldLog("info")) return;
 
     const normalizedContext = this.normalizeContext(context);
-    const sanitizedData = this.redactSensitiveData(data);
-
-    this.createLog("info", message, normalizedContext, sanitizedData);
-    this.emitToAdapter("info", message, normalizedContext, sanitizedData);
+    this.emit("info", eventName, normalizedContext, data);
   }
 
-  /**
-   * Warning logging
-   * @param message - Log message
-   * @param context - Optional context
-   * @param data - Optional data to log
-   */
-  warn(message: string, context?: unknown, data?: unknown): void {
+  warn(eventName: string, context?: unknown, data?: unknown): void {
     if (!this.shouldLog("warning")) return;
 
     const normalizedContext = this.normalizeContext(context);
-    const sanitizedData = this.redactSensitiveData(data);
-
-    this.createLog("warning", message, normalizedContext, sanitizedData);
-    this.emitToAdapter("warning", message, normalizedContext, sanitizedData);
+    this.emit("warning", eventName, normalizedContext, data);
   }
 
-  /**
-   * Error logging (always logged except in silent mode)
-   * @param message - Error message
-   * @param error - Error object or unknown error
-   * @param context - Optional context
-   * @param data - Optional additional data
-   */
   error(
-    message: string,
+    eventName: string,
     error?: unknown,
     context?: unknown,
     data?: unknown,
@@ -374,70 +278,42 @@ export class LoggerService {
 
     const normalizedError = this.normalizeError(error);
     const normalizedContext = this.normalizeContext(context);
-    const sanitizedData = this.redactSensitiveData(data);
-    const log = this.createLog(
+    const entry = this.emit(
       "error",
-      message,
+      eventName,
       normalizedContext,
-      sanitizedData,
+      data,
       normalizedError,
     );
 
-    // In production, send to error tracking service
     if (!this.isDevelopment) {
-      this.sendToErrorTracking(log);
+      this.sendToErrorTracking(entry);
     }
-    this.emitToAdapter(
-      "error",
-      message,
-      normalizedContext,
-      sanitizedData,
-      normalizedError,
-    );
   }
 
-  /**
-   * Success logging (info level)
-   * @param message - Success message
-   * @param context - Optional context
-   * @param data - Optional data
-   */
-  success(message: string, context?: unknown, data?: unknown): void {
+  success(eventName: string, context?: unknown, data?: unknown): void {
     if (!this.shouldLog("info")) return;
 
     const normalizedContext = this.normalizeContext(context);
-    const sanitizedData = this.redactSensitiveData(data);
-
-    this.createLog("info", message, normalizedContext, sanitizedData);
-    this.emitToAdapter("info", message, normalizedContext, sanitizedData);
+    this.emit("info", eventName, normalizedContext, data);
   }
 
-  /**
-   * Performance logging for monitoring slow operations
-   * @param operationName - Name of the operation
-   * @param durationMs - Duration in milliseconds
-   * @param context - Optional context
-   */
   performance(
     operationName: string,
     durationMs: number,
     context?: LogContext,
   ): void {
-    const level = durationMs > 1000 ? "warning" : "info";
+    const level: InternalLevel = durationMs > 1000 ? "warning" : "info";
 
     if (!this.shouldLog(level)) return;
 
-    const data = this.redactSensitiveData({ durationMs });
-    this.createLog(level, `Performance: ${operationName}`, context, data);
-    this.emitToAdapter(level, `Performance: ${operationName}`, context, data);
+    this.emit(level, "performance_metric", context, {
+      operation: operationName,
+      durationMs,
+    });
   }
 
-  /**
-   * Send error to external tracking service (Sentry, etc.)
-   * @param log - Structured log entry
-   */
-  private sendToErrorTracking(_log: StructuredLog): void {
+  private sendToErrorTracking(_log: StructuredJsonLogEntry): void {
     // Integrate with ErrorTrackingService when configured
-    // Example: Sentry.captureException(log.error, { contexts: log.context });
   }
 }

@@ -17,8 +17,9 @@
       <!-- Header (Full Width) -->
       <div class="bento-item full-width no-padding header-bento">
         <app-page-header
+          eyebrow="ACCOUNT"
           title="Settings"
-          subtitle="Manage your account and application preferences"
+          subtitle="Account, privacy, and app preferences."
           icon="pi-cog"
         >
           <app-button
@@ -158,9 +159,7 @@
     (submit)="changePassword()"
   ></app-change-password-dialog>
 } @placeholder {
-  <div class="defer-dialog-chunk-placeholder" role="status" aria-live="polite">
-    <app-loading [visible]="true" variant="skeleton" message="Loading dialog…" />
-  </div>
+  <span class="defer-dialog-chunk-placeholder"></span>
 }
 
 <!-- Delete Account Dialog -->
@@ -174,9 +173,7 @@
     (submit)="deleteAccount()"
   ></app-delete-account-dialog>
 } @placeholder {
-  <div class="defer-dialog-chunk-placeholder" role="status" aria-live="polite">
-    <app-loading [visible]="true" variant="skeleton" message="Loading dialog…" />
-  </div>
+  <span class="defer-dialog-chunk-placeholder"></span>
 }
 
 <!-- 2FA Setup Dialog -->
@@ -198,9 +195,7 @@
     (downloadBackupCodes)="downloadBackupCodes()"
   ></app-twofa-setup-dialog>
 } @placeholder {
-  <div class="defer-dialog-chunk-placeholder" role="status" aria-live="polite">
-    <app-loading [visible]="true" variant="skeleton" message="Loading 2FA setup…" />
-  </div>
+  <span class="defer-dialog-chunk-placeholder"></span>
 }
 
 <!-- Disable 2FA Dialog -->
@@ -214,9 +209,7 @@
     (submit)="disable2FA()"
   ></app-disable-twofa-dialog>
 } @placeholder {
-  <div class="defer-dialog-chunk-placeholder" role="status" aria-live="polite">
-    <app-loading [visible]="true" variant="skeleton" message="Loading dialog…" />
-  </div>
+  <span class="defer-dialog-chunk-placeholder"></span>
 }
 
 <!-- Active Sessions Dialog -->
@@ -231,9 +224,7 @@
     (revokeAllSessions)="revokeAllSessions()"
   ></app-active-sessions-dialog>
 } @placeholder {
-  <div class="defer-dialog-chunk-placeholder" role="status" aria-live="polite">
-    <app-loading [visible]="true" variant="skeleton" message="Loading sessions…" />
-  </div>
+  <span class="defer-dialog-chunk-placeholder"></span>
 }
 
 <!-- Data Export Dialog -->
@@ -251,7 +242,5 @@
     (submit)="exportUserData()"
   ></app-data-export-dialog>
 } @placeholder {
-  <div class="defer-dialog-chunk-placeholder" role="status" aria-live="polite">
-    <app-loading [visible]="true" variant="skeleton" message="Loading export…" />
-  </div>
+  <span class="defer-dialog-chunk-placeholder"></span>
 }

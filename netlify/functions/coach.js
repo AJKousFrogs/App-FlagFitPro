@@ -6,12 +6,14 @@ import { ConsentDataReader, AccessContext } from "./utils/consent-data-reader.js
 import { DataState } from "./utils/data-state.js";
 import { getUserRole, requireRole, logViolation } from "./utils/authorization-guard.js";
 import { parseJsonObjectBody as sharedParseJsonObjectBody } from "./utils/input-validator.js";
+import { buildRequestLogContext, createLogger } from "./utils/structured-logger.js";
 
 // Netlify Function: Coach API
 // Handles coach-specific operations: dashboard, team management, training analytics
 
 // Initialize consent-aware data reader
 const consentReader = new ConsentDataReader(supabaseAdmin);
+const logger = createLogger({ service: "netlify.coach" });
 const CALENDAR_EVENT_TYPES = new Set(["practice", "game", "meeting", "other"]);
 const COACH_ROLES = [
   "owner",
@@ -335,9 +337,10 @@ async function getCoachDashboard(userId) {
           }
           // If no wellness data, readiness stays null
         } catch (wellnessErr) {
-          console.warn(
-            `Could not fetch wellness for user ${member.user_id}:`,
-            wellnessErr.message,
+          logger.warn(
+            "coach_dashboard_wellness_fetch_failed",
+            wellnessErr,
+            { player_user_id: member.user_id },
           );
           // readiness stays null - DO NOT estimate from ACWR alone
         }
@@ -358,7 +361,9 @@ async function getCoachDashboard(userId) {
           },
         });
       } catch (err) {
-        console.error(`Error processing squad member ${member.user_id}:`, err);
+        logger.error("coach_dashboard_squad_member_failed", err, {
+          player_user_id: member.user_id,
+        });
       }
     }
 
@@ -379,7 +384,7 @@ async function getCoachDashboard(userId) {
         squadMembers.length > 0 ? DataState.REAL_DATA : DataState.NO_DATA,
     };
   } catch (error) {
-    console.error("Error getting coach dashboard:", error);
+    logger.error("coach_dashboard_fetch_failed", error, { user_id: userId });
     throw error;
   }
 }
@@ -490,7 +495,9 @@ async function getTeamInfo(userId, coachId) {
             dataState,
           };
         } catch (err) {
-          console.error(`Error enriching member ${member.user_id}:`, err);
+          logger.error("coach_team_enrichment_failed", err, {
+            member_user_id: member.user_id,
+          });
           return {
             ...member,
             acwr: 1.0,
@@ -514,7 +521,10 @@ async function getTeamInfo(userId, coachId) {
         enrichedMembers.length > 0 ? DataState.REAL_DATA : DataState.NO_DATA,
     };
   } catch (error) {
-    console.error("Error getting team info:", error);
+    logger.error("coach_team_info_fetch_failed", error, {
+      user_id: userId,
+      coach_id: coachId,
+    });
     throw error;
   }
 }
@@ -630,7 +640,10 @@ async function getTrainingAnalytics(userId, coachId) {
         totalSessions >= 7 ? DataState.REAL_DATA : DataState.INSUFFICIENT_DATA,
     };
   } catch (error) {
-    console.error("Error getting training analytics:", error);
+    logger.error("coach_training_analytics_fetch_failed", error, {
+      user_id: userId,
+      coach_id: coachId,
+    });
     throw error;
   }
 }
@@ -707,13 +720,13 @@ async function createTrainingSession(userId, sessionData, requestInfo = {}) {
       .single();
 
     if (error) {
-      console.error("Error creating training session:", error);
+      logger.error("coach_training_session_insert_failed", error, { user_id: userId });
       throw error;
     }
 
     return data;
   } catch (error) {
-    console.error("Error creating training session:", error);
+    logger.error("coach_training_session_creation_failed", error, { user_id: userId });
     throw error;
   }
 }
@@ -741,7 +754,10 @@ async function getGames(userId, coachId) {
       .limit(10);
 
     if (gamesError) {
-      console.error("Error fetching games:", gamesError);
+      logger.error("coach_games_fetch_failed", gamesError, {
+        user_id: userId,
+        team_id: teamId,
+      });
       return [];
     }
 
@@ -764,7 +780,10 @@ async function getGames(userId, coachId) {
       game_type: game.game_type || "Regular Season",
     }));
   } catch (error) {
-    console.error("Error getting games:", error);
+    logger.error("coach_games_handler_failed", error, {
+      user_id: userId,
+      coach_id: coachId,
+    });
     throw error;
   }
 }
@@ -1046,7 +1065,10 @@ async function handleCalendarRequest(event, userId, coachId) {
 
     return createErrorResponse("Method not allowed", 405);
   } catch (error) {
-    console.error("Calendar error:", error);
+    logger.error("coach_calendar_request_failed", error, {
+      user_id: userId,
+      coach_id: coachId,
+    });
     if (error.message?.includes("Invalid JSON")) {
       return createErrorResponse(error.message, 400, "invalid_json");
     }
@@ -1060,7 +1082,11 @@ async function handleCalendarRequest(event, userId, coachId) {
 /**
  * Main handler function
  */
-async function handleRequest(event, context, { userId }) {
+async function handleRequest(
+  event,
+  context,
+  { userId, requestId, correlationId, requestLogger },
+) {
   try {
     // Extract endpoint from path
     const path = event.path.replace("/.netlify/functions/coach", "") || "/";
@@ -1168,7 +1194,21 @@ async function handleRequest(event, context, { userId }) {
     ) {
       return createErrorResponse(error.message, 422, "validation_error");
     }
-    console.error("Error in coach handler:", error);
+    const log =
+      requestLogger ||
+      logger.child(
+        buildRequestLogContext(event, {
+          user_id: userId,
+          request_id: requestId,
+          correlation_id: correlationId,
+          trace_id: correlationId,
+        }),
+      );
+    log.error("coach_handler_failure", error, {
+      user_id: userId,
+      request_id: requestId,
+      correlation_id: correlationId,
+    });
     throw error;
   }
 }
@@ -1184,7 +1224,22 @@ const handler = async (event, context) => {
     allowedMethods: ["GET", "POST", "PUT", "DELETE"],
 rateLimitType,
     requireAuth: true,
-    handler: handleRequest,
+    handler: async (event, _context, { userId, requestId, correlationId }) => {
+      const requestLogger = logger.child(
+        buildRequestLogContext(event, {
+          user_id: userId,
+          request_id: requestId,
+          correlation_id: correlationId,
+          trace_id: correlationId,
+        }),
+      );
+      return handleRequest(event, _context, {
+        userId,
+        requestId,
+        correlationId,
+        requestLogger,
+      });
+    },
   });
 };
 

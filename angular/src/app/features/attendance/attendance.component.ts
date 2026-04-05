@@ -70,7 +70,7 @@ type AttendanceStatus = "present" | "absent" | "late" | "excused";
       <div class="attendance-page bento-grid ui-page-shell">
         <!-- Header (Full Width) -->
         <div class="bento-item full-width no-padding header-bento">
-          <app-page-header title="Attendance Tracking" subtitle="Monitor team participation and event check-ins" icon="pi-calendar">
+          <app-page-header title="Attendance" subtitle="Practice and game participation — tracked." eyebrow="ATTENDANCE" icon="pi-calendar">
             <div class="header-actions">
               @if (isCoach()) {
                 <app-button iconLeft="pi-plus" (clicked)="openCreateEventDialog()" size="sm">Create Event</app-button>
@@ -100,7 +100,7 @@ type AttendanceStatus = "present" | "absent" | "late" | "excused";
         <!-- Upcoming Events (Span 1) -->
         <div class="bento-item events-bento">
           <div class="bento-header-row">
-            <h3 class="bento-title"><i class="pi pi-calendar"></i> Events</h3>
+            <h3 class="bento-title"><i class="pi pi-calendar"></i> Schedule</h3>
             <app-select [options]="eventTypeOptions" (change)="onSelectedEventTypeChange($event)" placeholder="Type" styleClass="mini-select" />
           </div>
           
@@ -128,7 +128,7 @@ type AttendanceStatus = "present" | "absent" | "late" | "excused";
         <!-- Player Attendance List (Span 2) -->
         <div class="bento-item span-2 players-bento no-padding">
           <div class="bento-header-row p-5">
-            <h3 class="bento-title"><i class="pi pi-users"></i> Player Performance</h3>
+            <h3 class="bento-title"><i class="pi pi-users"></i> Attendance</h3>
           </div>
 
           <p-table [value]="playerStats().slice(0, 10)" class="attendance-table">

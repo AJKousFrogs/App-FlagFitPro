@@ -24,7 +24,7 @@
 .play-tracker-card,
 .plays-list-card,
 .games-list-card {
-  margin-bottom: 0;
+  margin-bottom: var(--space-0);
   border-radius: var(--radius-xl);
   overflow: hidden;
 }
@@ -41,7 +41,7 @@
    ================================================================ */
 
 .visibility-info-banner {
-  margin-bottom: 0;
+  margin-bottom: var(--space-0);
 }
 
 /* Game type badges in table */
@@ -88,7 +88,7 @@
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(var(--grid-card-min-md), 1fr));
   gap: var(--layout-page-section-gap-tight);
-  margin-bottom: 0;
+  margin-bottom: var(--space-0);
 }
 
 /* Form layout: use primitives _forms.scss (.form-row, .form-field, .four-col) */
@@ -141,10 +141,10 @@
   border-radius: var(--radius-full);
   border: none;
   cursor: pointer;
-  padding: 0;
+  padding: var(--space-0);
   transition:
-    background-color var(--transition-base),
-    box-shadow var(--transition-base);
+    background-color var(--transition-fast),
+    box-shadow var(--transition-fast);
   box-shadow: var(--shadow-inset), var(--shadow-1);
 }
 
@@ -171,7 +171,7 @@
   height: var(--space-5);
   background: var(--color-text-on-primary);
   border-radius: var(--radius-full);
-  transition: transform var(--transition-base);
+  transition: transform var(--transition-fast);
   box-shadow: var(--shadow-1);
 }
 
@@ -204,7 +204,7 @@
   font-size: var(--ds-font-size-md);
   font-weight: var(--ds-font-weight-medium);
   color: var(--color-text-secondary);
-  margin: 0;
+  margin: var(--space-0);
 }
 
 .score-separator {
@@ -221,7 +221,7 @@
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(var(--grid-card-min-xs), 1fr));
   gap: var(--layout-page-section-gap-tight);
-  margin-bottom: 0;
+  margin-bottom: var(--space-0);
 }
 
 .stat-box {
@@ -288,7 +288,7 @@
 }
 
 .play-type-label-text {
-  margin: 0;
+  margin: var(--space-0);
   font-size: var(--ds-font-size-md);
   font-weight: var(--ds-font-weight-medium);
   color: var(--color-text-primary);
@@ -308,7 +308,7 @@
 }
 
 .play-details-section h4 {
-  margin: 0 0 var(--space-5) 0;
+  margin: var(--space-0) var(--space-0) var(--space-5) var(--space-0);
   font-size: var(--ds-font-size-md);
   font-weight: var(--ds-font-weight-semibold);
   color: var(--color-text-primary);
@@ -354,7 +354,7 @@
   padding: var(--space-4) var(--space-4);
   border: var(--border-2) solid var(--color-border-secondary);
   border-radius: var(--radius-md);
-  background: var(--surface-primary);
+  background: var(--surface-card);
   color: var(--color-text-primary);
   font-size: var(--ds-font-size-md);
   font-weight: var(--ds-font-weight-semibold);
@@ -552,7 +552,7 @@
     width: 100%;
     justify-content: center;
     padding: var(--space-3);
-    background: var(--surface-ground);
+    background: var(--surface-secondary);
     border-radius: var(--radius-md);
 
     .score-group {
@@ -709,7 +709,7 @@
   .play-tracker-card,
   .plays-list-card,
   .games-list-card {
-    margin-bottom: 0;
+    margin-bottom: var(--space-0);
 
     // PrimeNG card body override moved to _component-overrides.scss (DS-EXC-003)
   }

@@ -55,7 +55,7 @@
     }
 
     h3 {
-      margin: 0;
+      margin: var(--space-0);
       font-size: var(--ds-font-size-md);
       font-weight: var(--ds-font-weight-semibold);
       color: var(--color-text-primary);
@@ -172,12 +172,11 @@
     cursor: pointer;
     transition: background-color var(--transition-fast) var(--ease-standard);
 
-    @include ds-hover-state(var(--color-surface-hover));
-
-    &:focus-visible {
-      outline: var(--focus-outline-width) solid var(--ds-primary-green);
-      outline-offset: var(--focus-outline-offset);
+    @media (hover: hover) and (pointer: fine) {
+      &:hover { background: var(--color-surface-hover); }
     }
+
+    @include focus-visible;
 
     &.taken {
       .item-name {

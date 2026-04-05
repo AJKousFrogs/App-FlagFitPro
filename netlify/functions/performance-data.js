@@ -12,9 +12,12 @@ import { getUserRole } from "./utils/authorization-guard.js";
 import { guardMerlinRequest } from "./utils/merlin-guard.js";
 import { hasAnyRole, HEALTH_DATA_ACCESS_ROLES } from "./utils/role-sets.js";
 import { parseJsonObjectBody as sharedParseJsonObjectBody } from "./utils/input-validator.js";
+import { buildRequestLogContext, createLogger } from "./utils/structured-logger.js";
 
 // Netlify Functions - Performance Data API
 // Handles athlete performance data storage and retrieval using Supabase
+
+const logger = createLogger({ service: "netlify.performance-data" });
 
 // CORS Headers for cross-origin requests
 const CORS_HEADERS = {
@@ -247,7 +250,15 @@ const handler = async (event, context) => {
     allowedMethods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
     rateLimitType,
     requireAuth: true,
-    handler: async (event, _context, { userId }) => {
+    handler: async (event, _context, { userId, requestId, correlationId }) => {
+      const requestLogger = logger.child(
+        buildRequestLogContext(event, {
+          user_id: userId,
+          request_id: requestId,
+          correlation_id: correlationId,
+          trace_id: correlationId,
+        }),
+      );
       const { httpMethod, path, body, queryStringParameters } = event;
       const pathSegments = path.split("/").filter(Boolean);
       const knownEndpoints = new Set(Object.keys(ENDPOINT_HANDLERS));
@@ -272,7 +283,7 @@ const handler = async (event, context) => {
 
       // Special handling for export endpoint (different signature)
       if (endpoint === "export") {
-        return await handler(userId, queryStringParameters);
+        return await handler(userId, queryStringParameters, requestLogger);
       }
 
       // Extract athleteId from query for coach requests
@@ -286,6 +297,7 @@ const handler = async (event, context) => {
           body,
           queryStringParameters,
           resourceId,
+          requestLogger,
         );
       }
 
@@ -295,13 +307,14 @@ const handler = async (event, context) => {
         body,
         queryStringParameters,
         resourceId,
+        requestLogger,
       );
     },
   });
 };
 
 // Physical Measurements Handler
-async function handleMeasurements(method, userId, body, query, _resourceId) {
+async function handleMeasurements(method, userId, body, query, _resourceId, log = logger) {
   switch (method) {
     case "GET": {
       const timeframe = query?.timeframe || "6m";
@@ -368,7 +381,9 @@ async function handleMeasurements(method, userId, body, query, _resourceId) {
           }),
         };
       } catch (error) {
-        console.error("Error fetching measurements:", error);
+        log.error("performance_measurements_fetch_failed", error, {
+          user_id: userId,
+        });
         // Return empty data if table doesn't exist
         return {
           statusCode: 200,
@@ -485,7 +500,9 @@ async function handleMeasurements(method, userId, body, query, _resourceId) {
           }),
         };
       } catch (error) {
-        console.error("Error saving measurement:", error);
+        log.error("performance_measurement_save_failed", error, {
+          user_id: userId,
+        });
         return createErrorResponse(
           "Failed to save measurement",
           500,
@@ -505,7 +522,7 @@ async function handleMeasurements(method, userId, body, query, _resourceId) {
 
 // Performance Tests Handler
 // Uses 'performance_tests' table (aligned with frontend) - UUID-based with auth.users FK
-async function handlePerformanceTests(method, userId, body, query, _resourceId) {
+async function handlePerformanceTests(method, userId, body, query, _resourceId, log = logger) {
   switch (method) {
     case "GET": {
       const testType = query?.testType;
@@ -584,7 +601,9 @@ async function handlePerformanceTests(method, userId, body, query, _resourceId) 
           }),
         };
       } catch (error) {
-        console.error("Error fetching performance tests:", error);
+        log.error("performance_tests_fetch_failed", error, {
+          user_id: userId,
+        });
         return {
           statusCode: 200,
           body: JSON.stringify({
@@ -674,7 +693,10 @@ async function handlePerformanceTests(method, userId, body, query, _resourceId) 
           }),
         };
       } catch (error) {
-        console.error("Error saving performance test:", error);
+        log.error("performance_test_save_failed", error, {
+          user_id: userId,
+          test_type: testData.testType,
+        });
         return createErrorResponse(
           "Failed to save performance test",
           500,
@@ -693,7 +715,7 @@ async function handlePerformanceTests(method, userId, body, query, _resourceId) 
 }
 
 // Wellness Data Handler
-async function handleWellness(method, userId, requestedAthleteId, body, query, _resourceId) {
+async function handleWellness(method, userId, requestedAthleteId, body, query, _resourceId, log = logger) {
   const targetAthleteId = requestedAthleteId || userId;
   const role = await getUserRole(userId);
   const isCoach = hasAnyRole(role, HEALTH_DATA_ACCESS_ROLES);
@@ -777,7 +799,10 @@ async function handleWellness(method, userId, requestedAthleteId, body, query, _
           }),
         };
       } catch (error) {
-        console.error("Error fetching wellness data:", error);
+        log.error("performance_wellness_fetch_failed", error, {
+          requester_user_id: userId,
+          athlete_id: targetAthleteId,
+        });
         return {
           statusCode: 200,
           body: JSON.stringify({
@@ -846,7 +871,9 @@ async function handleWellness(method, userId, requestedAthleteId, body, query, _
           }),
         };
       } catch (error) {
-        console.error("Error saving wellness data:", error);
+        log.error("performance_wellness_save_failed", error, {
+          user_id: userId,
+        });
         return createErrorResponse(
           "Failed to save wellness data",
           500,
@@ -865,7 +892,7 @@ async function handleWellness(method, userId, requestedAthleteId, body, query, _
 }
 
 // Supplements Handler
-async function handleSupplements(method, userId, body, query, _resourceId) {
+async function handleSupplements(method, userId, body, query, _resourceId, log = logger) {
   switch (method) {
     case "GET": {
       const timeframe = query?.timeframe || "30d";
@@ -903,7 +930,9 @@ async function handleSupplements(method, userId, body, query, _resourceId) {
           }),
         };
       } catch (error) {
-        console.error("Error fetching supplements data:", error);
+        log.error("performance_supplements_fetch_failed", error, {
+          user_id: userId,
+        });
         return {
           statusCode: 200,
           body: JSON.stringify({
@@ -975,7 +1004,10 @@ async function handleSupplements(method, userId, body, query, _resourceId) {
           }),
         };
       } catch (error) {
-        console.error("Error saving supplement data:", error);
+        log.error("performance_supplement_save_failed", error, {
+          user_id: userId,
+          supplement_name: supplementData.name,
+        });
         return createErrorResponse(
           "Failed to save supplement data",
           500,
@@ -994,7 +1026,7 @@ async function handleSupplements(method, userId, body, query, _resourceId) {
 }
 
 // Injuries Handler - Fully migrated to Supabase
-async function handleInjuries(method, userId, body, query, resourceId) {
+async function handleInjuries(method, userId, body, query, resourceId, log = logger) {
   switch (method) {
     case "GET": {
       const status = query?.status; // active, recovered, all
@@ -1046,7 +1078,9 @@ async function handleInjuries(method, userId, body, query, resourceId) {
           }),
         };
       } catch (dbError) {
-        console.error("Error fetching injuries:", dbError);
+        log.error("performance_injuries_fetch_failed", dbError, {
+          user_id: userId,
+        });
         return {
           statusCode: 200,
           headers: CORS_HEADERS,
@@ -1138,7 +1172,10 @@ async function handleInjuries(method, userId, body, query, resourceId) {
           }),
         };
       } catch (dbError) {
-        console.error("Error creating injury:", dbError);
+        log.error("performance_injury_create_failed", dbError, {
+          user_id: userId,
+          injury_type: injuryData.type,
+        });
         return {
           statusCode: 500,
           headers: CORS_HEADERS,
@@ -1226,7 +1263,10 @@ async function handleInjuries(method, userId, body, query, resourceId) {
           }),
         };
       } catch (dbError) {
-        console.error("Error updating injury:", dbError);
+        log.error("performance_injury_update_failed", dbError, {
+          user_id: userId,
+          injury_id: injuryId,
+        });
         return {
           ...createErrorResponse(
             "Failed to update injury record",
@@ -1248,7 +1288,7 @@ async function handleInjuries(method, userId, body, query, resourceId) {
 }
 
 // Trends Analysis Handler
-async function handleTrends(method, userId, requestedAthleteId, body, query, _resourceId) {
+async function handleTrends(method, userId, requestedAthleteId, body, query, _resourceId, log = logger) {
   const targetAthleteId = requestedAthleteId || userId;
   if (method !== "GET") {
     return createErrorResponse("Method not allowed", 405, "method_not_allowed");
@@ -1366,7 +1406,10 @@ async function handleTrends(method, userId, requestedAthleteId, body, query, _re
       body: JSON.stringify(trends),
     };
   } catch (error) {
-    console.error("Error fetching trends data:", error);
+    log.error("performance_trends_fetch_failed", error, {
+      requester_user_id: userId,
+      athlete_id: targetAthleteId,
+    });
     return {
       statusCode: 200,
       body: JSON.stringify({
@@ -1382,7 +1425,7 @@ async function handleTrends(method, userId, requestedAthleteId, body, query, _re
 }
 
 // Data Export Handler
-async function handleExport(userId, query) {
+async function handleExport(userId, query, log = logger) {
   const format = query?.format || "json";
   const timeframe = query?.timeframe || "12m";
   const startDate = getStartDateForTimeframe(timeframe);
@@ -1484,7 +1527,10 @@ async function handleExport(userId, query) {
       body: JSON.stringify(allData),
     };
   } catch (error) {
-    console.error("Error exporting data:", error);
+    log.error("performance_export_failed", error, {
+      user_id: userId,
+      format,
+    });
     return createErrorResponse("Failed to export data", 500, "server_error");
   }
 }
@@ -1855,7 +1901,10 @@ async function calculateImprovement(testType, currentResult, userId) {
       previous: previousResult,
     };
   } catch (error) {
-    console.error("Error calculating improvement:", error);
+    logger.error("performance_improvement_calculation_failed", error, {
+      user_id: userId,
+      test_type: testType,
+    });
     return { percent: 0, trend: "no_data" };
   }
 }

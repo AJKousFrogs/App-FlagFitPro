@@ -359,7 +359,7 @@ export class SettingsComponent implements OnInit {
           this.profileForm.get("jerseyNumber")?.value,
       });
 
-      this.logger.info("[Settings] Final form values:", {
+      this.logger.info("settings_form_values_debug", {
         position: this.profileForm.get("position")?.value,
         jerseyNumber: this.profileForm.get("jerseyNumber")?.value,
       });
@@ -396,7 +396,7 @@ export class SettingsComponent implements OnInit {
     );
 
     if (this.profileForm.invalid) {
-      this.logger.warn("[saveSettings] Profile form invalid, aborting");
+      this.logger.warn("settings_save_profile_invalid");
       this.profileForm.markAllAsTouched();
       this.toastService.warn(TOAST.WARN.REQUIRED_FIELDS);
       return;
@@ -418,7 +418,7 @@ export class SettingsComponent implements OnInit {
     );
 
     if (this.passwordForm.invalid) {
-      this.logger.warn("[changePassword] Form invalid, aborting");
+      this.logger.warn("settings_change_password_invalid");
       this.passwordForm.markAllAsTouched();
       return;
     }
@@ -434,7 +434,7 @@ export class SettingsComponent implements OnInit {
 
   async deleteAccount(): Promise<void> {
     if (this.deleteConfirmText !== "DELETE") {
-      this.logger.warn("[deleteAccount] Confirmation text mismatch, aborting");
+      this.logger.warn("settings_delete_account_confirmation_mismatch");
       return;
     }
 

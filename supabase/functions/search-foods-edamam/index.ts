@@ -5,6 +5,10 @@
 // @ts-ignore
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { corsHeaders } from "../_shared/cors.ts";
+import {
+  buildRequestContext,
+  createLogger,
+} from "../_shared/structured-logger.ts";
 
 interface FoodSearchRequest {
   query: string;
@@ -12,7 +16,11 @@ interface FoodSearchRequest {
   pageNumber?: number;
 }
 
+const logger = createLogger("supabase.search-foods-edamam");
+
 Deno.serve(async (req) => {
+  const requestLogger = logger.child(buildRequestContext(req));
+
   // Handle CORS preflight
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -40,7 +48,7 @@ Deno.serve(async (req) => {
     const appKey = Deno.env.get("EDAMAM_APP_KEY");
 
     if (!appId || !appKey) {
-      console.error("Edamam credentials not configured");
+      requestLogger.error("edamam_credentials_missing");
       return new Response(
         JSON.stringify({ error: "Edamam API not configured" }),
         {
@@ -63,7 +71,13 @@ Deno.serve(async (req) => {
     const to = from + pageSize;
     edamamUrl.searchParams.set("nutrition-type", "cooking");
 
-    console.log(`[Edamam] Searching for: ${query}`);
+    requestLogger.info("edamam_search_started", {
+      query,
+      page_size: pageSize,
+      page_number: pageNumber,
+      from,
+      to,
+    });
 
     // Call Edamam API
     const edamamResponse = await fetch(edamamUrl.toString(), {
@@ -74,7 +88,10 @@ Deno.serve(async (req) => {
     });
 
     if (!edamamResponse.ok) {
-      console.error(`Edamam API error: ${edamamResponse.status}`);
+      requestLogger.error("edamam_api_request_failed", undefined, {
+        query,
+        status_code: edamamResponse.status,
+      });
       return new Response(
         JSON.stringify({
           error: "Edamam API error",
@@ -132,7 +149,7 @@ Deno.serve(async (req) => {
       },
     );
   } catch (error) {
-    console.error("Edge function error:", error);
+    requestLogger.error("edamam_search_handler_failed", error);
     return new Response(
       JSON.stringify({
         error: "Internal server error",

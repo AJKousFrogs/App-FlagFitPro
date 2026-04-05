@@ -474,11 +474,11 @@ export class PlayerDashboardComponent {
         .pipe(takeUntilDestroyed(this.destroyRef))
         .subscribe({
           next: () => {
-            this.logger.info("[Dashboard] Today's overview data loaded");
+            this.logger.info("player_dashboard_today_overview_loaded");
           },
           error: (error) => {
             this.logger.error(
-              "[Dashboard] Error loading today's overview:",
+              "player_dashboard_today_overview_failed",
               error,
             );
           },
@@ -599,7 +599,7 @@ export class PlayerDashboardComponent {
       const events = await this.continuityService.getPlayerContinuity(userId);
       this.continuityEvents.set(events);
     } catch (error) {
-      this.logger.error("[Dashboard] Error loading continuity events:", error);
+      this.logger.error("player_dashboard_continuity_events_failed", error);
     }
   }
 
@@ -614,7 +614,7 @@ export class PlayerDashboardComponent {
         // Reload continuity events to show the new load cap
         await this.loadContinuityEvents();
       } catch (error) {
-        this.logger.error("[Dashboard] Error checking ACWR spike:", error);
+        this.logger.error("player_dashboard_acwr_spike_check_failed", error);
       }
     }
   }
@@ -636,7 +636,7 @@ export class PlayerDashboardComponent {
         await this.loadCoachNames(overrides);
       }
     } catch (error) {
-      this.logger.error("[Dashboard] Error loading recent overrides:", error);
+      this.logger.error("player_dashboard_overrides_load_failed", error);
     }
   }
 
@@ -779,7 +779,7 @@ export class PlayerDashboardComponent {
         await this.playerDashboardDataService.fetchCoachProfiles(missingIds);
 
       if (error) {
-        this.logger.error("[Dashboard] Error loading coach names:", error);
+        this.logger.error("player_dashboard_coach_names_failed", error);
         return;
       }
 
@@ -790,7 +790,7 @@ export class PlayerDashboardComponent {
 
       this.coachNamesCache.set(cache);
     } catch (error) {
-      this.logger.error("[Dashboard] Error loading coach names:", error);
+      this.logger.error("player_dashboard_coach_names_failed", error);
     }
   }
 
@@ -819,7 +819,7 @@ export class PlayerDashboardComponent {
 
       this.activeTransitions.set(active);
     } catch (error) {
-      this.logger.error("[Dashboard] Error loading active transitions:", error);
+        this.logger.error("player_dashboard_transitions_load_failed", error);
     }
   }
 
@@ -836,7 +836,7 @@ export class PlayerDashboardComponent {
       this.missingWellnessStatus.set(status);
     } catch (error) {
       this.logger.error(
-        "[Dashboard] Error loading missing wellness status:",
+        "player_dashboard_wellness_status_failed",
         error,
       );
     }

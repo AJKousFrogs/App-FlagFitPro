@@ -359,6 +359,16 @@ export function isBenignSupabaseQueryError(error: unknown): boolean {
     "does not exist",
   ];
 
+  // PostgREST sometimes surfaces missing-table errors as plain Error (no status/code).
+  const strictMissingTablePatterns = ["schema cache", "could not find the table"];
+  if (
+    strictMissingTablePatterns.some(
+      (pattern) => message.includes(pattern) || details.includes(pattern),
+    )
+  ) {
+    return true;
+  }
+
   if (
     status === 400 &&
     missingOptionalResourcePatterns.some(

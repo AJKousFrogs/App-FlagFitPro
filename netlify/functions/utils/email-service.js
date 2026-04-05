@@ -1,10 +1,8 @@
 import nodemailer from "nodemailer";
 import { randomBytes } from "crypto";
+import { createLogger } from "./structured-logger.js";
 
-const logger = {
-  debug: (...args) => console.log("[EMAIL]", ...args),
-  error: (...args) => console.error("[EMAIL]", ...args),
-};
+const logger = createLogger({ service: "netlify.email-service" });
 
 class EmailService {
   constructor() {
@@ -32,10 +30,14 @@ class EmailService {
       }
 
       this.isInitialized = true;
-      logger.debug(`Email service initialized with ${provider}`);
+      logger.info("email_service_initialized", {
+        provider,
+      });
       return true;
     } catch (error) {
-      logger.error("Failed to initialize email service:", error);
+      logger.error("email_service_initialization_failed", error, {
+        provider,
+      });
       return false;
     }
   }
@@ -152,10 +154,14 @@ class EmailService {
 
     try {
       const result = await this.transporter.sendMail(mailOptions);
-      logger.debug(`Password reset email sent to ${email}`);
+      logger.info("password_reset_email_sent", {
+        email,
+      });
       return { success: true, messageId: result.messageId, token };
     } catch (error) {
-      logger.error("Failed to send password reset email:", error);
+      logger.error("password_reset_email_send_failed", error, {
+        email,
+      });
       throw error;
     }
   }
@@ -181,10 +187,14 @@ class EmailService {
 
     try {
       const result = await this.transporter.sendMail(mailOptions);
-      logger.debug(`Welcome email sent to ${email}`);
+      logger.info("welcome_email_sent", {
+        email,
+      });
       return { success: true, messageId: result.messageId };
     } catch (error) {
-      logger.error("Failed to send welcome email:", error);
+      logger.error("welcome_email_send_failed", error, {
+        email,
+      });
       throw error;
     }
   }
@@ -359,10 +369,10 @@ The FlagFit Pro Team
 
     try {
       await this.transporter.verify();
-      logger.debug("Email service connection verified");
+      logger.info("email_service_connection_verified");
       return true;
     } catch (error) {
-      logger.error("Email service connection failed:", error);
+      logger.error("email_service_connection_verification_failed", error);
       return false;
     }
   }

@@ -36,7 +36,7 @@
   height: var(--touch-target-md);
   min-width: var(--touch-target-md);
   min-height: var(--touch-target-md);
-  padding: 0;
+  padding: var(--space-0);
 }
 
 @media (hover: hover) and (pointer: fine) {

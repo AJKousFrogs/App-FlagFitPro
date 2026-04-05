@@ -22,7 +22,7 @@
 .privacy-section-card {
   display: flex;
   flex-direction: column;
-  gap: 0;
+  gap: var(--space-0);
 }
 
 .section-header {
@@ -94,14 +94,14 @@
 .section-title {
   font-size: var(--ds-font-size-2xl);
   font-weight: var(--ds-font-weight-semibold);
-  margin: 0 0 var(--space-1) 0;
+  margin: var(--space-0) var(--space-0) var(--space-1) var(--space-0);
   color: var(--color-text-primary);
 }
 
 .section-subtitle {
   font-size: var(--ds-font-size-md);
   color: var(--color-text-secondary);
-  margin: 0;
+  margin: var(--space-0);
 }
 
 .setting-item {
@@ -117,14 +117,14 @@
 }
 
 .setting-info h4 {
-  margin: 0 0 var(--space-2) 0;
+  margin: var(--space-0) var(--space-0) var(--space-2) var(--space-0);
   font-size: var(--ds-font-size-md);
   font-weight: var(--ds-font-weight-semibold);
   color: var(--color-text-primary);
 }
 
 .setting-info p {
-  margin: 0;
+  margin: var(--space-0);
   font-size: var(--ds-font-size-md);
   color: var(--color-text-secondary);
   line-height: var(--ds-line-height-normal);
@@ -292,13 +292,13 @@
 }
 
 .toggle-info h5 {
-  margin: 0 0 var(--space-1) 0;
+  margin: var(--space-0) var(--space-0) var(--space-1) var(--space-0);
   font-size: var(--ds-font-size-md);
   font-weight: var(--ds-font-weight-semibold);
 }
 
 .toggle-info p {
-  margin: 0;
+  margin: var(--space-0);
   font-size: var(--ds-font-size-xs);
   color: var(--color-text-secondary);
 }
@@ -310,11 +310,11 @@
 }
 
 .metric-categories h5 {
-  margin: 0 0 var(--space-1) 0;
+  margin: var(--space-0) var(--space-0) var(--space-1) var(--space-0);
 }
 
 .metric-categories p {
-  margin: 0 0 var(--space-3) 0;
+  margin: var(--space-0) var(--space-0) var(--space-3) var(--space-0);
   font-size: var(--ds-font-size-md);
   color: var(--color-text-secondary);
 }
@@ -345,11 +345,11 @@
 }
 
 .emergency-contacts h4 {
-  margin: 0 0 var(--space-2) 0;
+  margin: var(--space-0) var(--space-0) var(--space-2) var(--space-0);
 }
 
 .emergency-contacts > p {
-  margin: 0 0 var(--space-4) 0;
+  margin: var(--space-0) var(--space-0) var(--space-4) var(--space-0);
   font-size: var(--ds-font-size-md);
   color: var(--color-text-secondary);
 }
@@ -405,11 +405,11 @@
 }
 
 .right-item h5 {
-  margin: 0 0 var(--space-2) 0;
+  margin: var(--space-0) var(--space-0) var(--space-2) var(--space-0);
 }
 
 .right-item p {
-  margin: 0 0 var(--space-3) 0;
+  margin: var(--space-0) var(--space-0) var(--space-3) var(--space-0);
   font-size: var(--ds-font-size-xs);
   color: var(--color-text-secondary);
 }

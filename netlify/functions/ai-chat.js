@@ -8,6 +8,9 @@ import { processSmartQuery, searchKnowledgeHybrid, recordFeedbackWithLearning as
 import { isEmbeddingServiceAvailable } from "./utils/embedding-service.js";
 import { guardMerlinRequest } from "./utils/merlin-guard.js";
 import { parseJsonObjectBody } from "./utils/input-validator.js";
+import { createLogger } from "./utils/structured-logger.js";
+
+const logger = createLogger({ service: "netlify.ai-chat" });
 
 /**
  * Netlify Function: AI Chat
@@ -109,7 +112,7 @@ async function getOrCreateSession(userId, sessionId = null) {
     .single();
 
   if (error) {
-    console.error("Error creating chat session:", error);
+    logger.error("ai_chat_session_create_failed", error, { user_id: userId });
     throw new Error("Failed to create chat session");
   }
 
@@ -223,7 +226,7 @@ async function calculateUserACWR(userId) {
       canRecommendHighIntensity,
     };
   } catch (error) {
-    console.error("[AI Chat] Error calculating ACWR:", error);
+    logger.error("ai_chat_acwr_calculation_failed", error, { user_id: userId });
     return {
       acwr: null,
       riskZone: "error",
@@ -512,7 +515,7 @@ async function getUserContext(userId) {
       context.role ||= teamMembership.role;
     }
   } catch (error) {
-    console.error("Error fetching user context:", error);
+    logger.error("ai_chat_user_context_fetch_failed", error, { user_id: userId });
   }
 
   return context;
@@ -543,13 +546,17 @@ async function getActiveConversationContexts(userId, limit = 5) {
       .limit(limit);
 
     if (error) {
-      console.error("[AI Chat] Error fetching conversation contexts:", error);
+      logger.error("ai_chat_conversation_contexts_fetch_failed", error, {
+        user_id: userId,
+      });
       return [];
     }
 
     return data || [];
   } catch (error) {
-    console.error("[AI Chat] Error in getActiveConversationContexts:", error);
+    logger.error("ai_chat_conversation_contexts_handler_failed", error, {
+      user_id: userId,
+    });
     return [];
   }
 }
@@ -598,13 +605,18 @@ async function saveConversationContext(userId, contextData) {
       .single();
 
     if (error) {
-      console.error("[AI Chat] Error saving conversation context:", error);
+      logger.error("ai_chat_conversation_context_save_failed", error, {
+        user_id: userId,
+        context_type: contextType,
+      });
       return null;
     }
 
     return data;
   } catch (error) {
-    console.error("[AI Chat] Error in saveConversationContext:", error);
+    logger.error("ai_chat_conversation_context_save_handler_failed", error, {
+      user_id: userId,
+    });
     return null;
   }
 }
@@ -639,10 +651,9 @@ async function markContextReferenced(contextId) {
       .eq("id", contextId);
   } catch (error) {
     // Non-critical, just log
-    console.log(
-      "[AI Chat] Could not mark context as referenced:",
-      error.message,
-    );
+    logger.warn("ai_chat_context_reference_increment_failed", error, {
+      context_id: contextId,
+    });
   }
 }
 
@@ -664,13 +675,13 @@ async function getPendingFollowups(userId) {
       .limit(3);
 
     if (error) {
-      console.error("[AI Chat] Error fetching follow-ups:", error);
+      logger.error("ai_chat_followups_fetch_failed", error, { user_id: userId });
       return [];
     }
 
     return data || [];
   } catch (error) {
-    console.error("[AI Chat] Error in getPendingFollowups:", error);
+    logger.error("ai_chat_followups_handler_failed", error, { user_id: userId });
     return [];
   }
 }
@@ -713,16 +724,23 @@ async function createFollowup(userId, followupData) {
       .single();
 
     if (error) {
-      console.error("[AI Chat] Error creating follow-up:", error);
+      logger.error("ai_chat_followup_create_failed", error, {
+        user_id: userId,
+        followup_type: followupType,
+      });
       return null;
     }
 
-    console.log(
-      `[AI Chat] Created follow-up for user ${userId}: ${followupType}`,
-    );
+    logger.info("ai_chat_followup_created", {
+      user_id: userId,
+      followup_type: followupType,
+      followup_id: data?.id,
+    });
     return data;
   } catch (error) {
-    console.error("[AI Chat] Error in createFollowup:", error);
+    logger.error("ai_chat_followup_creation_handler_failed", error, {
+      user_id: userId,
+    });
     return null;
   }
 }
@@ -742,7 +760,9 @@ async function markFollowupTriggered(followupId) {
       })
       .eq("id", followupId);
   } catch (error) {
-    console.error("[AI Chat] Error marking follow-up triggered:", error);
+    logger.error("ai_chat_followup_trigger_marker_failed", error, {
+      followup_id: followupId,
+    });
   }
 }
 
@@ -774,7 +794,9 @@ async function _completeFollowup(followupId, messageId, responseSummary) {
       })
       .eq("id", followupId);
   } catch (error) {
-    console.error("[AI Chat] Error completing follow-up:", error);
+    logger.error("ai_chat_followup_completion_failed", error, {
+      followup_id: followupId,
+    });
   }
 }
 
@@ -946,7 +968,9 @@ async function getUserAIPreferences(userId) {
       .single();
 
     if (error && error.code !== "PGRST116") {
-      console.error("[AI Chat] Error fetching user preferences:", error);
+      logger.error("ai_chat_user_preferences_fetch_failed", error, {
+        user_id: userId,
+      });
     }
 
     if (data) {
@@ -985,7 +1009,9 @@ async function getUserAIPreferences(userId) {
       .single();
 
     if (insertError) {
-      console.error("[AI Chat] Error creating user preferences:", insertError);
+      logger.error("ai_chat_user_preferences_create_failed", insertError, {
+        user_id: userId,
+      });
       // Return normalized defaults even if insert fails
       return {
         ...defaultDBPreferences,
@@ -1014,7 +1040,9 @@ async function getUserAIPreferences(userId) {
       completed_sessions: 0,
     };
   } catch (error) {
-    console.error("[AI Chat] Error in getUserAIPreferences:", error);
+    logger.error("ai_chat_user_preferences_handler_failed", error, {
+      user_id: userId,
+    });
     return null;
   }
 }
@@ -1065,7 +1093,9 @@ async function updateUserPreferences(userId, interaction) {
         .eq("user_id", userId);
     }
   } catch (error) {
-    console.error("[AI Chat] Error updating user preferences:", error);
+    logger.error("ai_chat_user_preferences_update_failed", error, {
+      user_id: userId,
+    });
   }
 }
 
@@ -1330,16 +1360,17 @@ async function buildAthleteStateGates(userId) {
       );
     }
 
-    console.log(`[AI Chat] State gates built for user ${userId}:`, {
+    logger.info("ai_chat_state_gates_built", {
       ageGroup: gates.ageGroup,
       acwrZone: gates.acwr?.riskZone,
       injuryCount: gates.injuries.length,
       dailyPain: gates.dailyState?.pain_level,
       riskEscalation: gates.riskEscalation,
       escalationReasons: gates.escalationReasons,
+      user_id: userId,
     });
   } catch (error) {
-    console.error("[AI Chat] Error building state gates:", error);
+    logger.error("ai_chat_state_gates_build_failed", error, { user_id: userId });
     // Return partial gates, don't block on error
   }
 
@@ -1365,12 +1396,16 @@ async function getYouthSettings(userId) {
       .single();
 
     if (error && error.code !== "PGRST116") {
-      console.error("[AI Chat] Error fetching youth settings:", error);
+      logger.error("ai_chat_youth_settings_fetch_failed", error, {
+        user_id: userId,
+      });
     }
 
     return data || null;
   } catch (error) {
-    console.error("[AI Chat] Error in getYouthSettings:", error);
+    logger.error("ai_chat_youth_settings_handler_failed", error, {
+      user_id: userId,
+    });
     return null;
   }
 }
@@ -1392,14 +1427,18 @@ async function getConversationHistory(sessionId, limit = 10) {
       .limit(limit);
 
     if (error) {
-      console.error("[AI Chat] Error fetching conversation history:", error);
+      logger.error("ai_chat_conversation_history_fetch_failed", error, {
+        session_id: sessionId,
+      });
       return [];
     }
 
     // Return in chronological order
     return (data || []).reverse();
   } catch (error) {
-    console.error("[AI Chat] Error in getConversationHistory:", error);
+    logger.error("ai_chat_conversation_history_handler_failed", error, {
+      session_id: sessionId,
+    });
     return [];
   }
 }
@@ -1413,7 +1452,10 @@ async function getSessionMessages(userId, sessionId) {
     .maybeSingle();
 
   if (sessionError) {
-    console.error("[AI Chat] Error fetching session:", sessionError);
+    logger.error("ai_chat_session_fetch_failed", sessionError, {
+      session_id: sessionId,
+      user_id: userId,
+    });
     throw new Error("Failed to load chat session");
   }
 
@@ -1428,7 +1470,10 @@ async function getSessionMessages(userId, sessionId) {
     .order("created_at", { ascending: true });
 
   if (messagesError) {
-    console.error("[AI Chat] Error fetching session messages:", messagesError);
+    logger.error("ai_chat_session_messages_fetch_failed", messagesError, {
+      session_id: sessionId,
+      user_id: userId,
+    });
     throw new Error("Failed to load chat messages");
   }
 
@@ -1469,7 +1514,10 @@ async function createYouthParentNotification(
       .eq("status", "verified");
 
     if (parentsError || !parents || parents.length === 0) {
-      console.log("[AI Chat] No verified parents found for youth notification");
+      logger.info("ai_chat_no_youth_parents_found", {
+        youth_id: youthId,
+        notification_type: notificationType,
+      });
       return;
     }
 
@@ -1535,18 +1583,22 @@ async function createYouthParentNotification(
         .insert(notifications);
 
       if (insertError) {
-        console.error(
-          "[AI Chat] Error creating parent notifications:",
-          insertError,
-        );
+        logger.error("ai_chat_parent_notifications_insert_failed", insertError, {
+          youth_id: youthId,
+          notification_type: notificationType,
+        });
       } else {
-        console.log(
-          `[AI Chat] Created ${notifications.length} parent notification(s) for youth ${youthId}`,
-        );
+        logger.info("ai_chat_parent_notifications_created", {
+          youth_id: youthId,
+          notification_count: notifications.length,
+        });
       }
     }
   } catch (error) {
-    console.error("[AI Chat] Error in createYouthParentNotification:", error);
+    logger.error("ai_chat_youth_parent_notification_failed", error, {
+      youth_id: youthId,
+      notification_type: notificationType,
+    });
   }
 }
 
@@ -1602,10 +1654,18 @@ async function saveClassificationHistory(
       .insert(historyRecord);
 
     if (error) {
-      console.error("[AI Chat] Error saving classification history:", error);
+      logger.error("ai_chat_classification_history_save_failed", error, {
+        user_id: userId,
+        session_id: sessionId,
+        message_id: messageId,
+      });
     }
   } catch (error) {
-    console.error("[AI Chat] Error in saveClassificationHistory:", error);
+    logger.error("ai_chat_classification_history_handler_failed", error, {
+      user_id: userId,
+      session_id: sessionId,
+      message_id: messageId,
+    });
   }
 }
 
@@ -1679,10 +1739,12 @@ function applyStateGateEscalation(baseClassification, stateGates) {
   const wasEscalated = escalatedRisk !== baseClassification.riskLevel;
 
   if (wasEscalated) {
-    console.log(
-      `[AI Chat] Risk escalated from ${baseClassification.riskLevel} to ${escalatedRisk}:`,
-      escalationReasons,
-    );
+    logger.info("ai_chat_state_gate_risk_escalated", {
+      user_id: stateGates.userId || null,
+      from_risk: baseClassification.riskLevel,
+      to_risk: escalatedRisk,
+      escalation_reasons: escalationReasons,
+    });
   }
 
   return {
@@ -1720,9 +1782,10 @@ function applyACWRSafetyOverride(classification, userContext, query) {
   }
 
   // ACWR SAFETY OVERRIDE: Block high-intensity recommendations
-  console.log(
-    `[AI Chat] ACWR SAFETY OVERRIDE: Athlete ACWR is ${acwr.acwr} (${acwr.riskZone}), blocking high-intensity recommendation`,
-  );
+  logger.info("ai_chat_acwr_safety_override_applied", {
+    acwr_value: acwr.acwr,
+    acwr_zone: acwr.riskZone,
+  });
 
   return {
     ...classification,
@@ -1821,7 +1884,10 @@ async function _searchKnowledgeBase(query, riskLevel, limit = 5) {
   try {
     // Extract meaningful keywords from the query
     const keywords = extractSearchKeywords(query);
-    console.log("[Knowledge Search] Query:", query, "Keywords:", keywords);
+    logger.info("ai_chat_knowledge_search_keywords_extracted", {
+      query,
+      keywords,
+    });
 
     // Build OR conditions for each keyword
     const searchConditions = keywords
@@ -1859,11 +1925,16 @@ async function _searchKnowledgeBase(query, riskLevel, limit = 5) {
       .limit(limit * 3); // Get more, then filter and rank
 
     if (error) {
-      console.error("Knowledge base search error:", error);
+      logger.error("ai_chat_knowledge_search_failed", error, {
+        query,
+      });
       return [];
     }
 
-    console.log("[Knowledge Search] Found entries:", entries?.length || 0);
+    logger.info("ai_chat_knowledge_search_results", {
+      query,
+      count: entries?.length || 0,
+    });
 
     // Score entries by relevance (how many keywords match)
     const scoredEntries = (entries || []).map((e) => {
@@ -1925,7 +1996,10 @@ async function _searchKnowledgeBase(query, riskLevel, limit = 5) {
 
     return filtered.slice(0, limit);
   } catch (error) {
-    console.error("Error searching knowledge base:", error);
+    logger.error("ai_chat_knowledge_base_query_failed", error, {
+      query,
+      risk_level: riskLevel,
+    });
     return [];
   }
 }
@@ -1978,7 +2052,10 @@ async function generateAIResponse(query, knowledge, userContext, riskLevel) {
   // Check if Groq is configured
   if (isGroqConfigured()) {
     try {
-      console.log("[AI Chat] Using Groq LLM for conversational response");
+      logger.info("ai_chat_using_groq_llm", {
+        query,
+        risk_level: riskLevel,
+      });
 
       // Extract conversation history from context if available
       const conversationHistory = userContext.conversationHistory || [];
@@ -2009,16 +2086,18 @@ async function generateAIResponse(query, knowledge, userContext, riskLevel) {
         usage: groqResponse.usage,
       };
     } catch (error) {
-      console.error(
-        "[AI Chat] Groq API error, falling back to knowledge base:",
-        error.message,
-      );
+      logger.error("ai_chat_groq_api_error", error, {
+        query,
+        risk_level: riskLevel,
+        message: error?.message,
+      });
       // Fall through to knowledge base fallback
     }
   } else {
-    console.log(
-      "[AI Chat] Groq not configured, using knowledge base synthesis",
-    );
+    logger.info("ai_chat_groq_not_configured", {
+      query,
+      risk_level: riskLevel,
+    });
   }
 
   // Fallback: Synthesize from knowledge base with conversational tone
@@ -2165,7 +2244,9 @@ async function generateSwapPlanResponse(query, classification, userContext) {
         .slice(0, 5);
     }
   } catch (error) {
-    console.error("[AI Chat] Error fetching recovery alternatives:", error);
+    logger.error("ai_chat_recovery_alternatives_fetch_failed", error, {
+      position,
+    });
   }
 
   // Build the swap plan response
@@ -2732,7 +2813,10 @@ async function saveChatMessage(
 
     return messageId;
   } catch (error) {
-    console.error("Error saving chat message:", error);
+    logger.error("ai_chat_message_save_failed", error, {
+      user_id: userId,
+      session_id: sessionId,
+    });
     // Don't fail the request if saving fails
     return null;
   }
@@ -2752,7 +2836,11 @@ async function logRecommendation(userId, sessionId, recommendation) {
       status: "pending",
     });
   } catch (error) {
-    console.error("Error logging recommendation:", error);
+    logger.error("ai_chat_recommendation_log_failed", error, {
+      user_id: userId,
+      session_id: sessionId,
+      recommendation_type: recommendation?.type,
+    });
   }
 }
 
@@ -2872,9 +2960,9 @@ async function createCoachInboxItem(
       .eq("status", "active");
 
     if (!teamMemberships || teamMemberships.length === 0) {
-      console.log(
-        `[AI Chat] Athlete ${userId} not on any teams, skipping inbox creation`,
-      );
+      logger.info("ai_chat_coach_inbox_skip_no_team", {
+        user_id: userId,
+      });
       return;
     }
 
@@ -2889,7 +2977,10 @@ async function createCoachInboxItem(
       .eq("status", "active");
 
     if (!coaches || coaches.length === 0) {
-      console.log(`[AI Chat] No coaches found for athlete's teams`);
+      logger.info("ai_chat_coach_inbox_skip_no_coaches", {
+        user_id: userId,
+        team_ids: teamIds,
+      });
       return;
     }
 
@@ -2959,14 +3050,23 @@ async function createCoachInboxItem(
       .insert(inboxItems);
 
     if (error) {
-      console.error("[AI Chat] Error creating coach inbox items:", error);
+      logger.error("ai_chat_coach_inbox_insert_failed", error, {
+        user_id: userId,
+        inbox_type: reviewNeed.inboxType,
+        priority: reviewNeed.priority,
+      });
     } else {
-      console.log(
-        `[AI Chat] Created ${inboxItems.length} coach inbox items (${reviewNeed.inboxType}, ${reviewNeed.priority})`,
-      );
+      logger.info("ai_chat_coach_inbox_items_created", {
+        user_id: userId,
+        count: inboxItems.length,
+        inbox_type: reviewNeed.inboxType,
+        priority: reviewNeed.priority,
+      });
     }
   } catch (error) {
-    console.error("[AI Chat] Error in createCoachInboxItem:", error);
+    logger.error("ai_chat_coach_inbox_handler_failed", error, {
+      user_id: userId,
+    });
     // Don't fail the request if inbox creation fails
   }
 }
@@ -3257,7 +3357,9 @@ const handler = async (event, context) => {
 
           return createSuccessResponse(insights, requestId);
         } catch (error) {
-          console.error("[AI Chat] Error analyzing context:", error);
+          logger.error("ai_chat_context_analysis_failed", error, {
+            user_id: userId,
+          });
           return createErrorResponse(
             "Failed to analyze context",
             500,
@@ -3376,10 +3478,11 @@ const handler = async (event, context) => {
         userContext.hasMemory =
           conversationContexts.length > 0 || pendingFollowups.length > 0;
 
-        console.log(
-          `[AI Chat] Phase 4: Loaded ${conversationContexts.length} contexts, ${pendingFollowups.length} follow-ups`,
-          { requestId },
-        );
+        logger.info("ai_chat_phase4_memory_loaded", {
+          request_id: requestId,
+          contexts: conversationContexts.length,
+          pending_followups: pendingFollowups.length,
+        });
 
         // 6. Phase 3: Enhanced multi-signal classification with confidence scoring
         const enhancedClassification = classifyWithConfidence(
@@ -3395,24 +3498,21 @@ const handler = async (event, context) => {
           youthSettings,
         );
 
-        console.log(
-          `[AI Chat] Phase 3 Classification: ${enhancedClassification.riskLevel} risk (confidence: ${enhancedClassification.confidence})`,
-          {
-            intent: enhancedClassification.intent,
-            isYouthUser: enhancedClassification.isYouthUser,
-            escalated: enhancedClassification.escalated,
-            requestId,
-          },
-        );
+        logger.info("ai_chat_phase3_classification", {
+          request_id: requestId,
+          risk_level: enhancedClassification.riskLevel,
+          confidence: enhancedClassification.confidence,
+          intent: enhancedClassification.intent,
+          is_youth_user: enhancedClassification.isYouthUser,
+          escalated: enhancedClassification.escalated,
+        });
 
         // 7. Phase 3: Check for blocked youth topics
         if (enhancedClassification.youthRestrictions?.isBlocked) {
-          console.log(
-            `[AI Chat] Youth topic blocked: ${enhancedClassification.youthRestrictions.blockedReason}`,
-            {
-              requestId,
-            },
-          );
+          logger.warn("ai_chat_youth_topic_blocked", {
+            request_id: requestId,
+            reason: enhancedClassification.youthRestrictions.blockedReason,
+          });
 
           // Generate blocked response
           const blockedResponse = generateBlockedYouthResponse(
@@ -3497,14 +3597,13 @@ const handler = async (event, context) => {
         }
 
         if (classification.acwrOverride) {
-          console.log(
-            `[AI Chat] ACWR Override applied - escalated from ${classification.originalRiskLevel} to ${classification.riskLevel}`,
-            {
-              acwr: classification.acwrData?.acwr,
-              riskZone: classification.acwrData?.riskZone,
-              requestId,
-            },
-          );
+          logger.info("ai_chat_acwr_override_logged", {
+            request_id: requestId,
+            from_risk: classification.originalRiskLevel,
+            to_risk: classification.riskLevel,
+            acwr_value: classification.acwrData?.acwr,
+            acwr_zone: classification.acwrData?.riskZone,
+          });
         }
 
         // 9. Phase 3: Get user preferences for personalization
@@ -3526,17 +3625,19 @@ const handler = async (event, context) => {
           conversationHistory,
         });
 
-        console.log(
-          `[AI Chat] Smart AI: Routing=${smartResult.routingAction}, Confidence=${smartResult.confidence?.toFixed(2)}, Memory=${smartResult.memory?.hasMemory}`,
-          { requestId },
-        );
+        logger.info("ai_chat_smart_ai_routing", {
+          request_id: requestId,
+          routing_action: smartResult.routingAction,
+          confidence: smartResult.confidence,
+          has_memory: Boolean(smartResult.memory?.hasMemory),
+        });
 
         // 10a. SMART AI: Handle clarification requests
         if (smartResult.shouldAskClarification) {
-          console.log(
-            `[AI Chat] Smart AI: Asking clarification - ${smartResult.ambiguityReasons?.join(", ")}`,
-            { requestId },
-          );
+          logger.info("ai_chat_smart_ai_asking_clarification", {
+            request_id: requestId,
+            ambiguity_reasons: smartResult.ambiguityReasons,
+          });
 
           const clarificationResponse = {
             answer: smartResult.clarificationQuestion,
@@ -3655,7 +3756,10 @@ const handler = async (event, context) => {
 
           // Mark check-in as sent
           updateCheckinStatus(checkin.id, "sent").catch((err) =>
-            console.error("[AI Chat] Error updating checkin:", err),
+            logger.error("ai_chat_checkin_update_failed", err, {
+              user_id: userId,
+              checkin_id: checkin.id,
+            }),
           );
         }
 
@@ -3667,7 +3771,9 @@ const handler = async (event, context) => {
             classification.intent,
           position: userContext.position,
         }).catch((err) =>
-          console.error("[AI Chat] Error updating preferences:", err),
+          logger.error("ai_chat_user_preferences_update_failed", err, {
+            user_id: userId,
+          }),
         );
 
         // 13. Phase 4: Create conversation context if applicable
@@ -3686,7 +3792,10 @@ const handler = async (event, context) => {
             sessionId: session.id,
             expiresInDays: contextToCreate.expiresInDays,
           }).catch((err) =>
-            console.error("[AI Chat] Error saving context:", err),
+            logger.error("ai_chat_conversation_context_save_failed", err, {
+              user_id: userId,
+              context_key: contextToCreate.contextKey,
+            }),
           );
 
           // Create follow-up if specified
@@ -3703,7 +3812,10 @@ const handler = async (event, context) => {
               scheduledFor: scheduledFor.toISOString(),
               sourceType: "ai_message",
             }).catch((err) =>
-              console.error("[AI Chat] Error creating follow-up:", err),
+              logger.error("ai_chat_followup_creation_failed", err, {
+                user_id: userId,
+                followup_type: contextToCreate.createFollowup.type,
+              }),
             );
           }
         }
@@ -3712,7 +3824,9 @@ const handler = async (event, context) => {
         if (pendingFollowups.length > 0) {
           // Mark first pending follow-up as triggered since we're responding
           markFollowupTriggered(pendingFollowups[0].id).catch((err) =>
-            console.error("[AI Chat] Error marking follow-up:", err),
+            logger.error("ai_chat_followup_mark_failed", err, {
+              followup_id: pendingFollowups[0].id,
+            }),
           );
         }
 
@@ -3867,7 +3981,10 @@ const handler = async (event, context) => {
           requestId,
         );
       } catch (error) {
-        console.error("[AI Chat] Error processing request:", error);
+        logger.error("ai_chat_request_processing_failed", error, {
+          request_id: requestId,
+          user_id: userId,
+        });
         return createErrorResponse(
           "Failed to process chat request",
           500,

@@ -11,6 +11,19 @@ import { baseHandler } from "./utils/base-handler.js";
 import { getUserRole } from "./utils/authorization-guard.js";
 import { hasAnyRole, LOAD_MANAGEMENT_ACCESS_ROLES } from "./utils/role-sets.js";
 import { parseJsonObjectBody } from "./utils/input-validator.js";
+import { buildRequestLogContext, createLogger } from "./utils/structured-logger.js";
+
+const logger = createLogger({ service: "netlify.import-open-data" });
+
+function createRequestLogger(event, meta = {}) {
+  return logger.child(
+    buildRequestLogContext(event, {
+      request_id: meta.requestId,
+      correlation_id: meta.correlationId,
+      trace_id: meta.traceId ?? meta.correlationId,
+    }),
+  );
+}
 
 // Flag-football specific thresholds
 const HIGH_SPEED_M_S = 5.5; // High-speed running threshold (m/s)
@@ -243,7 +256,11 @@ const handler = async (event, context) => {
     allowedMethods: ["POST"],
     rateLimitType: "CREATE",
     requireAuth: true,
-    handler: async (event, _context, { userId }) => {
+    handler: async (event, _context, { userId, requestId, correlationId }) => {
+      const requestLogger = createRequestLogger(event, {
+        requestId,
+        correlationId,
+      });
       // Parse request body
       let body;
       try {
@@ -309,7 +326,10 @@ const handler = async (event, context) => {
       });
 
       if (persistResult.error) {
-        console.error("Database error:", persistResult.error);
+        requestLogger.error("import_open_data_database_error", persistResult.error, {
+          athlete_id: athleteId,
+          session_date: normalizedSessionDate,
+        });
         return createErrorResponse(
           "Failed to insert session",
           500,

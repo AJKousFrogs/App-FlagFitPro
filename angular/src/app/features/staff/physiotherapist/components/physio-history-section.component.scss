@@ -32,8 +32,8 @@
     min-width: var(--input-min-width-md);
     padding: var(--ds-spacing-lg);
     background: var(--surface-card);
-    border: var(--border-1) solid var(--surface-border);
-    border-radius: var(--ds-radius-md);
+    border: var(--border-1) solid var(--color-border-primary);
+    border-radius: var(--radius-xl);
   }
 }
 
@@ -42,7 +42,7 @@
   align-items: center;
   gap: var(--ds-spacing-md);
   padding: var(--ds-spacing-sm) 0;
-  border-bottom: var(--border-1) solid var(--surface-border);
+  border-bottom: var(--border-1) solid var(--color-border-secondary);
 
   &:last-child {
     border-bottom: none;
@@ -65,7 +65,7 @@
 }
 
 .recurrent-list {
-  margin: 0;
+  margin: var(--space-0);
   padding-left: var(--ds-spacing-lg);
 
   li {

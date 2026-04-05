@@ -42,13 +42,13 @@
 
 .search-card__header h2,
 .results-header h2 {
-  margin: 0;
+  margin: var(--space-0);
   font-size: var(--ds-font-size-lg);
   font-weight: var(--ds-font-weight-semibold);
 }
 
 .search-card__empty {
-  margin: 0;
+  margin: var(--space-0);
   color: var(--color-text-secondary);
 }
 
@@ -82,7 +82,7 @@
 }
 
 .quick-link-card:hover {
-  background: var(--surface-primary);
+  background: var(--surface-card);
   transform: translateY(calc(-1 * var(--space-0-5)));
   box-shadow: var(--shadow-sm);
 }
@@ -136,7 +136,7 @@
 }
 
 .result-item:hover {
-  background: var(--surface-primary);
+  background: var(--surface-card);
   transform: translateY(calc(-1 * var(--space-0-5)));
   box-shadow: var(--shadow-sm);
 }
@@ -147,7 +147,7 @@
   width: var(--space-12);
   height: var(--space-12);
   border-radius: var(--radius-lg);
-  background: var(--surface-primary);
+  background: var(--surface-card);
   color: var(--color-brand-primary);
   flex-shrink: 0;
 }

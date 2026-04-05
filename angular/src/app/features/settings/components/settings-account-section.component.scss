@@ -21,15 +21,15 @@
 .form-row .form-field {
   flex: 1 1 0;
   min-width: 0;
-  margin-bottom: 0;
+  margin-bottom: var(--space-0);
 }
 
 .settings-profile-form .form-field {
-  margin-bottom: 0;
+  margin-bottom: var(--space-0);
 }
 
 .age-display {
-  margin-top: 0;
+  margin-top: var(--space-0);
 }
 
 .datepicker-with-suggestion {
@@ -46,7 +46,7 @@
   background: linear-gradient(
     135deg,
     var(--color-status-success-subtle) 0%,
-    var(--ui-surface-card-alt) 100%
+    var(--surface-card) 100%
   );
   border: var(--border-1) solid rgba(var(--ds-primary-green-rgb), 0.18);
   border-radius: var(--radius-xl);
@@ -99,7 +99,7 @@
 }
 
 .field-hint {
-  margin-top: 0;
+  margin-top: var(--space-0);
 }
 
 .field-hint i {

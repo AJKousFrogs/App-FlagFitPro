@@ -43,7 +43,7 @@
     gap: var(--ds-spacing-sm);
     margin-top: var(--ds-spacing-md);
     padding-top: var(--ds-spacing-md);
-    border-top: var(--border-1) solid var(--surface-border);
+    border-top: var(--border-1) solid var(--color-border-secondary);
 
     .label {
       font-size: var(--ds-font-size-md);
@@ -70,7 +70,7 @@
   cursor: help;
   padding: var(--space-1) var(--space-2);
   border-radius: var(--ds-radius-sm);
-  background: var(--surface-ground);
+  background: var(--surface-secondary);
   font-size: var(--ds-font-size-xs);
 }
 

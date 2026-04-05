@@ -34,7 +34,7 @@
 
 .position-card {
   background: var(--surface-card);
-  border: var(--border-1) solid var(--surface-border);
+  border: var(--border-1) solid var(--color-border-primary);
   border-radius: var(--radius-lg);
   overflow: hidden;
 }
@@ -45,7 +45,7 @@
   gap: var(--space-3);
   padding: var(--space-3) var(--space-4);
   background: var(--surface-100);
-  border-bottom: var(--border-1) solid var(--surface-border);
+  border-bottom: var(--border-1) solid var(--color-border-primary);
 }
 
 .position-abbr {
@@ -80,7 +80,7 @@
   padding: var(--space-3);
   background: var(--surface-secondary);
   border-radius: var(--radius-lg);
-  border: var(--border-1) solid var(--surface-border);
+  border: var(--border-1) solid var(--color-border-primary);
   cursor: grab;
   transition:
     transform var(--transition-fast),
@@ -184,13 +184,13 @@
 }
 
 .assign-info {
-  margin: 0;
+  margin: var(--space-0);
   color: var(--color-text-secondary);
 }
 
 @include respond-to(md) {
   .depth-chart-page {
-    padding: 0;
+    padding: var(--space-0);
   }
 
   .depth-chart-content {

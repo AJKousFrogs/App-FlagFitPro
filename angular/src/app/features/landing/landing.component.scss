@@ -35,19 +35,19 @@
 
   // Always-dark hero — Apple event style
   // Override design tokens locally so child elements adapt automatically
-  --color-text-primary: #f5f5f7;
-  --color-text-secondary: rgba(245, 245, 247, 0.68);
-  --color-text-muted: rgba(245, 245, 247, 0.42);
+  --color-text-primary: var(--marketing-hero-text);
+  --color-text-secondary: var(--marketing-hero-text-secondary);
+  --color-text-muted: var(--marketing-hero-text-muted);
   --color-border-subtle: rgba(255, 255, 255, 0.08);
   color-scheme: dark;
-  color: #f5f5f7;
+  color: var(--marketing-hero-text);
 
-  background: linear-gradient(160deg, #0c1a12 0%, #0a1525 50%, #0c1a12 100%);
+  background: var(--marketing-hero-gradient);
 }
 
 .hero-background {
   position: absolute;
-  inset: 0;
+  inset: var(--space-0);
   z-index: var(--z-index-base, 1);
   overflow: hidden;
 }
@@ -107,7 +107,7 @@
 /* Particle effects */
 .hero-particles {
   position: absolute;
-  inset: 0;
+  inset: var(--space-0);
   pointer-events: none;
 }
 
@@ -239,14 +239,14 @@
   align-items: center;
   gap: var(--space-2);
   padding: var(--space-2) var(--space-5);
-  background: rgba(8, 153, 73, 0.14);
-  border: var(--border-1) solid rgba(8, 153, 73, 0.32);
+  background: rgba(var(--ds-primary-green-rgb), 0.14);
+  border: var(--border-1) solid rgba(var(--ds-primary-green-rgb), 0.32);
   border-radius: var(--radius-full);
   font-size: var(--ds-font-size-sm);
   font-weight: var(--ds-font-weight-semibold);
   letter-spacing: var(--ds-letter-spacing-wide);
   text-transform: var(--ds-text-transform-uppercase);
-  color: #6ee2a2;
+  color: var(--marketing-hero-badge-text);
   animation: badge-glow 2s ease-in-out infinite alternate;
 }
 
@@ -340,7 +340,7 @@
 .countdown-days .countdown-value {
   min-width: 2.5ch;
   color: var(--ds-primary-green);
-  text-shadow: 0 0 24px rgba(8, 153, 73, 0.6);
+  text-shadow: 0 0 24px rgba(var(--ds-primary-green-rgb), 0.6);
 }
 
 .countdown-unit {
@@ -358,7 +358,7 @@
   line-height: var(--ds-line-height-1);
   color: var(--color-text-primary);
   opacity: var(--opacity-quarter);
-  padding-top: 0;
+  padding-top: var(--space-0);
 }
 
 .hero-title {
@@ -416,7 +416,7 @@
     &:hover {
       background: rgba(255, 255, 255, 0.08);
       border-color: rgba(255, 255, 255, 0.52);
-      color: #fff;
+      color: var(--color-text-on-inverse);
     }
   }
 }
@@ -559,13 +559,13 @@
 /* ===== FEATURES SECTION ===== */
 .features-section {
   padding: var(--space-20) var(--space-6);
-  background: var(--surface-primary);
+  background: var(--surface-card);
   position: relative;
 }
 
 .features-container {
   max-width: var(--content-max-width-xl);
-  margin: 0 auto;
+  margin: var(--space-0) auto;
 }
 
 .features-header {
@@ -584,7 +584,7 @@
   font-size: var(--ds-font-size-md);
   color: var(--color-text-secondary);
   max-width: var(--dialog-max-width-2xl);
-  margin: 0 auto;
+  margin: var(--space-0) auto;
 }
 
 .features-grid {
@@ -728,14 +728,14 @@
 
 /* ===== FOOTER ===== */
 .landing-footer {
-  background: var(--surface-primary);
+  background: var(--surface-card);
   border-top: var(--border-1) solid var(--color-border-primary);
   padding: var(--space-16) var(--space-6) var(--space-8);
 }
 
 .footer-container {
   max-width: var(--content-max-width-xl);
-  margin: 0 auto;
+  margin: var(--space-0) auto;
 }
 
 .footer-grid {
@@ -778,20 +778,20 @@
   color: var(--color-text-secondary);
   font-size: var(--ds-font-size-md);
   line-height: var(--ds-line-height-1-7);
-  margin: 0;
+  margin: var(--space-0);
 }
 
 .footer-links h4 {
   font-size: var(--ds-font-size-md);
   font-weight: var(--ds-font-weight-semibold);
   color: var(--color-text-primary);
-  margin: 0 0 var(--space-5) 0;
+  margin: var(--space-0) var(--space-0) var(--space-5) var(--space-0);
 }
 
 .footer-links ul {
   list-style: none;
-  padding: 0;
-  margin: 0;
+  padding: var(--space-0);
+  margin: var(--space-0);
 }
 
 .footer-links li {
@@ -821,7 +821,7 @@
   p {
     color: var(--color-text-muted);
     font-size: var(--ds-font-size-md);
-    margin: 0;
+    margin: var(--space-0);
   }
 }
 
@@ -950,7 +950,7 @@
   .feature-card:hover {
     ::ng-deep .card-shell {
       box-shadow:
-        0 0 0 1.5px rgba(8, 153, 73, 0.18),
+        0 0 0 1.5px rgba(var(--ds-primary-green-rgb), 0.18),
         var(--shadow-lg);
     }
   }

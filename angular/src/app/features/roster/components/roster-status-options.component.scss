@@ -16,16 +16,18 @@
   width: 100%;
   gap: var(--space-3);
   padding: var(--space-3) var(--space-4);
-  border: var(--border-1) solid var(--ui-border-subtle);
+  border: var(--border-1) solid var(--color-border-primary);
   border-radius: var(--radius-xl);
-  background: var(--ui-surface-card-alt);
+  background: var(--surface-card);
   text-align: left;
   cursor: pointer;
   transition:
     background-color var(--transition-fast),
     border-color var(--transition-fast);
 
-  @include ds-hover-state(var(--surface-secondary));
+  @media (hover: hover) and (pointer: fine) {
+    &:hover { background: var(--surface-secondary); }
+  }
 }
 
 .status-option.selected {

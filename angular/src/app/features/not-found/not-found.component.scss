@@ -17,7 +17,7 @@ height: 100dvh; // Modern: keyboard-aware
   background: linear-gradient(
     135deg,
     var(--surface-secondary) 0%,
-    var(--surface-primary) 100%
+    var(--surface-card) 100%
   );
 }
 
@@ -60,8 +60,8 @@ app-page-error-state.not-found-state {
 
 .not-found-links ul {
   list-style: none;
-  padding: 0;
-  margin: 0;
+  padding: var(--space-0);
+  margin: var(--space-0);
   display: flex;
   gap: var(--space-4);
   justify-content: center;
@@ -72,7 +72,7 @@ app-page-error-state.not-found-state {
   color: var(--color-brand-primary);
   text-decoration: none;
   font-weight: var(--ds-font-weight-medium);
-  transition: color var(--transition-base) var(--ease-standard);
+  transition: color var(--transition-fast) var(--ease-standard);
 }
 
 .not-found-links a:hover {

@@ -4,9 +4,12 @@ import { parseJsonObjectBody, sanitizeObject } from "./utils/input-validator.js"
 import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { authenticateRequest } from "./utils/auth-helper.js";
+import { buildRequestLogContext, createLogger } from "./utils/structured-logger.js";
 
 // Netlify Function: Community API
 // Returns community feed, posts, and leaderboard data
+
+const logger = createLogger({ service: "netlify.community" });
 
 const parseBoundedInt = (value, fieldName, { min, max }) => {
   if (value === undefined || value === null || value === "") {
@@ -159,7 +162,7 @@ const getCommunityFeed = async (userId, limit = 20, offset = 0) => {
       mediaType: post.media_type || null,
     }));
   } catch (error) {
-    console.error("Error fetching community feed:", error);
+    logger.error("community_feed_fetch_failed", error, { viewer_user_id: userId });
     // Return empty array on error
     return [];
   }
@@ -225,7 +228,10 @@ const getCommunityLeaderboard = async (_category = "overall", limit = 10) => {
 
     return leaderboard;
   } catch (error) {
-    console.error("Error fetching community leaderboard:", error);
+    logger.error("community_leaderboard_fetch_failed", error, {
+      category: _category,
+      limit,
+    });
     // Return empty array on error
     return [];
   }
@@ -324,7 +330,7 @@ const createPost = async (userId, postData) => {
       mediaType: newPost.media_type || null,
     };
   } catch (error) {
-    console.error("Error creating post:", error);
+    logger.error("community_post_create_failed", error, { user_id: userId });
     throw error;
   }
 };
@@ -363,7 +369,10 @@ const toggleLike = async (userId, postId) => {
       return { liked: true, message: "Post liked" };
     }
   } catch (error) {
-    console.error("Error toggling like:", error);
+    logger.error("community_post_like_toggle_failed", error, {
+      user_id: userId,
+      post_id: postId,
+    });
     throw error;
   }
 };
@@ -399,7 +408,10 @@ const toggleBookmark = async (userId, postId) => {
       return { bookmarked: true, message: "Post bookmarked" };
     }
   } catch (error) {
-    console.error("Error toggling bookmark:", error);
+    logger.error("community_post_bookmark_toggle_failed", error, {
+      user_id: userId,
+      post_id: postId,
+    });
     throw error;
   }
 };
@@ -452,7 +464,10 @@ const getPostComments = async (postId, userId = null) => {
       isLiked: userLikedCommentIds.has(comment.id),
     }));
   } catch (error) {
-    console.error("Error fetching comments:", error);
+    logger.error("community_comments_fetch_failed", error, {
+      post_id: postId,
+      viewer_user_id: userId,
+    });
     return [];
   }
 };
@@ -506,7 +521,10 @@ const addComment = async (userId, postId, content) => {
       isLiked: false,
     };
   } catch (error) {
-    console.error("Error adding comment:", error);
+    logger.error("community_comment_add_failed", error, {
+      user_id: userId,
+      post_id: postId,
+    });
     throw error;
   }
 };
@@ -552,7 +570,10 @@ const toggleCommentLike = async (userId, commentId) => {
       return { liked: true, message: "Comment liked" };
     }
   } catch (error) {
-    console.error("Error toggling comment like:", error);
+    logger.error("community_comment_like_toggle_failed", error, {
+      user_id: userId,
+      comment_id: commentId,
+    });
     throw error;
   }
 };
@@ -579,7 +600,7 @@ const getTrendingTopics = async (limit = 5) => {
       count: topic.count,
     }));
   } catch (error) {
-    console.error("Error fetching trending topics:", error);
+    logger.error("community_trending_topics_fetch_failed", error, { limit });
     return [];
   }
 };
@@ -678,7 +699,9 @@ const _createPoll = async (postId, pollData) => {
       endsAt: poll.ends_at,
     };
   } catch (error) {
-    console.error("Error creating poll:", error);
+    logger.error("community_poll_create_failed", error, {
+      post_id: postId,
+    });
     throw error;
   }
 };
@@ -767,7 +790,10 @@ const votePoll = async (userId, optionId) => {
     };
   } catch (error) {
     if (!expectedMessages.has(error?.message)) {
-      console.error("Error voting on poll:", error);
+      logger.error("community_poll_vote_failed", error, {
+        user_id: userId,
+        option_id: optionId,
+      });
     }
     throw error;
   }
@@ -825,7 +851,10 @@ const getPollForPost = async (postId, userId = null) => {
       endsAt: poll.ends_at,
     };
   } catch (error) {
-    console.error("Error getting poll:", error);
+    logger.error("community_poll_fetch_failed", error, {
+      post_id: postId,
+      viewer_user_id: userId,
+    });
     return null;
   }
 };
@@ -840,8 +869,16 @@ const handler = async (event, context) => {
       allowedMethods: ["GET", "POST", "DELETE"],
       rateLimitType,
       requireAuth: true,
-      handler: async (event, _context, { requestId }) => {
-        return handleCommunityRequest(event, requestId);
+      handler: async (event, _context, { requestId, correlationId, userId }) => {
+        const requestLogger = logger.child(
+          buildRequestLogContext(event, {
+            request_id: requestId,
+            correlation_id: correlationId,
+            trace_id: correlationId,
+            user_id: userId,
+          }),
+        );
+        return handleCommunityRequest(event, requestId, requestLogger);
       },
     });
   }
@@ -851,13 +888,22 @@ const handler = async (event, context) => {
     allowedMethods: ["GET", "POST", "DELETE"],
     rateLimitType,
     requireAuth: false, // Optional auth for read-only access
-    handler: async (event, _context, { requestId }) => {
-      return handleCommunityRequest(event, requestId);
+    handler: async (event, _context, { requestId, correlationId, userId }) => {
+      const requestLogger = logger.child(
+        buildRequestLogContext(event, {
+          request_id: requestId,
+          correlation_id: correlationId,
+          trace_id: correlationId,
+          user_id: userId,
+        }),
+      );
+      return handleCommunityRequest(event, requestId, requestLogger);
     },
   });
 };
 
-async function handleCommunityRequest(event, requestId) {
+async function handleCommunityRequest(event, requestId, log = logger) {
+    try {
       // SECURITY: Authentication (optional for GET, required for POST/DELETE)
       let userId = null;
       const headers = event.headers || {};
@@ -1104,6 +1150,17 @@ async function handleCommunityRequest(event, requestId) {
         "method_not_allowed",
         requestId,
       );
+    } catch (error) {
+      log.error("community_request_failed", error, {
+        http_method: event.httpMethod,
+      });
+      return createErrorResponse(
+        "Internal server error",
+        500,
+        "server_error",
+        requestId,
+      );
+    }
 }
 
 export const testHandler = handler;

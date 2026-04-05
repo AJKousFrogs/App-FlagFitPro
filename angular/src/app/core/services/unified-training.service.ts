@@ -501,7 +501,7 @@ export class UnifiedTrainingService {
       readiness: this.readinessService.calculateToday(userId).pipe(
         catchError((err) => {
           if (!this.isExpectedApiClientError(err)) {
-            this.logger.warn("[UnifiedTraining] Readiness unavailable", err);
+            this.logger.warn("unified_training_readiness_unavailable", err);
           }
           return of(null);
         }),
@@ -542,7 +542,7 @@ export class UnifiedTrainingService {
     if (this.isExpectedApiClientError(err)) {
       this.authFailureCooldownUntil = Date.now() + 15_000;
     } else {
-      this.logger.error("Error in getTodayOverview", err);
+      this.logger.error("unified_training_today_overview_failed", err);
     }
     return of(null);
   }
@@ -600,7 +600,7 @@ export class UnifiedTrainingService {
       this.applyTrainingDataResult(result);
       return result;
     } catch (error) {
-      this.logger.error("Error loading all training data", error);
+      this.logger.error("unified_training_load_all_data_failed", error);
       return getUnifiedTrainingFallbackData();
     }
   }
@@ -621,9 +621,7 @@ export class UnifiedTrainingService {
   loadProgramAssignment(): void {
     // Only attempt to load if user is authenticated
     if (!this.supabase.isAuthenticated()) {
-      this.logger.info(
-        "[UnifiedTrainingService] Skipping program load - user not authenticated",
-      );
+      this.logger.info("unified_training_program_load_skipped_no_auth");
       this._programAssignment.set(null);
       this._hasProgramAssignment.set(false);
       return;
@@ -635,18 +633,16 @@ export class UnifiedTrainingService {
         this._hasProgramAssignment.set(assignment !== null);
 
         if (assignment) {
-          this.logger.info(
-            `[UnifiedTrainingService] Program loaded: ${assignment.program.name}`,
-          );
+          this.logger.info("unified_training_program_loaded", {
+            programName: assignment.program.name,
+          });
         } else {
-          this.logger.info(
-            "[UnifiedTrainingService] No active program assigned",
-          );
+          this.logger.info("unified_training_no_active_program");
         }
       },
       error: (error) => {
         this.logger.error(
-          "[UnifiedTrainingService] Error loading program assignment:",
+          "unified_training_program_assignment_load_failed",
           error,
         );
         this._programAssignment.set(null);
@@ -671,7 +667,7 @@ export class UnifiedTrainingService {
    * Unified logging - handles all downstream updates automatically
    */
   async logTrainingSession(sessionData: Record<string, unknown>) {
-    this.logger.info("Logging training session via Unified Service");
+    this.logger.info("unified_training_log_session_start");
     const result = await firstValueFrom(
       this.trainingDataService.createTrainingSession(
         sessionData as Parameters<
@@ -788,13 +784,15 @@ export class UnifiedTrainingService {
       onError: (message, error) => {
         const queryError = error as { message?: string; code?: string };
         this.logger.error(
-          `[UnifiedTrainingService] ${message}`,
-          toLogContext({
+          "unified_training_training_sessions_query_failed",
+          error,
+          {
+            detail: message,
             userId,
             dateRange: { start },
-            error: queryError.message,
+            errorMessage: queryError.message,
             code: queryError.code,
-          }),
+          },
         );
       },
     });
@@ -812,9 +810,15 @@ export class UnifiedTrainingService {
       today,
       weekStart,
       onInfo: (message) =>
-        this.logger.info(`[UnifiedTrainingService] ${message}`),
+        this.logger.info("unified_training_weekly_schedule_info", {
+          message,
+        }),
       onError: (message, error) =>
-        this.logger.error(`[UnifiedTrainingService] ${message}:`, error),
+        this.logger.error(
+          "unified_training_weekly_schedule_failed",
+          error,
+          { detail: message },
+        ),
     });
   }
 
@@ -822,9 +826,7 @@ export class UnifiedTrainingService {
     const userId = this.userId();
     // Return empty array if no user - don't show fake workouts
     if (!userId) {
-      this.logger.info(
-        "[UnifiedTrainingService] No user ID - returning empty workouts",
-      );
+      this.logger.info("unified_training_workouts_empty_no_user");
       return [];
     }
 
@@ -835,17 +837,21 @@ export class UnifiedTrainingService {
       today,
       toWorkout: (workout) => transformSessionRecordToWorkout(workout),
       onInfo: (message) =>
-        this.logger.info(`[UnifiedTrainingService] ${message}`),
+        this.logger.info("unified_training_available_workouts_info", {
+          message,
+        }),
       onError: (message, error) => {
         const queryError = error as { message?: string; code?: string };
         this.logger.error(
-          `[UnifiedTrainingService] ${message}`,
-          toLogContext({
+          "unified_training_available_workouts_failed",
+          error,
+          {
+            detail: message,
             userId,
             today,
-            error: queryError.message,
+            errorMessage: queryError.message,
             code: queryError.code,
-          }),
+          },
         );
       },
     });

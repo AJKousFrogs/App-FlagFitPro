@@ -7,31 +7,13 @@
 
 import { inject } from "@angular/core";
 import { ResolveFn } from "@angular/router";
-import { AnalyticsDataService } from "../services/data/analytics-data.service";
 import { AnalyticsViewModel } from "../view-models/analytics.view-model";
-import { LoggerService } from "../services/logger.service";
-import { toLogContext } from "../services/logger.service";
 
+/**
+ * Prefetches analytics by initializing the view model before the route activates.
+ * A single `getAllAnalytics` run happens inside `initialize` → `loadAllAnalytics`.
+ */
 export const analyticsPrefetchResolver: ResolveFn<void> = (_route, _state) => {
-  const analyticsDataService = inject(AnalyticsDataService);
-  const analyticsViewModel = inject(AnalyticsViewModel);
-  const logger = inject(LoggerService);
-
-  // Prefetch analytics data
-  // This runs before the component loads, improving perceived performance
-  analyticsDataService.getAllAnalytics().subscribe({
-    next: (_data) => {
-      // Data is prefetched and cached
-      // Component will use AnalyticsViewModel which may have cached data
-    },
-    error: (err) => {
-      // Silently fail - component will handle error state
-      logger.warn("Analytics prefetch failed:", toLogContext(err));
-    },
-  });
-
-  // Initialize view model with prefetched data
-  analyticsViewModel.initialize(undefined, false);
-
+  inject(AnalyticsViewModel).initialize(undefined, false);
   return undefined;
 };

@@ -25,7 +25,7 @@
 }
 
 .goal-selection {
-  margin-bottom: 0;
+  margin-bottom: var(--space-0);
 }
 
 .goal-selection__label {
@@ -52,7 +52,7 @@
 .stat-item {
   text-align: center;
   padding: var(--space-3);
-  background: var(--surface-primary);
+  background: var(--surface-card);
   border-radius: var(--radius-md);
   border: var(--border-1) solid var(--color-border-secondary);
 }
@@ -84,7 +84,7 @@
 }
 
 .plan-header__title {
-  margin: 0;
+  margin: var(--space-0);
   font-size: var(--ds-font-size-xl);
   font-weight: var(--ds-font-weight-semibold);
   color: var(--color-text-primary);
@@ -95,7 +95,7 @@
     background-color var(--motion-fast) var(--ease-standard),
     border-color var(--motion-fast) var(--ease-standard),
     box-shadow var(--motion-fast) var(--ease-standard);
-  background: var(--surface-primary);
+  background: var(--surface-card);
   border: var(--border-2) solid var(--color-border-secondary);
 
   &:hover {
@@ -138,7 +138,7 @@
 }
 
 .plan-summary__title {
-  margin: 0 0 var(--space-3);
+  margin: var(--space-0) var(--space-0) var(--space-3);
   font-size: var(--ds-font-size-md);
   font-weight: var(--ds-font-weight-semibold);
   color: var(--color-text-primary);

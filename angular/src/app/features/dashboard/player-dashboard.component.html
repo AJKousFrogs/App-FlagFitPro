@@ -23,11 +23,9 @@
                 <i class="pi pi-sparkles"></i>
               </div>
               <div class="welcome-content">
-                <div class="welcome-header-row">
-                  <h2 class="welcome-greeting">
-                    {{ greeting() }}, {{ userName() }}!
-                  </h2>
-                </div>
+                <h2 class="welcome-greeting">
+                  {{ greeting() }}, <span class="greeting-name">{{ userName() }}</span>!
+                </h2>
                 <p class="merlin-insight">{{ merlinInsight() }}</p>
                 <div class="welcome-actions">
                   <app-button iconLeft="pi-play" routerLink="/todays-practice" size="sm"

@@ -109,7 +109,7 @@
   --p-tabview-nav-background: var(--surface-card);
   --p-tabview-nav-border-radius: var(--radius-lg) var(--radius-lg) 0 0;
   --p-tabview-content-background: transparent;
-  --p-tabview-content-padding: 0;
+  --p-tabview-content-padding: var(--space-0);
 }
 
 /* ================================
@@ -138,7 +138,7 @@
   font-weight: var(--font-weight-semibold);
   color: var(--color-text-primary);
   line-height: var(--ds-line-height-h1);
-  margin: 0;
+  margin: var(--space-0);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -147,7 +147,7 @@
 .toolbar-row__subtitle {
   font-size: var(--font-body-sm-size);
   color: var(--color-text-secondary);
-  margin: 0;
+  margin: var(--space-0);
 }
 
 .toolbar-row__end {
@@ -213,7 +213,7 @@
   height: var(--touch-target-md);
   min-width: var(--touch-target-md);
   min-height: var(--touch-target-md);
-  padding: 0;
+  padding: var(--space-0);
   border: none;
   border-radius: var(--radius-lg);
   background: transparent;
@@ -271,7 +271,7 @@
   margin-bottom: var(--space-4);
 
   &:last-child {
-    margin-bottom: 0;
+    margin-bottom: var(--space-0);
   }
 }
 
@@ -303,7 +303,7 @@
    Consistent spacing and alignment for p-message
    ================================ */
 .status-message {
-  margin: 0;
+  margin: var(--space-0);
 }
 
 .status-message .p-message-wrapper {
@@ -314,7 +314,7 @@
 }
 
 .status-message .p-message-icon {
-  margin-right: 0;
+  margin-right: var(--space-0);
 }
 
 .status-message--success {
@@ -662,13 +662,13 @@
   font-size: var(--font-body-size);
   font-weight: var(--font-weight-semibold);
   color: var(--color-text-primary);
-  margin: 0 0 var(--space-2) 0;
+  margin: var(--space-0) var(--space-0) var(--space-2) var(--space-0);
 }
 
 .empty-state__description {
   font-size: var(--font-body-size);
   color: var(--color-text-secondary);
-  margin: 0 0 var(--space-4) 0;
+  margin: var(--space-0) var(--space-0) var(--space-4) var(--space-0);
   max-width: var(--element-max-width-sm);
 }
 
@@ -714,13 +714,13 @@
   font-size: var(--font-body-size);
   font-weight: var(--font-weight-semibold);
   color: var(--color-text-primary);
-  margin: 0 0 var(--space-2) 0;
+  margin: var(--space-0) var(--space-0) var(--space-2) var(--space-0);
 }
 
 .error-state__description {
   font-size: var(--font-body-size);
   color: var(--color-text-secondary);
-  margin: 0 0 var(--space-4) 0;
+  margin: var(--space-0) var(--space-0) var(--space-4) var(--space-0);
   max-width: var(--element-max-width-sm);
 }
 

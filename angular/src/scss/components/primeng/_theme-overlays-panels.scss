@@ -26,7 +26,7 @@
   overflow: hidden;
   min-width: var(--p-datepicker-panel-min-width);
   max-width: var(--p-datepicker-panel-max-width);
-  padding: 0;
+  padding: var(--space-0);
   animation: calendarSlideIn var(--p-datepicker-panel-animation-duration)
     var(--ease-decelerate);
 }
@@ -90,7 +90,7 @@
 .p-dropdown-items,
 .p-listbox-list {
   padding: var(--space-2);
-  margin: 0;
+  margin: var(--space-0);
 }
 
 .p-select-option,
@@ -233,7 +233,7 @@
   width: 100%;
   border-collapse: separate;
   border-spacing: var(--space-1);
-  margin: 0;
+  margin: var(--space-0);
 }
 
 /* Weekday Headers */

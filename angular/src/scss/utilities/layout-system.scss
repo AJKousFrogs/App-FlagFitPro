@@ -66,7 +66,7 @@
     font-size: var(--font-h2-size);
     font-weight: var(--font-weight-semibold);
     line-height: var(--line-height-tight);
-    margin: 0 0 var(--space-2) 0;
+    margin: var(--space-0) var(--space-0) var(--space-2) var(--space-0);
     color: var(--color-text-primary);
 
     .page-title-icon {
@@ -80,7 +80,7 @@
     font-weight: var(--font-weight-normal);
     line-height: var(--line-height-normal);
     color: var(--color-text-secondary);
-    margin: 0;
+    margin: var(--space-0);
   }
 
   .page-header-actions {
@@ -122,7 +122,7 @@
     gap: var(--space-4);
 
     .page-header-actions {
-      margin-left: 0;
+      margin-left: var(--space-0);
       width: 100%;
       justify-content: flex-end;
     }
@@ -179,7 +179,7 @@
   }
 
   &.breadcrumbs-inline {
-    padding: 0;
+    padding: var(--space-0);
     margin-bottom: var(--space-4);
   }
 }
@@ -223,7 +223,7 @@
     margin-left: var(--layout-width-sm);
 
     @include respond-to(lg) {
-      margin-left: 0;
+      margin-left: var(--space-0);
     }
   }
 
@@ -256,7 +256,7 @@
 .content-container {
   width: 100%;
   max-width: var(--layout-width-3xl);
-  margin: 0 auto;
+  margin: var(--space-0) auto;
   padding: 0 var(--space-6);
 
   @include respond-to(md) {
@@ -274,7 +274,7 @@
 
   &.content-container-full {
     max-width: 100%;
-    padding: 0;
+    padding: var(--space-0);
   }
 }
 
@@ -342,7 +342,7 @@
   margin-bottom: var(--space-8);
 
   &:last-child {
-    margin-bottom: 0;
+    margin-bottom: var(--space-0);
   }
 
   .section-title {

@@ -7,7 +7,7 @@
 
 .training-builder {
   max-width: calc(var(--size-200) * 5);
-  margin: 0 auto;
+  margin: var(--space-0) auto;
 }
 
 .step-content-wrapper {

@@ -6,11 +6,11 @@
 @use "styles/mixins" as *;
 
 .stats-section {
-  margin: 0;
+  margin: var(--space-0);
 }
 
 .stat-card {
-  background: var(--surface-primary);
+  background: var(--surface-card);
   border: var(--border-1) solid var(--color-border-primary);
   border-radius: var(--component-card-radius);
   padding: var(--component-card-padding-compact);

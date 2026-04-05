@@ -22,10 +22,10 @@
     justify-content: space-between;
     align-items: center;
     gap: var(--space-3);
-    margin: 0;
+    margin: var(--space-0);
 
     h3 {
-      margin: 0;
+      margin: var(--space-0);
       font-size: var(--ds-font-size-md);
       font-weight: var(--ds-font-weight-semibold);
     }
@@ -34,7 +34,7 @@
   .summary-stats {
     display: flex;
     gap: var(--layout-page-section-gap-tight);
-    margin: 0;
+    margin: var(--space-0);
     flex-wrap: wrap;
 
     .stat {
@@ -58,7 +58,7 @@
   .active-streaks {
     display: flex;
     gap: var(--space-2);
-    margin: 0;
+    margin: var(--space-0);
     flex-wrap: wrap;
 
     .streak-badge {
@@ -66,7 +66,7 @@
       align-items: center;
       gap: var(--space-1);
       padding: var(--space-1) var(--space-2);
-      background: var(--surface-ground);
+      background: var(--surface-secondary);
       border-radius: var(--radius-xl);
       font-size: var(--ds-font-size-md);
 
@@ -101,10 +101,10 @@
   }
 
   .next-achievement {
-    background: var(--surface-ground);
+    background: var(--surface-secondary);
     border-radius: var(--component-card-radius);
     padding: var(--component-card-padding-compact);
-    margin: 0;
+    margin: var(--space-0);
     display: flex;
     flex-direction: column;
     gap: var(--space-2);
@@ -113,7 +113,7 @@
       display: flex;
       align-items: center;
       gap: var(--space-2);
-      margin: 0;
+      margin: var(--space-0);
 
       .next-icon {
         font-size: var(--ds-font-size-2xl);
@@ -164,10 +164,10 @@
     margin-bottom: var(--layout-page-section-gap);
 
     h4 {
-      margin: 0;
+      margin: var(--space-0);
       font-size: var(--ds-font-size-md);
       color: var(--color-text-secondary);
-      border-bottom: var(--border-1) solid var(--surface-border);
+      border-bottom: var(--border-1) solid var(--color-border-primary);
       padding-bottom: var(--space-2);
     }
   }
@@ -183,7 +183,7 @@
     align-items: flex-start;
     gap: var(--space-3);
     padding: var(--component-card-padding-compact);
-    background: var(--surface-ground);
+    background: var(--surface-secondary);
     border-radius: var(--component-card-radius);
     border: var(--component-card-border);
     opacity: var(--opacity-muted);
@@ -225,7 +225,7 @@
       }
 
       .ach-desc {
-        margin: 0;
+        margin: var(--space-0);
         font-size: var(--ds-font-size-md);
         color: var(--color-text-secondary);
       }
@@ -271,10 +271,10 @@
   gap: var(--layout-page-section-gap-tight);
 
   .streak-card {
-    background: var(--surface-ground);
+    background: var(--surface-secondary);
     border-radius: var(--component-card-radius);
     padding: var(--component-card-padding-compact);
-    border: var(--border-2) solid var(--surface-border);
+    border: var(--border-2) solid var(--color-border-primary);
 
     &.active {
       border-color: var(--color-status-success);
@@ -353,7 +353,7 @@
     flex-direction: column;
     align-items: center;
     padding: var(--component-card-padding-compact);
-    background: var(--surface-ground);
+    background: var(--surface-secondary);
     border-radius: var(--component-card-radius);
     text-align: center;
 
@@ -390,12 +390,12 @@
     border-radius: var(--component-card-radius);
 
     h4 {
-      margin: 0 0 var(--space-1) 0;
+      margin: var(--space-0) var(--space-0) var(--space-1) var(--space-0);
       color: var(--ds-primary-green-dark);
     }
 
     p {
-      margin: 0;
+      margin: var(--space-0);
       font-size: var(--ds-font-size-md);
       color: var(--color-brand-primary);
     }

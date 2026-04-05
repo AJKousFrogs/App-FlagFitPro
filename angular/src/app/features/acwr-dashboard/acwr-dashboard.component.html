@@ -21,8 +21,9 @@
       <!-- Header (Full Width) -->
       <div class="bento-item full-width no-padding header-bento">
         <app-page-header
-          title="Load Monitoring & Injury Prevention"
-          subtitle="Acute:Chronic Workload Ratio (ACWR) Analysis"
+          eyebrow="PREVENTION"
+          title="Load Monitoring"
+          subtitle="Track workload trends to prevent overtraining and injury."
           icon="pi-chart-line"
         />
       </div>
@@ -143,6 +144,14 @@
         <h3 class="bento-title"><i class="pi pi-bolt"></i> Next Steps</h3>
         <div class="action-buttons-stack">
           <app-button iconLeft="pi-play" (clicked)="logSession()" width="100%">Go to Practice</app-button>
+          <app-button
+            variant="outlined"
+            iconLeft="pi-save"
+            [loading]="isSavingLoadSnapshot()"
+            (clicked)="saveLoadSnapshot()"
+            width="100%"
+            >Save load snapshot</app-button
+          >
           <app-button variant="outlined" iconLeft="pi-calendar" (clicked)="viewHistory()" width="100%">Training History</app-button>
           <app-button variant="text" iconLeft="pi-download" (clicked)="downloadReport()" width="100%">Export Data</app-button>
         </div>

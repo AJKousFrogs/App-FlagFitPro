@@ -4,6 +4,10 @@
 // password before the user has a session.
 
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import {
+  buildRequestContext,
+  createLogger,
+} from "../_shared/structured-logger.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -16,11 +20,16 @@ interface RequestBody {
   action?: "check" | "enable" | "status";
 }
 
+const logger = createLogger("supabase.enable-leaked-password-protection");
+
 /**
  * Check if a password has been leaked using Have I Been Pwned API
  * Uses k-anonymity model - only sends first 5 chars of SHA-1 hash
  */
-async function checkPasswordLeaked(password: string): Promise<boolean> {
+async function checkPasswordLeaked(
+  password: string,
+  requestLogger = logger,
+): Promise<boolean> {
   try {
     // Create SHA-1 hash of password
     const encoder = new TextEncoder();
@@ -47,7 +56,9 @@ async function checkPasswordLeaked(password: string): Promise<boolean> {
     );
 
     if (!response.ok) {
-      console.error("Have I Been Pwned API error:", response.status);
+      requestLogger.error("hibp_api_request_failed", undefined, {
+        status_code: response.status,
+      });
       // Fail open - if API is down, allow password (but log the error)
       return false;
     }
@@ -60,20 +71,24 @@ async function checkPasswordLeaked(password: string): Promise<boolean> {
       const [hashSuffix, count] = line.split(":");
       if (hashSuffix === suffix) {
         const leakCount = parseInt(count.trim(), 10);
-        console.log(`Password found in ${leakCount} data breaches`);
+        requestLogger.info("password_breach_detected", {
+          breach_count: leakCount,
+        });
         return true; // Password has been leaked
       }
     }
 
     return false; // Password not found in breaches
   } catch (error) {
-    console.error("Error checking password:", error);
+    requestLogger.error("password_breach_check_failed", error);
     // Fail open - if there's an error, allow password (but log it)
     return false;
   }
 }
 
 serve(async (req) => {
+  const requestLogger = logger.child(buildRequestContext(req));
+
   // Handle CORS preflight requests
   if (req.method === "OPTIONS") {
     return new Response("ok", { headers: corsHeaders });
@@ -97,7 +112,7 @@ serve(async (req) => {
           );
         }
 
-        const isLeaked = await checkPasswordLeaked(password);
+        const isLeaked = await checkPasswordLeaked(password, requestLogger);
         return new Response(
           JSON.stringify({
             leaked: isLeaked,
@@ -150,7 +165,7 @@ serve(async (req) => {
         );
     }
   } catch (error) {
-    console.error("Function error:", error);
+    requestLogger.error("leaked_password_protection_handler_failed", error);
     return new Response(
       JSON.stringify({
         error: "Internal server error",

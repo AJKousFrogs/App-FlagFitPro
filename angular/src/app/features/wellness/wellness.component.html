@@ -16,8 +16,9 @@
   @if (!isPageLoading() && !hasPageError()) {
     <div class="wellness-page ui-page-shell ui-page-stack">
       <app-page-header
+        eyebrow="WELLNESS"
         title="Wellness & Recovery"
-        subtitle="Track your health, recovery, and wellness metrics"
+        subtitle="Sleep, readiness, and recovery — logged and tracked."
         icon="pi-heart"
       >
         <app-button iconLeft="pi-plus" (clicked)="openCheckIn()"

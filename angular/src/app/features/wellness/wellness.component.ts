@@ -422,11 +422,9 @@ export class WellnessComponent {
       mood: this.checkInData.mood,
       stress: this.checkInData.stress,
       motivation: this.checkInData.motivation,
+      readinessScore: this.checkInData.readiness ?? undefined,
+      resting_hr: this.checkInData.restingHR ?? undefined,
       date: new Date().toISOString().split("T")[0],
-      notes:
-        this.checkInData.restingHR || this.checkInData.readiness
-          ? `${this.checkInData.restingHR ? `RHR: ${this.checkInData.restingHR}bpm` : ""}${this.checkInData.restingHR && this.checkInData.readiness ? ", " : ""}${this.checkInData.readiness ? `Readiness: ${this.checkInData.readiness}/10` : ""}`
-          : undefined,
     };
 
     this.trainingService

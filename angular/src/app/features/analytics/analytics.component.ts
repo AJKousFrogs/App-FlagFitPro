@@ -306,7 +306,7 @@ export class AnalyticsComponent implements AfterViewInit {
     } catch (error) {
       this.isPageLoading.set(false);
       this.hasPageError.set(true);
-      this.logger.error("[Analytics] Init error:", error);
+      this.logger.error("analytics_init_failed", error);
       this.pageErrorMessage.set(
         "Failed to initialize analytics. Please try again.",
       );
@@ -1110,9 +1110,9 @@ Tip: Hover over data points to see trend information!`;
         this.speedChartData.set(null);
       }
 
-      this.logger.info("[Analytics] Speed insights loaded from real data");
+      this.logger.info("analytics_speed_insights_loaded");
     } catch (error) {
-      this.logger.error("[Analytics] Error loading speed insights:", error);
+      this.logger.error("analytics_speed_insights_load_failed", error);
       this.speedInsights.set(null);
       this.speedChartData.set(null);
     }

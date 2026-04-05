@@ -1,8 +1,11 @@
 import { createClient } from "@supabase/supabase-js";
 import { AsyncLocalStorage } from "node:async_hooks";
+import { createLogger } from "./structured-logger.js";
 
 // Supabase client for Netlify Functions
 // Handles database connections and operations
+
+const logger = createLogger({ service: "netlify.supabase-client" });
 
 function sanitizeEnvValue(value) {
   if (typeof value !== "string") {
@@ -116,7 +119,7 @@ try {
     });
   }
 } catch (error) {
-  console.error("Failed to initialize Supabase clients:", error);
+  logger.error("supabase_clients_initialization_failed", error);
   // Clients will be undefined, checkEnvVars will catch this
 }
 
@@ -1297,8 +1300,8 @@ function checkEnvVars() {
       missing.push("SUPABASE_ANON_KEY (or VITE_SUPABASE_ANON_KEY)");
     }
 
-    console.error("Missing environment variables:", missing.join(", "));
-    console.error("Current env vars:", {
+    logger.error("supabase_env_missing", undefined, {
+      missing_variables: missing,
       SUPABASE_URL: supabaseUrl
         ? `${supabaseUrl.substring(0, 20)}...`
         : "MISSING",
@@ -1322,7 +1325,9 @@ function checkEnvVars() {
   try {
     new URL(supabaseUrl);
   } catch (_urlError) {
-    console.error("Invalid SUPABASE_URL format:", supabaseUrl);
+    logger.error("supabase_url_invalid", undefined, {
+      supabase_url: supabaseUrl,
+    });
     const error = new Error(
       `Invalid SUPABASE_URL format. Expected a valid URL, got: ${supabaseUrl?.substring(0, 50)}...`,
     );
@@ -1332,8 +1337,7 @@ function checkEnvVars() {
 
   // Also check if clients were initialized
   if (!supabaseAdmin || !supabase) {
-    console.error("Supabase clients not initialized properly");
-    console.error("Client status:", {
+    logger.error("supabase_clients_not_initialized", undefined, {
       supabaseAdmin: !!supabaseAdmin,
       supabase: !!supabase,
       supabaseUrl: supabaseUrl

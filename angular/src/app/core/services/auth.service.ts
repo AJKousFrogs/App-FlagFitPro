@@ -184,18 +184,18 @@ export class AuthService {
     const userId = this.currentUser()?.id;
     const email = this.currentUser()?.email;
 
-    this.logger.info("[Auth] User logout initiated", { userId, email });
+    this.logger.info("auth_logout_initiated", { userId, email });
 
     return from(this.supabaseService.signOut()).pipe(
       tap(() => {
         this.clearAuth();
-        this.logger.info("[Auth] User logout completed", { userId });
+        this.logger.info("auth_logout_completed", { userId });
         this.router.navigate(["/login"]);
       }),
       catchError((error) => {
         // Even if logout fails on server, clear local auth
         this.logger.error(
-          "[Auth] Logout error on server, clearing local auth",
+          "auth_logout_server_error",
           error,
           { userId: userId },
         );
@@ -279,17 +279,17 @@ export class AuthService {
       } = await this.supabaseService.client.auth.getUser();
 
       if (error) {
-        this.logger.warn("[Auth] Error refreshing user:", error);
+        this.logger.warn("auth_refresh_user_failed", error);
         return;
       }
 
       if (user) {
         this.currentUser.set(this.mapSupabaseUser(user));
         this.isAuthenticated.set(true);
-        this.logger.info("[Auth] User refreshed successfully");
+        this.logger.info("auth_user_refreshed");
       }
     } catch (error) {
-      this.logger.error("[Auth] Failed to refresh user:", error);
+      this.logger.error("auth_refresh_user_exception", error);
     }
   }
 

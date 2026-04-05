@@ -86,7 +86,7 @@ export class DecisionLedgerService {
   private handleRequestError(error: unknown, context: string): never {
     const errorMessage = getErrorMessage(error, "Unknown error");
     this.error.set(errorMessage);
-    this.logger.error(`[DecisionLedger] Error ${context}:`, error);
+    this.logger.error("decision_ledger_request_failed", error, { context });
     throw error;
   }
 

@@ -50,6 +50,9 @@ import {
   getExistingProtocolGenerationRequest,
   persistGeneratedProtocol,
 } from "./utils/daily-protocol-persistence.js";
+import { buildRequestLogContext, createLogger } from "./utils/structured-logger.js";
+
+const logger = createLogger({ service: "netlify.daily-protocol" });
 const TRAINING_SESSIONS_TABLE = "training_sessions";
 const EXERCISE_CATEGORY_ALIASES = {
   isometrics: ["isometric", "Isometric", "Strength"],
@@ -97,7 +100,12 @@ function prioritizeExercises(exercises, keywords, fallbackCount = 5) {
   );
 }
 
-async function fetchExercisesByCategories(supabase, categories, limit = 20) {
+async function fetchExercisesByCategories(
+  supabase,
+  categories,
+  limit = 20,
+  log = logger,
+) {
   const normalizedCategories = [...new Set(categories.filter(Boolean))];
   if (normalizedCategories.length === 0) {
     return [];
@@ -111,7 +119,14 @@ async function fetchExercisesByCategories(supabase, categories, limit = 20) {
     .limit(limit);
 
   if (error) {
-    console.warn("[daily-protocol] Failed to fetch exercises by category:", error.message);
+    log.warn(
+      "daily_protocol_exercise_category_fetch_failed",
+      {
+        categories: normalizedCategories,
+        limit,
+      },
+      error,
+    );
     return [];
   }
 
@@ -334,7 +349,7 @@ const DAY_NAMES = [
 /**
  * Get user's training context - position, age modifiers, practice schedule, current program
  */
-async function getUserTrainingContext(supabase, userId, date) {
+async function getUserTrainingContext(supabase, userId, date, log = logger) {
   const dayOfWeek = getIsoDayOfWeek(date);
   const dayName = DAY_NAMES[dayOfWeek];
 
@@ -363,9 +378,6 @@ async function getUserTrainingContext(supabase, userId, date) {
   // If no position in config, use position from users table
   if (!userPosition && userData?.position) {
     userPosition = normalizePosition(userData.position);
-    console.log(
-      `[daily-protocol] No athlete_training_config, using users.position: ${userData.position} -> ${userPosition}`,
-    );
   }
 
   // 3. Calculate age and get recovery modifier
@@ -438,7 +450,14 @@ async function getUserTrainingContext(supabase, userId, date) {
       date,
     );
   } catch (error) {
-    console.warn("[daily-protocol] Team activity resolution error:", error);
+    log.warn(
+      "daily_protocol_team_activity_resolution_failed",
+      {
+        user_id: userId,
+        date,
+      },
+      error,
+    );
     // Non-fatal - continue without team activity
   }
 
@@ -452,21 +471,12 @@ async function getUserTrainingContext(supabase, userId, date) {
 
     if (sessionResolution.success) {
       sessionTemplate = sessionResolution.session;
-      console.log("[daily-protocol] Session resolved successfully:", {
-        sessionName: sessionTemplate?.session_name,
-        override: sessionResolution.override?.type || "none",
-        metadata: sessionResolution.metadata,
-      });
-    } else {
-      console.log("[daily-protocol] Session resolution failed:", {
-        status: sessionResolution.status,
-        reason: sessionResolution.reason,
-        metadata: sessionResolution.metadata,
-      });
-      // sessionTemplate remains null - we'll handle this truthfully below
     }
   } catch (error) {
-    console.error("[daily-protocol] Session resolution error:", error);
+    log.error("daily_protocol_session_resolution_failed", error, {
+      user_id: userId,
+      date,
+    });
     // Continue with sessionTemplate = null
   }
 
@@ -507,21 +517,6 @@ async function getUserTrainingContext(supabase, userId, date) {
         };
       }
       sessionResolution.override = override;
-
-      console.log("[daily-protocol] Override computed via computeOverride:", {
-        overrideType: override.type,
-        participation: teamActivity.participation,
-        activityType: teamActivity.type,
-      });
-    } else if (teamActivityResult.participation === "excluded") {
-      // Participation is excluded but no rehab override - log for debugging
-      console.log(
-        "[daily-protocol] Team activity exists but athlete excluded (no override):",
-        {
-          activityType: teamActivity.type,
-          participation: teamActivityResult.participation,
-        },
-      );
     }
   }
 
@@ -570,10 +565,6 @@ async function getUserTrainingContext(supabase, userId, date) {
     .from("position_exercise_modifiers")
     .select("*")
     .eq("position", position);
-
-  console.log(
-    `[daily-protocol] Fetching modifiers for position: ${position}, found: ${positionModifiers?.length || 0}`,
-  );
 
   // 10. Calculate ACWR target range (adjusted by age)
   const baseAcwrMin = config?.acwr_target_min || 0.8;
@@ -692,7 +683,7 @@ function getTaperRecommendation(daysUntil, isPeakEvent) {
 /**
  * Main handler
  */
-const legacyDailyProtocolHandler = async (event) => {
+const legacyDailyProtocolHandler = async (event, log = logger) => {
   const { httpMethod, path, queryStringParameters, body, headers } = event;
 
   // CORS headers
@@ -729,6 +720,7 @@ const legacyDailyProtocolHandler = async (event) => {
         user.id,
         queryStringParameters,
         corsHeaders,
+        log,
       );
     }
 
@@ -748,6 +740,7 @@ const legacyDailyProtocolHandler = async (event) => {
             user.id,
             payload,
             corsHeaders,
+            log,
           );
         case "complete":
           return await completeExercise(
@@ -763,7 +756,7 @@ const legacyDailyProtocolHandler = async (event) => {
         case "skip-block":
           return await skipBlock(supabase, user.id, payload, corsHeaders);
         case "log-session":
-          return await logSession(supabase, user.id, payload, corsHeaders);
+          return await logSession(supabase, user.id, payload, corsHeaders, log);
         default:
           break;
       }
@@ -774,7 +767,7 @@ const legacyDailyProtocolHandler = async (event) => {
       headers: corsHeaders,
     };
   } catch (err) {
-    console.error("Daily protocol error:", err);
+    log.error("daily_protocol_request_failed", err);
     return {
       ...createErrorResponse("Internal server error", 500, "server_error"),
       headers: corsHeaders,
@@ -788,14 +781,24 @@ export const handler = async (event, context) =>
     allowedMethods: ["GET", "POST"],
     rateLimitType: "UPDATE",
     requireAuth: true,
-    handler: async (evt) => legacyDailyProtocolHandler(evt),
+    handler: async (evt, _ctx, { userId, requestId, correlationId }) => {
+      const requestLogger = logger.child(
+        buildRequestLogContext(evt, {
+          user_id: userId,
+          request_id: requestId,
+          correlation_id: correlationId,
+          trace_id: correlationId,
+        }),
+      );
+      return legacyDailyProtocolHandler(evt, requestLogger);
+    },
   });
 
 /**
  * GET /api/daily-protocol
  * Fetch today's (or specified date's) protocol for the user
  */
-async function getProtocol(supabase, userId, params, headers) {
+async function getProtocol(supabase, userId, params, headers, log = logger) {
   const date = params?.date || getIsoDateString();
 
   // Get the protocol
@@ -888,8 +891,13 @@ async function getProtocol(supabase, userId, params, headers) {
       };
     }
   } catch (teamActivityError) {
-    console.warn(
-      "[daily-protocol] Team activity resolution failed:",
+    log.warn(
+      "daily_protocol_team_activity_resolution_failed",
+      {
+        user_id: userId,
+        date,
+        phase: "get_protocol",
+      },
       teamActivityError,
     );
     // Non-fatal - continue without team activity
@@ -917,33 +925,11 @@ async function getProtocol(supabase, userId, params, headers) {
     throw exercisesError;
   }
 
-  // Debug logging to understand exercise state
-  console.log("[daily-protocol] Fetched protocol exercises:", {
-    count: protocolExercises?.length || 0,
-    protocolId: protocol.id,
-    totalExercisesStored: protocol.total_exercises,
-    // Sample first exercise to check structure
-    firstExercise: protocolExercises?.[0]
-      ? {
-          id: protocolExercises[0].id,
-          block_type: protocolExercises[0].block_type,
-          exercise_id: protocolExercises[0].exercise_id,
-          hasExerciseData: !!protocolExercises[0].exercises,
-          exerciseName:
-            protocolExercises[0].exercises?.name || "NO_EXERCISE_DATA",
-        }
-      : null,
-  });
-
   // ============================================================================
   // AUTO-FIX: If protocol exists but has 0 exercises, regenerate using fallback
   // This fixes protocols that were created when the DB was empty
   // ============================================================================
   if (!protocolExercises || protocolExercises.length === 0) {
-    console.log(
-      "[daily-protocol] Protocol has 0 exercises - auto-regenerating with fallback",
-    );
-
     // Check if exercises table is empty (triggers fallback)
     const { count: exerciseCount } = await supabase
       .from("exercises")
@@ -983,10 +969,12 @@ async function getProtocol(supabase, userId, params, headers) {
           .insert(fallbackExercises);
 
         if (insertError) {
-          console.error(
-            "[daily-protocol] Error inserting fallback exercises:",
-            insertError,
-          );
+          log.error("daily_protocol_fallback_exercise_insert_failed", insertError, {
+            user_id: userId,
+            protocol_id: protocol.id,
+            date,
+            fallback_exercise_count: fallbackExercises.length,
+          });
         } else {
           // Update protocol total_exercises count
           await supabase
@@ -1013,9 +1001,6 @@ async function getProtocol(supabase, userId, params, headers) {
             .order("sequence_order");
 
           protocolExercises = newExercises || [];
-          console.log(
-            `[daily-protocol] Auto-fix complete: ${protocolExercises.length} exercises added`,
-          );
         }
       }
     }
@@ -1063,7 +1048,7 @@ async function getProtocol(supabase, userId, params, headers) {
  * POST /api/daily-protocol/generate
  * Generate a new protocol for a given date using structured training data
  */
-async function generateProtocol(supabase, userId, payload, headers) {
+async function generateProtocol(supabase, userId, payload, headers, log = logger) {
   const date = payload.date || getIsoDateString();
 
   // ============================================================================
@@ -1086,24 +1071,20 @@ async function generateProtocol(supabase, userId, payload, headers) {
 
   if (existingRequest) {
     if (existingRequest.status === "completed" && existingRequest.protocol_id) {
-      // Return existing protocol
-      console.log(
-        "[daily-protocol] Idempotent request - returning existing protocol:",
-        existingRequest.protocol_id,
-      );
-      return await getProtocol(supabase, userId, { date }, headers);
+      return await getProtocol(supabase, userId, { date }, headers, log);
     } else if (existingRequest.status === "failed") {
-      // Previous attempt failed - allow retry but log the error
-      console.warn(
-        "[daily-protocol] Previous generation failed:",
-        existingRequest.error,
-      );
+      log.warn("daily_protocol_previous_generation_failed", {
+        user_id: userId,
+        date,
+        idempotency_key: idempotencyKey,
+        previous_error: existingRequest.error,
+      });
     }
     // If status is 'pending', continue (might be concurrent request, will be handled by unique constraint)
   }
 
   // Get user's full training context
-  const context = await getUserTrainingContext(supabase, userId, date);
+  const context = await getUserTrainingContext(supabase, userId, date, log);
 
   // ============================================================================
   // INJURY CHECK - Priority #1 for athlete safety
@@ -1125,10 +1106,11 @@ async function generateProtocol(supabase, userId, payload, headers) {
 
   // If injuries exist, generate return-to-play protocol instead
   if (hasActiveInjuries) {
-    console.log(
-      "[daily-protocol] Active injuries detected:",
-      wellnessCheckin.soreness_areas,
-    );
+    log.info("daily_protocol_return_to_play_triggered", {
+      user_id: userId,
+      date,
+      soreness_areas_count: wellnessCheckin.soreness_areas.length,
+    });
     return await generateReturnToPlayProtocol(
       supabase,
       userId,
@@ -1149,7 +1131,7 @@ async function generateProtocol(supabase, userId, payload, headers) {
     );
 
   if (existingCompleted?.status === "completed" && existingCompleted.protocol_id) {
-    return await getProtocol(supabase, userId, { date }, headers);
+    return await getProtocol(supabase, userId, { date }, headers, log);
   }
 
   const {
@@ -1171,20 +1153,6 @@ async function generateProtocol(supabase, userId, payload, headers) {
     context,
     computeReadinessDaysStale,
     computeTrainingDaysLogged,
-  });
-
-  console.log("[daily-protocol] Truthfulness contract check:", {
-    readiness: {
-      truth: readinessScore,
-      forLogic: readinessForLogic,
-      willPersist: readinessScore,
-    },
-    acwr: {
-      truth: acwrValue,
-      forLogic: acwrForLogic,
-      willPersist: acwrValue,
-    },
-    confidence: confidenceMetadata,
   });
 
   // Protocol and exercises will be created transactionally via RPC
@@ -1262,14 +1230,6 @@ async function generateProtocol(supabase, userId, payload, headers) {
     trainingFocus,
   );
 
-  console.log("[daily-protocol] Evidence-based config:", {
-    phase: currentPhase,
-    plyoIntensity,
-    safeConditioning,
-    includeNordics,
-    dayOfWeek: context.dayOfWeek,
-  });
-
   // Skip gym blocks on practice days, film room days, or recovery days
   const isGymTrainingDay =
     !isPracticeDay && !isFilmRoomDay && trainingFocus !== "recovery";
@@ -1287,6 +1247,7 @@ async function generateProtocol(supabase, userId, payload, headers) {
         supabase,
         EXERCISE_CATEGORY_ALIASES.isometrics,
         30,
+        log,
       ),
       [
         "isometric",
@@ -1324,10 +1285,6 @@ async function generateProtocol(supabase, userId, payload, headers) {
           ai_note: `📊 Isometric Protocol: ${sets} sets × ${holdSeconds}s hold. Focus on maximal tension. Evidence: Builds strength at specific joint angles, safe for all fitness levels.`,
         });
       });
-
-      console.log(
-        `[daily-protocol] Added ${selectedIsometrics.length} isometric exercises`,
-      );
     }
 
     // ============================================================================
@@ -1348,6 +1305,7 @@ async function generateProtocol(supabase, userId, payload, headers) {
         supabase,
         EXERCISE_CATEGORY_ALIASES.plyometrics,
         20,
+        log,
       ),
       ["jump", "bound", "hop", "skater", "medicine ball", "explosive"],
       5,
@@ -1404,10 +1362,6 @@ async function generateProtocol(supabase, userId, payload, headers) {
           ai_note: `⚡ Plyometric Phase: ${currentPhase}. Intensity: ${plyoIntensity.toUpperCase()}. Weekly contacts target: ${plyoContactsConfig.min}-${plyoContactsConfig.max}. Focus on LANDING MECHANICS first.`,
         });
       });
-
-      console.log(
-        `[daily-protocol] Added ${selectedPlyos.length} plyometric exercises (${plyoIntensity} intensity)`,
-      );
     }
 
     // ============================================================================
@@ -1420,6 +1374,7 @@ async function generateProtocol(supabase, userId, payload, headers) {
       supabase,
       EXERCISE_CATEGORY_ALIASES.strength,
       30,
+      log,
     );
 
     if (strengthExercises && strengthExercises.length > 0) {
@@ -1451,8 +1406,6 @@ async function generateProtocol(supabase, userId, payload, headers) {
             load_contribution_au: nordicExercise.load_contribution_au || 25,
             ai_note: `🏋️ MANDATORY: Nordic Curls - Evidence shows 50-70% reduction in hamstring injuries when performed 2-3x/week. Focus on slow, controlled eccentric lowering.`,
           });
-
-          console.log("[daily-protocol] Added mandatory Nordic Curls");
         }
       }
 
@@ -1512,10 +1465,6 @@ async function generateProtocol(supabase, userId, payload, headers) {
           ai_note: `💪 Strength Phase: ${currentPhase}. Focus on quality movement over load.`,
         });
       });
-
-      console.log(
-        `[daily-protocol] Added strength block with ${includeNordics ? "Nordic curls + " : ""}hip work + general strength`,
-      );
     }
 
     // ============================================================================
@@ -1529,6 +1478,7 @@ async function generateProtocol(supabase, userId, payload, headers) {
       supabase,
       EXERCISE_CATEGORY_ALIASES.conditioning,
       20,
+      log,
     );
 
     if (conditioningExercises && conditioningExercises.length > 0) {
@@ -1572,10 +1522,6 @@ async function generateProtocol(supabase, userId, payload, headers) {
             `🏃 Conditioning Phase: ${currentPhase}. Max intensity: ${safeConditioning.maxIntensity}%. ACWR-safe progression.`,
         });
       });
-
-      console.log(
-        `[daily-protocol] Added ${selectedConditioning.length} conditioning exercises (max ${safeConditioning.maxIntensity}% intensity)`,
-      );
     }
 
     // ============================================================================
@@ -1589,6 +1535,7 @@ async function generateProtocol(supabase, userId, payload, headers) {
       supabase,
       EXERCISE_CATEGORY_ALIASES.skill_drills,
       20,
+      log,
     );
 
     if (skillExercises && skillExercises.length > 0) {
@@ -1636,10 +1583,6 @@ async function generateProtocol(supabase, userId, payload, headers) {
           ai_note: `⚡ Skill Drill: Fast-twitch activation. Focus on speed and precision. Position: ${normalizedPosition}.`,
         });
       });
-
-      console.log(
-        `[daily-protocol] Added ${selectedSkills.length} skill/twitching drills`,
-      );
     }
 
     // ============================================================================
@@ -1679,14 +1622,6 @@ async function generateProtocol(supabase, userId, payload, headers) {
         });
       });
     });
-
-    if (mainSessionSequence > 1) {
-      console.log(
-        `[daily-protocol] Added ${mainSessionSequence - 1} exercises to main_session from gym blocks`,
-      );
-    }
-  } else {
-    console.log("[daily-protocol] Skipping gym blocks - practice/recovery day");
   }
 
   // ============================================================================
@@ -1774,9 +1709,14 @@ async function generateProtocol(supabase, userId, payload, headers) {
       throw error;
     }
 
-    console.warn(
-      "[daily-protocol] Persistence layer unavailable, returning transient protocol:",
-      error.message,
+    log.warn(
+      "daily_protocol_persistence_unavailable",
+      {
+        user_id: userId,
+        date,
+        protocol_exercise_count: protocolExercises.length,
+      },
+      error,
     );
 
     return buildTransientProtocolResponse({
@@ -2083,7 +2023,7 @@ async function skipBlock(supabase, userId, payload, headers) {
  * POST /api/daily-protocol/log-session
  * Log the main session RPE and duration
  */
-async function logSession(supabase, userId, payload, headers) {
+async function logSession(supabase, userId, payload, headers, log = logger) {
   const { protocolId, actualDurationMinutes, actualRpe, sessionNotes } =
     payload;
 
@@ -2229,16 +2169,31 @@ async function logSession(supabase, userId, payload, headers) {
       }
     }
   } catch (sessionError) {
-    console.warn("Could not log to training_sessions:", sessionError.message);
+    log.warn(
+      "daily_protocol_training_session_log_failed",
+      {
+        user_id: userId,
+        protocol_id: protocolId,
+        session_date: protocol.protocol_date,
+      },
+      sessionError,
+    );
     // Non-fatal - continue
   }
 
   // Trigger ACWR recalculation
   try {
     await supabase.rpc("compute_acwr", { athlete: userId });
-    console.log("ACWR recalculated for user:", userId);
   } catch (acwrError) {
-    console.warn("Could not recalculate ACWR:", acwrError.message);
+    log.warn(
+      "daily_protocol_acwr_recalculation_failed",
+      {
+        user_id: userId,
+        protocol_id: protocolId,
+        session_date: protocol.protocol_date,
+      },
+      acwrError,
+    );
     // Non-fatal - ACWR will be recalculated on next load
   }
 
@@ -2258,7 +2213,15 @@ async function logSession(supabase, userId, payload, headers) {
       },
     );
   } catch (wellnessError) {
-    console.warn("Could not update wellness:", wellnessError.message);
+    log.warn(
+      "daily_protocol_wellness_update_failed",
+      {
+        user_id: userId,
+        protocol_id: protocolId,
+        session_date: protocol.protocol_date,
+      },
+      wellnessError,
+    );
     // Non-fatal
   }
 
@@ -2270,7 +2233,14 @@ async function logSession(supabase, userId, payload, headers) {
       .eq("protocol_id", protocolId)
       .eq("user_id", userId);
   } catch (completionError) {
-    console.warn("Could not update completions:", completionError.message);
+    log.warn(
+      "daily_protocol_completion_update_failed",
+      {
+        user_id: userId,
+        protocol_id: protocolId,
+      },
+      completionError,
+    );
   }
 
   // Update training streak
@@ -2299,7 +2269,14 @@ async function logSession(supabase, userId, payload, headers) {
       }
     }
   } catch (streakError) {
-    console.warn("Could not update streak:", streakError.message);
+    log.warn(
+      "daily_protocol_training_streak_update_failed",
+      {
+        user_id: userId,
+        protocol_id: protocolId,
+      },
+      streakError,
+    );
   }
 
   // Update player_training_stats
@@ -2344,7 +2321,14 @@ async function logSession(supabase, userId, payload, headers) {
       });
     }
   } catch (statsError) {
-    console.warn("Could not update stats:", statsError.message);
+    log.warn(
+      "daily_protocol_training_stats_update_failed",
+      {
+        user_id: userId,
+        protocol_id: protocolId,
+      },
+      statsError,
+    );
   }
 
   // Check for session milestone achievements
@@ -2377,7 +2361,14 @@ async function logSession(supabase, userId, payload, headers) {
       }
     }
   } catch (achievementError) {
-    console.warn("Could not check achievements:", achievementError.message);
+    log.warn(
+      "daily_protocol_achievement_check_failed",
+      {
+        user_id: userId,
+        protocol_id: protocolId,
+      },
+      achievementError,
+    );
   }
 
   return {

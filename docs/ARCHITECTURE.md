@@ -1,9 +1,10 @@
 # 🏗️ FlagFit Pro - System Architecture
 
-**Version:** 2.1  
-**Last Updated:** 15 March 2026  
-**Last Verified Against Codebase:** 2026-03-15  
-**Status:** ✅ Consolidated Release Baseline
+**Product surface version:** 2.1  
+**Application release:** 4.0.0  
+**Last Updated:** 5 April 2026  
+**Last Verified Against Codebase:** 2026-04-05  
+**Status:** ✅ Consolidated release baseline (v4.0 platform and UI refresh)
 
 ---
 

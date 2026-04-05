@@ -20,7 +20,7 @@
   gap: var(--ds-spacing-md);
 
   h3 {
-    margin: 0;
+    margin: var(--space-0);
     font-size: var(--ds-font-size-2xl);
     font-weight: var(--ds-font-weight-semibold);
   }
@@ -67,7 +67,7 @@
 
   .mental-state {
     h5 {
-      margin: 0 0 var(--ds-spacing-sm);
+      margin: var(--space-0) var(--space-0) var(--ds-spacing-sm);
       font-size: var(--ds-font-size-md);
       color: var(--color-text-secondary);
     }
@@ -85,12 +85,12 @@
   }
 
   .self-assessment {
-    background: var(--surface-ground);
+    background: var(--surface-secondary);
     border-radius: var(--ds-radius-md);
     padding: var(--ds-spacing-md);
 
     h5 {
-      margin: 0 0 var(--ds-spacing-sm);
+      margin: var(--space-0) var(--space-0) var(--ds-spacing-sm);
       font-size: var(--ds-font-size-md);
       color: var(--color-text-secondary);
     }
@@ -168,7 +168,7 @@
   }
 
   .privacy-settings {
-    background: var(--surface-ground);
+    background: var(--surface-secondary);
     border-radius: var(--ds-radius-md);
     padding: var(--ds-spacing-md);
 
@@ -176,7 +176,7 @@
       display: flex;
       align-items: center;
       gap: var(--ds-spacing-sm);
-      margin: 0 0 var(--ds-spacing-xs);
+      margin: var(--space-0) var(--space-0) var(--ds-spacing-xs);
 
       i {
         color: var(--blue-500);
@@ -186,7 +186,7 @@
     .privacy-hint {
       font-size: var(--ds-font-size-md);
       color: var(--color-text-secondary);
-      margin: 0 0 var(--ds-spacing-md);
+      margin: var(--space-0) var(--space-0) var(--ds-spacing-md);
     }
 
     .checkbox-grid {
@@ -209,10 +209,10 @@
     .anonymization-options {
       margin-top: var(--ds-spacing-md);
       padding-top: var(--ds-spacing-md);
-      border-top: var(--border-1) solid var(--surface-border);
+      border-top: var(--border-1) solid var(--color-border-secondary);
 
       h5 {
-        margin: 0 0 var(--ds-spacing-sm);
+        margin: var(--space-0) var(--space-0) var(--ds-spacing-sm);
         font-size: var(--ds-font-size-md);
         color: var(--color-text-secondary);
       }
@@ -227,7 +227,7 @@
 .reports-section .section-tag {
   font-size: var(--ds-font-size-xs);
   padding: var(--space-1) var(--space-2);
-  background: var(--surface-ground);
+  background: var(--surface-secondary);
   border-radius: var(--ds-radius-sm);
 }
 

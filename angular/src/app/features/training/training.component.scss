@@ -9,29 +9,33 @@
 .training-page.bento-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: var(--space-5);
+  gap: var(--space-4);
   max-width: var(--layout-page-max-width-wide);
-  margin: 0 auto;
+  margin: var(--space-0) auto;
   width: 100%;
-  padding-bottom: var(--space-8);
+  padding-bottom: var(--space-10);
 
   .bento-item {
-    background: var(--surface-primary);
-    border: var(--border-1) solid var(--ui-border-subtle);
+    background: var(--surface-card);
+    border: var(--border-1) solid var(--color-border-primary);
     border-radius: var(--radius-xl);
-    padding: var(--space-5);
+    padding: var(--space-6);
     box-shadow: var(--shadow-sm);
     min-width: 0;
-    transition: transform var(--transition-base), box-shadow var(--transition-base);
+    transition:
+      transform var(--transition-fast) var(--ease-standard),
+      box-shadow var(--transition-fast) var(--ease-standard);
 
-    &:hover {
-      box-shadow: var(--shadow-md);
+    @media (hover: hover) and (pointer: fine) {
+      &:not(.no-padding):not(.skeleton-placeholder):hover {
+        transform: translateY(-1px);
+        box-shadow: var(--shadow-md);
+      }
     }
-
 
     &.skeleton-placeholder {
       min-height: var(--grid-card-min-sm);
-      background: var(--ui-surface-subtle);
+      background: var(--surface-secondary);
       border-style: dashed;
     }
   }
@@ -41,7 +45,7 @@
   .full-width { grid-column: 1 / -1; }
 }
 
-/* Tablet: 2 Columns */
+/* Tablet + smaller desktop: 2 Columns */
 @include respond-to(lg) {
   .training-page.bento-grid {
     grid-template-columns: repeat(2, 1fr);
@@ -54,10 +58,11 @@
 }
 
 /* Mobile: 1 Column */
-@include respond-to(md) {
+@include respond-to(sm) {
   .training-page.bento-grid {
     grid-template-columns: 1fr;
     gap: var(--space-4);
+    padding: var(--space-3);
 
     .bento-item {
       grid-column: span 1;

@@ -34,7 +34,7 @@
 
 .phase-progress {
   h5 {
-    margin: 0 0 var(--ds-spacing-sm);
+    margin: var(--space-0) var(--space-0) var(--ds-spacing-sm);
     font-size: var(--ds-font-size-md);
   }
 
@@ -118,14 +118,14 @@
   border-radius: var(--ds-radius-md);
 
   h5 {
-    margin: 0 0 var(--ds-spacing-sm);
+    margin: var(--space-0) var(--space-0) var(--ds-spacing-sm);
     font-size: var(--ds-font-size-md);
   }
 }
 
 .criteria-list {
-  margin: 0;
-  padding: 0;
+  margin: var(--space-0);
+  padding: var(--space-0);
   list-style: none;
 }
 

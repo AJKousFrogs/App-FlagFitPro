@@ -4,22 +4,33 @@
 .achievements-page.bento-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: var(--space-5);
+  gap: var(--space-4);
   max-width: var(--layout-page-max-width-wide);
-  margin: 0 auto;
+  margin: var(--space-0) auto;
   width: 100%;
-  padding-bottom: var(--space-8);
+  padding-bottom: var(--space-10);
 
   .bento-item {
     @extend %bento-surface-card;
-    padding: var(--space-5);
+    padding: var(--space-6);
+    transition:
+      transform var(--transition-fast) var(--ease-standard),
+      box-shadow var(--transition-fast) var(--ease-standard);
+
+    @media (hover: hover) and (pointer: fine) {
+      &:not(.gallery-bento):hover {
+        transform: translateY(-1px);
+        box-shadow: var(--shadow-md);
+      }
+    }
 
     .bento-title {
       @extend %bento-title;
       margin-bottom: var(--space-4);
       gap: var(--space-2);
-      
-      i { color: var(--ds-primary-green); }
+      letter-spacing: -0.015em;
+
+      i { color: var(--ds-primary-green); font-size: var(--ds-font-size-md); }
     }
   }
 
@@ -39,7 +50,7 @@
 
   .stat-box {
     padding: var(--space-4);
-    background: var(--ui-surface-subtle);
+    background: var(--surface-secondary);
     border-radius: var(--radius-lg);
     display: flex;
     flex-direction: column;
@@ -74,11 +85,11 @@
     align-items: center;
     gap: var(--space-4);
     padding: var(--space-3);
-    background: var(--ui-surface-subtle);
+    background: var(--surface-secondary);
     border-radius: var(--radius-lg);
 
     .icon { font-size: var(--ds-font-size-2xl); }
-    .info { flex: 1; h4 { margin: 0; font-size: var(--ds-font-size-sm); } p { margin: 0; font-size: var(--ds-font-size-xs); color: var(--color-text-tertiary); } }
+    .info { flex: 1; h4 { margin: var(--space-0); font-size: var(--ds-font-size-sm); } p { margin: var(--space-0); font-size: var(--ds-font-size-xs); color: var(--color-text-tertiary); } }
     .pts { font-weight: var(--ds-font-weight-bold); color: var(--ds-primary-green); }
   }
 
@@ -127,7 +138,7 @@
     overflow-y: hidden;
     padding-bottom: var(--space-1);
     scrollbar-width: thin;
-    scrollbar-color: var(--ui-border-default) transparent;
+    scrollbar-color: var(--color-border-primary) transparent;
     -webkit-overflow-scrolling: touch;
     scroll-behavior: smooth;
 
@@ -141,7 +152,7 @@
     }
 
     &::-webkit-scrollbar-thumb {
-      background: var(--ui-border-default);
+      background: var(--color-border-primary);
       border-radius: var(--radius-full);
     }
   }
@@ -149,7 +160,7 @@
   .cat-chip {
     padding: var(--space-2) var(--space-3);
     border-radius: var(--radius-full);
-    border: var(--border-1) solid var(--ui-border-default);
+    border: var(--border-1) solid var(--color-border-primary);
     background: transparent;
     font-size: var(--ds-font-size-xs);
     font-weight: var(--ds-font-weight-medium);
@@ -172,15 +183,11 @@
     }
 
     &:hover {
-      background: var(--ui-surface-subtle);
+      background: color-mix(in srgb, var(--ds-primary-green) 6%, transparent);
       border-color: var(--ds-primary-green);
     }
 
-    &:focus-visible {
-      outline: var(--focus-outline-width) solid var(--color-focus-ring);
-      outline-offset: var(--focus-outline-offset);
-      box-shadow: var(--shadow-focus);
-    }
+    @include focus-visible;
 
     &:active {
       transform: scale(0.98);
@@ -218,14 +225,14 @@
 
   .badge-card {
     padding: var(--space-4);
-    background: var(--ui-surface-subtle);
-    border-radius: var(--radius-lg);
+    background: var(--surface-card);
+    border-radius: var(--radius-xl);
     text-align: center;
-    border: var(--border-1) solid transparent;
+    border: var(--border-1) solid var(--color-border-primary);
     transition:
-      transform var(--transition-base),
-      box-shadow var(--transition-base),
-      border-color var(--transition-base);
+      transform var(--transition-fast) var(--ease-standard),
+      box-shadow var(--transition-fast) var(--ease-standard),
+      border-color var(--transition-fast) var(--ease-standard);
     position: relative;
 
     // Hover state for unlocked badges
@@ -250,8 +257,8 @@
     .badge-visual {
       width: var(--space-16);
       height: var(--space-16);
-      margin: 0 auto var(--space-3);
-      background: var(--surface-primary);
+      margin: var(--space-0) auto var(--space-3);
+      background: var(--surface-card);
       border-radius: var(--radius-full);
       display: flex;
       align-items: center;
@@ -277,7 +284,7 @@
         right: calc(-1 * var(--space-0-5));
         color: var(--color-status-success);
         font-size: var(--ds-font-size-lg);
-        background: var(--surface-primary);
+        background: var(--surface-card);
         border-radius: var(--radius-full);
         padding: var(--space-0-5);
         box-shadow: var(--shadow-sm);
@@ -285,14 +292,14 @@
     }
 
     h4 {
-      margin: 0 0 var(--space-1);
+      margin: var(--space-0) var(--space-0) var(--space-1);
       font-size: var(--ds-font-size-sm);
       font-weight: var(--ds-font-weight-semibold);
       color: var(--color-text-primary);
     }
 
     p {
-      margin: 0 0 var(--space-3);
+      margin: var(--space-0) var(--space-0) var(--space-3);
       font-size: var(--ds-font-size-xs);
       color: var(--color-text-secondary);
       line-height: var(--line-height-normal);
@@ -328,7 +335,7 @@
       gap: var(--space-3);
 
       .bento-title {
-        margin-bottom: 0;
+        margin-bottom: var(--space-0);
       }
 
       .category-filters {
@@ -365,7 +372,7 @@
       padding: var(--space-4) var(--space-4) 0;
 
       .bento-title {
-        margin-bottom: 0;
+        margin-bottom: var(--space-0);
       }
 
       .category-filters {

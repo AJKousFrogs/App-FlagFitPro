@@ -3,25 +3,29 @@
 .playbook-page.bento-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: var(--space-5);
+  gap: var(--space-4);
   max-width: var(--layout-page-max-width-wide);
-  margin: 0 auto;
+  margin: var(--space-0) auto;
   width: 100%;
-  padding-bottom: var(--space-8);
+  padding-bottom: var(--space-10);
 
   .bento-item {
-    background: var(--surface-primary);
-    border: var(--border-1) solid var(--ui-border-subtle);
+    background: var(--surface-card);
+    border: var(--border-1) solid var(--color-border-primary);
     border-radius: var(--radius-xl);
-    padding: var(--space-5);
+    padding: var(--space-6);
     box-shadow: var(--shadow-sm);
     min-width: 0;
-    transition: transform var(--transition-base), box-shadow var(--transition-base);
+    transition:
+      transform var(--transition-fast) var(--ease-standard),
+      box-shadow var(--transition-fast) var(--ease-standard);
 
-    &:hover {
-      box-shadow: var(--shadow-md);
+    @media (hover: hover) and (pointer: fine) {
+      &:not(.no-padding):hover {
+        transform: translateY(-1px);
+        box-shadow: var(--shadow-md);
+      }
     }
-
   }
 
   .full-width { grid-column: 1 / -1; }
@@ -30,7 +34,7 @@
     background: transparent;
     border: none;
     box-shadow: none;
-    padding: 0;
+    padding: var(--space-0);
   }
 
   /* Play Cards Grid */
@@ -42,20 +46,22 @@
   }
 
   .play-card {
-    background: var(--surface-primary);
-    border: var(--border-1) solid var(--ui-border-subtle);
-    border-radius: var(--radius-lg);
+    background: var(--surface-card);
+    border: var(--border-1) solid var(--color-border-primary);
+    border-radius: var(--radius-xl);
     overflow: hidden;
     cursor: pointer;
     transition:
-      transform var(--transition-base),
-      box-shadow var(--transition-base),
-      border-color var(--transition-base);
+      transform var(--transition-fast) var(--ease-standard),
+      box-shadow var(--transition-fast) var(--ease-standard),
+      border-color var(--transition-fast) var(--ease-standard);
 
-    &:hover {
-      transform: translateY(calc(-1 * var(--space-1)));
-      box-shadow: var(--shadow-md);
-      border-color: var(--ds-primary-green);
+    @media (hover: hover) and (pointer: fine) {
+      &:hover {
+        transform: translateY(-1px);
+        box-shadow: var(--shadow-md);
+        border-color: var(--ds-primary-green);
+      }
     }
 
     .play-diagram-placeholder {
@@ -73,7 +79,7 @@
         top: var(--space-2);
         right: var(--space-2);
         background: var(--ds-primary-green);
-        color: white;
+        color: var(--color-text-on-primary);
         width: var(--space-6);
         height: var(--space-6);
         border-radius: var(--radius-full);
@@ -87,14 +93,14 @@
     .play-info {
       padding: var(--space-4);
       
-      .play-name { margin: 0 0 var(--space-1); font-size: var(--ds-font-size-md); font-weight: var(--ds-font-weight-bold); }
+      .play-name { margin: var(--space-0) var(--space-0) var(--space-1); font-size: var(--ds-font-size-md); font-weight: var(--ds-font-weight-bold); }
       .play-category { font-size: var(--ds-font-size-xs); color: var(--color-text-secondary); margin-bottom: var(--space-3); }
 
       .play-tags {
         display: flex;
         flex-wrap: wrap;
         gap: var(--space-1);
-        .tag { font-size: var(--ds-font-size-2xs); background: var(--ui-surface-subtle); padding: var(--space-0-5) var(--space-1-5); border-radius: var(--radius-sm); }
+        .tag { font-size: var(--ds-font-size-2xs); background: var(--surface-secondary); padding: var(--space-0-5) var(--space-1-5); border-radius: var(--radius-sm); }
       }
     }
   }

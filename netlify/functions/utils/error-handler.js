@@ -4,6 +4,8 @@
 
 "use strict";
 
+import { buildRequestLogContext, createLogger } from "./structured-logger.js";
+
 /**
  * Error types for categorization
  * @readonly
@@ -37,6 +39,7 @@ const ALLOWED_ORIGINS = [
 ];
 
 const DEFAULT_DEV_ORIGIN = "http://localhost:4200";
+const logger = createLogger({ service: "netlify.error-handler" });
 
 const getCorsOrigin = (requestOrigin) => {
   // In development, allow all origins
@@ -68,7 +71,8 @@ function getCorsHeaders(eventOrOrigin = null) {
 
 const CORS_HEADERS = {
   "Access-Control-Allow-Origin": getCorsOrigin(null),
-  "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Request-Id",
+  "Access-Control-Allow-Headers":
+    "Content-Type, Authorization, X-Request-Id, X-Correlation-Id",
   "Access-Control-Allow-Methods": "GET, POST, PUT, PATCH, DELETE, OPTIONS",
   "Access-Control-Allow-Credentials": "true",
   "Content-Type": "application/json",
@@ -132,11 +136,17 @@ function createErrorResponse(
   }
 
   // Log the error with requestId if available
-  const logPrefix = requestId ? `[${requestId}]` : "";
-  console.error(
-    `${logPrefix}[${resolvedErrorType}] ${resolvedStatusCode}:`,
-    errorMessage,
-    resolvedError?.stack || "",
+  logger.error(
+    "http_error_response",
+    resolvedError instanceof Error ? resolvedError : undefined,
+    {
+      status_code: resolvedStatusCode,
+      error_type: resolvedErrorType,
+      request_id: requestId ?? undefined,
+      correlation_id: additionalData?.correlationId,
+      trace_id: additionalData?.correlationId,
+      error_message: errorMessage,
+    },
   );
 
   const errorDetails =
@@ -311,7 +321,9 @@ function handleConflictError(message = "Resource already exists") {
  * @returns {object} 500 response
  */
 function handleDatabaseError(error, context = "Database operation") {
-  console.error(`[Database Error] ${context}:`, error);
+  logger.error("database_operation_failed", error, {
+    operation_context: context,
+  });
   return createErrorResponse(
     "A database error occurred. Please try again later.",
     500,
@@ -326,9 +338,8 @@ function handleDatabaseError(error, context = "Database operation") {
  * @returns {object} 500 response
  */
 function handleServerError(error, context = "Operation") {
-  console.error(`[Server Error] ${context}:`, error);
-  console.error(`[Server Error] Stack:`, error.stack);
-  console.error(`[Server Error] Details:`, {
+  logger.error("server_operation_failed", error, {
+    operation_context: context,
     message: error.message,
     name: error.name,
     code: error.code,
@@ -413,7 +424,9 @@ function withErrorHandling(handler, context = "Function") {
     try {
       return await handler(event, ...args);
     } catch (error) {
-      console.error(`[${context}] Unhandled error:`, error);
+      logger.error("wrapped_handler_unhandled_error", error, {
+        operation_context: context,
+      });
 
       // Categorize and handle different error types
       if (error.code === "PGRST116" || error.message?.includes("not found")) {
@@ -464,10 +477,11 @@ async function tryCatch(operation, context = "Operation", options = {}) {
       return { success: true, data: result };
     } catch (error) {
       lastError = error;
-      console.error(
-        `[${context}] Error (attempt ${attempt + 1}/${retries + 1}):`,
-        error,
-      );
+      logger.error("retryable_operation_failed", error, {
+        operation_context: context,
+        attempt: attempt + 1,
+        max_attempts: retries + 1,
+      });
 
       // Don't retry on certain errors
       if (error.message?.includes("timed out") || attempt === retries) {
@@ -512,7 +526,9 @@ function validateJWT(event, jwt, secret) {
 
     return { success: true, decoded };
   } catch (jwtError) {
-    console.error("[JWT Validation] Error:", jwtError.message);
+    logger.warn("jwt_validation_failed", {
+      message: jwtError.message,
+    });
     return {
       success: false,
       error: handleAuthenticationError("Invalid or expired token"),
@@ -525,12 +541,16 @@ function validateJWT(event, jwt, secret) {
  * @param {string} functionName - Name of the function
  * @param {object} event - Netlify function event
  */
-function logFunctionCall(functionName, event) {
+function logFunctionCall(functionName, event, extraContext = {}) {
   const ip =
     (event.headers && event.headers["x-forwarded-for"]) ||
     (event.headers && event.headers["X-Forwarded-For"]) ||
     "unknown";
-  console.log(`[${functionName}] ${event.httpMethod} request from ${ip}`);
+  logger.info("function_request_received", {
+    function_name: functionName,
+    client_ip: ip,
+    ...buildRequestLogContext(event, extraContext),
+  });
 }
 
 // Export functions for use in other Netlify functions

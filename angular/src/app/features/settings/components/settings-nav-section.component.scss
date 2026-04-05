@@ -1,5 +1,6 @@
 .settings-nav-item {
   justify-content: flex-start;
+  border-radius: var(--radius-lg);
   transition:
     background-color var(--transition-fast) var(--ease-standard),
     color var(--transition-fast) var(--ease-standard);
@@ -13,9 +14,10 @@
 }
 
 .settings-nav-item--active {
-  background: var(--ds-primary-green-subtle, rgba(var(--ds-primary-green-rgb), 0.08));
+  background: color-mix(in srgb, var(--ds-primary-green) 10%, transparent);
   color: var(--ds-primary-green);
   font-weight: var(--ds-font-weight-semibold);
+  border-radius: var(--radius-lg);
 }
 
 .settings-nav-item--active i {

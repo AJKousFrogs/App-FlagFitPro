@@ -26,7 +26,7 @@
     justify-content: space-between;
     align-items: flex-start;
     gap: var(--space-3);
-    margin: 0;
+    margin: var(--space-0);
 
     .header-content {
       display: flex;
@@ -34,7 +34,7 @@
       gap: var(--space-1);
 
       h3 {
-        margin: 0;
+        margin: var(--space-0);
         font-size: var(--ds-font-size-md);
         font-weight: var(--ds-font-weight-semibold);
       }
@@ -50,7 +50,7 @@
     display: flex;
     align-items: center;
     gap: var(--layout-page-section-gap-tight);
-    margin: 0;
+    margin: var(--space-0);
   }
 
   .progress-ring {
@@ -66,7 +66,7 @@
 
     .ring-bg {
       fill: none;
-      stroke: var(--surface-border);
+      stroke: var(--color-border-primary);
       stroke-width: 8;
     }
 
@@ -183,7 +183,7 @@
       var(--ds-primary-green-ultra-subtle)
     );
     border-radius: var(--component-card-radius);
-    margin: 0;
+    margin: var(--space-0);
     gap: var(--layout-page-section-gap-tight);
     flex-wrap: wrap;
 
@@ -213,7 +213,7 @@
     gap: var(--layout-page-section-gap-tight);
 
     h4 {
-      margin: 0;
+      margin: var(--space-0);
       font-size: var(--ds-font-size-md);
     }
   }
@@ -228,10 +228,10 @@
   }
 
   .cycle-card {
-    background: var(--surface-ground);
+    background: var(--surface-secondary);
     border-radius: var(--component-card-radius);
     padding: var(--component-card-padding-compact);
-    border: var(--border-2) solid var(--surface-border);
+    border: var(--border-2) solid var(--color-border-primary);
 
     &.active {
       border-color: var(--color-brand-primary);
@@ -257,14 +257,14 @@
     }
 
     h5 {
-      margin: 0 0 var(--space-1) 0;
+      margin: var(--space-0) var(--space-0) var(--space-1) var(--space-0);
       font-size: var(--ds-font-size-md);
     }
 
     .cycle-focus {
       font-size: var(--ds-font-size-md);
       color: var(--color-text-secondary);
-      margin: 0 0 var(--space-2) 0;
+      margin: var(--space-0) var(--space-0) var(--space-2) var(--space-0);
     }
 
     .target-event {
@@ -291,7 +291,7 @@
     .cycle-dates {
       font-size: var(--ds-font-size-xs);
       color: var(--color-text-secondary);
-      margin: 0;
+      margin: var(--space-0);
     }
   }
 
@@ -301,7 +301,7 @@
     gap: var(--layout-page-section-gap-tight);
 
     h4 {
-      margin: 0;
+      margin: var(--space-0);
       font-size: var(--ds-font-size-md);
     }
   }
@@ -335,7 +335,7 @@
 
     .countdown-text {
       h3 {
-        margin: 0;
+        margin: var(--space-0);
         font-size: var(--ds-font-size-2xl);
       }
 

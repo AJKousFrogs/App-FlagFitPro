@@ -3,14 +3,17 @@ import { baseHandler } from "./utils/base-handler.js";
 import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
 import { parseJsonObjectBody } from "./utils/input-validator.js";
 import { supabaseAdmin } from "./supabase-client.js";
+import { buildRequestLogContext, createLogger } from "./utils/structured-logger.js";
 
 // Netlify Function: Training Suggestions
 // Provides AI-powered training suggestions based on user history and performance
 
+const logger = createLogger({ service: "netlify.training-suggestions" });
+
 /**
  * Analyze user's training history to identify gaps and opportunities
  */
-async function analyzeTrainingHistory(userId) {
+async function analyzeTrainingHistory(userId, log = logger) {
   // Default values to return on error or no data
   const defaultAnalysis = {
     sessions: [],
@@ -29,31 +32,20 @@ async function analyzeTrainingHistory(userId) {
 
   // Validate userId
   if (!userId) {
-    console.warn(
-      "[training-suggestions] analyzeTrainingHistory called without userId",
-    );
+    log.warn("training_history_analysis_missing_user_id");
     return { ...defaultAnalysis, error: "No user ID provided" };
   }
 
   try {
-    // #region agent log
-    console.log(
-      "[training-suggestions] analyzeTrainingHistory called with userId:",
-      userId,
-    );
-    // #endregion
-
     // Get recent training sessions (last 30 days)
     const thirtyDaysAgo = new Date();
     thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
 
-    // #region agent log
-    console.log("[training-suggestions] Querying training_sessions table...");
-    // #endregion
-
     // Check if supabaseAdmin is available
     if (!supabaseAdmin) {
-      console.error("[training-suggestions] Supabase client not initialized");
+      log.error("training_history_analysis_supabase_unavailable", undefined, {
+        user_id: userId,
+      });
       return { ...defaultAnalysis, error: "Database connection unavailable" };
     }
 
@@ -67,24 +59,13 @@ async function analyzeTrainingHistory(userId) {
       .order("session_date", { ascending: false });
 
     if (error) {
-      // #region agent log
-      console.error(
-        "[training-suggestions] Database error:",
-        error.message,
-        error.code,
-        error.details,
-      );
-      // #endregion
+      log.error("training_history_analysis_query_failed", error, {
+        user_id: userId,
+        table: "training_sessions",
+      });
       // Return default structure with error info instead of throwing
       return { ...defaultAnalysis, error: "Failed to analyze training history" };
     }
-
-    // #region agent log
-    console.log(
-      "[training-suggestions] Found sessions:",
-      sessions?.length || 0,
-    );
-    // #endregion
 
     // Analyze session types
     const sessionTypes = {};
@@ -142,11 +123,9 @@ async function analyzeTrainingHistory(userId) {
       error: null,
     };
   } catch (error) {
-    console.error(
-      "[training-suggestions] Error analyzing training history:",
-      error.message,
-      error.stack,
-    );
+    log.error("training_history_analysis_failed", error, {
+      user_id: userId,
+    });
     return { ...defaultAnalysis, error: "Failed to analyze training history" };
   }
 }
@@ -358,16 +337,15 @@ function generateSuggestions(analysis, params = {}) {
 /**
  * Main handler function
  */
-async function handleRequest(event, context, { userId, requestId }) {
-  // #region agent log
-  console.log(
-    "[training-suggestions] handleRequest called, userId:",
-    userId,
-    "method:",
-    event.httpMethod,
+async function handleRequest(event, context, { userId, requestId, correlationId }) {
+  const requestLogger = logger.child(
+    buildRequestLogContext(event, {
+      user_id: userId,
+      request_id: requestId,
+      correlation_id: correlationId,
+      trace_id: correlationId,
+    }),
   );
-  // #endregion
-
   try {
     let params = {};
 
@@ -375,12 +353,6 @@ async function handleRequest(event, context, { userId, requestId }) {
     if (event.httpMethod === "POST" && event.body) {
       try {
         params = parseJsonObjectBody(event.body);
-        // #region agent log
-        console.log(
-          "[training-suggestions] Parsed params:",
-          JSON.stringify(params),
-        );
-        // #endregion
       } catch (e) {
         if (
           e?.code === "INVALID_JSON_BODY" &&
@@ -416,27 +388,16 @@ async function handleRequest(event, context, { userId, requestId }) {
     }
 
     // Analyze user's training history
-    // #region agent log
-    console.log("[training-suggestions] Calling analyzeTrainingHistory...");
-    // #endregion
-    const analysis = await analyzeTrainingHistory(params.userId);
-
-    // #region agent log
-    console.log(
-      "[training-suggestions] Analysis complete, totalSessions:",
-      analysis.totalSessions,
-    );
-    // #endregion
+    const analysis = await analyzeTrainingHistory(params.userId, requestLogger);
 
     // Generate suggestions
     const suggestions = generateSuggestions(analysis, params);
-
-    // #region agent log
-    console.log(
-      "[training-suggestions] Generated suggestions:",
-      suggestions.length,
-    );
-    // #endregion
+    requestLogger.info("training_suggestions_generated", {
+      target_user_id: params.userId,
+      total_sessions: analysis.totalSessions,
+      suggestion_count: suggestions.length,
+      had_analysis_error: Boolean(analysis.error),
+    });
 
     return createSuccessResponse({
       suggestions,
@@ -447,13 +408,9 @@ async function handleRequest(event, context, { userId, requestId }) {
       },
     });
   } catch (error) {
-    // #region agent log
-    console.error(
-      "[training-suggestions] CRITICAL ERROR:",
-      error.message,
-      error.stack,
-    );
-    // #endregion
+    requestLogger.error("training_suggestions_request_failed", error, {
+      target_user_id: userId,
+    });
     return createErrorResponse(
       "Failed to generate training suggestions",
       500,

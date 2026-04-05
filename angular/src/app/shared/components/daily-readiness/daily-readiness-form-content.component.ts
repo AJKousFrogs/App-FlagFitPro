@@ -1,4 +1,10 @@
-import { ChangeDetectionStrategy, Component, input, output } from "@angular/core";
+import {
+  ChangeDetectionStrategy,
+  Component,
+  input,
+  output,
+} from "@angular/core";
+import { AcwrCalculationResult } from "../../../core/services/wellness.service";
 import { FormsModule } from "@angular/forms";
 import { InputNumber } from "primeng/inputnumber";
 import { Slider } from "primeng/slider";
@@ -25,6 +31,8 @@ export class DailyReadinessFormContentComponent {
   readonly readinessHint = input.required<string>();
   readonly riskFlags = input.required<string[]>();
   readonly lastWeight = input<number | null>(null);
+  /** Shown after a successful save when `calculate_acwr` returns. */
+  readonly acwrResult = input<AcwrCalculationResult | null>(null);
 
   readonly sliderChange = output<{
     key: Exclude<keyof DailyState, "weight_kg">;

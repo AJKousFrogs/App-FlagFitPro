@@ -19,7 +19,7 @@
 
   .app-dialog-shell--settings.p-dialog .p-dialog-content,
   .app-dialog-shell--settings .p-dialog-content {
-    padding: 0;
+    padding: var(--space-0);
     background: var(--surface-primary);
   }
 

@@ -197,14 +197,12 @@ export class PerformanceDataService {
         }
 
         this.cleanupPerformanceChannels();
-        this.logger.info(
-          "[PerformanceData] User logged in, setting up realtime subscriptions",
-        );
+        this.logger.info("performance_data_realtime_setup_start");
         this.lastRealtimeUserId = userId;
         this.loadRecentData();
         this.subscribeToPerformanceUpdates(userId);
       } else {
-        this.logger.info("[PerformanceData] User logged out, cleaning up");
+        this.logger.info("performance_data_user_logged_out_cleanup");
         this._recentMeasurements.set([]);
         this._recentTests.set([]);
         this._todaysSupplements.set([]);
@@ -239,13 +237,10 @@ export class PerformanceDataService {
     this.getMeasurements("3m", 1, 10).subscribe({
       next: ({ data }) => {
         this._recentMeasurements.set(data);
-        this.logger.success("[PerformanceData] Loaded recent measurements");
+        this.logger.success("performance_data_measurements_loaded");
       },
       error: (error) => {
-        this.logger.error(
-          "[PerformanceData] Failed to load measurements:",
-          error,
-        );
+        this.logger.error("performance_data_measurements_load_failed", error);
       },
     });
 
@@ -253,10 +248,10 @@ export class PerformanceDataService {
     this.getPerformanceTests("3m").subscribe({
       next: ({ data }) => {
         this._recentTests.set(data);
-        this.logger.success("[PerformanceData] Loaded recent tests");
+        this.logger.success("performance_data_tests_loaded");
       },
       error: (error) => {
-        this.logger.error("[PerformanceData] Failed to load tests:", error);
+        this.logger.error("performance_data_tests_load_failed", error);
       },
     });
 
@@ -264,13 +259,10 @@ export class PerformanceDataService {
     this.getSupplements("1d").subscribe({
       next: ({ data }) => {
         this._todaysSupplements.set(data);
-        this.logger.success("[PerformanceData] Loaded today's supplements");
+        this.logger.success("performance_data_supplements_loaded");
       },
       error: (error) => {
-        this.logger.error(
-          "[PerformanceData] Failed to load supplements:",
-          error,
-        );
+        this.logger.error("performance_data_supplements_load_failed", error);
       },
     });
   }
@@ -296,7 +288,7 @@ export class PerformanceDataService {
       })
       .subscribe((status) => {
         if (status === "SUBSCRIBED") {
-          this.logger.debug("[PerformanceData] Measurement broadcast subscribed");
+          this.logger.debug("performance_data_measurement_broadcast_subscribed");
         }
       });
   }
@@ -313,7 +305,7 @@ export class PerformanceDataService {
       })
       .subscribe((status) => {
         if (status === "SUBSCRIBED") {
-          this.logger.debug("[PerformanceData] Performance test broadcast subscribed");
+          this.logger.debug("performance_data_test_broadcast_subscribed");
         }
       });
   }
@@ -330,7 +322,7 @@ export class PerformanceDataService {
       })
       .subscribe((status) => {
         if (status === "SUBSCRIBED") {
-          this.logger.debug("[PerformanceData] Supplement broadcast subscribed");
+          this.logger.debug("performance_data_supplement_broadcast_subscribed");
         }
       });
   }
@@ -495,7 +487,7 @@ export class PerformanceDataService {
     const userId = this.userId();
 
     if (!userId) {
-      this.logger.warn("[Performance] No user logged in");
+      this.logger.warn("performance_no_user");
       return of({
         data: [] as PhysicalMeasurement[],
         summary: {} as MeasurementsSummary,
@@ -518,7 +510,7 @@ export class PerformanceDataService {
           .range((page - 1) * limit, page * limit - 1);
 
         if (error) {
-          this.logger.error("[Performance] Error fetching measurements", error);
+          this.logger.error("performance_measurements_fetch_error", error);
           throw error;
         }
 
@@ -549,7 +541,7 @@ export class PerformanceDataService {
       })(),
     ).pipe(
       catchError((error) => {
-        this.logger.error("[Performance] Failed to fetch measurements", error);
+        this.logger.error("performance_measurements_fetch_failed", error);
         return of({
           data: [] as PhysicalMeasurement[],
           summary: {} as MeasurementsSummary,
@@ -567,9 +559,7 @@ export class PerformanceDataService {
     const userId = this.userId();
 
     if (!userId) {
-      this.logger.error(
-        "[Performance] Cannot log measurement: No user logged in",
-      );
+      this.logger.error("performance_log_measurement_no_user");
       return of({
         success: false,
         error: "Not authenticated. Please log in again.",
@@ -607,14 +597,16 @@ export class PerformanceDataService {
     ).pipe(
       map(({ data, error }) => {
         if (error) {
-          this.logger.error("[Performance] Error logging measurement:", error);
+          this.logger.error("performance_measurement_log_error", error);
           return { success: false, error };
         }
-        this.logger.success("[Performance] Measurement logged:", data.id);
+        this.logger.success("performance_measurement_logged", {
+          id: data.id,
+        });
         return { success: true, data };
       }),
       catchError((error) => {
-        this.logger.error("[Performance] Failed to log measurement:", error);
+        this.logger.error("performance_measurement_log_failed", error);
         return of({ success: false, error: error.message });
       }),
     );
@@ -674,7 +666,7 @@ export class PerformanceDataService {
         if (error) {
           if (isBenignSupabaseQueryError(error)) {
             this.logger.warn(
-              "[Performance] Supplements unavailable in current environment",
+              "performance_supplements_unavailable_environment",
               error,
             );
             return {
@@ -682,7 +674,7 @@ export class PerformanceDataService {
               compliance: { complianceRate: 0, totalDays: 0, missedDays: 0 },
             };
           }
-          this.logger.error("[Performance] Error fetching supplements:", error);
+          this.logger.error("performance_supplements_fetch_error", error);
           throw error;
         }
 
@@ -718,7 +710,7 @@ export class PerformanceDataService {
     ).pipe(
       catchError((error) => {
         if (!isBenignSupabaseQueryError(error)) {
-          this.logger.error("[Performance] Failed to fetch supplements:", error);
+          this.logger.error("performance_supplements_fetch_failed", error);
         }
         return of({
           data: [],
@@ -793,19 +785,16 @@ export class PerformanceDataService {
     const userId = this.userId();
 
     if (!userId) {
-      this.logger.error(
-        "[Performance] Cannot log supplement: No user logged in",
-      );
+      this.logger.error("performance_log_supplement_no_user");
       return of({ success: false, error: "Not authenticated" });
     }
 
     // Validate supplement data
     const validation = this.validateSupplementData(supplement);
     if (!validation.valid) {
-      this.logger.error(
-        "[Performance] Supplement validation failed:",
-        validation.errors,
-      );
+      this.logger.error("performance_supplement_validation_failed", undefined, {
+        errors: validation.errors,
+      });
       return of({ success: false, error: validation.errors.join(", ") });
     }
 
@@ -826,14 +815,14 @@ export class PerformanceDataService {
     ).pipe(
       map(({ data, error }) => {
         if (error) {
-          this.logger.error("[Performance] Error logging supplement:", error);
+          this.logger.error("performance_supplement_log_error", error);
           return { success: false, error };
         }
-        this.logger.success("[Performance] Supplement logged:", data.id);
+        this.logger.success("performance_supplement_logged", { id: data.id });
         return { success: true, data };
       }),
       catchError((error) => {
-        this.logger.error("[Performance] Failed to log supplement:", error);
+        this.logger.error("performance_supplement_log_failed", error);
         return of({ success: false, error: error.message });
       }),
     );
@@ -883,7 +872,7 @@ export class PerformanceDataService {
         if (error) {
           if (isBenignSupabaseQueryError(error)) {
             this.logger.warn(
-              "[Performance] Performance tests unavailable in current environment",
+              "performance_tests_unavailable_environment",
               error,
             );
             return {
@@ -893,7 +882,7 @@ export class PerformanceDataService {
               pagination: { total: 0 },
             };
           }
-          this.logger.error("[Performance] Error fetching tests:", error);
+          this.logger.error("performance_tests_fetch_error", error);
           throw error;
         }
 
@@ -923,7 +912,7 @@ export class PerformanceDataService {
     ).pipe(
       catchError((error) => {
         if (!isBenignSupabaseQueryError(error)) {
-          this.logger.error("[Performance] Failed to fetch tests:", error);
+          this.logger.error("performance_tests_fetch_failed", error);
         }
         return of({
           data: [] as PerformanceTest[],
@@ -943,7 +932,7 @@ export class PerformanceDataService {
     const userId = this.userId();
 
     if (!userId) {
-      this.logger.error("[Performance] Cannot log test: No user logged in");
+      this.logger.error("performance_log_test_no_user");
       return of({ success: false });
     }
 
@@ -963,14 +952,14 @@ export class PerformanceDataService {
     ).pipe(
       map(({ data, error }) => {
         if (error) {
-          this.logger.error("[Performance] Error logging test:", error);
+          this.logger.error("performance_test_log_error", error);
           return { success: false, error };
         }
-        this.logger.success("[Performance] Test logged:", data.id);
+        this.logger.success("performance_test_logged", { id: data.id });
         return { success: true, data };
       }),
       catchError((error) => {
-        this.logger.error("[Performance] Failed to log test:", error);
+        this.logger.error("performance_test_log_failed", error);
         return of({ success: false, error: error.message });
       }),
     );
@@ -993,9 +982,7 @@ export class PerformanceDataService {
 
     // This is a complex analysis that could be implemented as a Supabase function
     // For now, return basic structure
-    this.logger.warn(
-      "[Performance] Trends analysis is simplified - consider implementing as DB function",
-    );
+    this.logger.warn("performance_trends_analysis_simplified");
 
     return of({
       performance: {},
@@ -1100,7 +1087,7 @@ export class PerformanceDataService {
         data: exportData,
       };
     } catch (error) {
-      this.logger.error("[Performance] Export failed:", error);
+      this.logger.error("performance_export_failed", error);
       return { success: false, message: "Failed to export data" };
     }
   }

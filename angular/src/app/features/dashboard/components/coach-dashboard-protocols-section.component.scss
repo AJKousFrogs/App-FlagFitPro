@@ -15,7 +15,7 @@
   font-size: var(--ds-font-size-xl);
   font-weight: var(--ds-font-weight-semibold);
   color: var(--color-text-primary);
-  margin: 0;
+  margin: var(--space-0);
   display: flex;
   align-items: center;
   gap: var(--space-2);
@@ -26,7 +26,7 @@
 }
 
 .protocol-group {
-  margin-bottom: 0;
+  margin-bottom: var(--space-0);
 }
 
 .protocol-players {
@@ -42,14 +42,18 @@
   width: 100%;
   gap: var(--space-3);
   padding: var(--space-2);
-  background: var(--surface-ground);
+  background: var(--surface-secondary);
   border: none;
   border-radius: var(--radius-md);
   text-align: left;
   cursor: pointer;
   transition: background-color var(--transition-fast) var(--ease-standard);
 
-  @include ds-hover-state(var(--surface-secondary));
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      background: color-mix(in srgb, var(--ds-primary-green) 4%, var(--surface-secondary));
+    }
+  }
   @include ds-focus-ring;
 }
 

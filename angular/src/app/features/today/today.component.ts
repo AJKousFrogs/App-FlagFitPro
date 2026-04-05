@@ -729,7 +729,7 @@ export class TodayComponent {
       const events = await this.continuityIndicators.getPlayerContinuity(userId);
       this.continuityEvents.set(events);
     } catch (error) {
-      this.logger.warn("[TodayComponent] Failed to load continuity events", {
+      this.logger.warn("today_continuity_events_failed", {
         error,
       });
       this.continuityEvents.set([]);

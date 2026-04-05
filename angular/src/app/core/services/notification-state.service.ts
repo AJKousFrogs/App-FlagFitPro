@@ -325,7 +325,7 @@ export class NotificationStateService implements OnDestroy {
           }
         });
 
-      this.logger.info("[NotificationState] Realtime subscription initialized");
+      this.logger.info("notification_state_realtime_initialized");
       this._realtimeInitialized = true;
     } catch (error) {
       this.logger.error(
@@ -540,7 +540,6 @@ export class NotificationStateService implements OnDestroy {
       this.supabaseService.unsubscribe(this.realtimeChannel);
       this.realtimeChannel = null;
       this.isRealtimeConnected.set(false);
-      this.logger.debug("[NotificationState] Unsubscribed from realtime");
     }
   }
 

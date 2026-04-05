@@ -137,7 +137,7 @@
 }
 
 .post-card {
-  background: var(--surface-primary);
+  background: var(--surface-card);
   border-radius: var(--radius-lg);
   padding: var(--space-4);
   box-shadow: var(--shadow-sm);
@@ -147,9 +147,11 @@
     box-shadow var(--transition-fast) var(--ease-standard);
 }
 
-.post-card:hover {
-  transform: translateY(calc(-1 * var(--space-1) / 4));
-  box-shadow: var(--shadow-md);
+@media (hover: hover) and (pointer: fine) {
+  .post-card:hover {
+    transform: translateY(calc(-1 * var(--space-1) / 4));
+    box-shadow: var(--shadow-md);
+  }
 }
 
 .post-card.highlighted {
@@ -201,7 +203,12 @@
     background-color var(--transition-fast),
     color var(--transition-fast);
 
-  @include ds-hover-state(var(--ds-primary-green), $color: var(--color-text-on-primary));
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      background: var(--ds-primary-green);
+      color: var(--color-text-on-primary);
+    }
+  }
 }
 
 .post-meta {
@@ -260,7 +267,7 @@
   font-size: var(--ds-font-size-md);
   line-height: var(--ds-line-height-relaxed);
   color: var(--color-text-primary);
-  margin: 0;
+  margin: var(--space-0);
 }
 
 /* ============================================
@@ -307,7 +314,7 @@
   align-items: center;
   width: 100%;
   padding: var(--space-3) var(--space-4);
-  background: var(--surface-primary);
+  background: var(--surface-card);
   border: var(--border-2) solid var(--color-border-primary);
   border-radius: var(--radius-lg);
   cursor: pointer;
@@ -451,7 +458,7 @@
   margin-top: var(--space-4);
   border-radius: var(--radius-xl);
   overflow: hidden;
-  transition: transform var(--transition-base);
+  transition: transform var(--transition-fast);
 }
 
 .post-media:hover {
@@ -461,7 +468,7 @@
 .media-image {
   width: 100%;
   display: block;
-  transition: transform var(--transition-base);
+  transition: transform var(--transition-fast);
 }
 
 .post-media:hover .media-image {
@@ -491,7 +498,7 @@
 .stat-item.clickable {
   border: none;
   background: transparent;
-  padding: 0;
+  padding: var(--space-0);
   cursor: pointer;
 }
 
@@ -653,7 +660,11 @@
   border-top-left-radius: var(--radius-sm);
   transition: background-color var(--transition-fast);
 
-  @include ds-hover-state(var(--ds-primary-green-subtle));
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      background: var(--ds-primary-green-subtle);
+    }
+  }
 }
 
 .comment-author {
@@ -666,7 +677,7 @@
 .comment-text {
   font-size: var(--ds-font-size-md);
   color: var(--color-text-primary);
-  margin: 0;
+  margin: var(--space-0);
   line-height: var(--ds-line-height-normal);
 }
 
@@ -685,7 +696,7 @@
   font-weight: var(--ds-font-weight-semibold);
   color: var(--color-text-muted);
   cursor: pointer;
-  padding: 0;
+  padding: var(--space-0);
   transition:
     color var(--transition-fast),
     transform var(--transition-fast);
@@ -723,13 +734,13 @@
   border-radius: var(--radius-full);
   padding: var(--space-1) var(--space-1) var(--space-1) var(--space-4);
   transition:
-    background-color var(--transition-base),
-    box-shadow var(--transition-base),
-    transform var(--transition-base);
+    background-color var(--transition-fast),
+    box-shadow var(--transition-fast),
+    transform var(--transition-fast);
 }
 
 .comment-input-wrapper:focus-within {
-  background: var(--surface-primary);
+  background: var(--surface-card);
   box-shadow: 0 0 0 var(--border-2) var(--ds-primary-green);
   transform: scale(1.01);
 }
@@ -833,7 +844,12 @@
     background-color var(--transition-fast),
     color var(--transition-fast);
 
-  @include ds-hover-state(var(--color-status-error-subtle), $color: var(--color-status-error));
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      background: var(--color-status-error-subtle);
+      color: var(--color-status-error);
+    }
+  }
 }
 
 .add-option-btn {
@@ -856,10 +872,12 @@
     color var(--transition-fast),
     border-style var(--transition-fast);
 
-  @include ds-hover-state(var(--ds-primary-green), $color: var(--color-text-on-primary));
-
-  &:hover {
-    border-style: solid;
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      background: var(--ds-primary-green);
+      color: var(--color-text-on-primary);
+      border-style: solid;
+    }
   }
 }
 
@@ -873,8 +891,8 @@
   font-size: var(--ds-font-size-md);
   font-weight: var(--ds-font-weight-semibold);
   transition:
-    transform var(--transition-base),
-    box-shadow var(--transition-base);
+    transform var(--transition-fast),
+    box-shadow var(--transition-fast);
 
   &:hover {
     transform: scale(1.1);
@@ -896,13 +914,13 @@
   resize: none;
   min-height: var(--space-20);
   transition:
-    background-color var(--transition-base),
-    box-shadow var(--transition-base);
+    background-color var(--transition-fast),
+    box-shadow var(--transition-fast);
 
   @include ds-input-focus(
     $color: null,
     $shadow: inset 0 0 0 var(--border-2) var(--ds-primary-green),
-    $bg: var(--surface-primary)
+    $bg: var(--surface-card)
   );
 }
 

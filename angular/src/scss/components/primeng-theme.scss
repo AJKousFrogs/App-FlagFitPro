@@ -77,7 +77,7 @@
     &::before {
       content: "";
       position: absolute;
-      inset: 0;
+      inset: var(--space-0);
       background: linear-gradient(
         180deg,
         var(--overlay-white-15) 0%,
@@ -92,7 +92,7 @@
     &::after {
       content: "";
       position: absolute;
-      inset: 0;
+      inset: var(--space-0);
       background: radial-gradient(
         circle at var(--ripple-x) var(--ripple-y),
         var(--overlay-white-30) 0%,
@@ -935,7 +935,7 @@
   }
 
   .p-card-content {
-    padding: 0;
+    padding: var(--space-0);
   }
 
   .p-card-footer {
@@ -950,7 +950,7 @@
     font-weight: var(--font-weight-semibold);
     color: var(--color-text-primary);
     line-height: var(--font-h3-line-height);
-    margin: 0;
+    margin: var(--space-0);
   }
 
   .p-card-subtitle {
@@ -1019,7 +1019,7 @@
     line-height: var(--font-h2-line-height);
     letter-spacing: var(--ds-letter-spacing-normal);
     color: var(--color-text-primary);
-    margin: 0;
+    margin: var(--space-0);
   }
 
   .p-dialog-content {
@@ -1520,7 +1520,7 @@
 
     /* Label alignment */
     .p-dropdown-label {
-      padding: 0;
+      padding: var(--space-0);
       display: flex;
       align-items: center;
       height: 100%;
@@ -1676,7 +1676,7 @@
 
     /* Label alignment */
     .p-select-label {
-      padding: 0;
+      padding: var(--space-0);
       display: flex;
       align-items: center;
       height: 100%;
@@ -1825,7 +1825,7 @@
 
     /* Label alignment */
     .p-multiselect-label {
-      padding: 0;
+      padding: var(--space-0);
       display: flex;
       align-items: center;
       height: 100%;
@@ -2733,8 +2733,8 @@
       border: none;
       border-bottom: var(--border-2) solid var(--color-border-secondary);
       border-radius: 0;
-      padding: 0;
-      gap: 0;
+      padding: var(--space-0);
+      gap: var(--space-0);
       box-shadow: none;
       margin-bottom: var(--space-5);
     }
@@ -2922,7 +2922,7 @@
     &::after {
       content: "";
       position: absolute;
-      inset: 0;
+      inset: var(--space-0);
       background: linear-gradient(
         90deg,
         transparent 0%,

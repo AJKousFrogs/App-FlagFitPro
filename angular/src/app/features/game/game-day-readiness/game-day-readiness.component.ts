@@ -613,9 +613,9 @@ export class GameDayReadinessComponent implements OnInit {
 
       this.isSubmitted.set(true);
       this.toastService.success(TOAST.SUCCESS.GAME_DAY_READINESS_SUBMITTED);
-      this.logger.success("[GameDayReadiness] Check-in saved successfully");
+      this.logger.success("game_day_readiness_checkin_saved");
     } catch (error) {
-      this.logger.error("[GameDayReadiness] Error submitting:", error);
+      this.logger.error("game_day_readiness_submit_failed", error);
       this.toastService.error(TOAST.ERROR.READINESS_SUBMIT_FAILED);
     } finally {
       this.isSubmitting.set(false);
@@ -654,7 +654,7 @@ export class GameDayReadinessComponent implements OnInit {
         });
       }
 
-      this.logger.info("[GameDayReadiness] Coach notification sent");
+      this.logger.info("game_day_readiness_coach_notification_sent");
     } catch (error) {
       this.logger.warn(
         "[GameDayReadiness] Could not notify coach:",

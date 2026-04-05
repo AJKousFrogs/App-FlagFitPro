@@ -50,7 +50,7 @@ export class MissingDataDetectionService {
 
       if (error && error.code !== "PGRST116") {
         // PGRST116 is "no rows returned" which is fine
-        this.logger.error("[MissingData] Error checking wellness:", error);
+        this.logger.error("missing_data_wellness_check_failed", error);
         return {
           missing: true,
           daysMissing: 999,
@@ -86,7 +86,7 @@ export class MissingDataDetectionService {
         lastCheckin: data.checkin_date,
       };
     } catch (error) {
-      this.logger.error("[MissingData] Error checking wellness:", error);
+      this.logger.error("missing_data_wellness_check_failed", error);
       return {
         missing: true,
         daysMissing: 999,
@@ -112,11 +112,11 @@ export class MissingDataDetectionService {
         return;
       }
 
-      this.logger.info(
-        `[MissingData] Found ${criticalPlayers.length} players with missing wellness data. Coach reminder delivery is backend-managed.`,
-      );
+      this.logger.info("missing_data_critical_players_found", {
+        count: criticalPlayers.length,
+      });
     } catch (error) {
-      this.logger.error("[MissingData] Error creating coach reminders:", error);
+      this.logger.error("missing_data_coach_reminders_failed", error);
     }
   }
 
@@ -137,7 +137,7 @@ export class MissingDataDetectionService {
 
       if (teamError || !teamMembers) {
         this.logger.error(
-          "[MissingData] Error fetching team members:",
+          "missing_data_team_members_fetch_failed",
           teamError,
         );
         return [];
@@ -169,7 +169,7 @@ export class MissingDataDetectionService {
       );
     } catch (error) {
       this.logger.error(
-        "[MissingData] Error getting players with missing data:",
+        "missing_data_players_with_gaps_failed",
         error,
       );
       return [];
@@ -198,7 +198,7 @@ export class MissingDataDetectionService {
         .maybeSingle();
 
       if (error && error.code !== "PGRST116") {
-        this.logger.error("[MissingData] Error checking training:", error);
+        this.logger.error("missing_data_training_check_failed", error);
         return {
           missing: true,
           daysMissing: daysRequired,
@@ -234,7 +234,7 @@ export class MissingDataDetectionService {
         lastCheckin: data.session_date,
       };
     } catch (error) {
-      this.logger.error("[MissingData] Error checking training:", error);
+      this.logger.error("missing_data_training_check_failed", error);
       return {
         missing: true,
         daysMissing: daysRequired,

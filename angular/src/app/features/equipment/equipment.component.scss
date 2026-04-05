@@ -103,7 +103,7 @@
   height: var(--indicator-size-md);
   border-radius: var(--radius-circle);
   margin-left: var(--space-2);
-  border: var(--border-1) solid var(--surface-border);
+  border: var(--border-1) solid var(--color-border-primary);
 }
 
 .quantity-cell {
@@ -154,7 +154,7 @@
   padding: var(--space-3);
   background: var(--surface-100);
   border-radius: var(--radius-lg);
-  margin: 0;
+  margin: var(--space-0);
 }
 
 @include respond-to(md) {

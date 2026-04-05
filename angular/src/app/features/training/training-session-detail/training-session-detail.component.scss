@@ -26,12 +26,12 @@
     }
 
     h3 {
-      margin: 0;
+      margin: var(--space-0);
       color: var(--text-primary);
     }
 
     p {
-      margin: 0;
+      margin: var(--space-0);
       color: var(--color-text-secondary);
     }
   }

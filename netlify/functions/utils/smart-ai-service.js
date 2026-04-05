@@ -1,6 +1,7 @@
 import { supabaseAdmin } from "../utils/supabase-client.js";
 import { generateEmbedding, generateEmbeddings as _generateEmbeddings, cosineSimilarity as _cosineSimilarity, isEmbeddingServiceAvailable } from "./embedding-service.js";
 import { generateCoachingResponse as _generateCoachingResponse, generateClarifyingQuestion } from "./groq-client.js";
+import { createLogger } from "./structured-logger.js";
 
 /**
  * Smart AI Service
@@ -15,6 +16,8 @@ import { generateCoachingResponse as _generateCoachingResponse, generateClarifyi
  * This service orchestrates all smart features to create
  * intelligent, contextual conversations.
  */
+
+const logger = createLogger({ service: "netlify.smart-ai-service" });
 
 // =============================================================================
 // CONSTANTS
@@ -52,7 +55,7 @@ async function searchKnowledgeSemantic(query, options = {}) {
 
   // Check if semantic search is available
   if (!isEmbeddingServiceAvailable()) {
-    console.log("[Smart AI] Embeddings not available, using keyword search");
+    logger.info("smart_ai_embeddings_unavailable_fallback_to_keyword");
     return searchKnowledgeKeyword(query, { limit, category, riskLevel });
   }
 
@@ -80,16 +83,21 @@ async function searchKnowledgeSemantic(query, options = {}) {
     );
 
     if (error) {
-      console.error("[Smart AI] Semantic search error:", error);
+      logger.error("smart_ai_semantic_search_error", error, {
+        query,
+      });
       return searchKnowledgeKeyword(query, { limit, category, riskLevel });
     }
 
-    console.log(
-      `[Smart AI] Semantic search found ${results?.length || 0} results`,
-    );
+    logger.debug("smart_ai_semantic_search_completed", {
+      query,
+      result_count: results?.length || 0,
+    });
     return results || [];
   } catch (error) {
-    console.error("[Smart AI] Semantic search failed:", error);
+    logger.error("smart_ai_semantic_search_failed", error, {
+      query,
+    });
     return searchKnowledgeKeyword(query, { limit, category, riskLevel });
   }
 }
@@ -133,7 +141,9 @@ async function searchKnowledgeKeyword(query, options = {}) {
     .limit(limit);
 
   if (error) {
-    console.error("[Smart AI] Keyword search error:", error);
+    logger.error("smart_ai_keyword_search_failed", error, {
+      query,
+    });
     return [];
   }
 
@@ -413,7 +423,9 @@ async function getConversationMemory(userId, query, options = {}) {
         relevantSummaries = data || [];
       }
     } catch (error) {
-      console.error("[Smart AI] Error getting conversation memory:", error);
+      logger.error("smart_ai_conversation_memory_fetch_failed", error, {
+        user_id: userId,
+      });
     }
   }
 
@@ -526,7 +538,10 @@ async function summarizeConversation(sessionId, userId) {
     .single();
 
   if (error) {
-    console.error("[Smart AI] Error saving summary:", error);
+    logger.error("smart_ai_summary_save_failed", error, {
+      session_id: sessionId,
+      user_id: userId,
+    });
   }
 
   return summary;
@@ -550,7 +565,9 @@ async function getPendingCheckins(userId) {
     .limit(3);
 
   if (error) {
-    console.error("[Smart AI] Error getting checkins:", error);
+    logger.error("smart_ai_pending_checkins_fetch_failed", error, {
+      user_id: userId,
+    });
     return [];
   }
 
@@ -569,10 +586,15 @@ async function generateUserCheckins(userId) {
       },
     );
 
-    console.log(`[Smart AI] Generated ${count} proactive check-ins for user`);
+    logger.info("smart_ai_proactive_checkins_generated", {
+      user_id: userId,
+      count,
+    });
     return count;
   } catch (error) {
-    console.error("[Smart AI] Error generating checkins:", error);
+    logger.error("smart_ai_proactive_checkins_generation_failed", error, {
+      user_id: userId,
+    });
     return 0;
   }
 }
@@ -591,7 +613,10 @@ async function updateCheckinStatus(checkinId, status, engagedAt = null) {
     .eq("id", checkinId);
 
   if (error) {
-    console.error("[Smart AI] Error updating checkin:", error);
+    logger.error("smart_ai_checkin_update_failed", error, {
+      checkin_id: checkinId,
+      status,
+    });
   }
 }
 
@@ -643,7 +668,10 @@ async function recordFeedbackWithLearning(feedbackData) {
     .single();
 
   if (error) {
-    console.error("[Smart AI] Error saving feedback:", error);
+    logger.error("smart_ai_feedback_save_failed", error, {
+      message_id: messageId,
+      user_id: userId,
+    });
     return null;
   }
 
@@ -658,7 +686,9 @@ async function recordFeedbackWithLearning(feedbackData) {
       },
     });
   } catch (err) {
-    console.error("[Smart AI] Error learning preferences:", err);
+    logger.error("smart_ai_preference_learning_failed", err, {
+      user_id: userId,
+    });
   }
 
   return feedback;
@@ -676,7 +706,9 @@ async function getLearnedPreferences(userId) {
     .order("confidence_score", { ascending: false });
 
   if (error) {
-    console.error("[Smart AI] Error getting preferences:", error);
+    logger.error("smart_ai_preferences_fetch_failed", error, {
+      user_id: userId,
+    });
     return {};
   }
 
@@ -727,9 +759,11 @@ async function processSmartQuery({
     ambiguity.isAmbiguous,
   );
 
-  console.log(
-    `[Smart AI] Routing: ${routingAction}, Confidence: ${classification.confidence}, Ambiguous: ${ambiguity.isAmbiguous}`,
-  );
+  logger.debug("smart_ai_routing_decision", {
+    routing_action: routingAction,
+    confidence: classification.confidence,
+    ambiguous: ambiguity.isAmbiguous,
+  });
 
   // 2. If too ambiguous, return clarification request
   if (

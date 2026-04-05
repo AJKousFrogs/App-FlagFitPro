@@ -34,6 +34,7 @@
   font-size: var(--ds-font-size-3xl);
   font-weight: var(--ds-font-weight-bold);
   color: var(--color-text-on-primary);
+  letter-spacing: -0.04em;
 }
 
 .game-clock {
@@ -46,6 +47,7 @@
 .item-time {
   font-size: var(--ds-font-size-3xl);
   font-weight: var(--ds-font-weight-semibold);
+  letter-spacing: -0.04em;
 }
 
 .quarter {
@@ -79,7 +81,7 @@
   cursor: pointer;
   stroke: var(--color-text-on-primary);
   stroke-width: var(--border-2);
-  transition: r var(--transition-base);
+  transition: r var(--transition-fast);
 }
 
 .player-marker:hover {
@@ -98,13 +100,13 @@
 .field-action {
   background: var(--surface-overlay-darkest);
   color: var(--color-text-on-primary);
-  border: var(--border-2) solid var(--surface-primary);
+  border: var(--border-2) solid var(--surface-card);
   padding: var(--space-3) var(--space-4);
   border-radius: var(--radius-2xl);
   font-weight: var(--ds-font-weight-semibold);
   -webkit-backdrop-filter: blur(calc(var(--space-2) + var(--space-0-5)));
   backdrop-filter: blur(calc(var(--space-2) + var(--space-0-5)));
-  transition: transform var(--transition-base);
+  transition: transform var(--transition-fast);
   cursor: pointer;
 }
 

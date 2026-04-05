@@ -1,22 +1,26 @@
-import type { Logger } from "./logger";
+import type { Logger, StructuredJsonLogEntry } from "./logger";
 
-function formatMeta(meta?: unknown): unknown[] {
-  if (meta === undefined) return [];
-  if (Array.isArray(meta)) return meta;
-  return [meta];
-}
-
+/**
+ * Writes one JSON object per log line to the appropriate console API.
+ */
 export class ConsoleLoggerAdapter implements Logger {
-  debug(message: string, meta?: unknown): void {
-    console.debug(message, ...formatMeta(meta));
-  }
-  info(message: string, meta?: unknown): void {
-    console.info(message, ...formatMeta(meta));
-  }
-  warn(message: string, meta?: unknown): void {
-    console.warn(message, ...formatMeta(meta));
-  }
-  error(message: string, meta?: unknown): void {
-    console.error(message, ...formatMeta(meta));
+  write(entry: StructuredJsonLogEntry): void {
+    const line = JSON.stringify(entry);
+    switch (entry.level) {
+      case "debug":
+        console.debug(line);
+        break;
+      case "info":
+        console.info(line);
+        break;
+      case "warn":
+        console.warn(line);
+        break;
+      case "error":
+        console.error(line);
+        break;
+      default:
+        console.info(line);
+    }
   }
 }

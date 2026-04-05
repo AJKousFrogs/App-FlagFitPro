@@ -112,7 +112,7 @@
 }
 
 .skeleton-exercise-card {
-  padding: 0;
+  padding: var(--space-0);
   overflow: hidden;
   .exercise-info { padding: var(--space-4); display: flex; flex-direction: column; gap: var(--space-3); }
   .exercise-tags { display: flex; gap: var(--space-2); }

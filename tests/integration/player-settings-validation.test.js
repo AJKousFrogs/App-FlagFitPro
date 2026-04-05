@@ -43,6 +43,79 @@ describe("player-settings validation hardening", () => {
     expect(response.statusCode).toBe(422);
   });
 
+  it("accepts string preferredTrainingDays and maxSessionsPerWeek after coercion", async () => {
+    const savedRow = {
+      primary_position: "wr_db",
+      secondary_position: null,
+      birth_date: null,
+      flag_practice_schedule: [],
+      preferred_training_days: [1, 2, 3],
+      daily_routine: null,
+      max_sessions_per_week: 4,
+      has_gym_access: true,
+      has_field_access: true,
+      warmup_focus: null,
+      available_equipment: [],
+      current_limitations: null,
+    };
+
+    mockSupabase = {
+      from: vi.fn((tableName) => {
+        if (tableName === "age_recovery_modifiers") {
+          return {
+            select: vi.fn(() => ({
+              lte: vi.fn(() => ({
+                gte: vi.fn(() => ({
+                  single: vi.fn(() =>
+                    Promise.resolve({ data: null, error: { code: "PGRST116" } }),
+                  ),
+                })),
+              })),
+            })),
+          };
+        }
+
+        if (tableName === "athlete_training_config") {
+          return {
+            upsert: vi.fn((payload) => ({
+              select: vi.fn(() => ({
+                single: vi.fn(async () => ({
+                  data: { ...savedRow, ...payload },
+                  error: null,
+                })),
+              })),
+            })),
+          };
+        }
+
+        if (tableName === "users") {
+          return {
+            update: vi.fn(() => ({
+              eq: vi.fn(() => Promise.resolve({ data: null, error: null })),
+            })),
+          };
+        }
+
+        throw new Error(`Unexpected table: ${tableName}`);
+      }),
+    };
+
+    const response = await handler(
+      {
+        httpMethod: "POST",
+        path: "/.netlify/functions/player-settings",
+        headers: { authorization: "Bearer test-token" },
+        body: JSON.stringify({
+          preferredTrainingDays: ["1", "2", "3"],
+          maxSessionsPerWeek: "4",
+        }),
+      },
+      {},
+    );
+
+    expect(response.statusCode).toBe(200);
+  });
+
   it("returns 422 for out-of-range maxSessionsPerWeek", async () => {
     const response = await handler(
       {

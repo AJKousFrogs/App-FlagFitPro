@@ -44,7 +44,7 @@
 }
 
 .contract-answer {
-  margin: 0;
+  margin: var(--space-0);
   color: var(--color-text-primary);
 }
 
@@ -92,7 +92,9 @@
     border-color var(--transition-fast) var(--ease-standard),
     color var(--transition-fast) var(--ease-standard);
 
-  @include ds-hover-state(var(--surface-secondary));
+  @media (hover: hover) and (pointer: fine) {
+    &:hover { background: var(--surface-secondary); }
+  }
   @include ds-focus-ring;
 }
 
@@ -125,13 +127,13 @@
 }
 
 .comparison-item h5 {
-  margin: 0 0 var(--space-2) 0;
+  margin: var(--space-0) var(--space-0) var(--space-2) var(--space-0);
   font-size: var(--ds-font-size-sm);
   font-weight: var(--ds-font-weight-semibold);
 }
 
 .comparison-item pre {
-  margin: 0;
+  margin: var(--space-0);
   font-size: var(--ds-font-size-sm);
   white-space: pre-wrap;
   word-break: break-all;
@@ -162,7 +164,7 @@
 }
 
 .history-reason {
-  margin: 0;
+  margin: var(--space-0);
   color: var(--color-text-secondary);
   font-size: var(--ds-font-size-sm);
 }

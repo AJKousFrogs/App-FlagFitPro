@@ -2,6 +2,7 @@ import { createRuntimeV2Handler } from "./utils/runtime-v2-adapter.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { createErrorResponse, handleValidationError } from "./utils/error-handler.js";
 import { parseJsonObjectBody } from "./utils/input-validator.js";
+import { buildRequestLogContext, createLogger } from "./utils/structured-logger.js";
 
 const DEFAULT_DAILY_ROUTINE = [
   { id: "wake", label: "Wake Up", time: "07:00", icon: "pi-sun" },
@@ -77,6 +78,68 @@ function isValidRoutineSlot(value) {
       value.icon === null ||
       (typeof value.icon === "string" && value.icon.length <= 64))
   );
+}
+
+/** Unique sorted day indices 0–6 (Sun–Sat) from mixed client/DB values. */
+function coercePreferredTrainingDaysArray(value) {
+  if (!Array.isArray(value)) {
+    return null;
+  }
+  const seen = new Set();
+  const out = [];
+  for (const raw of value) {
+    const n =
+      typeof raw === "string" ? Number.parseInt(raw, 10) : Number(raw);
+    if (!Number.isInteger(n) || n < 0 || n > 6) {
+      continue;
+    }
+    if (!seen.has(n)) {
+      seen.add(n);
+      out.push(n);
+    }
+  }
+  out.sort((a, b) => a - b);
+  return out.length > 0 ? out : null;
+}
+
+/**
+ * Coerce client payloads (PrimeNG multiselect, JSON) into integer day indices 0–6.
+ * Mutates payload.preferredTrainingDays when present.
+ */
+function normalizePreferredTrainingDaysPayload(payload) {
+  if (payload.preferredTrainingDays === undefined) {
+    return;
+  }
+  if (!Array.isArray(payload.preferredTrainingDays)) {
+    return;
+  }
+  const coerced = coercePreferredTrainingDaysArray(
+    payload.preferredTrainingDays,
+  );
+  payload.preferredTrainingDays = coerced ?? [];
+}
+
+/** Coerce numeric fields that often arrive as strings from forms. */
+function normalizeNumericFieldsPayload(payload) {
+  if (
+    payload.maxSessionsPerWeek !== undefined &&
+    payload.maxSessionsPerWeek !== null
+  ) {
+    const raw = payload.maxSessionsPerWeek;
+    const n =
+      typeof raw === "string" ? Number.parseInt(raw, 10) : Number(raw);
+    if (Number.isFinite(n)) {
+      payload.maxSessionsPerWeek = Math.round(n);
+    }
+  }
+}
+
+function normalizeSettingsPayload(payload) {
+  if (!isPlainObject(payload)) {
+    return;
+  }
+  normalizePreferredTrainingDaysPayload(payload);
+  normalizeNumericFieldsPayload(payload);
 }
 
 function sanitizeDailyRoutine(value) {
@@ -204,13 +267,29 @@ function validateSettingsPayload(payload) {
  * - POST /api/player-settings - Save/update player settings
  */
 
+const logger = createLogger({ service: "netlify.player-settings" });
+
+function createRequestLogger(event, meta = {}) {
+  return logger.child(
+    buildRequestLogContext(event, {
+      request_id: meta.requestId,
+      correlation_id: meta.correlationId,
+      trace_id: meta.traceId ?? meta.correlationId,
+    }),
+  );
+}
+
 const handler = async (event, context) =>
   baseHandler(event, context, {
     functionName: "player-settings",
     allowedMethods: ["GET", "POST"],
     rateLimitType: "UPDATE",
     requireAuth: true,
-    handler: async (evt, _ctx, { userId, supabase }) => {
+    handler: async (evt, _ctx, { userId, supabase, requestId, correlationId }) => {
+      const requestLogger = createRequestLogger(evt, {
+        requestId,
+        correlationId,
+      });
       try {
         if (evt.httpMethod === "GET") {
           return getSettings(supabase, userId);
@@ -222,13 +301,16 @@ const handler = async (event, context) =>
         } catch (_parseError) {
           return handleValidationError("Invalid JSON in request body");
         }
+        normalizeSettingsPayload(payload);
         const validationError = validateSettingsPayload(payload);
         if (validationError) {
           return handleValidationError(validationError);
         }
-        return saveSettings(supabase, userId, payload);
+        return saveSettings(supabase, userId, payload, requestLogger);
       } catch (err) {
-        console.error("Player settings error:", err);
+        requestLogger.error("player_settings_handler_error", err, {
+          user_id: userId,
+        });
         return createErrorResponse("Internal server error", 500, "server_error");
       }
     },
@@ -295,9 +377,10 @@ async function getSettings(supabase, userId) {
         availabilitySchedule: config.flag_practice_schedule || [], // Keep DB field name for now
         availabilityDisclaimer:
           "Availability does not schedule practice. Coaches schedule team activities.",
-        preferredTrainingDays: config.preferred_training_days || [
-          1, 2, 4, 5, 6,
-        ],
+        preferredTrainingDays:
+          coercePreferredTrainingDaysArray(config.preferred_training_days) ?? [
+            1, 2, 4, 5, 6,
+          ],
         dailyRoutine: sanitizeDailyRoutine(config.daily_routine),
         maxSessionsPerWeek: config.max_sessions_per_week || 5,
         hasGymAccess: config.has_gym_access !== false,
@@ -316,7 +399,7 @@ async function getSettings(supabase, userId) {
 /**
  * POST /api/player-settings
  */
-async function saveSettings(supabase, userId, payload) {
+async function saveSettings(supabase, userId, payload, log = logger) {
   const {
     primaryPosition,
     secondaryPosition,
@@ -397,9 +480,13 @@ async function saveSettings(supabase, userId, payload) {
         .from("users")
         .update({ date_of_birth: birthDate })
         .eq("id", userId);
-    } catch (updateError) {
-      console.warn("Could not update users table:", updateError.message);
-    }
+      } catch (updateError) {
+        log.warn("player_settings_user_update_warning", {
+          message: "Could not update users table",
+          err: updateError.message,
+          user_id: userId,
+        });
+      }
   }
 
   return {

@@ -10,7 +10,8 @@
   flex-direction: column;
   height: calc(100vh - var(--header-height, 4rem));
   height: calc(100dvh - var(--header-height, 4rem));
-  overflow: hidden;
+  min-height: 0;
+  overflow-x: hidden;
   background: var(--surface-secondary);
 }
 
@@ -35,7 +36,7 @@
   justify-content: space-between;
   align-items: center;
   padding: var(--space-5) var(--space-6);
-  background: var(--surface-primary);
+  background: var(--surface-card);
   border-bottom: var(--border-1) solid var(--color-border-secondary);
   box-shadow: var(--shadow-2);
 
@@ -48,7 +49,7 @@
   align-items: center;
   gap: var(--space-4);
   max-width: var(--content-max-width-2xl);
-  margin: 0 auto;
+  margin: var(--space-0) auto;
   width: 100%;
   min-width: 0;
 }
@@ -102,14 +103,14 @@
 .chat-title {
   font-size: var(--ds-font-size-2xl);
   font-weight: var(--ds-font-weight-bold);
-  margin: 0;
+  margin: var(--space-0);
   color: var(--color-text-on-primary);
 }
 
 .chat-subtitle {
   font-size: var(--ds-font-size-md);
   color: var(--overlay-white-90);
-  margin: 0;
+  margin: var(--space-0);
 }
 
 .chat-actions {
@@ -121,11 +122,12 @@
 .chat-container {
   display: flex;
   flex: 1;
-  overflow: hidden;
+  min-height: 0;
+  overflow-x: hidden;
   gap: var(--space-4);
   padding: var(--space-4);
   max-width: var(--content-max-width-2xl);
-  margin: 0 auto;
+  margin: var(--space-0) auto;
   width: 100%;
   min-width: 0;
 }
@@ -135,7 +137,7 @@
   display: grid;
   place-items: center;
   min-height: calc(var(--space-10) * 4);
-  background: var(--surface-primary);
+  background: var(--surface-card);
   border-radius: var(--radius-xl);
   box-shadow: var(--shadow-1);
   padding: var(--space-6);
@@ -149,7 +151,7 @@
   width: var(--chart-min-height-md); /* var(--chart-min-height-md) */
   min-width: 0;
   border-right: none;
-  background: var(--surface-primary);
+  background: var(--surface-card);
   padding: var(--space-5);
   overflow-y: auto;
   border-radius: var(--radius-xl);
@@ -285,10 +287,12 @@
 .messages-area {
   flex: 1;
   min-width: 0;
+  min-height: 0;
   display: flex;
   flex-direction: column;
-  background: var(--surface-primary);
-  overflow: hidden;
+  background: var(--surface-card);
+  overflow-x: hidden;
+  overflow-y: visible;
   border-radius: var(--radius-xl);
   box-shadow: var(--shadow-1);
   animation: ui-motion-fade-in 400ms ease-out;
@@ -327,13 +331,13 @@
   font-size: var(--ds-font-size-xl);
   font-weight: var(--ds-font-weight-semibold);
   color: var(--color-text-primary);
-  margin: 0;
+  margin: var(--space-0);
 }
 
 .no-channel-selected p {
   font-size: var(--ds-font-size-sm);
   color: var(--color-text-secondary);
-  margin: 0;
+  margin: var(--space-0);
   text-align: center;
   max-width: 22rem;
   line-height: var(--ds-line-height-relaxed);
@@ -357,9 +361,11 @@
 
 .messages-scroll {
   flex: 1;
+  min-height: 0;
   width: 100%;
   height: calc(100vh - var(--grid-card-min-md));
   height: calc(100dvh - var(--grid-card-min-md));
+  border-radius: var(--radius-xl) var(--radius-xl) 0 0;
 }
 
 .messages-list {
@@ -387,8 +393,8 @@
 }
 
 .message-own .message-content {
-  background: var(--surface-primary);
-  border: var(--border-1) solid var(--ds-primary-green-subtle);
+  background: color-mix(in srgb, var(--ds-primary-green) 6%, var(--surface-card));
+  border: var(--border-1) solid color-mix(in srgb, var(--ds-primary-green) 20%, var(--color-border-primary));
   color: var(--color-text-primary);
   border-radius: var(--radius-lg) var(--radius-lg) var(--radius-sm)
     var(--radius-lg);
@@ -496,7 +502,7 @@
 .message-input-container {
   padding: var(--space-5);
   border-top: var(--border-2) solid var(--color-border-secondary);
-  background: var(--surface-primary);
+  background: var(--surface-card);
   box-shadow: var(--shadow-sm);
 }
 
@@ -508,20 +514,20 @@
   display: flex;
   gap: var(--space-3);
   align-items: center;
-  background: var(--surface-tertiary);
+  background: var(--surface-secondary);
   padding: var(--space-2);
   border-radius: var(--radius-lg);
-  border: var(--border-2) solid var(--color-border-secondary);
+  border: var(--border-2) solid var(--color-border-primary);
   transition:
-    border-color var(--transition-fast),
-    box-shadow var(--transition-fast),
-    background-color var(--transition-fast);
+    border-color var(--transition-fast) var(--ease-standard),
+    box-shadow var(--transition-fast) var(--ease-standard),
+    background-color var(--transition-fast) var(--ease-standard);
 }
 
 .input-row:focus-within {
   border-color: var(--ds-primary-green);
   box-shadow: var(--shadow-focus);
-  background: var(--surface-primary);
+  background: var(--surface-card);
 }
 
 .message-input {
@@ -567,11 +573,13 @@
     background-color var(--motion-fast) var(--ease-standard),
     color var(--motion-fast) var(--ease-standard);
 
-  @include ds-hover-state(
-    var(--ds-primary-green-ultra-subtle),
-    $color: var(--ds-primary-green),
-    $border-color: var(--ds-primary-green)
-  );
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      background: color-mix(in srgb, var(--ds-primary-green) 8%, transparent);
+      color: var(--ds-primary-green);
+      border-color: var(--ds-primary-green);
+    }
+  }
 }
 
 /* ============================================
@@ -583,7 +591,7 @@
   bottom: 100%;
   left: var(--space-4);
   right: var(--space-4);
-  background: var(--surface-primary);
+  background: var(--surface-card);
   border: var(--border-1) solid var(--color-border-secondary);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-3);
@@ -607,7 +615,9 @@
   color: inherit;
   transition: background-color var(--transition-fast);
 
-  @include ds-hover-state(var(--surface-secondary));
+  @media (hover: hover) and (pointer: fine) {
+    &:hover { background: var(--surface-secondary); }
+  }
 }
 
 /* ============================================
@@ -624,17 +634,106 @@
 }
 
 /* ============================================
+   DESKTOP: 3-PANE LAYOUT (Channels + Messages + Members)
+   ============================================ */
+
+@include respond-min(lg) {
+  .chat-container {
+    display: grid;
+    grid-template-columns: var(--chart-min-height-md) 1fr minmax(14rem, 16rem);
+    gap: var(--space-4);
+    
+    // Support for optional members panel visibility
+    &.members-hidden {
+      grid-template-columns: var(--chart-min-height-md) 1fr;
+    }
+  }
+
+  .channels-sidebar {
+    width: 100%;
+  }
+
+  .members-sidebar {
+    background: var(--surface-card);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-1);
+    padding: var(--space-4);
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+
+  .members-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: var(--space-3);
+    border-bottom: var(--border-1) solid var(--color-border-secondary);
+  }
+
+  .members-title {
+    font-size: var(--ds-font-size-sm);
+    font-weight: var(--ds-font-weight-semibold);
+    color: var(--color-text-primary);
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+  }
+
+  .members-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+
+  .member-item {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-2);
+    border-radius: var(--radius-md);
+    transition: background-color var(--transition-fast);
+  }
+
+  .member-item:hover {
+    background: var(--surface-tertiary);
+  }
+
+  .member-name {
+    font-size: var(--ds-font-size-sm);
+    color: var(--color-text-primary);
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .member-role {
+    font-size: var(--ds-font-size-xs);
+    color: var(--color-text-muted);
+  }
+}
+
+/* ============================================
    RESPONSIVE - TABLET
    ============================================ */
 
 @include respond-to(lg) {
   .chat-container {
+    display: flex;
     gap: var(--space-3);
     padding: var(--space-3);
   }
 
   .channels-sidebar {
     width: var(--grid-card-min-md); /* 16.25rem */
+  }
+
+  // Hide members panel on tablet
+  .members-sidebar {
+    display: none;
   }
 }
 
@@ -674,8 +773,8 @@
 
   .chat-container {
     flex-direction: column;
-    gap: 0;
-    padding: 0;
+    gap: var(--space-0);
+    padding: var(--space-0);
   }
 
   .channels-sidebar {

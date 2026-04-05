@@ -403,13 +403,13 @@
     // TABS (pill tablist — structure in _brand-overrides.scss)
     // ============================================
 
-    --p-tabs-nav-padding: 0;
+    --p-tabs-nav-padding: var(--space-0);
     --p-tabs-nav-gap: var(--space-1);
     --p-tabs-tab-padding: var(--space-2) var(--space-5);
     --p-tabs-tab-border-radius: var(--radius-lg);
     --p-tabs-tab-active-border-color: transparent;
     --p-tabs-tab-active-color: var(--ds-primary-green);
-    --p-tabs-content-padding: 0;
+    --p-tabs-content-padding: var(--space-0);
 
     // ============================================
     // MENU

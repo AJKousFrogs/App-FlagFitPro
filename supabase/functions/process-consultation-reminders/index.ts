@@ -5,6 +5,10 @@
 
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import {
+  buildRequestContext,
+  createLogger,
+} from "../_shared/structured-logger.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -12,7 +16,11 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type",
 };
 
+const logger = createLogger("supabase.process-consultation-reminders");
+
 Deno.serve(async (req: Request) => {
+  const requestLogger = logger.child(buildRequestContext(req));
+
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
@@ -154,7 +162,10 @@ Deno.serve(async (req: Request) => {
         }
       } catch (sendError) {
         results.failed++;
-        console.error("Failed to process reminder:", sendError);
+        requestLogger.error("consultation_reminder_processing_failed", sendError, {
+          reminder_id: reminder.id,
+          user_id: reminder.user_id,
+        });
 
         await supabase
           .from("consultation_reminders")
@@ -176,7 +187,7 @@ Deno.serve(async (req: Request) => {
       { headers: { ...corsHeaders, "Content-Type": "application/json" } },
     );
   } catch (error) {
-    console.error("Error processing consultation reminders:", error);
+    requestLogger.error("consultation_reminders_handler_failed", error);
 
     return new Response(
       JSON.stringify({

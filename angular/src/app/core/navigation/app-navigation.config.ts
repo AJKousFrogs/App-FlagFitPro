@@ -60,10 +60,10 @@ const ATHLETE_NAV_ITEMS: readonly AppNavigationItem[] = [
     mobilePrimary: true,
   },
   {
-    label: "Performance",
+    label: "Stats",
     route: "/performance/insights",
     icon: "pi-chart-line",
-    ariaLabel: "Performance - Metrics, tests, and performance insights",
+    ariaLabel: "Performance Stats - Metrics, tests, and performance insights",
     group: "athlete",
     mobilePrimary: true,
   },

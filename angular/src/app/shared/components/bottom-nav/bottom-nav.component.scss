@@ -7,7 +7,7 @@
 
 .bottom-nav {
   position: fixed;
-  inset: auto 0 0;
+  inset: auto var(--space-0) var(--space-0);
   height: calc(var(--bottom-nav-height) + var(--safe-area-bottom));
   background: color-mix(
     in srgb,
@@ -16,10 +16,10 @@
   );
   border-top: var(--border-1) solid var(--color-border-secondary);
   display: none;
-  justify-content: space-between;
+  justify-content: space-around;
   align-items: center;
-  padding: 0 var(--space-2) var(--safe-area-bottom);
-  gap: 0;
+  padding: 0 var(--space-1) var(--safe-area-bottom);
+  gap: var(--space-0-5);
   z-index: var(--z-modal);
   box-sizing: border-box;
   backdrop-filter: blur(20px) saturate(1.6);
@@ -52,7 +52,7 @@
 
 .more-menu {
   position: fixed;
-  inset: auto 0 0;
+  inset: auto var(--space-0) var(--space-0);
   z-index: calc(var(--z-index-modal-backdrop) + 1);
   width: 100%;
   background: color-mix(in srgb, var(--surface-primary) 92%, transparent);

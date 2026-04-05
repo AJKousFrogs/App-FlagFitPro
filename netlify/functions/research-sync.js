@@ -5,6 +5,9 @@ import { authenticateRequest } from "./utils/auth-helper.js";
 import { getUserRole } from "./utils/authorization-guard.js";
 import { createErrorResponse } from "./utils/error-handler.js";
 import { tryParseJsonObjectBody } from "./utils/input-validator.js";
+import { buildRequestLogContext, createLogger } from "./utils/structured-logger.js";
+
+const logger = createLogger({ service: "netlify.research-sync" });
 
 /**
  * Sports Science Research Sync Function
@@ -60,7 +63,10 @@ async function searchPubMed(query, maxResults = 20) {
 
     return articles;
   } catch (error) {
-    console.error("PubMed search error:", error);
+    logger.error("research_pubmed_search_failed", error, {
+      query,
+      max_results: maxResults,
+    });
     return [];
   }
 }
@@ -115,7 +121,9 @@ function parsePubMedXML(xmlText) {
         });
       }
     } catch (e) {
-      console.error("Error parsing article:", e);
+      logger.warn("research_pubmed_article_parse_failed", {
+        source: "pubmed",
+      }, e);
     }
   }
 
@@ -241,7 +249,10 @@ async function searchEuropePMC(query, maxResults = 20) {
       is_open_access: article.isOpenAccess === "Y",
     }));
   } catch (error) {
-    console.error("Europe PMC search error:", error);
+    logger.error("research_europe_pmc_search_failed", error, {
+      query,
+      max_results: maxResults,
+    });
     return [];
   }
 }
@@ -288,7 +299,10 @@ async function searchOpenAlex(query, maxResults = 20) {
       study_type: work.type,
     }));
   } catch (error) {
-    console.error("OpenAlex search error:", error);
+    logger.error("research_openalex_search_failed", error, {
+      query,
+      max_results: maxResults,
+    });
     return [];
   }
 }
@@ -314,7 +328,10 @@ async function searchOpenAlexByInstitution(
 
     const institution = instData.results?.[0];
     if (!institution) {
-      console.log(`Institution not found: ${institutionQuery}`);
+      logger.warn("research_institution_not_found", {
+        institution_query: institutionQuery,
+        topic_query: topicQuery,
+      });
       return [];
     }
 
@@ -357,7 +374,11 @@ async function searchOpenAlexByInstitution(
       institution: institution.display_name,
     }));
   } catch (error) {
-    console.error("OpenAlex institution search error:", error);
+    logger.error("research_openalex_institution_search_failed", error, {
+      institution_query: institutionQuery,
+      topic_query: topicQuery,
+      max_results: maxResults,
+    });
     return [];
   }
 }
@@ -652,8 +673,6 @@ function determineSports(article) {
  * Sync research from all sources for a given topic
  */
 async function syncResearchForTopic(topic, _supabase) {
-  console.log(`Syncing research for topic: ${topic.topic_name}`);
-
   const allArticles = [];
 
   // Search PubMed
@@ -708,8 +727,6 @@ async function syncFromTopInstitutions(topic = null) {
   const startTime = Date.now();
   const supabase = getSupabaseAdmin();
 
-  console.log("Syncing research from top institutions...");
-
   // Get top institutions from database
   const { data: institutions, error: instError } = await supabase
     .from("research_institutions")
@@ -727,14 +744,12 @@ async function syncFromTopInstitutions(topic = null) {
   const errors = [];
 
   for (const institution of institutions) {
+    const searchName =
+      institution.openalex_search_name || institution.institution_name;
+    const searchTopic =
+      topic || institution.focus_areas?.[0]?.replace("_", " ") || "training";
+
     try {
-      const searchName =
-        institution.openalex_search_name || institution.institution_name;
-      const searchTopic =
-        topic || institution.focus_areas?.[0]?.replace("_", " ") || "training";
-
-      console.log(`Searching ${searchName} for: ${searchTopic}`);
-
       const articles = await searchOpenAlexByInstitution(
         searchName,
         searchTopic,
@@ -758,7 +773,11 @@ async function syncFromTopInstitutions(topic = null) {
             });
 
           if (error) {
-            console.error(`Error upserting article: ${error.message}`);
+            logger.error("research_institution_article_upsert_failed", error, {
+              institution_name: institution.institution_name,
+              source: enrichedArticle.source,
+              external_id: enrichedArticle.external_id,
+            });
             totalFailed++;
           } else {
             totalAdded++;
@@ -771,9 +790,10 @@ async function syncFromTopInstitutions(topic = null) {
       // Rate limiting
       await new Promise((resolve) => setTimeout(resolve, 500));
     } catch (e) {
-      console.error(
-        `Error syncing from ${institution.institution_name}: ${e.message}`,
-      );
+      logger.error("research_institution_sync_failed", e, {
+        institution_name: institution.institution_name,
+        search_topic: searchTopic,
+      });
       errors.push({
         institution: institution.institution_name,
         error: e.message,
@@ -873,8 +893,6 @@ async function syncAllResearch() {
   const startTime = Date.now();
   const supabase = getSupabaseAdmin();
 
-  console.log("Starting research sync...");
-
   // Get all active research topics
   const { data: topics, error: topicsError } = await supabase
     .from("research_topics")
@@ -906,13 +924,21 @@ async function syncAllResearch() {
             });
 
           if (error) {
-            console.error(`Error upserting article: ${error.message}`);
+            logger.error("research_article_upsert_failed", error, {
+              topic_name: topic.topic_name,
+              source: article.source,
+              external_id: article.external_id,
+            });
             totalFailed++;
           } else {
             totalAdded++;
           }
         } catch (e) {
-          console.error(`Error processing article: ${e.message}`);
+          logger.error("research_article_processing_failed", e, {
+            topic_name: topic.topic_name,
+            source: article.source,
+            external_id: article.external_id,
+          });
           totalFailed++;
         }
       }
@@ -920,7 +946,9 @@ async function syncAllResearch() {
       // Rate limiting between topics
       await new Promise((resolve) => setTimeout(resolve, 1000));
     } catch (e) {
-      console.error(`Error syncing topic ${topic.topic_name}: ${e.message}`);
+      logger.error("research_topic_sync_failed", e, {
+        topic_name: topic.topic_name,
+      });
       errors.push({ topic: topic.topic_name, error: e.message });
     }
   }
@@ -1117,7 +1145,14 @@ const handler = async (event, context) =>
         allowedMethods: ["POST"],
         rateLimitType: "UPDATE",
         requireAuth: true,
-        handler: async (evt, _ctx, { requestId }) => {
+        handler: async (evt, _ctx, { requestId, correlationId }) => {
+          const requestLogger = logger.child(
+            buildRequestLogContext(evt, {
+              request_id: requestId,
+              correlation_id: correlationId,
+              trace_id: correlationId,
+            }),
+          );
           try {
             const path = evt.path
               .replace(/^\/api\/research\/?/, "")
@@ -1136,9 +1171,9 @@ const handler = async (event, context) =>
               }
             }
 
-            return handleResearchRequest(evt);
+            return handleResearchRequest(evt, requestLogger);
           } catch (error) {
-            console.error("Research sync error:", error);
+            requestLogger.error("research_sync_request_failed", error);
             return createErrorResponse(
               "Internal server error",
               500,
@@ -1153,11 +1188,18 @@ const handler = async (event, context) =>
         allowedMethods: ["GET"],
         rateLimitType: "READ",
         requireAuth: false,
-        handler: async (evt, _ctx, { requestId }) => {
+        handler: async (evt, _ctx, { requestId, correlationId }) => {
+          const requestLogger = logger.child(
+            buildRequestLogContext(evt, {
+              request_id: requestId,
+              correlation_id: correlationId,
+              trace_id: correlationId,
+            }),
+          );
           try {
-            return handleResearchRequest(evt);
+            return handleResearchRequest(evt, requestLogger);
           } catch (error) {
-            console.error("Research sync error:", error);
+            requestLogger.error("research_sync_request_failed", error);
             return createErrorResponse(
               "Internal server error",
               500,
@@ -1168,7 +1210,7 @@ const handler = async (event, context) =>
         },
       });
 
-async function handleResearchRequest(evt) {
+async function handleResearchRequest(evt, log = logger) {
       try {
         const path = evt.path
           .replace(/^\/api\/research\/?/, "")
@@ -1363,10 +1405,10 @@ async function handleResearchRequest(evt) {
       statusCode: 200,
       body: JSON.stringify(result),
     };
-      } catch (error) {
-        console.error("Research sync error:", error);
-        return createErrorResponse("Internal server error", 500, "server_error");
-      }
+  } catch (error) {
+    log.error("research_request_handler_failed", error);
+    return createErrorResponse("Internal server error", 500, "server_error");
+  }
 }
 
 // ESM exports for use in admin.js and other modules

@@ -15,6 +15,7 @@ import { parseAthleteId, parseDateParam } from "./utils/db-query-helper.js";
 import { successResponse } from "./utils/response-helper.js";
 import { getUserRole } from "./utils/authorization-guard.js";
 import { hasAnyRole, LOAD_MANAGEMENT_ACCESS_ROLES } from "./utils/role-sets.js";
+import { buildRequestLogContext, createLogger } from "./utils/structured-logger.js";
 
 function isOptionalSchemaError(error) {
   const code = error?.code;
@@ -126,16 +127,34 @@ async function fetchLegacyMetrics(athleteId, startDate) {
 /**
  * Get training metrics for an athlete
  */
+const logger = createLogger({ service: "netlify.training-metrics" });
+
+function createRequestLogger(event, meta = {}) {
+  return logger.child(
+    buildRequestLogContext(event, {
+      request_id: meta.requestId,
+      correlation_id: meta.correlationId,
+      trace_id: meta.traceId ?? meta.correlationId,
+    }),
+  );
+}
+
 const handler = async (event, context) => {
   return baseHandler(event, context, {
     functionName: "training-metrics",
     allowedMethods: ["GET"],
     rateLimitType: "READ",
     requireAuth: true, // Explicit auth requirement for training metrics
-    handler: async (event, context, { userId, requestId }) => {
+    handler: async (event, context, { userId, requestId, correlationId }) => {
+      const requestLogger = createRequestLogger(event, {
+        requestId,
+        correlationId,
+      });
+      let athleteIdForLog = userId;
       try {
         // Parse query parameters
         const { valid, athleteId, error } = parseAthleteId(event, userId);
+        athleteIdForLog = athleteId;
         if (!valid) {
           return error;
         }
@@ -245,7 +264,10 @@ const handler = async (event, context) => {
           ),
         );
       } catch (error) {
-        console.error("[training-metrics] Unexpected handler error:", error);
+        requestLogger.error("training_metrics_handler_error", error, {
+          user_id: userId,
+          athlete_id: athleteIdForLog,
+        });
         return createErrorResponse(
           "Failed to retrieve metrics",
           500,

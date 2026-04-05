@@ -18,7 +18,7 @@
   align-items: center;
   gap: var(--ds-spacing-sm);
   padding: var(--ds-spacing-sm) 0;
-  border-bottom: var(--border-1) solid var(--surface-border);
+  border-bottom: var(--border-1) solid var(--color-border-secondary);
 
   &:last-child {
     border-bottom: none;
@@ -54,7 +54,7 @@
 .timing-issues {
   margin-top: var(--ds-spacing-md);
   padding-top: var(--ds-spacing-md);
-  border-top: var(--border-1) solid var(--surface-border);
+  border-top: var(--border-1) solid var(--color-border-secondary);
 
   strong {
     display: block;
@@ -64,7 +64,7 @@
   }
 
   ul {
-    margin: 0;
+    margin: var(--space-0);
     padding-left: var(--ds-spacing-lg);
     font-size: var(--ds-font-size-md);
     color: var(--color-text-secondary);

@@ -8,7 +8,7 @@
 .film-room-page {
   width: min(100%, var(--content-max-width-xl));
   margin-inline: auto;
-  padding: 0;
+  padding: var(--space-0);
   display: flex;
   flex-direction: column;
   gap: var(--layout-page-section-gap);
@@ -130,7 +130,7 @@
     }
 
     h3 {
-      margin: 0;
+      margin: var(--space-0);
       font-size: var(--ds-font-size-md);
       font-weight: var(--ds-font-weight-semibold);
       color: var(--ds-text-primary);
@@ -173,7 +173,7 @@
   flex: 1;
 
   p {
-    margin: 0 0 var(--space-1) 0;
+    margin: var(--space-0) var(--space-0) var(--space-1) var(--space-0);
     font-size: var(--ds-font-size-md);
     color: var(--ds-text-secondary);
 
@@ -182,7 +182,7 @@
     }
 
     &:last-child {
-      margin-bottom: 0;
+      margin-bottom: var(--space-0);
     }
   }
 }
@@ -192,7 +192,7 @@
   border-bottom: var(--border-1) solid var(--ds-border-subtle);
 
   p {
-    margin: 0 0 var(--space-2) 0;
+    margin: var(--space-0) var(--space-0) var(--space-2) var(--space-0);
     font-size: var(--ds-font-size-md);
     color: var(--ds-text-secondary);
 
@@ -294,7 +294,7 @@
 .compliance-list {
   h4,
   p {
-    margin: 0;
+    margin: var(--space-0);
   }
 }
 
@@ -315,7 +315,7 @@
 }
 
 .tag-timestamp {
-  margin: 0;
+  margin: var(--space-0);
   padding: var(--space-2);
   background: var(--ds-surface-base);
   border-radius: var(--radius-md);
@@ -356,7 +356,7 @@
     gap: var(--space-2);
 
     label {
-      margin: 0;
+      margin: var(--space-0);
       cursor: pointer;
     }
   }
@@ -377,7 +377,7 @@
     margin-bottom: var(--space-2);
 
     &:last-child {
-      margin-bottom: 0;
+      margin-bottom: var(--space-0);
     }
 
     label {

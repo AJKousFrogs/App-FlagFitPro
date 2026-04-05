@@ -7,7 +7,7 @@
 // Summary Grid
 // Payment Disclaimer
 .payment-disclaimer {
-  margin: 0;
+  margin: var(--space-0);
 }
 
 .summary-grid {
@@ -93,7 +93,7 @@
 
 .fee-item {
   padding: var(--space-3);
-  background: var(--ds-surface-base);
+  background: var(--surface-secondary);
   border-radius: var(--radius-md);
   border-left: var(--border-3) solid var(--color-border-default);
 
@@ -113,14 +113,14 @@
     flex: 1;
 
     h4 {
-      margin: 0 0 var(--space-1) 0;
+      margin: var(--space-0) var(--space-0) var(--space-1) var(--space-0);
       font-size: var(--ds-font-size-md);
       font-weight: var(--ds-font-weight-semibold);
       color: var(--color-text-primary);
     }
 
     p {
-      margin: 0;
+      margin: var(--space-0);
       font-size: var(--ds-font-size-md);
       color: var(--color-text-secondary);
     }
@@ -163,7 +163,7 @@
     gap: var(--space-1);
     background: none;
     border: none;
-    padding: 0;
+    padding: var(--space-0);
     font-size: var(--ds-font-size-md);
     color: var(--color-brand-primary);
     cursor: pointer;
@@ -180,7 +180,7 @@
   .breakdown-list {
     margin-top: var(--space-2);
     padding: var(--space-2);
-    background: var(--ds-surface-elevated);
+    background: var(--surface-card);
     border-radius: var(--radius-sm);
   }
 
@@ -245,7 +245,7 @@
 
 .method-card {
   padding: var(--space-3);
-  background: var(--ds-surface-base);
+  background: var(--surface-secondary);
   border-radius: var(--radius-md);
   border-left: var(--border-3) solid var(--color-brand-primary);
 
@@ -261,7 +261,7 @@
     }
 
     h4 {
-      margin: 0;
+      margin: var(--space-0);
       font-size: var(--ds-font-size-md);
       font-weight: var(--ds-font-weight-semibold);
       color: var(--color-text-primary);
@@ -269,7 +269,7 @@
   }
 
   .method-instructions {
-    margin: 0;
+    margin: var(--space-0);
     font-size: var(--ds-font-size-md);
     color: var(--color-text-secondary);
     line-height: var(--ds-line-height-normal);
@@ -278,11 +278,11 @@
   .method-details {
     margin-top: var(--space-2);
     padding: var(--space-2);
-    background: var(--ds-surface-elevated);
+    background: var(--surface-card);
     border-radius: var(--radius-sm);
 
     pre {
-      margin: 0;
+      margin: var(--space-0);
       font-size: var(--ds-font-size-md);
       color: var(--color-text-primary);
       white-space: pre-wrap;
@@ -304,7 +304,7 @@
   }
 
   p {
-    margin: 0;
+    margin: var(--space-0);
     font-size: var(--ds-font-size-md);
     color: var(--color-warning-text);
   }
@@ -313,7 +313,7 @@
 // Responsive
 @include respond-to(md) {
   .payments-page {
-    padding: 0;
+    padding: var(--space-0);
   }
 
   .summary-grid {

@@ -6,7 +6,7 @@
 }
 
 .partial-data-notice__detail {
-  margin: 0;
+  margin: var(--space-0);
   font-size: var(--ds-font-size-md);
   color: var(--color-text-secondary);
   line-height: var(--ds-line-height-normal);

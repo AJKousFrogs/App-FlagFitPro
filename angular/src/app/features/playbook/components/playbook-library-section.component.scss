@@ -1,3 +1,5 @@
+@use "styles/mixins" as *;
+
 .playbook-filter-select {
   width: var(--size-150);
   max-width: 100%;
@@ -74,10 +76,10 @@
 .play-card {
   cursor: pointer;
   transition:
-    background-color var(--motion-base) var(--ease-standard),
-    border-color var(--motion-base) var(--ease-standard),
-    box-shadow var(--motion-base) var(--ease-standard),
-    transform var(--motion-base) var(--ease-standard);
+    background-color var(--transition-fast) var(--ease-standard),
+    border-color var(--transition-fast) var(--ease-standard),
+    box-shadow var(--transition-fast) var(--ease-standard),
+    transform var(--transition-fast) var(--ease-standard);
 
   @media (hover: hover) and (pointer: fine) {
     &:hover {
@@ -87,11 +89,7 @@
     }
   }
 
-  &:focus-visible {
-    outline: var(--focus-outline-width) solid var(--ds-primary-green);
-    outline-offset: var(--focus-outline-offset);
-    box-shadow: var(--shadow-focus);
-  }
+  @include focus-visible;
 
   &:active {
     transform: scale(0.98);
@@ -110,7 +108,7 @@
       flex-wrap: wrap;
 
       h3 {
-        margin: 0;
+        margin: var(--space-0);
         font-size: var(--ds-font-size-md);
         font-weight: var(--ds-font-weight-semibold);
         color: var(--color-text-primary);
@@ -124,13 +122,13 @@
   }
 
   .play-formation {
-    margin: 0 0 var(--space-2) 0;
+    margin: var(--space-0) var(--space-0) var(--space-2) var(--space-0);
     font-size: var(--ds-font-size-md);
     color: var(--color-text-secondary);
   }
 
   .play-assignment {
-    margin: 0;
+    margin: var(--space-0);
     font-size: var(--ds-font-size-md);
     color: var(--color-text-primary);
     line-height: var(--ds-line-height-normal);

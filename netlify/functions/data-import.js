@@ -2,6 +2,7 @@ import { createRuntimeV2Handler } from "./utils/runtime-v2-adapter.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { createErrorResponse, createSuccessResponse } from "./utils/error-handler.js";
 import { parseJsonObjectBody } from "./utils/input-validator.js";
+import { buildRequestLogContext, createLogger } from "./utils/structured-logger.js";
 
 const DEFAULT_DEVICES = [
   { id: "garmin", name: "Garmin", connected: false },
@@ -78,13 +79,29 @@ async function persistMappedRows(supabase, userId, rows, mappings) {
   return { imported, warnings };
 }
 
+const logger = createLogger({ service: "netlify.data-import" });
+
+function createRequestLogger(event, meta = {}) {
+  return logger.child(
+    buildRequestLogContext(event, {
+      request_id: meta.requestId,
+      correlation_id: meta.correlationId,
+      trace_id: meta.traceId ?? meta.correlationId,
+    }),
+  );
+}
+
 const handler = async (event, context) =>
   baseHandler(event, context, {
     functionName: "data-import",
     allowedMethods: ["GET", "POST"],
     rateLimitType: "UPDATE",
     requireAuth: true,
-    handler: async (evt, _ctx, { userId, supabase }) => {
+    handler: async (evt, _ctx, { userId, supabase, requestId, correlationId }) => {
+      const requestLogger = createRequestLogger(evt, {
+        requestId,
+        correlationId,
+      });
       const subPath = getSubPath(evt.path || "");
 
       try {
@@ -133,7 +150,11 @@ const handler = async (event, context) =>
 
         return createErrorResponse("Endpoint not found", 404, "not_found");
       } catch (error) {
-        console.error("[data-import] Request failed:", error);
+        requestLogger.error("data_import_request_failed", error, {
+          path: subPath,
+          method: evt.httpMethod,
+          user_id: userId,
+        });
         return createErrorResponse(
           error?.message || "Failed to process data import request",
           500,

@@ -1,4 +1,5 @@
 import { Injectable, inject } from "@angular/core";
+import { DEFAULT_TEAM_BRAND_HEX } from "../../../core/utils/design-tokens.util";
 import { LoggerService, toLogContext } from "../../../core/services/logger.service";
 import { SupabaseService } from "../../../core/services/supabase.service";
 import { CoachTeamContextService } from "./coach-team-context.service";
@@ -23,8 +24,8 @@ type ServiceError = { message?: string } | null;
 const DEFAULT_SETTINGS: TeamManagementSettings = {
   name: "",
   logoUrl: "",
-  primaryColor: "#16a34a",
-  secondaryColor: "#0f172a",
+  primaryColor: DEFAULT_TEAM_BRAND_HEX.primary,
+  secondaryColor: DEFAULT_TEAM_BRAND_HEX.secondary,
   league: "",
   homeField: "",
   preferences: {

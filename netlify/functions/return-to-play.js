@@ -3,6 +3,19 @@ import { createRuntimeV2Handler } from "./utils/runtime-v2-adapter.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { createErrorResponse, createSuccessResponse } from "./utils/error-handler.js";
 import { parseJsonObjectBody } from "./utils/input-validator.js";
+import { buildRequestLogContext, createLogger } from "./utils/structured-logger.js";
+
+const logger = createLogger({ service: "netlify.return-to-play" });
+
+function createRequestLogger(event, meta = {}) {
+  return logger.child(
+    buildRequestLogContext(event, {
+      request_id: meta.requestId,
+      correlation_id: meta.correlationId,
+      trace_id: meta.traceId ?? meta.correlationId,
+    }),
+  );
+}
 
 const TOTAL_STAGES = 7;
 
@@ -92,8 +105,12 @@ const handler = async (event, context) =>
     allowedMethods: ["GET", "POST"],
     rateLimitType: "UPDATE",
     requireAuth: true,
-    handler: async (evt, _ctx, { userId, supabase }) => {
+    handler: async (evt, _ctx, { userId, supabase, requestId, correlationId }) => {
       const subPath = getSubPath(evt.path || "");
+      const requestLogger = createRequestLogger(evt, {
+        requestId,
+        correlationId,
+      });
 
       try {
         if (evt.httpMethod === "GET" && (subPath === "" || subPath === "/")) {
@@ -270,7 +287,14 @@ const handler = async (event, context) =>
 
         return createErrorResponse("Endpoint not found", 404, "not_found");
       } catch (error) {
-        console.error("[return-to-play] Request failed:", error);
+        requestLogger.error(
+          "return_to_play_request_failed",
+          error,
+          {
+            http_method: evt.httpMethod,
+            path: evt.path,
+          },
+        );
         return createErrorResponse(
           error?.message || "Failed to process return-to-play request",
           500,

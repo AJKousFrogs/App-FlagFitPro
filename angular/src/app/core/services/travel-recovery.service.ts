@@ -385,7 +385,7 @@ export class TravelRecoveryService {
       "id" | "userId" | "createdAt" | "timezonesEast" | "travelDirection"
     >,
   ): Promise<TravelPlan> {
-    this.logger.debug("[TravelRecoveryService] createTravelPlan called", {
+    this.logger.debug("travel_recovery_service_create_plan", {
       planData,
     });
     const userId = this.supabaseService.userId() || "anonymous";
@@ -394,7 +394,7 @@ export class TravelRecoveryService {
     const depTz = MAJOR_TIMEZONES[planData.departureTimezone];
     const arrTz = MAJOR_TIMEZONES[planData.arrivalTimezone];
 
-    this.logger.debug("[TravelRecoveryService] Timezone data", {
+    this.logger.debug("travel_recovery_service_timezone", {
       departure: depTz,
       arrival: arrTz,
     });
@@ -416,7 +416,7 @@ export class TravelRecoveryService {
       }
     }
 
-    this.logger.debug("[TravelRecoveryService] Travel calculation", {
+    this.logger.debug("travel_recovery_service_calculation", {
       timezonesEast,
       travelDirection,
     });
@@ -435,14 +435,14 @@ export class TravelRecoveryService {
       plan.persistedLogId = persistedLogId;
     }
 
-    this.logger.debug("[TravelRecoveryService] Created plan object", { plan });
+    this.logger.debug("travel_recovery_service_plan_object", { plan });
     this._currentPlan.set(plan);
-    this.logger.debug("[TravelRecoveryService] Current plan signal set");
+    this.logger.debug("travel_recovery_service_plan_signal_set");
 
     this.generateRecoveryProtocol(plan);
-    this.logger.debug("[TravelRecoveryService] Recovery protocol generated");
+    this.logger.debug("travel_recovery_service_protocol_generated");
 
-    this.logger.info("[TravelRecovery] Created travel plan:", {
+    this.logger.info("travel_recovery_plan_created", {
       direction: travelDirection,
       timezones: Math.abs(timezonesEast),
     });
@@ -484,7 +484,7 @@ export class TravelRecoveryService {
         .maybeSingle();
 
       if (error && !String(error.message || "").includes("relation")) {
-        this.logger.warn("[TravelRecoveryService] Failed to load persisted plan", {
+        this.logger.warn("travel_recovery_persist_load_failed", {
           error,
         });
         return;
@@ -520,7 +520,7 @@ export class TravelRecoveryService {
       this._currentPlan.set(hydratedPlan);
       this.generateRecoveryProtocol(hydratedPlan);
     } catch (error) {
-      this.logger.warn("[TravelRecoveryService] Could not restore travel plan", {
+      this.logger.warn("travel_recovery_restore_failed", {
         error,
       });
     }
@@ -598,7 +598,7 @@ export class TravelRecoveryService {
           : new Date(log.created_at || log.arrival_date),
       };
     } catch (error) {
-      this.logger.warn("[TravelRecoveryService] Could not parse stored notes", {
+      this.logger.warn("travel_recovery_notes_parse_failed", {
         error,
       });
       return null;
@@ -621,7 +621,7 @@ export class TravelRecoveryService {
         .single();
 
       if (error) {
-        this.logger.warn("[TravelRecoveryService] Failed to persist travel plan", {
+        this.logger.warn("travel_recovery_persist_save_failed", {
           error,
         });
         return null;
@@ -629,7 +629,7 @@ export class TravelRecoveryService {
 
       return (data as { id?: string } | null)?.id ?? null;
     } catch (error) {
-      this.logger.warn("[TravelRecoveryService] Travel persistence unavailable", {
+      this.logger.warn("travel_recovery_persistence_unavailable", {
         error,
       });
       return null;
@@ -649,12 +649,12 @@ export class TravelRecoveryService {
         .eq("id", persistedLogId);
 
       if (error) {
-        this.logger.warn("[TravelRecoveryService] Failed to clear travel log", {
+        this.logger.warn("travel_recovery_clear_log_failed", {
           error,
         });
       }
     } catch (error) {
-      this.logger.warn("[TravelRecoveryService] Travel log cleanup unavailable", {
+      this.logger.warn("travel_recovery_cleanup_unavailable", {
         error,
       });
     }

@@ -66,20 +66,6 @@ import { NavItemComponent } from "../nav-item.component";
         <span class="logo-text">FlagFit Pro</span>
       </a>
 
-      <!-- User Info Section -->
-      <div
-        class="user-section"
-        [attr.title]="isCollapsed() ? userName() + ' - ' + userRoleLabel() : null"
-      >
-        <div class="user-avatar">
-          {{ userInitials() }}
-        </div>
-        <div class="user-info">
-          <span class="user-name">{{ userName() }}</span>
-          <span class="user-role">{{ userRoleLabel() }}</span>
-        </div>
-      </div>
-
       <nav class="nav-section" aria-label="Main navigation">
         @for (group of navGroupsForRole(); track group.id) {
           <div class="nav-group">
@@ -107,8 +93,12 @@ import { NavItemComponent } from "../nav-item.component";
           </div>
         }
 
-        @if (isCollapsed()) {
-          <div class="nav-group me-group-container me-group-container--collapsed">
+        <!-- Me group — simple, always visible -->
+        <div class="nav-group me-group-container">
+          @if (!isCollapsed()) {
+            <div class="nav-group-title">Me</div>
+          }
+          <div class="nav-group-items">
             @for (item of meItems(); track trackByRoute($index, item)) {
               <app-nav-item
                 [route]="item.route"
@@ -118,73 +108,39 @@ import { NavItemComponent } from "../nav-item.component";
                 [testId]="getNavTestId(item.route)"
                 [itemId]="'nav-' + item.route.replace('/', '')"
                 variant="sidebar"
-                [itemClass]="navItemClass()"
+                [itemClass]="isCollapsed() ? navItemClass() : navItemClass('nav-item-sub')"
                 [tooltipDisabled]="!isCollapsed()"
                 tooltipPosition="right"
                 (clicked)="onNavItemClick()"
               />
             }
           </div>
-        } @else {
-          <!-- COLLAPSIBLE "ME" GROUP -->
-          <div class="me-group-container">
-            <button
-              class="me-group-header"
-              (click)="toggleMeGroup()"
-              [attr.aria-expanded]="meGroupExpanded()"
-              aria-controls="me-group-items"
-              type="button"
-            >
-              <span class="me-group-icon">
-                <i
-                  [class]="
-                    meGroupExpanded()
-                      ? 'pi pi-chevron-down'
-                      : 'pi pi-chevron-right'
-                  "
-                ></i>
-              </span>
-              <span class="me-group-label">Me</span>
-            </button>
-
-            @if (meGroupExpanded()) {
-              <div id="me-group-items" class="me-group-items">
-                @for (item of meItems(); track trackByRoute($index, item)) {
-                  <app-nav-item
-                    [route]="item.route"
-                    [label]="item.label"
-                    [icon]="item.icon"
-                    [ariaLabel]="item.ariaLabel"
-                    [testId]="getNavTestId(item.route)"
-                    [itemId]="'nav-' + item.route.replace('/', '')"
-                    variant="sidebar"
-                    [itemClass]="navItemClass('nav-item-sub')"
-                    [tooltipDisabled]="!isCollapsed()"
-                    tooltipPosition="right"
-                    (clicked)="onNavItemClick()"
-                  />
-                }
-              </div>
-            }
-          </div>
-        }
+        </div>
       </nav>
 
-      <!-- Bottom Section (Profile quick access + Logout) -->
+      <!-- User card + logout -->
       <div class="sidebar-footer">
-        @if (!isCollapsed()) {
-          <app-nav-item
-            route="/profile"
-            label="Profile"
-            icon="pi-user"
-            ariaLabel="Profile - Quick access"
-            variant="sidebar"
-            [itemClass]="navItemClass()"
-            [tooltipDisabled]="!isCollapsed()"
-            tooltipPosition="right"
-            (clicked)="onNavItemClick()"
-          />
-        }
+        <div
+          class="user-card"
+          [class.user-card--collapsed]="isCollapsed()"
+          [attr.title]="isCollapsed() ? userName() + ' · ' + userRoleLabel() : null"
+        >
+          <div class="user-avatar">{{ userInitials() }}</div>
+          @if (!isCollapsed()) {
+            <div class="user-info">
+              <span class="user-name">{{ userName() }}</span>
+              <span class="user-role">{{ userRoleLabel() }}</span>
+            </div>
+            <button
+              class="user-settings-btn"
+              type="button"
+              (click)="navigateToSettings()"
+              aria-label="Settings"
+            >
+              <i class="pi pi-cog" aria-hidden="true"></i>
+            </button>
+          }
+        </div>
         <app-nav-item
           label="Logout"
           icon="pi-sign-out"
@@ -332,6 +288,11 @@ export class SidebarComponent implements OnInit {
     if (this.mobileViewport()) {
       this.closeSidebar();
     }
+  }
+
+  navigateToSettings(): void {
+    void this.router.navigate(["/settings"]);
+    this.onNavItemClick();
   }
 
   async logout(): Promise<void> {

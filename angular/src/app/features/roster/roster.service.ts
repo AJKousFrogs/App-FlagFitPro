@@ -165,10 +165,10 @@ export class RosterService {
     this.error.set(null);
     const userId = this.supabaseService.userId();
 
-    this.logger.warn(`[RosterService] Loading roster for user: ${userId}`);
+    this.logger.warn("roster_load_start", { userId });
 
     if (!userId) {
-      this.logger.warn("[RosterService] No user ID found");
+      this.logger.warn("roster_no_user_id");
       this.isLoading.set(false);
       return;
     }
@@ -194,7 +194,7 @@ export class RosterService {
       }
 
       if (!teamMember?.team_id) {
-        this.logger.warn("[RosterService] No team found for user");
+        this.logger.warn("roster_no_team_for_user");
         this.teamStats.set([]);
         this.coachingStaff.set([]);
         this.allPlayers.set([]);
@@ -397,7 +397,7 @@ export class RosterService {
         `[RosterService] Team stats calculated with ${allPlayersList.length} total players`,
       );
     } catch (error: unknown) {
-      this.logger.error("[RosterService] Error loading roster:", error);
+      this.logger.error("roster_load_failed", error);
       this.error.set(getErrorMessage(error, "Failed to load roster data"));
     } finally {
       this.isLoading.set(false);
@@ -445,7 +445,7 @@ export class RosterService {
       await this.loadRosterData();
       return { success: true };
     } catch (error: unknown) {
-      this.logger.error("[RosterService] Error adding player:", error);
+      this.logger.error("roster_add_player_failed", error);
       return {
         success: false,
         error: getErrorMessage(error, "Failed to add player"),
@@ -482,7 +482,7 @@ export class RosterService {
       await this.loadRosterData();
       return { success: true };
     } catch (error: unknown) {
-      this.logger.error("[RosterService] Error updating player:", error);
+      this.logger.error("roster_update_player_failed", error);
       return {
         success: false,
         error: getErrorMessage(error, "Failed to update player"),
@@ -507,7 +507,7 @@ export class RosterService {
       await this.loadRosterData();
       return { success: true };
     } catch (error: unknown) {
-      this.logger.error("[RosterService] Error removing player:", error);
+      this.logger.error("roster_remove_player_failed", error);
       return {
         success: false,
         error: getErrorMessage(error, "Failed to remove player"),
@@ -533,7 +533,7 @@ export class RosterService {
       await this.loadRosterData();
       return { success: true };
     } catch (error: unknown) {
-      this.logger.error("[RosterService] Error updating status:", error);
+      this.logger.error("roster_update_status_failed", error);
       return {
         success: false,
         error: getErrorMessage(error, "Failed to update status"),
@@ -559,7 +559,7 @@ export class RosterService {
       await this.loadRosterData();
       return { success: true };
     } catch (error: unknown) {
-      this.logger.error("[RosterService] Error bulk updating status:", error);
+      this.logger.error("roster_bulk_update_status_failed", error);
       return {
         success: false,
         error: getErrorMessage(error, "Failed to update status"),
@@ -584,7 +584,7 @@ export class RosterService {
       await this.loadRosterData();
       return { success: true };
     } catch (error: unknown) {
-      this.logger.error("[RosterService] Error bulk removing players:", error);
+      this.logger.error("roster_bulk_remove_failed", error);
       return {
         success: false,
         error: getErrorMessage(error, "Failed to remove players"),
@@ -650,7 +650,7 @@ export class RosterService {
       await this.loadPendingInvitations();
       return { success: true };
     } catch (error: unknown) {
-      this.logger.error("[RosterService] Error sending invitation:", error);
+      this.logger.error("roster_invitation_send_failed", error);
       return {
         success: false,
         error: getErrorMessage(error, "Failed to send invitation"),
@@ -736,7 +736,7 @@ export class RosterService {
         })),
       );
     } catch (error: unknown) {
-      this.logger.error("[RosterService] Error loading invitations:", error);
+      this.logger.error("roster_invitations_load_failed", error);
     }
   }
 
@@ -763,7 +763,7 @@ export class RosterService {
       await this.loadPendingInvitations();
       return { success: true };
     } catch (error: unknown) {
-      this.logger.error("[RosterService] Error resending invitation:", error);
+      this.logger.error("roster_invitation_resend_failed", error);
       return {
         success: false,
         error: getErrorMessage(error, "Failed to resend invitation"),
@@ -788,7 +788,7 @@ export class RosterService {
       await this.loadPendingInvitations();
       return { success: true };
     } catch (error: unknown) {
-      this.logger.error("[RosterService] Error cancelling invitation:", error);
+      this.logger.error("roster_invitation_cancel_failed", error);
       return {
         success: false,
         error: getErrorMessage(error, "Failed to cancel invitation"),

@@ -264,7 +264,7 @@
 }
 
 .card-title {
-  margin: 0;
+  margin: var(--space-0);
   font-size: var(--ds-font-size-2xl);
   font-weight: var(--ds-font-weight-semibold);
   color: var(--color-text-primary);
@@ -299,7 +299,7 @@
 }
 
 .card-body-flush {
-  padding: 0;
+  padding: var(--space-0);
 }
 
 /* ================================
@@ -326,7 +326,7 @@
 
 .card-skeleton-overlay {
   position: absolute;
-  inset: 0;
+  inset: var(--space-0);
   background: var(--surface-primary);
   z-index: var(--z-dropdown);
   overflow: hidden;
@@ -334,7 +334,7 @@
 
 .skeleton-shimmer {
   position: absolute;
-  inset: 0;
+  inset: var(--space-0);
   background: linear-gradient(
     90deg,
     var(--surface-secondary) 25%,
@@ -360,7 +360,7 @@
 
 .card-interactive-overlay {
   position: absolute;
-  inset: 0;
+  inset: var(--space-0);
   background: transparent;
   transition: background-color var(--transition-fast) var(--ease-standard);
   pointer-events: none;

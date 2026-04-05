@@ -37,7 +37,7 @@
 .olympic-card {
   --app-card-shell-header-bg: var(--surface-secondary);
   --app-card-shell-header-border-bottom: var(--border-1) solid
-    var(--surface-border);
+    var(--color-border-primary);
   --app-card-shell-header-icon-color: var(--color-brand-primary);
 }
 
@@ -55,7 +55,7 @@
   @include selectable-panel(
     $padding: var(--component-card-padding-compact),
     $radius: var(--component-card-radius),
-    $border-color: var(--surface-border),
+    $border-color: var(--color-border-primary),
     $min-height: calc(var(--card-min-height-sm) + var(--space-4))
   );
   border-width: var(--border-1);
@@ -166,7 +166,7 @@
 
 // ===== Timeline =====
 .timeline-card {
-  margin-bottom: 0;
+  margin-bottom: var(--space-0);
 }
 
 .timeline-header {
@@ -279,14 +279,14 @@
     minmax(min(var(--grid-card-min-sm), 100%), 1fr)
   );
   gap: var(--layout-page-section-gap-tight);
-  margin-bottom: 0;
+  margin-bottom: var(--space-0);
 }
 
 .type-btn {
   @include selectable-panel(
     $padding: var(--component-card-padding-compact),
     $radius: var(--component-card-radius),
-    $border-color: var(--surface-border),
+    $border-color: var(--color-border-primary),
     $min-height: calc(var(--card-min-height-sm) + var(--space-4))
   );
   border-width: var(--border-1);
@@ -448,13 +448,13 @@
   @include surface-panel();
 
   h4 {
-    margin: 0 0 var(--space-2) 0;
+    margin: var(--space-0) var(--space-0) var(--space-2) var(--space-0);
     font-size: var(--ds-font-size-md);
     color: var(--color-text-primary);
   }
 
   ul {
-    margin: 0;
+    margin: var(--space-0);
     padding-left: var(--space-4);
     font-size: var(--ds-font-size-md);
   }
@@ -490,7 +490,7 @@
 }
 
 .risk-info h2 {
-  margin: 0 0 var(--space-2) 0;
+  margin: var(--space-0) var(--space-0) var(--space-2) var(--space-0);
 }
 
 .warning-symptoms {
@@ -503,7 +503,7 @@
     display: flex;
     align-items: center;
     gap: var(--space-2);
-    margin: 0 0 var(--space-3) 0;
+    margin: var(--space-0) var(--space-0) var(--space-3) var(--space-0);
     color: var(--color-status-error);
   }
 }
@@ -516,7 +516,7 @@
 
 .warning-symptom {
   padding: var(--space-1) var(--space-3);
-  background: var(--surface-primary);
+  background: var(--surface-card);
   border: var(--border-1) solid var(--color-status-error);
   border-radius: var(--radius-full);
   font-size: var(--ds-font-size-md);
@@ -546,7 +546,7 @@
   margin-bottom: var(--space-4);
 
   h4 {
-    margin: 0;
+    margin: var(--space-0);
   }
 }
 
@@ -573,7 +573,7 @@
   }
 
   p {
-    margin: 0;
+    margin: var(--space-0);
     font-size: var(--ds-font-size-md);
     color: var(--color-text-secondary);
   }
@@ -589,12 +589,12 @@
     display: flex;
     align-items: center;
     gap: var(--space-2);
-    margin: 0 0 var(--space-2) 0;
+    margin: var(--space-0) var(--space-0) var(--space-2) var(--space-0);
     font-size: var(--ds-font-size-md);
   }
 
   ul {
-    margin: 0;
+    margin: var(--space-0);
     padding-left: var(--space-4);
     font-size: var(--ds-font-size-md);
   }
@@ -668,13 +668,13 @@
 }
 
 .muscle-technique {
-  margin: 0 0 var(--space-1) 0;
+  margin: var(--space-0) var(--space-0) var(--space-1) var(--space-0);
   font-size: var(--ds-font-size-md);
   color: var(--color-text-secondary);
 }
 
 .muscle-purpose {
-  margin: 0;
+  margin: var(--space-0);
   font-size: var(--ds-font-size-xs);
   color: var(--color-text-muted);
   font-style: italic;
@@ -687,12 +687,12 @@
   margin-bottom: var(--space-3);
 
   h5 {
-    margin: 0 0 var(--space-2) 0;
+    margin: var(--space-0) var(--space-0) var(--space-2) var(--space-0);
     font-size: var(--ds-font-size-md);
   }
 
   ul {
-    margin: 0;
+    margin: var(--space-0);
     padding-left: var(--space-4);
     font-size: var(--ds-font-size-md);
   }
@@ -732,13 +732,13 @@
   margin-bottom: var(--space-2);
 
   h4 {
-    margin: 0;
+    margin: var(--space-0);
     font-size: var(--ds-font-size-md);
   }
 }
 
 .exercise-description {
-  margin: 0 0 var(--space-2) 0;
+  margin: var(--space-0) var(--space-0) var(--space-2) var(--space-0);
   font-size: var(--ds-font-size-md);
   color: var(--color-text-secondary);
 }
@@ -851,7 +851,7 @@
   padding: var(--space-3);
 
   .finding {
-    margin: 0 0 var(--space-3) 0;
+    margin: var(--space-0) var(--space-0) var(--space-3) var(--space-0);
     line-height: var(--ds-line-height-relaxed);
   }
 
@@ -1000,7 +1000,7 @@
   }
 
   .header-right {
-    margin-left: 0;
+    margin-left: var(--space-0);
     justify-content: flex-start;
   }
 }
@@ -1084,7 +1084,7 @@
   }
 
   .travel-recovery-page {
-    padding: 0;
+    padding: var(--space-0);
     max-width: 100%;
   }
 

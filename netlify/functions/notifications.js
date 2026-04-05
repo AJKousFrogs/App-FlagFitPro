@@ -3,6 +3,19 @@ import { db } from "./supabase-client.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { createSuccessResponse, createErrorResponse, handleValidationError } from "./utils/error-handler.js";
 import { parseJsonObjectBody } from "./utils/input-validator.js";
+import { buildRequestLogContext, createLogger } from "./utils/structured-logger.js";
+
+const logger = createLogger({ service: "netlify.notifications" });
+
+function createRequestLogger(event, meta = {}) {
+  return logger.child(
+    buildRequestLogContext(event, {
+      request_id: meta.requestId,
+      correlation_id: meta.correlationId,
+      trace_id: meta.traceId ?? meta.correlationId,
+    }),
+  );
+}
 
 // Netlify Function: Notifications
 // Returns user notifications using Supabase
@@ -14,7 +27,11 @@ const handler = async (event, context) => {
     allowedMethods: ["GET", "POST", "PATCH"],
 rateLimitType,
     requireAuth: true, // SECURITY: Explicit auth for notifications
-    handler: async (event, _context, { userId }) => {
+    handler: async (event, _context, { userId, requestId, correlationId }) => {
+      const requestLogger = createRequestLogger(event, {
+        requestId,
+        correlationId,
+      });
       const parseStrictPositiveInt = (raw, field, { min = 1, max = Number.POSITIVE_INFINITY } = {}) => {
         if (raw === undefined || raw === null || raw === "") {
           return null;
@@ -114,10 +131,19 @@ rateLimitType,
             { limit, page, onlyUnread, lastOpenedAt },
           );
           return createSuccessResponse(notifications);
-        } catch (dbError) {
-          console.error("Database error:", dbError);
-          return createSuccessResponse([]);
-        }
+          } catch (dbError) {
+            requestLogger.error(
+              "notifications_list_query_failed",
+              dbError,
+              {
+                user_id: userId,
+                limit,
+                page,
+                only_unread: onlyUnread,
+              },
+            );
+            return createSuccessResponse([]);
+          }
       }
 
       if (event.httpMethod === "PATCH") {
@@ -136,7 +162,13 @@ rateLimitType,
               "Last opened timestamp updated",
             );
           } catch (dbError) {
-            console.error("Database error:", dbError);
+            requestLogger.error(
+              "notifications_update_last_opened_failed",
+              dbError,
+              {
+                user_id: userId,
+              },
+            );
             return createErrorResponse(
               "Failed to update last opened timestamp",
               500,
@@ -160,7 +192,11 @@ rateLimitType,
               "All notifications marked as read",
             );
           } catch (dbError) {
-            console.error("Database error:", dbError);
+            requestLogger.error(
+              "notifications_mark_all_failed",
+              dbError,
+              { user_id: userId },
+            );
             return createErrorResponse(
               "Failed to mark all notifications as read",
               500,
@@ -205,7 +241,11 @@ rateLimitType,
               `${uniqueIds.length} notifications marked as read`,
             );
           } catch (dbError) {
-            console.error("Database error:", dbError);
+            requestLogger.error(
+              "notifications_mark_many_failed",
+              dbError,
+              { user_id: userId, count: uniqueIds.length },
+            );
             return createErrorResponse(
               "Failed to mark notifications as read",
               500,
@@ -233,7 +273,14 @@ rateLimitType,
               "Notification marked as read",
             );
           } catch (dbError) {
-            console.error("Database error:", dbError);
+            requestLogger.error(
+              "notifications_mark_one_failed",
+              dbError,
+              {
+                user_id: userId,
+                notification_id: normalizedNotificationId,
+              },
+            );
             return createErrorResponse(
               "Failed to update notification",
               500,

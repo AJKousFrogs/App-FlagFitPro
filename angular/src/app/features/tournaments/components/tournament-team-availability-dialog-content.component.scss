@@ -14,14 +14,14 @@
 }
 
 .tournament-summary h3 {
-  margin: 0 0 var(--space-2);
+  margin: var(--space-0) var(--space-0) var(--space-2);
   font-size: var(--ds-font-size-2xl);
 }
 
 .tournament-dates {
   color: var(--color-text-secondary);
   font-size: var(--ds-font-size-md);
-  margin: 0;
+  margin: var(--space-0);
 }
 
 .availability-summary {
@@ -68,7 +68,7 @@
   display: flex;
   align-items: center;
   gap: var(--space-2);
-  margin: 0 0 var(--space-3);
+  margin: var(--space-0) var(--space-0) var(--space-3);
 }
 
 .budget-grid {

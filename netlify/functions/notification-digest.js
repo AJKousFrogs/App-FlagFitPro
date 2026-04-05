@@ -3,6 +3,7 @@ import { supabaseAdmin, checkEnvVars } from "./supabase-client.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
 import { parseJsonObjectBody as sharedParseJsonObjectBody } from "./utils/input-validator.js";
+import { buildRequestLogContext, createLogger } from "./utils/structured-logger.js";
 
 const VALID_DIGEST_TYPES = new Set(["daily", "weekly", "monthly"]);
 const COACH_ROLES = new Set([
@@ -114,6 +115,18 @@ const parseJsonObjectBody = (rawBody) => {
     throw error;
   }
 };
+
+const logger = createLogger({ service: "netlify.notification-digest" });
+
+function createRequestLogger(event, meta = {}) {
+  return logger.child(
+    buildRequestLogContext(event, {
+      request_id: meta.requestId,
+      correlation_id: meta.correlationId,
+      trace_id: meta.traceId ?? meta.correlationId,
+    }),
+  );
+}
 
 /**
  * Netlify Function: Notification Digest
@@ -594,7 +607,7 @@ async function generateParentDigest(
  * @param {string} userId - User ID
  * @returns {Object} - Preferences
  */
-async function getNotificationPreferences(userId) {
+async function getNotificationPreferences(userId, log = logger) {
   const { data, error } = await supabaseAdmin
     .from("notification_preferences")
     .select("*")
@@ -602,7 +615,9 @@ async function getNotificationPreferences(userId) {
     .single();
 
   if (error && error.code !== "PGRST116") {
-    console.error("[Notification Digest] Error fetching preferences:", error);
+    log.error("notification_digest_preferences_fetch_failed", error, {
+      user_id: userId,
+    });
     throw error;
   }
 
@@ -683,7 +698,7 @@ async function updateNotificationPreferences(userId, updates) {
  * @param {Object} options - Query options
  * @returns {Array} - Digest history
  */
-async function getDigestHistory(userId, options = {}) {
+async function getDigestHistory(userId, options = {}, log = logger) {
   const { limit = 20, digestType } = options;
 
   let query = supabaseAdmin
@@ -700,7 +715,11 @@ async function getDigestHistory(userId, options = {}) {
   const { data, error } = await query;
 
   if (error) {
-    console.error("[Notification Digest] Error fetching history:", error);
+    log.error("notification_digest_history_fetch_failed", error, {
+      user_id: userId,
+      limit,
+      digest_type: digestType,
+    });
     throw error;
   }
 
@@ -793,11 +812,15 @@ const handler = async (event, context) => {
     allowedMethods: ["GET", "POST", "PATCH"],
 rateLimitType,
     requireAuth: true,
-    handler: async (event, _context, { userId, requestId }) => {
+    handler: async (event, _context, { userId, requestId, correlationId }) => {
       checkEnvVars();
 
       const { path } = event;
       const method = event.httpMethod;
+      const requestLogger = createRequestLogger(event, {
+        requestId,
+        correlationId,
+      });
       const params = event.queryStringParameters || {};
 
       // Parse path
@@ -851,7 +874,10 @@ rateLimitType,
 
         // GET /api/notification-digest/preferences - Get preferences
         if (method === "GET" && resource === "preferences") {
-          const preferences = await getNotificationPreferences(userId);
+          const preferences = await getNotificationPreferences(
+            userId,
+            requestLogger,
+          );
           return createSuccessResponse(preferences, requestId);
         }
 
@@ -902,10 +928,14 @@ rateLimitType,
         // GET /api/notification-digest/history - Get history
         if (method === "GET" && resource === "history") {
           const digestType = params.type ? resolveDigestType(params.type) : undefined;
-          const history = await getDigestHistory(userId, {
-            limit: parseHistoryLimit(params.limit),
-            digestType,
-          });
+          const history = await getDigestHistory(
+            userId,
+            {
+              limit: parseHistoryLimit(params.limit),
+              digestType,
+            },
+            requestLogger,
+          );
           return createSuccessResponse({ history }, requestId);
         }
 
@@ -991,7 +1021,11 @@ rateLimitType,
             requestId,
           );
         }
-        console.error("[Notification Digest] Error:", error);
+        requestLogger.error("notification_digest_handler_error", error, {
+          user_id: userId,
+          path: event.path,
+          method: event.httpMethod,
+        });
         return createErrorResponse(
           error.message || "Failed to process request",
           500,

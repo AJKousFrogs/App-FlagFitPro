@@ -186,7 +186,7 @@ a.btn {
 
 .btn.btn-icon-only {
   width: var(--button-height-md);
-  padding: 0;
+  padding: var(--space-0);
   flex-shrink: 0;
 }
 
@@ -233,7 +233,7 @@ a.btn {
   position: absolute;
   width: var(--border-1);
   height: var(--border-1);
-  padding: 0;
+  padding: var(--space-0);
   margin: calc(-1 * (var(--space-1) / 4));
   overflow: hidden;
   clip-path: inset(0);

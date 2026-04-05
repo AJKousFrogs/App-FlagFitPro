@@ -76,14 +76,14 @@ export class TournamentNutritionStateService {
       const hydrationErrorMessage = String(hydrationResult.error?.message || "");
 
       if (planResult.error && !planErrorMessage.includes("relation")) {
-        this.logger.warn("[TournamentNutrition] Failed to load persisted plan", {
+        this.logger.warn("tournament_nutrition_persist_load_failed", {
           error: planResult.error,
         });
       }
 
       if (hydrationResult.error && !hydrationErrorMessage.includes("relation")) {
         this.logger.warn(
-          "[TournamentNutrition] Failed to load persisted hydration logs",
+          "tournament_nutrition_hydration_persist_load_failed",
           {
             error: hydrationResult.error,
           },
@@ -113,7 +113,7 @@ export class TournamentNutritionStateService {
         })),
       };
     } catch (error) {
-      this.logger.warn("[TournamentNutrition] Persistence unavailable", {
+      this.logger.warn("tournament_nutrition_persistence_unavailable", {
         error,
       });
       return null;
@@ -152,12 +152,12 @@ export class TournamentNutritionStateService {
         );
 
       if (error) {
-        this.logger.warn("[TournamentNutrition] Failed to persist plan", {
+        this.logger.warn("tournament_nutrition_persist_save_failed", {
           error,
         });
       }
     } catch (error) {
-      this.logger.warn("[TournamentNutrition] Plan persistence unavailable", {
+      this.logger.warn("tournament_nutrition_plan_persist_unavailable", {
         error,
       });
     }
@@ -188,7 +188,7 @@ export class TournamentNutritionStateService {
 
       if (error) {
         this.logger.warn(
-          "[TournamentNutrition] Failed to persist hydration log",
+          "tournament_nutrition_hydration_log_persist_failed",
           {
             error,
           },
@@ -196,7 +196,7 @@ export class TournamentNutritionStateService {
       }
     } catch (error) {
       this.logger.warn(
-        "[TournamentNutrition] Hydration persistence unavailable",
+        "tournament_nutrition_hydration_persistence_unavailable",
         {
           error,
         },
@@ -282,7 +282,7 @@ export class TournamentNutritionStateService {
           .eq("context", this.getHydrationContext(date)),
       ]);
     } catch (error) {
-      this.logger.warn("[TournamentNutrition] Could not clear persisted state", {
+      this.logger.warn("tournament_nutrition_persist_clear_failed", {
         error,
       });
     }

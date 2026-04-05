@@ -3,6 +3,19 @@ import { baseHandler } from "./utils/base-handler.js";
 import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
 import { supabaseAdmin } from "./supabase-client.js";
 import { parseJsonObjectBody } from "./utils/input-validator.js";
+import { buildRequestLogContext, createLogger } from "./utils/structured-logger.js";
+
+const logger = createLogger({ service: "netlify.hydration" });
+
+function createRequestLogger(event, meta = {}) {
+  return logger.child(
+    buildRequestLogContext(event, {
+      request_id: meta.requestId,
+      correlation_id: meta.correlationId,
+      trace_id: meta.traceId ?? meta.correlationId,
+    }),
+  );
+}
 
 // Netlify Function: Hydration API
 // Handles hydration tracking for athletes
@@ -39,7 +52,7 @@ function parseBoundedInt(value, fallback, { min, max, field }) {
  * - notes: text
  * - created_at: timestamptz
  */
-async function getTodayHydrationLogs(userId) {
+async function getTodayHydrationLogs(userId, log = logger) {
   try {
     const today = new Date().toISOString().split("T")[0];
 
@@ -51,8 +64,7 @@ async function getTodayHydrationLogs(userId) {
       .order("log_time", { ascending: true });
 
     if (error) {
-      // Table might not exist - return empty array gracefully
-      console.warn("[Hydration] Query error:", error.message);
+      log.warn("hydration_today_query_failed", { user_id: userId }, error);
       return [];
     }
 
@@ -65,7 +77,7 @@ async function getTodayHydrationLogs(userId) {
       type: log.fluid_type || "water",
     }));
   } catch (error) {
-    console.error("Error in getTodayHydrationLogs:", error);
+    log.error("hydration_today_query_exception", error, { user_id: userId });
     return [];
   }
 }
@@ -74,7 +86,7 @@ async function getTodayHydrationLogs(userId) {
  * Log hydration intake
  * POST /api/hydration/log
  */
-async function logHydration(userId, hydrationData) {
+async function logHydration(userId, hydrationData, log = logger) {
   try {
     const { amount, type = "water", context } = hydrationData;
 
@@ -107,7 +119,10 @@ async function logHydration(userId, hydrationData) {
       .single();
 
     if (error) {
-      console.error("Error logging hydration:", error);
+      log.error("hydration_log_db_error", error, {
+        user_id: userId,
+        amount,
+      });
       throw error;
     }
 
@@ -118,7 +133,7 @@ async function logHydration(userId, hydrationData) {
       type: data.fluid_type,
     };
   } catch (error) {
-    console.error("Error in logHydration:", error);
+    log.error("hydration_log_failed", error, { user_id: userId });
     throw error;
   }
 }
@@ -127,7 +142,7 @@ async function logHydration(userId, hydrationData) {
  * Get hydration history
  * GET /api/hydration/history
  */
-async function getHydrationHistory(userId, days = 7) {
+async function getHydrationHistory(userId, days = 7, log = logger) {
   try {
     const startDate = new Date();
     startDate.setDate(startDate.getDate() - days);
@@ -142,7 +157,11 @@ async function getHydrationHistory(userId, days = 7) {
       .order("log_time", { ascending: false });
 
     if (error) {
-      console.warn("[Hydration History] Query error:", error.message);
+      log.warn(
+        "hydration_history_query_failed",
+        { user_id: userId, days },
+        error,
+      );
       return [];
     }
 
@@ -154,7 +173,10 @@ async function getHydrationHistory(userId, days = 7) {
       type: log.fluid_type || "water",
     }));
   } catch (error) {
-    console.error("Error in getHydrationHistory:", error);
+    log.error("hydration_history_failed", error, {
+      user_id: userId,
+      days,
+    });
     return [];
   }
 }
@@ -168,7 +190,11 @@ const handler = async (event, context) => {
     allowedMethods: ["GET", "POST"],
     rateLimitType: event.httpMethod === "POST" ? "CREATE" : "READ",
     requireAuth: true, // P0-010: Explicitly require authentication for hydration data
-    handler: async (event, context, { userId }) => {
+    handler: async (event, context, { userId, requestId, correlationId }) => {
+      const requestLogger = createRequestLogger(event, {
+        requestId,
+        correlationId,
+      });
       try {
         if (event.httpMethod === "POST") {
           // Handle POST /api/hydration/log
@@ -191,7 +217,7 @@ const handler = async (event, context) => {
               );
             }
 
-            const result = await logHydration(userId, hydrationData);
+            const result = await logHydration(userId, hydrationData, requestLogger);
             return createSuccessResponse(result, 201, "Hydration logged");
           }
 
@@ -214,12 +240,16 @@ const handler = async (event, context) => {
               "validation_error",
             );
           }
-          const result = await getHydrationHistory(userId, days);
+          const result = await getHydrationHistory(
+            userId,
+            days,
+            requestLogger,
+          );
           return createSuccessResponse({ logs: result });
         }
 
         // Default: return today's logs
-        const result = await getTodayHydrationLogs(userId);
+        const result = await getTodayHydrationLogs(userId, requestLogger);
         return createSuccessResponse({ logs: result });
       } catch (error) {
         if (
@@ -228,6 +258,15 @@ const handler = async (event, context) => {
         ) {
           return createErrorResponse(error.message, 422, "validation_error");
         }
+        requestLogger.error(
+          "hydration_handler_failed",
+          error,
+          {
+            http_method: event.httpMethod,
+            path,
+            user_id: userId,
+          },
+        );
         throw error;
       }
     },

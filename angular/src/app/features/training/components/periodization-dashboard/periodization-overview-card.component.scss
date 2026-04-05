@@ -1,10 +1,10 @@
 @use "styles/mixins" as *;
 
 .phase-card {
-  margin: 0;
+  margin: var(--space-0);
 
   --app-card-shell-bg: var(--surface-card);
-  --app-card-shell-body-padding: 0;
+  --app-card-shell-body-padding: var(--space-0);
 }
 
 .phase-shell {
@@ -53,28 +53,28 @@
   font-size: var(--ds-font-size-md);
   line-height: var(--ds-line-height-relaxed);
   color: var(--color-text-secondary);
-  margin: 0;
+  margin: var(--space-0);
 }
 
 .focus-areas {
   display: flex;
   flex-direction: column;
   gap: var(--space-3);
-  margin: 0;
+  margin: var(--space-0);
 }
 
 .focus-areas h4 {
   font-size: var(--ds-font-size-md);
   text-transform: var(--ds-text-transform-uppercase);
   color: var(--color-text-secondary);
-  margin: 0;
+  margin: var(--space-0);
 }
 
 .chips-container {
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-2);
-  margin: 0;
+  margin: var(--space-0);
 }
 
 .focus-chip.primary {
@@ -91,14 +91,14 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-2);
-  margin: 0;
+  margin: var(--space-0);
 }
 
 .load-targets h4 {
   font-size: var(--ds-font-size-md);
   text-transform: var(--ds-text-transform-uppercase);
   color: var(--color-text-secondary);
-  margin: 0;
+  margin: var(--space-0);
 }
 
 .load-info {
@@ -116,7 +116,7 @@
 .acwr-status {
   padding: var(--component-card-padding-compact);
   border-radius: var(--component-card-radius);
-  margin: 0;
+  margin: var(--space-0);
 }
 
 .acwr-status.acwr-optimal {

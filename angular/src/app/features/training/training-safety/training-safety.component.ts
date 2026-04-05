@@ -491,7 +491,7 @@ export class TrainingSafetyComponent implements OnInit {
       // Generate recommendations based on real data
       this.generateRecommendations();
     } catch (error) {
-      this.logger.error("[TrainingSafety] Error loading safety data:", error);
+      this.logger.error("training_safety_load_failed", error);
       this.showEmptyState();
     }
   }
@@ -586,7 +586,7 @@ export class TrainingSafetyComponent implements OnInit {
         this.trainingCapacity.set(100);
       }
     } catch (_error) {
-      this.logger.debug("[TrainingSafety] Could not load sleep data");
+      this.logger.debug("training_safety_sleep_unavailable");
     }
   }
 
@@ -659,7 +659,7 @@ export class TrainingSafetyComponent implements OnInit {
         this.movementLimitStatus.set("Safe");
       }
     } catch (_error) {
-      this.logger.debug("[TrainingSafety] Could not load movement limits");
+      this.logger.debug("training_safety_movement_limits_unavailable");
     }
   }
 
@@ -733,7 +733,7 @@ export class TrainingSafetyComponent implements OnInit {
         }
       }
     } catch (_error) {
-      this.logger.debug("[TrainingSafety] Could not load training history");
+      this.logger.debug("training_safety_history_unavailable");
     }
   }
 
@@ -795,7 +795,7 @@ export class TrainingSafetyComponent implements OnInit {
         this.hasActiveRTP.set(false);
       }
     } catch (_error) {
-      this.logger.debug("[TrainingSafety] Could not load RTP status");
+      this.logger.debug("training_safety_rtp_unavailable");
       this.hasActiveRTP.set(false);
     }
   }

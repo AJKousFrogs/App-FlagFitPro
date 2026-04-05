@@ -2,6 +2,8 @@
 
 FlagFit Pro is a flag football performance, wellness, and team-operations platform built with Angular, PrimeNG, Netlify Functions, and Supabase.
 
+**Current release:** [4.0.0](docs/RELEASE_NOTES_4.0.0.md) — UI redesign, Supabase polish, and TypeScript/JavaScript fixes.
+
 ## Start Here
 
 - Canonical documentation index: [docs/DOCS_INDEX.md](./docs/DOCS_INDEX.md)

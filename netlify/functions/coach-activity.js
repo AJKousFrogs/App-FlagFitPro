@@ -3,6 +3,7 @@ import { supabaseAdmin } from "./supabase-client.js";
 import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { COACH_ROUTE_ROLES } from "./utils/role-sets.js";
+import { buildRequestLogContext, createLogger } from "./utils/structured-logger.js";
 
 /**
  * Coach Activity API Function
@@ -14,6 +15,18 @@ import { COACH_ROUTE_ROLES } from "./utils/role-sets.js";
  * - POST /api/coach-activity/:id/read - Mark activity as read
  * - POST /api/coach-activity/read-all - Mark all as read
  */
+
+const logger = createLogger({ service: "netlify.coach-activity" });
+
+function createRequestLogger(event, meta = {}) {
+  return logger.child(
+    buildRequestLogContext(event, {
+      request_id: meta.requestId,
+      correlation_id: meta.correlationId,
+      trace_id: meta.traceId ?? meta.correlationId,
+    }),
+  );
+}
 
 // Use shared Supabase admin client
 function getSupabase() {
@@ -282,13 +295,17 @@ const handler = async (event, context) => {
     allowedMethods: ["GET", "POST"],
 rateLimitType,
     requireAuth: true,
-    handler: async (event, _context, { userId, requestId }) => {
+    handler: async (event, _context, { userId, requestId, correlationId }) => {
       const path = event.path
         .replace(/^\/\.netlify\/functions\/coach-activity\/?/, "")
         .replace(/^\/api\/coach-activity\/?/, "");
       const method = event.httpMethod;
       const queryParams = event.queryStringParameters || {};
 
+      const requestLogger = createRequestLogger(event, {
+        requestId,
+        correlationId,
+      });
       try {
         // GET / - Get activity feed
         if (method === "GET" && (path === "" || path === "/")) {
@@ -336,7 +353,11 @@ rateLimitType,
 
         return createErrorResponse("Not found", 404, "not_found", requestId);
       } catch (error) {
-        console.error("Coach activity API error:", error);
+        requestLogger.error("coach_activity_api_error", error, {
+          path,
+          method,
+          user_id: userId,
+        });
         if (
           error.message?.includes("must be an integer between")
         ) {

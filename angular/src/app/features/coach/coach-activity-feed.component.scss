@@ -6,7 +6,7 @@
 @use "styles/mixins" as *;
 
 .activity-feed {
-  background: var(--surface-primary);
+  background: var(--surface-card);
   border-radius: var(--radius-md);
   overflow: hidden;
 }
@@ -36,7 +36,7 @@
 }
 
 .header-title h3 {
-  margin: 0;
+  margin: var(--space-0);
   font-size: var(--ds-font-size-md);
   font-weight: var(--ds-font-weight-semibold);
   color: var(--color-text-primary);
@@ -97,7 +97,11 @@
     opacity var(--transition-fast);
   position: relative;
 
-  @include ds-hover-state(var(--surface-secondary));
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      background: var(--surface-secondary);
+    }
+  }
   @include ds-focus-ring;
 }
 
@@ -159,7 +163,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  border: var(--border-2) solid var(--surface-primary);
+  border: var(--border-2) solid var(--surface-card);
 }
 
 .activity-icon-badge i {

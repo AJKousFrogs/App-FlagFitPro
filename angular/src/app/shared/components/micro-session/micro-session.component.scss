@@ -42,7 +42,7 @@
   display: flex;
   align-items: center;
   gap: var(--space-2);
-  margin: 0 0 var(--space-3) 0;
+  margin: var(--space-0) var(--space-0) var(--space-3) var(--space-0);
   font-size: var(--ds-font-size-md);
   font-weight: var(--ds-font-weight-semibold);
 }
@@ -57,7 +57,7 @@
   display: inline-flex;
   padding: var(--space-1) var(--space-3);
   background: var(--surface-card);
-  border: var(--border-1) solid var(--surface-border);
+  border: var(--border-1) solid var(--ui-border-subtle);
   border-radius: var(--radius-full);
   font-size: var(--ds-font-size-md);
 }
@@ -85,14 +85,14 @@
 }
 
 .coaching-cues h4 {
-  margin: 0 0 var(--space-2) 0;
+  margin: var(--space-0) var(--space-0) var(--space-2) var(--space-0);
   font-size: var(--ds-font-size-md);
   font-weight: var(--ds-font-weight-semibold);
   color: var(--ds-primary-green);
 }
 
 .coaching-cues ul {
-  margin: 0;
+  margin: var(--space-0);
   padding-left: var(--space-5);
 }
 
@@ -112,7 +112,7 @@
 
 /* Equipment Check State */
 .equipment-check-state h4 {
-  margin: 0 0 var(--space-4) 0;
+  margin: var(--space-0) var(--space-0) var(--space-4) var(--space-0);
   text-align: center;
 }
 

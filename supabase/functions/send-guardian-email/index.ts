@@ -6,6 +6,10 @@
 
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import {
+  buildRequestContext,
+  createLogger,
+} from "../_shared/structured-logger.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -21,6 +25,8 @@ interface GuardianEmailRequest {
   verificationToken: string;
   consentId: string;
 }
+
+const logger = createLogger("supabase.send-guardian-email");
 
 // Email template for guardian verification
 function getGuardianEmailTemplate(
@@ -179,6 +185,8 @@ Athletes helping athletes since 2020
 }
 
 Deno.serve(async (req: Request) => {
+  const requestLogger = logger.child(buildRequestContext(req));
+
   // Handle CORS preflight
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -269,7 +277,10 @@ Deno.serve(async (req: Request) => {
 
       if (!emailResponse.ok) {
         const errorData = await emailResponse.text();
-        console.error("Resend API error:", errorData);
+        requestLogger.error("guardian_email_resend_api_failed", undefined, {
+          consent_id: consentId,
+          response_body: errorData,
+        });
         throw new Error(`Failed to send email: ${errorData}`);
       }
 
@@ -335,7 +346,7 @@ Deno.serve(async (req: Request) => {
       { headers: { ...corsHeaders, "Content-Type": "application/json" } },
     );
   } catch (error) {
-    console.error("Error sending guardian email:", error);
+    requestLogger.error("guardian_email_send_failed", error);
 
     return new Response(
       JSON.stringify({

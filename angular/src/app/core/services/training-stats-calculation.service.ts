@@ -119,7 +119,7 @@ export class TrainingStatsCalculationService {
     // This avoids connection errors when backend API isn't running
     return from(this.calculateStatsFromSupabase(options)).pipe(
       catchError((err) => {
-        this.logger.error("[TrainingStats] Error calculating stats:", err);
+        this.logger.error("training_stats_calculation_failed", err);
         return of(this.getEmptyStats());
       }),
     );
@@ -172,7 +172,7 @@ export class TrainingStatsCalculationService {
 
       if (error || !sessions) {
         this.logger.warn(
-          "[TrainingStats] Error loading sessions:",
+          "training_stats_sessions_load_failed",
           toLogContext(error),
         );
         return this.getEmptyStats();
@@ -239,7 +239,7 @@ export class TrainingStatsCalculationService {
         },
       };
     } catch (err) {
-      this.logger.error("[TrainingStats] Error calculating stats:", err);
+      this.logger.error("training_stats_calculation_failed", err);
       return this.getEmptyStats();
     }
   }

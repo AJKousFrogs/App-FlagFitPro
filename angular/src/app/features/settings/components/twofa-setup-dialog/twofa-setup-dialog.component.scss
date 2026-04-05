@@ -1,7 +1,7 @@
 @use "styles/mixins" as *;
 
 .dialog-container {
-  padding: 0;
+  padding: var(--space-0);
 }
 
 .dialog-actions {
@@ -38,8 +38,8 @@
   border-radius: var(--radius-full);
   background: var(--color-border-primary);
   transition:
-    background-color var(--transition-base),
-    width var(--transition-base);
+    background-color var(--transition-fast),
+    width var(--transition-fast);
 }
 
 .step-dot.active {
@@ -60,7 +60,7 @@
 }
 
 .step-section h3 {
-  margin: 0 0 var(--space-2) 0;
+  margin: var(--space-0) var(--space-0) var(--space-2) var(--space-0);
   font-size: var(--ds-font-size-2xl);
   font-weight: var(--ds-font-weight-semibold);
   color: var(--color-text-primary);
@@ -68,7 +68,7 @@
 }
 
 .step-desc {
-  margin: 0 0 var(--space-6) 0;
+  margin: var(--space-0) var(--space-0) var(--space-6) var(--space-0);
   font-size: var(--ds-font-size-md);
   color: var(--color-text-secondary);
   line-height: var(--ds-line-height-normal);
@@ -87,10 +87,7 @@
     background-color var(--transition-fast);
   cursor: pointer;
 
-  &:focus-visible {
-    outline: var(--focus-outline-width) solid var(--ds-primary-green);
-    outline-offset: var(--focus-outline-offset);
-  }
+  @include focus-visible;
 }
 
 .app-list {
@@ -146,9 +143,9 @@
 .qr-wrapper {
   width: var(--size-200);
   height: var(--size-200);
-  margin: 0 auto var(--space-6);
+  margin: var(--space-0) auto var(--space-6);
   padding: var(--space-4);
-  background: var(--surface-primary);
+  background: var(--surface-card);
   border: var(--border-2) solid var(--color-border-primary);
   border-radius: var(--radius-2xl);
   display: flex;
@@ -205,7 +202,7 @@
 
 .code-input-wrapper {
   max-width: var(--input-min-width-lg);
-  margin: 0 auto var(--space-4);
+  margin: var(--space-0) auto var(--space-4);
 }
 
 .verification-code-input {
@@ -223,7 +220,7 @@
 .success-icon-wrapper {
   width: var(--avatar-size-3xl);
   height: var(--avatar-size-3xl);
-  margin: 0 auto var(--space-5);
+  margin: var(--space-0) auto var(--space-5);
   border-radius: var(--radius-full);
   background: var(--gradient-primary);
   display: flex;
@@ -267,7 +264,7 @@
 .backup-desc {
   font-size: var(--ds-font-size-md);
   color: var(--color-text-secondary);
-  margin: 0 0 var(--space-4) 0;
+  margin: var(--space-0) var(--space-0) var(--space-4) var(--space-0);
 }
 
 .codes-grid {
@@ -278,7 +275,7 @@
 
 .backup-code-item {
   padding: var(--space-2) var(--space-3);
-  background: var(--surface-primary);
+  background: var(--surface-card);
   border: var(--border-1) solid var(--color-border-primary);
   border-radius: var(--radius-lg);
   font-family: var(--ds-font-family-mono);

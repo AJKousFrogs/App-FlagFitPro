@@ -5,9 +5,10 @@
   position: sticky;
   top: 0;
   z-index: var(--z-index-app-header);
-  background: var(--surface-primary);
-  border-bottom: var(--border-1) solid var(--ui-border-subtle);
-  backdrop-filter: blur(var(--blur-md));
+  background: color-mix(in srgb, var(--surface-primary) 88%, transparent);
+  border-bottom: var(--border-1) solid var(--color-border-subtle);
+  backdrop-filter: blur(20px) saturate(1.5);
+  -webkit-backdrop-filter: blur(20px) saturate(1.5);
 }
 
 .app-header-shell {
@@ -20,10 +21,10 @@
   align-items: center;
   justify-content: space-between;
   height: var(--header-height);
-  padding: 0 var(--space-6);
+  padding: 0 var(--space-5);
   max-width: var(--layout-page-max-width-wide);
-  margin: 0 auto;
-  gap: var(--space-4);
+  margin: var(--space-0) auto;
+  gap: var(--space-3);
 }
 
 .header-left, .header-center, .header-right {
@@ -81,7 +82,7 @@
 .header-center {
   flex: 1;
   justify-content: center;
-  max-width: var(--layout-page-max-width-sm);
+  max-width: 32rem;
 
   .ui-search-trigger {
     @include reset-button;
@@ -90,8 +91,9 @@
     gap: var(--space-2);
     background: var(--ui-surface-subtle);
     border: var(--border-1) solid var(--color-border-subtle);
-    border-radius: var(--radius-xl);
-    padding: var(--space-2) var(--space-3);
+    border-radius: var(--radius-full);
+    padding: var(--space-2) var(--space-4);
+    height: 40px;
     width: 100%;
     max-width: var(--layout-header-search-trigger-max-width);
     cursor: pointer;
@@ -118,12 +120,13 @@
     i {
       color: var(--color-text-tertiary);
       font-size: var(--ds-font-size-sm);
+      flex-shrink: 0;
     }
 
     .search-input-stub {
       flex: 1;
       font-size: var(--ds-font-size-sm);
-      color: var(--color-text-primary);
+      color: var(--color-text-secondary);
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -132,15 +135,17 @@
     .search-shortcut {
       display: flex;
       gap: var(--space-1);
+      flex-shrink: 0;
 
       kbd {
         background: var(--surface-secondary);
         border: var(--border-1) solid var(--color-border-subtle);
         border-radius: var(--radius-sm);
-        padding: 0 var(--space-1);
+        padding: 1px var(--space-1);
         font-size: var(--ds-font-size-xs);
         font-family: var(--ds-font-family-mono);
         color: var(--color-text-tertiary);
+        line-height: 1.5;
       }
     }
   }
@@ -148,7 +153,7 @@
 
 /* RIGHT GROUP */
 .header-right {
-  gap: var(--space-3);
+  gap: var(--space-2);
   flex: 0 0 auto;
 }
 

@@ -17,7 +17,7 @@
     display: grid;
     gap: var(--space-5);
     max-width: var(--layout-page-max-width-wide);
-    margin: 0 auto;
+    margin: var(--space-0) auto;
     width: 100%;
     padding-bottom: var(--space-8);
 
@@ -27,6 +27,11 @@
     /* Ensure grid doesn't create overflow */
     min-width: 0;
     overflow: visible;
+
+    /* Smooth layout transitions */
+    transition:
+      gap var(--transition-slow) var(--ease-standard),
+      padding var(--transition-slow) var(--ease-standard);
 
     /* Tablet: 2 columns */
     @include respond-to(md) {
@@ -90,11 +95,13 @@
     /* Ensure content can scroll if needed */
     overflow: visible;
 
-    /* Smooth transitions */
+    /* Smooth transitions including layout changes */
     transition:
-      transform var(--transition-base),
-      box-shadow var(--transition-base),
-      border-color var(--transition-base);
+      transform var(--transition-base) var(--ease-standard),
+      box-shadow var(--transition-base) var(--ease-standard),
+      border-color var(--transition-base) var(--ease-standard),
+      padding var(--transition-slow) var(--ease-standard),
+      border-radius var(--transition-slow) var(--ease-standard);
 
     /* Hover state */
     &:hover {
@@ -106,6 +113,7 @@
     /* Mobile padding adjustment */
     @include respond-to(sm) {
       padding: var(--space-4);
+      border-radius: var(--radius-lg);
     }
   }
 
@@ -115,10 +123,7 @@
   .bento-item--clickable {
     cursor: pointer;
 
-    &:focus-visible {
-      outline: var(--focus-outline-width) solid var(--color-focus-ring);
-      outline-offset: var(--focus-outline-offset);
-    }
+    @include focus-visible;
 
     &:active {
       transform: scale(var(--motion-scale-press));
@@ -166,7 +171,7 @@
 
   /* No padding variant */
   .bento-item--no-padding {
-    padding: 0;
+    padding: var(--space-0);
     overflow: hidden;
   }
 
@@ -183,7 +188,9 @@
      GRID ITEM SIZING
      ============================================ */
 
-  .bento-item--span-2 {
+  .bento-item--span-2,
+  .bento-item.span-2,
+  .span-2 {
     grid-column: span 2;
 
     /* Auto-adjust on tablet */
@@ -198,8 +205,16 @@
   }
 
   .bento-item--span-3,
-  .bento-item--full-width {
+  .bento-item--full-width,
+  .bento-item.full-width,
+  .full-width {
     grid-column: 1 / -1;
+  }
+
+  /* No padding variant (shorthand) */
+  .bento-item.no-padding,
+  .no-padding {
+    padding: var(--space-0);
   }
 
   /**
@@ -232,7 +247,7 @@
     font-size: var(--ds-font-size-lg);
     font-weight: var(--ds-font-weight-bold);
     color: var(--color-text-primary);
-    margin: 0;
+    margin: var(--space-0);
     line-height: var(--line-height-snug);
   }
 
@@ -361,7 +376,7 @@
   .bento-item--alerts {
     background: transparent;
     border: none;
-    padding: 0;
+    padding: var(--space-0);
     box-shadow: none;
 
     &:hover {
@@ -395,6 +410,10 @@
    * Reduced motion
    */
   @media (prefers-reduced-motion: reduce) {
+    .bento-grid {
+      transition: none;
+    }
+
     .bento-item,
     .bento-item--clickable,
     .bento-item--elevated {

@@ -1,3 +1,5 @@
+@use "styles/mixins" as *;
+
 .content-section {
   display: flex;
   flex-direction: column;
@@ -5,10 +7,11 @@
 }
 
 .protocol-progress-wrapper {
-  background: var(--surface-secondary);
-  padding: var(--space-3);
-  border-radius: var(--radius-lg);
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-xl);
   margin-bottom: var(--space-4);
+  background: color-mix(in srgb, var(--ds-primary-green) 6%, var(--surface-card));
+  border: var(--border-1) solid color-mix(in srgb, var(--ds-primary-green) 18%, var(--color-border-primary));
 }
 
 .protocol-meta {
@@ -44,7 +47,32 @@
 }
 
 .no-exercises-message p {
-  margin: 0 0 var(--space-4);
+  margin: var(--space-0) var(--space-0) var(--space-4);
   font-size: var(--ds-font-size-md);
   color: var(--color-text-secondary);
+}
+
+@include respond-to(sm) {
+  .protocol-progress-wrapper {
+    padding: var(--space-2) var(--space-3);
+    border-radius: var(--radius-lg);
+  }
+
+  .protocol-meta {
+    flex-direction: column;
+    gap: var(--space-1);
+    font-size: var(--ds-font-size-2xs);
+  }
+
+  .card-footer {
+    padding-top: var(--space-2);
+  }
+
+  .no-exercises-message {
+    padding: var(--space-4);
+  }
+
+  .no-exercises-message p {
+    font-size: var(--ds-font-size-sm);
+  }
 }

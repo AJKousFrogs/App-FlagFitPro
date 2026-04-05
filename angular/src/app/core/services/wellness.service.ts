@@ -1,18 +1,23 @@
 import { Injectable, computed, effect, inject, signal } from "@angular/core";
-import { Observable, from, of } from "rxjs";
-import { catchError, map, tap } from "rxjs";
+import { Observable, defer, from, of } from "rxjs";
+import { catchError, map, switchMap, take, tap } from "rxjs";
 import { STATUS_HEX_COLORS } from "../utils/design-tokens.util";
-import { ApiService } from "./api.service";
 import { LoggerService } from "./logger.service";
 import type { RealtimeChannel } from "@supabase/supabase-js";
 import { RealtimeService } from "./realtime.service";
 import { SupabaseService } from "./supabase.service";
-import {
-  extractApiPayload,
-  isApiResponse,
-  isSuccessfulApiResponse,
-} from "../utils/api-response-mapper";
 import { RealtimeBroadcastPayload } from "../models/realtime-broadcast.model";
+
+/** Result shape from public.calculate_acwr (jsonb). */
+export interface AcwrCalculationResult {
+  acute_load: number;
+  chronic_load: number;
+  ratio: number;
+  sufficient: boolean;
+  days_with_data: number;
+  sessions_in_window: number;
+  computed_at: string;
+}
 
 export interface WellnessData {
   id?: number;
@@ -32,6 +37,8 @@ export interface WellnessData {
   resting_hr?: number;
   notes?: string;
   timestamp?: string;
+  /** Regions for soreness (canonical RPC). */
+  sorenessAreas?: string[];
 }
 
 export interface WellnessAverages {
@@ -85,6 +92,7 @@ interface DailyWellnessCheckinEntry {
   motivation_level?: number;
   mood?: number;
   hydration_level?: number;
+  resting_hr?: number;
   soreness_areas?: string[];
   notes?: string;
   calculated_readiness?: number;
@@ -119,7 +127,6 @@ export class WellnessService {
   private supabaseService = inject(SupabaseService);
   private logger = inject(LoggerService);
   private realtimeService = inject(RealtimeService);
-  private api = inject(ApiService);
 
   // Get current user ID reactively
   private userId = computed(() => this.supabaseService.userId());
@@ -150,18 +157,15 @@ export class WellnessService {
       if (userId) {
         // MEMORY SAFETY: Prevent duplicate loads for same user
         if (this.lastLoadedUserId === userId) {
-          this.logger.debug("[Wellness] User already loaded, skipping reload");
           return;
         }
 
-        this.logger.info(
-          "[Wellness] User logged in, setting up realtime subscription",
-        );
+        this.logger.info("wellness_realtime_setup_start", { userId });
         this.lastLoadedUserId = userId;
         this.loadWellnessData();
         this.subscribeToWellnessUpdates(userId);
       } else {
-        this.logger.info("[Wellness] User logged out, cleaning up");
+        this.logger.info("wellness_user_logged_out_cleanup");
         this.cleanup();
       }
     });
@@ -177,14 +181,12 @@ export class WellnessService {
     this.clearCache();
     this.lastLoadedUserId = null;
 
-    this.logger.debug("[Wellness] Cleanup complete");
   }
 
   private cleanupWellnessChannel(): void {
     if (this.wellnessChannel) {
       this.supabaseService.unsubscribe(this.wellnessChannel);
       this.wellnessChannel = null;
-      this.logger.debug("[Wellness] Broadcast channel closed");
     }
   }
 
@@ -197,7 +199,7 @@ export class WellnessService {
     const userId = this.userId();
 
     if (!userId) {
-      this.logger.warn("[Wellness] Cannot fetch data: No user logged in");
+      this.logger.warn("wellness_fetch_no_user");
       return of({ success: false, data: [] });
     }
 
@@ -217,7 +219,7 @@ export class WellnessService {
           .order("checkin_date", { ascending: false });
 
         if (error) {
-          this.logger.error("[Wellness] Error fetching data:", error);
+          this.logger.error("wellness_fetch_error", error);
           throw error;
         }
 
@@ -234,6 +236,7 @@ export class WellnessService {
             motivation: entry.motivation_level,
             mood: entry.mood,
             hydration: entry.hydration_level,
+            resting_hr: entry.resting_hr,
             readinessScore:
               entry.calculated_readiness ?? entry.readiness_score,
             notes: entry.notes,
@@ -256,7 +259,7 @@ export class WellnessService {
       })(),
     ).pipe(
       catchError((error) => {
-        this.logger.error("[Wellness] Failed to fetch data:", error);
+        this.logger.error("wellness_fetch_failed", error);
         return of({ success: false, data: [] });
       }),
     );
@@ -369,8 +372,8 @@ export class WellnessService {
   }
 
   /**
-   * Log wellness entry for today or specific date.
-   * Routes to /api/wellness/checkin endpoint which writes to daily_wellness_checkin table.
+   * Log wellness entry for today or specific date via Supabase RPC
+   * `upsert_wellness_checkin` (upserts `daily_wellness_checkin` + legacy entries).
    *
    * @param data Wellness data to log
    * @returns Observable with success status and data
@@ -383,88 +386,129 @@ export class WellnessService {
     const userId = this.userId();
 
     if (!userId) {
-      this.logger.error("[Wellness] Cannot log entry: No user logged in");
+      this.logger.error("wellness_log_no_user");
       return of({ success: false, error: "Not authenticated" });
     }
 
-    // Map to API format (camelCase for API, snake_case in database)
-    const payload = {
-      date: data.date || new Date().toISOString().split("T")[0],
-      sleepQuality: data.sleep,
-      sleepHours: data.sleepHours,
-      energyLevel: data.energy,
-      stressLevel: data.stress,
-      muscleSoreness: data.soreness,
-      motivationLevel: data.motivation,
-      mood: data.mood,
-      hydrationLevel: data.hydration,
-      readinessScore: data.readinessScore,
-      notes: data.notes,
-      sorenessAreas: [] as string[],
+    const checkinDate = data.date || new Date().toISOString().split("T")[0];
+
+    const rpcPayload = {
+      p_user_id: userId,
+      p_checkin_date: checkinDate,
+      p_sleep_quality: data.sleep ?? null,
+      p_sleep_hours: data.sleepHours ?? null,
+      p_energy_level: data.energy ?? null,
+      p_muscle_soreness: data.soreness ?? null,
+      p_stress_level: data.stress ?? null,
+      p_soreness_areas: data.sorenessAreas ?? [],
+      p_notes: data.notes ?? null,
+      p_calculated_readiness: data.readinessScore ?? null,
+      p_motivation_level: data.motivation ?? null,
+      p_mood: data.mood ?? null,
+      p_hydration_level: data.hydration ?? null,
     };
 
-    this.logger.info(
-      "[Wellness] Posting wellness via API:",
-      JSON.stringify(payload),
-    );
+    this.logger.info("wellness_upsert_rpc_start", {
+      checkinDate,
+      userId,
+    });
 
-    return this.api
-      .post<{
-        success: boolean;
-        data?: unknown;
-      }>("/api/wellness/checkin", payload)
-      .pipe(
-        map((response) => {
-          const data = extractApiPayload<unknown>(response);
-          const responseError =
-            isApiResponse(response) && typeof response.error === "string"
-              ? response.error
-              : undefined;
-          if (
-            !isApiResponse(response) ||
-            isSuccessfulApiResponse(response)
-          ) {
-            this.logger.success("[Wellness] Entry saved via API");
-            return { success: true, data };
-          }
-          throw new Error(responseError || "Failed to save wellness");
-        }),
-        tap((result) => {
-          // Refresh wellness data after successful post
-          this.getWellnessData("30d").subscribe();
+    return defer(() => this.supabaseService.waitForInit()).pipe(
+      switchMap(() =>
+        from(
+          this.supabaseService.client.rpc(
+            "upsert_wellness_checkin",
+            rpcPayload,
+          ),
+        ),
+      ),
+      map(({ data: row, error }) => {
+        if (error) {
+          throw error;
+        }
+        this.logger.success("wellness_entry_saved");
+        return { success: true as const, data: row };
+      }),
+      tap((result) => {
+        if (result.success) {
+          this.getWellnessData("30d")
+            .pipe(take(1))
+            .subscribe({
+              error: (err) =>
+                this.logger.warn("wellness_refresh_after_checkin_failed", err),
+            });
 
-          // Dispatch wellnessSubmitted event for achievements integration
-          if (result.success) {
-            document.dispatchEvent(
-              new CustomEvent("wellnessSubmitted", {
-                detail: {
-                  date: payload.date,
-                  sleep: payload.sleepQuality,
-                  sleepHours: payload.sleepHours,
-                  energy: payload.energyLevel,
-                  stress: payload.stressLevel,
-                  soreness: payload.muscleSoreness,
-                  motivation: payload.motivationLevel,
-                  mood: payload.mood,
-                  hydration: payload.hydrationLevel,
-                  readinessScore: payload.readinessScore,
-                },
-              }),
-            );
-            this.logger.info("[Wellness] Dispatched wellnessSubmitted event");
-          }
-        }),
-        catchError((error) => {
-          const errorMessage =
-            error?.message || error?.details || JSON.stringify(error);
-          this.logger.error(
-            "[Wellness] Failed to log entry via API:",
-            errorMessage,
-            error,
+          document.dispatchEvent(
+            new CustomEvent("wellnessSubmitted", {
+              detail: {
+                date: checkinDate,
+                sleep: data.sleep,
+                sleepHours: data.sleepHours,
+                energy: data.energy,
+                stress: data.stress,
+                soreness: data.soreness,
+                motivation: data.motivation,
+                mood: data.mood,
+                hydration: data.hydration,
+                readinessScore: data.readinessScore,
+              },
+            }),
           );
-          return of({ success: false, error: errorMessage });
-        }),
-      );
+          this.logger.info("wellness_submitted_event_dispatched", {
+            checkinDate,
+          });
+        }
+      }),
+      catchError((error: { message?: string; details?: string }) => {
+        const errorMessage =
+          error?.message || error?.details || JSON.stringify(error);
+        this.logger.error("wellness_log_rpc_failed", error, {
+          message: errorMessage,
+        });
+        return of({ success: false, error: errorMessage });
+      }),
+    );
+  }
+
+  /**
+   * Server-side ACWR (EWMA) from `workout_logs`; matches default evidence preset math.
+   */
+  calculateAcwr(): Observable<{
+    success: boolean;
+    data?: AcwrCalculationResult;
+    error?: string;
+  }> {
+    const userId = this.userId();
+    if (!userId) {
+      return of({ success: false, error: "Not authenticated" });
+    }
+
+    return defer(() => this.supabaseService.waitForInit()).pipe(
+      switchMap(() =>
+        from(
+          this.supabaseService.client.rpc("calculate_acwr", {
+            p_user_id: userId,
+          }),
+        ),
+      ),
+      map(({ data, error }) => {
+        if (error) {
+          throw error;
+        }
+        return {
+          success: true as const,
+          data: data as AcwrCalculationResult,
+        };
+      }),
+      catchError((error: { message?: string; details?: string }) => {
+        const errorMessage =
+          error?.message || error?.details || JSON.stringify(error);
+        this.logger.error("wellness_calculate_acwr_failed", error, {
+          message: errorMessage,
+        });
+        return of({ success: false, error: errorMessage });
+      }),
+    );
   }
 
   /**
@@ -632,11 +676,11 @@ export class WellnessService {
     this.getWellnessData("30d").subscribe({
       next: ({ success }) => {
         if (success) {
-          this.logger.success("[Wellness] Loaded wellness data from database");
+          this.logger.success("wellness_data_loaded");
         }
       },
       error: (error) => {
-        this.logger.error("[Wellness] Failed to load wellness data:", error);
+        this.logger.error("wellness_data_load_failed", error);
       },
     });
   }
@@ -655,16 +699,18 @@ export class WellnessService {
       })
       .subscribe((status) => {
         if (status === "SUBSCRIBED") {
-          this.logger.info("[Wellness] Wellness broadcast channel subscribed");
+          this.logger.info("wellness_broadcast_subscribed");
         } else {
-          this.logger.debug("[Wellness] Wellness broadcast status:", status);
+          this.logger.debug("wellness_broadcast_status", { status });
         }
       });
   }
 
   private handleWellnessBroadcast(payload: RealtimeBroadcastPayload): void {
     if (!payload || !payload.record) return;
-    this.logger.debug("[Wellness] Received wellness broadcast:", payload.operation);
+    this.logger.debug("wellness_broadcast_received", {
+      operation: payload.operation,
+    });
     switch (payload.operation) {
       case "INSERT":
         this.handleWellnessInsert(payload.record);
@@ -729,6 +775,7 @@ export class WellnessService {
       motivation_level: Number(record["motivation_level"] ?? 0),
       mood: Number(record["mood"] ?? 0),
       hydration_level: Number(record["hydration_level"] ?? 0),
+      resting_hr: record["resting_hr"] !== undefined ? Number(record["resting_hr"]) : undefined,
       soreness_areas: record["soreness_areas"] as string[] | undefined,
       notes: record["notes"] as string | undefined,
       calculated_readiness: Number(record["calculated_readiness"] ?? 0),
@@ -776,6 +823,7 @@ export class WellnessService {
       motivation: entry.motivation_level,
       mood: entry.mood,
       hydration: entry.hydration_level,
+      resting_hr: entry.resting_hr,
       readinessScore: entry.calculated_readiness ?? entry.readiness_score,
       notes: entry.notes,
       timestamp: entry.created_at,

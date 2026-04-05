@@ -37,7 +37,7 @@
 }
 
 .acwr-hint {
-  margin: 0;
+  margin: var(--space-0);
   font-size: var(--ds-font-size-xs);
   color: var(--color-text-muted);
   font-style: italic;

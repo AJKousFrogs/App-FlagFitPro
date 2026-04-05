@@ -419,7 +419,7 @@ export class GoalBasedPlannerComponent {
       }
       this.gameDays.set(games);
     } catch (error) {
-      this.logger.warn("[GoalPlanner] Failed to load upcoming games", error);
+      this.logger.warn("goal_planner_upcoming_games_failed", error);
       this.gameDays.set([]);
     }
   }

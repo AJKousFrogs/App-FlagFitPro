@@ -7,6 +7,19 @@ import { ConsentDataReader, AccessContext } from "./utils/consent-data-reader.js
 import { roundToPrecision, safeDivide, average, standardDeviation, ACWR_PRECISION } from "./utils/precision.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { LOAD_MANAGEMENT_ACCESS_ROLES } from "./utils/role-sets.js";
+import { buildRequestLogContext, createLogger } from "./utils/structured-logger.js";
+
+const logger = createLogger({ service: "netlify.load-management" });
+
+function createRequestLogger(event, meta = {}) {
+  return logger.child(
+    buildRequestLogContext(event, {
+      request_id: meta.requestId,
+      correlation_id: meta.correlationId,
+      trace_id: meta.traceId ?? meta.correlationId,
+    }),
+  );
+}
 
 // Netlify Functions - Load Management & Monitoring API
 // Evidence-based training load monitoring, injury risk prediction, and fatigue management
@@ -126,9 +139,16 @@ async function getTrainingLoads(
   startDate,
   endDate,
   options = {},
+  log = logger,
 ) {
   if (!supabase) {
-    console.warn("[load-management] No Supabase client, returning empty loads");
+    log.warn(
+      "load_management_no_supabase_client",
+      {
+        requester_id: requesterId,
+        target_user_id: targetUserId,
+      },
+    );
     return {
       loads: [],
       consentInfo: { blockedPlayerIds: [], accessibleCount: 0 },
@@ -221,10 +241,16 @@ async function getTrainingLoads(
       .order("session_date", { ascending: true });
 
     if (sessionsError) {
-      console.error(
-        "[load-management] Error fetching training sessions:",
-        sessionsError,
-      );
+    log.error(
+      "load_management_training_sessions_fetch_failed",
+      sessionsError,
+      {
+        requester_id: requesterId,
+        target_user_id: targetUserId,
+        start_date: startDateStr,
+        end_date: endDateStr,
+      },
+    );
       return {
         loads: [],
         consentInfo: { blockedPlayerIds: [], accessibleCount: 0 },
@@ -255,7 +281,16 @@ async function getTrainingLoads(
       dataState: DataState.REAL_DATA,
     };
   } catch (error) {
-    console.error("[load-management] Error fetching training loads:", error);
+    log.error(
+      "load_management_fetch_failed",
+      error,
+      {
+        requester_id: requesterId,
+        target_user_id: targetUserId,
+        start_date: startDate.toISOString().split("T")[0],
+        end_date: endDate.toISOString().split("T")[0],
+      },
+    );
     return {
       loads: [],
       consentInfo: { blockedPlayerIds: [], accessibleCount: 0 },
@@ -1005,7 +1040,7 @@ async function handleInjuryRisk(method, requesterId, query) {
 /**
  * Handle training loads endpoint
  */
-async function handleTrainingLoads(method, requesterId, query) {
+async function handleTrainingLoads(method, requesterId, query, log = logger) {
   if (method !== "GET") {
     return createErrorResponse("Method not allowed", 405, "method_not_allowed");
   }
@@ -1023,6 +1058,7 @@ async function handleTrainingLoads(method, requesterId, query) {
     startDate,
     endDate,
     { teamId },
+    log,
   );
 
   // Build data state info
@@ -1073,7 +1109,11 @@ const handler = async (event, context) => {
     allowedMethods: ["GET"],
     rateLimitType: "READ",
     requireAuth: true, // SECURITY: Explicit auth for load management data
-    handler: async (event, _context, { userId }) => {
+    handler: async (event, _context, { userId, requestId, correlationId }) => {
+      const requestLogger = createRequestLogger(event, {
+        requestId,
+        correlationId,
+      });
       const { httpMethod, path, queryStringParameters } = event;
       const pathSegments = path.split("/").filter(Boolean);
       const endpoint = pathSegments[pathSegments.length - 1];
@@ -1106,7 +1146,12 @@ const handler = async (event, context) => {
           response = await handleInjuryRisk(httpMethod, userId, query);
           break;
         case "training-loads":
-          response = await handleTrainingLoads(httpMethod, userId, query);
+          response = await handleTrainingLoads(
+            httpMethod,
+            userId,
+            query,
+            requestLogger,
+          );
           break;
         case "load-management": {
           // Default endpoint - return overview

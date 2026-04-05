@@ -10,11 +10,34 @@
    - PRIMENG-DEPENDENT: Typography (--ds-font-size-*), radius (--ds-radius-*),
      shadows (--ds-shadow-*), focus ring. All have local fallbacks.
    
+   SURFACES & TEXT:
+   - ZERO raw hex (#rgb / #rrggbb) in any SCSS except:
+       (1) this file, (2) scss/pages/color-contrast-fixes.scss,
+       (3) assets/styles/overrides/_color-guards.scss (literal selectors only).
+   - Do not use second arguments in var() that duplicate hex — use var(--token) only.
+   - Onboarding ob-* shells: bind to --ui-surface-* / --ui-border-* (see ob-* block).
+   
+   SPACING:
+   - ZERO bare 0 for margin, padding, gap, or inset offsets — use var(--space-0).
+   - All spacing: --space-* (or component tokens that reference them). No magic px/rem
+     for layout rhythm except this file’s scale definitions.
+   
    COLOR RULES (STRICTLY ENFORCED):
    - Green on white: Use --color-brand-primary (#089949) on white backgrounds
    - White on green: Use --color-text-on-primary (#ffffff) on green backgrounds
    - Black on white: Use --color-text-primary (#1a1a1a) on white backgrounds
    - NO black on green: Never use --color-text-primary on green backgrounds
+   
+   TYPESCRIPT / CANVAS / CHART.JS:
+   - Prefer `var(--token)` strings for DOM and PrimeNG charts when the pipeline
+     resolves them; for raw Chart.js canvas datasets, resolve at runtime via
+     ThemeService.getChartColors() or getCssVariable() from design-tokens.util.
+   - Canonical chart series: --color-chart-1 … --color-chart-6 (see :root).
+     Fallback hex for SSR/offline must match those tokens in
+     design-tokens.util.ts (CANVAS_CHART_FALLBACK_HEX).
+   - Exempt: meta theme-color, static PWA icons/SVG assets, user/team custom
+     colors from APIs, design-tokens.util.ts (CANVAS_CHART_FALLBACK_HEX,
+     DEFAULT_TEAM_BRAND_HEX), and automated tests that assert known values.
    
    USAGE: @use "./scss/tokens/design-system-tokens" as *;
    ================================================================ */
@@ -312,6 +335,7 @@ $ds-font-weight-extrabold: 800;
 
   /* Border Width Tokens - canonical, resolve before PrimeNG */
   --border-1: 1px;
+  --border-hairline: 1.5px; /* dense form controls, onboarding */
   --border-2: 2px;
   --border-3: 3px;
   --border-4: 4px;
@@ -652,15 +676,19 @@ $ds-font-weight-extrabold: 800;
   --font-h1-size: var(--ds-font-size-3xl, 2rem);
   --font-h1-line-height: var(--ds-line-height-h1, 1.2);
   --font-h1-weight: var(--ds-font-weight-bold);
+  --font-h1-letter-spacing: -0.04em;
   --font-h2-size: var(--ds-font-size-2xl, 1.5rem);
   --font-h2-line-height: var(--ds-line-height-h2, 1.25);
   --font-h2-weight: var(--ds-font-weight-semibold);
+  --font-h2-letter-spacing: -0.025em;
   --font-h3-size: var(--ds-font-size-xl, 1.25rem);
   --font-h3-line-height: var(--ds-line-height-h3, 1.3);
-  --font-h3-weight: var(--ds-font-weight-regular);
+  --font-h3-weight: var(--ds-font-weight-semibold);
+  --font-h3-letter-spacing: -0.015em;
   --font-h4-size: var(--ds-font-size-md, 1rem);
   --font-h4-line-height: var(--ds-line-height-h4, 1.35);
-  --font-h4-weight: var(--ds-font-weight-light);
+  --font-h4-weight: var(--ds-font-weight-medium);
+  --font-h4-letter-spacing: -0.01em;
 
   /* Body Tokens - Unified System */
   --font-body-size: var(--ds-font-size-md, 1rem);
@@ -1311,6 +1339,7 @@ $ds-font-weight-extrabold: 800;
 
   /* Fixed Size Tokens */
   --size-80: 5rem; /* 80px */
+  --size-96: 6rem; /* 96px */
   --size-100: 6.25rem; /* 100px */
   --size-120: 7.5rem; /* 120px */
   --size-150: 9.375rem; /* 150px */
@@ -1937,6 +1966,41 @@ body.light-theme {
   --breakpoint-wide: var(--breakpoint-xl); /* 1280px - Wide screens */
 
   /* ================================
+     MARKETING / LANDING HERO (always-dark; literals live only in this file)
+     ================================ */
+  --marketing-hero-text: #f5f5f7;
+  --marketing-hero-text-secondary: color-mix(
+    in srgb,
+    var(--marketing-hero-text) 68%,
+    transparent
+  );
+  --marketing-hero-text-muted: color-mix(
+    in srgb,
+    var(--marketing-hero-text) 42%,
+    transparent
+  );
+  --marketing-hero-gradient: linear-gradient(
+    160deg,
+    #0c1a12 0%,
+    #0a1525 50%,
+    #0c1a12 100%
+  );
+  --marketing-hero-badge-text: #6ee2a2;
+
+  /* Auth marketing shell (login/register) — gradients only from primitives */
+  --elite-auth-card-top-gradient: linear-gradient(
+    90deg,
+    var(--ds-primary-green) 0%,
+    color-mix(in srgb, var(--ds-primary-green) 70%, var(--primitive-primary-400)) 55%,
+    var(--primitive-primary-600) 100%
+  );
+  --elite-auth-logo-gradient: linear-gradient(
+    135deg,
+    var(--ds-primary-green) 0%,
+    color-mix(in srgb, var(--ds-primary-green) 75%, var(--color-success-text-accessible)) 100%
+  );
+
+  /* ================================
      MEDAL COLORS
      Achievement/ranking color palette
      ================================ */
@@ -2504,20 +2568,26 @@ body.light-theme {
    Apple-style full-screen onboarding shell
    ================================================================ */
 :root {
+  /*
+   * Shell surfaces MUST use --ui-surface-* / --ui-border-* (not raw hex).
+   * Otherwise @media (prefers-color-scheme: dark) flips text to light while ob-*
+   * stayed #fff / #f5f5f5 → unreadable light-on-white at night until data-theme applied.
+   */
   /* Shell */
-  --ob-bg:               #ffffff;
-  --ob-topbar-h:         56px;
-  --ob-content-pad:      var(--space-6);          /* 24px */
+  --ob-bg:               var(--ui-surface-card);
+  --ob-topbar-h:         var(--component-button-height-lg);
+  --ob-content-pad:      var(--space-6);
+  --ob-step-skeleton-height: 20rem; /* 320px loading placeholder */
 
   /* Segmented progress bar */
-  --ob-seg-h:            4px;
-  --ob-seg-gap:          3px;
+  --ob-seg-h:            var(--space-1);
+  --ob-seg-gap:          var(--space-0-75);
   --ob-seg-done:         var(--ds-primary-green);
   --ob-seg-active:       rgba(var(--ds-primary-green-rgb), 0.4);
-  --ob-seg-track:        #e5e5e5;
+  --ob-seg-track:        var(--ui-border-default);
 
   /* Step hero icon */
-  --ob-icon-size:        80px;
+  --ob-icon-size:        var(--size-80);
   --ob-icon-radius:      var(--radius-2xl);
   --ob-icon-bg:          rgba(var(--ds-primary-green-rgb), 0.1);
   --ob-icon-color:       var(--ds-primary-green);
@@ -2526,50 +2596,90 @@ body.light-theme {
   /* Step typography */
   --ob-heading-size:     clamp(1.5rem, 4vw, 1.875rem);
   --ob-heading-weight:   700;
-  --ob-heading-color:    var(--ui-text-primary, #0f1728);
+  --ob-heading-color:    var(--ui-text-primary);
   --ob-heading-tracking: -0.025em;
-  --ob-subtext-color:    var(--ui-text-secondary, #344054);
+  --ob-subtext-color:    var(--ui-text-secondary);
   --ob-subtext-size:     var(--ds-font-size-md);
+  --ob-field-hint-color: var(--ui-text-secondary);
 
   /* Selection cards (role, goals) */
   --ob-card-radius:      var(--radius-xl);         /* 16px */
-  --ob-card-border:      rgba(15, 23, 42, 0.1);
-  --ob-card-bg:          #ffffff;
+  --ob-card-border:      var(--ui-border-subtle);
+  --ob-card-bg:          var(--ui-surface-card);
   --ob-card-sel-bg:      rgba(var(--ds-primary-green-rgb), 0.06);
   --ob-card-sel-border:  var(--ds-primary-green);
   --ob-card-sel-shadow:  0 0 0 3px rgba(var(--ds-primary-green-rgb), 0.12);
+  --ob-card-desc-color:  var(--ui-text-secondary);
 
   /* Segmented control (units, days/week) */
-  --ob-ctrl-bg:          #f0f0f0;
+  --ob-ctrl-bg:          var(--ui-surface-muted);
   --ob-ctrl-fill:        var(--ds-primary-green);
   --ob-ctrl-radius:      var(--radius-full);
-  --ob-ctrl-h:           44px;
+  --ob-ctrl-h:           var(--touch-target-md);
 
   /* Day chips */
   --ob-chip-radius:      var(--radius-full);
-  --ob-chip-h:           44px;
-  --ob-chip-bg:          #f5f5f5;
+  --ob-chip-h:           var(--touch-target-md);
+  --ob-chip-bg:          var(--ui-surface-subtle);
   --ob-chip-sel-bg:      var(--ds-primary-green);
-  --ob-chip-sel-color:   #ffffff;
+  --ob-chip-sel-color:   var(--color-text-on-primary);
 
   /* Inputs */
-  --ob-input-h:          56px;
+  --ob-input-h:          var(--component-input-height-lg);
   --ob-input-radius:     var(--radius-lg);         /* 12px */
-  --ob-input-bg:         #f9fbfa;
-  --ob-input-border:     #d0d5dd;
+  --ob-input-bg:         var(--ui-surface-card-alt);
+  --ob-input-border:     var(--ui-border-default);
 
   /* Footer / CTA */
-  --ob-footer-blur:      12px;
-  --ob-cta-h:            56px;
+  --ob-footer-blur:      0.75rem;
+  --ob-cta-h:            var(--component-button-height-lg);
   --ob-cta-radius:       var(--radius-full);
 
   /* Welcome screen */
-  --ob-welcome-bg:       #f8faf8;
+  --ob-welcome-bg:       var(--ui-surface-canvas);
+  --ob-welcome-icon-size: var(--size-96);
+  --ob-welcome-emoji-size: 2.75rem; /* hero emoji scale */
   --ob-welcome-accent:   var(--ds-primary-green);
 
   /* Easing */
   --ob-spring:           cubic-bezier(0.34, 1.56, 0.64, 1);
   --ob-ease-out:         cubic-bezier(0.16, 1, 0.3, 1);
+
+  /* Footer / glass — tint follows surface */
+  --ob-footer-bg:        color-mix(in srgb, var(--ui-surface-card) 92%, transparent);
+  --ob-footer-border:    var(--ui-border-subtle);
+}
+
+/*
+ * Onboarding shell must track theme: ob-* surfaces are bound to --ui-surface-* so
+ * system dark (prefers-color-scheme) and [data-theme="dark"] both stay aligned with
+ * --ui-text-*. Prior hex-only ob-* caused light grey text on white when OS was dark.
+ */
+[data-theme="dark"],
+.dark-theme,
+body.dark-theme {
+  --ob-bg:               var(--ui-surface-canvas);
+  --ob-seg-track:        rgba(255, 255, 255, 0.12);
+  --ob-card-bg:          var(--ui-surface-card);
+  --ob-card-border:      rgba(255, 255, 255, 0.1);
+  --ob-ctrl-bg:          rgba(255, 255, 255, 0.08);
+  --ob-chip-bg:          var(--ui-surface-muted);
+  --ob-input-bg:         var(--ui-surface-muted);
+  --ob-input-border:     var(--ui-border-default);
+  --ob-welcome-bg:       var(--ui-surface-canvas);
+  --ob-footer-bg:        rgba(17, 26, 23, 0.94);
+  --ob-footer-border:    var(--ui-border-subtle);
+}
+
+/*
+ * Light theme: slightly stronger body copy on onboarding (hints, card blurbs).
+ */
+[data-theme="light"],
+.light-theme,
+body.light-theme {
+  --ob-subtext-color:    var(--color-text-secondary-accessible);
+  --ob-field-hint-color: var(--color-text-secondary-accessible);
+  --ob-card-desc-color:  var(--color-text-muted-accessible);
 }
 
 /* ================================================================

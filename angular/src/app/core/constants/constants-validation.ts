@@ -11,6 +11,8 @@
  */
 
 import { isDevMode } from "@angular/core";
+import { ConsoleLoggerAdapter } from "../logging/console-logger.adapter";
+import { createStructuredLogEntry } from "../logging/logger";
 import { WELLNESS } from "./wellness.constants";
 import { TRAINING } from "./app.constants";
 
@@ -109,9 +111,12 @@ if (isDevMode()) {
   try {
     validateAllConstants();
   } catch (error) {
-    // LoggerService is not ready during this bootstrap validation phase, so
-    // console.error is temporarily allowed while we validate constants.
-    console.error("❌ Constants validation failed:", error);
+    // LoggerService is not initialized during this early validation phase.
+    new ConsoleLoggerAdapter().write(
+      createStructuredLogEntry("error", "constants_validation_failed", {
+        error: error instanceof Error ? error.message : String(error),
+      }),
+    );
     throw error;
   }
 }

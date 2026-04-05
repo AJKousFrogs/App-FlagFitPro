@@ -24,6 +24,8 @@
   },
   "documentation": {
     "primary": "Angular 21 + PrimeNG 21",
-    "migration": "Migrated from vanilla HTML/CSS/JS to Angular 21 + PrimeNG 21"
+    "migration": "Migrated from vanilla HTML/CSS/JS to Angular 21 + PrimeNG 21",
+    "appRelease": "4.0.0",
+    "releaseNotes": "docs/RELEASE_NOTES_4.0.0.md"
   }
 }

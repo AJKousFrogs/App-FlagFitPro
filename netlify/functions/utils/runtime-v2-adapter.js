@@ -1,4 +1,7 @@
 import { createErrorResponse } from "./error-handler.js";
+import { createLogger } from "./structured-logger.js";
+
+const logger = createLogger({ service: "netlify.runtime-v2-adapter" });
 
 function buildHeadersObject(headers) {
   const out = {};
@@ -93,7 +96,7 @@ export function createRuntimeV2Handler(legacyHandler) {
       const result = await legacyHandler(event, legacyContext);
       return lambdaResponseToWebResponse(result);
     } catch (error) {
-      console.error("[runtime-v2-adapter] Unhandled function error:", error);
+      logger.error("runtime_v2_adapter_unhandled_error", error);
       return lambdaResponseToWebResponse(
         createErrorResponse(
           error?.message || "Unhandled function error",

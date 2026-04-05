@@ -54,8 +54,8 @@ import { PlaybookQuizDialogContentComponent } from "./components/playbook-quiz-d
     <app-main-layout>
       <div class="playbook-page ui-page-shell ui-page-stack">
         <app-page-header
-          title="Playbook"
-          subtitle="Study and memorize team plays for your position"
+          title="Playbook" eyebrow="LEARNING"
+          subtitle="Your team's plays, organized and ready."
           icon="pi-book"
         ></app-page-header>
         <app-playbook-library-section

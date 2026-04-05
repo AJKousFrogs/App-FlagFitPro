@@ -7,6 +7,19 @@ import { detectPainTrigger } from "./utils/safety-override.js";
 import { getUserRole } from "./utils/authorization-guard.js";
 import { hasAnyRole, HEALTH_DATA_ACCESS_ROLES } from "./utils/role-sets.js";
 import { parseJsonObjectBody } from "./utils/input-validator.js";
+import { buildRequestLogContext, createLogger } from "./utils/structured-logger.js";
+
+const logger = createLogger({ service: "netlify.wellness" });
+
+function createRequestLogger(event, meta = {}) {
+  return logger.child(
+    buildRequestLogContext(event, {
+      request_id: meta.requestId,
+      correlation_id: meta.correlationId,
+      trace_id: meta.traceId ?? meta.correlationId,
+    }),
+  );
+}
 
 // Netlify Function: Wellness API
 // Handles wellness check-ins and wellness data retrieval
@@ -31,7 +44,7 @@ function parseBoundedInt(value, fallback, { min, max, field }) {
  * POST /api/wellness/checkin
  * Contract: Must check safety overrides for pain >3/10
  */
-async function createWellnessCheckin(userId, checkinData) {
+async function createWellnessCheckin(userId, checkinData, log = logger) {
   try {
     let { readiness, sleep, energy, mood, soreness, notes } = checkinData;
 
@@ -117,7 +130,13 @@ async function createWellnessCheckin(userId, checkinData) {
       .single();
 
     if (error) {
-      console.error("Error creating wellness check-in:", error);
+      log.error(
+        "wellness_checkin_create_failed",
+        error,
+        {
+          user_id: userId,
+        },
+      );
       throw error;
     }
 
@@ -132,7 +151,13 @@ async function createWellnessCheckin(userId, checkinData) {
       notes: data.notes,
     };
   } catch (error) {
-    console.error("Error in createWellnessCheckin:", error);
+    log.error(
+      "wellness_checkin_exception",
+      error,
+      {
+        user_id: userId,
+      },
+    );
     throw error;
   }
 }
@@ -142,7 +167,12 @@ async function createWellnessCheckin(userId, checkinData) {
  * GET /api/wellness/checkins
  * Contract: Must enforce consent for coach requests
  */
-async function getWellnessCheckins(userId, requestedAthleteId, limit = 30) {
+async function getWellnessCheckins(
+  userId,
+  requestedAthleteId,
+  limit = 30,
+  log = logger,
+) {
   try {
     const role = await getUserRole(userId);
     const isCoach = hasAnyRole(role, HEALTH_DATA_ACCESS_ROLES);
@@ -175,7 +205,14 @@ async function getWellnessCheckins(userId, requestedAthleteId, limit = 30) {
       .limit(limit);
 
     if (error) {
-      console.error("Error fetching wellness check-ins:", error);
+      log.error(
+        "wellness_checkins_fetch_failed",
+        error,
+        {
+          requested_athlete_id: requestedAthleteId,
+          limit,
+        },
+      );
       throw error;
     }
 
@@ -193,7 +230,13 @@ async function getWellnessCheckins(userId, requestedAthleteId, limit = 30) {
 
     return data || [];
   } catch (error) {
-    console.error("Error in getWellnessCheckins:", error);
+    log.error(
+      "wellness_checkins_exception",
+      error,
+      {
+        requested_athlete_id: requestedAthleteId,
+      },
+    );
     throw error;
   }
 }
@@ -202,7 +245,7 @@ async function getWellnessCheckins(userId, requestedAthleteId, limit = 30) {
  * Get latest wellness check-in
  * GET /api/wellness/latest
  */
-async function getLatestWellnessCheckin(userId) {
+async function getLatestWellnessCheckin(userId, log = logger) {
   try {
     const { data, error } = await supabaseAdmin
       .from("wellness_checkins")
@@ -217,13 +260,25 @@ async function getLatestWellnessCheckin(userId) {
       if (error.code === "PGRST116") {
         return null;
       }
-      console.error("Error fetching latest wellness check-in:", error);
+      log.error(
+        "wellness_latest_fetch_failed",
+        error,
+        {
+          user_id: userId,
+        },
+      );
       throw error;
     }
 
     return data;
   } catch (error) {
-    console.error("Error in getLatestWellnessCheckin:", error);
+    log.error(
+      "wellness_latest_exception",
+      error,
+      {
+        user_id: userId,
+      },
+    );
     throw error;
   }
 }
@@ -237,7 +292,11 @@ const handler = async (event, context) => {
     allowedMethods: ["GET", "POST"],
     rateLimitType: event.httpMethod === "POST" ? "CREATE" : "READ",
     requireAuth: true, // P0-008: Explicitly require authentication for health data
-    handler: async (event, context, { userId }) => {
+    handler: async (event, context, { userId, requestId, correlationId }) => {
+      const requestLogger = createRequestLogger(event, {
+        requestId,
+        correlationId,
+      });
       try {
         if (event.httpMethod === "POST") {
           // Handle POST /api/wellness/checkin
@@ -260,7 +319,11 @@ const handler = async (event, context) => {
               );
             }
 
-            const result = await createWellnessCheckin(userId, checkinData);
+            const result = await createWellnessCheckin(
+              userId,
+              checkinData,
+              requestLogger,
+            );
             return createSuccessResponse(
               result,
               201,
@@ -272,8 +335,8 @@ const handler = async (event, context) => {
         }
 
         // Handle GET requests
-        if (path.includes("/latest") || path.endsWith("/latest")) {
-          const result = await getLatestWellnessCheckin(userId);
+          if (path.includes("/latest") || path.endsWith("/latest")) {
+          const result = await getLatestWellnessCheckin(userId, requestLogger);
           return createSuccessResponse(result);
         }
 
@@ -303,12 +366,17 @@ const handler = async (event, context) => {
               );
             }
           }
-          const result = await getWellnessCheckins(userId, athleteId, limit);
+          const result = await getWellnessCheckins(
+            userId,
+            athleteId,
+            limit,
+            requestLogger,
+          );
           return createSuccessResponse({ checkins: result });
         }
 
         // Default: return latest check-in
-        const result = await getLatestWellnessCheckin(userId);
+        const result = await getLatestWellnessCheckin(userId, requestLogger);
         return createSuccessResponse(result);
       } catch (error) {
         if (
@@ -317,6 +385,15 @@ const handler = async (event, context) => {
         ) {
           return createErrorResponse(error.message, 422, "validation_error");
         }
+        requestLogger.error(
+          "wellness_handler_failed",
+          error,
+          {
+            http_method: event.httpMethod,
+            path,
+            user_id: userId,
+          },
+        );
         throw error;
       }
     },

@@ -6,7 +6,7 @@
 @use "styles/mixins" as *;
 
 .search-filter-bar {
-  margin-bottom: 0;
+  margin-bottom: var(--space-0);
 }
 
 /* search-box sits inside ds-toolbar--card which already provides the shell */
@@ -34,7 +34,7 @@
   align-items: center;
   gap: var(--space-3);
   padding-left: var(--space-4);
-  border-left: var(--border-1) solid var(--ui-border-subtle);
+  border-left: var(--border-1) solid var(--color-border-secondary);
   margin-left: auto;
 }
 
@@ -63,7 +63,7 @@
   .search-filter-bar {
     flex-direction: column;
     align-items: stretch;
-    padding: 0;
+    padding: var(--space-0);
   }
 
   .search-box {
@@ -81,10 +81,10 @@
 
   .bulk-actions {
     border-left: none;
-    padding-left: 0;
+    padding-left: var(--space-0);
     padding-top: var(--space-3);
-    border-top: var(--border-1) solid var(--ui-border-subtle);
-    margin-left: 0;
+    border-top: var(--border-1) solid var(--color-border-secondary);
+    margin-left: var(--space-0);
     justify-content: center;
     width: 100%;
   }

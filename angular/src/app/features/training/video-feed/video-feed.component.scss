@@ -66,7 +66,7 @@ height: 100dvh; // Modern: keyboard-aware
   padding: var(--space-3) var(--space-5);
   border-radius: var(--radius-full);
   border: var(--border-2) solid var(--color-border-secondary);
-  background: var(--surface-primary);
+  background: var(--surface-card);
   color: var(--color-text-primary);
   font-size: var(--ds-font-size-md);
   font-weight: var(--ds-font-weight-semibold);
@@ -108,7 +108,7 @@ height: 100dvh; // Modern: keyboard-aware
 .filter-chip::before {
   content: "";
   position: absolute;
-  inset: 0;
+  inset: var(--space-0);
   background: var(--ds-primary-green);
   opacity: 0;
   transition: opacity var(--transition-fast);
@@ -164,7 +164,7 @@ height: 100dvh; // Modern: keyboard-aware
 .video-grid-section {
   padding: 0 var(--space-6);
   max-width: var(--content-max-width-xl);
-  margin: 0 auto;
+  margin: var(--space-0) auto;
 }
 
 .video-grid {
@@ -178,7 +178,7 @@ height: 100dvh; // Modern: keyboard-aware
 
 /* Video Card */
 .video-card {
-  background: var(--surface-primary);
+  background: var(--surface-card);
   border-radius: var(--radius-xl);
   overflow: hidden;
   box-shadow: var(--shadow-2);
@@ -226,7 +226,7 @@ height: 100dvh; // Modern: keyboard-aware
   width: 100%;
   height: 100%;
   position: absolute;
-  inset: 0;
+  inset: var(--space-0);
   background: var(--color-bg-dark);
   animation: ui-motion-fade-in 0.3s ease-in-out;
 }
@@ -240,7 +240,7 @@ height: 100dvh; // Modern: keyboard-aware
 
 .thumbnail-overlay {
   position: absolute;
-  inset: 0;
+  inset: var(--space-0);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -322,7 +322,7 @@ height: 100dvh; // Modern: keyboard-aware
 
 .overlay-btn:hover {
   transform: scale(1.1);
-  background: var(--surface-primary);
+  background: var(--surface-card);
 }
 
 .overlay-btn.active {
@@ -362,7 +362,7 @@ height: 100dvh; // Modern: keyboard-aware
   font-size: var(--ds-font-size-md);
   font-weight: var(--ds-font-weight-semibold);
   color: var(--color-text-primary);
-  margin: 0 0 var(--space-2);
+  margin: var(--space-0) var(--space-0) var(--space-2);
   line-height: var(--ds-line-height-tight);
   display: -webkit-box;
   -webkit-line-clamp: 2;
@@ -373,7 +373,7 @@ height: 100dvh; // Modern: keyboard-aware
 .video-description {
   font-size: var(--ds-font-size-md);
   color: var(--color-text-secondary);
-  margin: 0 0 var(--space-3);
+  margin: var(--space-0) var(--space-0) var(--space-3);
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
@@ -463,12 +463,12 @@ height: 100dvh; // Modern: keyboard-aware
 .creators-section {
   padding: var(--space-8) var(--space-6);
   background: var(--surface-secondary);
-  margin-top: 0;
+  margin-top: var(--space-0);
 }
 
 .section-header {
   max-width: var(--content-max-width-xl);
-  margin: 0 auto var(--space-6);
+  margin: var(--space-0) auto var(--space-6);
 }
 
 .section-header h2 {
@@ -478,12 +478,12 @@ height: 100dvh; // Modern: keyboard-aware
   display: flex;
   align-items: center;
   gap: var(--space-3);
-  margin: 0 0 var(--space-2);
+  margin: var(--space-0) var(--space-0) var(--space-2);
 }
 
 .section-header p {
   color: var(--color-text-secondary);
-  margin: 0;
+  margin: var(--space-0);
 }
 
 .creators-scroll {
@@ -492,7 +492,7 @@ height: 100dvh; // Modern: keyboard-aware
   overflow-x: auto;
   padding: var(--space-2) 0;
   max-width: var(--content-max-width-xl);
-  margin: 0 auto;
+  margin: var(--space-0) auto;
   -webkit-overflow-scrolling: touch;
 }
 
@@ -513,14 +513,14 @@ height: 100dvh; // Modern: keyboard-aware
 .creator-card {
   flex: 0 0 auto;
   width: var(--size-200);
-  background: var(--surface-primary);
+  background: var(--surface-card);
   border-radius: var(--radius-xl);
   padding: var(--space-5);
   text-align: center;
   cursor: pointer;
   transition:
-    transform var(--transition-base),
-    box-shadow var(--transition-base);
+    transform var(--transition-fast),
+    box-shadow var(--transition-fast);
   box-shadow: var(--shadow-1);
 }
 
@@ -598,7 +598,7 @@ height: 100dvh; // Modern: keyboard-aware
   font-size: var(--ds-font-size-md);
   color: var(--color-text-primary);
   line-height: var(--ds-line-height-relaxed);
-  margin: 0 0 var(--space-4);
+  margin: var(--space-0) var(--space-0) var(--space-4);
 }
 
 .video-meta-grid {
@@ -709,8 +709,8 @@ height: 100dvh; // Modern: keyboard-aware
   }
 
   .filter-label {
-    margin-bottom: 0;
-    padding-top: 0;
+    margin-bottom: var(--space-0);
+    padding-top: var(--space-0);
     min-width: auto;
     width: 100%;
   }

@@ -17,7 +17,7 @@
 /// p, strong, h3/h4, i — use only in containers that need these defaults.
 %rich-text {
   p {
-    margin: 0 0 var(--space-3);
+    margin: var(--space-0) var(--space-0) var(--space-3);
   }
 
   strong {
@@ -26,7 +26,7 @@
 
   h3,
   h4 {
-    margin: 0 0 var(--space-2);
+    margin: var(--space-0) var(--space-0) var(--space-2);
     line-height: var(--line-height-tight);
   }
 

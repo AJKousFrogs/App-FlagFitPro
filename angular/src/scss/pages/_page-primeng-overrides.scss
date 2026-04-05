@@ -8,11 +8,11 @@
       background: transparent;
       border: none;
       box-shadow: none;
-      padding: 0;
+      padding: var(--space-0);
     }
 
     app-card-shell .p-card-body {
-      padding: 0;
+      padding: var(--space-0);
     }
   }
 
@@ -21,7 +21,7 @@
     background: transparent;
     border: none;
     box-shadow: none;
-    padding: 0;
+    padding: var(--space-0);
   }
 
   /* Profile — stats grid + tabs */
@@ -91,17 +91,17 @@
       gap: var(--space-4);
       background: transparent;
       border: none;
-      padding: 0;
+      padding: var(--space-0);
     }
 
     .p-stepper-header {
       background: transparent;
-      padding: 0;
+      padding: var(--space-0);
     }
 
     .p-stepper-action {
       background: transparent;
-      padding: 0;
+      padding: var(--space-0);
     }
 
     .p-stepper-separator {

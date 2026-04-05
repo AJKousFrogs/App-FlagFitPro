@@ -17,7 +17,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  margin: 0 auto var(--space-3);
+  margin: var(--space-0) auto var(--space-3);
   border: var(--border-3) solid;
 }
 
@@ -57,7 +57,7 @@
 .score-hint {
   font-size: var(--ds-font-size-md);
   color: var(--color-text-secondary);
-  margin: 0;
+  margin: var(--space-0);
 }
 
 .slider-group {
@@ -146,4 +146,33 @@
   color: var(--color-text-muted);
   margin: var(--space-1) 0 0;
   text-align: center;
+}
+
+.acwr-strip {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  align-items: center;
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+  background: var(--color-surface-elevated, var(--color-background-subtle));
+  border: var(--border-1) solid var(--color-border-light);
+  font-size: var(--ds-font-size-sm);
+}
+
+.acwr-value {
+  font-weight: var(--ds-font-weight-semibold);
+  color: var(--color-text-primary);
+}
+
+.acwr-meta {
+  font-size: var(--ds-font-size-xs);
+  color: var(--color-text-muted);
+}
+
+.acwr-muted {
+  font-size: var(--ds-font-size-xs);
+  color: var(--color-text-muted);
+  text-align: center;
+  line-height: var(--ds-line-height-relaxed);
 }

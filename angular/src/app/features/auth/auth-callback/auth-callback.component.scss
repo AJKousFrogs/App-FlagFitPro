@@ -36,7 +36,7 @@ height: 100dvh; // Modern: keyboard-aware
 .processing-state h2,
 .error-state h2,
 .success-state h2 {
-  margin: 0;
+  margin: var(--space-0);
   font-size: var(--ds-font-size-2xl);
   font-weight: var(--ds-font-weight-semibold);
   color: var(--color-text-primary);
@@ -45,7 +45,7 @@ height: 100dvh; // Modern: keyboard-aware
 .processing-description,
 .success-description {
   color: var(--color-text-secondary);
-  margin: 0;
+  margin: var(--space-0);
 }
 
 .auth-callback-spinner {

@@ -3,6 +3,19 @@ import { baseHandler } from "./utils/base-handler.js";
 import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
 import { supabaseAdmin } from "./supabase-client.js";
 import { parseJsonObjectBody } from "./utils/input-validator.js";
+import { buildRequestLogContext, createLogger } from "./utils/structured-logger.js";
+
+const logger = createLogger({ service: "netlify.data-export" });
+
+function createRequestLogger(event, meta = {}) {
+  return logger.child(
+    buildRequestLogContext(event, {
+      request_id: meta.requestId,
+      correlation_id: meta.correlationId,
+      trace_id: meta.traceId ?? meta.correlationId,
+    }),
+  );
+}
 
 // Netlify Function: GDPR Data Export API
 // Handles user data export requests for GDPR compliance
@@ -160,7 +173,7 @@ function sanitizeData(data, sensitiveFields = []) {
 /**
  * Export data from a single table for a user
  */
-async function exportTableData(tableConfig, userId) {
+async function exportTableData(tableConfig, userId, log = logger) {
   const {
     table,
     userIdColumn,
@@ -199,7 +212,15 @@ async function exportTableData(tableConfig, userId) {
       data: sanitizedData,
     };
   } catch (error) {
-    console.error(`[data-export] Section export failed for ${table}:`, error);
+    log.error(
+      "data_export_section_failed",
+      error,
+      {
+        table,
+        export_name: exportName,
+        user_id: userId,
+      },
+    );
     return {
       name: exportName,
       description,
@@ -213,7 +234,7 @@ async function exportTableData(tableConfig, userId) {
 /**
  * Generate complete data export for a user
  */
-async function generateDataExport(userId) {
+async function generateDataExport(userId, log = logger) {
   const startTime = Date.now();
   const exportId = `export-${userId}-${Date.now()}`;
 
@@ -237,7 +258,7 @@ async function generateDataExport(userId) {
 
   // Export data from each table
   for (const tableConfig of USER_DATA_TABLES) {
-    const result = await exportTableData(tableConfig, userId);
+    const result = await exportTableData(tableConfig, userId, log);
 
     exportData.sections[result.name] = result;
 
@@ -267,7 +288,14 @@ async function generateDataExport(userId) {
       },
     })
     .catch((err) => {
-      console.warn("Failed to log data export:", err);
+      log.warn(
+        "data_export_log_insert_failed",
+        {
+          export_id: exportId,
+          user_id: userId,
+        },
+        err,
+      );
     });
 
   return exportData;
@@ -374,7 +402,7 @@ async function requestDataExport(userId, options = {}) {
 // REQUEST HANDLER
 // =============================================================================
 
-async function handleRequest(event, _context, { userId }) {
+async function handleRequest(event, _context, { userId, requestId, correlationId }) {
   const path =
     event.path
       .replace("/.netlify/functions/data-export", "")
@@ -399,6 +427,11 @@ async function handleRequest(event, _context, { userId }) {
       );
     }
   }
+
+  const requestLogger = createRequestLogger(event, {
+    requestId,
+    correlationId,
+  });
 
   try {
     // Get data inventory (summary without actual data)
@@ -438,7 +471,7 @@ async function handleRequest(event, _context, { userId }) {
 
     // Generate data export (returns in response)
     if (event.httpMethod === "POST" && path === "generate") {
-      const exportData = await generateDataExport(userId);
+      const exportData = await generateDataExport(userId, requestLogger);
       return createSuccessResponse(exportData);
     }
 
@@ -469,7 +502,15 @@ async function handleRequest(event, _context, { userId }) {
 
     return createErrorResponse("Endpoint not found", 404, "not_found");
   } catch (error) {
-    console.error("Data export error:", error);
+    requestLogger.error(
+      "data_export_handler_failed",
+      error,
+      {
+        http_method: event.httpMethod,
+        path,
+        user_id: userId,
+      },
+    );
     if (error.message?.includes("must be one of")) {
       return createErrorResponse(error.message, 422, "validation_error");
     }

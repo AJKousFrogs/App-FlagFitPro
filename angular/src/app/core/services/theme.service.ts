@@ -4,6 +4,10 @@
  * Centralized theme management for the application.
  * Handles light/dark mode toggle, system preference detection,
  * and persistence to localStorage and Supabase.
+ *
+ * **"Auto" mode** follows the OS / browser appearance (`prefers-color-scheme`),
+ * not the time of day. Evening hours alone do not switch the app to dark mode
+ * unless the device is set to dark appearance or the user chooses dark explicitly.
  */
 
 import {
@@ -14,7 +18,10 @@ import {
   OnDestroy,
   signal,
 } from "@angular/core";
-import { CHART_PALETTE } from "../utils/design-tokens.util";
+import {
+  CANVAS_CHART_FALLBACK_HEX,
+  CHART_SERIES_CSS_VARS,
+} from "../utils/design-tokens.util";
 import { LoggerService } from "./logger.service";
 import { SupabaseService } from "./supabase.service";
 
@@ -94,7 +101,7 @@ export class ThemeService implements OnDestroy {
   setMode(mode: ThemeMode): void {
     this._mode.set(mode);
     this.savePreference(mode);
-    this.logger.debug(`[ThemeService] Theme mode set to: ${mode}`);
+    this.logger.debug("theme_mode_set", { mode });
   }
 
   /**
@@ -118,8 +125,7 @@ export class ThemeService implements OnDestroy {
   }
 
   /**
-   * Get CSS variable value from design system
-   * Useful for Chart.js and other canvas-based rendering that can't use CSS vars
+   * Get CSS variable value from design system (resolved hex/rgb for canvas use)
    * @param variableName - CSS variable name (e.g., '--color-chart-1' or 'color-chart-1')
    * @returns The computed value of the CSS variable
    */
@@ -139,22 +145,14 @@ export class ThemeService implements OnDestroy {
    * Get chart color palette from design system
    * Returns array of hex colors for Chart.js
    *
-   * Prefer using CHART_PALETTE from @core/utils/design-tokens.util directly
-   * for better tree-shaking and type safety
+   * Prefer CHART_SERIES_CSS_VARS + CANVAS_CHART_FALLBACK_HEX from design-tokens.util.
    */
   getChartColors(): string[] {
-    // Try to read from CSS variables first (respects theming)
-    const cssColors = [
-      this.getCssVariable("--color-chart-1"),
-      this.getCssVariable("--color-chart-2"),
-      this.getCssVariable("--color-chart-3"),
-      this.getCssVariable("--color-chart-4"),
-      this.getCssVariable("--color-chart-5"),
-      this.getCssVariable("--color-chart-6"),
-    ].filter((c) => c);
+    const cssColors = CHART_SERIES_CSS_VARS.map((name) =>
+      this.getCssVariable(name),
+    ).filter((c) => c);
 
-    // Return CSS values if available, otherwise fallback to design token constants
-    return cssColors.length === 6 ? cssColors : [...CHART_PALETTE.slice(0, 6)];
+    return cssColors.length === 6 ? cssColors : [...CANVAS_CHART_FALLBACK_HEX];
   }
 
   /**
@@ -179,9 +177,9 @@ export class ThemeService implements OnDestroy {
     // Listen for system preference changes (addEventListener is supported in all target browsers)
     this.mediaQueryHandler = (e: MediaQueryListEvent) => {
       this._systemPreference.set(e.matches ? "dark" : "light");
-      this.logger.debug(
-        `[ThemeService] System preference changed to: ${e.matches ? "dark" : "light"}`,
-      );
+      this.logger.debug("theme_system_preference_changed", {
+        preference: e.matches ? "dark" : "light",
+      });
     };
     this.mediaQuery.addEventListener("change", this.mediaQueryHandler);
   }
@@ -200,9 +198,7 @@ export class ThemeService implements OnDestroy {
    * Load saved preference from localStorage
    */
   private loadSavedPreference(): void {
-    this.logger.debug(
-      "[ThemeService] Browser storage persistence disabled; using in-memory or Supabase theme state",
-    );
+    this.logger.debug("theme_browser_storage_disabled");
   }
 
   /**
@@ -213,7 +209,7 @@ export class ThemeService implements OnDestroy {
       // Persist only to Supabase when authenticated. Otherwise this remains in-memory.
       this.saveToSupabase(mode);
     } catch (_error) {
-      this.logger.warn("[ThemeService] Failed to save theme preference");
+      this.logger.warn("theme_save_preference_failed");
     }
   }
 
@@ -238,10 +234,9 @@ export class ThemeService implements OnDestroy {
       );
 
       if (error) {
-        this.logger.debug(
-          "[ThemeService] Could not save theme to Supabase:",
-          error.message,
-        );
+        this.logger.debug("theme_supabase_save_failed", {
+          message: error.message,
+        });
       }
     } catch (_error) {
       // Silently fail - localStorage is the primary storage
@@ -269,9 +264,9 @@ export class ThemeService implements OnDestroy {
         ["light", "dark", "auto"].includes(storedTheme)
       ) {
         this._mode.set(storedTheme as ThemeMode);
-        this.logger.debug(
-          `[ThemeService] Loaded theme from Supabase: ${storedTheme}`,
-        );
+        this.logger.debug("theme_loaded_from_supabase", {
+          theme: storedTheme,
+        });
       }
     } catch (_error) {
       // Silently fail - localStorage preference is used
@@ -301,7 +296,7 @@ export class ThemeService implements OnDestroy {
     // Update meta theme-color for mobile browsers
     this.updateMetaThemeColor(theme);
 
-    this.logger.debug(`[ThemeService] Applied theme: ${theme}`);
+    this.logger.debug("theme_applied", { theme });
   }
 
   /**

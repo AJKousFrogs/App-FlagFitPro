@@ -13,6 +13,7 @@ This file is the canonical entry point for durable documentation in the repo.
 
 | Need | Document |
 | --- | --- |
+| Current release (v4.0) | [RELEASE_NOTES_4.0.0.md](./RELEASE_NOTES_4.0.0.md) |
 | Overall architecture | [ARCHITECTURE.md](./ARCHITECTURE.md) |
 | Canonical ownership rules | [SINGLE_SOURCE_OF_TRUTH.md](./SINGLE_SOURCE_OF_TRUTH.md) |
 | Repo navigation | [REPO_DISCOVERY_GUIDE.md](./REPO_DISCOVERY_GUIDE.md) |
@@ -84,6 +85,7 @@ This file is the canonical entry point for durable documentation in the repo.
 
 ## Release And Change History
 
+- [RELEASE_NOTES_4.0.0.md](./RELEASE_NOTES_4.0.0.md)
 - [RELEASE_NOTES_3.4.0.md](./RELEASE_NOTES_3.4.0.md)
 - [RELEASE_NOTES_2.1.0.md](./RELEASE_NOTES_2.1.0.md)
 - [RELEASE_NOTES_1.5.0.md](./RELEASE_NOTES_1.5.0.md)

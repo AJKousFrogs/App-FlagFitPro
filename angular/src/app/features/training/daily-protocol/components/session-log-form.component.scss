@@ -10,7 +10,7 @@
   border: var(--component-card-border);
   border-radius: var(--component-card-radius);
   padding: var(--component-card-padding);
-  margin-top: 0;
+  margin-top: var(--space-0);
   display: flex;
   flex-direction: column;
   gap: var(--layout-page-section-gap-tight);
@@ -20,18 +20,18 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-1);
-  margin: 0;
+  margin: var(--space-0);
 }
 
 .form-header h4 {
-  margin: 0;
+  margin: var(--space-0);
   font-size: var(--ds-font-size-md);
   font-weight: var(--ds-font-weight-semibold);
   color: var(--color-text-primary);
 }
 
 .form-header p {
-  margin: 0;
+  margin: var(--space-0);
   font-size: var(--ds-font-size-sm);
   color: var(--color-text-secondary);
 }
@@ -41,7 +41,7 @@
   display: flex;
   flex-direction: column;
   gap: var(--layout-page-section-gap-tight);
-  margin: 0;
+  margin: var(--space-0);
 }
 
 .form-field {
@@ -158,7 +158,7 @@
   background: var(--ds-primary-green-subtle);
   border-radius: var(--component-card-radius);
   padding: var(--component-card-padding-compact);
-  margin: 0;
+  margin: var(--space-0);
   display: flex;
   flex-direction: column;
   gap: var(--space-2);
@@ -170,7 +170,7 @@
   align-items: center;
   gap: var(--space-2);
   flex-wrap: wrap;
-  margin: 0;
+  margin: var(--space-0);
 }
 
 .load-label {

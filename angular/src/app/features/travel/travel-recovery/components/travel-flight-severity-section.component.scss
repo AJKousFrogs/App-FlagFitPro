@@ -1,7 +1,7 @@
 @use "styles/mixins" as *;
 
 .severity-section {
-  margin-bottom: 0;
+  margin-bottom: var(--space-0);
 }
 
 .severity-card {
@@ -54,7 +54,7 @@
     width: calc(var(--space-16) + var(--space-6));
     height: calc(var(--space-16) + var(--space-6));
     border-radius: var(--radius-full);
-    background: var(--surface-primary);
+    background: var(--surface-card);
   }
 }
 
@@ -120,10 +120,10 @@
 .symptom-chip {
   padding: var(--space-1) var(--space-2);
   border-radius: var(--radius-full);
-  background: var(--ui-surface-card-alt);
-  border: var(--border-1) solid var(--ui-border-subtle);
+  background: var(--surface-card);
+  border: var(--border-1) solid var(--color-border-primary);
   font-size: var(--font-body-sm-size);
-  color: var(--ui-text-secondary);
+  color: var(--color-text-secondary);
 }
 
 @include respond-to(md) {

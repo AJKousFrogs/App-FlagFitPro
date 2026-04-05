@@ -1,8 +1,8 @@
 {
   "name": "flagfit-pro",
-  "version": "3.4.0",
+  "version": "4.0.0",
   "type": "module",
-  "description": "FlagFit Pro v3.4 - consolidated flag football performance, wellness, and team operations platform",
+  "description": "FlagFit Pro v4.0 - consolidated flag football performance, wellness, and team operations platform",
   "main": "index.js",
   "engines": {
     "node": ">=22.0.0"
@@ -30,6 +30,7 @@
     "test:e2e:headed": "playwright test --headed",
     "test:smoke": "cd angular && npx playwright test e2e/smoke.spec.ts",
     "test:e2e:smoke": "cd angular && npx playwright test e2e/smoke.spec.ts",
+    "e2e:smoke": "cd angular && npx playwright test e2e/smoke.spec.ts",
     "test:e2e:critical": "cd angular && npx playwright test e2e/critical-flow-morning-training.spec.ts",
     "test:e2e:navigation": "cd angular && npx playwright test e2e/navigation-routing.spec.ts",
     "test:e2e:navigation:watch": "cd angular && npx playwright test e2e/navigation-routing.spec.ts --headed",

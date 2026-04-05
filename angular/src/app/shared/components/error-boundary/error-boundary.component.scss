@@ -31,7 +31,7 @@ app-page-error-state.error-boundary-state {
 .error-boundary-meta {
   font-size: var(--ds-font-size-sm);
   color: var(--color-text-muted);
-  margin: 0;
+  margin: var(--space-0);
   text-align: center;
   font-family: var(--ds-font-family-mono); /* ds-exception: monospace */
 }

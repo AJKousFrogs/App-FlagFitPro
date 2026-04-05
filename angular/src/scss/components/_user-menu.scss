@@ -65,7 +65,7 @@
 
     // Divider
     &.menu-divider {
-      padding: 0;
+      padding: var(--space-0);
       margin: var(--space-2) var(--space-4);
       border-top: var(--border-1) solid var(--ui-border-subtle);
       height: var(--border-1);

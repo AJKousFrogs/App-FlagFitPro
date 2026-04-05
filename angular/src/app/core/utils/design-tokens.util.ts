@@ -5,9 +5,11 @@
  * This is the single source of truth for accessing design tokens in TypeScript.
  *
  * Usage:
- * - For Chart.js/Canvas: Use CHART_COLORS constant (requires hex values)
- * - For DOM elements: Use getCssVariable() to read CSS vars at runtime
- * - For component configs: Use semantic color objects (BLOCK_COLORS, STATUS_COLORS, etc.)
+ * - DOM / styles: Prefer `var(--token)` via BRAND_COLORS, STATUS_COLORS, etc.
+ * - Chart.js / canvas: Pass resolved colors from ThemeService.getChartColors() or
+ *   getCssVariable("--color-chart-N"). For SSR or missing document, use
+ *   CANVAS_CHART_FALLBACK_HEX (must stay in sync with :root --color-chart-* in SCSS).
+ * - Do not duplicate brand hex in feature code; use tokens above.
  */
 
 /**
@@ -171,22 +173,44 @@ export const PHASE_COLORS = {
 } as const;
 
 // ============================================================================
-// CHART.JS / CANVAS COLORS (HEX VALUES REQUIRED)
-// Chart.js cannot read CSS variables - must use computed hex values
-// These are extracted from design-system-tokens.scss
+// CHART.JS / CANVAS — series tokens (see design-system-tokens.scss CONTRACT)
 // ============================================================================
 
+/** Canonical CSS var names for the six primary chart series (single source for ThemeService). */
+export const CHART_SERIES_CSS_VARS = [
+  "--color-chart-1",
+  "--color-chart-2",
+  "--color-chart-3",
+  "--color-chart-4",
+  "--color-chart-5",
+  "--color-chart-6",
+] as const;
+
 /**
- * Chart colors for Chart.js/Canvas rendering
- * These MUST be hex values because Chart.js canvas context cannot read CSS vars
- *
- * Maps to CSS variables:
- * - --color-chart-1: var(--p-highlight-text-color) (primary green)
- * - --color-chart-2: var(--p-highlight-text-color) (secondary green)
- * - --color-chart-3: var(--color-chart-3) (gold/success)
- * - --color-chart-4: var(--color-chart-4) (red/error)
- * - --color-chart-5: var(--color-chart-5) (blue/info)
- * - --color-chart-6: var(--color-chart-6) (purple)
+ * Light-theme hex fallbacks when computed styles are unavailable (SSR).
+ * MUST match :root --color-chart-1 … --color-chart-6 resolved values in
+ * design-system-tokens.scss (brand green + five fixed accents).
+ */
+export const CANVAS_CHART_FALLBACK_HEX: readonly string[] = [
+  "#089949",
+  "#10c96b",
+  "#f1c40f",
+  "#e74c3c",
+  "#3498db",
+  "#9b59b6",
+];
+
+/**
+ * Default coach team branding when API has no custom colors (matches primitives).
+ * Exempt from “no hex in features” — persisted user/team data.
+ */
+export const DEFAULT_TEAM_BRAND_HEX = {
+  primary: "#16a34a",
+  secondary: "#0f172a",
+} as const;
+
+/**
+ * Semantic chart color keys (CSS var references for DOM / configs that accept var()).
  */
 export const CHART_COLORS = {
   primary: "var(--p-highlight-text-color)",
@@ -199,20 +223,19 @@ export const CHART_COLORS = {
 } as const;
 
 /**
- * Chart color palette array for datasets
- * Use this for multi-series charts
+ * Extended palette as CSS var references (multi-series charts, non-canvas).
  */
 export const CHART_PALETTE: readonly string[] = [
-  "var(--p-highlight-text-color)", // primary green
-  "var(--p-highlight-text-color)", // secondary green
-  "var(--color-chart-3)", // gold
-  "var(--color-chart-4)", // red
-  "var(--color-chart-5)", // blue
-  "var(--color-chart-6)", // purple
-  "var(--color-chart-septenary)", // pink
-  "var(--color-phase-late-season)", // teal
-  "var(--ds-primary-orange)", // orange
-  "var(--color-phase-reload)", // indigo
+  "var(--p-highlight-text-color)",
+  "var(--p-highlight-text-color)",
+  "var(--color-chart-3)",
+  "var(--color-chart-4)",
+  "var(--color-chart-5)",
+  "var(--color-chart-6)",
+  "var(--color-chart-septenary)",
+  "var(--color-phase-late-season)",
+  "var(--ds-primary-orange)",
+  "var(--color-phase-reload)",
 ] as const;
 
 /**
@@ -227,11 +250,16 @@ export const CHART_STATUS_COLORS = {
 } as const;
 
 /**
- * Generates Chart.js-compatible color with alpha
- * @param hex - Hex color code
- * @param alpha - Opacity (0-1)
+ * Chart.js-friendly RGBA from a hex string or a resolved `var(--token)` / `--token`.
  */
-export function hexToRgba(hex: string, alpha: number): string {
+export function hexToRgba(color: string, alpha: number): string {
+  let hex = color.trim();
+  if (hex.startsWith("var(") || hex.startsWith("--")) {
+    hex = resolveCssVariable(hex.startsWith("var(") ? hex : `var(${hex})`);
+  }
+  if (!/^#[0-9a-fA-F]{6}$/.test(hex)) {
+    return color;
+  }
   const r = parseInt(hex.slice(1, 3), 16);
   const g = parseInt(hex.slice(3, 5), 16);
   const b = parseInt(hex.slice(5, 7), 16);
@@ -302,8 +330,7 @@ export function getInvertedStatusColor(
 }
 
 /**
- * Status colors as hex values for Chart.js/Canvas
- * Use these ONLY when CSS variables cannot be used
+ * Status colors as CSS var references (resolve with getCssVariable for canvas)
  */
 export const STATUS_HEX_COLORS = {
   success: "var(--p-highlight-text-color)", // --ds-primary-green (brand success)

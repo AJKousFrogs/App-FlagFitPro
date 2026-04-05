@@ -8,7 +8,7 @@
 
 .coach-analytics {
   width: 100%;
-  padding: 0;
+  padding: var(--space-0);
   gap: var(--layout-page-section-gap);
   min-width: 0;
 }
@@ -35,14 +35,14 @@
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(var(--grid-card-min-md), 1fr));
   gap: var(--layout-page-section-gap-tight);
-  margin-bottom: 0;
+  margin-bottom: var(--space-0);
 }
 
 .metric-card {
   display: flex;
   align-items: center;
   gap: var(--space-4);
-  background: var(--surface-primary);
+  background: var(--surface-card);
   padding: var(--space-4);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-sm);

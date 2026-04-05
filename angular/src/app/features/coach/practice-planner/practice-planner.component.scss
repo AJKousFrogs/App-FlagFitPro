@@ -8,7 +8,7 @@
 .practice-planner-page {
   width: min(100%, var(--content-max-width-xl));
   margin-inline: auto;
-  padding: 0;
+  padding: var(--space-0);
   display: flex;
   flex-direction: column;
   gap: var(--layout-page-section-gap);
@@ -47,10 +47,10 @@
     }
 
     h4 {
-      margin: 0;
+      margin: var(--space-0);
       font-size: var(--ds-font-size-md);
       font-weight: var(--ds-font-weight-semibold);
-      color: var(--ds-text-primary);
+      color: var(--color-text-primary);
     }
   }
 
@@ -72,10 +72,10 @@
     align-items: center;
     gap: var(--space-2);
     font-size: var(--ds-font-size-md);
-    color: var(--ds-text-secondary);
+    color: var(--color-text-secondary);
 
     i {
-      color: var(--ds-text-tertiary);
+      color: var(--color-text-tertiary);
       width: var(--avatar-size-xs);
     }
   }
@@ -87,7 +87,7 @@
   margin-bottom: var(--space-2);
 
   strong {
-    color: var(--ds-text-primary);
+    color: var(--color-text-primary);
   }
 }
 
@@ -95,14 +95,14 @@
 .timeline-preview {
   margin: var(--space-3) 0;
   padding: var(--space-3);
-  background: var(--ds-surface-base);
+  background: var(--surface-secondary);
   border-radius: var(--radius-md);
 
   h5 {
-    margin: 0 0 var(--space-2) 0;
+    margin: var(--space-0) var(--space-0) var(--space-2) var(--space-0);
     font-size: var(--ds-font-size-md);
     font-weight: var(--ds-font-weight-semibold);
-    color: var(--ds-text-primary);
+    color: var(--color-text-primary);
   }
 
   .timeline-items {
@@ -118,12 +118,12 @@
 
     .item-time {
       min-width: var(--badge-min-width-md);
-      color: var(--ds-text-tertiary);
+      color: var(--color-text-tertiary);
       font-family: var(--ds-font-family-mono); /* ds-exception: monospace */
     }
 
     .activity {
-      color: var(--ds-text-primary);
+      color: var(--color-text-primary);
     }
   }
 }
@@ -131,15 +131,15 @@
 .attendance-row {
   font-size: var(--ds-font-size-md);
   padding-top: var(--space-3);
-  border-top: var(--border-1) solid var(--ds-border-subtle);
+  border-top: var(--border-1) solid var(--color-border-secondary);
 
   .attendance-stats {
     margin-left: var(--space-2);
     font-weight: var(--ds-font-weight-medium);
-    color: var(--ds-text-primary);
+    color: var(--color-text-primary);
 
     .pending {
-      color: var(--ds-text-tertiary);
+      color: var(--color-text-tertiary);
       margin-left: var(--space-1);
     }
   }
@@ -159,16 +159,16 @@
 
 .form-section {
   padding: var(--component-card-padding-compact);
-  background: var(--ds-surface-base);
+  background: var(--surface-secondary);
   border-radius: var(--radius-lg);
 
   h4 {
-    margin: 0 0 var(--space-3) 0;
+    margin: var(--space-0) var(--space-0) var(--space-3) var(--space-0);
     font-size: var(--ds-font-size-md);
     font-weight: var(--ds-font-weight-semibold);
-    color: var(--ds-text-primary);
+    color: var(--color-text-primary);
     padding-bottom: var(--space-2);
-    border-bottom: var(--border-1) solid var(--ds-border-subtle);
+    border-bottom: var(--border-1) solid var(--color-border-secondary);
   }
 
   .section-header {
@@ -179,11 +179,11 @@
     gap: var(--space-2);
     margin-bottom: var(--space-3);
     padding-bottom: var(--space-2);
-    border-bottom: var(--border-1) solid var(--ds-border-subtle);
+    border-bottom: var(--border-1) solid var(--color-border-secondary);
 
     h4 {
-      margin: 0;
-      padding: 0;
+      margin: var(--space-0);
+      padding: var(--space-0);
       border: 0;
     }
   }
@@ -192,7 +192,7 @@
     display: flex;
     gap: var(--space-3);
     font-size: var(--ds-font-size-md);
-    color: var(--ds-text-secondary);
+    color: var(--color-text-secondary);
 
     .warning {
       color: var(--primitive-error-500);
@@ -208,7 +208,7 @@
     margin-bottom: var(--space-1);
     font-size: var(--ds-font-size-md);
     font-weight: var(--ds-font-weight-medium);
-    color: var(--ds-text-primary);
+    color: var(--color-text-primary);
   }
 
   input,
@@ -237,7 +237,7 @@
 
 .activity-block {
   padding: var(--space-3);
-  background: var(--ds-surface-elevated);
+  background: var(--surface-card);
   border-radius: var(--radius-md);
   border-left: var(--space-0-75) solid var(--ds-primary-green);
 
@@ -251,7 +251,7 @@
       min-width: var(--badge-min-width-md);
       font-family: var(--ds-font-family-mono); /* ds-exception: monospace */
       font-size: var(--ds-font-size-md);
-      color: var(--ds-text-tertiary);
+      color: var(--color-text-tertiary);
     }
 
     .activity-icon {
@@ -269,10 +269,10 @@
     padding-left: var(--space-4);
 
     ul {
-      margin: 0;
+      margin: var(--space-0);
       padding-left: var(--space-4);
       font-size: var(--ds-font-size-md);
-      color: var(--ds-text-secondary);
+      color: var(--color-text-secondary);
 
       li {
         margin-bottom: var(--space-1);
@@ -295,7 +295,7 @@
     align-items: center;
     gap: var(--space-2);
     padding: var(--space-2);
-    background: var(--ds-surface-elevated);
+    background: var(--surface-card);
     border-radius: var(--radius-md);
 
     label {

@@ -2,6 +2,7 @@
 
 import fs from "node:fs";
 import path from "node:path";
+import { createLogger } from "../netlify/functions/utils/structured-logger.js";
 
 const ROOT = process.cwd();
 const APP_DIR = path.join(ROOT, "angular/src/app");
@@ -44,6 +45,10 @@ const ALLOWED_PATTERNS = [
     reason: "Theme preference with Supabase sync support",
   },
 ];
+
+const logger = createLogger({
+  service: "local_persistence_audit",
+});
 
 function read(filePath) {
   return fs.readFileSync(filePath, "utf8");
@@ -98,28 +103,27 @@ function main() {
 
   const unexpected = findings.filter((finding) => !finding.allowed);
 
-  console.log("Local Persistence Audit");
-  console.log("=======================");
-
   if (findings.length === 0) {
-    console.log("No local persistence writes found.");
+    logger.info("local_persistence_no_findings");
     return;
   }
-
-  console.log("\nAllowed local persistence writes:");
-  for (const finding of findings.filter((entry) => entry.allowed)) {
-    console.log(`- ${finding.file}: ${finding.reason}`);
+  const allowedEntries = findings.filter((entry) => entry.allowed);
+  if (allowedEntries.length > 0) {
+    logger.info("local_persistence_allowed_entries", {
+      entries: allowedEntries,
+    });
   }
 
   if (unexpected.length > 0) {
-    console.error("\nUnexpected local persistence writes:");
-    for (const finding of unexpected) {
-      console.error(`- ${finding.file}: ${finding.reason}`);
-    }
+    logger.error("local_persistence_unexpected_entries", {
+      entries: unexpected,
+    });
     process.exit(1);
   }
 
-  console.log("\nNo unexpected local persistence writes detected.");
+  logger.info("local_persistence_no_unexpected", {
+    allowed: allowedEntries.length,
+  });
 }
 
 main();

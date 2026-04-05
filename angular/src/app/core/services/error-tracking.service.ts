@@ -197,12 +197,10 @@ export class ErrorTrackingService {
             },
           });
 
-          this.logger.success("[ErrorTracking] Sentry initialized");
+          this.logger.success("error_tracking_sentry_initialized");
           this.isInitialized = true;
         } else {
-          this.logger.warn(
-            "[ErrorTracking] Sentry DSN not configured, skipping initialization",
-          );
+          this.logger.warn("error_tracking_sentry_dsn_missing");
         }
       } catch (error) {
         // Gracefully handle any initialization errors
@@ -212,9 +210,7 @@ export class ErrorTrackingService {
         );
       }
     } else {
-      this.logger.debug(
-        "[ErrorTracking] Sentry disabled, using local logging only",
-      );
+      this.logger.debug("error_tracking_sentry_disabled_local_only");
     }
 
     // Subscribe to router errors
@@ -251,7 +247,10 @@ export class ErrorTrackingService {
     this.recentErrorSignatures.set(signature, now);
 
     // Log locally
-    this.logger.error(`[${severity.toUpperCase()}]`, errorObj, context);
+    this.logger.error("error_tracking_capture", errorObj, {
+      severity,
+      ...(context as Record<string, unknown>),
+    });
 
     // Add breadcrumb
     this.addBreadcrumb({
@@ -294,7 +293,11 @@ export class ErrorTrackingService {
     severity: ErrorSeverity = "info",
   ): void {
     // Log locally
-    this.logger.info(`[${severity.toUpperCase()}]`, context);
+    this.logger.info("error_tracking_message", {
+      severity,
+      message,
+      ...(context as Record<string, unknown> | undefined),
+    });
 
     // Send to Sentry if available
     if (this.Sentry && this.isInitialized) {

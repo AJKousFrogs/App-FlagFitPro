@@ -236,7 +236,7 @@
 
 /* Card body padding: ui-standardization (--p-card-body-padding) */
 .p-card .p-card-content {
-  padding: 0;
+  padding: var(--space-0);
 }
 
 .p-card .p-card-header {
@@ -372,7 +372,7 @@
 
 .p-select .p-select-label,
 .p-multiselect .p-multiselect-label {
-  padding: 0;
+  padding: var(--space-0);
   display: flex;
   align-items: center;
   height: 100%;
@@ -550,8 +550,8 @@
     opacity: 0;
     width: 0;
     height: 0;
-    margin: 0;
-    padding: 0;
+    margin: var(--space-0);
+    padding: var(--space-0);
     border: 0;
     background: transparent;
     box-shadow: none;
@@ -576,7 +576,7 @@
 .p-inputswitch .p-inputswitch-slider {
   position: absolute;
   cursor: pointer;
-  inset: 0;
+  inset: var(--space-0);
   background: var(--p-inputswitch-background);
   border-radius: var(--p-inputswitch-border-radius, var(--radius-full));
   transition:
@@ -819,7 +819,7 @@
   --p-card-body-gap: var(--space-3);
   --p-card-header-padding: var(--space-4);
   --p-card-footer-padding: var(--space-4);
-  --p-card-content-padding: 0;
+  --p-card-content-padding: var(--space-0);
   --p-card-title-font-size: var(--font-h3-size);
   --p-card-title-font-weight: var(--font-weight-semibold);
   --p-card-subtitle-font-size: var(--font-body-sm-size);
@@ -1086,13 +1086,13 @@
   --p-tabview-tab-hover-border-color: var(--ds-primary-green);
 
   /* p-tabs (PrimeNG 21) — aligned with token-mapping + brand-overrides pill tabs */
-  --p-tabs-nav-padding: 0;
+  --p-tabs-nav-padding: var(--space-0);
   --p-tabs-nav-gap: var(--space-1);
   --p-tabs-tab-padding: var(--space-2) var(--space-5);
   --p-tabs-tab-border-radius: var(--radius-lg);
   --p-tabs-tab-active-border-color: transparent;
   --p-tabs-tab-active-color: var(--ds-primary-green);
-  --p-tabs-content-padding: 0;
+  --p-tabs-content-padding: var(--space-0);
 
   /* Panel - Typography aligned to unified system */
   --p-panel-header-background: var(

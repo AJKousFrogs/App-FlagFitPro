@@ -106,7 +106,7 @@
   align-items: center;
   margin-top: var(--space-1);
   padding: 0 var(--space-2);
-  border: var(--border-1) solid var(--surface-border);
+  border: var(--border-1) solid var(--color-border-primary);
   border-radius: var(--radius-pill);
   background: var(--surface-secondary);
   color: var(--color-text-secondary);
@@ -141,7 +141,7 @@
 }
 
 .checkin-due {
-  background: var(--surface-ground);
+  background: var(--surface-secondary);
   color: var(--color-text-secondary);
 }
 
@@ -162,7 +162,7 @@
 }
 
 .stat-readiness {
-  transition: transform var(--motion-fast) var(--ease-standard);
+  transition: transform var(--transition-fast) var(--ease-standard);
 }
 
 .stat-readiness:hover {

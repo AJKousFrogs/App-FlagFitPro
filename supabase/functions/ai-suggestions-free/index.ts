@@ -5,6 +5,10 @@
 // @ts-ignore
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { corsHeaders } from "../_shared/cors.ts";
+import {
+  buildRequestContext,
+  createLogger,
+} from "../_shared/structured-logger.ts";
 
 interface AISuggestionRequest {
   userId: string;
@@ -41,7 +45,11 @@ interface Suggestion {
   reasoning: string;
 }
 
+const logger = createLogger("supabase.ai-suggestions-free");
+
 Deno.serve(async (req) => {
+  const requestLogger = logger.child(buildRequestContext(req));
+
   // Handle CORS preflight
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -55,7 +63,7 @@ Deno.serve(async (req) => {
     const groqApiKey = Deno.env.get("GROQ_API_KEY");
 
     if (!groqApiKey) {
-      console.warn("GROQ_API_KEY not set, returning empty suggestions");
+      requestLogger.warn("groq_api_key_missing");
       // Return empty array instead of mock data to avoid misleading athletes
       // with generic suggestions that don't reflect their actual training state
       return new Response(
@@ -127,7 +135,7 @@ Deno.serve(async (req) => {
       { headers: { ...corsHeaders, "Content-Type": "application/json" } },
     );
   } catch (error) {
-    console.error("AI suggestions error:", error);
+    requestLogger.error("ai_suggestions_generation_failed", error);
 
     // Return empty array on error instead of mock data
     // Mock data could mislead athletes about their actual training needs

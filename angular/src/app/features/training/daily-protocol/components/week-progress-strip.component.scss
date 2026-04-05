@@ -15,7 +15,7 @@
   justify-content: space-between;
   align-items: center;
   gap: var(--layout-page-section-gap-tight);
-  margin: 0;
+  margin: var(--space-0);
 }
 
 /* Week Days */
@@ -114,7 +114,7 @@
   display: flex;
   gap: var(--space-3);
   padding-left: var(--space-3);
-  border-left: var(--border-1) solid var(--ui-border-subtle);
+  border-left: var(--border-1) solid var(--color-border-primary);
 }
 
 .stat-item {
@@ -156,10 +156,10 @@
   }
 
   .week-stats {
-    padding-left: 0;
+    padding-left: var(--space-0);
     padding-top: var(--space-3);
     border-left: none;
-    border-top: var(--border-1) solid var(--ui-border-subtle);
+    border-top: var(--border-1) solid var(--color-border-primary);
     justify-content: center;
   }
 }

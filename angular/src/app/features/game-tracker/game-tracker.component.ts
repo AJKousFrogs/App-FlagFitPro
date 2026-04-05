@@ -501,6 +501,38 @@ export class GameTrackerComponent implements OnInit {
       .subscribe((playType) => {
         this.updatePlayFormValidators(playType);
       });
+
+    // Single subscription: drop-analysis validators when pass outcome is "drop"
+    this.playForm
+      .get("outcome")
+      ?.valueChanges.pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => {
+        if (this.playForm.get("playType")?.value !== "pass_play") {
+          return;
+        }
+        this.applyPassPlayOutcomeDropState(this.playForm.controls);
+      });
+  }
+
+  /**
+   * Align drop fields with current outcome when play type is pass (also when switching
+   * to pass_play with outcome already set — valueChanges may not re-emit).
+   */
+  private applyPassPlayOutcomeDropState(
+    controls: FormGroup["controls"],
+  ): void {
+    const outcome = controls["outcome"].value;
+    if (outcome === "drop") {
+      controls["dropSeverity"].setValidators([Validators.required]);
+      controls["dropReason"].setValidators([Validators.required]);
+      controls["isDrop"].setValue(true);
+    } else {
+      controls["dropSeverity"].clearValidators();
+      controls["dropReason"].clearValidators();
+      controls["isDrop"].setValue(false);
+    }
+    controls["dropSeverity"].updateValueAndValidity({ emitEvent: false });
+    controls["dropReason"].updateValueAndValidity({ emitEvent: false });
   }
 
   updatePlayFormValidators(playType: string): void {
@@ -538,24 +570,8 @@ export class GameTrackerComponent implements OnInit {
         break;
     }
 
-    // Show/hide drop analysis if outcome is drop
     if (playType === "pass_play") {
-      this.playForm
-        .get("outcome")
-        ?.valueChanges.pipe(takeUntilDestroyed(this.destroyRef))
-        .subscribe((outcome) => {
-          if (outcome === "drop") {
-            controls["dropSeverity"].setValidators([Validators.required]);
-            controls["dropReason"].setValidators([Validators.required]);
-            controls["isDrop"].setValue(true);
-          } else {
-            controls["dropSeverity"].clearValidators();
-            controls["dropReason"].clearValidators();
-            controls["isDrop"].setValue(false);
-          }
-          controls["dropSeverity"].updateValueAndValidity({ emitEvent: false });
-          controls["dropReason"].updateValueAndValidity({ emitEvent: false });
-        });
+      this.applyPassPlayOutcomeDropState(controls);
     }
 
     // Update validity

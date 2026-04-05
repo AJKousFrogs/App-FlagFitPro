@@ -2,6 +2,8 @@
 
 This file is the canonical high-level stack summary. For detailed setup and workflow commands, see [LOCAL_DEVELOPMENT_SETUP.md](./LOCAL_DEVELOPMENT_SETUP.md).
 
+**Current application release:** [4.0.0](./RELEASE_NOTES_4.0.0.md) (see release notes for scope: redesign, Supabase polish, TypeScript/JavaScript fixes).
+
 ## Runtime Baseline
 
 - Node.js 22+

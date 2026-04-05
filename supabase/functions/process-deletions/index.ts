@@ -12,6 +12,10 @@
 
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from "jsr:@supabase/supabase-js@2";
+import {
+  buildRequestContext,
+  createLogger,
+} from "../_shared/structured-logger.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -20,7 +24,11 @@ const corsHeaders = {
   "Content-Type": "application/json",
 };
 
+const logger = createLogger("supabase.process-deletions");
+
 Deno.serve(async (req: Request) => {
+  const requestLogger = logger.child(buildRequestContext(req));
+
   // Handle CORS preflight
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -66,7 +74,9 @@ Deno.serve(async (req: Request) => {
         `Failed to fetch pending deletions: ${fetchError.message}`,
       );
     } else if (pendingDeletions && pendingDeletions.length > 0) {
-      console.log(`Processing ${pendingDeletions.length} pending deletions`);
+      requestLogger.info("pending_deletions_processing_started", {
+        pending_count: pendingDeletions.length,
+      });
 
       for (const deletion of pendingDeletions) {
         try {
@@ -93,9 +103,10 @@ Deno.serve(async (req: Request) => {
               results.deletionsFailed++;
             } else {
               results.deletionsProcessed++;
-              console.log(
-                `Successfully processed deletion for user ${deletion.user_id}`,
-              );
+              requestLogger.info("pending_deletion_processed", {
+                user_id: deletion.user_id,
+                deletion_request_id: deletion.request_id,
+              });
             }
           } else {
             results.deletionsFailed++;
@@ -122,14 +133,16 @@ Deno.serve(async (req: Request) => {
     } else {
       results.emergencyRecordsCleaned = cleanedCount || 0;
       if (cleanedCount > 0) {
-        console.log(
-          `Cleaned up ${cleanedCount} expired emergency medical records`,
-        );
+        requestLogger.info("expired_emergency_records_cleaned", {
+          records_cleaned: cleanedCount,
+        });
       }
     }
 
     // Log summary
-    console.log("Deletion processing complete:", results);
+    requestLogger.info("deletion_processing_completed", {
+      results,
+    });
 
     return new Response(
       JSON.stringify({
@@ -141,7 +154,9 @@ Deno.serve(async (req: Request) => {
     );
   } catch (error) {
     const message = error instanceof Error ? error.message : "Unknown error";
-    console.error("Error in process-deletions:", message);
+    requestLogger.error("deletion_processing_failed", error, {
+      message,
+    });
 
     return new Response(JSON.stringify({ error: message }), {
       status: 500,

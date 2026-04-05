@@ -5,6 +5,10 @@
 // @ts-ignore
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { corsHeaders } from "../_shared/cors.ts";
+import {
+  buildRequestContext,
+  createLogger,
+} from "../_shared/structured-logger.ts";
 
 interface WeatherRequest {
   latitude?: number;
@@ -12,7 +16,11 @@ interface WeatherRequest {
   city?: string;
 }
 
+const logger = createLogger("supabase.weather-free");
+
 Deno.serve(async (req) => {
+  const requestLogger = logger.child(buildRequestContext(req));
+
   // Handle CORS preflight
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -86,7 +94,7 @@ Deno.serve(async (req) => {
       },
     );
   } catch (error) {
-    console.error("Weather error:", error);
+    requestLogger.error("weather_request_failed", error);
 
     // Return error state instead of mock data
     // Mock weather data could lead athletes to train in unsafe conditions

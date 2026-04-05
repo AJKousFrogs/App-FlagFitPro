@@ -14,7 +14,7 @@
 }
 
 .tournament-summary h3 {
-  margin: 0 0 var(--space-2);
+  margin: var(--space-0) var(--space-0) var(--space-2);
   font-size: var(--ds-font-size-2xl);
 }
 
@@ -100,7 +100,7 @@
   display: flex;
   align-items: center;
   gap: var(--space-2);
-  margin: 0 0 var(--space-3);
+  margin: var(--space-0) var(--space-0) var(--space-3);
   font-size: var(--ds-font-size-md);
 }
 
@@ -114,7 +114,7 @@
   display: flex;
   justify-content: space-between;
   padding: var(--space-2);
-  background: var(--surface-primary);
+  background: var(--surface-card);
   border-radius: var(--radius-md);
 }
 

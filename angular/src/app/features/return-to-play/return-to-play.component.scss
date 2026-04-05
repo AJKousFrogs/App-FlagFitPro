@@ -19,12 +19,12 @@
 
 // ===== Empty State =====
 .no-protocol-card {
-  margin-bottom: 0;
+  margin-bottom: var(--space-0);
 }
 
 // ===== Protocol Overview Card =====
 .protocol-overview-card {
-  margin-bottom: 0;
+  margin-bottom: var(--space-0);
 }
 
 .protocol-header {
@@ -89,7 +89,7 @@
 
 // ===== Stages Visual =====
 .stages-card {
-  margin-bottom: 0;
+  margin-bottom: var(--space-0);
 }
 
 .stages-visual {
@@ -108,11 +108,11 @@
   padding: var(--space-3);
   border: var(--border-2) solid var(--color-border-secondary);
   border-radius: var(--radius-md);
-  background: var(--surface-primary);
+  background: var(--surface-card);
   transition:
-    background-color var(--motion-base) var(--ease-standard),
-    border-color var(--motion-base) var(--ease-standard),
-    box-shadow var(--motion-base) var(--ease-standard);
+    background-color var(--transition-fast) var(--ease-standard),
+    border-color var(--transition-fast) var(--ease-standard),
+    box-shadow var(--transition-fast) var(--ease-standard);
 
   .stage-number {
     font-size: var(--ds-font-size-2xl);
@@ -206,7 +206,7 @@
 
 // ===== Current Stage Card =====
 .current-stage-card {
-  margin-bottom: 0;
+  margin-bottom: var(--space-0);
 }
 
 .stage-detail-header {
@@ -250,7 +250,7 @@
     gap: var(--space-2);
     font-size: var(--ds-font-size-md);
     font-weight: var(--ds-font-weight-semibold);
-    margin: 0 0 var(--space-2) 0;
+    margin: var(--space-0) var(--space-0) var(--space-2) var(--space-0);
 
     i {
       font-size: var(--ds-font-size-md);
@@ -296,7 +296,7 @@
     gap: var(--space-2);
     font-size: var(--ds-font-size-md);
     font-weight: var(--ds-font-weight-semibold);
-    margin: 0 0 var(--space-3) 0;
+    margin: var(--space-0) var(--space-0) var(--space-3) var(--space-0);
 
     i {
       color: var(--ds-primary-green);
@@ -341,7 +341,7 @@
 
 // ===== Daily Tracking =====
 .daily-tracking-card {
-  margin-bottom: 0;
+  margin-bottom: var(--space-0);
 }
 
 .checkin-form {
@@ -351,7 +351,7 @@
     gap: var(--space-2);
     font-size: var(--ds-font-size-md);
     font-weight: var(--ds-font-weight-semibold);
-    margin: 0 0 var(--space-4) 0;
+    margin: var(--space-0) var(--space-0) var(--space-4) var(--space-0);
     color: var(--color-text-primary);
 
     i {
@@ -418,7 +418,7 @@
 
     label {
       font-weight: var(--ds-font-weight-regular);
-      margin-bottom: 0;
+      margin-bottom: var(--space-0);
       font-size: var(--ds-font-size-md);
       cursor: pointer;
     }
@@ -442,14 +442,14 @@
 
 // ===== Chart Card =====
 .chart-card {
-  margin-bottom: 0;
+  margin-bottom: var(--space-0);
 
   // PrimeNG chart override moved to _component-overrides.scss (DS-EXC-017)
 }
 
 // ===== Checkins Table =====
 .checkins-card {
-  margin-bottom: 0;
+  margin-bottom: var(--space-0);
 }
 
 .notes-cell {
@@ -501,7 +501,7 @@
 
       label {
         font-weight: var(--ds-font-weight-regular);
-        margin-bottom: 0;
+        margin-bottom: var(--space-0);
         font-size: var(--ds-font-size-md);
         cursor: pointer;
       }

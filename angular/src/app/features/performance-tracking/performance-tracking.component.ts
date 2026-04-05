@@ -44,6 +44,8 @@ import {
   PerformanceAchievement,
 } from "../../core/services/team-performance-ranking.service";
 import { TeamMembershipService } from "../../core/services/team-membership.service";
+import { CorrelationContextService } from "../../core/services/correlation-context.service";
+import { RemoteTelemetryService } from "../../core/services/remote-telemetry.service";
 
 /**
  * Database record shape for performance_records table
@@ -204,6 +206,8 @@ export class PerformanceTrackingComponent {
   private readonly teamRankingService = inject(TeamPerformanceRankingService);
   private readonly teamMembershipService = inject(TeamMembershipService);
   private readonly featureFlags = inject(FeatureFlagsService);
+  private readonly correlation = inject(CorrelationContextService);
+  private readonly remoteTelemetry = inject(RemoteTelemetryService);
 
   // Next-gen preview
   readonly nextGenEnabled = this.featureFlags.nextGenMetricsPreview;
@@ -371,7 +375,7 @@ export class PerformanceTrackingComponent {
       this.isPageLoading.set(false);
       this.hasPageError.set(false);
     } catch (error) {
-      this.logger.error("[PerformanceTracking] Unexpected error:", error);
+      this.logger.error("performance_tracking_unexpected_error", error);
       this.setEmptyState();
       this.lastRefreshed.set(new Date());
       this.isPageLoading.set(false);
@@ -759,76 +763,84 @@ export class PerformanceTrackingComponent {
   }
 
   async savePerformance(): Promise<void> {
-    // Validate at least one metric is entered
-    const hasAnyMetric =
-      this.newPerformance.sprint10 ||
-      this.newPerformance.sprint20 ||
-      this.newPerformance.dash40 ||
-      this.newPerformance.proAgility ||
-      this.newPerformance.lDrill ||
-      this.newPerformance.reactiveAgility ||
-      this.newPerformance.vertical ||
-      this.newPerformance.broad ||
-      this.newPerformance.rsi ||
-      this.newPerformance.bench ||
-      this.newPerformance.squat ||
-      this.newPerformance.deadlift;
-
-    if (!hasAnyMetric) {
-      this.toastService.warn(TOAST.WARN.ENTER_PERFORMANCE_METRIC);
-      return;
-    }
-
-    this.isSaving.set(true);
-
+    this.correlation.startTrace();
     try {
-      const user = this.performanceTrackingDataService.getCurrentUser();
-      if (!user) {
-        this.toastService.error(TOAST.ERROR.LOGIN_TO_SAVE_PERFORMANCE);
+      // Validate at least one metric is entered (including body weight alone)
+      const hasAnyMetric =
+        this.newPerformance.sprint10 ||
+        this.newPerformance.sprint20 ||
+        this.newPerformance.dash40 ||
+        this.newPerformance.proAgility ||
+        this.newPerformance.lDrill ||
+        this.newPerformance.reactiveAgility ||
+        this.newPerformance.vertical ||
+        this.newPerformance.broad ||
+        this.newPerformance.rsi ||
+        this.newPerformance.bench ||
+        this.newPerformance.squat ||
+        this.newPerformance.deadlift ||
+        this.newPerformance.bodyWeight;
+
+      if (!hasAnyMetric) {
+        this.toastService.warn(TOAST.WARN.ENTER_PERFORMANCE_METRIC);
         return;
       }
 
-      // Calculate overall score (simple average based on benchmarks)
-      const score = this.calculateScore();
+      this.isSaving.set(true);
 
-      // Save to Supabase with extended fields
-      const { error } =
-        await this.performanceTrackingDataService.createPerformanceRecord({
-          userId: user.id,
-          score,
-          payload: {
-            sprint_10m: this.newPerformance.sprint10,
-            sprint_20m: this.newPerformance.sprint20,
-            dash_40: this.newPerformance.dash40,
-            pro_agility: this.newPerformance.proAgility,
-            l_drill: this.newPerformance.lDrill,
-            reactive_agility: this.newPerformance.reactiveAgility,
-            vertical_jump: this.newPerformance.vertical,
-            broad_jump: this.newPerformance.broad,
-            rsi: this.newPerformance.rsi,
-            bench_press: this.newPerformance.bench,
-            back_squat: this.newPerformance.squat,
-            deadlift: this.newPerformance.deadlift,
-            body_weight: this.newPerformance.bodyWeight,
-            notes: this.newPerformance.notes,
-          },
+      try {
+        const user = this.performanceTrackingDataService.getCurrentUser();
+        if (!user) {
+          this.toastService.error(TOAST.ERROR.LOGIN_TO_SAVE_PERFORMANCE);
+          return;
+        }
+
+        // Calculate overall score (simple average based on benchmarks)
+        const score = this.calculateScore();
+
+        const { error } =
+          await this.performanceTrackingDataService.createPerformanceRecord({
+            userId: user.id,
+            score,
+            payload: {
+              sprint_10m: this.newPerformance.sprint10,
+              sprint_20m: this.newPerformance.sprint20,
+              dash_40: this.newPerformance.dash40,
+              pro_agility: this.newPerformance.proAgility,
+              l_drill: this.newPerformance.lDrill,
+              reactive_agility: this.newPerformance.reactiveAgility,
+              vertical_jump: this.newPerformance.vertical,
+              broad_jump: this.newPerformance.broad,
+              rsi: this.newPerformance.rsi,
+              bench_press: this.newPerformance.bench,
+              back_squat: this.newPerformance.squat,
+              deadlift: this.newPerformance.deadlift,
+              body_weight: this.newPerformance.bodyWeight,
+              notes: this.newPerformance.notes,
+            },
+          });
+
+        if (error) {
+          throw new Error(error.message ?? "performance_records insert failed");
+        }
+
+        await this.loadPerformanceData();
+
+        this.toastService.success(TOAST.SUCCESS.PERFORMANCE_LOGGED);
+        this.showLogDialog = false;
+      } catch (error) {
+        const message =
+          error instanceof Error ? error.message : "Failed to save performance";
+        void this.remoteTelemetry.error(message, {
+          source: "performance_tracking",
+          operation: "savePerformance",
         });
-
-      if (error) {
-        throw new Error(error.message);
+        this.toastService.error(message);
+      } finally {
+        this.isSaving.set(false);
       }
-
-      // Reload all data from database to ensure consistency
-      await this.loadPerformanceData();
-
-      this.toastService.success(TOAST.SUCCESS.PERFORMANCE_LOGGED);
-      this.showLogDialog = false;
-    } catch (error) {
-      const message =
-        error instanceof Error ? error.message : "Failed to save performance";
-      this.toastService.error(message);
     } finally {
-      this.isSaving.set(false);
+      this.correlation.endTrace();
     }
   }
 

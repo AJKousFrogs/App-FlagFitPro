@@ -81,7 +81,7 @@ export class EvidenceConfigService {
    * Log preset change (for analytics/calibration)
    */
   private async logPresetChange(presetId: string): Promise<void> {
-    this.logger.info(`[EvidenceConfig] Preset changed to: ${presetId}`);
+    this.logger.info("evidence_config_preset_changed", { presetId });
 
     // Log to Supabase for analytics
     const user = this.supabaseService.currentUser();

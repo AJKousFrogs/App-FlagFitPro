@@ -27,13 +27,13 @@
   font-size: var(--ds-font-size-md);
   font-weight: var(--ds-font-weight-semibold);
   color: var(--color-text-primary);
-  margin: 0 0 var(--space-2) 0;
+  margin: var(--space-0) var(--space-0) var(--space-2) var(--space-0);
 }
 
 .error-state__description {
   font-size: var(--ds-font-size-md);
   color: var(--color-text-secondary);
-  margin: 0 0 var(--space-4) 0;
+  margin: var(--space-0) var(--space-0) var(--space-4) var(--space-0);
   max-width: var(--grid-card-min-md-plus);
   line-height: var(--ds-line-height-normal);
 }
