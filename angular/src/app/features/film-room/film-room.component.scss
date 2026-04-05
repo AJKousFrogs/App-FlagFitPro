@@ -123,7 +123,7 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        color: white;
+        color: var(--color-text-on-primary);
         font-size: 2rem;
       }
 
@@ -132,10 +132,10 @@
         bottom: var(--space-2);
         right: var(--space-2);
         background: var(--surface-overlay-darkest);
-        color: white;
+        color: var(--color-text-on-primary);
         padding: var(--space-0-5) var(--space-1-5);
         border-radius: var(--radius-sm);
-        font-size: var(--font-caption-size);
+        font-size: var(--ds-font-size-xs);
       }
     }
 
@@ -144,7 +144,7 @@
 
       .film-title { margin: var(--space-0) var(--space-0) var(--space-1); font-size: var(--ds-font-size-md); font-weight: var(--ds-font-weight-bold); }
       .film-meta { font-size: var(--ds-font-size-xs); color: var(--color-text-secondary); margin-bottom: var(--space-3); }
-      .tag-count { font-size: var(--font-caption-size); color: var(--ds-primary-green); display: flex; align-items: center; gap: var(--space-1); }
+      .tag-count { font-size: var(--ds-font-size-xs); color: var(--ds-primary-green); display: flex; align-items: center; gap: var(--space-1); }
     }
   }
 }

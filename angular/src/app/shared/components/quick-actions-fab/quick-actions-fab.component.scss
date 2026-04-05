@@ -22,7 +22,7 @@
   backdrop-filter: blur(var(--overlay-blur));
   -webkit-backdrop-filter: blur(var(--overlay-blur));
   z-index: var(--z-modal);
-  animation: fabBackdropFade 0.2s ease forwards;
+  animation: fabBackdropFade var(--transition-fast) var(--ease-standard) forwards;
 }
 
 @keyframes fabBackdropFade {
@@ -121,9 +121,9 @@
   text-overflow: ellipsis;
   box-shadow: var(--shadow-sm), var(--shadow-md);
   transition:
-    background-color var(--motion-fast) var(--ease-standard),
-    box-shadow var(--motion-fast) var(--ease-standard),
-    transform var(--motion-fast) var(--ease-standard);
+    background-color var(--transition-fast) var(--ease-standard),
+    box-shadow var(--transition-fast) var(--ease-standard),
+    transform var(--transition-fast) var(--ease-standard);
   letter-spacing: var(--ds-letter-spacing-0-01em);
 }
 
@@ -150,9 +150,9 @@
     var(--shadow-sm),
     0 var(--space-1) calc(var(--size-200) * 0.375) rgba(var(--ds-primary-green-rgb), 0.3);
   transition:
-    background-color var(--motion-fast) var(--ease-standard),
-    box-shadow var(--motion-fast) var(--ease-standard),
-    transform var(--motion-fast) var(--ease-standard);
+    background-color var(--transition-fast) var(--ease-standard),
+    box-shadow var(--transition-fast) var(--ease-standard),
+    transform var(--transition-fast) var(--ease-standard);
   flex-shrink: 0;
 }
 
@@ -190,9 +190,9 @@
     var(--shadow-md),
     0 calc(var(--space-1) + var(--space-0-5)) var(--space-5) rgba(var(--ds-primary-green-rgb), 0.35);
   transition:
-    background-color var(--motion-base) cubic-bezier(0.16, 1, 0.3, 1),
-    box-shadow var(--motion-base) cubic-bezier(0.16, 1, 0.3, 1),
-    transform var(--motion-base) cubic-bezier(0.16, 1, 0.3, 1);
+    background-color var(--transition-base) cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow var(--transition-base) cubic-bezier(0.16, 1, 0.3, 1),
+    transform var(--transition-base) cubic-bezier(0.16, 1, 0.3, 1);
   position: relative;
   overflow: hidden;
 }
@@ -236,8 +236,8 @@
   font-size: var(--ds-font-size-2xl);
   color: var(--color-text-on-primary);
   transition:
-    opacity var(--motion-base) var(--ease-standard),
-    transform var(--motion-base) var(--ease-standard);
+    opacity var(--transition-base) var(--ease-standard),
+    transform var(--transition-base) var(--ease-standard);
 }
 
 .main-fab.active .merlin-icon {
@@ -256,8 +256,8 @@
   opacity: 0;
   transform: scale(0.5) rotate(-90deg);
   transition:
-    opacity var(--motion-base) var(--ease-standard),
-    transform var(--motion-base) var(--ease-standard);
+    opacity var(--transition-base) var(--ease-standard),
+    transform var(--transition-base) var(--ease-standard);
 }
 
 .fab-close i {

@@ -30,13 +30,28 @@
   border-right: var(--border-1) solid var(--color-border-primary);
   z-index: var(--z-index-app-sidebar);
   transition:
-    transform var(--motion-feedback-duration) var(--ease-standard),
-    box-shadow var(--motion-feedback-duration) var(--ease-standard),
+    transform var(--transition-base) var(--ease-standard),
+    box-shadow var(--transition-base) var(--ease-standard),
     width var(--transition-slow) var(--ease-standard);
   overflow: hidden;
   display: flex;
   flex-direction: column;
   container-type: inline-size;
+
+  .light-theme & {
+    background: var(--premium-light-bg-glass);
+    backdrop-filter: blur(var(--premium-glass-blur-md));
+    -webkit-backdrop-filter: blur(var(--premium-glass-blur-md));
+    border-right-color: var(--premium-border-light);
+  }
+
+  .dark-theme & {
+    background: var(--premium-dark-gradient-neutral);
+    backdrop-filter: blur(var(--premium-glass-blur-xl));
+    -webkit-backdrop-filter: blur(var(--premium-glass-blur-xl));
+    border-right-color: var(--premium-border-dark);
+    box-shadow: 10px 0 30px rgba(0, 0, 0, 0.2);
+  }
 }
 
 .sidebar::before,
@@ -148,7 +163,7 @@ app-close-button.sidebar-close-btn {
   color: var(--color-text-tertiary);
   letter-spacing: 0.02em;
   user-select: none;
-  transition: opacity var(--motion-feedback-duration-fast) var(--ease-standard);
+  transition: opacity var(--transition-fast) var(--ease-standard);
 
   &::before {
     content: "";
@@ -158,7 +173,7 @@ app-close-button.sidebar-close-btn {
     border-radius: var(--radius-full);
     background: currentColor;
     flex-shrink: 0;
-    opacity: 0.55;
+    opacity: var(--opacity-muted);
   }
 }
 
@@ -225,7 +240,7 @@ app-close-button.sidebar-close-btn {
   font-weight: var(--ds-font-weight-semibold);
   font-size: var(--ds-font-size-sm);
   flex-shrink: 0;
-  box-shadow: 0 2px 8px rgba(8, 153, 73, 0.28);
+  box-shadow: 0 2px 8px rgba(var(--ds-primary-green-rgb), 0.28);
 }
 
 .user-info {
@@ -243,14 +258,14 @@ app-close-button.sidebar-close-btn {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  line-height: 1.3;
+  line-height: var(--ds-line-height-caption);
 }
 
 .user-role {
   font-size: var(--ds-font-size-xs);
   color: var(--color-text-secondary);
   text-transform: capitalize;
-  line-height: 1.3;
+  line-height: var(--ds-line-height-caption);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -402,7 +417,8 @@ app-close-button.sidebar-close-btn {
 // ============================================================
 // MOBILE: Samsung Galaxy fixes
 // ============================================================
-@media (max-width: var(--breakpoint-md)) and (min-height: var(--breakpoint-min-height-tablet)) {
+/* Samsung Galaxy: max-width 48rem matches --breakpoint-md; min-height 600px targets tall phones */
+@media (max-width: 48rem) and (min-height: 37.5rem) {
   .sidebar {
     height: calc(100dvh - var(--app-shell-header-height-mobile));
     max-height: calc(100dvh - var(--app-shell-header-height-mobile));

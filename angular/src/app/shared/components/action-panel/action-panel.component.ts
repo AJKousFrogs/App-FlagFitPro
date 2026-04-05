@@ -140,7 +140,7 @@ export class ActionPanelComponent {
     let title = titles[type] || "Action Required";
 
     if (urgency === "critical") {
-      title = `⚠️ ${title}`;
+      title = `Warning: ${title}`;
     }
 
     return title;

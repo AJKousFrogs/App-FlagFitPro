@@ -744,11 +744,11 @@ export class AnalyticsComponent implements AfterViewInit {
     // Chart interaction instructions
     const instructions = `Chart Interactions Available:
 
-🔍 Zoom:
+Zoom:
   • Scroll with mouse wheel to zoom in/out
   • Pinch on touch devices
 
-↔️ Pan:
+Pan:
   • Hold Shift + drag to pan left/right
 
 Legend: Click legend items to show/hide datasets

@@ -21,13 +21,13 @@
     text-align: center;
 
     .error-icon {
-  font-size: var(--font-h1-size);
+  font-size: var(--ds-font-size-3xl);
       color: var(--primitive-error-500);
     }
 
     h3 {
       margin: var(--space-0);
-      color: var(--text-primary);
+      color: var(--color-text-primary);
     }
 
     p {
@@ -48,7 +48,7 @@
       padding: var(--space-2) var(--space-3);
       border-radius: var(--radius-md);
       font-size: var(--ds-font-size-md);
-      font-weight: var(--font-weight-medium);
+      font-weight: var(--ds-font-weight-medium);
       width: fit-content;
 
       &.team-badge {
@@ -66,7 +66,7 @@
   .session-description,
   .session-notes {
     line-height: var(--ds-line-height-1-6);
-    color: var(--text-primary);
+    color: var(--color-text-primary);
     white-space: pre-wrap;
   }
 
@@ -102,13 +102,13 @@
 .session-detail-page .overview-label {
   font-size: var(--ds-font-size-md);
   color: var(--color-text-secondary);
-  font-weight: var(--font-weight-medium);
+  font-weight: var(--ds-font-weight-medium);
 }
 
 .session-detail-page .overview-value {
   font-size: var(--ds-font-size-lg);
-  color: var(--text-primary);
-  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+  font-weight: var(--ds-font-weight-semibold);
 }
 
 .session-detail-page .equipment-item {
@@ -118,7 +118,7 @@
   background: var(--surface-secondary);
   border-radius: var(--radius-md);
   font-size: var(--ds-font-size-md);
-  color: var(--text-primary);
+  color: var(--color-text-primary);
 }
 
 @include respond-to(sm) {

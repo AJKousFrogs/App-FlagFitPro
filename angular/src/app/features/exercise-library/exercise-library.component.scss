@@ -125,11 +125,11 @@
       right: var(--space-2);
       padding: var(--space-0-5) var(--space-2);
       border-radius: var(--radius-full);
-      font-size: var(--font-caption-size);
+      font-size: var(--ds-font-size-xs);
       font-weight: var(--ds-font-weight-bold);
       text-transform: uppercase;
       background: var(--surface-overlay-dark);
-      color: white;
+      color: var(--color-text-on-primary);
       backdrop-filter: blur(var(--blur-sm));
 
       &[data-difficulty="beginner"] { border-left: var(--border-3) solid var(--color-status-success); }
@@ -164,7 +164,7 @@
     }
 
     .ex-tag {
-      font-size: var(--font-caption-size);
+      font-size: var(--ds-font-size-xs);
       background: var(--surface-secondary);
       color: var(--color-text-secondary);
       padding: var(--space-0-5) var(--space-1-5);

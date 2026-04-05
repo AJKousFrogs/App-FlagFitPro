@@ -557,7 +557,7 @@ background: linear-gradient(135deg,var(--color-status-error),var(--primitive-err
 }
 
 .window-details {
-  animation: expandDown 0.3s ease-out;
+  animation: expandDown var(--transition-base) var(--ease-standard)-out;
 }
 
 @keyframes expandDown {

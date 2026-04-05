@@ -22,13 +22,13 @@
   gap: var(--space-0-5);
   z-index: var(--z-modal);
   box-sizing: border-box;
-  backdrop-filter: blur(20px) saturate(1.6);
-  -webkit-backdrop-filter: blur(20px) saturate(1.6);
+  backdrop-filter: blur(var(--premium-glass-blur-xl)) saturate(1.6);
+  -webkit-backdrop-filter: blur(var(--premium-glass-blur-xl)) saturate(1.6);
   box-shadow: 0 -1px 0 var(--color-border-subtle);
   transition:
-    transform var(--motion-feedback-duration-fast) var(--ease-standard),
-    box-shadow var(--motion-feedback-duration-fast) var(--ease-standard),
-    background-color var(--motion-feedback-duration-fast) var(--ease-standard);
+    transform var(--transition-fast) var(--ease-standard),
+    box-shadow var(--transition-fast) var(--ease-standard),
+    background-color var(--transition-fast) var(--ease-standard);
 }
 
 .bottom-nav > app-nav-item {
@@ -56,14 +56,14 @@
   z-index: calc(var(--z-index-modal-backdrop) + 1);
   width: 100%;
   background: color-mix(in srgb, var(--surface-primary) 92%, transparent);
-  backdrop-filter: blur(24px) saturate(1.5);
-  -webkit-backdrop-filter: blur(24px) saturate(1.5);
+  backdrop-filter: blur(var(--premium-glass-blur-xl)) saturate(1.5);
+  -webkit-backdrop-filter: blur(var(--premium-glass-blur-xl)) saturate(1.5);
   border-radius: var(--radius-2xl) var(--radius-2xl) 0 0;
   box-shadow:
     0 -1px 0 var(--color-border-secondary),
     var(--shadow-xl);
   padding-bottom: env(safe-area-inset-bottom, var(--space-4));
-  animation: feedback-slide-up var(--motion-feedback-duration)
+  animation: feedback-slide-up var(--transition-base)
     cubic-bezier(0.34, 1.56, 0.64, 1);
   will-change: transform, opacity;
 }

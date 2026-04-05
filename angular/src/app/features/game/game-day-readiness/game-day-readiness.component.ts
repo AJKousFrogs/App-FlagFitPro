@@ -293,7 +293,7 @@ export class GameDayReadinessComponent implements OnInit {
     {
       key: "sleep",
       label: "Sleep Quality",
-      icon: "😴",
+      icon: "pi-moon",
       value: 0, // Start at 0 - user must set value
       weight: 20,
       description: "How well did you sleep last night?",

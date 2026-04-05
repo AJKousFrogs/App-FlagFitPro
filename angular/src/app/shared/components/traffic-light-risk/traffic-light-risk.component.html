@@ -2,7 +2,7 @@
 <div class="traffic-light-container" [class.compact]="isCompact">
   <!-- Header: Title & ACWR Value -->
   <div class="risk-header">
-    <h3 class="risk-title">
+    <h3 class="ff-h3 risk-title">
       <i class="pi pi-shield"></i>
       Injury Risk
     </h3>
@@ -66,7 +66,7 @@
   <!-- Risk Info Card -->
   <div class="risk-info" [class]="'info-' + risk.level">
     <div class="info-header">
-      <h4 class="info-title">{{ risk.label }}</h4>
+      <h4 class="ff-h4 info-title">{{ risk.label }}</h4>
     </div>
     <p class="risk-description">{{ risk.description }}</p>
     <div class="risk-recommendation">

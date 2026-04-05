@@ -3,8 +3,8 @@
 }
 
 .icon-btn {
-  --icon-btn-background: var(--ui-primary);
-  --icon-btn-background-hover: var(--ui-primary-hover);
+  --icon-btn-background: var(--ds-primary-green);
+  --icon-btn-background-hover: var(--ds-primary-green-dark);
   --icon-btn-background-active: var(--ui-primary-active);
   --icon-btn-color: var(--color-text-on-primary);
   --icon-btn-border-color: transparent;
@@ -65,7 +65,7 @@
 
 .icon-btn:disabled,
 .icon-btn.btn-disabled {
-  opacity: 0.5;
+  opacity: var(--opacity-dimmed);
   cursor: not-allowed;
   pointer-events: none;
   box-shadow: var(--shadow-1);
@@ -107,8 +107,8 @@
 .icon-btn-secondary,
 .icon-btn-outlined,
 .icon-btn-success {
-  --icon-btn-background: var(--ui-primary);
-  --icon-btn-background-hover: var(--ui-primary-hover);
+  --icon-btn-background: var(--ds-primary-green);
+  --icon-btn-background-hover: var(--ds-primary-green-dark);
   --icon-btn-background-active: var(--ui-primary-active);
   --icon-btn-color: var(--color-text-on-primary);
   --icon-btn-border-color: transparent;
@@ -173,7 +173,7 @@
 }
 
 .icon-btn-danger {
-  --icon-btn-background: var(--ui-danger);
+  --icon-btn-background: var(--color-status-error);
   --icon-btn-background-hover: var(--color-interactive-destructive-hover);
   --icon-btn-background-active: var(--primitive-error-700);
   --icon-btn-color: var(--color-text-on-primary);

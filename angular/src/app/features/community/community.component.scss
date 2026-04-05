@@ -621,7 +621,7 @@
   margin-top: var(--space-4);
   padding-top: var(--space-4);
   border-top: var(--border-1) solid var(--color-border-primary);
-  animation: ui-motion-fade-in 0.3s ease-out;
+  animation: ui-motion-fade-in var(--transition-base) var(--ease-standard)-out;
 }
 
 .comments-list {
@@ -636,7 +636,7 @@
   gap: var(--space-3);
 
   --ui-motion-enter-from-y: var(--space-5);
-  animation: ui-motion-enter-y 0.3s ease-out both;
+  animation: ui-motion-enter-y var(--transition-base) var(--ease-standard)-out both;
 }
 
 .comment-item:nth-child(1) {
@@ -723,7 +723,7 @@
   display: flex;
   gap: var(--space-3);
   align-items: center;
-  animation: ui-motion-fade-in 0.3s ease-out 0.2s both;
+  animation: ui-motion-fade-in var(--transition-base) var(--ease-standard)-out 0.2s both;
 }
 
 .comment-input-wrapper {

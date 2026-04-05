@@ -50,7 +50,7 @@
   margin-bottom: var(--space-0);
 
   .form-label {
-    font-size: var(--font-caption-size);
+    font-size: var(--ds-font-size-xs);
     font-weight: var(--ds-font-weight-medium);
     color: var(--color-text-secondary);
     text-transform: var(--ds-text-transform-uppercase);
@@ -65,7 +65,7 @@
   border-radius: var(--component-input-radius);
   background: var(--component-input-background);
   color: var(--color-text-primary);
-  font-size: var(--font-body-size);
+  font-size: var(--ds-font-size-md);
 
   @include ds-input-focus($shadow: var(--component-input-shadow-focus));
 }
@@ -78,7 +78,7 @@
 
 .quiet-hours-note {
   margin-top: var(--space-0);
-  font-size: var(--font-body-sm-size);
+  font-size: var(--ds-font-size-sm);
   color: var(--color-text-secondary);
   display: flex;
   align-items: center;

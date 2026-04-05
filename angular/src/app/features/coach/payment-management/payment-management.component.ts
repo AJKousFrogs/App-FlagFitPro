@@ -263,7 +263,9 @@ const BALANCE_FILTERS = [
             <!-- Financial Overview -->
             <div class="financial-overview">
               <div class="stat-card balance">
-                <span class="stat-icon">💰</span>
+                <span class="stat-icon" aria-hidden="true"
+                  ><i class="pi pi-wallet"></i
+                ></span>
                 <div class="stat-content">
                   <span class="stat-block__value"
                     >\${{ totalOutstanding() }}</span
@@ -273,7 +275,9 @@ const BALANCE_FILTERS = [
                 </div>
               </div>
               <div class="stat-card collected">
-                <span class="stat-icon">✅</span>
+                <span class="stat-icon" aria-hidden="true"
+                  ><i class="pi pi-check-circle"></i
+                ></span>
                 <div class="stat-content">
                   <span class="stat-block__value"
                     >\${{ totalCollected() }}</span
@@ -283,7 +287,9 @@ const BALANCE_FILTERS = [
                 </div>
               </div>
               <div class="stat-card due">
-                <span class="stat-icon">📅</span>
+                <span class="stat-icon" aria-hidden="true"
+                  ><i class="pi pi-calendar"></i
+                ></span>
                 <div class="stat-content">
                   <span class="stat-block__value">\${{ dueThisMonth() }}</span>
                   <span class="stat-block__label">Due This Month</span>
@@ -291,7 +297,9 @@ const BALANCE_FILTERS = [
                 </div>
               </div>
               <div class="stat-card overdue">
-                <span class="stat-icon">⚠️</span>
+                <span class="stat-icon" aria-hidden="true"
+                  ><i class="pi pi-exclamation-triangle"></i
+                ></span>
                 <div class="stat-content">
                   <span class="stat-block__value">\${{ totalOverdue() }}</span>
                   <span class="stat-block__label">Overdue</span>
@@ -312,7 +320,9 @@ const BALANCE_FILTERS = [
                 @for (fee of fees().slice(0, 2); track fee.id) {
                   <div class="fee-preview-card" [class.overdue]="fee.isOverdue">
                     <div class="fee-header">
-                      <span class="fee-icon">{{ getFeeIcon(fee.type) }}</span>
+                      <span class="fee-icon" aria-hidden="true"
+                        ><i [class]="'pi ' + getFeeIcon(fee.type)"></i
+                      ></span>
                       <h4>{{ fee.name }}</h4>
                       @if (fee.isOverdue) {
                         <app-status-tag
@@ -347,7 +357,9 @@ const BALANCE_FILTERS = [
                 <div class="fee-card" [class.overdue]="fee.isOverdue">
                   <div class="fee-header">
                     <div class="fee-title">
-                      <span class="fee-icon">{{ getFeeIcon(fee.type) }}</span>
+                      <span class="fee-icon" aria-hidden="true"
+                        ><i [class]="'pi ' + getFeeIcon(fee.type)"></i
+                      ></span>
                       <h3>{{ fee.name }}</h3>
                     </div>
                     <div class="fee-actions">
@@ -375,7 +387,10 @@ const BALANCE_FILTERS = [
                     <p>
                       <strong>Due Date:</strong> {{ fee.dueDate }}
                       @if (fee.isOverdue) {
-                        <span class="overdue-badge">⚠️ OVERDUE</span>
+                        <span class="overdue-badge"
+                          ><i class="pi pi-exclamation-triangle" aria-hidden="true"></i>
+                          OVERDUE</span
+                        >
                       }
                     </p>
                   </div>
@@ -1318,12 +1333,12 @@ export class PaymentManagementComponent implements OnInit {
   // Helpers
   getFeeIcon(type: string): string {
     const icons: Record<string, string> = {
-      tournament: "🏆",
-      dues: "📋",
-      equipment: "🎽",
-      other: "💰",
+      tournament: "pi-trophy",
+      dues: "pi-clipboard",
+      equipment: "pi-tag",
+      other: "pi-wallet",
     };
-    return icons[type] || "💰";
+    return icons[type] || "pi-wallet";
   }
 
   getCollectionPercent(fee: TeamFee): number {

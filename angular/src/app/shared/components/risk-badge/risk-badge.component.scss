@@ -5,8 +5,8 @@
   align-items: center;
   gap: var(--space-2);
   transition:
-    transform var(--motion-fast) var(--ease-standard),
-    opacity var(--motion-fast) var(--ease-standard);
+    transform var(--transition-fast) var(--ease-standard),
+    opacity var(--transition-fast) var(--ease-standard);
 }
 
 @keyframes risk-badge-pulse {
@@ -16,7 +16,7 @@
   }
 
   50% {
-    opacity: 0.7;
+    opacity: var(--opacity-subtle);
   }
 }
 

@@ -266,12 +266,24 @@
         border-bottom: var(--border-1) solid var(--p-datatable-border-color);
       }
 
-      &:hover {
-        background: var(--p-datatable-row-hover-background);
+      @media (hover: hover) and (pointer: fine) {
+        &:hover {
+          background: var(--p-datatable-row-hover-background);
+        }
       }
 
       &.p-highlight {
         background: var(--p-datatable-row-selected-background);
+      }
+
+      // Empty state: ensure the message cell fills the full table width
+      &.p-datatable-empty-message > td {
+        text-align: center;
+        color: var(--color-text-tertiary);
+        padding: var(--space-8) var(--space-5);
+        background: var(--surface-primary);
+        min-width: 100%;
+        width: 100%;
       }
     }
 

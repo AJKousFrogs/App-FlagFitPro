@@ -217,13 +217,15 @@
   }
 }
 
-.channel-item:hover {
-  background: var(--surface-tertiary);
-  transform: translateX(var(--space-1));
-}
+@media (hover: hover) and (pointer: fine) {
+  .channel-item:hover {
+    background: var(--surface-tertiary);
+    transform: translateX(var(--space-1));
+  }
 
-.channel-item:hover::before {
-  transform: scaleY(1);
+  .channel-item:hover::before {
+    transform: scaleY(1);
+  }
 }
 
 .channel-item.active {
@@ -379,7 +381,7 @@
   position: relative;
 
   --ui-motion-enter-from-y: var(--space-4);
-  animation: ui-motion-enter-y 300ms ease-out;
+  animation: ui-motion-enter-y var(--transition-base) var(--ease-standard)-out;
 }
 
 .message-row {
@@ -570,8 +572,8 @@
   color: var(--color-text-secondary);
   cursor: pointer;
   transition:
-    background-color var(--motion-fast) var(--ease-standard),
-    color var(--motion-fast) var(--ease-standard);
+    background-color var(--transition-fast) var(--ease-standard),
+    color var(--transition-fast) var(--ease-standard);
 
   @media (hover: hover) and (pointer: fine) {
     &:hover {

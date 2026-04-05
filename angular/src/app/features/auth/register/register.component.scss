@@ -17,7 +17,7 @@
   }
 
   .register-login-link {
-    font-size: var(--font-body-sm-size);
+    font-size: var(--ds-font-size-sm);
   }
 
   .form-help {
@@ -26,7 +26,7 @@
 
   .age-label,
   .terms-label {
-    font-size: var(--font-body-sm-size);
+    font-size: var(--ds-font-size-sm);
     line-height: var(--line-height-relaxed);
   }
 
@@ -42,7 +42,7 @@
 
   .terms-label a {
     color: var(--color-brand-primary);
-    font-weight: var(--font-weight-semibold);
+    font-weight: var(--ds-font-weight-semibold);
     text-decoration: none;
     text-underline-offset: 0.15em;
   }

@@ -72,7 +72,7 @@
     position: relative;
 
     .ratio-value { font-size: var(--ds-font-size-3xl); font-weight: var(--ds-font-weight-semibold); line-height: 1; }
-    .ratio-label { font-size: var(--font-caption-size); font-weight: var(--ds-font-weight-semibold); color: var(--color-text-tertiary); letter-spacing: 0.1em; }
+    .ratio-label { font-size: var(--ds-font-size-xs); font-weight: var(--ds-font-weight-semibold); color: var(--color-text-tertiary); letter-spacing: 0.1em; }
 
     .confidence-indicator-bento { position: absolute; bottom: calc(-1 * var(--space-2-5)); background: var(--surface-card); border-radius: var(--radius-full); padding: var(--space-0-5); }
 
@@ -85,7 +85,7 @@
   .risk-summary {
     flex: 1;
     .risk-badge { display: inline-block; padding: var(--space-1) var(--space-3); border-radius: var(--radius-full); font-weight: var(--ds-font-weight-semibold); font-size: var(--ds-font-size-sm); margin-bottom: var(--space-3); }
-    .risk-text { margin: var(--space-0); color: var(--color-text-secondary); line-height: 1.6; }
+    .risk-text { margin: var(--space-0); color: var(--color-text-secondary); line-height: var(--ds-line-height-1-6); }
 
     .risk-badge--sweet-spot { background: var(--color-status-success-subtle); color: var(--color-status-success); }
     .risk-badge--elevated-risk { background: var(--color-status-warning-subtle); color: var(--color-status-warning); }
@@ -153,7 +153,7 @@
       border-radius: var(--radius-lg);
       text-align: center;
       span { font-weight: var(--ds-font-weight-semibold); display: block; margin-bottom: var(--space-1); }
-      p { margin: var(--space-0); font-size: var(--font-caption-size); text-transform: uppercase; }
+      p { margin: var(--space-0); font-size: var(--ds-font-size-xs); text-transform: uppercase; }
       
       &.u { background: var(--color-status-info-subtle); color: var(--color-status-info); }
       &.s { background: var(--color-status-success-subtle); color: var(--color-status-success); }

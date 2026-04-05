@@ -76,9 +76,9 @@
   background: var(--surface-secondary);
   border-radius: var(--radius-lg);
   transition:
-    background-color var(--motion-fast) var(--ease-standard),
-    transform var(--motion-fast) var(--ease-standard),
-    box-shadow var(--motion-fast) var(--ease-standard);
+    background-color var(--transition-fast) var(--ease-standard),
+    transform var(--transition-fast) var(--ease-standard),
+    box-shadow var(--transition-fast) var(--ease-standard);
 }
 
 .quick-link-card:hover {
@@ -130,9 +130,9 @@
   border-radius: var(--radius-lg);
   background: var(--surface-secondary);
   transition:
-    background-color var(--motion-fast) var(--ease-standard),
-    transform var(--motion-fast) var(--ease-standard),
-    box-shadow var(--motion-fast) var(--ease-standard);
+    background-color var(--transition-fast) var(--ease-standard),
+    transform var(--transition-fast) var(--ease-standard),
+    box-shadow var(--transition-fast) var(--ease-standard);
 }
 
 .result-item:hover {

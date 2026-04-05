@@ -301,61 +301,109 @@
   }
 
   .app-toast.p-toast {
-    width: min(24rem, calc(100vw - var(--space-4)));
+    width: min(28rem, calc(100vw - var(--space-4)));
   }
 
   .app-toast .p-toast-message {
-    min-height: var(--component-toast-height);
-    border: var(--border-1) solid var(--color-border-subtle);
-    border-radius: var(--component-toast-radius);
-    background: var(--surface-card);
-    box-shadow: var(--component-toast-shadow);
+    min-height: 5.5rem;
+    border: var(--border-1) solid var(--premium-border-dark);
+    border-radius: var(--radius-2xl);
+    background: var(--premium-dark-gradient-success);
+    box-shadow: 
+      var(--premium-shadow-dark-xl),
+      var(--premium-shadow-inner-white);
     overflow: hidden;
+    position: relative;
+    backdrop-filter: blur(var(--premium-glass-blur-md));
+    -webkit-backdrop-filter: blur(var(--premium-glass-blur-md));
     animation: feedback-slide-in-right var(--motion-feedback-duration)
       var(--ease-standard);
+
+    &::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 120px;
+      height: 40px;
+      background: radial-gradient(
+        circle,
+        var(--premium-glow-success) 0%,
+        transparent 70%
+      );
+      filter: blur(15px);
+      z-index: 0;
+      pointer-events: none;
+    }
   }
 
   .app-toast .p-toast-message-content {
     display: flex;
-    align-items: flex-start;
-    gap: var(--component-toast-gap);
-    padding: var(--component-toast-padding);
+    align-items: center;
+    gap: var(--space-4);
+    padding: var(--space-3);
+    position: relative;
+    z-index: 1;
   }
 
   .app-toast .p-toast-message-success {
-    border-color: var(--ds-status-success-border);
+    background: var(--premium-dark-gradient-success);
+    border-color: rgba(var(--ds-primary-green-rgb), 0.3);
+    
+    &::before {
+      background: radial-gradient(circle, var(--premium-glow-success) 0%, transparent 70%);
+    }
   }
 
   .app-toast .p-toast-message-info {
-    border-color: var(--ds-status-info-border);
+    background: var(--premium-dark-gradient-info);
+    border-color: rgba(14, 165, 233, 0.3);
+    
+    &::before {
+      background: radial-gradient(circle, var(--premium-glow-info) 0%, transparent 70%);
+    }
   }
 
   .app-toast .p-toast-message-warn {
-    border-color: var(--ds-status-warning-border);
+    background: var(--premium-dark-gradient-warn);
+    border-color: rgba(245, 158, 11, 0.3);
+    
+    &::before {
+      background: radial-gradient(circle, var(--premium-glow-warn) 0%, transparent 70%);
+    }
   }
 
   .app-toast .p-toast-message-error {
-    border-color: var(--ds-status-danger-border);
+    background: var(--premium-dark-gradient-error);
+    border-color: rgba(239, 68, 68, 0.3);
+    
+    &::before {
+      background: radial-gradient(circle, var(--premium-glow-error) 0%, transparent 70%);
+    }
   }
 
   .app-toast .p-toast-close-button {
-    width: var(--component-close-button-size-md);
-    height: var(--component-close-button-size-md);
-    min-width: var(--component-close-button-size-md);
-    min-height: var(--component-close-button-size-md);
-    border-radius: var(--radius-full);
-    border: none;
-    background: transparent;
-    color: var(--color-text-secondary);
-    transition: transform var(--motion-feedback-duration-fast) var(--ease-standard),
-      background-color var(--motion-feedback-duration-fast) var(--ease-standard),
-      color var(--motion-feedback-duration-fast) var(--ease-standard);
+    width: 3.5rem;
+    height: 3.5rem;
+    min-width: 3.5rem;
+    min-height: 3.5rem;
+    border-radius: var(--radius-xl);
+    border: 1px solid var(--premium-border-dark);
+    background: var(--premium-boxed-bg);
+    color: var(--color-text-on-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-inline-start: auto;
+    transition: all var(--motion-feedback-duration-fast) var(--ease-standard);
+    cursor: pointer;
   }
 
   .app-toast .p-toast-close-button:hover {
-    background: var(--surface-secondary);
-    color: var(--color-text-primary);
-    transform: scale(1.1);
+    background: var(--premium-border-dark);
+    border-color: var(--premium-border-dark-strong);
+    transform: scale(1.05);
   }
 
   .app-toast .p-toast-close-button:active {
@@ -370,61 +418,69 @@
 
   .toast-content {
     display: flex;
-    align-items: flex-start;
-    gap: var(--component-toast-gap);
+    align-items: center;
+    gap: var(--space-4);
     width: 100%;
   }
 
-  .toast-icon-wrapper {
+  .app-icon-box {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: var(--space-10);
-    height: var(--space-10);
+    width: 3.5rem;
+    height: 3.5rem;
     flex-shrink: 0;
-    border-radius: var(--radius-lg);
-    font-size: var(--font-h3-size);
+    border-radius: var(--radius-xl);
+    font-size: 1.5rem;
+    background: var(--premium-boxed-bg);
+    border: 1px solid var(--premium-boxed-border);
+    box-shadow: var(--premium-boxed-shadow);
   }
 
-  .toast-icon-success {
-    background: var(--ds-status-success-bg);
-    color: var(--ui-success);
+  .app-icon-box--success {
+    background: rgba(var(--ds-primary-green-rgb), 0.15);
+    border-color: rgba(var(--ds-primary-green-rgb), 0.25);
+    color: var(--ds-primary-green);
   }
 
-  .toast-icon-info {
-    background: var(--ds-status-info-bg);
-    color: var(--ui-info);
+  .app-icon-box--info {
+    background: rgba(14, 165, 233, 0.15);
+    border-color: rgba(14, 165, 233, 0.25);
+    color: #0ea5e9;
   }
 
-  .toast-icon-warn {
-    background: var(--ds-status-warning-bg);
-    color: var(--ui-warning);
+  .app-icon-box--warn {
+    background: rgba(245, 158, 11, 0.15);
+    border-color: rgba(245, 158, 11, 0.25);
+    color: #f59e0b;
   }
 
-  .toast-icon-error {
-    background: rgba(var(--primitive-error-500-rgb), 0.08);
-    color: var(--ui-danger);
+  .app-icon-box--error {
+    background: rgba(239, 68, 68, 0.15);
+    border-color: rgba(239, 68, 68, 0.25);
+    color: #ef4444;
   }
 
   .toast-text {
     display: flex;
     flex: 1;
     flex-direction: column;
-    gap: var(--space-1);
+    gap: var(--space-0);
     min-width: 0;
   }
 
   .toast-summary {
     margin: var(--space-0);
-    font-size: var(--font-body-size);
-    font-weight: var(--font-weight-semibold);
-    color: var(--color-text-primary);
-    line-height: var(--line-height-snug);
+    font-size: var(--ds-font-size-lg);
+    font-weight: var(--ds-font-weight-bold);
+    color: var(--color-text-on-primary);
+    line-height: var(--line-height-tight);
   }
 
   .toast-detail {
     margin: var(--space-0);
-    color: var(--color-text-secondary);
+    font-size: var(--ds-font-size-md);
+    color: rgba(255, 255, 255, 0.7);
     line-height: var(--line-height-normal);
   }
 
@@ -433,50 +489,60 @@
   .data-source-banner,
   .announcements-banner {
     border-radius: var(--radius-xl);
-    box-shadow: var(--shadow-sm);
+    box-shadow: var(--premium-shadow-dark-lg);
+    backdrop-filter: blur(var(--premium-glass-blur-md));
+    -webkit-backdrop-filter: blur(var(--premium-glass-blur-md));
+    border: var(--border-1) solid var(--premium-border-dark);
   }
 
   .banner {
     display: flex;
     align-items: flex-start;
     gap: var(--space-4);
-    padding: var(--component-banner-padding);
-    border: var(--border-1) solid var(--color-border-subtle);
-    border-left-width: var(--component-alert-accent-width);
+    padding: var(--space-4);
     background: var(--surface-card);
-    transition:
-      background-color var(--motion-feedback-duration-fast)
-        var(--ease-standard),
-      border-color var(--motion-feedback-duration-fast)
-        var(--ease-standard),
-      box-shadow var(--motion-feedback-duration-fast) var(--ease-standard);
-  }
+    transition: all var(--motion-feedback-duration-fast) var(--ease-standard);
+    position: relative;
+    overflow: hidden;
 
-  @media (prefers-reduced-motion: reduce) {
-    .app-backdrop,
-    .app-toast .p-toast-message {
-      animation: none;
-      transition: none;
+    &::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 4px;
+      height: 100%;
+      background: currentColor;
+      opacity: 0.8;
     }
   }
 
   .banner.banner-info {
-    background: var(--ds-status-info-bg);
-    border-color: var(--ds-status-info-border);
-    border-left-color: var(--ui-info);
+    background: var(--premium-dark-gradient-info);
+    border-color: rgba(14, 165, 233, 0.3);
+    color: #0ea5e9;
+
+    .banner-message { color: var(--color-text-on-primary); }
+    .banner-icon { color: #0ea5e9; }
   }
 
   .banner.banner-warning,
   .banner.banner-alert {
-    background: var(--ds-status-warning-bg);
-    border-color: var(--ds-status-warning-border);
-    border-left-color: var(--ui-warning);
+    background: var(--premium-dark-gradient-warn);
+    border-color: rgba(245, 158, 11, 0.3);
+    color: #f59e0b;
+
+    .banner-message { color: var(--color-text-on-primary); }
+    .banner-icon { color: #f59e0b; }
   }
 
   .banner.banner-error {
-    background: var(--ds-status-danger-bg);
-    border-color: var(--ds-status-danger-border);
-    border-left-color: var(--ui-danger);
+    background: var(--premium-dark-gradient-error);
+    border-color: rgba(239, 68, 68, 0.3);
+    color: #ef4444;
+
+    .banner-message { color: var(--color-text-on-primary); }
+    .banner-icon { color: #ef4444; }
   }
 
   .banner-content {
@@ -489,25 +555,16 @@
 
   .banner-icon {
     flex-shrink: 0;
-    font-size: var(--font-h3-size);
+    font-size: 1.25rem;
     line-height: 1;
-    color: var(--ui-info);
-  }
-
-  .banner-warning .banner-icon,
-  .banner-alert .banner-icon {
-    color: var(--ui-warning);
-  }
-
-  .banner-error .banner-icon {
-    color: var(--ui-danger);
+    margin-top: 0.125rem;
   }
 
   .banner-message {
     margin: var(--space-0);
-    font-size: var(--font-body-sm-size);
-    color: var(--color-text-primary);
-    line-height: var(--font-body-sm-line-height);
+    font-size: var(--ds-font-size-sm);
+    font-weight: var(--ds-font-weight-medium);
+    line-height: var(--line-height-normal);
   }
 
   .banner-actions {

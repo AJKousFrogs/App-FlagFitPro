@@ -27,10 +27,36 @@
 
   .card {
     background: var(--surface-card);
-    border: var(--component-card-border);
+    border: var(--border-1) solid var(--color-border-subtle);
     border-radius: var(--component-card-radius);
-    box-shadow: var(--component-card-shadow);
+    box-shadow: 
+      0 1px 3px rgba(0, 0, 0, 0.02),
+      0 4px 12px rgba(0, 0, 0, 0.03);
     padding: var(--component-card-padding);
+    transition: all var(--motion-base) var(--ease-standard);
+    position: relative;
+    overflow: hidden;
+
+    .light-theme & {
+      background: var(--premium-light-bg-glass);
+      backdrop-filter: blur(var(--premium-glass-blur-md));
+      -webkit-backdrop-filter: blur(var(--premium-glass-blur-md));
+      border-color: var(--premium-light-border-glass);
+      box-shadow: 
+        0 4px 6px -1px rgba(0, 0, 0, 0.03), 
+        0 2px 4px -1px rgba(0, 0, 0, 0.02),
+        var(--premium-shadow-inner-white-strong);
+    }
+
+    .dark-theme & {
+      background: var(--premium-dark-gradient-neutral);
+      backdrop-filter: blur(var(--premium-glass-blur-lg));
+      -webkit-backdrop-filter: blur(var(--premium-glass-blur-lg));
+      border: var(--border-1) solid var(--premium-border-dark);
+      box-shadow: 
+        var(--premium-shadow-dark-lg),
+        var(--premium-shadow-inner-white);
+    }
   }
 
   // ============================================
@@ -50,15 +76,23 @@
   // ============================================
 
   .card--outlined {
-    box-shadow: none;
+    box-shadow: none !important;
   }
 
   .card--elevated {
     box-shadow: var(--shadow-md);
+    
+    .dark-theme & {
+      box-shadow: var(--premium-shadow-dark-xl);
+    }
   }
 
   .card--floating {
     box-shadow: var(--shadow-lg);
+    
+    .dark-theme & {
+      box-shadow: var(--premium-shadow-dark-2xl);
+    }
   }
 
   // ============================================
@@ -68,24 +102,45 @@
 
   .card--interactive {
     cursor: pointer;
-    transition:
-      box-shadow var(--motion-fast) var(--ease-standard),
-      transform var(--motion-fast) var(--ease-standard);
+    
+    &::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: currentColor;
+      opacity: 0;
+      transition: opacity var(--motion-fast) var(--ease-standard);
+      pointer-events: none;
+    }
   }
 
   // Hover only on hover-capable devices (Decision 52)
   @media (hover: hover) and (pointer: fine) {
     .card--interactive:hover {
-      border-color: var(--ui-border-default);
-      box-shadow: var(--component-card-shadow-hover);
-      transform: translateY(calc(var(--border-1) * -1));
+      border-color: var(--ui-primary);
+      box-shadow: var(--shadow-lg);
+      transform: translateY(-2px);
+      
+      .dark-theme & {
+        border-color: rgba(var(--ds-primary-green-rgb), 0.4);
+        background: linear-gradient(135deg, rgba(15, 23, 42, 0.7) 0%, rgba(2, 6, 23, 0.9) 100%);
+        box-shadow: var(--premium-shadow-dark-xl);
+      }
+      
+      &::after {
+        opacity: 0.02;
+      }
     }
   }
 
   // Active state (Decision 18)
   .card--interactive:active {
     transform: translateY(0);
-    box-shadow: var(--component-card-shadow);
+    box-shadow: var(--shadow-sm);
+    
+    &::after {
+      opacity: 0.05;
+    }
   }
 
   // Focus state (Decision 12/18/50)

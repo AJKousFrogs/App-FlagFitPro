@@ -54,8 +54,8 @@
 
 .app-card-header__title {
   margin: var(--space-0);
-  font-size: var(--app-card-header-title-size, var(--font-h3-size));
-  font-weight: var(--app-card-header-title-weight, var(--font-h2-weight));
+  font-size: var(--app-card-header-title-size, var(--ds-font-size-lg));
+  font-weight: var(--app-card-header-title-weight, var(--ds-font-weight-semibold));
   line-height: var(
     --app-card-header-title-line-height,
     var(--font-h3-line-height)
@@ -65,7 +65,7 @@
 
 .app-card-header__subtitle {
   margin: var(--space-1) 0 0;
-  font-size: var(--app-card-header-subtitle-size, var(--font-body-sm-size));
+  font-size: var(--app-card-header-subtitle-size, var(--ds-font-size-sm));
   line-height: var(--ds-line-height-normal);
   color: var(--app-card-header-subtitle-color, var(--color-text-secondary));
 }

@@ -30,6 +30,7 @@ import { BadgeComponent } from "../../../shared/components/badge/badge.component
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 // Services
 import { VideoCurationService } from "./video-curation.service";
+import { ConfirmDialogService } from "../../../core/services/confirm-dialog.service";
 
 // Models
 import {
@@ -208,6 +209,7 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
 })
 export class VideoCurationComponent implements OnInit {
   readonly curationService = inject(VideoCurationService);
+  private readonly confirmDialog = inject(ConfirmDialogService);
   readonly playlistDialog = viewChild(VideoCurationPlaylistDialogComponent);
 
   // Local UI state
@@ -299,6 +301,8 @@ export class VideoCurationComponent implements OnInit {
   }
 
   async deletePlaylist(playlist: InstagramPlaylist): Promise<void> {
+    const confirmed = await this.confirmDialog.confirmDelete(playlist.name);
+    if (!confirmed) return;
     await this.curationService.deletePlaylist(playlist);
   }
 

@@ -46,7 +46,7 @@
     position: relative;
     color: var(--color-text-on-primary);
     font-size: var(--ds-font-size-2xl);
-    box-shadow: 0 4px 14px rgba(8, 153, 73, 0.28);
+    box-shadow: 0 4px 14px rgba(var(--ds-primary-green-rgb), 0.28);
 
     .online-indicator {
       position: absolute;
@@ -56,7 +56,7 @@
       height: var(--space-3);
       background: var(--color-status-success);
       border: var(--border-2) solid var(--surface-card);
-      border-radius: 50%;
+      border-radius: var(--radius-full);
     }
   }
 
@@ -70,7 +70,7 @@
 
     p {
       margin: var(--space-0);
-      font-size: var(--font-caption-size);
+      font-size: var(--ds-font-size-xs);
       color: var(--color-text-tertiary);
       text-transform: uppercase;
     }
@@ -170,7 +170,7 @@
     flex: 1;
     .lbl {
       display: block;
-      font-size: var(--font-caption-size);
+      font-size: var(--ds-font-size-xs);
       color: var(--color-text-tertiary);
       text-transform: uppercase;
     }
@@ -251,7 +251,7 @@
 
   .message-row.user & {
     background: var(--gradient-primary);
-    color: white;
+    color: var(--color-text-on-primary);
     border: none;
     border-bottom-right-radius: var(--radius-sm);
   }
@@ -262,10 +262,10 @@
 
   .message-content {
     font-size: var(--ds-font-size-md);
-    line-height: 1.6;
+    line-height: var(--ds-line-height-1-6);
   }
   .ts {
-    font-size: var(--font-caption-size);
+    font-size: var(--ds-font-size-xs);
     color: var(--color-text-tertiary);
     margin-top: var(--space-2);
     display: block;
@@ -315,9 +315,9 @@
     width: var(--space-10);
     height: var(--space-10);
     min-width: var(--space-10); // Prevent shrinking
-    border-radius: 50%;
+    border-radius: var(--radius-full);
     background: var(--gradient-primary);
-    color: white;
+    color: var(--color-text-on-primary);
     border: none;
     display: flex;
     align-items: center;
@@ -329,7 +329,7 @@
       filter var(--transition-fast);
     flex-shrink: 0;
 
-    &:disabled { opacity: 0.5; cursor: not-allowed; filter: grayscale(1); }
+    &:disabled { opacity: var(--opacity-dimmed); cursor: not-allowed; filter: grayscale(1); }
     &:hover:not(:disabled) { transform: scale(1.05); }
 
     // Touch feedback for mobile
@@ -457,7 +457,7 @@
     .readiness-chip {
       padding: var(--space-0-75) var(--space-2);
       gap: var(--space-1-5);
-      font-size: var(--font-caption-size);
+      font-size: var(--ds-font-size-xs);
     }
   }
 
@@ -537,7 +537,7 @@
 
     .message-content {
       font-size: var(--ds-font-size-sm);
-      line-height: 1.5;
+      line-height: var(--ds-line-height-normal);
     }
 
     .ts {

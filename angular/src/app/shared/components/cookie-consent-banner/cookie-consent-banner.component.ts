@@ -42,7 +42,9 @@ import { ButtonComponent } from "../button/button.component";
         <div class="cookie-content">
           <!-- Header -->
           <div class="cookie-header">
-            <div class="cookie-icon">🍪</div>
+            <div class="cookie-icon" aria-hidden="true">
+              <i class="pi pi-shield"></i>
+            </div>
             <h2 id="cookie-title" class="cookie-title">Cookie Settings</h2>
           </div>
 

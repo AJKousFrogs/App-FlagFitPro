@@ -380,7 +380,7 @@
   }
 }
 
-@media (width <= var(--breakpoint-md)) {
+@media (max-width: 48rem) {
   .roadmap-panel {
     .summary-header,
     .progress-overview,

@@ -265,7 +265,10 @@ const ROUTES = [
                     class="memorization-progress"
                   ></p-progressBar>
                   @if (play.teamMemorized < 70) {
-                    <span class="mem-warning">⚠️ Low memorization</span>
+                    <span class="mem-warning"
+                      ><i class="pi pi-exclamation-triangle" aria-hidden="true"></i>
+                      Low memorization</span
+                    >
                   }
                 </div>
 

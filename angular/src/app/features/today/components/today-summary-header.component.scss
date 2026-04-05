@@ -26,7 +26,7 @@
   color: var(--color-text-on-primary);
   font-size: var(--ds-font-size-md);
   border: none;
-  box-shadow: 0 4px 14px rgba(8, 153, 73, 0.28);
+  box-shadow: 0 4px 14px rgba(var(--ds-primary-green-rgb), 0.28);
   flex-shrink: 0;
 }
 

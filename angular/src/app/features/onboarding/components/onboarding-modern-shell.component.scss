@@ -63,14 +63,14 @@
   gap: var(--space-2);
   font-size: var(--ds-font-size-xs);
   color: var(--color-status-success);
-  font-weight: var(--font-weight-medium);
+  font-weight: var(--ds-font-weight-medium);
 
   &.saving {
     color: var(--ds-primary-green);
   }
 
   i {
-    font-size: var(--font-caption-size);
+    font-size: var(--ds-font-size-xs);
   }
 }
 

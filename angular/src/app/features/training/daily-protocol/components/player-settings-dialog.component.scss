@@ -168,7 +168,7 @@
   color: var(--color-text-primary);
 }
 
-@media (width <= var(--breakpoint-md)) {
+@media (max-width: 48rem) {
   .settings-form {
     gap: var(--layout-page-section-gap-tight);
   }

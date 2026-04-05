@@ -54,11 +54,11 @@
   --p-datatable-body-cell-padding: var(--space-4) var(--space-5);
   --p-datatable-row-background: var(--surface-primary);
   --p-datatable-row-hover-background: var(--surface-secondary);
-  --p-paginator-padding: var(--space-4) var(--space-5);
+  --p-paginator-padding: var(--space-3) var(--space-4);
   --p-paginator-background: var(--surface-secondary);
   --p-paginator-border-color: transparent;
-  --p-paginator-item-border-radius: var(--radius-md);
-  --p-paginator-item-hover-background: var(--surface-tertiary);
+  --p-paginator-nav-button-border-radius: var(--radius-md);
+  --p-paginator-nav-button-hover-background: var(--surface-tertiary);
 }
 
 /* ================================

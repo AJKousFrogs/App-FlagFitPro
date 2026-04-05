@@ -132,7 +132,7 @@
 }
 
 /* On wider screens, allow 3 columns if space permits (--breakpoint-xxl-wide) */
-@media (min-width: var(--breakpoint-xxl-wide)) {
+@media (min-width: 90rem) {
   .quick-actions-grid {
     grid-template-columns: repeat(3, 1fr);
   }

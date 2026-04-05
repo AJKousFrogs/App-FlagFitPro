@@ -19,14 +19,16 @@
   border-radius: var(--component-card-radius);
   cursor: pointer;
   transition:
-    background-color var(--motion-fast) var(--ease-standard),
-    border-color var(--motion-fast) var(--ease-standard),
-    box-shadow var(--motion-fast) var(--ease-standard);
+    background-color var(--transition-fast) var(--ease-standard),
+    border-color var(--transition-fast) var(--ease-standard),
+    box-shadow var(--transition-fast) var(--ease-standard);
 
-  &:hover {
-    border-color: var(--color-brand-primary-hover);
-    background: var(--ds-primary-green-subtle);
-    transform: var(--transform-hover-lift-subtle);
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      border-color: var(--color-brand-primary-hover);
+      background: var(--ds-primary-green-subtle);
+      transform: var(--transform-hover-lift-subtle);
+    }
   }
 
   .prompt-icon {
@@ -79,13 +81,15 @@
   border-radius: var(--component-card-radius);
   cursor: pointer;
   transition:
-    background-color var(--motion-fast) var(--ease-standard),
-    border-color var(--motion-fast) var(--ease-standard),
-    box-shadow var(--motion-fast) var(--ease-standard);
+    background-color var(--transition-fast) var(--ease-standard),
+    border-color var(--transition-fast) var(--ease-standard),
+    box-shadow var(--transition-fast) var(--ease-standard);
 
-  &:hover {
-    border-color: var(--color-brand-primary);
-    background: var(--hover-bg-secondary);
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      border-color: var(--color-brand-primary);
+      background: var(--hover-bg-secondary);
+    }
   }
 
   .readiness-display {
@@ -272,13 +276,15 @@
     font-size: var(--ds-font-size-md);
     color: var(--color-text-primary);
     transition:
-      background-color var(--motion-fast) var(--ease-standard),
-      border-color var(--motion-fast) var(--ease-standard),
-      box-shadow var(--motion-fast) var(--ease-standard);
+      background-color var(--transition-fast) var(--ease-standard),
+      border-color var(--transition-fast) var(--ease-standard),
+      box-shadow var(--transition-fast) var(--ease-standard);
 
-    &:hover {
-      background: var(--hover-bg-secondary);
-      border-color: var(--color-brand-primary);
+    @media (hover: hover) and (pointer: fine) {
+      &:hover {
+        background: var(--hover-bg-secondary);
+        border-color: var(--color-brand-primary);
+      }
     }
 
     // PrimeNG checkbox override moved to _component-overrides.scss (DS-EXC-012)

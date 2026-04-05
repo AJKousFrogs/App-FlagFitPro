@@ -112,12 +112,12 @@
 
 .checklist-icon.checklist-complete {
   background: var(--ds-primary-green);
-  color: white;
+  color: var(--color-text-on-primary);
 }
 
 .checklist-icon.checklist-warning {
   background: var(--color-status-warning);
-  color: white;
+  color: var(--color-text-on-primary);
 }
 
 .checklist-icon.checklist-waiting {

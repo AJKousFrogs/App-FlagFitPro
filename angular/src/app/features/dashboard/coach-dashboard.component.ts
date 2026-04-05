@@ -289,44 +289,42 @@ export class CoachDashboardComponent {
 
       if (criticalAlerts > 0) {
         sections.push(
-          `🚨 ${criticalAlerts} critical alert(s) requiring immediate attention`,
+          `${criticalAlerts} critical alert(s) requiring immediate attention`,
         );
       }
       if (wellnessLow > 0) {
-        sections.push(`⚠️ ${wellnessLow} player(s) with wellness below 40%`);
+        sections.push(`${wellnessLow} player(s) with wellness below 40%`);
       }
       if (alerts.length > 0) {
-        sections.push(
-          `📊 ${alerts.length} total risk alert(s) across the team`,
-        );
+        sections.push(`${alerts.length} total risk alert(s) across the team`);
       }
     }
 
     // Missing data
     if (missingData.length > 0) {
       sections.push(
-        `📋 ${missingData.length} player(s) with incomplete wellness data`,
+        `${missingData.length} player(s) with incomplete wellness data`,
       );
     }
 
     // Injury status
     if (injured > 0) {
-      sections.push(`🏥 ${injured} player(s) currently injured`);
+      sections.push(`${injured} player(s) currently injured`);
     }
 
     // Team workload
     if (overview.avgTeamWorkload > 1.3) {
       sections.push(
-        `⚡ Team ACWR trending high (${overview.avgTeamWorkload.toFixed(2)}) - consider deload`,
+        `Team ACWR trending high (${overview.avgTeamWorkload.toFixed(2)}) — consider deload`,
       );
     }
 
     // Positive status
     if (sections.length === 0) {
-      return "✅ Team Briefing: The squad is looking sharp today! Compliance is high, and readiness scores are optimal. Great day for a high-intensity session.";
+      return "Team Briefing: The squad is looking sharp today! Compliance is high, and readiness scores are optimal. Great day for a high-intensity session.";
     }
 
-    return `📋 Team Briefing: ${sections.join(". ")}. ${atRisk > 0 ? `Recommendation: Review ${atRisk} at-risk player(s) before today's session.` : "All systems go for today's practice."}`;
+    return `Team Briefing: ${sections.join(". ")}. ${atRisk > 0 ? `Recommendation: Review ${atRisk} at-risk player(s) before today's session.` : "All systems go for today's practice."}`;
   });
 
   filteredPlayers = computed(() => {

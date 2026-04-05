@@ -19,8 +19,14 @@
           <div class="player-score">{{ entry.score | number }} pts</div>
         </div>
         @if (entry.rank <= 3) {
-          <div class="rank-badge" [class]="'badge-' + entry.rank">
-            {{ entry.rank === 1 ? "🥇" : entry.rank === 2 ? "🥈" : "🥉" }}
+          <div class="rank-badge" [class]="'badge-' + entry.rank" aria-hidden="true">
+            @if (entry.rank === 1) {
+              <i class="pi pi-star-fill"></i>
+            } @else if (entry.rank === 2) {
+              <i class="pi pi-star"></i>
+            } @else {
+              <i class="pi pi-bookmark"></i>
+            }
           </div>
         }
       </div>

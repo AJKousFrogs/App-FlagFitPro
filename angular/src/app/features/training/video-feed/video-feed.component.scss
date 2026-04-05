@@ -228,7 +228,7 @@ height: 100dvh; // Modern: keyboard-aware
   position: absolute;
   inset: var(--space-0);
   background: var(--color-bg-dark);
-  animation: ui-motion-fade-in 0.3s ease-in-out;
+  animation: ui-motion-fade-in var(--transition-base) var(--ease-standard)-in-out;
 }
 
 .video-preview-iframe {

@@ -27,8 +27,8 @@
 .btn,
 button.btn,
 a.btn {
-  --btn-background: var(--ui-primary);
-  --btn-background-hover: var(--ui-primary-hover);
+  --btn-background: var(--ds-primary-green);
+  --btn-background-hover: var(--ds-primary-green-dark);
   --btn-background-active: var(--ui-primary-active);
   --btn-color: var(--color-text-on-primary);
   --btn-border: transparent;
@@ -57,9 +57,9 @@ a.btn {
   vertical-align: middle;
   user-select: none;
   box-sizing: border-box;
-  font-size: var(--font-body-sm-size);
-  font-weight: var(--font-weight-semibold);
-  line-height: var(--font-body-sm-line-height);
+  font-size: var(--ds-font-size-sm);
+  font-weight: var(--ds-font-weight-semibold);
+  line-height: var(--ds-line-height-normal);
   letter-spacing: var(--letter-spacing-normal);
   transition:
     background-color var(--transition-fast) var(--ease-standard),
@@ -82,7 +82,7 @@ a.btn {
   .btn:hover:not(:disabled):not(.btn-disabled) {
     background: var(--btn-background-hover);
     box-shadow: var(--btn-shadow-hover);
-    transform: translateY(calc(var(--border-1) * -1));
+    transform: translateY(-2px);
   }
 }
 
@@ -114,7 +114,7 @@ a.btn {
 
 .btn.btn-primary,
 .btn.btn-success {
-  --btn-background: var(--ui-primary-hover);
+  --btn-background: var(--ds-primary-green-dark);
   --btn-background-hover: var(--ui-primary-active);
   --btn-background-active: var(--primitive-primary-900);
   --btn-color: var(--color-text-on-primary);
@@ -155,7 +155,7 @@ a.btn {
 }
 
 .btn.btn-danger {
-  --btn-background: var(--ui-danger);
+  --btn-background: var(--color-status-error);
   --btn-background-hover: var(--ui-danger-hover);
   --btn-background-active: var(--primitive-error-700);
   --btn-color: var(--color-text-on-primary);
@@ -167,17 +167,17 @@ a.btn {
 .btn.btn-sm {
   height: var(--button-height-sm);
   padding: 0 var(--component-button-padding-x-sm);
-  font-size: var(--font-caption-size);
+  font-size: var(--ds-font-size-xs);
   gap: var(--space-2);
-  line-height: var(--font-caption-line-height);
+  line-height: var(--ds-line-height-normal);
 }
 
 .btn.btn-lg {
   height: var(--button-height-lg);
   padding: 0 var(--component-button-padding-x-lg);
-  font-size: var(--font-body-size);
+  font-size: var(--ds-font-size-md);
   gap: var(--space-3);
-  line-height: var(--font-body-line-height);
+  line-height: var(--ds-line-height-relaxed);
 }
 
 .btn-full-width {

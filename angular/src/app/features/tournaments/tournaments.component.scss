@@ -381,7 +381,7 @@
 }
 
 /* Landscape Mode on Mobile */
-@media (max-height: var(--breakpoint-landscape-height)) and (orientation: landscape) {
+@media (max-height: 30rem) and (orientation: landscape) {
   .tournaments-grid {
     grid-template-columns: repeat(2, 1fr);
   }

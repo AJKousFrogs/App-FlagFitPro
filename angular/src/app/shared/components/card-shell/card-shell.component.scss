@@ -51,10 +51,10 @@
   overflow: hidden;
 
   transition:
-    background-color var(--motion-base) var(--ease-standard),
-    border-color var(--motion-base) var(--ease-standard),
-    box-shadow var(--motion-base) var(--ease-standard),
-    transform var(--motion-base) var(--ease-standard);
+    background-color var(--transition-fast) var(--ease-standard),
+    border-color var(--transition-fast) var(--ease-standard),
+    box-shadow var(--transition-fast) var(--ease-standard),
+    transform var(--transition-fast) var(--ease-standard);
 }
 
 // ============================================
@@ -81,7 +81,7 @@
     box-shadow: var(--component-card-shadow-hover);
     border-color: color-mix(
       in srgb,
-      var(--ui-border-default) 78%,
+      var(--color-border-primary) 78%,
       var(--color-brand-primary)
     );
   }
@@ -221,15 +221,15 @@
 
 .card-shell__title {
   margin: var(--space-0);
-  font-size: var(--font-h3-size);
-  font-weight: var(--font-h2-weight);
+  font-size: var(--ds-font-size-lg);
+  font-weight: var(--ds-font-weight-semibold);
   color: var(--app-card-shell-title-color, var(--color-text-primary));
   line-height: var(--font-h3-line-height);
 }
 
 .card-shell__subtitle {
   margin: var(--space-1) 0 0 0;
-  font-size: var(--font-body-sm-size);
+  font-size: var(--ds-font-size-sm);
   font-weight: var(--ds-font-weight-regular);
   color: var(--app-card-shell-subtitle-color, var(--color-text-secondary));
   line-height: var(--ds-line-height-normal);

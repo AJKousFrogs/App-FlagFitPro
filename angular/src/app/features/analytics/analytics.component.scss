@@ -56,6 +56,17 @@
     padding: var(--space-0);
   }
 
+  .data-freshness {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: var(--space-1);
+    margin-top: var(--space-2);
+    font-size: var(--ds-font-size-xs);
+    color: var(--color-text-tertiary);
+    line-height: var(--ds-line-height-normal);
+  }
+
   .overview-bento {
     background: transparent;
     border: none;

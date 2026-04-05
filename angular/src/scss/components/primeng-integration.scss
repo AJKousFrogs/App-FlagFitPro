@@ -185,7 +185,8 @@
   }
 
   /* PrimeNG Paginator Active Page */
-  .p-paginator .p-paginator-page.p-highlight {
+  .p-paginator .p-paginator-page.p-highlight,
+  .p-paginator .p-paginator-page.p-paginator-page-selected {
     background: var(--ds-primary-green);
     border-color: var(--ds-primary-green);
     color: var(--color-text-on-primary);

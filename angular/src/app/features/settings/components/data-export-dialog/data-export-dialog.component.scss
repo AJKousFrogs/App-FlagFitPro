@@ -44,10 +44,10 @@
   border-radius: var(--component-card-radius);
   cursor: pointer;
   transition:
-    background-color var(--motion-fast) var(--ease-standard),
-    border-color var(--motion-fast) var(--ease-standard),
-    box-shadow var(--motion-fast) var(--ease-standard),
-    color var(--motion-fast) var(--ease-standard);
+    background-color var(--transition-fast) var(--ease-standard),
+    border-color var(--transition-fast) var(--ease-standard),
+    box-shadow var(--transition-fast) var(--ease-standard),
+    color var(--transition-fast) var(--ease-standard);
   text-align: center;
 
   @media (hover: hover) and (pointer: fine) {

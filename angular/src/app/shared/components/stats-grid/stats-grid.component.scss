@@ -20,9 +20,11 @@
     transform var(--transition-fast) var(--ease-standard),
     box-shadow var(--transition-fast) var(--ease-standard);
 
-  &:hover {
-    transform: translateY(-var(--border-1));
-    box-shadow: var(--shadow-md);
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-md);
+    }
   }
 }
 

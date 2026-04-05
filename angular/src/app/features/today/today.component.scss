@@ -434,9 +434,11 @@
     transform var(--transition-fast) var(--ease-standard);
 }
 
-.mood-btn:hover {
-  border-color: var(--color-brand-primary);
-  background: var(--hover-bg-secondary);
+@media (hover: hover) and (pointer: fine) {
+  .mood-btn:hover {
+    border-color: var(--color-brand-primary);
+    background: var(--hover-bg-secondary);
+  }
 }
 
 .mood-btn:focus-visible {
@@ -519,8 +521,10 @@
   opacity: 1;
 }
 
-.energy-btn:hover {
-  border-color: var(--color-brand-primary);
+@media (hover: hover) and (pointer: fine) {
+  .energy-btn:hover {
+    border-color: var(--color-brand-primary);
+  }
 }
 
 .energy-btn:focus-visible {
@@ -567,8 +571,10 @@
   font-size: var(--ds-font-size-md);
 }
 
-.soreness-btn:hover {
-  border-color: var(--color-brand-primary);
+@media (hover: hover) and (pointer: fine) {
+  .soreness-btn:hover {
+    border-color: var(--color-brand-primary);
+  }
 }
 
 .soreness-btn:focus-visible {
@@ -640,7 +646,7 @@
   background: var(--surface-overlay-darkest);
   backdrop-filter: blur(var(--overlay-blur));
   padding: var(--space-4);
-  animation: today-celebration-overlay-in 300ms ease-out forwards;
+  animation: today-celebration-overlay-in var(--transition-base) var(--ease-standard)-out forwards;
 }
 
 .celebration-content {

@@ -378,11 +378,11 @@ export class TravelRecoveryComponent implements OnInit {
   getMassageTimingLabel(timing: string): string {
     switch (timing) {
       case "pre-travel":
-        return "🚗 Before Departure";
+        return "Before Departure";
       case "rest-stop":
         return "⛽ At Rest Stops";
       case "post-arrival":
-        return "🏁 After Arrival";
+        return "After Arrival";
       default:
         return timing;
     }

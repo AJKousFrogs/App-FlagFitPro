@@ -355,7 +355,7 @@ export function resolveTodayState(
       {
         type: "info",
         style: "blue",
-        text: "📋 External Program Active. You're managing your own training. Log workouts to track ACWR.",
+        text: "External Program Active. You're managing your own training. Log workouts to track ACWR.",
         ctas: [
           {
             label: "Log Workout",
@@ -411,8 +411,8 @@ export function resolveTodayState(
         type: "alert",
         style: "amber",
         text: hasTeamActivity
-          ? `🏥 Return-to-Play Protocol Active. Team practice today, but you're excluded for rehab. Pain > 3/10? Stop immediately.`
-          : `🏥 Return-to-Play Protocol Active. Pain > 3/10? Stop immediately.`,
+          ? `Return-to-Play Protocol Active. Team practice today, but you're excluded for rehab. Pain > 3/10? Stop immediately.`
+          : `Return-to-Play Protocol Active. Pain > 3/10? Stop immediately.`,
         ctas: [
           {
             label: "View Rehab Phase Details",
@@ -433,7 +433,7 @@ export function resolveTodayState(
       banners.push({
         type: "info",
         style: "blue",
-        text: `🏈 Team practice today at ${protocolJson.teamActivity.startTimeLocal}. You're excluded for rehab.`,
+        text: `Team practice today at ${protocolJson.teamActivity.startTimeLocal}. You're excluded for rehab.`,
       });
     }
 
@@ -470,7 +470,7 @@ export function resolveTodayState(
       {
         type: "alert",
         style: "amber",
-        text: `🔔 Coach Alert: ${protocolJson.coach_alert_message || "Coach has updated your plan."}${trainingBlocked ? " Acknowledgment required before training." : ""}`,
+        text: `Coach alert: ${protocolJson.coach_alert_message || "Coach has updated your plan."}${trainingBlocked ? " Acknowledgment required before training." : ""}`,
         ctas: trainingBlocked
           ? [
               {
@@ -513,7 +513,7 @@ export function resolveTodayState(
       {
         type: "alert",
         style: "amber",
-        text: `🌧️ Weather Alert: ${protocolJson.weather_condition || "Practice moved indoors"}. ${protocolJson.modified_by_coach_name ? `Updated plan from Coach ${protocolJson.modified_by_coach_name}` : "Updated plan from coach"}.`,
+        text: `Weather alert: ${protocolJson.weather_condition || "Practice moved indoors"}. ${protocolJson.modified_by_coach_name ? `Updated plan from Coach ${protocolJson.modified_by_coach_name}` : "Updated plan from coach"}.`,
         ctas: [
           {
             label: "View Coach Note",
@@ -589,7 +589,7 @@ export function resolveTodayState(
       banners.push({
         type: "warning",
         style: "amber",
-        text: `⚠️ Last check-in was ${daysStale} day${daysStale > 1 ? "s" : ""} ago. Plan uses program defaults for practice prep.`,
+        text: `Last check-in was ${daysStale} day${daysStale > 1 ? "s" : ""} ago. Plan uses program defaults for practice prep.`,
         ctas: [
           {
             label: "Update Check-in",
@@ -602,8 +602,8 @@ export function resolveTodayState(
 
     // Add practice banner (from teamActivity, not player schedule)
     const practiceText = practiceLocation
-      ? `🏈 Flag Practice Today — ${practiceTime} at ${practiceLocation}. Training adjusted.`
-      : `🏈 Flag Practice Today — ${practiceTime}. Training adjusted.`;
+      ? `Flag Practice Today — ${practiceTime} at ${practiceLocation}. Training adjusted.`
+      : `Flag Practice Today — ${practiceTime}. Training adjusted.`;
 
     banners.push({
       type: "info",
@@ -672,8 +672,8 @@ export function resolveTodayState(
     const filmRoomLocation = teamActivity?.location;
 
     const filmRoomText = filmRoomLocation
-      ? `📽️ Film Room Today — ${filmRoomTime} at ${filmRoomLocation}. No field training scheduled. Recovery and mental prep day.`
-      : `📽️ Film Room Today — ${filmRoomTime}. No field training scheduled. Recovery and mental prep day.`;
+      ? `Film Room Today — ${filmRoomTime} at ${filmRoomLocation}. No field training scheduled. Recovery and mental prep day.`
+      : `Film Room Today — ${filmRoomTime}. No field training scheduled. Recovery and mental prep day.`;
 
     return {
       trainingAllowed: true,
@@ -718,7 +718,7 @@ export function resolveTodayState(
       {
         type: "info",
         style: "blue",
-        text: `🎯 Tapering for ${protocolJson.tournament_name || "competition"} — ${protocolJson.taper_days_until || 0} days out. Volume reduced. Trust the process.`,
+        text: `Tapering for ${protocolJson.tournament_name || "competition"} — ${protocolJson.taper_days_until || 0} days out. Volume reduced. Trust the process.`,
         ctas: [
           {
             label: "View Taper Plan",
@@ -792,7 +792,7 @@ export function resolveTodayState(
     banners.push({
       type: "warning",
       style: "amber",
-      text: `⚠️ Last check-in was ${daysStale} day${daysStale > 1 ? "s" : ""} ago. Update recommended.`,
+      text: `Last check-in was ${daysStale} day${daysStale > 1 ? "s" : ""} ago. Update recommended.`,
       ctas: [
         {
           label: "Update Check-in",

@@ -281,8 +281,8 @@
 
   // Glass morphism on dark hero
   background: rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(20px) saturate(1.4);
-  -webkit-backdrop-filter: blur(20px) saturate(1.4);
+  backdrop-filter: blur(var(--premium-glass-blur-xl)) saturate(1.4);
+  -webkit-backdrop-filter: blur(var(--premium-glass-blur-xl)) saturate(1.4);
   border: var(--border-1) solid rgba(255, 255, 255, 0.09);
   box-shadow:
     0 0 0 1px rgba(255, 255, 255, 0.04),

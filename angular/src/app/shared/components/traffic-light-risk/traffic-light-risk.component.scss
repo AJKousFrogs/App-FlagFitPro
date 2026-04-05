@@ -106,9 +106,9 @@
   position: relative;
   opacity: var(--opacity-quarter);
   transition:
-    opacity var(--motion-fast) var(--ease-standard),
-    box-shadow var(--motion-fast) var(--ease-standard),
-    transform var(--motion-fast) var(--ease-standard);
+    opacity var(--transition-fast) var(--ease-standard),
+    box-shadow var(--transition-fast) var(--ease-standard),
+    transform var(--transition-fast) var(--ease-standard);
   border: var(--border-2) solid var(--overlay-white-30);
 
   &.active {
@@ -167,7 +167,7 @@
   color: var(--color-text-secondary);
   white-space: nowrap;
   opacity: 0;
-  transition: opacity var(--motion-fast) var(--ease-standard);
+  transition: opacity var(--transition-fast) var(--ease-standard);
 
   .light.active & {
     opacity: 1;
@@ -268,7 +268,7 @@
 
 .scale-segment {
   position: relative;
-  transition: transform var(--motion-fast) var(--ease-standard);
+  transition: transform var(--transition-fast) var(--ease-standard);
 
   &.active {
     z-index: 1;
@@ -336,7 +336,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  transition: left var(--motion-base) var(--ease-standard);
+  transition: left var(--transition-base) var(--ease-standard);
 }
 
 .marker-value {

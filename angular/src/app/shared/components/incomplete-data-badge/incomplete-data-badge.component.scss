@@ -5,8 +5,8 @@
   align-items: center;
   gap: var(--space-2);
   transition:
-    transform var(--motion-fast) var(--ease-standard),
-    opacity var(--motion-fast) var(--ease-standard);
+    transform var(--transition-fast) var(--ease-standard),
+    opacity var(--transition-fast) var(--ease-standard);
 }
 
 .incomplete-data-badge.placement-top-right {
@@ -45,7 +45,7 @@
 
 .days-count {
   margin-left: var(--space-1);
-  color: var(--ui-text-tertiary);
-  font-size: var(--font-body-sm-size);
+  color: var(--color-text-tertiary);
+  font-size: var(--ds-font-size-sm);
   opacity: 0.9;
 }

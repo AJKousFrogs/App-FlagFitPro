@@ -16,10 +16,15 @@
     padding: var(--space-5);
     box-shadow: var(--shadow-sm);
     min-width: 0;
-    transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+    transition:
+      transform var(--transition-fast) var(--ease-standard),
+      box-shadow var(--transition-fast) var(--ease-standard);
 
-    &:hover {
-      box-shadow: var(--shadow-md);
+    @media (hover: hover) and (pointer: fine) {
+      &:not(.header-bento):not(.data-info-bento):not(.stats-bento):hover {
+        transform: translateY(-1px);
+        box-shadow: var(--shadow-md);
+      }
     }
 
 
@@ -44,6 +49,17 @@
     border: none;
     box-shadow: none;
     padding: var(--space-0);
+  }
+
+  .data-freshness {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: var(--space-1);
+    margin-top: var(--space-2);
+    font-size: var(--ds-font-size-xs);
+    color: var(--color-text-tertiary);
+    line-height: var(--ds-line-height-normal);
   }
 
   /* Rankings List */

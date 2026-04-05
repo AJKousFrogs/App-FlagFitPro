@@ -34,7 +34,7 @@
 
       <!-- Navigation Sidebar (Span 1) -->
       <div class="bento-item settings-nav-card">
-        <h3 class="bento-title"><i class="pi pi-compass"></i> Navigation</h3>
+        <h3 class="ff-h3 bento-title"><i class="pi pi-compass"></i> Navigation</h3>
         <app-settings-nav-section
           [items]="settingsNavItems"
           [activeId]="activeSettingsSection()"
@@ -45,7 +45,7 @@
       <!-- Settings Content (Span 2) -->
       <div class="settings-content-column span-2">
         <div class="bento-item account-card">
-          <h3 class="bento-title"><i class="pi pi-user"></i> Account Profile</h3>
+          <h3 class="ff-h3 bento-title"><i class="pi pi-user"></i> Account Profile</h3>
           <app-settings-account-section
             [profileForm]="profileForm"
             [maxBirthDate]="maxBirthDate"
@@ -64,7 +64,7 @@
         @defer (on viewport) {
           <!-- Section 2: Notifications -->
           <div id="notifications-settings" class="bento-item notifications-card">
-            <h3 class="bento-title">
+            <h3 class="ff-h3 bento-title">
               <i class="pi pi-bell"></i> Notifications
             </h3>
             <app-notification-preferences-card
@@ -74,7 +74,7 @@
 
           <!-- Section 3: Privacy & Security -->
           <div id="privacy-settings" class="bento-item privacy-card">
-            <h3 class="bento-title">
+            <h3 class="ff-h3 bento-title">
               <i class="pi pi-lock"></i> Privacy & Security
             </h3>
             <app-privacy-controls-card
@@ -86,7 +86,7 @@
 
           <!-- Section 4: Preferences -->
           <div id="preferences-settings" class="bento-item preferences-card">
-            <h3 class="bento-title">
+            <h3 class="ff-h3 bento-title">
               <i class="pi pi-sliders-h"></i> App Preferences
             </h3>
             <app-app-preferences-card
@@ -99,7 +99,7 @@
 
           <!-- Section 5: Security/Danger Zone -->
           <div class="bento-item security-actions-card">
-            <h3 class="bento-title">
+            <h3 class="ff-h3 bento-title">
               <i class="pi pi-shield"></i> Advanced Security
             </h3>
             <app-security-settings-card

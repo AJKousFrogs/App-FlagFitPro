@@ -31,12 +31,11 @@ import { Toast } from "primeng/toast";
       <ng-template let-message #message>
         <div class="toast-content">
           <div
-            class="toast-icon-wrapper"
-            [class]="'toast-icon-' + message.severity"
+            class="app-icon-box"
+            [class]="'app-icon-box--' + message.severity"
           >
             <i [class]="getIcon(message.severity)"></i>
-          </div>
-          <div class="toast-text">
+          </div>          <div class="toast-text">
             <div class="toast-summary">{{ message.summary }}</div>
             @if (message.detail) {
               <div class="toast-detail">{{ message.detail }}</div>

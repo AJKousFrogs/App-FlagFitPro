@@ -286,9 +286,9 @@ const COMPARE_OPTIONS = [
                   <div class="goal-item">
                     <div class="goal-header">
                       <div class="goal-title">
-                        <span class="goal-icon">{{
-                          getGoalIcon(goal.category)
-                        }}</span>
+                        <span class="goal-icon" aria-hidden="true"
+                          ><i [class]="'pi ' + getGoalIcon(goal.category)"></i
+                        ></span>
                         <span
                           >{{ goal.metric }}: {{ goal.startValue }} →
                           {{ goal.targetValue }}</span
@@ -1265,12 +1265,12 @@ export class PlayerDevelopmentComponent implements OnInit {
   // Helpers
   getGoalIcon(category: string): string {
     const icons: Record<string, string> = {
-      physical: "🏃",
-      skill: "⚡",
-      stats: "📊",
-      compliance: "✅",
+      physical: "pi-forward",
+      skill: "pi-bolt",
+      stats: "pi-chart-bar",
+      compliance: "pi-check",
     };
-    return icons[category] || "🎯";
+    return icons[category] || "pi-bullseye";
   }
 
   getStatusLabel(status: string): string {

@@ -4,7 +4,7 @@
     gap: var(--component-dialog-body-gap);
     margin-top: var(--component-dialog-body-margin-top);
     max-width: var(--component-dialog-body-max-width);
-    animation: feedback-fade-in var(--motion-feedback-duration-fast)
+    animation: feedback-fade-in var(--transition-fast)
       var(--ease-standard);
   }
 

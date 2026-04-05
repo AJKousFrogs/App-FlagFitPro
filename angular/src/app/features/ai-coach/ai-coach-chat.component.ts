@@ -983,7 +983,7 @@ export class AiCoachChatComponent implements OnInit, AfterViewChecked {
       id: `followup-${Date.now()}`,
       role: "assistant",
       content:
-        `🎉 **Session Complete!**\n\nYou completed the ${this.activeMicroSession()?.title || "session"} in ${result.duration_minutes} minutes.` +
+        `**Session Complete!**\n\nYou completed the ${this.activeMicroSession()?.title || "session"} in ${result.duration_minutes} minutes.` +
         (result.follow_up_response
           ? `\n\nYour feedback: ${result.follow_up_response.rating}/10${result.follow_up_response.notes ? ` - "${result.follow_up_response.notes}"` : ""}`
           : ""),
@@ -1208,7 +1208,7 @@ export class AiCoachChatComponent implements OnInit, AfterViewChecked {
   // ========================================
 
   async shareMessage(message: ChatMessage): Promise<void> {
-    const shareText = `💬 From Merlin Merlin AI:\n\n${message.content}`;
+    const shareText = `From Merlin AI:\n\n${message.content}`;
 
     // Try native share API first (mobile)
     if (navigator.share) {

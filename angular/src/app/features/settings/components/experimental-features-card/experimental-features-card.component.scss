@@ -17,7 +17,7 @@
   margin-top: var(--space-0);
 }
 
-@media (width <= var(--breakpoint-md)) {
+@media (max-width: 48rem) {
   .settings-toggle-row {
     align-items: flex-start;
     flex-direction: column;

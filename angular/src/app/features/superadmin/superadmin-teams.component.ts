@@ -28,6 +28,8 @@ import {
   DialogFooterComponent,
   DialogHeaderComponent,
 } from "../../shared/components/ui-components";
+import { ConfirmDialog } from "primeng/confirmdialog";
+import { ConfirmDialogService } from "../../core/services/confirm-dialog.service";
 import { SuperadminService } from "../../core/services/superadmin.service";
 import { ToastService } from "../../core/services/toast.service";
 
@@ -58,6 +60,7 @@ interface Team {
     EmptyStateComponent,
     AppLoadingComponent,
     AppDialogComponent,
+    ConfirmDialog,
     DialogHeaderComponent,
     DialogFooterComponent,
   ],
@@ -247,12 +250,14 @@ interface Team {
           />
         </app-dialog>
       </div>
+      <p-confirmDialog></p-confirmDialog>
     </app-main-layout>
   `,
   styleUrl: "./superadmin-teams.component.scss",
 })
 export class SuperadminTeamsComponent implements OnInit {
   private superadminService = inject(SuperadminService);
+  private confirmDialog = inject(ConfirmDialogService);
   private toast = inject(ToastService);
   private destroyRef = inject(DestroyRef);
 
@@ -344,7 +349,16 @@ export class SuperadminTeamsComponent implements OnInit {
     this.showTeamDialog = false;
   }
 
-  approveTeam(team: Team): void {
+  async approveTeam(team: Team): Promise<void> {
+    const confirmed = await this.confirmDialog.confirm({
+      title: "Approve Team",
+      message: `Grant "${team.name}" full platform access? This takes effect immediately.`,
+      acceptLabel: "Approve",
+      acceptSeverity: "success",
+      icon: "pi pi-check-circle",
+    });
+    if (!confirmed) return;
+
     this.superadminService
       .approveTeam(team.id, "Approved")
       .pipe(takeUntilDestroyed(this.destroyRef))
@@ -353,11 +367,29 @@ export class SuperadminTeamsComponent implements OnInit {
       });
   }
 
-  suspendTeam(team: Team): void {
+  async suspendTeam(team: Team): Promise<void> {
+    const confirmed = await this.confirmDialog.confirm({
+      title: "Suspend Team",
+      message: `Suspend "${team.name}"? Their members will lose access until reactivated.`,
+      acceptLabel: "Suspend",
+      acceptSeverity: "danger",
+      icon: "pi pi-ban",
+    });
+    if (!confirmed) return;
+
     this.applyLocalTeamStatusUpdate(team, "suspended", "Team suspended.");
   }
 
-  reactivateTeam(team: Team): void {
+  async reactivateTeam(team: Team): Promise<void> {
+    const confirmed = await this.confirmDialog.confirm({
+      title: "Reactivate Team",
+      message: `Reactivate "${team.name}" and restore their platform access?`,
+      acceptLabel: "Reactivate",
+      acceptSeverity: "success",
+      icon: "pi pi-refresh",
+    });
+    if (!confirmed) return;
+
     this.applyLocalTeamStatusUpdate(team, "active", "Team reactivated.");
   }
 

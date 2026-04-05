@@ -202,7 +202,7 @@ export class HydrationTrackerComponent implements OnInit {
     } else if (percent < 100) {
       return `Almost there! Only ${remaining}ml remaining.`;
     }
-    return "Great job! You've hit your hydration goal! 💧";
+    return "Great job! You've hit your hydration goal!";
   });
 
   ngOnInit(): void {
@@ -253,7 +253,7 @@ export class HydrationTrackerComponent implements OnInit {
             type: "water",
           };
           this.hydrationLogs.update((logs) => [...logs, newLog]);
-          this.toastService.success(`Added ${amount}ml 💧`);
+          this.toastService.success(`Added ${amount} ml`);
         }
         this.isLoading.set(false);
       })

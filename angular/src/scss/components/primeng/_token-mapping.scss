@@ -498,7 +498,15 @@
 
     --p-paginator-background: var(--surface-card, var(--surface-primary));
     --p-paginator-padding: var(--space-4) var(--space-5);
-    --p-paginator-element-gap: var(--space-2);
+    --p-paginator-gap: var(--space-1);
+    --p-paginator-nav-button-width: 2rem;
+    --p-paginator-nav-button-height: 2rem;
+    --p-paginator-nav-button-border-radius: var(--radius-md);
+    --p-paginator-nav-button-selected-background: var(--ds-primary-green);
+    --p-paginator-nav-button-selected-color: var(--color-text-on-primary);
+    --p-paginator-nav-button-hover-background: var(--surface-secondary);
+    --p-paginator-nav-button-color: var(--color-text-secondary);
+    --p-paginator-nav-button-hover-color: var(--color-text-primary);
 
     // ============================================
     // MESSAGE

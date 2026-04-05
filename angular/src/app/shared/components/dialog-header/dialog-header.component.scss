@@ -34,7 +34,7 @@
 .dialog-title-section h2 {
   margin: var(--space-0);
   color: var(--color-text-primary);
-  font-size: var(--font-h3-size);
+  font-size: var(--ds-font-size-lg);
   line-height: var(--font-h3-line-height);
   text-wrap: balance;
 }
@@ -42,7 +42,7 @@
 .dialog-title-section p {
   margin: var(--space-1) 0 0;
   color: var(--color-text-secondary);
-  font-size: var(--font-body-sm-size);
+  font-size: var(--ds-font-size-sm);
   line-height: var(--line-height-normal);
 }
 
@@ -78,6 +78,6 @@ app-close-button .app-close-button.dialog-close-btn i.pi-times {
   }
 
   .dialog-title-section h2 {
-    font-size: var(--font-h4-size);
+    font-size: var(--ds-font-size-md);
   }
 }

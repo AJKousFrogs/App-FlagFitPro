@@ -149,7 +149,11 @@ type AttendanceStatus = "present" | "absent" | "late" | "excused";
                   </div>
                 </td>
                 <td>{{ stat.attendance_rate }}%</td>
-                <td><span class="streak-tag">🔥 {{ stat.current_streak }}</span></td>
+                <td
+                  ><span class="streak-tag"
+                    ><i class="pi pi-bolt" aria-hidden="true"></i>
+                    {{ stat.current_streak }}</span
+                  ></td>
                 <td><app-status-tag [value]="stat.attendance_rate > 80 ? 'Reliable' : 'At Risk'" [severity]="stat.attendance_rate > 80 ? 'success' : 'warning'" size="sm" /></td>
               </tr>
             </ng-template>

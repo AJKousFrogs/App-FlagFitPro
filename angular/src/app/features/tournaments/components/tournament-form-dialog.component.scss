@@ -38,7 +38,7 @@
 
 .section-header span {
   font-size: var(--font-h5-size);
-  font-weight: var(--font-weight-semibold);
+  font-weight: var(--ds-font-weight-semibold);
   color: var(--color-text-primary);
 }
 
@@ -103,8 +103,8 @@
   background: var(--component-input-background);
   color: var(--color-text-primary);
   transition:
-    border-color var(--motion-feedback-duration-fast) var(--ease-standard),
-    box-shadow var(--motion-feedback-duration-fast) var(--ease-standard);
+    border-color var(--transition-fast) var(--ease-standard),
+    box-shadow var(--transition-fast) var(--ease-standard);
 }
 
 .native-date-input:focus-visible {

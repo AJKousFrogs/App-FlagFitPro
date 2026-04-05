@@ -15,7 +15,7 @@
   border-radius: var(--radius-full);
   background: var(--ob-seg-track);
   cursor: default;
-  transition: background 300ms ease;
+  transition: background var(--transition-base) var(--ease-standard);
   min-width: 0;
 
   &--done {

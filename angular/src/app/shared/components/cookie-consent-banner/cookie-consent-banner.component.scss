@@ -45,6 +45,11 @@
 .cookie-icon {
   font-size: var(--ds-font-size-2xl);
   line-height: var(--ds-line-height-1);
+  color: var(--color-brand-primary);
+
+  .pi {
+    font-size: inherit;
+  }
 }
 
 .cookie-title {
@@ -88,7 +93,7 @@
   margin-top: var(--space-1);
 
   --ui-motion-enter-from-y: calc(var(--space-2) * -1);
-  animation: ui-motion-enter-y var(--motion-base) var(--ease-standard);
+  animation: ui-motion-enter-y var(--transition-base) var(--ease-standard);
   box-shadow: var(--shadow-sm);
 }
 
@@ -153,7 +158,7 @@
   bottom: 0;
   background-color: var(--color-border-default);
   border-radius: var(--radius-2xl);
-  transition: background-color var(--motion-fast) var(--ease-standard);
+  transition: background-color var(--transition-fast) var(--ease-standard);
 }
 
 .toggle-slider::before {
@@ -165,7 +170,7 @@
   bottom: calc(var(--space-1) / 2);
   background-color: var(--color-text-on-primary);
   border-radius: var(--radius-circle);
-  transition: transform var(--motion-fast) var(--ease-standard);
+  transition: transform var(--transition-fast) var(--ease-standard);
   box-shadow: var(--shadow-1);
 }
 

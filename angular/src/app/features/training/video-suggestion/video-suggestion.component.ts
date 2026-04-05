@@ -47,6 +47,7 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
 import { FormInputComponent } from "../../../shared/components/form-input/form-input.component";
 import { TextareaComponent } from "../../../shared/components/textarea/textarea.component";
 import { Chip } from "primeng/chip";
+import { ConfirmDialog } from "primeng/confirmdialog";
 import { Divider } from "primeng/divider";
 import { MultiSelect } from "primeng/multiselect";
 import { Skeleton } from "primeng/skeleton";
@@ -56,6 +57,7 @@ import { EmptyStateComponent } from "../../../shared/components/empty-state/empt
 import { StatusTagComponent } from "../../../shared/components/status-tag/status-tag.component";
 
 // Services
+import { ConfirmDialogService } from "../../../core/services/confirm-dialog.service";
 import { HapticFeedbackService } from "../../../core/services/haptic-feedback.service";
 import { InstagramVideoService } from "../../../core/services/instagram-video.service";
 import { LoggerService } from "../../../core/services/logger.service";
@@ -109,6 +111,7 @@ interface VideoSuggestion {
     EmptyStateComponent,
     StatusTagComponent,
     AppDialogComponent,
+    ConfirmDialog,
     DialogHeaderComponent,
     PageHeaderComponent,
   ],
@@ -586,12 +589,14 @@ interface VideoSuggestion {
           }
         </app-dialog>
       </div>
+      <p-confirmDialog></p-confirmDialog>
     </app-main-layout>
   `,
   styleUrl: "./video-suggestion.component.scss",
 })
 export class VideoSuggestionComponent implements OnInit {
   private fb = inject(NonNullableFormBuilder);
+  private confirmDialog = inject(ConfirmDialogService);
   private instagramService = inject(InstagramVideoService);
   private toastService = inject(ToastService);
   private hapticService = inject(HapticFeedbackService);
@@ -832,6 +837,9 @@ export class VideoSuggestionComponent implements OnInit {
   }
 
   async deleteSuggestion(suggestion: VideoSuggestion): Promise<void> {
+    const confirmed = await this.confirmDialog.confirmDelete(suggestion.title);
+    if (!confirmed) return;
+
     this.hapticService.medium();
 
     try {

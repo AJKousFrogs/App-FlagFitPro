@@ -22,7 +22,7 @@
   padding: 0 var(--component-badge-padding-x-md);
   font-size: var(--component-badge-font-size-md);
   font-weight: var(--component-badge-font-weight);
-  line-height: var(--font-caption-line-height);
+  line-height: var(--ds-line-height-normal);
   white-space: nowrap;
   text-transform: var(--ds-text-transform-none);
   text-decoration: none;
@@ -34,8 +34,8 @@
   color: var(--component-badge-success-text);
   flex-shrink: 0;
   transition:
-    box-shadow var(--motion-fast) var(--ease-standard),
-    transform var(--motion-fast) var(--ease-standard);
+    box-shadow var(--transition-fast) var(--ease-standard),
+    transform var(--transition-fast) var(--ease-standard);
 }
 
 .status-tag i {

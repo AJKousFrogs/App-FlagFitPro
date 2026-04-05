@@ -52,7 +52,7 @@
   border-radius: var(--radius-xl);
 
   --ui-motion-enter-from-y: calc(-1 * var(--space-1));
-  animation: ui-motion-enter-y 0.2s ease-out;
+  animation: ui-motion-enter-y var(--transition-fast) var(--ease-standard)-out;
 }
 
 .suggestion-content {
@@ -76,7 +76,7 @@
 }
 
 .suggestion-label {
-  font-size: var(--font-caption-size);
+  font-size: var(--ds-font-size-xs);
   font-weight: var(--ds-font-weight-semibold);
   color: var(--ds-primary-green);
   text-transform: var(--ds-text-transform-uppercase);
@@ -84,13 +84,13 @@
 }
 
 .suggestion-date {
-  font-size: var(--font-body-size);
+  font-size: var(--ds-font-size-md);
   font-weight: var(--ds-font-weight-medium);
   color: var(--color-text-primary);
 }
 
 .suggestion-age {
-  font-size: var(--font-body-sm-size);
+  font-size: var(--ds-font-size-sm);
   color: var(--color-text-secondary);
 }
 

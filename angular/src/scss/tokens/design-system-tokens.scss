@@ -536,6 +536,53 @@ $ds-font-weight-extrabold: 800;
   --color-focus-ring: var(--ui-focus-ring-color);
 
   /* ================================
+     PREMIUM VISUAL SYSTEM TOKENS
+     Enhanced aesthetics: Gradients, Glassmorphism, Shadows
+     ================================ */
+
+  /* Premium Dark Theme Gradients (Standardized across components) */
+  --premium-dark-gradient-success: linear-gradient(135deg, #022c16 0%, #011d0e 100%);
+  --premium-dark-gradient-info: linear-gradient(135deg, #021a2c 0%, #01101d 100%);
+  --premium-dark-gradient-warn: linear-gradient(135deg, #2c1a02 0%, #1d1101 100%);
+  --premium-dark-gradient-error: linear-gradient(135deg, #2c0202 0%, #1d0101 100%);
+  --premium-dark-gradient-neutral: linear-gradient(135deg, #0f172a 0%, #020617 100%);
+
+  /* Premium Light Theme Surfaces */
+  --premium-light-bg-glass: rgba(255, 255, 255, 0.8);
+  --premium-light-border-glass: rgba(0, 0, 0, 0.06);
+
+  /* Glassmorphism Blur Scale */
+  --premium-glass-blur-sm: 8px;
+  --premium-glass-blur-md: 12px;
+  --premium-glass-blur-lg: 16px;
+  --premium-glass-blur-xl: 20px;
+
+  /* Premium Borders & Dividers */
+  --premium-border-dark: rgba(255, 255, 255, 0.1);
+  --premium-border-dark-strong: rgba(255, 255, 255, 0.15);
+  --premium-border-dark-subtle: rgba(255, 255, 255, 0.05);
+  --premium-border-light: rgba(0, 0, 0, 0.05);
+  --premium-border-light-strong: rgba(0, 0, 0, 0.08);
+
+  /* Premium Shadows */
+  --premium-shadow-dark-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.2);
+  --premium-shadow-dark-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.4), 0 10px 10px -5px rgba(0, 0, 0, 0.3);
+  --premium-shadow-dark-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  --premium-shadow-inner-white: inset 0 1px 1px rgba(255, 255, 255, 0.05);
+  --premium-shadow-inner-white-strong: inset 0 1px 0 rgba(255, 255, 255, 0.1);
+
+  /* Premium Boxed Containers (Used for icons, close buttons) */
+  --premium-boxed-bg: rgba(255, 255, 255, 0.05);
+  --premium-boxed-border: rgba(255, 255, 255, 0.1);
+  --premium-boxed-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.05);
+
+  /* Premium Glow Effect Colors */
+  --premium-glow-success: rgba(var(--ds-primary-green-rgb), 0.4);
+  --premium-glow-info: rgba(14, 165, 233, 0.4);
+  --premium-glow-warn: rgba(245, 158, 11, 0.4);
+  --premium-glow-error: rgba(239, 68, 68, 0.4);
+
+  /* ================================
      SPACING SCALE (8-POINT GRID)
      Single global spacing scale
      ================================ */
@@ -677,15 +724,15 @@ $ds-font-weight-extrabold: 800;
   --font-h1-size: var(--ds-font-size-3xl, 2rem);
   --font-h1-line-height: var(--ds-line-height-h1, 1.2);
   --font-h1-weight: var(--ds-font-weight-bold);
-  --font-h1-letter-spacing: -0.04em;
+  --font-h1-letter-spacing: -0.05em;
   --font-h2-size: var(--ds-font-size-2xl, 1.5rem);
   --font-h2-line-height: var(--ds-line-height-h2, 1.25);
-  --font-h2-weight: var(--ds-font-weight-semibold);
-  --font-h2-letter-spacing: -0.025em;
+  --font-h2-weight: var(--ds-font-weight-bold);
+  --font-h2-letter-spacing: -0.035em;
   --font-h3-size: var(--ds-font-size-xl, 1.25rem);
   --font-h3-line-height: var(--ds-line-height-h3, 1.3);
   --font-h3-weight: var(--ds-font-weight-semibold);
-  --font-h3-letter-spacing: -0.015em;
+  --font-h3-letter-spacing: -0.025em;
   --font-h4-size: var(--ds-font-size-md, 1rem);
   --font-h4-line-height: var(--ds-line-height-h4, 1.35);
   --font-h4-weight: var(--ds-font-weight-medium);

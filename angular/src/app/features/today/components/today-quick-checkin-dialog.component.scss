@@ -2,6 +2,14 @@
   padding: 0 var(--space-4) var(--space-4);
 }
 
+.mood-icon {
+  color: var(--color-brand-primary);
+
+  .pi {
+    font-size: var(--ds-font-size-xl);
+  }
+}
+
 @media (max-width: 26.875rem) {
   .quick-checkin-form {
     padding-inline: var(--space-3);

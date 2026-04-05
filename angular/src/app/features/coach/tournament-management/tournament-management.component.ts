@@ -245,7 +245,7 @@ const POSITIONS = [
                 <div class="tournament-status-sections">
                   <!-- RSVP Status -->
                   <div class="status-section rsvp-section">
-                    <h4>👥 ROSTER STATUS</h4>
+                    <h4><i class="pi pi-users" aria-hidden="true"></i> ROSTER STATUS</h4>
                     <div class="rsvp-summary">
                       <span class="rsvp-item going"
                         >✅ Going: {{ tournament.rsvpSummary.going }}</span
@@ -286,7 +286,7 @@ const POSITIONS = [
                   <!-- Payment Status -->
                   @if (tournament.paymentSummary.total > 0) {
                     <div class="status-section payment-section">
-                      <h4>💰 PAYMENT STATUS</h4>
+                      <h4><i class="pi pi-wallet" aria-hidden="true"></i> PAYMENT STATUS</h4>
                       <div class="payment-info">
                         <span
                           >Collected: \${{
@@ -441,7 +441,8 @@ const POSITIONS = [
                         @if (rsvp.paymentStatus === "paid") {
                           Paid: \${{ rsvp.amountPaid }}
                         } @else if (rsvp.paymentStatus === "owes") {
-                          OWES: \${{ rsvp.amountOwed }} ⚠️
+                          OWES: \${{ rsvp.amountOwed }}
+                          <i class="pi pi-exclamation-triangle" aria-hidden="true"></i>
                         }
                       </span>
                       <span class="rsvp-guests"
@@ -541,7 +542,7 @@ const POSITIONS = [
                 </div>
 
                 <div class="lineup-notes">
-                  <h5>💡 Lineup Notes</h5>
+                  <h5><i class="pi pi-pencil" aria-hidden="true"></i> Lineup Notes</h5>
                   <app-textarea
                     [value]="lineupNotes"
                     (valueChange)="lineupNotes = $event"
