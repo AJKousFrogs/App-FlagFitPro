@@ -561,7 +561,7 @@ INSERT INTO session_exercises (session_id, exercise_id, exercise_order, sets, re
 -- ✅ Position-specific parameters for throwing volume tracking
 --
 -- TO USE THIS DATA:
--- 1. Run create-training-schema.sql first to create all tables
+-- 1. Run archive/legacy-root-sql/create-training-schema.sql first to create all tables
 -- 2. Run this file to populate with QB program data
 -- 3. Assign program to a player using player_programs table
 -- 4. Players log workouts via workout_logs table

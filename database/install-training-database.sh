@@ -29,6 +29,7 @@ NC='\033[0m' # No Color
 
 # Script directory
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+LEGACY_SQL_DIR="$SCRIPT_DIR/archive/legacy-root-sql"
 
 echo -e "${BLUE}"
 echo "=============================================="
@@ -57,7 +58,7 @@ install_via_cli() {
     fi
 
     echo -e "\n${BLUE}Step 1/2:${NC} Creating training database schema..."
-    supabase db push --file "$SCRIPT_DIR/create-training-schema.sql" || {
+    supabase db push --file "$LEGACY_SQL_DIR/create-training-schema.sql" || {
         echo -e "${RED}✗${NC} Failed to create schema"
         exit 1
     }
@@ -93,7 +94,7 @@ install_via_psql() {
     DB_URL="postgresql://postgres.grfjmnjpzvknmsxrwesx:${SUPABASE_SERVICE_KEY}@aws-0-us-west-1.pooler.supabase.com:5432/postgres"
 
     echo -e "\n${BLUE}Step 1/2:${NC} Creating training database schema..."
-    psql "$DB_URL" -f "$SCRIPT_DIR/create-training-schema.sql" || {
+    psql "$DB_URL" -f "$LEGACY_SQL_DIR/create-training-schema.sql" || {
         echo -e "${RED}✗${NC} Failed to create schema"
         exit 1
     }

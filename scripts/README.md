@@ -44,7 +44,7 @@ Run these via npm commands from the project root:
 | `run-all-migrations-supabase.sh` | Run all SQL from canonical `supabase/migrations/` via psql (optional legacy mode available) |
 | `apply-migration.js` | Apply a single migration file: `node scripts/apply-migration.js supabase/migrations/XXX.sql` |
 | `migrate-supabase-data.js` | Migrate data from old Supabase project (`npm run migrate:data`) |
-| `open-supabase-sql-editor.sh` | Open Supabase Dashboard SQL Editor with consolidated SQL path |
+| `open-supabase-sql-editor.sh` | Open Supabase SQL Editor; consolidated bundle is generated (not committed) via `node scripts/run-migrations-via-api.js` → `database/migration_results/all_migrations_consolidated.sql` |
 
 ## Diagnostics & Health Checks
 

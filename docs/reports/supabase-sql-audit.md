@@ -11,8 +11,8 @@ Overlapping migration basenames: 0
 ## Top Files
 - database/migrations/070_comprehensive_database_refactor.sql (4 findings)
 - database/migrations/072_exercisedb_integration.sql (3 findings)
-- database/add_email_verification.sql (2 findings)
-- database/create-training-schema.sql (2 findings)
+- database/archive/legacy-root-sql/add_email_verification.sql (2 findings)
+- database/archive/legacy-root-sql/create-training-schema.sql (2 findings)
 - database/migrations/001_base_tables.sql (2 findings)
 - database/migrations/030_advanced_ux_components_support.sql (2 findings)
 - database/migrations/063_player_tournament_availability_and_finances.sql (2 findings)
@@ -41,10 +41,10 @@ Overlapping migration basenames: 0
 - database/migrations/035_enable_rls_remaining_tables.sql (1 findings)
 
 ## Detailed Findings
-- database/add_email_verification.sql
+- database/archive/legacy-root-sql/add_email_verification.sql
   - [medium] non_idempotent_create_index: CREATE INDEX without IF NOT EXISTS
   - [high] definer_missing_search_path: SECURITY DEFINER found without explicit SET search_path
-- database/create-training-schema.sql
+- database/archive/legacy-root-sql/create-training-schema.sql
   - [medium] non_idempotent_create_index: CREATE INDEX without IF NOT EXISTS
   - [low] policy_recreate_risk: CREATE POLICY without DROP POLICY IF EXISTS
 - database/migrations/001_base_tables.sql
@@ -181,7 +181,7 @@ Overlapping migration basenames: 0
   - [low] view_not_security_invoker: VIEW does not declare security_invoker=true
 - database/schema.sql
   - [low] view_not_security_invoker: VIEW does not declare security_invoker=true
-- database/validate_indexes.sql
+- database/archive/legacy-root-sql/validate_indexes.sql
   - [medium] non_idempotent_create_index: CREATE INDEX without IF NOT EXISTS
 - supabase/migrations/001_role_enforcement.sql
   - [medium] non_idempotent_create_index: CREATE INDEX without IF NOT EXISTS

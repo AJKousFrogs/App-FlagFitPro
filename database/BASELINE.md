@@ -23,6 +23,8 @@ supabase db dump --schema --db-url "$DATABASE_URL" > database/schema.baseline.sq
 
 ### Migration policy going forward
 - Do **not** renumber historical migrations.
-- Add new migrations as forward-only patch files.
+- Add new migrations as forward-only patch files under `supabase/migrations/`.
 - Document any data backfills or RLS changes in the migration file header.
+- `database/migration_results/` holds **generated** bundles only (gitignored except `.gitkeep`). Regenerate with `node scripts/run-migrations-via-api.js`.
+- One-off SQL snapshots live under `database/archive/legacy-root-sql/` (not applied by CI).
 

@@ -6,9 +6,9 @@ node_modules.old/
 .netlify/functions
 netlify/functions/*.zip
 netlify/functions/manifest.json
-database/migration_results/mcp_migrations
-database/migration_results/chunk_*
-database/migration_results/sql_files_list.txt
+# Generated migration bundles (regenerate: node scripts/run-migrations-via-api.js)
+database/migration_results/*
+!database/migration_results/.gitkeep
 
 # Environment files
 .env

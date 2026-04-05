@@ -291,7 +291,7 @@ Minor signs up → Uses features → Data exposed without parent approval
 
 **Evidence:**
 
-- `database/add_email_verification.sql` - Parental consent schema
+- `database/archive/legacy-root-sql/add_email_verification.sql` - Parental consent schema (archived one-off)
 - `docs/SECURITY.md` - Security architecture including consent states
 
 ---

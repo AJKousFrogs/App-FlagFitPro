@@ -626,5 +626,5 @@ ORDER BY frequency DESC;
 -- NEXT STEPS:
 -- 1. Run seed-qb-annual-program-corrected.sql to create QB program
 -- 2. Run seed-test-account.sql to create test accounts
--- 3. Enable RLS policies if using Supabase (see create-training-schema.sql for examples)
+-- 3. Enable RLS policies if using Supabase (see archive/legacy-root-sql/create-training-schema.sql for examples)
 -- =============================================================================

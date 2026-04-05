@@ -2,7 +2,17 @@
 # Open Supabase SQL Editor with migration SQL ready to paste
 
 PROJECT_REF="grfjmnjpzvknmsxrwesx"
-SQL_FILE="$(cd "$(dirname "$0")/.." && pwd)/database/migration_results/all_migrations_consolidated.sql"
+PROJECT_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+SQL_FILE="$PROJECT_ROOT/database/migration_results/all_migrations_consolidated.sql"
+
+if [[ ! -f "$SQL_FILE" ]]; then
+  echo "⚠️  Consolidated SQL not found at:"
+  echo "   $SQL_FILE"
+  echo ""
+  echo "Generate it from the repo root:"
+  echo "   node scripts/run-migrations-via-api.js"
+  echo ""
+fi
 
 echo "🚀 Opening Supabase SQL Editor"
 echo "=" .repeat(60)

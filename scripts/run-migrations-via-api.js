@@ -68,13 +68,18 @@ function main() {
   const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
   const planPath = join(RESULTS_DIR, `migration_plan_${timestamp}.txt`);
   const consolidatedPath = join(MCP_DIR, `mcp_chunk_${timestamp}.sql`);
+  const stableConsolidatedPath = join(RESULTS_DIR, "all_migrations_consolidated.sql");
+
+  const bundle = buildConsolidatedSql(files);
 
   writeFileSync(planPath, files.map((f) => f.replace(`${PROJECT_DIR}/`, "")).join("\n"));
-  writeFileSync(consolidatedPath, buildConsolidatedSql(files));
+  writeFileSync(consolidatedPath, bundle);
+  writeFileSync(stableConsolidatedPath, bundle);
 
   console.log("🚀 Migration Planning Complete\n");
   console.log(`Files in plan: ${files.length}`);
   console.log(`Plan file: ${planPath}`);
+  console.log(`Stable bundle: ${stableConsolidatedPath}`);
   console.log(`MCP SQL bundle: ${consolidatedPath}`);
   console.log("\n⚠️  Execution note:");
   console.log("- Supabase REST API cannot run DDL migrations directly.");
