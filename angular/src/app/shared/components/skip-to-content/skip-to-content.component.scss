@@ -19,7 +19,9 @@
   transition: transform var(--transition-fast) var(--ease-standard);
   --focus-ring-color: var(--color-brand-primary);
 
-  @include focus-visible {
+  @include focus-visible;
+
+  &:focus-visible {
     transform: translateY(0);
     outline-offset: var(--focus-outline-offset);
   }
