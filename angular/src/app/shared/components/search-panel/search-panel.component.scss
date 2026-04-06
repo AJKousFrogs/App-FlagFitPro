@@ -156,12 +156,6 @@
     $shadow: 0 0 0 var(--space-0-75) rgba(var(--ds-primary-green-rgb), 0.2)
   );
 
-  @include hover-style {
-    background: var(--surface-card);
-    border-color: var(--ds-primary-green);
-    box-shadow: var(--shadow-sm);
-  }
-
   @include focus-visible;
 }
 
@@ -237,10 +231,6 @@
   color: var(--color-text-secondary);
   cursor: pointer;
   padding: var(--space-0);
-
-  @include hover-style {
-    color: var(--ds-primary-green);
-  }
 }
 
 .recent-grid {
@@ -265,10 +255,6 @@
     border-color var(--transition-fast) var(--ease-standard),
     color var(--transition-fast) var(--ease-standard);
 
-  @include hover-style {
-    background: var(--surface-card);
-    border-color: var(--color-border-primary);
-  }
 }
 
 .recent-tag i {
@@ -314,18 +300,6 @@
     border-color var(--transition-fast),
     box-shadow var(--transition-fast);
   text-align: left;
-
-  @include hover-style {
-    background: var(--ds-primary-green);
-    border-color: var(--ds-primary-green);
-    color: var(--color-text-on-primary);
-    transform: translateY(calc(-1 * var(--border-1)));
-    box-shadow: var(--shadow-md);
-
-    i {
-      color: var(--color-text-on-primary);
-    }
-  }
 
   @include focus-visible;
 }
@@ -376,13 +350,6 @@
 
   @include focus-visible;
 
-  @include hover-style {
-    background: var(--surface-secondary);
-
-    .enter-icon {
-      opacity: 1;
-    }
-  }
 }
 .search-result-item.selected {
   background: var(--surface-secondary);
@@ -681,11 +648,6 @@
     color var(--transition-fast) var(--ease-standard);
   color: var(--color-text-primary);
 
-  @include hover-style {
-    background: var(--surface-card);
-    color: var(--ds-primary-green-hover);
-    border-color: var(--ds-primary-green);
-  }
 }
 
 /* ================================================================
@@ -721,13 +683,6 @@
   text-align: left;
   transition: background-color var(--transition-fast) var(--ease-standard);
 
-  @include hover-style {
-    background: var(--color-surface-hover);
-
-    i:last-child {
-      opacity: 1;
-    }
-  }
 }
 
 .suggestion-item i:first-child {

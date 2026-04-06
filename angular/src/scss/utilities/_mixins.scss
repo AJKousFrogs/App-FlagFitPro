@@ -1001,6 +1001,24 @@
   }
 }
 
+/// Simple hover wrapper for arbitrary content blocks (legacy helper)
+@mixin hover-style {
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      @content;
+    }
+  }
+}
+
+/// Hover helper that skips disabled states
+@mixin hover-style-not-disabled {
+  @media (hover: hover) and (pointer: fine) {
+    &:hover:not(:disabled):not([aria-disabled="true"]):not(.disabled) {
+      @content;
+    }
+  }
+}
+
 /// Common ::before pseudo - icon, divider, overlay patterns
 @mixin pseudo-before(
   $content: "",

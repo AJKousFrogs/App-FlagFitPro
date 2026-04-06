@@ -17,13 +17,6 @@
       transform var(--transition-fast) var(--ease-standard),
       box-shadow var(--transition-fast) var(--ease-standard);
 
-    @media (hover: hover) and (pointer: fine) {
-      &:not(.gallery-bento):hover {
-        transform: translateY(-1px);
-        box-shadow: var(--shadow-md);
-      }
-    }
-
     .bento-title {
       @extend %bento-title;
       margin-bottom: var(--space-4);
