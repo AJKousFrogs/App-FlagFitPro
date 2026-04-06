@@ -23,6 +23,12 @@
     box-shadow var(--transition-base) var(--ease-standard),
     border-color var(--transition-base) var(--ease-standard);
   will-change: transform, box-shadow;
+
+  @include hover-style {
+    .card-header-icon {
+      transform: scale(1.05);
+    }
+  }
 }
 
 /* ================================
@@ -33,10 +39,8 @@
 .card-default {
   border: none;
   box-shadow: var(--shadow-sm);
-}
 
-@media (hover: hover) and (pointer: fine) {
-  .card-default:hover {
+  @include hover-style {
     box-shadow: var(--shadow-md);
   }
 }
@@ -50,10 +54,8 @@
 .card-elevated {
   border: none;
   box-shadow: var(--shadow-md);
-}
 
-@media (hover: hover) and (pointer: fine) {
-  .card-elevated:hover {
+  @include hover-style {
     transform: translateY(-var(--border-2));
     box-shadow: var(--shadow-lg);
   }
@@ -68,10 +70,8 @@
 .card-outlined {
   border: var(--border-1) solid var(--color-border-subtle);
   box-shadow: none;
-}
 
-@media (hover: hover) and (pointer: fine) {
-  .card-outlined:hover {
+  @include hover-style {
     border-color: var(--ds-primary-green);
     box-shadow: var(--shadow-sm);
   }
@@ -90,14 +90,17 @@
   cursor: pointer;
 
   @include ds-focus-ring;
-}
 
-@media (hover: hover) and (pointer: fine) {
-  .card-interactive:hover {
+  @include hover-style {
     transform: translateY(-var(--border-2));
     box-shadow: var(--shadow-md);
+
+    .card-interactive-overlay {
+      background: rgba(var(--ds-primary-green-rgb), 0.02);
+    }
   }
 }
+
 
 .card-interactive:active,
 .card-interactive.card-pressed {
@@ -117,6 +120,13 @@
   box-shadow:
     0 var(--space-2) calc(var(--space-5) + var(--space-0-5)) rgba(var(--ds-primary-green-rgb), 0.3),
     var(--shadow-md);
+
+  @include hover-style {
+    transform: translateY(-var(--space-1));
+    box-shadow:
+      0 var(--space-4) calc(var(--avatar-size-lg) + var(--space-0-5)) rgba(var(--ds-primary-green-rgb), 0.4),
+      var(--shadow-lg);
+  }
 }
 
 .card-gradient .card-title,
@@ -134,15 +144,6 @@
   background: var(--overlay-white-10);
 }
 
-@media (hover: hover) and (pointer: fine) {
-  .card-gradient:hover {
-    transform: translateY(-var(--space-1));
-    box-shadow:
-      0 var(--space-4) calc(var(--avatar-size-lg) + var(--space-0-5)) rgba(var(--ds-primary-green-rgb), 0.4),
-      var(--shadow-lg);
-  }
-}
-
 .card-gradient:active {
   transform: translateY(0) scale(0.99);
   box-shadow:
@@ -154,16 +155,6 @@
 .card-session {
   border: var(--border-1) solid var(--color-border-secondary);
   box-shadow: var(--shadow-sm);
-}
-
-@media (hover: hover) and (pointer: fine) {
-  .card-session:hover {
-    transform: translateY(-var(--space-1));
-    box-shadow:
-      0 calc(var(--size-200) * 0.375) var(--space-10) rgba(var(--ds-primary-green-rgb), 0.15),
-      var(--shadow-md);
-    border-color: var(--ds-primary-green);
-  }
 }
 
 .card-session:active {
@@ -227,10 +218,6 @@
   flex-shrink: 0;
   transition: transform var(--transition-base) var(--ease-micro-bounce);
   box-shadow: var(--shadow-1); /* Subtle shadow for depth */
-}
-
-.card:hover .card-header-icon {
-  transform: scale(1.05); /* Slightly reduced scale for subtlety */
 }
 
 .icon-primary {
@@ -366,10 +353,6 @@
   pointer-events: none;
 }
 
-.card-interactive:hover .card-interactive-overlay {
-  background: rgba(var(--ds-primary-green-rgb), 0.02);
-}
-
 .card-interactive:active .card-interactive-overlay,
 .card-interactive.card-pressed .card-interactive-overlay {
   background: rgba(var(--ds-primary-green-rgb), 0.05);
@@ -410,7 +393,7 @@
     animation: none;
   }
 
-  .card:hover,
+  .card,
   .card:active {
     transform: none;
   }

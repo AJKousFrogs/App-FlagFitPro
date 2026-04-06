@@ -77,9 +77,7 @@
   text-underline-offset: var(--space-1);
   font-weight: var(--ds-font-weight-medium);
 
-  @media (hover: hover) and (pointer: fine) {
-    &:hover { color: var(--ds-primary-green); }
-  }
+  @include ds-hover-state($color: var(--ds-primary-green));
 }
 
 /* ================================

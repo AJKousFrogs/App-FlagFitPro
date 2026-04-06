@@ -31,9 +31,7 @@
   font-size: var(--ds-font-size-xl);
   flex-shrink: 0;
 
-  &:hover {
-    background: var(--surface-hover);
-  }
+  @include ds-hover-state($bg: var(--surface-hover));
 }
 
 .mobile-header-center {

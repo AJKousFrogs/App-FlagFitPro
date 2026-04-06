@@ -36,11 +36,11 @@
   --ui-motion-enter-from-y: var(--space-5);
   animation: ui-motion-enter-y 0.3s var(--ease-spring);
 
-  &:hover {
-    background: var(--ds-primary-green-hover);
-    transform: translateY(calc(var(--space-1) * -1));
-    box-shadow: var(--shadow-lg);
-  }
+  @include ds-hover-state($bg: var(--ds-primary-green-hover));
+  @include hover-lift(
+    $lift: translateY(calc(var(--space-1) * -1)),
+    $shadow: var(--shadow-lg)
+  );
 
   &:active {
     transform: translateY(calc(var(--border-2) * -1));

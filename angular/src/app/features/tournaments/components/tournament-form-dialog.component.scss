@@ -85,16 +85,6 @@
   align-items: center;
 }
 
-.tournament-form .checkbox-field ::ng-deep .app-checkbox-wrapper,
-.tournament-form .checkbox-field ::ng-deep label.cursor-pointer {
-  gap: var(--space-3);
-  align-items: center;
-}
-
-.tournament-form .checkbox-field ::ng-deep label i.pi {
-  flex-shrink: 0;
-}
-
 .native-date-input {
   min-height: var(--p-inputtext-min-height);
   padding: var(--p-inputtext-padding-y) var(--p-inputtext-padding-x);

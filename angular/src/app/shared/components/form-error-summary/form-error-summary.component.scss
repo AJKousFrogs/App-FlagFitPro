@@ -76,10 +76,7 @@
   text-decoration: underline;
   transition: color var(--transition-fast) var(--ease-standard);
 
-  &:hover {
-    color: var(--primitive-error-800);
-    text-decoration: none;
-  }
+  @include ds-hover-state($color: var(--primitive-error-800));
 
   @include ds-focus-ring(var(--primitive-error-600), null, var(--radius-sm));
 
@@ -120,9 +117,7 @@
   border-radius: var(--radius-sm);
   transition: background-color var(--transition-fast) var(--ease-standard);
 
-  @media (hover: hover) and (pointer: fine) {
-    &:hover { background: var(--primitive-error-100); }
-  }
+  @include ds-hover-state($bg: var(--primitive-error-100));
   @include ds-focus-ring(var(--primitive-error-600));
 }
 
@@ -141,9 +136,7 @@
   .error-link {
     color: var(--primitive-error-300);
 
-    &:hover {
-      color: var(--primitive-error-200);
-    }
+    @include ds-hover-state($color: var(--primitive-error-200));
   }
 
   .error-suggestion {

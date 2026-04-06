@@ -41,6 +41,7 @@
 /* TIER 4: Always-on page accessibility fixes */
 @use "./scss/pages/color-contrast-fixes";
 @use "./scss/pages/page-primeng-overrides";
+@use "./scss/pages/onboarding";
 
 /* TIER 5: Always-on overrides required for accessibility and platform behavior */
 @use "./assets/styles/overrides/exceptions";

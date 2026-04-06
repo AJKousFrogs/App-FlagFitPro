@@ -124,28 +124,26 @@
   justify-content: center;
 }
 
-.preset-btn {
-  padding: var(--space-2) var(--space-3);
-  background: var(--surface-secondary);
-  border: var(--border-1) solid var(--color-border-secondary);
-  border-radius: var(--radius-md);
-  font-size: var(--ds-font-size-md);
-  font-weight: var(--ds-font-weight-medium);
-  color: var(--color-text-secondary);
-  cursor: pointer;
-  transition:
-    transform var(--transition-fast),
-    opacity var(--transition-fast),
-    background var(--transition-fast);
+  .preset-btn {
+    padding: var(--space-2) var(--space-3);
+    background: var(--surface-secondary);
+    border: var(--border-1) solid var(--color-border-secondary);
+    border-radius: var(--radius-md);
+    font-size: var(--ds-font-size-md);
+    font-weight: var(--ds-font-weight-medium);
+    color: var(--color-text-secondary);
+    cursor: pointer;
+    transition:
+      transform var(--transition-fast),
+      opacity var(--transition-fast),
+      background var(--transition-fast);
 
-  @media (hover: hover) and (pointer: fine) {
-    &:hover {
-      background: var(--surface-tertiary);
-      color: var(--color-brand-primary);
-      border-color: var(--color-brand-primary);
-    }
+    @include ds-hover-state(
+      $bg: var(--surface-tertiary),
+      $color: var(--color-brand-primary),
+      $border-color: var(--color-brand-primary)
+    );
   }
-}
 
 .preset-btn.active {
   background: var(--color-brand-primary);

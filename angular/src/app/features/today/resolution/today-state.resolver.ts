@@ -470,7 +470,7 @@ export function resolveTodayState(
       {
         type: "alert",
         style: "amber",
-        text: `Coach alert: ${protocolJson.coach_alert_message || "Coach has updated your plan."}${trainingBlocked ? " Acknowledgment required before training." : ""}`,
+        text: `Coach Alert: ${protocolJson.coach_alert_message || "Coach has updated your plan."}${trainingBlocked ? " Acknowledgment required before training." : ""}`,
         ctas: trainingBlocked
           ? [
               {
@@ -513,7 +513,7 @@ export function resolveTodayState(
       {
         type: "alert",
         style: "amber",
-        text: `Weather alert: ${protocolJson.weather_condition || "Practice moved indoors"}. ${protocolJson.modified_by_coach_name ? `Updated plan from Coach ${protocolJson.modified_by_coach_name}` : "Updated plan from coach"}.`,
+        text: `Weather Alert: ${protocolJson.weather_condition || "Practice moved indoors"}. ${protocolJson.modified_by_coach_name ? `Updated plan from Coach ${protocolJson.modified_by_coach_name}` : "Updated plan from coach"}.`,
         ctas: [
           {
             label: "View Coach Note",

@@ -118,19 +118,13 @@
       box-shadow var(--transition-base);
     text-align: left;
 
-    @media (hover: hover) and (pointer: fine) {
-      &:hover {
-        border-color: var(--ds-primary-green);
-        background: var(--surface-card);
-        box-shadow: var(--shadow-sm);
-      }
+    @include hover-style {
+      border-color: var(--ds-primary-green);
+      background: var(--surface-card);
+      box-shadow: var(--shadow-sm);
     }
 
-    &:focus-visible {
-      outline: var(--focus-outline-width) solid var(--ds-primary-green);
-      outline-offset: var(--focus-outline-offset);
-      box-shadow: var(--shadow-focus);
-    }
+    @include focus-visible;
 
     i {
       color: var(--color-text-tertiary);
@@ -194,18 +188,12 @@
   border: none;
   font: inherit;
 
-  @media (hover: hover) and (pointer: fine) {
-    &:hover {
-      background: var(--ui-surface-subtle);
-      color: var(--ds-primary-green);
-    }
+  @include hover-style {
+    background: var(--ui-surface-subtle);
+    color: var(--ds-primary-green);
   }
 
-  &:focus-visible {
-    outline: var(--focus-outline-width) solid var(--ds-primary-green);
-    outline-offset: var(--focus-outline-offset);
-    box-shadow: var(--shadow-focus);
-  }
+  @include focus-visible;
 
   i { font-size: var(--ds-font-size-lg); }
 }
@@ -254,17 +242,11 @@
   border: none;
   font: inherit;
 
-  @media (hover: hover) and (pointer: fine) {
-    &:hover {
-      transform: scale(1.05);
-    }
+  @include hover-style {
+    transform: scale(1.05);
   }
 
-  &:focus-visible {
-    outline: var(--focus-outline-width) solid var(--ds-primary-green);
-    outline-offset: var(--focus-outline-offset);
-    box-shadow: var(--shadow-focus);
-  }
+  @include focus-visible;
 }
 
 /* THEME TOGGLE — compact pill */
@@ -276,7 +258,7 @@
   border: var(--border-1) solid var(--color-border-subtle);
   height: var(--button-height-sm);
 
-  &:hover {
+  @include hover-style {
     background: var(--surface-card);
     border-color: var(--ds-primary-green);
   }
@@ -309,21 +291,21 @@
   }
 
   // Keep severity colors on hover (otherwise `.header-utility` forces green)
-  @media (hover: hover) and (pointer: fine) {
-    &.weather-excellent:hover,
-    &.weather-good:hover {
+  @include hover-style {
+    &.weather-excellent,
+    &.weather-good {
       background: var(--color-status-success-subtle);
       color: var(--color-status-success);
       border-color: var(--color-status-success);
     }
 
-    &.weather-fair:hover {
+    &.weather-fair {
       background: var(--color-status-warning-subtle);
       color: var(--color-status-warning);
       border-color: var(--color-status-warning);
     }
 
-    &.weather-poor:hover {
+    &.weather-poor {
       background: var(--color-status-error-subtle);
       color: var(--color-status-error);
       border-color: var(--color-status-error);

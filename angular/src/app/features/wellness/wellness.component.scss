@@ -97,23 +97,7 @@
   width: 100%;
 }
 
-/* Prevent title/actions overlap when the shell header wraps */
-:host ::ng-deep app-card-shell.checkin-card .card-shell__header {
-  flex-wrap: wrap;
-  align-items: flex-start;
-  row-gap: var(--space-2);
-  column-gap: var(--space-4);
-  padding-top: var(--space-5);
-  padding-bottom: var(--space-3);
-}
-
-:host ::ng-deep app-card-shell.checkin-card .card-shell__header-text {
-  min-width: 0;
-}
-
-:host ::ng-deep app-card-shell.checkin-card .card-shell__title {
-  line-height: var(--ds-line-height-snug);
-}
+/* Check-in header layout handled via the modern overrides layer */
 
 // ── Check-in form shell ──────────────────────────────────────────────────────
 .checkin-form {

@@ -155,19 +155,14 @@
   @include ds-input-focus(
     $shadow: 0 0 0 var(--space-0-75) rgba(var(--ds-primary-green-rgb), 0.2)
   );
-}
 
-@media (hover: hover) and (pointer: fine) {
-  .quick-link-card:hover {
+  @include hover-style {
     background: var(--surface-card);
     border-color: var(--ds-primary-green);
     box-shadow: var(--shadow-sm);
   }
-}
 
-.quick-link-card:focus-visible {
-  outline: var(--focus-outline-width) solid var(--ds-primary-green);
-  outline-offset: var(--focus-outline-offset);
+  @include focus-visible;
 }
 
 .quick-link-card.selected {
@@ -243,8 +238,8 @@
   cursor: pointer;
   padding: var(--space-0);
 
-  @media (hover: hover) and (pointer: fine) {
-    &:hover { color: var(--ds-primary-green); }
+  @include hover-style {
+    color: var(--ds-primary-green);
   }
 }
 
@@ -270,11 +265,9 @@
     border-color var(--transition-fast) var(--ease-standard),
     color var(--transition-fast) var(--ease-standard);
 
-  @media (hover: hover) and (pointer: fine) {
-    &:hover {
-      background: var(--surface-card);
-      border-color: var(--color-border-primary);
-    }
+  @include hover-style {
+    background: var(--surface-card);
+    border-color: var(--color-border-primary);
   }
 }
 
@@ -321,31 +314,26 @@
     border-color var(--transition-fast),
     box-shadow var(--transition-fast);
   text-align: left;
-}
 
-@media (hover: hover) and (pointer: fine) {
-  .popular-tag:hover {
+  @include hover-style {
     background: var(--ds-primary-green);
     border-color: var(--ds-primary-green);
     color: var(--color-text-on-primary);
     transform: translateY(calc(-1 * var(--border-1)));
     box-shadow: var(--shadow-md);
-  }
-}
 
-.popular-tag:focus-visible {
-  outline: var(--focus-outline-width) solid var(--ds-primary-green);
-  outline-offset: var(--focus-outline-offset);
+    i {
+      color: var(--color-text-on-primary);
+    }
+  }
+
+  @include focus-visible;
 }
 
 .popular-tag i {
   font-size: var(--ds-font-size-xs);
   color: var(--color-text-secondary);
   transition: color var(--transition-fast) var(--ease-standard);
-}
-
-.popular-tag:hover i {
-  color: var(--color-text-on-primary);
 }
 
 /* ================================================================
@@ -384,21 +372,20 @@
   transition: background-color var(--transition-fast) var(--ease-standard);
   margin: 0 var(--space-2);
   border-radius: var(--radius-lg);
-}
+  --focus-outline-offset: calc(-1 * var(--focus-outline-width));
 
-@media (hover: hover) and (pointer: fine) {
-  .search-result-item:hover {
+  @include focus-visible;
+
+  @include hover-style {
     background: var(--surface-secondary);
+
+    .enter-icon {
+      opacity: 1;
+    }
   }
 }
-
 .search-result-item.selected {
   background: var(--surface-secondary);
-}
-
-.search-result-item:focus-visible {
-  outline: var(--focus-outline-width) solid var(--ds-primary-green);
-  outline-offset: calc(-1 * var(--focus-outline-width));
 }
 
 .result-icon-box {
@@ -496,7 +483,6 @@
   transition: opacity var(--transition-fast);
 }
 
-.search-result-item:hover .enter-icon,
 .search-result-item.selected .enter-icon {
   opacity: 1;
 }
@@ -695,12 +681,10 @@
     color var(--transition-fast) var(--ease-standard);
   color: var(--color-text-primary);
 
-  @media (hover: hover) and (pointer: fine) {
-    &:hover {
-      background: var(--surface-card);
-      color: var(--ds-primary-green-hover);
-      border-color: var(--ds-primary-green);
-    }
+  @include hover-style {
+    background: var(--surface-card);
+    color: var(--ds-primary-green-hover);
+    border-color: var(--ds-primary-green);
   }
 }
 
@@ -736,11 +720,13 @@
   font-size: var(--ds-font-size-md);
   text-align: left;
   transition: background-color var(--transition-fast) var(--ease-standard);
-}
 
-.suggestion-item {
-  @media (hover: hover) and (pointer: fine) {
-    &:hover { background: var(--color-surface-hover); }
+  @include hover-style {
+    background: var(--color-surface-hover);
+
+    i:last-child {
+      opacity: 1;
+    }
   }
 }
 
@@ -755,10 +741,6 @@
   font-size: var(--ds-font-size-xs);
   opacity: 0;
   transition: opacity var(--transition-fast) var(--ease-standard);
-}
-
-.suggestion-item:hover i:last-child {
-  opacity: 1;
 }
 
 .suggestion-item mark {
@@ -845,19 +827,14 @@
     background-color var(--transition-fast) var(--ease-standard),
     transform var(--transition-fast) var(--ease-standard),
     box-shadow var(--transition-fast) var(--ease-standard);
-}
 
-@media (hover: hover) and (pointer: fine) {
-  .open-search-page-link:hover {
+  @include hover-style {
     background: var(--surface-hover);
     box-shadow: var(--shadow-sm);
     transform: translateY(calc(-1 * var(--border-1)));
   }
-}
 
-.open-search-page-link:focus-visible {
-  outline: var(--focus-outline-width) solid var(--ds-primary-green);
-  outline-offset: var(--focus-outline-offset);
+  @include focus-visible;
 }
 
 /* ================================================================

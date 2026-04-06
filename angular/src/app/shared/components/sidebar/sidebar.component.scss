@@ -76,24 +76,22 @@ app-close-button.sidebar-close-btn {
 // LOGO
 // ============================================================
 
-.sidebar-logo {
-  padding: var(--space-4) var(--space-5);
-  display: flex;
-  align-items: center;
-  gap: var(--space-3);
-  cursor: pointer;
-  background: var(--surface-primary);
-  border-bottom: var(--border-1) solid var(--color-border-primary);
-  transition:
-    background-color var(--transition-fast) var(--ease-standard),
-    box-shadow var(--transition-fast) var(--ease-standard);
-  min-height: var(--header-height, 4rem);
-  text-decoration: none;
+  .sidebar-logo {
+    padding: var(--space-4) var(--space-5);
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    cursor: pointer;
+    background: var(--surface-primary);
+    border-bottom: var(--border-1) solid var(--color-border-primary);
+    transition:
+      background-color var(--transition-fast) var(--ease-standard),
+      box-shadow var(--transition-fast) var(--ease-standard);
+    min-height: var(--header-height, 4rem);
+    text-decoration: none;
 
-  @media (hover: hover) and (pointer: fine) {
-    &:hover { background: var(--surface-secondary); }
+    @include ds-hover-state($bg: var(--surface-secondary));
   }
-}
 
 @media (hover: hover) and (pointer: fine) {
   .sidebar-logo:hover .logo-icon-wrapper {
@@ -202,21 +200,17 @@ app-close-button.sidebar-close-btn {
   gap: var(--space-1);
 }
 
-.user-card {
-  display: flex;
-  align-items: center;
-  gap: var(--space-3);
-  padding: var(--space-2) var(--space-3);
-  border-radius: var(--radius-lg);
-  transition: background-color var(--transition-fast) var(--ease-standard);
-  min-height: var(--touch-target-md);
+  .user-card {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-2) var(--space-3);
+    border-radius: var(--radius-lg);
+    transition: background-color var(--transition-fast) var(--ease-standard);
+    min-height: var(--touch-target-md);
 
-  @media (hover: hover) and (pointer: fine) {
-    &:hover {
-      background: var(--surface-secondary);
-    }
+    @include ds-hover-state($bg: var(--surface-secondary));
   }
-}
 
 .user-card--collapsed {
   justify-content: center;

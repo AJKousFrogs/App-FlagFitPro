@@ -34,14 +34,13 @@
   font-size: var(--ds-font-size-sm);
   font-weight: var(--ds-font-weight-medium);
   text-align: center;
-}
 
-@media (hover: hover) and (pointer: fine) {
-  .quick-link-card:hover {
-    background: var(--surface-hover, var(--surface-secondary));
-    transform: translateY(calc(var(--space-0-5) * -1));
-    box-shadow: var(--shadow-md);
-  }
+  @include ds-interactive-card-focus(
+    $border-color: var(--color-border-primary),
+    $bg: var(--surface-hover, var(--surface-secondary)),
+    $transform: translateY(calc(var(--space-0-5) * -1)),
+    $shadow: var(--shadow-md)
+  );
 }
 
 .quick-link-card:focus-visible {

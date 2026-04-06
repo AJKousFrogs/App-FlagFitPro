@@ -15,10 +15,10 @@
   text-decoration: none;
   transform: translateY(calc(-100% - var(--space-3)));
   transition: transform var(--transition-fast) var(--ease-standard);
-}
+  --focus-ring-color: var(--color-brand-primary);
 
-.skip-link:focus-visible {
-  transform: translateY(0);
-  outline: var(--focus-outline-width) solid var(--color-brand-primary);
-  outline-offset: var(--focus-outline-offset);
+  @include focus-visible {
+    transform: translateY(0);
+    outline-offset: var(--focus-outline-offset);
+  }
 }

@@ -33,14 +33,13 @@
     transform var(--transition-fast) var(--ease-standard),
     box-shadow var(--transition-fast) var(--ease-standard),
     border-color var(--transition-fast) var(--ease-standard);
-}
 
-@media (hover: hover) and (pointer: fine) {
-  .analytics-hub-link:hover {
-    transform: var(--transform-hover-lift);
-    box-shadow: var(--shadow-sm);
-    border-color: rgba(var(--ds-primary-green-rgb), 0.22);
-  }
+  @include ds-interactive-card-focus(
+    $border-color: rgba(var(--ds-primary-green-rgb), 0.22),
+    $bg: var(--surface-card),
+    $transform: var(--transform-hover-lift),
+    $shadow: var(--shadow-sm)
+  );
 }
 
 .analytics-hub-icon {

@@ -256,4 +256,66 @@
       transform: translateY(0);
     }
   }
+
+  /* Landing hero pill CTAs */
+  .hero-actions .btn-lg {
+    border-radius: var(--radius-full);
+    min-height: 54px;
+    padding-inline: var(--space-10);
+    font-weight: var(--ds-font-weight-semibold);
+    letter-spacing: -0.01em;
+    font-size: var(--ds-font-size-lg);
+  }
+
+  .hero-actions .btn-outlined.btn-lg,
+  .hero-actions a.btn-outlined.btn-lg {
+    border-color: rgba(255, 255, 255, 0.28);
+    color: rgba(255, 255, 255, 0.92);
+    background: transparent;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: rgba(255, 255, 255, 0.52);
+      color: var(--color-text-on-inverse);
+    }
+  }
+
+  /* Tournament form checkbox alignment */
+  .tournament-form .checkbox-field .app-checkbox-wrapper,
+  .tournament-form .checkbox-field label.cursor-pointer {
+    gap: var(--space-3);
+    align-items: center;
+  }
+
+  .tournament-form .checkbox-field label i.pi {
+    flex-shrink: 0;
+  }
+
+  /* Wellness check-in card header */
+  .wellness-page .checkin-card .card-shell__header {
+    flex-wrap: wrap;
+    align-items: flex-start;
+    row-gap: var(--space-2);
+    column-gap: var(--space-4);
+    padding-top: var(--space-5);
+    padding-bottom: var(--space-3);
+  }
+
+  .wellness-page .checkin-card .card-shell__header-text {
+    min-width: 0;
+  }
+
+  .wellness-page .checkin-card .card-shell__title {
+    line-height: var(--ds-line-height-snug);
+  }
+
+  /* Hydration tracker quick-add button tweaks */
+  app-hydration-tracker .quick-add-buttons .btn.btn-outlined {
+    --btn-color: var(--color-text-primary);
+    --btn-border: color-mix(
+      in srgb,
+      var(--color-border-default) 85%,
+      var(--ds-primary-green) 15%
+    );
+  }
 }

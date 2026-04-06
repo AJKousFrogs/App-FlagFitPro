@@ -80,13 +80,12 @@ app-card-shell {
     background var(--transition-fast);
   text-align: center;
 
-  @media (hover: hover) and (pointer: fine) {
-    &:hover {
-      border-color: var(--color-brand-primary);
-      background: var(--color-brand-primary-subtle);
-      transform: translateY(calc(var(--space-0-5) * -1));
-    }
-  }
+  @include ds-interactive-card-focus(
+    $border-color: var(--color-brand-primary),
+    $bg: var(--color-brand-primary-subtle),
+    $transform: translateY(calc(var(--space-0-5) * -1)),
+    $shadow: none
+  );
 
   @include focus-visible;
 

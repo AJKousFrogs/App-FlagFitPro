@@ -63,10 +63,8 @@
   border-radius: var(--radius-lg);
   text-align: center;
   transition: border-color var(--transition-fast);
-}
 
-.upload-area:hover {
-  border-color: var(--color-brand-primary);
+  @include ds-hover-state($border-color: var(--color-brand-primary));
 }
 
 .upload-input {
@@ -133,15 +131,13 @@
   transition:
     background-color var(--transition-fast),
     opacity var(--transition-fast);
+
+  @include ds-hover-state($bg: var(--color-brand-primary-hover));
 }
 
 .primary-button:focus-visible {
   outline: var(--focus-outline-width) solid var(--color-brand-primary);
   outline-offset: var(--focus-outline-offset);
-}
-
-.primary-button:hover:not(:disabled) {
-  background: var(--color-brand-primary-hover);
 }
 
 .primary-button:disabled {

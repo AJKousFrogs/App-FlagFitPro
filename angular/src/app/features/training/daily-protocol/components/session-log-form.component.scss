@@ -69,9 +69,7 @@
   transition: color var(--transition-fast) var(--ease-standard);
   margin-left: var(--space-1);
 
-  &:hover {
-    color: var(--ds-primary-green);
-  }
+  @include ds-hover-state($color: var(--ds-primary-green));
 }
 
 .rpe-description {

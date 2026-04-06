@@ -138,16 +138,6 @@
   flex-wrap: wrap;
 }
 
-/* Outlined quick-add: stronger label contrast on dark surfaces */
-:host ::ng-deep .quick-add-buttons .btn.btn-outlined {
-  --btn-color: var(--color-text-primary);
-  --btn-border: color-mix(
-    in srgb,
-    var(--color-border-default) 85%,
-    var(--ds-primary-green) 15%
-  );
-}
-
 .recent-logs {
   padding-top: var(--space-3);
   border-top: var(--border-1) solid var(--color-border-subtle);

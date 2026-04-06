@@ -3,6 +3,8 @@
 // Design System Compliant
 // ============================================================================
 
+@use "styles/mixins" as *;
+
 .loading-overlay {
   position: fixed;
   top: 0;
@@ -51,10 +53,8 @@
   cursor: pointer;
   font-size: var(--ds-font-size-md);
   transition: background var(--transition-base);
-}
 
-.loading-cancel-btn:hover {
-  background: var(--overlay-white-30);
+  @include ds-hover-state($bg: var(--overlay-white-30));
 }
 
 @keyframes spin {

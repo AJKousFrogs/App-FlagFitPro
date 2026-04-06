@@ -397,28 +397,7 @@
   flex-wrap: wrap;
   margin-bottom: var(--space-16);
 
-  // Apple-style pill CTAs — override ButtonComponent defaults
-  ::ng-deep .btn-lg {
-    border-radius: var(--radius-full);
-    min-height: 54px;
-    padding-inline: var(--space-10);
-    font-weight: var(--ds-font-weight-semibold);
-    letter-spacing: -0.01em;
-    font-size: var(--ds-font-size-lg);
-  }
-
-  ::ng-deep .btn-outlined.btn-lg,
-  ::ng-deep a.btn-outlined.btn-lg {
-    border-color: rgba(255, 255, 255, 0.28);
-    color: rgba(255, 255, 255, 0.92);
-    background: transparent;
-
-    &:hover {
-      background: rgba(255, 255, 255, 0.08);
-      border-color: rgba(255, 255, 255, 0.52);
-      color: var(--color-text-on-inverse);
-    }
-  }
+  // Apple-style pill CTAs now live in the modern overrides layer.
 }
 
 .hero-stats {
@@ -596,6 +575,9 @@
 
 .features-grid > app-card-shell.feature-card {
   height: 100%;
+  --component-card-shadow-hover:
+    0 0 0 1.5px rgba(var(--ds-primary-green-rgb), 0.18),
+    var(--shadow-lg);
 }
 
 .feature-card-icon {
@@ -947,11 +929,4 @@
     transform: scale(1.08);
   }
 
-  .feature-card:hover {
-    ::ng-deep .card-shell {
-      box-shadow:
-        0 0 0 1.5px rgba(var(--ds-primary-green-rgb), 0.18),
-        var(--shadow-lg);
-    }
-  }
 }

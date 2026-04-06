@@ -10,7 +10,5 @@
   color: var(--color-text-primary);
   font-size: var(--ds-font-size-lg);
 
-  &:hover {
-    background: var(--surface-hover);
-  }
+  @include ds-hover-state($bg: var(--surface-hover));
 }

@@ -101,9 +101,7 @@
   border-radius: var(--radius-md);
   transition: background-color var(--transition-fast) var(--ease-standard);
 
-  @media (hover: hover) and (pointer: fine) {
-    &:hover { background: var(--surface-tertiary); }
-  }
+  @include ds-hover-state($bg: var(--surface-tertiary));
 }
 
 .shortcut-description {
