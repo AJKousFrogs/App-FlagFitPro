@@ -795,6 +795,9 @@
     .onboarding .ob-avatar-btn:active {
       transform: none !important;
     }
+  }
+@layer overrides {
+
 @keyframes ob-icon-pop {
   from { opacity: 0; transform: scale(0.55) rotate(-6deg); }
   to   { opacity: 1; transform: scale(1) rotate(0deg); }
@@ -803,4 +806,6 @@
 @keyframes ob-fade-up {
   from { opacity: 0; transform: translateY(var(--space-3)); }
   to   { opacity: 1; transform: translateY(0); }
+}
+
 }
