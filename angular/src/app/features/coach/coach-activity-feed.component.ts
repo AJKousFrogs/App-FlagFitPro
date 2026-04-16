@@ -20,6 +20,7 @@ import {
   ChangeDetectionStrategy,
   DestroyRef,
 } from "@angular/core";
+import { FormsModule } from "@angular/forms";
 import { Router, RouterModule } from "@angular/router";
 import {
   TeamNotificationService,
@@ -42,11 +43,13 @@ import { toLogContext } from "../../core/services/logger.service";
 import { getInitials } from "../../shared/utils/format.utils";
 
 const ACTIVITY_PAGE_SIZE = 20;
+type ActivityFilter = "all" | ActivityType | "unread";
 
 @Component({
   selector: "app-coach-activity-feed",
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    FormsModule,
     RouterModule,
     AvatarComponent,
     BadgeComponent,
@@ -85,6 +88,33 @@ const ACTIVITY_PAGE_SIZE = 20;
         </div>
       </div>
 
+      @if (activities().length > 0) {
+        <div class="feed-filters">
+          <div class="feed-search">
+            <i class="pi pi-search" aria-hidden="true"></i>
+            <input
+              type="text"
+              [ngModel]="searchQuery()"
+              (ngModelChange)="searchQuery.set($event)"
+              placeholder="Search player, title, or activity"
+              aria-label="Search player activity"
+            />
+          </div>
+          <div class="feed-filter-chips">
+            @for (option of filterOptions; track option.value) {
+              <app-button
+                size="sm"
+                [variant]="activityFilter() === option.value ? 'primary' : 'outlined'"
+                (clicked)="setActivityFilter(option.value)"
+              >
+                {{ option.label }}
+              </app-button>
+            }
+          </div>
+          <p class="feed-filter-summary">{{ filterSummary() }}</p>
+        </div>
+      }
+
       <!-- Loading State -->
       @if (loading() && activities().length === 0) {
         <div class="loading-state">
@@ -119,7 +149,15 @@ const ACTIVITY_PAGE_SIZE = 20;
       }
 
       <!-- Activity List -->
-      @if (activities().length > 0) {
+      @if (activities().length > 0 && filteredActivities().length === 0) {
+        <app-empty-state
+          icon="pi-search"
+          heading="No activity matches your filters"
+          description="Try a different search or reset the activity type filter."
+        />
+      }
+
+      @if (filteredActivities().length > 0) {
         <p-scrollPanel class="activity-scroll-panel">
           <div class="activity-list">
             @for (group of groupedActivities(); track group.date) {
@@ -199,7 +237,7 @@ const ACTIVITY_PAGE_SIZE = 20;
       }
 
       <!-- Quick Stats Summary -->
-      @if (showSummary() && activities().length > 0) {
+      @if (showSummary() && filteredActivities().length > 0) {
         <div class="activity-summary">
           <div class="meta-row">
             <i class="pi pi-chart-bar meta-row__icon" aria-hidden="true"></i>
@@ -239,13 +277,21 @@ export class CoachActivityFeedComponent implements OnDestroy {
 
   // State from service
   readonly activities = this.notificationService.activityFeed;
-  readonly groupedActivities = this.notificationService.groupedActivityFeed;
   readonly loading = this.notificationService.loading;
   readonly unreadCount = this.notificationService.unreadActivityCount;
 
   // Local state
   private readonly _loadingMore = signal(false);
   private readonly _hasMore = signal(true);
+  readonly searchQuery = signal("");
+  readonly activityFilter = signal<ActivityFilter>("all");
+  readonly filterOptions: Array<{ value: ActivityFilter; label: string }> = [
+    { value: "all", label: "All" },
+    { value: "unread", label: "Unread" },
+    { value: "training_completed", label: "Training" },
+    { value: "wellness_logged", label: "Wellness" },
+    { value: "stats_uploaded", label: "Stats" },
+  ];
 
   readonly loadingMore = computed(() => this._loadingMore());
   readonly hasMore = computed(() => this._hasMore());
@@ -254,10 +300,61 @@ export class CoachActivityFeedComponent implements OnDestroy {
     return this.maxHeight();
   }
 
+  readonly filteredActivities = computed(() => {
+    const query = this.searchQuery().trim().toLowerCase();
+    const filter = this.activityFilter();
+
+    return this.activities().filter((activity) => {
+      if (filter === "unread" && activity.is_read) {
+        return false;
+      }
+
+      if (
+        filter !== "all" &&
+        filter !== "unread" &&
+        activity.activity_type !== filter
+      ) {
+        return false;
+      }
+
+      if (!query) {
+        return true;
+      }
+
+      const searchableText = [
+        activity.player?.full_name,
+        activity.player?.position,
+        activity.title,
+        activity.description,
+        activity.activity_type,
+      ]
+        .filter(Boolean)
+        .join(" ")
+        .toLowerCase();
+
+      return searchableText.includes(query);
+    });
+  });
+
+  readonly groupedActivities = computed(() => {
+    const groups: Map<string, CoachActivityItem[]> = new Map();
+
+    this.filteredActivities().forEach((activity) => {
+      const date = this.getActivityDateLabel(activity.created_at);
+      const existing = groups.get(date) || [];
+      groups.set(date, [...existing, activity]);
+    });
+
+    return Array.from(groups.entries()).map(([date, items]) => ({
+      date,
+      items,
+    }));
+  });
+
   // Computed stats
   readonly todayStatsCount = computed(() => {
     const today = new Date().toDateString();
-    return this.activities().filter(
+    return this.filteredActivities().filter(
       (a) =>
         a.activity_type === "stats_uploaded" &&
         new Date(a.created_at).toDateString() === today,
@@ -266,11 +363,25 @@ export class CoachActivityFeedComponent implements OnDestroy {
 
   readonly todayTrainingCount = computed(() => {
     const today = new Date().toDateString();
-    return this.activities().filter(
+    return this.filteredActivities().filter(
       (a) =>
         a.activity_type === "training_completed" &&
         new Date(a.created_at).toDateString() === today,
     ).length;
+  });
+
+  readonly filterSummary = computed(() => {
+    const total = this.activities().length;
+    const filtered = this.filteredActivities().length;
+    const filterLabel =
+      this.filterOptions.find((option) => option.value === this.activityFilter())
+        ?.label ?? "All";
+
+    if (!this.searchQuery().trim() && this.activityFilter() === "all") {
+      return `${total} activity items`;
+    }
+
+    return `${filtered} of ${total} items shown · ${filterLabel}`;
   });
 
   constructor() {
@@ -295,6 +406,10 @@ export class CoachActivityFeedComponent implements OnDestroy {
 
   async refresh(): Promise<void> {
     await this.loadActivities();
+  }
+
+  setActivityFilter(filter: ActivityFilter): void {
+    this.activityFilter.set(filter);
   }
 
   async loadMore(): Promise<void> {
@@ -372,6 +487,10 @@ export class CoachActivityFeedComponent implements OnDestroy {
 
   formatTime(timestamp: string): string {
     return this.notificationService.formatActivityTime(timestamp);
+  }
+
+  private getActivityDateLabel(timestamp: string): string {
+    return new Date(timestamp).toLocaleDateString();
   }
 
   /**

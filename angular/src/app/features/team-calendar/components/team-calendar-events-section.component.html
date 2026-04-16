@@ -22,7 +22,7 @@
               </div>
 
               <p class="event-location">
-                <i class="pi pi-map-marker"></i>
+                <i class="pi pi-map-marker" aria-hidden="true"></i>
                 {{ event.location }}
               </p>
 
@@ -32,16 +32,16 @@
 
               <div class="rsvp-stats">
                 <span class="stat going">
-                  <i class="pi pi-check-circle"></i>
+                  <i class="pi pi-check-circle" aria-hidden="true"></i>
                   {{ event.rsvpStats.going }} going
                 </span>
                 <span class="stat not-going">
-                  <i class="pi pi-times-circle"></i>
+                  <i class="pi pi-times-circle" aria-hidden="true"></i>
                   {{ event.rsvpStats.notGoing }} can't go
                 </span>
                 @if (event.rsvpStats.maybe > 0) {
                   <span class="stat maybe">
-                    <i class="pi pi-question-circle"></i>
+                    <i class="pi pi-question-circle" aria-hidden="true"></i>
                     {{ event.rsvpStats.maybe }} maybe
                   </span>
                 }
@@ -52,19 +52,19 @@
               <div class="current-rsvp" [class]="'status-' + event.myRsvp">
                 @switch (event.myRsvp) {
                   @case ("going") {
-                    <i class="pi pi-check-circle"></i>
+                    <i class="pi pi-check-circle" aria-hidden="true"></i>
                     <span>{{ getRsvpLabel(event.myRsvp) }}</span>
                   }
                   @case ("not-going") {
-                    <i class="pi pi-times-circle"></i>
+                    <i class="pi pi-times-circle" aria-hidden="true"></i>
                     <span>{{ getRsvpLabel(event.myRsvp) }}</span>
                   }
                   @case ("maybe") {
-                    <i class="pi pi-question-circle"></i>
+                    <i class="pi pi-question-circle" aria-hidden="true"></i>
                     <span>{{ getRsvpLabel(event.myRsvp) }}</span>
                   }
                   @default {
-                    <i class="pi pi-clock"></i>
+                    <i class="pi pi-clock" aria-hidden="true"></i>
                     <span>{{ getRsvpLabel(event.myRsvp) }}</span>
                   }
                 }

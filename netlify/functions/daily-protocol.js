@@ -1,4 +1,4 @@
-import { createRuntimeV2Handler } from "./utils/runtime-v2-adapter.js";
+import { wrapHandler } from "./utils/lambda-compat.js";
 import { supabaseAdmin } from "./utils/supabase-client.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { authenticateRequest } from "./utils/auth-helper.js";
@@ -2392,4 +2392,4 @@ export const testTransforms = {
   buildAcwrPresentation,
   transformExercise,
 };
-export default createRuntimeV2Handler(handler);
+export default wrapHandler(handler);

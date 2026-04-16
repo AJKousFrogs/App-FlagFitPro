@@ -4,21 +4,37 @@
       <header class="chat-header bento-item full-width no-padding">
         <div class="header-brand">
           <div class="coach-avatar">
-            <i class="pi pi-sparkles"></i>
+            <i class="pi pi-sparkles" aria-hidden="true"></i>
             <span class="online-indicator"></span>
           </div>
           <div class="brand-info">
             <h1>Merlin AI</h1>
             <p>Your Performance Strategist</p>
+            <div class="session-summary">
+              <span class="session-summary__eyebrow">
+                {{ sessionId ? "Active session" : "New session" }}
+              </span>
+              <span class="session-summary__copy">{{ sessionSummaryText() }}</span>
+            </div>
           </div>
         </div>
 
         <div class="header-actions">
           @if (todayReadinessScore()) {
             <div class="readiness-chip">
-              <i class="pi pi-heart-fill"></i>
+              <i class="pi pi-heart-fill" aria-hidden="true"></i>
               <span>{{ todayReadinessScore() }}% Readiness</span>
             </div>
+          }
+          @if (recentSessions().length > 0) {
+            <button
+              type="button"
+              class="recent-toggle"
+              (click)="toggleRecentSessionsPanel()"
+            >
+              <i class="pi pi-history" aria-hidden="true"></i>
+              <span>Recent</span>
+            </button>
           }
           <app-icon-button
             icon="pi-plus"
@@ -29,16 +45,162 @@
         </div>
       </header>
 
+      @if (returnContext(); as returnContextMessage) {
+        <section class="return-context-banner bento-item full-width" role="status" aria-live="polite">
+          <div class="return-context-banner__icon">
+            <i class="pi pi-arrow-left" aria-hidden="true"></i>
+          </div>
+          <div class="return-context-banner__content">
+            <strong>Returned from {{ returnContextMessage.sourceLabel }}</strong>
+            <p>{{ returnContextMessage.message }}</p>
+            @if (currentMessage) {
+              <div class="return-context-banner__draft">
+                <span class="return-context-banner__draft-label">Draft ready</span>
+                <span class="return-context-banner__draft-copy">{{ currentMessage }}</span>
+              </div>
+            }
+            <div class="return-context-banner__actions">
+              @if (currentMessage) {
+                <app-button
+                  variant="text"
+                  iconLeft="pi-pencil"
+                  (clicked)="editDraft()"
+                >
+                  Edit draft
+                </app-button>
+                <app-button
+                  variant="outlined"
+                  iconLeft="pi-send"
+                  [disabled]="!currentMessage.trim() || isLoading()"
+                  (clicked)="sendMessage()"
+                >
+                  Send draft
+                </app-button>
+              }
+              <app-button
+                variant="text"
+                iconLeft="pi-arrow-right"
+                [routerLink]="getReturnContextCommands(returnContextMessage)"
+                [queryParams]="getReturnContextQueryParams(returnContextMessage)"
+              >
+                {{ returnContextMessage.resumeLabel }}
+              </app-button>
+            </div>
+          </div>
+          <button
+            type="button"
+            class="return-context-banner__close"
+            (click)="dismissReturnContext()"
+            aria-label="Dismiss return context"
+          >
+            Dismiss
+          </button>
+        </section>
+      }
+
+      @if (showRecentSessionsPanel() && recentSessions().length > 0) {
+        <section class="recent-sessions-panel bento-item full-width">
+          <div class="recent-sessions__header">
+            <div class="recent-sessions__header-copy">
+              <span class="recent-sessions__eyebrow">Recent Merlin conversations</span>
+              <span class="recent-sessions__copy">Switch sessions without leaving the current chat.</span>
+            </div>
+            <button
+              type="button"
+              class="recent-sessions__close"
+              (click)="closeRecentSessionsPanel()"
+            >
+              Close recent
+            </button>
+          </div>
+          <div class="recent-sessions__grid">
+            @for (session of recentSessions(); track session.id) {
+              <button
+                type="button"
+                class="recent-session-card"
+                [class.recent-session-card--active]="isActiveRecentSession(session)"
+                [disabled]="isActiveRecentSession(session)"
+                (click)="reopenRecentSession(session.id)"
+              >
+                <span class="recent-session-card__meta">
+                  {{ formatTime(session.startedAt) }} · {{ session.messageCount }} messages
+                </span>
+                @if (isActiveRecentSession(session)) {
+                  <span class="recent-session-card__status">Current session</span>
+                }
+                <span class="recent-session-card__topic">
+                  {{ getRecentSessionTopicLabel(session) }}
+                </span>
+                <strong>{{ session.preview || "Open conversation" }}</strong>
+                <span class="recent-session-card__role">
+                  {{ session.previewRole === 'assistant' ? 'Last answer from Merlin' : 'Last message from you' }}
+                </span>
+              </button>
+            }
+          </div>
+        </section>
+      }
+
       <!-- Welcome State (Full Width within chat flow) -->
       @if (messages().length === 0) {
         <div class="bento-item full-width welcome-bento">
           <div class="welcome-hero">
             <div class="hero-icon" aria-hidden="true">
-              <i class="pi pi-flag"></i>
+              <i class="pi pi-flag" aria-hidden="true"></i>
             </div>
             <h2>Ready to train{{ userName() ? ', ' + userName() : '' }}?</h2>
             <p>Ask me about your roster, practice planning, or injury risk analysis.</p>
+            <p class="grounding-copy">{{ groundingSummary() }}</p>
           </div>
+
+          @if (groundingCards().length > 0) {
+            <div class="grounding-grid-bento">
+              @for (card of groundingCards(); track card.id) {
+                <button type="button" class="grounding-card-bento" (click)="askQuestion(card.query)">
+                  <i [class]="'pi ' + card.icon"></i>
+                  <div class="grounding-content">
+                    <span class="grounding-title">{{ card.title }}</span>
+                    <span class="grounding-summary">{{ card.summary }}</span>
+                    <span class="grounding-meta">{{ card.meta }}</span>
+                  </div>
+                </button>
+              }
+            </div>
+          }
+
+          @if (recentSessions().length > 0) {
+            <div class="recent-sessions">
+              <div class="recent-sessions__header">
+                <span class="recent-sessions__eyebrow">Recent Merlin conversations</span>
+                <span class="recent-sessions__copy">Jump back into a previous thread.</span>
+              </div>
+              <div class="recent-sessions__grid">
+                @for (session of recentSessions(); track session.id) {
+                  <button
+                    type="button"
+                    class="recent-session-card"
+                    [class.recent-session-card--active]="isActiveRecentSession(session)"
+                    [disabled]="isActiveRecentSession(session)"
+                    (click)="reopenRecentSession(session.id)"
+                  >
+                    <span class="recent-session-card__meta">
+                      {{ formatTime(session.startedAt) }} · {{ session.messageCount }} messages
+                    </span>
+                    @if (isActiveRecentSession(session)) {
+                      <span class="recent-session-card__status">Current session</span>
+                    }
+                    <span class="recent-session-card__topic">
+                      {{ getRecentSessionTopicLabel(session) }}
+                    </span>
+                    <strong>{{ session.preview || "Open conversation" }}</strong>
+                    <span class="recent-session-card__role">
+                      {{ session.previewRole === 'assistant' ? 'Last answer from Merlin' : 'Last message from you' }}
+                    </span>
+                  </button>
+                }
+              </div>
+            </div>
+          }
 
           <div class="suggestion-grid-bento">
             @for (suggestion of quickSuggestions(); track suggestion.query) {
@@ -48,7 +210,7 @@
                   <span class="lbl">{{ suggestion.category }}</span>
                   <span class="val">{{ suggestion.label }}</span>
                 </div>
-                <i class="pi pi-chevron-right arrow"></i>
+                <i class="pi pi-chevron-right arrow" aria-hidden="true"></i>
               </button>
             }
           </div>
@@ -61,10 +223,121 @@
           @for (message of messages(); track message.id || $index) {
             <div class="message-row" [class.user]="message.role === 'user'">
               @if (message.role === 'assistant') {
-                <div class="msg-avatar"><i class="pi pi-sparkles"></i></div>
+                <div class="msg-avatar"><i class="pi pi-sparkles" aria-hidden="true"></i></div>
               }
               <div class="message-bubble-bento">
-                <div class="message-content" [innerHTML]="formatMessage(message.content)"></div>
+                @if (message.isLoading) {
+                  <div class="loading-state">
+                    <div class="loading-state__pulse" aria-hidden="true">
+                      <span></span>
+                      <span></span>
+                      <span></span>
+                    </div>
+                    <div class="loading-state__copy">
+                      <strong>{{ getLoadingStageTitle() }}</strong>
+                      <p>{{ getLoadingStageDescription() }}</p>
+                    </div>
+                  </div>
+                } @else {
+                  <div class="message-content" [innerHTML]="formatMessage(message.content)"></div>
+                }
+                @if (message.role === 'assistant' && hasGrounding(message)) {
+                  <div class="message-grounding">
+                    <div class="message-grounding__header">
+                      <span class="grounding-heading">{{ getGroundingHeading(message) }}</span>
+                      @if (getCitationEvidenceSummary(message); as evidenceSummary) {
+                        <span class="grounding-strength">
+                          {{ evidenceSummary.label }} · {{ evidenceSummary.count }} source{{ evidenceSummary.count === 1 ? "" : "s" }}
+                        </span>
+                      }
+                    </div>
+
+                    <div class="message-grounding__badges">
+                      @for (group of getCitationGroups(message); track group.key) {
+                        <span class="grounding-badge">
+                          {{ group.label }} · {{ group.count }}
+                        </span>
+                      }
+                      @if (messageUsesNutritionPlan(message)) {
+                        <span class="grounding-badge grounding-badge--plan">
+                          Nutrition targets
+                        </span>
+                      }
+                    </div>
+
+                    @if (message.evidenceGradeExplanation) {
+                      <p class="grounding-explainer">{{ message.evidenceGradeExplanation }}</p>
+                    }
+
+                    @if (message.citations?.length) {
+                      <button
+                        type="button"
+                        class="grounding-toggle"
+                        (click)="toggleCitations(message)"
+                      >
+                        {{ message.isExpanded ? "Hide sources" : "Show sources" }}
+                      </button>
+
+                      @if (message.isExpanded) {
+                        <div class="citation-list">
+                          @if (messageUsesNutritionPlan(message)) {
+                            <div class="citation-item citation-item--plan">
+                              <div class="citation-copy">
+                                <strong>Nutrition targets</strong>
+                                <span>Merlin used your backend nutrition profile to tailor fueling and hydration guidance.</span>
+                              </div>
+                            </div>
+                          }
+                          @for (citation of message.citations; track citation.id) {
+                            <div class="citation-item">
+                              <div class="citation-copy">
+                                <strong>{{ citation.title }}</strong>
+                                <div class="citation-meta">
+                                  <span>{{ getCitationTypeLabel(citation) }}</span>
+                                  <span>{{ getEvidenceGradeLabel(citation.evidence_grade) }}</span>
+                                  <span>{{ getCitationSourceLabel(citation) }}</span>
+                                </div>
+                              </div>
+                              @if (getCitationLink(citation); as citationLink) {
+                                <a [href]="citationLink" target="_blank" rel="noreferrer">Open</a>
+                              }
+                            </div>
+                          }
+                        </div>
+                      }
+                    }
+                  </div>
+                }
+                @if (message.role === 'assistant' && message.suggestedActions?.length) {
+                  <div class="message-actions">
+                    <span class="message-actions__label">Next step</span>
+                    <div class="message-actions__list">
+                      @for (action of message.suggestedActions; track action.label + action.type) {
+                        <button
+                          type="button"
+                          class="action-chip"
+                          [class.action-chip--primary]="getActionButtonTone(action) === 'primary'"
+                          (click)="executeAction(action)"
+                        >
+                          <i [class]="getActionButtonIcon(action)"></i>
+                          <span class="action-chip__copy">
+                            <strong>{{ action.label }}</strong>
+                            <small>{{ action.reason }}</small>
+                            <span class="action-chip__destination">{{ getActionDestinationLabel(action) }}</span>
+                          </span>
+                        </button>
+                      }
+                    </div>
+                  </div>
+                }
+                @if (message.role === 'assistant' && message.coachReviewedAt) {
+                  <div class="coach-review-note">
+                    <i class="pi pi-verified" aria-hidden="true"></i>
+                    <span>
+                      Coach reviewed{{ message.coachReviewedBy ? ' by ' + message.coachReviewedBy : '' }}
+                    </span>
+                  </div>
+                }
                 @if (message.timestamp) { <span class="ts">{{ formatTime(message.timestamp) }}</span> }
               </div>
             </div>
@@ -74,6 +347,37 @@
 
       <!-- Input Section (Full Width Sticky) -->
       <footer class="input-section-bento bento-item full-width">
+        @if (sessionContextItems().length > 0 || contextChips().length > 0) {
+          <div class="session-context-strip">
+            @if (sessionContextItems().length > 0) {
+              <div class="session-context-grid">
+                @for (item of sessionContextItems(); track item.id) {
+                  <div class="context-card" [class.context-card--warning]="item.tone === 'warning'">
+                    <i [class]="'context-card__icon pi ' + item.icon"></i>
+                    <div class="context-card__copy">
+                      <span class="context-card__label">{{ item.label }}</span>
+                      <strong>{{ item.value }}</strong>
+                      <small>{{ item.detail }}</small>
+                    </div>
+                  </div>
+                }
+              </div>
+            }
+
+            @if (contextChips().length > 0) {
+              <div class="context-chip-row">
+                <span class="context-chip-row__label">Try next</span>
+                <div class="context-chip-row__list">
+                  @for (chip of contextChips(); track chip) {
+                    <button type="button" class="context-chip" (click)="askQuestion(chip)">
+                      {{ chip }}
+                    </button>
+                  }
+                </div>
+              </div>
+            }
+          </div>
+        }
         <div class="input-wrapper">
           <textarea
             #messageInput
@@ -83,8 +387,8 @@
             (input)="onCurrentMessageInput($event)"
             rows="1"
           ></textarea>
-          <button type="button" class="send-btn-bento" [disabled]="!currentMessage.trim()" (click)="sendMessage()">
-            <i class="pi pi-send"></i>
+          <button type="button" class="send-btn-bento" aria-label="Send message" [disabled]="!currentMessage.trim()" (click)="sendMessage()">
+            <i class="pi pi-send" aria-hidden="true"></i>
           </button>
         </div>
       </footer>
@@ -107,7 +411,7 @@
               @if (activeMicroSession(); as session) {
                 <div dialogHeader class="dialog-header">
                   <div class="dialog-icon">
-                    <i class="pi pi-bolt"></i>
+                    <i class="pi pi-bolt" aria-hidden="true"></i>
                   </div>
                   <div class="dialog-title-section">
                     <h2>{{ session.title }}</h2>

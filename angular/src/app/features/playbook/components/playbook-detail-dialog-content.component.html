@@ -11,14 +11,14 @@
     </div>
   } @else {
     <div class="play-diagram placeholder">
-      <i class="pi pi-image"></i>
+      <i class="pi pi-image" aria-hidden="true"></i>
       <span>No diagram available</span>
     </div>
   }
 
   <div class="section assignment-section">
     <h4>
-      <i class="pi pi-user"></i> My Assignment ({{ play().personalAssignment.position }})
+      <i class="pi pi-user" aria-hidden="true"></i> My Assignment ({{ play().personalAssignment.position }})
     </h4>
     <div class="assignment-details">
       @if (play().personalAssignment.route) {
@@ -47,16 +47,16 @@
   </div>
 
   <div class="section">
-    <h4><i class="pi pi-info-circle"></i> Description</h4>
+    <h4><i class="pi pi-info-circle" aria-hidden="true"></i> Description</h4>
     <p>{{ play().description }}</p>
   </div>
 
   @if (play().keyPoints.length > 0) {
     <div class="section">
-      <h4><i class="pi pi-check-square"></i> Key Points</h4>
+      <h4><i class="pi pi-check-square" aria-hidden="true"></i> Key Points</h4>
       <ul class="key-points-list">
         @for (point of play().keyPoints; track point) {
-          <li><i class="pi pi-check"></i> {{ point }}</li>
+          <li><i class="pi pi-check" aria-hidden="true"></i> {{ point }}</li>
         }
       </ul>
     </div>
@@ -64,10 +64,10 @@
 
   @if (play().commonMistakes.length > 0) {
     <div class="section warning-section">
-      <h4><i class="pi pi-exclamation-triangle"></i> Common Mistakes</h4>
+      <h4><i class="pi pi-exclamation-triangle" aria-hidden="true"></i> Common Mistakes</h4>
       <ul class="mistakes-list">
         @for (mistake of play().commonMistakes; track mistake) {
-          <li><i class="pi pi-times"></i> {{ mistake }}</li>
+          <li><i class="pi pi-times" aria-hidden="true"></i> {{ mistake }}</li>
         }
       </ul>
     </div>

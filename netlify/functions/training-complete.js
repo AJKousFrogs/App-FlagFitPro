@@ -1,4 +1,3 @@
-import { createRuntimeV2Handler } from "./utils/runtime-v2-adapter.js";
 
 // Netlify Function: Training Complete API
 // Handles marking training sessions as completed
@@ -598,4 +597,3 @@ const handler = async (event, context) => {
 
 export const testHandler = handler;
 export { handler };
-export default createRuntimeV2Handler(handler);

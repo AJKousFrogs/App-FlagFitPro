@@ -1,4 +1,3 @@
-import { createRuntimeV2Handler } from "./utils/runtime-v2-adapter.js";
 import { supabaseAdmin } from "./supabase-client.js";
 import { createErrorResponse, handleValidationError } from "./utils/error-handler.js";
 import { baseHandler } from "./utils/base-handler.js";
@@ -19,13 +18,34 @@ import { buildRequestLogContext, createLogger } from "./utils/structured-logger.
 
 const logger = createLogger({ service: "netlify.performance-data" });
 
-// CORS Headers for cross-origin requests
-const CORS_HEADERS = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "Content-Type, Authorization",
-  "Access-Control-Allow-Methods": "GET, POST, PUT, PATCH, DELETE, OPTIONS",
-  "Content-Type": "application/json",
+// CORS Headers — restrict to known origins only.
+// Set ALLOWED_ORIGIN in Netlify environment variables for the production domain.
+const ALLOWED_ORIGINS = [
+  process.env.ALLOWED_ORIGIN,
+  process.env.URL,                 // Netlify injects the deploy URL automatically
+  process.env.DEPLOY_PRIME_URL,    // Netlify injects branch deploy URLs automatically
+  "http://localhost:4200",
+  "http://localhost:8888",
+].filter(Boolean);
+
+const getCorsHeaders = (requestOrigin) => {
+  const origin =
+    requestOrigin && ALLOWED_ORIGINS.includes(requestOrigin)
+      ? requestOrigin
+      : ALLOWED_ORIGINS[0] || "";
+  return {
+    "Access-Control-Allow-Origin": origin,
+    "Access-Control-Allow-Headers": "Content-Type, Authorization",
+    "Access-Control-Allow-Methods": "GET, POST, PUT, PATCH, DELETE, OPTIONS",
+    "Access-Control-Allow-Credentials": "true",
+    "Content-Type": "application/json",
+    "Vary": "Origin",
+  };
 };
+
+// Backwards-compatible alias used throughout the file — resolved per-request below.
+// Replace CORS_HEADERS usages with getCorsHeaders(requestOrigin) when refactoring handlers.
+const CORS_HEADERS = getCorsHeaders(undefined);
 
 // ============================================================================
 // DATA MAPPERS - Reusable transformation functions
@@ -301,6 +321,7 @@ const handler = async (event, context) => {
         );
       }
 
+      // injuries supports optional ?athleteId= with server-side team membership enforcement
       return await handler(
         httpMethod,
         userId,
@@ -381,9 +402,7 @@ async function handleMeasurements(method, userId, body, query, _resourceId, log 
           }),
         };
       } catch (error) {
-        log.error("performance_measurements_fetch_failed", error, {
-          user_id: userId,
-        });
+        log.error("performance_measurements_fetch_failed", error);
         // Return empty data if table doesn't exist
         return {
           statusCode: 200,
@@ -500,9 +519,7 @@ async function handleMeasurements(method, userId, body, query, _resourceId, log 
           }),
         };
       } catch (error) {
-        log.error("performance_measurement_save_failed", error, {
-          user_id: userId,
-        });
+        log.error("performance_measurement_save_failed", error);
         return createErrorResponse(
           "Failed to save measurement",
           500,
@@ -601,9 +618,7 @@ async function handlePerformanceTests(method, userId, body, query, _resourceId, 
           }),
         };
       } catch (error) {
-        log.error("performance_tests_fetch_failed", error, {
-          user_id: userId,
-        });
+        log.error("performance_tests_fetch_failed", error);
         return {
           statusCode: 200,
           body: JSON.stringify({
@@ -694,7 +709,6 @@ async function handlePerformanceTests(method, userId, body, query, _resourceId, 
         };
       } catch (error) {
         log.error("performance_test_save_failed", error, {
-          user_id: userId,
           test_type: testData.testType,
         });
         return createErrorResponse(
@@ -799,10 +813,7 @@ async function handleWellness(method, userId, requestedAthleteId, body, query, _
           }),
         };
       } catch (error) {
-        log.error("performance_wellness_fetch_failed", error, {
-          requester_user_id: userId,
-          athlete_id: targetAthleteId,
-        });
+        log.error("performance_wellness_fetch_failed", error);
         return {
           statusCode: 200,
           body: JSON.stringify({
@@ -871,9 +882,7 @@ async function handleWellness(method, userId, requestedAthleteId, body, query, _
           }),
         };
       } catch (error) {
-        log.error("performance_wellness_save_failed", error, {
-          user_id: userId,
-        });
+        log.error("performance_wellness_save_failed", error);
         return createErrorResponse(
           "Failed to save wellness data",
           500,
@@ -930,9 +939,7 @@ async function handleSupplements(method, userId, body, query, _resourceId, log =
           }),
         };
       } catch (error) {
-        log.error("performance_supplements_fetch_failed", error, {
-          user_id: userId,
-        });
+        log.error("performance_supplements_fetch_failed", error);
         return {
           statusCode: 200,
           body: JSON.stringify({
@@ -1005,7 +1012,6 @@ async function handleSupplements(method, userId, body, query, _resourceId, log =
         };
       } catch (error) {
         log.error("performance_supplement_save_failed", error, {
-          user_id: userId,
           supplement_name: supplementData.name,
         });
         return createErrorResponse(
@@ -1031,12 +1037,41 @@ async function handleInjuries(method, userId, body, query, resourceId, log = log
     case "GET": {
       const status = query?.status; // active, recovered, all
 
+      // Determine whose injuries to fetch. Coaches may pass ?athleteId= to view an athlete's
+      // injuries, but we MUST verify team membership before querying across users because
+      // supabaseAdmin bypasses RLS.
+      const targetUserId = query?.athleteId || userId;
+      if (targetUserId !== userId) {
+        const { data: membership, error: membershipError } = await supabaseAdmin
+          .from("team_members")
+          .select("team_id")
+          .eq("user_id", userId)
+          .eq("role", "coach")
+          .limit(1);
+
+        if (membershipError || !membership?.length) {
+          return createErrorResponse("Forbidden", 403, "forbidden");
+        }
+
+        const coachTeamIds = membership.map((m) => m.team_id);
+        const { data: athleteMembership, error: athleteErr } = await supabaseAdmin
+          .from("team_members")
+          .select("team_id")
+          .eq("user_id", targetUserId)
+          .in("team_id", coachTeamIds)
+          .limit(1);
+
+        if (athleteErr || !athleteMembership?.length) {
+          return createErrorResponse("Forbidden", 403, "forbidden");
+        }
+      }
+
       // Try Supabase first
       try {
         let queryBuilder = supabaseAdmin
           .from("injuries")
           .select("*")
-          .eq("user_id", userId)
+          .eq("user_id", targetUserId)
           .order("start_date", { ascending: false });
 
         if (status && status !== "all") {
@@ -1078,9 +1113,7 @@ async function handleInjuries(method, userId, body, query, resourceId, log = log
           }),
         };
       } catch (dbError) {
-        log.error("performance_injuries_fetch_failed", dbError, {
-          user_id: userId,
-        });
+        log.error("performance_injuries_fetch_failed", dbError);
         return {
           statusCode: 200,
           headers: CORS_HEADERS,
@@ -1173,7 +1206,6 @@ async function handleInjuries(method, userId, body, query, resourceId, log = log
         };
       } catch (dbError) {
         log.error("performance_injury_create_failed", dbError, {
-          user_id: userId,
           injury_type: injuryData.type,
         });
         return {
@@ -1264,7 +1296,6 @@ async function handleInjuries(method, userId, body, query, resourceId, log = log
         };
       } catch (dbError) {
         log.error("performance_injury_update_failed", dbError, {
-          user_id: userId,
           injury_id: injuryId,
         });
         return {
@@ -1406,10 +1437,7 @@ async function handleTrends(method, userId, requestedAthleteId, body, query, _re
       body: JSON.stringify(trends),
     };
   } catch (error) {
-    log.error("performance_trends_fetch_failed", error, {
-      requester_user_id: userId,
-      athlete_id: targetAthleteId,
-    });
+    log.error("performance_trends_fetch_failed", error);
     return {
       statusCode: 200,
       body: JSON.stringify({
@@ -1528,7 +1556,6 @@ async function handleExport(userId, query, log = logger) {
     };
   } catch (error) {
     log.error("performance_export_failed", error, {
-      user_id: userId,
       format,
     });
     return createErrorResponse("Failed to export data", 500, "server_error");
@@ -2128,4 +2155,3 @@ function calculateWellnessTrends(wellness) {
 
 export const testHandler = handler;
 export { handler };
-export default createRuntimeV2Handler(handler);

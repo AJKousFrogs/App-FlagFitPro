@@ -64,7 +64,7 @@ export type ValidationState = "idle" | "validating" | "valid" | "invalid";
       <div class="form-field__control form-input__control">
         <!-- Prefix Icon -->
         @if (prefixIcon()) {
-          <i [class]="'prefix-icon pi ' + prefixIcon()"></i>
+          <i [class]="'prefix-icon pi ' + prefixIcon()" aria-hidden="true"></i>
         }
 
         <!-- Input Field — p-inputtext: shared padding/height/border with Prime form controls -->
@@ -109,7 +109,7 @@ export type ValidationState = "idle" | "validating" | "valid" | "invalid";
 
         <!-- Validation Icon -->
         @if (validationState() !== "idle" && type() !== "password") {
-          <div class="form-input__validation-icon">
+          <div class="form-input__validation-icon" aria-hidden="true">
             @if (validationState() === "validating") {
               <i class="pi pi-spin pi-spinner"></i>
             } @else if (validationState() === "valid") {
@@ -124,14 +124,14 @@ export type ValidationState = "idle" | "validating" | "valid" | "invalid";
         @if (
           suffixIcon() && type() !== "password" && validationState() === "idle"
         ) {
-          <i [class]="'suffix-icon pi ' + suffixIcon()"></i>
+          <i [class]="'suffix-icon pi ' + suffixIcon()" aria-hidden="true"></i>
         }
       </div>
 
       <!-- Hint Text -->
       @if (hint() && !showError()) {
         <small [id]="inputId() + '-hint'" class="form-feedback form-help">
-          <i class="pi pi-info-circle"></i>
+          <i class="pi pi-info-circle" aria-hidden="true"></i>
           {{ hint() }}
         </small>
       }
@@ -139,7 +139,7 @@ export type ValidationState = "idle" | "validating" | "valid" | "invalid";
       <!-- Success Message -->
       @if (showSuccess() && successMessage()) {
         <small [id]="inputId() + '-success'" class="form-feedback form-success">
-          <i class="pi pi-check-circle"></i>
+          <i class="pi pi-check-circle" aria-hidden="true"></i>
           {{ successMessage() }}
         </small>
       }
@@ -151,7 +151,7 @@ export type ValidationState = "idle" | "validating" | "valid" | "invalid";
           class="form-feedback form-error"
           role="alert"
         >
-          <i class="pi pi-exclamation-circle"></i>
+          <i class="pi pi-exclamation-circle" aria-hidden="true"></i>
           {{ errorMessage() }}
         </small>
       }

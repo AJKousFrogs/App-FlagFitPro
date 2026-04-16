@@ -366,17 +366,17 @@ export class PhaseLoadCalculatorService {
       }
     }
 
-    // Progressive overload within phase
-    if (config.maxWeeklyIncrease > 0 && weekInPhase > 1) {
+    // Progressive overload within phase (weeks 1-3 only).
+    // Week 4 is always a deload — skip progression so that the deload is
+    // relative to the *base* load, not base * 1.3x (which would make it 0.91x
+    // instead of a genuine 0.7x reduction).
+    if (weekInPhase === 4) {
+      targetLoad *= 0.7;
+      adjustments.push("Deload week - volume reduced to 70% of base");
+    } else if (config.maxWeeklyIncrease > 0 && weekInPhase > 1) {
       const progressionFactor =
         1 + (config.maxWeeklyIncrease / 100) * (weekInPhase - 1);
       targetLoad *= Math.min(progressionFactor, 1.3); // Cap at 30% increase
-    }
-
-    // Week 4 deload
-    if (weekInPhase === 4) {
-      targetLoad *= 0.7;
-      adjustments.push("Deload week - reduced volume to 70%");
     }
 
     // Check chronic load floor

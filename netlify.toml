@@ -74,9 +74,12 @@
     Cross-Origin-Resource-Policy = "same-site"
 
     # Content Security Policy - defense in depth against XSS
-    # Note: 'unsafe-inline' is used for inline scripts/styles - consider moving to external files with nonces in production
+    # 'unsafe-inline' removed from script-src: Angular 17+ ESBuild output uses module scripts,
+    # no inline <script> tags. If a future change reintroduces inline scripts, use nonces instead.
+    # 'unsafe-inline' retained in style-src: Angular ViewEncapsulation injects component styles
+    # at runtime. Removing it would require nonce configuration in the Angular CLI build.
     # Sentry domains added for error reporting (https://*.ingest.sentry.io for event ingestion)
-    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://unpkg.com https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob: https:; connect-src 'self' https://*.supabase.co https://*.netlify.app https://*.netlify.com https://cdn.jsdelivr.net https://unpkg.com https://cdnjs.cloudflare.com wss://*.supabase.co https://*.ingest.sentry.io https://sentry.io; object-src 'none'; media-src 'self'; frame-src 'none'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests"
+    Content-Security-Policy = "default-src 'self'; script-src 'self' https://cdn.jsdelivr.net https://unpkg.com https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob: https:; connect-src 'self' https://*.supabase.co https://*.netlify.app https://*.netlify.com https://cdn.jsdelivr.net https://unpkg.com https://cdnjs.cloudflare.com wss://*.supabase.co https://*.ingest.sentry.io https://sentry.io; object-src 'none'; media-src 'self'; frame-src 'none'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests"
 
 # CORP headers for static resources (CSS, JS, images)
 # Using /**/* pattern to match nested paths (e.g., /assets/chunks/*.js)
@@ -212,13 +215,13 @@
 
 [[redirects]]
   from = "/api/team-calendar/*"
-  to = "/.netlify/functions/team-calendar"
+  to = "/.netlify/functions/team"
   status = 200
   force = true
 
 [[redirects]]
   from = "/api/team-calendar"
-  to = "/.netlify/functions/team-calendar"
+  to = "/.netlify/functions/team"
   status = 200
   force = true
 
@@ -230,61 +233,61 @@
 
 [[redirects]]
   from = "/api/return-to-play/*"
-  to = "/.netlify/functions/return-to-play"
+  to = "/.netlify/functions/health"
   status = 200
   force = true
 
 [[redirects]]
   from = "/api/return-to-play"
-  to = "/.netlify/functions/return-to-play"
+  to = "/.netlify/functions/health"
   status = 200
   force = true
 
 [[redirects]]
   from = "/api/cycle-tracking/*"
-  to = "/.netlify/functions/cycle-tracking"
+  to = "/.netlify/functions/wellness"
   status = 200
   force = true
 
 [[redirects]]
   from = "/api/cycle-tracking"
-  to = "/.netlify/functions/cycle-tracking"
+  to = "/.netlify/functions/wellness"
   status = 200
   force = true
 
 [[redirects]]
   from = "/api/game-events/*"
-  to = "/.netlify/functions/game-events"
+  to = "/.netlify/functions/games"
   status = 200
   force = true
 
 [[redirects]]
   from = "/api/game-events"
-  to = "/.netlify/functions/game-events"
+  to = "/.netlify/functions/games"
   status = 200
   force = true
 
 [[redirects]]
   from = "/api/sleep-data"
-  to = "/.netlify/functions/sleep-data"
+  to = "/.netlify/functions/wellness"
   status = 200
   force = true
 
 [[redirects]]
   from = "/api/wearables/status"
-  to = "/.netlify/functions/wearables-status"
+  to = "/.netlify/functions/readiness"
   status = 200
   force = true
 
 [[redirects]]
   from = "/api/import/fetch-url"
-  to = "/.netlify/functions/import-process"
+  to = "/.netlify/functions/data"
   status = 200
   force = true
 
 [[redirects]]
   from = "/api/import/process"
-  to = "/.netlify/functions/import-process"
+  to = "/.netlify/functions/data"
   status = 200
   force = true
 
@@ -295,26 +298,26 @@
 # Chat API - Channel and message operations
 [[redirects]]
   from = "/api/chat/*"
-  to = "/.netlify/functions/chat"
+  to = "/.netlify/functions/social"
   status = 200
   force = true
 
 [[redirects]]
   from = "/api/chat"
-  to = "/.netlify/functions/chat"
+  to = "/.netlify/functions/social"
   status = 200
   force = true
 
 # Coach Activity API - Activity feed for coaches
 [[redirects]]
   from = "/api/coach-activity/*"
-  to = "/.netlify/functions/coach-activity"
+  to = "/.netlify/functions/coach"
   status = 200
   force = true
 
 [[redirects]]
   from = "/api/coach-activity"
-  to = "/.netlify/functions/coach-activity"
+  to = "/.netlify/functions/coach"
   status = 200
   force = true
 
@@ -341,84 +344,82 @@
 # API Routes for Performance Metrics
 [[redirects]]
   from = "/api/performance/metrics"
-  to = "/.netlify/functions/performance-metrics"
+  to = "/.netlify/functions/analytics"
   status = 200
   force = true
 
 [[redirects]]
   from = "/api/performance/metrics/*"
-  to = "/.netlify/functions/performance-metrics"
+  to = "/.netlify/functions/analytics"
   status = 200
   force = true
 
 # API Routes for Performance Heatmap
 [[redirects]]
   from = "/api/performance/heatmap"
-  to = "/.netlify/functions/performance-heatmap"
+  to = "/.netlify/functions/analytics"
   status = 200
   force = true
 
 [[redirects]]
   from = "/api/performance/heatmap/*"
-  to = "/.netlify/functions/performance-heatmap"
+  to = "/.netlify/functions/analytics"
   status = 200
   force = true
 
-# API Routes for Training Sessions
+# Training domain — consolidated into training.js
 [[redirects]]
   from = "/api/training/sessions"
-  to = "/.netlify/functions/training-sessions"
+  to = "/.netlify/functions/training"
   status = 200
   force = true
 
 [[redirects]]
   from = "/api/training-sessions"
-  to = "/.netlify/functions/training-sessions"
+  to = "/.netlify/functions/training"
   status = 200
   force = true
 
 [[redirects]]
   from = "/api/training/sessions/*"
-  to = "/.netlify/functions/training-sessions"
+  to = "/.netlify/functions/training"
   status = 200
   force = true
 
 [[redirects]]
   from = "/api/training-sessions/*"
-  to = "/.netlify/functions/training-sessions"
+  to = "/.netlify/functions/training"
   status = 200
   force = true
 
-# API Routes for Training Complete
 [[redirects]]
   from = "/api/training/complete"
-  to = "/.netlify/functions/training-complete"
+  to = "/.netlify/functions/training"
   status = 200
   force = true
 
 [[redirects]]
   from = "/api/training/complete/*"
-  to = "/.netlify/functions/training-complete"
+  to = "/.netlify/functions/training"
   status = 200
   force = true
 
-# API Routes for Training Suggestions
 [[redirects]]
   from = "/api/training/suggestions"
-  to = "/.netlify/functions/training-suggestions"
+  to = "/.netlify/functions/training"
   status = 200
   force = true
 
 [[redirects]]
   from = "/api/training/suggestions/*"
-  to = "/.netlify/functions/training-suggestions"
+  to = "/.netlify/functions/training"
   status = 200
   force = true
 
-# API Routes for Training Stats (deprecated training-stats merged into training-stats-enhanced)
+# Consolidated into training.js
 [[redirects]]
   from = "/training-stats"
-  to = "/.netlify/functions/training-stats-enhanced"
+  to = "/.netlify/functions/training"
   status = 200
   force = true
 
@@ -435,17 +436,17 @@
   status = 200
   force = true
 
-# API Routes for Nutrition
+# Nutrition — consolidated into wellness.js
 [[redirects]]
   from = "/api/nutrition/*"
-  to = "/.netlify/functions/nutrition"
+  to = "/.netlify/functions/wellness"
   status = 200
   force = true
 
 # API Routes for Recovery
 [[redirects]]
   from = "/api/recovery/*"
-  to = "/.netlify/functions/recovery"
+  to = "/.netlify/functions/health"
   status = 200
   force = true
 
@@ -504,85 +505,85 @@
 # API Routes for Community
 [[redirects]]
   from = "/api/community/*"
-  to = "/.netlify/functions/community"
+  to = "/.netlify/functions/social"
   status = 200
   force = true
 
 # API Routes for Staff - Nutritionist
 [[redirects]]
   from = "/api/staff-nutritionist/*"
-  to = "/.netlify/functions/staff-nutritionist"
+  to = "/.netlify/functions/staff"
   status = 200
   force = true
 
 [[redirects]]
   from = "/api/staff-nutritionist"
-  to = "/.netlify/functions/staff-nutritionist"
+  to = "/.netlify/functions/staff"
   status = 200
   force = true
 
 # API Routes for Staff - Physiotherapist
 [[redirects]]
   from = "/api/staff-physiotherapist/*"
-  to = "/.netlify/functions/staff-physiotherapist"
+  to = "/.netlify/functions/staff"
   status = 200
   force = true
 
 [[redirects]]
   from = "/api/staff-physiotherapist"
-  to = "/.netlify/functions/staff-physiotherapist"
+  to = "/.netlify/functions/staff"
   status = 200
   force = true
 
 # API Routes for Staff - Psychology
 [[redirects]]
   from = "/api/staff-psychology/*"
-  to = "/.netlify/functions/staff-psychology"
+  to = "/.netlify/functions/staff"
   status = 200
   force = true
 
 [[redirects]]
   from = "/api/staff-psychology"
-  to = "/.netlify/functions/staff-psychology"
+  to = "/.netlify/functions/staff"
   status = 200
   force = true
 
 # API Routes for Decision Ledger
 [[redirects]]
   from = "/api/decisions/*"
-  to = "/.netlify/functions/decisions"
+  to = "/.netlify/functions/programs"
   status = 200
   force = true
 
 [[redirects]]
   from = "/api/decisions"
-  to = "/.netlify/functions/decisions"
+  to = "/.netlify/functions/programs"
   status = 200
   force = true
 
 # API Routes for Scouting
 [[redirects]]
   from = "/api/scouting/*"
-  to = "/.netlify/functions/scouting"
+  to = "/.netlify/functions/roster"
   status = 200
   force = true
 
 [[redirects]]
   from = "/api/scouting"
-  to = "/.netlify/functions/scouting"
+  to = "/.netlify/functions/roster"
   status = 200
   force = true
 
 # API Routes for Tournaments
 [[redirects]]
   from = "/api/tournaments"
-  to = "/.netlify/functions/tournaments"
+  to = "/.netlify/functions/games"
   status = 200
   force = true
 
 [[redirects]]
   from = "/api/tournaments/*"
-  to = "/.netlify/functions/tournaments"
+  to = "/.netlify/functions/games"
   status = 200
   force = true
 
@@ -591,19 +592,19 @@
 # Only auth-me endpoint uses backend function for token verification
 [[redirects]]
   from = "/auth-me"
-  to = "/.netlify/functions/auth-me"
+  to = "/.netlify/functions/auth"
   status = 200
   force = true
 
 [[redirects]]
   from = "/api/auth/me"
-  to = "/.netlify/functions/auth-me"
+  to = "/.netlify/functions/auth"
   status = 200
   force = true
 
 [[redirects]]
   from = "/api/auth-me"
-  to = "/.netlify/functions/auth-me"
+  to = "/.netlify/functions/auth"
   status = 200
   force = true
 
@@ -644,177 +645,158 @@
   status = 200
   force = true
 
-# API Routes for Notifications Count
-[[redirects]]
-  from = "/notifications-count"
-  to = "/.netlify/functions/notifications-count"
-  status = 200
-  force = true
-
+# Consolidated: notifications-count, notifications-create, notifications-preferences
+# all handled by the unified notifications domain function
 [[redirects]]
   from = "/api/dashboard/notifications/count"
-  to = "/.netlify/functions/notifications-count"
-  status = 200
-  force = true
-
-# API Routes for Notifications Create
-[[redirects]]
-  from = "/notifications-create"
-  to = "/.netlify/functions/notifications-create"
+  to = "/.netlify/functions/notifications"
   status = 200
   force = true
 
 [[redirects]]
   from = "/api/dashboard/notifications/create"
-  to = "/.netlify/functions/notifications-create"
-  status = 200
-  force = true
-
-# API Routes for Notifications Preferences
-[[redirects]]
-  from = "/notifications-preferences"
-  to = "/.netlify/functions/notifications-preferences"
+  to = "/.netlify/functions/notifications"
   status = 200
   force = true
 
 [[redirects]]
   from = "/api/dashboard/notifications/preferences"
-  to = "/.netlify/functions/notifications-preferences"
+  to = "/.netlify/functions/notifications"
   status = 200
   force = true
 
 # API Routes for Knowledge Search
 [[redirects]]
   from = "/knowledge-search"
-  to = "/.netlify/functions/knowledge-search"
+  to = "/.netlify/functions/knowledge"
   status = 200
   force = true
 
 [[redirects]]
   from = "/knowledge-search/*"
-  to = "/.netlify/functions/knowledge-search"
+  to = "/.netlify/functions/knowledge"
   status = 200
   force = true
 
 # API Routes for Knowledge Search (with /api prefix for consistency)
 [[redirects]]
   from = "/api/knowledge-search"
-  to = "/.netlify/functions/knowledge-search"
+  to = "/.netlify/functions/knowledge"
   status = 200
   force = true
 
 [[redirects]]
   from = "/api/knowledge-search/*"
-  to = "/.netlify/functions/knowledge-search"
+  to = "/.netlify/functions/knowledge"
   status = 200
   force = true
 
 # Backward-compatible aliases used by Angular API_ENDPOINTS.knowledge
 [[redirects]]
   from = "/api/knowledge"
-  to = "/.netlify/functions/knowledge-search"
+  to = "/.netlify/functions/knowledge"
   status = 200
   force = true
 
 [[redirects]]
   from = "/api/knowledge/search"
-  to = "/.netlify/functions/knowledge-search"
+  to = "/.netlify/functions/knowledge"
   status = 200
   force = true
 
 [[redirects]]
   from = "/api/knowledge-governance"
-  to = "/.netlify/functions/knowledge-governance"
+  to = "/.netlify/functions/knowledge"
   status = 200
   force = true
 
 [[redirects]]
   from = "/api/knowledge-governance/*"
-  to = "/.netlify/functions/knowledge-governance"
+  to = "/.netlify/functions/knowledge"
   status = 200
   force = true
 
 # API Routes for Performance Data (Wellness, Supplements, Measurements)
 [[redirects]]
   from = "/api/performance-data/measurements"
-  to = "/.netlify/functions/performance-data"
+  to = "/.netlify/functions/analytics"
   status = 200
   force = true
 
 [[redirects]]
   from = "/api/performance-data/performance-tests"
-  to = "/.netlify/functions/performance-data"
+  to = "/.netlify/functions/analytics"
   status = 200
   force = true
 
 [[redirects]]
   from = "/api/performance-data/wellness"
-  to = "/.netlify/functions/performance-data"
+  to = "/.netlify/functions/analytics"
   status = 200
   force = true
 
 [[redirects]]
   from = "/api/performance-data/supplements"
-  to = "/.netlify/functions/performance-data"
+  to = "/.netlify/functions/analytics"
   status = 200
   force = true
 
 [[redirects]]
   from = "/api/performance-data/injuries"
-  to = "/.netlify/functions/performance-data"
+  to = "/.netlify/functions/analytics"
   status = 200
   force = true
 
 [[redirects]]
   from = "/api/performance-data/injuries/*"
-  to = "/.netlify/functions/performance-data"
+  to = "/.netlify/functions/analytics"
   status = 200
   force = true
 
 [[redirects]]
   from = "/api/performance-data/trends"
-  to = "/.netlify/functions/performance-data"
+  to = "/.netlify/functions/analytics"
   status = 200
   force = true
 
 [[redirects]]
   from = "/api/performance-data/export"
-  to = "/.netlify/functions/performance-data"
+  to = "/.netlify/functions/analytics"
   status = 200
   force = true
 
 # API Routes for Import Open Data
 [[redirects]]
   from = "/api/import-open-data"
-  to = "/.netlify/functions/import-open-data"
+  to = "/.netlify/functions/data"
   status = 200
   force = true
 
 # API Routes for Compute ACWR
 [[redirects]]
   from = "/api/compute-acwr"
-  to = "/.netlify/functions/compute-acwr"
+  to = "/.netlify/functions/readiness"
   status = 200
   force = true
 
-# API Routes for Training Metrics
+# Training metrics — consolidated into training.js
 [[redirects]]
   from = "/api/training-metrics"
-  to = "/.netlify/functions/training-metrics"
+  to = "/.netlify/functions/training"
   status = 200
   force = true
 
 # API Routes for Readiness Calculation
 [[redirects]]
   from = "/api/calc-readiness"
-  to = "/.netlify/functions/calc-readiness"
+  to = "/.netlify/functions/readiness"
   status = 200
   force = true
 
 # API Routes for Readiness History
 [[redirects]]
   from = "/api/readiness-history"
-  to = "/.netlify/functions/readiness-history"
+  to = "/.netlify/functions/readiness"
   status = 200
   force = true
 
@@ -835,13 +817,13 @@
 # API Routes for Load Management
 [[redirects]]
   from = "/api/load-management/*"
-  to = "/.netlify/functions/load-management"
+  to = "/.netlify/functions/readiness"
   status = 200
   force = true
 
 [[redirects]]
   from = "/api/load-management"
-  to = "/.netlify/functions/load-management"
+  to = "/.netlify/functions/readiness"
   status = 200
   force = true
 
@@ -861,78 +843,73 @@
 # API Routes for Player Stats (base endpoint)
 [[redirects]]
   from = "/api/player-stats"
-  to = "/.netlify/functions/player-stats"
+  to = "/.netlify/functions/roster"
   status = 200
   force = true
 
 # API Routes for Fixtures
 [[redirects]]
   from = "/api/fixtures"
-  to = "/.netlify/functions/fixtures"
+  to = "/.netlify/functions/games"
   status = 200
   force = true
 
 # API Routes for Trends
 [[redirects]]
   from = "/api/trends/*"
-  to = "/.netlify/functions/trends"
+  to = "/.netlify/functions/analytics"
   status = 200
   force = true
 
 [[redirects]]
   from = "/api/trends"
-  to = "/.netlify/functions/trends"
+  to = "/.netlify/functions/analytics"
   status = 200
   force = true
 
 # API Routes for Player Stats
 [[redirects]]
   from = "/api/player-stats/*"
-  to = "/.netlify/functions/player-stats"
+  to = "/.netlify/functions/roster"
   status = 200
   force = true
 
-# API Routes for Training Plan
+# Training plan — consolidated into training.js
 [[redirects]]
   from = "/api/training-plan"
-  to = "/.netlify/functions/training-plan"
+  to = "/.netlify/functions/training"
   status = 200
   force = true
 
 [[redirects]]
   from = "/api/training-plan/*"
-  to = "/.netlify/functions/training-plan"
+  to = "/.netlify/functions/training"
   status = 200
   force = true
 
-# Training Plan with slash (frontend uses this pattern)
 [[redirects]]
   from = "/api/training/plan"
-  to = "/.netlify/functions/training-plan"
+  to = "/.netlify/functions/training"
   status = 200
   force = true
 
 [[redirects]]
   from = "/api/training/plan/*"
-  to = "/.netlify/functions/training-plan"
+  to = "/.netlify/functions/training"
   status = 200
   force = true
 
-# API Routes for Wellness
-#
-# IMPORTANT:
-# /api/wellness/checkin is the canonical endpoint used by frontend services and
-# must be handled by the dedicated wellness-checkin function (daily_wellness_checkin table).
-# Keep these specific routes BEFORE the generic /api/wellness/* mapping.
+# Wellness domain — consolidated into wellness.js
+# checkin routes MUST stay before generic /api/wellness/* (router handles priority internally)
 [[redirects]]
   from = "/api/wellness/checkin"
-  to = "/.netlify/functions/wellness-checkin"
+  to = "/.netlify/functions/wellness"
   status = 200
   force = true
 
 [[redirects]]
   from = "/api/wellness/checkin/*"
-  to = "/.netlify/functions/wellness-checkin"
+  to = "/.netlify/functions/wellness"
   status = 200
   force = true
 
@@ -945,103 +922,103 @@
 # API Routes for Supplements
 [[redirects]]
   from = "/api/supplements"
-  to = "/.netlify/functions/supplements"
+  to = "/.netlify/functions/wellness"
   status = 200
   force = true
 
 [[redirects]]
   from = "/api/supplements/*"
-  to = "/.netlify/functions/supplements"
+  to = "/.netlify/functions/wellness"
   status = 200
   force = true
 
-# API Routes for Hydration (used by HydrationTrackerComponent)
+# Hydration — consolidated into wellness.js
 [[redirects]]
   from = "/api/hydration"
-  to = "/.netlify/functions/hydration"
+  to = "/.netlify/functions/wellness"
   status = 200
   force = true
 
 [[redirects]]
   from = "/api/hydration/*"
-  to = "/.netlify/functions/hydration"
+  to = "/.netlify/functions/wellness"
   status = 200
   force = true
 
 # API Routes for User Context
 [[redirects]]
   from = "/api/user/context"
-  to = "/.netlify/functions/user-context"
+  to = "/.netlify/functions/user-profile"
   status = 200
   force = true
 
 [[redirects]]
   from = "/api/user-context"
-  to = "/.netlify/functions/user-context"
+  to = "/.netlify/functions/user-profile"
   status = 200
   force = true
 
 [[redirects]]
   from = "/api/user/context/*"
-  to = "/.netlify/functions/user-context"
+  to = "/.netlify/functions/user-profile"
   status = 200
   force = true
 
 [[redirects]]
   from = "/api/user-context/*"
-  to = "/.netlify/functions/user-context"
+  to = "/.netlify/functions/user-profile"
   status = 200
   force = true
 
-# API Routes for Training Stats (consolidated into training-stats-enhanced)
+# Training stats — consolidated into training.js
 [[redirects]]
   from = "/api/training/stats"
-  to = "/.netlify/functions/training-stats-enhanced"
+  to = "/.netlify/functions/training"
   status = 200
   force = true
 
 [[redirects]]
   from = "/api/training/stats-enhanced"
-  to = "/.netlify/functions/training-stats-enhanced"
+  to = "/.netlify/functions/training"
   status = 200
   force = true
 
-# API Routes for Training Programs (Annual Program Data)
+# Training programs — consolidated into training.js
 [[redirects]]
   from = "/api/training-programs"
-  to = "/.netlify/functions/training-programs"
+  to = "/.netlify/functions/training"
   status = 200
   force = true
 
 [[redirects]]
   from = "/api/training-programs/*"
-  to = "/.netlify/functions/training-programs"
+  to = "/.netlify/functions/training"
   status = 200
   force = true
 
 # API Routes for Player Programs (Program Assignment Management)
 [[redirects]]
   from = "/api/player-programs"
-  to = "/.netlify/functions/player-programs"
+  to = "/.netlify/functions/programs"
   status = 200
   force = true
 
 [[redirects]]
   from = "/api/player-programs/*"
-  to = "/.netlify/functions/player-programs"
+  to = "/.netlify/functions/programs"
   status = 200
   force = true
 
-# API Routes for Smart Training Recommendations
+# Smart training — consolidated into training.js
 [[redirects]]
   from = "/api/smart-training"
-  to = "/.netlify/functions/smart-training-recommendations"
+  to = "/.netlify/functions/training"
   status = 200
   force = true
 
 [[redirects]]
   from = "/api/smart-training/*"
-  to = "/.netlify/functions/smart-training-recommendations"
+  to = "/.netlify/functions/training"
   status = 200
   force = true
 
@@ -1062,6 +1039,12 @@
 [[redirects]]
   from = "/api/ai-chat"
   to = "/.netlify/functions/ai-chat"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/ai-chat/bookmark"
+  to = "/.netlify/functions/ai-chat-bookmark"
   status = 200
   force = true
 
@@ -1088,39 +1071,39 @@
 # API Routes for AI Feedback
 [[redirects]]
   from = "/api/ai/feedback"
-  to = "/.netlify/functions/ai-feedback"
+  to = "/.netlify/functions/ai-chat"
   status = 200
   force = true
 
 [[redirects]]
   from = "/api/ai/feedback/*"
-  to = "/.netlify/functions/ai-feedback"
+  to = "/.netlify/functions/ai-chat"
   status = 200
   force = true
 
 [[redirects]]
   from = "/api/ai/telemetry"
-  to = "/.netlify/functions/ai-telemetry"
+  to = "/.netlify/functions/ai-chat"
   status = 200
   force = true
 
 # API Routes for Performance Trends
 [[redirects]]
   from = "/api/performance/trends"
-  to = "/.netlify/functions/trends"
+  to = "/.netlify/functions/analytics"
   status = 200
   force = true
 
 [[redirects]]
   from = "/api/performance/trends/*"
-  to = "/.netlify/functions/trends"
+  to = "/.netlify/functions/analytics"
   status = 200
   force = true
 
-# API Routes for Training Stats Enhanced
+# Training stats enhanced (legacy path) — consolidated into training.js
 [[redirects]]
   from = "/training-stats-enhanced"
-  to = "/.netlify/functions/training-stats-enhanced"
+  to = "/.netlify/functions/training"
   status = 200
   force = true
 
@@ -1151,48 +1134,48 @@
 
 [[redirects]]
   from = "/api/training/programs"
-  to = "/.netlify/functions/training-programs"
+  to = "/.netlify/functions/training"
   status = 200
   force = true
 
 [[redirects]]
   from = "/api/training/programs/*"
-  to = "/.netlify/functions/training-programs"
+  to = "/.netlify/functions/training"
   status = 200
   force = true
 
 # API Routes for Auth Reset Password
 [[redirects]]
   from = "/api/auth/reset-password"
-  to = "/.netlify/functions/auth-reset-password"
+  to = "/.netlify/functions/auth"
   status = 200
   force = true
 
 # API Routes for Auth Login
 [[redirects]]
   from = "/api/auth/login"
-  to = "/.netlify/functions/auth-login"
+  to = "/.netlify/functions/auth"
   status = 200
   force = true
 
 # API Routes for Accept Invitation
 [[redirects]]
   from = "/api/accept-invitation"
-  to = "/.netlify/functions/accept-invitation"
+  to = "/.netlify/functions/auth"
   status = 200
   force = true
 
 # API Routes for Validate Invitation
 [[redirects]]
   from = "/api/validate-invitation"
-  to = "/.netlify/functions/validate-invitation"
+  to = "/.netlify/functions/auth"
   status = 200
   force = true
 
 # API Routes for Team Invite
 [[redirects]]
   from = "/api/team-invite"
-  to = "/.netlify/functions/team-invite"
+  to = "/.netlify/functions/team"
   status = 200
   force = true
 
@@ -1209,29 +1192,29 @@
   status = 200
   force = true
 
-# API Routes for Daily Training
+# Daily training — consolidated into training.js
 [[redirects]]
   from = "/api/daily-training"
-  to = "/.netlify/functions/daily-training"
+  to = "/.netlify/functions/training"
   status = 200
   force = true
 
 [[redirects]]
   from = "/api/daily-training/*"
-  to = "/.netlify/functions/daily-training"
+  to = "/.netlify/functions/training"
   status = 200
   force = true
 
 # API Routes for Calibration Logs
 [[redirects]]
   from = "/api/calibration-logs"
-  to = "/.netlify/functions/calibration-logs"
+  to = "/.netlify/functions/readiness"
   status = 200
   force = true
 
 [[redirects]]
   from = "/api/calibration-logs/*"
-  to = "/.netlify/functions/calibration-logs"
+  to = "/.netlify/functions/readiness"
   status = 200
   force = true
 
@@ -1242,52 +1225,52 @@
 # Attendance API - Practice attendance tracking
 [[redirects]]
   from = "/api/attendance/*"
-  to = "/.netlify/functions/attendance"
+  to = "/.netlify/functions/team"
   status = 200
   force = true
 
 [[redirects]]
   from = "/api/attendance"
-  to = "/.netlify/functions/attendance"
+  to = "/.netlify/functions/team"
   status = 200
   force = true
 
 # Depth Chart API - Roster depth chart management
 [[redirects]]
   from = "/api/depth-chart/*"
-  to = "/.netlify/functions/depth-chart"
+  to = "/.netlify/functions/roster"
   status = 200
   force = true
 
 [[redirects]]
   from = "/api/depth-chart"
-  to = "/.netlify/functions/depth-chart"
+  to = "/.netlify/functions/roster"
   status = 200
   force = true
 
 # Equipment API - Gear and equipment tracking
 [[redirects]]
   from = "/api/equipment/*"
-  to = "/.netlify/functions/equipment"
+  to = "/.netlify/functions/team"
   status = 200
   force = true
 
 [[redirects]]
   from = "/api/equipment"
-  to = "/.netlify/functions/equipment"
+  to = "/.netlify/functions/team"
   status = 200
   force = true
 
 # Officials API - Referee scheduling
 [[redirects]]
   from = "/api/officials/*"
-  to = "/.netlify/functions/officials"
+  to = "/.netlify/functions/team"
   status = 200
   force = true
 
 [[redirects]]
   from = "/api/officials"
-  to = "/.netlify/functions/officials"
+  to = "/.netlify/functions/team"
   status = 200
   force = true
 
@@ -1320,52 +1303,52 @@
 # API Routes for Exercise Progression Calculator
 [[redirects]]
   from = "/api/exercise-progression"
-  to = "/.netlify/functions/exercise-progression"
+  to = "/.netlify/functions/exercises"
   status = 200
   force = true
 
 [[redirects]]
   from = "/api/exercise-progression/*"
-  to = "/.netlify/functions/exercise-progression"
+  to = "/.netlify/functions/exercises"
   status = 200
   force = true
 
 # API Routes for Player Settings
 [[redirects]]
   from = "/api/player-settings"
-  to = "/.netlify/functions/player-settings"
+  to = "/.netlify/functions/roster"
   status = 200
   force = true
 
 [[redirects]]
   from = "/api/player-settings/*"
-  to = "/.netlify/functions/player-settings"
+  to = "/.netlify/functions/roster"
   status = 200
   force = true
 
 # API Routes for Tournament Calendar
 [[redirects]]
   from = "/api/tournament-calendar"
-  to = "/.netlify/functions/tournament-calendar"
+  to = "/.netlify/functions/games"
   status = 200
   force = true
 
 [[redirects]]
   from = "/api/tournament-calendar/*"
-  to = "/.netlify/functions/tournament-calendar"
+  to = "/.netlify/functions/games"
   status = 200
   force = true
 
 # API Routes for QB Throwing Tracker
 [[redirects]]
   from = "/api/qb-throwing"
-  to = "/.netlify/functions/qb-throwing"
+  to = "/.netlify/functions/exercises"
   status = 200
   force = true
 
 [[redirects]]
   from = "/api/qb-throwing/*"
-  to = "/.netlify/functions/qb-throwing"
+  to = "/.netlify/functions/exercises"
   status = 200
   force = true
 
@@ -1375,26 +1358,26 @@
 # API Routes for Program Cycles (LA28 Roadmap)
 [[redirects]]
   from = "/api/program-cycles"
-  to = "/.netlify/functions/program-cycles"
+  to = "/.netlify/functions/programs"
   status = 200
   force = true
 
 [[redirects]]
   from = "/api/program-cycles/*"
-  to = "/.netlify/functions/program-cycles"
+  to = "/.netlify/functions/programs"
   status = 200
   force = true
 
-# API Routes for Wellness Check-in
+# Wellness check-in (legacy path) — consolidated into wellness.js
 [[redirects]]
   from = "/api/wellness-checkin"
-  to = "/.netlify/functions/wellness-checkin"
+  to = "/.netlify/functions/wellness"
   status = 200
   force = true
 
 [[redirects]]
   from = "/api/wellness-checkin/*"
-  to = "/.netlify/functions/wellness-checkin"
+  to = "/.netlify/functions/wellness"
   status = 200
   force = true
 
@@ -1406,39 +1389,39 @@
 # Coach Alerts API - Coach alert acknowledgment and management
 [[redirects]]
   from = "/api/coach-alerts/*"
-  to = "/.netlify/functions/coach-alerts"
+  to = "/.netlify/functions/coach"
   status = 200
   force = true
 
 [[redirects]]
   from = "/api/coach-alerts"
-  to = "/.netlify/functions/coach-alerts"
+  to = "/.netlify/functions/coach"
   status = 200
   force = true
 
 # Coach Inbox API - Coach inbox for player notifications
 [[redirects]]
   from = "/api/coach-inbox/*"
-  to = "/.netlify/functions/coach-inbox"
+  to = "/.netlify/functions/coach"
   status = 200
   force = true
 
 [[redirects]]
   from = "/api/coach-inbox"
-  to = "/.netlify/functions/coach-inbox"
+  to = "/.netlify/functions/coach"
   status = 200
   force = true
 
 # Coach Analytics API
 [[redirects]]
   from = "/api/coach-analytics/*"
-  to = "/.netlify/functions/coach-analytics"
+  to = "/.netlify/functions/coach"
   status = 200
   force = true
 
 [[redirects]]
   from = "/api/coach-analytics"
-  to = "/.netlify/functions/coach-analytics"
+  to = "/.netlify/functions/coach"
   status = 200
   force = true
 
@@ -1484,65 +1467,65 @@
 # Micro Sessions API - Quick training sessions
 [[redirects]]
   from = "/api/micro-sessions/*"
-  to = "/.netlify/functions/micro-sessions"
+  to = "/.netlify/functions/programs"
   status = 200
   force = true
 
 [[redirects]]
   from = "/api/micro-sessions"
-  to = "/.netlify/functions/micro-sessions"
+  to = "/.netlify/functions/programs"
   status = 200
   force = true
 
 # Season Archive API - Season archival and reports
 [[redirects]]
   from = "/api/season/*"
-  to = "/.netlify/functions/season-archive"
+  to = "/.netlify/functions/team"
   status = 200
   force = true
 
 [[redirects]]
   from = "/api/season"
-  to = "/.netlify/functions/season-archive"
+  to = "/.netlify/functions/team"
   status = 200
   force = true
 
 # Season Reports API
 [[redirects]]
   from = "/api/season-reports/*"
-  to = "/.netlify/functions/season-reports"
+  to = "/.netlify/functions/team"
   status = 200
   force = true
 
 [[redirects]]
   from = "/api/season-reports"
-  to = "/.netlify/functions/season-reports"
+  to = "/.netlify/functions/team"
   status = 200
   force = true
 
 # Account Pause API - Player account pause/resume
 [[redirects]]
   from = "/api/account/pause"
-  to = "/.netlify/functions/account-pause"
+  to = "/.netlify/functions/auth"
   status = 200
   force = true
 
 [[redirects]]
   from = "/api/account/resume"
-  to = "/.netlify/functions/account-pause"
+  to = "/.netlify/functions/auth"
   status = 200
   force = true
 
 [[redirects]]
   from = "/api/account/*"
-  to = "/.netlify/functions/account-pause"
+  to = "/.netlify/functions/auth"
   status = 200
   force = true
 
 # Account Deletion API
 [[redirects]]
   from = "/api/account/delete"
-  to = "/.netlify/functions/account-deletion"
+  to = "/.netlify/functions/auth"
   status = 200
   force = true
 
@@ -1582,52 +1565,52 @@
 # Isometrics API - Isometric exercise tracking
 [[redirects]]
   from = "/api/isometrics/*"
-  to = "/.netlify/functions/isometrics"
+  to = "/.netlify/functions/exercises"
   status = 200
   force = true
 
 [[redirects]]
   from = "/api/isometrics"
-  to = "/.netlify/functions/isometrics"
+  to = "/.netlify/functions/exercises"
   status = 200
   force = true
 
 # Plyometrics API - Plyometric exercise tracking
 [[redirects]]
   from = "/api/plyometrics/*"
-  to = "/.netlify/functions/plyometrics"
+  to = "/.netlify/functions/exercises"
   status = 200
   force = true
 
 [[redirects]]
   from = "/api/plyometrics"
-  to = "/.netlify/functions/plyometrics"
+  to = "/.netlify/functions/exercises"
   status = 200
   force = true
 
 # Privacy Settings API
 [[redirects]]
   from = "/api/privacy-settings/*"
-  to = "/.netlify/functions/privacy-settings"
+  to = "/.netlify/functions/user-profile"
   status = 200
   force = true
 
 [[redirects]]
   from = "/api/privacy-settings"
-  to = "/.netlify/functions/privacy-settings"
+  to = "/.netlify/functions/user-profile"
   status = 200
   force = true
 
 # Data Export API
 [[redirects]]
   from = "/api/data-export/*"
-  to = "/.netlify/functions/data-export"
+  to = "/.netlify/functions/data"
   status = 200
   force = true
 
 [[redirects]]
   from = "/api/data-export"
-  to = "/.netlify/functions/data-export"
+  to = "/.netlify/functions/data"
   status = 200
   force = true
 
@@ -1654,59 +1637,59 @@
 # Sponsors API
 [[redirects]]
   from = "/api/sponsors/*"
-  to = "/.netlify/functions/sponsors"
+  to = "/.netlify/functions/payments"
   status = 200
   force = true
 
 [[redirects]]
   from = "/api/sponsors"
-  to = "/.netlify/functions/sponsors"
+  to = "/.netlify/functions/payments"
   status = 200
   force = true
 
 # Sponsor Logo API
 [[redirects]]
   from = "/api/sponsor-logo/*"
-  to = "/.netlify/functions/sponsor-logo"
+  to = "/.netlify/functions/payments"
   status = 200
   force = true
 
 # Team Templates API
 [[redirects]]
   from = "/api/team-templates/*"
-  to = "/.netlify/functions/team-templates"
+  to = "/.netlify/functions/team"
   status = 200
   force = true
 
 [[redirects]]
   from = "/api/team-templates"
-  to = "/.netlify/functions/team-templates"
+  to = "/.netlify/functions/team"
   status = 200
   force = true
 
 # Response Feedback API (AI response feedback)
 [[redirects]]
   from = "/api/response-feedback/*"
-  to = "/.netlify/functions/response-feedback"
+  to = "/.netlify/functions/ai-chat"
   status = 200
   force = true
 
 [[redirects]]
   from = "/api/response-feedback"
-  to = "/.netlify/functions/response-feedback"
+  to = "/.netlify/functions/ai-chat"
   status = 200
   force = true
 
 # AI Review API
 [[redirects]]
   from = "/api/ai-review/*"
-  to = "/.netlify/functions/ai-review"
+  to = "/.netlify/functions/ai-chat"
   status = 200
   force = true
 
 [[redirects]]
   from = "/api/ai-review"
-  to = "/.netlify/functions/ai-review"
+  to = "/.netlify/functions/ai-chat"
   status = 200
   force = true
 
@@ -1726,26 +1709,26 @@
 # Parent Dashboard API - Parent management of youth athletes
 [[redirects]]
   from = "/api/parent-dashboard/*"
-  to = "/.netlify/functions/parent-dashboard"
+  to = "/.netlify/functions/user-profile"
   status = 200
   force = true
 
 [[redirects]]
   from = "/api/parent-dashboard"
-  to = "/.netlify/functions/parent-dashboard"
+  to = "/.netlify/functions/user-profile"
   status = 200
   force = true
 
 # Parental Consent API - Consent management
 [[redirects]]
   from = "/api/parental-consent/*"
-  to = "/.netlify/functions/parental-consent"
+  to = "/.netlify/functions/auth"
   status = 200
   force = true
 
 [[redirects]]
   from = "/api/parental-consent"
-  to = "/.netlify/functions/parental-consent"
+  to = "/.netlify/functions/auth"
   status = 200
   force = true
 

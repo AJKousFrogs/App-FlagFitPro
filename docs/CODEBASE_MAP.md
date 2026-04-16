@@ -1,6 +1,6 @@
 # Codebase Map
 
-**Version:** 1.7 draft  
+**Application release:** 4.0.0  
 **Purpose:** Map major product areas to their Angular surfaces, backend entry points, and primary data ownership.
 
 ## Core App Shell

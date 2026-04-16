@@ -1,6 +1,7 @@
 import {
     ChangeDetectionStrategy,
     Component,
+    computed,
     DestroyRef,
     ElementRef,
     inject,
@@ -8,6 +9,7 @@ import {
     signal,
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
+import { ActivatedRoute, NavigationEnd, Router } from "@angular/router";
 
 import {
   FormGroup,
@@ -95,6 +97,8 @@ import {
 })
 export class SettingsComponent implements OnInit {
   private destroyRef = inject(DestroyRef);
+  private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
   private supabase = inject(SupabaseService);
   private accountDeletionService = inject(SettingsAccountDeletionService);
   private birthdayService = inject(SettingsBirthdayService);
@@ -229,13 +233,58 @@ export class SettingsComponent implements OnInit {
   countryOptions = COUNTRY_OPTIONS;
 
   readonly settingsNavItems: SettingsNavItem[] = [
-    { id: "account-settings", icon: "pi-user", label: "Account" },
-    { id: "notifications-settings", icon: "pi-bell", label: "Notifications" },
-    { id: "privacy-settings", icon: "pi-lock", label: "Privacy & Security" },
-    { id: "preferences-settings", icon: "pi-sliders-h", label: "Preferences" },
+    {
+      id: "account-settings",
+      icon: "pi-user",
+      label: "Account",
+      route: "/settings/profile",
+      keywords: ["profile", "name", "email", "birthday", "team", "position"],
+    },
+    {
+      id: "notifications-settings",
+      icon: "pi-bell",
+      label: "Notifications",
+      route: "/settings/notifications",
+      keywords: ["alerts", "messages", "email", "push", "reminders"],
+    },
+    {
+      id: "privacy-settings",
+      icon: "pi-lock",
+      label: "Privacy & Security",
+      route: "/settings/privacy-security",
+      keywords: ["privacy", "sharing", "visibility", "security", "data"],
+    },
+    {
+      id: "preferences-settings",
+      icon: "pi-sliders-h",
+      label: "Preferences",
+      route: "/settings/preferences",
+      keywords: ["theme", "language", "app", "display", "preferences"],
+    },
+    {
+      id: "security-settings",
+      icon: "pi-shield",
+      label: "Security",
+      route: "/settings/security",
+      keywords: ["password", "2fa", "sessions", "delete", "account"],
+    },
   ];
 
   readonly activeSettingsSection = signal("account-settings");
+  readonly settingsSearchQuery = signal("");
+  readonly filteredSettingsNavItems = computed(() => {
+    const query = this.settingsSearchQuery().trim().toLowerCase();
+    if (!query) {
+      return this.settingsNavItems;
+    }
+
+    return this.settingsNavItems.filter((item) => {
+      const searchableText = [item.label, ...(item.keywords ?? [])]
+        .join(" ")
+        .toLowerCase();
+      return searchableText.includes(query);
+    });
+  });
 
   ngOnInit(): void {
     const currentUser = this.supabase.currentUser();
@@ -262,6 +311,15 @@ export class SettingsComponent implements OnInit {
     this.passwordForm = this.formFactory.createPasswordForm();
 
     void this.loadInitialData();
+    this.syncSectionFromRoute();
+
+    this.router.events
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((event) => {
+        if (event instanceof NavigationEnd) {
+          this.syncSectionFromRoute();
+        }
+      });
 
     // Subscribe to theme changes from form
     this.preferencesForm
@@ -548,6 +606,55 @@ export class SettingsComponent implements OnInit {
     }
 
     this.activeSettingsSection.set(sectionId);
+    this.navigateToSection(sectionId);
+    this.scrollSectionIntoView(sectionId);
+  }
+
+  clearSettingsSearch(): void {
+    this.settingsSearchQuery.set("");
+  }
+
+  private syncSectionFromRoute(): void {
+    const sectionId = this.getSectionIdForCurrentRoute();
+    this.activeSettingsSection.set(sectionId);
+
+    if (this.isPageLoading()) {
+      return;
+    }
+
+    this.scrollSectionIntoView(sectionId);
+  }
+
+  private getSectionIdForCurrentRoute(): string {
+    const path = this.route.snapshot.routeConfig?.path ?? "settings";
+
+    switch (path) {
+      case "settings/profile":
+      case "settings":
+        return "account-settings";
+      case "settings/notifications":
+        return "notifications-settings";
+      case "settings/privacy-security":
+        return "privacy-settings";
+      case "settings/preferences":
+        return "preferences-settings";
+      case "settings/security":
+        return "security-settings";
+      default:
+        return "account-settings";
+    }
+  }
+
+  private navigateToSection(sectionId: string): void {
+    const route = this.settingsNavItems.find((item) => item.id === sectionId)?.route;
+    if (!route || this.router.url === route) {
+      return;
+    }
+
+    void this.router.navigateByUrl(route);
+  }
+
+  private scrollSectionIntoView(sectionId: string): void {
 
     setTimeout(() => {
       const settingsContainer = this.elementRef?.nativeElement;

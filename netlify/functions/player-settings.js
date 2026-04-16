@@ -1,4 +1,3 @@
-import { createRuntimeV2Handler } from "./utils/runtime-v2-adapter.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { createErrorResponse, handleValidationError } from "./utils/error-handler.js";
 import { parseJsonObjectBody } from "./utils/input-validator.js";
@@ -533,4 +532,3 @@ function calculateAge(birthDateStr) {
 
 export const testHandler = handler;
 export { handler };
-export default createRuntimeV2Handler(handler);

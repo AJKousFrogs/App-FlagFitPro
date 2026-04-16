@@ -150,7 +150,7 @@ export interface ToleranceDetection {
 export interface ACWRData {
   acute: number; // 7-day EWMA load
   chronic: number; // 28-day EWMA load
-  ratio: number; // Acute ÷ Chronic
+  ratio: number | null; // Acute ÷ Chronic; null when insufficient data history
   riskZone: RiskZone;
   weeklyProgression: {
     currentWeek: number;

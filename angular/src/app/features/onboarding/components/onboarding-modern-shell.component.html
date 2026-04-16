@@ -18,9 +18,9 @@
       @if (lastSaved()) {
         <span class="save-status" [class.saving]="isSaving()">
           @if (isSaving()) {
-            <i class="pi pi-spin pi-spinner"></i> Saving...
+            <i class="pi pi-spin pi-spinner" aria-hidden="true"></i> Saving...
           } @else {
-            <i class="pi pi-check-circle"></i> Draft saved
+            <i class="pi pi-check-circle" aria-hidden="true"></i> Draft saved
           }
         </span>
       }
@@ -34,7 +34,7 @@
   @if (hasPendingRequirements()) {
     <div class="requirements-banner">
       <div class="banner-content">
-        <i class="pi pi-info-circle banner-icon"></i>
+        <i class="pi pi-info-circle banner-icon" aria-hidden="true"></i>
         <div class="checklist-compact">
           <span class="checklist-label">Next:</span>
           <div class="checklist-pills">
@@ -63,7 +63,7 @@
             <ng-template #content>
               <div class="modern-step-dot" [class.active]="$index === currentStep()" [class.completed]="$index < currentStep()">
                 @if ($index < currentStep()) {
-                  <i class="pi pi-check"></i>
+                  <i class="pi pi-check" aria-hidden="true"></i>
                 } @else {
                   <span>{{ $index + 1 }}</span>
                 }

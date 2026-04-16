@@ -1,4 +1,3 @@
-import { createRuntimeV2Handler } from "./utils/runtime-v2-adapter.js";
 
 // Netlify Function: Knowledge Base Search
 // Searches the evidence-based knowledge database
@@ -398,4 +397,3 @@ rateLimitType,
 
 export const testHandler = handler;
 export { handler };
-export default createRuntimeV2Handler(handler);

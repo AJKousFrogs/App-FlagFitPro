@@ -97,7 +97,7 @@
 
         @if (tendencies()!.defensive.weaknesses.length > 0) {
           <div class="tendency-section weaknesses">
-            <h5><i class="pi pi-exclamation-triangle"></i>Weaknesses to Exploit</h5>
+            <h5><i class="pi pi-exclamation-triangle" aria-hidden="true"></i>Weaknesses to Exploit</h5>
             <ul class="tendency-list">
               @for (weakness of tendencies()!.defensive.weaknesses; track $index) {
                 <li>{{ weakness }}</li>
@@ -142,7 +142,7 @@
     </div>
   } @else {
     <div class="select-prompt">
-      <i class="pi pi-chart-bar"></i>
+      <i class="pi pi-chart-bar" aria-hidden="true"></i>
       <p>Select an opponent to view their tendencies</p>
     </div>
   }

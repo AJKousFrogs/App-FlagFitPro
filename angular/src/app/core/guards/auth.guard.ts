@@ -23,19 +23,24 @@ export const authGuard: CanActivateFn = async (route, state) => {
   });
 
   if (!session) {
-    try {
-      const {
-        data: { session: refreshedSession },
-        error,
-      } = await supabaseService.client.auth.getSession();
+    // Use currentUser() as a secondary check to avoid a redundant network call
+    // when another concurrent guard has already refreshed the session
+    const cachedUser = supabaseService.currentUser();
+    if (!cachedUser) {
+      try {
+        const {
+          data: { session: refreshedSession },
+          error,
+        } = await supabaseService.client.auth.getSession();
 
-      if (error) {
-        logger.warn("auth_guard_session_error", { message: error.message });
-      } else {
-        session = refreshedSession;
+        if (error) {
+          logger.warn("auth_guard_session_error", { message: error.message });
+        } else {
+          session = refreshedSession;
+        }
+      } catch (err) {
+        logger.error("auth_guard_session_exception", err);
       }
-    } catch (err) {
-      logger.error("auth_guard_session_exception", err);
     }
   }
 

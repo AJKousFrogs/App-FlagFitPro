@@ -333,7 +333,7 @@ export class TrainingComponent {
   }
 
   openScheduleBuilder(): void {
-    this.router.navigate(["/training/workspace"]);
+    this.router.navigate(["/training"]);
   }
 
   goToQBThrowing(): void {

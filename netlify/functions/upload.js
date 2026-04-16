@@ -1,4 +1,4 @@
-import { createRuntimeV2Handler } from "./utils/runtime-v2-adapter.js";
+import { wrapHandler } from "./utils/lambda-compat.js";
 
 // Netlify Function: File Upload API
 // Handles image and video uploads to Supabase Storage
@@ -298,4 +298,4 @@ const handler = async (event, context) => {
 
 export const testHandler = handler;
 export { handler };
-export default createRuntimeV2Handler(handler);
+export default wrapHandler(handler);

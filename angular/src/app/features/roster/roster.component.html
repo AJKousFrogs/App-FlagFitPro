@@ -78,10 +78,134 @@
             ></app-roster-filters>
           </div>
 
+          <div class="bento-item full-width section-nav-bento">
+            <div class="section-nav">
+              <span class="section-nav__label">View</span>
+              <app-button
+                [variant]="activeRosterView() === 'all' ? 'primary' : 'outlined'"
+                size="sm"
+                iconLeft="pi-th-large"
+                (clicked)="setRosterView('all')"
+                >All</app-button
+              >
+              @if (hasInvitationSection()) {
+                <app-button
+                  [variant]="activeRosterView() === 'invites' ? 'primary' : 'outlined'"
+                  size="sm"
+                  iconLeft="pi-send"
+                  (clicked)="setRosterView('invites')"
+                  >Invites</app-button
+                >
+              }
+              @if (hasStaffSection()) {
+                <app-button
+                  [variant]="activeRosterView() === 'staff' ? 'primary' : 'outlined'"
+                  size="sm"
+                  iconLeft="pi-briefcase"
+                  (clicked)="setRosterView('staff')"
+                  >Staff</app-button
+                >
+              }
+              <app-button
+                [variant]="activeRosterView() === 'players' ? 'primary' : 'outlined'"
+                size="sm"
+                iconLeft="pi-id-card"
+                (clicked)="setRosterView('players')"
+                >Players</app-button
+              >
+
+              <span class="section-nav__label">Jump to</span>
+              @if (hasInvitationSection()) {
+                <app-button
+                  variant="outlined"
+                  size="sm"
+                  iconLeft="pi-send"
+                  (clicked)="scrollToSection('invites-section')"
+                  >Invites</app-button
+                >
+              }
+              <app-button
+                variant="outlined"
+                size="sm"
+                iconLeft="pi-id-card"
+                (clicked)="scrollToSection('players-section')"
+                >Players</app-button
+              >
+              @if (hasStaffSection()) {
+                <app-button
+                  variant="outlined"
+                  size="sm"
+                  iconLeft="pi-briefcase"
+                  (clicked)="scrollToSection('staff-section')"
+                  >Staff</app-button
+                >
+              }
+            </div>
+          </div>
+
+          @if (showInvitationSection()) {
+            <div id="invites-section" class="bento-item full-width invites-section">
+              <div class="invites-header">
+                <div>
+                  <h3 class="bento-title"><i class="pi pi-send" aria-hidden="true"></i> Pending Invitations</h3>
+                  <p class="invites-subtitle">
+                    Track roster invitations that still need a response.
+                  </p>
+                </div>
+                <span class="invites-count">
+                  {{ rosterService.pendingInvitations().length }} open
+                </span>
+              </div>
+
+              <div class="invites-list">
+                @for (invitation of rosterService.pendingInvitations(); track invitation.id) {
+                  <div class="invite-card">
+                    <div class="invite-card__body">
+                      <div class="invite-card__identity">
+                        <strong>{{ invitation.email }}</strong>
+                        <app-status-tag
+                          [value]="invitation.isExpired ? 'Expired' : 'Pending'"
+                          [severity]="invitation.isExpired ? 'warning' : 'info'"
+                          size="sm"
+                        />
+                      </div>
+                      <p class="invite-card__meta">
+                        {{ getRoleDisplayName(invitation.role) }} · Invited by {{ invitation.invitedBy }}
+                      </p>
+                      <p class="invite-card__dates">
+                        Sent {{ invitation.createdAt | date: "MMM d, y" }} ·
+                        Expires {{ invitation.expiresAt | date: "MMM d, y" }}
+                      </p>
+                    </div>
+                    <div class="invite-card__actions">
+                      <app-button
+                        variant="outlined"
+                        size="sm"
+                        iconLeft="pi-refresh"
+                        (clicked)="resendInvitation(invitation.id, invitation.email)"
+                      >
+                        {{ invitation.isExpired ? 'Resend' : 'Refresh expiry' }}
+                      </app-button>
+                      <app-button
+                        variant="text"
+                        size="sm"
+                        iconLeft="pi-times"
+                        severity="danger"
+                        (clicked)="cancelInvitation(invitation.id, invitation.email)"
+                      >
+                        Cancel
+                      </app-button>
+                    </div>
+                  </div>
+                }
+              </div>
+            </div>
+          }
+
           <!-- Staff Sections (Spans 3 columns) -->
-          @if (!rosterService.isLoading() && rosterService.coachingStaff().length > 0) {
-            <div class="bento-item full-width staff-section">
-              <h3 class="bento-title"><i class="pi pi-users"></i> Team Staff</h3>
+          @if (showStaffSection()) {
+            <div id="staff-section" class="bento-item full-width staff-section">
+              <h3 class="bento-title"><i class="pi pi-users" aria-hidden="true"></i> Team Staff</h3>
               <div class="roster-grid">
                 @for (member of rosterService.coachingStaff(); track member.id || member.name) {
                   <app-roster-staff-card
@@ -94,7 +218,8 @@
           }
 
           <!-- Players Grid (Spans 3 columns) -->
-          <div class="bento-item full-width no-padding players-section">
+          @if (showPlayersSection()) {
+          <div id="players-section" class="bento-item full-width no-padding players-section">
             @if (!rosterService.isLoading() && filteredPlayers().length > 0) {
               @for (positionGroup of filteredPlayersByPosition(); track positionGroup.position) {
                 <div class="position-group">
@@ -133,6 +258,7 @@
               </div>
             }
           </div>
+          }
         </div>
 
         <!-- Add/Edit Player Dialog -->

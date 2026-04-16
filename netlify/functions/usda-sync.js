@@ -1,4 +1,4 @@
-import { createRuntimeV2Handler } from "./utils/runtime-v2-adapter.js";
+import { wrapHandler } from "./utils/lambda-compat.js";
 import { supabaseAdmin } from "./supabase-client.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { authenticateRequest } from "./utils/auth-helper.js";
@@ -756,4 +756,24 @@ const handler = async (event, context) =>
 
 export const testHandler = handler;
 export { handler };
-export default createRuntimeV2Handler(handler);
+
+export const config = { schedule: "0 3 * * 1" }; // Weekly — Monday 03:00 UTC
+
+export default async (req, context) => {
+  if (req.headers.get("x-netlify-event") === "schedule") {
+    logger.info("usda_sync_scheduled_start");
+    if (!isUSDAConfigured) {
+      logger.warn("usda_sync_scheduled_skipped", { reason: "USDA_API_KEY not set" });
+      return Response.json({ success: true, skipped: true, reason: "USDA_API_KEY not configured" });
+    }
+    try {
+      const result = await handleSync({ body: null, httpMethod: "POST" });
+      logger.info("usda_sync_scheduled_complete", { recordsAdded: result?.data?.recordsAdded ?? 0 });
+      return Response.json({ success: true, data: result });
+    } catch (err) {
+      logger.error("usda_sync_scheduled_failed", { error: err?.message });
+      return Response.json({ success: false, error: err?.message || "sync failed" }, { status: 500 });
+    }
+  }
+  return wrapHandler(handler)(req, context);
+};

@@ -32,6 +32,11 @@
                 "glob": "robots.txt",
                 "input": "src/assets",
                 "output": "/"
+              },
+              {
+                "glob": "custom-sw.js",
+                "input": "src",
+                "output": "/"
               }
             ],
             "serviceWorker": "ngsw-config.json",

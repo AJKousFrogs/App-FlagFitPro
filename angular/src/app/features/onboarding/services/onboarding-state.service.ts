@@ -64,11 +64,12 @@ export class OnboardingStateService {
     if (!this.formData.dateOfBirth) return null;
     const today = new Date();
     const birth = new Date(this.formData.dateOfBirth);
-    let age = today.getFullYear() - birth.getFullYear();
-    const monthDiff = today.getMonth() - birth.getMonth();
+    // Use UTC getters consistently to avoid timezone-offset off-by-one on birthday
+    let age = today.getUTCFullYear() - birth.getUTCFullYear();
+    const monthDiff = today.getUTCMonth() - birth.getUTCMonth();
     if (
       monthDiff < 0 ||
-      (monthDiff === 0 && today.getDate() < birth.getDate())
+      (monthDiff === 0 && today.getUTCDate() < birth.getUTCDate())
     ) {
       age--;
     }
@@ -201,60 +202,49 @@ export class OnboardingStateService {
   }
 
   toggleStaffVisibility(option: string): void {
-    const index = this.formData.staffVisibility.indexOf(option);
-    if (index > -1) {
-      this.formData.staffVisibility.splice(index, 1);
-    } else {
-      this.formData.staffVisibility.push(option);
-    }
+    const current = this.formData.staffVisibility;
+    this.formData.staffVisibility = current.includes(option)
+      ? current.filter((v) => v !== option)
+      : [...current, option];
   }
 
   toggleGoal(goalId: string): void {
-    const index = this.formData.goals.indexOf(goalId);
-    if (index > -1) {
-      this.formData.goals.splice(index, 1);
-    } else {
-      this.formData.goals.push(goalId);
-    }
+    const current = this.formData.goals;
+    this.formData.goals = current.includes(goalId)
+      ? current.filter((g) => g !== goalId)
+      : [...current, goalId];
   }
 
   togglePracticeDay(day: string): void {
-    const index = this.formData.practiceDays.indexOf(day);
-    if (index > -1) {
-      this.formData.practiceDays.splice(index, 1);
-    } else {
-      this.formData.practiceDays.push(day);
-    }
+    const current = this.formData.practiceDays;
+    this.formData.practiceDays = current.includes(day)
+      ? current.filter((d) => d !== day)
+      : [...current, day];
   }
 
   toggleEquipment(equipment: string): void {
-    const index = this.formData.equipmentAvailable.indexOf(equipment);
-    if (index > -1) {
-      this.formData.equipmentAvailable.splice(index, 1);
+    const current = this.formData.equipmentAvailable;
+    if (equipment === "none") {
+      // Toggle "none": if already selected deselect it, otherwise clear and select
+      this.formData.equipmentAvailable = current.includes("none") ? [] : ["none"];
     } else {
-      if (equipment === "none") {
-        this.formData.equipmentAvailable = ["none"];
-      } else {
-        this.formData.equipmentAvailable = this.formData.equipmentAvailable.filter(
-          (e) => e !== "none",
-        );
-        this.formData.equipmentAvailable.push(equipment);
-      }
+      // Selecting any specific equipment always removes "none"
+      this.formData.equipmentAvailable = current.includes(equipment)
+        ? current.filter((e) => e !== equipment)
+        : [...current.filter((e) => e !== "none"), equipment];
     }
   }
 
   toggleInjuryHistory(value: string): void {
-    const index = this.formData.injuryHistory.indexOf(value);
-    if (index > -1) {
-      this.formData.injuryHistory.splice(index, 1);
+    const current = this.formData.injuryHistory;
+    if (value === "none") {
+      // Toggle "none": if already selected deselect it, otherwise clear and select
+      this.formData.injuryHistory = current.includes("none") ? [] : ["none"];
     } else {
-      if (value === "none") {
-        this.formData.injuryHistory = ["none"];
-      } else {
-        const noneIdx = this.formData.injuryHistory.indexOf("none");
-        if (noneIdx > -1) this.formData.injuryHistory.splice(noneIdx, 1);
-        this.formData.injuryHistory.push(value);
-      }
+      // Selecting a specific injury always removes "none"
+      this.formData.injuryHistory = current.includes(value)
+        ? current.filter((v) => v !== value)
+        : [...current.filter((v) => v !== "none"), value];
     }
   }
 
@@ -281,17 +271,23 @@ export class OnboardingStateService {
       if (!saved) return false;
 
       const draft = JSON.parse(saved);
+      if (!draft || typeof draft !== "object" || !draft.data || typeof draft.data !== "object" || Array.isArray(draft.data)) {
+        this.logger.warn("[OnboardingState] Invalid draft structure, discarding");
+        return false;
+      }
       Object.assign(this.formData, draft.data);
 
       if (draft.currentStep !== undefined) {
-        const maxStepIndex = Math.max(0, this.steps().length - 1);
+        const stepsSnapshot = this.steps();
+        if (stepsSnapshot.length === 0) return true;
+        const maxStepIndex = stepsSnapshot.length - 1;
         const restoredStep = Math.min(
           Math.max(Number(draft.currentStep) || 0, 0),
           maxStepIndex,
         );
 
         this.currentStep.set(restoredStep);
-        const stepList = this.steps().map((s) => ({ ...s }));
+        const stepList = stepsSnapshot.map((s) => ({ ...s }));
         for (let i = 0; i < restoredStep; i++) {
           stepList[i].completed = true;
         }

@@ -22,18 +22,18 @@
           />
           <div class="tournament-details">
             <div class="detail-row">
-              <i class="pi pi-calendar"></i>
+              <i class="pi pi-calendar" aria-hidden="true"></i>
               <span>
                 {{ tournament.tournament.dates.start | date: "MMM d" }} -
                 {{ tournament.tournament.dates.end | date: "MMM d, yyyy" }}
               </span>
             </div>
             <div class="detail-row">
-              <i class="pi pi-map-marker"></i>
+              <i class="pi pi-map-marker" aria-hidden="true"></i>
               <span>{{ tournament.tournament.location }}</span>
             </div>
             <div class="detail-row">
-              <i class="pi pi-sun"></i>
+              <i class="pi pi-sun" aria-hidden="true"></i>
               <span>
                 {{ tournament.tournament.climate.temperature }}°C,
                 {{ tournament.tournament.climate.humidity }}% humidity

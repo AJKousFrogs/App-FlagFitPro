@@ -30,12 +30,15 @@ import { Toast } from "primeng/toast";
     >
       <ng-template let-message #message>
         <div class="toast-content">
+          <!-- aria-hidden: icon is decorative; PrimeNG renders role="alert" on the outer container -->
           <div
             class="app-icon-box"
             [class]="'app-icon-box--' + message.severity"
+            aria-hidden="true"
           >
             <i [class]="getIcon(message.severity)"></i>
-          </div>          <div class="toast-text">
+          </div>
+          <div class="toast-text">
             <div class="toast-summary">{{ message.summary }}</div>
             @if (message.detail) {
               <div class="toast-detail">{{ message.detail }}</div>

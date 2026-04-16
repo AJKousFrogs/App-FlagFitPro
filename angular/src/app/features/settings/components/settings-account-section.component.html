@@ -3,7 +3,7 @@
     <div class="ui-section-heading__content">
       <h2 class="ui-section-heading__title">
         <span class="ui-section-heading__icon">
-          <i class="pi pi-user"></i>
+          <i class="pi pi-user" aria-hidden="true"></i>
         </span>
         Account Settings
       </h2>
@@ -57,7 +57,7 @@
           @if (birthdaySuggestion(); as suggestion) {
             <div class="birthday-suggestion">
               <div class="suggestion-content">
-                <i class="pi pi-lightbulb suggestion-icon"></i>
+                <i class="pi pi-lightbulb suggestion-icon" aria-hidden="true"></i>
                 <div class="suggestion-text">
                   <span class="suggestion-label">Suggested:</span>
                   <span class="suggestion-date">{{ suggestion.formatted }}</span>

@@ -23,10 +23,53 @@
           }
         </app-page-header>
 
+        @if (merlinSessionId() && !merlinEntryContext()) {
+          <div class="merlin-return-link">
+            <app-button
+              variant="text"
+              iconLeft="pi-arrow-left"
+              routerLink="/chat"
+              [queryParams]="{ session: merlinSessionId(), draft: merlinReturnDraft(), from: 'nutrition' }"
+            >
+              Back to Merlin
+            </app-button>
+          </div>
+        }
+
+        @if (merlinEntryContext(); as entryContext) {
+          <div class="entry-context-banner" role="status" aria-live="polite">
+            <div class="entry-context-banner__icon">
+              <i class="pi pi-sparkles" aria-hidden="true"></i>
+            </div>
+            <div class="entry-context-banner__content">
+              <strong>{{ entryContext.title }}</strong>
+              <p>{{ entryContext.message }}</p>
+              @if (merlinSessionId()) {
+                <app-button
+                  variant="text"
+                  iconLeft="pi-arrow-left"
+                  routerLink="/chat"
+                  [queryParams]="{ session: merlinSessionId(), draft: merlinReturnDraft(), from: 'nutrition' }"
+                >
+                  Return to Merlin
+                </app-button>
+              }
+            </div>
+            <button
+              type="button"
+              class="entry-context-banner__close"
+              (click)="dismissEntryContext()"
+              aria-label="Dismiss Merlin context"
+            >
+              Dismiss
+            </button>
+          </div>
+        }
+
         <!-- Tournament Overview Banner -->
         <div class="tournament-banner">
           <div class="banner-content">
-            <div class="banner-icon"><i class="pi pi-trophy"></i></div>
+            <div class="banner-icon"><i class="pi pi-trophy" aria-hidden="true"></i></div>
             <div class="banner-info">
               <h2>{{ tournamentName() }}</h2>
               <p>{{ games().length }} Games · {{ tournamentDuration() }}</p>
@@ -192,7 +235,7 @@
         } @else {
           <div class="nutrition-timeline">
             <h3 class="timeline-title">
-              <i class="pi pi-clock"></i> Your Nutrition Timeline
+              <i class="pi pi-clock" aria-hidden="true"></i> Your Nutrition Timeline
             </h3>
 
             @for (window of nutritionWindows(); track window.id) {
@@ -233,7 +276,7 @@
                       }
                       @if (window.completed) {
                         <span class="completed-badge-inline">
-                          <i class="pi pi-check-circle"></i> Completed
+                          <i class="pi pi-check-circle" aria-hidden="true"></i> Completed
                         </span>
                       }
                     </div>
@@ -290,7 +333,7 @@
 
                       <div class="window-footer">
                         <div class="hydration-target">
-                          <i class="pi pi-tint"></i>
+                          <i class="pi pi-tint" aria-hidden="true"></i>
                           <span>Target: {{ window.hydrationTarget }}ml</span>
                         </div>
                         @if (!window.completed) {
@@ -314,7 +357,7 @@
         <!-- Evidence-Based Supplements Section -->
         <div class="section-card supplements-section">
           <div class="section-header">
-            <div class="section-icon"><i class="pi pi-heart-fill"></i></div>
+            <div class="section-icon"><i class="pi pi-heart-fill" aria-hidden="true"></i></div>
             <div class="section-title">
               <h3>Evidence-Based Game Day Supplements</h3>
               <p>Scientifically proven to enhance performance and recovery</p>
@@ -351,7 +394,7 @@
                   <p class="supp-reason">{{ supp.reason }}</p>
                 </div>
                 <p class="supp-notes">
-                  <i class="pi pi-info-circle"></i> {{ supp.notes }}
+                  <i class="pi pi-info-circle" aria-hidden="true"></i> {{ supp.notes }}
                 </p>
               </div>
             }
@@ -362,7 +405,7 @@
         <div class="section-card tips-section">
           <div class="section-header">
             <div class="section-icon warning">
-              <i class="pi pi-exclamation-triangle"></i>
+              <i class="pi pi-exclamation-triangle" aria-hidden="true"></i>
             </div>
             <div class="section-title">
               <h3>Cramp Prevention Protocol</h3>

@@ -34,18 +34,49 @@
 
       <!-- Navigation Sidebar (Span 1) -->
       <div class="bento-item settings-nav-card">
-        <h3 class="ff-h3 bento-title"><i class="pi pi-compass"></i> Navigation</h3>
-        <app-settings-nav-section
-          [items]="settingsNavItems"
-          [activeId]="activeSettingsSection()"
-          (selectSection)="scrollToSection($event)"
-        ></app-settings-nav-section>
+        <h3 class="ff-h3 bento-title"><i class="pi pi-compass" aria-hidden="true"></i> Navigation</h3>
+          <div class="settings-search">
+            <label class="settings-search__label" for="settings-search-input">
+              Find a setting
+            </label>
+            <div class="settings-search__field">
+              <i class="pi pi-search" aria-hidden="true"></i>
+              <input
+                id="settings-search-input"
+                type="text"
+                [ngModel]="settingsSearchQuery()"
+                (ngModelChange)="settingsSearchQuery.set($event)"
+                placeholder="Search profile, password, theme..."
+              />
+              @if (settingsSearchQuery()) {
+                <button
+                  type="button"
+                  class="settings-search__clear"
+                  (click)="clearSettingsSearch()"
+                  aria-label="Clear settings search"
+                >
+                  Clear
+                </button>
+              }
+            </div>
+          </div>
+          @if (filteredSettingsNavItems().length > 0) {
+          <app-settings-nav-section
+            [items]="filteredSettingsNavItems()"
+            [activeId]="activeSettingsSection()"
+            (selectSection)="scrollToSection($event)"
+          ></app-settings-nav-section>
+          } @else {
+            <p class="settings-search__empty">
+              No settings match "{{ settingsSearchQuery() }}".
+            </p>
+          }
       </div>
 
       <!-- Settings Content (Span 2) -->
       <div class="settings-content-column span-2">
-        <div class="bento-item account-card">
-          <h3 class="ff-h3 bento-title"><i class="pi pi-user"></i> Account Profile</h3>
+        <div id="account-settings" class="bento-item account-card">
+          <h3 class="ff-h3 bento-title"><i class="pi pi-user" aria-hidden="true"></i> Account Profile</h3>
           <app-settings-account-section
             [profileForm]="profileForm"
             [maxBirthDate]="maxBirthDate"
@@ -65,7 +96,7 @@
           <!-- Section 2: Notifications -->
           <div id="notifications-settings" class="bento-item notifications-card">
             <h3 class="ff-h3 bento-title">
-              <i class="pi pi-bell"></i> Notifications
+              <i class="pi pi-bell" aria-hidden="true"></i> Notifications
             </h3>
             <app-notification-preferences-card
               [notificationForm]="notificationForm"
@@ -75,7 +106,7 @@
           <!-- Section 3: Privacy & Security -->
           <div id="privacy-settings" class="bento-item privacy-card">
             <h3 class="ff-h3 bento-title">
-              <i class="pi pi-lock"></i> Privacy & Security
+              <i class="pi pi-lock" aria-hidden="true"></i> Privacy & Security
             </h3>
             <app-privacy-controls-card
               [privacyForm]="privacyForm"
@@ -87,7 +118,7 @@
           <!-- Section 4: Preferences -->
           <div id="preferences-settings" class="bento-item preferences-card">
             <h3 class="ff-h3 bento-title">
-              <i class="pi pi-sliders-h"></i> App Preferences
+              <i class="pi pi-sliders-h" aria-hidden="true"></i> App Preferences
             </h3>
             <app-app-preferences-card
               [preferencesForm]="preferencesForm"
@@ -98,9 +129,9 @@
           </div>
 
           <!-- Section 5: Security/Danger Zone -->
-          <div class="bento-item security-actions-card">
+          <div id="security-settings" class="bento-item security-actions-card">
             <h3 class="ff-h3 bento-title">
-              <i class="pi pi-shield"></i> Advanced Security
+              <i class="pi pi-shield" aria-hidden="true"></i> Advanced Security
             </h3>
             <app-security-settings-card
               [isTwoFactorEnabled]="is2FAEnabled()"
@@ -134,7 +165,7 @@
                 message="Loading preferences..."
               ></app-loading>
             </div>
-            <div class="bento-item security-actions-card">
+            <div id="security-settings" class="bento-item security-actions-card">
               <app-loading
                 [visible]="true"
                 variant="skeleton"

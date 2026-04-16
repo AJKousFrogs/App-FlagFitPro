@@ -1,4 +1,3 @@
-import { createRuntimeV2Handler } from "./utils/runtime-v2-adapter.js";
 
 // Netlify Function: User Context API
 // Returns comprehensive user context for AI coaching system
@@ -251,4 +250,3 @@ const handler = async (event, context) => {
 
 export const testHandler = handler;
 export { handler };
-export default createRuntimeV2Handler(handler);

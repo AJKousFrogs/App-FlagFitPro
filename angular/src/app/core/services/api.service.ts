@@ -1,7 +1,7 @@
 import { HttpClient, HttpHeaders, HttpParams } from "@angular/common/http";
 import { Injectable, inject } from "@angular/core";
 import { Observable, throwError } from "rxjs";
-import { catchError, map } from "rxjs";
+import { catchError, finalize, map, share } from "rxjs";
 import { environment } from "../../../environments/environment";
 import { LoggerService } from "./logger.service";
 import { extractApiErrorDetails } from "../../shared/utils/error.utils";
@@ -47,6 +47,14 @@ export class ApiService {
   private readonly http = inject(HttpClient);
   private readonly logger = inject(LoggerService);
   private readonly baseUrl = this.getApiBaseUrl();
+
+  /**
+   * In-flight GET request deduplication.
+   * Maps a cache key (url + serialized params) to a shared observable.
+   * When a second caller issues an identical GET before the first resolves,
+   * they receive the same observable — only one network request is made.
+   */
+  private readonly inflightGets = new Map<string, Observable<ApiResponse<unknown>>>();
 
   constructor() {
     this.logger.info(`[ApiService] Initialized with baseUrl: ${this.baseUrl}`);
@@ -101,6 +109,11 @@ export class ApiService {
 
     // Default: use relative paths (same origin)
     return "";
+  }
+
+  /** Build a full URL for the given API endpoint (used by streaming fetch calls). */
+  buildUrl(endpoint: string): string {
+    return `${this.baseUrl}${this.normalizeEndpoint(endpoint)}`;
   }
 
   private normalizeEndpoint(endpoint: string): string {
@@ -215,10 +228,25 @@ export class ApiService {
     const httpParams = this.buildHttpParams(params);
     const url = `${this.baseUrl}${normalizedEndpoint}`;
 
-    return this.http.get<ApiResponse<T>>(url, { params: httpParams }).pipe(
+    // Deduplicate concurrent identical GET requests: if a request to the same
+    // URL+params is already in-flight, return the shared observable rather than
+    // issuing a second network call.
+    const cacheKey = `${url}?${httpParams.toString()}`;
+
+    const existing = this.inflightGets.get(cacheKey);
+    if (existing) {
+      return existing as Observable<ApiResponse<T>>;
+    }
+
+    const request$ = this.http.get<ApiResponse<T>>(url, { params: httpParams }).pipe(
       map((response) => this.validateResponse(response, options)),
       catchError(this.handleError),
+      share(),
+      finalize(() => this.inflightGets.delete(cacheKey)),
     );
+
+    this.inflightGets.set(cacheKey, request$ as Observable<ApiResponse<unknown>>);
+    return request$;
   }
 
   post<T = unknown>(
@@ -528,6 +556,7 @@ export const API_ENDPOINTS = {
     export: "/api/performance-data/export",
   },
   nutrition: {
+    plan: "/api/nutrition/plan",
     searchFoods: "/api/nutrition/search-foods",
     addFood: "/api/nutrition/add-food",
     goals: "/api/nutrition/goals",
@@ -620,6 +649,7 @@ export const API_ENDPOINTS = {
   // AI Chat endpoints (with safety tiers)
   aiChat: {
     send: "/api/ai/chat",
+    sessions: "/api/ai/chat/sessions",
     session: (sessionId: string) => `/api/ai/chat/session/${sessionId}`,
     feedback: "/api/ai/feedback",
     telemetry: "/api/ai/telemetry",

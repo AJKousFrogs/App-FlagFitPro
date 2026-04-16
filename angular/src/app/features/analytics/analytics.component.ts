@@ -376,7 +376,7 @@ export class AnalyticsComponent implements AfterViewInit {
 
     // Load ACWR data from canonical AcwrService (single source of truth)
     const acwrData = this.acwrService.acwrData();
-    if (acwrData.ratio > 0) {
+    if (acwrData.ratio && acwrData.ratio > 0) {
       this.acwrData.set({
         acwr: acwrData.ratio,
         acuteLoad: acwrData.acute,

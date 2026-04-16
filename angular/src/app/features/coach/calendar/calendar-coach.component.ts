@@ -158,8 +158,8 @@ const RECURRING_OPTIONS = [
     <app-main-layout>
 <div class="calendar-coach-page ui-page-shell ui-page-shell--wide ui-page-stack">
         <app-page-header
-          title="Team Calendar"
-          subtitle="Manage team schedule and RSVPs"
+          title="Coach Planning"
+          subtitle="Manage the team calendar, event logistics, and RSVPs."
           icon="pi-calendar"
         >
           <app-button iconLeft="pi-plus" (clicked)="openCreateDialog()"

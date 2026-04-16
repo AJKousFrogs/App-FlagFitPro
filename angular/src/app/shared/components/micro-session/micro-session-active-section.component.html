@@ -72,7 +72,7 @@
 @if (currentStatus() === "completed") {
   <div class="completed-state">
     <div class="completion-icon">
-      <i class="pi pi-check-circle"></i>
+      <i class="pi pi-check-circle" aria-hidden="true"></i>
     </div>
     <h3>Great Work!</h3>
     <p>
@@ -121,7 +121,7 @@
       </div>
     } @else if (followUpSubmitted()) {
       <div class="follow-up-submitted">
-        <i class="pi pi-check"></i>
+        <i class="pi pi-check" aria-hidden="true"></i>
         <span>Feedback submitted. Thanks!</span>
       </div>
     }

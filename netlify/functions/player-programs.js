@@ -1,4 +1,3 @@
-import { createRuntimeV2Handler } from "./utils/runtime-v2-adapter.js";
 
 /**
  * Player Programs API
@@ -619,4 +618,3 @@ export { POSITION_TO_MODIFIER_KEY };
 export { getProgramIdForPosition };
 export { normalizePositionForModifiers };
 export const testHandler = handler;
-export default createRuntimeV2Handler(handler);

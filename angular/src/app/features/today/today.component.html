@@ -73,6 +73,36 @@
   @if (!isLoading() && !isGeneratingProtocol()) {
     @if (todayViewModel(); as vm) {
       <div class="today-page bento-grid ui-page-shell">
+        @if (entryContext(); as entryContextMessage) {
+          <div class="entry-context-banner full-width" role="status" aria-live="polite">
+            <div class="entry-context-banner__icon">
+              <i class="pi pi-sparkles" aria-hidden="true"></i>
+            </div>
+            <div class="entry-context-banner__content">
+              <strong>{{ entryContextMessage.title }}</strong>
+              <p>{{ entryContextMessage.message }}</p>
+              @if (merlinSessionId()) {
+                <app-button
+                  variant="text"
+                  iconLeft="pi-arrow-left"
+                  routerLink="/chat"
+                  [queryParams]="{ session: merlinSessionId(), draft: merlinReturnDraft(), from: 'today' }"
+                >
+                  Return to Merlin
+                </app-button>
+              }
+            </div>
+            <button
+              type="button"
+              class="entry-context-banner__close"
+              (click)="dismissEntryContext()"
+              aria-label="Dismiss Merlin context"
+            >
+              Dismiss
+            </button>
+          </div>
+        }
+
         <!-- Summary Header (Full Width) -->
         <div class="bento-item full-width no-padding header-bento">
           <app-today-summary-header
@@ -83,6 +113,19 @@
             (startExactPlan)="scrollToProtocolBlocks()"
           />
         </div>
+
+        @if (merlinSessionId() && !entryContext()) {
+          <div class="full-width merlin-return-link">
+            <app-button
+              variant="text"
+              iconLeft="pi-arrow-left"
+              routerLink="/chat"
+              [queryParams]="{ session: merlinSessionId(), draft: merlinReturnDraft(), from: 'today' }"
+            >
+              Back to Merlin
+            </app-button>
+          </div>
+        }
 
         <!-- Status Stack (Span 1 or Full if mobile) -->
         @defer (on viewport) {

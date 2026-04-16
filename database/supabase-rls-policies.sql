@@ -115,10 +115,19 @@ ON users FOR UPDATE
 USING (id = auth.user_id())
 WITH CHECK (id = auth.user_id());
 
--- Users can view basic info of other users (for team features)
+-- Users can view basic info of teammates (prevents user enumeration across the entire users table)
 CREATE POLICY "Users can view public profiles"
 ON users FOR SELECT
-USING (true); -- Public read access for name, avatar, etc.
+USING (
+  id = auth.user_id()
+  OR id IN (
+    SELECT DISTINCT tm.user_id
+    FROM team_members tm
+    WHERE tm.team_id IN (
+      SELECT team_id FROM team_members WHERE user_id = auth.user_id()
+    )
+  )
+);
 
 -- Users can insert their own profile (during registration)
 CREATE POLICY "Users can insert own profile"
@@ -637,16 +646,19 @@ CREATE POLICY "Users can view own injuries"
 ON injuries FOR SELECT
 USING (user_id = auth.user_id_text());
 
--- Coaches can view their team's injuries
+-- Coaches can view their team's injuries (WITH CONSENT CHECK - GDPR Compliance)
+-- Athletes must have health sharing enabled for coaches to access injury records.
 CREATE POLICY "Coaches can view team injuries"
 ON injuries FOR SELECT
 USING (
   user_id IN (
     SELECT tm.user_id::text FROM team_members tm
     INNER JOIN team_members coach ON coach.team_id = tm.team_id
-    WHERE coach.user_id = auth.user_id() AND coach.role IN ('coach', 'admin')
+    WHERE coach.user_id = auth.user_id()
+      AND coach.role IN ('coach', 'admin')
+      -- GDPR Consent Check: Only show injury data if player has enabled health sharing
+      AND check_health_sharing(tm.user_id::uuid, tm.team_id)
   )
-  OR user_id = auth.user_id_text()
 );
 
 -- Users can create their own injuries
@@ -675,7 +687,10 @@ DROP POLICY IF EXISTS "Users can create own wearables data" ON wearables_data;
 DROP POLICY IF EXISTS "Users can update own wearables data" ON wearables_data;
 DROP POLICY IF EXISTS "Users can delete own wearables data" ON wearables_data;
 
--- Users can view their own wearables data
+-- Users can view their own wearables data.
+-- NOTE: Coach access to wearables (HRV, heart rate, sleep stages) is intentionally
+-- omitted — this data is medical-grade and must remain athlete-private.
+-- Any future coach-access policy MUST gate on check_health_sharing() consent.
 CREATE POLICY "Users can view own wearables data"
 ON wearables_data FOR SELECT
 USING (user_id = auth.user_id_text());

@@ -4,7 +4,7 @@
       <div class="leaderboard-item" [class.top-rank]="entry.rank <= 3">
         <div class="rank" [class]="'rank-' + entry.rank">
           @if (entry.rank === 1) {
-            <i class="pi pi-crown"></i>
+            <i class="pi pi-crown" aria-hidden="true"></i>
           } @else {
             {{ entry.rank }}
           }
@@ -21,11 +21,11 @@
         @if (entry.rank <= 3) {
           <div class="rank-badge" [class]="'badge-' + entry.rank" aria-hidden="true">
             @if (entry.rank === 1) {
-              <i class="pi pi-star-fill"></i>
+              <i class="pi pi-star-fill" aria-hidden="true"></i>
             } @else if (entry.rank === 2) {
-              <i class="pi pi-star"></i>
+              <i class="pi pi-star" aria-hidden="true"></i>
             } @else {
-              <i class="pi pi-bookmark"></i>
+              <i class="pi pi-bookmark" aria-hidden="true"></i>
             }
           </div>
         }
@@ -54,13 +54,13 @@
           <span class="topic-count">{{ topic.count }} posts</span>
         </div>
         <div class="topic-trend">
-          <i class="pi pi-arrow-up"></i>
+          <i class="pi pi-arrow-up" aria-hidden="true"></i>
         </div>
       </button>
     }
     @if (selectedTopic()) {
       <button type="button" class="clear-filter-btn" (click)="clearTopicFilter.emit()">
-        <i class="pi pi-times"></i>
+        <i class="pi pi-times" aria-hidden="true"></i>
         Clear filter
       </button>
     }

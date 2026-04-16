@@ -54,9 +54,12 @@ export const teamRoutes: Routes = [
   // === NEW ROUTE: Coach Activity Feed ===
   {
     path: "coach/activity",
-    redirectTo: "coach/dashboard",
-    pathMatch: "full",
-    data: { entry: "legacy" },
+    loadComponent: () =>
+      import("../../../features/coach/coach-activity-feed.component").then(
+        (m) => m.CoachActivityFeedComponent,
+      ),
+    canActivate: [authGuard, coachRoleGuard],
+    data: { preload: false, entry: "internal", headerPreset: "dashboard" },
   },
   {
     path: "coach/analytics",
@@ -74,9 +77,12 @@ export const teamRoutes: Routes = [
   },
   {
     path: "coach/planning",
-    redirectTo: "coach/calendar",
-    pathMatch: "full",
-    data: { entry: "hub" },
+    loadComponent: () =>
+      import("../../../features/coach/calendar/calendar-coach.component").then(
+        (m) => m.CalendarCoachComponent,
+      ),
+    canActivate: [authGuard, coachRoleGuard],
+    data: { preload: false, entry: "hub", headerPreset: "training" },
   },
   {
     path: "coach/team-workspace",
@@ -86,9 +92,12 @@ export const teamRoutes: Routes = [
   },
   {
     path: "coach/inbox",
-    redirectTo: "team-chat",
-    pathMatch: "full",
-    data: { entry: "legacy" },
+    loadComponent: () =>
+      import("../../../features/coach/coach-inbox/coach-inbox.component").then(
+        (m) => m.CoachInboxComponent,
+      ),
+    canActivate: [authGuard, coachRoleGuard],
+    data: { preload: false, entry: "internal", headerPreset: "dashboard" },
   },
   {
     path: "coach/team",
@@ -107,15 +116,18 @@ export const teamRoutes: Routes = [
   },
   {
     path: "coach/programs",
-    redirectTo: "coach/planning",
+    redirectTo: "coach/program-builder",
     pathMatch: "full",
     data: { entry: "legacy" },
   },
   {
     path: "coach/program-builder",
-    redirectTo: "coach/planning",
-    pathMatch: "full",
-    data: { entry: "legacy" },
+    loadComponent: () =>
+      import("../../../features/coach/program-builder/program-builder.component").then(
+        (m) => m.ProgramBuilderComponent,
+      ),
+    canActivate: [authGuard, coachRoleGuard],
+    data: { preload: false, entry: "internal", headerPreset: "training" },
   },
   {
     path: "coach/practice",
@@ -128,37 +140,46 @@ export const teamRoutes: Routes = [
   },
   {
     path: "coach/practice-planner",
-    redirectTo: "coach/planning",
+    redirectTo: "coach/practice",
     pathMatch: "full",
     data: { entry: "legacy" },
   },
   {
     path: "coach/injuries",
-    redirectTo: "coach/analytics",
-    pathMatch: "full",
-    data: { entry: "legacy" },
+    loadComponent: () =>
+      import("../../../features/coach/injury-management/injury-management.component").then(
+        (m) => m.InjuryManagementComponent,
+      ),
+    canActivate: [authGuard, coachRoleGuard],
+    data: { preload: false, entry: "internal", headerPreset: "analytics" },
   },
   {
     path: "coach/injury-management",
-    redirectTo: "coach/analytics",
+    redirectTo: "coach/injuries",
     pathMatch: "full",
     data: { entry: "legacy" },
   },
   {
     path: "coach/playbook",
-    redirectTo: "coach/planning",
-    pathMatch: "full",
-    data: { entry: "legacy" },
+    loadComponent: () =>
+      import("../../../features/coach/playbook-manager/playbook-manager.component").then(
+        (m) => m.PlaybookManagerComponent,
+      ),
+    canActivate: [authGuard, coachRoleGuard],
+    data: { preload: false, entry: "internal", headerPreset: "training" },
   },
   {
     path: "coach/development",
-    redirectTo: "coach/analytics",
-    pathMatch: "full",
-    data: { entry: "legacy" },
+    loadComponent: () =>
+      import("../../../features/coach/player-development/player-development.component").then(
+        (m) => m.PlayerDevelopmentComponent,
+      ),
+    canActivate: [authGuard, coachRoleGuard],
+    data: { preload: false, entry: "internal", headerPreset: "analytics" },
   },
   {
     path: "coach/player-development",
-    redirectTo: "coach/analytics",
+    redirectTo: "coach/development",
     pathMatch: "full",
     data: { entry: "legacy" },
   },
@@ -173,15 +194,21 @@ export const teamRoutes: Routes = [
   },
   {
     path: "coach/payments",
-    redirectTo: "team/workspace",
-    pathMatch: "full",
-    data: { entry: "legacy" },
+    loadComponent: () =>
+      import("../../../features/coach/payment-management/payment-management.component").then(
+        (m) => m.PaymentManagementComponent,
+      ),
+    canActivate: [authGuard, coachRoleGuard],
+    data: { preload: false, entry: "internal", headerPreset: "dashboard" },
   },
   {
     path: "coach/ai-scheduler",
-    redirectTo: "coach/planning",
-    pathMatch: "full",
-    data: { entry: "legacy" },
+    loadComponent: () =>
+      import("../../../features/coach/ai-scheduler/ai-scheduler.component").then(
+        (m) => m.AiSchedulerComponent,
+      ),
+    canActivate: [authGuard, coachRoleGuard],
+    data: { preload: false, entry: "internal", headerPreset: "training" },
   },
   {
     path: "knowledge",
@@ -206,24 +233,27 @@ export const teamRoutes: Routes = [
   },
   {
     path: "coach/film",
-    redirectTo: "coach/planning",
-    pathMatch: "full",
-    data: { entry: "legacy" },
+    loadComponent: () =>
+      import("../../../features/coach/film-room/film-room-coach.component").then(
+        (m) => m.FilmRoomCoachComponent,
+      ),
+    canActivate: [authGuard, coachRoleGuard],
+    data: { preload: false, entry: "internal", headerPreset: "training" },
   },
   {
     path: "coach/calendar",
-    loadComponent: () =>
-      import("../../../features/coach/calendar/calendar-coach.component").then(
-        (m) => m.CalendarCoachComponent,
-      ),
-    canActivate: [authGuard, coachRoleGuard],
-    data: { preload: false, entry: "internal", headerPreset: "training" }, // Planning sub-tool
-  },
-  {
-    path: "coach/scouting",
     redirectTo: "coach/planning",
     pathMatch: "full",
     data: { entry: "legacy" },
+  },
+  {
+    path: "coach/scouting",
+    loadComponent: () =>
+      import("../../../features/coach/scouting/scouting-reports.component").then(
+        (m) => m.ScoutingReportsComponent,
+      ),
+    canActivate: [authGuard, coachRoleGuard],
+    data: { preload: false, entry: "internal", headerPreset: "analytics" },
   },
   {
     path: "admin",

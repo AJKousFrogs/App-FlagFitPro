@@ -79,6 +79,8 @@ export class OfflineQueueService {
     () => this._queue().filter((action) => action.priority === "high").length,
   );
 
+  private static readonly STORAGE_KEY = "flagfit_offline_queue";
+
   constructor() {
     // Listen for online/offline events
     if (typeof window !== "undefined") {
@@ -86,7 +88,60 @@ export class OfflineQueueService {
       window.addEventListener("offline", () => this.handleOffline());
     }
 
-    // Browser storage persistence is disabled; queue remains in-memory.
+    // Restore any queued actions that survived a previous page close.
+    this.loadQueueFromStorage();
+
+    // Register Background Sync if the browser supports it.
+    // When the device comes back online (even if the tab is closed), the
+    // service worker will fire a 'sync' event and we trigger syncQueue().
+    this.registerBackgroundSync();
+
+    // Listen for OFFLINE_SYNC_TRIGGER messages posted by the custom service
+    // worker (custom-sw.js) when a Background Sync event fires.
+    this.listenForSwSyncMessages();
+  }
+
+  /**
+   * Receive OFFLINE_SYNC_TRIGGER messages from custom-sw.js and drain the
+   * queue. This is the client-side half of the Background Sync handshake:
+   * the SW cannot access Angular services directly, so it posts a message
+   * and this handler calls syncQueue() within the normal DI context.
+   */
+  private listenForSwSyncMessages(): void {
+    if (typeof navigator === "undefined" || !("serviceWorker" in navigator)) {
+      return;
+    }
+
+    navigator.serviceWorker.addEventListener("message", (event: MessageEvent) => {
+      if ((event.data as { type?: string })?.type === "OFFLINE_SYNC_TRIGGER") {
+        this.logger.info("[OfflineQueue] Background Sync triggered by service worker");
+        void this.syncQueue();
+      }
+    });
+  }
+
+  /**
+   * Register a Background Sync event so the service worker can retry the
+   * queue even after the tab has been closed.
+   * Falls back gracefully on unsupported browsers.
+   */
+  private registerBackgroundSync(): void {
+    if (
+      typeof window === "undefined" ||
+      !("serviceWorker" in navigator) ||
+      !("SyncManager" in window)
+    ) {
+      return;
+    }
+
+    navigator.serviceWorker.ready
+      .then((registration) => {
+        // @ts-expect-error SyncManager is not yet in all TS lib typings
+        return registration.sync.register("flagfit-offline-queue");
+      })
+      .catch((err: unknown) => {
+        this.logger.debug("[OfflineQueue] Background Sync registration failed (non-critical):", err);
+      });
   }
 
   /**
@@ -232,6 +287,9 @@ export class OfflineQueueService {
                 `[OfflineQueue] Max retries reached for action ${action.id}, removing from queue`,
               );
               this.removeAction(action.id);
+              this.toastService.error(
+                `Failed to sync "${action.type}" after multiple attempts. The action has been discarded — please try again.`,
+              );
               failureCount++;
             }
           }
@@ -244,6 +302,9 @@ export class OfflineQueueService {
           const currentAction = this._queue().find((a) => a.id === action.id);
           if (currentAction && currentAction.retryCount >= 3) {
             this.removeAction(action.id);
+            this.toastService.error(
+              `Failed to sync "${action.type}" after multiple attempts. The action has been discarded — please try again.`,
+            );
             failureCount++;
           }
         }
@@ -254,8 +315,6 @@ export class OfflineQueueService {
         );
       }
 
-      this._isSyncing.set(false);
-
       if (successCount > 0) {
         this.toastService.success(
           `Successfully synced ${successCount} action(s)`,
@@ -265,7 +324,8 @@ export class OfflineQueueService {
         this.toastService.warn(`Failed to sync ${failureCount} action(s)`);
       }
     } finally {
-      // Always release lock
+      // Always release lock and clear syncing state
+      this._isSyncing.set(false);
       this._syncLock = false;
     }
   }
@@ -377,17 +437,100 @@ export class OfflineQueueService {
   }
 
   /**
-   * Save queue to localStorage
+   * Persist the current queue to localStorage so it survives page reloads
+   * and app restarts. Serializes dates as ISO strings.
    */
   private saveQueueToStorage(): void {
-    this.logger.debug("[OfflineQueue] Queue persistence disabled; keeping queue in memory only");
+    if (typeof localStorage === "undefined") return;
+    try {
+      const serialized = JSON.stringify(
+        this._queue().map((action) => ({
+          ...action,
+          timestamp: action.timestamp instanceof Date
+            ? action.timestamp.toISOString()
+            : action.timestamp,
+        })),
+      );
+      localStorage.setItem(OfflineQueueService.STORAGE_KEY, serialized);
+    } catch {
+      // Storage may be full or unavailable — non-fatal
+      this.logger.warn("[OfflineQueue] Could not persist queue to localStorage");
+    }
   }
 
   /**
-   * Load queue from localStorage
+   * Restore queue from localStorage on service startup.
+   * Deserializes ISO date strings back into Date objects.
+   * Drops any actions that exceed the max retry count already.
    */
   private loadQueueFromStorage(): void {
-    this.logger.debug("[OfflineQueue] Queue persistence disabled; no storage restore performed");
+    if (typeof localStorage === "undefined") return;
+    try {
+      const raw = localStorage.getItem(OfflineQueueService.STORAGE_KEY);
+      if (!raw) return;
+
+      const parsed: unknown[] = JSON.parse(raw);
+      if (!Array.isArray(parsed)) return;
+
+      const restored: QueuedAction[] = parsed
+        .filter((item): item is Record<string, unknown> =>
+          item !== null && typeof item === "object",
+        )
+        .map((item) => {
+          const priority: QueuedAction["priority"] =
+            item["priority"] === "high" ||
+            item["priority"] === "medium" ||
+            item["priority"] === "low"
+              ? item["priority"]
+              : "medium";
+          const method: QueuedAction["method"] =
+            item["method"] === "POST" ||
+            item["method"] === "PUT" ||
+            item["method"] === "PATCH"
+              ? item["method"]
+              : undefined;
+
+          return {
+            id: String(item["id"] ?? ""),
+            type: item["type"] as QueuedActionType,
+            payload:
+              item["payload"] && typeof item["payload"] === "object"
+                ? (item["payload"] as Record<string, unknown>)
+                : {},
+            timestamp: new Date(String(item["timestamp"] ?? "")),
+            retryCount:
+              typeof item["retryCount"] === "number" ? item["retryCount"] : 0,
+            priority,
+            endpoint:
+              typeof item["endpoint"] === "string"
+                ? item["endpoint"]
+                : undefined,
+            method,
+          };
+        })
+        // Drop actions that already hit max retries to avoid infinite loops
+        .filter(
+          (a) =>
+            a.id.length > 0 &&
+            !Number.isNaN(a.timestamp.getTime()) &&
+            a.retryCount < 3,
+        );
+
+      if (restored.length > 0) {
+        this._queue.set(restored);
+        this.logger.info(
+          `[OfflineQueue] Restored ${restored.length} action(s) from previous session`,
+        );
+      }
+    } catch {
+      // Corrupt storage — clear and start fresh
+      this.logger.warn("[OfflineQueue] Could not restore queue; clearing corrupt storage");
+      try {
+        localStorage.removeItem(OfflineQueueService.STORAGE_KEY);
+      } catch {
+        // ignore
+      }
+    }
   }
 
   /**
@@ -395,6 +538,9 @@ export class OfflineQueueService {
    */
   clearQueue(): void {
     this._queue.set([]);
+    if (typeof localStorage !== "undefined") {
+      try { localStorage.removeItem(OfflineQueueService.STORAGE_KEY); } catch { /* ignore */ }
+    }
     this.logger.info("[OfflineQueue] Queue cleared");
   }
 

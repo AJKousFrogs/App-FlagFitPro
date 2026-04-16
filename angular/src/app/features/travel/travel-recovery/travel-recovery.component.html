@@ -17,24 +17,28 @@
         </app-page-header>
 
         <!-- Travel Type Selector -->
-        <div class="travel-type-selector">
+        <div class="travel-type-selector" role="radiogroup" aria-label="Travel type">
           <button type="button"
+            role="radio"
             class="type-btn"
             [class.active]="travelType() === 'flight'"
+            [attr.aria-checked]="travelType() === 'flight'"
             (click)="setTravelType('flight')"
           >
-            <i class="pi pi-send"></i>
+            <i class="pi pi-send" aria-hidden="true"></i>
             <div class="type-btn-content">
               <span>Flight Travel</span>
               <small>Jet lag protocols</small>
             </div>
           </button>
           <button type="button"
+            role="radio"
             class="type-btn"
             [class.active]="travelType() === 'car'"
+            [attr.aria-checked]="travelType() === 'car'"
             (click)="setTravelType('car')"
           >
-            <i class="pi pi-car"></i>
+            <i class="pi pi-car" aria-hidden="true"></i>
             <div class="type-btn-content">
               <span>Car Travel</span>
               <small>6-12+ hour drives</small>
@@ -499,7 +503,7 @@
                       <ul>
                         @for (factor of carTravelRisk().factors; track factor) {
                           <li>
-                            <i class="pi pi-exclamation-circle"></i>
+                            <i class="pi pi-exclamation-circle" aria-hidden="true"></i>
                             {{ factor }}
                           </li>
                         }
@@ -513,7 +517,7 @@
                           rec of carTravelRisk().recommendations;
                           track rec
                         ) {
-                          <li><i class="pi pi-check-circle"></i> {{ rec }}</li>
+                          <li><i class="pi pi-check-circle" aria-hidden="true"></i> {{ rec }}</li>
                         }
                       </ul>
                     </div>
@@ -566,7 +570,7 @@
                     <!-- Warning Symptoms -->
                     <div class="warning-symptoms">
                       <h4>
-                        <i class="pi pi-exclamation-triangle"></i> Stop & Seek
+                        <i class="pi pi-exclamation-triangle" aria-hidden="true"></i> Stop & Seek
                         Help If You Experience:
                       </h4>
                       <div class="symptoms-grid">
@@ -603,14 +607,14 @@
 
                     <div class="compression-timing">
                       <div class="timing-item">
-                        <i class="pi pi-play"></i>
+                        <i class="pi pi-play" aria-hidden="true"></i>
                         <div>
                           <strong>When to Wear</strong>
                           <p>{{ compressionGuidelines().whenToWear }}</p>
                         </div>
                       </div>
                       <div class="timing-item">
-                        <i class="pi pi-stop"></i>
+                        <i class="pi pi-stop" aria-hidden="true"></i>
                         <div>
                           <strong>When to Remove</strong>
                           <p>{{ compressionGuidelines().whenToRemove }}</p>
@@ -620,7 +624,7 @@
 
                     <div class="compression-cautions">
                       <h4>
-                        <i class="pi pi-info-circle"></i> Important Cautions
+                        <i class="pi pi-info-circle" aria-hidden="true"></i> Important Cautions
                       </h4>
                       <ul>
                         @for (
@@ -633,7 +637,7 @@
                     </div>
 
                     <div class="evidence-note">
-                      <i class="pi pi-book"></i>
+                      <i class="pi pi-book" aria-hidden="true"></i>
                       <small>{{ compressionGuidelines().evidenceBase }}</small>
                     </div>
                   </div>
@@ -699,7 +703,7 @@
                             </div>
 
                             <div class="evidence-note">
-                              <i class="pi pi-book"></i>
+                              <i class="pi pi-book" aria-hidden="true"></i>
                               <small>{{ protocol.evidenceBase }}</small>
                             </div>
                           </div>

@@ -1,6 +1,6 @@
 # Single Source Of Truth
 
-**Version:** 1.7 draft  
+**Application release:** 4.0.0  
 **Purpose:** Define where truth lives across the FlagFit Pro codebase so future product, UI, and backend work does not reintroduce drift.
 
 ## Rule

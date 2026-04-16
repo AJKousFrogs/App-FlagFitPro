@@ -1,4 +1,3 @@
-import { createRuntimeV2Handler } from "./utils/runtime-v2-adapter.js";
 
 // Netlify Function: Import Open Data
 // Imports open-source sport-science datasets and computes flag-football metrics
@@ -350,4 +349,3 @@ const handler = async (event, context) => {
 
 export const testHandler = handler;
 export { handler };
-export default createRuntimeV2Handler(handler);

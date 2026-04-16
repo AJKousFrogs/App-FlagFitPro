@@ -732,6 +732,7 @@ export class TrainingLogComponent implements OnInit {
       await this.updateOverrideMessage();
     } catch (error) {
       this.logger.error("Failed to load existing training session", error);
+      this.toastService.warn("Could not load your previous session — starting fresh.");
     }
   }
 

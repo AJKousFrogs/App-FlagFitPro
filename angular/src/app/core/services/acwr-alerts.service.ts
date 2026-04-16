@@ -75,41 +75,42 @@ export class AcwrAlertsService {
    */
   private checkForAlerts(acwrData: ACWRData): void {
     const { ratio, riskZone, weeklyProgression } = acwrData;
+    const acwrValue = ratio ?? 0;
 
     // Check for danger zone (ACWR > 1.50)
-    if (ratio > 1.5) {
+    if (acwrValue > 1.5) {
       this.createAlert({
         type: "danger-zone",
         severity: "critical",
-        message: `CRITICAL: ACWR is ${ratio.toFixed(2)} - in danger zone!`,
+        message: `CRITICAL: ACWR is ${acwrValue.toFixed(2)} - in danger zone!`,
         recommendation: riskZone.recommendation,
-        acwrValue: ratio,
+        acwrValue: acwrValue,
       });
 
       // Log ownership transition for critical ACWR
-      this.logOwnershipTransition("acwr_critical", ratio);
+      this.logOwnershipTransition("acwr_critical", acwrValue);
     }
     // Check for elevated risk (ACWR > 1.30)
-    else if (ratio > 1.3) {
+    else if (acwrValue > 1.3) {
       this.createAlert({
         type: "high-acwr",
         severity: "warning",
-        message: `WARNING: ACWR is ${ratio.toFixed(2)} - elevated injury risk`,
+        message: `WARNING: ACWR is ${acwrValue.toFixed(2)} - elevated injury risk`,
         recommendation: riskZone.recommendation,
-        acwrValue: ratio,
+        acwrValue: acwrValue,
       });
 
       // Log ownership transition for elevated ACWR
-      this.logOwnershipTransition("acwr_elevated", ratio);
+      this.logOwnershipTransition("acwr_elevated", acwrValue);
     }
     // Check for under-training (ACWR < 0.80)
-    else if (ratio > 0 && ratio < 0.8) {
+    else if (acwrValue > 0 && acwrValue < 0.8) {
       this.createAlert({
         type: "under-training",
         severity: "info",
-        message: `INFO: ACWR is ${ratio.toFixed(2)} - player may lack conditioning`,
+        message: `INFO: ACWR is ${acwrValue.toFixed(2)} - player may lack conditioning`,
         recommendation: riskZone.recommendation,
-        acwrValue: ratio,
+        acwrValue: acwrValue,
       });
     }
 
@@ -120,7 +121,7 @@ export class AcwrAlertsService {
         severity: "warning",
         message: `WARNING: Weekly load increased by ${weeklyProgression.changePercent.toFixed(1)}%`,
         recommendation: "Limit load increase to <10% week-over-week",
-        acwrValue: ratio,
+        acwrValue: acwrValue,
       });
     }
   }
@@ -484,7 +485,7 @@ export class AcwrAlertsService {
         modifications,
       },
       reason,
-      acwrBeforeAdjustment: acwrData.ratio,
+      acwrBeforeAdjustment: acwrData.ratio ?? 0,
       projectedACWRWithoutAdjustment: predicted.projectedACWR,
       projectedACWRWithAdjustment: predicted.projectedACWR * 0.8, // Estimated
       autoApplied: false,

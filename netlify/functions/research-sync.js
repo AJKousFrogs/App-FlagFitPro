@@ -1,4 +1,4 @@
-import { createRuntimeV2Handler } from "./utils/runtime-v2-adapter.js";
+import { wrapHandler } from "./utils/lambda-compat.js";
 import { supabaseAdmin } from "./supabase-client.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { authenticateRequest } from "./utils/auth-helper.js";
@@ -1416,4 +1416,20 @@ export { syncAllResearch, searchResearch, getResearchTopics, getTrainingProtocol
 
 export const testHandler = handler;
 export { handler };
-export default createRuntimeV2Handler(handler);
+
+export const config = { schedule: "0 2 * * 0" }; // Weekly — Sunday 02:00 UTC
+
+export default async (req, context) => {
+  if (req.headers.get("x-netlify-event") === "schedule") {
+    logger.info("research_sync_scheduled_start");
+    try {
+      const result = await syncAllResearch();
+      logger.info("research_sync_scheduled_complete", { articlesAdded: result?.added ?? 0 });
+      return Response.json({ success: true, data: result });
+    } catch (err) {
+      logger.error("research_sync_scheduled_failed", { error: err?.message });
+      return Response.json({ success: false, error: err?.message || "sync failed" }, { status: 500 });
+    }
+  }
+  return wrapHandler(handler)(req, context);
+};

@@ -17,6 +17,8 @@ import { ToastComponent } from "./shared/components/toast/toast.component";
 import { HttpCacheService } from "./core/interceptors/cache.interceptor";
 import { CookieConsentService } from "./core/services/cookie-consent.service";
 import { RouteEntry, RouteShellService } from "./core/services/route-shell.service";
+import { SessionExpiryService } from "./core/services/session-expiry.service";
+import { SupabaseService } from "./core/services/supabase.service";
 import { ThemeService } from "./core/services/theme.service";
 import { ensurePrimeIconsStylesheet } from "./core/utils/primeicons-loader";
 import { RouterOutlet } from "@angular/router";
@@ -83,16 +85,20 @@ export class AppComponent {
   );
 
   private readonly _themeService = inject(ThemeService);
+  private readonly supabase = inject(SupabaseService);
+  private readonly sessionExpiry = inject(SessionExpiryService);
 
   constructor() {
     this.destroyRef.onDestroy(() => {
       HttpCacheService.destroy();
+      this.sessionExpiry.stopMonitoring();
     });
     this.applyPlatformClasses();
     this.syncRouteClasses();
     this.initPrimeIconsLoading();
     this.initFeedbackStylesScheduling();
     this.initCookieBannerScheduling();
+    this.initSessionExpiryMonitoring();
   }
 
   private applyPlatformClasses(): void {
@@ -219,5 +225,20 @@ export class AppComponent {
 
     window.clearTimeout(this.feedbackStylesTimer);
     this.feedbackStylesTimer = null;
+  }
+
+  /**
+   * Start/stop session-expiry monitoring whenever the Supabase auth state changes.
+   * Uses an effect so it reacts to signal changes without a manual subscription.
+   */
+  private initSessionExpiryMonitoring(): void {
+    effect(() => {
+      const session = this.supabase.session();
+      if (session) {
+        this.sessionExpiry.startMonitoring();
+      } else {
+        this.sessionExpiry.stopMonitoring();
+      }
+    });
   }
 }

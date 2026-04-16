@@ -37,6 +37,11 @@ import {
   readNumericField,
 } from "../utils/api-response-mapper";
 import { RealtimeBroadcastPayload } from "../models/realtime-broadcast.model";
+import {
+  NotificationListSchema,
+  NotificationCountSchema,
+  NotificationDTO,
+} from "../schemas/api-response.schema";
 
 /**
  * Notification categories specific to flag football app
@@ -558,29 +563,40 @@ export class NotificationStateService implements OnDestroy {
 
     try {
       const response = await firstValueFrom(
-        this.apiService.get<Notification[]>(API_ENDPOINTS.notifications.list, {
-          ...options,
-          lastOpenedAt: this.lastOpenedAt() || options.lastOpenedAt,
-        }),
+        this.apiService.get<NotificationDTO[]>(
+          API_ENDPOINTS.notifications.list,
+          {
+            ...options,
+            lastOpenedAt: this.lastOpenedAt() || options.lastOpenedAt,
+          },
+          { schema: NotificationListSchema, throwOnValidationError: false },
+        ),
       );
 
       let notifications: Notification[] = [];
       const payload = extractApiPayload<
-        Notification[] | { notifications?: Notification[]; data?: Notification[] }
+        NotificationDTO[] | {
+          notifications?: NotificationDTO[];
+          data?: NotificationDTO[];
+        }
       >(response);
 
       // Handle different response formats
       if (Array.isArray(payload)) {
-        notifications = payload;
+        notifications = payload.map((item) => this.normalizeNotification(item));
       } else if (payload && typeof payload === "object") {
           const dataObj = payload as Record<string, unknown>;
           if (
             "notifications" in dataObj &&
             Array.isArray(dataObj["notifications"])
           ) {
-            notifications = dataObj["notifications"] as Notification[];
+            notifications = (dataObj["notifications"] as NotificationDTO[]).map(
+              (item) => this.normalizeNotification(item),
+            );
           } else if ("data" in dataObj && Array.isArray(dataObj["data"])) {
-            notifications = dataObj["data"] as Notification[];
+            notifications = (dataObj["data"] as NotificationDTO[]).map(
+              (item) => this.normalizeNotification(item),
+            );
           }
       }
 
@@ -606,6 +622,16 @@ export class NotificationStateService implements OnDestroy {
       this.logger.error("Error loading notifications:", error);
       throw error;
     }
+  }
+
+  private normalizeNotification(notification: NotificationDTO): Notification {
+    return {
+      ...notification,
+      data:
+        notification.data && typeof notification.data === "object"
+          ? (notification.data as Record<string, unknown>)
+          : undefined,
+    };
   }
 
   /**
@@ -775,6 +801,8 @@ export class NotificationStateService implements OnDestroy {
       const response = await firstValueFrom(
         this.apiService.get<{ unreadCount: number }>(
           API_ENDPOINTS.notifications.count,
+          undefined,
+          { schema: NotificationCountSchema, throwOnValidationError: false },
         ),
       );
 
@@ -837,9 +865,20 @@ export class NotificationStateService implements OnDestroy {
   }
 
   /**
-   * Add a notification to the state (for real-time updates)
+   * Add a notification to the state (for real-time updates).
+   * Deduplicates by ID — if the notification already exists it is ignored,
+   * preventing double-display when both a DB trigger and an HTTP response fire
+   * for the same event.
    */
   addNotification(notification: Notification): void {
+    const exists = this.notifications().some((n) => n.id === notification.id);
+    if (exists) {
+      this.logger.debug(
+        "[NotificationState] addNotification skipped duplicate:",
+        notification.id,
+      );
+      return;
+    }
     this.notifications.update((notifications) => [
       notification,
       ...notifications,

@@ -169,7 +169,7 @@ export class StatisticsCalculationService {
       throw new Error("Pull stats must be integers");
     }
 
-    if (attempts === 0) {
+    if (attempts <= 0) {
       return {
         rate: 0,
         confidence95: [0, 0],
@@ -286,7 +286,8 @@ export class StatisticsCalculationService {
         currentStreak++;
         expectedDate.setDate(expectedDate.getDate() - 1);
       } else if (dayDifference === 1) {
-        // Rest day (skip one day)
+        // One allowed rest day — this workout still counts toward the streak
+        currentStreak++;
         expectedDate.setDate(expectedDate.getDate() - 2);
       } else {
         // Gap too large, streak broken
@@ -419,12 +420,13 @@ export class StatisticsCalculationService {
         ? intensityPoints.reduce((a, b) => a + b) / intensityPoints.length
         : 0;
 
+    // Use Bessel's correction (n-1) for sample variance
     const variance =
       intensityPoints.length > 1
         ? intensityPoints.reduce(
             (sum, intensity) => sum + Math.pow(intensity - avgIntensity, 2),
             0,
-          ) / intensityPoints.length
+          ) / (intensityPoints.length - 1)
         : 0;
 
     const totalHours = Math.round((totalMinutes / 60) * 10) / 10;
@@ -554,11 +556,17 @@ export class StatisticsCalculationService {
         163.205 * log10(sum) - 97.684 * log10(heightCm) - 78.387;
     }
 
-    // Ensure result is within realistic bounds
+    // Sport-realistic bounds for flag football athletes.
+    // Navy method SE: ±3.5% males, ±5% females — result is an estimate, not precise.
+    const minBF = gender === "male" ? 5 : 12;
+    const maxBF = gender === "male" ? 35 : 40;
     bodyFatPercentage = Math.max(
-      3,
-      Math.min(60, Number(bodyFatPercentage.toFixed(1))),
+      minBF,
+      Math.min(maxBF, Number(bodyFatPercentage.toFixed(1))),
     );
+
+    // Gender-specific confidence reflecting Navy method standard error
+    const genderConfidence = gender === "male" ? 0.85 : 0.75;
 
     // Category classification
     let category: string;
@@ -579,7 +587,7 @@ export class StatisticsCalculationService {
     return {
       bodyFatPercentage,
       category,
-      confidence,
+      confidence: genderConfidence,
       measurements: { waist: waistCm, neck: neckCm, hips: hipsCm },
       validMeasurements: true,
     };

@@ -97,6 +97,73 @@
   width: 100%;
 }
 
+.entry-context-banner {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  padding: var(--space-4) var(--space-5);
+  border: var(--border-1) solid color-mix(in srgb, var(--ds-primary-green) 16%, var(--color-border-primary));
+  border-radius: var(--radius-xl);
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--ds-primary-green) 10%, var(--surface-card)) 0%,
+    var(--surface-card) 100%
+  );
+  box-shadow: var(--shadow-sm);
+}
+
+.entry-context-banner__icon {
+  display: grid;
+  place-items: center;
+  width: var(--space-10);
+  height: var(--space-10);
+  border-radius: var(--radius-lg);
+  background: color-mix(in srgb, var(--ds-primary-green) 14%, transparent);
+  color: var(--ds-primary-green);
+  flex-shrink: 0;
+}
+
+.entry-context-banner__content {
+  strong {
+    display: block;
+    margin-bottom: var(--space-1);
+    color: var(--color-text-primary);
+    font-size: var(--ds-font-size-md);
+    font-weight: var(--ds-font-weight-semibold);
+  }
+
+  p {
+    margin: 0;
+    color: var(--color-text-secondary);
+    line-height: var(--ds-line-height-relaxed);
+  }
+}
+
+.entry-context-banner__close {
+  align-self: flex-start;
+  border: none;
+  background: transparent;
+  color: var(--color-text-secondary);
+  font-size: var(--ds-font-size-xs);
+  font-weight: var(--ds-font-weight-semibold);
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-full);
+  cursor: pointer;
+
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      color: var(--color-text-primary);
+      background: rgba(var(--ds-primary-green-rgb), 0.08);
+    }
+  }
+}
+
+.merlin-return-link {
+  display: flex;
+  justify-content: flex-start;
+  margin-top: calc(var(--space-4) * -1);
+}
+
 /* Check-in header layout handled via the modern overrides layer */
 
 // ── Check-in form shell ──────────────────────────────────────────────────────

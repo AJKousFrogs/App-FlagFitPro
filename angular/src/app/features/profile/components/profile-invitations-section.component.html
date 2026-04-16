@@ -35,8 +35,8 @@
               }
             </p>
             <div class="invitation-meta">
-              <span><i class="pi pi-user"></i> Invited by {{ invitation.invitedBy }}</span>
-              <span><i class="pi pi-calendar"></i> {{ invitation.createdAt | date: "mediumDate" }}</span>
+              <span><i class="pi pi-user" aria-hidden="true"></i> Invited by {{ invitation.invitedBy }}</span>
+              <span><i class="pi pi-calendar" aria-hidden="true"></i> {{ invitation.createdAt | date: "mediumDate" }}</span>
               @if (invitation.isExpired) {
                 <app-status-tag value="Expired" severity="danger" size="sm" />
               } @else {

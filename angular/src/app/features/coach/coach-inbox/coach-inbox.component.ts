@@ -13,7 +13,8 @@ import {
   inject,
   signal,
 } from "@angular/core";
-import { Router } from "@angular/router";
+import { FormsModule } from "@angular/forms";
+import { ActivatedRoute, Router } from "@angular/router";
 import type { RealtimeChannel } from "@supabase/supabase-js";
 import { firstValueFrom } from "rxjs";
 import { AvatarComponent } from "../../../shared/components/avatar/avatar.component";
@@ -23,6 +24,12 @@ import { ApiService, API_ENDPOINTS } from "../../../core/services/api.service";
 import { LoggerService } from "../../../core/services/logger.service";
 import { SupabaseService } from "../../../core/services/supabase.service";
 import { ToastService } from "../../../core/services/toast.service";
+import {
+  CoachInboxListResponseDTO,
+  InboxItemDTO,
+  InboxStatsSchema,
+  CoachInboxListResponseSchema,
+} from "../../../core/schemas/api-response.schema";
 import { AppDialogComponent } from "../../../shared/components/dialog/dialog.component";
 import { DialogFooterComponent } from "../../../shared/components/dialog-footer/dialog-footer.component";
 import { DialogHeaderComponent } from "../../../shared/components/dialog-header/dialog-header.component";
@@ -84,12 +91,19 @@ interface CoachInboxListResponse {
 }
 
 type InboxActionMode = "note" | "override";
+type InboxPriorityFilter = "all" | "critical" | "high" | "medium" | "low" | "unread";
+
+interface CoachInboxEntryContext {
+  title: string;
+  message: string;
+}
 
 @Component({
   selector: "app-coach-inbox",
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     DatePipe,
+    FormsModule,
     Tabs,
     TabPanel,
     StatusTagComponent,
@@ -124,6 +138,49 @@ type InboxActionMode = "note" | "override";
           </div>
         </div>
 
+        @if (merlinSessionId() && !entryContext()) {
+          <div class="merlin-return-link">
+            <app-button
+              variant="text"
+              iconLeft="pi-arrow-left"
+              routerLink="/chat"
+              [queryParams]="{ session: merlinSessionId(), draft: merlinReturnDraft(), from: 'coach-inbox' }"
+            >
+              Back to Merlin
+            </app-button>
+          </div>
+        }
+
+        @if (entryContext(); as entryContextMessage) {
+          <div class="entry-context-banner" role="status" aria-live="polite">
+            <div class="entry-context-banner__icon">
+              <i class="pi pi-sparkles"></i>
+            </div>
+            <div class="entry-context-banner__content">
+              <strong>{{ entryContextMessage.title }}</strong>
+              <p>{{ entryContextMessage.message }}</p>
+              @if (merlinSessionId()) {
+                <app-button
+                  variant="text"
+                  iconLeft="pi-arrow-left"
+                  routerLink="/chat"
+                  [queryParams]="{ session: merlinSessionId(), draft: merlinReturnDraft(), from: 'coach-inbox' }"
+                >
+                  Return to Merlin
+                </app-button>
+              }
+            </div>
+            <button
+              type="button"
+              class="entry-context-banner__close"
+              (click)="dismissEntryContext()"
+              aria-label="Dismiss Merlin context"
+            >
+              Dismiss
+            </button>
+          </div>
+        }
+
         @if (loading()) {
           <app-loading message="Loading coach inbox..." />
         } @else if (pageError()) {
@@ -134,6 +191,33 @@ type InboxActionMode = "note" | "override";
             (action)="loadInbox()"
           />
         } @else {
+          <div class="inbox-filters">
+            <div class="inbox-search">
+              <i class="pi pi-search" aria-hidden="true"></i>
+              <input
+                type="text"
+                [ngModel]="searchQuery()"
+                (ngModelChange)="searchQuery.set($event)"
+                placeholder="Search athlete, summary, or source"
+                aria-label="Search coach inbox"
+              />
+            </div>
+            <div class="inbox-priority-filter">
+              @for (option of priorityFilterOptions; track option.value) {
+                <app-button
+                  [variant]="priorityFilter() === option.value ? 'primary' : 'outlined'"
+                  size="sm"
+                  (clicked)="setPriorityFilter(option.value)"
+                >
+                  {{ option.label }}
+                </app-button>
+              }
+            </div>
+            <p class="inbox-filter-summary">
+              {{ activeFilterSummary() }}
+            </p>
+          </div>
+
           <p-tabs [value]="activeTabIndex" (valueChange)="onTabChange($event)">
             <p-tabpanel value="0">
               <ng-template #header>
@@ -409,6 +493,7 @@ export class CoachInboxComponent {
   private readonly apiService = inject(ApiService);
   private readonly logger = inject(LoggerService);
   private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
   private readonly supabaseService = inject(SupabaseService);
   private readonly toastService = inject(ToastService);
 
@@ -421,8 +506,24 @@ export class CoachInboxComponent {
   actionDialogMode = signal<InboxActionMode>("note");
   actionDialogText = signal("");
   dialogSubmitting = signal(false);
+  searchQuery = signal("");
+  priorityFilter = signal<InboxPriorityFilter>("all");
   selectedItem = signal<InboxItem | null>(null);
   items = signal<InboxItem[]>([]);
+  entryContext = signal<CoachInboxEntryContext | null>(null);
+  merlinSessionId = signal<string | null>(null);
+  merlinReturnDraft = signal(
+    "I reviewed Coach Inbox. Help me decide the next coaching action.",
+  );
+  readonly priorityFilterOptions: Array<{
+    value: InboxPriorityFilter;
+    label: string;
+  }> = [
+    { value: "all", label: "All" },
+    { value: "critical", label: "Critical" },
+    { value: "high", label: "High" },
+    { value: "unread", label: "Unread" },
+  ];
   stats = signal<InboxStats>({
     safety_alerts: 0,
     review_needed: 0,
@@ -431,17 +532,70 @@ export class CoachInboxComponent {
     critical_count: 0,
   });
 
+  filteredItems = computed(() => {
+    const query = this.searchQuery().trim().toLowerCase();
+    const priority = this.priorityFilter();
+
+    return this.items().filter((item) => {
+      if (priority === "unread" && !item.is_new) {
+        return false;
+      }
+
+      if (
+        priority !== "all" &&
+        priority !== "unread" &&
+        item.priority !== priority
+      ) {
+        return false;
+      }
+
+      if (!query) {
+        return true;
+      }
+
+      const searchableText = [
+        item.player?.name,
+        item.player?.position,
+        item.title,
+        item.summary,
+        item.source_type,
+        item.intent_type,
+      ]
+        .filter(Boolean)
+        .join(" ")
+        .toLowerCase();
+
+      return searchableText.includes(query);
+    });
+  });
   safetyAlerts = computed(() =>
-    this.items().filter((item) => item.inbox_type === "safety_alert"),
+    this.filteredItems().filter((item) => item.inbox_type === "safety_alert"),
   );
   reviewNeeded = computed(() =>
-    this.items().filter((item) => item.inbox_type === "review_needed"),
+    this.filteredItems().filter((item) => item.inbox_type === "review_needed"),
   );
-  wins = computed(() => this.items().filter((item) => item.inbox_type === "win"));
+  wins = computed(() =>
+    this.filteredItems().filter((item) => item.inbox_type === "win"),
+  );
+  activeFilterSummary = computed(() => {
+    const filteredCount = this.filteredItems().length;
+    const totalCount = this.items().length;
+    const priorityLabel =
+      this.priorityFilterOptions.find(
+        (option) => option.value === this.priorityFilter(),
+      )?.label ?? "All";
+
+    if (!this.searchQuery().trim() && this.priorityFilter() === "all") {
+      return `${totalCount} inbox items available`;
+    }
+
+    return `${filteredCount} of ${totalCount} items shown · ${priorityLabel} filter`;
+  });
 
   private inboxChannel: RealtimeChannel | null = null;
 
   constructor() {
+    this.observeRouteContext();
     this.loadInbox();
     this.subscribeToRealtime();
     this.destroyRef.onDestroy(() => {
@@ -458,15 +612,24 @@ export class CoachInboxComponent {
     }
     this.pageError.set(null);
 
-    const items$ = this.apiService.get<CoachInboxListResponse>(
+    const items$ = this.apiService.get<CoachInboxListResponseDTO>(
       API_ENDPOINTS.coach.inbox,
       { limit: 100 },
+      { schema: CoachInboxListResponseSchema, throwOnValidationError: false },
     );
-    const stats$ = this.apiService.get<InboxStats>(API_ENDPOINTS.coach.inboxStats);
+    const stats$ = this.apiService.get<InboxStats>(
+      API_ENDPOINTS.coach.inboxStats,
+      undefined,
+      { schema: InboxStatsSchema, throwOnValidationError: false },
+    );
 
     Promise.all([firstValueFrom(items$), firstValueFrom(stats$)])
       .then(([itemsResponse, statsResponse]) => {
-        this.items.set(itemsResponse.data?.items ?? []);
+        this.items.set(
+          (itemsResponse.data?.items ?? []).map((item) =>
+            this.normalizeInboxItem(item),
+          ),
+        );
         this.stats.set(
           statsResponse.data ?? {
             safety_alerts: 0,
@@ -492,7 +655,64 @@ export class CoachInboxComponent {
     }
   }
 
+  setPriorityFilter(priority: InboxPriorityFilter): void {
+    this.priorityFilter.set(priority);
+  }
+
+  private observeRouteContext(): void {
+    this.route.queryParamMap.subscribe((queryParams) => {
+      const source = queryParams.get("source");
+      const focus = queryParams.get("focus");
+      if (source === "merlin") {
+        this.merlinSessionId.set(queryParams.get("session"));
+        this.merlinReturnDraft.set(this.buildMerlinReturnDraft(focus));
+        this.consumeMerlinRouteParams(["source", "focus", "session"]);
+        if (focus === "review-needed") {
+          this.activeTabIndex = "1";
+          this.entryContext.set({
+            title: "Merlin sent you here for coach review",
+            message:
+              "Review the athlete context, confirm the recommendation, and decide whether to approve, note, or override it.",
+          });
+          return;
+        }
+
+        this.entryContext.set({
+          title: "Merlin sent you here for coach follow-through",
+          message:
+            "Use Coach Inbox to review athlete issues, add context, and resolve items that need manual coach action.",
+        });
+      }
+    });
+  }
+
+  private buildMerlinReturnDraft(focus: string | null): string {
+    if (focus === "review-needed") {
+      return "I reviewed Coach Inbox. Help me think through the recommendation and the best coaching decision.";
+    }
+
+    return "I reviewed Coach Inbox. Help me decide the next coaching action.";
+  }
+
+  private consumeMerlinRouteParams(paramNames: string[]): void {
+    const consumedParams = Object.fromEntries(
+      paramNames.map((paramName) => [paramName, null]),
+    );
+
+    void this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: consumedParams,
+      queryParamsHandling: "merge",
+      replaceUrl: true,
+    });
+  }
+
+  dismissEntryContext(): void {
+    this.entryContext.set(null);
+  }
+
   async approveItem(item: InboxItem): Promise<void> {
+    this.dismissEntryContext();
     this.actionLoadingId.set(item.id);
 
     try {
@@ -521,6 +741,7 @@ export class CoachInboxComponent {
   }
 
   async openItem(item: InboxItem): Promise<void> {
+    this.dismissEntryContext();
     this.itemLoadingId.set(item.id);
 
     try {
@@ -571,6 +792,7 @@ export class CoachInboxComponent {
   }
 
   openNoteDialog(item: InboxItem): void {
+    this.dismissEntryContext();
     this.selectedItem.set(item);
     this.actionDialogMode.set("note");
     this.actionDialogText.set(item.coach_notes ?? "");
@@ -578,6 +800,7 @@ export class CoachInboxComponent {
   }
 
   openOverrideDialog(item: InboxItem): void {
+    this.dismissEntryContext();
     this.selectedItem.set(item);
     this.actionDialogMode.set("override");
     this.actionDialogText.set(item.override_reason ?? "");
@@ -742,6 +965,15 @@ export class CoachInboxComponent {
       critical_count: items.filter(
         (item) => item.priority === "critical" && item.status === "pending",
       ).length,
+    };
+  }
+
+  private normalizeInboxItem(item: InboxItemDTO): InboxItem {
+    return {
+      ...item,
+      coach_id: "",
+      team_id: "",
+      athlete_context: {},
     };
   }
 }

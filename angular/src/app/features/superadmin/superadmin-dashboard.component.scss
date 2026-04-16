@@ -179,15 +179,10 @@
   border-top: var(--border-1) solid var(--color-border-primary);
 }
 
-.quick-actions {
-  margin-top: var(--space-0);
-}
-
-.quick-actions h3 {
-  margin: var(--space-0) var(--space-0) var(--space-4);
-  font-size: var(--ds-font-size-md);
-  font-weight: var(--ds-font-weight-semibold);
-  color: var(--color-text-primary);
+.admin-panels {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(16rem, 1fr);
+  gap: var(--layout-page-section-gap-tight);
 }
 
 .actions-grid {
@@ -221,6 +216,36 @@
   font-weight: var(--ds-font-weight-semibold);
 }
 
+.action-card small {
+  text-align: center;
+  color: var(--color-text-secondary);
+  line-height: var(--ds-line-height-relaxed);
+}
+
+.snapshot-list {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.snapshot-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding-bottom: var(--space-3);
+  border-bottom: var(--border-1) solid var(--color-border-primary);
+  color: var(--color-text-secondary);
+}
+
+.snapshot-row:last-child {
+  border-bottom: 0;
+  padding-bottom: 0;
+}
+
+.snapshot-row strong {
+  color: var(--color-text-primary);
+}
+
 .modal-body {
   padding-top: var(--space-2);
 }
@@ -248,6 +273,10 @@
 
   .stats-grid {
     grid-template-columns: repeat(2, 1fr);
+  }
+
+  .admin-panels {
+    grid-template-columns: 1fr;
   }
 
   .approval-actions {

@@ -12,7 +12,6 @@ import { Router, RouterModule } from "@angular/router";
 import { FormInputComponent } from "../../shared/components/form-input/form-input.component";
 import { SelectComponent } from "../../shared/components/select/select.component";
 import { TextareaComponent } from "../../shared/components/textarea/textarea.component";
-import { forkJoin } from "rxjs";
 import { firstValueFrom } from "rxjs";
 import { ApiService, API_ENDPOINTS } from "../../core/services/api.service";
 import { HeaderService } from "../../core/services/header.service";
@@ -34,7 +33,6 @@ import {
   PlayerPerformanceStats,
   RiskAlert,
   TeamOverviewStats,
-  TeamStatisticsService,
   TrainingSession,
   UpcomingGame,
 } from "../../core/services/team-statistics.service";
@@ -64,6 +62,7 @@ import { CoachDashboardPrioritySectionComponent } from "./components/coach-dashb
 import { CoachDashboardProtocolsSectionComponent } from "./components/coach-dashboard-protocols-section.component";
 import { CoachDashboardRosterSectionComponent } from "./components/coach-dashboard-roster-section.component";
 import { CoachDashboardSummarySectionComponent } from "./components/coach-dashboard-summary-section.component";
+import { CoachDashboardDataService } from "./services/coach-dashboard-data.service";
 
 /**
  * Coach Dashboard Component
@@ -137,14 +136,10 @@ export class CoachDashboardComponent {
   private readonly api = inject(ApiService);
   private readonly headerService = inject(HeaderService);
   private readonly teamMembershipService = inject(TeamMembershipService);
-  private readonly teamStatsService = inject(TeamStatisticsService);
+  private readonly coachDashboardDataService = inject(CoachDashboardDataService);
   private readonly toastService = inject(ToastService);
   private readonly missingDataService = inject(MissingDataDetectionService);
-  private readonly continuityService = inject(ContinuityIndicatorsService);
   private readonly overrideService = inject(OverrideLoggingService);
-  private readonly ownershipTransitionService = inject(
-    OwnershipTransitionService,
-  );
   private readonly accountabilityService = inject(
     AccountabilityTrackingService,
   );
@@ -445,15 +440,8 @@ export class CoachDashboardComponent {
     }
 
     // Load all data in parallel
-    forkJoin({
-      overview: this.teamStatsService.getTeamOverview(teamId),
-      players: this.teamStatsService.getTeamPlayersStats(teamId),
-      recentGames: this.teamStatsService.getRecentGames(teamId, 5),
-      upcomingGames: this.teamStatsService.getUpcomingGames(teamId, 5),
-      trainingSessions: this.teamStatsService.getTrainingSchedule(teamId, 7),
-      riskAlerts: this.teamStatsService.getRiskAlerts(teamId),
-      performanceTrend: this.teamStatsService.getPerformanceTrend(teamId, 10),
-    })
+    this.coachDashboardDataService
+      .loadDashboardSnapshot(teamId)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (data) => {
@@ -489,27 +477,20 @@ export class CoachDashboardComponent {
           this.riskAlerts.set(data.riskAlerts);
           this.performanceTrend.set(data.performanceTrend);
 
-          // Load missing data detection
-          this.loadMissingData(teamId);
+          void this.loadFollowUpSignals(teamId);
 
           // Check and create coach reminders for missing wellness
           this.missingDataService
             .checkAndCreateCoachReminders(teamId)
-            .catch((error) => {
+            .catch((error: unknown) => {
               this.logger.error(
                 "[CoachDashboard] Error checking reminders:",
                 error,
               );
             });
 
-          // Load team continuity
-          this.loadTeamContinuity(teamId);
-
           // Load override counts
-          this.loadOverrideCounts();
-
-          // Load pending ownership transitions
-          this.loadPendingTransitions();
+          void this.loadOverrideCounts();
 
           // Load accountability items
           this.accountabilityService
@@ -544,31 +525,15 @@ export class CoachDashboardComponent {
       });
   }
 
-  /**
-   * Load players with missing wellness data
-   */
-  private async loadMissingData(teamId: string): Promise<void> {
+  private async loadFollowUpSignals(teamId: string): Promise<void> {
     try {
-      const playersWithMissing =
-        await this.missingDataService.getPlayersWithMissingWellness(teamId);
-      this.playersWithMissingData.set(playersWithMissing);
+      const followUpSnapshot =
+        await this.coachDashboardDataService.loadFollowUpSnapshot(teamId);
+      this.playersWithMissingData.set(followUpSnapshot.playersWithMissingData);
+      this.teamContinuity.set(followUpSnapshot.teamContinuity);
+      this.pendingTransitions.set(followUpSnapshot.pendingTransitions);
     } catch (error) {
-      this.logger.error("coach_dashboard_missing_data_load_failed", error);
-    }
-  }
-
-  /**
-   * Load team continuity events
-   */
-  private async loadTeamContinuity(teamId: string): Promise<void> {
-    try {
-      const continuity = await this.continuityService.getTeamContinuity(teamId);
-      this.teamContinuity.set(continuity);
-    } catch (error) {
-      this.logger.error(
-        "[CoachDashboard] Error loading team continuity:",
-        error,
-      );
+      this.logger.error("coach_dashboard_follow_up_signals_failed", error);
     }
   }
 
@@ -978,25 +943,6 @@ export class CoachDashboardComponent {
     this.toastService.info(
       `${overrides.length} override(s) found. Check console for details.`,
     );
-  }
-
-  /**
-   * Load pending ownership transitions for coach
-   */
-  private async loadPendingTransitions(): Promise<void> {
-    try {
-      const transitions =
-        await this.ownershipTransitionService.getPendingTransitions(
-          "coach",
-          10,
-        );
-      this.pendingTransitions.set(transitions);
-    } catch (error) {
-      this.logger.error(
-        "[CoachDashboard] Error loading pending transitions:",
-        error,
-      );
-    }
   }
 
   /**

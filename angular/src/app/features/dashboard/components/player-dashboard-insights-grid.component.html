@@ -20,9 +20,9 @@
               "
             >
               @if (day.completed) {
-                <i class="pi pi-check"></i>
+                <i class="pi pi-check" aria-hidden="true"></i>
               } @else if (day.isToday) {
-                <i class="pi pi-circle"></i>
+                <i class="pi pi-circle" aria-hidden="true"></i>
               }
             </div>
             <span class="day-name">{{ day.short }}</span>

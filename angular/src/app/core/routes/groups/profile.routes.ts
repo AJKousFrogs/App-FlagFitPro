@@ -42,6 +42,58 @@ export const profileRoutes: Routes = [
     }, // Settings - on demand
   },
   {
+    path: "settings/notifications",
+    loadComponent: () =>
+      import("../../../features/settings/settings.component").then(
+        (m) => m.SettingsComponent,
+      ),
+    canActivate: [authGuard],
+    data: {
+      preload: false,
+      entry: "internal",
+      headerPreset: "default",
+    },
+  },
+  {
+    path: "settings/preferences",
+    loadComponent: () =>
+      import("../../../features/settings/settings.component").then(
+        (m) => m.SettingsComponent,
+      ),
+    canActivate: [authGuard],
+    data: {
+      preload: false,
+      entry: "internal",
+      headerPreset: "default",
+    },
+  },
+  {
+    path: "settings/security",
+    loadComponent: () =>
+      import("../../../features/settings/settings.component").then(
+        (m) => m.SettingsComponent,
+      ),
+    canActivate: [authGuard],
+    data: {
+      preload: false,
+      entry: "internal",
+      headerPreset: "default",
+    },
+  },
+  {
+    path: "settings/privacy-security",
+    loadComponent: () =>
+      import("../../../features/settings/settings.component").then(
+        (m) => m.SettingsComponent,
+      ),
+    canActivate: [authGuard],
+    data: {
+      preload: false,
+      entry: "internal",
+      headerPreset: "default",
+    },
+  },
+  {
     path: "settings/privacy",
     loadComponent: () =>
       import("../../../features/settings/privacy-controls/privacy-controls.component").then(

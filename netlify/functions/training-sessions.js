@@ -1,4 +1,3 @@
-import { createRuntimeV2Handler } from "./utils/runtime-v2-adapter.js";
 import { parseJsonObjectBody, validateInput } from "./utils/input-validator.js";
 import { createSuccessResponse, createErrorResponse, handleValidationError } from "./utils/error-handler.js";
 import { requireAuthorization, getUserRole, logViolation } from "./utils/authorization-guard.js";
@@ -886,4 +885,3 @@ const handler = async (event, context) => {
 
 export const testHandler = handler;
 export { handler };
-export default createRuntimeV2Handler(handler);

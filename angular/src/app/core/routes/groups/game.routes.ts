@@ -13,9 +13,12 @@ export const gameRoutes: Routes = [
   },
   {
     path: "game/nutrition",
-    redirectTo: "wellness",
-    pathMatch: "full",
-    data: { entry: "legacy" },
+    loadComponent: () =>
+      import("../../../features/game/tournament-nutrition/tournament-nutrition.component").then(
+        (m) => m.TournamentNutritionComponent,
+      ),
+    canActivate: [authGuard],
+    data: { preload: false, entry: "internal", headerPreset: "analytics" },
   },
   {
     path: "travel/recovery",

@@ -1,4 +1,3 @@
-import { createRuntimeV2Handler } from "./utils/runtime-v2-adapter.js";
 
 // Netlify Function: Enhanced Training Statistics API
 // Centralized endpoint for aggregating training statistics with ACWR, REP, volume, intensity
@@ -356,4 +355,3 @@ const handler = async (event, context) => {
 
 export const testHandler = handler;
 export { handler };
-export default createRuntimeV2Handler(handler);

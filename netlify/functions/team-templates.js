@@ -1,4 +1,3 @@
-import { createRuntimeV2Handler } from "./utils/runtime-v2-adapter.js";
 import { supabaseAdmin, checkEnvVars } from "./supabase-client.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
@@ -777,4 +776,3 @@ rateLimitType,
 
 export const testHandler = handler;
 export { handler };
-export default createRuntimeV2Handler(handler);

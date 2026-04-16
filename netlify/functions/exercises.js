@@ -1,297 +1,69 @@
-import { createRuntimeV2Handler } from "./utils/runtime-v2-adapter.js";
-import { baseHandler } from "./utils/base-handler.js";
-import { createErrorResponse } from "./utils/error-handler.js";
-import { resolveYouTubeVideoMetadata } from "./utils/youtube.js";
-
-function parseBoundedInt(rawValue, fieldName, { min, max, fallback }) {
-  if (rawValue === undefined || rawValue === null || rawValue === "") {
-    return fallback;
-  }
-  const normalized = String(rawValue).trim();
-  if (!/^\d+$/.test(normalized)) {
-    throw new Error(`${fieldName} must be an integer between ${min} and ${max}`);
-  }
-  const parsed = Number.parseInt(normalized, 10);
-  if (!Number.isInteger(parsed) || parsed < min || parsed > max) {
-    throw new Error(`${fieldName} must be an integer between ${min} and ${max}`);
-  }
-  return parsed;
-}
-
-function parseSearch(rawValue) {
-  if (rawValue === undefined || rawValue === null) {
-    return null;
-  }
-  const normalized = String(rawValue).trim();
-  if (normalized.length === 0) {
-    return null;
-  }
-  if (normalized.length > 120) {
-    throw new Error("search must be 120 characters or less");
-  }
-  return normalized;
-}
-
 /**
- * Exercises API
- * Serves exercises from the exercise library for the Exercise Library component
- * Combines data from: exercises, plyometrics_exercises, and isometrics_exercises tables
+ * Exercises Domain Handler — Netlify Functions v2 (native, no adapter)
  *
- * Endpoints:
- * GET /api/exercises - Get all active exercises
- * GET /api/exercises?category=mobility - Filter by category
- * GET /api/exercises?search=hip - Search by name/description
+ * Consolidates five legacy handlers into one native v2 function.
+ *
+ * Routes handled:
+ *   /api/exercises, /api/exercises/*
+ *   /api/exercise-progression, /api/exercise-progression/*
+ *   /api/isometrics, /api/isometrics/*
+ *   /api/plyometrics, /api/plyometrics/*
+ *   /api/qb-throwing, /api/qb-throwing/*
  */
 
-/**
- * Map plyometric exercise to unified format
- */
-function mapPlyometricExercise(ex) {
-  const video = resolveYouTubeVideoMetadata({ videoUrl: ex.video_url });
+import { handler as exercisesCoreHandler } from "./exercises-core.js";
+import { handler as exerciseProgressionHandler } from "./exercise-progression.js";
+import { handler as isometricsHandler } from "./isometrics.js";
+import { handler as plyometricsHandler } from "./plyometrics.js";
+import { handler as qbThrowingHandler } from "./qb-throwing.js";
 
+async function toLambdaEvent(req, url) {
+  const headers = Object.fromEntries(req.headers);
+  const method = req.method.toUpperCase();
+  let body = null;
+  if (method !== "GET" && method !== "HEAD" && method !== "OPTIONS") {
+    body = await req.text();
+  }
   return {
-    id: ex.id,
-    name: ex.exercise_name,
-    slug: ex.exercise_name.toLowerCase().replace(/\s+/g, "-"),
-    category: "plyometric",
-    subcategory: ex.exercise_category,
-    difficulty_level: ex.difficulty_level?.toLowerCase() || "intermediate",
-    how_text: ex.description,
-    description: ex.description,
-    // Handle both string and array formats for backward compatibility
-    feel_text: Array.isArray(ex.coaching_cues)
-      ? ex.coaching_cues.join(" ")
-      : ex.coaching_cues || null,
-    compensation_text: Array.isArray(ex.common_mistakes)
-      ? ex.common_mistakes.join(" ")
-      : ex.common_mistakes || null,
-    target_muscles: ex.target_muscles || [],
-    equipment_required: ex.equipment_needed || [],
-    video_url: video.videoUrl,
-    video_id: video.videoId,
-    default_sets: 3,
-    default_reps: 8,
-    is_high_intensity:
-      ex.intensity_level === "High" || ex.intensity_level === "Very High",
-    load_contribution_au: ex.effectiveness_rating
-      ? ex.effectiveness_rating * 2
-      : 10,
-    position_specific: ex.position_applications
-      ? Object.keys(ex.position_applications)
-      : null,
+    httpMethod: method, path: url.pathname, headers,
+    queryStringParameters: url.searchParams.size > 0 ? Object.fromEntries(url.searchParams) : {},
+    multiValueQueryStringParameters: {}, body: body || null, isBase64Encoded: false,
   };
 }
 
-/**
- * Map isometric exercise to unified format
- */
-function mapIsometricExercise(ex) {
-  const video = resolveYouTubeVideoMetadata({ videoUrl: ex.video_url });
+function fromLambdaResponse(r) {
+  if (!r) return new Response(JSON.stringify({ success: false, error: "No response" }), { status: 500, headers: { "Content-Type": "application/json" } });
+  const body = typeof r.body === "string" ? r.body : JSON.stringify(r.body ?? null);
+  return new Response(body, { status: r.statusCode ?? 200, headers: r.headers ?? { "Content-Type": "application/json" } });
+}
 
+async function dispatch(handler, req, url) {
+  return fromLambdaResponse(await handler(await toLambdaEvent(req, url), {}));
+}
+
+function corsHeaders(req) {
   return {
-    id: ex.id,
-    name: ex.name,
-    slug: ex.name.toLowerCase().replace(/\s+/g, "-"),
-    category: "strength", // Isometrics are strength exercises
-    subcategory: ex.category,
-    difficulty_level: ex.difficulty_level?.toLowerCase() || "intermediate",
-    how_text: ex.description,
-    description: ex.description,
-    // Handle both string and array formats for backward compatibility
-    feel_text: Array.isArray(ex.instructions)
-      ? ex.instructions.join(" ")
-      : ex.instructions || null,
-    compensation_text: Array.isArray(ex.safety_notes)
-      ? ex.safety_notes.join(" ")
-      : ex.safety_notes || null,
-    target_muscles: ex.target_muscles || [],
-    equipment_required: [],
-    video_url: video.videoUrl,
-    video_id: video.videoId,
-    default_sets: ex.sets || 3,
-    default_reps: ex.reps || 1,
-    default_hold_seconds: ex.hold_duration_seconds || 30,
-    is_high_intensity: false,
-    load_contribution_au: ex.effectiveness_rating
-      ? ex.effectiveness_rating * 2
-      : 8,
-    position_specific: null,
+    "Access-Control-Allow-Origin": req.headers.get("origin") || "*",
+    "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Request-Id, X-Correlation-Id",
+    "Access-Control-Allow-Methods": "GET, POST, PUT, PATCH, DELETE, OPTIONS",
+    "Access-Control-Allow-Credentials": "true",
+    "Content-Type": "application/json", Vary: "Origin",
   };
 }
 
-/**
- * Map main exercises table to unified format
- */
-function mapMainExercise(ex) {
-  const video = resolveYouTubeVideoMetadata({
-    videoId: ex.video_id,
-    videoUrl: ex.video_url,
-  });
+export default async (req) => {
+  if (req.method === "OPTIONS") return new Response(null, { status: 204, headers: corsHeaders(req) });
+  const url = new URL(req.url);
+  const path = url.pathname;
 
-  return {
-    id: ex.id,
-    name: ex.name,
-    slug: ex.slug,
-    category: ex.category,
-    subcategory: ex.subcategory,
-    difficulty_level: ex.difficulty_level || "beginner",
-    how_text: ex.how_text,
-    description: ex.how_text,
-    feel_text: ex.feel_text,
-    compensation_text: ex.compensation_text,
-    target_muscles: ex.target_muscles || [],
-    equipment_required: ex.equipment_required || [],
-    video_url: video.videoUrl,
-    video_id: video.videoId,
-    default_sets: ex.default_sets,
-    default_reps: ex.default_reps,
-    default_hold_seconds: ex.default_hold_seconds,
-    default_duration_seconds: ex.default_duration_seconds,
-    is_high_intensity: ex.is_high_intensity,
-    load_contribution_au: ex.load_contribution_au,
-    position_specific: ex.position_specific,
-  };
-}
+  if (path.includes("/exercise-progression")) return dispatch(exerciseProgressionHandler, req, url);
+  if (path.includes("/isometrics")) return dispatch(isometricsHandler, req, url);
+  if (path.includes("/plyometrics")) return dispatch(plyometricsHandler, req, url);
+  if (path.includes("/qb-throwing")) return dispatch(qbThrowingHandler, req, url);
+  if (path.includes("/exercises")) return dispatch(exercisesCoreHandler, req, url);
 
-/**
- * GET - Retrieve exercises from all sources
- */
-async function getExercises(supabase, params) {
-  const category =
-    params.category === undefined || params.category === null
-      ? null
-      : String(params.category).trim();
-  const search = parseSearch(params.search);
-  const limit = parseBoundedInt(params.limit, "limit", {
-    min: 1,
-    max: 500,
-    fallback: 500,
-  });
-  const offset = parseBoundedInt(params.offset, "offset", {
-    min: 0,
-    max: 1_000_000,
-    fallback: 0,
-  });
-
-  const allExercises = [];
-
-  // 1. Query main exercises table
-  let mainQuery = supabase
-    .from("exercises")
-    .select("*")
-    .eq("active", true)
-    .order("name", { ascending: true });
-
-  if (category && category !== "all") {
-    mainQuery = mainQuery.eq("category", category);
-  }
-
-  if (search && search.trim()) {
-    mainQuery = mainQuery.or(
-      `name.ilike.%${search}%,how_text.ilike.%${search}%,subcategory.ilike.%${search}%`,
-    );
-  }
-
-  const { data: mainExercises, error: mainError } = await mainQuery;
-
-  if (mainError) {
-    console.error("Error fetching main exercises:", mainError);
-  } else if (mainExercises) {
-    allExercises.push(...mainExercises.map(mapMainExercise));
-  }
-
-  // 2. Query plyometrics exercises (if category matches or is "all")
-  if (!category || category === "all" || category === "plyometric") {
-    let plyoQuery = supabase
-      .from("plyometrics_exercises")
-      .select("*")
-      .order("exercise_name", { ascending: true });
-
-    if (search && search.trim()) {
-      plyoQuery = plyoQuery.or(
-        `exercise_name.ilike.%${search}%,description.ilike.%${search}%,exercise_category.ilike.%${search}%`,
-      );
-    }
-
-    const { data: plyoExercises, error: plyoError } = await plyoQuery;
-
-    if (plyoError) {
-      console.error("Error fetching plyometric exercises:", plyoError);
-    } else if (plyoExercises) {
-      allExercises.push(...plyoExercises.map(mapPlyometricExercise));
-    }
-  }
-
-  // 3. Query isometrics exercises (if category matches or is "all")
-  if (!category || category === "all" || category === "strength") {
-    let isoQuery = supabase
-      .from("isometrics_exercises")
-      .select("*")
-      .order("name", { ascending: true });
-
-    if (search && search.trim()) {
-      isoQuery = isoQuery.or(
-        `name.ilike.%${search}%,description.ilike.%${search}%,category.ilike.%${search}%`,
-      );
-    }
-
-    const { data: isoExercises, error: isoError } = await isoQuery;
-
-    if (isoError) {
-      console.error("Error fetching isometric exercises:", isoError);
-    } else if (isoExercises) {
-      allExercises.push(...isoExercises.map(mapIsometricExercise));
-    }
-  }
-
-  // Sort by name
-  allExercises.sort((a, b) => a.name.localeCompare(b.name));
-
-  // Apply pagination
-  const paginatedExercises = allExercises.slice(offset, offset + limit);
-
-  return { exercises: paginatedExercises, count: allExercises.length };
-}
-
-/**
- * Main handler
- */
-const handler = async (event, context) =>
-  baseHandler(event, context, {
-    functionName: "exercises",
-    allowedMethods: ["GET"],
-    rateLimitType: "READ",
-    requireAuth: false,
-    handler: async (evt, _ctx, { supabase }) => {
-      const params = evt.queryStringParameters || {};
-      try {
-        const results = await getExercises(supabase, params);
-        return {
-          statusCode: 200,
-          body: JSON.stringify({ success: true, data: results.exercises }),
-        };
-      } catch (error) {
-        if (
-          /must be an integer between|120 characters or less/i.test(
-            error.message || "",
-          )
-        ) {
-          return createErrorResponse(
-            error.message,
-            422,
-            "validation_error",
-          );
-        }
-        console.error("Exercises API error:", error);
-        return createErrorResponse(
-          "Internal server error",
-          500,
-          "server_error",
-        );
-      }
-    },
-  });
-
-export const testHandler = handler;
-export { handler };
-export default createRuntimeV2Handler(handler);
+  return new Response(
+    JSON.stringify({ success: false, error: `Not found: ${req.method} ${path}`, code: "not_found" }),
+    { status: 404, headers: corsHeaders(req) },
+  );
+};

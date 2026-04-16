@@ -1,4 +1,3 @@
-import { createRuntimeV2Handler } from "./utils/runtime-v2-adapter.js";
 import { supabaseAdmin } from "./supabase-client.js";
 import { canCoachViewWellness, filterWellnessDataForCoach } from "./utils/consent-guard.js";
 import { detectPainTrigger } from "./utils/safety-override.js";
@@ -966,4 +965,3 @@ function calculateReadiness(data) {
 
 export const testHandler = handler;
 export { handler };
-export default createRuntimeV2Handler(handler);

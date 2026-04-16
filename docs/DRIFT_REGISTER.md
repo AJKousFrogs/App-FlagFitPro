@@ -1,7 +1,7 @@
 # Drift Register
 
-**Version:** 1.7 draft  
-**Purpose:** Track the highest-value codebase drift points that still matter after the `1.5` and `1.6` cleanup passes.
+**Application release:** 4.0.0  
+**Purpose:** Track the highest-value codebase drift points that still matter after the v4.0 consolidation pass.
 
 ## How To Use This File
 
@@ -67,7 +67,7 @@ Authorization is much more aligned now, but role and team context still span:
 
 ### Problem
 
-`1.6` fixed many dead-end actions, but workflow handoff still depends on conventions:
+The current cleanup pass removed many dead-end actions, but workflow handoff still depends on conventions:
 - route params
 - query params
 - selected-item state in dialogs

@@ -1,4 +1,3 @@
-import { createRuntimeV2Handler } from "./utils/runtime-v2-adapter.js";
 import { checkEnvVars, supabaseAdmin } from "./supabase-client.js";
 import { parseJsonObjectBody, sanitizeObject } from "./utils/input-validator.js";
 import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
@@ -1165,4 +1164,3 @@ async function handleCommunityRequest(event, requestId, log = logger) {
 
 export const testHandler = handler;
 export { handler };
-export default createRuntimeV2Handler(handler);

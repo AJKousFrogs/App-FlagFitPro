@@ -149,6 +149,20 @@
     color: var(--color-text-tertiary);
   }
 
+  .sharing-card__summary {
+    margin: 0;
+    color: var(--color-text-secondary);
+    font-size: var(--ds-font-size-sm);
+    line-height: var(--ds-line-height-relaxed);
+  }
+
+  .sharing-card__muted {
+    display: block;
+    margin-top: var(--space-2);
+    color: var(--color-text-tertiary);
+    font-size: var(--ds-font-size-xs);
+  }
+
   .welcome-actions {
     display: flex;
     gap: var(--space-3);

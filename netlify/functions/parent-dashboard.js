@@ -1,4 +1,3 @@
-import { createRuntimeV2Handler } from "./utils/runtime-v2-adapter.js";
 
 /**
  * Netlify Function: Parent Dashboard
@@ -1120,4 +1119,3 @@ rateLimitType,
 
 export const testHandler = handler;
 export { handler };
-export default createRuntimeV2Handler(handler);

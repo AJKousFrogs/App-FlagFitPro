@@ -84,6 +84,11 @@ interface MonthlyStats {
   completionRate: number;
 }
 
+interface TrainingEntryContext {
+  title: string;
+  message: string;
+}
+
 @Component({
   selector: "app-training-schedule",
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -150,6 +155,11 @@ export class TrainingScheduleComponent implements OnInit {
   hasError = signal<boolean>(false);
   errorMessage = signal<string>(
     "Failed to load training sessions. Please try again.",
+  );
+  entryContext = signal<TrainingEntryContext | null>(null);
+  merlinSessionId = signal<string | null>(null);
+  merlinReturnDraft = signal(
+    "I reviewed the training schedule. Help me decide the next session or adjustment.",
   );
 
   /** Saved onboarding / Settings: team practice days (aligns program to these days). */
@@ -266,7 +276,7 @@ export class TrainingScheduleComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.observeRouteDate();
+    this.observeRouteState();
 
     this.loadSessions();
     this.loadMonthlyStats();
@@ -317,45 +327,144 @@ export class TrainingScheduleComponent implements OnInit {
       .join(", ");
   }
 
-  private observeRouteDate(): void {
+  private observeRouteState(): void {
     this.route.queryParamMap
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((queryParams) => {
-        void this.applyRouteDate(queryParams);
+        void this.applyRouteState(queryParams);
       });
   }
 
-  private async applyRouteDate(queryParams: ParamMap): Promise<void> {
-    const dateParam = queryParams.get("date");
-    if (!dateParam) {
-      return;
+  private async applyRouteState(queryParams: ParamMap): Promise<void> {
+    let shouldReload = false;
+    const source = queryParams.get("source");
+    const focus = queryParams.get("focus");
+    if (source === "merlin") {
+      this.entryContext.set(this.buildEntryContext(source, focus));
+      this.merlinSessionId.set(queryParams.get("session"));
+      this.merlinReturnDraft.set(this.buildMerlinReturnDraft(focus));
+      this.consumeMerlinRouteParams(["source", "focus", "session"]);
     }
 
-    try {
-      const parsedDate = new Date(dateParam);
-      if (isNaN(parsedDate.getTime())) {
+    const dateParam = queryParams.get("date");
+    if (dateParam) {
+      try {
+        const parsedDate = new Date(dateParam);
+        if (isNaN(parsedDate.getTime())) {
+          this.logger.warn("Invalid date query parameter", { date: dateParam });
+        } else {
+          const previousDate = toLocalDateKey(this.selectedDate());
+          const nextDate = toLocalDateKey(parsedDate);
+          if (previousDate !== nextDate) {
+            this.selectedDate.set(parsedDate);
+            shouldReload = true;
+            this.logger.debug("Updated schedule date from query param", {
+              date: dateParam,
+            });
+          }
+        }
+      } catch (_error) {
         this.logger.warn("Invalid date query parameter", { date: dateParam });
-        return;
       }
+    }
 
-      const previousDate = toLocalDateKey(this.selectedDate());
-      const nextDate = toLocalDateKey(parsedDate);
-      if (previousDate === nextDate) {
-        return;
+    const viewParam = queryParams.get("view");
+    if (viewParam === "week" || viewParam === "month") {
+      if (this.viewMode() !== viewParam) {
+        this.viewMode.set(viewParam);
+        shouldReload = true;
       }
+    }
 
-      this.selectedDate.set(parsedDate);
-      this.logger.debug("Updated schedule date from query param", {
-        date: dateParam,
-      });
-
+    if (shouldReload) {
       await this.loadSessions();
       await this.loadMonthlyStats();
       await this.loadDateMarkers();
       this.checkWeatherForTodaysSessions();
-    } catch (_error) {
-      this.logger.warn("Invalid date query parameter", { date: dateParam });
     }
+
+    this.handleRouteFocus(queryParams.get("focus"));
+  }
+
+  private handleRouteFocus(focus: string | null): void {
+    switch (focus) {
+      case "create-session":
+        break;
+      case "today": {
+        const todayKey = toLocalDateKey(this.today);
+        const selectedKey = toLocalDateKey(this.selectedDate());
+        if (todayKey !== selectedKey) {
+          this.selectedDate.set(new Date(this.today));
+          void this.loadSessions();
+          void this.loadMonthlyStats();
+          void this.loadDateMarkers();
+          this.checkWeatherForTodaysSessions();
+        }
+        break;
+      }
+      default:
+        break;
+    }
+  }
+
+  private buildEntryContext(
+    source: string | null,
+    focus: string | null,
+  ): TrainingEntryContext | null {
+    if (source !== "merlin") {
+      return null;
+    }
+
+    if (focus === "create-session") {
+      return {
+        title: "Merlin sent you here to build the next session",
+        message:
+          "Review the selected date, then use Create Session to turn the recommendation into a concrete practice or workout.",
+      };
+    }
+
+    if (focus === "today") {
+      return {
+        title: "Merlin sent you here to review today’s training plan",
+        message:
+          "Check the current date, planned sessions, and any schedule adjustments before you train.",
+      };
+    }
+
+    return {
+      title: "Merlin sent you here for training follow-through",
+      message:
+        "Use this schedule to confirm timing, choose the right session, or create the next training block.",
+    };
+  }
+
+  private buildMerlinReturnDraft(focus: string | null): string {
+    if (focus === "create-session") {
+      return "I’m in the training builder now. Help me shape the best session for this date and goal.";
+    }
+
+    if (focus === "today") {
+      return "I reviewed today’s training schedule. What should I prioritize or adjust based on what’s planned?";
+    }
+
+    return "I reviewed the training schedule. Help me choose the next best training action.";
+  }
+
+  private consumeMerlinRouteParams(paramNames: string[]): void {
+    const consumedParams = Object.fromEntries(
+      paramNames.map((paramName) => [paramName, null]),
+    );
+
+    void this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: consumedParams,
+      queryParamsHandling: "merge",
+      replaceUrl: true,
+    });
+  }
+
+  dismissEntryContext(): void {
+    this.entryContext.set(null);
   }
 
   /**
@@ -596,6 +705,7 @@ export class TrainingScheduleComponent implements OnInit {
 
   onDateSelect(date: Date): void {
     if (!date) return;
+    this.dismissEntryContext();
 
     const previousDate = this.selectedDate();
     this.logger.debug("Date selected", {
@@ -624,6 +734,7 @@ export class TrainingScheduleComponent implements OnInit {
   }
 
   onShowWeekToggle(checked: boolean | undefined): void {
+    this.dismissEntryContext();
     this.showWeekNumbers.set(!!checked);
   }
 
@@ -631,7 +742,16 @@ export class TrainingScheduleComponent implements OnInit {
     this.onShowWeekToggle(event.checked);
   }
 
-  primaryAction(): void {
+  setViewMode(mode: "week" | "month"): void {
+    this.dismissEntryContext();
+    this.viewMode.set(mode);
+    this.loadSessions();
+  }
+
+  primaryAction(dismissContext = true): void {
+    if (dismissContext) {
+      this.dismissEntryContext();
+    }
     if (!this.isCoach()) {
       this.router.navigate(["/todays-practice"]);
       return;
@@ -644,12 +764,14 @@ export class TrainingScheduleComponent implements OnInit {
   }
 
   viewSession(session: TrainingSession): void {
+    this.dismissEntryContext();
     // Navigate to session detail view for both templates and actual sessions
     this.router.navigate(["/training/session", session.id]);
   }
 
   async markComplete(event: Event, session: TrainingSession): Promise<void> {
     event.stopPropagation();
+    this.dismissEntryContext();
 
     // Only allow marking complete for actual sessions (not templates)
     if (session.isTemplate) {
@@ -686,6 +808,7 @@ export class TrainingScheduleComponent implements OnInit {
     session: TrainingSession,
   ): Promise<void> {
     event.stopPropagation();
+    this.dismissEntryContext();
 
     const user = this.currentUser();
     if (!user?.id) {

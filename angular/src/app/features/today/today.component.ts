@@ -88,6 +88,11 @@ type TagSeverity =
   | "secondary"
   | "contrast";
 
+interface TodayEntryContext {
+  title: string;
+  message: string;
+}
+
 
 // Quick Check-in Types
 interface QuickMood {
@@ -185,6 +190,11 @@ export class TodayComponent {
   // Celebration State
   readonly showCelebration = signal(false);
   private celebrationShownForSession = false;
+  readonly entryContext = signal<TodayEntryContext | null>(null);
+  readonly merlinSessionId = signal<string | null>(null);
+  readonly merlinReturnDraft = signal(
+    "I reviewed today’s plan. Help me decide what to focus on next.",
+  );
 
   // Protocol Generation State
   readonly isGeneratingProtocol = signal(false);
@@ -575,6 +585,16 @@ export class TodayComponent {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((params) => {
         this.pendingFocus.set(params.get("focus"));
+        if (params.get("source") === "merlin") {
+          this.merlinSessionId.set(params.get("session"));
+          this.merlinReturnDraft.set(
+            this.buildMerlinReturnDraft(params.get("focus")),
+          );
+          this.entryContext.set(
+            this.buildEntryContext(params.get("source"), params.get("focus")),
+          );
+          this.consumeMerlinRouteParams(["source", "focus", "session"]);
+        }
       });
 
     effect(() => {
@@ -584,11 +604,13 @@ export class TodayComponent {
       }
 
       queueMicrotask(() => {
-        this.scrollToFirstBlock();
-        this.toastService.info(
-          `Opening today's plan for ${this.formatFocusLabel(focus)}`,
-          "Workout Focus",
-        );
+        this.scrollToFirstBlock(false);
+        if (!this.entryContext()) {
+          this.toastService.info(
+            `Opening today's plan for ${this.formatFocusLabel(focus)}`,
+            "Workout Focus",
+          );
+        }
         void this.router.navigate([], {
           relativeTo: this.route,
           queryParams: { focus: null },
@@ -786,6 +808,7 @@ export class TodayComponent {
   }
 
   scrollToProtocolBlocks(): void {
+    this.dismissEntryContext();
     const blocksContainer = this.protocolBlocks();
     blocksContainer?.nativeElement?.scrollIntoView({
       behavior: "smooth",
@@ -797,6 +820,7 @@ export class TodayComponent {
   // QUICK CHECK-IN METHODS
   // ============================================================================
   openQuickCheckin(): void {
+    this.dismissEntryContext();
     this.resetQuickCheckinForm();
     this.showQuickCheckin.set(true);
   }
@@ -1009,7 +1033,7 @@ export class TodayComponent {
   }
 
   private navigateToTrainingWorkspace(): void {
-    this.router.navigate(["/training/workspace"]);
+    this.router.navigate(["/training"]);
   }
 
   private navigateToTeamChat(): void {
@@ -1024,6 +1048,7 @@ export class TodayComponent {
    * Maps action IDs to component methods
    */
   handleCta(actionId: string): void {
+    this.dismissEntryContext();
     switch (actionId) {
       case "open_checkin":
       case "start_checkin":
@@ -1087,7 +1112,10 @@ export class TodayComponent {
     }
   }
 
-  private scrollToFirstBlock(): void {
+  private scrollToFirstBlock(dismissContext = true): void {
+    if (dismissContext) {
+      this.dismissEntryContext();
+    }
     const blocksContainer = this.protocolBlocks();
     if (blocksContainer?.nativeElement) {
       // Query within the component's scoped element for the first block
@@ -1190,6 +1218,66 @@ export class TodayComponent {
       .filter(Boolean)
       .map((segment) => segment.charAt(0).toUpperCase() + segment.slice(1))
       .join(" ");
+  }
+
+  private buildEntryContext(
+    source: string | null,
+    focus: string | null,
+  ): TodayEntryContext | null {
+    if (source !== "merlin") {
+      return null;
+    }
+
+    if (focus === "protocol") {
+      return {
+        title: "Merlin sent you here to review today’s plan",
+        message:
+          "Check today’s protocol, current readiness, and any coaching updates before you start training.",
+      };
+    }
+
+    if (focus === "checkin") {
+      return {
+        title: "Merlin sent you here to complete today’s check-in",
+        message:
+          "Update your readiness first so today’s protocol and recovery decisions stay grounded in current data.",
+      };
+    }
+
+    return {
+      title: "Merlin sent you here for daily follow-through",
+      message:
+        "Use Today to confirm what you should do next, review the current protocol, and stay aligned with your readiness state.",
+    };
+  }
+
+  private buildMerlinReturnDraft(focus: string | null): string {
+    if (focus === "protocol") {
+      return "I reviewed today’s protocol. Based on the current plan, what should I focus on or watch out for?";
+    }
+
+    if (focus === "checkin") {
+      return "I’m back from Today. Use my current readiness and protocol to tell me the next best action.";
+    }
+
+    return "I reviewed today’s plan. Help me decide the next best step.";
+  }
+
+  private consumeMerlinRouteParams(paramNames: string[]): void {
+    const consumedParams = Object.fromEntries(
+      paramNames.map((paramName) => [paramName, null]),
+    );
+
+    void this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: consumedParams,
+      queryParamsHandling: "merge",
+      replaceUrl: true,
+    });
+  }
+
+  dismissEntryContext(): void {
+    this.entryContext.set(null);
   }
 
   // ============================================================================

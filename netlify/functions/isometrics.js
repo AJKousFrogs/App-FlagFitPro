@@ -1,4 +1,3 @@
-import { createRuntimeV2Handler } from "./utils/runtime-v2-adapter.js";
 
 /**
  * Isometrics Exercises API
@@ -91,4 +90,3 @@ const handler = async (event, context) =>
 
 export const testHandler = handler;
 export { handler };
-export default createRuntimeV2Handler(handler);

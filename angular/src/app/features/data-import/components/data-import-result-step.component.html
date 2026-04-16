@@ -2,9 +2,9 @@
   <div class="result-content">
     <div class="result-icon" [class.success]="result().success">
       @if (result().success) {
-        <i class="pi pi-check-circle result-icon__glyph"></i>
+        <i class="pi pi-check-circle result-icon__glyph" aria-hidden="true"></i>
       } @else {
-        <i class="pi pi-times-circle result-icon__glyph"></i>
+        <i class="pi pi-times-circle result-icon__glyph" aria-hidden="true"></i>
       }
     </div>
 
@@ -16,13 +16,14 @@
         <h4>Import Summary</h4>
         <ul>
           <li>
-            <i class="pi pi-check result-list-icon"></i>
+            <i class="pi pi-check result-list-icon" aria-hidden="true"></i>
             {{ result().itemsImported }} items imported
           </li>
           @for (warning of result().warnings; track warning) {
             <li class="warning">
               <i
                 class="pi pi-exclamation-triangle result-list-icon result-list-icon--warning"
+                aria-hidden="true"
               ></i>
               {{ warning }}
             </li>
@@ -35,7 +36,7 @@
         <ul>
           @for (step of result().nextSteps; track step) {
             <li>
-              <i class="pi pi-arrow-right result-list-icon"></i>
+              <i class="pi pi-arrow-right result-list-icon" aria-hidden="true"></i>
               {{ step }}
             </li>
           }

@@ -1,4 +1,4 @@
-import { createRuntimeV2Handler } from "./utils/runtime-v2-adapter.js";
+import { wrapHandler } from "./utils/lambda-compat.js";
 import nodemailer from "nodemailer";
 import { baseHandler } from "./utils/base-handler.js";
 import {
@@ -247,4 +247,4 @@ Back to FlagFit Pro: ${process.env.APP_URL || "http://localhost:8888"}
 
 export const testHandler = handler;
 export { handler };
-export default createRuntimeV2Handler(handler);
+export default wrapHandler(handler);

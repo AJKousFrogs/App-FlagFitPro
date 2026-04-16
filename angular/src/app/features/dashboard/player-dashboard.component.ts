@@ -12,16 +12,12 @@ import {
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { Router, RouterModule } from "@angular/router";
 import { Timeline } from "primeng/timeline";
-import { forkJoin, of } from "rxjs";
-import { catchError } from "rxjs";
 import { HeaderService } from "../../core/services/header.service";
 import { LoggerService } from "../../core/services/logger.service";
 import { SupabaseService } from "../../core/services/supabase.service";
 import {
-  TrainingStatsCalculationService,
   type TrainingStatsData,
 } from "../../core/services/training-stats-calculation.service";
-import { TrainingDataService } from "../../core/services/training-data.service";
 import type { TrainingSession } from "../../core/services/training-data.service";
 import { TeamNotificationService } from "../../core/services/team-notification.service";
 import { UnifiedTrainingService } from "../../core/services/unified-training.service";
@@ -45,15 +41,12 @@ import { PageErrorStateComponent } from "../../shared/components/page-error-stat
 import { LINE_CHART_OPTIONS } from "../../shared/config/chart.config";
 import { DashboardSkeletonComponent } from "../../shared/components/dashboard-skeleton/dashboard-skeleton.component";
 import {
-  OverrideLoggingService,
   CoachOverride,
 } from "../../core/services/override-logging.service";
 import {
-  OwnershipTransitionService,
   OwnershipTransition,
 } from "../../core/services/ownership-transition.service";
 import {
-  MissingDataDetectionService,
   MissingDataStatus,
 } from "../../core/services/missing-data-detection.service";
 import type {
@@ -124,22 +117,12 @@ export class PlayerDashboardComponent {
   private readonly router = inject(Router);
   private readonly supabase = inject(SupabaseService);
   private readonly headerService = inject(HeaderService);
-  private readonly trainingStatsService = inject(
-    TrainingStatsCalculationService,
-  );
   private readonly unifiedTrainingService = inject(UnifiedTrainingService);
   private readonly wellnessService = inject(WellnessService);
   private readonly dataConfidenceService = inject(DataConfidenceService);
   private readonly continuityService = inject(ContinuityIndicatorsService);
   private readonly acwrSpikeDetection = inject(AcwrSpikeDetectionService);
   private readonly privacySettingsService = inject(PrivacySettingsService);
-  private readonly overrideLoggingService = inject(OverrideLoggingService);
-  private readonly ownershipTransitionService = inject(
-    OwnershipTransitionService,
-  );
-  private readonly missingDataDetectionService = inject(
-    MissingDataDetectionService,
-  );
   private readonly playerDashboardDataService = inject(PlayerDashboardDataService);
   private readonly channelService = inject(ChannelService);
   private readonly toastService = inject(ToastService);
@@ -147,7 +130,6 @@ export class PlayerDashboardComponent {
   private readonly teamMembershipService = inject(TeamMembershipService);
   private readonly featureFlags = inject(FeatureFlagsService);
   private readonly nextGenMetricsService = inject(NextGenMetricsService);
-  private readonly trainingDataService = inject(TrainingDataService);
   private readonly teamNotificationService = inject(TeamNotificationService);
   private readonly smartTrainingDataService = inject(SmartTrainingDataService);
   private readonly destroyRef = inject(DestroyRef);
@@ -357,18 +339,6 @@ export class PlayerDashboardComponent {
   // Quick actions (order preserved from wireframe)
   quickActions: QuickAction[] = [
     {
-      label: "Log Today’s Session",
-      icon: "pi pi-plus",
-      route: "/todays-practice",
-      description: "Go to today’s practice and log your session",
-    },
-    {
-      label: "Videos",
-      icon: "pi pi-video",
-      route: "/training/videos",
-      description: "Watch training videos",
-    },
-    {
       label: "Wellness",
       icon: "pi pi-heart",
       route: "/wellness",
@@ -387,10 +357,10 @@ export class PlayerDashboardComponent {
       description: "Performance insights",
     },
     {
-      label: "Merlin AI",
-      icon: "pi pi-sparkles",
-      route: "/chat",
-      description: "Talk to Merlin",
+      label: "Today",
+      icon: "pi pi-play",
+      route: "/todays-practice",
+      description: "Open today’s training plan",
     },
   ];
 
@@ -601,39 +571,13 @@ export class PlayerDashboardComponent {
     const trendStartStr = this.formatDateOnlyLocal(trendStart);
     const todayStr = this.formatDateOnlyLocal(today);
 
-    forkJoin({
-      stats: this.trainingStatsService.getTrainingStats().pipe(
-        catchError((error) => {
-          this.logger.error("player_dashboard_training_stats_failed", error);
-          return of(null as TrainingStatsData | null);
-        }),
-      ),
-      weekSessions: this.trainingDataService
-        .getTrainingSessions({
-          startDate: weekStartStr,
-          endDate: weekEndStr,
-        })
-        .pipe(
-          catchError((error) => {
-            this.logger.error("player_dashboard_week_sessions_failed", error);
-            return of([] as TrainingSession[]);
-          }),
-        ),
-      trendSessions: this.trainingDataService
-        .getTrainingSessions({
-          startDate: trendStartStr,
-          endDate: todayStr,
-        })
-        .pipe(
-          catchError((error) => {
-            this.logger.error(
-              "player_dashboard_trend_sessions_failed",
-              error,
-            );
-            return of([] as TrainingSession[]);
-          }),
-        ),
-    })
+    this.playerDashboardDataService
+      .loadTrainingSnapshot(
+        weekStartStr,
+        weekEndStr,
+        trendStartStr,
+        todayStr,
+      )
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(({ stats, weekSessions, trendSessions }) => {
         if (stats === null) {
@@ -775,9 +719,7 @@ export class PlayerDashboardComponent {
   private refreshDashboardInsights(): void {
     void this.loadContinuityEvents();
     void this.checkAcwrSpike();
-    void this.loadRecentOverrides();
-    void this.loadActiveTransitions();
-    void this.loadMissingWellnessStatus();
+    void this.loadTrustSignals();
   }
 
   private getCurrentUserId(): string | null {
@@ -812,24 +754,23 @@ export class PlayerDashboardComponent {
     }
   }
 
-  /**
-   * Phase 2.1 - Trust Repair: Load recent coach override notifications
-   */
-  private async loadRecentOverrides(): Promise<void> {
+  private async loadTrustSignals(): Promise<void> {
     const userId = this.currentUserId();
     if (!userId) return;
 
     try {
-      const overrides =
-        await this.overrideLoggingService.getRecentUnreadOverrides(userId, 5);
-      this.recentOverrides.set(overrides);
+      const trustSnapshot =
+        await this.playerDashboardDataService.loadTrustSnapshot(userId);
 
-      // Load coach names for display
-      if (overrides.length > 0) {
-        await this.loadCoachNames(overrides);
+      this.recentOverrides.set(trustSnapshot.overrides);
+      this.activeTransitions.set(trustSnapshot.activeTransitions);
+      this.missingWellnessStatus.set(trustSnapshot.missingWellnessStatus);
+
+      if (trustSnapshot.overrides.length > 0) {
+        await this.loadCoachNames(trustSnapshot.overrides);
       }
     } catch (error) {
-      this.logger.error("player_dashboard_overrides_load_failed", error);
+      this.logger.error("player_dashboard_trust_signals_load_failed", error);
     }
   }
 
@@ -927,47 +868,6 @@ export class PlayerDashboardComponent {
    */
   getCoachName(coachId: string): string {
     return this.coachNamesCache()[coachId] || "Your coach";
-  }
-
-  /**
-   * Phase 2.1 - Load active ownership transitions for player
-   */
-  private async loadActiveTransitions(): Promise<void> {
-    const userId = this.currentUserId();
-    if (!userId) return;
-
-    try {
-      const transitions =
-        await this.ownershipTransitionService.getPlayerTransitions(userId, 5);
-
-      // Filter for active (pending or in_progress) transitions
-      const active = transitions.filter(
-        (t) => t.status === "pending" || t.status === "in_progress",
-      );
-
-      this.activeTransitions.set(active);
-    } catch (error) {
-        this.logger.error("player_dashboard_transitions_load_failed", error);
-    }
-  }
-
-  /**
-   * Phase 2.2 - Load missing wellness data status
-   */
-  private async loadMissingWellnessStatus(): Promise<void> {
-    const userId = this.currentUserId();
-    if (!userId) return;
-
-    try {
-      const status =
-        await this.missingDataDetectionService.checkMissingWellness(userId);
-      this.missingWellnessStatus.set(status);
-    } catch (error) {
-      this.logger.error(
-        "player_dashboard_wellness_status_failed",
-        error,
-      );
-    }
   }
 
   async dismissAnnouncement(): Promise<void> {

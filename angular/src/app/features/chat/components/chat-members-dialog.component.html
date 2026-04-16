@@ -17,7 +17,7 @@
   <div class="members-dialog-content">
     @if (membersData()) {
       <div class="visibility-info">
-        <i class="pi pi-info-circle"></i>
+        <i class="pi pi-info-circle" aria-hidden="true"></i>
         <span>{{ membersData()!.visibility_description }}</span>
       </div>
     }
@@ -38,7 +38,7 @@
       @if (coaches().length > 0) {
         <div class="members-section">
           <h4 class="section-header">
-            <i class="pi pi-shield"></i>
+            <i class="pi pi-shield" aria-hidden="true"></i>
             Coaches ({{ coaches().length }})
             @if (onlineCoachCount() > 0) {
               <span class="online-count-badge">
@@ -62,7 +62,7 @@
       @if (athletes().length > 0) {
         <div class="members-section">
           <h4 class="section-header">
-            <i class="pi pi-users"></i>
+            <i class="pi pi-users" aria-hidden="true"></i>
             Athletes ({{ athletes().length }})
             @if (onlineAthleteCount() > 0) {
               <span class="online-count-badge">
@@ -85,7 +85,7 @@
 
       @if (coaches().length === 0 && athletes().length === 0) {
         <div class="no-members-found">
-          <i class="pi pi-search icon-2xl icon-secondary"></i>
+          <i class="pi pi-search icon-2xl icon-secondary" aria-hidden="true"></i>
           <p>No members found matching "{{ memberSearchQuery() }}"</p>
         </div>
       }

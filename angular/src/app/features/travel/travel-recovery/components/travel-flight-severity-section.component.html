@@ -21,7 +21,7 @@
           <app-status-tag [value]="jetLagSeverity().level | titlecase" [severity]="severityColor()" size="sm" />
         </div>
         <div class="recovery-estimate">
-          <i class="pi pi-calendar-plus"></i>
+          <i class="pi pi-calendar-plus" aria-hidden="true"></i>
           <span>
             Estimated Recovery:
             <strong>{{ jetLagSeverity().estimatedRecoveryDays }} days</strong>
@@ -29,7 +29,7 @@
         </div>
         @if (daysUntilCompetition() !== null) {
           <div class="competition-countdown" [class.warning]="!isCompetitionReady()">
-            <i class="pi pi-flag"></i>
+            <i class="pi pi-flag" aria-hidden="true"></i>
             <span>
               Competition in <strong>{{ daysUntilCompetition() }} days</strong>
               @if (!isCompetitionReady()) {

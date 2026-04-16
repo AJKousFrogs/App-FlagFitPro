@@ -1,4 +1,3 @@
-import { createRuntimeV2Handler } from "./utils/runtime-v2-adapter.js";
 import { baseHandler } from "./utils/base-handler.js";
 import {
   createErrorResponse,
@@ -174,4 +173,3 @@ async function updateCycleStatus(supabase, userId, payload) {
 
 export const testHandler = handler;
 export { handler };
-export default createRuntimeV2Handler(handler);

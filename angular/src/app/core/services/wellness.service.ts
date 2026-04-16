@@ -260,7 +260,9 @@ export class WellnessService {
     ).pipe(
       catchError((error) => {
         this.logger.error("wellness_fetch_failed", error);
-        return of({ success: false, data: [] });
+        // Return a distinct `error: true` flag so components can show "error
+        // loading data" rather than the misleading "no wellness data yet" state.
+        return of({ success: false, error: true, data: [] });
       }),
     );
   }
@@ -309,31 +311,31 @@ export class WellnessService {
     const counts = { ...sums };
 
     data.forEach((entry) => {
-      if (entry.sleep !== undefined) {
+      if (entry.sleep !== undefined && !Number.isNaN(entry.sleep)) {
         sums.sleep += entry.sleep;
         counts.sleep++;
       }
-      if (entry.energy !== undefined) {
+      if (entry.energy !== undefined && !Number.isNaN(entry.energy)) {
         sums.energy += entry.energy;
         counts.energy++;
       }
-      if (entry.stress !== undefined) {
+      if (entry.stress !== undefined && !Number.isNaN(entry.stress)) {
         sums.stress += entry.stress;
         counts.stress++;
       }
-      if (entry.soreness !== undefined) {
+      if (entry.soreness !== undefined && !Number.isNaN(entry.soreness)) {
         sums.soreness += entry.soreness;
         counts.soreness++;
       }
-      if (entry.motivation !== undefined) {
+      if (entry.motivation !== undefined && !Number.isNaN(entry.motivation)) {
         sums.motivation += entry.motivation;
         counts.motivation++;
       }
-      if (entry.mood !== undefined) {
+      if (entry.mood !== undefined && !Number.isNaN(entry.mood)) {
         sums.mood += entry.mood;
         counts.mood++;
       }
-      if (entry.hydration !== undefined) {
+      if (entry.hydration !== undefined && !Number.isNaN(entry.hydration)) {
         sums.hydration += entry.hydration;
         counts.hydration++;
       }
@@ -529,15 +531,18 @@ export class WellnessService {
    * This method provides a quick client-side average suitable for UI display.
    */
   getWellnessScore(data: WellnessData): number {
+    // Clamp inverted metrics to [1,10] before inverting to prevent negative scores
+    // from out-of-range data (e.g. stress=15 would otherwise produce -5)
+    const clamp = (v: number) => Math.min(10, Math.max(1, v));
     const metrics = [
       data.sleep,
       data.energy,
-      data.stress ? 10 - data.stress : undefined, // Invert stress
-      data.soreness ? 10 - data.soreness : undefined, // Invert soreness
+      data.stress !== undefined && data.stress !== null ? 10 - clamp(data.stress) : undefined,
+      data.soreness !== undefined && data.soreness !== null ? 10 - clamp(data.soreness) : undefined,
       data.motivation,
       data.mood,
       data.hydration,
-    ].filter((m): m is number => m !== undefined && m !== null);
+    ].filter((m): m is number => m !== undefined && m !== null && !Number.isNaN(m));
 
     if (metrics.length === 0) return 0;
 
@@ -606,8 +611,16 @@ export class WellnessService {
 
       if (values.length < 2) return;
 
-      const recent = values.slice(0, Math.floor(values.length / 2));
-      const earlier = values.slice(Math.floor(values.length / 2));
+      // Use fixed 7-day windows rather than 50/50 split so that
+      // small datasets (e.g. 3 entries → 1 vs 2) don't produce biased trends.
+      // `data` is ordered newest-first; values preserves that order.
+      const recentWindow = values.slice(0, Math.min(7, Math.floor(values.length / 2)));
+      const earlierWindow = values.slice(recentWindow.length, recentWindow.length + Math.min(7, values.length - recentWindow.length));
+
+      if (recentWindow.length === 0 || earlierWindow.length === 0) return;
+
+      const recent = recentWindow;
+      const earlier = earlierWindow;
 
       const recentAvg = recent.reduce((a, b) => a + b, 0) / recent.length;
       const earlierAvg = earlier.reduce((a, b) => a + b, 0) / earlier.length;

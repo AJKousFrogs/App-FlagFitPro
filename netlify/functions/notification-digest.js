@@ -1,4 +1,4 @@
-import { createRuntimeV2Handler } from "./utils/runtime-v2-adapter.js";
+import { wrapHandler } from "./utils/lambda-compat.js";
 import { supabaseAdmin, checkEnvVars } from "./supabase-client.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
@@ -1039,4 +1039,60 @@ rateLimitType,
 
 export const testHandler = handler;
 export { handler };
-export default createRuntimeV2Handler(handler);
+
+export const config = { schedule: "0 9 * * *" }; // Daily — 09:00 UTC
+
+async function runScheduledDigests(digestType) {
+  const { periodStart, periodEnd } = resolveDigestPeriod(digestType);
+  const { data: users, error } = await supabaseAdmin
+    .from("users")
+    .select("id")
+    .eq("is_active", true);
+  if (error) throw error;
+
+  let sent = 0;
+  let skipped = 0;
+  let failed = 0;
+
+  for (const { id: userId } of users ?? []) {
+    try {
+      const role = await getUserRole(userId);
+      let content;
+      if (role === "coach") {
+        content = await generateCoachDigest(userId, digestType, periodStart, periodEnd);
+      } else if (role === "parent") {
+        content = await generateParentDigest(userId, digestType, periodStart, periodEnd);
+      } else {
+        content = await generateAthleteDigest(userId, digestType, periodStart, periodEnd);
+      }
+      const { duplicate } = await recordDigestSent(
+        userId, digestType, periodStart, periodEnd, content, "scheduled",
+      );
+      if (duplicate) { skipped++; } else { sent++; }
+    } catch (err) {
+      logger.error("digest_scheduled_user_failed", { userId, error: err?.message });
+      failed++;
+    }
+  }
+
+  return { digestType, total: (users ?? []).length, sent, skipped, failed };
+}
+
+export default async (req, context) => {
+  if (req.headers.get("x-netlify-event") === "schedule") {
+    logger.info("digest_scheduled_start");
+    try {
+      // Run daily digest; weekly digest is handled by the same cron on Sundays
+      const now = new Date();
+      const isWeekly = now.getDay() === 0; // Sunday
+      const digestType = isWeekly ? "weekly" : "daily";
+      const result = await runScheduledDigests(digestType);
+      logger.info("digest_scheduled_complete", result);
+      return Response.json({ success: true, data: result });
+    } catch (err) {
+      logger.error("digest_scheduled_failed", { error: err?.message });
+      return Response.json({ success: false, error: err?.message || "digest run failed" }, { status: 500 });
+    }
+  }
+  return wrapHandler(handler)(req, context);
+};

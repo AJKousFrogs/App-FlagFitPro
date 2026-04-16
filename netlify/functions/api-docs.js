@@ -1,4 +1,4 @@
-import { createRuntimeV2Handler } from "./utils/runtime-v2-adapter.js";
+import { wrapHandler } from "./utils/lambda-compat.js";
 
 // Netlify Function: API Documentation
 // Provides interactive API documentation for the Flag Football app
@@ -669,4 +669,4 @@ function generateHtmlDocs(docs) {
 
 export const testHandler = handler;
 export { handler };
-export default createRuntimeV2Handler(handler);
+export default wrapHandler(handler);

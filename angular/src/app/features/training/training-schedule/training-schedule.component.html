@@ -4,7 +4,7 @@
         <app-page-header
           eyebrow="TRAINING"
           title="Training Schedule"
-          subtitle="Your sessions, organized by week."
+          subtitle="Your current schedule, calendar, and next sessions."
           icon="pi-calendar"
         >
           <app-button iconLeft="pi-plus" (clicked)="primaryAction()"
@@ -12,14 +12,52 @@
           >
         </app-page-header>
 
-        <app-card-shell title="Training Hub" headerIcon="pi-compass">
+        @if (merlinSessionId() && !entryContext()) {
+          <div class="merlin-return-link">
+            <app-button
+              variant="text"
+              iconLeft="pi-arrow-left"
+              routerLink="/chat"
+              [queryParams]="{ session: merlinSessionId(), draft: merlinReturnDraft(), from: 'training' }"
+            >
+              Back to Merlin
+            </app-button>
+          </div>
+        }
+
+        @if (entryContext(); as entryContextMessage) {
+          <div class="entry-context-banner" role="status" aria-live="polite">
+            <div class="entry-context-banner__icon">
+              <i class="pi pi-sparkles" aria-hidden="true"></i>
+            </div>
+            <div class="entry-context-banner__content">
+              <strong>{{ entryContextMessage.title }}</strong>
+              <p>{{ entryContextMessage.message }}</p>
+              @if (merlinSessionId()) {
+                <app-button
+                  variant="text"
+                  iconLeft="pi-arrow-left"
+                  routerLink="/chat"
+                  [queryParams]="{ session: merlinSessionId(), draft: merlinReturnDraft(), from: 'training' }"
+                >
+                  Return to Merlin
+                </app-button>
+              }
+            </div>
+            <button
+              type="button"
+              class="entry-context-banner__close"
+              (click)="dismissEntryContext()"
+              aria-label="Dismiss Merlin context"
+            >
+              Dismiss
+            </button>
+          </div>
+        }
+
+        <app-card-shell title="Related Tools" headerIcon="pi-compass">
           <div class="training-hub-grid">
-            <a routerLink="/todays-practice" class="training-hub-link">
-              <span class="training-hub-icon" aria-hidden="true"><i class="pi pi-calendar"></i></span>
-              <span class="training-hub-title">Today's Practice</span>
-              <span class="training-hub-subtitle">Log today’s session</span>
-            </a>
-            <a routerLink="/training/workspace" class="training-hub-link">
+            <a routerLink="/workout" class="training-hub-link">
               <span class="training-hub-icon" aria-hidden="true"><i class="pi pi-briefcase"></i></span>
               <span class="training-hub-title">Workout workspace</span>
               <span class="training-hub-subtitle">Custom workouts, plans & saved sessions</span>
@@ -63,7 +101,7 @@
             <div class="calendar-legend">
               <!-- Today indicator -->
               <p class="legend-today">
-                <i class="pi pi-circle legend-today-icon"></i>
+                <i class="pi pi-circle legend-today-icon" aria-hidden="true"></i>
                 Today: {{ today | date: "MMM d" }}
               </p>
 
@@ -72,23 +110,23 @@
                 <span class="legend-label">Legend:</span>
                 <div class="legend-items">
                   <span class="legend-item">
-                    <i class="pi pi-circle-fill legend-completed"></i>
+                    <i class="pi pi-circle-fill legend-completed" aria-hidden="true"></i>
                     Completed
                   </span>
                   <span class="legend-item">
-                    <i class="pi pi-circle legend-scheduled"></i>
+                    <i class="pi pi-circle legend-scheduled" aria-hidden="true"></i>
                     Scheduled
                   </span>
                   <span class="legend-item">
-                    <i class="pi pi-circle-fill legend-in-progress"></i>
+                    <i class="pi pi-circle-fill legend-in-progress" aria-hidden="true"></i>
                     In Progress
                   </span>
                   <span class="legend-item">
-                    <i class="pi pi-times-circle legend-missed"></i>
+                    <i class="pi pi-times-circle legend-missed" aria-hidden="true"></i>
                     Missed
                   </span>
                   <span class="legend-item">
-                    <i class="pi pi-refresh legend-replaced"></i>
+                    <i class="pi pi-refresh legend-replaced" aria-hidden="true"></i>
                     Replaced
                   </span>
                 </div>
@@ -109,13 +147,13 @@
                 <app-button
                   [variant]="viewMode() === 'week' ? 'primary' : 'outlined'"
                   size="sm"
-                  (clicked)="viewMode.set('week'); loadSessions()"
+                  (clicked)="setViewMode('week')"
                   >Week</app-button
                 >
                 <app-button
                   [variant]="viewMode() === 'month' ? 'primary' : 'outlined'"
                   size="sm"
-                  (clicked)="viewMode.set('month'); loadSessions()"
+                  (clicked)="setViewMode('month')"
                   >Month</app-button
                 >
               </div>
@@ -142,12 +180,12 @@
                 </p>
                 @if (currentWeather()) {
                   <p class="weather-alert__conditions">
-                    <i class="pi pi-cloud"></i>
+                    <i class="pi pi-cloud" aria-hidden="true"></i>
                     Current: {{ currentWeather()?.temp }}°F,
                     {{ currentWeather()?.condition }}
                     @if (currentWeather()?.windSpeed) {
                       <span class="weather-wind">
-                        <i class="pi pi-arrows-h"></i>
+                        <i class="pi pi-arrows-h" aria-hidden="true"></i>
                         {{ currentWeather()?.windSpeed }} mph wind
                       </span>
                     }
@@ -191,13 +229,13 @@
                   </h3>
                   <div class="substitute-workout__badges">
                     <span class="badge badge--info">
-                      <i class="pi pi-map-marker"></i>
+                      <i class="pi pi-map-marker" aria-hidden="true"></i>
                       {{
                         getLocationLabel(suggestedSubstitute()?.locationType)
                       }}
                     </span>
                     <span class="badge badge--secondary">
-                      <i class="pi pi-clock"></i>
+                      <i class="pi pi-clock" aria-hidden="true"></i>
                       {{ suggestedSubstitute()?.durationMinutes }} min
                     </span>
                     <span class="badge badge--secondary">
@@ -214,7 +252,7 @@
                 <!-- Equipment Needed -->
                 @if (suggestedSubstitute()?.equipmentNeeded?.length) {
                   <div class="substitute-workout__equipment">
-                    <h4><i class="pi pi-box"></i> Equipment Needed</h4>
+                    <h4><i class="pi pi-box" aria-hidden="true"></i> Equipment Needed</h4>
                     <div class="equipment-list">
                       @for (
                         item of suggestedSubstitute()?.equipmentNeeded;
@@ -229,13 +267,13 @@
                 <!-- Workout Structure Preview -->
                 <div class="substitute-workout__preview">
                   <div class="workout-phase">
-                    <h4><i class="pi pi-play"></i> Warm-Up</h4>
+                    <h4><i class="pi pi-play" aria-hidden="true"></i> Warm-Up</h4>
                     <p>{{ getWarmUpPreview(suggestedSubstitute()?.warmUp) }}</p>
                   </div>
 
                   <div class="workout-phase">
                     <h4>
-                      <i class="pi pi-bolt"></i> Main Workout ({{
+                      <i class="pi pi-bolt" aria-hidden="true"></i> Main Workout ({{
                         suggestedSubstitute()?.mainWorkout?.length
                       }}
                       exercises)
@@ -273,7 +311,7 @@
                   </div>
 
                   <div class="workout-phase">
-                    <h4><i class="pi pi-stop"></i> Cool-Down</h4>
+                    <h4><i class="pi pi-stop" aria-hidden="true"></i> Cool-Down</h4>
                     <p>
                       {{ getCoolDownPreview(suggestedSubstitute()?.coolDown) }}
                     </p>
@@ -283,7 +321,7 @@
                 <!-- Training Goals -->
                 @if (suggestedSubstitute()?.trainingGoals?.length) {
                   <div class="substitute-workout__goals">
-                    <h4><i class="pi pi-flag"></i> Training Goals</h4>
+                    <h4><i class="pi pi-flag" aria-hidden="true"></i> Training Goals</h4>
                     <div class="goals-list">
                       @for (
                         goal of suggestedSubstitute()?.trainingGoals;
@@ -464,7 +502,7 @@
                         {{ session.type }}
                         @if (session.status === "replaced") {
                           <span class="status-pill status-pill--replaced">
-                            <i class="pi pi-refresh"></i>
+                            <i class="pi pi-refresh" aria-hidden="true"></i>
                             Replaced
                           </span>
                         }
@@ -472,7 +510,7 @@
                           !session.isTemplate && session.status === "completed"
                         ) {
                           <span class="status-pill status-pill--logged">
-                            <i class="pi pi-check"></i>
+                            <i class="pi pi-check" aria-hidden="true"></i>
                             Logged
                           </span>
                         }
@@ -481,7 +519,7 @@
                         }
                         @if (session.isTeamPractice) {
                           <span class="team-badge">
-                            <i class="pi pi-users"></i> Team practice
+                            <i class="pi pi-users" aria-hidden="true"></i> Team practice
                           </span>
                         }
                         @if (session.isOutdoor && session.weatherSensitive) {
@@ -489,7 +527,7 @@
                             class="outdoor-badge"
                             [title]="'Weather-sensitive outdoor session'"
                           >
-                            <i class="pi pi-sun"></i>
+                            <i class="pi pi-sun" aria-hidden="true"></i>
                           </span>
                         }
                       </h4>

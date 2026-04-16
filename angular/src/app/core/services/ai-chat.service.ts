@@ -1,7 +1,8 @@
 import { Injectable, inject, signal, computed } from "@angular/core";
-import { Observable, of } from "rxjs";
+import { Observable, of, from } from "rxjs";
 import { catchError, map, tap } from "rxjs";
 import { ApiService, API_ENDPOINTS } from "./api.service";
+import { SupabaseService } from "./supabase.service";
 import { getErrorMessage } from "../../shared/utils/error.utils";
 import {
   extractApiPayload,
@@ -106,11 +107,20 @@ interface ChatApiResponse {
  * Provides Merlin AI coaching chat functionality with safety tiers.
  * Uses Groq LLM (FREE tier: 14,400 requests/day) on the backend.
  */
+/** Maximum messages stored in local session before older ones are summarized. */
+const MAX_SESSION_MESSAGES = 20;
+
+/** Rate limit: at most this many user messages within the sliding window. */
+const RATE_LIMIT_MAX = 5;
+/** Rate limit window in milliseconds. */
+const RATE_LIMIT_WINDOW_MS = 60_000; // 1 minute
+
 @Injectable({
   providedIn: "root",
 })
 export class AiChatService {
   private apiService = inject(ApiService);
+  private supabase = inject(SupabaseService);
 
   // State - All using signals for consistent reactivity
   private currentSession = signal<ChatSession | null>(null);
@@ -125,83 +135,232 @@ export class AiChatService {
   // For backward compatibility with components using Observable pattern
   readonly currentSession$ = computed(() => this.currentSession());
 
+  /** Timestamps of recent user messages — used for client-side rate limiting. */
+  private readonly recentMessageTimestamps: number[] = [];
+
   /**
-   * Send a message to Merlin AI
+   * Send a message to Merlin AI using server-sent events streaming.
+   *
+   * Enforces two guards before hitting the API:
+   *  1. Client-side rate limit (RATE_LIMIT_MAX messages / RATE_LIMIT_WINDOW_MS)
+   *  2. Context window management (trims old messages when session grows large)
+   *
+   * The backend streams tokens via SSE. A placeholder assistant message is
+   * added immediately and its `content` is updated live as tokens arrive.
+   * The Observable emits the finalised ChatMessage when streaming completes.
    */
   sendMessage(request: ChatRequest): Observable<ChatMessage> {
+    // ── Rate limit check ─────────────────────────────────────────────────────
+    const now = Date.now();
+    while (
+      this.recentMessageTimestamps.length > 0 &&
+      this.recentMessageTimestamps[0] < now - RATE_LIMIT_WINDOW_MS
+    ) {
+      this.recentMessageTimestamps.shift();
+    }
+
+    if (this.recentMessageTimestamps.length >= RATE_LIMIT_MAX) {
+      const oldestMs = this.recentMessageTimestamps[0];
+      const retryInSec = Math.ceil((oldestMs + RATE_LIMIT_WINDOW_MS - now) / 1000);
+      const rateLimitMsg: ChatMessage = {
+        id: `rate-limit-${now}`,
+        role: "assistant",
+        content: `You're sending messages too fast. Please wait ${retryInSec} second${retryInSec !== 1 ? "s" : ""} before trying again.`,
+        timestamp: new Date(),
+        riskLevel: "low",
+      };
+      return of(rateLimitMsg);
+    }
+
+    this.recentMessageTimestamps.push(now);
     this.loading.set(true);
     this.error.set(null);
 
+    // ── Context window management ─────────────────────────────────────────────
+    this.trimSessionContext();
+
     // Add user message to local state immediately
     const userMessage: ChatMessage = {
-      id: `user-${Date.now()}`,
+      id: `user-${now}`,
       role: "user",
       content: request.message,
       timestamp: new Date(),
     };
     this.addMessageToSession(userMessage);
 
-    return this.apiService
-      .post<ChatApiResponse>(API_ENDPOINTS.aiChat.send, request)
-      .pipe(
-        map((response) => {
-          const data = extractApiPayload<ChatApiResponse>(response);
-          const wrappedFailure =
-            isApiResponse(response) && !isSuccessfulApiResponse(response);
-          if (wrappedFailure || !data) {
-            throw new Error(
-              isApiResponse(response)
-                ? response.error || "Failed to get AI response"
-                : "Failed to get AI response",
-            );
+    // ── Streaming via SSE ─────────────────────────────────────────────────────
+    return from(this.streamMessage(request)).pipe(
+      tap(() => this.loading.set(false)),
+      catchError((err) => {
+        this.loading.set(false);
+        const errorMessage = getErrorMessage(err, "Failed to send message");
+        this.error.set(errorMessage);
+
+        const fallbackMessage: ChatMessage = {
+          id: `error-${Date.now()}`,
+          role: "assistant",
+          content: "I'm having trouble connecting right now. Please try again in a moment, or consult your coach for immediate assistance.",
+          timestamp: new Date(),
+          riskLevel: "low",
+        };
+        this.addMessageToSession(fallbackMessage);
+        return of(fallbackMessage);
+      }),
+    );
+  }
+
+  /**
+   * Core SSE streaming implementation.
+   * Creates a placeholder message, streams tokens into it, finalises metadata.
+   */
+  private async streamMessage(request: ChatRequest): Promise<ChatMessage> {
+    const token = await this.supabase.waitForInit().then(() => this.supabase.getToken());
+
+    const placeholderId = `assistant-${Date.now()}`;
+    const placeholder: ChatMessage = {
+      id: placeholderId,
+      role: "assistant",
+      content: "",
+      timestamp: new Date(),
+      riskLevel: "low",
+    };
+    this.addMessageToSession(placeholder);
+
+    const response = await fetch(this.apiService.buildUrl(API_ENDPOINTS.aiChat.send), {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Accept": "text/event-stream",
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
+      body: JSON.stringify(request),
+    });
+
+    if (!response.ok || !response.body) {
+      throw new Error(`AI service returned ${response.status}`);
+    }
+
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder();
+    let buffer = "";
+    let accumulatedContent = "";
+    let finalMessage: ChatMessage = placeholder;
+
+    try {
+      while (true) {
+        const { value, done } = await reader.read();
+        if (done) break;
+
+        buffer += decoder.decode(value, { stream: true });
+        const lines = buffer.split("\n");
+        buffer = lines.pop() ?? "";
+
+        for (const line of lines) {
+          const trimmed = line.trim();
+          if (!trimmed.startsWith("data: ")) continue;
+
+          let event: { type: string; token?: string; payload?: ChatApiResponse; message?: string };
+          try {
+            event = JSON.parse(trimmed.slice(6));
+          } catch {
+            continue;
           }
 
-          const riskLevel = this.normalizeRiskLevel(data.risk_level);
-          const sessionId = data.chat_session_id || data.session_id || "";
+          if (event.type === "token" && event.token) {
+            accumulatedContent += event.token;
+            // Update the placeholder message in-place so the UI updates reactively
+            this.updateMessageContent(placeholderId, accumulatedContent);
 
-          // Create assistant message
-          const assistantMessage: ChatMessage = {
-            id: data.message_id || `assistant-${Date.now()}`,
-            role: "assistant",
-            content:
-              data.answer_markdown ||
-              "I couldn't generate a response right now. Please try again.",
-            timestamp: new Date(),
-            riskLevel,
-            disclaimer: data.disclaimer,
-            citations: Array.isArray(data.citations) ? data.citations : [],
-            suggestedActions: Array.isArray(data.suggested_actions)
-              ? data.suggested_actions
-              : [],
-            metadata: data.metadata,
-          };
+          } else if (event.type === "done" && event.payload) {
+            const p = event.payload;
+            const riskLevel = this.normalizeRiskLevel(p.risk_level);
+            finalMessage = {
+              id: p.message_id || placeholderId,
+              role: "assistant",
+              content: p.answer_markdown || accumulatedContent,
+              timestamp: new Date(),
+              riskLevel,
+              disclaimer: p.disclaimer,
+              citations: Array.isArray(p.citations) ? p.citations : [],
+              suggestedActions: Array.isArray(p.suggested_actions) ? p.suggested_actions : [],
+              metadata: p.metadata,
+            };
+            // Replace the placeholder with the final message
+            this.replaceMessage(placeholderId, finalMessage);
+            if (p.chat_session_id) this.updateSessionId(p.chat_session_id);
 
-          // Update session
-          this.addMessageToSession(assistantMessage);
-          this.updateSessionId(sessionId);
+          } else if (event.type === "error") {
+            throw new Error(event.message ?? "Stream error");
+          }
+        }
+      }
+    } finally {
+      reader.releaseLock();
+    }
 
-          return assistantMessage;
-        }),
-        tap(() => this.loading.set(false)),
-        catchError((err) => {
-          this.loading.set(false);
-          const errorMessage = getErrorMessage(err, "Failed to send message");
-          this.error.set(errorMessage);
+    return finalMessage;
+  }
 
-          // Return fallback message
-          const fallbackMessage: ChatMessage = {
-            id: `error-${Date.now()}`,
-            role: "assistant",
-            content:
-              "I'm having trouble connecting right now. Please try again in a moment, or consult your coach for immediate assistance.",
-            timestamp: new Date(),
-            riskLevel: "low",
-          };
-          this.addMessageToSession(fallbackMessage);
+  /**
+   * Update the `content` field of an existing message in the session.
+   * Used to stream tokens into the placeholder message.
+   */
+  private updateMessageContent(id: string, content: string): void {
+    this.currentSession.update((session) => {
+      if (!session) return session;
+      return {
+        ...session,
+        messages: session.messages.map((m) =>
+          m.id === id ? { ...m, content } : m,
+        ),
+      };
+    });
+  }
 
-          return of(fallbackMessage);
-        }),
-      );
+  /**
+   * Replace the placeholder message with the fully-resolved ChatMessage.
+   */
+  private replaceMessage(placeholderId: string, replacement: ChatMessage): void {
+    this.currentSession.update((session) => {
+      if (!session) return session;
+      return {
+        ...session,
+        messages: session.messages.map((m) =>
+          m.id === placeholderId ? replacement : m,
+        ),
+      };
+    });
+  }
+
+  /**
+   * Trim session context when it exceeds MAX_SESSION_MESSAGES.
+   *
+   * Strategy: keep the system context summary marker + the most recent half
+   * of messages. Older messages are collapsed into a single "[Earlier context
+   * omitted — N messages]" placeholder so the user can see history was trimmed.
+   */
+  private trimSessionContext(): void {
+    const session = this.currentSession();
+    if (!session || session.messages.length < MAX_SESSION_MESSAGES) return;
+
+    const keepCount = Math.floor(MAX_SESSION_MESSAGES / 2);
+    const dropped = session.messages.length - keepCount;
+
+    const contextMarker: ChatMessage = {
+      id: `context-trim-${Date.now()}`,
+      role: "assistant",
+      content:
+        `_[${dropped} earlier message${dropped !== 1 ? "s" : ""} omitted to stay within context limits. Start a new session to reset.]_`,
+      timestamp: new Date(),
+      riskLevel: "low",
+    };
+
+    const recentMessages = session.messages.slice(-keepCount);
+
+    this.currentSession.update((current) => {
+      if (!current) return current;
+      return { ...current, messages: [contextMarker, ...recentMessages] };
+    });
   }
 
   /**
@@ -213,6 +372,7 @@ export class AiChatService {
       startedAt: new Date(),
       messages: [],
     });
+    this.recentMessageTimestamps.length = 0; // Reset rate limit window on new session
     this.error.set(null);
   }
 

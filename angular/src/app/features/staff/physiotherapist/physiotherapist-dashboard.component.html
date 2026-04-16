@@ -24,7 +24,7 @@
           <div class="stats-grid">
             <div class="stat-card">
               <div class="stat-icon athletes">
-                <i class="pi pi-users"></i>
+                <i class="pi pi-users" aria-hidden="true"></i>
               </div>
               <div class="stat-content stat-block__content">
                 <span class="stat-block__value">{{ athletes().length }}</span>
@@ -33,7 +33,7 @@
             </div>
             <div class="stat-card">
               <div class="stat-icon injuries">
-                <i class="pi pi-exclamation-circle"></i>
+                <i class="pi pi-exclamation-circle" aria-hidden="true"></i>
               </div>
               <div class="stat-content stat-block__content">
                 <span class="stat-block__value">{{ activeInjuryCount() }}</span>
@@ -42,7 +42,7 @@
             </div>
             <div class="stat-card">
               <div class="stat-icon rtp">
-                <i class="pi pi-sync"></i>
+                <i class="pi pi-sync" aria-hidden="true"></i>
               </div>
               <div class="stat-content stat-block__content">
                 <span class="stat-block__value">{{ rtpCount() }}</span>
@@ -51,7 +51,7 @@
             </div>
             <div class="stat-card">
               <div class="stat-icon risk">
-                <i class="pi pi-exclamation-triangle"></i>
+                <i class="pi pi-exclamation-triangle" aria-hidden="true"></i>
               </div>
               <div class="stat-content stat-block__content">
                 <span class="stat-block__value">{{ highRiskCount() }}</span>
@@ -476,7 +476,7 @@
 
               <div class="risk-category">
                 <h4>
-                  <i class="pi pi-exclamation-circle"></i> Common Injuries
+                  <i class="pi pi-exclamation-circle" aria-hidden="true"></i> Common Injuries
                 </h4>
                 <ul>
                   @for (
@@ -489,7 +489,7 @@
               </div>
 
               <div class="risk-category">
-                <h4><i class="pi pi-exclamation-triangle"></i> Risk Factors</h4>
+                <h4><i class="pi pi-exclamation-triangle" aria-hidden="true"></i> Risk Factors</h4>
                 <ul>
                   @for (
                     factor of viewingPositionRisk()!.risks.riskFactors;
@@ -501,7 +501,7 @@
               </div>
 
               <div class="risk-category">
-                <h4><i class="pi pi-search"></i> Screening Focus</h4>
+                <h4><i class="pi pi-search" aria-hidden="true"></i> Screening Focus</h4>
                 <ul>
                   @for (
                     focus of viewingPositionRisk()!.risks.screeningFocus;

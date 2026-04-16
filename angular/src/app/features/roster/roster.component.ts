@@ -33,6 +33,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   DestroyRef,
+  ElementRef,
   OnInit,
   computed,
   inject,
@@ -127,6 +128,8 @@ import {
   styleUrl: "./roster.component.scss",
 })
 export class RosterComponent implements OnInit {
+  readonly rosterViews = ["all", "invites", "staff", "players"] as const;
+
   // Services
   readonly rosterService = inject(RosterService);
   private readonly metricsService = inject(PlayerMetricsService);
@@ -134,6 +137,7 @@ export class RosterComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly elementRef = inject<ElementRef<HTMLElement>>(ElementRef);
   private toastService = inject(ToastService);
   private confirmDialog = inject(ConfirmDialogService);
 
@@ -162,6 +166,7 @@ export class RosterComponent implements OnInit {
   searchQuery = signal("");
   positionFilter: string | null = null;
   statusFilter: string | null = null;
+  activeRosterView = signal<(typeof this.rosterViews)[number]>("all");
 
   // Options
   // Expose utility functions
@@ -208,6 +213,31 @@ export class RosterComponent implements OnInit {
     const countryStat = stats.find((s) => s.label === "Countries");
     return `Manage your team • ${countryStat?.value || 0} countries represented`;
   });
+
+  readonly hasStaffSection = computed(
+    () => this.rosterService.coachingStaff().length > 0,
+  );
+  readonly hasInvitationSection = computed(
+    () =>
+      this.rosterService.canManageRoster() &&
+      this.rosterService.pendingInvitations().length > 0,
+  );
+  readonly showInvitationSection = computed(
+    () =>
+      this.hasInvitationSection() &&
+      (this.activeRosterView() === "all" ||
+        this.activeRosterView() === "invites"),
+  );
+  readonly showStaffSection = computed(
+    () =>
+      this.hasStaffSection() &&
+      (this.activeRosterView() === "all" || this.activeRosterView() === "staff"),
+  );
+  readonly showPlayersSection = computed(
+    () =>
+      this.activeRosterView() === "all" ||
+      this.activeRosterView() === "players",
+  );
 
   filteredPlayers = computed(() => {
     let players = this.rosterService.allPlayers();
@@ -308,6 +338,9 @@ export class RosterComponent implements OnInit {
     this.hasPageError.set(false);
 
     await this.rosterService.loadRosterData();
+    if (this.rosterService.canManageRoster()) {
+      await this.rosterService.loadPendingInvitations();
+    }
 
     if (this.rosterService.error()) {
       this.hasPageError.set(true);
@@ -320,9 +353,16 @@ export class RosterComponent implements OnInit {
   private applyRouteState(queryParamMap: ParamMap): void {
     const playerId = queryParamMap.get("player");
     const routeFilter = queryParamMap.get("filter");
+    const routeSection = queryParamMap.get("section");
 
     if (this.isPlayerStatus(routeFilter)) {
       this.statusFilter = routeFilter;
+    }
+
+    if (this.isRosterView(routeSection)) {
+      this.activeRosterView.set(routeSection);
+    } else {
+      this.activeRosterView.set("all");
     }
 
     if (!playerId) {
@@ -353,8 +393,31 @@ export class RosterComponent implements OnInit {
     );
   }
 
+  private isRosterView(
+    value: string | null,
+  ): value is (typeof this.rosterViews)[number] {
+    return (
+      value === "all" ||
+      value === "invites" ||
+      value === "staff" ||
+      value === "players"
+    );
+  }
+
   retryLoad(): void {
     this.initializePage();
+  }
+
+  setRosterView(view: (typeof this.rosterViews)[number]): void {
+    this.activeRosterView.set(view);
+    void this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: {
+        section: view === "all" ? null : view,
+      },
+      queryParamsHandling: "merge",
+      replaceUrl: true,
+    });
   }
 
   // Player CRUD
@@ -484,6 +547,49 @@ export class RosterComponent implements OnInit {
 
   clearSelection(): void {
     this.selectedPlayerIds.set(new Set());
+  }
+
+  scrollToSection(
+    sectionId: "invites-section" | "staff-section" | "players-section",
+  ): void {
+    const rosterContainer = this.elementRef.nativeElement;
+    const section = rosterContainer.querySelector(`#${sectionId}`) as
+      | HTMLElement
+      | null;
+
+    if (!section) {
+      return;
+    }
+
+    section.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
+  async resendInvitation(invitationId: string, email: string): Promise<void> {
+    await this.runRosterMutation({
+      request: () => this.rosterService.resendInvitation(invitationId),
+      successMessage: `Invitation resent to ${email}`,
+      errorMessage: "Failed to resend invitation",
+    });
+  }
+
+  async cancelInvitation(invitationId: string, email: string): Promise<void> {
+    const confirmed = await this.confirmDialog.confirm({
+      message: `Cancel the invitation for ${email}?`,
+      title: "Cancel Invitation",
+      icon: "pi pi-exclamation-triangle",
+      acceptSeverity: "danger",
+      rejectSeverity: "secondary",
+      defaultFocus: "reject",
+    });
+    if (!confirmed) {
+      return;
+    }
+
+    await this.runRosterMutation({
+      request: () => this.rosterService.cancelInvitation(invitationId),
+      successMessage: `Invitation cancelled for ${email}`,
+      errorMessage: "Failed to cancel invitation",
+    });
   }
 
   openBulkStatusDialog(): void {

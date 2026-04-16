@@ -1,9 +1,10 @@
-import { createRuntimeV2Handler } from "./utils/runtime-v2-adapter.js";
+import { wrapHandler } from "./utils/lambda-compat.js";
 import { supabaseAdmin, checkEnvVars } from "./supabase-client.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
 import { classifyRiskLevel, classifyIntent as _classifyIntent, generateSafeResponse, filterContent, filterSourcesByEvidence, RISK_LEVELS, INTENT_TYPES, classifyWithConfidence, applyYouthRestrictions as _applyYouthRestrictions, generateBlockedYouthResponse, AGE_GROUPS as _AGE_GROUPS, YOUTH_RESTRICTED_TOPICS as _YOUTH_RESTRICTED_TOPICS } from "./utils/ai-safety-classifier.js";
-import { isGroqConfigured, generateCoachingResponse, generateClarifyingQuestion as _generateClarifyingQuestion } from "./utils/groq-client.js";
+import { isGroqConfigured, generateCoachingResponse, generateCoachingResponseStream, generateClarifyingQuestion as _generateClarifyingQuestion } from "./utils/groq-client.js";
+import { authenticateRequest } from "./utils/auth-helper.js";
 import { processSmartQuery, searchKnowledgeHybrid, recordFeedbackWithLearning as _recordFeedbackWithLearning, getLearnedPreferences as _getLearnedPreferences, getPendingCheckins as _getPendingCheckins, updateCheckinStatus, buildCheckinMessage, summarizeConversation as _summarizeConversation, ROUTING_ACTIONS } from "./utils/smart-ai-service.js";
 import { isEmbeddingServiceAvailable } from "./utils/embedding-service.js";
 import { guardMerlinRequest } from "./utils/merlin-guard.js";
@@ -263,6 +264,7 @@ async function getUserContext(userId) {
     todayProtocol: null, // NEW: Current day's prescription
     recentSessions: [], // NEW: Last few sessions for context
     latestWellness: null, // NEW: Sleep, energy, etc
+    nutritionPlan: null, // NEW: Active nutrition targets for grounded fueling advice
   };
 
   try {
@@ -386,7 +388,21 @@ async function getUserContext(userId) {
 
     context.recentGames = recentGames || [];
 
-    // 6c. Get active recovery protocols
+    // 6c. Get active nutrition plan for fueling and recovery guidance
+    const { data: nutritionPlan } = await supabaseAdmin
+      .from("nutrition_plans")
+      .select(
+        "plan_name, target_calories, protein_g, carbs_g, fat_g, hydration_goal_liters, meal_timing_notes",
+      )
+      .eq("user_id", userId)
+      .eq("is_active", true)
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+
+    context.nutritionPlan = nutritionPlan || null;
+
+    // 6d. Get active recovery protocols
     const { data: activeRecovery } = await supabaseAdmin
       .from("recovery_blocks")
       .select("protocol_type, block_date, max_load_percent, focus")
@@ -402,7 +418,7 @@ async function getUserContext(userId) {
       };
     }
 
-    // 6d. Get active load cap
+    // 6e. Get active load cap
     const { data: loadCap } = await supabaseAdmin
       .from("load_caps")
       .select("sessions_remaining, max_load_percent, reason")
@@ -421,7 +437,7 @@ async function getUserContext(userId) {
       };
     }
 
-    // 6e. Calculate data confidence
+    // 6f. Calculate data confidence
     const missingInputs = [];
     const staleData = [];
     let confidenceScore = 1.0;
@@ -1465,7 +1481,7 @@ async function getSessionMessages(userId, sessionId) {
 
   const { data: messages, error: messagesError } = await supabaseAdmin
     .from("ai_messages")
-    .select("id, role, content, created_at, risk_level, metadata")
+    .select("id, role, content, created_at, risk_level, intent, citations, feedback_helpful, coach_reviewed_at, coach_reviewed_by, metadata")
     .eq("session_id", sessionId)
     .order("created_at", { ascending: true });
 
@@ -1483,8 +1499,88 @@ async function getSessionMessages(userId, sessionId) {
     content: message.content,
     timestamp: message.created_at,
     riskLevel: message.risk_level || null,
+    intent: message.intent || null,
+    citations: Array.isArray(message.citations) ? message.citations : null,
+    feedbackHelpful:
+      typeof message.feedback_helpful === "boolean"
+        ? message.feedback_helpful
+        : null,
+    coachReviewedAt: message.coach_reviewed_at || null,
+    coachReviewedBy: message.coach_reviewed_by || null,
     metadata: message.metadata || null,
   }));
+}
+
+async function getRecentSessions(userId, limit = 5) {
+  const safeLimit = Math.max(1, Math.min(limit, 10));
+  const { data: sessions, error: sessionsError } = await supabaseAdmin
+    .from("ai_chat_sessions")
+    .select("id, started_at")
+    .eq("user_id", userId)
+    .order("started_at", { ascending: false })
+    .limit(safeLimit);
+
+  if (sessionsError) {
+    logger.error("ai_chat_recent_sessions_fetch_failed", sessionsError, {
+      user_id: userId,
+    });
+    throw new Error("Failed to load recent chat sessions");
+  }
+
+  if (!sessions || sessions.length === 0) {
+    return [];
+  }
+
+  const sessionIds = sessions.map((session) => session.id);
+  const { data: messages, error: messagesError } = await supabaseAdmin
+    .from("ai_messages")
+    .select("id, session_id, role, content, created_at, intent")
+    .in("session_id", sessionIds)
+    .order("created_at", { ascending: false });
+
+  if (messagesError) {
+    logger.error("ai_chat_recent_session_messages_fetch_failed", messagesError, {
+      user_id: userId,
+    });
+    throw new Error("Failed to load recent chat sessions");
+  }
+
+  const previewBySession = new Map();
+  const countBySession = new Map();
+  const topicIntentBySession = new Map();
+
+  for (const message of messages || []) {
+    countBySession.set(
+      message.session_id,
+      (countBySession.get(message.session_id) || 0) + 1,
+    );
+
+    if (!previewBySession.has(message.session_id)) {
+      previewBySession.set(message.session_id, message);
+    }
+
+    if (
+      message.role === "assistant" &&
+      message.intent &&
+      !topicIntentBySession.has(message.session_id)
+    ) {
+      topicIntentBySession.set(message.session_id, message.intent);
+    }
+  }
+
+  return sessions.map((session) => {
+    const preview = previewBySession.get(session.id);
+    return {
+      id: session.id,
+      startedAt: session.started_at,
+      messageCount: countBySession.get(session.id) || 0,
+      preview: preview?.content || "",
+      previewRole: preview?.role || null,
+      previewIntent:
+        topicIntentBySession.get(session.id) || preview?.intent || null,
+      previewCreatedAt: preview?.created_at || null,
+    };
+  });
 }
 
 /**
@@ -1877,6 +1973,117 @@ function extractSearchKeywords(query) {
   return words.length > 0 ? words : [query];
 }
 
+function detectKnowledgeBias(goalFocus, query) {
+  const lowerQuery = query.toLowerCase();
+
+  if (
+    goalFocus === "nutrition_guidance" ||
+    /(nutrition|meal|food|hydrate|hydration|supplement|protein|carb|electrolyte|fuel)/.test(
+      lowerQuery,
+    )
+  ) {
+    return {
+      categories: ["nutrition", "supplement", "recovery", "recovery_method"],
+      semanticWeight: 0.35,
+    };
+  }
+
+  if (
+    goalFocus === "recovery_guidance" ||
+    /(recovery|sleep|sore|fatigue|pain|injury prevention)/.test(lowerQuery)
+  ) {
+    return {
+      categories: ["recovery", "recovery_method", "injury_prevention", "injury"],
+      semanticWeight: 0.45,
+    };
+  }
+
+  if (goalFocus === "training_guidance") {
+    return {
+      categories: ["training", "training_method", "technique"],
+      semanticWeight: isEmbeddingServiceAvailable() ? 0.7 : 0,
+    };
+  }
+
+  return {
+    categories: [],
+    semanticWeight: isEmbeddingServiceAvailable() ? 0.7 : 0,
+  };
+}
+
+async function getCategoryBiasedKnowledge(query, categories, riskLevel, limit = 5) {
+  if (!Array.isArray(categories) || categories.length === 0) {
+    return [];
+  }
+
+  const keywords = extractSearchKeywords(query);
+  const searchConditions = keywords
+    .slice(0, 5)
+    .map(
+      (kw) =>
+        `topic.ilike.%${kw}%,question.ilike.%${kw}%,answer.ilike.%${kw}%,summary.ilike.%${kw}%`,
+    )
+    .join(",");
+
+  const { data: entries, error } = await supabaseAdmin
+    .from("knowledge_base_entries")
+    .select(
+      `
+      id,
+      entry_type,
+      topic,
+      question,
+      answer,
+      summary,
+      supporting_articles,
+      evidence_strength,
+      consensus_level,
+      query_count,
+      updated_at
+    `,
+    )
+    .eq("is_merlin_approved", true)
+    .in("entry_type", categories)
+    .or(searchConditions)
+    .order("query_count", { ascending: false, nullsFirst: false })
+    .order("updated_at", { ascending: false, nullsFirst: false })
+    .limit(limit * 2);
+
+  if (error) {
+    logger.warn("ai_chat_category_biased_knowledge_failed", error, {
+      categories,
+      query,
+    });
+    return [];
+  }
+
+  const sources = (entries || []).map((e) => ({
+    id: e.id,
+    content: e.answer || e.summary || e.question || "",
+    topic: e.topic || e.question || "Knowledge Entry",
+    category: e.entry_type || "general",
+    source_type: "knowledge_base",
+    source_title: e.topic || e.question || "Knowledge Entry",
+    source_quality_score:
+      e.consensus_level === "high"
+        ? 0.9
+        : e.consensus_level === "moderate"
+          ? 0.7
+          : 0.5,
+    evidence_grade: mapEvidenceStrength(e.evidence_strength),
+    risk_level: null,
+    requires_professional: false,
+    url: Array.isArray(e.supporting_articles)
+      ? e.supporting_articles[0] || null
+      : null,
+    source_url: Array.isArray(e.supporting_articles)
+      ? e.supporting_articles[0] || null
+      : null,
+  }));
+
+  return filterSourcesByEvidence(sources, riskLevel).slice(0, limit);
+}
+
 /**
  * Search knowledge base for relevant content
  */
@@ -2128,6 +2335,10 @@ async function generateAIResponse(query, knowledge, userContext, riskLevel) {
   answer += primarySource.content;
 
   // Add personalization based on context
+  if (userContext.goalFocusPrompt) {
+    answer += `\n\n${userContext.goalFocusPrompt}`;
+  }
+
   if (userContext.position && riskLevel === RISK_LEVELS.LOW) {
     answer += `\n\nAs a ${userContext.position}, you'll want to pay extra attention to how this applies to your role on the field.`;
   }
@@ -2154,6 +2365,85 @@ async function generateAIResponse(query, knowledge, userContext, riskLevel) {
     answer,
     source: "knowledge_base",
   };
+}
+
+function normalizeConversationGoal(goal) {
+  if (typeof goal !== "string") {
+    return null;
+  }
+
+  const normalized = goal.trim().toLowerCase();
+  if (!normalized) {
+    return null;
+  }
+
+  const allowedGoals = new Set([
+    "nutrition_guidance",
+    "training_guidance",
+    "recovery_guidance",
+    "coach_strategy",
+    "performance_guidance",
+  ]);
+
+  return allowedGoals.has(normalized) ? normalized : null;
+}
+
+function normalizeTimeHorizon(timeHorizon) {
+  if (typeof timeHorizon !== "string") {
+    return "immediate";
+  }
+
+  const normalized = timeHorizon.trim().toLowerCase();
+  return ["immediate", "weekly", "monthly", "seasonal"].includes(normalized)
+    ? normalized
+    : "immediate";
+}
+
+function buildGoalFocusPrompt(goalFocus, timeHorizon) {
+  const horizonLabel =
+    {
+      immediate: "right now",
+      weekly: "over the next 7 days",
+      monthly: "over the next few weeks",
+      seasonal: "over the current season",
+    }[timeHorizon] || "right now";
+
+  switch (goalFocus) {
+    case "nutrition_guidance":
+      return `Keep the answer grounded in fueling, hydration, recovery nutrition, and approved evidence. Prioritize actions the athlete can use ${horizonLabel}.`;
+    case "training_guidance":
+      return `Focus on session structure, drills, training progression, and workload decisions. Emphasize what to do ${horizonLabel}.`;
+    case "recovery_guidance":
+      return `Prioritize recovery, soreness management, sleep, hydration, and safe return-to-training guidance ${horizonLabel}.`;
+    case "coach_strategy":
+      return `Frame the answer like a coach workflow: team planning, prioritization, roster decisions, and practical next actions ${horizonLabel}.`;
+    case "performance_guidance":
+      return `Focus on improving performance with specific, practical next steps ${horizonLabel}.`;
+    default:
+      return "";
+  }
+}
+
+function buildKnowledgeSearchQuery(message, goalFocus, timeHorizon) {
+  const expansions = [];
+
+  if (goalFocus === "nutrition_guidance") {
+    expansions.push("nutrition hydration fueling recovery");
+  } else if (goalFocus === "training_guidance") {
+    expansions.push("training drills workload session planning");
+  } else if (goalFocus === "recovery_guidance") {
+    expansions.push("recovery soreness sleep hydration injury prevention");
+  } else if (goalFocus === "coach_strategy") {
+    expansions.push("coach strategy planning roster practice");
+  } else if (goalFocus === "performance_guidance") {
+    expansions.push("performance speed agility conditioning");
+  }
+
+  if (timeHorizon && timeHorizon !== "immediate") {
+    expansions.push(timeHorizon);
+  }
+
+  return [message, ...expansions].filter(Boolean).join(" ");
 }
 
 // =====================================================
@@ -2403,6 +2693,14 @@ function generateSuggestedActions(
 ) {
   const actions = [];
   const position = userContext.position || "ALL";
+  const normalizedQuery = (query || "").toLowerCase();
+  const isNutritionQuery =
+    userContext.goalFocus === "nutrition_guidance" ||
+    /(eat|meal|nutrition|hydrate|hydration|protein|carb|calories|fuel|supplement|snack)/.test(
+      normalizedQuery,
+    );
+  const isHydrationFocused =
+    /hydrate|hydration|fluids|electrolyte|drink/.test(normalizedQuery);
 
   // High-risk: always suggest professional consultation (not a micro-session)
   if (riskLevel === RISK_LEVELS.HIGH) {
@@ -2636,6 +2934,34 @@ function generateSuggestedActions(
     });
   }
 
+  // Nutrition and fueling guidance: turn Merlin answers into product follow-through.
+  if (isNutritionQuery) {
+    if (userContext.nutritionPlan) {
+      actions.push({
+        type: "review_nutrition_targets",
+        reason: "Use your saved backend targets to turn guidance into a daily plan",
+        label: "Review Nutrition Targets",
+        isMicroSession: false,
+      });
+    }
+
+    actions.push({
+      type: "build_fueling_day",
+      reason: "Convert this advice into a practical fueling routine for today",
+      label: "Build Fueling Day",
+      isMicroSession: false,
+    });
+
+    actions.push({
+      type: "review_hydration_plan",
+      reason: isHydrationFocused
+        ? "Track hydration and electrolytes in your recovery flow"
+        : "Turn fueling guidance into a hydration plan",
+      label: "Review Hydration Plan",
+      isMicroSession: false,
+    });
+  }
+
   // General training query: suggest related content and simple warm-up
   if (riskLevel === RISK_LEVELS.LOW && actions.length < 2) {
     actions.push({
@@ -2689,7 +3015,7 @@ function generateSuggestedActions(
     });
   }
 
-  return actions;
+  return actions.slice(0, 3);
 }
 
 /**
@@ -3254,6 +3580,9 @@ const handler = async (event, context) => {
   const isAnalyzeContext =
     path.includes("/analyze-context") ||
     event.path.includes("/api/ai/analyze-context");
+  const isSessionListFetch =
+    event.httpMethod === "GET" &&
+    (path === "/sessions" || event.path.includes("/api/ai/chat/sessions"));
   const isSessionFetch =
     event.httpMethod === "GET" &&
     (path.includes("/session/") || event.path.includes("/api/ai/chat/session/"));
@@ -3282,9 +3611,23 @@ const handler = async (event, context) => {
       checkEnvVars();
 
       if (event.httpMethod === "GET") {
+        if (isSessionListFetch) {
+          try {
+            const sessions = await getRecentSessions(userId);
+            return createSuccessResponse({ sessions }, requestId);
+          } catch (error) {
+            return createErrorResponse(
+              error.message || "Failed to load recent chat sessions",
+              500,
+              "server_error",
+              requestId,
+            );
+          }
+        }
+
         if (!isSessionFetch || !sessionMatch?.[1]) {
           return createErrorResponse(
-            "GET is only supported for /api/ai/chat/session/:sessionId",
+            "GET is only supported for /api/ai/chat/sessions or /api/ai/chat/session/:sessionId",
             405,
             "method_not_allowed",
             requestId,
@@ -3402,8 +3745,7 @@ const handler = async (event, context) => {
         );
       }
 
-      const { message, session_id, team_id } = body;
-      // goal and time_horizon reserved for future personalization features
+      const { message, session_id, team_id, goal, time_horizon } = body;
 
       // Validate message
       if (!message || typeof message !== "string") {
@@ -3442,12 +3784,20 @@ const handler = async (event, context) => {
 
         // 3. Build user context for personalization
         const userContext = await getUserContext(userId);
+        const goalFocus = normalizeConversationGoal(goal);
+        const timeHorizon = normalizeTimeHorizon(time_horizon);
         if (team_id) {
           userContext.teamId = team_id;
         }
         userContext.stateGates = stateGates;
         userContext.position = stateGates.position || userContext.position;
         userContext.ageGroup = stateGates.ageGroup;
+        userContext.goalFocus = goalFocus;
+        userContext.timeHorizon = timeHorizon;
+        userContext.goalFocusPrompt = buildGoalFocusPrompt(
+          goalFocus,
+          timeHorizon,
+        );
 
         // 4. Phase 3: Get youth settings if applicable
         let youthSettings = null;
@@ -3679,12 +4029,34 @@ const handler = async (event, context) => {
         }
 
         // 10b. Use smart hybrid search (semantic + keyword) for knowledge
-        const knowledge =
+        const knowledgeQuery = buildKnowledgeSearchQuery(
+          normalizedMessage,
+          goalFocus,
+          timeHorizon,
+        );
+        const knowledgeBias = detectKnowledgeBias(
+          goalFocus,
+          normalizedMessage,
+        );
+        const biasedKnowledge = await getCategoryBiasedKnowledge(
+          knowledgeQuery,
+          knowledgeBias.categories,
+          classification.riskLevel,
+          5,
+        );
+        const fallbackKnowledge =
           smartResult.knowledge ||
-          (await searchKnowledgeHybrid(normalizedMessage, {
+          (await searchKnowledgeHybrid(knowledgeQuery, {
             limit: 5,
-            semanticWeight: isEmbeddingServiceAvailable() ? 0.7 : 0,
+            semanticWeight: knowledgeBias.semanticWeight,
           }));
+        const knowledge = [
+          ...biasedKnowledge,
+          ...(fallbackKnowledge || []),
+        ].filter(
+          (entry, index, array) =>
+            array.findIndex((candidate) => candidate.id === entry.id) === index,
+        ).slice(0, 5);
 
         // 10c. Add learned preferences and memory to context
         userContext.learnedPreferences = smartResult.learnedPreferences;
@@ -3998,4 +4370,363 @@ const handler = async (event, context) => {
 
 export const testHandler = handler;
 export { handler };
-export default createRuntimeV2Handler(handler);
+
+// ─── Native Netlify Functions v2 handler ─────────────────────────────────────
+//
+// POST requests with `Accept: text/event-stream` are handled here with
+// real-time SSE streaming (tokens appear as Groq generates them).
+//
+// All other requests (GET, non-streaming POST) fall through to the legacy
+// Lambda-style handler via the runtime-v2-adapter, preserving backward
+// compatibility with zero code changes in the business logic.
+//
+// SSE event format:
+//   data: {"type":"token","token":"…"}     — one per Groq token
+//   data: {"type":"done","payload":{…}}    — final payload (citations, actions…)
+//   data: {"type":"error","message":"…"}   — on failure
+// ─────────────────────────────────────────────────────────────────────────────
+
+const STREAM_CORS_HEADERS = {
+  "Content-Type": "text/event-stream; charset=utf-8",
+  "Cache-Control": "no-cache, no-transform",
+  "Connection": "keep-alive",
+  "X-Accel-Buffering": "no",   // disable Nginx buffering on Netlify infra
+};
+
+/**
+ * Encode an SSE event line.
+ * @param {object} payload
+ * @returns {Uint8Array}
+ */
+function sseEvent(payload) {
+  return new TextEncoder().encode(`data: ${JSON.stringify(payload)}\n\n`);
+}
+
+/**
+ * Run all pre-processing for a chat POST (auth, context, safety, knowledge).
+ * Returns the same data that the legacy handler assembles before calling
+ * generateAIResponse — extracted inline here to avoid duplicating logic.
+ *
+ * Returns null + streams an error event on failure.
+ */
+async function runPreProcessing(req, controller) {
+  // 1. Auth
+  const authHeader = req.headers.get("authorization") || req.headers.get("Authorization") || "";
+  const token = authHeader.startsWith("Bearer ") ? authHeader.slice(7) : "";
+  if (!token) {
+    controller.enqueue(sseEvent({ type: "error", message: "Authorization token required" }));
+    controller.close();
+    return null;
+  }
+
+  const fakeEvent = { headers: { authorization: authHeader } };
+  const authResult = await authenticateRequest(fakeEvent);
+  if (!authResult.success) {
+    controller.enqueue(sseEvent({ type: "error", message: "Invalid or expired token" }));
+    controller.close();
+    return null;
+  }
+
+  return { userId: authResult.user.id, token };
+}
+
+export default async (req) => {
+  const isStreamRequest =
+    req.method === "POST" &&
+    (req.headers.get("accept") || "").includes("text/event-stream");
+
+  if (!isStreamRequest) {
+    // ── Non-streaming path: delegate to legacy Lambda handler ────────────────
+    return wrapHandler(handler)(req);
+  }
+
+  // ── Streaming POST path ───────────────────────────────────────────────────
+  const encoder = new TextEncoder();
+  let controllerRef = null;
+
+  const stream = new ReadableStream({
+    async start(controller) {
+      controllerRef = controller;
+
+      try {
+        // Step 1: Auth
+        const auth = await runPreProcessing(req, controller);
+        if (!auth) return; // error already sent
+
+        const { userId } = auth;
+
+        // Step 2: Parse body
+        let body;
+        try {
+          body = await req.json();
+        } catch {
+          controller.enqueue(sseEvent({ type: "error", message: "Invalid JSON body" }));
+          controller.close();
+          return;
+        }
+
+        const { message, session_id, team_id, goal, time_horizon } = body;
+        if (!message || typeof message !== "string" || !message.trim()) {
+          controller.enqueue(sseEvent({ type: "error", message: "Message is required" }));
+          controller.close();
+          return;
+        }
+
+        const normalizedMessage = message.trim().substring(0, MAX_QUERY_LENGTH);
+
+        // Step 3: Merlin guard
+        const guardReq = { method: "POST", path: req.url, headers: Object.fromEntries(req.headers), body: JSON.stringify(body) };
+        const blocked = guardMerlinRequest(guardReq);
+        if (blocked?.statusCode === 403) {
+          controller.enqueue(sseEvent({ type: "error", message: "Request blocked" }));
+          controller.close();
+          return;
+        }
+
+        // Step 4: Check AI consent
+        const consent = await checkAiProcessingConsent(userId);
+        if (!consent) {
+          controller.enqueue(sseEvent({ type: "error", message: "AI processing consent not granted" }));
+          controller.close();
+          return;
+        }
+
+        // Step 5: Session + context (parallel where possible)
+        const [session, stateGates, userContext] = await Promise.all([
+          getOrCreateSession(userId, session_id || null),
+          buildAthleteStateGates(userId),
+          getUserContext(userId),
+        ]);
+
+        // Step 6: Conversation history + contexts
+        const [conversationHistory, conversationContexts, pendingFollowups] = await Promise.all([
+          getConversationHistory(session.id, 10),
+          getActiveConversationContexts(userId, 5),
+          getPendingFollowups(userId),
+        ]);
+
+        // Step 7: Youth settings
+        const youthSettings = stateGates.ageGroup !== "adult"
+          ? await getYouthSettings(userId)
+          : null;
+
+        // Step 8: Classification + safety
+        const enhancedClassification = await classifyWithConfidence(
+          normalizedMessage,
+          { ...userContext, stateGates, youthSettings },
+        );
+
+        if (enhancedClassification.isYouthBlocked) {
+          controller.enqueue(sseEvent({ type: "error", message: "This topic is restricted for your age group" }));
+          controller.close();
+          return;
+        }
+
+        let classification = classifyRiskLevel(normalizedMessage, userContext);
+        classification = applyStateGateEscalation(classification, stateGates);
+        classification = applyACWRSafetyOverride(classification, userContext, normalizedMessage);
+
+        // Step 9: ACWR blocked — swap plan (not streamed, it's a special response)
+        if (classification.acwrOverride) {
+          const swapResponse = await generateACWRBlockedResponse(
+            normalizedMessage,
+            classification,
+            userContext,
+          );
+          const safeResponse = generateSafeResponse(
+            classification.riskLevel,
+            swapResponse.answer,
+            swapResponse.citations || [],
+            { requiresProfessional: true, acwrOverride: true, acwrData: classification.acwrData },
+          );
+          const messageId = await saveChatMessage(session.id, userId, normalizedMessage, safeResponse, classification);
+          if (messageId) {
+            await createCoachInboxItem(messageId, userId, normalizedMessage, classification, stateGates);
+          }
+          controller.enqueue(sseEvent({
+            type: "done",
+            payload: {
+              answer_markdown: safeResponse.answer,
+              citations: safeResponse.citations || [],
+              risk_level: safeResponse.riskLevel,
+              disclaimer: safeResponse.disclaimer || null,
+              suggested_actions: safeResponse.suggestedActions || [],
+              chat_session_id: session.id,
+              message_id: messageId || null,
+              is_swap_plan: true,
+              acwr_safety: {
+                blocked: true,
+                reason: classification.acwrBlockReason,
+                current_acwr: classification.acwrData?.acwr,
+                risk_zone: classification.acwrData?.riskZone,
+              },
+            },
+          }));
+          controller.close();
+          return;
+        }
+
+        // Step 10: Smart AI routing + knowledge
+        const memoryPrompt = conversationContexts
+          .map((c) => c.context_summary)
+          .filter(Boolean)
+          .slice(0, 3)
+          .join(" | ");
+
+        const smartResult = await processSmartQuery(normalizedMessage, {
+          userId,
+          userContext,
+          conversationHistory,
+          sessionId: session.id,
+        });
+
+        const [knowledgeFromBias, knowledgeFromHybrid] = await Promise.all([
+          getCategoryBiasedKnowledge(normalizedMessage, [classification.intent], classification.riskLevel, 3),
+          searchKnowledgeHybrid(normalizedMessage, { userId, riskLevel: classification.riskLevel, limit: 5 }),
+        ]);
+
+        const knowledgeSeen = new Set();
+        const knowledge = [...knowledgeFromBias, ...(knowledgeFromHybrid || [])]
+          .filter((k) => k?.id && !knowledgeSeen.has(k.id) && knowledgeSeen.add(k.id))
+          .slice(0, 5);
+
+        const enhancedContext = {
+          ...userContext,
+          conversationHistory: conversationHistory.map((h) => ({ role: h.role, content: h.content })),
+          userName: stateGates.userName || null,
+          dailyState: stateGates.dailyState || null,
+          upcomingGame: stateGates.upcomingGame || null,
+          memoryPrompt,
+          goal,
+          time_horizon,
+          team_id,
+        };
+
+        // ── Step 11: Stream Groq tokens ──────────────────────────────────────
+        const groqGen = generateCoachingResponseStream({
+          query: normalizedMessage,
+          riskLevel: classification.riskLevel,
+          userContext: {
+            ...enhancedContext,
+            athleteName: enhancedContext.userName,
+          },
+          knowledgeSources: knowledge,
+          conversationHistory: enhancedContext.conversationHistory,
+        });
+
+        let fullAnswer = "";
+        let streamModel = null;
+        let streamUsage = null;
+
+        // Manually iterate to capture the generator's return value
+        // (the {model, usage} object returned after the last yield)
+        while (true) {
+          const { value, done } = await groqGen.next();
+          if (done) {
+            // Return value of the generator — { model, usage }
+            if (value) {
+              streamModel = value.model ?? null;
+              streamUsage = value.usage ?? null;
+            }
+            break;
+          }
+          fullAnswer += value;
+          controller.enqueue(sseEvent({ type: "token", token: value }));
+        }
+
+        // ── Step 12: Fire-and-forget post-processing ──────────────────────────
+        const filteredAnswer = filterContent(fullAnswer, classification.riskLevel);
+        const aiResponse = { answer: filteredAnswer, source: "groq-ai", model: streamModel, usage: streamUsage };
+        const finalAiResponse = addEvidenceExplanation(aiResponse);
+
+        const safeResponse = generateSafeResponse(
+          classification.riskLevel,
+          finalAiResponse.answer,
+          knowledge,
+          {
+            requiresProfessional: classification.requiresProfessional,
+            requiresLabs: classification.requiresLabs,
+            evidenceLevel: knowledge[0]?.evidence_grade || "limited",
+            acwrData: classification.acwrData,
+          },
+        );
+
+        const suggestedActions = generateSuggestedActions(
+          normalizedMessage,
+          finalAiResponse.answer,
+          userContext,
+          classification.riskLevel,
+          classification.intent,
+        );
+        safeResponse.suggestedActions = [...(safeResponse.suggestedActions || []), ...suggestedActions];
+
+        // DB operations — fire-and-forget (don't block the stream close)
+        (async () => {
+          try {
+            const messageId = await saveChatMessage(session.id, userId, normalizedMessage, safeResponse, classification);
+            if (messageId) {
+              await createCoachInboxItem(messageId, userId, normalizedMessage, classification, stateGates);
+              for (const action of safeResponse.suggestedActions) {
+                await logRecommendation(userId, session.id, action);
+              }
+              // Send the final done event with message_id from DB
+              controller.enqueue(sseEvent({
+                type: "done",
+                payload: {
+                  answer_markdown: safeResponse.answer,
+                  citations: safeResponse.citations || [],
+                  risk_level: safeResponse.riskLevel,
+                  disclaimer: safeResponse.disclaimer || null,
+                  suggested_actions: safeResponse.suggestedActions || [],
+                  chat_session_id: session.id,
+                  message_id: messageId,
+                  intent: classification.intent,
+                  is_swap_plan: false,
+                  acwr_safety: null,
+                  state_gate_escalation: classification.stateGateEscalation
+                    ? { escalated: true, original_risk: classification.originalRiskLevel, escalated_risk: classification.riskLevel, reasons: classification.escalationReasons }
+                    : null,
+                  smart_ai: {
+                    routing_action: smartResult.routingAction,
+                    confidence: smartResult.confidence,
+                    knowledge_sources_count: knowledge.length,
+                  },
+                  metadata: {
+                    source: finalAiResponse.source,
+                    model: streamModel,
+                    usage: streamUsage,
+                  },
+                },
+              }));
+            }
+          } catch (postErr) {
+            logger.error("ai_chat_stream_post_processing_failed", postErr, { user_id: userId });
+          } finally {
+            controller.close();
+          }
+        })();
+
+        // Side effects — fire-and-forget
+        updateUserPreferences(userId, { intent: classification.intent, position: userContext.position })
+          .catch((e) => logger.error("ai_chat_stream_prefs_update_failed", e, { user_id: userId }));
+
+        for (const ctx of conversationContexts) {
+          markContextReferenced(ctx.id);
+        }
+
+        if (pendingFollowups.length > 0) {
+          markFollowupTriggered(pendingFollowups[0].id).catch(() => {});
+        }
+
+      } catch (err) {
+        logger.error("ai_chat_stream_handler_failed", err);
+        try {
+          controllerRef?.enqueue(sseEvent({ type: "error", message: "Internal server error" }));
+          controllerRef?.close();
+        } catch { /* already closed */ }
+      }
+    },
+  });
+
+  return new Response(stream, { headers: STREAM_CORS_HEADERS });
+};

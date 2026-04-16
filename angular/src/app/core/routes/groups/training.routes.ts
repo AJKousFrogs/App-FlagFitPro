@@ -19,20 +19,13 @@ export const trainingRoutes: Routes = [
   },
   {
     path: "training/workspace",
-    loadComponent: () =>
-      import("../../../features/training/training.component").then(
-        (m) => m.TrainingComponent,
-      ),
-    canActivate: [authGuard],
-    data: {
-      preload: false,
-      entry: "internal",
-      headerPreset: "training",
-    },
+    redirectTo: "/training",
+    pathMatch: "full",
+    data: { entry: "legacy" },
   },
   {
     path: "training/builder",
-    redirectTo: "/training/workspace",
+    redirectTo: "/training",
     pathMatch: "full",
     data: { entry: "legacy" },
   },

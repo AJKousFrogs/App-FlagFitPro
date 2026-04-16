@@ -3,6 +3,15 @@ import { authGuard } from "../../guards/auth.guard";
 
 export const socialRoutes: Routes = [
   {
+    path: "notifications",
+    loadComponent: () =>
+      import("../../../features/notifications/notifications.component").then(
+        (m) => m.NotificationsComponent,
+      ),
+    canActivate: [authGuard],
+    data: { preload: false, entry: "hub", headerPreset: "default" },
+  },
+  {
     path: "search",
     loadComponent: () =>
       import("../../../features/search/search.component").then(

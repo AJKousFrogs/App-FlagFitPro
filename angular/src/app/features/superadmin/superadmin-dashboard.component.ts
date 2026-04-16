@@ -247,23 +247,47 @@ import {
           }
         </app-card-shell>
 
-        <!-- Quick Actions -->
-        <div class="quick-actions">
-          <h3>Quick Actions</h3>
-          <div class="actions-grid">
-            <a routerLink="/superadmin/teams" class="action-card">
-              <i class="pi pi-building"></i>
-              <span>Manage Teams</span>
-            </a>
-            <a routerLink="/superadmin/users" class="action-card">
-              <i class="pi pi-users"></i>
-              <span>Manage Users</span>
-            </a>
-            <a routerLink="/superadmin/settings" class="action-card">
-              <i class="pi pi-cog"></i>
-              <span>Settings</span>
-            </a>
-          </div>
+        <div class="admin-panels">
+          <app-card-shell title="Control Center" headerIcon="pi-sitemap">
+            <div class="actions-grid">
+              <a routerLink="/superadmin/teams" class="action-card">
+                <i class="pi pi-building"></i>
+                <span>Manage Teams</span>
+                <small>Review status, ownership, and team approvals.</small>
+              </a>
+              <a routerLink="/superadmin/users" class="action-card">
+                <i class="pi pi-users"></i>
+                <span>Manage Users</span>
+                <small>Update roles, account status, and access.</small>
+              </a>
+              <a routerLink="/superadmin/settings" class="action-card">
+                <i class="pi pi-cog"></i>
+                <span>Platform Settings</span>
+                <small>Adjust admin defaults and platform controls.</small>
+              </a>
+            </div>
+          </app-card-shell>
+
+          <app-card-shell title="Platform Snapshot" headerIcon="pi-chart-line">
+            <div class="snapshot-list">
+              <div class="snapshot-row">
+                <span>Open approval queue</span>
+                <strong>{{ pendingApprovals().length }}</strong>
+              </div>
+              <div class="snapshot-row">
+                <span>Approved teams</span>
+                <strong>{{ stats().approvedTeams }}</strong>
+              </div>
+              <div class="snapshot-row">
+                <span>Active teams</span>
+                <strong>{{ stats().activeTeams }}</strong>
+              </div>
+              <div class="snapshot-row">
+                <span>Total athletes</span>
+                <strong>{{ stats().totalUsers }}</strong>
+              </div>
+            </div>
+          </app-card-shell>
         </div>
       </div>
 

@@ -153,24 +153,24 @@ describe("AcwrService", () => {
       service.addSessions(sessions);
 
       const ratio = service.acwrRatio();
-      // With sufficient data, ratio should be > 0
-      if (ratio > 0) {
+      // With sufficient data, ratio should be a positive number (not null)
+      if (ratio !== null && ratio > 0) {
         expect(ratio).toBeGreaterThan(0);
         expect(ratio).toBeLessThan(3); // Sanity check
       }
     });
 
-    it("should return 0 when insufficient data", () => {
+    it("should return null when insufficient data", () => {
       // Only 5 days of data (need 21 minimum)
       const sessions = generateSessions(5, 500);
       service.addSessions(sessions);
 
-      expect(service.acwrRatio()).toBe(0);
+      expect(service.acwrRatio()).toBeNull();
     });
 
-    it("should return 0 when chronic load is zero", () => {
+    it("should return null when chronic load is zero", () => {
       // No sessions = zero chronic
-      expect(service.acwrRatio()).toBe(0);
+      expect(service.acwrRatio()).toBeNull();
     });
   });
 
@@ -201,7 +201,7 @@ describe("AcwrService", () => {
       if (riskZone.level !== "no-data") {
         // ACWR < 0.8 should be under-training
         const ratio = service.acwrRatio();
-        if (ratio < 0.8 && ratio > 0) {
+        if (ratio !== null && ratio < 0.8 && ratio > 0) {
           expect(riskZone.level).toBe("under-training");
           expect(riskZone.color).toBe("orange");
         }
@@ -219,7 +219,7 @@ describe("AcwrService", () => {
       const riskZone = service.riskZone();
       const ratio = service.acwrRatio();
 
-      if (ratio >= 0.8 && ratio <= 1.3) {
+      if (ratio !== null && ratio >= 0.8 && ratio <= 1.3) {
         expect(riskZone.level).toBe("sweet-spot");
         expect(riskZone.color).toBe("green");
         expect(riskZone.label).toBe("Sweet Spot");
@@ -237,7 +237,7 @@ describe("AcwrService", () => {
       const riskZone = service.riskZone();
       const ratio = service.acwrRatio();
 
-      if (ratio > 1.5) {
+      if (ratio !== null && ratio > 1.5) {
         expect(riskZone.level).toBe("danger-zone");
         expect(riskZone.color).toBe("red");
       }
@@ -593,7 +593,7 @@ describe("AcwrService", () => {
       const endDate = new Date("2026-01-20T23:59:59Z");
       const rangeSessions = service.getSessionsInRange(startDate, endDate);
       expect(rangeSessions.length).toBe(1);
-      expect(service.acwrRatio()).toBe(0); // Insufficient data
+      expect(service.acwrRatio()).toBeNull(); // Insufficient data
     });
   });
 });

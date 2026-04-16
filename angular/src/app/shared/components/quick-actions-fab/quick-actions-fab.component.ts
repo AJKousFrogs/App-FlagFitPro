@@ -118,9 +118,9 @@ export class QuickActionsFABComponent implements OnInit {
           route: "/coach/analytics",
         },
         {
-          icon: "pi-calendar",
-          label: "Coach Planning",
-          route: "/coach/planning",
+          icon: "pi-sitemap",
+          label: "Program Builder",
+          route: "/coach/program-builder",
         },
         {
           icon: "pi-briefcase",

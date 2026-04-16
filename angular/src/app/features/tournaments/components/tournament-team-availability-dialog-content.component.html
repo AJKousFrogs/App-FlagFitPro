@@ -25,7 +25,7 @@
 
   @if (budget()) {
     <div class="budget-overview">
-      <h4><i class="pi pi-wallet"></i> Budget Overview</h4>
+      <h4><i class="pi pi-wallet" aria-hidden="true"></i> Budget Overview</h4>
       <div class="budget-grid">
         <div class="budget-item">
           <span class="budget-label">Total Estimated</span>
@@ -72,7 +72,7 @@
         </div>
         @if (player.reason) {
           <div class="player-reason">
-            <i class="pi pi-info-circle"></i>
+            <i class="pi pi-info-circle" aria-hidden="true"></i>
             {{ player.reason }}
           </div>
         }

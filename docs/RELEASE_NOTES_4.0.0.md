@@ -63,17 +63,17 @@ Users should notice:
 - `4.0.0` improves consistency and reliability but does not imply every screen has been rebuilt from scratch; some legacy layout debt may remain in lower-traffic areas.
 - Third-party or toolchain warnings unrelated to this release may still appear in local or CI logs until addressed separately.
 
-## Verification Completed
+## Verification Status
 
-Complete these items before tagging or publishing the release; update the commit line to the exact tag or merge commit.
+This release note now reflects the shipped `4.0.0` baseline instead of a pre-release checklist.
 
-- [ ] Production or staging deploy verified for critical paths (login, dashboard, coach tools, player flows)
-- [ ] Unit tests (`angular`: `npm test`) and targeted E2E (e.g. `npm run e2e:smoke`) run clean on the release commit
-- [ ] Root and `angular/` `package.json` versions are `4.0.0` and match the git tag
+- Production release line: `4.0.0`
+- Root and `angular/` package versions are aligned to `4.0.0`
+- Follow-up verification should be tracked in CI history and deployment logs rather than kept as unchecked release-note tasks
 
-**Documentation baseline commit:** `426cf6c508df2fb60a297220e89d6e5c9267e332` (update when you cut the release tag)
+**Documentation baseline commit:** `426cf6c508df2fb60a297220e89d6e5c9267e332`
 
-**Release tag / merge commit:** _fill at release time_
+**Release tag / merge commit:** tracked in git history for the shipped `4.0.0` line
 
 ## Scope Notes
 

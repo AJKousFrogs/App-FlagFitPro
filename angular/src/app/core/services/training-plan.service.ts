@@ -64,6 +64,21 @@ export interface GoalBasedPlanConfig {
   gameDays?: Date[]; // Upcoming game dates
   trainingDaysPerWeek?: number; // 3-6
   phase?: "foundation" | "strength" | "power" | "peaking" | "maintenance";
+  /** Primary competition/tournament date. Triggers a 10-14 day taper when within range. */
+  competitionDate?: Date;
+  /** Date of last completed training session. Used to detect detraining gaps ≥7 days. */
+  lastTrainingDate?: Date;
+}
+
+/** Result of the pre-plan periodization state check. */
+export interface PeriodizationState {
+  phase: "normal" | "taper" | "detraining_ramp";
+  /** Days until competition (undefined if no competition date set). */
+  daysToCompetition?: number;
+  /** Days since last training (undefined if no lastTrainingDate set). */
+  daysSinceTraining?: number;
+  /** Narrative for coach/athlete display. */
+  message: string;
 }
 
 interface FixtureResponse {
@@ -101,18 +116,46 @@ export class TrainingPlanService {
       readinessLevel,
       gameDays = [],
       trainingDaysPerWeek = 5,
-      phase = this.determinePhase(currentACWR, readinessLevel),
+      competitionDate,
+      lastTrainingDate,
     } = config;
+
+    // ── Periodization state detection ─────────────────────────────────────────
+    const periodization = this.detectPeriodizationState(
+      competitionDate,
+      lastTrainingDate,
+    );
+
+    // Override phase when taper or detraining ramp is active
+    let phase = config.phase ?? this.determinePhase(currentACWR, readinessLevel);
+    if (periodization.phase === "taper") phase = "peaking";
+    if (periodization.phase === "detraining_ramp") phase = "foundation";
 
     // Get base template for goal
     const baseTemplate = this.getGoalTemplate(goal, phase);
 
     // Adjust for ACWR and readiness
-    const adjustedTemplate = this.adjustForACWR(
+    let adjustedTemplate = this.adjustForACWR(
       baseTemplate,
       currentACWR,
       readinessLevel,
     );
+
+    // Apply taper volume reduction on top of ACWR adjustments
+    if (periodization.phase === "taper" && periodization.daysToCompetition !== undefined) {
+      adjustedTemplate = this.applyTaperProgression(
+        adjustedTemplate,
+        periodization.daysToCompetition,
+      );
+    }
+
+    // Apply conservative re-conditioning ramp after detraining gap
+    if (periodization.phase === "detraining_ramp" && periodization.daysSinceTraining !== undefined) {
+      adjustedTemplate = this.applyDetrainingRamp(
+        adjustedTemplate,
+        periodization.daysSinceTraining,
+      );
+    }
 
     // Adjust for game proximity
     const gameAwareTemplate = this.adjustForGameDays(
@@ -127,8 +170,72 @@ export class TrainingPlanService {
       trainingDaysPerWeek,
     );
 
+    // Attach periodization notes so the UI can surface them
+    if (periodization.message) {
+      finalPlan.sessions = finalPlan.sessions.map((s) => ({
+        ...s,
+        notes: s.notes
+          ? `${s.notes} | ${periodization.message}`
+          : periodization.message,
+      }));
+    }
+
     this.currentPlan.set(finalPlan);
     return finalPlan;
+  }
+
+  /**
+   * Detect taper (pre-competition) and detraining (prolonged absence) states.
+   * Returns a PeriodizationState that upstream callers can display to athletes.
+   */
+  detectPeriodizationState(
+    competitionDate?: Date,
+    lastTrainingDate?: Date,
+  ): PeriodizationState {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    // ── Detraining gap check (takes precedence over taper) ────────────────────
+    if (lastTrainingDate) {
+      const last = new Date(lastTrainingDate);
+      last.setHours(0, 0, 0, 0);
+      const daysSince = Math.round(
+        (today.getTime() - last.getTime()) / (1000 * 60 * 60 * 24),
+      );
+
+      // ≥7 days off = detraining begins (Mujika & Padilla 2001)
+      if (daysSince >= 7) {
+        return {
+          phase: "detraining_ramp",
+          daysSinceTraining: daysSince,
+          message:
+            `${daysSince}-day training gap detected. Re-conditioning ramp applied — ` +
+            "volume capped at 60% for week 1 to prevent injury on return.",
+        };
+      }
+    }
+
+    // ── Taper check ───────────────────────────────────────────────────────────
+    if (competitionDate) {
+      const comp = new Date(competitionDate);
+      comp.setHours(0, 0, 0, 0);
+      const daysOut = Math.round(
+        (comp.getTime() - today.getTime()) / (1000 * 60 * 60 * 24),
+      );
+
+      // 4–14 days out = progressive taper window (Bosquet et al. 2007)
+      if (daysOut >= 0 && daysOut <= 14) {
+        return {
+          phase: "taper",
+          daysToCompetition: daysOut,
+          message:
+            `${daysOut} days to competition — taper active. ` +
+            "Volume progressively reduced; intensity maintained.",
+        };
+      }
+    }
+
+    return { phase: "normal", message: "" };
   }
 
   /**
@@ -828,9 +935,16 @@ export class TrainingPlanService {
     acwr: number,
     readiness: "low" | "moderate" | "high",
   ): string {
-    if (acwr > 1.5 || readiness === "low") return "foundation"; // Deload phase
-    if (acwr < 0.8) return "strength"; // Can push harder
-    return "foundation"; // Default to foundation
+    // Overloaded or under-recovered — always protective regardless of fitness level
+    if (acwr > 1.5 || readiness === "low") return "foundation";
+    // Sweet spot + high readiness → can progress
+    if (acwr >= 0.8 && acwr <= 1.3 && readiness === "high") return "power";
+    // Sweet spot + moderate readiness → maintain
+    if (acwr >= 0.8 && acwr <= 1.3) return "foundation";
+    // Under-trained but physically ready → build volume first, not intensity
+    if (acwr < 0.8 && readiness === "high") return "strength";
+    // Under-trained and moderate readiness → conservative base build
+    return "foundation";
   }
 
   /**
@@ -844,16 +958,23 @@ export class TrainingPlanService {
     let volumeMultiplier = 1.0;
     let intensityAdjustment = 0;
 
-    // ACWR-based adjustments
+    // ACWR-based adjustments with smooth linear interpolation to avoid
+    // cliff-edge recommendation swings (e.g. 40% swing at ACWR 1.30 vs 1.31).
     if (acwr > 1.5) {
-      volumeMultiplier = 0.6; // Reduce volume by 40%
-      intensityAdjustment = -1; // Reduce intensity
+      // Danger zone: linear ramp from -40% at 1.5 to -60% at 2.0
+      const overageRatio = Math.min((acwr - 1.5) / 0.5, 1.0);
+      volumeMultiplier = 0.6 - overageRatio * 0.2; // 0.60 → 0.40
+      intensityAdjustment = -1;
     } else if (acwr > 1.3) {
-      volumeMultiplier = 0.8; // Reduce volume by 20%
+      // Elevated zone: linear ramp from 0% reduction at 1.3 to -40% at 1.5
+      const overageRatio = (acwr - 1.3) / 0.2;
+      volumeMultiplier = 1.0 - overageRatio * 0.4; // 1.00 → 0.60
       intensityAdjustment = -1;
     } else if (acwr < 0.8) {
-      volumeMultiplier = 1.2; // Increase volume by 20%
-      intensityAdjustment = 1; // Can increase intensity
+      // Under-training zone: linear ramp from +20% at 0.8 to +5% at 0.5
+      const underRatio = Math.min((0.8 - acwr) / 0.3, 1.0);
+      volumeMultiplier = 1.2 - underRatio * 0.15; // 1.20 → 1.05
+      intensityAdjustment = 1;
     }
 
     // Readiness-based adjustments
@@ -883,6 +1004,92 @@ export class TrainingPlanService {
     const currentIndex = levels.indexOf(current);
     const newIndex = Math.max(0, Math.min(2, currentIndex + adjustment));
     return levels[newIndex];
+  }
+
+  /**
+   * Apply progressive volume reduction for the pre-competition taper window.
+   *
+   * Evidence: Bosquet et al. (2007) meta-analysis recommends ~41–60% volume
+   * reduction over 8–14 days while maintaining or slightly reducing intensity.
+   * A linear ramp is applied: full taper at 0 days out, 10% reduction at 14 days.
+   *
+   *   volumeFactor = 1.0 - (1 - daysOut/14) * 0.55
+   *   → 14d out: 0.96 (near normal), 7d: 0.72, 3d: 0.45, 1d: 0.31
+   */
+  private applyTaperProgression(
+    template: TrainingSessionTemplate[],
+    daysToCompetition: number,
+  ): TrainingSessionTemplate[] {
+    // Linear interpolation from 0% reduction at 14d to 55% reduction at 0d
+    const taperFraction = Math.max(0, Math.min(1, 1 - daysToCompetition / 14));
+    const volumeFactor = 1.0 - taperFraction * 0.55;
+
+    return template.map((session) => {
+      // Skip recovery sessions — they're already low
+      if (session.sessionType === "recovery") return session;
+
+      // Maintain intensity but reduce volume
+      const adjustedVolume = Math.max(
+        1,
+        Math.round(session.volume * volumeFactor),
+      );
+      const adjustedDuration = Math.max(
+        15,
+        Math.round(session.duration * volumeFactor),
+      );
+
+      return {
+        ...session,
+        volume: adjustedVolume,
+        duration: adjustedDuration,
+        // Taper preserves intensity — do NOT drop intensity level
+        notes: session.notes
+          ? `${session.notes} (taper: ${Math.round((1 - volumeFactor) * 100)}% volume reduction)`
+          : `Taper: ${Math.round((1 - volumeFactor) * 100)}% volume reduction, intensity maintained`,
+      };
+    });
+  }
+
+  /**
+   * Apply a conservative re-conditioning ramp after a detraining gap.
+   *
+   * Evidence: Mujika & Padilla (2001) show meaningful fitness decrements
+   * begin at ~7 days of inactivity and accelerate beyond 14 days.
+   *
+   *   7–13 days off  → 60% volume, low intensity (week 1 return)
+   *   14–20 days off → 50% volume, low intensity
+   *   >20 days off   → 40% volume, mandatory low intensity
+   *
+   * Intensity is forced to "low" until the athlete is back in the sweet spot.
+   */
+  private applyDetrainingRamp(
+    template: TrainingSessionTemplate[],
+    daysSinceTraining: number,
+  ): TrainingSessionTemplate[] {
+    let volumeFactor: number;
+    let forceIntensity: "low" | "medium" | null;
+
+    if (daysSinceTraining >= 21) {
+      volumeFactor = 0.4;
+      forceIntensity = "low";
+    } else if (daysSinceTraining >= 14) {
+      volumeFactor = 0.5;
+      forceIntensity = "low";
+    } else {
+      // 7–13 days
+      volumeFactor = 0.6;
+      forceIntensity = "medium";
+    }
+
+    return template.map((session) => ({
+      ...session,
+      volume: Math.max(1, Math.round(session.volume * volumeFactor)),
+      duration: Math.max(15, Math.round(session.duration * volumeFactor)),
+      intensity: forceIntensity ?? session.intensity,
+      notes:
+        `Return from ${daysSinceTraining}d break — re-conditioning ramp (${Math.round(volumeFactor * 100)}% volume). ` +
+        (session.notes ? session.notes : ""),
+    }));
   }
 
   /**

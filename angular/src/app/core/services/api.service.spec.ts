@@ -153,6 +153,44 @@ describe("ApiService", () => {
         { status: 404, statusText: "Not Found" },
       );
     });
+
+    it("should deduplicate concurrent GET requests to the same URL", () => {
+      const mockResponse: ApiResponse<{ id: number }> = {
+        success: true,
+        data: { id: 42 },
+      };
+
+      let firstResult: ApiResponse<{ id: number }> | undefined;
+      let secondResult: ApiResponse<{ id: number }> | undefined;
+
+      // Two simultaneous subscriptions before the request resolves
+      service.get<{ id: number }>("/dedup-endpoint").subscribe((r) => { firstResult = r; });
+      service.get<{ id: number }>("/dedup-endpoint").subscribe((r) => { secondResult = r; });
+
+      // Only ONE network request should be outstanding
+      const requests = httpMock.match((req) => req.url.includes("/dedup-endpoint"));
+      expect(requests.length).toBe(1);
+
+      // Flush the single request — both subscribers should receive the value
+      requests[0].flush(mockResponse);
+
+      expect(firstResult?.data?.id).toBe(42);
+      expect(secondResult?.data?.id).toBe(42);
+    });
+
+    it("issues a new network request after the first completes (no stale cache)", () => {
+      const mockResponse: ApiResponse = { success: true };
+
+      // First request — subscribe and flush immediately
+      service.get("/unique-endpoint").subscribe();
+      httpMock.expectOne((req) => req.url.includes("/unique-endpoint")).flush(mockResponse);
+
+      // Second request after the first has fully completed
+      service.get("/unique-endpoint").subscribe();
+      const req2 = httpMock.expectOne((req) => req.url.includes("/unique-endpoint"));
+      expect(req2).toBeTruthy();
+      req2.flush(mockResponse);
+    });
   });
 
   // ============================================================================

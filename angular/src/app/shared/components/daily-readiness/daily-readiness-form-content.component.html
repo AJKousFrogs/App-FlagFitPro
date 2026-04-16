@@ -29,7 +29,7 @@
     <div class="slider-item">
       <div class="slider-header">
         <label>
-          <i class="pi pi-exclamation-circle"></i>
+          <i class="pi pi-exclamation-circle" aria-hidden="true"></i>
           Pain Level
         </label>
         <span class="slider-value" [class.danger]="state().pain_level >= 7">
@@ -52,7 +52,7 @@
     <div class="slider-item">
       <div class="slider-header">
         <label>
-          <i class="pi pi-moon"></i>
+          <i class="pi pi-moon" aria-hidden="true"></i>
           Fatigue
         </label>
         <span class="slider-value" [class.danger]="state().fatigue_level >= 7">
@@ -75,7 +75,7 @@
     <div class="slider-item">
       <div class="slider-header">
         <label>
-          <i class="pi pi-star"></i>
+          <i class="pi pi-star" aria-hidden="true"></i>
           Sleep Quality
         </label>
         <span class="slider-value" [class.good]="state().sleep_quality >= 7">
@@ -98,7 +98,7 @@
     <div class="slider-item">
       <div class="slider-header">
         <label>
-          <i class="pi pi-bolt"></i>
+          <i class="pi pi-bolt" aria-hidden="true"></i>
           Motivation
         </label>
         <span class="slider-value" [class.good]="state().motivation_level >= 7">
@@ -121,7 +121,7 @@
     <div class="slider-item weight-input form-controls-full">
       <div class="slider-header">
         <label>
-          <i class="pi pi-chart-line"></i>
+          <i class="pi pi-chart-line" aria-hidden="true"></i>
           Today's Weight
           <span class="optional-label">(optional)</span>
         </label>
@@ -154,7 +154,7 @@
 
   @if (riskFlags().length > 0) {
     <div class="risk-flags">
-      <i class="pi pi-exclamation-triangle"></i>
+      <i class="pi pi-exclamation-triangle" aria-hidden="true"></i>
       <span>{{ riskFlags().join(', ') }}</span>
     </div>
   }

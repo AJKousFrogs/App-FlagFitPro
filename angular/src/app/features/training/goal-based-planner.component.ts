@@ -340,9 +340,14 @@ export class GoalBasedPlannerComponent {
       null,
     ),
   );
-  readonly currentAcwrValue = computed(
-    () => this.acwrDisplay().value ?? this.trainingService.acwrRatio(),
-  );
+  readonly currentAcwrValue = computed(() => {
+    const displayValue = this.acwrDisplay().value;
+    if (displayValue != null) {
+      return displayValue;
+    }
+
+    return this.trainingService.acwrRatio() ?? 0;
+  });
   readonly currentRiskZone = computed(() =>
     getProtocolRiskZone(
       this.todayProtocol(),

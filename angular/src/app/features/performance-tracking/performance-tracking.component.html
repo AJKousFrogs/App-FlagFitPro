@@ -59,7 +59,7 @@
           <!-- Rankings & Achievements (Span 2) -->
           @if (teamRankings() && teamRankings()!.rankings.length > 0) {
             <div class="bento-item span-2 team-rankings-bento">
-              <h3 class="bento-title"><i class="pi pi-users"></i> Team Rankings</h3>
+              <h3 class="bento-title"><i class="pi pi-users" aria-hidden="true"></i> Team Rankings</h3>
               <div class="rankings-list">
                 @for (ranking of teamRankings()!.rankings.slice(0, 5); track ranking.metric) {
                   <div class="ranking-item">
@@ -74,7 +74,7 @@
 
           <!-- Trend Chart (Span 1) -->
           <div class="bento-item performance-chart-bento">
-            <h3 class="bento-title"><i class="pi pi-chart-line"></i> Progress Trend</h3>
+            <h3 class="bento-title"><i class="pi pi-chart-line" aria-hidden="true"></i> Progress Trend</h3>
             @if (performanceChartData()) {
               <app-lazy-chart type="line" [data]="performanceChartData()" [options]="chartOptions" />
             }
@@ -82,7 +82,7 @@
 
           <!-- Position Benchmarks (Span 1) -->
           <div class="bento-item benchmark-bento">
-            <h3 class="bento-title"><i class="pi pi-bullseye"></i> {{ selectedPosition() }} Benchmarks</h3>
+            <h3 class="bento-title"><i class="pi pi-bullseye" aria-hidden="true"></i> {{ selectedPosition() }} Benchmarks</h3>
             <div class="benchmarks-list">
               @for (benchmark of positionBenchmarks().slice(0, 4); track benchmark.metric) {
                 <div class="benchmark-item">
@@ -95,7 +95,7 @@
 
           <!-- Training Priorities (Span 2) -->
           <div class="bento-item span-2 priorities-bento">
-            <h3 class="bento-title"><i class="pi pi-search"></i> Focus Areas</h3>
+            <h3 class="bento-title"><i class="pi pi-search" aria-hidden="true"></i> Focus Areas</h3>
             <div class="priorities-grid">
               @for (gap of gapAnalysis().slice(0, 2); track gap.metric) {
                 <div class="priority-card">
@@ -115,7 +115,7 @@
 
           <!-- History (Full Width) -->
           <div class="bento-item full-width history-bento">
-            <h3 class="bento-title"><i class="pi pi-history"></i> Performance History</h3>
+            <h3 class="bento-title"><i class="pi pi-history" aria-hidden="true"></i> Performance History</h3>
             <app-table [data]="performanceHistory().slice(0, 5)" [scrollable]="true">
               <ng-template #header>
                 <tr><th>Date</th><th>40yd</th><th>Vert</th><th>Score</th></tr>

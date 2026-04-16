@@ -45,7 +45,7 @@
     @if (readinessScore() !== null) {
       <div class="stat-card-content">
         <div class="stat-icon readiness-icon">
-          <i class="pi pi-heart"></i>
+          <i class="pi pi-heart" aria-hidden="true"></i>
         </div>
         <div class="stat-details">
           <span class="stat-block__value">{{ readinessScore() }}%</span>
@@ -72,7 +72,7 @@
     } @else {
       <div class="stat-card-content">
         <div class="stat-icon readiness-icon">
-          <i class="pi pi-heart"></i>
+          <i class="pi pi-heart" aria-hidden="true"></i>
         </div>
         <div class="stat-details">
           @if (isDataLoading()) {
@@ -100,7 +100,7 @@
     <div class="wellness-checkin-status">
       @if (wellnessCheckedInToday()) {
         <div class="checkin-status checkin-complete">
-          <i class="pi pi-check-circle"></i>
+          <i class="pi pi-check-circle" aria-hidden="true"></i>
           <span>Checked in today</span>
         </div>
         @if (checkinStreak() > 0) {
@@ -111,12 +111,12 @@
         }
       } @else if (checkinOverdue()) {
         <div class="checkin-status checkin-overdue">
-          <i class="pi pi-exclamation-circle"></i>
+          <i class="pi pi-exclamation-circle" aria-hidden="true"></i>
           <span>Overdue ({{ daysSinceLastCheckin() }} days)</span>
         </div>
       } @else {
         <div class="checkin-status checkin-due">
-          <i class="pi pi-clock"></i>
+          <i class="pi pi-clock" aria-hidden="true"></i>
           <span>Due today • Takes 2 min</span>
         </div>
       }
@@ -147,7 +147,7 @@
     @if (acwrDisplay().hasData && acwrDataSufficient()) {
       <div class="stat-card-content">
         <div class="stat-icon acwr-icon">
-          <i class="pi pi-chart-line"></i>
+          <i class="pi pi-chart-line" aria-hidden="true"></i>
         </div>
         <div class="stat-details">
           <span class="stat-block__value">{{
@@ -166,7 +166,7 @@
     } @else if (acwrDisplay().trainingDaysLogged !== null) {
       <div class="acwr-progress-content">
         <div class="stat-icon acwr-icon-building">
-          <i class="pi pi-chart-line"></i>
+          <i class="pi pi-chart-line" aria-hidden="true"></i>
         </div>
         <div class="acwr-progress-details">
           <span class="acwr-progress-title">Load Monitoring</span>
@@ -255,7 +255,7 @@
   >
     <div class="stat-card-content">
       <div class="stat-icon streak-icon">
-        <i class="pi pi-bolt"></i>
+        <i class="pi pi-bolt" aria-hidden="true"></i>
       </div>
       <div class="stat-details">
         <span class="stat-block__value">{{ currentStreak() }}</span>
@@ -267,7 +267,7 @@
   <app-card-shell class="stat-card stat-sessions">
     <div class="stat-card-content">
       <div class="stat-icon sessions-icon">
-        <i class="pi pi-calendar-plus"></i>
+        <i class="pi pi-calendar-plus" aria-hidden="true"></i>
       </div>
       <div class="stat-details">
         <span class="stat-block__value"

@@ -238,9 +238,14 @@ export class MicrocyclePlannerComponent {
       null,
     ),
   );
-  readonly currentACWR = computed(
-    () => this.acwrDisplay().value ?? this.trainingService.acwrRatio(),
-  );
+  readonly currentACWR = computed(() => {
+    const displayValue = this.acwrDisplay().value;
+    if (displayValue != null) {
+      return displayValue;
+    }
+
+    return this.trainingService.acwrRatio() ?? 0;
+  });
   readonly acuteLoad = this.trainingService.acuteLoad;
   readonly chronicLoad = this.trainingService.chronicLoad;
   readonly currentRiskZone = computed(() =>

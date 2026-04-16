@@ -1,6 +1,6 @@
 # Repo Discovery Guide
 
-**Version:** 1.7 draft  
+**Application release:** 4.0.0  
 **Purpose:** Provide a fast starting point for navigating the FlagFit Pro repo without already knowing its layout.
 
 ## Start Here

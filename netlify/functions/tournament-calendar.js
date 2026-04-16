@@ -1,4 +1,3 @@
-import { createRuntimeV2Handler } from "./utils/runtime-v2-adapter.js";
 
 /**
  * Tournament Calendar API
@@ -363,4 +362,3 @@ async function deleteTournament(supabase, userId, payload) {
 
 export const testHandler = handler;
 export { handler };
-export default createRuntimeV2Handler(handler);

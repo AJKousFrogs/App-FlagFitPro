@@ -4,6 +4,15 @@ import { analyticsPrefetchResolver } from "../../resolvers/analytics-prefetch.re
 
 export const analyticsRoutes: Routes = [
   {
+    path: "reports",
+    loadComponent: () =>
+      import("../../../features/reports/reports-hub.component").then(
+        (m) => m.ReportsHubComponent,
+      ),
+    canActivate: [authGuard],
+    data: { preload: false, entry: "hub", headerPreset: "analytics" },
+  },
+  {
     path: "performance/insights",
     loadComponent: () =>
       import("../../../features/analytics/analytics.component").then(

@@ -348,16 +348,27 @@ export class TrainingSafetyService {
       };
     }
 
-    // Get last 7 days
+    // Acute window: last 7 days
     const last7Days = sleepEntries.slice(0, 7);
     const average =
       last7Days.reduce((sum, e) => sum + (e.hours || 0), 0) / last7Days.length;
 
-    // Calculate cumulative debt (hours below optimal over 7 days)
-    const debt = Math.max(
+    // Chronic window: up to 30 days to distinguish acute vs chronic under-sleep.
+    // Chronic debt drives a higher penalty because the body cannot fully adapt.
+    const last30Days = sleepEntries.slice(0, 30);
+    const chronicAverage =
+      last30Days.reduce((sum, e) => sum + (e.hours || 0), 0) / last30Days.length;
+    const isChronicUnderslept = chronicAverage < SLEEP_THRESHOLDS.minimum && last30Days.length >= 14;
+
+    // Calculate cumulative acute debt (hours below optimal over the 7-day window)
+    const acuteDebt = Math.max(
       0,
       (SLEEP_THRESHOLDS.optimal - average) * last7Days.length,
     );
+    // Chronic debt adds extra weight when pattern persists beyond 2 weeks
+    const debt = isChronicUnderslept
+      ? acuteDebt * 1.25
+      : acuteDebt;
 
     // Determine debt level
     let debtLevel: SleepDebtAnalysis["debtLevel"] = "none";
@@ -369,8 +380,9 @@ export class TrainingSafetyService {
       debtLevel = "mild";
     }
 
-    // Calculate training impact (3% reduction per hour of debt, min 50%)
-    const trainingImpact = Math.max(0.5, 1 - debt * 0.03);
+    // Training impact: 2% reduction per hour of debt (Halson 2014 — 1-2% range).
+    // Previously 3%, which was above evidence-supported upper bound.
+    const trainingImpact = Math.max(0.5, 1 - debt * 0.02);
 
     // Estimate days to recover (1 hour of extra sleep per night)
     const daysToRecover = Math.ceil(debt);
@@ -379,8 +391,9 @@ export class TrainingSafetyService {
     let recommendation = "";
     switch (debtLevel) {
       case "severe":
-        recommendation =
-          "⚠️ CRITICAL: Severe sleep debt detected. Reduce training intensity by 50% and prioritize 9+ hours of sleep for the next week.";
+        recommendation = isChronicUnderslept
+          ? "⚠️ CRITICAL: Chronic sleep deficit detected (30-day pattern). Reduce training intensity by 50%, prioritize 9+ hours of sleep, and consider consulting a sports medicine professional."
+          : "⚠️ CRITICAL: Severe acute sleep debt detected. Reduce training intensity by 50% and prioritize 9+ hours of sleep for the next week.";
         break;
       case "moderate":
         recommendation =

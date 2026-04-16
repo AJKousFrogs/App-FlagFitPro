@@ -101,7 +101,7 @@
             @if (announcementChannels().length > 0) {
               <div class="channel-section">
                 <h4 class="section-label">
-                  <i class="pi pi-megaphone"></i> Announcements
+                  <i class="pi pi-megaphone" aria-hidden="true"></i> Announcements
                 </h4>
                 @for (channel of announcementChannels(); track channel.id) {
                   <button
@@ -112,7 +112,7 @@
                     (click)="selectChannel(channel)"
                     [attr.aria-label]="'Open channel ' + channel.name"
                   >
-                    <i class="pi pi-megaphone"></i>
+                    <i class="pi pi-megaphone" aria-hidden="true"></i>
                     <span class="channel-name">{{ channel.name }}</span>
                     @if (channel.unread_count) {
                       <app-badge variant="danger">{{ channel.unread_count }}</app-badge>
@@ -125,7 +125,7 @@
             <!-- Team Channels Section -->
             <div class="channel-section">
               <h4 class="section-label">
-                <i class="pi pi-hashtag"></i> Team Channels
+                <i class="pi pi-hashtag" aria-hidden="true"></i> Team Channels
                 @if (teamOnlineCount() > 0) {
                   <span class="sidebar-online-indicator">
                     <span class="mini-pulse"></span>
@@ -190,7 +190,7 @@
           <div class="messages-area">
             @if (!currentChannel()) {
               <div class="no-channel-selected">
-                <i class="pi pi-comments"></i>
+                <i class="pi pi-comments" aria-hidden="true"></i>
                 <div class="no-channel-text">
                   <h3>No channel selected</h3>
                   <p>Pick a channel from the sidebar to view messages and chat with your team.</p>
@@ -228,7 +228,7 @@
                       <!-- Pin indicator -->
                       @if (message.is_pinned) {
                         <div class="pin-indicator">
-                          <i class="pi pi-bookmark-fill"></i> Pinned
+                          <i class="pi pi-bookmark-fill" aria-hidden="true"></i> Pinned
                         </div>
                       }
 

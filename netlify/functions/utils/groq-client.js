@@ -161,6 +161,24 @@ function getGroqApiKey() {
 }
 
 /**
+ * Shared Groq request builder
+ */
+function buildGroqRequest({ prompt, systemPrompt, model, temperature, maxTokens, messages, stream }) {
+  const chatMessages = messages || [
+    { role: "system", content: systemPrompt },
+    { role: "user", content: prompt },
+  ];
+  return {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${getGroqApiKey()}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ model, messages: chatMessages, temperature, max_tokens: maxTokens, stream }),
+  };
+}
+
+/**
  * Call Groq API for chat completion
  *
  * @param {Object} options - Request options
@@ -180,49 +198,22 @@ async function chatCompletion({
   maxTokens = 1024,
   messages = null,
 }) {
-  const apiKey = getGroqApiKey();
-
-  // Build messages array
-  const chatMessages = messages || [
-    { role: "system", content: systemPrompt },
-    { role: "user", content: prompt },
-  ];
-
-  const requestBody = {
-    model,
-    messages: chatMessages,
-    temperature,
-    max_tokens: maxTokens,
-    stream: false,
-  };
-
   try {
-    const response = await fetch(GROQ_API_URL, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${apiKey}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(requestBody),
-    });
+    const response = await fetch(
+      GROQ_API_URL,
+      buildGroqRequest({ prompt, systemPrompt, model, temperature, maxTokens, messages, stream: false }),
+    );
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
       const errorMessage = errorData.error?.message || response.statusText;
 
       if (response.status === 429) {
-        logger.error("groq_rate_limit_exceeded", undefined, {
-          error_message: errorMessage,
-        });
-        throw new Error(
-          "AI service rate limit exceeded. Please try again in a moment.",
-        );
+        logger.error("groq_rate_limit_exceeded", undefined, { error_message: errorMessage });
+        throw new Error("AI service rate limit exceeded. Please try again in a moment.");
       }
 
-      logger.error("groq_api_request_failed", undefined, {
-        status_code: response.status,
-        error_message: errorMessage,
-      });
+      logger.error("groq_api_request_failed", undefined, { status_code: response.status, error_message: errorMessage });
       throw new Error(`AI service error: ${errorMessage}`);
     }
 
@@ -241,6 +232,125 @@ async function chatCompletion({
     logger.error("groq_request_failed", error);
     throw new Error("Failed to connect to AI service");
   }
+}
+
+/**
+ * Stream Groq API response as an async generator of token strings.
+ * Yields each text token as it arrives from the SSE stream.
+ * Returns the final usage object after the stream completes.
+ *
+ * @param {Object} options - Same signature as chatCompletion
+ * @yields {string} token - Individual text token from Groq
+ * @returns {{ model: string, usage: Object|null }} finalStats
+ */
+async function* chatCompletionStream({
+  prompt,
+  systemPrompt = SYSTEM_PROMPTS.coach,
+  model = DEFAULT_MODEL,
+  temperature = 0.7,
+  maxTokens = 1024,
+  messages = null,
+}) {
+  const response = await fetch(
+    GROQ_API_URL,
+    buildGroqRequest({ prompt, systemPrompt, model, temperature, maxTokens, messages, stream: true }),
+  );
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    const errorMessage = errorData.error?.message || response.statusText;
+    if (response.status === 429) {
+      throw new Error("AI service rate limit exceeded. Please try again in a moment.");
+    }
+    throw new Error(`AI service error: ${errorMessage}`);
+  }
+
+  const reader = response.body.getReader();
+  const decoder = new TextDecoder();
+  let buffer = "";
+  let finalModel = model;
+  let finalUsage = null;
+
+  try {
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+
+      buffer += decoder.decode(value, { stream: true });
+      const lines = buffer.split("\n");
+      buffer = lines.pop() ?? ""; // last item may be an incomplete line
+
+      for (const line of lines) {
+        const trimmed = line.trim();
+        if (!trimmed || !trimmed.startsWith("data: ")) continue;
+        const json = trimmed.slice(6);
+        if (json === "[DONE]") continue;
+
+        try {
+          const chunk = JSON.parse(json);
+          const token = chunk.choices?.[0]?.delta?.content ?? "";
+          if (token) yield token;
+          if (chunk.model) finalModel = chunk.model;
+          if (chunk.usage) finalUsage = chunk.usage;
+        } catch {
+          // malformed chunk — skip
+        }
+      }
+    }
+  } finally {
+    reader.releaseLock();
+  }
+
+  return { model: finalModel, usage: finalUsage };
+}
+
+/**
+ * Streaming variant of generateCoachingResponse.
+ * Yields token strings and returns final stats when complete.
+ *
+ * @param {Object} options - Same as generateCoachingResponse
+ * @yields {string} token
+ * @returns {{ model: string, usage: Object|null }}
+ */
+async function* generateCoachingResponseStream({
+  query,
+  riskLevel,
+  userContext = {},
+  knowledgeSources = [],
+  conversationHistory = [],
+}) {
+  let systemPrompt;
+  if (riskLevel === "high") {
+    systemPrompt = SYSTEM_PROMPTS.highRisk;
+  } else if (riskLevel === "medium") {
+    systemPrompt = SYSTEM_PROMPTS.mediumRisk;
+  } else {
+    systemPrompt = SYSTEM_PROMPTS.coach;
+  }
+
+  const athleteContext = buildAthleteContext(userContext);
+  const knowledgeContext = buildKnowledgeContext(knowledgeSources);
+  const historyContext = buildConversationHistory(conversationHistory);
+
+  const fullPrompt = `${athleteContext}${historyContext}${knowledgeContext}
+
+## ATHLETE'S MESSAGE
+"${query}"
+
+Respond as Merlin would - naturally, helpfully, and as a real coach would in a 1-on-1 conversation.`;
+
+  logger.debug("groq_streaming_response_started", {
+    query_preview: query.substring(0, 50),
+    risk_level: riskLevel,
+  });
+
+  return yield* chatCompletionStream({
+    prompt: fullPrompt,
+    systemPrompt,
+    model: riskLevel === "high" ? GROQ_MODELS.LLAMA_70B : DEFAULT_MODEL,
+    temperature: riskLevel === "high" ? 0.4 : 0.75,
+    maxTokens: riskLevel === "high" ? 900 : 1200,
+  });
 }
 
 /**
@@ -440,12 +550,51 @@ function buildAthleteContext(userContext) {
     }
   }
 
+  if (userContext.nutritionPlan) {
+    const plan = userContext.nutritionPlan;
+    const planParts = [];
+    if (plan.target_calories) planParts.push(`${plan.target_calories} kcal`);
+    if (plan.protein_g) planParts.push(`${plan.protein_g}g protein`);
+    if (plan.carbs_g) planParts.push(`${plan.carbs_g}g carbs`);
+    if (plan.fat_g) planParts.push(`${plan.fat_g}g fat`);
+    if (plan.hydration_goal_liters) {
+      planParts.push(`${plan.hydration_goal_liters}L hydration`);
+    }
+
+    if (planParts.length > 0) {
+      parts.push(
+        `Use their saved nutrition targets when giving fueling advice: ${planParts.join(", ")}.`,
+      );
+    }
+
+    if (plan.meal_timing_notes) {
+      parts.push(
+        `Meal timing preference or plan note: ${plan.meal_timing_notes}.`,
+      );
+    }
+  }
+
   // Upcoming game
   if (userContext.upcomingGame) {
     const daysUntil = userContext.upcomingGame.daysUntil || "soon";
     parts.push(
       `They have a game coming up ${typeof daysUntil === "number" ? `in ${daysUntil} days` : daysUntil}. Consider game-prep advice.`,
     );
+  }
+
+  if (userContext.goalFocusPrompt) {
+    parts.push(userContext.goalFocusPrompt);
+  }
+
+  if (userContext.timeHorizon) {
+    const horizonCopy =
+      {
+        immediate: "right now",
+        weekly: "this week",
+        monthly: "this month",
+        seasonal: "this season",
+      }[userContext.timeHorizon] || "right now";
+    parts.push(`Shape the answer around what matters ${horizonCopy}.`);
   }
 
   // Conversation memory (Phase 4)
@@ -735,12 +884,16 @@ Example: ["Can you show me a specific drill?", "How often should I practice this
   }
 }
 
-export { isGroqConfigured,
+export {
+  isGroqConfigured,
   chatCompletion,
+  chatCompletionStream,
   generateCoachingResponse,
+  generateCoachingResponseStream,
   generateClarifyingQuestion,
   analyzeTrainingData,
   quickSuggestion,
   generateFollowUpSuggestions,
   GROQ_MODELS,
-  SYSTEM_PROMPTS, };
+  SYSTEM_PROMPTS,
+};

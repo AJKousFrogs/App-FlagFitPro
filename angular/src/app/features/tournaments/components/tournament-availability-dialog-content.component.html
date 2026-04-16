@@ -2,11 +2,11 @@
   <div class="tournament-summary">
     <h3>{{ tournament().flag }} {{ tournament().name }}</h3>
     <p class="tournament-dates">
-      <i class="pi pi-calendar"></i>
+      <i class="pi pi-calendar" aria-hidden="true"></i>
       {{ dateRangeLabel() }}
     </p>
     <p class="tournament-location">
-      <i class="pi pi-map-marker"></i>
+      <i class="pi pi-map-marker" aria-hidden="true"></i>
       {{ tournament().location }}, {{ tournament().country }}
     </p>
   </div>
@@ -97,7 +97,7 @@
 
     @if (tournamentCost() > 0 && currentStatus() === "confirmed") {
       <div class="cost-summary">
-        <h4><i class="pi pi-wallet"></i> Estimated Cost</h4>
+        <h4><i class="pi pi-wallet" aria-hidden="true"></i> Estimated Cost</h4>
         <div class="cost-breakdown">
           <div class="cost-item">
             <span>Your share:</span>

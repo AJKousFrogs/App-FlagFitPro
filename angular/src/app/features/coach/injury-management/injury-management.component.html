@@ -12,31 +12,47 @@
         </app-page-header>
 
         <!-- Tab Navigation -->
-        <div class="tab-navigation">
+        <div class="tab-navigation" role="tablist" aria-label="Injury tracker views">
           <button type="button"
+            id="tab-active"
+            role="tab"
             class="tab-btn"
             [class.active]="activeTab() === 'active'"
+            [attr.aria-selected]="activeTab() === 'active'"
+            [tabindex]="activeTab() === 'active' ? 0 : -1"
             (click)="activeTab.set('active')"
           >
             Active Injuries
           </button>
           <button type="button"
+            id="tab-rtp"
+            role="tab"
             class="tab-btn"
             [class.active]="activeTab() === 'rtp'"
+            [attr.aria-selected]="activeTab() === 'rtp'"
+            [tabindex]="activeTab() === 'rtp' ? 0 : -1"
             (click)="activeTab.set('rtp')"
           >
             In Recovery
           </button>
           <button type="button"
+            id="tab-cleared"
+            role="tab"
             class="tab-btn"
             [class.active]="activeTab() === 'cleared'"
+            [attr.aria-selected]="activeTab() === 'cleared'"
+            [tabindex]="activeTab() === 'cleared' ? 0 : -1"
             (click)="activeTab.set('cleared')"
           >
             Cleared
           </button>
           <button type="button"
+            id="tab-history"
+            role="tab"
             class="tab-btn"
             [class.active]="activeTab() === 'history'"
+            [attr.aria-selected]="activeTab() === 'history'"
+            [tabindex]="activeTab() === 'history' ? 0 : -1"
             (click)="activeTab.set('history')"
           >
             All History
@@ -78,6 +94,13 @@
             </div>
           </div>
         </div>
+
+        <!-- Tab Panel -->
+        <div
+          role="tabpanel"
+          [attr.aria-labelledby]="'tab-' + activeTab()"
+          id="injury-tab-panel"
+        >
 
         <!-- Active Injuries -->
         @if (activeTab() === "active" && activeInjuries().length > 0) {
@@ -311,7 +334,7 @@
                 }
               </div>
               <div class="insight-box">
-                <i class="pi pi-lightbulb"></i>
+                <i class="pi pi-lightbulb" aria-hidden="true"></i>
                 <span
                   >Hamstring injuries are 50% of total. Consider adding more
                   dynamic warm-up time and hamstring-specific prehab
@@ -321,6 +344,8 @@
             </app-card-shell>
           </div>
         }
+
+        </div><!-- end tabpanel -->
       </div>
 
       <!-- Report Injury Dialog -->

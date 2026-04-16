@@ -493,6 +493,61 @@ export const TeamMemberListSchema = z.array(TeamMemberSchema);
 export const GameListSchema = z.array(GameSchema);
 
 // ============================================================================
+// Notification Count Schema
+// ============================================================================
+
+export const NotificationCountSchema = z.object({
+  unreadCount: z.number(),
+});
+
+export type NotificationCountDTO = ReturnType<typeof NotificationCountSchema.parse>;
+
+// ============================================================================
+// Coach Inbox Schemas
+// ============================================================================
+
+export const InboxItemSchema = z.object({
+  id: z.string(),
+  player_id: z.string(),
+  inbox_type: z.enum(["safety_alert", "review_needed", "win"] as const),
+  priority: z.enum(["low", "medium", "high", "critical"] as const),
+  source_type: z.string(),
+  source_id: z.string(),
+  title: z.string(),
+  summary: z.string(),
+  risk_level: z.string(),
+  acwr_value: z.number().nullable(),
+  acwr_zone: z.string().nullable(),
+  intent_type: z.string(),
+  status: z.string(),
+  coach_action: z.string().nullable(),
+  coach_notes: z.string().nullable(),
+  override_reason: z.string().nullable(),
+  override_alternative: z.string().nullable(),
+  viewed_at: z.string().nullable(),
+  actioned_at: z.string().nullable(),
+  created_at: z.string(),
+  is_new: z.boolean(),
+});
+
+export const CoachInboxListResponseSchema = z.object({
+  items: z.array(InboxItemSchema),
+  total: z.number(),
+});
+
+export const InboxStatsSchema = z.object({
+  safety_alerts: z.number(),
+  review_needed: z.number(),
+  wins: z.number(),
+  total_pending: z.number(),
+  critical_count: z.number(),
+});
+
+export type InboxItemDTO = ReturnType<typeof InboxItemSchema.parse>;
+export type CoachInboxListResponseDTO = ReturnType<typeof CoachInboxListResponseSchema.parse>;
+export type InboxStatsDTO = ReturnType<typeof InboxStatsSchema.parse>;
+
+// ============================================================================
 // Validation Helper
 // ============================================================================
 

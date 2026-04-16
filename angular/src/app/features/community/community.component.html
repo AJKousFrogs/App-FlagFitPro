@@ -46,7 +46,7 @@
                     aria-label="Remove poll option"
                     pTooltip="Remove option"
                   >
-                    <i class="pi pi-times"></i>
+                    <i class="pi pi-times" aria-hidden="true"></i>
                   </button>
                 }
               </div>
@@ -57,7 +57,7 @@
                 class="add-option-btn"
                 (click)="addOption()"
               >
-                <i class="pi pi-plus"></i>
+                <i class="pi pi-plus" aria-hidden="true"></i>
                 Add Option
               </button>
             }
@@ -189,7 +189,7 @@
                           <span class="item-time">{{ post.timeAgo }}</span>
                           @if (post.location) {
                             <span class="location">
-                              <i class="pi pi-map-marker"></i>
+                              <i class="pi pi-map-marker" aria-hidden="true"></i>
                               {{ post.location }}
                             </span>
                           }
@@ -202,7 +202,7 @@
                       pTooltip="More options"
                       aria-label="More post options"
                     >
-                      <i class="pi pi-ellipsis-h"></i>
+                      <i class="pi pi-ellipsis-h" aria-hidden="true"></i>
                     </button>
                   </div>
 
@@ -214,7 +214,7 @@
                     @if (post.poll) {
                       <div class="poll-container">
                         <div class="poll-header">
-                          <i class="pi pi-chart-bar"></i>
+                          <i class="pi pi-chart-bar" aria-hidden="true"></i>
                           <span class="poll-question">{{
                             post.poll.question
                           }}</span>
@@ -232,9 +232,9 @@
                               <div class="option-content">
                                 <div class="option-radio">
                                   @if (post.poll.userVote === option.id) {
-                                    <i class="pi pi-check-circle"></i>
+                                    <i class="pi pi-check-circle" aria-hidden="true"></i>
                                   } @else {
-                                    <i class="pi pi-circle"></i>
+                                    <i class="pi pi-circle" aria-hidden="true"></i>
                                   }
                                 </div>
                                 <span class="option-text">{{
@@ -333,11 +333,11 @@
                       [class.active]="post.showComments"
                       (click)="toggleComments(post)"
                     >
-                      <i class="pi pi-comment"></i>
+                      <i class="pi pi-comment" aria-hidden="true"></i>
                       <span>Comment</span>
                     </button>
                     <button type="button" class="action-btn" (click)="sharePost(post)">
-                      <i class="pi pi-share-alt"></i>
+                      <i class="pi pi-share-alt" aria-hidden="true"></i>
                       <span>Share</span>
                     </button>
                     <button type="button"
@@ -434,7 +434,7 @@
                             aria-label="Send comment"
                             [disabled]="!post.newComment?.trim()"
                           >
-                            <i class="pi pi-send"></i>
+                            <i class="pi pi-send" aria-hidden="true"></i>
                           </button>
                         </div>
                       </div>
@@ -468,7 +468,7 @@
               <!-- Loading more indicator -->
               @if (isLoadingMore()) {
                 <div class="loading-more">
-                  <i class="pi pi-spin pi-spinner"></i>
+                  <i class="pi pi-spin pi-spinner" aria-hidden="true"></i>
                   <span>Loading more posts...</span>
                 </div>
               }
@@ -476,7 +476,7 @@
               <!-- End of feed indicator -->
               @if (!hasMorePosts() && filteredPosts().length > 0) {
                 <div class="end-of-feed">
-                  <i class="pi pi-check-circle"></i>
+                  <i class="pi pi-check-circle" aria-hidden="true"></i>
                   <span>You're all caught up!</span>
                 </div>
               }

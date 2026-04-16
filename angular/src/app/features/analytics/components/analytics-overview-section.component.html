@@ -30,7 +30,7 @@
   headerIcon="pi-bullseye"
 >
   <a header-actions routerLink="/goals" class="view-all-link">
-    View All <i class="pi pi-arrow-right"></i>
+    View All <i class="pi pi-arrow-right" aria-hidden="true"></i>
   </a>
   @if (developmentGoals().length === 0) {
     <app-empty-state
@@ -71,13 +71,13 @@
           </div>
           <div class="goal-meta">
             <span class="days-remaining">
-              <i class="pi pi-calendar"></i>
+              <i class="pi pi-calendar" aria-hidden="true"></i>
               {{ getDaysRemaining(goal.deadline) }} days remaining
             </span>
           </div>
           @if (goal.coachNote) {
             <div class="coach-note">
-              <i class="pi pi-comment"></i>
+              <i class="pi pi-comment" aria-hidden="true"></i>
               <span>"{{ goal.coachNote }}"</span>
             </div>
           }

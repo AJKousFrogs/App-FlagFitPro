@@ -1,4 +1,3 @@
-import { createRuntimeV2Handler } from "./utils/runtime-v2-adapter.js";
 
 // Netlify Function: Nutrition API
 // Handles nutrition calculations, meal planning, and athlete nutrition profiles
@@ -960,4 +959,3 @@ export { calculateNutritionProfile };
 
 export const testHandler = handler;
 export { handler };
-export default createRuntimeV2Handler(handler);

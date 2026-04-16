@@ -20,13 +20,15 @@ import { CommonModule } from "@angular/common";
 import {
   ChangeDetectionStrategy,
   Component,
+  DestroyRef,
   OnDestroy,
   OnInit,
   computed,
   inject,
   signal,
 } from "@angular/core";
-import { Router } from "@angular/router";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
+import { ActivatedRoute, Router } from "@angular/router";
 
 // PrimeNG Components
 
@@ -127,11 +129,13 @@ interface HydrationLog {
 })
 export class TournamentNutritionComponent implements OnInit, OnDestroy {
   private router = inject(Router);
+  private route = inject(ActivatedRoute);
   private toastService = inject(ToastService);
   private logger = inject(LoggerService);
   private nutritionService = inject(NutritionService);
   private dialogService = inject(DialogService);
   private tournamentStateService = inject(TournamentNutritionStateService);
+  private destroyRef = inject(DestroyRef);
   private unsubscribeTodayState: (() => void) | null = null;
 
   // State
@@ -140,6 +144,16 @@ export class TournamentNutritionComponent implements OnInit, OnDestroy {
   hydrationLogs = signal<HydrationLog[]>([]);
   tournamentName = signal("Tournament Day");
   showScheduleEditor = false;
+  merlinEntryContext = signal<{
+    source: "merlin";
+    focus: "hydration" | "schedule";
+    title: string;
+    message: string;
+  } | null>(null);
+  merlinSessionId = signal<string | null>(null);
+  merlinReturnDraft = signal(
+    "I reviewed my tournament nutrition plan. What should I do next?",
+  );
 
   readonly openScheduleEditorHandler = (): void => {
     this.showScheduleEditor = true;
@@ -338,6 +352,7 @@ export class TournamentNutritionComponent implements OnInit, OnDestroy {
   private refreshInterval: ReturnType<typeof setInterval> | null = null;
 
   ngOnInit(): void {
+    this.observeRouteContext();
     void this.loadSavedSchedule();
     this.unsubscribeTodayState = this.tournamentStateService.subscribeToTodayState(
       () => {
@@ -358,6 +373,88 @@ export class TournamentNutritionComponent implements OnInit, OnDestroy {
     }
     this.unsubscribeTodayState?.();
     this.unsubscribeTodayState = null;
+  }
+
+  private observeRouteContext(): void {
+    this.route.queryParamMap
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((queryParams) => {
+        const source = queryParams.get("source");
+        const focus = queryParams.get("focus");
+        if (source === "merlin") {
+          this.merlinSessionId.set(queryParams.get("session"));
+          this.merlinReturnDraft.set(this.buildMerlinReturnDraft(focus));
+          this.consumeMerlinRouteParams(["source", "focus", "session"]);
+          if (focus === "hydration") {
+            this.merlinEntryContext.set({
+              source: "merlin",
+              focus: "hydration",
+              title: "Merlin sent you here for hydration follow-through",
+              message:
+                "Log fluids here and compare your current intake against today’s tournament hydration target.",
+            });
+            this.scrollToSection(".hydration-card");
+            return;
+          }
+
+          if (focus === "schedule") {
+            this.showScheduleEditor = true;
+            this.merlinEntryContext.set({
+              source: "merlin",
+              focus: "schedule",
+              title: "Merlin sent you here to build a game-day fueling plan",
+              message:
+                "Set your tournament schedule first so fueling windows and hydration timing can be generated correctly.",
+            });
+            this.scrollToSection(".schedule-editor-card");
+            return;
+          }
+
+          this.merlinEntryContext.set({
+            source: "merlin",
+            focus: "hydration",
+            title: "Merlin sent you here for nutrition follow-through",
+            message:
+              "Use this page to align your tournament fueling and hydration plan with your upcoming games.",
+          });
+        }
+      });
+  }
+
+  private scrollToSection(selector: string): void {
+    setTimeout(() => {
+      const element = document.querySelector<HTMLElement>(selector);
+      element?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }, 0);
+  }
+
+  private buildMerlinReturnDraft(focus: string | null): string {
+    if (focus === "hydration") {
+      return "I reviewed my tournament hydration plan. Tell me what to drink next and how aggressively I should hydrate.";
+    }
+
+    if (focus === "schedule") {
+      return "I updated my tournament schedule. Build the next fueling and hydration recommendation from that timeline.";
+    }
+
+    return "I reviewed my tournament nutrition plan. What should I do next?";
+  }
+
+  private consumeMerlinRouteParams(paramNames: string[]): void {
+    const consumedParams = Object.fromEntries(
+      paramNames.map((paramName) => [paramName, null]),
+    );
+
+    void this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: consumedParams,
+      queryParamsHandling: "merge",
+      replaceUrl: true,
+    });
+  }
+
+  dismissEntryContext(): void {
+    this.merlinEntryContext.set(null);
   }
 
   private async loadSavedSchedule(): Promise<void> {
@@ -381,6 +478,7 @@ export class TournamentNutritionComponent implements OnInit, OnDestroy {
   }
 
   addGame(): void {
+    this.dismissEntryContext();
     const lastGame = this.editGames[this.editGames.length - 1];
     let nextTime = "09:00";
 
@@ -399,19 +497,23 @@ export class TournamentNutritionComponent implements OnInit, OnDestroy {
   }
 
   removeGame(index: number): void {
+    this.dismissEntryContext();
     this.editGames.splice(index, 1);
   }
 
   onEditTournamentNameInput(value: string): void {
+    this.dismissEntryContext();
     this.editTournamentName = value;
   }
 
   onEditGameTimeInput(game: GameSchedule, event: Event): void {
+    this.dismissEntryContext();
     const input = event.target as HTMLInputElement | null;
     game.time = input?.value ?? "";
   }
 
   onEditGameOpponentInput(game: GameSchedule, value: string): void {
+    this.dismissEntryContext();
     game.opponent = value;
   }
 
@@ -419,6 +521,7 @@ export class TournamentNutritionComponent implements OnInit, OnDestroy {
     game: GameSchedule,
     checked: boolean | undefined,
   ): void {
+    this.dismissEntryContext();
     game.isReferee = !!checked;
   }
 
@@ -430,6 +533,7 @@ export class TournamentNutritionComponent implements OnInit, OnDestroy {
   }
 
   async generateNutritionPlan(): Promise<void> {
+    this.dismissEntryContext();
     // Sort games by time
     const sortedGames = [...this.editGames].sort((a, b) =>
       a.time.localeCompare(b.time),
@@ -872,6 +976,7 @@ export class TournamentNutritionComponent implements OnInit, OnDestroy {
   }
 
   async logHydration(type: string, amount: number): Promise<void> {
+    this.dismissEntryContext();
     const now = new Date();
     const timeStr = `${now.getHours().toString().padStart(2, "0")}:${now.getMinutes().toString().padStart(2, "0")}`;
 
@@ -896,6 +1001,7 @@ export class TournamentNutritionComponent implements OnInit, OnDestroy {
   }
 
   async completeWindow(window: NutritionWindow): Promise<void> {
+    this.dismissEntryContext();
     this.nutritionWindows.update((windows) =>
       windows.map((w) => (w.id === window.id ? { ...w, completed: true } : w)),
     );

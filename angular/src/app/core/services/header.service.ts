@@ -41,13 +41,6 @@ export class HeaderService {
     }));
   }
 
-  /**
-   * Set config - alias for updateConfig for compatibility
-   */
-  setConfig(newConfig: Partial<HeaderConfig>) {
-    this.updateConfig(newConfig);
-  }
-
   applyPreset(preset: HeaderPreset | null | undefined) {
     switch (preset) {
       case "dashboard":

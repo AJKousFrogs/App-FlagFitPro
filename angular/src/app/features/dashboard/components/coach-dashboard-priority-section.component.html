@@ -1,7 +1,7 @@
 <section class="priority-command-center">
   <div class="merlin-coach-card">
     <div class="merlin-avatar">
-      <i class="pi pi-sparkles"></i>
+      <i class="pi pi-sparkles" aria-hidden="true"></i>
     </div>
     <div class="merlin-content">
       <h3>Merlin's Team Briefing</h3>
@@ -9,6 +9,9 @@
       <div class="merlin-actions">
         <app-button variant="text" size="sm" icon="comments" routerLink="/chat">
           Discuss Team Strategy
+        </app-button>
+        <app-button variant="text" size="sm" icon="inbox" routerLink="/coach/inbox">
+          Review Coach Inbox
         </app-button>
       </div>
     </div>
@@ -18,7 +21,7 @@
     <div class="priority-athletes-strip">
       <div class="strip-header">
         <span class="strip-title">
-          <i class="pi pi-exclamation-triangle strip-title-icon"></i>
+          <i class="pi pi-exclamation-triangle strip-title-icon" aria-hidden="true"></i>
           Needs Attention Now
           @if (nextGenEnabled()) {
             <span class="strip-preview-badge">Preview</span>
@@ -69,7 +72,7 @@
                 size="sm"
               />
             }
-            <i class="pi pi-chevron-right"></i>
+            <i class="pi pi-chevron-right" aria-hidden="true"></i>
           </button>
         }
       </div>
@@ -80,7 +83,7 @@
     <div class="priority-athletes-strip missing-data-strip">
       <div class="strip-header">
         <span class="strip-title">
-          <i class="pi pi-exclamation-circle strip-title-icon"></i>
+          <i class="pi pi-exclamation-circle strip-title-icon" aria-hidden="true"></i>
           Data Incomplete
         </span>
         <app-badge variant="warning">{{ playersWithMissingData().length }}</app-badge>
@@ -113,7 +116,7 @@
               [severity]="getMissingDataSeverity(player.severity)"
               size="sm"
             />
-            <i class="pi pi-chevron-right"></i>
+            <i class="pi pi-chevron-right" aria-hidden="true"></i>
           </button>
         }
       </div>

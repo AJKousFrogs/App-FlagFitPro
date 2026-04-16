@@ -46,9 +46,9 @@
             (click)="selectSuggestion(suggestion)"
             [attr.aria-label]="'Search for ' + suggestion"
           >
-            <i class="pi pi-search"></i>
+            <i class="pi pi-search" aria-hidden="true"></i>
             <span [innerHTML]="highlightSuggestion(suggestion)"></span>
-            <i class="pi pi-corner-down-left"></i>
+            <i class="pi pi-corner-down-left" aria-hidden="true"></i>
           </button>
         }
       </div>
@@ -118,7 +118,7 @@
                   ></div>
                 }
               </div>
-              <i class="pi pi-chevron-right enter-icon"></i>
+              <i class="pi pi-chevron-right enter-icon" aria-hidden="true"></i>
             </div>
           }
         </div>
@@ -130,7 +130,7 @@
       ) {
         <div class="no-results">
           <div class="no-results-icon">
-            <i class="pi pi-search"></i>
+            <i class="pi pi-search" aria-hidden="true"></i>
           </div>
           <h3>No results found</h3>
           <p>
@@ -144,14 +144,14 @@
           <div class="search-tips">
             <h4>Search tips:</h4>
             <ul>
-              <li><i class="pi pi-check-circle"></i> Check your spelling</li>
+              <li><i class="pi pi-check-circle" aria-hidden="true"></i> Check your spelling</li>
               <li>
-                <i class="pi pi-check-circle"></i> Try broader terms (e.g.,
+                <i class="pi pi-check-circle" aria-hidden="true"></i> Try broader terms (e.g.,
                 "drill" instead of "specific drill name")
               </li>
-              <li><i class="pi pi-check-circle"></i> Use fewer keywords</li>
+              <li><i class="pi pi-check-circle" aria-hidden="true"></i> Use fewer keywords</li>
               <li>
-                <i class="pi pi-check-circle"></i> Try synonyms (e.g., "workout"
+                <i class="pi pi-check-circle" aria-hidden="true"></i> Try synonyms (e.g., "workout"
                 instead of "training")
               </li>
             </ul>
@@ -165,7 +165,7 @@
                 class="suggestion-chip"
                 (click)="searchFor('Sprint Training')"
               >
-                <i class="pi pi-search"></i>
+                <i class="pi pi-search" aria-hidden="true"></i>
                 Sprint Training
               </button>
               <button
@@ -173,7 +173,7 @@
                 class="suggestion-chip"
                 (click)="searchFor('Quarterback Drills')"
               >
-                <i class="pi pi-search"></i>
+                <i class="pi pi-search" aria-hidden="true"></i>
                 Quarterback Drills
               </button>
               <button
@@ -181,7 +181,7 @@
                 class="suggestion-chip"
                 (click)="searchFor('Conditioning')"
               >
-                <i class="pi pi-search"></i>
+                <i class="pi pi-search" aria-hidden="true"></i>
                 Conditioning
               </button>
               <button
@@ -189,7 +189,7 @@
                 class="suggestion-chip"
                 (click)="searchFor('Recovery')"
               >
-                <i class="pi pi-search"></i>
+                <i class="pi pi-search" aria-hidden="true"></i>
                 Recovery
               </button>
             </div>
@@ -202,7 +202,7 @@
         <div class="recent-searches">
           <div class="section-header">
             <div class="section-title">
-              <i class="pi pi-history"></i>
+              <i class="pi pi-history" aria-hidden="true"></i>
               <span>Recent Searches</span>
             </div>
             <button
@@ -221,7 +221,7 @@
                 (click)="searchFor(recent)"
               >
                 <span>{{ recent }}</span>
-                <i class="pi pi-arrow-up-left"></i>
+                <i class="pi pi-arrow-up-left" aria-hidden="true"></i>
               </button>
             }
           </div>
@@ -233,7 +233,7 @@
         <div class="popular-searches">
           <div class="section-header">
             <div class="section-title">
-              <i class="pi pi-sparkles"></i>
+              <i class="pi pi-sparkles" aria-hidden="true"></i>
               <span>Popular Searches</span>
             </div>
           </div>
@@ -244,7 +244,7 @@
                 class="popular-tag"
                 (click)="searchFor(popular)"
               >
-                <i class="pi pi-search"></i>
+                <i class="pi pi-search" aria-hidden="true"></i>
                 <span>{{ popular }}</span>
               </button>
             }
@@ -257,7 +257,7 @@
         <div class="quick-links" role="listbox" aria-label="Quick Actions">
           <div class="section-header">
             <div class="section-title">
-              <i class="pi pi-bolt"></i>
+              <i class="pi pi-bolt" aria-hidden="true"></i>
               <span>Quick Actions</span>
             </div>
           </div>
@@ -272,7 +272,7 @@
               [attr.aria-selected]="quickActionIndex() === 0"
             >
               <div class="quick-link-icon training">
-                <i class="pi pi-calendar"></i>
+                <i class="pi pi-calendar" aria-hidden="true"></i>
               </div>
               <div class="quick-link-text">
                 <span class="link-label">Training</span>
@@ -289,7 +289,7 @@
               [attr.aria-selected]="quickActionIndex() === 1"
             >
               <div class="quick-link-icon exercises">
-                <i class="pi pi-bolt"></i>
+                <i class="pi pi-bolt" aria-hidden="true"></i>
               </div>
               <div class="quick-link-text">
                 <span class="link-label">Exercises</span>
@@ -306,7 +306,7 @@
               [attr.aria-selected]="quickActionIndex() === 2"
             >
               <div class="quick-link-icon analytics">
-                <i class="pi pi-chart-line"></i>
+                <i class="pi pi-chart-line" aria-hidden="true"></i>
               </div>
               <div class="quick-link-text">
                 <span class="link-label">Performance</span>
@@ -323,7 +323,7 @@
               [attr.aria-selected]="quickActionIndex() === 3"
             >
               <div class="quick-link-icon roster">
-                <i class="pi pi-users"></i>
+                <i class="pi pi-users" aria-hidden="true"></i>
               </div>
               <div class="quick-link-text">
                 <span class="link-label">Roster</span>
@@ -358,7 +358,7 @@
       <div class="keyboard-hint search-type-hint">
         @if (searchService.loading()) {
           <span class="searching-indicator">
-            <i class="pi pi-spin pi-spinner"></i>
+            <i class="pi pi-spin pi-spinner" aria-hidden="true"></i>
             Searching...
           </span>
         } @else {
@@ -367,7 +367,7 @@
       </div>
       @if (searchQuery) {
         <button type="button" class="open-search-page-link" (click)="openFullSearch()">
-          <i class="pi pi-arrow-right"></i>
+          <i class="pi pi-arrow-right" aria-hidden="true"></i>
           <span>Open full search</span>
         </button>
       }

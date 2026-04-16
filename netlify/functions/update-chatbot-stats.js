@@ -1,4 +1,3 @@
-import { createRuntimeV2Handler } from "./utils/runtime-v2-adapter.js";
 import { Pool } from "pg";
 import { baseHandler } from "./utils/base-handler.js";
 import {
@@ -77,4 +76,3 @@ const handler = async (event, context) =>
 
 export const testHandler = handler;
 export { handler };
-export default createRuntimeV2Handler(handler);

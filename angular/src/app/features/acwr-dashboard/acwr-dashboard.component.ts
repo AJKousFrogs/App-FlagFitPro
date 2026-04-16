@@ -549,7 +549,7 @@ export class AcwrDashboardComponent implements OnInit {
       generatedAt: new Date().toISOString(),
       userId,
       acwr: {
-        current: this.acwrRatio(),
+        current: this.acwrRatio() ?? 0,
         riskZone: riskZone.label,
         acuteLoad: this.acuteLoad(),
         chronicLoad: this.chronicLoad(),

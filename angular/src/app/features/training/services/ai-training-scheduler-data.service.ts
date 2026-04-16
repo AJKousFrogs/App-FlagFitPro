@@ -7,7 +7,6 @@ import { isBenignSupabaseQueryError } from "../../../shared/utils/error.utils";
 })
 export class AiTrainingSchedulerDataService {
   private readonly supabaseService = inject(SupabaseService);
-  private legacyTrainingSessionsSchema = true;
 
   async getLatestReadiness(userId: string): Promise<{
     readiness: { score?: number | null } | null;
@@ -93,7 +92,6 @@ export class AiTrainingSchedulerDataService {
       .order("session_date", { ascending: true });
 
     if (error && isBenignSupabaseQueryError(error)) {
-      this.legacyTrainingSessionsSchema = true;
       return { sessions: [], error: null };
     }
 

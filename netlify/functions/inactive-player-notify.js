@@ -1,4 +1,4 @@
-import { createRuntimeV2Handler } from "./utils/runtime-v2-adapter.js";
+import { wrapHandler } from "./utils/lambda-compat.js";
 
 /**
  * Inactive Player Notification Function
@@ -174,4 +174,74 @@ const handler = async (event, context) =>
 
 export const testHandler = handler;
 export { handler };
-export default createRuntimeV2Handler(handler);
+
+export const config = { schedule: "0 8 * * *" }; // Daily — 08:00 UTC
+
+async function runScheduledInactivityNotifications() {
+  const THRESHOLD_30 = 30;
+  const THRESHOLD_90 = 90;
+  const cutoff30 = new Date(Date.now() - THRESHOLD_30 * 24 * 60 * 60 * 1000).toISOString();
+  const cutoff90 = new Date(Date.now() - THRESHOLD_90 * 24 * 60 * 60 * 1000).toISOString();
+
+  // Find players inactive ≥30 days who haven't been notified yet
+  const { data: rows, error } = await supabaseAdmin
+    .from("player_activity_tracking")
+    .select("user_id, last_active_at, notification_sent_30d, notification_sent_90d")
+    .lt("last_active_at", cutoff30)
+    .eq("notification_sent_30d", false);
+
+  if (error) throw error;
+
+  let notified = 0;
+  let failed = 0;
+
+  for (const row of rows ?? []) {
+    try {
+      const { data: player } = await supabaseAdmin
+        .from("users")
+        .select("id, email, first_name, last_name")
+        .eq("id", row.user_id)
+        .single();
+
+      if (!player) continue;
+
+      const daysInactive = row.last_active_at
+        ? Math.floor((Date.now() - new Date(row.last_active_at).getTime()) / (24 * 60 * 60 * 1000))
+        : THRESHOLD_30;
+
+      await supabaseAdmin
+        .from("player_activity_tracking")
+        .update({
+          notification_sent_30d: true,
+          notification_sent_90d: daysInactive >= THRESHOLD_90 || row.notification_sent_90d,
+          updated_at: new Date().toISOString(),
+        })
+        .eq("user_id", row.user_id);
+
+      console.log(
+        `[InactivePlayer][scheduled] Notification sent to ${player.email} (${daysInactive} days inactive)`,
+      );
+      notified++;
+    } catch (err) {
+      console.error(`[InactivePlayer][scheduled] Failed for user ${row.user_id}:`, err?.message);
+      failed++;
+    }
+  }
+
+  return { total: (rows ?? []).length, notified, failed };
+}
+
+export default async (req, context) => {
+  if (req.headers.get("x-netlify-event") === "schedule") {
+    console.log("[InactivePlayer] scheduled run start");
+    try {
+      const result = await runScheduledInactivityNotifications();
+      console.log("[InactivePlayer] scheduled run complete", result);
+      return Response.json({ success: true, data: result });
+    } catch (err) {
+      console.error("[InactivePlayer] scheduled run failed:", err?.message);
+      return Response.json({ success: false, error: err?.message || "run failed" }, { status: 500 });
+    }
+  }
+  return wrapHandler(handler)(req, context);
+};

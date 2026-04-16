@@ -36,7 +36,7 @@
             <div class="protocol-header">
               <div class="injury-info">
                 <div class="injury-badge">
-                  <i class="pi pi-exclamation-triangle"></i>
+                  <i class="pi pi-exclamation-triangle" aria-hidden="true"></i>
                   {{ formatInjuryLocation(protocol.injuryLocation) }}
                 </div>
                 <span class="injury-type">{{
@@ -108,9 +108,9 @@
                   <div class="stage-number">{{ stage.stage }}</div>
                   <div class="stage-icon">
                     @if (stage.stage < protocol.currentStage) {
-                      <i class="pi pi-check"></i>
+                      <i class="pi pi-check" aria-hidden="true"></i>
                     } @else if (stage.stage === protocol.currentStage) {
-                      <i class="pi pi-circle-fill"></i>
+                      <i class="pi pi-circle-fill" aria-hidden="true"></i>
                     }
                   </div>
                   <div class="stage-name">{{ stage.shortName }}</div>
@@ -125,7 +125,7 @@
               }
             </div>
             <div class="current-indicator">
-              <i class="pi pi-arrow-up"></i>
+              <i class="pi pi-arrow-up" aria-hidden="true"></i>
               <span>CURRENT</span>
             </div>
           </app-card-shell>
@@ -150,7 +150,7 @@
             </div>
 
             <div class="stage-day-info">
-              <i class="pi pi-calendar"></i>
+              <i class="pi pi-calendar" aria-hidden="true"></i>
               <span
                 >Day {{ protocol.daysInCurrentStage }} of Stage
                 {{ protocol.currentStage }}</span
@@ -161,7 +161,7 @@
             </div>
 
             <div class="activities-section">
-              <h4><i class="pi pi-check-circle"></i> ALLOWED ACTIVITIES</h4>
+              <h4><i class="pi pi-check-circle" aria-hidden="true"></i> ALLOWED ACTIVITIES</h4>
               <div class="activities-list allowed">
                 @for (
                   activity of getCurrentStage().activities;
@@ -174,7 +174,7 @@
 
             @if (getCurrentStage().restrictions.length > 0) {
               <div class="activities-section">
-                <h4><i class="pi pi-times-circle"></i> RESTRICTIONS</h4>
+                <h4><i class="pi pi-times-circle" aria-hidden="true"></i> RESTRICTIONS</h4>
                 <div class="activities-list restricted">
                   @for (
                     restriction of getCurrentStage().restrictions;
@@ -188,7 +188,7 @@
 
             <div class="progression-criteria">
               <h4>
-                <i class="pi pi-flag"></i> PROGRESSION CRITERIA (Complete ALL to
+                <i class="pi pi-flag" aria-hidden="true"></i> PROGRESSION CRITERIA (Complete ALL to
                 advance)
               </h4>
               <div class="criteria-list">
@@ -234,7 +234,7 @@
             headerIcon="pi-pencil"
           >
             <div class="checkin-form">
-              <h4><i class="pi pi-pencil"></i> Today's Check-in</h4>
+              <h4><i class="pi pi-pencil" aria-hidden="true"></i> Today's Check-in</h4>
 
               <div class="metrics-row">
                 <div class="metric-input">

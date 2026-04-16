@@ -1,4 +1,3 @@
-import { createRuntimeV2Handler } from "./utils/runtime-v2-adapter.js";
 import https from "https";
 import http from "http";
 import { baseHandler } from "./utils/base-handler.js";
@@ -179,4 +178,3 @@ const handler = async (event, context) =>
 
 export const testHandler = handler;
 export { handler };
-export default createRuntimeV2Handler(handler);

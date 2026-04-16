@@ -36,8 +36,8 @@
                 }
               </div>
               <div class="session-meta">
-                <span><i class="pi pi-map-marker"></i> {{ session.location }}</span>
-                <span><i class="pi pi-clock"></i> {{ session.lastActive }}</span>
+                <span><i class="pi pi-map-marker" aria-hidden="true"></i> {{ session.location }}</span>
+                <span><i class="pi pi-clock" aria-hidden="true"></i> {{ session.lastActive }}</span>
               </div>
             </div>
             @if (!session.isCurrent) {

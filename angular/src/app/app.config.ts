@@ -161,9 +161,10 @@ export const appConfig: ApplicationConfig = {
     // Error tracking and monitoring (Sentry integration)
     { provide: ErrorHandler, useClass: AngularGlobalErrorHandler },
 
-    // Service Worker for PWA support (offline caching, push notifications)
-    // PERFORMANCE: Delay registration to not block initial render
-    provideServiceWorker("ngsw-worker.js", {
+    // Service Worker for PWA support (offline caching, push notifications, Background Sync)
+    // custom-sw.js wraps the NGSW worker and adds the 'flagfit-offline-queue' sync handler.
+    // PERFORMANCE: Delay registration to not block initial render.
+    provideServiceWorker("custom-sw.js", {
       enabled: environment.production,
       registrationStrategy: "registerWhenStable:30000", // Register after app is stable or 30s
     }),

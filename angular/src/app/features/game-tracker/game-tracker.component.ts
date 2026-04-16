@@ -68,6 +68,8 @@ interface Game {
   visibilityScope?: "team" | "personal";
   ownerType?: "coach" | "player";
   isPersonal?: boolean;
+  /** Optimistic-lock version counter from the database. */
+  version?: number;
 }
 
 interface Player {
@@ -118,6 +120,8 @@ interface Play {
   recordedBy: string; // User ID of who recorded the play
   recorderRole: "coach" | "player"; // Role of person recording
   timestamp: Date;
+  /** Optimistic local-only play queued for sync. Shown with a "pending" indicator. */
+  _pending?: boolean;
 }
 
 @Component({
@@ -168,10 +172,13 @@ export class GameTrackerComponent implements OnInit {
   showGameForm = signal(false);
   games = signal<Game[]>([]);
   activeGameId = signal<string | null>(null);
+  /** Optimistic-lock version of the active game. Sent with every play submission. */
+  readonly activeGameVersion = signal<number>(0);
 
   // Page-level loading/error state (UX audit fix - prevent empty state masking API failure)
   readonly isPageLoading = signal<boolean>(true);
   readonly hasPageError = signal<boolean>(false);
+  readonly isSubmittingGame = signal<boolean>(false);
   readonly pageErrorMessage = signal<string>(
     "Unable to load games. Please check your connection and try again.",
   );
@@ -600,6 +607,7 @@ export class GameTrackerComponent implements OnInit {
             visibility_scope: string;
             owner_type: string;
             player_owner_id: string;
+            version: number;
           }>
         | { data: unknown[] }
       >(API_ENDPOINTS.games.list)
@@ -637,6 +645,7 @@ export class GameTrackerComponent implements OnInit {
                 visibilityScope: (game.visibility_scope as "team" | "personal") ?? "team",
                 ownerType: (game.owner_type as "coach" | "player") ?? "player",
                 isPersonal: game.visibility_scope === "personal",
+                version: typeof game.version === "number" ? game.version : 0,
               };
             },
           );
@@ -687,6 +696,9 @@ export class GameTrackerComponent implements OnInit {
   }
 
   submitGame(): void {
+    if (this.isSubmittingGame()) return;
+    this.isSubmittingGame.set(true);
+
     // Use comprehensive form validation
     const validationResult: FormValidationResult = validateForm(this.gameForm);
 
@@ -699,6 +711,7 @@ export class GameTrackerComponent implements OnInit {
       this.toastService.error(
         errorMessages || "Please fill in all required fields correctly",
       );
+      this.isSubmittingGame.set(false);
       return;
     }
 
@@ -708,6 +721,7 @@ export class GameTrackerComponent implements OnInit {
     const parsedDate = safeParseDate(formValue.gameDate);
     if (!parsedDate) {
       this.toastService.error("Please enter a valid game date");
+      this.isSubmittingGame.set(false);
       return;
     }
 
@@ -733,7 +747,8 @@ export class GameTrackerComponent implements OnInit {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (response: unknown) => {
-          let gameId = `game-${Date.now()}`;
+          this.isSubmittingGame.set(false);
+          let gameId: string | null = null;
           if (response && typeof response === "object") {
             const respObj = response as Record<string, unknown>;
             // Backend returns { success: true, data: {...} } structure
@@ -750,14 +765,29 @@ export class GameTrackerComponent implements OnInit {
               }
             }
           }
+
+          if (!gameId) {
+            // Server returned success but no ID — do not start tracking against
+            // a phantom game; reload the list so the user can find the game.
+            this.logger.error("Game created but no ID returned from server", { response });
+            this.toastService.warn(
+              "Game was created but could not be opened automatically. Please select it from the list.",
+            );
+            this.closeGameForm();
+            this.loadGames();
+            return;
+          }
+
           this.toastService.success(TOAST.SUCCESS.GAME_CREATED);
           this.closeGameForm();
           this.loadGames();
           this.startTrackingGame(gameId);
         },
         error: (err) => {
-          // If network error, queue for retry
-          if (err.status === 0 || err.message?.includes("network")) {
+          this.isSubmittingGame.set(false);
+          // Use NetworkStatusService rather than guessing from the error object —
+          // err.status === 0 is unreliable across browsers and HTTP clients.
+          if (!this.networkStatus.isOnline()) {
             this.offlineQueue.queueAction(
               "game_action",
               {
@@ -776,8 +806,9 @@ export class GameTrackerComponent implements OnInit {
       });
   }
 
-  startTrackingGame(gameId: string): void {
+  startTrackingGame(gameId: string, version = 0): void {
     this.activeGameId.set(gameId);
+    this.activeGameVersion.set(version);
     this.plays.set([]);
     this.playForm.reset({
       playType: "",
@@ -806,6 +837,7 @@ export class GameTrackerComponent implements OnInit {
       playType?: string;
       ballCarrierId?: string;
       ballCarrierIdFlag?: string;
+      expectedVersion: number;
     } = {
       ...formValue,
       gameId: this.activeGameId() || "",
@@ -813,6 +845,9 @@ export class GameTrackerComponent implements OnInit {
       recordedBy: currentUserId || "unknown",
       recorderRole: recorderRole,
       timestamp: new Date(),
+      // Optimistic-locking: server will reject with 409 if another user has
+      // already recorded a play since this client last loaded the game.
+      expectedVersion: this.activeGameVersion(),
     };
 
     // Handle ballCarrierId for flag pull (use ballCarrierIdFlag)
@@ -840,17 +875,28 @@ export class GameTrackerComponent implements OnInit {
         "high",
       );
       this.toastService.info(TOAST.INFO.PLAY_SAVED_OFFLINE);
-      this.plays.update((plays) => [...plays, playData as Play]);
+      // Mark as pending so the UI can display a "waiting to sync" badge.
+      // The play will be confirmed or removed once the queue processes.
+      this.plays.update((plays) => [...plays, { ...playData, _pending: true } as Play]);
       this.resetPlayForm();
       return;
     }
 
     // Save play
     this.apiService
-      .post(API_ENDPOINTS.gameEvents.list, playData)
+      .post<{ gameVersion?: number }>(API_ENDPOINTS.gameEvents.list, playData)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
-        next: () => {
+        next: (response) => {
+          // Advance our local version to match the server's confirmed version so the
+          // next play submission carries the correct expectedVersion.
+          const serverVersion = (response as { gameVersion?: number })?.gameVersion;
+          if (typeof serverVersion === "number") {
+            this.activeGameVersion.set(serverVersion);
+          } else {
+            this.activeGameVersion.update((v) => v + 1);
+          }
+
           this.plays.update((plays) => [...plays, playData as Play]);
 
           // Mark players as present if they're tracking their own stats
@@ -862,9 +908,21 @@ export class GameTrackerComponent implements OnInit {
 
           this.resetPlayForm();
         },
-        error: (error) => {
-          // If network error, queue for retry
-          if (error.status === 0 || error.message?.includes("network")) {
+        error: (err) => {
+          // 409 Conflict = optimistic-lock violation: another user recorded a play
+          // after this client's last load. Ask the user to reload before retrying.
+          if (err?.status === 409) {
+            this.toastService.error(
+              "Another user recorded a play at the same time. Reload the game to get the latest plays, then try again.",
+            );
+            // Reload games to refresh versions; don't reset the form so the user
+            // doesn't lose their entered play data.
+            this.loadGames();
+            return;
+          }
+          // Network dropped mid-request — use NetworkStatusService instead of
+          // guessing from the error object (err.status === 0 is unreliable).
+          if (!this.networkStatus.isOnline()) {
             this.offlineQueue.queueAction(
               "game_action",
               {
@@ -874,7 +932,7 @@ export class GameTrackerComponent implements OnInit {
               "high",
             );
             this.toastService.info(TOAST.INFO.PLAY_SAVED_OFFLINE);
-            this.plays.update((plays) => [...plays, playData as Play]);
+            this.plays.update((plays) => [...plays, { ...playData, _pending: true } as Play]);
             this.resetPlayForm();
           }
         },
@@ -1092,6 +1150,10 @@ export class GameTrackerComponent implements OnInit {
   viewGameDetails(game: Game): void {
     // Load plays for this game and show details
     this.activeGameId.set(game.id);
+    // Restore the game's last-known version so play submissions carry the correct
+    // expectedVersion for optimistic-locking. If the game list was stale we'll
+    // learn about it from a 409 on the first conflicting play.
+    this.activeGameVersion.set(game.version ?? 0);
     this.teamScore.set(parseInt(game.score.split("-")[0]) || 0);
     this.opponentScore.set(parseInt(game.score.split("-")[1]) || 0);
 

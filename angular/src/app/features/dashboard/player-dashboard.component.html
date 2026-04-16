@@ -20,25 +20,13 @@
           <section class="welcome-section bento-item span-2">
             <div class="welcome-wrapper">
               <div class="app-icon-box app-icon-box--info" aria-hidden="true">
-                <i class="pi pi-sparkles"></i>
+                <i class="pi pi-sparkles" aria-hidden="true"></i>
               </div>
               <div class="welcome-content">
                 <h1 class="welcome-greeting ff-h1">
                   {{ greeting() }}, <span class="greeting-name">{{ userName() }}</span>!
                 </h1>
                 <p class="merlin-insight">{{ merlinInsight() }}</p>
-                @if (privacySharingStatus().totalMetrics > 0) {
-                  <p class="welcome-privacy">
-                    <a routerLink="/settings/privacy" class="welcome-privacy__link"
-                      >Team sharing</a
-                    >:
-                    {{ privacySharingStatus().sharedMetrics }} of
-                    {{ privacySharingStatus().totalMetrics }} metric groups enabled
-                    @if (!privacySharingStatus().sharingEnabled) {
-                      <span class="welcome-privacy__muted">(none active)</span>
-                    }
-                  </p>
-                }
                 <div class="welcome-actions">
                   <app-button iconLeft="pi-play" routerLink="/todays-practice" size="sm"
                     >Start Training</app-button
@@ -148,9 +136,9 @@
                         [attr.aria-hidden]="true"
                       >
                         @if (item.completed) {
-                          <i class="pi pi-check"></i>
+                          <i class="pi pi-check" aria-hidden="true"></i>
                         } @else {
-                          <i class="pi pi-circle"></i>
+                          <i class="pi pi-circle" aria-hidden="true"></i>
                         }
                       </span>
                     </ng-template>
@@ -177,13 +165,39 @@
                   </div>
                 } @else {
                   <div class="empty-schedule">
-                    <i class="pi pi-calendar-minus empty-icon"></i>
+                    <i class="pi pi-calendar-minus empty-icon" aria-hidden="true"></i>
                     <p class="empty-schedule__message">No training today</p>
                   </div>
                 }
             </app-card-shell>
           } @placeholder {
             <div class="player-dashboard-schedule-placeholder bento-item"></div>
+          }
+
+          @if (privacySharingStatus().totalMetrics > 0) {
+            <app-card-shell
+              class="bento-item sharing-card"
+              title="Team Sharing"
+              headerIcon="pi-shield"
+            >
+              <p class="sharing-card__summary">
+                {{ privacySharingStatus().sharedMetrics }} of
+                {{ privacySharingStatus().totalMetrics }} metric groups enabled
+                @if (!privacySharingStatus().sharingEnabled) {
+                  <span class="sharing-card__muted">No metrics are currently shared.</span>
+                }
+              </p>
+              <div class="card-footer-action">
+                <app-button
+                  variant="text"
+                  iconRight="pi-arrow-right"
+                  routerLink="/settings/privacy"
+                  size="sm"
+                >
+                  Review Sharing
+                </app-button>
+              </div>
+            </app-card-shell>
           }
 
           <!-- Setup Card (Full Width if active) -->

@@ -9,7 +9,7 @@ import {
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
-import { RouterModule } from "@angular/router";
+import { ActivatedRoute, Router, RouterModule } from "@angular/router";
 import { InputNumberComponent } from "../../shared/components/input-number/input-number.component";
 
 import { TOAST } from "../../core/constants/toast-messages.constants";
@@ -66,6 +66,11 @@ interface WellnessMetric {
   trend?: string;
 }
 
+interface WellnessEntryContext {
+  title: string;
+  message: string;
+}
+
 @Component({
   selector: "app-wellness",
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -92,6 +97,8 @@ interface WellnessMetric {
   styleUrl: "./wellness.component.scss",
 })
 export class WellnessComponent {
+  private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
   private readonly wellnessService = inject(WellnessService);
   private readonly trainingService = inject(UnifiedTrainingService);
   private readonly logger = inject(LoggerService);
@@ -118,6 +125,11 @@ export class WellnessComponent {
 
   readonly metrics = signal<WellnessMetric[]>([]);
   readonly wellnessStats = signal<StatItem[]>([]);
+  readonly entryContext = signal<WellnessEntryContext | null>(null);
+  readonly merlinSessionId = signal<string | null>(null);
+  readonly merlinReturnDraft = signal(
+    "I updated my wellness check-in. Reassess my readiness and tell me the next best step.",
+  );
   // Chart data - uses Chart.js format
   readonly sleepChartData = signal<SimpleChartData | null>(null);
   readonly recoveryChartData = signal<SimpleChartData | null>(null);
@@ -159,6 +171,7 @@ export class WellnessComponent {
 
   constructor() {
     this.initializePage();
+    this.observeRouteFocus();
   }
 
   private initializePage(): void {
@@ -170,6 +183,89 @@ export class WellnessComponent {
 
   retryLoad(): void {
     this.initializePage();
+  }
+
+  private observeRouteFocus(): void {
+    this.route.queryParamMap
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((queryParams) => {
+        const source = queryParams.get("source");
+        const focus = queryParams.get("focus");
+        const intent = queryParams.get("intent");
+        if (source === "merlin") {
+          this.merlinSessionId.set(queryParams.get("session"));
+          this.merlinReturnDraft.set(this.buildMerlinReturnDraft(intent, focus));
+          this.entryContext.set(this.buildEntryContext(intent, focus));
+          this.consumeMerlinRouteParams(["source", "focus", "intent", "session"]);
+        }
+
+        if (!focus) {
+          return;
+        }
+
+        if (focus === "checkin") {
+          setTimeout(() => this.openCheckIn(false), 0);
+        }
+      });
+  }
+
+  private buildEntryContext(
+    intent: string | null,
+    focus: string | null,
+  ): WellnessEntryContext {
+    if (intent === "nutrition-targets") {
+      return {
+        title: "Merlin sent you here to confirm your recovery inputs",
+        message:
+          "Update today’s check-in first so nutrition and readiness recommendations stay grounded in current recovery status.",
+      };
+    }
+
+    if (intent === "recovery" || focus === "checkin") {
+      return {
+        title: "Merlin sent you here for recovery follow-through",
+        message:
+          "Complete today’s check-in so workload, soreness, sleep, and hydration can shape the next training decision.",
+      };
+    }
+
+    return {
+      title: "Merlin sent you here to update your wellness state",
+      message:
+        "Use today’s check-in to ground the next recommendation in current recovery and readiness data.",
+    };
+  }
+
+  private buildMerlinReturnDraft(
+    intent: string | null,
+    focus: string | null,
+  ): string {
+    if (intent === "nutrition-targets") {
+      return "I reviewed my wellness state. Use that together with my nutrition targets and tell me what I should prioritize next.";
+    }
+
+    if (intent === "recovery" || focus === "checkin") {
+      return "I updated my wellness check-in. Reassess my recovery and tell me whether I should train fully, reduce load, or recover today.";
+    }
+
+    return "I updated my wellness information. Reassess my current status and give me the next best recommendation.";
+  }
+
+  private consumeMerlinRouteParams(paramNames: string[]): void {
+    const consumedParams = Object.fromEntries(
+      paramNames.map((paramName) => [paramName, null]),
+    );
+
+    void this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: consumedParams,
+      queryParamsHandling: "merge",
+      replaceUrl: true,
+    });
+  }
+
+  dismissEntryContext(): void {
+    this.entryContext.set(null);
   }
 
   loadWellnessData(): void {
@@ -386,7 +482,10 @@ export class WellnessComponent {
     }
   }
 
-  openCheckIn(): void {
+  openCheckIn(dismissContext = true): void {
+    if (dismissContext) {
+      this.dismissEntryContext();
+    }
     const cardElement =
       this.checkinCard()?.nativeElement ??
       document.querySelector<HTMLElement>(".checkin-card-anchor");
@@ -418,6 +517,7 @@ export class WellnessComponent {
       | "readiness",
     value: number | null,
   ): void {
+    this.dismissEntryContext();
     this.checkInData = {
       ...this.checkInData,
       [key]: value,
@@ -425,25 +525,31 @@ export class WellnessComponent {
   }
 
   submitCheckIn(): void {
+    // Gate first — disable the button immediately to prevent double-submit
+    // before any async work begins.
+    if (this.isSubmitting()) return;
+    this.isSubmitting.set(true);
+
     if (
       this.checkInData.sleepHours === null ||
       this.checkInData.sleepHours <= 0
     ) {
       this.toastService.warn(TOAST.WARN.ENTER_SLEEP_HOURS);
+      this.isSubmitting.set(false);
       return;
     }
 
     if (this.checkInData.sleepQuality === null) {
       this.toastService.warn("Please enter your sleep quality rating");
+      this.isSubmitting.set(false);
       return;
     }
 
     if (this.checkInData.energyLevel === null) {
       this.toastService.warn("Please enter your energy level");
+      this.isSubmitting.set(false);
       return;
     }
-
-    this.isSubmitting.set(true);
 
     const wellnessData = {
       sleep: this.checkInData.sleepQuality,
@@ -492,21 +598,11 @@ export class WellnessComponent {
             wellnessData,
             "high",
           );
+          // Keep form data intact — if sync never completes the user can edit
+          // and resubmit rather than losing their entries silently.
           this.toastService.info(
-            "You're offline. Check-in queued for sync when connection is restored.",
+            "You're offline. Check-in queued for sync when connection is restored. Your entries are preserved.",
           );
-          this.checkInData = {
-            sleepHours: null,
-            sleepQuality: null,
-            energyLevel: null,
-            soreness: null,
-            hydration: null,
-            restingHR: null,
-            mood: null,
-            stress: null,
-            motivation: null,
-            readiness: null,
-          };
         } else {
           this.toastService.error(TOAST.ERROR.WELLNESS_CHECKIN_FAILED);
         }

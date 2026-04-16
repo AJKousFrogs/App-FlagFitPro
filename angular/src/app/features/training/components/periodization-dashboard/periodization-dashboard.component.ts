@@ -247,7 +247,7 @@ export class PeriodizationDashboardComponent implements OnInit {
 
     // Get ACWR from canonical AcwrService (single source of truth)
     const acwrData = this.acwrService.acwrData();
-    if (acwrData.ratio > 0) {
+    if (acwrData.ratio && acwrData.ratio > 0) {
       const acwr: ACWRCalculation = {
         acuteLoad: Math.round(acwrData.acute),
         chronicLoad: Math.round(acwrData.chronic),

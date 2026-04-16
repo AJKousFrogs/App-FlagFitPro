@@ -2,7 +2,7 @@
   <div class="header-content">
     <div class="header-text">
       <h1 class="feed-title">
-        <i class="pi pi-video"></i>
+        <i class="pi pi-video" aria-hidden="true"></i>
         Training Videos
       </h1>
       <p class="feed-subtitle">Curated drills from pro athletes & coaches</p>
@@ -16,10 +16,10 @@
           tooltipPosition="bottom"
           (click)="scrollToVideos.emit()"
         >
-          <i class="pi pi-video"></i>
+          <i class="pi pi-video" aria-hidden="true"></i>
           <span class="stat-number">{{ totalVideos() }}</span>
           <span class="stat-block__label">Videos</span>
-          <i class="pi pi-chevron-down stat-action-icon"></i>
+          <i class="pi pi-chevron-down stat-action-icon" aria-hidden="true"></i>
         </button>
         <button
           type="button"
@@ -28,10 +28,10 @@
           tooltipPosition="bottom"
           (click)="scrollToCreators.emit()"
         >
-          <i class="pi pi-star"></i>
+          <i class="pi pi-star" aria-hidden="true"></i>
           <span class="stat-number">{{ totalCreators() }}</span>
           <span class="stat-block__label">Creators</span>
-          <i class="pi pi-chevron-down stat-action-icon"></i>
+          <i class="pi pi-chevron-down stat-action-icon" aria-hidden="true"></i>
         </button>
       </div>
       <app-button
@@ -55,7 +55,7 @@
 
   <div class="filter-chips-container">
     <div class="filter-label">
-      <i class="pi pi-filter"></i>
+      <i class="pi pi-filter" aria-hidden="true"></i>
       <span>Position</span>
     </div>
     <div class="filter-chips">
@@ -79,7 +79,7 @@
 
   <div class="filter-chips-container">
     <div class="filter-label">
-      <i class="pi pi-bolt"></i>
+      <i class="pi pi-bolt" aria-hidden="true"></i>
       <span>Focus</span>
     </div>
     <div class="filter-chips scrollable">

@@ -320,11 +320,28 @@ export class SupabaseService {
   }
 
   /**
-   * Sign out
+   * Sign out — clears auth session and all browser-cached data.
    */
   async signOut() {
     await this.waitForInit();
-    return await this.client.auth.signOut();
+    const result = await this.client.auth.signOut();
+
+    // Clear Angular state immediately (onAuthStateChange also does this, but be explicit)
+    this._currentUser.set(null);
+    this._session.set(null);
+
+    // Clear service worker cache so stale athlete data cannot be read
+    // by the next person who uses this device.
+    if (typeof window !== "undefined" && "caches" in window) {
+      try {
+        const cacheNames = await caches.keys();
+        await Promise.all(cacheNames.map((name) => caches.delete(name)));
+      } catch {
+        // Non-fatal — cache clearing is best-effort
+      }
+    }
+
+    return result;
   }
 
   /**

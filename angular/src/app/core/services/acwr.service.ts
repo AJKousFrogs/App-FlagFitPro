@@ -257,12 +257,17 @@ export class AcwrService {
     sessions.forEach((session) => {
       const dateKey = this.getDateKeyLocal(session.date);
       const currentLoad = dailyLoads.get(dateKey) || 0;
-      const sessionLoad =
-        Number.isFinite(session.load) && session.load > 0
-          ? session.load
-          : (session.metrics?.calculatedLoad ??
-            session.metrics?.internal?.workload ??
-            0);
+      let sessionLoad: number;
+      if (Number.isFinite(session.load) && (session.load as number) > 0) {
+        sessionLoad = session.load as number;
+      } else if (typeof session.metrics?.calculatedLoad === "number" && session.metrics.calculatedLoad > 0) {
+        sessionLoad = session.metrics.calculatedLoad;
+      } else if (typeof session.metrics?.internal?.workload === "number" && session.metrics.internal.workload > 0) {
+        sessionLoad = session.metrics.internal.workload;
+      } else {
+        sessionLoad = 0;
+        this.logger.warn("[ACWR] Missing load data for session", { id: session.id });
+      }
       dailyLoads.set(dateKey, currentLoad + sessionLoad);
     });
 
@@ -342,6 +347,19 @@ export class AcwrService {
    * Check if sufficient data exists for reliable ACWR calculation
    * Requires minimum days and sessions as per evidence-based guidelines
    */
+  /**
+   * Public computed: whether there is enough data for a meaningful ACWR ratio.
+   * Consumers should check this before using acwrRatio() to distinguish
+   * "no data" from a genuinely low ratio.
+   */
+  readonly sufficientDataForACWR = computed(() => this.hasSufficientData().sufficient);
+
+  /**
+   * Public computed: exposes tolerance detection so UI can surface it.
+   * Returns undefined when there is insufficient history or tolerance not detected.
+   */
+  readonly toleranceStatus = computed(() => this.detectTolerance());
+
   private hasSufficientData(): {
     sufficient: boolean;
     daysWithData: number;
@@ -439,19 +457,18 @@ export class AcwrService {
   }
 
   /**
-   * Reactive signal: Calculate ACWR ratio with data quality checks
-   * Returns 0 if insufficient data for reliable calculation.
-   * Uses safeDivide for precision and division-by-zero safety.
+   * Reactive signal: Calculate ACWR ratio with data quality checks.
+   * Returns null when there is insufficient history — callers must distinguish
+   * null ("no data yet") from a low numeric ratio ("under-training").
+   * Use sufficientDataForACWR to guard before reading this value numerically.
    */
-  public acwrRatio: Signal<number> = computed(() => {
+  public acwrRatio: Signal<number | null> = computed(() => {
     const acute = this.acuteLoad();
     const chronic = this.chronicLoad();
     const { sufficient } = this.hasSufficientData();
 
-    // Return 0 if insufficient data (prevents misleading ratios)
-    if (!sufficient) return 0;
+    if (!sufficient) return null;
 
-    // Use safeDivide for precision handling and division-by-zero safety
     return safeDivide(acute, chronic, ACWR_PRECISION);
   });
 
@@ -464,8 +481,8 @@ export class AcwrService {
     const cfg = this.config();
     const { sufficient } = this.hasSufficientData();
 
-    // Check data sufficiency first
-    if (!sufficient || ratio === 0) {
+    // Check data sufficiency first — ratio null means insufficient history
+    if (!sufficient || ratio === null) {
       return {
         level: "no-data",
         color: "gray",
@@ -725,11 +742,12 @@ export class AcwrService {
 
     // Update historical ACWR for tolerance detection
     const currentData = this.acwrData();
-    if (currentData.ratio > 0) {
+    const currentRatio = currentData.ratio;
+    if (currentRatio && currentRatio > 0) {
       const history = [...this.historicalACWR()];
       history.unshift({
         date: new Date(),
-        ratio: currentData.ratio,
+        ratio: currentRatio,
         chronic: currentData.chronic,
       });
 
@@ -740,9 +758,9 @@ export class AcwrService {
       );
 
       // Check for ACWR spike and create load cap if needed
-      if (currentData.ratio > 1.5 && session.playerId) {
+      if (currentRatio > 1.5 && session.playerId) {
         this.acwrSpikeDetection
-          .checkAndCapLoad(session.playerId, currentData.ratio)
+          .checkAndCapLoad(session.playerId, currentRatio)
           .catch((error) => {
             this.logger.error("acwr_spike_check_failed", error, {
               playerId: session.playerId,
@@ -1012,7 +1030,7 @@ export class AcwrService {
     if (risk.level === "elevated-risk" && daysUntilGame <= 2) return true;
 
     // Skip if ACWR exceeds sweet spot upper bound and it's Friday (day before Saturday game)
-    if (ratio > cfg.thresholds.sweetSpotHigh && dayOfWeek === 5) return true;
+    if (ratio !== null && ratio > cfg.thresholds.sweetSpotHigh && dayOfWeek === 5) return true;
 
     return false;
   }
@@ -1356,8 +1374,9 @@ export class AcwrService {
     userId: string,
   ): Promise<{ ok: boolean; errorMessage?: string }> {
     const acwrData = this.acwrData();
+    const acwrRatio = acwrData.ratio;
 
-    if (acwrData.ratio === 0) {
+    if (!acwrRatio || acwrRatio === 0) {
       this.logger.debug("acwr_save_skipped_insufficient_data", { userId });
       return { ok: true };
     }
@@ -1372,7 +1391,7 @@ export class AcwrService {
           daily_load: Math.round(acwrData.acute), // Current day's load estimate
           acute_load: acwrData.acute,
           chronic_load: acwrData.chronic,
-          acwr: acwrData.ratio,
+          acwr: acwrRatio,
           injury_risk_level: acwrData.riskZone.label,
         });
 
@@ -1395,12 +1414,12 @@ export class AcwrService {
 
       this.logger.debug("acwr_load_monitoring_upsert_ok", {
         userId,
-        ratio: acwrData.ratio,
+        ratio: acwrRatio,
       });
 
       // Check for ACWR spike and create load cap if needed
-      if (acwrData.ratio > 1.5) {
-        await this.acwrSpikeDetection.checkAndCapLoad(userId, acwrData.ratio);
+      if (acwrRatio > 1.5) {
+        await this.acwrSpikeDetection.checkAndCapLoad(userId, acwrRatio);
       }
 
       return { ok: true };

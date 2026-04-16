@@ -124,6 +124,8 @@ export class RealtimeService {
       this.logger.warn(
         `Already subscribed to ${channelName}, skipping duplicate subscription`,
       );
+      // Return the real unsubscribe function so the caller can clean up the
+      // shared channel if they hold the only remaining reference.
       return () => this.unsubscribe(channelName);
     }
 
@@ -386,7 +388,8 @@ export class RealtimeService {
     // Check if channel already exists
     if (this.channels.has(channelName)) {
       this.logger.warn(`Channel ${channelName} already exists`);
-      return () => {};
+      // Return a real unsubscribe so the caller can remove the shared channel.
+      return () => this.unsubscribe(channelName);
     }
 
     // Create channel

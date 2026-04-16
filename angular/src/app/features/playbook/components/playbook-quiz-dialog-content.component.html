@@ -74,9 +74,9 @@
   <div class="quiz-results">
     <div class="results-icon" [class.success]="quizScore() >= 80">
       @if (quizScore() >= 80) {
-        <i class="pi pi-trophy"></i>
+        <i class="pi pi-trophy" aria-hidden="true"></i>
       } @else {
-        <i class="pi pi-chart-bar"></i>
+        <i class="pi pi-chart-bar" aria-hidden="true"></i>
       }
     </div>
 

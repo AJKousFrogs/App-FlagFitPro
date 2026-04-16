@@ -1,4 +1,3 @@
-import { createRuntimeV2Handler } from "./utils/runtime-v2-adapter.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { createErrorResponse, createSuccessResponse } from "./utils/error-handler.js";
 import { parseJsonObjectBody } from "./utils/input-validator.js";
@@ -78,6 +77,35 @@ const handler = async (event, context) =>
             return createErrorResponse("Not authorized", 403, "authorization_error");
           }
 
+          // Optimistic-locking: if the client supplied expectedVersion, atomically
+          // increment the game's version counter only when it matches. A zero-row
+          // result means someone else already recorded a play after the client last
+          // loaded the game → 409 Conflict so the client can reload and retry.
+          let newGameVersion = null;
+          if (typeof body.expectedVersion === "number") {
+            const { data: versionRow, error: versionError } = await supabase
+              .from("games")
+              .update({ version: body.expectedVersion + 1, updated_at: new Date().toISOString() })
+              .eq("game_id", game.data.game_id)
+              .eq("version", body.expectedVersion)
+              .select("version")
+              .maybeSingle();
+
+            if (versionError) {
+              throw versionError;
+            }
+
+            if (!versionRow) {
+              return createErrorResponse(
+                "Game was updated by another user. Reload the game to see the latest plays before adding yours.",
+                409,
+                "version_conflict",
+              );
+            }
+
+            newGameVersion = versionRow.version;
+          }
+
           const { data, error } = await supabase
             .from("game_events")
             .insert(normalizePlay(body, userId))
@@ -88,7 +116,10 @@ const handler = async (event, context) =>
             throw error;
           }
 
-          return createSuccessResponse(data, 201);
+          return createSuccessResponse(
+            { ...data, gameVersion: newGameVersion ?? game.data.version },
+            201,
+          );
         }
 
         if (evt.httpMethod === "POST" && subPath === "/mark-presence") {
@@ -174,4 +205,3 @@ const handler = async (event, context) =>
 
 export const testHandler = handler;
 export { handler };
-export default createRuntimeV2Handler(handler);

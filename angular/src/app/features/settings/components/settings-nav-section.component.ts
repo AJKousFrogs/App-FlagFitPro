@@ -4,6 +4,8 @@ export interface SettingsNavItem {
   id: string;
   icon: string;
   label: string;
+  route?: string;
+  keywords?: string[];
 }
 
 @Component({

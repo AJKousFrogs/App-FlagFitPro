@@ -62,7 +62,7 @@
     <!-- Primary Charts (Span 2) -->
     @defer (on viewport) {
       <div class="bento-item span-2 charts-bento">
-        <h3 class="bento-title"><i class="pi pi-chart-line"></i> Performance Dynamics</h3>
+        <h3 class="bento-title"><i class="pi pi-chart-line" aria-hidden="true"></i> Performance Dynamics</h3>
         <app-analytics-charts-section
           [performanceChartData]="performanceChartData()"
           [chemistryChartData]="chemistryChartData()"
@@ -99,7 +99,7 @@
     <!-- Player Stats Summary (Span 1) -->
     @defer (on viewport) {
       <div class="bento-item stats-summary-bento">
-        <h3 class="bento-title"><i class="pi pi-user"></i> Athlete Profile Stats</h3>
+        <h3 class="bento-title"><i class="pi pi-user" aria-hidden="true"></i> Athlete Profile Stats</h3>
         <app-analytics-player-stats-section
           [playerGameStats]="playerGameStats()"
           [playerSeasonStats]="playerSeasonStats()"

@@ -458,13 +458,21 @@
               </div>
               <!-- Pass Outcome Selection -->
               <div class="outcome-section">
-                <label class="outcome-label">Outcome:</label>
-                <div class="outcome-buttons">
+                <span id="outcome-label" class="outcome-label">Outcome:</span>
+                <div
+                  class="outcome-buttons"
+                  role="radiogroup"
+                  aria-labelledby="outcome-label"
+                >
                   @for (outcome of passOutcomeOptions; track outcome) {
                     <button
-                  type="button"
+                      type="button"
+                      role="radio"
                       class="outcome-btn outcome-{{ outcome.severity }}"
                       [class.active]="
+                        playForm.get('outcome')?.value === outcome.value
+                      "
+                      [attr.aria-checked]="
                         playForm.get('outcome')?.value === outcome.value
                       "
                       (click)="playForm.patchValue({ outcome: outcome.value })"
@@ -794,12 +802,12 @@
               <td>
                 @if (game.isPersonal) {
                   <span class="personal-badge">
-                    <i class="pi pi-user"></i>
+                    <i class="pi pi-user" aria-hidden="true"></i>
                     Personal
                   </span>
                 } @else {
                   <span class="team-badge">
-                    <i class="pi pi-users"></i>
+                    <i class="pi pi-users" aria-hidden="true"></i>
                     Team
                   </span>
                 }

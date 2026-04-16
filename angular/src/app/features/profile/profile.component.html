@@ -23,11 +23,11 @@
 
       <!-- Quick Bio/Status (Span 1) -->
       <div class="bento-item bio-bento">
-        <h3 class="bento-title"><i class="pi pi-id-card"></i> Athlete Identity</h3>
+        <h3 class="bento-title"><i class="pi pi-id-card" aria-hidden="true"></i> Athlete Identity</h3>
         <div class="bio-content">
           <div class="jersey-badge">#{{ jerseyNumber() || '00' }}</div>
           <p class="position-tag">{{ userPosition() }}</p>
-          <div class="team-link"><i class="pi pi-users"></i> {{ teamName() }}</div>
+          <div class="team-link"><i class="pi pi-users" aria-hidden="true"></i> {{ teamName() }}</div>
         </div>
       </div>
 

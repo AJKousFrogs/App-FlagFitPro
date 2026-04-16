@@ -30,9 +30,9 @@
         "
       >
         @if (isUploadingAvatar()) {
-          <i class="pi pi-spin pi-spinner"></i>
+          <i class="pi pi-spin pi-spinner" aria-hidden="true"></i>
         } @else {
-          <i class="pi pi-camera"></i>
+          <i class="pi pi-camera" aria-hidden="true"></i>
         }
         <input
           type="file"
@@ -58,13 +58,13 @@
     <div class="profile-position-team">
       @if (userPosition()) {
         <span class="position-tag">
-          <i class="pi pi-user"></i>
+          <i class="pi pi-user" aria-hidden="true"></i>
           {{ userPosition() }}
         </span>
       }
       @if (teamName()) {
         <span class="team-tag">
-          <i class="pi pi-users"></i>
+          <i class="pi pi-users" aria-hidden="true"></i>
           {{ teamName() }}
         </span>
       }
@@ -73,7 +73,7 @@
     <p class="profile-email-text">{{ userEmail() }}</p>
 
     <p class="member-since">
-      <i class="pi pi-calendar"></i>
+      <i class="pi pi-calendar" aria-hidden="true"></i>
       Member since {{ memberSince() }}
     </p>
   </div>
@@ -91,7 +91,7 @@
       />
       @if (profileCompletionMissingFields().length > 0) {
         <div class="completion-hint">
-          <i class="pi pi-info-circle"></i>
+          <i class="pi pi-info-circle" aria-hidden="true"></i>
           <span>
             Complete your profile:
             {{
@@ -114,7 +114,7 @@
     </div>
   } @else {
     <div class="profile-complete-badge">
-      <i class="pi pi-check-circle"></i>
+      <i class="pi pi-check-circle" aria-hidden="true"></i>
       <span>Profile Complete</span>
     </div>
   }
