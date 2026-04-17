@@ -38,9 +38,9 @@ import { IconButtonComponent } from "../../../shared/components/button/icon-butt
 import { FormInputComponent } from "../../../shared/components/form-input/form-input.component";
 import { CheckboxComponent } from "../../../shared/components/checkbox/checkbox.component";
 
-import { ProgressBar } from "primeng/progressbar";
 import { Tooltip } from "primeng/tooltip";
 import { StatusTagComponent } from "../../../shared/components/status-tag/status-tag.component";
+import { ProgressBarComponent } from "../../../shared/components/progress-bar/progress-bar.component";
 
 // App Components & Services
 import { LoggerService } from "../../../core/services/logger.service";
@@ -116,7 +116,7 @@ interface HydrationLog {
     FormInputComponent,
     StatusTagComponent,
     Tooltip,
-    ProgressBar,
+    ProgressBarComponent,
     CardShellComponent,
     MainLayoutComponent,
     PageHeaderComponent,

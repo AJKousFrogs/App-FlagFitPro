@@ -7,6 +7,7 @@ import {
   output,
   signal,
   computed,
+  numberAttribute,
 } from "@angular/core";
 import { ControlValueAccessor, NG_VALUE_ACCESSOR, FormsModule } from "@angular/forms";
 import { TextareaModule } from "primeng/textarea";
@@ -63,7 +64,7 @@ export class TextareaComponent implements ControlValueAccessor {
   // Inputs
   label = input<string>("");
   placeholder = input<string>("");
-  rows = input(3);
+  rows = input(3, { transform: numberAttribute });
   autoResize = input(false);
   disabled = input(false);
   required = input(false);

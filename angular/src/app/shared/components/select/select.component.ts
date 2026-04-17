@@ -13,7 +13,6 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR, FormsModule } from "@angular/f
 import { SelectModule, type SelectChangeEvent } from "primeng/select";
 
 type SelectValue = SelectChangeEvent["value"];
-type SelectResolvedValue<T> = T extends { value: infer V } ? V | null : T | null;
 
 @Component({
   selector: "app-select",
@@ -92,11 +91,11 @@ export class SelectComponent<T = unknown> implements ControlValueAccessor {
 
   // Outputs
   change = output<SelectValue>();
-  valueChange = output<SelectResolvedValue<T>>();
+  valueChange = output<SelectValue>();
   /** Same payload as PrimeNG `onChange` — for templates using `(onChange)`. */
   onChange = output<SelectChangeEvent>();
   /** Emits resolved option value — for templates using `(ngModelChange)`. */
-  ngModelChange = output<SelectResolvedValue<T>>();
+  ngModelChange = output<SelectValue>();
 
   /**
    * Plain value — NgModel + p-select does not work with WritableSignal two-way
@@ -144,9 +143,9 @@ export class SelectComponent<T = unknown> implements ControlValueAccessor {
     this._cvaDisabled.set(isDisabled);
   }
 
-  private resolveValue(value: SelectValue): SelectResolvedValue<T> {
+  private resolveValue(value: SelectValue): SelectValue {
     if (value == null) {
-      return null as SelectResolvedValue<T>;
+      return null;
     }
 
     const optionValueKey = this.optionValue();
@@ -155,9 +154,9 @@ export class SelectComponent<T = unknown> implements ControlValueAccessor {
       value !== null &&
       optionValueKey in value
     ) {
-      return (value as Record<string, unknown>)[optionValueKey] as SelectResolvedValue<T>;
+      return (value as Record<string, unknown>)[optionValueKey] as SelectValue;
     }
 
-    return value as SelectResolvedValue<T>;
+    return value;
   }
 }

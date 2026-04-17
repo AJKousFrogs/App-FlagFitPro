@@ -28,14 +28,13 @@ import { ButtonComponent } from "../../../shared/components/button/button.compon
 import { CardShellComponent } from "../../../shared/components/card-shell/card-shell.component";
 import { EmptyStateComponent } from "../../../shared/components/empty-state/empty-state.component";
 import { CheckboxComponent } from "../../../shared/components/checkbox/checkbox.component";
-import { FormInputComponent } from "../../../shared/components/form-input/form-input.component";
 import { SelectComponent } from "../../../shared/components/select/select.component";
 import { TableComponent } from "../../../shared/components/table/table.component";
 import { TextareaComponent } from "../../../shared/components/textarea/textarea.component";
 import { InputNumberComponent } from "../../../shared/components/input-number/input-number.component";
-import { DatePicker } from "primeng/datepicker";
+import { DatePickerComponent } from "../../../shared/components/date-picker/date-picker.component";
 
-import { RadioButton } from "primeng/radiobutton";
+import { RadioButtonComponent } from "../../../shared/components/radio-button/radio-button.component";
 import { firstValueFrom } from "rxjs";
 import { StatusTagComponent } from "../../../shared/components/status-tag/status-tag.component";
 import {
@@ -269,13 +268,12 @@ const RTP_STAGES: RtpStage[] = [
     AvatarComponent,
     CardShellComponent,
     CheckboxComponent,
-    DatePicker,
+    DatePickerComponent,
     InputNumberComponent,
-    RadioButton,
+    RadioButtonComponent,
     SelectComponent,
     TableComponent,
     TextareaComponent,
-    FormInputComponent,
 
     MainLayoutComponent,
     PageHeaderComponent,

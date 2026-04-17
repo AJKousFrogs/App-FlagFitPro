@@ -28,7 +28,7 @@
  * - roster.models.ts: Shared interfaces
  * - roster-utils.ts: Helper functions
  */
-import { DecimalPipe, TitleCasePipe } from "@angular/common";
+import { DatePipe, DecimalPipe, TitleCasePipe } from "@angular/common";
 import {
   ChangeDetectionStrategy,
   Component,
@@ -105,6 +105,7 @@ import {
   imports: [
     StatusTagComponent,
     ConfirmDialog,
+    DatePipe,
     DecimalPipe,
     TitleCasePipe,
     MainLayoutComponent,

@@ -38,6 +38,7 @@ import {
 import {
   AIModeStatus,
 } from "../../shared/components/ai-mode-explanation/ai-mode-explanation.component";
+import { ButtonComponent } from "../../shared/components/button/button.component";
 import { CloseButtonComponent } from "../../shared/components/close-button/close-button.component";
 import { AppDialogComponent } from "../../shared/components/dialog/dialog.component";
 import { IconButtonComponent } from "../../shared/components/button/icon-button.component";
@@ -213,6 +214,7 @@ interface RecentChatSession {
     ReactiveFormsModule,
     AppDialogComponent,
     MainLayoutComponent,
+    ButtonComponent,
     IconButtonComponent,
     CloseButtonComponent,
     MicroSessionComponent,

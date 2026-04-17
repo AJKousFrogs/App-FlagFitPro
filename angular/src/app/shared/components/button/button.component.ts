@@ -8,7 +8,7 @@ import {
   booleanAttribute,
   inject,
 } from "@angular/core";
-import { RouterModule } from "@angular/router";
+import { Params, RouterModule } from "@angular/router";
 
 import { Tooltip } from "primeng/tooltip";
 import { LoggerService } from "@core/services/logger.service";
@@ -194,7 +194,7 @@ export class ButtonComponent {
   routerLink = input<string | string[] | null>(null);
 
   /** Query parameters for router link */
-  queryParams = input<Record<string, string> | null>(null);
+  queryParams = input<Params | null>(null);
 
   /** Fragment for router link */
   fragment = input<string>("");

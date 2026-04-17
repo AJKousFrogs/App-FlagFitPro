@@ -84,8 +84,8 @@ export class DatePickerComponent implements ControlValueAccessor {
   hint = input<string>("");
 
   // Outputs
-  select = output<Date | Date[] | null>();
-  ngModelChange = output<Date | Date[] | null>();
+  select = output<Date | null>();
+  ngModelChange = output<Date | null>();
 
   // Internal
   protected dateValue = signal<Date | Date[] | null>(null);
@@ -99,13 +99,13 @@ export class DatePickerComponent implements ControlValueAccessor {
 
   onSelect(value: Date | Date[] | null) {
     this.dateValue.set(value);
-    this.select.emit(value);
+    this.select.emit(this.toSingleDate(value));
   }
 
   onDateNgModelChange(value: Date | Date[] | null) {
     this.dateValue.set(value);
     this.onModelChange(value);
-    this.ngModelChange.emit(value);
+    this.ngModelChange.emit(this.toSingleDate(value));
     this.onModelTouched();
   }
 
@@ -135,5 +135,9 @@ export class DatePickerComponent implements ControlValueAccessor {
 
   setDisabledState(isDisabled: boolean): void {
     this._cvaDisabled.set(isDisabled);
+  }
+
+  private toSingleDate(value: Date | Date[] | null): Date | null {
+    return Array.isArray(value) ? value[0] ?? null : value;
   }
 }

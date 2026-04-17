@@ -7,11 +7,11 @@ import {
   OnInit,
   signal,
 } from "@angular/core";
+import { FormsModule } from "@angular/forms";
 import { RouterModule } from "@angular/router";
+import { Tab, TabList, TabPanel, TabPanels, Tabs } from "primeng/tabs";
 import { FormInputComponent } from "../../../shared/components/form-input/form-input.component";
 import { SelectComponent } from "../../../shared/components/select/select.component";
-import { TableComponent } from "../../../shared/components/table/table.component";
-import { TabsComponent, AppTabPanelDirective } from "../../../shared/components/tabs/tabs.component";
 import { TextareaComponent } from "../../../shared/components/textarea/textarea.component";
 import { CheckboxComponent } from "../../../shared/components/checkbox/checkbox.component";
 
@@ -148,14 +148,17 @@ interface NewOpponentForm {
   imports: [
     CommonModule,
     RouterModule,
+    FormsModule,
     AppDialogComponent,
     DialogHeaderComponent,
     DialogFooterComponent,
+    Tabs,
+    TabList,
+    Tab,
+    TabPanels,
+    TabPanel,
     FormInputComponent,
     SelectComponent,
-    TableComponent,
-    TabsComponent,
-    AppTabPanelDirective,
     StatusTagComponent,
     TextareaComponent,
     CheckboxComponent,

@@ -22,6 +22,7 @@ export type InputType =
   | "password"
   | "tel"
   | "url"
+  | "date"
   | "number"
   | "search";
 export type ValidationState = "idle" | "validating" | "valid" | "invalid";

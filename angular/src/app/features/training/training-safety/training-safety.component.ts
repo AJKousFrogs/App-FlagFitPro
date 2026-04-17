@@ -383,7 +383,7 @@ export class TrainingSafetyComponent implements OnInit {
     ),
   );
   acwrValue = computed(
-    () => this.acwrDisplay().value ?? this.trainingService.acwrRatio(),
+    () => this.acwrDisplay().value ?? this.trainingService.acwrRatio() ?? 0,
   );
   acwrRiskZone = computed(() =>
     getProtocolRiskZone(

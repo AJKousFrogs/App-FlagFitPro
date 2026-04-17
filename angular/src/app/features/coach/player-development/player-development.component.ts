@@ -1014,6 +1014,17 @@ export class PlayerDevelopmentComponent implements OnInit {
     this.goalForm = { ...this.goalForm, category: value };
   }
 
+  onGoalCategoryOptionChange(value: string): void {
+    if (
+      value === "physical" ||
+      value === "skill" ||
+      value === "stats" ||
+      value === "compliance"
+    ) {
+      this.onGoalCategoryChange(value);
+    }
+  }
+
   onGoalMetricChange(value: string | null): void {
     this.goalForm = { ...this.goalForm, metric: value ?? "" };
   }
