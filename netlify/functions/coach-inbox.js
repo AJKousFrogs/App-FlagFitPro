@@ -679,7 +679,6 @@ rateLimitType,
           requestId,
         );
       } catch (error) {
-      } catch (error) {
         if (error.code === "invalid_json") {
           return createErrorResponse(
             "Invalid JSON in request body",

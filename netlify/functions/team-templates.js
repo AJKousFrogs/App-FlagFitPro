@@ -395,8 +395,6 @@ async function assignTemplate(
   reason = null,
   sourceInboxItemId = null,
 ) {
-  const log = arguments[7] ?? logger;
-) {
   // Get the template
   const { data: template, error: templateError } = await supabaseAdmin
     .from("team_templates")
