@@ -1,0 +1,384 @@
+    <app-main-layout>
+<div class="ai-scheduler-page ui-page-stack">
+        <app-page-header
+          title="AI Training Scheduler"
+          subtitle="Let Merlin optimize your training plan"
+          icon="pi-bolt"
+        ></app-page-header>
+
+        @if (!generatedSchedule()) {
+          <!-- Generation Form -->
+          <app-card-shell class="generation-form-card">
+            <div class="merlin-intro">
+              <div class="merlin-avatar">🤖</div>
+              <div class="merlin-message">
+                <h3>MERLIN - Training Scheduler</h3>
+                <p>
+                  "I'll create an optimized training schedule based on your
+                  team's calendar, player readiness, and your goals. Just tell
+                  me what you need to prepare for."
+                </p>
+              </div>
+            </div>
+
+            <!-- Step 1: Target Event -->
+            <div class="form-step">
+              <h4>STEP 1: Target Event</h4>
+              <p class="step-description">What are you preparing for?</p>
+
+              <div class="radio-group">
+                @for (type of targetTypes; track type.value) {
+                  <div class="radio-option">
+                    <input
+                      type="radio"
+                      name="targetType"
+                      [id]="'target-' + type.value"
+                      [value]="type.value"
+                      [checked]="formData.targetType === type.value"
+                      (change)="onTargetTypeChange(type.value)"
+                    />
+                    <label [for]="'target-' + type.value">{{
+                      type.label
+                    }}</label>
+                  </div>
+                }
+              </div>
+
+              @if (
+                formData.targetType === "tournament" ||
+                formData.targetType === "game"
+              ) {
+                <div class="event-selector">
+                  <app-select
+                    label="Select event"
+                    [options]="upcomingEvents()"
+                    (valueChange)="onEventIdChange($event)"
+                    optionLabel="name"
+                    optionValue="id"
+                    placeholder="Select upcoming event"
+                  />
+                  @if (selectedEvent()) {
+                    <p class="event-info">
+                      Time until event:
+                      <strong>{{ selectedEvent()?.daysUntil }} days</strong>
+                    </p>
+                  }
+                </div>
+              }
+            </div>
+
+            <!-- Step 2: Training Focus -->
+            <div class="form-step">
+              <h4>STEP 2: Training Focus</h4>
+              <p class="step-description">
+                What should we prioritize? (Select up to 3)
+              </p>
+
+              <div class="checkbox-grid">
+                @for (area of focusAreas; track area.value) {
+                  <div class="checkbox-option">
+                    <input
+                      type="checkbox"
+                      [id]="'focus-' + area.value"
+                      [checked]="formData.focusAreas.includes(area.value)"
+                      (change)="onFocusAreaToggleInput(area.value, $event)"
+                      [disabled]="
+                        formData.focusAreas.length >= 3 &&
+                        !formData.focusAreas.includes(area.value)
+                      "
+                    />
+                    <label [for]="'focus-' + area.value"
+                      >{{ area.icon }} {{ area.label }}</label
+                    >
+                  </div>
+                }
+              </div>
+            </div>
+
+            <!-- Step 3: Constraints -->
+            <div class="form-step">
+              <h4>STEP 3: Constraints</h4>
+              <p class="step-description">Practice days available:</p>
+
+              <div class="days-grid">
+                @for (day of weekDays; track day.value) {
+                  <div class="day-checkbox">
+                    <input
+                      type="checkbox"
+                      [id]="'day-' + day.value"
+                      [checked]="formData.availableDays.includes(day.value)"
+                      (change)="onAvailableDayToggleInput(day.value, $event)"
+                    />
+                    <label [for]="'day-' + day.value">{{ day.label }}</label>
+                  </div>
+                }
+              </div>
+
+              <div class="constraints-row">
+                <div class="constraint-field">
+                  <app-select
+                    label="Practice duration"
+                    [options]="practiceDurations"
+                    (valueChange)="onDurationChange($event)"
+                    optionLabel="label"
+                    optionValue="value"
+                  />
+                </div>
+                <div class="constraint-field">
+                  <app-select
+                    label="Facility"
+                    [options]="facilities()"
+                    (valueChange)="onFacilityChange($event)"
+                    optionLabel="name"
+                    optionValue="id"
+                    placeholder="Select facility"
+                  />
+                </div>
+              </div>
+
+              <div class="special-considerations">
+                <p class="step-description">Special considerations:</p>
+                <div class="checkbox-option">
+                  <input
+                    type="checkbox"
+                    id="considerRtp"
+                    [checked]="formData.considerRtp"
+                    (change)="onConsiderRtpToggle($event)"
+                  />
+                  <label for="considerRtp"
+                    >🏥 {{ rtpPlayerCount() }} players in RTP ({{
+                      rtpPlayerNames()
+                    }})</label
+                  >
+                </div>
+                <div class="checkbox-option">
+                  <input
+                    type="checkbox"
+                    id="considerAcwr"
+                    [checked]="formData.considerAcwr"
+                    (change)="onConsiderAcwrToggle($event)"
+                  />
+                  <label for="considerAcwr"
+                    >⚠️ {{ highAcwrCount() }} players with elevated ACWR (reduce
+                    their load)</label
+                  >
+                </div>
+                <div class="checkbox-option">
+                  <input
+                    type="checkbox"
+                    id="weatherAdjust"
+                    [checked]="formData.weatherAdjust"
+                    (change)="onWeatherAdjustToggle($event)"
+                  />
+                  <label for="weatherAdjust"
+                    >🌧️ Weather-adjusted (indoor alternatives)</label
+                  >
+                </div>
+              </div>
+            </div>
+
+            <div class="generate-action">
+              <app-button
+                iconLeft="pi-bolt"
+                [loading]="isGenerating()"
+                [disabled]="!canGenerate()"
+                (clicked)="generateSchedule()"
+                >Generate Schedule</app-button
+              >
+            </div>
+          </app-card-shell>
+        } @else {
+          <!-- Generated Schedule View -->
+          <div class="schedule-header-actions">
+            <app-button
+              variant="secondary"
+              iconLeft="pi-arrow-left"
+              (clicked)="resetSchedule()"
+              >Back</app-button
+            >
+            <app-button
+              variant="secondary"
+              iconLeft="pi-refresh"
+              (clicked)="regenerateSchedule()"
+              >Regenerate</app-button
+            >
+            <app-button variant="secondary" iconLeft="pi-pencil"
+              >Edit</app-button
+            >
+          </div>
+
+          <!-- Merlin Recommendation -->
+          <app-card-shell class="recommendation-card">
+            <div class="merlin-recommendation">
+              <span class="merlin-icon">🤖</span>
+              <div class="recommendation-content">
+                <h3>MERLIN'S RECOMMENDATION</h3>
+                <p>{{ merlinRecommendation() }}</p>
+              </div>
+            </div>
+          </app-card-shell>
+
+          <!-- Periodization Overview -->
+          <app-card-shell title="Periodization Overview">
+            <div class="periodization-timeline">
+              @for (phase of periodizationPhases(); track phase.name) {
+                <div
+                  class="phase-block"
+                  [class.current]="phase.name === 'CURRENT'"
+                >
+                  <div class="phase-header">
+                    <span class="phase-dates">{{ phase.dateRange }}</span>
+                    <span class="phase-name">{{ phase.name }}</span>
+                  </div>
+                  <div class="phase-load">
+                    <p-progressBar
+                      [value]="phase.loadPercent"
+                      [showValue]="false"
+                      class="periodization-load-bar"
+                    ></p-progressBar>
+                    <span class="load-label">{{ phase.description }}</span>
+                  </div>
+                </div>
+              }
+            </div>
+          </app-card-shell>
+
+          <!-- Weekly Schedule -->
+          @for (week of scheduleWeeks(); track week.name) {
+            <app-card-shell [title]="week.name">
+              <div class="sessions-list">
+                @for (session of week.sessions; track session.id) {
+                  <div
+                    class="session-card"
+                    [class.rest-day]="session.isRestDay"
+                  >
+                    <div class="session-day">
+                      <span class="day-name">{{ session.day }}</span>
+                      <span class="day-date">{{ session.date }}</span>
+                      @if (!session.isRestDay) {
+                        <span class="item-time">{{ session.time }}</span>
+                      }
+                    </div>
+                    <div class="session-content">
+                      <div class="session-header">
+                        <span class="session-icon">{{ session.icon }}</span>
+                        <h4>{{ session.title }}</h4>
+                        @if (!session.isRestDay) {
+                          <span class="session-duration">{{
+                            session.duration
+                          }}</span>
+                        }
+                      </div>
+                      @if (!session.isRestDay) {
+                        <ul class="session-activities">
+                          @for (
+                            activity of session.activities;
+                            track activity
+                          ) {
+                            <li>{{ activity }}</li>
+                          }
+                        </ul>
+                        <div class="session-meta">
+                          <span>Target RPE: {{ session.targetRpe }}</span>
+                          <span>Load: {{ session.load }}</span>
+                          <span>Focus: {{ session.focus }}</span>
+                        </div>
+                        @if (session.location) {
+                          <p class="session-location">
+                            📍 {{ session.location }}
+                          </p>
+                        }
+                      }
+                    </div>
+                    @if (!session.isRestDay) {
+                      <div class="session-actions">
+                        <app-button
+                          variant="text"
+                          size="sm"
+                          iconLeft="pi-pencil"
+                          >Edit session</app-button
+                        >
+                        <app-button variant="text" size="sm" iconLeft="pi-times"
+                          >Remove session</app-button
+                        >
+                      </div>
+                    }
+                  </div>
+                }
+              </div>
+            </app-card-shell>
+          }
+
+          <!-- Player Modifications -->
+          @if (playerModifications().length > 0) {
+            <app-card-shell
+              class="modifications-card"
+              headerIcon="pi-exclamation-triangle"
+              title="Player-Specific Modifications"
+            >
+
+              @if (highAcwrMods().length > 0) {
+                <div class="mod-section">
+                  <h4>🔴 HIGH ACWR - Load Reduction</h4>
+                  @for (mod of highAcwrMods(); track mod.playerId) {
+                    <div class="mod-card">
+                      <strong
+                        >{{ mod.playerName }} (ACWR:
+                        {{ mod.acwr?.toFixed(2) }})</strong
+                      >
+                      <p>{{ mod.modification }}</p>
+                    </div>
+                  }
+                </div>
+              }
+
+              @if (rtpMods().length > 0) {
+                <div class="mod-section">
+                  <h4>🏥 RETURN-TO-PLAY - Modified Activities</h4>
+                  @for (mod of rtpMods(); track mod.playerId) {
+                    <div class="mod-card">
+                      <strong
+                        >{{ mod.playerName }} (RTP Stage
+                        {{ mod.rtpStage }})</strong
+                      >
+                      <p>{{ mod.modification }}</p>
+                      @if (mod.clearedFor && mod.clearedFor.length > 0) {
+                        <p class="cleared">
+                          <strong>Cleared for:</strong>
+                          {{ mod.clearedFor.join(", ") }}
+                        </p>
+                      }
+                      @if (mod.notClearedFor && mod.notClearedFor.length > 0) {
+                        <p class="not-cleared">
+                          <strong>NOT cleared:</strong>
+                          {{ mod.notClearedFor.join(", ") }}
+                        </p>
+                      }
+                    </div>
+                  }
+                </div>
+              }
+            </app-card-shell>
+          }
+
+          <!-- Export Actions -->
+          <div class="export-actions">
+            <app-button
+              variant="secondary"
+              iconLeft="pi-file-pdf"
+              (clicked)="exportPdf()"
+              >Export to PDF</app-button
+            >
+            <app-button
+              variant="secondary"
+              iconLeft="pi-calendar"
+              (clicked)="addToCalendar()"
+              >Add to Calendar</app-button
+            >
+            <app-button iconLeft="pi-check" (clicked)="applySchedule()"
+              >Apply Schedule</app-button
+            >
+          </div>
+        }
+      </div>
+    </app-main-layout>

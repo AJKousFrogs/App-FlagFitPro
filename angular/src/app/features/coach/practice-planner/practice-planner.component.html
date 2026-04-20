@@ -1,0 +1,470 @@
+    <app-main-layout>
+<div class="practice-planner-page ui-page-stack">
+        <app-page-header
+          title="Practice Planner"
+          subtitle="Design detailed practice sessions"
+          icon="pi-calendar"
+        >
+          <app-button iconLeft="pi-plus" (clicked)="openCreateDialog()"
+            >New Practice Plan</app-button
+          >
+        </app-page-header>
+
+        <!-- Tab Navigation -->
+        <div class="tab-navigation">
+          <button
+            class="tab-btn"
+            [class.active]="activeTab() === 'upcoming'"
+            (click)="activeTab.set('upcoming')"
+          >
+            Upcoming Practices
+          </button>
+          <button
+            class="tab-btn"
+            [class.active]="activeTab() === 'past'"
+            (click)="activeTab.set('past')"
+          >
+            Past Practices
+          </button>
+          <button
+            class="tab-btn"
+            [class.active]="activeTab() === 'templates'"
+            (click)="activeTab.set('templates')"
+          >
+            Templates
+          </button>
+        </div>
+
+        <!-- Practice List -->
+        @if (isLoading()) {
+          <app-loading message="Loading practice plans..." />
+        } @else if (loadError()) {
+          <app-page-error-state
+            title="Unable to load practice plans"
+            [message]="loadError()!"
+            (retry)="retryLoadData()"
+          />
+        } @else if (filteredPractices().length > 0) {
+          <div class="practices-list">
+            @for (practice of filteredPractices(); track practice.id) {
+              <app-card-shell class="practice-card">
+                <div class="practice-header">
+                  <div class="practice-title">
+                    <span class="practice-icon"><i class="pi pi-bolt" aria-hidden="true"></i></span>
+                    <h4>{{ practice.title }}</h4>
+                    <app-status-tag
+                      [value]="getStatusLabel(practice.status)"
+                      [severity]="getStatusSeverity(practice.status)"
+                      size="sm"
+                    />
+                  </div>
+                  <div class="practice-actions">
+                    <app-button
+                      variant="secondary"
+                      size="sm"
+                      iconLeft="pi-pencil"
+                      (clicked)="editPractice(practice)"
+                      >Edit</app-button
+                    >
+                    <app-button
+                      variant="text"
+                      size="sm"
+                      iconLeft="pi-copy"
+                      (clicked)="copyPractice(practice)"
+                      >Copy</app-button
+                    >
+                    <app-button
+                      size="sm"
+                      iconLeft="pi-play"
+                      [disabled]="practice.status !== 'scheduled'"
+                      (clicked)="startPractice(practice)"
+                      >Start</app-button
+                    >
+                  </div>
+                </div>
+
+                <div class="practice-info">
+                  <div class="info-row">
+                    <i class="pi pi-calendar"></i>
+                    <span>{{ practice.date | date: "EEEE, MMM d, y" }}</span>
+                  </div>
+                  <div class="info-row">
+                    <i class="pi pi-clock"></i>
+                    <span
+                      >{{ practice.startTime }} - {{ practice.endTime }} ({{
+                        practice.durationMinutes
+                      }}
+                      min)</span
+                    >
+                  </div>
+                  <div class="info-row">
+                    <i class="pi pi-map-marker"></i>
+                    <span>{{ practice.location }}</span>
+                  </div>
+                </div>
+
+                <div class="practice-focus">
+                  <strong>Focus:</strong> {{ practice.focus }}
+                </div>
+
+                @if (practice.equipment.length > 0) {
+                  <div class="practice-equipment">
+                    <strong>Equipment:</strong>
+                    {{ getEquipmentSummary(practice.equipment) }}
+                  </div>
+                }
+
+                <!-- Timeline Preview -->
+                <div class="timeline-preview">
+                  <h5>Timeline Preview:</h5>
+                  <div class="timeline-items">
+                    @for (activity of practice.activities; track activity.id) {
+                      <div class="timeline-item">
+                        <span class="item-time">{{ activity.startTime }}</span>
+                        <span class="activity">{{ activity.title }}</span>
+                      </div>
+                    }
+                  </div>
+                </div>
+
+                <div class="attendance-row">
+                  <span>Attendance:</span>
+                  <span class="attendance-stats">
+                    {{ practice.attendance.confirmed }}/{{
+                      practice.attendance.total
+                    }}
+                    confirmed
+                    @if (practice.attendance.pending > 0) {
+                      <span class="pending"
+                        >({{ practice.attendance.pending }} pending)</span
+                      >
+                    }
+                  </span>
+                </div>
+              </app-card-shell>
+            }
+          </div>
+        } @else {
+          <app-empty-state
+            [useCard]="true"
+            icon="pi-calendar"
+            heading="No Practices Found"
+            description="Create your first practice plan"
+            actionLabel="Create Practice"
+            actionIcon="pi-plus"
+            [actionHandler]="openCreateDialogHandler"
+          />
+        }
+      </div>
+
+      <!-- Create/Edit Dialog -->
+      <app-dialog
+        [(visible)]="showDialog"
+        [modal]="true"
+        dialogSize="2xl"
+        [blockScroll]="true"
+        [draggable]="false"
+        [breakpoints]="dialogBreakpoints.wideComfortable"
+        [ariaLabel]="
+          isEditing() ? 'Edit practice plan' : 'Create practice plan'
+        "
+      >
+        <app-dialog-header
+          icon="calendar-plus"
+          [title]="isEditing() ? 'Edit Practice Plan' : 'Create Practice Plan'"
+          subtitle="Plan timing, drills, equipment, and coach notes for the session."
+          (close)="showDialog = false"
+        />
+        <div class="practice-form">
+          <!-- Details Section -->
+          <div class="form-section">
+            <h4>Practice Details</h4>
+
+            <div class="form-field">
+              <app-form-input
+                label="Practice Title"
+                [value]="formData.title"
+                (valueChange)="updateFormDataTextField('title', $event)"
+                placeholder="e.g., Tuesday Practice - Red Zone Focus"
+              />
+            </div>
+
+            <div class="form-row three-col">
+              <div class="form-field">
+                <app-date-picker
+                  label="Date"
+                  (select)="updatePracticeDate($event)"
+                />
+              </div>
+              <div class="form-field">
+                <app-select
+                  label="Start Time"
+                  [options]="timeOptions"
+                  (valueChange)="updateFormDataTextField('startTime', $event)"
+                  optionLabel="label"
+                  optionValue="value"
+                />
+              </div>
+              <div class="form-field">
+                <app-select
+                  label="End Time"
+                  [options]="timeOptions"
+                  (valueChange)="updateFormDataTextField('endTime', $event)"
+                  optionLabel="label"
+                  optionValue="value"
+                />
+              </div>
+            </div>
+
+            <div class="form-field">
+              <app-select
+                label="Location"
+                [options]="locationOptions"
+                (valueChange)="updateFormDataTextField('location', $event)"
+                optionLabel="label"
+                optionValue="value"
+                [editable]="true"
+              />
+            </div>
+
+            <div class="form-field">
+              <app-form-input
+                label="Practice Focus (main objectives)"
+                [value]="formData.focus"
+                (valueChange)="updateFormDataTextField('focus', $event)"
+                placeholder="e.g., Red zone offense, Defensive rotations"
+              />
+            </div>
+          </div>
+
+          <!-- Timeline Section -->
+          <div class="form-section">
+            <div class="section-header">
+              <h4>Practice Timeline</h4>
+              <div class="duration-summary">
+                <span>Total: {{ formData.durationMinutes }} min</span>
+                <span>Allocated: {{ allocatedMinutes() }} min</span>
+                <span [class.warning]="remainingMinutes() < 0">
+                  Remaining: {{ remainingMinutes() }} min
+                </span>
+              </div>
+            </div>
+
+            <div class="timeline-editor">
+              @for (
+                activity of formData.activities;
+                track activity.id;
+                let i = $index
+              ) {
+                <div class="activity-block">
+                  <div class="activity-header">
+                    <span class="item-time">{{ activity.startTime }}</span>
+                    <span class="activity-icon"><i [class]="'pi ' + getActivityIcon(activity.type)" aria-hidden="true"></i></span>
+                    <app-form-input
+                      [value]="activity.title"
+                      (valueChange)="updateActivityTitle(i, $event)"
+                      class="activity-title-input"
+                    />
+                    <p-inputNumber
+                      (onInput)="onActivityDurationInput(i, $event)"
+                      suffix=" min"
+                      [min]="5"
+                      [max]="60"
+                      class="activity-duration-input"
+                    ></p-inputNumber>
+                    <app-button
+                      variant="text"
+                      iconLeft="pi-pencil"
+                      (clicked)="editActivity(activity)"
+                      >Edit activity</app-button
+                    >
+                    <app-button
+                      variant="text"
+                      iconLeft="pi-times"
+                      (clicked)="removeActivity(i)"
+                      >Remove activity</app-button
+                    >
+                  </div>
+                  @if (activity.details.length > 0) {
+                    <div class="activity-details">
+                      <ul>
+                        @for (detail of activity.details; track detail) {
+                          <li>{{ detail }}</li>
+                        }
+                      </ul>
+                    </div>
+                  }
+                </div>
+              }
+            </div>
+
+            <app-button
+              variant="text"
+              iconLeft="pi-plus"
+              (clicked)="addActivity()"
+              >Add Activity Block</app-button
+            >
+          </div>
+
+          <!-- Equipment Section -->
+          <div class="form-section">
+            <h4>Equipment Needed</h4>
+            <div class="equipment-grid">
+              @for (item of formData.equipment; track item.name) {
+                <div class="equipment-item">
+                  <input
+                    type="checkbox"
+                    [id]="'eq-' + item.name"
+                    [checked]="item.checked"
+                    (change)="onEquipmentCheckedChange(item.name, $event)"
+                  />
+                  <label [for]="'eq-' + item.name"
+                    >{{ item.name }} ({{ item.quantity }})</label
+                  >
+                </div>
+              }
+            </div>
+          </div>
+
+          <!-- Coach Notes -->
+          <div class="form-section">
+            <h4>Notes for Coaches</h4>
+            <app-textarea
+              [value]="formData.coachNotes"
+              (valueChange)="updateFormDataTextField('coachNotes', $event)"
+              placeholder="• Player-specific instructions&#10;• Key coaching points&#10;• Modifications needed"
+              [rows]="4"
+            />
+          </div>
+        </div>
+
+        <app-dialog-footer
+          dialogFooter
+          class="practice-dialog-actions"
+          cancelLabel="Cancel"
+          secondaryLabel="Save as Template"
+          secondaryVariant="text"
+          primaryLabel="Save & Notify Team"
+          primaryIcon="check"
+          [disabled]="!formData.title"
+          (cancel)="showDialog = false"
+          (secondary)="saveAsTemplate()"
+          (primary)="saveAndNotify()"
+        >
+          <app-button
+            dialogFooterStart
+            variant="secondary"
+            (clicked)="saveDraft()"
+          >
+            Save as Draft
+          </app-button>
+        </app-dialog-footer>
+      </app-dialog>
+
+      <!-- Activity Editor Dialog -->
+      <app-dialog
+        [(visible)]="showActivityDialog"
+        [modal]="true"
+        dialogSize="xl"
+        [blockScroll]="true"
+        [draggable]="false"
+        [ariaLabel]="'Edit activity ' + (editingActivity?.title || '')"
+      >
+        <app-dialog-header
+          icon="pencil"
+          [title]="'Edit Activity: ' + (editingActivity?.title || '')"
+          subtitle="Adjust timing, structure, and coaching details for this block."
+          (close)="showActivityDialog = false"
+        />
+        @if (editingActivity) {
+          <div class="activity-form">
+            <div class="form-row">
+              <div class="form-field">
+                <app-select
+                  label="Activity Type"
+                  [options]="activityTypeOptions"
+                  (valueChange)="updateEditingActivityType($event)"
+                  optionLabel="label"
+                  optionValue="value"
+                />
+              </div>
+              <div class="form-field">
+                <label for="actDuration">Duration (min)</label>
+                <p-inputNumber
+                  inputId="actDuration"
+                  (onInput)="onEditingActivityDurationInput($event)"
+                  [min]="5"
+                  [max]="60"
+                ></p-inputNumber>
+              </div>
+            </div>
+
+            <div class="form-field">
+              <label>Activity Details</label>
+              <div class="details-list">
+                @for (
+                  detail of editingActivity.details;
+                  track detail;
+                  let i = $index
+                ) {
+                  <div class="detail-row">
+                    <app-form-input
+                      [value]="editingActivity.details[i]"
+                      (valueChange)="updateEditingActivityDetail(i, $event)"
+                    />
+                    <app-button
+                      variant="text"
+                      iconLeft="pi-times"
+                      (clicked)="removeDetail(i)"
+                      >Remove</app-button
+                    >
+                  </div>
+                }
+              </div>
+              <app-button
+                variant="text"
+                size="sm"
+                iconLeft="pi-plus"
+                (clicked)="addDetail()"
+                >Add Detail</app-button
+              >
+            </div>
+
+            @if (editingActivity.type === "offense") {
+              <div class="form-field">
+                <app-textarea
+                  label="Plays to Run"
+                  [value]="editingActivity.plays?.join('\n') ?? ''"
+                  (valueChange)="updatePlays($event)"
+                  placeholder="One play per line"
+                  [rows]="4"
+                />
+              </div>
+
+              <div class="form-field">
+                <app-textarea
+                  label="Key Coaching Points"
+                  [value]="editingActivity.keyPoints?.join('\n') ?? ''"
+                  (valueChange)="updateKeyPoints($event)"
+                  placeholder="One point per line"
+                  [rows]="3"
+                />
+              </div>
+            }
+          </div>
+
+        }
+        @if (editingActivity) {
+          <div dialogFooter class="dialog-actions">
+            <app-button
+              variant="secondary"
+              (clicked)="showActivityDialog = false"
+              >Cancel</app-button
+            >
+            <app-button iconLeft="pi-check" (clicked)="saveActivity()"
+              >Save Activity</app-button
+            >
+          </div>
+        }
+      </app-dialog>
+    </app-main-layout>

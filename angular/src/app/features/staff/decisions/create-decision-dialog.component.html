@@ -1,0 +1,260 @@
+    <app-dialog
+      [visible]="visible()"
+      (visibleChange)="onVisibleChange($event)"
+      [modal]="true"
+      [closable]="false"
+      [draggable]="false"
+      [resizable]="false"
+      [blockScroll]="true"
+      [styleClass]="'dialog-lg decision-dialog decision-dialog--create'"
+    >
+      <app-dialog-header
+        icon="file"
+        title="Create Decision"
+        subtitle="Capture the athlete, rationale, and review timing in one documented workflow."
+        (close)="onCancel()"
+      />
+
+      <!-- Stepper -->
+      <app-stepper
+        [steps]="steps()"
+        [activeStepIndex]="currentStep()"
+        (stepClick)="goToStep($event)"
+      ></app-stepper>
+
+      <!-- Step Content -->
+      <div class="step-content">
+        <!-- Step 1: Select Athlete -->
+        @if (currentStep() === 0) {
+          <div class="step-panel">
+            <h3>Select Athlete</h3>
+            <div class="field">
+              <app-select
+                label="Athlete"
+                [options]="athletes()"
+                [ngModel]="formData.athleteId"
+                (change)="onAthleteSelect($event)"
+                optionLabel="name"
+                optionValue="id"
+                placeholder="Select an athlete"
+                [filter]="true"
+                [showClear]="true"
+                styleClass="w-full"
+              />
+            </div>
+            @if (formData.athleteId) {
+              <div class="athlete-info">
+                <p>Selected: {{ getAthleteName(formData.athleteId) }}</p>
+              </div>
+            }
+          </div>
+        }
+
+        <!-- Step 2: Select Decision Type -->
+        @if (currentStep() === 1) {
+          <div class="step-panel">
+            <h3>Select Decision Type</h3>
+            <div class="field">
+              <app-select
+                label="Decision Type"
+                [options]="decisionTypeOptions"
+                [ngModel]="formData.decisionType"
+                (change)="onDecisionTypeSelect($event)"
+                placeholder="Select decision type"
+                styleClass="w-full"
+              />
+            </div>
+            @if (formData.decisionType) {
+              <div class="info-box">
+                <p>
+                  <strong>Required Data Points:</strong>
+                  {{ getRequiredDataPoints(formData.decisionType).join(", ") }}
+                </p>
+              </div>
+            }
+          </div>
+        }
+
+        <!-- Step 3: Enter Summary -->
+        @if (currentStep() === 2) {
+          <div class="step-panel">
+            <h3>Decision Summary</h3>
+            <div class="field">
+              <app-textarea
+                label="Provide a clear, concise summary of the decision"
+                [value]="formData.decisionSummary"
+                (valueChange)="formData.decisionSummary = $event"
+                placeholder="e.g., Reduced sprint volume by 50% due to elevated ACWR"
+                [rows]="3"
+                styleClass="w-full"
+              />
+              <small id="decision-summary-hint" class="p-field-hint">
+                Maximum 500 characters
+              </small>
+            </div>
+            <div class="char-count">
+              {{ formData.decisionSummary.length }}/500 characters
+            </div>
+          </div>
+        }
+
+        <!-- Step 4: Select Data Points -->
+        @if (currentStep() === 3) {
+          <div class="step-panel">
+            <h3>Data Points Used</h3>
+            <p>Select the data points that informed this decision</p>
+            <div class="data-points-grid">
+              @for (point of availableDataPoints(); track point) {
+                <div class="data-point-item">
+                  <app-checkbox
+                    [ngModel]="point.selected"
+                    (change)="onDataPointToggle(point.label, $event)"
+                    [binary]="true"
+                    [inputId]="point.id"
+                    [label]="point.label"
+                  >
+                    @if (point.required) {
+                      <app-status-tag
+                        value="Required"
+                        severity="danger"
+                        size="sm"
+                      />
+                    }
+                  </app-checkbox>
+                </div>
+              }
+            </div>
+          </div>
+        }
+
+        <!-- Step 5: Set Constraints -->
+        @if (currentStep() === 4) {
+          <div class="step-panel">
+            <h3>Constraints</h3>
+            <p>Add any constraints or limitations</p>
+            <div class="constraints-list">
+              @for (
+                constraint of formData.decisionBasis.constraints;
+                track $index
+              ) {
+                <div class="constraint-item">
+                  <app-form-input
+                    [value]="formData.decisionBasis.constraints[$index]"
+                    (valueChange)="formData.decisionBasis.constraints[$index] = $event"
+                    placeholder="e.g., RTP Phase 2, No sprinting >80%"
+                    styleClass="w-full"
+                  />
+                  <app-button
+                    iconLeft="pi-times"
+                    variant="danger"
+                    [iconOnly]="true"
+                    ariaLabel="Remove constraint"
+                    (clicked)="removeConstraint($index)"
+                  />
+                </div>
+              }
+              <app-button
+                iconLeft="pi-plus"
+                variant="outlined"
+                (clicked)="addConstraint()"
+                ariaLabel="Add new constraint"
+                >Add Constraint</app-button
+              >
+            </div>
+          </div>
+        }
+
+        <!-- Step 6: Set Review Trigger -->
+        @if (currentStep() === 5) {
+          <div class="step-panel">
+            <h3>Review Trigger</h3>
+            <div class="field">
+              <app-select
+                label="When should this decision be reviewed?"
+                [options]="reviewTriggerOptions"
+                [ngModel]="formData.reviewTrigger"
+                (change)="onReviewTriggerSelect($event)"
+                placeholder="Select review trigger"
+                styleClass="w-full"
+              />
+            </div>
+            @if (formData.reviewTrigger) {
+              <div class="review-info">
+                <p>
+                  <strong>Review Date:</strong>
+                  {{ calculateReviewDate() | date: "short" }}
+                </p>
+              </div>
+            }
+          </div>
+        }
+
+        <!-- Step 7: Review & Confirm -->
+        @if (currentStep() === 6) {
+          <div class="step-panel">
+            <h3>Review & Confirm</h3>
+            <div class="review-summary">
+              <div class="review-summary-row">
+                <label>Athlete:</label>
+                <p>{{ getAthleteName(formData.athleteId) }}</p>
+              </div>
+              <div class="review-summary-row">
+                <label>Decision Type:</label>
+                <p>{{ getDecisionTypeLabel(formData.decisionType) }}</p>
+              </div>
+              <div class="review-summary-row">
+                <label>Summary:</label>
+                <p>{{ formData.decisionSummary }}</p>
+              </div>
+              <div class="review-summary-row">
+                <label>Review Date:</label>
+                <p>{{ calculateReviewDate() | date: "short" }}</p>
+              </div>
+            </div>
+
+            <!-- Confidence Preview -->
+            <div class="confidence-preview">
+              <h4>Confidence Score</h4>
+              <app-confidence-indicator
+                [score]="calculatedConfidence()"
+                [missingInputs]="missingRequiredData()"
+                [showDetails]="true"
+              ></app-confidence-indicator>
+              @if (calculatedConfidence() < 0.7) {
+                <div class="confidence-warning">
+                  <app-status-tag
+                    severity="warning"
+                    value="Low Confidence - Consider collecting more data"
+                    size="sm"
+                  />
+                </div>
+              }
+            </div>
+          </div>
+        }
+      </div>
+
+      <!-- Footer -->
+      <div dialogFooter class="dialog-actions decision-dialog__actions">
+        <app-button variant="outlined" (clicked)="onCancel()"
+          >Cancel</app-button
+        >
+        @if (currentStep() > 0) {
+          <app-button variant="outlined" (clicked)="previousStep()"
+            >Back</app-button
+          >
+        }
+        @if (currentStep() < 6) {
+          <app-button (clicked)="nextStep()" [disabled]="!canProceed()"
+            >Next</app-button
+          >
+        } @else {
+          <app-button
+            (clicked)="onConfirm()"
+            [disabled]="!canCreate()"
+            [loading]="isCreating()"
+            >Create Decision</app-button
+          >
+        }
+      </div>
+    </app-dialog>

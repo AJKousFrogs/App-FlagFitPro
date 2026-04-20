@@ -1,0 +1,192 @@
+    <!-- Session Card / Modal -->
+    @if (mode() === "modal") {
+      <app-dialog
+        [(visible)]="dialogVisible"
+        [modal]="true"
+        [closable]="currentStatus() !== 'in_progress'"
+        [dismissableMask]="currentStatus() !== 'in_progress'"
+        [draggable]="false"
+        [resizable]="false"
+        [blockScroll]="true"
+        [styleClass]="'dialog-w-xl dialog-max-w-lg micro-session-dialog'"
+        [ariaLabel]="session().title"
+        (hide)="onDialogHide()"
+      >
+        <app-dialog-header
+          icon="play-circle"
+          [title]="session().title"
+          [subtitle]="session().description || ''"
+          (close)="onDialogHide()"
+        />
+        <ng-container *ngTemplateOutlet="sessionContent"></ng-container>
+      </app-dialog>
+    } @else {
+      <app-card-shell
+        class="micro-session-card"
+        [title]="session().title"
+        [subtitle]="session().description || ''"
+        headerIcon="play-circle"
+      >
+        <ng-container header-actions>
+          <div class="header-info">
+            <app-status-tag
+              [value]="getSessionTypeLabel(session().session_type)"
+              [severity]="getSessionTypeSeverity(session().session_type)"
+              size="sm"
+            />
+            <span class="duration-badge">
+              <i class="pi pi-clock"></i>
+              {{ session().estimated_duration_minutes }} min
+            </span>
+          </div>
+        </ng-container>
+        <ng-container *ngTemplateOutlet="sessionContent"></ng-container>
+      </app-card-shell>
+    }
+
+    <!-- Shared Session Content Template -->
+    <ng-template #sessionContent>
+      <div class="session-body">
+        <!-- Ready State -->
+        @if (currentStatus() === "ready") {
+          <div class="ready-state">
+            <!-- Equipment Check Button -->
+            @if (
+              session().equipment_needed.length > 0 && !hasRequiredEquipment()
+            ) {
+              <div class="equipment-needed">
+                <h4>
+                  <i class="pi pi-box"></i>
+                  Equipment Needed
+                </h4>
+                <div class="equipment-list">
+                  @for (item of session().equipment_needed; track item) {
+                    <span class="equipment-item">{{ item }}</span>
+                  }
+                </div>
+              </div>
+            }
+
+            <!-- Safety Notes -->
+            @if (session().safety_notes) {
+              <div class="safety-notes">
+                <i class="pi pi-exclamation-triangle"></i>
+                <span>{{ session().safety_notes }}</span>
+              </div>
+            }
+
+            <!-- Coaching Cues -->
+            @if (session().coaching_cues.length > 0) {
+              <div class="coaching-cues">
+                <h4>Key Points</h4>
+                <ul>
+                  @for (cue of session().coaching_cues; track cue) {
+                    <li>{{ cue }}</li>
+                  }
+                </ul>
+              </div>
+            }
+
+            <!-- Start Button -->
+            <div class="action-buttons">
+              <app-button iconLeft="pi-play" (clicked)="startSession()"
+                >Start Session</app-button
+              >
+              <app-button variant="text" (clicked)="skipSession()"
+                >Skip</app-button
+              >
+            </div>
+          </div>
+        }
+
+        <!-- Equipment Check State -->
+        @if (currentStatus() === "equipment_check") {
+          <div class="equipment-check-state">
+            <h4>Confirm Equipment</h4>
+            <div class="equipment-checklist">
+              @for (
+                item of session().equipment_needed;
+                track item;
+                let i = $index
+              ) {
+                <div class="checklist-item">
+                  <app-checkbox
+                    [ngModel]="equipmentChecked[i]"
+                    (checkedChange)="onEquipmentCheckChange(i, $event)"
+                    [binary]="true"
+                    [label]="item"
+                  />
+                </div>
+              }
+            </div>
+            <div class="action-buttons">
+              <app-button
+                iconLeft="pi-arrow-right"
+                [disabled]="!allEquipmentChecked()"
+                (clicked)="confirmEquipment()"
+                >Continue</app-button
+              >
+              <app-button variant="text" (clicked)="skipEquipmentCheck()"
+                >Don't have equipment</app-button
+              >
+            </div>
+          </div>
+        }
+
+        <!-- In Progress State -->
+        @if (
+          currentStatus() === "in_progress" || currentStatus() === "paused"
+        ) {
+          <app-micro-session-active-section
+            [session]="session()"
+            [currentStatus]="currentStatus()"
+            [currentStepIndex]="currentStepIndex()"
+            [currentStep]="currentStep()"
+            [overallProgress]="overallProgress()"
+            [stepProgress]="stepProgress()"
+            [timerClass]="timerClass()"
+            [stepTimeRemaining]="stepTimeRemaining()"
+            [totalElapsedTime]="totalElapsedTime()"
+            [followUpRating]="followUpRating"
+            [followUpNotes]="followUpNotes"
+            [followUpSubmitted]="followUpSubmitted()"
+            [submitting]="submitting()"
+            (resume)="resumeSession()"
+            (pause)="pauseSession()"
+            (nextStep)="nextStep()"
+            (complete)="completeSession()"
+            (followUpRatingChange)="onFollowUpRatingChange($event)"
+            (followUpNotesInput)="onFollowUpNotesInput($event)"
+            (submitFollowUp)="submitFollowUp()"
+            (done)="close()"
+          />
+        }
+
+        <!-- Completed State -->
+        @if (currentStatus() === "completed") {
+          <app-micro-session-active-section
+            [session]="session()"
+            [currentStatus]="currentStatus()"
+            [currentStepIndex]="currentStepIndex()"
+            [currentStep]="currentStep()"
+            [overallProgress]="overallProgress()"
+            [stepProgress]="stepProgress()"
+            [timerClass]="timerClass()"
+            [stepTimeRemaining]="stepTimeRemaining()"
+            [totalElapsedTime]="totalElapsedTime()"
+            [followUpRating]="followUpRating"
+            [followUpNotes]="followUpNotes"
+            [followUpSubmitted]="followUpSubmitted()"
+            [submitting]="submitting()"
+            (resume)="resumeSession()"
+            (pause)="pauseSession()"
+            (nextStep)="nextStep()"
+            (complete)="completeSession()"
+            (followUpRatingChange)="onFollowUpRatingChange($event)"
+            (followUpNotesInput)="onFollowUpNotesInput($event)"
+            (submitFollowUp)="submitFollowUp()"
+            (done)="close()"
+          />
+        }
+      </div>
+    </ng-template>

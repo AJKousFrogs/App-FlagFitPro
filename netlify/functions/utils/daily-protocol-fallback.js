@@ -17,6 +17,7 @@ export async function persistFallbackProtocolWhenExercisesMissing({
   getIsoDayOfYear,
   generateFallbackProtocolExercises,
   persistGeneratedProtocol,
+  buildTransientProtocolResponse,
 }) {
   const { count: exerciseCount } = await supabase
     .from("exercises")
@@ -57,7 +58,28 @@ export async function persistFallbackProtocolWhenExercisesMissing({
     prescribed_duration_seconds: ex.prescribed_duration_seconds || null,
     load_contribution_au: ex.load_contribution_au || 0,
     ai_note: ex.ai_note || null,
+    video_url: ex.video_url || null,
   }));
+
+  const hasPersistableExercises = protocolExercises.some(
+    (ex) => ex.exercise_id,
+  );
+
+  if (!hasPersistableExercises && buildTransientProtocolResponse) {
+    return buildTransientProtocolResponse({
+      userId,
+      date,
+      readinessScore,
+      acwrValue,
+      trainingFocus,
+      aiRationale,
+      adjustedLoadTarget,
+      confidenceMetadata,
+      protocolExercises,
+      headers,
+      sessionResolution: context.sessionResolution || null,
+    });
+  }
 
   return persistGeneratedProtocol({
     supabase,

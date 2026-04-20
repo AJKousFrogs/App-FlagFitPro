@@ -1,0 +1,261 @@
+<app-main-layout>
+      <div class="ai-training-scheduler-page">
+        <app-page-header
+          title="AI Training Scheduler"
+          subtitle="AI-powered training schedule optimization based on your readiness and performance"
+          icon="pi-sparkles"
+        >
+          <app-button
+            iconLeft="pi-refresh"
+            [loading]="isGenerating()"
+            [disabled]="!aiEnabled()"
+            (clicked)="generateNewPlan()"
+            >Generate New Plan</app-button
+          >
+        </app-page-header>
+
+        <!-- AI Consent Required Banner -->
+        @if (!aiEnabled()) {
+          <app-ai-consent-required
+            featureName="AI Training Scheduler"
+            [showSettingsLink]="true"
+            [status]="'disabled'"
+            variant="banner"
+          ></app-ai-consent-required>
+        }
+
+        <!-- Readiness Overview -->
+        @if (athleteMetrics()) {
+          <div class="readiness-overview">
+            <app-card-shell class="readiness-card">
+              <div class="readiness-header">
+                <h3><i class="pi pi-heart-fill"></i> Your Readiness</h3>
+                <span class="readiness-score" [class]="getReadinessClass()">
+                  @if (athleteMetrics()!.readiness_score !== null) {
+                    {{ athleteMetrics()!.readiness_score }}%
+                  } @else {
+                    —
+                  }
+                </span>
+              </div>
+              <div class="metrics-grid">
+                <div class="metric-item">
+                  <span class="metric-label">ACWR</span>
+                  <span
+                    class="metric-value"
+                    [class.warning]="
+                      athleteMetrics()!.acwr !== null &&
+                      athleteMetrics()!.acwr! > 1.5
+                    "
+                  >
+                    @if (athleteMetrics()!.acwr !== null) {
+                      {{ athleteMetrics()!.acwr!.toFixed(2) }}
+                    } @else {
+                      —
+                    }
+                  </span>
+                </div>
+                <div class="metric-item">
+                  <span class="metric-label">Fatigue</span>
+                  @if (athleteMetrics()!.fatigue_level !== null) {
+                    <p-progressBar
+                      [value]="athleteMetrics()!.fatigue_level!"
+                      [showValue]="false"
+                      class="fatigue-bar"
+                    ></p-progressBar>
+                  } @else {
+                    <span class="metric-value">—</span>
+                  }
+                </div>
+                <div class="metric-item">
+                  <span class="metric-label">Sleep</span>
+                  <span class="metric-value">
+                    @if (athleteMetrics()!.sleep_quality !== null) {
+                      {{ athleteMetrics()!.sleep_quality }}/10
+                    } @else {
+                      —
+                    }
+                  </span>
+                </div>
+                <div class="metric-item">
+                  <span class="metric-label">Soreness</span>
+                  <span class="metric-value">
+                    @if (athleteMetrics()!.soreness_level !== null) {
+                      {{ athleteMetrics()!.soreness_level }}/10
+                    } @else {
+                      —
+                    }
+                  </span>
+                </div>
+              </div>
+            </app-card-shell>
+          </div>
+        } @else {
+          <app-card-shell class="readiness-card">
+            <app-empty-state
+              icon="pi-info-circle"
+              heading="No Readiness Data Available"
+              description="Complete your wellness check-in to see your readiness metrics here."
+            />
+          </app-card-shell>
+        }
+
+        <div class="scheduler-content">
+          <!-- AI Suggestions -->
+          <app-card-shell
+            class="suggestions-card"
+            title="AI Suggestions"
+            headerIcon="pi-sparkles"
+          >
+            @if (pendingSuggestions().length > 0) {
+              <app-status-tag
+                header-actions
+                [value]="pendingSuggestions().length + ' pending'"
+                severity="info"
+                size="sm"
+              />
+            }
+
+            @if (isLoading()) {
+              <div class="suggestions-list">
+                @for (i of [1, 2, 3]; track i) {
+                  <div class="suggestion-item">
+                    <div class="suggestion-content">
+                      <p-skeleton
+                        width="var(--size-80)"
+                        height="var(--space-6)"
+                      ></p-skeleton>
+                      <p-skeleton
+                        width="100%"
+                        height="var(--icon-container-md)"
+                        class="mt-2"
+                      ></p-skeleton>
+                      <p-skeleton
+                        width="var(--size-120)"
+                        height="var(--ds-font-size-sm)"
+                        class="mt-2"
+                      ></p-skeleton>
+                    </div>
+                  </div>
+                }
+              </div>
+            } @else if (suggestions().length === 0) {
+              <app-empty-state
+                icon="pi-check-circle"
+                heading="All Optimized!"
+                description="No suggestions at this time. Your schedule looks optimal!"
+              />
+            } @else {
+              <div class="suggestions-list">
+                @for (suggestion of suggestions(); track suggestion.id) {
+                  <div
+                    class="suggestion-item"
+                    [class.accepted]="suggestion.accepted"
+                    [class.priority-high]="suggestion.priority === 'high'"
+                  >
+                    <div class="suggestion-content">
+                      <div class="suggestion-tags">
+                        <app-status-tag
+                          [value]="suggestion.type"
+                          [severity]="getSuggestionSeverity(suggestion.type)"
+                          size="sm"
+                        />
+                        @if (suggestion.priority === "high") {
+                          <app-status-tag
+                            value="Priority"
+                            severity="danger"
+                            size="sm"
+                          />
+                        }
+                      </div>
+                      <p class="suggestion-message">{{ suggestion.message }}</p>
+                      <p class="suggestion-reason">{{ suggestion.reason }}</p>
+                      <small class="suggestion-date">
+                        {{ suggestion.date | date: "MMM d, y 'at' h:mm a" }}
+                      </small>
+                    </div>
+                    <div class="suggestion-actions">
+                      @if (!suggestion.accepted && !suggestion.dismissed) {
+                        <app-button
+                          size="sm"
+                          iconLeft="pi-check"
+                          [loading]="applyingId() === suggestion.id"
+                          (clicked)="applySuggestion(suggestion)"
+                          >Apply</app-button
+                        >
+                        <app-button
+                          variant="outlined"
+                          size="sm"
+                          (clicked)="dismissSuggestion(suggestion)"
+                          >Dismiss</app-button
+                        >
+                      } @else if (suggestion.accepted) {
+                        <app-status-tag
+                          value="Applied"
+                          severity="success"
+                          size="sm"
+                        />
+                      }
+                    </div>
+                  </div>
+                }
+              </div>
+            }
+          </app-card-shell>
+
+          <!-- Optimized Schedule -->
+          <div class="schedule-section">
+            <app-card-shell
+              class="calendar-card"
+              title="Optimized Schedule"
+              headerIcon="pi-calendar"
+            >
+              <p-datepicker
+                [formControl]="selectedDateControl"
+                [inline]="true"
+                [showWeek]="true"
+              ></p-datepicker>
+            </app-card-shell>
+
+            <app-card-shell
+              class="sessions-card"
+              [title]="'Sessions for ' + (selectedDate() | date: 'MMM d')"
+            >
+              @if (selectedDateSessions().length === 0) {
+                <div class="empty-sessions">
+                  <p>No sessions scheduled for this date</p>
+                  <app-button variant="outlined" size="sm" iconLeft="pi-plus"
+                    >Add Session</app-button
+                  >
+                </div>
+              } @else {
+                <div class="sessions-list">
+                  @for (session of selectedDateSessions(); track session.id) {
+                    <div
+                      class="session-item"
+                      [class.ai-optimized]="session.ai_optimized"
+                    >
+                      <div class="session-info">
+                        <h4>{{ session.session_type }}</h4>
+                        <p>
+                          {{ session.duration_minutes }} min •
+                          {{ session.intensity }}
+                        </p>
+                      </div>
+                      @if (session.ai_optimized) {
+                        <app-status-tag
+                          value="AI Optimized"
+                          severity="success"
+                          icon="pi-sparkles"
+                          size="sm"
+                        />
+                      }
+                    </div>
+                  }
+                </div>
+              }
+            </app-card-shell>
+          </div>
+        </div>
+      </div>
+    </app-main-layout>

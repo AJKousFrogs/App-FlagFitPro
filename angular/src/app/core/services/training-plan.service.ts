@@ -11,6 +11,13 @@ import { AcwrService } from "./acwr.service";
 import { ReadinessService } from "./readiness.service";
 import { ApiService } from "./api.service";
 import { LoggerService } from "./logger.service";
+import { GOAL_TEMPLATES } from "./training-plan-templates.data";
+import {
+  FlagFootballPerformanceSystemService,
+  type PerformanceSystemRecommendation,
+  type TournamentContext,
+} from "./flag-football-performance-system.service";
+import type { GameWeekType } from "./flag-football-performance-system.data";
 import {
   extractApiArray,
   extractApiPayload,
@@ -43,6 +50,10 @@ export interface TrainingSessionTemplate {
   volume: number; // reps/sets/distance
   restPeriods: string;
   notes: string;
+  rpeTarget?: number;
+  estimatedLoad?: number; // session-RPE x duration, arbitrary units
+  priority?: "primary" | "secondary" | "microdose" | "recovery" | "competition";
+  loadTags?: string[];
 }
 
 export interface WeeklyTrainingPlan {
@@ -51,6 +62,10 @@ export interface WeeklyTrainingPlan {
   phase: string;
   sessions: TrainingSessionTemplate[];
   totalVolume: number;
+  totalEstimatedLoad?: number;
+  fixedTeamPracticeLoadAu?: number;
+  competitionLoadAu?: number;
+  performanceSystem?: PerformanceSystemRecommendation;
   progressionRules: {
     acwrThreshold: number;
     volumeAdjustment: number; // percentage
@@ -68,6 +83,16 @@ export interface GoalBasedPlanConfig {
   competitionDate?: Date;
   /** Date of last completed training session. Used to detect detraining gaps ≥7 days. */
   lastTrainingDate?: Date;
+  /** Existing team practices this player will attend. They count as fixed sport load. */
+  teamPracticesPerWeek?: number;
+  /** Override automatic game-density detection when coaches know the week context. */
+  gameWeekType?: GameWeekType;
+  /** International or dense tournament context that should drive taper and recovery. */
+  tournaments?: TournamentContext[];
+  /** Optional body mass for nutrition target calculations. */
+  bodyMassKg?: number;
+  /** Avoid caffeine recommendations for sensitive athletes. */
+  caffeineSensitive?: boolean;
 }
 
 /** Result of the pre-plan periodization state check. */
@@ -102,6 +127,7 @@ export class TrainingPlanService {
   private readinessService = inject(ReadinessService);
   private apiService = inject(ApiService);
   private logger = inject(LoggerService);
+  private performanceSystemService = inject(FlagFootballPerformanceSystemService);
 
   readonly currentPlan = signal<WeeklyTrainingPlan | null>(null);
   readonly loading = signal(false);
@@ -118,7 +144,25 @@ export class TrainingPlanService {
       trainingDaysPerWeek = 5,
       competitionDate,
       lastTrainingDate,
+      teamPracticesPerWeek,
+      gameWeekType,
+      tournaments,
+      bodyMassKg,
+      caffeineSensitive,
     } = config;
+
+    const performanceContext =
+      this.performanceSystemService.buildRecommendation({
+        currentAcwr: currentACWR,
+        readinessLevel,
+        gameDays,
+        gameWeekType,
+        teamPracticesPerWeek,
+        tournaments,
+        competitionDate,
+        bodyMassKg,
+        caffeineSensitive,
+      });
 
     // ── Periodization state detection ─────────────────────────────────────────
     const periodization = this.detectPeriodizationState(
@@ -158,9 +202,14 @@ export class TrainingPlanService {
     }
 
     // Adjust for game proximity
-    const gameAwareTemplate = this.adjustForGameDays(
+    let gameAwareTemplate = this.adjustForGameDays(
       adjustedTemplate,
       gameDays,
+    );
+
+    gameAwareTemplate = this.applyPerformanceSystemContext(
+      gameAwareTemplate,
+      performanceContext,
     );
 
     // Apply progression rules
@@ -168,6 +217,9 @@ export class TrainingPlanService {
       gameAwareTemplate,
       currentACWR,
       trainingDaysPerWeek,
+      goal,
+      phase,
+      performanceContext,
     );
 
     // Attach periodization notes so the UI can surface them
@@ -245,687 +297,7 @@ export class TrainingPlanService {
     goal: TrainingGoal,
     phase: string,
   ): TrainingSessionTemplate[] {
-    const templates: Record<
-      TrainingGoal,
-      Record<string, TrainingSessionTemplate[]>
-    > = {
-      speed: {
-        foundation: [
-          {
-            day: 0,
-            sessionType: "speed",
-            focus: ["Mechanics", "Acceleration"],
-            exercises: ["Wall drills", "10m sprints", "Resisted sprints"],
-            duration: 45,
-            intensity: "medium",
-            volume: 8,
-            restPeriods: "2-3 min",
-            notes: "Focus on form",
-          },
-          {
-            day: 2,
-            sessionType: "strength",
-            focus: ["Posterior chain"],
-            exercises: ["RDLs", "Hip thrusts"],
-            duration: 60,
-            intensity: "medium",
-            volume: 4,
-            restPeriods: "3 min",
-            notes: "",
-          },
-          {
-            day: 4,
-            sessionType: "speed",
-            focus: ["Top speed"],
-            exercises: ["Flying 20s", "30m sprints"],
-            duration: 45,
-            intensity: "high",
-            volume: 6,
-            restPeriods: "4-5 min",
-            notes: "",
-          },
-          {
-            day: 6,
-            sessionType: "recovery",
-            focus: ["Mobility"],
-            exercises: ["Dynamic warmup", "Foam rolling"],
-            duration: 30,
-            intensity: "low",
-            volume: 1,
-            restPeriods: "N/A",
-            notes: "Active recovery",
-          },
-        ],
-        strength: [
-          {
-            day: 0,
-            sessionType: "speed",
-            focus: ["Acceleration", "Power"],
-            exercises: ["Resisted sprints", "Hill sprints", "Plyometrics"],
-            duration: 60,
-            intensity: "high",
-            volume: 10,
-            restPeriods: "3-4 min",
-            notes: "Max effort",
-          },
-          {
-            day: 2,
-            sessionType: "strength",
-            focus: ["Max strength"],
-            exercises: ["Squats", "Deadlifts", "Nordic curls"],
-            duration: 75,
-            intensity: "high",
-            volume: 5,
-            restPeriods: "4-5 min",
-            notes: "",
-          },
-          {
-            day: 4,
-            sessionType: "speed",
-            focus: ["Top speed", "Speed endurance"],
-            exercises: ["Flying 30s", "150m repeats"],
-            duration: 60,
-            intensity: "high",
-            volume: 8,
-            restPeriods: "5-6 min",
-            notes: "",
-          },
-          {
-            day: 6,
-            sessionType: "recovery",
-            focus: ["Mobility"],
-            exercises: ["Yoga", "Foam rolling"],
-            duration: 45,
-            intensity: "low",
-            volume: 1,
-            restPeriods: "N/A",
-            notes: "",
-          },
-        ],
-      },
-      "change-of-direction": {
-        foundation: [
-          {
-            day: 0,
-            sessionType: "agility",
-            focus: ["Lateral movement", "Deceleration"],
-            exercises: ["Lateral shuffles", "5-10-5 drill", "Cone drills"],
-            duration: 45,
-            intensity: "medium",
-            volume: 10,
-            restPeriods: "2 min",
-            notes: "Focus on technique",
-          },
-          {
-            day: 2,
-            sessionType: "strength",
-            focus: ["Eccentric strength"],
-            exercises: ["Split squats", "Lunges", "Single-leg RDLs"],
-            duration: 60,
-            intensity: "medium",
-            volume: 4,
-            restPeriods: "2-3 min",
-            notes: "",
-          },
-          {
-            day: 4,
-            sessionType: "agility",
-            focus: ["Multi-directional"],
-            exercises: ["T-drill", "L-drill", "Reactive agility"],
-            duration: 50,
-            intensity: "high",
-            volume: 8,
-            restPeriods: "3 min",
-            notes: "",
-          },
-          {
-            day: 6,
-            sessionType: "recovery",
-            focus: ["Mobility"],
-            exercises: ["Hip mobility", "Ankle mobility"],
-            duration: 30,
-            intensity: "low",
-            volume: 1,
-            restPeriods: "N/A",
-            notes: "",
-          },
-        ],
-        strength: [
-          {
-            day: 0,
-            sessionType: "agility",
-            focus: ["Reactive COD", "Power"],
-            exercises: [
-              "Reactive cone drills",
-              "Plyometric cuts",
-              "Mirror drills",
-            ],
-            duration: 60,
-            intensity: "high",
-            volume: 12,
-            restPeriods: "3-4 min",
-            notes: "Game-like intensity",
-          },
-          {
-            day: 2,
-            sessionType: "strength",
-            focus: ["Eccentric power"],
-            exercises: ["Depth jumps", "Lateral bounds", "Single-leg hops"],
-            duration: 75,
-            intensity: "high",
-            volume: 6,
-            restPeriods: "4 min",
-            notes: "",
-          },
-          {
-            day: 4,
-            sessionType: "agility",
-            focus: ["Speed-COD"],
-            exercises: ["Sprint-cut-sprint", "Zigzag sprints"],
-            duration: 60,
-            intensity: "high",
-            volume: 10,
-            restPeriods: "4-5 min",
-            notes: "",
-          },
-          {
-            day: 6,
-            sessionType: "recovery",
-            focus: ["Mobility"],
-            exercises: ["Full body mobility"],
-            duration: 45,
-            intensity: "low",
-            volume: 1,
-            restPeriods: "N/A",
-            notes: "",
-          },
-        ],
-      },
-      agility: {
-        foundation: [
-          {
-            day: 0,
-            sessionType: "agility",
-            focus: ["Footwork", "Quickness"],
-            exercises: ["Ladder drills", "Cone drills", "Reaction drills"],
-            duration: 40,
-            intensity: "medium",
-            volume: 12,
-            restPeriods: "1-2 min",
-            notes: "High volume, low intensity",
-          },
-          {
-            day: 2,
-            sessionType: "strength",
-            focus: ["Lower body"],
-            exercises: ["Goblet squats", "Step-ups", "Calf raises"],
-            duration: 50,
-            intensity: "medium",
-            volume: 3,
-            restPeriods: "2 min",
-            notes: "",
-          },
-          {
-            day: 4,
-            sessionType: "agility",
-            focus: ["Reactive agility"],
-            exercises: ["Mirror drills", "Partner drills", "Random direction"],
-            duration: 45,
-            intensity: "high",
-            volume: 10,
-            restPeriods: "2-3 min",
-            notes: "",
-          },
-          {
-            day: 6,
-            sessionType: "recovery",
-            focus: ["Mobility"],
-            exercises: ["Dynamic stretching"],
-            duration: 30,
-            intensity: "low",
-            volume: 1,
-            restPeriods: "N/A",
-            notes: "",
-          },
-        ],
-        strength: [
-          {
-            day: 0,
-            sessionType: "agility",
-            focus: ["Game-speed agility"],
-            exercises: [
-              "Position-specific drills",
-              "Reactive cuts",
-              "Open-field agility",
-            ],
-            duration: 60,
-            intensity: "high",
-            volume: 15,
-            restPeriods: "3 min",
-            notes: "Competition intensity",
-          },
-          {
-            day: 2,
-            sessionType: "strength",
-            focus: ["Power"],
-            exercises: ["Box jumps", "Lateral bounds", "Medicine ball throws"],
-            duration: 60,
-            intensity: "high",
-            volume: 5,
-            restPeriods: "3-4 min",
-            notes: "",
-          },
-          {
-            day: 4,
-            sessionType: "agility",
-            focus: ["Speed-agility"],
-            exercises: ["Sprint-agility combos", "Multi-directional sprints"],
-            duration: 60,
-            intensity: "high",
-            volume: 12,
-            restPeriods: "4 min",
-            notes: "",
-          },
-          {
-            day: 6,
-            sessionType: "recovery",
-            focus: ["Mobility"],
-            exercises: ["Yoga flow"],
-            duration: 45,
-            intensity: "low",
-            volume: 1,
-            restPeriods: "N/A",
-            notes: "",
-          },
-        ],
-      },
-      "route-running": {
-        foundation: [
-          {
-            day: 0,
-            sessionType: "technique",
-            focus: ["Route mechanics", "Separation"],
-            exercises: ["Route tree practice", "Release drills", "Cone routes"],
-            duration: 60,
-            intensity: "medium",
-            volume: 20,
-            restPeriods: "1-2 min",
-            notes: "Focus on technique",
-          },
-          {
-            day: 2,
-            sessionType: "speed",
-            focus: ["Acceleration"],
-            exercises: ["10m sprints", "Starts", "Resisted sprints"],
-            duration: 45,
-            intensity: "medium",
-            volume: 8,
-            restPeriods: "2-3 min",
-            notes: "",
-          },
-          {
-            day: 4,
-            sessionType: "technique",
-            focus: ["Route execution"],
-            exercises: ["Full routes", "Catch drills", "Contested catches"],
-            duration: 60,
-            intensity: "high",
-            volume: 15,
-            restPeriods: "2 min",
-            notes: "",
-          },
-          {
-            day: 6,
-            sessionType: "recovery",
-            focus: ["Mobility"],
-            exercises: ["Hip mobility", "Shoulder mobility"],
-            duration: 30,
-            intensity: "low",
-            volume: 1,
-            restPeriods: "N/A",
-            notes: "",
-          },
-        ],
-        strength: [
-          {
-            day: 0,
-            sessionType: "technique",
-            focus: ["Advanced routes", "Game situations"],
-            exercises: ["Double moves", "Route combinations", "QB-WR timing"],
-            duration: 75,
-            intensity: "high",
-            volume: 25,
-            restPeriods: "2 min",
-            notes: "Game-speed",
-          },
-          {
-            day: 2,
-            sessionType: "speed",
-            focus: ["Top speed"],
-            exercises: ["Flying 20s", "30m sprints"],
-            duration: 50,
-            intensity: "high",
-            volume: 10,
-            restPeriods: "4 min",
-            notes: "",
-          },
-          {
-            day: 4,
-            sessionType: "technique",
-            focus: ["Route precision"],
-            exercises: ["Precision routes", "Separation moves"],
-            duration: 70,
-            intensity: "high",
-            volume: 20,
-            restPeriods: "2-3 min",
-            notes: "",
-          },
-          {
-            day: 6,
-            sessionType: "recovery",
-            focus: ["Mobility"],
-            exercises: ["Full body mobility"],
-            duration: 45,
-            intensity: "low",
-            volume: 1,
-            restPeriods: "N/A",
-            notes: "",
-          },
-        ],
-      },
-      defense: {
-        foundation: [
-          {
-            day: 0,
-            sessionType: "technique",
-            focus: ["Backpedal", "Hip turn"],
-            exercises: [
-              "Backpedal drills",
-              "Hip turn drills",
-              "Coverage technique",
-            ],
-            duration: 60,
-            intensity: "medium",
-            volume: 15,
-            restPeriods: "2 min",
-            notes: "Focus on form",
-          },
-          {
-            day: 2,
-            sessionType: "agility",
-            focus: ["Lateral movement"],
-            exercises: ["Lateral shuffles", "Cone drills", "Mirror drills"],
-            duration: 50,
-            intensity: "medium",
-            volume: 12,
-            restPeriods: "2-3 min",
-            notes: "",
-          },
-          {
-            day: 4,
-            sessionType: "technique",
-            focus: ["Coverage", "Ball skills"],
-            exercises: ["Coverage drills", "Ball drills", "Break on ball"],
-            duration: 60,
-            intensity: "high",
-            volume: 15,
-            restPeriods: "2 min",
-            notes: "",
-          },
-          {
-            day: 6,
-            sessionType: "recovery",
-            focus: ["Mobility"],
-            exercises: ["Hip mobility", "Ankle mobility"],
-            duration: 30,
-            intensity: "low",
-            volume: 1,
-            restPeriods: "N/A",
-            notes: "",
-          },
-        ],
-        strength: [
-          {
-            day: 0,
-            sessionType: "technique",
-            focus: ["Game situations", "Reactive coverage"],
-            exercises: [
-              "Coverage scenarios",
-              "Break drills",
-              "Contested catches",
-            ],
-            duration: 75,
-            intensity: "high",
-            volume: 20,
-            restPeriods: "2-3 min",
-            notes: "Game-speed",
-          },
-          {
-            day: 2,
-            sessionType: "agility",
-            focus: ["Reactive agility"],
-            exercises: ["Reactive cuts", "Direction changes"],
-            duration: 60,
-            intensity: "high",
-            volume: 15,
-            restPeriods: "3-4 min",
-            notes: "",
-          },
-          {
-            day: 4,
-            sessionType: "technique",
-            focus: ["Advanced coverage"],
-            exercises: ["Zone coverage", "Man coverage", "Ball skills"],
-            duration: 70,
-            intensity: "high",
-            volume: 18,
-            restPeriods: "2-3 min",
-            notes: "",
-          },
-          {
-            day: 6,
-            sessionType: "recovery",
-            focus: ["Mobility"],
-            exercises: ["Full body mobility"],
-            duration: 45,
-            intensity: "low",
-            volume: 1,
-            restPeriods: "N/A",
-            notes: "",
-          },
-        ],
-      },
-      power: {
-        foundation: [
-          {
-            day: 0,
-            sessionType: "strength",
-            focus: ["Max strength"],
-            exercises: ["Squats", "Deadlifts", "Press"],
-            duration: 75,
-            intensity: "high",
-            volume: 5,
-            restPeriods: "4-5 min",
-            notes: "Heavy loads",
-          },
-          {
-            day: 2,
-            sessionType: "speed",
-            focus: ["Power development"],
-            exercises: ["Plyometrics", "Jumps", "Throws"],
-            duration: 50,
-            intensity: "high",
-            volume: 8,
-            restPeriods: "3-4 min",
-            notes: "",
-          },
-          {
-            day: 4,
-            sessionType: "strength",
-            focus: ["Power"],
-            exercises: ["Olympic lifts", "Explosive movements"],
-            duration: 70,
-            intensity: "high",
-            volume: 6,
-            restPeriods: "4 min",
-            notes: "",
-          },
-          {
-            day: 6,
-            sessionType: "recovery",
-            focus: ["Mobility"],
-            exercises: ["Full body mobility"],
-            duration: 45,
-            intensity: "low",
-            volume: 1,
-            restPeriods: "N/A",
-            notes: "",
-          },
-        ],
-        strength: [
-          {
-            day: 0,
-            sessionType: "strength",
-            focus: ["Peak power"],
-            exercises: ["Max effort lifts", "Plyometrics", "Speed work"],
-            duration: 90,
-            intensity: "high",
-            volume: 6,
-            restPeriods: "5 min",
-            notes: "Peak intensity",
-          },
-          {
-            day: 2,
-            sessionType: "speed",
-            focus: ["Explosive speed"],
-            exercises: ["Sprint work", "Jumps", "Throws"],
-            duration: 60,
-            intensity: "high",
-            volume: 10,
-            restPeriods: "4-5 min",
-            notes: "",
-          },
-          {
-            day: 4,
-            sessionType: "strength",
-            focus: ["Power maintenance"],
-            exercises: ["Moderate loads", "Power movements"],
-            duration: 75,
-            intensity: "medium",
-            volume: 5,
-            restPeriods: "3-4 min",
-            notes: "",
-          },
-          {
-            day: 6,
-            sessionType: "recovery",
-            focus: ["Mobility"],
-            exercises: ["Yoga", "Foam rolling"],
-            duration: 45,
-            intensity: "low",
-            volume: 1,
-            restPeriods: "N/A",
-            notes: "",
-          },
-        ],
-      },
-      endurance: {
-        foundation: [
-          {
-            day: 0,
-            sessionType: "conditioning",
-            focus: ["Aerobic base"],
-            exercises: ["Tempo runs", "Interval runs", "Fartlek"],
-            duration: 60,
-            intensity: "medium",
-            volume: 3,
-            restPeriods: "2 min",
-            notes: "Steady pace",
-          },
-          {
-            day: 2,
-            sessionType: "strength",
-            focus: ["Endurance strength"],
-            exercises: ["Circuit training", "High reps"],
-            duration: 60,
-            intensity: "medium",
-            volume: 3,
-            restPeriods: "1 min",
-            notes: "",
-          },
-          {
-            day: 4,
-            sessionType: "conditioning",
-            focus: ["Anaerobic"],
-            exercises: ["Sprint intervals", "Shuttle runs"],
-            duration: 50,
-            intensity: "high",
-            volume: 6,
-            restPeriods: "3 min",
-            notes: "",
-          },
-          {
-            day: 6,
-            sessionType: "recovery",
-            focus: ["Mobility"],
-            exercises: ["Light jog", "Stretching"],
-            duration: 30,
-            intensity: "low",
-            volume: 1,
-            restPeriods: "N/A",
-            notes: "",
-          },
-        ],
-        strength: [
-          {
-            day: 0,
-            sessionType: "conditioning",
-            focus: ["VO2 max"],
-            exercises: ["High-intensity intervals", "Sprint repeats"],
-            duration: 70,
-            intensity: "high",
-            volume: 8,
-            restPeriods: "3-4 min",
-            notes: "Max effort",
-          },
-          {
-            day: 2,
-            sessionType: "strength",
-            focus: ["Endurance"],
-            exercises: ["Circuit", "High volume"],
-            duration: 60,
-            intensity: "medium",
-            volume: 4,
-            restPeriods: "1-2 min",
-            notes: "",
-          },
-          {
-            day: 4,
-            sessionType: "conditioning",
-            focus: ["Lactate threshold"],
-            exercises: ["Tempo intervals", "Sustained efforts"],
-            duration: 65,
-            intensity: "high",
-            volume: 5,
-            restPeriods: "4 min",
-            notes: "",
-          },
-          {
-            day: 6,
-            sessionType: "recovery",
-            focus: ["Mobility"],
-            exercises: ["Active recovery"],
-            duration: 45,
-            intensity: "low",
-            volume: 1,
-            restPeriods: "N/A",
-            notes: "",
-          },
-        ],
-      },
-    };
-
-    return templates[goal]?.[phase] || templates[goal]?.["foundation"] || [];
+    return GOAL_TEMPLATES[goal]?.[phase] || GOAL_TEMPLATES[goal]?.["foundation"] || [];
   }
 
   /**
@@ -1113,32 +485,7 @@ export class TrainingPlanService {
         const hoursUntilGame =
           (gameDate.getTime() - sessionDate.getTime()) / (1000 * 60 * 60);
 
-        if (hoursUntilGame >= 0 && hoursUntilGame <= 72) {
-          // Deload sprints and high-intensity work
-          if (session.sessionType === "speed" || session.intensity === "high") {
-            return {
-              ...session,
-              volume: Math.round(session.volume * 0.5), // Reduce by 50%
-              intensity: "low",
-              notes: session.notes + " (Game proximity deload)",
-            };
-          }
-        }
-
-        // Day before game - rest or very light
-        if (hoursUntilGame >= 0 && hoursUntilGame <= 24) {
-          return {
-            ...session,
-            sessionType: "recovery",
-            volume: 0,
-            intensity: "low",
-            exercises: ["Light mobility", "Dynamic warmup"],
-            duration: 20,
-            notes: "Pre-game rest day",
-          };
-        }
-
-        // Game day - rest
+        // Game day - competition replaces training
         if (hoursUntilGame === 0) {
           return {
             ...session,
@@ -1150,10 +497,160 @@ export class TrainingPlanService {
             notes: "Game day",
           };
         }
+
+        // Day before game - rest or very light
+        if (hoursUntilGame > 0 && hoursUntilGame <= 24) {
+          return {
+            ...session,
+            sessionType: "recovery",
+            volume: 0,
+            intensity: "low",
+            exercises: ["Light mobility", "Dynamic warmup"],
+            duration: 20,
+            notes: "Pre-game rest day",
+          };
+        }
+
+        if (hoursUntilGame >= 0 && hoursUntilGame <= 72) {
+          // Deload sprints and high-intensity work
+          if (session.sessionType === "speed" || session.intensity === "high") {
+            return {
+              ...session,
+              volume: Math.round(session.volume * 0.5), // Reduce by 50%
+              intensity: "low",
+              notes: session.notes + " (Game proximity deload)",
+            };
+          }
+        }
       }
 
       return session;
     });
+  }
+
+  private applyPerformanceSystemContext(
+    template: TrainingSessionTemplate[],
+    context: PerformanceSystemRecommendation,
+  ): TrainingSessionTemplate[] {
+    const trainingSessions = template.filter((session) =>
+      this.isIndividualTrainingSession(session),
+    );
+    const keepDays = new Set(
+      [...trainingSessions]
+        .sort((a, b) => this.scoreSessionPriority(b) - this.scoreSessionPriority(a))
+        .slice(0, context.individualSessionCap)
+        .map((session) => session.day),
+    );
+    let highIntensityUsed = 0;
+
+    return template.map((session) => {
+      if (!this.isIndividualTrainingSession(session)) {
+        return this.withSessionLoad({
+          ...session,
+          priority:
+            session.sessionType === "game" ? "competition" : "recovery",
+          loadTags: [
+            ...(session.loadTags ?? []),
+            context.densityLabel,
+          ],
+        });
+      }
+
+      if (!keepDays.has(session.day)) {
+        return this.withSessionLoad({
+          ...session,
+          sessionType: "recovery",
+          focus: ["Recovery", "Tissue capacity"],
+          exercises: context.injuryPreventionMicrodose.slice(0, 3),
+          duration: context.weekType === "training-week" ? 25 : 18,
+          intensity: "low",
+          volume: 1,
+          restPeriods: "N/A",
+          notes: this.appendNotes(session.notes, [
+            `Converted to recovery microdose: ${context.densityLabel}`,
+            `${context.teamPracticeCount} team practices already counted as load`,
+          ]),
+          priority: "microdose",
+          loadTags: ["team-practice-adjusted", context.weekType],
+        });
+      }
+
+      let intensity = session.intensity;
+      if (intensity === "high") {
+        if (highIntensityUsed >= context.highIntensityCap) {
+          intensity = "medium";
+        } else {
+          highIntensityUsed++;
+        }
+      }
+
+      const adjustedDuration = Math.max(
+        15,
+        Math.round(session.duration * context.volumeMultiplier),
+      );
+      const adjustedVolume = Math.max(
+        1,
+        Math.round(session.volume * context.volumeMultiplier),
+      );
+
+      const notes = this.appendNotes(session.notes, [
+        `${context.densityLabel}: individual volume x${context.volumeMultiplier}`,
+        context.neuralExposure,
+        context.strengthDose,
+      ]);
+
+      return this.withSessionLoad({
+        ...session,
+        duration: adjustedDuration,
+        volume: adjustedVolume,
+        intensity,
+        notes,
+        priority: this.scoreSessionPriority(session) >= 4 ? "primary" : "secondary",
+        loadTags: [
+          ...(session.loadTags ?? []),
+          "acwr-aware",
+          "team-practice-aware",
+          context.weekType,
+        ],
+      });
+    });
+  }
+
+  private isIndividualTrainingSession(session: TrainingSessionTemplate): boolean {
+    return session.sessionType !== "recovery" && session.sessionType !== "game";
+  }
+
+  private scoreSessionPriority(session: TrainingSessionTemplate): number {
+    const focusText = `${session.sessionType} ${session.focus.join(" ")}`.toLowerCase();
+    if (focusText.includes("speed") || focusText.includes("acceleration")) return 5;
+    if (focusText.includes("agility") || focusText.includes("change")) return 4;
+    if (focusText.includes("strength") || focusText.includes("power")) return 4;
+    if (focusText.includes("technique") || focusText.includes("route")) return 3;
+    if (focusText.includes("conditioning")) return 2;
+    return 1;
+  }
+
+  private appendNotes(current: string, additions: string[]): string {
+    const existing = current.trim();
+    const additionText = additions.filter(Boolean).join(" | ");
+    return existing ? `${existing} | ${additionText}` : additionText;
+  }
+
+  private withSessionLoad(
+    session: TrainingSessionTemplate,
+  ): TrainingSessionTemplate {
+    const rpeTarget = this.getRpeForIntensity(session.intensity);
+    return {
+      ...session,
+      rpeTarget,
+      estimatedLoad: Math.round(session.duration * rpeTarget),
+    };
+  }
+
+  private getRpeForIntensity(intensity: "low" | "medium" | "high"): number {
+    if (intensity === "high") return 8;
+    if (intensity === "medium") return 6;
+    return 3;
   }
 
   /**
@@ -1163,6 +660,9 @@ export class TrainingPlanService {
     template: TrainingSessionTemplate[],
     acwr: number,
     _trainingDaysPerWeek: number,
+    goal: TrainingGoal,
+    phase: string,
+    performanceContext: PerformanceSystemRecommendation,
   ): WeeklyTrainingPlan {
     const _totalVolume = template.reduce((sum, s) => sum + s.volume, 0);
 
@@ -1191,13 +691,23 @@ export class TrainingPlanService {
     }));
 
     return {
-      goal: "speed" as TrainingGoal, // Will be set by caller
+      goal,
       weekNumber: 1,
-      phase: "foundation",
+      phase,
       sessions: adjustedSessions,
       totalVolume: adjustedSessions.reduce((sum, s) => sum + s.volume, 0),
+      totalEstimatedLoad:
+        adjustedSessions.reduce(
+          (sum, s) => sum + (s.estimatedLoad ?? Math.round(s.duration * this.getRpeForIntensity(s.intensity))),
+          0,
+        ) +
+        performanceContext.fixedTeamPracticeLoadAu +
+        performanceContext.competitionLoadAu,
+      fixedTeamPracticeLoadAu: performanceContext.fixedTeamPracticeLoadAu,
+      competitionLoadAu: performanceContext.competitionLoadAu,
+      performanceSystem: performanceContext,
       progressionRules: {
-        acwrThreshold,
+        acwrThreshold: Math.min(acwrThreshold, performanceContext.targetAcwrCeiling),
         volumeAdjustment,
       },
     };

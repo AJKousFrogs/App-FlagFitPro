@@ -40,14 +40,17 @@ import { TOAST } from "../../../core/constants/toast-messages.constants";
 import { LoggerService } from "../../../core/services/logger.service";
 import { ToastService } from "../../../core/services/toast.service";
 import {
-  BloodCirculationRisk,
-  CarTravelProtocol,
-  CirculationExercise,
-  MassageGunProtocol,
   RecoveryProtocol,
   TravelChecklist,
   TravelRecoveryService,
 } from "../../../core/services/travel-recovery.service";
+import {
+  BloodCirculationRisk,
+  CarTravelProtocol,
+  CarTravelService,
+  CirculationExercise,
+  MassageGunProtocol,
+} from "../../../core/services/car-travel.service";
 
 // Layout & Components
 import { ButtonComponent } from "../../../shared/components/button/button.component";
@@ -116,6 +119,7 @@ interface FlightTripForm {
 })
 export class TravelRecoveryComponent implements OnInit {
   private travelService = inject(TravelRecoveryService);
+  private carTravelService = inject(CarTravelService);
   private toastService = inject(ToastService);
   private logger = inject(LoggerService);
 
@@ -192,10 +196,10 @@ export class TravelRecoveryComponent implements OnInit {
     this.travelChecklist = this.travelService.getTravelChecklist();
 
     // Initialize car travel data
-    this.seatedExercises = this.travelService.getSeatedExercises();
-    this.massageGunProtocols = this.travelService.getMassageGunProtocol();
-    this.carTravelChecklist = this.travelService.getCarTravelChecklist();
-    this.researchSummary = this.travelService.getCarTravelResearchSummary();
+    this.seatedExercises = this.carTravelService.getSeatedExercises();
+    this.massageGunProtocols = this.carTravelService.getMassageGunProtocol();
+    this.carTravelChecklist = this.carTravelService.getCarTravelChecklist();
+    this.researchSummary = this.carTravelService.getCarTravelResearchSummary();
 
     this.logger.debug("travel_recovery_state", {
       hasActivePlan: this.hasActivePlan(),
@@ -303,12 +307,12 @@ export class TravelRecoveryComponent implements OnInit {
       this.activeCarPlan()?.duration || this.carTripForm.duration;
     const isDriver =
       this.activeCarPlan()?.isDriver ?? this.carTripForm.isDriver;
-    return this.travelService.calculateCarTravelRisk(duration, isDriver);
+    return this.carTravelService.calculateCarTravelRisk(duration, isDriver);
   }
 
   // Compression guidelines (reactive)
   compressionGuidelines() {
-    return this.travelService.getCompressionGuidelines("during-travel");
+    return this.carTravelService.getCompressionGuidelines("during-travel");
   }
 
   canCreateCarPlan(): boolean {
@@ -331,7 +335,7 @@ export class TravelRecoveryComponent implements OnInit {
     });
 
     // Generate protocols
-    this.carTravelProtocols = this.travelService.generateCarTravelProtocol(
+    this.carTravelProtocols = this.carTravelService.generateCarTravelProtocol(
       this.carTripForm.duration,
       this.carTripForm.isDriver,
     );

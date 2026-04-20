@@ -1,0 +1,92 @@
+    <app-main-layout>
+      <div class="playbook-page ui-page-shell ui-page-stack">
+        <app-page-header
+          title="Playbook" eyebrow="LEARNING"
+          subtitle="Your team's plays, organized and ready."
+          icon="pi-book"
+        ></app-page-header>
+        <app-playbook-library-section
+          [filteredPlays]="filteredPlays()"
+          [memorizedCount]="memorizedCount()"
+          [totalPlays]="totalPlays()"
+          [progressPercent]="progressPercent()"
+          [searchQuery]="searchQuery()"
+          [categoryOptions]="categoryOptions"
+          [statusOptions]="statusOptions"
+          [emptyDescription]="getEmptyDescription()"
+          (searchInput)="onSearchInput($event)"
+          (categoryChange)="onCategoryChange($event)"
+          (statusChange)="onStatusChange($event)"
+          (selectPlay)="selectPlay($event)"
+          (startQuiz)="startQuiz()"
+        />
+      </div>
+
+      <!-- Play Detail Dialog -->
+      <app-dialog
+        [(visible)]="showPlayDetail"
+        [modal]="true"
+        [draggable]="false"
+        [resizable]="false"
+        [blockScroll]="true"
+        dialogSize="2xl"
+        ariaLabel="Play Details"
+      >
+        <app-dialog-header
+          icon="pi-book"
+          [title]="selectedPlay()?.name || 'Play Details'"
+          subtitle="Study your assignment and memorize the concept"
+          (close)="showPlayDetail = false"
+        />
+        @if (selectedPlay(); as play) {
+          <app-playbook-detail-dialog-content
+            [play]="play"
+            [toggleMemorized]="toggleMemorized.bind(this)"
+          />
+        }
+      </app-dialog>
+
+      <!-- Quiz Dialog -->
+      <app-dialog
+        [(visible)]="showQuiz"
+        [modal]="true"
+        [draggable]="false"
+        [resizable]="false"
+        [blockScroll]="true"
+        dialogSize="2xl"
+        ariaLabel="Playbook Quiz"
+      >
+        <app-dialog-header
+          icon="pi-question-circle"
+          title="Playbook Quiz"
+          subtitle="Test recall, assignments, and play recognition"
+          (close)="showQuiz = false"
+        />
+        <app-playbook-quiz-dialog-content
+          [quizActive]="quizActive()"
+          [quizCompleted]="quizCompleted()"
+          [quizQuestions]="quizQuestions()"
+          [currentQuestionIndex]="currentQuestionIndex()"
+          [currentQuestion]="currentQuestion()"
+          [selectedAnswer]="selectedAnswer()"
+          [answerSubmitted]="answerSubmitted()"
+          [quizScore]="quizScore()"
+          [correctAnswers]="correctAnswers()"
+          (selectAnswer)="selectAnswer($event)"
+          (submitAnswer)="submitAnswer()"
+          (nextQuestion)="nextQuestion()"
+          (showResults)="showQuizResults()"
+          (restartQuiz)="startQuiz()"
+          (closeQuiz)="showQuiz = false"
+        />
+        @if (!quizActive() || quizCompleted()) {
+          <app-dialog-footer
+            cancelLabel="Close"
+            primaryLabel="Restart Quiz"
+            primaryIcon="pi-refresh"
+            (cancel)="showQuiz = false"
+            (primary)="startQuiz()"
+          />
+        }
+      </app-dialog>
+    </app-main-layout>

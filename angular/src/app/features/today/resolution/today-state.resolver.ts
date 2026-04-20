@@ -48,6 +48,9 @@ export interface ProtocolJson {
       hasProgram?: boolean;
       hasSessionTemplate?: boolean;
       override?: string | null;
+      baselineProgram?: boolean;
+      originalStatus?: string | null;
+      reason?: string | null;
     };
     hasActiveProgram?: boolean;
     injuryProtocolActive?: boolean;
@@ -181,6 +184,9 @@ type ConfidenceSessionResolutionState = {
   hasProgram?: boolean;
   hasSessionTemplate?: boolean;
   override?: string | null;
+  baselineProgram?: boolean;
+  originalStatus?: string | null;
+  reason?: string | null;
 };
 
 function resolveSessionStatus(
@@ -265,14 +271,22 @@ export function resolveTodayState(
   const sessionRes = cm.sessionResolution || {};
   const status = resolveSessionStatus(sr, sessionRes);
   const overrideType = resolveOverrideType(sr, sessionRes);
+  const baselineSessionStatuses = new Set([
+    "baseline_program",
+    "no_program",
+    "no_week",
+    "no_template",
+  ]);
+  const isBaselineProgram =
+    baselineSessionStatuses.has(status) || sessionRes.baselineProgram === true;
 
   // ========================================================================
-  // PRIORITY 1: Session Resolution Failure (excluding external_program and no_program)
+  // PRIORITY 1: Session Resolution Failure (excluding trainable baseline states)
   // ========================================================================
   if (
     (sr.success === false || sessionRes.success === false) &&
     status !== "external_program" &&
-    status !== "no_program"
+    !isBaselineProgram
   ) {
     const failureMessage =
       status === "no_template"
@@ -309,13 +323,14 @@ export function resolveTodayState(
   }
 
   // ========================================================================
-  // PRIORITY 2: No Active Program (status = 'no_program')
+  // PRIORITY 2: No Active Program only when backend cannot create a baseline
   // ========================================================================
   if (
-    status === "no_program" ||
-    (cm.hasActiveProgram === false &&
-      sessionRes.hasProgram !== true &&
-      status !== "external_program")
+    !isBaselineProgram &&
+    (status === "no_program" ||
+      (cm.hasActiveProgram === false &&
+        sessionRes.hasProgram !== true &&
+        status !== "external_program"))
   ) {
     return {
       trainingAllowed: false,
@@ -756,6 +771,26 @@ export function resolveTodayState(
   // ========================================================================
   const banners: TodayViewModel["banners"] = [];
 
+  if (isBaselineProgram) {
+    banners.push({
+      type: "info",
+      style: "blue",
+      text: "Baseline Program Active. Daily training starts from safe flag football defaults until a coach plan, team practices, competitions, and your logged workload personalize it.",
+      ctas: [
+        {
+          label: "Start Training",
+          action: "start_training",
+          variant: "primary",
+        },
+        {
+          label: "Log Workout",
+          action: "log_workout",
+          variant: "secondary",
+        },
+      ],
+    });
+  }
+
   // Handle missing readiness
   if (
     !readiness.hasData ||
@@ -830,12 +865,22 @@ export function resolveTodayState(
           label: "2-min Check-in",
           action: "open_checkin",
         }
+      : isBaselineProgram
+        ? {
+            label: "Start Training",
+            action: "start_training",
+          }
       : undefined,
     secondaryCta: !readiness.hasData
       ? {
           label: "Start Training Anyway",
           action: "start_training",
         }
+      : isBaselineProgram
+        ? {
+            label: "Log Workout",
+            action: "log_workout",
+          }
       : undefined,
     merlinPosture: "explanatory",
     acwrBaseline,

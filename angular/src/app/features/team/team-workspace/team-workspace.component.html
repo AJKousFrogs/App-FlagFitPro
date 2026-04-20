@@ -1,0 +1,365 @@
+    <app-main-layout>
+      <div class="team-workspace-page ui-page-shell ui-page-shell--wide ui-page-stack">
+        <app-page-header
+          title="Team Workspace" eyebrow="TEAM"
+          subtitle="Live squad context, pending actions, and team operations in one place."
+          icon="pi-users"
+        >
+          <app-button
+            variant="outlined"
+            iconLeft="pi-refresh"
+            [loading]="vm.loading()"
+            (clicked)="refresh()"
+          >
+            Refresh
+          </app-button>
+        </app-page-header>
+
+        @if (!vm.hasTeam() && !vm.loading()) {
+          <app-empty-state
+            icon="pi-users"
+            heading="No active team found"
+            description="Join or create a team before using the team workspace."
+          />
+        } @else {
+          <section class="workspace-summary-grid" aria-label="Team workspace overview">
+            <app-card-shell title="Active Players" headerIcon="pi-users">
+              <p class="workspace-stat-value">
+                {{ vm.overview()?.activePlayers ?? 0 }}
+              </p>
+              <p class="workspace-stat-copy">
+                {{ vm.overview()?.teamName || "Current team" }}
+              </p>
+            </app-card-shell>
+
+            <app-card-shell title="Practice Attendance" headerIcon="pi-check-square">
+              <p class="workspace-stat-value">
+                {{ vm.overview()?.practiceAttendanceRate ?? 0 }}%
+              </p>
+              <p class="workspace-stat-copy">Recent practice participation.</p>
+            </app-card-shell>
+
+            <app-card-shell title="At Risk" headerIcon="pi-exclamation-triangle">
+              <p class="workspace-stat-value">
+                {{ vm.overview()?.playersAtRisk ?? 0 }}
+              </p>
+              <p class="workspace-stat-copy">Players flagged for closer review.</p>
+            </app-card-shell>
+
+            <app-card-shell title="Pending Actions" headerIcon="pi-inbox">
+              <p class="workspace-stat-value">{{ vm.pendingActionCount() }}</p>
+              <p class="workspace-stat-copy">
+                {{ vm.pendingInvitations().length }} invites and
+                {{ vm.pendingAbsenceRequests().length }} absence requests.
+              </p>
+            </app-card-shell>
+          </section>
+
+          @if (vm.error()) {
+            <app-card-shell
+              title="Workspace data is partially unavailable"
+              headerIcon="pi-exclamation-circle"
+              tone="warning"
+            >
+              <p class="workspace-error-copy">{{ vm.error() }}</p>
+            </app-card-shell>
+          }
+
+        <section class="workspace-focus-grid" aria-label="Team action overview">
+          <app-card-shell title="What Needs Attention" headerIcon="pi-bolt">
+            @if (vm.actionItems().length > 0) {
+              <div class="workspace-action-list">
+                @for (action of vm.actionItems(); track action.id) {
+                  <a class="workspace-action-item" [routerLink]="action.route">
+                    <div class="workspace-action-item__copy">
+                      <span class="workspace-action-item__title">
+                        <i [class]="'pi ' + action.icon" aria-hidden="true"></i>
+                        {{ action.title }}
+                      </span>
+                      <p>{{ action.detail }}</p>
+                    </div>
+                    <i class="pi pi-arrow-right" aria-hidden="true"></i>
+                  </a>
+                }
+              </div>
+            } @else {
+              <p class="workspace-muted-copy">
+                No urgent team actions are waiting right now.
+              </p>
+            }
+          </app-card-shell>
+
+          <app-card-shell title="Next Team Event" headerIcon="pi-calendar">
+            @if (vm.nextEvent(); as nextEvent) {
+              <div class="workspace-next-event">
+                <strong>{{ nextEvent.title }}</strong>
+                <p>{{ formatEventMeta(nextEvent) }}</p>
+                <app-button
+                  size="sm"
+                  variant="text"
+                  iconLeft="pi-arrow-right"
+                  routerLink="/attendance"
+                >
+                  Open Event Operations
+                </app-button>
+              </div>
+            } @else {
+              <p class="workspace-muted-copy">
+                No upcoming team events are scheduled.
+              </p>
+            }
+          </app-card-shell>
+
+          <app-card-shell title="Coach Signals" headerIcon="pi-bell">
+            @if (vm.coachSignalSummary().unreadActivityCount > 0) {
+              <div class="workspace-next-event">
+                <strong>{{ vm.coachSignalSummary().unreadActivityCount }} unread coach updates</strong>
+                <p>
+                  {{ vm.coachSignalSummary().unreadWellnessCount }} wellness updates and
+                  {{ vm.coachSignalSummary().unreadTrainingCount }} training updates need review.
+                </p>
+                @if (vm.coachSignalSummary().latestActivity; as latestActivity) {
+                  <p class="workspace-signal-note">
+                    Latest: {{ latestActivity.title }}
+                  </p>
+                }
+                <app-button
+                  size="sm"
+                  variant="text"
+                  iconLeft="pi-arrow-right"
+                  routerLink="/coach/activity"
+                >
+                  Open Coach Activity
+                </app-button>
+              </div>
+            } @else {
+              <p class="workspace-muted-copy">
+                No unread coach activity is waiting right now.
+              </p>
+            }
+          </app-card-shell>
+        </section>
+
+        <p-tabs [value]="activeTab()" (valueChange)="onTabChange($event)">
+          <p-tablist>
+            <p-tab value="0"
+              ><i class="pi pi-users mr-2"></i> Roster & Squad</p-tab
+            >
+            <p-tab value="1"
+              ><i class="pi pi-calendar mr-2"></i> Ops & Logistics</p-tab
+            >
+            <p-tab value="2"
+              ><i class="pi pi-cog mr-2"></i> Team Settings</p-tab
+            >
+          </p-tablist>
+
+          <p-tabpanels>
+            <!-- Tab 0: Roster & Depth -->
+            <p-tabpanel value="0">
+              <div class="workspace-panel-grid">
+                <app-card-shell title="Roster Snapshot" headerIcon="pi-users">
+                  <div class="workspace-detail-list">
+                    <div class="workspace-detail-row">
+                      <span>Total squad</span>
+                      <strong>{{ vm.overview()?.totalPlayers ?? 0 }}</strong>
+                    </div>
+                    <div class="workspace-detail-row">
+                      <span>Healthy and active</span>
+                      <strong>{{ vm.overview()?.activePlayers ?? 0 }}</strong>
+                    </div>
+                    <div class="workspace-detail-row">
+                      <span>Currently injured</span>
+                      <strong>{{ vm.overview()?.injuredPlayers ?? 0 }}</strong>
+                    </div>
+                  </div>
+                </app-card-shell>
+
+                <app-card-shell title="Coaching Staff" headerIcon="pi-briefcase">
+                  @if (vm.coaches().length > 0) {
+                    <div class="workspace-staff-list">
+                      @for (coach of vm.coaches(); track coach.userId) {
+                        <div class="workspace-staff-row">
+                          <div>
+                            <strong>{{ coach.fullName }}</strong>
+                            <p>{{ getRoleLabel(coach.role) }}</p>
+                          </div>
+                        </div>
+                      }
+                    </div>
+                  } @else {
+                    <p class="workspace-muted-copy">
+                      No coach assignments are available yet.
+                    </p>
+                  }
+                </app-card-shell>
+
+                <div class="tab-content-grid">
+                  <a class="tool-card" routerLink="/roster">
+                    <i class="pi pi-users"></i>
+                    <h3>Roster Manager</h3>
+                    <p>View and manage all active athletes.</p>
+                  </a>
+                  <a class="tool-card" routerLink="/roster">
+                    <i class="pi pi-list"></i>
+                    <h3>Squad Planning</h3>
+                    <p>Open the roster workspace to review starters, depth, and role coverage.</p>
+                  </a>
+                  <a class="tool-card" routerLink="/attendance">
+                    <i class="pi pi-check-square"></i>
+                    <h3>Attendance</h3>
+                    <p>Track practice and game participation.</p>
+                  </a>
+                </div>
+              </div>
+            </p-tabpanel>
+
+            <!-- Tab 1: Ops & Logistics -->
+            <p-tabpanel value="1">
+              <div class="workspace-panel-grid">
+                <app-card-shell title="Upcoming Events" headerIcon="pi-calendar">
+                  @if (vm.upcomingEvents().length > 0) {
+                    <div class="workspace-detail-list">
+                      @for (event of vm.upcomingEvents(); track event.id) {
+                        <div class="workspace-detail-row workspace-detail-row--stacked">
+                          <div>
+                            <strong>{{ event.title }}</strong>
+                            <p>{{ formatEventMeta(event) }}</p>
+                          </div>
+                          <app-button
+                            size="sm"
+                            variant="text"
+                            iconLeft="pi-arrow-right"
+                            routerLink="/attendance"
+                          >
+                            Open
+                          </app-button>
+                        </div>
+                      }
+                    </div>
+                  } @else {
+                    <p class="workspace-muted-copy">
+                      No upcoming events are scheduled right now.
+                    </p>
+                  }
+                </app-card-shell>
+
+                <app-card-shell title="Pending Absence Requests" headerIcon="pi-inbox">
+                  @if (vm.pendingAbsenceRequests().length > 0) {
+                    <div class="workspace-detail-list">
+                      @for (request of vm.pendingAbsenceRequests(); track request.id) {
+                        <div class="workspace-detail-row">
+                          <span>Request {{ request.id.slice(0, 8) }}</span>
+                          <strong>{{ formatDate(request.created_at) }}</strong>
+                        </div>
+                      }
+                    </div>
+                  } @else {
+                    <p class="workspace-muted-copy">
+                      No unresolved absence requests.
+                    </p>
+                  }
+                </app-card-shell>
+
+                <app-card-shell title="Coach Activity Queue" headerIcon="pi-bell">
+                  <div class="workspace-detail-list">
+                    <div class="workspace-detail-row">
+                      <span>Unread updates</span>
+                      <strong>{{ vm.coachSignalSummary().unreadActivityCount }}</strong>
+                    </div>
+                    <div class="workspace-detail-row">
+                      <span>Unread wellness logs</span>
+                      <strong>{{ vm.coachSignalSummary().unreadWellnessCount }}</strong>
+                    </div>
+                    <div class="workspace-detail-row">
+                      <span>Unread training logs</span>
+                      <strong>{{ vm.coachSignalSummary().unreadTrainingCount }}</strong>
+                    </div>
+                  </div>
+                </app-card-shell>
+
+                <div class="tab-content-grid">
+                  <a class="tool-card" routerLink="/coach/practice">
+                    <i class="pi pi-calendar-plus"></i>
+                    <h3>Practice Planner</h3>
+                    <p>Plan sessions, drills, attendance, and equipment needs.</p>
+                  </a>
+                  <a class="tool-card" routerLink="/tournaments">
+                    <i class="pi pi-trophy"></i>
+                    <h3>Tournaments</h3>
+                    <p>Manage multi-game event logistics.</p>
+                  </a>
+                  <a class="tool-card" routerLink="/coach/team">
+                    <i class="pi pi-flag"></i>
+                    <h3>Game Day Setup</h3>
+                    <p>Manage operational details and team administration.</p>
+                  </a>
+                </div>
+              </div>
+            </p-tabpanel>
+
+            <!-- Tab 2: Settings -->
+            <p-tabpanel value="2">
+              <div class="workspace-panel-grid">
+                <app-card-shell title="Pending Invitations" headerIcon="pi-send">
+                  @if (vm.pendingInvitations().length > 0) {
+                    <div class="workspace-detail-list">
+                      @for (invite of vm.pendingInvitations(); track invite.id) {
+                        <div class="workspace-detail-row workspace-detail-row--stacked">
+                          <div>
+                            <strong>{{ invite.email }}</strong>
+                            <p>
+                              {{ getRoleLabel(invite.role || "player") }} • expires
+                              {{ formatDate(invite.expiresAt) }}
+                            </p>
+                          </div>
+                        </div>
+                      }
+                    </div>
+                  } @else {
+                    <p class="workspace-muted-copy">
+                      No pending team invitations.
+                    </p>
+                  }
+                </app-card-shell>
+
+                <app-card-shell title="Current Readiness" headerIcon="pi-chart-line">
+                  <div class="workspace-detail-list">
+                    <div class="workspace-detail-row">
+                      <span>Training consistency</span>
+                      <strong>{{ vm.overview()?.trainingConsistency ?? 0 }}%</strong>
+                    </div>
+                    <div class="workspace-detail-row">
+                      <span>Average workload</span>
+                      <strong>{{ vm.overview()?.avgTeamWorkload ?? 0 }}</strong>
+                    </div>
+                    <div class="workspace-detail-row">
+                      <span>Team chemistry</span>
+                      <strong>{{ vm.overview()?.teamChemistry ?? 0 }}</strong>
+                    </div>
+                  </div>
+                </app-card-shell>
+
+                <div class="tab-content-grid">
+                  <a class="tool-card" routerLink="/coach/team">
+                    <i class="pi pi-cog"></i>
+                    <h3>Team Settings</h3>
+                    <p>Update team profile and preferences.</p>
+                  </a>
+                  <a class="tool-card" routerLink="/coach/planning">
+                    <i class="pi pi-plus"></i>
+                    <h3>Season Planning</h3>
+                    <p>Set up calendars, programs, and the next training cycle.</p>
+                  </a>
+                  <a class="tool-card" routerLink="/settings">
+                    <i class="pi pi-cog"></i>
+                    <h3>Platform Settings</h3>
+                    <p>Adjust notification and sharing defaults.</p>
+                  </a>
+                </div>
+              </div>
+            </p-tabpanel>
+          </p-tabpanels>
+        </p-tabs>
+        }
+      </div>
+    </app-main-layout>

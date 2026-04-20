@@ -1,0 +1,243 @@
+    <app-card-shell
+      title="Body Composition"
+      [subtitle]="lastUpdated() ? 'Last measured ' + formatDate(lastUpdated()!) : undefined"
+      headerIcon="chart-pie"
+    >
+      <!-- Empty State -->
+      @if (!isLoading() && !hasData()) {
+        <app-empty-state
+          icon="pi-scale"
+          heading="No measurements yet"
+          description="Log your first body composition measurement to track changes over time."
+          actionLabel="Log Measurement"
+          actionIcon="pi-plus"
+          [actionHandler]="openLogDialogHandler"
+        />
+      }
+
+      <!-- Data Display -->
+      @else if (!isLoading()) {
+        <div class="body-comp-content">
+          <!-- Primary Metric: Weight -->
+          <div class="primary-metric">
+            <div class="metric-main">
+              <span class="metric-value">{{
+                displayData().weight | number: "1.1-1"
+              }}</span>
+              <span class="metric-unit">kg</span>
+              @if (displayData().weightTrend) {
+                <span
+                  class="trend-indicator"
+                  [class.up]="displayData().weightTrend === 'up'"
+                  [class.down]="displayData().weightTrend === 'down'"
+                >
+                  <i [class]="getTrendIcon(displayData().weightTrend!)"></i>
+                </span>
+              }
+            </div>
+            <span class="metric-label">Total Weight</span>
+          </div>
+
+          <!-- Secondary Metrics Grid -->
+          <div class="metrics-grid">
+            <!-- Body Fat -->
+            @if (displayData().bodyFat !== null) {
+              <div class="metric-item">
+                <div class="metric-row">
+                  <span class="metric-value-sm"
+                    >{{ displayData().bodyFat | number: "1.1-1" }}%</span
+                  >
+                  @if (displayData().fatTrend) {
+                    <span
+                      class="trend-small"
+                      [class.good]="displayData().fatTrend === 'down'"
+                      [class.neutral]="displayData().fatTrend === 'stable'"
+                    >
+                      <i [class]="getTrendIcon(displayData().fatTrend!)"></i>
+                    </span>
+                  }
+                </div>
+                <span class="metric-label-sm">Body Fat</span>
+                <div
+                  class="fat-bar"
+                  [pTooltip]="getFatRangeTooltip(displayData().bodyFat!)"
+                >
+                  <div
+                    class="fat-fill"
+                    [style.width.%]="getFatBarWidth(displayData().bodyFat!)"
+                    [class.low]="displayData().bodyFat! < 10"
+                    [class.ideal]="
+                      displayData().bodyFat! >= 10 &&
+                      displayData().bodyFat! <= 20
+                    "
+                    [class.moderate]="
+                      displayData().bodyFat! > 20 &&
+                      displayData().bodyFat! <= 30
+                    "
+                    [class.high]="displayData().bodyFat! > 30"
+                  ></div>
+                </div>
+              </div>
+            }
+
+            <!-- Muscle Mass -->
+            @if (displayData().muscleMass !== null) {
+              <div class="metric-item">
+                <span class="metric-value-sm"
+                  >{{ displayData().muscleMass | number: "1.1-1" }} kg</span
+                >
+                <span class="metric-label-sm">Muscle Mass</span>
+              </div>
+            }
+
+            <!-- Body Water -->
+            @if (displayData().bodyWater !== null) {
+              <div class="metric-item">
+                <span class="metric-value-sm"
+                  >{{ displayData().bodyWater | number: "1.1-1" }}%</span
+                >
+                <span class="metric-label-sm">Body Water</span>
+              </div>
+            }
+
+            <!-- BMR -->
+            @if (displayData().basalMetabolicRate !== null) {
+              <div class="metric-item">
+                <span class="metric-value-sm">{{
+                  displayData().basalMetabolicRate
+                }}</span>
+                <span class="metric-label-sm">BMR (kcal)</span>
+              </div>
+            }
+          </div>
+
+          <!-- Log New Measurement Button -->
+          <div class="log-button-container">
+            <app-button
+              variant="outlined"
+              size="sm"
+              iconLeft="pi-plus"
+              (clicked)="openLogDialog()"
+            >
+              Log New Measurement
+            </app-button>
+          </div>
+        </div>
+      }
+
+      <!-- Footer -->
+      <div footer>
+        <a routerLink="/performance/tests" class="view-link">
+          View Full History
+          <i class="pi pi-arrow-right"></i>
+        </a>
+      </div>
+    </app-card-shell>
+
+    <!-- Log Measurement Dialog -->
+    <app-dialog
+      [(visible)]="showLogDialog"
+      [modal]="true"
+      [draggable]="false"
+      [resizable]="false"
+      [blockScroll]="true"
+      shell="settings"
+      dialogSize="md"
+      [scrollableContent]="true"
+      [scrollMaxHeight]="'calc(80dvh - var(--space-12))'"
+      [mobileStickyFooter]="true"
+      [mobileMaxHeight]="'80dvh'"
+      ariaLabel="Log Body Composition"
+    >
+      <app-dialog-header
+        icon="chart-pie"
+        title="Log Body Composition"
+        subtitle="Enter your latest smart-scale measurement"
+        (close)="showLogDialog = false"
+      />
+      <div class="measurement-form">
+        <p class="form-description">
+          Enter your body composition measurements. Weight is required, other
+          fields are optional.
+        </p>
+
+        <!-- Weight (Required) -->
+        <div class="form-field">
+          <app-input-number
+            label="Weight (kg) *"
+            id="weight"
+            [ngModel]="measurementForm.weight"
+            (valueChange)="onMeasurementInput('weight', $event)"
+            [minFractionDigits]="1"
+            [maxFractionDigits]="1"
+            placeholder="e.g., 75.5"
+          ></app-input-number>
+        </div>
+
+        <!-- Body Fat -->
+        <div class="form-field">
+          <app-input-number
+            label="Body Fat (%)"
+            id="bodyFat"
+            [ngModel]="measurementForm.bodyFat"
+            (valueChange)="onMeasurementInput('bodyFat', $event)"
+            [minFractionDigits]="1"
+            [maxFractionDigits]="1"
+            [min]="1"
+            [max]="60"
+            placeholder="e.g., 15.0"
+          ></app-input-number>
+        </div>
+
+        <!-- Muscle Mass -->
+        <div class="form-field">
+          <app-input-number
+            label="Muscle Mass (kg)"
+            id="muscleMass"
+            [ngModel]="measurementForm.muscleMass"
+            (valueChange)="onMeasurementInput('muscleMass', $event)"
+            [minFractionDigits]="1"
+            [maxFractionDigits]="1"
+            placeholder="e.g., 35.0"
+          ></app-input-number>
+        </div>
+
+        <!-- Body Water -->
+        <div class="form-field">
+          <app-input-number
+            label="Body Water (%)"
+            id="bodyWater"
+            [ngModel]="measurementForm.bodyWater"
+            (valueChange)="onMeasurementInput('bodyWater', $event)"
+            [minFractionDigits]="1"
+            [maxFractionDigits]="1"
+            [min]="30"
+            [max]="80"
+            placeholder="e.g., 55.0"
+          ></app-input-number>
+        </div>
+
+        <!-- BMR -->
+        <div class="form-field">
+          <app-input-number
+            label="Basal Metabolic Rate (kcal)"
+            id="bmr"
+            [ngModel]="measurementForm.basalMetabolicRate"
+            (valueChange)="onMeasurementInput('basalMetabolicRate', $event)"
+            [min]="800"
+            [max]="4000"
+            placeholder="e.g., 1800"
+          ></app-input-number>
+        </div>
+      </div>
+
+      <app-dialog-footer
+        cancelLabel="Cancel"
+        primaryLabel="Save Measurement"
+        primaryIcon="pi-check"
+        [loading]="isSaving()"
+        [disabled]="!measurementForm.weight"
+        (cancel)="showLogDialog = false"
+        (primary)="saveMeasurement()"
+      />
+    </app-dialog>

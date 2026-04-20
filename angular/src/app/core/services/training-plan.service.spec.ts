@@ -171,6 +171,79 @@ describe("TrainingPlanService", () => {
     });
   });
 
+  describe("generateWeeklyPlan with flag football performance context", () => {
+    it("preserves the selected goal and detected phase", () => {
+      const plan = service.generateWeeklyPlan({
+        goal: "defense",
+        currentACWR: 1.0,
+        readinessLevel: "high",
+        teamPracticesPerWeek: 2,
+      });
+
+      expect(plan.goal).toBe("defense");
+      expect(plan.phase).toBe("power");
+      expect(plan.performanceSystem?.teamPracticeCount).toBe(2);
+    });
+
+    it("caps individual work when the athlete already has four team practices and a doubleheader", () => {
+      const plan = service.generateWeeklyPlan({
+        goal: "speed",
+        currentACWR: 1.0,
+        readinessLevel: "moderate",
+        teamPracticesPerWeek: 4,
+        gameWeekType: "doubleheader",
+      });
+
+      const individualSessions = plan.sessions.filter(
+        (session) =>
+          session.sessionType !== "recovery" &&
+          session.sessionType !== "game",
+      );
+
+      expect(plan.performanceSystem?.individualSessionCap).toBe(1);
+      expect(plan.performanceSystem?.highIntensityCap).toBe(0);
+      expect(individualSessions.length).toBeLessThanOrEqual(1);
+      expect(plan.fixedTeamPracticeLoadAu).toBe(1680);
+      expect(plan.competitionLoadAu).toBe(900);
+    });
+
+    it("adds international tournament taper, nutrition, mental, and injury-prevention context", () => {
+      const compDate = new Date();
+      compDate.setDate(compDate.getDate() + 10);
+
+      const plan = service.generateWeeklyPlan({
+        goal: "route-running",
+        currentACWR: 1.05,
+        readinessLevel: "high",
+        teamPracticesPerWeek: 2,
+        gameWeekType: "international-tournament",
+        competitionDate: compDate,
+        bodyMassKg: 80,
+      });
+
+      const system = plan.performanceSystem;
+      expect(system?.weekType).toBe("international-tournament");
+      expect(system?.competitionWeekTaper.some((item) =>
+        item.includes("travel hydration"),
+      )).toBe(true);
+      expect(system?.nutritionTimeline.some((item) =>
+        item.timing === "Between games",
+      )).toBe(true);
+      expect(system?.performanceBaselines.some((item) =>
+        item.cadence === "yearly",
+      )).toBe(true);
+      expect(system?.supplementPlan.some((item) =>
+        item.key === "nitrate",
+      )).toBe(true);
+      expect(system?.supplementPlan.some((item) =>
+        item.key === "sodium-bicarbonate" &&
+        item.protocol[0].includes("16 to 24 g"),
+      )).toBe(true);
+      expect(system?.mentalRoutine.thirtySecondReset.length).toBeGreaterThan(0);
+      expect(system?.injuryProtocols.length).toBe(4);
+    });
+  });
+
   // ──────────────────────────────────────────────────────────────────────────
   // generateWeeklyPlan — detraining ramp
   // ──────────────────────────────────────────────────────────────────────────

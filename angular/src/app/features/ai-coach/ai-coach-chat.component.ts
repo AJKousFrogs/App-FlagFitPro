@@ -18,26 +18,25 @@ import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { FormControl, ReactiveFormsModule } from "@angular/forms";
 import { ActivatedRoute, Router } from "@angular/router";
 
-import { firstValueFrom } from "rxjs";
 import { TIMEOUTS, UI_LIMITS } from "../../core/constants/app.constants";
-import { ApiService, API_ENDPOINTS } from "../../core/services/api.service";
 import {
   LoggerService,
   toLogContext,
 } from "../../core/services/logger.service";
-import { MissingDataDetectionService } from "../../core/services/missing-data-detection.service";
 import { SupabaseService } from "../../core/services/supabase.service";
 import { TeamMembershipService } from "../../core/services/team-membership.service";
 import { ToastService } from "../../core/services/toast.service";
 import { UnifiedTrainingService } from "../../core/services/unified-training.service";
-import { extractApiPayload } from "../../core/utils/api-response-mapper";
+import { ChatSessionService, type RecentChatSession } from "./chat-session.service";
+import { MerlinKnowledgeService, type Citation } from "./merlin-knowledge.service";
 import {
-  getProtocolAcwrDisplay,
-  getProtocolReadinessPresentation,
-} from "../../core/utils/protocol-metrics-presentation";
-import {
-  AIModeStatus,
-} from "../../shared/components/ai-mode-explanation/ai-mode-explanation.component";
+  ChatMessagesService,
+  type ChatMessage,
+  type MicroSessionData,
+  type SuggestedAction,
+} from "./chat-messages.service";
+import { ChatSuggestionsService } from "./chat-suggestions.service";
+
 import { ButtonComponent } from "../../shared/components/button/button.component";
 import { CloseButtonComponent } from "../../shared/components/close-button/close-button.component";
 import { AppDialogComponent } from "../../shared/components/dialog/dialog.component";
@@ -47,74 +46,7 @@ import { MicroSessionComponent } from "../../shared/components/micro-session/mic
 import { SearchInputComponent } from "../../shared/components/search-input/search-input.component";
 import { formatTimeOfDay } from "../../shared/utils/format.utils";
 
-interface ChatMessage {
-  id?: string;
-  role: "user" | "assistant";
-  content: string;
-  timestamp: Date;
-  riskLevel?: string;
-  citations?: Citation[];
-  suggestedActions?: SuggestedAction[];
-  disclaimer?: string;
-  isLoading?: boolean;
-  acwrSafety?: {
-    blocked: boolean;
-    reason: string;
-    currentAcwr: number;
-    riskZone: string;
-  };
-  isSwapPlan?: boolean;
-  evidenceGradeExplanation?: string;
-  coachReviewedAt?: string;
-  coachReviewedBy?: string;
-  intent?: string;
-  // UI state
-  feedbackGiven?: "helpful" | "not_helpful" | null;
-  isExpanded?: boolean;
-  showActions?: boolean;
-  // New UX features
-  isBookmarked?: boolean;
-  loadingStage?: "thinking" | "searching" | "generating";
-}
 
-interface Citation {
-  id: string;
-  title: string;
-  source_type: string;
-  evidence_grade: string;
-  url?: string;
-  source_url?: string;
-}
-
-interface SuggestedAction {
-  type: string;
-  label: string;
-  reason: string;
-  data?: Record<string, unknown>;
-  isMicroSession?: boolean;
-  microSession?: MicroSessionData;
-}
-
-interface MicroSessionData {
-  title: string;
-  description?: string;
-  session_type: string;
-  estimated_duration_minutes: number;
-  equipment_needed: string[];
-  intensity_level: string;
-  position_relevance: string[];
-  steps: { order: number; instruction: string; duration_seconds: number }[];
-  coaching_cues: string[];
-  safety_notes?: string | null;
-  follow_up_prompt: string;
-}
-
-interface QuickSuggestion {
-  icon: string;
-  label: string;
-  query: string;
-  category: string;
-}
 
 interface MerlinReturnContext {
   sourceKey: "wellness" | "training" | "today" | "nutrition" | "coach-inbox";
@@ -128,84 +60,9 @@ interface AutocompleteSuggestion {
   category: string;
 }
 
-interface KnowledgeEntry {
-  id: string;
-  title: string;
-  content: string;
-  category: string;
-  evidenceGrade: string;
-  sourceUrl?: string;
-}
 
-interface NutritionPlanSummary {
-  exists: boolean;
-  targetCalories: number | null;
-  proteinGrams: number | null;
-  carbsGrams: number | null;
-  fatGrams: number | null;
-}
 
-interface MerlinGroundingCard {
-  id: string;
-  title: string;
-  summary: string;
-  meta: string;
-  icon: string;
-  query: string;
-}
 
-interface CitationGroup {
-  key: string;
-  label: string;
-  count: number;
-}
-
-interface CitationEvidenceSummary {
-  label: string;
-  count: number;
-}
-
-interface SessionContextItem {
-  id: string;
-  label: string;
-  value: string;
-  detail: string;
-  icon: string;
-  tone?: "default" | "warning";
-}
-
-interface SessionSummaryItem {
-  id: string;
-  label: string;
-}
-
-interface PersistedChatMessage {
-  id: string;
-  role: "user" | "assistant";
-  content: string;
-  timestamp: string;
-  riskLevel?: string | null;
-  intent?: string | null;
-  citations?: Citation[] | null;
-  feedbackHelpful?: boolean | null;
-  coachReviewedAt?: string | null;
-  coachReviewedBy?: string | null;
-  metadata?: {
-    suggestedActions?: SuggestedAction[];
-    evidenceGradeExplanation?: string | null;
-    bookmarked?: boolean;
-  } | null;
-}
-
-interface RecentChatSession {
-  id: string;
-  startedAt: string;
-  messageCount: number;
-  preview: string;
-  previewRole?: "user" | "assistant" | null;
-  previewIntent?: string | null;
-  previewCreatedAt?: string | null;
-}
 
 @Component({
   selector: "app-ai-coach-chat",
@@ -227,7 +84,6 @@ interface RecentChatSession {
   },
 })
 export class AiCoachChatComponent implements OnInit, AfterViewChecked {
-  private readonly apiService = inject(ApiService);
   private readonly supabase = inject(SupabaseService);
   private readonly logger = inject(LoggerService);
   private readonly toast = inject(ToastService);
@@ -235,49 +91,40 @@ export class AiCoachChatComponent implements OnInit, AfterViewChecked {
   private readonly trainingService = inject(UnifiedTrainingService);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
-  private readonly missingDataService = inject(MissingDataDetectionService);
   private readonly teamMembershipService = inject(TeamMembershipService);
   private readonly sanitizer = inject(DomSanitizer);
 
-  // Use the canonical team membership capability model instead of coarse auth roles.
-  readonly isCoach = computed(
-    () =>
-      this.teamMembershipService.isCoach() ||
-      this.teamMembershipService.isAdmin(),
-  );
+  // Extracted services
+  readonly knowledge = inject(MerlinKnowledgeService);
+  readonly session = inject(ChatSessionService);
+  readonly msgs = inject(ChatMessagesService);
+  readonly suggestions = inject(ChatSuggestionsService);
+
+  // Template-facing delegates to msgs service (keeps template bindings stable)
+  readonly isLoading = this.msgs.isLoading;
+  readonly sessionSummaryText = this.msgs.sessionSummaryText;
+  // Template-facing delegates to suggestions service
+  readonly acwrDisplay = this.suggestions.acwrDisplay;
+  readonly readinessPresentation = this.suggestions.readinessPresentation;
+  readonly aiModeStatus = this.suggestions.aiModeStatus;
+  readonly todayReadinessScore = this.suggestions.todayReadinessScore;
+  readonly isCoach = this.suggestions.isCoach;
+  readonly userName = this.suggestions.userName;
+  readonly sessionContextItems = this.suggestions.sessionContextItems;
+  readonly quickSuggestions = this.suggestions.quickSuggestions;
+  readonly contextChips = this.suggestions.contextChips;
 
   messagesContainer = viewChild.required<ElementRef>("messagesContainer");
   messageInput = viewChild.required<ElementRef>("messageInput");
   searchInputElement = viewChild<SearchInputComponent>("searchInput");
 
-  messages = signal<ChatMessage[]>([]);
-  isLoading = signal(false);
   currentMessage = "";
-  sessionId: string | null = null;
   returnContext = signal<MerlinReturnContext | null>(null);
   private shouldScrollToBottom = false;
   private lastMessageCount = 0;
   private restoredSessionId: string | null = null;
 
-  // Daily readiness
-  todayReadinessScore = signal<number | null>(null);
-  readonly todayProtocol = this.trainingService.todayProtocol;
-  readonly acwrDisplay = computed(() =>
-    getProtocolAcwrDisplay(
-      this.todayProtocol(),
-      this.trainingService.acwrRatio(),
-      this.trainingService.acwrData().dataQuality.daysWithData || null,
-    ),
-  );
-  readonly readinessPresentation = computed(() =>
-    getProtocolReadinessPresentation(
-      this.todayProtocol(),
-      this.trainingService.readinessScore(),
-    ),
-  );
 
-  // Phase 2.3: AI Mode Status
-  aiModeStatus = signal<AIModeStatus | null>(null);
 
   // Micro-session state
   microSessionDialogVisible = false;
@@ -294,16 +141,6 @@ export class AiCoachChatComponent implements OnInit, AfterViewChecked {
   searchQuery = signal("");
   searchControl = new FormControl("", { nonNullable: true });
   showBookmarks = signal(false);
-  loadingStage = signal<"thinking" | "searching" | "generating">("thinking");
-  private loadingStageRunId = 0;
-  private loadingStageTimeouts: ReturnType<typeof setTimeout>[] = [];
-  groundingLoading = signal(false);
-  knowledgeError = signal<string | null>(null);
-  trainingKnowledge = signal<KnowledgeEntry[]>([]);
-  nutritionKnowledge = signal<KnowledgeEntry[]>([]);
-  queryKnowledge = signal<KnowledgeEntry[]>([]);
-  nutritionPlan = signal<NutritionPlanSummary | null>(null);
-  recentSessions = signal<RecentChatSession[]>([]);
   showRecentSessionsPanel = signal(false);
 
   // Voice input
@@ -334,8 +171,8 @@ export class AiCoachChatComponent implements OnInit, AfterViewChecked {
   // Computed: filtered messages for search
   filteredMessages = computed(() => {
     const query = this.searchQuery().toLowerCase().trim();
-    if (!query) return this.messages();
-    return this.messages().filter((m) =>
+    if (!query) return this.msgs.messages();
+    return this.msgs.messages().filter((m) =>
       m.content.toLowerCase().includes(query),
     );
   });
@@ -346,12 +183,12 @@ export class AiCoachChatComponent implements OnInit, AfterViewChecked {
 
   // Computed: bookmarked messages count
   bookmarkedCount = computed(() => {
-    return this.messages().filter((m) => m.isBookmarked).length;
+    return this.msgs.messages().filter((m) => m.isBookmarked).length;
   });
 
   // Computed: visible messages (respects search and bookmarks filters)
   visibleMessages = computed(() => {
-    let msgs = this.messages();
+    let msgs = this.msgs.messages();
 
     if (this.showBookmarks()) {
       msgs = msgs.filter((m) => m.isBookmarked);
@@ -363,381 +200,6 @@ export class AiCoachChatComponent implements OnInit, AfterViewChecked {
     }
 
     return msgs;
-  });
-
-  readonly groundingCards = computed<MerlinGroundingCard[]>(() => {
-    const cards: MerlinGroundingCard[] = [];
-    const queryEntry = this.queryKnowledge()[0];
-    const nutritionPlan = this.nutritionPlan();
-    const trainingEntry = this.trainingKnowledge()[0];
-    const nutritionEntry = this.nutritionKnowledge()[0];
-
-    if (queryEntry) {
-      cards.push({
-        id: `query-${queryEntry.id}`,
-        title: "Current evidence match",
-        summary: queryEntry.title,
-        meta: `${queryEntry.category} • ${queryEntry.evidenceGrade} evidence`,
-        icon: "pi-book",
-        query: `Use ${queryEntry.title} to answer my question with practical next steps.`,
-      });
-    }
-
-    if (nutritionPlan?.exists) {
-      cards.push({
-        id: "nutrition-plan",
-        title: "Your nutrition targets",
-        summary: [
-          nutritionPlan.targetCalories ? `${nutritionPlan.targetCalories} kcal` : null,
-          nutritionPlan.proteinGrams ? `${nutritionPlan.proteinGrams}g protein` : null,
-          nutritionPlan.carbsGrams ? `${nutritionPlan.carbsGrams}g carbs` : null,
-        ]
-          .filter(Boolean)
-          .join(" • "),
-        meta: "Saved backend nutrition profile",
-        icon: "pi-heart",
-        query: "Use my nutrition targets to give me today's fueling advice.",
-      });
-    }
-
-    if (trainingEntry) {
-      cards.push({
-        id: `training-${trainingEntry.id}`,
-        title: "Training evidence",
-        summary: trainingEntry.title,
-        meta: `${trainingEntry.category} • ${trainingEntry.evidenceGrade} evidence`,
-        icon: "pi-bolt",
-        query: `Show me the most useful training takeaway from ${trainingEntry.title}.`,
-      });
-    }
-
-    if (nutritionEntry) {
-      cards.push({
-        id: `nutrition-${nutritionEntry.id}`,
-        title: "Nutrition evidence",
-        summary: nutritionEntry.title,
-        meta: `${nutritionEntry.category} • ${nutritionEntry.evidenceGrade} evidence`,
-        icon: "pi-apple",
-        query: `Summarize the nutrition guidance from ${nutritionEntry.title} for flag football.`,
-      });
-    }
-
-    return cards.slice(0, 3);
-  });
-
-  readonly groundingSummary = computed(() => {
-    const sources = [
-      this.trainingKnowledge().length > 0 ? "training evidence" : null,
-      this.nutritionKnowledge().length > 0 ? "nutrition evidence" : null,
-      this.nutritionPlan()?.exists ? "nutrition targets" : null,
-    ].filter(Boolean);
-
-    return sources.length > 0
-      ? `Grounded by ${sources.join(", ")}.`
-      : "Grounding context is loading.";
-  });
-
-  readonly sessionContextItems = computed<SessionContextItem[]>(() => {
-    const items: SessionContextItem[] = [];
-    const readiness = this.readinessPresentation();
-    const acwr = this.acwrDisplay();
-    const nutritionPlan = this.nutritionPlan();
-    const aiMode = this.aiModeStatus();
-
-    if (readiness.score !== null) {
-      items.push({
-        id: "readiness",
-        label: "Readiness",
-        value: `${readiness.score}%`,
-        detail:
-          readiness.severity === "danger"
-            ? "Recovery should shape the next answer."
-            : "Current daily state is available to Merlin.",
-        icon: "pi-heart-fill",
-        tone: readiness.severity === "danger" ? "warning" : "default",
-      });
-    }
-
-    if (typeof acwr.value === "number") {
-      items.push({
-        id: "acwr",
-        label: "Training load",
-        value: acwr.value.toFixed(2),
-        detail:
-          acwr.level === "danger-zone" || acwr.level === "elevated-risk"
-            ? "High load context is active."
-            : "Recent load is available to Merlin.",
-        icon: "pi-chart-line",
-        tone:
-          acwr.level === "danger-zone" || acwr.level === "elevated-risk"
-            ? "warning"
-            : "default",
-      });
-    }
-
-    if (nutritionPlan?.exists) {
-      const nutritionBits = [
-        nutritionPlan.targetCalories
-          ? `${nutritionPlan.targetCalories} kcal`
-          : null,
-        nutritionPlan.proteinGrams ? `${nutritionPlan.proteinGrams}g protein` : null,
-      ].filter(Boolean);
-      items.push({
-        id: "nutrition-targets",
-        label: "Nutrition targets",
-        value: nutritionBits.join(" • ") || "Saved",
-        detail: "Fueling guidance can use your backend nutrition profile.",
-        icon: "pi-apple",
-      });
-    }
-
-    if (aiMode?.isConservative) {
-      items.push({
-        id: "mode",
-        label: "AI mode",
-        value: `${Math.round(aiMode.confidence * 100)}% confidence`,
-        detail: aiMode.reason,
-        icon: "pi-shield",
-        tone: "warning",
-      });
-    }
-
-    return items.slice(0, 4);
-  });
-
-  readonly sessionSummaryItems = computed<SessionSummaryItem[]>(() => {
-    const items: SessionSummaryItem[] = [];
-    const acwr = this.acwrDisplay();
-    const readiness = this.readinessPresentation();
-    const nutritionPlan = this.nutritionPlan();
-    const lastAssistantMessage = [...this.messages()]
-      .reverse()
-      .find((message) => message.role === "assistant" && !message.isLoading);
-
-    if (readiness.score !== null) {
-      items.push({ id: "readiness", label: "readiness" });
-    }
-
-    if (typeof acwr.value === "number") {
-      items.push({ id: "load", label: "training load" });
-    }
-
-    if (nutritionPlan?.exists) {
-      items.push({ id: "nutrition", label: "nutrition targets" });
-    }
-
-    if (lastAssistantMessage?.intent) {
-      items.push({
-        id: "topic",
-        label: this.getIntentSummaryLabel(lastAssistantMessage.intent),
-      });
-    }
-
-    return items.slice(0, 4);
-  });
-
-  readonly sessionSummaryText = computed(() => {
-    const items = this.sessionSummaryItems().map((item) => item.label);
-    if (items.length === 0) {
-      return "Merlin is ready to ground the next answer.";
-    }
-
-    return `Using ${items.join(", ")}.`;
-  });
-
-  // Quick suggestions for welcome state - now more dynamic
-  quickSuggestions = computed<QuickSuggestion[]>(() => {
-    if (this.isCoach()) {
-      return [
-        {
-          icon: "pi-users",
-          label: "Team Health Report",
-          query:
-            "Merlin, give me a briefing on current team injury risks and readiness.",
-          category: "Roster",
-        },
-        {
-          icon: "pi-calendar-plus",
-          label: "Plan Practice",
-          query:
-            "Help me design a 90-minute high-intensity practice for today.",
-          category: "Planning",
-        },
-        {
-          icon: "pi-chart-line",
-          label: "Performance Trends",
-          query:
-            "Which athletes have shown the most improvement in speed this month?",
-          category: "Analytics",
-        },
-        {
-          icon: "pi-shield",
-          label: "Injury Prevention",
-          query:
-            "Show me the best warm-up routines to prevent hamstring strains.",
-          category: "Safety",
-        },
-      ];
-    }
-
-    const suggestions: QuickSuggestion[] = [
-      {
-        icon: "pi-bolt",
-        label: "Improve route running",
-        query: "How can I improve my route running?",
-        category: "Skills",
-      },
-      {
-        icon: "pi-heart",
-        label: "Pre-game nutrition",
-        query: "What should I eat before a game?",
-        category: "Nutrition",
-      },
-    ];
-
-    // Add load-based suggestion
-    const acwr = this.acwrDisplay();
-    if (
-      typeof acwr.value === "number" &&
-      (acwr.level === "elevated-risk" || acwr.level === "danger-zone")
-    ) {
-      suggestions.push({
-        icon: "pi-exclamation-triangle",
-        label: "Handle high load",
-        query: `My ACWR is ${acwr.value.toFixed(2)}. How should I adjust my training?`,
-        category: "Safety",
-      });
-    } else if (acwr.level === "under-training") {
-      suggestions.push({
-        icon: "pi-chart-line",
-        label: "Build back up",
-        query: "My training load has been low. How do I safely increase it?",
-        category: "Performance",
-      });
-    }
-
-    // Add position-based suggestion
-    const position = this.trainingService.userPosition();
-    if (position === "QB") {
-      suggestions.push({
-        icon: "pi-star",
-        label: "QB arm care",
-        query: "What are the best arm care routines for a QB?",
-        category: "Position",
-      });
-    }
-
-    // Add health-based suggestion
-    if (this.readinessPresentation().severity === "danger") {
-      suggestions.push({
-        icon: "pi-info-circle",
-        label: "Recover better",
-        query:
-          "My readiness is low today. What recovery techniques do you suggest?",
-        category: "Recovery",
-      });
-    }
-
-    return suggestions.slice(0, UI_LIMITS.AI_SUGGESTIONS_COUNT);
-  });
-
-  // Computed context chips based on conversation and state
-  contextChips = computed(() => {
-    const msgs = this.messages();
-    const isCoach = this.isCoach();
-    const chips: string[] = [];
-
-    // If no messages, show some helpful starters based on current state
-    if (msgs.length === 0) {
-      if (isCoach) {
-        chips.push(
-          "Team load summary",
-          "Next opponent strategy",
-          "Injury report",
-        );
-      } else {
-        const acwr = this.acwrDisplay();
-        const readiness = this.readinessPresentation();
-        if (
-          acwr.level === "elevated-risk" ||
-          acwr.level === "danger-zone"
-        ) {
-          chips.push("Explain my high ACWR");
-        }
-        if (readiness.score !== null && readiness.severity === "danger")
-          chips.push("Why is my readiness low?");
-      }
-      return chips.slice(0, UI_LIMITS.AI_CHIPS_COUNT);
-    }
-
-    const lastAssistantMsg = [...msgs]
-      .reverse()
-      .find((m) => m.role === "assistant" && !m.isLoading);
-    if (!lastAssistantMsg) return [];
-
-    // Generate relevant follow-up suggestions based on intent
-    const intent = lastAssistantMsg.intent;
-
-    if (isCoach) {
-      switch (intent) {
-        case "team_report":
-          chips.push(
-            "Detailed roster view",
-            "Export health PDF",
-            "Message at-risk players",
-          );
-          break;
-        case "practice_plan":
-          chips.push(
-            "Reduce intensity",
-            "Add position drills",
-            "Save to calendar",
-          );
-          break;
-        default:
-          chips.push("Compare with last week", "Specific player deep-dive");
-      }
-    } else {
-      switch (intent) {
-        case "pain_injury":
-          chips.push(
-            "What exercises can I still do?",
-            "How long should I rest?",
-          );
-          break;
-        case "technique_correction":
-          chips.push("Show me video examples", "Create a drill plan");
-          break;
-        case "plan_request":
-          chips.push("Adjust for my schedule", "Add recovery days");
-          break;
-        case "recovery_readiness":
-          chips.push("Low-intensity alternatives", "When can I return?");
-          break;
-        default:
-          // Fallback to state-based context
-          if (
-            this.acwrDisplay().level === "elevated-risk" ||
-            this.acwrDisplay().level === "danger-zone"
-          ) {
-            chips.push("Injury prevention tips");
-          }
-          if (msgs.length === 2) {
-            chips.push("Tell me more", "Give me a routine");
-          }
-      }
-    }
-
-    return chips.slice(0, UI_LIMITS.AI_CHIPS_COUNT);
-  });
-
-  // User's first name for personalized greeting
-  userName = computed(() => {
-    const metadata = this.supabase.currentUser()?.user_metadata as
-      | { fullName?: string; firstName?: string }
-      | undefined;
-    const fullName = metadata?.fullName || metadata?.firstName || "";
-    return fullName ? fullName.split(" ")[0] : "";
   });
 
   getIntentSummaryLabel(intent: string): string {
@@ -787,16 +249,10 @@ export class AiCoachChatComponent implements OnInit, AfterViewChecked {
   }
 
   isActiveRecentSession(session: RecentChatSession): boolean {
-    return this.sessionId === session.id;
+    return this.msgs.sessionId === session.id;
   }
 
   constructor() {
-    effect(() => {
-      const score = this.readinessPresentation().score;
-      if (score !== null && score > 0) {
-        this.todayReadinessScore.set(score);
-      }
-    });
 
     this.searchControl.valueChanges
       .pipe(takeUntilDestroyed(this.destroyRef))
@@ -806,11 +262,10 @@ export class AiCoachChatComponent implements OnInit, AfterViewChecked {
       });
 
     // Initialize on construction (Angular 21 pattern)
-    this.loadTodayReadiness();
     this.loadAIModeStatus();
     this.loadTrainingOverviewContext();
-    void this.loadMerlinGrounding();
-    void this.loadRecentSessions();
+    void this.knowledge.loadMerlinGrounding();
+    void this.session.loadRecentSessions();
     this.initializeSpeechRecognition();
     this.handleRouteParams();
   }
@@ -837,7 +292,7 @@ export class AiCoachChatComponent implements OnInit, AfterViewChecked {
         if (
           sessionParam &&
           sessionParam !== this.restoredSessionId &&
-          sessionParam !== this.sessionId
+          sessionParam !== this.msgs.sessionId
         ) {
           this.restoredSessionId = sessionParam;
           void this.restoreSession(sessionParam);
@@ -847,7 +302,7 @@ export class AiCoachChatComponent implements OnInit, AfterViewChecked {
           this.currentMessage = params["draft"];
           this.returnContext.set(returnContext);
           setTimeout(() => this.adjustComposerHeight(), 0);
-          this.consumeRouteParams(["draft", "from"]);
+          this.session.consumeRouteParams(["draft", "from"]);
           return;
         }
 
@@ -855,7 +310,7 @@ export class AiCoachChatComponent implements OnInit, AfterViewChecked {
           this.currentMessage = params["query"];
           this.returnContext.set(returnContext);
           setTimeout(() => this.adjustComposerHeight(), 0);
-          this.consumeRouteParams(["query", "from"]);
+          this.session.consumeRouteParams(["query", "from"]);
           // Small delay to ensure initialization is complete
           setTimeout(() => this.sendMessage(), TIMEOUTS.UI_MICRO_DELAY);
           return;
@@ -863,7 +318,7 @@ export class AiCoachChatComponent implements OnInit, AfterViewChecked {
 
         if (returnContext) {
           this.returnContext.set(returnContext);
-          this.consumeRouteParams(["from"]);
+          this.session.consumeRouteParams(["from"]);
         }
       });
   }
@@ -941,7 +396,7 @@ export class AiCoachChatComponent implements OnInit, AfterViewChecked {
           source: "merlin",
           focus: "checkin",
           intent: "recovery",
-          session: this.sessionId || undefined,
+          session: this.msgs.sessionId || undefined,
         });
       case "training":
         return this.buildResumeQueryParams({
@@ -949,25 +404,25 @@ export class AiCoachChatComponent implements OnInit, AfterViewChecked {
           focus: "create-session",
           view: "week",
           date: this.getTodayDateKey(),
-          session: this.sessionId || undefined,
+          session: this.msgs.sessionId || undefined,
         });
       case "today":
         return this.buildResumeQueryParams({
           source: "merlin",
           focus: "protocol",
-          session: this.sessionId || undefined,
+          session: this.msgs.sessionId || undefined,
         });
       case "nutrition":
         return this.buildResumeQueryParams({
           source: "merlin",
           focus: "hydration",
-          session: this.sessionId || undefined,
+          session: this.msgs.sessionId || undefined,
         });
       case "coach-inbox":
         return this.buildResumeQueryParams({
           source: "merlin",
           focus: "review-needed",
-          session: this.sessionId || undefined,
+          session: this.msgs.sessionId || undefined,
         });
     }
   }
@@ -1054,98 +509,9 @@ export class AiCoachChatComponent implements OnInit, AfterViewChecked {
     }
   }
 
-  async loadTodayReadiness(): Promise<void> {
-    const score = this.readinessPresentation().score;
-    if (score !== null && score > 0) {
-      this.todayReadinessScore.set(score);
-    }
-  }
 
-  /**
-   * Phase 2.3: Load AI mode status to detect conservative mode
-   */
   async loadAIModeStatus(): Promise<void> {
-    try {
-      const userId = this.supabase.userId();
-      if (!userId) return;
-
-      // Check data confidence
-      const wellnessStatus = await this.missingDataService.checkMissingWellness(
-        userId,
-      );
-      const trainingDays =
-        (this.acwrDisplay().trainingDaysLogged ??
-          this.trainingService.acwrData().dataQuality.daysWithData) ||
-        0;
-
-      // Calculate confidence similar to backend
-      let confidence = 1.0;
-      const missingData: string[] = [];
-      const staleData: string[] = [];
-
-      if (wellnessStatus.missing) {
-        missingData.push("wellness_checkin");
-        confidence *= 0.7;
-      }
-
-      if (trainingDays < 10) {
-        missingData.push(`${10 - trainingDays} training_sessions`);
-        confidence *= Math.min(trainingDays / 10, 1.0);
-      }
-
-      if (wellnessStatus.daysMissing > 2) {
-        staleData.push("wellness");
-        confidence *= 0.8;
-      }
-
-      const isConservative = confidence < 0.7;
-
-      if (isConservative) {
-        let reason = "Incomplete data reduces recommendation accuracy.";
-        if (wellnessStatus.missing) {
-          reason = "Missing wellness check-ins reduce recommendation accuracy.";
-        } else if (trainingDays < 10) {
-          reason =
-            "Insufficient training data reduces recommendation accuracy.";
-        } else if (staleData.length > 0) {
-          reason = "Stale wellness data reduces recommendation accuracy.";
-        }
-
-        this.aiModeStatus.set({
-          isConservative: true,
-          confidence: Math.max(0, Math.min(1, confidence)),
-          reason,
-          missingData,
-          staleData,
-        });
-      } else {
-        this.aiModeStatus.set(null);
-      }
-    } catch (error) {
-      this.logger.error("ai_chat_mode_status_load_failed", error);
-    }
-  }
-
-  onReadinessCompleted(state: {
-    pain_level: number;
-    fatigue_level: number;
-    sleep_quality: number;
-    motivation_level: number;
-  }): void {
-    const score =
-      ((10 - state.pain_level) * 0.3 +
-        (10 - state.fatigue_level) * 0.25 +
-        state.sleep_quality * 0.25 +
-        state.motivation_level * 0.2) *
-      10;
-    this.todayReadinessScore.set(Math.round(Math.max(0, Math.min(100, score))));
-    this.toast.success(
-      "Thanks for checking in! Your readiness has been recorded.",
-    );
-  }
-
-  onReadinessSkipped(): void {
-    // User skipped, that's okay
+    await this.suggestions.loadAIModeStatus();
   }
 
   userInitials(): string {
@@ -1163,7 +529,7 @@ export class AiCoachChatComponent implements OnInit, AfterViewChecked {
   }
 
   isRecentMessage(index: number): boolean {
-    return index >= this.messages().length - 2;
+    return index >= this.msgs.messages().length - 2;
   }
 
   askQuestion(question: string): void {
@@ -1181,447 +547,40 @@ export class AiCoachChatComponent implements OnInit, AfterViewChecked {
 
   sendMessage(): void {
     const message = this.currentMessage.trim();
-    if (!message || this.isLoading()) return;
+    if (!message || this.msgs.isLoading()) return;
     this.returnContext.set(null);
     this.closeRecentSessionsPanel();
-    void this.refreshGroundingForQuery(message);
 
-    // Add user message
-    const userMessage: ChatMessage = {
-      id: `user-${Date.now()}`,
-      role: "user",
-      content: message,
-      timestamp: new Date(),
-    };
-    this.messages.update((msgs) => [...msgs, userMessage]);
+    // Hand off to message service - it adds messages, fires API, updates isLoading
     this.currentMessage = "";
     this.shouldScrollToBottom = true;
-
-    // Add loading message
-    const loadingMessage: ChatMessage = {
-      id: `loading-${Date.now()}`,
-      role: "assistant",
-      content: "",
-      timestamp: new Date(),
-      isLoading: true,
-    };
-    this.messages.update((msgs) => [...msgs, loadingMessage]);
-    this.isLoading.set(true);
-
-    // Start loading stage simulation
-    this.simulateLoadingStages();
-
-    // Haptic feedback on send
     this.triggerHaptic("light");
-
-    // Clear autocomplete
     this.autocompleteSuggestions.set([]);
-
-    // Reset textarea height
     this.resetComposerHeight();
-
-    // Call AI Chat API
-    this.apiService
-      .post<{
-        answer_markdown: string;
-        citations: Citation[];
-        risk_level: string;
-        disclaimer: string;
-        suggested_actions: SuggestedAction[];
-        chat_session_id: string;
-        message_id: string;
-        acwr_safety: {
-          blocked: boolean;
-          reason: string;
-          current_acwr: number;
-          risk_zone: string;
-        } | null;
-        evidence_grade_explanation: string | null;
-        intent: string | null;
-        is_swap_plan: boolean;
-        state_gate_escalation: {
-          escalated: boolean;
-          original_risk: string;
-          escalated_risk: string;
-          reasons: string[];
-        } | null;
-      }>(API_ENDPOINTS.aiChat.send, {
-        message,
-        session_id: this.sessionId,
-        team_id: this.teamMembershipService.teamId() || undefined,
-        goal: this.inferConversationGoal(message),
-        time_horizon: this.inferTimeHorizon(message),
-      })
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: (response) => {
-          this.clearLoadingStageTimers();
-          const payload = extractApiPayload<{
-            chat_session_id: string;
-            message_id: string;
-            answer_markdown: string;
-            risk_level?: string;
-            citations?: Citation[];
-            suggested_actions?: SuggestedAction[];
-            disclaimer?: string;
-            acwr_safety?: {
-              blocked: boolean;
-              reason: string;
-              current_acwr: number;
-              risk_zone: string;
-            } | null;
-            is_swap_plan: boolean;
-            evidence_grade_explanation?: string | null;
-            intent?: string | null;
-          }>(response);
-          if (payload) {
-            this.sessionId = payload.chat_session_id;
-            this.syncSessionQueryParam(payload.chat_session_id);
-
-            const assistantMessage: ChatMessage = {
-              id: payload.message_id,
-              role: "assistant",
-              content: payload.answer_markdown,
-              timestamp: new Date(),
-              riskLevel: payload.risk_level,
-              citations: payload.citations,
-              suggestedActions: payload.suggested_actions?.slice(
-                0,
-                UI_LIMITS.SUGGESTED_ACTIONS_COUNT,
-              ),
-              disclaimer: payload.disclaimer,
-              acwrSafety: payload.acwr_safety
-                ? {
-                    blocked: payload.acwr_safety.blocked,
-                    reason: payload.acwr_safety.reason,
-                    currentAcwr: payload.acwr_safety.current_acwr,
-                    riskZone: payload.acwr_safety.risk_zone,
-                  }
-                : undefined,
-              isSwapPlan: payload.is_swap_plan,
-              evidenceGradeExplanation:
-                payload.evidence_grade_explanation || undefined,
-              intent: payload.intent || undefined,
-              feedbackGiven: null,
-              isExpanded: false,
-            };
-
-            this.messages.update((msgs) => {
-              const filtered = msgs.filter((m) => !m.isLoading);
-              return [...filtered, assistantMessage];
-            });
-          } else {
-            this.handleError("Failed to get response from Merlin AI");
-          }
-          this.isLoading.set(false);
-          this.shouldScrollToBottom = true;
-        },
-        error: (error) => {
-          this.clearLoadingStageTimers();
-          this.logger.error("AI Chat error:", error);
-          this.handleError(error.message || "Failed to connect to Merlin AI");
-          this.isLoading.set(false);
-        },
-      });
+    this.msgs.sendMessageApi(message, this.isCoach());
   }
 
-  private handleError(message: string): void {
-    this.messages.update((msgs) => msgs.filter((m) => !m.isLoading));
-
-    const errorMessage: ChatMessage = {
-      id: `error-${Date.now()}`,
-      role: "assistant",
-      content:
-        "I'm sorry, I'm having trouble connecting right now. Please try again in a moment.",
-      timestamp: new Date(),
-    };
-    this.messages.update((msgs) => [...msgs, errorMessage]);
-
-    this.toast.error(message, "Error");
-  }
-
-  private async loadMerlinGrounding(): Promise<void> {
-    this.groundingLoading.set(true);
-    this.knowledgeError.set(null);
-
-    try {
-      const [trainingKnowledge, nutritionKnowledge, nutritionPlan] =
-        await Promise.all([
-          this.fetchKnowledgeCategory("training"),
-          this.fetchKnowledgeCategory("nutrition"),
-          this.fetchNutritionPlan(),
-        ]);
-
-      this.trainingKnowledge.set(trainingKnowledge.slice(0, 3));
-      this.nutritionKnowledge.set(nutritionKnowledge.slice(0, 3));
-      this.nutritionPlan.set(nutritionPlan);
-    } catch (error) {
-      this.logger.warn("[AI Chat] Failed to preload Merlin grounding", error);
-      this.knowledgeError.set("Merlin is running without the full backend evidence snapshot.");
-    } finally {
-      this.groundingLoading.set(false);
-    }
-  }
-
-  private async refreshGroundingForQuery(message: string): Promise<void> {
-    const category = this.inferKnowledgeCategory(message);
-
-    try {
-      const response = await firstValueFrom(
-        this.apiService.post<{
-          results?: KnowledgeEntry[];
-          total?: number;
-        }>(API_ENDPOINTS.knowledge.search, {
-          query: message,
-          category,
-          limit: 3,
-        }),
-      );
-
-      const payload = extractApiPayload<{
-        results?: KnowledgeEntry[];
-      }>(response);
-
-      this.queryKnowledge.set(
-        Array.isArray(payload?.results) ? payload.results : [],
-      );
-    } catch (error) {
-      this.logger.warn("[AI Chat] Query grounding search failed", error);
-      this.queryKnowledge.set([]);
-    }
-  }
-
-  private async fetchKnowledgeCategory(category: "training" | "nutrition"): Promise<KnowledgeEntry[]> {
-    const response = await firstValueFrom(
-      this.apiService.get<{
-        entries?: KnowledgeEntry[];
-      }>(API_ENDPOINTS.knowledge.search, { category }),
-    );
-
-    const payload = extractApiPayload<{
-      entries?: KnowledgeEntry[];
-    }>(response);
-
-    return Array.isArray(payload?.entries) ? payload.entries : [];
-  }
-
-  private async fetchNutritionPlan(): Promise<NutritionPlanSummary | null> {
-    try {
-      const response = await firstValueFrom(
-        this.apiService.get<Record<string, unknown>>(API_ENDPOINTS.nutrition.plan),
-      );
-      const payload = extractApiPayload<Record<string, unknown>>(response);
-      if (!payload) {
-        return null;
-      }
-
-      return {
-        exists: payload["exists"] === false ? false : true,
-        targetCalories: this.asNumber(payload["target_calories"]),
-        proteinGrams: this.asNumber(payload["protein_g"]),
-        carbsGrams: this.asNumber(payload["carbs_g"]),
-        fatGrams: this.asNumber(payload["fat_g"]),
-      };
-    } catch (error) {
-      this.logger.warn("[AI Chat] Nutrition plan unavailable", error);
-      return null;
-    }
-  }
-
-  private inferConversationGoal(message: string): string {
-    const normalized = message.toLowerCase();
-    if (/(eat|meal|nutrition|hydrate|protein|carb|supplement)/.test(normalized)) {
-      return "nutrition_guidance";
-    }
-    if (/(practice|training|session|drill|workout|plan)/.test(normalized)) {
-      return "training_guidance";
-    }
-    if (/(pain|injury|recover|recovery|sore|sleep)/.test(normalized)) {
-      return "recovery_guidance";
-    }
-    if (this.isCoach()) {
-      return "coach_strategy";
-    }
-    return "performance_guidance";
-  }
-
-  private inferTimeHorizon(
-    message: string,
-  ): "immediate" | "weekly" | "monthly" | "seasonal" {
-    const normalized = message.toLowerCase();
-    if (/(season|playoffs|tournament block|offseason)/.test(normalized)) {
-      return "seasonal";
-    }
-    if (/(month|4 weeks|six weeks|8 weeks)/.test(normalized)) {
-      return "monthly";
-    }
-    if (/(week|this week|next week)/.test(normalized)) {
-      return "weekly";
-    }
-    return "immediate";
-  }
-
-  private inferKnowledgeCategory(message: string): "training" | "nutrition" {
-    const normalized = message.toLowerCase();
-    if (/(eat|meal|nutrition|hydrate|protein|carb|supplement|food)/.test(normalized)) {
-      return "nutrition";
-    }
-    return "training";
-  }
-
-  private asNumber(value: unknown): number | null {
-    return typeof value === "number" && Number.isFinite(value) ? value : null;
-  }
-
-  hasGrounding(message: ChatMessage): boolean {
-    return (
-      this.getCitationGroups(message).length > 0 ||
-      this.messageUsesNutritionPlan(message) ||
-      Boolean(message.evidenceGradeExplanation)
-    );
-  }
-
-  getCitationGroups(message: ChatMessage): CitationGroup[] {
-    const citations = Array.isArray(message.citations) ? message.citations : [];
-    const groups = new Map<string, CitationGroup>();
-
-    for (const citation of citations) {
-      const key = this.getCitationCategoryLabel(citation);
-      const existing = groups.get(key);
-      if (existing) {
-        existing.count += 1;
-      } else {
-        groups.set(key, {
-          key,
-          label: key,
-          count: 1,
-        });
-      }
-    }
-
-    return Array.from(groups.values());
-  }
-
-  getCitationEvidenceSummary(
-    message: ChatMessage,
-  ): CitationEvidenceSummary | null {
-    const citations = Array.isArray(message.citations) ? message.citations : [];
-    if (citations.length === 0) {
-      return null;
-    }
-
-    const grades = new Map<string, number>();
-    for (const citation of citations) {
-      const label = this.getEvidenceGradeLabel(citation.evidence_grade);
-      grades.set(label, (grades.get(label) || 0) + 1);
-    }
-
-    const [label, count] =
-      Array.from(grades.entries()).sort((left, right) => right[1] - left[1])[0] ||
-      [];
-
-    return label ? { label, count: count || 0 } : null;
-  }
-
-  messageUsesNutritionPlan(message: ChatMessage): boolean {
-    const content = message.content.toLowerCase();
-    return (
-      this.nutritionPlan()?.exists === true &&
-      /nutrition targets|hydration goal|protein|carbs|kcal|calories|fueling/.test(content)
-    );
-  }
-
-  getCitationLink(citation: Citation): string | null {
-    return citation.url || citation.source_url || null;
-  }
-
-  getCitationTypeLabel(citation: Citation): string {
-    return this.getCitationCategoryLabel(citation);
-  }
-
-  getCitationSourceLabel(citation: Citation): string {
-    const sourceType = citation.source_type?.toLowerCase() || "";
-    if (sourceType.includes("knowledge")) {
-      return "Backend knowledge base";
-    }
-    if (sourceType.includes("nutrition")) {
-      return "Nutrition profile";
-    }
-    if (sourceType.includes("article")) {
-      return "Evidence article";
-    }
-    return "Reference source";
-  }
-
-  getEvidenceGradeLabel(evidenceGrade: string | null | undefined): string {
-    const normalized = (evidenceGrade || "").trim().toUpperCase();
-    if (!normalized) {
-      return "Ungraded";
-    }
-    if (/^[ABC]$/.test(normalized)) {
-      return `Grade ${normalized}`;
-    }
-    if (normalized === "HIGH") {
-      return "High confidence";
-    }
-    if (normalized === "MODERATE") {
-      return "Moderate confidence";
-    }
-    if (normalized === "LOW") {
-      return "Low confidence";
-    }
-    return normalized;
-  }
-
-  getGroundingHeading(message: ChatMessage): string {
-    if (message.citations?.length && this.messageUsesNutritionPlan(message)) {
-      return "Grounded by backend evidence and nutrition targets";
-    }
-    if (message.citations?.length) {
-      return "Grounded by backend evidence";
-    }
-    if (this.messageUsesNutritionPlan(message)) {
-      return "Grounded by nutrition targets";
-    }
-    return "Grounding details";
-  }
-
-  private getCitationCategoryLabel(citation: Citation): string {
-    const sourceType = citation.source_type?.toLowerCase() || "";
-    if (sourceType.includes("knowledge")) {
-      const title = citation.title.toLowerCase();
-      if (/(nutrition|hydrate|protein|carb|supplement|fuel)/.test(title)) {
-        return "Nutrition evidence";
-      }
-      if (/(recovery|sleep|fatigue|soreness|pain)/.test(title)) {
-        return "Recovery evidence";
-      }
-      return "Training evidence";
-    }
-
-    return "Reference";
-  }
 
   startNewConversation(): void {
-    this.clearLoadingStageTimers();
+    this.msgs.clearLoadingStageTimers();
+    this.msgs.clearMessages();
+    this.msgs.sessionId = null;
     this.returnContext.set(null);
-    this.messages.set([]);
-    this.sessionId = null;
     this.restoredSessionId = null;
     this.currentMessage = "";
     this.showRecentSessionsPanel.set(false);
     this.resetComposerHeight();
-    this.syncSessionQueryParam(null);
+    this.session.syncSessionQueryParam(null);
   }
 
   async reopenRecentSession(sessionId: string): Promise<void> {
     this.returnContext.set(null);
-    this.messages.set([]);
+    this.msgs.clearMessages();
     this.currentMessage = "";
     this.restoredSessionId = sessionId;
     this.showRecentSessionsPanel.set(false);
     this.resetComposerHeight();
-    this.syncSessionQueryParam(sessionId);
+    this.session.syncSessionQueryParam(sessionId);
     await this.restoreSession(sessionId);
   }
 
@@ -1648,131 +607,13 @@ export class AiCoachChatComponent implements OnInit, AfterViewChecked {
   }
 
   private async restoreSession(sessionId: string): Promise<void> {
-    try {
-      const response = await firstValueFrom(
-        this.apiService.get<{ messages?: PersistedChatMessage[] }>(
-          API_ENDPOINTS.aiChat.session(sessionId),
-        ),
-      );
-
-      const payload = extractApiPayload<{ messages?: PersistedChatMessage[] }>(
-        response,
-      );
-      const messages = Array.isArray(payload?.messages) ? payload.messages : [];
-
-      this.messages.set(messages.map((message) => this.mapPersistedMessage(message)));
-      this.sessionId = sessionId;
-      this.shouldScrollToBottom = true;
-    } catch (error) {
-      this.logger.error("[AI Chat] Failed to restore session", error);
-      this.toast.error("Unable to restore the previous Merlin session.");
-      this.syncSessionQueryParam(null);
-    }
+    const ok = await this.msgs.restoreSessionMessages(sessionId);
+    if (ok) this.shouldScrollToBottom = true;
   }
 
-  private async loadRecentSessions(): Promise<void> {
-    try {
-      const response = await firstValueFrom(
-        this.apiService.get<{ sessions?: RecentChatSession[] }>(
-          API_ENDPOINTS.aiChat.sessions,
-        ),
-      );
-      const payload = extractApiPayload<{ sessions?: RecentChatSession[] }>(
-        response,
-      );
-      this.recentSessions.set(
-        Array.isArray(payload?.sessions) ? payload.sessions.slice(0, 4) : [],
-      );
-    } catch (error) {
-      this.logger.warn("[AI Chat] Failed to load recent sessions", error);
-      this.recentSessions.set([]);
-    }
-  }
 
-  private mapPersistedMessage(message: PersistedChatMessage): ChatMessage {
-    return {
-      id: message.id,
-      role: message.role,
-      content: message.content,
-      timestamp: new Date(message.timestamp),
-      riskLevel: message.riskLevel || undefined,
-      intent: message.intent || undefined,
-      citations: Array.isArray(message.citations) ? message.citations : undefined,
-      suggestedActions: message.metadata?.suggestedActions?.slice(
-        0,
-        UI_LIMITS.SUGGESTED_ACTIONS_COUNT,
-      ),
-      evidenceGradeExplanation:
-        message.metadata?.evidenceGradeExplanation || undefined,
-      isBookmarked: message.metadata?.bookmarked === true,
-      feedbackGiven:
-        message.feedbackHelpful === true
-          ? "helpful"
-          : message.feedbackHelpful === false
-            ? "not_helpful"
-            : null,
-      coachReviewedAt: message.coachReviewedAt || undefined,
-      coachReviewedBy: message.coachReviewedBy || undefined,
-      isExpanded: false,
-    };
-  }
-
-  private syncSessionQueryParam(sessionId: string | null): void {
-    void this.router.navigate([], {
-      relativeTo: this.route,
-      queryParams: { session: sessionId || null },
-      queryParamsHandling: "merge",
-      replaceUrl: true,
-    });
-  }
-
-  private consumeRouteParams(paramNames: string[]): void {
-    const consumedParams = Object.fromEntries(
-      paramNames.map((paramName) => [paramName, null]),
-    );
-
-    void this.router.navigate([], {
-      relativeTo: this.route,
-      queryParams: consumedParams,
-      queryParamsHandling: "merge",
-      replaceUrl: true,
-    });
-  }
-
-  // Feedback handling
   async giveFeedback(message: ChatMessage, helpful: boolean): Promise<void> {
-    if (!message.id || message.feedbackGiven) return;
-
-    const feedbackType = helpful ? "helpful" : "not_helpful";
-
-    // Optimistic update
-    this.messages.update((msgs) =>
-      msgs.map((m) =>
-        m.id === message.id ? { ...m, feedbackGiven: feedbackType } : m,
-      ),
-    );
-
-    try {
-      await firstValueFrom(
-        this.apiService.post(API_ENDPOINTS.responseFeedback, {
-          messageId: message.id,
-          wasHelpful: helpful,
-        }),
-      );
-
-      this.toast.success(
-        helpful ? "Thanks for the feedback!" : "Thanks, we'll improve!",
-        "Feedback Received",
-      );
-    } catch (error) {
-      this.logger.error("Error submitting feedback:", error);
-      // Revert on error
-      this.messages.update((msgs) =>
-        msgs.map((m) =>
-          m.id === message.id ? { ...m, feedbackGiven: null } : m,
-        ),
-      );
-    }
+    await this.msgs.giveFeedback(message, helpful);
   }
 
   // Copy message
@@ -1785,13 +626,8 @@ export class AiCoachChatComponent implements OnInit, AfterViewChecked {
     }
   }
 
-  // Toggle citations
   toggleCitations(message: ChatMessage): void {
-    this.messages.update((msgs) =>
-      msgs.map((m) =>
-        m.id === message.id ? { ...m, isExpanded: !m.isExpanded } : m,
-      ),
-    );
+    this.msgs.toggleCitations(message);
   }
 
   executeAction(action: SuggestedAction): void {
@@ -1801,7 +637,7 @@ export class AiCoachChatComponent implements OnInit, AfterViewChecked {
           queryParams: {
             source: "merlin",
             focus: "review-needed",
-            session: this.sessionId || undefined,
+            session: this.msgs.sessionId || undefined,
           },
         });
         break;
@@ -1817,7 +653,7 @@ export class AiCoachChatComponent implements OnInit, AfterViewChecked {
             view: "week",
             date: this.getTodayDateKey(),
             source: "merlin",
-            session: this.sessionId || undefined,
+            session: this.msgs.sessionId || undefined,
           },
         });
         break;
@@ -1830,7 +666,7 @@ export class AiCoachChatComponent implements OnInit, AfterViewChecked {
             focus: "checkin",
             source: "merlin",
             intent: "recovery",
-            session: this.sessionId || undefined,
+            session: this.msgs.sessionId || undefined,
           },
         });
         break;
@@ -1840,7 +676,7 @@ export class AiCoachChatComponent implements OnInit, AfterViewChecked {
             focus: "checkin",
             source: "merlin",
             intent: "recovery",
-            session: this.sessionId || undefined,
+            session: this.msgs.sessionId || undefined,
           },
         });
         break;
@@ -1849,7 +685,7 @@ export class AiCoachChatComponent implements OnInit, AfterViewChecked {
           queryParams: {
             source: "merlin",
             focus: "protocol",
-            session: this.sessionId || undefined,
+            session: this.msgs.sessionId || undefined,
           },
         });
         break;
@@ -1859,7 +695,7 @@ export class AiCoachChatComponent implements OnInit, AfterViewChecked {
             focus: "checkin",
             source: "merlin",
             intent: "nutrition-targets",
-            session: this.sessionId || undefined,
+            session: this.msgs.sessionId || undefined,
           },
         });
         break;
@@ -1868,7 +704,7 @@ export class AiCoachChatComponent implements OnInit, AfterViewChecked {
           queryParams: {
             source: "merlin",
             focus: "hydration",
-            session: this.sessionId || undefined,
+            session: this.msgs.sessionId || undefined,
           },
         });
         break;
@@ -1877,7 +713,7 @@ export class AiCoachChatComponent implements OnInit, AfterViewChecked {
           queryParams: {
             source: "merlin",
             focus: "schedule",
-            session: this.sessionId || undefined,
+            session: this.msgs.sessionId || undefined,
           },
         });
         break;
@@ -1961,47 +797,13 @@ export class AiCoachChatComponent implements OnInit, AfterViewChecked {
   }
 
   getLoadingStageTitle(): string {
-    switch (this.loadingStage()) {
-      case "searching":
-        return this.isNutritionLoadingContext()
-          ? "Checking evidence and nutrition targets"
-          : "Checking evidence and recent context";
-      case "generating":
-        return this.isNutritionLoadingContext()
-          ? "Building your fueling guidance"
-          : "Building your coaching answer";
-      case "thinking":
-      default:
-        return "Understanding your question";
-    }
+    return this.msgs.getLoadingStageTitle();
   }
 
   getLoadingStageDescription(): string {
-    switch (this.loadingStage()) {
-      case "searching":
-        return this.isNutritionLoadingContext()
-          ? "Merlin is matching backend nutrition targets with approved evidence."
-          : "Merlin is pulling the most relevant training and recovery evidence.";
-      case "generating":
-        return this.isNutritionLoadingContext()
-          ? "Merlin is turning that evidence into a practical fueling and hydration plan."
-          : "Merlin is turning that evidence into a practical next-step answer.";
-      case "thinking":
-      default:
-        return "Merlin is classifying the request and deciding what context matters most.";
-    }
+    return this.msgs.getLoadingStageDescription();
   }
 
-  private isNutritionLoadingContext(): boolean {
-    const latestUserMessage = [...this.messages()]
-      .reverse()
-      .find((message) => message.role === "user");
-
-    return latestUserMessage
-      ? this.inferConversationGoal(latestUserMessage.content) ===
-          "nutrition_guidance"
-      : false;
-  }
 
   startMicroSession(action: SuggestedAction, messageId?: string): void {
     if (!action.microSession) {
@@ -2036,7 +838,7 @@ export class AiCoachChatComponent implements OnInit, AfterViewChecked {
           : ""),
       timestamp: new Date(),
     };
-    this.messages.update((msgs) => [...msgs, followUpMessage]);
+    this.msgs.addMessage(followUpMessage);
     this.shouldScrollToBottom = true;
 
     this.closeMicroSessionDialog();
@@ -2129,7 +931,7 @@ export class AiCoachChatComponent implements OnInit, AfterViewChecked {
       const element = container.nativeElement;
       const isAtBottom =
         element.scrollHeight - element.scrollTop - element.clientHeight < 100;
-      this.showScrollButton.set(!isAtBottom && this.messages().length > 2);
+      this.showScrollButton.set(!isAtBottom && this.msgs.messages().length > 2);
     }
   }
 
@@ -2277,30 +1079,8 @@ export class AiCoachChatComponent implements OnInit, AfterViewChecked {
   }
 
   toggleBookmark(message: ChatMessage): void {
-    this.messages.update((msgs) =>
-      msgs.map((m) =>
-        m.id === message.id ? { ...m, isBookmarked: !m.isBookmarked } : m,
-      ),
-    );
-
-    const isNowBookmarked = !message.isBookmarked;
-    this.toast.success(
-      isNowBookmarked ? "Message bookmarked!" : "Bookmark removed",
-    );
+    this.msgs.toggleBookmark(message);
     this.triggerHaptic("selection");
-
-    // Persist bookmark to backend (optional)
-    if (message.id) {
-      this.apiService
-        .post(API_ENDPOINTS.aiChat.bookmark, {
-          messageId: message.id,
-          bookmarked: isNowBookmarked,
-        })
-        .pipe(takeUntilDestroyed(this.destroyRef))
-        .subscribe({
-          error: (err) => this.logger.error("Failed to save bookmark:", err),
-        });
-    }
   }
 
   // ========================================
@@ -2358,40 +1138,5 @@ export class AiCoachChatComponent implements OnInit, AfterViewChecked {
     navigator.vibrate(patterns[type] || 10);
   }
 
-  // ========================================
-  // LOADING STAGES
-  // ========================================
 
-  private simulateLoadingStages(): void {
-    this.clearLoadingStageTimers();
-    const runId = ++this.loadingStageRunId;
-
-    // Stage 1: Thinking
-    this.loadingStage.set("thinking");
-
-    // Stage 2: Searching (after 800ms)
-    const searchingTimeout = setTimeout(() => {
-      if (this.isLoading() && runId === this.loadingStageRunId) {
-        this.loadingStage.set("searching");
-      }
-    }, 800);
-    this.loadingStageTimeouts.push(searchingTimeout);
-
-    // Stage 3: Generating (after 2s)
-    const generatingTimeout = setTimeout(() => {
-      if (this.isLoading() && runId === this.loadingStageRunId) {
-        this.loadingStage.set("generating");
-      }
-    }, 2000);
-    this.loadingStageTimeouts.push(generatingTimeout);
-  }
-
-  private clearLoadingStageTimers(): void {
-    this.loadingStageRunId++;
-    for (const timeoutId of this.loadingStageTimeouts) {
-      clearTimeout(timeoutId);
-    }
-    this.loadingStageTimeouts = [];
-    this.loadingStage.set("thinking");
-  }
 }

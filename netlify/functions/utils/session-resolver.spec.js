@@ -6,49 +6,108 @@
 
 import { resolveTodaySession } from "./session-resolver.js";
 import { createClient as _createClient } from "@supabase/supabase-js";
+import { describe, expect, test } from "vitest";
 
 // Mock Supabase client
 function createMockSupabase(mockData = {}) {
-  return {
-    from: (table) => ({
-      select: (_columns) => ({
-        eq: (column, value) => ({
-          maybeSingle: async () => ({
-            data: mockData[table]?.[column]?.[value] || null,
-            error: null,
-          }),
-          single: async () => ({
-            data: mockData[table]?.[column]?.[value] || null,
-            error: null,
-          }),
+  const resolveRows = (table, filters = []) => {
+    const tableData = mockData[table];
+
+    if (!tableData) {
+      return table === "tournament_calendar" ? [] : null;
+    }
+
+    if (Array.isArray(tableData)) {
+      return tableData.filter((row) =>
+        filters.every(({ column, value, operator }) => {
+          if (operator === "lte") {
+            return row[column] <= value;
+          }
+          if (operator === "gte") {
+            return row[column] >= value;
+          }
+          return row[column] === value;
         }),
-        lte: (_column, _value) => ({
-          gte: (_column2, _value2) => ({
-            maybeSingle: async () => ({
-              data: mockData[table]?.[_column2] || null,
-              error: null,
-            }),
-            single: async () => ({
-              data: mockData[table]?.[_column2] || null,
-              error: null,
-            }),
-          }),
-        }),
-        // Duplicate eq removed - nested eq was never used
-        nestedEq: (_column3, _value3) => ({
-          eq: (_column4, _value4) => ({
-            maybeSingle: async () => ({
-              data: mockData[table]?.[_column3]?.[_value3] || null,
-              error: null,
-            }),
-          }),
-        }),
+      );
+    }
+
+    for (const { column, value } of filters) {
+      if (tableData[column] && value in tableData[column]) {
+        return tableData[column][value];
+      }
+    }
+
+    return table === "tournament_calendar" ? [] : null;
+  };
+
+  const createQueryBuilder = (table) => {
+    const filters = [];
+    const builder = {
+      select: () => builder,
+      eq: (column, value) => {
+        filters.push({ column, value, operator: "eq" });
+        return builder;
+      },
+      lte: (column, value) => {
+        filters.push({ column, value, operator: "lte" });
+        return builder;
+      },
+      gte: (column, value) => {
+        filters.push({ column, value, operator: "gte" });
+        return builder;
+      },
+      order: () => builder,
+      limit: () => builder,
+      maybeSingle: async () => ({
+        data: Array.isArray(resolveRows(table, filters))
+          ? resolveRows(table, filters)[0] || null
+          : resolveRows(table, filters),
+        error: null,
       }),
-    }),
+      single: async () => ({
+        data: Array.isArray(resolveRows(table, filters))
+          ? resolveRows(table, filters)[0] || null
+          : resolveRows(table, filters),
+        error: null,
+      }),
+      then: (resolve, reject) =>
+        Promise.resolve({
+          data: resolveRows(table, filters),
+          error: null,
+        }).then(resolve, reject),
+    };
+
+    return builder;
+  };
+
+  return {
+    from: (table) => createQueryBuilder(table),
   };
 }
 
 describe("Session Resolver - Player Schedule Authority Removal", () => {
+  test("No active player program resolves to baseline_program", async () => {
+    const mockSupabase = createMockSupabase({
+      player_programs: {
+        player_id: {
+          "test-user": null,
+        },
+      },
+    });
+
+    const result = await resolveTodaySession(
+      mockSupabase,
+      "test-user",
+      "2025-02-03",
+    );
+
+    expect(result.success).toBe(true);
+    expect(result.status).toBe("baseline_program");
+    expect(result.session).toBeNull();
+    expect(result.metadata.baselineProgram).toBe(true);
+    expect(result.metadata.originalStatus).toBe("no_program");
+  });
+
   test("Player schedule says practice, but no teamActivity => override MUST be null", async () => {
     // Setup: Player has practice schedule configured
     const mockSupabase = createMockSupabase({
@@ -60,6 +119,15 @@ describe("Session Resolver - Player Schedule Authority Removal", () => {
             status: "active",
             start_date: "2025-01-01",
             training_programs: { id: "prog-1", name: "Test Program" },
+          },
+        },
+      },
+      training_programs: {
+        id: {
+          "prog-1": {
+            id: "prog-1",
+            name: "Test Program",
+            program_type: "flag_football",
           },
         },
       },
@@ -129,6 +197,15 @@ describe("Session Resolver - Player Schedule Authority Removal", () => {
           },
         },
       },
+      training_programs: {
+        id: {
+          "prog-1": {
+            id: "prog-1",
+            name: "Test Program",
+            program_type: "flag_football",
+          },
+        },
+      },
       training_phases: {
         program_id: {
           "prog-1": {
@@ -192,6 +269,15 @@ describe("Session Resolver - Player Schedule Authority Removal", () => {
           },
         },
       },
+      training_programs: {
+        id: {
+          "prog-1": {
+            id: "prog-1",
+            name: "Test Program",
+            program_type: "flag_football",
+          },
+        },
+      },
       training_phases: {
         program_id: {
           "prog-1": {
@@ -246,8 +332,3 @@ describe("Session Resolver - Player Schedule Authority Removal", () => {
     expect(result.override.replaceSession).toBe(true);
   });
 });
-
-// Export for use in test runner
-module.exports = {
-  resolveTodaySession,
-};

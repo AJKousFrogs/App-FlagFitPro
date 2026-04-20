@@ -12,7 +12,7 @@
             <p>Your Performance Strategist</p>
             <div class="session-summary">
               <span class="session-summary__eyebrow">
-                {{ sessionId ? "Active session" : "New session" }}
+                {{ msgs.sessionId ? "Active session" : "New session" }}
               </span>
               <span class="session-summary__copy">{{ sessionSummaryText() }}</span>
             </div>
@@ -26,7 +26,7 @@
               <span>{{ todayReadinessScore() }}% Readiness</span>
             </div>
           }
-          @if (recentSessions().length > 0) {
+          @if (session.recentSessions().length > 0) {
             <button
               type="button"
               class="recent-toggle"
@@ -98,7 +98,7 @@
         </section>
       }
 
-      @if (showRecentSessionsPanel() && recentSessions().length > 0) {
+      @if (showRecentSessionsPanel() && session.recentSessions().length > 0) {
         <section class="recent-sessions-panel bento-item full-width">
           <div class="recent-sessions__header">
             <div class="recent-sessions__header-copy">
@@ -114,7 +114,7 @@
             </button>
           </div>
           <div class="recent-sessions__grid">
-            @for (session of recentSessions(); track session.id) {
+            @for (session of session.recentSessions(); track session.id) {
               <button
                 type="button"
                 class="recent-session-card"
@@ -142,7 +142,7 @@
       }
 
       <!-- Welcome State (Full Width within chat flow) -->
-      @if (messages().length === 0) {
+      @if (msgs.messages().length === 0) {
         <div class="bento-item full-width welcome-bento">
           <div class="welcome-hero">
             <div class="hero-icon" aria-hidden="true">
@@ -150,12 +150,12 @@
             </div>
             <h2>Ready to train{{ userName() ? ', ' + userName() : '' }}?</h2>
             <p>Ask me about your roster, practice planning, or injury risk analysis.</p>
-            <p class="grounding-copy">{{ groundingSummary() }}</p>
+            <p class="grounding-copy">{{ knowledge.groundingSummary() }}</p>
           </div>
 
-          @if (groundingCards().length > 0) {
+          @if (knowledge.groundingCards().length > 0) {
             <div class="grounding-grid-bento">
-              @for (card of groundingCards(); track card.id) {
+              @for (card of knowledge.groundingCards(); track card.id) {
                 <button type="button" class="grounding-card-bento" (click)="askQuestion(card.query)">
                   <i [class]="'pi ' + card.icon"></i>
                   <div class="grounding-content">
@@ -168,14 +168,14 @@
             </div>
           }
 
-          @if (recentSessions().length > 0) {
+          @if (session.recentSessions().length > 0) {
             <div class="recent-sessions">
               <div class="recent-sessions__header">
                 <span class="recent-sessions__eyebrow">Recent Merlin conversations</span>
                 <span class="recent-sessions__copy">Jump back into a previous thread.</span>
               </div>
               <div class="recent-sessions__grid">
-                @for (session of recentSessions(); track session.id) {
+                @for (session of session.recentSessions(); track session.id) {
                   <button
                     type="button"
                     class="recent-session-card"
@@ -220,7 +220,7 @@
       <!-- Messages Area (Full Width) -->
       <main class="messages-area bento-item full-width no-padding" #messagesContainer>
         <div class="messages-stack">
-          @for (message of messages(); track message.id || $index) {
+          @for (message of visibleMessages(); track message.id || $index) {
             <div class="message-row" [class.user]="message.role === 'user'">
               @if (message.role === 'assistant') {
                 <div class="msg-avatar"><i class="pi pi-sparkles" aria-hidden="true"></i></div>
@@ -241,11 +241,11 @@
                 } @else {
                   <div class="message-content" [innerHTML]="formatMessage(message.content)"></div>
                 }
-                @if (message.role === 'assistant' && hasGrounding(message)) {
+                @if (message.role === 'assistant' && knowledge.hasGrounding(message.citations, message.evidenceGradeExplanation, message.content)) {
                   <div class="message-grounding">
                     <div class="message-grounding__header">
-                      <span class="grounding-heading">{{ getGroundingHeading(message) }}</span>
-                      @if (getCitationEvidenceSummary(message); as evidenceSummary) {
+                      <span class="grounding-heading">{{ knowledge.getGroundingHeading(message.citations, message.content) }}</span>
+                      @if (knowledge.getCitationEvidenceSummary(message.citations); as evidenceSummary) {
                         <span class="grounding-strength">
                           {{ evidenceSummary.label }} · {{ evidenceSummary.count }} source{{ evidenceSummary.count === 1 ? "" : "s" }}
                         </span>
@@ -253,12 +253,12 @@
                     </div>
 
                     <div class="message-grounding__badges">
-                      @for (group of getCitationGroups(message); track group.key) {
+                      @for (group of knowledge.getCitationGroups(message.citations); track group.key) {
                         <span class="grounding-badge">
                           {{ group.label }} · {{ group.count }}
                         </span>
                       }
-                      @if (messageUsesNutritionPlan(message)) {
+                      @if (knowledge.messageUsesNutritionPlan(message.content)) {
                         <span class="grounding-badge grounding-badge--plan">
                           Nutrition targets
                         </span>
@@ -280,7 +280,7 @@
 
                       @if (message.isExpanded) {
                         <div class="citation-list">
-                          @if (messageUsesNutritionPlan(message)) {
+                          @if (knowledge.messageUsesNutritionPlan(message.content)) {
                             <div class="citation-item citation-item--plan">
                               <div class="citation-copy">
                                 <strong>Nutrition targets</strong>
@@ -293,12 +293,12 @@
                               <div class="citation-copy">
                                 <strong>{{ citation.title }}</strong>
                                 <div class="citation-meta">
-                                  <span>{{ getCitationTypeLabel(citation) }}</span>
-                                  <span>{{ getEvidenceGradeLabel(citation.evidence_grade) }}</span>
-                                  <span>{{ getCitationSourceLabel(citation) }}</span>
+                                  <span>{{ knowledge.getCitationTypeLabel(citation) }}</span>
+                                  <span>{{ knowledge.getEvidenceGradeLabel(citation.evidence_grade) }}</span>
+                                  <span>{{ knowledge.getCitationSourceLabel(citation) }}</span>
                                 </div>
                               </div>
-                              @if (getCitationLink(citation); as citationLink) {
+                              @if (knowledge.getCitationLink(citation); as citationLink) {
                                 <a [href]="citationLink" target="_blank" rel="noreferrer">Open</a>
                               }
                             </div>

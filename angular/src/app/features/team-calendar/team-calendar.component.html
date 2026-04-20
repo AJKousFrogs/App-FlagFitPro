@@ -1,0 +1,331 @@
+    <app-main-layout>
+<div class="calendar-page ui-page-shell ui-page-shell--content-lg ui-page-stack">
+        <app-page-header
+          title="Team Calendar"
+          subtitle="Upcoming events and your RSVPs"
+          icon="pi-calendar"
+        ></app-page-header>
+
+        <!-- Calendar Actions -->
+        <div class="calendar-actions ui-section-card ui-section-card--compact">
+          <app-select
+            [options]="typeFilterOptions"
+            [ngModel]="selectedType"
+            (change)="onSelectedTypeChange($event)"
+            optionLabel="label"
+            optionValue="value"
+            placeholder="All Events"
+            [showClear]="true"
+            class="calendar-filter-select"
+          ></app-select>
+
+          <app-button
+            variant="secondary"
+            iconLeft="pi-calendar-plus"
+            (clicked)="syncToCalendar()"
+            >Sync to Calendar</app-button
+          >
+        </div>
+
+        <!-- Pending RSVPs Alert -->
+        @if (pendingCount() > 0) {
+          <app-alert
+            variant="warning"
+            density="compact"
+            title="Pending RSVPs"
+            [message]="
+              'You have ' +
+              pendingCount() +
+              ' pending RSVP' +
+              (pendingCount() > 1 ? 's' : '')
+            "
+            styleClass="pending-alert"
+          />
+        }
+
+        <!-- Events List by Date -->
+        @for (dateGroup of groupedEvents(); track dateGroup.date) {
+          <div class="date-group ui-page-stack--tight">
+            <h3 class="date-header">
+              {{ formatDateHeader(dateGroup.date) }}
+            </h3>
+
+            <div class="events-list ui-page-stack--tight">
+              @for (event of dateGroup.events; track event.id) {
+                <app-card-shell class="event-card" [class]="'type-' + event.type">
+                  <div class="event-content">
+                    <div class="event-time">
+                      <span class="item-time">{{ event.startTime }}</span>
+                      <span class="duration">{{ event.endTime }}</span>
+                    </div>
+
+                    <div class="event-details">
+                      <div class="event-header">
+                        <h4>{{ event.title }}</h4>
+                        <app-status-tag
+                          [value]="getEventTypeConfig(event.type).label"
+                          [severity]="getEventTypeConfig(event.type).severity"
+                          size="sm"
+                        />
+                      </div>
+
+                      <p class="event-location">
+                        <i class="pi pi-map-marker"></i>
+                        {{ event.location }}
+                      </p>
+
+                      @if (event.description) {
+                        <p class="event-description">{{ event.description }}</p>
+                      }
+
+                      <!-- RSVP Stats -->
+                      <div class="rsvp-stats">
+                        <span class="stat going">
+                          <i class="pi pi-check-circle"></i>
+                          {{ event.rsvpStats.going }} going
+                        </span>
+                        <span class="stat not-going">
+                          <i class="pi pi-times-circle"></i>
+                          {{ event.rsvpStats.notGoing }} can't go
+                        </span>
+                        @if (event.rsvpStats.maybe > 0) {
+                          <span class="stat maybe">
+                            <i class="pi pi-question-circle"></i>
+                            {{ event.rsvpStats.maybe }} maybe
+                          </span>
+                        }
+                      </div>
+                    </div>
+
+                    <div class="event-actions">
+                      <!-- Current RSVP Status -->
+                      <div
+                        class="current-rsvp"
+                        [class]="'status-' + event.myRsvp"
+                      >
+                        @switch (event.myRsvp) {
+                          @case ("going") {
+                            <i class="pi pi-check-circle"></i>
+                            <span>Going</span>
+                          }
+                          @case ("not-going") {
+                            <i class="pi pi-times-circle"></i>
+                            <span>Can't Go</span>
+                          }
+                          @case ("maybe") {
+                            <i class="pi pi-question-circle"></i>
+                            <span>Maybe</span>
+                          }
+                          @default {
+                            <i class="pi pi-clock"></i>
+                            <span>Pending</span>
+                          }
+                        }
+                      </div>
+
+                      <app-button
+                        variant="secondary"
+                        size="sm"
+                        iconLeft="pi-user-edit"
+                        (clicked)="openRsvpDialog(event)"
+                        >Manage RSVP</app-button
+                      >
+                    </div>
+                  </div>
+                </app-card-shell>
+              }
+            </div>
+          </div>
+        }
+
+        @if (groupedEvents().length === 0) {
+          <app-empty-state
+            [useCard]="true"
+            icon="pi-calendar"
+            heading="No upcoming events"
+            [description]="selectedType ? 'No ' + getEventTypeConfig(selectedType).label.toLowerCase() + ' events scheduled' : 'Check back later for team events'"
+          />
+        }
+      </div>
+
+      <!-- RSVP Dialog -->
+      <app-dialog
+        [(visible)]="showRsvpDialog"
+        [modal]="true"
+        [closable]="false"
+        [draggable]="false"
+        [resizable]="false"
+        [dismissableMask]="true"
+        dialogSize="md"
+      >
+        @if (selectedEvent(); as event) {
+          <app-dialog-header
+            icon="calendar"
+            [title]="'RSVP: ' + event.title"
+            [subtitle]="(event.date | date: 'EEEE, MMMM d') || ''"
+            (close)="showRsvpDialog = false"
+          />
+        }
+        @if (selectedEvent(); as event) {
+          <div class="rsvp-form">
+            <!-- Event Summary -->
+            <div class="event-summary">
+              <p>
+                <i class="pi pi-calendar"></i>
+                {{ event.date | date: "EEEE, MMMM d" }}
+              </p>
+              <p>
+                <i class="pi pi-clock"></i> {{ event.startTime }} -
+                {{ event.endTime }}
+              </p>
+              <p><i class="pi pi-map-marker"></i> {{ event.location }}</p>
+            </div>
+
+            <!-- RSVP Options -->
+            <div class="rsvp-options">
+              <h4>Are you attending?</h4>
+              <div class="options-group">
+                <div
+                  class="option-card"
+                  [class.selected]="rsvpForm.status === 'going'"
+                  (click)="onRsvpStatusChange('going')"
+                >
+                  <input
+                    type="radio"
+                    name="rsvp"
+                    value="going"
+                    id="going"
+                    [checked]="rsvpForm.status === 'going'"
+                    (change)="onRsvpStatusChange('going')"
+                  />
+                  <label for="going">
+                    <i class="pi pi-check-circle"></i>
+                    <span>Going</span>
+                  </label>
+                </div>
+
+                <div
+                  class="option-card"
+                  [class.selected]="rsvpForm.status === 'not-going'"
+                  (click)="onRsvpStatusChange('not-going')"
+                >
+                  <input
+                    type="radio"
+                    name="rsvp"
+                    value="not-going"
+                    id="not-going"
+                    [checked]="rsvpForm.status === 'not-going'"
+                    (change)="onRsvpStatusChange('not-going')"
+                  />
+                  <label for="not-going">
+                    <i class="pi pi-times-circle"></i>
+                    <span>Can't Go</span>
+                  </label>
+                </div>
+
+                <div
+                  class="option-card"
+                  [class.selected]="rsvpForm.status === 'maybe'"
+                  (click)="onRsvpStatusChange('maybe')"
+                >
+                  <input
+                    type="radio"
+                    name="rsvp"
+                    value="maybe"
+                    id="maybe"
+                    [checked]="rsvpForm.status === 'maybe'"
+                    (change)="onRsvpStatusChange('maybe')"
+                  />
+                  <label for="maybe">
+                    <i class="pi pi-question-circle"></i>
+                    <span>Maybe</span>
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <!-- Additional Options (shown if going) -->
+            @if (rsvpForm.status === "going") {
+              <div class="additional-options">
+                <!-- Guests -->
+                @if (event.guestsAllowed) {
+                  <div class="option-row">
+                    <label>Bringing guests?</label>
+                    <p-inputNumber
+                      [ngModel]="rsvpForm.guests"
+                      (ngModelChange)="onRsvpGuestsChange($event)"
+                      [min]="0"
+                      [max]="5"
+                      [showButtons]="true"
+                      buttonLayout="horizontal"
+                      spinnerMode="horizontal"
+                      incrementButtonIcon="pi pi-plus"
+                      decrementButtonIcon="pi pi-minus"
+                    ></p-inputNumber>
+                  </div>
+                }
+
+                <!-- Ride Options -->
+                <div class="option-row checkbox-row">
+                  <input
+                    type="checkbox"
+                    id="needsRide"
+                    [checked]="rsvpForm.needsRide"
+                    (change)="onRsvpNeedsRideToggle($event)"
+                  />
+                  <label for="needsRide">I need a ride</label>
+                </div>
+
+                <div class="option-row checkbox-row">
+                  <input
+                    type="checkbox"
+                    id="canProvideRide"
+                    [checked]="rsvpForm.canProvideRide"
+                    (change)="onRsvpCanProvideRideToggle($event)"
+                  />
+                  <label for="canProvideRide"
+                    >I can provide a ride ({{
+                      rsvpForm.rideSeats
+                    }}
+                    seats)</label
+                  >
+                  @if (rsvpForm.canProvideRide) {
+                    <p-inputNumber
+                      [ngModel]="rsvpForm.rideSeats"
+                      (ngModelChange)="onRsvpRideSeatsChange($event)"
+                      [min]="1"
+                      [max]="6"
+                      [showButtons]="true"
+                      class="ride-seats"
+                    ></p-inputNumber>
+                  }
+                </div>
+              </div>
+            }
+
+            <!-- Notes -->
+            <div class="notes-section">
+              <app-textarea
+                label="Notes (optional)"
+                id="notes"
+                [value]="rsvpForm.notes"
+                (valueChange)="onRsvpNotesChange($event)"
+                placeholder="Any notes for the coach..."
+                [rows]="2"
+              ></app-textarea>
+            </div>
+
+          </div>
+        }
+        @if (selectedEvent()) {
+          <app-dialog-footer
+            cancelLabel="Cancel"
+            primaryLabel="Submit RSVP"
+            primaryIcon="check"
+            [disabled]="!rsvpForm.status"
+            (cancel)="showRsvpDialog = false"
+            (primary)="submitRsvp()"
+          />
+        }
+      </app-dialog>
+    </app-main-layout>

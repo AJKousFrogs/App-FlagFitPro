@@ -1,0 +1,304 @@
+    <div class="decision-detail">
+      <!-- Loading State -->
+      @if (isLoading()) {
+        <app-loading
+          [visible]="true"
+          message="Loading decision details..."
+          variant="skeleton"
+        />
+      } @else if (error()) {
+        <app-page-error-state
+          title="Unable to load decision details"
+          [message]="error() || 'Something went wrong while loading this decision.'"
+          [helpText]="'Use Back to Decisions if the problem persists.'"
+          (retry)="loadDecision(currentDecisionId())"
+        />
+        <div class="decision-detail__error-actions">
+          <app-button variant="outlined" (clicked)="goBack()"
+            >Back to Decisions</app-button
+          >
+        </div>
+      }
+
+      <!-- Decision Content -->
+      @else if (decision()) {
+        <app-page-header
+          [title]="decision()!.athleteName || 'Decision Details'"
+          [subtitle]="getDecisionTypeLabel(decision()!.decisionType)"
+        >
+          <app-button
+            iconLeft="pi-arrow-left"
+            variant="outlined"
+            (clicked)="goBack()"
+            >Back to Decisions</app-button
+          >
+          @if (canReview()) {
+            <app-button iconLeft="pi-check" (clicked)="openReviewDialog()"
+              >Review Decision</app-button
+            >
+          }
+        </app-page-header>
+
+        <div class="detail-grid">
+          <!-- Decision Overview -->
+          <app-card-shell title="Decision Overview" headerIcon="pi-info-circle">
+            <div class="overview-content">
+              <div class="overview-item">
+                <label>Decision Type</label>
+                <p>{{ getDecisionTypeLabel(decision()!.decisionType) }}</p>
+              </div>
+
+              <div class="overview-item">
+                <label>Summary</label>
+                <p>{{ decision()!.decisionSummary }}</p>
+              </div>
+
+              <div class="overview-item">
+                <label>Category</label>
+                <app-status-tag
+                  [value]="decision()!.decisionCategory"
+                  severity="info"
+                  size="sm"
+                />
+              </div>
+
+              <div class="overview-item">
+                <label>Status</label>
+                <app-status-tag
+                  [value]="decision()!.status"
+                  [severity]="getStatusSeverity(decision()!.status)"
+                  size="sm"
+                />
+              </div>
+
+              <div class="overview-item">
+                <label>Priority</label>
+                <app-status-tag
+                  [value]="decision()!.reviewPriority"
+                  [severity]="getPrioritySeverity(decision()!.reviewPriority)"
+                  size="sm"
+                />
+              </div>
+            </div>
+          </app-card-shell>
+
+          <!-- Decision Maker -->
+          <app-card-shell title="Decision Maker" headerIcon="pi-user">
+            <div class="maker-content">
+              <div class="maker-info">
+                <strong>{{ decision()!.madeBy.name }}</strong>
+                <span class="role-badge">{{ decision()!.madeBy.role }}</span>
+              </div>
+              <div class="maker-date">
+                Made on {{ formatDate(decision()!.createdAt) }}
+              </div>
+            </div>
+          </app-card-shell>
+
+          <!-- Confidence -->
+          <app-card-shell title="Confidence" headerIcon="pi-chart-line">
+            <app-confidence-indicator
+              [score]="confidenceScore()"
+              [missingInputs]="missingInputs()"
+              [staleData]="staleData()"
+            ></app-confidence-indicator>
+          </app-card-shell>
+
+          <!-- Review Information -->
+          <app-card-shell title="Review Information" headerIcon="pi-calendar">
+            <div class="review-content">
+              <div class="review-item">
+                <label>Review Trigger</label>
+                <p>{{ decision()!.reviewTrigger }}</p>
+              </div>
+
+              <div class="review-item">
+                <label>Review Date</label>
+                <p>
+                  {{ formatDate(decision()!.reviewDate) }}
+                  @if (isOverdue()) {
+                    <app-status-tag
+                      severity="danger"
+                      value="Overdue"
+                      size="sm"
+                    />
+                  }
+                </p>
+              </div>
+
+              @if (decision()!.intendedDuration) {
+                <div class="review-item">
+                  <label>Intended Duration</label>
+                  <p>{{ decision()!.intendedDuration }}</p>
+                </div>
+              }
+
+              @if (decision()!.reviewedAt) {
+                <div class="review-item">
+                  <label>Reviewed On</label>
+                  <p>{{ formatDate(decision()!.reviewedAt!) }}</p>
+                </div>
+              }
+
+              @if (decision()!.reviewedBy) {
+                <div class="review-item">
+                  <label>Reviewed By</label>
+                  <p>{{ decision()!.reviewedBy!.name }}</p>
+                </div>
+              }
+
+              @if (decision()!.reviewOutcome) {
+                <div class="review-item">
+                  <label>Review Outcome</label>
+                  <app-status-tag
+                    [value]="decision()!.reviewOutcome || ''"
+                    severity="success"
+                    size="sm"
+                  />
+                </div>
+              }
+            </div>
+          </app-card-shell>
+
+          <!-- Decision Basis (Expandable) -->
+          <app-card-shell title="Decision Basis" headerIcon="pi-file-edit">
+            <p-accordion>
+              <p-accordion-panel value="0">
+                <p-accordion-header>Data Points Used</p-accordion-header>
+                <p-accordion-content>
+                  <ul class="data-points-list">
+                    @for (
+                      point of decision()!.decisionBasis.dataPoints;
+                      track point
+                    ) {
+                      <li>{{ point }}</li>
+                    }
+                  </ul>
+                </p-accordion-content>
+              </p-accordion-panel>
+
+              <p-accordion-panel value="1">
+                <p-accordion-header>Constraints Considered</p-accordion-header>
+                <p-accordion-content>
+                  <ul class="constraints-list">
+                    @for (
+                      constraint of decision()!.decisionBasis.constraints;
+                      track constraint
+                    ) {
+                      <li>{{ constraint }}</li>
+                    }
+                  </ul>
+                </p-accordion-content>
+              </p-accordion-panel>
+
+              <p-accordion-panel value="2">
+                <p-accordion-header>Rationale</p-accordion-header>
+                <p-accordion-content>
+                  <p>{{ decision()!.decisionBasis.rationale }}</p>
+                </p-accordion-content>
+              </p-accordion-panel>
+
+              <p-accordion-panel value="3">
+                <p-accordion-header>Data Quality</p-accordion-header>
+                <p-accordion-content>
+                  <div class="data-quality">
+                    <div class="quality-item">
+                      <label>Completeness</label>
+                      <p>
+                        {{
+                          (decision()!.decisionBasis.dataQuality.completeness ||
+                            0) * 100
+                        }}%
+                      </p>
+                    </div>
+                    <div class="quality-item">
+                      <label>Stale Days</label>
+                      <p>
+                        {{
+                          decision()!.decisionBasis.dataQuality.staleDays || 0
+                        }}
+                      </p>
+                    </div>
+                  </div>
+                </p-accordion-content>
+              </p-accordion-panel>
+            </p-accordion>
+          </app-card-shell>
+
+          <!-- Outcome Tracking (If Reviewed) -->
+          @if (decision()!.outcomeData) {
+            <app-card-shell title="Outcome" headerIcon="pi-check-circle">
+              <div class="outcome-content">
+                <div class="outcome-item">
+                  <label>Goal Achieved</label>
+                  <app-status-tag
+                    [value]="
+                      decision()!.outcomeData!.goalAchieved ? 'Yes' : 'No'
+                    "
+                    [severity]="
+                      decision()!.outcomeData!.goalAchieved
+                        ? 'success'
+                        : 'warning'
+                    "
+                    size="sm"
+                  />
+                </div>
+
+                @if (
+                  decision()!.outcomeData!.unintendedConsequences &&
+                  decision()!.outcomeData!.unintendedConsequences.length > 0
+                ) {
+                  <div class="outcome-item">
+                    <label>Unintended Consequences</label>
+                    <ul>
+                      @for (
+                        consequence of decision()!.outcomeData!
+                          .unintendedConsequences;
+                        track consequence
+                      ) {
+                        <li>{{ consequence }}</li>
+                      }
+                    </ul>
+                  </div>
+                }
+
+                @if (decision()!.outcomeData!.lessonsLearned) {
+                  <div class="outcome-item">
+                    <label>Lessons Learned</label>
+                    <p>{{ decision()!.outcomeData!.lessonsLearned }}</p>
+                  </div>
+                }
+              </div>
+            </app-card-shell>
+          }
+
+          <!-- Related Decisions -->
+          @if (relatedDecisions().length > 0) {
+            <app-card-shell title="Related Decisions" headerIcon="pi-link">
+              <div class="related-decisions">
+                @for (related of relatedDecisions(); track related.id) {
+                  <div class="related-decision">
+                    <a [routerLink]="['/staff/decisions', related.id]">
+                      {{ related.decisionSummary }}
+                    </a>
+                    <app-status-tag
+                      [value]="related.relation"
+                      severity="info"
+                      size="sm"
+                    />
+                  </div>
+                }
+              </div>
+            </app-card-shell>
+          }
+        </div>
+      }
+
+      <!-- Review Decision Dialog -->
+      <app-review-decision-dialog
+        [visible]="showReviewDialog()"
+        [decision]="decision()"
+        (visibleChange)="onDialogVisibleChange($event)"
+        (reviewed)="onDecisionReviewed($event)"
+      ></app-review-decision-dialog>
+    </div>

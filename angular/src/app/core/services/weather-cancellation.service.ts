@@ -7,6 +7,11 @@ import { LoggerService, toLogContext } from "./logger.service";
 import { PrivacySettingsService } from "./privacy-settings.service";
 import { ApiService } from "./api.service";
 import { extractApiPayload } from "../utils/api-response-mapper";
+import {
+  BODYWEIGHT_EXERCISES,
+  FLAG_FOOTBALL_DRILLS,
+  GYM_EXERCISES,
+} from "./weather-cancellation.data";
 
 /**
  * Weather conditions that trigger cancellation warnings
@@ -563,172 +568,9 @@ export class WeatherCancellationService {
   ): SubstituteExercise[] {
     const exercises: SubstituteExercise[] = [];
 
-    // Flag football specific drills (can be done indoors)
-    const flagFootballDrills: SubstituteExercise[] = [
-      {
-        name: "Cone Route Running",
-        category: "Skills",
-        sets: 4,
-        reps: "5 routes each direction",
-        intensity: "high",
-        description:
-          "Set up cones in slant, out, and comeback patterns. Focus on sharp cuts and acceleration.",
-        equipment: ["cones"],
-        alternatives: ["Line drills without cones"],
-      },
-      {
-        name: "Wall Ball Catching Drill",
-        category: "Skills",
-        sets: 3,
-        reps: "20 catches",
-        intensity: "moderate",
-        description:
-          "Throw football against wall and catch. Vary angles and distances.",
-        equipment: ["football", "wall"],
-        alternatives: ["Partner catch if available"],
-      },
-      {
-        name: "Ladder Agility Drills",
-        category: "Agility",
-        sets: 4,
-        reps: "2 lengths each pattern",
-        intensity: "high",
-        description:
-          "Ickey shuffle, in-out, lateral runs. Focus on quick feet and body control.",
-        equipment: ["agility ladder"],
-        alternatives: ["Floor tape ladder", "Imaginary ladder"],
-      },
-      {
-        name: "Backpedal to Sprint",
-        category: "Speed",
-        sets: 6,
-        reps: "15 yards each",
-        intensity: "high",
-        description:
-          "Backpedal 5 yards, open hips, sprint 10 yards. Simulates defensive coverage.",
-        equipment: [],
-        alternatives: [],
-      },
-      {
-        name: "Flag Pull Reaction Drill",
-        category: "Skills",
-        durationSeconds: 120,
-        intensity: "moderate",
-        description:
-          "Practice flag pulling motion with resistance band or solo. Focus on hand speed and accuracy.",
-        equipment: ["resistance band"],
-        alternatives: ["Shadow flag pulls"],
-      },
-    ];
-
-    // Bodyweight exercises for general conditioning
-    const bodyweightExercises: SubstituteExercise[] = [
-      {
-        name: "Jump Squats",
-        category: "Power",
-        sets: 4,
-        reps: "12",
-        restSeconds: 45,
-        intensity: "high",
-        description: "Explosive squat jumps focusing on maximum height.",
-        equipment: [],
-      },
-      {
-        name: "Lateral Bounds",
-        category: "Agility",
-        sets: 3,
-        reps: "10 each side",
-        restSeconds: 30,
-        intensity: "high",
-        description: "Single-leg lateral jumps for change of direction power.",
-        equipment: [],
-      },
-      {
-        name: "Mountain Climbers",
-        category: "Conditioning",
-        durationSeconds: 45,
-        sets: 4,
-        restSeconds: 15,
-        intensity: "high",
-        description: "Fast-paced for cardio and core engagement.",
-        equipment: [],
-      },
-      {
-        name: "Plank with Shoulder Taps",
-        category: "Core",
-        durationSeconds: 45,
-        sets: 3,
-        restSeconds: 30,
-        intensity: "moderate",
-        description: "Core stability with anti-rotation component.",
-        equipment: [],
-      },
-      {
-        name: "Burpees",
-        category: "Conditioning",
-        sets: 4,
-        reps: "10",
-        restSeconds: 45,
-        intensity: "high",
-        description: "Full body conditioning exercise.",
-        equipment: [],
-      },
-      {
-        name: "Single Leg RDL",
-        category: "Strength",
-        sets: 3,
-        reps: "10 each leg",
-        restSeconds: 30,
-        intensity: "moderate",
-        description: "Balance and hamstring/glute activation.",
-        equipment: [],
-        alternatives: ["Use dumbbell for added resistance"],
-      },
-    ];
-
-    // Gym exercises (if gym available)
-    const gymExercises: SubstituteExercise[] = [
-      {
-        name: "Box Jumps",
-        category: "Power",
-        sets: 4,
-        reps: "8",
-        restSeconds: 60,
-        intensity: "high",
-        description: "Explosive hip extension and landing mechanics.",
-        equipment: ["plyo box"],
-      },
-      {
-        name: "Trap Bar Deadlift",
-        category: "Strength",
-        sets: 4,
-        reps: "6",
-        restSeconds: 90,
-        intensity: "high",
-        description: "Lower body power development.",
-        equipment: ["trap bar", "weights"],
-      },
-      {
-        name: "Cable Rotation",
-        category: "Core",
-        sets: 3,
-        reps: "12 each side",
-        restSeconds: 45,
-        intensity: "moderate",
-        description: "Rotational power for throwing.",
-        equipment: ["cable machine"],
-      },
-      {
-        name: "Treadmill Sprints",
-        category: "Speed",
-        sets: 8,
-        durationSeconds: 20,
-        restSeconds: 40,
-        intensity: "high",
-        description: "Sprint intervals at 10-12% incline.",
-        equipment: ["treadmill"],
-      },
-    ];
+    const flagFootballDrills = FLAG_FOOTBALL_DRILLS;
+    const bodyweightExercises = BODYWEIGHT_EXERCISES;
+    const gymExercises = GYM_EXERCISES;
 
     // Select exercises based on workout type and goals
     const hasSkillGoals = goals.some((g) =>

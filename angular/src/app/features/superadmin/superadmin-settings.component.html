@@ -1,0 +1,259 @@
+    <app-main-layout>
+      <div class="settings-content">
+        <app-page-header
+          title="Superadmin Settings"
+          subtitle="Platform configuration and access control"
+        >
+          <app-button
+            iconLeft="pi-arrow-left"
+            variant="outlined"
+            routerLink="/superadmin"
+            >Back to Dashboard</app-button
+          >
+        </app-page-header>
+
+        <!-- Your Status Card -->
+        <app-card-shell
+          class="status-card"
+          title="Your Superadmin Status"
+          headerIcon="pi-shield"
+          tone="success"
+        >
+
+          <div class="status-grid">
+            <div class="status-item">
+              <span class="status-label">Email</span>
+              <span class="status-value">{{ currentUserEmail() }}</span>
+            </div>
+            <div class="status-item">
+              <span class="status-label">Status</span>
+              <span class="status-value status-active">
+                <span class="status-dot"></span>
+                Active Superadmin
+              </span>
+            </div>
+            <div class="status-item">
+              <span class="status-label">Role</span>
+              <span class="status-value">Founding Superadmin</span>
+            </div>
+          </div>
+
+          <app-alert
+            variant="info"
+            title="Founding superadmin access"
+            message="As the founding superadmin, you have full control over the platform. Only you can add additional superadmins."
+            [styleClass]="'info-notice'"
+          />
+        </app-card-shell>
+
+        <!-- Manage Superadmins -->
+        <app-card-shell title="Manage Superadmins" headerIcon="pi-users">
+          <app-button header-actions iconLeft="pi-plus" (clicked)="openAddModal()"
+            >Add Superadmin</app-button
+          >
+
+          @if (isLoading()) {
+            <app-loading message="Loading superadmins..." variant="inline" />
+          } @else if (loadError()) {
+            <app-page-error-state
+              title="Unable to load superadmin access"
+              [message]="loadError()!"
+              (retry)="loadSuperadmins()"
+            />
+          } @else if (superadmins().length === 0) {
+            <app-empty-state
+              icon="pi-shield"
+              heading="No Superadmins"
+              description="No additional superadmins configured."
+            />
+          } @else {
+            <p-table [value]="superadmins()" tableStyleClass="superadmin-table">
+              <ng-template #header>
+                <tr>
+                  <th>Email</th>
+                  <th>Granted</th>
+                  <th>Notes</th>
+                  <th class="superadmin-actions-col">Actions</th>
+                </tr>
+              </ng-template>
+              <ng-template #body let-admin>
+                <tr>
+                  <td>
+                    <span class="admin-email">{{ admin.email }}</span>
+                  </td>
+                  <td>{{ admin.granted_at | date: "mediumDate" }}</td>
+                  <td>{{ admin.notes || "-" }}</td>
+                  <td>
+                    @if (admin.email !== "aljosa@ljubljanafrogs.si") {
+                      <app-button
+                        variant="text"
+                        size="sm"
+                        (clicked)="removeSuperadmin(admin.user_id)"
+                        >Remove</app-button
+                      >
+                    } @else {
+                      <span class="founder-badge">Founder</span>
+                    }
+                  </td>
+                </tr>
+              </ng-template>
+            </p-table>
+          }
+        </app-card-shell>
+
+        <!-- Platform Settings -->
+        <app-card-shell title="Platform Settings" headerIcon="pi-cog">
+
+          <div class="settings-list">
+            <div class="setting-item">
+              <div class="setting-info">
+                <h4>Require Olympic Track</h4>
+                <p>
+                  Require teams to specify their Olympic preparation track (LA
+                  2028 / Brisbane 2032)
+                </p>
+              </div>
+              <label class="toggle">
+                <input
+                  type="checkbox"
+                  [checked]="requireOlympicTrack"
+                  disabled
+                />
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+
+            <div class="setting-item">
+              <div class="setting-info">
+                <h4>Auto-approve Players</h4>
+                <p>
+                  Automatically approve player role requests (not admin/coach)
+                </p>
+              </div>
+              <label class="toggle">
+                <input
+                  type="checkbox"
+                  [checked]="autoApprovePlayers"
+                  disabled
+                />
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+
+            <div class="setting-item">
+              <div class="setting-info">
+                <h4>Federation Verification</h4>
+                <p>
+                  Require federation affiliation verification for team approval
+                </p>
+              </div>
+              <label class="toggle">
+                <input
+                  type="checkbox"
+                  [checked]="federationVerification"
+                  disabled
+                />
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+          </div>
+
+          <app-alert
+            variant="info"
+            title="Database-managed settings"
+            message="Platform settings are currently managed at the database level. Contact the development team for configuration changes."
+            [styleClass]="'info-notice info'"
+          />
+        </app-card-shell>
+
+        <!-- Olympic Program -->
+        <app-card-shell
+          class="olympic-card"
+          title="Olympic Program"
+          headerIcon="pi-trophy"
+          tone="brand"
+        >
+
+          <div class="olympic-tracks">
+            <div class="track-card">
+              <h4>LA 2028</h4>
+              <p class="track-date">July 14 - July 30, 2028</p>
+              <p class="track-desc">
+                First Olympic Games featuring Flag Football
+              </p>
+            </div>
+            <div class="track-card">
+              <h4>Brisbane 2032</h4>
+              <p class="track-date">July 23 - August 8, 2032</p>
+              <p class="track-desc">Second Olympic Games with Flag Football</p>
+            </div>
+          </div>
+
+          <p class="mission-text">
+            This platform is exclusively for athletes and teams preparing for
+            Olympic competition. All team and admin approvals should consider
+            the applicant's commitment to Olympic-level preparation.
+          </p>
+        </app-card-shell>
+      </div>
+
+      <!-- Add Superadmin Modal -->
+      <app-dialog
+        [visible]="showAddModal"
+        (visibleChange)="onAddModalVisibleChange($event)"
+        (hide)="closeAddModal()"
+        [modal]="true"
+        [closable]="false"
+        [draggable]="false"
+        [resizable]="false"
+        [dismissableMask]="true"
+        [blockScroll]="true"
+        [styleClass]="'dialog-md superadmin-settings-dialog'"
+      >
+        <app-dialog-header
+          icon="shield"
+          title="Add New Superadmin"
+          subtitle="Grant full platform access to a trusted account."
+          (close)="closeAddModal()"
+        />
+
+        <div class="form-group">
+          <label for="adminEmail">User Email</label>
+          <input
+            type="email"
+            id="adminEmail"
+            [value]="newAdminEmail"
+            (input)="onNewAdminEmailInput($event)"
+            placeholder="Enter user email..."
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="adminNotes">Notes (Optional)</label>
+          <textarea
+            id="adminNotes"
+            [value]="newAdminNotes"
+            (input)="onNewAdminNotesInput($event)"
+            placeholder="Add notes about this superadmin..."
+            rows="3"
+          ></textarea>
+        </div>
+
+        <app-alert
+          variant="warning"
+          density="compact"
+          title="Full platform access"
+          message="Superadmins can approve teams, manage other superadmins, and access platform-critical settings. Only grant this role to trusted operators."
+          [styleClass]="'warning-notice'"
+        />
+
+        <app-dialog-footer
+          cancelLabel="Cancel"
+          primaryLabel="Add Superadmin"
+          primaryIcon="plus"
+          [disabled]="!newAdminEmail.trim()"
+          (cancel)="closeAddModal()"
+          (primary)="addNewSuperadmin()"
+        />
+      </app-dialog>
+    </app-main-layout>

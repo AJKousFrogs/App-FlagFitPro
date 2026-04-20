@@ -1,0 +1,244 @@
+    <app-dialog
+      [visible]="visible()"
+      (visibleChange)="onVisibleChange($event)"
+      [blockScroll]="true"
+      [breakpoints]="dialogBreakpoints"
+      [draggable]="false"
+      [resizable]="false"
+      dialogSize="lg"
+      ariaLabel="Training settings"
+    >
+      <app-dialog-header
+        icon="sliders-h"
+        title="Training Settings"
+        subtitle="Configure your availability and training preferences"
+        (close)="onCancel()"
+      />
+
+      <div class="settings-form">
+        <!-- Position Selection -->
+        <div class="form-section">
+          <h4>Position</h4>
+          <div class="form-field">
+            <app-select
+              label="Primary Position *"
+              [options]="positions"
+              [ngModel]="settings.primaryPosition"
+              (onChange)="onPrimaryPositionSelect($event)"
+              optionLabel="label"
+              optionValue="value"
+              placeholder="Select position"
+            ></app-select>
+            @if (selectedPositionDescription()) {
+              <small class="field-hint">{{
+                selectedPositionDescription()
+              }}</small>
+            }
+          </div>
+
+          <div class="form-field">
+            <app-select
+              label="Secondary Position"
+              [options]="positions"
+              [ngModel]="settings.secondaryPosition"
+              (onChange)="onSecondaryPositionSelect($event)"
+              optionLabel="label"
+              optionValue="value"
+              placeholder="Optional"
+              [showClear]="true"
+            ></app-select>
+          </div>
+        </div>
+
+        <!-- Birth Date (for age-based recovery) -->
+        <div class="form-section">
+          <h4>Age-Based Recovery</h4>
+          <div class="form-field">
+            <app-date-picker
+              label="Birth Date"
+              [ngModel]="settings.birthDate"
+              (onSelect)="onBirthDateChange($event)"
+              dateFormat="yy-mm-dd"
+              [showIcon]="true"
+              [maxDate]="maxBirthDate"
+              placeholder="Select birth date"
+            ></app-date-picker>
+            <small class="field-hint">
+              Used to calculate age-based recovery recommendations.
+              @if (calculatedAge() !== null) {
+                <strong>Age: {{ calculatedAge() }}</strong>
+                @if (ageRecoveryNote()) {
+                  <span class="recovery-note"> - {{ ageRecoveryNote() }}</span>
+                }
+              }
+            </small>
+          </div>
+        </div>
+
+        <!-- Availability Schedule -->
+        <div class="form-section">
+          <h4>Availability</h4>
+          <p class="section-description">
+            This does not schedule team practice. Coaches schedule team
+            activities.
+          </p>
+          <p class="section-description section-description--note">
+            Add your typical training times for reference. This information
+            helps coaches understand your availability but does not create team
+            practices.
+          </p>
+
+          @for (slot of settings.flagPracticeSchedule; track slot.day) {
+            <div class="practice-slot">
+              <div class="slot-header">
+                <span class="day-name">{{ slot.dayName }}</span>
+                <app-icon-button
+                  icon="pi-trash"
+                  variant="text"
+                  size="sm"
+                  (clicked)="removePracticeSlot(slot.day)"
+                  ariaLabel="Remove practice slot"
+                  tooltip="Remove"
+                />
+              </div>
+              <div class="slot-times">
+                <div class="time-field">
+                  <app-form-input
+                    label="Start"
+                    type="text"
+                    [value]="slot.startTime"
+                    (valueChange)="onSlotStartTimeChange(slot.day, $event)"
+                  />
+                </div>
+                <div class="time-field">
+                  <app-form-input
+                    label="End"
+                    type="text"
+                    [value]="slot.endTime"
+                    (valueChange)="onSlotEndTimeChange(slot.day, $event)"
+                  />
+                </div>
+                @if (settings.primaryPosition === "quarterback") {
+                  <div class="time-field">
+                    <app-form-input
+                      label="Expected Throws"
+                      type="number"
+                      [value]="(slot.expectedThrows ?? '') + ''"
+                      (valueChange)="onSlotExpectedThrowsChange(slot.day, $event)"
+                      placeholder="40-50"
+                    />
+                  </div>
+                }
+              </div>
+            </div>
+          }
+
+          <!-- Add Practice Button -->
+          @if (availableDays.length > 0) {
+            <div class="add-practice">
+              <app-select
+                [options]="availableDays"
+                [ngModel]="selectedNewDay"
+                (onChange)="onSelectedNewDaySelect($event)"
+                optionLabel="label"
+                optionValue="value"
+                placeholder="Add practice day..."
+              ></app-select>
+              <app-button
+                iconLeft="pi-plus"
+                [disabled]="selectedNewDay === null"
+                (clicked)="addPracticeSlot()"
+                >Add</app-button
+              >
+            </div>
+          }
+        </div>
+
+        <!-- Daily Routine -->
+        <div class="form-section">
+          <h4>My Daily Routine</h4>
+          <p class="section-description">
+            Set your preferred times for daily activities.
+          </p>
+
+          <div class="routine-list">
+            @for (slot of settings.dailyRoutine; track slot.id) {
+              <div class="routine-field">
+                <div class="routine-label">
+                  <i [class]="slot.icon" class="mr-2"></i>
+                  <span>{{ slot.label }}</span>
+                </div>
+                <app-form-input
+                  type="text"
+                  [value]="slot.time"
+                  (valueChange)="onRoutineTimeChange(slot.id, $event)"
+                  styleClass="routine-time-input"
+                />
+              </div>
+            }
+          </div>
+        </div>
+
+        <!-- Training Preferences -->
+        <div class="form-section">
+          <h4>Training Preferences</h4>
+
+          <div class="form-field">
+            <label>Preferred Training Days</label>
+            <p-multiselect
+              [options]="allDays"
+              [value]="settings.preferredTrainingDays"
+              (onChange)="onPreferredTrainingDaysSelect($event)"
+              optionLabel="label"
+              optionValue="value"
+              placeholder="Select days"
+              class="w-full"
+            ></p-multiselect>
+          </div>
+
+          <div class="form-field checkbox-group">
+            <input
+              id="gymAccess"
+              type="checkbox"
+              [checked]="settings.hasGymAccess"
+              (change)="onHasGymAccessToggle($event)"
+            />
+            <label for="gymAccess">I have gym access</label>
+          </div>
+
+          <div class="form-field checkbox-group">
+            <input
+              id="fieldAccess"
+              type="checkbox"
+              [checked]="settings.hasFieldAccess"
+              (change)="onHasFieldAccessToggle($event)"
+            />
+            <label for="fieldAccess">I have field access</label>
+          </div>
+
+          <div class="form-field">
+            <app-select
+              label="Warm-up Focus"
+              [options]="warmupFocusOptions"
+              [ngModel]="settings.warmupFocus"
+              (onChange)="onWarmupFocusSelect($event)"
+              optionLabel="label"
+              optionValue="value"
+              placeholder="Auto (use position)"
+            ></app-select>
+            <small class="field-hint">
+              Overrides the warm-up flow without changing your primary position.
+            </small>
+          </div>
+        </div>
+      </div>
+
+      <app-dialog-footer
+        cancelLabel="Cancel"
+        primaryLabel="Save Settings"
+        primaryIcon="check"
+        [loading]="isSaving()"
+        (cancel)="onCancel()"
+        (primary)="onSave()"
+      />
+    </app-dialog>

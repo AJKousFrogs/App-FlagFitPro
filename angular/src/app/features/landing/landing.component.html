@@ -1,0 +1,210 @@
+    <section class="hero-section">
+      <div class="hero-background">
+        <div class="hero-gradient-1"></div>
+        <div class="hero-gradient-2"></div>
+        @if (particles().length > 0) {
+          <div class="hero-particles">
+            @for (particle of particles(); track particle.id) {
+              <div
+                class="particle"
+                [style.left.%]="particle.x"
+                [style.top.%]="particle.y"
+                [style.animation-delay]="particle.delay + 's'"
+                [style.animation-duration]="particle.duration + 's'"
+              ></div>
+            }
+          </div>
+        }
+      </div>
+
+      <div class="hero-container">
+        <div class="hero-content" [class.hero-content-visible]="isLoaded()">
+          <div class="hero-logo-wrapper animate-item animate-delay-0">
+            <div class="hero-logo">
+              <i class="pi pi-flag merlin-icon" aria-hidden="true"></i>
+            </div>
+            <div class="hero-badge">
+              <span class="hero-badge-marker" aria-hidden="true"></span>
+              Olympic-ready platform
+            </div>
+          </div>
+
+          <!-- Olympic Countdown Timer -->
+          <div class="olympic-countdown animate-item animate-delay-1">
+            <div class="countdown-label">
+              <span class="countdown-label-text">TIME LEFT UNTIL THE</span>
+              <span class="countdown-label-event">LA28 OLYMPIC GAMES</span>
+            </div>
+            <div class="countdown-timer">
+              <div class="countdown-segment countdown-days">
+                <span class="countdown-value">{{
+                  olympicCountdown().days
+                }}</span>
+                <span class="countdown-unit">DAYS</span>
+              </div>
+              <div class="countdown-separator">:</div>
+              <div class="countdown-segment">
+                <span class="countdown-value">{{
+                  olympicCountdown().hours | number: "2.0-0"
+                }}</span>
+                <span class="countdown-unit">HOURS</span>
+              </div>
+              <div class="countdown-separator">:</div>
+              <div class="countdown-segment">
+                <span class="countdown-value">{{
+                  olympicCountdown().minutes | number: "2.0-0"
+                }}</span>
+                <span class="countdown-unit">MINS</span>
+              </div>
+              <div class="countdown-separator">:</div>
+              <div class="countdown-segment">
+                <span class="countdown-value">{{
+                  olympicCountdown().seconds | number: "2.0-0"
+                }}</span>
+                <span class="countdown-unit">SEC</span>
+              </div>
+            </div>
+          </div>
+
+          <h1 class="hero-title animate-item animate-delay-2">
+            Elevate Your
+            <span class="hero-title-accent">Flag Football</span>
+            Game
+          </h1>
+
+          <p class="hero-description animate-item animate-delay-3">
+            The ultimate training and competition platform for serious players.
+            Track performance, join tournaments, and connect with a community
+            that shares your passion for the game.
+          </p>
+
+          <div class="hero-actions animate-item animate-delay-4">
+            <app-button
+              size="lg"
+              routerLink="/register"
+              (mouseover)="preloadRegisterRoute()"
+              (focusin)="preloadRegisterRoute()"
+              (touchstart)="preloadRegisterRoute()"
+              >Get Started Free</app-button
+            >
+            <app-button
+              variant="outlined"
+              size="lg"
+              routerLink="/login"
+              (mouseover)="preloadLoginRoute()"
+              (focusin)="preloadLoginRoute()"
+              (touchstart)="preloadLoginRoute()"
+              >Sign In</app-button
+            >
+          </div>
+
+          <div class="hero-stats animate-item animate-delay-5">
+            @for (stat of heroStats; track stat.label) {
+              <div [class]="'hero-stat stat-delay-' + $index">
+                <div class="hero-stat-number">{{ stat.value }}</div>
+                <div class="hero-stat-label">{{ stat.label }}</div>
+              </div>
+            }
+          </div>
+
+          <!-- Scroll indicator -->
+          <div class="scroll-indicator animate-item animate-delay-6">
+            <div class="scroll-mouse">
+              <div class="scroll-wheel"></div>
+            </div>
+            <span>Scroll to explore</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="features-section" #featuresSection>
+      <div class="features-container">
+        <div class="features-header">
+          <h2 class="features-title">Everything You Need to Excel</h2>
+          <p class="features-subtitle">
+            Powerful tools designed to help you train smarter, compete better,
+            and grow faster
+          </p>
+        </div>
+
+        <div class="features-grid">
+          @for (feature of features; track trackByFeatureId($index, feature)) {
+            <app-card-shell
+              class="feature-card"
+              [stretchBody]="true"
+              state="interactive"
+              (cardClick)="navigateToFeature(feature.id)"
+            >
+              <!-- Custom header with icon -->
+              <div class="feature-card-icon">
+                <div
+                  class="feature-icon-wrapper"
+                  [class]="'feature-icon-' + feature.id"
+                >
+                  <i
+                    class="feature-icon-glyph"
+                    [class]="'pi ' + feature.icon"
+                    aria-hidden="true"
+                  ></i>
+                </div>
+              </div>
+              <h3 class="feature-card-title">{{ feature.title }}</h3>
+              <p class="feature-card-description">{{ feature.description }}</p>
+              <div class="feature-card-link">
+                <span>Learn more</span>
+                <span class="feature-card-arrow" aria-hidden="true">→</span>
+              </div>
+            </app-card-shell>
+          }
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="landing-footer">
+      <div class="footer-container">
+        <div class="footer-grid">
+          <!-- Brand -->
+          <div class="footer-brand">
+            <div class="footer-logo">
+              <i class="pi pi-flag footer-logo-mark" aria-hidden="true"></i>
+              <span class="footer-logo-text">FlagFit Pro</span>
+            </div>
+            <p class="footer-tagline">
+              The ultimate training and competition platform for flag football
+              athletes.
+            </p>
+          </div>
+
+          <!-- Quick Links -->
+          <div class="footer-links">
+            <h4>Quick Links</h4>
+            <ul>
+              <li><a routerLink="/login">Sign In</a></li>
+              <li><a routerLink="/register">Get Started</a></li>
+              <li>
+                <a href="#features" (click)="scrollToFeatures($event)"
+                  >Features</a
+                >
+              </li>
+            </ul>
+          </div>
+
+          <!-- Resources -->
+          <div class="footer-links">
+            <h4>Resources</h4>
+            <ul>
+              <li><a routerLink="/settings/privacy">Privacy Settings</a></li>
+              <li>
+                <a href="mailto:support&#64;flagfitpro.com">Contact Support</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="footer-bottom">
+          <p>&copy; {{ currentYear }} FlagFit Pro. All rights reserved.</p>
+        </div>
+      </div>
+    </footer>

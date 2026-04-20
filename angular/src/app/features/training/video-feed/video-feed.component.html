@@ -1,0 +1,313 @@
+<app-main-layout>
+      <div class="video-feed-page ui-page-shell ui-page-shell--wide ui-page-stack">
+        <app-video-feed-header-section
+          [searchControl]="searchControl"
+          [totalVideos]="totalVideos()"
+          [totalCreators]="totalCreators()"
+          [positionChips]="positionChips()"
+          [focusChips]="focusChips()"
+          [hasActiveFilters]="hasActiveFilters()"
+          [activeFilterLabels]="activeFilterLabels()"
+          (scrollToVideos)="scrollToVideos()"
+          (scrollToCreators)="scrollToCreators()"
+          (navigateToSuggest)="navigateToSuggest()"
+          (togglePositionFilter)="togglePositionFilter($event)"
+          (toggleFocusFilter)="toggleFocusFilter($event)"
+          (clearAllFilters)="clearAllFilters()"
+        />
+
+        <!-- Video Grid -->
+        <section class="video-grid-section">
+          @if (isLoading()) {
+            <!-- Skeleton Loading -->
+            <div class="video-grid">
+              @for (i of [1, 2, 3, 4, 5, 6]; track i) {
+                <div class="video-card skeleton-card">
+                  <p-skeleton
+                    width="100%"
+                    height="calc(var(--size-200) * 1.4)"
+                    borderRadius="var(--radius-2xl)"
+                  ></p-skeleton>
+                  <div class="skeleton-content">
+                    <p-skeleton width="70%" height="var(--space-5)"></p-skeleton>
+                    <p-skeleton
+                      width="100%"
+                      height="var(--ds-font-size-sm)"
+                    ></p-skeleton>
+                    <div class="skeleton-meta">
+                      <p-skeleton
+                        width="var(--size-80)"
+                        height="var(--space-6)"
+                        borderRadius="var(--radius-xl)"
+                      ></p-skeleton>
+                      <p-skeleton
+                        width="calc(var(--size-120) * 0.5)"
+                        height="var(--space-6)"
+                        borderRadius="var(--radius-xl)"
+                      ></p-skeleton>
+                    </div>
+                  </div>
+                </div>
+              }
+            </div>
+          } @else if (filteredVideos().length === 0) {
+            <app-empty-state
+              icon="pi-video"
+              heading="No videos found"
+              description="Try adjusting your filters or search query"
+              actionLabel="Clear Filters"
+              actionIcon="pi-refresh"
+              [actionHandler]="clearAllFiltersHandler"
+            />
+          } @else {
+            <!-- Video Cards Grid -->
+            <div class="video-grid">
+              @for (video of filteredVideos(); track video.id) {
+                <article
+                  class="video-card"
+                  (click)="openVideo(video)"
+                  [class.bookmarked]="isBookmarked(video.id)"
+                  (mouseenter)="onVideoCardHover(video)"
+                  (mouseleave)="onVideoCardLeave()"
+                >
+                  <!-- Video Embed Preview -->
+                  <div class="video-thumbnail">
+                    <!-- Hover Preview (Optional Feature) -->
+                    @if (isPreviewingVideo(video.id)) {
+                      <div class="video-preview-container">
+                        <iframe
+                          [src]="video.embedUrl"
+                          frameborder="0"
+                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                          allowfullscreen
+                          class="video-preview-iframe"
+                        ></iframe>
+                      </div>
+                    } @else {
+                      <!-- Instagram Thumbnail Image -->
+                      <img
+                        [src]="getVideoThumbnail(video)"
+                        [alt]="video.title"
+                        class="video-thumbnail-img"
+                        loading="lazy"
+                        (error)="onThumbnailError($event)"
+                      />
+                      <div class="thumbnail-overlay">
+                        <i class="pi pi-play-circle play-icon"></i>
+                      </div>
+                    }
+
+                    @if (video.isReel) {
+                      <div class="reel-badge">
+                        <i class="pi pi-instagram"></i>
+                        Reel
+                      </div>
+                    }
+
+                    <!-- Overlay Actions -->
+                    <div class="video-overlay">
+                      <button
+                        class="overlay-btn bookmark-btn"
+                        [class.active]="isBookmarked(video.id)"
+                        (click)="toggleBookmark($event, video)"
+                        pTooltip="Save for later"
+                      >
+                        <i
+                          [class]="
+                            isBookmarked(video.id)
+                              ? 'pi pi-bookmark-fill'
+                              : 'pi pi-bookmark'
+                          "
+                        ></i>
+                      </button>
+                      <button
+                        class="overlay-btn share-btn"
+                        (click)="shareVideo($event, video)"
+                        pTooltip="Copy link"
+                      >
+                        <i class="pi pi-share-alt"></i>
+                      </button>
+                    </div>
+
+                    <!-- Rating Badge -->
+                    <div class="rating-badge">
+                      <i class="pi pi-star-fill"></i>
+                      {{ video.rating.toFixed(1) }}
+                    </div>
+                  </div>
+
+                  <!-- Video Info -->
+                  <div class="video-info">
+                    <h3 class="video-title">{{ video.title }}</h3>
+                    <p class="video-description">{{ video.description }}</p>
+
+                    <!-- Creator Info -->
+                    <div class="creator-row">
+                      <app-avatar
+                        [label]="video.creator.displayName.charAt(0)"
+                        shape="circle"
+                        size="normal"
+                        styleClass="creator-avatar"
+                      />
+                      <div class="creator-info">
+                        <span class="creator-name">
+                          {{ video.creator.displayName }}
+                          @if (video.creator.verified) {
+                            <i
+                              class="pi pi-verified verified-badge"
+                              pTooltip="Verified Creator"
+                            ></i>
+                          }
+                        </span>
+                        <span class="creator-type">{{
+                          formatCredibility(video.creator.credibility)
+                        }}</span>
+                      </div>
+                    </div>
+
+                    <!-- Tags -->
+                    <div class="video-tags">
+                      @for (
+                        position of video.positions.slice(0, 2);
+                        track position
+                      ) {
+                        <span class="tag position-tag">{{ position }}</span>
+                      }
+                      @for (
+                        focus of video.trainingFocus.slice(0, 2);
+                        track focus
+                      ) {
+                        <span class="tag focus-tag">{{
+                          formatFocus(focus)
+                        }}</span>
+                      }
+                      <span class="tag skill-tag">{{ video.skillLevel }}</span>
+                    </div>
+                  </div>
+                </article>
+              }
+            </div>
+          }
+        </section>
+
+        <!-- Featured Creators Section -->
+        <section class="creators-section">
+          <div class="section-header">
+            <h2>
+              <i class="pi pi-users"></i>
+              Featured Creators
+            </h2>
+            <p>Follow top flag football trainers and athletes</p>
+          </div>
+
+          <div class="creators-scroll">
+            @for (creator of featuredCreators(); track creator.username) {
+              <div class="creator-card" (click)="filterByCreator(creator)">
+                <app-avatar
+                  [label]="creator.displayName.charAt(0)"
+                  shape="circle"
+                  size="xlarge"
+                  styleClass="creator-avatar-large"
+                />
+                <div class="creator-details">
+                  <span class="creator-display-name">
+                    {{ creator.displayName }}
+                    @if (creator.verified) {
+                      <i class="pi pi-verified"></i>
+                    }
+                  </span>
+                  <span class="creator-username"
+                    >&#64;{{ creator.username }}</span
+                  >
+                  <span class="creator-specialty">{{
+                    formatCredibility(creator.credibility)
+                  }}</span>
+                  @if (creator.followers) {
+                    <span class="follower-count"
+                      >{{ formatFollowers(creator.followers) }} followers</span
+                    >
+                  }
+                </div>
+                <div class="video-count">
+                  {{ getCreatorVideoCount(creator.username) }} videos
+                </div>
+              </div>
+            }
+          </div>
+        </section>
+
+        <!-- Video Player Dialog -->
+        <app-dialog
+          [(visible)]="showVideoDialog"
+          dialogSize="2xl"
+          [draggable]="false"
+          [resizable]="false"
+          [dismissableMask]="true"
+          (hide)="closeVideoDialog()"
+        >
+          <app-dialog-header
+            icon="film"
+            [title]="selectedVideo()?.title || 'Training Video'"
+            subtitle="Watch coach-led sessions in premium resolution"
+            (close)="closeVideoDialog()"
+          ></app-dialog-header>
+          @if (selectedVideo(); as video) {
+            <div class="video-dialog-content">
+              <!-- Instagram Embed -->
+              <div class="embed-container" [innerHTML]="videoEmbedHtml()"></div>
+
+              <!-- Video Details -->
+              <div class="video-details">
+                <p class="video-full-description">{{ video.description }}</p>
+
+                <div class="video-meta-grid">
+                  <div class="meta-item">
+                    <i class="pi pi-user"></i>
+                    <span>{{ video.creator.displayName }}</span>
+                  </div>
+                  <div class="meta-item">
+                    <i class="pi pi-star-fill"></i>
+                    <span>{{ video.rating.toFixed(1) }} Rating</span>
+                  </div>
+                  <div class="meta-item">
+                    <i class="pi pi-calendar"></i>
+                    <span>Added {{ formatDate(video.addedDate) }}</span>
+                  </div>
+                </div>
+
+                <!-- All Tags -->
+                <div class="all-tags">
+                  @for (tag of video.tags; track tag) {
+                    <span class="tag">#{{ tag }}</span>
+                  }
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="dialog-actions">
+                  <app-button
+                    [iconLeft]="
+                      isBookmarked(video.id)
+                        ? 'pi-bookmark-fill'
+                        : 'pi-bookmark'
+                    "
+                    [variant]="isBookmarked(video.id) ? 'success' : 'outlined'"
+                    (clicked)="toggleBookmark($event, video)"
+                    >{{ isBookmarked(video.id) ? "Saved" : "Save" }}</app-button
+                  >
+                  <app-button
+                    iconLeft="pi-external-link"
+                    (clicked)="openInInstagram(video)"
+                    >Open in Instagram</app-button
+                  >
+                  <app-button
+                    iconLeft="pi-copy"
+                    (clicked)="shareVideo($event, video)"
+                    >Copy Link</app-button
+                  >
+                </div>
+              </div>
+            </div>
+          }
+        </app-dialog>
+      </div>
+    </app-main-layout>

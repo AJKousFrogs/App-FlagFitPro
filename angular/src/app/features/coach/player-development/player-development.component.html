@@ -1,0 +1,575 @@
+<app-main-layout>
+<div class="player-development-page ui-page-shell ui-page-shell--wide ui-page-stack">
+        <app-page-header
+          title="Player Development"
+          subtitle="Track progress and set goals"
+          icon="pi-chart-line"
+        >
+          <app-button
+            variant="secondary"
+            iconLeft="pi-download"
+            (clicked)="exportReport()"
+            >Export Report</app-button
+          >
+        </app-page-header>
+
+        <!-- Player/Compare Selection -->
+        <div class="selection-row">
+          <div class="selection-field">
+            <app-select
+              label="Player"
+              [options]="playerOptions()"
+              (valueChange)="onSelectedPlayerIdChange($event)"
+              optionLabel="name"
+              optionValue="id"
+              placeholder="Select Player"
+            />
+          </div>
+          <div class="selection-field">
+            <app-select
+              label="Compare To"
+              [options]="compareOptions"
+              (valueChange)="onCompareToValueChange($event)"
+              optionLabel="label"
+              optionValue="value"
+              placeholder="Position Avg"
+            />
+          </div>
+        </div>
+
+        @if (isLoading()) {
+          <app-loading message="Loading player development..." />
+        } @else if (loadError()) {
+          <app-page-error-state
+            title="Unable to load player development"
+            [message]="loadError()!"
+            (retry)="retryLoadData()"
+          />
+        } @else if (selectedPlayer()) {
+          <!-- Development Overview -->
+          <div class="stats-summary">
+            <div class="stat-card">
+              <span class="stat-icon"><i class="pi pi-chart-bar" aria-hidden="true"></i></span>
+              <div class="stat-content">
+                <span class="stat-block__value"
+                  >{{ selectedPlayer()?.overallProgress }}%</span
+                >
+                <span class="stat-block__label">Overall Progress</span>
+                <span class="stat-sub">vs benchmarks</span>
+              </div>
+            </div>
+            <div class="stat-card">
+              <span class="stat-icon"><i class="pi pi-bullseye" aria-hidden="true"></i></span>
+              <div class="stat-content">
+                <span class="stat-block__value"
+                  >{{ selectedPlayer()?.goalsCompleted }}/{{
+                    selectedPlayer()?.goalsTotal
+                  }}</span
+                >
+                <span class="stat-block__label">Goals Completed</span>
+                <span class="stat-sub">Active goals</span>
+              </div>
+            </div>
+            <div class="stat-card">
+              <span class="stat-icon"><i class="pi pi-chart-line" aria-hidden="true"></i></span>
+              <div class="stat-content">
+                <span
+                  class="stat-block__value"
+                  [class.positive]="
+                    (selectedPlayer()?.improvementThisMonth ?? 0) > 0
+                  "
+                >
+                  {{
+                    (selectedPlayer()?.improvementThisMonth ?? 0) > 0
+                      ? "+"
+                      : ""
+                  }}{{ selectedPlayer()?.improvementThisMonth }}%
+                </span>
+                <span class="stat-block__label">Improvement</span>
+                <span class="stat-sub">This month</span>
+              </div>
+            </div>
+            <div class="stat-card">
+              <span class="stat-icon"><i class="pi pi-trophy" aria-hidden="true"></i></span>
+              <div class="stat-content">
+                <span class="stat-block__value">{{
+                  selectedPlayer()?.achievements
+                }}</span>
+                <span class="stat-block__label">Achievements</span>
+                <span class="stat-sub">Unlocked</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Spider Chart Section -->
+          <app-card-shell
+            class="chart-card"
+            title="Position Benchmark Spider Chart"
+          >
+            <div class="spider-chart-container">
+              <app-lazy-chart
+                type="radar"
+                [data]="radarChartData()"
+                [options]="radarChartOptions"
+              ></app-lazy-chart>
+            </div>
+            <div class="chart-legend">
+              <span class="legend-item"
+                ><span class="legend-color player"></span>
+                {{ selectedPlayer()?.name }} ({{
+                  selectedPlayer()?.position
+                }})</span
+              >
+              <span class="legend-item"
+                ><span class="legend-color elite"></span> Elite
+                {{ selectedPlayer()?.position }} Benchmark</span
+              >
+              <span class="legend-item"
+                ><span class="legend-color avg"></span> Position Average</span
+              >
+            </div>
+          </app-card-shell>
+
+          <!-- Development Goals -->
+          <app-card-shell class="goals-card" title="Development Goals">
+            <app-button
+              header-actions
+              size="sm"
+              iconLeft="pi-plus"
+              (clicked)="openGoalDialog()"
+              >Add Goal</app-button
+            >
+
+            @if (playerGoals().length > 0) {
+              <div class="goals-list">
+                @for (goal of playerGoals(); track goal.id) {
+                  <div class="goal-item">
+                    <div class="goal-header">
+                      <div class="goal-title">
+                        <span class="goal-icon" aria-hidden="true"
+                          ><i [class]="'pi ' + getGoalIcon(goal.category)"></i
+                        ></span>
+                        <span
+                          >{{ goal.metric }}: {{ goal.startValue }} →
+                          {{ goal.targetValue }}</span
+                        >
+                      </div>
+                      <span class="goal-due">Due: {{ goal.dueDate }}</span>
+                    </div>
+                    <div class="goal-progress">
+                      <span class="progress-label">Progress:</span>
+                      <p-progressBar
+                        [value]="goal.progress"
+                        [showValue]="false"
+                        class="goal-progress-bar"
+                      ></p-progressBar>
+                      <span class="progress-value">{{ goal.progress }}%</span>
+                    </div>
+                    <div class="goal-status">
+                      <span class="current-value"
+                        >Current: {{ goal.currentValue }}</span
+                      >
+                      <app-status-tag
+                        [value]="getStatusLabel(goal.status)"
+                        [severity]="getStatusSeverity(goal.status)"
+                        size="sm"
+                      />
+                    </div>
+                    <div class="goal-actions">
+                      <app-button
+                        variant="secondary"
+                        size="sm"
+                        (clicked)="updateGoal(goal)"
+                        >Update</app-button
+                      >
+                      <app-button
+                        variant="text"
+                        size="sm"
+                        (clicked)="viewGoalDetails(goal)"
+                        >Details</app-button
+                      >
+                    </div>
+                  </div>
+                }
+              </div>
+            } @else {
+              <div class="empty-goals">
+                <p>No development goals set for this player.</p>
+                <app-button iconLeft="pi-plus" (clicked)="openGoalDialog()"
+                  >Set First Goal</app-button
+                >
+              </div>
+            }
+          </app-card-shell>
+
+          <!-- Performance History -->
+          <app-card-shell class="history-card" title="Performance History">
+            <div class="history-filters">
+              <app-select
+                [options]="physicalMetrics"
+                (valueChange)="onSelectedMetricChange($event)"
+                optionLabel="label"
+                optionValue="value"
+                placeholder="Select Metric"
+              />
+              <app-select
+                [options]="periodOptions"
+                (valueChange)="onSelectedPeriodChange($event)"
+                optionLabel="label"
+                optionValue="value"
+                placeholder="Period"
+              />
+            </div>
+            <div class="history-chart">
+              <app-lazy-chart
+                type="line"
+                [data]="lineChartData()"
+                [options]="lineChartOptions"
+              ></app-lazy-chart>
+            </div>
+            <div class="history-stats">
+              <span><strong>Best:</strong> {{ historyStats().best }}</span>
+              <span><strong>Avg:</strong> {{ historyStats().avg }}</span>
+              <span><strong>Trend:</strong> {{ historyStats().trend }}</span>
+            </div>
+          </app-card-shell>
+
+          <!-- Skill Assessments -->
+          <app-card-shell
+            class="assessments-card"
+            [title]="selectedPlayer()?.position + '-Specific Skills'"
+          >
+            <div header-actions class="assessment-actions">
+              <span class="last-assessment">Last Assessment: Dec 28, 2025</span>
+              <app-button
+                variant="secondary"
+                size="sm"
+                (clicked)="newAssessment()"
+                >New Assessment</app-button
+              >
+            </div>
+            <div class="skills-list">
+              @for (skill of skillAssessments(); track skill.skill) {
+                <div class="skill-row">
+                  <span class="skill-name">{{ skill.skill }}</span>
+                  <div class="skill-bar">
+                    <p-progressBar
+                      [value]="skill.score"
+                      [showValue]="false"
+                      height="var(--space-4)"
+                    ></p-progressBar>
+                  </div>
+                  <span class="skill-score">{{ skill.score }}%</span>
+                  <app-status-tag
+                    [value]="skill.grade"
+                    [severity]="getGradeSeverity(skill.grade)"
+                    size="sm"
+                  />
+                </div>
+              }
+            </div>
+            <div class="overall-grade">
+              <strong>Overall Position Grade:</strong> B+ (78/100)
+            </div>
+          </app-card-shell>
+
+          <!-- Coach Notes -->
+          <app-card-shell class="notes-card" title="Coach Development Notes">
+            <app-button
+              header-actions
+              size="sm"
+              iconLeft="pi-plus"
+              (clicked)="openNoteDialog()"
+              >Add Note</app-button
+            >
+            <div class="notes-list">
+              @for (note of coachNotes(); track note.id) {
+                <div class="note-item">
+                  <div class="note-header">
+                    <span class="note-date">{{ note.date }}</span>
+                    <span class="note-author">{{ note.coachName }}</span>
+                  </div>
+                  <p class="note-content">{{ note.content }}</p>
+                </div>
+              }
+            </div>
+          </app-card-shell>
+        } @else {
+          <app-empty-state
+            [useCard]="true"
+            icon="pi-users"
+            heading="Select a Player"
+            description="Choose a player to view their development progress"
+          />
+        }
+      </div>
+
+      <!-- Add Goal Dialog -->
+      <app-dialog
+        [(visible)]="showGoalDialog"
+        [modal]="true"
+        dialogSize="lg"
+        [blockScroll]="true"
+        [draggable]="false"
+        ariaLabel="Add development goal"
+      >
+        <app-dialog-header
+          icon="bullseye"
+          [title]="goalDialogMode === 'edit' ? 'Update Development Goal' : 'Add Development Goal'"
+          [subtitle]="
+            goalDialogMode === 'edit'
+              ? 'Adjust progress, target values, or notes for the selected athlete.'
+              : 'Set a measurable development target for the selected athlete.'
+          "
+          (close)="closeGoalDialog()"
+        />
+        <div class="goal-form">
+          <div class="form-field">
+            <app-select
+              label="Player"
+              [options]="playerOptions()"
+              (valueChange)="onGoalPlayerIdChange($event)"
+              optionLabel="name"
+              optionValue="id"
+              placeholder="Select Player"
+            />
+          </div>
+
+          <div class="form-field">
+            <label>Goal Category</label>
+            <div class="radio-group">
+              @for (cat of goalCategories; track cat.value) {
+                <div class="radio-option">
+                  <input
+                    type="radio"
+                    name="category"
+                    [value]="cat.value"
+                    [id]="'cat-' + cat.value"
+                    [checked]="goalForm.category === cat.value"
+                    (change)="onGoalCategoryOptionChange(cat.value)"
+                  />
+                  <label [for]="'cat-' + cat.value">{{ cat.label }}</label>
+                </div>
+              }
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-field">
+              <app-select
+                label="Metric"
+                [options]="physicalMetrics"
+                (valueChange)="onGoalMetricChange($event)"
+                optionLabel="label"
+                optionValue="value"
+                placeholder="Select Metric"
+              />
+            </div>
+            <div class="form-field">
+              <app-form-input
+                label="Current Value"
+                [value]="goalForm.currentValue"
+                (valueChange)="onGoalCurrentValueChange($event)"
+                placeholder="e.g., 4.52s"
+              />
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-field">
+              <app-form-input
+                label="Target Value"
+                [value]="goalForm.targetValue"
+                (valueChange)="onGoalTargetValueChange($event)"
+                placeholder="e.g., 4.45s"
+              />
+            </div>
+            <div class="form-field">
+              <app-date-picker
+                label="Target Date"
+                (select)="onGoalDueDateChange($event)"
+              />
+            </div>
+          </div>
+
+          <div class="form-field">
+            <app-textarea
+              label="Notes (optional)"
+              [value]="goalForm.notes"
+              (valueChange)="onGoalNotesChange($event)"
+              [rows]="3"
+              placeholder="Additional notes..."
+            />
+          </div>
+        </div>
+
+        <app-dialog-footer
+          dialogFooter
+          cancelLabel="Cancel"
+          [primaryLabel]="goalDialogMode === 'edit' ? 'Save Goal' : 'Create Goal'"
+          [primaryIcon]="goalDialogMode === 'edit' ? 'save' : 'check'"
+          (cancel)="closeGoalDialog()"
+          (primary)="createGoal()"
+        />
+      </app-dialog>
+
+      <!-- Goal Details Dialog -->
+      <app-dialog
+        [(visible)]="showGoalDetailsDialog"
+        [modal]="true"
+        styleClass="development-goal-details-dialog"
+        [blockScroll]="true"
+        [draggable]="false"
+        ariaLabel="Development goal details"
+      >
+        <app-dialog-header
+          icon="bullseye"
+          title="Goal Details"
+          subtitle="Review progress, timing, and coaching notes for this development target."
+          (close)="closeGoalDetailsDialog()"
+        />
+        @if (selectedGoal(); as goal) {
+          <div class="goal-details">
+            <div class="goal-detail-card">
+              <span class="goal-detail-label">Player</span>
+              <span class="goal-detail-value">{{ getPlayerName(goal.playerId) }}</span>
+            </div>
+            <div class="goal-detail-card">
+              <span class="goal-detail-label">Category</span>
+              <span class="goal-detail-value">{{ getGoalCategoryLabel(goal.category) }}</span>
+            </div>
+            <div class="goal-detail-card">
+              <span class="goal-detail-label">Metric</span>
+              <span class="goal-detail-value">{{ goal.metric }}</span>
+            </div>
+            <div class="goal-detail-card">
+              <span class="goal-detail-label">Status</span>
+              <span class="goal-detail-value">{{ getStatusLabel(goal.status) }}</span>
+            </div>
+            <div class="goal-detail-card">
+              <span class="goal-detail-label">Start value</span>
+              <span class="goal-detail-value">{{ goal.startValue }}</span>
+            </div>
+            <div class="goal-detail-card">
+              <span class="goal-detail-label">Current value</span>
+              <span class="goal-detail-value">{{ goal.currentValue }}</span>
+            </div>
+            <div class="goal-detail-card">
+              <span class="goal-detail-label">Target value</span>
+              <span class="goal-detail-value">{{ goal.targetValue }}</span>
+            </div>
+            <div class="goal-detail-card">
+              <span class="goal-detail-label">Due date</span>
+              <span class="goal-detail-value">{{ goal.dueDate }}</span>
+            </div>
+            <div class="goal-detail-card goal-detail-card--wide">
+              <span class="goal-detail-label">Progress</span>
+              <div class="goal-detail-progress">
+                <p-progressBar
+                  [value]="goal.progress"
+                  [showValue]="false"
+                  class="goal-progress-bar"
+                ></p-progressBar>
+                <span class="goal-detail-value">{{ goal.progress }}%</span>
+              </div>
+            </div>
+            <div class="goal-detail-card goal-detail-card--wide">
+              <span class="goal-detail-label">Coach notes</span>
+              <span class="goal-detail-value">{{
+                goal.notes?.trim() || "No notes added yet."
+              }}</span>
+            </div>
+          </div>
+        }
+
+        <app-dialog-footer
+          dialogFooter
+          cancelLabel="Close"
+          primaryLabel="Edit Goal"
+          primaryIcon="pencil"
+          (cancel)="closeGoalDetailsDialog()"
+          (primary)="editSelectedGoal()"
+        />
+      </app-dialog>
+
+      <!-- Add Note Dialog -->
+      <app-dialog
+        [(visible)]="showNoteDialog"
+        [modal]="true"
+        dialogSize="lg"
+        styleClass="development-note-dialog"
+        [blockScroll]="true"
+        [draggable]="false"
+        ariaLabel="Add development note"
+      >
+        <app-dialog-header
+          icon="file-edit"
+          title="Add Development Note"
+          subtitle="Capture progress context, coaching observations, or follow-up actions."
+          (close)="closeNoteDialog()"
+        />
+        <div class="note-form">
+          <div class="form-field">
+            <app-textarea
+              label="Note"
+              [value]="noteContent"
+              (valueChange)="onNoteContentChange($event)"
+              [rows]="5"
+              placeholder="Enter your development notes..."
+            />
+          </div>
+        </div>
+
+        <app-dialog-footer
+          dialogFooter
+          cancelLabel="Cancel"
+          primaryLabel="Save Note"
+          primaryIcon="check"
+          (cancel)="closeNoteDialog()"
+          (primary)="saveNote()"
+        />
+      </app-dialog>
+
+      <app-dialog
+        [(visible)]="showAssessmentDialog"
+        [modal]="true"
+        styleClass="development-assessment-dialog"
+        [blockScroll]="true"
+        [draggable]="false"
+        ariaLabel="Add skill assessment"
+      >
+        <app-dialog-header
+          icon="chart-bar"
+          title="Record Skill Assessment"
+          subtitle="Add or update a player skill grade from the current review session."
+          (close)="closeAssessmentDialog()"
+        />
+        <div class="note-form">
+          <div class="form-field">
+            <app-form-input
+              label="Skill"
+              [value]="assessmentSkill"
+              (valueChange)="onAssessmentSkillChange($event)"
+              placeholder="e.g. Route Running"
+            />
+          </div>
+          <div class="form-field">
+            <app-form-input
+              label="Score"
+              [value]="assessmentScore"
+              (valueChange)="onAssessmentScoreChange($event)"
+              placeholder="0-100"
+            />
+          </div>
+        </div>
+
+        <app-dialog-footer
+          dialogFooter
+          cancelLabel="Cancel"
+          primaryLabel="Save Assessment"
+          primaryIcon="check"
+          (cancel)="closeAssessmentDialog()"
+          (primary)="saveAssessment()"
+        />
+      </app-dialog>
+    </app-main-layout>

@@ -19,6 +19,7 @@ import {
   TrainingGoal,
   WeeklyTrainingPlan,
 } from "../../core/services/training-plan.service";
+import type { GameWeekType } from "../../core/services/flag-football-performance-system.data";
 import { UnifiedTrainingService } from "../../core/services/unified-training.service";
 import { LoggerService } from "../../core/services/logger.service";
 import { SupabaseService } from "../../core/services/supabase.service";
@@ -46,271 +47,7 @@ import {
     PageHeaderComponent,
     ButtonComponent,
   ],
-  template: `
-    <app-main-layout>
-      <div class="goal-planner-page ui-page-shell ui-page-stack">
-        <!-- Page Header -->
-        <app-page-header
-          title="Goal-Based Training Planner"
-          subtitle="Select your goal and get an auto-generated weekly training plan"
-          icon="pi-calendar-plus"
-        >
-        </app-page-header>
-
-        <div class="goal-planner-content ui-page-stack">
-          <!-- Goal Selection -->
-          <div class="goal-selection">
-            <app-select
-              label="Select Training Goal"
-              [ngModel]="selectedGoal()"
-              [options]="goalOptions"
-              optionLabel="label"
-              optionValue="value"
-              placeholder="Choose your primary goal"
-              (onChange)="onGoalSelect($event)"
-            ></app-select>
-            <p class="goal-selection__hint">
-              The plan will auto-adjust based on your ACWR and readiness scores
-            </p>
-          </div>
-
-          <!-- Current Status -->
-          @if (selectedGoal()) {
-            <div class="status-section">
-              <div class="status-grid">
-                <div class="stat-item stat-block stat-block--compact">
-                  <div class="stat-block__label">
-                    Current ACWR
-                  </div>
-                  <div
-                    class="stat-block__value"
-                    [class]="getACWRColorClass()"
-                  >
-                    {{ currentAcwrValue() | number: "1.2-2" }}
-                  </div>
-                </div>
-                <div class="stat-item stat-block stat-block--compact">
-                  <div class="stat-block__label">
-                    Readiness
-                  </div>
-                  <div class="stat-block__value">
-                    <app-status-tag
-                      [severity]="getReadinessSeverity()"
-                      [value]="readinessPresentation().label"
-                      size="sm"
-                    />
-                  </div>
-                </div>
-                <div class="stat-item stat-block stat-block--compact">
-                  <div class="stat-block__label">
-                    Progression Rule
-                  </div>
-                  <div class="stat-block__value stat-block__value--sm">
-                    {{ getProgressionRule() }}
-                  </div>
-                </div>
-              </div>
-              <app-traffic-light-risk
-                [riskZone]="currentRiskZone()"
-                [acwrValue]="currentAcwrValue()"
-              >
-              </app-traffic-light-risk>
-            </div>
-
-            <!-- Weekly Plan -->
-            @if (weeklyPlan()) {
-              <div class="weekly-plan-section">
-                <div class="plan-header">
-                  <h3 class="plan-header__title">
-                    Weekly Training Plan - {{ getGoalLabel() }}
-                  </h3>
-                  <app-status-tag
-                    [value]="weeklyPlan()?.phase || '' | titlecase"
-                    severity="info"
-                    size="sm"
-                  />
-                </div>
-
-                <div class="sessions-grid">
-                  @for (session of weeklyPlan()?.sessions; track session.day) {
-                    <div
-                      class="session-card"
-                      [class]="getSessionCardClass(session)"
-                    >
-                      <div class="session-header mb-3">
-                        <div class="day-name font-bold text-lg">
-                          {{ getDayName(session.day) }}
-                        </div>
-                        <app-status-tag
-                          [value]="session.sessionType | titlecase"
-                          [severity]="
-                            getSessionTypeSeverity(session.sessionType)
-                          "
-                          size="sm"
-                        />
-                      </div>
-
-                      <div class="session-details">
-                        <div class="focus-area mb-2">
-                          <div class="text-xs text-text-secondary mb-1">
-                            Focus
-                          </div>
-                          <div class="text-sm font-semibold">
-                            {{ session.focus.join(", ") }}
-                          </div>
-                        </div>
-
-                        <div class="exercises mb-2">
-                          <div class="text-xs text-text-secondary mb-1">
-                            Exercises
-                          </div>
-                          <ul class="text-xs list-disc list-inside">
-                            @for (
-                              exercise of session.exercises.slice(0, 3);
-                              track exercise
-                            ) {
-                              <li>{{ exercise }}</li>
-                            }
-                            @if (session.exercises.length > 3) {
-                              <li class="text-text-secondary">
-                                +{{ session.exercises.length - 3 }} more
-                              </li>
-                            }
-                          </ul>
-                        </div>
-
-                        <div class="session-metrics">
-                          <div>
-                            <div class="text-xs text-text-secondary">
-                              Duration
-                            </div>
-                            <div class="font-semibold">
-                              {{ session.duration }} min
-                            </div>
-                          </div>
-                          <div>
-                            <div class="text-xs text-text-secondary">
-                              Intensity
-                            </div>
-                            <div
-                              class="font-semibold"
-                              [class]="
-                                'text-' + getIntensityColor(session.intensity)
-                              "
-                            >
-                              {{ session.intensity | titlecase }}
-                            </div>
-                          </div>
-                          <div>
-                            <div class="text-xs text-text-secondary">
-                              Volume
-                            </div>
-                            <div class="font-semibold">
-                              {{ session.volume }}
-                            </div>
-                          </div>
-                          <div>
-                            <div class="text-xs text-text-secondary">Rest</div>
-                            <div class="font-semibold text-xs">
-                              {{ session.restPeriods }}
-                            </div>
-                          </div>
-                        </div>
-
-                        @if (session.notes) {
-                          <div class="notes">
-                            <div class="text-xs text-text-secondary italic">
-                              {{ session.notes }}
-                            </div>
-                          </div>
-                        }
-                      </div>
-                    </div>
-                  }
-                </div>
-
-                <!-- Plan Summary -->
-                <div class="plan-summary">
-                  <h4 class="plan-summary__title">
-                    Plan Summary
-                  </h4>
-                  <div class="plan-summary-grid">
-                    <div>
-                      <div class="text-xs text-text-secondary">
-                        Total Volume
-                      </div>
-                      <div class="text-lg font-bold">
-                        {{ weeklyPlan()?.totalVolume }}
-                      </div>
-                    </div>
-                    <div>
-                      <div class="text-xs text-text-secondary">
-                        Training Days
-                      </div>
-                      <div class="text-lg font-bold">
-                        {{ getTrainingDays() }}
-                      </div>
-                    </div>
-                    <div>
-                      <div class="text-xs text-text-secondary">ACWR Target</div>
-                      <div class="text-lg font-bold">
-                        {{
-                          weeklyPlan()?.progressionRules?.acwrThreshold
-                            | number: "1.2-2"
-                        }}
-                      </div>
-                    </div>
-                    <div>
-                      <div class="text-xs text-text-secondary">
-                        Volume Adjustment
-                      </div>
-                      <div
-                        class="text-lg font-bold"
-                        [class]="
-                          (weeklyPlan()?.progressionRules?.volumeAdjustment ??
-                            0) > 0
-                            ? 'text-green-600'
-                            : 'text-red-600'
-                        "
-                      >
-                        {{
-                          (weeklyPlan()?.progressionRules?.volumeAdjustment ??
-                            0) > 0
-                            ? "+"
-                            : ""
-                        }}{{
-                          weeklyPlan()?.progressionRules?.volumeAdjustment
-                        }}%
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            }
-          }
-
-          <!-- Generate Button -->
-          @if (selectedGoal()) {
-            <div class="actions">
-              <app-button
-                variant="outlined"
-                iconLeft="pi-save"
-                [loading]="saving()"
-                (clicked)="savePlan()"
-                >Save to Schedule</app-button
-              >
-              <app-button
-                iconLeft="pi-calculator"
-                [loading]="loading()"
-                (clicked)="generatePlan()"
-                >Generate Plan</app-button
-              >
-            </div>
-          }
-        </div>
-      </div>
-    </app-main-layout>
-  `,
+  templateUrl: "./goal-based-planner.component.html",
   styleUrl: "./goal-based-planner.component.scss",
 })
 export class GoalBasedPlannerComponent {
@@ -325,6 +62,8 @@ export class GoalBasedPlannerComponent {
   private lastOverviewAthleteId: string | null = null;
 
   selectedGoal = signal<TrainingGoal | null>(null);
+  teamPracticeCount = signal(2);
+  gameWeekContext = signal<GameWeekType | "auto">("auto");
   weeklyPlan = signal<WeeklyTrainingPlan | null>(null);
   loading = signal(false);
   saving = signal(false);
@@ -378,6 +117,23 @@ export class GoalBasedPlannerComponent {
     { label: "Defense", value: "defense" },
     { label: "Power", value: "power" },
     { label: "Endurance", value: "endurance" },
+  ];
+
+  practiceOptions = [
+    { label: "0 team practices", value: 0 },
+    { label: "1 team practice", value: 1 },
+    { label: "2 team practices", value: 2 },
+    { label: "3 team practices", value: 3 },
+    { label: "4 team practices", value: 4 },
+  ];
+
+  gameWeekOptions: Array<{ label: string; value: GameWeekType | "auto" }> = [
+    { label: "Auto from schedule", value: "auto" },
+    { label: "Training week", value: "training-week" },
+    { label: "Single game", value: "single-game" },
+    { label: "Doubleheader", value: "doubleheader" },
+    { label: "Tournament", value: "tournament" },
+    { label: "International tournament", value: "international-tournament" },
   ];
 
   constructor() {
@@ -446,6 +202,22 @@ export class GoalBasedPlannerComponent {
     );
   }
 
+  onPracticeCountSelect(event: SelectChangeEvent): void {
+    this.teamPracticeCount.set(Number(event.value ?? 0));
+    if (this.selectedGoal()) {
+      this.generatePlan();
+    }
+  }
+
+  onGameWeekContextSelect(event: SelectChangeEvent): void {
+    this.gameWeekContext.set(
+      (event.value as GameWeekType | "auto" | null | undefined) ?? "auto",
+    );
+    if (this.selectedGoal()) {
+      this.generatePlan();
+    }
+  }
+
   async generatePlan() {
     const goal = this.selectedGoal();
     if (!goal || !this.currentUserId()) return;
@@ -458,6 +230,11 @@ export class GoalBasedPlannerComponent {
         currentACWR: this.currentAcwrValue(),
         readinessLevel: this.trainingPlanReadinessLevel(),
         gameDays: this.gameDays(),
+        teamPracticesPerWeek: this.teamPracticeCount(),
+        gameWeekType:
+          this.gameWeekContext() === "auto"
+            ? undefined
+            : this.gameWeekContext() as GameWeekType,
       });
 
       this.weeklyPlan.set(plan);
@@ -501,6 +278,12 @@ export class GoalBasedPlannerComponent {
     if (acwr > 1.3) return "Reduce volume 15%";
     if (acwr < 0.8) return "Increase volume 10%";
     return "Maintain current load";
+  }
+
+  getPerformanceContextLabel(): string {
+    const context = this.weeklyPlan()?.performanceSystem;
+    if (!context) return "Not generated";
+    return `${context.densityLabel} / ${context.teamPracticeCount} team practices`;
   }
 
   getSessionCardClass(session: {

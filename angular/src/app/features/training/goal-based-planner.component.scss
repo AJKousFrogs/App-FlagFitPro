@@ -42,6 +42,13 @@
   color: var(--color-text-secondary);
 }
 
+.planning-controls {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--layout-page-section-gap-tight);
+  margin-top: var(--space-4);
+}
+
 .status-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -150,6 +157,66 @@
   gap: var(--layout-page-section-gap-tight);
 }
 
+.performance-system-summary {
+  margin-top: var(--layout-page-section-gap-tight);
+  padding: var(--component-card-padding-compact);
+  background: var(--surface-secondary);
+  border: var(--border-1) solid var(--color-border-secondary);
+  border-radius: var(--radius-lg);
+}
+
+.performance-system-summary__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin-bottom: var(--layout-page-section-gap-tight);
+}
+
+.performance-system-summary__title {
+  margin: var(--space-0);
+  font-size: var(--ds-font-size-md);
+  font-weight: var(--ds-font-weight-semibold);
+  color: var(--color-text-primary);
+}
+
+.performance-system-summary__subtitle {
+  margin: var(--space-1) 0 0;
+  font-size: var(--ds-font-size-sm);
+  color: var(--color-text-secondary);
+}
+
+.performance-system-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--layout-page-section-gap-tight);
+}
+
+.performance-system-card {
+  padding: var(--space-3);
+  background: var(--surface-card);
+  border: var(--border-1) solid var(--color-border-secondary);
+  border-radius: var(--radius-md);
+
+  p,
+  ul {
+    margin: var(--space-2) 0 0;
+    font-size: var(--ds-font-size-xs);
+    color: var(--color-text-secondary);
+  }
+
+  ul {
+    padding-left: var(--space-4);
+  }
+}
+
+.performance-system-card__label {
+  font-size: var(--ds-font-size-xs);
+  font-weight: var(--ds-font-weight-semibold);
+  text-transform: var(--ds-text-transform-uppercase);
+  color: var(--color-text-primary);
+}
+
 .actions {
   display: flex;
   justify-content: flex-end;
@@ -164,6 +231,10 @@
   .plan-summary-grid {
     @include grid-cols-equal(2);
   }
+
+  .performance-system-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 
 @include respond-to(md) {
@@ -174,7 +245,9 @@
 
   .status-grid,
   .sessions-grid,
-  .plan-summary-grid {
+  .plan-summary-grid,
+  .planning-controls,
+  .performance-system-grid {
     grid-template-columns: 1fr;
   }
 

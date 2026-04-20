@@ -50,68 +50,7 @@ import {
     TrainingBuilderGeneratedSessionComponent,
     TrainingBuilderParametersStepComponent,
   ],
-  template: `
-    <app-card-shell
-      class="training-builder"
-      title="Smart Training Session Builder"
-      [flush]="true"
-    >
-      <p-stepper
-        [value]="activeStep"
-        (valueChange)="activeStep = $event ?? 0"
-        [linear]="false"
-      >
-        <p-step-list>
-          @for (step of steps; track $index) {
-            <p-step [value]="$index">{{ step.label }}</p-step>
-          }
-        </p-step-list>
-      </p-stepper>
-
-      <div class="step-content-wrapper">
-        <!-- Step 1: Session Goals -->
-        @if (activeStep === 0) {
-          <app-training-builder-goals-step
-            [goals]="availableGoals"
-            [selectedGoalIds]="selectedGoals()"
-            (toggleGoal)="toggleGoal($event)"
-            (next)="activeStep = 1"
-          />
-        }
-
-        <!-- Step 2: Session Parameters -->
-        @if (activeStep === 1) {
-          <app-training-builder-parameters-step
-            [sessionForm]="sessionForm"
-            [intensityLevels]="intensityLevels"
-            [weatherData]="weatherData()"
-            [weatherSummary]="weatherSummary()"
-            [weatherAlertVariant]="weatherAlertVariant()"
-            [weatherSeverity]="getWeatherSeverity()"
-            (previous)="activeStep = 0"
-            (generate)="generateSession(); activeStep = 2"
-          />
-        }
-
-        <!-- Step 3: Generated Session -->
-        @if (activeStep === 2) {
-          <app-training-builder-generated-session
-            [totalDuration]="totalDuration()"
-            [exerciseCount]="generatedExercises().length"
-            [intensity]="sessionForm.get('intensity')?.value"
-            [intensitySeverity]="getIntensitySeverity()"
-            [timelineEvents]="timelineEvents()"
-            [isSaving]="isSaving()"
-            (previous)="activeStep = 1"
-            (preview)="previewExercise($event)"
-            (modify)="modifyExercise($event)"
-            (start)="startSession()"
-            (save)="saveSession()"
-          />
-        }
-      </div>
-    </app-card-shell>
-  `,
+  templateUrl: "./training-builder.component.html",
   styleUrl: "./training-builder.component.scss",
 })
 export class TrainingBuilderComponent {

@@ -1,0 +1,700 @@
+    <app-main-layout>
+      <div class="payment-management-page ui-page-shell ui-page-shell--content-lg ui-page-stack">
+        <app-page-header
+          title="Payment Management"
+          subtitle="Track team dues and payments"
+          icon="pi-dollar"
+        >
+          <app-button iconLeft="pi-plus" (clicked)="openCreateFeeDialog()"
+            >Create Fee</app-button
+          >
+        </app-page-header>
+
+        <!-- Tab Navigation -->
+        <div class="tab-navigation">
+          <button
+            class="tab-btn"
+            [class.active]="activeTab() === 'overview'"
+            (click)="activeTab.set('overview')"
+          >
+            Overview
+          </button>
+          <button
+            class="tab-btn"
+            [class.active]="activeTab() === 'fees'"
+            (click)="activeTab.set('fees')"
+          >
+            Active Fees
+          </button>
+          <button
+            class="tab-btn"
+            [class.active]="activeTab() === 'balances'"
+            (click)="activeTab.set('balances')"
+          >
+            Player Balances
+          </button>
+          <button
+            class="tab-btn"
+            [class.active]="activeTab() === 'history'"
+            (click)="activeTab.set('history')"
+          >
+            Payment History
+          </button>
+        </div>
+
+        @if (data.isLoading()) {
+          <app-loading message="Loading payment data..." />
+        } @else if (data.loadError(); as errorMessage) {
+          <app-page-error-state
+            title="Unable to load payment data"
+            [message]="errorMessage"
+            (retry)="retryLoadData()"
+          />
+        } @else {
+          @switch (activeTab()) {
+            @case ("overview") {
+            <!-- Financial Overview -->
+            <div class="financial-overview">
+              <div class="stat-card balance">
+                <span class="stat-icon" aria-hidden="true"
+                  ><i class="pi pi-wallet"></i
+                ></span>
+                <div class="stat-content">
+                  <span class="stat-block__value"
+                    >\${{ data.totalOutstanding() }}</span
+                  >
+                  <span class="stat-block__label">Outstanding Balance</span>
+                  <span class="stat-sub">{{ data.playersOwing() }} players owe</span>
+                </div>
+              </div>
+              <div class="stat-card collected">
+                <span class="stat-icon" aria-hidden="true"
+                  ><i class="pi pi-check-circle"></i
+                ></span>
+                <div class="stat-content">
+                  <span class="stat-block__value"
+                    >\${{ data.totalCollected() }}</span
+                  >
+                  <span class="stat-block__label">Collected This Month</span>
+                  <span class="stat-sub">Season total</span>
+                </div>
+              </div>
+              <div class="stat-card due">
+                <span class="stat-icon" aria-hidden="true"
+                  ><i class="pi pi-calendar"></i
+                ></span>
+                <div class="stat-content">
+                  <span class="stat-block__value">\${{ data.dueThisMonth() }}</span>
+                  <span class="stat-block__label">Due This Month</span>
+                  <span class="stat-sub">{{ data.playersDueCount() }} players</span>
+                </div>
+              </div>
+              <div class="stat-card overdue">
+                <span class="stat-icon" aria-hidden="true"
+                  ><i class="pi pi-exclamation-triangle"></i
+                ></span>
+                <div class="stat-content">
+                  <span class="stat-block__value">\${{ data.totalOverdue() }}</span>
+                  <span class="stat-block__label">Overdue</span>
+                  <span class="stat-sub">{{ data.playersOverdue() }} players</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Active Fees Preview -->
+            <app-card-shell class="payment-shell-card" title="Active Fees">
+              <app-button
+                header-actions
+                variant="text"
+                (clicked)="activeTab.set('fees')"
+                >View All</app-button
+              >
+              <div class="fees-preview">
+                @for (fee of data.fees().slice(0, 2); track fee.id) {
+                  <div class="fee-preview-card" [class.overdue]="fee.isOverdue">
+                    <div class="fee-header">
+                      <span class="fee-icon" aria-hidden="true"
+                        ><i [class]="'pi ' + getFeeIcon(fee.type)"></i
+                      ></span>
+                      <h4>{{ fee.name }}</h4>
+                      @if (fee.isOverdue) {
+                        <app-status-tag
+                          value="OVERDUE"
+                          severity="danger"
+                          size="sm"
+                        />
+                      }
+                    </div>
+                    <div class="fee-progress">
+                      <p-progressBar
+                        [value]="getCollectionPercent(fee)"
+                        [showValue]="false"
+                        class="fees-preview-progress"
+                      ></p-progressBar>
+                      <span class="progress-text"
+                        >\${{ fee.collected }} / \${{ fee.total }} ({{
+                          getCollectionPercent(fee)
+                        }}%)</span
+                      >
+                    </div>
+                  </div>
+                }
+              </div>
+            </app-card-shell>
+          }
+
+            @case ("fees") {
+            <!-- Active Fees List -->
+            <div class="fees-list">
+              @for (fee of data.fees(); track fee.id) {
+                <div class="fee-card" [class.overdue]="fee.isOverdue">
+                  <div class="fee-header">
+                    <div class="fee-title">
+                      <span class="fee-icon" aria-hidden="true"
+                        ><i [class]="'pi ' + getFeeIcon(fee.type)"></i
+                      ></span>
+                      <h3>{{ fee.name }}</h3>
+                    </div>
+                    <div class="fee-actions">
+                      <app-button variant="text" size="sm" iconLeft="pi-pencil"
+                        >Edit fee</app-button
+                      >
+                      <app-button
+                        variant="text"
+                        size="sm"
+                        iconLeft="pi-ellipsis-v"
+                        >More options</app-button
+                      >
+                    </div>
+                  </div>
+
+                  <div class="fee-details">
+                    <p>
+                      <strong>Base Fee:</strong> \${{ fee.amount }}/player
+                      @if (fee.guestFee) {
+                        <span class="guest-fee"
+                          >Guest Fee: \${{ fee.guestFee }}/guest</span
+                        >
+                      }
+                    </p>
+                    <p>
+                      <strong>Due Date:</strong> {{ fee.dueDate }}
+                      @if (fee.isOverdue) {
+                        <span class="overdue-badge"
+                          ><i class="pi pi-exclamation-triangle" aria-hidden="true"></i>
+                          OVERDUE</span
+                        >
+                      }
+                    </p>
+                  </div>
+
+                  <div class="fee-progress-section">
+                    <h4>Collection Progress:</h4>
+                    <p-progressBar
+                      [value]="getCollectionPercent(fee)"
+                      [showValue]="false"
+                      class="fees-list-progress"
+                    ></p-progressBar>
+                    <span class="progress-detail"
+                      >\${{ fee.collected }} / \${{ fee.total }} ({{
+                        getCollectionPercent(fee)
+                      }}%)</span
+                    >
+                    <p class="status-counts">
+                      {{ fee.paidCount }} paid full •
+                      {{ fee.partialCount }} partial •
+                      {{ fee.unpaidCount }} unpaid
+                    </p>
+                  </div>
+
+                  @if (fee.outstanding.length > 0) {
+                    <div class="outstanding-section">
+                      <h4>Outstanding:</h4>
+                      <ul class="outstanding-list">
+                        @for (item of fee.outstanding; track item.playerId) {
+                          <li>
+                            {{ item.playerName }}: \${{ item.amount }}
+                            {{ item.note || "" }}
+                          </li>
+                        }
+                      </ul>
+                    </div>
+                  }
+
+                  <div class="fee-card-actions">
+                    <app-button
+                      variant="secondary"
+                      size="sm"
+                      (clicked)="viewFeeDetails(fee)"
+                      >View Details</app-button
+                    >
+                    <app-button
+                      variant="secondary"
+                      size="sm"
+                      (clicked)="sendFeeReminders(fee)"
+                      >Send Reminders</app-button
+                    >
+                    <app-button
+                      size="sm"
+                      (clicked)="openRecordPaymentDialog(fee)"
+                      >Mark Paid</app-button
+                    >
+                  </div>
+                </div>
+              }
+            </div>
+          }
+
+            @case ("balances") {
+            <!-- Player Balances -->
+            <app-card-shell class="payment-shell-card" title="Player Balances">
+              <div header-actions class="balance-filters">
+                <app-search-input
+                  [formControl]="balanceSearchControl"
+                  placeholder="Search players..."
+                />
+                <app-select
+                  [options]="balanceFilters"
+                  [formControl]="balanceFilterControl"
+                  optionLabel="label"
+                  optionValue="value"
+                />
+              </div>
+
+              <p-table
+                [value]="filteredBalances()"
+                class="table-compact"
+                [scrollable]="true"
+              >
+                <ng-template #header>
+                  <tr>
+                    <th>Player</th>
+                    <th>Balance</th>
+                    <th>Status</th>
+                    <th>Last Payment</th>
+                    <th>Actions</th>
+                  </tr>
+                </ng-template>
+                <ng-template #body let-balance>
+                  <tr>
+                    <td>{{ balance.playerName }}</td>
+                    <td [class.owes]="balance.balance > 0">
+                      \${{ balance.balance }}
+                    </td>
+                    <td>
+                      <app-status-tag
+                        [value]="getStatusLabel(balance.status)"
+                        [severity]="getStatusSeverity(balance.status)"
+                        size="sm"
+                      />
+                    </td>
+                    <td>
+                      @if (balance.lastPaymentDate) {
+                        {{ balance.lastPaymentDate }}, \${{
+                          balance.lastPaymentAmount
+                        }}
+                      } @else {
+                        --
+                      }
+                    </td>
+                    <td>
+                      @if (balance.balance > 0) {
+                        <app-button
+                          variant="text"
+                          size="sm"
+                          iconLeft="pi-comment"
+                          (clicked)="sendPlayerReminder(balance)"
+                          >Send reminder</app-button
+                        >
+                        <app-button
+                          variant="secondary"
+                          size="sm"
+                          (clicked)="markPlayerPaid(balance)"
+                          >Mark</app-button
+                        >
+                      } @else {
+                        <app-button
+                          variant="text"
+                          size="sm"
+                          (clicked)="viewPlayerHistory(balance)"
+                          >View</app-button
+                        >
+                      }
+                    </td>
+                  </tr>
+                </ng-template>
+              </p-table>
+
+              <div class="balance-actions">
+                <app-button
+                  variant="secondary"
+                  iconLeft="pi-download"
+                  (clicked)="exportCSV()"
+                  >Export CSV</app-button
+                >
+                <app-button iconLeft="pi-bell" (clicked)="sendAllReminders()"
+                  >Send All Reminders</app-button
+                >
+              </div>
+            </app-card-shell>
+          }
+
+            @case ("history") {
+            <!-- Payment History -->
+            <app-card-shell class="payment-shell-card" title="Payment History">
+              <p-table
+                [value]="data.payments()"
+                class="table-compact"
+                [scrollable]="true"
+              >
+                <ng-template #header>
+                  <tr>
+                    <th>Date</th>
+                    <th>Player</th>
+                    <th>Fee</th>
+                    <th>Amount</th>
+                    <th>Method</th>
+                    <th>Reference</th>
+                  </tr>
+                </ng-template>
+                <ng-template #body let-payment>
+                  <tr>
+                    <td>{{ payment.date }}</td>
+                    <td>{{ payment.playerName }}</td>
+                    <td>{{ payment.feeName }}</td>
+                    <td>\${{ payment.amount }}</td>
+                    <td>{{ payment.method }}</td>
+                    <td>{{ payment.reference || "--" }}</td>
+                  </tr>
+                </ng-template>
+              </p-table>
+            </app-card-shell>
+            }
+          }
+        }
+      </div>
+
+      <!-- Create Fee Dialog -->
+      <app-dialog
+        [(visible)]="showFeeDialog"
+        [modal]="true"
+        dialogSize="xl"
+        [blockScroll]="true"
+        [draggable]="false"
+        ariaLabel="Create fee"
+      >
+        <app-dialog-header
+          icon="wallet"
+          title="Create Fee"
+          subtitle="Create dues, tournament fees, or equipment charges for your roster."
+          (close)="showFeeDialog = false"
+        />
+        <form class="fee-form" [formGroup]="feeFormGroup">
+          <div class="form-field">
+            <app-form-input
+              label="Fee Name"
+              formControlName="name"
+              placeholder="e.g., February Team Dues"
+            />
+          </div>
+
+          <div class="form-field">
+            <label>Fee Type</label>
+            <div class="radio-group">
+              @for (type of feeTypes; track type.value) {
+                <div class="radio-option">
+                  <p-radioButton
+                    name="feeType"
+                    [value]="type.value"
+                    formControlName="type"
+                    [inputId]="'feeType-' + type.value"
+                  ></p-radioButton>
+                  <label [for]="'feeType-' + type.value">{{
+                    type.label
+                  }}</label>
+                </div>
+              }
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-field">
+              <label>Amount per Player</label>
+              <p-inputNumber
+                formControlName="amount"
+                mode="currency"
+                currency="USD"
+                locale="en-US"
+              ></p-inputNumber>
+            </div>
+            <div class="form-field">
+              <label>Guest Fee (optional)</label>
+              <p-inputNumber
+                formControlName="guestFee"
+                mode="currency"
+                currency="USD"
+                locale="en-US"
+              ></p-inputNumber>
+            </div>
+          </div>
+
+          <div class="form-field">
+            <app-date-picker
+              label="Due Date"
+              formControlName="dueDate"
+            />
+          </div>
+
+          <div class="form-field">
+            <app-textarea
+              label="Description / Breakdown"
+              formControlName="description"
+              [rows]="4"
+              placeholder="What this fee covers..."
+            />
+          </div>
+
+          <div class="form-field">
+            <label>Apply To</label>
+            <div class="radio-group">
+              <div class="radio-option">
+                <p-radioButton
+                  name="applyTo"
+                  value="all"
+                  formControlName="applyTo"
+                  inputId="applyAll"
+                ></p-radioButton>
+                <label for="applyAll"
+                  >All active players ({{ data.totalPlayers() }})</label
+                >
+              </div>
+              <div class="radio-option">
+                <p-radioButton
+                  name="applyTo"
+                  value="select"
+                  formControlName="applyTo"
+                  inputId="applySelect"
+                ></p-radioButton>
+                <label for="applySelect">Select specific players...</label>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-field">
+            <label>Reminders</label>
+            <div class="checkbox-group">
+              <div class="checkbox-option">
+                <app-checkbox
+                  formControlName="notifyOnCreate"
+                  label="Send notification when created"
+                />
+              </div>
+              <div class="checkbox-option">
+                <app-checkbox
+                  formControlName="remind3Days"
+                  label="Send reminder 3 days before due"
+                />
+              </div>
+              <div class="checkbox-option">
+                <app-checkbox
+                  formControlName="remindOverdue"
+                  label="Send reminder when overdue"
+                />
+              </div>
+            </div>
+          </div>
+        </form>
+
+        <app-dialog-footer
+          dialogFooter
+          cancelLabel="Cancel"
+          primaryLabel="Create Fee"
+          primaryIcon="check"
+          (cancel)="showFeeDialog = false"
+          (primary)="createFee()"
+        />
+      </app-dialog>
+
+      <!-- Record Payment Dialog -->
+      <app-dialog
+        [(visible)]="showPaymentDialog"
+        [modal]="true"
+        dialogSize="lg"
+        [blockScroll]="true"
+        [draggable]="false"
+        ariaLabel="Record payment"
+      >
+        <app-dialog-header
+          icon="credit-card"
+          title="Record Payment"
+          subtitle="Log incoming payments and keep player balances current."
+          (close)="showPaymentDialog = false"
+        />
+        <form class="payment-form" [formGroup]="paymentFormGroup">
+          <div class="form-field">
+            <app-select
+              label="Player"
+              [options]="data.playerOptions()"
+              formControlName="playerId"
+              optionLabel="name"
+              optionValue="id"
+              placeholder="Select Player"
+            />
+          </div>
+
+          @if (selectedPaymentPlayerId()) {
+            <div class="current-balance">
+              Current Balance:
+              <strong
+                >\${{ getPlayerBalance(selectedPaymentPlayerId()) }} owed</strong
+              >
+            </div>
+          }
+
+          <div class="form-row">
+            <div class="form-field">
+              <label>Amount Received</label>
+              <p-inputNumber
+                formControlName="amount"
+                mode="currency"
+                currency="USD"
+                locale="en-US"
+              ></p-inputNumber>
+            </div>
+            <div class="form-field">
+              <app-select
+                label="Payment Method"
+                [options]="paymentMethods"
+                formControlName="method"
+                optionLabel="label"
+                optionValue="value"
+              />
+            </div>
+          </div>
+
+          <div class="form-field">
+            <app-date-picker
+              label="Date Received"
+              formControlName="date"
+            />
+          </div>
+
+          <div class="form-field">
+            <app-form-input
+              label="Reference / Notes (optional)"
+              formControlName="reference"
+              placeholder="e.g., Venmo txn #12345"
+            />
+          </div>
+
+          <div class="checkbox-option">
+            <app-checkbox
+              formControlName="sendConfirmation"
+              label="Send confirmation to player"
+            />
+          </div>
+        </form>
+
+        <app-dialog-footer
+          dialogFooter
+          cancelLabel="Cancel"
+          primaryLabel="Record Payment"
+          primaryIcon="check"
+          (cancel)="showPaymentDialog = false"
+          (primary)="recordPayment()"
+        />
+      </app-dialog>
+
+      <app-dialog
+        [(visible)]="showFeeDetailsDialog"
+        [modal]="true"
+        styleClass="payment-fee-details-dialog"
+        [blockScroll]="true"
+        [draggable]="false"
+        ariaLabel="Fee details"
+      >
+        <app-dialog-header
+          icon="wallet"
+          [title]="data.selectedFee()?.name || 'Fee Details'"
+          subtitle="Review collection progress, fee timing, and outstanding balances."
+          (close)="showFeeDetailsDialog = false"
+        />
+        @if (data.selectedFee(); as fee) {
+          <div class="fee-details-dialog-content">
+            <div class="fee-details-grid">
+              <div class="fee-detail-card">
+                <span class="fee-detail-label">Type</span>
+                <span class="fee-detail-value">{{ getFeeTypeLabel(fee.type) }}</span>
+              </div>
+              <div class="fee-detail-card">
+                <span class="fee-detail-label">Due date</span>
+                <span class="fee-detail-value">{{ fee.dueDate }}</span>
+              </div>
+              <div class="fee-detail-card">
+                <span class="fee-detail-label">Base fee</span>
+                <span class="fee-detail-value">\${{ fee.amount }}/player</span>
+              </div>
+              <div class="fee-detail-card">
+                <span class="fee-detail-label">Guest fee</span>
+                <span class="fee-detail-value">{{
+                  fee.guestFee ? "$" + fee.guestFee + "/guest" : "Not set"
+                }}</span>
+              </div>
+              <div class="fee-detail-card fee-detail-card--wide">
+                <span class="fee-detail-label">Collection progress</span>
+                <div class="fee-detail-progress">
+                  <p-progressBar
+                    [value]="getCollectionPercent(fee)"
+                    [showValue]="false"
+                    class="fees-list-progress"
+                  ></p-progressBar>
+                  <span class="fee-detail-value"
+                    >\${{ fee.collected }} / \${{ fee.total }} ({{
+                      getCollectionPercent(fee)
+                    }}%)</span
+                  >
+                </div>
+                <span class="fee-detail-subtle"
+                  >{{ fee.paidCount }} paid full, {{ fee.partialCount }} partial,
+                  {{ fee.unpaidCount }} unpaid</span
+                >
+              </div>
+              <div class="fee-detail-card fee-detail-card--wide">
+                <span class="fee-detail-label">Description</span>
+                <span class="fee-detail-value">{{
+                  fee.description?.trim() || "No additional description provided."
+                }}</span>
+              </div>
+            </div>
+
+            <div class="fee-outstanding-summary">
+              <h4>Outstanding balances</h4>
+              @if (fee.outstanding.length > 0) {
+                <div class="fee-outstanding-list">
+                  @for (item of fee.outstanding; track item.playerId) {
+                    <div class="fee-outstanding-row">
+                      <span>{{ item.playerName }}</span>
+                      <span>\${{ item.amount }}</span>
+                      <span class="fee-outstanding-note">{{
+                        item.note || "No note"
+                      }}</span>
+                    </div>
+                  }
+                </div>
+              } @else {
+                <p>All assigned players are currently settled on this fee.</p>
+              }
+            </div>
+          </div>
+        }
+
+        <app-dialog-footer
+          dialogFooter
+          cancelLabel="Close"
+          primaryLabel="Record Payment"
+          primaryIcon="check"
+          (cancel)="showFeeDetailsDialog = false"
+          (primary)="openPaymentDialogFromDetails()"
+        />
+      </app-dialog>
+    </app-main-layout>

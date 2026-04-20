@@ -348,9 +348,9 @@ describe("resolveTodayState", () => {
   });
 
   // ========================================================================
-  // SCENARIO 8: Session Resolution Failure
+  // SCENARIO 8: Missing Template Uses Baseline
   // ========================================================================
-  it("Scenario 8: Session Resolution Failure", () => {
+  it("Scenario 8: Missing Template Uses Baseline", () => {
     const protocol: ProtocolJson = {
       id: "test-8",
       protocol_date: "2026-01-06",
@@ -374,18 +374,18 @@ describe("resolveTodayState", () => {
 
     const result = resolveTodayState(protocol, nowLocal);
 
-    expect(result.trainingAllowed).toBe(false);
-    expect(result.errorState?.reason_code).toBe("SESSION_RESOLUTION_FAILED");
-    expect(result.banners[0].type).toBe("error");
-    expect(result.banners[0].text).toContain("No session found");
-    expect(result.blocksDisplayed).toHaveLength(0);
+    expect(result.trainingAllowed).toBe(true);
+    expect(result.errorState).toBeUndefined();
+    expect(result.banners[0].type).toBe("info");
+    expect(result.banners[0].text).toContain("Baseline Program Active");
+    expect(result.blocksDisplayed).toContain("main_session");
     expect(result.merlinPosture).toBe("explanatory");
   });
 
   // ========================================================================
-  // SCENARIO 9: No Active Program
+  // SCENARIO 9: No Active Program Uses Baseline
   // ========================================================================
-  it("Scenario 9: No Active Program", () => {
+  it("Scenario 9: No Active Program Uses Baseline", () => {
     const protocol: ProtocolJson = {
       id: "test-9",
       protocol_date: "2026-01-06",
@@ -409,11 +409,12 @@ describe("resolveTodayState", () => {
 
     const result = resolveTodayState(protocol, nowLocal);
 
-    expect(result.trainingAllowed).toBe(false);
-    expect(result.errorState?.reason_code).toBe("NO_ACTIVE_PROGRAM");
-    expect(result.banners[0].type).toBe("error");
-    expect(result.banners[0].text).toContain("No training program assigned");
-    expect(result.merlinPosture).toBe("refusal");
+    expect(result.trainingAllowed).toBe(true);
+    expect(result.errorState).toBeUndefined();
+    expect(result.banners[0].type).toBe("info");
+    expect(result.banners[0].text).toContain("Baseline Program Active");
+    expect(result.blocksDisplayed).toContain("main_session");
+    expect(result.merlinPosture).toBe("explanatory");
   });
 
   // ========================================================================
@@ -586,7 +587,7 @@ describe("resolveTodayState", () => {
     expect(result.trainingAllowed).toBe(true);
   });
 
-  it("prefers exceptional metadata status over a resolved session payload", () => {
+  it("uses baseline handling when legacy metadata reports no_program over a resolved payload", () => {
     const protocol: ProtocolJson = {
       id: "test-edge-status",
       protocol_date: "2026-01-06",
@@ -609,9 +610,10 @@ describe("resolveTodayState", () => {
 
     const result = resolveTodayState(protocol, nowLocal);
 
-    expect(result.trainingAllowed).toBe(false);
-    expect(result.errorState?.reason_code).toBe("NO_ACTIVE_PROGRAM");
-    expect(result.banners[0].text).toContain("No training program assigned");
+    expect(result.trainingAllowed).toBe(true);
+    expect(result.errorState).toBeUndefined();
+    expect(result.banners[0].text).toContain("Baseline Program Active");
+    expect(result.blocksDisplayed).toContain("main_session");
   });
 
   it("uses metadata override when the session payload omits the override type", () => {

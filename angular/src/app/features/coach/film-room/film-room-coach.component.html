@@ -1,0 +1,549 @@
+    <app-main-layout>
+<div class="film-room-page ui-page-stack">
+        <app-page-header
+          title="Film Room"
+          subtitle="Manage game and practice film"
+          icon="pi-video"
+        >
+          <app-button iconLeft="pi-upload" (clicked)="openUploadDialog()"
+            >Upload Film</app-button
+          >
+        </app-page-header>
+
+        <!-- Tab Navigation -->
+        <div class="tab-navigation">
+          <button
+            class="tab-btn"
+            [class.active]="activeTab() === 'all'"
+            (click)="activeTab.set('all')"
+          >
+            All Film
+          </button>
+          <button
+            class="tab-btn"
+            [class.active]="activeTab() === 'games'"
+            (click)="activeTab.set('games')"
+          >
+            Games
+          </button>
+          <button
+            class="tab-btn"
+            [class.active]="activeTab() === 'practices'"
+            (click)="activeTab.set('practices')"
+          >
+            Practices
+          </button>
+          <button
+            class="tab-btn"
+            [class.active]="activeTab() === 'scouting'"
+            (click)="activeTab.set('scouting')"
+          >
+            Scouting
+          </button>
+          <button
+            class="tab-btn"
+            [class.active]="activeTab() === 'assigned'"
+            (click)="activeTab.set('assigned')"
+          >
+            Assigned
+          </button>
+        </div>
+
+        <!-- Film Overview Stats -->
+        <div class="film-stats">
+          <div class="stat-card">
+            <span class="stat-icon"><i class="pi pi-video" aria-hidden="true"></i></span>
+            <div class="stat-content">
+              <span class="stat-block__value">{{ totalFilmCount() }}</span>
+              <span class="stat-block__label">Total Film Sessions</span>
+              <span class="stat-sub">This season</span>
+            </div>
+          </div>
+          <div class="stat-card">
+            <span class="stat-icon"><i class="pi pi-clock" aria-hidden="true"></i></span>
+            <div class="stat-content">
+              <span class="stat-block__value">{{ totalDuration() }}</span>
+              <span class="stat-block__label">Total Duration</span>
+              <span class="stat-sub">All film</span>
+            </div>
+          </div>
+          <div class="stat-card">
+            <span class="stat-icon"><i class="pi pi-list" aria-hidden="true"></i></span>
+            <div class="stat-content">
+              <span class="stat-block__value">{{ assignedThisWeek() }}</span>
+              <span class="stat-block__label">Assigned This Week</span>
+              <span class="stat-sub">Active</span>
+            </div>
+          </div>
+          <div class="stat-card">
+            <span class="stat-icon"><i class="pi pi-eye" aria-hidden="true"></i></span>
+            <div class="stat-content">
+              <span class="stat-block__value">{{ avgWatchRate() }}%</span>
+              <span class="stat-block__label">Watch Rate</span>
+              <span class="stat-sub">Team average</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Film List -->
+        <div class="film-list">
+          @if (isLoading()) {
+            <app-loading message="Loading film room..." />
+          } @else if (loadError()) {
+            <app-page-error-state
+              title="Unable to load film room"
+              [message]="loadError()!"
+              (retry)="retryLoadData()"
+            />
+          } @else {
+          @for (session of filteredSessions(); track session.id) {
+            <div class="film-card">
+              <div class="film-header">
+                <div class="film-title">
+                  <span class="film-icon"><i class="pi pi-video" aria-hidden="true"></i></span>
+                  <h3>{{ session.title }}</h3>
+                </div>
+                <div class="film-actions-header">
+                  <app-button variant="text" size="sm" iconLeft="pi-pencil"
+                    >Edit</app-button
+                  >
+                  <app-button variant="text" size="sm" iconLeft="pi-ellipsis-v"
+                    >More options</app-button
+                  >
+                </div>
+              </div>
+
+              <div class="film-body">
+                <div class="film-thumbnail">
+                  <div class="thumbnail-placeholder">
+                    <i class="pi pi-play-circle"></i>
+                  </div>
+                </div>
+
+                <div class="film-info">
+                  <p><strong>Type:</strong> {{ getTypeLabel(session.type) }}</p>
+                  <p><strong>Duration:</strong> {{ session.duration }}</p>
+                  <p><strong>Uploaded:</strong> {{ session.uploadDate }}</p>
+                  <p>
+                    <strong>Tags:</strong> {{ session.tagCount }} timestamps
+                  </p>
+                </div>
+              </div>
+
+              <div class="film-assignment">
+                <p>
+                  <strong>Assignment:</strong> {{ session.assignment }}
+                  <span class="due-date">Due: {{ session.dueDate }}</span>
+                </p>
+                <div class="watch-progress">
+                  <span class="progress-label"
+                    >Watch Status: {{ session.watchedCount }}/{{
+                      session.totalAssigned
+                    }}
+                    complete ({{ getWatchPercent(session) }}%)</span
+                  >
+                  <p-progressBar
+                    [value]="getWatchPercent(session)"
+                    [showValue]="false"
+                    class="film-watch-progress"
+                  ></p-progressBar>
+                </div>
+                @if (session.notWatched.length > 0) {
+                  <p class="not-watched">
+                    Not watched: {{ session.notWatched.join(", ") }}
+                  </p>
+                }
+              </div>
+
+              <div class="film-actions">
+                <app-button
+                  size="sm"
+                  iconLeft="pi-play"
+                  (clicked)="watchFilm(session)"
+                  >Watch</app-button
+                >
+                <app-button
+                  variant="secondary"
+                  size="sm"
+                  (clicked)="editTags(session)"
+                  >Edit Tags</app-button
+                >
+                <app-button
+                  variant="text"
+                  size="sm"
+                  (clicked)="viewCompliance(session)"
+                  >View Compliance</app-button
+                >
+                <app-button
+                  variant="text"
+                  size="sm"
+                  (clicked)="sendReminder(session)"
+                  >Send Reminder</app-button
+                >
+              </div>
+            </div>
+          } @empty {
+            <app-empty-state
+              icon="pi-video"
+              heading="No Film Found"
+              description="Upload your first film to get started"
+              actionLabel="Upload Film"
+              actionIcon="pi-upload"
+              [actionHandler]="openUploadDialogHandler"
+            />
+          }
+          }
+        </div>
+      </div>
+
+      <!-- Upload Dialog -->
+      <app-dialog
+        [(visible)]="showUploadDialog"
+        [modal]="true"
+        dialogSize="lg"
+        [blockScroll]="true"
+        [draggable]="false"
+        ariaLabel="Upload film"
+      >
+        <app-dialog-header
+          icon="upload"
+          title="Upload Film"
+          subtitle="Add a new game, practice, scouting, or training video to the film room."
+          (close)="closeUploadDialog()"
+        />
+        <div class="upload-form">
+          <div class="form-field">
+            <label>Source</label>
+            <div class="radio-group">
+              <div class="radio-option">
+                <input
+                  type="radio"
+                  name="source"
+                  value="url"
+                  id="sourceUrl"
+                  [checked]="uploadForm.source === 'url'"
+                  (change)="onUploadSourceChange('url')"
+                />
+                <label for="sourceUrl">YouTube / Vimeo URL</label>
+              </div>
+              <div class="radio-option">
+                <input
+                  type="radio"
+                  name="source"
+                  value="file"
+                  id="sourceFile"
+                  [checked]="uploadForm.source === 'file'"
+                  (change)="onUploadSourceChange('file')"
+                />
+                <label for="sourceFile">Upload File</label>
+              </div>
+            </div>
+          </div>
+
+          @if (uploadForm.source === "url") {
+            <div class="form-field">
+              <app-form-input
+                label="Video URL"
+                placeholder="https://youtube.com/watch?v=..."
+                [value]="uploadForm.url"
+                (valueChange)="onUploadUrlChange($event)"
+              />
+            </div>
+          }
+
+          <div class="form-field">
+            <app-form-input
+              label="Title"
+              placeholder="Week 3 vs Panthers - Offense"
+              [value]="uploadForm.title"
+              (valueChange)="onUploadTitleChange($event)"
+            />
+          </div>
+
+          <div class="form-field">
+            <label>Type</label>
+            <div class="radio-group">
+              @for (type of filmTypes; track type.value) {
+                <div class="radio-option">
+                  <input
+                    type="radio"
+                    name="filmType"
+                    [value]="type.value"
+                    [id]="'filmType-' + type.value"
+                    [checked]="uploadForm.type === type.value"
+                    (change)="onUploadTypeChange(type.value)"
+                  />
+                  <label [for]="'filmType-' + type.value">{{
+                    type.label
+                  }}</label>
+                </div>
+              }
+            </div>
+          </div>
+
+          <div class="form-field">
+            <app-textarea
+              label="Description"
+              placeholder="Brief description of the film..."
+              [value]="uploadForm.description"
+              (valueChange)="onUploadDescriptionChange($event)"
+              [rows]="3"
+            />
+          </div>
+        </div>
+
+        <app-dialog-footer
+          dialogFooter
+          cancelLabel="Cancel"
+          primaryLabel="Upload & Open"
+          primaryIcon="upload"
+          (cancel)="closeUploadDialog()"
+          (primary)="uploadFilm()"
+        />
+      </app-dialog>
+
+      <!-- Tag Editor Dialog -->
+      <app-dialog
+        [(visible)]="showTagDialog"
+        [modal]="true"
+        dialogSize="lg"
+        styleClass="film-tag-dialog"
+        [blockScroll]="true"
+        [draggable]="false"
+        ariaLabel="Add film tag"
+      >
+        <app-dialog-header
+          icon="tag"
+          title="Add Tag"
+          subtitle="Highlight a film moment and connect it to the right player, play, or teaching point."
+          (close)="closeTagDialog()"
+        />
+        <div class="tag-form">
+          <p class="tag-timestamp">
+            Adding tag at <strong>{{ tagForm.timestamp }}</strong>
+          </p>
+
+          <div class="form-field">
+            <label>Tag Type</label>
+            <div class="radio-group">
+              @for (type of tagTypes; track type.value) {
+                <div class="radio-option">
+                  <input
+                    type="radio"
+                    name="tagType"
+                    [value]="type.value"
+                    [id]="'tagType-' + type.value"
+                    [checked]="tagForm.type === type.value"
+                    (change)="onTagTypeChange(type.value)"
+                  />
+                  <label [for]="'tagType-' + type.value">{{
+                    type.label
+                  }}</label>
+                </div>
+              }
+            </div>
+          </div>
+
+          <div class="form-field">
+            <label>Tag Player(s)</label>
+            <div class="radio-group">
+              <div class="radio-option">
+                <input
+                  type="radio"
+                  name="tagTarget"
+                  value="everyone"
+                  id="tagEveryone"
+                  [checked]="tagForm.target === 'everyone'"
+                  (change)="onTagTargetChange('everyone')"
+                />
+                <label for="tagEveryone">Everyone (team)</label>
+              </div>
+              <div class="radio-option">
+                <input
+                  type="radio"
+                  name="tagTarget"
+                  value="specific"
+                  id="tagSpecific"
+                  [checked]="tagForm.target === 'specific'"
+                  (change)="onTagTargetChange('specific')"
+                />
+                <label for="tagSpecific">Specific player(s):</label>
+              </div>
+            </div>
+            @if (tagForm.target === "specific") {
+              <div class="player-checkboxes">
+                @for (player of players(); track player.id) {
+                  <div class="checkbox-option">
+                    <input
+                      type="checkbox"
+                      [id]="'player-' + player.id"
+                      [checked]="tagForm.playerIds.includes(player.id)"
+                      (change)="onTagPlayerToggleInput(player.id, $event)"
+                    />
+                    <label [for]="'player-' + player.id"
+                      >{{ player.name }} (#{{ player.number }})</label
+                    >
+                  </div>
+                }
+              </div>
+            }
+          </div>
+
+          <div class="form-field">
+            <app-select
+              label="Link to Play (optional)"
+              [options]="plays()"
+              optionLabel="name"
+              optionValue="id"
+              placeholder="Select play"
+              [showClear]="true"
+              (ngModelChange)="onTagPlayIdChange($event)"
+            />
+          </div>
+
+          <div class="form-field">
+            <app-textarea
+              label="Comment"
+              placeholder="What should the player learn from this moment?"
+              [value]="tagForm.comment"
+              (valueChange)="onTagCommentChange($event)"
+              [rows]="4"
+            />
+          </div>
+        </div>
+
+        <app-dialog-footer
+          dialogFooter
+          cancelLabel="Cancel"
+          primaryLabel="Save Tag"
+          primaryIcon="check"
+          (cancel)="closeTagDialog()"
+          (primary)="saveTag()"
+        />
+      </app-dialog>
+
+      <!-- Session Detail Dialog -->
+      <app-dialog
+        [(visible)]="showSessionDialog"
+        [modal]="true"
+        styleClass="film-session-dialog"
+        [blockScroll]="true"
+        [draggable]="false"
+        ariaLabel="Film session details"
+      >
+        <app-dialog-header
+          icon="video"
+          [title]="selectedSession()?.title || 'Film Session'"
+          subtitle="Review assignment details before coaching actions."
+          (close)="closeSessionDialog()"
+        />
+        @if (selectedSession(); as session) {
+          <div class="film-session-detail">
+            <div class="film-session-preview">
+              <div class="thumbnail-placeholder">
+                <i class="pi pi-play-circle" aria-hidden="true"></i>
+              </div>
+            </div>
+
+            <div class="film-session-grid">
+              <div class="detail-block">
+                <span class="detail-label">Type</span>
+                <span class="detail-value">{{ getTypeLabel(session.type) }}</span>
+              </div>
+              <div class="detail-block">
+                <span class="detail-label">Duration</span>
+                <span class="detail-value">{{ session.duration }}</span>
+              </div>
+              <div class="detail-block">
+                <span class="detail-label">Uploaded</span>
+                <span class="detail-value">{{ session.uploadDate }}</span>
+              </div>
+              <div class="detail-block">
+                <span class="detail-label">Tags</span>
+                <span class="detail-value">{{ session.tagCount }} timestamps</span>
+              </div>
+              <div class="detail-block detail-block--wide">
+                <span class="detail-label">Assignment</span>
+                <span class="detail-value">{{ session.assignment }}</span>
+              </div>
+              <div class="detail-block detail-block--wide">
+                <span class="detail-label">Due date</span>
+                <span class="detail-value">{{ session.dueDate }}</span>
+              </div>
+            </div>
+          </div>
+        }
+
+        <app-dialog-footer
+          dialogFooter
+          cancelLabel="Close"
+          primaryLabel="Add Tag"
+          primaryIcon="tag"
+          (cancel)="closeSessionDialog()"
+          (primary)="openTagDialogFromSession()"
+        />
+      </app-dialog>
+
+      <!-- Compliance Dialog -->
+      <app-dialog
+        [(visible)]="showComplianceDialog"
+        [modal]="true"
+        styleClass="film-compliance-dialog"
+        [blockScroll]="true"
+        [draggable]="false"
+        ariaLabel="Film compliance details"
+      >
+        <app-dialog-header
+          icon="check-square"
+          title="Viewing Compliance"
+          subtitle="Track who has completed the assignment and who still needs follow-up."
+          (close)="closeComplianceDialog()"
+        />
+        @if (selectedSession(); as session) {
+          <div class="film-compliance-detail">
+            <div class="compliance-summary">
+              <span class="detail-label">Watch progress</span>
+              <span class="detail-value"
+                >{{ session.watchedCount }}/{{ session.totalAssigned }} complete</span
+              >
+              <p-progressBar
+                [value]="getWatchPercent(session)"
+                [showValue]="false"
+                class="film-watch-progress"
+              ></p-progressBar>
+            </div>
+
+            <div class="compliance-columns">
+              <div class="compliance-list">
+                <h4>Waiting On</h4>
+                @if (session.notWatched.length > 0) {
+                  @for (playerName of session.notWatched; track playerName) {
+                    <span class="compliance-pill compliance-pill--pending">{{
+                      playerName
+                    }}</span>
+                  }
+                } @else {
+                  <p>Everyone assigned has completed this film.</p>
+                }
+              </div>
+
+              <div class="compliance-list">
+                <h4>Assignment</h4>
+                <p>{{ session.assignment }}</p>
+                <p><strong>Due:</strong> {{ session.dueDate }}</p>
+                <p><strong>Watch rate:</strong> {{ getWatchPercent(session) }}%</p>
+              </div>
+            </div>
+          </div>
+        }
+
+        <app-dialog-footer
+          dialogFooter
+          cancelLabel="Close"
+          primaryLabel="Send Reminder"
+          primaryIcon="send"
+          (cancel)="closeComplianceDialog()"
+          (primary)="sendReminderForSelectedSession()"
+        />
+      </app-dialog>
+    </app-main-layout>

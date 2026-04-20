@@ -1179,6 +1179,7 @@ async function generateProtocol(supabase, userId, payload, headers, log = logger
     getIsoDayOfYear,
     generateFallbackProtocolExercises,
     persistGeneratedProtocol,
+    buildTransientProtocolResponse,
   });
 
   if (fallbackProtocol) {

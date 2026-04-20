@@ -1,0 +1,635 @@
+<app-main-layout>
+      <div class="privacy-controls-page">
+        <app-page-header
+          title="Privacy Controls"
+          subtitle="Manage how your data is used and shared"
+          icon="pi-shield"
+        >
+          <app-button
+            variant="outlined"
+            iconLeft="pi-download"
+            (clicked)="exportData()"
+            >Export My Data</app-button
+          >
+        </app-page-header>
+
+        @if (loading()) {
+          <app-loading
+            message="Loading privacy settings..."
+            variant="inline"
+          />
+        } @else {
+          <div class="privacy-grid">
+            <!-- AI Processing Section -->
+            <app-card-shell class="privacy-section ai-section">
+              <div class="privacy-section-card">
+                <div class="section-header">
+                  <div class="section-icon ai-icon" aria-hidden="true">
+                    <i class="pi pi-sparkles"></i>
+                  </div>
+                  <div class="section-title-group">
+                    <h2 class="section-title">AI Processing</h2>
+                    <p class="section-subtitle">
+                      Article 22 GDPR - Automated Decision Making
+                    </p>
+                  </div>
+                </div>
+
+              <div class="setting-item">
+                <div class="setting-info">
+                  <h4>AI-Powered Recommendations</h4>
+                  <p>
+                    Allow our AI to analyze your training data to provide
+                    personalized recommendations, injury risk assessments, and
+                    performance insights.
+                  </p>
+                  <div class="setting-details">
+                    <span class="detail-item">
+                      <i class="pi pi-check-circle" aria-hidden="true"></i>
+                      Training load optimization
+                    </span>
+                    <span class="detail-item">
+                      <i class="pi pi-check-circle" aria-hidden="true"></i>
+                      Recovery recommendations
+                    </span>
+                    <span class="detail-item">
+                      <i class="pi pi-check-circle" aria-hidden="true"></i>
+                      Injury risk warnings
+                    </span>
+                  </div>
+                </div>
+                <div class="setting-control">
+                  <input
+                    type="checkbox"
+                    [checked]="aiProcessingEnabled"
+                    (change)="onAiProcessingToggle($event)"
+                    aria-label="Enable AI-powered recommendations"
+                  />
+                </div>
+              </div>
+
+              @if (!aiProcessingEnabled) {
+                <app-alert
+                  variant="warning"
+                  density="compact"
+                  icon="pi pi-info-circle"
+                  message="With AI processing disabled, you won't receive personalized training recommendations or automated injury risk assessments. All AI features will show generic guidance instead."
+                  styleClass="privacy-alert"
+                />
+              }
+
+              <div class="consent-info">
+                @if (aiConsentStatus()) {
+                  <div class="consent-status-detail">
+                    <div class="status-row">
+                      <span class="status-label">Status:</span>
+                      <span
+                        class="status-value"
+                        [class.enabled]="aiConsentStatus()?.canProcess"
+                        [class.disabled]="!aiConsentStatus()?.canProcess"
+                      >
+                        {{
+                          aiConsentStatus()?.canProcess ? "Enabled" : "Disabled"
+                        }}
+                      </span>
+                    </div>
+                    <div class="status-row">
+                      <span class="status-label">Reason:</span>
+                      <span class="status-value">{{
+                        aiConsentStatus()?.reason
+                      }}</span>
+                    </div>
+                    @if (aiConsentStatus()?.consentDate) {
+                      <div class="status-row">
+                        <span class="status-label">Consent Date:</span>
+                        <span class="status-value">{{
+                          aiConsentStatus()?.consentDate | date: "medium"
+                        }}</span>
+                      </div>
+                    }
+                  </div>
+                }
+              </div>
+              </div>
+            </app-card-shell>
+
+            <!-- Team Data Sharing Section -->
+            <app-card-shell class="privacy-section team-section">
+              <div class="privacy-section-card">
+                <div class="section-header">
+                  <div class="section-icon team-icon" aria-hidden="true">
+                    <i class="pi pi-users"></i>
+                  </div>
+                  <div class="section-title-group">
+                    <h2 class="section-title">Team Data Sharing</h2>
+                    <p class="section-subtitle">Control what coaches can see</p>
+                  </div>
+                </div>
+
+              @if (teamSettings().length === 0) {
+                <app-empty-state
+                  icon="pi-users"
+                  heading="You're not on any teams"
+                  description="Join a team to manage data sharing preferences."
+                />
+              } @else {
+                <p-accordion [multiple]="true">
+                  @for (team of teamSettings(); track team.teamId) {
+                    <p-accordionpanel>
+                      <ng-template #header>
+                        <div class="team-header">
+                          <span class="team-name">{{ team.teamName }}</span>
+                          <div class="team-status">
+                            @if (
+                              team.performanceSharingEnabled ||
+                              team.healthSharingEnabled
+                            ) {
+                              <app-status-tag
+                                value="Sharing"
+                                severity="success"
+                                size="sm"
+                              />
+                            } @else {
+                              <app-status-tag
+                                value="Private"
+                                severity="secondary"
+                                size="sm"
+                              />
+                            }
+                          </div>
+                        </div>
+                      </ng-template>
+                      <ng-template #content>
+                        <div class="team-settings">
+                          <div class="team-toggle">
+                            <div class="toggle-info">
+                              <h5>Performance Data</h5>
+                              <p>
+                                Speed, agility, strength scores, training
+                                progress
+                              </p>
+                            </div>
+                            <input
+                              type="checkbox"
+                              [checked]="team.performanceSharingEnabled"
+                              (change)="
+                                onTeamSharingToggle(
+                                  team.teamId,
+                                  'performance',
+                                  $event
+                                )
+                              "
+                              [attr.aria-label]="'Share performance data for ' + team.teamName"
+                            />
+                          </div>
+
+                          <div class="team-toggle">
+                            <div class="toggle-info">
+                              <h5>Health Data</h5>
+                              <p>Wellness scores, readiness, recovery status</p>
+                            </div>
+                            <input
+                              type="checkbox"
+                              [checked]="team.healthSharingEnabled"
+                              (change)="
+                                onTeamSharingToggle(
+                                  team.teamId,
+                                  'health',
+                                  $event
+                                )
+                              "
+                              [attr.aria-label]="'Share health data for ' + team.teamName"
+                            />
+                          </div>
+
+                          @if (
+                            team.performanceSharingEnabled ||
+                            team.healthSharingEnabled
+                          ) {
+                            <div class="metric-categories">
+                              <h5>Specific Metrics</h5>
+                              <p>Choose exactly which metrics to share:</p>
+                              <div class="category-chips">
+                                @for (
+                                  category of metricCategories;
+                                  track category.value
+                                ) {
+                                  <p-chip
+                                    [label]="category.label"
+                                    [class.selected]="
+                                      isCategorySelected(team, category.value)
+                                    "
+                                    (click)="
+                                      toggleCategory(team, category.value)
+                                    "
+                                    [pTooltip]="category.description"
+                                  ></p-chip>
+                                }
+                              </div>
+                            </div>
+                          }
+                        </div>
+                      </ng-template>
+                    </p-accordionpanel>
+                  }
+                </p-accordion>
+              }
+              </div>
+            </app-card-shell>
+
+            <!-- Emergency Data Section -->
+            <app-card-shell class="privacy-section emergency-section">
+              <div class="privacy-section-card">
+                <div class="section-header">
+                  <div class="section-icon emergency-icon" aria-hidden="true">
+                    <i class="pi pi-exclamation-triangle"></i>
+                  </div>
+                  <div class="section-title-group">
+                    <h2 class="section-title">Emergency Data Sharing</h2>
+                    <p class="section-subtitle">In case of medical emergency</p>
+                  </div>
+                </div>
+
+              <div class="setting-item">
+                <div class="setting-info">
+                  <h4>Emergency Sharing Level</h4>
+                  <p>
+                    Choose what information can be shared with emergency
+                    services or designated contacts in case of a medical
+                    emergency.
+                  </p>
+                </div>
+                <div class="setting-control wide">
+                  <app-select
+                    [ngModel]="emergencyLevel"
+                    [options]="emergencyLevelOptions"
+                    placeholder="Select level"
+                    (change)="onEmergencyLevelSelect($event)"
+                  />
+                </div>
+              </div>
+
+              <p-divider></p-divider>
+
+              <div class="emergency-contacts">
+                <h4>Emergency Contacts</h4>
+                <p>
+                  These people will be notified and may receive your medical
+                  data in an emergency.
+                </p>
+
+                @for (contact of emergencyContacts(); track $index) {
+                  <div class="contact-item">
+                    <div class="contact-info">
+                      <span class="contact-name">{{ contact.name }}</span>
+                      <span class="contact-relationship">{{
+                        contact.relationship
+                      }}</span>
+                      <span class="contact-phone">{{ contact.phone }}</span>
+                    </div>
+                    <app-icon-button
+                      icon="pi-trash"
+                      variant="text"
+                      (clicked)="removeEmergencyContact($index)"
+                      ariaLabel="Remove emergency contact"
+                      tooltip="Remove"
+                    />
+                  </div>
+                }
+
+                @if (emergencyContacts().length < 3) {
+                  <app-button
+                    variant="outlined"
+                    iconLeft="pi-plus"
+                    (clicked)="showAddContactDialog = true"
+                    >Add Emergency Contact</app-button
+                  >
+                }
+              </div>
+              </div>
+            </app-card-shell>
+
+            <!-- Research & Marketing Section -->
+            <app-card-shell class="privacy-section research-section">
+              <div class="privacy-section-card">
+                <div class="section-header">
+                  <div class="section-icon research-icon" aria-hidden="true">
+                    <i class="pi pi-chart-bar"></i>
+                  </div>
+                  <div class="section-title-group">
+                    <h2 class="section-title">Research & Communications</h2>
+                    <p class="section-subtitle">Optional data usage</p>
+                  </div>
+                </div>
+
+              <div class="setting-item">
+                <div class="setting-info">
+                  <h4>Research Participation</h4>
+                  <p>
+                    Contribute anonymized data to sports science research. Your
+                    data will be aggregated and de-identified before use.
+                  </p>
+                </div>
+                <div class="setting-control">
+                  <input
+                    type="checkbox"
+                    [checked]="researchOptIn"
+                    (change)="onResearchOptInToggle($event)"
+                    aria-label="Opt in to research participation"
+                  />
+                </div>
+              </div>
+
+              <p-divider></p-divider>
+
+              <div class="setting-item">
+                <div class="setting-info">
+                  <h4>Marketing Communications</h4>
+                  <p>
+                    Receive updates about new features, training tips, and
+                    special offers.
+                  </p>
+                </div>
+                <div class="setting-control">
+                  <input
+                    type="checkbox"
+                    [checked]="marketingOptIn"
+                    (change)="onMarketingOptInToggle($event)"
+                    aria-label="Opt in to marketing communications"
+                  />
+                </div>
+              </div>
+              </div>
+            </app-card-shell>
+
+            <!-- Note: Parental Consent Section removed - App is 16+ only -->
+
+            <!-- Data Rights Section -->
+            <app-card-shell class="privacy-section rights-section">
+              <div class="privacy-section-card">
+                <div class="section-header">
+                  <div class="section-icon rights-icon" aria-hidden="true">
+                    <i class="pi pi-file-check"></i>
+                  </div>
+                  <div class="section-title-group">
+                    <h2 class="section-title">Your Data Rights</h2>
+                    <p class="section-subtitle">GDPR Article 15-22</p>
+                  </div>
+                </div>
+
+              <div class="rights-grid">
+                <div class="right-item">
+                  <i class="pi pi-download" aria-hidden="true"></i>
+                  <h5>Export Data</h5>
+                  <p>Download all your personal data in a portable format.</p>
+                  @if (exporting()) {
+                    <div class="export-progress">
+                      <small>{{ exportStep() }}</small>
+                      <div class="progress-bar">
+                        <div
+                          class="progress-fill"
+                          [style.width.%]="exportProgress()"
+                        ></div>
+                      </div>
+                    </div>
+                  } @else {
+                    <app-button
+                      variant="outlined"
+                      size="sm"
+                      (clicked)="exportData()"
+                      >Export</app-button
+                    >
+                  }
+                </div>
+
+                <div class="right-item">
+                  <i class="pi pi-trash" aria-hidden="true"></i>
+                  <h5>Delete Account</h5>
+                  @if (hasPendingDeletion()) {
+                    <div class="pending-deletion-state">
+                      <app-alert
+                        variant="warning"
+                        density="compact"
+                        icon="pi pi-exclamation-triangle"
+                        [message]="
+                          'Deletion scheduled in ' +
+                          deletionStatus()?.daysUntilDeletion +
+                          ' days'
+                        "
+                        styleClass="privacy-alert"
+                      />
+                      <app-button
+                        variant="outlined"
+                        size="sm"
+                        [loading]="deletionLoading()"
+                        (clicked)="cancelDeletion()"
+                        >Cancel Deletion</app-button
+                      >
+                    </div>
+                  } @else {
+                    <p>Permanently delete your account and all data.</p>
+                    <app-button
+                      variant="outlined"
+                      size="sm"
+                      (clicked)="showDeleteAccountDialog = true"
+                      >Delete</app-button
+                    >
+                  }
+                </div>
+
+                <div class="right-item">
+                  <i class="pi pi-history" aria-hidden="true"></i>
+                  <h5>View Audit Log</h5>
+                  <p>See a history of how your data has been accessed.</p>
+                  <app-button
+                    variant="outlined"
+                    size="sm"
+                    (clicked)="showAuditLog()"
+                    >View Log</app-button
+                  >
+                </div>
+              </div>
+              </div>
+            </app-card-shell>
+          </div>
+        }
+      </div>
+
+      <!-- Add Emergency Contact Dialog -->
+      <app-dialog
+        [(visible)]="showAddContactDialog"
+        [modal]="true"
+        [blockScroll]="true"
+        [draggable]="false"
+        dialogSize="sm"
+        ariaLabel="Add emergency contact"
+        styleClass="privacy-contact-dialog"
+      >
+        <app-dialog-header
+          dialogHeader
+          icon="user-plus"
+          title="Add Emergency Contact"
+          (close)="showAddContactDialog = false"
+        />
+        <div class="contact-form privacy-dialog-stack">
+          <div class="form-field">
+            <app-form-input
+              label="Name"
+              [value]="newContact.name ?? ''"
+              (valueChange)="onNewContactNameChange($event)"
+              placeholder="Contact name"
+            />
+          </div>
+          <div class="form-field">
+            <app-form-input
+              label="Phone"
+              [value]="newContact.phone ?? ''"
+              (valueChange)="onNewContactPhoneChange($event)"
+              placeholder="+1 234 567 8900"
+            />
+          </div>
+          <div class="form-field">
+            <app-select
+              label="Relationship"
+              [ngModel]="newContact.relationship"
+              (change)="onNewContactRelationshipSelect($event)"
+              [options]="relationshipOptions"
+              placeholder="Select relationship"
+            />
+          </div>
+        </div>
+        <app-dialog-footer
+          dialogFooter
+          primaryLabel="Add Contact"
+          primaryIcon="plus"
+          [disabled]="!isContactValid()"
+          (cancel)="showAddContactDialog = false"
+          (primary)="addEmergencyContact()"
+        />
+      </app-dialog>
+
+      <!-- Note: Parental Consent Dialog removed - App is 16+ only -->
+
+      <!-- Delete Account Confirmation Dialog -->
+      <app-dialog
+        [(visible)]="showDeleteAccountDialog"
+        [modal]="true"
+        [blockScroll]="true"
+        [draggable]="false"
+        dialogSize="sm"
+        ariaLabel="Delete account"
+        styleClass="privacy-delete-dialog"
+      >
+        <app-dialog-header
+          dialogHeader
+          icon="trash"
+          title="Delete Account"
+          subtitle="This action is permanent and irreversible"
+          [danger]="true"
+          (close)="showDeleteAccountDialog = false"
+        />
+        <div class="delete-warning-content privacy-dialog-stack">
+          <app-alert
+            variant="error"
+            icon="pi pi-exclamation-triangle"
+            title="This action cannot be undone"
+            message="Your account will be immediately deactivated. All personal data will be permanently deleted within 30 days as required by our privacy policy."
+            styleClass="privacy-alert"
+          />
+          <div class="delete-warning-notes">
+            <div class="retention-note">
+              <i class="pi pi-info-circle" aria-hidden="true"></i>
+              <small>
+                Emergency medical records are retained for 7 years as required
+                by law.
+              </small>
+            </div>
+            <div class="cancellation-note">
+              <i class="pi pi-clock" aria-hidden="true"></i>
+              <small>
+                You can cancel this request within 30 days by logging back in.
+              </small>
+            </div>
+          </div>
+          <div class="form-field">
+            <app-form-input
+              label="Reason for leaving (optional):"
+              [value]="deletionReason"
+              (valueChange)="onDeletionReasonChange($event)"
+              placeholder="Help us improve..."
+            />
+          </div>
+          <div class="form-field">
+            <app-form-input
+              label="Type DELETE to confirm:"
+              [value]="deleteConfirmText"
+              (valueChange)="onDeleteConfirmTextChange($event)"
+              placeholder="DELETE"
+            />
+          </div>
+        </div>
+        <app-dialog-footer
+          dialogFooter
+          primaryLabel="Delete My Account"
+          primaryIcon="trash"
+          primaryVariant="danger"
+          [loading]="deletionLoading()"
+          [disabled]="deleteConfirmText !== 'DELETE'"
+          (cancel)="showDeleteAccountDialog = false"
+          (primary)="deleteAccount()"
+        />
+      </app-dialog>
+
+      <!-- Audit Log Dialog -->
+      <app-dialog
+        [(visible)]="showAuditLogDialog"
+        [modal]="true"
+        [blockScroll]="true"
+        [draggable]="false"
+        [contentStyle]="{ width: 'min(90vw, 600px)' }"
+        ariaLabel="Privacy audit log"
+        styleClass="privacy-audit-dialog"
+        (onHide)="auditLogEntries.set([])"
+      >
+        <app-dialog-header
+          dialogHeader
+          icon="history"
+          title="Privacy Audit Log"
+          (close)="showAuditLogDialog = false"
+        />
+        <div class="audit-log-content privacy-dialog-stack">
+          @if (auditLogLoading()) {
+            <app-loading
+              variant="inline"
+              message="Loading audit log..."
+            ></app-loading>
+          } @else if (auditLogEntries().length === 0) {
+            <app-empty-state
+              icon="pi-history"
+              heading="No audit log yet"
+              description="Privacy activity will appear here once actions are recorded."
+            ></app-empty-state>
+          } @else {
+            <div class="audit-log-list">
+              @for (entry of auditLogEntries(); track entry.id) {
+                <div class="audit-log-entry">
+                  <span class="audit-action">{{ entry.action }}</span>
+                  @if (entry.affectedTable) {
+                    <span class="audit-table">{{ entry.affectedTable }}</span>
+                  }
+                  <span class="audit-date">{{ entry.createdAt | date : 'short' }}</span>
+                </div>
+              }
+            </div>
+          }
+        </div>
+        <div
+          dialogFooter
+          class="privacy-dialog-actions privacy-dialog-actions--single"
+        >
+          <app-button variant="text" (clicked)="showAuditLogDialog = false"
+            >Close</app-button
+          >
+        </div>
+      </app-dialog>
+    </app-main-layout>

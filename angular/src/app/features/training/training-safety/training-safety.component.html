@@ -1,0 +1,294 @@
+    <app-main-layout>
+      <div class="training-safety-page ui-page-shell ui-page-shell--wide ui-page-stack">
+        <app-page-header
+          title="Training Safety Dashboard"
+          subtitle="Monitor your training load, recovery, and injury prevention metrics"
+          icon="pi-shield"
+        >
+          <app-button
+            variant="outlined"
+            iconLeft="pi-heart"
+            routerLink="/wellness"
+            >Log Wellness</app-button
+          >
+        </app-page-header>
+
+        <!-- Safety Warnings Banner -->
+        <app-safety-warnings></app-safety-warnings>
+
+        <!-- Safety Overview Cards -->
+        <div class="safety-overview">
+          <!-- ACWR Status -->
+          <app-card-shell class="safety-card" title="ACWR Status">
+            <div class="card-content">
+              <ng-container header-actions>
+                @if (!hasInsufficientAcwrData()) {
+                  <app-traffic-light-risk
+                    [riskZone]="acwrRiskZone()"
+                    [acwrValue]="acwrValue()"
+                  ></app-traffic-light-risk>
+                }
+              </ng-container>
+              @if (hasInsufficientAcwrData()) {
+                <!-- Insufficient ACWR data - use centralized message -->
+                <app-alert
+                  class="insufficient-data-alert"
+                  variant="info"
+                  [title]="acwrInsufficientMessage.title"
+                  [message]="acwrInsufficientMessage.reason"
+                  [icon]="acwrInsufficientMessage.icon || null"
+                >
+                  <div class="insufficient-data-alert__action">
+                    <app-icon-button
+                      icon="pi-plus"
+                      variant="outlined"
+                      routerLink="/todays-practice"
+                      ariaLabel="Go to today's practice"
+                      tooltip="Go to today's practice"
+                    />
+                  </div>
+                </app-alert>
+              } @else {
+                <div class="metric-display">
+                  <span class="metric-value">{{
+                    acwrValue() | number: "1.2-2"
+                  }}</span>
+                  <span class="metric-label">Acute:Chronic Ratio</span>
+                </div>
+                <div class="metric-details">
+                  <div class="detail-item">
+                    <span class="detail-label">Acute Load (7d)</span>
+                    <span class="detail-value"
+                      >{{ acuteLoad() | number: "1.0-0" }} AU</span
+                    >
+                  </div>
+                  <div class="detail-item">
+                    <span class="detail-label">Chronic Load (28d)</span>
+                    <span class="detail-value"
+                      >{{ chronicLoad() | number: "1.0-0" }} AU</span
+                    >
+                  </div>
+                </div>
+              }
+            </div>
+          </app-card-shell>
+
+          <!-- Age-Adjusted Recovery -->
+          <app-card-shell class="safety-card" title="Recovery Status">
+            <div class="card-content">
+              <ng-container header-actions>
+                <app-status-tag
+                  [value]="ageGroup()"
+                  [severity]="getAgeGroupSeverity()"
+                  size="sm"
+                />
+              </ng-container>
+              <div class="metric-display">
+                <span class="metric-value"
+                  >{{ recoveryMultiplier() | number: "1.1-1" }}x</span
+                >
+                <span class="metric-label">Recovery Time Multiplier</span>
+              </div>
+              <div class="metric-details">
+                <div class="detail-item">
+                  <span class="detail-label">Max Sessions/Week</span>
+                  <span class="detail-value">{{ maxSessionsPerWeek() }}</span>
+                </div>
+                <div class="detail-item">
+                  <span class="detail-label"
+                    >Min Rest Between High-Intensity</span
+                  >
+                  <span class="detail-value">{{ minRestDays() }} days</span>
+                </div>
+              </div>
+            </div>
+          </app-card-shell>
+
+          <!-- Sleep Debt -->
+          <app-card-shell class="safety-card" title="Sleep Debt">
+            <div class="card-content">
+              <ng-container header-actions>
+                <app-status-tag
+                  [value]="sleepDebtLevel()"
+                  [severity]="getSleepDebtSeverity()"
+                  size="sm"
+                />
+              </ng-container>
+              <div class="metric-display">
+                <span class="metric-value"
+                  >{{ sleepDebtHours() | number: "1.1-1" }}h</span
+                >
+                <span class="metric-label">Accumulated Debt</span>
+              </div>
+              <div class="sleep-impact">
+                <p-progressBar
+                  [value]="trainingCapacity()"
+                  [showValue]="false"
+                ></p-progressBar>
+                <span class="capacity-label">
+                  Training Capacity: {{ trainingCapacity() | number: "1.0-0" }}%
+                </span>
+              </div>
+            </div>
+          </app-card-shell>
+
+          <!-- Weekly Movement Limits -->
+          <app-card-shell class="safety-card" title="Movement Limits">
+            <div class="card-content">
+              <ng-container header-actions>
+                <app-status-tag
+                  [value]="movementLimitStatus()"
+                  [severity]="getMovementLimitSeverity()"
+                  size="sm"
+                />
+              </ng-container>
+              <div class="movement-limits">
+                @for (limit of movementLimits(); track limit.type) {
+                  <div class="limit-item">
+                    <div class="limit-header">
+                      <span class="limit-type">{{ limit.type }}</span>
+                      <span class="limit-count">
+                        {{ limit.current }}/{{ limit.max }}
+                      </span>
+                    </div>
+                    <p-progressBar
+                      [value]="(limit.current / limit.max) * 100"
+                      [showValue]="false"
+                      class="movement-limit-bar"
+                    ></p-progressBar>
+                  </div>
+                }
+              </div>
+            </div>
+          </app-card-shell>
+        </div>
+
+        <!-- Detailed Tabs -->
+        <p-tabs class="safety-tabs tabs-standard">
+          <!-- Safety Recommendations Tab -->
+          <p-tabpanel header="Recommendations">
+            <div class="recommendations-list">
+              @for (rec of recommendations(); track rec.id) {
+                <div
+                  class="recommendation-item"
+                  [class]="'rec-' + rec.priority"
+                >
+                  <div class="rec-icon">
+                    @switch (rec.priority) {
+                      @case ("critical") {
+                        <i class="pi pi-exclamation-triangle" aria-hidden="true"></i>
+                      }
+                      @case ("high") {
+                        <i class="pi pi-exclamation-circle" aria-hidden="true"></i>
+                      }
+                      @case ("medium") {
+                        <i class="pi pi-lightbulb" aria-hidden="true"></i>
+                      }
+                      @default {
+                        <i class="pi pi-info-circle" aria-hidden="true"></i>
+                      }
+                    }
+                  </div>
+                  <div class="rec-content">
+                    <h4>{{ rec.title }}</h4>
+                    <p>{{ rec.message }}</p>
+                    @if (rec.action) {
+                      <app-button
+                        variant="outlined"
+                        size="sm"
+                        (clicked)="executeAction(rec.action)"
+                      ></app-button>
+                    }
+                  </div>
+                </div>
+              } @empty {
+                <div class="no-recommendations">
+                  <i class="pi pi-check-circle"></i>
+                  <p>No safety concerns at this time. Keep up the good work!</p>
+                </div>
+              }
+            </div>
+          </p-tabpanel>
+
+          <!-- Return to Play Tab -->
+          <p-tabpanel header="Return to Play">
+            @if (hasActiveRTP()) {
+              <div class="rtp-protocol">
+                <div class="rtp-header">
+                  <h3>Active Return-to-Play Protocol</h3>
+                  <app-status-tag
+                    [value]="rtpStage()"
+                    severity="info"
+                    size="sm"
+                  />
+                </div>
+                <div class="rtp-progress">
+                  <p-progressBar
+                    [value]="rtpProgress()"
+                    [showValue]="true"
+                  ></p-progressBar>
+                </div>
+                <div class="rtp-details">
+                  <p><strong>Injury Type:</strong> {{ rtpInjuryType() }}</p>
+                  <p>
+                    <strong>Days in Protocol:</strong> {{ rtpDaysInProtocol() }}
+                  </p>
+                  <p>
+                    <strong>Current Restrictions:</strong>
+                    {{ rtpRestrictions() }}
+                  </p>
+                </div>
+                <div class="rtp-checkin">
+                  <app-button iconLeft="pi-check" (clicked)="openRTPCheckin()"
+                    >Daily Check-in</app-button
+                  >
+                </div>
+              </div>
+            } @else {
+              <div class="no-rtp">
+                <i class="pi pi-heart"></i>
+                <p>No active return-to-play protocol. Stay healthy!</p>
+                <app-button
+                  variant="outlined"
+                  iconLeft="pi-plus"
+                  (clicked)="reportInjury()"
+                  >Report Injury</app-button
+                >
+              </div>
+            }
+          </p-tabpanel>
+
+          <!-- Training History Tab -->
+          <p-tabpanel header="Training History">
+            <div class="training-history">
+              <div class="history-summary">
+                <div class="metric-tile">
+                  <span class="metric-tile__value">{{
+                    totalSessionsThisWeek()
+                  }}</span>
+                  <span class="metric-tile__label">Sessions This Week</span>
+                </div>
+                <div class="metric-tile">
+                  <span class="metric-tile__value">{{
+                    totalLoadThisWeek() | number: "1.0-0"
+                  }}</span>
+                  <span class="metric-tile__label">Total Load (AU)</span>
+                </div>
+                <div class="metric-tile">
+                  <span class="metric-tile__value">{{
+                    consecutiveTrainingDays()
+                  }}</span>
+                  <span class="metric-tile__label">Consecutive Days</span>
+                </div>
+                <div class="metric-tile">
+                  <span class="metric-tile__value"
+                    >{{ weeklyLoadChange() | number: "1.0-0" }}%</span
+                  >
+                  <span class="metric-tile__label">Week-over-Week Change</span>
+                </div>
+              </div>
+            </div>
+          </p-tabpanel>
+        </p-tabs>
+      </div>
+    </app-main-layout>

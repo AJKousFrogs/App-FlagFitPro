@@ -15,6 +15,18 @@ const PERIODIZATION_PHASE_NAMES = {
   active_recovery: "Active Recovery",
 };
 
+const TRAINING_SESSIONS_TABLE = "training_sessions";
+
+const BASELINE_FOCUS_BY_DAY = {
+  0: "recovery",
+  1: "strength",
+  2: "skill",
+  3: "strength",
+  4: "conditioning",
+  5: "skill",
+  6: "speed",
+};
+
 export async function buildProtocolDecisionContext({
   supabase,
   userId,
@@ -40,6 +52,7 @@ export async function buildProtocolDecisionContext({
     supabase,
     userId,
     date,
+    TRAINING_SESSIONS_TABLE,
   );
 
   const confidenceMetadata = {
@@ -63,6 +76,10 @@ export async function buildProtocolDecisionContext({
       status: context.sessionResolution?.status || "unknown",
       hasProgram: !!context.playerProgram,
       hasSessionTemplate: !!context.sessionTemplate,
+      baselineProgram:
+        context.sessionResolution?.status === "baseline_program",
+      originalStatus: context.sessionResolution?.metadata?.originalStatus || null,
+      reason: context.sessionResolution?.reason || null,
     },
   };
 
@@ -73,6 +90,8 @@ export async function buildProtocolDecisionContext({
     context.sessionResolution?.override?.type === "flag_practice";
   const isFilmRoomDay =
     context.sessionResolution?.override?.type === "film_room";
+  const isBaselineProgram =
+    context.sessionResolution?.status === "baseline_program";
 
   let trainingFocus = "strength";
   let aiRationale = "";
@@ -107,6 +126,15 @@ export async function buildProtocolDecisionContext({
     trainingFocus =
       context.sessionTemplate.session_type?.toLowerCase() || "strength";
     aiRationale = `📋 ${context.sessionTemplate.session_name}: ${context.sessionTemplate.description || "Structured training from your program."}`;
+  } else if (isBaselineProgram) {
+    trainingFocus = resolveBaselineTrainingFocus(
+      context.dayOfWeek,
+      readinessForLogic,
+      acwrForLogic,
+      context.acwrTargetRange,
+    );
+    aiRationale =
+      "Baseline flag football plan active. Training starts from safe daily defaults and becomes more personalized as workouts, readiness, team practices, and competitions are logged.";
   } else {
     aiRationale = "Good readiness! Today is great for training.";
   }
@@ -167,4 +195,17 @@ export async function buildProtocolDecisionContext({
     isFilmRoomDay,
     periodizationPhase,
   };
+}
+
+function resolveBaselineTrainingFocus(
+  dayOfWeek,
+  readinessForLogic,
+  acwrForLogic,
+  acwrTargetRange,
+) {
+  if (readinessForLogic < 55 || acwrForLogic > acwrTargetRange.max) {
+    return "recovery";
+  }
+
+  return BASELINE_FOCUS_BY_DAY[dayOfWeek] || "strength";
 }

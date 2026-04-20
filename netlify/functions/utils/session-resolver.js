@@ -12,8 +12,9 @@ import {
  * This is Blocker A: Ensures every athlete always has a "real" session
  * resolved from their 52-week program + sport-layer overrides.
  *
- * No generic fallbacks. If a session cannot be resolved, returns explicit
- * "cannot resolve" state rather than random exercises.
+ * If a coach-assigned session cannot be resolved, return a safe baseline
+ * program state so athletes still receive daily training and keep building
+ * ACWR/readiness history.
  *
  * Resolution chain:
  * 1. user → active player_programs
@@ -26,7 +27,7 @@ import {
 /**
  * @typedef {Object} SessionResolutionResult
  * @property {boolean} success - Whether a session was resolved
- * @property {'resolved'|'no_program'|'no_week'|'no_template'|'future_date'|'active_injury'} status
+ * @property {'resolved'|'baseline_program'|'no_program'|'no_week'|'no_template'|'future_date'|'active_injury'} status
  * @property {Object|null} session - The resolved session template
  * @property {Object|null} override - Any sport-layer override applied
  * @property {string|null} reason - Human-readable reason if resolution failed
@@ -93,18 +94,14 @@ async function resolveTodaySession(supabase, userId, date) {
   }
 
   if (!playerProgram) {
-    return {
-      success: false,
-      status: "no_program",
-      session: null,
-      override: null,
-      reason:
-        "No active training program assigned. Complete onboarding or contact your coach.",
-      metadata: {
-        ...metadata,
+    return buildBaselineProgramResolution(
+      metadata,
+      "No active training program assigned. Using the baseline flag football plan while the athlete builds history.",
+      {
+        originalStatus: "no_program",
         programCheckCompleted: true,
       },
-    };
+    );
   }
 
   const trainingProgram = await getTrainingProgramById(
@@ -114,18 +111,15 @@ async function resolveTodaySession(supabase, userId, date) {
   );
 
   if (!trainingProgram) {
-    return {
-      success: false,
-      status: "no_program",
-      session: null,
-      override: null,
-      reason:
-        "Active training assignment references a missing program. Contact your coach.",
-      metadata: {
-        ...metadata,
+    return buildBaselineProgramResolution(
+      metadata,
+      "Active training assignment references a missing program. Using the baseline flag football plan until the assignment is repaired.",
+      {
+        originalStatus: "no_program",
+        missingProgramId: playerProgram.program_id,
         programCheckCompleted: true,
       },
-    };
+    );
   }
 
   metadata.programId = playerProgram.program_id;
@@ -147,17 +141,14 @@ async function resolveTodaySession(supabase, userId, date) {
   }
 
   if (!currentPhase) {
-    return {
-      success: false,
-      status: "no_week",
-      session: null,
-      override: null,
-      reason: `No training phase found for ${date}. Program may not be configured for this date.`,
-      metadata: {
-        ...metadata,
+    return buildBaselineProgramResolution(
+      metadata,
+      `No training phase found for ${date}. Using the baseline flag football plan for today.`,
+      {
+        originalStatus: "no_week",
         phaseCheckCompleted: true,
       },
-    };
+    );
   }
 
   metadata.phaseId = currentPhase.id;
@@ -178,17 +169,14 @@ async function resolveTodaySession(supabase, userId, date) {
   }
 
   if (!currentWeek) {
-    return {
-      success: false,
-      status: "no_week",
-      session: null,
-      override: null,
-      reason: `No training week found for ${date} in phase "${currentPhase.name}".`,
-      metadata: {
-        ...metadata,
+    return buildBaselineProgramResolution(
+      metadata,
+      `No training week found for ${date} in phase "${currentPhase.name}". Using the baseline flag football plan for today.`,
+      {
+        originalStatus: "no_week",
         weekCheckCompleted: true,
       },
-    };
+    );
   }
 
   metadata.weekId = currentWeek.id;
@@ -211,18 +199,15 @@ async function resolveTodaySession(supabase, userId, date) {
   }
 
   if (!sessionTemplate) {
-    return {
-      success: false,
-      status: "no_template",
-      session: null,
-      override: null,
-      reason: `No session template found for day ${dayOfWeek} in week "${currentWeek.name}". This may be a rest day or missing configuration.`,
-      metadata: {
-        ...metadata,
+    return buildBaselineProgramResolution(
+      metadata,
+      `No session template found for day ${dayOfWeek} in week "${currentWeek.name}". Using the baseline flag football plan for today.`,
+      {
+        originalStatus: "no_template",
         templateCheckCompleted: true,
         dayOfWeek,
       },
-    };
+    );
   }
 
   metadata.sessionTemplateId = sessionTemplate.id;
@@ -251,6 +236,22 @@ async function resolveTodaySession(supabase, userId, date) {
     override,
     reason: null,
     metadata,
+  };
+}
+
+function buildBaselineProgramResolution(metadata, reason, extraMetadata = {}) {
+  return {
+    success: true,
+    status: "baseline_program",
+    session: null,
+    override: null,
+    reason,
+    metadata: {
+      ...metadata,
+      ...extraMetadata,
+      baselineProgram: true,
+      requiresCoachAssignment: extraMetadata.originalStatus === "no_program",
+    },
   };
 }
 

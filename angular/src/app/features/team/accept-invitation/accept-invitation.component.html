@@ -1,0 +1,140 @@
+<div class="accept-invitation-page">
+      <app-card-shell class="accept-invitation-card">
+        <div class="accept-invitation-header">
+          <div class="accept-invitation-logo">
+            <i class="pi pi-users"></i>
+          </div>
+          <h1 class="accept-invitation-title">Team Invitation</h1>
+        </div>
+        @if (isLoading()) {
+          <app-loading
+            [visible]="true"
+            message="Loading invitation..."
+            variant="skeleton"
+          />
+        } @else if (needsLogin()) {
+          <div class="login-required-state">
+            <app-alert
+              variant="warning"
+              message="Please sign in to accept this invitation"
+              styleClass="status-message"
+            />
+            <p class="login-message">
+              You need to be signed in to accept team invitations.
+              @if (invitationData()) {
+                You've been invited to join
+                <strong>{{ invitationData()?.teamName }}</strong
+                >.
+              }
+            </p>
+            <app-button
+              iconLeft="pi-sign-in"
+              routerLink="/login"
+              [queryParams]="authRedirectQueryParams()"
+            >
+              >Sign In</app-button
+            >
+            <app-button
+              variant="outlined"
+              iconLeft="pi-user-plus"
+              routerLink="/register"
+              [queryParams]="authRedirectQueryParams()"
+              >Create Account</app-button
+            >
+          </div>
+        } @else if (invitationError()) {
+          <app-page-error-state
+            title="Unable to load invitation"
+            [message]="invitationError() || ''"
+            [showRetry]="hasRetryableError()"
+            [helpText]="
+              hasRetryableError()
+                ? null
+                : 'If this link came from an older email, ask the team to send a new invitation.'
+            "
+            (retry)="retryLoadInvitation()"
+          />
+          @if (!hasRetryableError()) {
+            <a [routerLink]="['/dashboard']" class="back-link mt-4"
+              >Go to Dashboard</a
+            >
+          }
+        } @else if (isAccepted()) {
+          <div class="accepted-state">
+            <app-alert
+              variant="success"
+              message="Invitation accepted!"
+              styleClass="status-message status-message--success"
+            />
+            <p class="accepted-message">
+              You've successfully joined {{ teamName() }}. Welcome to the team!
+            </p>
+            <app-button iconLeft="pi-users" routerLink="/roster"
+              >Go to Team Page</app-button
+            >
+          </div>
+        } @else if (isDeclined()) {
+          <div class="declined-state">
+            <app-alert
+              variant="info"
+              message="Invitation declined"
+              styleClass="status-message"
+            />
+            <p class="declined-message">
+              You have declined the invitation to join {{ teamName() }}.
+            </p>
+            <app-button iconLeft="pi-home" routerLink="/dashboard"
+              >Go to Dashboard</app-button
+            >
+          </div>
+        } @else if (invitationData()) {
+          <div class="invitation-state">
+            <div class="team-info">
+              <h3>{{ invitationData()?.teamName }}</h3>
+              <p class="team-description">
+                You've been invited to join this team by
+                {{ invitationData()?.inviterName }}.
+              </p>
+              @if (invitationData()?.role) {
+                <p class="role-info">
+                  <i class="pi pi-tag"></i>
+                  Role:
+                  <strong>{{ invitationData()?.role | titlecase }}</strong>
+                </p>
+              }
+              @if (invitationData()?.position) {
+                <p class="position-info">
+                  <i class="pi pi-map-marker"></i>
+                  Position: <strong>{{ invitationData()?.position }}</strong>
+                </p>
+              }
+              @if (invitationData()?.jerseyNumber) {
+                <p class="jersey-info">
+                  <i class="pi pi-hashtag"></i>
+                  Jersey: <strong>#{{ invitationData()?.jerseyNumber }}</strong>
+                </p>
+              }
+              <p class="expires-info">
+                <i class="pi pi-clock"></i>
+                Expires: {{ formatExpiry(invitationData()?.expiresAt) }}
+              </p>
+            </div>
+
+            <div class="invitation-actions">
+              <app-button
+                iconLeft="pi-check"
+                [loading]="isProcessing()"
+                (clicked)="acceptInvitation()"
+                >Accept Invitation</app-button
+              >
+              <app-button
+                variant="outlined"
+                [loading]="isProcessing()"
+                (clicked)="declineInvitation()"
+                >Decline</app-button
+              >
+            </div>
+          </div>
+        }
+      </app-card-shell>
+    </div>

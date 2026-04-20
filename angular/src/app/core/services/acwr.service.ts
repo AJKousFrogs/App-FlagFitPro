@@ -74,6 +74,7 @@ import {
   clamp,
 } from "../../shared/utils/precision.utils";
 import { getDateKey } from "../../shared/utils/date.utils";
+import { inferSessionType } from "../../shared/utils/session-type.utils";
 
 interface LoadMonitoringRecord {
   monitoring_date?: string;
@@ -1184,7 +1185,7 @@ export class AcwrService {
           return {
             playerId: log.player_id,
             date: new Date(log.completed_at),
-            sessionType: this.inferSessionType(log),
+            sessionType: inferSessionType(log),
             metrics: {
               type: "internal",
               internal: {
@@ -1244,7 +1245,7 @@ export class AcwrService {
           const session: TrainingSession = {
             playerId: log.player_id,
             date: new Date(log.completed_at),
-            sessionType: this.inferSessionType(log),
+            sessionType: inferSessionType(log),
             metrics: {
               type: "internal",
               internal: {
@@ -1302,64 +1303,6 @@ export class AcwrService {
       this.supabaseService.client.removeChannel(this.realtimeChannel);
       this.realtimeChannel = null;
     }
-  }
-
-  /**
-   * Infer session type from workout log data
-   */
-  private inferSessionType(
-    log: WorkoutLog,
-  ):
-    | "game"
-    | "sprint"
-    | "technical"
-    | "conditioning"
-    | "strength"
-    | "recovery" {
-    const workoutType = (log.workout_type || "").toLowerCase();
-    if (workoutType.includes("game") || workoutType.includes("match")) {
-      return "game";
-    } else if (workoutType.includes("sprint") || workoutType.includes("speed")) {
-      return "sprint";
-    } else if (
-      workoutType.includes("strength") ||
-      workoutType.includes("gym") ||
-      workoutType.includes("weight")
-    ) {
-      return "strength";
-    } else if (
-      workoutType.includes("conditioning") ||
-      workoutType.includes("cardio")
-    ) {
-      return "conditioning";
-    } else if (
-      workoutType.includes("recovery") ||
-      workoutType.includes("mobility") ||
-      workoutType.includes("activation")
-    ) {
-      return "recovery";
-    }
-
-    // Fall back to notes for legacy rows, then default to technical.
-    const notes = (log.notes || "").toLowerCase();
-
-    if (notes.includes("game") || notes.includes("match")) {
-      return "game";
-    } else if (notes.includes("sprint") || notes.includes("speed")) {
-      return "sprint";
-    } else if (
-      notes.includes("strength") ||
-      notes.includes("gym") ||
-      notes.includes("weights")
-    ) {
-      return "strength";
-    } else if (notes.includes("conditioning") || notes.includes("cardio")) {
-      return "conditioning";
-    } else if (notes.includes("recovery") || notes.includes("rest")) {
-      return "recovery";
-    }
-
-    return "technical";
   }
 
   /**
