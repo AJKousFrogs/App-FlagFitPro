@@ -8,11 +8,11 @@ import { DialogHeaderComponent } from "../../../shared/components/dialog-header/
 import { TournamentAvailabilityDialogContentComponent } from "./tournament-availability-dialog-content.component";
 
 type AvailabilityStatus = "pending" | "confirmed" | "declined" | "tentative";
-type AvailabilityOption = {
+interface AvailabilityOption {
   value: AvailabilityStatus;
   label: string;
   icon: string;
-};
+}
 
 @Component({
   selector: "app-tournament-availability-dialog",

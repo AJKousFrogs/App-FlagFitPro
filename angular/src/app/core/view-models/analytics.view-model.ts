@@ -11,7 +11,6 @@ import {
   BehaviorSubject,
   NEVER,
   interval,
-  shareReplay,
   startWith,
   switchMap,
 } from "rxjs";
@@ -87,7 +86,7 @@ export class AnalyticsViewModel extends ReactiveViewModel {
    */
   override initialize(
     athleteId?: string,
-    enableRealTime: boolean = false,
+    enableRealTime = false,
   ): void {
     if (this.initialized()) {
       return;

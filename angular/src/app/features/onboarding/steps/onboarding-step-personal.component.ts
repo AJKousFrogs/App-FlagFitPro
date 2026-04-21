@@ -58,6 +58,7 @@ import { OnboardingStateService } from "../services/onboarding-state.service";
         <div class="ob-field">
           <label class="ob-label" for="ob-gender">Gender</label>
           <app-select
+            inputId="ob-gender"
             label=""
             [options]="genderOptions"
             (change)="onGenderSelect($event)"
@@ -70,10 +71,11 @@ import { OnboardingStateService } from "../services/onboarding-state.service";
       <!-- Country + Phone row -->
       <div class="ob-input-row">
         <div class="ob-field">
-          <label class="ob-label">
+          <label class="ob-label" for="ob-country">
             Country <span class="req" aria-hidden="true">*</span>
           </label>
           <app-select
+            inputId="ob-country"
             label=""
             [options]="countryOptions"
             (change)="onCountrySelect($event)"

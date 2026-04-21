@@ -170,7 +170,7 @@ export class LoadMonitoringService {
     wellness?: WellnessMetrics,
   ): LoadMetrics {
     const options = this.calculationOptions();
-    let calculatedLoad = 0;
+    let calculatedLoad: number;
 
     if (external && options.externalLoadWeight > 0) {
       // Combined approach
@@ -466,7 +466,7 @@ export class LoadMonitoringService {
    */
   public getLoadRecommendation(
     recentSessions: TrainingSession[],
-    targetACWR: number = 1.0,
+    targetACWR = 1.0,
   ): {
     recommendedLoad: number;
     recommendedRPE: number;
@@ -496,7 +496,7 @@ export class LoadMonitoringService {
       Math.round(recommendedLoad / recommendedDuration),
     );
 
-    let reasoning = "";
+    let reasoning: string;
     if (targetACWR < 0.9) {
       reasoning = "Reducing load to allow recovery and avoid under-training.";
     } else if (targetACWR > 1.2) {

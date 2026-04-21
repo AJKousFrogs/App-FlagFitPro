@@ -31,7 +31,12 @@ interface QuickActionItem {
     @if (showFAB()) {
       <!-- Backdrop -->
       @if (isExpanded()) {
-        <div class="fab-backdrop" (click)="closeMenu()"></div>
+        <button
+          type="button"
+          class="fab-backdrop"
+          aria-label="Close quick actions"
+          (click)="closeMenu()"
+        ></button>
       }
 
       <div class="quick-actions-container" [class.expanded]="isExpanded()">

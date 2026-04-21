@@ -1306,12 +1306,12 @@ export class ChannelService {
 
       // Get user details from users table (public profile data)
       const userIds = teamMembersData.map((m) => m.user_id);
-      let usersData: Array<{
+      let usersData: {
         id: string;
         email: string;
         full_name: string;
         profile_photo_url: string;
-      }> | null = null;
+      }[] | null = null;
       if (!this.usersTableUnavailable) {
         const result = await this.supabase.client
           .from("users")

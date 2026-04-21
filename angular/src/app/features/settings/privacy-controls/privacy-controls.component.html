@@ -74,7 +74,7 @@
                   density="compact"
                   icon="pi pi-info-circle"
                   message="With AI processing disabled, you won't receive personalized training recommendations or automated injury risk assessments. All AI features will show generic guidance instead."
-                  styleClass="privacy-alert"
+                  class="privacy-alert"
                 />
               }
 
@@ -416,7 +416,7 @@
                           deletionStatus()?.daysUntilDeletion +
                           ' days'
                         "
-                        styleClass="privacy-alert"
+                        class="privacy-alert"
                       />
                       <app-button
                         variant="outlined"
@@ -463,7 +463,7 @@
         [draggable]="false"
         dialogSize="sm"
         ariaLabel="Add emergency contact"
-        styleClass="privacy-contact-dialog"
+        class="privacy-contact-dialog"
       >
         <app-dialog-header
           dialogHeader
@@ -518,7 +518,7 @@
         [draggable]="false"
         dialogSize="sm"
         ariaLabel="Delete account"
-        styleClass="privacy-delete-dialog"
+        class="privacy-delete-dialog"
       >
         <app-dialog-header
           dialogHeader
@@ -534,7 +534,7 @@
             icon="pi pi-exclamation-triangle"
             title="This action cannot be undone"
             message="Your account will be immediately deactivated. All personal data will be permanently deleted within 30 days as required by our privacy policy."
-            styleClass="privacy-alert"
+            class="privacy-alert"
           />
           <div class="delete-warning-notes">
             <div class="retention-note">
@@ -588,7 +588,7 @@
         [draggable]="false"
         [contentStyle]="{ width: 'min(90vw, 600px)' }"
         ariaLabel="Privacy audit log"
-        styleClass="privacy-audit-dialog"
+        class="privacy-audit-dialog"
         (onHide)="auditLogEntries.set([])"
       >
         <app-dialog-header

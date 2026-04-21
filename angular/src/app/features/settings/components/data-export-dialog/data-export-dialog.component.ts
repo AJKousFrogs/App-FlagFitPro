@@ -8,13 +8,13 @@ import {
   DialogHeaderComponent,
 } from "../../../../shared/components/ui-components";
 
-type ExportOptions = {
+interface ExportOptions {
   profile: boolean;
   training: boolean;
   wellness: boolean;
   achievements: boolean;
   settings: boolean;
-};
+}
 
 @Component({
   selector: "app-data-export-dialog",

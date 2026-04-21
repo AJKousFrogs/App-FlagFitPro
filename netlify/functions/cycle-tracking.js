@@ -45,10 +45,10 @@ function deriveCycleLength(history) {
 }
 
 function derivePhase(day) {
-  if (day <= 5) return "Menstrual";
-  if (day <= 13) return "Follicular";
-  if (day <= 16) return "Ovulation";
-  if (day <= 23) return "Luteal Early";
+  if (day <= 5) {return "Menstrual";}
+  if (day <= 13) {return "Follicular";}
+  if (day <= 16) {return "Ovulation";}
+  if (day <= 23) {return "Luteal Early";}
   return "Luteal Late";
 }
 
@@ -94,7 +94,7 @@ const handler = async (event, context) =>
             startDate: entry.start_date,
             endDate: entry.end_date,
             length:
-              entry.end_date != null
+              entry.end_date !== null && entry.end_date !== undefined
                 ? daysBetween(entry.start_date, entry.end_date)
                 : undefined,
             flowIntensity: entry.flow_intensity,
@@ -117,7 +117,7 @@ const handler = async (event, context) =>
             },
             history,
             acwr:
-              acwr.error || acwr.data == null
+              acwr.error || acwr.data === null || acwr.data === undefined
                 ? null
                 : Array.isArray(acwr.data)
                   ? acwr.data[0]?.acwr ?? null

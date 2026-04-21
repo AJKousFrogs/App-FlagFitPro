@@ -581,13 +581,13 @@ export class CarTravelService {
   /**
    * Get car travel research summary
    */
-  getCarTravelResearchSummary(): Array<{
+  getCarTravelResearchSummary(): {
     topic: string;
     finding: string;
     source: string;
     pubmedId?: string;
     recommendation: string;
-  }> {
+  }[] {
     return CAR_TRAVEL_RESEARCH_SUMMARY;
   }
 }

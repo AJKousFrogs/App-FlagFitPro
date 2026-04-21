@@ -104,7 +104,12 @@
                   <div
                     class="activity-item"
                     [class.unread]="!activity.is_read"
+                    role="button"
+                    tabindex="0"
+                    [attr.aria-label]="'Open activity ' + activity.title"
                     (click)="onActivityClick(activity)"
+                    (keydown.enter)="onActivityClick(activity)"
+                    (keydown.space)="onActivityClick(activity); $event.preventDefault()"
                   >
                     <!-- Player Avatar -->
                     <div
@@ -116,7 +121,7 @@
                           getInitialsStr(activity.player?.full_name || 'P')
                         "
                         shape="circle"
-                        styleClass="activity-avatar-icon"
+                        class="activity-avatar-icon"
                       />
                       <div class="activity-icon-badge">
                         <i

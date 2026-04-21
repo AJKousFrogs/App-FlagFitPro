@@ -21,10 +21,8 @@ import {
   MissingDataDetectionService,
   PlayerMissingData,
 } from "../../core/services/missing-data-detection.service";
-import { ContinuityIndicatorsService } from "../../core/services/continuity-indicators.service";
 import { OverrideLoggingService } from "../../core/services/override-logging.service";
 import {
-  OwnershipTransitionService,
   OwnershipTransition,
 } from "../../core/services/ownership-transition.service";
 import { AccountabilityTrackingService } from "../../core/services/accountability-tracking.service";
@@ -203,21 +201,21 @@ export class CoachDashboardComponent {
 
   // Team continuity tracking
   teamContinuity = signal<{
-    gameDayRecovery: Array<{
+    gameDayRecovery: {
       playerId: string;
       playerName: string;
       dayNumber: number;
-    }>;
-    loadCaps: Array<{
+    }[];
+    loadCaps: {
       playerId: string;
       playerName: string;
       sessionsRemaining: number;
-    }>;
-    travelRecovery: Array<{
+    }[];
+    travelRecovery: {
       playerId: string;
       playerName: string;
       daysRemaining: number;
-    }>;
+    }[];
   }>({
     gameDayRecovery: [],
     loadCaps: [],

@@ -114,8 +114,7 @@ describe("TrainingDataService", () => {
     );
 
     expect(workoutLogsInsert).toHaveBeenCalled();
-    const calls = workoutLogsInsert.mock.calls as unknown as Array<
-      [
+    const calls = workoutLogsInsert.mock.calls as unknown as [
         {
           player_id: string;
           session_id: string;
@@ -123,8 +122,7 @@ describe("TrainingDataService", () => {
           rpe: number;
           completed_at: string;
         },
-      ]
-    >;
+      ][];
     expect(calls.length).toBeGreaterThan(0);
     const payload = calls[0]?.[0];
     expect(payload).toBeDefined();

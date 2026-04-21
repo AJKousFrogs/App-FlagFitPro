@@ -195,7 +195,7 @@ export class WellnessService {
    * @param timeframe - Time range (e.g., '7d', '30d', '3m')
    * Returns Observable using direct Supabase queries
    */
-  getWellnessData(timeframe: string = "30d"): Observable<WellnessResponse> {
+  getWellnessData(timeframe = "30d"): Observable<WellnessResponse> {
     const userId = this.userId();
 
     if (!userId) {

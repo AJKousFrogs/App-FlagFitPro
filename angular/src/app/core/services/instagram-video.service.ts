@@ -670,7 +670,7 @@ export class InstagramVideoService {
     position: FlagPosition,
     phase: TrainingPhase,
     skillLevel: SkillLevel,
-    limit: number = 5,
+    limit = 5,
   ): InstagramVideo[] {
     const filtered = this.filterVideos({
       positions: [position],

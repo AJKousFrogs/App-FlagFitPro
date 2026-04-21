@@ -25,10 +25,11 @@ import { SelectComponent } from "../../../shared/components/select/select.compon
 
       <!-- Work schedule -->
       <div class="ob-field">
-        <label class="ob-label">
+        <label class="ob-label" for="ob-work-schedule">
           Work Schedule <span class="req" aria-hidden="true">*</span>
         </label>
         <app-select
+          inputId="ob-work-schedule"
           label=""
           [options]="scheduleTypes"
           (change)="onScheduleTypeSelect($event)"
@@ -39,7 +40,7 @@ import { SelectComponent } from "../../../shared/components/select/select.compon
 
       <!-- Practices per week -->
       <div class="ob-field">
-        <label class="ob-label" id="ob-freq-label">Team practices per week</label>
+        <div class="ob-label" id="ob-freq-label">Team practices per week</div>
         <div
           class="ob-freq-grid"
           role="group"
@@ -61,9 +62,9 @@ import { SelectComponent } from "../../../shared/components/select/select.compon
 
       <!-- Practice days -->
       <div class="ob-field">
-        <label class="ob-label" id="ob-days-label"
-          >Team practice days (flag football)</label
-        >
+        <div class="ob-label" id="ob-days-label">
+          Team practice days (flag football)
+        </div>
         <div
           class="ob-chips"
           role="group"

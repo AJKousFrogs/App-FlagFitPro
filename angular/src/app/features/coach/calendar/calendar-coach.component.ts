@@ -348,7 +348,7 @@ export class CalendarCoachComponent implements OnInit {
     field: "startTime" | "endTime" | "location",
     value: unknown,
   ): void {
-    let str = "";
+    let str: string;
     if (value == null) {
       str = "";
     } else if (typeof value === "object" && value !== null && "id" in value) {

@@ -45,7 +45,7 @@ import { DatePickerModule } from "primeng/datepicker";
         [dateFormat]="dateFormat()"
         [showIcon]="showIcon()"
         [disabled]="isDisabled()"
-        [styleClass]="'w-full ' + styleClass()"
+        [class]="'w-full ' + styleClass()"
         [inputStyleClass]="'w-full ' + inputStyleClass()"
         [appendTo]="appendTo()"
         (onSelect)="onSelect($event)"

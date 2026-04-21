@@ -211,14 +211,14 @@ export interface ChartPanEventDetail {
  */
 export interface PerformanceChartData {
   labels: string[];
-  datasets: Array<{
+  datasets: {
     label: string;
     data: number[];
     borderColor: string;
     backgroundColor: string;
     fill?: boolean;
     tension?: number;
-  }>;
+  }[];
 }
 
 /**
@@ -226,13 +226,13 @@ export interface PerformanceChartData {
  */
 export interface ACWRChartData {
   labels: string[];
-  datasets: Array<{
+  datasets: {
     label: string;
     data: number[];
     borderColor: string;
     backgroundColor: string;
     borderDash?: number[];
-  }>;
+  }[];
   annotations?: {
     sweetSpot: { min: number; max: number };
     dangerZone: number;
@@ -244,13 +244,13 @@ export interface ACWRChartData {
  */
 export interface WellnessTrendChartData {
   labels: string[];
-  datasets: Array<{
+  datasets: {
     label: string;
     data: number[];
     borderColor: string;
     backgroundColor: string;
-  }>;
-  metrics: Array<"sleep" | "energy" | "stress" | "soreness" | "motivation">;
+  }[];
+  metrics: ("sleep" | "energy" | "stress" | "soreness" | "motivation")[];
 }
 
 /**
@@ -258,13 +258,13 @@ export interface WellnessTrendChartData {
  */
 export interface BodyCompositionChartData {
   labels: string[];
-  datasets: Array<{
+  datasets: {
     label: string;
     data: number[];
     borderColor: string;
     backgroundColor: string;
     yAxisID?: string;
-  }>;
+  }[];
 }
 
 /**
@@ -272,12 +272,12 @@ export interface BodyCompositionChartData {
  */
 export interface TrainingVolumeChartData {
   labels: string[];
-  datasets: Array<{
+  datasets: {
     label: string;
     data: number[];
     backgroundColor: string | string[];
     stack?: string;
-  }>;
+  }[];
 }
 
 /**
@@ -285,13 +285,13 @@ export interface TrainingVolumeChartData {
  */
 export interface SkillsRadarChartData {
   labels: string[];
-  datasets: Array<{
+  datasets: {
     label: string;
     data: number[];
     backgroundColor: string;
     borderColor: string;
     pointBackgroundColor: string;
-  }>;
+  }[];
 }
 
 // ============================================================================

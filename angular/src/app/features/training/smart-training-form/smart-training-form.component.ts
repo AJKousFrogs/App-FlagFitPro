@@ -181,7 +181,7 @@ export class SmartTrainingFormComponent implements OnInit {
     if (!userId) return;
 
     // Load recent performance data from Supabase
-    let recentPerformance: Array<{ date: string; rpe: number; type: string }> =
+    let recentPerformance: { date: string; rpe: number; type: string }[] =
       [];
     try {
       const { sessions } =
@@ -202,11 +202,11 @@ export class SmartTrainingFormComponent implements OnInit {
     }
 
     // Load upcoming games/events - this is optional, don't block on failure
-    let upcomingGames: Array<{
+    let upcomingGames: {
       date: string;
       opponent?: string;
       importance?: string;
-    }> = [];
+    }[] = [];
     try {
       // Note: team_events requires team_id filter via RLS, this query may return empty
       // if the user is not part of a team. We gracefully handle this case.

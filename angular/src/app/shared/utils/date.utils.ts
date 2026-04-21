@@ -37,7 +37,7 @@ import {
  */
 export function formatDate(
   date: Date | string,
-  formatStr: string = "PPP",
+  formatStr = "PPP",
 ): string {
   try {
     const dateObj = typeof date === "string" ? parseISO(date) : date;
@@ -417,7 +417,7 @@ export function toDateWithTimezone(date: Date | string): {
  */
 export function formatDateLocal(
   dateString: string | Date | null | undefined,
-  formatStr: string = "PPP",
+  formatStr = "PPP",
 ): string {
   if (!dateString) return "—";
 

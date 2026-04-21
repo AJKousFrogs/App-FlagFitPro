@@ -295,12 +295,12 @@ function getBlock(
 }
 
 /** Block key to config mapping */
-const BLOCK_CONFIGS: Array<{
+const BLOCK_CONFIGS: {
   key: string;
   type: string;
   title: string;
   icon: string;
-}> = [
+}[] = [
   { key: "morningMobility", type: "morning_mobility", title: "Morning Mobility", icon: "pi-sun" },
   { key: "foamRoll", type: "foam_roll", title: "Foam Rolling", icon: "pi-circle" },
   { key: "warmUp", type: "warm_up", title: "Warm-Up (25 min)", icon: "pi-bolt" },

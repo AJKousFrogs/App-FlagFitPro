@@ -238,13 +238,14 @@
 
               <div class="metrics-row">
                 <div class="metric-input">
-                  <label>Pain Level (0-10)</label>
+                  <div id="rtp-pain-level-label">Pain Level (0-10)</div>
                   <small>0 = No pain, 10 = Severe</small>
                   <p-slider
                     (onChange)="onPainLevelChange($event)"
                     [min]="0"
                     [max]="10"
                     [step]="1"
+                    ariaLabelledBy="rtp-pain-level-label"
                   ></p-slider>
                   <div
                     class="slider-value"
@@ -259,13 +260,14 @@
                 </div>
 
                 <div class="metric-input">
-                  <label>Function Score (%)</label>
+                  <div id="rtp-function-score-label">Function Score (%)</div>
                   <small>Compared to pre-injury baseline</small>
                   <p-slider
                     (onChange)="onFunctionScoreChange($event)"
                     [min]="0"
                     [max]="100"
                     [step]="5"
+                    ariaLabelledBy="rtp-function-score-label"
                   ></p-slider>
                   <div class="slider-value">
                     {{ todayCheckin.functionScore }}%
@@ -275,13 +277,14 @@
 
               <div class="metrics-row">
                 <div class="metric-input">
-                  <label>Confidence Level (1-10)</label>
+                  <div id="rtp-confidence-level-label">Confidence Level (1-10)</div>
                   <small>Trust in injured area</small>
                   <p-slider
                     (onChange)="onConfidenceLevelChange($event)"
                     [min]="1"
                     [max]="10"
                     [step]="1"
+                    ariaLabelledBy="rtp-confidence-level-label"
                   ></p-slider>
                   <div class="slider-value">
                     {{ todayCheckin.confidenceLevel }}/10
@@ -289,7 +292,7 @@
                 </div>
 
                 <div class="activities-checklist">
-                  <label>Activities Completed Today</label>
+                  <div>Activities Completed Today</div>
                   @for (
                     activity of getCurrentStage().activities.slice(
                       0,
@@ -403,7 +406,7 @@
         [draggable]="false"
         [resizable]="false"
         [dismissableMask]="true"
-        [styleClass]="'rtp-start-dialog'"
+        [class]="'rtp-start-dialog'"
       >
         <app-dialog-header
           icon="shield"
@@ -414,8 +417,8 @@
         <div class="start-form">
           <!-- Injury Type -->
           <div class="form-field">
-            <label>Injury Type *</label>
-            <div class="injury-type-options">
+            <div id="rtp-injury-type-label">Injury Type *</div>
+            <div class="injury-type-options" role="radiogroup" aria-labelledby="rtp-injury-type-label">
               @for (type of injuryTypes; track type.value) {
                 <div class="type-option">
                   <input

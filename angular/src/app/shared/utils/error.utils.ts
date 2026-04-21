@@ -237,7 +237,7 @@ export function getMessageForErrorType(errorType: ErrorType): string {
  */
 export function extractApiErrorDetails(
   error: unknown,
-  fallbackMessage: string = "An unknown error occurred",
+  fallbackMessage = "An unknown error occurred",
 ): {
   message: string;
   errorType?: string;

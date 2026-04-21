@@ -2,12 +2,15 @@
   <form [formGroup]="sessionForm()" class="parameters-form">
     <div class="form-row">
       <div class="form-field">
-        <label>Session Duration (minutes)</label>
+        <div id="training-builder-duration-label" class="field-label">
+          Session Duration (minutes)
+        </div>
         <p-slider
           formControlName="duration"
           [min]="15"
           [max]="120"
           [step]="15"
+          ariaLabelledBy="training-builder-duration-label"
         >
         </p-slider>
         <span class="duration-display"
@@ -41,7 +44,7 @@
         title="Outdoor conditions"
         [message]="weatherSummary()"
         density="compact"
-        styleClass="weather-notice"
+        class="weather-notice"
       >
         <app-status-tag
           [value]="weatherData()?.recommendation ?? 'No recommendation'"

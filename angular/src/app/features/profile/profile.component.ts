@@ -109,21 +109,21 @@ export class ProfileComponent implements OnInit {
   userInitials = signal("U");
   activeTab = signal<string>("overview");
   stats = signal<
-    Array<{
+    {
       value: string;
       label: string;
       icon?: string;
       iconType?: "primary" | "error" | "warning" | "info";
       trend?: string;
       trendType?: "positive" | "negative" | "neutral";
-    }>
+    }[]
   >([]);
-  activities = signal<Array<{ icon: string; title: string; time: string }>>([]);
+  activities = signal<{ icon: string; title: string; time: string }[]>([]);
   achievements = signal<
-    Array<{ icon: string; title: string; description: string; date: string }>
+    { icon: string; title: string; description: string; date: string }[]
   >([]);
   performanceStats = signal<
-    Array<{
+    {
       label: string;
       value: string;
       trend: string;
@@ -134,7 +134,7 @@ export class ProfileComponent implements OnInit {
         | "secondary"
         | "contrast"
         | "danger";
-    }>
+    }[]
   >([]);
 
   // Invitations
@@ -439,12 +439,12 @@ export class ProfileComponent implements OnInit {
       this.activities.set(recentActivities.length > 0 ? recentActivities : []);
 
       // Build achievements based on real data
-      const achievements: Array<{
+      const achievements: {
         icon: string;
         title: string;
         description: string;
         date: string;
-      }> = [];
+      }[] = [];
 
       if (streak >= 7) {
         achievements.push({
@@ -831,15 +831,15 @@ export class ProfileComponent implements OnInit {
         throw error;
       }
 
-      type InvitationRow = {
+      interface InvitationRow {
         id: string;
         team_id: string;
         teams?: { name?: string }[] | { name?: string } | null;
         role: string;
         created_at: string;
         expires_at: string;
-      };
-      const rows = (data || []) as InvitationRow[];
+      }
+      const rows = (data || []) as unknown as InvitationRow[];
       const invitations: PendingInvitation[] = rows.map((inv) => ({
           id: inv.id,
           teamId: inv.team_id,

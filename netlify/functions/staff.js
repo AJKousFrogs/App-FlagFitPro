@@ -79,8 +79,8 @@ export default async (req) => {
   const url = new URL(req.url);
   const path = url.pathname;
 
-  if (path.includes("/nutritionist")) return dispatch(staffNutritionistHandler, req, url);
-  if (path.includes("/physiotherapist")) return dispatch(staffPhysiotherapistHandler, req, url);
+  if (path.includes("/nutritionist")) {return dispatch(staffNutritionistHandler, req, url);}
+  if (path.includes("/physiotherapist")) {return dispatch(staffPhysiotherapistHandler, req, url);}
   if (path.includes("/psychology") || path.includes("/psycholog")) {
     return dispatch(staffPsychologyHandler, req, url);
   }

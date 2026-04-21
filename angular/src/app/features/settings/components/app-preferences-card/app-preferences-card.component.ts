@@ -8,18 +8,18 @@ import { FormGroup, ReactiveFormsModule } from "@angular/forms";
 import { SelectComponent } from "../../../../shared/components/select/select.component";
 import { CardShellComponent } from "../../../../shared/components/ui-components";
 
-type ThemeOption = {
+interface ThemeOption {
   label: string;
   value: string;
   icon: string;
-};
+}
 
-type LanguageOption = {
+interface LanguageOption {
   label: string;
   value: string;
   flag: string;
   native: string;
-};
+}
 
 @Component({
   selector: "app-app-preferences-card",

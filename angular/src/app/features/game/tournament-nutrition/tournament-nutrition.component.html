@@ -117,7 +117,7 @@
                 <app-progress-bar
                   [value]="hydrationProgress()"
                   [showValue]="false"
-                  styleClass="hydration-progress-bar"
+                  class="hydration-progress-bar"
                 />
                 <span class="target">/ {{ dailyHydrationTarget() }}ml</span>
               </div>
@@ -183,7 +183,7 @@
                       [value]="game.opponent"
                       (valueChange)="onEditGameOpponentInput(game, $event)"
                       placeholder="Opponent (optional)"
-                      styleClass="opponent-input"
+                      class="opponent-input"
                       ariaLabel="Game opponent"
                     />
                     <app-checkbox

@@ -213,7 +213,7 @@
         <app-dialog
           [(visible)]="showCreateSessionDialog"
           [modal]="true"
-          styleClass="dashboard-dialog"
+          class="dashboard-dialog"
           [blockScroll]="true"
           [draggable]="false"
           ariaLabel="Create training session"
@@ -234,7 +234,7 @@
                 [value]="newSession.title"
                 (valueChange)="onNewSessionTitleInput($event)"
                 placeholder="e.g., Offensive Drills"
-                styleClass="w-full"
+                class="w-full"
                 autocomplete="off"
               />
             </div>
@@ -247,7 +247,7 @@
                 optionLabel="label"
                 optionValue="value"
                 placeholder="Select type"
-                styleClass="w-full"
+                class="w-full"
                 appendTo="body"
               ></app-select>
             </div>
@@ -271,7 +271,7 @@
                 [value]="'' + newSession.duration"
                 (valueChange)="onNewSessionDurationInput($event)"
                 placeholder="90"
-                styleClass="w-full"
+                class="w-full"
                 autocomplete="off"
               />
             </div>
@@ -284,7 +284,7 @@
                 (valueChange)="onNewSessionNotesInput($event)"
                 placeholder="Session notes..."
                 [rows]="3"
-                styleClass="w-full"
+                class="w-full"
                 autocomplete="off"
               ></app-textarea>
             </div>
@@ -307,7 +307,7 @@
         <app-dialog
           [(visible)]="showTeamMessageDialog"
           [modal]="true"
-          styleClass="dashboard-dialog"
+          class="dashboard-dialog"
           [blockScroll]="true"
           [draggable]="false"
           ariaLabel="Send team message"
@@ -327,7 +327,7 @@
                 (valueChange)="onTeamMessageContentInput($event)"
                 placeholder="Type your message to the team..."
                 [rows]="5"
-                styleClass="w-full"
+                class="w-full"
               ></app-textarea>
             </div>
           </div>
@@ -349,7 +349,7 @@
         <app-dialog
           [(visible)]="showRequestAccessDialog"
           [modal]="true"
-          styleClass="dashboard-dialog"
+          class="dashboard-dialog"
           [blockScroll]="true"
           [draggable]="false"
           ariaLabel="Request data access"
@@ -373,7 +373,7 @@
                 (valueChange)="onRequestAccessMessageInput($event)"
                 placeholder="Type your request message..."
                 [rows]="4"
-                styleClass="w-full"
+                class="w-full"
               ></app-textarea>
             </div>
           </div>

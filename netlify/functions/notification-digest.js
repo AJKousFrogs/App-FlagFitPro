@@ -1048,7 +1048,7 @@ async function runScheduledDigests(digestType) {
     .from("users")
     .select("id")
     .eq("is_active", true);
-  if (error) throw error;
+  if (error) {throw error;}
 
   let sent = 0;
   let skipped = 0;

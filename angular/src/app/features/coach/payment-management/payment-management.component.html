@@ -398,9 +398,9 @@
             />
           </div>
 
-          <div class="form-field">
-            <label>Fee Type</label>
-            <div class="radio-group">
+                  <div class="form-field">
+                    <div id="payment-fee-type-label">Fee Type</div>
+                    <div class="radio-group" role="radiogroup" aria-labelledby="payment-fee-type-label">
               @for (type of feeTypes; track type.value) {
                 <div class="radio-option">
                   <p-radioButton
@@ -418,19 +418,21 @@
           </div>
 
           <div class="form-row">
-            <div class="form-field">
-              <label>Amount per Player</label>
-              <p-inputNumber
-                formControlName="amount"
+                    <div class="form-field">
+                      <label for="payment-fee-amount">Amount per Player</label>
+                      <p-inputNumber
+                        inputId="payment-fee-amount"
+                        formControlName="amount"
                 mode="currency"
                 currency="USD"
                 locale="en-US"
               ></p-inputNumber>
             </div>
-            <div class="form-field">
-              <label>Guest Fee (optional)</label>
-              <p-inputNumber
-                formControlName="guestFee"
+                    <div class="form-field">
+                      <label for="payment-guest-fee">Guest Fee (optional)</label>
+                      <p-inputNumber
+                        inputId="payment-guest-fee"
+                        formControlName="guestFee"
                 mode="currency"
                 currency="USD"
                 locale="en-US"
@@ -454,9 +456,9 @@
             />
           </div>
 
-          <div class="form-field">
-            <label>Apply To</label>
-            <div class="radio-group">
+                  <div class="form-field">
+                    <div id="payment-apply-to-label">Apply To</div>
+                    <div class="radio-group" role="radiogroup" aria-labelledby="payment-apply-to-label">
               <div class="radio-option">
                 <p-radioButton
                   name="applyTo"
@@ -480,9 +482,9 @@
             </div>
           </div>
 
-          <div class="form-field">
-            <label>Reminders</label>
-            <div class="checkbox-group">
+                  <div class="form-field">
+                    <div id="payment-reminders-label">Reminders</div>
+                    <div class="checkbox-group" role="group" aria-labelledby="payment-reminders-label">
               <div class="checkbox-option">
                 <app-checkbox
                   formControlName="notifyOnCreate"
@@ -552,10 +554,11 @@
           }
 
           <div class="form-row">
-            <div class="form-field">
-              <label>Amount Received</label>
-              <p-inputNumber
-                formControlName="amount"
+                    <div class="form-field">
+                      <label for="payment-amount-received">Amount Received</label>
+                      <p-inputNumber
+                        inputId="payment-amount-received"
+                        formControlName="amount"
                 mode="currency"
                 currency="USD"
                 locale="en-US"
@@ -608,7 +611,7 @@
       <app-dialog
         [(visible)]="showFeeDetailsDialog"
         [modal]="true"
-        styleClass="payment-fee-details-dialog"
+        class="payment-fee-details-dialog"
         [blockScroll]="true"
         [draggable]="false"
         ariaLabel="Fee details"

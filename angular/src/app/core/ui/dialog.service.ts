@@ -32,7 +32,7 @@ export class DialogService {
 
   prompt(
     message: string,
-    defaultValue: string = "",
+    defaultValue = "",
     title?: string,
   ): Promise<string | null> {
     if (typeof window === "undefined") {

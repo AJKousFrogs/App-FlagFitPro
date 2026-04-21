@@ -182,15 +182,13 @@ export interface PhaseEvidenceConfig {
   population: PopulationAssumptions;
   citations: ResearchCitation[];
 
-  phases: {
-    [phaseName: string]: {
+  phases: Record<string, {
       volumeRange: { min: number; max: number };
       intensityRange: { min: number; max: number };
       durationWeeks: { min: number; max: number };
       rationale: string;
       citations: string[]; // References to citation IDs
-    };
-  };
+    }>;
 
   scienceNotes: {
     phaseStructure: string;

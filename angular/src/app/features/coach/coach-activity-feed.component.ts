@@ -12,7 +12,6 @@
 
 import {
   Component,
-  OnDestroy,
   inject,
   signal,
   computed,
@@ -66,7 +65,7 @@ type ActivityFilter = "all" | ActivityType | "unread";
     "[style.--activity-feed-height]": "activityFeedHeight",
   },
 })
-export class CoachActivityFeedComponent implements OnDestroy {
+export class CoachActivityFeedComponent {
   private readonly notificationService = inject(TeamNotificationService);
   private readonly logger = inject(LoggerService);
   private readonly destroyRef = inject(DestroyRef);
@@ -88,7 +87,7 @@ export class CoachActivityFeedComponent implements OnDestroy {
   private readonly _hasMore = signal(true);
   readonly searchQuery = signal("");
   readonly activityFilter = signal<ActivityFilter>("all");
-  readonly filterOptions: Array<{ value: ActivityFilter; label: string }> = [
+  readonly filterOptions: { value: ActivityFilter; label: string }[] = [
     { value: "all", label: "All" },
     { value: "unread", label: "Unread" },
     { value: "training_completed", label: "Training" },
@@ -140,7 +139,7 @@ export class CoachActivityFeedComponent implements OnDestroy {
   });
 
   readonly groupedActivities = computed(() => {
-    const groups: Map<string, CoachActivityItem[]> = new Map();
+    const groups = new Map<string, CoachActivityItem[]>();
 
     this.filteredActivities().forEach((activity) => {
       const date = this.getActivityDateLabel(activity.created_at);
@@ -192,9 +191,6 @@ export class CoachActivityFeedComponent implements OnDestroy {
     this.loadActivities();
   }
 
-  ngOnDestroy(): void {
-    // Cleanup handled by service
-  }
 
   // ============================================================================
   // DATA LOADING

@@ -319,7 +319,7 @@ export class PresenceService implements OnDestroy {
 
   private handleTeamPresenceJoin(
     key: string,
-    newPresences: { [key: string]: unknown }[],
+    newPresences: Record<string, unknown>[],
   ): void {
     if (!newPresences || newPresences.length === 0) return;
 
@@ -334,7 +334,7 @@ export class PresenceService implements OnDestroy {
 
   private handleTeamPresenceLeave(
     key: string,
-    leftPresences: { [key: string]: unknown }[],
+    leftPresences: Record<string, unknown>[],
   ): void {
     const currentMap = new Map(this._teamPresence());
     currentMap.delete(key);

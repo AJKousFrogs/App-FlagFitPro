@@ -83,11 +83,11 @@ export default async (req) => {
   const url = new URL(req.url);
   const path = url.pathname;
 
-  if (path.includes("/depth-chart")) return dispatch(depthChartHandler, req, url);
-  if (path.includes("/scouting")) return dispatch(scoutingHandler, req, url);
-  if (path.includes("/player-stats")) return dispatch(playerStatsHandler, req, url);
-  if (path.includes("/player-settings")) return dispatch(playerSettingsHandler, req, url);
-  if (path.includes("/roster")) return dispatch(rosterCoreHandler, req, url);
+  if (path.includes("/depth-chart")) {return dispatch(depthChartHandler, req, url);}
+  if (path.includes("/scouting")) {return dispatch(scoutingHandler, req, url);}
+  if (path.includes("/player-stats")) {return dispatch(playerStatsHandler, req, url);}
+  if (path.includes("/player-settings")) {return dispatch(playerSettingsHandler, req, url);}
+  if (path.includes("/roster")) {return dispatch(rosterCoreHandler, req, url);}
 
   return new Response(
     JSON.stringify({ success: false, error: `Not found: ${req.method} ${path}`, code: "not_found" }),

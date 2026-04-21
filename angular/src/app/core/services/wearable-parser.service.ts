@@ -8,7 +8,7 @@
 import { Injectable } from "@angular/core";
 
 export interface ParsedWearableData {
-  data: Array<{ speed_m_s: number; distance_m: number }>;
+  data: { speed_m_s: number; distance_m: number }[];
   metadata: {
     deviceType?: string;
     deviceModel?: string;
@@ -81,7 +81,7 @@ export class WearableParserService {
     }
 
     const headers = lines[0].split(",").map((h) => h.trim().toLowerCase());
-    const data: Array<{ speed_m_s: number; distance_m: number }> = [];
+    const data: { speed_m_s: number; distance_m: number }[] = [];
     const errors: string[] = [];
 
     // Detect speed and distance columns
@@ -166,11 +166,11 @@ export class WearableParserService {
     try {
       jsonData = JSON.parse(text);
     } catch (_error) {
-      throw new Error("Invalid JSON format");
+      throw new Error("Invalid JSON format", { cause: _error });
     }
 
     // Handle different JSON structures
-    let dataArray: unknown[] = [];
+    let dataArray: unknown[];
 
     if (Array.isArray(jsonData)) {
       dataArray = jsonData;
@@ -186,7 +186,7 @@ export class WearableParserService {
       );
     }
 
-    const data: Array<{ speed_m_s: number; distance_m: number }> = [];
+    const data: { speed_m_s: number; distance_m: number }[] = [];
     const errors: string[] = [];
 
     for (let i = 0; i < dataArray.length; i++) {
@@ -248,7 +248,7 @@ export class WearableParserService {
     const samples = xmlDoc.querySelectorAll(
       "sample, record, point, data, trackpoint",
     );
-    const data: Array<{ speed_m_s: number; distance_m: number }> = [];
+    const data: { speed_m_s: number; distance_m: number }[] = [];
     const errors: string[] = [];
 
     samples.forEach((sample, index) => {
@@ -314,8 +314,7 @@ export class WearableParserService {
     let current = "";
     let inQuotes = false;
 
-    for (let i = 0; i < line.length; i++) {
-      const char = line[i];
+    for (const char of line) {
 
       if (char === '"') {
         inQuotes = !inQuotes;

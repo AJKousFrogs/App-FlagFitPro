@@ -90,9 +90,7 @@ interface SpeechRecognition extends EventTarget {
   stop(): void;
 }
 
-interface SpeechRecognitionConstructor {
-  new (): SpeechRecognition;
-}
+type SpeechRecognitionConstructor = new () => SpeechRecognition;
 
 // TrainingContext is now imported as AnalysisContext from ai.service.ts
 

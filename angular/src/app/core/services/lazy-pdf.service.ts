@@ -100,7 +100,7 @@ export class LazyPdfService {
       this.loaded.set(true);
     } catch (error) {
       this.logger.error("Failed to load PDF libraries:", error);
-      throw new Error("Failed to load PDF export libraries");
+      throw new Error("Failed to load PDF export libraries", { cause: error });
     } finally {
       this.loading.set(false);
     }
@@ -185,7 +185,7 @@ export class LazyPdfService {
       pdf.save(filename);
     } catch (error) {
       this.logger.error("Failed to export PDF:", error);
-      throw new Error("Failed to generate PDF");
+      throw new Error("Failed to generate PDF", { cause: error });
     }
   }
 
@@ -252,7 +252,7 @@ export class LazyPdfService {
       pdf.save(filename);
     } catch (error) {
       this.logger.error("Failed to export PDF:", error);
-      throw new Error("Failed to generate PDF");
+      throw new Error("Failed to generate PDF", { cause: error });
     }
   }
 

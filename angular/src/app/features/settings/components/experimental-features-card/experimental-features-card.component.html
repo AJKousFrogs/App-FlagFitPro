@@ -4,14 +4,14 @@
   tone="warning"
 >
   <div class="settings-toggle-row">
-    <label id="settings-nextgen-label" class="form-label">
+    <label for="settings-nextgen-toggle" class="form-label">
       Next-Gen Metrics Preview
     </label>
     <div class="toggle-wrapper">
       <p-toggleswitch
+        inputId="settings-nextgen-toggle"
         [ngModel]="nextGenMetricsPreview()"
         (ngModelChange)="onNextGenToggle($event)"
-        ariaLabelledBy="settings-nextgen-label"
       ></p-toggleswitch>
     </div>
   </div>

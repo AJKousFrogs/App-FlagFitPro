@@ -16,12 +16,12 @@ export type RouteEntry =
   | "public"
   | null;
 
-type RouteShellData = {
+interface RouteShellData {
   entry: RouteEntry;
   headerPreset: HeaderPreset | null;
   showBottomNav: boolean | null;
   showFab: boolean | null;
-};
+}
 
 @Injectable({
   providedIn: "root",

@@ -593,7 +593,7 @@ export class GameTrackerComponent implements OnInit {
 
     this.apiService
       .get<
-        | Array<{
+        | {
             game_id: string;
             id: string;
             game_date: string;
@@ -608,7 +608,7 @@ export class GameTrackerComponent implements OnInit {
             owner_type: string;
             player_owner_id: string;
             version: number;
-          }>
+          }[]
         | { data: unknown[] }
       >(API_ENDPOINTS.games.list)
       .pipe(takeUntilDestroyed(this.destroyRef))
@@ -617,7 +617,7 @@ export class GameTrackerComponent implements OnInit {
           const raw = Array.isArray(response)
             ? response
             : (response as { data?: unknown[] })?.data ?? [];
-          const games: Game[] = (raw as Array<Record<string, unknown>>).map(
+          const games: Game[] = (raw as Record<string, unknown>[]).map(
             (game) => {
               const teamScore =
                 (game.team_score as number) ?? (game.our_score as number) ?? 0;

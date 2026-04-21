@@ -65,7 +65,12 @@
               @for (video of filteredVideos(); track video.id) {
                 <article
                   class="video-card"
+                  role="button"
+                  tabindex="0"
+                  [attr.aria-label]="'Open video ' + video.title"
                   (click)="openVideo(video)"
+                  (keydown.enter)="openVideo(video)"
+                  (keydown.space)="openVideo(video); $event.preventDefault()"
                   [class.bookmarked]="isBookmarked(video.id)"
                   (mouseenter)="onVideoCardHover(video)"
                   (mouseleave)="onVideoCardLeave()"
@@ -147,7 +152,7 @@
                         [label]="video.creator.displayName.charAt(0)"
                         shape="circle"
                         size="normal"
-                        styleClass="creator-avatar"
+                        class="creator-avatar"
                       />
                       <div class="creator-info">
                         <span class="creator-name">
@@ -202,12 +207,20 @@
 
           <div class="creators-scroll">
             @for (creator of featuredCreators(); track creator.username) {
-              <div class="creator-card" (click)="filterByCreator(creator)">
+              <div
+                class="creator-card"
+                role="button"
+                tabindex="0"
+                [attr.aria-label]="'Filter videos by ' + creator.displayName"
+                (click)="filterByCreator(creator)"
+                (keydown.enter)="filterByCreator(creator)"
+                (keydown.space)="filterByCreator(creator); $event.preventDefault()"
+              >
                 <app-avatar
                   [label]="creator.displayName.charAt(0)"
                   shape="circle"
                   size="xlarge"
-                  styleClass="creator-avatar-large"
+                  class="creator-avatar-large"
                 />
                 <div class="creator-details">
                   <span class="creator-display-name">

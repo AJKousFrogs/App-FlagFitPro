@@ -11,7 +11,7 @@
           </div>
           @if (day.sessions.length > 0) {
             <div class="day-session-preview">{{ day.sessions[0].title }}</div>
-            @if (day.sessions[0].duration != null) {
+            @if (day.sessions[0].duration !== null) {
               <div class="day-session-meta">{{ day.sessions[0].duration }} min</div>
             }
           } @else {
@@ -30,7 +30,7 @@
   <app-card-shell title="Quick Workouts" headerIcon="pi-bolt" [hasFooter]="workouts().length > 4">
     <div class="workouts-list-compact">
       @for (workout of previewWorkouts(); track trackByWorkoutTitle($index, workout)) {
-        <!-- eslint-disable-next-line @angular-eslint/template/no-inline-styles -->
+         
         <button
           type="button"
           class="workout-card-compact"
@@ -38,7 +38,7 @@
           (click)="selectWorkout.emit(workout)"
           [attr.aria-label]="'Start workout ' + workout.title"
         >
-          <!-- eslint-disable-next-line @angular-eslint/template/no-inline-styles -->
+           
           <div class="workout-icon-small" [style.background]="workout.iconBg">
             <i [class]="workout.icon"></i>
           </div>

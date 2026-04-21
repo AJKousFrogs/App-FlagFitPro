@@ -8,7 +8,7 @@
       <app-progress-bar
         [value]="overallProgress()"
         [showValue]="false"
-        styleClass="overall-bar"
+        class="overall-bar"
       />
     </div>
 
@@ -29,7 +29,7 @@
       <app-progress-bar
         [value]="stepProgress()"
         [showValue]="false"
-        styleClass="step-bar"
+        class="step-bar"
       />
     </div>
 
@@ -110,7 +110,7 @@
           (valueChange)="followUpNotesInput.emit($event)"
           placeholder="Any additional notes? (optional)"
           [rows]="2"
-          styleClass="follow-up-notes"
+          class="follow-up-notes"
         />
         <app-button
           iconLeft="pi-send"

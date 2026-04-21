@@ -62,10 +62,10 @@ export interface CreateDepthChartPayload {
   team_id: string;
   name: string;
   chart_type: DepthChartTemplate["chart_type"];
-  positions?: Array<{
+  positions?: {
     position_name: string;
     position_abbreviation: string;
-  }>;
+  }[];
 }
 
 export interface UpdateEntryPayload {
@@ -348,10 +348,10 @@ export class DepthChartService {
   getUnassignedPlayers(
     teamId: string,
     templateId: string,
-  ): Observable<Array<{ id: string; name: string; number?: string }>> {
+  ): Observable<{ id: string; name: string; number?: string }[]> {
     return this.apiService
       .get<
-        Array<{ id: string; name: string; number?: string }>
+        { id: string; name: string; number?: string }[]
       >(`/api/depth-chart/templates/${templateId}/unassigned`, { team_id: teamId })
       .pipe(
         map(

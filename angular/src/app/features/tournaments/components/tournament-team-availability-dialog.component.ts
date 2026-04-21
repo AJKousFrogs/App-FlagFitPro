@@ -6,7 +6,7 @@ import { DialogFooterComponent } from "../../../shared/components/dialog-footer/
 import { DialogHeaderComponent } from "../../../shared/components/dialog-header/dialog-header.component";
 import { TournamentTeamAvailabilityDialogContentComponent } from "./tournament-team-availability-dialog-content.component";
 
-type PlayerAvailability = {
+interface PlayerAvailability {
   playerId: string;
   playerName: string;
   position: string;
@@ -14,21 +14,21 @@ type PlayerAvailability = {
   reason?: string;
   paymentStatus: "pending" | "paid" | "partial" | "not_required";
   amountPaid: number;
-};
+}
 
-type AvailabilitySummary = {
+interface AvailabilitySummary {
   confirmed: number;
   tentative: number;
   declined: number;
   pending: number;
-};
+}
 
-type TournamentBudget = {
+interface TournamentBudget {
   totalEstimated: number;
   teamContribution: number;
   sponsorContribution: number;
   perPlayer: number;
-};
+}
 
 @Component({
   selector: "app-tournament-team-availability-dialog",

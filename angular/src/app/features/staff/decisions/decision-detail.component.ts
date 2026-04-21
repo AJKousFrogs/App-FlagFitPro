@@ -73,14 +73,14 @@ export class DecisionDetailComponent implements OnInit {
   isLoading = signal(false);
   error = signal<string | null>(null);
   relatedDecisions = signal<
-    Array<{
+    {
       id: string;
       title: string;
       category: string;
       outcome: string;
       decisionSummary: string;
       relation: string;
-    }>
+    }[]
   >([]);
   showReviewDialog = signal(false);
 

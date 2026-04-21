@@ -16,7 +16,6 @@ import {
   ChangeDetectionStrategy,
   Component,
   DestroyRef,
-  OnInit,
   computed,
   inject,
   signal,
@@ -68,7 +67,7 @@ interface BodyCompositionData {
   templateUrl: "./body-composition-card.component.html",
   styleUrl: "./body-composition-card.component.scss",
 })
-export class BodyCompositionCardComponent implements OnInit {
+export class BodyCompositionCardComponent {
   private trainingService = inject(UnifiedTrainingService);
   private destroyRef = inject(DestroyRef);
   private logger = inject(LoggerService);
@@ -132,9 +131,6 @@ export class BodyCompositionCardComponent implements OnInit {
   hasData = computed(() => this.displayData().weight !== null);
   lastUpdated = computed(() => this.displayData().measurementDate);
 
-  ngOnInit(): void {
-    // Data is automatically loaded/refreshed by UnifiedTrainingService
-  }
 
   readonly openLogDialogHandler = (): void => this.openLogDialog();
 

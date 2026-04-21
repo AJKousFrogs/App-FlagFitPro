@@ -504,5 +504,5 @@ export interface BatchOperationResult {
   success: boolean;
   processed: number;
   failed: number;
-  errors?: Array<{ id: string; error: string }>;
+  errors?: { id: string; error: string }[];
 }

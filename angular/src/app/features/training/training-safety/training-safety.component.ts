@@ -121,7 +121,7 @@ export class TrainingSafetyComponent implements OnInit {
 
   // Movement limits signals
   movementLimits = signal<
-    Array<{ type: string; current: number; max: number }>
+    { type: string; current: number; max: number }[]
   >([
     { type: "Sprints", current: 0, max: 100 },
     { type: "Cuts", current: 0, max: 200 },
@@ -132,13 +132,13 @@ export class TrainingSafetyComponent implements OnInit {
 
   // Recommendations
   recommendations = signal<
-    Array<{
+    {
       id: string;
       title: string;
       message: string;
       priority: string;
       action?: { label: string; route: string };
-    }>
+    }[]
   >([]);
 
   // Return to play
@@ -528,13 +528,13 @@ export class TrainingSafetyComponent implements OnInit {
   }
 
   private generateRecommendations(): void {
-    const recs: Array<{
+    const recs: {
       id: string;
       title: string;
       message: string;
       priority: string;
       action?: { label: string; route: string };
-    }> = [];
+    }[] = [];
 
     // Check ACWR
     const acwr = this.acwrDisplay();

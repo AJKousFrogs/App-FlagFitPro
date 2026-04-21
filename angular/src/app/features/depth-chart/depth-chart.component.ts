@@ -82,7 +82,7 @@ export class DepthChartComponent implements OnInit {
   // State
   depthCharts = signal<DepthChartTemplate[]>([]);
   activeChart = signal<DepthChartWithEntries | null>(null);
-  unassignedPlayers = signal<Array<{ id: string; name: string }>>([]);
+  unassignedPlayers = signal<{ id: string; name: string }[]>([]);
   selectedEntry = signal<DepthChartEntry | null>(null);
 
   // UI State

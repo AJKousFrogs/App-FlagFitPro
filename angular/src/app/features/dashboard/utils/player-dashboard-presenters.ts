@@ -94,7 +94,7 @@ export function hasCompletedDashboardOnboarding(
 
 /** Consecutive calendar days with wellness check-ins, ordered from most recent. */
 export function computeWellnessCheckinStreak(
-  entries: Array<{ date: string }>,
+  entries: { date: string }[],
 ): number {
   if (!entries.length) return 0;
   const sorted = [...new Set(entries.map((e) => e.date).filter(Boolean))].sort(
@@ -148,7 +148,7 @@ export function getDashboardEventSeverity(
   }
 }
 
-export type DashboardUpcomingEventDisplay = {
+export interface DashboardUpcomingEventDisplay {
   id: string;
   day: string;
   month: string;
@@ -156,7 +156,7 @@ export type DashboardUpcomingEventDisplay = {
   type: string;
   typeLabel: string;
   severity: ReturnType<typeof getDashboardEventSeverity>;
-};
+}
 
 /** Maps Supabase `team_events` rows to dashboard “Coming up” cards. */
 export function mapTeamEventToDashboardDisplay(

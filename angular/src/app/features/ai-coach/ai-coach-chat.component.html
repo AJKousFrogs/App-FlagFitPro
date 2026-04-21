@@ -405,7 +405,7 @@
               [resizable]="false"
               [dismissableMask]="!microSessionInProgress()"
               dialogSize="md"
-              [styleClass]="'micro-session-dialog'"
+              [class]="'micro-session-dialog'"
               (onHide)="onMicroSessionDialogHide()"
             >
               @if (activeMicroSession(); as session) {
@@ -420,7 +420,7 @@
                   @if (!microSessionInProgress()) {
                     <app-close-button
                       ariaLabel="Close micro-session dialog"
-                      [styleClass]="'dialog-close-btn'"
+                      [class]="'dialog-close-btn'"
                       (clicked)="microSessionDialogVisible = false"
                     />
                   }

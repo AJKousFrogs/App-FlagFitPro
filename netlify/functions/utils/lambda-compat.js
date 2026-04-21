@@ -30,16 +30,16 @@ function normalizeBody(result) {
   if (result?.isBase64Encoded && typeof result.body === "string") {
     return Buffer.from(result.body, "base64");
   }
-  if (typeof result?.body === "string") return result.body;
-  if (result?.body == null) return "";
+  if (typeof result?.body === "string") {return result.body;}
+  if (result?.body === null || result?.body === undefined) {return "";}
   return JSON.stringify(result.body);
 }
 
 function toWebResponse(result) {
-  if (result instanceof Response) return result;
+  if (result instanceof Response) {return result;}
   const headers = new Headers(result?.headers || {});
   for (const [k, vals] of Object.entries(result?.multiValueHeaders || {})) {
-    if (Array.isArray(vals)) vals.forEach((v) => headers.append(k, v));
+    if (Array.isArray(vals)) {vals.forEach((v) => headers.append(k, v));}
   }
   return new Response(normalizeBody(result), {
     status: Number(result?.statusCode) || 200,

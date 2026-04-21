@@ -72,26 +72,26 @@ import type {
       @if (decision()) {
         <!-- Decision Context -->
         <div class="review-context">
-          <h3>Decision Context</h3>
-          <div class="context-item">
-            <label>Athlete:</label>
-            <p>{{ decision()!.athleteName }}</p>
-          </div>
-          <div class="context-item">
-            <label>Decision:</label>
-            <p>{{ decision()!.decisionSummary }}</p>
-          </div>
-          <div class="context-item">
-            <label>Made By:</label>
-            <p>{{ decision()!.madeBy.name }} ({{ decision()!.madeBy.role }})</p>
-          </div>
-          <div class="context-item">
-            <label>Created:</label>
-            <p>{{ formatDate(decision()!.createdAt) }}</p>
-          </div>
-          <div class="context-item">
-            <label>Review Due:</label>
-            <p>
+                  <h3>Decision Context</h3>
+                  <div class="context-item">
+                    <span>Athlete:</span>
+                    <p>{{ decision()!.athleteName }}</p>
+                  </div>
+                  <div class="context-item">
+                    <span>Decision:</span>
+                    <p>{{ decision()!.decisionSummary }}</p>
+                  </div>
+                  <div class="context-item">
+                    <span>Made By:</span>
+                    <p>{{ decision()!.madeBy.name }} ({{ decision()!.madeBy.role }})</p>
+                  </div>
+                  <div class="context-item">
+                    <span>Created:</span>
+                    <p>{{ formatDate(decision()!.createdAt) }}</p>
+                  </div>
+                  <div class="context-item">
+                    <span>Review Due:</span>
+                    <p>
               {{ formatDate(decision()!.reviewDate) }}
               @if (isOverdue()) {
                 <app-status-tag severity="danger" value="Overdue" size="sm" />
@@ -151,9 +151,9 @@ import type {
             />
           </div>
 
-          <div class="consequences-list">
-            <label>Unintended Consequences</label>
-            @for (
+                  <div class="consequences-list">
+                    <div>Unintended Consequences</div>
+                    @for (
               consequence of formData.outcomeData.unintendedConsequences;
               track $index
             ) {

@@ -85,7 +85,7 @@
                     [loading]="loading()"
                     [paginator]="true"
                     [rows]="10"
-                    styleClass="table-compact"
+                    class="table-compact"
                   >
                     <ng-template #header>
                       <tr>
@@ -130,7 +130,7 @@
                             <app-progress-bar
                               [value]="getAthleteCompliance(athlete.id)"
                               [showValue]="false"
-                              styleClass="compliance-bar"
+                              class="compliance-bar"
                             />
                             <span>{{ getAthleteCompliance(athlete.id) }}%</span>
                           </div>

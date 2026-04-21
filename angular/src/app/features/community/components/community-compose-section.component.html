@@ -3,7 +3,7 @@
     <app-avatar
       [label]="currentUserInitials()"
       shape="circle"
-      styleClass="user-avatar"
+      class="user-avatar"
     />
     <div class="post-prompt">What's on your mind?</div>
   </div>
@@ -15,7 +15,7 @@
       placeholder="Share your training progress, game highlights, or tips with the community..."
       [rows]="3"
       [autoResize]="true"
-      styleClass="post-textarea"
+      class="post-textarea"
       ariaLabel="Create post content"
     ></app-textarea>
   </div>
@@ -75,7 +75,7 @@
     density="compact"
     title="Topic Filter"
     [message]="'Showing posts about #' + selectedTopic()"
-    styleClass="filter-banner-alert"
+    class="filter-banner-alert"
   >
     <div class="filter-banner-actions">
       <app-button

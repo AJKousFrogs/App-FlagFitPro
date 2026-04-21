@@ -10,8 +10,6 @@ import { TrainingDataService } from "./training-data.service";
 import { PerformanceDataService } from "./performance-data.service";
 import { LoggerService } from "./logger.service";
 import { firstValueFrom, Observable, of, throwError } from "rxjs";
-import { mockUser, mockAuthService } from "./auth.service.spec";
-import { mockSupabaseService } from "./supabase.service.spec";
 import { mockPlayerProgramService } from "./player-program.service.mock";
 import { mockLoggerService } from "./logger.service.mock";
 import { AcwrService } from "./acwr.service";
@@ -19,7 +17,6 @@ import type { Workout } from "../models/training.models";
 import { mockProtocolMetricsSnapshot } from "../../../../test/mock-data/protocol-metrics.mock";
 import { mockWeeklySchedule } from "../../../../test/mock-data/weekly-schedule.mock";
 import { mockWorkout } from "../../../../test/mock-data/workout.mock";
-import { mockImportLogs } from "../../../../test/mock-data/import-logs.mock";
 import { mockProgramAssignment } from "../../../../test/mock-data/program-assignment.mock";
 import { signal } from "@angular/core";
 import { USERS } from "../../../../test/mock-data/users.mock"; // Assuming USERS is available
@@ -161,8 +158,8 @@ describe("UnifiedTrainingService", () => {
   let wellnessService: WellnessService;
   let trainingDataService: TrainingDataService;
   let performanceDataService: PerformanceDataService;
-  let loggerService: LoggerService;
-  let acwrService: AcwrService;
+  let _loggerService: LoggerService;
+  let _acwrService: AcwrService;
   let mockPlayerProgram: ReturnType<typeof mockPlayerProgramService>;
   let mockLoggerInstance: ReturnType<typeof mockLoggerService>;
 
@@ -201,8 +198,8 @@ describe("UnifiedTrainingService", () => {
     wellnessService = TestBed.inject(WellnessService);
     trainingDataService = TestBed.inject(TrainingDataService);
     performanceDataService = TestBed.inject(PerformanceDataService);
-    loggerService = TestBed.inject(LoggerService);
-    acwrService = TestBed.inject(AcwrService);
+    _loggerService = TestBed.inject(LoggerService);
+    _acwrService = TestBed.inject(AcwrService);
 
     // Ensure mocks are reset and properly configured for each test
     vi.clearAllMocks();

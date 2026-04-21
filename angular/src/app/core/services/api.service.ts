@@ -12,11 +12,6 @@ import {
 import { ApiResponse } from "../models/common.models";
 
 type QueryParamPrimitive = string | number | boolean | Date;
-type QueryParamValue =
-  | QueryParamPrimitive
-  | QueryParamPrimitive[]
-  | null
-  | undefined;
 type QueryParams = Record<string, unknown>;
 
 /**
@@ -419,10 +414,6 @@ export const API_ENDPOINTS = {
     metrics: "/api/performance/metrics",
     trends: "/api/performance/trends",
     heatmap: "/api/performance/heatmap",
-    // Performance records (fitness tests: sprints, jumps, strength)
-    records: "/api/performance/records",
-    latestRecord: "/api/performance/records/latest",
-    speedInsights: "/api/performance/speed-insights",
   },
   weather: {
     current: "/api/weather/current",
@@ -625,8 +616,6 @@ export const API_ENDPOINTS = {
   payments: "/api/payments",
   sleepData: "/api/sleep-data",
   programCycles: "/api/program-cycles",
-  teamManagement: "/api/team-management",
-  teamSettings: "/api/team/settings",
   cycleTracking: {
     base: "/api/cycle-tracking",
     period: "/api/cycle-tracking/period",
@@ -808,6 +797,4 @@ export const API_ENDPOINTS = {
   },
   // Response feedback (AI response rating)
   responseFeedback: "/api/response-feedback",
-  // Performance live data
-  performanceLive: "/api/performance/live",
 };

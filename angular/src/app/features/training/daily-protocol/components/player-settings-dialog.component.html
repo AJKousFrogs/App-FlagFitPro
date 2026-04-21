@@ -172,7 +172,7 @@
                   type="text"
                   [value]="slot.time"
                   (valueChange)="onRoutineTimeChange(slot.id, $event)"
-                  styleClass="routine-time-input"
+                  class="routine-time-input"
                 />
               </div>
             }
@@ -184,8 +184,9 @@
           <h4>Training Preferences</h4>
 
           <div class="form-field">
-            <label>Preferred Training Days</label>
+            <label for="preferred-training-days">Preferred Training Days</label>
             <p-multiselect
+              inputId="preferred-training-days"
               [options]="allDays"
               [value]="settings.preferredTrainingDays"
               (onChange)="onPreferredTrainingDaysSelect($event)"

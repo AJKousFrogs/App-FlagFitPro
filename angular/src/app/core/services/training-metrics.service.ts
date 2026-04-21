@@ -80,12 +80,12 @@ export class TrainingMetricsService {
    */
   async importOpenDataset(
     athleteId: string,
-    dataset: Array<{
+    dataset: {
       speed_m_s?: number;
       distance_m?: number;
       speed?: number;
       distance?: number;
-    }>,
+    }[],
   ): Promise<ImportDatasetResponse> {
     const defaultResponse: ImportDatasetResponse = {
       ok: false,

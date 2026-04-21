@@ -493,6 +493,7 @@ export class SettingsSaveSettingsService {
     } catch (error) {
       throw new Error(
         getErrorMessage(error, "Could not update team membership."),
+        { cause: error },
       );
     }
   }

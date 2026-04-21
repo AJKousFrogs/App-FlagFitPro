@@ -42,7 +42,7 @@ export class AiTrainingSchedulerDataService {
   }
 
   async getSuggestions(userId: string): Promise<{
-    suggestions: Array<{
+    suggestions: {
       id: string;
       suggestion_type: string;
       priority?: string | null;
@@ -53,7 +53,7 @@ export class AiTrainingSchedulerDataService {
       dismissed?: boolean | null;
       affected_session_id?: string | null;
       suggested_changes?: unknown;
-    }>;
+    }[];
     error: { message?: string } | null;
   }> {
     const { data, error } = await this.supabaseService.client
@@ -72,7 +72,7 @@ export class AiTrainingSchedulerDataService {
     startDate: string;
     endDate: string;
   }): Promise<{
-    sessions: Array<{
+    sessions: {
       id: string;
       scheduled_date?: string | null;
       session_type?: string | null;
@@ -80,7 +80,7 @@ export class AiTrainingSchedulerDataService {
       intensity?: string | null;
       status?: string | null;
       ai_optimized?: boolean | null;
-    }>;
+    }[];
     error: { message?: string } | null;
   }> {
     const { data, error } = await this.supabaseService.client
@@ -95,7 +95,7 @@ export class AiTrainingSchedulerDataService {
       return { sessions: [], error: null };
     }
 
-    const sessions = ((data as Array<Record<string, unknown>>) ?? []).map((row) => ({
+    const sessions = ((data as Record<string, unknown>[]) ?? []).map((row) => ({
       id: String(row["id"] ?? ""),
       scheduled_date: (row["session_date"] as string | null) ?? null,
       session_type: (row["session_type"] as string | null) ?? null,

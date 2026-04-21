@@ -128,8 +128,11 @@
       <div class="quiet-hours-config">
         <div class="time-range">
           <div class="time-input form-field">
-            <label class="form-label">Start Time</label>
+            <label class="form-label" for="settings-quiet-hours-start">
+              Start Time
+            </label>
             <input
+              id="settings-quiet-hours-start"
               type="time"
               formControlName="quietHoursStart"
               class="time-picker"
@@ -138,8 +141,11 @@
           </div>
           <span class="time-separator">to</span>
           <div class="time-input form-field">
-            <label class="form-label">End Time</label>
+            <label class="form-label" for="settings-quiet-hours-end">
+              End Time
+            </label>
             <input
+              id="settings-quiet-hours-end"
               type="time"
               formControlName="quietHoursEnd"
               class="time-picker"

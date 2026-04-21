@@ -38,8 +38,8 @@ export interface ChatChannelCreateRequest {
 })
 export class ChatCreateChannelDialogComponent {
   readonly visible = model(false);
-  readonly channelTypeOptions = input<Array<{ label: string; value: string }>>([]);
-  readonly positionOptions = input<Array<{ label: string; value: string }>>([]);
+  readonly channelTypeOptions = input<{ label: string; value: string }[]>([]);
+  readonly positionOptions = input<{ label: string; value: string }[]>([]);
 
   readonly createChannel = output<ChatChannelCreateRequest>();
 

@@ -223,21 +223,21 @@ export class ContinuityIndicatorsService {
    * Get team-wide continuity summary for coach
    */
   async getTeamContinuity(teamId: string): Promise<{
-    gameDayRecovery: Array<{
+    gameDayRecovery: {
       playerId: string;
       playerName: string;
       dayNumber: number;
-    }>;
-    loadCaps: Array<{
+    }[];
+    loadCaps: {
       playerId: string;
       playerName: string;
       sessionsRemaining: number;
-    }>;
-    travelRecovery: Array<{
+    }[];
+    travelRecovery: {
       playerId: string;
       playerName: string;
       daysRemaining: number;
-    }>;
+    }[];
   }> {
     try {
       // Get all team members
@@ -257,21 +257,21 @@ export class ContinuityIndicatorsService {
         return { gameDayRecovery: [], loadCaps: [], travelRecovery: [] };
       }
 
-      const gameDayRecovery: Array<{
+      const gameDayRecovery: {
         playerId: string;
         playerName: string;
         dayNumber: number;
-      }> = [];
-      const loadCaps: Array<{
+      }[] = [];
+      const loadCaps: {
         playerId: string;
         playerName: string;
         sessionsRemaining: number;
-      }> = [];
-      const travelRecovery: Array<{
+      }[] = [];
+      const travelRecovery: {
         playerId: string;
         playerName: string;
         daysRemaining: number;
-      }> = [];
+      }[] = [];
 
       const continuityByPlayer = await Promise.all(
         teamMembers.map(async (member) => {

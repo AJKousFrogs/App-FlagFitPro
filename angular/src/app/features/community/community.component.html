@@ -8,7 +8,7 @@
         [resizable]="false"
         [dismissableMask]="true"
         dialogSize="md"
-        [styleClass]="'poll-dialog'"
+        [class]="'poll-dialog'"
       >
         <app-dialog-header
           icon="chart-bar"
@@ -24,18 +24,18 @@
               [value]="pollQuestion"
               (valueChange)="onPollQuestionInput($event)"
               placeholder="What would you like to ask?"
-              styleClass="poll-input"
+              class="poll-input"
             />
           </div>
           <div class="form-field">
-            <label>Options</label>
+            <div>Options</div>
             @for (option of pollOptions; track $index; let i = $index) {
               <div class="option-row">
                 <app-form-input
                   [value]="pollOptions[i]"
                   (valueChange)="onPollOptionInput(i, $event)"
                   [placeholder]="'Option ' + (i + 1)"
-                  styleClass="poll-input"
+                  class="poll-input"
                   [ariaLabel]="'Poll option ' + (i + 1)"
                 />
                 @if (pollOptions.length > 2) {
@@ -82,7 +82,7 @@
         [resizable]="false"
         [dismissableMask]="true"
         dialogSize="sm"
-        [styleClass]="'location-dialog'"
+        [class]="'location-dialog'"
       >
         <app-dialog-header
           icon="map-marker"
@@ -98,7 +98,7 @@
               [value]="locationInput"
               (valueChange)="onLocationInput($event)"
               placeholder="e.g., Training Field, Stadium, Gym..."
-              styleClass="location-input"
+              class="location-input"
             />
           </div>
         </div>
@@ -171,7 +171,7 @@
                       <app-avatar
                         [label]="post.authorInitials"
                         shape="circle"
-                        [styleClass]="
+                        [class]="
                           'author-avatar ' +
                           getAvatarColorClass(post.authorInitials)
                         "
@@ -250,7 +250,7 @@
                                 }
                               </div>
                               @if (post.poll.userVote) {
-                                <!-- eslint-disable-next-line @angular-eslint/template/no-inline-styles -->
+                                 
                                 <div
                                   class="option-progress"
                                   [style.width.%]="option.percentage"
@@ -372,7 +372,7 @@
                               <app-avatar
                                 [label]="comment.authorInitials"
                                 shape="circle"
-                                [styleClass]="
+                                [class]="
                                   'comment-avatar ' +
                                   getAvatarColorClass(comment.authorInitials)
                                 "
@@ -413,7 +413,7 @@
                         <app-avatar
                           [label]="currentUserInitials()"
                           shape="circle"
-                          [styleClass]="
+                          [class]="
                             'comment-avatar ' +
                             getAvatarColorClass(currentUserInitials())
                           "
@@ -424,7 +424,7 @@
                             [value]="post.newComment ?? ''"
                             (valueChange)="onPostCommentInput(post.id, $event)"
                             placeholder="Write a comment..."
-                            styleClass="comment-input"
+                            class="comment-input"
                             ariaLabel="Write a comment"
                             (keyup.enter)="addComment(post)"
                           />

@@ -153,7 +153,7 @@ export function getYears(experience: string): string {
  */
 export function getPlayerStats(player: {
   stats?: Record<string, number | string>;
-}): Array<{ label: string; value: string | number; key: string }> {
+}): { label: string; value: string | number; key: string }[] {
   if (!player.stats) return [];
   return Object.entries(player.stats).map(([key, value]) => ({
     label: key.charAt(0).toUpperCase() + key.slice(1),

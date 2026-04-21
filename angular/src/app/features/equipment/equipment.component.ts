@@ -53,7 +53,7 @@ type ItemType =
   | "cones"
   | "other";
 type Condition = "new" | "good" | "fair" | "poor" | "needs_replacement";
-type EquipmentFormItem = {
+interface EquipmentFormItem {
   name: string;
   item_type: ItemType;
   condition: Condition;
@@ -61,9 +61,9 @@ type EquipmentFormItem = {
   color: string;
   quantity_total: number;
   description: string;
-};
-type CheckoutData = { player_id: string; quantity: number; notes: string };
-type ReturnData = { condition: Condition; notes: string };
+}
+interface CheckoutData { player_id: string; quantity: number; notes: string }
+interface ReturnData { condition: Condition; notes: string }
 
 @Component({
   selector: "app-equipment",
@@ -104,7 +104,7 @@ export class EquipmentComponent implements OnInit {
   equipment = signal<EquipmentItem[]>([]);
   assignments = signal<EquipmentAssignment[]>([]);
   summary = signal<EquipmentSummary | null>(null);
-  teamPlayers = signal<Array<{ id: string; name: string }>>([]);
+  teamPlayers = signal<{ id: string; name: string }[]>([]);
 
   // UI State
   selectedType: ItemType | null = null;

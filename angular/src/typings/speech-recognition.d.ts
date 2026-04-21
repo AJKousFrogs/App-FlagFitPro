@@ -40,9 +40,7 @@ declare global {
     stop(): void;
   }
 
-  interface SpeechRecognitionConstructor {
-    new (): SpeechRecognition;
-  }
+  type SpeechRecognitionConstructor = new () => SpeechRecognition;
 
   interface Window {
     SpeechRecognition?: SpeechRecognitionConstructor;

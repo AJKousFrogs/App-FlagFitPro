@@ -9,7 +9,7 @@ export class SettingsTeamRequestService {
   private readonly settingsDataService = inject(SettingsDataService);
   private readonly logger = inject(LoggerService);
 
-  readonly availableTeams = signal<Array<{ label: string; value: string }>>([]);
+  readonly availableTeams = signal<{ label: string; value: string }[]>([]);
   async loadAvailableTeams(): Promise<string | null> {
     try {
       const { teams, error } =

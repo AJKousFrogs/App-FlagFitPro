@@ -86,7 +86,7 @@ function redact(value, depth = 0, seen = new WeakSet()) {
     seen.add(value);
 
     const output = {};
-    const source = isPlainObject(value) ? value : Object.assign({}, value);
+    const source = isPlainObject(value) ? value : ({ ...value});
     for (const [key, nestedValue] of Object.entries(source)) {
       output[key] = isSensitiveKey(key)
         ? REDACTED

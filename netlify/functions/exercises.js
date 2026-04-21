@@ -32,7 +32,7 @@ async function toLambdaEvent(req, url) {
 }
 
 function fromLambdaResponse(r) {
-  if (!r) return new Response(JSON.stringify({ success: false, error: "No response" }), { status: 500, headers: { "Content-Type": "application/json" } });
+  if (!r) {return new Response(JSON.stringify({ success: false, error: "No response" }), { status: 500, headers: { "Content-Type": "application/json" } });}
   const body = typeof r.body === "string" ? r.body : JSON.stringify(r.body ?? null);
   return new Response(body, { status: r.statusCode ?? 200, headers: r.headers ?? { "Content-Type": "application/json" } });
 }
@@ -52,15 +52,15 @@ function corsHeaders(req) {
 }
 
 export default async (req) => {
-  if (req.method === "OPTIONS") return new Response(null, { status: 204, headers: corsHeaders(req) });
+  if (req.method === "OPTIONS") {return new Response(null, { status: 204, headers: corsHeaders(req) });}
   const url = new URL(req.url);
   const path = url.pathname;
 
-  if (path.includes("/exercise-progression")) return dispatch(exerciseProgressionHandler, req, url);
-  if (path.includes("/isometrics")) return dispatch(isometricsHandler, req, url);
-  if (path.includes("/plyometrics")) return dispatch(plyometricsHandler, req, url);
-  if (path.includes("/qb-throwing")) return dispatch(qbThrowingHandler, req, url);
-  if (path.includes("/exercises")) return dispatch(exercisesCoreHandler, req, url);
+  if (path.includes("/exercise-progression")) {return dispatch(exerciseProgressionHandler, req, url);}
+  if (path.includes("/isometrics")) {return dispatch(isometricsHandler, req, url);}
+  if (path.includes("/plyometrics")) {return dispatch(plyometricsHandler, req, url);}
+  if (path.includes("/qb-throwing")) {return dispatch(qbThrowingHandler, req, url);}
+  if (path.includes("/exercises")) {return dispatch(exercisesCoreHandler, req, url);}
 
   return new Response(
     JSON.stringify({ success: false, error: `Not found: ${req.method} ${path}`, code: "not_found" }),

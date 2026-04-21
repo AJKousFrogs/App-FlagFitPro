@@ -335,9 +335,9 @@
             />
           </div>
 
-          <div class="form-field">
-            <label>Goal Category</label>
-            <div class="radio-group">
+                  <div class="form-field">
+                    <div id="player-goal-category-label">Goal Category</div>
+                    <div class="radio-group" role="radiogroup" aria-labelledby="player-goal-category-label">
               @for (cat of goalCategories; track cat.value) {
                 <div class="radio-option">
                   <input
@@ -417,7 +417,7 @@
       <app-dialog
         [(visible)]="showGoalDetailsDialog"
         [modal]="true"
-        styleClass="development-goal-details-dialog"
+        class="development-goal-details-dialog"
         [blockScroll]="true"
         [draggable]="false"
         ariaLabel="Development goal details"
@@ -497,7 +497,7 @@
         [(visible)]="showNoteDialog"
         [modal]="true"
         dialogSize="lg"
-        styleClass="development-note-dialog"
+        class="development-note-dialog"
         [blockScroll]="true"
         [draggable]="false"
         ariaLabel="Add development note"
@@ -533,7 +533,7 @@
       <app-dialog
         [(visible)]="showAssessmentDialog"
         [modal]="true"
-        styleClass="development-assessment-dialog"
+        class="development-assessment-dialog"
         [blockScroll]="true"
         [draggable]="false"
         ariaLabel="Add skill assessment"

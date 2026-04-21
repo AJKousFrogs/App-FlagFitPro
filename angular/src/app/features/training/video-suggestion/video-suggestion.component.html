@@ -343,7 +343,15 @@
           } @else {
             <div class="approved-videos-scroll">
               @for (video of teamApprovedVideos(); track video.id) {
-                <div class="approved-video-card" (click)="openVideo(video)">
+                <div
+                  class="approved-video-card"
+                  role="button"
+                  tabindex="0"
+                  [attr.aria-label]="'Open approved video ' + video.title"
+                  (click)="openVideo(video)"
+                  (keydown.enter)="openVideo(video)"
+                  (keydown.space)="openVideo(video); $event.preventDefault()"
+                >
                   <div class="video-thumbnail">
                     <i class="pi pi-play-circle"></i>
                   </div>

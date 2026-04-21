@@ -17,21 +17,21 @@ import {
 export interface CoachDashboardFollowUpSnapshot {
   playersWithMissingData: PlayerMissingData[];
   teamContinuity: {
-    gameDayRecovery: Array<{
+    gameDayRecovery: {
       playerId: string;
       playerName: string;
       dayNumber: number;
-    }>;
-    loadCaps: Array<{
+    }[];
+    loadCaps: {
       playerId: string;
       playerName: string;
       sessionsRemaining: number;
-    }>;
-    travelRecovery: Array<{
+    }[];
+    travelRecovery: {
       playerId: string;
       playerName: string;
       daysRemaining: number;
-    }>;
+    }[];
   };
   pendingTransitions: OwnershipTransition[];
 }

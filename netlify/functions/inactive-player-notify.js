@@ -190,7 +190,7 @@ async function runScheduledInactivityNotifications() {
     .lt("last_active_at", cutoff30)
     .eq("notification_sent_30d", false);
 
-  if (error) throw error;
+  if (error) {throw error;}
 
   let notified = 0;
   let failed = 0;
@@ -203,7 +203,7 @@ async function runScheduledInactivityNotifications() {
         .eq("id", row.user_id)
         .single();
 
-      if (!player) continue;
+      if (!player) {continue;}
 
       const daysInactive = row.last_active_at
         ? Math.floor((Date.now() - new Date(row.last_active_at).getTime()) / (24 * 60 * 60 * 1000))

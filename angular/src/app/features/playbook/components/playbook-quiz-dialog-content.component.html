@@ -45,7 +45,7 @@
                 : 'Incorrect. The correct answer is: ' + q.options[q.correctIndex]
             "
             density="compact"
-            styleClass="status-message"
+            class="status-message"
           />
         }
       </div>
@@ -93,21 +93,21 @@
         variant="success"
         message="Great job! You know your plays well."
         density="compact"
-        styleClass="status-message status-message--success"
+        class="status-message status-message--success"
       />
     } @else if (quizScore() >= 60) {
       <app-alert
         variant="warning"
         message="Good effort! Keep studying to improve."
         density="compact"
-        styleClass="status-message"
+        class="status-message"
       />
     } @else {
       <app-alert
         variant="info"
         message="Keep studying! Review the plays you missed."
         density="compact"
-        styleClass="status-message"
+        class="status-message"
       />
     }
 

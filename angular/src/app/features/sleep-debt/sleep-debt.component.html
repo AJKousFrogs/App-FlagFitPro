@@ -139,7 +139,7 @@
                 <app-progress-bar
                   [value]="multipliers.trainingCapacity * 100"
                   [showValue]="false"
-                  styleClass="impact-bar"
+                  class="impact-bar"
                 />
                 <p class="impact-description">
                   Your body can only absorb
@@ -160,7 +160,7 @@
                 <app-progress-bar
                   [value]="multipliers.recoveryRate * 100"
                   [showValue]="false"
-                  styleClass="impact-bar"
+                  class="impact-bar"
                 />
                 <p class="impact-description">
                   Recovery between sessions is
@@ -182,7 +182,7 @@
                 <app-progress-bar
                   [value]="Math.min((multipliers.injuryRiskMultiplier - 1) * 100, 100)"
                   [showValue]="false"
-                  styleClass="impact-bar danger"
+                  class="impact-bar danger"
                 />
                 <p class="impact-description">
                   Injury risk increased by
@@ -206,7 +206,7 @@
                 <app-progress-bar
                   [value]="Math.min((multipliers.reactionTimeMultiplier - 1) * 100, 100)"
                   [showValue]="false"
-                  styleClass="impact-bar warn"
+                  class="impact-bar warn"
                 />
                 <p class="impact-description">
                   Reaction time is

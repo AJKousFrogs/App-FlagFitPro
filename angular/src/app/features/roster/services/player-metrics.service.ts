@@ -233,7 +233,7 @@ export class PlayerMetricsService {
     const armCareCompliance =
       player.positionMetrics?.armCareCompliance ?? false;
 
-    let armCareStatus = "Unknown";
+    let armCareStatus!: string;
     if (armCareCompliance) {
       armCareStatus = "✅ Compliant";
     } else if (throwsThisWeek > weeklyLimit * 0.8) {

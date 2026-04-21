@@ -1,6 +1,13 @@
     <!-- Quick Checkin Button -->
     @if (!hasCheckedIn()) {
-      <div class="checkin-prompt" (click)="showDialog.set(true)">
+      <div
+        class="checkin-prompt"
+        role="button"
+        tabindex="0"
+        (click)="showDialog.set(true)"
+        (keydown.enter)="showDialog.set(true)"
+        (keydown.space)="showDialog.set(true); $event.preventDefault()"
+      >
         <span class="prompt-icon" aria-hidden="true"
           ><i class="pi pi-heart-fill"></i
         ></span>
@@ -11,7 +18,14 @@
         <i class="pi pi-chevron-right"></i>
       </div>
     } @else {
-      <div class="checkin-complete" (click)="showDialog.set(true)">
+      <div
+        class="checkin-complete"
+        role="button"
+        tabindex="0"
+        (click)="showDialog.set(true)"
+        (keydown.enter)="showDialog.set(true)"
+        (keydown.space)="showDialog.set(true); $event.preventDefault()"
+      >
         <div class="readiness-display">
           <span
             class="readiness-score"
@@ -70,7 +84,7 @@
       (visibleChange)="showDialog.set($event)"
       [blockScroll]="true"
       [draggable]="false"
-      styleClass="wellness-dialog"
+      class="wellness-dialog"
       ariaLabel="Daily wellness check-in"
     >
       <app-dialog-header
@@ -83,7 +97,7 @@
       <div class="checkin-form">
         <!-- Sleep Quality -->
         <div class="form-section">
-          <label class="section-label">
+          <div id="wellness-sleep-quality-label" class="section-label">
             <span class="label-icon" aria-hidden="true"
               ><i class="pi pi-moon"></i
             ></span>
@@ -91,7 +105,7 @@
             <span class="value-badge">{{
               getSleepLabel(formData().sleepQuality)
             }}</span>
-          </label>
+          </div>
           <div class="slider-row">
             <span class="slider-label">Poor</span>
             <p-slider
@@ -100,6 +114,7 @@
               [min]="1"
               [max]="5"
               [step]="1"
+              ariaLabelledBy="wellness-sleep-quality-label"
               class="flex-1"
             />
             <span class="slider-label">Excellent</span>
@@ -117,13 +132,13 @@
 
         <!-- Sleep Hours -->
         <div class="form-section">
-          <label class="section-label">
+          <div id="wellness-sleep-hours-label" class="section-label">
             <span class="label-icon" aria-hidden="true"
               ><i class="pi pi-clock"></i
             ></span>
             <span>Hours of Sleep</span>
             <span class="value-badge">{{ formData().sleepHours }}h</span>
-          </label>
+          </div>
           <div class="slider-row">
             <span class="slider-label">4h</span>
             <p-slider
@@ -132,6 +147,7 @@
               [min]="4"
               [max]="12"
               [step]="0.5"
+              ariaLabelledBy="wellness-sleep-hours-label"
               class="flex-1"
             />
             <span class="slider-label">12h</span>
@@ -156,7 +172,7 @@
 
         <!-- Energy Level -->
         <div class="form-section">
-          <label class="section-label">
+          <div id="wellness-energy-level-label" class="section-label">
             <span class="label-icon" aria-hidden="true"
               ><i class="pi pi-bolt"></i
             ></span>
@@ -164,7 +180,7 @@
             <span class="value-badge">{{
               getEnergyLabel(formData().energyLevel)
             }}</span>
-          </label>
+          </div>
           <div class="slider-row">
             <span class="slider-label">Exhausted</span>
             <p-slider
@@ -173,6 +189,7 @@
               [min]="1"
               [max]="5"
               [step]="1"
+              ariaLabelledBy="wellness-energy-level-label"
               class="flex-1"
             />
             <span class="slider-label">Energized</span>
@@ -190,7 +207,7 @@
 
         <!-- Muscle Soreness -->
         <div class="form-section">
-          <label class="section-label">
+          <div id="wellness-muscle-soreness-label" class="section-label">
             <span class="label-icon" aria-hidden="true"
               ><i class="pi pi-chart-line"></i
             ></span>
@@ -198,7 +215,7 @@
             <span class="value-badge">{{
               getSorenessLabel(formData().muscleSoreness)
             }}</span>
-          </label>
+          </div>
           <div class="slider-row">
             <span class="slider-label">Very Sore</span>
             <p-slider
@@ -207,6 +224,7 @@
               [min]="1"
               [max]="5"
               [step]="1"
+              ariaLabelledBy="wellness-muscle-soreness-label"
               class="flex-1"
             />
             <span class="slider-label">No Soreness</span>
@@ -235,10 +253,10 @@
         <!-- Soreness Areas -->
         @if (formData().muscleSoreness < 4) {
           <div class="form-section">
-            <label class="section-label">
+            <div class="section-label">
               <span class="label-icon"><i class="pi pi-map-marker" aria-hidden="true"></i></span>
               <span>Where are you sore?</span>
-            </label>
+            </div>
             <small class="state-narration state-narration--compact">
               <strong>What changed:</strong> Soreness areas section appeared.
               <strong>Why:</strong> Your muscle soreness is
@@ -279,13 +297,13 @@
 
         <!-- Stress Level -->
         <div class="form-section">
-          <label class="section-label">
+          <div id="wellness-stress-level-label" class="section-label">
             <span class="label-icon"><i class="pi pi-heart" aria-hidden="true"></i></span>
             <span>Stress Level</span>
             <span class="value-badge">{{
               getStressLabel(formData().stressLevel)
             }}</span>
-          </label>
+          </div>
           <div class="slider-row">
             <span class="slider-label">Very High</span>
             <p-slider
@@ -294,6 +312,7 @@
               [min]="1"
               [max]="5"
               [step]="1"
+              ariaLabelledBy="wellness-stress-level-label"
               class="flex-1"
             />
             <span class="slider-label">Very Low</span>
@@ -311,11 +330,12 @@
 
         <!-- Notes -->
         <div class="form-section">
-          <label class="section-label">
+          <label class="section-label" for="wellness-notes">
             <span class="label-icon"><i class="pi pi-pencil" aria-hidden="true"></i></span>
             <span>Notes (optional)</span>
           </label>
           <textarea
+            id="wellness-notes"
             p-textarea
             [value]="formData().notes || ''"
             (input)="onNotesInput($event)"

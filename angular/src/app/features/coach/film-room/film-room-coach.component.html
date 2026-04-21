@@ -211,10 +211,10 @@
           subtitle="Add a new game, practice, scouting, or training video to the film room."
           (close)="closeUploadDialog()"
         />
-        <div class="upload-form">
-          <div class="form-field">
-            <label>Source</label>
-            <div class="radio-group">
+                <div class="upload-form">
+                  <div class="form-field">
+                    <div id="film-source-label">Source</div>
+                    <div class="radio-group" role="radiogroup" aria-labelledby="film-source-label">
               <div class="radio-option">
                 <input
                   type="radio"
@@ -260,9 +260,9 @@
             />
           </div>
 
-          <div class="form-field">
-            <label>Type</label>
-            <div class="radio-group">
+                  <div class="form-field">
+                    <div id="film-type-label">Type</div>
+                    <div class="radio-group" role="radiogroup" aria-labelledby="film-type-label">
               @for (type of filmTypes; track type.value) {
                 <div class="radio-option">
                   <input
@@ -307,7 +307,7 @@
         [(visible)]="showTagDialog"
         [modal]="true"
         dialogSize="lg"
-        styleClass="film-tag-dialog"
+        class="film-tag-dialog"
         [blockScroll]="true"
         [draggable]="false"
         ariaLabel="Add film tag"
@@ -323,9 +323,9 @@
             Adding tag at <strong>{{ tagForm.timestamp }}</strong>
           </p>
 
-          <div class="form-field">
-            <label>Tag Type</label>
-            <div class="radio-group">
+                  <div class="form-field">
+                    <div id="film-tag-type-label">Tag Type</div>
+                    <div class="radio-group" role="radiogroup" aria-labelledby="film-tag-type-label">
               @for (type of tagTypes; track type.value) {
                 <div class="radio-option">
                   <input
@@ -344,9 +344,9 @@
             </div>
           </div>
 
-          <div class="form-field">
-            <label>Tag Player(s)</label>
-            <div class="radio-group">
+                  <div class="form-field">
+                    <div id="film-tag-target-label">Tag Player(s)</div>
+                    <div class="radio-group" role="radiogroup" aria-labelledby="film-tag-target-label">
               <div class="radio-option">
                 <input
                   type="radio"
@@ -426,7 +426,7 @@
       <app-dialog
         [(visible)]="showSessionDialog"
         [modal]="true"
-        styleClass="film-session-dialog"
+        class="film-session-dialog"
         [blockScroll]="true"
         [draggable]="false"
         ariaLabel="Film session details"
@@ -488,7 +488,7 @@
       <app-dialog
         [(visible)]="showComplianceDialog"
         [modal]="true"
-        styleClass="film-compliance-dialog"
+        class="film-compliance-dialog"
         [blockScroll]="true"
         [draggable]="false"
         ariaLabel="Film compliance details"

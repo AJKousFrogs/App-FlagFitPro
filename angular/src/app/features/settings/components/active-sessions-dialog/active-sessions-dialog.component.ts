@@ -7,14 +7,14 @@ import {
   DialogHeaderComponent,
 } from "../../../../shared/components/ui-components";
 
-type ActiveSession = {
+interface ActiveSession {
   id: string;
   deviceName: string;
   deviceType: "desktop" | "mobile" | "tablet";
   location: string;
   lastActive: string;
   isCurrent: boolean;
-};
+}
 
 @Component({
   selector: "app-active-sessions-dialog",

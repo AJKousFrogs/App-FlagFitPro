@@ -29,12 +29,12 @@ export interface ValidationError {
 // Schema Builder (Lightweight Zod Alternative)
 // ============================================================================
 
-export type SchemaType<T> = {
+export interface SchemaType<T> {
   parse: (data: unknown) => T;
   safeParse: (data: unknown) => ValidationResult<T>;
   optional: () => SchemaType<T | undefined>;
   nullable: () => SchemaType<T | null>;
-};
+}
 
 function createSchema<T>(
   validator: (data: unknown) => T,

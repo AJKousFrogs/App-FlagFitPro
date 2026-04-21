@@ -20,16 +20,16 @@ function isoDate(value) {
 }
 
 function toRsvpStatus(status) {
-  if (status === "present") return "going";
-  if (status === "absent") return "not-going";
-  if (status === "excused") return "maybe";
+  if (status === "present") {return "going";}
+  if (status === "absent") {return "not-going";}
+  if (status === "excused") {return "maybe";}
   return "pending";
 }
 
 function toAttendanceStatus(status) {
-  if (status === "going") return "present";
-  if (status === "not-going") return "absent";
-  if (status === "maybe") return "excused";
+  if (status === "going") {return "present";}
+  if (status === "not-going") {return "absent";}
+  if (status === "maybe") {return "excused";}
   return "pending";
 }
 

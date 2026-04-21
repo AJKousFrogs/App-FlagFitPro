@@ -42,7 +42,7 @@ import { TableModule, TablePageEvent, TableRowSelectEvent, TableRowUnSelectEvent
         [responsiveLayout]="responsiveLayout()"
         [attr.aria-label]="ariaLabel()"
         [scrollable]="scrollable()"
-        [styleClass]="tableClasses()"
+        [class]="tableClasses()"
         [tableStyle]="tableStyle()"
       >
         <!-- Header Template -->
@@ -85,15 +85,17 @@ import { TableModule, TablePageEvent, TableRowSelectEvent, TableRowUnSelectEvent
 
         <!-- Loading Body Template -->
         <ng-template pTemplate="loadingbody">
-          <tr *ngFor="let _ of [].constructor(rows())">
-            <td [attr.colspan]="columns().length" style="padding: 0; border: none;">
-              <div class="skeleton-table__row">
-                @for (col of columns(); track col.field) {
-                  <div class="skeleton-table__cell"></div>
-                }
-              </div>
-            </td>
-          </tr>
+          @for (_ of skeletonRows(); track $index) {
+            <tr>
+              <td [attr.colspan]="columns().length" style="padding: 0; border: none;">
+                <div class="skeleton-table__row">
+                  @for (col of columns(); track col.field) {
+                    <div class="skeleton-table__cell"></div>
+                  }
+                </div>
+              </td>
+            </tr>
+          }
         </ng-template>
 
         <!-- Empty Message Template -->
@@ -193,6 +195,9 @@ export class TableComponent<T = unknown> {
   protected readonly tableStyle = computed(() => ({
     "min-width": this.minTableWidth(),
   }));
+  protected readonly skeletonRows = computed(() =>
+    Array.from({ length: this.rows() }),
+  );
 
   get selectionValue() {
     return this.selection() ?? this._selection;

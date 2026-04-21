@@ -315,7 +315,8 @@ app-alert.preview-alert {
   gap: var(--space-1);
 }
 
-.form-field label {
+.form-field label,
+.field-label {
   @extend %form-label;
   font-size: var(--ds-font-size-sm);
   font-weight: var(--ds-font-weight-medium);

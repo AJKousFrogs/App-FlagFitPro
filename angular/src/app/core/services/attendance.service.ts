@@ -203,11 +203,11 @@ export class AttendanceService {
    */
   bulkRecordAttendance(
     eventId: string,
-    records: Array<{
+    records: {
       player_id: string;
       status: AttendanceRecord["status"];
       notes?: string;
-    }>,
+    }[],
   ): Observable<AttendanceRecord[]> {
     return this.apiService
       .post<AttendanceRecord[]>("/api/attendance/record/bulk", {

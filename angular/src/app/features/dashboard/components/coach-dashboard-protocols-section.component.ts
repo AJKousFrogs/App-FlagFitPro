@@ -45,13 +45,13 @@ export class CoachDashboardProtocolsSectionComponent {
 
   readonly protocolSections = computed(() => {
     const tc = this.teamContinuity();
-    type Row = {
+    interface Row {
       playerId: string;
       playerName: string;
       tagValue: string;
       tagSeverity: "info" | "warning";
-    };
-    type Section = { title: string; subtitle: string; rows: Row[] };
+    }
+    interface Section { title: string; subtitle: string; rows: Row[] }
     const sections: Section[] = [];
     if (tc.gameDayRecovery.length > 0) {
       sections.push({

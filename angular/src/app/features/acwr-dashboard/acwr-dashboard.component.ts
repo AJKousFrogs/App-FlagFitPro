@@ -231,12 +231,12 @@ export class AcwrDashboardComponent implements OnInit {
 
   // Phase 2.1 - Cause Attribution (loaded from sessions)
   acwrCauseAttribution = signal<
-    Array<{
+    {
       sessionId: string;
       date: Date;
       sessionType: string;
       load: number;
-    }>
+    }[]
   >([]);
 
   // Phase 2.1 - Ownership Transition

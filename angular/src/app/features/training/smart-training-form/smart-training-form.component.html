@@ -68,11 +68,14 @@
                 />
               </div>
               <p-toggleswitch
+                inputId="smart-training-outdoor-session"
                 formControlName="outdoorSession"
                 [disabled]="!weatherData()?.suitable"
               >
               </p-toggleswitch>
-              <label class="switch-label">Outdoor Session</label>
+              <label class="switch-label" for="smart-training-outdoor-session">
+                Outdoor Session
+              </label>
             </div>
           }
         </div>

@@ -335,7 +335,12 @@
               @for (category of data.categories(); track category.id) {
                 <div
                   class="category-card"
+                  role="button"
+                  tabindex="0"
+                  [attr.aria-label]="'Filter by ' + category.name"
                   (click)="filterByCategory(category.id)"
+                  (keydown.enter)="filterByCategory(category.id)"
+                  (keydown.space)="filterByCategory(category.id); $event.preventDefault()"
                 >
                   <span class="category-icon"><i [class]="'pi ' + category.icon" aria-hidden="true"></i></span>
                   <div class="category-info">
@@ -501,8 +506,12 @@
             </p>
           </div>
           <div class="form-field">
-            <label>Resource Type</label>
-            <div class="radio-group">
+            <div id="knowledge-resource-type-label">Resource Type</div>
+            <div
+              class="radio-group"
+              role="radiogroup"
+              aria-labelledby="knowledge-resource-type-label"
+            >
               @for (type of resourceTypes; track type.value) {
                 <div class="radio-option">
                   <input
@@ -561,8 +570,12 @@
           </div>
 
           <div class="form-field">
-            <label>Visibility</label>
-            <div class="radio-group">
+            <div id="knowledge-visibility-label">Visibility</div>
+            <div
+              class="radio-group"
+              role="radiogroup"
+              aria-labelledby="knowledge-visibility-label"
+            >
               @for (opt of visibilityOptions; track opt.value) {
                 <div class="radio-option">
                   <input
@@ -614,16 +627,16 @@
           subtitle="Review quality checks and finalize approval for Merlin knowledge."
           (close)="closeApproveDialog()"
         />
-        @if (data.selectedPendingEntry()) {
-          <div class="add-form">
-            <div class="form-field">
-              <label>Entry</label>
+          @if (data.selectedPendingEntry()) {
+            <div class="add-form">
+              <div class="form-field">
+              <div>Entry</div>
               <p class="resource-meta">
                 {{ data.selectedPendingEntry()?.question }}
               </p>
             </div>
             <div class="form-field">
-              <label>Quality Checklist</label>
+              <div>Quality Checklist</div>
               @if (data.reviewQualityIssues().length > 0) {
                 <ul class="quality-list">
                   @for (issue of data.reviewQualityIssues(); track issue) {
@@ -667,7 +680,7 @@
       <app-dialog
         [(visible)]="showResourceDialog"
         [modal]="true"
-        styleClass="knowledge-base-resource-dialog"
+        class="knowledge-base-resource-dialog"
         [blockScroll]="true"
         [draggable]="false"
         ariaLabel="Knowledge resource details"

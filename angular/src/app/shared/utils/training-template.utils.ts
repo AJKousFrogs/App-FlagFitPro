@@ -69,10 +69,10 @@ function weekDataFromTemplate(
 }
 
 export interface MapProgramTemplatesResult {
-  placed: Array<{
+  placed: {
     template: ProgramTemplateLike;
     sessionDate: Date;
-  }>;
+  }[];
   /** Weeks where program had more sessions than the user has practice days (extras omitted). */
   weeksWhereSessionsWereTrimmed: number;
 }
@@ -121,7 +121,7 @@ export function mapProgramTemplatesToUserPracticeDays(
     byWeek.set(key, arr);
   }
 
-  const result: Array<{ template: ProgramTemplateLike; sessionDate: Date }> =
+  const result: { template: ProgramTemplateLike; sessionDate: Date }[] =
     [];
   let weeksWhereSessionsWereTrimmed = 0;
 

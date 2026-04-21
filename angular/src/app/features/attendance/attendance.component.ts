@@ -109,11 +109,11 @@ export class AttendanceComponent implements OnInit {
     { label: "Other", value: "other" },
   ];
 
-  attendanceStatuses: Array<{
+  attendanceStatuses: {
     value: AttendanceStatus;
     label: string;
     severity: "success" | "danger" | "warning" | "info";
-  }> = [
+  }[] = [
     { value: "present", label: "Present", severity: "success" },
     { value: "late", label: "Late", severity: "warning" },
     { value: "excused", label: "Excused", severity: "info" },

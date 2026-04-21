@@ -92,16 +92,16 @@ export class OfficialsComponent implements OnInit {
   officials = signal<Official[]>([]);
   gameAssignments = signal<GameOfficial[]>([]);
   paymentSummary = signal<
-    Array<{
+    {
       official_id: string;
       official_name: string;
       total_games: number;
       total_payment: number;
       paid: number;
       pending: number;
-    }>
+    }[]
   >([]);
-  upcomingGames = signal<Array<{ label: string; value: string }>>([]);
+  upcomingGames = signal<{ label: string; value: string }[]>([]);
 
   // UI State
   selectedCertification: CertificationLevel | null = null;

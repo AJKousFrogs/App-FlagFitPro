@@ -35,11 +35,11 @@ export class HeaderBreadcrumbsComponent implements OnInit {
   private updateBreadcrumbs(): void {
     const url = this.router.url;
 
-    type BreadcrumbRule = {
+    interface BreadcrumbRule {
       match: (url: string) => boolean;
       section: string;
       page: (url: string) => string;
-    };
+    }
 
     const rules: BreadcrumbRule[] = [
       { match: (u) => u.includes("/dashboard"), section: "Dashboard", page: () => "" },

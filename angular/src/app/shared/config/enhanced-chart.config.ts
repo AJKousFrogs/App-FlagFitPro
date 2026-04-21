@@ -576,7 +576,7 @@ export const ENHANCED_RADAR_CHART_OPTIONS: ChartOptions<"radar"> = {
  */
 export function exportChartAsPNG(
   chart: Chart,
-  filename: string = "chart",
+  filename = "chart",
 ): void {
   // Defensive guard: ensure chart and canvas exist
   if (!chart?.canvas) {

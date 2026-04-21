@@ -261,13 +261,13 @@ export interface TrainingStatCard {
 export interface WeeklyScheduleDay {
   name: string;
   date?: Date;
-  sessions: Array<{
+  sessions: {
     time: string;
     title: string;
     type?: SessionType;
     duration?: number;
     description?: string;
-  }>;
+  }[];
   isToday?: boolean;
 }
 

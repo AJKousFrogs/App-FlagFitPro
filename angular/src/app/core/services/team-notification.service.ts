@@ -142,7 +142,7 @@ export class TeamNotificationService {
   // Group activities by date
   readonly groupedActivityFeed = computed(() => {
     const activities = this._activityFeed();
-    const groups: Map<string, CoachActivityItem[]> = new Map();
+    const groups = new Map<string, CoachActivityItem[]>();
 
     activities.forEach((activity) => {
       const date = formatDate(activity.created_at, "P");
@@ -674,7 +674,7 @@ export class TeamNotificationService {
   async sendAnnouncement(
     channelId: string,
     message: string,
-    isImportant: boolean = false,
+    isImportant = false,
   ): Promise<void> {
     try {
       const userId = this.requireCurrentUserId();

@@ -159,13 +159,13 @@ export class TravelRecoveryComponent implements OnInit {
   seatedExercises: CirculationExercise[] = [];
   massageGunProtocols: MassageGunProtocol[] = [];
   carTravelChecklist: TravelChecklist[] = [];
-  researchSummary: Array<{
+  researchSummary: {
     topic: string;
     finding: string;
     source: string;
     pubmedId?: string;
     recommendation: string;
-  }> = [];
+  }[] = [];
 
   // Car trip form
   carTripForm: CarTripForm = {

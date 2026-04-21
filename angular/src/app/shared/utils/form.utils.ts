@@ -53,7 +53,7 @@ export function createFormFieldState<T = unknown>(
  * Combine multiple validators
  */
 export function combineValidators<T>(
-  ...validators: Array<(value: T) => string | null>
+  ...validators: ((value: T) => string | null)[]
 ): (value: T) => string | null {
   return (value: T) => {
     for (const validator of validators) {
@@ -174,7 +174,7 @@ export interface FormFieldConfig {
   required?: boolean;
   autocomplete?: string;
   hint?: string;
-  validators?: Array<(value: string) => string | null>;
+  validators?: ((value: string) => string | null)[];
 }
 
 /**

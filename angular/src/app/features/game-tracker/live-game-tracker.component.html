@@ -139,7 +139,7 @@
         [draggable]="false"
         dialogSize="md"
         ariaLabel="Play details"
-        styleClass="game-tracker-play-dialog"
+        class="game-tracker-play-dialog"
       >
         <app-dialog-header
           dialogHeader
@@ -149,18 +149,20 @@
         />
         <form [formGroup]="playForm" class="play-form">
           <div class="form-row">
-            <label>Play Type</label>
+            <div id="live-game-play-type-label">Play Type</div>
             <p-selectButton
               formControlName="playType"
               [options]="playTypes"
               optionLabel="label"
               optionValue="value"
+              ariaLabelledBy="live-game-play-type-label"
             />
           </div>
 
           <div class="form-row">
-            <label>Player</label>
+            <label for="live-game-player">Player</label>
             <p-select
+              inputId="live-game-player"
               formControlName="playerId"
               [options]="activePlayers()"
               optionLabel="name"
@@ -170,8 +172,9 @@
           </div>
 
           <div class="form-row">
-            <label>Yards Gained</label>
+            <label for="live-game-yards">Yards Gained</label>
             <p-inputNumber
+              inputId="live-game-yards"
               formControlName="yards"
               [min]="-20"
               [max]="80"

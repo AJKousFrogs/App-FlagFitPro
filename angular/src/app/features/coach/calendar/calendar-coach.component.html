@@ -77,7 +77,12 @@
                           <div
                             class="event-dot"
                             [class]="'type-' + event.type"
+                            role="button"
+                            tabindex="0"
+                            [attr.aria-label]="'View event ' + event.title"
                             (click)="viewEvent(event)"
+                            (keydown.enter)="viewEvent(event)"
+                            (keydown.space)="viewEvent(event); $event.preventDefault()"
                           >
                             <i [class]="'pi ' + getEventIcon(event.type)" aria-hidden="true"></i>
                             <span class="rsvp-count"
@@ -264,8 +269,8 @@
         />
         <div class="event-form">
           <div class="form-field">
-            <label>Event Type</label>
-            <div class="radio-group">
+            <div id="coach-event-type-label">Event Type</div>
+            <div class="radio-group" role="radiogroup" aria-labelledby="coach-event-type-label">
               @for (type of eventTypes; track type.value) {
                 <div class="radio-option">
                   <input
@@ -543,7 +548,7 @@
       <app-dialog
         [(visible)]="showEventDetailDialog"
         [modal]="true"
-        styleClass="coach-calendar-event-detail-dialog"
+        class="coach-calendar-event-detail-dialog"
         [blockScroll]="true"
         [draggable]="false"
         [ariaLabel]="'Event details for ' + (selectedEvent()?.title || 'event')"

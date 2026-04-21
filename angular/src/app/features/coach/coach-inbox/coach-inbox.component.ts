@@ -85,11 +85,6 @@ interface InboxStats {
   critical_count: number;
 }
 
-interface CoachInboxListResponse {
-  items: InboxItem[];
-  total: number;
-}
-
 type InboxActionMode = "note" | "override";
 type InboxPriorityFilter = "all" | "critical" | "high" | "medium" | "low" | "unread";
 
@@ -147,10 +142,10 @@ export class CoachInboxComponent {
   merlinReturnDraft = signal(
     "I reviewed Coach Inbox. Help me decide the next coaching action.",
   );
-  readonly priorityFilterOptions: Array<{
+  readonly priorityFilterOptions: {
     value: InboxPriorityFilter;
     label: string;
-  }> = [
+  }[] = [
     { value: "all", label: "All" },
     { value: "critical", label: "Critical" },
     { value: "high", label: "High" },

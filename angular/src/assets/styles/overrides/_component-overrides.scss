@@ -453,7 +453,7 @@
     }
 
     &:focus-within {
-      border-color: var(--ds-primary-green, var(--primary-color));
+      border-color: var(--ds-primary-green);
       box-shadow: 0 0 0 var(--space-0-75) rgba(var(--ds-primary-green-rgb, 34, 197, 94), 0.1);
     }
 

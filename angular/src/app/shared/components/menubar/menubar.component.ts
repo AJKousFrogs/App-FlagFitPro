@@ -15,7 +15,7 @@ import { MenubarModule } from "primeng/menubar";
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule, MenubarModule],
   template: `
-    <p-menubar [model]="model()" [styleClass]="styleClass()">
+    <p-menubar [model]="model()" [class]="styleClass()">
       <ng-template pTemplate="start">
          <ng-content select="[start]"></ng-content>
       </ng-template>

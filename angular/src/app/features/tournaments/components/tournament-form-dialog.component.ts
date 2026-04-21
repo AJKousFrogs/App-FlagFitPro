@@ -44,8 +44,8 @@ export class TournamentFormDialogComponent {
   isCoachOrAdmin = input(false);
   editingTournament = input<Tournament | null>(null);
   isPersonalTournament = input(false);
-  tournamentTypes = input<Array<{ label: string; value: string }>>([]);
-  competitionLevels = input<Array<{ label: string; value: string }>>([]);
+  tournamentTypes = input<{ label: string; value: string }[]>([]);
+  competitionLevels = input<{ label: string; value: string }[]>([]);
 
   visibleChange = output<boolean>();
   save = output<void>();

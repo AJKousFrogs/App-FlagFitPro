@@ -248,7 +248,7 @@ export class TrainingStatsCalculationService {
    * Calculate current training streak from raw session data
    */
   private calculateStreakFromSessions(
-    sessions: Array<{ session_date?: string; date?: string }>,
+    sessions: { session_date?: string; date?: string }[],
   ): number {
     if (sessions.length === 0) return 0;
 

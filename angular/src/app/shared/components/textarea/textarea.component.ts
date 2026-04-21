@@ -59,7 +59,7 @@ import { TextareaModule } from "primeng/textarea";
   `]
 })
 export class TextareaComponent implements ControlValueAccessor {
-  value = input<string | undefined>(undefined, { alias: "value" });
+  value = input<string | undefined>(undefined);
 
   // Inputs
   label = input<string>("");

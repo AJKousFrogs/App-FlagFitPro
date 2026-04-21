@@ -718,7 +718,7 @@ export class TrainingPlanService {
    */
   async getUpcomingGames(
     athleteId: string,
-    days: number = 14,
+    days = 14,
   ): Promise<Date[]> {
     try {
       const response = await firstValueFrom(
@@ -816,7 +816,7 @@ export class TrainingPlanService {
    */
   async getPlanHistory(
     athleteId: string,
-    limit: number = 10,
+    limit = 10,
   ): Promise<WeeklyTrainingPlan[]> {
     try {
       const response = await firstValueFrom(

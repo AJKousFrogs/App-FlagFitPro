@@ -124,7 +124,7 @@ export class TrainingComponent {
   readonly streakCount = signal(0);
   readonly totalAchievements = signal(0);
   readonly recentAchievements = signal<
-    Array<{ id: string; icon: string; title: string; description: string }>
+    { id: string; icon: string; title: string; description: string }[]
   >([]);
   readonly daysUntilOlympics = signal(0);
   readonly overallProgress = signal(0);

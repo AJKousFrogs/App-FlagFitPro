@@ -388,7 +388,7 @@ export class TrainingSafetyService {
     const daysToRecover = Math.ceil(debt);
 
     // Generate recommendation
-    let recommendation = "";
+    let recommendation!: string;
     switch (debtLevel) {
       case "severe":
         recommendation = isChronicUnderslept
@@ -816,7 +816,7 @@ export class TrainingSafetyService {
 
     const canTrainHighIntensity = hoursSinceSession >= minRestHours;
 
-    let message = "";
+    let message!: string;
     if (hoursSinceSession < minRestHours) {
       const hoursRemaining = Math.ceil(minRestHours - hoursSinceSession);
       message = `Wait ${hoursRemaining} more hours before high-intensity training.`;

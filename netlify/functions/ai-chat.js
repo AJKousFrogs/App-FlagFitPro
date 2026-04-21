@@ -4451,7 +4451,7 @@ export default async (req) => {
       try {
         // Step 1: Auth
         const auth = await runPreProcessing(req, controller);
-        if (!auth) return; // error already sent
+        if (!auth) {return;} // error already sent
 
         const { userId } = auth;
 

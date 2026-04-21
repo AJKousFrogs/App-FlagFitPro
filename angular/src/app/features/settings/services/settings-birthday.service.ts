@@ -28,9 +28,9 @@ export class SettingsBirthdayService {
     ];
 
     let parsedDate: Date | null = null;
-    let day = 0;
-    let month = 0;
-    let year = 0;
+    let day!: number;
+    let month!: number;
+    let year!: number;
 
     for (const format of formats) {
       const match = typedValue.match(format);

@@ -229,13 +229,13 @@ export class AccountDeletionService {
    * Get privacy audit log for the current user
    */
   async getAuditLog(limit = 50): Promise<
-    Array<{
+    {
       id: string;
       action: string;
       affectedTable: string | null;
       affectedData: Record<string, unknown> | null;
       createdAt: string;
-    }>
+    }[]
   > {
     const userId = this.getCurrentUserId();
     if (!userId) {
@@ -371,14 +371,14 @@ export class AccountDeletionService {
    * Get emergency medical records for the current user
    */
   async getEmergencyRecords(): Promise<
-    Array<{
+    {
       id: string;
       eventType: string;
       eventDate: string;
       medicalData: Record<string, unknown>;
       locationData: Record<string, unknown> | null;
       retentionExpiresAt: string;
-    }>
+    }[]
   > {
     const userId = this.getCurrentUserId();
     if (!userId) {

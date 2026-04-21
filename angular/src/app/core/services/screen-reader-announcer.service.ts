@@ -47,7 +47,7 @@ export class ScreenReaderAnnouncerService {
   announce(
     message: string,
     politeness: AnnouncePoliteness = "polite",
-    duration: number = 1000,
+    duration = 1000,
   ): void {
     if (!isPlatformBrowser(this.platformId)) {
       return;

@@ -250,22 +250,24 @@
       <div class="log-form">
         <!-- Session Type -->
         <div class="form-field">
-          <label>Session Type *</label>
+          <label for="qb-session-type">Session Type *</label>
           <app-select
+            inputId="qb-session-type"
             [options]="sessionTypes"
             [ngModel]="formData.sessionType"
             (onChange)="onSessionTypeSelect($event)"
             optionLabel="label"
             optionValue="value"
             placeholder="Select type"
-            styleClass="w-full"
+            class="w-full"
           ></app-select>
         </div>
 
         <!-- Total Throws -->
         <div class="form-field">
-          <label>Total Throws *</label>
+          <label for="qb-total-throws">Total Throws *</label>
           <p-inputNumber
+            inputId="qb-total-throws"
             [ngModel]="formData.totalThrows"
             (ngModelChange)="onTotalThrowsChange($event)"
             [min]="0"
@@ -284,8 +286,9 @@
         <!-- Throw Breakdown -->
         <div class="form-row">
           <div class="form-field">
-            <label>Short (0-10y)</label>
+            <label for="qb-short-throws">Short (0-10y)</label>
             <p-inputNumber
+              inputId="qb-short-throws"
               [ngModel]="formData.shortThrows"
               (ngModelChange)="onShortThrowsChange($event)"
               [min]="0"
@@ -294,8 +297,9 @@
             ></p-inputNumber>
           </div>
           <div class="form-field">
-            <label>Medium (10-20y)</label>
+            <label for="qb-medium-throws">Medium (10-20y)</label>
             <p-inputNumber
+              inputId="qb-medium-throws"
               [ngModel]="formData.mediumThrows"
               (ngModelChange)="onMediumThrowsChange($event)"
               [min]="0"
@@ -304,8 +308,9 @@
             ></p-inputNumber>
           </div>
           <div class="form-field">
-            <label>Long (20y+)</label>
+            <label for="qb-long-throws">Long (20y+)</label>
             <p-inputNumber
+              inputId="qb-long-throws"
               [ngModel]="formData.longThrows"
               (ngModelChange)="onLongThrowsChange($event)"
               [min]="0"
@@ -317,13 +322,16 @@
 
         <!-- Arm Feeling -->
         <div class="form-field">
-          <label>Arm Feeling After (1=fresh, 10=fatigued)</label>
+          <div id="qb-arm-feeling-label" class="field-label">
+            Arm Feeling After (1=fresh, 10=fatigued)
+          </div>
           <p-slider
             [ngModel]="formData.armFeelingAfter"
             (ngModelChange)="onArmFeelingAfterSliderChange($event)"
             [min]="1"
             [max]="10"
             [step]="1"
+            ariaLabelledBy="qb-arm-feeling-label"
           ></p-slider>
           <div class="slider-labels">
             <span>Fresh</span>
@@ -371,8 +379,9 @@
 
         <!-- Notes -->
         <div class="form-field">
-          <label>Notes / Mechanics Focus</label>
+          <label for="qb-session-notes">Notes / Mechanics Focus</label>
           <app-textarea
+            inputId="qb-session-notes"
             [value]="formData.notes"
             (valueChange)="onNotesChange($event)"
             placeholder="What did you work on?"

@@ -148,7 +148,7 @@ export class MissingDataDetectionService {
 
       for (const member of teamMembers) {
         const status = await this.checkMissingWellness(member.user_id);
-        const users = member.users as Array<{ id: string; name: string }>;
+        const users = member.users as { id: string; name: string }[];
         const user = users?.[0] || { id: "", name: "Unknown" };
 
         if (status.missing) {
@@ -181,7 +181,7 @@ export class MissingDataDetectionService {
    */
   async checkMissingTraining(
     playerId: string,
-    daysRequired: number = 7,
+    daysRequired = 7,
   ): Promise<MissingDataStatus> {
     try {
       const cutoff = new Date();

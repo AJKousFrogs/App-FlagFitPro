@@ -2,6 +2,13 @@ import { supabaseAdmin, checkEnvVars } from "./supabase-client.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
 import { parseJsonObjectBody } from "./utils/input-validator.js";
+import { buildRequestLogContext, createLogger } from "./utils/structured-logger.js";
+
+const logger = createLogger({ service: "netlify.coach-inbox" });
+
+function createRequestLogger(event, meta = {}) {
+  return logger.child(buildRequestLogContext(event, meta));
+}
 
 const COACH_INBOX_ROLES = [
   "owner",
@@ -447,7 +454,7 @@ const handler = async (event, context) => {
   return baseHandler(event, context, {
     functionName: "coach-inbox",
     allowedMethods: ["GET", "PATCH", "POST"],
-rateLimitType,
+    rateLimitType,
     requireAuth: true,
     handler: async (event, _context, { userId, requestId, correlationId }) => {
       checkEnvVars();
@@ -706,7 +713,7 @@ rateLimitType,
           error,
           {
             http_method: event.httpMethod,
-            path: path,
+            path,
           },
         );
         return createErrorResponse(

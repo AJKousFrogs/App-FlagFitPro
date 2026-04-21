@@ -25,8 +25,8 @@ import { TRAINING } from "./app.constants";
  */
 export function validateWeightsSum(
   weights: Record<string, number>,
-  expectedSum: number = 1.0,
-  tolerance: number = 0.001,
+  expectedSum = 1.0,
+  tolerance = 0.001,
 ): void {
   const sum = Object.values(weights).reduce((a, b) => a + b, 0);
   if (Math.abs(sum - expectedSum) > tolerance) {

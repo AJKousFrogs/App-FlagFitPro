@@ -270,7 +270,7 @@ export class ScoutingReportsComponent implements OnInit {
       const [reportsRes, opponentsRes] = await Promise.all([
         firstValueFrom(
           this.api.get<{
-            reports: Array<{
+            reports: {
               id: string;
               opponent_name: string;
               opponent_profile: {
@@ -282,23 +282,23 @@ export class ScoutingReportsComponent implements OnInit {
               game_date: string;
               offensive_notes: string;
               defensive_notes: string;
-              key_players: Array<{
+              key_players: {
                 name: string;
                 number: string;
                 position: string;
                 notes: string;
-              }>;
+              }[];
               tendencies: Record<string, unknown>;
               game_plan: Record<string, unknown>;
               status: string;
               created_at: string;
               created_by_user?: { full_name: string };
-            }>;
+            }[];
           }>("/api/scouting/reports"),
         ),
         firstValueFrom(
           this.api.get<{
-            opponents: Array<{
+            opponents: {
               name: string;
               opponentTeamId?: string;
               profile: {
@@ -312,13 +312,13 @@ export class ScoutingReportsComponent implements OnInit {
               wins: number;
               losses: number;
               lastPlayed: string;
-            }>;
+            }[];
           }>("/api/scouting/opponents"),
         ),
       ]);
 
       const reportsPayload = extractApiPayload<{
-        reports: Array<{
+        reports: {
           id: string;
           opponent_name: string;
           opponent_profile: {
@@ -330,21 +330,21 @@ export class ScoutingReportsComponent implements OnInit {
           game_date: string;
           offensive_notes: string;
           defensive_notes: string;
-          key_players: Array<{
+          key_players: {
             name: string;
             number: string;
             position: string;
             notes: string;
-          }>;
+          }[];
           tendencies: Record<string, unknown>;
           game_plan: Record<string, unknown>;
           status: string;
           created_at: string;
           created_by_user?: { full_name: string };
-        }>;
+        }[];
       }>(reportsRes);
       const opponentsPayload = extractApiPayload<{
-        opponents: Array<{
+        opponents: {
           name: string;
           opponentTeamId?: string;
           profile: {
@@ -358,7 +358,7 @@ export class ScoutingReportsComponent implements OnInit {
           wins: number;
           losses: number;
           lastPlayed: string;
-        }>;
+        }[];
       }>(opponentsRes);
 
       // Transform reports

@@ -19,9 +19,7 @@ interface UpcomingGame {
   [key: string]: unknown;
 }
 
-interface UserPreferences {
-  [key: string]: unknown;
-}
+type UserPreferences = Record<string, unknown>;
 
 interface CommandAction {
   label: string;

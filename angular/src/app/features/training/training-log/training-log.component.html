@@ -27,9 +27,13 @@
           <app-card-shell title="Session Type" headerIcon="pi-tag">
             <div class="session-types-grid">
               @for (type of sessionTypes; track type.value) {
-                <div
+                <button
+                  type="button"
                   class="session-type-card"
                   [class.selected]="
+                    sessionForm.get('sessionType')?.value === type.value
+                  "
+                  [attr.aria-pressed]="
                     sessionForm.get('sessionType')?.value === type.value
                   "
                   (click)="selectSessionType(type.value)"
@@ -37,7 +41,7 @@
                   <i [class]="'type-icon pi ' + type.icon"></i>
                   <span class="type-label">{{ type.label }}</span>
                   <span class="type-description">{{ type.description }}</span>
-                </div>
+                </button>
               }
             </div>
             @if (sessionForm.get("sessionType")?.value) {

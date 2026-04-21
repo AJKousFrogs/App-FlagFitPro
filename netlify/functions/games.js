@@ -84,11 +84,11 @@ export default async (req) => {
   const path = url.pathname;
 
   // More-specific paths first to avoid prefix collision
-  if (path.includes("/game-events")) return dispatch(gameEventsHandler, req, url);
-  if (path.includes("/tournament-calendar")) return dispatch(tournamentCalendarHandler, req, url);
-  if (path.includes("/tournaments")) return dispatch(tournamentsHandler, req, url);
-  if (path.includes("/fixtures")) return dispatch(fixturesHandler, req, url);
-  if (path.includes("/games")) return dispatch(gamesCoreHandler, req, url);
+  if (path.includes("/game-events")) {return dispatch(gameEventsHandler, req, url);}
+  if (path.includes("/tournament-calendar")) {return dispatch(tournamentCalendarHandler, req, url);}
+  if (path.includes("/tournaments")) {return dispatch(tournamentsHandler, req, url);}
+  if (path.includes("/fixtures")) {return dispatch(fixturesHandler, req, url);}
+  if (path.includes("/games")) {return dispatch(gamesCoreHandler, req, url);}
 
   return new Response(
     JSON.stringify({ success: false, error: `Not found: ${req.method} ${path}`, code: "not_found" }),

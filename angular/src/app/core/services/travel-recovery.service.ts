@@ -998,8 +998,8 @@ export class TravelRecoveryService {
     }
 
     // Training progression
-    let trainingIntensity: TrainingGuideline["allowedIntensity"] = "none";
-    let maxDuration = 0;
+    let trainingIntensity!: TrainingGuideline["allowedIntensity"];
+    let maxDuration!: number;
 
     if (day === 1) {
       trainingIntensity = "light";
@@ -1221,11 +1221,11 @@ export class TravelRecoveryService {
   /**
    * Get available timezones for selection
    */
-  getAvailableTimezones(): Array<{
+  getAvailableTimezones(): {
     value: string;
     label: string;
     offset: number;
-  }> {
+  }[] {
     return Object.entries(MAJOR_TIMEZONES).map(([tz, data]) => ({
       value: tz,
       label: `${data.city} (UTC${data.offset >= 0 ? "+" : ""}${data.offset})`,

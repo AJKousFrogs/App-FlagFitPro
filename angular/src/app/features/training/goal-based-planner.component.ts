@@ -127,7 +127,7 @@ export class GoalBasedPlannerComponent {
     { label: "4 team practices", value: 4 },
   ];
 
-  gameWeekOptions: Array<{ label: string; value: GameWeekType | "auto" }> = [
+  gameWeekOptions: { label: string; value: GameWeekType | "auto" }[] = [
     { label: "Auto from schedule", value: "auto" },
     { label: "Training week", value: "training-week" },
     { label: "Single game", value: "single-game" },

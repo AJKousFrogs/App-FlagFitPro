@@ -27,7 +27,7 @@ const SEVERITY_OPTIONS = [
 
       <!-- Current injuries -->
       <div class="ob-field">
-        <label class="ob-label">Current pain areas</label>
+        <div class="ob-label">Current pain areas</div>
         <p class="ob-field-hint">Leave blank if you have none.</p>
 
         <div class="ob-add-row" style="margin-top:var(--space-2)">
@@ -85,7 +85,7 @@ const SEVERITY_OPTIONS = [
 
       <!-- Injury history -->
       <div class="ob-field">
-        <label class="ob-label" id="ob-hist-label">Injury history</label>
+        <div class="ob-label" id="ob-hist-label">Injury history</div>
         <p class="ob-field-hint">Select any significant past injuries.</p>
         <div
           class="ob-card-grid ob-card-grid--3col"

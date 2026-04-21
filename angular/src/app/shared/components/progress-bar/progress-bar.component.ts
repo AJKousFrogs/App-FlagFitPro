@@ -20,7 +20,7 @@ import { ProgressBarModule } from "primeng/progressbar";
         [value]="value()"
         [showValue]="showValue()"
         [unit]="unit()"
-        [styleClass]="'app-pb ' + styleClass() + ' ' + severityClass()"
+        [class]="'app-pb ' + styleClass() + ' ' + severityClass()"
       ></p-progressBar>
     </div>
   `,

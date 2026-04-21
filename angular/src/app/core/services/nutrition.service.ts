@@ -97,10 +97,10 @@ interface DatabaseNutritionLog {
 
 // RealtimePayload is imported from realtime.service.ts as RealtimeEvent
 // Using type alias for clarity
-type _RealtimePayload<T extends Record<string, unknown>> = {
+interface _RealtimePayload<T extends Record<string, unknown>> {
   new: T;
   old: T;
-};
+}
 
 interface EdamamFood {
   fdcId: number;
@@ -134,7 +134,7 @@ export class NutritionService {
   // State signals
   private readonly _todaysMeals = signal<Meal[]>([]);
   private readonly _nutritionGoals = signal<NutritionGoal[]>([]);
-  private realtimeUnsubscribers: Array<() => void> = [];
+  private realtimeUnsubscribers: (() => void)[] = [];
   private lastRealtimeUserId: string | null = null;
   readonly todaysMeals = this._todaysMeals.asReadonly();
   readonly nutritionGoals = this._nutritionGoals.asReadonly();
@@ -316,8 +316,8 @@ export class NutritionService {
    */
   searchUSDAFoods(
     query: string,
-    pageSize: number = 25,
-    pageNumber: number = 1,
+    pageSize = 25,
+    pageNumber = 1,
   ): Observable<USDAFood[]> {
     if (!query || query.trim().length === 0) {
       return of([]);

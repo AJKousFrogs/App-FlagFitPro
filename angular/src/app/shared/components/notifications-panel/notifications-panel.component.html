@@ -1,6 +1,6 @@
     <app-backdrop
       [visible]="visible"
-      [styleClass]="'notifications-backdrop'"
+      [class]="'notifications-backdrop'"
       (backdropClick)="close()"
     />
 
@@ -59,7 +59,7 @@
           }
           <app-close-button
             ariaLabel="Close notifications panel"
-            [styleClass]="'panel-close-btn'"
+            [class]="'panel-close-btn'"
             (clicked)="close()"
           />
         </div>
@@ -223,7 +223,7 @@
                       tooltip="Dismiss"
                       tooltipPosition="left"
                       size="sm"
-                      [styleClass]="'dismiss-btn'"
+                      [class]="'dismiss-btn'"
                       (clicked)="dismissNotification($event, notification)"
                     />
                   </div>

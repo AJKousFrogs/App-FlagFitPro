@@ -20,16 +20,13 @@ import {
   type PositionSprintProtocol,
   type ReactiveReadinessProtocol,
   type SprintBiomechanicsProfile,
-  type SprintDistanceBreakdown,
   type SprintPhaseGuidelines,
   type SprintProgressionModel,
   type SprintProtocol,
-  type SprintProtocolRequirements,
   type SprintQuality,
   type SprintResearchReference,
   type SprintSet,
   type SprintTechniqueCheckpoint,
-  type SprintVariation,
   type SprintWorkout,
   type WarmupProtocol,
 } from "./sprint-training-knowledge.data";
@@ -247,7 +244,7 @@ export class SprintTrainingKnowledgeService {
    */
   getSprintProgressionModel(
     phase: string,
-    startingVolume: number = 20,
+    startingVolume = 20,
   ): SprintProgressionModel[] {
     const guidelines = this.getPhaseGuidelines(phase);
     const maxVolume = guidelines?.weeklySprintVolume[1] || 40;
@@ -288,7 +285,7 @@ export class SprintTrainingKnowledgeService {
    * Calculate weekly sprint load
    */
   calculateWeeklySprintLoad(
-    sprints: Array<{ distance: number; intensity: number }>,
+    sprints: { distance: number; intensity: number }[],
   ): number {
     // Sprint load = Σ (distance × intensity factor)
     // Intensity factor: submaximal (0.7), near_maximal (0.85), maximal (1.0)

@@ -380,7 +380,6 @@ export class StatisticsCalculationService {
     // Separate recorded vs estimated durations
     let totalMinutes = 0;
     let recordedCount = 0;
-    let estimatedCount = 0;
     let estimatedMinutes = 0;
     const intensityPoints: number[] = [];
 
@@ -391,7 +390,6 @@ export class StatisticsCalculationService {
       } else {
         const defaultDuration = this.getDefaultDurationByType(workout.type);
         totalMinutes += defaultDuration;
-        estimatedCount++;
         estimatedMinutes += defaultDuration;
       }
 
@@ -478,7 +476,7 @@ export class StatisticsCalculationService {
     }
 
     // Recommendation
-    let recommendation = "";
+    let recommendation: string;
     if (isOutlier) {
       recommendation =
         "Consult healthcare provider - value outside normal range";
@@ -522,7 +520,6 @@ export class StatisticsCalculationService {
     }
 
     let bodyFatPercentage: number;
-    const confidence: number = 0.85; // Default confidence (85%)
 
     if (gender === "male") {
       // Navy method for males
@@ -597,7 +594,7 @@ export class StatisticsCalculationService {
    * Get default duration by workout type
    */
   private getDefaultDurationByType(type?: string): number {
-    const defaults: { [key: string]: number } = {
+    const defaults: Record<string, number> = {
       speed: 45,
       strength: 60,
       agility: 30,
@@ -616,7 +613,7 @@ export class StatisticsCalculationService {
     type?: string,
     intensity?: "high" | "medium" | "low",
   ): number {
-    const baseScores: { [key: string]: number } = {
+    const baseScores: Record<string, number> = {
       speed: 8,
       strength: 7,
       agility: 8,

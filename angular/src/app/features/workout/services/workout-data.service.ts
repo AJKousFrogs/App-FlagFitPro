@@ -9,10 +9,10 @@ export interface WorkoutLogRecord {
   training_sessions?: {
     name?: string | null;
     exercises?: unknown;
-  } | Array<{
+  } | {
     name?: string | null;
     exercises?: unknown;
-  }> | null;
+  }[] | null;
 }
 
 @Injectable({

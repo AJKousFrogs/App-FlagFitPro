@@ -31,9 +31,9 @@ export class LoadingService {
    * Show a loading indicator
    */
   show(
-    message: string = "Loading...",
+    message = "Loading...",
     id: string | null = null,
-    cancellable: boolean = false,
+    cancellable = false,
     onCancel?: () => void,
   ): string {
     const loaderId = id || `loader-${Date.now()}`;
@@ -64,7 +64,7 @@ export class LoadingService {
    */
   async useLoading<T>(
     promise: Promise<T>,
-    message: string = "Loading...",
+    message = "Loading...",
   ): Promise<T> {
     const id = this.show(message);
     try {

@@ -62,10 +62,11 @@ import { OnboardingStateService } from "../services/onboarding-state.service";
       <!-- Staff role -->
       @if (state.formData.userType === 'staff') {
         <div class="ob-field">
-          <label class="ob-label">
+          <label class="ob-label" for="ob-staff-role">
             Staff Role <span class="req" aria-hidden="true">*</span>
           </label>
           <app-select
+            inputId="ob-staff-role"
             label=""
             [options]="staffRoleOptions"
             (change)="onStaffRoleSelect($event)"
@@ -75,7 +76,7 @@ import { OnboardingStateService } from "../services/onboarding-state.service";
         </div>
 
         <div class="ob-field">
-          <label class="ob-label" id="staff-vis-label">App Access</label>
+          <div class="ob-label" id="staff-vis-label">App Access</div>
           <p class="ob-field-hint">Select sections you need access to</p>
           <div
             class="ob-card-grid ob-card-grid--3col"
@@ -136,10 +137,11 @@ import { OnboardingStateService } from "../services/onboarding-state.service";
       @if (state.formData.userType === 'player') {
         <div class="ob-input-row">
           <div class="ob-field">
-            <label class="ob-label">
+            <label class="ob-label" for="ob-position">
               Position <span class="req" aria-hidden="true">*</span>
             </label>
             <app-select
+              inputId="ob-position"
               label=""
               [options]="positions"
               (change)="onPositionSelect($event)"
@@ -162,8 +164,11 @@ import { OnboardingStateService } from "../services/onboarding-state.service";
 
         <div class="ob-input-row">
           <div class="ob-field">
-            <label class="ob-label">Secondary Position</label>
+            <label class="ob-label" for="ob-secondary-position">
+              Secondary Position
+            </label>
             <app-select
+              inputId="ob-secondary-position"
               label=""
               [options]="positions"
               (change)="onSecondaryPositionSelect($event)"
@@ -173,10 +178,11 @@ import { OnboardingStateService } from "../services/onboarding-state.service";
             />
           </div>
           <div class="ob-field">
-            <label class="ob-label">
+            <label class="ob-label" for="ob-experience">
               Experience <span class="req" aria-hidden="true">*</span>
             </label>
             <app-select
+              inputId="ob-experience"
               label=""
               [options]="experienceLevels"
               (change)="onExperienceSelect($event)"
@@ -189,9 +195,9 @@ import { OnboardingStateService } from "../services/onboarding-state.service";
         <!-- Throwing arm (QB only) -->
         @if (state.isQBSelected()) {
           <div class="ob-field">
-            <label class="ob-label" id="ob-arm-label">
+            <div class="ob-label" id="ob-arm-label">
               Throwing Arm <span class="req" aria-hidden="true">*</span>
-            </label>
+            </div>
             <div
               class="ob-seg-ctrl"
               role="radiogroup"

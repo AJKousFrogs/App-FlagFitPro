@@ -230,7 +230,7 @@ export class ReadinessService {
    */
   getHistory(
     athleteId: string,
-    days: number = 7,
+    days = 7,
   ): Observable<ReadinessHistory[]> {
     return this.apiService
       .get<ReadinessHistory[]>("/api/readiness-history", { athleteId, days })
@@ -336,12 +336,12 @@ export class ReadinessService {
    */
   getEvidenceInfo(): {
     preset: string;
-    citations: Array<{
+    citations: {
       authors: string;
       year: number;
       title: string;
       doi?: string;
-    }>;
+    }[];
     scienceNotes: {
       weightings: string;
       cutPoints: string;

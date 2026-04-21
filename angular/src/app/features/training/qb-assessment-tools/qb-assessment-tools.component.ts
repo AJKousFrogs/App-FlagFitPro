@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, OnInit } from "@angular/core";
+import { Component, ChangeDetectionStrategy } from "@angular/core";
 
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";
@@ -39,8 +39,5 @@ import { CardShellComponent } from "../../../shared/components/card-shell/card-s
   `,
   styleUrl: "./qb-assessment-tools.component.scss",
 })
-export class QbAssessmentToolsComponent implements OnInit {
-  ngOnInit(): void {
-    // Load assessment tools
-  }
+export class QbAssessmentToolsComponent {
 }

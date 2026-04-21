@@ -8,7 +8,7 @@
 
 // Helper to safely get environment value from window._env
 // Supports canonical SUPABASE_* keys with VITE_* fallback
-const getEnvValue = (keys: string[], fallback: string = ""): string => {
+const getEnvValue = (keys: string[], fallback = ""): string => {
   if (typeof window === "undefined") return fallback;
   const env = (window as { _env?: Record<string, string | undefined> })._env;
   if (!env) return fallback;

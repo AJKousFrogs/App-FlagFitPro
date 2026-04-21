@@ -107,10 +107,10 @@ export interface ProtocolJson {
   ai_rationale?: string | null;
 
   // Blocks (simplified for resolution)
-  blocks?: Array<{
+  blocks?: {
     type: string;
     title: string;
-  }>;
+  }[];
 }
 
 export interface TodayViewModel {
@@ -126,16 +126,16 @@ export interface TodayViewModel {
   };
 
   // Banners (ordered by priority)
-  banners: Array<{
+  banners: {
     type: "error" | "alert" | "warning" | "info";
     style: "red" | "amber" | "blue";
     text: string;
-    ctas?: Array<{
+    ctas?: {
       label: string;
       action: string;
       variant?: "primary" | "secondary";
-    }>;
-  }>;
+    }[];
+  }[];
 
   // Blocks to display (ordered)
   blocksDisplayed: string[];
@@ -169,16 +169,16 @@ export interface TodayViewModel {
   };
 }
 
-type SessionResolutionState = {
+interface SessionResolutionState {
   success?: boolean;
   status?: string;
   override?: {
     type?: string;
     reason?: string;
   } | null;
-};
+}
 
-type ConfidenceSessionResolutionState = {
+interface ConfidenceSessionResolutionState {
   success?: boolean;
   status?: string;
   hasProgram?: boolean;
@@ -187,7 +187,7 @@ type ConfidenceSessionResolutionState = {
   baselineProgram?: boolean;
   originalStatus?: string | null;
   reason?: string | null;
-};
+}
 
 function resolveSessionStatus(
   sessionResolution: SessionResolutionState | undefined,

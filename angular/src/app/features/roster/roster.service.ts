@@ -1122,7 +1122,7 @@ export class RosterService {
     ]);
   }
 
-  private loadFallbackData(members: Array<{ role: string }> | null): void {
+  private loadFallbackData(members: { role: string }[] | null): void {
     const staff = this.processStaffMembers(
       members as TeamMemberRecord[] | null,
     );

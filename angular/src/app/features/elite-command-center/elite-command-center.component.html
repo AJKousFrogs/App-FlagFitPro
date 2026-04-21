@@ -31,7 +31,7 @@
       <p-breadcrumb
         [model]="breadcrumbItems"
         [home]="homeCrumb"
-        styleClass="elite-breadcrumb"
+        class="elite-breadcrumb"
       ></p-breadcrumb>
     </header>
 
@@ -169,7 +169,7 @@
             [rows]="3"
             [first]="tableFirst()"
             (page)="onTablePageChange($event)"
-            styleClass="interactive-surface queue-table"
+            class="interactive-surface queue-table"
           >
             <ng-template #header>
               <tr>
@@ -204,7 +204,7 @@
         </app-card-shell>
 
         <app-card-shell title="Training & Event Timeline" class="elite-card">
-          <p-timeline [value]="timeline()" align="left" styleClass="elite-timeline">
+          <p-timeline [value]="timeline()" align="left" class="elite-timeline">
             <ng-template #content let-event>
               <div class="timeline-card interactive-surface" aria-label="Timeline event">
                 <strong>{{ event.title }}</strong>
@@ -244,7 +244,7 @@
                     [variant]="step.complete ? 'success' : (step.locked ? 'warning' : 'info')"
                     [message]="step.note"
                     density="compact"
-                    styleClass="protocol-note"
+                    class="protocol-note"
                   />
                 </div>
               </div>
@@ -342,12 +342,18 @@
           <div class="mode-template settings-template">
             <h2 class="type-h2">Settings Hierarchy</h2>
             <div class="settings-row">
-              <label class="setting-toggle" aria-label="Enable medical auto escalation">
-                <p-toggleSwitch [ngModel]="true"></p-toggleSwitch>
+              <label class="setting-toggle" for="elite-medical-auto-escalation">
+                <p-toggleSwitch
+                  inputId="elite-medical-auto-escalation"
+                  [ngModel]="true"
+                ></p-toggleSwitch>
                 <span>Medical auto-escalation</span>
               </label>
-              <label class="setting-toggle" aria-label="Enable smart protocol lock">
-                <p-toggleSwitch [ngModel]="false"></p-toggleSwitch>
+              <label class="setting-toggle" for="elite-smart-protocol-lock">
+                <p-toggleSwitch
+                  inputId="elite-smart-protocol-lock"
+                  [ngModel]="false"
+                ></p-toggleSwitch>
                 <span>Smart protocol lock</span>
               </label>
             </div>
@@ -376,7 +382,7 @@
     <p-drawer
       [(visible)]="drawerVisible"
       position="right"
-      styleClass="details-drawer"
+      class="details-drawer"
       [modal]="true"
       [dismissible]="true"
       [blockScroll]="true"

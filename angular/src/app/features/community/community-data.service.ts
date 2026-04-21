@@ -102,7 +102,7 @@ interface CommunityFeedResponse {
 }
 
 interface TrendingTopicsResponse {
-  topics: Array<{ name: string; count: number }>;
+  topics: { name: string; count: number }[];
 }
 
 interface UserMetadata {
@@ -142,9 +142,9 @@ export class CommunityDataService {
   // ====== Data signals ======
   readonly posts = signal<Post[]>([]);
   readonly leaderboard = signal<
-    Array<{ rank: number; name: string; initials: string; score: number }>
+    { rank: number; name: string; initials: string; score: number }[]
   >([]);
-  readonly trendingTopics = signal<Array<{ name: string; count: number }>>([]);
+  readonly trendingTopics = signal<{ name: string; count: number }[]>([]);
   readonly userStats = signal({ posts: 0, likes: 0, comments: 0 });
 
   // ====== Page-level state ======

@@ -81,7 +81,7 @@ export class OverrideLoggingService {
    */
   async getPlayerOverrides(
     playerId: string,
-    limit: number = 10,
+    limit = 10,
   ): Promise<CoachOverride[]> {
     try {
       const { data, error } = await this.supabaseService.client
@@ -120,7 +120,7 @@ export class OverrideLoggingService {
    */
   async getPlayerOverrideCount(
     playerId: string,
-    days: number = 7,
+    days = 7,
   ): Promise<number> {
     try {
       const cutoff = new Date();
@@ -149,7 +149,7 @@ export class OverrideLoggingService {
    */
   async getCoachOverrides(
     coachId: string,
-    limit: number = 20,
+    limit = 20,
   ): Promise<CoachOverride[]> {
     try {
       const { data, error } = await this.supabaseService.client
@@ -195,7 +195,7 @@ export class OverrideLoggingService {
    */
   async getRecentUnreadOverrides(
     playerId: string,
-    limit: number = 5,
+    limit = 5,
   ): Promise<CoachOverride[]> {
     try {
       // Get recent override notifications

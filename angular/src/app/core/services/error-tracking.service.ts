@@ -45,7 +45,7 @@ export interface Breadcrumb {
 }
 
 interface SentryEvent {
-  breadcrumbs?: Array<Record<string, unknown>>;
+  breadcrumbs?: Record<string, unknown>[];
   [key: string]: unknown;
 }
 

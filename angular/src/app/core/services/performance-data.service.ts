@@ -476,9 +476,9 @@ export class PerformanceDataService {
 
   // Physical Measurements
   getMeasurements(
-    timeframe: string = "6m",
-    page: number = 1,
-    limit: number = 50,
+    timeframe = "6m",
+    page = 1,
+    limit = 50,
   ): Observable<{
     data: PhysicalMeasurement[];
     summary: MeasurementsSummary;
@@ -637,7 +637,7 @@ export class PerformanceDataService {
   }
 
   // Supplements
-  getSupplements(timeframe: string = "30d"): Observable<{
+  getSupplements(timeframe = "30d"): Observable<{
     data: Supplement[];
     compliance: SupplementCompliance;
   }> {
@@ -830,7 +830,7 @@ export class PerformanceDataService {
 
   // Performance Tests
   getPerformanceTests(
-    timeframe: string = "12m",
+    timeframe = "12m",
     testType?: string,
   ): Observable<{
     data: PerformanceTest[];
@@ -966,7 +966,7 @@ export class PerformanceDataService {
   }
 
   // Trends Analysis
-  getTrends(_timeframe: string = "12m"): Observable<TrendsData> {
+  getTrends(_timeframe = "12m"): Observable<TrendsData> {
     const userId = this.userId();
 
     if (!userId) {
@@ -996,7 +996,7 @@ export class PerformanceDataService {
 
   // Data Export
   exportData(
-    timeframe: string = "12m",
+    timeframe = "12m",
     format: "json" | "csv" = "json",
   ): Observable<{ success: boolean; message?: string; data?: unknown }> {
     return from(this.performExport(timeframe, format));

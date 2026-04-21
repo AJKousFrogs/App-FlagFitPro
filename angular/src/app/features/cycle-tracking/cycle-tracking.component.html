@@ -13,7 +13,7 @@
           icon="pi-lock"
           title="Privacy First"
           message="This data is private by default. Coaches only see 'recovery day recommended' - never cycle details."
-          styleClass="privacy-notice status-message"
+          class="privacy-notice status-message"
         >
           <a routerLink="/settings/privacy" class="privacy-link"
             >Manage settings</a
@@ -24,7 +24,7 @@
         <app-card-shell class="cycle-status-card">
           <div class="cycle-status-content">
             <div class="cycle-day-display">
-              <!-- eslint-disable-next-line @angular-eslint/template/no-inline-styles -->
+               
               <div
                 class="day-circle"
                 [style.borderColor]="getCurrentPhase().color"
@@ -35,7 +35,7 @@
             </div>
 
             <div class="phase-display">
-              <!-- eslint-disable-next-line @angular-eslint/template/no-inline-styles -->
+               
               <div
                 class="phase-badge"
                 [style.backgroundColor]="getCurrentPhase().color"
@@ -64,7 +64,7 @@
 
             <div class="cycle-phases-timeline">
               @for (phase of cyclePhases; track phase.name) {
-                <!-- eslint-disable-next-line @angular-eslint/template/no-inline-styles -->
+                 
                 <div
                   class="phase-segment"
                   [class.active]="phase.name === getCurrentPhase().name"
@@ -221,7 +221,7 @@
               variant="info"
               density="compact"
               [message]="getNutritionTip()"
-              styleClass="nutrition-tip status-message"
+              class="nutrition-tip status-message"
             />
           </app-card-shell>
         </div>
@@ -258,7 +258,7 @@
                 [variant]="getAlertVariant(getAcwrStatus().severity)"
                 [message]="getAcwrStatus().message"
                 density="compact"
-                styleClass="acwr-status status-message"
+                class="acwr-status status-message"
               />
             </div>
           } @else {
@@ -298,8 +298,12 @@
             </div>
 
             <div class="severity-section">
-              <label>Symptom Severity:</label>
-              <div class="severity-options">
+              <div id="cycle-symptom-severity-label">Symptom Severity:</div>
+              <div
+                class="severity-options"
+                role="radiogroup"
+                aria-labelledby="cycle-symptom-severity-label"
+              >
                 @for (sev of severityOptions; track sev.value) {
                   <div class="severity-option">
                     <input
@@ -396,8 +400,12 @@
         >
           <div class="privacy-settings">
             <div class="privacy-option">
-              <label>Who can see your cycle data?</label>
-              <div class="privacy-radios">
+              <div id="cycle-privacy-label">Who can see your cycle data?</div>
+              <div
+                class="privacy-radios"
+                role="radiogroup"
+                aria-labelledby="cycle-privacy-label"
+              >
                 @for (option of privacyOptions; track option.value) {
                   <div class="privacy-radio">
                     <input
@@ -458,7 +466,7 @@
         [resizable]="false"
         [dismissableMask]="true"
         [breakpoints]="dialogBreakpoints"
-        [styleClass]="'dialog-max-w-lg'"
+        [class]="'dialog-max-w-lg'"
       >
         <app-dialog-header
           icon="calendar-plus"
@@ -477,7 +485,7 @@
                 [maxDate]="today"
                 dateFormat="M dd, yy"
                 [showIcon]="true"
-                styleClass="w-full"
+                class="w-full"
               ></app-date-picker>
             </div>
             <div class="form-field">
@@ -489,7 +497,7 @@
                 [maxDate]="today"
                 dateFormat="M dd, yy"
                 [showIcon]="true"
-                styleClass="w-full"
+                class="w-full"
                 placeholder="Select date"
               ></app-date-picker>
             </div>
@@ -497,8 +505,12 @@
 
           <!-- Flow Intensity -->
           <div class="form-field">
-            <label>Flow Intensity</label>
-            <div class="flow-options">
+            <div id="cycle-flow-intensity-label">Flow Intensity</div>
+            <div
+              class="flow-options"
+              role="radiogroup"
+              aria-labelledby="cycle-flow-intensity-label"
+            >
               @for (flow of flowIntensityOptions; track flow.value) {
                 <div class="flow-option">
                   <input
@@ -518,8 +530,14 @@
 
           <!-- Symptoms -->
           <div class="form-field">
-            <label>Symptoms (select all that apply)</label>
-            <div class="symptoms-checkboxes">
+            <div id="cycle-period-symptoms-label">
+              Symptoms (select all that apply)
+            </div>
+            <div
+              class="symptoms-checkboxes"
+              role="group"
+              aria-labelledby="cycle-period-symptoms-label"
+            >
               @for (symptom of symptomOptions; track symptom.value) {
                 <app-checkbox
                   [label]="symptom.label"
@@ -563,7 +581,7 @@
         [draggable]="false"
         [resizable]="false"
         [dismissableMask]="true"
-        [styleClass]="'dialog-max-w-sm'"
+        [class]="'dialog-max-w-sm'"
       >
         <app-dialog-header
           icon="trash"

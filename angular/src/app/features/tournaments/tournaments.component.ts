@@ -308,11 +308,11 @@ export class TournamentsComponent implements OnInit {
   tournamentCost = signal(0);
 
   // Options
-  availabilityOptions: Array<{
+  availabilityOptions: {
     value: "pending" | "confirmed" | "declined" | "tentative";
     label: string;
     icon: string;
-  }> = [
+  }[] = [
     { value: "confirmed", label: "Yes, I'm in!", icon: "pi pi-check-circle" },
     { value: "tentative", label: "Maybe", icon: "pi pi-question-circle" },
     { value: "declined", label: "Can't make it", icon: "pi pi-times-circle" },
@@ -660,7 +660,7 @@ export class TournamentsComponent implements OnInit {
     delete dataToSend["end_date_obj"];
     delete dataToSend["registration_deadline_obj"];
 
-    let success = false;
+    let success: boolean;
     if (this.editingTournament) {
       const result = await this.tournamentService.updateTournament(
         this.editingTournament.id,

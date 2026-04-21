@@ -9,7 +9,7 @@
  *
  * @version 1.0.0
  */
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
+ 
 
 import { TestBed } from "@angular/core/testing";
 import { describe, it, expect, beforeEach, vi } from "vitest";
@@ -488,7 +488,7 @@ describe("AiChatService", () => {
      * Build a session with N messages by directly starting a session
      * and sending messages that resolve immediately.
      */
-    async function fillSession(n: number): Promise<void> {
+    async function _fillSession(n: number): Promise<void> {
       mockApiService.post.mockReturnValue(of(mockSuccessResponse));
       service.startNewSession();
 

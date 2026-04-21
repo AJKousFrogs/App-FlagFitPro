@@ -62,7 +62,7 @@ interface MentalWellnessReport {
 export class PsychologyWellnessSectionComponent {
   readonly data = input.required<MentalWellnessReport | null>();
   readonly selectedPeriod = input.required<string>();
-  readonly timePeriods = input.required<Array<{ label: string; value: string }>>();
+  readonly timePeriods = input.required<{ label: string; value: string }[]>();
   readonly chartData = input.required<
     LazyChartData | SimpleChartData | Record<string, unknown> | null
   >();

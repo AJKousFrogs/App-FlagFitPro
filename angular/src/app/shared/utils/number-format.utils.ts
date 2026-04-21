@@ -30,7 +30,7 @@
  */
 export function formatLargeNumber(
   value: number,
-  decimals: number = 1,
+  decimals = 1,
 ): string {
   const absValue = Math.abs(value);
   const sign = value < 0 ? "-" : "";
@@ -65,7 +65,7 @@ export function formatLargeNumber(
  */
 export function formatPercentage(
   value: number,
-  decimals: number = 1,
+  decimals = 1,
 ): string {
   return (value * 100).toFixed(decimals) + "%";
 }
@@ -85,8 +85,8 @@ export function formatPercentage(
  */
 export function formatCurrency(
   value: number,
-  currency: string = "$",
-  decimals: number = 2,
+  currency = "$",
+  decimals = 2,
 ): string {
   const formatted = value.toFixed(decimals).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
   return currency + formatted;
@@ -107,8 +107,8 @@ export function formatCurrency(
  */
 export function formatWithSeparator(
   value: number,
-  separator: string = ",",
-  decimals: number = 0,
+  separator = ",",
+  decimals = 0,
 ): string {
   const fixed = value.toFixed(decimals);
   const parts = fixed.split(".");
@@ -146,7 +146,7 @@ export function formatDuration(seconds: number): string {
  * formatWithSign(0);        // "0"
  * formatWithSign(12.5, 1);  // "+12.5"
  */
-export function formatWithSign(value: number, decimals: number = 0): string {
+export function formatWithSign(value: number, decimals = 0): string {
   if (value === 0) return "0";
   const formatted = value.toFixed(decimals);
   return value > 0 ? `+${formatted}` : formatted;

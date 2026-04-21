@@ -91,7 +91,7 @@ export class LoggerService {
     this.globalContext = {};
   }
 
-  getRecentLogs(count: number = 50): StructuredJsonLogEntry[] {
+  getRecentLogs(count = 50): StructuredJsonLogEntry[] {
     return this.logBuffer.slice(-count);
   }
 

@@ -46,7 +46,7 @@ import { InputNumberModule } from "primeng/inputnumber";
         [placeholder]="placeholder()"
         [disabled]="isDisabled()"
         [inputId]="inputId()"
-        [styleClass]="'w-full ' + styleClass()"
+        [class]="'w-full ' + styleClass()"
         [inputStyleClass]="'w-full ' + inputStyleClass()"
         [showButtons]="showButtons()"
         [buttonLayout]="buttonLayout()"

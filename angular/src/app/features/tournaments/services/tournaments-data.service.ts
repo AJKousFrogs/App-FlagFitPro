@@ -65,7 +65,7 @@ export class TournamentsDataService {
   }
 
   async fetchTeamMembers(teamId: string): Promise<{
-    members: Array<Record<string, unknown>>;
+    members: Record<string, unknown>[];
     error: { message?: string } | null;
   }> {
     const { data: members, error } = await this.supabaseService.client
@@ -86,7 +86,7 @@ export class TournamentsDataService {
   async fetchTeamAvailability(input: {
     tournamentId: string;
     teamId: string;
-  }): Promise<{ availability: Array<Record<string, unknown>>; error: { message?: string } | null }> {
+  }): Promise<{ availability: Record<string, unknown>[]; error: { message?: string } | null }> {
     const { data: availability, error } = await this.supabaseService.client
       .from("player_tournament_availability")
       .select("*")

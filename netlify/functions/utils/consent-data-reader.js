@@ -91,29 +91,40 @@ class ConsentDataReader {
   }) {
     this._validateContext(context);
 
-    // For player's own data, can query directly (still use view for consistency)
-    // For coach context, MUST use consent view
-    const viewName =
-      context === AccessContext.PLAYER_OWN_DATA && playerId === requesterId
-        ? "load_monitoring" // Can use raw table for own data
-        : "v_load_monitoring_consent";
-
-    let query = this.supabase.from(viewName).select("*");
-
-    // Apply filters
-    if (playerId) {
-      query = query.eq("player_id", playerId);
+    if (context === AccessContext.COACH_TEAM_DATA) {
+      return this._readLoadMonitoringWithConsentCheck({
+        requesterId,
+        playerId,
+        teamId,
+        filters,
+      });
     }
 
+    const ownAccess = this._resolveOwnDataAccess({
+      requesterId,
+      playerId,
+      resourceType: "load_monitoring",
+    });
+
+    if (ownAccess.errorResponse) {
+      return ownAccess.errorResponse;
+    }
+
+    const { targetPlayerId } = ownAccess;
+    let query = this.supabase
+      .from("load_monitoring")
+      .select("*")
+      .eq("player_id", targetPlayerId);
+
     if (filters.startDate) {
-      query = query.gte("calculated_at", filters.startDate);
+      query = query.gte("date", filters.startDate);
     }
 
     if (filters.endDate) {
-      query = query.lte("calculated_at", filters.endDate);
+      query = query.lte("date", filters.endDate);
     }
 
-    query = query.order("calculated_at", { ascending: false });
+    query = query.order("date", { ascending: false });
 
     if (filters.limit) {
       query = query.limit(filters.limit);
@@ -125,22 +136,7 @@ class ConsentDataReader {
       return this._createErrorResponse(error, "load_monitoring");
     }
 
-    // Process results with consent awareness
     const processedData = this._processConsentResults(data, context);
-
-    // Log access for audit
-    if (
-      this.options.enableAuditLogging &&
-      context === AccessContext.COACH_TEAM_DATA
-    ) {
-      await this._logAccess({
-        accessorUserId: requesterId,
-        targetUserIds: [...new Set((data || []).map((d) => d.player_id))],
-        resourceType: "load_monitoring",
-        teamId,
-        context,
-      });
-    }
 
     return this._wrapResponse(processedData, "acwr");
   }
@@ -157,26 +153,40 @@ class ConsentDataReader {
   }) {
     this._validateContext(context);
 
-    const viewName =
-      context === AccessContext.PLAYER_OWN_DATA && playerId === requesterId
-        ? "workout_logs"
-        : "v_workout_logs_consent";
-
-    let query = this.supabase.from(viewName).select("*");
-
-    if (playerId) {
-      query = query.eq("player_id", playerId);
+    if (context === AccessContext.COACH_TEAM_DATA) {
+      return this._readWorkoutLogsWithConsentCheck({
+        requesterId,
+        playerId,
+        teamId,
+        filters,
+      });
     }
 
+    const ownAccess = this._resolveOwnDataAccess({
+      requesterId,
+      playerId,
+      resourceType: "workout_logs",
+    });
+
+    if (ownAccess.errorResponse) {
+      return ownAccess.errorResponse;
+    }
+
+    const { targetPlayerId } = ownAccess;
+    let query = this.supabase
+      .from("workout_logs")
+      .select("*")
+      .eq("player_id", targetPlayerId);
+
     if (filters.startDate) {
-      query = query.gte("created_at", filters.startDate);
+      query = query.gte("completed_at", filters.startDate);
     }
 
     if (filters.endDate) {
-      query = query.lte("created_at", filters.endDate);
+      query = query.lte("completed_at", filters.endDate);
     }
 
-    query = query.order("created_at", { ascending: false });
+    query = query.order("completed_at", { ascending: false });
 
     if (filters.limit) {
       query = query.limit(filters.limit);
@@ -190,20 +200,168 @@ class ConsentDataReader {
 
     const processedData = this._processConsentResults(data, context);
 
-    if (
-      this.options.enableAuditLogging &&
-      context === AccessContext.COACH_TEAM_DATA
-    ) {
-      await this._logAccess({
-        accessorUserId: requesterId,
-        targetUserIds: [...new Set((data || []).map((d) => d.player_id))],
-        resourceType: "workout_logs",
-        teamId,
-        context,
-      });
+    return this._wrapResponse(processedData, "acwr");
+  }
+
+  /**
+   * Read load monitoring for a coach after resolving team consent.
+   *
+   * Backend functions normally use the service-role Supabase client. Service
+   * role has no requester JWT, so auth.uid() inside consent views is not a
+   * reliable coach identity. Resolve consent explicitly, then query only the
+   * consented player IDs from the raw table.
+   *
+   * @private
+   */
+  async _readLoadMonitoringWithConsentCheck({
+    requesterId,
+    playerId,
+    teamId,
+    filters,
+  }) {
+    const access = await this._resolveTeamConsentAccess({
+      requesterId,
+      playerId,
+      teamId,
+      consentType: "performance",
+      resourceType: "load_monitoring",
+    });
+
+    if (access.errorResponse) {
+      return access.errorResponse;
     }
 
-    return this._wrapResponse(processedData, "acwr");
+    if (access.targetUserIds.length === 0) {
+      return this._wrapResponse(
+        {
+          data: [],
+          consentBlocked: access.blockedUserIds,
+          accessibleCount: 0,
+          message: access.message,
+        },
+        "acwr",
+      );
+    }
+
+    let query = this.supabase
+      .from("load_monitoring")
+      .select("*")
+      .in("player_id", access.targetUserIds);
+
+    if (filters.startDate) {
+      query = query.gte("date", filters.startDate);
+    }
+
+    if (filters.endDate) {
+      query = query.lte("date", filters.endDate);
+    }
+
+    query = query.order("date", { ascending: false });
+
+    if (filters.limit) {
+      query = query.limit(filters.limit);
+    }
+
+    const { data, error } = await query;
+
+    if (error) {
+      return this._createErrorResponse(error, "load_monitoring");
+    }
+
+    await this._logCoachAccessIfEnabled({
+      requesterId,
+      targetUserIds: access.targetUserIds,
+      resourceType: "load_monitoring",
+      teamId,
+    });
+
+    return this._wrapResponse(
+      {
+        data: data || [],
+        consentBlocked: access.blockedUserIds,
+        accessibleCount: data?.length || 0,
+        message: access.message,
+      },
+      "acwr",
+    );
+  }
+
+  /**
+   * Read workout logs for a coach after resolving team consent.
+   *
+   * @private
+   */
+  async _readWorkoutLogsWithConsentCheck({
+    requesterId,
+    playerId,
+    teamId,
+    filters,
+  }) {
+    const access = await this._resolveTeamConsentAccess({
+      requesterId,
+      playerId,
+      teamId,
+      consentType: "performance",
+      resourceType: "workout_logs",
+    });
+
+    if (access.errorResponse) {
+      return access.errorResponse;
+    }
+
+    if (access.targetUserIds.length === 0) {
+      return this._wrapResponse(
+        {
+          data: [],
+          consentBlocked: access.blockedUserIds,
+          accessibleCount: 0,
+          message: access.message,
+        },
+        "acwr",
+      );
+    }
+
+    let query = this.supabase
+      .from("workout_logs")
+      .select("*")
+      .in("player_id", access.targetUserIds);
+
+    if (filters.startDate) {
+      query = query.gte("completed_at", filters.startDate);
+    }
+
+    if (filters.endDate) {
+      query = query.lte("completed_at", filters.endDate);
+    }
+
+    query = query.order("completed_at", { ascending: false });
+
+    if (filters.limit) {
+      query = query.limit(filters.limit);
+    }
+
+    const { data, error } = await query;
+
+    if (error) {
+      return this._createErrorResponse(error, "workout_logs");
+    }
+
+    await this._logCoachAccessIfEnabled({
+      requesterId,
+      targetUserIds: access.targetUserIds,
+      resourceType: "workout_logs",
+      teamId,
+    });
+
+    return this._wrapResponse(
+      {
+        data: data || [],
+        consentBlocked: access.blockedUserIds,
+        accessibleCount: data?.length || 0,
+        message: access.message,
+      },
+      "acwr",
+    );
   }
 
   /**
@@ -231,11 +389,23 @@ class ConsentDataReader {
       });
     }
 
+    const ownAccess = this._resolveOwnDataAccess({
+      requesterId,
+      playerId,
+      resourceType: "training_sessions",
+    });
+
+    if (ownAccess.errorResponse) {
+      return ownAccess.errorResponse;
+    }
+
     // For player's own data
     let query = this.supabase
       .from("training_sessions")
       .select("*")
-      .or(`user_id.eq.${playerId},athlete_id.eq.${playerId}`);
+      .or(
+        `user_id.eq.${ownAccess.targetPlayerId},athlete_id.eq.${ownAccess.targetPlayerId}`,
+      );
 
     if (filters.startDate) {
       query = query.gte("session_date", filters.startDate);
@@ -273,61 +443,42 @@ class ConsentDataReader {
     teamId,
     filters,
   }) {
-    // Get team members with their consent status
-    const { data: teamMembers, error: teamError } = await this.supabase
-      .from("team_members")
-      .select(
-        `
-        user_id,
-        team_id,
-        team_sharing_settings!inner(
-          performance_sharing_enabled
-        )
-      `,
-      )
-      .eq("team_id", teamId)
-      .eq("team_sharing_settings.performance_sharing_enabled", true);
+    const access = await this._resolveTeamConsentAccess({
+      requesterId,
+      playerId,
+      teamId,
+      consentType: "performance",
+      resourceType: "training_sessions",
+    });
 
-    if (teamError) {
-      return this._createErrorResponse(teamError, "training_sessions");
+    if (access.errorResponse) {
+      return access.errorResponse;
     }
 
-    const consentedUserIds = teamMembers?.map((m) => m.user_id) || [];
-
-    if (consentedUserIds.length === 0) {
+    if (access.targetUserIds.length === 0) {
       return this._wrapResponse(
         {
           data: [],
-          consentBlocked: playerId ? [playerId] : [],
+          consentBlocked: access.blockedUserIds,
           accessibleCount: 0,
-          message: "No team members have enabled performance sharing",
-        },
-        "acwr",
-      );
-    }
-
-    // Filter by specific player if requested
-    const targetUserIds = playerId
-      ? consentedUserIds.filter((id) => id === playerId)
-      : consentedUserIds;
-
-    if (targetUserIds.length === 0 && playerId) {
-      return this._wrapResponse(
-        {
-          data: [],
-          consentBlocked: [playerId],
-          accessibleCount: 0,
-          message: "Player has not enabled performance sharing for this team",
+          message: access.message,
         },
         "acwr",
       );
     }
 
     // Query training sessions for consented users
-    let query = this.supabase
-      .from("training_sessions")
-      .select("*")
-      .in("user_id", targetUserIds);
+    let query = this.supabase.from("training_sessions").select("*");
+
+    if (access.targetUserIds.length === 1) {
+      query = query.or(
+        `user_id.eq.${access.targetUserIds[0]},athlete_id.eq.${access.targetUserIds[0]}`,
+      );
+    } else {
+      query = query.or(
+        `user_id.in.(${access.targetUserIds.join(",")}),athlete_id.in.(${access.targetUserIds.join(",")})`,
+      );
+    }
 
     if (filters.startDate) {
       query = query.gte("session_date", filters.startDate);
@@ -350,22 +501,19 @@ class ConsentDataReader {
     }
 
     // Log access
-    if (this.options.enableAuditLogging) {
-      await this._logAccess({
-        accessorUserId: requesterId,
-        targetUserIds,
-        resourceType: "training_sessions",
-        teamId,
-        context: AccessContext.COACH_TEAM_DATA,
-      });
-    }
+    await this._logCoachAccessIfEnabled({
+      requesterId,
+      targetUserIds: access.targetUserIds,
+      resourceType: "training_sessions",
+      teamId,
+    });
 
     return this._wrapResponse(
       {
         data,
-        consentBlocked:
-          playerId && !targetUserIds.includes(playerId) ? [playerId] : [],
+        consentBlocked: access.blockedUserIds,
         accessibleCount: data?.length || 0,
+        message: access.message,
       },
       "acwr",
     );
@@ -396,11 +544,23 @@ class ConsentDataReader {
       });
     }
 
+    const ownAccess = this._resolveOwnDataAccess({
+      requesterId,
+      playerId,
+      resourceType: "wellness_entries",
+    });
+
+    if (ownAccess.errorResponse) {
+      return ownAccess.errorResponse;
+    }
+
     // For player's own data
     let query = this.supabase
       .from("wellness_entries")
       .select("*")
-      .or(`user_id.eq.${playerId},athlete_id.eq.${playerId}`);
+      .or(
+        `user_id.eq.${ownAccess.targetPlayerId},athlete_id.eq.${ownAccess.targetPlayerId}`,
+      );
 
     if (filters.startDate) {
       query = query.gte("date", filters.startDate);
@@ -438,51 +598,25 @@ class ConsentDataReader {
     teamId,
     filters,
   }) {
-    // Get team members with their health sharing consent status
-    const { data: teamMembers, error: teamError } = await this.supabase
-      .from("team_members")
-      .select(
-        `
-        user_id,
-        team_id,
-        team_sharing_settings!inner(
-          health_sharing_enabled
-        )
-      `,
-      )
-      .eq("team_id", teamId)
-      .eq("team_sharing_settings.health_sharing_enabled", true);
+    const access = await this._resolveTeamConsentAccess({
+      requesterId,
+      playerId,
+      teamId,
+      consentType: "health",
+      resourceType: "wellness_entries",
+    });
 
-    if (teamError) {
-      return this._createErrorResponse(teamError, "wellness_entries");
+    if (access.errorResponse) {
+      return access.errorResponse;
     }
 
-    const consentedUserIds = teamMembers?.map((m) => m.user_id) || [];
-
-    if (consentedUserIds.length === 0) {
+    if (access.targetUserIds.length === 0) {
       return this._wrapResponse(
         {
           data: [],
-          consentBlocked: playerId ? [playerId] : [],
+          consentBlocked: access.blockedUserIds,
           accessibleCount: 0,
-          message: "No team members have enabled health data sharing",
-        },
-        "acwr",
-      );
-    }
-
-    // Filter by specific player if requested
-    const targetUserIds = playerId
-      ? consentedUserIds.filter((id) => id === playerId)
-      : consentedUserIds;
-
-    if (targetUserIds.length === 0 && playerId) {
-      return this._wrapResponse(
-        {
-          data: [],
-          consentBlocked: [playerId],
-          accessibleCount: 0,
-          message: "Player has not enabled health data sharing for this team",
+          message: access.message,
         },
         "acwr",
       );
@@ -493,14 +627,14 @@ class ConsentDataReader {
     let query = this.supabase.from("wellness_entries").select("*");
 
     // Build OR condition for all consented user IDs
-    if (targetUserIds.length === 1) {
+    if (access.targetUserIds.length === 1) {
       query = query.or(
-        `user_id.eq.${targetUserIds[0]},athlete_id.eq.${targetUserIds[0]}`,
+        `user_id.eq.${access.targetUserIds[0]},athlete_id.eq.${access.targetUserIds[0]}`,
       );
     } else {
       // For multiple users, use IN clause on both columns
       query = query.or(
-        `user_id.in.(${targetUserIds.join(",")}),athlete_id.in.(${targetUserIds.join(",")})`,
+        `user_id.in.(${access.targetUserIds.join(",")}),athlete_id.in.(${access.targetUserIds.join(",")})`,
       );
     }
 
@@ -525,22 +659,19 @@ class ConsentDataReader {
     }
 
     // Log access
-    if (this.options.enableAuditLogging) {
-      await this._logAccess({
-        accessorUserId: requesterId,
-        targetUserIds,
-        resourceType: "wellness_entries",
-        teamId,
-        context: AccessContext.COACH_TEAM_DATA,
-      });
-    }
+    await this._logCoachAccessIfEnabled({
+      requesterId,
+      targetUserIds: access.targetUserIds,
+      resourceType: "wellness_entries",
+      teamId,
+    });
 
     return this._wrapResponse(
       {
         data,
-        consentBlocked:
-          playerId && !targetUserIds.includes(playerId) ? [playerId] : [],
+        consentBlocked: access.blockedUserIds,
         accessibleCount: data?.length || 0,
+        message: access.message,
       },
       "acwr",
     );
@@ -549,6 +680,182 @@ class ConsentDataReader {
   // ============================================================================
   // HELPER METHODS
   // ============================================================================
+
+  _resolveOwnDataAccess({ requesterId, playerId, resourceType }) {
+    const targetPlayerId = playerId || requesterId;
+
+    if (!requesterId || !targetPlayerId || targetPlayerId !== requesterId) {
+      return {
+        errorResponse: this._createErrorResponse(
+          new Error("Player own-data access can only read the requester data"),
+          resourceType,
+        ),
+      };
+    }
+
+    return { targetPlayerId };
+  }
+
+  async _resolveTeamConsentAccess({
+    requesterId,
+    playerId,
+    teamId,
+    consentType,
+    resourceType,
+  }) {
+    if (!teamId) {
+      return {
+        errorResponse: this._createErrorResponse(
+          new Error("teamId is required for coach team data access"),
+          resourceType,
+        ),
+      };
+    }
+
+    const consentConfig = this._getConsentConfig(consentType);
+
+    const { data: teamMembers, error: teamError } = await this.supabase
+      .from("team_members")
+      .select("user_id, team_id, role, status")
+      .eq("team_id", teamId);
+
+    if (teamError) {
+      return {
+        errorResponse: this._createErrorResponse(teamError, resourceType),
+      };
+    }
+
+    const activeMemberIds = [
+      ...new Set(
+        (teamMembers || [])
+          .filter((member) => member.status !== "inactive")
+          .map((member) => member.user_id)
+          .filter(Boolean),
+      ),
+    ];
+
+    if (playerId && !activeMemberIds.includes(playerId)) {
+      return {
+        targetUserIds: [],
+        blockedUserIds: [playerId],
+        message: "Player is not an active member of this team.",
+      };
+    }
+
+    const requestedUserIds = playerId
+      ? [playerId]
+      : activeMemberIds.filter((memberId) => memberId !== requesterId);
+
+    if (requestedUserIds.length === 0) {
+      return {
+        targetUserIds: [],
+        blockedUserIds: [],
+        message: "No team members are available for this request.",
+      };
+    }
+
+    const { data: teamSettings, error: settingsError } = await this.supabase
+      .from("team_sharing_settings")
+      .select(`user_id, ${consentConfig.settingColumn}`)
+      .eq("team_id", teamId)
+      .in("user_id", requestedUserIds);
+
+    if (settingsError) {
+      return {
+        errorResponse: this._createErrorResponse(settingsError, resourceType),
+      };
+    }
+
+    const { data: privacySettings, error: privacyError } = await this.supabase
+      .from("privacy_settings")
+      .select(`user_id, ${consentConfig.defaultColumn}`)
+      .in("user_id", requestedUserIds);
+
+    if (privacyError) {
+      return {
+        errorResponse: this._createErrorResponse(privacyError, resourceType),
+      };
+    }
+
+    const explicitConsentByUser = new Map(
+      (teamSettings || []).map((setting) => [
+        setting.user_id,
+        setting[consentConfig.settingColumn],
+      ]),
+    );
+    const defaultConsentByUser = new Map(
+      (privacySettings || []).map((setting) => [
+        setting.user_id,
+        setting[consentConfig.defaultColumn],
+      ]),
+    );
+
+    const targetUserIds = [];
+    const blockedUserIds = [];
+
+    for (const userId of requestedUserIds) {
+      const explicitConsent = explicitConsentByUser.get(userId);
+      const defaultConsent = defaultConsentByUser.get(userId);
+      const consentEnabled =
+        typeof explicitConsent === "boolean"
+          ? explicitConsent
+          : Boolean(defaultConsent);
+
+      if (consentEnabled) {
+        targetUserIds.push(userId);
+      } else {
+        blockedUserIds.push(userId);
+      }
+    }
+
+    let message;
+    if (playerId && blockedUserIds.includes(playerId)) {
+      message = `Player has not enabled ${consentConfig.label} sharing for this team.`;
+    } else if (targetUserIds.length === 0 && blockedUserIds.length > 0) {
+      message = `No team members have enabled ${consentConfig.label} sharing.`;
+    }
+
+    return {
+      targetUserIds,
+      blockedUserIds,
+      message,
+    };
+  }
+
+  _getConsentConfig(consentType) {
+    if (consentType === "health") {
+      return {
+        settingColumn: "health_sharing_enabled",
+        defaultColumn: "health_sharing_default",
+        label: "health data",
+      };
+    }
+
+    return {
+      settingColumn: "performance_sharing_enabled",
+      defaultColumn: "performance_sharing_default",
+      label: "performance",
+    };
+  }
+
+  async _logCoachAccessIfEnabled({
+    requesterId,
+    targetUserIds,
+    resourceType,
+    teamId,
+  }) {
+    if (!this.options.enableAuditLogging) {
+      return;
+    }
+
+    await this._logAccess({
+      accessorUserId: requesterId,
+      targetUserIds,
+      resourceType,
+      teamId,
+      context: AccessContext.COACH_TEAM_DATA,
+    });
+  }
 
   _validateContext(context) {
     const validContexts = Object.values(AccessContext);

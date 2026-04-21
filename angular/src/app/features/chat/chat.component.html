@@ -204,7 +204,7 @@
                   title="Important"
                   [message]="currentImportantMessage()?.message || ''"
                   [dismissible]="true"
-                  styleClass="important-banner-alert"
+                  class="important-banner-alert"
                   (dismissed)="dismissImportantBanner()"
                 />
               }
@@ -241,7 +241,7 @@
                               'U'
                           )
                         "
-                        [styleClass]="
+                        [class]="
                           'mr-2 avatar-token ' +
                           getAvatarColorClass(message.author?.full_name || '')
                         "
@@ -324,7 +324,7 @@
                     density="compact"
                     icon="pi-lock"
                     message="Only coaches can post in this channel."
-                    styleClass="cannot-post-alert"
+                    class="cannot-post-alert"
                   />
                 } @else {
                   <!-- Mention suggestions -->
@@ -378,7 +378,7 @@
                       (valueChange)="onMessageFieldInput($event)"
                       (keydown.enter)="sendMessage()"
                       [placeholder]="getInputPlaceholder()"
-                      styleClass="message-input"
+                      class="message-input"
                       autocomplete="off"
                     />
 

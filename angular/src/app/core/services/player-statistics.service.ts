@@ -628,7 +628,7 @@ export class PlayerStatisticsService {
   }
 
   private aggregateGameStats(
-    games: Array<PlayerGameStats & { hasStats?: boolean }>,
+    games: (PlayerGameStats & { hasStats?: boolean })[],
   ): Omit<
     PlayerGameStats,
     | "gameId"

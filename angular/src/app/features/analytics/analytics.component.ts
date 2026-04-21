@@ -68,21 +68,21 @@ type AnalyticsChartType =
   | "position"
   | "speed";
 
-type AnalyticsSeriesPayload = {
+interface AnalyticsSeriesPayload {
   labels: string[];
   values: number[];
-};
+}
 
-type AnalyticsSpeedPayload = {
+interface AnalyticsSpeedPayload {
   labels: string[];
-  datasets: Array<{
+  datasets: {
     label: string;
     data: number[];
     borderColor?: string;
     backgroundColor?: string;
     tension?: number;
-  }>;
-};
+  }[];
+}
 
 @Component({
   selector: "app-analytics",
@@ -169,13 +169,13 @@ export class AnalyticsComponent implements AfterViewInit {
 
   // Gap Analysis data
   gapAnalysisData = signal<
-    Array<{
+    {
       metric: string;
       current: number;
       benchmark: number;
       gap: number;
       unit: string;
-    }>
+    }[]
   >([]);
 
   gapAnalysisSummary = signal<{
@@ -192,8 +192,8 @@ export class AnalyticsComponent implements AfterViewInit {
     improvement: string | null;
   } | null>(null);
 
-  selectedTimePeriod: string = "Last 7 Weeks";
-  selectedMetric: string = "40-Yard & 10-Yard";
+  selectedTimePeriod = "Last 7 Weeks";
+  selectedMetric = "40-Yard & 10-Yard";
 
   timePeriods = ["Last 7 Weeks", "Last 30 Days", "Season Progress"];
   metricOptions = [
@@ -1122,12 +1122,12 @@ Tip: Hover over data points to see trend information!`;
    * Process gap analysis data and calculate summary
    */
   private processGapAnalysisData(
-    data: Array<{
+    data: {
       metric: string;
       current: number;
       benchmark: number;
       unit: string;
-    }>,
+    }[],
   ): void {
     const processedData = data.map((item) => {
       // For time-based metrics (lower is better), invert the gap

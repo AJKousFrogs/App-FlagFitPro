@@ -123,7 +123,7 @@ export class TrainingScheduleDataService {
     templates: TrainingTemplateRow[];
     error: { message?: string } | null;
   }> {
-    let activeProgramId: string | null = null;
+    let activeProgramId: string | null;
 
     try {
       const response = await firstValueFrom(

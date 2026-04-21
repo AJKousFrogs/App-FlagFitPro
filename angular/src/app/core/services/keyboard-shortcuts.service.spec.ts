@@ -8,7 +8,7 @@
  *
  * @author FlagFit Pro Team
  */
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
+ 
 
 import { TestBed } from "@angular/core/testing";
 import { provideRouter } from "@angular/router";

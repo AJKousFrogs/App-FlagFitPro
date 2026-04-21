@@ -50,8 +50,8 @@ export class OnboardingStateService {
   readonly lastSaved = signal<Date | null>(null);
   readonly isSaving = signal(false);
 
-  readonly teams = signal<Array<{ label: string; value: string }>>(FALLBACK_TEAMS);
-  readonly teamSuggestions = signal<Array<{ label: string; value: string }>>(FALLBACK_TEAMS);
+  readonly teams = signal<{ label: string; value: string }[]>(FALLBACK_TEAMS);
+  readonly teamSuggestions = signal<{ label: string; value: string }[]>(FALLBACK_TEAMS);
 
   /** Computed progress percentage */
   readonly progress = computed(() => {

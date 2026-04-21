@@ -141,7 +141,7 @@ export class OnboardingComponent implements OnInit, OnDestroy {
     return this.getCompletionStats().remaining > 0;
   }
 
-  private getCompletionRequirements(): Array<{ label: string; done: boolean }> {
+  private getCompletionRequirements(): { label: string; done: boolean }[] {
     const f = this.state.formData;
     const isPlayer = this.state.isPlayer();
     const hasMetricPhysical = !!(f.heightCm && f.weightKg);

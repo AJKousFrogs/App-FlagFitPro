@@ -291,7 +291,7 @@ export class TeamStatisticsService {
   /**
    * Get recent game results
    */
-  getRecentGames(teamId: string, limit: number = 5): Observable<GameResult[]> {
+  getRecentGames(teamId: string, limit = 5): Observable<GameResult[]> {
     return this.apiService
       .get<
         GameResult[]
@@ -316,7 +316,7 @@ export class TeamStatisticsService {
    */
   getUpcomingGames(
     teamId: string,
-    limit: number = 5,
+    limit = 5,
   ): Observable<UpcomingGame[]> {
     return this.apiService
       .get<UpcomingGame[]>(API_ENDPOINTS.coach.games, { teamId, limit })
@@ -340,7 +340,7 @@ export class TeamStatisticsService {
    */
   getTrainingSchedule(
     teamId: string,
-    days: number = 7,
+    days = 7,
   ): Observable<TrainingSession[]> {
     return this.apiService
       .get<TrainingSession[]>(API_ENDPOINTS.training.sessions, { teamId, days })
@@ -385,7 +385,7 @@ export class TeamStatisticsService {
    */
   getTeamMessages(
     teamId: string,
-    limit: number = 10,
+    limit = 10,
   ): Observable<TeamMessage[]> {
     return this.apiService
       .get<TeamMessage[]>(API_ENDPOINTS.community.feed, { teamId, limit })
@@ -409,7 +409,7 @@ export class TeamStatisticsService {
    */
   getPerformanceTrend(
     teamId: string,
-    weeks: number = 10,
+    weeks = 10,
   ): Observable<{ labels: string[]; scores: number[] }> {
     return this.apiService
       .get<{

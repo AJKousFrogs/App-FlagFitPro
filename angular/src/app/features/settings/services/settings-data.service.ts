@@ -10,7 +10,7 @@ export class SettingsDataService {
   private usersTableUnavailable = false;
 
   private mapSettingsRows(
-    rows: Array<{ setting_key?: string | null; setting_value?: unknown }> | null,
+    rows: { setting_key?: string | null; setting_value?: unknown }[] | null,
   ): Record<string, unknown> | null {
     if (!rows || rows.length === 0) {
       return null;
@@ -50,7 +50,7 @@ export class SettingsDataService {
 
     return {
       data: this.mapSettingsRows(
-        (result as Array<{ setting_key?: string | null; setting_value?: unknown }>) ?? null,
+        (result as { setting_key?: string | null; setting_value?: unknown }[]) ?? null,
       ),
       error,
     };
@@ -293,7 +293,7 @@ export class SettingsDataService {
       .eq("user_id", userId);
     return {
       settings: this.mapSettingsRows(
-        (data as Array<{ setting_key?: string | null; setting_value?: unknown }>) ?? null,
+        (data as { setting_key?: string | null; setting_value?: unknown }[]) ?? null,
       ),
       error,
     };
@@ -405,7 +405,7 @@ export class SettingsDataService {
   }
 
   async fetchApprovedTeams(): Promise<{
-    teams: Array<{ id: string; name: string }>;
+    teams: { id: string; name: string }[];
     error: { message?: string } | null;
   }> {
     const { data, error } = await this.supabaseService.client
@@ -413,7 +413,7 @@ export class SettingsDataService {
       .select("id, name")
       .eq("approval_status", "approved")
       .order("name");
-    return { teams: (data as Array<{ id: string; name: string }>) ?? [], error };
+    return { teams: (data as { id: string; name: string }[]) ?? [], error };
   }
 
   async createTeam(data: Record<string, unknown>): Promise<{

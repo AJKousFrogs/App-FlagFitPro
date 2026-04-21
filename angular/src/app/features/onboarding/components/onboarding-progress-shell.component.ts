@@ -5,18 +5,18 @@ import {
   output,
 } from "@angular/core";
 
-type OnboardingStepSummary = {
+interface OnboardingStepSummary {
   label: string;
   icon: string;
   completed?: boolean;
-};
+}
 
-type CompletionStats = {
+interface CompletionStats {
   completed: number;
   total: number;
   percent: number;
   remaining: number;
-};
+}
 
 @Component({
   selector: "app-onboarding-progress-shell",

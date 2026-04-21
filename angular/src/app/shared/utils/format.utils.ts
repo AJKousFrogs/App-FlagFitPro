@@ -68,7 +68,7 @@ export function snakeCase(str: string): string {
 export function truncate(
   str: string,
   length: number,
-  suffix: string = "...",
+  suffix = "...",
 ): string {
   if (str.length <= length) return str;
   return str.slice(0, length) + suffix;
@@ -82,7 +82,7 @@ export function truncate(
 export function truncateWords(
   str: string,
   count: number,
-  suffix: string = "...",
+  suffix = "...",
 ): string {
   const words = str.split(" ");
   if (words.length <= count) return str;
@@ -103,7 +103,7 @@ export function stripHtml(html: string): string {
  * @example
  * formatNumber(1234567) // '1,234,567'
  */
-export function formatNumber(num: number, decimals: number = 0): string {
+export function formatNumber(num: number, decimals = 0): string {
   return num.toLocaleString("en-US", {
     minimumFractionDigits: decimals,
     maximumFractionDigits: decimals,
@@ -117,8 +117,8 @@ export function formatNumber(num: number, decimals: number = 0): string {
  */
 export function formatCurrency(
   amount: number,
-  currency: string = "USD",
-  locale: string = "en-US",
+  currency = "USD",
+  locale = "en-US",
 ): string {
   return new Intl.NumberFormat(locale, {
     style: "currency",
@@ -131,7 +131,7 @@ export function formatCurrency(
  * @example
  * formatPercent(0.1234) // '12.34%'
  */
-export function formatPercent(value: number, decimals: number = 2): string {
+export function formatPercent(value: number, decimals = 2): string {
   return `${(value * 100).toFixed(decimals)}%`;
 }
 
@@ -140,7 +140,7 @@ export function formatPercent(value: number, decimals: number = 2): string {
  * @example
  * formatPercentage(0.1234) // '12.34%'
  */
-export function formatPercentage(value: number, decimals: number = 2): string {
+export function formatPercentage(value: number, decimals = 2): string {
   return formatPercent(value, decimals);
 }
 
@@ -149,7 +149,7 @@ export function formatPercentage(value: number, decimals: number = 2): string {
  * @example
  * formatAverage(12.345) // '12.3'
  */
-export function formatAverage(value: number, decimals: number = 1): string {
+export function formatAverage(value: number, decimals = 1): string {
   return value.toFixed(decimals);
 }
 
@@ -229,7 +229,7 @@ export function pluralize(
  * getInitials('John') // 'J'
  * getInitials('') // ''
  */
-export function getInitials(name: string, maxLength: number = 2): string {
+export function getInitials(name: string, maxLength = 2): string {
   if (!name || !name.trim()) {
     return "";
   }
@@ -250,7 +250,7 @@ export function getInitials(name: string, maxLength: number = 2): string {
 export function padStart(
   str: string,
   length: number,
-  char: string = " ",
+  char = " ",
 ): string {
   return str.padStart(length, char);
 }
@@ -261,7 +261,7 @@ export function padStart(
 export function padEnd(
   str: string,
   length: number,
-  char: string = " ",
+  char = " ",
 ): string {
   return str.padEnd(length, char);
 }
@@ -348,7 +348,7 @@ export function normalizePlayerName(
     lastName?: string | null;
     email?: string | null;
   },
-  fallback: string = "Unknown",
+  fallback = "Unknown",
 ): string {
   // Try full_name first (snake_case or camelCase)
   if (data.full_name?.trim()) {
@@ -386,7 +386,7 @@ export function normalizePlayerName(
 export function mask(
   str: string,
   visibleChars: number,
-  maskChar: string = "*",
+  maskChar = "*",
 ): string {
   if (str.length <= visibleChars) return str;
   return (

@@ -6,7 +6,7 @@
       [draggable]="false"
       [resizable]="false"
       [blockScroll]="true"
-      [styleClass]="'dialog-lg decision-dialog decision-dialog--create'"
+      [class]="'dialog-lg decision-dialog decision-dialog--create'"
     >
       <app-dialog-header
         icon="file"
@@ -39,7 +39,7 @@
                 placeholder="Select an athlete"
                 [filter]="true"
                 [showClear]="true"
-                styleClass="w-full"
+                class="w-full"
               />
             </div>
             @if (formData.athleteId) {
@@ -61,7 +61,7 @@
                 [ngModel]="formData.decisionType"
                 (change)="onDecisionTypeSelect($event)"
                 placeholder="Select decision type"
-                styleClass="w-full"
+                class="w-full"
               />
             </div>
             @if (formData.decisionType) {
@@ -86,7 +86,7 @@
                 (valueChange)="formData.decisionSummary = $event"
                 placeholder="e.g., Reduced sprint volume by 50% due to elevated ACWR"
                 [rows]="3"
-                styleClass="w-full"
+                class="w-full"
               />
               <small id="decision-summary-hint" class="p-field-hint">
                 Maximum 500 characters
@@ -142,7 +142,7 @@
                     [value]="formData.decisionBasis.constraints[$index]"
                     (valueChange)="formData.decisionBasis.constraints[$index] = $event"
                     placeholder="e.g., RTP Phase 2, No sprinting >80%"
-                    styleClass="w-full"
+                    class="w-full"
                   />
                   <app-button
                     iconLeft="pi-times"
@@ -175,7 +175,7 @@
                 [ngModel]="formData.reviewTrigger"
                 (change)="onReviewTriggerSelect($event)"
                 placeholder="Select review trigger"
-                styleClass="w-full"
+                class="w-full"
               />
             </div>
             @if (formData.reviewTrigger) {
@@ -194,22 +194,22 @@
           <div class="step-panel">
             <h3>Review & Confirm</h3>
             <div class="review-summary">
-              <div class="review-summary-row">
-                <label>Athlete:</label>
-                <p>{{ getAthleteName(formData.athleteId) }}</p>
-              </div>
-              <div class="review-summary-row">
-                <label>Decision Type:</label>
-                <p>{{ getDecisionTypeLabel(formData.decisionType) }}</p>
-              </div>
-              <div class="review-summary-row">
-                <label>Summary:</label>
-                <p>{{ formData.decisionSummary }}</p>
-              </div>
-              <div class="review-summary-row">
-                <label>Review Date:</label>
-                <p>{{ calculateReviewDate() | date: "short" }}</p>
-              </div>
+                      <div class="review-summary-row">
+                        <span>Athlete:</span>
+                        <p>{{ getAthleteName(formData.athleteId) }}</p>
+                      </div>
+                      <div class="review-summary-row">
+                        <span>Decision Type:</span>
+                        <p>{{ getDecisionTypeLabel(formData.decisionType) }}</p>
+                      </div>
+                      <div class="review-summary-row">
+                        <span>Summary:</span>
+                        <p>{{ formData.decisionSummary }}</p>
+                      </div>
+                      <div class="review-summary-row">
+                        <span>Review Date:</span>
+                        <p>{{ calculateReviewDate() | date: "short" }}</p>
+                      </div>
             </div>
 
             <!-- Confidence Preview -->

@@ -9,6 +9,10 @@
   padding: var(--space-6);
   border: var(--border-2) solid var(--color-border-primary);
   border-radius: var(--radius-md);
+  appearance: none;
+  background: var(--surface-card);
+  color: inherit;
+  font: inherit;
   text-align: center;
   cursor: pointer;
   transition:

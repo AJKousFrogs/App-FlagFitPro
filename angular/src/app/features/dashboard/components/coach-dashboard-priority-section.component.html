@@ -40,7 +40,7 @@
             <app-avatar
               [label]="getPlayerInitials(alert.playerName)"
               shape="circle"
-              [styleClass]="
+              [class]="
                 alert.severity === 'critical'
                   ? 'priority-avatar priority-avatar--critical'
                   : 'priority-avatar priority-avatar--warning'
@@ -99,7 +99,7 @@
             <app-avatar
               [label]="getPlayerInitials(player.playerName)"
               shape="circle"
-              [styleClass]="
+              [class]="
                 player.severity === 'critical'
                   ? 'priority-avatar priority-avatar--critical'
                   : 'priority-avatar priority-avatar--warning'

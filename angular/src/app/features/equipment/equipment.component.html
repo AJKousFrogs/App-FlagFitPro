@@ -308,8 +308,9 @@
             </div>
 
             <div class="form-field">
-              <label>Total Quantity *</label>
+              <label for="equipment-total-quantity">Total Quantity *</label>
               <p-inputNumber
+                inputId="equipment-total-quantity"
                 (onInput)="onNewItemQuantityInput($event)"
                 [min]="1"
               ></p-inputNumber>
@@ -373,8 +374,9 @@
               </div>
 
               <div class="form-field">
-                <label>Quantity</label>
+                <label for="equipment-checkout-quantity">Quantity</label>
                 <p-inputNumber
+                  inputId="equipment-checkout-quantity"
                   (onInput)="onCheckoutQuantityInput($event)"
                   [min]="1"
                   [max]="checkoutItem()!.quantity_available"

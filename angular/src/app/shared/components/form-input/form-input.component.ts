@@ -171,7 +171,7 @@ export class FormInputComponent implements ControlValueAccessor {
   /**
    * One-way value from parent (`[value]`). When omitted, ControlValueAccessor drives the field.
    */
-  value = input<string | undefined>(undefined, { alias: "value" });
+  value = input<string | undefined>(undefined);
 
   // Configuration inputs
   inputId = input<string>(`form-input-${++nextFormInputId}`);

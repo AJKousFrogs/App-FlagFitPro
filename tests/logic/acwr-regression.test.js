@@ -20,7 +20,9 @@
  * @module ESM (migrated from CJS 2026-02)
  */
 
+import "dotenv/config";
 import { createClient } from "@supabase/supabase-js";
+import { randomUUID } from "node:crypto";
 
 // =============================================================================
 // CONFIGURATION
@@ -28,7 +30,9 @@ import { createClient } from "@supabase/supabase-js";
 
 const SUPABASE_URL = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
 const SUPABASE_SERVICE_KEY =
-  process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY;
+  process.env.SUPABASE_SERVICE_ROLE_KEY ||
+  process.env.SUPABASE_SERVICE_KEY ||
+  process.env.SUPABASE_ANON_KEY;
 
 function getSupabaseEnvStatus() {
   const missing = [];
@@ -36,7 +40,9 @@ function getSupabaseEnvStatus() {
     missing.push("SUPABASE_URL (or VITE_SUPABASE_URL)");
   }
   if (!SUPABASE_SERVICE_KEY) {
-    missing.push("SUPABASE_SERVICE_ROLE_KEY (or SUPABASE_ANON_KEY)");
+    missing.push(
+      "SUPABASE_SERVICE_ROLE_KEY, SUPABASE_SERVICE_KEY, or SUPABASE_ANON_KEY",
+    );
   }
   return {
     ok: missing.length === 0,
@@ -44,9 +50,44 @@ function getSupabaseEnvStatus() {
   };
 }
 
-// Test player UUID - use a deterministic UUID for reproducibility
-const TEST_PLAYER_ID = "00000000-0000-0000-0000-000000000001";
-const TEST_PLAYER_EMAIL = "acwr-test@flagfit.test";
+// Test players are created as temporary Auth users because workout_logs.player_id
+// references auth.users(id) in the live schema.
+const TEST_RUN_ID = randomUUID();
+let TEST_PLAYER_ID = "";
+let LOW_LOAD_PLAYER_ID = "";
+const createdAuthUserIds = new Set();
+const TEST_USER_BLUEPRINTS = [
+  {
+    key: "primary",
+    email: `acwr-test+${TEST_RUN_ID}@flagfit.test`,
+    password_hash: "test-only",
+    first_name: "ACWR",
+    last_name: "Regression",
+    full_name: "ACWR Regression",
+    name: "ACWR Regression",
+    position: "FLEX",
+    is_active: true,
+    email_verified: true,
+    onboarding_completed: true,
+  },
+  {
+    key: "low-load",
+    email: `acwr-low-load-test+${TEST_RUN_ID}@flagfit.test`,
+    password_hash: "test-only",
+    first_name: "ACWR",
+    last_name: "Low Load",
+    full_name: "ACWR Low Load",
+    name: "ACWR Low Load",
+    position: "FLEX",
+    is_active: true,
+    email_verified: true,
+    onboarding_completed: true,
+  },
+];
+
+function getTestPlayerIds() {
+  return [TEST_PLAYER_ID, LOW_LOAD_PLAYER_ID].filter(Boolean);
+}
 
 // =============================================================================
 // TOLERANCE DEFINITIONS
@@ -123,6 +164,10 @@ const SYNTHETIC_DATASET = [
   { day: 27, duration: 55, rpe: 7, type: "Strength", expectedLoad: 385 },
   { day: 28, duration: 95, rpe: 9, type: "Game", expectedLoad: 855 },
 ];
+
+function toWorkoutType(type) {
+  return String(type || "training").toLowerCase();
+}
 
 // =============================================================================
 // EXPECTED VALUES AT CHECKPOINTS
@@ -208,7 +253,7 @@ const EXPECTED_VALUES = {
 function createTestClient() {
   if (!SUPABASE_URL || !SUPABASE_SERVICE_KEY) {
     throw new Error(
-      "Missing Supabase credentials. Set SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY environment variables.",
+      "Missing Supabase credentials. Set SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY/SUPABASE_SERVICE_KEY environment variables.",
     );
   }
   return createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY, {
@@ -253,12 +298,86 @@ function formatResult(passed, message, details = {}) {
 
 async function cleanupTestData(supabase) {
   console.log("\n🧹 Cleaning up test data...");
+  const playerIds = getTestPlayerIds();
+  if (playerIds.length === 0) {
+    console.log("   No fixture player IDs registered yet");
+    return;
+  }
+
   await supabase
     .from("load_monitoring")
     .delete()
-    .eq("player_id", TEST_PLAYER_ID);
-  await supabase.from("workout_logs").delete().eq("player_id", TEST_PLAYER_ID);
+    .in("player_id", playerIds);
+  await supabase.from("workout_logs").delete().in("player_id", playerIds);
   console.log("   Cleanup complete");
+}
+
+async function cleanupTestUsers(supabase) {
+  const playerIds = getTestPlayerIds();
+  if (playerIds.length === 0) {
+    return;
+  }
+
+  await supabase.from("users").delete().in("id", playerIds);
+}
+
+async function cleanupAuthUsers(supabase) {
+  for (const userId of createdAuthUserIds) {
+    const { error } = await supabase.auth.admin.deleteUser(userId);
+    if (error) {
+      console.log(`   ⚠️ Could not delete fixture auth user ${userId}: ${error.message}`);
+    }
+  }
+  createdAuthUserIds.clear();
+}
+
+async function ensureTestUsers(supabase) {
+  console.log("\n👤 Ensuring ACWR fixture users...");
+  const publicProfiles = [];
+
+  for (const blueprint of TEST_USER_BLUEPRINTS) {
+    const { data, error } = await supabase.auth.admin.createUser({
+      email: blueprint.email,
+      password: `${randomUUID()}Aa1!`,
+      email_confirm: true,
+      user_metadata: {
+        test_fixture: "acwr-regression",
+        display_name: blueprint.full_name,
+      },
+      app_metadata: {
+        test_fixture: "acwr-regression",
+      },
+    });
+
+    if (error || !data.user?.id) {
+      throw new Error(
+        `Failed to prepare auth user ${blueprint.key}: ${error?.message || "missing user id"}`,
+      );
+    }
+
+    createdAuthUserIds.add(data.user.id);
+    if (blueprint.key === "primary") {
+      TEST_PLAYER_ID = data.user.id;
+    } else {
+      LOW_LOAD_PLAYER_ID = data.user.id;
+    }
+
+    const { key, ...profile } = blueprint;
+    publicProfiles.push({
+      ...profile,
+      id: data.user.id,
+    });
+  }
+
+  const { error } = await supabase.from("users").upsert(publicProfiles, {
+    onConflict: "id",
+  });
+
+  if (error) {
+    throw new Error(`Failed to prepare test users: ${error.message}`);
+  }
+
+  console.log(`   Prepared ${publicProfiles.length} fixture users`);
 }
 
 async function insertTestData(supabase) {
@@ -267,9 +386,9 @@ async function insertTestData(supabase) {
   const workouts = SYNTHETIC_DATASET.filter((d) => d.duration > 0).map((d) => ({
     player_id: TEST_PLAYER_ID,
     completed_at: `${getDateForDay(d.day, baseDate)}T12:00:00Z`,
+    workout_type: toWorkoutType(d.type),
     rpe: d.rpe,
     duration_minutes: d.duration,
-    notes: `Day ${d.day}: ${d.type}`,
   }));
 
   console.log(`   Inserting ${workouts.length} workout records...`);
@@ -485,7 +604,6 @@ async function testRiskLevelClassification(supabase) {
 
 async function testMinimumChronicLoadFloor(supabase) {
   console.log("\n🛡️ Testing Minimum Chronic Load Floor...");
-  const LOW_LOAD_PLAYER_ID = "00000000-0000-0000-0000-000000000002";
 
   try {
     await supabase.from("load_monitoring").delete().eq("player_id", LOW_LOAD_PLAYER_ID);
@@ -501,9 +619,9 @@ async function testMinimumChronicLoadFloor(supabase) {
     const workouts = lightSessions.map((s) => ({
       player_id: LOW_LOAD_PLAYER_ID,
       completed_at: `${getDateForDay(s.day, baseDate)}T12:00:00Z`,
+      workout_type: "recovery",
       rpe: s.rpe,
       duration_minutes: s.duration,
-      notes: `Day ${s.day}: Light return-to-play session`,
     }));
 
     const { error: insertError } = await supabase.from("workout_logs").insert(workouts);
@@ -587,6 +705,7 @@ async function runTests() {
   try {
     supabase = createTestClient();
     await cleanupTestData(supabase);
+    await ensureTestUsers(supabase);
     await insertTestData(supabase);
     await calculateLoadMonitoring(supabase);
 
@@ -601,6 +720,8 @@ async function runTests() {
   } finally {
     if (supabase) {
       await cleanupTestData(supabase);
+      await cleanupTestUsers(supabase);
+      await cleanupAuthUsers(supabase);
     }
   }
 

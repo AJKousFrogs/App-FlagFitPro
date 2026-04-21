@@ -20,7 +20,7 @@
  * roundToPrecision(1.235, 2)  // 1.24 (rounds up)
  * roundToPrecision(NaN, 2)    // 0
  */
-export function roundToPrecision(value: number, decimals: number = 2): number {
+export function roundToPrecision(value: number, decimals = 2): number {
   if (
     value === null ||
     value === undefined ||
@@ -51,7 +51,7 @@ export function roundToPrecision(value: number, decimals: number = 2): number {
 export function safeDivide(
   numerator: number,
   denominator: number,
-  decimals: number = 2,
+  decimals = 2,
 ): number {
   if (
     numerator === null ||
@@ -90,7 +90,7 @@ export function safeDivide(
 export function calculatePercentage(
   part: number,
   whole: number,
-  decimals: number = 1,
+  decimals = 1,
 ): number {
   if (whole === 0) return 0;
   return roundToPrecision((part / whole) * 100, decimals);
@@ -111,7 +111,7 @@ export function calculatePercentage(
 export function percentageChange(
   oldValue: number,
   newValue: number,
-  decimals: number = 1,
+  decimals = 1,
 ): number {
   if (oldValue === 0) return 0;
   return roundToPrecision(((newValue - oldValue) / oldValue) * 100, decimals);
@@ -145,7 +145,7 @@ export function clamp(value: number, min: number, max: number): number {
  * @example
  * average([1, 2, 3, 4, 5], 2) // 3.00
  */
-export function average(values: number[], decimals: number = 2): number {
+export function average(values: number[], decimals = 2): number {
   if (!values || values.length === 0) return 0;
 
   const validValues = values.filter((v) => !isNaN(v) && isFinite(v));
@@ -167,7 +167,7 @@ export function average(values: number[], decimals: number = 2): number {
  */
 export function standardDeviation(
   values: number[],
-  decimals: number = 2,
+  decimals = 2,
 ): number {
   if (!values || values.length < 2) return 0;
 
@@ -231,8 +231,8 @@ export function calculateACWRRatio(
  */
 export function formatNumberSafe(
   value: number | null | undefined,
-  decimals: number = 2,
-  fallback: string = "—",
+  decimals = 2,
+  fallback = "—",
 ): string {
   if (
     value === null ||

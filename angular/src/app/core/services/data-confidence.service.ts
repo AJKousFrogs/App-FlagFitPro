@@ -38,7 +38,7 @@ export class DataConfidenceService {
    */
   calculateWellnessConfidence(
     wellnessData: WellnessData[],
-    daysRequired: number = 7,
+    daysRequired = 7,
   ): ConfidenceScore {
     if (!wellnessData || wellnessData.length === 0) {
       return {
@@ -102,7 +102,7 @@ export class DataConfidenceService {
    */
   calculateACWRConfidence(
     trainingDays: number,
-    requiredDays: number = 21,
+    requiredDays = 21,
   ): ConfidenceScore {
     if (trainingDays === 0) {
       return {
@@ -162,7 +162,7 @@ export class DataConfidenceService {
    */
   calculatePartialWellnessConfidence(
     providedMetrics: string[],
-    totalMetrics: number = 5,
+    totalMetrics = 5,
   ): ConfidenceScore {
     const completeness = providedMetrics.length / totalMetrics;
 

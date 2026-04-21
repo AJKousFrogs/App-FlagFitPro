@@ -13,8 +13,12 @@
 
   <form [formGroup]="availabilityForm()" class="availability-form">
     <div class="form-field">
-      <label>Will you be attending?</label>
-      <div class="availability-options">
+      <div id="tournament-availability-label">Will you be attending?</div>
+      <div
+        class="availability-options"
+        role="group"
+        aria-labelledby="tournament-availability-label"
+      >
         @for (option of availabilityOptions(); track option.value) {
           <button
             type="button"
@@ -46,8 +50,9 @@
     @if (currentStatus() === "confirmed") {
       <div class="form-grid-2">
         <div class="form-field">
-          <label>Arrival Date</label>
+          <label for="tournament-arrival-date">Arrival Date</label>
           <input
+            id="tournament-arrival-date"
             type="date"
             [value]="getDateInputValue('arrivalDate')"
             (input)="onDateInputEvent('arrivalDate', $event)"
@@ -56,8 +61,9 @@
           />
         </div>
         <div class="form-field">
-          <label>Departure Date</label>
+          <label for="tournament-departure-date">Departure Date</label>
           <input
+            id="tournament-departure-date"
             type="date"
             [value]="getDateInputValue('departureDate')"
             (input)="onDateInputEvent('departureDate', $event)"

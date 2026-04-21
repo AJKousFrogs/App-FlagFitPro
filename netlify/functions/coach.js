@@ -83,11 +83,11 @@ export default async (req) => {
   const url = new URL(req.url);
   const path = url.pathname;
 
-  if (path.includes("/coach-activity")) return dispatch(coachActivityHandler, req, url);
-  if (path.includes("/coach-analytics")) return dispatch(coachAnalyticsHandler, req, url);
-  if (path.includes("/coach-alerts")) return dispatch(coachAlertsHandler, req, url);
-  if (path.includes("/coach-inbox")) return dispatch(coachInboxHandler, req, url);
-  if (path.includes("/coach")) return dispatch(coachCoreHandler, req, url);
+  if (path.includes("/coach-activity")) {return dispatch(coachActivityHandler, req, url);}
+  if (path.includes("/coach-analytics")) {return dispatch(coachAnalyticsHandler, req, url);}
+  if (path.includes("/coach-alerts")) {return dispatch(coachAlertsHandler, req, url);}
+  if (path.includes("/coach-inbox")) {return dispatch(coachInboxHandler, req, url);}
+  if (path.includes("/coach")) {return dispatch(coachCoreHandler, req, url);}
 
   return new Response(
     JSON.stringify({ success: false, error: `Not found: ${req.method} ${path}`, code: "not_found" }),

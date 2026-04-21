@@ -314,11 +314,257 @@ describe("Coach API Consent Unit Tests", () => {
       expect(isConsentProtectedTable("teams")).toBe(false);
     });
   });
+
+  describe("service-role coach consent reads", () => {
+    it("should query load monitoring only for consented team members", async () => {
+      const { ConsentDataReader, AccessContext } =
+        await import("../../netlify/functions/utils/consent-data-reader.js");
+
+      const reader = new ConsentDataReader(createMockSupabase(), {
+        enableAuditLogging: false,
+      });
+
+      const result = await reader.readLoadMonitoring({
+        requesterId: "coach-1",
+        teamId: "team-1",
+        context: AccessContext.COACH_TEAM_DATA,
+        filters: { limit: 10 },
+      });
+
+      const returnedPlayerIds = result.data.map((row) => row.player_id);
+
+      expect(result.success).toBe(true);
+      expect(returnedPlayerIds).toContain("player-explicit-consent");
+      expect(returnedPlayerIds).toContain("player-default-consent");
+      expect(returnedPlayerIds).not.toContain("player-no-consent");
+      expect(returnedPlayerIds).not.toContain("outside-team-player");
+      expect(result.consentInfo.blockedPlayerIds).toEqual([
+        "player-no-consent",
+      ]);
+    });
+
+    it("should block a specific workout log request when consent is disabled", async () => {
+      const { ConsentDataReader, AccessContext } =
+        await import("../../netlify/functions/utils/consent-data-reader.js");
+
+      const reader = new ConsentDataReader(createMockSupabase(), {
+        enableAuditLogging: false,
+      });
+
+      const result = await reader.readWorkoutLogs({
+        requesterId: "coach-1",
+        playerId: "player-no-consent",
+        teamId: "team-1",
+        context: AccessContext.COACH_TEAM_DATA,
+      });
+
+      expect(result.success).toBe(true);
+      expect(result.data).toEqual([]);
+      expect(result.consentInfo.blockedPlayerIds).toEqual([
+        "player-no-consent",
+      ]);
+      expect(result.dataStateInfo.warnings.join(" ")).toContain(
+        "not enabled performance sharing",
+      );
+    });
+
+    it("should reject player-own reads for another player", async () => {
+      const { ConsentDataReader, AccessContext } =
+        await import("../../netlify/functions/utils/consent-data-reader.js");
+
+      const reader = new ConsentDataReader(createMockSupabase(), {
+        enableAuditLogging: false,
+      });
+
+      const result = await reader.readLoadMonitoring({
+        requesterId: "player-explicit-consent",
+        playerId: "player-no-consent",
+        context: AccessContext.PLAYER_OWN_DATA,
+      });
+
+      expect(result.success).toBe(false);
+      expect(result.data).toEqual([]);
+    });
+  });
 });
 
 // ============================================================================
 // HELPER FUNCTIONS
 // ============================================================================
+
+function createMockSupabase() {
+  const tables = {
+    team_members: [
+      {
+        team_id: "team-1",
+        user_id: "coach-1",
+        role: "coach",
+        status: "active",
+      },
+      {
+        team_id: "team-1",
+        user_id: "player-explicit-consent",
+        role: "player",
+        status: "active",
+      },
+      {
+        team_id: "team-1",
+        user_id: "player-default-consent",
+        role: "player",
+        status: "active",
+      },
+      {
+        team_id: "team-1",
+        user_id: "player-no-consent",
+        role: "player",
+        status: "active",
+      },
+      {
+        team_id: "other-team",
+        user_id: "outside-team-player",
+        role: "player",
+        status: "active",
+      },
+    ],
+    team_sharing_settings: [
+      {
+        team_id: "team-1",
+        user_id: "player-explicit-consent",
+        performance_sharing_enabled: true,
+        health_sharing_enabled: true,
+      },
+      {
+        team_id: "team-1",
+        user_id: "player-no-consent",
+        performance_sharing_enabled: false,
+        health_sharing_enabled: false,
+      },
+    ],
+    privacy_settings: [
+      {
+        user_id: "player-default-consent",
+        performance_sharing_default: true,
+        health_sharing_default: true,
+      },
+    ],
+    load_monitoring: [
+      {
+        player_id: "player-explicit-consent",
+        date: "2026-04-20",
+        daily_load: 420,
+      },
+      {
+        player_id: "player-default-consent",
+        date: "2026-04-20",
+        daily_load: 360,
+      },
+      {
+        player_id: "player-no-consent",
+        date: "2026-04-20",
+        daily_load: 999,
+      },
+      {
+        player_id: "outside-team-player",
+        date: "2026-04-20",
+        daily_load: 888,
+      },
+    ],
+    workout_logs: [
+      {
+        player_id: "player-explicit-consent",
+        completed_at: "2026-04-20T10:00:00Z",
+        load_au: 420,
+      },
+      {
+        player_id: "player-no-consent",
+        completed_at: "2026-04-20T10:00:00Z",
+        load_au: 999,
+      },
+    ],
+  };
+
+  return {
+    from(tableName) {
+      return new MockSupabaseQuery(tables[tableName] || []);
+    },
+  };
+}
+
+class MockSupabaseQuery {
+  constructor(rows) {
+    this.rows = [...rows];
+    this.filters = [];
+    this.orderConfig = null;
+    this.limitValue = null;
+  }
+
+  select() {
+    return this;
+  }
+
+  eq(column, value) {
+    this.filters.push((row) => row[this.normalizeColumn(column)] === value);
+    return this;
+  }
+
+  in(column, values) {
+    const allowedValues = new Set(values);
+    this.filters.push((row) => allowedValues.has(row[this.normalizeColumn(column)]));
+    return this;
+  }
+
+  gte(column, value) {
+    this.filters.push((row) => String(row[this.normalizeColumn(column)]) >= String(value));
+    return this;
+  }
+
+  lte(column, value) {
+    this.filters.push((row) => String(row[this.normalizeColumn(column)]) <= String(value));
+    return this;
+  }
+
+  order(column, options = {}) {
+    this.orderConfig = {
+      column: this.normalizeColumn(column),
+      ascending: options.ascending ?? true,
+    };
+    return this;
+  }
+
+  limit(value) {
+    this.limitValue = value;
+    return this;
+  }
+
+  then(resolve, reject) {
+    return Promise.resolve(this.execute()).then(resolve, reject);
+  }
+
+  execute() {
+    let data = this.rows.filter((row) =>
+      this.filters.every((filter) => filter(row)),
+    );
+
+    if (this.orderConfig) {
+      const direction = this.orderConfig.ascending ? 1 : -1;
+      data = [...data].sort((left, right) =>
+        String(left[this.orderConfig.column]).localeCompare(
+          String(right[this.orderConfig.column]),
+        ) * direction,
+      );
+    }
+
+    if (this.limitValue) {
+      data = data.slice(0, this.limitValue);
+    }
+
+    return { data, error: null };
+  }
+
+  normalizeColumn(column) {
+    return column.split(".").at(-1);
+  }
+}
 
 async function setupTestData(supabase) {
   // Create test team

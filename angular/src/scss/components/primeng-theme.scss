@@ -69,7 +69,7 @@
       transform: translateY(0);
       box-shadow: var(--shadow-sm);
     }
-    justify-content: center;
+
     gap: var(--space-2);
 
     &.p-button-sm {
@@ -131,14 +131,14 @@
       transition: transform var(--transition-base) var(--ease-micro-bounce);
     }
 
-    /* Icon spacing - left icon */
-    .p-button-icon-left {
+    /* Icon spacing */
+    .p-button-icon {
       margin-right: var(--space-2);
-    }
 
-    /* Icon spacing - right icon */
-    .p-button-icon-right {
-      margin-left: var(--space-2);
+      &:last-child:not(:first-child) {
+        margin-right: 0;
+        margin-left: var(--space-2);
+      }
     }
 
     /* Arrow icon animation on hover */
@@ -3073,37 +3073,58 @@
 }
 
 /* PrimeNG SPECIFIC - Green components */
-:where(
-  .p-button,
-  .p-card,
-  .p-panel,
-  .p-tabview-title,
-  .p-tag,
-  .p-badge,
-  .p-chip,
-  .p-message
-) {
+// Inline-style detection — written as flat rules to avoid LightningCSS
+// "Empty sub-selector" warnings that occur with [style*="..."] inside :where().
+// Specificity is intentionally low (one attribute selector).
+.p-button,
+.p-card,
+.p-panel,
+.p-tabview-title,
+.p-tag,
+.p-badge,
+.p-chip,
+.p-message {
   &[style*="var(--ds-primary-green)"],
   &[style*="var(--color-brand-primary)"],
-  &[style*="rgb(8, 153, 73)"],
-  &.p-button-green,
-  &.bg-primary,
-  &.bg-primary-green,
-  &.p-card--brand {
+  &[style*="rgb(8, 153, 73)"] {
     --text-color: var(--color-text-on-primary);
     --p-button-text-color: var(--color-text-on-primary);
-    color: var(--color-text-on-primary);
 
-    &,
-    & *,
-    & .p-button-label,
-    & .p-button-icon,
-    & span,
-    & i,
-    & p {
-      color: var(--color-text-on-primary);
-    }
+    @include btn-text-color(var(--color-text-on-primary));
   }
+}
+
+// Class-based detection kept flat because Angular's CSS optimizer can produce
+// empty sub-selector warnings when nested selectors target multi-line :where().
+.p-button.p-button-green,
+.p-card.p-button-green,
+.p-panel.p-button-green,
+.p-tabview-title.p-button-green,
+.p-tag.p-button-green,
+.p-badge.p-button-green,
+.p-chip.p-button-green,
+.p-message.p-button-green,
+.p-button.bg-primary,
+.p-card.bg-primary,
+.p-panel.bg-primary,
+.p-tabview-title.bg-primary,
+.p-tag.bg-primary,
+.p-badge.bg-primary,
+.p-chip.bg-primary,
+.p-message.bg-primary,
+.p-button.bg-primary-green,
+.p-card.bg-primary-green,
+.p-panel.bg-primary-green,
+.p-tabview-title.bg-primary-green,
+.p-tag.bg-primary-green,
+.p-badge.bg-primary-green,
+.p-chip.bg-primary-green,
+.p-message.bg-primary-green,
+.p-card.p-card--brand {
+  --text-color: var(--color-text-on-primary);
+  --p-button-text-color: var(--color-text-on-primary);
+
+  @include btn-text-color(var(--color-text-on-primary));
 }
 
 /* ================================================================
@@ -3128,112 +3149,55 @@
 .p-button-danger:not(.p-button-outlined):not(.p-button-text),
 .p-button-help:not(.p-button-outlined):not(.p-button-text),
 .p-button-contrast:not(.p-button-outlined):not(.p-button-text) {
-  color: var(--color-text-on-primary);
-
-  .p-button-label,
-  .p-button-icon,
-  span {
-    color: var(--color-text-on-primary);
-  }
+  @include btn-text-color(var(--color-text-on-primary));
 }
 
 /* Warning - dark text on yellow/amber */
 .p-button-warning:not(.p-button-outlined):not(.p-button-text),
 .p-button-warn:not(.p-button-outlined):not(.p-button-text) {
-  color: var(--color-status-warning-text);
-
-  .p-button-label,
-  .p-button-icon,
-  span {
-    color: var(--color-status-warning-text);
-  }
+  @include btn-text-color(var(--color-status-warning-text));
 }
 
 /* Outlined/text/link - green text */
 .p-button-outlined,
 .p-button-text,
 .p-button-link {
-  color: var(--ds-primary-green);
-
-  .p-button-label,
-  .p-button-icon {
-    color: var(--ds-primary-green);
-  }
+  @include btn-text-color(var(--ds-primary-green));
 }
 
 /* Secondary solid */
 .p-button-secondary:not(.p-button-outlined):not(.p-button-text) {
-  color: var(--color-text-primary);
-
-  .p-button-label,
-  .p-button-icon {
-    color: var(--color-text-primary);
-  }
+  @include btn-text-color(var(--color-text-primary));
 }
 
 /* Outlined severity variants */
 .p-button-outlined.p-button-secondary {
-  color: var(--color-text-secondary);
-
-  .p-button-label,
-  .p-button-icon {
-    color: var(--color-text-secondary);
-  }
+  @include btn-text-color(var(--color-text-secondary));
 }
 
 .p-button-outlined.p-button-success {
-  color: var(--color-status-success);
-
-  .p-button-label,
-  .p-button-icon {
-    color: var(--color-status-success);
-  }
+  @include btn-text-color(var(--color-status-success));
 }
 
 .p-button-outlined.p-button-info {
-  color: var(--color-status-info);
-
-  .p-button-label,
-  .p-button-icon {
-    color: var(--color-status-info);
-  }
+  @include btn-text-color(var(--color-status-info));
 }
 
 .p-button-outlined.p-button-warning,
 .p-button-outlined.p-button-warn {
-  color: var(--color-status-warning-text);
-
-  .p-button-label,
-  .p-button-icon {
-    color: var(--color-status-warning-text);
-  }
+  @include btn-text-color(var(--color-status-warning-text));
 }
 
 .p-button-outlined.p-button-danger {
-  color: var(--color-status-error);
-
-  .p-button-label,
-  .p-button-icon {
-    color: var(--color-status-error);
-  }
+  @include btn-text-color(var(--color-status-error));
 }
 
 .p-button-outlined.p-button-help {
-  color: var(--primitive-purple-500);
-
-  .p-button-label,
-  .p-button-icon {
-    color: var(--primitive-purple-500);
-  }
+  @include btn-text-color(var(--primitive-purple-500));
 }
 
 .p-button-outlined.p-button-contrast {
-  color: var(--color-text-primary);
-
-  .p-button-label,
-  .p-button-icon {
-    color: var(--color-text-primary);
-  }
+  @include btn-text-color(var(--color-text-primary));
 }
 
 /* Text button severity variants */
@@ -3284,13 +3248,9 @@
 
   /* Dark mode: Outlined contrast button should be white */
   .p-button-outlined.p-button-contrast {
-    color: var(--surface-primary);
     border-color: var(--surface-primary);
 
-    .p-button-label,
-    .p-button-icon {
-      color: var(--surface-primary);
-    }
+    @include btn-text-color(var(--surface-primary));
   }
 
   /* Dark mode: Text contrast button should be white */

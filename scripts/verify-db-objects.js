@@ -35,6 +35,73 @@ const REQUIRED_FUNCTIONS = [
   "create_emergency_medical_record",
 ];
 
+const ZERO_UUID = "00000000-0000-0000-0000-000000000000";
+const SAFE_RPC_PROBES = {
+  calculate_daily_load: {
+    player_uuid: ZERO_UUID,
+    log_date: "2026-01-01",
+  },
+  calculate_acute_load: {
+    player_uuid: ZERO_UUID,
+    reference_date: "2026-01-01",
+  },
+  calculate_chronic_load: {
+    player_uuid: ZERO_UUID,
+    reference_date: "2026-01-01",
+  },
+  calculate_acwr_safe: {
+    player_uuid: ZERO_UUID,
+    reference_date: "2026-01-01",
+  },
+  get_injury_risk_level: {
+    acwr_value: 1,
+  },
+  check_performance_sharing: {
+    p_player_id: ZERO_UUID,
+    p_team_id: ZERO_UUID,
+  },
+  check_health_sharing: {
+    p_player_id: ZERO_UUID,
+    p_team_id: ZERO_UUID,
+  },
+  check_ai_processing_enabled: {
+    p_user_id: ZERO_UUID,
+  },
+  require_ai_consent: {
+    p_user_id: ZERO_UUID,
+  },
+  get_ai_consent_status: {
+    p_user_id: ZERO_UUID,
+  },
+  check_metric_category_allowed: {
+    p_player_id: ZERO_UUID,
+    p_team_id: ZERO_UUID,
+    p_category: "performance",
+  },
+  get_coached_teams: {},
+  initiate_account_deletion: {
+    p_user_id: null,
+    p_reason: "__verify_signature_only__",
+  },
+  cancel_account_deletion: {
+    p_request_id: ZERO_UUID,
+    p_user_id: ZERO_UUID,
+  },
+  process_hard_deletion: {
+    p_request_id: ZERO_UUID,
+  },
+  get_deletions_ready_for_processing: {},
+  get_deletion_status: {
+    p_user_id: ZERO_UUID,
+  },
+  create_emergency_medical_record: {
+    p_user_id: null,
+    p_event_type: "__verify_signature_only__",
+    p_medical_data: {},
+    p_location_data: null,
+  },
+};
+
 const REQUIRED_TABLES = [
   "privacy_settings",
   "team_sharing_settings",
@@ -128,22 +195,51 @@ async function checkFunctions(supabase) {
 
   for (const fn of REQUIRED_FUNCTIONS) {
     try {
-      await supabase.rpc(fn, {});
-      logPass(`Function: ${fn}`);
+      const args = SAFE_RPC_PROBES[fn] ?? {};
+      const { error } = await supabase.rpc(fn, args);
+
+      if (!error) {
+        logPass(`Function: ${fn}`);
+        continue;
+      }
+
+      const message = String(error?.message || "");
+      if (message.toLowerCase().includes("fetch failed")) {
+        logFail(`Function: ${fn}`, "RPC transport failed (fetch failed)");
+        continue;
+      }
+
+      const missing = missingPatterns.some((p) =>
+        message.toLowerCase().includes(p),
+      );
+
+      if (missing) {
+        logFail(
+          `Function: ${fn}`,
+          `Function '${fn}()' does not exist or signature drifted: ${message}`,
+        );
+      } else {
+        // Exists but may need runtime preconditions, permissions, or real records.
+        logPass(`Function: ${fn}`);
+      }
     } catch (e) {
       const message = String(e?.message || "");
       if (message.toLowerCase().includes("fetch failed")) {
         logFail(`Function: ${fn}`, "RPC transport failed (fetch failed)");
         continue;
       }
+
       const missing = missingPatterns.some((p) =>
         message.toLowerCase().includes(p),
       );
 
       if (missing) {
-        logFail(`Function: ${fn}`, `Function '${fn}()' does not exist`);
+        logFail(
+          `Function: ${fn}`,
+          `Function '${fn}()' does not exist or signature drifted: ${message}`,
+        );
       } else {
-        // Exists but may need params/runtime preconditions.
+        // Exists but may need runtime preconditions, permissions, or real records.
         logPass(`Function: ${fn}`);
       }
     }

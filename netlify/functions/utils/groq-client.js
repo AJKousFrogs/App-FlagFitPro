@@ -274,7 +274,7 @@ async function* chatCompletionStream({
   try {
     while (true) {
       const { done, value } = await reader.read();
-      if (done) break;
+      if (done) {break;}
 
       buffer += decoder.decode(value, { stream: true });
       const lines = buffer.split("\n");
@@ -282,16 +282,16 @@ async function* chatCompletionStream({
 
       for (const line of lines) {
         const trimmed = line.trim();
-        if (!trimmed || !trimmed.startsWith("data: ")) continue;
+        if (!trimmed || !trimmed.startsWith("data: ")) {continue;}
         const json = trimmed.slice(6);
-        if (json === "[DONE]") continue;
+        if (json === "[DONE]") {continue;}
 
         try {
           const chunk = JSON.parse(json);
           const token = chunk.choices?.[0]?.delta?.content ?? "";
-          if (token) yield token;
-          if (chunk.model) finalModel = chunk.model;
-          if (chunk.usage) finalUsage = chunk.usage;
+          if (token) {yield token;}
+          if (chunk.model) {finalModel = chunk.model;}
+          if (chunk.usage) {finalUsage = chunk.usage;}
         } catch {
           // malformed chunk — skip
         }
@@ -553,10 +553,10 @@ function buildAthleteContext(userContext) {
   if (userContext.nutritionPlan) {
     const plan = userContext.nutritionPlan;
     const planParts = [];
-    if (plan.target_calories) planParts.push(`${plan.target_calories} kcal`);
-    if (plan.protein_g) planParts.push(`${plan.protein_g}g protein`);
-    if (plan.carbs_g) planParts.push(`${plan.carbs_g}g carbs`);
-    if (plan.fat_g) planParts.push(`${plan.fat_g}g fat`);
+    if (plan.target_calories) {planParts.push(`${plan.target_calories} kcal`);}
+    if (plan.protein_g) {planParts.push(`${plan.protein_g}g protein`);}
+    if (plan.carbs_g) {planParts.push(`${plan.carbs_g}g carbs`);}
+    if (plan.fat_g) {planParts.push(`${plan.fat_g}g fat`);}
     if (plan.hydration_goal_liters) {
       planParts.push(`${plan.hydration_goal_liters}L hydration`);
     }

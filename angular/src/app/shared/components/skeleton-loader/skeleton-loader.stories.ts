@@ -1,8 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/angular";
-import {
-  SkeletonLoaderComponent,
-  SkeletonRepeatComponent,
-} from "./skeleton-loader.component";
+import { SkeletonLoaderComponent } from "./skeleton-loader.component";
 // Note: play functions temporarily disabled due to Storybook 10 + @storybook/test incompatibility
 
 /**

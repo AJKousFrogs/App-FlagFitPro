@@ -13,7 +13,7 @@ import { Avatar } from "primeng/avatar";
       [image]="image()"
       [shape]="shape()"
       [size]="size()"
-      [styleClass]="avatarClass()"
+      [class]="avatarClass()"
       [attr.aria-label]="ariaLabel()"
       class="app-avatar-host"
     >

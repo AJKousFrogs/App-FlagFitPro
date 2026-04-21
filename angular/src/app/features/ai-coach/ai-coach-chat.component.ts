@@ -9,7 +9,6 @@ import {
   OnInit,
   viewChild,
   computed,
-  effect,
   inject,
   signal,
 } from "@angular/core";
@@ -379,7 +378,7 @@ export class AiCoachChatComponent implements OnInit, AfterViewChecked {
       case "training":
         return ["/training"];
       case "today":
-        return ["/today"];
+        return ["/todays-practice"];
       case "nutrition":
         return ["/game/nutrition"];
       case "coach-inbox":
@@ -465,8 +464,8 @@ export class AiCoachChatComponent implements OnInit, AfterViewChecked {
       const results = event.results;
       let transcript = "";
 
-      for (let i = 0; i < results.length; i++) {
-        transcript += results[i][0].transcript;
+      for (const result of Array.from({ length: results.length }, (_, i) => results[i])) {
+        transcript += result[0].transcript;
       }
 
       this.currentMessage = transcript;
@@ -681,7 +680,7 @@ export class AiCoachChatComponent implements OnInit, AfterViewChecked {
         });
         break;
       case "check_tomorrow":
-        void this.router.navigate(["/today"], {
+        void this.router.navigate(["/todays-practice"], {
           queryParams: {
             source: "merlin",
             focus: "protocol",

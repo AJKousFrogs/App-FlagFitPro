@@ -106,7 +106,7 @@ describe("OfflineQueueService", () => {
     it("serialized payload includes action type and timestamp as ISO string", () => {
       service.queueAction("game_action", { gameId: "g1" });
       const raw = localStorageMock._store["flagfit_offline_queue"];
-      const parsed = JSON.parse(raw) as Array<Record<string, unknown>>;
+      const parsed = JSON.parse(raw) as Record<string, unknown>[];
       expect(parsed[0].type).toBe("game_action");
       expect(typeof parsed[0].timestamp).toBe("string");
       // Should be a valid ISO date string
@@ -321,15 +321,17 @@ describe("OfflineQueueService", () => {
 
   describe("queueGenericRequest", () => {
     it("queues a generic POST with correct type and endpoint", () => {
-      service.queueGenericRequest("/api/custom", "POST", { foo: "bar" });
+      service.queueGenericRequest("/api/notifications", "POST", { foo: "bar" });
       const action = service.queue()[0];
       expect(action.type).toBe("generic_post");
-      expect(action.endpoint).toBe("/api/custom");
+      expect(action.endpoint).toBe("/api/notifications");
       expect(action.method).toBe("POST");
     });
 
     it("queues a generic PATCH with correct type", () => {
-      service.queueGenericRequest("/api/update", "PATCH", { val: 1 });
+      service.queueGenericRequest("/api/notifications/preferences", "PATCH", {
+        val: 1,
+      });
       expect(service.queue()[0].type).toBe("generic_patch");
     });
   });

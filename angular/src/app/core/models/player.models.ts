@@ -32,9 +32,7 @@ export interface PlayerWithStats {
   position: string;
   avatarUrl?: string;
   jerseyNumber?: number;
-  stats: {
-    [key: string]: number | string;
-  };
+  stats: Record<string, number | string>;
   // Common football stats
   touchdowns?: number;
   receptions?: number;

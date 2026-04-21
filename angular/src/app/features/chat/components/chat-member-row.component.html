@@ -4,7 +4,7 @@
       [label]="member().initials || getInitialsStr(member().full_name)"
       shape="circle"
       size="large"
-      [styleClass]="'avatar-token ' + getAvatarColorClass(member().full_name)"
+      [class]="'avatar-token ' + getAvatarColorClass(member().full_name)"
     />
     @if (member().is_online) {
       <span class="online-indicator"></span>

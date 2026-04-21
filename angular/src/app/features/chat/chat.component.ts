@@ -110,12 +110,12 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
   readonly coachChannels = this.channelService.coachChannels;
   readonly dmChannels = this.channelService.dmChannels;
   readonly channelSections = computed(() => {
-    const sections: Array<{
+    const sections: {
       title: string;
       sectionIcon: string;
       itemIcon: string;
       channels: Channel[];
-    }> = [];
+    }[] = [];
 
     if (this.isCoach() && this.coachChannels().length > 0) {
       sections.push({

@@ -16,7 +16,7 @@ export class EnhancedAnalyticsDataService {
 
   async getRecentTrainingSessions(
     userId: string,
-    weeks: number = 7,
+    weeks = 7,
   ): Promise<{
     sessions: TrainingSessionRow[] | null;
     error: unknown | null;

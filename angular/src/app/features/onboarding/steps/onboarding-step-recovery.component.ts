@@ -23,10 +23,10 @@ import { OnboardingStateService } from "../services/onboarding-state.service";
       </div>
 
       <div class="form-group">
-        <label id="morning-mobility-label"
-          >Morning Mobility
-          <small>(10 min wake-up routine)</small></label
-        >
+        <div id="morning-mobility-label">
+          Morning Mobility
+          <small>(10 min wake-up routine)</small>
+        </div>
         <div
           class="preference-options compact"
           role="radiogroup"
@@ -66,9 +66,9 @@ import { OnboardingStateService } from "../services/onboarding-state.service";
       </div>
 
       <div class="form-group">
-        <label id="evening-mobility-label"
-          >Evening Mobility <small>(15 min before bed)</small></label
-        >
+        <div id="evening-mobility-label">
+          Evening Mobility <small>(15 min before bed)</small>
+        </div>
         <div
           class="preference-options compact"
           role="radiogroup"
@@ -108,7 +108,7 @@ import { OnboardingStateService } from "../services/onboarding-state.service";
       </div>
 
       <div class="form-group">
-        <label id="foam-rolling-label">Foam Rolling Preference</label>
+        <div id="foam-rolling-label">Foam Rolling Preference</div>
         <div
           class="preference-options compact"
           role="radiogroup"
@@ -148,7 +148,7 @@ import { OnboardingStateService } from "../services/onboarding-state.service";
       </div>
 
       <div class="form-group">
-        <label id="rest-day-label">Rest Day Recovery</label>
+        <div id="rest-day-label">Rest Day Recovery</div>
         <div
           class="preference-options"
           role="radiogroup"

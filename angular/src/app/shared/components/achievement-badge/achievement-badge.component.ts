@@ -49,7 +49,12 @@ export type BadgeRarity = "common" | "uncommon" | "rare" | "epic" | "legendary";
       [class.animate-unlock]="showUnlockAnimation()"
       [pTooltip]="tooltipContent()"
       tooltipPosition="top"
+      role="button"
+      tabindex="0"
+      [attr.aria-label]="title()"
       (click)="handleClick()"
+      (keydown.enter)="handleClick()"
+      (keydown.space)="handleClick(); $event.preventDefault()"
       (mouseenter)="onHover()"
       (mouseleave)="onLeave()"
     >

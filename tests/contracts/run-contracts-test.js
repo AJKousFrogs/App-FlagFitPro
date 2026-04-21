@@ -4,9 +4,10 @@
  * Runs tests without requiring Jest installation
  *
  * Usage:
- *   SUPABASE_URL=... SUPABASE_SERVICE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdyZmptbmpwenZrbm1zeHJ3ZXN4Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc2OTUwMjg5OSwiZXhwIjoyMDg1MDc4ODk5fQ.GIETcsbB9U_CRoeOhONwykUgMWzdWdU--QuyDr2BPaw node run-contracts-test.js
+ *   SUPABASE_URL=... SUPABASE_SERVICE_KEY=... node run-contracts-test.js
  */
 
+import "dotenv/config";
 import { createClient } from "@supabase/supabase-js";
 
 // Get environment variables
@@ -15,14 +16,14 @@ const SUPABASE_SERVICE_KEY =
   process.env.SUPABASE_SERVICE_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY;
 
 if (!SUPABASE_URL || !SUPABASE_SERVICE_KEY) {
-  console.error("❌ Error: SUPABASE_URL and SUPABASE_SERVICE_KEY must be set");
+  console.error(
+    "❌ Error: SUPABASE_URL and SUPABASE_SERVICE_KEY/SUPABASE_SERVICE_ROLE_KEY must be set",
+  );
   console.error("\nExample:");
   console.error(
     "  export SUPABASE_URL='https://grfjmnjpzvknmsxrwesx.supabase.co'",
   );
-  console.error(
-    "  export SUPABASE_SERVICE_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdyZmptbmpwenZrbm1zeHJ3ZXN4Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc2OTUwMjg5OSwiZXhwIjoyMDg1MDc4ODk5fQ.GIETcsbB9U_CRoeOhONwykUgMWzdWdU--QuyDr2BPaw'",
-  );
+  console.error("  export SUPABASE_SERVICE_KEY='<service-role-key>'");
   console.error("  node run-contracts-test.js");
   process.exit(1);
 }
@@ -73,7 +74,7 @@ async function runTests() {
   console.log("🧪 Contract Compliance Tests");
   console.log("=".repeat(50));
   console.log(`Supabase URL: ${SUPABASE_URL}`);
-  console.log(`Service Key: ${SUPABASE_SERVICE_KEY.substring(0, 20)}...`);
+  console.log(`Service Key: ${SUPABASE_SERVICE_KEY ? "set" : "missing"}`);
   console.log("");
 
   // Test 1: Verify state_transition_history table exists

@@ -1,7 +1,6 @@
 import {
   Component,
   ChangeDetectionStrategy,
-  OnInit,
 } from "@angular/core";
 
 import { FormControl, ReactiveFormsModule } from "@angular/forms";
@@ -52,12 +51,8 @@ import { CardShellComponent } from "../../../shared/components/card-shell/card-s
   `,
   styleUrl: "./qb-training-schedule.component.scss",
 })
-export class QbTrainingScheduleComponent implements OnInit {
+export class QbTrainingScheduleComponent {
   readonly selectedDateControl = new FormControl(new Date(), {
     nonNullable: true,
   });
-
-  ngOnInit(): void {
-    // Load QB training schedule
-  }
 }

@@ -39,7 +39,7 @@
               ' pending RSVP' +
               (pendingCount() > 1 ? 's' : '')
             "
-            styleClass="pending-alert"
+            class="pending-alert"
           />
         }
 
@@ -184,11 +184,16 @@
             <!-- RSVP Options -->
             <div class="rsvp-options">
               <h4>Are you attending?</h4>
-              <div class="options-group">
+              <div class="options-group" role="radiogroup" aria-label="RSVP status">
                 <div
                   class="option-card"
                   [class.selected]="rsvpForm.status === 'going'"
+                  role="radio"
+                  tabindex="0"
+                  [attr.aria-checked]="rsvpForm.status === 'going'"
                   (click)="onRsvpStatusChange('going')"
+                  (keydown.enter)="onRsvpStatusChange('going')"
+                  (keydown.space)="onRsvpStatusChange('going'); $event.preventDefault()"
                 >
                   <input
                     type="radio"
@@ -207,7 +212,12 @@
                 <div
                   class="option-card"
                   [class.selected]="rsvpForm.status === 'not-going'"
+                  role="radio"
+                  tabindex="0"
+                  [attr.aria-checked]="rsvpForm.status === 'not-going'"
                   (click)="onRsvpStatusChange('not-going')"
+                  (keydown.enter)="onRsvpStatusChange('not-going')"
+                  (keydown.space)="onRsvpStatusChange('not-going'); $event.preventDefault()"
                 >
                   <input
                     type="radio"
@@ -226,7 +236,12 @@
                 <div
                   class="option-card"
                   [class.selected]="rsvpForm.status === 'maybe'"
+                  role="radio"
+                  tabindex="0"
+                  [attr.aria-checked]="rsvpForm.status === 'maybe'"
                   (click)="onRsvpStatusChange('maybe')"
+                  (keydown.enter)="onRsvpStatusChange('maybe')"
+                  (keydown.space)="onRsvpStatusChange('maybe'); $event.preventDefault()"
                 >
                   <input
                     type="radio"
@@ -250,8 +265,9 @@
                 <!-- Guests -->
                 @if (event.guestsAllowed) {
                   <div class="option-row">
-                    <label>Bringing guests?</label>
+                    <label for="team-calendar-guests">Bringing guests?</label>
                     <p-inputNumber
+                      inputId="team-calendar-guests"
                       [ngModel]="rsvpForm.guests"
                       (ngModelChange)="onRsvpGuestsChange($event)"
                       [min]="0"

@@ -23,7 +23,7 @@ async function toLambdaEvent(req, url) {
   const headers = Object.fromEntries(req.headers);
   const method = req.method.toUpperCase();
   let body = null;
-  if (method !== "GET" && method !== "HEAD" && method !== "OPTIONS") body = await req.text();
+  if (method !== "GET" && method !== "HEAD" && method !== "OPTIONS") {body = await req.text();}
   return {
     httpMethod: method, path: url.pathname, headers,
     queryStringParameters: url.searchParams.size > 0 ? Object.fromEntries(url.searchParams) : {},
@@ -32,7 +32,7 @@ async function toLambdaEvent(req, url) {
 }
 
 function fromLambdaResponse(r) {
-  if (!r) return new Response(JSON.stringify({ success: false, error: "No response" }), { status: 500, headers: { "Content-Type": "application/json" } });
+  if (!r) {return new Response(JSON.stringify({ success: false, error: "No response" }), { status: 500, headers: { "Content-Type": "application/json" } });}
   const body = typeof r.body === "string" ? r.body : JSON.stringify(r.body ?? null);
   return new Response(body, { status: r.statusCode ?? 200, headers: r.headers ?? { "Content-Type": "application/json" } });
 }
@@ -52,16 +52,16 @@ function corsHeaders(req) {
 }
 
 export default async (req) => {
-  if (req.method === "OPTIONS") return new Response(null, { status: 204, headers: corsHeaders(req) });
+  if (req.method === "OPTIONS") {return new Response(null, { status: 204, headers: corsHeaders(req) });}
   const url = new URL(req.url);
   const path = url.pathname;
 
-  if (path.includes("/team-calendar")) return dispatch(teamCalendarHandler, req, url);
-  if (path.includes("/team-invite")) return dispatch(teamInviteHandler, req, url);
-  if (path.includes("/team-templates")) return dispatch(teamTemplatesHandler, req, url);
-  if (path.includes("/season-archive")) return dispatch(seasonArchiveHandler, req, url);
-  if (path.includes("/season-reports")) return dispatch(seasonReportsHandler, req, url);
-  if (path.includes("/attendance")) return dispatch(attendanceHandler, req, url);
+  if (path.includes("/team-calendar")) {return dispatch(teamCalendarHandler, req, url);}
+  if (path.includes("/team-invite")) {return dispatch(teamInviteHandler, req, url);}
+  if (path.includes("/team-templates")) {return dispatch(teamTemplatesHandler, req, url);}
+  if (path.includes("/season-archive")) {return dispatch(seasonArchiveHandler, req, url);}
+  if (path.includes("/season-reports")) {return dispatch(seasonReportsHandler, req, url);}
+  if (path.includes("/attendance")) {return dispatch(attendanceHandler, req, url);}
 
   return new Response(
     JSON.stringify({ success: false, error: `Not found: ${req.method} ${path}`, code: "not_found" }),

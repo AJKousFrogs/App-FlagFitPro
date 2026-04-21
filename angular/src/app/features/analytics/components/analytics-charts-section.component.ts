@@ -45,13 +45,13 @@ export class AnalyticsChartsSectionComponent {
     helpLink?: string | null;
   }>();
   gapAnalysisData = input.required<
-    Array<{
+    {
       metric: string;
       current: number;
       benchmark: number;
       gap: number;
       unit: string;
-    }>
+    }[]
   >();
   gapAnalysisSummary = input.required<{
     achieved: number;

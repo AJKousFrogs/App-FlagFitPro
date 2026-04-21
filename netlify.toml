@@ -1083,7 +1083,7 @@
 
 [[redirects]]
   from = "/api/ai/telemetry"
-  to = "/.netlify/functions/ai-chat"
+  to = "/.netlify/functions/ai-telemetry"
   status = 200
   force = true
 

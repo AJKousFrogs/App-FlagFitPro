@@ -67,7 +67,7 @@ import { IconButtonComponent } from "../button/icon-button.component";
   styleUrl: "./search-input.component.scss",
 })
 export class SearchInputComponent implements ControlValueAccessor {
-  value = input<string | undefined>(undefined, { alias: "value" });
+  value = input<string | undefined>(undefined);
 
   placeholder = input<string>("");
   ariaLabel = input<string>("");

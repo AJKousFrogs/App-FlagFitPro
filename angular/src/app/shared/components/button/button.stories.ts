@@ -402,7 +402,7 @@ export const AllVariants: Story = {
 // ICON BUTTON COMPONENT
 // ================================
 
-const iconButtonMeta: Meta<IconButtonComponent> = {
+const _iconButtonMeta: Meta<IconButtonComponent> = {
   title: "Design System/Icon Button",
   component: IconButtonComponent,
   tags: ["autodocs"],

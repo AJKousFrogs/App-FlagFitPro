@@ -196,11 +196,10 @@ export class MicrocyclePlannerComponent {
 
     // Base sprint load recommendations
     let suggestedSprintLoad = 0;
-    let suggestedIntensity: "low" | "medium" | "high" | "rest" = "medium";
+    let suggestedIntensity!: "low" | "medium" | "high" | "rest";
     let maxSprints = 20;
     let recommendedDuration = 60;
-    let reasoning = "";
-    let acwrProjection = currentACWR;
+    let reasoning!: string;
 
     // Game proximity adjustments (48-72 hours before game = deload sprints)
     if (
@@ -295,69 +294,10 @@ export class MicrocyclePlannerComponent {
       }
     }
 
-    // Adjust based on current ACWR
-    if (currentACWR > 1.5) {
-      // Danger zone - reduce load significantly
-      if (dayIndex === 0 || dayIndex === 1) {
-        suggestedIntensity = "rest";
-        reasoning = "High ACWR - rest day recommended";
-      } else {
-        suggestedSprintLoad = 2; // Fixed baseline
-        suggestedIntensity = "low";
-        maxSprints = 5;
-        recommendedDuration = 30;
-        reasoning = "Danger zone - minimal sprint work";
-      }
-    } else if (currentACWR > 1.3) {
-      // Elevated risk
-      if (dayIndex % 3 === 0) {
-        suggestedIntensity = "rest";
-        reasoning = "Elevated ACWR - rest day";
-      } else {
-        suggestedSprintLoad = 5; // Fixed baseline
-        suggestedIntensity = "low";
-        maxSprints = 10;
-        recommendedDuration = 45;
-        reasoning = "Elevated risk - reduced sprint volume";
-      }
-    } else if (currentACWR < 0.8) {
-      // Under-training - can increase
-      if (dayIndex === 6) {
-        suggestedIntensity = "rest";
-        reasoning = "Weekly rest day";
-      } else {
-        suggestedSprintLoad = 15; // Fixed baseline
-        suggestedIntensity = dayIndex % 2 === 0 ? "high" : "medium";
-        maxSprints = 25;
-        recommendedDuration = 90;
-        reasoning = "Under-training - can increase load";
-      }
-    } else {
-      // Sweet spot - normal training
-      if (dayIndex === 6) {
-        suggestedIntensity = "rest";
-        reasoning = "Weekly rest day";
-      } else if (dayIndex === 0 || dayIndex === 3) {
-        // High intensity days
-        suggestedSprintLoad = 12; // Fixed baseline
-        suggestedIntensity = "high";
-        maxSprints = 20;
-        recommendedDuration = 90;
-        reasoning = "Optimal ACWR - high intensity day";
-      } else {
-        // Medium intensity days
-        suggestedSprintLoad = 8; // Fixed baseline
-        suggestedIntensity = "medium";
-        maxSprints = 15;
-        recommendedDuration = 60;
-        reasoning = "Optimal ACWR - moderate intensity";
-      }
-    }
-
     // Project ACWR for this day
     const dailyLoad = suggestedSprintLoad * 10; // Rough estimate
     const projectedAcute = (this.acuteLoad() * 6 + dailyLoad) / 7; // Rolling 7-day
-    acwrProjection = chronic > 0 ? projectedAcute / chronic : 0;
+    const acwrProjection = chronic > 0 ? projectedAcute / chronic : 0;
 
     return {
       day: dayName,

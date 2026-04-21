@@ -13,11 +13,11 @@ import {
   CardShellComponent,
 } from "../../../../shared/components/ui-components";
 
-type VisibilityOption = {
+interface VisibilityOption {
   label: string;
   value: string;
   description: string;
-};
+}
 
 @Component({
   selector: "app-privacy-controls-card",

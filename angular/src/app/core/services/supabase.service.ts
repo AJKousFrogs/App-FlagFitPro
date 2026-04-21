@@ -450,10 +450,10 @@ export class SupabaseService {
   subscribeToCoachInbox(
     coachId: string,
     onInsert?: (
-      payload: RealtimePostgresChangesPayload<{ [key: string]: unknown }>,
+      payload: RealtimePostgresChangesPayload<Record<string, unknown>>,
     ) => void,
     onUpdate?: (
-      payload: RealtimePostgresChangesPayload<{ [key: string]: unknown }>,
+      payload: RealtimePostgresChangesPayload<Record<string, unknown>>,
     ) => void,
   ): RealtimeChannel {
     const channelName = `coach-inbox:${coachId}`;
@@ -508,10 +508,10 @@ export class SupabaseService {
   subscribeToAthleteDailyState(
     teamPlayerIds: string[],
     onInsert?: (
-      payload: RealtimePostgresChangesPayload<{ [key: string]: unknown }>,
+      payload: RealtimePostgresChangesPayload<Record<string, unknown>>,
     ) => void,
     onUpdate?: (
-      payload: RealtimePostgresChangesPayload<{ [key: string]: unknown }>,
+      payload: RealtimePostgresChangesPayload<Record<string, unknown>>,
     ) => void,
   ): RealtimeChannel {
     const channelName = `athlete-daily-state`;

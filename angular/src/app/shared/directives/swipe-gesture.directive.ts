@@ -2,7 +2,6 @@ import {
   Directive,
   ElementRef,
   OnInit,
-  OnDestroy,
   inject,
   input,
   output,
@@ -26,7 +25,7 @@ export interface SwipeEvent {
     "(touchend)": "onTouchEnd($event)",
   },
 })
-export class SwipeGestureDirective implements OnInit, OnDestroy {
+export class SwipeGestureDirective implements OnInit {
   // Angular 21: Using signal inputs for better performance
   swipeThreshold = input<number>(50); // Minimum distance in pixels to trigger swipe
   swipeVelocity = input<number>(0.3); // Minimum velocity for quick swipe
@@ -58,10 +57,6 @@ export class SwipeGestureDirective implements OnInit, OnDestroy {
     this.scrollContainer = resolveScrollContainer(
       this.elementRef.nativeElement as HTMLElement,
     );
-  }
-
-  ngOnDestroy(): void {
-    // Cleanup
   }
 
   onTouchStart(event: TouchEvent): void {

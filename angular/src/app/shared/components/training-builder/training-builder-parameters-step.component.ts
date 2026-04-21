@@ -29,7 +29,7 @@ import {
 })
 export class TrainingBuilderParametersStepComponent {
   sessionForm = input.required<FormGroup>();
-  intensityLevels = input.required<ReadonlyArray<{ label: string; value: string }>>();
+  intensityLevels = input.required<readonly { label: string; value: string }[]>();
   weatherData = input<{
     condition: string;
     temperature: number;

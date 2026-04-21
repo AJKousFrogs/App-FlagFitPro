@@ -1049,6 +1049,21 @@
 // Base .form-field lives in primitives/_forms.scss - avoid redefining.
 // ================================
 
+/// Forces a single text color onto a button and its label/icon children.
+/// Use for PrimeNG buttons and branded containers that require an explicit text
+/// color override (e.g. white on green, dark on amber).
+/// @param {Color} $color - The text color to apply
+@mixin btn-text-color($color) {
+  color: $color;
+
+  .p-button-label,
+  .p-button-icon,
+  span,
+  i {
+    color: $color;
+  }
+}
+
 @mixin form-field-base($gap: var(--space-2), $margin-bottom: null) {
   .form-field {
     display: flex;

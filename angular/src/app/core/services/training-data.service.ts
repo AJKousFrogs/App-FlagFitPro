@@ -270,7 +270,7 @@ export class TrainingDataService {
     logStatus: "on_time" | "late" | "retroactive";
     requiresApproval: boolean;
     hoursDelayed: number | null;
-    conflicts: Array<{ type: string; message: string }>;
+    conflicts: { type: string; message: string }[];
   } {
     const sessionDate = session.session_date
       ? new Date(session.session_date)
@@ -290,12 +290,12 @@ export class TrainingDataService {
     }
 
     // Detect conflicts: RPE vs session type
-    const conflicts: Array<{
+    const conflicts: {
       type: string;
       message: string;
       playerValue?: number;
       coachValue?: string;
-    }> = [];
+    }[] = [];
     if (session.rpe && session.session_type) {
       const sessionTypeIntensity: Record<
         string,
@@ -738,7 +738,7 @@ export class TrainingDataService {
    * @returns Number of consecutive days with at least one session
    */
   private calculateCurrentStreak(
-    sessions: Array<{ session_date: string }>,
+    sessions: { session_date: string }[],
   ): number {
     if (!sessions || sessions.length === 0) {
       return 0;

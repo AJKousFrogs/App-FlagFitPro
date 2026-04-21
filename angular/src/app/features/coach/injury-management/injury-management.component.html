@@ -319,7 +319,7 @@
                       <div class="stat-bar">
                         <span class="bar-label">{{ stat.label }}</span>
                         <div class="bar-track">
-                          <!-- eslint-disable-next-line @angular-eslint/template/no-inline-styles -->
+                           
                           <div
                             class="bar-fill"
                             [style.width.%]="
@@ -430,8 +430,8 @@
 
           <div class="form-row">
             <div class="form-field">
-              <label>Side</label>
-              <div class="radio-group">
+              <div id="injury-side-label">Side</div>
+              <div class="radio-group" role="radiogroup" aria-labelledby="injury-side-label">
                 <div class="radio-option">
                   <app-radio-button
                     name="side"
@@ -453,8 +453,12 @@
               </div>
             </div>
             <div class="form-field">
-              <label>Severity (player assessment)</label>
-              <div class="radio-group">
+              <div id="injury-severity-label">Severity (player assessment)</div>
+              <div
+                class="radio-group"
+                role="radiogroup"
+                aria-labelledby="injury-severity-label"
+              >
                 <div class="radio-option">
                   <app-radio-button
                     name="severity"
@@ -509,8 +513,8 @@
           </div>
 
           <div class="form-field">
-            <label>Immediate Action Taken</label>
-            <div class="checkbox-group">
+            <div id="injury-actions-label">Immediate Action Taken</div>
+            <div class="checkbox-group" role="group" aria-labelledby="injury-actions-label">
               <div class="checkbox-option">
                 <app-checkbox
                   formControlName="actionIceApplied"
@@ -629,7 +633,7 @@
       <app-dialog
         [(visible)]="showRtpDetailsDialog"
         [modal]="true"
-        styleClass="injury-rtp-dialog"
+        class="injury-rtp-dialog"
         [blockScroll]="true"
         [draggable]="false"
         ariaLabel="Return to play details"

@@ -544,13 +544,13 @@ export const CAR_TRAVEL_CHECKLIST: TravelChecklist[] = [
     },
 ];
 
-export const CAR_TRAVEL_RESEARCH_SUMMARY: Array<{
+export const CAR_TRAVEL_RESEARCH_SUMMARY: {
   topic: string;
   finding: string;
   source: string;
   pubmedId?: string;
   recommendation: string;
-}> = [
+}[] = [
     {
       topic: "Compression Garments & Blood Flow",
       finding:

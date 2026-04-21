@@ -70,10 +70,15 @@ app-card-shell {
   display: flex;
   flex-direction: column;
   align-items: center;
+  width: 100%;
   padding: var(--space-4);
   border: var(--border-2) solid var(--color-border-secondary);
   border-radius: var(--radius-lg);
+  appearance: none;
+  background: var(--surface-card);
+  color: inherit;
   cursor: pointer;
+  font: inherit;
   transition:
     transform var(--transition-fast),
     opacity var(--transition-fast),

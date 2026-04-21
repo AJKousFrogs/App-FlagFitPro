@@ -43,7 +43,7 @@ function normalizeSleepRows(rows, dateKey, hoursKey, qualityKey) {
       quality:
         typeof row?.[qualityKey] === "number"
           ? row[qualityKey]
-          : row?.[qualityKey] != null
+          : row?.[qualityKey] !== null && row?.[qualityKey] !== undefined
             ? Number(row[qualityKey])
             : null,
     }))
@@ -99,13 +99,15 @@ const handler = async (event, context) =>
               .map((row) => ({
                 date: row.log_date || row.date || null,
                 hoursSlept:
-                  row.sleep_hours != null
+                  row.sleep_hours !== null && row.sleep_hours !== undefined
                     ? Number(row.sleep_hours)
-                    : row.sleep != null
+                    : row.sleep !== null && row.sleep !== undefined
                       ? Number(row.sleep)
                       : 0,
                 quality:
-                  row.sleep_quality != null ? Number(row.sleep_quality) : null,
+                  row.sleep_quality !== null && row.sleep_quality !== undefined
+                    ? Number(row.sleep_quality)
+                    : null,
               }))
               .filter(
                 (row) =>

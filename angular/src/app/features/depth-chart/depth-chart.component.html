@@ -112,7 +112,12 @@
                                     } @else {
                                       <div
                                         class="empty-slot"
+                                        role="button"
+                                        tabindex="0"
+                                        [attr.aria-label]="'Assign player to ' + entry.position"
                                         (click)="openAssignDialog(entry)"
+                                        (keydown.enter)="openAssignDialog(entry)"
+                                        (keydown.space)="openAssignDialog(entry); $event.preventDefault()"
                                       >
                                         <i class="pi pi-user-plus"></i>
                                         <span>Assign Player</span>
@@ -176,7 +181,7 @@
           [draggable]="false"
           [resizable]="false"
           [dismissableMask]="true"
-          [styleClass]="'dialog-max-w-sm'"
+          [class]="'dialog-max-w-sm'"
         >
           <app-dialog-header
             icon="users"

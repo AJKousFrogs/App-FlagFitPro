@@ -77,11 +77,12 @@ import {
                 ></app-form-input>
               </div>
 
-              <div class="form-row">
-                <div class="form-field">
-                  <label>Primary Color</label>
-                  <input
-                    type="color"
+                      <div class="form-row">
+                        <div class="form-field">
+                          <label for="team-primary-color">Primary Color</label>
+                          <input
+                            id="team-primary-color"
+                            type="color"
                     class="color-input"
                     [value]="toHexColor(teamSettings().primaryColor, teamBrandDefaultHex.primary)"
                     (input)="onPrimaryColorInput($event)"
@@ -89,11 +90,12 @@ import {
                   <span class="color-code">{{
                     teamSettings().primaryColor
                   }}</span>
-                </div>
-                <div class="form-field">
-                  <label>Secondary Color</label>
-                  <input
-                    type="color"
+                        </div>
+                        <div class="form-field">
+                          <label for="team-secondary-color">Secondary Color</label>
+                          <input
+                            id="team-secondary-color"
+                            type="color"
                     class="color-input"
                     [value]="toHexColor(teamSettings().secondaryColor, teamBrandDefaultHex.secondary)"
                     (input)="onSecondaryColorInput($event)"

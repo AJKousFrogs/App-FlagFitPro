@@ -3,7 +3,7 @@
   (visibleChange)="visibleChange.emit($event)"
   [blockScroll]="true"
   [draggable]="false"
-  styleClass="new-team-dialog"
+  class="new-team-dialog"
   ariaLabel="Request new team"
 >
   <app-dialog-header
@@ -19,7 +19,7 @@
       density="compact"
       icon="pi pi-info-circle"
       message="New team requests require approval from a superadmin. You will be notified via email once your request has been reviewed."
-      styleClass="settings-dialog-alert"
+      class="settings-dialog-alert"
     />
 
     <div class="form-field">
@@ -28,7 +28,7 @@
         [value]="teamName()"
         (valueChange)="teamNameChange.emit($event)"
         placeholder="Enter your team name"
-        styleClass="w-full"
+        class="w-full"
       />
     </div>
 
@@ -39,7 +39,7 @@
         (valueChange)="teamNotesChange.emit($event)"
         placeholder="Tell us about your team (e.g., location, league, number of members)"
         [rows]="3"
-        styleClass="w-full"
+        class="w-full"
       />
     </div>
   </div>

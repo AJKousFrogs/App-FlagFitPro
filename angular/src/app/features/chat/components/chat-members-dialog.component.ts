@@ -13,7 +13,6 @@ import {
   ChannelMemberDetails,
   ChannelMembersResponse,
 } from "../../../core/services/channel.service";
-import { IconButtonComponent } from "../../../shared/components/button/icon-button.component";
 import { AppDialogComponent } from "../../../shared/components/dialog/dialog.component";
 import { DialogHeaderComponent } from "../../../shared/components/dialog-header/dialog-header.component";
 import { AppLoadingComponent } from "../../../shared/components/loading/loading.component";

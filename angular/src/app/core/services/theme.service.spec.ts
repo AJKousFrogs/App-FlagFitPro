@@ -14,7 +14,7 @@ import { SupabaseService } from "./supabase.service";
 import { vi, describe, it, expect, beforeEach, afterEach } from "vitest";
 
 // Helper to wait for async operations
-const waitFor = (ms: number = 50) =>
+const waitFor = (ms = 50) =>
   new Promise((resolve) => setTimeout(resolve, ms));
 
 describe("ThemeService", () => {

@@ -94,8 +94,8 @@ export class SemanticRendererService {
     context: MeaningMetadata["context"],
   ): RenderDecision {
     // Determine component based on context
-    let component = "app-risk-badge";
-    let placement: RenderDecision["placement"] = "top";
+    let component: string;
+    let placement: RenderDecision["placement"];
 
     if (context.container === "banner") {
       component = "app-risk-banner"; // Full-width banner

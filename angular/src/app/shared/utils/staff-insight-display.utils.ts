@@ -47,7 +47,7 @@ export function formatStaffInsightRelativeDate(date: Date): string {
 
 export function getStaffInsightMetadataEntries(
   metadata: Record<string, unknown>,
-): Array<{ key: string; value: string }> {
+): { key: string; value: string }[] {
   return Object.entries(metadata).map(([key, value]) => ({
     key: key.replace(/_/g, " ").replace(/\b\w/g, (l) => l.toUpperCase()),
     value: String(value),

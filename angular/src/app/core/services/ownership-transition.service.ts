@@ -152,7 +152,7 @@ export class OwnershipTransitionService {
    */
   async getPendingTransitions(
     toRole: string,
-    limit: number = 20,
+    limit = 20,
   ): Promise<OwnershipTransition[]> {
     if (this.transitionsUnavailable) {
       return [];
@@ -270,7 +270,7 @@ export class OwnershipTransitionService {
    */
   async getPlayerTransitions(
     playerId: string,
-    limit: number = 10,
+    limit = 10,
   ): Promise<OwnershipTransition[]> {
     if (this.transitionsUnavailable) {
       return [];

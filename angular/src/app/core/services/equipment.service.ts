@@ -74,11 +74,11 @@ export class EquipmentService {
   private apiService = inject(ApiService);
   private logger = inject(LoggerService);
 
-  readonly EQUIPMENT_TYPES: Array<{
+  readonly EQUIPMENT_TYPES: {
     value: EquipmentItem["item_type"];
     label: string;
     icon: string;
-  }> = [
+  }[] = [
     { value: "jersey", label: "Jersey", icon: "pi-user" },
     { value: "shorts", label: "Shorts", icon: "pi-user" },
     { value: "flags", label: "Flags", icon: "pi-flag" },
@@ -89,11 +89,11 @@ export class EquipmentService {
     { value: "other", label: "Other", icon: "pi-box" },
   ];
 
-  readonly CONDITIONS: Array<{
+  readonly CONDITIONS: {
     value: EquipmentItem["condition"];
     label: string;
     severity: string;
-  }> = [
+  }[] = [
     { value: "new", label: "New", severity: "success" },
     { value: "good", label: "Good", severity: "success" },
     { value: "fair", label: "Fair", severity: "warning" },
@@ -262,7 +262,7 @@ export class EquipmentService {
   bulkCheckout(
     equipmentId: string,
     playerIds: string[],
-    quantity: number = 1,
+    quantity = 1,
   ): Observable<EquipmentAssignment[]> {
     return this.apiService
       .post<EquipmentAssignment[]>("/api/equipment/checkout/bulk", {

@@ -165,7 +165,7 @@ export class ExerciseLibraryComponent implements OnInit {
   loadExercises(): void {
     this.isLoading.set(true);
     this.errorMessage.set(null);
-    type ExerciseApi = {
+    interface ExerciseApi {
       id: string;
       name: string;
       slug: string;
@@ -194,7 +194,7 @@ export class ExerciseLibraryComponent implements OnInit {
       is_featured?: boolean;
       created_at?: string;
       updated_at?: string;
-    };
+    }
     this.apiService.get<ExerciseApi[]>("/api/exercises").pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (response) => {
         const exercises = extractApiArray<ExerciseApi>(response);

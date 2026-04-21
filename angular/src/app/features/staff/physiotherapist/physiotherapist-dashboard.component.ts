@@ -327,7 +327,7 @@ export class PhysiotherapistDashboardComponent implements OnInit {
       // Load athletes with physio status from real API
       const response = await firstValueFrom(
         this.api.get<{
-          athletes: Array<{
+          athletes: {
             id: string;
             name: string;
             position: string;
@@ -345,11 +345,11 @@ export class PhysiotherapistDashboardComponent implements OnInit {
             restrictions: string[];
             acwr: number | null;
             riskLevel: "low" | "medium" | "high" | "unknown";
-          }>;
+          }[];
         }>("/api/staff-physiotherapist/athletes"),
       );
       const payload = extractApiPayload<{
-        athletes: Array<{
+        athletes: {
           id: string;
           name: string;
           position: string;
@@ -367,7 +367,7 @@ export class PhysiotherapistDashboardComponent implements OnInit {
           restrictions: string[];
           acwr: number | null;
           riskLevel: "low" | "medium" | "high" | "unknown";
-        }>;
+        }[];
       }>(response);
 
       if (payload?.athletes) {
@@ -458,7 +458,7 @@ export class PhysiotherapistDashboardComponent implements OnInit {
     try {
       const response = await firstValueFrom(
         this.api.get<{
-          athletes: Array<{
+          athletes: {
             athleteId: string;
             athleteName: string;
             position: string;
@@ -472,11 +472,11 @@ export class PhysiotherapistDashboardComponent implements OnInit {
             rtpProgress: number;
             expectedReturn: string;
             daysRemaining: number | null;
-          }>;
+          }[];
         }>("/api/staff-physiotherapist/rtp"),
       );
       const payload = extractApiPayload<{
-        athletes: Array<{
+        athletes: {
           athleteId: string;
           athleteName: string;
           position: string;
@@ -490,7 +490,7 @@ export class PhysiotherapistDashboardComponent implements OnInit {
           rtpProgress: number;
           expectedReturn: string;
           daysRemaining: number | null;
-        }>;
+        }[];
       }>(response);
 
       if (payload?.athletes) {
@@ -548,13 +548,13 @@ export class PhysiotherapistDashboardComponent implements OnInit {
       try {
         const response = await firstValueFrom(
           this.api.get<{
-            activeInjuries: Array<{ injury_type: string; injury_date: string }>;
-            injuryHistory: Array<{ injury_type: string; injury_date: string }>;
+            activeInjuries: { injury_type: string; injury_date: string }[];
+            injuryHistory: { injury_type: string; injury_date: string }[];
           }>(`/api/staff-physiotherapist/athletes/${athlete.id}`),
         );
         const payload = extractApiPayload<{
-          activeInjuries: Array<{ injury_type: string; injury_date: string }>;
-          injuryHistory: Array<{ injury_type: string; injury_date: string }>;
+          activeInjuries: { injury_type: string; injury_date: string }[];
+          injuryHistory: { injury_type: string; injury_date: string }[];
         }>(response);
 
         if (payload) {

@@ -628,7 +628,7 @@ function createSession(date: Date, load: number): TrainingSession {
 function generateSessions(
   days: number,
   avgLoad: number,
-  daysAgo: number = 0,
+  daysAgo = 0,
 ): TrainingSession[] {
   const sessions: TrainingSession[] = [];
 
@@ -665,7 +665,7 @@ function generateSessionsForWeek(
 
 function generateSessionsWithPattern(
   totalDays: number,
-  pattern: Array<{ days: number; load: number }>,
+  pattern: { days: number; load: number }[],
 ): TrainingSession[] {
   const sessions: TrainingSession[] = [];
   let dayOffset = 0;

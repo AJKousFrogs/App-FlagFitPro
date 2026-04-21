@@ -42,38 +42,38 @@
         <div class="detail-grid">
           <!-- Decision Overview -->
           <app-card-shell title="Decision Overview" headerIcon="pi-info-circle">
-            <div class="overview-content">
-              <div class="overview-item">
-                <label>Decision Type</label>
-                <p>{{ getDecisionTypeLabel(decision()!.decisionType) }}</p>
-              </div>
+                    <div class="overview-content">
+                      <div class="overview-item">
+                        <span>Decision Type</span>
+                        <p>{{ getDecisionTypeLabel(decision()!.decisionType) }}</p>
+                      </div>
 
-              <div class="overview-item">
-                <label>Summary</label>
-                <p>{{ decision()!.decisionSummary }}</p>
-              </div>
+                      <div class="overview-item">
+                        <span>Summary</span>
+                        <p>{{ decision()!.decisionSummary }}</p>
+                      </div>
 
-              <div class="overview-item">
-                <label>Category</label>
-                <app-status-tag
+                      <div class="overview-item">
+                        <span>Category</span>
+                        <app-status-tag
                   [value]="decision()!.decisionCategory"
                   severity="info"
                   size="sm"
                 />
               </div>
 
-              <div class="overview-item">
-                <label>Status</label>
-                <app-status-tag
+                      <div class="overview-item">
+                        <span>Status</span>
+                        <app-status-tag
                   [value]="decision()!.status"
                   [severity]="getStatusSeverity(decision()!.status)"
                   size="sm"
                 />
               </div>
 
-              <div class="overview-item">
-                <label>Priority</label>
-                <app-status-tag
+                      <div class="overview-item">
+                        <span>Priority</span>
+                        <app-status-tag
                   [value]="decision()!.reviewPriority"
                   [severity]="getPrioritySeverity(decision()!.reviewPriority)"
                   size="sm"
@@ -105,16 +105,16 @@
           </app-card-shell>
 
           <!-- Review Information -->
-          <app-card-shell title="Review Information" headerIcon="pi-calendar">
-            <div class="review-content">
-              <div class="review-item">
-                <label>Review Trigger</label>
-                <p>{{ decision()!.reviewTrigger }}</p>
-              </div>
+                  <app-card-shell title="Review Information" headerIcon="pi-calendar">
+                    <div class="review-content">
+                      <div class="review-item">
+                        <span>Review Trigger</span>
+                        <p>{{ decision()!.reviewTrigger }}</p>
+                      </div>
 
-              <div class="review-item">
-                <label>Review Date</label>
-                <p>
+                      <div class="review-item">
+                        <span>Review Date</span>
+                        <p>
                   {{ formatDate(decision()!.reviewDate) }}
                   @if (isOverdue()) {
                     <app-status-tag
@@ -126,31 +126,31 @@
                 </p>
               </div>
 
-              @if (decision()!.intendedDuration) {
-                <div class="review-item">
-                  <label>Intended Duration</label>
-                  <p>{{ decision()!.intendedDuration }}</p>
-                </div>
-              }
+                      @if (decision()!.intendedDuration) {
+                        <div class="review-item">
+                          <span>Intended Duration</span>
+                          <p>{{ decision()!.intendedDuration }}</p>
+                        </div>
+                      }
 
-              @if (decision()!.reviewedAt) {
-                <div class="review-item">
-                  <label>Reviewed On</label>
-                  <p>{{ formatDate(decision()!.reviewedAt!) }}</p>
-                </div>
-              }
+                      @if (decision()!.reviewedAt) {
+                        <div class="review-item">
+                          <span>Reviewed On</span>
+                          <p>{{ formatDate(decision()!.reviewedAt!) }}</p>
+                        </div>
+                      }
 
-              @if (decision()!.reviewedBy) {
-                <div class="review-item">
-                  <label>Reviewed By</label>
-                  <p>{{ decision()!.reviewedBy!.name }}</p>
-                </div>
-              }
+                      @if (decision()!.reviewedBy) {
+                        <div class="review-item">
+                          <span>Reviewed By</span>
+                          <p>{{ decision()!.reviewedBy!.name }}</p>
+                        </div>
+                      }
 
-              @if (decision()!.reviewOutcome) {
-                <div class="review-item">
-                  <label>Review Outcome</label>
-                  <app-status-tag
+                      @if (decision()!.reviewOutcome) {
+                        <div class="review-item">
+                          <span>Review Outcome</span>
+                          <app-status-tag
                     [value]="decision()!.reviewOutcome || ''"
                     severity="success"
                     size="sm"
@@ -201,19 +201,19 @@
               <p-accordion-panel value="3">
                 <p-accordion-header>Data Quality</p-accordion-header>
                 <p-accordion-content>
-                  <div class="data-quality">
-                    <div class="quality-item">
-                      <label>Completeness</label>
-                      <p>
+                          <div class="data-quality">
+                            <div class="quality-item">
+                              <span>Completeness</span>
+                              <p>
                         {{
                           (decision()!.decisionBasis.dataQuality.completeness ||
                             0) * 100
                         }}%
                       </p>
-                    </div>
-                    <div class="quality-item">
-                      <label>Stale Days</label>
-                      <p>
+                            </div>
+                            <div class="quality-item">
+                              <span>Stale Days</span>
+                              <p>
                         {{
                           decision()!.decisionBasis.dataQuality.staleDays || 0
                         }}
@@ -228,10 +228,10 @@
           <!-- Outcome Tracking (If Reviewed) -->
           @if (decision()!.outcomeData) {
             <app-card-shell title="Outcome" headerIcon="pi-check-circle">
-              <div class="outcome-content">
-                <div class="outcome-item">
-                  <label>Goal Achieved</label>
-                  <app-status-tag
+                      <div class="outcome-content">
+                        <div class="outcome-item">
+                          <span>Goal Achieved</span>
+                          <app-status-tag
                     [value]="
                       decision()!.outcomeData!.goalAchieved ? 'Yes' : 'No'
                     "
@@ -247,10 +247,10 @@
                 @if (
                   decision()!.outcomeData!.unintendedConsequences &&
                   decision()!.outcomeData!.unintendedConsequences.length > 0
-                ) {
-                  <div class="outcome-item">
-                    <label>Unintended Consequences</label>
-                    <ul>
+                        ) {
+                          <div class="outcome-item">
+                            <span>Unintended Consequences</span>
+                            <ul>
                       @for (
                         consequence of decision()!.outcomeData!
                           .unintendedConsequences;
@@ -262,11 +262,11 @@
                   </div>
                 }
 
-                @if (decision()!.outcomeData!.lessonsLearned) {
-                  <div class="outcome-item">
-                    <label>Lessons Learned</label>
-                    <p>{{ decision()!.outcomeData!.lessonsLearned }}</p>
-                  </div>
+                      @if (decision()!.outcomeData!.lessonsLearned) {
+                        <div class="outcome-item">
+                          <span>Lessons Learned</span>
+                          <p>{{ decision()!.outcomeData!.lessonsLearned }}</p>
+                        </div>
                 }
               </div>
             </app-card-shell>

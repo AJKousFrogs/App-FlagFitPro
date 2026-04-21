@@ -12,8 +12,8 @@ import { Goal } from "./training-builder.models";
   styleUrl: "./training-builder-goals-step.component.scss",
 })
 export class TrainingBuilderGoalsStepComponent {
-  goals = input.required<ReadonlyArray<Goal>>();
-  selectedGoalIds = input.required<ReadonlyArray<string>>();
+  goals = input.required<readonly Goal[]>();
+  selectedGoalIds = input.required<readonly string[]>();
 
   toggleGoal = output<string>();
   next = output<void>();

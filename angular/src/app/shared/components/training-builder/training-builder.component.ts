@@ -228,7 +228,7 @@ export class TrainingBuilderComponent {
     }
 
     // Load recent performance data from Supabase
-    let recentPerformance: Array<{ date: string; rpe: number; type: string }> =
+    let recentPerformance: { date: string; rpe: number; type: string }[] =
       [];
     try {
       const { data: sessions } = await this.supabaseService.client
@@ -253,11 +253,11 @@ export class TrainingBuilderComponent {
     }
 
     // Load upcoming games/events
-    let upcomingGames: Array<{
+    let upcomingGames: {
       date: string;
       opponent?: string;
       importance?: string;
-    }> = [];
+    }[] = [];
     try {
       const { data: events } = await this.supabaseService.client
         .from("games")

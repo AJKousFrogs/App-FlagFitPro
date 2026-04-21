@@ -385,51 +385,51 @@ export class PsychologyReportsComponent implements OnInit {
       // Load wellness data from API
       const response = await firstValueFrom(
         this.api.get<{
-          mentalLogs: Array<{
+          mentalLogs: {
             log_date: string;
             confidence_level: number;
             focus_level: number;
             motivation_level: number;
             anxiety_level: number;
-          }>;
-          wellness: Array<{
+          }[];
+          wellness: {
             date: string;
             mood: number;
             stress_level: number;
             sleep_quality: number;
             motivation_level: number;
             energy_level: number;
-          }>;
-          assessments: Array<{
+          }[];
+          assessments: {
             assessment_type: string;
             score: number;
             created_at: string;
             requires_professional_review: boolean;
-          }>;
+          }[];
         }>("/api/staff-psychology/my-data"),
       );
       const payload = extractApiPayload<{
-        mentalLogs: Array<{
+        mentalLogs: {
           log_date: string;
           confidence_level: number;
           focus_level: number;
           motivation_level: number;
           anxiety_level: number;
-        }>;
-        wellness: Array<{
+        }[];
+        wellness: {
           date: string;
           mood: number;
           stress_level: number;
           sleep_quality: number;
           motivation_level: number;
           energy_level: number;
-        }>;
-        assessments: Array<{
+        }[];
+        assessments: {
           assessment_type: string;
           score: number;
           created_at: string;
           requires_professional_review: boolean;
-        }>;
+        }[];
       }>(response);
 
       if (payload) {
@@ -446,27 +446,27 @@ export class PsychologyReportsComponent implements OnInit {
   }
 
   private processWellnessData(data: {
-    mentalLogs: Array<{
+    mentalLogs: {
       log_date: string;
       confidence_level: number;
       focus_level: number;
       motivation_level: number;
       anxiety_level: number;
-    }>;
-    wellness: Array<{
+    }[];
+    wellness: {
       date: string;
       mood: number;
       stress_level: number;
       sleep_quality: number;
       motivation_level: number;
       energy_level: number;
-    }>;
-    assessments: Array<{
+    }[];
+    assessments: {
       assessment_type: string;
       score: number;
       created_at: string;
       requires_professional_review: boolean;
-    }>;
+    }[];
   }): void {
     const mentalLogs = data.mentalLogs || [];
     const wellness = data.wellness || [];
@@ -550,7 +550,7 @@ export class PsychologyReportsComponent implements OnInit {
   }
 
   private calcAverage(
-    data: Array<Record<string, unknown>>,
+    data: Record<string, unknown>[],
     field: string,
   ): number | null {
     const values = data
@@ -589,8 +589,8 @@ export class PsychologyReportsComponent implements OnInit {
   }
 
   private identifyStressTriggers(
-    wellness: Array<{ stress_level: number; sleep_quality: number }>,
-    _mentalLogs: Array<{ anxiety_level: number }>,
+    wellness: { stress_level: number; sleep_quality: number }[],
+    _mentalLogs: { anxiety_level: number }[],
   ): string[] {
     const triggers: string[] = [];
     const highStressDays = wellness.filter((w) => w.stress_level >= 7);
@@ -606,8 +606,8 @@ export class PsychologyReportsComponent implements OnInit {
   }
 
   private identifyPositiveCorrelations(
-    wellness: Array<{ mood: number; sleep_quality: number }>,
-    _mentalLogs: Array<{ confidence_level: number }>,
+    wellness: { mood: number; sleep_quality: number }[],
+    _mentalLogs: { confidence_level: number }[],
   ): string[] {
     const correlations: string[] = [];
     const goodSleepGoodMood = wellness.filter(
@@ -620,16 +620,16 @@ export class PsychologyReportsComponent implements OnInit {
   }
 
   private identifyConcerns(
-    wellness: Array<{ stress_level: number; mood: number }>,
-    mentalLogs: Array<{ anxiety_level: number }>,
+    wellness: { stress_level: number; mood: number }[],
+    mentalLogs: { anxiety_level: number }[],
   ): string[] {
     const concerns: string[] = [];
     const avgStress = this.calcAverage(
-      wellness as Array<Record<string, unknown>>,
+      wellness as Record<string, unknown>[],
       "stress_level",
     );
     const avgAnxiety = this.calcAverage(
-      mentalLogs as Array<Record<string, unknown>>,
+      mentalLogs as Record<string, unknown>[],
       "anxiety_level",
     );
 

@@ -16,7 +16,19 @@
         [class.minimized]="isMinimized()"
       >
         <!-- AI Avatar -->
-        <div class="ai-avatar" (click)="toggleCompanion()">
+        <div
+          class="ai-avatar"
+          role="button"
+          tabindex="0"
+          [attr.aria-label]="
+            isActive()
+              ? 'Collapse AI training companion'
+              : 'Open AI training companion'
+          "
+          (click)="toggleCompanion()"
+          (keydown.enter)="toggleCompanion()"
+          (keydown.space)="toggleCompanion(); $event.preventDefault()"
+        >
           <div class="avatar-container">
             <div class="pulse-ring" [class.animate]="isListening()"></div>
             <div class="avatar-image">
@@ -167,7 +179,7 @@
                 <div class="feedback-meters">
                   @for (metric of performanceMetrics(); track metric.name) {
                     <div class="meter">
-                      <label>{{ metric.name }}</label>
+                      <span class="meter-label">{{ metric.name }}</span>
                       <p-knob
                         [value]="metric.value"
                         [min]="0"
@@ -176,6 +188,7 @@
                         [size]="80"
                         [strokeWidth]="8"
                         [valueColor]="getMetricColor(metric.value)"
+                        [ariaLabel]="metric.name + ': ' + metric.value"
                       />
                       <small class="metric-trend">
                         <i [class]="metric.trend.icon"></i>

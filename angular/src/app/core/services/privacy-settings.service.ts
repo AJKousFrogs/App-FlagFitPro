@@ -653,7 +653,7 @@ export class PrivacySettingsService {
       ) {
         throw err;
       }
-      throw new Error("Failed to verify AI consent");
+      throw new Error("Failed to verify AI consent", { cause: err });
     }
   }
 
@@ -767,7 +767,7 @@ export class PrivacySettingsService {
    * Returns data with consent_blocked flag for UI handling
    */
   async getConsentAwareLoadMonitoring(playerId?: string): Promise<{
-    data: Array<{
+    data: {
       id: string;
       playerId: string;
       dailyLoad: number | null;
@@ -777,7 +777,7 @@ export class PrivacySettingsService {
       injuryRiskLevel: string | null;
       consentBlocked: boolean;
       accessReason: string;
-    }>;
+    }[];
     error: string | null;
   }> {
     try {
@@ -822,7 +822,7 @@ export class PrivacySettingsService {
    * Fetch workout logs with consent awareness
    */
   async getConsentAwareWorkoutLogs(playerId?: string): Promise<{
-    data: Array<{
+    data: {
       id: string;
       playerId: string;
       sessionId: string;
@@ -831,7 +831,7 @@ export class PrivacySettingsService {
       durationMinutes: number | null;
       notes: string | null;
       consentBlocked: boolean;
-    }>;
+    }[];
     error: string | null;
   }> {
     try {

@@ -28,7 +28,7 @@ export interface CoachTournamentSummary {
     outstanding: string;
   };
   rsvpDeadline?: string;
-  games?: Array<{
+  games?: {
     id: string;
     gameNum: number;
     type: "pool" | "quarterfinal" | "semifinal" | "final";
@@ -39,7 +39,7 @@ export interface CoachTournamentSummary {
     theirScore?: number;
     result?: "win" | "loss" | "pending";
     day: number;
-  }>;
+  }[];
 }
 
 export interface CoachTournamentRsvp {
@@ -56,12 +56,12 @@ export interface CoachTournamentRsvp {
 }
 
 export interface CoachTournamentLineup {
-  slots: Array<{
+  slots: {
     position: string;
     playerId: string | null;
     note?: string;
     isStarter: boolean;
-  }>;
+  }[];
   notes: string;
 }
 

@@ -297,8 +297,9 @@
               </div>
 
               <div class="form-field">
-                <label>Years Experience</label>
+                <label for="official-years-experience">Years Experience</label>
                 <p-inputNumber
+                  inputId="official-years-experience"
                   (onInput)="onOfficialYearsExperienceInput($event)"
                   [min]="0"
                 ></p-inputNumber>
@@ -370,8 +371,9 @@
               </div>
 
               <div class="form-field">
-                <label>Payment Amount</label>
+                <label for="official-payment-amount">Payment Amount</label>
                 <p-inputNumber
+                  inputId="official-payment-amount"
                   (onInput)="onSchedulePaymentAmountInput($event)"
                   mode="currency"
                   currency="USD"

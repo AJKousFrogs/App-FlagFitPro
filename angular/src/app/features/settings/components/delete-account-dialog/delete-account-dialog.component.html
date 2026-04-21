@@ -21,7 +21,7 @@
       icon="pi pi-exclamation-triangle"
       title="Are you absolutely sure?"
       message="All your data will be permanently deleted, including:"
-      styleClass="settings-dialog-alert"
+      class="settings-dialog-alert"
     >
       <ul class="delete-list">
         <li><i class="pi pi-chart-line" aria-hidden="true"></i> Training history & progress</li>
@@ -37,7 +37,7 @@
         [value]="confirmText()"
         (valueChange)="confirmTextChange.emit($event)"
         placeholder="Type DELETE"
-        styleClass="delete-input"
+        class="delete-input"
       />
     </div>
   </div>

@@ -9,12 +9,13 @@
  * Contract Reference: docs/contracts/CONTRACT_MAP.md
  *
  * Usage:
- *   SUPABASE_URL=... SUPABASE_SERVICE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdyZmptbmpwenZrbm1zeHJ3ZXN4Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc2OTUwMjg5OSwiZXhwIjoyMDg1MDc4ODk5fQ.GIETcsbB9U_CRoeOhONwykUgMWzdWdU--QuyDr2BPaw node api-response-shapes.contract.test.js
+ *   SUPABASE_URL=... SUPABASE_SERVICE_KEY=... node api-response-shapes.contract.test.js
  *
  * Or via npm:
  *   npm run test:contracts:api
  */
 
+import "dotenv/config";
 import { createClient } from "@supabase/supabase-js";
 
 // =============================================================================
@@ -28,7 +29,9 @@ const API_BASE_URL =
   process.env.API_BASE_URL || "http://localhost:8888/.netlify/functions";
 
 if (!SUPABASE_URL || !SUPABASE_SERVICE_KEY) {
-  console.error("❌ Error: SUPABASE_URL and SUPABASE_SERVICE_KEY must be set");
+  console.error(
+    "❌ Error: SUPABASE_URL and SUPABASE_SERVICE_KEY/SUPABASE_SERVICE_ROLE_KEY must be set",
+  );
   process.exit(1);
 }
 

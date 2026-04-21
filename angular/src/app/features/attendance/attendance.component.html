@@ -41,7 +41,15 @@
               <app-empty-state icon="pi-calendar-times" title="No events" message="Check back later" />
             } @else {
               @for (event of filteredEvents().slice(0, 5); track event.id) {
-                <div class="event-item-bento" (click)="selectEvent(event)">
+                <div
+                  class="event-item-bento"
+                  role="button"
+                  tabindex="0"
+                  [attr.aria-label]="'Select event ' + event.title"
+                  (click)="selectEvent(event)"
+                  (keydown.enter)="selectEvent(event)"
+                  (keydown.space)="selectEvent(event); $event.preventDefault()"
+                >
                   <div class="event-date">
                     <span class="m">{{ event.start_time | date: 'MMM' }}</span>
                     <span class="d">{{ event.start_time | date: 'dd' }}</span>

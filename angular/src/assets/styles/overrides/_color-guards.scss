@@ -61,34 +61,61 @@
     color: var(--color-text-on-primary);
   }
 
-  /* PrimeNG components with green backgrounds */
-  :where(
-    .p-button,
-    .p-card,
-    .p-panel,
-    .p-tabview-title,
-    .p-tag,
-    .p-badge,
-    .p-chip
-  ) {
-    &[style*="089949"],
-    &.p-button-green,
-    &.bg-primary,
-    &.p-button-primary {
+  /* PrimeNG components with green backgrounds — flat rules for inline-style detection */
+  .p-button,
+  .p-card,
+  .p-panel,
+  .p-tabview-title,
+  .p-tag,
+  .p-badge,
+  .p-chip {
+    &[style*="089949"] {
       --text-color: var(--color-text-on-primary);
       --p-button-text-color: var(--color-text-on-primary);
       color: var(--color-text-on-primary);
 
-      * {
-        color: var(--color-text-on-primary);
-      }
-
+      *,
       .p-button-label,
       .p-button-icon,
       span,
       i {
         color: var(--color-text-on-primary);
       }
+    }
+  }
+
+  /* Class-based detection kept flat to avoid Angular CSS optimizer empty selector warnings. */
+  .p-button.p-button-green,
+  .p-card.p-button-green,
+  .p-panel.p-button-green,
+  .p-tabview-title.p-button-green,
+  .p-tag.p-button-green,
+  .p-badge.p-button-green,
+  .p-chip.p-button-green,
+  .p-button.bg-primary,
+  .p-card.bg-primary,
+  .p-panel.bg-primary,
+  .p-tabview-title.bg-primary,
+  .p-tag.bg-primary,
+  .p-badge.bg-primary,
+  .p-chip.bg-primary,
+  .p-button.p-button-primary,
+  .p-card.p-button-primary,
+  .p-panel.p-button-primary,
+  .p-tabview-title.p-button-primary,
+  .p-tag.p-button-primary,
+  .p-badge.p-button-primary,
+  .p-chip.p-button-primary {
+    --text-color: var(--color-text-on-primary);
+    --p-button-text-color: var(--color-text-on-primary);
+    color: var(--color-text-on-primary);
+
+    *,
+    .p-button-label,
+    .p-button-icon,
+    span,
+    i {
+      color: var(--color-text-on-primary);
     }
   }
 

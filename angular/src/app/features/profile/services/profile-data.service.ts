@@ -14,13 +14,13 @@ export class ProfileDataService {
   private teamInvitationsUnavailable = false;
 
   async fetchTrainingSessions(userId: string): Promise<{
-    sessions: Array<{
+    sessions: {
       id: string;
       status?: string | null;
       completed_at?: string | null;
       session_date?: string | null;
       duration_minutes?: number | null;
-    }>;
+    }[];
     error: { code?: string; message?: string } | null;
   }> {
     const { data: sessions, error } = await this.supabaseService.client
@@ -32,7 +32,7 @@ export class ProfileDataService {
   }
 
   async fetchGameParticipations(userId: string): Promise<{
-    participations: Array<{ id: string }>;
+    participations: { id: string }[];
     error: { message?: string } | null;
   }> {
     if (this.gameParticipationsUnavailable) {
@@ -50,11 +50,11 @@ export class ProfileDataService {
       return { participations: [], error: null };
     }
 
-    return { participations: (data as Array<{ id: string }>) ?? [], error };
+    return { participations: (data as { id: string }[]) ?? [], error };
   }
 
   async fetchGamesByParticipant(userId: string): Promise<{
-    games: Array<{ id: string }>;
+    games: { id: string }[];
     error: { message?: string } | null;
   }> {
     if (this.gamesParticipantsFilterUnavailable) {
@@ -71,11 +71,11 @@ export class ProfileDataService {
       return { games: [], error: null };
     }
 
-    return { games: (data as Array<{ id: string }>) ?? [], error };
+    return { games: (data as { id: string }[]) ?? [], error };
   }
 
   async fetchWellnessEntries(userId: string): Promise<{
-    entries: Array<{ energy_level?: number | null; sleep_quality?: number | null; checkin_date?: string }>;
+    entries: { energy_level?: number | null; sleep_quality?: number | null; checkin_date?: string }[];
     error: { message?: string } | null;
   }> {
     const { data, error } = await this.supabaseService.client
@@ -166,7 +166,7 @@ export class ProfileDataService {
   }
 
   async fetchPendingInvitations(email: string): Promise<{
-    invitations: Array<Record<string, unknown>>;
+    invitations: Record<string, unknown>[];
     error: { code?: string; message?: string } | null;
   }> {
     if (this.teamInvitationsUnavailable) {

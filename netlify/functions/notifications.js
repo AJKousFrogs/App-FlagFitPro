@@ -60,8 +60,8 @@ function err(message, req, status = 400, code = "error") {
 // ─── Validation helpers ──────────────────────────────────────────────────────
 
 function parseStrictPositiveInt(raw, field, { min = 1, max = Infinity } = {}) {
-  if (raw === undefined || raw === null || raw === "") return null;
-  if (!/^\d+$/.test(String(raw))) throw new Error(`${field} must be a positive integer`);
+  if (raw === undefined || raw === null || raw === "") {return null;}
+  if (!/^\d+$/.test(String(raw))) {throw new Error(`${field} must be a positive integer`);}
   const parsed = parseInt(String(raw), 10);
   if (!Number.isInteger(parsed) || parsed < min || parsed > max) {
     throw new Error(Number.isFinite(max)
@@ -75,7 +75,7 @@ function validateNotificationId(value, fieldName = "notificationId") {
   if (typeof value !== "string" || value.trim().length === 0) {
     throw new Error(`${fieldName} must be a non-empty string`);
   }
-  if (value.trim().length > 200) throw new Error(`${fieldName} is too long`);
+  if (value.trim().length > 200) {throw new Error(`${fieldName} is too long`);}
   return value.trim();
 }
 
@@ -123,7 +123,7 @@ function checkRateLimit(req, userId, limitType) {
 
 async function handleList(req, userId, url) {
   const rl = checkRateLimit(req, userId, "READ");
-  if (rl) return Response.json(JSON.parse(rl.body), { status: rl.statusCode, headers: corsHeaders(req) });
+  if (rl) {return Response.json(JSON.parse(rl.body), { status: rl.statusCode, headers: corsHeaders(req) });}
 
   let limit = 20, page = 1, onlyUnread = false, lastOpenedAt = null;
   try {
@@ -131,12 +131,12 @@ async function handleList(req, userId, url) {
     page  = parseStrictPositiveInt(url.searchParams.get("page"), "page", { min: 1 }) ?? 1;
     const unreadParam = url.searchParams.get("onlyUnread");
     if (unreadParam !== null) {
-      if (unreadParam !== "true" && unreadParam !== "false") throw new Error("onlyUnread must be true or false");
+      if (unreadParam !== "true" && unreadParam !== "false") {throw new Error("onlyUnread must be true or false");}
       onlyUnread = unreadParam === "true";
     }
     const laParam = url.searchParams.get("lastOpenedAt");
     if (laParam) {
-      if (isNaN(new Date(laParam).getTime())) throw new Error("lastOpenedAt must be a valid date");
+      if (isNaN(new Date(laParam).getTime())) {throw new Error("lastOpenedAt must be a valid date");}
       lastOpenedAt = laParam;
     }
   } catch (ve) {
@@ -154,7 +154,7 @@ async function handleList(req, userId, url) {
 
 async function handleCount(req, userId) {
   const rl = checkRateLimit(req, userId, "READ");
-  if (rl) return Response.json(JSON.parse(rl.body), { status: rl.statusCode, headers: corsHeaders(req) });
+  if (rl) {return Response.json(JSON.parse(rl.body), { status: rl.statusCode, headers: corsHeaders(req) });}
 
   try {
     const [rawCount, rawLastOpened] = await Promise.all([
@@ -173,12 +173,12 @@ async function handleCount(req, userId) {
 
 async function handleMarkRead(req, userId) {
   const rl = checkRateLimit(req, userId, "UPDATE");
-  if (rl) return Response.json(JSON.parse(rl.body), { status: rl.statusCode, headers: corsHeaders(req) });
+  if (rl) {return Response.json(JSON.parse(rl.body), { status: rl.statusCode, headers: corsHeaders(req) });}
 
   let body;
   try {
     body = await req.json();
-    if (!body || typeof body !== "object" || Array.isArray(body)) throw new Error("body must be an object");
+    if (!body || typeof body !== "object" || Array.isArray(body)) {throw new Error("body must be an object");}
   } catch {
     return err("Request body must be a JSON object", req, 400, "invalid_json");
   }
@@ -202,8 +202,8 @@ async function handleMarkRead(req, userId) {
       catch (ve) { return err(ve.message, req, 422, "validation_error"); }
     }
     const unique = [...new Set(normalized)];
-    if (unique.length === 0) return err("ids must contain at least one non-empty notification id", req, 422, "validation_error");
-    if (unique.length > 100) return err("ids cannot contain more than 100 notification ids", req, 422, "validation_error");
+    if (unique.length === 0) {return err("ids must contain at least one non-empty notification id", req, 422, "validation_error");}
+    if (unique.length > 100) {return err("ids cannot contain more than 100 notification ids", req, 422, "validation_error");}
     try {
       await db.notifications.markManyAsRead(userId, unique);
       return ok(null, req, 200);
@@ -231,12 +231,12 @@ async function handleMarkRead(req, userId) {
 
 async function handleCreate(req, userId) {
   const rl = checkRateLimit(req, userId, "CREATE");
-  if (rl) return Response.json(JSON.parse(rl.body), { status: rl.statusCode, headers: corsHeaders(req) });
+  if (rl) {return Response.json(JSON.parse(rl.body), { status: rl.statusCode, headers: corsHeaders(req) });}
 
   let body;
   try {
     body = await req.json();
-    if (!body || typeof body !== "object" || Array.isArray(body)) throw new Error();
+    if (!body || typeof body !== "object" || Array.isArray(body)) {throw new Error();}
   } catch {
     return err("Request body must be a JSON object", req, 400, "invalid_json");
   }
@@ -255,8 +255,8 @@ async function handleCreate(req, userId) {
 
   // Normalize priority aliases
   let priority = rawPriority;
-  if (priority === "medium") priority = "normal";
-  if (priority === "critical") priority = "urgent";
+  if (priority === "medium") {priority = "normal";}
+  if (priority === "critical") {priority = "urgent";}
   if (priority !== undefined && !VALID_PRIORITIES.has(priority)) {
     return err(`priority must be one of: ${[...VALID_PRIORITIES].join(", ")}`, req, 422, "validation_error");
   }
@@ -283,7 +283,7 @@ async function handleCreate(req, userId) {
 
 async function handleUpdateLastOpened(req, userId) {
   const rl = checkRateLimit(req, userId, "UPDATE");
-  if (rl) return Response.json(JSON.parse(rl.body), { status: rl.statusCode, headers: corsHeaders(req) });
+  if (rl) {return Response.json(JSON.parse(rl.body), { status: rl.statusCode, headers: corsHeaders(req) });}
 
   try {
     await db.notifications.updateLastOpenedAt(userId);
@@ -296,7 +296,7 @@ async function handleUpdateLastOpened(req, userId) {
 
 async function handleGetPreferences(req, userId) {
   const rl = checkRateLimit(req, userId, "READ");
-  if (rl) return Response.json(JSON.parse(rl.body), { status: rl.statusCode, headers: corsHeaders(req) });
+  if (rl) {return Response.json(JSON.parse(rl.body), { status: rl.statusCode, headers: corsHeaders(req) });}
 
   try {
     const prefs = await db.notifications.getUserPreferences(userId);
@@ -309,12 +309,12 @@ async function handleGetPreferences(req, userId) {
 
 async function handleUpdatePreferences(req, userId) {
   const rl = checkRateLimit(req, userId, "UPDATE");
-  if (rl) return Response.json(JSON.parse(rl.body), { status: rl.statusCode, headers: corsHeaders(req) });
+  if (rl) {return Response.json(JSON.parse(rl.body), { status: rl.statusCode, headers: corsHeaders(req) });}
 
   let body;
   try {
     body = await req.json();
-    if (!body || typeof body !== "object" || Array.isArray(body)) throw new Error();
+    if (!body || typeof body !== "object" || Array.isArray(body)) {throw new Error();}
   } catch {
     return err("Request body must be a JSON object", req, 400, "invalid_json");
   }
@@ -364,9 +364,9 @@ export default async (req) => {
   // Route dispatch
   try {
     if (segment === "" || segment === "/") {
-      if (method === "GET")   return handleList(req, userId, url);
-      if (method === "POST")  return handleMarkRead(req, userId);
-      if (method === "PATCH") return handleUpdateLastOpened(req, userId);
+      if (method === "GET")   {return handleList(req, userId, url);}
+      if (method === "POST")  {return handleMarkRead(req, userId);}
+      if (method === "PATCH") {return handleUpdateLastOpened(req, userId);}
     }
 
     if (segment === "/count" && method === "GET") {
@@ -382,8 +382,8 @@ export default async (req) => {
     }
 
     if (segment === "/preferences") {
-      if (method === "GET") return handleGetPreferences(req, userId);
-      if (method === "PUT" || method === "POST") return handleUpdatePreferences(req, userId);
+      if (method === "GET") {return handleGetPreferences(req, userId);}
+      if (method === "PUT" || method === "POST") {return handleUpdatePreferences(req, userId);}
     }
 
     return err(`Not found: ${method} /api/notifications${segment}`, req, 404, "not_found");

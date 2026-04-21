@@ -97,7 +97,7 @@ interface WorkoutLog {
 
 interface ToleranceDetectionSnapshot {
   cfg: ACWRConfig;
-  recentHistory: Array<{ date: Date; ratio: number; chronic: number }>;
+  recentHistory: { date: Date; ratio: number; chronic: number }[];
   daysAboveThreshold: number;
   averageACWRAboveThreshold: number;
 }
@@ -187,7 +187,7 @@ export class AcwrService {
 
   // Historical ACWR data for tolerance detection
   private readonly historicalACWR = signal<
-    Array<{ date: Date; ratio: number; chronic: number }>
+    { date: Date; ratio: number; chronic: number }[]
   >([]);
 
   // Track the last loaded user to prevent duplicate loads
@@ -403,7 +403,7 @@ export class AcwrService {
     const issues: string[] = [];
     const recommendations: string[] = [];
 
-    let level: DataQualityLevel = "high";
+    let level: DataQualityLevel;
     let confidence = 100;
 
     if (!sufficient) {
@@ -829,7 +829,7 @@ export class AcwrService {
    */
   public predictNextSessionLoad(
     plannedIntensity: number,
-    plannedDuration: number = 90,
+    plannedDuration = 90,
   ): {
     projected: number;
     projectedACWR: number;
@@ -882,7 +882,7 @@ export class AcwrService {
       cfg.thresholds.maxWeeklyIncreasePercent;
     const exceedsWeeklyCap = weeklyChangePercent > maxIncrease;
 
-    let recommendation = "";
+    let recommendation: string;
     let adjustments:
       | {
           suggestedIntensity: number;
@@ -994,12 +994,12 @@ export class AcwrService {
    */
   public getEvidenceInfo(): {
     preset: string;
-    citations: Array<{
+    citations: {
       authors: string;
       year: number;
       title: string;
       doi?: string;
-    }>;
+    }[];
     scienceNotes: string;
     coachOverride: string;
   } {
@@ -1018,7 +1018,7 @@ export class AcwrService {
    * Should player skip sprints today?
    * Based on ACWR and day of week using evidence-based thresholds
    */
-  public shouldSkipSprints(dayOfWeek: number, gameDay: number = 6): boolean {
+  public shouldSkipSprints(dayOfWeek: number, gameDay = 6): boolean {
     const risk = this.riskZone();
     const ratio = this.acwrRatio();
     const cfg = this.config();
@@ -1325,18 +1325,22 @@ export class AcwrService {
     }
 
     try {
-      // Note: load_monitoring uses calculated_at (timestamp with time zone) not date column
+      const monitoringDate = getDateKey(new Date());
+      const riskLevel = acwrData.riskZone.label;
       const { error } = await this.supabaseService.client
         .from("load_monitoring")
         .upsert({
           player_id: userId,
+          date: monitoringDate,
+          monitoring_date: monitoringDate,
           calculated_at: new Date().toISOString(),
           daily_load: Math.round(acwrData.acute), // Current day's load estimate
           acute_load: acwrData.acute,
           chronic_load: acwrData.chronic,
           acwr: acwrRatio,
-          injury_risk_level: acwrData.riskZone.label,
-        });
+          injury_risk_level: riskLevel,
+          risk_level: riskLevel,
+        }, { onConflict: "player_id,date" });
 
       if (error) {
         const msg =

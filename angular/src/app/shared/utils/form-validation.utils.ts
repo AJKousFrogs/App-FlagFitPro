@@ -40,7 +40,7 @@ export interface FormValidationResult {
  * Validator that requires a valid date string or Date object.
  */
 export function validDate(): ValidatorFn {
-  return (control: AbstractControl): { [key: string]: unknown } | null => {
+  return (control: AbstractControl): Record<string, unknown> | null => {
     if (!control.value) return null; // Let required validator handle empty
 
     const parsed = safeParseDate(control.value);
@@ -60,7 +60,7 @@ export function dateRange(options: {
   allowPast?: boolean;
   allowFuture?: boolean;
 }): ValidatorFn {
-  return (control: AbstractControl): { [key: string]: unknown } | null => {
+  return (control: AbstractControl): Record<string, unknown> | null => {
     if (!control.value) return null;
 
     const result = validateDateRange(control.value, options);
@@ -77,9 +77,9 @@ export function dateRange(options: {
 export function numericRange(
   min: number,
   max: number,
-  decimals: number = 2,
+  decimals = 2,
 ): ValidatorFn {
-  return (control: AbstractControl): { [key: string]: unknown } | null => {
+  return (control: AbstractControl): Record<string, unknown> | null => {
     if (
       control.value === null ||
       control.value === undefined ||
@@ -122,7 +122,7 @@ export function intensityValidator(): ValidatorFn {
 /**
  * Validator for duration in minutes.
  */
-export function durationValidator(maxMinutes: number = 480): ValidatorFn {
+export function durationValidator(maxMinutes = 480): ValidatorFn {
   return numericRange(1, maxMinutes, 0);
 }
 
@@ -137,7 +137,7 @@ export function percentageValidator(): ValidatorFn {
  * Validator for positive integers.
  */
 export function positiveInteger(): ValidatorFn {
-  return (control: AbstractControl): { [key: string]: unknown } | null => {
+  return (control: AbstractControl): Record<string, unknown> | null => {
     if (
       control.value === null ||
       control.value === undefined ||
@@ -158,7 +158,7 @@ export function positiveInteger(): ValidatorFn {
  * Validator for trimmed non-empty string.
  */
 export function nonEmptyString(): ValidatorFn {
-  return (control: AbstractControl): { [key: string]: unknown } | null => {
+  return (control: AbstractControl): Record<string, unknown> | null => {
     if (!control.value) return null;
 
     if (
@@ -175,7 +175,7 @@ export function nonEmptyString(): ValidatorFn {
  * Validator for maximum string length after trimming.
  */
 export function maxTrimmedLength(maxLength: number): ValidatorFn {
-  return (control: AbstractControl): { [key: string]: unknown } | null => {
+  return (control: AbstractControl): Record<string, unknown> | null => {
     if (!control.value) return null;
 
     const trimmed = String(control.value).trim();
@@ -241,7 +241,7 @@ export function markFormGroupTouched(formGroup: FormGroup): void {
  */
 export function getErrorMessages(
   fieldName: string,
-  errors: { [key: string]: unknown },
+  errors: Record<string, unknown>,
 ): FieldValidationError[] {
   const messages: FieldValidationError[] = [];
 

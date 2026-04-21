@@ -11,11 +11,11 @@ import {
 } from "../../training/daily-protocol/daily-protocol.models";
 import type { TodayViewModel } from "../resolution/today-state.resolver";
 
-export type PracticeDayCallout = {
+export interface PracticeDayCallout {
   variant: "recovery" | "acwr-rest";
   title: string;
   body: string;
-};
+}
 
 @Component({
   selector: "app-today-protocol-section",

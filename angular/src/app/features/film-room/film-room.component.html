@@ -204,16 +204,15 @@
                       class="moment-item"
                       [class.positive]="moment.type === 'positive'"
                       [class.correction]="moment.type === 'correction'"
+                      role="button"
+                      tabindex="0"
+                      [attr.aria-label]="'Jump to moment at ' + formatTimestamp(moment.timestamp)"
                       (click)="jumpToMoment(moment.timestamp)"
+                      (keydown.enter)="jumpToMoment(moment.timestamp)"
+                      (keydown.space)="jumpToMoment(moment.timestamp); $event.preventDefault()"
                     >
                       <div class="moment-header">
-                        <span
-                          class="timestamp"
-                          (click)="
-                            jumpToMoment(moment.timestamp);
-                            $event.stopPropagation()
-                          "
-                        >
+                        <span class="timestamp">
                           <i class="pi pi-play-circle"></i>
                           {{ formatTimestamp(moment.timestamp) }}
                         </span>

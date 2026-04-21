@@ -32,7 +32,6 @@ interface ThemeState {
   resolvedTheme: "light" | "dark";
 }
 
-const THEME_STORAGE_KEY = "flagfit_theme";
 const THEME_SETTING_KEY = "theme";
 
 /**

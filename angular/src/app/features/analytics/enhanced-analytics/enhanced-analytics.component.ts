@@ -153,10 +153,10 @@ export class EnhancedAnalyticsComponent implements OnInit {
       tension?: number;
     }[];
   } {
-    const weeks: Map<
+    const weeks = new Map<
       number,
       { completed: number; total: number; duration: number }
-    > = new Map();
+    >();
 
     sessions.forEach((session) => {
       const date = new Date(session.session_date);

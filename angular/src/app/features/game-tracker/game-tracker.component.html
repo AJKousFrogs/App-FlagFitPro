@@ -308,8 +308,12 @@
           </div>
           <!-- Play Type Selection -->
           <div class="play-type-section">
-            <label class="play-type-label">Play Type</label>
-            <div class="play-type-options">
+            <div class="play-type-label" id="game-play-type-label">Play Type</div>
+            <div
+              class="play-type-options"
+              role="radiogroup"
+              aria-labelledby="game-play-type-label"
+            >
               <div class="play-type-option">
                 <p-radioButton
                   name="playType"

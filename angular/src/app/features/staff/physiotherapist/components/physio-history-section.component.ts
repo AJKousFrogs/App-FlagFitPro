@@ -21,7 +21,7 @@ interface InjuryHistoryView {
 })
 export class PhysioHistorySectionComponent {
   readonly selectedAthlete = input.required<string | null>();
-  readonly athleteOptions = input.required<Array<{ label: string; value: string }>>();
+  readonly athleteOptions = input.required<{ label: string; value: string }[]>();
   readonly history = input.required<InjuryHistoryView | null>();
 
   readonly athleteChange = output<string | null>();

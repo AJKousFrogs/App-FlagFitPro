@@ -49,7 +49,15 @@ import {
       [attr.aria-label]="exercise().exercise.name"
     >
       <!-- Header Row -->
-      <div class="exercise-header" (click)="toggleExpand()">
+      <div
+        class="exercise-header"
+        role="button"
+        tabindex="0"
+        [attr.aria-expanded]="isExpanded()"
+        (click)="toggleExpand()"
+        (keydown.enter)="toggleExpand()"
+        (keydown.space)="toggleExpand(); $event.preventDefault()"
+      >
         <div class="exercise-title-row">
           <div class="status-indicator" [class]="exercise().status">
             @if (exercise().status === "complete") {

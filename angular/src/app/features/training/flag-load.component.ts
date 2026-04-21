@@ -173,13 +173,13 @@ export class FlagLoadComponent {
 
   chartData = signal<{
     labels: string[];
-    datasets: Array<{
+    datasets: {
       label: string;
       data: number[];
       borderColor?: string;
       backgroundColor?: string;
       tension?: number;
-    }>;
+    }[];
   }>({
     labels: [],
     datasets: [],

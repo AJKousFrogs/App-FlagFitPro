@@ -169,7 +169,7 @@ export const POSITION_FILTER_OPTIONS = [
   { label: "Linebacker", value: "LB" },
 ];
 
-export const STATUS_OPTIONS: Array<{ label: string; value: PlayerStatus }> = [
+export const STATUS_OPTIONS: { label: string; value: PlayerStatus }[] = [
   { label: "Active", value: "active" },
   { label: "Limited", value: "limited" },
   { label: "Returning", value: "returning" },

@@ -38,20 +38,20 @@ export interface PositionPerformanceData {
 
 export interface InjuryRiskData {
   riskLevel: "low" | "medium" | "high";
-  factors: Array<{
+  factors: {
     name: string;
     impact: number;
     description: string;
-  }>;
+  }[];
   recommendations: string[];
 }
 
 export interface SpeedDevelopmentData {
-  timeline: Array<{
+  timeline: {
     date: string;
     speed: number;
     acceleration: number;
-  }>;
+  }[];
   improvement: {
     percentChange: number;
     trend: "improving" | "stable" | "declining";

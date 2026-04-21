@@ -116,13 +116,13 @@ export class PrivacyControlsComponent implements OnInit {
   showAuditLogDialog = false;
   auditLogLoading = signal(false);
   auditLogEntries = signal<
-    Array<{
+    {
       id: string;
       action: string;
       affectedTable: string | null;
       affectedData: Record<string, unknown> | null;
       createdAt: string;
-    }>
+    }[]
   >([]);
 
   // Form data

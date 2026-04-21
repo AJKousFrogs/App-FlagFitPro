@@ -60,11 +60,12 @@
               <div class="tab-content">
                 <!-- Filters -->
                 <app-card-shell class="filters-card">
-                  <div class="filters-row">
-                    <div class="filter-group">
-                      <label>Search</label>
-                      <app-search-input
-                        class="filter-search"
+                          <div class="filters-row">
+                            <div class="filter-group">
+                              <label for="exercise-db-search">Search</label>
+                              <app-search-input
+                                inputId="exercise-db-search"
+                                class="filter-search"
                         (valueChange)="updateSearchQuery($event)"
                         placeholder="Search exercises..."
                         ariaLabel="Search exercises"
@@ -255,11 +256,12 @@
                     relevance.
                   </p>
 
-                  <div class="import-options">
-                    <div class="option-group">
-                      <label>Body Parts to Import</label>
-                      <p-multiSelect
-                        [options]="importBodyPartOptions"
+                          <div class="import-options">
+                            <div class="option-group">
+                              <label for="exercise-import-body-parts">Body Parts to Import</label>
+                              <p-multiSelect
+                                inputId="exercise-import-body-parts"
+                                [options]="importBodyPartOptions"
                         (onChange)="onImportBodyPartsSelect($event)"
                         placeholder="Select body parts (leave empty for all)"
                         display="chip"
@@ -294,7 +296,7 @@
                       <app-progress-bar
                         [value]="0"
                         [showValue]="false"
-                        styleClass="import-bar"
+                        class="import-bar"
                       />
                       <p class="progress-text">
                         Importing exercises from ExerciseDB...
@@ -671,10 +673,13 @@
             <div class="approval-form">
               <h4>{{ exerciseToApprove()?.name }}</h4>
 
-              <div class="form-group">
-                <label>Flag Football Relevance (1-10)</label>
-                <input
-                  type="range"
+                      <div class="form-group">
+                        <label for="exercise-football-relevance">
+                          Flag Football Relevance (1-10)
+                        </label>
+                        <input
+                          id="exercise-football-relevance"
+                          type="range"
                   class="relevance-slider"
                   [value]="approvalData.flag_football_relevance"
                   (input)="onApprovalRelevanceInput($event)"
@@ -739,7 +744,7 @@
                     label="Recommended Sets"
                     type="number"
                     [value]="
-                      approvalData.recommended_sets != null
+                      approvalData.recommended_sets !== null
                         ? '' + approvalData.recommended_sets
                         : undefined
                     "

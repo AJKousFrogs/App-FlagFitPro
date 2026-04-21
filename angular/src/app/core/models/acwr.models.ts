@@ -172,16 +172,16 @@ export interface PlayerACWRProfile {
   playerId: string;
   playerName: string;
   currentACWR: ACWRData;
-  historicalACWR: Array<{
+  historicalACWR: {
     date: Date;
     ratio: number;
     riskLevel: RiskLevel;
-  }>;
-  injuries?: Array<{
+  }[];
+  injuries?: {
     date: Date;
     type: string;
     acwrAtInjury: number; // ACWR when injury occurred
-  }>;
+  }[];
   preferences?: {
     alertThreshold: number; // Custom ACWR threshold for alerts
     enableAutoAdjust: boolean; // Auto-adjust training based on ACWR
@@ -205,17 +205,17 @@ export interface TeamACWRSummary {
     dangerZone: number;
   };
   averageACWR: number;
-  playersAtRisk: Array<{
+  playersAtRisk: {
     playerId: string;
     playerName: string;
     acwr: number;
     riskLevel: RiskLevel;
-  }>;
-  weeklyLoadTrend: Array<{
+  }[];
+  weeklyLoadTrend: {
     week: string; // ISO week (e.g., "2024-W48")
     averageLoad: number;
     acwrRange: { min: number; max: number };
-  }>;
+  }[];
 }
 
 /**

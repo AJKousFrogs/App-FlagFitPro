@@ -42,7 +42,7 @@
             variant="info"
             title="Founding superadmin access"
             message="As the founding superadmin, you have full control over the platform. Only you can add additional superadmins."
-            [styleClass]="'info-notice'"
+            [class]="'info-notice'"
           />
         </app-card-shell>
 
@@ -162,7 +162,7 @@
             variant="info"
             title="Database-managed settings"
             message="Platform settings are currently managed at the database level. Contact the development team for configuration changes."
-            [styleClass]="'info-notice info'"
+            [class]="'info-notice info'"
           />
         </app-card-shell>
 
@@ -208,7 +208,7 @@
         [resizable]="false"
         [dismissableMask]="true"
         [blockScroll]="true"
-        [styleClass]="'dialog-md superadmin-settings-dialog'"
+        [class]="'dialog-md superadmin-settings-dialog'"
       >
         <app-dialog-header
           icon="shield"
@@ -244,7 +244,7 @@
           density="compact"
           title="Full platform access"
           message="Superadmins can approve teams, manage other superadmins, and access platform-critical settings. Only grant this role to trusted operators."
-          [styleClass]="'warning-notice'"
+          [class]="'warning-notice'"
         />
 
         <app-dialog-footer

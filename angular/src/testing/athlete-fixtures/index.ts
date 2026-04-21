@@ -38,7 +38,7 @@ const toDateString = (baseDate: string, offsetDays: number): string => {
 
 const buildTrainingLoads = (
   baseDate: string,
-  loads: Array<{ rpe: number; durationMinutes: number }>,
+  loads: { rpe: number; durationMinutes: number }[],
 ): TrainingLoadEntry[] =>
   loads.map((entry, index) => ({
     date: toDateString(baseDate, index),

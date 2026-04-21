@@ -17,7 +17,7 @@ import {
   output,
   signal,
   computed,
-  ChangeDetectionStrategy,
+  ChangeDetectionStrategy, OnInit,
 } from "@angular/core";
 import { ButtonComponent } from "../../../../shared/components/button/button.component";
 
@@ -239,7 +239,7 @@ import { ExerciseCardComponent } from "./exercise-card.component";
   `,
   styleUrl: "./protocol-block.component.scss",
 })
-export class ProtocolBlockComponent {
+export class ProtocolBlockComponent implements OnInit {
   // Inputs
   block = input.required<ProtocolBlock>();
   defaultExpanded = input<boolean>(false);

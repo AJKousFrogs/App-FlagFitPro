@@ -376,7 +376,7 @@ export class NutritionistDashboardComponent implements OnInit {
       // Load real data from API
       const response = await firstValueFrom(
         this.api.get<{
-          athletes: Array<{
+          athletes: {
             id: string;
             name: string;
             position: string;
@@ -388,11 +388,11 @@ export class NutritionistDashboardComponent implements OnInit {
             dailyCalories: number;
             proteinTarget: number;
             lastUpdated: string;
-          }>;
+          }[];
         }>("/api/staff-nutritionist/athletes"),
       );
       const payload = extractApiPayload<{
-        athletes: Array<{
+        athletes: {
           id: string;
           name: string;
           position: string;
@@ -404,7 +404,7 @@ export class NutritionistDashboardComponent implements OnInit {
           dailyCalories: number;
           proteinTarget: number;
           lastUpdated: string;
-        }>;
+        }[];
       }>(response);
 
       if (payload?.athletes) {
@@ -448,21 +448,21 @@ export class NutritionistDashboardComponent implements OnInit {
       try {
         const response = await firstValueFrom(
           this.api.get<{
-            trends: Array<{
+            trends: {
               date: string;
               weight: number;
               bodyFat: number;
               leanMass: number;
-            }>;
+            }[];
           }>(`/api/staff-nutritionist/athletes/${athlete.id}/trends`),
         );
         const payload = extractApiPayload<{
-          trends: Array<{
+          trends: {
             date: string;
             weight: number;
             bodyFat: number;
             leanMass: number;
-          }>;
+          }[];
         }>(response);
 
         if (payload?.trends) {
@@ -499,7 +499,7 @@ export class NutritionistDashboardComponent implements OnInit {
   }
 
   private detectAlerts(
-    trends: Array<{ date: string; weight: number }>,
+    trends: { date: string; weight: number }[],
   ): string[] {
     const alerts: string[] = [];
     if (trends.length >= 3) {
@@ -522,25 +522,25 @@ export class NutritionistDashboardComponent implements OnInit {
     try {
       const response = await firstValueFrom(
         this.api.get<{
-          compliance: Array<{
+          compliance: {
             athleteId: string;
             athleteName: string;
             supplements: string[];
             compliance: number;
             takenCount: number;
             missedCount: number;
-          }>;
+          }[];
         }>("/api/staff-nutritionist/supplements"),
       );
       const payload = extractApiPayload<{
-        compliance: Array<{
+        compliance: {
           athleteId: string;
           athleteName: string;
           supplements: string[];
           compliance: number;
           takenCount: number;
           missedCount: number;
-        }>;
+        }[];
       }>(response);
 
       if (payload?.compliance) {
@@ -564,7 +564,7 @@ export class NutritionistDashboardComponent implements OnInit {
   }
 
   private loadWellnessFromAthletes(
-    athletes: Array<{ id: string; hydrationStatus: string }>,
+    athletes: { id: string; hydrationStatus: string }[],
   ): void {
     const wellness = new Map<string, WellnessMetrics>();
     athletes.forEach((athlete) => {

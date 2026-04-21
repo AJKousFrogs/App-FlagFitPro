@@ -173,12 +173,12 @@ export class TrainingLogComponent implements OnInit {
   readonly requiresApproval = signal(false);
   readonly hoursDelayed = signal<number | null>(null);
   readonly conflicts = signal<
-    Array<{
+    {
       type: string;
       message: string;
       playerValue?: string;
       coachValue?: string;
-    }>
+    }[]
   >([]);
 
   readonly hasLateLogWarning = computed(() => this.logStatus() !== "on_time");

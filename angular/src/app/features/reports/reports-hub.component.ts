@@ -228,7 +228,7 @@ export class ReportsHubComponent implements OnInit {
   private readonly teamMembershipService = inject(TeamMembershipService);
   readonly searchQuery = signal("");
   readonly selectedReportType = signal<ReportTypeFilter>("all");
-  readonly reportTypeFilters: ReadonlyArray<{ id: ReportTypeFilter; label: string }> = [
+  readonly reportTypeFilters: readonly { id: ReportTypeFilter; label: string }[] = [
     { id: "all", label: "All reports" },
     { id: "daily", label: "Daily review" },
     { id: "coach", label: "Coach" },

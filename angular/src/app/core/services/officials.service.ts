@@ -71,10 +71,10 @@ export class OfficialsService {
   private apiService = inject(ApiService);
   private logger = inject(LoggerService);
 
-  readonly OFFICIAL_ROLES: Array<{
+  readonly OFFICIAL_ROLES: {
     value: GameOfficial["role"];
     label: string;
-  }> = [
+  }[] = [
     { value: "head_referee", label: "Head Referee" },
     { value: "line_judge", label: "Line Judge" },
     { value: "field_judge", label: "Field Judge" },
@@ -83,10 +83,10 @@ export class OfficialsService {
     { value: "timekeeper", label: "Timekeeper" },
   ];
 
-  readonly CERTIFICATION_LEVELS: Array<{
+  readonly CERTIFICATION_LEVELS: {
     value: Official["certification_level"];
     label: string;
-  }> = [
+  }[] = [
     { value: "youth", label: "Youth" },
     { value: "high_school", label: "High School" },
     { value: "college", label: "College" },
@@ -366,14 +366,14 @@ export class OfficialsService {
     endDate?: string;
     officialId?: string;
   }): Observable<
-    Array<{
+    {
       official_id: string;
       official_name: string;
       total_games: number;
       total_payment: number;
       paid: number;
       pending: number;
-    }>
+    }[]
   > {
     const params: Record<string, unknown> = {};
     if (options?.startDate) params["start_date"] = options.startDate;
@@ -382,14 +382,14 @@ export class OfficialsService {
 
     return this.apiService
       .get<
-        Array<{
+        {
           official_id: string;
           official_name: string;
           total_games: number;
           total_payment: number;
           paid: number;
           pending: number;
-        }>
+        }[]
       >("/api/officials/payments/summary", params)
       .pipe(
         map((response) =>
@@ -415,7 +415,7 @@ export class OfficialsService {
   getUpcomingGames(
     teamId: string,
   ): Observable<
-    Array<{ label: string; value: string; date: string; opponent: string }>
+    { label: string; value: string; date: string; opponent: string }[]
   > {
     interface GameResponse {
       id?: string;

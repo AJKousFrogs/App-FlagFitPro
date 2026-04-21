@@ -41,7 +41,7 @@ import { PasswordModule } from "primeng/password";
         [feedback]="feedback()"
         [placeholder]="placeholder()"
         [inputId]="inputId()"
-        [styleClass]="'w-full ' + styleClass()"
+        [class]="'w-full ' + styleClass()"
         [inputStyleClass]="'w-full ' + inputStyleClass()"
         [autocomplete]="autocomplete()"
         [disabled]="isDisabled()"
