@@ -74,8 +74,8 @@
     Cross-Origin-Resource-Policy = "same-site"
 
     # Content Security Policy - defense in depth against XSS
-    # 'unsafe-inline' removed from script-src: Angular 17+ ESBuild output uses module scripts,
-    # no inline <script> tags. If a future change reintroduces inline scripts, use nonces instead.
+    # 'unsafe-inline' removed from script-src: Angular bundles and runtime env load from
+    # same-origin external files, so no inline <script> tags are required.
     # 'unsafe-inline' retained in style-src: Angular ViewEncapsulation injects component styles
     # at runtime. Removing it would require nonce configuration in the Angular CLI build.
     # Sentry domains added for error reporting (https://*.ingest.sentry.io for event ingestion)
@@ -132,6 +132,11 @@
   for = "/assets/*"
   [headers.values]
     Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/assets/runtime-env.js"
+  [headers.values]
+    Cache-Control = "no-cache, no-store, must-revalidate"
 
 # Fonts - long cache with CORS for preloading (using /**/* pattern for nested paths)
 [[headers]]

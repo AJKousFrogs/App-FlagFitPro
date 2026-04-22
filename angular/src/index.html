@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" class="ds-initial-render">
   <head>
     <meta charset="utf-8" />
     <title>FlagFit Pro</title>
@@ -46,6 +46,7 @@
 
     <!-- PWA Manifest -->
     <link rel="manifest" href="manifest.webmanifest" />
+    <script src="/assets/runtime-env.js"></script>
 
     <!-- ============================================
          CRITICAL CSS: Inline above-the-fold styles
@@ -130,47 +131,6 @@
         }
       }
     </style>
-    <script>
-      (function () {
-        var pathname = window.location.pathname || "/";
-        if (pathname === "/") {
-          document.documentElement.classList.add("route-landing");
-          return;
-        }
-
-        if (document.getElementById("app-primeicons-stylesheet")) {
-          return;
-        }
-
-        var link = document.createElement("link");
-        link.id = "app-primeicons-stylesheet";
-        link.rel = "stylesheet";
-        link.href = "/assets/styles/vendor/primeicons/primeicons.css";
-        document.head.appendChild(link);
-      })();
-    </script>
-    <script>
-      (function () {
-        var root = document.documentElement;
-        root.classList.add("ds-initial-render");
-
-        var markReady = function () {
-          requestAnimationFrame(function () {
-            requestAnimationFrame(function () {
-              root.classList.remove("ds-initial-render");
-            });
-          });
-        };
-
-        if (document.readyState === "loading") {
-          document.addEventListener("DOMContentLoaded", markReady, {
-            once: true,
-          });
-        } else {
-          markReady();
-        }
-      })();
-    </script>
   </head>
   <body>
     <app-root></app-root>

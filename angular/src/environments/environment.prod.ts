@@ -1,6 +1,12 @@
 // Production environment configuration
-// Values are injected at runtime via window._env (set by index.html inline script)
-// This allows deployment-time configuration without rebuilding
+// Values are injected at runtime via window._env (set by runtime-env.js)
+// This allows deployment-time configuration without rebuilding and falls back
+// to the canonical public Supabase project if runtime config is missing.
+
+import {
+  DEFAULT_SUPABASE_ANON_KEY,
+  DEFAULT_SUPABASE_URL,
+} from "./supabase.defaults";
 
 // Note: Window._env type is declared in environment.ts
 // Canonical runtime keys are SUPABASE_URL and SUPABASE_ANON_KEY.
@@ -25,8 +31,14 @@ export const environment = {
   apiUrl: undefined as string | undefined, // Will auto-detect based on hostname
   supabase: {
     // Runtime injection with canonical keys + legacy fallback
-    url: getEnvValue(["SUPABASE_URL", "VITE_SUPABASE_URL"]),
-    anonKey: getEnvValue(["SUPABASE_ANON_KEY", "VITE_SUPABASE_ANON_KEY"]),
+    url: getEnvValue(
+      ["SUPABASE_URL", "VITE_SUPABASE_URL"],
+      DEFAULT_SUPABASE_URL,
+    ),
+    anonKey: getEnvValue(
+      ["SUPABASE_ANON_KEY", "VITE_SUPABASE_ANON_KEY"],
+      DEFAULT_SUPABASE_ANON_KEY,
+    ),
   },
   // Angular DevTools configuration (disabled in production for security)
   devtools: {

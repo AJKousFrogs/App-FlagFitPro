@@ -1,8 +1,13 @@
 // Environment configuration for development
 // For production, use environment.prod.ts with Angular's file replacement
 //
-// Values can be injected at runtime via window._env (set by dev server or index.html script)
+// Values can be injected at runtime via window._env (set by the dev server or runtime-env.js)
 // This allows changing configuration without rebuilding
+
+import {
+  DEFAULT_SUPABASE_ANON_KEY,
+  DEFAULT_SUPABASE_URL,
+} from "./supabase.defaults";
 
 // Type declaration for runtime environment injection
 declare global {
@@ -61,9 +66,8 @@ const getDefaultApiUrl = (): string => {
 
 // Default development values (safe to commit - public anon key only)
 const DEFAULTS = {
-  SUPABASE_URL: "https://grfjmnjpzvknmsxrwesx.supabase.co",
-  SUPABASE_ANON_KEY:
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdyZmptbmpwenZrbm1zeHJ3ZXN4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njk1MDI4OTksImV4cCI6MjA4NTA3ODg5OX0.63Do5rUEHBT7-pZEXzFFHB5LqFRaXWAt-YrH2v45vo0",
+  SUPABASE_URL: DEFAULT_SUPABASE_URL,
+  SUPABASE_ANON_KEY: DEFAULT_SUPABASE_ANON_KEY,
   API_URL: "", // Will be auto-detected
 };
 

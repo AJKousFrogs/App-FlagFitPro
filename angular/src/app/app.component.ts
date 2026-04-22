@@ -1,4 +1,5 @@
 import {
+  afterNextRender,
   ChangeDetectionStrategy,
   Component,
   computed,
@@ -93,6 +94,7 @@ export class AppComponent {
       HttpCacheService.destroy();
       this.sessionExpiry.stopMonitoring();
     });
+    this.clearInitialRenderState();
     this.applyPlatformClasses();
     this.syncRouteClasses();
     this.initPrimeIconsLoading();
@@ -225,6 +227,16 @@ export class AppComponent {
 
     window.clearTimeout(this.feedbackStylesTimer);
     this.feedbackStylesTimer = null;
+  }
+
+  private clearInitialRenderState(): void {
+    afterNextRender(() => {
+      if (typeof document === "undefined") {
+        return;
+      }
+
+      document.documentElement.classList.remove("ds-initial-render");
+    });
   }
 
   /**
