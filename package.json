@@ -142,7 +142,7 @@
     "dotenv": "^17.2.4",
     "isomorphic-dompurify": "^2.35.0",
     "jsonwebtoken": "^9.0.3",
-    "nodemailer": "^7.0.12",
+    "nodemailer": "^8.0.2",
     "pg": "^8.20.0",
     "pg-format": "^1.0.4",
     "sql-template-strings": "^2.2.2",
