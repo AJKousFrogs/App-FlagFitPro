@@ -1277,6 +1277,7 @@ async function generateProtocol(supabase, userId, payload, headers, log = logger
 
         protocolExercises.push({
           exercise_id: ex.id,
+          exercise_name: ex.name,
           block_type: "isometrics",
           sequence_order: idx + 1,
           prescribed_sets: sets,
@@ -1354,6 +1355,7 @@ async function generateProtocol(supabase, userId, payload, headers, log = logger
       selectedPlyos.forEach((ex, idx) => {
         protocolExercises.push({
           exercise_id: ex.id,
+          exercise_name: ex.name,
           block_type: "plyometrics",
           sequence_order: idx + 1,
           prescribed_sets: 3,
@@ -1399,6 +1401,7 @@ async function generateProtocol(supabase, userId, payload, headers, log = logger
           protocolExercises.push({
             // protocol_id will be assigned by RPC
             exercise_id: nordicExercise.id,
+            exercise_name: nordicExercise.name,
             block_type: "strength",
             sequence_order: 1, // Nordic curls FIRST in strength block
             prescribed_sets: nordicProtocol.sets,
@@ -1429,6 +1432,7 @@ async function generateProtocol(supabase, userId, payload, headers, log = logger
           protocolExercises.push({
             // protocol_id will be assigned by RPC
             exercise_id: ex.id,
+            exercise_name: ex.name,
             block_type: "strength",
             sequence_order: (includeNordics ? 2 : 1) + idx,
             prescribed_sets: 3,
@@ -1457,6 +1461,7 @@ async function generateProtocol(supabase, userId, payload, headers, log = logger
         protocolExercises.push({
           // protocol_id will be assigned by RPC
           exercise_id: ex.id,
+          exercise_name: ex.name,
           block_type: "strength",
           sequence_order: sequenceStart + idx,
           prescribed_sets: 3,
@@ -1509,6 +1514,7 @@ async function generateProtocol(supabase, userId, payload, headers, log = logger
         protocolExercises.push({
           // protocol_id will be assigned by RPC
           exercise_id: ex.id,
+          exercise_name: ex.name,
           block_type: "conditioning",
           sequence_order: idx + 1,
           prescribed_sets: 2,
@@ -1575,6 +1581,7 @@ async function generateProtocol(supabase, userId, payload, headers, log = logger
         protocolExercises.push({
           // protocol_id will be assigned by RPC
           exercise_id: ex.id,
+          exercise_name: ex.name,
           block_type: "skill_drills",
           sequence_order: idx + 1,
           prescribed_sets: 3,
@@ -1611,6 +1618,7 @@ async function generateProtocol(supabase, userId, payload, headers, log = logger
         protocolExercises.push({
           // protocol_id will be assigned by RPC
           exercise_id: ex.exercise_id,
+          exercise_name: ex.exercise_name || ex.exercise?.name || ex.name || null,
           block_type: "main_session",
           sequence_order: mainSessionSequence++,
           prescribed_sets: ex.prescribed_sets,

@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject, output } from "@angular/core";
 import { RouterLink } from "@angular/router";
-import { type CheckboxChangeEvent } from "primeng/checkbox";
+import { STAFF_VISIBILITY_OPTIONS } from "../constants/onboarding-options";
 import { OnboardingStateService } from "../services/onboarding-state.service";
 
 @Component({
@@ -26,10 +26,10 @@ import { OnboardingStateService } from "../services/onboarding-state.service";
         <div class="ob-review-block-title">
           <i class="pi pi-user" aria-hidden="true"></i> Profile
         </div>
-        <div class="ob-review-row">
-          <i class="pi pi-id-card ob-review-icon" aria-hidden="true"></i>
-          <div>
-            <span class="ob-review-value">{{ state.formData.name || 'Not set' }}</span>
+          <div class="ob-review-row">
+            <i class="pi pi-id-card ob-review-icon" aria-hidden="true"></i>
+            <div>
+            <span class="ob-review-value">{{ state.formData.name || 'Add your name' }}</span>
             <span class="ob-review-label">Full name</span>
           </div>
         </div>
@@ -53,10 +53,10 @@ import { OnboardingStateService } from "../services/onboarding-state.service";
             </div>
           </div>
         }
-        <div class="ob-review-row">
-          <i class="pi pi-map-marker ob-review-icon" aria-hidden="true"></i>
-          <div>
-            <span class="ob-review-value">{{ state.formData.country || 'Not selected' }}</span>
+          <div class="ob-review-row">
+            <i class="pi pi-map-marker ob-review-icon" aria-hidden="true"></i>
+            <div>
+            <span class="ob-review-value">{{ state.formData.country || 'Choose a country' }}</span>
             <span class="ob-review-label">Country</span>
           </div>
         </div>
@@ -88,9 +88,9 @@ import { OnboardingStateService } from "../services/onboarding-state.service";
             <i class="pi pi-lock ob-review-icon" aria-hidden="true"></i>
             <div>
               <span class="ob-review-value">
-                {{ state.formData.staffVisibility.length }} section(s)
+                {{ getStaffAccessSummary() }}
               </span>
-              <span class="ob-review-label">App access</span>
+              <span class="ob-review-label">Access granted</span>
             </div>
           </div>
         </div>
@@ -322,6 +322,23 @@ import { OnboardingStateService } from "../services/onboarding-state.service";
 export class OnboardingStepSummaryComponent {
   readonly state = inject(OnboardingStateService);
   readonly consentChange = output<{ type: string; checked: boolean }>();
+  private readonly staffVisibilityOptions = STAFF_VISIBILITY_OPTIONS;
+
+  getStaffAccessSummary(): string {
+    const labels = this.staffVisibilityOptions
+      .filter((option) => this.state.formData.staffVisibility.includes(option.value))
+      .map((option) => option.label);
+
+    if (labels.length === 0) {
+      return "Standard team access";
+    }
+
+    if (labels.length <= 3) {
+      return labels.join(" · ");
+    }
+
+    return `${labels.slice(0, 3).join(" · ")} +${labels.length - 3} more`;
+  }
 
   toggleConsent(type: "terms" | "privacy" | "data" | "ai" | "email"): void {
     switch (type) {
@@ -347,36 +364,5 @@ export class OnboardingStepSummaryComponent {
         break;
     }
     this.state.saveDraft();
-  }
-
-  // Legacy handler kept for compatibility with onboarding.component.ts onSummaryConsentChange
-  onConsentTermsChange(event: CheckboxChangeEvent): void {
-    const checked = Boolean(event.checked);
-    this.state.formData.consentTermsOfService = checked;
-    this.consentChange.emit({ type: "Terms of Service", checked });
-  }
-
-  onConsentPrivacyChange(event: CheckboxChangeEvent): void {
-    const checked = Boolean(event.checked);
-    this.state.formData.consentPrivacyPolicy = checked;
-    this.consentChange.emit({ type: "Privacy Policy", checked });
-  }
-
-  onConsentDataUsageChange(event: CheckboxChangeEvent): void {
-    const checked = Boolean(event.checked);
-    this.state.formData.consentDataUsage = checked;
-    this.consentChange.emit({ type: "Data Usage", checked });
-  }
-
-  onConsentAiCoachChange(event: CheckboxChangeEvent): void {
-    const checked = Boolean(event.checked);
-    this.state.formData.consentAICoach = checked;
-    this.consentChange.emit({ type: "Merlin AI", checked });
-  }
-
-  onConsentEmailUpdatesChange(event: CheckboxChangeEvent): void {
-    const checked = Boolean(event.checked);
-    this.state.formData.consentEmailUpdates = checked;
-    this.consentChange.emit({ type: "Email Updates", checked });
   }
 }

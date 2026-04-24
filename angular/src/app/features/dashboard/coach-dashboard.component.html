@@ -209,9 +209,10 @@
         </div>
 
         <!-- Create Session Dialog -->
-        @defer (when showCreateSessionDialog) {
+        @defer (when showCreateSessionDialog()) {
         <app-dialog
-          [(visible)]="showCreateSessionDialog"
+          [visible]="showCreateSessionDialog()"
+          (visibleChange)="showCreateSessionDialog.set($event)"
           [modal]="true"
           class="dashboard-dialog"
           [blockScroll]="true"
@@ -303,9 +304,10 @@
         }
 
         <!-- Team Message Dialog -->
-        @defer (when showTeamMessageDialog) {
+        @defer (when showTeamMessageDialog()) {
         <app-dialog
-          [(visible)]="showTeamMessageDialog"
+          [visible]="showTeamMessageDialog()"
+          (visibleChange)="showTeamMessageDialog.set($event)"
           [modal]="true"
           class="dashboard-dialog"
           [blockScroll]="true"
@@ -316,14 +318,14 @@
             icon="send"
             title="Send Team Message"
             subtitle="Broadcast a clear update to the full team."
-            (close)="showTeamMessageDialog = false"
+            (close)="showTeamMessageDialog.set(false)"
           />
           <div class="message-form">
             <div class="form-field">
               <app-textarea
                 label="Message"
                 id="messageContent"
-                [value]="teamMessageContent"
+                [value]="teamMessageContent()"
                 (valueChange)="onTeamMessageContentInput($event)"
                 placeholder="Type your message to the team..."
                 [rows]="5"
@@ -336,7 +338,7 @@
             cancelLabel="Cancel"
             primaryLabel="Send"
             primaryIcon="send"
-            (cancel)="showTeamMessageDialog = false"
+            (cancel)="showTeamMessageDialog.set(false)"
             (primary)="sendTeamMessage()"
           />
         </app-dialog>
@@ -345,9 +347,10 @@
         }
 
         <!-- Request Access Dialog -->
-        @defer (when showRequestAccessDialog) {
+        @defer (when showRequestAccessDialog()) {
         <app-dialog
-          [(visible)]="showRequestAccessDialog"
+          [visible]="showRequestAccessDialog()"
+          (visibleChange)="showRequestAccessDialog.set($event)"
           [modal]="true"
           class="dashboard-dialog"
           [blockScroll]="true"
@@ -369,7 +372,7 @@
               <app-textarea
                 label="Message"
                 id="accessMessage"
-                [value]="requestAccessMessage"
+                [value]="requestAccessMessage()"
                 (valueChange)="onRequestAccessMessageInput($event)"
                 placeholder="Type your request message..."
                 [rows]="4"

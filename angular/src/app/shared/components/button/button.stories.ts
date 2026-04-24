@@ -45,8 +45,8 @@ import { IconButtonComponent } from "./icon-button.component";
  *   Save Changes
  * </app-button>
  *
- * <app-button variant="text" routerLink="/dashboard">
- *   Go to Dashboard
+ * <app-button variant="text" routerLink="/todays-practice">
+ *   Open Today's Practice
  * </app-button>
  *
  * <app-icon-button

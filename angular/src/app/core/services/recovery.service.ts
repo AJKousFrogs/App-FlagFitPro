@@ -576,7 +576,8 @@ export class RecoveryService {
       return (data || []).map((p: DatabaseRecoveryProtocol) =>
         this.transformDatabaseProtocol(p),
       );
-    } catch {
+    } catch (error) {
+      this.logger.warn("[Recovery] Unexpected error loading protocols by category", error);
       return [];
     }
   }
@@ -613,7 +614,8 @@ export class RecoveryService {
       }
 
       return this.transformRecoveryProfile(data);
-    } catch {
+    } catch (error) {
+      this.logger.warn("[Recovery] Unexpected error loading athlete recovery profile", error);
       return null;
     }
   }
@@ -844,7 +846,8 @@ export class RecoveryService {
       }
 
       return true;
-    } catch {
+    } catch (error) {
+      this.logger.warn("[Recovery] Unexpected error saving protocol effectiveness", error);
       return false;
     }
   }

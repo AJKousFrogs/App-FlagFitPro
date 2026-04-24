@@ -11,6 +11,7 @@ import {
 import { NavigationEnd, Router } from "@angular/router";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { filter } from "rxjs";
+import { ROUTES } from "../../../core/constants/app.constants";
 import { isCoachNavigationRole } from "../../../core/navigation/app-navigation.config";
 import { RouteShellService } from "../../../core/services/route-shell.service";
 import { SupabaseService } from "../../../core/services/supabase.service";
@@ -159,7 +160,7 @@ export class QuickActionsFABComponent implements OnInit {
       {
         icon: "pi-play",
         label: "Today's Practice",
-        route: "/training/daily",
+        route: ROUTES.TODAY,
       },
     ];
   });

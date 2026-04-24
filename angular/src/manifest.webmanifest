@@ -57,10 +57,10 @@
   "categories": ["sports", "health", "fitness"],
   "shortcuts": [
     {
-      "name": "Dashboard",
-      "short_name": "Dashboard",
-      "description": "View your player dashboard",
-      "url": "/dashboard",
+      "name": "Today's Practice",
+      "short_name": "Today",
+      "description": "Open your training for today",
+      "url": "/todays-practice",
       "icons": [
         {
           "src": "/assets/icons/icon-96x96.svg",

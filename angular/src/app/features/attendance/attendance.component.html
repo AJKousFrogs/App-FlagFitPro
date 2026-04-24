@@ -40,7 +40,7 @@
             @if (filteredEvents().length === 0) {
               <app-empty-state icon="pi-calendar-times" title="No events" message="Check back later" />
             } @else {
-              @for (event of filteredEvents().slice(0, 5); track event.id) {
+              @for (event of filteredEvents(); track event.id) {
                 <div
                   class="event-item-bento"
                   role="button"
@@ -71,7 +71,7 @@
             <h3 class="bento-title"><i class="pi pi-users"></i> Attendance</h3>
           </div>
 
-          <p-table [value]="playerStats().slice(0, 10)" class="attendance-table">
+          <p-table [value]="paginatedPlayerStats()" class="attendance-table">
             <ng-template #header>
               <tr>
                 <th>Player</th>
@@ -97,13 +97,21 @@
                 <td><app-status-tag [value]="stat.attendance_rate > 80 ? 'Reliable' : 'At Risk'" [severity]="stat.attendance_rate > 80 ? 'success' : 'warning'" size="sm" /></td>
               </tr>
             </ng-template>
+            <ng-template #emptymessage>
+              <tr>
+                <td colspan="4">
+                  <app-empty-state icon="pi-users" title="No players tracked" message="Attendance data will appear here once events are recorded." />
+                </td>
+              </tr>
+            </ng-template>
           </p-table>
         </div>
       </div>
 
       <!-- Create Event Dialog -->
       <app-dialog
-        [(visible)]="showCreateEventDialog"
+        [visible]="showCreateEventDialog()"
+        (visibleChange)="showCreateEventDialog.set($event)"
         [modal]="true"
         dialogSize="md"
         [blockScroll]="true"
@@ -114,13 +122,13 @@
           icon="calendar-plus"
           title="Create Event"
           subtitle="Schedule a new practice, game, meeting, or conditioning session."
-          (close)="showCreateEventDialog = false"
+          (close)="showCreateEventDialog.set(false)"
         />
         <div class="attendance-dialog-form">
           <div class="form-field">
             <app-form-input
               label="Title *"
-              [value]="newEvent.title"
+              [value]="newEvent().title"
               (valueChange)="onNewEventTitleChange($event)"
               placeholder="e.g., Team Practice"
             />
@@ -141,7 +149,7 @@
               <input
                 id="startTime"
                 type="datetime-local"
-                [value]="getNewEventDateTimeInputValue(newEvent.start_time)"
+                [value]="getNewEventDateTimeInputValue(newEvent().start_time)"
                 (input)="onNewEventStartTimeInputEvent($event)"
                 class="w-full"
               />
@@ -152,7 +160,7 @@
               <input
                 id="endTime"
                 type="datetime-local"
-                [value]="getNewEventDateTimeInputValue(newEvent.end_time)"
+                [value]="getNewEventDateTimeInputValue(newEvent().end_time)"
                 (input)="onNewEventEndTimeInputEvent($event)"
                 class="w-full"
               />
@@ -162,7 +170,7 @@
           <div class="form-field">
             <app-form-input
               label="Location"
-              [value]="newEvent.location"
+              [value]="newEvent().location"
               (valueChange)="onNewEventLocationChange($event)"
               placeholder="e.g., Main Field"
             />
@@ -171,7 +179,7 @@
           <div class="form-field">
             <app-textarea
               label="Description"
-              [value]="newEvent.description"
+              [value]="newEvent().description"
               (valueChange)="onNewEventDescriptionChange($event)"
               [rows]="3"
               placeholder="Optional details..."
@@ -182,7 +190,7 @@
             <input
               type="checkbox"
               id="mandatory"
-              [checked]="newEvent.is_mandatory"
+              [checked]="newEvent().is_mandatory"
               (change)="onNewEventMandatoryToggle($event)"
             />
             <label for="mandatory">Mandatory attendance</label>
@@ -195,8 +203,59 @@
           primaryLabel="Create Event"
           primaryIcon="check"
           [disabled]="!canCreateEvent()"
-          (cancel)="showCreateEventDialog = false"
+          (cancel)="showCreateEventDialog.set(false)"
           (primary)="createEvent()"
+        />
+      </app-dialog>
+
+      <!-- Mark Attendance Dialog -->
+      <app-dialog
+        [visible]="showAttendanceDialog()"
+        (visibleChange)="showAttendanceDialog.set($event)"
+        [modal]="true"
+        dialogSize="md"
+        [blockScroll]="true"
+        [draggable]="false"
+        ariaLabel="Mark attendance"
+      >
+        <app-dialog-header
+          icon="check-circle"
+          title="Mark Attendance"
+          [subtitle]="selectedEvent()?.title || 'Event attendance'"
+          (close)="showAttendanceDialog.set(false)"
+        />
+        <div class="attendance-dialog-form">
+          @if (attendanceRecords().length === 0) {
+            <app-empty-state icon="pi-users" title="No players" message="No attendance records found for this event." />
+          } @else {
+            <div class="attendance-records-list">
+              @for (record of attendanceRecords(); track record.player_id) {
+                <div class="attendance-record-row">
+                  <div class="player-cell">
+                    <app-avatar [label]="getInitialsStr(record.player_name || 'U')" shape="circle" />
+                    <span>{{ record.player_name || 'Unknown' }}</span>
+                  </div>
+                  <app-select
+                    [options]="attendanceStatuses"
+                    [ngModel]="record.status"
+                    (change)="updateAttendanceStatus(record, $any($event))"
+                    placeholder="Select status"
+                    styleClass="mini-select"
+                  />
+                </div>
+              }
+            </div>
+          }
+        </div>
+
+        <app-dialog-footer
+          dialogFooter
+          cancelLabel="Cancel"
+          primaryLabel="Save Attendance"
+          primaryIcon="check"
+          [disabled]="isSaving()"
+          (cancel)="showAttendanceDialog.set(false)"
+          (primary)="saveAttendance()"
         />
       </app-dialog>
     </app-main-layout>

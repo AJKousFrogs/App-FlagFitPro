@@ -1,4 +1,4 @@
-import { Injectable, inject, signal, computed } from "@angular/core";
+import { Injectable, inject, signal, computed, effect } from "@angular/core";
 import { SupabaseService } from "./supabase.service";
 import { from, Observable, of } from "rxjs";
 import { catchError, map, tap } from "rxjs";
@@ -88,8 +88,15 @@ export class SuperadminService {
   pendingCount = computed(() => this.pendingApprovals().length);
 
   constructor() {
-    // Check superadmin status when auth changes
-    this.checkSuperadminStatus();
+    // Defer superadmin check until a user is actually available
+    effect(() => {
+      const user = this.supabaseService.currentUser();
+      if (user) {
+        void this.checkSuperadminStatus();
+      } else {
+        this.isSuperadmin.set(false);
+      }
+    });
   }
 
   /**
@@ -108,7 +115,7 @@ export class SuperadminService {
         .select("id, is_active")
         .eq("user_id", user.id)
         .eq("is_active", true)
-        .single();
+        .maybeSingle();
 
       const isSuperadmin = !error && !!data;
       this.isSuperadmin.set(isSuperadmin);

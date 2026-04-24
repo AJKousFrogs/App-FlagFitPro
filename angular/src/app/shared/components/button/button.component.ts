@@ -47,7 +47,7 @@ import { LoggerService } from "@core/services/logger.service";
  *
  * @example With routerLink
  * ```html
- * <app-button routerLink="/dashboard" variant="text">Go to Dashboard</app-button>
+ * <app-button routerLink="/todays-practice" variant="text">Open Today's Practice</app-button>
  * ```
  *
  * @version 2.0.0 - Unified Design System

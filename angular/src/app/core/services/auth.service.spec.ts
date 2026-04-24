@@ -40,6 +40,7 @@ const mockSupabaseService = {
 // Mock Router
 const mockRouter = {
   navigate: vi.fn(),
+  navigateByUrl: vi.fn(),
 };
 
 const mockPlatformStorage = new Map<string, string>();
@@ -429,9 +430,11 @@ describe("AuthService", () => {
   // ============================================================================
 
   describe("Navigation", () => {
-    it("should redirect to dashboard", () => {
+    it("should redirect to role-aware home", () => {
       service.redirectToDashboard();
-      expect(mockRouter.navigate).toHaveBeenCalledWith(["/dashboard"]);
+      expect(mockRouter.navigateByUrl).toHaveBeenCalledWith(
+        "/todays-practice",
+      );
     });
 
     it("should redirect to login", () => {

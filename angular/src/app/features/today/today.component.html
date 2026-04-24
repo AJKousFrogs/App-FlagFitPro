@@ -186,8 +186,8 @@
       <!-- No ViewModel - show error -->
       <div class="today-page">
         <app-page-error-state
-          title="Unable to load plan"
-          [message]="error() || 'Please try refreshing the page.'"
+          title="We couldn't load today's practice"
+          [message]="error() || 'Refresh to try again.'"
           (retry)="refreshProtocol()"
         />
       </div>

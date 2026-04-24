@@ -13,7 +13,7 @@ import { ChangeDetectionStrategy, Component, output } from "@angular/core";
 
         <h1 class="ob-welcome__title">Welcome to<br>FlagFit Pro</h1>
         <p class="ob-welcome__subtitle">
-          Let's build your personalised training profile.<br>
+          Set up your training profile and get to today's plan.<br>
           Takes about 3 minutes.
         </p>
 

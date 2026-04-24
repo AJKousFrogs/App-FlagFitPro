@@ -174,7 +174,10 @@ export class OfficialsComponent implements OnInit {
             })),
           );
         },
-        error: (err) => this.logger.error("Failed to load upcoming games", err),
+        error: (err) => {
+          this.logger.error("Failed to load upcoming games", err);
+          this.toastService.error(TOAST.ERROR.LOAD_FAILED);
+        },
       });
   }
 
@@ -213,7 +216,10 @@ export class OfficialsComponent implements OnInit {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (summary) => this.paymentSummary.set(summary),
-        error: () => this.logger.error("Failed to load payment summary"),
+        error: (err) => {
+          this.logger.error("Failed to load payment summary", err);
+          this.toastService.error(TOAST.ERROR.LOAD_FAILED);
+        },
       });
   }
 

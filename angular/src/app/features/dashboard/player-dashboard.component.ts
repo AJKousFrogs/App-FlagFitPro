@@ -1,4 +1,4 @@
-/** Athlete home: readiness, training, schedule, insights. */
+/** Athlete overview: readiness, schedule, and trend insights. */
 
 import {
   ChangeDetectionStrategy,
@@ -57,7 +57,7 @@ import { ProfileCompletionService } from "../../core/services/profile-completion
 import { TeamMembershipService } from "../../core/services/team-membership.service";
 import { FeatureFlagsService } from "../../core/services/feature-flags.service";
 import { NextGenMetricsService } from "../../core/services/next-gen-metrics.service";
-import { TRAINING, UI_LIMITS } from "../../core/constants/app.constants";
+import { ROUTES, TRAINING, UI_LIMITS } from "../../core/constants/app.constants";
 import { getTimeAgo } from "../../shared/utils/date.utils";
 import {
   getProtocolAcwrDisplay,
@@ -151,8 +151,20 @@ export class PlayerDashboardComponent {
   errorMessage = signal("Failed to load dashboard. Please try again.");
 
   // User info
-  userName = signal("Athlete");
   private readonly currentUser = computed(() => this.supabase.currentUser());
+  readonly userName = computed(() => {
+    // 1. Users table (authoritative — populated after onboarding)
+    const profile = this.profileCompletionService.profileData();
+    if (profile?.firstName) return profile.firstName;
+    if (profile?.fullName) return profile.fullName.split(" ")[0];
+    // 2. Auth metadata (set by OAuth providers or email signup)
+    const meta = this.currentUser()?.user_metadata as
+      | { fullName?: string; firstName?: string }
+      | undefined;
+    const metaName = meta?.firstName || meta?.fullName;
+    if (metaName) return metaName.split(" ")[0];
+    return "Athlete";
+  });
   currentUserId = computed(() => this.currentUser()?.id ?? "");
   private overviewLoadedForUser = signal<string | null>(null);
 
@@ -336,8 +348,14 @@ export class PlayerDashboardComponent {
   // Performance chart - uses Chart.js format
   performanceChartData = signal<SimpleChartData | null>(null);
 
-  // Quick actions (order preserved from wireframe)
+  // Quick actions are ordered by most likely athlete intent.
   quickActions: QuickAction[] = [
+    {
+      label: "Today",
+      icon: "pi pi-play",
+      route: "/todays-practice",
+      description: "Open today’s training plan",
+    },
     {
       label: "Wellness",
       icon: "pi pi-heart",
@@ -355,12 +373,6 @@ export class PlayerDashboardComponent {
       icon: "pi pi-chart-bar",
       route: "/performance/insights",
       description: "Performance insights",
-    },
-    {
-      label: "Today",
-      icon: "pi pi-play",
-      route: "/todays-practice",
-      description: "Open today’s training plan",
     },
   ];
 
@@ -549,15 +561,6 @@ export class PlayerDashboardComponent {
   loadData(): void {
     this.isLoading.set(true);
     this.hasError.set(false);
-
-    const user = this.currentUser();
-    const metadata = user?.user_metadata as
-      | { fullName?: string; firstName?: string }
-      | undefined;
-    const fullName = metadata?.fullName || metadata?.firstName;
-    if (fullName) {
-      this.userName.set(fullName.split(" ")[0]);
-    }
 
     const today = new Date();
     const weekStart = getStartOfTrainingWeek(today);
@@ -947,7 +950,7 @@ export class PlayerDashboardComponent {
    * UX Audit Fix #5
    */
   navigateToACWR(): void {
-    this.router.navigate(["/performance/load"]);
+    this.router.navigate([ROUTES.ACWR]);
   }
 
   /**

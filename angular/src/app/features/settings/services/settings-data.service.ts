@@ -411,7 +411,7 @@ export class SettingsDataService {
     const { data, error } = await this.supabaseService.client
       .from("teams")
       .select("id, name")
-      .eq("approval_status", "approved")
+      .neq("approval_status", "rejected")
       .order("name");
     return { teams: (data as { id: string; name: string }[]) ?? [], error };
   }

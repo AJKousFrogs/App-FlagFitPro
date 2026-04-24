@@ -240,11 +240,7 @@ export class VideoFeedComponent {
       });
 
     afterNextRender(() => {
-      this.loadBookmarks();
-      // Simulate loading completion
-      setTimeout(() => {
-        this.isLoading.set(false);
-      }, 800);
+      void this.loadBookmarks().finally(() => this.isLoading.set(false));
     });
   }
 

@@ -174,6 +174,7 @@ export async function generateFallbackProtocolExercises(
   exercises.push({
     protocol_id: protocolId,
     exercise_id: null,
+    exercise_name: mobilityExercise.name,
     block_type: "morning_mobility",
     sequence_order: sequenceOrder,
     prescribed_sets: 1,
@@ -190,6 +191,7 @@ export async function generateFallbackProtocolExercises(
       exercises.push({
         protocol_id: protocolId,
         exercise_id: null,
+        exercise_name: ex.name,
         block_type: "foam_roll",
         sequence_order: sequenceOrder,
         prescribed_sets: ex.sets || 1,
@@ -239,6 +241,7 @@ export async function generateFallbackProtocolExercises(
     exercises.push({
       protocol_id: protocolId,
       exercise_id: null,
+      exercise_name: item.name,
       block_type: "warm_up",
       sequence_order: sequenceOrder,
       prescribed_sets: item.sets || 1,
@@ -260,6 +263,7 @@ export async function generateFallbackProtocolExercises(
         exercises.push({
           protocol_id: protocolId,
           exercise_id: null,
+          exercise_name: ex.name,
           block_type: "isometrics",
           sequence_order: sequenceOrder,
           prescribed_sets: ex.sets || 3,
@@ -277,6 +281,7 @@ export async function generateFallbackProtocolExercises(
         exercises.push({
           protocol_id: protocolId,
           exercise_id: null,
+          exercise_name: ex.name,
           block_type: "plyometrics",
           sequence_order: sequenceOrder,
           prescribed_sets: ex.sets || 3,
@@ -293,6 +298,7 @@ export async function generateFallbackProtocolExercises(
         exercises.push({
           protocol_id: protocolId,
           exercise_id: null,
+          exercise_name: ex.name,
           block_type: "strength",
           sequence_order: sequenceOrder,
           prescribed_sets: ex.sets || 3,
@@ -309,6 +315,7 @@ export async function generateFallbackProtocolExercises(
         exercises.push({
           protocol_id: protocolId,
           exercise_id: null,
+          exercise_name: ex.name,
           block_type: "conditioning",
           sequence_order: sequenceOrder,
           prescribed_sets: ex.sets || 4,
@@ -326,6 +333,7 @@ export async function generateFallbackProtocolExercises(
         exercises.push({
           protocol_id: protocolId,
           exercise_id: null,
+          exercise_name: ex.name,
           block_type: "skill_drills",
           sequence_order: sequenceOrder,
           prescribed_sets: ex.sets || 3,
@@ -344,6 +352,7 @@ export async function generateFallbackProtocolExercises(
       exercises.push({
         protocol_id: protocolId,
         exercise_id: null,
+        exercise_name: ex.name,
         block_type: "cool_down",
         sequence_order: sequenceOrder,
         prescribed_sets: ex.sets || 1,
@@ -362,6 +371,7 @@ export async function generateFallbackProtocolExercises(
       exercises.push({
         protocol_id: protocolId,
         exercise_id: null,
+        exercise_name: ex.name,
         block_type: "evening_recovery",
         sequence_order: sequenceOrder,
         prescribed_sets: ex.sets || 1,

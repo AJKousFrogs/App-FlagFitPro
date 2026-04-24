@@ -1,6 +1,6 @@
 import { Routes } from "@angular/router";
 import { authGuard } from "../../guards/auth.guard";
-import { coachRoleGuard } from "../../guards/team-role.guard";
+import { coachRoleGuard, staffRoleGuard } from "../../guards/team-role.guard";
 
 export const teamRoutes: Routes = [
   {
@@ -43,7 +43,7 @@ export const teamRoutes: Routes = [
       import("../../../features/dashboard/coach-dashboard.component").then(
         (m) => m.CoachDashboardComponent,
       ),
-    canActivate: [authGuard, coachRoleGuard],
+    canActivate: [authGuard, staffRoleGuard],
     data: {
       preload: true,
       priority: "high",
@@ -67,7 +67,7 @@ export const teamRoutes: Routes = [
       import("../../../features/coach/coach-analytics/coach-analytics.component").then(
         (m) => m.CoachAnalyticsComponent,
       ),
-    canActivate: [authGuard, coachRoleGuard],
+    canActivate: [authGuard, staffRoleGuard],
     data: {
       preload: true,
       priority: "high",
@@ -150,7 +150,7 @@ export const teamRoutes: Routes = [
       import("../../../features/coach/injury-management/injury-management.component").then(
         (m) => m.InjuryManagementComponent,
       ),
-    canActivate: [authGuard, coachRoleGuard],
+    canActivate: [authGuard, staffRoleGuard],
     data: { preload: false, entry: "internal", headerPreset: "analytics" },
   },
   {
@@ -174,7 +174,7 @@ export const teamRoutes: Routes = [
       import("../../../features/coach/player-development/player-development.component").then(
         (m) => m.PlayerDevelopmentComponent,
       ),
-    canActivate: [authGuard, coachRoleGuard],
+    canActivate: [authGuard, staffRoleGuard],
     data: { preload: false, entry: "internal", headerPreset: "analytics" },
   },
   {

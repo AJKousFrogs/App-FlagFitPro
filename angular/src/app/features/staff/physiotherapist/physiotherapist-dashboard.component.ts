@@ -10,6 +10,7 @@ import {
 } from "@angular/core";
 import { RouterModule } from "@angular/router";
 import { UI_LIMITS } from "@core/constants";
+import { AlertComponent } from "../../../shared/components/alert/alert.component";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { IconButtonComponent } from "../../../shared/components/button/icon-button.component";
 import { SelectComponent } from "../../../shared/components/select/select.component";
@@ -202,6 +203,7 @@ const RTP_PHASES = [
     CommonModule,
     FormsModule,
     RouterModule,
+    AlertComponent,
     AppDialogComponent,
     DialogHeaderComponent,
     DialogFooterComponent,
@@ -240,6 +242,8 @@ export class PhysiotherapistDashboardComponent implements OnInit {
   athletes = signal<AthletePhysioData[]>([]);
   riskIndicators = signal<RiskIndicators[]>([]);
   rtpData = signal<ReturnToPlayData[]>([]);
+  rtpLoadError = signal(false);
+  injuryHistoryLoadError = signal(false);
   injuryHistoryMap = signal<Map<string, InjuryHistory>>(new Map());
   sharedInsights = signal<SharedInsight[]>([]);
 
@@ -531,7 +535,9 @@ export class PhysiotherapistDashboardComponent implements OnInit {
         );
         this.rtpData.set(rtpList);
       }
-    } catch {
+    } catch (error) {
+      this.logger.warn("[Physio] Failed to load RTP data", error);
+      this.rtpLoadError.set(true);
       this.rtpData.set([]);
     }
   }
@@ -594,8 +600,9 @@ export class PhysiotherapistDashboardComponent implements OnInit {
                 : null,
           });
         }
-      } catch {
-        // Skip athletes with no injury data
+      } catch (error) {
+        this.logger.warn(`[Physio] Failed to load injury history for athlete ${athlete.id}`, error);
+        this.injuryHistoryLoadError.set(true);
       }
     }
     this.injuryHistoryMap.set(historyMap);

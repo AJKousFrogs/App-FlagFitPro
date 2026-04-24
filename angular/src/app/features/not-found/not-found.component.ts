@@ -1,5 +1,6 @@
 import { Component, ChangeDetectionStrategy, inject } from "@angular/core";
 import { Router, RouterModule } from "@angular/router";
+import { HomeRouteService } from "../../core/services/home-route.service";
 import { ButtonComponent } from "../../shared/components/button/button.component";
 import { PageErrorStateComponent } from "../../shared/components/page-error-state/page-error-state.component";
 
@@ -20,8 +21,8 @@ import { PageErrorStateComponent } from "../../shared/components/page-error-stat
           [showRetry]="false"
         ></app-page-error-state>
         <div class="not-found-actions">
-          <app-button size="lg" iconLeft="pi-home" routerLink="/dashboard"
-            >Go to Dashboard</app-button
+          <app-button size="lg" iconLeft="pi-home" [routerLink]="homeRoute()"
+            >Go to Home</app-button
           >
           <app-button
             variant="outlined"
@@ -34,7 +35,7 @@ import { PageErrorStateComponent } from "../../shared/components/page-error-stat
         <div class="not-found-links">
           <p>Here are some helpful links:</p>
           <ul>
-            <li><a routerLink="/dashboard">Dashboard</a></li>
+            <li><a [routerLink]="homeRoute()">Home</a></li>
             <li><a routerLink="/training">Training</a></li>
             <li><a routerLink="/performance/insights">Performance</a></li>
             <li><a routerLink="/settings">Settings</a></li>
@@ -47,12 +48,17 @@ import { PageErrorStateComponent } from "../../shared/components/page-error-stat
 })
 export class NotFoundComponent {
   private readonly router = inject(Router);
+  private readonly homeRouteService = inject(HomeRouteService);
+
+  homeRoute(): string {
+    return this.homeRouteService.getHomeRoute();
+  }
 
   goBack(): void {
     if (typeof window !== "undefined" && window.history.length > 1) {
       window.history.back();
     } else {
-      void this.router.navigate(["/dashboard"]);
+      void this.router.navigateByUrl(this.homeRoute());
     }
   }
 }

@@ -447,7 +447,6 @@ export class DataImportComponent implements OnInit {
 
     this.toastService.info("Downloading file from URL...", "Fetching");
 
-    // In real implementation, this would fetch the file
     this.api.post(API_ENDPOINTS.dataImport.fetchUrl, { url: this.importUrl }).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (_response: unknown) => {
         // Process fetched data
@@ -537,34 +536,11 @@ export class DataImportComponent implements OnInit {
 
   // Wearable Methods
   connectDevice(device: WearableDevice): void {
-    this.toastService.info(`Opening ${device.name} authorization...`, "Connecting");
-
-    // In real implementation, this would open OAuth flow
-    setTimeout(() => {
-      this.wearableDevices.update((devices) =>
-        devices.map((d) =>
-          d.id === device.id
-            ? { ...d, connected: true, lastSync: "Just now" }
-            : d,
-        ),
-      );
-
-      this.toastService.success(`${device.name} connected successfully`, "Connected");
-    }, 1500);
+    this.toastService.info(`${device.name} integration coming soon`, "Coming Soon");
   }
 
   syncDevice(device: WearableDevice): void {
-    this.toastService.info(`Syncing ${device.name}...`, "Syncing");
-
-    setTimeout(() => {
-      this.wearableDevices.update((devices) =>
-        devices.map((d) =>
-          d.id === device.id ? { ...d, lastSync: "Just now" } : d,
-        ),
-      );
-
-      this.toastService.success(`${device.name} data synced`, "Synced");
-    }, 1000);
+    this.toastService.info(`${device.name} sync coming soon`, "Coming Soon");
   }
 
   disconnectDevice(device: WearableDevice): void {

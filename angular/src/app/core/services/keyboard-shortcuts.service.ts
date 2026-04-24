@@ -26,6 +26,7 @@ import {
   OnDestroy,
 } from "@angular/core";
 import { Router } from "@angular/router";
+import { HomeRouteService } from "./home-route.service";
 import { LoggerService } from "./logger.service";
 
 export interface KeyboardShortcut {
@@ -57,6 +58,7 @@ interface _ShortcutState {
 })
 export class KeyboardShortcutsService implements OnDestroy {
   private router = inject(Router);
+  private homeRouteService = inject(HomeRouteService);
   private logger = inject(LoggerService);
   private ngZone = inject(NgZone);
 
@@ -141,9 +143,9 @@ export class KeyboardShortcutsService implements OnDestroy {
     this.register({
       id: "home",
       keys: ["ctrl+h", "cmd+h"],
-      description: "Go to dashboard",
+      description: "Go to home",
       category: "navigation",
-      action: () => this.router.navigate(["/dashboard"]),
+      action: () => this.router.navigateByUrl(this.homeRouteService.getHomeRoute()),
     });
 
     this.register({

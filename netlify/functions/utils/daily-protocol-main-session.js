@@ -251,6 +251,7 @@ async function addSprintMainSession({
     const config = getSprintExerciseConfig(exercise, sprintPhase);
     protocolExercises.push({
       exercise_id: exercise.id,
+      exercise_name: exercise.name,
       block_type: "main_session",
       sequence_order: idx + 1,
       prescribed_sets: config.sets,
@@ -284,6 +285,7 @@ async function addFlagMainSession({ supabase, protocolExercises }) {
   flagExercises.slice(0, 6).forEach((exercise, idx) => {
     protocolExercises.push({
       exercise_id: exercise.id,
+      exercise_name: exercise.name,
       block_type: "main_session",
       sequence_order: idx + 1,
       prescribed_sets: exercise.default_sets || 3,
@@ -334,6 +336,7 @@ async function addFallbackMainSession({
   fallbackExercises.forEach((exercise, idx) => {
     protocolExercises.push({
       exercise_id: exercise.id,
+      exercise_name: exercise.name,
       block_type: "main_session",
       sequence_order: idx + 1,
       prescribed_sets: exercise.default_sets || 3,

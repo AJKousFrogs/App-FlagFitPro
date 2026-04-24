@@ -167,7 +167,10 @@ export class EquipmentComponent implements OnInit {
             data.members.map((m) => ({ id: m.playerId, name: m.playerName })),
           );
         },
-        error: (err) => this.logger.error("Failed to load team players", err),
+        error: (err) => {
+          this.logger.error("Failed to load team players", err);
+          this.toastService.error(TOAST.ERROR.LOAD_FAILED);
+        },
       });
   }
 
@@ -212,7 +215,10 @@ export class EquipmentComponent implements OnInit {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (assignments) => this.assignments.set(assignments),
-        error: () => this.logger.error("Failed to load assignments"),
+        error: (err) => {
+          this.logger.error("Failed to load assignments", err);
+          this.toastService.error(TOAST.ERROR.LOAD_FAILED);
+        },
       });
   }
 
@@ -225,7 +231,10 @@ export class EquipmentComponent implements OnInit {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (summary) => this.summary.set(summary),
-        error: () => this.logger.error("Failed to load summary"),
+        error: (err) => {
+          this.logger.error("Failed to load summary", err);
+          this.toastService.error(TOAST.ERROR.LOAD_FAILED);
+        },
       });
   }
 

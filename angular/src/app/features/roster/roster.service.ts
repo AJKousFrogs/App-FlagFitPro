@@ -180,7 +180,7 @@ export class RosterService {
           .from("team_members")
           .select("team_id, role, teams(name)")
           .eq("user_id", userId)
-          .single();
+          .maybeSingle();
 
       this.logger.warn(
         `[RosterService] Team member query result:`,
@@ -613,7 +613,7 @@ export class RosterService {
         .eq("team_id", teamId)
         .eq("email", email)
         .eq("status", "pending")
-        .single();
+        .maybeSingle();
 
       if (existing) {
         return {
@@ -1145,7 +1145,7 @@ export class RosterService {
       .from("team_members")
       .select("team_id")
       .eq("user_id", userId)
-      .single();
+      .maybeSingle();
 
     if (teamMember?.team_id) {
       this.currentTeamId.set(teamMember.team_id);

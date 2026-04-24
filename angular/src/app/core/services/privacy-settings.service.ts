@@ -189,9 +189,11 @@ export class PrivacySettingsService {
         .from("privacy_settings")
         .select("*")
         .eq("user_id", userId)
-        .single();
+        .maybeSingle();
 
-      if (error && error.code === "PGRST116") {
+      if (error) {
+        throw error;
+      } else if (!existingSettings) {
         // No settings found, create default
         const { data: newSettings, error: insertError } =
           await this.supabase.client
@@ -202,8 +204,6 @@ export class PrivacySettingsService {
 
         if (insertError) throw insertError;
         settingsData = newSettings;
-      } else if (error) {
-        throw error;
       } else {
         settingsData = existingSettings;
       }
@@ -300,7 +300,7 @@ export class PrivacySettingsService {
         .from("users")
         .select("date_of_birth")
         .eq("id", userId)
-        .single();
+        .maybeSingle();
 
       if (!user?.date_of_birth) return;
 
@@ -332,7 +332,7 @@ export class PrivacySettingsService {
         .in("consent_status", ["pending", "verified"])
         .order("created_at", { ascending: false })
         .limit(1)
-        .single();
+        .maybeSingle();
 
       if (consent) {
         this._parentalConsent.set({

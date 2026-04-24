@@ -1,5 +1,10 @@
 import { Injectable } from "@angular/core";
-import type { DailyProtocol, ProtocolBlock } from "../training/daily-protocol/daily-protocol.models";
+import {
+  formatPrescription,
+  type DailyProtocol,
+  type PrescribedExercise,
+  type ProtocolBlock,
+} from "../training/daily-protocol/daily-protocol.models";
 import type { ProtocolJson, TodayViewModel } from "./resolution/today-state.resolver";
 import { resolveYouTubeVideoMetadata } from "../../shared/utils/youtube-video.utils";
 
@@ -21,6 +26,9 @@ export interface ExactTrainingSummary {
   description: string;
   startBlock: string;
   firstExercise: string | null;
+  featuredVideoId: string | null;
+  featuredVideoTitle: string | null;
+  featuredVideos: ExactTrainingVideoItem[];
   blockCount: number;
   exerciseCount: number;
   estimatedMinutes: number;
@@ -28,6 +36,17 @@ export interface ExactTrainingSummary {
   readinessText: string | null;
   acwrText: string | null;
   coachContext: string | null;
+}
+
+export interface ExactTrainingVideoItem {
+  exerciseId: string;
+  exerciseName: string;
+  blockType: string;
+  blockLabel: string;
+  prescriptionLabel: string;
+  videoId: string;
+  videoUrl: string | null;
+  thumbnailUrl: string | null;
 }
 
 @Injectable({
@@ -124,19 +143,44 @@ export class TodayProtocolFacade {
       (total, block) => total + (block.estimatedDurationMinutes ?? 0),
       0,
     );
-    const videoCount = substantiveBlocks.reduce(
-      (total, block) =>
-        total +
-        block.exercises.filter((exercise) =>
-          Boolean(
-            resolveYouTubeVideoMetadata({
-              videoId: exercise.exercise.videoId,
-              videoUrl: exercise.exercise.videoUrl,
-            }).videoId,
-          ),
-        ).length,
-      0,
-    );
+    const featuredVideos: ExactTrainingVideoItem[] = [];
+    const seenExerciseIds = new Set<string>();
+    for (const block of substantiveBlocks) {
+      for (const exercise of block.exercises) {
+        const exerciseId = exercise.exerciseId;
+        if (!exerciseId || seenExerciseIds.has(exerciseId)) {
+          continue;
+        }
+
+        const metadata = resolveYouTubeVideoMetadata({
+          videoId: exercise.exercise.videoId,
+          videoUrl: exercise.exercise.videoUrl,
+          exerciseName: exercise.exercise.name,
+        });
+
+        if (!metadata.videoId) {
+          continue;
+        }
+
+        seenExerciseIds.add(exerciseId);
+        featuredVideos.push({
+          exerciseId,
+          exerciseName: exercise.exercise.name,
+          blockType: exercise.blockType,
+          blockLabel: block.title,
+          prescriptionLabel: formatPrescription(exercise as PrescribedExercise),
+          videoId: metadata.videoId,
+          videoUrl: metadata.videoUrl,
+          thumbnailUrl: metadata.thumbnailUrl,
+        });
+      }
+    }
+
+    const featuredVideo = featuredVideos[0] ?? null;
+    const featuredVideoId: string | null = featuredVideo?.videoId ?? null;
+    const featuredVideoTitle: string | null =
+      featuredVideo?.exerciseName ?? null;
+    const videoCount = featuredVideos.length;
 
     const firstBlock = substantiveBlocks[0];
     const firstExercise = firstBlock.exercises[0]?.exercise.name ?? null;
@@ -148,7 +192,7 @@ export class TodayProtocolFacade {
       filmRoomTime ? `Film room at ${filmRoomTime}` : null,
       protocolJson?.coach_modified ? "Coach-adjusted plan" : null,
       estimatedMinutes > 0 ? `~${estimatedMinutes} minutes total` : null,
-      videoCount > 0 ? `${videoCount} video-guided exercises` : null,
+      videoCount > 0 ? `${videoCount} video-guided drills` : null,
     ].filter((value): value is string => Boolean(value));
 
     return {
@@ -159,6 +203,9 @@ export class TodayProtocolFacade {
         "Your exact individual session is ready to execute.",
       startBlock: firstBlock.title,
       firstExercise,
+      featuredVideoId,
+      featuredVideoTitle,
+      featuredVideos,
       blockCount: substantiveBlocks.length,
       exerciseCount,
       estimatedMinutes,

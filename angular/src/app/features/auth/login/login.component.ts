@@ -26,6 +26,7 @@ import {
   AuthService,
   AuthSessionResult,
 } from "../../../core/services/auth.service";
+import { HomeRouteService } from "../../../core/services/home-route.service";
 import { ToastService } from "../../../core/services/toast.service";
 import { TOAST } from "../../../core/constants/toast-messages.constants";
 import { getErrorMessage } from "../../../shared/utils/error.utils";
@@ -150,7 +151,7 @@ type LoginForm = FormGroup<{
             type="submit"
             iconLeft="pi-lock"
             [loading]="isLoading()"
-            [disabled]="!isFormValid() || isLoading()"
+            [disabled]="!formValid() || isLoading()"
             [fullWidth]="true"
             class="elite-auth-sticky-cta"
             testId="login-submit"
@@ -180,6 +181,7 @@ export class LoginComponent implements OnInit {
   private router = inject(Router);
   private route = inject(ActivatedRoute);
   private toastService = inject(ToastService);
+  private homeRouteService = inject(HomeRouteService);
   private destroyRef = inject(DestroyRef);
 
   loginForm: LoginForm;
@@ -193,7 +195,6 @@ export class LoginComponent implements OnInit {
   formValid = signal(false);
 
   // Computed form state signals
-  isFormValid = computed(() => this.formValid());
   emailError = computed(() => {
     const control = this.loginForm.get("email");
     return control && (this.submitted() || control.touched)
@@ -358,7 +359,7 @@ export class LoginComponent implements OnInit {
       );
       await this.router.navigateByUrl(destination);
     } catch {
-      await this.router.navigate(["/dashboard"]);
+      await this.router.navigateByUrl(this.homeRouteService.getHomeRoute());
     }
   }
 

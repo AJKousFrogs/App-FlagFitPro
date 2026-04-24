@@ -52,9 +52,9 @@ import { ButtonComponent } from "../button/button.component";
 })
 export class PageErrorStateComponent {
   // Angular 21 Signals
-  title = input<string>("Unable to load data");
+  title = input<string>("We couldn't load this yet");
   message = input<string>(
-    "Something went wrong while loading this page. Please try again.",
+    "Refresh to try again.",
   );
   icon = input<string>("pi-exclamation-circle");
   titleTag = input<"h1" | "h2" | "h3">("h3");

@@ -514,17 +514,9 @@ export class AiCoachChatComponent implements OnInit, AfterViewChecked {
   }
 
   userInitials(): string {
-    const metadata = this.supabase.currentUser()?.user_metadata as
-      | { fullName?: string; firstName?: string }
-      | undefined;
-    const fullName = metadata?.fullName || metadata?.firstName;
-    if (!fullName) return "U";
-    const parts = fullName.split(" ");
-    return parts
-      .map((p) => p[0])
-      .join("")
-      .substring(0, 2)
-      .toUpperCase();
+    const name = this.suggestions.userName();
+    if (!name) return "U";
+    return name.substring(0, 2).toUpperCase();
   }
 
   isRecentMessage(index: number): boolean {

@@ -101,6 +101,7 @@ export async function updateProtocolGenerationRequestStatus(
 function serializeProtocolExercises(protocolExercises) {
   return protocolExercises.map((ex) => ({
     exercise_id: ex.exercise_id,
+    exercise_name: ex.exercise_name || null,
     block_type: ex.block_type,
     sequence_order: ex.sequence_order,
     prescribed_sets: ex.prescribed_sets ?? null,
@@ -161,6 +162,7 @@ async function createProtocolWithoutRpc({
       persistedExercises.map((exercise) => ({
         protocol_id: protocol.id,
         exercise_id: exercise.exercise_id,
+        exercise_name: exercise.exercise_name || null,
         block_type: exercise.block_type,
         sequence_order: exercise.sequence_order,
         prescribed_sets: exercise.prescribed_sets,

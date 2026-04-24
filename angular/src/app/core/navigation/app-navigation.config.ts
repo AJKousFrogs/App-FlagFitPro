@@ -27,20 +27,19 @@ const EXACT_NAV_ROUTES = new Set([
 const ATHLETE_NAV_ITEMS: readonly AppNavigationItem[] = [
   // ── HOME ──────────────────────────────────────────────────────────
   {
-    label: "Dashboard",
-    route: "/player-dashboard",
-    icon: "pi-home",
-    ariaLabel: "Dashboard - Overview of your training and progress",
-    group: "home",
-    mobilePrimary: true,
-  },
-  {
     label: "Today",
     route: "/todays-practice",
     icon: "pi-calendar",
     ariaLabel: "Today's Practice - Your training for today",
     group: "home",
     mobilePrimary: true,
+  },
+  {
+    label: "Overview",
+    route: "/player-dashboard",
+    icon: "pi-home",
+    ariaLabel: "Overview - Training progress, status, and trends",
+    group: "home",
   },
   // ── ATHLETE ───────────────────────────────────────────────────────
   {
@@ -363,6 +362,10 @@ const COACH_NAV_ROLES = [
   "defense_coordinator",
   "assistant_coach",
   "manager",
+  "physiotherapist",
+  "nutritionist",
+  "psychologist",
+  "strength_conditioning_coach",
 ] as const;
 
 export function isCoachNavigationRole(role: string | undefined): boolean {

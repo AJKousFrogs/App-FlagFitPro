@@ -21,6 +21,5 @@ export const femaleAthleteGuard: CanActivateFn = async () => {
   }
 
   // Redirect non-female users to wellness page
-  router.navigate(["/wellness"]);
-  return false;
+  return router.createUrlTree(["/wellness"]);
 };

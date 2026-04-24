@@ -78,6 +78,9 @@ import { AuthFlowDataService } from "../services/auth-flow-data.service";
                   {{ getFieldError("password") }}
                 </small>
               }
+              <small class="p-hint">
+                Min. 8 characters — must include uppercase, lowercase, number, and special character (@ $ ! % * ? &).
+              </small>
             </div>
 
             <div class="p-field mb-4">
@@ -251,8 +254,9 @@ export class UpdatePasswordComponent implements OnInit {
     const hasUpperCase = /[A-Z]/.test(value);
     const hasLowerCase = /[a-z]/.test(value);
     const hasNumeric = /[0-9]/.test(value);
+    const hasSpecial = /[@$!%*?&]/.test(value);
 
-    const valid = hasUpperCase && hasLowerCase && hasNumeric;
+    const valid = hasUpperCase && hasLowerCase && hasNumeric && hasSpecial;
 
     return valid ? null : { passwordStrength: true };
   }
@@ -288,7 +292,7 @@ export class UpdatePasswordComponent implements OnInit {
         return "Password must be at least 8 characters";
       }
       if (field?.hasError("passwordStrength")) {
-        return "Password must contain uppercase, lowercase, and a number";
+        return "Password must contain uppercase, lowercase, number, and special character (@ $ ! % * ? &)";
       }
     }
 

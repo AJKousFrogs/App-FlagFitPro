@@ -96,7 +96,7 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
                   <h3>Today's Practice</h3>
                   <p>Log today’s session before you leave.</p>
                 </a>
-                <a class="tool-card" routerLink="/training/schedule">
+                <a class="tool-card" routerLink="/training">
                   <i class="pi pi-calendar"></i>
                   <h3>Full Calendar</h3>
                   <p>View past and future planned events.</p>

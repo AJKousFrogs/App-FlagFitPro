@@ -1173,7 +1173,8 @@ export class TournamentsComponent implements OnInit {
       );
 
       return data || null;
-    } catch {
+    } catch (error) {
+      this.logger.warn("[Tournaments] Unexpected error getting current team ID", error);
       return null;
     }
   }

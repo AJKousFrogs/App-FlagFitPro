@@ -22,6 +22,7 @@ import {
   isExactNavigationRoute,
 } from "../../../core/navigation/app-navigation.config";
 import { ConfirmDialogService } from "../../../core/services/confirm-dialog.service";
+import { HomeRouteService } from "../../../core/services/home-route.service";
 import { PlatformService } from "../../../core/services/platform.service";
 import { ShellBodyStateService } from "../../../core/services/shell-body-state.service";
 import { SupabaseService } from "../../../core/services/supabase.service";
@@ -56,9 +57,9 @@ import { NavItemComponent } from "../nav-item.component";
 
       <a
         class="sidebar-logo"
-        routerLink="/dashboard"
-        title="FlagFit Pro - Go to Dashboard"
-        aria-label="Go to dashboard"
+        [routerLink]="homeRoute()"
+        title="FlagFit Pro - Go to Home"
+        aria-label="Go to home"
       >
         <div class="logo-icon-wrapper">
           <i class="pi pi-flag-fill"></i>
@@ -171,6 +172,7 @@ export class SidebarComponent implements OnInit {
   private readonly supabase = inject(SupabaseService);
   private readonly confirmDialog = inject(ConfirmDialogService);
   private readonly shellBodyState = inject(ShellBodyStateService);
+  private readonly homeRouteService = inject(HomeRouteService);
   private readonly platform = inject(PlatformService);
   private readonly platformId = inject(PLATFORM_ID);
   private readonly destroyRef = inject(DestroyRef);
@@ -234,6 +236,8 @@ export class SidebarComponent implements OnInit {
     const userRole = this.currentUserRole();
     return getMeNavigationItems(userRole);
   });
+
+  homeRoute = computed(() => this.homeRouteService.getHomeRoute());
 
   userName = computed(() => {
     const user = this.currentUser();

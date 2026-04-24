@@ -1,5 +1,5 @@
 <app-main-layout>
-      <!-- Loading State - Dashboard-Specific Skeleton (Evidence-Based UX) -->
+      <!-- Loading State - Overview skeleton -->
       @if (isLoading()) {
         <app-dashboard-skeleton></app-dashboard-skeleton>
       }
@@ -7,13 +7,13 @@
       <!-- Error State -->
       @if (hasError()) {
         <app-page-error-state
-          title="Unable to load dashboard"
+          title="Unable to load overview"
           [message]="errorMessage()"
           (retry)="loadData()"
         ></app-page-error-state>
       }
 
-      <!-- Dashboard Content -->
+      <!-- Overview Content -->
       @if (!isLoading() && !hasError()) {
         <div class="player-dashboard bento-grid">
           <!-- SECTION 1: Welcome Header (Spans 2 columns) -->

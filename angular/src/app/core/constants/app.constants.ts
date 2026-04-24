@@ -92,16 +92,15 @@ export const ROUTES = {
 
   // Training
   TRAINING: "/training",
-  TRAINING_SCHEDULE: "/training/schedule",
+  TRAINING_SCHEDULE: "/training",
   TRAINING_LOG: "/training/log",
-  TRAINING_PROTOCOL: "/training/protocol",
+  TRAINING_PROTOCOL: "/todays-practice",
   TRAINING_SMART_FORM: "/training/smart-form",
   TODAY: "/todays-practice",
 
   // Analytics & Performance
   ANALYTICS: "/performance/insights",
-  ACWR: "/performance/load",
-  ACWR_DASHBOARD: "/performance/load",
+  ACWR: "/acwr",
   PERFORMANCE_TRACKING: "/performance/tests",
   GAME_TRACKER: "/tournaments",
 
@@ -125,7 +124,7 @@ export const ROUTES = {
 
   // Game
   PLAYBOOK: "/playbook",
-  FILM_ROOM: "/film-room",
+  FILM_ROOM: "/film",
   TOURNAMENTS: "/tournaments",
 
   // Social

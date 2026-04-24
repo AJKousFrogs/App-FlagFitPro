@@ -186,7 +186,7 @@ export async function loadWeeklyScheduleSnapshot({
       .eq("program_id", programId)
       .lte("start_date", today)
       .gte("end_date", today)
-      .single();
+      .maybeSingle();
 
     if (!(currentPhase as TrainingPhaseRecord | null)?.id) {
       onInfo?.("No active phase found for current date");
@@ -199,7 +199,7 @@ export async function loadWeeklyScheduleSnapshot({
       .eq("phase_id", (currentPhase as TrainingPhaseRecord).id)
       .lte("start_date", today)
       .gte("end_date", today)
-      .single();
+      .maybeSingle();
 
     if (!(currentWeek as TrainingWeekRecord | null)?.id) {
       onInfo?.("No active week found for current date");

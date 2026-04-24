@@ -17,6 +17,7 @@ import { PageErrorStateComponent } from "../../../shared/components/page-error-s
 import { getErrorMessage } from "../../../shared/utils/error.utils";
 import { ToastService } from "../../../core/services/toast.service";
 import { PlatformService } from "../../../core/services/platform.service";
+import { HomeRouteService } from "../../../core/services/home-route.service";
 import { formatDate } from "../../../shared/utils/date.utils";
 import { TeamInvitationDataService } from "../services/team-invitation-data.service";
 
@@ -66,6 +67,7 @@ export class AcceptInvitationComponent implements OnInit {
   private toastService = inject(ToastService);
   private teamInvitationDataService = inject(TeamInvitationDataService);
   private platform = inject(PlatformService);
+  private homeRouteService = inject(HomeRouteService);
 
   isLoading = signal(true);
   isProcessing = signal(false);
@@ -81,6 +83,7 @@ export class AcceptInvitationComponent implements OnInit {
     const returnUrl = this.currentUrl();
     return returnUrl ? { returnUrl } : null;
   });
+  readonly homeRoute = computed(() => this.homeRouteService.getHomeRoute());
 
   ngOnInit(): void {
     // Store current URL for return after login
@@ -307,7 +310,7 @@ export class AcceptInvitationComponent implements OnInit {
 
       // Redirect to dashboard after 2 seconds
       setTimeout(() => {
-        this.router.navigate(["/dashboard"]);
+        this.router.navigateByUrl(this.homeRoute());
       }, 2000);
     } catch (error) {
       const message = getErrorMessage(

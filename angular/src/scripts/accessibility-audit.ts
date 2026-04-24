@@ -18,8 +18,8 @@ import { chromium } from "@playwright/test";
 
 const BASE_URL = process.env["BASE_URL"] || "http://localhost:4200";
 
-// Routes to audit. Unauthenticated routes hit the shell/login; /dashboard may redirect.
-const ROUTES_TO_AUDIT = ["/", "/login", "/register", "/dashboard"];
+// Routes to audit. Unauthenticated app routes hit the shell/login.
+const ROUTES_TO_AUDIT = ["/", "/login", "/register", "/todays-practice"];
 
 // Levels to report: 'critical' | 'serious' | 'moderate' | 'minor'
 const MIN_LEVEL = "moderate" as const;

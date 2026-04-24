@@ -19,7 +19,7 @@ import {
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { ToastService } from "../../core/services/toast.service";
-
+import { TOAST } from "../../core/constants/toast-messages.constants";
 import { ProgressBarComponent } from "../../shared/components/progress-bar/progress-bar.component";
 import { SelectComponent } from "../../shared/components/select/select.component";
 import { TableComponent } from "../../shared/components/table/table.component";
@@ -540,7 +540,10 @@ export class ReturnToPlayComponent implements OnInit {
         completed: checked ?? false,
       })
       .pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-        error: (err) => this.logger.error("Failed to update criterion", err),
+        error: (err) => {
+          this.logger.error("Failed to update criterion", err);
+          this.toastService.error(TOAST.ERROR.UPDATE_FAILED);
+        },
       });
   }
 

@@ -23,7 +23,7 @@ import { By } from "@angular/platform-browser";
       <h1>Test Page</h1>
       <nav aria-label="Main navigation">
         <ul>
-          <li><a href="/dashboard">Dashboard</a></li>
+          <li><a href="/todays-practice">Today's Practice</a></li>
           <li><a href="/training">Training</a></li>
         </ul>
       </nav>

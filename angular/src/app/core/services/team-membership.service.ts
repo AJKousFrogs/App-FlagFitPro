@@ -143,6 +143,7 @@ export class TeamMembershipService {
       "offense_coordinator",
       "defense_coordinator",
       "assistant_coach",
+      "manager",
     ].includes(role);
   });
 
@@ -157,6 +158,9 @@ export class TeamMembershipService {
       "admin",
       "head_coach",
       "coach",
+      "offense_coordinator",
+      "defense_coordinator",
+      "assistant_coach",
       "physiotherapist",
       "nutritionist",
       "psychologist",
@@ -501,7 +505,7 @@ export class TeamMembershipService {
         .select("role")
         .eq("user_id", userId)
         .eq("team_id", teamId)
-        .in("role", ["coach", "head_coach", "assistant_coach"])
+        .in("role", ["coach", "head_coach", "assistant_coach", "offense_coordinator", "defense_coordinator", "manager"])
         .maybeSingle();
 
       return !!data;

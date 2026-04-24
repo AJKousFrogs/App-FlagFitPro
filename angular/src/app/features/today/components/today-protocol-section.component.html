@@ -129,15 +129,15 @@
         } @else {
           <app-empty-state
             icon="calendar-plus"
-            heading="No Training Plan Yet"
-            description="Generate your personalized protocol to see exercises with videos and instructions."
+            heading="Today's Practice Is Ready To Build"
+            description="Generate today's plan to load your drills, coaching notes, and video demos."
           >
             <app-button
               iconLeft="pi-sparkles"
               [loading]="isGenerating()"
               (clicked)="generate.emit()"
             >
-              Generate Today's Protocol
+              Build Today's Practice
             </app-button>
           </app-empty-state>
         }

@@ -71,7 +71,7 @@ import { TodayProtocolSectionComponent } from "./components/today-protocol-secti
 import { TodayStatusStackComponent } from "./components/today-status-stack.component";
 
 // Constants
-import { TIMEOUTS, TRAINING } from "../../core/constants/app.constants";
+import { ROUTES, TIMEOUTS, TRAINING } from "../../core/constants/app.constants";
 import {
   WELLNESS,
   computeQuickReadiness,
@@ -665,7 +665,7 @@ export class TodayComponent {
           } else {
             // Generation already attempted, show error
             this.error.set(
-              "Unable to generate your training plan. Please contact support.",
+              "We couldn't build today's plan right now. Try refreshing in a moment.",
             );
             this.protocolJson.set(null);
             this.fullProtocolData = null;
@@ -681,7 +681,7 @@ export class TodayComponent {
             this.generateAndLoadProtocol(today);
           } else {
             this.error.set(
-              "Failed to load your training data. Please try again.",
+              "We couldn't load today's practice. Please try again.",
             );
             this.protocolJson.set(null);
             this.fullProtocolData = null;
@@ -729,7 +729,7 @@ export class TodayComponent {
           } else {
             // Generation failed, show explicit error
             this.error.set(
-              "Unable to generate your training plan. Please contact support.",
+              "We couldn't generate today's plan right now. Try again in a moment.",
             );
             this.protocolJson.set(null);
             this.fullProtocolData = null;
@@ -742,7 +742,7 @@ export class TodayComponent {
           this.logger.error("Failed to generate protocol", err);
           this.isGeneratingProtocol.set(false);
           this.error.set(
-            "Failed to generate your training plan. Please contact support.",
+            "We couldn't generate today's plan right now. Try again in a moment.",
           );
           this.protocolJson.set(null);
           this.fullProtocolData = null;
@@ -1013,7 +1013,7 @@ export class TodayComponent {
   // NAVIGATION
   // ============================================================================
   navigateToAcwr(): void {
-    this.router.navigate(["/performance/load"]);
+    this.router.navigate([ROUTES.ACWR]);
   }
 
   navigateToWellness(): void {

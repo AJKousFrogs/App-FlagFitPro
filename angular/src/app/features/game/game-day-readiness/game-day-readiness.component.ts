@@ -35,6 +35,7 @@ import { MainLayoutComponent } from "../../../shared/components/layout/main-layo
 
 // Services
 import { TOAST } from "../../../core/constants/toast-messages.constants";
+import { HomeRouteService } from "../../../core/services/home-route.service";
 import {
   LoggerService,
   toLogContext,
@@ -77,6 +78,7 @@ export class GameDayReadinessComponent implements OnInit {
   private readonly trainingService = inject(UnifiedTrainingService);
   private readonly supabase = inject(SupabaseService);
   private readonly toastService = inject(ToastService);
+  private readonly homeRouteService = inject(HomeRouteService);
   private readonly logger = inject(LoggerService);
   private readonly gameDayReadinessDataService = inject(
     GameDayReadinessDataService,
@@ -482,8 +484,8 @@ export class GameDayReadinessComponent implements OnInit {
     }
   }
 
-  goToDashboard(): void {
-    this.router.navigate(["/dashboard"]);
+  goToHome(): void {
+    this.router.navigateByUrl(this.homeRouteService.getHomeRoute());
   }
 
   viewGamePlan(): void {

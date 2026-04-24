@@ -4,6 +4,7 @@ import {
     Component,
     OnDestroy,
     OnInit,
+    computed,
     inject,
     signal,
 } from "@angular/core";
@@ -112,36 +113,8 @@ export class OnboardingComponent implements OnInit, OnDestroy {
     return this.state.steps()[this.state.currentStep()]?.label || "Setup";
   }
 
-  getCompletionStats(): {
-    completed: number;
-    total: number;
-    percent: number;
-    remaining: number;
-  } {
-    const requirements = this.getCompletionRequirements();
-    const total = requirements.length;
-    const completed = requirements.filter((item) => item.done).length;
-    const percent = total === 0 ? 0 : Math.round((completed / total) * 100);
-    return {
-      completed,
-      total,
-      percent,
-      remaining: Math.max(0, total - completed),
-    };
-  }
-
-  getPendingRequirementLabels(limit = 4): string[] {
-    return this.getCompletionRequirements()
-      .filter((item) => !item.done)
-      .slice(0, limit)
-      .map((item) => item.label);
-  }
-
-  hasPendingRequirements(): boolean {
-    return this.getCompletionStats().remaining > 0;
-  }
-
-  private getCompletionRequirements(): { label: string; done: boolean }[] {
+  /** Memoized list of completion requirements — recomputed when signals change. */
+  readonly completionRequirements = computed<{ label: string; done: boolean }[]>(() => {
     const f = this.state.formData;
     const isPlayer = this.state.isPlayer();
     const hasMetricPhysical = !!(f.heightCm && f.weightKg);
@@ -181,6 +154,35 @@ export class OnboardingComponent implements OnInit, OnDestroy {
     ];
 
     return [...shared, ...playerOnly];
+  });
+
+  getCompletionStats(): {
+    completed: number;
+    total: number;
+    percent: number;
+    remaining: number;
+  } {
+    const requirements = this.completionRequirements();
+    const total = requirements.length;
+    const completed = requirements.filter((item) => item.done).length;
+    const percent = total === 0 ? 0 : Math.round((completed / total) * 100);
+    return {
+      completed,
+      total,
+      percent,
+      remaining: Math.max(0, total - completed),
+    };
+  }
+
+  getPendingRequirementLabels(limit = 4): string[] {
+    return this.completionRequirements()
+      .filter((item) => !item.done)
+      .slice(0, limit)
+      .map((item) => item.label);
+  }
+
+  hasPendingRequirements(): boolean {
+    return this.getCompletionStats().remaining > 0;
   }
 
   constructor() {
@@ -477,7 +479,10 @@ export class OnboardingComponent implements OnInit, OnDestroy {
         }
         return { valid: true };
 
-      case 2: // Physical Measurements
+      case 2: // Physical Measurements (skipped for staff)
+        if (this.state.formData.userType === "staff") {
+          return { valid: true };
+        }
         if (this.state.formData.unitSystem === "metric") {
           if (!this.state.formData.heightCm) {
             return { valid: false, message: "Please enter your height" };
@@ -605,7 +610,7 @@ export class OnboardingComponent implements OnInit, OnDestroy {
           } else if (result.isStaff) {
             void this.router.navigate(["/team/workspace"]);
           } else {
-            void this.router.navigate(["/dashboard"]);
+            void this.router.navigate(["/todays-practice"]);
           }
         }, 1000);
       }

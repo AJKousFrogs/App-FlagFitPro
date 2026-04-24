@@ -2,6 +2,7 @@ import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { Router } from "@angular/router";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { LoggerService } from "../../../core/services/logger.service";
+import { HomeRouteService } from "../../../core/services/home-route.service";
 import { ToastService } from "../../../core/services/toast.service";
 import { AuthFlowDataService } from "../services/auth-flow-data.service";
 import { AuthCallbackComponent } from "./auth-callback.component";
@@ -37,6 +38,10 @@ describe("AuthCallbackComponent", () => {
     navigateByUrl: vi.fn(),
   } as unknown as Router;
 
+  const mockHomeRouteService = {
+    getHomeRoute: vi.fn(() => "/todays-practice"),
+  } as unknown as HomeRouteService;
+
   const mockBroadcastChannel = {
     postMessage: vi.fn(),
     close: vi.fn(),
@@ -52,7 +57,7 @@ describe("AuthCallbackComponent", () => {
     mockAuthFlowDataService.setSession = vi.fn();
     mockAuthFlowDataService.resolvePostAuthRedirect = vi
       .fn()
-      .mockResolvedValue("/dashboard");
+      .mockResolvedValue("/todays-practice");
     mockAuthFlowDataService.markPasswordRecoveryIntent = vi.fn();
     mockAuthFlowDataService.clearPendingVerificationEmail = vi.fn();
     mockRouter.navigate = vi.fn();
@@ -67,6 +72,7 @@ describe("AuthCallbackComponent", () => {
       imports: [AuthCallbackComponent],
       providers: [
         { provide: AuthFlowDataService, useValue: mockAuthFlowDataService },
+        { provide: HomeRouteService, useValue: mockHomeRouteService },
         { provide: ToastService, useValue: mockToastService },
         { provide: LoggerService, useValue: mockLoggerService },
         { provide: Router, useValue: mockRouter },
@@ -111,7 +117,7 @@ describe("AuthCallbackComponent", () => {
     expect(component.success()).toBe(true);
     expect(component.successMessage()).toBe("You are already signed in!");
     expect(mockAuthFlowDataService.resolvePostAuthRedirect).toHaveBeenCalled();
-    expect(mockRouter.navigateByUrl).toHaveBeenCalledWith("/dashboard");
+    expect(mockRouter.navigateByUrl).toHaveBeenCalledWith("/todays-practice");
   });
 
   it("handles signup callback and redirects after verification", async () => {

@@ -8,7 +8,7 @@ import {
 
 function createTeamRoleGuard(
   allowedRoles: readonly TeamRole[],
-  redirectTo = "/dashboard",
+  redirectTo = "/todays-practice",
 ): CanActivateFn {
   return async (_route, state) => {
     const supabaseService = inject(SupabaseService);

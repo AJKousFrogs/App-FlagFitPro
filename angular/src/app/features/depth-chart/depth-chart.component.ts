@@ -188,7 +188,10 @@ export class DepthChartComponent implements OnInit {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (players) => this.unassignedPlayers.set(players),
-        error: () => this.logger.error("Failed to load unassigned players"),
+        error: (err) => {
+          this.logger.error("Failed to load unassigned players", err);
+          this.toastService.error(TOAST.ERROR.LOAD_FAILED);
+        },
       });
   }
 

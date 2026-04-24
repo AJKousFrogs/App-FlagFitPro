@@ -141,8 +141,108 @@ describe("TodayProtocolFacade", () => {
     expect(summary?.videoCount).toBe(1);
     expect(summary?.startBlock).toBe("Morning Mobility");
     expect(summary?.firstExercise).toBe("Hip Flow");
+    expect(summary?.featuredVideoId).toBe("IWNnTJFwi3s");
+    expect(summary?.featuredVideoTitle).toBe("Hip Flow");
+    expect(summary?.featuredVideos).toHaveLength(1);
+    expect(summary?.featuredVideos[0]).toMatchObject({
+      exerciseName: "Hip Flow",
+      blockLabel: "Morning Mobility",
+      prescriptionLabel: "1 set",
+      videoId: "IWNnTJFwi3s",
+    });
     expect(summary?.readinessText).toBe("77% readiness");
     expect(summary?.acwrText).toBe("ACWR 1.09 · sweet spot");
+  });
+
+  it("dedupes video-guided drills by underlying exercise id", () => {
+    const protocol: Partial<DailyProtocol> = {
+      trainingFocus: "practice_day",
+      morningMobility: {
+        type: "morning_mobility",
+        title: "Morning Mobility",
+        icon: "pi-sun",
+        status: "pending",
+        completedCount: 0,
+        totalCount: 1,
+        progressPercent: 0,
+        exercises: [
+          {
+            id: "pe-1",
+            exerciseId: "ex-1",
+            blockType: "morning_mobility",
+            sequenceOrder: 1,
+            prescribedSets: 1,
+            status: "pending",
+            loadContributionAu: 0,
+            exercise: {
+              id: "ex-1",
+              name: "Hip Flow",
+              slug: "hip-flow",
+              category: "mobility",
+              howText: "Move slowly",
+              defaultSets: 1,
+              difficultyLevel: "beginner",
+              loadContributionAu: 0,
+              isHighIntensity: false,
+              videoUrl: "https://www.youtube.com/watch?v=IWNnTJFwi3s",
+            },
+          },
+        ],
+      },
+      mainSession: {
+        type: "main_session",
+        title: "Main Session",
+        icon: "pi-play",
+        status: "pending",
+        completedCount: 0,
+        totalCount: 1,
+        progressPercent: 0,
+        exercises: [
+          {
+            id: "pe-2",
+            exerciseId: "ex-1",
+            blockType: "main_session",
+            sequenceOrder: 1,
+            prescribedSets: 1,
+            status: "pending",
+            loadContributionAu: 0,
+            exercise: {
+              id: "ex-1",
+              name: "Hip Flow",
+              slug: "hip-flow",
+              category: "mobility",
+              howText: "Move slowly",
+              defaultSets: 1,
+              difficultyLevel: "beginner",
+              loadContributionAu: 0,
+              isHighIntensity: false,
+              videoUrl: "https://www.youtube.com/watch?v=IWNnTJFwi3s",
+            },
+          },
+        ],
+      },
+    };
+
+    const summary = facade.buildExactTrainingSummary({
+      todayViewModel: {
+        trainingAllowed: true,
+        banners: [],
+        blocksDisplayed: ["morning_mobility", "main_session"],
+        merlinPosture: "explanatory",
+      },
+      protocol,
+      protocolJson: null,
+      metrics: {
+        readinessScore: 72,
+        acwrValue: 1.1,
+        acwrRiskLevel: null,
+        hasCheckedInToday: true,
+      },
+    });
+
+    expect(summary?.videoCount).toBe(1);
+    expect(summary?.featuredVideos).toHaveLength(1);
+    expect(summary?.featuredVideos[0].exerciseName).toBe("Hip Flow");
   });
 
   it("falls back to live acwr metrics when protocol presentation is unavailable", () => {

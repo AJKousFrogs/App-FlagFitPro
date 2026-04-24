@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { Router } from "@angular/router";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { HomeRouteService } from "../../../core/services/home-route.service";
 import { ToastService } from "../../../core/services/toast.service";
 import { AuthFlowDataService } from "../services/auth-flow-data.service";
 import { VerifyEmailComponent } from "./verify-email.component";
@@ -32,6 +33,10 @@ describe("VerifyEmailComponent", () => {
     navigateByUrl: vi.fn(),
   } as unknown as Router;
 
+  const mockHomeRouteService = {
+    getHomeRoute: vi.fn(() => "/todays-practice"),
+  } as unknown as HomeRouteService;
+
   beforeEach(async () => {
     vi.useFakeTimers();
     vi.clearAllMocks();
@@ -54,7 +59,7 @@ describe("VerifyEmailComponent", () => {
     });
     mockAuthFlowDataService.resolvePostAuthRedirect = vi
       .fn()
-      .mockResolvedValue("/dashboard");
+      .mockResolvedValue("/todays-practice");
     mockRouter.navigate = vi.fn();
     mockRouter.navigateByUrl = vi.fn();
 
@@ -62,6 +67,7 @@ describe("VerifyEmailComponent", () => {
       imports: [VerifyEmailComponent],
       providers: [
         { provide: AuthFlowDataService, useValue: mockAuthFlowDataService },
+        { provide: HomeRouteService, useValue: mockHomeRouteService },
         { provide: ToastService, useValue: mockToastService },
         { provide: Router, useValue: mockRouter },
       ],
@@ -126,7 +132,7 @@ describe("VerifyEmailComponent", () => {
     expect(component.isVerified()).toBe(true);
     expect(mockToastService.success).toHaveBeenCalled();
     expect(mockAuthFlowDataService.clearPendingVerificationEmail).toHaveBeenCalled();
-    expect(mockRouter.navigateByUrl).toHaveBeenCalledWith("/dashboard");
+    expect(mockRouter.navigateByUrl).toHaveBeenCalledWith("/todays-practice");
   });
 
   it("shows a verification error from the callback hash", async () => {

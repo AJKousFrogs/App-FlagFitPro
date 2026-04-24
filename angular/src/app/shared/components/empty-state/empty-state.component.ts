@@ -120,11 +120,11 @@ const CONTEXT_CONFIGS: Record<
   },
   generic: {
     icon: "pi-database",
-    title: "No Data Available",
-    message: "Start logging data to see your personalized metrics and insights.",
-    actionLabel: "Get Started",
+    title: "Nothing Here Yet",
+    message: "Start using FlagFit Pro to see your metrics, progress, and recommendations.",
+    actionLabel: "Open Today's Practice",
     actionIcon: "pi pi-arrow-right",
-    route: "/dashboard",
+    route: "/todays-practice",
     benefits: ["Track your progress", "Get personalized recommendations", "Monitor your performance", "Achieve your goals faster"],
   },
 };
@@ -269,7 +269,7 @@ const CONTEXT_CONFIGS: Record<
 })
 export class EmptyStateComponent {
   // Basic display
-  title = input<string>("No Data Available");
+  title = input<string>("Nothing Here Yet");
   message = input<string | null>(null);
   icon = input<string | null>(null);
   iconColor = input<string>("var(--color-text-secondary)");
@@ -341,7 +341,7 @@ export class EmptyStateComponent {
     this.heading() ||
     this.title() ||
     this.config()?.title ||
-    "No Data Available"
+    "Nothing Here Yet"
   );
   resolvedMessage = computed(() =>
     this.customMessage() ||

@@ -55,8 +55,8 @@
             (retry)="retryLoadInvitation()"
           />
           @if (!hasRetryableError()) {
-            <a [routerLink]="['/dashboard']" class="back-link mt-4"
-              >Go to Dashboard</a
+            <a [routerLink]="homeRoute()" class="back-link mt-4"
+              >Go to Home</a
             >
           }
         } @else if (isAccepted()) {
@@ -83,8 +83,8 @@
             <p class="declined-message">
               You have declined the invitation to join {{ teamName() }}.
             </p>
-            <app-button iconLeft="pi-home" routerLink="/dashboard"
-              >Go to Dashboard</app-button
+            <app-button iconLeft="pi-home" [routerLink]="homeRoute()"
+              >Go to Home</app-button
             >
           </div>
         } @else if (invitationData()) {

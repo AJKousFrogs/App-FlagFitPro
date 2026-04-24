@@ -330,221 +330,36 @@ export class AiSchedulerComponent implements OnInit {
 
   async generateSchedule(): Promise<void> {
     this.isGenerating.set(true);
-
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 2000));
-
-    this.periodization.set([
-      {
-        name: "CURRENT",
-        dateRange: "Jan 3-5",
-        loadPercent: 0,
-        description: "0%",
-      },
-      {
-        name: "PEAK INTENSITY",
-        dateRange: "Jan 6-12",
-        loadPercent: 100,
-        description: "100% Load",
-      },
-      {
-        name: "TAPER",
-        dateRange: "Jan 13-17",
-        loadPercent: 60,
-        description: "60% Load",
-      },
-      {
-        name: "COMPETE",
-        dateRange: "Jan 18-19",
-        loadPercent: 0,
-        description: "🏆 Tournament",
-      },
-    ]);
-
-    this.generatedSchedule.set([
-      {
-        id: "w1-1",
-        day: "MON",
-        date: "Jan 6",
-        time: "6:00 PM",
-        title: "Speed & Explosiveness",
-        icon: "🏃",
-        duration: "2 hrs",
-        activities: [
-          "Warm-up (15 min)",
-          "Sprint mechanics & acceleration (30 min)",
-          "Agility ladder & cone drills (25 min)",
-          "Position-specific explosive work (30 min)",
-          "Cool down (10 min)",
-        ],
-        targetRpe: 8,
-        load: "High",
-        focus: "Speed",
-        location: "Central Park Field",
-      },
-      {
-        id: "w1-2",
-        day: "TUE",
-        date: "Jan 7",
-        time: "6:00 PM",
-        title: "Game Tactics - Offense",
-        icon: "🏈",
-        duration: "2 hrs",
-        activities: [
-          "Warm-up (15 min)",
-          "Red zone offense 7v7 (40 min)",
-          "New plays installation (30 min)",
-          "Live scrimmage - offense focus (25 min)",
-          "Team talk (10 min)",
-        ],
-        targetRpe: 8,
-        load: "High",
-        focus: "Tactics",
-        location: "Central Park Field",
-      },
-      {
-        id: "w1-3",
-        day: "THU",
-        date: "Jan 9",
-        time: "6:00 PM",
-        title: "Game Tactics - Defense + Communication",
-        icon: "🛡️",
-        duration: "2 hrs",
-        activities: [
-          "Warm-up (15 min)",
-          "Defensive rotations & coverage (40 min)",
-          "Communication drills (20 min)",
-          "Live scrimmage - defense focus (25 min)",
-          "Film preview: opponent tendencies (10 min)",
-        ],
-        targetRpe: 8,
-        load: "High",
-        focus: "Defense",
-        location: "Central Park Field",
-      },
-      {
-        id: "w1-4",
-        day: "SAT",
-        date: "Jan 11",
-        time: "10:00 AM",
-        title: "Full Game Simulation",
-        icon: "⚔️",
-        duration: "2 hrs",
-        activities: [
-          "Warm-up (15 min)",
-          "Full scrimmage with tournament rules (75 min)",
-          "Special situations practice (20 min)",
-          "Cool down & team chemistry (10 min)",
-        ],
-        targetRpe: 9,
-        load: "Max",
-        focus: "Game Sim",
-        location: "Central Park Field",
-      },
-      {
-        id: "w2-1",
-        day: "MON",
-        date: "Jan 13",
-        time: "6:00 PM",
-        title: "Light Skills & Recovery",
-        icon: "🔄",
-        duration: "90 min",
-        activities: ["Light position work", "Recovery protocols"],
-        targetRpe: 5,
-        load: "Low",
-        focus: "Maintenance",
-      },
-      {
-        id: "w2-2",
-        day: "TUE",
-        date: "Jan 14",
-        time: "6:00 PM",
-        title: "Walkthrough & Film",
-        icon: "📋",
-        duration: "90 min",
-        activities: ["Walkthrough", "Film review", "Mental prep"],
-        targetRpe: 3,
-        load: "Min",
-        focus: "Mental Prep",
-      },
-      {
-        id: "w2-3",
-        day: "THU",
-        date: "Jan 16",
-        time: "6:00 PM",
-        title: "Light Activation & Final Prep",
-        icon: "⚡",
-        duration: "60 min",
-        activities: ["Activation drills", "Final prep walkthrough"],
-        targetRpe: 4,
-        load: "Min",
-        focus: "Activation",
-      },
-      {
-        id: "w2-4",
-        day: "FRI",
-        date: "Jan 17",
-        time: "",
-        title: "REST DAY - Travel if needed",
-        icon: "😴",
-        duration: "",
-        activities: [],
-        targetRpe: 0,
-        load: "Min",
-        focus: "",
-        isRestDay: true,
-      },
-    ]);
-
-    this.modifications.set([
-      {
-        playerId: "1",
-        playerName: "Chris Martinez",
-        reason: "acwr",
-        acwr: 1.42,
-        modification:
-          "-25% load. Skip Saturday max-intensity scrimmage. Instead: Light position work + film study",
-      },
-      {
-        playerId: "2",
-        playerName: "Morgan Davis",
-        reason: "acwr",
-        acwr: 1.35,
-        modification: "-20% load. Limit full-speed sprints.",
-      },
-      {
-        playerId: "3",
-        playerName: "Riley Brown",
-        reason: "acwr",
-        acwr: 1.32,
-        modification: "-15% load. Extra recovery time between drills.",
-      },
-      {
-        playerId: "4",
-        playerName: "Alex Thompson",
-        reason: "rtp",
-        rtpStage: 4,
-        modification: "Non-contact drills only. 60% intensity cap.",
-        clearedFor: ["Position drills", "Walkthrough", "Film"],
-        notClearedFor: ["Live scrimmage", "Full-speed contact"],
-      },
-      {
-        playerId: "5",
-        playerName: "Emily Chen",
-        reason: "rtp",
-        rtpStage: 2,
-        modification: "Light activity only. 20% intensity cap.",
-        clearedFor: ["Walkthrough", "Film", "Light stretching"],
-        notClearedFor: ["Running", "Drills", "Any intensity work"],
-      },
-    ]);
-
-    this.isGenerating.set(false);
-
-    this.toastService.success(
-      "Merlin has created your optimized training schedule",
-      "Schedule Generated",
-    );
+    try {
+      const response = await firstValueFrom(
+        this.api.post(API_ENDPOINTS.coach.createTrainingSession, {
+          targetEvent: this.selectedEvent(),
+          focusAreas: this.formData.focusAreas,
+          availableDays: this.formData.availableDays,
+          practiceDuration: this.formData.duration,
+          considerRtp: this.formData.considerRtp,
+          considerAcwr: this.formData.considerAcwr,
+        }),
+      );
+      interface SchedulePayload { periodization: PeriodizationPhase[]; schedule: GeneratedSession[]; modifications: PlayerModification[] }
+      const data = extractApiPayload<SchedulePayload>(response as unknown as SchedulePayload);
+      if (data) {
+        this.periodization.set(data.periodization ?? []);
+        this.generatedSchedule.set(data.schedule ?? []);
+        this.modifications.set(data.modifications ?? []);
+        this.toastService.success(
+          "Merlin has created your optimized training schedule",
+          "Schedule Generated",
+        );
+      } else {
+        this.toastService.info("AI schedule generation coming soon", "Coming Soon");
+      }
+    } catch (error) {
+      this.logger.warn("[AIScheduler] generateSchedule failed", error);
+      this.toastService.info("AI schedule generation coming soon", "Coming Soon");
+    } finally {
+      this.isGenerating.set(false);
+    }
   }
 
   resetSchedule(): void {

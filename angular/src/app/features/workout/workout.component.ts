@@ -78,6 +78,36 @@ export class WorkoutComponent implements OnInit {
     return this.supabase.userId();
   }
 
+  private resolveWorkoutExerciseName(
+    exercise: Record<string, unknown>,
+    index: number,
+  ): string {
+    const nestedExercise =
+      exercise["exercise"] &&
+      typeof exercise["exercise"] === "object" &&
+      exercise["exercise"] !== null
+        ? (exercise["exercise"] as Record<string, unknown>)
+        : null;
+
+    const candidates = [
+      exercise["exercise_name"],
+      exercise["exerciseName"],
+      nestedExercise?.["exercise_name"],
+      nestedExercise?.["exerciseName"],
+      nestedExercise?.["name"],
+      exercise["name"],
+      exercise["title"],
+    ];
+
+    for (const candidate of candidates) {
+      if (typeof candidate === "string" && candidate.trim()) {
+        return candidate;
+      }
+    }
+
+    return `Exercise ${index + 1}`;
+  }
+
   ngOnInit(): void {
     this.loadWorkouts();
   }
@@ -121,10 +151,7 @@ export class WorkoutComponent implements OnInit {
               exercises = (parsedExercises || []).map(
                 (ex: Record<string, unknown>, idx: number) => ({
                   id: (ex["id"] as string) || `${log.id}-${idx}`,
-                  name:
-                    (ex["name"] as string) ||
-                    (ex["exercise_name"] as string) ||
-                    "Exercise",
+                  name: this.resolveWorkoutExerciseName(ex, idx),
                   sets: (ex["sets"] as number) || 3,
                   reps: (ex["reps"] as number) || 10,
                   weight: ex["weight"] as number | undefined,

@@ -7,19 +7,11 @@ import {
 } from "@angular/core";
 import { Router } from "@angular/router";
 import { AppLoadingComponent } from "../../shared/components/loading/loading.component";
-import { DashboardRoleService } from "./services/dashboard-role.service";
-import { SupabaseService } from "../../core/services/supabase.service";
+import { HomeRouteService } from "../../core/services/home-route.service";
 
 /**
- * Dashboard Switcher
- * Role-based redirection to the appropriate dashboard
- * - Coaches/Staff go to /coach/dashboard
- * - Players/Athletes go to /player-dashboard
- *
- * Checks both auth user_metadata.role AND users table user_type
- * to ensure proper routing after onboarding
- *
- * UX Audit Fix #2: Added role-aware loading message
+ * Legacy dashboard switcher.
+ * New entry points route directly to role-aware home destinations.
  */
 @Component({
   selector: "app-dashboard",
@@ -30,74 +22,14 @@ import { SupabaseService } from "../../core/services/supabase.service";
   `,
 })
 export class DashboardComponent implements OnInit {
-  private readonly supabase = inject(SupabaseService);
-  private readonly dashboardRoleService = inject(DashboardRoleService);
   private readonly router = inject(Router);
+  private readonly homeRouteService = inject(HomeRouteService);
 
-  loadingMessage = signal("Redirecting...");
+  loadingMessage = signal("Loading your home...");
 
   async ngOnInit(): Promise<void> {
-    const user = this.supabase.currentUser();
-
-    if (!user) {
-      await this.router.navigate(["/login"], { replaceUrl: true });
-      return;
-    }
-
-    // Check auth metadata role first
-    const metadata = user.user_metadata as { role?: string } | undefined;
-    const authRole = metadata?.role;
-
-    // If auth metadata has a valid role, use it
-    if (this.isCoachRole(authRole)) {
-      this.loadingMessage.set("Loading your Coach Dashboard...");
-      await this.router.navigate(["/coach/dashboard"], { replaceUrl: true });
-      return;
-    }
-
-    if (authRole === "player" || authRole === "athlete") {
-      this.loadingMessage.set("Loading your Dashboard...");
-      await this.router.navigate(["/player-dashboard"], { replaceUrl: true });
-      return;
-    }
-
-    // Fallback: Check team_members for staff role (user_type is in auth metadata, not users table)
-    // This handles cases where auth metadata wasn't updated properly
-    try {
-      const { role } = await this.dashboardRoleService.getTeamMembershipRole(
-        user.id,
-      );
-
-      if (role && this.isCoachRole(role)) {
-        this.loadingMessage.set("Loading your Coach Dashboard...");
-        await this.router.navigate(["/coach/dashboard"], { replaceUrl: true });
-        return;
-      }
-    } catch {
-      // If lookup fails, fall through to default
-    }
-
-    // Default: Player dashboard for unset roles
-    this.loadingMessage.set("Loading your Dashboard...");
-    await this.router.navigate(["/player-dashboard"], { replaceUrl: true });
-  }
-
-  /**
-   * Check if role is a coach/staff role
-   */
-  private isCoachRole(role: string | undefined): boolean {
-    if (!role) return false;
-    const coachRoles = [
-      "coach",
-      "head_coach",
-      "assistant_coach",
-      "admin",
-      "offensive_coordinator",
-      "defensive_coordinator",
-      "strength_coach",
-      "athletic_trainer",
-      "team_manager",
-    ];
-    return coachRoles.includes(role);
+    await this.router.navigateByUrl(this.homeRouteService.getHomeRoute(), {
+      replaceUrl: true,
+    });
   }
 }

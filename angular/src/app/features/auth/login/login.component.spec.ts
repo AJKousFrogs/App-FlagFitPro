@@ -8,6 +8,7 @@ import {
   AuthSessionResult,
   User,
 } from "../../../core/services/auth.service";
+import { HomeRouteService } from "../../../core/services/home-route.service";
 import { ToastService } from "../../../core/services/toast.service";
 import { AuthFlowDataService } from "../services/auth-flow-data.service";
 import { LoginComponent } from "./login.component";
@@ -37,6 +38,10 @@ describe("LoginComponent", () => {
     info: vi.fn(),
     warn: vi.fn(),
   } as unknown as ToastService;
+
+  const mockHomeRouteService = {
+    getHomeRoute: vi.fn(() => "/todays-practice"),
+  } as unknown as HomeRouteService;
 
   const mockRouter = {
     navigate: vi.fn(),
@@ -72,7 +77,7 @@ describe("LoginComponent", () => {
     mockAuthService.getUser = vi.fn(() => currentUser());
     mockAuthFlowDataService.resolvePostAuthRedirect = vi
       .fn()
-      .mockResolvedValue("/dashboard");
+      .mockResolvedValue("/todays-practice");
     mockAuthFlowDataService.signOut = vi.fn().mockResolvedValue(undefined);
     mockAuthFlowDataService.storePendingVerificationEmail = vi.fn();
     mockRouter.navigate = vi.fn();
@@ -83,6 +88,7 @@ describe("LoginComponent", () => {
       providers: [
         { provide: AuthService, useValue: mockAuthService },
         { provide: AuthFlowDataService, useValue: mockAuthFlowDataService },
+        { provide: HomeRouteService, useValue: mockHomeRouteService },
         { provide: ToastService, useValue: mockToastService },
         { provide: Router, useValue: mockRouter },
         { provide: ActivatedRoute, useValue: mockActivatedRoute },
@@ -158,7 +164,7 @@ describe("LoginComponent", () => {
       },
     );
     expect(mockToastService.success).toHaveBeenCalled();
-    expect(mockRouter.navigateByUrl).toHaveBeenCalledWith("/dashboard");
+    expect(mockRouter.navigateByUrl).toHaveBeenCalledWith("/todays-practice");
     expect(component.submitError()).toBeNull();
   });
 

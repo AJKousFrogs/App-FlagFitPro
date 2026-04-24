@@ -1,14 +1,15 @@
 import { Injectable, inject } from "@angular/core";
 import type { Session } from "@supabase/supabase-js";
+import { HomeRouteService } from "../../../core/services/home-route.service";
 import { PlatformService } from "../../../core/services/platform.service";
 import { SupabaseService } from "../../../core/services/supabase.service";
-import { isBenignSupabaseQueryError } from "../../../shared/utils/error.utils";
 
 @Injectable({
   providedIn: "root",
 })
 export class AuthFlowDataService {
   private readonly supabaseService = inject(SupabaseService);
+  private readonly homeRouteService = inject(HomeRouteService);
   private readonly platform = inject(PlatformService);
   private usersTableUnavailable = false;
   private readonly postOnboardingRedirectKey = "postOnboardingRedirect";
@@ -106,17 +107,18 @@ export class AuthFlowDataService {
     allowReturnUrlBypassOnboarding?: boolean;
     fallbackRoute?: string;
   }): Promise<string> {
-    const fallbackRoute =
-      this.normalizeInternalRoute(options?.fallbackRoute) ?? "/dashboard";
-    const returnUrl = this.normalizeInternalRoute(options?.returnUrl);
     const user = this.getCurrentUser();
+    const fallbackRoute =
+      this.normalizeInternalRoute(options?.fallbackRoute) ??
+      (user ? this.homeRouteService.getHomeRouteForUser(user) : "/");
+    const returnUrl = this.normalizeInternalRoute(options?.returnUrl);
 
     if (!user) {
       return returnUrl ?? this.consumePostOnboardingRedirect() ?? fallbackRoute;
     }
 
     const { data: userData } = await this.getUserOnboardingStatus(user.id);
-    const onboardingIncomplete = userData?.onboarding_completed === false;
+    const onboardingIncomplete = !userData?.onboarding_completed;
 
     if (
       onboardingIncomplete &&
@@ -148,6 +150,15 @@ export class AuthFlowDataService {
       refresh_token: input.refreshToken,
     });
 
+    return { data: data ?? null, error };
+  }
+
+  async exchangeCodeForSession(code: string): Promise<{
+    data: { session: Session | null } | null;
+    error: { message?: string } | null;
+  }> {
+    const { data, error } =
+      await this.supabaseService.client.auth.exchangeCodeForSession(code);
     return { data: data ?? null, error };
   }
 
@@ -262,19 +273,25 @@ export class AuthFlowDataService {
   }
 
   private isMissingUsersTableError(error: unknown): boolean {
-    if (
-      !isBenignSupabaseQueryError(error) ||
-      !error ||
-      typeof error !== "object"
-    ) {
+    if (!error || typeof error !== "object") {
       return false;
     }
 
-    const code = (error as { code?: string }).code;
-    if (code === "PGRST116") {
-      return false;
+    const e = error as { code?: string; message?: string; details?: string };
+
+    // Match only the Postgres undefined_table error code
+    if (e.code === "42P01") {
+      return true;
     }
 
-    return true;
+    // Match PostgREST table-not-found message patterns
+    const message = typeof e.message === "string" ? e.message.toLowerCase() : "";
+    const details = typeof e.details === "string" ? e.details.toLowerCase() : "";
+    const tableNotFoundPatterns = ["schema cache", "could not find the table"];
+    if (tableNotFoundPatterns.some((p) => message.includes(p) || details.includes(p))) {
+      return true;
+    }
+
+    return false;
   }
 }

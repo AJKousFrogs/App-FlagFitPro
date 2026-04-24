@@ -257,7 +257,7 @@ export class MissingDataDetectionService {
       .from("users")
       .select("name")
       .eq("id", playerId)
-      .single();
+      .maybeSingle();
 
     let dataType: "wellness" | "training" | "both" = "wellness";
     if (wellnessStatus.missing && trainingStatus.missing) {

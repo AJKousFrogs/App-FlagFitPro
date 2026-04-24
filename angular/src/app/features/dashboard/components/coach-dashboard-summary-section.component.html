@@ -76,7 +76,7 @@
         <span class="preview-value">Enabled</span>
       </div>
       <div class="preview-metric">
-        <span class="preview-label">Legacy Avg ACWR</span>
+        <span class="preview-label">Current Workload Index</span>
         <span class="preview-value">{{
           teamOverview().avgTeamWorkload | number: "1.2-2"
         }}</span>
@@ -146,22 +146,22 @@
     <ul class="preview-insights">
       <li>
         @if (teamOverview().avgTeamWorkload > 1.3) {
-          ⚠️ Elevated team workload (legacy ACWR). Consider deload.
+          ⚠️ Elevated team workload. Consider a lighter session or recovery block.
         } @else {
-          ✅ Team workload appears stable (legacy ACWR baseline).
+          ✅ Team workload is within the expected range.
         }
       </li>
       <li>
         @if (teamOverview().playersAtRisk > 0) {
           🚑 {{ teamOverview().playersAtRisk }} players flagged at risk.
         } @else {
-          ✅ No players flagged at risk in legacy baseline.
+          ✅ No players are currently flagged at risk.
         }
       </li>
     </ul>
     <p class="preview-note">
-      Next-gen team aggregation is in preview. Use legacy ACWR and roster alerts
-      for decisions until full validation completes.
+      Next-gen team aggregation is still in preview. Rely on current workload and
+      roster alerts when making practice decisions.
     </p>
   </app-card-shell>
 }

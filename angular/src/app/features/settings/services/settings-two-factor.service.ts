@@ -182,21 +182,16 @@ export class SettingsTwoFactorService {
 
   private generateRandomSecret(): string {
     const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";
-    let secret = "";
-    for (let i = 0; i < 32; i++) {
-      secret += chars.charAt(Math.floor(Math.random() * chars.length));
-    }
-    return secret;
+    const bytes = crypto.getRandomValues(new Uint8Array(32));
+    return Array.from(bytes, (b) => chars[b % chars.length]).join("");
   }
 
   private generateBackupCodes(): string[] {
     const codes: string[] = [];
     for (let i = 0; i < 10; i++) {
-      const code =
-        Math.random().toString(36).substring(2, 6).toUpperCase() +
-        "-" +
-        Math.random().toString(36).substring(2, 6).toUpperCase();
-      codes.push(code);
+      const bytes = crypto.getRandomValues(new Uint8Array(8));
+      const hex = Array.from(bytes, (b) => b.toString(16).padStart(2, "0")).join("");
+      codes.push(`${hex.slice(0, 4).toUpperCase()}-${hex.slice(4, 8).toUpperCase()}`);
     }
     return codes;
   }

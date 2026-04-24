@@ -68,6 +68,11 @@ export async function generateTemplateMainSession({
 
     protocolExercises.push({
       exercise_id: exerciseId,
+      exercise_name:
+        sessionExercise.exercise_name ||
+        sessionExercise.exercises?.name ||
+        sessionExercise.name ||
+        null,
       block_type: "main_session",
       sequence_order: idx + 1,
       prescribed_sets: prescribedSets,

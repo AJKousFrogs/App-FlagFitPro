@@ -18,6 +18,7 @@ import { Router } from "@angular/router";
 import { Stepper, StepList, Step } from "primeng/stepper";
 import { COLORS } from "../../../core/constants/app.constants";
 import { AIService } from "../../../core/services/ai.service";
+import { HomeRouteService } from "../../../core/services/home-route.service";
 import { LoadMonitoringService } from "../../../core/services/load-monitoring.service";
 import { LoggerService } from "../../../core/services/logger.service";
 import { toLogContext } from "../../../core/services/logger.service";
@@ -59,6 +60,7 @@ export class TrainingBuilderComponent {
   private weatherService = inject(WeatherService);
   private logger = inject(LoggerService);
   private loadMonitoringService = inject(LoadMonitoringService);
+  private homeRouteService = inject(HomeRouteService);
   private toastService = inject(ToastService);
   private supabaseService = inject(SupabaseService);
   private router = inject(Router);
@@ -415,7 +417,7 @@ export class TrainingBuilderComponent {
           name:
             typeof suggestionTitle === "string"
               ? suggestionTitle
-              : "Untitled Exercise",
+              : "Suggested Exercise",
           category:
             typeof formSessionType === "string" ? formSessionType : "mixed",
           duration:
@@ -573,8 +575,7 @@ export class TrainingBuilderComponent {
         this.toastService.success(TOAST.SUCCESS.SESSION_STARTED);
         this.logger.info("Session saved to database:", session);
 
-        // Navigate to dashboard to see updated ACWR
-        this.router.navigate(["/dashboard"]);
+        this.router.navigateByUrl(this.homeRouteService.getHomeRoute());
       } else {
         this.toastService.warn(TOAST.WARN.START_SESSION_FIRST);
       }

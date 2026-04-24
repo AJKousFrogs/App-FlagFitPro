@@ -23,12 +23,7 @@ import { OnboardingDataService } from "./onboarding-data.service";
 
 const STORAGE_KEY = "flagfit_onboarding_draft";
 
-const FALLBACK_TEAMS = [
-  { label: "Ljubljana Frogs - International", value: "ljubljana_frogs_international" },
-  { label: "Ljubljana Frogs - Domestic", value: "ljubljana_frogs_domestic" },
-  { label: "American Samoa National Team - Men", value: "american_samoa_men" },
-  { label: "American Samoa National Team - Women", value: "american_samoa_women" },
-];
+const FALLBACK_TEAMS: { label: string; value: string }[] = [];
 
 @Injectable({
   providedIn: "root",

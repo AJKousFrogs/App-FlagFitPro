@@ -51,10 +51,10 @@ export class MobileHeaderComponent implements OnInit {
     const route = this.currentRoute() || this.router.url;
     const items = this.contextService.buildBreadcrumbItems(route);
     if (items.length === 0) {
-      return "Dashboard";
+      return "Home";
     }
 
-    return items[items.length - 1]?.label ?? "Dashboard";
+    return items[items.length - 1]?.label ?? "Home";
   });
 
   ngOnInit(): void {

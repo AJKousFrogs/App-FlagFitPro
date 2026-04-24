@@ -107,7 +107,7 @@ import {
               } @else {
                 <div class="video-placeholder">
                   <i class="pi pi-video"></i>
-                  <span>Video coming soon</span>
+                  <span>No demo video for this drill yet</span>
                 </div>
               }
               @if (videoWatchUrl()) {
@@ -303,6 +303,7 @@ export class ExerciseCardComponent {
       videoId: this.exercise().exercise.videoId,
       videoUrl: this.exercise().exercise.videoUrl,
       thumbnailUrl: this.exercise().exercise.thumbnailUrl,
+      exerciseName: this.exercise().exercise.name,
     }),
   );
 

@@ -7,6 +7,7 @@ import {
 } from "@angular/core";
 
 import { Router, RouterModule } from "@angular/router";
+import { HomeRouteService } from "../../../core/services/home-route.service";
 import { ToastService } from "../../../core/services/toast.service";
 import { AlertComponent } from "../../../shared/components/alert/alert.component";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
@@ -64,16 +65,28 @@ import { AuthFlowDataService } from "../services/auth-flow-data.service";
               message="Email verified successfully!"
               styleClass="status-message status-message--success"
             />
-            <p class="verified-message">
-              Your email has been verified. We’ll take you straight into
-              onboarding so you can finish setting up your profile.
-            </p>
-            <app-button
-              iconLeft="pi-arrow-right"
-              routerLink="/onboarding"
-              [fullWidth]="true"
-              >Continue to Onboarding</app-button
-            >
+            @if (showManualContinue()) {
+              <p class="verified-message">
+                Your email is already verified. Click below to continue.
+              </p>
+              <app-button
+                iconLeft="pi-arrow-right"
+                (clicked)="continueToApp()"
+                [fullWidth]="true"
+                >Continue to App</app-button
+              >
+            } @else {
+              <p class="verified-message">
+                Your email has been verified. We’ll take you straight into
+                onboarding so you can finish setting up your profile.
+              </p>
+              <app-button
+                iconLeft="pi-arrow-right"
+                routerLink="/onboarding"
+                [fullWidth]="true"
+                >Continue to Onboarding</app-button
+              >
+            }
           </div>
         } @else if (verificationError()) {
           <div class="error-state">
@@ -128,11 +141,13 @@ export class VerifyEmailComponent implements OnInit {
   private router = inject(Router);
   private toastService = inject(ToastService);
   private authFlowDataService = inject(AuthFlowDataService);
+  private homeRouteService = inject(HomeRouteService);
 
   isVerifying = signal(false);
   isVerified = signal(false);
   verificationError = signal<string | undefined>(undefined);
   isResending = signal(false);
+  showManualContinue = signal(false);
   private userEmail = signal<string | null>(null);
 
   ngOnInit(): void {
@@ -149,14 +164,13 @@ export class VerifyEmailComponent implements OnInit {
     const hash = window.location.hash;
 
     if (!hash || hash.length < 2) {
-      // No hash fragment - user landed here directly
-      // Check if they're already authenticated
+      // No hash fragment — user navigated here manually (not from email link).
+      // Check if they're already authenticated and show a manual continue button
+      // instead of auto-redirecting, so the user retains control.
       const session = this.authFlowDataService.getCurrentSession();
       if (session?.user?.email_confirmed_at) {
         this.isVerified.set(true);
-        setTimeout(() => {
-          void this.redirectAfterVerification(false);
-        }, 2000);
+        this.showManualContinue.set(true);
       }
       return;
     }
@@ -250,6 +264,13 @@ export class VerifyEmailComponent implements OnInit {
   }
 
   /**
+   * Manual navigation: user was already verified, let them navigate themselves
+   */
+  async continueToApp(): Promise<void> {
+    await this.redirectAfterVerification(false);
+  }
+
+  /**
    * Resend verification email
    */
   async resendVerification(): Promise<void> {
@@ -302,12 +323,16 @@ export class VerifyEmailComponent implements OnInit {
     try {
       const destination = await this.authFlowDataService.resolvePostAuthRedirect(
         {
-          fallbackRoute: preferOnboarding ? "/onboarding" : "/dashboard",
+          fallbackRoute: preferOnboarding
+            ? "/onboarding"
+            : this.homeRouteService.getHomeRoute(),
         },
       );
       this.router.navigateByUrl(destination);
     } catch {
-      this.router.navigate([preferOnboarding ? "/onboarding" : "/dashboard"]);
+      this.router.navigateByUrl(
+        preferOnboarding ? "/onboarding" : this.homeRouteService.getHomeRoute(),
+      );
     }
   }
 }

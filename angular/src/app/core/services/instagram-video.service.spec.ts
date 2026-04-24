@@ -225,6 +225,9 @@ describe("InstagramVideoService", () => {
         const html = service.generateEmbedHtml(video);
         expect(html).toContain("iframe");
         expect(html).toContain(video.embedUrl);
+        expect(html).not.toContain("onload=");
+        expect(html).not.toContain("onerror=");
+        expect(html).not.toContain("<script>");
       }
     });
 

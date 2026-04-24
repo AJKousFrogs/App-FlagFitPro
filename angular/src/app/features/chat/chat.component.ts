@@ -591,8 +591,6 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   private parseMentions(message: string): string[] {
-    // Extract mentioned user IDs
-    // In real implementation, would resolve names to IDs
     const matches = message.match(/@(\w+\s?\w*)/g) || [];
     return matches.map((m) => m.slice(1));
   }

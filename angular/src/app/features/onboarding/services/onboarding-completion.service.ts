@@ -283,7 +283,7 @@ export class OnboardingCompletionService {
         hasGymAccess:
           this.state.formData.equipmentAvailable?.includes("gym") || false,
         hasFieldAccess:
-          this.state.formData.equipmentAvailable?.includes("field") || true,
+          this.state.formData.equipmentAvailable?.includes("field") ?? false,
         availableEquipment: this.state.formData.equipmentAvailable || [],
         currentLimitations:
           this.state.formData.currentInjuries?.length > 0
@@ -331,7 +331,7 @@ export class OnboardingCompletionService {
         has_gym_access:
           this.state.formData.equipmentAvailable?.includes("gym") || false,
         has_field_access:
-          this.state.formData.equipmentAvailable?.includes("field") || true,
+          this.state.formData.equipmentAvailable?.includes("field") ?? false,
         current_limitations:
           this.state.formData.currentInjuries?.length > 0
             ? { injuries: this.state.formData.currentInjuries }
@@ -418,52 +418,27 @@ export class OnboardingCompletionService {
 
   private async addPlayerToTeamRoster(userId: string): Promise<void> {
     try {
-      const teamName = this.state.formData.team;
-      if (!teamName) {
+      const teamId = this.state.formData.team;
+      if (!teamId) {
         this.logger.warn(
-          "[Onboarding] No team name provided, skipping roster addition",
+          "[Onboarding] No team provided, skipping roster addition",
         );
         return;
       }
-
-      let teamId: string | null = null;
 
       const { team: existingTeam } =
-        await this.onboardingDataService.findTeamByName(teamName);
+        await this.onboardingDataService.findTeamById(teamId);
 
-      if (existingTeam) {
-        teamId = existingTeam.id;
-        this.logger.info(
-          `[Onboarding] Found existing team: ${teamName} (${teamId})`,
+      if (!existingTeam) {
+        this.logger.warn(
+          `[Onboarding] Team not found: ${teamId}`,
         );
-      } else {
-        const { team: newTeam, error: teamError } =
-          await this.onboardingDataService.createTeam({
-            name: teamName,
-            createdBy: userId,
-          });
-
-        if (teamError) {
-          this.logger.warn(
-            "[Onboarding] Failed to create team:",
-            teamError.message,
-          );
-          return;
-        }
-        if (!newTeam) {
-          this.logger.warn("onboarding_team_creation_empty");
-          return;
-        }
-        teamId = newTeam.id;
-        this.logger.info(
-          `[Onboarding] Created new team: ${teamName} (${teamId})`,
-        );
-      }
-
-      if (!teamId) {
-        this.logger.warn("onboarding_team_id_unknown");
         return;
       }
+
+      this.logger.info(
+        `[Onboarding] Found existing team: ${teamId}`,
+      );
 
       const { member: existingMember } =
         await this.onboardingDataService.findTeamMember({ teamId, userId });
@@ -535,52 +510,27 @@ export class OnboardingCompletionService {
 
   private async addStaffToTeamRoster(userId: string): Promise<void> {
     try {
-      const teamName = this.state.formData.team;
-      if (!teamName) {
+      const teamId = this.state.formData.team;
+      if (!teamId) {
         this.logger.warn(
-          "[Onboarding] No team name provided, skipping staff roster addition",
+          "[Onboarding] No team provided, skipping staff roster addition",
         );
         return;
       }
-
-      let teamId: string | null = null;
 
       const { team: existingTeam } =
-        await this.onboardingDataService.findTeamByName(teamName);
+        await this.onboardingDataService.findTeamById(teamId);
 
-      if (existingTeam) {
-        teamId = existingTeam.id;
-        this.logger.info(
-          `[Onboarding] Found existing team for staff: ${teamName} (${teamId})`,
+      if (!existingTeam) {
+        this.logger.warn(
+          `[Onboarding] Team not found for staff: ${teamId}`,
         );
-      } else {
-        const { team: newTeam, error: teamError } =
-          await this.onboardingDataService.createTeam({
-            name: teamName,
-            createdBy: userId,
-          });
-
-        if (teamError) {
-          this.logger.warn(
-            "[Onboarding] Failed to create team:",
-            teamError.message,
-          );
-          return;
-        }
-        if (!newTeam) {
-          this.logger.warn("onboarding_team_creation_empty");
-          return;
-        }
-        teamId = newTeam.id;
-        this.logger.info(
-          `[Onboarding] Created new team for staff: ${teamName} (${teamId})`,
-        );
-      }
-
-      if (!teamId) {
-        this.logger.warn("onboarding_team_id_unknown_staff");
         return;
       }
+
+      this.logger.info(
+        `[Onboarding] Found existing team for staff: ${teamId}`,
+      );
 
       const staffRoleToMemberRole: Record<string, string> = {
         head_coach: "head_coach",

@@ -32,6 +32,7 @@ import {
   LoggerService,
   toLogContext,
 } from "../../../core/services/logger.service";
+import { HomeRouteService } from "../../../core/services/home-route.service";
 import { SupabaseService } from "../../../core/services/supabase.service";
 import { TeamMembershipService } from "../../../core/services/team-membership.service";
 import { ToastService } from "../../../core/services/toast.service";
@@ -80,6 +81,7 @@ export class SmartTrainingFormComponent implements OnInit {
   private supabase = inject(SupabaseService);
   private teamMembershipService = inject(TeamMembershipService);
   private smartTrainingDataService = inject(SmartTrainingDataService);
+  private homeRouteService = inject(HomeRouteService);
   private toastService = inject(ToastService);
   private logger = inject(LoggerService);
   private router = inject(Router);
@@ -421,10 +423,9 @@ export class SmartTrainingFormComponent implements OnInit {
     this.trainingForm.reset();
     this.toastService.info(TOAST.INFO.SESSION_CANCELLED);
 
-    // Navigate back to appropriate dashboard based on user role
-    const dashboardRoute = this.teamMembershipService.canManageRoster()
-      ? "/coach"
-      : "/dashboard";
-    this.router.navigate([dashboardRoute]);
+    const homeRoute = this.teamMembershipService.canManageRoster()
+      ? "/coach/dashboard"
+      : this.homeRouteService.getHomeRoute();
+    this.router.navigateByUrl(homeRoute);
   }
 }

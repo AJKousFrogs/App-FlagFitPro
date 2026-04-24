@@ -777,29 +777,9 @@ export class InstagramVideoService {
       ? `${video.embedUrl}?captioned=true`
       : video.embedUrl;
 
-    // Generate a unique ID for this embed
-    const embedId = `ig-embed-${video.id}-${Date.now()}`;
-
     return `
       <div class="${containerClass}">
-        <div id="${embedId}-loading" class="instagram-embed-loading">
-          <div class="instagram-embed-message">
-            <i class="pi pi-spin pi-spinner instagram-embed-spinner"></i>
-            <span class="instagram-embed-text">Loading video...</span>
-          </div>
-        </div>
-        <div id="${embedId}-error" class="instagram-embed-error">
-          <div class="instagram-embed-message instagram-embed-message--error">
-            <i class="pi pi-video instagram-embed-error-icon"></i>
-            <p class="instagram-embed-text">Video temporarily unavailable</p>
-            <a href="${video.url}" target="_blank" rel="noopener noreferrer" class="instagram-embed-link">
-              <i class="pi pi-external-link instagram-embed-link-icon"></i>
-              Watch on Instagram
-            </a>
-          </div>
-        </div>
         <iframe
-          id="${embedId}"
           src="${embedUrl}"
           width="${width}"
           height="${Math.round(width * 1.25)}"
@@ -809,40 +789,12 @@ export class InstagramVideoService {
           allowfullscreen="true"
           loading="lazy"
           class="instagram-embed-frame"
-          onload="
-            var loading = document.getElementById('${embedId}-loading');
-            if (loading) loading.classList.add('is-hidden');
-          "
-          onerror="
-            var loading = document.getElementById('${embedId}-loading');
-            var error = document.getElementById('${embedId}-error');
-            if (loading) loading.classList.add('is-hidden');
-            if (error) error.classList.add('is-visible');
-          "
         ></iframe>
+        <a href="${video.url}" target="_blank" rel="noopener noreferrer" class="instagram-embed-link">
+          <i class="pi pi-external-link instagram-embed-link-icon"></i>
+          Watch on Instagram
+        </a>
       </div>
-      <script>
-        (function() {
-          // Set a timeout to show error state if iframe doesn't load
-          var timeout = setTimeout(function() {
-            var iframe = document.getElementById('${embedId}');
-            var loading = document.getElementById('${embedId}-loading');
-            var error = document.getElementById('${embedId}-error');
-            if (loading && !loading.classList.contains('is-hidden')) {
-              if (loading) loading.classList.add('is-hidden');
-              if (error) error.classList.add('is-visible');
-            }
-          }, 15000); // 15 second timeout
-          
-          // Clear timeout if iframe loads successfully
-          var iframe = document.getElementById('${embedId}');
-          if (iframe) {
-            iframe.addEventListener('load', function() {
-              clearTimeout(timeout);
-            });
-          }
-        })();
-      </script>
     `;
   }
 

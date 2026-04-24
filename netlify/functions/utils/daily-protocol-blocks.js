@@ -24,6 +24,7 @@ export async function addMorningMobilityBlock({
     mobilitySequence++;
     protocolExercises.push({
       exercise_id: morningMobility.id,
+      exercise_name: morningMobility.name,
       block_type: "morning_mobility",
       sequence_order: mobilitySequence,
       prescribed_sets: morningMobility.default_sets || 1,
@@ -48,6 +49,7 @@ export async function addMorningMobilityBlock({
         mobilitySequence++;
         protocolExercises.push({
           exercise_id: ex.id,
+          exercise_name: ex.name,
           block_type: "morning_mobility",
           sequence_order: mobilitySequence,
           prescribed_sets: ex.default_sets || 1,
@@ -104,11 +106,12 @@ export async function addFoamRollBlock({ supabase, protocolExercises }) {
       .sort(() => Math.random() - 0.5)
       .slice(0, 5);
     shuffled.forEach((ex, idx) => {
-      protocolExercises.push({
-        exercise_id: ex.id,
-        block_type: "foam_roll",
-        sequence_order: idx + 1,
-        prescribed_sets: ex.default_sets || 1,
+        protocolExercises.push({
+          exercise_id: ex.id,
+          exercise_name: ex.name,
+          block_type: "foam_roll",
+          sequence_order: idx + 1,
+          prescribed_sets: ex.default_sets || 1,
         prescribed_reps: ex.default_reps,
         prescribed_hold_seconds: ex.default_hold_seconds,
         prescribed_duration_seconds: ex.default_duration_seconds,
@@ -169,6 +172,7 @@ export async function addWarmupBlock({
     const match = findWarmupMatch(warmUpExercises, item.keywords || []);
     protocolExercises.push({
       exercise_id: match?.id || null,
+      exercise_name: item.name,
       block_type: "warm_up",
       sequence_order: idx + 1,
       prescribed_sets: item.sets || match?.default_sets || 1,
@@ -202,6 +206,7 @@ export async function addRecoveryBlocks({
     shuffled.forEach((ex, idx) => {
       protocolExercises.push({
         exercise_id: ex.id,
+        exercise_name: ex.name,
         block_type: "cool_down",
         sequence_order: idx + 1,
         prescribed_sets: ex.default_sets || 1,
@@ -230,6 +235,7 @@ export async function addRecoveryBlocks({
     shuffled.forEach((ex, idx) => {
       protocolExercises.push({
         exercise_id: ex.id,
+        exercise_name: ex.name,
         block_type: "evening_recovery",
         sequence_order: idx + 1,
         prescribed_sets: ex.default_sets || 1,

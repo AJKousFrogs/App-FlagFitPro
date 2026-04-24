@@ -70,6 +70,30 @@ function formatUtcDateOnly(date) {
   return date.toISOString().slice(0, 10);
 }
 
+function resolveExerciseName(protocolExercise, nestedExercise = null) {
+  const candidates = [
+    protocolExercise?.exercise_name,
+    protocolExercise?.exerciseName,
+    nestedExercise?.exercise_name,
+    nestedExercise?.exerciseName,
+    nestedExercise?.name,
+    protocolExercise?.name,
+    protocolExercise?.title,
+  ];
+
+  for (const candidate of candidates) {
+    if (typeof candidate === "string" && candidate.trim()) {
+      return candidate;
+    }
+  }
+
+  const blockType = protocolExercise?.block_type || "general";
+  const sequenceOrder = protocolExercise?.sequence_order || 1;
+  return `${blockType
+    .replace(/_/g, " ")
+    .replace(/\b\w/g, (l) => l.toUpperCase())} Exercise ${sequenceOrder}`;
+}
+
 export async function computeReadinessDaysStale(
   supabase,
   userId,
@@ -422,11 +446,12 @@ export function transformExercise(protocolExercise) {
   if (!ex) {
     const aiNote = protocolExercise.ai_note || "";
     const blockType = protocolExercise.block_type || "general";
-    const exerciseName = `${blockType.replace(/_/g, " ").replace(/\b\w/g, (l) => l.toUpperCase())} Exercise ${protocolExercise.sequence_order || 1}`;
+    const exerciseName = resolveExerciseName(protocolExercise);
 
     const video = resolveYouTubeVideoMetadata({
       videoUrl: protocolExercise.video_url || null,
       thumbnailUrl: protocolExercise.thumbnail_url || null,
+      exerciseName,
     });
 
     return {
@@ -474,10 +499,12 @@ export function transformExercise(protocolExercise) {
     };
   }
 
+  const exerciseName = resolveExerciseName(protocolExercise, ex);
   const video = resolveYouTubeVideoMetadata({
     videoId: ex.video_id,
     videoUrl: ex.video_url,
     thumbnailUrl: ex.thumbnail_url,
+    exerciseName,
   });
 
   return {
@@ -485,8 +512,8 @@ export function transformExercise(protocolExercise) {
     exerciseId: ex.id,
     exercise: {
       id: ex.id,
-      name: ex.name,
-      slug: ex.slug,
+      name: exerciseName,
+      slug: ex.slug || exerciseName.toLowerCase().replace(/\s+/g, "-"),
       category: ex.category,
       subcategory: ex.subcategory,
       videoUrl: video.videoUrl,

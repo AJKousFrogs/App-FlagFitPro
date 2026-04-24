@@ -73,6 +73,7 @@ const mockSupabaseService = {
 
 const mockRouter = {
   navigate: vi.fn(),
+  navigateByUrl: vi.fn(),
 };
 
 const mockLoggerService = {
@@ -142,7 +143,7 @@ describe("Integration Tests", () => {
   // ============================================================================
 
   describe("Authentication Flow", () => {
-    it("should complete login → dashboard flow", async () => {
+    it("should complete login to role-aware home flow", async () => {
       const authService = TestBed.inject(AuthService);
 
       mockSupabaseService.signIn.mockResolvedValue({
@@ -163,9 +164,11 @@ describe("Integration Tests", () => {
       // Check auth state
       expect(authService.isAuthenticated()).toBe(true);
 
-      // Navigate to dashboard
+      // Navigate to home
       authService.redirectToDashboard();
-      expect(mockRouter.navigate).toHaveBeenCalledWith(["/dashboard"]);
+      expect(mockRouter.navigateByUrl).toHaveBeenCalledWith(
+        "/todays-practice",
+      );
     });
 
     it("should complete logout → login redirect flow", async () => {

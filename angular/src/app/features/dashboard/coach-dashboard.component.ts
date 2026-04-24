@@ -224,12 +224,12 @@ export class CoachDashboardComponent {
 
   // UI state
   playerFilter = signal<PlayerFilterType>("all");
-  showCreateSessionDialog = false;
-  showTeamMessageDialog = false;
-  showRequestAccessDialog = false;
-  teamMessageContent = "";
+  showCreateSessionDialog = signal(false);
+  showTeamMessageDialog = signal(false);
+  showRequestAccessDialog = signal(false);
+  teamMessageContent = signal("");
   requestAccessPlayerId: string | null = null;
-  requestAccessMessage = "";
+  requestAccessMessage = signal("");
 
   // New session form
   newSession: NewSessionDraft = this.createDefaultSessionDraft();
@@ -601,7 +601,7 @@ export class CoachDashboardComponent {
   // Dialog methods
   openCreateSession(): void {
     this.resetCreateSessionDialog();
-    this.showCreateSessionDialog = true;
+    this.showCreateSessionDialog.set(true);
   }
 
   onNewSessionTitleChange(value: string): void {
@@ -672,25 +672,38 @@ export class CoachDashboardComponent {
     this.onNewSessionNotesChange(value);
   }
 
-  createSession(): void {
+  async createSession(): Promise<void> {
     const title = this.newSession.title.trim();
     if (!title) {
       this.toastService.warn(TOAST.WARN.ENTER_SESSION_TITLE);
       return;
     }
 
-    this.toastService.success(`Training session "${title}" created`);
-    this.resetCreateSessionDialog();
-    // In real implementation, would call API to create session
+    try {
+      await firstValueFrom(
+        this.api.post(API_ENDPOINTS.coach.createTrainingSession, {
+          title,
+          type: this.newSession.type,
+          date: this.newSession.date.toISOString(),
+          duration: this.newSession.duration,
+          notes: this.newSession.notes,
+        }),
+      );
+      this.toastService.success(`Training session "${title}" created`);
+      this.resetCreateSessionDialog();
+    } catch (error) {
+      this.logger.warn("[CoachDashboard] createSession API call failed, feature may not be available yet", error);
+      this.toastService.warn(`Session creation is not available yet. Coming soon.`);
+    }
   }
 
   openTeamMessage(): void {
     this.resetTeamMessageDialog();
-    this.showTeamMessageDialog = true;
+    this.showTeamMessageDialog.set(true);
   }
 
   onTeamMessageContentChange(value: string): void {
-    this.teamMessageContent = value;
+    this.teamMessageContent.set(value);
   }
 
   onTeamMessageContentInput(value: string): void {
@@ -698,7 +711,7 @@ export class CoachDashboardComponent {
   }
 
   async sendTeamMessage(): Promise<void> {
-    const message = this.teamMessageContent.trim();
+    const message = this.teamMessageContent().trim();
     if (!message) {
       this.toastService.warn(TOAST.WARN.ENTER_MESSAGE);
       return;
@@ -722,13 +735,13 @@ export class CoachDashboardComponent {
   private openRequestAccessDialog(playerId: string): void {
     const player = this.players().find((p) => p.playerId === playerId);
     this.requestAccessPlayerId = playerId;
-    this.requestAccessMessage = `Hi ${player?.playerName || "there"}, I'd like to request access to your wellness and training data to better support your performance. This will help me provide personalized training recommendations.`;
-    this.showRequestAccessDialog = true;
+    this.requestAccessMessage.set(`Hi ${player?.playerName || "there"}, I'd like to request access to your wellness and training data to better support your performance. This will help me provide personalized training recommendations.`);
+    this.showRequestAccessDialog.set(true);
   }
 
   async sendAccessRequest(): Promise<void> {
     const playerId = this.requestAccessPlayerId;
-    const message = this.requestAccessMessage.trim();
+    const message = this.requestAccessMessage().trim();
     if (!playerId || !message) {
       this.toastService.warn(TOAST.WARN.ENTER_MESSAGE);
       return;
@@ -749,7 +762,7 @@ export class CoachDashboardComponent {
   }
 
   onRequestAccessMessageChange(value: string): void {
-    this.requestAccessMessage = value;
+    this.requestAccessMessage.set(value);
   }
 
   onRequestAccessMessageInput(value: string): void {
@@ -765,19 +778,19 @@ export class CoachDashboardComponent {
   }
 
   private resetTeamMessageDialog(): void {
-    this.showTeamMessageDialog = false;
-    this.teamMessageContent = "";
+    this.showTeamMessageDialog.set(false);
+    this.teamMessageContent.set("");
   }
 
   resetCreateSessionDialog(): void {
-    this.showCreateSessionDialog = false;
+    this.showCreateSessionDialog.set(false);
     this.newSession = this.createDefaultSessionDraft();
   }
 
   private resetAccessRequestDialog(): void {
-    this.showRequestAccessDialog = false;
+    this.showRequestAccessDialog.set(false);
     this.requestAccessPlayerId = null;
-    this.requestAccessMessage = "";
+    this.requestAccessMessage.set("");
   }
 
   private createDefaultSessionDraft(): NewSessionDraft {

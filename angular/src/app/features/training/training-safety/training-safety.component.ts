@@ -36,7 +36,7 @@ import { SafetyWarningsComponent } from "../../../shared/components/safety-warni
 import { TrafficLightRiskComponent } from "../../../shared/components/traffic-light-risk/traffic-light-risk.component";
 import { UnifiedTrainingService } from "../../../core/services/unified-training.service";
 import { LoggerService } from "../../../core/services/logger.service";
-import { toLogContext } from "../../../core/services/logger.service";
+import { Router } from "@angular/router";
 import { SupabaseService } from "../../../core/services/supabase.service";
 import { TrainingSafetyDataService } from "../services/training-safety-data.service";
 import {
@@ -76,6 +76,7 @@ export class TrainingSafetyComponent implements OnInit {
   private supabase = inject(SupabaseService);
   private logger = inject(LoggerService);
   private trainingSafetyDataService = inject(TrainingSafetyDataService);
+  private readonly router = inject(Router);
   private destroyRef = inject(DestroyRef);
 
   // ACWR signals
@@ -604,18 +605,14 @@ export class TrainingSafetyComponent implements OnInit {
   }
 
   executeAction(action: { label: string; route: string }): void {
-    // Navigate to the action route
-    // In real implementation, use Router
-    this.logger.info("Executing action", toLogContext(action));
+    void this.router.navigate([action.route]);
   }
 
   openRTPCheckin(): void {
-    // Open return-to-play check-in dialog
-    this.logger.info("Opening RTP check-in");
+    void this.router.navigate(["/return-to-play"]);
   }
 
   reportInjury(): void {
-    // Open injury report dialog
-    this.logger.info("Opening injury report");
+    void this.router.navigate(["/wellness"]);
   }
 }

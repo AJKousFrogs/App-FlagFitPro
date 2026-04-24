@@ -1,6 +1,7 @@
-import { ChangeDetectionStrategy, Component } from "@angular/core";
+import { ChangeDetectionStrategy, Component, inject } from "@angular/core";
 import { RouterLink } from "@angular/router";
 
+import { HomeRouteService } from "../../core/services/home-route.service";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
 import { ButtonComponent } from "../../shared/components/button/button.component";
@@ -35,8 +36,8 @@ interface HelpTopic {
           <app-button
             iconLeft="pi-arrow-left"
             variant="text"
-            routerLink="/dashboard"
-            >Back to Dashboard</app-button
+            [routerLink]="homeRoute()"
+            >Back to Home</app-button
           >
         </app-page-header>
 
@@ -46,7 +47,7 @@ interface HelpTopic {
             <i class="pi pi-shield"></i>
             <span>Privacy Settings</span>
           </a>
-          <a routerLink="/performance/load" class="quick-link-card">
+          <a routerLink="/acwr" class="quick-link-card">
             <i class="pi pi-chart-line"></i>
             <span>Load Monitoring</span>
           </a>
@@ -82,6 +83,12 @@ interface HelpTopic {
   styleUrl: "./help-center.component.scss",
 })
 export class HelpCenterComponent {
+  private readonly homeRouteService = inject(HomeRouteService);
+
+  homeRoute(): string {
+    return this.homeRouteService.getHomeRoute();
+  }
+
   categories = ["Privacy & Data", "Training & Load", "Account", "General"];
 
   topics: HelpTopic[] = [

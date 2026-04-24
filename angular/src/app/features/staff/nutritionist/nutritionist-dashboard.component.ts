@@ -8,6 +8,7 @@ import {
   signal,
 } from "@angular/core";
 import { RouterModule } from "@angular/router";
+import { AlertComponent } from "../../../shared/components/alert/alert.component";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { IconButtonComponent } from "../../../shared/components/button/icon-button.component";
 import { FormInputComponent } from "../../../shared/components/form-input/form-input.component";
@@ -129,6 +130,7 @@ interface TournamentNutritionBrief {
   imports: [
     FormsModule,
     RouterModule,
+    AlertComponent,
     LazyChartComponent,
     CardShellComponent,
     NutritionistSupplementSectionComponent,
@@ -164,6 +166,8 @@ export class NutritionistDashboardComponent implements OnInit {
   loadError = signal<string | null>(null);
   athletes = signal<AthleteNutritionData[]>([]);
   bodyCompositionData = signal<Map<string, BodyCompositionData>>(new Map());
+  bodyCompositionLoadError = signal(false);
+  supplementLoadError = signal(false);
   trainingLoadData = signal<Map<string, TrainingLoadData>>(new Map());
   supplementCompliance = signal<NutritionistSupplementCompliance[]>([]);
   wellnessMetrics = signal<Map<string, WellnessMetrics>>(new Map());
@@ -483,8 +487,9 @@ export class NutritionistDashboardComponent implements OnInit {
             alerts: this.detectAlerts(payload.trends),
           });
         }
-      } catch {
-        // If no trend data, create empty entry
+      } catch (error) {
+        this.logger.warn(`[Nutritionist] Failed to load body composition for athlete ${athlete.id}`, error);
+        this.bodyCompositionLoadError.set(true);
         compData.set(athlete.id, {
           athleteId: athlete.id,
           weightHistory: [],
@@ -558,7 +563,9 @@ export class NutritionistDashboardComponent implements OnInit {
           }));
         this.supplementCompliance.set(supplements);
       }
-    } catch {
+    } catch (error) {
+      this.logger.warn("[Nutritionist] Failed to load supplement compliance", error);
+      this.supplementLoadError.set(true);
       this.supplementCompliance.set([]);
     }
   }
@@ -579,9 +586,9 @@ export class NutritionistDashboardComponent implements OnInit {
       };
       wellness.set(athlete.id, {
         athleteId: athlete.id,
-        avgSleepHours: 7,
-        avgEnergyLevel: 7,
-        avgSoreness: 4,
+        avgSleepHours: null as unknown as number,
+        avgEnergyLevel: null as unknown as number,
+        avgSoreness: null as unknown as number,
         hydrationStatus: hydrationMap[athlete.hydrationStatus] || "adequate",
       });
     });

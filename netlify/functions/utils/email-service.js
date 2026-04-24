@@ -319,7 +319,7 @@ The FlagFit Pro Team
                 <p>Track your improvement over time with detailed performance metrics and insights.</p>
             </div>
             <p style="text-align: center;">
-                <a href="${process.env.APP_URL || "http://localhost:4200"}/dashboard" class="button">Get Started</a>
+                <a href="${process.env.APP_URL || "http://localhost:4200"}/todays-practice" class="button">Get Started</a>
             </p>
             <p>If you have any questions, our support team is here to help at support@flagfitpro.com</p>
             <p>Let's elevate your game!</p>
@@ -351,7 +351,7 @@ Access personalized training programs designed by professional coaches.
 Progress Analytics
 Track your improvement over time with detailed performance metrics and insights.
 
-Get started: ${process.env.APP_URL || "http://localhost:4200"}/dashboard
+Get started: ${process.env.APP_URL || "http://localhost:4200"}/todays-practice
 
 If you have any questions, our support team is here to help at support@flagfitpro.com
 

@@ -3,6 +3,7 @@ import { Router } from "@angular/router";
 import type { Session, User as SupabaseUser } from "@supabase/supabase-js";
 import { Observable, from, of, throwError } from "rxjs";
 import { catchError, map, tap } from "rxjs";
+import { HomeRouteService } from "./home-route.service";
 import { LoggerService } from "./logger.service";
 import { PlatformService } from "./platform.service";
 import { SupabaseService } from "./supabase.service";
@@ -55,6 +56,7 @@ export interface AuthSessionResult {
 export class AuthService {
   private supabaseService = inject(SupabaseService);
   private router = inject(Router);
+  private homeRouteService = inject(HomeRouteService);
   private logger = inject(LoggerService);
   private platform = inject(PlatformService);
 
@@ -240,7 +242,11 @@ export class AuthService {
   }
 
   redirectToDashboard(): void {
-    this.router.navigate(["/dashboard"]);
+    const user = this.currentUser();
+    const route = this.homeRouteService.getHomeRouteForRole(
+      user?.role ?? user?.user_metadata?.role,
+    );
+    this.router.navigateByUrl(route);
   }
 
   redirectToLogin(): void {

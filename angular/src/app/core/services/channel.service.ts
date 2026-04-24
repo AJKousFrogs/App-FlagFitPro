@@ -587,7 +587,7 @@ export class ChannelService {
             .from("users")
             .select("id, email, full_name, profile_photo_url")
             .eq("id", userId)
-            .single();
+            .maybeSingle();
 
         if (authorError) {
           if (isBenignSupabaseQueryError(authorError)) {
@@ -822,7 +822,7 @@ export class ChannelService {
         .from("chat_messages")
         .select("channel_id")
         .eq("id", messageId)
-        .single();
+        .maybeSingle();
 
       if (!message) throw new Error("Message not found");
 
@@ -831,7 +831,7 @@ export class ChannelService {
         .from("channels")
         .select("team_id")
         .eq("id", message.channel_id)
-        .single();
+        .maybeSingle();
 
       if (!channel) throw new Error("Channel not found");
 
@@ -1071,7 +1071,7 @@ export class ChannelService {
         .select("last_read_at")
         .eq("channel_id", channelId)
         .eq("user_id", userId)
-        .single();
+        .maybeSingle();
 
       const lastReadAt = membership?.last_read_at || "1970-01-01T00:00:00Z";
 
@@ -1135,7 +1135,7 @@ export class ChannelService {
           .select("channel_id")
           .eq("channel_id", membership.channel_id)
           .eq("user_id", otherUserId)
-          .single();
+          .maybeSingle();
 
         if (otherMember) {
           // DM already exists
@@ -1144,7 +1144,7 @@ export class ChannelService {
             .select("*")
             .eq("id", membership.channel_id)
             .eq("channel_type", "direct_message")
-            .single();
+            .maybeSingle();
 
           if (channel) {
             return channel as Channel;

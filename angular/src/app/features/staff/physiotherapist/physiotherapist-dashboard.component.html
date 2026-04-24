@@ -194,6 +194,9 @@
             </div>
 
             <div *appTabPanel="let panel; header: 'Return to Play'; value: 1; icon: 'pi-sync'">
+                @if (rtpLoadError()) {
+                  <app-alert variant="warning" message="Some return-to-play data could not be loaded. Showing partial results." density="compact" />
+                }
                 <app-physio-rtp-section
                   [items]="rtpData()"
                   [phases]="rtpPhases"
@@ -215,6 +218,9 @@
             </div>
 
             <div *appTabPanel="let panel; header: 'Injury History'; value: 3; icon: 'pi-history'">
+                @if (injuryHistoryLoadError()) {
+                  <app-alert variant="warning" message="Some injury history records could not be loaded." density="compact" />
+                }
                 <app-physio-history-section
                   [selectedAthlete]="selectedHistoryAthlete"
                   [athleteOptions]="athleteSelectOptions()"

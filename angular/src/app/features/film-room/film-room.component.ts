@@ -19,6 +19,7 @@ import {
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { ToastService } from "../../core/services/toast.service";
+import { TOAST } from "../../core/constants/toast-messages.constants";
 import { ButtonComponent } from "../../shared/components/button/button.component";
 import { ProgressBar } from "primeng/progressbar";
 
@@ -327,7 +328,10 @@ export class FilmRoomComponent implements OnInit {
         next: () => {
           this.toastService.success("Reply sent");
         },
-        error: (err) => this.logger.error("Failed to send reply", err),
+        error: (err) => {
+          this.logger.error("Failed to send reply", err);
+          this.toastService.error(TOAST.ERROR.SAVE_FAILED);
+        },
       });
 
     this.replyMessage.set("");

@@ -340,7 +340,7 @@ export class PracticePlannerComponent implements OnInit {
       equipment: [...practice.equipment],
       activities: practice.activities.map((a) => ({
         ...a,
-        id: `new-${Date.now()}-${Math.random()}`,
+        id: crypto.randomUUID(),
         details: [...a.details],
       })),
       coachNotes: practice.coachNotes,

@@ -239,14 +239,10 @@ export class TrainingDataService {
         .select("*")
         .eq("id", id)
         .eq("user_id", userId)
-        .single(),
+        .maybeSingle(),
     ).pipe(
       map(({ data, error }) => {
         if (error) {
-          if (error.code === "PGRST116") {
-            // Not found
-            return null;
-          }
           this.logger.error("Error fetching training session:", error);
           throw error;
         }
@@ -700,7 +696,7 @@ export class TrainingDataService {
           .eq("player_id", userId)
           .order("calculated_at", { ascending: false })
           .limit(1)
-          .single();
+          .maybeSingle();
 
         // Calculate current streak (consecutive days with sessions)
         const current_streak = this.calculateCurrentStreak(sessions);

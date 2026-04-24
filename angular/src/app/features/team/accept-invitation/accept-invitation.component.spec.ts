@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { ActivatedRoute, Router } from "@angular/router";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { HomeRouteService } from "../../../core/services/home-route.service";
 import { PlatformService } from "../../../core/services/platform.service";
 import { ToastService } from "../../../core/services/toast.service";
 import {
@@ -30,7 +31,12 @@ describe("AcceptInvitationComponent", () => {
 
   const mockRouter = {
     navigate: vi.fn(),
+    navigateByUrl: vi.fn(),
   } as unknown as Router;
+
+  const mockHomeRouteService = {
+    getHomeRoute: vi.fn(() => "/todays-practice"),
+  } as unknown as HomeRouteService;
 
   const mockActivatedRoute = {
     snapshot: {
@@ -63,6 +69,7 @@ describe("AcceptInvitationComponent", () => {
           useValue: mockTeamInvitationDataService,
         },
         { provide: ToastService, useValue: mockToastService },
+        { provide: HomeRouteService, useValue: mockHomeRouteService },
         { provide: Router, useValue: mockRouter },
         { provide: ActivatedRoute, useValue: mockActivatedRoute },
         { provide: PlatformService, useValue: mockPlatformService },
@@ -220,7 +227,7 @@ describe("AcceptInvitationComponent", () => {
     expect(component.isProcessing()).toBe(false);
   });
 
-  it("declines the invitation and redirects to the dashboard", async () => {
+  it("declines the invitation and redirects home", async () => {
     vi.useFakeTimers();
     mockTeamInvitationDataService.declineInvitation = vi
       .fn()
@@ -243,6 +250,6 @@ describe("AcceptInvitationComponent", () => {
 
     vi.runAllTimers();
 
-    expect(mockRouter.navigate).toHaveBeenCalledWith(["/dashboard"]);
+    expect(mockRouter.navigateByUrl).toHaveBeenCalledWith("/todays-practice");
   });
 });

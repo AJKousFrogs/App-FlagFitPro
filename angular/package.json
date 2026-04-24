@@ -11,7 +11,7 @@
     "ng": "ng",
     "start": "ng serve",
     "start:ssr": "ng serve-ssr",
-    "prebuild": "npm run check:ngmodel-cva",
+    "prebuild": "node scripts/patch-build-dependency-warnings.mjs && npm run check:ngmodel-cva",
     "build": "ng build --progress=false",
     "build:analyze": "ng build && node scripts/check-bundle-size.js",
     "serve:dist": "node scripts/serve-dist.mjs",

@@ -312,20 +312,14 @@ export class PlayerMetricsService {
     // If we have actual metrics, calculate against benchmarks
     const metrics = player.positionMetrics;
     if (!metrics) {
-      // Generate based on status
+      // No real metrics — return status-based baseline (no random to avoid coach confusion on refresh)
       switch (player.status) {
-        case "active":
-          return 70 + Math.floor(Math.random() * 25);
-        case "limited":
-          return 55 + Math.floor(Math.random() * 20);
-        case "returning":
-          return 50 + Math.floor(Math.random() * 20);
-        case "injured":
-          return 40 + Math.floor(Math.random() * 20);
-        case "inactive":
-          return 45 + Math.floor(Math.random() * 25);
-        default:
-          return 70;
+        case "active": return 70;
+        case "limited": return 60;
+        case "returning": return 55;
+        case "injured": return 45;
+        case "inactive": return 50;
+        default: return 70;
       }
     }
 
@@ -397,23 +391,11 @@ export class PlayerMetricsService {
    */
   private buildPositionMetrics(
     player: Player,
-    position: FlagFootballPosition | null,
+    _position: FlagFootballPosition | null,
   ): PositionMetrics {
     const existing = player.positionMetrics || {};
 
-    // Add position-specific defaults if not present
-    if (position === "QB" && !existing.throwsThisWeek) {
-      existing.throwsThisWeek = Math.floor(Math.random() * 150) + 50;
-      existing.armCareCompliance = Math.random() > 0.3;
-    }
-
-    if ((position === "WR" || position === "DB") && !existing.sprintCapacity) {
-      existing.sprintCapacity = 70 + Math.floor(Math.random() * 25);
-    }
-
-    if (position === "Rusher" && !existing.firstStepExplosion) {
-      existing.firstStepExplosion = 70 + Math.floor(Math.random() * 25);
-    }
+    // Only include metrics that are backed by real data — no invented defaults
 
     return existing;
   }

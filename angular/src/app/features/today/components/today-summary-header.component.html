@@ -73,13 +73,119 @@
                 }
               </strong>
             </div>
-            <div class="exact-training-metric">
-              <span class="exact-training-metric__label">Video demos</span>
-              <strong class="exact-training-metric__value">{{
-                summary.videoCount
-              }}</strong>
-            </div>
           </div>
+
+          @if (summary.featuredVideos.length > 0) {
+            <section class="exact-training-videos" aria-label="Drill videos">
+              <div class="exact-training-videos__header">
+                <div class="exact-training-videos__header-text">
+                  <span class="exact-training-videos__kicker">Video demos</span>
+                  <h3 class="exact-training-videos__title">Select a drill</h3>
+                </div>
+                <span class="exact-training-videos__count">
+                  {{ summary.videoCount }} available
+                </span>
+              </div>
+
+              <div class="exact-training-videos__layout">
+                <div class="exact-training-videos__player">
+                  @if (featuredVideoEmbedUrl(); as embedUrl) {
+                    <div class="exact-training-video__frame">
+                      <iframe
+                        [src]="embedUrl"
+                        [title]="
+                          (selectedVideo()?.exerciseName || 'Selected drill') +
+                          ' video demo'
+                        "
+                        loading="lazy"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                        allowfullscreen
+                      ></iframe>
+                    </div>
+                  } @else {
+                    <div
+                      class="exact-training-video__frame exact-training-video__frame--empty"
+                      aria-hidden="true"
+                    >
+                      <i class="pi pi-video" aria-hidden="true"></i>
+                      <span>Select a drill to watch the demo</span>
+                    </div>
+                  }
+
+                  @if (selectedVideo(); as currentVideo) {
+                    <div class="exact-training-video__meta">
+                      <span class="exact-training-video__label">
+                        Selected drill
+                      </span>
+                      <strong class="exact-training-video__title">
+                        {{ currentVideo.exerciseName }}
+                      </strong>
+                      <span class="exact-training-video__details">
+                        {{ currentVideo.blockLabel }} ·
+                        {{ currentVideo.prescriptionLabel }}
+                      </span>
+                      @if (featuredVideoWatchUrl(); as watchUrl) {
+                        <a
+                          class="exact-training-video__link"
+                          [href]="watchUrl"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          Open in YouTube
+                        </a>
+                      }
+                    </div>
+                  }
+                </div>
+
+                <div class="exact-training-videos__list">
+                  @for (video of summary.featuredVideos; track video.videoId) {
+                    <button
+                      type="button"
+                      class="exact-training-videos__item"
+                      [class.is-selected]="
+                        selectedVideo()?.videoId === video.videoId
+                      "
+                      [attr.aria-pressed]="
+                        selectedVideo()?.videoId === video.videoId
+                      "
+                      [attr.aria-label]="'Play ' + video.exerciseName"
+                      (click)="selectVideo(video.videoId)"
+                    >
+                      <div class="exact-training-videos__thumbnail">
+                        @if (video.thumbnailUrl) {
+                          <img
+                            [src]="video.thumbnailUrl"
+                            [alt]="video.exerciseName"
+                            loading="lazy"
+                            decoding="async"
+                          />
+                        } @else {
+                          <i class="pi pi-play" aria-hidden="true"></i>
+                        }
+                      </div>
+                      <div class="exact-training-videos__copy">
+                        <span class="exact-training-videos__eyebrow">
+                          Drill demo
+                        </span>
+                        <strong class="exact-training-videos__name">
+                          {{ video.exerciseName }}
+                        </strong>
+                        <span class="exact-training-videos__details">
+                          {{ video.blockLabel }} ·
+                          {{ video.prescriptionLabel }}
+                        </span>
+                      </div>
+                      <i
+                        class="pi pi-chevron-right exact-training-videos__chevron"
+                        aria-hidden="true"
+                      ></i>
+                    </button>
+                  }
+                </div>
+              </div>
+            </section>
+          }
 
           <div class="exact-training-status">
             @if (summary.readinessText) {

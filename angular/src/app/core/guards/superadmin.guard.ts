@@ -1,5 +1,6 @@
 import { inject } from "@angular/core";
 import { Router, CanActivateFn } from "@angular/router";
+import { HomeRouteService } from "../services/home-route.service";
 import { SuperadminService } from "../services/superadmin.service";
 import { SupabaseService } from "../services/supabase.service";
 
@@ -10,6 +11,7 @@ import { SupabaseService } from "../services/supabase.service";
 export const superadminGuard: CanActivateFn = async (route, state) => {
   const superadminService = inject(SuperadminService);
   const supabaseService = inject(SupabaseService);
+  const homeRouteService = inject(HomeRouteService);
   const router = inject(Router);
 
   // CRITICAL: Wait for Supabase auth to initialize before checking
@@ -27,8 +29,7 @@ export const superadminGuard: CanActivateFn = async (route, state) => {
   const isSuperadmin = await superadminService.checkSuperadminStatus();
 
   if (!isSuperadmin) {
-    // Redirect to regular dashboard if not superadmin
-    return router.createUrlTree(["/dashboard"]);
+    return router.createUrlTree([homeRouteService.getHomeRoute()]);
   }
 
   return true;

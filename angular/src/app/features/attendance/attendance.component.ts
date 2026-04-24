@@ -8,6 +8,7 @@ import {
   inject,
   signal,
 } from "@angular/core";
+import { FormsModule } from "@angular/forms";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { AvatarComponent } from "../../shared/components/avatar/avatar.component";
 import { FormInputComponent } from "../../shared/components/form-input/form-input.component";
@@ -50,6 +51,7 @@ type AttendanceStatus = "present" | "absent" | "late" | "excused";
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
+    FormsModule,
     StatusTagComponent,
     FormInputComponent,
     TextareaComponent,
@@ -84,11 +86,12 @@ export class AttendanceComponent implements OnInit {
   selectedEventType: EventType | null = null;
 
   // Dialogs
-  showCreateEventDialog = false;
-  showAttendanceDialog = false;
+  showCreateEventDialog = signal(false);
+  showAttendanceDialog = signal(false);
+  isSaving = signal(false);
 
   // New event form
-  newEvent = {
+  newEvent = signal({
     title: "",
     event_type: "practice" as EventType,
     start_time: null as Date | null,
@@ -96,7 +99,7 @@ export class AttendanceComponent implements OnInit {
     location: "",
     description: "",
     is_mandatory: true,
-  };
+  });
 
   // Options
   readonly playerStatsPageSize = 10;
@@ -244,7 +247,7 @@ export class AttendanceComponent implements OnInit {
   }
 
   openCreateEventDialog(): void {
-    this.newEvent = {
+    this.newEvent.set({
       title: "",
       event_type: "practice",
       start_time: null,
@@ -252,20 +255,20 @@ export class AttendanceComponent implements OnInit {
       location: "",
       description: "",
       is_mandatory: true,
-    };
-    this.showCreateEventDialog = true;
+    });
+    this.showCreateEventDialog.set(true);
   }
 
   onNewEventTitleChange(value: string): void {
-    this.newEvent = { ...this.newEvent, title: value };
+    this.newEvent.set({ ...this.newEvent(), title: value });
   }
 
   onNewEventTypeChange(value: unknown): void {
-    this.newEvent = { ...this.newEvent, event_type: (value as EventType | null | undefined) ?? "practice" };
+    this.newEvent.set({ ...this.newEvent(), event_type: (value as EventType | null | undefined) ?? "practice" });
   }
 
   onNewEventStartTimeChange(value: Date | null): void {
-    this.newEvent = { ...this.newEvent, start_time: value };
+    this.newEvent.set({ ...this.newEvent(), start_time: value });
   }
 
   onNewEventStartTimeInput(value: string): void {
@@ -277,7 +280,7 @@ export class AttendanceComponent implements OnInit {
   }
 
   onNewEventEndTimeChange(value: Date | null): void {
-    this.newEvent = { ...this.newEvent, end_time: value };
+    this.newEvent.set({ ...this.newEvent(), end_time: value });
   }
 
   onNewEventEndTimeInput(value: string): void {
@@ -289,15 +292,15 @@ export class AttendanceComponent implements OnInit {
   }
 
   onNewEventLocationChange(value: string): void {
-    this.newEvent = { ...this.newEvent, location: value };
+    this.newEvent.set({ ...this.newEvent(), location: value });
   }
 
   onNewEventDescriptionChange(value: string): void {
-    this.newEvent = { ...this.newEvent, description: value };
+    this.newEvent.set({ ...this.newEvent(), description: value });
   }
 
   onNewEventMandatoryChange(value: boolean): void {
-    this.newEvent = { ...this.newEvent, is_mandatory: value };
+    this.newEvent.set({ ...this.newEvent(), is_mandatory: value });
   }
 
   onNewEventMandatoryToggle(event: Event): void {
@@ -344,28 +347,31 @@ export class AttendanceComponent implements OnInit {
   }
 
   canCreateEvent(): boolean {
-    return !!(
-      this.newEvent.title &&
-      this.newEvent.event_type &&
-      this.newEvent.start_time
-    );
+    const e = this.newEvent();
+    if (!(e.title && e.event_type && e.start_time)) {
+      return false;
+    }
+    if (e.end_time && e.end_time <= e.start_time) {
+      return false;
+    }
+    return true;
   }
 
   createEvent(): void {
     const teamId = this.teamMembershipService.teamId();
     if (!teamId || !this.canCreateEvent()) return;
 
+    const e = this.newEvent();
     this.attendanceService
       .createEvent({
         team_id: teamId,
-        title: this.newEvent.title,
-        event_type: this.newEvent.event_type,
-        start_time:
-          this.newEvent.start_time?.toISOString() ?? new Date().toISOString(),
-        end_time: this.newEvent.end_time?.toISOString(),
-        location: this.newEvent.location || undefined,
-        description: this.newEvent.description || undefined,
-        is_mandatory: this.newEvent.is_mandatory,
+        title: e.title,
+        event_type: e.event_type,
+        start_time: e.start_time?.toISOString() ?? new Date().toISOString(),
+        end_time: e.end_time?.toISOString(),
+        location: e.location || undefined,
+        description: e.description || undefined,
+        is_mandatory: e.is_mandatory,
       })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
@@ -373,7 +379,7 @@ export class AttendanceComponent implements OnInit {
           if (event) {
             this.events.update((events) => [event, ...events]);
             this.toastService.success(TOAST.SUCCESS.EVENT_CREATED_SUCCESS);
-            this.showCreateEventDialog = false;
+            this.showCreateEventDialog.set(false);
           }
         },
         error: () => this.toastService.error(TOAST.ERROR.CREATE_FAILED),
@@ -383,7 +389,7 @@ export class AttendanceComponent implements OnInit {
   openAttendanceDialog(event: TeamEvent): void {
     this.selectedEvent.set(event);
     this.loadEventAttendance(event.id);
-    this.showAttendanceDialog = true;
+    this.showAttendanceDialog.set(true);
   }
 
   loadEventAttendance(eventId: string): void {
@@ -416,16 +422,21 @@ export class AttendanceComponent implements OnInit {
       status: r.status,
     }));
 
+    this.isSaving.set(true);
     this.attendanceService
       .bulkRecordAttendance(event.id, records)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {
+          this.isSaving.set(false);
           this.toastService.success(TOAST.SUCCESS.ATTENDANCE_SAVED_SUCCESS);
-          this.showAttendanceDialog = false;
+          this.showAttendanceDialog.set(false);
           this.loadPlayerStats();
         },
-        error: () => this.toastService.error(TOAST.ERROR.SAVE_FAILED),
+        error: () => {
+          this.isSaving.set(false);
+          this.toastService.error(TOAST.ERROR.SAVE_FAILED);
+        },
       });
   }
 

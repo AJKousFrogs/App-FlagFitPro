@@ -18,6 +18,7 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  computed,
   inject,
   input,
   signal,
@@ -25,6 +26,7 @@ import {
 import { Router } from "@angular/router";
 import { ButtonComponent } from "../button/button.component";
 import { GlobalErrorHandlerService } from "../../../core/services/global-error-handler.service";
+import { HomeRouteService } from "../../../core/services/home-route.service";
 import { CardShellComponent } from "../card-shell/card-shell.component";
 import { PageErrorStateComponent } from "../page-error-state/page-error-state.component";
 
@@ -40,11 +42,11 @@ import { PageErrorStateComponent } from "../page-error-state/page-error-state.co
             <app-page-error-state
               class="error-boundary-state"
               titleTag="h2"
-              title="Something went wrong"
+              title="This section hit a problem"
               [message]="errorMessage()"
               icon="pi-exclamation-triangle"
               [showRetry]="false"
-              helpText="If this problem persists, please contact support."
+              helpText="Try reloading this section or return home."
             ></app-page-error-state>
             @if (componentName()) {
               <p class="error-boundary-meta">Component: {{ componentName() }}</p>
@@ -56,8 +58,8 @@ import { PageErrorStateComponent } from "../page-error-state/page-error-state.co
               <app-button
                 variant="outlined"
                 iconLeft="pi-home"
-                (clicked)="goToDashboard()"
-                >Go to Dashboard</app-button
+                (clicked)="goToHome()"
+                >Go to Home</app-button
               >
             </div>
           </div>
@@ -73,11 +75,13 @@ export class ErrorBoundaryComponent {
   componentName = input<string>();
 
   private router = inject(Router);
+  private homeRouteService = inject(HomeRouteService);
   private errorHandler = inject(GlobalErrorHandlerService);
+  readonly homeRoute = computed(() => this.homeRouteService.getHomeRoute());
 
   hasError = signal(false);
   errorMessage = signal(
-    "An unexpected error occurred while loading this component.",
+    "We couldn't load this section right now.",
   );
 
   /**
@@ -95,7 +99,7 @@ export class ErrorBoundaryComponent {
   retry(): void {
     this.hasError.set(false);
     this.errorMessage.set(
-      "An unexpected error occurred while loading this component.",
+      "We couldn't load this section right now.",
     );
     // Force a re-render by navigating to the same route
     const currentUrl = this.router.url;
@@ -107,8 +111,8 @@ export class ErrorBoundaryComponent {
   /**
    * Navigate to dashboard as fallback
    */
-  goToDashboard(): void {
+  goToHome(): void {
     this.hasError.set(false);
-    this.router.navigate(["/dashboard"]);
+    this.router.navigateByUrl(this.homeRoute());
   }
 }

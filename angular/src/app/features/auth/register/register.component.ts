@@ -106,8 +106,7 @@ import { CardShellComponent } from "../../../shared/components/card-shell/card-s
               </small>
             }
             <small id="register-password-hint" class="form-help">
-              Password must be at least 8 characters and include uppercase,
-              lowercase, number, and special character.
+              Min. 8 characters — must include uppercase, lowercase, number, and special character (@ $ ! % * ? &).
             </small>
           </div>
 
@@ -257,6 +256,17 @@ export class RegisterComponent {
       const confirmControl = this.registerForm.get("confirmPassword");
       if (confirmControl && (confirmControl.touched || confirmControl.dirty)) {
         return "Passwords do not match";
+      }
+    }
+
+    if (fieldName === "password") {
+      const control = this.registerForm.get("password");
+      if (control?.errors && control.touched) {
+        if (control.errors["required"]) return "Password is required";
+        if (control.errors["minlength"]) return "Password must be at least 8 characters";
+        if (control.errors["pattern"]) {
+          return "Must include uppercase, lowercase, number, and special character (@ $ ! % * ? &)";
+        }
       }
     }
 

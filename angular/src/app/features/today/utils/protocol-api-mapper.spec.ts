@@ -50,6 +50,53 @@ describe("protocol-api-mapper", () => {
     expect(result.morningMobility?.totalCount).toBe(1);
   });
 
+  it("should prefer exact drill names from exercise_name fields", () => {
+    const block: ApiProtocolBlock = {
+      exercises: [
+        {
+          id: "ex-exact",
+          exercise_name: "Lateral Bounds",
+          prescribedSets: 2,
+          prescribedReps: 6,
+          status: "pending",
+        } as ApiExercise,
+      ],
+    };
+
+    const result = mapToDailyProtocol({ warmUp: block });
+
+    expect(result.warmUp?.exercises[0].exercise.name).toBe("Lateral Bounds");
+    expect(result.warmUp?.exercises[0].exerciseId).toBe("ex-exact");
+  });
+
+  it("should prefer nested exact drill names over generic top-level names", () => {
+    const block: ApiProtocolBlock = {
+      exercises: [
+        {
+          id: "ex-nested",
+          name: "Legacy Warm-Up Placeholder",
+          exercise: {
+            id: "nested-exact",
+            exercise_name: "A-Skips",
+            slug: "a-skips",
+            category: "skill",
+            howText: "Stay tall",
+            defaultSets: 1,
+            difficultyLevel: "intermediate",
+            loadContributionAu: 0,
+            isHighIntensity: false,
+          },
+          prescribedSets: 2,
+          status: "pending",
+        } as ApiExercise,
+      ],
+    };
+
+    const result = mapToDailyProtocol({ skillDrills: block });
+
+    expect(result.skillDrills?.exercises[0].exercise.name).toBe("A-Skips");
+  });
+
   it("should handle nested exercise object", () => {
     const block: ApiProtocolBlock = {
       exercises: [
@@ -131,6 +178,31 @@ describe("protocol-api-mapper", () => {
     const result = mapToDailyProtocol({ morningMobility: block });
     const exercise = result.morningMobility?.exercises[0].exercise;
 
+    expect(exercise?.videoId).toBe("IWNnTJFwi3s");
+    expect(exercise?.videoUrl).toBe(
+      "https://www.youtube.com/watch?v=IWNnTJFwi3s",
+    );
+    expect(exercise?.thumbnailUrl).toBe(
+      "https://img.youtube.com/vi/IWNnTJFwi3s/hqdefault.jpg",
+    );
+  });
+
+  it("uses curated drill videos when backend exercise rows have no video metadata", () => {
+    const block: ApiProtocolBlock = {
+      exercises: [
+        {
+          id: "ex-curated-video",
+          exercise_name: "Morning Mobility - Day 1 (Monday)",
+          prescribedSets: 1,
+          prescribedDurationSeconds: 600,
+        } as ApiExercise,
+      ],
+    };
+
+    const result = mapToDailyProtocol({ morningMobility: block });
+    const exercise = result.morningMobility?.exercises[0].exercise;
+
+    expect(exercise?.name).toBe("Morning Mobility - Day 1 (Monday)");
     expect(exercise?.videoId).toBe("IWNnTJFwi3s");
     expect(exercise?.videoUrl).toBe(
       "https://www.youtube.com/watch?v=IWNnTJFwi3s",

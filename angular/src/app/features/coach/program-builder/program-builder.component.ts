@@ -19,6 +19,7 @@ import {
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { ToastService } from "../../../core/services/toast.service";
+import { TOAST } from "../../../core/constants/toast-messages.constants";
 import { InputNumber, type InputNumberInputEvent } from "primeng/inputnumber";
 import { ProgressBar } from "primeng/progressbar";
 import { TableModule } from "primeng/table";
@@ -479,7 +480,10 @@ export class ProgramBuilderComponent implements OnInit {
         options.closeDialog?.();
         this.refreshPrograms();
       },
-      error: (err) => this.logger.error(`Failed to ${options.successTitle.toLowerCase()}`, err),
+      error: (err) => {
+        this.logger.error(`Failed to ${options.successTitle.toLowerCase()}`, err);
+        this.toastService.error(TOAST.ERROR.SAVE_FAILED);
+      },
     });
   }
 
@@ -590,7 +594,10 @@ export class ProgramBuilderComponent implements OnInit {
         this.toastService.info("Program deleted", "Program Deleted");
         this.refreshPrograms();
       },
-      error: (err) => this.logger.error("Failed to delete program", err),
+      error: (err) => {
+        this.logger.error("Failed to delete program", err);
+        this.toastService.error(TOAST.ERROR.DELETE_FAILED);
+      },
     });
   }
 

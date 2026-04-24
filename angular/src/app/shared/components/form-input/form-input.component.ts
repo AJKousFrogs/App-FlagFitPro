@@ -29,6 +29,7 @@ export type ValidationState = "idle" | "validating" | "valid" | "invalid";
 
 @Component({
   selector: "app-form-input",
+  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [],
   providers: [

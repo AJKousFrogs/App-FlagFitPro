@@ -48,6 +48,7 @@ import { AcwrService } from "../../../core/services/acwr.service";
 import { LoggerService } from "../../../core/services/logger.service";
 import { OfflineQueueService } from "../../../core/services/offline-queue.service";
 import { SupabaseService } from "../../../core/services/supabase.service";
+import { HomeRouteService } from "../../../core/services/home-route.service";
 import { SessionType as AcwrSessionType } from "../../../core/models/acwr.models";
 
 interface SessionType {
@@ -97,14 +98,13 @@ export class TrainingLogComponent implements OnInit {
   private readonly toastService = inject(ToastService);
   private readonly logger = inject(LoggerService);
   private readonly offlineQueue = inject(OfflineQueueService);
+  private readonly homeRouteService = inject(HomeRouteService);
 
   readonly isSubmitting = signal(false);
   readonly showDetails = signal(false);
   readonly isReadOnly = signal(false);
   readonly overrideMessage = signal<string | null>(null);
   private activeSessionId: string | null = null;
-
-  private readonly dashboardRoute = ["/dashboard"] as const;
 
   readonly sessionTypes: SessionType[] = [
     {
@@ -506,7 +506,7 @@ export class TrainingLogComponent implements OnInit {
   }
 
   private navigateToDashboard(): void {
-    this.router.navigate([...this.dashboardRoute]);
+    this.router.navigateByUrl(this.homeRouteService.getHomeRoute());
   }
 
   /**

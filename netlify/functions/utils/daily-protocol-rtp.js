@@ -98,6 +98,7 @@ export async function generateReturnToPlayProtocol(
   if (dayMobility) {
     protocolExercises.push({
       exercise_id: dayMobility.id,
+      exercise_name: dayMobility.name,
       block_type: "morning_mobility",
       block_order: 1,
       sequence_order: sequenceOrder++,
@@ -115,6 +116,7 @@ export async function generateReturnToPlayProtocol(
     mobilityExercises.forEach((ex) => {
       protocolExercises.push({
         exercise_id: ex.id,
+        exercise_name: ex.name,
         block_type: "morning_mobility",
         block_order: 1,
         sequence_order: sequenceOrder++,
@@ -142,6 +144,7 @@ export async function generateReturnToPlayProtocol(
         const loadModifier = rtpPhase === 2 ? 0.3 : 0.5;
         protocolExercises.push({
           exercise_id: ex.id,
+          exercise_name: ex.name,
           block_type: "rehab_progression",
           block_order: 2,
           sequence_order: sequenceOrder++,
@@ -169,6 +172,7 @@ export async function generateReturnToPlayProtocol(
       conditioningExercises.forEach((ex) => {
         protocolExercises.push({
           exercise_id: ex.id,
+          exercise_name: ex.name,
           block_type: "conditioning",
           block_order: 3,
           sequence_order: sequenceOrder++,
@@ -193,6 +197,7 @@ export async function generateReturnToPlayProtocol(
     eveningMobility.forEach((ex) => {
       protocolExercises.push({
         exercise_id: ex.id,
+        exercise_name: ex.name,
         block_type: "evening_mobility",
         block_order: 4,
         sequence_order: sequenceOrder++,

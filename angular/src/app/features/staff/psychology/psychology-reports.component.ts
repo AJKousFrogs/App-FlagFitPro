@@ -203,6 +203,7 @@ export class PsychologyReportsComponent implements OnInit {
   >([]);
   currentWellnessData = signal<MentalWellnessReport | null>(null);
   preCompReports = signal<PreCompetitionReport[]>([]);
+  athletes = signal<{ id: string; name: string; position: string }[]>([]);
 
   // UI State
   selectedPeriod = "30days";
@@ -382,9 +383,42 @@ export class PsychologyReportsComponent implements OnInit {
     this.loading.set(true);
     this.loadError.set(null);
     try {
-      // Load wellness data from API
+      // Load athletes wellness data from API (team-wide, not own data)
       const response = await firstValueFrom(
         this.api.get<{
+          athletes: {
+            id: string;
+            name: string;
+            position: string;
+            mentalLogs: {
+              log_date: string;
+              confidence_level: number;
+              focus_level: number;
+              motivation_level: number;
+              anxiety_level: number;
+            }[];
+            wellness: {
+              date: string;
+              mood: number;
+              stress_level: number;
+              sleep_quality: number;
+              motivation_level: number;
+              energy_level: number;
+            }[];
+            assessments: {
+              assessment_type: string;
+              score: number;
+              created_at: string;
+              requires_professional_review: boolean;
+            }[];
+          }[];
+        }>("/api/staff-psychology/athletes"),
+      );
+      const payload = extractApiPayload<{
+        athletes: {
+          id: string;
+          name: string;
+          position: string;
           mentalLogs: {
             log_date: string;
             confidence_level: number;
@@ -406,34 +440,34 @@ export class PsychologyReportsComponent implements OnInit {
             created_at: string;
             requires_professional_review: boolean;
           }[];
-        }>("/api/staff-psychology/my-data"),
-      );
-      const payload = extractApiPayload<{
-        mentalLogs: {
-          log_date: string;
-          confidence_level: number;
-          focus_level: number;
-          motivation_level: number;
-          anxiety_level: number;
-        }[];
-        wellness: {
-          date: string;
-          mood: number;
-          stress_level: number;
-          sleep_quality: number;
-          motivation_level: number;
-          energy_level: number;
-        }[];
-        assessments: {
-          assessment_type: string;
-          score: number;
-          created_at: string;
-          requires_professional_review: boolean;
         }[];
       }>(response);
 
-      if (payload) {
-        this.processWellnessData(payload);
+      if (payload?.athletes && payload.athletes.length > 0) {
+        this.athletes.set(
+          payload.athletes.map((a) => ({
+            id: a.id,
+            name: a.name,
+            position: a.position,
+          })),
+        );
+
+        // Aggregate wellness data across all athletes
+        const allMentalLogs = payload.athletes.flatMap(
+          (a) => a.mentalLogs || [],
+        );
+        const allWellness = payload.athletes.flatMap(
+          (a) => a.wellness || [],
+        );
+        const allAssessments = payload.athletes.flatMap(
+          (a) => a.assessments || [],
+        );
+
+        this.processWellnessData({
+          mentalLogs: allMentalLogs,
+          wellness: allWellness,
+          assessments: allAssessments,
+        });
       }
     } catch (error) {
       this.logger.error("Failed to load psychology data", error);
@@ -488,7 +522,7 @@ export class PsychologyReportsComponent implements OnInit {
       },
       generatedBy: "athlete",
       athlete: {
-        name: "Current User",
+        name: `Team Aggregate (${this.athletes().length} athletes)`,
         age: 0,
         position: "",
         teamRole: "",

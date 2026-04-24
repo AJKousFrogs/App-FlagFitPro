@@ -266,7 +266,7 @@ export class TrainingSafetyService {
         .from("users")
         .select("birth_date, date_of_birth")
         .eq("id", targetUserId)
-        .single();
+        .maybeSingle();
 
       if (error || !data) {
         if (error && isBenignSupabaseQueryError(error)) {

@@ -36,7 +36,7 @@ describe("EmptyStateComponent", () => {
   describe("Basic Display", () => {
     it("should display default title", () => {
       const titleEl = fixture.nativeElement.querySelector(".empty-title");
-      expect(titleEl.textContent).toContain("No Data Available");
+      expect(titleEl.textContent).toContain("Nothing Here Yet");
     });
 
     it("should display custom title", () => {

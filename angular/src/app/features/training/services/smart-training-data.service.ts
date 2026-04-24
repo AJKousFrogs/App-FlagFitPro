@@ -61,9 +61,9 @@ export class SmartTrainingDataService {
 
     const { data: events, error } = await this.supabaseService.client
       .from("team_events")
-      .select("event_date, title, event_type")
-      .gte("event_date", startDate)
-      .order("event_date", { ascending: true })
+      .select("start_time, title, event_type")
+      .gte("start_time", `${startDate}T00:00:00`)
+      .order("start_time", { ascending: true })
       .limit(5);
 
     if (error && isBenignSupabaseQueryError(error)) {
@@ -71,7 +71,16 @@ export class SmartTrainingDataService {
       return { events: [], error: null };
     }
 
-    return { events: events ?? [], error };
+    const mappedEvents = (events ?? []).map((event) => ({
+      event_date:
+        typeof event.start_time === "string"
+          ? event.start_time
+          : `${startDate}T00:00:00`,
+      title: event.title ?? null,
+      event_type: event.event_type ?? null,
+    }));
+
+    return { events: mappedEvents, error };
   }
 
   async createTrainingSession(input: {

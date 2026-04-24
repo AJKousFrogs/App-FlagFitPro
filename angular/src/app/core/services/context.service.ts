@@ -2,6 +2,7 @@ import { Injectable, inject } from "@angular/core";
 import { Router, NavigationEnd } from "@angular/router";
 import { filter, map } from "rxjs";
 import { toSignal } from "@angular/core/rxjs-interop";
+import { HomeRouteService } from "./home-route.service";
 import { LoggerService } from "./logger.service";
 
 export interface QuickAction {
@@ -31,6 +32,7 @@ export interface BreadcrumbItem {
 })
 export class ContextService {
   private router = inject(Router);
+  private homeRouteService = inject(HomeRouteService);
   private logger = inject(LoggerService);
 
   // Track current route
@@ -53,8 +55,8 @@ export class ContextService {
       quickActions: QuickAction[];
     }
   > = {
-    "/dashboard": {
-      label: "Dashboard",
+    "/todays-practice": {
+      label: "Today's Practice",
       icon: "pi-th-large",
       quickActions: [
         {
@@ -82,7 +84,7 @@ export class ContextService {
     "/training": {
       label: "Training",
       icon: "pi-bolt",
-      parent: "/dashboard",
+      parent: "/todays-practice",
       quickActions: [
         {
           label: "New Workout",
@@ -109,7 +111,7 @@ export class ContextService {
     "/analytics": {
       label: "Analytics",
       icon: "pi-chart-bar",
-      parent: "/dashboard",
+      parent: "/todays-practice",
       quickActions: [
         {
           label: "Export Report",
@@ -136,7 +138,7 @@ export class ContextService {
     "/performance/insights": {
       label: "Analytics",
       icon: "pi-chart-bar",
-      parent: "/dashboard",
+      parent: "/todays-practice",
       quickActions: [
         {
           label: "View Performance Tests",
@@ -158,7 +160,7 @@ export class ContextService {
     "/roster": {
       label: "Roster",
       icon: "pi-users",
-      parent: "/dashboard",
+      parent: "/todays-practice",
       quickActions: [
         {
           label: "Add Player",
@@ -185,7 +187,7 @@ export class ContextService {
     "/performance-tracking": {
       label: "Performance Tracking",
       icon: "pi-bullseye",
-      parent: "/dashboard",
+      parent: "/todays-practice",
       quickActions: [
         {
           label: "Log Session",
@@ -212,7 +214,7 @@ export class ContextService {
     "/performance/tests": {
       label: "Performance Tests",
       icon: "pi-bullseye",
-      parent: "/dashboard",
+      parent: "/todays-practice",
       quickActions: [
         {
           label: "Log Session",
@@ -234,7 +236,7 @@ export class ContextService {
     "/tournaments": {
       label: "Tournaments",
       icon: "pi-trophy",
-      parent: "/dashboard",
+      parent: "/todays-practice",
       quickActions: [
         {
           label: "Create Tournament",
@@ -261,7 +263,7 @@ export class ContextService {
     "/wellness": {
       label: "Wellness",
       icon: "pi-heart",
-      parent: "/dashboard",
+      parent: "/todays-practice",
       quickActions: [
         {
           label: "Log Wellness",
@@ -288,7 +290,7 @@ export class ContextService {
     "/settings": {
       label: "Settings",
       icon: "pi-cog",
-      parent: "/dashboard",
+      parent: "/todays-practice",
       quickActions: [
         {
           label: "Profile",
@@ -315,7 +317,7 @@ export class ContextService {
     "/profile": {
       label: "Profile",
       icon: "pi-user",
-      parent: "/dashboard",
+      parent: "/todays-practice",
       quickActions: [
         {
           label: "Edit Profile",
@@ -337,7 +339,7 @@ export class ContextService {
     "/game-tracker": {
       label: "Game Tracker",
       icon: "pi-flag",
-      parent: "/dashboard",
+      parent: "/todays-practice",
       quickActions: [
         {
           label: "New Game",
@@ -359,7 +361,7 @@ export class ContextService {
     "/chat": {
       label: "Chat",
       icon: "pi-comments",
-      parent: "/dashboard",
+      parent: "/todays-practice",
       quickActions: [
         {
           label: "New Message",
@@ -376,7 +378,7 @@ export class ContextService {
     "/community": {
       label: "Community",
       icon: "pi-globe",
-      parent: "/dashboard",
+      parent: "/todays-practice",
       quickActions: [
         {
           label: "Browse Posts",
@@ -398,7 +400,7 @@ export class ContextService {
     "/team/workspace": {
       label: "Team Workspace",
       icon: "pi-users",
-      parent: "/dashboard",
+      parent: "/todays-practice",
       quickActions: [
         {
           label: "Open Roster",
@@ -459,24 +461,30 @@ export class ContextService {
     const segments = path.split("/").filter((s) => s);
 
     // If we're on the dashboard, don't show breadcrumbs at all (just one item makes no sense)
-    if (route === "/dashboard" || route === "/" || segments.length === 0) {
+    if (
+      route === "/todays-practice" ||
+      route === "/dashboard" ||
+      route === "/" ||
+      segments.length === 0
+    ) {
       return [];
     }
 
-    // Always start with Dashboard as home
+    const homeRoute = this.homeRouteService.getHomeRoute();
+
+    // Always start with the user's real home experience.
     items.push({
-      label: "Dashboard",
-      route: "/dashboard",
+      label: "Home",
+      route: homeRoute,
       icon: "pi-home",
     });
 
-    // Build path segments (skip 'dashboard' if it's the first segment since we already added it)
+    // Build path segments (skip home routes since we already added them)
     let currentPath = "";
     segments.forEach((segment, index) => {
       currentPath += `/${segment}`;
 
-      // Skip dashboard as we already added it
-      if (currentPath === "/dashboard") {
+      if (currentPath === "/dashboard" || currentPath === homeRoute) {
         return;
       }
 
@@ -523,7 +531,7 @@ export class ContextService {
    * Get current page identifier
    */
   getCurrentPage(): string {
-    return this.currentRoute() || "/dashboard";
+    return this.currentRoute() || "/todays-practice";
   }
 
   /**

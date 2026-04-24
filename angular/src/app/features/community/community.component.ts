@@ -151,23 +151,25 @@ export class CommunityComponent implements OnInit {
 
   scrollToCreatePost(): void {
     const cardRef = this.createPostCard();
-    if (cardRef) {
-      cardRef.nativeElement.scrollIntoView({ behavior: "smooth", block: "start" });
-      setTimeout(() => {
-        const textarea = cardRef.nativeElement.querySelector("textarea");
-        textarea?.focus();
-      }, 500);
-    }
+    if (!cardRef) return;
+    cardRef.nativeElement.scrollIntoView({ behavior: "smooth", block: "start" });
+    let destroyed = false;
+    this.destroyRef.onDestroy(() => { destroyed = true; });
+    setTimeout(() => {
+      if (destroyed) return;
+      cardRef.nativeElement.querySelector("textarea")?.focus();
+    }, 500);
   }
 
   onTopicSelected(topicName: string): void {
     this.data.selectTopic(topicName);
-    if (this.data.selectedTopic() !== null) {
-      setTimeout(() => {
-        const feedRef = this.postsFeed();
-        feedRef?.nativeElement.scrollIntoView({ behavior: "smooth", block: "start" });
-      }, 100);
-    }
+    if (this.data.selectedTopic() === null) return;
+    let destroyed = false;
+    this.destroyRef.onDestroy(() => { destroyed = true; });
+    setTimeout(() => {
+      if (destroyed) return;
+      this.postsFeed()?.nativeElement.scrollIntoView({ behavior: "smooth", block: "start" });
+    }, 100);
   }
 
   // ============================================================================

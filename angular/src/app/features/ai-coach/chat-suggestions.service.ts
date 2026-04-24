@@ -21,6 +21,7 @@ import {
 import type { AIModeStatus } from "../../shared/components/ai-mode-explanation/ai-mode-explanation.component";
 import { ChatMessagesService } from "./chat-messages.service";
 import { MerlinKnowledgeService, type NutritionPlanSummary } from "./merlin-knowledge.service";
+import { ProfileCompletionService } from "../../core/services/profile-completion.service";
 
 // ============================================================================
 // INTERFACES (exported for template use)
@@ -53,6 +54,7 @@ export class ChatSuggestionsService {
   private readonly msgs = inject(ChatMessagesService);
   private readonly knowledge = inject(MerlinKnowledgeService);
   private readonly supabase = inject(SupabaseService);
+  private readonly profileCompletionService = inject(ProfileCompletionService);
   private readonly missingDataService = inject(MissingDataDetectionService);
   private readonly logger = inject(LoggerService);
 
@@ -90,11 +92,14 @@ export class ChatSuggestionsService {
 
   // ====== User display ======
   readonly userName = computed(() => {
+    const profile = this.profileCompletionService.profileData();
+    if (profile?.firstName) return profile.firstName;
+    if (profile?.fullName) return profile.fullName.split(" ")[0];
     const metadata = this.supabase.currentUser()?.user_metadata as
       | { fullName?: string; firstName?: string }
       | undefined;
-    const fullName = metadata?.fullName || metadata?.firstName || "";
-    return fullName ? fullName.split(" ")[0] : "";
+    const metaName = metadata?.firstName || metadata?.fullName || "";
+    return metaName ? metaName.split(" ")[0] : "";
   });
 
   // ====== Session context items (header data pills) ======

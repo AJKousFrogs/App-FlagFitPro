@@ -130,6 +130,36 @@ describe("AuthFlowDataService", () => {
     await expect(service.resolvePostAuthRedirect()).resolves.toBe("/onboarding");
   });
 
+  it("uses a role-aware default fallback for onboarded athletes", async () => {
+    vi.spyOn(service, "getCurrentUser").mockReturnValue({
+      id: "user-123",
+      user_metadata: { role: "player" },
+    } as User);
+    vi.spyOn(service, "getUserOnboardingStatus").mockResolvedValue({
+      data: { onboarding_completed: true },
+      error: null,
+    });
+
+    await expect(service.resolvePostAuthRedirect()).resolves.toBe(
+      "/todays-practice",
+    );
+  });
+
+  it("uses a role-aware default fallback for onboarded coaches", async () => {
+    vi.spyOn(service, "getCurrentUser").mockReturnValue({
+      id: "user-123",
+      user_metadata: { role: "coach" },
+    } as User);
+    vi.spyOn(service, "getUserOnboardingStatus").mockResolvedValue({
+      data: { onboarding_completed: true },
+      error: null,
+    });
+
+    await expect(service.resolvePostAuthRedirect()).resolves.toBe(
+      "/coach/dashboard",
+    );
+  });
+
   it("allows a trusted returnUrl to bypass onboarding when requested", async () => {
     vi.spyOn(service, "getCurrentUser").mockReturnValue({
       id: "user-123",

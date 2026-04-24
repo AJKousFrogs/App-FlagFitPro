@@ -80,7 +80,7 @@ export class OnboardingDataService {
     const { data, error } = await this.supabaseService.client
       .from("teams")
       .select("id, name")
-      .eq("approval_status", "approved")
+      .neq("approval_status", "rejected")
       .order("name");
 
     return { teams: (data as { id: string; name: string }[]) ?? [], error };
@@ -162,6 +162,19 @@ export class OnboardingDataService {
       .from("teams")
       .select("id")
       .ilike("name", name)
+      .maybeSingle();
+
+    return { team: (data as { id: string }) ?? null, error };
+  }
+
+  async findTeamById(id: string): Promise<{
+    team: { id: string } | null;
+    error: { message?: string } | null;
+  }> {
+    const { data, error } = await this.supabaseService.client
+      .from("teams")
+      .select("id")
+      .eq("id", id)
       .maybeSingle();
 
     return { team: (data as { id: string }) ?? null, error };

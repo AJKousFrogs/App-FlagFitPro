@@ -37,7 +37,7 @@ const meta: Meta<EmptyStateComponent> = {
       control: "text",
       description: "Main title text",
       table: {
-        defaultValue: { summary: "No Data Available" },
+        defaultValue: { summary: "Nothing Here Yet" },
       },
     },
     message: {
@@ -99,7 +99,7 @@ type Story = StoryObj<EmptyStateComponent>;
 
 export const Default: Story = {
   args: {
-    title: "No Data Available",
+    title: "Nothing Here Yet",
     message: "There's nothing to show here yet.",
     icon: "pi-inbox",
   },

@@ -2,6 +2,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   inject,
+  OnDestroy,
   OnInit,
   signal,
 } from "@angular/core";
@@ -9,6 +10,7 @@ import {
 import { Router, RouterModule } from "@angular/router";
 import { ProgressSpinner } from "primeng/progressspinner";
 import { TOAST } from "../../../core/constants/toast-messages.constants";
+import { HomeRouteService } from "../../../core/services/home-route.service";
 import { LoggerService } from "../../../core/services/logger.service";
 import { ToastService } from "../../../core/services/toast.service";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
@@ -92,11 +94,12 @@ import { AuthFlowDataService } from "../services/auth-flow-data.service";
   `,
   styleUrl: "./auth-callback.component.scss",
 })
-export class AuthCallbackComponent implements OnInit {
+export class AuthCallbackComponent implements OnInit, OnDestroy {
   private router = inject(Router);
   private toastService = inject(ToastService);
   private authFlowDataService = inject(AuthFlowDataService);
   private logger = inject(LoggerService);
+  private homeRouteService = inject(HomeRouteService);
 
   isProcessing = signal(true);
   success = signal(false);
@@ -104,14 +107,50 @@ export class AuthCallbackComponent implements OnInit {
   processingMessage = signal("Completing authentication...");
   successMessage = signal("Authentication successful!");
 
+  private pendingTimeouts: ReturnType<typeof setTimeout>[] = [];
+
   ngOnInit(): void {
     this.handleAuthCallback();
+  }
+
+  ngOnDestroy(): void {
+    for (const id of this.pendingTimeouts) {
+      clearTimeout(id);
+    }
+    this.pendingTimeouts = [];
   }
 
   /**
    * Handle the authentication callback from Supabase
    */
   private async handleAuthCallback(): Promise<void> {
+    // PKCE flow: Supabase v2 sends ?code= query param instead of hash tokens
+    const searchParams = new URLSearchParams(window.location.search);
+    const code = searchParams.get("code");
+    if (code) {
+      try {
+        this.processingMessage.set("Completing authentication...");
+        const { data, error } =
+          await this.authFlowDataService.exchangeCodeForSession(code);
+        if (error) throw error;
+        if (!data?.session?.user) throw new Error("Failed to establish session");
+        window.history.replaceState(null, "", window.location.pathname);
+        await this.handleAuthType(
+          searchParams.get("type") ?? null,
+          data.session.user,
+        );
+      } catch (error) {
+        const message = getErrorMessage(
+          error,
+          "Authentication failed. Please try again.",
+        );
+        this.logger.error("[Auth] PKCE code exchange error", { error });
+        this.error.set(message);
+        this.isProcessing.set(false);
+      }
+      return;
+    }
+
     const hash = window.location.hash;
 
     if (!hash || hash.length < 2) {
@@ -120,9 +159,9 @@ export class AuthCallbackComponent implements OnInit {
       if (session) {
         this.success.set(true);
         this.successMessage.set("You are already signed in!");
-        setTimeout(() => {
+        this.pendingTimeouts.push(setTimeout(() => {
           void this.redirectAfterAuth();
-        }, 1500);
+        }, 1500));
       } else {
         this.error.set(
           "No authentication data found. Please try signing in again.",
@@ -260,13 +299,13 @@ export class AuthCallbackComponent implements OnInit {
         this.broadcastEmailVerified();
         // Check if user needs onboarding
         this.authFlowDataService.clearPendingVerificationEmail();
-        setTimeout(
+        this.pendingTimeouts.push(setTimeout(
           () =>
             this.redirectAfterAuth({
               fallbackRoute: "/onboarding",
             }),
           1500,
-        );
+        ));
         break;
 
       case "recovery":
@@ -277,7 +316,7 @@ export class AuthCallbackComponent implements OnInit {
         );
         this.authFlowDataService.markPasswordRecoveryIntent();
         // Redirect to update password page
-        setTimeout(() => this.router.navigate(["/update-password"]), 1500);
+        this.pendingTimeouts.push(setTimeout(() => this.router.navigate(["/update-password"]), 1500));
         break;
 
       case "magiclink":
@@ -287,7 +326,7 @@ export class AuthCallbackComponent implements OnInit {
         });
         this.successMessage.set("Signed in successfully!");
         this.toastService.success(TOAST.SUCCESS.LOGIN, "Signed In");
-        setTimeout(() => this.redirectAfterAuth(), 1500);
+        this.pendingTimeouts.push(setTimeout(() => this.redirectAfterAuth(), 1500));
         break;
 
       case "email_change":
@@ -296,14 +335,14 @@ export class AuthCallbackComponent implements OnInit {
           "Your email has been changed.",
           "Email Updated",
         );
-        setTimeout(() => this.router.navigate(["/settings"]), 1500);
+        this.pendingTimeouts.push(setTimeout(() => this.router.navigate(["/settings"]), 1500));
         break;
 
       default:
         // OAuth or unknown type
         this.successMessage.set("Signed in successfully!");
         this.toastService.success(TOAST.SUCCESS.WELCOME, "Signed In");
-        setTimeout(() => this.redirectAfterAuth(), 1500);
+        this.pendingTimeouts.push(setTimeout(() => this.redirectAfterAuth(), 1500));
     }
   }
 
@@ -322,10 +361,12 @@ export class AuthCallbackComponent implements OnInit {
       );
       this.router.navigateByUrl(destination);
     } catch (error) {
-      this.logger.warn("[Auth] Falling back to dashboard after callback", {
+      this.logger.warn("[Auth] Falling back to home after callback", {
         error,
       });
-      this.router.navigate([options?.fallbackRoute ?? "/dashboard"]);
+      this.router.navigateByUrl(
+        options?.fallbackRoute ?? this.homeRouteService.getHomeRoute(),
+      );
     }
   }
 
@@ -338,7 +379,8 @@ export class AuthCallbackComponent implements OnInit {
       // Use BroadcastChannel API to notify other tabs
       const channel = new BroadcastChannel("flagfit-auth");
       channel.postMessage({ type: "EMAIL_VERIFIED", timestamp: Date.now() });
-      channel.close();
+      // Defer close so the message has time to be delivered before the channel tears down
+      setTimeout(() => channel.close(), 100);
     } catch (_error) {
       this.logger.debug(
         "[Auth] BroadcastChannel not supported; local storage fallback disabled",

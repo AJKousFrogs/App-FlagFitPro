@@ -36,6 +36,7 @@ export class ProfileNotificationService {
   private notificationsUnavailable = false;
   private notificationsRetryAt = 0;
   private readonly toastSuppressedRoutes = new Set([
+    "/todays-practice",
     "/dashboard",
     "/player-dashboard",
     "/coach/dashboard",

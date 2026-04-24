@@ -266,7 +266,8 @@ export class AchievementsService {
             return of({ synced: 0, alreadyUnlocked: 0 });
           }),
         );
-    } catch {
+    } catch (error) {
+      this.logger.warn("[Achievements] Unexpected error syncing from localStorage", error);
       return of({ synced: 0, alreadyUnlocked: 0 });
     }
   }

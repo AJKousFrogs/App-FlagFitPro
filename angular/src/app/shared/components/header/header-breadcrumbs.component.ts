@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, effect, inject, OnInit, signal } from "@angular/core";
+import { ChangeDetectionStrategy, Component, effect, inject, signal } from "@angular/core";
 import { NavigationEnd, Router } from "@angular/router";
 import { filter } from "rxjs";
 import { toSignal } from "@angular/core/rxjs-interop";
@@ -8,7 +8,7 @@ import { toSignal } from "@angular/core/rxjs-interop";
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: "./header-breadcrumbs.component.html",
 })
-export class HeaderBreadcrumbsComponent implements OnInit {
+export class HeaderBreadcrumbsComponent {
   private readonly router = inject(Router);
 
   readonly currentSection = signal("");
@@ -21,7 +21,7 @@ export class HeaderBreadcrumbsComponent implements OnInit {
     initialValue: null,
   });
 
-  ngOnInit(): void {
+  constructor() {
     this.updateBreadcrumbs();
 
     // Update breadcrumbs whenever the route changes.
@@ -51,6 +51,7 @@ export class HeaderBreadcrumbsComponent implements OnInit {
       {
         match: (u) =>
           u.includes("/analytics") ||
+          u.includes("/acwr") ||
           u.includes("/performance/insights") ||
           u.includes("/performance/tests") ||
           u.includes("/performance/load"),
@@ -67,4 +68,3 @@ export class HeaderBreadcrumbsComponent implements OnInit {
     this.currentPage.set(rule ? rule.page(url) : "");
   }
 }
-

@@ -220,12 +220,9 @@ export class ExerciseDBManagerComponent implements OnInit {
     ];
   });
 
-  ngOnInit(): void {
-    this.loadExercises();
-    this.loadFilters();
-    this.loadImportLogs();
-
-    // Subscribe to loading states using effect
+  constructor() {
+    // Keep these effects in an injection context. Angular 21 rejects creating
+    // them in ngOnInit() with NG0203.
     effect(() => {
       this.loading.set(this.exerciseDBService.isLoading());
     });
@@ -233,6 +230,12 @@ export class ExerciseDBManagerComponent implements OnInit {
     effect(() => {
       this.importing.set(this.exerciseDBService.isImporting());
     });
+  }
+
+  ngOnInit(): void {
+    this.loadExercises();
+    this.loadFilters();
+    this.loadImportLogs();
   }
 
   loadExercises(): void {

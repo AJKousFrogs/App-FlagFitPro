@@ -20,9 +20,13 @@ import { resolveYouTubeVideoMetadata } from "../../../shared/utils/youtube-video
 export interface ApiExercise {
   id?: string;
   exerciseId?: string;
+  exercise_name?: string;
+  exerciseName?: string;
   exercise?: {
     id?: string;
     name?: string;
+    exercise_name?: string;
+    exerciseName?: string;
     slug?: string;
     category?: ExerciseCategory;
     videoUrl?: string;
@@ -151,9 +155,16 @@ function mapExerciseToPrescribed(
 ): PrescribedExercise {
   const fallbackId = `${blockType}-${index}`;
   const baseId = ex.id || fallbackId;
-  const baseName = ex.name || "Exercise";
-  const baseSlug = ex.slug || baseName.toLowerCase().replace(/\s+/g, "-");
   const nestedExercise = ex.exercise;
+  const baseName =
+    ex.exercise_name ||
+    ex.exerciseName ||
+    nestedExercise?.exercise_name ||
+    nestedExercise?.exerciseName ||
+    nestedExercise?.name ||
+    ex.name ||
+    "Exercise";
+  const baseSlug = ex.slug || baseName.toLowerCase().replace(/\s+/g, "-");
   const video = resolveYouTubeVideoMetadata({
     videoId:
       nestedExercise?.videoId ||
@@ -170,13 +181,18 @@ function mapExerciseToPrescribed(
       nestedExercise?.thumbnail_url ||
       ex.thumbnailUrl ||
       ex.thumbnail_url,
+    exerciseName: baseName,
   });
 
   const exercise = nestedExercise
     ? {
         ...nestedExercise,
         id: nestedExercise.id || baseId,
-        name: nestedExercise.name || baseName,
+        name:
+          nestedExercise.name ||
+          nestedExercise.exercise_name ||
+          nestedExercise.exerciseName ||
+          baseName,
         slug: nestedExercise.slug || baseSlug,
         category: (nestedExercise.category || blockType) as ExerciseCategory,
         videoUrl: video.videoUrl || undefined,

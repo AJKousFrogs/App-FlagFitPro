@@ -186,6 +186,9 @@
 
             <!-- Body Composition -->
             <div *appTabPanel="let panel; header: 'Body Composition'; value: 1; icon: 'pi-chart-line'">
+                @if (bodyCompositionLoadError()) {
+                  <app-alert variant="warning" message="Some body composition data could not be loaded. Showing partial results." density="compact" />
+                }
                 <div class="body-composition-section">
                   <div class="section-header">
                     <h3>Body Composition Trends</h3>
@@ -239,6 +242,9 @@
 
             <!-- Supplement Compliance -->
             <div *appTabPanel="let panel; header: 'Supplement Compliance'; value: 2; icon: 'pi-check-square'">
+                @if (supplementLoadError()) {
+                  <app-alert variant="warning" message="Supplement compliance data could not be loaded." density="compact" />
+                }
                 <app-nutritionist-supplement-section
                   [items]="supplementCompliance()"
                   [athleteName]="getAthleteName.bind(this)"
