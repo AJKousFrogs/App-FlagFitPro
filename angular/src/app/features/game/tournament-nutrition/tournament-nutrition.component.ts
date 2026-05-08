@@ -525,6 +525,11 @@ export class TournamentNutritionComponent implements OnInit, OnDestroy {
       const seeded = seedGamesFromEvent(event);
       this.games.set(seeded);
       this.editGames = [...seeded];
+      // Generate fueling windows immediately so the page is useful on
+      // first paint — matches the "open and see what to do" v10 contract.
+      // Persist so the user's session-scoped edits live across reloads.
+      this.nutritionWindows.set(this.buildNutritionWindows(seeded));
+      await this.persistCurrentState();
     }
     // Else: leave empty — user creates a scratch plan via the editor.
   }
@@ -595,7 +600,24 @@ export class TournamentNutritionComponent implements OnInit, OnDestroy {
     this.tournamentName.set(this.editTournamentName);
     this.showScheduleEditor = false;
 
-    // Generate nutrition windows
+    const windows = this.buildNutritionWindows(sortedGames);
+
+    this.nutritionWindows.set(windows);
+    await this.persistCurrentState();
+    this.toastService.success(
+      `Nutrition plan generated for ${sortedGames.length} games!`,
+    );
+  }
+
+  /**
+   * Build the morning + per-game (pre / halftime / post) nutrition window list
+   * from a sorted game list. Pure construction — no signal writes, no toasts —
+   * so both the manual editor flow and the silent spine auto-seed path can
+   * use it without firing UI side effects.
+   */
+  private buildNutritionWindows(
+    sortedGames: GameSchedule[],
+  ): NutritionWindow[] {
     const windows: NutritionWindow[] = [];
 
     // Morning nutrition (if first game is after 7am)
@@ -611,7 +633,6 @@ export class TournamentNutritionComponent implements OnInit, OnDestroy {
 
     // Pre-game, halftime, and post-game windows for each game
     sortedGames.forEach((game, index) => {
-      const _isLastGame = index === sortedGames.length - 1;
       const nextGame = sortedGames[index + 1];
 
       // Pre-game (45-60 min before)
@@ -646,11 +667,7 @@ export class TournamentNutritionComponent implements OnInit, OnDestroy {
       }
     });
 
-    this.nutritionWindows.set(windows);
-    await this.persistCurrentState();
-    this.toastService.success(
-      `Nutrition plan generated for ${sortedGames.length} games!`,
-    );
+    return windows;
   }
 
   private createMorningWindow(
