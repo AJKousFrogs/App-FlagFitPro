@@ -1,21 +1,38 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { setupTestEnvironment } from "../test-helpers.js";
 
-// Mock the ErrorHandler class structure based on common patterns
-const ErrorHandler = vi.fn().mockImplementation(() => ({
-  logError: vi.fn(),
-  handleApiError: vi.fn(),
-  handleValidationError: vi.fn(),
-  handleNetworkError: vi.fn(),
-  handleAuthError: vi.fn(),
-  handleClientError: vi.fn(),
-  handleServerError: vi.fn(),
-  notifyUser: vi.fn(),
-  reportTelemetry: vi.fn(),
-  createErrorReport: vi.fn(),
-  isRetryableError: vi.fn(),
-  sanitizeError: vi.fn(),
-}));
+/**
+ * Note on this file's testing strategy.
+ *
+ * These tests do not exercise `netlify/functions/utils/error-handler.js`
+ * directly. Each test stubs an `errorHandler.X` method via
+ * `mockImplementation` and then asserts that the mock returned what the
+ * stub was told to return — they document the *shape* of the contract
+ * (input → output) the team expects from a future ErrorHandler class
+ * rather than verifying the current implementation.
+ *
+ * Until those expectations are migrated to real source assertions, this
+ * suite serves as living documentation. The factory pattern below replaces
+ * the previous `vi.fn().mockImplementation(() => ({...}))` + `new` shape,
+ * which broke under vitest 4.1+ because arrow functions are not valid
+ * constructors.
+ */
+function createErrorHandlerStub() {
+  return {
+    logError: vi.fn(),
+    handleApiError: vi.fn(),
+    handleValidationError: vi.fn(),
+    handleNetworkError: vi.fn(),
+    handleAuthError: vi.fn(),
+    handleClientError: vi.fn(),
+    handleServerError: vi.fn(),
+    notifyUser: vi.fn(),
+    reportTelemetry: vi.fn(),
+    createErrorReport: vi.fn(),
+    isRetryableError: vi.fn(),
+    sanitizeError: vi.fn(),
+  };
+}
 
 describe("Error Handler - Comprehensive Tests", () => {
   let errorHandler;
@@ -25,7 +42,7 @@ describe("Error Handler - Comprehensive Tests", () => {
 
   beforeEach(() => {
     testEnv = setupTestEnvironment();
-    errorHandler = new ErrorHandler();
+    errorHandler = createErrorHandlerStub();
 
     // Spy on console methods
     consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
@@ -480,6 +497,10 @@ describe("Error Handler - Comprehensive Tests", () => {
       };
 
       errorHandler.createErrorReport.mockImplementation((error, context) => {
+        // `window` and `navigator` aren't defined in the Node test env;
+        // guard with optional chaining so the mock works headless.
+        const win = globalThis.window;
+        const nav = globalThis.navigator;
         return {
           errorId: `err-${Date.now()}`,
           timestamp: new Date().toISOString(),
@@ -490,9 +511,12 @@ describe("Error Handler - Comprehensive Tests", () => {
           },
           context,
           environment: {
-            userAgent: navigator.userAgent,
-            url: window.location.href,
-            viewport: { width: window.innerWidth, height: window.innerHeight },
+            userAgent: nav?.userAgent ?? "node",
+            url: win?.location?.href ?? "about:blank",
+            viewport: {
+              width: win?.innerWidth ?? 0,
+              height: win?.innerHeight ?? 0,
+            },
           },
           session: {
             duration: Date.now() - context.sessionStart,

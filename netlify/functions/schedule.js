@@ -133,21 +133,28 @@ function resolvePhase(now, upcoming, lastEvent) {
 
   if (lastEvent) {
     const ended = new Date(lastEvent.ends_at ?? lastEvent.starts_at);
-    const hoursSince = hoursBetween(now, ended);
-    const recoveryWindow =
-      lastEvent.importance === "peak"
-        ? HOURS_RECOVERY_PEAK
-        : lastEvent.importance === "high"
-          ? HOURS_RECOVERY_HIGH
-          : HOURS_RECOVERY_REGULAR;
-    if (hoursSince <= recoveryWindow) {
-      return "recovery";
+    // Defensive: only count recovery when the event is actually in the past
+    // for the resolution moment. Mirrors `resolvePhase` in
+    // angular/.../schedule.service.ts so client and server agree on phase
+    // for a given (now, upcoming, lastEvent) tuple even if upstream filters
+    // change.
+    if (ended <= now) {
+      const hoursSince = hoursBetween(now, ended);
+      const recoveryWindow =
+        lastEvent.importance === "peak"
+          ? HOURS_RECOVERY_PEAK
+          : lastEvent.importance === "high"
+            ? HOURS_RECOVERY_HIGH
+            : HOURS_RECOVERY_REGULAR;
+      if (hoursSince <= recoveryWindow) {
+        return "recovery";
+      }
     }
   }
 
-  // Nothing imminent and no recent load → transition (long off-stretch)
+  // Nothing scheduled at all → transition window.
   if (!next) {
-    return lastEvent ? "transition" : "transition";
+    return "transition";
   }
   const hoursUntilNext = hoursBetween(new Date(next.starts_at), now);
   if (hoursUntilNext > HOURS_TRANSITION) {
