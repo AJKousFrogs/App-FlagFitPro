@@ -126,7 +126,7 @@ describe("StatisticsCalculationService", () => {
 
       const result = service.calculateStreak(workouts, new Date("2025-12-07"));
 
-      expect(result.currentStreak).toBe(3); // Dec 7, 6, 5
+      expect(result.currentStreak).toBe(4); // Dec 7, 6, 5, 3 — one rest day (Dec 4) is allowed
       expect(result.longestStreak).toBeGreaterThanOrEqual(3);
     });
 

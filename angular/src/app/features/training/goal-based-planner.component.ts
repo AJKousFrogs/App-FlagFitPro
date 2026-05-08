@@ -58,7 +58,6 @@ export class GoalBasedPlannerComponent {
   private readonly logger = inject(LoggerService);
   private readonly toastService = inject(ToastService);
 
-  private lastLoadedAthleteId: string | null = null;
   private lastOverviewAthleteId: string | null = null;
 
   selectedGoal = signal<TrainingGoal | null>(null);
@@ -67,7 +66,6 @@ export class GoalBasedPlannerComponent {
   weeklyPlan = signal<WeeklyTrainingPlan | null>(null);
   loading = signal(false);
   saving = signal(false);
-  gameDays = signal<Date[]>([]);
 
   readonly currentUserId = computed(() => this.supabase.userId());
   readonly todayProtocol = this.trainingService.todayProtocol;
@@ -137,15 +135,10 @@ export class GoalBasedPlannerComponent {
   ];
 
   constructor() {
-    effect(() => {
-      const athleteId = this.currentUserId();
-      if (athleteId === this.lastLoadedAthleteId) {
-        return;
-      }
-
-      this.lastLoadedAthleteId = athleteId;
-      void this.syncGameDays(athleteId);
-    });
+    // Schedule data is auto-loaded by `ScheduleService` on auth and consumed
+    // inside `TrainingPlanService.generateWeeklyPlan` via the spine. The
+    // component used to pre-fetch upcoming games here and pass them in
+    // explicitly; that orchestration is no longer needed.
 
     effect(() => {
       const athleteId = this.currentUserId();
@@ -162,27 +155,6 @@ export class GoalBasedPlannerComponent {
           ),
       });
     });
-  }
-
-  private async syncGameDays(athleteId: string | null): Promise<void> {
-    if (!athleteId) {
-      this.gameDays.set([]);
-      return;
-    }
-
-    try {
-      const games = await this.trainingPlanService.getUpcomingGames(
-        athleteId,
-        14,
-      );
-      if (this.currentUserId() !== athleteId) {
-        return;
-      }
-      this.gameDays.set(games);
-    } catch (error) {
-      this.logger.warn("goal_planner_upcoming_games_failed", error);
-      this.gameDays.set([]);
-    }
   }
 
   onGoalChange() {
@@ -225,11 +197,12 @@ export class GoalBasedPlannerComponent {
     this.loading.set(true);
 
     try {
+      // gameDays / competitionDate / tournaments are derived from the spine
+      // by the service when not supplied — see `TrainingPlanService.resolveScheduleContext`.
       const plan = this.trainingPlanService.generateWeeklyPlan({
         goal: goal,
         currentACWR: this.currentAcwrValue(),
         readinessLevel: this.trainingPlanReadinessLevel(),
-        gameDays: this.gameDays(),
         teamPracticesPerWeek: this.teamPracticeCount(),
         gameWeekType:
           this.gameWeekContext() === "auto"

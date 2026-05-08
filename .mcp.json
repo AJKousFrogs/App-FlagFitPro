@@ -1,37 +1,16 @@
 {
-  "$schema": "https://modelcontextprotocol.io/schema.json",
   "mcpServers": {
-    "angular-cli": {
-      "command": "npx",
-      "args": ["-y", "@angular/cli", "mcp"],
-      "description": "Angular CLI MCP Server - Provides Angular CLI commands, documentation search, best practices, code examples, and migration guides",
-      "alwaysAllow": []
+    "supabase": {
+      "type": "http",
+      "url": "https://mcp.supabase.com/mcp?project_ref=grfjmnjpzvknmsxrwesx"
     },
-    "context7-sports": {
+    "angular": {
       "command": "npx",
-      "args": ["-y", "@upstash/context7-mcp@latest"],
-      "env": {},
-      "description": "Context7 MCP Server - Sports science documentation and knowledge base for nutrition, training, recovery, psychology, and biomechanics (using free tier without API key)",
-      "alwaysAllow": []
-    },
-    "sequential-thought": {
-      "command": "npx",
-      "args": ["-y", "@sequential-thought/mcp-server@latest"],
-      "env": {
-        "ST_REASONING_DEPTH": "3",
-        "ST_DOMAIN": "sports-coaching"
-      },
-      "description": "Sequential Thought MCP Server - Chain-of-thought reasoning framework for complex sports coaching decision making",
-      "alwaysAllow": []
+      "args": ["-y", "@angular/cli", "mcp"]
     },
     "primeng": {
       "command": "npx",
       "args": ["-y", "@primeng/mcp"]
-    },
-    "supabase": {
-      "url": "https://mcp.supabase.com/mcp?project_ref=grfjmnjpzvknmsxrwesx",
-      "description": "Supabase MCP Server - Provides direct access to Supabase project grfjmnjpzvknmsxrwesx for database operations, schema management, and data queries",
-      "alwaysAllow": []
     }
   }
 }

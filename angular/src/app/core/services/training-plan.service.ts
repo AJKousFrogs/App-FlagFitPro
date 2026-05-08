@@ -11,6 +11,8 @@ import { AcwrService } from "./acwr.service";
 import { ReadinessService } from "./readiness.service";
 import { ApiService } from "./api.service";
 import { LoggerService } from "./logger.service";
+import { ScheduleService } from "./schedule.service";
+import { CompetitionEvent } from "../models/schedule.models";
 import { GOAL_TEMPLATES } from "./training-plan-templates.data";
 import {
   FlagFootballPerformanceSystemService,
@@ -18,6 +20,18 @@ import {
   type TournamentContext,
 } from "./flag-football-performance-system.service";
 import type { GameWeekType } from "./flag-football-performance-system.data";
+
+/**
+ * Spine-derived schedule context for one call to `generateWeeklyPlan`.
+ * Holds the four periodization inputs that the caller used to be required
+ * to pre-fetch. With the v10 spine the defaults come from the snapshot.
+ */
+interface ResolvedScheduleContext {
+  gameDays: Date[];
+  competitionDate: Date | undefined;
+  tournaments: TournamentContext[] | undefined;
+  gameWeekType: GameWeekType | undefined;
+}
 import {
   extractApiArray,
   extractApiPayload,
@@ -119,6 +133,32 @@ interface PlanWithId extends WeeklyTrainingPlan {
   id?: string;
 }
 
+/**
+ * Expand CompetitionEvents into a flat list of game-day Dates.
+ * A 2-day tournament with 8 games returns two Dates (the planner cares
+ * about *days that contain games*, not the count of games per day).
+ * Dates are normalized to UTC midnight to avoid timezone drift in window
+ * comparisons.
+ */
+function expandEventsToGameDays(events: CompetitionEvent[]): Date[] {
+  const days: Date[] = [];
+  for (const ev of events) {
+    const start = new Date(ev.startsAt);
+    const end = ev.endsAt ? new Date(ev.endsAt) : start;
+
+    const cursor = new Date(start);
+    cursor.setUTCHours(0, 0, 0, 0);
+    const endDay = new Date(end);
+    endDay.setUTCHours(0, 0, 0, 0);
+
+    while (cursor <= endDay) {
+      days.push(new Date(cursor));
+      cursor.setUTCDate(cursor.getUTCDate() + 1);
+    }
+  }
+  return days;
+}
+
 @Injectable({
   providedIn: "root",
 })
@@ -128,28 +168,33 @@ export class TrainingPlanService {
   private apiService = inject(ApiService);
   private logger = inject(LoggerService);
   private performanceSystemService = inject(FlagFootballPerformanceSystemService);
+  private scheduleService = inject(ScheduleService);
 
   readonly currentPlan = signal<WeeklyTrainingPlan | null>(null);
   readonly loading = signal(false);
 
   /**
-   * Generate goal-based weekly training plan
+   * Generate goal-based weekly training plan.
+   *
+   * Schedule-derived fields (`gameDays`, `competitionDate`, `tournaments`,
+   * `gameWeekType`) are resolved from the v10 schedule spine when the caller
+   * doesn't supply them. Anything passed in `config` always wins, so existing
+   * coach-side flows and tests keep working unchanged.
    */
   generateWeeklyPlan(config: GoalBasedPlanConfig): WeeklyTrainingPlan {
     const {
       goal,
       currentACWR,
       readinessLevel,
-      gameDays = [],
       trainingDaysPerWeek = 5,
-      competitionDate,
       lastTrainingDate,
       teamPracticesPerWeek,
-      gameWeekType,
-      tournaments,
       bodyMassKg,
       caffeineSensitive,
     } = config;
+
+    const schedule = this.resolveScheduleContext(config);
+    const { gameDays, competitionDate, tournaments, gameWeekType } = schedule;
 
     const performanceContext =
       this.performanceSystemService.buildRecommendation({
@@ -714,12 +759,118 @@ export class TrainingPlanService {
   }
 
   /**
+   * Resolve the four schedule-derived fields a plan needs from either the
+   * explicit `config` or — as fallback — the cached schedule spine snapshot.
+   *
+   * Precedence per field: explicit `config.<field>` ▶ spine derivation ▶
+   * legacy default (empty / undefined). Tests and coach views that pre-fetch
+   * still control everything; lazy-athlete UIs can omit all four and the
+   * spine fills in.
+   *
+   * Pure read against the cached snapshot — no network, no async. If no
+   * snapshot is loaded yet the helpers return the legacy defaults so the
+   * function stays synchronous.
+   */
+  private resolveScheduleContext(
+    config: GoalBasedPlanConfig,
+  ): ResolvedScheduleContext {
+    const snapshot = this.scheduleService.snapshot();
+    const upcoming = snapshot?.upcoming ?? [];
+
+    const gameDays = config.gameDays ?? this.deriveGameDaysFromSpine(upcoming);
+    const competitionDate =
+      config.competitionDate ??
+      this.deriveCompetitionDateFromSpine(snapshot?.nextEvent ?? null);
+    const tournaments =
+      config.tournaments ?? this.deriveTournamentsFromSpine(upcoming);
+    // gameWeekType has no spine derivation here — the performance system
+    // already infers it from gameDays + tournaments. Pass through as-is.
+    const gameWeekType = config.gameWeekType;
+
+    return { gameDays, competitionDate, tournaments, gameWeekType };
+  }
+
+  private deriveGameDaysFromSpine(upcoming: CompetitionEvent[]): Date[] {
+    if (upcoming.length === 0) {
+      return [];
+    }
+    const horizonMs = Date.now() + 14 * 86_400_000;
+    const inWindow = upcoming.filter(
+      (e) => new Date(e.startsAt).getTime() <= horizonMs,
+    );
+    return expandEventsToGameDays(inWindow);
+  }
+
+  private deriveCompetitionDateFromSpine(
+    nextEvent: CompetitionEvent | null,
+  ): Date | undefined {
+    if (!nextEvent) {
+      return undefined;
+    }
+    // Only treat high-importance events as "competition" for taper purposes.
+    // A regular league round 6 weeks out shouldn't trigger a taper.
+    if (nextEvent.importance === "regular") {
+      return undefined;
+    }
+    return new Date(nextEvent.startsAt);
+  }
+
+  private deriveTournamentsFromSpine(
+    upcoming: CompetitionEvent[],
+  ): TournamentContext[] | undefined {
+    // Only events that look like tournaments (multi-game days, peak/high
+    // importance, or labeled `tournament`) make it into this list. Regular
+    // single-game league rounds are intentionally excluded — they belong on
+    // `gameDays`, not in the tournament/taper pipeline.
+    const horizonMs = Date.now() + 21 * 86_400_000;
+    const candidates = upcoming.filter((e) => {
+      if (new Date(e.startsAt).getTime() > horizonMs) return false;
+      if (e.competitionKind === "tournament") return true;
+      if (e.importance === "peak" || e.importance === "high") return true;
+      return e.expectedGameCount >= 3;
+    });
+
+    if (candidates.length === 0) {
+      return undefined;
+    }
+
+    return candidates.map((e) => ({
+      name: e.competitionShortName ?? e.competitionName,
+      startDate: new Date(e.startsAt),
+      endDate: e.endsAt ? new Date(e.endsAt) : undefined,
+      gamesExpected: e.expectedGameCount,
+      isInternational:
+        e.competitionLevel === "international" ||
+        e.competitionLevel === "continental" ||
+        e.competitionLevel === "world" ||
+        e.competitionLevel === "olympic",
+      isPeakEvent: e.importance === "peak",
+      hasBackToBackGames: e.expectedGameCount >= 4,
+    }));
+  }
+
+  /**
    * Get upcoming game days for an athlete
    */
   async getUpcomingGames(
     athleteId: string,
     days = 14,
   ): Promise<Date[]> {
+    // v10 canonical: read from the schedule spine (`v_athlete_schedule`).
+    // The spine is a union across the athlete's active team memberships, so
+    // an athlete playing in Slovenian + Austrian leagues + Copenhagen Bowl
+    // sees one merged calendar instead of three disjoint fixture lists.
+    const snapshotAthleteId = this.scheduleService.snapshot()?.athleteId;
+    if (!snapshotAthleteId || snapshotAthleteId === athleteId) {
+      await this.scheduleService.refresh();
+      const events = this.scheduleService.eventsInWindow(days);
+      if (events.length > 0) {
+        return expandEventsToGameDays(events);
+      }
+    }
+
+    // Legacy fallback: `/api/fixtures` for cross-athlete (coach) views or
+    // environments where the schedule spine has not yet been seeded.
     try {
       const response = await firstValueFrom(
         this.apiService.get<FixtureResponse[]>("/api/fixtures", {

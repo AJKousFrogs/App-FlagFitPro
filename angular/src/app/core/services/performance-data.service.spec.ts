@@ -41,20 +41,9 @@ describe("PerformanceDataService", () => {
     service = TestBed.inject(PerformanceDataService);
   });
 
-  it("calculates BMI with 1 decimal precision", () => {
-    expect(service.calculateBMI(80, 180)).toBe(24.7);
-    expect(service.calculateBMI(90, 180)).toBe(27.8);
-  });
-
-  it("categorizes BMI correctly", () => {
-    expect(service.getBMICategory(18.4).category).toBe("Underweight");
-    expect(service.getBMICategory(22).category).toBe("Normal");
-    expect(service.getBMICategory(27).category).toBe("Overweight");
-    expect(service.getBMICategory(32).category).toBe("Obese");
-  });
-
-  it("calculates lean body mass", () => {
-    expect(service.calculateLeanBodyMass(80, 20)).toBe(64.0);
-    expect(service.calculateLeanBodyMass(90, 15)).toBe(76.5);
+  // BMI/lean-body-mass calculation tests live in body-composition.service.spec.ts.
+  // PerformanceDataService is now a data-access layer for measurements/tests/supplements.
+  it("instantiates the service", () => {
+    expect(service).toBeTruthy();
   });
 });

@@ -15,6 +15,7 @@ import { AcwrService } from "./acwr.service";
 import { ReadinessService } from "./readiness.service";
 import { ApiService } from "./api.service";
 import { LoggerService } from "./logger.service";
+import { ScheduleService } from "./schedule.service";
 
 const mockAcwrService = { acwrRatio: vi.fn(() => 1.0) };
 const mockReadinessService = { readinessScore: vi.fn(() => 70) };
@@ -24,6 +25,14 @@ const mockApiService = {
 };
 const mockLoggerService = {
   info: vi.fn(), debug: vi.fn(), error: vi.fn(), warn: vi.fn(),
+};
+// Spine snapshot is null in tests by default — ensures `resolveScheduleContext`
+// degrades to legacy behavior (no auto-derived gameDays / competitionDate /
+// tournaments) so existing config-driven test cases stay deterministic.
+const mockScheduleService = {
+  snapshot: vi.fn(() => null),
+  refresh: vi.fn(async () => undefined),
+  eventsInWindow: vi.fn(() => []),
 };
 
 describe("TrainingPlanService", () => {
@@ -37,6 +46,7 @@ describe("TrainingPlanService", () => {
         { provide: ReadinessService, useValue: mockReadinessService },
         { provide: ApiService, useValue: mockApiService },
         { provide: LoggerService, useValue: mockLoggerService },
+        { provide: ScheduleService, useValue: mockScheduleService },
       ],
     });
     service = TestBed.inject(TrainingPlanService);

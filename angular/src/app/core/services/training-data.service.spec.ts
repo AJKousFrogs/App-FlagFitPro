@@ -164,7 +164,8 @@ describe("TrainingDataService", () => {
             eq: () => ({
               order: () => ({
                 limit: () => ({
-                  single: () => Promise.resolve({ data: null, error: null }),
+                  maybeSingle: () =>
+                    Promise.resolve({ data: null, error: null }),
                 }),
               }),
             }),

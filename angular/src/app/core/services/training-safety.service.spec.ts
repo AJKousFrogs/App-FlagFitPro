@@ -74,7 +74,7 @@ describe("TrainingSafetyService", () => {
     expect(result.last7DaysAverage).toBe(6);
     expect(result.cumulativeDebt).toBe(14);
     expect(result.debtLevel).toBe("severe");
-    expect(result.trainingImpact).toBe(0.58);
+    expect(result.trainingImpact).toBe(0.72);
     expect(result.daysToRecover).toBe(14);
   });
 

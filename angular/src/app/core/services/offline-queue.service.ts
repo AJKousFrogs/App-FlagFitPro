@@ -108,7 +108,11 @@ export class OfflineQueueService {
    * and this handler calls syncQueue() within the normal DI context.
    */
   private listenForSwSyncMessages(): void {
-    if (typeof navigator === "undefined" || !("serviceWorker" in navigator)) {
+    // `"serviceWorker" in navigator` is true even in JSDOM (the property is
+    // declared on the prototype) but the value is undefined — guard on the
+    // value, not just the key. Also bails out in non-secure contexts where
+    // the API exists but is null.
+    if (typeof navigator === "undefined" || !navigator.serviceWorker) {
       return;
     }
 
@@ -128,7 +132,7 @@ export class OfflineQueueService {
   private registerBackgroundSync(): void {
     if (
       typeof window === "undefined" ||
-      !("serviceWorker" in navigator) ||
+      !navigator.serviceWorker ||
       !("SyncManager" in window)
     ) {
       return;

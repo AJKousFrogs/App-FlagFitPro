@@ -122,8 +122,8 @@ describe("UpdatePasswordComponent", () => {
     await initializeComponent();
     component.isValidRecoverySession.set(true);
     component.passwordForm.setValue({
-      password: "Password123",
-      confirmPassword: "Password123",
+      password: "Password123!",
+      confirmPassword: "Password123!",
     });
 
     const submitPromise = component.onSubmit();
@@ -131,7 +131,7 @@ describe("UpdatePasswordComponent", () => {
     await vi.runAllTimersAsync();
 
     expect(mockAuthFlowDataService.updateAuthUser).toHaveBeenCalledWith({
-      password: "Password123",
+      password: "Password123!",
     });
     expect(mockAuthFlowDataService.clearPasswordRecoveryIntent).toHaveBeenCalled();
     expect(mockAuthFlowDataService.signOut).toHaveBeenCalled();

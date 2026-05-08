@@ -1,0 +1,136 @@
+.rx-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-5);
+  background: var(--surface-card);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--surface-border);
+  border-left: var(--space-1) solid var(--ds-primary-green, #089949);
+
+  &[data-tone="danger"] {
+    border-left-color: var(--ds-danger, #dc2626);
+  }
+  &[data-tone="warning"] {
+    border-left-color: var(--ds-warning, #d97706);
+  }
+  &[data-tone="info"] {
+    border-left-color: var(--ds-info, #2563eb);
+  }
+  &[data-tone="success"] {
+    border-left-color: var(--ds-primary-green, #089949);
+  }
+  &[data-tone="neutral"] {
+    border-left-color: var(--surface-border);
+  }
+}
+
+.rx-card__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+
+.rx-card__intent-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-pill, 999px);
+  background: var(--surface-subtle, var(--surface-card));
+  border: 1px solid var(--surface-border);
+  font-size: var(--text-xs);
+  font-weight: var(--font-weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-secondary);
+
+  i {
+    font-size: var(--text-sm);
+  }
+}
+
+.rx-card__meta {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+
+  strong {
+    color: var(--text-primary);
+    font-size: var(--text-base);
+  }
+}
+
+.rx-card__title {
+  margin: 0;
+  font-size: var(--text-2xl);
+  font-weight: var(--font-weight-bold);
+  line-height: var(--line-height-tight, 1.2);
+  color: var(--text-primary);
+}
+
+.rx-card__reasoning {
+  margin: 0;
+  font-size: var(--text-base);
+  line-height: var(--line-height-base, 1.5);
+  color: var(--text-secondary);
+}
+
+.rx-card__volume {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--text-sm);
+  color: var(--text-primary);
+  padding: var(--space-2) var(--space-3);
+  background: var(--surface-subtle, var(--surface-card));
+  border-radius: var(--radius-md);
+  align-self: flex-start;
+
+  i {
+    color: var(--text-secondary);
+  }
+}
+
+.rx-card__nutrition {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-3);
+  padding: var(--space-3);
+  background: var(--surface-subtle, var(--surface-card));
+  border-radius: var(--radius-md);
+}
+
+.rx-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-1);
+  text-align: center;
+}
+
+.rx-stat__num {
+  font-size: var(--text-xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--text-primary);
+  line-height: 1;
+}
+
+.rx-stat__unit {
+  font-size: var(--text-xs);
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.rx-card__nutrition-rationale {
+  margin: 0;
+  font-size: var(--text-sm);
+  font-style: italic;
+  color: var(--text-secondary);
+  line-height: var(--line-height-base, 1.5);
+}

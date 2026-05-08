@@ -103,6 +103,24 @@
           </div>
         }
 
+        <!-- Schedule Banner (Full Width) — phase + next event + density -->
+        @if (schedule.snapshot()) {
+          <div class="bento-item full-width no-padding schedule-bento">
+            <app-today-schedule-banner
+              [phase]="schedule.currentPhase()"
+              [nextEvent]="schedule.nextEvent()"
+              [density14d]="schedule.density14d()"
+            />
+          </div>
+        }
+
+        <!-- Today's Prescription (Full Width) — what to do, how hard, why -->
+        @if (periodization.today(); as rx) {
+          <div class="bento-item full-width no-padding prescription-bento">
+            <app-today-prescription-card [prescription]="rx" />
+          </div>
+        }
+
         <!-- Summary Header (Full Width) -->
         <div class="bento-item full-width no-padding header-bento">
           <app-today-summary-header

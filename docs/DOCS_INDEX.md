@@ -13,8 +13,10 @@ This file is the canonical entry point for durable documentation in the repo.
 
 | Need | Document |
 | --- | --- |
+| **v10 architecture** (in progress, additive on v4) | [ARCHITECTURE_v10.md](./ARCHITECTURE_v10.md) |
+| **Daily prescription contract** | [PRESCRIPTION_SPEC.md](./PRESCRIPTION_SPEC.md) |
 | Current release (v4.0) | [RELEASE_NOTES_4.0.0.md](./RELEASE_NOTES_4.0.0.md) |
-| Overall architecture | [ARCHITECTURE.md](./ARCHITECTURE.md) |
+| Overall architecture (v4 baseline) | [ARCHITECTURE.md](./ARCHITECTURE.md) |
 | Canonical ownership rules | [SINGLE_SOURCE_OF_TRUTH.md](./SINGLE_SOURCE_OF_TRUTH.md) |
 | Repo navigation | [REPO_DISCOVERY_GUIDE.md](./REPO_DISCOVERY_GUIDE.md) |
 | Feature and product behavior | [FEATURE_DOCUMENTATION.md](./FEATURE_DOCUMENTATION.md) |
@@ -35,6 +37,8 @@ This file is the canonical entry point for durable documentation in the repo.
 
 ## Engineering And Architecture Docs
 
+- [ARCHITECTURE_v10.md](./ARCHITECTURE_v10.md) — schedule spine + prescription engine (current direction)
+- [PRESCRIPTION_SPEC.md](./PRESCRIPTION_SPEC.md) — `prescribeFor` algorithm contract
 - [ARCHITECTURE.md](./ARCHITECTURE.md)
 - [SINGLE_SOURCE_OF_TRUTH.md](./SINGLE_SOURCE_OF_TRUTH.md)
 - [CODEBASE_MAP.md](./CODEBASE_MAP.md)

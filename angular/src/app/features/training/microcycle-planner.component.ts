@@ -7,13 +7,18 @@ import {
   signal,
 } from "@angular/core";
 import { DatePipe, DecimalPipe, TitleCasePipe } from "@angular/common";
-import { TrainingPlanService } from "../../core/services/training-plan.service";
+import { PeriodizationService } from "../../core/services/periodization.service";
+import { ScheduleService } from "../../core/services/schedule.service";
 import { UnifiedTrainingService } from "../../core/services/unified-training.service";
 import { LoggerService } from "../../core/services/logger.service";
 import { SupabaseService } from "../../core/services/supabase.service";
 import { TrafficLightRiskComponent } from "../../shared/components/traffic-light-risk/traffic-light-risk.component";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
+import {
+  DailyPrescription,
+  PrescriptionIntent,
+} from "../../core/models/prescription.models";
 import {
   getProtocolAcwrDisplay,
   getProtocolRiskZone,
@@ -29,6 +34,25 @@ interface DayPlan {
   reasoning: string;
   acwrProjection: number;
 }
+
+/**
+ * Map DailyPrescription intent → the planner's coarse intensity bucket.
+ * Display-only adapter; the algorithm of record is `prescribeFor`.
+ */
+const INTENT_INTENSITY: Record<
+  PrescriptionIntent,
+  "low" | "medium" | "high" | "rest"
+> = {
+  rest: "rest",
+  recovery: "rest",
+  mobility: "low",
+  technical: "low",
+  "taper-prime": "low",
+  mixed: "medium",
+  sprint: "high",
+  strength: "high",
+  competition: "high",
+};
 
 @Component({
   selector: "app-microcycle-planner",
@@ -47,14 +71,12 @@ interface DayPlan {
 export class MicrocyclePlannerComponent {
   private readonly supabase = inject(SupabaseService);
   private readonly trainingService = inject(UnifiedTrainingService);
-  private readonly trainingPlanService = inject(TrainingPlanService);
+  private readonly periodization = inject(PeriodizationService);
+  private readonly scheduleService = inject(ScheduleService);
   private readonly logger = inject(LoggerService);
 
-  private lastLoadedAthleteId: string | null = null;
   private lastOverviewAthleteId: string | null = null;
 
-  readonly weeklyPlan = signal<DayPlan[]>([]);
-  readonly gameDays = signal<Date[]>([]);
   readonly currentUserId = computed(() => this.supabase.userId());
   readonly todayProtocol = this.trainingService.todayProtocol;
   readonly acwrDisplay = computed(() =>
@@ -107,17 +129,32 @@ export class MicrocyclePlannerComponent {
     return lastDay?.acwrProjection || this.currentACWR();
   });
 
+  /**
+   * 7-day plan computed from the canonical prescription stream.
+   * Every input that drives the plan (schedule, ACWR, readiness, density) is
+   * a signal — the computed re-runs automatically when any of them change.
+   */
+  readonly weeklyPlan = computed<DayPlan[]>(() => {
+    const prescriptions = this.periodization.weekAhead();
+    const chronic = this.chronicLoad();
+    const acuteBaseline = this.acuteLoad();
+    if (prescriptions.length === 0) {
+      return [];
+    }
+    return prescriptions.map((rx, index) =>
+      prescriptionToDayPlan(rx, index, chronic, acuteBaseline),
+    );
+  });
+
+  /**
+   * Manual re-trigger hook. Refreshes the underlying schedule snapshot;
+   * weeklyPlan re-derives reactively because every input is a signal.
+   */
+  refresh(): void {
+    void this.scheduleService.refresh();
+  }
+
   constructor() {
-    effect(() => {
-      const athleteId = this.currentUserId();
-      if (athleteId === this.lastLoadedAthleteId) {
-        return;
-      }
-
-      this.lastLoadedAthleteId = athleteId;
-      void this.syncGameDaysAndPlan(athleteId);
-    });
-
     effect(() => {
       const athleteId = this.currentUserId();
       if (!athleteId || athleteId === this.lastOverviewAthleteId) {
@@ -133,182 +170,6 @@ export class MicrocyclePlannerComponent {
           ),
       });
     });
-  }
-
-  private async syncGameDaysAndPlan(athleteId: string | null): Promise<void> {
-    if (athleteId) {
-      try {
-        const games = await this.trainingPlanService.getUpcomingGames(
-          athleteId,
-          14,
-        );
-        if (this.currentUserId() !== athleteId) return;
-        this.gameDays.set(games);
-      } catch (error) {
-        this.logger.warn(
-          "[MicrocyclePlanner] Failed to load upcoming games",
-          error,
-        );
-        this.gameDays.set([]);
-      }
-    } else {
-      this.gameDays.set([]);
-    }
-    this.generateWeeklyPlan();
-  }
-
-  generateWeeklyPlan() {
-    const currentACWR = this.currentACWR();
-    const chronic = this.chronicLoad();
-    const days: DayPlan[] = [];
-    const today = new Date();
-
-    for (let i = 0; i < 7; i++) {
-      const date = new Date(today);
-      date.setDate(date.getDate() + i);
-      const _dayName = date.toLocaleDateString("en-US", { weekday: "short" });
-
-      const plan = this.calculateDayPlan(
-        date,
-        i,
-        currentACWR,
-        chronic,
-        this.gameDays(),
-      );
-      days.push(plan);
-    }
-
-    this.weeklyPlan.set(days);
-  }
-
-  private calculateDayPlan(
-    date: Date,
-    dayIndex: number,
-    currentACWR: number,
-    chronic: number,
-    gameDays: Date[],
-  ): DayPlan {
-    // Calculate day name
-    const dayName = date.toLocaleDateString("en-US", { weekday: "short" });
-
-    // Check game proximity first (48-72 hour deload rule)
-    const gameProximity = this.getGameProximity(date, gameDays);
-
-    // Base sprint load recommendations
-    let suggestedSprintLoad = 0;
-    let suggestedIntensity!: "low" | "medium" | "high" | "rest";
-    let maxSprints = 20;
-    let recommendedDuration = 60;
-    let reasoning!: string;
-
-    // Game proximity adjustments (48-72 hours before game = deload sprints)
-    if (
-      gameProximity.hoursUntilGame >= 0 &&
-      gameProximity.hoursUntilGame <= 24
-    ) {
-      // Day before game - rest or very light
-      suggestedIntensity = "rest";
-      suggestedSprintLoad = 0;
-      maxSprints = 0;
-      recommendedDuration = 20;
-      reasoning = "Pre-game rest day - game within 24 hours";
-    } else if (
-      gameProximity.hoursUntilGame > 24 &&
-      gameProximity.hoursUntilGame <= 48
-    ) {
-      // 24-48 hours before - minimal sprint work
-      suggestedSprintLoad = 2; // Fixed baseline
-      suggestedIntensity = "low";
-      maxSprints = 3;
-      recommendedDuration = 30;
-      reasoning = "Game proximity (24-48h) - deload sprints";
-    } else if (
-      gameProximity.hoursUntilGame > 48 &&
-      gameProximity.hoursUntilGame <= 72
-    ) {
-      // 48-72 hours before - reduced sprint volume
-      suggestedSprintLoad = 4; // Fixed baseline
-      suggestedIntensity = "low";
-      maxSprints = 6;
-      recommendedDuration = 45;
-      reasoning = "Game proximity (48-72h) - reduced sprint volume";
-    } else {
-      // Normal ACWR-based planning (only if not near game)
-      // Adjust based on current ACWR with progression rules
-      if (currentACWR > 1.5) {
-        // Danger zone - reduce load significantly
-        if (dayIndex === 0 || dayIndex === 1) {
-          suggestedIntensity = "rest";
-          reasoning = "High ACWR - rest day recommended";
-        } else {
-          suggestedSprintLoad = 2; // Fixed baseline
-          suggestedIntensity = "low";
-          maxSprints = 5;
-          recommendedDuration = 30;
-          reasoning = "Danger zone - minimal sprint work (ACWR > 1.5)";
-        }
-      } else if (currentACWR > 1.3) {
-        // Elevated risk - reduce volume by 15%
-        if (dayIndex % 3 === 0) {
-          suggestedIntensity = "rest";
-          reasoning = "Elevated ACWR - rest day";
-        } else {
-          suggestedSprintLoad = 5; // Fixed baseline
-          suggestedIntensity = "low";
-          maxSprints = 10;
-          recommendedDuration = 45;
-          reasoning = "Elevated risk - reduced sprint volume (ACWR > 1.3)";
-        }
-      } else if (currentACWR < 0.8) {
-        // Under-training - can increase volume by 10%
-        if (dayIndex === 6) {
-          suggestedIntensity = "rest";
-          reasoning = "Weekly rest day";
-        } else {
-          suggestedSprintLoad = 15; // Fixed baseline
-          suggestedIntensity = dayIndex % 2 === 0 ? "high" : "medium";
-          maxSprints = 25;
-          recommendedDuration = 90;
-          reasoning = "Under-training - can increase load (ACWR < 0.8)";
-        }
-      } else {
-        // Sweet spot - normal training
-        if (dayIndex === 6) {
-          suggestedIntensity = "rest";
-          reasoning = "Weekly rest day";
-        } else if (dayIndex === 0 || dayIndex === 3) {
-          // High intensity days
-          suggestedSprintLoad = 12; // Fixed baseline
-          suggestedIntensity = "high";
-          maxSprints = 20;
-          recommendedDuration = 90;
-          reasoning = "Optimal ACWR - high intensity day";
-        } else {
-          // Medium intensity days
-          suggestedSprintLoad = 8; // Fixed baseline
-          suggestedIntensity = "medium";
-          maxSprints = 15;
-          recommendedDuration = 60;
-          reasoning = "Optimal ACWR - moderate intensity";
-        }
-      }
-    }
-
-    // Project ACWR for this day
-    const dailyLoad = suggestedSprintLoad * 10; // Rough estimate
-    const projectedAcute = (this.acuteLoad() * 6 + dailyLoad) / 7; // Rolling 7-day
-    const acwrProjection = chronic > 0 ? projectedAcute / chronic : 0;
-
-    return {
-      day: dayName,
-      date,
-      suggestedSprintLoad,
-      suggestedIntensity,
-      maxSprints,
-      recommendedDuration,
-      reasoning,
-      acwrProjection,
-    };
   }
 
   getDayCardClass(day: DayPlan): string {
@@ -343,31 +204,40 @@ export class MicrocyclePlannerComponent {
     if (acwr > 1.3) return "status-warning";
     return "status-success";
   }
+}
 
-  /**
-   * Get game proximity for a specific date
-   */
-  private getGameProximity(
-    date: Date,
-    gameDays: Date[],
-  ): { hoursUntilGame: number; hasGame: boolean } {
-    const dateTime = date.getTime();
-    let closestGame: Date | null = null;
-    let minHours = Infinity;
+/**
+ * Adapt a {@link DailyPrescription} into the planner's display-only DayPlan.
+ *
+ * The prescription is the source of truth for *what* the athlete does and
+ * *why*. The DayPlan adds two display concerns the prescription does not
+ * own: a coarse intensity bucket for cell coloring and an ACWR projection
+ * for the chart. Anything else that diverges from the prescription is a bug.
+ */
+function prescriptionToDayPlan(
+  rx: DailyPrescription,
+  dayIndex: number,
+  chronicLoad: number,
+  acuteBaseline: number,
+): DayPlan {
+  const date = new Date(`${rx.date}T00:00:00`);
+  const day = date.toLocaleDateString("en-US", { weekday: "short" });
 
-    for (const gameDay of gameDays) {
-      const gameTime = gameDay.getTime();
-      const hoursUntilGame = (gameTime - dateTime) / (1000 * 60 * 60);
+  // Approximate session AU = sprintReps × 10 + strengthSets × 6;
+  // used only for the ACWR projection chart, never for the prescription.
+  const dailyAU = rx.sprintReps * 10 + rx.strengthSets * 6;
+  const projectedAcute = (acuteBaseline * 6 + dailyAU) / 7;
+  const acwrProjection =
+    chronicLoad > 0 ? projectedAcute / chronicLoad : 0;
 
-      if (hoursUntilGame >= 0 && hoursUntilGame < minHours) {
-        minHours = hoursUntilGame;
-        closestGame = gameDay;
-      }
-    }
-
-    return {
-      hoursUntilGame: minHours === Infinity ? 999 : minHours,
-      hasGame: closestGame !== null,
-    };
-  }
+  return {
+    day,
+    date,
+    suggestedSprintLoad: rx.sprintReps,
+    suggestedIntensity: INTENT_INTENSITY[rx.intent],
+    maxSprints: rx.sprintReps > 0 ? rx.sprintReps + 4 : 0,
+    recommendedDuration: rx.targetMinutes,
+    reasoning: rx.reasoning,
+    acwrProjection,
+  };
 }

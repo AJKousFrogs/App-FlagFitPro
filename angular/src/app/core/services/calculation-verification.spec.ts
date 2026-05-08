@@ -218,7 +218,7 @@ describe("Calculation Verification", () => {
     acwrService.addSessions(sessions);
 
     const result = acwrService.acwrData();
-    expect(result.ratio).toBe(0);
+    expect(result.ratio).toBe(null);
     expect(result.riskZone.level).toBe("no-data");
   });
 

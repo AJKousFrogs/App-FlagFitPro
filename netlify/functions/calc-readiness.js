@@ -290,7 +290,34 @@ async function fetchWellnessForReadiness(athleteId, dayStr) {
 }
 
 async function fetchNextGame(targetDate, athleteId) {
-  const queries = [
+  // v10 canonical source: union across active team memberships, schedule spine.
+  // Falls back to legacy `fixtures` table if the spine returns nothing or the
+  // view is not yet deployed (older environments).
+  const spineQuery = await supabaseAdmin
+    .from("v_athlete_schedule")
+    .select("starts_at, importance, expected_game_count")
+    .eq("athlete_id", athleteId)
+    .gte("starts_at", targetDate.toISOString())
+    .neq("status", "cancelled")
+    .order("starts_at", { ascending: true })
+    .limit(1)
+    .maybeSingle();
+
+  if (
+    spineQuery.data &&
+    (!spineQuery.error || spineQuery.error.code === "PGRST116")
+  ) {
+    return {
+      data: {
+        game_start: spineQuery.data.starts_at,
+        importance: spineQuery.data.importance,
+        expected_game_count: spineQuery.data.expected_game_count,
+      },
+      error: null,
+    };
+  }
+
+  const legacyQueries = [
     () =>
       supabaseAdmin
         .from("fixtures")
@@ -310,7 +337,7 @@ async function fetchNextGame(targetDate, athleteId) {
         .maybeSingle(),
   ];
 
-  for (const runQuery of queries) {
+  for (const runQuery of legacyQueries) {
     const result = await runQuery();
     if (!result.error || result.error.code === "PGRST116") {
       return result;

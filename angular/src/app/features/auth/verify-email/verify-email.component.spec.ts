@@ -105,6 +105,12 @@ describe("VerifyEmailComponent", () => {
     await vi.advanceTimersByTimeAsync(2000);
 
     expect(component.isVerified()).toBe(true);
+    // Manual-continue gate: directly opened verified sessions no longer
+    // auto-redirect; the user clicks Continue to invoke the shared resolver.
+    expect(component.showManualContinue()).toBe(true);
+    expect(mockRouter.navigateByUrl).not.toHaveBeenCalled();
+
+    await component.continueToApp();
     expect(mockRouter.navigateByUrl).toHaveBeenCalledWith("/onboarding");
   });
 

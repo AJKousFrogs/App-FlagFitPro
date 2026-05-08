@@ -127,7 +127,7 @@ describe("KnowledgeBaseComponent", () => {
     const fixture = TestBed.createComponent(KnowledgeBaseComponent);
     const component = fixture.componentInstance;
 
-    await component.reviewPendingEntry("kb-1", "approve");
+    await component.data.reviewPendingEntry("kb-1", "approve");
 
     expect(mockApiService.patch).not.toHaveBeenCalled();
     expect(mockToastService.warn).toHaveBeenCalled();
@@ -177,21 +177,21 @@ describe("KnowledgeBaseComponent", () => {
     const fixture = TestBed.createComponent(KnowledgeBaseComponent);
     const component = fixture.componentInstance;
 
-    await component.loadMySubmissions();
+    await component.data.loadMySubmissions();
 
-    expect(component.mySubmissions().length).toBe(1);
-    expect(component.mySubmissions()[0].id).toBe("kb-1");
+    expect(component.data.mySubmissions().length).toBe(1);
+    expect(component.data.mySubmissions()[0].id).toBe("kb-1");
   });
 
   it("loads audit timeline for a submission", async () => {
     const fixture = TestBed.createComponent(KnowledgeBaseComponent);
     const component = fixture.componentInstance;
 
-    await component.toggleAuditTimeline("kb-1");
+    await component.data.toggleAuditTimeline("kb-1");
 
     expect(mockApiService.get).toHaveBeenCalledWith(
       "/api/knowledge-governance/audit/kb-1",
     );
-    expect(component.auditTimelineByEntry()["kb-1"]?.length).toBe(0);
+    expect(component.data.auditTimelineByEntry()["kb-1"]?.length).toBe(0);
   });
 });

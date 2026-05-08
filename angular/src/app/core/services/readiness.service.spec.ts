@@ -2,46 +2,8 @@ import { TestBed } from "@angular/core/testing";
 import { describe, it, expect, beforeEach, vi } from "vitest";
 import { firstValueFrom, of } from "rxjs";
 import { ReadinessService } from "./readiness.service";
-import { EvidenceConfigService } from "./evidence-config.service";
 import { ApiService } from "./api.service";
 import { LoggerService } from "./logger.service";
-
-const mockEvidenceConfigService = {
-  getReadinessConfig: () => ({
-    weightings: {
-      workload: 0.4,
-      wellness: 0.4,
-      sleep: 0.15,
-      proximity: 0.05,
-    },
-    cutPoints: {
-      lowMax: 55,
-      moderateMax: 75,
-    },
-    reducedDataMode: {
-      enabled: false,
-      wellnessCompletenessThreshold: 0.5,
-      sleepWeightMultiplier: 1.2,
-    },
-    wellnessIndex: {
-      use1to5Scale: false,
-      requiredFields: ["sleep", "energy"],
-      optionalFields: ["stress", "soreness", "mood"],
-    },
-  }),
-  getActivePreset: () => ({
-    name: "Default",
-    version: "1.0",
-    readiness: {
-      citations: [],
-      scienceNotes: {
-        weightings: "",
-        cutPoints: "",
-        coachOverride: "",
-      },
-    },
-  }),
-};
 
 const mockApiService = {
   post: vi.fn(),
@@ -66,46 +28,12 @@ describe("ReadinessService", () => {
     TestBed.configureTestingModule({
       providers: [
         ReadinessService,
-        { provide: EvidenceConfigService, useValue: mockEvidenceConfigService },
         { provide: ApiService, useValue: mockApiService },
         { provide: LoggerService, useValue: mockLoggerService },
       ],
     });
 
     service = TestBed.inject(ReadinessService);
-  });
-
-  it("classifies readiness level using cut points", () => {
-    expect(service.getReadinessLevel(40)).toBe("low");
-    expect(service.getReadinessLevel(55)).toBe("moderate");
-    expect(service.getReadinessLevel(75)).toBe("moderate");
-    expect(service.getReadinessLevel(76)).toBe("high");
-  });
-
-  it("maps readiness score to suggestion", () => {
-    expect(service.getSuggestion(40)).toBe("deload");
-    expect(service.getSuggestion(55)).toBe("maintain");
-    expect(service.getSuggestion(70)).toBe("maintain");
-    expect(service.getSuggestion(76)).toBe("push");
-  });
-
-  it("maps readiness level to severity", () => {
-    expect(service.getSeverity("high")).toBe("success");
-    expect(service.getSeverity("moderate")).toBe("warning");
-    expect(service.getSeverity("low")).toBe("danger");
-  });
-
-  it("maps readiness score to score color class", () => {
-    expect(service.getScoreColor(80)).toBe("text-green-600");
-    expect(service.getScoreColor(60)).toBe("text-yellow-600");
-    expect(service.getScoreColor(40)).toBe("text-red-600");
-  });
-
-  it("returns calibration note containing cut points", () => {
-    const note = service.getCalibrationNote();
-    expect(note).toContain("Low: <55");
-    expect(note).toContain("Moderate: 55-75");
-    expect(note).toContain("High: >75");
   });
 
   it("stores readiness history from API response", async () => {

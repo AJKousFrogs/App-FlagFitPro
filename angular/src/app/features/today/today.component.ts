@@ -44,6 +44,8 @@ import { ApiService } from "../../core/services/api.service";
 import { DataSourceService } from "../../core/services/data-source.service";
 import { HeaderService } from "../../core/services/header.service";
 import { LoggerService } from "../../core/services/logger.service";
+import { PeriodizationService } from "../../core/services/periodization.service";
+import { ScheduleService } from "../../core/services/schedule.service";
 import { ScreenReaderAnnouncerService } from "../../core/services/screen-reader-announcer.service";
 import { SupabaseService } from "../../core/services/supabase.service";
 import { UnifiedTrainingService } from "../../core/services/unified-training.service";
@@ -67,7 +69,9 @@ import {
 } from "./today-protocol.facade";
 import { TodaySummaryHeaderComponent } from "./components/today-summary-header.component";
 import { TodayQuickCheckinDialogComponent } from "./components/today-quick-checkin-dialog.component";
+import { TodayPrescriptionCardComponent } from "./components/today-prescription-card.component";
 import { TodayProtocolSectionComponent } from "./components/today-protocol-section.component";
+import { TodayScheduleBannerComponent } from "./components/today-schedule-banner.component";
 import { TodayStatusStackComponent } from "./components/today-status-stack.component";
 
 // Constants
@@ -126,6 +130,8 @@ interface QuickFormData {
     PageErrorStateComponent,
     ButtonComponent,
     MainLayoutComponent,
+    TodayScheduleBannerComponent,
+    TodayPrescriptionCardComponent,
     TodaySummaryHeaderComponent,
     TodayQuickCheckinDialogComponent,
     TodayProtocolSectionComponent,
@@ -149,6 +155,8 @@ export class TodayComponent {
   private readonly screenReaderAnnouncer = inject(ScreenReaderAnnouncerService);
   private readonly todayProtocolFacade = inject(TodayProtocolFacade);
   private readonly continuityIndicators = inject(ContinuityIndicatorsService);
+  protected readonly schedule = inject(ScheduleService);
+  protected readonly periodization = inject(PeriodizationService);
 
   // Angular 21: viewChild signals for DOM element references
   private readonly protocolBlocks = viewChild<ElementRef>("protocolBlocks");

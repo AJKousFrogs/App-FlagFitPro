@@ -2,119 +2,169 @@
  * AI Chat Service Unit Tests
  *
  * Tests for the Merlin AI coaching chat functionality with safety tiers.
- * Uses async/await pattern compatible with zoneless Angular.
  *
- * Note: Test files use non-null assertions for test data setup where values are guaranteed.
- * This is acceptable practice in test files for cleaner test code.
- *
- * @version 1.0.0
+ * The service streams responses via Server-Sent Events over a raw `fetch()`
+ * call (not ApiService.post), so the spec stubs `globalThis.fetch` with a
+ * `ReadableStream` that emits SSE `data:` lines. Each test that exercises
+ * `sendMessage` mocks fetch with `mockSseResponse(payload)`; error tests
+ * either reject the fetch promise or return a non-2xx Response.
  */
- 
 
 import { TestBed } from "@angular/core/testing";
-import { describe, it, expect, beforeEach, vi } from "vitest";
-import { of, throwError, firstValueFrom } from "rxjs";
+import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
+import { firstValueFrom, of, throwError } from "rxjs";
 import {
   AiChatService,
-  type ChatMessage as _ChatMessage,
   ChatRequest,
   RiskLevel,
 } from "./ai-chat.service";
 import { ApiService } from "./api.service";
+import { SupabaseService } from "./supabase.service";
 
-// Mock API responses
-const mockSuccessResponse = {
-  success: true,
-  data: {
-    answer_markdown: "Here's my advice on improving your speed...",
-    citations: [
-      {
-        title: "Speed Training for Athletes",
-        url: "https://example.com/speed",
-        evidence_grade: "A",
-      },
-    ],
-    risk_level: "low" as RiskLevel,
-    disclaimer: undefined,
-    suggested_actions: [
-      {
-        type: "training",
-        reason: "Based on your goals",
-        label: "Start sprint training",
-      },
-    ],
-    chat_session_id: "session-123",
-    message_id: "msg-456",
-    metadata: {
-      source: "groq",
-      model: "llama-3.3-70b-versatile",
-      usage: { prompt_tokens: 100, completion_tokens: 200, total_tokens: 300 },
+// ──────────────────────────────────────────────────────────────────────────
+// Canned payloads — same shape the server emits inside the SSE `done` event.
+// ──────────────────────────────────────────────────────────────────────────
+
+const mockSuccessPayload = {
+  answer_markdown: "Here's my advice on improving your speed...",
+  citations: [
+    {
+      title: "Speed Training for Athletes",
+      url: "https://example.com/speed",
+      evidence_grade: "A",
+    },
+  ],
+  risk_level: "low" as RiskLevel,
+  disclaimer: undefined,
+  suggested_actions: [
+    {
+      type: "training",
+      reason: "Based on your goals",
+      label: "Start sprint training",
+    },
+  ],
+  chat_session_id: "session-123",
+  message_id: "msg-456",
+  metadata: {
+    source: "groq",
+    model: "llama-3.3-70b-versatile",
+    usage: { prompt_tokens: 100, completion_tokens: 200, total_tokens: 300 },
+  },
+};
+
+const mockHighRiskPayload = {
+  answer_markdown:
+    "I cannot provide specific medical advice. Please consult a healthcare professional.",
+  citations: [],
+  risk_level: "high" as RiskLevel,
+  disclaimer:
+    "This response has been filtered for safety. Please consult a professional.",
+  suggested_actions: [],
+  chat_session_id: "session-123",
+  message_id: "msg-789",
+};
+
+const mockACWRBlockedPayload = {
+  answer_markdown:
+    "Based on your current ACWR of 1.7 (danger zone), I cannot recommend high-intensity training. Focus on recovery instead.",
+  citations: [],
+  risk_level: "high" as RiskLevel,
+  disclaimer: "High-intensity training blocked due to elevated ACWR.",
+  suggested_actions: [
+    {
+      type: "recovery",
+      reason: "ACWR in danger zone",
+      label: "View recovery recommendations",
+    },
+  ],
+  chat_session_id: "session-123",
+  message_id: "msg-acwr",
+  metadata: {
+    acwr_safety: {
+      blocked: true,
+      acwr: 1.7,
+      risk_zone: "danger",
     },
   },
 };
 
-const mockHighRiskResponse = {
-  success: true,
-  data: {
-    answer_markdown:
-      "I cannot provide specific medical advice. Please consult a healthcare professional.",
-    citations: [],
-    risk_level: "high" as RiskLevel,
-    disclaimer:
-      "This response has been filtered for safety. Please consult a professional.",
-    suggested_actions: [],
-    chat_session_id: "session-123",
-    message_id: "msg-789",
-  },
-};
+// ──────────────────────────────────────────────────────────────────────────
+// SSE Response factory.
+//
+// JSDOM does not expose `ReadableStream`, so we hand-roll an object that
+// quacks like a fetch Response: `ok`, `status`, and a `body.getReader()`
+// returning `{ read(): {value, done}, releaseLock() }`. The service only
+// touches those four fields. Each call returns a fresh object so a single
+// "stream" is consumed once-and-only-once.
+// ──────────────────────────────────────────────────────────────────────────
 
-const mockACWRBlockedResponse = {
-  success: true,
-  data: {
-    answer_markdown:
-      "Based on your current ACWR of 1.7 (danger zone), I cannot recommend high-intensity training. Focus on recovery instead.",
-    citations: [],
-    risk_level: "high" as RiskLevel,
-    disclaimer: "High-intensity training blocked due to elevated ACWR.",
-    suggested_actions: [
-      {
-        type: "recovery",
-        reason: "ACWR in danger zone",
-        label: "View recovery recommendations",
-      },
-    ],
-    chat_session_id: "session-123",
-    message_id: "msg-acwr",
-    metadata: {
-      acwr_safety: {
-        blocked: true,
-        acwr: 1.7,
-        risk_zone: "danger",
-      },
+function mockSseResponse(payload: unknown, opts?: { status?: number }): Response {
+  const status = opts?.status ?? 200;
+  const encoder = new TextEncoder();
+  const line = `data: ${JSON.stringify({ type: "done", payload })}\n\n`;
+  const chunks: Uint8Array[] = [encoder.encode(line)];
+  let cursor = 0;
+
+  return {
+    ok: status >= 200 && status < 300,
+    status,
+    body: {
+      getReader: () => ({
+        read: async (): Promise<{ value?: Uint8Array; done: boolean }> => {
+          if (cursor < chunks.length) {
+            return { value: chunks[cursor++], done: false };
+          }
+          return { value: undefined, done: true };
+        },
+        releaseLock: () => {
+          /* no-op */
+        },
+      }),
     },
-  },
-};
+  } as unknown as Response;
+}
 
-// Mock ApiService
+// ──────────────────────────────────────────────────────────────────────────
+// Mocks
+// ──────────────────────────────────────────────────────────────────────────
+
 const mockApiService = {
   post: vi.fn(),
   get: vi.fn(),
+  buildUrl: vi.fn((endpoint: string) => `/api${endpoint}`),
 };
+
+const mockSupabaseService = {
+  waitForInit: vi.fn(async () => undefined),
+  getToken: vi.fn(async () => "test-jwt-token"),
+};
+
+let mockFetch: ReturnType<typeof vi.fn>;
+const originalFetch = globalThis.fetch;
 
 describe("AiChatService", () => {
   let service: AiChatService;
 
   beforeEach(() => {
     vi.clearAllMocks();
+    mockFetch = vi.fn();
+    globalThis.fetch = mockFetch as unknown as typeof fetch;
+    // Default: every fetch resolves to a fresh successful SSE response.
+    mockFetch.mockImplementation(async () => mockSseResponse(mockSuccessPayload));
 
     TestBed.configureTestingModule({
       providers: [
         AiChatService,
         { provide: ApiService, useValue: mockApiService },
+        { provide: SupabaseService, useValue: mockSupabaseService },
       ],
     });
 
     service = TestBed.inject(AiChatService);
+  });
+
+  afterEach(() => {
+    globalThis.fetch = originalFetch;
   });
 
   // ============================================================================
@@ -123,11 +173,7 @@ describe("AiChatService", () => {
 
   describe("Basic Chat", () => {
     it("should send message and receive response", async () => {
-      mockApiService.post.mockReturnValue(of(mockSuccessResponse));
-
-      const request: ChatRequest = {
-        message: "How can I improve my speed?",
-      };
+      const request: ChatRequest = { message: "How can I improve my speed?" };
 
       const response = await firstValueFrom(service.sendMessage(request));
 
@@ -138,13 +184,7 @@ describe("AiChatService", () => {
     });
 
     it("should add user message immediately", async () => {
-      mockApiService.post.mockReturnValue(of(mockSuccessResponse));
-
-      const request: ChatRequest = {
-        message: "Test message",
-      };
-
-      await firstValueFrom(service.sendMessage(request));
+      await firstValueFrom(service.sendMessage({ message: "Test message" }));
 
       const messages = service.messages();
       const userMessage = messages.find((m) => m.role === "user");
@@ -154,10 +194,6 @@ describe("AiChatService", () => {
     });
 
     it("should set loading state during request", async () => {
-      mockApiService.post.mockReturnValue(of(mockSuccessResponse));
-
-      expect(service.loading()).toBe(false);
-
       await firstValueFrom(service.sendMessage({ message: "Test" }));
 
       // Loading should be false after response
@@ -165,14 +201,11 @@ describe("AiChatService", () => {
     });
 
     it("should clear error on new message", async () => {
-      // First, set an error
-      mockApiService.post.mockReturnValue(
-        throwError(() => new Error("Network error")),
-      );
+      // First, make sendMessage fail
+      mockFetch.mockRejectedValueOnce(new Error("Network error"));
       await firstValueFrom(service.sendMessage({ message: "Fail" }));
 
-      // Now send successful message
-      mockApiService.post.mockReturnValue(of(mockSuccessResponse));
+      // Now send successful message — fetch falls back to default SSE success
       await firstValueFrom(service.sendMessage({ message: "Success" }));
 
       expect(service.error()).toBeNull();
@@ -185,8 +218,6 @@ describe("AiChatService", () => {
 
   describe("Safety Tiers", () => {
     it("should handle low risk responses", async () => {
-      mockApiService.post.mockReturnValue(of(mockSuccessResponse));
-
       const response = await firstValueFrom(
         service.sendMessage({ message: "How do I warm up?" }),
       );
@@ -196,7 +227,7 @@ describe("AiChatService", () => {
     });
 
     it("should handle high risk responses with disclaimer", async () => {
-      mockApiService.post.mockReturnValue(of(mockHighRiskResponse));
+      mockFetch.mockImplementationOnce(async () => mockSseResponse(mockHighRiskPayload));
 
       const response = await firstValueFrom(
         service.sendMessage({
@@ -210,7 +241,7 @@ describe("AiChatService", () => {
     });
 
     it("should handle ACWR-blocked responses", async () => {
-      mockApiService.post.mockReturnValue(of(mockACWRBlockedResponse));
+      mockFetch.mockImplementationOnce(async () => mockSseResponse(mockACWRBlockedPayload));
 
       const response = await firstValueFrom(
         service.sendMessage({ message: "Can I do sprint training today?" }),
@@ -230,8 +261,6 @@ describe("AiChatService", () => {
 
   describe("Citations", () => {
     it("should include citations in response", async () => {
-      mockApiService.post.mockReturnValue(of(mockSuccessResponse));
-
       const response = await firstValueFrom(
         service.sendMessage({ message: "Test" }),
       );
@@ -242,7 +271,7 @@ describe("AiChatService", () => {
     });
 
     it("should handle responses without citations", async () => {
-      mockApiService.post.mockReturnValue(of(mockHighRiskResponse));
+      mockFetch.mockImplementationOnce(async () => mockSseResponse(mockHighRiskPayload));
 
       const response = await firstValueFrom(
         service.sendMessage({ message: "Test" }),
@@ -259,8 +288,6 @@ describe("AiChatService", () => {
 
   describe("Suggested Actions", () => {
     it("should include suggested actions", async () => {
-      mockApiService.post.mockReturnValue(of(mockSuccessResponse));
-
       const response = await firstValueFrom(
         service.sendMessage({ message: "Test" }),
       );
@@ -289,15 +316,12 @@ describe("AiChatService", () => {
 
     it("should update session ID after first message", async () => {
       service.startNewSession();
-      mockApiService.post.mockReturnValue(of(mockSuccessResponse));
-
       await firstValueFrom(service.sendMessage({ message: "Test" }));
 
       expect(service.sessionId()).toBe("session-123");
     });
 
     it("should clear session", async () => {
-      mockApiService.post.mockReturnValue(of(mockSuccessResponse));
       await firstValueFrom(service.sendMessage({ message: "Test" }));
 
       service.clearSession();
@@ -336,9 +360,7 @@ describe("AiChatService", () => {
 
   describe("Error Handling", () => {
     it("should handle API errors gracefully", async () => {
-      mockApiService.post.mockReturnValue(
-        throwError(() => new Error("Network error")),
-      );
+      mockFetch.mockRejectedValueOnce(new Error("Network error"));
 
       const response = await firstValueFrom(
         service.sendMessage({ message: "Test" }),
@@ -352,12 +374,8 @@ describe("AiChatService", () => {
     });
 
     it("should handle failed response", async () => {
-      mockApiService.post.mockReturnValue(
-        of({
-          success: false,
-          error: "Server error",
-        }),
-      );
+      // Non-2xx response triggers the same throw → fallback path
+      mockFetch.mockResolvedValueOnce(mockSseResponse({}, { status: 500 }));
 
       const response = await firstValueFrom(
         service.sendMessage({ message: "Test" }),
@@ -398,8 +416,6 @@ describe("AiChatService", () => {
 
   describe("Metadata", () => {
     it("should include model metadata", async () => {
-      mockApiService.post.mockReturnValue(of(mockSuccessResponse));
-
       const response = await firstValueFrom(
         service.sendMessage({ message: "Test" }),
       );
@@ -410,8 +426,6 @@ describe("AiChatService", () => {
     });
 
     it("should include token usage", async () => {
-      mockApiService.post.mockReturnValue(of(mockSuccessResponse));
-
       const response = await firstValueFrom(
         service.sendMessage({ message: "Test" }),
       );
@@ -427,27 +441,23 @@ describe("AiChatService", () => {
 
   describe("Rate Limiting", () => {
     it("returns rate-limit message when 5 messages sent within 60s", async () => {
-      mockApiService.post.mockReturnValue(of(mockSuccessResponse));
-
       // Send 5 messages to fill the window
       for (let i = 0; i < 5; i++) {
         await firstValueFrom(service.sendMessage({ message: `Message ${i + 1}` }));
       }
 
-      // 6th message should be rate-limited (no API call)
+      // 6th message should be rate-limited (no fetch call)
       const limitResponse = await firstValueFrom(
         service.sendMessage({ message: "Message 6" }),
       );
 
       expect(limitResponse.role).toBe("assistant");
       expect(limitResponse.content).toContain("too fast");
-      // API should only have been called 5 times, not 6
-      expect(mockApiService.post).toHaveBeenCalledTimes(5);
+      // fetch should only have been called 5 times, not 6
+      expect(mockFetch).toHaveBeenCalledTimes(5);
     });
 
     it("rate-limit message contains retry countdown in seconds", async () => {
-      mockApiService.post.mockReturnValue(of(mockSuccessResponse));
-
       for (let i = 0; i < 5; i++) {
         await firstValueFrom(service.sendMessage({ message: `Msg ${i}` }));
       }
@@ -460,8 +470,6 @@ describe("AiChatService", () => {
     });
 
     it("resets rate limit window after startNewSession()", async () => {
-      mockApiService.post.mockReturnValue(of(mockSuccessResponse));
-
       for (let i = 0; i < 5; i++) {
         await firstValueFrom(service.sendMessage({ message: `Msg ${i}` }));
       }
@@ -485,59 +493,28 @@ describe("AiChatService", () => {
 
   describe("Context Window Management", () => {
     /**
-     * Build a session with N messages by directly starting a session
-     * and sending messages that resolve immediately.
+     * Reach into the private rate-limit window so we can build a long
+     * conversation in one session without `startNewSession()` (which would
+     * reset `messages()` and prevent the 20-message threshold from being
+     * crossed). Trim only fires when a single session accumulates enough
+     * messages, so accessing the private timestamp array is the cleanest
+     * way to test the threshold deterministically.
      */
-    async function _fillSession(n: number): Promise<void> {
-      mockApiService.post.mockReturnValue(of(mockSuccessResponse));
-      service.startNewSession();
-
-      // Reset rate-limit between each call by calling startNewSession() between
-      // every 5 messages so we don't hit the client-side gate.
-      for (let i = 0; i < n; i++) {
-        if (i > 0 && i % 5 === 0) {
-          // Reset rate-limit timestamps without losing messages by momentarily
-          // re-invoking startNewSession only to clear the timestamp array,
-          // then restoring the session
-          const saved = service.messages().slice();
-          const savedId = service.sessionId();
-          service.startNewSession();
-          // Restore message content manually via a second session manipulation
-          // is not easy via public API, so instead we accept that each 5-block
-          // resets the session. For the trim test we only need >20 messages
-          // total and will count them from the final state.
-          mockApiService.post.mockReturnValue(of(mockSuccessResponse));
-          void saved; void savedId; // acknowledge intentional reset
-        }
-        await firstValueFrom(service.sendMessage({ message: `Message ${i + 1}` }));
-      }
+    function clearRateLimit(): void {
+      (service as unknown as { recentMessageTimestamps: number[] })
+        .recentMessageTimestamps.length = 0;
     }
 
     it("inserts a context-trim marker when session exceeds 20 messages", async () => {
-      // Send just enough messages to cross the 20-message threshold.
-      // Each sendMessage adds 2 messages (user + assistant), so 11 sends = 22.
-      // We spread across 3 sessions of ≤5 to avoid rate-limiting.
-      mockApiService.post.mockReturnValue(of(mockSuccessResponse));
-
-      // Session 1: 5 user messages → 10 total
+      // Each sendMessage adds 2 messages (user + final assistant). 11 sends
+      // → trim is consulted on the 11th call: messages.length = 20 ≥ MAX,
+      // so it inserts the marker and keeps half. Bypass the 5-msg/60s
+      // client-side rate limit between sends to keep one continuous session.
       service.startNewSession();
-      for (let i = 0; i < 5; i++) {
-        await firstValueFrom(service.sendMessage({ message: `Batch1-${i}` }));
+      for (let i = 0; i < 11; i++) {
+        clearRateLimit();
+        await firstValueFrom(service.sendMessage({ message: `Msg-${i}` }));
       }
-
-      // Session 2: 5 more → 20 total
-      service.startNewSession();
-      for (let i = 0; i < 5; i++) {
-        await firstValueFrom(service.sendMessage({ message: `Batch2-${i}` }));
-      }
-
-      // Session 3: 1 more (21st message triggers trim on the 11th send)
-      service.startNewSession();
-      for (let i = 0; i < 5; i++) {
-        await firstValueFrom(service.sendMessage({ message: `Batch3-${i}` }));
-      }
-      // Now send one more to push over the limit in this session (20 msgs → trim)
-      await firstValueFrom(service.sendMessage({ message: "The 11th" }));
 
       const msgs = service.messages();
       const hasMarker = msgs.some(
@@ -546,33 +523,29 @@ describe("AiChatService", () => {
       expect(hasMarker).toBe(true);
     });
 
-    it("total messages after trim is at most MAX_SESSION_MESSAGES / 2 + 2", async () => {
-      mockApiService.post.mockReturnValue(of(mockSuccessResponse));
-
-      // Build a session of exactly 11 sends (22 messages) in one block
-      // to trigger trim, resetting rate-limit via startNewSession between batches
+    it("trim fires repeatedly under sustained sending", async () => {
+      // Send well past one trim cycle. Each trim collapses to ~11 messages,
+      // then 2 are added per send. After 20 sends we should see the marker
+      // present (trim has fired at least once and was not overwritten).
       service.startNewSession();
-      for (let i = 0; i < 5; i++) {
-        await firstValueFrom(service.sendMessage({ message: `A${i}` }));
+      for (let i = 0; i < 20; i++) {
+        clearRateLimit();
+        await firstValueFrom(service.sendMessage({ message: `S${i}` }));
       }
-      // Rate-limit hit — reset window without losing the context we care about
-      // (we just want to see trim happen; exact message count after multiple
-      // resets is hard to assert, so use a single large batch via mock time skip)
-      //
-      // Simplest valid assertion: after trim, messages() is smaller than
-      // MAX_SESSION_MESSAGES (20).
-      expect(service.messages().length).toBeLessThanOrEqual(20);
+
+      const markerCount = service.messages().filter(
+        (m) => m.role === "assistant" && m.content.includes("omitted"),
+      ).length;
+      expect(markerCount).toBeGreaterThanOrEqual(1);
     });
   });
 
   // ============================================================================
-  // Request Options
+  // Request Options — assertions read the JSON body sent to fetch
   // ============================================================================
 
   describe("Request Options", () => {
     it("should pass session_id in request", async () => {
-      mockApiService.post.mockReturnValue(of(mockSuccessResponse));
-
       const request: ChatRequest = {
         message: "Test",
         session_id: "existing-session",
@@ -580,15 +553,13 @@ describe("AiChatService", () => {
 
       await firstValueFrom(service.sendMessage(request));
 
-      expect(mockApiService.post).toHaveBeenCalledWith(
-        expect.any(String),
-        expect.objectContaining({ session_id: "existing-session" }),
-      );
+      expect(mockFetch).toHaveBeenCalled();
+      const init = mockFetch.mock.calls[0][1] as RequestInit;
+      const body = JSON.parse(init.body as string);
+      expect(body.session_id).toBe("existing-session");
     });
 
     it("should pass team_id in request", async () => {
-      mockApiService.post.mockReturnValue(of(mockSuccessResponse));
-
       const request: ChatRequest = {
         message: "Test",
         team_id: "team-123",
@@ -596,30 +567,24 @@ describe("AiChatService", () => {
 
       await firstValueFrom(service.sendMessage(request));
 
-      expect(mockApiService.post).toHaveBeenCalledWith(
-        expect.any(String),
-        expect.objectContaining({ team_id: "team-123" }),
-      );
+      const init = mockFetch.mock.calls[0][1] as RequestInit;
+      const body = JSON.parse(init.body as string);
+      expect(body.team_id).toBe("team-123");
     });
 
     it("should pass goal and time_horizon", async () => {
-      mockApiService.post.mockReturnValue(of(mockSuccessResponse));
-
       const request: ChatRequest = {
         message: "Test",
-        goal: "Improve speed",
-        time_horizon: "weekly",
-      };
+        goal: "speed",
+        time_horizon: "8-weeks",
+      } as unknown as ChatRequest;
 
       await firstValueFrom(service.sendMessage(request));
 
-      expect(mockApiService.post).toHaveBeenCalledWith(
-        expect.any(String),
-        expect.objectContaining({
-          goal: "Improve speed",
-          time_horizon: "weekly",
-        }),
-      );
+      const init = mockFetch.mock.calls[0][1] as RequestInit;
+      const body = JSON.parse(init.body as string);
+      expect(body.goal).toBe("speed");
+      expect(body.time_horizon).toBe("8-weeks");
     });
   });
 });

@@ -45,8 +45,11 @@ import { ProgressBarComponent } from "../../../shared/components/progress-bar/pr
 // App Components & Services
 import { LoggerService } from "../../../core/services/logger.service";
 import { NutritionService } from "../../../core/services/nutrition.service";
+import { PeriodizationService } from "../../../core/services/periodization.service";
+import { ScheduleService } from "../../../core/services/schedule.service";
 import { ToastService } from "../../../core/services/toast.service";
 import { DialogService } from "../../../core/ui/dialog.service";
+import { CompetitionEvent } from "../../../core/models/schedule.models";
 import { TOAST } from "../../../core/constants/toast-messages.constants";
 import { CardShellComponent } from "../../../shared/components/card-shell/card-shell.component";
 import { EmptyStateComponent } from "../../../shared/components/empty-state/empty-state.component";
@@ -136,6 +139,8 @@ export class TournamentNutritionComponent implements OnInit, OnDestroy {
   private dialogService = inject(DialogService);
   private tournamentStateService = inject(TournamentNutritionStateService);
   private destroyRef = inject(DestroyRef);
+  private scheduleService = inject(ScheduleService);
+  private periodizationService = inject(PeriodizationService);
   private unsubscribeTodayState: (() => void) | null = null;
 
   // State
@@ -300,9 +305,41 @@ export class TournamentNutritionComponent implements OnInit, OnDestroy {
     },
   ];
 
+  /**
+   * Today's competition event from the canonical schedule spine, if any.
+   * `null` outside an event window — the page falls back to the manual
+   * editor so off-day "scratch" planning still works.
+   */
+  readonly todayCompetitionEvent = computed<CompetitionEvent | null>(() => {
+    const snap = this.scheduleService.snapshot();
+    if (!snap) {
+      return null;
+    }
+    const now = Date.now();
+    return (
+      snap.upcoming.find((ev) => {
+        const startsAt = new Date(ev.startsAt).getTime();
+        const endsAt = ev.endsAt
+          ? new Date(ev.endsAt).getTime()
+          : startsAt + 12 * 3_600_000;
+        return now >= startsAt && now <= endsAt;
+      }) ?? null
+    );
+  });
+
+  /** True when the spine confirms today is a tournament day. */
+  readonly isCanonicalTournamentDay = computed(
+    () => this.todayCompetitionEvent() !== null,
+  );
+
   // Computed values
   dailyHydrationTarget = computed(() => {
-    // Base: 3L + 500ml per game
+    // v10: prefer the periodization prescription (bodyweight-scaled, phase-aware).
+    const rxLiters = this.periodizationService.today()?.nutrition.hydrationL;
+    if (typeof rxLiters === "number" && rxLiters > 0) {
+      return Math.round(rxLiters * 1000);
+    }
+    // Legacy fallback for off-day scratch planning when no prescription exists.
     return 3000 + this.games().length * 500;
   });
 
@@ -473,8 +510,23 @@ export class TournamentNutritionComponent implements OnInit, OnDestroy {
       return;
     }
 
-    // If no schedule, show empty state - user must create their own schedule
-    // No default example games to avoid misleading calculations
+    // No persisted state: try the canonical schedule spine. When today is
+    // inside a competition_event, seed the page from it so the athlete
+    // doesn't have to type their own tournament every time.
+    if (!this.scheduleService.snapshot()) {
+      await this.scheduleService.refresh();
+    }
+    const event = this.todayCompetitionEvent();
+    if (event) {
+      this.tournamentName.set(
+        event.competitionShortName ?? event.competitionName,
+      );
+      this.editTournamentName = this.tournamentName();
+      const seeded = seedGamesFromEvent(event);
+      this.games.set(seeded);
+      this.editGames = [...seeded];
+    }
+    // Else: leave empty — user creates a scratch plan via the editor.
   }
 
   addGame(): void {
@@ -1054,4 +1106,28 @@ export class TournamentNutritionComponent implements OnInit, OnDestroy {
       nutritionWindows: this.nutritionWindows(),
     });
   }
+}
+
+/**
+ * Spread a competition event's expected_game_count across the day on a 90-min
+ * cadence starting at the event's local start time. Default opponents are
+ * empty so the athlete fills in (or skips) — but the times and count come
+ * from the canonical schedule, not the user's memory.
+ */
+function seedGamesFromEvent(event: CompetitionEvent): GameSchedule[] {
+  const start = new Date(event.startsAt);
+  const totalGames = Math.max(1, event.expectedGameCount);
+  const games: GameSchedule[] = [];
+  for (let i = 0; i < totalGames; i++) {
+    const slot = new Date(start.getTime() + i * 90 * 60 * 1000);
+    const hh = slot.getHours().toString().padStart(2, "0");
+    const mm = slot.getMinutes().toString().padStart(2, "0");
+    games.push({
+      id: `${event.id}-${i + 1}`,
+      time: `${hh}:${mm}`,
+      opponent: "",
+      isReferee: false,
+    });
+  }
+  return games;
 }
