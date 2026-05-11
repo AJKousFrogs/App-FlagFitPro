@@ -942,4 +942,50 @@ The exercises are selected to maintain your training goals while adapting to ind
   clearSuggestedSubstitute(): void {
     this._suggestedSubstitute.set(null);
   }
+
+  async suggestRescheduleSlots(
+    _cancelledSession: WeatherSensitiveSession,
+    daysAhead = 3,
+  ): Promise<RescheduleSlot[]> {
+    const slots: RescheduleSlot[] = [];
+    const now = new Date();
+
+    const currentWeather = await firstValueFrom(
+      this.weatherService.getWeatherData(),
+    ).catch(() => null);
+
+    for (let dayOffset = 1; dayOffset <= daysAhead; dayOffset++) {
+      const candidateDate = new Date(now);
+      candidateDate.setDate(now.getDate() + dayOffset);
+
+      const slot: RescheduleSlot = {
+        date: candidateDate,
+        dateLabel: candidateDate.toLocaleDateString("en-US", {
+          weekday: "long",
+          month: "short",
+          day: "numeric",
+        }),
+        forecastAvailable: false,
+      };
+
+      if (currentWeather) {
+        const alert = this.assessWeatherRisk(currentWeather, {
+          ..._cancelledSession,
+          id: `reschedule-${dayOffset}`,
+        });
+        slot.currentWeatherAlert = alert ?? undefined;
+      }
+
+      slots.push(slot);
+    }
+
+    return slots;
+  }
+}
+
+export interface RescheduleSlot {
+  date: Date;
+  dateLabel: string;
+  forecastAvailable: boolean;
+  currentWeatherAlert?: WeatherAlert;
 }
