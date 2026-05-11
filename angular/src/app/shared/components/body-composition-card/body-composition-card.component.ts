@@ -27,6 +27,7 @@ import { Tooltip } from "primeng/tooltip";
 import { LoggerService } from "../../../core/services/logger.service";
 import { ToastService } from "../../../core/services/toast.service";
 import { UnifiedTrainingService } from "../../../core/services/unified-training.service";
+import { formatDateRelative } from "../../utils/date.utils";
 import { ButtonComponent } from "../ui-components";
 import { EmptyStateComponent } from "../empty-state/empty-state.component";
 import { CardShellComponent } from "../card-shell/card-shell.component";
@@ -227,21 +228,5 @@ export class BodyCompositionCardComponent {
     return "Above average";
   }
 
-  formatDate(dateStr: string): string {
-    const date = new Date(dateStr);
-    const today = new Date();
-    const yesterday = new Date(today);
-    yesterday.setDate(yesterday.getDate() - 1);
-
-    if (date.toDateString() === today.toDateString()) {
-      return "Today";
-    } else if (date.toDateString() === yesterday.toDateString()) {
-      return "Yesterday";
-    } else {
-      return date.toLocaleDateString(undefined, {
-        month: "short",
-        day: "numeric",
-      });
-    }
-  }
+  protected readonly formatDateRelative = formatDateRelative;
 }

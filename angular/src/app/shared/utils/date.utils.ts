@@ -368,6 +368,24 @@ export function getTodayISO(): string {
 }
 
 /**
+ * Format date with relative labels for recent dates
+ * Shows "Today", "Yesterday", or formatted date
+ * @example
+ * formatDateRelative(new Date()) // "Today"
+ * formatDateRelative(daysAgo(1)) // "Yesterday"
+ * formatDateRelative(daysAgo(5)) // "Jan 5"
+ */
+export function formatDateRelative(
+  date: Date | string,
+  formatStr = "MMM d",
+): string {
+  const dateObj = typeof date === "string" ? parseISO(date) : date;
+  if (isToday(dateObj)) return "Today";
+  if (isYesterday(dateObj)) return "Yesterday";
+  return dateFnsFormat(dateObj, formatStr);
+}
+
+/**
  * Get user's timezone identifier.
  *
  * @returns Timezone identifier (e.g., 'America/New_York')

@@ -375,7 +375,5 @@ export class ExerciseCardComponent {
     return `${secs}s`;
   }
 
-  formatDate(date: Date | string, formatStr?: string): string {
-    return formatDate(date, formatStr || "h:mm a");
-  }
+  protected readonly formatDate = formatDate;
 }

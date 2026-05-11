@@ -25,7 +25,7 @@ import {
   CoachOverride,
 } from "../../../core/services/override-logging.service";
 import { LoggerService } from "../../../core/services/logger.service";
-import { getTimeAgo } from "../../utils/date.utils";
+import { getTimeAgo, formatDate } from "../../utils/date.utils";
 import { CardShellComponent } from "../card-shell/card-shell.component";
 import { AppDialogComponent } from "../dialog/dialog.component";
 import { COACH_OVERRIDE_TYPE_LABELS } from "../../constants/status-labels.constants";
@@ -301,15 +301,6 @@ export class CoachOverrideNotificationComponent {
     return JSON.stringify(data, null, 2);
   }
 
-  formatDate(dateString: string): string {
-    return new Date(dateString).toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-  }
 
   getTimestamp(dateValue: Date | string | undefined): Date | null {
     if (!dateValue) return null;

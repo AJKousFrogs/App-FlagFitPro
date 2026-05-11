@@ -303,7 +303,5 @@ export class ProtocolBlockComponent implements OnInit {
     return formatPrescription(exercise);
   }
 
-  formatDate(date: Date | string, formatStr?: string): string {
-    return formatDate(date, formatStr || "h:mm a");
-  }
+  protected readonly formatDate = formatDate;
 }

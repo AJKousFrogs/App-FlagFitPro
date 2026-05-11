@@ -1,3 +1,4 @@
+import { formatDate } from "../../../shared/utils/date.utils";
 /**
  * Video Curation Suggestions Component
  *
@@ -152,9 +153,6 @@ export class VideoCurationSuggestionsComponent {
     return formatFocus(focus);
   }
 
-  formatDate(dateStr: string): string {
-    return formatSuggestionDate(dateStr);
-  }
 
   getSeverity(status: string): "warning" | "success" | "danger" | "secondary" {
     return getStatusSeverity(status);

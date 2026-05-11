@@ -546,9 +546,6 @@ export class VideoFeedComponent {
     return count.toString();
   }
 
-  formatDate(dateStr: string): string {
-    return formatDateValue(dateStr, "MMM d, yyyy");
-  }
 
   navigateToSuggest(): void {
     this.hapticService.light();

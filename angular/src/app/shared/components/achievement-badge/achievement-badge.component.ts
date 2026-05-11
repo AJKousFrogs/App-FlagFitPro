@@ -31,6 +31,7 @@ import {
   ChangeDetectionStrategy,
 } from "@angular/core";
 import { Tooltip } from "primeng/tooltip";
+import { formatDate } from "../../utils/date.utils";
 
 export type BadgeTier = "bronze" | "silver" | "gold" | "platinum" | "diamond";
 export type BadgeRarity = "common" | "uncommon" | "rare" | "epic" | "legendary";
@@ -190,11 +191,4 @@ export class AchievementBadgeComponent {
     setTimeout(() => this.showUnlockAnimation.set(false), 1000);
   }
 
-  formatDate(date: Date): string {
-    return new Intl.DateTimeFormat("en-US", {
-      month: "short",
-      day: "numeric",
-      year: "numeric",
-    }).format(date);
-  }
 }

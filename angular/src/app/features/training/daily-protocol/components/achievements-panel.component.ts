@@ -286,10 +286,10 @@ export class AchievementsPanelComponent {
     return labels[type] || type;
   }
 
-  formatDate(date?: string): string {
+  protected readonly formatDate = (date?: string): string => {
     if (!date) return "";
     return formatDateUtil(date, "PPP");
-  }
+  };
 
   formatMinutes(minutes: number): string {
     if (minutes < 60) return `${minutes}m`;
