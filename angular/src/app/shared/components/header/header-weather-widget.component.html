@@ -1,7 +1,6 @@
 @if (weatherData()) {
   <div
-    class="header-utility weather-widget"
-    [ngClass]="weatherSeverityClass()"
+    [class]="'header-utility weather-widget ' + weatherSeverityClass()"
     [pTooltip]="weatherTooltip()"
     tooltipPosition="bottom"
   >

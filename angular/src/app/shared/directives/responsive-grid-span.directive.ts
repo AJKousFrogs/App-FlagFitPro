@@ -1,6 +1,5 @@
 import {
   Directive,
-  HostBinding,
   input,
   OnDestroy,
   OnInit,
@@ -12,6 +11,9 @@ import { PlatformService } from "../../core/services/platform.service";
 @Directive({
   selector: "[appResponsiveGridSpan]",
   standalone: true,
+  host: {
+    "[style.grid-column]": "gridColumn",
+  },
 })
 export class ResponsiveGridSpanDirective implements OnInit, OnDestroy {
   private readonly platform = inject(PlatformService);
@@ -22,7 +24,6 @@ export class ResponsiveGridSpanDirective implements OnInit, OnDestroy {
   tablet = input<string>("span 6");
   mobile = input<string>("span 12");
 
-  @HostBinding("style.grid-column")
   gridColumn = "span 6";
 
   constructor() {

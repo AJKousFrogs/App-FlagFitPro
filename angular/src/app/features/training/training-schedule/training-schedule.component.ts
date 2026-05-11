@@ -4,7 +4,6 @@ import {
   Component,
   computed,
   DestroyRef,
-  HostListener,
   inject,
   OnInit,
   PLATFORM_ID,
@@ -108,8 +107,10 @@ interface TrainingEntryContext {
     RouterModule,
   ],
   templateUrl: "./training-schedule.component.html",
-
   styleUrl: "./training-schedule.component.scss",
+  host: {
+    "(wheel)": "onWheelOverDatepicker($event)",
+  },
 })
 export class TrainingScheduleComponent implements OnInit {
   private trainingScheduleDataService = inject(TrainingScheduleDataService);
@@ -289,7 +290,6 @@ export class TrainingScheduleComponent implements OnInit {
    * prevents the app shell scroll root from receiving scroll. Forward wheel
    * delta to the main scroll container when the pointer is over the calendar.
    */
-  @HostListener("wheel", ["$event"])
   onWheelOverDatepicker(event: WheelEvent): void {
     if (!isPlatformBrowser(this.platformId)) {
       return;
