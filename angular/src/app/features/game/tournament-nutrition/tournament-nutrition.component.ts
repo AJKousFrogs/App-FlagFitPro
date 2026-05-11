@@ -43,8 +43,6 @@ import { StatusTagComponent } from "../../../shared/components/status-tag/status
 import { ProgressBarComponent } from "../../../shared/components/progress-bar/progress-bar.component";
 
 // App Components & Services
-import { LoggerService } from "../../../core/services/logger.service";
-import { NutritionService } from "../../../core/services/nutrition.service";
 import { PeriodizationService } from "../../../core/services/periodization.service";
 import { ScheduleService } from "../../../core/services/schedule.service";
 import { ToastService } from "../../../core/services/toast.service";
@@ -134,8 +132,6 @@ export class TournamentNutritionComponent implements OnInit, OnDestroy {
   private router = inject(Router);
   private route = inject(ActivatedRoute);
   private toastService = inject(ToastService);
-  private logger = inject(LoggerService);
-  private nutritionService = inject(NutritionService);
   private dialogService = inject(DialogService);
   private tournamentStateService = inject(TournamentNutritionStateService);
   private destroyRef = inject(DestroyRef);

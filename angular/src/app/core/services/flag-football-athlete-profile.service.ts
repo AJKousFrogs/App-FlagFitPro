@@ -29,8 +29,6 @@
  */
 
 import { Injectable, inject, signal } from "@angular/core";
-import { SupabaseService } from "./supabase.service";
-import { LoggerService } from "./logger.service";
 import {
   POSITION_REQUIREMENTS,
   ELITE_COMPARISONS,
@@ -55,9 +53,6 @@ import type {
   providedIn: "root",
 })
 export class FlagFootballAthleteProfileService {
-  private supabaseService = inject(SupabaseService);
-  private logger = inject(LoggerService);
-
   // State
   private readonly _athleteProfile = signal<AthletePhysicalProfile | null>(
     null,

@@ -20,8 +20,7 @@
  * @version 1.0.0
  */
 
-import { Injectable, inject } from "@angular/core";
-import { LoggerService } from "./logger.service";
+import { Injectable } from "@angular/core";
 import type { TravelChecklist } from "./travel-recovery.service";
 import {
   SEATED_EXERCISES,
@@ -141,9 +140,6 @@ export interface BloodCirculationRisk {
   providedIn: "root",
 })
 export class CarTravelService {
-  private logger = inject(LoggerService);
-
-
   /**
    * Calculate blood circulation risk for car travel
    * Based on duration, driver status, and other factors

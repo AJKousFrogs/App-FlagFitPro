@@ -62,7 +62,6 @@
 import { Injectable, inject, signal, computed, effect } from "@angular/core";
 import { LoggerService } from "./logger.service";
 import { SupabaseService } from "./supabase.service";
-import { RecoveryService } from "./recovery.service";
 import { TRAVEL_CHECKLIST } from "./travel-recovery.data";
 
 // ============================================================================
@@ -210,8 +209,6 @@ const OLYMPIC_VENUES = {
 export class TravelRecoveryService {
   private logger = inject(LoggerService);
   private supabaseService = inject(SupabaseService);
-  private recoveryService = inject(RecoveryService);
-
   // State
   private readonly _currentPlan = signal<TravelPlan | null>(null);
   private readonly _recoveryProtocol = signal<RecoveryProtocol[]>([]);

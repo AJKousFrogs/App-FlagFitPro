@@ -4,7 +4,6 @@ import { catchError, map, switchMap, take, tap } from "rxjs";
 import { STATUS_HEX_COLORS } from "../utils/design-tokens.util";
 import { LoggerService } from "./logger.service";
 import type { RealtimeChannel } from "@supabase/supabase-js";
-import { RealtimeService } from "./realtime.service";
 import { SupabaseService } from "./supabase.service";
 import { RealtimeBroadcastPayload } from "../models/realtime-broadcast.model";
 
@@ -126,8 +125,6 @@ const WELLNESS_MEMORY_LIMITS = {
 export class WellnessService {
   private supabaseService = inject(SupabaseService);
   private logger = inject(LoggerService);
-  private realtimeService = inject(RealtimeService);
-
   // Get current user ID reactively
   private userId = computed(() => this.supabaseService.userId());
 

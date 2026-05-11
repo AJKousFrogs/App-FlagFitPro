@@ -5,8 +5,7 @@
  * Static data (protocols, research references, technique checkpoints,
  * phase guidelines) lives in sprint-training-knowledge.data.ts.
  */
-import { Injectable, inject, signal } from "@angular/core";
-import { LoggerService } from "./logger.service";
+import { Injectable, signal } from "@angular/core";
 import {
   ANKLE_STIFFNESS_PROTOCOL,
   PHASE_GUIDELINES,
@@ -40,8 +39,6 @@ export * from "./sprint-training-knowledge.data";
   providedIn: "root",
 })
 export class SprintTrainingKnowledgeService {
-  private logger = inject(LoggerService);
-
   // State
   private readonly _selectedProtocol = signal<SprintProtocol | null>(null);
   private readonly _currentPhaseGuidelines =

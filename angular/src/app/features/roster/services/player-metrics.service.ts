@@ -17,9 +17,6 @@ import {
   PositionRequirements,
   BenchmarkRange,
 } from "../../../core/services/flag-football-athlete-profile.service";
-import { AcwrService } from "../../../core/services/acwr.service";
-import { WellnessService } from "../../../core/services/wellness.service";
-import { LoggerService } from "../../../core/services/logger.service";
 import { Player, PlayerRiskLevel, PositionMetrics } from "../roster.models";
 import { TRAINING, UI_LIMITS } from "../../../core/constants/app.constants";
 import { WELLNESS } from "../../../core/constants/wellness.constants";
@@ -56,9 +53,6 @@ export class PlayerMetricsService {
   private readonly athleteProfileService = inject(
     FlagFootballAthleteProfileService,
   );
-  private readonly acwrService = inject(AcwrService);
-  private readonly wellnessService = inject(WellnessService);
-  private readonly logger = inject(LoggerService);
 
   // Cache for player metrics
   private readonly _playerMetricsCache = signal<Map<string, PlayerWithMetrics>>(

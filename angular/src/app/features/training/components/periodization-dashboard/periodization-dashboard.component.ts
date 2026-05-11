@@ -42,7 +42,6 @@ import {
   LoadRecommendation,
   ACWRCalculation,
 } from "../../../../core/services/phase-load-calculator.service";
-import { FlagFootballAthleteProfileService } from "../../../../core/services/flag-football-athlete-profile.service";
 import { AcwrService } from "../../../../core/services/acwr.service";
 import { ScheduleService } from "../../../../core/services/schedule.service";
 
@@ -92,7 +91,6 @@ export class PeriodizationDashboardComponent {
   private periodizationService = inject(FlagFootballPeriodizationService);
   private sprintService = inject(SprintTrainingKnowledgeService);
   private loadCalculator = inject(PhaseLoadCalculatorService);
-  private athleteProfileService = inject(FlagFootballAthleteProfileService);
   private acwrService = inject(AcwrService);
   private scheduleService = inject(ScheduleService);
 

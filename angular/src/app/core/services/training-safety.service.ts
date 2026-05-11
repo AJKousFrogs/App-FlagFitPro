@@ -22,7 +22,6 @@
 import { Injectable, inject, signal, computed } from "@angular/core";
 import { SupabaseService } from "./supabase.service";
 import { LoggerService } from "./logger.service";
-import { DataSourceService } from "./data-source.service";
 import { calculateAge } from "../../shared/utils/date.utils";
 import { isBenignSupabaseQueryError } from "../../shared/utils/error.utils";
 
@@ -200,7 +199,6 @@ const SLEEP_THRESHOLDS = {
 export class TrainingSafetyService {
   private supabaseService = inject(SupabaseService);
   private logger = inject(LoggerService);
-  private dataSourceService = inject(DataSourceService);
   private usersTableUnavailable = false;
 
   // Current user's profile
