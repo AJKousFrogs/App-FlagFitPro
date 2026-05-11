@@ -295,7 +295,5 @@ export class CoachActivityFeedComponent {
   /**
    * Get initials from name using centralized utility
    */
-  getInitialsStr(name: string): string {
-    return getInitials(name);
-  }
+  protected readonly getInitials = getInitials;
 }

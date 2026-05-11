@@ -84,7 +84,7 @@
               <tr>
                 <td>
                   <div class="player-cell">
-                    <app-avatar [label]="getInitialsStr(stat.player_name || 'U')" shape="circle" />
+                    <app-avatar [label]="getInitials(stat.player_name || 'U')" shape="circle" />
                     <span>{{ stat.player_name || "Unknown" }}</span>
                   </div>
                 </td>
@@ -232,7 +232,7 @@
               @for (record of attendanceRecords(); track record.player_id) {
                 <div class="attendance-record-row">
                   <div class="player-cell">
-                    <app-avatar [label]="getInitialsStr(record.player_name || 'U')" shape="circle" />
+                    <app-avatar [label]="getInitials(record.player_name || 'U')" shape="circle" />
                     <span>{{ record.player_name || 'Unknown' }}</span>
                   </div>
                   <app-select

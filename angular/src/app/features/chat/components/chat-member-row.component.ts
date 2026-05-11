@@ -26,9 +26,7 @@ export class ChatMemberRowComponent {
     this.startDirectMessage.emit(this.member());
   }
 
-  getInitialsStr(name: string): string {
-    return getInitials(name);
-  }
+  protected readonly getInitials = getInitials;
 
   getAvatarColorClass(name: string): string {
     const paletteSize = 6;

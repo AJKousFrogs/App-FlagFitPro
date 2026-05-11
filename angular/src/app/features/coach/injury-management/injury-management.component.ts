@@ -693,9 +693,7 @@ export class InjuryManagementComponent implements OnInit {
   /**
    * Get initials from name using centralized utility
    */
-  getInitialsStr(name: string): string {
-    return getInitials(name);
-  }
+  protected readonly getInitials = getInitials;
 
   getStageName(stage: number): string {
     return RTP_STAGES.find((s) => s.stage === stage)?.name || "";

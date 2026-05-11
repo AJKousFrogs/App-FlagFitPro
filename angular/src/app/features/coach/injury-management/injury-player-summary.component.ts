@@ -28,7 +28,5 @@ export class InjuryPlayerSummaryComponent {
   readonly injury = input.required<InjuryPlayerSummaryModel>();
   readonly variant = input<"active" | "rtp">("active");
 
-  getInitialsStr(name: string): string {
-    return getInitials(name);
-  }
+  protected readonly getInitials = getInitials;
 }

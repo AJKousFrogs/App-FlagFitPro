@@ -196,9 +196,7 @@ export class CommunityDataService {
     return `avatar-color-${index}`;
   }
 
-  getInitialsStr(name: string): string {
-    return getInitials(name);
-  }
+  protected readonly getInitials = getInitials;
 
   getRelativeTime(date: Date): string {
     const now = new Date();

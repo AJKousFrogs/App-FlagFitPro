@@ -235,7 +235,7 @@
                       <div class="message-row">
                       <app-avatar
                         [label]="
-                          getInitialsStr(
+                          getInitials(
                             message.author?.full_name ||
                               message.author?.email ||
                               'U'
@@ -338,7 +338,7 @@
                           [attr.aria-label]="'Mention ' + member.full_name"
                         >
                           <app-avatar
-                            [label]="getInitialsStr(member.full_name)"
+                            [label]="getInitials(member.full_name)"
                           />
                           <span>{{ member.full_name }}</span>
                         </button>

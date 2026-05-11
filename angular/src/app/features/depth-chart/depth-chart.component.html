@@ -82,7 +82,7 @@
                                     @if (entry.player_id) {
                                       <app-avatar
                                         [label]="
-                                          getInitialsStr(
+                                          getInitials(
                                             entry.player_name || 'U'
                                           )
                                         "
@@ -161,7 +161,7 @@
                   @for (player of unassignedPlayers(); track player.id) {
                     <div class="unassigned-player">
                       <app-avatar
-                        [label]="getInitialsStr(player.name || 'U')"
+                        [label]="getInitials(player.name || 'U')"
                         shape="circle"
                       />
                       <span>{{ player.name }}</span>

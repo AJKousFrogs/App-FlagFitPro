@@ -309,9 +309,7 @@ export class OfficialsComponent implements OnInit {
   /**
    * Get initials from name using centralized utility
    */
-  getInitialsStr(name: string): string {
-    return getInitials(name);
-  }
+  protected readonly getInitials = getInitials;
 
   getCertificationLabel(level: string | undefined): string {
     if (!level) return "N/A";

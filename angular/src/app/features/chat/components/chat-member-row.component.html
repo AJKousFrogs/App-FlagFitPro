@@ -1,7 +1,7 @@
 <div class="member-card" [class.is-online]="member().is_online">
   <div class="member-avatar-container">
     <app-avatar
-      [label]="member().initials || getInitialsStr(member().full_name)"
+      [label]="member().initials || getInitials(member().full_name)"
       shape="circle"
       size="large"
       [class]="'avatar-token ' + getAvatarColorClass(member().full_name)"

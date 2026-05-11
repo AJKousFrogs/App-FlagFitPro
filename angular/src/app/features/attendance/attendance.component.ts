@@ -242,9 +242,7 @@ export class AttendanceComponent implements OnInit {
   /**
    * Get initials from name using centralized utility
    */
-  getInitialsStr(name: string): string {
-    return getInitials(name);
-  }
+  protected readonly getInitials = getInitials;
 
   openCreateEventDialog(): void {
     this.newEvent.set({

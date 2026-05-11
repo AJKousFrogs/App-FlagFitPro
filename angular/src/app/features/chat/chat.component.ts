@@ -677,12 +677,7 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
 
   formatTime = (timestamp: string): string => getTimeAgo(timestamp);
 
-  /**
-   * Get initials from name using centralized utility
-   */
-  getInitialsStr(name: string): string {
-    return getInitials(name);
-  }
+  protected readonly getInitials = getInitials;
 
   getAvatarColorClass(name: string): string {
     const paletteSize = 6;
