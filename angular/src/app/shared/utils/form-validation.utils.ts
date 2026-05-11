@@ -224,7 +224,7 @@ export function validateForm(form: FormGroup): FormValidationResult {
 /**
  * Mark all controls in a form group as touched.
  */
-export function markFormGroupTouched(formGroup: FormGroup): void {
+function markFormGroupTouched(formGroup: FormGroup): void {
   Object.keys(formGroup.controls).forEach((key) => {
     const control = formGroup.get(key);
     control?.markAsTouched();

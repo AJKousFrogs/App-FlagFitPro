@@ -431,8 +431,8 @@ body {
   margin: var(--space-0);
   padding: var(--space-0);
   min-height: 100vh;
-  min-height: 100dvh; // Modern: keyboard-aware
-  height: 100dvh; // Modern: keyboard-aware /* Fallback for older browsers */
+  min-height: 100dvh;
+  height: 100dvh;
   background-color: var(--surface-ground);
   color: var(--color-text-primary);
   /* Base Typography - Unified System */

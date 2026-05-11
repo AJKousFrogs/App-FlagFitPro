@@ -187,7 +187,7 @@
                 #videoPlayer
                 [src]="film.videoUrl"
                 controls
-                poster=""
+                [poster]="film.thumbnailUrl"
                 (timeupdate)="onTimeUpdate($event)"
               >
                 Your browser does not support the video tag.
@@ -300,7 +300,10 @@
 
             <!-- Film Actions -->
             <div class="film-actions">
-              <app-button (clicked)="toggleWatched(film)"></app-button>
+              <app-button
+                iconLeft="pi-eye"
+                (clicked)="toggleWatched(film)"
+              >{{ film.isWatched ? 'Watched' : 'Mark Watched' }}</app-button>
             </div>
           </div>
         }

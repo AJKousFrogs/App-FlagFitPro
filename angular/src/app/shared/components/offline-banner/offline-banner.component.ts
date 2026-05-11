@@ -136,6 +136,7 @@ export class OfflineBannerComponent implements OnInit, OnDestroy {
 
   private onlineHandler = () => this.handleOnline();
   private offlineHandler = () => this.handleOffline();
+  private pendingTimers: ReturnType<typeof setTimeout>[] = [];
   ngOnInit(): void {
     // Set initial status
     this.connectionStatus.set(navigator.onLine ? "online" : "offline");
@@ -148,6 +149,7 @@ export class OfflineBannerComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     window.removeEventListener("online", this.onlineHandler);
     window.removeEventListener("offline", this.offlineHandler);
+    this.pendingTimers.forEach(clearTimeout);
   }
 
   private handleOnline(): void {
@@ -159,17 +161,15 @@ export class OfflineBannerComponent implements OnInit, OnDestroy {
       void this.checkConnectionQuality();
       this.dismissed.set(false);
 
-      // Simulate sync completion
-      setTimeout(() => {
+      this.pendingTimers.push(setTimeout(() => {
         this.connectionStatus.set("online");
         this.pendingSyncCount.set(0);
 
-        // Auto-dismiss after showing "back online"
-        setTimeout(() => {
+        this.pendingTimers.push(setTimeout(() => {
           this.dismissed.set(true);
           this.wasOffline.set(false);
-        }, 3000);
-      }, 1500);
+        }, 3000));
+      }, 1500));
     }
   }
 

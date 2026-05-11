@@ -200,7 +200,7 @@
   width: 100%;
   overflow: hidden;
   border-radius: var(--radius-xl);
-  background: #000;
+  background: var(--color-surface-inverse);
 }
 
 .exact-training-video__frame--empty {

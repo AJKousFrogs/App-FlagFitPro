@@ -35,6 +35,8 @@ import { Tooltip } from "primeng/tooltip";
 export type BadgeTier = "bronze" | "silver" | "gold" | "platinum" | "diamond";
 export type BadgeRarity = "common" | "uncommon" | "rare" | "epic" | "legendary";
 
+const UNLOCK_ANIMATION_DURATION = 1000;
+
 @Component({
   selector: "app-achievement-badge",
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -187,7 +189,7 @@ export class AchievementBadgeComponent {
 
   triggerUnlockAnimation(): void {
     this.showUnlockAnimation.set(true);
-    setTimeout(() => this.showUnlockAnimation.set(false), 1000);
+    setTimeout(() => this.showUnlockAnimation.set(false), UNLOCK_ANIMATION_DURATION);
   }
 
   formatDate(date: Date): string {

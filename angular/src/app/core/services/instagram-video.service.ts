@@ -783,7 +783,7 @@ export class InstagramVideoService {
           src="${embedUrl}"
           width="${width}"
           height="${Math.round(width * 1.25)}"
-          frameborder="0"
+          style="border: none"
           scrolling="no"
           allowtransparency="true"
           allowfullscreen="true"

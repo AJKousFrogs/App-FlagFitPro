@@ -19,6 +19,8 @@ import { PageErrorStateComponent } from "../../../shared/components/page-error-s
 import { getErrorMessage } from "../../../shared/utils/error.utils";
 import { AuthFlowDataService } from "../services/auth-flow-data.service";
 
+const AUTH_REDIRECT_DELAY = 1500;
+
 /**
  * Auth Callback Component
  *
@@ -161,7 +163,7 @@ export class AuthCallbackComponent implements OnInit, OnDestroy {
         this.successMessage.set("You are already signed in!");
         this.pendingTimeouts.push(setTimeout(() => {
           void this.redirectAfterAuth();
-        }, 1500));
+        }, AUTH_REDIRECT_DELAY));
       } else {
         this.error.set(
           "No authentication data found. Please try signing in again.",
@@ -304,7 +306,7 @@ export class AuthCallbackComponent implements OnInit, OnDestroy {
             this.redirectAfterAuth({
               fallbackRoute: "/onboarding",
             }),
-          1500,
+          AUTH_REDIRECT_DELAY,
         ));
         break;
 
@@ -316,7 +318,7 @@ export class AuthCallbackComponent implements OnInit, OnDestroy {
         );
         this.authFlowDataService.markPasswordRecoveryIntent();
         // Redirect to update password page
-        this.pendingTimeouts.push(setTimeout(() => this.router.navigate(["/update-password"]), 1500));
+        this.pendingTimeouts.push(setTimeout(() => this.router.navigate(["/update-password"]), AUTH_REDIRECT_DELAY));
         break;
 
       case "magiclink":
@@ -326,7 +328,7 @@ export class AuthCallbackComponent implements OnInit, OnDestroy {
         });
         this.successMessage.set("Signed in successfully!");
         this.toastService.success(TOAST.SUCCESS.LOGIN, "Signed In");
-        this.pendingTimeouts.push(setTimeout(() => this.redirectAfterAuth(), 1500));
+        this.pendingTimeouts.push(setTimeout(() => this.redirectAfterAuth(), AUTH_REDIRECT_DELAY));
         break;
 
       case "email_change":
@@ -335,14 +337,14 @@ export class AuthCallbackComponent implements OnInit, OnDestroy {
           "Your email has been changed.",
           "Email Updated",
         );
-        this.pendingTimeouts.push(setTimeout(() => this.router.navigate(["/settings"]), 1500));
+        this.pendingTimeouts.push(setTimeout(() => this.router.navigate(["/settings"]), AUTH_REDIRECT_DELAY));
         break;
 
       default:
         // OAuth or unknown type
         this.successMessage.set("Signed in successfully!");
         this.toastService.success(TOAST.SUCCESS.WELCOME, "Signed In");
-        this.pendingTimeouts.push(setTimeout(() => this.redirectAfterAuth(), 1500));
+        this.pendingTimeouts.push(setTimeout(() => this.redirectAfterAuth(), AUTH_REDIRECT_DELAY));
     }
   }
 

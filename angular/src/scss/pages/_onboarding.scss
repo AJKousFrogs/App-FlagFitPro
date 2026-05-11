@@ -726,15 +726,15 @@
       .p-autocomplete-input {
         width: 100%;
         height: var(--ob-input-h);
-        border-radius: var(--ob-input-radius) !important;
-        border: var(--border-hairline) solid var(--ob-input-border) !important;
-        background: var(--ob-input-bg) !important;
-        font-size: var(--ds-font-size-md) !important;
-        padding: 0 var(--space-4) !important;
+        border-radius: var(--ob-input-radius);
+        border: var(--border-hairline) solid var(--ob-input-border);
+        background: var(--ob-input-bg);
+        font-size: var(--ds-font-size-md);
+        padding: 0 var(--space-4);
 
         &:focus {
-          border-color: var(--ds-primary-green) !important;
-          box-shadow: 0 0 0 var(--focus-ring-width) rgba(var(--ds-primary-green-rgb), 0.14) !important;
+          border-color: var(--ds-primary-green);
+          box-shadow: 0 0 0 var(--focus-ring-width) rgba(var(--ds-primary-green-rgb), 0.14);
         }
       }
     }
