@@ -14,7 +14,6 @@ import { TabsComponent, AppTabPanelDirective } from "../../shared/components/tab
 import { UI_LIMITS } from "../../core/constants/app.constants";
 import { TOAST } from "../../core/constants/toast-messages.constants";
 import { AccountDeletionService } from "../../core/services/account-deletion.service";
-import { ApiService } from "../../core/services/api.service";
 import {
   LoggerService,
   toLogContext,
@@ -72,7 +71,6 @@ interface PendingInvitation {
 })
 export class ProfileComponent implements OnInit {
   private supabase = inject(SupabaseService);
-  private apiService = inject(ApiService);
   private toastService = inject(ToastService);
   private profileDataService = inject(ProfileDataService);
   private logger = inject(LoggerService);

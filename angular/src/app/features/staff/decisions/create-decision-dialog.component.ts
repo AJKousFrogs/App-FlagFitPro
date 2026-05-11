@@ -22,7 +22,6 @@ import type {
   DecisionType,
   ReviewTrigger,
 } from "@core/models/decision-ledger.models";
-import { DecisionLedgerService } from "@core/services/decision-ledger.service";
 import { LoggerService } from "@core/services/logger.service";
 import { RosterService } from "@features/roster/roster.service";
 import { ConfidenceIndicatorComponent } from "@shared/components/confidence-indicator/confidence-indicator.component";
@@ -66,7 +65,6 @@ export class CreateDecisionDialogComponent {
   created = output<CreateDecisionRequest>();
 
   // Services
-  private decisionService = inject(DecisionLedgerService);
   private rosterService = inject(RosterService);
   private logger = inject(LoggerService);
 

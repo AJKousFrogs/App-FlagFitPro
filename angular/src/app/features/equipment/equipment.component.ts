@@ -26,7 +26,6 @@ import {
   EquipmentSummary,
 } from "../../core/services/equipment.service";
 import { LoggerService } from "../../core/services/logger.service";
-import { SupabaseService } from "../../core/services/supabase.service";
 import { TeamMembershipService } from "../../core/services/team-membership.service";
 import { TeamStatisticsService } from "../../core/services/team-statistics.service";
 import { ToastService } from "../../core/services/toast.service";
@@ -93,7 +92,6 @@ interface ReturnData { condition: Condition; notes: string }
 export class EquipmentComponent implements OnInit {
   private equipmentService = inject(EquipmentService);
   private teamStatsService = inject(TeamStatisticsService);
-  private supabase = inject(SupabaseService);
   private teamMembershipService = inject(TeamMembershipService);
   private toastService = inject(ToastService);
   private destroyRef = inject(DestroyRef);

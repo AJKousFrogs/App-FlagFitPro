@@ -21,7 +21,6 @@ import { StatusTagComponent } from "../../../shared/components/status-tag/status
 import { Tooltip } from "primeng/tooltip";
 import { firstValueFrom } from "rxjs";
 import { ApiService } from "../../../core/services/api.service";
-import { SharedInsightFeedService } from "../../../core/services/shared-insight-feed.service";
 import { LoggerService } from "../../../core/services/logger.service";
 import { ToastService } from "../../../core/services/toast.service";
 import { extractApiPayload } from "../../../core/utils/api-response-mapper";
@@ -159,7 +158,7 @@ export class NutritionistDashboardComponent implements OnInit {
   private api = inject(ApiService);
   private toast = inject(ToastService);
   private logger = inject(LoggerService);
-  private insightFeedService = inject(SharedInsightFeedService);
+
 
   // State
   loading = signal(true);

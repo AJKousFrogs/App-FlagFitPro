@@ -13,7 +13,6 @@ import { ActivatedRoute, Router, RouterModule } from "@angular/router";
 import { InputNumberComponent } from "../../shared/components/input-number/input-number.component";
 
 import { TOAST } from "../../core/constants/toast-messages.constants";
-import { DataConfidenceService } from "../../core/services/data-confidence.service";
 import { LoggerService } from "../../core/services/logger.service";
 import { OfflineQueueService } from "../../core/services/offline-queue.service";
 import { ProfileCompletionService } from "../../core/services/profile-completion.service";
@@ -104,7 +103,6 @@ export class WellnessComponent {
   private readonly logger = inject(LoggerService);
   private readonly toastService = inject(ToastService);
   private readonly destroyRef = inject(DestroyRef);
-  private readonly confidenceService = inject(DataConfidenceService);
   private readonly offlineQueue = inject(OfflineQueueService);
   private readonly profileService = inject(ProfileCompletionService);
 

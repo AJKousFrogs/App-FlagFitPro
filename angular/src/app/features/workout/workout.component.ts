@@ -18,7 +18,6 @@ import { PageHeaderComponent } from "../../shared/components/page-header/page-he
 import { StatusTagComponent } from "../../shared/components/status-tag/status-tag.component";
 import { EmptyStateComponent } from "../../shared/components/empty-state/empty-state.component";
 import { AppLoadingComponent } from "../../shared/components/loading/loading.component";
-import { ApiService } from "../../core/services/api.service";
 import { ToastService } from "../../core/services/toast.service";
 import { TOAST } from "../../core/constants/toast-messages.constants";
 import { LoggerService } from "../../core/services/logger.service";
@@ -63,7 +62,6 @@ interface Workout {
   styleUrl: "./workout.component.scss",
 })
 export class WorkoutComponent implements OnInit {
-  private apiService = inject(ApiService);
   private supabase = inject(SupabaseService);
   private toastService = inject(ToastService);
   private logger = inject(LoggerService);

@@ -15,7 +15,6 @@ import { InputNumberComponent } from "../../shared/components/input-number/input
 import { FormInputComponent } from "../../shared/components/form-input/form-input.component";
 import { COLORS, UI_LIMITS } from "../../core/constants/app.constants";
 import { TOAST } from "../../core/constants/toast-messages.constants";
-import { ApiService } from "../../core/services/api.service";
 import { ToastService } from "../../core/services/toast.service";
 import { LoggerService } from "../../core/services/logger.service";
 import { FeatureFlagsService } from "../../core/services/feature-flags.service";
@@ -197,7 +196,6 @@ const TRAINING_RECOMMENDATIONS: Record<string, string[]> = {
   styleUrl: "./performance-tracking.component.scss",
 })
 export class PerformanceTrackingComponent {
-  private readonly apiService = inject(ApiService);
   private readonly toastService = inject(ToastService);
   private readonly performanceTrackingDataService = inject(
     PerformanceTrackingDataService,

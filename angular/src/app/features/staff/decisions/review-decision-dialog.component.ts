@@ -27,7 +27,6 @@ import { StatusTagComponent } from "@shared/components/status-tag/status-tag.com
 import { AppDialogComponent } from "@shared/components/dialog/dialog.component";
 import { DialogFooterComponent } from "@shared/components/dialog-footer/dialog-footer.component";
 import { DialogHeaderComponent } from "@shared/components/dialog-header/dialog-header.component";
-import { DecisionLedgerService } from "@core/services/decision-ledger.service";
 import { LoggerService } from "@core/services/logger.service";
 import type {
   DecisionLedgerEntry,
@@ -213,7 +212,6 @@ export class ReviewDecisionDialogComponent {
   reviewed = output<ReviewDecisionRequest>();
 
   // Services
-  private decisionService = inject(DecisionLedgerService);
   private logger = inject(LoggerService);
 
   // State
