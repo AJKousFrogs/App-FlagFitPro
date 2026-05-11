@@ -30,7 +30,6 @@ import {
   PlayerStatisticsService,
 } from "../../core/services/player-statistics.service";
 import { ToastService } from "../../core/services/toast.service";
-import { TrainingDataService } from "../../core/services/training-data.service";
 import { AnalyticsDataService } from "./services/analytics-data.service";
 import {
   TrainingStatsCalculationService,
@@ -115,7 +114,6 @@ export class AnalyticsComponent implements AfterViewInit {
   private readonly trainingStatsService = inject(
     TrainingStatsCalculationService,
   );
-  private readonly trainingDataService = inject(TrainingDataService);
   private readonly logger = inject(LoggerService);
   private readonly acwrService = inject(AcwrService);
   private readonly toastService = inject(ToastService);

@@ -13,9 +13,7 @@ import { Carousel } from "primeng/carousel";
 import { Knob } from "primeng/knob";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { AIService, AnalysisContext } from "../../core/services/ai.service";
-import { ContextService } from "../../core/services/context.service";
 import { HapticFeedbackService } from "../../core/services/haptic-feedback.service";
-import { ApiService } from "../../core/services/api.service";
 import { LoggerService } from "../../core/services/logger.service";
 import { PrivacySettingsService } from "../../core/services/privacy-settings.service";
 import { timer } from "rxjs";
@@ -122,9 +120,7 @@ declare global {
 })
 export class AITrainingCompanionComponent implements OnInit, OnDestroy {
   private aiService = inject(AIService);
-  private contextService = inject(ContextService);
   private hapticService = inject(HapticFeedbackService);
-  private apiService = inject(ApiService);
   private destroyRef = inject(DestroyRef);
   private logger = inject(LoggerService);
   private privacyService = inject(PrivacySettingsService);

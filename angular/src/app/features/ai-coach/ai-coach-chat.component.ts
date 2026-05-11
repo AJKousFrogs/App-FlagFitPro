@@ -22,7 +22,6 @@ import {
   LoggerService,
   toLogContext,
 } from "../../core/services/logger.service";
-import { SupabaseService } from "../../core/services/supabase.service";
 import { TeamMembershipService } from "../../core/services/team-membership.service";
 import { ToastService } from "../../core/services/toast.service";
 import { UnifiedTrainingService } from "../../core/services/unified-training.service";
@@ -83,7 +82,6 @@ interface AutocompleteSuggestion {
   },
 })
 export class AiCoachChatComponent implements OnInit, AfterViewChecked {
-  private readonly supabase = inject(SupabaseService);
   private readonly logger = inject(LoggerService);
   private readonly toast = inject(ToastService);
   private readonly destroyRef = inject(DestroyRef);
