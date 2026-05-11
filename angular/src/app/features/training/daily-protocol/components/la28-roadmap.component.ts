@@ -259,8 +259,8 @@ export class La28RoadmapComponent {
     return severities[type] || "secondary";
   }
 
-  formatDate(date?: string, formatStr = "MMM yyyy"): string {
+  protected readonly formatDate = (date?: string, formatStr = "MMM yyyy"): string => {
     if (!date) return "";
     return formatDateUtil(date, formatStr);
-  }
+  };
 }
