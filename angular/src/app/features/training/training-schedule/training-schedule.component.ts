@@ -39,6 +39,7 @@ import { PageErrorStateComponent } from "../../../shared/components/page-error-s
 import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";
 import { getStatusSeverity as getStatusSeverityValue } from "../../../shared/utils/status.utils";
 import { mapProgramTemplatesToUserPracticeDays } from "../../../shared/utils/training-template.utils";
+import { TRAINING_SESSION_STATUS_LABELS } from "../../../shared/constants/status-labels.constants";
 
 function toLocalDateKey(date: Date | null | undefined): string {
   if (!date) {
@@ -890,18 +891,7 @@ export class TrainingScheduleComponent implements OnInit {
   }
 
   getStatusLabel(status: string): string {
-    switch (status) {
-      case "completed":
-        return "Completed";
-      case "missed":
-        return "Missed";
-      case "in_progress":
-        return "In Progress";
-      case "replaced":
-        return "Replaced";
-      default:
-        return "Scheduled";
-    }
+    return TRAINING_SESSION_STATUS_LABELS[status] || "Scheduled";
   }
 
   /**
