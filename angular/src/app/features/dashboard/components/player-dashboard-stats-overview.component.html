@@ -48,7 +48,7 @@
           <i class="pi pi-heart" aria-hidden="true"></i>
         </div>
         <div class="stat-details">
-          <span class="stat-block__value">{{ readinessScore() }}%</span>
+          <span class="stat-block__value" [appAnimateNumber]="readinessScore()!" [animSuffix]="'%'">0%</span>
           <span class="stat-block__label">Readiness</span>
         </div>
         <app-status-tag
@@ -258,7 +258,7 @@
         <i class="pi pi-bolt" aria-hidden="true"></i>
       </div>
       <div class="stat-details">
-        <span class="stat-block__value">{{ currentStreak() }}</span>
+        <span class="stat-block__value" [appAnimateNumber]="currentStreak()">0</span>
         <span class="stat-block__label">Day Streak</span>
       </div>
     </div>

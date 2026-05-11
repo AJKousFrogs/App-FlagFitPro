@@ -9,6 +9,7 @@ import { CardShellComponent } from "../../../shared/components/card-shell/card-s
 import { SemanticMeaningRendererComponent } from "../../../shared/components/semantic-meaning-renderer/semantic-meaning-renderer.component";
 import { StatusTagComponent } from "../../../shared/components/status-tag/status-tag.component";
 import { SkeletonComponent } from "../../../shared/components/skeleton/skeleton.component";
+import { AnimateNumberDirective } from "../../../shared/directives/animate-number.directive";
 
 type StatusSeverity =
   | "success"
@@ -41,6 +42,7 @@ interface AcwrDisplayInput {
     ConfidenceIndicatorComponent,
     SemanticMeaningRendererComponent,
     SkeletonComponent,
+    AnimateNumberDirective,
   ],
   templateUrl: "./player-dashboard-stats-overview.component.html",
   styleUrl: "./player-dashboard-stats-overview.component.scss",

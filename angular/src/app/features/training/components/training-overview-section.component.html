@@ -35,7 +35,7 @@
     @if (readinessScore() !== null && readinessScore()! > 0) {
       <div class="ui-page-hero__aside">
         <div class="readiness-badge-compact" [class]="readinessStatus()">
-          <span class="readiness-value">{{ readinessScore() }}</span>
+          <span class="readiness-value" [appAnimateNumber]="readinessScore()!">0</span>
           <span class="readiness-label">Readiness</span>
         </div>
       </div>

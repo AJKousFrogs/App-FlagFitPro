@@ -71,19 +71,19 @@
   <div class="quick-stats">
     <div class="stat-block">
       <div class="stat-block__content">
-        <span class="stat-block__value">{{ userStats().posts }}</span>
+        <span class="stat-block__value" [appAnimateNumber]="userStats().posts">0</span>
         <span class="stat-block__label">Posts</span>
       </div>
     </div>
     <div class="stat-block">
       <div class="stat-block__content">
-        <span class="stat-block__value">{{ userStats().likes }}</span>
+        <span class="stat-block__value" [appAnimateNumber]="userStats().likes">0</span>
         <span class="stat-block__label">Likes</span>
       </div>
     </div>
     <div class="stat-block">
       <div class="stat-block__content">
-        <span class="stat-block__value">{{ userStats().comments }}</span>
+        <span class="stat-block__value" [appAnimateNumber]="userStats().comments">0</span>
         <span class="stat-block__label">Comments</span>
       </div>
     </div>

@@ -68,7 +68,7 @@
         } @else {
           <div class="acwr-ratio-display">
             <div class="ratio-circle" [class]="'ratio-circle--' + riskZone().level">
-              <div class="ratio-value">{{ acwrRatio() | number: "1.2-2" }}</div>
+              <div class="ratio-value" [appAnimateNumber]="acwrRatio()!" [animDecimals]="2">0.00</div>
               <div class="ratio-label">CURRENT RATIO</div>
               <div class="confidence-indicator-bento">
                 <app-confidence-indicator [score]="acwrConfidence().score" [missingInputs]="acwrConfidence().missingInputs" [showDetails]="false" />
@@ -84,12 +84,12 @@
           <div class="load-metrics-split">
             <div class="load-metric-box">
               <span class="lbl">Acute Load (7d)</span>
-              <span class="val">{{ acuteLoad() | number: '1.0-0' }} AU</span>
+              <span class="val" [appAnimateNumber]="acuteLoad()" [animSuffix]="' AU'">0 AU</span>
             </div>
             <div class="load-divider-icon"><i class="pi pi-divide" aria-hidden="true"></i></div>
             <div class="load-metric-box">
               <span class="lbl">Chronic Load (28d)</span>
-              <span class="val">{{ chronicLoad() | number: '1.0-0' }} AU</span>
+              <span class="val" [appAnimateNumber]="chronicLoad()" [animSuffix]="' AU'">0 AU</span>
             </div>
           </div>
         }
@@ -138,6 +138,64 @@
           }
         </div>
       </div>
+
+      <!-- Injury Risk Prediction (Feature-Flag Gated) -->
+      @if (nextGenEnabled()) {
+        <div class="bento-item span-2 prediction-bento">
+          <h3 class="bento-title"><i class="pi pi-shield" aria-hidden="true"></i> Injury Risk Prediction <span class="preview-tag">Preview</span></h3>
+
+          @if (nextGenLoading()) {
+            <div class="prediction-loading">
+              <i class="pi pi-spin pi-spinner" aria-hidden="true"></i> Loading predictions...
+            </div>
+          } @else if (spikeDetection(); as spike) {
+            <div class="prediction-grid">
+              <div class="prediction-card" [class.spike-detected]="spike.spikeDetected">
+                <span class="pred-label">Workload Spike</span>
+                <span class="pred-value" [class]="'risk-' + spike.riskLevel">
+                  {{ spike.spikeDetected ? 'Detected' : 'None' }}
+                </span>
+                @if (spike.spikePct !== null) {
+                  <span class="pred-detail">{{ spike.spikePct | number: '1.0-0' }}% above baseline</span>
+                }
+              </div>
+
+              <div class="prediction-card">
+                <span class="pred-label">Risk Level</span>
+                <span class="pred-value" [class]="'risk-' + spike.riskLevel">
+                  {{ spike.riskLevel | titlecase }}
+                </span>
+              </div>
+
+              @if (readinessScore(); as readiness) {
+                <div class="prediction-card">
+                  <span class="pred-label">Readiness</span>
+                  <span class="pred-value">{{ readiness.score | number: '1.0-0' }}%</span>
+                  <span class="pred-detail">{{ readiness.dataMode === 'baseline' ? 'Full data' : 'Limited data' }}</span>
+                </div>
+              }
+
+              @if (wellnessScore(); as wellness) {
+                <div class="prediction-card">
+                  <span class="pred-label">Wellness</span>
+                  @if (wellness.score !== null) {
+                    <span class="pred-value">{{ wellness.score | number: '1.0-0' }}%</span>
+                  } @else {
+                    <span class="pred-value muted">N/A</span>
+                  }
+                  <span class="pred-detail">{{ wellness.includedMetrics }} metrics</span>
+                </div>
+              }
+            </div>
+          } @else {
+            <app-empty-state
+              icon="pi-chart-bar"
+              title="No Prediction Data"
+              message="Log more sessions to enable ML-based injury risk predictions."
+            />
+          }
+        </div>
+      }
 
       <!-- Quick Actions (Span 1) -->
       <div class="bento-item actions-bento">

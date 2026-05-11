@@ -54,6 +54,8 @@ import { METRIC_INSUFFICIENT_DATA } from "../../shared/utils/privacy-ux-copy";
 import { UI_LIMITS } from "../../core/constants";
 import { LazyChartComponent } from "../../shared/components/lazy-chart/lazy-chart.component";
 import { DataConfidenceService } from "../../core/services/data-confidence.service";
+import { NextGenMetricsService } from "../../core/services/next-gen-metrics.service";
+import { FeatureFlagsService } from "../../core/services/feature-flags.service";
 import { ConfidenceIndicatorComponent } from "../../shared/components/confidence-indicator/confidence-indicator.component";
 import {
   OwnershipTransitionService,
@@ -75,6 +77,7 @@ import { DataSourceBannerComponent } from "../../shared/components/data-source-b
 import { DataState } from "../../core/services/data-source.service";
 import { LazyPdfService } from "../../core/services/lazy-pdf.service";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
+import { AnimateNumberDirective } from "../../shared/directives/animate-number.directive";
 
 @Component({
   selector: "app-acwr-dashboard",
@@ -93,6 +96,7 @@ import { PageHeaderComponent } from "../../shared/components/page-header/page-he
     PageHeaderComponent,
     ButtonComponent,
     EmptyStateComponent,
+    AnimateNumberDirective,
   ],
   templateUrl: "./acwr-dashboard.component.html",
   styleUrl: "./acwr-dashboard.component.scss",
@@ -111,6 +115,8 @@ export class AcwrDashboardComponent implements OnInit {
   );
   private logger = inject(LoggerService);
   private readonly lazyPdf = inject(LazyPdfService);
+  private readonly nextGenMetrics = inject(NextGenMetricsService);
+  private readonly featureFlags = inject(FeatureFlagsService);
 
   // Angular 21: viewChild signal for PDF export dashboard reference
   private readonly dashboardElement =
@@ -196,6 +202,26 @@ export class AcwrDashboardComponent implements OnInit {
       max: maxEstimate,
       confidence: confidence.score,
     };
+  });
+
+  // Next-gen ML prediction signals (feature-flag gated)
+  readonly nextGenEnabled = this.featureFlags.nextGenMetricsPreview;
+  readonly nextGenPreview = this.nextGenMetrics.loadPreview;
+  readonly nextGenLoading = this.nextGenMetrics.loading;
+
+  readonly spikeDetection = computed(() => {
+    const preview = this.nextGenPreview();
+    return preview?.workload ?? null;
+  });
+
+  readonly readinessScore = computed(() => {
+    const preview = this.nextGenPreview();
+    return preview?.readiness ?? null;
+  });
+
+  readonly wellnessScore = computed(() => {
+    const preview = this.nextGenPreview();
+    return preview?.wellness ?? null;
   });
 
   // Centralized UX copy for insufficient data state
@@ -333,6 +359,10 @@ export class AcwrDashboardComponent implements OnInit {
     this.loadTrendData();
     this.loadOwnershipTransition();
     this.loadCauseAttribution();
+
+    if (this.featureFlags.nextGenMetricsPreview()) {
+      this.nextGenMetrics.refreshLoadPreview();
+    }
   }
 
   /**

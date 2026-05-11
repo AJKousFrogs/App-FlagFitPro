@@ -4,6 +4,7 @@ import { AlertComponent } from "../../../shared/components/alert/alert.component
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { CardShellComponent } from "../../../shared/components/card-shell/card-shell.component";
 import { StatusTagComponent } from "../../../shared/components/status-tag/status-tag.component";
+import { AnimateNumberDirective } from "../../../shared/directives/animate-number.directive";
 
 export interface TrainingQuickActionView {
   icon: string;
@@ -33,6 +34,7 @@ export interface TrainingWellnessAlertView {
     ButtonComponent,
     CardShellComponent,
     StatusTagComponent,
+    AnimateNumberDirective,
   ],
   templateUrl: "./training-overview-section.component.html",
   styleUrl: "./training-overview-section.component.scss",

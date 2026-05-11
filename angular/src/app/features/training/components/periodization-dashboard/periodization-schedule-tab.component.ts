@@ -2,12 +2,13 @@ import { ChangeDetectionStrategy, Component, input } from "@angular/core";
 
 import { WeeklyTrainingTemplate } from "../../../../core/services/flag-football-periodization.service";
 import { StatusTagComponent } from "../../../../shared/components/status-tag/status-tag.component";
+import { AnimateNumberDirective } from "../../../../shared/directives/animate-number.directive";
 
 @Component({
   selector: "app-periodization-schedule-tab",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [StatusTagComponent],
+  imports: [StatusTagComponent, AnimateNumberDirective],
   templateUrl: "./periodization-schedule-tab.component.html",
   styleUrl: "./periodization-schedule-tab.component.scss",
 })

@@ -38,19 +38,19 @@
       <h4>Weekly Totals</h4>
       <div class="totals-grid">
         <div class="total-item">
-          <span class="total-value">{{ t.weeklyTotals.totalSprints }}</span>
+          <span class="total-value" [appAnimateNumber]="t.weeklyTotals.totalSprints">0</span>
           <span class="total-label">Sprints</span>
         </div>
         <div class="total-item">
-          <span class="total-value">{{ t.weeklyTotals.totalCuts }}</span>
+          <span class="total-value" [appAnimateNumber]="t.weeklyTotals.totalCuts">0</span>
           <span class="total-label">Cuts</span>
         </div>
         <div class="total-item">
-          <span class="total-value">{{ t.weeklyTotals.totalPlyoContacts }}</span>
+          <span class="total-value" [appAnimateNumber]="t.weeklyTotals.totalPlyoContacts">0</span>
           <span class="total-label">Plyo Contacts</span>
         </div>
         <div class="total-item">
-          <span class="total-value">{{ t.weeklyTotals.trainingDays }}</span>
+          <span class="total-value" [appAnimateNumber]="t.weeklyTotals.trainingDays">0</span>
           <span class="total-label">Training Days</span>
         </div>
       </div>

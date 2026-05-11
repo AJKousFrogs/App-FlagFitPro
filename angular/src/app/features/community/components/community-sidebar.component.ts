@@ -4,6 +4,7 @@ import { AvatarComponent } from "../../../shared/components/avatar/avatar.compon
 import { Tooltip } from "primeng/tooltip";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { CardShellComponent } from "../../../shared/components/card-shell/card-shell.component";
+import { AnimateNumberDirective } from "../../../shared/directives/animate-number.directive";
 import { COLORS } from "../../../core/constants/app.constants";
 
 interface LeaderboardEntry {
@@ -33,6 +34,7 @@ interface UserStats {
     Tooltip,
     ButtonComponent,
     CardShellComponent,
+    AnimateNumberDirective,
   ],
   templateUrl: "./community-sidebar.component.html",
   styleUrl: "./community-sidebar.component.scss",
