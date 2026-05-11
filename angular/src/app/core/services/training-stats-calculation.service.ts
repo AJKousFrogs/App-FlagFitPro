@@ -13,7 +13,7 @@ import { catchError } from "rxjs";
 import { AcwrService } from "./acwr.service";
 import { LoggerService, toLogContext } from "./logger.service";
 import { SupabaseService } from "./supabase.service";
-import { TrainingDataService, TrainingSession } from "./training-data.service";
+import type { TrainingSession } from "./training-data.service";
 
 /**
  * Memory management constants for stats calculation
@@ -99,7 +99,6 @@ export class TrainingStatsCalculationService {
     return new Date(year, month - 1, day, 12, 0, 0, 0);
   }
 
-  private trainingDataService = inject(TrainingDataService);
   private logger = inject(LoggerService);
   private acwrService = inject(AcwrService);
   private supabase = inject(SupabaseService);

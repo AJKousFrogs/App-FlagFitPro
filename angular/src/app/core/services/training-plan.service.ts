@@ -7,8 +7,6 @@
 
 import { Injectable, inject, signal } from "@angular/core";
 import { firstValueFrom } from "rxjs";
-import { AcwrService } from "./acwr.service";
-import { ReadinessService } from "./readiness.service";
 import { ApiService } from "./api.service";
 import { LoggerService } from "./logger.service";
 import { ScheduleService } from "./schedule.service";
@@ -163,8 +161,6 @@ function expandEventsToGameDays(events: CompetitionEvent[]): Date[] {
   providedIn: "root",
 })
 export class TrainingPlanService {
-  private acwrService = inject(AcwrService);
-  private readinessService = inject(ReadinessService);
   private apiService = inject(ApiService);
   private logger = inject(LoggerService);
   private performanceSystemService = inject(FlagFootballPerformanceSystemService);

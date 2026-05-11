@@ -18,7 +18,7 @@
 import {
   ChangeDetectionStrategy,
   Component,
-  OnInit,
+  effect,
   inject,
   signal,
 } from "@angular/core";
@@ -44,6 +44,7 @@ import {
 } from "../../../../core/services/phase-load-calculator.service";
 import { FlagFootballAthleteProfileService } from "../../../../core/services/flag-football-athlete-profile.service";
 import { AcwrService } from "../../../../core/services/acwr.service";
+import { ScheduleService } from "../../../../core/services/schedule.service";
 
 // Layout Components
 import { MainLayoutComponent } from "../../../../shared/components/layout/main-layout.component";
@@ -86,13 +87,14 @@ interface TimelineEvent {
   templateUrl: "./periodization-dashboard.component.html",
   styleUrl: "./periodization-dashboard.component.scss",
 })
-export class PeriodizationDashboardComponent implements OnInit {
+export class PeriodizationDashboardComponent {
   // Services
   private periodizationService = inject(FlagFootballPeriodizationService);
   private sprintService = inject(SprintTrainingKnowledgeService);
   private loadCalculator = inject(PhaseLoadCalculatorService);
   private athleteProfileService = inject(FlagFootballAthleteProfileService);
   private acwrService = inject(AcwrService);
+  private scheduleService = inject(ScheduleService);
 
   // State
   readonly currentDate = new Date();
@@ -113,8 +115,13 @@ export class PeriodizationDashboardComponent implements OnInit {
   readonly formattedRecommendedProtocols = signal<string[]>([]);
   readonly formattedAvoidProtocols = signal<string[]>([]);
 
-  ngOnInit(): void {
-    this.loadPeriodizationData();
+  constructor() {
+    // Re-compute whenever the schedule spine snapshot changes — the phase
+    // detection now reads from the spine, so we must react to it loading.
+    effect(() => {
+      this.scheduleService.snapshot(); // tracked; triggers re-run on change
+      this.loadPeriodizationData();
+    });
   }
 
   private loadPeriodizationData(): void {
@@ -129,15 +136,13 @@ export class PeriodizationDashboardComponent implements OnInit {
 
     // Get load recommendation
     const phaseType = recommendation.currentPhase.type;
+    const acwrData = this.acwrService.acwrData();
     const loadRec = this.loadCalculator.calculatePhaseLoad(
       phaseType,
-      2000, // Default chronic load - would come from athlete data
+      acwrData.chronic > 0 ? Math.round(acwrData.chronic) : 2000,
       recommendation.currentWeek,
     );
     this.loadRecommendation.set(loadRec);
-
-    // Get ACWR from canonical AcwrService (single source of truth)
-    const acwrData = this.acwrService.acwrData();
     if (acwrData.ratio && acwrData.ratio > 0) {
       const acwr: ACWRCalculation = {
         acuteLoad: Math.round(acwrData.acute),

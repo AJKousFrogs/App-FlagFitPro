@@ -6,8 +6,7 @@
  * flag-football-periodization.data.ts.
  */
 import { Injectable, inject, signal, computed } from "@angular/core";
-import { SupabaseService } from "./supabase.service";
-import { LoggerService } from "./logger.service";
+import { ScheduleService } from "./schedule.service";
 import {
   ANNUAL_PHASES,
   EVIDENCE_BASE,
@@ -32,8 +31,7 @@ export * from "./flag-football-periodization.data";
   providedIn: "root",
 })
 export class FlagFootballPeriodizationService {
-  private supabaseService = inject(SupabaseService);
-  private logger = inject(LoggerService);
+  private scheduleService = inject(ScheduleService);
 
   // Current phase
   private readonly _currentPhase = signal<PhaseConfig | null>(null);
@@ -54,35 +52,41 @@ export class FlagFootballPeriodizationService {
   );
 
   /**
-   * Get phase configuration for a given date
+   * Get phase configuration for a given date.
+   *
+   * Competition proximity from the schedule spine takes precedence — if the
+   * spine says we're in a competition or taper window, that wins regardless of
+   * calendar month. Month-based selection is only used for accumulation /
+   * transition periods where the spine has no competition proximity signal.
    */
   getPhaseForDate(date: Date = new Date()): PhaseConfig {
-    const month = date.getMonth() + 1; // 1-12
+    const spinePhase = this.scheduleService.phaseFor(date);
 
-    switch (month) {
-      case 11: // November
-        return ANNUAL_PHASES["november_recovery"];
-      case 12: // December
-        return ANNUAL_PHASES["december_foundation"];
-      case 1: // January
-        return ANNUAL_PHASES["january_strength"];
-      case 2: // February
-        return ANNUAL_PHASES["february_power"];
-      case 3: // March
-        return ANNUAL_PHASES["march_explosive"];
-      case 4: // April
-      case 5: // May
-      case 6: // June
+    switch (spinePhase) {
+      case "competition":
         return ANNUAL_PHASES["competition_maintenance"];
-      case 7: // July - MID-SEASON RELOAD
-        return ANNUAL_PHASES["july_reload"];
-      case 8: // August
-        return ANNUAL_PHASES["august_peak"];
-      case 9: // September
-      case 10: // October
-        return ANNUAL_PHASES["late_season"];
-      default:
-        return ANNUAL_PHASES["december_foundation"];
+      case "taper":
+        return ANNUAL_PHASES["august_peak"]; // peak-type: volume down, sharpness up
+      case "recovery":
+        return ANNUAL_PHASES["november_recovery"];
+      // "accumulation" | "transition" — fall through to month-based block selection
+    }
+
+    const month = date.getMonth() + 1;
+    switch (month) {
+      case 11: return ANNUAL_PHASES["november_recovery"];
+      case 12: return ANNUAL_PHASES["december_foundation"];
+      case 1:  return ANNUAL_PHASES["january_strength"];
+      case 2:  return ANNUAL_PHASES["february_power"];
+      case 3:  return ANNUAL_PHASES["march_explosive"];
+      case 4:
+      case 5:
+      case 6:  return ANNUAL_PHASES["competition_maintenance"];
+      case 7:  return ANNUAL_PHASES["july_reload"];
+      case 8:  return ANNUAL_PHASES["august_peak"];
+      case 9:
+      case 10: return ANNUAL_PHASES["late_season"];
+      default: return ANNUAL_PHASES["december_foundation"];
     }
   }
 

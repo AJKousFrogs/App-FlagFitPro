@@ -111,9 +111,15 @@ export class PeriodizationService {
   // Service-internal accessors. Defensive against null/undefined.
   // ---------------------------------------------------------------------------
   private readAcwr(): number | null {
-    const value = this.acwrService.acwrRatio?.();
-    return typeof value === "number" && Number.isFinite(value) && value > 0
-      ? value
+    // Prefer the server's ACWR (already embedded in the readiness response);
+    // fall back to the local EWMA when no server check-in exists yet.
+    const serverAcwr = this.readinessService.current?.()?.acwr;
+    if (typeof serverAcwr === "number" && Number.isFinite(serverAcwr) && serverAcwr > 0) {
+      return serverAcwr;
+    }
+    const localAcwr = this.acwrService.acwrRatio?.();
+    return typeof localAcwr === "number" && Number.isFinite(localAcwr) && localAcwr > 0
+      ? localAcwr
       : null;
   }
 

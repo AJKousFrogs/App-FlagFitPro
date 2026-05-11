@@ -22,8 +22,6 @@
  */
 
 import { Injectable, inject, signal, computed } from "@angular/core";
-import { LoggerService } from "./logger.service";
-import { AcwrService } from "./acwr.service";
 
 // ============================================================================
 // INTERFACES
@@ -293,9 +291,6 @@ const LOAD_CONSTANTS = {
   providedIn: "root",
 })
 export class PhaseLoadCalculatorService {
-  private logger = inject(LoggerService);
-  private acwrService = inject(AcwrService);
-
   // State
   private readonly _trainingHistory = signal<TrainingLoad[]>([]);
   private readonly _currentACWR = signal<ACWRCalculation | null>(null);
