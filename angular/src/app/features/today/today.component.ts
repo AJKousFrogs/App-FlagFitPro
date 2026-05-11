@@ -73,6 +73,7 @@ import { TodayPrescriptionCardComponent } from "./components/today-prescription-
 import { TodayProtocolSectionComponent } from "./components/today-protocol-section.component";
 import { TodayScheduleBannerComponent } from "./components/today-schedule-banner.component";
 import { TodayStatusStackComponent } from "./components/today-status-stack.component";
+import { TodayCoachMessagesService } from "./services/today-coach-messages.service";
 
 // Constants
 import { ROUTES, TIMEOUTS, TRAINING } from "../../core/constants/app.constants";
@@ -155,6 +156,7 @@ export class TodayComponent {
   private readonly screenReaderAnnouncer = inject(ScreenReaderAnnouncerService);
   private readonly todayProtocolFacade = inject(TodayProtocolFacade);
   private readonly continuityIndicators = inject(ContinuityIndicatorsService);
+  private readonly coachMessages = inject(TodayCoachMessagesService);
   protected readonly schedule = inject(ScheduleService);
   protected readonly periodization = inject(PeriodizationService);
 
@@ -1140,26 +1142,7 @@ export class TodayComponent {
   }
 
   private showCoachAlertDialog(): void {
-    const protocol = this.protocolJson();
-
-    if (!protocol) {
-      return;
-    }
-
-    // Show coach alert message in a dialog or toast
-    const alertMessage =
-      protocol.coach_alert_message || "Coach has updated your plan.";
-    const coachName = this.getCoachMessageAuthor();
-
-    this.showCoachMessage(alertMessage, `Coach Alert from ${coachName}`);
-
-    // If there's a coach note, show that too
-    if (protocol.coach_note?.content) {
-      const noteContent = protocol.coach_note.content;
-      setTimeout(() => {
-        this.showCoachMessage(noteContent, `Coach Note from ${coachName}`);
-      }, 500);
-    }
+    this.coachMessages.showAlert(this.protocolJson());
   }
 
   private acknowledgeCoachAlert(): void {
@@ -1170,27 +1153,20 @@ export class TodayComponent {
       return;
     }
 
-    const alertId = protocol.id;
-    const sessionDate = protocol.protocol_date || getTodayISO();
-
-    // Call backend endpoint to acknowledge coach alert
-    this.api
-      .post<{
-        success: boolean;
-        data?: unknown;
-        error?: string;
-        code?: string;
-      }>(`/api/coach-alerts/${alertId}/acknowledge`, { sessionDate })
+    this.coachMessages
+      .acknowledge(protocol.id, this.coachMessages.resolveSessionDate(protocol))
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
-        next: (response) => {
-          const payload = extractApiPayload<{ error?: string }>(response);
-          if (isSuccessfulApiResponse(response)) {
-            this.toastService.success("You can now proceed with training", "Alert Acknowledged");
+        next: (result) => {
+          if (result.ok) {
+            this.toastService.success(
+              "You can now proceed with training",
+              "Alert Acknowledged",
+            );
             // Refresh protocol to update state
             this.loadTodayData();
           } else {
-            this.toastService.error(payload?.error || "Failed to acknowledge alert");
+            this.toastService.error(result.message ?? "Failed to acknowledge alert");
           }
         },
         error: (err) => {
@@ -1201,23 +1177,7 @@ export class TodayComponent {
   }
 
   private showCoachNoteDialog(): void {
-    const noteContent = this.protocolJson()?.coach_note?.content?.trim();
-    const coachName = this.getCoachMessageAuthor();
-
-    if (!noteContent) {
-      this.toastService.info("No coach note is attached to today's plan.", "Coach Note");
-      return;
-    }
-
-    this.showCoachMessage(noteContent, `Coach Note from ${coachName}`);
-  }
-
-  private getCoachMessageAuthor(): string {
-    return this.protocolJson()?.modified_by_coach_name || "Your coach";
-  }
-
-  private showCoachMessage(message: string, title: string): void {
-    this.toastService.info(message, title, 10000);
+    this.coachMessages.showNote(this.protocolJson());
   }
 
   private formatFocusLabel(focus: string): string {
@@ -1322,33 +1282,8 @@ export class TodayComponent {
     return this.todayProtocolFacade.getBlockByType(protocol, blockType);
   }
 
-  /**
-   * Format coach modification timestamp
-   */
+  /** Format coach modification timestamp. Delegated to the coach-messages service. */
   formatCoachTimestamp(timestamp: string): string {
-    try {
-      const date = new Date(timestamp);
-      const now = new Date();
-      const diffMs = now.getTime() - date.getTime();
-      const diffHours = diffMs / (1000 * 60 * 60);
-
-      if (diffHours < 24) {
-        const hours = Math.floor(diffHours);
-        if (hours === 0) {
-          const minutes = Math.floor(diffMs / (1000 * 60));
-          return `${minutes} minute${minutes !== 1 ? "s" : ""} ago`;
-        }
-        return `${hours} hour${hours !== 1 ? "s" : ""} ago`;
-      }
-
-      return date.toLocaleDateString("en-US", {
-        month: "short",
-        day: "numeric",
-        hour: "numeric",
-        minute: "2-digit",
-      });
-    } catch {
-      return timestamp;
-    }
+    return this.coachMessages.formatTimestamp(timestamp);
   }
 }
