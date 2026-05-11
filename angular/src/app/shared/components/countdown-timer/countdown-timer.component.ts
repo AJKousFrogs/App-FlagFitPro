@@ -28,7 +28,6 @@ import {
   computed,
   effect,
   ChangeDetectionStrategy,
-  OnDestroy,
   inject,
   DestroyRef,
 } from "@angular/core";
@@ -149,7 +148,7 @@ import { IconButtonComponent } from "../button/icon-button.component";
   `,
   styleUrl: "./countdown-timer.component.scss",
 })
-export class CountdownTimerComponent implements OnDestroy {
+export class CountdownTimerComponent {
   private destroyRef = inject(DestroyRef);
   private intervalId: ReturnType<typeof setInterval> | null = null;
 
@@ -218,10 +217,10 @@ export class CountdownTimerComponent implements OnDestroy {
         this.start();
       }
     });
-  }
 
-  ngOnDestroy(): void {
-    this.clearInterval();
+    this.destroyRef.onDestroy(() => {
+      this.clearInterval();
+    });
   }
 
   start(): void {

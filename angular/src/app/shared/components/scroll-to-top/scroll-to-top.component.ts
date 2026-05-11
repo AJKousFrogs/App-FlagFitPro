@@ -12,7 +12,8 @@ import {
   Component,
   signal,
   ChangeDetectionStrategy,
-  OnDestroy,
+  DestroyRef,
+  inject,
 } from "@angular/core";
 import { Tooltip } from "primeng/tooltip";
 import {
@@ -41,7 +42,8 @@ import {
   `,
   styleUrl: "./scroll-to-top.component.scss",
 })
-export class ScrollToTopComponent implements OnDestroy {
+export class ScrollToTopComponent {
+  private destroyRef = inject(DestroyRef);
   isVisible = signal(false);
   private scrollContainer: ScrollContainer | null = null;
   private readonly onScroll = () => this.updateVisibility();
@@ -55,12 +57,12 @@ export class ScrollToTopComponent implements OnDestroy {
         passive: true,
       });
       this.updateVisibility();
-    });
-  }
 
-  ngOnDestroy(): void {
-    if (typeof window === "undefined" || !this.scrollContainer) return;
-    this.scrollContainer.removeEventListener("scroll", this.onScroll);
+      this.destroyRef.onDestroy(() => {
+        if (typeof window === "undefined" || !this.scrollContainer) return;
+        this.scrollContainer!.removeEventListener("scroll", this.onScroll);
+      });
+    });
   }
 
   scrollToTop(): void {

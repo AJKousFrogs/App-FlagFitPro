@@ -25,7 +25,6 @@ import {
   Type,
   viewChild,
   ComponentRef,
-  OnDestroy,
   effect,
   DestroyRef,
 } from "@angular/core";
@@ -50,7 +49,7 @@ import { CoachOverrideBadgeComponent } from "../coach-override-badge/coach-overr
   template: ` <ng-container #renderTarget></ng-container> `,
   styleUrl: "./semantic-meaning-renderer.component.scss",
 })
-export class SemanticMeaningRendererComponent implements OnDestroy {
+export class SemanticMeaningRendererComponent {
   // Required inputs
   meaning = input.required<SemanticMeaning>();
   context = input.required<MeaningMetadata["context"]>();
@@ -66,7 +65,6 @@ export class SemanticMeaningRendererComponent implements OnDestroy {
 
   // MEMORY SAFETY: Track pending timeouts for cleanup
   private pendingTimeoutId: ReturnType<typeof setTimeout> | null = null;
-  private isDestroyed = false;
 
   // Computed render decision
   renderDecision = computed(() => {
@@ -89,24 +87,17 @@ export class SemanticMeaningRendererComponent implements OnDestroy {
       this.renderDecision();
       // MEMORY SAFETY: Clear any pending timeout before setting new one
       this.clearPendingTimeout();
-      // Render after view is initialized, but only if not destroyed
+      // Render after view is initialized
       this.pendingTimeoutId = setTimeout(() => {
-        if (!this.isDestroyed) {
-          this.render();
-        }
+        this.render();
       }, 0);
     });
-  }
-
-  ngOnDestroy(): void {
-    this.cleanup();
   }
 
   /**
    * MEMORY SAFETY: Centralized cleanup method
    */
   private cleanup(): void {
-    this.isDestroyed = true;
     this.clearPendingTimeout();
 
     // Clean up component reference

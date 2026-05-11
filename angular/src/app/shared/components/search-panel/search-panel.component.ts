@@ -16,7 +16,6 @@ import {
   DestroyRef,
   effect,
   inject,
-  OnDestroy,
   signal,
   viewChild,
 } from "@angular/core";
@@ -49,12 +48,12 @@ const SUGGESTION_DEBOUNCE_MS = 150;
     "(document:keydown.control.k)": "onKeyboardShortcut($event)",
   },
 })
-export class SearchPanelComponent implements OnDestroy {
+export class SearchPanelComponent {
   searchInput = viewChild.required<SearchInputComponent>("searchInput");
 
   readonly searchService = inject(SearchService);
   private readonly router = inject(Router);
-  private readonly destroyRef = inject(DestroyRef);
+  private destroyRef: DestroyRef;
 
   // Use a signal for visibility to ensure proper change detection
   private readonly _visible = signal(false);
@@ -117,6 +116,8 @@ export class SearchPanelComponent implements OnDestroy {
   ];
 
   constructor() {
+    this.destroyRef = inject(DestroyRef);
+
     // Setup debounced search stream
     this.searchSubject
       .pipe(
@@ -158,11 +159,6 @@ export class SearchPanelComponent implements OnDestroy {
         }
       }
     });
-  }
-
-  ngOnDestroy(): void {
-    this.searchSubject.complete();
-    this.suggestionSubject.complete();
   }
 
   onKeyboardShortcut(event: Event): void {

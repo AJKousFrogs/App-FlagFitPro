@@ -23,7 +23,7 @@ import {
   computed,
   inject,
   NgZone,
-  OnDestroy,
+  DestroyRef,
 } from "@angular/core";
 import { Router } from "@angular/router";
 import { HomeRouteService } from "./home-route.service";
@@ -56,11 +56,12 @@ interface _ShortcutState {
 @Injectable({
   providedIn: "root",
 })
-export class KeyboardShortcutsService implements OnDestroy {
+export class KeyboardShortcutsService {
   private router = inject(Router);
   private homeRouteService = inject(HomeRouteService);
   private logger = inject(LoggerService);
   private ngZone = inject(NgZone);
+  private destroyRef = inject(DestroyRef);
 
   // State signals
   private _isHelpModalOpen = signal(false);
@@ -120,10 +121,10 @@ export class KeyboardShortcutsService implements OnDestroy {
     this.registerDefaultShortcuts();
     this.setupGlobalListener();
     this.logger.debug("[KeyboardShortcuts] Service initialized");
-  }
 
-  ngOnDestroy(): void {
-    this.removeGlobalListener();
+    this.destroyRef.onDestroy(() => {
+      this.removeGlobalListener();
+    });
   }
 
   /**

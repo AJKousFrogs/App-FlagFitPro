@@ -6,9 +6,8 @@
  * Perfect for live analytics dashboards
  */
 
-import { Injectable, computed, inject, signal } from "@angular/core";
+import { Injectable, computed, inject, signal, effect } from "@angular/core";
 import {
-  BehaviorSubject,
   NEVER,
   interval,
   startWith,
@@ -42,24 +41,29 @@ export class AnalyticsViewModel extends ReactiveViewModel {
   // Real-time data stream (updates every 5 seconds while polling is active)
   private realTimeUpdateInterval = 5000; // 5 seconds
   readonly realTimeEnabled = signal<boolean>(false);
+  readonly realTimePollingActive = signal<boolean>(false);
 
-  /** When false, no interval or HTTP polling runs. */
-  private readonly realTimePollingActive$ = new BehaviorSubject(false);
-
-  // Reactive stream: only polls when realTimePollingActive$ is true
-  readonly performanceTrends$ = this.createStream(
-    this.realTimePollingActive$.pipe(
-      switchMap((active) =>
-        active
-          ? interval(this.realTimeUpdateInterval).pipe(
-              startWith(0),
-              switchMap(() => this.analyticsDataService.getPerformanceTrends()),
-            )
-          : NEVER,
-      ),
-    ),
-    "performanceTrends",
-  );
+  // Reactive stream: only polls when realTimePollingActive is true
+  constructor() {
+    super();
+    // Create reactive stream that watches the polling signal
+    let performanceTrendsStream$ = interval(0);
+    effect(() => {
+      const active = this.realTimePollingActive();
+      if (active) {
+        performanceTrendsStream$ = interval(this.realTimeUpdateInterval).pipe(
+          startWith(0),
+          switchMap(() => this.analyticsDataService.getPerformanceTrends()),
+        );
+        this.subscribe(performanceTrendsStream$, {
+          next: (data) => {
+            this.performanceTrends.set(data);
+          },
+          showLoading: false,
+        });
+      }
+    });
+  }
 
   // Derived/computed signals
   readonly hasPerformanceData = computed(
@@ -69,17 +73,6 @@ export class AnalyticsViewModel extends ReactiveViewModel {
   readonly hasTrainingDistributionData = computed(
     () => this.trainingDistribution() !== null,
   );
-
-  constructor() {
-    super();
-    // Single subscription: emits only while real-time polling is active (no eager interval)
-    this.subscribe(this.performanceTrends$, {
-      next: (data) => {
-        this.performanceTrends.set(data);
-      },
-      showLoading: false,
-    });
-  }
 
   /**
    * Initialize analytics - loads all data
@@ -174,7 +167,7 @@ export class AnalyticsViewModel extends ReactiveViewModel {
    */
   startRealTimeUpdates(_athleteId?: string): void {
     this.realTimeEnabled.set(true);
-    this.realTimePollingActive$.next(true);
+    this.realTimePollingActive.set(true);
   }
 
   /**
@@ -182,7 +175,7 @@ export class AnalyticsViewModel extends ReactiveViewModel {
    */
   stopRealTimeUpdates(): void {
     this.realTimeEnabled.set(false);
-    this.realTimePollingActive$.next(false);
+    this.realTimePollingActive.set(false);
   }
 
   /**

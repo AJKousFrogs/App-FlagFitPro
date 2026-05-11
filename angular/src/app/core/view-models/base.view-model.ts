@@ -38,7 +38,6 @@ import { Injectable, signal, DestroyRef, inject } from "@angular/core";
 import {
   EMPTY,
   Observable,
-  Subject,
   catchError,
   finalize,
   tap,
@@ -51,20 +50,11 @@ import { getErrorMessage } from "../../shared/utils/error.utils";
 export abstract class BaseViewModel {
   protected destroyRef = inject(DestroyRef);
   protected logger = inject(LoggerService);
-  protected destroy$ = new Subject<void>();
 
   // Common state signals
   readonly loading = signal<boolean>(false);
   readonly error = signal<string | null>(null);
   readonly initialized = signal<boolean>(false);
-
-  constructor() {
-    // Auto-cleanup on destroy
-    this.destroyRef.onDestroy(() => {
-      this.destroy$.next();
-      this.destroy$.complete();
-    });
-  }
 
   /**
    * Subscribe to an Observable with automatic cleanup
