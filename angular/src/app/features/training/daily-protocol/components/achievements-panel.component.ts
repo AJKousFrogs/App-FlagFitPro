@@ -228,7 +228,7 @@ export class AchievementsPanelComponent {
     }
   }
 
-  retryLoadData(): void {
+  retryLoad(): void {
     void this.loadData();
   }
 

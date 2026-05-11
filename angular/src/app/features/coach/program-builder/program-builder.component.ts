@@ -392,7 +392,7 @@ export class ProgramBuilderComponent implements OnInit {
     }
   }
 
-  retryLoadData(): void {
+  retryLoad(): void {
     void this.loadData();
   }
 

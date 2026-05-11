@@ -49,7 +49,7 @@
           <app-page-error-state
             title="Unable to load tournaments"
             [message]="loadError()!"
-            (retry)="retryLoadData()"
+            (retry)="retryLoad()"
           />
         } @else if (filteredTournaments().length > 0) {
           <div class="tournaments-list">

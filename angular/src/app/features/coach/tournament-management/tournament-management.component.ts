@@ -221,7 +221,7 @@ export class TournamentManagementComponent implements OnInit {
     }
   }
 
-  retryLoadData(): void {
+  retryLoad(): void {
     void this.loadData();
   }
 

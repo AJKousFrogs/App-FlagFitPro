@@ -48,7 +48,7 @@
           <app-page-error-state
             title="Unable to load payment data"
             [message]="errorMessage"
-            (retry)="retryLoadData()"
+            (retry)="retryLoad()"
           />
         } @else {
           @switch (activeTab()) {

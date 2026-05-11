@@ -93,7 +93,7 @@
             <app-page-error-state
               title="Unable to load film room"
               [message]="loadError()!"
-              (retry)="retryLoadData()"
+              (retry)="retryLoad()"
             />
           } @else {
           @for (session of filteredSessions(); track session.id) {

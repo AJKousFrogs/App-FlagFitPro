@@ -434,7 +434,7 @@ export class ScoutingReportsComponent implements OnInit {
     }
   }
 
-  retryLoadData(): void {
+  retryLoad(): void {
     void this.loadData();
   }
 

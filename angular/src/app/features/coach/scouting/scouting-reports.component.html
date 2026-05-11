@@ -23,7 +23,7 @@
           <app-page-error-state
             title="Unable to load scouting data"
             [message]="loadError()!"
-            (retry)="retryLoadData()"
+            (retry)="retryLoad()"
           />
         } @else {
           <p-tabs [value]="0">

@@ -58,7 +58,7 @@ import {
           <app-page-error-state
             title="Unable to load team settings"
             [message]="loadError()!"
-            (retry)="retryLoadSettings()"
+            (retry)="retryLoad()"
           />
         } @else {
           <app-card-shell class="tab-content-card">
@@ -318,7 +318,7 @@ export class TeamManagementComponent implements OnInit {
     }
   }
 
-  retryLoadSettings(): void {
+  retryLoad(): void {
     void this.loadSettings();
   }
 

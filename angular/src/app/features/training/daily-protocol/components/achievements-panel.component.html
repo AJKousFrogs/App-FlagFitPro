@@ -23,7 +23,7 @@
           <app-page-error-state
             title="Unable to load achievements"
             [message]="loadError()!"
-            (retry)="retryLoadData()"
+            (retry)="retryLoad()"
           />
         } @else {
           <div class="summary-stats">

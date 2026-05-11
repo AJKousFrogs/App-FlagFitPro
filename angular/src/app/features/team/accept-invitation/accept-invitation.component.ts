@@ -122,7 +122,7 @@ export class AcceptInvitationComponent implements OnInit {
     return true;
   }
 
-  retryLoadInvitation(): void {
+  retryLoad(): void {
     const token = this.invitationToken();
     if (!token) {
       return;

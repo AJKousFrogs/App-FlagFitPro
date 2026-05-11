@@ -253,7 +253,7 @@ export class TournamentCalendarComponent {
     }
   }
 
-  retryLoadTournaments(): void {
+  retryLoad(): void {
     void this.loadTournaments();
   }
 

@@ -305,7 +305,7 @@ export class CalendarCoachComponent implements OnInit {
     }
   }
 
-  retryLoadData(): void {
+  retryLoad(): void {
     void this.loadData();
   }
 

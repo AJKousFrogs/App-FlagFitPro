@@ -19,7 +19,7 @@
         <app-page-error-state
           title="Unable to load tournaments"
           [message]="loadError()!"
-          (retry)="retryLoadTournaments()"
+          (retry)="retryLoad()"
         />
       } @else if (tournaments().length === 0) {
         <app-empty-state

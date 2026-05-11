@@ -20,7 +20,7 @@
           <app-page-error-state
             title="Unable to load roadmap"
             [message]="loadError()!"
-            (retry)="retryLoadCycles()"
+            (retry)="retryLoad()"
           />
         } @else if (playerCycles().length === 0) {
           <app-empty-state

@@ -42,7 +42,7 @@
           <app-page-error-state
             title="Unable to load practice plans"
             [message]="loadError()!"
-            (retry)="retryLoadData()"
+            (retry)="retryLoad()"
           />
         } @else if (filteredPractices().length > 0) {
           <div class="practices-list">

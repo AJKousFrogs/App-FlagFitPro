@@ -252,7 +252,7 @@ export class PracticePlannerComponent implements OnInit {
     }
   }
 
-  retryLoadData(): void {
+  retryLoad(): void {
     void this.loadData();
   }
 

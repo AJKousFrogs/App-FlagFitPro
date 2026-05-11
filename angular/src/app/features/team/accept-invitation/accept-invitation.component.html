@@ -52,7 +52,7 @@
                 ? null
                 : 'If this link came from an older email, ask the team to send a new invitation.'
             "
-            (retry)="retryLoadInvitation()"
+            (retry)="retryLoad()"
           />
           @if (!hasRetryableError()) {
             <a [routerLink]="homeRoute()" class="back-link mt-4"

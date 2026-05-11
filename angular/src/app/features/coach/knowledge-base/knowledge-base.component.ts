@@ -199,7 +199,7 @@ export class KnowledgeBaseComponent implements OnInit {
     this.reviewForm = { ...this.reviewForm, notes: value };
   }
 
-  retryLoadData(): void {
+  retryLoad(): void {
     void this.data.bootstrap();
   }
 

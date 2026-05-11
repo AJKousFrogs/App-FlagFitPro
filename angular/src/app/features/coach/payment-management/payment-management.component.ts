@@ -212,7 +212,7 @@ export class PaymentManagementComponent implements OnInit {
     void this.data.loadData();
   }
 
-  retryLoadData(): void {
+  retryLoad(): void {
     void this.data.loadData();
   }
 

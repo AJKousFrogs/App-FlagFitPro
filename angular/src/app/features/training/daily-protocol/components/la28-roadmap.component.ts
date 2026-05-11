@@ -221,7 +221,7 @@ export class La28RoadmapComponent {
     }
   }
 
-  retryLoadCycles(): void {
+  retryLoad(): void {
     void this.loadCycles();
   }
 

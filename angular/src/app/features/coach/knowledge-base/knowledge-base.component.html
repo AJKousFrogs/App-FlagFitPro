@@ -24,7 +24,7 @@
           <app-page-error-state
             title="Unable to load knowledge base"
             [message]="data.loadError()!"
-            (retry)="retryLoadData()"
+            (retry)="retryLoad()"
           />
         } @else {
         @if (activeTab() === "all") {

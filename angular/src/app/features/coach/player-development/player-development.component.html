@@ -43,7 +43,7 @@
           <app-page-error-state
             title="Unable to load player development"
             [message]="loadError()!"
-            (retry)="retryLoadData()"
+            (retry)="retryLoad()"
           />
         } @else if (selectedPlayer()) {
           <!-- Development Overview -->
