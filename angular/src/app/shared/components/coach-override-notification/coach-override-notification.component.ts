@@ -28,6 +28,7 @@ import { LoggerService } from "../../../core/services/logger.service";
 import { getTimeAgo } from "../../utils/date.utils";
 import { CardShellComponent } from "../card-shell/card-shell.component";
 import { AppDialogComponent } from "../dialog/dialog.component";
+import { COACH_OVERRIDE_TYPE_LABELS } from "../../constants/status-labels.constants";
 import { DialogHeaderComponent } from "../dialog-header/dialog-header.component";
 
 @Component({
@@ -250,14 +251,7 @@ export class CoachOverrideNotificationComponent {
   }
 
   getOverrideTypeLabel(type: CoachOverride["overrideType"]): string {
-    const labels: Record<string, string> = {
-      training_load: "Training Load",
-      session_modification: "Session Modification",
-      acwr_override: "ACWR Override",
-      recovery_protocol: "Recovery Protocol",
-      other: "Other",
-    };
-    return labels[type] || type;
+    return COACH_OVERRIDE_TYPE_LABELS[type] || type;
   }
 
   getChangeDescription(override: CoachOverride): string {

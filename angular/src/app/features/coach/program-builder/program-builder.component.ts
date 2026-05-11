@@ -152,6 +152,7 @@ const PHASE_PRESETS = [
 ];
 
 @Component({
+import { PROGRAM_STATUS_LABELS } from "../../shared/constants/status-labels.constants";
   selector: "app-program-builder",
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [

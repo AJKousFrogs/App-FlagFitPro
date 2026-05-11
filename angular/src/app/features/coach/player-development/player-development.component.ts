@@ -80,6 +80,7 @@ const COMPARE_OPTIONS = [
 ];
 
 @Component({
+import { GOAL_STATUS_LABELS } from "../../../../shared/constants/status-labels.constants";
   selector: "app-player-development",
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
