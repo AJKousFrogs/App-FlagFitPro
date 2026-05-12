@@ -90,6 +90,19 @@ export class ReadinessService {
    * Calculate readiness score for today.
    * Server uses authenticated user from token — no need to send userId in body.
    */
+  getHistory(_athleteId: string, days = 7): Observable<ReadinessHistory[]> {
+    return this.apiService
+      .get<ReadinessHistory[]>(`/api/readiness-history?days=${days}`)
+      .pipe(
+        map((response) => extractApiArray<ReadinessHistory>(response) ?? []),
+        tap((history) => this.history.set(history)),
+        catchError((error) => {
+          this.logger.error("Failed to load readiness history", error);
+          return throwError(() => error);
+        }),
+      );
+  }
+
   calculateToday(_athleteId?: string): Observable<ReadinessResponse> {
     this.loading.set(true);
     this.error.set(null);

@@ -7,14 +7,12 @@ import {
 
 import {
   CompetitionEvent,
-  CompetitionPhase,
 } from "../models/schedule.models";
 import {
   DailyPrescription,
   NutritionTargets,
   PeriodizationInputs,
   PrescriptionIntent,
-  RecoveryEmphasis,
 } from "../models/prescription.models";
 import { AcwrService } from "./acwr.service";
 import { ReadinessService } from "./readiness.service";

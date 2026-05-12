@@ -28,7 +28,7 @@
  * @version 1.0.0
  */
 
-import { Injectable, inject, signal } from "@angular/core";
+import { Injectable, signal } from "@angular/core";
 import {
   POSITION_REQUIREMENTS,
   ELITE_COMPARISONS,

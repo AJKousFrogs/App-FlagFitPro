@@ -578,6 +578,76 @@ export class WellnessService {
     }
   }
 
+  getRecommendations(entry: WellnessData): string[] {
+    const recs: string[] = [];
+
+    if (entry.sleep !== undefined && entry.sleep < 5) {
+      recs.push("Prioritize sleep — aim for 7–9 hours tonight.");
+    }
+    if (entry.energy !== undefined && entry.energy < 5) {
+      recs.push("Low energy detected — consider rest and lighter activity today.");
+    }
+    if (entry.stress !== undefined && entry.stress > 7) {
+      recs.push("High stress levels — try breathing exercises or stress management techniques.");
+    }
+    if (entry.soreness !== undefined && entry.soreness > 7) {
+      recs.push("High soreness — prioritize recovery, foam rolling, and reduced intensity.");
+    }
+    if (entry.hydration !== undefined && entry.hydration < 5) {
+      recs.push("Drink more water — target at least 2–3 litres today.");
+    }
+    if (entry.motivation !== undefined && entry.motivation < 5) {
+      recs.push("Motivation is low — vary your training or try a fun drill session.");
+    }
+
+    if (recs.length === 0) {
+      recs.push("Great wellness scores — keep up the great work!");
+    }
+
+    return recs;
+  }
+
+  getWellnessTrends(data: WellnessData[]): { metric: string; trend: "improving" | "declining" | "stable" }[] {
+    if (data.length < 2) return [];
+
+    const mid = Math.ceil(data.length / 2);
+    const recent = data.slice(0, mid);
+    const older = data.slice(mid);
+
+    const invertedMetrics = new Set(["stress", "soreness"]);
+    const metrics: (keyof WellnessData)[] = ["sleep", "energy", "stress", "soreness", "mood", "hydration", "motivation"];
+
+    const avg = (entries: WellnessData[], key: keyof WellnessData) => {
+      const vals = entries.map((e) => e[key] as number | undefined).filter((v): v is number => v !== undefined);
+      return vals.length ? vals.reduce((a, b) => a + b, 0) / vals.length : null;
+    };
+
+    const results: { metric: string; trend: "improving" | "declining" | "stable" }[] = [];
+
+    for (const metric of metrics) {
+      const recentAvg = avg(recent, metric);
+      const olderAvg = avg(older, metric);
+
+      if (recentAvg === null || olderAvg === null) continue;
+
+      const diff = recentAvg - olderAvg;
+      const THRESHOLD = 0.5;
+
+      let trend: "improving" | "declining" | "stable";
+      if (Math.abs(diff) < THRESHOLD) {
+        trend = "stable";
+      } else if (invertedMetrics.has(metric)) {
+        trend = diff < 0 ? "improving" : "declining";
+      } else {
+        trend = diff > 0 ? "improving" : "declining";
+      }
+
+      results.push({ metric: metric as string, trend });
+    }
+
+    return results;
+  }
+
   /**
    * Load wellness data from database
    */

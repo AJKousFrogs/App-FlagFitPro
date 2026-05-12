@@ -194,6 +194,18 @@ export class BodyCompositionService {
     return Math.round((weight / (heightInMeters * heightInMeters)) * 10) / 10;
   }
 
+  getBMICategory(bmi: number): { category: string; color: string } {
+    if (bmi < 18.5) return { category: "Underweight", color: "var(--primitive-warning-500)" };
+    if (bmi < 25) return { category: "Normal", color: "var(--color-status-success)" };
+    if (bmi < 30) return { category: "Overweight", color: "var(--primitive-warning-500)" };
+    return { category: "Obese", color: "var(--primitive-error-500)" };
+  }
+
+  calculateLeanBodyMass(weight: number, bodyFatPercent: number): number {
+    if (bodyFatPercent < 0 || bodyFatPercent > 100) return weight;
+    return Math.round((weight * (1 - bodyFatPercent / 100)) * 10) / 10;
+  }
+
   /**
    * Transform database record to interface
    */

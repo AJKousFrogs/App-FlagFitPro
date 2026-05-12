@@ -21,7 +21,7 @@
  * @version 1.1.0 - Consolidated ACWR to AcwrService
  */
 
-import { Injectable, inject, signal, computed } from "@angular/core";
+import { Injectable, signal, computed } from "@angular/core";
 
 // ============================================================================
 // INTERFACES

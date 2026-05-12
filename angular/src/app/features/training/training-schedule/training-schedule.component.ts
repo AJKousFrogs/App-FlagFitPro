@@ -41,7 +41,6 @@ import { getStatusSeverity as getStatusSeverityValue } from "../../../shared/uti
 import { TrainingScheduleStateService } from "./training-schedule-state.service";
 import type {
   CalendarDateMarker,
-  MonthlyStats,
   TrainingEntryContext,
   TrainingSession,
 } from "./training-schedule.types";
@@ -233,6 +232,10 @@ export class TrainingScheduleComponent implements OnInit {
 
   trackSession(session: TrainingSession): string {
     return `${session.id}-${session.date.getTime()}`;
+  }
+
+  loadSessions(): void {
+    this.reloadSchedule();
   }
 
   private reloadSchedule(): void {
