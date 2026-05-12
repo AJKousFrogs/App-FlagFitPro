@@ -626,6 +626,13 @@ app-alert.weather-alert {
   i { margin-right: var(--space-1); }
 }
 
+.reschedule-slot__no-forecast {
+  color: var(--color-text-secondary, #94a3b8);
+  font-size: var(--text-sm);
+
+  i { margin-right: var(--space-1); }
+}
+
 // ================================================================
 // SUBSTITUTE WORKOUT CARD - RESPONSIVE
 // ================================================================

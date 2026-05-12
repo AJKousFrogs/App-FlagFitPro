@@ -233,15 +233,20 @@
                           [class.reschedule-slot--caution]="slot.currentWeatherAlert"
                         >
                           <span class="reschedule-slot__date">{{ slot.dateLabel }}</span>
-                          @if (slot.currentWeatherAlert) {
+                          @if (slot.forecastAvailable && slot.currentWeatherAlert) {
                             <span class="reschedule-slot__warning">
                               <i class="pi pi-exclamation-triangle" aria-hidden="true"></i>
                               {{ slot.currentWeatherAlert.reason }}
                             </span>
-                          } @else {
+                          } @else if (slot.forecastAvailable) {
                             <span class="reschedule-slot__clear">
                               <i class="pi pi-check-circle" aria-hidden="true"></i>
-                              Conditions look good
+                              Forecast looks good
+                            </span>
+                          } @else {
+                            <span class="reschedule-slot__no-forecast">
+                              <i class="pi pi-info-circle" aria-hidden="true"></i>
+                              No forecast — check day-of
                             </span>
                           }
                         </div>
