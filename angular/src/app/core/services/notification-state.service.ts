@@ -741,54 +741,6 @@ export class NotificationStateService implements OnDestroy {
   /**
    * Mark multiple notifications as read (bulk operation)
    */
-  async markManyAsRead(notificationIds: string[]): Promise<boolean> {
-    if (notificationIds.length === 0) {
-      return true;
-    }
-
-    // Optimistic update
-    const previousState = [...this.notifications()];
-    this.notifications.update((notifications) =>
-      notifications.map((n) =>
-        notificationIds.includes(n.id) ? { ...n, read: true } : n,
-      ),
-    );
-
-    try {
-      const response = await firstValueFrom(
-        this.apiService.post<{ success: boolean }>(
-          API_ENDPOINTS.notifications.markRead,
-          { ids: notificationIds },
-        ),
-      );
-
-      if (!isSuccessfulApiResponse(response) || !extractApiPayload(response)) {
-        // Revert optimistic update
-        this.notifications.set(previousState);
-        throw new Error("Failed to mark notifications as read");
-      }
-
-      // Refresh badge count to ensure consistency
-      await this.refreshBadgeCount();
-      return true;
-    } catch (error) {
-      if (this.isConflictOrUnavailableError(error)) {
-        this.markNotificationsApiUnavailable();
-        return true;
-      }
-
-      // Revert optimistic update
-      this.notifications.set(previousState);
-      const errorMessage =
-        error instanceof Error
-          ? error.message
-          : "Failed to mark notifications as read";
-      this.error.set(errorMessage);
-      this.logger.error("Error marking notifications as read:", error);
-      throw error;
-    }
-  }
-
   /**
    * Refresh badge count from API
    */
@@ -831,36 +783,6 @@ export class NotificationStateService implements OnDestroy {
       this.logger.warn("Error refreshing badge count:", toLogContext(error));
       // Return current count as fallback
       return this.unreadCount();
-    }
-  }
-
-  /**
-   * Update last opened timestamp
-   */
-  async updateLastOpenedAt(): Promise<void> {
-    if (this.shouldBypassNotificationsApi()) {
-      return;
-    }
-
-    try {
-      await firstValueFrom(
-        this.apiService.patch<{ success: boolean }>(
-          API_ENDPOINTS.notifications.lastOpened,
-          {},
-        ),
-      );
-
-      this.lastOpenedAt.set(new Date().toISOString());
-    } catch (error) {
-      if (this.isConflictOrUnavailableError(error)) {
-        this.markNotificationsApiUnavailable();
-        return;
-      }
-      this.logger.warn(
-        "Error updating last opened timestamp:",
-        toLogContext(error),
-      );
-      // Non-critical error, don't throw
     }
   }
 
@@ -1034,19 +956,6 @@ export class NotificationStateService implements OnDestroy {
   /**
    * Check if there are any unread game-related notifications
    */
-  hasUnreadGameNotifications(): boolean {
-    return this.unreadNotifications().some(
-      (n) => n.category === "game" || n.category === "tournament",
-    );
-  }
-
-  /**
-   * Check if there are any high priority unread notifications
-   */
-  hasHighPriorityUnread(): boolean {
-    return this.highPriorityUnread().length > 0;
-  }
-
   /**
    * Load notifications directly from Supabase (for initial load and refresh)
    */
@@ -1089,11 +998,4 @@ export class NotificationStateService implements OnDestroy {
     }
   }
 
-  /**
-   * Reconnect realtime subscription (useful after auth changes)
-   */
-  async reconnectRealtime(): Promise<void> {
-    this.unsubscribeFromRealtime();
-    await this.initializeRealtimeSubscription();
-  }
 }

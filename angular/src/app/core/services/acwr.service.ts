@@ -615,33 +615,6 @@ export class AcwrService {
     return this.createToleranceDetectionResult(snapshot, false);
   }
 
-  /**
-   * Async method to check tolerance with injury data
-   * Call this separately when you need injury-aware tolerance detection
-   */
-  public async checkToleranceWithInjuryData(): Promise<
-    ToleranceDetection | undefined
-  > {
-    const snapshot = this.buildToleranceDetectionSnapshot();
-    if (!snapshot) {
-      return undefined;
-    }
-
-    const playerId = this.currentPlayerId();
-    const startDate = snapshot.recentHistory[snapshot.recentHistory.length - 1]?.date;
-    const endDate = snapshot.recentHistory[0]?.date;
-
-    const injuryOccurred = playerId
-      ? await this.checkForRecentInjury(
-          playerId,
-          startDate?.toISOString(),
-          endDate?.toISOString(),
-        )
-      : false;
-
-    return this.createToleranceDetectionResult(snapshot, injuryOccurred);
-  }
-
   private buildToleranceDetectionSnapshot():
     | ToleranceDetectionSnapshot
     | undefined {
@@ -1384,46 +1357,4 @@ export class AcwrService {
     }
   }
 
-  /**
-   * Check if player had an injury during a specific date range
-   * @param playerId - Player ID to check
-   * @param startDate - Start date of the period (ISO string)
-   * @param endDate - End date of the period (ISO string)
-   * @returns Promise<boolean> - True if injury occurred during period
-   */
-  private async checkForRecentInjury(
-    playerId: string,
-    startDate: string | undefined,
-    endDate: string | undefined,
-  ): Promise<boolean> {
-    if (!startDate || !endDate) {
-      return false;
-    }
-
-    try {
-      const { data, error } = await this.supabaseService.client
-        .from("injury_tracking")
-        .select("injury_date")
-        .eq("player_id", playerId)
-        .gte("injury_date", startDate)
-        .lte("injury_date", endDate)
-        .limit(1);
-
-      if (error) {
-        this.logger.warn("acwr_injury_history_query_failed", {
-          playerId,
-          ...toLogContext(error),
-        });
-        return false;
-      }
-
-      return (data && data.length > 0) || false;
-    } catch (error) {
-      this.logger.warn("acwr_injury_history_check_failed", {
-        playerId,
-        ...toLogContext(error),
-      });
-      return false;
-    }
-  }
 }

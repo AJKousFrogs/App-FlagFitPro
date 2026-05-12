@@ -807,23 +807,6 @@ export class RosterService {
   }
 
   /**
-   * Get available jersey numbers
-   */
-  getAvailableJerseyNumbers(): string[] {
-    const usedNumbers = new Set(this.allPlayers().map((p) => p.jersey));
-    const available: string[] = [];
-
-    for (let i = 0; i <= 99; i++) {
-      const num = i.toString();
-      if (!usedNumbers.has(num)) {
-        available.push(num);
-      }
-    }
-
-    return available;
-  }
-
-  /**
    * Export roster to CSV
    */
   exportRosterToCsv(): string {

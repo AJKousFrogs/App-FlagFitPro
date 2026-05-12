@@ -1,5 +1,4 @@
 import {
-    DestroyRef,
     Injectable,
     computed,
     effect,
@@ -136,7 +135,6 @@ export class UnifiedTrainingService {
   private logger = inject(LoggerService);
   private playerProgramService = inject(PlayerProgramService);
   private supabase = inject(SupabaseService);
-  private _destroyRef = inject(DestroyRef);
   private overviewRequest$: Observable<unknown> | null = null;
   private lastOverviewRequestKey: string | null = null;
   private authFailureCooldownUntil = 0;
@@ -171,7 +169,14 @@ export class UnifiedTrainingService {
   private userId = computed(() => this.supabase.currentUser()?.id);
 
   // Expose key metrics as signals (facade pattern)
-  readonly acwrRatio = this.acwrService.acwrRatio;
+  readonly acwrRatio = computed<number | null>(() => {
+    const serverAcwr = this.readinessService.current()?.acwr;
+    if (typeof serverAcwr === "number" && Number.isFinite(serverAcwr) && serverAcwr > 0) {
+      return serverAcwr;
+    }
+    const local = this.acwrService.acwrRatio?.();
+    return typeof local === "number" && Number.isFinite(local) && local > 0 ? local : null;
+  });
   readonly acuteLoad = this.acwrService.acuteLoad;
   readonly chronicLoad = this.acwrService.chronicLoad;
   readonly weeklyProgression = this.acwrService.weeklyProgression;
@@ -220,9 +225,8 @@ export class UnifiedTrainingService {
   readonly recentMeasurements = this.performanceDataService.recentMeasurements;
 
   // Hydration Facade
-  readonly latestWellness = this.wellnessService.latestWellnessEntry;
   readonly hydrationLevel = computed(
-    () => this.latestWellness()?.hydration || 0,
+    () => this.wellnessService.latestWellnessEntry()?.hydration || 0,
   );
 
   // Training specific state moved from TrainingStateService
@@ -704,16 +708,12 @@ export class UnifiedTrainingService {
     this._dailyRoutine.set(this.normalizeDailyRoutine(settings.dailyRoutine));
   }
 
-  async refreshPlayerSettings(): Promise<void> {
-    await this.loadPlayerSettingsRoutine();
-  }
-
   /**
    * Quick update for hydration
    * @param amountMl Amount in milliliters (converted to glasses, 1 glass = 250ml)
    */
   async addHydration(amountMl: number) {
-    const current = this.latestWellness();
+    const current = this.wellnessService.latestWellnessEntry();
     const currentLevel =
       (current as { hydration?: number } | null)?.hydration || 0;
 

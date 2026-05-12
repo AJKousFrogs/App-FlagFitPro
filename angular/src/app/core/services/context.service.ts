@@ -444,14 +444,6 @@ export class ContextService {
   };
 
   /**
-   * Get quick actions for the current page
-   */
-  getQuickActions(page: string): QuickAction[] {
-    const metadata = this.routeMetadata[page];
-    return metadata?.quickActions || [];
-  }
-
-  /**
    * Build breadcrumb items from route
    */
   buildBreadcrumbItems(route: string): BreadcrumbItem[] {
@@ -525,13 +517,6 @@ export class ContextService {
 
       return enhanced;
     });
-  }
-
-  /**
-   * Get current page identifier
-   */
-  getCurrentPage(): string {
-    return this.currentRoute() || "/todays-practice";
   }
 
   /**

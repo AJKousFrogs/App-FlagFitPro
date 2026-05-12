@@ -20,7 +20,6 @@ import { CookieConsentService } from "./core/services/cookie-consent.service";
 import { RouteEntry, RouteShellService } from "./core/services/route-shell.service";
 import { SessionExpiryService } from "./core/services/session-expiry.service";
 import { SupabaseService } from "./core/services/supabase.service";
-import { ThemeService } from "./core/services/theme.service";
 import { ensurePrimeIconsStylesheet } from "./core/utils/primeicons-loader";
 import { RouterOutlet } from "@angular/router";
 
@@ -85,7 +84,6 @@ export class AppComponent {
       this.cookieBannerReady() && this.cookieConsentService.showBanner(),
   );
 
-  private readonly _themeService = inject(ThemeService);
   private readonly supabase = inject(SupabaseService);
   private readonly sessionExpiry = inject(SessionExpiryService);
 

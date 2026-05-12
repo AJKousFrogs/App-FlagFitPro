@@ -39,7 +39,6 @@ import {
 } from "@angular/core";
 import { Router, RouterModule } from "@angular/router";
 import { AcwrAlertsService } from "../../core/services/acwr-alerts.service";
-import { LoadMonitoringService } from "../../core/services/load-monitoring.service";
 import { LoggerService } from "../../core/services/logger.service";
 import { toLogContext } from "../../core/services/logger.service";
 import { SupabaseService } from "../../core/services/supabase.service";
@@ -100,7 +99,6 @@ import { PageHeaderComponent } from "../../shared/components/page-header/page-he
 export class AcwrDashboardComponent implements OnInit {
   // Inject services using Angular's inject() function
   private readonly trainingService = inject(UnifiedTrainingService);
-  private readonly loadService = inject(LoadMonitoringService);
   private readonly alertsService = inject(AcwrAlertsService);
   private readonly confidenceService = inject(DataConfidenceService);
   private readonly supabase = inject(SupabaseService);

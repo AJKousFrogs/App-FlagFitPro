@@ -992,38 +992,6 @@ export class ChannelService {
     );
   }
 
-  /**
-   * Subscribe to all channels for a team
-   */
-  subscribeToTeamChannels(
-    teamId: string,
-    callback: RealtimeCallback,
-  ): () => void {
-    return this.realtimeService.subscribe("channels", `team_id=eq.${teamId}`, {
-      onInsert: (event) => {
-        const newChannel = event.new as unknown as Channel;
-        this._channels.update((channels) => [...channels, newChannel]);
-        callback(event);
-      },
-      onUpdate: (event) => {
-        const updatedChannel = event.new as unknown as Channel;
-        this._channels.update((channels) =>
-          channels.map((c) =>
-            c.id === updatedChannel.id ? updatedChannel : c,
-          ),
-        );
-        callback(event);
-      },
-      onDelete: (event) => {
-        const deletedChannel = event.old as unknown as Channel;
-        this._channels.update((channels) =>
-          channels.filter((c) => c.id !== deletedChannel.id),
-        );
-        callback(event);
-      },
-    });
-  }
-
   // ============================================================================
   // HELPERS
   // ============================================================================

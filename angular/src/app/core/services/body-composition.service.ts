@@ -49,12 +49,6 @@ export interface MeasurementsSummary {
   };
 }
 
-interface BMICategory {
-  category: string;
-  color: string;
-  description: string;
-}
-
 @Injectable({
   providedIn: "root",
 })
@@ -198,45 +192,6 @@ export class BodyCompositionService {
     if (height <= 0 || weight <= 0) return 0;
     const heightInMeters = height / 100;
     return Math.round((weight / (heightInMeters * heightInMeters)) * 10) / 10;
-  }
-
-  /**
-   * Get BMI category with styling info
-   */
-  getBMICategory(bmi: number): BMICategory {
-    if (bmi < 18.5) {
-      return {
-        category: "Underweight",
-        color: "var(--color-status-info)",
-        description: "Below healthy range",
-      };
-    } else if (bmi < 25) {
-      return {
-        category: "Normal",
-        color: "var(--color-status-success)",
-        description: "Healthy weight range",
-      };
-    } else if (bmi < 30) {
-      return {
-        category: "Overweight",
-        color: "var(--color-status-warning)",
-        description: "Above healthy range",
-      };
-    } else {
-      return {
-        category: "Obese",
-        color: "var(--color-status-error)",
-        description: "Well above healthy range",
-      };
-    }
-  }
-
-  /**
-   * Calculate lean body mass
-   */
-  calculateLeanBodyMass(weight: number, bodyFat: number): number {
-    if (bodyFat < 0 || bodyFat > 100) return weight;
-    return Math.round(weight * (1 - bodyFat / 100) * 10) / 10;
   }
 
   /**

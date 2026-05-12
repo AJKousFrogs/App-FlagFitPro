@@ -12,7 +12,6 @@
  */
 
 import { Injectable, inject, OnDestroy } from "@angular/core";
-import { Router } from "@angular/router";
 import { SupabaseService } from "./supabase.service";
 import { ToastService } from "./toast.service";
 import { LoggerService } from "./logger.service";
@@ -33,7 +32,6 @@ export class SessionExpiryService implements OnDestroy {
   private readonly supabase = inject(SupabaseService);
   private readonly toastService = inject(ToastService);
   private readonly logger = inject(LoggerService);
-  private readonly router = inject(Router);
 
   private pollTimer: ReturnType<typeof setInterval> | null = null;
   private warnedAt5Min = false;

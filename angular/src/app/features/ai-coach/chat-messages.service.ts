@@ -124,12 +124,6 @@ export class ChatMessagesService {
     this._messages.update((msgs) => [...msgs, msg]);
   }
 
-  updateMessage(id: string, updater: (m: ChatMessage) => ChatMessage): void {
-    this._messages.update((msgs) =>
-      msgs.map((m) => (m.id === id ? updater(m) : m)),
-    );
-  }
-
   // ============================================================================
   // SEND MESSAGE (API)
   // ============================================================================

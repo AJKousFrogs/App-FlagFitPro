@@ -34,13 +34,9 @@ import {
   DailyProtocol,
   ProtocolBlock,
 } from "../training/daily-protocol/daily-protocol.models";
-import {
-  mapToDailyProtocol,
-  type ProtocolApiResponse,
-} from "./utils/protocol-api-mapper";
+import { mapToDailyProtocol } from "./utils/protocol-api-mapper";
 
 // Services
-import { ApiService } from "../../core/services/api.service";
 import { DataSourceService } from "../../core/services/data-source.service";
 import { HeaderService } from "../../core/services/header.service";
 import { LoggerService } from "../../core/services/logger.service";
@@ -57,11 +53,7 @@ import {
 // Environment
 
 // Utils
-import {
-  extractApiPayload,
-  isSuccessfulApiResponse,
-  mapDailyProtocolResponse,
-} from "../../core/utils/api-response-mapper";
+import { extractApiPayload } from "../../core/utils/api-response-mapper";
 import { getDateKey, getTodayISO } from "../../shared/utils/date.utils";
 import {
   ExactTrainingSummary,
@@ -74,6 +66,7 @@ import { TodayProtocolSectionComponent } from "./components/today-protocol-secti
 import { TodayScheduleBannerComponent } from "./components/today-schedule-banner.component";
 import { TodayStatusStackComponent } from "./components/today-status-stack.component";
 import { TodayCoachMessagesService } from "./services/today-coach-messages.service";
+import { TodayProtocolStateService } from "./services/today-protocol-state.service";
 
 // Constants
 import { ROUTES, TIMEOUTS, TRAINING } from "../../core/constants/app.constants";
@@ -125,6 +118,7 @@ interface QuickFormData {
 @Component({
   selector: "app-today",
   changeDetection: ChangeDetectionStrategy.OnPush,
+  providers: [TodayProtocolStateService],
   imports: [
     RouterModule,
     SkeletonLoaderComponent,
@@ -152,9 +146,9 @@ export class TodayComponent {
   private readonly route = inject(ActivatedRoute);
   private readonly dataSourceService = inject(DataSourceService);
   private readonly destroyRef = inject(DestroyRef);
-  private readonly api = inject(ApiService);
   private readonly screenReaderAnnouncer = inject(ScreenReaderAnnouncerService);
   private readonly todayProtocolFacade = inject(TodayProtocolFacade);
+  readonly protocolState = inject(TodayProtocolStateService);
   private readonly continuityIndicators = inject(ContinuityIndicatorsService);
   private readonly coachMessages = inject(TodayCoachMessagesService);
   protected readonly schedule = inject(ScheduleService);
@@ -166,9 +160,6 @@ export class TodayComponent {
   // Guard to prevent duplicate initial loads
   private _initialLoadDone = false;
 
-  // Guard to prevent multiple protocol generation attempts (race condition fix)
-  private readonly _generationAttempted = signal(false);
-
   // Computed userId from auth service - uses signal for reactivity
   // Per audit: use currentUser() signal, not getUser() method
   private readonly userId = computed(() => this.supabase.userId());
@@ -177,11 +168,11 @@ export class TodayComponent {
   // STATE SIGNALS
   // ============================================================================
   readonly protocol = signal<Partial<DailyProtocol> | null>(null);
-  readonly protocolJson = signal<ProtocolJson | null>(null); // Raw JSON from API
+  readonly protocolJson = this.protocolState.protocolJson;
   readonly todayViewModel = signal<TodayViewModel | null>(null); // Resolved state
   readonly continuityEvents = signal<ContinuityEvent[]>([]);
-  private fullProtocolData: ProtocolApiResponse | null = null; // Store full API response with blocks for UI rendering
-  readonly error = signal<string | null>(null);
+  readonly error = this.protocolState.error;
+  readonly isGeneratingProtocol = this.protocolState.isGenerating;
   readonly currentTime = signal(new Date());
 
   // Quick Check-in State
@@ -206,8 +197,6 @@ export class TodayComponent {
     "I reviewed today’s plan. Help me decide what to focus on next.",
   );
 
-  // Protocol Generation State
-  readonly isGeneratingProtocol = signal(false);
   // Quick Check-in Options
   readonly quickMoods: QuickMood[] = [
     { value: 1, icon: "pi-times", label: "Rough" },
@@ -567,8 +556,19 @@ export class TodayComponent {
         "[TodayComponent] Auth ready, loading data for user:",
         id,
       );
-      this.loadTodayData();
+      this.protocolState.load(getTodayISO(), (uid) => { void this.loadContinuityEvents(uid); }, id);
       void this.loadContinuityEvents(id);
+    });
+
+    // React to protocol state changes and resolve view model
+    effect(() => {
+      const protocolJson = this.protocolState.protocolJson();
+      if (protocolJson) {
+        this.resolveAndUpdateViewModel(protocolJson);
+      } else if (this.protocolState.error()) {
+        this.todayViewModel.set(resolveTodayState(null, this.currentTime()));
+        this.protocol.set(null);
+      }
     });
 
     // Update time every minute
@@ -631,149 +631,12 @@ export class TodayComponent {
     });
   }
 
-  // ============================================================================
-  // DATA LOADING (Contract-Compliant)
-  // ============================================================================
-  /**
-   * Load TODAY data per contract:
-   * 1. Call GET /api/daily-protocol?date=today
-   * 2. If not found, call POST /api/daily-protocol/generate once, then GET again
-   * 3. Resolve state using deterministic resolver
-   * 4. Do NOT generate multiple times
-   * 5. Do NOT fabricate fallback UI if generation fails
-   */
-  private loadTodayData(): void {
-    const today = getTodayISO();
-
-    // Step 1: Try GET first (via Netlify Functions)
-    this.api
-      .get<ProtocolJson>(`/api/daily-protocol?date=${today}`)
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: (response) => {
-          const payload = extractApiPayload<ProtocolJson>(response);
-          if (payload) {
-            // Store full protocol data for UI rendering (includes blocks with exercises)
-            this.fullProtocolData = payload as unknown as ProtocolApiResponse;
-
-            // Protocol found, resolve state
-            // Map API response (camelCase) to resolver format (snake_case)
-            const protocolData = this.mapApiProtocolResponse(payload);
-            this.protocolJson.set(protocolData);
-            this.resolveAndUpdateViewModel(protocolData);
-            this.error.set(null);
-            const userId = this.userId();
-            if (userId) {
-              void this.loadContinuityEvents(userId);
-            }
-            // Reset generation flag on successful load
-            this._generationAttempted.set(false);
-          } else if (!this._generationAttempted()) {
-            // Protocol not found, generate once (using component-level signal)
-            this._generationAttempted.set(true);
-            this.generateAndLoadProtocol(today);
-          } else {
-            // Generation already attempted, show error
-            this.error.set(
-              "We couldn't build today's plan right now. Try refreshing in a moment.",
-            );
-            this.protocolJson.set(null);
-            this.fullProtocolData = null;
-            this.todayViewModel.set(
-              resolveTodayState(null, this.currentTime()),
-            );
-          }
-        },
-        error: (err) => {
-          this.logger.error("Failed to load today data", err);
-          if (!this._generationAttempted()) {
-            this._generationAttempted.set(true);
-            this.generateAndLoadProtocol(today);
-          } else {
-            this.error.set(
-              "We couldn't load today's practice. Please try again.",
-            );
-            this.protocolJson.set(null);
-            this.fullProtocolData = null;
-            this.todayViewModel.set(
-              resolveTodayState(null, this.currentTime()),
-            );
-          }
-        },
-      });
-  }
-
-  /**
-   * Map API response (camelCase) to ProtocolJson format (snake_case)
-   * Handles field name mismatches between backend and frontend
-   */
-  private mapApiProtocolResponse(data: unknown): ProtocolJson {
-    return mapDailyProtocolResponse(data) as ProtocolJson;
-  }
-
-  /**
-   * Generate protocol and then reload
-   */
-  private generateAndLoadProtocol(date: string): void {
-    this.isGeneratingProtocol.set(true);
-
-    this.api
-      .post<ProtocolJson>("/api/daily-protocol/generate", { date })
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: (response) => {
-          this.isGeneratingProtocol.set(false);
-          if (isSuccessfulApiResponse(response)) {
-            const payload = extractApiPayload<ProtocolJson>(response);
-            if (payload) {
-              this.fullProtocolData = payload as unknown as ProtocolApiResponse;
-              const protocolData = this.mapApiProtocolResponse(payload);
-              this.protocolJson.set(protocolData);
-              this.resolveAndUpdateViewModel(protocolData);
-              this.error.set(null);
-              return;
-            }
-
-            // Generation succeeded without inline payload, reload via GET
-            this.loadTodayData();
-          } else {
-            // Generation failed, show explicit error
-            this.error.set(
-              "We couldn't generate today's plan right now. Try again in a moment.",
-            );
-            this.protocolJson.set(null);
-            this.fullProtocolData = null;
-            this.todayViewModel.set(
-              resolveTodayState(null, this.currentTime()),
-            );
-          }
-        },
-        error: (err) => {
-          this.logger.error("Failed to generate protocol", err);
-          this.isGeneratingProtocol.set(false);
-          this.error.set(
-            "We couldn't generate today's plan right now. Try again in a moment.",
-          );
-          this.protocolJson.set(null);
-          this.fullProtocolData = null;
-          this.todayViewModel.set(resolveTodayState(null, this.currentTime()));
-        },
-      });
-  }
-
-  /**
-   * Resolve protocol JSON to TodayViewModel and update signals
-   */
   private resolveAndUpdateViewModel(protocolJson: ProtocolJson): void {
-    const viewModel = resolveTodayState(protocolJson, this.currentTime());
-    this.todayViewModel.set(viewModel);
-
-    // Also update protocol signal for backward compatibility
-    // We need to keep the full blocks data for UI rendering
-    if (this.fullProtocolData) {
-      this.protocol.set(mapToDailyProtocol(this.fullProtocolData));
+    this.todayViewModel.set(resolveTodayState(protocolJson, this.currentTime()));
+    const full = this.protocolState.fullProtocolData;
+    if (full) {
+      this.protocol.set(mapToDailyProtocol(full));
     } else if (protocolJson.blocks) {
-      // Fallback: create minimal structure
       this.protocol.set({
         id: protocolJson.id,
         protocolDate: protocolJson.protocol_date,
@@ -791,7 +654,7 @@ export class TodayComponent {
   }
 
   refreshProtocol(): void {
-    this.loadTodayData();
+    this.protocolState.load(getTodayISO());
   }
 
   private async loadContinuityEvents(userId: string): Promise<void> {
@@ -969,54 +832,31 @@ export class TodayComponent {
   // ============================================================================
   // PROTOCOL GENERATION
   // ============================================================================
+  private readonly _isGeneratingLegacy = signal(false);
+
   generateProtocol(): void {
-    this.isGeneratingProtocol.set(true);
+    this._isGeneratingLegacy.set(true);
     // Announce loading state to screen readers
     this.screenReaderAnnouncer.announceLoading("training protocol");
-    this.handleProtocolRequest(
-      this.trainingService.generateDailyProtocol(),
-      this.protocol,
-      this.isGeneratingProtocol,
-      {
-        success: "Protocol Generated",
-        detail: "Your personalized training plan is ready!",
-      },
-    );
-  }
-
-  private handleProtocolRequest(
-    request: ReturnType<
-      typeof this.trainingService.generateDailyProtocol<Partial<DailyProtocol>>
-    >,
-    targetSignal: typeof this.protocol,
-    loadingSignal: typeof this.isGeneratingProtocol,
-    toast?: { success: string; detail: string },
-  ): void {
-    request.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-      next: (response) => {
-        const payload = extractApiPayload<Partial<DailyProtocol>>(response);
-        if (payload) {
-          targetSignal.set(payload);
-          if (toast) {
-            this.toastService.success(toast.detail, toast.success);
-            // Announce success to screen readers
-            this.screenReaderAnnouncer.announceSuccess(toast.detail);
+    this.trainingService.generateDailyProtocol<Partial<DailyProtocol>>()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (response) => {
+          const payload = extractApiPayload<Partial<DailyProtocol>>(response);
+          if (payload) {
+            this.protocol.set(payload);
+            this.toastService.success("Your personalized training plan is ready!", "Protocol Generated");
+            this.screenReaderAnnouncer.announceSuccess("Your personalized training plan is ready!");
           }
-        }
-        loadingSignal.set(false);
-      },
-      error: (err) => {
-        if (toast) {
+          this._isGeneratingLegacy.set(false);
+        },
+        error: (err) => {
           this.logger.error("Protocol request failed", err);
           this.toastService.error("Request failed. Please try again.");
-          // Announce error to screen readers
-          this.screenReaderAnnouncer.announceAssertive(
-            "Error: Request failed. Please try again.",
-          );
-        }
-        loadingSignal.set(false);
-      },
-    });
+          this.screenReaderAnnouncer.announceAssertive("Error: Request failed. Please try again.");
+          this._isGeneratingLegacy.set(false);
+        },
+      });
   }
 
   // ============================================================================
@@ -1103,8 +943,7 @@ export class TodayComponent {
         break;
 
       case "read_coach_alert":
-        // Show coach alert modal/dialog
-        this.showCoachAlertDialog();
+        this.coachMessages.showAlert(this.protocolJson());
         break;
 
       case "acknowledge_coach_alert":
@@ -1112,8 +951,7 @@ export class TodayComponent {
         break;
 
       case "view_coach_note":
-        // Show coach note modal
-        this.showCoachNoteDialog();
+        this.coachMessages.showNote(this.protocolJson());
         break;
 
       default:
@@ -1141,10 +979,6 @@ export class TodayComponent {
     return getTodayISO();
   }
 
-  private showCoachAlertDialog(): void {
-    this.coachMessages.showAlert(this.protocolJson());
-  }
-
   private acknowledgeCoachAlert(): void {
     const protocol = this.protocolJson();
 
@@ -1164,7 +998,7 @@ export class TodayComponent {
               "Alert Acknowledged",
             );
             // Refresh protocol to update state
-            this.loadTodayData();
+            this.protocolState.load(getTodayISO());
           } else {
             this.toastService.error(result.message ?? "Failed to acknowledge alert");
           }
@@ -1174,10 +1008,6 @@ export class TodayComponent {
           this.toastService.error("Failed to acknowledge alert. Please try again.");
         },
       });
-  }
-
-  private showCoachNoteDialog(): void {
-    this.coachMessages.showNote(this.protocolJson());
   }
 
   private formatFocusLabel(focus: string): string {

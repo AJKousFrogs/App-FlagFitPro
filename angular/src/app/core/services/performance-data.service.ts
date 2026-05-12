@@ -55,35 +55,10 @@ export interface PerformanceTest {
   conditions?: Record<string, unknown>;
 }
 
-// Trends Interfaces
-export interface TrendsData {
-  performance: Record<string, TrendValue>;
-  body_composition: {
-    trend: string;
-    changes: TrendChanges | null;
-    latest?: PhysicalMeasurement;
-    previous?: PhysicalMeasurement;
-  };
-  wellness: {
-    trend: string;
-    trends: Record<string, TrendValue>;
-    recentAverage?: number;
-  };
-  correlations: Record<string, number>;
-  insights: string[];
-  recommendations: string[];
-}
-
 interface TrendValue {
   value: number;
   change?: number;
   trend?: "up" | "down" | "stable";
-}
-
-interface TrendChanges {
-  weight?: number;
-  bodyFat?: number;
-  muscleMass?: number;
 }
 
 interface PaginationInfo {
@@ -922,76 +897,6 @@ export class PerformanceDataService {
         });
       }),
     );
-  }
-
-  logPerformanceTest(test: Partial<PerformanceTest>): Observable<{
-    success: boolean;
-    data?: DatabaseTest;
-    error?: unknown;
-  }> {
-    const userId = this.userId();
-
-    if (!userId) {
-      this.logger.error("performance_log_test_no_user");
-      return of({ success: false });
-    }
-
-    return from(
-      this.supabaseService.client
-        .from("performance_tests")
-        .insert({
-          user_id: userId,
-          test_type: test.testType,
-          result_value: test.result,
-          target_value: test.target,
-          test_date: test.timestamp || new Date().toISOString(),
-          conditions: test.conditions || {},
-        })
-        .select()
-        .single(),
-    ).pipe(
-      map(({ data, error }) => {
-        if (error) {
-          this.logger.error("performance_test_log_error", error);
-          return { success: false, error };
-        }
-        this.logger.success("performance_test_logged", { id: data.id });
-        return { success: true, data };
-      }),
-      catchError((error) => {
-        this.logger.error("performance_test_log_failed", error);
-        return of({ success: false, error: error.message });
-      }),
-    );
-  }
-
-  // Trends Analysis
-  getTrends(_timeframe = "12m"): Observable<TrendsData> {
-    const userId = this.userId();
-
-    if (!userId) {
-      return of({
-        performance: {},
-        body_composition: { trend: "insufficient_data", changes: null },
-        wellness: { trend: "insufficient_data", trends: {} },
-        correlations: {},
-        insights: [],
-        recommendations: [],
-      });
-    }
-
-    // This is a complex analysis that could be implemented as a Supabase function
-    // For now, return basic structure
-    this.logger.warn("performance_trends_analysis_simplified");
-
-    return of({
-      performance: {},
-      body_composition: { trend: "insufficient_data", changes: null },
-      wellness: { trend: "insufficient_data", trends: {} },
-      correlations: {},
-      insights: ["Track more data to see trends"],
-      recommendations: ["Log workouts, wellness, and measurements regularly"],
-    });
   }
 
   // Data Export

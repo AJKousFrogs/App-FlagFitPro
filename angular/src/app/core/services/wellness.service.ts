@@ -102,12 +102,6 @@ interface DailyWellnessCheckinEntry {
 
 // RealtimeEvent is now imported from realtime.service.ts
 
-interface WellnessTrend {
-  metric: string;
-  trend: "improving" | "declining" | "stable";
-  change: number;
-}
-
 /**
  * Memory management constants for wellness data
  * Prevents unbounded data growth
@@ -582,112 +576,6 @@ export class WellnessService {
           "Your wellness is concerning. Consider taking a rest day and consulting a coach.",
       };
     }
-  }
-
-  /**
-   * Get wellness trends over time
-   */
-  getWellnessTrends(data: WellnessData[]): WellnessTrend[] {
-    if (data.length < 2) return [];
-
-    const metrics = [
-      "sleep",
-      "energy",
-      "stress",
-      "soreness",
-      "motivation",
-      "mood",
-      "hydration",
-    ];
-    const trends: WellnessTrend[] = [];
-
-    metrics.forEach((metric) => {
-      const values = data
-        .map((d) => (d as unknown as Record<string, unknown>)[metric])
-        .filter((v): v is number => typeof v === "number");
-
-      if (values.length < 2) return;
-
-      // Use fixed 7-day windows rather than 50/50 split so that
-      // small datasets (e.g. 3 entries → 1 vs 2) don't produce biased trends.
-      // `data` is ordered newest-first; values preserves that order.
-      const recentWindow = values.slice(0, Math.min(7, Math.floor(values.length / 2)));
-      const earlierWindow = values.slice(recentWindow.length, recentWindow.length + Math.min(7, values.length - recentWindow.length));
-
-      if (recentWindow.length === 0 || earlierWindow.length === 0) return;
-
-      const recent = recentWindow;
-      const earlier = earlierWindow;
-
-      const recentAvg = recent.reduce((a, b) => a + b, 0) / recent.length;
-      const earlierAvg = earlier.reduce((a, b) => a + b, 0) / earlier.length;
-
-      const change = ((recentAvg - earlierAvg) / earlierAvg) * 100;
-
-      // For stress and soreness, lower is better
-      const invertMetrics = ["stress", "soreness"];
-      const adjustedChange = invertMetrics.includes(metric) ? -change : change;
-
-      trends.push({
-        metric,
-        trend:
-          adjustedChange > 5
-            ? "improving"
-            : adjustedChange < -5
-              ? "declining"
-              : "stable",
-        change: Math.round(Math.abs(change) * 10) / 10,
-      });
-    });
-
-    return trends;
-  }
-
-  /**
-   * Get recommendations based on wellness data
-   */
-  getRecommendations(data: WellnessData): string[] {
-    const recommendations: string[] = [];
-
-    if (data.sleep !== undefined && data.sleep < 6) {
-      recommendations.push(
-        "Prioritize 7-9 hours of sleep for optimal recovery",
-      );
-    }
-
-    if (data.energy !== undefined && data.energy < 5) {
-      recommendations.push("Consider a rest day or light training session");
-    }
-
-    if (data.stress !== undefined && data.stress > 7) {
-      recommendations.push(
-        "Practice stress management techniques like meditation or breathing exercises",
-      );
-    }
-
-    if (data.soreness !== undefined && data.soreness > 7) {
-      recommendations.push(
-        "Focus on recovery protocols: foam rolling, stretching, ice baths",
-      );
-    }
-
-    if (data.hydration !== undefined && data.hydration < 6) {
-      recommendations.push(
-        "Increase water intake to support performance and recovery",
-      );
-    }
-
-    if (data.motivation !== undefined && data.motivation < 5) {
-      recommendations.push(
-        "Try varying your training routine to maintain engagement",
-      );
-    }
-
-    if (recommendations.length === 0) {
-      recommendations.push("Keep up the excellent wellness habits!");
-    }
-
-    return recommendations;
   }
 
   /**

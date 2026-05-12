@@ -6,7 +6,6 @@
  */
 
 import { Injectable, inject, signal, computed } from "@angular/core";
-import { SupabaseService } from "./supabase.service";
 import { LoggerService } from "./logger.service";
 import { OwnershipTransitionService } from "./ownership-transition.service";
 
@@ -25,7 +24,6 @@ export interface AccountabilityItem {
   providedIn: "root",
 })
 export class AccountabilityTrackingService {
-  private readonly supabaseService = inject(SupabaseService);
   private readonly logger = inject(LoggerService);
   private readonly ownershipTransitionService = inject(
     OwnershipTransitionService,

@@ -5,9 +5,7 @@
  * Used to display confidence indicators throughout the app
  */
 
-import { Injectable, inject } from "@angular/core";
-import { SupabaseService } from "./supabase.service";
-import { LoggerService } from "./logger.service";
+import { Injectable } from "@angular/core";
 
 export interface ConfidenceScore {
   score: number; // 0.0 to 1.0
@@ -29,9 +27,6 @@ export interface WellnessData {
   providedIn: "root",
 })
 export class DataConfidenceService {
-  private readonly supabaseService = inject(SupabaseService);
-  private readonly logger = inject(LoggerService);
-
   /**
    * Calculate confidence score for wellness data
    * Returns 0.0 to 1.0 based on completeness and recency

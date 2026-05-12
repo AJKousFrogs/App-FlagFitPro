@@ -8,13 +8,11 @@
 import {
   ChangeDetectionStrategy,
   Component,
-  inject,
   input,
 } from "@angular/core";
 
 import { StatusTagComponent } from "../status-tag/status-tag.component";
 import { OwnershipTransition } from "../../../core/services/ownership-transition.service";
-import { LoggerService } from "../../../core/services/logger.service";
 import { getTimeAgo } from "../../utils/date.utils";
 
 @Component({
@@ -75,8 +73,6 @@ import { getTimeAgo } from "../../utils/date.utils";
 export class OwnershipTransitionBadgeComponent {
   transition = input.required<OwnershipTransition>();
   showDetails = input<boolean>(false);
-
-  private logger = inject(LoggerService);
 
   getTitle(transition: OwnershipTransition): string {
     if (transition.toRole === "coach") {

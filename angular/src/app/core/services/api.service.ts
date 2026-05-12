@@ -390,7 +390,6 @@ export const API_ENDPOINTS = {
     list: "/api/notifications",
     count: "/api/notifications/count",
     markRead: "/api/notifications/mark-read",
-    lastOpened: "/api/notifications/last-opened",
     delete: (id: string) => `/api/notifications/${id}`,
     preferences: "/api/notifications/preferences",
   },
