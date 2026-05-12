@@ -213,6 +213,8 @@ export class AiChatService {
    * Core SSE streaming implementation.
    * Creates a placeholder message, streams tokens into it, finalises metadata.
    */
+  private useFallbackProvider = false;
+
   private async streamMessage(request: ChatRequest): Promise<ChatMessage> {
     const token = await this.supabase.waitForInit().then(() => this.supabase.getToken());
 
@@ -226,15 +228,7 @@ export class AiChatService {
     };
     this.addMessageToSession(placeholder);
 
-    const response = await fetch(this.apiService.buildUrl(API_ENDPOINTS.aiChat.send), {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Accept": "text/event-stream",
-        ...(token ? { Authorization: `Bearer ${token}` } : {}),
-      },
-      body: JSON.stringify(request),
-    });
+    const response = await this.fetchWithFallback(request, token);
 
     if (!response.ok || !response.body) {
       throw new Error(`AI service returned ${response.status}`);
@@ -299,6 +293,33 @@ export class AiChatService {
     }
 
     return finalMessage;
+  }
+
+  private async fetchWithFallback(
+    request: ChatRequest,
+    token: string | null,
+  ): Promise<Response> {
+    const url = this.apiService.buildUrl(API_ENDPOINTS.aiChat.send);
+    const headers: Record<string, string> = {
+      "Content-Type": "application/json",
+      "Accept": "text/event-stream",
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      ...(this.useFallbackProvider ? { "X-Prefer-Fallback": "true" } : {}),
+    };
+    const body = JSON.stringify(request);
+
+    const response = await fetch(url, { method: "POST", headers, body });
+
+    if ((response.status === 429 || response.status === 503) && !this.useFallbackProvider) {
+      this.useFallbackProvider = true;
+      return fetch(url, {
+        method: "POST",
+        headers: { ...headers, "X-Prefer-Fallback": "true" },
+        body,
+      });
+    }
+
+    return response;
   }
 
   /**
