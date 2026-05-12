@@ -3,6 +3,7 @@ import {
   Component,
   ElementRef,
   OnDestroy,
+  OnInit,
   computed,
   input,
   output,
@@ -201,10 +202,12 @@ const DEFAULT_PLAYERS: PlayerPosition[] = [
     }
   `,
 })
-export class PlayCanvasComponent implements OnDestroy {
+export class PlayCanvasComponent implements OnInit, OnDestroy {
   readonly width = input(400);
   readonly height = input(350);
   readonly readonly = input(false);
+  readonly initialPlayers = input<PlayerPosition[] | null>(null);
+  readonly initialRoutes = input<RouteSegment[] | null>(null);
   readonly routesChanged = output<RouteSegment[]>();
   readonly playersChanged = output<PlayerPosition[]>();
 
@@ -229,6 +232,13 @@ export class PlayCanvasComponent implements OnDestroy {
   private isDragging = false;
   private dragPlayer: PlayerPosition | null = null;
   private dragOffset = { x: 0, y: 0 };
+
+  ngOnInit(): void {
+    const initPlayers = this.initialPlayers();
+    const initRoutes = this.initialRoutes();
+    if (initPlayers?.length) this.players.set(initPlayers);
+    if (initRoutes?.length) this.routes.set(initRoutes);
+  }
 
   setTool(tool: CanvasTool): void {
     if (this.readonly()) return;

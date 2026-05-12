@@ -236,7 +236,13 @@
             <!-- Left: Designer -->
             <div class="designer-column">
               <h4>Play Designer</h4>
-              <app-play-canvas [readonly]="isViewing()" />
+              <app-play-canvas
+                [readonly]="isViewing()"
+                [initialPlayers]="playForm.diagram?.players ?? null"
+                [initialRoutes]="playForm.diagram?.routes ?? null"
+                (routesChanged)="onRoutesChanged($event)"
+                (playersChanged)="onPlayersChanged($event)"
+              />
             </div>
 
             <!-- Right: Details -->

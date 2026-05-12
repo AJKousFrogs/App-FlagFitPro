@@ -31,8 +31,12 @@ import { DialogFooterComponent } from "../../../shared/components/dialog-footer/
 import { DialogHeaderComponent } from "../../../shared/components/dialog-header/dialog-header.component";
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";
-import { CoachPlaybookDataService } from "../services/coach-playbook-data.service";
-import { PlayCanvasComponent } from "./play-canvas.component";
+import { CoachPlaybookDataService, PlayDiagram } from "../services/coach-playbook-data.service";
+import {
+  PlayCanvasComponent,
+  PlayerPosition,
+  RouteSegment,
+} from "./play-canvas.component";
 
 // ===== Interfaces =====
 interface Play {
@@ -46,6 +50,7 @@ interface Play {
   teamMemorized: number;
   status: "active" | "archived";
   createdAt: string;
+  diagram?: PlayDiagram;
 }
 
 interface PlayAssignment {
@@ -276,6 +281,7 @@ export class PlaybookManagerComponent implements OnInit {
         { position: "C", instructions: [""] },
       ],
       coachNotes: "",
+      diagram: undefined as PlayDiagram | undefined,
     };
   }
 
@@ -291,6 +297,21 @@ export class PlaybookManagerComponent implements OnInit {
         instructions: [...assignment.instructions],
       })),
       coachNotes: play.coachNotes,
+      diagram: play.diagram,
+    };
+  }
+
+  onRoutesChanged(routes: RouteSegment[]): void {
+    this.playForm = {
+      ...this.playForm,
+      diagram: { ...this.playForm.diagram, routes },
+    };
+  }
+
+  onPlayersChanged(players: PlayerPosition[]): void {
+    this.playForm = {
+      ...this.playForm,
+      diagram: { ...this.playForm.diagram, players },
     };
   }
 
@@ -366,6 +387,7 @@ export class PlaybookManagerComponent implements OnInit {
       type: this.playForm.type,
       assignments: this.playForm.assignments,
       coachNotes: this.playForm.coachNotes,
+      diagram: this.playForm.diagram,
       status: "active",
     });
 

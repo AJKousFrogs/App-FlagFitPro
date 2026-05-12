@@ -14,6 +14,11 @@ export interface CoachPlayAssignment {
   isPrimary?: boolean;
 }
 
+export interface PlayDiagram {
+  players?: { id: string; label: string; x: number; y: number }[];
+  routes?: { playerId: string; points: { x: number; y: number }[] }[];
+}
+
 export interface CoachPlaybookPlay {
   id: string;
   name: string;
@@ -25,6 +30,7 @@ export interface CoachPlaybookPlay {
   teamMemorized: number;
   status: "active" | "archived";
   createdAt: string;
+  diagram?: PlayDiagram;
 }
 
 export interface CoachPlayMemorizationStatus {
@@ -46,6 +52,7 @@ export interface SaveCoachPlayInput {
   coachNotes: string;
   teamMemorized?: number;
   status?: "active" | "archived";
+  diagram?: PlayDiagram;
 }
 
 type ServiceError = { message?: string } | null;
@@ -131,6 +138,7 @@ export class CoachPlaybookDataService {
         team_memorized: input.teamMemorized ?? 0,
         status: input.status ?? "active",
         updated_at: new Date().toISOString(),
+        diagram: input.diagram ?? null,
       };
 
       if (input.id) {
@@ -209,6 +217,7 @@ export class CoachPlaybookDataService {
       teamMemorized: this.toNumber(row["team_memorized"]),
       status: this.toStatus(row["status"]),
       createdAt: this.toString(row["created_at"]),
+      diagram: (row["diagram"] as PlayDiagram) ?? undefined,
     };
   }
 
