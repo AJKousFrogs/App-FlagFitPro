@@ -3,8 +3,8 @@ import {
   Component,
   ElementRef,
   OnDestroy,
-  OnInit,
   computed,
+  effect,
   input,
   output,
   signal,
@@ -202,7 +202,7 @@ const DEFAULT_PLAYERS: PlayerPosition[] = [
     }
   `,
 })
-export class PlayCanvasComponent implements OnInit, OnDestroy {
+export class PlayCanvasComponent implements OnDestroy {
   readonly width = input(400);
   readonly height = input(350);
   readonly readonly = input(false);
@@ -233,11 +233,14 @@ export class PlayCanvasComponent implements OnInit, OnDestroy {
   private dragPlayer: PlayerPosition | null = null;
   private dragOffset = { x: 0, y: 0 };
 
-  ngOnInit(): void {
-    const initPlayers = this.initialPlayers();
-    const initRoutes = this.initialRoutes();
-    if (initPlayers?.length) this.players.set(initPlayers);
-    if (initRoutes?.length) this.routes.set(initRoutes);
+  constructor() {
+    effect(() => {
+      const initPlayers = this.initialPlayers();
+      const initRoutes = this.initialRoutes();
+      this.players.set(initPlayers?.length ? initPlayers : [...DEFAULT_PLAYERS]);
+      this.routes.set(initRoutes?.length ? initRoutes : []);
+      this.undoStack.set([]);
+    });
   }
 
   setTool(tool: CanvasTool): void {
