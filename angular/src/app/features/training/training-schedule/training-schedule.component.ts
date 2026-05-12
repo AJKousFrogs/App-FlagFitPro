@@ -861,7 +861,7 @@ export class TrainingScheduleComponent implements OnInit {
     }
   }
 
-  getStatusSeverity(status: string): StatusSeverity | null | undefined {
+  getStatusSeverity(status: string): StatusSeverity {
     return getStatusSeverityValue(status);
   }
 

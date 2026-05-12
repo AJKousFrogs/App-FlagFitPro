@@ -124,11 +124,6 @@ export class VideoCurationPlaylistsComponent {
 
   readonly createPlaylistHandler = (): void => this.create.emit();
 
-  getFormatFocus(focus: string): string {
-    return formatFocus(focus);
-  }
-
-  getDuration(seconds: number): string {
-    return formatDuration(seconds);
-  }
+  getFormatFocus = formatFocus;
+  getDuration = formatDuration;
 }

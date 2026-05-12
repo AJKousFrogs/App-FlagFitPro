@@ -32,6 +32,7 @@ import { PrivacySettingsService } from "../../../core/services/privacy-settings.
 import { SupabaseService } from "../../../core/services/supabase.service";
 import { AiTrainingSchedulerDataService } from "../services/ai-training-scheduler-data.service";
 import { extractApiPayload } from "../../../core/utils/api-response-mapper";
+import { type StatusSeverity } from "../../../shared/utils/status.utils";
 
 interface AISuggestion {
   id: string;
@@ -515,7 +516,7 @@ export class AiTrainingSchedulerComponent implements OnInit {
 
   getSuggestionSeverity(
     type: string,
-  ): "success" | "info" | "warning" | "secondary" | "contrast" | "danger" {
+  ): StatusSeverity {
     switch (type) {
       case "swap":
         return "info";

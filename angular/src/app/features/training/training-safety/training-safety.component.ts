@@ -30,6 +30,7 @@ import { IconButtonComponent } from "../../../shared/components/button/icon-butt
 import { ProgressBar } from "primeng/progressbar";
 import { Tabs, TabPanel } from "primeng/tabs";
 import { StatusTagComponent } from "../../../shared/components/status-tag/status-tag.component";
+import { type StatusSeverityBase } from "../../../shared/utils/status.utils";
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";
 import { SafetyWarningsComponent } from "../../../shared/components/safety-warnings/safety-warnings.component";
@@ -581,7 +582,7 @@ export class TrainingSafetyComponent implements OnInit {
     this.recommendations.set(recs);
   }
 
-  getAgeGroupSeverity(): "success" | "info" | "warning" | "danger" {
+  getAgeGroupSeverity(): StatusSeverityBase {
     const group = this.ageGroup();
     if (group === "Youth" || group === "Young Adult") return "success";
     if (group === "Adult") return "info";
@@ -589,7 +590,7 @@ export class TrainingSafetyComponent implements OnInit {
     return "danger";
   }
 
-  getSleepDebtSeverity(): "success" | "info" | "warning" | "danger" {
+  getSleepDebtSeverity(): StatusSeverityBase {
     const level = this.sleepDebtLevel();
     if (level === "None") return "success";
     if (level === "Mild") return "info";
@@ -597,7 +598,7 @@ export class TrainingSafetyComponent implements OnInit {
     return "danger";
   }
 
-  getMovementLimitSeverity(): "success" | "info" | "warning" | "danger" {
+  getMovementLimitSeverity(): StatusSeverityBase {
     const status = this.movementLimitStatus();
     if (status === "Safe") return "success";
     if (status === "Caution") return "warning";

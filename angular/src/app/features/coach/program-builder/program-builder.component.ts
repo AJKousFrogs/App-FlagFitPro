@@ -49,6 +49,7 @@ import { DialogService } from "../../../core/ui/dialog.service";
 import { CardShellComponent } from "../../../shared/components/card-shell/card-shell.component";
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";
+import { PROGRAM_STATUS_LABELS } from "../../../shared/constants/status-labels.constants";
 
 // ===== Interfaces =====
 interface TrainingProgram {
@@ -152,7 +153,6 @@ const PHASE_PRESETS = [
 ];
 
 @Component({
-import { PROGRAM_STATUS_LABELS } from "../../shared/constants/status-labels.constants";
   selector: "app-program-builder",
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [

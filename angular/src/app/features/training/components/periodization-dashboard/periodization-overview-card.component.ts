@@ -9,6 +9,7 @@ import { PhaseConfig } from "../../../../core/services/flag-football-periodizati
 import { CardShellComponent } from "../../../../shared/components/card-shell/card-shell.component";
 import { StatusTagComponent } from "../../../../shared/components/status-tag/status-tag.component";
 import { Chip } from "primeng/chip";
+import { type StatusSeverityBase } from "../../../../shared/utils/status.utils";
 
 @Component({
   selector: "app-periodization-overview-card",
@@ -31,7 +32,7 @@ export class PeriodizationOverviewCardComponent {
   readonly loadRecommendation = input<LoadRecommendation | null>(null);
   readonly acwrStatus = input<ACWRCalculation | null>(null);
 
-  getPhaseSeverity(): "success" | "info" | "warning" | "danger" | "secondary" {
+  getPhaseSeverity(): StatusSeverityBase {
     const phase = this.currentPhase();
     if (!phase) return "info";
 
@@ -50,7 +51,7 @@ export class PeriodizationOverviewCardComponent {
     }
   }
 
-  getAcwrSeverity(): "success" | "info" | "warning" | "danger" {
+  getAcwrSeverity(): StatusSeverityBase {
     const status = this.acwrStatus();
     if (!status) return "info";
 

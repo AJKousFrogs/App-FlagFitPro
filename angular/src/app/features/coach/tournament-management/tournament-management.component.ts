@@ -33,6 +33,7 @@ import { LoggerService } from "../../../core/services/logger.service";
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";
 import { CoachTournamentManagementDataService } from "../services/coach-tournament-management-data.service";
+import { type StatusSeverity } from "../../../shared/utils/status.utils";
 
 // ===== Interfaces =====
 interface Tournament {
@@ -408,7 +409,7 @@ export class TournamentManagementComponent implements OnInit {
 
   getRegistrationSeverity(
     status: string,
-  ): "success" | "info" | "warning" | "danger" | "secondary" | "contrast" {
+  ): StatusSeverity {
     const severities: Record<
       string,
       "success" | "info" | "warning" | "danger" | "secondary" | "contrast"

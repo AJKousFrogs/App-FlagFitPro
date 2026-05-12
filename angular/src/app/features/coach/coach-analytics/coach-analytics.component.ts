@@ -29,6 +29,7 @@ import { LazyChartComponent } from "../../../shared/components/lazy-chart/lazy-c
 import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";
 import { StatusTagComponent } from "../../../shared/components/status-tag/status-tag.component";
 import { getInitials } from "../../../shared/utils/format.utils";
+import { type StatusSeverityBase } from "../../../shared/utils/status.utils";
 
 interface OverviewMetrics {
   totalAthletes: number;
@@ -240,17 +241,12 @@ export class CoachAnalyticsComponent {
 
   getCompletionSeverity(
     rate: number,
-  ): "success" | "info" | "warning" | "danger" {
+  ): StatusSeverityBase {
     if (rate >= 90) return "success";
     if (rate >= 70) return "info";
     if (rate >= 50) return "warning";
     return "danger";
   }
 
-  /**
-   * Get initials from name using centralized utility
-   */
-  getInitials(name: string): string {
-    return getInitials(name);
-  }
+  getInitials = getInitials;
 }

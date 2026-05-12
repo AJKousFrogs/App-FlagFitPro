@@ -672,7 +672,7 @@ export class PracticePlannerComponent implements OnInit {
     return PRACTICE_STATUS_LABELS[status] || status;
   }
 
-  getStatusSeverity(status: string): StatusSeverity | null | undefined {
+  getStatusSeverity(status: string): StatusSeverity {
     return getStatusSeverityValue(status);
   }
 

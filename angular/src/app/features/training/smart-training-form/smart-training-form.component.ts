@@ -43,6 +43,7 @@ import {
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { CardShellComponent } from "../../../shared/components/card-shell/card-shell.component";
 import { SmartTrainingDataService } from "../services/smart-training-data.service";
+import { type StatusSeverityBase } from "../../../shared/utils/status.utils";
 
 interface SessionTypeOption {
   label: string;
@@ -349,7 +350,7 @@ export class SmartTrainingFormComponent implements OnInit {
 
   getWeatherSeverity(
     suitability: "excellent" | "good" | "fair" | "poor" | undefined,
-  ): "success" | "info" | "warning" | "danger" {
+  ): StatusSeverityBase {
     return this.weatherService.getWeatherSeverity(suitability || "good");
   }
 

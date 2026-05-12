@@ -246,18 +246,11 @@ export class VideoCurationVideoTableComponent {
   positionOptions = POSITION_OPTIONS;
   statusOptions = STATUS_OPTIONS;
 
-  getFormatFocus(focus: string): string {
-    return formatFocus(focus);
-  }
+  getFormatFocus = formatFocus;
+  getStatusSeverityValue = getStatusSeverity;
 
   getVideoStatusValue(videoId: string): VideoStatus {
     return this.videoStatuses().get(videoId) || "pending";
-  }
-
-  getStatusSeverityValue(
-    status: string,
-  ): "warning" | "success" | "danger" | "secondary" {
-    return getStatusSeverity(status);
   }
 
   onFilterChange(): void {

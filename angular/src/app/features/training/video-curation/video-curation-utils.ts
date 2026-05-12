@@ -8,6 +8,7 @@ import { TrainingFocus } from "./video-curation.models";
 import {
   getMappedStatusSeverity,
   reviewStatusSeverityMap,
+  type StatusSeverityBase,
 } from "../../../shared/utils/status.utils";
 
 /**
@@ -79,7 +80,7 @@ export function formatSuggestionDate(dateStr: string): string {
  */
 export function getStatusSeverity(
   status: string,
-): "warning" | "success" | "danger" | "secondary" {
+): StatusSeverityBase {
   return getMappedStatusSeverity(status, reviewStatusSeverityMap, "secondary");
 }
 

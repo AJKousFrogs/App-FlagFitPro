@@ -29,6 +29,7 @@ import { StatusTagComponent } from "../../../shared/components/status-tag/status
 import {
   getMappedStatusSeverity,
   goalStatusSeverityMap,
+  type StatusSeverity,
 } from "../../../shared/utils/status.utils";
 import { DatePickerComponent } from "../../../shared/components/date-picker/date-picker.component";
 import { FormInputComponent } from "../../../shared/components/form-input/form-input.component";
@@ -49,6 +50,7 @@ import {
   CoachPlayerDevelopmentDataService,
   CoachSkillAssessment,
 } from "../services/coach-player-development-data.service";
+import { GOAL_STATUS_LABELS } from "../../../shared/constants/status-labels.constants";
 
 // ===== Local interfaces =====
 
@@ -80,7 +82,6 @@ const COMPARE_OPTIONS = [
 ];
 
 @Component({
-import { GOAL_STATUS_LABELS } from "../../../../shared/constants/status-labels.constants";
   selector: "app-player-development",
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
@@ -699,13 +700,13 @@ export class PlayerDevelopmentComponent implements OnInit {
 
   getStatusSeverity(
     status: string,
-  ): "success" | "info" | "warning" | "danger" | "secondary" | "contrast" {
+  ): StatusSeverity {
     return getMappedStatusSeverity(status, goalStatusSeverityMap, "secondary");
   }
 
   getGradeSeverity(
     grade: string,
-  ): "success" | "info" | "warning" | "danger" | "secondary" | "contrast" {
+  ): StatusSeverity {
     const severities: Record<
       string,
       "success" | "info" | "warning" | "danger" | "secondary" | "contrast"

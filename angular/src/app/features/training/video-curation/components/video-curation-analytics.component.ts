@@ -108,7 +108,5 @@ export class VideoCurationAnalyticsComponent {
   videosByFocus = input.required<FocusStat[]>();
   topCreators = input.required<CreatorStat[]>();
 
-  getFormatFocus(focus: string): string {
-    return formatFocus(focus);
-  }
+  getFormatFocus = formatFocus;
 }

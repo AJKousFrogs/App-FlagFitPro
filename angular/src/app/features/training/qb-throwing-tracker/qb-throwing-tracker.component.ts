@@ -39,6 +39,7 @@ import { LoggerService } from "../../../core/services/logger.service";
 import { FeatureFlagsService } from "../../../core/services/feature-flags.service";
 import { extractApiPayload } from "../../../core/utils/api-response-mapper";
 import { DIALOG_BREAKPOINTS } from "../../../core/utils/design-tokens.util";
+import { type StatusSeverity, type StatusSeverityBase } from "../../../shared/utils/status.utils";
 
 interface ThrowingSession {
   id: string;
@@ -356,7 +357,7 @@ export class QbThrowingTrackerComponent {
 
   getSessionTypeSeverity(
     type: string,
-  ): "success" | "info" | "warning" | "danger" | "secondary" | "contrast" {
+  ): StatusSeverityBase {
     const severities: Record<
       string,
       "success" | "info" | "warning" | "danger" | "secondary"

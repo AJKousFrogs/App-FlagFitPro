@@ -40,6 +40,7 @@ import { StatusTagComponent } from "../../../shared/components/status-tag/status
 import {
   getMappedStatusSeverity,
   injuryStatusSeverityMap,
+  type StatusSeverityBase,
 } from "../../../shared/utils/status.utils";
 
 import { ApiService, API_ENDPOINTS } from "../../../core/services/api.service";
@@ -728,7 +729,7 @@ export class InjuryManagementComponent implements OnInit {
 
   getStatusSeverity(
     status: InjuryStatus,
-  ): "success" | "info" | "warning" | "danger" {
+  ): StatusSeverityBase {
     return getMappedStatusSeverity(status, injuryStatusSeverityMap, "info");
   }
 }

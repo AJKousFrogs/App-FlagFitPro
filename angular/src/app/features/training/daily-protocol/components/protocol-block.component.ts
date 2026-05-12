@@ -299,9 +299,6 @@ export class ProtocolBlockComponent implements OnInit {
     }
   }
 
-  formatPrescriptionText(exercise: PrescribedExercise): string {
-    return formatPrescription(exercise);
-  }
-
+  formatPrescriptionText = formatPrescription;
   protected readonly formatDate = formatDate;
 }

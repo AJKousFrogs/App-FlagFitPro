@@ -22,7 +22,6 @@ import { CardShellComponent } from "../../../../shared/components/card-shell/car
 import { PlayerSuggestion } from "../video-curation.models";
 import {
   formatFocus,
-  formatSuggestionDate,
   getStatusSeverity,
 } from "../video-curation-utils";
 
@@ -149,12 +148,6 @@ export class VideoCurationSuggestionsComponent {
   reject = output<PlayerSuggestion>();
   openInInstagram = output<PlayerSuggestion>();
 
-  getFormatFocus(focus: string): string {
-    return formatFocus(focus);
-  }
-
-
-  getSeverity(status: string): "warning" | "success" | "danger" | "secondary" {
-    return getStatusSeverity(status);
-  }
+  getFormatFocus = formatFocus;
+  getSeverity = getStatusSeverity;
 }

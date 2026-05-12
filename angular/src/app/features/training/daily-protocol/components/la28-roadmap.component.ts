@@ -16,6 +16,7 @@ import { PageErrorStateComponent } from "../../../../shared/components/page-erro
 import {
   getMappedStatusSeverity,
   roadmapStatusSeverityMap,
+  type StatusSeverity,
 } from "../../../../shared/utils/status.utils";
 import { Tooltip } from "primeng/tooltip";
 import { ProgressBar } from "primeng/progressbar";
@@ -232,7 +233,7 @@ export class La28RoadmapComponent {
 
   getStatusSeverity(
     status: string,
-  ): "success" | "info" | "warning" | "danger" | "secondary" | "contrast" {
+  ): StatusSeverity {
     return getMappedStatusSeverity(
       status,
       roadmapStatusSeverityMap,
@@ -242,7 +243,7 @@ export class La28RoadmapComponent {
 
   getMilestoneTypeSeverity(
     type: string,
-  ): "success" | "info" | "warning" | "danger" | "secondary" | "contrast" {
+  ): StatusSeverity {
     const severities: Record<
       string,
       "success" | "info" | "warning" | "danger" | "secondary" | "contrast"

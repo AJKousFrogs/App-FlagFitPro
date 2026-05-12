@@ -23,6 +23,7 @@ import { LoggerService } from "../../../core/services/logger.service";
 import { TOAST } from "../../../core/constants/toast-messages.constants";
 import { getTemplateSessionDateFromWeekRange } from "../../../shared/utils/training-template.utils";
 import { TRAINING_SESSION_STATUS_LABELS } from "../../../shared/constants/status-labels.constants";
+import { type StatusSeverity } from "../../../shared/utils/status.utils";
 
 interface SessionDetails {
   id: string;
@@ -350,7 +351,7 @@ export class TrainingSessionDetailComponent implements OnInit {
 
   getStatusSeverity(
     status: string,
-  ): "success" | "info" | "warning" | "secondary" | "contrast" | "danger" {
+  ): StatusSeverity {
     switch (status) {
       case "completed":
         return "success";

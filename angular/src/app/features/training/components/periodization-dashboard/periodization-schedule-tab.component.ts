@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, input } from "@angular/core";
 
 import { WeeklyTrainingTemplate } from "../../../../core/services/flag-football-periodization.service";
 import { StatusTagComponent } from "../../../../shared/components/status-tag/status-tag.component";
+import { type StatusSeverityBase } from "../../../../shared/utils/status.utils";
 
 @Component({
   selector: "app-periodization-schedule-tab",
@@ -16,7 +17,7 @@ export class PeriodizationScheduleTabComponent {
 
   getSessionSeverity(
     sessionType: string,
-  ): "success" | "info" | "warning" | "danger" | "secondary" {
+  ): StatusSeverityBase {
     switch (sessionType) {
       case "game":
         return "warning";

@@ -33,6 +33,7 @@ import {
   getProtocolRiskZone,
   getProtocolTrainingPlanReadinessLevel,
 } from "../../core/utils/protocol-metrics-presentation";
+import { type StatusSeverityBase } from "../../shared/utils/status.utils";
 
 @Component({
   selector: "app-goal-based-planner",
@@ -273,7 +274,7 @@ export class GoalBasedPlannerComponent {
 
   getSessionTypeSeverity(
     type: string,
-  ): "success" | "info" | "warning" | "danger" {
+  ): StatusSeverityBase {
     const severityMap: Record<
       string,
       "success" | "info" | "warning" | "danger"

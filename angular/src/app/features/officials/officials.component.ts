@@ -19,6 +19,7 @@ import { StatusTagComponent } from "../../shared/components/status-tag/status-ta
 import {
   getMappedStatusSeverity,
   officialAssignmentStatusSeverityMap,
+  type StatusSeverityBase,
 } from "../../shared/utils/status.utils";
 import { TOAST } from "../../core/constants/toast-messages.constants";
 import { LoggerService } from "../../core/services/logger.service";
@@ -346,7 +347,7 @@ export class OfficialsComponent implements OnInit {
     return GAME_OFFICIAL_STATUS_LABELS[status] || status;
   }
 
-  getStatusSeverity(status: string): "success" | "info" | "warning" | "danger" {
+  getStatusSeverity(status: string): StatusSeverityBase {
     return getMappedStatusSeverity(
       status,
       officialAssignmentStatusSeverityMap,

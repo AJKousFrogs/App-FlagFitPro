@@ -14,6 +14,7 @@ import { ProgressBar } from "primeng/progressbar";
 import { Tabs, TabList, Tab, TabPanels, TabPanel } from "primeng/tabs";
 import { Skeleton } from "primeng/skeleton";
 import { StatusTagComponent } from "../../../../shared/components/status-tag/status-tag.component";
+import { type StatusSeverity } from "../../../../shared/utils/status.utils";
 import { ApiService } from "../../../../core/services/api.service";
 import { LoggerService } from "../../../../core/services/logger.service";
 import { extractApiPayload } from "../../../../core/utils/api-response-mapper";
@@ -251,7 +252,7 @@ export class AchievementsPanelComponent {
 
   getTierSeverity(
     tier: string,
-  ): "success" | "info" | "warning" | "danger" | "secondary" | "contrast" {
+  ): StatusSeverity {
     const severities: Record<
       string,
       "success" | "info" | "warning" | "danger" | "secondary" | "contrast"

@@ -55,6 +55,7 @@ import { PeriodizationOverviewCardComponent } from "./periodization-overview-car
 import { PeriodizationResearchTabComponent } from "./periodization-research-tab.component";
 import { PeriodizationScheduleTabComponent } from "./periodization-schedule-tab.component";
 import { PeriodizationSprintTabComponent } from "./periodization-sprint-tab.component";
+import { type StatusSeverityBase } from "../../../../shared/utils/status.utils";
 
 interface TimelineEvent {
   phase: string;
@@ -288,7 +289,7 @@ export class PeriodizationDashboardComponent implements OnInit {
 
   getSessionSeverity(
     sessionType: string,
-  ): "success" | "info" | "warning" | "danger" | "secondary" {
+  ): StatusSeverityBase {
     switch (sessionType) {
       case "game":
         return "warning";
