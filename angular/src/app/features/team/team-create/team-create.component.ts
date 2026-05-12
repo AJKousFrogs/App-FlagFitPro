@@ -24,6 +24,7 @@ import { ToastService } from "../../../core/services/toast.service";
 import { TOAST } from "../../../core/constants/toast-messages.constants";
 import { SupabaseService } from "../../../core/services/supabase.service";
 import { TeamCreateDataService } from "../services/team-create-data.service";
+import { FormBase } from "../../../shared/utils/form-base";
 
 type TeamCreateForm = FormGroup<{
   name: FormControl<string>;
@@ -129,7 +130,7 @@ type TeamCreateForm = FormGroup<{
   `,
   styleUrl: "./team-create.component.scss",
 })
-export class TeamCreateComponent {
+export class TeamCreateComponent extends FormBase {
   private router = inject(Router);
   private fb = inject(NonNullableFormBuilder);
   private toastService = inject(ToastService);
@@ -161,11 +162,10 @@ export class TeamCreateComponent {
   });
 
   isFieldInvalid(fieldName: string): boolean {
-    const field = this.teamForm.get(fieldName);
-    return !!(field && field.invalid && (field.dirty || field.touched));
+    return super.isFieldInvalid(this.teamForm, fieldName);
   }
 
-  getFieldError(fieldName: string): string {
+  getFieldError(fieldName: string): string | null {
     const field = this.teamForm.get(fieldName);
     if (field?.hasError("required")) {
       return `${fieldName} is required`;
@@ -173,12 +173,12 @@ export class TeamCreateComponent {
     if (field?.hasError("minlength")) {
       return `${fieldName} must be at least ${field.errors?.["minlength"].requiredLength} characters`;
     }
-    return "";
+    return super.getFieldError(this.teamForm, fieldName);
   }
 
   async onSubmit(): Promise<void> {
     if (this.teamForm.invalid) {
-      this.teamForm.markAllAsTouched();
+      this.markFormGroupTouched(this.teamForm);
       return;
     }
 
