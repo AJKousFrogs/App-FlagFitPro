@@ -136,7 +136,7 @@
 
     <!-- Log Measurement Dialog -->
     <app-dialog
-      [(visible)]="showLogDialog"
+      [visible]="showLogDialog()" (visibleChange)="showLogDialog.set($event)"
       [modal]="true"
       [draggable]="false"
       [resizable]="false"
@@ -153,7 +153,7 @@
         icon="chart-pie"
         title="Log Body Composition"
         subtitle="Enter your latest smart-scale measurement"
-        (close)="showLogDialog = false"
+        (close)="showLogDialog.set(false)"
       />
       <div class="measurement-form">
         <p class="form-description">
@@ -237,7 +237,7 @@
         primaryIcon="pi-check"
         [loading]="isSaving()"
         [disabled]="!measurementForm.weight"
-        (cancel)="showLogDialog = false"
+        (cancel)="showLogDialog.set(false)"
         (primary)="saveMeasurement()"
       />
     </app-dialog>

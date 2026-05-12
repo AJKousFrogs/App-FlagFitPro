@@ -87,7 +87,7 @@ export class DepthChartComponent implements OnInit {
 
   // UI State
   activeTabIndex = 0;
-  showAssignDialog = false;
+  showAssignDialog = signal(false);
   selectedPlayerId: string | null = null;
 
   // Computed
@@ -261,11 +261,11 @@ export class DepthChartComponent implements OnInit {
     if (!this.isCoach()) return;
     this.closeAssignDialog();
     this.selectedEntry.set(entry);
-    this.showAssignDialog = true;
+    this.showAssignDialog.set(true);
   }
 
   closeAssignDialog(): void {
-    this.showAssignDialog = false;
+    this.showAssignDialog.set(false);
     this.selectedPlayerId = null;
     this.selectedEntry.set(null);
   }

@@ -280,7 +280,7 @@ export class PerformanceTrackingComponent {
   ];
 
   // Dialog state
-  showLogDialog = false;
+  showLogDialog = signal(false);
   readonly isSaving = signal(false);
   newPerformance: NewPerformanceForm = {
     sprint10: null as number | null,
@@ -748,7 +748,7 @@ export class PerformanceTrackingComponent {
       bodyWeight: null,
       notes: "",
     };
-    this.showLogDialog = true;
+    this.showLogDialog.set(true);
   }
 
   updatePerformanceMetric(
@@ -827,7 +827,7 @@ export class PerformanceTrackingComponent {
         await this.loadPerformanceData();
 
         this.toastService.success(TOAST.SUCCESS.PERFORMANCE_LOGGED);
-        this.showLogDialog = false;
+        this.showLogDialog.set(false);
       } catch (error) {
         const message =
           error instanceof Error ? error.message : "Failed to save performance";

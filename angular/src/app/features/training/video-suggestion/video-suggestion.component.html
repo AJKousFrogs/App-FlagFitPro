@@ -433,7 +433,7 @@
 
         <!-- Video Preview Dialog -->
         <app-dialog
-          [(visible)]="showVideoDialog"
+          [visible]="showVideoDialog()" (visibleChange)="showVideoDialog.set($event)"
           dialogSize="xl"
           class="video-preview-dialog"
           [draggable]="false"

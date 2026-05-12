@@ -163,7 +163,7 @@
 
       <!-- Film Detail Dialog -->
       <app-dialog
-        [(visible)]="showFilmDetail"
+        [visible]="showFilmDetail()" (visibleChange)="showFilmDetail.set($event)"
         [modal]="true"
         [closable]="false"
         [draggable]="false"

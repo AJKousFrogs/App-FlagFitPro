@@ -243,7 +243,8 @@
 
         <!-- Add/Edit Equipment Dialog -->
         <app-dialog
-          [(visible)]="showAddDialog"
+          [visible]="showAddDialog()"
+          (visibleChange)="showAddDialog.set($event)"
           [modal]="true"
           dialogSize="lg"
           [blockScroll]="true"
@@ -339,7 +340,8 @@
 
         <!-- Checkout Dialog -->
         <app-dialog
-          [(visible)]="showCheckoutDialog"
+          [visible]="showCheckoutDialog()"
+          (visibleChange)="showCheckoutDialog.set($event)"
           [modal]="true"
           dialogSize="sm"
           [blockScroll]="true"
@@ -407,7 +409,8 @@
 
         <!-- Return Dialog -->
         <app-dialog
-          [(visible)]="showReturnDialog"
+          [visible]="showReturnDialog()"
+          (visibleChange)="showReturnDialog.set($event)"
           [modal]="true"
           dialogSize="sm"
           [blockScroll]="true"

@@ -140,7 +140,7 @@
         </app-card-shell>
 
         <app-dialog
-          [(visible)]="showTeamDialog"
+          [visible]="showTeamDialog()" (visibleChange)="showTeamDialog.set($event)"
           [modal]="true"
           [draggable]="false"
           [blockScroll]="true"

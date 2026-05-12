@@ -133,10 +133,10 @@ export class PlayerDevelopmentComponent implements OnInit {
   selectedPeriod = "6-months";
 
   // Dialog state
-  showGoalDialog = false;
-  showNoteDialog = false;
-  showGoalDetailsDialog = false;
-  showAssessmentDialog = false;
+  showGoalDialog = signal(false);
+  showNoteDialog = signal(false);
+  showGoalDetailsDialog = signal(false);
+  showAssessmentDialog = signal(false);
   noteContent = "";
   assessmentSkill = "";
   assessmentScore = "75";
@@ -378,21 +378,21 @@ export class PlayerDevelopmentComponent implements OnInit {
   }
 
   closeGoalDialog(): void {
-    this.showGoalDialog = false;
+    this.showGoalDialog.set(false);
     this.resetGoalDialogState();
   }
 
   closeGoalDetailsDialog(): void {
-    this.showGoalDetailsDialog = false;
+    this.showGoalDetailsDialog.set(false);
   }
 
   closeNoteDialog(): void {
-    this.showNoteDialog = false;
+    this.showNoteDialog.set(false);
     this.noteContent = "";
   }
 
   closeAssessmentDialog(): void {
-    this.showAssessmentDialog = false;
+    this.showAssessmentDialog.set(false);
     this.assessmentSkill = "";
     this.assessmentScore = "75";
   }
@@ -458,7 +458,7 @@ export class PlayerDevelopmentComponent implements OnInit {
 
   openGoalDialog(): void {
     this.resetGoalDialogState();
-    this.showGoalDialog = true;
+    this.showGoalDialog.set(true);
   }
 
   async createGoal(): Promise<void> {
@@ -513,17 +513,17 @@ export class PlayerDevelopmentComponent implements OnInit {
       notes: goal.notes || "",
     };
     this.closeGoalDetailsDialog();
-    this.showGoalDialog = true;
+    this.showGoalDialog.set(true);
   }
 
   viewGoalDetails(goal: CoachDevelopmentGoal): void {
     this.selectedGoal.set(goal);
-    this.showGoalDetailsDialog = true;
+    this.showGoalDetailsDialog.set(true);
   }
 
   openNoteDialog(): void {
     this.closeNoteDialog();
-    this.showNoteDialog = true;
+    this.showNoteDialog.set(true);
   }
 
   async saveNote(): Promise<void> {
@@ -557,7 +557,7 @@ export class PlayerDevelopmentComponent implements OnInit {
 
   newAssessment(): void {
     this.closeAssessmentDialog();
-    this.showAssessmentDialog = true;
+    this.showAssessmentDialog.set(true);
   }
 
   exportReport(): void {

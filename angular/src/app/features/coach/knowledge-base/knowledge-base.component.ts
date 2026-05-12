@@ -81,9 +81,9 @@ export class KnowledgeBaseComponent implements OnInit {
   searchQuery = "";
 
   // Dialog state
-  showAddDialog = false;
-  showApproveDialog = false;
-  showResourceDialog = false;
+  showAddDialog = signal(false);
+  showApproveDialog = signal(false);
+  showResourceDialog = signal(false);
   resourceForm = this.getEmptyForm();
   reviewForm = {
     notes: "",
@@ -235,18 +235,18 @@ export class KnowledgeBaseComponent implements OnInit {
   }
 
   closeAddDialog(): void {
-    this.showAddDialog = false;
+    this.showAddDialog.set(false);
     this.resourceForm = this.getEmptyForm();
   }
 
   closeApproveDialog(): void {
-    this.showApproveDialog = false;
+    this.showApproveDialog.set(false);
     this.data.selectedPendingEntry.set(null);
     this.resetReviewForm();
   }
 
   closeResourceDialog(): void {
-    this.showResourceDialog = false;
+    this.showResourceDialog.set(false);
     this.data.selectedResource.set(null);
   }
 
@@ -256,7 +256,7 @@ export class KnowledgeBaseComponent implements OnInit {
     if (isTeam) {
       this.resourceForm.visibility = "team";
     }
-    this.showAddDialog = true;
+    this.showAddDialog.set(true);
   }
 
   async saveResource(): Promise<void> {
@@ -269,7 +269,7 @@ export class KnowledgeBaseComponent implements OnInit {
   openApproveDialog(entry: PendingKnowledgeEntry): void {
     this.closeApproveDialog();
     this.data.selectedPendingEntry.set(entry);
-    this.showApproveDialog = true;
+    this.showApproveDialog.set(true);
   }
 
   setMyStatusFilter(
@@ -291,13 +291,13 @@ export class KnowledgeBaseComponent implements OnInit {
   openResource(resource: KnowledgeResource): void {
     this.closeResourceDialog();
     this.data.selectedResource.set(resource);
-    this.showResourceDialog = true;
+    this.showResourceDialog.set(true);
   }
 
   editResource(resource: KnowledgeResource): void {
     this.applyResourceToForm(resource);
     this.closeResourceDialog();
-    this.showAddDialog = true;
+    this.showAddDialog.set(true);
   }
 
   toggleFavorite(resource: KnowledgeResource): void {

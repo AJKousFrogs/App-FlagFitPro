@@ -251,7 +251,7 @@
 
         <!-- Video Player Dialog -->
         <app-dialog
-          [(visible)]="showVideoDialog"
+          [visible]="showVideoDialog()" (visibleChange)="showVideoDialog.set($event)"
           dialogSize="2xl"
           [draggable]="false"
           [resizable]="false"

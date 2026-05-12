@@ -72,8 +72,8 @@ export class PlaybookComponent implements OnInit {
   readonly selectedStatus = signal<"memorized" | "learning" | null>(null);
 
   // Dialog state
-  showPlayDetail = false;
-  showQuiz = false;
+  showPlayDetail = signal(false);
+  showQuiz = signal(false);
 
   // Quiz state
   readonly quizQuestions = signal<QuizQuestion[]>([]);
@@ -192,7 +192,7 @@ export class PlaybookComponent implements OnInit {
 
   selectPlay(play: Play): void {
     this.selectedPlay.set(play);
-    this.showPlayDetail = true;
+    this.showPlayDetail.set(true);
 
     // Record study time
     this.api.post(API_ENDPOINTS.playbook.study, { playId: play.id }).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
@@ -254,7 +254,7 @@ export class PlaybookComponent implements OnInit {
     this.answerSubmitted.set(false);
     this.quizActive.set(true);
     this.quizCompleted.set(false);
-    this.showQuiz = true;
+    this.showQuiz.set(true);
   }
 
   private generateQuizQuestions(): QuizQuestion[] {

@@ -141,9 +141,9 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
   // Local state
   newMessage = "";
   markAsImportant = false;
-  showCreateChannelDialog = false;
-  showPinnedMessages = false;
-  showMembersDialog = false;
+  showCreateChannelDialog = signal(false);
+  showPinnedMessages = signal(false);
+  showMembersDialog = signal(false);
 
   // Mention state
   private readonly _showMentionSuggestions = signal(false);
@@ -728,7 +728,7 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   onMembersDialogVisibleChange(visible: boolean): void {
-    this.showMembersDialog = visible;
+    this.showMembersDialog.set(visible);
     if (visible) {
       void this.loadChannelMembers();
       return;
@@ -795,23 +795,23 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   openCreateChannelDialog(): void {
-    this.showCreateChannelDialog = true;
+    this.showCreateChannelDialog.set(true);
   }
 
   closeCreateChannelDialog(): void {
-    this.showCreateChannelDialog = false;
+    this.showCreateChannelDialog.set(false);
   }
 
   openPinnedMessagesDialog(): void {
-    this.showPinnedMessages = true;
+    this.showPinnedMessages.set(true);
   }
 
   openMembersDialog(): void {
-    this.showMembersDialog = true;
+    this.showMembersDialog.set(true);
   }
 
   closeMembersDialog(): void {
-    this.showMembersDialog = false;
+    this.showMembersDialog.set(false);
     this.resetMembersDialogState();
   }
 

@@ -201,9 +201,9 @@ export class ProgramBuilderComponent implements OnInit {
   readonly selectedProgram = signal<TrainingProgram | null>(null);
 
   // Dialog state
-  showCreateDialog = false;
-  showProgramDetailsDialog = false;
-  showComplianceDialog = false;
+  showCreateDialog = signal(false);
+  showProgramDetailsDialog = signal(false);
+  showComplianceDialog = signal(false);
   selectAllPlayers = false;
 
   // Form data
@@ -439,16 +439,16 @@ export class ProgramBuilderComponent implements OnInit {
   }
 
   closeCreateDialog(): void {
-    this.showCreateDialog = false;
+    this.showCreateDialog.set(false);
     this.resetCreateDialogState();
   }
 
   closeProgramDetailsDialog(): void {
-    this.showProgramDetailsDialog = false;
+    this.showProgramDetailsDialog.set(false);
   }
 
   closeComplianceDialog(): void {
-    this.showComplianceDialog = false;
+    this.showComplianceDialog.set(false);
   }
 
   private refreshPrograms(): void {
@@ -458,13 +458,13 @@ export class ProgramBuilderComponent implements OnInit {
   private showProgramDetailsDialogFor(program: TrainingProgram): void {
     this.closeProgramDetailsDialog();
     this.selectedProgram.set(program);
-    this.showProgramDetailsDialog = true;
+    this.showProgramDetailsDialog.set(true);
   }
 
   private showComplianceDialogFor(program: TrainingProgram): void {
     this.closeComplianceDialog();
     this.selectedProgram.set(program);
-    this.showComplianceDialog = true;
+    this.showComplianceDialog.set(true);
   }
 
   private handleProgramMutation(
@@ -491,7 +491,7 @@ export class ProgramBuilderComponent implements OnInit {
   // Dialog methods
   openCreateDialog(): void {
     this.resetCreateDialogState();
-    this.showCreateDialog = true;
+    this.showCreateDialog.set(true);
   }
 
   readonly openCreateDialogHandler = (): void => this.openCreateDialog();
@@ -510,7 +510,7 @@ export class ProgramBuilderComponent implements OnInit {
       phases: [...program.phases],
       weekTemplate: this.getEmptyFormData().weekTemplate,
     };
-    this.showCreateDialog = true;
+    this.showCreateDialog.set(true);
   }
 
   toggleSelectAll(): void {

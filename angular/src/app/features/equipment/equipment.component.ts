@@ -108,9 +108,9 @@ export class EquipmentComponent implements OnInit {
 
   // UI State
   selectedType: ItemType | null = null;
-  showAddDialog = false;
-  showCheckoutDialog = false;
-  showReturnDialog = false;
+  showAddDialog = signal(false);
+  showCheckoutDialog = signal(false);
+  showReturnDialog = signal(false);
   editingItem: EquipmentItem | null = null;
   checkoutItem = signal<EquipmentItem | null>(null);
   returnAssignment = signal<EquipmentAssignment | null>(null);
@@ -405,26 +405,26 @@ export class EquipmentComponent implements OnInit {
   }
 
   closeAddDialog(): void {
-    this.showAddDialog = false;
+    this.showAddDialog.set(false);
     this.editingItem = null;
     this.newItem = this.getEmptyItem();
   }
 
   closeCheckoutDialog(): void {
-    this.showCheckoutDialog = false;
+    this.showCheckoutDialog.set(false);
     this.checkoutItem.set(null);
     this.checkoutData = { player_id: "", quantity: 1, notes: "" };
   }
 
   closeReturnDialog(): void {
-    this.showReturnDialog = false;
+    this.showReturnDialog.set(false);
     this.returnAssignment.set(null);
     this.returnData = { condition: "good", notes: "" };
   }
 
   openAddDialog(): void {
     this.closeAddDialog();
-    this.showAddDialog = true;
+    this.showAddDialog.set(true);
   }
 
   openEditDialog(item: EquipmentItem): void {
@@ -439,7 +439,7 @@ export class EquipmentComponent implements OnInit {
       quantity_total: item.quantity_total,
       description: item.description || "",
     };
-    this.showAddDialog = true;
+    this.showAddDialog.set(true);
   }
 
   canSaveItem(): boolean {
@@ -492,7 +492,7 @@ export class EquipmentComponent implements OnInit {
   openCheckoutDialog(item: EquipmentItem): void {
     this.closeCheckoutDialog();
     this.checkoutItem.set(item);
-    this.showCheckoutDialog = true;
+    this.showCheckoutDialog.set(true);
   }
 
   checkout(): void {
@@ -518,7 +518,7 @@ export class EquipmentComponent implements OnInit {
   openReturnDialog(assignment: EquipmentAssignment): void {
     this.closeReturnDialog();
     this.returnAssignment.set(assignment);
-    this.showReturnDialog = true;
+    this.showReturnDialog.set(true);
   }
 
   processReturn(): void {

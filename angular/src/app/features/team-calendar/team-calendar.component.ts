@@ -131,7 +131,7 @@ export class TeamCalendarComponent implements OnInit {
   selectedType: EventType | null = null;
 
   // Dialog state
-  showRsvpDialog = false;
+  showRsvpDialog = signal(false);
   rsvpForm: {
     status: RsvpStatus | null;
     guests: number;
@@ -227,7 +227,7 @@ export class TeamCalendarComponent implements OnInit {
       rideSeats: 3,
       notes: "",
     };
-    this.showRsvpDialog = true;
+    this.showRsvpDialog.set(true);
   }
 
   onRsvpStatusChange(value: RsvpStatus | null): void {
@@ -321,7 +321,7 @@ export class TeamCalendarComponent implements OnInit {
       error: (err) => this.logger.error("Failed to submit RSVP", err),
     });
 
-    this.showRsvpDialog = false;
+    this.showRsvpDialog.set(false);
   }
 
   syncToCalendar(): void {

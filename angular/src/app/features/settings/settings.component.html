@@ -111,7 +111,7 @@
             <app-privacy-controls-card
               [privacyForm]="privacyForm"
               [visibilityOptions]="visibilityOptions"
-              (exportData)="showDataExportDialog = true"
+              (exportData)="showDataExportDialog.set(true)"
             ></app-privacy-controls-card>
           </div>
 
@@ -135,11 +135,11 @@
             </h3>
             <app-security-settings-card
               [isTwoFactorEnabled]="is2FAEnabled()"
-              (changePassword)="showChangePasswordDialog = true"
+              (changePassword)="showChangePasswordDialog.set(true)"
               (enableTwoFactor)="startSetup2FA()"
-              (disableTwoFactor)="showDisable2FADialog = true"
-              (viewSessions)="showSessionsDialog = true; loadSessions()"
-              (deleteAccount)="showDeleteAccountDialog = true"
+              (disableTwoFactor)="showDisable2FADialog.set(true)"
+              (viewSessions)="showSessionsDialog.set(true); loadSessions()"
+              (deleteAccount)="showDeleteAccountDialog.set(true)"
             ></app-security-settings-card>
           </div>
         } @placeholder {
@@ -181,9 +181,9 @@
 
 <!-- All Dialogs (outside main layout for proper portal rendering) -->
 <!-- Change Password Dialog -->
-@defer (when showChangePasswordDialog) {
+@defer (when showChangePasswordDialog()) {
   <app-change-password-dialog
-    [visible]="showChangePasswordDialog"
+    [visible]="showChangePasswordDialog()"
     [passwordForm]="passwordForm"
     [loading]="isChangingPassword()"
     (visibleChange)="!$event && closeChangePasswordDialog()"
@@ -194,9 +194,9 @@
 }
 
 <!-- Delete Account Dialog -->
-@defer (when showDeleteAccountDialog) {
+@defer (when showDeleteAccountDialog()) {
   <app-delete-account-dialog
-    [visible]="showDeleteAccountDialog"
+    [visible]="showDeleteAccountDialog()"
     [confirmText]="deleteConfirmText"
     [loading]="isDeletingAccount()"
     (visibleChange)="!$event && closeDeleteAccountDialog()"
@@ -208,9 +208,9 @@
 }
 
 <!-- 2FA Setup Dialog -->
-@defer (when show2FASetupDialog) {
+@defer (when show2FASetupDialog()) {
   <app-twofa-setup-dialog
-    [visible]="show2FASetupDialog"
+    [visible]="show2FASetupDialog()"
     [step]="twoFAStep()"
     [qrCodeUrl]="qrCodeUrl()"
     [twoFASecret]="twoFASecret()"
@@ -218,7 +218,7 @@
     [twoFAError]="twoFAError()"
     [backupCodes]="backupCodes()"
     [isEnabling]="isEnabling2FA()"
-    (visibleChange)="show2FASetupDialog = $event; !$event && close2FASetup()"
+    (visibleChange)="show2FASetupDialog.set($event); !$event && close2FASetup()"
     (stepChange)="twoFAStep.set($event)"
     (verificationCodeChange)="twoFAVerificationCode = $event"
     (copySecret)="copySecret()"
@@ -230,9 +230,9 @@
 }
 
 <!-- Disable 2FA Dialog -->
-@defer (when showDisable2FADialog) {
+@defer (when showDisable2FADialog()) {
   <app-disable-twofa-dialog
-    [visible]="showDisable2FADialog"
+    [visible]="showDisable2FADialog()"
     [disableCode]="disable2FACode"
     [loading]="isDisabling2FA()"
     (visibleChange)="!$event && closeDisable2FADialog()"
@@ -244,9 +244,9 @@
 }
 
 <!-- Active Sessions Dialog -->
-@defer (when showSessionsDialog) {
+@defer (when showSessionsDialog()) {
   <app-active-sessions-dialog
-    [visible]="showSessionsDialog"
+    [visible]="showSessionsDialog()"
     [loadingSessions]="loadingSessions()"
     [sessions]="activeSessions()"
     [isRevokingAll]="isRevokingAll()"
@@ -259,9 +259,9 @@
 }
 
 <!-- Data Export Dialog -->
-@defer (when showDataExportDialog) {
+@defer (when showDataExportDialog()) {
   <app-data-export-dialog
-    [visible]="showDataExportDialog"
+    [visible]="showDataExportDialog()"
     [exportFormat]="exportFormat"
     [exportOptions]="exportOptions"
     [isExportingData]="isExportingData()"

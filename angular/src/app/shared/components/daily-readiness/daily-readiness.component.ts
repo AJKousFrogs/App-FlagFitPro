@@ -71,7 +71,7 @@ interface DailyState {
   template: `
     @if (mode() === "modal") {
       <app-dialog
-        [(visible)]="dialogVisible"
+        [visible]="dialogVisible()" (visibleChange)="dialogVisible.set($event)"
         [modal]="true"
         [closable]="false"
         [draggable]="false"
@@ -169,7 +169,7 @@ export class DailyReadinessComponent implements OnInit {
   readonly completed = output<DailyState>();
   readonly skipped = output<void>();
 
-  dialogVisible = false;
+  dialogVisible = signal(false);
   saving = signal(false);
   lastWeight = signal<number | null>(null);
   /** Latest ACWR from `calculate_acwr` after a successful save. */
@@ -254,14 +254,14 @@ export class DailyReadinessComponent implements OnInit {
         .maybeSingle();
 
       if (error) {
-        this.dialogVisible = true;
+        this.dialogVisible.set(true);
         return;
       }
       if (!data) {
-        this.dialogVisible = true;
+        this.dialogVisible.set(true);
       }
     } catch {
-      this.dialogVisible = true;
+      this.dialogVisible.set(true);
     }
   }
 
@@ -269,7 +269,7 @@ export class DailyReadinessComponent implements OnInit {
    * Show the modal (can be called externally)
    */
   show(): void {
-    this.dialogVisible = true;
+    this.dialogVisible.set(true);
   }
 
   onStateChange<K extends keyof DailyState>(key: K, value: DailyState[K]): void {
@@ -344,7 +344,7 @@ export class DailyReadinessComponent implements OnInit {
       }
 
       this.toastService.success(TOAST.SUCCESS.DAILY_CHECKIN_SAVED);
-      this.dialogVisible = false;
+      this.dialogVisible.set(false);
       this.completed.emit(this.state());
     } catch (error: unknown) {
       this.state.set(previous);
@@ -390,7 +390,7 @@ export class DailyReadinessComponent implements OnInit {
    * Handle skip action
    */
   onSkip(): void {
-    this.dialogVisible = false;
+    this.dialogVisible.set(false);
     this.skipped.emit();
   }
 }

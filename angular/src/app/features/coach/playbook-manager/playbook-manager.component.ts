@@ -141,8 +141,8 @@ export class PlaybookManagerComponent implements OnInit {
   situationFilter: string | null = null;
 
   // Dialog state
-  showPlayDialog = false;
-  showStatsDialog = false;
+  showPlayDialog = signal(false);
+  showStatsDialog = signal(false);
 
   // Form
   playForm = this.getEmptyPlayForm();
@@ -293,14 +293,14 @@ export class PlaybookManagerComponent implements OnInit {
   }
 
   closePlayDialog(): void {
-    this.showPlayDialog = false;
+    this.showPlayDialog.set(false);
     this.isEditing.set(false);
     this.isViewing.set(false);
     this.playForm = this.getEmptyPlayForm();
   }
 
   closeStatsDialog(): void {
-    this.showStatsDialog = false;
+    this.showStatsDialog.set(false);
   }
 
   onPlayNameChange(value: string): void {
@@ -340,7 +340,7 @@ export class PlaybookManagerComponent implements OnInit {
   // Dialog methods
   openCreateDialog(): void {
     this.closePlayDialog();
-    this.showPlayDialog = true;
+    this.showPlayDialog.set(true);
   }
 
   readonly openCreateDialogHandler = (): void => this.openCreateDialog();
@@ -350,7 +350,7 @@ export class PlaybookManagerComponent implements OnInit {
     this.isViewing.set(false);
     this.selectedPlay.set(play);
     this.populatePlayForm(play);
-    this.showPlayDialog = true;
+    this.showPlayDialog.set(true);
   }
 
   async savePlay(): Promise<void> {
@@ -390,7 +390,7 @@ export class PlaybookManagerComponent implements OnInit {
     this.isEditing.set(false);
     this.isViewing.set(true);
     this.populatePlayForm(play);
-    this.showPlayDialog = true;
+    this.showPlayDialog.set(true);
   }
 
   editViewedPlay(): void {
@@ -403,7 +403,7 @@ export class PlaybookManagerComponent implements OnInit {
 
   viewStats(play: Play): void {
     this.selectedPlay.set(play);
-    this.showStatsDialog = true;
+    this.showStatsDialog.set(true);
   }
 
   async archivePlay(play: Play): Promise<void> {

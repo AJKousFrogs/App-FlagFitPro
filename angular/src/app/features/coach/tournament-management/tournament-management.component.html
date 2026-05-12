@@ -214,7 +214,8 @@
 
       <!-- Tournament Detail Dialog -->
       <app-dialog
-        [(visible)]="showDetailDialog"
+        [visible]="showDetailDialog()"
+        (visibleChange)="showDetailDialog.set($event)"
         dialogSize="2xl"
         class="tournament-detail-dialog"
         (hide)="closeDetailDialog()"

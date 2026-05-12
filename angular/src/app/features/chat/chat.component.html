@@ -407,9 +407,10 @@
       </div>
     </app-main-layout>
 
-    @defer (when showCreateChannelDialog) {
+    @defer (when showCreateChannelDialog()) {
       <app-chat-create-channel-dialog
-        [(visible)]="showCreateChannelDialog"
+        [visible]="showCreateChannelDialog()"
+        (visibleChange)="showCreateChannelDialog.set($event)"
         [channelTypeOptions]="channelTypeOptions"
         [positionOptions]="positionOptions"
         (createChannel)="createChannel($event)"
@@ -418,9 +419,10 @@
       <span class="defer-dialog-chunk-placeholder"></span>
     }
 
-    @defer (when showPinnedMessages) {
+    @defer (when showPinnedMessages()) {
       <app-chat-pinned-messages-dialog
-        [(visible)]="showPinnedMessages"
+        [visible]="showPinnedMessages()"
+        (visibleChange)="showPinnedMessages.set($event)"
         [pinnedMessages]="pinnedMessages()"
         [canPinMessages]="canPinMessages()"
         (togglePin)="togglePin($event)"
@@ -429,9 +431,9 @@
       <span class="defer-dialog-chunk-placeholder"></span>
     }
 
-    @defer (when showMembersDialog) {
+    @defer (when showMembersDialog()) {
       <app-chat-members-dialog
-        [visible]="showMembersDialog"
+        [visible]="showMembersDialog()"
         [subtitle]="
           channelMembersData()
             ? channelMembersData()!.total_count + ' members in this channel'

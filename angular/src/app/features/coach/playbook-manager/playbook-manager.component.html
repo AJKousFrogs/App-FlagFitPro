@@ -201,7 +201,8 @@
 
       <!-- Create/Edit Play Dialog -->
       <app-dialog
-        [(visible)]="showPlayDialog"
+        [visible]="showPlayDialog()"
+        (visibleChange)="showPlayDialog.set($event)"
         [modal]="true"
         dialogSize="2xl"
         [blockScroll]="true"
@@ -434,7 +435,8 @@
 
       <!-- Stats Dialog -->
       <app-dialog
-        [(visible)]="showStatsDialog"
+        [visible]="showStatsDialog()"
+        (visibleChange)="showStatsDialog.set($event)"
         [modal]="true"
         dialogSize="lg"
         [blockScroll]="true"

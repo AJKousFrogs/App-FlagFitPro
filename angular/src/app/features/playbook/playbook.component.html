@@ -24,7 +24,7 @@
 
       <!-- Play Detail Dialog -->
       <app-dialog
-        [(visible)]="showPlayDetail"
+        [visible]="showPlayDetail()" (visibleChange)="showPlayDetail.set($event)"
         [modal]="true"
         [draggable]="false"
         [resizable]="false"
@@ -36,7 +36,7 @@
           icon="pi-book"
           [title]="selectedPlay()?.name || 'Play Details'"
           subtitle="Study your assignment and memorize the concept"
-          (close)="showPlayDetail = false"
+          (close)="showPlayDetail.set(false)"
         />
         @if (selectedPlay(); as play) {
           <app-playbook-detail-dialog-content
@@ -48,7 +48,7 @@
 
       <!-- Quiz Dialog -->
       <app-dialog
-        [(visible)]="showQuiz"
+        [visible]="showQuiz()" (visibleChange)="showQuiz.set($event)"
         [modal]="true"
         [draggable]="false"
         [resizable]="false"
@@ -60,7 +60,7 @@
           icon="pi-question-circle"
           title="Playbook Quiz"
           subtitle="Test recall, assignments, and play recognition"
-          (close)="showQuiz = false"
+          (close)="showQuiz.set(false)"
         />
         <app-playbook-quiz-dialog-content
           [quizActive]="quizActive()"
@@ -77,14 +77,14 @@
           (nextQuestion)="nextQuestion()"
           (showResults)="showQuizResults()"
           (restartQuiz)="startQuiz()"
-          (closeQuiz)="showQuiz = false"
+          (closeQuiz)="showQuiz.set(false)"
         />
         @if (!quizActive() || quizCompleted()) {
           <app-dialog-footer
             cancelLabel="Close"
             primaryLabel="Restart Quiz"
             primaryIcon="pi-refresh"
-            (cancel)="showQuiz = false"
+            (cancel)="showQuiz.set(false)"
             (primary)="startQuiz()"
           />
         }

@@ -69,8 +69,8 @@ export class SuperadminUsersComponent implements OnInit {
   filteredUsers: User[] = [];
   searchQuery = "";
   roleFilter: "all" | "player" | "coach" | "admin" | "superadmin" = "all";
-  showUserDialog = false;
-  showEditDialog = false;
+  showUserDialog = signal(false);
+  showEditDialog = signal(false);
   selectedUser: User | null = null;
   editRole: User["role"] = "player";
   editStatus: User["status"] = "active";
@@ -202,11 +202,11 @@ export class SuperadminUsersComponent implements OnInit {
   }
 
   closeUserDialog(): void {
-    this.showUserDialog = false;
+    this.showUserDialog.set(false);
   }
 
   closeEditDialog(): void {
-    this.showEditDialog = false;
+    this.showEditDialog.set(false);
     this.syncEditDraftFromSelectedUser();
   }
 
@@ -216,7 +216,7 @@ export class SuperadminUsersComponent implements OnInit {
     if (closeUserDialog) {
       this.closeUserDialog();
     }
-    this.showEditDialog = true;
+    this.showEditDialog.set(true);
   }
 
   editUser(user: User): void {
@@ -225,7 +225,7 @@ export class SuperadminUsersComponent implements OnInit {
 
   viewUser(user: User): void {
     this.selectedUser = user;
-    this.showUserDialog = true;
+    this.showUserDialog.set(true);
   }
 
   openEditUserDialog(): void {

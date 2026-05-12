@@ -121,11 +121,11 @@ export class SettingsComponent implements OnInit {
   passwordForm!: FormGroup;
 
   // Dialog visibility
-  showChangePasswordDialog = false;
-  showDeleteAccountDialog = false;
-  show2FASetupDialog = false;
-  showDisable2FADialog = false;
-  showSessionsDialog = false;
+  showChangePasswordDialog = signal(false);
+  showDeleteAccountDialog = signal(false);
+  show2FASetupDialog = signal(false);
+  showDisable2FADialog = signal(false);
+  showSessionsDialog = signal(false);
   deleteConfirmText = "";
 
   // 2FA state
@@ -158,7 +158,7 @@ export class SettingsComponent implements OnInit {
   exportTakingLong = this.dataExportService.exportTakingLong;
 
   // Data export dialog
-  showDataExportDialog = false;
+  showDataExportDialog = signal(false);
   exportFormat: DataExportFormat = "json";
   exportOptions: DataExportOptions = {
     profile: true,
@@ -505,7 +505,7 @@ export class SettingsComponent implements OnInit {
   // 2FA Methods
   async startSetup2FA(): Promise<void> {
     this.twoFAVerificationCode = "";
-    this.show2FASetupDialog = true;
+    this.show2FASetupDialog.set(true);
     await this.twoFactorService.startSetup();
   }
 
@@ -522,7 +522,7 @@ export class SettingsComponent implements OnInit {
   }
 
   close2FASetup(): void {
-    this.show2FASetupDialog = false;
+    this.show2FASetupDialog.set(false);
     this.twoFAVerificationCode = "";
     this.twoFactorService.resetSetup();
   }
@@ -671,25 +671,25 @@ export class SettingsComponent implements OnInit {
   private elementRef = inject(ElementRef);
 
   closeChangePasswordDialog(): void {
-    this.showChangePasswordDialog = false;
+    this.showChangePasswordDialog.set(false);
     this.passwordForm.reset();
   }
 
   closeDeleteAccountDialog(): void {
-    this.showDeleteAccountDialog = false;
+    this.showDeleteAccountDialog.set(false);
     this.deleteConfirmText = "";
   }
 
   closeDisable2FADialog(): void {
-    this.showDisable2FADialog = false;
+    this.showDisable2FADialog.set(false);
     this.disable2FACode = "";
   }
 
   closeSessionsDialog(): void {
-    this.showSessionsDialog = false;
+    this.showSessionsDialog.set(false);
   }
 
   closeDataExportDialog(): void {
-    this.showDataExportDialog = false;
+    this.showDataExportDialog.set(false);
   }
 }

@@ -91,8 +91,8 @@ export class ExerciseDBManagerComponent implements OnInit {
   importing = signal(false);
 
   // Dialogs
-  showDetailDialog = false;
-  showApprovalDialog = false;
+  showDetailDialog = signal(false);
+  showApprovalDialog = signal(false);
 
   // Filters
   searchQuery = "";
@@ -461,7 +461,7 @@ export class ExerciseDBManagerComponent implements OnInit {
 
   openExerciseDetail(exercise: ExerciseDBExercise): void {
     this.selectedExercise.set(exercise);
-    this.showDetailDialog = true;
+    this.showDetailDialog.set(true);
   }
 
   openApprovalDialog(exercise: ExerciseDBExercise): void {
@@ -475,8 +475,8 @@ export class ExerciseDBManagerComponent implements OnInit {
       recommended_sets: exercise.recommended_sets || 3,
       recommended_reps: exercise.recommended_reps || "8-12",
     };
-    this.showDetailDialog = false;
-    this.showApprovalDialog = true;
+    this.showDetailDialog.set(false);
+    this.showApprovalDialog.set(true);
   }
 
   approveExercise(): void {
@@ -491,7 +491,7 @@ export class ExerciseDBManagerComponent implements OnInit {
             `${exercise.name} has been approved`,
             "Success",
           );
-          this.showApprovalDialog = false;
+          this.showApprovalDialog.set(false);
           this.loadExercises();
         } else {
           this.toastService.error(

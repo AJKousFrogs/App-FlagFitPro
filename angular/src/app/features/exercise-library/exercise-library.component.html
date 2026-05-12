@@ -201,7 +201,7 @@
 
       <!-- Exercise Details Dialog -->
       <app-dialog
-        [(visible)]="showDetailsDialog"
+        [visible]="showDetailsDialog()" (visibleChange)="showDetailsDialog.set($event)"
         [modal]="true"
         [closable]="false"
         [draggable]="false"

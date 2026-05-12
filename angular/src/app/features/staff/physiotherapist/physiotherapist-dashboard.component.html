@@ -269,7 +269,7 @@
 
         <!-- Athlete Details Dialog -->
         <app-dialog
-          [(visible)]="showAthleteDialog"
+          [visible]="showAthleteDialog()" (visibleChange)="showAthleteDialog.set($event)"
           [modal]="true"
           [blockScroll]="true"
           [draggable]="false"
@@ -410,7 +410,7 @@
 
         <!-- Report Generation Dialog -->
         <app-dialog
-          [(visible)]="showReportDialog"
+          [visible]="showReportDialog()" (visibleChange)="showReportDialog.set($event)"
           [modal]="true"
           [blockScroll]="true"
           [draggable]="false"
@@ -462,7 +462,7 @@
 
         <!-- Position Risk Dialog -->
         <app-dialog
-          [(visible)]="showPositionRiskDialog"
+          [visible]="showPositionRiskDialog()" (visibleChange)="showPositionRiskDialog.set($event)"
           [modal]="true"
           [blockScroll]="true"
           [draggable]="false"

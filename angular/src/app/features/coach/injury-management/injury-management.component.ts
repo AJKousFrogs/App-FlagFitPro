@@ -301,9 +301,9 @@ export class InjuryManagementComponent implements OnInit {
   readonly isLoading = signal(true);
 
   // Dialog state
-  showReportDialog = false;
-  showCheckinDialog = false;
-  showRtpDetailsDialog = false;
+  showReportDialog = signal(false);
+  showCheckinDialog = signal(false);
+  showRtpDetailsDialog = signal(false);
   selectedInjury: InjuryRecord | null = null;
 
   // Report form
@@ -591,22 +591,22 @@ export class InjuryManagementComponent implements OnInit {
 
   // Dialog methods
   closeReportDialog(): void {
-    this.showReportDialog = false;
+    this.showReportDialog.set(false);
     this.resetReportForm();
   }
 
   closeCheckinDialog(): void {
-    this.showCheckinDialog = false;
+    this.showCheckinDialog.set(false);
     this.resetCheckinForm(this.selectedInjury);
   }
 
   closeRtpDetailsDialog(): void {
-    this.showRtpDetailsDialog = false;
+    this.showRtpDetailsDialog.set(false);
   }
 
   openReportDialog(): void {
     this.resetReportForm();
-    this.showReportDialog = true;
+    this.showReportDialog.set(true);
   }
 
   submitReport(): void {
@@ -622,7 +622,7 @@ export class InjuryManagementComponent implements OnInit {
   openCheckinDialog(injury: InjuryRecord): void {
     this.selectedInjury = injury;
     this.resetCheckinForm(injury);
-    this.showCheckinDialog = true;
+    this.showCheckinDialog.set(true);
   }
 
   submitCheckin(): void {
@@ -682,7 +682,7 @@ export class InjuryManagementComponent implements OnInit {
 
   viewRtpDetails(injury: InjuryRecord): void {
     this.selectedInjury = injury;
-    this.showRtpDetailsDialog = true;
+    this.showRtpDetailsDialog.set(true);
   }
 
   requestMedical(_injury: InjuryRecord): void {

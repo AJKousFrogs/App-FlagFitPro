@@ -233,7 +233,8 @@
 
       <!-- Create/Edit Program Dialog -->
       <app-dialog
-        [(visible)]="showCreateDialog"
+        [visible]="showCreateDialog()"
+        (visibleChange)="showCreateDialog.set($event)"
         dialogSize="2xl"
         class="program-dialog"
         (hide)="closeCreateDialog()"
@@ -437,7 +438,8 @@
       </app-dialog>
 
       <app-dialog
-        [(visible)]="showProgramDetailsDialog"
+        [visible]="showProgramDetailsDialog()"
+        (visibleChange)="showProgramDetailsDialog.set($event)"
         class="program-detail-dialog"
         (hide)="closeProgramDetailsDialog()"
       >
@@ -509,7 +511,8 @@
       </app-dialog>
 
       <app-dialog
-        [(visible)]="showComplianceDialog"
+        [visible]="showComplianceDialog()"
+        (visibleChange)="showComplianceDialog.set($event)"
         class="program-compliance-dialog"
         (hide)="closeComplianceDialog()"
       >

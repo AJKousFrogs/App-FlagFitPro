@@ -110,7 +110,7 @@
 
       <!-- Full Dialog -->
       <app-dialog
-        [(visible)]="showFullDialog"
+        [visible]="showFullDialog()" (visibleChange)="showFullDialog.set($event)"
         [blockScroll]="true"
         [draggable]="false"
         dialogSize="2xl"

@@ -198,7 +198,8 @@
 
       <!-- Upload Dialog -->
       <app-dialog
-        [(visible)]="showUploadDialog"
+        [visible]="showUploadDialog()"
+        (visibleChange)="showUploadDialog.set($event)"
         [modal]="true"
         dialogSize="lg"
         [blockScroll]="true"
@@ -304,7 +305,8 @@
 
       <!-- Tag Editor Dialog -->
       <app-dialog
-        [(visible)]="showTagDialog"
+        [visible]="showTagDialog()"
+        (visibleChange)="showTagDialog.set($event)"
         [modal]="true"
         dialogSize="lg"
         class="film-tag-dialog"
@@ -424,7 +426,8 @@
 
       <!-- Session Detail Dialog -->
       <app-dialog
-        [(visible)]="showSessionDialog"
+        [visible]="showSessionDialog()"
+        (visibleChange)="showSessionDialog.set($event)"
         [modal]="true"
         class="film-session-dialog"
         [blockScroll]="true"
@@ -486,7 +489,8 @@
 
       <!-- Compliance Dialog -->
       <app-dialog
-        [(visible)]="showComplianceDialog"
+        [visible]="showComplianceDialog()"
+        (visibleChange)="showComplianceDialog.set($event)"
         [modal]="true"
         class="film-compliance-dialog"
         [blockScroll]="true"

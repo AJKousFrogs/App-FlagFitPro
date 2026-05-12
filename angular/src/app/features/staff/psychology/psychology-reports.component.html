@@ -268,7 +268,7 @@
 
         <!-- Generate Report Dialog -->
         <app-dialog
-          [(visible)]="showGenerateDialog"
+          [visible]="showGenerateDialog()" (visibleChange)="showGenerateDialog.set($event)"
           [modal]="true"
           [blockScroll]="true"
           [draggable]="false"
@@ -412,7 +412,7 @@
 
         <!-- Pre-Competition Dialog -->
         <app-dialog
-          [(visible)]="showPreCompDialog"
+          [visible]="showPreCompDialog()" (visibleChange)="showPreCompDialog.set($event)"
           [modal]="true"
           [blockScroll]="true"
           [draggable]="false"

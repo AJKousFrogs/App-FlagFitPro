@@ -1,7 +1,8 @@
 <app-main-layout>
       <!-- Poll Creation Dialog -->
       <app-dialog
-        [(visible)]="showPollDialog"
+        [visible]="showPollDialog()"
+        (visibleChange)="showPollDialog.set($event)"
         [modal]="true"
         [closable]="false"
         [draggable]="false"
@@ -75,7 +76,8 @@
 
       <!-- Location Dialog -->
       <app-dialog
-        [(visible)]="showLocationDialog"
+        [visible]="showLocationDialog()"
+        (visibleChange)="showLocationDialog.set($event)"
         [modal]="true"
         [closable]="false"
         [draggable]="false"

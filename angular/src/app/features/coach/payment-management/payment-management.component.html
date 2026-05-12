@@ -376,7 +376,8 @@
 
       <!-- Create Fee Dialog -->
       <app-dialog
-        [(visible)]="showFeeDialog"
+        [visible]="showFeeDialog()"
+        (visibleChange)="showFeeDialog.set($event)"
         [modal]="true"
         dialogSize="xl"
         [blockScroll]="true"
@@ -387,7 +388,7 @@
           icon="wallet"
           title="Create Fee"
           subtitle="Create dues, tournament fees, or equipment charges for your roster."
-          (close)="showFeeDialog = false"
+          (close)="showFeeDialog.set(false)"
         />
         <form class="fee-form" [formGroup]="feeFormGroup">
           <div class="form-field">
@@ -512,14 +513,15 @@
           cancelLabel="Cancel"
           primaryLabel="Create Fee"
           primaryIcon="check"
-          (cancel)="showFeeDialog = false"
+          (cancel)="showFeeDialog.set(false)"
           (primary)="createFee()"
         />
       </app-dialog>
 
       <!-- Record Payment Dialog -->
       <app-dialog
-        [(visible)]="showPaymentDialog"
+        [visible]="showPaymentDialog()"
+        (visibleChange)="showPaymentDialog.set($event)"
         [modal]="true"
         dialogSize="lg"
         [blockScroll]="true"
@@ -530,7 +532,7 @@
           icon="credit-card"
           title="Record Payment"
           subtitle="Log incoming payments and keep player balances current."
-          (close)="showPaymentDialog = false"
+          (close)="showPaymentDialog.set(false)"
         />
         <form class="payment-form" [formGroup]="paymentFormGroup">
           <div class="form-field">
@@ -603,13 +605,14 @@
           cancelLabel="Cancel"
           primaryLabel="Record Payment"
           primaryIcon="check"
-          (cancel)="showPaymentDialog = false"
+          (cancel)="showPaymentDialog.set(false)"
           (primary)="recordPayment()"
         />
       </app-dialog>
 
       <app-dialog
-        [(visible)]="showFeeDetailsDialog"
+        [visible]="showFeeDetailsDialog()"
+        (visibleChange)="showFeeDetailsDialog.set($event)"
         [modal]="true"
         class="payment-fee-details-dialog"
         [blockScroll]="true"
@@ -620,7 +623,7 @@
           icon="wallet"
           [title]="data.selectedFee()?.name || 'Fee Details'"
           subtitle="Review collection progress, fee timing, and outstanding balances."
-          (close)="showFeeDetailsDialog = false"
+          (close)="showFeeDetailsDialog.set(false)"
         />
         @if (data.selectedFee(); as fee) {
           <div class="fee-details-dialog-content">
@@ -696,7 +699,7 @@
           cancelLabel="Close"
           primaryLabel="Record Payment"
           primaryIcon="check"
-          (cancel)="showFeeDetailsDialog = false"
+          (cancel)="showFeeDetailsDialog.set(false)"
           (primary)="openPaymentDialogFromDetails()"
         />
       </app-dialog>

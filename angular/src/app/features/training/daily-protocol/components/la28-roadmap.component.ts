@@ -95,7 +95,7 @@ export class La28RoadmapComponent {
   readonly playerCycles = signal<PlayerCycle[]>([]);
   readonly isLoading = signal(true);
   readonly loadError = signal<string | null>(null);
-  showFullDialog = false;
+  showFullDialog = signal(false);
 
   // Computed values
   readonly daysUntilOlympics = computed(() => {

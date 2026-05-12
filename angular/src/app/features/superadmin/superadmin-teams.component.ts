@@ -2,6 +2,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   inject,
+  signal,
   DestroyRef,
   OnInit,
 } from "@angular/core";
@@ -77,7 +78,7 @@ export class SuperadminTeamsComponent implements OnInit {
   filteredTeams: Team[] = [];
   searchQuery = "";
   statusFilter: "all" | "active" | "pending" | "suspended" = "all";
-  showTeamDialog = false;
+  showTeamDialog = signal(false);
   selectedTeam: Team | null = null;
   isLoading = this.superadminService.isLoading;
 
@@ -158,7 +159,7 @@ export class SuperadminTeamsComponent implements OnInit {
   }
 
   closeTeamDialog(): void {
-    this.showTeamDialog = false;
+    this.showTeamDialog.set(false);
   }
 
   async approveTeam(team: Team): Promise<void> {
@@ -207,6 +208,6 @@ export class SuperadminTeamsComponent implements OnInit {
 
   viewTeam(team: Team): void {
     this.selectedTeam = team;
-    this.showTeamDialog = true;
+    this.showTeamDialog.set(true);
   }
 }

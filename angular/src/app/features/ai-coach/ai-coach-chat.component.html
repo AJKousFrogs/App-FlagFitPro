@@ -396,9 +396,9 @@
 
         <!-- Micro-Session Modal -->
         @if (activeMicroSession()) {
-          @defer (when microSessionDialogVisible) {
+          @defer (when microSessionDialogVisible()) {
             <app-dialog
-              [(visible)]="microSessionDialogVisible"
+              [visible]="microSessionDialogVisible()" (visibleChange)="microSessionDialogVisible.set($event)"
               [modal]="true"
               [closable]="false"
               [draggable]="false"

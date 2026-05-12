@@ -178,9 +178,9 @@ export class CalendarCoachComponent implements OnInit {
   readonly isEditing = signal(false);
 
   // Dialog state
-  showCreateDialog = false;
-  showRsvpDialog = false;
-  showEventDetailDialog = false;
+  showCreateDialog = signal(false);
+  showRsvpDialog = signal(false);
+  showEventDetailDialog = signal(false);
 
   // Form
   eventForm: EventForm = this.getEmptyEventForm();
@@ -434,17 +434,17 @@ export class CalendarCoachComponent implements OnInit {
 
   // Actions
   closeCreateDialog(): void {
-    this.showCreateDialog = false;
+    this.showCreateDialog.set(false);
     this.isEditing.set(false);
     this.eventForm = this.getEmptyEventForm();
   }
 
   closeRsvpDialog(): void {
-    this.showRsvpDialog = false;
+    this.showRsvpDialog.set(false);
   }
 
   closeEventDetailDialog(): void {
-    this.showEventDetailDialog = false;
+    this.showEventDetailDialog.set(false);
   }
 
   private refreshCalendarData(): Promise<void> {
@@ -454,7 +454,7 @@ export class CalendarCoachComponent implements OnInit {
   private showEventDetail(event: TeamEvent): void {
     this.closeEventDetailDialog();
     this.selectedEvent.set(event);
-    this.showEventDetailDialog = true;
+    this.showEventDetailDialog.set(true);
   }
 
   private showRsvpManagement(event: TeamEvent): void {
@@ -462,12 +462,12 @@ export class CalendarCoachComponent implements OnInit {
     this.closeRsvpDialog();
     this.selectedEvent.set(event);
     this.rsvps.set([]);
-    this.showRsvpDialog = true;
+    this.showRsvpDialog.set(true);
   }
 
   openCreateDialog(): void {
     this.closeCreateDialog();
-    this.showCreateDialog = true;
+    this.showCreateDialog.set(true);
   }
 
   readonly openCreateDialogHandler = (): void => this.openCreateDialog();
@@ -484,7 +484,7 @@ export class CalendarCoachComponent implements OnInit {
       startTime: event.startTime,
       endTime: event.endTime,
     };
-    this.showCreateDialog = true;
+    this.showCreateDialog.set(true);
   }
 
   async saveEvent(): Promise<void> {

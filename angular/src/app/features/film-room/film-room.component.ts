@@ -120,7 +120,7 @@ export class FilmRoomComponent implements OnInit {
   readonly selectedStatus = signal<"watched" | "unwatched" | null>(null);
 
   // Dialog state
-  showFilmDetail = false;
+  showFilmDetail = signal(false);
   readonly replyMessage = signal("");
 
   // Options
@@ -208,11 +208,11 @@ export class FilmRoomComponent implements OnInit {
   selectFilm(film: FilmSession): void {
     this.closeFilmDetail();
     this.selectedFilm.set(film);
-    this.showFilmDetail = true;
+    this.showFilmDetail.set(true);
   }
 
   closeFilmDetail(): void {
-    this.showFilmDetail = false;
+    this.showFilmDetail.set(false);
     this.selectedFilm.set(null);
     this.expandedMoment.set(null);
     this.replyMessage.set("");

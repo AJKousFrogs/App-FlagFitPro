@@ -1,7 +1,7 @@
     <!-- Session Card / Modal -->
     @if (mode() === "modal") {
       <app-dialog
-        [(visible)]="dialogVisible"
+        [visible]="dialogVisible()" (visibleChange)="dialogVisible.set($event)"
         [modal]="true"
         [closable]="currentStatus() !== 'in_progress'"
         [dismissableMask]="currentStatus() !== 'in_progress'"

@@ -1,5 +1,5 @@
     <app-backdrop
-      [visible]="visible"
+      [visible]="visible()"
       [class]="'notifications-backdrop'"
       (backdropClick)="close()"
     />
@@ -7,11 +7,11 @@
     <!-- Panel -->
     <div
       class="notifications-panel"
-      [class.open]="visible"
+      [class.open]="visible()"
       role="dialog"
       aria-modal="true"
       aria-label="Notifications panel"
-      [attr.aria-hidden]="!visible"
+      [attr.aria-hidden]="!visible()"
     >
       <!-- Header -->
       <div class="panel-header">

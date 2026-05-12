@@ -106,7 +106,7 @@
 
 <!-- Add Supplement Dialog -->
 <app-dialog
-  [(visible)]="showAddDialog"
+  [visible]="showAddDialog()" (visibleChange)="showAddDialog.set($event)"
   [modal]="true"
   [draggable]="false"
   [resizable]="false"

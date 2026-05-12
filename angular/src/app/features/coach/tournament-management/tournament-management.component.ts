@@ -161,7 +161,7 @@ export class TournamentManagementComponent implements OnInit {
   lineupNotes = "";
 
   // Dialog state
-  showDetailDialog = false;
+  showDetailDialog = signal(false);
 
   // Options
   readonly positionOptions = POSITIONS;
@@ -322,7 +322,7 @@ export class TournamentManagementComponent implements OnInit {
   }
 
   closeDetailDialog(): void {
-    this.showDetailDialog = false;
+    this.showDetailDialog.set(false);
   }
 
   getGamesForDay(day: number): TournamentGame[] {
@@ -331,7 +331,7 @@ export class TournamentManagementComponent implements OnInit {
 
   private showDetailDialogForTab(tab: "overview" | "rsvps" | "lineup" | "schedule"): void {
     this.detailTab.set(tab);
-    this.showDetailDialog = true;
+    this.showDetailDialog.set(true);
   }
 
   private async openTournamentDetail(

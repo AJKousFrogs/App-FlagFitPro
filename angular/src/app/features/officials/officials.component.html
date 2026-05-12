@@ -241,7 +241,8 @@
 
         <!-- Add/Edit Official Dialog -->
         <app-dialog
-          [(visible)]="showOfficialDialog"
+          [visible]="showOfficialDialog()"
+          (visibleChange)="showOfficialDialog.set($event)"
           [modal]="true"
           dialogSize="md"
           [blockScroll]="true"
@@ -329,7 +330,8 @@
 
         <!-- Schedule Official Dialog -->
         <app-dialog
-          [(visible)]="showScheduleDialog"
+          [visible]="showScheduleDialog()"
+          (visibleChange)="showScheduleDialog.set($event)"
           [modal]="true"
           dialogSize="sm"
           [blockScroll]="true"

@@ -175,7 +175,8 @@
 
         <!-- Assign Player Dialog -->
         <app-dialog
-          [(visible)]="showAssignDialog"
+          [visible]="showAssignDialog()"
+          (visibleChange)="showAssignDialog.set($event)"
           [modal]="true"
           [closable]="false"
           [draggable]="false"

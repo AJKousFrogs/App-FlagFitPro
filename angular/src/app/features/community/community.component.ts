@@ -8,6 +8,7 @@ import {
   OnInit,
   afterNextRender,
   inject,
+  signal,
   viewChild,
 } from "@angular/core";
 import { RouterModule } from "@angular/router";
@@ -85,12 +86,12 @@ export class CommunityComponent implements OnInit {
   pendingPoll: Poll | null = null;
 
   // ====== Poll dialog state ======
-  showPollDialog = false;
+  showPollDialog = signal(false);
   pollQuestion = "";
   pollOptions: string[] = ["", ""];
 
   // ====== Location dialog state ======
-  showLocationDialog = false;
+  showLocationDialog = signal(false);
   locationInput = "";
 
   get isPollValid(): boolean {
@@ -266,7 +267,7 @@ export class CommunityComponent implements OnInit {
   createPoll(): void {
     this.pollQuestion = "";
     this.pollOptions = ["", ""];
-    this.showPollDialog = true;
+    this.showPollDialog.set(true);
   }
 
   setPollQuestion(value: string): void {
@@ -298,7 +299,7 @@ export class CommunityComponent implements OnInit {
   }
 
   cancelPoll(): void {
-    this.showPollDialog = false;
+    this.showPollDialog.set(false);
     this.pollQuestion = "";
     this.pollOptions = ["", ""];
   }
@@ -317,7 +318,7 @@ export class CommunityComponent implements OnInit {
         totalVotes: 0,
       };
       this.newPostContent = this.newPostContent + `\n📊 Poll attached`;
-      this.showPollDialog = false;
+      this.showPollDialog.set(false);
       this.toastService.success(TOAST.SUCCESS.POLL_ADDED);
       this.cdr.detectChanges();
     }
@@ -329,7 +330,7 @@ export class CommunityComponent implements OnInit {
 
   addLocation(): void {
     this.locationInput = "";
-    this.showLocationDialog = true;
+    this.showLocationDialog.set(true);
   }
 
   setLocationInput(value: string): void {
@@ -341,14 +342,14 @@ export class CommunityComponent implements OnInit {
   }
 
   cancelLocation(): void {
-    this.showLocationDialog = false;
+    this.showLocationDialog.set(false);
     this.locationInput = "";
   }
 
   confirmLocation(): void {
     if (this.locationInput.trim()) {
       this.newPostContent = this.newPostContent + `\n📍 ${this.locationInput}`;
-      this.showLocationDialog = false;
+      this.showLocationDialog.set(false);
       this.toastService.success(TOAST.SUCCESS.LOCATION_ADDED);
       this.cdr.detectChanges();
     }

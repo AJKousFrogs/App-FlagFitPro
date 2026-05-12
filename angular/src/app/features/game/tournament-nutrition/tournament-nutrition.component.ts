@@ -148,7 +148,7 @@ export class TournamentNutritionComponent implements OnInit, OnDestroy {
   nutritionWindows = signal<NutritionWindow[]>([]);
   hydrationLogs = signal<HydrationLog[]>([]);
   tournamentName = signal("Tournament Day");
-  showScheduleEditor = false;
+  showScheduleEditor = signal(false);
   merlinEntryContext = signal<{
     source: "merlin";
     focus: "hydration" | "schedule";
@@ -161,7 +161,7 @@ export class TournamentNutritionComponent implements OnInit, OnDestroy {
   );
 
   readonly openScheduleEditorHandler = (): void => {
-    this.showScheduleEditor = true;
+    this.showScheduleEditor.set(true);
   };
   selectedHydration: string | null = null;
   expandedWindows = new Set<string>(); // Track which windows are expanded
@@ -435,7 +435,7 @@ export class TournamentNutritionComponent implements OnInit, OnDestroy {
           }
 
           if (focus === "schedule") {
-            this.showScheduleEditor = true;
+            this.showScheduleEditor.set(true);
             this.merlinEntryContext.set({
               source: "merlin",
               focus: "schedule",
@@ -593,7 +593,7 @@ export class TournamentNutritionComponent implements OnInit, OnDestroy {
 
     this.games.set(sortedGames);
     this.tournamentName.set(this.editTournamentName);
-    this.showScheduleEditor = false;
+    this.showScheduleEditor.set(false);
 
     // Generate nutrition windows
     const windows: NutritionWindow[] = [];

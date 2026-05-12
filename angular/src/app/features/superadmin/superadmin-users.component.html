@@ -176,7 +176,7 @@
         </div>
 
         <app-dialog
-          [(visible)]="showUserDialog"
+          [visible]="showUserDialog()" (visibleChange)="showUserDialog.set($event)"
           [modal]="true"
           [draggable]="false"
           [blockScroll]="true"
@@ -220,7 +220,7 @@
         </app-dialog>
 
         <app-dialog
-          [(visible)]="showEditDialog"
+          [visible]="showEditDialog()" (visibleChange)="showEditDialog.set($event)"
           [modal]="true"
           [draggable]="false"
           [blockScroll]="true"

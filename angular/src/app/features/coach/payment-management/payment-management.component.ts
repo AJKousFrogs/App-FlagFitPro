@@ -168,9 +168,9 @@ export class PaymentManagementComponent implements OnInit {
   );
 
   // Dialog state
-  showFeeDialog = false;
-  showPaymentDialog = false;
-  showFeeDetailsDialog = false;
+  showFeeDialog = signal(false);
+  showPaymentDialog = signal(false);
+  showFeeDetailsDialog = signal(false);
 
   // Forms
   readonly feeFormGroup: FeeFormGroup = this.createFeeForm();
@@ -295,12 +295,12 @@ export class PaymentManagementComponent implements OnInit {
   // Dialog methods
   openCreateFeeDialog(): void {
     this.feeFormGroup.reset(this.getEmptyFeeForm());
-    this.showFeeDialog = true;
+    this.showFeeDialog.set(true);
   }
 
   openRecordPaymentDialog(_fee?: TeamFee): void {
     this.paymentFormGroup.reset(this.getEmptyPaymentForm());
-    this.showPaymentDialog = true;
+    this.showPaymentDialog.set(true);
   }
 
   async createFee(): Promise<void> {
@@ -313,7 +313,7 @@ export class PaymentManagementComponent implements OnInit {
       this.feeFormGroup.getRawValue() as FeeForm,
     );
     if (success) {
-      this.showFeeDialog = false;
+      this.showFeeDialog.set(false);
     }
   }
 
@@ -327,14 +327,14 @@ export class PaymentManagementComponent implements OnInit {
       this.paymentFormGroup.getRawValue() as PaymentForm,
     );
     if (success) {
-      this.showPaymentDialog = false;
+      this.showPaymentDialog.set(false);
     }
   }
 
   // Action methods
   viewFeeDetails(fee: TeamFee): void {
     this.data.selectedFee.set(fee);
-    this.showFeeDetailsDialog = true;
+    this.showFeeDetailsDialog.set(true);
   }
 
   sendFeeReminders(fee: TeamFee): void {
@@ -353,7 +353,7 @@ export class PaymentManagementComponent implements OnInit {
       playerId: balance.id,
       amount: balance.balance,
     });
-    this.showPaymentDialog = true;
+    this.showPaymentDialog.set(true);
   }
 
   viewPlayerHistory(_balance: PlayerBalance): void {
@@ -459,7 +459,7 @@ export class PaymentManagementComponent implements OnInit {
   }
 
   openPaymentDialogFromDetails(): void {
-    this.showFeeDetailsDialog = false;
+    this.showFeeDetailsDialog.set(false);
     this.openRecordPaymentDialog(this.data.selectedFee() || undefined);
   }
 }

@@ -112,7 +112,7 @@ export class AchievementsPanelComponent {
   readonly streaks = signal<Streak[]>([]);
   readonly stats = signal<Stats | null>(null);
 
-  showFullDialog = false;
+  showFullDialog = signal(false);
 
   readonly categories = computed(() => Object.keys(this.grouped()));
 

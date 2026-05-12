@@ -254,7 +254,8 @@
 
       <!-- Create Event Dialog -->
       <app-dialog
-        [(visible)]="showCreateDialog"
+        [visible]="showCreateDialog()"
+        (visibleChange)="showCreateDialog.set($event)"
         [modal]="true"
         dialogSize="xl"
         [blockScroll]="true"
@@ -438,7 +439,8 @@
 
       <!-- RSVP Management Dialog -->
       <app-dialog
-        [(visible)]="showRsvpDialog"
+        [visible]="showRsvpDialog()"
+        (visibleChange)="showRsvpDialog.set($event)"
         [modal]="true"
         dialogSize="xl"
         [blockScroll]="true"
@@ -546,7 +548,8 @@
 
       <!-- Event Details Dialog -->
       <app-dialog
-        [(visible)]="showEventDetailDialog"
+        [visible]="showEventDetailDialog()"
+        (visibleChange)="showEventDetailDialog.set($event)"
         [modal]="true"
         class="coach-calendar-event-detail-dialog"
         [blockScroll]="true"

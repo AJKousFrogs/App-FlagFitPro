@@ -56,7 +56,7 @@ export class NotificationsPanelComponent {
   private router = inject(Router);
   private toastService = inject(ToastService);
 
-  visible = false;
+  visible = signal(false);
   isLoading = signal(false);
   selectedCategory = signal<NotificationCategory | null>(null);
   dismissingIds = signal<Set<string>>(new Set());
@@ -75,7 +75,7 @@ export class NotificationsPanelComponent {
 
   // Close on Escape key
   onEscapePress(): void {
-    if (this.visible) {
+    if (this.visible()) {
       this.close();
     }
   }
@@ -178,16 +178,16 @@ export class NotificationsPanelComponent {
   });
 
   open(): void {
-    this.visible = true;
+    this.visible.set(true);
     this.loadNotifications();
   }
 
   close(): void {
-    this.visible = false;
+    this.visible.set(false);
   }
 
   toggle(): void {
-    if (this.visible) {
+    if (this.visible()) {
       this.close();
     } else {
       this.open();

@@ -301,7 +301,7 @@
                   <app-button
                     variant="outlined"
                     iconLeft="pi-plus"
-                    (clicked)="showAddContactDialog = true"
+                    (clicked)="showAddContactDialog.set(true)"
                     >Add Emergency Contact</app-button
                   >
                 }
@@ -431,7 +431,7 @@
                     <app-button
                       variant="outlined"
                       size="sm"
-                      (clicked)="showDeleteAccountDialog = true"
+                      (clicked)="showDeleteAccountDialog.set(true)"
                       >Delete</app-button
                     >
                   }
@@ -457,7 +457,7 @@
 
       <!-- Add Emergency Contact Dialog -->
       <app-dialog
-        [(visible)]="showAddContactDialog"
+        [visible]="showAddContactDialog()" (visibleChange)="showAddContactDialog.set($event)"
         [modal]="true"
         [blockScroll]="true"
         [draggable]="false"
@@ -469,7 +469,7 @@
           dialogHeader
           icon="user-plus"
           title="Add Emergency Contact"
-          (close)="showAddContactDialog = false"
+          (close)="showAddContactDialog.set(false)"
         />
         <div class="contact-form privacy-dialog-stack">
           <div class="form-field">
@@ -503,7 +503,7 @@
           primaryLabel="Add Contact"
           primaryIcon="plus"
           [disabled]="!isContactValid()"
-          (cancel)="showAddContactDialog = false"
+          (cancel)="showAddContactDialog.set(false)"
           (primary)="addEmergencyContact()"
         />
       </app-dialog>
@@ -512,7 +512,7 @@
 
       <!-- Delete Account Confirmation Dialog -->
       <app-dialog
-        [(visible)]="showDeleteAccountDialog"
+        [visible]="showDeleteAccountDialog()" (visibleChange)="showDeleteAccountDialog.set($event)"
         [modal]="true"
         [blockScroll]="true"
         [draggable]="false"
@@ -526,7 +526,7 @@
           title="Delete Account"
           subtitle="This action is permanent and irreversible"
           [danger]="true"
-          (close)="showDeleteAccountDialog = false"
+          (close)="showDeleteAccountDialog.set(false)"
         />
         <div class="delete-warning-content privacy-dialog-stack">
           <app-alert
@@ -575,14 +575,14 @@
           primaryVariant="danger"
           [loading]="deletionLoading()"
           [disabled]="deleteConfirmText !== 'DELETE'"
-          (cancel)="showDeleteAccountDialog = false"
+          (cancel)="showDeleteAccountDialog.set(false)"
           (primary)="deleteAccount()"
         />
       </app-dialog>
 
       <!-- Audit Log Dialog -->
       <app-dialog
-        [(visible)]="showAuditLogDialog"
+        [visible]="showAuditLogDialog()" (visibleChange)="showAuditLogDialog.set($event)"
         [modal]="true"
         [blockScroll]="true"
         [draggable]="false"
@@ -595,7 +595,7 @@
           dialogHeader
           icon="history"
           title="Privacy Audit Log"
-          (close)="showAuditLogDialog = false"
+          (close)="showAuditLogDialog.set(false)"
         />
         <div class="audit-log-content privacy-dialog-stack">
           @if (auditLogLoading()) {
@@ -627,7 +627,7 @@
           dialogFooter
           class="privacy-dialog-actions privacy-dialog-actions--single"
         >
-          <app-button variant="text" (clicked)="showAuditLogDialog = false"
+          <app-button variant="text" (clicked)="showAuditLogDialog.set(false)"
             >Close</app-button
           >
         </div>

@@ -9,7 +9,7 @@
           <app-button
             variant="outlined"
             iconLeft="pi-calendar"
-            (clicked)="showScheduleEditor = true"
+            (clicked)="showScheduleEditor.set(true)"
             >Edit Schedule</app-button
           >
           @if (games().length > 0) {
@@ -142,7 +142,7 @@
         </app-card-shell>
 
         <!-- Schedule Editor (Collapsible) -->
-        @if (showScheduleEditor) {
+        @if (showScheduleEditor()) {
           <app-card-shell
             class="schedule-editor-card"
             title="Game Schedule"
@@ -153,7 +153,7 @@
               header-actions
               icon="pi-times"
               variant="text"
-              (clicked)="showScheduleEditor = false"
+              (clicked)="showScheduleEditor.set(false)"
               ariaLabel="Close schedule editor"
               tooltip="Close"
             />

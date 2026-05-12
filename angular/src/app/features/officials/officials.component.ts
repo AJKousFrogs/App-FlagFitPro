@@ -106,8 +106,8 @@ export class OfficialsComponent implements OnInit {
 
   // UI State
   selectedCertification: CertificationLevel | null = null;
-  showOfficialDialog = false;
-  showScheduleDialog = false;
+  showOfficialDialog = signal(false);
+  showScheduleDialog = signal(false);
   editingOfficial: Official | null = null;
   selectedOfficial = signal<Official | null>(null);
 
@@ -359,13 +359,13 @@ export class OfficialsComponent implements OnInit {
   }
 
   closeOfficialDialog(): void {
-    this.showOfficialDialog = false;
+    this.showOfficialDialog.set(false);
     this.editingOfficial = null;
     this.officialForm = this.getEmptyOfficialForm();
   }
 
   closeScheduleDialog(): void {
-    this.showScheduleDialog = false;
+    this.showScheduleDialog.set(false);
     this.selectedOfficial.set(null);
     this.scheduleForm = {
       game_id: "",
@@ -376,7 +376,7 @@ export class OfficialsComponent implements OnInit {
 
   openAddOfficialDialog(): void {
     this.closeOfficialDialog();
-    this.showOfficialDialog = true;
+    this.showOfficialDialog.set(true);
   }
 
   openEditOfficialDialog(official: Official): void {
@@ -390,7 +390,7 @@ export class OfficialsComponent implements OnInit {
       notes: official.notes || "",
       is_active: official.is_active,
     };
-    this.showOfficialDialog = true;
+    this.showOfficialDialog.set(true);
   }
 
   saveOfficial(): void {
@@ -437,7 +437,7 @@ export class OfficialsComponent implements OnInit {
   openScheduleDialog(official: Official): void {
     this.closeScheduleDialog();
     this.selectedOfficial.set(official);
-    this.showScheduleDialog = true;
+    this.showScheduleDialog.set(true);
   }
 
   scheduleOfficial(): void {

@@ -134,7 +134,8 @@
 
         <!-- Log Performance Dialog (Extended) -->
         <app-dialog
-          [(visible)]="showLogDialog"
+          [visible]="showLogDialog()"
+          (visibleChange)="showLogDialog.set($event)"
           [modal]="true"
           [closable]="false"
           [draggable]="false"
@@ -146,7 +147,7 @@
             icon="chart-line"
             title="Log Performance"
             subtitle="Add a new testing session to update benchmarks and trends."
-            (close)="showLogDialog = false"
+            (close)="showLogDialog.set(false)"
           />
           <div class="log-form">
             <!-- Speed Metrics -->
@@ -319,7 +320,7 @@
             primaryLabel="Save Weight &amp; Metrics"
             primaryIcon="check"
             [loading]="isSaving()"
-            (cancel)="showLogDialog = false"
+            (cancel)="showLogDialog.set(false)"
             (primary)="savePerformance()"
           />
         </app-dialog>

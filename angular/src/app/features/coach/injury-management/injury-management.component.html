@@ -350,7 +350,8 @@
 
       <!-- Report Injury Dialog -->
       <app-dialog
-        [(visible)]="showReportDialog"
+        [visible]="showReportDialog()"
+        (visibleChange)="showReportDialog.set($event)"
         [modal]="true"
         dialogSize="xl"
         [blockScroll]="true"
@@ -568,7 +569,8 @@
 
       <!-- Daily Check-in Dialog -->
       <app-dialog
-        [(visible)]="showCheckinDialog"
+        [visible]="showCheckinDialog()"
+        (visibleChange)="showCheckinDialog.set($event)"
         [modal]="true"
         dialogSize="lg"
         [blockScroll]="true"
@@ -631,7 +633,8 @@
       </app-dialog>
 
       <app-dialog
-        [(visible)]="showRtpDetailsDialog"
+        [visible]="showRtpDetailsDialog()"
+        (visibleChange)="showRtpDetailsDialog.set($event)"
         [modal]="true"
         class="injury-rtp-dialog"
         [blockScroll]="true"

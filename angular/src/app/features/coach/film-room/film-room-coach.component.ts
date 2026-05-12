@@ -122,10 +122,10 @@ export class FilmRoomCoachComponent implements OnInit {
   readonly loadError = signal<string | null>(null);
 
   // Dialog state
-  showUploadDialog = false;
-  showTagDialog = false;
-  showSessionDialog = false;
-  showComplianceDialog = false;
+  showUploadDialog = signal(false);
+  showTagDialog = signal(false);
+  showSessionDialog = signal(false);
+  showComplianceDialog = signal(false);
 
   // Forms
   uploadForm = this.getEmptyUploadForm();
@@ -313,19 +313,19 @@ export class FilmRoomCoachComponent implements OnInit {
   }
 
   closeUploadDialog(): void {
-    this.showUploadDialog = false;
+    this.showUploadDialog.set(false);
     this.uploadForm = this.getEmptyUploadForm();
   }
 
   closeTagDialog(): void {
-    this.showTagDialog = false;
+    this.showTagDialog.set(false);
     this.tagForm = this.getEmptyTagForm();
   }
 
   // Actions
   openUploadDialog(): void {
     this.closeUploadDialog();
-    this.showUploadDialog = true;
+    this.showUploadDialog.set(true);
   }
 
   readonly openUploadDialogHandler = (): void => this.openUploadDialog();
@@ -358,19 +358,19 @@ export class FilmRoomCoachComponent implements OnInit {
   watchFilm(session: FilmSession): void {
     this.closeSessionDialog();
     this.selectedSession.set(session);
-    this.showSessionDialog = true;
+    this.showSessionDialog.set(true);
   }
 
   editTags(session: FilmSession): void {
     this.closeTagDialog();
     this.selectedSession.set(session);
-    this.showTagDialog = true;
+    this.showTagDialog.set(true);
   }
 
   viewCompliance(session: FilmSession): void {
     this.closeComplianceDialog();
     this.selectedSession.set(session);
-    this.showComplianceDialog = true;
+    this.showComplianceDialog.set(true);
   }
 
   sendReminder(session: FilmSession): void {
@@ -389,7 +389,7 @@ export class FilmRoomCoachComponent implements OnInit {
 
   openAddTag(): void {
     this.closeTagDialog();
-    this.showTagDialog = true;
+    this.showTagDialog.set(true);
   }
 
   async saveTag(): Promise<void> {
@@ -455,11 +455,11 @@ export class FilmRoomCoachComponent implements OnInit {
   }
 
   closeSessionDialog(): void {
-    this.showSessionDialog = false;
+    this.showSessionDialog.set(false);
   }
 
   closeComplianceDialog(): void {
-    this.showComplianceDialog = false;
+    this.showComplianceDialog.set(false);
   }
 
   openTagDialogFromSession(): void {

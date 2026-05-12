@@ -66,7 +66,7 @@
             variant="secondary"
             size="sm"
             iconLeft="pi-info-circle"
-            (clicked)="showInstructions = true"
+            (clicked)="showInstructions.set(true)"
             >Payment Instructions</app-button
           >
           @if (outstandingFees().length > 0) {
@@ -234,7 +234,7 @@
 
       <!-- Payment Instructions Dialog -->
       <app-dialog
-        [(visible)]="showInstructions"
+        [visible]="showInstructions()" (visibleChange)="showInstructions.set($event)"
         [closable]="false"
         [draggable]="false"
         [resizable]="false"
@@ -246,7 +246,7 @@
           icon="wallet"
           title="Payment Instructions"
           subtitle="Coach-provided methods and details"
-          (close)="showInstructions = false"
+          (close)="showInstructions.set(false)"
         ></app-dialog-header>
         <div class="instructions-content">
           @for (method of paymentInstructions().methods; track method.method) {

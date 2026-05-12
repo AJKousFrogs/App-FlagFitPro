@@ -266,7 +266,7 @@
 
         <!-- Athlete Details Dialog -->
         <app-dialog
-          [(visible)]="showAthleteDialog"
+          [visible]="showAthleteDialog()" (visibleChange)="showAthleteDialog.set($event)"
           [modal]="true"
           [blockScroll]="true"
           [draggable]="false"
@@ -347,7 +347,7 @@
 
         <!-- Report Generation Dialog -->
         <app-dialog
-          [(visible)]="showReportDialog"
+          [visible]="showReportDialog()" (visibleChange)="showReportDialog.set($event)"
           [modal]="true"
           [blockScroll]="true"
           [draggable]="false"
@@ -405,7 +405,7 @@
 
         <!-- Tournament Brief Dialog -->
         <app-dialog
-          [(visible)]="showTournamentDialog"
+          [visible]="showTournamentDialog()" (visibleChange)="showTournamentDialog.set($event)"
           [modal]="true"
           [blockScroll]="true"
           [draggable]="false"

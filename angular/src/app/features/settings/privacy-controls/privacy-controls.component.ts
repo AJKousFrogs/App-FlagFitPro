@@ -111,9 +111,9 @@ export class PrivacyControlsComponent implements OnInit {
   emergencyContacts = signal<EmergencyContact[]>([]);
 
   // Dialog visibility
-  showAddContactDialog = false;
-  showDeleteAccountDialog = false;
-  showAuditLogDialog = false;
+  showAddContactDialog = signal(false);
+  showDeleteAccountDialog = signal(false);
+  showAuditLogDialog = signal(false);
   auditLogLoading = signal(false);
   auditLogEntries = signal<
     {
@@ -313,7 +313,7 @@ export class PrivacyControlsComponent implements OnInit {
     if (success) {
       this.emergencyContacts.set(contacts);
       this.newContact = {};
-      this.showAddContactDialog = false;
+      this.showAddContactDialog.set(false);
     }
   }
 
@@ -398,7 +398,7 @@ export class PrivacyControlsComponent implements OnInit {
     });
 
     if (success) {
-      this.showDeleteAccountDialog = false;
+      this.showDeleteAccountDialog.set(false);
       this.deleteConfirmText = "";
       this.deletionReason = "";
     }
@@ -409,7 +409,7 @@ export class PrivacyControlsComponent implements OnInit {
   }
 
   async showAuditLog(): Promise<void> {
-    this.showAuditLogDialog = true;
+    this.showAuditLogDialog.set(true);
     this.auditLogLoading.set(true);
     this.auditLogEntries.set([]);
     const entries = await this.deletionService.getAuditLog(50);

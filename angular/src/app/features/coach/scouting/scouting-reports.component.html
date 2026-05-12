@@ -81,7 +81,7 @@
 
         <!-- New Report Dialog -->
         <app-dialog
-          [(visible)]="showNewReportDialog"
+          [visible]="showNewReportDialog()" (visibleChange)="showNewReportDialog.set($event)"
           [modal]="true"
           class="dialog-w-lg"
           [blockScroll]="true"
@@ -216,7 +216,7 @@
 
         <!-- View Report Dialog -->
         <app-dialog
-          [(visible)]="showViewReportDialog"
+          [visible]="showViewReportDialog()" (visibleChange)="showViewReportDialog.set($event)"
           [modal]="true"
           class="dialog-w-lg"
           [blockScroll]="true"
@@ -355,7 +355,7 @@
 
         <!-- Add Opponent Dialog -->
         <app-dialog
-          [(visible)]="showAddOpponentDialog"
+          [visible]="showAddOpponentDialog()" (visibleChange)="showAddOpponentDialog.set($event)"
           [modal]="true"
           class="dialog-max-w-lg"
           [blockScroll]="true"

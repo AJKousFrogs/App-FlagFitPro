@@ -485,7 +485,8 @@
 
       <!-- Add Resource Dialog -->
       <app-dialog
-        [(visible)]="showAddDialog"
+        [visible]="showAddDialog()"
+        (visibleChange)="showAddDialog.set($event)"
         [modal]="true"
         dialogSize="xl"
         [blockScroll]="true"
@@ -614,7 +615,8 @@
       </app-dialog>
 
       <app-dialog
-        [(visible)]="showApproveDialog"
+        [visible]="showApproveDialog()"
+        (visibleChange)="showApproveDialog.set($event)"
         [modal]="true"
         dialogSize="xl"
         [blockScroll]="true"
@@ -678,7 +680,8 @@
       </app-dialog>
 
       <app-dialog
-        [(visible)]="showResourceDialog"
+        [visible]="showResourceDialog()"
+        (visibleChange)="showResourceDialog.set($event)"
         [modal]="true"
         class="knowledge-base-resource-dialog"
         [blockScroll]="true"

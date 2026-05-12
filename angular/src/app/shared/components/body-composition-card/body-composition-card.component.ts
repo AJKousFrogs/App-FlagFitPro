@@ -80,7 +80,7 @@ export class BodyCompositionCardComponent {
   isLoading = this.trainingService.isRefreshing;
 
   // Dialog state
-  showLogDialog = false;
+  showLogDialog = signal(false);
   readonly isSaving = signal(false);
   measurementForm = {
     weight: null as number | null,
@@ -144,7 +144,7 @@ export class BodyCompositionCardComponent {
       bodyWater: null,
       basalMetabolicRate: null,
     };
-    this.showLogDialog = true;
+    this.showLogDialog.set(true);
   }
 
   onMeasurementInput(
@@ -179,7 +179,7 @@ export class BodyCompositionCardComponent {
       this.isSaving.set(false);
       if (result?.success) {
         this.toastService.success("Body composition saved!");
-        this.showLogDialog = false;
+        this.showLogDialog.set(false);
         // Data is refreshed internally by logBodyComp
       } else {
         const errorMsg = result?.error

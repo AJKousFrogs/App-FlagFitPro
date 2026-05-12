@@ -154,7 +154,7 @@ export class PaymentsComponent implements OnInit {
   readonly currentHistoryPage = signal(1);
 
   // Dialog state
-  showInstructions = false;
+  showInstructions = signal(false);
 
   // Computed values
   readonly outstandingFees = computed(() =>

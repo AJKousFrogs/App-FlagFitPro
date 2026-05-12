@@ -306,7 +306,8 @@
 
       <!-- Add Goal Dialog -->
       <app-dialog
-        [(visible)]="showGoalDialog"
+        [visible]="showGoalDialog()"
+        (visibleChange)="showGoalDialog.set($event)"
         [modal]="true"
         dialogSize="lg"
         [blockScroll]="true"
@@ -415,7 +416,8 @@
 
       <!-- Goal Details Dialog -->
       <app-dialog
-        [(visible)]="showGoalDetailsDialog"
+        [visible]="showGoalDetailsDialog()"
+        (visibleChange)="showGoalDetailsDialog.set($event)"
         [modal]="true"
         class="development-goal-details-dialog"
         [blockScroll]="true"
@@ -494,7 +496,8 @@
 
       <!-- Add Note Dialog -->
       <app-dialog
-        [(visible)]="showNoteDialog"
+        [visible]="showNoteDialog()"
+        (visibleChange)="showNoteDialog.set($event)"
         [modal]="true"
         dialogSize="lg"
         class="development-note-dialog"
@@ -531,7 +534,8 @@
       </app-dialog>
 
       <app-dialog
-        [(visible)]="showAssessmentDialog"
+        [visible]="showAssessmentDialog()"
+        (visibleChange)="showAssessmentDialog.set($event)"
         [modal]="true"
         class="development-assessment-dialog"
         [blockScroll]="true"

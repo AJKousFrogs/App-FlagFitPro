@@ -126,7 +126,7 @@ export class AiCoachChatComponent implements OnInit, AfterViewChecked {
 
 
   // Micro-session state
-  microSessionDialogVisible = false;
+  microSessionDialogVisible = signal(false);
   microSessionInProgress = signal(false);
   activeMicroSession = signal<MicroSessionData | null>(null);
   activeMicroSessionMessageId: string | null = null;
@@ -806,7 +806,7 @@ export class AiCoachChatComponent implements OnInit, AfterViewChecked {
       ...action.microSession,
     } as MicroSessionData);
     this.activeMicroSessionMessageId = messageId || null;
-    this.microSessionDialogVisible = true;
+    this.microSessionDialogVisible.set(true);
     this.microSessionInProgress.set(false);
   }
 
@@ -851,7 +851,7 @@ export class AiCoachChatComponent implements OnInit, AfterViewChecked {
   }
 
   private closeMicroSessionDialog(): void {
-    this.microSessionDialogVisible = false;
+    this.microSessionDialogVisible.set(false);
     this.activeMicroSession.set(null);
     this.activeMicroSessionMessageId = null;
     this.microSessionInProgress.set(false);

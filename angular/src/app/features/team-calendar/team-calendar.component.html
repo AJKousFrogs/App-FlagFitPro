@@ -150,7 +150,7 @@
 
       <!-- RSVP Dialog -->
       <app-dialog
-        [(visible)]="showRsvpDialog"
+        [visible]="showRsvpDialog()" (visibleChange)="showRsvpDialog.set($event)"
         [modal]="true"
         [closable]="false"
         [draggable]="false"

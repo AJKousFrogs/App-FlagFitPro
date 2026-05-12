@@ -92,7 +92,7 @@ export class MicroSessionComponent implements OnInit, OnDestroy {
   readonly closed = output<void>();
 
   // State
-  dialogVisible = false;
+  dialogVisible = signal(false);
   currentStatus = signal<SessionStatus>("ready");
   currentStepIndex = signal(0);
   equipmentChecked: boolean[] = [];
@@ -158,11 +158,11 @@ export class MicroSessionComponent implements OnInit, OnDestroy {
 
   // Public methods
   show(): void {
-    this.dialogVisible = true;
+    this.dialogVisible.set(true);
   }
 
   hide(): void {
-    this.dialogVisible = false;
+    this.dialogVisible.set(false);
   }
 
   hasRequiredEquipment(): boolean {
@@ -339,7 +339,7 @@ export class MicroSessionComponent implements OnInit, OnDestroy {
 
   close(): void {
     this.stopTimer();
-    this.dialogVisible = false;
+    this.dialogVisible.set(false);
     this.closed.emit();
   }
 

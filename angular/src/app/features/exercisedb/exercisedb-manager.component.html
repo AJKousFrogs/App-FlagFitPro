@@ -478,9 +478,9 @@
 
         <!-- Exercise Detail Dialog -->
         <app-dialog
-          [visible]="showDetailDialog"
-          (visibleChange)="showDetailDialog = $event"
-          (hide)="showDetailDialog = false"
+          [visible]="showDetailDialog()"
+          (visibleChange)="showDetailDialog.set($event)"
+          (hide)="showDetailDialog.set(false)"
           [ariaLabel]="selectedExercise()?.name || 'Exercise Details'"
           [draggable]="false"
           [resizable]="false"
@@ -490,7 +490,7 @@
           <app-dialog-header
             icon="database"
             [title]="selectedExercise()?.name || 'Exercise Details'"
-            (close)="showDetailDialog = false"
+            (close)="showDetailDialog.set(false)"
           />
           @if (selectedExercise()) {
             <div class="detail-content">
@@ -646,7 +646,7 @@
               <app-button
                 variant="secondary"
                 iconLeft="pi-times"
-                (clicked)="showDetailDialog = false"
+                (clicked)="showDetailDialog.set(false)"
                 >Close</app-button
               >
             }
@@ -655,9 +655,9 @@
 
         <!-- Approval Dialog -->
         <app-dialog
-          [visible]="showApprovalDialog"
-          (visibleChange)="showApprovalDialog = $event"
-          (hide)="showApprovalDialog = false"
+          [visible]="showApprovalDialog()"
+          (visibleChange)="showApprovalDialog.set($event)"
+          (hide)="showApprovalDialog.set(false)"
           ariaLabel="Approve Exercise"
           [draggable]="false"
           [resizable]="false"
@@ -667,7 +667,7 @@
           <app-dialog-header
             icon="check-circle"
             title="Approve Exercise"
-            (close)="showApprovalDialog = false"
+            (close)="showApprovalDialog.set(false)"
           />
           @if (exerciseToApprove()) {
             <div class="approval-form">
@@ -768,7 +768,7 @@
               <app-button
                 variant="text"
                 iconLeft="pi-times"
-                (clicked)="showApprovalDialog = false"
+                (clicked)="showApprovalDialog.set(false)"
                 >Cancel</app-button
               >
               <app-button
