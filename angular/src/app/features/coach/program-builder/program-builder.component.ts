@@ -7,7 +7,7 @@
  * Design System Compliant (DESIGN_SYSTEM_RULES.md)
  */
 
-import { DatePipe } from "@angular/common";
+import { DatePipe, DecimalPipe } from "@angular/common";
 import {
   ChangeDetectionStrategy,
   Component,
@@ -157,6 +157,7 @@ const PHASE_PRESETS = [
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     DatePipe,
+    DecimalPipe,
     DatePickerComponent,
     FormInputComponent,
     InputNumber,
