@@ -47,6 +47,7 @@ import { LoggerService } from "../../../core/services/logger.service";
 import { NutritionService } from "../../../core/services/nutrition.service";
 import { PeriodizationService } from "../../../core/services/periodization.service";
 import { ScheduleService } from "../../../core/services/schedule.service";
+import { StorageService } from "../../../core/services/storage.service";
 import { ToastService } from "../../../core/services/toast.service";
 import { DialogService } from "../../../core/ui/dialog.service";
 import { CompetitionEvent } from "../../../core/models/schedule.models";
@@ -141,6 +142,7 @@ export class TournamentNutritionComponent implements OnInit, OnDestroy {
   private destroyRef = inject(DestroyRef);
   private scheduleService = inject(ScheduleService);
   private periodizationService = inject(PeriodizationService);
+  private storageService = inject(StorageService);
   private unsubscribeTodayState: (() => void) | null = null;
 
   // State
@@ -1091,9 +1093,8 @@ export class TournamentNutritionComponent implements OnInit, OnDestroy {
     this.editTournamentName = "Tournament Day";
     this.expandedWindows.clear();
 
-    // Clear localStorage
-    localStorage.removeItem("tournament_schedule");
-    localStorage.removeItem("hydration_logs_" + new Date().toDateString());
+    this.storageService.remove("tournament_schedule");
+    this.storageService.remove("hydration_logs_" + new Date().toDateString());
     await this.tournamentStateService.clearTodayState();
 
     this.toastService.success("All tournament data cleared successfully!");

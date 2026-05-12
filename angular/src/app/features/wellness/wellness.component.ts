@@ -278,8 +278,23 @@ export class WellnessComponent {
           this.hasPageError.set(false);
           const wellnessEntries = extractApiArray<WellnessData>(response);
 
+          const confidence =
+            this.confidenceService.calculateWellnessConfidence(
+              wellnessEntries ?? [],
+            );
+          this.wellnessConfidence.set({
+            score: confidence.score,
+            missingInputs: confidence.missingInputs,
+          });
+
           if (wellnessEntries && wellnessEntries.length > 0) {
             const latestData = wellnessEntries[0];
+            const expectedMetrics = ["sleep", "energy", "soreness", "stress"] as const;
+            const filled = expectedMetrics.filter(
+              (m) => latestData[m] != null,
+            ).length;
+            this.completedMetricsCount.set(filled);
+            this.totalMetricsCount.set(expectedMetrics.length);
             const overallScore =
               this.wellnessService.getWellnessScore(latestData);
             const status = this.wellnessService.getWellnessStatus(overallScore);
