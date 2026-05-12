@@ -79,8 +79,8 @@ export interface UpdateEntryPayload {
   providedIn: "root",
 })
 export class DepthChartService {
-  private apiService = inject(ApiService);
-  private logger = inject(LoggerService);
+  private readonly apiService = inject(ApiService);
+  private readonly logger = inject(LoggerService);
 
   // Standard flag football positions
   readonly FLAG_FOOTBALL_POSITIONS = {

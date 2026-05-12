@@ -182,7 +182,7 @@ const PHASE_PRESETS = [
 })
 export class ProgramBuilderComponent implements OnInit {
   private readonly api = inject(ApiService);
-  private destroyRef = inject(DestroyRef);
+  private readonly destroyRef = inject(DestroyRef);
   private readonly logger = inject(LoggerService);
   private readonly toastService = inject(ToastService);
   private readonly dialogService = inject(DialogService);

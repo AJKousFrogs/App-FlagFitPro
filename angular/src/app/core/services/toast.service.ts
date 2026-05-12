@@ -10,7 +10,7 @@
  *
  * @example
  * ```typescript
- * constructor(private toastService = inject(ToastService)) {}
+ * constructor(private readonly toastService = inject(ToastService)) {}
  *
  * // Success notification
  * this.toastService.success('Data saved successfully!');
@@ -69,7 +69,7 @@ const DEFAULT_TOAST_KEY = "app-toast";
   providedIn: "root",
 })
 export class ToastService {
-  private messageService = inject(MessageService);
+  private readonly messageService = inject(MessageService);
 
   /**
    * Track recent messages to prevent duplicates

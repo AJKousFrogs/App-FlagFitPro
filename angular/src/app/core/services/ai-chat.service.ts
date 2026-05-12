@@ -119,8 +119,8 @@ const RATE_LIMIT_WINDOW_MS = 60_000; // 1 minute
   providedIn: "root",
 })
 export class AiChatService {
-  private apiService = inject(ApiService);
-  private supabase = inject(SupabaseService);
+  private readonly apiService = inject(ApiService);
+  private readonly supabase = inject(SupabaseService);
 
   // State - All using signals for consistent reactivity
   private currentSession = signal<ChatSession | null>(null);

@@ -101,8 +101,8 @@ import { PlatformService } from "../../../core/services/platform.service";
   },
 })
 export class MainLayoutComponent implements OnInit, OnDestroy {
-  private themeService = inject(ThemeService);
-  private profileNotificationService = inject(ProfileNotificationService);
+  private readonly themeService = inject(ThemeService);
+  private readonly profileNotificationService = inject(ProfileNotificationService);
   private readonly shellBodyState = inject(ShellBodyStateService);
   private readonly destroyRef = inject(DestroyRef);
   private readonly platformId = inject(PLATFORM_ID);

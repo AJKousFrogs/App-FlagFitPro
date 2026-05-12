@@ -64,9 +64,9 @@ import { CardShellComponent } from "../card-shell/card-shell.component";
   styleUrl: "./micro-session.component.scss",
 })
 export class MicroSessionComponent implements OnInit, OnDestroy {
-  private apiService = inject(ApiService);
-  private toastService = inject(ToastService);
-  private logger = inject(LoggerService);
+  private readonly apiService = inject(ApiService);
+  private readonly toastService = inject(ToastService);
+  private readonly logger = inject(LoggerService);
 
   readonly session = input<MicroSessionData>({
     title: "",

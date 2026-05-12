@@ -184,7 +184,7 @@ interface RegisteredMetric {
   providedIn: "root",
 })
 export class DataSourceService {
-  private logger = inject(LoggerService);
+  private readonly logger = inject(LoggerService);
 
   // Global demo mode flag (for development/testing)
   private _demoMode = signal(false);

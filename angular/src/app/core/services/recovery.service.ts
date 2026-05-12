@@ -167,10 +167,10 @@ interface DatabaseRecoverySession {
   providedIn: "root",
 })
 export class RecoveryService {
-  private supabaseService = inject(SupabaseService);
-  private apiService = inject(ApiService);
-  private logger = inject(LoggerService);
-  private realtimeService = inject(RealtimeService);
+  private readonly supabaseService = inject(SupabaseService);
+  private readonly apiService = inject(ApiService);
+  private readonly logger = inject(LoggerService);
+  private readonly realtimeService = inject(RealtimeService);
 
   // Get current user ID reactively
   private userId = computed(() => this.supabaseService.userId());

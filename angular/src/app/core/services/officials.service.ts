@@ -68,8 +68,8 @@ export interface OfficialScheduleRequest {
   providedIn: "root",
 })
 export class OfficialsService {
-  private apiService = inject(ApiService);
-  private logger = inject(LoggerService);
+  private readonly apiService = inject(ApiService);
+  private readonly logger = inject(LoggerService);
 
   readonly OFFICIAL_ROLES: {
     value: GameOfficial["role"];

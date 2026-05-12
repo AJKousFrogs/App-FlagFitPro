@@ -139,7 +139,7 @@ export interface BloodCirculationRisk {
   providedIn: "root",
 })
 export class CarTravelService {
-  private logger = inject(LoggerService);
+  private readonly logger = inject(LoggerService);
 
 
   /**

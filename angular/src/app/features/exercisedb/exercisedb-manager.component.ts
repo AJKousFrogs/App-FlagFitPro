@@ -72,9 +72,9 @@ import { SkeletonRepeatComponent } from "../../shared/components/skeleton-loader
   styleUrl: "./exercisedb-manager.component.scss",
 })
 export class ExerciseDBManagerComponent implements OnInit {
-  private exerciseDBService = inject(ExerciseDBService);
-  private destroyRef = inject(DestroyRef);
-  private toastService = inject(ToastService);
+  private readonly exerciseDBService = inject(ExerciseDBService);
+  private readonly destroyRef = inject(DestroyRef);
+  private readonly toastService = inject(ToastService);
 
   // Design system tokens
   // State

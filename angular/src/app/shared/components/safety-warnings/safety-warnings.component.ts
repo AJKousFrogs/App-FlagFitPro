@@ -139,8 +139,8 @@ import { SAFETY_WARNING_METRIC_LABELS } from "../../constants/status-labels.cons
   styleUrl: "./safety-warnings.component.scss",
 })
 export class SafetyWarningsComponent implements OnInit {
-  private safetyService = inject(TrainingSafetyService);
-  private supabase = inject(SupabaseService);
+  private readonly safetyService = inject(TrainingSafetyService);
+  private readonly supabase = inject(SupabaseService);
 
   // Expose service signals
   hasWarnings = computed(() => this.safetyService.warningCount() > 0);

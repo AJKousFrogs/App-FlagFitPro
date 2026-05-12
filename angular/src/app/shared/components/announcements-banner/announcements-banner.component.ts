@@ -107,7 +107,7 @@ import { StatusTagComponent } from "../status-tag/status-tag.component";
   styleUrl: "./announcements-banner.component.scss",
 })
 export class AnnouncementsBannerComponent implements OnInit {
-  private notificationService = inject(TeamNotificationService);
+  private readonly notificationService = inject(TeamNotificationService);
 
   // Inputs
   readonly maxDisplay = input<number>(1);

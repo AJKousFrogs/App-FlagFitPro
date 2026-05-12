@@ -55,7 +55,7 @@ import { PlaybookQuizDialogContentComponent } from "./components/playbook-quiz-d
 })
 export class PlaybookComponent implements OnInit {
   private readonly api = inject(ApiService);
-  private destroyRef = inject(DestroyRef);
+  private readonly destroyRef = inject(DestroyRef);
   private readonly logger = inject(LoggerService);
   private readonly toastService = inject(ToastService);
 

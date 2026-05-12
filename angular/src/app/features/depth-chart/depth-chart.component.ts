@@ -73,11 +73,11 @@ interface PositionGroup {
   styleUrl: "./depth-chart.component.scss",
 })
 export class DepthChartComponent implements OnInit {
-  private depthChartService = inject(DepthChartService);
-  private teamMembershipService = inject(TeamMembershipService);
-  private toastService = inject(ToastService);
-  private destroyRef = inject(DestroyRef);
-  private logger = inject(LoggerService);
+  private readonly depthChartService = inject(DepthChartService);
+  private readonly teamMembershipService = inject(TeamMembershipService);
+  private readonly toastService = inject(ToastService);
+  private readonly destroyRef = inject(DestroyRef);
+  private readonly logger = inject(LoggerService);
 
   // State
   depthCharts = signal<DepthChartTemplate[]>([]);

@@ -213,9 +213,9 @@ export class CoachOverrideNotificationComponent {
   coachName = input<string>("Your coach");
   playerId = input.required<string>();
 
-  private overrideLoggingService = inject(OverrideLoggingService);
-  private logger = inject(LoggerService);
-  private router = inject(Router);
+  private readonly overrideLoggingService = inject(OverrideLoggingService);
+  private readonly logger = inject(LoggerService);
+  private readonly router = inject(Router);
 
   showTransparency = signal(false);
   showHistory = signal(false);

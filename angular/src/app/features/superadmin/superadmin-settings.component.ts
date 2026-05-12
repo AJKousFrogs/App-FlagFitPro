@@ -55,11 +55,11 @@ interface SuperadminUser {
   styleUrl: "./superadmin-settings.component.scss",
 })
 export class SuperadminSettingsComponent implements OnInit {
-  private superadminService = inject(SuperadminService);
-  private supabase = inject(SupabaseService);
-  private logger = inject(LoggerService);
-  private toastService = inject(ToastService);
-  private confirmDialog = inject(ConfirmDialogService);
+  private readonly superadminService = inject(SuperadminService);
+  private readonly supabase = inject(SupabaseService);
+  private readonly logger = inject(LoggerService);
+  private readonly toastService = inject(ToastService);
+  private readonly confirmDialog = inject(ConfirmDialogService);
 
   // State
   superadmins = signal<SuperadminUser[]>([]);

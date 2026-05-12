@@ -98,10 +98,10 @@ import { CloseButtonComponent } from "../close-button/close-button.component";
   styleUrl: "./bottom-nav.component.scss",
 })
 export class BottomNavComponent implements OnInit {
-  private router = inject(Router);
-  private supabase = inject(SupabaseService);
-  private notificationState = inject(NotificationStateService);
-  private routeShell = inject(RouteShellService);
+  private readonly router = inject(Router);
+  private readonly supabase = inject(SupabaseService);
+  private readonly notificationState = inject(NotificationStateService);
+  private readonly routeShell = inject(RouteShellService);
   private readonly destroyRef = inject(DestroyRef);
 
   showMoreMenu = signal(false);

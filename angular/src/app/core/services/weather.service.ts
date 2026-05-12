@@ -3,6 +3,7 @@ import { Observable, of } from "rxjs";
 import { catchError, map } from "rxjs";
 import { API_ENDPOINTS, ApiService } from "./api.service";
 import { extractApiPayload } from "../utils/api-response-mapper";
+import { type StatusSeverityBase } from "../../shared/utils/status.utils";
 
 export interface WeatherData {
   temp: number;
@@ -19,7 +20,7 @@ export interface WeatherData {
   providedIn: "root",
 })
 export class WeatherService {
-  private apiService = inject(ApiService);
+  private readonly apiService = inject(ApiService);
 
   /**
    * Get weather data for outdoor training suitability
@@ -102,7 +103,7 @@ export class WeatherService {
    */
   getWeatherSeverity(
     suitability: "excellent" | "good" | "fair" | "poor",
-  ): "success" | "info" | "warning" | "danger" {
+  ): StatusSeverityBase {
     switch (suitability) {
       case "excellent":
         return "success";

@@ -185,10 +185,10 @@ type PreCompSignificance = PreCompForm["significance"];
   styleUrl: "./psychology-reports.component.scss",
 })
 export class PsychologyReportsComponent implements OnInit {
-  private api = inject(ApiService);
-  private toast = inject(ToastService);
-  private logger = inject(LoggerService);
-  protected insightFeedService = inject(SharedInsightFeedService);
+  private readonly api = inject(ApiService);
+  private readonly toast = inject(ToastService);
+  private readonly logger = inject(LoggerService);
+  protected readonly insightFeedService = inject(SharedInsightFeedService);
 
   // State
   loading = signal(false);

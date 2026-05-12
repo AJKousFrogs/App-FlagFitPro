@@ -249,13 +249,13 @@ const toDateOrNull = (value: unknown): Date | null => {
 })
 export class TournamentsComponent implements OnInit {
   tournamentService = inject(TournamentService);
-  private supabase = inject(SupabaseService);
-  private teamMembershipService = inject(TeamMembershipService);
-  private tournamentsDataService = inject(TournamentsDataService);
-  private toastService = inject(ToastService);
-  private confirmDialog = inject(ConfirmDialogService);
-  private logger = inject(LoggerService);
-  private elementRef = inject(ElementRef);
+  private readonly supabase = inject(SupabaseService);
+  private readonly teamMembershipService = inject(TeamMembershipService);
+  private readonly tournamentsDataService = inject(TournamentsDataService);
+  private readonly toastService = inject(ToastService);
+  private readonly confirmDialog = inject(ConfirmDialogService);
+  private readonly logger = inject(LoggerService);
+  private readonly elementRef = inject(ElementRef);
 
   // Computed signals from service
   tournaments = this.tournamentService.tournaments;

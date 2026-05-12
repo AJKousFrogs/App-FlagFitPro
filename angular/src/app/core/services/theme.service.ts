@@ -45,8 +45,8 @@ const THEME_META_COLOR_DARK = "#171717"; // --primitive-neutral-900
   providedIn: "root",
 })
 export class ThemeService implements OnDestroy {
-  private supabase = inject(SupabaseService);
-  private logger = inject(LoggerService);
+  private readonly supabase = inject(SupabaseService);
+  private readonly logger = inject(LoggerService);
 
   // State signals
   private _mode = signal<ThemeMode>("auto");

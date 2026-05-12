@@ -56,9 +56,9 @@ const MAX_CACHE_SIZE = 50; // Maximum number of cached queries
   providedIn: "root",
 })
 export class SearchService implements OnDestroy {
-  private supabase = inject(SupabaseService);
-  private logger = inject(LoggerService);
-  private platform = inject(PlatformService);
+  private readonly supabase = inject(SupabaseService);
+  private readonly logger = inject(LoggerService);
+  private readonly platform = inject(PlatformService);
 
   // State signals
   private readonly _query = signal<string>("");

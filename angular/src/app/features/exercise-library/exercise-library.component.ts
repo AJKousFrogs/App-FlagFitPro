@@ -85,12 +85,12 @@ interface Category {
   styleUrl: "./exercise-library.component.scss",
 })
 export class ExerciseLibraryComponent implements OnInit {
-  private apiService = inject(ApiService);
-  private destroyRef = inject(DestroyRef);
-  private toastService = inject(ToastService);
-  private trainingService = inject(UnifiedTrainingService);
-  private sanitizer = inject(DomSanitizer);
-  private logger = inject(LoggerService);
+  private readonly apiService = inject(ApiService);
+  private readonly destroyRef = inject(DestroyRef);
+  private readonly toastService = inject(ToastService);
+  private readonly trainingService = inject(UnifiedTrainingService);
+  private readonly sanitizer = inject(DomSanitizer);
+  private readonly logger = inject(LoggerService);
 
   // ViewChild references for scroll operations
   private readonly exercisesGrid =

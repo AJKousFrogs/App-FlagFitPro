@@ -16,7 +16,7 @@ import { LoggerService } from "./logger.service";
   providedIn: "root",
 })
 export class FormErrorService {
-  private logger = inject(LoggerService);
+  private readonly logger = inject(LoggerService);
   /**
    * Scroll to a form field and focus it
    *

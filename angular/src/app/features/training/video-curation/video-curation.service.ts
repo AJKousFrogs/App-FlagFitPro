@@ -47,12 +47,12 @@ interface DatabaseVideoPlaylistRow {
   providedIn: "root",
 })
 export class VideoCurationService {
-  private instagramService = inject(InstagramVideoService);
-  private realtimeService = inject(RealtimeService);
-  private supabaseService = inject(SupabaseService);
-  private teamMembershipService = inject(TeamMembershipService);
-  private toastService = inject(ToastService);
-  private logger = inject(LoggerService);
+  private readonly instagramService = inject(InstagramVideoService);
+  private readonly realtimeService = inject(RealtimeService);
+  private readonly supabaseService = inject(SupabaseService);
+  private readonly teamMembershipService = inject(TeamMembershipService);
+  private readonly toastService = inject(ToastService);
+  private readonly logger = inject(LoggerService);
   private playlistsSubscription: (() => void) | null = null;
   private videoStatusSubscription: (() => void) | null = null;
   private realtimeTeamId: string | null = null;

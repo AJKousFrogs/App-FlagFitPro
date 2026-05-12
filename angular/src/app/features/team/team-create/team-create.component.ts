@@ -131,11 +131,11 @@ type TeamCreateForm = FormGroup<{
   styleUrl: "./team-create.component.scss",
 })
 export class TeamCreateComponent extends FormBase {
-  private router = inject(Router);
-  private fb = inject(NonNullableFormBuilder);
-  private toastService = inject(ToastService);
-  private supabase = inject(SupabaseService);
-  private teamCreateDataService = inject(TeamCreateDataService);
+  private readonly router = inject(Router);
+  private readonly fb = inject(NonNullableFormBuilder);
+  private readonly toastService = inject(ToastService);
+  private readonly supabase = inject(SupabaseService);
+  private readonly teamCreateDataService = inject(TeamCreateDataService);
 
   isSubmitting = signal(false);
 

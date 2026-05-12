@@ -123,8 +123,8 @@ interface ExerciseDBApiResponse<T> extends ApiResponse<T> {
   providedIn: "root",
 })
 export class ExerciseDBService {
-  private http = inject(HttpClient);
-  private logger = inject(LoggerService);
+  private readonly http = inject(HttpClient);
+  private readonly logger = inject(LoggerService);
 
   private baseUrl = this.getApiBaseUrl();
 

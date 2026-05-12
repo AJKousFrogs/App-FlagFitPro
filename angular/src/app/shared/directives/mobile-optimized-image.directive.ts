@@ -22,7 +22,7 @@ import { Directive, ElementRef, input, effect, inject } from "@angular/core";
   }
 })
 export class MobileOptimizedImageDirective {
-  private el = inject(ElementRef<HTMLImageElement>);
+  private readonly el = inject(ElementRef<HTMLImageElement>);
 
   width = input<string | number | undefined>(undefined);
   height = input<string | number | undefined>(undefined);

@@ -40,10 +40,10 @@ export interface DeletionRequest {
   providedIn: "root",
 })
 export class AccountDeletionService {
-  private supabase = inject(SupabaseService);
-  private logger = inject(LoggerService);
-  private toastService = inject(ToastService);
-  private router = inject(Router);
+  private readonly supabase = inject(SupabaseService);
+  private readonly logger = inject(LoggerService);
+  private readonly toastService = inject(ToastService);
+  private readonly router = inject(Router);
 
   // Reactive state
   private _deletionStatus = signal<DeletionStatus | null>(null);

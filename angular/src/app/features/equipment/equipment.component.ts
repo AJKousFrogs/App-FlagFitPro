@@ -90,14 +90,14 @@ interface ReturnData { condition: Condition; notes: string }
   styleUrl: "./equipment.component.scss",
 })
 export class EquipmentComponent implements OnInit {
-  private equipmentService = inject(EquipmentService);
-  private teamStatsService = inject(TeamStatisticsService);
-  private supabase = inject(SupabaseService);
-  private teamMembershipService = inject(TeamMembershipService);
-  private toastService = inject(ToastService);
-  private destroyRef = inject(DestroyRef);
-  private logger = inject(LoggerService);
-  private dialogService = inject(DialogService);
+  private readonly equipmentService = inject(EquipmentService);
+  private readonly teamStatsService = inject(TeamStatisticsService);
+  private readonly supabase = inject(SupabaseService);
+  private readonly teamMembershipService = inject(TeamMembershipService);
+  private readonly toastService = inject(ToastService);
+  private readonly destroyRef = inject(DestroyRef);
+  private readonly logger = inject(LoggerService);
+  private readonly dialogService = inject(DialogService);
 
   // State
   equipment = signal<EquipmentItem[]>([]);

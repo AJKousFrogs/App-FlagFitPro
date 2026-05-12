@@ -291,8 +291,8 @@ const LOAD_CONSTANTS = {
   providedIn: "root",
 })
 export class PhaseLoadCalculatorService {
-  private logger = inject(LoggerService);
-  private acwrService = inject(AcwrService);
+  private readonly logger = inject(LoggerService);
+  private readonly acwrService = inject(AcwrService);
 
   // State
   private readonly _trainingHistory = signal<TrainingLoad[]>([]);

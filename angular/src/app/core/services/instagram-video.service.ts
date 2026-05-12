@@ -490,7 +490,7 @@ const FEATURED_CREATORS: InstagramCreator[] = [
 })
 export class InstagramVideoService {
   private readonly http = new HttpClient(inject(HttpBackend));
-  private logger = inject(LoggerService);
+  private readonly logger = inject(LoggerService);
 
   // Reactive state with signals
   private readonly _videos = signal<InstagramVideo[]>(CURATED_INSTAGRAM_VIDEOS);

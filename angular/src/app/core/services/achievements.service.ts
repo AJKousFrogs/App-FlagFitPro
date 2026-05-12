@@ -55,9 +55,9 @@ export interface UnlockResult {
   providedIn: "root",
 })
 export class AchievementsService {
-  private http = inject(HttpClient);
-  private logger = inject(LoggerService);
-  private toastService = inject(ToastService);
+  private readonly http = inject(HttpClient);
+  private readonly logger = inject(LoggerService);
+  private readonly toastService = inject(ToastService);
 
   // State signals
   private readonly achievementsData = signal<AchievementsResponse | null>(null);

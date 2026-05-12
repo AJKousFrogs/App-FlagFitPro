@@ -6,7 +6,7 @@
  *
  * @example
  * // In a component
- * private announcer = inject(ScreenReaderAnnouncerService);
+ * private readonly announcer = inject(ScreenReaderAnnouncerService);
  *
  * onSave() {
  *   this.announcer.announce('Changes saved successfully');
@@ -26,8 +26,8 @@ export type AnnouncePoliteness = "polite" | "assertive" | "off";
   providedIn: "root",
 })
 export class ScreenReaderAnnouncerService {
-  private document = inject(DOCUMENT);
-  private platformId = inject(PLATFORM_ID);
+  private readonly document = inject(DOCUMENT);
+  private readonly platformId = inject(PLATFORM_ID);
   private liveElement: HTMLElement | null = null;
   private assertiveElement: HTMLElement | null = null;
 

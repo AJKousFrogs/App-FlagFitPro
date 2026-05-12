@@ -88,9 +88,9 @@ const LEGAL_DOCS: Record<
   styleUrl: "./legal-doc.component.scss",
 })
 export class LegalDocComponent implements OnInit {
-  private http = inject(HttpClient);
-  private route = inject(ActivatedRoute);
-  private destroyRef = inject(DestroyRef);
+  private readonly http = inject(HttpClient);
+  private readonly route = inject(ActivatedRoute);
+  private readonly destroyRef = inject(DestroyRef);
 
   title = signal("Legal Document");
   subtitle = signal(" ");

@@ -47,9 +47,9 @@ export interface ImportDatasetResponse {
   providedIn: "root",
 })
 export class TrainingMetricsService {
-  private apiService = inject(ApiService);
-  private http = inject(HttpClient);
-  private logger = inject(LoggerService);
+  private readonly apiService = inject(ApiService);
+  private readonly http = inject(HttpClient);
+  private readonly logger = inject(LoggerService);
 
   /**
    * Get ACWR data for an athlete using the stored procedure

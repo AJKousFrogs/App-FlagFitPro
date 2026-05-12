@@ -133,9 +133,9 @@ export const METRIC_CATEGORIES = [
   providedIn: "root",
 })
 export class PrivacySettingsService {
-  private supabase = inject(SupabaseService);
-  private logger = inject(LoggerService);
-  private toastService = inject(ToastService);
+  private readonly supabase = inject(SupabaseService);
+  private readonly logger = inject(LoggerService);
+  private readonly toastService = inject(ToastService);
 
   // Reactive state
   private _settings = signal<PrivacySettings | null>(null);

@@ -85,11 +85,11 @@ import { FormBase } from "../../../shared/utils/form-base";
   styleUrl: "./reset-password.component.scss",
 })
 export class ResetPasswordComponent extends FormBase {
-  private fb = inject(NonNullableFormBuilder);
-  private router = inject(Router);
-  private toastService = inject(ToastService);
-  private authFlowDataService = inject(AuthFlowDataService);
-  private logger = inject(LoggerService);
+  private readonly fb = inject(NonNullableFormBuilder);
+  private readonly router = inject(Router);
+  private readonly toastService = inject(ToastService);
+  private readonly authFlowDataService = inject(AuthFlowDataService);
+  private readonly logger = inject(LoggerService);
 
   resetForm: FormGroup;
   isLoading = signal(false);

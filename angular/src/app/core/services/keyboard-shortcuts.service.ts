@@ -55,11 +55,11 @@ interface _ShortcutState {
   providedIn: "root",
 })
 export class KeyboardShortcutsService {
-  private router = inject(Router);
-  private homeRouteService = inject(HomeRouteService);
-  private logger = inject(LoggerService);
-  private ngZone = inject(NgZone);
-  private destroyRef = inject(DestroyRef);
+  private readonly router = inject(Router);
+  private readonly homeRouteService = inject(HomeRouteService);
+  private readonly logger = inject(LoggerService);
+  private readonly ngZone = inject(NgZone);
+  private readonly destroyRef = inject(DestroyRef);
 
   // State signals
   private _isHelpModalOpen = signal(false);

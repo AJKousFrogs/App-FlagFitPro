@@ -131,11 +131,11 @@ interface _CountResponse {
   providedIn: "root",
 })
 export class NotificationStateService implements OnDestroy {
-  private apiService = inject(ApiService);
-  private logger = inject(LoggerService);
-  private supabaseService = inject(SupabaseService);
-  private toastService = inject(ToastService);
-  private destroyRef = inject(DestroyRef);
+  private readonly apiService = inject(ApiService);
+  private readonly logger = inject(LoggerService);
+  private readonly supabaseService = inject(SupabaseService);
+  private readonly toastService = inject(ToastService);
+  private readonly destroyRef = inject(DestroyRef);
 
   // Realtime channel
   private realtimeChannel: RealtimeChannel | null = null;

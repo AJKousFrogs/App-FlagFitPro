@@ -43,7 +43,7 @@ import {
   styleUrl: "./scroll-to-top.component.scss",
 })
 export class ScrollToTopComponent {
-  private destroyRef = inject(DestroyRef);
+  private readonly destroyRef = inject(DestroyRef);
   isVisible = signal(false);
   private scrollContainer: ScrollContainer | null = null;
   private readonly onScroll = () => this.updateVisibility();

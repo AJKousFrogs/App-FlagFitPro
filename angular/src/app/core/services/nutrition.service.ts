@@ -124,9 +124,9 @@ interface EdamamFood {
   providedIn: "root",
 })
 export class NutritionService {
-  private supabaseService = inject(SupabaseService);
-  private logger = inject(LoggerService);
-  private realtimeService = inject(RealtimeService);
+  private readonly supabaseService = inject(SupabaseService);
+  private readonly logger = inject(LoggerService);
+  private readonly realtimeService = inject(RealtimeService);
 
   // Get current user ID reactively
   private userId = computed(() => this.supabaseService.userId());

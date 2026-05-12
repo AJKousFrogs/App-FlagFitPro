@@ -265,7 +265,7 @@ import { ReviewDecisionDialogComponent } from "./review-decision-dialog.componen
 })
 export class DecisionLedgerDashboardComponent implements OnInit {
   decisionService = inject(DecisionLedgerService);
-  private logger = inject(LoggerService);
+  private readonly logger = inject(LoggerService);
 
   /** Immutable: always `filters.update` / `filters.set` — never mutate `filters()` snapshot. */
   filters = signal<DecisionFilters>({});

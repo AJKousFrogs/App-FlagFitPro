@@ -151,17 +151,17 @@ interface Play {
   styleUrl: "./game-tracker.component.scss",
 })
 export class GameTrackerComponent implements OnInit {
-  private fb = inject(NonNullableFormBuilder);
-  private router = inject(Router);
-  private apiService = inject(ApiService);
-  private supabase = inject(SupabaseService);
-  private teamMembershipService = inject(TeamMembershipService);
-  private destroyRef = inject(DestroyRef);
-  private toastService = inject(ToastService);
-  private offlineQueue = inject(OfflineQueueService);
-  private networkStatus = inject(NetworkStatusService);
-  private logger = inject(LoggerService);
-  private platform = inject(PlatformService);
+  private readonly fb = inject(NonNullableFormBuilder);
+  private readonly router = inject(Router);
+  private readonly apiService = inject(ApiService);
+  private readonly supabase = inject(SupabaseService);
+  private readonly teamMembershipService = inject(TeamMembershipService);
+  private readonly destroyRef = inject(DestroyRef);
+  private readonly toastService = inject(ToastService);
+  private readonly offlineQueue = inject(OfflineQueueService);
+  private readonly networkStatus = inject(NetworkStatusService);
+  private readonly logger = inject(LoggerService);
+  private readonly platform = inject(PlatformService);
 
   // ViewChild references for scroll operations
   private readonly gamesListCard =

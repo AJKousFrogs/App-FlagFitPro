@@ -54,11 +54,11 @@ export interface AuthSessionResult {
   providedIn: "root",
 })
 export class AuthService {
-  private supabaseService = inject(SupabaseService);
-  private router = inject(Router);
-  private homeRouteService = inject(HomeRouteService);
-  private logger = inject(LoggerService);
-  private platform = inject(PlatformService);
+  private readonly supabaseService = inject(SupabaseService);
+  private readonly router = inject(Router);
+  private readonly homeRouteService = inject(HomeRouteService);
+  private readonly logger = inject(LoggerService);
+  private readonly platform = inject(PlatformService);
 
   private readonly TOKEN_KEY = "authToken";
   private readonly USER_KEY = "user";

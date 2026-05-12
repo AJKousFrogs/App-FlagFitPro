@@ -115,12 +115,12 @@ interface AthleteMetrics {
   styleUrl: "./ai-training-scheduler.component.scss",
 })
 export class AiTrainingSchedulerComponent implements OnInit {
-  private aiTrainingSchedulerDataService = inject(AiTrainingSchedulerDataService);
-  private supabase = inject(SupabaseService);
-  private toastService = inject(ToastService);
-  private logger = inject(LoggerService);
-  private privacyService = inject(PrivacySettingsService);
-  private api = inject(ApiService);
+  private readonly aiTrainingSchedulerDataService = inject(AiTrainingSchedulerDataService);
+  private readonly supabase = inject(SupabaseService);
+  private readonly toastService = inject(ToastService);
+  private readonly logger = inject(LoggerService);
+  private readonly privacyService = inject(PrivacySettingsService);
+  private readonly api = inject(ApiService);
   private readonly destroyRef = inject(DestroyRef);
 
   // AI consent check - shows banner when disabled

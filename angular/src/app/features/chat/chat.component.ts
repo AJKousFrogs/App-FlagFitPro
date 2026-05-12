@@ -90,13 +90,13 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
   readonly messagesList = viewChild<ElementRef<HTMLElement>>("messagesList");
 
   // Services
-  private toastService = inject(ToastService);
-  private supabase = inject(SupabaseService);
-  private channelService = inject(ChannelService);
-  private presenceService = inject(PresenceService);
-  private dialogService = inject(DialogService);
-  private route = inject(ActivatedRoute);
-  private destroyRef = inject(DestroyRef);
+  private readonly toastService = inject(ToastService);
+  private readonly supabase = inject(SupabaseService);
+  private readonly channelService = inject(ChannelService);
+  private readonly presenceService = inject(PresenceService);
+  private readonly dialogService = inject(DialogService);
+  private readonly route = inject(ActivatedRoute);
+  private readonly destroyRef = inject(DestroyRef);
 
   // State from services
   readonly currentChannel = this.channelService.currentChannel;

@@ -96,7 +96,7 @@ export interface FormError {
   styleUrl: "./form-error-summary.component.scss",
 })
 export class FormErrorSummaryComponent {
-  private elementRef = inject(ElementRef);
+  private readonly elementRef = inject(ElementRef);
 
   /** Array of form errors to display */
   errors = input.required<FormError[]>();

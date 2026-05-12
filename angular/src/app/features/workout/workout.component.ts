@@ -63,12 +63,12 @@ interface Workout {
   styleUrl: "./workout.component.scss",
 })
 export class WorkoutComponent implements OnInit {
-  private apiService = inject(ApiService);
-  private supabase = inject(SupabaseService);
-  private toastService = inject(ToastService);
-  private logger = inject(LoggerService);
-  private destroyRef = inject(DestroyRef);
-  private workoutDataService = inject(WorkoutDataService);
+  private readonly apiService = inject(ApiService);
+  private readonly supabase = inject(SupabaseService);
+  private readonly toastService = inject(ToastService);
+  private readonly logger = inject(LoggerService);
+  private readonly destroyRef = inject(DestroyRef);
+  private readonly workoutDataService = inject(WorkoutDataService);
 
   activeWorkout = signal<Workout | null>(null);
   workoutHistory = signal<Workout[]>([]);

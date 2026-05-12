@@ -127,16 +127,16 @@ const DEFAULT_DAILY_ROUTINE: DailyRoutineSlot[] = [
   providedIn: "root",
 })
 export class UnifiedTrainingService {
-  private acwrService = inject(AcwrService);
-  private readinessService = inject(ReadinessService);
-  private trainingDataService = inject(TrainingDataService);
-  private performanceDataService = inject(PerformanceDataService);
-  private wellnessService = inject(WellnessService);
-  private api = inject(ApiService);
-  private logger = inject(LoggerService);
-  private playerProgramService = inject(PlayerProgramService);
-  private supabase = inject(SupabaseService);
-  private _destroyRef = inject(DestroyRef);
+  private readonly acwrService = inject(AcwrService);
+  private readonly readinessService = inject(ReadinessService);
+  private readonly trainingDataService = inject(TrainingDataService);
+  private readonly performanceDataService = inject(PerformanceDataService);
+  private readonly wellnessService = inject(WellnessService);
+  private readonly api = inject(ApiService);
+  private readonly logger = inject(LoggerService);
+  private readonly playerProgramService = inject(PlayerProgramService);
+  private readonly supabase = inject(SupabaseService);
+  private readonly _destroyRef = inject(DestroyRef);
   private overviewRequest$: Observable<unknown> | null = null;
   private lastOverviewRequestKey: string | null = null;
   private authFailureCooldownUntil = 0;

@@ -54,8 +54,8 @@ export interface TeamPresence {
   providedIn: "root",
 })
 export class PresenceService implements OnDestroy {
-  private supabase = inject(SupabaseService);
-  private logger = inject(LoggerService);
+  private readonly supabase = inject(SupabaseService);
+  private readonly logger = inject(LoggerService);
 
   // Presence channels
   private teamPresenceChannel: RealtimeChannel | null = null;

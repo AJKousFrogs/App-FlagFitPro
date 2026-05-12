@@ -124,9 +124,9 @@ const WELLNESS_MEMORY_LIMITS = {
   providedIn: "root",
 })
 export class WellnessService {
-  private supabaseService = inject(SupabaseService);
-  private logger = inject(LoggerService);
-  private realtimeService = inject(RealtimeService);
+  private readonly supabaseService = inject(SupabaseService);
+  private readonly logger = inject(LoggerService);
+  private readonly realtimeService = inject(RealtimeService);
 
   // Get current user ID reactively
   private userId = computed(() => this.supabaseService.userId());

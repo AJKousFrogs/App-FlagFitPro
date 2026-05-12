@@ -229,10 +229,10 @@ const RTP_PHASES = [
   styleUrl: "./physiotherapist-dashboard.component.scss",
 })
 export class PhysiotherapistDashboardComponent implements OnInit {
-  private api = inject(ApiService);
-  private toast = inject(ToastService);
-  private logger = inject(LoggerService);
-  protected insightFeedService = inject(SharedInsightFeedService);
+  private readonly api = inject(ApiService);
+  private readonly toast = inject(ToastService);
+  private readonly logger = inject(LoggerService);
+  protected readonly insightFeedService = inject(SharedInsightFeedService);
 
   // Constants exposed to template
   protected readonly UI_LIMITS = UI_LIMITS;

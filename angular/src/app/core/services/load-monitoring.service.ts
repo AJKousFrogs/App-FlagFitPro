@@ -28,8 +28,8 @@ import { SupabaseService } from "./supabase.service";
   providedIn: "root",
 })
 export class LoadMonitoringService {
-  private supabaseService = inject(SupabaseService);
-  private logger = inject(LoggerService);
+  private readonly supabaseService = inject(SupabaseService);
+  private readonly logger = inject(LoggerService);
 
   // Get current user ID reactively
   private userId = computed(() => this.supabaseService.userId());

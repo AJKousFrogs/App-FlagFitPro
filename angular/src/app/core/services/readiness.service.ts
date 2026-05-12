@@ -78,8 +78,8 @@ export interface ReadinessHistory {
   providedIn: "root",
 })
 export class ReadinessService {
-  private apiService = inject(ApiService);
-  private logger = inject(LoggerService);
+  private readonly apiService = inject(ApiService);
+  private readonly logger = inject(LoggerService);
 
   readonly loading = signal(false);
   readonly current = signal<ReadinessResponse | null>(null);

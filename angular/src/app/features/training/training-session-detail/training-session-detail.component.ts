@@ -66,13 +66,13 @@ const isBoolean = (value: unknown): value is boolean =>
   styleUrl: "./training-session-detail.component.scss",
 })
 export class TrainingSessionDetailComponent implements OnInit {
-  private route = inject(ActivatedRoute);
-  private router = inject(Router);
-  private sessionDataService = inject(TrainingSessionDetailDataService);
-  private supabase = inject(SupabaseService);
-  private toastService = inject(ToastService);
-  private logger = inject(LoggerService);
-  private destroyRef = inject(DestroyRef);
+  private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
+  private readonly sessionDataService = inject(TrainingSessionDetailDataService);
+  private readonly supabase = inject(SupabaseService);
+  private readonly toastService = inject(ToastService);
+  private readonly logger = inject(LoggerService);
+  private readonly destroyRef = inject(DestroyRef);
 
   sessionDetails = signal<SessionDetails | null>(null);
   isLoading = signal<boolean>(true);

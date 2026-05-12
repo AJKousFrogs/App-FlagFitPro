@@ -88,11 +88,11 @@ interface Play {
   },
 })
 export class LiveGameTrackerComponent implements OnInit, OnDestroy {
-  private fb = inject(NonNullableFormBuilder);
-  private hapticService = inject(HapticFeedbackService);
-  private apiService = inject(ApiService);
-  private destroyRef = inject(DestroyRef);
-  private logger = inject(LoggerService);
+  private readonly fb = inject(NonNullableFormBuilder);
+  private readonly hapticService = inject(HapticFeedbackService);
+  private readonly apiService = inject(ApiService);
+  private readonly destroyRef = inject(DestroyRef);
+  private readonly logger = inject(LoggerService);
 
   game = signal<Game | null>(null);
   ballPosition = signal({ x: 600, y: 266 }); // Center field

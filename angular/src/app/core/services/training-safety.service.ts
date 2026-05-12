@@ -196,9 +196,9 @@ const SLEEP_THRESHOLDS = {
   providedIn: "root",
 })
 export class TrainingSafetyService {
-  private supabaseService = inject(SupabaseService);
-  private logger = inject(LoggerService);
-  private dataSourceService = inject(DataSourceService);
+  private readonly supabaseService = inject(SupabaseService);
+  private readonly logger = inject(LoggerService);
+  private readonly dataSourceService = inject(DataSourceService);
   private usersTableUnavailable = false;
 
   // Current user's profile

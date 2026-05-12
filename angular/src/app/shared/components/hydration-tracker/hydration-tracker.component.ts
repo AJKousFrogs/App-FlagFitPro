@@ -142,10 +142,10 @@ interface HydrationLog {
   styleUrl: "./hydration-tracker.component.scss",
 })
 export class HydrationTrackerComponent implements OnInit {
-  private trainingService = inject(UnifiedTrainingService);
-  private supabase = inject(SupabaseService);
-  private toastService = inject(ToastService);
-  private destroyRef = inject(DestroyRef);
+  private readonly trainingService = inject(UnifiedTrainingService);
+  private readonly supabase = inject(SupabaseService);
+  private readonly toastService = inject(ToastService);
+  private readonly destroyRef = inject(DestroyRef);
 
   // State
   isLoading = signal(false);

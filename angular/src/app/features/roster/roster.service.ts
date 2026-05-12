@@ -127,9 +127,9 @@ interface _InvitationRecord {
   providedIn: "root",
 })
 export class RosterService {
-  private supabaseService = inject(SupabaseService);
-  private logger = inject(LoggerService);
-  private teamMembershipService = inject(TeamMembershipService);
+  private readonly supabaseService = inject(SupabaseService);
+  private readonly logger = inject(LoggerService);
+  private readonly teamMembershipService = inject(TeamMembershipService);
   private usersTableUnavailable = false;
 
   // State signals

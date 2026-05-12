@@ -189,8 +189,8 @@ export interface RiskAlert {
   providedIn: "root",
 })
 export class TeamStatisticsService {
-  private apiService = inject(ApiService);
-  private logger = inject(LoggerService);
+  private readonly apiService = inject(ApiService);
+  private readonly logger = inject(LoggerService);
 
   /**
    * Get comprehensive team overview statistics

@@ -82,12 +82,12 @@ type AssignmentStatus = "scheduled" | "confirmed" | "declined" | "no_show";
   styleUrl: "./officials.component.scss",
 })
 export class OfficialsComponent implements OnInit {
-  private officialsService = inject(OfficialsService);
-  private teamMembershipService = inject(TeamMembershipService);
-  private toastService = inject(ToastService);
-  private dialogService = inject(DialogService);
-  private destroyRef = inject(DestroyRef);
-  private logger = inject(LoggerService);
+  private readonly officialsService = inject(OfficialsService);
+  private readonly teamMembershipService = inject(TeamMembershipService);
+  private readonly toastService = inject(ToastService);
+  private readonly dialogService = inject(DialogService);
+  private readonly destroyRef = inject(DestroyRef);
+  private readonly logger = inject(LoggerService);
 
   // State
   officials = signal<Official[]>([]);

@@ -138,10 +138,10 @@ import { AuthFlowDataService } from "../services/auth-flow-data.service";
   styleUrl: "./verify-email.component.scss",
 })
 export class VerifyEmailComponent implements OnInit {
-  private router = inject(Router);
-  private toastService = inject(ToastService);
-  private authFlowDataService = inject(AuthFlowDataService);
-  private homeRouteService = inject(HomeRouteService);
+  private readonly router = inject(Router);
+  private readonly toastService = inject(ToastService);
+  private readonly authFlowDataService = inject(AuthFlowDataService);
+  private readonly homeRouteService = inject(HomeRouteService);
 
   isVerifying = signal(false);
   isVerified = signal(false);

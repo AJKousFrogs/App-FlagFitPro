@@ -47,11 +47,11 @@ import {
   styleUrl: "./enhanced-analytics.component.scss",
 })
 export class EnhancedAnalyticsComponent implements OnInit {
-  private analyticsDataService = inject(EnhancedAnalyticsDataService);
-  private supabase = inject(SupabaseService);
-  private toastService = inject(ToastService);
-  private logger = inject(LoggerService);
-  private privacyService = inject(PrivacySettingsService);
+  private readonly analyticsDataService = inject(EnhancedAnalyticsDataService);
+  private readonly supabase = inject(SupabaseService);
+  private readonly toastService = inject(ToastService);
+  private readonly logger = inject(LoggerService);
+  private readonly privacyService = inject(PrivacySettingsService);
 
   performanceChartData = signal<{
     labels: string[];

@@ -281,7 +281,7 @@ import {
   styleUrl: "./exercise-card.component.scss",
 })
 export class ExerciseCardComponent {
-  private sanitizer = inject(DomSanitizer);
+  private readonly sanitizer = inject(DomSanitizer);
 
   // Inputs
   exercise = input.required<PrescribedExercise>();

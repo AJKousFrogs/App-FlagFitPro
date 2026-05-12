@@ -78,7 +78,7 @@ export class OwnershipTransitionBadgeComponent {
   transition = input.required<OwnershipTransition>();
   showDetails = input<boolean>(false);
 
-  private logger = inject(LoggerService);
+  private readonly logger = inject(LoggerService);
 
   getTitle(transition: OwnershipTransition): string {
     if (transition.toRole === "coach") {

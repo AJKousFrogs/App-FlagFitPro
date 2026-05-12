@@ -96,23 +96,23 @@ import {
   styleUrl: "./settings.component.scss",
 })
 export class SettingsComponent implements OnInit {
-  private destroyRef = inject(DestroyRef);
+  private readonly destroyRef = inject(DestroyRef);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
-  private supabase = inject(SupabaseService);
-  private accountDeletionService = inject(SettingsAccountDeletionService);
-  private birthdayService = inject(SettingsBirthdayService);
-  private dataExportService = inject(SettingsDataExportService);
-  private formFactory = inject(SettingsFormFactoryService);
-  private profileInitService = inject(SettingsProfileInitService);
-  private saveSettingsService = inject(SettingsSaveSettingsService);
-  private securityService = inject(SettingsSecurityService);
-  private sessionManagementService = inject(SettingsSessionManagementService);
-  private teamRequestService = inject(SettingsTeamRequestService);
-  private twoFactorService = inject(SettingsTwoFactorService);
-  private toastService = inject(ToastService);
-  private themeService = inject(ThemeService);
-  private logger = inject(LoggerService);
+  private readonly supabase = inject(SupabaseService);
+  private readonly accountDeletionService = inject(SettingsAccountDeletionService);
+  private readonly birthdayService = inject(SettingsBirthdayService);
+  private readonly dataExportService = inject(SettingsDataExportService);
+  private readonly formFactory = inject(SettingsFormFactoryService);
+  private readonly profileInitService = inject(SettingsProfileInitService);
+  private readonly saveSettingsService = inject(SettingsSaveSettingsService);
+  private readonly securityService = inject(SettingsSecurityService);
+  private readonly sessionManagementService = inject(SettingsSessionManagementService);
+  private readonly teamRequestService = inject(SettingsTeamRequestService);
+  private readonly twoFactorService = inject(SettingsTwoFactorService);
+  private readonly toastService = inject(ToastService);
+  private readonly themeService = inject(ThemeService);
+  private readonly logger = inject(LoggerService);
 
   profileForm!: FormGroup;
   notificationForm!: FormGroup;
@@ -668,7 +668,7 @@ export class SettingsComponent implements OnInit {
   }
 
   // Inject ElementRef for scoped DOM queries
-  private elementRef = inject(ElementRef);
+  private readonly elementRef = inject(ElementRef);
 
   closeChangePasswordDialog(): void {
     this.showChangePasswordDialog.set(false);

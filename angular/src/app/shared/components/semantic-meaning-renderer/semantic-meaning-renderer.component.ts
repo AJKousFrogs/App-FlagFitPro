@@ -58,9 +58,9 @@ export class SemanticMeaningRendererComponent {
   // Note: ng-container doesn't create a real DOM element, so we must explicitly read ViewContainerRef
   renderTarget = viewChild.required("renderTarget", { read: ViewContainerRef });
 
-  private rendererService = inject(SemanticRendererService);
-  private logger = inject(LoggerService);
-  private destroyRef = inject(DestroyRef);
+  private readonly rendererService = inject(SemanticRendererService);
+  private readonly logger = inject(LoggerService);
+  private readonly destroyRef = inject(DestroyRef);
   private componentRef: ComponentRef<unknown> | null = null;
 
   // MEMORY SAFETY: Track pending timeouts for cleanup

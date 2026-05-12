@@ -63,10 +63,10 @@ import type {
   styleUrl: "./decision-detail.component.scss",
 })
 export class DecisionDetailComponent implements OnInit {
-  private route = inject(ActivatedRoute);
-  private router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
   decisionService = inject(DecisionLedgerService);
-  private logger = inject(LoggerService);
+  private readonly logger = inject(LoggerService);
 
   // State
   decision = signal<DecisionLedgerEntry | null>(null);

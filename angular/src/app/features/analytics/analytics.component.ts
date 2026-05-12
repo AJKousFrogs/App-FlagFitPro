@@ -109,7 +109,7 @@ interface AnalyticsSpeedPayload {
 export class AnalyticsComponent implements AfterViewInit {
   chartRefs = viewChildren<UIChart>(UIChart);
   private readonly apiService = inject(ApiService);
-  private destroyRef = inject(DestroyRef);
+  private readonly destroyRef = inject(DestroyRef);
   private readonly playerStatsService = inject(PlayerStatisticsService);
   private readonly supabase = inject(SupabaseService);
   private readonly trainingStatsService = inject(

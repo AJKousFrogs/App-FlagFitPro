@@ -32,6 +32,7 @@ import { Chip } from "primeng/chip";
 import { DatePickerComponent } from "../../../shared/components/date-picker/date-picker.component";
 
 import { StatusTagComponent } from "../../../shared/components/status-tag/status-tag.component";
+import { type StatusSeverityBase } from "../../../shared/utils/status.utils";
 
 // Services
 import { TOAST } from "../../../core/constants/toast-messages.constants";
@@ -116,10 +117,10 @@ interface FlightTripForm {
   styleUrl: "./travel-recovery.component.scss",
 })
 export class TravelRecoveryComponent implements OnInit {
-  private travelService = inject(TravelRecoveryService);
-  private carTravelService = inject(CarTravelService);
-  private toastService = inject(ToastService);
-  private logger = inject(LoggerService);
+  private readonly travelService = inject(TravelRecoveryService);
+  private readonly carTravelService = inject(CarTravelService);
+  private readonly toastService = inject(ToastService);
+  private readonly logger = inject(LoggerService);
 
   // Constants exposed to template
   protected readonly UI_LIMITS = UI_LIMITS;
@@ -343,7 +344,7 @@ export class TravelRecoveryComponent implements OnInit {
 
   getRiskColor(
     level: string,
-  ): "success" | "info" | "warning" | "danger" | "secondary" {
+  ): StatusSeverityBase {
     switch (level) {
       case "low":
         return "success";
@@ -360,7 +361,7 @@ export class TravelRecoveryComponent implements OnInit {
 
   getTargetAreaColor(
     area: string,
-  ): "success" | "info" | "warning" | "danger" | "secondary" {
+  ): StatusSeverityBase {
     switch (area) {
       case "calves":
         return "info";
@@ -534,7 +535,7 @@ export class TravelRecoveryComponent implements OnInit {
 
   getSeverityColor(
     level: string,
-  ): "success" | "info" | "warning" | "danger" | "secondary" {
+  ): StatusSeverityBase {
     switch (level) {
       case "none":
         return "success";
@@ -551,7 +552,7 @@ export class TravelRecoveryComponent implements OnInit {
 
   getPhaseColor(
     phase: string,
-  ): "success" | "info" | "warning" | "danger" | "secondary" {
+  ): StatusSeverityBase {
     switch (phase) {
       case "pre-travel":
         return "info";

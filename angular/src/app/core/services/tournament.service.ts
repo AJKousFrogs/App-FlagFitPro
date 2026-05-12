@@ -86,8 +86,8 @@ export type UpdateTournamentDto = Partial<CreateTournamentDto>;
   providedIn: "root",
 })
 export class TournamentService {
-  private apiService = inject(ApiService);
-  private logger = inject(LoggerService);
+  private readonly apiService = inject(ApiService);
+  private readonly logger = inject(LoggerService);
 
   // State signals
   readonly tournaments = signal<Tournament[]>([]);

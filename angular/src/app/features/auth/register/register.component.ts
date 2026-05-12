@@ -195,14 +195,14 @@ import { CardShellComponent } from "../../../shared/components/card-shell/card-s
 })
 export class RegisterComponent extends FormBase {
   private readonly http = new HttpClient(inject(HttpBackend));
-  private fb = inject(NonNullableFormBuilder);
-  private authService = inject(AuthService);
-  private authFlowDataService = inject(AuthFlowDataService);
-  private router = inject(Router);
-  private route = inject(ActivatedRoute);
-  private toastService = inject(ToastService);
-  private logger = inject(LoggerService);
-  private destroyRef = inject(DestroyRef);
+  private readonly fb = inject(NonNullableFormBuilder);
+  private readonly authService = inject(AuthService);
+  private readonly authFlowDataService = inject(AuthFlowDataService);
+  private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
+  private readonly toastService = inject(ToastService);
+  private readonly logger = inject(LoggerService);
+  private readonly destroyRef = inject(DestroyRef);
 
   registerForm: FormGroup;
   isLoading = signal(false);

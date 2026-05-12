@@ -133,9 +133,9 @@ const TRAINING_DATA_LIMITS = {
   providedIn: "root",
 })
 export class TrainingDataService {
-  private supabaseService = inject(SupabaseService);
-  private logger = inject(LoggerService);
-  private http = inject(HttpClient);
+  private readonly supabaseService = inject(SupabaseService);
+  private readonly logger = inject(LoggerService);
+  private readonly http = inject(HttpClient);
 
   // Get current user ID reactively
   private userId = computed(() => this.supabaseService.userId());

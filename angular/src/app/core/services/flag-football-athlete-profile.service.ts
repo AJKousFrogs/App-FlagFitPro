@@ -53,8 +53,8 @@ import type {
   providedIn: "root",
 })
 export class FlagFootballAthleteProfileService {
-  private supabaseService = inject(SupabaseService);
-  private logger = inject(LoggerService);
+  private readonly supabaseService = inject(SupabaseService);
+  private readonly logger = inject(LoggerService);
 
   // State
   private readonly _athleteProfile = signal<AthletePhysicalProfile | null>(

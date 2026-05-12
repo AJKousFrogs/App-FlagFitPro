@@ -10,8 +10,8 @@ export class BirthdayInputSuggestionDirective implements OnInit {
   inputTyped = output<string>();
   inputBlurred = output<void>();
 
-  private host = inject(ElementRef<HTMLElement>);
-  private destroyRef = inject(DestroyRef);
+  private readonly host = inject(ElementRef<HTMLElement>);
+  private readonly destroyRef = inject(DestroyRef);
   private retryCount = 0;
   private readonly maxRetries = 10;
   private listenersAttached = false;

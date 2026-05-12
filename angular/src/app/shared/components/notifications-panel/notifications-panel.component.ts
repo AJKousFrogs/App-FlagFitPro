@@ -53,8 +53,8 @@ import { TIMEOUTS, TIME } from "../../../core/constants/app.constants";
 })
 export class NotificationsPanelComponent {
   notificationService = inject(NotificationStateService);
-  private router = inject(Router);
-  private toastService = inject(ToastService);
+  private readonly router = inject(Router);
+  private readonly toastService = inject(ToastService);
 
   visible = signal(false);
   isLoading = signal(false);

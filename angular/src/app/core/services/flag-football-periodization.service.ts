@@ -32,8 +32,8 @@ export * from "./flag-football-periodization.data";
   providedIn: "root",
 })
 export class FlagFootballPeriodizationService {
-  private supabaseService = inject(SupabaseService);
-  private logger = inject(LoggerService);
+  private readonly supabaseService = inject(SupabaseService);
+  private readonly logger = inject(LoggerService);
 
   // Current phase
   private readonly _currentPhase = signal<PhaseConfig | null>(null);

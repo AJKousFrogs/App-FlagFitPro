@@ -62,8 +62,8 @@ const USER_STATUSES = ["active", "suspended", "pending"] as const;
   styleUrl: "./superadmin-users.component.scss",
 })
 export class SuperadminUsersComponent implements OnInit {
-  private superadminService = inject(SuperadminService);
-  private toast = inject(ToastService);
+  private readonly superadminService = inject(SuperadminService);
+  private readonly toast = inject(ToastService);
 
   users: User[] = [];
   filteredUsers: User[] = [];

@@ -38,7 +38,7 @@ export class SwipeGestureDirective implements OnInit {
   swipeDown = output<SwipeEvent>();
   pullToRefresh = output<void>();
 
-  private elementRef = inject(ElementRef);
+  private readonly elementRef = inject(ElementRef);
   private touchStartX = 0;
   private touchStartY = 0;
   private touchEndX = 0;

@@ -154,11 +154,11 @@ interface DailyState {
   styleUrl: "./daily-readiness.component.scss",
 })
 export class DailyReadinessComponent implements OnInit {
-  private supabase = inject(SupabaseService);
-  private toastService = inject(ToastService);
-  private logger = inject(LoggerService);
-  private profileCompletionService = inject(ProfileCompletionService);
-  private wellnessService = inject(WellnessService);
+  private readonly supabase = inject(SupabaseService);
+  private readonly toastService = inject(ToastService);
+  private readonly logger = inject(LoggerService);
+  private readonly profileCompletionService = inject(ProfileCompletionService);
+  private readonly wellnessService = inject(WellnessService);
 
   /** Prevents duplicate saves before `saving` signal updates the view. */
   private saveLocked = false;

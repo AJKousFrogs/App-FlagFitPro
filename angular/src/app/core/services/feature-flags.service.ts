@@ -10,8 +10,8 @@ const STORAGE_KEYS = {
   providedIn: "root",
 })
 export class FeatureFlagsService {
-  private platform = inject(PlatformService);
-  private logger = inject(LoggerService);
+  private readonly platform = inject(PlatformService);
+  private readonly logger = inject(LoggerService);
 
   private _nextGenMetricsPreview = signal(false);
   readonly nextGenMetricsPreview = this._nextGenMetricsPreview.asReadonly();

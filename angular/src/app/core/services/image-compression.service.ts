@@ -69,7 +69,7 @@ const DEFAULT_OPTIONS: RequiredCompressionOptions = {
 })
 export class ImageCompressionService {
   private readonly http = new HttpClient(inject(HttpBackend));
-  private logger = inject(LoggerService);
+  private readonly logger = inject(LoggerService);
   private supportsWebP: boolean | null = null;
 
   constructor() {

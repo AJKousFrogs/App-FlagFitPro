@@ -23,7 +23,7 @@ export interface ExportOptions {
   providedIn: "root",
 })
 export class DataExportService {
-  private logger = inject(LoggerService);
+  private readonly logger = inject(LoggerService);
 
   /**
    * Export data to CSV format

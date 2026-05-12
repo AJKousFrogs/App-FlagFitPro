@@ -71,7 +71,7 @@ export interface AnalyticsData {
   providedIn: "root",
 })
 export class AnalyticsDataService {
-  private apiService = inject(ApiService);
+  private readonly apiService = inject(ApiService);
 
   /**
    * Get performance trends

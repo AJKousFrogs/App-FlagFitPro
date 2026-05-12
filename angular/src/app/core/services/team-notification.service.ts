@@ -110,10 +110,10 @@ interface AnnouncementReadRecord {
   providedIn: "root",
 })
 export class TeamNotificationService {
-  private supabase = inject(SupabaseService);
-  private logger = inject(LoggerService);
-  private notificationState = inject(NotificationStateService);
-  private toastService = inject(ToastService);
+  private readonly supabase = inject(SupabaseService);
+  private readonly logger = inject(LoggerService);
+  private readonly notificationState = inject(NotificationStateService);
+  private readonly toastService = inject(ToastService);
 
   // Realtime channels
   private notificationChannel: RealtimeChannel | null = null;

@@ -206,9 +206,9 @@ const OLYMPIC_VENUES = {
   providedIn: "root",
 })
 export class TravelRecoveryService {
-  private logger = inject(LoggerService);
-  private supabaseService = inject(SupabaseService);
-  private recoveryService = inject(RecoveryService);
+  private readonly logger = inject(LoggerService);
+  private readonly supabaseService = inject(SupabaseService);
+  private readonly recoveryService = inject(RecoveryService);
 
   // State
   private readonly _currentPlan = signal<TravelPlan | null>(null);

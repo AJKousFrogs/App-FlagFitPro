@@ -62,8 +62,8 @@ interface LoadManagementResponse {
   providedIn: "root",
 })
 export class NextGenMetricsService {
-  private apiService = inject(ApiService);
-  private logger = inject(LoggerService);
+  private readonly apiService = inject(ApiService);
+  private readonly logger = inject(LoggerService);
 
   readonly loading = signal(false);
   readonly error = signal<string | null>(null);

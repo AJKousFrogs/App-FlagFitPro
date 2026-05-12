@@ -143,11 +143,11 @@ const WEATHER_THRESHOLDS = {
   providedIn: "root",
 })
 export class WeatherCancellationService {
-  private weatherService = inject(WeatherService);
-  private supabaseService = inject(SupabaseService);
-  private logger = inject(LoggerService);
-  private privacySettingsService = inject(PrivacySettingsService);
-  private apiService = inject(ApiService);
+  private readonly weatherService = inject(WeatherService);
+  private readonly supabaseService = inject(SupabaseService);
+  private readonly logger = inject(LoggerService);
+  private readonly privacySettingsService = inject(PrivacySettingsService);
+  private readonly apiService = inject(ApiService);
 
   // Reactive state
   private _currentWeather = signal<WeatherData | null>(null);

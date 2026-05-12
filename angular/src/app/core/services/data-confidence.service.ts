@@ -8,6 +8,7 @@
 import { Injectable, inject } from "@angular/core";
 import { SupabaseService } from "./supabase.service";
 import { LoggerService } from "./logger.service";
+import { type StatusSeverityBase } from "../../shared/utils/status.utils";
 
 export interface ConfidenceScore {
   score: number; // 0.0 to 1.0
@@ -196,7 +197,7 @@ export class DataConfidenceService {
    */
   getConfidenceSeverity(
     score: number,
-  ): "success" | "info" | "warning" | "danger" {
+  ): StatusSeverityBase {
     if (score >= 0.9) return "success";
     if (score >= 0.7) return "info";
     if (score >= 0.5) return "warning";

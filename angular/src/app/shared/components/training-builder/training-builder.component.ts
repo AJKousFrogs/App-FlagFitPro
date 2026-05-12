@@ -55,16 +55,16 @@ import {
   styleUrl: "./training-builder.component.scss",
 })
 export class TrainingBuilderComponent {
-  private fb = inject(NonNullableFormBuilder);
-  private aiService = inject(AIService);
-  private weatherService = inject(WeatherService);
-  private logger = inject(LoggerService);
-  private loadMonitoringService = inject(LoadMonitoringService);
-  private homeRouteService = inject(HomeRouteService);
-  private toastService = inject(ToastService);
-  private supabaseService = inject(SupabaseService);
-  private router = inject(Router);
-  private destroyRef = inject(DestroyRef);
+  private readonly fb = inject(NonNullableFormBuilder);
+  private readonly aiService = inject(AIService);
+  private readonly weatherService = inject(WeatherService);
+  private readonly logger = inject(LoggerService);
+  private readonly loadMonitoringService = inject(LoadMonitoringService);
+  private readonly homeRouteService = inject(HomeRouteService);
+  private readonly toastService = inject(ToastService);
+  private readonly supabaseService = inject(SupabaseService);
+  private readonly router = inject(Router);
+  private readonly destroyRef = inject(DestroyRef);
 
   // Session saving state
   isSaving = signal(false);

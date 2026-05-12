@@ -66,9 +66,9 @@ export class CreateDecisionDialogComponent {
   created = output<CreateDecisionRequest>();
 
   // Services
-  private decisionService = inject(DecisionLedgerService);
-  private rosterService = inject(RosterService);
-  private logger = inject(LoggerService);
+  private readonly decisionService = inject(DecisionLedgerService);
+  private readonly rosterService = inject(RosterService);
+  private readonly logger = inject(LoggerService);
 
   // State
   currentStep = signal(0);

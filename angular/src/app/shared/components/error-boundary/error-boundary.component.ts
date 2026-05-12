@@ -72,9 +72,9 @@ import { PageErrorStateComponent } from "../page-error-state/page-error-state.co
 export class ErrorBoundaryComponent {
   componentName = input<string>();
 
-  private router = inject(Router);
-  private homeRouteService = inject(HomeRouteService);
-  private errorHandler = inject(GlobalErrorHandlerService);
+  private readonly router = inject(Router);
+  private readonly homeRouteService = inject(HomeRouteService);
+  private readonly errorHandler = inject(GlobalErrorHandlerService);
   readonly homeRoute = computed(() => this.homeRouteService.getHomeRoute());
 
   hasError = signal(false);

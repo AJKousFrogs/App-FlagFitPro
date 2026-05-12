@@ -40,7 +40,7 @@ export * from "./sprint-training-knowledge.data";
   providedIn: "root",
 })
 export class SprintTrainingKnowledgeService {
-  private logger = inject(LoggerService);
+  private readonly logger = inject(LoggerService);
 
   // State
   private readonly _selectedProtocol = signal<SprintProtocol | null>(null);

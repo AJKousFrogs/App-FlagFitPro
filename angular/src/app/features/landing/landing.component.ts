@@ -26,8 +26,8 @@ import { ensurePrimeIconsStylesheet } from "../../core/utils/primeicons-loader";
 export class LandingComponent implements OnInit {
   private readonly heroRevealDelayMs = 100;
   private readonly particleRevealDelayMs = 700;
-  private router = inject(Router);
-  private destroyRef = inject(DestroyRef);
+  private readonly router = inject(Router);
+  private readonly destroyRef = inject(DestroyRef);
   private hasPrefetchedRegisterRoute = false;
   private hasPrefetchedLoginRoute = false;
   private heroRevealTimer: ReturnType<typeof setTimeout> | null = null;

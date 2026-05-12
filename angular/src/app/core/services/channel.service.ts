@@ -186,10 +186,10 @@ export interface ChannelMembersResponse {
   providedIn: "root",
 })
 export class ChannelService {
-  private supabase = inject(SupabaseService);
-  private logger = inject(LoggerService);
-  private realtimeService = inject(RealtimeService);
-  private teamMembershipService = inject(TeamMembershipService);
+  private readonly supabase = inject(SupabaseService);
+  private readonly logger = inject(LoggerService);
+  private readonly realtimeService = inject(RealtimeService);
+  private readonly teamMembershipService = inject(TeamMembershipService);
   private usersTableUnavailable = false;
 
   // State

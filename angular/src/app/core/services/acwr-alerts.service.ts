@@ -34,8 +34,8 @@ export class AcwrAlertsService {
   private readonly ownershipTransitionService = inject(
     OwnershipTransitionService,
   );
-  private logger = inject(LoggerService);
-  private supabaseService = inject(SupabaseService);
+  private readonly logger = inject(LoggerService);
+  private readonly supabaseService = inject(SupabaseService);
 
   // Active alerts
   private readonly alerts = signal<LoadAlert[]>([]);

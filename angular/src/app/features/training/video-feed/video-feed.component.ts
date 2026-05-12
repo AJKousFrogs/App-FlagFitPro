@@ -83,13 +83,13 @@ import { FilterChip } from "./video-feed.models";
   styleUrl: "./video-feed.component.scss",
 })
 export class VideoFeedComponent {
-  private instagramService = inject(InstagramVideoService);
-  private toastService = inject(ToastService);
-  private hapticService = inject(HapticFeedbackService);
-  private supabase = inject(SupabaseService);
-  private videoBookmarkDataService = inject(VideoBookmarkDataService);
-  private router = inject(Router);
-  private logger = inject(LoggerService);
+  private readonly instagramService = inject(InstagramVideoService);
+  private readonly toastService = inject(ToastService);
+  private readonly hapticService = inject(HapticFeedbackService);
+  private readonly supabase = inject(SupabaseService);
+  private readonly videoBookmarkDataService = inject(VideoBookmarkDataService);
+  private readonly router = inject(Router);
+  private readonly logger = inject(LoggerService);
   private readonly destroyRef = inject(DestroyRef);
 
   // State

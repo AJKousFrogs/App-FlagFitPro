@@ -31,9 +31,9 @@ export interface BreadcrumbItem {
   providedIn: "root",
 })
 export class ContextService {
-  private router = inject(Router);
-  private homeRouteService = inject(HomeRouteService);
-  private logger = inject(LoggerService);
+  private readonly router = inject(Router);
+  private readonly homeRouteService = inject(HomeRouteService);
+  private readonly logger = inject(LoggerService);
 
   // Track current route
   private currentRoute$ = this.router.events.pipe(

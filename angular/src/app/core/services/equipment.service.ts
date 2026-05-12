@@ -71,8 +71,8 @@ export interface EquipmentSummary {
   providedIn: "root",
 })
 export class EquipmentService {
-  private apiService = inject(ApiService);
-  private logger = inject(LoggerService);
+  private readonly apiService = inject(ApiService);
+  private readonly logger = inject(LoggerService);
 
   readonly EQUIPMENT_TYPES: {
     value: EquipmentItem["item_type"];

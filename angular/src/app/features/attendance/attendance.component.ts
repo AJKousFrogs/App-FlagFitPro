@@ -70,10 +70,10 @@ type AttendanceStatus = "present" | "absent" | "late" | "excused";
   styleUrl: "./attendance.component.scss",
 })
 export class AttendanceComponent implements OnInit {
-  private attendanceService = inject(AttendanceService);
-  private teamMembershipService = inject(TeamMembershipService);
-  private toastService = inject(ToastService);
-  private destroyRef = inject(DestroyRef);
+  private readonly attendanceService = inject(AttendanceService);
+  private readonly teamMembershipService = inject(TeamMembershipService);
+  private readonly toastService = inject(ToastService);
+  private readonly destroyRef = inject(DestroyRef);
 
   // Design system tokens
   // State

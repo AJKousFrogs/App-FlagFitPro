@@ -130,16 +130,16 @@ interface HydrationLog {
   templateUrl: "./tournament-nutrition.component.html",
 })
 export class TournamentNutritionComponent implements OnInit, OnDestroy {
-  private router = inject(Router);
-  private route = inject(ActivatedRoute);
-  private toastService = inject(ToastService);
-  private logger = inject(LoggerService);
-  private nutritionService = inject(NutritionService);
-  private dialogService = inject(DialogService);
-  private tournamentStateService = inject(TournamentNutritionStateService);
-  private destroyRef = inject(DestroyRef);
-  private scheduleService = inject(ScheduleService);
-  private periodizationService = inject(PeriodizationService);
+  private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
+  private readonly toastService = inject(ToastService);
+  private readonly logger = inject(LoggerService);
+  private readonly nutritionService = inject(NutritionService);
+  private readonly dialogService = inject(DialogService);
+  private readonly tournamentStateService = inject(TournamentNutritionStateService);
+  private readonly destroyRef = inject(DestroyRef);
+  private readonly scheduleService = inject(ScheduleService);
+  private readonly periodizationService = inject(PeriodizationService);
   private unsubscribeTodayState: (() => void) | null = null;
 
   // State

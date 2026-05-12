@@ -32,7 +32,7 @@ import { isFormControlInvalid, getFormControlError } from "./form.utils";
  * }
  */
 export abstract class FormBase {
-  protected destroyRef = inject(DestroyRef);
+  protected readonly destroyRef = inject(DestroyRef);
 
   readonly submitted = signal(false);
   readonly submitting = signal(false);

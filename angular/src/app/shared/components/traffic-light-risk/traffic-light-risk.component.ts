@@ -29,7 +29,7 @@ import { RiskZone } from "../../../core/models/acwr.models";
   styleUrl: "./traffic-light-risk.component.scss",
 })
 export class TrafficLightRiskComponent {
-  private renderer = inject(Renderer2);
+  private readonly renderer = inject(Renderer2);
 
   scaleMarker = viewChild<ElementRef<HTMLDivElement>>("scaleMarker");
 

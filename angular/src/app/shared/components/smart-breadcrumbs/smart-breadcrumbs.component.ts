@@ -58,8 +58,8 @@ import { BreadcrumbItem } from "../../../core/services/context.service";
   styleUrl: "./smart-breadcrumbs.component.scss",
 })
 export class SmartBreadcrumbsComponent {
-  private router = inject(Router);
-  private contextService = inject(ContextService);
+  private readonly router = inject(Router);
+  private readonly contextService = inject(ContextService);
 
   breadcrumbItems = computed((): BreadcrumbItem[] => {
     const route = this.router.url;

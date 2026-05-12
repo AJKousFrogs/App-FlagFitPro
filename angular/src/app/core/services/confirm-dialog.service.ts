@@ -51,7 +51,7 @@ export type ConfirmationType =
   providedIn: "root",
 })
 export class ConfirmDialogService {
-  private confirmationService = inject(ConfirmationService);
+  private readonly confirmationService = inject(ConfirmationService);
 
   // Predefined confirmation configurations
   private readonly presets: Record<string, Partial<ConfirmDialogOptions>> = {

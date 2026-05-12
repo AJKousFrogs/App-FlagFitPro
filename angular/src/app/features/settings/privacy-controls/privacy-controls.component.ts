@@ -81,11 +81,11 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
   styleUrl: "./privacy-controls.component.scss",
 })
 export class PrivacyControlsComponent implements OnInit {
-  private privacyService = inject(PrivacySettingsService);
-  private dataExportService = inject(DataExportService);
-  private deletionService = inject(AccountDeletionService);
-  private supabase = inject(SupabaseService);
-  private toastService = inject(ToastService);
+  private readonly privacyService = inject(PrivacySettingsService);
+  private readonly dataExportService = inject(DataExportService);
+  private readonly deletionService = inject(AccountDeletionService);
+  private readonly supabase = inject(SupabaseService);
+  private readonly toastService = inject(ToastService);
 
   // Design system tokens
   // State from service

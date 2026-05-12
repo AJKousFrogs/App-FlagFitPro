@@ -107,7 +107,7 @@ export class AcwrDashboardComponent implements OnInit {
   private readonly ownershipTransitionService = inject(
     OwnershipTransitionService,
   );
-  private logger = inject(LoggerService);
+  private readonly logger = inject(LoggerService);
   private readonly lazyPdf = inject(LazyPdfService);
 
   // Angular 21: viewChild signal for PDF export dashboard reference
@@ -363,9 +363,9 @@ export class AcwrDashboardComponent implements OnInit {
     this.initializeDashboard();
   }
 
-  private router = inject(Router);
-  private toastService = inject(ToastService);
-  private acwrDashboardDataService = inject(AcwrDashboardDataService);
+  private readonly router = inject(Router);
+  private readonly toastService = inject(ToastService);
+  private readonly acwrDashboardDataService = inject(AcwrDashboardDataService);
 
   public dismissTopAlert(): void {
     const alert = this.topAlert();

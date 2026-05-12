@@ -163,12 +163,12 @@ function expandEventsToGameDays(events: CompetitionEvent[]): Date[] {
   providedIn: "root",
 })
 export class TrainingPlanService {
-  private acwrService = inject(AcwrService);
-  private readinessService = inject(ReadinessService);
-  private apiService = inject(ApiService);
-  private logger = inject(LoggerService);
-  private performanceSystemService = inject(FlagFootballPerformanceSystemService);
-  private scheduleService = inject(ScheduleService);
+  private readonly acwrService = inject(AcwrService);
+  private readonly readinessService = inject(ReadinessService);
+  private readonly apiService = inject(ApiService);
+  private readonly logger = inject(LoggerService);
+  private readonly performanceSystemService = inject(FlagFootballPerformanceSystemService);
+  private readonly scheduleService = inject(ScheduleService);
 
   readonly currentPlan = signal<WeeklyTrainingPlan | null>(null);
   readonly loading = signal(false);

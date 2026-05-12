@@ -9,7 +9,7 @@
  * Usage:
  * ```typescript
  * export class AnalyticsViewModel extends ReactiveViewModel {
- *   private analyticsService = inject(AnalyticsDataService);
+ *   private readonly analyticsService = inject(AnalyticsDataService);
  *
  *   // Complex async work: Use RxJS Observable
  *   performanceData$ = this.createStream(

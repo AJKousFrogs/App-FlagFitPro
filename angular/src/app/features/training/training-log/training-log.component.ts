@@ -90,7 +90,7 @@ interface ExistingTrainingSession {
 })
 export class TrainingLogComponent implements OnInit {
   private readonly fb = inject(NonNullableFormBuilder);
-  private destroyRef = inject(DestroyRef);
+  private readonly destroyRef = inject(DestroyRef);
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
   private readonly supabase = inject(SupabaseService);

@@ -118,14 +118,14 @@ interface VideoSuggestion {
   styleUrl: "./video-suggestion.component.scss",
 })
 export class VideoSuggestionComponent implements OnInit {
-  private fb = inject(NonNullableFormBuilder);
-  private confirmDialog = inject(ConfirmDialogService);
-  private instagramService = inject(InstagramVideoService);
-  private toastService = inject(ToastService);
-  private hapticService = inject(HapticFeedbackService);
-  private supabase = inject(SupabaseService);
-  private videoSuggestionDataService = inject(VideoSuggestionDataService);
-  private logger = inject(LoggerService);
+  private readonly fb = inject(NonNullableFormBuilder);
+  private readonly confirmDialog = inject(ConfirmDialogService);
+  private readonly instagramService = inject(InstagramVideoService);
+  private readonly toastService = inject(ToastService);
+  private readonly hapticService = inject(HapticFeedbackService);
+  private readonly supabase = inject(SupabaseService);
+  private readonly videoSuggestionDataService = inject(VideoSuggestionDataService);
+  private readonly logger = inject(LoggerService);
 
   // Expose constants to template
   protected readonly UI_LIMITS = UI_LIMITS;

@@ -16,7 +16,7 @@
  * Usage:
  * ```typescript
  * export class MyViewModel extends BaseViewModel {
- *   private dataService = inject(MyDataService);
+ *   private readonly dataService = inject(MyDataService);
  *
  *   // State (Signals)
  *   stats = signal<Stat[]>([]);
@@ -48,8 +48,8 @@ import { getErrorMessage } from "../../shared/utils/error.utils";
 
 @Injectable()
 export abstract class BaseViewModel {
-  protected destroyRef = inject(DestroyRef);
-  protected logger = inject(LoggerService);
+  protected readonly destroyRef = inject(DestroyRef);
+  protected readonly logger = inject(LoggerService);
 
   // Common state signals
   readonly loading = signal<boolean>(false);

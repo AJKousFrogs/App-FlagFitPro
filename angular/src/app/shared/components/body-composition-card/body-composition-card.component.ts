@@ -68,10 +68,10 @@ interface BodyCompositionData {
   styleUrl: "./body-composition-card.component.scss",
 })
 export class BodyCompositionCardComponent {
-  private trainingService = inject(UnifiedTrainingService);
-  private destroyRef = inject(DestroyRef);
-  private logger = inject(LoggerService);
-  private toastService = inject(ToastService);
+  private readonly trainingService = inject(UnifiedTrainingService);
+  private readonly destroyRef = inject(DestroyRef);
+  private readonly logger = inject(LoggerService);
+  private readonly toastService = inject(ToastService);
 
   // Use unified service signals
   latestMeasurement = this.trainingService.latestMeasurement;

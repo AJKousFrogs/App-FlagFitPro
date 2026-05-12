@@ -52,8 +52,8 @@ import {
   styleUrl: "./superadmin-dashboard.component.scss",
 })
 export class SuperadminDashboardComponent implements OnInit {
-  private superadminService = inject(SuperadminService);
-  private destroyRef = inject(DestroyRef);
+  private readonly superadminService = inject(SuperadminService);
+  private readonly destroyRef = inject(DestroyRef);
 
   // State
   pendingApprovals = this.superadminService.pendingApprovals;

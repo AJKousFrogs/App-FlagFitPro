@@ -99,10 +99,10 @@ export class TrainingStatsCalculationService {
     return new Date(year, month - 1, day, 12, 0, 0, 0);
   }
 
-  private trainingDataService = inject(TrainingDataService);
-  private logger = inject(LoggerService);
-  private acwrService = inject(AcwrService);
-  private supabase = inject(SupabaseService);
+  private readonly trainingDataService = inject(TrainingDataService);
+  private readonly logger = inject(LoggerService);
+  private readonly acwrService = inject(AcwrService);
+  private readonly supabase = inject(SupabaseService);
 
   /**
    * Get comprehensive training statistics

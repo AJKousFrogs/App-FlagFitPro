@@ -114,14 +114,14 @@ interface TrainingEntryContext {
   },
 })
 export class TrainingScheduleComponent implements OnInit {
-  private trainingScheduleDataService = inject(TrainingScheduleDataService);
-  private supabase = inject(SupabaseService);
-  private toastService = inject(ToastService);
-  private router = inject(Router);
-  private route = inject(ActivatedRoute);
-  private logger = inject(LoggerService);
-  private weatherCancellationService = inject(WeatherCancellationService);
-  private destroyRef = inject(DestroyRef);
+  private readonly trainingScheduleDataService = inject(TrainingScheduleDataService);
+  private readonly supabase = inject(SupabaseService);
+  private readonly toastService = inject(ToastService);
+  private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
+  private readonly logger = inject(LoggerService);
+  private readonly weatherCancellationService = inject(WeatherCancellationService);
+  private readonly destroyRef = inject(DestroyRef);
   private readonly platformId = inject(PLATFORM_ID);
 
   selectedDate = signal<Date>(new Date());

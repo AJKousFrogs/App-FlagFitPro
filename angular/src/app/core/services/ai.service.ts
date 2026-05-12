@@ -76,9 +76,9 @@ export interface TrainingSuggestionParams {
   providedIn: "root",
 })
 export class AIService {
-  private apiService = inject(ApiService);
-  private privacySettingsService = inject(PrivacySettingsService);
-  private logger = inject(LoggerService);
+  private readonly apiService = inject(ApiService);
+  private readonly privacySettingsService = inject(PrivacySettingsService);
+  private readonly logger = inject(LoggerService);
 
   /**
    * Get AI-powered training suggestions based on user history, performance gaps, and goals

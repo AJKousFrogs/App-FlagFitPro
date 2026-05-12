@@ -149,7 +149,7 @@ import { IconButtonComponent } from "../button/icon-button.component";
   styleUrl: "./countdown-timer.component.scss",
 })
 export class CountdownTimerComponent {
-  private destroyRef = inject(DestroyRef);
+  private readonly destroyRef = inject(DestroyRef);
   private intervalId: ReturnType<typeof setInterval> | null = null;
 
   // Inputs

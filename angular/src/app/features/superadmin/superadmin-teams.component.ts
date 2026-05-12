@@ -69,10 +69,10 @@ interface Team {
   styleUrl: "./superadmin-teams.component.scss",
 })
 export class SuperadminTeamsComponent implements OnInit {
-  private superadminService = inject(SuperadminService);
-  private confirmDialog = inject(ConfirmDialogService);
-  private toast = inject(ToastService);
-  private destroyRef = inject(DestroyRef);
+  private readonly superadminService = inject(SuperadminService);
+  private readonly confirmDialog = inject(ConfirmDialogService);
+  private readonly toast = inject(ToastService);
+  private readonly destroyRef = inject(DestroyRef);
 
   teams: Team[] = [];
   filteredTeams: Team[] = [];

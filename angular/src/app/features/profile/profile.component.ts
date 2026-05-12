@@ -71,14 +71,14 @@ interface PendingInvitation {
   styleUrl: "./profile.component.scss",
 })
 export class ProfileComponent implements OnInit {
-  private supabase = inject(SupabaseService);
-  private apiService = inject(ApiService);
-  private toastService = inject(ToastService);
-  private profileDataService = inject(ProfileDataService);
-  private logger = inject(LoggerService);
-  private accountDeletionService = inject(AccountDeletionService);
-  private profileCompletionService = inject(ProfileCompletionService);
-  private teamMembershipService = inject(TeamMembershipService);
+  private readonly supabase = inject(SupabaseService);
+  private readonly apiService = inject(ApiService);
+  private readonly toastService = inject(ToastService);
+  private readonly profileDataService = inject(ProfileDataService);
+  private readonly logger = inject(LoggerService);
+  private readonly accountDeletionService = inject(AccountDeletionService);
+  private readonly profileCompletionService = inject(ProfileCompletionService);
+  private readonly teamMembershipService = inject(TeamMembershipService);
 
   // Expose UI_LIMITS for template usage
   readonly UI_LIMITS = UI_LIMITS;

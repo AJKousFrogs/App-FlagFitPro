@@ -43,7 +43,7 @@ export interface RenderDecision {
   providedIn: "root",
 })
 export class SemanticRendererService {
-  private logger = inject(LoggerService);
+  private readonly logger = inject(LoggerService);
 
   /**
    * Render a semantic meaning into a component decision

@@ -67,8 +67,8 @@ export interface ManagedUserAccount {
   providedIn: "root",
 })
 export class SuperadminService {
-  private supabaseService = inject(SupabaseService);
-  private logger = inject(LoggerService);
+  private readonly supabaseService = inject(SupabaseService);
+  private readonly logger = inject(LoggerService);
 
   // Signals for reactive state
   isSuperadmin = signal<boolean>(false);

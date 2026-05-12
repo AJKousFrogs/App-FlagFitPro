@@ -62,12 +62,12 @@ interface InvitationData {
   styleUrl: "./accept-invitation.component.scss",
 })
 export class AcceptInvitationComponent implements OnInit {
-  private router = inject(Router);
-  private route = inject(ActivatedRoute);
-  private toastService = inject(ToastService);
-  private teamInvitationDataService = inject(TeamInvitationDataService);
-  private platform = inject(PlatformService);
-  private homeRouteService = inject(HomeRouteService);
+  private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
+  private readonly toastService = inject(ToastService);
+  private readonly teamInvitationDataService = inject(TeamInvitationDataService);
+  private readonly platform = inject(PlatformService);
+  private readonly homeRouteService = inject(HomeRouteService);
 
   isLoading = signal(true);
   isProcessing = signal(false);

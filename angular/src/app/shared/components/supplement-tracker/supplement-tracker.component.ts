@@ -205,11 +205,11 @@ const DEFAULT_SUPPLEMENTS: Supplement[] = [
   styleUrl: "./supplement-tracker.component.scss",
 })
 export class SupplementTrackerComponent implements OnInit {
-  private apiService = inject(ApiService);
-  private toastService = inject(ToastService);
-  private logger = inject(LoggerService);
-  private destroyRef = inject(DestroyRef);
-  private renderer = inject(Renderer2);
+  private readonly apiService = inject(ApiService);
+  private readonly toastService = inject(ToastService);
+  private readonly logger = inject(LoggerService);
+  private readonly destroyRef = inject(DestroyRef);
+  private readonly renderer = inject(Renderer2);
 
   progressFill = viewChild<ElementRef<HTMLDivElement>>("progressFill");
 

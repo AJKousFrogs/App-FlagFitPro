@@ -40,9 +40,9 @@ export interface RedactedError {
   providedIn: "root",
 })
 export class GlobalErrorHandlerService {
-  private zone = inject(NgZone);
-  private router = inject(Router);
-  private logger = inject(LoggerService);
+  private readonly zone = inject(NgZone);
+  private readonly router = inject(Router);
+  private readonly logger = inject(LoggerService);
 
   // Error log buffer (in-memory, no PII)
   private errorLog: RedactedError[] = [];

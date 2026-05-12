@@ -210,8 +210,8 @@ export interface PlayerFormData {
   styleUrl: "./roster-player-form-dialog.component.scss",
 })
 export class RosterPlayerFormDialogComponent {
-  private fb = inject(FormBuilder);
-  private formErrorService = inject(FormErrorService);
+  private readonly fb = inject(FormBuilder);
+  private readonly formErrorService = inject(FormErrorService);
 
   // Inputs
   visible = input<boolean>(false);

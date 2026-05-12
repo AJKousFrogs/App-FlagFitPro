@@ -93,8 +93,8 @@ interface SentryApi {
   providedIn: "root",
 })
 export class ErrorTrackingService {
-  private logger = inject(LoggerService);
-  private router = inject(Router);
+  private readonly logger = inject(LoggerService);
+  private readonly router = inject(Router);
 
   private breadcrumbs: Breadcrumb[] = [];
   private maxBreadcrumbs = 50;

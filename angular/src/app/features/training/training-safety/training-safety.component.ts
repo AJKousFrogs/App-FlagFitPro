@@ -74,12 +74,12 @@ import {
   styleUrl: "./training-safety.component.scss",
 })
 export class TrainingSafetyComponent implements OnInit {
-  private trainingService = inject(UnifiedTrainingService);
-  private supabase = inject(SupabaseService);
-  private logger = inject(LoggerService);
-  private trainingSafetyDataService = inject(TrainingSafetyDataService);
+  private readonly trainingService = inject(UnifiedTrainingService);
+  private readonly supabase = inject(SupabaseService);
+  private readonly logger = inject(LoggerService);
+  private readonly trainingSafetyDataService = inject(TrainingSafetyDataService);
   private readonly router = inject(Router);
-  private destroyRef = inject(DestroyRef);
+  private readonly destroyRef = inject(DestroyRef);
 
   // ACWR signals
   readonly todayProtocol = this.trainingService.todayProtocol;

@@ -172,14 +172,14 @@ type LoginForm = FormGroup<{
   styleUrl: "./login.component.scss",
 })
 export class LoginComponent extends FormBase implements OnInit {
-  private fb = inject(NonNullableFormBuilder);
-  private authService = inject(AuthService);
-  private authFlowDataService = inject(AuthFlowDataService);
-  private router = inject(Router);
-  private route = inject(ActivatedRoute);
-  private toastService = inject(ToastService);
-  private homeRouteService = inject(HomeRouteService);
-  private destroyRef = inject(DestroyRef);
+  private readonly fb = inject(NonNullableFormBuilder);
+  private readonly authService = inject(AuthService);
+  private readonly authFlowDataService = inject(AuthFlowDataService);
+  private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
+  private readonly toastService = inject(ToastService);
+  private readonly homeRouteService = inject(HomeRouteService);
+  private readonly destroyRef = inject(DestroyRef);
 
   loginForm: LoginForm;
   isLoading = signal(false);

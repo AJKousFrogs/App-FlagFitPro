@@ -21,8 +21,8 @@ import { SPACING } from "../utils/design-tokens.util";
   providedIn: "root",
 })
 export class QuickLinkPreloadStrategy implements PreloadingStrategy {
-  private router = inject(Router);
-  private document = inject(DOCUMENT);
+  private readonly router = inject(Router);
+  private readonly document = inject(DOCUMENT);
   private preloadedRoutes = new Set<string>();
   private observer?: IntersectionObserver;
   private readonly preloadMargin = SPACING[12];

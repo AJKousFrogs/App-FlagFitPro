@@ -135,9 +135,9 @@ export interface PlayerMultiSeasonStats {
   providedIn: "root",
 })
 export class PlayerStatisticsService {
-  private apiService = inject(ApiService);
-  private statsCalcService = inject(StatisticsCalculationService);
-  private logger = inject(LoggerService);
+  private readonly apiService = inject(ApiService);
+  private readonly statsCalcService = inject(StatisticsCalculationService);
+  private readonly logger = inject(LoggerService);
 
   /**
    * Get player statistics for a specific game

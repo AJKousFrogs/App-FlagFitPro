@@ -191,9 +191,9 @@ import { getErrorMessage } from "../../shared/utils/error.utils";
   styleUrl: "./import-dataset.component.scss",
 })
 export class ImportDatasetComponent {
-  private metricsService = inject(TrainingMetricsService);
-  private wearableParser = inject(WearableParserService);
-  private toastService = inject(ToastService);
+  private readonly metricsService = inject(TrainingMetricsService);
+  private readonly wearableParser = inject(WearableParserService);
+  private readonly toastService = inject(ToastService);
 
   // Angular 21: Use signals for two-way binding in templates
   athleteId = signal("");

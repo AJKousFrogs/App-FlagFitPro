@@ -213,8 +213,8 @@ export class ReviewDecisionDialogComponent {
   reviewed = output<ReviewDecisionRequest>();
 
   // Services
-  private decisionService = inject(DecisionLedgerService);
-  private logger = inject(LoggerService);
+  private readonly decisionService = inject(DecisionLedgerService);
+  private readonly logger = inject(LoggerService);
 
   // State
   isSubmitting = signal(false);

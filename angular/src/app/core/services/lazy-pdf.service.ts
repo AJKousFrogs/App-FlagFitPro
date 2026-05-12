@@ -62,7 +62,7 @@ type Html2CanvasFunction = (
   providedIn: "root",
 })
 export class LazyPdfService {
-  private logger = inject(LoggerService);
+  private readonly logger = inject(LoggerService);
   private jsPDF: JsPDFConstructor | null = null;
   private html2canvas: Html2CanvasFunction | null = null;
   private loading = signal(false);

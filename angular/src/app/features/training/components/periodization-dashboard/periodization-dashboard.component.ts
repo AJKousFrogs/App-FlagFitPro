@@ -87,11 +87,11 @@ interface TimelineEvent {
 })
 export class PeriodizationDashboardComponent implements OnInit {
   // Services
-  private periodizationService = inject(FlagFootballPeriodizationService);
-  private sprintService = inject(SprintTrainingKnowledgeService);
-  private loadCalculator = inject(PhaseLoadCalculatorService);
-  private athleteProfileService = inject(FlagFootballAthleteProfileService);
-  private acwrService = inject(AcwrService);
+  private readonly periodizationService = inject(FlagFootballPeriodizationService);
+  private readonly sprintService = inject(SprintTrainingKnowledgeService);
+  private readonly loadCalculator = inject(PhaseLoadCalculatorService);
+  private readonly athleteProfileService = inject(FlagFootballAthleteProfileService);
+  private readonly acwrService = inject(AcwrService);
 
   // State
   readonly currentDate = new Date();

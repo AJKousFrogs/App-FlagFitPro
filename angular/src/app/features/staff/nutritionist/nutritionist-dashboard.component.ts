@@ -157,10 +157,10 @@ interface TournamentNutritionBrief {
   styleUrl: "./nutritionist-dashboard.component.scss",
 })
 export class NutritionistDashboardComponent implements OnInit {
-  private api = inject(ApiService);
-  private toast = inject(ToastService);
-  private logger = inject(LoggerService);
-  private insightFeedService = inject(SharedInsightFeedService);
+  private readonly api = inject(ApiService);
+  private readonly toast = inject(ToastService);
+  private readonly logger = inject(LoggerService);
+  private readonly insightFeedService = inject(SharedInsightFeedService);
 
   // State
   loading = signal(true);

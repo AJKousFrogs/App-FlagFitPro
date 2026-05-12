@@ -23,7 +23,7 @@ import { ReactiveViewModel } from "./reactive.view-model";
 
 @Injectable({ providedIn: "root" })
 export class AnalyticsViewModel extends ReactiveViewModel {
-  private analyticsDataService = inject(AnalyticsDataService);
+  private readonly analyticsDataService = inject(AnalyticsDataService);
 
   // State signals
   readonly performanceTrends = signal<PerformanceTrendsData | null>(null);

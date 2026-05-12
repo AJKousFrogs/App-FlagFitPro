@@ -175,9 +175,9 @@ interface NewOpponentForm {
   styleUrl: "./scouting-reports.component.scss",
 })
 export class ScoutingReportsComponent implements OnInit {
-  private api = inject(ApiService);
-  private toast = inject(ToastService);
-  private logger = inject(LoggerService);
+  private readonly api = inject(ApiService);
+  private readonly toast = inject(ToastService);
+  private readonly logger = inject(LoggerService);
 
   // State
   loading = signal(true);

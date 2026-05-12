@@ -87,9 +87,9 @@ export interface RecordAttendancePayload {
   providedIn: "root",
 })
 export class AttendanceService {
-  private apiService = inject(ApiService);
-  private supabaseService = inject(SupabaseService);
-  private logger = inject(LoggerService);
+  private readonly apiService = inject(ApiService);
+  private readonly supabaseService = inject(SupabaseService);
+  private readonly logger = inject(LoggerService);
 
   /**
    * Get team events with optional filters

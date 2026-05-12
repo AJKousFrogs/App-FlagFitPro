@@ -140,8 +140,8 @@ export class RosterComponent implements OnInit {
   private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
   private readonly elementRef = inject<ElementRef<HTMLElement>>(ElementRef);
-  private toastService = inject(ToastService);
-  private confirmDialog = inject(ConfirmDialogService);
+  private readonly toastService = inject(ToastService);
+  private readonly confirmDialog = inject(ConfirmDialogService);
 
   // Page state
   isPageLoading = signal(true);

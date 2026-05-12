@@ -117,10 +117,10 @@ const ACWR_MEMORY_LIMITS = {
   providedIn: "root",
 })
 export class AcwrService {
-  private evidenceConfigService = inject(EvidenceConfigService);
-  private supabaseService = inject(SupabaseService);
-  private logger = inject(LoggerService);
-  private acwrSpikeDetection = inject(AcwrSpikeDetectionService);
+  private readonly evidenceConfigService = inject(EvidenceConfigService);
+  private readonly supabaseService = inject(SupabaseService);
+  private readonly logger = inject(LoggerService);
+  private readonly acwrSpikeDetection = inject(AcwrSpikeDetectionService);
   private readonly correlation = inject(CorrelationContextService);
   private readonly remoteTelemetry = inject(RemoteTelemetryService);
 

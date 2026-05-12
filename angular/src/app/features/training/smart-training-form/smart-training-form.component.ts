@@ -76,17 +76,17 @@ interface EquipmentOption {
   styleUrl: "./smart-training-form.component.scss",
 })
 export class SmartTrainingFormComponent implements OnInit {
-  private fb = inject(NonNullableFormBuilder);
-  private aiService = inject(AIService);
-  private weatherService = inject(WeatherService);
-  private supabase = inject(SupabaseService);
-  private teamMembershipService = inject(TeamMembershipService);
-  private smartTrainingDataService = inject(SmartTrainingDataService);
-  private homeRouteService = inject(HomeRouteService);
-  private toastService = inject(ToastService);
-  private logger = inject(LoggerService);
-  private router = inject(Router);
-  private destroyRef = inject(DestroyRef);
+  private readonly fb = inject(NonNullableFormBuilder);
+  private readonly aiService = inject(AIService);
+  private readonly weatherService = inject(WeatherService);
+  private readonly supabase = inject(SupabaseService);
+  private readonly teamMembershipService = inject(TeamMembershipService);
+  private readonly smartTrainingDataService = inject(SmartTrainingDataService);
+  private readonly homeRouteService = inject(HomeRouteService);
+  private readonly toastService = inject(ToastService);
+  private readonly logger = inject(LoggerService);
+  private readonly router = inject(Router);
+  private readonly destroyRef = inject(DestroyRef);
 
   isSubmitting = signal(false);
   durationValue = signal(45);

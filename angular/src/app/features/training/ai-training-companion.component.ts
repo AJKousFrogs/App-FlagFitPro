@@ -121,13 +121,13 @@ declare global {
   styleUrl: "./ai-training-companion.component.scss",
 })
 export class AITrainingCompanionComponent implements OnInit, OnDestroy {
-  private aiService = inject(AIService);
-  private contextService = inject(ContextService);
-  private hapticService = inject(HapticFeedbackService);
-  private apiService = inject(ApiService);
-  private destroyRef = inject(DestroyRef);
-  private logger = inject(LoggerService);
-  private privacyService = inject(PrivacySettingsService);
+  private readonly aiService = inject(AIService);
+  private readonly contextService = inject(ContextService);
+  private readonly hapticService = inject(HapticFeedbackService);
+  private readonly apiService = inject(ApiService);
+  private readonly destroyRef = inject(DestroyRef);
+  private readonly logger = inject(LoggerService);
+  private readonly privacyService = inject(PrivacySettingsService);
 
   // AI consent check - shows disabled banner when AI processing is off
   readonly aiEnabled = this.privacyService.aiProcessingEnabled;

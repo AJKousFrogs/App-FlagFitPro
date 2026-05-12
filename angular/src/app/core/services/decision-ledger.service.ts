@@ -29,8 +29,8 @@ import type {
   providedIn: "root",
 })
 export class DecisionLedgerService {
-  private apiService = inject(ApiService);
-  private logger = inject(LoggerService);
+  private readonly apiService = inject(ApiService);
+  private readonly logger = inject(LoggerService);
 
   // State signals
   readonly decisions = signal<DecisionLedgerEntry[]>([]);

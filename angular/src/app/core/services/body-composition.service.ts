@@ -59,8 +59,8 @@ interface BMICategory {
   providedIn: "root",
 })
 export class BodyCompositionService {
-  private supabase = inject(SupabaseService);
-  private logger = inject(LoggerService);
+  private readonly supabase = inject(SupabaseService);
+  private readonly logger = inject(LoggerService);
 
   // Reactive state
   private readonly _measurements = signal<PhysicalMeasurement[]>([]);

@@ -95,11 +95,11 @@ import { AuthFlowDataService } from "../services/auth-flow-data.service";
   styleUrl: "./auth-callback.component.scss",
 })
 export class AuthCallbackComponent implements OnInit, OnDestroy {
-  private router = inject(Router);
-  private toastService = inject(ToastService);
-  private authFlowDataService = inject(AuthFlowDataService);
-  private logger = inject(LoggerService);
-  private homeRouteService = inject(HomeRouteService);
+  private readonly router = inject(Router);
+  private readonly toastService = inject(ToastService);
+  private readonly authFlowDataService = inject(AuthFlowDataService);
+  private readonly logger = inject(LoggerService);
+  private readonly homeRouteService = inject(HomeRouteService);
 
   isProcessing = signal(true);
   success = signal(false);
