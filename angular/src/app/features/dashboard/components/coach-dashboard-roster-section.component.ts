@@ -13,6 +13,7 @@ import {
   playerStatusSeverityMap,
 } from "../../../shared/utils/status.utils";
 import { PlayerPerformanceStats } from "../../../core/services/team-statistics.service";
+import { PLAYER_STATUS_LABELS } from "../../../shared/constants/status-labels.constants";
 
 export type CoachDashboardPlayerFilter = "all" | "starters" | "injured" | "at_risk";
 
@@ -108,13 +109,7 @@ export class CoachDashboardRosterSectionComponent {
   }
 
   protected getStatusLabel(status: string): string {
-    const labels: Record<string, string> = {
-      active: "Active",
-      injured: "Injured",
-      inactive: "Inactive",
-      at_risk: "At Risk",
-    };
-    return labels[status] || status;
+    return PLAYER_STATUS_LABELS[status] || status;
   }
 
   protected getStatusSeverity(

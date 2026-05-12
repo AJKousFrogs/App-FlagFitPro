@@ -155,6 +155,16 @@ export const TOURNAMENT_STATUS_LABELS: Record<string, string> = {
 };
 
 /**
+ * Player/Roster Status Labels
+ */
+export const PLAYER_STATUS_LABELS: Record<string, string> = {
+  active: "Active",
+  injured: "Injured",
+  inactive: "Inactive",
+  at_risk: "At Risk",
+};
+
+/**
  * Staff Decision Type Labels
  */
 export const DECISION_TYPE_LABELS: Record<string, string> = {
