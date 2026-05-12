@@ -18,13 +18,9 @@
 /* TIER 1: Tokens + design-system typography/states/utilities (single source) */
 @use "./scss/design-system/index" as *;
 @use "./scss/design-system/elite-phase2-auth";
-/* Command-center ECC aliases + page layout grids (critical; previously deferred — Phase 0) */
-@use "./scss/design-system/elite-command-center.tokens" as *;
 @use "./scss/design-system/elite-phase2-layout" as *;
 /* TIER 2: Utilities - mixins, responsive, layout, typography-system */
 @use "./scss/utilities" as *;
-@use "./assets/fonts/poppins";
-
 /* TIER 2.5: Foundations - canonical placeholders + interactive mixin (dedupe layer) */
 @use "./scss/foundations" as *;
 
@@ -393,7 +389,7 @@ button {
     textarea,
     [tabindex]:not([tabindex="-1"])
   ):focus-visible {
-  outline: var(--focus-outline-width) solid var(--ds-primary-green);
+  outline: var(--focus-outline-width) solid var(--accent);
   outline-offset: var(--focus-outline-offset);
 }
 
@@ -445,8 +441,7 @@ body {
     color var(--transition-slow) ease;
 
   &.dark-theme {
-    background: radial-gradient(circle at 50% -20%, #1e293b 0%, #0f172a 45%, #020617 100%);
-    background-attachment: fixed;
+    background: var(--bg-0);
   }
 }
 

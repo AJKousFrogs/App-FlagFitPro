@@ -60,19 +60,15 @@ type LoginForm = FormGroup<{
           <div class="login-logo elite-auth-logo">
             <i class="pi pi-flag-fill"></i>
           </div>
-          <span class="elite-auth-kicker">Welcome Back</span>
-          <h1 class="login-title elite-auth-title">Sign in to FlagFit Pro</h1>
+          <h1 class="login-title elite-auth-title">Welcome back</h1>
           <p class="elite-auth-subtitle">
-            Access your training plan, readiness, and daily protocol from one
-            place.
+            Sign in to FlagFit Pro and pick up where you left off.
           </p>
         </div>
 
         @if (isDemoMode()) {
-          <div class="alert alert--info elite-auth-note">
-            <strong>Local Development:</strong> You're running on localhost.
-            Sign in still requires a reachable auth backend and valid test
-            credentials.
+          <div class="elite-auth-note" role="note">
+            <strong>Local environment.</strong> Sign-in still calls the real auth backend — use valid test credentials.
           </div>
         }
 
@@ -159,16 +155,10 @@ type LoginForm = FormGroup<{
           >
         </form>
 
-        <div class="login-divider elite-auth-divider">
-          <span>New to FlagFit Pro?</span>
-        </div>
-
-        <a
-          [routerLink]="['/register']"
-          class="login-create-link elite-auth-link elite-auth-link--centered"
-        >
-          Create a new account
-        </a>
+        <p class="elite-auth-footnote">
+          New here?
+          <a [routerLink]="['/register']" class="elite-auth-link">Create an account</a>
+        </p>
       </app-card-shell>
     </div>
   `,

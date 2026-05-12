@@ -4,7 +4,7 @@
  * Quick Actions FAB Component Styles
  * ─────────────────────────────────────────────────────────────
  * Floating Action Button with expandable action menu
- * Design: Raised style buttons (0.5rem radius), Poppins font
+ * Design: Raised style buttons (0.5rem radius), system font stack
  * ─────────────────────────────────────────────────────────────
  */
 
@@ -105,7 +105,7 @@
   }
 }
 
-/* Action Label - Raised style (0.5rem radius), Poppins font */
+/* Action Label - Raised style (0.5rem radius) */
 .action-label {
   /* Fixed width so label boxes share one column (avoids staggered left edges). */
   width: min(16rem, 72vw);

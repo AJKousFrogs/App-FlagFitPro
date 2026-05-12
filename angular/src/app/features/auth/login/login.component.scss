@@ -1,17 +1,19 @@
 @use "styles/mixins" as *;
 
-.login-page {
-  .login-card {
-    width: 100%;
-    max-width: 32rem;
-    margin-inline: auto;
-  }
+/*
+ * Login-specific overrides only. Shared visual treatment lives in
+ * scss/design-system/_elite-phase2-auth.scss (.elite-auth-* tokens).
+ */
 
+.login-page {
   .form-error-summary--auth {
     display: grid;
     gap: var(--space-3);
-    margin-bottom: var(--space-0);
+    margin: 0;
     padding: var(--space-4) var(--space-5);
+    border-radius: var(--radius-lg);
+    background: rgba(var(--danger-rgb), 0.06);
+    border: var(--border-1) solid rgba(var(--danger-rgb), 0.2);
   }
 
   .form-error-summary__header {
@@ -22,52 +24,47 @@
 
   .form-error-summary__header > i {
     flex-shrink: 0;
-    margin-top: var(--space-1);
+    margin-top: var(--space-0-5);
     color: var(--color-status-error);
-    font-size: var(--ds-font-size-lg);
+    font-size: var(--ds-font-size-md);
   }
 
   .form-error-summary__title {
-    margin: var(--space-0);
-    font-size: var(--ds-font-size-lg);
+    margin: 0;
+    font-size: var(--ds-font-size-md);
+    font-weight: var(--ds-font-weight-semibold);
     line-height: var(--line-height-tight);
   }
 
   .form-error-summary__body {
-    margin: var(--space-0);
-    padding-left: calc(var(--ds-font-size-lg) + var(--space-3));
-    color: var(--color-text-primary);
-    font-size: var(--ds-font-size-md);
+    margin: 0;
+    padding-left: calc(var(--ds-font-size-md) + var(--space-3));
+    color: var(--color-text-secondary);
+    font-size: var(--font-body-sm-size);
     line-height: var(--line-height-normal);
   }
 
   .login-form-options {
     align-items: center;
     gap: var(--space-3);
-    margin-top: var(--space-1);
+    margin-top: var(--space-0-5);
   }
 
   .forgot-link {
     margin-left: auto;
-  }
-
-  .login-create-link {
-    font-size: var(--ds-font-size-sm);
+    font-size: 0.8125rem;
+    font-weight: var(--ds-font-weight-medium);
   }
 }
 
 @include respond-to(md) {
   .login-page {
-    .login-card {
-      max-width: none;
-    }
-
     .form-error-summary--auth {
       padding: var(--space-4);
     }
 
     .form-error-summary__body {
-      padding-left: calc(var(--ds-font-size-lg) + var(--space-2));
+      padding-left: calc(var(--ds-font-size-md) + var(--space-2));
     }
 
     .forgot-link {

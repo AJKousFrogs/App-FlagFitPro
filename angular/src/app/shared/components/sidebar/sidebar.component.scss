@@ -50,7 +50,7 @@
     backdrop-filter: blur(var(--premium-glass-blur-xl));
     -webkit-backdrop-filter: blur(var(--premium-glass-blur-xl));
     border-right-color: var(--premium-border-dark);
-    box-shadow: 10px 0 30px rgba(0, 0, 0, 0.2);
+    box-shadow: var(--premium-shadow-dark-lg);
   }
 }
 
@@ -219,22 +219,18 @@ app-close-button.sidebar-close-btn {
 }
 
 .user-avatar {
-  width: 2.25rem;
-  height: 2.25rem;
+  width: var(--component-button-height-md);
+  height: var(--component-button-height-md);
   border-radius: var(--radius-full);
-  background: linear-gradient(
-    135deg,
-    var(--ds-primary-green-light) 0%,
-    var(--ds-primary-green) 100%
-  );
-  color: var(--color-text-on-primary);
+  background: linear-gradient(135deg, var(--ds-primary-green-light) 0%, var(--accent) 100%);
+  color: var(--accent-ink);
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: var(--ds-font-weight-semibold);
   font-size: var(--ds-font-size-sm);
   flex-shrink: 0;
-  box-shadow: 0 2px 8px rgba(var(--ds-primary-green-rgb), 0.28);
+  box-shadow: 0 2px 8px var(--accent-line);
 }
 
 .user-info {

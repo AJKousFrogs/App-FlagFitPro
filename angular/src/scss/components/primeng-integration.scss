@@ -293,9 +293,9 @@
   color: var(--p-input-text-color, var(--color-text-primary));
   box-shadow: var(--component-input-shadow-rest);
   transition:
-    border-color 0.15s ease,
-    box-shadow 0.15s ease,
-    background-color 0.15s ease;
+    border-color var(--transition-fast) var(--ease-standard),
+    box-shadow var(--transition-fast) var(--ease-standard),
+    background-color var(--transition-fast) var(--ease-standard);
 }
 
 /* Password input: reserve space for toggle icon */
@@ -416,8 +416,8 @@
   align-items: center;
   cursor: pointer;
   transition:
-    background-color 0.15s ease,
-    color 0.15s ease;
+    background-color var(--transition-fast) var(--ease-standard),
+    color var(--transition-fast) var(--ease-standard);
 }
 
 /* Option hover */
@@ -474,7 +474,7 @@
   border-radius: 0 var(--p-form-control-border-radius, var(--radius-lg))
     var(--p-form-control-border-radius, var(--radius-lg)) 0;
   cursor: pointer;
-  transition: color 0.15s ease;
+  transition: color var(--transition-fast) var(--ease-standard);
 }
 
 .p-datepicker .p-datepicker-trigger:hover {
@@ -503,8 +503,8 @@
   border: var(--border-1) solid var(--color-border-primary);
   color: var(--color-text-secondary);
   transition:
-    background-color 0.15s ease,
-    color 0.15s ease;
+    background-color var(--transition-fast) var(--ease-standard),
+    color var(--transition-fast) var(--ease-standard);
 }
 
 .p-inputnumber-button:hover {
@@ -555,8 +555,8 @@
   background: var(--p-inputswitch-background);
   border-radius: var(--p-inputswitch-border-radius, var(--radius-full));
   transition:
-    background-color 0.2s ease,
-    box-shadow 0.2s ease;
+    background-color var(--transition-fast) var(--ease-standard),
+    box-shadow var(--transition-fast) var(--ease-standard);
   border: none;
   overflow: hidden;
 }
@@ -571,8 +571,8 @@
   top: var(--space-0-75);
   background: var(--p-inputswitch-handle-background);
   border-radius: var(--radius-circle);
-  transition: left 0.2s ease;
-  box-shadow: 0 var(--space-0-5) var(--space-1) rgba(0, 0, 0, 0.2);
+  transition: left var(--transition-fast) var(--ease-standard);
+  box-shadow: var(--shadow-sm);
 }
 
 /* Hover state - unchecked */
@@ -1102,7 +1102,7 @@
      TRANSITIONS & ANIMATIONS
      ================================================================ */
 
-  --p-transition-duration: var(--transition-base, 200ms);
+  --p-transition-duration: var(--transition-fast, 120ms);
   --p-transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
 
   /* ================================================================

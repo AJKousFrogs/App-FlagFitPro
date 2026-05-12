@@ -20,7 +20,14 @@
  */
 
 @layer overrides {
-  /* Inline style green backgrounds - force white text */
+  /* Inline style green backgrounds - force white/dark text per accent-ink */
+  *[style*="background-color: rgb(0, 168, 92)"],
+  *[style*="background-color:#00A85C"],
+  *[style*="background: #00A85C"],
+  *[style*="background:#00A85C"],
+  *[style*="background-color: #00A85C"],
+  *[style*="00A85C"],
+  /* Legacy brand green (#089949) — kept for cached/SSR inline styles */
   *[style*="background-color: rgb(8, 153, 73)"],
   *[style*="background-color:#089949"],
   *[style*="background: #089949"],
@@ -32,6 +39,11 @@
     --text-color: var(--color-text-on-primary);
   }
 
+  *[style*="background-color: rgb(0, 168, 92)"] *,
+  *[style*="background-color:#00A85C"] *,
+  *[style*="background: #00A85C"] *,
+  *[style*="background:#00A85C"] *,
+  *[style*="background-color: #00A85C"] *,
   *[style*="background-color: rgb(8, 153, 73)"] *,
   *[style*="background-color:#089949"] *,
   *[style*="background: #089949"] *,
@@ -69,6 +81,7 @@
   .p-tag,
   .p-badge,
   .p-chip {
+    &[style*="00A85C"],
     &[style*="089949"] {
       --text-color: var(--color-text-on-primary);
       --p-button-text-color: var(--color-text-on-primary);
@@ -157,9 +170,12 @@
   }
 
   /* Gradient backgrounds containing green */
+  [style*="linear-gradient"][style*="00A85C"],
+  [style*="linear-gradient"][style*="00E07A"],
   [style*="linear-gradient"][style*="089949"],
   [style*="linear-gradient"][style*="0ab85a"],
-  [style*="linear-gradient"][style*="ds-primary-green"] {
+  [style*="linear-gradient"][style*="ds-primary-green"],
+  [style*="linear-gradient"][style*="accent"] {
     color: var(--color-text-on-primary);
 
     &,

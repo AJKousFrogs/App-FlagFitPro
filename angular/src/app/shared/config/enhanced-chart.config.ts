@@ -157,7 +157,7 @@ export const ENHANCED_CHART_OPTIONS: ChartOptions<ChartType> = {
         padding: 15,
         font: {
           size: getResponsiveFontSize(12),
-          family: "'Poppins', sans-serif",
+          family: "'Plus Jakarta Sans', 'Inter', sans-serif",
           weight: 500,
         },
         color: "var(--color-text-primary)",
@@ -209,15 +209,15 @@ export const ENHANCED_CHART_OPTIONS: ChartOptions<ChartType> = {
       titleFont: {
         size: getResponsiveFontSize(14),
         weight: "bold",
-        family: "'Poppins', sans-serif",
+        family: "'Plus Jakarta Sans', 'Inter', sans-serif",
       },
       bodyFont: {
         size: getResponsiveFontSize(13),
-        family: "'Poppins', sans-serif",
+        family: "'Plus Jakarta Sans', 'Inter', sans-serif",
       },
       footerFont: {
         size: getResponsiveFontSize(11),
-        family: "'Poppins', sans-serif",
+        family: "'Plus Jakarta Sans', 'Inter', sans-serif",
         style: "italic",
       },
       displayColors: true,
@@ -235,7 +235,7 @@ export const ENHANCED_CHART_OPTIONS: ChartOptions<ChartType> = {
       ticks: {
         font: {
           size: getResponsiveFontSize(12),
-          family: "'Poppins', sans-serif",
+          family: "'Plus Jakarta Sans', 'Inter', sans-serif",
         },
         color: "var(--color-text-secondary)",
         maxRotation: 45,
@@ -252,7 +252,7 @@ export const ENHANCED_CHART_OPTIONS: ChartOptions<ChartType> = {
       ticks: {
         font: {
           size: getResponsiveFontSize(12),
-          family: "'Poppins', sans-serif",
+          family: "'Plus Jakarta Sans', 'Inter', sans-serif",
         },
         color: "var(--color-text-secondary)",
         padding: 8,
@@ -281,7 +281,7 @@ export const ENHANCED_LINE_CHART_OPTIONS = {
         padding: 15,
         font: {
           size: getResponsiveFontSize(12),
-          family: "'Poppins', sans-serif",
+          family: "'Plus Jakarta Sans', 'Inter', sans-serif",
           weight: 500,
         },
         color: "var(--color-text-primary)",
@@ -300,11 +300,11 @@ export const ENHANCED_LINE_CHART_OPTIONS = {
       titleFont: {
         size: getResponsiveFontSize(14),
         weight: "bold",
-        family: "'Poppins', sans-serif",
+        family: "'Plus Jakarta Sans', 'Inter', sans-serif",
       },
       bodyFont: {
         size: getResponsiveFontSize(13),
-        family: "'Poppins', sans-serif",
+        family: "'Plus Jakarta Sans', 'Inter', sans-serif",
       },
       displayColors: true,
     },
@@ -319,7 +319,7 @@ export const ENHANCED_LINE_CHART_OPTIONS = {
       ticks: {
         font: {
           size: getResponsiveFontSize(12),
-          family: "'Poppins', sans-serif",
+          family: "'Plus Jakarta Sans', 'Inter', sans-serif",
         },
         color: "var(--color-text-secondary)",
         maxRotation: 45,
@@ -336,7 +336,7 @@ export const ENHANCED_LINE_CHART_OPTIONS = {
       ticks: {
         font: {
           size: getResponsiveFontSize(12),
-          family: "'Poppins', sans-serif",
+          family: "'Plus Jakarta Sans', 'Inter', sans-serif",
         },
         color: "var(--color-text-secondary)",
         padding: 8,
@@ -377,7 +377,7 @@ export const ENHANCED_BAR_CHART_OPTIONS = {
         padding: 15,
         font: {
           size: getResponsiveFontSize(12),
-          family: "'Poppins', sans-serif",
+          family: "'Plus Jakarta Sans', 'Inter', sans-serif",
           weight: 500,
         },
         color: "var(--color-text-primary)",
@@ -396,11 +396,11 @@ export const ENHANCED_BAR_CHART_OPTIONS = {
       titleFont: {
         size: getResponsiveFontSize(14),
         weight: "bold",
-        family: "'Poppins', sans-serif",
+        family: "'Plus Jakarta Sans', 'Inter', sans-serif",
       },
       bodyFont: {
         size: getResponsiveFontSize(13),
-        family: "'Poppins', sans-serif",
+        family: "'Plus Jakarta Sans', 'Inter', sans-serif",
       },
       displayColors: true,
     },
@@ -415,7 +415,7 @@ export const ENHANCED_BAR_CHART_OPTIONS = {
       ticks: {
         font: {
           size: getResponsiveFontSize(12),
-          family: "'Poppins', sans-serif",
+          family: "'Plus Jakarta Sans', 'Inter', sans-serif",
         },
         color: "var(--color-text-secondary)",
         maxRotation: 45,
@@ -432,7 +432,7 @@ export const ENHANCED_BAR_CHART_OPTIONS = {
       ticks: {
         font: {
           size: getResponsiveFontSize(12),
-          family: "'Poppins', sans-serif",
+          family: "'Plus Jakarta Sans', 'Inter', sans-serif",
         },
         color: "var(--color-text-secondary)",
         padding: 8,
@@ -474,7 +474,7 @@ export const ENHANCED_DOUGHNUT_CHART_OPTIONS: ChartOptions<"doughnut"> = {
         boxWidth: 12,
         font: {
           size: getResponsiveFontSize(11),
-          family: "'Poppins', sans-serif",
+          family: "'Plus Jakarta Sans', 'Inter', sans-serif",
           weight: 500,
         },
         color: "var(--color-text-primary)",
@@ -491,11 +491,11 @@ export const ENHANCED_DOUGHNUT_CHART_OPTIONS: ChartOptions<"doughnut"> = {
       titleFont: {
         size: getResponsiveFontSize(14),
         weight: "bold",
-        family: "'Poppins', sans-serif",
+        family: "'Plus Jakarta Sans', 'Inter', sans-serif",
       },
       bodyFont: {
         size: getResponsiveFontSize(13),
-        family: "'Poppins', sans-serif",
+        family: "'Plus Jakarta Sans', 'Inter', sans-serif",
       },
       displayColors: true,
     },
@@ -521,7 +521,7 @@ export const ENHANCED_RADAR_CHART_OPTIONS: ChartOptions<"radar"> = {
       labels: {
         font: {
           size: getResponsiveFontSize(12),
-          family: "'Poppins', sans-serif",
+          family: "'Plus Jakarta Sans', 'Inter', sans-serif",
         },
         color: "var(--color-text-primary)",
       },
@@ -531,11 +531,11 @@ export const ENHANCED_RADAR_CHART_OPTIONS: ChartOptions<"radar"> = {
       backgroundColor: "var(--surface-overlay-darkest)",
       titleFont: {
         size: getResponsiveFontSize(14),
-        family: "'Poppins', sans-serif",
+        family: "'Plus Jakarta Sans', 'Inter', sans-serif",
       },
       bodyFont: {
         size: getResponsiveFontSize(13),
-        family: "'Poppins', sans-serif",
+        family: "'Plus Jakarta Sans', 'Inter', sans-serif",
       },
       callbacks: CUSTOM_TOOLTIP_CALLBACKS,
     },
@@ -549,7 +549,7 @@ export const ENHANCED_RADAR_CHART_OPTIONS: ChartOptions<"radar"> = {
         stepSize: 2,
         font: {
           size: getResponsiveFontSize(11),
-          family: "'Poppins', sans-serif",
+          family: "'Plus Jakarta Sans', 'Inter', sans-serif",
         },
         color: "var(--color-text-secondary)",
         backdropColor: "transparent",
@@ -560,7 +560,7 @@ export const ENHANCED_RADAR_CHART_OPTIONS: ChartOptions<"radar"> = {
       pointLabels: {
         font: {
           size: getResponsiveFontSize(12),
-          family: "'Poppins', sans-serif",
+          family: "'Plus Jakarta Sans', 'Inter', sans-serif",
           weight: 500,
         },
         color: "var(--color-text-primary)",

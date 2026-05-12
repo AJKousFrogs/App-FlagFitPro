@@ -6,19 +6,19 @@
   background: var(--surface-card);
   border-radius: var(--radius-lg);
   border: 1px solid var(--surface-border);
-  border-left: var(--space-1) solid var(--ds-primary-green, #089949);
+  border-left: var(--space-1) solid var(--accent);
 
   &[data-tone="danger"] {
-    border-left-color: var(--ds-danger, #dc2626);
+    border-left-color: var(--danger);
   }
   &[data-tone="warning"] {
-    border-left-color: var(--ds-warning, #d97706);
+    border-left-color: var(--warn);
   }
   &[data-tone="info"] {
-    border-left-color: var(--ds-info, #2563eb);
+    border-left-color: var(--info);
   }
   &[data-tone="success"] {
-    border-left-color: var(--ds-primary-green, #089949);
+    border-left-color: var(--accent);
   }
   &[data-tone="neutral"] {
     border-left-color: var(--surface-border);

@@ -192,8 +192,8 @@ export const CHART_SERIES_CSS_VARS = [
  * design-system-tokens.scss (brand green + five fixed accents).
  */
 export const CANVAS_CHART_FALLBACK_HEX: readonly string[] = [
-  "#089949",
-  "#10c96b",
+  "#00A85C",
+  "#22c55e",
   "#f1c40f",
   "#e74c3c",
   "#3498db",

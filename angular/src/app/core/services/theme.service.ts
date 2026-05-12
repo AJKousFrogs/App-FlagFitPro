@@ -38,7 +38,7 @@ const THEME_SETTING_KEY = "theme";
  * Theme-color meta tag values for mobile browser chrome
  * Maps to design system but hardcoded for SSR compatibility
  */
-const THEME_META_COLOR_LIGHT = "#089949"; // --ds-primary-green
+const THEME_META_COLOR_LIGHT = "#00A85C"; // --accent / --ds-primary-green
 const THEME_META_COLOR_DARK = "#171717"; // --primitive-neutral-900
 
 @Injectable({

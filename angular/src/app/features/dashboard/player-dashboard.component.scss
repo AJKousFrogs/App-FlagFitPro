@@ -85,7 +85,7 @@
     height: 4.5rem;
     font-size: 2.25rem;
     border-radius: var(--radius-2xl);
-    background: linear-gradient(135deg, #089949 0%, #036d35 100%);
+    background: var(--gradient-primary);
     box-shadow: 0 8px 24px rgba(var(--ds-primary-green-rgb), 0.25);
     transition: transform var(--transition-base) var(--ease-standard);
 
