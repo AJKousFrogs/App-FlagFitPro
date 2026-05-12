@@ -1,7 +1,6 @@
 import {
   ChangeDetectionStrategy,
   Component,
-  DestroyRef,
   inject,
   signal,
 } from "@angular/core";
@@ -28,11 +27,7 @@ import { TOAST } from "../../../core/constants/toast-messages.constants";
 import { getErrorMessage } from "../../../shared/utils/error.utils";
 import { AuthFlowDataService } from "../services/auth-flow-data.service";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
-import {
-  getFormControlError,
-  isFormControlInvalid,
-  markFormGroupTouched,
-} from "../../../shared/utils/form.utils";
+import { FormBase } from "../../../shared/utils/form-base";
 import { CardShellComponent } from "../../../shared/components/card-shell/card-shell.component";
 
 @Component({
@@ -198,7 +193,7 @@ import { CardShellComponent } from "../../../shared/components/card-shell/card-s
   `,
   styleUrl: "./register.component.scss",
 })
-export class RegisterComponent {
+export class RegisterComponent extends FormBase {
   private readonly http = new HttpClient(inject(HttpBackend));
   private fb = inject(NonNullableFormBuilder);
   private authService = inject(AuthService);
@@ -244,11 +239,11 @@ export class RegisterComponent {
   };
 
   isFieldInvalid(fieldName: string): boolean {
-    const control = this.registerForm.get(fieldName);
-    return control ? isFormControlInvalid(control) : false;
+    return super.isFieldInvalid(this.registerForm, fieldName);
   }
 
-  getFieldError(fieldName: string): string {
+  getFieldError(fieldName: string): string | null {
+    // Custom error messages for specific fields
     if (
       fieldName === "confirmPassword" &&
       this.registerForm.hasError("passwordMismatch")
@@ -270,8 +265,8 @@ export class RegisterComponent {
       }
     }
 
-    const control = this.registerForm.get(fieldName);
-    return control ? getFormControlError(control) || "" : "";
+    // Fall back to default error handling
+    return super.getFieldError(this.registerForm, fieldName);
   }
 
   async onSubmit(): Promise<void> {
@@ -280,7 +275,7 @@ export class RegisterComponent {
     }
 
     if (this.registerForm.invalid) {
-      markFormGroupTouched(this.registerForm);
+      this.markFormGroupTouched(this.registerForm);
       return;
     }
 
