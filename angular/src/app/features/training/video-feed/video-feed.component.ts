@@ -43,6 +43,7 @@ import { Skeleton } from "primeng/skeleton";
 import { Tooltip } from "primeng/tooltip";
 import { formatDate as formatDateValue } from "../../../shared/utils/date.utils";
 import { VideoFeedHeaderSectionComponent } from "./components/video-feed-header-section.component";
+import { MobileOptimizedImageDirective } from "../../../shared/directives/mobile-optimized-image.directive";
 
 // Services
 import { HapticFeedbackService } from "../../../core/services/haptic-feedback.service";
@@ -80,6 +81,7 @@ import { FilterChip } from "./video-feed.models";
     AppDialogComponent,
     DialogHeaderComponent,
     VideoFeedHeaderSectionComponent,
+    MobileOptimizedImageDirective,
   ],
   templateUrl: "./video-feed.component.html",
   styleUrl: "./video-feed.component.scss",

@@ -91,10 +91,12 @@
                     } @else {
                       <!-- Instagram Thumbnail Image -->
                       <img
+                        appMobileOptimized
+                        [width]="320"
+                        [height]="180"
                         [src]="getVideoThumbnail(video)"
                         [alt]="video.title"
                         class="video-thumbnail-img"
-                        loading="lazy"
                         (error)="onThumbnailError($event)"
                       />
                       <div class="thumbnail-overlay">
