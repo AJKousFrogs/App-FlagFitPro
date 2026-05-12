@@ -159,7 +159,7 @@
 
       <!-- Create/Edit Dialog -->
       <app-dialog
-        [(visible)]="showDialog"
+        [visible]="showDialog()" (visibleChange)="showDialog.set($event)"
         [modal]="true"
         dialogSize="2xl"
         [blockScroll]="true"
@@ -173,7 +173,7 @@
           icon="calendar-plus"
           [title]="isEditing() ? 'Edit Practice Plan' : 'Create Practice Plan'"
           subtitle="Plan timing, drills, equipment, and coach notes for the session."
-          (close)="showDialog = false"
+          (close)="showDialog.set(false)"
         />
         <div class="practice-form">
           <!-- Details Section -->
@@ -347,7 +347,7 @@
           primaryLabel="Save & Notify Team"
           primaryIcon="check"
           [disabled]="!formData.title"
-          (cancel)="showDialog = false"
+          (cancel)="showDialog.set(false)"
           (secondary)="saveAsTemplate()"
           (primary)="saveAndNotify()"
         >
@@ -363,7 +363,7 @@
 
       <!-- Activity Editor Dialog -->
       <app-dialog
-        [(visible)]="showActivityDialog"
+        [visible]="showActivityDialog()" (visibleChange)="showActivityDialog.set($event)"
         [modal]="true"
         dialogSize="xl"
         [blockScroll]="true"
@@ -374,7 +374,7 @@
           icon="pencil"
           [title]="'Edit Activity: ' + (editingActivity?.title || '')"
           subtitle="Adjust timing, structure, and coaching details for this block."
-          (close)="showActivityDialog = false"
+          (close)="showActivityDialog.set(false)"
         />
         @if (editingActivity) {
           <div class="activity-form">
@@ -458,7 +458,7 @@
           <div dialogFooter class="dialog-actions">
             <app-button
               variant="secondary"
-              (clicked)="showActivityDialog = false"
+              (clicked)="showActivityDialog.set(false)"
               >Cancel</app-button
             >
             <app-button iconLeft="pi-check" (clicked)="saveActivity()"

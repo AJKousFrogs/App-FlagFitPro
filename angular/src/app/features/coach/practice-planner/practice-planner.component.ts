@@ -173,8 +173,8 @@ export class PracticePlannerComponent implements OnInit {
   readonly isEditing = signal(false);
 
   // Dialog state
-  showDialog = false;
-  showActivityDialog = false;
+  showDialog = signal(false);
+  showActivityDialog = signal(false);
   editingActivity: ActivityBlock | null = null;
 
   // Form data
@@ -299,7 +299,7 @@ export class PracticePlannerComponent implements OnInit {
     this.isEditing.set(false);
     this.formData = this.getEmptyFormData();
     this.editingAttendance = this.getEmptyAttendance();
-    this.showDialog = true;
+    this.showDialog.set(true);
   }
 
   readonly openCreateDialogHandler = (): void => this.openCreateDialog();
@@ -323,7 +323,7 @@ export class PracticePlannerComponent implements OnInit {
       })),
       coachNotes: practice.coachNotes,
     };
-    this.showDialog = true;
+    this.showDialog.set(true);
   }
 
   copyPractice(practice: PracticePlan): void {
@@ -346,7 +346,7 @@ export class PracticePlannerComponent implements OnInit {
       })),
       coachNotes: practice.coachNotes,
     };
-    this.showDialog = true;
+    this.showDialog.set(true);
   }
 
   startPractice(practice: PracticePlan): void {
@@ -398,7 +398,7 @@ export class PracticePlannerComponent implements OnInit {
 
   editActivity(activity: ActivityBlock): void {
     this.editingActivity = { ...activity, details: [...activity.details] };
-    this.showActivityDialog = true;
+    this.showActivityDialog.set(true);
   }
 
   saveActivity(): void {
@@ -416,7 +416,7 @@ export class PracticePlannerComponent implements OnInit {
         ),
       };
     }
-    this.showActivityDialog = false;
+    this.showActivityDialog.set(false);
     this.updateActivityTimes();
   }
 
@@ -636,7 +636,7 @@ export class PracticePlannerComponent implements OnInit {
     }
 
     this.toastService.success(successMessage, successTitle);
-    this.showDialog = false;
+    this.showDialog.set(false);
     await this.loadData();
   }
 
