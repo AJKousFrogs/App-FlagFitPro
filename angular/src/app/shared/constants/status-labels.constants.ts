@@ -155,6 +155,27 @@ export const TOURNAMENT_STATUS_LABELS: Record<string, string> = {
 };
 
 /**
+ * Staff Decision Type Labels
+ */
+export const DECISION_TYPE_LABELS: Record<string, string> = {
+  load_adjustment: "Load Adjustment",
+  rtp_clearance: "RTP Clearance",
+  rtp_progression: "RTP Progression",
+  nutrition_change: "Nutrition Change",
+  hydration_adjustment: "Hydration Adjustment",
+  mental_protocol: "Mental Protocol",
+  tactical_modification: "Tactical Modification",
+  recovery_intervention: "Recovery Intervention",
+  medical_constraint: "Medical Constraint",
+  supplement_change: "Supplement Change",
+  training_program_assignment: "Training Program Assignment",
+  session_modification: "Session Modification",
+  readiness_override: "Readiness Override",
+  acwr_override: "ACWR Override",
+  other: "Other Decision",
+};
+
+/**
  * Utility function to get label for a given status
  */
 export function getStatusLabel(

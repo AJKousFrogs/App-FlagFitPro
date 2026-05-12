@@ -18,6 +18,7 @@ import { formatDate, getTimeAgo } from "@shared/utils/date.utils";
 import { ButtonComponent } from "@shared/components/button/button.component";
 
 import { StatusTagComponent } from "../../../shared/components/status-tag/status-tag.component";
+import { DECISION_TYPE_LABELS } from "@shared/constants/status-labels.constants";
 
 @Component({
   selector: "app-decision-card",
@@ -132,24 +133,7 @@ export class DecisionCardComponent {
 
   // Helpers
   getDecisionTypeLabel(type: string): string {
-    const labels: Record<string, string> = {
-      load_adjustment: "Load Adjustment",
-      rtp_clearance: "RTP Clearance",
-      rtp_progression: "RTP Progression",
-      nutrition_change: "Nutrition Change",
-      hydration_adjustment: "Hydration Adjustment",
-      mental_protocol: "Mental Protocol",
-      tactical_modification: "Tactical Modification",
-      recovery_intervention: "Recovery Intervention",
-      medical_constraint: "Medical Constraint",
-      supplement_change: "Supplement Change",
-      training_program_assignment: "Training Program Assignment",
-      session_modification: "Session Modification",
-      readiness_override: "Readiness Override",
-      acwr_override: "ACWR Override",
-      other: "Other Decision",
-    };
-    return labels[type] || type;
+    return DECISION_TYPE_LABELS[type] || type;
   }
 
   getPrioritySeverity(
