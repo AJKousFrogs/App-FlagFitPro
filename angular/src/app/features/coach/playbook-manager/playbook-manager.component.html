@@ -236,67 +236,7 @@
             <!-- Left: Designer -->
             <div class="designer-column">
               <h4>Play Designer</h4>
-              <div class="play-designer">
-                <div class="field-canvas">
-                  <div class="end-zone-area">END ZONE</div>
-                  <div class="play-area">
-                    <div class="player-marker center" draggable="true">C</div>
-                    <div class="player-marker qb" draggable="true">QB</div>
-                    <div class="player-marker wr1" draggable="true">WR1</div>
-                    <div class="player-marker wr2" draggable="true">WR2</div>
-                    <div class="player-marker wr3" draggable="true">WR3</div>
-                  </div>
-                  <div class="scrimmage-line">LINE OF SCRIMMAGE</div>
-                </div>
-                <div class="designer-tools">
-                  <span class="tool-label">Tools:</span>
-                  <app-button
-                    variant="secondary"
-                    size="sm"
-                    iconLeft="pi-arrows-alt"
-                    [disabled]="isViewing()"
-                    >Select</app-button
-                  >
-                  <app-button
-                    variant="secondary"
-                    size="sm"
-                    iconLeft="pi-pencil"
-                    [disabled]="isViewing()"
-                    >Draw</app-button
-                  >
-                  <app-button
-                    variant="secondary"
-                    size="sm"
-                    iconLeft="pi-map-marker"
-                    [disabled]="isViewing()"
-                    >Add player</app-button
-                  >
-                  <app-button
-                    variant="text"
-                    size="sm"
-                    iconLeft="pi-trash"
-                    [disabled]="isViewing()"
-                    >Delete</app-button
-                  >
-                  <app-button
-                    variant="text"
-                    size="sm"
-                    iconLeft="pi-undo"
-                    [disabled]="isViewing()"
-                    >Undo</app-button
-                  >
-                </div>
-                <div class="route-buttons">
-                  <span class="tool-label">Routes:</span>
-                  @for (route of routeOptions; track route.value) {
-                    <app-button
-                      variant="text"
-                      size="sm"
-                      [disabled]="isViewing()"
-                    ></app-button>
-                  }
-                </div>
-              </div>
+              <app-play-canvas [readonly]="isViewing()" />
             </div>
 
             <!-- Right: Details -->

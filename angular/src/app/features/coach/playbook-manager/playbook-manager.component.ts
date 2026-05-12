@@ -32,6 +32,7 @@ import { DialogHeaderComponent } from "../../../shared/components/dialog-header/
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";
 import { CoachPlaybookDataService } from "../services/coach-playbook-data.service";
+import { PlayCanvasComponent } from "./play-canvas.component";
 
 // ===== Interfaces =====
 interface Play {
@@ -115,6 +116,7 @@ const ROUTES = [
     ButtonComponent,
     EmptyStateComponent,
     StatusTagComponent,
+    PlayCanvasComponent,
   ],
   templateUrl: "./playbook-manager.component.html",
   styleUrl: "./playbook-manager.component.scss",
