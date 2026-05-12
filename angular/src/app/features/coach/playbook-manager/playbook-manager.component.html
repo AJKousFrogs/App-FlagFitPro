@@ -77,28 +77,28 @@
           <div class="stat-card">
             <span class="stat-icon"><i class="pi pi-list" aria-hidden="true"></i></span>
             <div class="stat-content stat-block__content">
-              <span class="stat-block__value">{{ totalPlays() }}</span>
+              <span class="stat-block__value" [appAnimateNumber]="totalPlays()"></span>
               <span class="stat-block__label">Total Plays</span>
             </div>
           </div>
           <div class="stat-card">
             <span class="stat-icon"><i class="pi pi-shield" aria-hidden="true"></i></span>
             <div class="stat-content stat-block__content">
-              <span class="stat-block__value">{{ offensePlays() }}</span>
+              <span class="stat-block__value" [appAnimateNumber]="offensePlays()"></span>
               <span class="stat-block__label">Offense</span>
             </div>
           </div>
           <div class="stat-card">
             <span class="stat-icon"><i class="pi pi-shield" aria-hidden="true"></i></span>
             <div class="stat-content stat-block__content">
-              <span class="stat-block__value">{{ defensePlays() }}</span>
+              <span class="stat-block__value" [appAnimateNumber]="defensePlays()"></span>
               <span class="stat-block__label">Defense</span>
             </div>
           </div>
           <div class="stat-card">
             <span class="stat-icon"><i class="pi pi-chart-bar" aria-hidden="true"></i></span>
             <div class="stat-content stat-block__content">
-              <span class="stat-block__value">{{ avgMemorized() }}%</span>
+              <span class="stat-block__value" [appAnimateNumber]="avgMemorized()" [animSuffix]="'%'"></span>
               <span class="stat-block__label">Team Memorized</span>
             </div>
           </div>

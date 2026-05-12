@@ -22,6 +22,7 @@ import {
   ReactiveFormsModule,
   Validators,
 } from "@angular/forms";
+import { AnimateNumberDirective } from "../../../shared/directives/animate-number.directive";
 import { ToastService } from "../../../core/services/toast.service";
 import { AvatarComponent } from "../../../shared/components/avatar/avatar.component";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
@@ -280,6 +281,7 @@ const RTP_STAGES: RtpStage[] = [
     ButtonComponent,
     EmptyStateComponent,
     StatusTagComponent,
+    AnimateNumberDirective,
     AppDialogComponent,
     DialogHeaderComponent,
     DialogFooterComponent,

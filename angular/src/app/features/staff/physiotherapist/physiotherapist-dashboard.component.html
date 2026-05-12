@@ -27,7 +27,7 @@
                 <i class="pi pi-users" aria-hidden="true"></i>
               </div>
               <div class="stat-content stat-block__content">
-                <span class="stat-block__value">{{ athletes().length }}</span>
+                <span class="stat-block__value" [appAnimateNumber]="athletes().length"></span>
                 <span class="stat-block__label">Athletes Monitored</span>
               </div>
             </div>
@@ -36,7 +36,7 @@
                 <i class="pi pi-exclamation-circle" aria-hidden="true"></i>
               </div>
               <div class="stat-content stat-block__content">
-                <span class="stat-block__value">{{ activeInjuryCount() }}</span>
+                <span class="stat-block__value" [appAnimateNumber]="activeInjuryCount()"></span>
                 <span class="stat-block__label">Active Injuries</span>
               </div>
             </div>
@@ -45,7 +45,7 @@
                 <i class="pi pi-sync" aria-hidden="true"></i>
               </div>
               <div class="stat-content stat-block__content">
-                <span class="stat-block__value">{{ rtpCount() }}</span>
+                <span class="stat-block__value" [appAnimateNumber]="rtpCount()"></span>
                 <span class="stat-block__label">In RTP Protocol</span>
               </div>
             </div>
@@ -54,7 +54,7 @@
                 <i class="pi pi-exclamation-triangle" aria-hidden="true"></i>
               </div>
               <div class="stat-content stat-block__content">
-                <span class="stat-block__value">{{ highRiskCount() }}</span>
+                <span class="stat-block__value" [appAnimateNumber]="highRiskCount()"></span>
                 <span class="stat-block__label">High Risk Athletes</span>
               </div>
             </div>

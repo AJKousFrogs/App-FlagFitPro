@@ -7,6 +7,7 @@ import { EmptyStateComponent } from "../../../shared/components/empty-state/empt
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { CardShellComponent } from "../../../shared/components/card-shell/card-shell.component";
 import { StatusTagComponent } from "../../../shared/components/status-tag/status-tag.component";
+import { AnimateNumberDirective } from "../../../shared/directives/animate-number.directive";
 import { Play, PlayCategory } from "../playbook.models";
 
 @Component({
@@ -21,6 +22,7 @@ import { Play, PlayCategory } from "../playbook.models";
     ButtonComponent,
     CardShellComponent,
     StatusTagComponent,
+    AnimateNumberDirective,
   ],
   templateUrl: "./playbook-library-section.component.html",
   styleUrl: "./playbook-library-section.component.scss",

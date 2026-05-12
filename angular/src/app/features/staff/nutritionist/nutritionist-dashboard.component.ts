@@ -8,6 +8,7 @@ import {
   signal,
 } from "@angular/core";
 import { RouterModule } from "@angular/router";
+import { AnimateNumberDirective } from "../../../shared/directives/animate-number.directive";
 import { AlertComponent } from "../../../shared/components/alert/alert.component";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { IconButtonComponent } from "../../../shared/components/button/icon-button.component";
@@ -146,6 +147,7 @@ interface TournamentNutritionBrief {
     AppTabPanelDirective,
     StatusTagComponent,
     Tooltip,
+    AnimateNumberDirective,
     MainLayoutComponent,
     PageHeaderComponent,
     ButtonComponent,

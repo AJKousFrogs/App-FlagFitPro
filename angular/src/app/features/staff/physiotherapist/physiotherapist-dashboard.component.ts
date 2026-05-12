@@ -10,6 +10,7 @@ import {
 } from "@angular/core";
 import { RouterModule } from "@angular/router";
 import { UI_LIMITS } from "@core/constants";
+import { AnimateNumberDirective } from "../../../shared/directives/animate-number.directive";
 import { AlertComponent } from "../../../shared/components/alert/alert.component";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { IconButtonComponent } from "../../../shared/components/button/icon-button.component";
@@ -219,6 +220,7 @@ const RTP_PHASES = [
     PageHeaderComponent,
     ButtonComponent,
     IconButtonComponent,
+    AnimateNumberDirective,
     AppLoadingComponent,
     EmptyStateComponent,
     StaffDashboardLoadStateComponent,

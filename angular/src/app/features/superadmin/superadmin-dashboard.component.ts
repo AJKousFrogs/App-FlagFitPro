@@ -9,6 +9,7 @@ import {
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { CommonModule } from "@angular/common";
 import { RouterLink } from "@angular/router";
+import { AnimateNumberDirective } from "../../shared/directives/animate-number.directive";
 import { ButtonComponent } from "../../shared/components/button/button.component";
 import { CardShellComponent } from "../../shared/components/card-shell/card-shell.component";
 import { IconButtonComponent } from "../../shared/components/button/icon-button.component";
@@ -47,6 +48,7 @@ import {
     AppDialogComponent,
     DialogHeaderComponent,
     DialogFooterComponent,
+    AnimateNumberDirective,
   ],
   templateUrl: "./superadmin-dashboard.component.html",
   styleUrl: "./superadmin-dashboard.component.scss",

@@ -54,7 +54,7 @@
           <div class="stat-card">
             <span class="stat-icon"><i class="pi pi-video" aria-hidden="true"></i></span>
             <div class="stat-content">
-              <span class="stat-block__value">{{ totalFilmCount() }}</span>
+              <span class="stat-block__value" [appAnimateNumber]="totalFilmCount()"></span>
               <span class="stat-block__label">Total Film Sessions</span>
               <span class="stat-sub">This season</span>
             </div>
@@ -70,7 +70,7 @@
           <div class="stat-card">
             <span class="stat-icon"><i class="pi pi-list" aria-hidden="true"></i></span>
             <div class="stat-content">
-              <span class="stat-block__value">{{ assignedThisWeek() }}</span>
+              <span class="stat-block__value" [appAnimateNumber]="assignedThisWeek()"></span>
               <span class="stat-block__label">Assigned This Week</span>
               <span class="stat-sub">Active</span>
             </div>
@@ -78,7 +78,7 @@
           <div class="stat-card">
             <span class="stat-icon"><i class="pi pi-eye" aria-hidden="true"></i></span>
             <div class="stat-content">
-              <span class="stat-block__value">{{ avgWatchRate() }}%</span>
+              <span class="stat-block__value" [appAnimateNumber]="avgWatchRate()" [animSuffix]="'%'"></span>
               <span class="stat-block__label">Watch Rate</span>
               <span class="stat-sub">Team average</span>
             </div>

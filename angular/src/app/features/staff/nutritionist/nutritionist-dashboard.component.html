@@ -27,7 +27,7 @@
                 <i class="pi pi-users" aria-hidden="true"></i>
               </div>
               <div class="stat-content stat-block__content">
-                <span class="stat-block__value">{{ athletes().length }}</span>
+                <span class="stat-block__value" [appAnimateNumber]="athletes().length"></span>
                 <span class="stat-block__label">Athletes Monitored</span>
               </div>
             </div>
@@ -36,8 +36,8 @@
                 <i class="pi pi-check-circle" aria-hidden="true"></i>
               </div>
               <div class="stat-content stat-block__content">
-                <span class="stat-block__value"
-                  >{{ avgSupplementCompliance() }}%</span
+                <span class="stat-block__value" [appAnimateNumber]="avgSupplementCompliance()" [animSuffix]="'%'"
+                  ></span
                 >
                 <span class="stat-block__label">Avg Supplement Compliance</span>
               </div>
@@ -47,7 +47,7 @@
                 <i class="pi pi-exclamation-triangle" aria-hidden="true"></i>
               </div>
               <div class="stat-content stat-block__content">
-                <span class="stat-block__value">{{ alertCount() }}</span>
+                <span class="stat-block__value" [appAnimateNumber]="alertCount()"></span>
                 <span class="stat-block__label">Active Alerts</span>
               </div>
             </div>

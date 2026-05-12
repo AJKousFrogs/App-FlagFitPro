@@ -18,6 +18,7 @@ import {
   signal,
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
+import { AnimateNumberDirective } from "../../shared/directives/animate-number.directive";
 import { ToastService } from "../../core/services/toast.service";
 import { TOAST } from "../../core/constants/toast-messages.constants";
 import { ButtonComponent } from "../../shared/components/button/button.component";
@@ -96,6 +97,7 @@ interface DiscussionMessage {
     ButtonComponent,
     EmptyStateComponent,
     CardShellComponent,
+    AnimateNumberDirective,
     AppDialogComponent,
     DialogHeaderComponent,
   ],

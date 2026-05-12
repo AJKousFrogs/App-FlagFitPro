@@ -25,6 +25,7 @@ import { SelectComponent } from "../../../shared/components/select/select.compon
 import { TextareaComponent } from "../../../shared/components/textarea/textarea.component";
 import { StatusTagComponent } from "../../../shared/components/status-tag/status-tag.component";
 
+import { AnimateNumberDirective } from "../../../shared/directives/animate-number.directive";
 import { LoggerService } from "../../../core/services/logger.service";
 import { AppDialogComponent } from "../../../shared/components/dialog/dialog.component";
 import { DialogFooterComponent } from "../../../shared/components/dialog-footer/dialog-footer.component";
@@ -121,6 +122,7 @@ const ROUTES = [
     ButtonComponent,
     EmptyStateComponent,
     StatusTagComponent,
+    AnimateNumberDirective,
     PlayCanvasComponent,
   ],
   templateUrl: "./playbook-manager.component.html",

@@ -3,21 +3,21 @@
     <div class="progress-stats">
       <div class="stat-item stat-block stat-block--compact">
         <div class="stat-block__content">
-          <span class="stat-block__value">{{ memorizedCount() }}</span>
+          <span class="stat-block__value" [appAnimateNumber]="memorizedCount()"></span>
           <span class="stat-block__label">Memorized</span>
         </div>
       </div>
       <div class="stat-divider"></div>
       <div class="stat-item stat-block stat-block--compact">
         <div class="stat-block__content">
-          <span class="stat-block__value">{{ totalPlays() }}</span>
+          <span class="stat-block__value" [appAnimateNumber]="totalPlays()"></span>
           <span class="stat-block__label">Total Plays</span>
         </div>
       </div>
       <div class="stat-divider"></div>
       <div class="stat-item stat-block stat-block--compact">
         <div class="stat-block__content">
-          <span class="stat-block__value">{{ progressPercent() }}%</span>
+          <span class="stat-block__value" [appAnimateNumber]="progressPercent()" [animSuffix]="'%'"></span>
           <span class="stat-block__label">Complete</span>
         </div>
       </div>

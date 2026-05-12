@@ -14,6 +14,7 @@ import {
   OnInit,
   signal,
 } from "@angular/core";
+import { AnimateNumberDirective } from "../../../shared/directives/animate-number.directive";
 import { ToastService } from "../../../core/services/toast.service";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { EmptyStateComponent } from "../../../shared/components/empty-state/empty-state.component";
@@ -100,6 +101,7 @@ const TAG_TYPES = [
     EmptyStateComponent,
     AppLoadingComponent,
     PageErrorStateComponent,
+    AnimateNumberDirective,
   ],
   templateUrl: "./film-room-coach.component.html",
   styleUrl: "./film-room-coach.component.scss",

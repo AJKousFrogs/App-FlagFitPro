@@ -25,9 +25,7 @@
                 <i class="pi pi-clock"></i>
               </div>
               <div class="stat-info stat-block__content">
-                <span class="stat-block__value">{{
-                  stats().pendingTeams
-                }}</span>
+                <span class="stat-block__value" [appAnimateNumber]="stats().pendingTeams"></span>
                 <span class="stat-block__label">Pending Teams</span>
               </div>
             </div>
@@ -39,9 +37,7 @@
                 <i class="pi pi-users"></i>
               </div>
               <div class="stat-info stat-block__content">
-                <span class="stat-block__value">{{
-                  stats().pendingRoles
-                }}</span>
+                <span class="stat-block__value" [appAnimateNumber]="stats().pendingRoles"></span>
                 <span class="stat-block__label">Pending Roles</span>
               </div>
             </div>
@@ -53,9 +49,7 @@
                 <i class="pi pi-check-circle"></i>
               </div>
               <div class="stat-info stat-block__content">
-                <span class="stat-block__value">{{
-                  stats().approvedTeams
-                }}</span>
+                <span class="stat-block__value" [appAnimateNumber]="stats().approvedTeams"></span>
                 <span class="stat-block__label">Active Teams</span>
               </div>
             </div>
@@ -67,7 +61,7 @@
                 <i class="pi pi-user"></i>
               </div>
               <div class="stat-info stat-block__content">
-                <span class="stat-block__value">{{ stats().totalUsers }}</span>
+                <span class="stat-block__value" [appAnimateNumber]="stats().totalUsers"></span>
                 <span class="stat-block__label">Total Athletes</span>
               </div>
             </div>

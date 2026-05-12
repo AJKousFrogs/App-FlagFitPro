@@ -29,23 +29,21 @@
               <div class="progress-stats">
                 <div class="stat-item stat-block stat-block--compact">
                   <div class="stat-block__content">
-                    <span class="stat-block__value">{{ watchedCount() }}</span>
+                    <span class="stat-block__value" [appAnimateNumber]="watchedCount()"></span>
                     <span class="stat-block__label">Watched</span>
                   </div>
                 </div>
                 <div class="stat-divider"></div>
                 <div class="stat-item stat-block stat-block--compact">
                   <div class="stat-block__content">
-                    <span class="stat-block__value">{{ totalFilms() }}</span>
+                    <span class="stat-block__value" [appAnimateNumber]="totalFilms()"></span>
                     <span class="stat-block__label">Assigned</span>
                   </div>
                 </div>
                 <div class="stat-divider"></div>
                 <div class="stat-item stat-block stat-block--compact">
                   <div class="stat-block__content">
-                    <span class="stat-block__value">{{
-                      totalTaggedMoments()
-                    }}</span>
+                    <span class="stat-block__value" [appAnimateNumber]="totalTaggedMoments()"></span>
                     <span class="stat-block__label">Tags to Review</span>
                   </div>
                 </div>
