@@ -20,6 +20,43 @@
       <app-toggle-switch formControlName="pushNotifications"></app-toggle-switch>
     </app-control-row>
 
+    @if (notificationForm().get("pushNotifications")?.value) {
+      @switch (pushPermission()) {
+        @case ("default") {
+          <app-alert
+            variant="info"
+            title="Enable Browser Notifications"
+            message="Allow notifications in your browser to receive real-time push alerts for games, training, and injury risk warnings."
+            icon="pi-bell"
+            [dismissible]="false"
+            density="compact"
+          >
+            <app-button size="sm" (clicked)="requestPushPermission()">Allow Notifications</app-button>
+          </app-alert>
+        }
+        @case ("denied") {
+          <app-alert
+            variant="warning"
+            title="Notifications Blocked"
+            message="Push notifications are blocked by your browser. To re-enable, click the lock icon in your address bar and allow notifications for this site."
+            icon="pi-exclamation-triangle"
+            [dismissible]="false"
+            density="compact"
+          />
+        }
+        @case ("unsupported") {
+          <app-alert
+            variant="info"
+            title="Not Supported"
+            message="Push notifications are not supported in this browser."
+            icon="pi-info-circle"
+            [dismissible]="false"
+            density="compact"
+          />
+        }
+      }
+    }
+
     <app-control-row
       icon="clock"
       title="Training Reminders"

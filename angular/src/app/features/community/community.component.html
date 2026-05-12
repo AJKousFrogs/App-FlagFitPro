@@ -280,6 +280,7 @@
                       <div class="post-media">
                         @if (post.media.type === "image") {
                           <img
+                            appMobileOptimized
                             [src]="post.media.url"
                             [alt]="'Image in post by ' + post.author"
                             class="media-image"

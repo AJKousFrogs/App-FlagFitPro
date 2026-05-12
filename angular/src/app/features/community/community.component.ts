@@ -36,6 +36,7 @@ import { EmptyStateComponent } from "../../shared/components/empty-state/empty-s
 import { AppLoadingComponent } from "../../shared/components/loading/loading.component";
 import { PageErrorStateComponent } from "../../shared/components/page-error-state/page-error-state.component";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
+import { MobileOptimizedImageDirective } from "../../shared/directives/mobile-optimized-image.directive";
 import { CommunityComposeSectionComponent } from "./components/community-compose-section.component";
 import { CommunityHeaderComponent } from "./components/community-header.component";
 import { CommunitySidebarComponent } from "./components/community-sidebar.component";
@@ -62,6 +63,7 @@ import { CommunityDataService, type PendingMedia, type Poll, type Post } from ".
     CommunityComposeSectionComponent,
     CommunityHeaderComponent,
     CommunitySidebarComponent,
+    MobileOptimizedImageDirective,
   ],
   templateUrl: "./community.component.html",
   styleUrl: "./community.component.scss",
