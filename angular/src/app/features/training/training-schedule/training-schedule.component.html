@@ -202,6 +202,15 @@
                     >
                       Get Indoor Alternative
                     </app-button>
+                    <app-button
+                      variant="outlined"
+                      size="sm"
+                      iconLeft="pi-calendar-plus"
+                      (clicked)="loadRescheduleSlots()"
+                      [disabled]="rescheduleSlots().length > 0"
+                    >
+                      Suggest Reschedule
+                    </app-button>
                   }
                   <app-button
                     variant="text"
@@ -211,6 +220,35 @@
                     Dismiss
                   </app-button>
                 </div>
+                @if (rescheduleSlots().length > 0) {
+                  <div class="weather-alert__reschedule">
+                    <h4 class="reschedule-title">
+                      <i class="pi pi-calendar" aria-hidden="true"></i>
+                      Reschedule Options
+                    </h4>
+                    <div class="reschedule-slots">
+                      @for (slot of rescheduleSlots(); track slot.dateLabel) {
+                        <div
+                          class="reschedule-slot"
+                          [class.reschedule-slot--caution]="slot.currentWeatherAlert"
+                        >
+                          <span class="reschedule-slot__date">{{ slot.dateLabel }}</span>
+                          @if (slot.currentWeatherAlert) {
+                            <span class="reschedule-slot__warning">
+                              <i class="pi pi-exclamation-triangle" aria-hidden="true"></i>
+                              {{ slot.currentWeatherAlert.reason }}
+                            </span>
+                          } @else {
+                            <span class="reschedule-slot__clear">
+                              <i class="pi pi-check-circle" aria-hidden="true"></i>
+                              Conditions look good
+                            </span>
+                          }
+                        </div>
+                      }
+                    </div>
+                  </div>
+                }
               </div>
             </app-alert>
           }

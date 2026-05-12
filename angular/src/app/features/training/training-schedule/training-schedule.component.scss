@@ -573,6 +573,59 @@ app-alert.weather-alert {
   flex-shrink: 0;
 }
 
+.weather-alert__reschedule {
+  margin-top: var(--space-3);
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--color-border-primary, #334155);
+}
+
+.reschedule-title {
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-2);
+
+  i { margin-right: var(--space-1); }
+}
+
+.reschedule-slots {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.reschedule-slot {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-sm, 6px);
+  background: var(--color-surface-tertiary, #334155);
+
+  &--caution {
+    background: color-mix(in srgb, var(--ui-warning) 10%, transparent);
+  }
+}
+
+.reschedule-slot__date {
+  font-weight: 500;
+  color: var(--color-text-primary);
+}
+
+.reschedule-slot__clear {
+  color: var(--ui-success, #22c55e);
+  font-size: var(--text-sm);
+
+  i { margin-right: var(--space-1); }
+}
+
+.reschedule-slot__warning {
+  color: var(--ui-warning, #f59e0b);
+  font-size: var(--text-sm);
+
+  i { margin-right: var(--space-1); }
+}
+
 // ================================================================
 // SUBSTITUTE WORKOUT CARD - RESPONSIVE
 // ================================================================

@@ -30,6 +30,7 @@ import { TOAST } from "../../../core/constants/toast-messages.constants";
 import {
   WeatherCancellationService,
   WeatherSensitiveSession,
+  RescheduleSlot,
 } from "../../../core/services/weather-cancellation.service";
 import { AlertComponent } from "../../../shared/components/alert/alert.component";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
@@ -137,6 +138,7 @@ export class TrainingScheduleComponent implements OnInit {
     this.weatherCancellationService.suggestedSubstitute;
   readonly isGeneratingSubstitute =
     this.weatherCancellationService.isGeneratingSubstitute;
+  readonly rescheduleSlots = signal<RescheduleSlot[]>([]);
 
   // Calendar date markers for visual indicators
   dateMarkers = signal<CalendarDateMarker[]>([]);
@@ -1039,6 +1041,27 @@ export class TrainingScheduleComponent implements OnInit {
    */
   dismissWeatherAlert(): void {
     this.weatherCancellationService.clearWeatherAlert();
+    this.rescheduleSlots.set([]);
+  }
+
+  async loadRescheduleSlots(): Promise<void> {
+    const outdoorSession = this.filteredSessions().find(
+      (s) => s.isOutdoor && s.weatherSensitive && s.isTemplate,
+    );
+    if (!outdoorSession) return;
+
+    const session: WeatherSensitiveSession = {
+      id: outdoorSession.id,
+      sessionName: outdoorSession.type,
+      sessionType: outdoorSession.type,
+      isOutdoor: true,
+      isTeamPractice: outdoorSession.isTeamPractice || false,
+      weatherSensitive: true,
+      durationMinutes: outdoorSession.duration,
+    };
+
+    const slots = await this.weatherCancellationService.suggestRescheduleSlots(session);
+    this.rescheduleSlots.set(slots);
   }
 
   /**
