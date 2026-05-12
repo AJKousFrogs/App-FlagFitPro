@@ -421,7 +421,7 @@
                     <app-close-button
                       ariaLabel="Close micro-session dialog"
                       [class]="'dialog-close-btn'"
-                      (clicked)="microSessionDialogVisible = false"
+                      (clicked)="microSessionDialogVisible.set(false)"
                     />
                   }
                 </div>

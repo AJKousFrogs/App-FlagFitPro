@@ -163,7 +163,7 @@
             icon="calendar"
             [title]="'RSVP: ' + event.title"
             [subtitle]="(event.date | date: 'EEEE, MMMM d') || ''"
-            (close)="showRsvpDialog = false"
+            (close)="showRsvpDialog.set(false)"
           />
         }
         @if (selectedEvent(); as event) {
@@ -339,7 +339,7 @@
             primaryLabel="Submit RSVP"
             primaryIcon="check"
             [disabled]="!rsvpForm.status"
-            (cancel)="showRsvpDialog = false"
+            (cancel)="showRsvpDialog.set(false)"
             (primary)="submitRsvp()"
           />
         }
