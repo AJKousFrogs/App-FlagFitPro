@@ -16,6 +16,7 @@ import { StatusTagComponent } from "../status-tag/status-tag.component";
 import { OwnershipTransition } from "../../../core/services/ownership-transition.service";
 import { LoggerService } from "../../../core/services/logger.service";
 import { getTimeAgo } from "../../utils/date.utils";
+import { OWNERSHIP_TRANSITION_STATUS_LABELS } from "../../constants/status-labels.constants";
 
 @Component({
   selector: "app-ownership-transition-badge",
@@ -107,13 +108,7 @@ export class OwnershipTransitionBadgeComponent {
   }
 
   getStatusLabel(status: OwnershipTransition["status"]): string {
-    const labels: Record<string, string> = {
-      pending: "Pending",
-      in_progress: "In Progress",
-      completed: "Completed",
-      overdue: "Overdue",
-    };
-    return labels[status] || status;
+    return OWNERSHIP_TRANSITION_STATUS_LABELS[status] || status;
   }
 
   getStatusSeverity(
