@@ -1,4 +1,3 @@
-import { DecimalPipe } from "@angular/common";
 import { ChangeDetectionStrategy, Component, input, output } from "@angular/core";
 import { AvatarComponent } from "../../../shared/components/avatar/avatar.component";
 import { BadgeComponent } from "../../../shared/components/badge/badge.component";
@@ -13,6 +12,7 @@ import {
   playerStatusSeverityMap,
 } from "../../../shared/utils/status.utils";
 import { PlayerPerformanceStats } from "../../../core/services/team-statistics.service";
+import { AcwrRiskPipe } from "../../../shared/pipes/acwr-risk.pipe";
 
 export type CoachDashboardPlayerFilter = "all" | "starters" | "injured" | "at_risk";
 
@@ -20,14 +20,14 @@ export type CoachDashboardPlayerFilter = "all" | "starters" | "injured" | "at_ri
   selector: "app-coach-dashboard-roster-section",
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    DecimalPipe,
     Tooltip,
     AvatarComponent,
     BadgeComponent,
     ButtonComponent,
     StatusTagComponent,
     TableComponent,
-    TableModule
+    TableModule,
+    AcwrRiskPipe,
   ],
   templateUrl: "./coach-dashboard-roster-section.component.html",
   styleUrl: "./coach-dashboard-roster-section.component.scss",

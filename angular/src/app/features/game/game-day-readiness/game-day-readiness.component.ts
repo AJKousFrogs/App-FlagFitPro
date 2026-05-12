@@ -46,6 +46,7 @@ import { ToastService } from "../../../core/services/toast.service";
 import { UnifiedTrainingService } from "../../../core/services/unified-training.service";
 import { getProtocolAcwrDisplay } from "../../../core/utils/protocol-metrics-presentation";
 import { GameDayReadinessDataService } from "../services/game-day-readiness-data.service";
+import { AcwrRiskPipe } from "../../../shared/pipes/acwr-risk.pipe";
 
 interface ReadinessMetric {
   key: string;
@@ -70,6 +71,7 @@ interface ReadinessMetric {
     ButtonComponent,
     ConfidenceIndicatorComponent,
     MainLayoutComponent,
+    AcwrRiskPipe,
   ],
   styleUrl: "./game-day-readiness.component.scss",
   templateUrl: "./game-day-readiness.component.html",

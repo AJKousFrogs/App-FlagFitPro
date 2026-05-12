@@ -51,7 +51,7 @@
               } @else {
                 <div class="metric-display">
                   <span class="metric-value">{{
-                    acwrValue() | number: "1.2-2"
+                    acwrValue() | acwrRisk: "full"
                   }}</span>
                   <span class="metric-label">Acute:Chronic Ratio</span>
                 </div>
@@ -59,13 +59,13 @@
                   <div class="detail-item">
                     <span class="detail-label">Acute Load (7d)</span>
                     <span class="detail-value"
-                      >{{ acuteLoad() | number: "1.0-0" }} AU</span
+                      >{{ acuteLoad() | trainingLoad: "full" }}</span
                     >
                   </div>
                   <div class="detail-item">
                     <span class="detail-label">Chronic Load (28d)</span>
                     <span class="detail-value"
-                      >{{ chronicLoad() | number: "1.0-0" }} AU</span
+                      >{{ chronicLoad() | trainingLoad: "full" }}</span
                     >
                   </div>
                 </div>

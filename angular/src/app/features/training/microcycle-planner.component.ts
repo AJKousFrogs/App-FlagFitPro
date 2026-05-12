@@ -15,6 +15,9 @@ import { SupabaseService } from "../../core/services/supabase.service";
 import { TrafficLightRiskComponent } from "../../shared/components/traffic-light-risk/traffic-light-risk.component";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
+import { DurationPipe } from "../../shared/pipes/duration.pipe";
+import { AcwrRiskPipe } from "../../shared/pipes/acwr-risk.pipe";
+import { TrainingLoadPipe } from "../../shared/pipes/training-load.pipe";
 import {
   DailyPrescription,
   PrescriptionIntent,
@@ -64,6 +67,9 @@ const INTENT_INTENSITY: Record<
     DatePipe,
     DecimalPipe,
     TitleCasePipe,
+    DurationPipe,
+    AcwrRiskPipe,
+    TrainingLoadPipe,
   ],
   templateUrl: "./microcycle-planner.component.html",
   styleUrl: "./microcycle-planner.component.scss",

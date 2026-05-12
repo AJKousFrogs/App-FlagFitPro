@@ -50,7 +50,7 @@
                     class="stat-block__value"
                     [class]="'text-' + getRiskColor()"
                   >
-                    {{ currentACWR() | number: "1.2-2" }}
+                    {{ currentACWR() | acwrRisk: "full" }}
                   </div>
                 </div>
               </div>
@@ -106,7 +106,7 @@
                           Duration
                         </div>
                         <div class="font-semibold">
-                          {{ day.recommendedDuration }} min
+                          {{ day.recommendedDuration * 60 | duration }}
                         </div>
                       </div>
 
@@ -118,7 +118,7 @@
                           class="font-semibold"
                           [class]="'text-' + getACWRColor(day.acwrProjection)"
                         >
-                          {{ day.acwrProjection | number: "1.2-2" }}
+                          {{ day.acwrProjection | acwrRisk: "full" }}
                         </div>
                       </div>
                     } @else {
@@ -154,7 +154,7 @@
               <div>
                 <div class="text-xs text-text-secondary">Avg Daily Load</div>
                 <div class="text-lg font-bold">
-                  {{ avgDailyLoad() | number: "1.0-0" }} AU
+                  {{ avgDailyLoad() | trainingLoad: "full" }}
                 </div>
               </div>
               <div>
@@ -163,7 +163,7 @@
                   class="text-lg font-bold"
                   [class]="'text-' + getACWRColor(endOfWeekACWR())"
                 >
-                  {{ endOfWeekACWR() | number: "1.2-2" }}
+                  {{ endOfWeekACWR() | acwrRisk: "full" }}
                 </div>
               </div>
             </div>

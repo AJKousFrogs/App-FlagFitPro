@@ -48,6 +48,8 @@ import {
   getProtocolAcwrDisplay,
   getProtocolRiskZone,
 } from "../../../core/utils/protocol-metrics-presentation";
+import { AcwrRiskPipe } from "../../../shared/pipes/acwr-risk.pipe";
+import { TrainingLoadPipe } from "../../../shared/pipes/training-load.pipe";
 
 @Component({
   selector: "app-training-safety",
@@ -67,6 +69,8 @@ import {
     CardShellComponent,
     IconButtonComponent,
     StatusTagComponent,
+    AcwrRiskPipe,
+    TrainingLoadPipe,
   ],
   templateUrl: "./training-safety.component.html",
   styleUrl: "./training-safety.component.scss",

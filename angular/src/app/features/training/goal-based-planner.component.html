@@ -59,7 +59,7 @@
                     class="stat-block__value"
                     [class]="getACWRColorClass()"
                   >
-                    {{ currentAcwrValue() | number: "1.2-2" }}
+                    {{ currentAcwrValue() | acwrRisk: "full" }}
                   </div>
                 </div>
                 <div class="stat-item stat-block stat-block--compact">
@@ -158,7 +158,7 @@
                               Duration
                             </div>
                             <div class="font-semibold">
-                              {{ session.duration }} min
+                              {{ session.duration * 60 | duration }}
                             </div>
                           </div>
                           <div>
@@ -229,7 +229,7 @@
                       <div class="text-lg font-bold">
                         {{
                           weeklyPlan()?.progressionRules?.acwrThreshold
-                            | number: "1.2-2"
+                            | acwrRisk: "full"
                         }}
                       </div>
                     </div>

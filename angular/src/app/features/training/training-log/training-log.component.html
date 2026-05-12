@@ -291,14 +291,14 @@
                           <div class="impact-item">
                             <span class="impact-label">Before this log:</span>
                             <span class="impact-value">{{
-                              getAcwrBefore() | number: "1.2-2"
+                              getAcwrBefore() | acwrRisk: "full"
                             }}</span>
                           </div>
                           <div class="impact-arrow">→</div>
                           <div class="impact-item">
                             <span class="impact-label">After this log:</span>
                             <span class="impact-value">{{
-                              getAcwrAfter() | number: "1.2-2"
+                              getAcwrAfter() | acwrRisk: "full"
                             }}</span>
                           </div>
                         </div>
@@ -312,8 +312,8 @@
                         <strong>Why:</strong> You're entering this session
                         retroactively (more than 24 hours late).
                         <strong>What it means:</strong> ACWR will change from
-                        {{ getAcwrBefore() | number: "1.2-2" }} to approximately
-                        {{ getAcwrAfter() | number: "1.2-2" }} after approval.
+                        {{ getAcwrBefore() | acwrRisk: "full" }} to approximately
+                        {{ getAcwrAfter() | acwrRisk: "full" }} after approval.
                         Retroactive logs require coach review for accuracy.
                         <strong>Who:</strong> Your coach will review and approve
                         this entry. <strong>What next:</strong> Coach has been
@@ -349,14 +349,14 @@
                           <div class="impact-item">
                             <span class="impact-label">Before this log:</span>
                             <span class="impact-value">{{
-                              getAcwrBefore() | number: "1.2-2"
+                              getAcwrBefore() | acwrRisk: "full"
                             }}</span>
                           </div>
                           <div class="impact-arrow">→</div>
                           <div class="impact-item">
                             <span class="impact-label">After this log:</span>
                             <span class="impact-value">{{
-                              getAcwrAfter() | number: "1.2-2"
+                              getAcwrAfter() | acwrRisk: "full"
                             }}</span>
                           </div>
                         </div>
@@ -371,8 +371,8 @@
                         (within 24 hours but after completion).
                         <strong>What it means:</strong> ACWR will update
                         automatically from
-                        {{ getAcwrBefore() | number: "1.2-2" }} to approximately
-                        {{ getAcwrAfter() | number: "1.2-2" }}. No coach approval
+                        {{ getAcwrBefore() | acwrRisk: "full" }} to approximately
+                        {{ getAcwrAfter() | acwrRisk: "full" }}. No coach approval
                         needed. <strong>Who:</strong> System will update ACWR
                         automatically when you submit.
                         <strong>What next:</strong> Submit your log to update ACWR

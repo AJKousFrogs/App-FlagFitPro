@@ -96,7 +96,7 @@
               [class]="getACWRClass(enrichedPlayer().acwr ?? 1.0)"
             >
               @if (enrichedPlayer().acwr !== null) {
-                {{ enrichedPlayer().acwr | number: "1.2-2" }}
+                {{ enrichedPlayer().acwr | acwrRisk: "full" }}
               } @else {
                 --
               }

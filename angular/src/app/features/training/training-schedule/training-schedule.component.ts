@@ -40,6 +40,7 @@ import { PageErrorStateComponent } from "../../../shared/components/page-error-s
 import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";
 import { getStatusSeverity as getStatusSeverityValue } from "../../../shared/utils/status.utils";
 import { mapProgramTemplatesToUserPracticeDays } from "../../../shared/utils/training-template.utils";
+import { DurationPipe } from "../../../shared/pipes/duration.pipe";
 
 function toLocalDateKey(date: Date | null | undefined): string {
   if (!date) {
@@ -106,6 +107,7 @@ interface TrainingEntryContext {
     EmptyStateComponent,
     PageErrorStateComponent,
     RouterModule,
+    DurationPipe,
   ],
   templateUrl: "./training-schedule.component.html",
 

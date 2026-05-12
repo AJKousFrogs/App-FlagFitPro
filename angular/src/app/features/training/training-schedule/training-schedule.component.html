@@ -236,7 +236,7 @@
                     </span>
                     <span class="badge badge--secondary">
                       <i class="pi pi-clock" aria-hidden="true"></i>
-                      {{ suggestedSubstitute()?.durationMinutes }} min
+                      {{ (suggestedSubstitute()?.durationMinutes ?? 0) * 60 | duration }}
                     </span>
                     <span class="badge badge--secondary">
                       {{ suggestedSubstitute()?.intensityLevel | titlecase }}

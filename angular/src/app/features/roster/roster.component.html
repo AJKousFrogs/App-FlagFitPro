@@ -363,7 +363,7 @@
                       "
                     >
                       @if (enrichedSelectedPlayer()!.acwr !== null) {
-                        {{ enrichedSelectedPlayer()!.acwr | number: "1.2-2" }}
+                        {{ enrichedSelectedPlayer()!.acwr | acwrRisk: "full" }}
                       } @else {
                         --
                       }

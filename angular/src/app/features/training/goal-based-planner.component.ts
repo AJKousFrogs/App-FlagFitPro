@@ -33,6 +33,8 @@ import {
   getProtocolRiskZone,
   getProtocolTrainingPlanReadinessLevel,
 } from "../../core/utils/protocol-metrics-presentation";
+import { AcwrRiskPipe } from "../../shared/pipes/acwr-risk.pipe";
+import { DurationPipe } from "../../shared/pipes/duration.pipe";
 
 @Component({
   selector: "app-goal-based-planner",
@@ -46,6 +48,8 @@ import {
     MainLayoutComponent,
     PageHeaderComponent,
     ButtonComponent,
+    AcwrRiskPipe,
+    DurationPipe,
   ],
   templateUrl: "./goal-based-planner.component.html",
   styleUrl: "./goal-based-planner.component.scss",

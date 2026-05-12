@@ -18,7 +18,7 @@
           @if (day.estimatedDuration > 0) {
             <div class="day-duration">
               <i class="pi pi-clock" aria-hidden="true"></i>
-              {{ day.estimatedDuration }} min
+              {{ day.estimatedDuration * 60 | duration }}
             </div>
           }
           <div class="day-rpe">

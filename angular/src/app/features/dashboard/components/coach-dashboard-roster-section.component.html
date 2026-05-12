@@ -45,7 +45,7 @@
           <span class="perf-score" [class]="getPerformanceClass(player.performanceScore)">{{ player.performanceScore }}%</span>
         </td>
         <td>
-          <span [class]="getAcwrClass(player.acwr)">{{ player.acwr | number: "1.2-2" }}</span>
+          <span [class]="getAcwrClass(player.acwr)">{{ player.acwr | acwrRisk: "full" }}</span>
         </td>
         <td>
           <div class="readiness-compact">

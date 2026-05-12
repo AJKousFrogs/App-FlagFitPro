@@ -15,7 +15,7 @@ import {
   inject,
   ChangeDetectionStrategy,
 } from "@angular/core";
-import { TitleCasePipe, DecimalPipe } from "@angular/common";
+import { TitleCasePipe } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 
 import { type CheckboxChangeEvent } from "primeng/checkbox";
@@ -44,6 +44,7 @@ import {
   formatWeight,
 } from "../roster-utils";
 import { TRAINING } from "../../../core/constants/app.constants";
+import { AcwrRiskPipe } from "../../../shared/pipes/acwr-risk.pipe";
 
 @Component({
   selector: "app-roster-player-card",
@@ -54,11 +55,11 @@ import { TRAINING } from "../../../core/constants/app.constants";
     Tooltip,
     ProgressBarComponent,
     TitleCasePipe,
-    DecimalPipe,
     CardShellComponent,
     SemanticMeaningRendererComponent,
     IconButtonComponent,
     StatusTagComponent,
+    AcwrRiskPipe,
   ],
   templateUrl: "./roster-player-card.component.html",
   styleUrl: "./roster-player-card.component.scss",

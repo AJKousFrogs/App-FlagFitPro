@@ -10,7 +10,7 @@
             <span class="acwr-label">ACWR</span>
             <span class="acwr-value">
               @if (acwrDisplay().value !== null) {
-                {{ acwrDisplay().value | number: "1.2-2" }}
+                {{ acwrDisplay().value | acwrRisk }}
               } @else {
                 --
               }

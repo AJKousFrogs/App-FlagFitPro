@@ -28,7 +28,7 @@
  * - roster.models.ts: Shared interfaces
  * - roster-utils.ts: Helper functions
  */
-import { DatePipe, DecimalPipe, TitleCasePipe } from "@angular/common";
+import { DatePipe, TitleCasePipe } from "@angular/common";
 import {
   ChangeDetectionStrategy,
   Component,
@@ -98,6 +98,7 @@ import {
   TeamMembershipService,
   TeamRole,
 } from "../../core/services/team-membership.service";
+import { AcwrRiskPipe } from "../../shared/pipes/acwr-risk.pipe";
 
 @Component({
   selector: "app-roster",
@@ -106,7 +107,6 @@ import {
     StatusTagComponent,
     ConfirmDialog,
     DatePipe,
-    DecimalPipe,
     TitleCasePipe,
     MainLayoutComponent,
     PageHeaderComponent,
@@ -123,6 +123,7 @@ import {
     DialogFooterComponent,
     ButtonComponent,
     RosterStatusOptionsComponent,
+    AcwrRiskPipe,
   ],
   templateUrl: "./roster.component.html",
 

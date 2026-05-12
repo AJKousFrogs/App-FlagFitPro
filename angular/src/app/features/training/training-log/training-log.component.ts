@@ -50,6 +50,7 @@ import { OfflineQueueService } from "../../../core/services/offline-queue.servic
 import { SupabaseService } from "../../../core/services/supabase.service";
 import { HomeRouteService } from "../../../core/services/home-route.service";
 import { SessionType as AcwrSessionType } from "../../../core/models/acwr.models";
+import { AcwrRiskPipe } from "../../../shared/pipes/acwr-risk.pipe";
 
 interface SessionType {
   label: string;
@@ -83,6 +84,7 @@ interface ExistingTrainingSession {
     ButtonComponent,
     AlertComponent,
     CardShellComponent,
+    AcwrRiskPipe,
   ],
   templateUrl: "./training-log.component.html",
   styleUrl: "./training-log.component.scss",
