@@ -69,6 +69,8 @@ export const GOAL_STATUS_LABELS: Record<string, string> = {
 export const PAYMENT_STATUS_LABELS: Record<string, string> = {
   paid: "Paid",
   pending: "Pending",
+  due: "Due",
+  overdue: "Overdue",
   failed: "Failed",
   cancelled: "Cancelled",
 };
@@ -79,6 +81,7 @@ export const PAYMENT_STATUS_LABELS: Record<string, string> = {
 export const GAME_OFFICIAL_STATUS_LABELS: Record<string, string> = {
   scheduled: "Scheduled",
   confirmed: "Confirmed",
+  declined: "Declined",
   cancelled: "Cancelled",
   completed: "Completed",
   no_show: "No Show",

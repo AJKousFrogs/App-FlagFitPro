@@ -38,6 +38,7 @@ import { PageHeaderComponent } from "../../shared/components/page-header/page-he
 import { EmptyStateComponent } from "../../shared/components/empty-state/empty-state.component";
 import { formatDate } from "../../shared/utils/date.utils";
 import { getInitials } from "../../shared/utils/format.utils";
+import { GAME_OFFICIAL_STATUS_LABELS } from "../../shared/constants/status-labels.constants";
 import {
   AppDialogComponent,
   DialogFooterComponent,
@@ -342,13 +343,7 @@ export class OfficialsComponent implements OnInit {
   }
 
   getStatusLabel(status: string): string {
-    const labels: Record<string, string> = {
-      scheduled: "Scheduled",
-      confirmed: "Confirmed",
-      declined: "Declined",
-      no_show: "No Show",
-    };
-    return labels[status] || status;
+    return GAME_OFFICIAL_STATUS_LABELS[status] || status;
   }
 
   getStatusSeverity(status: string): "success" | "info" | "warning" | "danger" {

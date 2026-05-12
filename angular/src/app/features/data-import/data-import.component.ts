@@ -39,6 +39,7 @@ import {
   extractApiPayload,
   isSuccessfulApiResponse,
 } from "../../core/utils/api-response-mapper";
+import { DATA_IMPORT_STATUS_LABELS } from "../../shared/constants/status-labels.constants";
 
 // ===== Interfaces =====
 interface ImportType {
@@ -469,12 +470,7 @@ export class DataImportComponent implements OnInit {
   }
 
   getMappingStatusLabel(status: string): string {
-    const labels: Record<string, string> = {
-      auto: "Auto-matched",
-      manual: "Manually set",
-      unmapped: "Needs mapping",
-    };
-    return labels[status] || status;
+    return DATA_IMPORT_STATUS_LABELS[status] || status;
   }
 
   getMappingStatusSeverity(status: string): "success" | "info" | "warning" {

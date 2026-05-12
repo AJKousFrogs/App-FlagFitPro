@@ -28,6 +28,7 @@ import {
   WarningSeverity,
 } from "../../../core/services/training-safety.service";
 import { SupabaseService } from "../../../core/services/supabase.service";
+import { SAFETY_WARNING_METRIC_LABELS } from "../../constants/status-labels.constants";
 
 @Component({
   selector: "app-safety-warnings",
@@ -232,16 +233,6 @@ export class SafetyWarningsComponent implements OnInit {
   }
 
   formatMetricLabel(metric: string): string {
-    const labels: Record<string, string> = {
-      sessions_per_week: "Sessions this week",
-      high_intensity_sessions: "High-intensity sessions",
-      consecutive_days: "Consecutive training days",
-      sprints_per_session: "Sprints planned",
-      sprints_per_week: "Weekly sprints",
-      cuts_per_session: "Cuts planned",
-      cuts_per_week: "Weekly cuts",
-      sleep_debt_hours: "Sleep debt",
-    };
-    return labels[metric] || metric.replace(/_/g, " ");
+    return SAFETY_WARNING_METRIC_LABELS[metric] || metric.replace(/_/g, " ");
   }
 }

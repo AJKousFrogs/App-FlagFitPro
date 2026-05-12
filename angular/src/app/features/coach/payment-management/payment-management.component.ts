@@ -61,6 +61,7 @@ import {
   type TeamFee,
   PaymentDataService,
 } from "./payment-data.service";
+import { PAYMENT_STATUS_LABELS } from "../../../shared/constants/status-labels.constants";
 
 type FeeFormGroup = FormGroup<{
   name: FormControl<string>;
@@ -436,12 +437,7 @@ export class PaymentManagementComponent implements OnInit {
   }
 
   getStatusLabel(status: string): string {
-    const labels: Record<string, string> = {
-      paid: "Paid",
-      due: "Due",
-      overdue: "Overdue",
-    };
-    return labels[status] || status;
+    return PAYMENT_STATUS_LABELS[status] || status;
   }
 
   getStatusSeverity(

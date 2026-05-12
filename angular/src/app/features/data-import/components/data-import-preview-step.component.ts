@@ -6,6 +6,7 @@ import { SelectComponent } from "../../../shared/components/select/select.compon
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { CardShellComponent } from "../../../shared/components/card-shell/card-shell.component";
 import { StatusTagComponent } from "../../../shared/components/status-tag/status-tag.component";
+import { DATA_IMPORT_STATUS_LABELS } from "../../../shared/constants/status-labels.constants";
 
 type MappingStatus = "auto" | "manual" | "unmapped";
 
@@ -57,12 +58,7 @@ export class DataImportPreviewStepComponent {
   }
 
   getMappingStatusLabel(status: MappingStatus): string {
-    const labels: Record<MappingStatus, string> = {
-      auto: "Auto-matched",
-      manual: "Manually set",
-      unmapped: "Needs mapping",
-    };
-    return labels[status];
+    return DATA_IMPORT_STATUS_LABELS[status] ?? status;
   }
 
   getMappingStatusSeverity(status: MappingStatus): "success" | "info" | "warning" {
