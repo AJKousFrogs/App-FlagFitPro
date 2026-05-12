@@ -239,7 +239,6 @@ export class PlayCanvasComponent implements OnDestroy {
       const initRoutes = this.initialRoutes();
       this.players.set(initPlayers?.length ? initPlayers : [...DEFAULT_PLAYERS]);
       this.routes.set(initRoutes?.length ? initRoutes : []);
-      this.undoStack.set([]);
     });
   }
 
