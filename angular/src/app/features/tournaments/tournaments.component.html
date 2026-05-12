@@ -86,9 +86,9 @@
         }
       </div>
 
-      @defer (when showDialog) {
+      @defer (when showDialog()) {
         <app-tournament-form-dialog
-          [visible]="showDialog"
+          [visible]="showDialog()"
           [dialogTitle]="getDialogTitle()"
           [form]="tournamentForm"
           [loading]="tournamentService.loading()"
@@ -98,17 +98,17 @@
           [isPersonalTournament]="!!(editingTournament && isPersonalTournament(editingTournament))"
           [tournamentTypes]="tournamentTypes"
           [competitionLevels]="competitionLevels"
-          (visibleChange)="showDialog = $event"
+          (visibleChange)="showDialog.set($event)"
           (save)="saveTournament()"
         />
       } @placeholder {
         <span class="defer-dialog-chunk-placeholder"></span>
       }
 
-      @defer (when showAvailabilityDialog) {
+      @defer (when showAvailabilityDialog()) {
         <app-tournament-availability-dialog
-          [visible]="showAvailabilityDialog"
-          (visibleChange)="showAvailabilityDialog = $event"
+          [visible]="showAvailabilityDialog()"
+          (visibleChange)="showAvailabilityDialog.set($event)"
           [tournament]="selectedTournament"
           [dateRangeLabel]="
             selectedTournament
@@ -130,10 +130,10 @@
         <span class="defer-dialog-chunk-placeholder"></span>
       }
 
-      @defer (when showTeamAvailabilityDialog) {
+      @defer (when showTeamAvailabilityDialog()) {
         <app-tournament-team-availability-dialog
-          [visible]="showTeamAvailabilityDialog"
-          (visibleChange)="showTeamAvailabilityDialog = $event"
+          [visible]="showTeamAvailabilityDialog()"
+          (visibleChange)="showTeamAvailabilityDialog.set($event)"
           [tournament]="selectedTournament"
           [dateRangeLabel]="
             selectedTournament
@@ -154,10 +154,10 @@
         <span class="defer-dialog-chunk-placeholder"></span>
       }
 
-      @defer (when showBudgetDialog) {
+      @defer (when showBudgetDialog()) {
         <app-tournament-budget-dialog
-          [visible]="showBudgetDialog"
-          (visibleChange)="showBudgetDialog = $event"
+          [visible]="showBudgetDialog()"
+          (visibleChange)="showBudgetDialog.set($event)"
           [budgetForm]="budgetFormGroup"
           [totalEstimatedCost]="calculateTotalBudget()"
           [totalFunding]="

@@ -281,15 +281,15 @@ export class TournamentsComponent implements OnInit {
   ]);
 
   // Dialog state
-  showDialog = false;
+  showDialog = signal(false);
   editingTournament: Tournament | null = null;
 
   readonly openCreateDialogHandler = (): void => this.openCreateDialog();
 
   // Availability dialogs
-  showAvailabilityDialog = false;
-  showTeamAvailabilityDialog = false;
-  showBudgetDialog = false;
+  showAvailabilityDialog = signal(false);
+  showTeamAvailabilityDialog = signal(false);
+  showBudgetDialog = signal(false);
   selectedTournament: Tournament | null = null;
 
   // Loading states
@@ -569,7 +569,7 @@ export class TournamentsComponent implements OnInit {
       end_date_obj: defaults.end_date_obj ?? null,
       registration_deadline_obj: defaults.registration_deadline_obj ?? null,
     });
-    this.showDialog = true;
+    this.showDialog.set(true);
   }
 
   openEditDialog(tournament: Tournament): void {
@@ -606,11 +606,11 @@ export class TournamentsComponent implements OnInit {
       contact_name: "",
       contact_email: "",
     });
-    this.showDialog = true;
+    this.showDialog.set(true);
   }
 
   closeDialog(): void {
-    this.showDialog = false;
+    this.showDialog.set(false);
     this.editingTournament = null;
     const defaults = this.getEmptyFormData();
     this.tournamentForm.reset({
@@ -743,7 +743,7 @@ export class TournamentsComponent implements OnInit {
 
   async openAvailabilityDialog(tournament: Tournament): Promise<void> {
     this.selectedTournament = tournament;
-    this.showAvailabilityDialog = true;
+    this.showAvailabilityDialog.set(true);
 
     // Load existing availability
     await this.loadMyAvailability(tournament.id);
@@ -862,7 +862,7 @@ export class TournamentsComponent implements OnInit {
 
       this.toastService.success("Your availability has been updated", "Saved");
 
-      this.showAvailabilityDialog = false;
+      this.showAvailabilityDialog.set(false);
     } catch (error: unknown) {
       this.logger.error("Error saving availability:", error);
       const message =
@@ -892,7 +892,7 @@ export class TournamentsComponent implements OnInit {
 
   async openTeamAvailabilityDialog(tournament: Tournament): Promise<void> {
     this.selectedTournament = tournament;
-    this.showTeamAvailabilityDialog = true;
+    this.showTeamAvailabilityDialog.set(true);
 
     await this.loadTeamAvailability(tournament.id);
     await this.loadTournamentBudget(tournament.id);
@@ -1074,7 +1074,7 @@ export class TournamentsComponent implements OnInit {
   // ============================================================================
 
   openBudgetDialog(): void {
-    this.showBudgetDialog = true;
+    this.showBudgetDialog.set(true);
   }
 
   calculateTotalBudget(): number {
@@ -1148,7 +1148,7 @@ export class TournamentsComponent implements OnInit {
 
       // Reload budget to get calculated fields
       await this.loadTournamentBudget(this.selectedTournament.id);
-      this.showBudgetDialog = false;
+      this.showBudgetDialog.set(false);
     } catch (error: unknown) {
       this.logger.error("Error saving budget:", error);
       const message =
