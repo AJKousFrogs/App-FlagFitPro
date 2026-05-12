@@ -215,13 +215,22 @@
             description="Try another category or check back after your next team, training, or system update."
           />
         } @else {
-          <section class="list-stack" aria-label="Notification list">
+          <section
+            class="list-stack"
+            aria-label="Notification list"
+            appSwipeGesture
+            [enablePullToRefresh]="true"
+            (pullToRefresh)="refresh()"
+          >
             @for (notification of filteredNotifications(); track notification.id) {
               <app-card-shell
                 class="notification-card"
                 [title]="notification.title || getNotificationLabel(notification)"
                 [headerIcon]="getNotificationIcon(notification)"
                 [tone]="getNotificationTone(notification)"
+                appSwipeGesture
+                (swipeRight)="markAsRead(notification)"
+                (swipeLeft)="dismiss(notification)"
               >
                 <div
                   class="notification-entry"

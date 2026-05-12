@@ -30,6 +30,7 @@ import { MainLayoutComponent } from "../../shared/components/layout/main-layout.
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
 import { getTimeAgo } from "../../shared/utils/date.utils";
 import { UI_LIMITS } from "../../core/constants";
+import { AnimateNumberDirective } from "../../shared/directives/animate-number.directive";
 
 // ===== Interfaces =====
 interface Achievement {
@@ -264,6 +265,7 @@ const CATEGORY_LABELS: Record<
     StatusTagComponent,
     MainLayoutComponent,
     PageHeaderComponent,
+    AnimateNumberDirective,
   ],
   templateUrl: "./achievements.component.html",
   styleUrl: "./achievements.component.scss",

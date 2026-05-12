@@ -10,11 +10,13 @@ import { Tooltip } from "primeng/tooltip";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { CardShellComponent } from "../../../shared/components/card-shell/card-shell.component";
 import { TeamOverviewStats } from "../../../core/services/team-statistics.service";
+import { AcwrRiskPipe } from "../../../shared/pipes/acwr-risk.pipe";
+import { AnimateNumberDirective } from "../../../shared/directives/animate-number.directive";
 
 @Component({
   selector: "app-coach-dashboard-summary-section",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ButtonComponent, CardShellComponent, ProgressBarComponent, Tooltip, DecimalPipe],
+  imports: [ButtonComponent, CardShellComponent, ProgressBarComponent, Tooltip, AcwrRiskPipe, DecimalPipe, AnimateNumberDirective],
   templateUrl: "./coach-dashboard-summary-section.component.html",
   styleUrl: "./coach-dashboard-summary-section.component.scss",
 })

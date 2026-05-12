@@ -38,21 +38,17 @@
         <span class="sc-preview-badge">Preview</span>
       }
     </span>
-    <span class="sc-value">{{ teamOverview().practiceAttendanceRate }}%</span>
+    <span class="sc-value" [appAnimateNumber]="teamOverview().practiceAttendanceRate" [animSuffix]="'%'"></span>
   </div>
   <div class="sc-divider"></div>
   <div class="sc-item" pTooltip="Players in Danger Zone">
     <span class="sc-label">At Risk</span>
-    <span class="sc-value" [class.warning]="teamOverview().playersAtRisk > 0">{{
-      teamOverview().playersAtRisk
-    }}</span>
+    <span class="sc-value" [class.warning]="teamOverview().playersAtRisk > 0" [appAnimateNumber]="teamOverview().playersAtRisk"></span>
   </div>
   <div class="sc-divider"></div>
   <div class="sc-item" pTooltip="Current Injuries">
     <span class="sc-label">Injured</span>
-    <span class="sc-value" [class.warning]="teamOverview().injuredPlayers > 0">{{
-      teamOverview().injuredPlayers
-    }}</span>
+    <span class="sc-value" [class.warning]="teamOverview().injuredPlayers > 0" [appAnimateNumber]="teamOverview().injuredPlayers"></span>
   </div>
   <div class="sc-divider"></div>
   <div class="sc-item" pTooltip="Team Chemistry Score">
@@ -78,12 +74,12 @@
       <div class="preview-metric">
         <span class="preview-label">Current Workload Index</span>
         <span class="preview-value">{{
-          teamOverview().avgTeamWorkload | number: "1.2-2"
+          teamOverview().avgTeamWorkload | acwrRisk: "full"
         }}</span>
       </div>
       <div class="preview-metric">
         <span class="preview-label">At-Risk Players</span>
-        <span class="preview-value">{{ teamOverview().playersAtRisk }}</span>
+        <span class="preview-value" [appAnimateNumber]="teamOverview().playersAtRisk"></span>
       </div>
     </div>
     <div class="preview-signals">
@@ -118,7 +114,7 @@
         "
         [class.danger]="teamOverview().avgTeamWorkload > 1.5"
       >
-        Workload {{ teamOverview().avgTeamWorkload | number: "1.2-2" }}
+        Workload {{ teamOverview().avgTeamWorkload | acwrRisk: "full" }}
       </span>
     </div>
     <div class="preview-bars">

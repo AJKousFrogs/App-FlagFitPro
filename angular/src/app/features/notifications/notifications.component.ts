@@ -7,6 +7,7 @@ import { PageHeaderComponent } from "../../shared/components/page-header/page-he
 import { ButtonComponent } from "../../shared/components/button/button.component";
 import { CardShellComponent } from "../../shared/components/card-shell/card-shell.component";
 import { EmptyStateComponent } from "../../shared/components/empty-state/empty-state.component";
+import { SwipeGestureDirective } from "../../shared/directives/swipe-gesture.directive";
 import {
   Notification,
   NotificationCategory,
@@ -33,6 +34,7 @@ interface NotificationCategoryTab {
     ButtonComponent,
     CardShellComponent,
     EmptyStateComponent,
+    SwipeGestureDirective,
   ],
   templateUrl: "./notifications.component.html",
   styleUrl: "./notifications.component.scss",

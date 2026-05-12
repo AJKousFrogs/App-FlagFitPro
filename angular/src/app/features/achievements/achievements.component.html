@@ -14,22 +14,22 @@
           <div class="stats-inner-grid">
             <div class="stat-box highlight">
               <span class="lbl">Total Points</span>
-              <span class="val">{{ totalPoints() | number }}</span>
+              <span class="val" [appAnimateNumber]="totalPoints()" animSeparator=","></span>
               @if (totalPoints() > 0) {
                 <app-status-tag [value]="'Top ' + userRankPercentile() + '%'" severity="info" size="sm" />
               }
             </div>
             <div class="stat-box">
               <span class="lbl">Badges Earned</span>
-              <span class="val">{{ unlockedCount() }} / {{ totalAchievements() }}</span>
+              <span class="val"><span [appAnimateNumber]="unlockedCount()"></span> / <span [appAnimateNumber]="totalAchievements()"></span></span>
             </div>
             <div class="stat-box">
               <span class="lbl">Global Rank</span>
-              <span class="val">#{{ userRank() }}</span>
+              <span class="val" [appAnimateNumber]="userRank()" [animPrefix]="'#'"></span>
             </div>
             <div class="stat-box progress-box">
               <span class="lbl">Season Progress</span>
-              <span class="val">{{ progressPercent() }}%</span>
+              <span class="val" [appAnimateNumber]="progressPercent()" [animSuffix]="'%'"></span>
               <app-progress-bar [value]="progressPercent()" [showValue]="false" />
             </div>
           </div>
