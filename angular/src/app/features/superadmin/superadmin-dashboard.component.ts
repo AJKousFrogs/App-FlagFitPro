@@ -62,7 +62,7 @@ export class SuperadminDashboardComponent implements OnInit {
   loadError = this.superadminService.loadError;
 
   // Modal state
-  showRejectModal = false;
+  showRejectModal = signal(false);
   selectedApproval = signal<ApprovalRequest | null>(null);
   rejectReason = "";
 
@@ -108,11 +108,11 @@ export class SuperadminDashboardComponent implements OnInit {
   openRejectModal(approval: ApprovalRequest): void {
     this.selectedApproval.set(approval);
     this.rejectReason = "";
-    this.showRejectModal = true;
+    this.showRejectModal.set(true);
   }
 
   closeRejectModal(): void {
-    this.showRejectModal = false;
+    this.showRejectModal.set(false);
     this.selectedApproval.set(null);
     this.rejectReason = "";
   }

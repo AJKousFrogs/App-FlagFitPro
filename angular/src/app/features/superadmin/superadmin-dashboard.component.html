@@ -241,8 +241,8 @@
       </div>
 
       <app-dialog
-        [visible]="showRejectModal"
-        (visibleChange)="showRejectModal = $event"
+        [visible]="showRejectModal()"
+        (visibleChange)="showRejectModal.set($event)"
         (hide)="closeRejectModal()"
         [modal]="true"
         [closable]="false"

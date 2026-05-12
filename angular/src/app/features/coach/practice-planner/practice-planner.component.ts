@@ -28,7 +28,7 @@ import { FormInputComponent } from "../../../shared/components/form-input/form-i
 import { SelectComponent } from "../../../shared/components/select/select.component";
 import { TextareaComponent } from "../../../shared/components/textarea/textarea.component";
 import { StatusTagComponent } from "../../../shared/components/status-tag/status-tag.component";
-import { getStatusSeverity as getStatusSeverityValue } from "../../../shared/utils/status.utils";
+import { getStatusSeverity as getStatusSeverityValue, StatusSeverity } from "../../../shared/utils/status.utils";
 import { DIALOG_BREAKPOINTS } from "../../../core/utils/design-tokens.util";
 import { PRACTICE_STATUS_LABELS } from "../../../shared/constants/status-labels.constants";
 
@@ -672,9 +672,7 @@ export class PracticePlannerComponent implements OnInit {
     return PRACTICE_STATUS_LABELS[status] || status;
   }
 
-  getStatusSeverity(
-    status: string,
-  ): "success" | "info" | "warning" | "danger" | "secondary" {
+  getStatusSeverity(status: string): StatusSeverity | null | undefined {
     return getStatusSeverityValue(status);
   }
 

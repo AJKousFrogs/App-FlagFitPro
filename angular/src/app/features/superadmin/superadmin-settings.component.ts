@@ -65,7 +65,7 @@ export class SuperadminSettingsComponent implements OnInit {
   superadmins = signal<SuperadminUser[]>([]);
   isLoading = signal(false);
   loadError = signal<string | null>(null);
-  showAddModal = false;
+  showAddModal = signal(false);
   newAdminEmail = "";
   newAdminNotes = "";
 
@@ -129,18 +129,18 @@ export class SuperadminSettingsComponent implements OnInit {
 
   openAddModal(): void {
     this.closeAddModal();
-    this.showAddModal = true;
+    this.showAddModal.set(true);
   }
 
   closeAddModal(): void {
-    this.showAddModal = false;
+    this.showAddModal.set(false);
     this.newAdminEmail = "";
     this.newAdminNotes = "";
   }
 
   onAddModalVisibleChange(visible: boolean): void {
     if (visible) {
-      this.showAddModal = true;
+      this.showAddModal.set(true);
       return;
     }
     this.closeAddModal();

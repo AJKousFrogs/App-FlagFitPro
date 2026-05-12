@@ -37,7 +37,7 @@ import { EmptyStateComponent } from "../../../shared/components/empty-state/empt
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
 import { PageErrorStateComponent } from "../../../shared/components/page-error-state/page-error-state.component";
 import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";
-import { getStatusSeverity as getStatusSeverityValue } from "../../../shared/utils/status.utils";
+import { getStatusSeverity as getStatusSeverityValue, StatusSeverity } from "../../../shared/utils/status.utils";
 import { mapProgramTemplatesToUserPracticeDays } from "../../../shared/utils/training-template.utils";
 import { TRAINING_SESSION_STATUS_LABELS } from "../../../shared/constants/status-labels.constants";
 
@@ -861,17 +861,7 @@ export class TrainingScheduleComponent implements OnInit {
     }
   }
 
-  getStatusSeverity(
-    status: string,
-  ):
-    | "success"
-    | "info"
-    | "warning"
-    | "secondary"
-    | "contrast"
-    | "danger"
-    | null
-    | undefined {
+  getStatusSeverity(status: string): StatusSeverity | null | undefined {
     return getStatusSeverityValue(status);
   }
 
