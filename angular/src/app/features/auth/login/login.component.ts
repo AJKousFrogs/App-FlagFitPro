@@ -31,10 +31,7 @@ import { ToastService } from "../../../core/services/toast.service";
 import { TOAST } from "../../../core/constants/toast-messages.constants";
 import { getErrorMessage } from "../../../shared/utils/error.utils";
 import { AuthFlowDataService } from "../services/auth-flow-data.service";
-import {
-  getFormControlError,
-  markFormGroupTouched,
-} from "../../../shared/utils/form.utils";
+import { FormBase } from "../../../shared/utils/form-base";
 
 type LoginForm = FormGroup<{
   email: FormControl<string>;
@@ -174,7 +171,7 @@ type LoginForm = FormGroup<{
   `,
   styleUrl: "./login.component.scss",
 })
-export class LoginComponent implements OnInit {
+export class LoginComponent extends FormBase implements OnInit {
   private fb = inject(NonNullableFormBuilder);
   private authService = inject(AuthService);
   private authFlowDataService = inject(AuthFlowDataService);
@@ -194,17 +191,16 @@ export class LoginComponent implements OnInit {
   // Track form validity as a signal (updated on statusChanges)
   formValid = signal(false);
 
-  // Computed form state signals
   emailError = computed(() => {
     const control = this.loginForm.get("email");
     return control && (this.submitted() || control.touched)
-      ? getFormControlError(control)
+      ? this.getFieldError("email")
       : null;
   });
   passwordError = computed(() => {
     const control = this.loginForm.get("password");
     return control && (this.submitted() || control.touched)
-      ? getFormControlError(control)
+      ? this.getFieldError("password")
       : null;
   });
 
@@ -259,6 +255,27 @@ export class LoginComponent implements OnInit {
     }
   }
 
+  getFieldError(fieldName: string): string | null {
+    const field = this.loginForm.get(fieldName);
+    if (fieldName === "email") {
+      if (field?.hasError("required")) {
+        return "Email is required";
+      }
+      if (field?.hasError("email")) {
+        return "Please enter a valid email address";
+      }
+    }
+    if (fieldName === "password") {
+      if (field?.hasError("required")) {
+        return "Password is required";
+      }
+      if (field?.hasError("minlength")) {
+        return "Password must be at least 8 characters";
+      }
+    }
+    return super.getFieldError(this.loginForm, fieldName);
+  }
+
   onSubmit(): void {
     if (this.isLoading()) {
       return;
@@ -268,7 +285,7 @@ export class LoginComponent implements OnInit {
     this.submitError.set(null);
 
     if (this.loginForm.invalid) {
-      markFormGroupTouched(this.loginForm);
+      this.markFormGroupTouched(this.loginForm);
       this.submitError.set("Check the highlighted fields and try again.");
       return;
     }
