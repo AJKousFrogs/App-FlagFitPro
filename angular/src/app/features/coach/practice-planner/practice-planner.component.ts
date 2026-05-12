@@ -7,7 +7,7 @@
  * Design System Compliant (DESIGN_SYSTEM_RULES.md)
  */
 
-import { CommonModule, DatePipe } from "@angular/common";
+import { DatePipe } from "@angular/common";
 import {
   ChangeDetectionStrategy,
   Component,
@@ -136,7 +136,6 @@ const DEFAULT_EQUIPMENT: EquipmentItem[] = [
   selector: "app-practice-planner",
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CommonModule,
     DatePipe,
     CardShellComponent,
     DatePickerComponent,

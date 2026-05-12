@@ -1,4 +1,5 @@
-import { CommonModule } from "@angular/common";
+
+import { JsonPipe } from "@angular/common";
 import { ChangeDetectionStrategy, Component, input, output } from "@angular/core";
 import { TableModule } from "primeng/table";
 import { SelectComponent } from "../../../shared/components/select/select.component";
@@ -28,7 +29,7 @@ export interface DataImportPreview {
   selector: "app-data-import-preview-step",
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CommonModule,
+    JsonPipe,
     CardShellComponent,
     TableModule,
     SelectComponent,

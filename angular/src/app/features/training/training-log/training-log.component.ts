@@ -14,6 +14,7 @@
  * - Injury prevention alerts
  */
 
+import { DecimalPipe } from "@angular/common";
 import {
   Component,
   inject,
@@ -32,7 +33,7 @@ import {
   ReactiveFormsModule,
 } from "@angular/forms";
 import { ActivatedRoute, ParamMap, Router } from "@angular/router";
-import { CommonModule } from "@angular/common";
+
 import { AlertComponent } from "../../../shared/components/alert/alert.component";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { Slider } from "primeng/slider";
@@ -72,7 +73,7 @@ interface ExistingTrainingSession {
   selector: "app-training-log",
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CommonModule,
+    DecimalPipe,
     ReactiveFormsModule,
     Slider,
     InputNumber,

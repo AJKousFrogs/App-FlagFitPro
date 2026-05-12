@@ -21,13 +21,12 @@ import {
   inject,
   viewChild,
 } from "@angular/core";
-import { CommonModule } from "@angular/common";
 import { RiskZone } from "../../../core/models/acwr.models";
 
 @Component({
   selector: "app-traffic-light-risk",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule],
+  imports: [],
   templateUrl: "./traffic-light-risk.component.html",
   styleUrl: "./traffic-light-risk.component.scss",
 })

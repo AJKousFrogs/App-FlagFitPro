@@ -7,7 +7,8 @@
  * Design System Compliant (DESIGN_SYSTEM_RULES.md)
  */
 
-import { CommonModule } from "@angular/common";
+
+import { TitleCasePipe } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import {
   ChangeDetectionStrategy,
@@ -135,7 +136,7 @@ const RECURRING_OPTIONS = [
   selector: "app-calendar-coach",
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CommonModule,
+    TitleCasePipe,
     FormsModule,
     CardShellComponent,
     DatePickerComponent,

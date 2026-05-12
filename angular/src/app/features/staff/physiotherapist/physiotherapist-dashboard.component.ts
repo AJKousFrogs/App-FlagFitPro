@@ -1,4 +1,4 @@
-import { CommonModule } from "@angular/common";
+import { DatePipe } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import {
   ChangeDetectionStrategy,
@@ -200,7 +200,7 @@ const RTP_PHASES = [
   selector: "app-physiotherapist-dashboard",
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CommonModule,
+    DatePipe,
     FormsModule,
     RouterModule,
     AlertComponent,

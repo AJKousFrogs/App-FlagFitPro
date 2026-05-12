@@ -1,4 +1,4 @@
-import { CommonModule } from "@angular/common";
+import { DatePipe } from "@angular/common";
 import { ChangeDetectionStrategy, Component, input, output } from "@angular/core";
 import { SearchInputComponent } from "../../../shared/components/search-input/search-input.component";
 import { ProgressBarComponent } from "../../../shared/components/progress-bar/progress-bar.component";
@@ -13,7 +13,7 @@ import { Play, PlayCategory } from "../playbook.models";
   selector: "app-playbook-library-section",
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CommonModule,
+    DatePipe,
     SearchInputComponent,
     ProgressBarComponent,
     SelectComponent,

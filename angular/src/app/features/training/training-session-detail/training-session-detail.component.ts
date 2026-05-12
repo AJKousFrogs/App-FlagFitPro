@@ -8,7 +8,7 @@ import {
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { ActivatedRoute, Router } from "@angular/router";
-import { CommonModule } from "@angular/common";
+import { DatePipe } from "@angular/common";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { CardShellComponent } from "../../../shared/components/card-shell/card-shell.component";
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
@@ -53,7 +53,7 @@ const isBoolean = (value: unknown): value is boolean =>
   selector: "app-training-session-detail",
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CommonModule,
+    DatePipe,
     ButtonComponent,
     CardShellComponent,
     MainLayoutComponent,

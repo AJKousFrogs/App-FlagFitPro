@@ -10,7 +10,7 @@ import {
   computed,
   ChangeDetectionStrategy,
 } from "@angular/core";
-import { CommonModule } from "@angular/common";
+import { DecimalPipe } from "@angular/common";
 import { RouterModule } from "@angular/router";
 import { StatusTagComponent } from "../status-tag/status-tag.component";
 
@@ -19,7 +19,7 @@ import { ButtonComponent } from "../button/button.component";
 @Component({
   selector: "app-confidence-indicator",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, RouterModule, StatusTagComponent, ButtonComponent],
+  imports: [DecimalPipe, RouterModule, StatusTagComponent, ButtonComponent],
   template: `
     <div
       class="confidence-indicator"

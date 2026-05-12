@@ -1,4 +1,4 @@
-import { CommonModule } from "@angular/common";
+import { NgTemplateOutlet } from "@angular/common";
 import {
   ChangeDetectionStrategy,
   Component,
@@ -17,7 +17,7 @@ import { TableModule, TablePageEvent, TableRowSelectEvent, TableRowUnSelectEvent
   changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.None,
   host: { class: "app-table-host" },
-  imports: [CommonModule, TableModule],
+  imports: [NgTemplateOutlet, TableModule],
   template: `
     <div class="app-table-container">
       <p-table

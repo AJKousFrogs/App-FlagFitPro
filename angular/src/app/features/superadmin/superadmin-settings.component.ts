@@ -5,7 +5,7 @@ import {
   OnInit,
   signal,
 } from "@angular/core";
-import { CommonModule } from "@angular/common";
+import { DatePipe } from "@angular/common";
 import { RouterLink } from "@angular/router";
 import { ButtonComponent } from "../../shared/components/button/button.component";
 import { TableModule } from "primeng/table";
@@ -36,7 +36,7 @@ interface SuperadminUser {
   selector: "app-superadmin-settings",
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CommonModule,
+    DatePipe,
     RouterLink,
     CardShellComponent,
     TableModule,

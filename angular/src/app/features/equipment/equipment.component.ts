@@ -1,4 +1,4 @@
-import { CommonModule, DatePipe } from "@angular/common";
+import { DatePipe } from "@angular/common";
 import {
   ChangeDetectionStrategy,
   Component,
@@ -69,7 +69,6 @@ interface ReturnData { condition: Condition; notes: string }
   selector: "app-equipment",
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CommonModule,
     TableModule,
     StatusTagComponent,
     FormInputComponent,

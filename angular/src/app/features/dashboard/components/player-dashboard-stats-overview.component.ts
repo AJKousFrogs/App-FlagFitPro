@@ -1,4 +1,4 @@
-import { CommonModule, DecimalPipe, NgTemplateOutlet } from "@angular/common";
+import { DecimalPipe, NgTemplateOutlet } from "@angular/common";
 import { ChangeDetectionStrategy, Component, input, output } from "@angular/core";
 import { ProgressBarComponent } from "../../../shared/components/progress-bar/progress-bar.component";
 import { Tooltip } from "primeng/tooltip";
@@ -31,7 +31,6 @@ interface AcwrDisplayInput {
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CommonModule,
     NgTemplateOutlet,
     DecimalPipe,
     ProgressBarComponent,

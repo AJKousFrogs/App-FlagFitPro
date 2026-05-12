@@ -6,7 +6,7 @@ import {
   signal,
   ChangeDetectionStrategy,
 } from "@angular/core";
-import { CommonModule } from "@angular/common";
+import { DatePipe } from "@angular/common";
 import { RouterModule } from "@angular/router";
 
 import { TableModule } from "primeng/table";
@@ -25,7 +25,7 @@ import { formatDate } from "../../shared/utils/date.utils";
   selector: "app-flag-load",
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CommonModule,
+    DatePipe,
     RouterModule,
     TableModule,
     LazyChartComponent,

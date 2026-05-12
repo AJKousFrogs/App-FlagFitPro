@@ -7,7 +7,7 @@
  * Design System Compliant (DESIGN_SYSTEM_RULES.md)
  */
 
-import { CommonModule } from "@angular/common";
+import { DatePipe } from "@angular/common";
 import {
   ChangeDetectionStrategy,
   Component,
@@ -298,7 +298,7 @@ const SEVERITY_LEVELS = [
   selector: "app-return-to-play",
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CommonModule,
+    DatePipe,
     LazyChartComponent,
     AppDialogComponent,
     ProgressBarComponent,

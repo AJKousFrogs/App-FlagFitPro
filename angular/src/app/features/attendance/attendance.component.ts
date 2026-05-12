@@ -1,4 +1,4 @@
-import { CommonModule, DatePipe } from "@angular/common";
+import { DatePipe } from "@angular/common";
 import {
   ChangeDetectionStrategy,
   Component,
@@ -50,7 +50,6 @@ type AttendanceStatus = "present" | "absent" | "late" | "excused";
   selector: "app-attendance",
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CommonModule,
     FormsModule,
     StatusTagComponent,
     FormInputComponent,

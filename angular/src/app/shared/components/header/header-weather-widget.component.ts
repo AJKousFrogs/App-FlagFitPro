@@ -1,4 +1,3 @@
-import { CommonModule } from "@angular/common";
 import {
   ChangeDetectionStrategy,
   Component,
@@ -20,7 +19,7 @@ import {
 @Component({
   selector: "app-header-weather-widget",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, Tooltip],
+  imports: [Tooltip],
   templateUrl: "./header-weather-widget.component.html",
 })
 export class HeaderWeatherWidgetComponent implements OnInit {

@@ -7,7 +7,7 @@
  * Design System Compliant (DESIGN_SYSTEM_RULES.md)
  */
 
-import { CommonModule, DatePipe } from "@angular/common";
+import { DatePipe } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import {
   ChangeDetectionStrategy,
@@ -95,7 +95,6 @@ const EVENT_TYPE_CONFIG: Record<
   selector: "app-team-calendar",
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CommonModule,
     FormsModule,
     DatePipe,
     InputNumber,

@@ -11,7 +11,7 @@ import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { firstValueFrom } from "rxjs";
 
 import { FormControl, ReactiveFormsModule } from "@angular/forms";
-import { CommonModule } from "@angular/common";
+import { DatePipe } from "@angular/common";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { CardShellComponent } from "../../../shared/components/card-shell/card-shell.component";
 import { DatePicker } from "primeng/datepicker";
@@ -98,7 +98,7 @@ interface AthleteMetrics {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ReactiveFormsModule,
-    CommonModule,
+    DatePipe,
     CardShellComponent,
     DatePicker,
     StatusTagComponent,

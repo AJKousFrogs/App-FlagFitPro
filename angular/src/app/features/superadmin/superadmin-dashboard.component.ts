@@ -7,7 +7,7 @@ import {
   signal,
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
-import { CommonModule } from "@angular/common";
+import { DatePipe } from "@angular/common";
 import { RouterLink } from "@angular/router";
 import { ButtonComponent } from "../../shared/components/button/button.component";
 import { CardShellComponent } from "../../shared/components/card-shell/card-shell.component";
@@ -32,7 +32,7 @@ import {
   selector: "app-superadmin-dashboard",
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CommonModule,
+    DatePipe,
     RouterLink,
     StatusTagComponent,
     TableModule,

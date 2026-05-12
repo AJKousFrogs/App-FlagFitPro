@@ -7,7 +7,7 @@
  * Design: Modern, clean card with left accent border matching design system
  */
 
-import { CommonModule } from "@angular/common";
+import { DecimalPipe } from "@angular/common";
 import {
   ChangeDetectionStrategy,
   Component,
@@ -28,7 +28,7 @@ export interface AIModeStatus {
 @Component({
   selector: "app-ai-mode-explanation",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, RouterModule, Tooltip],
+  imports: [DecimalPipe, RouterModule, Tooltip],
   template: `
     @if (modeStatus() && modeStatus()!.isConservative) {
       <div class="ai-mode-card">

@@ -1,4 +1,4 @@
-import { CommonModule, DecimalPipe } from "@angular/common";
+import { DecimalPipe } from "@angular/common";
 import { ChangeDetectionStrategy, Component, input, output } from "@angular/core";
 
 import { ButtonComponent } from "../../../shared/components/button/button.component";
@@ -33,7 +33,7 @@ interface TournamentBudget {
   selector: "app-tournament-team-availability-dialog-content",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, DecimalPipe, ButtonComponent, StatusTagComponent],
+  imports: [DecimalPipe, ButtonComponent, StatusTagComponent],
   templateUrl: "./tournament-team-availability-dialog-content.component.html",
   styleUrl: "./tournament-team-availability-dialog-content.component.scss",
 })

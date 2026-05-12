@@ -1,4 +1,4 @@
-import { CommonModule } from "@angular/common";
+import { DatePipe } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import {
   ChangeDetectionStrategy,
@@ -153,7 +153,7 @@ type PreCompSignificance = PreCompForm["significance"];
   selector: "app-psychology-reports",
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CommonModule,
+    DatePipe,
     FormsModule,
     RouterModule,
     AppDialogComponent,

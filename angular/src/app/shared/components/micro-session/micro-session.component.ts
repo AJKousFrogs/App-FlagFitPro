@@ -11,7 +11,6 @@
  * - Visual feedback and animations
  */
 
-import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import {
   ChangeDetectionStrategy,
@@ -51,7 +50,6 @@ import { CardShellComponent } from "../card-shell/card-shell.component";
   selector: "app-micro-session",
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CommonModule,
     FormsModule,
     CheckboxComponent,
     ButtonComponent,

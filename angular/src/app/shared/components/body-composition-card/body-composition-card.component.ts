@@ -10,7 +10,7 @@
  * - Decision 33: Card header pattern
  */
 
-import { CommonModule, DecimalPipe } from "@angular/common";
+import { DecimalPipe } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import {
   ChangeDetectionStrategy,
@@ -52,7 +52,6 @@ interface BodyCompositionData {
   selector: "app-body-composition-card",
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CommonModule,
     FormsModule,
     RouterModule,
     ButtonComponent,

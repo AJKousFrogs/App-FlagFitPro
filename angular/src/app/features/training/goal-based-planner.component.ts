@@ -1,3 +1,4 @@
+import { DecimalPipe, TitleCasePipe } from "@angular/common";
 import {
   Component,
   inject,
@@ -6,7 +7,7 @@ import {
   effect,
   ChangeDetectionStrategy,
 } from "@angular/core";
-import { CommonModule } from "@angular/common";
+
 import { FormsModule } from "@angular/forms";
 import { Router } from "@angular/router";
 import { type SelectChangeEvent } from "primeng/select";
@@ -39,7 +40,8 @@ import { type StatusSeverityBase } from "../../shared/utils/status.utils";
   selector: "app-goal-based-planner",
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CommonModule,
+    DecimalPipe,
+    TitleCasePipe,
     FormsModule,
     SelectComponent,
     StatusTagComponent,

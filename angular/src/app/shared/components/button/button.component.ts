@@ -1,4 +1,4 @@
-import { CommonModule } from "@angular/common";
+import { NgTemplateOutlet } from "@angular/common";
 import {
   ChangeDetectionStrategy,
   Component,
@@ -65,7 +65,7 @@ export type ButtonSize = "sm" | "md" | "lg";
 @Component({
   selector: "app-button",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, RouterModule, Tooltip],
+  imports: [NgTemplateOutlet, RouterModule, Tooltip],
   template: `
     <!-- Link version (when routerLink is provided) -->
     @if (routerLink()) {

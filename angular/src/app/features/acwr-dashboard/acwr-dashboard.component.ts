@@ -26,7 +26,7 @@
  * @version 1.0.0
  */
 
-import { CommonModule } from "@angular/common";
+import { DatePipe } from "@angular/common";
 import {
   ChangeDetectionStrategy,
   Component,
@@ -80,7 +80,7 @@ import { PageHeaderComponent } from "../../shared/components/page-header/page-he
   selector: "app-acwr-dashboard",
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CommonModule,
+    DatePipe,
     RouterModule,
 
     LazyChartComponent,

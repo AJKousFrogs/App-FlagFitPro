@@ -7,7 +7,7 @@
  * Design System Compliant (DESIGN_SYSTEM_RULES.md)
  */
 
-import { CommonModule, DatePipe } from "@angular/common";
+import { DatePipe } from "@angular/common";
 import {
   ChangeDetectionStrategy,
   Component,
@@ -156,7 +156,6 @@ const PHASE_PRESETS = [
   selector: "app-program-builder",
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CommonModule,
     DatePipe,
     DatePickerComponent,
     FormInputComponent,

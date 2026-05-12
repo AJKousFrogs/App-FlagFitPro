@@ -1,4 +1,4 @@
-import { CommonModule } from "@angular/common";
+import { DatePipe } from "@angular/common";
 import { ChangeDetectionStrategy, Component, input } from "@angular/core";
 import { ProgressBarComponent } from "../../../../shared/components/progress-bar/progress-bar.component";
 import {
@@ -16,7 +16,7 @@ import { type StatusSeverityBase } from "../../../../shared/utils/status.utils";
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CommonModule,
+    DatePipe,
     CardShellComponent,
     StatusTagComponent,
     ProgressBarComponent,

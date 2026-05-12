@@ -11,7 +11,6 @@
  * @version 1.0.0
  */
 
-import { CommonModule } from "@angular/common";
 import {
   ChangeDetectionStrategy,
   Component,
@@ -190,7 +189,6 @@ const DEFAULT_SUPPLEMENTS: Supplement[] = [
   selector: "app-supplement-tracker",
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CommonModule,
     FormsModule,
     ReactiveFormsModule,
     CheckboxComponent,

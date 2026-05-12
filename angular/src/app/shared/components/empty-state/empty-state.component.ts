@@ -1,4 +1,3 @@
-import { CommonModule } from "@angular/common";
 import {
   ChangeDetectionStrategy,
   Component,
@@ -139,7 +138,7 @@ const CONTEXT_CONFIGS: Record<
 @Component({
   selector: "app-empty-state",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, RouterModule, ButtonComponent, CardShellComponent],
+  imports: [RouterModule, ButtonComponent, CardShellComponent],
   template: `
     <div
       class="empty-state-wrapper"

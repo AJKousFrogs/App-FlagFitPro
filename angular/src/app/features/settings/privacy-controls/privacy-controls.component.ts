@@ -1,4 +1,4 @@
-import { CommonModule, DatePipe } from "@angular/common";
+import { DatePipe } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import {
   ChangeDetectionStrategy,
@@ -55,7 +55,6 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
   selector: "app-privacy-controls",
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CommonModule,
     FormsModule,
     SelectComponent,
     FormInputComponent,

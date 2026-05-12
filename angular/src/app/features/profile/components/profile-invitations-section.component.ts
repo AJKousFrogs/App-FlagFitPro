@@ -1,4 +1,4 @@
-import { CommonModule, DatePipe, TitleCasePipe } from "@angular/common";
+import { DatePipe, TitleCasePipe } from "@angular/common";
 import { ChangeDetectionStrategy, Component, input, output } from "@angular/core";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { CardShellComponent } from "../../../shared/components/card-shell/card-shell.component";
@@ -23,7 +23,6 @@ interface ProfileInvitation {
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CommonModule,
     DatePipe,
     TitleCasePipe,
     AppLoadingComponent,

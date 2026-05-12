@@ -1,4 +1,4 @@
-import { CommonModule, DatePipe } from "@angular/common";
+import { DatePipe } from "@angular/common";
 import { ChangeDetectionStrategy, Component, input, output } from "@angular/core";
 import { SelectComponent } from "../../../../shared/components/select/select.component";
 import { ButtonComponent } from "../../../../shared/components/button/button.component";
@@ -28,7 +28,6 @@ export interface ScoutingOpponentFilterOption {
   selector: "app-scouting-reports-list-section",
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CommonModule,
     DatePipe,
     SelectComponent,
     ButtonComponent,

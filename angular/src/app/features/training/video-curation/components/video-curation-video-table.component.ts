@@ -4,7 +4,8 @@
  * Displays the main videos table with filtering and actions.
  */
 
-import { CommonModule } from "@angular/common";
+
+import { SlicePipe } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import {
   ChangeDetectionStrategy,
@@ -40,7 +41,7 @@ import {
   selector: "app-video-curation-video-table",
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CommonModule,
+    SlicePipe,
     FormsModule,
     TableModule,
     StatusTagComponent,

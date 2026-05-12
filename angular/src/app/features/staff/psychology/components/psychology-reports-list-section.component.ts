@@ -1,4 +1,4 @@
-import { CommonModule } from "@angular/common";
+import { DatePipe } from "@angular/common";
 import { ChangeDetectionStrategy, Component, input, output } from "@angular/core";
 
 import { ButtonComponent } from "../../../../shared/components/button/button.component";
@@ -19,7 +19,7 @@ interface GeneratedReport {
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CommonModule,
+    DatePipe,
     ButtonComponent,
     CardShellComponent,
     EmptyStateComponent,

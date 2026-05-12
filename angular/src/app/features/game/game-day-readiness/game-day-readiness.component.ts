@@ -8,7 +8,8 @@
  * @version 1.0.0
  */
 
-import { CommonModule } from "@angular/common";
+
+import { DecimalPipe } from "@angular/common";
 import {
   ChangeDetectionStrategy,
   Component,
@@ -62,7 +63,7 @@ interface ReadinessMetric {
   selector: "app-game-day-readiness",
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CommonModule,
+    DecimalPipe,
     RouterModule,
     Slider,
     TextareaComponent,

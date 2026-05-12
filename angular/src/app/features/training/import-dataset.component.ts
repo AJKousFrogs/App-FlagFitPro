@@ -1,4 +1,5 @@
-import { CommonModule } from "@angular/common";
+
+import { DecimalPipe } from "@angular/common";
 import {
   ChangeDetectionStrategy,
   Component,
@@ -15,7 +16,7 @@ import { getErrorMessage } from "../../shared/utils/error.utils";
 @Component({
   selector: "app-import-dataset",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule,],
+  imports: [DecimalPipe],
 
   template: `
     <div class="import-dataset-container">

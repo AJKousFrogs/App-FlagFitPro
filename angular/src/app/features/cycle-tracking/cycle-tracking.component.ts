@@ -9,7 +9,7 @@
  * Design System Compliant (DESIGN_SYSTEM_RULES.md)
  */
 
-import { CommonModule } from "@angular/common";
+import { DatePipe } from "@angular/common";
 import {
   ChangeDetectionStrategy,
   Component,
@@ -293,7 +293,7 @@ import { FormsModule, ReactiveFormsModule } from "@angular/forms";
   selector: "app-cycle-tracking",
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CommonModule,
+    DatePipe,
     AppDialogComponent,
     AlertComponent,
     ButtonComponent,

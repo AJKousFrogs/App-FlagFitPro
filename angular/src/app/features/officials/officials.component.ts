@@ -1,4 +1,4 @@
-import { CommonModule, CurrencyPipe, DatePipe } from "@angular/common";
+import { CurrencyPipe, DatePipe } from "@angular/common";
 import {
   ChangeDetectionStrategy,
   Component,
@@ -60,7 +60,6 @@ type AssignmentStatus = "scheduled" | "confirmed" | "declined" | "no_show";
   selector: "app-officials",
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CommonModule,
     TableModule,
     StatusTagComponent,
     InputNumber,

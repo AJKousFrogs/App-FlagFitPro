@@ -1,4 +1,4 @@
-import { CommonModule } from "@angular/common";
+
 import {
   afterNextRender,
   ChangeDetectionStrategy,
@@ -10,6 +10,7 @@ import {
   signal,
   viewChild,
 } from "@angular/core";
+import { DecimalPipe } from "@angular/common";
 import { Router, RouterModule } from "@angular/router";
 import { ButtonComponent } from "../../shared/components/button/button.component";
 import { CardShellComponent } from "../../shared/components/card-shell/card-shell.component";
@@ -18,7 +19,7 @@ import { ensurePrimeIconsStylesheet } from "../../core/utils/primeicons-loader";
 @Component({
   selector: "app-landing",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, RouterModule, CardShellComponent, ButtonComponent],
+  imports: [DecimalPipe, RouterModule, CardShellComponent, ButtonComponent],
   templateUrl: "./landing.component.html",
   styleUrl: "./landing.component.scss",
 })

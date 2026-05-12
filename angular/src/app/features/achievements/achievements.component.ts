@@ -7,7 +7,7 @@
  * Design System Compliant (DESIGN_SYSTEM_RULES.md)
  */
 
-import { CommonModule, DatePipe, DecimalPipe } from "@angular/common";
+import { DatePipe, DecimalPipe } from "@angular/common";
 import {
   ChangeDetectionStrategy,
   Component,
@@ -256,7 +256,6 @@ const CATEGORY_LABELS: Record<
   selector: "app-achievements",
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CommonModule,
     DatePipe,
     DecimalPipe,
     ProgressBarComponent,

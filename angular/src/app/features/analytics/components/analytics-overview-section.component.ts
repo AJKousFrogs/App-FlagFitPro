@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, input } from "@angular/core";
-import { CommonModule } from "@angular/common";
+import { DatePipe } from "@angular/common";
 import { RouterModule } from "@angular/router";
 import { ProgressBarComponent } from "../../../shared/components/progress-bar/progress-bar.component";
 import { CardShellComponent } from "../../../shared/components/card-shell/card-shell.component";
@@ -10,7 +10,7 @@ import { DevelopmentGoal, Metric } from "../analytics.models";
   selector: "app-analytics-overview-section",
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CommonModule,
+    DatePipe,
     RouterModule,
     ProgressBarComponent,
     CardShellComponent,

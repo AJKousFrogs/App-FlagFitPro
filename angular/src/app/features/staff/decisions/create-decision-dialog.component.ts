@@ -4,7 +4,7 @@
  * Multi-step wizard for creating decisions
  */
 
-import { CommonModule } from "@angular/common";
+import { DatePipe } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import {
   ChangeDetectionStrategy,
@@ -43,7 +43,7 @@ import { TextareaComponent } from "@shared/components/textarea/textarea.componen
   selector: "app-create-decision-dialog",
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CommonModule,
+    DatePipe,
     FormsModule,
     ButtonComponent,
     SelectComponent,

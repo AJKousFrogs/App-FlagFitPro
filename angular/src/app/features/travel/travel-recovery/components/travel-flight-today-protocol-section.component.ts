@@ -1,4 +1,5 @@
-import { CommonModule } from "@angular/common";
+
+import { DecimalPipe, TitleCasePipe } from "@angular/common";
 import { ChangeDetectionStrategy, Component, input } from "@angular/core";
 
 import { StatusTagSeverity } from "../../../../shared/components/status-tag/status-tag.component";
@@ -9,7 +10,7 @@ import { RecoveryProtocol } from "../../../../core/services/travel-recovery.serv
 @Component({
   selector: "app-travel-flight-today-protocol-section",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, CardShellComponent, StatusTagComponent],
+  imports: [DecimalPipe, TitleCasePipe, CardShellComponent, StatusTagComponent],
   templateUrl: "./travel-flight-today-protocol-section.component.html",
   styleUrl: "./travel-flight-today-protocol-section.component.scss",
 })

@@ -1,4 +1,4 @@
-import { CommonModule, DatePipe } from "@angular/common";
+import { DatePipe } from "@angular/common";
 import { ChangeDetectionStrategy, Component, input, output } from "@angular/core";
 import { ButtonComponent } from "../../../../shared/components/button/button.component";
 import { CardShellComponent } from "../../../../shared/components/card-shell/card-shell.component";
@@ -25,7 +25,6 @@ export interface NutritionistTournamentBriefView {
   selector: "app-nutritionist-tournament-section",
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CommonModule,
     DatePipe,
     ButtonComponent,
     CardShellComponent,

@@ -14,7 +14,7 @@ import {
   inject,
   signal,
 } from "@angular/core";
-import { CommonModule } from "@angular/common";
+import { DatePipe } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { firstValueFrom } from "rxjs";
 import { AlertComponent } from "../../../shared/components/alert/alert.component";
@@ -91,7 +91,7 @@ interface SessionTypeOption {
   selector: "app-qb-throwing-tracker",
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CommonModule,
+    DatePipe,
     FormsModule,
     AppDialogComponent,
     DialogHeaderComponent,

@@ -1,4 +1,4 @@
-import { CommonModule, TitleCasePipe } from "@angular/common";
+import { TitleCasePipe } from "@angular/common";
 import { ChangeDetectionStrategy, Component, input } from "@angular/core";
 import { Chip } from "primeng/chip";
 import { CardShellComponent } from "../../../../shared/components/card-shell/card-shell.component";
@@ -16,7 +16,6 @@ import {
   selector: "app-travel-flight-severity-section",
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CommonModule,
     TitleCasePipe,
     Chip,
     CardShellComponent,

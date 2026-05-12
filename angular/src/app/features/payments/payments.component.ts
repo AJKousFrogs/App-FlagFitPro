@@ -16,7 +16,7 @@
  * Design System Compliant (DESIGN_SYSTEM_RULES.md)
  */
 
-import { CommonModule, CurrencyPipe, DatePipe } from "@angular/common";
+import { CurrencyPipe, DatePipe } from "@angular/common";
 import {
   ChangeDetectionStrategy,
   Component,
@@ -114,7 +114,6 @@ const PAYMENT_METHOD_CONFIG: Record<
   selector: "app-payments",
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CommonModule,
     CurrencyPipe,
     DatePipe,
     AlertComponent,

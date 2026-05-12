@@ -16,7 +16,7 @@
  * @version 1.0.0
  */
 
-import { CommonModule } from "@angular/common";
+
 import {
   ChangeDetectionStrategy,
   Component,
@@ -32,6 +32,7 @@ import { ActivatedRoute, Router } from "@angular/router";
 
 // PrimeNG Components
 
+import { DecimalPipe } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { IconButtonComponent } from "../../../shared/components/button/icon-button.component";
@@ -113,7 +114,7 @@ interface HydrationLog {
   selector: "app-tournament-nutrition",
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CommonModule,
+    DecimalPipe,
     FormsModule,
     CheckboxComponent,
     FormInputComponent,

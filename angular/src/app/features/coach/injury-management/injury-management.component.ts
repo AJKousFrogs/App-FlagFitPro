@@ -7,7 +7,7 @@
  * Design System Compliant (DESIGN_SYSTEM_RULES.md)
  */
 
-import { CommonModule, DatePipe } from "@angular/common";
+import { DatePipe } from "@angular/common";
 import {
   ChangeDetectionStrategy,
   Component,
@@ -263,7 +263,6 @@ const RTP_STAGES: RtpStage[] = [
   selector: "app-injury-management",
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CommonModule,
     ReactiveFormsModule,
     DatePipe,
     AvatarComponent,

@@ -11,7 +11,7 @@ import {
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 
-import { CommonModule } from "@angular/common";
+import { DatePipe } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { ActivatedRoute, ParamMap, Router, RouterModule } from "@angular/router";
 import { type CheckboxChangeEvent } from "primeng/checkbox";
@@ -93,7 +93,7 @@ interface TrainingEntryContext {
   selector: "app-training-schedule",
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CommonModule,
+    DatePipe,
     FormsModule,
     DatePicker,
     Skeleton,

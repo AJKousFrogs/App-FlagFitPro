@@ -16,7 +16,7 @@
  * @version 2.0.0
  */
 
-import { CommonModule } from "@angular/common";
+import { DatePipe } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import {
   ChangeDetectionStrategy,
@@ -93,7 +93,7 @@ interface FlightTripForm {
   selector: "app-travel-recovery",
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CommonModule,
+    DatePipe,
     FormsModule,
     RouterModule,
     Chip,

@@ -7,7 +7,7 @@ import {
   OnInit,
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
-import { CommonModule } from "@angular/common";
+import { DatePipe } from "@angular/common";
 import { RouterLink } from "@angular/router";
 import { ButtonComponent } from "../../shared/components/button/button.component";
 import { IconButtonComponent } from "../../shared/components/button/icon-button.component";
@@ -48,7 +48,7 @@ interface Team {
   selector: "app-superadmin-teams",
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CommonModule,
+    DatePipe,
     RouterLink,
     CardShellComponent,
     StatusTagComponent,

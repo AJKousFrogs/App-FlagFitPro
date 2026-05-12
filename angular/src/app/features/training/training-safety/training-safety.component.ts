@@ -11,6 +11,7 @@
  * CRITICAL SAFETY COMPONENT - This helps prevent athlete injuries
  */
 
+import { DecimalPipe } from "@angular/common";
 import {
   Component,
   OnInit,
@@ -20,7 +21,7 @@ import {
   ChangeDetectionStrategy,
   DestroyRef,
 } from "@angular/core";
-import { CommonModule } from "@angular/common";
+
 import { RouterModule } from "@angular/router";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { AlertComponent } from "../../../shared/components/alert/alert.component";
@@ -54,7 +55,7 @@ import {
   selector: "app-training-safety",
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CommonModule,
+    DecimalPipe,
     RouterModule,
     ProgressBar,
     Tabs,

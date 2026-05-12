@@ -1,4 +1,4 @@
-import { CommonModule } from "@angular/common";
+import { DatePipe } from "@angular/common";
 import {
   ChangeDetectionStrategy,
   Component,
@@ -146,7 +146,7 @@ interface NewOpponentForm {
   selector: "app-scouting-reports",
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CommonModule,
+    DatePipe,
     RouterModule,
     FormsModule,
     AppDialogComponent,
