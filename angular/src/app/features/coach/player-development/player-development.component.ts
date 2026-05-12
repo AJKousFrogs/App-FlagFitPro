@@ -676,13 +676,7 @@ export class PlayerDevelopmentComponent implements OnInit {
   }
 
   getStatusLabel(status: string): string {
-    const labels: Record<string, string> = {
-      "on-track": "On Track",
-      ahead: "Ahead of Schedule",
-      behind: "Needs Focus",
-      completed: "Completed",
-    };
-    return labels[status] || status;
+    return GOAL_STATUS_LABELS[status] || status;
   }
 
   private getAssessmentGrade(score: number): string {

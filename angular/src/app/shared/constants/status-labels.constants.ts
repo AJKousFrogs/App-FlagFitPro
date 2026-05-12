@@ -123,9 +123,12 @@ export const SAFETY_WARNING_METRIC_LABELS: Record<string, string> = {
  */
 export const PRACTICE_STATUS_LABELS: Record<string, string> = {
   scheduled: "Scheduled",
+  "in-progress": "In Progress",
   in_progress: "In Progress",
   completed: "Completed",
   cancelled: "Cancelled",
+  draft: "Draft",
+  template: "Template",
 };
 
 /**

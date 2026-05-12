@@ -30,6 +30,7 @@ import { TextareaComponent } from "../../../shared/components/textarea/textarea.
 import { StatusTagComponent } from "../../../shared/components/status-tag/status-tag.component";
 import { getStatusSeverity as getStatusSeverityValue } from "../../../shared/utils/status.utils";
 import { DIALOG_BREAKPOINTS } from "../../../core/utils/design-tokens.util";
+import { PRACTICE_STATUS_LABELS } from "../../../shared/constants/status-labels.constants";
 
 import { LoggerService } from "../../../core/services/logger.service";
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
@@ -668,15 +669,7 @@ export class PracticePlannerComponent implements OnInit {
   }
 
   getStatusLabel(status: string): string {
-    const labels: Record<string, string> = {
-      scheduled: "Scheduled",
-      "in-progress": "In Progress",
-      completed: "Completed",
-      cancelled: "Cancelled",
-      draft: "Draft",
-      template: "Template",
-    };
-    return labels[status] || status;
+    return PRACTICE_STATUS_LABELS[status] || status;
   }
 
   getStatusSeverity(

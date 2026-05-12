@@ -29,6 +29,7 @@ import {
   AppDialogComponent,
   DialogHeaderComponent,
 } from "../../../../shared/components/ui-components";
+import { LA28_ROADMAP_STATUS_LABELS } from "../../../../shared/constants/status-labels.constants";
 
 interface ProgramCycle {
   id: string;
@@ -226,12 +227,7 @@ export class La28RoadmapComponent {
   }
 
   getStatusLabel(status: string): string {
-    const labels: Record<string, string> = {
-      not_started: "Not Started",
-      in_progress: "In Progress",
-      completed: "Completed",
-    };
-    return labels[status] || status;
+    return LA28_ROADMAP_STATUS_LABELS[status] || status;
   }
 
   getStatusSeverity(

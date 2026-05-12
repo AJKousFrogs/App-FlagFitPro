@@ -644,13 +644,7 @@ export class ProgramBuilderComponent implements OnInit {
   }
 
   getStatusLabel(status: ProgramStatus): string {
-    const labels: Record<ProgramStatus, string> = {
-      draft: "Draft",
-      active: "Active",
-      completed: "Completed",
-      archived: "Archived",
-    };
-    return labels[status];
+    return PROGRAM_STATUS_LABELS[status] ?? status;
   }
 
   getProgramTypeLabel(type: ProgramType): string {
@@ -704,11 +698,6 @@ export class ProgramBuilderComponent implements OnInit {
   }
 
   getPlayerStatusLabel(status: string): string {
-    const labels: Record<string, string> = {
-      "minor-injury": "Minor Injury",
-      rtp: "RTP",
-      inactive: "Inactive",
-    };
-    return labels[status] || status;
+    return PROGRAM_STATUS_LABELS[status] || status;
   }
 }
