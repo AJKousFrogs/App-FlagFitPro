@@ -117,7 +117,7 @@ export class ResetPasswordComponent extends FormBase {
 
   async onSubmit(): Promise<void> {
     if (this.resetForm.invalid) {
-      this.resetForm.markAllAsTouched();
+      this.markFormGroupTouched(this.resetForm);
       return;
     }
 

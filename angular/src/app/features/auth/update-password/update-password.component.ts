@@ -310,7 +310,7 @@ export class UpdatePasswordComponent extends FormBase implements OnInit {
 
   async onSubmit(): Promise<void> {
     if (this.passwordForm.invalid) {
-      this.passwordForm.markAllAsTouched();
+      this.markFormGroupTouched(this.passwordForm);
       return;
     }
 
