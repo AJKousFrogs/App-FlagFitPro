@@ -9,8 +9,7 @@ import {
   input,
   output,
   inject,
-  OnChanges,
-  SimpleChanges,
+  effect,
   ChangeDetectionStrategy,
   computed,
 } from "@angular/core";
@@ -210,7 +209,7 @@ export interface PlayerFormData {
   `,
   styleUrl: "./roster-player-form-dialog.component.scss",
 })
-export class RosterPlayerFormDialogComponent implements OnChanges {
+export class RosterPlayerFormDialogComponent {
   private fb = inject(FormBuilder);
   private formErrorService = inject(FormErrorService);
 
@@ -324,10 +323,11 @@ export class RosterPlayerFormDialogComponent implements OnChanges {
     this.formErrorService.scrollToField(fieldId);
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes["editingPlayer"] || changes["visible"]) {
+  constructor() {
+    effect(() => {
       const player = this.editingPlayer();
-      if (player && this.visible()) {
+      const isVisible = this.visible();
+      if (player && isVisible) {
         this.playerForm.patchValue({
           name: player.name,
           position: player.position,
@@ -340,10 +340,10 @@ export class RosterPlayerFormDialogComponent implements OnChanges {
           phone: player.phone || "",
           status: player.status,
         });
-      } else if (this.visible() && !player) {
+      } else if (isVisible && !player) {
         this.playerForm.reset({ status: "active" });
       }
-    }
+    });
   }
 
   onSave(): void {
