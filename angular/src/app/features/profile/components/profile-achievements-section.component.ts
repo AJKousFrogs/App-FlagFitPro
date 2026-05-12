@@ -11,7 +11,6 @@ interface ProfileAchievement {
 
 @Component({
   selector: "app-profile-achievements-section",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [EmptyStateComponent, CardShellComponent],
   templateUrl: "./profile-achievements-section.component.html",

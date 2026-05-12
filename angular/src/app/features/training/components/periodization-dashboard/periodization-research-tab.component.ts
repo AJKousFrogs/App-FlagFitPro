@@ -4,7 +4,6 @@ import { EvidenceReference } from "../../../../core/services/flag-football-perio
 
 @Component({
   selector: "app-periodization-research-tab",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [],
   templateUrl: "./periodization-research-tab.component.html",

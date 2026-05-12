@@ -13,7 +13,6 @@ import { TabsModule } from "primeng/tabs";
 
 @Directive({
   selector: "ng-template[appTabPanel]",
-  standalone: true,
 })
 export class AppTabPanelDirective {
   header = input.required<string>({ alias: "appTabPanelHeader" });
@@ -26,7 +25,6 @@ export class AppTabPanelDirective {
 
 @Component({
   selector: "app-tabs",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [TabsModule, NgTemplateOutlet],
   template: `

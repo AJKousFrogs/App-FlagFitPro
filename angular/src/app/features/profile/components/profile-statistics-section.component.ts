@@ -17,7 +17,6 @@ interface ProfilePerformanceStat {
 
 @Component({
   selector: "app-profile-statistics-section",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CardShellComponent, StatusTagComponent],
   templateUrl: "./profile-statistics-section.component.html",

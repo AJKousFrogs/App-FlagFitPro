@@ -8,7 +8,6 @@ import { PlayerStatus, STATUS_OPTIONS } from "../roster.models";
 
 @Component({
   selector: "app-roster-status-options",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: "./roster-status-options.component.html",
   styleUrl: "./roster-status-options.component.scss",

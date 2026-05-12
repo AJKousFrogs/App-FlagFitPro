@@ -13,7 +13,6 @@ import {
 
 @Component({
   selector: "app-staff-insight-feed-card",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CardShellComponent, StatusTagComponent],
   templateUrl: "./staff-insight-feed-card.component.html",

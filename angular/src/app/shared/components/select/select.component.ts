@@ -16,7 +16,6 @@ type SelectValue = SelectChangeEvent["value"];
 
 @Component({
   selector: "app-select",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [SelectModule, FormsModule],
   providers: [

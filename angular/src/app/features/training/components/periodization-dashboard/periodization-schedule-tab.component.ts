@@ -6,7 +6,6 @@ import { type StatusSeverityBase } from "../../../../shared/utils/status.utils";
 
 @Component({
   selector: "app-periodization-schedule-tab",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [StatusTagComponent],
   templateUrl: "./periodization-schedule-tab.component.html",

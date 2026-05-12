@@ -4,7 +4,6 @@ import { PageErrorStateComponent } from "../page-error-state/page-error-state.co
 
 @Component({
   selector: "app-staff-dashboard-load-state",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [AppLoadingComponent, PageErrorStateComponent],
   templateUrl: "./staff-dashboard-load-state.component.html",

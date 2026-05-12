@@ -29,7 +29,6 @@ const INTENT_VISUALS: Record<PrescriptionIntent, IntentVisual> = {
 
 @Component({
   selector: "app-today-prescription-card",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [],
   template: `

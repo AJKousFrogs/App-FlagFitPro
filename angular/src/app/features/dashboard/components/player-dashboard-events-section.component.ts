@@ -34,7 +34,6 @@ interface DashboardUpcomingDisplayEvent {
 
 @Component({
   selector: "app-player-dashboard-events-section",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     RouterModule,

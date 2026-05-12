@@ -35,7 +35,6 @@ interface ReturnToPlayDataView {
 
 @Component({
   selector: "app-physio-rtp-section",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ProgressBarComponent,

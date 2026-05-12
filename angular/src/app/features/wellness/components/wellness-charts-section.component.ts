@@ -7,7 +7,6 @@ import { SimpleChartData } from "../../../core/models/chart.models";
 
 @Component({
   selector: "app-wellness-charts-section",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     LazyChartComponent,

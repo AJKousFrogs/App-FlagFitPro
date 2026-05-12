@@ -24,7 +24,6 @@ interface DashboardQuickAction {
 
 @Component({
   selector: "app-player-dashboard-insights-grid",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ProgressBarComponent,

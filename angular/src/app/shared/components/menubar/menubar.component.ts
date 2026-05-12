@@ -10,7 +10,6 @@ import { MenubarModule } from "primeng/menubar";
 
 @Component({
   selector: "app-menubar",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [MenubarModule],
   template: `

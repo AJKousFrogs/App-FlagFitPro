@@ -9,7 +9,6 @@ import { ProgressBarModule } from "primeng/progressbar";
 
 @Component({
   selector: "app-progress-bar",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.None,
   host: { class: "app-progress-bar-host" },

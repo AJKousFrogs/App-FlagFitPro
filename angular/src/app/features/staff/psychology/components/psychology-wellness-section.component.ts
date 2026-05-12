@@ -46,7 +46,6 @@ interface MentalWellnessReport {
 
 @Component({
   selector: "app-psychology-wellness-section",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     FormsModule,

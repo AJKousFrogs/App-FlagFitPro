@@ -15,7 +15,6 @@ import { InputNumberModule } from "primeng/inputnumber";
 
 @Component({
   selector: "app-input-number",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.None,
   host: { class: "app-input-number-host" },

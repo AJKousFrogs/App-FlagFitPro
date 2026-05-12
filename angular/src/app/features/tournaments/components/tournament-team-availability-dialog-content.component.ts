@@ -31,7 +31,6 @@ interface TournamentBudget {
 
 @Component({
   selector: "app-tournament-team-availability-dialog-content",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [DecimalPipe, ButtonComponent, StatusTagComponent],
   templateUrl: "./tournament-team-availability-dialog-content.component.html",

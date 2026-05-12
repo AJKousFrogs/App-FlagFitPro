@@ -10,7 +10,6 @@ interface ProfileActivity {
 
 @Component({
   selector: "app-profile-overview-section",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CardShellComponent, EmptyStateComponent],
   templateUrl: "./profile-overview-section.component.html",

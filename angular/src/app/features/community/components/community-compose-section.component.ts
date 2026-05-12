@@ -8,7 +8,6 @@ import { ButtonComponent } from "../../../shared/components/button/button.compon
 
 @Component({
   selector: "app-community-compose-section",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     AvatarComponent,

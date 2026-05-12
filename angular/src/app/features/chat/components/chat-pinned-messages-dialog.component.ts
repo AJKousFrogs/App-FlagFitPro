@@ -13,7 +13,6 @@ import { getTimeAgo } from "../../../shared/utils/date.utils";
 
 @Component({
   selector: "app-chat-pinned-messages-dialog",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     AppDialogComponent,

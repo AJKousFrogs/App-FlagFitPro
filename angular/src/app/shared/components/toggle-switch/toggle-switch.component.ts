@@ -14,7 +14,6 @@ import { ToggleSwitchModule, ToggleSwitchChangeEvent } from "primeng/toggleswitc
 
 @Component({
   selector: "app-toggle-switch",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [ToggleSwitchModule, FormsModule],
   providers: [

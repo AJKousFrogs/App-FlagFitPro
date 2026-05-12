@@ -24,7 +24,6 @@ import type {
 
 @Component({
   selector: "app-today-summary-header",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [ButtonComponent, CardShellComponent],
   templateUrl: "./today-summary-header.component.html",

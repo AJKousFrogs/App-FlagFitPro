@@ -19,7 +19,6 @@ interface WearableDeviceView {
 
 @Component({
   selector: "app-data-import-wearables-flow",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CardShellComponent, ButtonComponent, StatusTagComponent],
   templateUrl: "./data-import-wearables-flow.component.html",

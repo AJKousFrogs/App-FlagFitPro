@@ -13,7 +13,6 @@ import type { OnboardingStep } from "../models/onboarding.model";
 
 @Component({
   selector: "app-onboarding-modern-shell",
-  standalone: true,
   imports: [ProgressBarComponent, AlertComponent, StepperModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.None,

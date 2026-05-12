@@ -20,7 +20,6 @@ interface CompletionStats {
 
 @Component({
   selector: "app-onboarding-progress-shell",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [],
   templateUrl: "./onboarding-progress-shell.component.html",

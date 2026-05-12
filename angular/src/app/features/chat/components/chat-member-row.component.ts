@@ -9,7 +9,6 @@ export type ChatMemberRowPresence = ChannelMemberDetails & { is_online: boolean 
 
 @Component({
   selector: "app-chat-member-row",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [AvatarComponent, StatusTagComponent, IconButtonComponent],
   templateUrl: "./chat-member-row.component.html",

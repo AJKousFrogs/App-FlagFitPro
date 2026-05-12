@@ -16,7 +16,6 @@ interface GeneratedReport {
 
 @Component({
   selector: "app-psychology-reports-list-section",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     DatePipe,

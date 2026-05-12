@@ -7,7 +7,6 @@ import { MobileOptimizedImageDirective } from "../../../shared/directives/mobile
 
 @Component({
   selector: "app-profile-header-section",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     RouterModule,

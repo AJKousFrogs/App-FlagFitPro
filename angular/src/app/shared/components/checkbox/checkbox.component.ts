@@ -14,7 +14,6 @@ import { CheckboxModule, CheckboxChangeEvent } from "primeng/checkbox";
 
 @Component({
   selector: "app-checkbox",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CheckboxModule, FormsModule],
   providers: [

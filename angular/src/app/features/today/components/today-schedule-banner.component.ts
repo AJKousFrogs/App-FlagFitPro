@@ -29,7 +29,6 @@ const DENSITY_THRESHOLD_GAMES_14D = 10;
 
 @Component({
   selector: "app-today-schedule-banner",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [],
   template: `

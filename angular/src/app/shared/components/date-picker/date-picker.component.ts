@@ -13,7 +13,6 @@ import { DatePickerModule } from "primeng/datepicker";
 
 @Component({
   selector: "app-date-picker",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.None,
   host: { class: "app-date-picker-host" },

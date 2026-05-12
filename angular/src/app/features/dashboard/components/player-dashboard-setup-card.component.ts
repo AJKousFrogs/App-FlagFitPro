@@ -8,7 +8,6 @@ import type { ActionRequiredMeaning } from "../../../core/semantics/semantic-mea
 
 @Component({
   selector: "app-player-dashboard-setup-card",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     NgTemplateOutlet,

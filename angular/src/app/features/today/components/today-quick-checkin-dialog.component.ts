@@ -26,7 +26,6 @@ interface QuickFormData {
 
 @Component({
   selector: "app-today-quick-checkin-dialog",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [AppDialogComponent, DialogHeaderComponent, DialogFooterComponent],
   templateUrl: "./today-quick-checkin-dialog.component.html",

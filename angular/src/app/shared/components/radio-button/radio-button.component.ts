@@ -14,7 +14,6 @@ import { RadioButtonModule, RadioButtonClickEvent } from "primeng/radiobutton";
 
 @Component({
   selector: "app-radio-button",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [RadioButtonModule, FormsModule],
   providers: [

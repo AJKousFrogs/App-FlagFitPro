@@ -22,7 +22,6 @@ type ChatMemberWithPresence = ChannelMemberDetails & { is_online: boolean };
 
 @Component({
   selector: "app-chat-members-dialog",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     FormsModule,

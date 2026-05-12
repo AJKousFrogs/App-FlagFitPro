@@ -14,7 +14,6 @@ import { TextareaModule } from "primeng/textarea";
 
 @Component({
   selector: "app-textarea",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [TextareaModule, FormsModule],
   providers: [

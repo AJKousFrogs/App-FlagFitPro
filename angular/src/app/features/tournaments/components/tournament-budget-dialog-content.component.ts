@@ -6,7 +6,6 @@ import { FormInputComponent } from "../../../shared/components/form-input/form-i
 
 @Component({
   selector: "app-tournament-budget-dialog-content",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [ReactiveFormsModule, InputNumberComponent, FormInputComponent, DecimalPipe],
   templateUrl: "./tournament-budget-dialog-content.component.html",

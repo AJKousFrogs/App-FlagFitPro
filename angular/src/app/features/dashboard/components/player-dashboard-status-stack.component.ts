@@ -15,7 +15,6 @@ interface OverrideDisplayItem {
 
 @Component({
   selector: "app-player-dashboard-status-stack",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CloseButtonComponent,

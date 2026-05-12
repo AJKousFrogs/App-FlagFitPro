@@ -5,7 +5,6 @@ import { ButtonComponent } from "../../../shared/components/button/button.compon
 
 @Component({
   selector: "app-community-header",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [RouterModule, ButtonComponent],
   templateUrl: "./community-header.component.html",

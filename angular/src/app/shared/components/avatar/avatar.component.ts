@@ -3,7 +3,6 @@ import { Avatar } from "primeng/avatar";
 
 @Component({
   selector: "app-avatar",
-  standalone: true,
   imports: [Avatar],
   changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.None,

@@ -18,7 +18,6 @@ import { FormInputComponent } from "../../../shared/components/form-input/form-i
 
 @Component({
   selector: "app-tournament-form-dialog",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ReactiveFormsModule,

@@ -19,7 +19,6 @@ interface SupplementComplianceView {
 
 @Component({
   selector: "app-nutritionist-supplement-section",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [ProgressBarComponent, CardShellComponent, EmptyStateComponent, StatusTagComponent],
   templateUrl: "./nutritionist-supplement-section.component.html",

@@ -13,7 +13,6 @@ interface InjuryHistoryView {
 
 @Component({
   selector: "app-physio-history-section",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [FormsModule, SelectComponent, CardShellComponent],
   templateUrl: "./physio-history-section.component.html",

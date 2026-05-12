@@ -10,7 +10,6 @@ import { PlatformService } from "../../core/services/platform.service";
 
 @Directive({
   selector: "[appResponsiveGridSpan]",
-  standalone: true,
   host: {
     "[style.grid-column]": "gridColumn",
   },

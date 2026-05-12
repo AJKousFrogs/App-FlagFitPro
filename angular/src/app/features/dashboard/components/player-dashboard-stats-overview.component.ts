@@ -28,7 +28,6 @@ interface AcwrDisplayInput {
 
 @Component({
   selector: "app-player-dashboard-stats-overview",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     NgTemplateOutlet,

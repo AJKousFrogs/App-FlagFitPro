@@ -12,7 +12,6 @@ import { AccordionModule } from "primeng/accordion";
 
 @Directive({
   selector: "ng-template[appAccordionPanel]",
-  standalone: true,
 })
 export class AppAccordionPanelDirective {
   header = input.required<string>();
@@ -27,7 +26,6 @@ type AccordionModelValue = AccordionValue | string[] | number[] | null;
 
 @Component({
   selector: "app-accordion",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [AccordionModule, NgTemplateOutlet],
   template: `

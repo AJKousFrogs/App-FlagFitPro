@@ -23,7 +23,6 @@ export interface ChatChannelCreateRequest {
 
 @Component({
   selector: "app-chat-create-channel-dialog",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     AppDialogComponent,

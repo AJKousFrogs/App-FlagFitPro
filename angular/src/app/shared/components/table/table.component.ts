@@ -13,7 +13,6 @@ import { TableModule, TablePageEvent, TableRowSelectEvent, TableRowUnSelectEvent
 
 @Component({
   selector: "app-table",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.None,
   host: { class: "app-table-host" },

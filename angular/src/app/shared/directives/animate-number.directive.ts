@@ -57,7 +57,6 @@ import { MotionPreferencesService } from "../../core/services/motion-preferences
  */
 @Directive({
   selector: "[appAnimateNumber]",
-  standalone: true,
 })
 export class AnimateNumberDirective implements OnInit {
   private readonly el = inject(ElementRef<HTMLElement>);

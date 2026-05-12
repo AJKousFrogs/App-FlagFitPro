@@ -14,7 +14,6 @@ import { PasswordModule } from "primeng/password";
 
 @Component({
   selector: "app-password-input",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [PasswordModule, FormsModule],
   providers: [

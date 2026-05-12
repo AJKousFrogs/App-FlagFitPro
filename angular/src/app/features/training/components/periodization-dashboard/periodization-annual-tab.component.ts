@@ -20,7 +20,6 @@ interface TimelineEvent {
 
 @Component({
   selector: "app-periodization-annual-tab",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     Timeline,

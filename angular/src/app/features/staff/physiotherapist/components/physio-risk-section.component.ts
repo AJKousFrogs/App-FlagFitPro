@@ -19,7 +19,6 @@ interface RiskIndicatorView {
 
 @Component({
   selector: "app-physio-risk-section",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ProgressBarComponent,

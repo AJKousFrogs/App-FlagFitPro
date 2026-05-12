@@ -5,7 +5,6 @@ import { SprintPhaseGuidelines } from "../../../../core/services/sprint-training
 
 @Component({
   selector: "app-periodization-sprint-tab",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [Chip],
   templateUrl: "./periodization-sprint-tab.component.html",

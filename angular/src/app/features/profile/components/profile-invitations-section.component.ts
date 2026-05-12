@@ -20,7 +20,6 @@ interface ProfileInvitation {
 
 @Component({
   selector: "app-profile-invitations-section",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     DatePipe,

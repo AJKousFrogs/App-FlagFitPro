@@ -19,7 +19,6 @@ export interface InjuryPlayerSummaryModel {
 
 @Component({
   selector: "app-injury-player-summary",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [DatePipe, AvatarComponent],
   templateUrl: "./injury-player-summary.component.html",

@@ -15,7 +15,6 @@ interface AvailabilityOption {
 
 @Component({
   selector: "app-tournament-availability-dialog-content",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ReactiveFormsModule,

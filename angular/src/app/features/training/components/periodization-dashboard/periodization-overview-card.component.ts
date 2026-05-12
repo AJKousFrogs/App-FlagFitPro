@@ -13,7 +13,6 @@ import { type StatusSeverityBase } from "../../../../shared/utils/status.utils";
 
 @Component({
   selector: "app-periodization-overview-card",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     DatePipe,
