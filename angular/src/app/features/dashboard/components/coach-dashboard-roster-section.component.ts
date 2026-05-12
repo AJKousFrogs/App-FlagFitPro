@@ -11,6 +11,7 @@ import { TableComponent } from "../../../shared/components/table/table.component
 import {
   getMappedStatusSeverity,
   playerStatusSeverityMap,
+  type StatusSeverityBase,
 } from "../../../shared/utils/status.utils";
 import { PlayerPerformanceStats } from "../../../core/services/team-statistics.service";
 import { PLAYER_STATUS_LABELS } from "../../../shared/constants/status-labels.constants";
@@ -74,10 +75,10 @@ export class CoachDashboardRosterSectionComponent {
 
   protected getPositionSeverity(
     position: string,
-  ): "success" | "info" | "warning" | "danger" | "secondary" {
+  ): StatusSeverityBase {
     const positionColors: Record<
       string,
-      "success" | "info" | "warning" | "danger" | "secondary"
+      StatusSeverityBase
     > = {
       QB: "success",
       WR: "info",
@@ -114,7 +115,7 @@ export class CoachDashboardRosterSectionComponent {
 
   protected getStatusSeverity(
     status: string,
-  ): "success" | "info" | "warning" | "danger" {
+  ): StatusSeverityBase {
     return getMappedStatusSeverity(status, playerStatusSeverityMap, "info");
   }
 

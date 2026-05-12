@@ -24,6 +24,7 @@ import { SharedInsightFeedService } from "../../../core/services/shared-insight-
 import { LoggerService } from "../../../core/services/logger.service";
 import { ToastService } from "../../../core/services/toast.service";
 import { extractApiPayload } from "../../../core/utils/api-response-mapper";
+import { type StatusSeverityBase } from "../../../shared/utils/status.utils";
 import { AlertComponent } from "../../../shared/components/alert/alert.component";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
@@ -730,10 +731,10 @@ export class PsychologyReportsComponent implements OnInit {
 
   getSignificanceSeverity(
     significance: string,
-  ): "success" | "info" | "warning" | "danger" | "secondary" {
+  ): StatusSeverityBase {
     const severities: Record<
       string,
-      "success" | "info" | "warning" | "danger" | "secondary"
+      StatusSeverityBase
     > = {
       regular: "info",
       important: "warning",

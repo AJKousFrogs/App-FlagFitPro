@@ -39,7 +39,6 @@ import { Tooltip } from "primeng/tooltip";
  * <app-icon-button icon="pi-cog" ariaLabel="Settings" size="lg"></app-icon-button>
  * ```
  *
- * @version 1.0.0 - Unified Design System
  */
 export type IconButtonVariant =
   | "primary"

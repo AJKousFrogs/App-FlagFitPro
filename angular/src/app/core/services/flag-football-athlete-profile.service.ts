@@ -24,8 +24,6 @@
  * Static data (types, position requirements, benchmarks) lives in:
  * flag-football-athlete-profile.data.ts
  *
- * @author FlagFit Pro Team
- * @version 1.0.0
  */
 
 import { Injectable, inject, signal } from "@angular/core";

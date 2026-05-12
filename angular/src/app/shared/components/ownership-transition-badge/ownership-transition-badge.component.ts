@@ -17,6 +17,7 @@ import { OwnershipTransition } from "../../../core/services/ownership-transition
 import { LoggerService } from "../../../core/services/logger.service";
 import { getTimeAgo } from "../../utils/date.utils";
 import { OWNERSHIP_TRANSITION_STATUS_LABELS } from "../../constants/status-labels.constants";
+import { type StatusSeverity } from "../../utils/status.utils";
 
 @Component({
   selector: "app-ownership-transition-badge",
@@ -113,10 +114,10 @@ export class OwnershipTransitionBadgeComponent {
 
   getStatusSeverity(
     status: OwnershipTransition["status"],
-  ): "secondary" | "success" | "info" | "warning" | "danger" | "contrast" {
+  ): StatusSeverity {
     const severities: Record<
       string,
-      "secondary" | "success" | "info" | "warning" | "danger" | "contrast"
+      StatusSeverity
     > = {
       pending: "warning",
       in_progress: "info",
@@ -145,10 +146,5 @@ export class OwnershipTransitionBadgeComponent {
     return null;
   }
 
-  /**
-   * Get time ago string using centralized utility
-   */
-  getTimeAgoStr(date: Date): string {
-    return getTimeAgo(date);
-  }
+  getTimeAgoStr = getTimeAgo;
 }

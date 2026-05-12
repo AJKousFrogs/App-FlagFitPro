@@ -11,7 +11,6 @@
  * Note: Signal Forms are experimental in Angular 21. This configuration
  * provides a stable foundation that can evolve with the API.
  *
- * @version 1.0.0 - Angular 21 Signal Forms
  */
 
 import type { Signal } from "@angular/core";

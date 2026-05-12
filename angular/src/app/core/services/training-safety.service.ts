@@ -15,8 +15,6 @@
  * - Halson (2014) - Sleep and recovery
  * - Hulin et al. (2016) - Training monotony
  *
- * @author FlagFit Pro Team
- * @version 1.0.0
  */
 
 import { Injectable, inject, signal, computed } from "@angular/core";

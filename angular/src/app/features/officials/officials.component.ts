@@ -322,10 +322,10 @@ export class OfficialsComponent implements OnInit {
 
   getCertificationSeverity(
     level: string | undefined,
-  ): "success" | "info" | "warning" | "danger" {
+  ): StatusSeverityBase {
     const severities: Record<
       string,
-      "success" | "info" | "warning" | "danger"
+      StatusSeverityBase
     > = {
       professional: "success",
       college: "info",

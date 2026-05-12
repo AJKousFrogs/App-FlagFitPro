@@ -17,8 +17,6 @@
  *
  * NOTE: ACWR calculations delegate to AcwrService (single source of truth)
  *
- * @author FlagFit Pro Team
- * @version 1.1.0 - Consolidated ACWR to AcwrService
  */
 
 import { Injectable, inject, signal, computed } from "@angular/core";

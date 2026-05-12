@@ -28,6 +28,7 @@ import {
 } from "../../../core/services/shared-insight-feed.service";
 import { ToastService } from "../../../core/services/toast.service";
 import { extractApiPayload } from "../../../core/utils/api-response-mapper";
+import { type StatusSeverityBase } from "../../../shared/utils/status.utils";
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";
 import { AppLoadingComponent } from "../../../shared/components/loading/loading.component";
@@ -667,10 +668,10 @@ export class PhysiotherapistDashboardComponent implements OnInit {
 
   getInjurySeverity(
     severity: string,
-  ): "success" | "info" | "warning" | "danger" | "secondary" {
+  ): StatusSeverityBase {
     const severities: Record<
       string,
-      "success" | "info" | "warning" | "danger" | "secondary"
+      StatusSeverityBase
     > = {
       mild: "info",
       moderate: "warning",

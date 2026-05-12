@@ -8,6 +8,7 @@ import { StatusTagComponent } from "../../../shared/components/status-tag/status
 import { PlayerMissingData } from "../../../core/services/missing-data-detection.service";
 import { RiskAlert } from "../../../core/services/team-statistics.service";
 import { RiskMeaning } from "../../../core/semantics/semantic-meaning.types";
+import { type StatusSeverityBase } from "../../../shared/utils/status.utils";
 
 @Component({
   selector: "app-coach-dashboard-priority-section",
@@ -41,7 +42,7 @@ export class CoachDashboardPrioritySectionComponent {
 
   getMissingDataSeverity(
     severity: string,
-  ): "success" | "info" | "warning" | "danger" {
+  ): StatusSeverityBase {
     switch (severity) {
       case "critical":
         return "danger";

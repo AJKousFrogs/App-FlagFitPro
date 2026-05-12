@@ -22,8 +22,6 @@
  * - Training recommendations
  * - Alert notifications
  *
- * @author FlagFit Pro Team
- * @version 1.0.0
  */
 
 import { DatePipe } from "@angular/common";

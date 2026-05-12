@@ -16,8 +16,6 @@ import { Component, ChangeDetectionStrategy, input } from "@angular/core";
  * </app-control-row>
  * ```
  *
- * @author FlagFit Pro Team
- * @version 1.0.0
  */
 @Component({
   selector: "app-control-row",

@@ -31,6 +31,7 @@ import { AppLoadingComponent } from "../../shared/components/loading/loading.com
 import { PageErrorStateComponent } from "../../shared/components/page-error-state/page-error-state.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
 import { StatusTagComponent } from "../../shared/components/status-tag/status-tag.component";
+import { type StatusSeverityBase } from "../../shared/utils/status.utils";
 import {
   StatItem,
   StatsGridComponent,
@@ -901,7 +902,7 @@ export class PerformanceTrackingComponent {
     return severities[trendType] || "info";
   }
 
-  getScoreSeverity(score: number): "success" | "info" | "warning" | "danger" {
+  getScoreSeverity(score: number): StatusSeverityBase {
     if (score >= 90) return "success";
     if (score >= 80) return "info";
     if (score >= 70) return "warning";

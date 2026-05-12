@@ -81,6 +81,7 @@ import {
 import {
   getMappedStatusSeverity,
   rosterStatusSeverityMap,
+  type StatusSeverityBase,
 } from "../../shared/utils/status.utils";
 import {
   Player,
@@ -309,7 +310,7 @@ export class RosterComponent implements OnInit {
 
   getRiskSeverity(
     level: PlayerRiskLevel,
-  ): "success" | "info" | "warning" | "danger" {
+  ): StatusSeverityBase {
     switch (level) {
       case "low":
         return "success";

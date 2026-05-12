@@ -28,6 +28,7 @@ import { CheckboxComponent } from "../checkbox/checkbox.component";
 import { StatusTagComponent } from "../status-tag/status-tag.component";
 import { firstValueFrom } from "rxjs";
 import { ApiService } from "../../../core/services/api.service";
+import { type StatusSeverityBase } from "../../utils/status.utils";
 import { LoggerService } from "../../../core/services/logger.service";
 import { ToastService } from "../../../core/services/toast.service";
 import { TOAST } from "../../../core/constants/toast-messages.constants";
@@ -406,10 +407,10 @@ export class MicroSessionComponent implements OnInit, OnDestroy {
 
   getSessionTypeSeverity(
     type: string,
-  ): "success" | "info" | "warning" | "danger" | "secondary" {
+  ): StatusSeverityBase {
     const severities: Record<
       string,
-      "success" | "info" | "warning" | "danger" | "secondary"
+      StatusSeverityBase
     > = {
       recovery: "success",
       technique: "info",

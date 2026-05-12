@@ -36,6 +36,7 @@ import { StatusTagComponent } from "../../../shared/components/status-tag/status
 import {
   getMappedStatusSeverity,
   paymentStatusSeverityMap,
+  type StatusSeverity,
 } from "../../../shared/utils/status.utils";
 import { CheckboxComponent } from "../../../shared/components/checkbox/checkbox.component";
 import { DatePickerComponent } from "../../../shared/components/date-picker/date-picker.component";
@@ -442,7 +443,7 @@ export class PaymentManagementComponent implements OnInit {
 
   getStatusSeverity(
     status: string,
-  ): "success" | "info" | "warning" | "danger" | "secondary" | "contrast" {
+  ): StatusSeverity {
     return getMappedStatusSeverity(
       status,
       paymentStatusSeverityMap,

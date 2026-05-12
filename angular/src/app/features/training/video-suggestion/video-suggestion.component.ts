@@ -17,8 +17,6 @@ import { formatDate } from "../../shared/utils/date.utils";
  * - Clear status indicators
  * - Mobile-first design
  *
- * @author FlagFit Pro Team
- * @version 1.0.0
  * @angular 21
  */
 import {

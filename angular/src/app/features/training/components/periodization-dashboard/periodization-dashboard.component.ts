@@ -11,8 +11,6 @@
  * - Load targets and ACWR status
  * - Evidence-based research references
  *
- * @author FlagFit Pro Team
- * @version 1.0.0
  */
 
 import {

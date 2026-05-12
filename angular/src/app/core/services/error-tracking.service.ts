@@ -8,7 +8,6 @@
  * - Set VITE_ENABLE_SENTRY=true in environment
  * - Set VITE_SENTRY_DSN in environment
  *
- * @version 1.0.0
  */
 
 import { inject, Injectable } from "@angular/core";

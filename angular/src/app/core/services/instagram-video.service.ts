@@ -14,8 +14,6 @@
  * - Caching for performance optimization
  * - Platform detection and fallback handling
  *
- * @author FlagFit Pro Team
- * @version 1.0.0
  * @angular 21
  */
 

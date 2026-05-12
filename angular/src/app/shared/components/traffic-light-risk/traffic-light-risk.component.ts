@@ -6,8 +6,6 @@
  *
  * Design System Compliant (DESIGN_SYSTEM_RULES.md)
  *
- * @author FlagFit Pro Team
- * @version 2.0.0
  */
 
 import {

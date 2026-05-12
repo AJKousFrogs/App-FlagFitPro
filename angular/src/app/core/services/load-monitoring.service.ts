@@ -9,8 +9,6 @@
  *
  * Integrates with ACWR service for injury prevention
  *
- * @author FlagFit Pro Team
- * @version 2.0.0 - Added database integration
  */
 
 import { computed, inject, Injectable, signal } from "@angular/core";

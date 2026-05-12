@@ -4,7 +4,6 @@
  * Provides comprehensive form validation patterns for consistent
  * validation across the application before API submission.
  *
- * @version 1.0.0
  */
 
 import {

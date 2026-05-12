@@ -312,9 +312,7 @@ export class SidebarComponent implements OnInit {
     return item.route;
   }
 
-  isExactRoute(route: string): boolean {
-    return isExactNavigationRoute(route);
-  }
+  isExactRoute = isExactNavigationRoute;
 
   /**
    * Toggle "Me" group expansion and persist state

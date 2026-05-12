@@ -14,8 +14,6 @@
  * - Error log buffer for debugging
  * - Critical error detection
  *
- * @author FlagFit Pro Team
- * @version 1.0.0
  */
 
 import { Injectable, inject, NgZone } from "@angular/core";

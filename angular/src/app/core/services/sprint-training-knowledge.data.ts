@@ -22,8 +22,6 @@
  * - Buchheit et al. (2010) - Repeated-sprint sequences
  * - Petrakos et al. (2016) - Resisted sprint training
  *
- * @author FlagFit Pro Team
- * @version 1.0.0
  */
 
 // No Angular or service imports needed — pure data and interfaces

@@ -25,6 +25,7 @@ import { SharedInsightFeedService } from "../../../core/services/shared-insight-
 import { LoggerService } from "../../../core/services/logger.service";
 import { ToastService } from "../../../core/services/toast.service";
 import { extractApiPayload } from "../../../core/utils/api-response-mapper";
+import { type StatusSeverityBase } from "../../../shared/utils/status.utils";
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
 import { LazyChartComponent } from "../../../shared/components/lazy-chart/lazy-chart.component";
 import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";
@@ -617,11 +618,11 @@ export class NutritionistDashboardComponent implements OnInit {
 
   getHydrationSeverity(
     athleteId: string,
-  ): "success" | "info" | "warning" | "danger" | "secondary" {
+  ): StatusSeverityBase {
     const status = this.wellnessMetrics().get(athleteId)?.hydrationStatus;
     const severities: Record<
       string,
-      "success" | "info" | "warning" | "danger" | "secondary"
+      StatusSeverityBase
     > = {
       optimal: "success",
       good: "info",
@@ -633,7 +634,7 @@ export class NutritionistDashboardComponent implements OnInit {
 
   getComplianceSeverity(
     rate: number,
-  ): "success" | "info" | "warning" | "danger" | "secondary" {
+  ): StatusSeverityBase {
     if (rate >= 90) return "success";
     if (rate >= 75) return "info";
     if (rate >= 60) return "warning";

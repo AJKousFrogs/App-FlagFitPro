@@ -291,11 +291,7 @@ export class CoachOverrideNotificationComponent {
   }
 
   /**
-   * Get time ago string using centralized utility
-   */
-  getTimeAgoStr(dateString: string): string {
-    return getTimeAgo(dateString);
-  }
+  getTimeAgoStr = getTimeAgo;
 
   formatRecommendation(data: Record<string, unknown>): string {
     return JSON.stringify(data, null, 2);

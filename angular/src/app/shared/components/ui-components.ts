@@ -4,7 +4,6 @@
  * Central export file for all UI components
  * These components follow Angular 21 patterns with signals
  *
- * @version 2.0.0 - Added premium UX components
  */
 
 // ============================================================================

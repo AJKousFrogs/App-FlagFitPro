@@ -32,6 +32,7 @@ import { TableComponent } from "../../shared/components/table/table.component";
 import { TextareaComponent } from "../../shared/components/textarea/textarea.component";
 import { CheckboxComponent } from "../../shared/components/checkbox/checkbox.component";
 import { StatusTagComponent } from "../../shared/components/status-tag/status-tag.component";
+import { type StatusSeverity } from "../../shared/utils/status.utils";
 import { firstValueFrom } from "rxjs";
 
 import { ApiService, API_ENDPOINTS } from "../../core/services/api.service";
@@ -719,7 +720,7 @@ export class CycleTrackingComponent implements OnInit {
 
   getFlowSeverity(
     flow: string,
-  ): "success" | "info" | "warning" | "danger" | "secondary" | "contrast" {
+  ): StatusSeverity {
     const severities: Record<string, "success" | "warning" | "danger"> = {
       light: "success",
       moderate: "warning",

@@ -55,8 +55,6 @@
  * - Regular movement breaks every 1-2 hours critical for DVT prevention
  * - Prolonged sitting (>4 hours) increases DVT risk 2-3x
  *
- * @author FlagFit Pro Team
- * @version 2.0.0
  */
 
 import { Injectable, inject, signal, computed, effect } from "@angular/core";

@@ -12,8 +12,6 @@
  * - Cramp prevention protocols
  * - Referee duty considerations
  *
- * @author FlagFit Pro Team
- * @version 1.0.0
  */
 
 

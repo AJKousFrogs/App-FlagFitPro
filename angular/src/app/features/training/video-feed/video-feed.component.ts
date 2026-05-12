@@ -14,8 +14,6 @@
  * - Skeleton loading states
  * - Haptic feedback on interactions
  *
- * @author FlagFit Pro Team
- * @version 1.0.0
  * @angular 21
  */
 

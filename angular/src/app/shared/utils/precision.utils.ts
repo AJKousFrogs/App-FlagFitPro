@@ -4,7 +4,6 @@
  * Provides consistent rounding and precision handling across the application.
  * Critical for ACWR calculations and other numeric operations.
  *
- * @version 1.0.0
  */
 
 /**

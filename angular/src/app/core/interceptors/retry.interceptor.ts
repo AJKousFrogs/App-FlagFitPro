@@ -14,8 +14,6 @@
  * - POST/PUT/PATCH/DELETE requests (to avoid duplicate operations)
  * - Requests with custom skip header
  *
- * @author FlagFit Pro Team
- * @version 1.0.0
  */
 
 import {

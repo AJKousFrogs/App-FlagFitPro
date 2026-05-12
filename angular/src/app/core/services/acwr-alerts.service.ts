@@ -10,8 +10,6 @@
  *
  * Integrates with notification system and coach dashboard
  *
- * @author FlagFit Pro Team
- * @version 1.0.0
  */
 
 import { Injectable, signal, computed, effect, inject } from "@angular/core";

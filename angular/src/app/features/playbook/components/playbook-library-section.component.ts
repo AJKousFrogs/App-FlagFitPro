@@ -8,6 +8,7 @@ import { ButtonComponent } from "../../../shared/components/button/button.compon
 import { CardShellComponent } from "../../../shared/components/card-shell/card-shell.component";
 import { StatusTagComponent } from "../../../shared/components/status-tag/status-tag.component";
 import { Play, PlayCategory } from "../playbook.models";
+import { type StatusSeverityBase } from "../../../shared/utils/status.utils";
 
 @Component({
   selector: "app-playbook-library-section",
@@ -60,7 +61,7 @@ export class PlaybookLibrarySectionComponent {
 
   getCategorySeverity(
     category: PlayCategory,
-  ): "success" | "info" | "warning" | "danger" | "secondary" {
+  ): StatusSeverityBase {
     switch (category) {
       case "offense":
         return "success";

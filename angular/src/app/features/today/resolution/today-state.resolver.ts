@@ -6,8 +6,6 @@
  *
  * Contract: CONTRACT_2.2_TODAY_State_Behavior_Resolution.md
  *
- * @author FlagFit Pro Team
- * @version 1.0.0
  */
 
 export interface ProtocolJson {

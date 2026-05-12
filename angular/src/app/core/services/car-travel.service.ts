@@ -16,8 +16,6 @@
  * Extracted from TravelRecoveryService to keep each service single-responsibility.
  * Jet lag / air travel protocols remain in TravelRecoveryService.
  *
- * @author FlagFit Pro Team
- * @version 1.0.0
  */
 
 import { Injectable, inject } from "@angular/core";

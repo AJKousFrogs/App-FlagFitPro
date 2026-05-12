@@ -4,7 +4,6 @@
  * Handles importing open-source sport-science datasets and retrieving
  * processed flag-football metrics including ACWR calculations.
  *
- * @author FlagFit Pro Team
  */
 
 import { Injectable, inject } from "@angular/core";

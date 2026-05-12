@@ -4,8 +4,6 @@
  * Displays all available keyboard shortcuts in a modal dialog.
  * Triggered by Ctrl+/ or Cmd+/ or ?
  *
- * @author FlagFit Pro Team
- * @version 1.0.0
  */
 
 import {

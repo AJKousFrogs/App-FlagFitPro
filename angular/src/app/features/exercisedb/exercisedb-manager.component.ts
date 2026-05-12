@@ -28,7 +28,7 @@ import { CardShellComponent } from "../../shared/components/card-shell/card-shel
 import { AppDialogComponent } from "../../shared/components/dialog/dialog.component";
 import { DialogHeaderComponent } from "../../shared/components/dialog-header/dialog-header.component";
 import { formatDate as formatDateValue } from "../../shared/utils/date.utils";
-import { getStatusSeverity } from "../../shared/utils/status.utils";
+import { getStatusSeverity, type StatusSeverityBase } from "../../shared/utils/status.utils";
 import {
   ExerciseDBService,
   ExerciseDBExercise,
@@ -535,7 +535,7 @@ export class ExerciseDBManagerComponent implements OnInit {
 
   getRelevanceSeverity(
     relevance: number,
-  ): "success" | "info" | "warning" | "danger" | "secondary" {
+  ): StatusSeverityBase {
     if (relevance >= 8) return "success";
     if (relevance >= 6) return "info";
     if (relevance >= 4) return "warning";

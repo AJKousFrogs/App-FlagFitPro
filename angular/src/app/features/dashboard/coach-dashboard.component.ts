@@ -49,6 +49,7 @@ import { PageErrorStateComponent } from "../../shared/components/page-error-stat
 import { formatDate, getTimeAgo } from "../../shared/utils/date.utils";
 import {
   getStatusSeverity as getStatusSeverityValue,
+  type StatusSeverityBase,
 } from "../../shared/utils/status.utils";
 import { DatePipe } from "@angular/common";
 import { LINE_CHART_OPTIONS } from "../../shared/config/chart.config";
@@ -880,7 +881,7 @@ export class CoachDashboardComponent {
 
   getSessionStatusSeverity(
     status: string,
-  ): "success" | "info" | "warning" | "danger" | "secondary" {
+  ): StatusSeverityBase {
     return getStatusSeverityValue(status);
   }
 

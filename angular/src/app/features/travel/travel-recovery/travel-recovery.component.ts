@@ -12,8 +12,6 @@
  * - Blood circulation management
  * - Compression & massage gun guidance
  *
- * @author FlagFit Pro Team
- * @version 2.0.0
  */
 
 import { DatePipe } from "@angular/common";

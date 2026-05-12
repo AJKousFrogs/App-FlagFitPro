@@ -9,8 +9,6 @@
  * - Assign videos to training sessions
  * - Track which videos athletes have watched
  *
- * @author FlagFit Pro Team
- * @version 2.0.0 - Refactored into sub-components
  * @angular 21
  */
 

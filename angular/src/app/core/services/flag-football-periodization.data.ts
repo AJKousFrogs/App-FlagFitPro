@@ -27,8 +27,6 @@
  * - Turner & Stewart (2014) - Strength and Conditioning for Soccer
  * - Comfort et al. (2014) - Change of Direction Speed
  *
- * @author FlagFit Pro Team
- * @version 1.0.0
  */
 
 // No Angular or service imports needed — pure data and interfaces

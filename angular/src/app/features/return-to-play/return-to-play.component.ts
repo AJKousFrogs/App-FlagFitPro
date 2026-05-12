@@ -28,6 +28,7 @@ import { TextareaComponent } from "../../shared/components/textarea/textarea.com
 import { Slider } from "primeng/slider";
 
 import { StatusTagComponent } from "../../shared/components/status-tag/status-tag.component";
+import { type StatusSeverity } from "../../shared/utils/status.utils";
 import { firstValueFrom } from "rxjs";
 import { ButtonComponent } from "../../shared/components/button/button.component";
 import { CardShellComponent } from "../../shared/components/card-shell/card-shell.component";
@@ -829,7 +830,7 @@ export class ReturnToPlayComponent implements OnInit {
 
   getSeverityColor(
     severity: string,
-  ): "success" | "info" | "warning" | "danger" | "secondary" | "contrast" {
+  ): StatusSeverity {
     const colors: Record<string, "success" | "warning" | "danger"> = {
       mild: "success",
       moderate: "warning",

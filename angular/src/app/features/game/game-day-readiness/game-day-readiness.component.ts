@@ -4,8 +4,6 @@
  * Pre-competition wellness check-in for Olympic-bound flag football athletes.
  * Calculates readiness score and alerts coaches if athlete isn't competition-ready.
  *
- * @author FlagFit Pro Team
- * @version 1.0.0
  */
 
 

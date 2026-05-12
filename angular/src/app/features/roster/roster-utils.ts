@@ -6,6 +6,8 @@
 // getInitials is imported directly from format.utils where needed
 // getPositionDisplayName is imported from @core/constants/positions.constants
 
+import { type StatusSeverity } from "../../shared/utils/status.utils";
+
 /**
  * Get position icon class
  */
@@ -168,7 +170,7 @@ export function getPlayerStats(player: {
 export function getInvitationStatusSeverity(invitation: {
   isExpired: boolean;
   status: string;
-}): "success" | "info" | "warning" | "danger" | "secondary" | "contrast" {
+}): StatusSeverity {
   if (invitation.isExpired) return "danger";
   if (invitation.status === "pending") return "info";
   if (invitation.status === "accepted") return "success";

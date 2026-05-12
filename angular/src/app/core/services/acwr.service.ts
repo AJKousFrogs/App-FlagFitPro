@@ -26,8 +26,6 @@
  * - Gabbett, T. J. (2016). The training—injury prevention paradox: should athletes be training smarter and harder?
  * - Multiple systematic reviews and practitioner guidelines
  *
- * @author FlagFit Pro Team
- * @version 2.0.0 - Enhanced with evidence-based safeguards
  */
 
 import {

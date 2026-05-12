@@ -6,8 +6,6 @@
  *
  * Uses standardized .error-state utility classes from ui-standardization.scss
  *
- * @author FlagFit Pro Team
- * @version 2.0.0 - Angular 21 Signals
  */
 import {
   ChangeDetectionStrategy,

@@ -13,8 +13,6 @@
  * - Escape: Close modal/panel
  * - ?: Show shortcuts (when not in input)
  *
- * @author FlagFit Pro Team
- * @version 1.0.0
  */
 
 import {

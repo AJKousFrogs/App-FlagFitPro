@@ -50,7 +50,6 @@ import { LoggerService } from "@core/services/logger.service";
  * <app-button routerLink="/todays-practice" variant="text">Open Today's Practice</app-button>
  * ```
  *
- * @version 2.0.0 - Unified Design System
  */
 export type ButtonVariant =
   | "primary"
