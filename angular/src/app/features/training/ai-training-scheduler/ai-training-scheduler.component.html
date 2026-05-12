@@ -238,7 +238,7 @@
                       <div class="session-info">
                         <h4>{{ session.session_type }}</h4>
                         <p>
-                          {{ session.duration_minutes }} min •
+                          {{ session.duration_minutes * 60 | duration }} •
                           {{ session.intensity }}
                         </p>
                       </div>

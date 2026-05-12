@@ -32,6 +32,7 @@ import { PrivacySettingsService } from "../../../core/services/privacy-settings.
 import { SupabaseService } from "../../../core/services/supabase.service";
 import { AiTrainingSchedulerDataService } from "../services/ai-training-scheduler-data.service";
 import { extractApiPayload } from "../../../core/utils/api-response-mapper";
+import { DurationPipe } from "../../../shared/pipes/duration.pipe";
 
 interface AISuggestion {
   id: string;
@@ -109,6 +110,7 @@ interface AthleteMetrics {
     AiConsentRequiredComponent,
     ButtonComponent,
     EmptyStateComponent,
+    DurationPipe,
   ],
   templateUrl: "./ai-training-scheduler.component.html",
   styleUrl: "./ai-training-scheduler.component.scss",

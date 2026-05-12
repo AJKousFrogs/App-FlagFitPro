@@ -59,7 +59,7 @@
             <div class="item-time">{{ item.time }}</div>
             <div class="item-info">
               <span class="item-title">{{ item.title }}</span>
-              <span class="item-duration">{{ item.duration }} min</span>
+              <span class="item-duration">{{ item.duration * 60 | duration }}</span>
             </div>
           </div>
         </ng-template>

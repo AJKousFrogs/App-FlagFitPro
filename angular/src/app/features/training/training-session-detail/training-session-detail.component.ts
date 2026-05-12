@@ -22,6 +22,7 @@ import { ToastService } from "../../../core/services/toast.service";
 import { LoggerService } from "../../../core/services/logger.service";
 import { TOAST } from "../../../core/constants/toast-messages.constants";
 import { getTemplateSessionDateFromWeekRange } from "../../../shared/utils/training-template.utils";
+import { DurationPipe } from "../../../shared/pipes/duration.pipe";
 
 interface SessionDetails {
   id: string;
@@ -59,6 +60,7 @@ const isBoolean = (value: unknown): value is boolean =>
     PageHeaderComponent,
     StatusTagComponent,
     SkeletonLoaderComponent,
+    DurationPipe,
   ],
   templateUrl: "./training-session-detail.component.html",
   styleUrl: "./training-session-detail.component.scss",

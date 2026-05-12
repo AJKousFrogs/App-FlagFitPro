@@ -4,6 +4,7 @@ import { Timeline } from "primeng/timeline";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { CardShellComponent } from "../../../shared/components/card-shell/card-shell.component";
 import { StatusTagComponent } from "../../../shared/components/status-tag/status-tag.component";
+import { DurationPipe } from "../../../shared/pipes/duration.pipe";
 
 interface DashboardScheduleItem {
   id: string;
@@ -42,6 +43,7 @@ interface DashboardUpcomingDisplayEvent {
     ButtonComponent,
     CardShellComponent,
     StatusTagComponent,
+    DurationPipe,
   ],
   templateUrl: "./player-dashboard-events-section.component.html",
   styleUrl: "./player-dashboard-events-section.component.scss",

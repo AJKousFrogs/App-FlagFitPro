@@ -537,7 +537,7 @@
                       </p>
                       <!-- Duration tertiary -->
                       <p class="session-duration">
-                        Duration: {{ session.duration }} min
+                        Duration: {{ session.duration * 60 | duration }}
                       </p>
                     </div>
                     <div class="session-actions">

@@ -4,11 +4,12 @@ import { ButtonComponent } from "../../../shared/components/button/button.compon
 import { CardShellComponent } from "../../../shared/components/card-shell/card-shell.component";
 import { Workout, WeeklyScheduleDay } from "../../../core/models/training.models";
 import { UI_LIMITS } from "../../../core/constants/app.constants";
+import { DurationPipe } from "../../../shared/pipes/duration.pipe";
 
 @Component({
   selector: "app-training-schedule-workouts-section",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ButtonComponent, CardShellComponent],
+  imports: [ButtonComponent, CardShellComponent, DurationPipe],
   templateUrl: "./training-schedule-workouts-section.component.html",
   styleUrl: "./training-schedule-workouts-section.component.scss",
 })
