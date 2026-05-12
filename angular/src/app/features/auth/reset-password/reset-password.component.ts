@@ -19,6 +19,7 @@ import { ToastService } from "../../../core/services/toast.service";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { CardShellComponent } from "../../../shared/components/card-shell/card-shell.component";
 import { AuthFlowDataService } from "../services/auth-flow-data.service";
+import { FormBase } from "../../../shared/utils/form-base";
 
 @Component({
   selector: "app-reset-password",
@@ -83,7 +84,7 @@ import { AuthFlowDataService } from "../services/auth-flow-data.service";
   `,
   styleUrl: "./reset-password.component.scss",
 })
-export class ResetPasswordComponent {
+export class ResetPasswordComponent extends FormBase {
   private fb = inject(NonNullableFormBuilder);
   private router = inject(Router);
   private toastService = inject(ToastService);
@@ -100,11 +101,10 @@ export class ResetPasswordComponent {
   }
 
   isFieldInvalid(fieldName: string): boolean {
-    const field = this.resetForm.get(fieldName);
-    return !!(field && field.invalid && field.touched);
+    return super.isFieldInvalid(this.resetForm, fieldName);
   }
 
-  getFieldError(fieldName: string): string {
+  getFieldError(fieldName: string): string | null {
     const field = this.resetForm.get(fieldName);
     if (field?.hasError("required")) {
       return "Email is required";
@@ -112,7 +112,7 @@ export class ResetPasswordComponent {
     if (field?.hasError("email")) {
       return "Please enter a valid email address";
     }
-    return "";
+    return super.getFieldError(this.resetForm, fieldName);
   }
 
   async onSubmit(): Promise<void> {

@@ -22,6 +22,7 @@ import { AlertComponent } from "../../../shared/components/alert/alert.component
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { CardShellComponent } from "../../../shared/components/card-shell/card-shell.component";
 import { AuthFlowDataService } from "../services/auth-flow-data.service";
+import { FormBase } from "../../../shared/utils/form-base";
 
 /**
  * Update Password Component
@@ -150,7 +151,7 @@ import { AuthFlowDataService } from "../services/auth-flow-data.service";
   `,
   styleUrl: "./update-password.component.scss",
 })
-export class UpdatePasswordComponent implements OnInit {
+export class UpdatePasswordComponent extends FormBase implements OnInit {
   private fb = inject(NonNullableFormBuilder);
   private router = inject(Router);
   private toastService = inject(ToastService);
@@ -277,11 +278,10 @@ export class UpdatePasswordComponent implements OnInit {
   }
 
   isFieldInvalid(fieldName: string): boolean {
-    const field = this.passwordForm.get(fieldName);
-    return !!(field && field.invalid && field.touched);
+    return super.isFieldInvalid(this.passwordForm, fieldName);
   }
 
-  getFieldError(fieldName: string): string {
+  getFieldError(fieldName: string): string | null {
     const field = this.passwordForm.get(fieldName);
 
     if (fieldName === "password") {
@@ -305,7 +305,7 @@ export class UpdatePasswordComponent implements OnInit {
       }
     }
 
-    return "";
+    return super.getFieldError(this.passwordForm, fieldName);
   }
 
   async onSubmit(): Promise<void> {
