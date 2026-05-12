@@ -22,6 +22,7 @@ import { ToastService } from "../../../core/services/toast.service";
 import { LoggerService } from "../../../core/services/logger.service";
 import { TOAST } from "../../../core/constants/toast-messages.constants";
 import { getTemplateSessionDateFromWeekRange } from "../../../shared/utils/training-template.utils";
+import { TRAINING_SESSION_STATUS_LABELS } from "../../../shared/constants/status-labels.constants";
 
 interface SessionDetails {
   id: string;
@@ -344,16 +345,7 @@ export class TrainingSessionDetailComponent implements OnInit {
   }
 
   getStatusLabel(status: string): string {
-    switch (status) {
-      case "completed":
-        return "Completed";
-      case "missed":
-        return "Missed";
-      case "in_progress":
-        return "In Progress";
-      default:
-        return "Scheduled";
-    }
+    return TRAINING_SESSION_STATUS_LABELS[status] || "Scheduled";
   }
 
   getStatusSeverity(
