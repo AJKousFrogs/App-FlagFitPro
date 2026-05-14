@@ -1,0 +1,57 @@
+@use "styles/mixins" as *;
+
+/* The .mobile-bottom-sheet class on the underlying p-dialog is styled by
+ * scss/utilities/_mobile-responsive.scss; this file adds the chrome that
+ * lives INSIDE the dialog (handle, title, body, footer). View encapsulation
+ * is disabled in the component so these selectors apply directly. */
+
+.p-dialog.app-bottom-sheet {
+  border-radius: var(--bottom-sheet-radius) var(--bottom-sheet-radius) 0 0;
+  max-height: var(--bottom-sheet-max-height-mobile);
+  /* Honor safe-area inset so content clears the home indicator. */
+  padding-bottom: env(safe-area-inset-bottom, 0);
+  overflow: hidden;
+}
+
+.bottom-sheet__chrome {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-4) var(--space-2);
+}
+
+.bottom-sheet__handle {
+  display: block;
+  width: var(--bottom-sheet-handle-width);
+  height: var(--bottom-sheet-handle-height);
+  border-radius: var(--radius-pill, 9999px);
+  background: var(--color-border-default);
+  opacity: 0.5;
+}
+
+.bottom-sheet__title {
+  margin: 0;
+  font-size: var(--ds-font-size-md);
+  font-weight: var(--ds-font-weight-semibold);
+  color: var(--color-text-primary);
+  text-align: center;
+}
+
+.bottom-sheet__body {
+  padding: var(--space-3) var(--space-4) var(--space-4);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+}
+
+.bottom-sheet__footer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-4)
+    calc(var(--space-3) + env(safe-area-inset-bottom, 0));
+  border-top: var(--border-1) solid var(--color-border-secondary);
+  background: var(--surface-primary);
+}
