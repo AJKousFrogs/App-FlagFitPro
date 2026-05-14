@@ -15,16 +15,24 @@
 
   @if (!isPageLoading() && !hasPageError()) {
     <div class="wellness-page ui-page-shell ui-page-stack">
-      <app-page-header
-        eyebrow="WELLNESS"
+      <app-page-hero
+        variant="athlete"
+        eyebrow="RECOVER"
         title="Wellness & Recovery"
-        subtitle="Start with today’s check-in, then review recovery trends and alerts."
+        [subtitle]="heroSubtitle()"
         icon="pi-heart"
       >
-        <app-button iconLeft="pi-plus" (clicked)="openCheckIn()"
-          >Log Check-in</app-button
-        >
-      </app-page-header>
+        @if (heroKpiItems().length > 0) {
+          <app-kpi-strip
+            slot="kpis"
+            [items]="heroKpiItems()"
+            ariaLabel="Today's wellness metrics"
+          />
+        }
+        <app-button slot="actions" iconLeft="pi-plus" (clicked)="openCheckIn()">
+          Log Check-in
+        </app-button>
+      </app-page-hero>
       <app-recover-tab-bar />
 
       @if (merlinSessionId() && !entryContext()) {

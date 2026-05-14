@@ -3,6 +3,7 @@ import {
   Component,
   DestroyRef,
   ElementRef,
+  computed,
   inject,
   signal,
   viewChild,
@@ -28,7 +29,6 @@ import { ConfidenceIndicatorComponent } from "../../shared/components/confidence
 import { HydrationTrackerComponent } from "../../shared/components/hydration-tracker/hydration-tracker.component";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageErrorStateComponent } from "../../shared/components/page-error-state/page-error-state.component";
-import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
 import { AlertComponent, AlertVariant } from "../../shared/components/alert/alert.component";
 import { CardShellComponent } from "../../shared/components/card-shell/card-shell.component";
 import {
@@ -47,6 +47,11 @@ import { WellnessData } from "../../core/services/wellness.service";
 import { DATA_STATE_MESSAGES } from "../../shared/utils/privacy-ux-copy";
 import { WellnessChartsSectionComponent } from "./components/wellness-charts-section.component";
 import { RecoverTabBarComponent } from "../recover/recover-tab-bar.component";
+import { PageHeroComponent } from "../../shared/components/page-hero/page-hero.component";
+import {
+  KpiStripComponent,
+  type KpiItem,
+} from "../../shared/components/kpi-strip/kpi-strip.component";
 
 interface WellnessAlert {
   id: string;
@@ -82,7 +87,6 @@ interface WellnessEntryContext {
     InputNumberComponent,
     AppLoadingComponent,
     ButtonComponent,
-    PageHeaderComponent,
     StatsGridComponent,
     PageErrorStateComponent,
     BodyCompositionCardComponent,
@@ -93,6 +97,8 @@ interface WellnessEntryContext {
     CardShellComponent,
     WellnessChartsSectionComponent,
     RecoverTabBarComponent,
+    PageHeroComponent,
+    KpiStripComponent,
   ],
   templateUrl: "./wellness.component.html",
   styleUrl: "./wellness.component.scss",
@@ -125,6 +131,34 @@ export class WellnessComponent {
 
   readonly metrics = signal<WellnessMetric[]>([]);
   readonly wellnessStats = signal<StatItem[]>([]);
+
+  /**
+   * Phase 3b — Page hero KPI strip. Maps the existing wellnessStats
+   * StatItem[] (sleep, recovery, energy, stress) to the simpler KpiItem
+   * shape used by <app-kpi-strip>. Empty array until first wellness
+   * fetch resolves; the hero falls back to an "checking in for the first
+   * time" subtitle in that state.
+   */
+  readonly heroKpiItems = computed<readonly KpiItem[]>(() => {
+    const stats = this.wellnessStats();
+    if (stats.length === 0) return [];
+    return stats.slice(0, 4).map<KpiItem>((stat) => ({
+      value: String(stat.value ?? "—"),
+      label: stat.label,
+    }));
+  });
+
+  readonly heroSubtitle = computed(() => {
+    const count = this.wellnessStats().length;
+    if (count === 0) {
+      return "Start with today's check-in, then review recovery trends and alerts.";
+    }
+    const alerts = this.wellnessAlerts().length;
+    if (alerts > 0) {
+      return `${alerts} recovery alert${alerts === 1 ? "" : "s"} to review.`;
+    }
+    return "Recovery looks good today.";
+  });
   readonly entryContext = signal<WellnessEntryContext | null>(null);
   readonly merlinSessionId = signal<string | null>(null);
   readonly merlinReturnDraft = signal(
