@@ -7,6 +7,7 @@ import { PageHeaderComponent } from "../../shared/components/page-header/page-he
 import { ButtonComponent } from "../../shared/components/button/button.component";
 import { CardShellComponent } from "../../shared/components/card-shell/card-shell.component";
 import { TeamMembershipService } from "../../core/services/team-membership.service";
+import { InsightsTabBarComponent } from "../insights/insights-tab-bar.component";
 
 type ReportTypeFilter = "all" | "daily" | "coach" | "specialist" | "export";
 
@@ -32,6 +33,7 @@ interface ReportLink {
     PageHeaderComponent,
     ButtonComponent,
     CardShellComponent,
+    InsightsTabBarComponent,
   ],
   template: `
     <app-main-layout>
@@ -46,6 +48,7 @@ interface ReportLink {
             Performance Insights
           </app-button>
         </app-page-header>
+        <app-insights-tab-bar />
 
         <section class="summary-grid" aria-label="Reports overview">
           <app-card-shell title="Start Here" headerIcon="pi-compass">

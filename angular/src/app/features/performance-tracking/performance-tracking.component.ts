@@ -45,6 +45,7 @@ import {
 import { TeamMembershipService } from "../../core/services/team-membership.service";
 import { CorrelationContextService } from "../../core/services/correlation-context.service";
 import { RemoteTelemetryService } from "../../core/services/remote-telemetry.service";
+import { InsightsTabBarComponent } from "../insights/insights-tab-bar.component";
 
 /**
  * Database record shape for performance_records table
@@ -189,6 +190,7 @@ const TRAINING_RECOMMENDATIONS: Record<string, string[]> = {
     DataSourceBannerComponent,
     DatePipe,
     FormsModule,
+    InsightsTabBarComponent,
     ReactiveFormsModule,
   ],
   templateUrl: "./performance-tracking.component.html",

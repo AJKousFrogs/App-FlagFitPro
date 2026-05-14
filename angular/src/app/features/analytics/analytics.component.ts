@@ -59,6 +59,7 @@ import {
 import { AnalyticsChartsSectionComponent } from "./components/analytics-charts-section.component";
 import { AnalyticsOverviewSectionComponent } from "./components/analytics-overview-section.component";
 import { AnalyticsPlayerStatsSectionComponent } from "./components/analytics-player-stats-section.component";
+import { InsightsTabBarComponent } from "../insights/insights-tab-bar.component";
 
 type AnalyticsChartType =
   | "performance"
@@ -97,6 +98,7 @@ interface AnalyticsSpeedPayload {
     AnalyticsChartsSectionComponent,
     AnalyticsOverviewSectionComponent,
     AnalyticsPlayerStatsSectionComponent,
+    InsightsTabBarComponent,
   ],
   templateUrl: "./analytics.component.html",
 

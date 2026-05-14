@@ -3,6 +3,16 @@ import { authGuard } from "../../guards/auth.guard";
 import { analyticsPrefetchResolver } from "../../resolvers/analytics-prefetch.resolver";
 
 export const analyticsRoutes: Routes = [
+  // ── Phase 0.5: canonical "/insights" alias for athletes ──
+  // The 3 underlying routes (performance/insights, performance/tests,
+  // reports) render their own pages and share the InsightsTabBarComponent
+  // so users see one consolidated Insights surface with tabs.
+  {
+    path: "insights",
+    redirectTo: "performance/insights",
+    pathMatch: "full",
+    data: { entry: "internal" },
+  },
   {
     path: "reports",
     loadComponent: () =>

@@ -75,6 +75,13 @@ export const teamRoutes: Routes = [
       headerPreset: "analytics",
     }, // Core coach workflow
   },
+  // ── Phase 0.5: canonical "/coach/insights" alias ──
+  {
+    path: "coach/insights",
+    redirectTo: "coach/analytics",
+    pathMatch: "full",
+    data: { entry: "internal" },
+  },
   {
     path: "coach/planning",
     loadComponent: () =>

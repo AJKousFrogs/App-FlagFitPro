@@ -29,6 +29,7 @@ import { LazyChartComponent } from "../../../shared/components/lazy-chart/lazy-c
 import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";
 import { StatusTagComponent } from "../../../shared/components/status-tag/status-tag.component";
 import { getInitials } from "../../../shared/utils/format.utils";
+import { InsightsTabBarComponent } from "../../insights/insights-tab-bar.component";
 
 interface OverviewMetrics {
   totalAthletes: number;
@@ -106,6 +107,7 @@ interface TeamOption {
     MainLayoutComponent,
     IconButtonComponent,
     PageHeaderComponent,
+    InsightsTabBarComponent,
   ],
   templateUrl: "./coach-analytics.component.html",
   styleUrl: "./coach-analytics.component.scss",
