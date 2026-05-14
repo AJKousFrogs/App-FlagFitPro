@@ -34,6 +34,7 @@ import { AlertComponent } from "../../../shared/components/alert/alert.component
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { CardShellComponent } from "../../../shared/components/card-shell/card-shell.component";
 import { EmptyStateComponent } from "../../../shared/components/empty-state/empty-state.component";
+import { ListRowComponent } from "../../../shared/components/list-row/list-row.component";
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
 import { PageErrorStateComponent } from "../../../shared/components/page-error-state/page-error-state.component";
 import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";
@@ -72,6 +73,7 @@ function toLocalDateKey(date: Date | null | undefined): string {
     ButtonComponent,
     CardShellComponent,
     EmptyStateComponent,
+    ListRowComponent,
     PageErrorStateComponent,
     RouterModule,
   ],

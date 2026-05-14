@@ -58,26 +58,38 @@
         <app-card-shell title="Related Tools" headerIcon="pi-compass">
           <div class="training-hub-grid">
             <a routerLink="/workout" class="training-hub-link">
-              <span class="training-hub-icon" aria-hidden="true"><i class="pi pi-briefcase"></i></span>
-              <span class="training-hub-title">Workout workspace</span>
-              <span class="training-hub-subtitle">Custom workouts, plans & saved sessions</span>
+              <app-list-row
+                title="Workout workspace"
+                subline="Custom workouts, plans & saved sessions"
+                thumbnailIcon="pi-briefcase"
+                [showChevron]="true"
+              />
             </a>
             <a routerLink="/training/advanced" class="training-hub-link">
-              <span class="training-hub-icon" aria-hidden="true"><i class="pi pi-sliders-h"></i></span>
-              <span class="training-hub-title">Advanced Tools</span>
-              <span class="training-hub-subtitle">Periodization & AI</span>
+              <app-list-row
+                title="Advanced Tools"
+                subline="Periodization & AI"
+                thumbnailIcon="pi-sliders-h"
+                [showChevron]="true"
+              />
             </a>
             @if (isCoach()) {
               <a routerLink="/training/smart-form" class="training-hub-link">
-                <span class="training-hub-icon" aria-hidden="true"><i class="pi pi-file-edit"></i></span>
-                <span class="training-hub-title">Smart Form</span>
-                <span class="training-hub-subtitle">Coach quick logging</span>
+                <app-list-row
+                  title="Smart Form"
+                  subline="Coach quick logging"
+                  thumbnailIcon="pi-file-edit"
+                  [showChevron]="true"
+                />
               </a>
             }
             <a routerLink="/training/videos" class="training-hub-link">
-              <span class="training-hub-icon" aria-hidden="true"><i class="pi pi-video"></i></span>
-              <span class="training-hub-title">Video Feed</span>
-              <span class="training-hub-subtitle">Technique library</span>
+              <app-list-row
+                title="Video Feed"
+                subline="Technique library"
+                thumbnailIcon="pi-video"
+                [showChevron]="true"
+              />
             </a>
           </div>
         </app-card-shell>
