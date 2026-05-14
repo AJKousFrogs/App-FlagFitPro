@@ -59,6 +59,7 @@ import {
   DialogFooterComponent,
   DialogHeaderComponent,
 } from "../../shared/components/ui-components";
+import { BottomSheetComponent } from "../../shared/components/bottom-sheet/bottom-sheet.component";
 
 import {
   PlayerFormData,
@@ -121,6 +122,7 @@ import {
     AppDialogComponent,
     DialogHeaderComponent,
     DialogFooterComponent,
+    BottomSheetComponent,
     ButtonComponent,
     RosterStatusOptionsComponent,
   ],

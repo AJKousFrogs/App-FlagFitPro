@@ -576,46 +576,38 @@
           <span class="defer-dialog-chunk-placeholder"></span>
         }
 
-        <!-- Status Change Dialog -->
+        <!-- Status Change Sheet (Phase 3 — first dialog → bottom-sheet conversion) -->
         @defer (when showStatusDialog()) {
-          <app-dialog
+          <app-bottom-sheet
             [visible]="showStatusDialog()"
             (visibleChange)="showStatusDialog.set($event)"
-            [modal]="true"
-            [blockScroll]="true"
-            [draggable]="false"
-            ariaLabel="Change player status dialog"
-            dialogSize="sm"
-          >
-          <app-dialog-header
-            icon="sync"
             title="Change Player Status"
-            subtitle="Update the selected player's current roster status"
-            (close)="showStatusDialog.set(false)"
-          />
-
-          <div class="status-dialog-content">
-            <p>
-              Select new status for
-              <strong>{{ statusChangePlayer()?.name }}</strong
-              >:
-            </p>
-            <app-roster-status-options
-              [selected]="newStatus()"
-              (selectedChange)="newStatus.set($event)"
-              ariaLabelPrefix="Set status to"
-            />
-          </div>
-
-          <app-dialog-footer
-            cancelLabel="Cancel"
-            primaryLabel="Update Status"
-            primaryIcon="check"
-            [loading]="isSaving()"
-            (cancel)="showStatusDialog.set(false)"
-            (primary)="updatePlayerStatus()"
-          />
-          </app-dialog>
+            [hasFooter]="true"
+          >
+            <div class="status-dialog-content">
+              <p>
+                Select new status for
+                <strong>{{ statusChangePlayer()?.name }}</strong
+                >:
+              </p>
+              <app-roster-status-options
+                [selected]="newStatus()"
+                (selectedChange)="newStatus.set($event)"
+                ariaLabelPrefix="Set status to"
+              />
+            </div>
+            <ng-container slot="footer">
+              <app-button
+                variant="text"
+                (clicked)="showStatusDialog.set(false)"
+              >Cancel</app-button>
+              <app-button
+                iconLeft="pi-check"
+                [loading]="isSaving()"
+                (clicked)="updatePlayerStatus()"
+              >Update Status</app-button>
+            </ng-container>
+          </app-bottom-sheet>
         } @placeholder {
           <span class="defer-dialog-chunk-placeholder"></span>
         }
