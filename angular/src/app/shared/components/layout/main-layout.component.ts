@@ -47,7 +47,7 @@ import { PlatformService } from "../../../core/services/platform.service";
       <app-sidebar
         #sidebar
         class="app-shell__sidebar"
-        [collapsed]="sidebarCollapsed()"
+        [collapsed]="sidebarCollapsed() || tabletPortrait()"
         [mobileViewport]="mobileNav()"
       ></app-sidebar>
 
@@ -113,6 +113,12 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
   readonly sidebar = viewChild(SidebarComponent);
   readonly sidebarCollapsed = signal(this.loadSidebarCollapsedState());
   readonly mobileNav = signal(false);
+  /**
+   * Phase 2.5: tablet portrait (≥ md, < lg = 48.0625–64rem) forces the
+   * sidebar into icon-rail mode independent of the user's collapse
+   * preference. Restores the preference when leaving the range.
+   */
+  readonly tabletPortrait = signal(false);
 
   ngOnInit(): void {
     // Wait for the first NavigationEnd so router.url reflects the actual destination
@@ -155,6 +161,9 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
       return;
     }
 
+    // On tablet portrait the sidebar is force-collapsed as an icon rail;
+    // the user's collapse preference can still be flipped under the hood
+    // so it takes effect once they cross back over the lg breakpoint.
     this.sidebarCollapsed.update((value) => {
       const next = !value;
       this.saveSidebarCollapsedState(next);
@@ -166,25 +175,32 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
     if (!isPlatformBrowser(this.platformId)) return;
 
     // Phase 2: mobile shell extends through tablet portrait (≤ md = 48rem).
-    const mediaQuery = window.matchMedia("(max-width: 48rem)");
-    const syncViewportState = (matches: boolean) => {
+    const mobileQuery = window.matchMedia("(max-width: 48rem)");
+    const syncMobile = (matches: boolean) => {
       this.mobileNav.set(matches);
-
       if (!matches) {
         this.sidebar()?.closeSidebar();
       }
     };
+    syncMobile(mobileQuery.matches);
+    const onMobileChange = (event: MediaQueryListEvent) => syncMobile(event.matches);
+    mobileQuery.addEventListener("change", onMobileChange);
 
-    syncViewportState(mediaQuery.matches);
-
-    const onChange = (event: MediaQueryListEvent) => {
-      syncViewportState(event.matches);
-    };
-
-    mediaQuery.addEventListener("change", onChange);
-    this.destroyRef.onDestroy(() =>
-      mediaQuery.removeEventListener("change", onChange)
+    // Phase 2.5: tablet portrait (48.0625rem – 64rem) drives the
+    // icon-rail sidebar. Stays in sync with the matching scss block in
+    // sidebar.component.scss (line 317) and main-layout.scss (line 40).
+    const tabletQuery = window.matchMedia(
+      "(min-width: 48.0625rem) and (max-width: 64rem)",
     );
+    const syncTablet = (matches: boolean) => this.tabletPortrait.set(matches);
+    syncTablet(tabletQuery.matches);
+    const onTabletChange = (event: MediaQueryListEvent) => syncTablet(event.matches);
+    tabletQuery.addEventListener("change", onTabletChange);
+
+    this.destroyRef.onDestroy(() => {
+      mobileQuery.removeEventListener("change", onMobileChange);
+      tabletQuery.removeEventListener("change", onTabletChange);
+    });
   }
 
   /**
