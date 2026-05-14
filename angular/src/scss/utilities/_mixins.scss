@@ -108,6 +108,62 @@
   grid-template-columns: repeat($columns, minmax(0, 1fr));
 }
 
+/// Mobile-first grid. Starts as a single column on phones and progressively
+/// expands at tablet (≥ md = 48rem) and desktop (≥ lg = 64rem). Replaces the
+/// desktop-first pattern that declares a 3-col grid then shrinks via
+/// `respond-to(sm)` and `respond-to(lg)` — Phase 1 of the redesign. Default
+/// gap matches `--layout-gap-md`.
+///
+/// Example:
+///   .today-page { @include mobile-first-grid(1, 2, 3); }
+///   .stats-grid { @include mobile-first-grid(2, 4, 4, var(--space-3)); }
+@mixin mobile-first-grid(
+  $mobile: 1,
+  $tablet: 2,
+  $desktop: 3,
+  $gap: var(--space-4)
+) {
+  display: grid;
+  grid-template-columns: repeat($mobile, minmax(0, 1fr));
+  gap: $gap;
+
+  @include respond-min(md) {
+    grid-template-columns: repeat($tablet, minmax(0, 1fr));
+  }
+
+  @include respond-min(lg) {
+    grid-template-columns: repeat($desktop, minmax(0, 1fr));
+  }
+}
+
+/// Page hero surface. Applies one of the brand hero gradient tokens, hero
+/// padding (clamp-based for fluid sizing), safe-area top inset so the hero
+/// extends up to the notch, and a sensible min-height. Variant controls the
+/// gradient tint — "athlete" (accent green), "coach" (info blue), or
+/// "neutral" (surface-secondary fade).
+///
+/// Example:
+///   .today-hero { @include hero-surface("athlete"); }
+@mixin hero-surface($variant: "athlete") {
+  position: relative;
+  padding-block: var(--hero-padding-block);
+  padding-inline: var(--hero-padding-inline);
+  padding-top: calc(var(--hero-padding-block) + env(safe-area-inset-top, 0));
+  min-height: var(--hero-height-mobile);
+  color: var(--color-text-primary);
+  background: var(--gradient-hero-neutral);
+
+  @if $variant == "athlete" {
+    background: var(--gradient-hero-athlete);
+  } @else if $variant == "coach" {
+    background: var(--gradient-hero-coach);
+  }
+
+  @include respond-min(md) {
+    min-height: var(--hero-height-tablet);
+  }
+}
+
 // Search bar container (shared layout rhythm)
 @mixin search-bar(
   $padding-y: var(--space-3),
