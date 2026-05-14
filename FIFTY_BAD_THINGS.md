@@ -74,6 +74,24 @@ Brutal punch list. One line each, file:line citations where it helps. Sourced fr
 
 ---
 
+## Corrections found during execution
+
+Three items in the list above were partly wrong on second look. Recorded here for honesty:
+
+- **Item 11 (duplicate Back‑to‑Merlin link on Today).** The two blocks are mutually exclusive at runtime — gated by `entryContext()` and `!entryContext()`. The standalone link only renders after the user dismisses the banner. Defensible UX, not a defect. **Withdrawn.**
+- **Item 12 (duplicate Player Dashboard CTA).** "Start Training" is the dashboard hero's primary CTA; "View Full Day" is the schedule‑preview card's "see more" affordance. Same destination, different contexts. Defensible. **Withdrawn.**
+- **Item 44 (`jspdf` + `html2canvas` as dead deps).** Both ARE used — `core/services/lazy-pdf.service.ts` dynamic‑imports them and `acwr-dashboard.component.ts` consumes the service for PDF export. The static‑import grep in `AUDIT.md §E.1` missed dynamic imports. **The critical CVE still needs a `jspdf` version bump**, not removal. `@angular/aria` (0 hits) and `zone.js` (zoneless app, polyfills `[]`) ARE genuinely dead and were removed.
+
+Net real count: **47 of the 50** stand. List stays at 50 because the structural items dominate.
+
+## Fixes shipped on `claude/mobile-first-redesign-7v7hZ`
+
+| # | Commit | What changed |
+|---|---|---|
+| 50 | `fix(a11y): add aria-label …` | `video-feed.component.html` bookmark + share buttons, `notifications-panel.component.html` clear‑read button — `aria-label` + `aria-pressed` (bookmark) + `aria-hidden` on `<i>` |
+| 44 | `chore(deps): drop unused …` | `package.json` removed `@angular/aria` and `zone.js` (already zoneless); lockfile regenerated |
+| 45 | `chore(assets): drop Poppins .ttf` | Deleted 5 unused `.ttf` files (794 KB), `.woff2` already the sole loaded format in `poppins.scss` |
+
 ## What this list isn't
 
 It isn't a bug list. None of these will throw at runtime. They're **quality‑of‑build** problems — the kind that make a real user say "this is a lot" or "where do I find X" or "why did I just see four loading bars" without being able to point at why.
