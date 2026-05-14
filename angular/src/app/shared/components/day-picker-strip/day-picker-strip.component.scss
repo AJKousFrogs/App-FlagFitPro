@@ -1,0 +1,97 @@
+@use "styles/mixins" as *;
+
+.day-picker-strip {
+  position: relative;
+  width: 100%;
+}
+
+.day-picker-strip__track {
+  display: flex;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-1);
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  scroll-behavior: smooth;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+.day-picker-strip__day {
+  flex: 0 0 auto;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-0-5);
+  min-width: var(--space-12);
+  min-height: var(--touch-target-md);
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-lg);
+  background: transparent;
+  border: var(--border-1) solid transparent;
+  color: var(--color-text-secondary);
+  font: inherit;
+  cursor: pointer;
+  scroll-snap-align: center;
+  transition:
+    background-color var(--transition-fast) var(--ease-standard),
+    color var(--transition-fast) var(--ease-standard),
+    border-color var(--transition-fast) var(--ease-standard);
+
+  @media (hover: hover) and (pointer: fine) {
+    &:hover:not(&--active) {
+      background: var(--surface-secondary);
+      color: var(--color-text-primary);
+    }
+  }
+
+  &:focus-visible {
+    outline: var(--border-2) solid var(--color-border-focus);
+    outline-offset: var(--space-0-5);
+  }
+}
+
+.day-picker-strip__day--today {
+  border-color: color-mix(in srgb, var(--ds-primary-green) 40%, transparent);
+}
+
+.day-picker-strip__day--active {
+  background: var(--ds-primary-green);
+  color: var(--color-text-on-primary);
+  border-color: var(--ds-primary-green);
+
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      background: var(--ds-primary-green);
+      color: var(--color-text-on-primary);
+    }
+  }
+}
+
+.day-picker-strip__weekday {
+  font-size: var(--ds-font-size-xs);
+  font-weight: var(--ds-font-weight-medium);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  line-height: 1;
+}
+
+.day-picker-strip__date {
+  font-size: var(--ds-font-size-lg);
+  font-weight: var(--ds-font-weight-semibold);
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .day-picker-strip__day {
+    transition: none;
+  }
+
+  .day-picker-strip__track {
+    scroll-behavior: auto;
+  }
+}
