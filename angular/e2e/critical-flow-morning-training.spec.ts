@@ -16,19 +16,17 @@ import { test, expect, Page } from "@playwright/test";
 
 const BASE_URL = process.env["BASE_URL"] || "http://localhost:4200";
 
+const TEST_USER = {
+  email:
+    process.env["TEST_USER_EMAIL"] || process.env["E2E_TEST_EMAIL"] || "",
+  password:
+    process.env["TEST_USER_PASSWORD"] || process.env["E2E_TEST_PASSWORD"] || "",
+};
+
+const HAS_CREDENTIALS = Boolean(TEST_USER.email && TEST_USER.password);
+
 function getTestUser(): { email: string; password: string } {
-  const email =
-    process.env["TEST_USER_EMAIL"] || process.env["E2E_TEST_EMAIL"] || "";
-  const password =
-    process.env["TEST_USER_PASSWORD"] || process.env["E2E_TEST_PASSWORD"] || "";
-
-  if (!email || !password) {
-    throw new Error(
-      "Missing E2E credentials. Set TEST_USER_EMAIL and TEST_USER_PASSWORD (or E2E_TEST_EMAIL / E2E_TEST_PASSWORD).",
-    );
-  }
-
-  return { email, password };
+  return TEST_USER;
 }
 
 /**
@@ -334,6 +332,11 @@ async function completeOnboarding(page: Page): Promise<void> {
 }
 
 test.describe("Critical Flow - Morning Training Block", () => {
+  test.skip(
+    !HAS_CREDENTIALS,
+    "Missing E2E credentials — set TEST_USER_EMAIL and TEST_USER_PASSWORD to run this suite",
+  );
+
   test("should complete full flow: login -> onboarding -> today practice -> morning block", async ({
     page,
   }) => {
