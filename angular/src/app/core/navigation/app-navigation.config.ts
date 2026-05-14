@@ -24,8 +24,15 @@ const EXACT_NAV_ROUTES = new Set([
   "/todays-practice",
 ]);
 
+// ════════════════════════════════════════════════════════════════════════
+// ATHLETE — 5 primary mobile verbs: Today / Train / Recover / Insights / Team
+// Center FAB on the redesigned bottom nav will be "Start Today's Practice".
+// More menu collects: Overview, Merlin AI, Chat, Knowledge, Tournaments,
+// Reports, Cycle Tracking, Sleep Debt, ACWR, Return-to-Play, Film, Playbook,
+// Profile / Notifications / Settings / Help / Achievements.
+// ════════════════════════════════════════════════════════════════════════
 const ATHLETE_NAV_ITEMS: readonly AppNavigationItem[] = [
-  // ── HOME ──────────────────────────────────────────────────────────
+  // ── HOME (primary bottom-nav slot 1) ──────────────────────────────
   {
     label: "Today",
     route: "/todays-practice",
@@ -41,41 +48,71 @@ const ATHLETE_NAV_ITEMS: readonly AppNavigationItem[] = [
     ariaLabel: "Overview - Training progress, status, and trends",
     group: "home",
   },
-  // ── ATHLETE ───────────────────────────────────────────────────────
+  // ── ATHLETE (primary slots 2, 3, 4) ───────────────────────────────
   {
-    label: "Training",
+    label: "Train",
     route: "/training",
     icon: "pi-bolt",
-    ariaLabel: "Training Schedule - View and manage your training calendar",
+    ariaLabel: "Train - Schedule, library, programs, and workouts",
     group: "athlete",
     mobilePrimary: true,
   },
   {
-    label: "Wellness",
+    label: "Recover",
     route: "/wellness",
     icon: "pi-heart",
-    ariaLabel: "Wellness & Recovery - Daily check-in and recovery metrics",
+    ariaLabel: "Recover - Wellness check-in, cycle, sleep, and return-to-play",
     group: "athlete",
     mobilePrimary: true,
   },
   {
-    label: "Stats",
+    label: "Insights",
     route: "/performance/insights",
     icon: "pi-chart-line",
-    ariaLabel: "Performance Stats - Metrics, tests, and performance insights",
+    ariaLabel: "Insights - Performance metrics, tests, and reports",
     group: "athlete",
     mobilePrimary: true,
   },
-  // ── TEAM ──────────────────────────────────────────────────────────
+  // ── ATHLETE — Recover sub-features (More menu) ────────────────────
+  {
+    label: "Cycle Tracking",
+    route: "/cycle-tracking",
+    icon: "pi-circle",
+    ariaLabel: "Cycle Tracking - Menstrual cycle and recovery alignment",
+    group: "athlete",
+  },
+  {
+    label: "Sleep",
+    route: "/sleep-debt",
+    icon: "pi-moon",
+    ariaLabel: "Sleep - Sleep debt and recovery metrics",
+    group: "athlete",
+  },
+  {
+    label: "Workload (ACWR)",
+    route: "/acwr",
+    icon: "pi-gauge",
+    ariaLabel: "Workload - Acute:chronic workload ratio and load monitoring",
+    group: "athlete",
+  },
+  {
+    label: "Return to Play",
+    route: "/return-to-play",
+    icon: "pi-replay",
+    ariaLabel: "Return to Play - Injury return timeline and milestones",
+    group: "athlete",
+  },
+  // ── TEAM (primary slot 5) ─────────────────────────────────────────
   {
     label: "Team",
     route: "/roster",
     icon: "pi-users",
-    ariaLabel: "Roster - Teammates, roles, and availability",
+    ariaLabel: "Team - Roster, teammates, roles, and availability",
     group: "team",
+    mobilePrimary: true,
   },
   {
-    label: "Chat",
+    label: "Team Chat",
     route: "/team-chat",
     icon: "pi-comments",
     ariaLabel: "Team Chat - Communicate with your team",
@@ -85,15 +122,29 @@ const ATHLETE_NAV_ITEMS: readonly AppNavigationItem[] = [
     label: "Competition",
     route: "/tournaments",
     icon: "pi-trophy",
-    ariaLabel: "Tournaments - Games and competitions",
+    ariaLabel: "Competition - Games and tournaments",
     group: "team",
   },
-  // ── TOOLS ─────────────────────────────────────────────────────────
+  // ── TOOLS (More menu) ─────────────────────────────────────────────
   {
     label: "Merlin AI",
     route: "/chat",
     icon: "pi-sparkles",
     ariaLabel: "Merlin AI - Chat with your Merlin AI",
+    group: "tools",
+  },
+  {
+    label: "Film",
+    route: "/film",
+    icon: "pi-video",
+    ariaLabel: "Film - Review film and tagged moments",
+    group: "tools",
+  },
+  {
+    label: "Playbook",
+    route: "/playbook",
+    icon: "pi-book",
+    ariaLabel: "Playbook - Plays and assignments",
     group: "tools",
   },
   {
@@ -110,6 +161,7 @@ const ATHLETE_NAV_ITEMS: readonly AppNavigationItem[] = [
     ariaLabel: "Reports - Performance, workload, and generated report workspaces",
     group: "tools",
   },
+  // ── ME ────────────────────────────────────────────────────────────
   {
     label: "Profile",
     route: "/profile",
@@ -147,12 +199,20 @@ const ATHLETE_NAV_ITEMS: readonly AppNavigationItem[] = [
   },
 ];
 
+// ════════════════════════════════════════════════════════════════════════
+// COACH — 5 primary mobile verbs: Today / Roster / Plan / Insights / Team
+// Center FAB on the redesigned bottom nav will be "New Session".
+// More menu collects: Competition, Merlin AI, Knowledge, Reports, Inbox,
+// Activity, Programs, Injuries, Film Room, Staff Hub, Team Chat,
+// Team Settings, Payments, Profile / Notifications / Settings / Help /
+// Achievements.
+// ════════════════════════════════════════════════════════════════════════
 const COACH_NAV_ITEMS: readonly AppNavigationItem[] = [
   {
-    label: "Dashboard",
+    label: "Today",
     route: "/coach/dashboard",
     icon: "pi-home",
-    ariaLabel: "Coach Dashboard - Team overview and insights",
+    ariaLabel: "Today - Coach dashboard, team overview, and insights",
     group: "primary",
     mobilePrimary: true,
   },
@@ -165,18 +225,18 @@ const COACH_NAV_ITEMS: readonly AppNavigationItem[] = [
     mobilePrimary: true,
   },
   {
-    label: "Planning",
+    label: "Plan",
     route: "/coach/planning",
     icon: "pi-calendar",
-    ariaLabel: "Planning - Programs, practice planner, and calendar",
+    ariaLabel: "Plan - Programs, practice planner, and calendar",
     group: "primary",
     mobilePrimary: true,
   },
   {
-    label: "Performance",
+    label: "Insights",
     route: "/coach/analytics",
     icon: "pi-chart-line",
-    ariaLabel: "Performance - Team metrics, readiness, and performance insights",
+    ariaLabel: "Insights - Team metrics, readiness, performance, and reports",
     group: "primary",
     mobilePrimary: true,
   },
@@ -184,7 +244,7 @@ const COACH_NAV_ITEMS: readonly AppNavigationItem[] = [
     label: "Team",
     route: "/team/workspace",
     icon: "pi-briefcase",
-    ariaLabel: "Team Workspace - Team operations and collaboration",
+    ariaLabel: "Team - Team workspace, operations, and collaboration",
     group: "primary",
     mobilePrimary: true,
     roles: [
