@@ -13,6 +13,7 @@ import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { filter } from "rxjs";
 import { HeaderSearchWidgetComponent } from "../header/header-search-widget.component";
 import { ContextService } from "../../../core/services/context.service";
+import { MoreMenuService } from "../more-menu/more-menu.service";
 
 @Component({
   selector: "app-mobile-header",
@@ -26,7 +27,7 @@ import { ContextService } from "../../../core/services/context.service";
         type="button"
         aria-label="Open navigation"
       >
-        <i class="pi pi-bars"></i>
+        <i class="pi pi-bars" aria-hidden="true"></i>
       </button>
       <div class="mobile-header-center">
         <span class="mobile-header-eyebrow">FlagFit Pro</span>
@@ -34,6 +35,16 @@ import { ContextService } from "../../../core/services/context.service";
       </div>
       <div class="mobile-header-end">
         <app-header-search-widget></app-header-search-widget>
+        <button
+          (click)="moreMenu.toggle()"
+          class="mobile-more-toggle"
+          type="button"
+          aria-label="More navigation options"
+          [attr.aria-expanded]="moreMenu.isOpen()"
+          aria-haspopup="dialog"
+        >
+          <i class="pi pi-ellipsis-h" aria-hidden="true"></i>
+        </button>
       </div>
     </header>
   `,
@@ -44,6 +55,7 @@ export class MobileHeaderComponent implements OnInit {
   private readonly contextService = inject(ContextService);
   private readonly destroyRef = inject(DestroyRef);
   private readonly currentRoute = signal("");
+  protected readonly moreMenu = inject(MoreMenuService);
 
   readonly toggleSidebar = output<void>();
 

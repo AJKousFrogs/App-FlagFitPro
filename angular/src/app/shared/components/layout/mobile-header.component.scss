@@ -33,7 +33,8 @@
   }
 }
 
-.mobile-menu-toggle {
+.mobile-menu-toggle,
+.mobile-more-toggle {
   @include flex-center;
   width: var(--touch-target-md);
   height: var(--touch-target-md);
@@ -43,8 +44,14 @@
   color: var(--color-text-primary);
   font-size: var(--ds-font-size-xl);
   flex-shrink: 0;
+  cursor: pointer;
 
   @include ds-hover-state($bg: var(--surface-hover));
+}
+
+.mobile-more-toggle[aria-expanded="true"] {
+  background: var(--surface-secondary);
+  color: var(--ds-primary-green);
 }
 
 .mobile-header-center {
@@ -75,4 +82,5 @@
 .mobile-header-end {
   @include flex-center;
   justify-self: end;
+  gap: var(--space-1);
 }

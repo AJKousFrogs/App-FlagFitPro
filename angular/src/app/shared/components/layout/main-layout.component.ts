@@ -19,6 +19,7 @@ import { HeaderComponent } from "../header/header.component";
 import { QuickActionsFABComponent } from "../quick-actions-fab/quick-actions-fab.component";
 import { SmartBreadcrumbsComponent } from "../smart-breadcrumbs/smart-breadcrumbs.component";
 import { BottomNavComponent } from "../bottom-nav/bottom-nav.component";
+import { MoreMenuComponent } from "../more-menu/more-menu.component";
 import { OfflineBannerComponent } from "../offline-banner/offline-banner.component";
 import { KeyboardShortcutsModalComponent } from "../keyboard-shortcuts-modal/keyboard-shortcuts-modal.component";
 import { ScrollToTopComponent } from "../scroll-to-top/scroll-to-top.component";
@@ -38,6 +39,7 @@ import { PlatformService } from "../../../core/services/platform.service";
     QuickActionsFABComponent,
     SmartBreadcrumbsComponent,
     BottomNavComponent,
+    MoreMenuComponent,
     OfflineBannerComponent,
     KeyboardShortcutsModalComponent,
     ScrollToTopComponent,
@@ -86,6 +88,9 @@ import { PlatformService } from "../../../core/services/platform.service";
       <footer class="app-shell__footer">
         <app-bottom-nav></app-bottom-nav>
       </footer>
+
+      <!-- Phase 2.5: shared More overlay (triggered from MobileHeader) -->
+      <app-more-menu></app-more-menu>
 
       <!-- Scroll to Top Button (UX Audit Fix #10) -->
       <app-scroll-to-top></app-scroll-to-top>
