@@ -1,0 +1,108 @@
+@use "styles/mixins" as *;
+
+.page-hero {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-areas: "content" "actions";
+  gap: var(--space-4);
+  padding-block: var(--hero-padding-block);
+  padding-inline: var(--hero-padding-inline);
+  padding-top: calc(var(--hero-padding-block) + env(safe-area-inset-top, 0));
+  min-height: var(--hero-height-mobile);
+  color: var(--color-text-primary);
+  background: var(--gradient-hero-neutral);
+  border-radius: 0 0 var(--card-radius-mobile) var(--card-radius-mobile);
+  overflow: hidden;
+
+  @include respond-min(md) {
+    grid-template-columns: 1fr auto;
+    grid-template-areas: "content actions";
+    align-items: end;
+    min-height: var(--hero-height-tablet);
+    border-radius: var(--card-radius-mobile);
+  }
+
+  &--athlete {
+    background: var(--gradient-hero-athlete);
+  }
+
+  &--coach {
+    background: var(--gradient-hero-coach);
+  }
+
+  &--neutral {
+    background: var(--gradient-hero-neutral);
+  }
+}
+
+.page-hero__content {
+  grid-area: content;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  min-width: 0;
+}
+
+.page-hero__eyebrow {
+  margin: 0;
+  font-size: var(--ds-font-size-xs);
+  font-weight: var(--ds-font-weight-semibold);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-text-secondary);
+}
+
+.page-hero__title {
+  margin: 0;
+  font-size: clamp(1.875rem, 6vw, 2.5rem);
+  font-weight: var(--ds-font-weight-bold);
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  color: var(--color-text-primary);
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+
+  i {
+    font-size: 0.8em;
+    color: var(--ds-primary-green);
+  }
+}
+
+.page-hero__subtitle {
+  margin: 0;
+  font-size: var(--ds-font-size-md);
+  line-height: var(--ds-line-height-body);
+  color: var(--color-text-secondary);
+}
+
+.page-hero__kpis {
+  margin-top: var(--space-4);
+
+  &:empty {
+    display: none;
+  }
+}
+
+.page-hero__actions {
+  grid-area: actions;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  align-items: center;
+
+  &:empty {
+    display: none;
+  }
+
+  @include respond-min(md) {
+    justify-content: flex-end;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .page-hero {
+    transition: none;
+  }
+}
