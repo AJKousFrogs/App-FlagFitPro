@@ -8,7 +8,10 @@
 }
 
 .app-shell {
-  --bottom-nav-height: var(--space-16);
+  // Phase 2: --bottom-nav-height now mirrors the Phase 1 mobile token
+  // (--bottom-nav-height-mobile = 4.25rem) so the new center-FAB bar gets
+  // correct content padding everywhere this value is referenced.
+  --bottom-nav-height: var(--bottom-nav-height-mobile);
 
   display: grid;
   grid-template-columns: var(--app-shell-sidebar-width) minmax(0, 1fr);
@@ -145,12 +148,16 @@
 .desktop-only {
   display: block;
 
-  @include respond-to(sm) {
+  @include respond-to(md) {
     display: none;
   }
 }
 
-@include respond-to(sm) {
+// Phase 2: mobile-shell layout breakpoint moved from sm (40rem) to md (48rem)
+// so tablet portrait gets the mobile shell (bottom nav + mobile header)
+// instead of the desktop sidebar. Mirrors the breakpoint changes in
+// bottom-nav.component.scss + mobile-header.component.scss.
+@include respond-to(md) {
   .app-shell {
     grid-template-columns: minmax(0, 1fr);
     grid-template-rows:
@@ -190,7 +197,12 @@
       var(--app-shell-gutter-block-mobile)
       var(--app-shell-gutter-inline-mobile)
       calc(
-        var(--app-shell-gutter-block-mobile) + var(--bottom-nav-height) + var(--safe-area-bottom) + var(--space-4)      );
+        var(--app-shell-gutter-block-mobile)
+        + var(--bottom-nav-height)
+        + var(--bottom-nav-fab-protrusion)
+        + var(--safe-area-bottom)
+        + var(--space-4)
+      );
   }
 
   .app-shell__content-stack {
@@ -216,10 +228,11 @@
 @include respond-to(xs-narrow) {
   .app-shell__page {
     padding-block-end: calc(
-      var(--app-shell-gutter-block-mobile) +
-      var(--bottom-nav-height) +
-      var(--safe-area-bottom) +
-      var(--space-3)
+      var(--app-shell-gutter-block-mobile)
+      + var(--bottom-nav-height)
+      + var(--bottom-nav-fab-protrusion)
+      + var(--safe-area-bottom)
+      + var(--space-3)
     );
   }
 }
