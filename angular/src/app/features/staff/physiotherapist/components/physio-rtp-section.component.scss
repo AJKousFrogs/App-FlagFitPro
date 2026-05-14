@@ -1,9 +1,14 @@
 @use "styles/mixins" as *;
 
 .rtp-grid {
+  // Phase 5 mobile-first: 1 col on phones; auto-fill on tablet+.
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(var(--grid-card-min-xl), 1fr));
+  grid-template-columns: 1fr;
   gap: var(--ds-spacing-lg);
+
+  @include respond-above(md) {
+    grid-template-columns: repeat(auto-fill, minmax(var(--grid-card-min-xl), 1fr));
+  }
 }
 
 .rtp-header {
@@ -129,8 +134,4 @@
   list-style: none;
 }
 
-@include respond-to(md) {
-  .rtp-grid {
-    grid-template-columns: 1fr;
-  }
-}
+// (Phase 5 mobile-first sweep — override moved into .rtp-grid above.)

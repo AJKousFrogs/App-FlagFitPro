@@ -28,12 +28,23 @@
 }
 
 .playlists-grid {
+  // Phase 5 mobile-first: 1 col + tight gap on phones; auto-fill on tablet+;
+  // 4 col on extra-wide.
   display: grid;
-  grid-template-columns: repeat(
-    auto-fill,
-    minmax(var(--grid-card-min-md), 1fr)
-  );
-  gap: var(--layout-page-section-gap-tight);
+  grid-template-columns: 1fr;
+  gap: var(--space-3);
+
+  @include respond-above(md) {
+    grid-template-columns: repeat(
+      auto-fill,
+      minmax(var(--grid-card-min-md), 1fr)
+    );
+    gap: var(--layout-page-section-gap-tight);
+  }
+
+  @include respond-min(xxl-wide) {
+    grid-template-columns: repeat(4, 1fr);
+  }
 }
 
 .playlist-card {
@@ -61,8 +72,10 @@
 }
 
 .playlist-stats {
+  // Phase 5 mobile-first: stack on phones; row on tablet+.
   display: flex;
-  gap: var(--space-4);
+  flex-direction: column;
+  gap: var(--space-2);
   font-size: var(--ds-font-size-md);
   color: var(--color-text-muted);
   margin-bottom: var(--space-3);
@@ -71,6 +84,11 @@
     display: flex;
     align-items: center;
     gap: var(--space-1);
+  }
+
+  @include respond-above(md) {
+    flex-direction: row;
+    gap: var(--space-4);
   }
 }
 
@@ -82,38 +100,26 @@
 }
 
 .playlist-actions {
+  // Phase 5 mobile-first: stretch + full-width children on phones; right-aligned
+  // intrinsic on tablet+.
   display: flex;
   gap: var(--space-1);
-  justify-content: flex-end;
+  justify-content: stretch;
   flex-wrap: wrap;
-}
 
-@include respond-to(md) {
-  .playlists-grid {
-    grid-template-columns: 1fr;
-    gap: var(--space-3);
+  > * {
+    flex: 1 1 auto;
   }
 
-  .playlist-card {
-    height: 100%;
-  }
-
-  .playlist-stats {
-    flex-direction: column;
-    gap: var(--space-2);
-  }
-
-  .playlist-actions {
-    justify-content: stretch;
+  @include respond-above(md) {
+    justify-content: flex-end;
 
     > * {
-      flex: 1 1 auto;
+      flex: 0 1 auto;
     }
   }
 }
 
-@include respond-min(xxl-wide) {
-  .playlists-grid {
-    grid-template-columns: repeat(4, 1fr);
-  }
-}
+// (Phase 5 mobile-first sweep — overrides moved into .playlists-grid,
+// .playlist-stats, .playlist-actions blocks above. .playlist-card already
+// has height: 100% as default.)

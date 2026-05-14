@@ -106,14 +106,24 @@
   font-size: var(--ds-font-size-xs);
 }
 
-@include respond-to(md) {
-  .form-row.two-columns {
-    flex-direction: column;
-    gap: var(--space-4);
+// Phase 5 mobile-first: .form-row.two-columns stacks on phones, becomes
+// the 2-col flex row inherited from .form-row at tablet+.
+.form-row.two-columns {
+  flex-direction: column;
+  gap: var(--space-4);
+
+  .form-field {
+    width: 100%;
+    flex: 1 1 100%;
+  }
+
+  @include respond-above(md) {
+    flex-direction: row;
+    gap: var(--layout-gap-md);
 
     .form-field {
-      width: 100%;
-      flex: 1 1 100%;
+      width: auto;
+      flex: 1 1 0;
     }
   }
 }
