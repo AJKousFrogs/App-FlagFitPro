@@ -51,6 +51,23 @@
   .header-bento {
     @extend %bento-header-shell;
   }
+
+  // Phase 3a: page-hero hosting bento item — no surface chrome, lets the
+  // hero gradient run to the edges. The hero itself owns its rounding +
+  // padding via tokens added in Phase 1.
+  .today-hero-bento {
+    background: transparent;
+    box-shadow: none;
+    padding: 0;
+
+    @media (hover: hover) and (pointer: fine) {
+      &:hover {
+        transform: none;
+        border-color: transparent;
+        box-shadow: none;
+      }
+    }
+  }
 }
 
 .entry-context-banner {

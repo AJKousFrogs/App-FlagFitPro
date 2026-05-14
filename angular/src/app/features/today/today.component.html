@@ -4,6 +4,7 @@
        ======================================================================== -->
   @if (showCelebration()) {
     <div
+      #celebrationOverlay
       class="celebration-overlay"
       role="dialog"
       aria-modal="true"
@@ -73,6 +74,26 @@
   @if (!isLoading() && !isGeneratingProtocol()) {
     @if (todayViewModel(); as vm) {
       <div class="today-page bento-grid ui-page-shell">
+        <!-- Phase 3a: page hero with date eyebrow + display title + KPI strip -->
+        <div class="bento-item full-width no-padding today-hero-bento">
+          <app-page-hero
+            variant="athlete"
+            [eyebrow]="heroEyebrow()"
+            title="Today's training"
+            [subtitle]="heroSubtitle()"
+          >
+            <app-kpi-strip slot="kpis" [items]="kpiItems()" ariaLabel="Today's training metrics" />
+            <app-button
+              slot="actions"
+              iconLeft="pi-play"
+              size="lg"
+              (clicked)="scrollToProtocolBlocks()"
+            >
+              Start practice
+            </app-button>
+          </app-page-hero>
+        </div>
+
         @if (entryContext(); as entryContextMessage) {
           <div class="entry-context-banner full-width" role="status" aria-live="polite">
             <div class="entry-context-banner__icon">

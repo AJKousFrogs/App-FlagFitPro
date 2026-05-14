@@ -67,6 +67,8 @@ import { TodayScheduleBannerComponent } from "./components/today-schedule-banner
 import { TodayStatusStackComponent } from "./components/today-status-stack.component";
 import { TodayCoachMessagesService } from "./services/today-coach-messages.service";
 import { TodayProtocolStateService } from "./services/today-protocol-state.service";
+import { PageHeroComponent } from "../../shared/components/page-hero/page-hero.component";
+import { KpiStripComponent, type KpiItem } from "../../shared/components/kpi-strip/kpi-strip.component";
 
 // Constants
 import { ROUTES, TIMEOUTS, TRAINING } from "../../core/constants/app.constants";
@@ -131,6 +133,8 @@ interface QuickFormData {
     TodayQuickCheckinDialogComponent,
     TodayProtocolSectionComponent,
     TodayStatusStackComponent,
+    PageHeroComponent,
+    KpiStripComponent,
   ],
   templateUrl: "./today.component.html",
   styleUrl: "./today.component.scss",
@@ -156,6 +160,9 @@ export class TodayComponent {
 
   // Angular 21: viewChild signals for DOM element references
   private readonly protocolBlocks = viewChild<ElementRef>("protocolBlocks");
+  private readonly celebrationOverlay = viewChild<ElementRef<HTMLDivElement>>(
+    "celebrationOverlay",
+  );
 
   // Guard to prevent duplicate initial loads
   private _initialLoadDone = false;
@@ -588,6 +595,18 @@ export class TodayComponent {
       ) {
         this.celebrationShownForSession = true;
         this.showCelebration.set(true);
+      }
+    });
+
+    // Focus the celebration overlay when it opens so the (keydown) Escape
+    // handler can actually fire. Without this, keyboard focus stays on
+    // whatever element the user pressed (or no element at all) and the
+    // Escape key never reaches the dialog (FIFTY_BAD_THINGS item 20).
+    effect(() => {
+      if (this.showCelebration()) {
+        queueMicrotask(() => {
+          this.celebrationOverlay()?.nativeElement.focus();
+        });
       }
     });
 
@@ -1096,6 +1115,41 @@ export class TodayComponent {
       acwrRiskLevel: this.acwrRiskZone()?.level ?? null,
       hasCheckedInToday: this.hasCheckedInToday(),
     });
+  });
+
+  // ============================================================================
+  // PHASE 3a — PAGE HERO KPIs
+  // ============================================================================
+  readonly heroEyebrow = computed(() => this.todayDateLabel().toUpperCase());
+
+  readonly heroSubtitle = computed(() => {
+    const p = this.protocol();
+    if (!p) return "Your training plan is ready.";
+    const total = p.totalExercises ?? 0;
+    const done = p.completedExercises ?? 0;
+    if (total === 0) return "Your training plan is ready.";
+    if (done >= total) return "Today's training is complete — nice work.";
+    return `${total - done} of ${total} exercises remaining today.`;
+  });
+
+  readonly kpiItems = computed<readonly KpiItem[]>(() => {
+    const p = this.protocol();
+    const stats = this.weekStats();
+    const readiness = this.readinessScore();
+
+    const exercisesValue = p
+      ? `${p.completedExercises ?? 0}/${p.totalExercises ?? 0}`
+      : "0/0";
+
+    return [
+      { value: exercisesValue,                label: "Exercises" },
+      { value: String(stats.currentStreak),   label: "Day streak" },
+      { value: readiness != null ? String(readiness) : "—", label: "Readiness" },
+      {
+        value: stats.weeklyLoadAu != null ? String(stats.weeklyLoadAu) : "—",
+        label: "Load (AU)",
+      },
+    ];
   });
 
   // ============================================================================
