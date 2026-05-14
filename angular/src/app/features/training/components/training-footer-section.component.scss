@@ -29,6 +29,8 @@
 }
 
 .la28-teaser-content {
+  // Phase 5 mobile-first sweep: tighter padding + wrap on phones; spacious
+  // padding + nowrap on tablet+.
   display: flex;
   align-items: center;
   gap: var(--layout-gap-md);
@@ -38,10 +40,20 @@
     var(--color-status-info-subtle) 100%
   );
   border: var(--border-1) solid var(--color-border-primary);
-  padding: var(--space-5);
+  padding: var(--space-4);
   border-radius: calc(var(--component-card-radius) - var(--space-1));
   color: var(--color-text-primary);
-  margin: calc(-1 * var(--component-card-padding));
+  margin: calc(-1 * var(--component-card-padding-compact));
+  flex-wrap: wrap;
+
+  @media (min-width: 36.0625rem) {
+    flex-wrap: nowrap;
+  }
+
+  @include respond-above(md) {
+    padding: var(--space-5);
+    margin: calc(-1 * var(--component-card-padding));
+  }
 }
 
 .teaser-content {
@@ -102,15 +114,5 @@
   opacity: 1;
 }
 
-@include respond-to(md) {
-  .la28-teaser-content {
-    margin: calc(-1 * var(--component-card-padding-compact));
-    padding: var(--space-4);
-  }
-}
-
-@media (max-width: 36rem) {
-  .la28-teaser-content {
-    flex-wrap: wrap;
-  }
-}
+// (Phase 5 mobile-first sweep — overrides moved into .la28-teaser-content
+// as nested respond-above(md) + raw min-width 36rem rules above.)

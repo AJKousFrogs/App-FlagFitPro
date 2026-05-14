@@ -13,14 +13,27 @@
 }
 
 .table-filters {
+  // Phase 5 mobile-first sweep: stack on phones; row on tablet+.
   display: flex;
+  flex-direction: column;
   gap: var(--space-3);
   margin: var(--space-0);
-  flex-wrap: wrap;
+  width: 100%;
+
+  @include respond-above(md) {
+    flex-direction: row;
+    width: auto;
+    flex-wrap: wrap;
+  }
 }
 
 .filter-input {
-  min-width: var(--input-min-width-lg);
+  width: 100%;
+
+  @include respond-above(md) {
+    width: auto;
+    min-width: var(--input-min-width-lg);
+  }
 }
 
 .filter-select {
@@ -102,13 +115,5 @@
   }
 }
 
-@include respond-to(md) {
-  .table-filters {
-    flex-direction: column;
-    width: 100%;
-  }
-
-  .filter-input {
-    width: 100%;
-  }
-}
+// (Phase 5 mobile-first sweep — overrides moved into .table-filters and
+// .filter-input as nested respond-above rules above.)

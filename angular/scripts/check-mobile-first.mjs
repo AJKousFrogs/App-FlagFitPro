@@ -27,8 +27,12 @@ const REPO_ROOT = join(SCRIPT_DIR, "..");
 // 2026-05-14: features ceiling dropped from 226 → 222 (Phase 5 sweep —
 // qb-hub, reset-password, legal-doc converted from desktop-first to
 // mobile-first). The mobile-first count rose 8 → 14.
+// 2026-05-14: features ceiling dropped from 222 → 216 (slice 2 — periodization-
+// schedule-tab, video-curation-{analytics,video-table}, help-center,
+// analytics-player-stats-section, training-footer-section). Mobile-first
+// count rose 14 → 32.
 const CEILING = {
-  "src/app/features": 222,
+  "src/app/features": 216,
   "src/scss": 63,
 };
 

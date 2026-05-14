@@ -2,9 +2,19 @@
 
 .weekly-schedule {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(var(--grid-card-min-xs), 1fr));
+  grid-template-columns: 1fr;
   gap: var(--layout-page-section-gap-tight);
   margin: var(--space-0);
+
+  // Phase 5 mobile-first sweep: 1 col on phones; 2 cols on tablet; auto-fit
+  // on desktop+ so we still hit a reasonable col count on wide viewports.
+  @include respond-above(sm) {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  @media (min-width: 56.3125rem) {
+    grid-template-columns: repeat(auto-fit, minmax(var(--grid-card-min-xs), 1fr));
+  }
 }
 
 .day-card {
@@ -78,9 +88,18 @@
 
 .totals-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: 1fr;
   gap: var(--space-4);
   text-align: center;
+
+  // Phase 5 mobile-first sweep: 1 → 2 → 4 cols at sm/56rem/desktop.
+  @include respond-above(sm) {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  @media (min-width: 56.3125rem) {
+    grid-template-columns: repeat(4, 1fr);
+  }
 }
 
 .total-value {
@@ -93,18 +112,4 @@
 .total-label {
   font-size: var(--ds-font-size-xs);
   color: var(--color-text-secondary);
-}
-
-@media (max-width: 56.25rem) {
-  .weekly-schedule,
-  .totals-grid {
-    grid-template-columns: 1fr 1fr;
-  }
-}
-
-@include respond-to(sm) {
-  .weekly-schedule,
-  .totals-grid {
-    grid-template-columns: 1fr;
-  }
 }

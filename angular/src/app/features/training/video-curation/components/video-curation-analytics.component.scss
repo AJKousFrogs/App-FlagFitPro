@@ -13,9 +13,20 @@
 }
 
 .analytics-grid {
+  // Phase 5 mobile-first sweep: 1 col on phones; auto-fit on tablet+;
+  // 4 cols on extra-wide.
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(var(--grid-card-min-lg), 1fr));
-  gap: var(--layout-page-section-gap-tight);
+  grid-template-columns: 1fr;
+  gap: var(--space-3);
+
+  @include respond-above(md) {
+    grid-template-columns: repeat(auto-fit, minmax(var(--grid-card-min-lg), 1fr));
+    gap: var(--layout-page-section-gap-tight);
+  }
+
+  @include respond-min(xxl-wide) {
+    grid-template-columns: repeat(4, 1fr);
+  }
 }
 
 .analytics-list {
@@ -95,15 +106,5 @@
   color: var(--color-text-muted);
 }
 
-@include respond-to(md) {
-  .analytics-grid {
-    grid-template-columns: 1fr;
-    gap: var(--space-3);
-  }
-}
-
-@include respond-min(xxl-wide) {
-  .analytics-grid {
-    grid-template-columns: repeat(4, 1fr);
-  }
-}
+// (Phase 5 mobile-first sweep — overrides moved into .analytics-grid as
+// nested respond-above + respond-min rules above.)

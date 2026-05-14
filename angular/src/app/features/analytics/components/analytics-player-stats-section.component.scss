@@ -1,49 +1,88 @@
 @use "styles/mixins" as *;
 
+// Phase 5 mobile-first sweep: tightened mobile defaults, expanded grids
+// + spacing on tablet+ via respond-above(md).
 .player-stats-card {
-  margin-top: var(--space-0);
+  margin-top: var(--space-4);
 
   --app-card-shell-header-padding: var(--space-4);
   --app-card-shell-header-border-bottom: var(--border-1) solid
     var(--color-border-secondary);
+
+  @include respond-above(md) {
+    margin-top: var(--space-0);
+  }
 }
 
 .stats-summary {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(var(--grid-card-min-sm), 1fr));
-  gap: var(--space-4);
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-2);
   margin-bottom: var(--space-6);
-  padding: var(--space-4);
+  padding: var(--space-3);
   background: var(--surface-secondary);
   border-radius: var(--radius-md);
+
+  @include respond-above(md) {
+    grid-template-columns: repeat(auto-fit, minmax(var(--grid-card-min-sm), 1fr));
+    gap: var(--space-4);
+    padding: var(--space-4);
+  }
+}
+
+.stats-summary .metric-tile {
+  padding: var(--space-2);
+
+  @include respond-above(md) {
+    padding: var(--space-3);
+  }
 }
 
 .stats-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(var(--grid-card-min-md), 1fr));
-  gap: var(--space-4);
-  margin-bottom: var(--space-6);
+  grid-template-columns: 1fr;
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
+
+  @include respond-above(md) {
+    grid-template-columns: repeat(auto-fit, minmax(var(--grid-card-min-md), 1fr));
+    gap: var(--space-4);
+    margin-bottom: var(--space-6);
+  }
 }
 
 .stat-card {
-  padding: var(--space-4);
+  padding: var(--space-3);
   background: var(--surface-secondary);
   border-radius: var(--radius-md);
+
+  @include respond-above(md) {
+    padding: var(--space-4);
+  }
 }
 
 .stat-card h4,
 .stat-card h5 {
-  margin: var(--space-0) var(--space-0) var(--space-4);
+  margin: var(--space-0) var(--space-0) var(--space-3);
   font-size: var(--ds-font-size-md);
   font-weight: var(--ds-font-weight-semibold);
   color: var(--color-text-primary);
+
+  @include respond-above(md) {
+    margin-bottom: var(--space-4);
+  }
 }
 
 .stat-row {
   display: flex;
   justify-content: space-between;
-  padding: var(--space-2) 0;
+  padding: var(--space-1) 0;
   border-bottom: var(--border-1) solid var(--color-border-secondary);
+  font-size: var(--ds-font-size-md);
+
+  @include respond-above(md) {
+    padding: var(--space-2) 0;
+  }
 }
 
 .stat-row:last-child {
@@ -60,51 +99,14 @@
 }
 
 .multi-season-stats h4 {
-  margin: var(--space-6) 0 var(--space-4);
-  font-size: var(--ds-font-size-2xl);
+  margin: var(--space-4) 0 var(--space-3);
+  font-size: var(--ds-font-size-xl);
   font-weight: var(--ds-font-weight-semibold);
   letter-spacing: -0.025em;
   color: var(--color-text-primary);
-}
 
-@include respond-to(md) {
-  .player-stats-card {
-    margin-top: var(--space-4);
-  }
-
-  .stats-summary {
-    grid-template-columns: repeat(2, 1fr);
-    gap: var(--space-2);
-    padding: var(--space-3);
-  }
-
-  .stats-summary .metric-tile {
-    padding: var(--space-2);
-  }
-
-  .stats-grid {
-    grid-template-columns: 1fr;
-    gap: var(--space-3);
-    margin-bottom: var(--space-4);
-  }
-
-  .stat-card {
-    padding: var(--space-3);
-
-    h4,
-    h5 {
-      font-size: var(--ds-font-size-md);
-      margin-bottom: var(--space-3);
-    }
-  }
-
-  .stat-row {
-    padding: var(--space-1) 0;
-    font-size: var(--ds-font-size-md);
-  }
-
-  .multi-season-stats h4 {
-    margin: var(--space-4) 0 var(--space-3);
-    font-size: var(--ds-font-size-xl);
+  @include respond-above(md) {
+    margin: var(--space-6) 0 var(--space-4);
+    font-size: var(--ds-font-size-2xl);
   }
 }
