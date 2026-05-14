@@ -94,8 +94,6 @@ const ALL_ROUTES = [
   "exercisedb",
   "film",
   "film-room",
-  "game-tracker",
-  "game-tracker/live",
   "game/nutrition",
   "game/readiness",
   "goals",

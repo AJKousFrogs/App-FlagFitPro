@@ -33,6 +33,12 @@ export const gameRoutes: Routes = [
     data: { entry: "legacy" },
   },
   {
+    path: "game-tracker/live",
+    redirectTo: "tournaments",
+    pathMatch: "full",
+    data: { entry: "legacy" },
+  },
+  {
     path: "tournaments",
     loadComponent: () =>
       import("../../../features/tournaments/tournaments.component").then(
@@ -40,12 +46,5 @@ export const gameRoutes: Routes = [
       ),
     canActivate: [authGuard],
     data: { preload: false, entry: "internal", headerPreset: "analytics" }, // Seasonal feature
-  },
-  // === NEW ROUTE: Live Game Tracker ===
-  {
-    path: "game-tracker/live",
-    redirectTo: "tournaments",
-    pathMatch: "full",
-    data: { entry: "legacy" },
   },
 ];

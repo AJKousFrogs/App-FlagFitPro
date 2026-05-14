@@ -336,28 +336,6 @@ export class ContextService {
         },
       ],
     },
-    "/game-tracker": {
-      label: "Game Tracker",
-      icon: "pi-flag",
-      parent: "/todays-practice",
-      quickActions: [
-        {
-          label: "New Game",
-          icon: "pi-plus",
-          route: "/game-tracker",
-        },
-        {
-          label: "View Schedule",
-          icon: "pi-calendar",
-          route: "/game-tracker",
-        },
-        {
-          label: "Game Stats",
-          icon: "pi-chart-bar",
-          route: "/analytics",
-        },
-      ],
-    },
     "/chat": {
       label: "Chat",
       icon: "pi-comments",
