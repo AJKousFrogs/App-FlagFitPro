@@ -34,9 +34,10 @@ import { CloseButtonComponent } from "../close-button/close-button.component";
     <nav
       class="bottom-nav"
       [class.hidden]="!isVisible()"
+      [class.bottom-nav--has-fab]="hasFabSlot()"
       aria-label="Primary navigation"
     >
-      @for (item of visibleNavItems(); track item.route) {
+      @for (item of visibleNavItems(); track item.route; let i = $index) {
         <app-nav-item
           [route]="item.route"
           [label]="item.label"
@@ -44,6 +45,7 @@ import { CloseButtonComponent } from "../close-button/close-button.component";
           [badge]="item.badge && item.badge > 0 ? item.badge : null"
           [exact]="isExactRoute(item.route)"
           variant="bottom"
+          [itemClass]="i === fabIndex() ? 'nav-item--fab' : ''"
         />
       }
 
@@ -141,6 +143,18 @@ export class BottomNavComponent implements OnInit {
   });
 
   hasMoreItems = computed(() => this.moreNavItems().length > 0);
+
+  /**
+   * Index of the slot rendered as a protruding center FAB. Set to the
+   * middle slot when there are exactly 5 mobilePrimary items (the Phase 2
+   * shell shape). For other counts we skip the FAB treatment.
+   */
+  readonly fabIndex = computed(() => {
+    const count = this.visibleNavItems().length;
+    return count === 5 ? 2 : -1;
+  });
+
+  readonly hasFabSlot = computed(() => this.fabIndex() >= 0);
 
   ngOnInit(): void {
     this.router.events

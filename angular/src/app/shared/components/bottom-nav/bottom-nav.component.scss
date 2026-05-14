@@ -1,6 +1,5 @@
 // ============================================================================
-// bottom-nav.component Styles
-// Design System Compliant
+// bottom-nav.component Styles — Phase 2 mobile-first redesign
 // ============================================================================
 
 @use "styles/mixins" as *;
@@ -8,16 +7,16 @@
 .bottom-nav {
   position: fixed;
   inset: auto var(--space-0) var(--space-0);
-  height: calc(var(--bottom-nav-height) + var(--safe-area-bottom));
+  height: calc(var(--bottom-nav-height-mobile) + var(--safe-area-bottom));
   background: color-mix(
     in srgb,
-    var(--surface-primary) 85%,
+    var(--surface-primary) 88%,
     transparent
   );
   border-top: var(--border-1) solid var(--color-border-secondary);
   display: none;
   justify-content: space-around;
-  align-items: center;
+  align-items: stretch;
   padding: 0 var(--space-1) var(--safe-area-bottom);
   gap: var(--space-0-5);
   z-index: var(--z-modal);
@@ -26,9 +25,10 @@
   -webkit-backdrop-filter: blur(var(--premium-glass-blur-xl)) saturate(1.6);
   box-shadow: 0 -1px 0 var(--color-border-subtle);
   transition:
-    transform var(--transition-fast) var(--ease-standard),
+    transform var(--transition-base) var(--ease-standard),
     box-shadow var(--transition-fast) var(--ease-standard),
     background-color var(--transition-fast) var(--ease-standard);
+  overflow: visible; // Allow center FAB to protrude above the bar
 }
 
 .bottom-nav > app-nav-item {
@@ -40,12 +40,96 @@
   display: none;
 }
 
-@media (max-width: 40rem) {
+// Phase 2: extend bottom-nav visibility through ≤ md (768px). Previously
+// dropped out at ≤ 40rem (640px), so tablet portrait users inherited the
+// desktop sidebar (FIFTY_BAD_THINGS item 23).
+@include respond-to(md) {
   .bottom-nav {
     display: flex;
   }
 }
 
+// ============================================================================
+// CENTER FAB (3rd of 5 slots)
+// ============================================================================
+// The 5-item bar gets a protruding center FAB on the middle slot. The slot
+// keeps its flex layout in the bar so spacing stays even, but the icon-
+// labelled anchor inside gets sized as a circle that sits above the baseline
+// (matches Active Club / MLS reference). We target the nested anchor inside
+// app-nav-item by chaining the FAB modifier class set in the component.
+
+// The .nav-item--fab class is applied to the inner anchor element by
+// NavItemComponent via [itemClass]. The host <app-nav-item> wrapper keeps
+// its flex: 1 1 0 sizing so the 5 slots stay equal-width; the FAB anchor
+// itself absolutely positions to the center of the slot and protrudes
+// upward via negative top so it sits above the bar baseline (matches the
+// Active Club + MLS reference).
+.bottom-nav--has-fab .nav-item--fab {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  transform: translate(-50%, calc(var(--bottom-nav-fab-protrusion) * -1));
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--bottom-nav-fab-size);
+  height: var(--bottom-nav-fab-size);
+  padding: var(--space-0);
+  border-radius: 50%;
+  background: var(--gradient-fab-primary);
+  color: var(--color-text-on-primary);
+  box-shadow:
+    var(--shadow-lg),
+    0 0 0 var(--border-2) var(--surface-primary);
+  transition:
+    transform var(--transition-fast) var(--ease-standard),
+    box-shadow var(--transition-fast) var(--ease-standard);
+
+  // Hide the label — the FAB is icon-only; route label is its accessible name.
+  .nav-item-label {
+    display: none;
+  }
+
+  .nav-item-icon {
+    font-size: 1.5rem;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      transform: translate(-50%, calc(var(--bottom-nav-fab-protrusion) * -1 - 2px));
+      box-shadow:
+        var(--shadow-xl),
+        0 0 0 var(--border-2) var(--surface-primary);
+    }
+  }
+
+  &:active {
+    transform: translate(-50%, calc(var(--bottom-nav-fab-protrusion) * -1)) scale(0.95);
+  }
+
+  &:focus-visible {
+    outline: var(--border-2) solid var(--color-border-focus);
+    outline-offset: var(--space-1);
+  }
+}
+
+// Slot wrapper for the FAB stays flex-sized so the 5 columns are even, but
+// becomes positioning context for the absolutely-positioned FAB anchor.
+.bottom-nav--has-fab > app-nav-item:nth-child(3) {
+  position: relative;
+}
+
+// ============================================================================
+// HIDE-ON-SCROLL behavior (driven by the .is-scrolled-down class set on body
+// from main-layout's IntersectionObserver sentinel).
+// ============================================================================
+:where(body.bottom-nav-hidden) .bottom-nav {
+  transform: translateY(calc(100% + var(--safe-area-bottom)));
+}
+
+// ============================================================================
+// MORE MENU (unchanged from pre-Phase-2 except spacing tweaks)
+// ============================================================================
 .more-menu-overlay {
   z-index: var(--z-index-modal-backdrop);
 }
@@ -93,6 +177,7 @@
 
 @media (prefers-reduced-motion: reduce) {
   .bottom-nav,
+  .bottom-nav--has-fab .nav-item--fab,
   .more-menu {
     transition: none;
     animation: none;
