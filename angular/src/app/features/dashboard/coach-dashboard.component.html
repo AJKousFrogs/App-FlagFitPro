@@ -18,6 +18,28 @@
       <!-- Content -->
       @else {
         <div class="dashboard-content ui-page-shell ui-page-stack">
+          <!-- Phase 3b: page hero with team name + KPI strip -->
+          <app-page-hero
+            variant="coach"
+            eyebrow="COACH DASHBOARD"
+            [title]="teamOverview().teamName"
+            [subtitle]="heroSubtitle()"
+            icon="pi-users"
+          >
+            <app-kpi-strip
+              slot="kpis"
+              [items]="heroKpiItems()"
+              ariaLabel="Team overview metrics"
+            />
+            <app-button
+              slot="actions"
+              iconLeft="pi-plus"
+              (clicked)="openCreateSession()"
+            >
+              New session
+            </app-button>
+          </app-page-hero>
+
           <!-- Lead with Coach Priority Command & Merlin Insight -->
           <app-coach-dashboard-priority-section
             [merlinCoachInsight]="merlinCoachInsight()"

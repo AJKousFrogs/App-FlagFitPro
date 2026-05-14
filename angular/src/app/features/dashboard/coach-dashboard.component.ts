@@ -46,6 +46,11 @@ import {
   DialogHeaderComponent,
 } from "../../shared/components/ui-components";
 import { PageErrorStateComponent } from "../../shared/components/page-error-state/page-error-state.component";
+import { PageHeroComponent } from "../../shared/components/page-hero/page-hero.component";
+import {
+  KpiStripComponent,
+  type KpiItem,
+} from "../../shared/components/kpi-strip/kpi-strip.component";
 import { formatDate, getTimeAgo } from "../../shared/utils/date.utils";
 import {
   getStatusSeverity as getStatusSeverityValue,
@@ -122,6 +127,8 @@ interface NewSessionDraft {
     CoachDashboardPrioritySectionComponent,
     CoachDashboardProtocolsSectionComponent,
     CoachDashboardRosterSectionComponent,
+    PageHeroComponent,
+    KpiStripComponent,
   ],
   templateUrl: "./coach-dashboard.component.html",
 
@@ -185,6 +192,55 @@ export class CoachDashboardComponent {
   upcomingGames = signal<UpcomingGame[]>([]);
   trainingSessions = signal<TrainingSession[]>([]);
   riskAlerts = signal<RiskAlert[]>([]);
+
+  /**
+   * Phase 3b — Coach Dashboard page-hero subtitle. Pulls from teamOverview
+   * to give the coach an at-a-glance "what to look at first" line.
+   */
+  readonly heroSubtitle = computed(() => {
+    const overview = this.teamOverview();
+    const risks = this.riskAlerts().length;
+    if (overview.teamName === "Loading...") return "Loading team data…";
+    if (risks > 0) {
+      return `${risks} player${risks === 1 ? "" : "s"} flagged — review the priority list below.`;
+    }
+    const missing = this.playersWithMissingData().length;
+    if (missing > 0) {
+      return `Team is on track. ${missing} player${missing === 1 ? "" : "s"} need wellness check-ins.`;
+    }
+    return "Team is on track. No flags or missing data today.";
+  });
+
+  /**
+   * Phase 3b — Coach Dashboard page-hero KPI strip. Surfaces 4 metrics:
+   * Players (active / total), At risk count, Win-loss record, Practice
+   * attendance %.
+   */
+  readonly heroKpiItems = computed<readonly KpiItem[]>(() => {
+    const o = this.teamOverview();
+    const risks = this.riskAlerts().length;
+    return [
+      {
+        value: o.totalPlayers > 0 ? `${o.activePlayers}/${o.totalPlayers}` : "—",
+        label: "Players",
+      },
+      {
+        value: String(risks),
+        label: "At risk",
+        deltaTrend: risks > 0 ? "down" : "neutral",
+      },
+      {
+        value: `${o.wins}-${o.losses}` + (o.ties > 0 ? `-${o.ties}` : ""),
+        label: "Record",
+      },
+      {
+        value: o.practiceAttendanceRate > 0
+          ? `${Math.round(o.practiceAttendanceRate)}%`
+          : "—",
+        label: "Attendance",
+      },
+    ];
+  });
   performanceTrend = signal<{ labels: string[]; scores: number[] }>({
     labels: [],
     scores: [],
