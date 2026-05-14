@@ -90,6 +90,30 @@
   margin-top: calc(var(--space-4) * -1);
 }
 
+// Phase 3: training calendar picker — mobile (≤ md) shows the horizontal
+// day-picker strip; tablet landscape + desktop (≥ md-min) shows the full
+// PrimeNG inline calendar. Default is mobile-first: strip visible, p-datepicker
+// hidden. The respond-min(md-min) block flips the visibility at 48.0625rem.
+.calendar-picker {
+  &--mobile {
+    display: block;
+  }
+  &--desktop {
+    display: none;
+  }
+}
+
+@include respond-min(md-min) {
+  .calendar-picker {
+    &--mobile {
+      display: none;
+    }
+    &--desktop {
+      display: block;
+    }
+  }
+}
+
 // Phase 3: training-hub-grid now hosts <app-list-row> primitives wrapped
 // in anchor tags. The inner row component owns its own surface/hover/focus
 // styling so this layer only handles the grid placement + anchor reset.

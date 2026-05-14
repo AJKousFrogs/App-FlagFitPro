@@ -35,6 +35,7 @@ import { ButtonComponent } from "../../../shared/components/button/button.compon
 import { CardShellComponent } from "../../../shared/components/card-shell/card-shell.component";
 import { EmptyStateComponent } from "../../../shared/components/empty-state/empty-state.component";
 import { ListRowComponent } from "../../../shared/components/list-row/list-row.component";
+import { DayPickerStripComponent } from "../../../shared/components/day-picker-strip/day-picker-strip.component";
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
 import { PageErrorStateComponent } from "../../../shared/components/page-error-state/page-error-state.component";
 import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";
@@ -74,6 +75,7 @@ function toLocalDateKey(date: Date | null | undefined): string {
     CardShellComponent,
     EmptyStateComponent,
     ListRowComponent,
+    DayPickerStripComponent,
     PageErrorStateComponent,
     RouterModule,
   ],
@@ -95,6 +97,14 @@ export class TrainingScheduleComponent implements OnInit {
   selectedDate = signal<Date>(new Date());
   showWeekNumbers = signal<boolean>(true);
   today = new Date();
+
+  /**
+   * Phase 3 — ISO date binding for <app-day-picker-strip>.
+   * The strip emits YYYY-MM-DD strings; the existing onDateSelect()
+   * pipeline expects a Date instance. selectedDateIso bridges read +
+   * onDayPickerChange bridges write.
+   */
+  readonly selectedDateIso = computed(() => toLocalDateKey(this.selectedDate()));
 
   // Data state delegated to component-scoped service
   readonly sessions = this.scheduleState.sessions;
@@ -433,6 +443,14 @@ export class TrainingScheduleComponent implements OnInit {
           this.logger.warn("Failed to load weather-sensitive sessions:", toLogContext(error));
         },
       });
+  }
+
+  /** Bridges the day-picker-strip ISO string output to the existing
+      onDateSelect(Date) pipeline. */
+  onDayPickerChange(iso: string): void {
+    const [y, m, d] = iso.split("-").map((s) => parseInt(s, 10));
+    if (!y || !m || !d) return;
+    this.onDateSelect(new Date(y, m - 1, d));
   }
 
   onDateSelect(date: Date): void {

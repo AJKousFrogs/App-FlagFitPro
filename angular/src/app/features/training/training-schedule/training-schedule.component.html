@@ -97,17 +97,30 @@
         <div class="schedule-content">
           <!-- STEP 2: Calendar Card with inline DatePicker and showWeek -->
           <app-card-shell title="Training Calendar" headerIcon="pi-calendar">
-            <p-datepicker
-              [ngModel]="selectedDate()"
-              (onSelect)="onDateSelect($event)"
-              [inline]="true"
-              [showWeek]="showWeekNumbers()"
-              [touchUI]="false"
-              [disabled]="false"
-              [selectOtherMonths]="true"
-              [showOtherMonths]="true"
-              aria-label="Training calendar date picker"
-            ></p-datepicker>
+            <!-- Phase 3: mobile (≤ md) uses the horizontal day-picker strip
+                 from the primitive set; desktop keeps the full inline
+                 p-datepicker. CSS visibility split below. -->
+            <div class="calendar-picker calendar-picker--mobile">
+              <app-day-picker-strip
+                [selected]="selectedDateIso()"
+                [length]="14"
+                (selectedChange)="onDayPickerChange($event)"
+                ariaLabel="Pick a training date"
+              />
+            </div>
+            <div class="calendar-picker calendar-picker--desktop">
+              <p-datepicker
+                [ngModel]="selectedDate()"
+                (onSelect)="onDateSelect($event)"
+                [inline]="true"
+                [showWeek]="showWeekNumbers()"
+                [touchUI]="false"
+                [disabled]="false"
+                [selectOtherMonths]="true"
+                [showOtherMonths]="true"
+                aria-label="Training calendar date picker"
+              ></p-datepicker>
+            </div>
 
             <!-- Calendar Legend (informational only) -->
             <div class="calendar-legend">
