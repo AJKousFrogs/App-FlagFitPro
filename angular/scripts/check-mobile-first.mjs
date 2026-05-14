@@ -34,8 +34,11 @@ const REPO_ROOT = join(SCRIPT_DIR, "..");
 // 2026-05-14: features ceiling dropped from 216 → 211 (slice 3 — video-curation-
 // {pending,playlists}, settings-account-section, physio-{risk,rtp}-section).
 // Mobile-first count rose 32 → 41.
+// 2026-05-14: features ceiling dropped from 211 → 205 (slice 4 — today-protocol-
+// section, training-session-detail, decision-detail, tournament-{availability,
+// form}-dialog{,-content}, smart-training-form). Mobile-first 41 → 59.
 const CEILING = {
-  "src/app/features": 211,
+  "src/app/features": 205,
   "src/scss": 63,
 };
 

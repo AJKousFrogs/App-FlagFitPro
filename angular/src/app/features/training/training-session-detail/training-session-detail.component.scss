@@ -1,10 +1,15 @@
 @use "styles/mixins" as *;
 
 .session-detail-page {
+  // Phase 5 mobile-first: tight padding on phones; spacious on tablet+.
   display: flex;
   flex-direction: column;
   gap: var(--space-4);
-  padding: var(--space-4);
+  padding: var(--space-3);
+
+  @include respond-above(sm) {
+    padding: var(--space-4);
+  }
 
   .loading-state {
     display: flex;
@@ -77,20 +82,31 @@
   }
 
   .action-buttons {
+    // Phase 5 mobile-first: stack on phones; row on tablet+.
     display: flex;
+    flex-direction: column;
     flex-wrap: wrap;
     gap: var(--space-3);
     padding: var(--space-4) 0;
+
+    @include respond-above(sm) {
+      flex-direction: row;
+    }
   }
 }
 
 .session-detail-page .overview-grid {
+  // Phase 5 mobile-first: 2 cols on phones; auto-fit on tablet+.
   display: grid;
-  grid-template-columns: repeat(
-    auto-fit,
-    minmax(var(--grid-card-min-sm), 1fr)
-  );
+  grid-template-columns: repeat(2, 1fr);
   gap: var(--space-4);
+
+  @include respond-above(sm) {
+    grid-template-columns: repeat(
+      auto-fit,
+      minmax(var(--grid-card-min-sm), 1fr)
+    );
+  }
 }
 
 .session-detail-page .overview-item {
@@ -121,16 +137,6 @@
   color: var(--color-text-primary);
 }
 
-@include respond-to(sm) {
-  .session-detail-page {
-    padding: var(--space-3);
-  }
-
-  .session-detail-page .overview-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  .session-detail-page .action-buttons {
-    flex-direction: column;
-  }
-}
+// (Phase 5 mobile-first sweep — overrides moved into .session-detail-page,
+// .overview-grid, and .action-buttons blocks above as nested respond-above(sm)
+// rules.)

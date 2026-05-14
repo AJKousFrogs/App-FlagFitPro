@@ -36,10 +36,15 @@
 }
 
 .availability-options {
+  // Phase 5 mobile-first: 1 col on phones; 4 cols on tablet+.
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: 1fr;
   gap: var(--space-3);
   margin-top: var(--space-2);
+
+  @include respond-above(md) {
+    grid-template-columns: repeat(4, 1fr);
+  }
 }
 
 .availability-option {
@@ -84,9 +89,14 @@
 }
 
 .form-grid-2 {
+  // Phase 5 mobile-first: 1 col on phones; 2 cols on tablet+.
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr;
   gap: var(--space-4);
+
+  @include respond-above(md) {
+    grid-template-columns: 1fr 1fr;
+  }
 }
 
 .cost-summary {
@@ -132,9 +142,5 @@
   color: var(--ds-primary-green);
 }
 
-@include respond-to(md) {
-  .availability-options,
-  .form-grid-2 {
-    grid-template-columns: 1fr;
-  }
-}
+// (Phase 5 mobile-first sweep — overrides moved into .availability-options
+// and .form-grid-2 blocks above.)

@@ -49,9 +49,14 @@
 }
 
 .form-grid {
+  // Phase 5 mobile-first: 1 col on phones; auto-fit on tablet+.
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(var(--grid-card-min-md), 1fr));
+  grid-template-columns: 1fr;
   gap: var(--space-6);
+
+  @include respond-above(md) {
+    grid-template-columns: repeat(auto-fit, minmax(var(--grid-card-min-md), 1fr));
+  }
 }
 
 .session-type-option {
@@ -119,24 +124,27 @@
 }
 
 .form-actions {
+  // Phase 5 mobile-first: stack + full-width buttons on phones; row + intrinsic on tablet+.
   display: flex;
+  flex-direction: column;
   gap: var(--space-4);
   justify-content: flex-end;
   margin-top: var(--space-6); // 1.5rem
   padding-top: var(--space-6); // 1.5rem
   border-top: var(--border-1) solid var(--color-border-primary);
-}
 
-@include respond-to(md) {
-  .form-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .form-actions {
-    flex-direction: column;
-  }
-
-  .form-actions p-button {
+  p-button {
     width: 100%;
   }
+
+  @include respond-above(md) {
+    flex-direction: row;
+
+    p-button {
+      width: auto;
+    }
+  }
 }
+
+// (Phase 5 mobile-first sweep — overrides moved into .form-grid + .form-actions
+// blocks above as nested respond-above(md) rules.)

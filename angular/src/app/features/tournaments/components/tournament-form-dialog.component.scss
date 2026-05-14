@@ -9,26 +9,40 @@
 }
 
 .tournament-form {
+  // Phase 5 mobile-first: tighter gap on phones; spacious on tablet+.
   display: flex;
   flex-direction: column;
-  gap: var(--space-5);
+  gap: var(--space-4);
   padding: var(--space-0);
+
+  @include respond-above(md) {
+    gap: var(--space-5);
+  }
 }
 
 .form-section {
   background: var(--surface-secondary);
   border: var(--border-1) solid var(--color-border-secondary);
   border-radius: var(--radius-xl);
-  padding: var(--space-5);
+  padding: var(--space-4);
+
+  @include respond-above(md) {
+    padding: var(--space-5);
+  }
 }
 
 .section-header {
   display: flex;
   align-items: center;
   gap: var(--space-3);
-  margin-bottom: var(--space-5);
-  padding-bottom: var(--space-4);
+  margin-bottom: var(--space-4);
+  padding-bottom: var(--space-3);
   border-bottom: var(--border-1) solid var(--color-border-secondary);
+
+  @include respond-above(md) {
+    margin-bottom: var(--space-5);
+    padding-bottom: var(--space-4);
+  }
 }
 
 .section-header i {
@@ -43,8 +57,13 @@
 }
 
 .tournament-form .form-row {
-  gap: var(--space-5);
+  // Phase 5 mobile-first: tighter row gap on phones; spacious on tablet+.
+  gap: var(--space-4);
   margin-bottom: var(--space-4);
+
+  @include respond-above(md) {
+    gap: var(--space-5);
+  }
 }
 
 .tournament-form .form-row:last-child {
@@ -109,10 +128,16 @@
 }
 
 .tournament-form .form-field.checkbox-field {
+  // Phase 5 mobile-first: full padding on phones (already same value);
+  // padding x increases at tablet+.
   align-items: center;
   min-height: calc(var(--touch-target-md) + var(--space-4));
-  padding: var(--space-4) var(--space-5);
+  padding: var(--space-4);
   background: var(--surface-card);
+
+  @include respond-above(md) {
+    padding: var(--space-4) var(--space-5);
+  }
 }
 
 .tournament-form .form-field.checkbox-field app-checkbox {
@@ -120,25 +145,6 @@
   width: 100%;
 }
 
-@include respond-to(md) {
-  .tournament-form {
-    gap: var(--space-4);
-  }
-
-  .form-section {
-    padding: var(--space-4);
-  }
-
-  .section-header {
-    margin-bottom: var(--space-4);
-    padding-bottom: var(--space-3);
-  }
-
-  .tournament-form .form-row {
-    gap: var(--space-4);
-  }
-
-  .tournament-form .form-field.checkbox-field {
-    padding: var(--space-4);
-  }
-}
+// (Phase 5 mobile-first sweep — overrides moved into .tournament-form,
+// .form-section, .section-header, .tournament-form .form-row, and
+// .tournament-form .form-field.checkbox-field blocks above.)

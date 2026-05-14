@@ -62,19 +62,34 @@
 }
 
 .protocol-progress-wrapper {
-  padding: var(--space-3) var(--space-4);
-  border-radius: var(--radius-xl);
+  // Phase 5 mobile-first: tighter padding + radius on phones; spacious on tablet+.
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-lg);
   margin-bottom: var(--space-4);
   background: color-mix(in srgb, var(--ds-primary-green) 6%, var(--surface-card));
   border: var(--border-1) solid color-mix(in srgb, var(--ds-primary-green) 18%, var(--color-border-primary));
+
+  @include respond-above(sm) {
+    padding: var(--space-3) var(--space-4);
+    border-radius: var(--radius-xl);
+  }
 }
 
 .protocol-meta {
+  // Phase 5 mobile-first: stack vertically on phones; row on tablet+.
   display: flex;
+  flex-direction: column;
   justify-content: space-between;
+  gap: var(--space-1);
   margin-top: var(--space-2);
-  font-size: var(--ds-font-size-xs);
+  font-size: var(--ds-font-size-2xs);
   color: var(--color-text-secondary);
+
+  @include respond-above(sm) {
+    flex-direction: row;
+    gap: 0;
+    font-size: var(--ds-font-size-xs);
+  }
 }
 
 .protocol-blocks {
@@ -84,50 +99,44 @@
 }
 
 .card-footer {
+  // Phase 5 mobile-first: tighter padding-top on phones; spacious on tablet+.
   margin-top: var(--space-4);
-  padding-top: var(--space-3);
+  padding-top: var(--space-2);
   border-top: var(--border-1) solid var(--color-border-secondary);
   display: flex;
   flex-wrap: wrap;
+
+  @include respond-above(sm) {
+    padding-top: var(--space-3);
+  }
   gap: var(--space-2);
   justify-content: center;
 }
 
 .no-exercises-message {
+  // Phase 5 mobile-first: tighter padding on phones; spacious on tablet+.
   text-align: center;
-  padding: var(--space-6);
+  padding: var(--space-4);
   background: var(--color-surface-secondary);
   border-radius: var(--radius-lg);
+
+  @include respond-above(sm) {
+    padding: var(--space-6);
+  }
   margin: var(--space-4) 0;
 }
 
 .no-exercises-message p {
+  // Phase 5 mobile-first: smaller text on phones; full size on tablet+.
   margin: var(--space-0) var(--space-0) var(--space-4);
-  font-size: var(--ds-font-size-md);
+  font-size: var(--ds-font-size-sm);
+
+  @include respond-above(sm) {
+    font-size: var(--ds-font-size-md);
+  }
   color: var(--color-text-secondary);
 }
 
-@include respond-to(sm) {
-  .protocol-progress-wrapper {
-    padding: var(--space-2) var(--space-3);
-    border-radius: var(--radius-lg);
-  }
-
-  .protocol-meta {
-    flex-direction: column;
-    gap: var(--space-1);
-    font-size: var(--ds-font-size-2xs);
-  }
-
-  .card-footer {
-    padding-top: var(--space-2);
-  }
-
-  .no-exercises-message {
-    padding: var(--space-4);
-  }
-
-  .no-exercises-message p {
-    font-size: var(--ds-font-size-sm);
-  }
-}
+// (Phase 5 mobile-first sweep — overrides moved into .protocol-progress-wrapper,
+// .protocol-meta, .card-footer, .no-exercises-message, and .no-exercises-message p
+// blocks above as nested respond-above(sm) rules.)

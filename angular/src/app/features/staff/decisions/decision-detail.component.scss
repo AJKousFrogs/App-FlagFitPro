@@ -5,13 +5,18 @@
 }
 
 .detail-grid {
+  // Phase 5 mobile-first: 1 col on phones; auto-fit on tablet+.
   display: grid;
-  grid-template-columns: repeat(
-    auto-fit,
-    minmax(calc(var(--size-200) * 2), 1fr)
-  );
+  grid-template-columns: 1fr;
   gap: var(--space-4);
   margin-top: var(--space-6);
+
+  @include respond-above(md) {
+    grid-template-columns: repeat(
+      auto-fit,
+      minmax(calc(var(--size-200) * 2), 1fr)
+    );
+  }
 }
 
 .decision-detail__error-actions {
@@ -131,8 +136,4 @@
   text-align: center;
 }
 
-@include respond-to(md) {
-  .detail-grid {
-    grid-template-columns: 1fr;
-  }
-}
+// (Phase 5 mobile-first sweep — override moved into .detail-grid above.)
