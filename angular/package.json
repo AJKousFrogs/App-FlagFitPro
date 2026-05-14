@@ -53,7 +53,8 @@
     "audit:a11y": "npx tsx src/scripts/accessibility-audit.ts",
     "audit:a11y:ci": "BASE_URL=${BASE_URL:-http://127.0.0.1:4200} npm run audit:a11y",
     "audit:primeng-bindings": "node scripts/audit-primeng-bindings.js",
-    "check:ngmodel-cva": "node scripts/check-no-bidirectional-ngmodel.mjs"
+    "check:ngmodel-cva": "node scripts/check-no-bidirectional-ngmodel.mjs",
+    "check:mobile-first": "node scripts/check-mobile-first.mjs"
   },
   "private": true,
   "dependencies": {
