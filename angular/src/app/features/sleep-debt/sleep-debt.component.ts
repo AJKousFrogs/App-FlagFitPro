@@ -29,6 +29,7 @@ import { MainLayoutComponent } from "../../shared/components/layout/main-layout.
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
 import { LazyChartComponent } from "../../shared/components/lazy-chart/lazy-chart.component";
 import { EmptyStateComponent } from "../../shared/components/empty-state/empty-state.component";
+import { RecoverTabBarComponent } from "../recover/recover-tab-bar.component";
 
 // ===== Interfaces =====
 interface SleepEntry {
@@ -83,6 +84,7 @@ const DEBT_THRESHOLDS = {
     PageHeaderComponent,
     StatusTagComponent,
     EmptyStateComponent,
+    RecoverTabBarComponent,
   ],
   templateUrl: "./sleep-debt.component.html",
   styleUrl: "./sleep-debt.component.scss",

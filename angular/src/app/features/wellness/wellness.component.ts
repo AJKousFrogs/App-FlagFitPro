@@ -46,6 +46,7 @@ import { SimpleChartData } from "../../core/models/chart.models";
 import { WellnessData } from "../../core/services/wellness.service";
 import { DATA_STATE_MESSAGES } from "../../shared/utils/privacy-ux-copy";
 import { WellnessChartsSectionComponent } from "./components/wellness-charts-section.component";
+import { RecoverTabBarComponent } from "../recover/recover-tab-bar.component";
 
 interface WellnessAlert {
   id: string;
@@ -91,6 +92,7 @@ interface WellnessEntryContext {
     AlertComponent,
     CardShellComponent,
     WellnessChartsSectionComponent,
+    RecoverTabBarComponent,
   ],
   templateUrl: "./wellness.component.html",
   styleUrl: "./wellness.component.scss",

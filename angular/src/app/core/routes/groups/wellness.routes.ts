@@ -3,6 +3,16 @@ import { authGuard } from "../../guards/auth.guard";
 import { femaleAthleteGuard } from "../../guards/female-athlete.guard";
 
 export const wellnessRoutes: Routes = [
+  // ── Phase 0.5: canonical "/recover" alias for athletes ──
+  // The 5 underlying routes (wellness, sleep-debt, acwr, cycle-tracking,
+  // return-to-play) render their own pages and share the
+  // RecoverTabBarComponent so users see one consolidated Recover surface.
+  {
+    path: "recover",
+    redirectTo: "wellness",
+    pathMatch: "full",
+    data: { entry: "internal" },
+  },
   {
     path: "performance/load",
     redirectTo: "acwr",

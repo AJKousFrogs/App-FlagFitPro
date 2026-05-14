@@ -74,6 +74,7 @@ import { DataSourceBannerComponent } from "../../shared/components/data-source-b
 import { DataState } from "../../core/services/data-source.service";
 import { LazyPdfService } from "../../core/services/lazy-pdf.service";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
+import { RecoverTabBarComponent } from "../recover/recover-tab-bar.component";
 
 @Component({
   selector: "app-acwr-dashboard",
@@ -92,6 +93,7 @@ import { PageHeaderComponent } from "../../shared/components/page-header/page-he
     PageHeaderComponent,
     ButtonComponent,
     EmptyStateComponent,
+    RecoverTabBarComponent,
   ],
   templateUrl: "./acwr-dashboard.component.html",
   styleUrl: "./acwr-dashboard.component.scss",

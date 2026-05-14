@@ -43,6 +43,7 @@ import {
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
 import { EmptyStateComponent } from "../../shared/components/empty-state/empty-state.component";
+import { RecoverTabBarComponent } from "../recover/recover-tab-bar.component";
 
 // ===== Interfaces =====
 interface CyclePhase {
@@ -312,6 +313,7 @@ import { FormsModule, ReactiveFormsModule } from "@angular/forms";
     EmptyStateComponent,
     FormsModule,
     ReactiveFormsModule,
+    RecoverTabBarComponent,
   ],
   templateUrl: "./cycle-tracking.component.html",
   styleUrl: "./cycle-tracking.component.scss",
