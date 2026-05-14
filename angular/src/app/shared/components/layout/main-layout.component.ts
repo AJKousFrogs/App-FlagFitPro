@@ -2,6 +2,7 @@ import {
   Component,
   ChangeDetectionStrategy,
   DestroyRef,
+  afterNextRender,
   inject,
   OnInit,
   OnDestroy,
@@ -128,6 +129,10 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
     this.releaseShellBodyClass = this.shellBodyState.acquireShell();
   }
 
+  constructor() {
+    afterNextRender(() => this.initHideOnScroll());
+  }
+
   ngOnDestroy(): void {
     this.releaseShellBodyClass?.();
     this.releaseShellBodyClass = null;
@@ -160,7 +165,8 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
   private initViewportState(): void {
     if (!isPlatformBrowser(this.platformId)) return;
 
-    const mediaQuery = window.matchMedia("(max-width: 40rem)");
+    // Phase 2: mobile shell extends through tablet portrait (≤ md = 48rem).
+    const mediaQuery = window.matchMedia("(max-width: 48rem)");
     const syncViewportState = (matches: boolean) => {
       this.mobileNav.set(matches);
 
@@ -179,6 +185,58 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
     this.destroyRef.onDestroy(() =>
       mediaQuery.removeEventListener("change", onChange)
     );
+  }
+
+  /**
+   * Phase 2: hide-on-scroll for the bottom nav. Watches the app-shell scroll
+   * root and toggles `body.bottom-nav-hidden` based on scroll direction past
+   * a small threshold. The bottom-nav SCSS reads that class to translateY
+   * the bar off-screen. Skipped under prefers-reduced-motion.
+   */
+  private initHideOnScroll(): void {
+    if (!isPlatformBrowser(this.platformId)) return;
+
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduceMotion) return;
+
+    const scrollRoot = document.querySelector<HTMLElement>(
+      '[data-scroll-root="app-shell-main"]',
+    );
+    if (!scrollRoot) return;
+
+    const THRESHOLD = 24;
+    let lastY = scrollRoot.scrollTop;
+    let ticking = false;
+
+    const update = () => {
+      const y = scrollRoot.scrollTop;
+      const delta = y - lastY;
+
+      if (Math.abs(delta) > THRESHOLD) {
+        const hidden = delta > 0 && y > THRESHOLD;
+        document.body.classList.toggle("bottom-nav-hidden", hidden);
+        lastY = y;
+      } else if (y <= 0) {
+        // At the top — always show.
+        document.body.classList.remove("bottom-nav-hidden");
+        lastY = y;
+      }
+
+      ticking = false;
+    };
+
+    const onScroll = () => {
+      if (!ticking) {
+        window.requestAnimationFrame(update);
+        ticking = true;
+      }
+    };
+
+    scrollRoot.addEventListener("scroll", onScroll, { passive: true });
+    this.destroyRef.onDestroy(() => {
+      scrollRoot.removeEventListener("scroll", onScroll);
+      document.body.classList.remove("bottom-nav-hidden");
+    });
   }
 
   private loadSidebarCollapsedState(): boolean {
