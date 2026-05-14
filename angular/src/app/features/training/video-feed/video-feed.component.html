@@ -112,12 +112,18 @@
                     <!-- Overlay Actions -->
                     <div class="video-overlay">
                       <button
+                        type="button"
                         class="overlay-btn bookmark-btn"
                         [class.active]="isBookmarked(video.id)"
+                        [attr.aria-label]="
+                          isBookmarked(video.id) ? 'Remove bookmark' : 'Save video for later'
+                        "
+                        [attr.aria-pressed]="isBookmarked(video.id)"
                         (click)="toggleBookmark($event, video)"
                         pTooltip="Save for later"
                       >
                         <i
+                          aria-hidden="true"
                           [class]="
                             isBookmarked(video.id)
                               ? 'pi pi-bookmark-fill'
@@ -126,11 +132,13 @@
                         ></i>
                       </button>
                       <button
+                        type="button"
                         class="overlay-btn share-btn"
+                        aria-label="Copy video link"
                         (click)="shareVideo($event, video)"
                         pTooltip="Copy link"
                       >
-                        <i class="pi pi-share-alt"></i>
+                        <i class="pi pi-share-alt" aria-hidden="true"></i>
                       </button>
                     </div>
 

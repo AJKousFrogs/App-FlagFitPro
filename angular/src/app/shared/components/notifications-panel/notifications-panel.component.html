@@ -49,12 +49,14 @@
           }
           @if (notificationService.readNotifications().length > 0) {
             <button
+              type="button"
               class="clear-read-btn"
+              aria-label="Clear read notifications"
               (click)="clearAllRead()"
               pTooltip="Clear read notifications"
               tooltipPosition="bottom"
             >
-              <i class="pi pi-trash"></i>
+              <i class="pi pi-trash" aria-hidden="true"></i>
             </button>
           }
           <app-close-button
