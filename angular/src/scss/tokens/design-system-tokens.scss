@@ -1022,6 +1022,42 @@ body.dark-theme {
   --app-shell-gutter-inline-mobile: var(--space-3);
   --app-shell-gutter-block-mobile: var(--space-3);
   --app-shell-grid-gap: 0;
+
+  /* ==============================
+     PHASE 1 — REDESIGN PRIMITIVES
+     Mobile-first shell + hero/KPI/list-row/bottom-sheet sizing.
+     Consumed by Phase 2 shell rebuild and Phase 3 page primitives.
+     ============================== */
+  /* Bottom nav (mobile): 4 verb tabs + center FAB (matches MLS/Active Club pattern). */
+  --bottom-nav-height-mobile: 4.25rem;        /* 68px */
+  --bottom-nav-fab-size: 3.5rem;              /* 56px */
+  --bottom-nav-fab-protrusion: 1rem;          /* FAB sits 16px above the bar baseline */
+  --bottom-nav-icon-size: 1.5rem;
+  --bottom-nav-label-size: var(--ds-font-size-xs);
+  /* Page hero (mobile-first; expands via respond-min on tablet/desktop). */
+  --hero-height-mobile: 16rem;                /* 256px */
+  --hero-height-tablet: 20rem;                /* 320px */
+  --hero-padding-block: clamp(var(--space-6), 5vw, var(--space-10));
+  --hero-padding-inline: clamp(var(--space-4), 4vw, var(--space-8));
+  /* KPI big-number stat (Active Club "32 KM / 612 MINUTES"; Equinox "3 Active Days"). */
+  --kpi-number-size: clamp(2.25rem, 8vw, 3rem);
+  --kpi-number-line-height: 1;
+  --kpi-number-weight: var(--ds-font-weight-bold);
+  --kpi-label-size: var(--ds-font-size-xs);
+  --kpi-label-letter-spacing: 0.08em;
+  --kpi-cell-min-width: 4.5rem;
+  /* Image-led list row (Equinox class list). */
+  --list-row-thumb-size: 4rem;                /* 64px */
+  --list-row-min-height: 4.5rem;              /* 72px */
+  --list-row-gap: var(--space-3);
+  /* Mobile card radius — larger than desktop for the rounded reference look. */
+  --card-radius-mobile: var(--radius-2xl);
+  /* Bottom sheet. */
+  --bottom-sheet-radius: var(--radius-2xl);
+  --bottom-sheet-handle-width: 2.5rem;
+  --bottom-sheet-handle-height: 0.25rem;
+  --bottom-sheet-max-height-mobile: 92dvh;
+
   --breakpoint-sm: 640px;
   --breakpoint-md: 768px;
   --breakpoint-lg: 1024px;
@@ -1048,6 +1084,50 @@ body.dark-theme {
     135deg,
     var(--accent) 0%,
     color-mix(in srgb, var(--accent) 75%, #065f46) 100%
+  );
+
+  /* ── Phase 1 brand gradients (replace the 227 hardcoded position/role/medal
+     gradients across feature SCSS over Phase 3-5). Tinted-then-fade-to-ground
+     pattern matches the reference apps (MLS, Equinox, Active Club). ── */
+  --gradient-hero-athlete: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--accent) 40%, var(--surface-ground)) 0%,
+    var(--surface-ground) 78%
+  );
+  --gradient-hero-coach: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--color-status-info) 40%, var(--surface-ground)) 0%,
+    var(--surface-ground) 78%
+  );
+  --gradient-hero-neutral: linear-gradient(
+    180deg,
+    var(--surface-secondary) 0%,
+    var(--surface-ground) 78%
+  );
+  --gradient-card-accent: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--accent) 18%, var(--surface-primary)) 0%,
+    var(--surface-primary) 100%
+  );
+  --gradient-fab-primary: linear-gradient(
+    135deg,
+    var(--accent) 0%,
+    color-mix(in srgb, var(--accent) 70%, var(--primitive-primary-800)) 100%
+  );
+  --gradient-status-success: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--color-status-success) 25%, var(--surface-primary)) 0%,
+    var(--surface-primary) 100%
+  );
+  --gradient-status-warning: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--color-status-warning) 25%, var(--surface-primary)) 0%,
+    var(--surface-primary) 100%
+  );
+  --gradient-status-danger: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--color-status-error) 25%, var(--surface-primary)) 0%,
+    var(--surface-primary) 100%
   );
 
   /* ==============================
