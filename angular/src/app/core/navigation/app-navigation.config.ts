@@ -32,23 +32,12 @@ const EXACT_NAV_ROUTES = new Set([
 // Profile / Notifications / Settings / Help / Achievements.
 // ════════════════════════════════════════════════════════════════════════
 const ATHLETE_NAV_ITEMS: readonly AppNavigationItem[] = [
-  // ── HOME (primary bottom-nav slot 1) ──────────────────────────────
-  {
-    label: "Today",
-    route: "/todays-practice",
-    icon: "pi-calendar",
-    ariaLabel: "Today's Practice - Your training for today",
-    group: "home",
-    mobilePrimary: true,
-  },
-  {
-    label: "Overview",
-    route: "/player-dashboard",
-    icon: "pi-home",
-    ariaLabel: "Overview - Training progress, status, and trends",
-    group: "home",
-  },
-  // ── ATHLETE (primary slots 2, 3, 4) ───────────────────────────────
+  // ── BOTTOM NAV ORDER ──────────────────────────────────────────────
+  // Order matters: the BottomNavComponent renders the 3rd mobilePrimary
+  // item as the protruding center FAB. Today is placed at slot 3 so the
+  // primary action ("Start Today's Practice") visually pops.
+  // [Train] [Recover] [⏵ Today FAB] [Insights] [Team]
+  // ── ATHLETE (primary slots 1, 2) ──────────────────────────────────
   {
     label: "Train",
     route: "/training",
@@ -65,6 +54,23 @@ const ATHLETE_NAV_ITEMS: readonly AppNavigationItem[] = [
     group: "athlete",
     mobilePrimary: true,
   },
+  // ── HOME (primary slot 3 — center FAB) ────────────────────────────
+  {
+    label: "Today",
+    route: "/todays-practice",
+    icon: "pi-play",
+    ariaLabel: "Today's Practice - Your training for today",
+    group: "home",
+    mobilePrimary: true,
+  },
+  {
+    label: "Overview",
+    route: "/player-dashboard",
+    icon: "pi-home",
+    ariaLabel: "Overview - Training progress, status, and trends",
+    group: "home",
+  },
+  // ── ATHLETE (primary slot 4) ──────────────────────────────────────
   {
     label: "Insights",
     route: "/performance/insights",
@@ -208,14 +214,11 @@ const ATHLETE_NAV_ITEMS: readonly AppNavigationItem[] = [
 // Achievements.
 // ════════════════════════════════════════════════════════════════════════
 const COACH_NAV_ITEMS: readonly AppNavigationItem[] = [
-  {
-    label: "Today",
-    route: "/coach/dashboard",
-    icon: "pi-home",
-    ariaLabel: "Today - Coach dashboard, team overview, and insights",
-    group: "primary",
-    mobilePrimary: true,
-  },
+  // ── BOTTOM NAV ORDER ──────────────────────────────────────────────
+  // Order matters: BottomNavComponent renders the 3rd mobilePrimary item
+  // as the protruding center FAB. Today is placed at slot 3 so the
+  // dashboard ("daily go-to") visually pops.
+  // [Roster] [Plan] [⏵ Today FAB] [Insights] [Team]
   {
     label: "Roster",
     route: "/roster",
@@ -229,6 +232,14 @@ const COACH_NAV_ITEMS: readonly AppNavigationItem[] = [
     route: "/coach/planning",
     icon: "pi-calendar",
     ariaLabel: "Plan - Programs, practice planner, and calendar",
+    group: "primary",
+    mobilePrimary: true,
+  },
+  {
+    label: "Today",
+    route: "/coach/dashboard",
+    icon: "pi-play",
+    ariaLabel: "Today - Coach dashboard, team overview, and insights",
     group: "primary",
     mobilePrimary: true,
   },
