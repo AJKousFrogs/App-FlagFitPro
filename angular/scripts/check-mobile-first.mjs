@@ -24,8 +24,11 @@ const SCRIPT_DIR = fileURLToPath(new URL(".", import.meta.url));
 const REPO_ROOT = join(SCRIPT_DIR, "..");
 
 // Baseline ceiling set 2026-05-14 at Phase 1 commit. Decreasing is fine.
+// 2026-05-14: features ceiling dropped from 226 → 222 (Phase 5 sweep —
+// qb-hub, reset-password, legal-doc converted from desktop-first to
+// mobile-first). The mobile-first count rose 8 → 14.
 const CEILING = {
-  "src/app/features": 226,
+  "src/app/features": 222,
   "src/scss": 63,
 };
 

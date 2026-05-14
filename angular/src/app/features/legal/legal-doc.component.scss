@@ -1,20 +1,33 @@
 @use "styles/mixins" as *;
 
+// Mobile-first: tight mobile baseline, generous desktop padding via
+// respond-above(sm). Phase 5 sweep — was a single desktop-first respond-to(sm)
+// block stripping padding for narrow viewports.
 .legal-doc-page {
   max-width: var(--content-max-width-lg);
   margin: var(--space-0) auto;
-  padding: var(--space-8) var(--space-6);
+  padding: var(--space-4) var(--space-3);
   display: flex;
   flex-direction: column;
-  gap: var(--space-6);
+  gap: var(--space-4);
+
+  @include respond-above(sm) {
+    padding: var(--space-8) var(--space-6);
+    gap: var(--space-6);
+  }
 }
 
 .legal-doc-card {
   background: var(--surface-card);
   border: var(--border-1) solid var(--color-border-primary);
-  border-radius: var(--radius-lg);
-  padding: var(--space-6);
+  border-radius: var(--radius-md);
+  padding: var(--space-4);
   box-shadow: var(--shadow-sm);
+
+  @include respond-above(sm) {
+    padding: var(--space-6);
+    border-radius: var(--radius-lg);
+  }
 }
 
 .legal-doc-content {
@@ -22,6 +35,11 @@
   color: var(--color-text-primary);
   line-height: var(--ds-line-height-relaxed);
   margin: var(--space-0);
+  font-size: var(--ds-font-size-sm);
+
+  @include respond-above(sm) {
+    font-size: var(--ds-font-size-md);
+  }
 }
 
 .loading-state {
@@ -37,20 +55,4 @@
 .legal-doc-error-actions {
   display: flex;
   justify-content: center;
-}
-
-@include respond-to(sm) {
-  .legal-doc-page {
-    padding: var(--space-4) var(--space-3);
-    gap: var(--space-4);
-  }
-
-  .legal-doc-card {
-    padding: var(--space-4);
-    border-radius: var(--radius-md);
-  }
-
-  .legal-doc-content {
-    font-size: var(--ds-font-size-sm);
-  }
 }

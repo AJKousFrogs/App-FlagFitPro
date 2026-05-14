@@ -13,18 +13,20 @@
 }
 
 .qb-hub-page {
-  padding: var(--space-4);
+  // Mobile-first: smallest padding by default, grows at sm and md+.
+  // Inverted from the previous desktop-first dialect (Phase 5 sweep).
+  padding: var(--space-2);
 
   /* Hub's own header should display normally */
   > app-page-header {
     --page-header-display: block;
   }
 
-  @include respond-to(md) {
+  @include respond-above(sm) {
     padding: var(--space-3);
   }
 
-  @include respond-to(sm) {
-    padding: var(--space-2);
+  @include respond-above(md) {
+    padding: var(--space-4);
   }
 }
