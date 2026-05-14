@@ -1,0 +1,55 @@
+@use "styles/mixins" as *;
+
+.kpi-strip {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(var(--kpi-cell-min-width), 1fr));
+  gap: var(--space-3) var(--space-5);
+  margin: 0;
+  padding: 0;
+
+  @include respond-min(sm) {
+    grid-template-columns: repeat(4, minmax(var(--kpi-cell-min-width), 1fr));
+  }
+}
+
+.kpi-strip__cell {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-0-5);
+  min-width: 0;
+}
+
+.kpi-strip__value {
+  margin: 0;
+  font-size: var(--kpi-number-size);
+  line-height: var(--kpi-number-line-height);
+  font-weight: var(--kpi-number-weight);
+  letter-spacing: -0.02em;
+  color: var(--color-text-primary);
+  font-variant-numeric: tabular-nums;
+}
+
+.kpi-strip__label {
+  margin: 0;
+  font-size: var(--kpi-label-size);
+  font-weight: var(--ds-font-weight-semibold);
+  letter-spacing: var(--kpi-label-letter-spacing);
+  text-transform: uppercase;
+  color: var(--color-text-secondary);
+  order: -1;
+}
+
+.kpi-strip__delta {
+  margin: 0;
+  font-size: var(--ds-font-size-xs);
+  font-weight: var(--ds-font-weight-medium);
+  color: var(--color-text-muted);
+
+  &--up {
+    color: var(--color-status-success);
+  }
+
+  &--down {
+    color: var(--color-status-error);
+  }
+}
