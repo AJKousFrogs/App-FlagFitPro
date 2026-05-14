@@ -16,31 +16,34 @@
       <!-- Overview Content -->
       @if (!isLoading() && !hasError()) {
         <div class="player-dashboard bento-grid">
-          <!-- SECTION 1: Welcome Header (Spans 2 columns) -->
-          <section class="welcome-section bento-item span-2">
-            <div class="welcome-wrapper">
-              <div class="app-icon-box app-icon-box--info" aria-hidden="true">
-                <i class="pi pi-sparkles" aria-hidden="true"></i>
-              </div>
-              <div class="welcome-content">
-                <h1 class="welcome-greeting ff-h1">
-                  {{ greeting() }}, <span class="greeting-name">{{ userName() }}</span>!
-                </h1>
-                <p class="merlin-insight">{{ merlinInsight() }}</p>
-                <div class="welcome-actions">
-                  <app-button iconLeft="pi-play" routerLink="/todays-practice" size="sm"
-                    >Start Training</app-button
-                  >
-                  <app-button
-                    iconLeft="pi-comments"
-                    variant="text"
-                    routerLink="/chat"
-                    size="sm"
-                    >Ask Merlin</app-button
-                  >
-                </div>
-              </div>
-            </div>
+          <!-- Phase 3b: page hero replaces the welcome section + stats overview
+               (which now folds into the KPI strip slot). Spans the full bento
+               grid so the gradient runs edge-to-edge. -->
+          <section class="player-dashboard__hero bento-item full-width">
+            <app-page-hero
+              variant="athlete"
+              [eyebrow]="greeting().toUpperCase()"
+              [title]="userName() + '!'"
+              [subtitle]="merlinInsight()"
+              icon="pi-sparkles"
+            >
+              <app-kpi-strip
+                slot="kpis"
+                [items]="heroKpiItems()"
+                ariaLabel="Training overview metrics"
+              />
+              <app-button slot="actions" iconLeft="pi-play" routerLink="/todays-practice">
+                Start Training
+              </app-button>
+              <app-button
+                slot="actions"
+                iconLeft="pi-comments"
+                variant="text"
+                routerLink="/chat"
+              >
+                Ask Merlin
+              </app-button>
+            </app-page-hero>
           </section>
 
           <!-- Quick Stats Overview (Spans 1 column) -->

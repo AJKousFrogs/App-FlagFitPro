@@ -38,6 +38,11 @@ import { ButtonComponent } from "../../shared/components/button/button.component
 import { CardShellComponent } from "../../shared/components/card-shell/card-shell.component";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageErrorStateComponent } from "../../shared/components/page-error-state/page-error-state.component";
+import { PageHeroComponent } from "../../shared/components/page-hero/page-hero.component";
+import {
+  KpiStripComponent,
+  type KpiItem,
+} from "../../shared/components/kpi-strip/kpi-strip.component";
 import { LINE_CHART_OPTIONS } from "../../shared/config/chart.config";
 import { DashboardSkeletonComponent } from "../../shared/components/dashboard-skeleton/dashboard-skeleton.component";
 import {
@@ -109,6 +114,8 @@ interface QuickAction {
     PlayerDashboardStatsOverviewComponent,
     PlayerDashboardStatusStackComponent,
     PlayerDashboardEventsSectionComponent,
+    PageHeroComponent,
+    KpiStripComponent,
   ],
   templateUrl: "./player-dashboard.component.html",
   styleUrl: "./player-dashboard.component.scss",
@@ -419,6 +426,37 @@ export class PlayerDashboardComponent {
       this.trainingDaysLogged(),
     ),
   );
+
+  /**
+   * Phase 3b — Page hero KPI strip.
+   * Surfaces the 4 metrics that match the Active Club / Equinox reference:
+   * Readiness, Streak, This week (sessions), Workload (ACWR).
+   */
+  readonly heroKpiItems = computed<readonly KpiItem[]>(() => {
+    const readiness = this.dashboardReadinessPresentation();
+    const streak = this.checkinStreak();
+    const sessionsDone = this.weeklySessionsCompleted();
+    const sessionsPlanned = this.weeklySessionsPlanned();
+    const acwrValue = this.acwr();
+
+    return [
+      {
+        value: readiness.score != null ? String(readiness.score) : "—",
+        label: "Readiness",
+      },
+      { value: String(streak), label: "Day streak" },
+      {
+        value: sessionsPlanned > 0
+          ? `${sessionsDone}/${sessionsPlanned}`
+          : String(sessionsDone),
+        label: "This week",
+      },
+      {
+        value: acwrValue != null ? acwrValue.toFixed(2) : "—",
+        label: "Workload",
+      },
+    ];
+  });
 
   // Data Confidence Calculations
   readinessConfidence = computed(() => {
