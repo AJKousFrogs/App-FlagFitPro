@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FlagFit Pro — Coach Dashboard (Redesign)</title>
+<link rel="stylesheet" href="_tokens.css">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  .coach-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 28px;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+  .coach-head h1 {
+    font-family: var(--font-display);
+    font-size: clamp(36px, 5vw, 52px);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    line-height: 1;
+  }
+  .coach-head .sub { color: var(--text-2); font-size: 14px; margin-top: 6px; font-weight: 600; }
+
+  /* HERO: Next game card — broadcast-graphic energy */
+  .next-game {
+    background:
+      radial-gradient(circle at 80% 20%, rgba(255,77,94,0.18) 0%, transparent 50%),
+      linear-gradient(135deg, #0F1115 0%, var(--bg-1) 100%);
+    border: 1px solid var(--bg-line);
+    border-radius: var(--radius-2xl);
+    padding: 36px 40px;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 40px;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .next-game__eyebrow {
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-weight: 800;
+    margin-bottom: 12px;
+  }
+  .next-game__opp {
+    font-family: var(--font-display);
+    font-size: clamp(36px, 5vw, 56px);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    line-height: 1;
+    margin-bottom: 8px;
+  }
+  .next-game__meta {
+    color: var(--text-1);
+    font-size: 16px;
+    margin-bottom: 24px;
+  }
+  .next-game__kpis {
+    display: flex;
+    gap: 32px;
+    flex-wrap: wrap;
+  }
+  .nk { display: grid; gap: 4px; }
+  .nk__lab { font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-2); font-weight: 700; }
+  .nk__val { font-family: var(--font-display); font-size: 28px; font-weight: 800; letter-spacing: -0.02em; }
+  .nk__val--ok { color: var(--accent); }
+  .nk__val--warn { color: var(--warn); }
+  .nk__val--danger { color: var(--danger); }
+  .countdown {
+    background: var(--bg-0);
+    border-radius: var(--radius-xl);
+    padding: 24px 32px;
+    text-align: center;
+    border: 1px solid var(--bg-line);
+  }
+  .countdown__d { font-family: var(--font-display); font-size: 72px; font-weight: 800; line-height: 1; letter-spacing: -0.04em; color: var(--accent); }
+  .countdown__l { font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-2); margin-top: 6px; font-weight: 700; }
+
+  /* Status strip — 4 KPIs, color-coded, scannable */
+  .status-strip {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+  }
+  .ss {
+    background: var(--bg-1);
+    border: 1px solid var(--bg-line);
+    border-radius: var(--radius-xl);
+    padding: 22px;
+    position: relative;
+  }
+  .ss--danger { border-color: rgba(255,77,94,0.3); background: linear-gradient(180deg, var(--bg-1) 0%, rgba(255,77,94,0.05) 100%); }
+  .ss--warn { border-color: rgba(255,176,32,0.3); background: linear-gradient(180deg, var(--bg-1) 0%, rgba(255,176,32,0.05) 100%); }
+  .ss--ok { border-color: rgba(0,224,122,0.3); background: linear-gradient(180deg, var(--bg-1) 0%, rgba(0,224,122,0.05) 100%); }
+  .ss__lab { font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-2); font-weight: 700; margin-bottom: 8px; }
+  .ss__val { font-family: var(--font-display); font-size: 44px; font-weight: 800; letter-spacing: -0.03em; line-height: 1; }
+  .ss__sub { color: var(--text-2); font-size: 12px; margin-top: 8px; }
+
+  /* Needs attention — Merlin AI hero callouts */
+  .attn-card {
+    background: var(--bg-1);
+    border: 1px solid var(--bg-line);
+    border-radius: var(--radius-xl);
+    padding: 28px;
+  }
+  .attn-card__head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+  .attn-card__head h3 { font-family: var(--font-display); font-size: 22px; font-weight: 700; }
+  .attn-card__merlin { display: flex; gap: 8px; align-items: center; font-size: 12px; color: var(--accent); font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; }
+  .attn-card__merlin::before { content: '✦'; font-size: 16px; }
+
+  .player-attn {
+    display: grid;
+    grid-template-columns: auto 1fr auto auto;
+    gap: 16px;
+    padding: 16px 0;
+    border-top: 1px solid var(--bg-line);
+    align-items: center;
+  }
+  .player-attn:first-of-type { border-top: 0; padding-top: 0; }
+  .player-attn__avatar {
+    width: 44px; height: 44px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent), var(--accent-dim));
+    color: var(--bg-0);
+    display: grid;
+    place-items: center;
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: 16px;
+  }
+  .player-attn__avatar--danger { background: linear-gradient(135deg, var(--danger), #ff8a96); }
+  .player-attn__avatar--warn { background: linear-gradient(135deg, var(--warn), #ffd06a); }
+  .player-attn__name {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 15px;
+  }
+  .player-attn__reason { color: var(--text-2); font-size: 13px; margin-top: 2px; }
+  .player-attn__metric {
+    font-family: var(--font-display);
+    font-size: 24px;
+    font-weight: 800;
+    text-align: right;
+  }
+  .player-attn__metric--danger { color: var(--danger); }
+  .player-attn__metric--warn { color: var(--warn); }
+
+  /* Roster table — mobile-first cards, no 8-column table */
+  .roster-card {
+    background: var(--bg-1);
+    border: 1px solid var(--bg-line);
+    border-radius: var(--radius-xl);
+    padding: 28px;
+  }
+  .roster-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .roster-head h3 { font-family: var(--font-display); font-size: 22px; font-weight: 700; }
+  .pos-pills { display: flex; gap: 6px; flex-wrap: wrap; }
+  .pos-pill {
+    padding: 6px 12px;
+    border-radius: var(--radius-full);
+    background: var(--bg-2);
+    border: 1px solid var(--bg-line);
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text-1);
+    cursor: pointer;
+  }
+  .pos-pill.active { background: var(--accent); color: var(--bg-0); border-color: var(--accent); }
+  .pos-pill .count { opacity: 0.6; margin-left: 6px; }
+
+  .player-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 12px;
+  }
+  .pg {
+    background: var(--bg-2);
+    border: 1px solid transparent;
+    border-radius: var(--radius-lg);
+    padding: 16px;
+    transition: all 160ms ease;
+    cursor: pointer;
+  }
+  .pg:hover { border-color: rgba(0,224,122,0.3); }
+  .pg__head { display: flex; gap: 12px; align-items: center; margin-bottom: 12px; }
+  .pg__jersey {
+    width: 36px; height: 36px;
+    border-radius: 8px;
+    background: var(--bg-0);
+    display: grid; place-items: center;
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: 15px;
+  }
+  .pg__name { font-family: var(--font-display); font-weight: 700; font-size: 14px; }
+  .pg__pos { color: var(--text-2); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; font-weight: 700; }
+  .pg__metrics { display: flex; justify-content: space-between; }
+  .pgm__lab { color: var(--text-2); font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 700; }
+  .pgm__val { font-family: var(--font-display); font-size: 18px; font-weight: 800; margin-top: 2px; }
+  .pgm__val.ok { color: var(--accent); }
+  .pgm__val.warn { color: var(--warn); }
+  .pgm__val.danger { color: var(--danger); }
+
+  /* Quick actions */
+  .qa-row { display: flex; gap: 12px; flex-wrap: wrap; }
+  .qa {
+    flex: 1; min-width: 160px;
+    padding: 16px 20px;
+    background: var(--bg-1);
+    border: 1px solid var(--bg-line);
+    border-radius: var(--radius-lg);
+    color: var(--text-0);
+    text-decoration: none;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    cursor: pointer;
+  }
+  .qa:hover { border-color: rgba(0,224,122,0.3); }
+  .qa__arrow { color: var(--text-2); font-size: 18px; }
+
+  @media (max-width: 800px) {
+    .next-game { grid-template-columns: 1fr; }
+    .status-strip { grid-template-columns: repeat(2, 1fr); }
+  }
+</style>
+</head>
+<body>
+
+<header class="app-header">
+  <div class="brand"><div class="brand__mark">F</div>FlagFit <span style="opacity:.5">Pro</span></div>
+  <nav class="nav">
+    <a href="#" class="active">Dashboard</a>
+    <a href="#">Roster</a>
+    <a href="#">Practice</a>
+    <a href="#">Analytics</a>
+    <a href="#">Scouting</a>
+    <a href="#">Playbook</a>
+  </nav>
+</header>
+
+<main class="shell">
+
+  <div class="coach-head">
+    <div>
+      <h1>Mission control</h1>
+      <div class="sub">Ljubljana Frogs · 18 players · Coach AJ</div>
+    </div>
+    <div style="display:flex; gap: 10px;">
+      <a class="btn btn--ghost btn--sm">Schedule</a>
+      <a class="btn btn--primary btn--sm">+ New session</a>
+    </div>
+  </div>
+
+  <!-- 1. HERO: Next game (replaces buried priority section) -->
+  <div class="next-game" style="margin-bottom: 24px;">
+    <div>
+      <div class="next-game__eyebrow">● Next game</div>
+      <div class="next-game__opp">Phoenix Flames · Away</div>
+      <div class="next-game__meta">Sunday, May 18 · 3:00 PM · Stadium Park, Belgrade</div>
+      <div class="next-game__kpis">
+        <div class="nk">
+          <div class="nk__lab">RSVP</div>
+          <div class="nk__val nk__val--ok">18/22</div>
+        </div>
+        <div class="nk">
+          <div class="nk__lab">Lineup set</div>
+          <div class="nk__val nk__val--warn">Draft</div>
+        </div>
+        <div class="nk">
+          <div class="nk__lab">Last meeting</div>
+          <div class="nk__val">W 28–14</div>
+        </div>
+        <div class="nk">
+          <div class="nk__lab">Opp record</div>
+          <div class="nk__val">4–1</div>
+        </div>
+      </div>
+    </div>
+    <div class="countdown">
+      <div class="countdown__d">2d</div>
+      <div class="countdown__l">to kickoff</div>
+    </div>
+  </div>
+
+  <!-- 2. Status strip — single source of truth for squad health -->
+  <div class="status-strip" style="margin-bottom: 24px;">
+    <div class="ss ss--ok">
+      <div class="ss__lab">Team Readiness</div>
+      <div class="ss__val" style="color: var(--accent);">82<span style="font-size:.5em;color:var(--text-2);">%</span></div>
+      <div class="ss__sub">Avg across active squad</div>
+    </div>
+    <div class="ss ss--warn">
+      <div class="ss__lab">Workload spikes</div>
+      <div class="ss__val" style="color: var(--warn);">2</div>
+      <div class="ss__sub">ACWR &gt; 1.5 this week</div>
+    </div>
+    <div class="ss ss--danger">
+      <div class="ss__lab">Active injuries</div>
+      <div class="ss__val" style="color: var(--danger);">1</div>
+      <div class="ss__sub">Marko T. · stage 4 RTP</div>
+    </div>
+    <div class="ss">
+      <div class="ss__lab">Practice attend.</div>
+      <div class="ss__val">94<span style="font-size:.5em;color:var(--text-2);">%</span></div>
+      <div class="ss__sub">Last 7 sessions</div>
+    </div>
+  </div>
+
+  <!-- 3. Two-col: Needs attention (Merlin AI) + Quick actions -->
+  <div class="bento" style="margin-bottom: 24px;">
+
+    <div class="attn-card span-8">
+      <div class="attn-card__head">
+        <h3>Needs attention now</h3>
+        <span class="attn-card__merlin">Surfaced by Merlin AI</span>
+      </div>
+
+      <div class="player-attn">
+        <div class="player-attn__avatar player-attn__avatar--danger">MT</div>
+        <div>
+          <div class="player-attn__name">Marko Tomić · WR · #11</div>
+          <div class="player-attn__reason">In RTP stage 4 — clearance assessment due Monday before game</div>
+        </div>
+        <div>
+          <div class="player-attn__metric player-attn__metric--danger">Day 12</div>
+          <div style="font-size: 11px; color: var(--text-2); text-align: right; margin-top: 2px;">of RTP</div>
+        </div>
+        <a class="btn btn--primary btn--sm">Review</a>
+      </div>
+
+      <div class="player-attn">
+        <div class="player-attn__avatar player-attn__avatar--warn">JK</div>
+        <div>
+          <div class="player-attn__name">Jure Kos · QB · #7</div>
+          <div class="player-attn__reason">ACWR jumped to 1.62 — three high-RPE sessions in a row</div>
+        </div>
+        <div>
+          <div class="player-attn__metric player-attn__metric--warn">1.62</div>
+          <div style="font-size: 11px; color: var(--text-2); text-align: right; margin-top: 2px;">ACWR</div>
+        </div>
+        <a class="btn btn--ghost btn--sm">Reduce load</a>
+      </div>
+
+      <div class="player-attn">
+        <div class="player-attn__avatar player-attn__avatar--warn">LS</div>
+        <div>
+          <div class="player-attn__name">Luka Stojanović · CB · #24</div>
+          <div class="player-attn__reason">Readiness dropped to 58% — flag for wellness check</div>
+        </div>
+        <div>
+          <div class="player-attn__metric player-attn__metric--warn">58%</div>
+          <div style="font-size: 11px; color: var(--text-2); text-align: right; margin-top: 2px;">Readiness</div>
+        </div>
+        <a class="btn btn--ghost btn--sm">Message</a>
+      </div>
+    </div>
+
+    <div class="span-4" style="display: grid; gap: 12px; align-content: start;">
+      <h3 style="font-family: var(--font-display); font-size: 14px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-2); font-weight: 700;">Quick actions</h3>
+      <a class="qa">⚡ Start practice <span class="qa__arrow">→</span></a>
+      <a class="qa">🏈 Set Sunday lineup <span class="qa__arrow">→</span></a>
+      <a class="qa">📋 Send game reminders <span class="qa__arrow">→</span></a>
+      <a class="qa">🎬 Tag last game film <span class="qa__arrow">→</span></a>
+    </div>
+  </div>
+
+  <!-- 4. Roster — mobile-first cards instead of 8-col table -->
+  <div class="roster-card">
+    <div class="roster-head">
+      <h3>Squad health · by position</h3>
+      <div class="pos-pills">
+        <div class="pos-pill active">All <span class="count">18</span></div>
+        <div class="pos-pill">QB <span class="count">2</span></div>
+        <div class="pos-pill">WR <span class="count">5</span></div>
+        <div class="pos-pill">RB <span class="count">2</span></div>
+        <div class="pos-pill">CB <span class="count">4</span></div>
+        <div class="pos-pill">SAF <span class="count">3</span></div>
+        <div class="pos-pill">LB <span class="count">2</span></div>
+      </div>
+    </div>
+
+    <div class="player-grid">
+      <div class="pg">
+        <div class="pg__head">
+          <div class="pg__jersey">7</div>
+          <div>
+            <div class="pg__name">Jure Kos</div>
+            <div class="pg__pos">QB</div>
+          </div>
+        </div>
+        <div class="pg__metrics">
+          <div><div class="pgm__lab">Ready</div><div class="pgm__val ok">88%</div></div>
+          <div><div class="pgm__lab">ACWR</div><div class="pgm__val warn">1.62</div></div>
+        </div>
+      </div>
+
+      <div class="pg">
+        <div class="pg__head">
+          <div class="pg__jersey">11</div>
+          <div>
+            <div class="pg__name">Marko Tomić</div>
+            <div class="pg__pos">WR · RTP</div>
+          </div>
+        </div>
+        <div class="pg__metrics">
+          <div><div class="pgm__lab">Ready</div><div class="pgm__val danger">—</div></div>
+          <div><div class="pgm__lab">RTP</div><div class="pgm__val danger">St.4</div></div>
+        </div>
+      </div>
+
+      <div class="pg">
+        <div class="pg__head">
+          <div class="pg__jersey">9</div>
+          <div>
+            <div class="pg__name">Anže Novak</div>
+            <div class="pg__pos">WR</div>
+          </div>
+        </div>
+        <div class="pg__metrics">
+          <div><div class="pgm__lab">Ready</div><div class="pgm__val ok">91%</div></div>
+          <div><div class="pgm__lab">ACWR</div><div class="pgm__val ok">1.12</div></div>
+        </div>
+      </div>
+
+      <div class="pg">
+        <div class="pg__head">
+          <div class="pg__jersey">24</div>
+          <div>
+            <div class="pg__name">Luka Stojanović</div>
+            <div class="pg__pos">CB</div>
+          </div>
+        </div>
+        <div class="pg__metrics">
+          <div><div class="pgm__lab">Ready</div><div class="pgm__val warn">58%</div></div>
+          <div><div class="pgm__lab">ACWR</div><div class="pgm__val ok">1.04</div></div>
+        </div>
+      </div>
+
+      <div class="pg">
+        <div class="pg__head">
+          <div class="pg__jersey">22</div>
+          <div>
+            <div class="pg__name">Filip Horvat</div>
+            <div class="pg__pos">RB</div>
+          </div>
+        </div>
+        <div class="pg__metrics">
+          <div><div class="pgm__lab">Ready</div><div class="pgm__val ok">84%</div></div>
+          <div><div class="pgm__lab">ACWR</div><div class="pgm__val ok">1.21</div></div>
+        </div>
+      </div>
+
+      <div class="pg">
+        <div class="pg__head">
+          <div class="pg__jersey">5</div>
+          <div>
+            <div class="pg__name">Tomaž Petek</div>
+            <div class="pg__pos">SAF</div>
+          </div>
+        </div>
+        <div class="pg__metrics">
+          <div><div class="pgm__lab">Ready</div><div class="pgm__val ok">79%</div></div>
+          <div><div class="pgm__lab">ACWR</div><div class="pgm__val ok">0.94</div></div>
+        </div>
+      </div>
+
+      <div class="pg">
+        <div class="pg__head">
+          <div class="pg__jersey">33</div>
+          <div>
+            <div class="pg__name">Andrej Bizjak</div>
+            <div class="pg__pos">LB</div>
+          </div>
+        </div>
+        <div class="pg__metrics">
+          <div><div class="pgm__lab">Ready</div><div class="pgm__val ok">87%</div></div>
+          <div><div class="pgm__lab">ACWR</div><div class="pgm__val ok">1.18</div></div>
+        </div>
+      </div>
+
+      <div class="pg">
+        <div class="pg__head">
+          <div class="pg__jersey">14</div>
+          <div>
+            <div class="pg__name">Klemen Vidmar</div>
+            <div class="pg__pos">WR</div>
+          </div>
+        </div>
+        <div class="pg__metrics">
+          <div><div class="pgm__lab">Ready</div><div class="pgm__val ok">85%</div></div>
+          <div><div class="pgm__lab">ACWR</div><div class="pgm__val ok">1.27</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<div class="mockup-banner">Mockup · Coach Dashboard</div>
+
+</body>
+</html>

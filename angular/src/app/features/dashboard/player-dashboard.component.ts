@@ -11,7 +11,6 @@ import {
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { Router, RouterModule } from "@angular/router";
-import { Timeline } from "primeng/timeline";
 import { HeaderService } from "../../core/services/header.service";
 import { LoggerService } from "../../core/services/logger.service";
 import { SupabaseService } from "../../core/services/supabase.service";
@@ -36,6 +35,10 @@ import {
 } from "../../core/services/privacy-settings.service";
 import { ButtonComponent } from "../../shared/components/button/button.component";
 import { CardShellComponent } from "../../shared/components/card-shell/card-shell.component";
+import {
+  HeroMetricComponent,
+  type HeroMetricBadge,
+} from "../../shared/components/hero-metric/hero-metric.component";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageErrorStateComponent } from "../../shared/components/page-error-state/page-error-state.component";
 import { LINE_CHART_OPTIONS } from "../../shared/config/chart.config";
@@ -99,11 +102,10 @@ interface QuickAction {
     RouterModule,
     ButtonComponent,
     CardShellComponent,
+    HeroMetricComponent,
     PlayerDashboardSetupCardComponent,
     PlayerDashboardInsightsGridComponent,
-
     DashboardSkeletonComponent,
-    Timeline,
     MainLayoutComponent,
     PageErrorStateComponent,
     PlayerDashboardStatsOverviewComponent,
@@ -396,6 +398,53 @@ export class PlayerDashboardComponent {
       this.dashboardReadinessPresentation().score,
       this.dashboardAcwrDisplay().value,
     );
+  });
+
+  /**
+   * Hero metric eyebrow — shows greeting + name + today's date.
+   * Reads as: "GOOD AFTERNOON, AJ · SAT, MAY 16"
+   */
+  readonly heroEyebrow = computed(() => {
+    const todayLabel = new Date().toLocaleDateString("en-US", {
+      weekday: "short",
+      month: "short",
+      day: "numeric",
+    });
+    return `${this.greeting()}, ${this.userName()} · ${todayLabel}`;
+  });
+
+  /**
+   * Hero metric value — the readiness score from the protocol presentation
+   * (or null when no wellness data exists, which triggers the empty state).
+   */
+  readonly heroValue = computed<number | null>(() => {
+    return this.dashboardReadinessPresentation().score;
+  });
+
+  /**
+   * Hero metric badge — maps the existing severity to the hero badge tone.
+   * Returns null when there's no readiness data (empty state takes over).
+   */
+  readonly heroBadge = computed<HeroMetricBadge | null>(() => {
+    const presentation = this.dashboardReadinessPresentation();
+    if (presentation.score === null) {
+      return null;
+    }
+
+    // Map StatusSeverity → HeroMetricBadgeTone
+    const toneMap: Record<string, HeroMetricBadge["tone"]> = {
+      success: "success",
+      warning: "warning",
+      danger: "danger",
+      info: "info",
+      secondary: "neutral",
+      primary: "info",
+    };
+
+    return {
+      text: presentation.label,
+      tone: toneMap[presentation.severity] ?? "neutral",
+    };
   });
 
   weeklyProgress = computed(() =>

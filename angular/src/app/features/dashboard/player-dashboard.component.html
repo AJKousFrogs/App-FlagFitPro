@@ -16,34 +16,104 @@
       <!-- Overview Content -->
       @if (!isLoading() && !hasError()) {
         <div class="player-dashboard bento-grid">
-          <!-- SECTION 1: Welcome Header (Spans 2 columns) -->
-          <section class="welcome-section bento-item span-2">
-            <div class="welcome-wrapper">
-              <div class="app-icon-box app-icon-box--info" aria-hidden="true">
-                <i class="pi pi-sparkles" aria-hidden="true"></i>
-              </div>
-              <div class="welcome-content">
-                <h1 class="welcome-greeting ff-h1">
-                  {{ greeting() }}, <span class="greeting-name">{{ userName() }}</span>!
-                </h1>
-                <p class="merlin-insight">{{ merlinInsight() }}</p>
-                <div class="welcome-actions">
-                  <app-button iconLeft="pi-play" routerLink="/todays-practice" size="sm"
-                    >Start Training</app-button
-                  >
-                  <app-button
-                    iconLeft="pi-comments"
-                    variant="text"
-                    routerLink="/chat"
-                    size="sm"
-                    >Ask Merlin</app-button
-                  >
-                </div>
-              </div>
-            </div>
-          </section>
 
-          <!-- Quick Stats Overview (Spans 1 column) -->
+          <!-- ============================================================ -->
+          <!-- HERO METRIC — single source of truth for today's readiness.   -->
+          <!-- Replaces the old welcome card + duplicates the readiness used -->
+          <!-- to live separately in the stats-overview component. When no   -->
+          <!-- wellness data exists, the hero shows a friendly "Check in to  -->
+          <!-- unlock" prompt instead of the old "--" empty card.            -->
+          <!-- ============================================================ -->
+          <app-hero-metric
+            class="bento-item full-width no-padding"
+            [eyebrow]="heroEyebrow()"
+            [value]="heroValue()"
+            unit="%"
+            [badge]="heroBadge()"
+            [context]="merlinInsight()"
+            emptyTitle="Check in to unlock today's readiness"
+            emptyContext="A 2-minute wellness check-in turns into a personalized score and ACWR confidence."
+          >
+            <ng-container actions>
+              @if (heroValue() === null) {
+                <app-button
+                  variant="primary"
+                  iconLeft="pi-heart"
+                  size="md"
+                  (clicked)="navigateToWellness()"
+                >Start check-in</app-button>
+                <app-button
+                  variant="text"
+                  iconLeft="pi-comments"
+                  routerLink="/chat"
+                  size="md"
+                >Ask Merlin</app-button>
+              } @else {
+                <app-button
+                  variant="primary"
+                  iconLeft="pi-play"
+                  routerLink="/todays-practice"
+                  size="md"
+                >Start training</app-button>
+                <app-button
+                  variant="text"
+                  iconLeft="pi-comments"
+                  routerLink="/chat"
+                  size="md"
+                >Ask Merlin</app-button>
+              }
+            </ng-container>
+          </app-hero-metric>
+
+          <!-- ============================================================ -->
+          <!-- PRIORITY STATUS / ALERTS — full-width, only renders when      -->
+          <!-- there's actually something to show. Owns its own padding.     -->
+          <!-- ============================================================ -->
+          <app-player-dashboard-status-stack
+            class="bento-item full-width no-padding"
+            [announcement]="announcement()"
+            [announcementDismissed]="announcementDismissed()"
+            [announcementTimeAgo]="announcementTimeAgo()"
+            [overrideItems]="overrideDisplayItems()"
+            [currentUserId]="currentUserId()"
+            [activeTransitions]="activeTransitions()"
+            [missingWellnessStatus]="missingWellnessStatus()"
+            (dismissAnnouncement)="dismissAnnouncement()"
+          />
+
+          <!-- ============================================================ -->
+          <!-- SETUP / ONBOARDING — promoted ABOVE the schedule because if   -->
+          <!-- the player needs to complete onboarding, that's the next      -->
+          <!-- action; everything else is noise until they do.               -->
+          <!-- ============================================================ -->
+          @if (needsProgramAssignment()) {
+            <app-player-dashboard-setup-card
+              class="bento-item full-width"
+              [hasCompletedOnboarding]="hasCompletedOnboarding()"
+              [actionRequiredMeaning]="getOnboardingActionRequiredMeaning()"
+              (contactCoach)="contactCoach()"
+            />
+          }
+
+          <!-- ============================================================ -->
+          <!-- INSIGHTS GRID (left, spans 2) — week dots + chart + actions.  -->
+          <!-- DETAILED STATS (right, spans 1) — readiness/ACWR/streak       -->
+          <!-- detail cards. The hero already shows readiness as the headline-->
+          <!-- so these become supporting context, not the lead.             -->
+          <!-- ============================================================ -->
+          @defer (on viewport) {
+            <app-player-dashboard-insights-grid
+              class="bento-item span-2 no-padding"
+              [weekDays]="weekDays()"
+              [weeklyProgress]="weeklyProgress()"
+              [quickActions]="quickActions"
+              [performanceChartData]="performanceChartData()"
+              [chartOptions]="chartOptions"
+            />
+          } @placeholder {
+            <div class="player-dashboard-insights-placeholder bento-item span-2"></div>
+          }
+
           <app-player-dashboard-stats-overview
             class="bento-item stats-overview"
             [readinessScore]="dashboardReadinessPresentation().score"
@@ -73,19 +143,11 @@
             (navigateToAcwr)="navigateToACWR()"
           />
 
-          <!-- Priority Status (Full Width) — rendered after welcome so stats appear first -->
-          <app-player-dashboard-status-stack
-            class="bento-item full-width no-padding"
-            [announcement]="announcement()"
-            [announcementDismissed]="announcementDismissed()"
-            [announcementTimeAgo]="announcementTimeAgo()"
-            [overrideItems]="overrideDisplayItems()"
-            [currentUserId]="currentUserId()"
-            [activeTransitions]="activeTransitions()"
-            [missingWellnessStatus]="missingWellnessStatus()"
-            (dismissAnnouncement)="dismissAnnouncement()"
-          />
-
+          <!-- ============================================================ -->
+          <!-- UP NEXT — single schedule view (full-width). Replaces the     -->
+          <!-- duplicate "Today's Schedule" inline card that previously      -->
+          <!-- showed the same items rendered by events-section.             -->
+          <!-- ============================================================ -->
           @defer (on viewport) {
             <app-player-dashboard-events-section
               class="bento-item full-width no-padding"
@@ -101,79 +163,10 @@
             ></div>
           }
 
-          <!-- Insights Grid (Spans 2 columns) -->
-          @defer (on viewport) {
-            <app-player-dashboard-insights-grid
-              class="bento-item span-2 no-padding"
-              [weekDays]="weekDays()"
-              [weeklyProgress]="weeklyProgress()"
-              [quickActions]="quickActions"
-              [performanceChartData]="performanceChartData()"
-              [chartOptions]="chartOptions"
-            />
-          } @placeholder {
-            <div class="player-dashboard-insights-placeholder bento-item span-2"></div>
-          }
-
-          <!-- Today's Schedule Preview (Spans 1 column) -->
-          @defer (on viewport) {
-            <app-card-shell
-              class="bento-item schedule-card"
-              title="Today's Schedule"
-              headerIcon="pi-clock"
-            >
-                @if (todaySchedule().length > 0) {
-                  <p-timeline
-                    [value]="
-                      todaySchedule().slice(0, UI_LIMITS.SCHEDULE_PREVIEW_COUNT)
-                    "
-                    class="schedule-timeline"
-                  >
-                    <ng-template #marker let-item>
-                      <span
-                        class="timeline-marker"
-                        [class.completed]="item.completed"
-                        [attr.aria-hidden]="true"
-                      >
-                        @if (item.completed) {
-                          <i class="pi pi-check" aria-hidden="true"></i>
-                        } @else {
-                          <i class="pi pi-circle" aria-hidden="true"></i>
-                        }
-                      </span>
-                    </ng-template>
-                    <ng-template #content let-item>
-                      <div
-                        class="schedule-item"
-                        [class.completed]="item.completed"
-                      >
-                        <div class="item-time">{{ item.time }}</div>
-                        <div class="item-info">
-                          <span class="item-title">{{ item.title }}</span>
-                        </div>
-                      </div>
-                    </ng-template>
-                  </p-timeline>
-                  <div class="card-footer-action">
-                    <app-button
-                      variant="text"
-                      iconRight="pi-arrow-right"
-                      routerLink="/todays-practice"
-                      size="sm"
-                      >View Full Day</app-button
-                    >
-                  </div>
-                } @else {
-                  <div class="empty-schedule">
-                    <i class="pi pi-calendar-minus empty-icon" aria-hidden="true"></i>
-                    <p class="empty-schedule__message">No training today</p>
-                  </div>
-                }
-            </app-card-shell>
-          } @placeholder {
-            <div class="player-dashboard-schedule-placeholder bento-item"></div>
-          }
-
+          <!-- ============================================================ -->
+          <!-- TEAM SHARING — small ambient card. Only renders when there's  -->
+          <!-- something meaningful to show.                                  -->
+          <!-- ============================================================ -->
           @if (privacySharingStatus().totalMetrics > 0) {
             <app-card-shell
               class="bento-item sharing-card"
@@ -198,16 +191,6 @@
                 </app-button>
               </div>
             </app-card-shell>
-          }
-
-          <!-- Setup Card (Full Width if active) -->
-          @if (needsProgramAssignment()) {
-            <app-player-dashboard-setup-card
-              class="bento-item full-width"
-              [hasCompletedOnboarding]="hasCompletedOnboarding()"
-              [actionRequiredMeaning]="getOnboardingActionRequiredMeaning()"
-              (contactCoach)="contactCoach()"
-            />
           }
 
         </div>

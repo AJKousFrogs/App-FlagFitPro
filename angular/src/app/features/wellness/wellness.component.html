@@ -105,19 +105,16 @@
                   ></app-input-number>
                 </div>
                 <div class="checkin-item">
-                  <app-input-number
-                    label="Sleep Quality (1-10)"
+                  <app-rating-slider
+                    label="Sleep Quality"
+                    description="How well did you sleep?"
                     inputId="sleepQuality"
-                    [ngModel]="checkInData.sleepQuality"
-                    (valueChange)="
-                      onCheckInFieldChange('sleepQuality', $event)
-                    "
-                    [min]="1"
-                    [max]="10"
-                    [showButtons]="true"
-                    placeholder="Quality"
-                    [attr.aria-label]="'Sleep quality from 1 to 10'"
-                  ></app-input-number>
+                    [value]="checkInData.sleepQuality"
+                    direction="high-good"
+                    lowLabel="Poor"
+                    highLabel="Excellent"
+                    (valueChange)="onCheckInFieldChange('sleepQuality', $event)"
+                  />
                 </div>
               </div>
             </div>
@@ -128,35 +125,28 @@
               </h4>
               <div class="checkin-row">
                 <div class="checkin-item">
-                  <app-input-number
-                    label="Energy Level (1-10)"
+                  <app-rating-slider
+                    label="Energy Level"
+                    description="How much energy do you have today?"
                     inputId="energyLevel"
-                    [ngModel]="checkInData.energyLevel"
-                    (valueChange)="
-                      onCheckInFieldChange('energyLevel', $event)
-                    "
-                    [min]="1"
-                    [max]="10"
-                    [showButtons]="true"
-                    placeholder="Level"
-                    [attr.aria-label]="'Energy level from 1 to 10'"
-                  ></app-input-number>
+                    [value]="checkInData.energyLevel"
+                    direction="high-good"
+                    lowLabel="Drained"
+                    highLabel="Charged"
+                    (valueChange)="onCheckInFieldChange('energyLevel', $event)"
+                  />
                 </div>
                 <div class="checkin-item">
-                  <app-input-number
-                    label="Muscle Soreness (1-10)"
+                  <app-rating-slider
+                    label="Muscle Soreness"
+                    description="Higher = more sore"
                     inputId="soreness"
-                    [ngModel]="checkInData.soreness"
+                    [value]="checkInData.soreness"
+                    direction="high-bad"
+                    lowLabel="No soreness"
+                    highLabel="Very sore"
                     (valueChange)="onCheckInFieldChange('soreness', $event)"
-                    [min]="1"
-                    [max]="10"
-                    [showButtons]="true"
-                    placeholder="1–10"
-                    [attr.aria-label]="
-                      'Muscle soreness from 1 to 10, where 1 is no soreness and 10 is very sore'
-                    "
-                    hint="1 = No soreness, 10 = Very sore"
-                  ></app-input-number>
+                  />
                 </div>
               </div>
               <div class="checkin-row">
@@ -199,65 +189,54 @@
               </h4>
               <div class="checkin-row">
                 <div class="checkin-item">
-                  <app-input-number
-                    label="Mood (1-10)"
+                  <app-rating-slider
+                    label="Mood"
+                    description="How are you feeling today?"
                     inputId="mood"
-                    [ngModel]="checkInData.mood"
+                    [value]="checkInData.mood"
+                    direction="high-good"
+                    lowLabel="Low"
+                    highLabel="Great"
                     (valueChange)="onCheckInFieldChange('mood', $event)"
-                    [min]="1"
-                    [max]="10"
-                    [showButtons]="true"
-                    placeholder="Mood"
-                    [attr.aria-label]="'Mood level from 1 to 10'"
-                  ></app-input-number>
+                  />
                 </div>
                 <div class="checkin-item">
-                  <app-input-number
-                    label="Stress Level (1-10)"
+                  <app-rating-slider
+                    label="Stress Level"
+                    description="Higher = more stressed"
                     inputId="stress"
-                    [ngModel]="checkInData.stress"
+                    [value]="checkInData.stress"
+                    direction="high-bad"
+                    lowLabel="Relaxed"
+                    highLabel="Very stressed"
                     (valueChange)="onCheckInFieldChange('stress', $event)"
-                    [min]="1"
-                    [max]="10"
-                    [showButtons]="true"
-                    placeholder="1=Relaxed, 10=Very stressed"
-                    [attr.aria-label]="
-                      'Stress level from 1 to 10, where 1 is very relaxed and 10 is very stressed'
-                    "
-                    hint="1 = Very relaxed, 10 = Very stressed"
-                  ></app-input-number>
+                  />
                 </div>
               </div>
               <div class="checkin-row">
                 <div class="checkin-item">
-                  <app-input-number
-                    label="Training Motivation (1-10)"
+                  <app-rating-slider
+                    label="Training Motivation"
+                    description="How much do you want to train?"
                     inputId="motivation"
-                    [ngModel]="checkInData.motivation"
+                    [value]="checkInData.motivation"
+                    direction="high-good"
+                    lowLabel="Low"
+                    highLabel="High"
                     (valueChange)="onCheckInFieldChange('motivation', $event)"
-                    [min]="1"
-                    [max]="10"
-                    [showButtons]="true"
-                    placeholder="Motivation"
-                    [attr.aria-label]="
-                      'Training motivation level from 1 to 10'
-                    "
-                  ></app-input-number>
+                  />
                 </div>
                 <div class="checkin-item">
-                  <app-input-number
-                    label="Readiness to Train (1-10)"
+                  <app-rating-slider
+                    label="Readiness to Train"
+                    description="Your gut call on training today"
                     inputId="readiness"
-                    [ngModel]="checkInData.readiness"
+                    [value]="checkInData.readiness"
+                    direction="high-good"
+                    lowLabel="Not ready"
+                    highLabel="Fully ready"
                     (valueChange)="onCheckInFieldChange('readiness', $event)"
-                    [min]="1"
-                    [max]="10"
-                    [showButtons]="true"
-                    placeholder="Readiness"
-                    [attr.aria-label]="
-                      'Readiness to train level from 1 to 10'
-                    "
-                  ></app-input-number>
+                  />
                 </div>
               </div>
             </div>

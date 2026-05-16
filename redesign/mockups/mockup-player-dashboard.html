@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FlagFit Pro — Player Dashboard (Redesign)</title>
+<link rel="stylesheet" href="_tokens.css">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  /* Player dashboard specifics */
+  .greeting {
+    margin-bottom: 32px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+  .greeting h1 {
+    font-family: var(--font-display);
+    font-size: clamp(36px, 5vw, 56px);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    line-height: 1;
+  }
+  .greeting .sub { color: var(--text-2); font-size: 14px; margin-top: 6px; font-weight: 600; }
+
+  /* The hero readiness ring */
+  .readiness-hero {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 40px;
+    align-items: center;
+  }
+  .ring {
+    --pct: 78;
+    --c: var(--accent);
+    width: 200px; height: 200px;
+    border-radius: 50%;
+    background:
+      conic-gradient(var(--c) calc(var(--pct) * 1%), var(--bg-3) 0%);
+    display: grid;
+    place-items: center;
+    position: relative;
+  }
+  .ring::after {
+    content: '';
+    position: absolute;
+    inset: 14px;
+    background: var(--bg-1);
+    border-radius: 50%;
+  }
+  .ring__inner {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+  }
+  .ring__num {
+    font-family: var(--font-display);
+    font-size: 60px;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    line-height: 1;
+  }
+  .ring__label {
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-2);
+    font-weight: 700;
+    margin-top: 4px;
+  }
+
+  /* Action grid (replaces 3 schedule cards with single + actions) */
+  .action-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+  .action-card {
+    background: var(--bg-1);
+    border: 1px solid var(--bg-line);
+    border-radius: var(--radius-xl);
+    padding: 24px;
+    cursor: pointer;
+    transition: all 160ms ease;
+    position: relative;
+    overflow: hidden;
+  }
+  .action-card:hover {
+    border-color: rgba(0,224,122,0.3);
+    transform: translateY(-2px);
+  }
+  .action-card__icon {
+    width: 44px; height: 44px;
+    border-radius: var(--radius-md);
+    background: var(--bg-2);
+    display: grid;
+    place-items: center;
+    font-size: 22px;
+    margin-bottom: 16px;
+  }
+  .action-card__title {
+    font-family: var(--font-display);
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+  .action-card__sub { color: var(--text-2); font-size: 13px; }
+  .action-card--primary {
+    background: linear-gradient(135deg, var(--accent) 0%, #00ff8c 100%);
+    color: var(--bg-0);
+    border-color: transparent;
+  }
+  .action-card--primary .action-card__icon { background: rgba(10,11,13,0.15); }
+  .action-card--primary .action-card__sub { color: rgba(10,11,13,0.7); }
+
+  /* Up next — ONE schedule card, no duplicates */
+  .next-up {
+    background: var(--bg-1);
+    border: 1px solid var(--bg-line);
+    border-radius: var(--radius-xl);
+    padding: 28px;
+  }
+  .next-up__head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+  .next-up__head h3 {
+    font-family: var(--font-display);
+    font-size: 22px;
+    font-weight: 700;
+  }
+  .event-row {
+    display: grid;
+    grid-template-columns: 80px 1fr auto;
+    gap: 20px;
+    padding: 16px 0;
+    border-top: 1px solid var(--bg-line);
+    align-items: center;
+  }
+  .event-row:first-of-type { border-top: 0; }
+  .event-row__date {
+    font-family: var(--font-display);
+    text-align: center;
+  }
+  .event-row__date .d {
+    font-size: 28px;
+    font-weight: 800;
+    line-height: 1;
+    color: var(--text-0);
+  }
+  .event-row__date .m {
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-2);
+    font-weight: 700;
+    margin-top: 2px;
+  }
+  .event-row__title {
+    font-family: var(--font-display);
+    font-size: 17px;
+    font-weight: 700;
+  }
+  .event-row__meta { color: var(--text-2); font-size: 13px; margin-top: 2px; }
+
+  /* Trend chart simulation */
+  .trend-card { padding: 28px; }
+  .trend-card__head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 24px;
+  }
+  .trend-card__head h3 { font-family: var(--font-display); font-size: 22px; font-weight: 700; }
+  .trend-card__metric {
+    text-align: right;
+  }
+  .trend-card__num { font-family: var(--font-display); font-size: 32px; font-weight: 800; line-height: 1; }
+  .trend-card__delta { color: var(--accent); font-size: 13px; font-weight: 700; margin-top: 4px; }
+
+  /* Simple bar chart */
+  .bars { display: flex; gap: 12px; align-items: flex-end; height: 140px; }
+  .bars > div {
+    flex: 1;
+    background: linear-gradient(180deg, var(--accent) 0%, var(--accent-dim) 100%);
+    border-radius: 6px 6px 0 0;
+    position: relative;
+    min-height: 8px;
+  }
+  .bars > div::after {
+    content: attr(data-day);
+    position: absolute;
+    bottom: -22px;
+    left: 50%; transform: translateX(-50%);
+    font-size: 11px;
+    color: var(--text-2);
+    font-weight: 600;
+  }
+  .bars > div.muted {
+    background: var(--bg-3);
+  }
+  .bars-wrap { padding-bottom: 24px; }
+
+  /* Weekly progress */
+  .progress-strip {
+    display: flex;
+    gap: 8px;
+    margin-top: 20px;
+  }
+  .progress-strip > div {
+    flex: 1;
+    height: 6px;
+    background: var(--bg-3);
+    border-radius: 3px;
+    position: relative;
+  }
+  .progress-strip > div.done {
+    background: var(--accent);
+  }
+
+  /* Status banner (alerts) */
+  .alert {
+    display: flex;
+    gap: 14px;
+    align-items: center;
+    padding: 16px 20px;
+    background: rgba(255,176,32,0.08);
+    border: 1px solid rgba(255,176,32,0.25);
+    border-radius: var(--radius-xl);
+  }
+  .alert__icon { width: 36px; height: 36px; border-radius: 50%; background: var(--warn); color: var(--bg-0); display: grid; place-items: center; font-weight: 800; flex: none; }
+  .alert__text { flex: 1; }
+  .alert__title { font-weight: 700; }
+  .alert__sub { color: var(--text-1); font-size: 14px; }
+</style>
+</head>
+<body>
+
+<header class="app-header">
+  <div class="brand"><div class="brand__mark">F</div>FlagFit <span style="opacity:.5">Pro</span></div>
+  <nav class="nav">
+    <a href="#" class="active">Today</a>
+    <a href="#">Training</a>
+    <a href="#">Playbook</a>
+    <a href="#">Film</a>
+    <a href="#">Profile</a>
+  </nav>
+</header>
+
+<main class="shell">
+
+  <!-- 1. Greeting -->
+  <div class="greeting">
+    <div>
+      <h1>Morning, AJ.</h1>
+      <div class="sub">Saturday · May 16 · Game day in 2 days</div>
+    </div>
+    <span class="tag tag--accent">● Streak: 12 days</span>
+  </div>
+
+  <!-- 2. HERO — single readiness number, replaces 4 redundant readiness displays -->
+  <div class="hero-metric" style="margin-bottom: 24px;">
+    <div class="readiness-hero">
+      <div class="ring" style="--pct: 78;">
+        <div class="ring__inner">
+          <div class="ring__num">78</div>
+          <div class="ring__label">Readiness</div>
+        </div>
+      </div>
+      <div>
+        <div class="hero-metric__eyebrow">Today's Status</div>
+        <div class="hero-metric__row" style="margin: 6px 0 12px;">
+          <span style="font-family: var(--font-display); font-size: 36px; font-weight: 800; letter-spacing: -0.02em;">Train normally.</span>
+          <span class="hero-metric__badge">● READY</span>
+        </div>
+        <p class="hero-metric__context">Sleep was solid (7.5h). Soreness low. Your acute:chronic ratio is at 1.18 — well inside the green zone. Push hard today.</p>
+        <div class="hero-metric__actions">
+          <a class="btn btn--primary">Start Training</a>
+          <a class="btn btn--ghost">Update Check-in</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. Alert (only shown when relevant — game day prep) -->
+  <div class="alert" style="margin-bottom: 24px;">
+    <div class="alert__icon">!</div>
+    <div class="alert__text">
+      <div class="alert__title">Game day Sunday — taper window starts tomorrow</div>
+      <div class="alert__sub">Your plan auto-shifts to 60% volume Monday. Sleep target bumped to 8h.</div>
+    </div>
+    <a class="btn btn--ghost btn--sm">View plan</a>
+  </div>
+
+  <!-- 4. Quick actions (3 essential, no clutter) -->
+  <div class="action-grid" style="margin-bottom: 24px;">
+    <div class="action-card action-card--primary">
+      <div class="action-card__icon">▶</div>
+      <div class="action-card__title">Today's Practice</div>
+      <div class="action-card__sub">45 min · Speed + route running</div>
+    </div>
+    <div class="action-card">
+      <div class="action-card__icon">📋</div>
+      <div class="action-card__title">Wellness Check-in</div>
+      <div class="action-card__sub">Done today · Updated 7:22 AM</div>
+    </div>
+    <div class="action-card">
+      <div class="action-card__icon">🏈</div>
+      <div class="action-card__title">Playbook Quiz</div>
+      <div class="action-card__sub">3 plays to review</div>
+    </div>
+  </div>
+
+  <!-- 5. Bento: Up Next (single schedule, no duplicates) + 7-day trend -->
+  <div class="bento" style="margin-bottom: 24px;">
+
+    <!-- Up Next: SINGLE schedule card (was 3) -->
+    <div class="next-up span-8">
+      <div class="next-up__head">
+        <h3>Up next</h3>
+        <a href="#" style="color: var(--text-2); font-size: 13px; text-decoration: none; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;">View calendar →</a>
+      </div>
+
+      <div class="event-row">
+        <div class="event-row__date"><div class="d">16</div><div class="m">Today</div></div>
+        <div>
+          <div class="event-row__title">Speed + Route Running</div>
+          <div class="event-row__meta">5:30 PM · Field 2 · 45 min</div>
+        </div>
+        <span class="tag tag--accent">Required</span>
+      </div>
+
+      <div class="event-row">
+        <div class="event-row__date"><div class="d">17</div><div class="m">Sun</div></div>
+        <div>
+          <div class="event-row__title">Recovery + film review</div>
+          <div class="event-row__meta">10:00 AM · Home · 30 min</div>
+        </div>
+        <span class="tag">Optional</span>
+      </div>
+
+      <div class="event-row">
+        <div class="event-row__date"><div class="d">18</div><div class="m">Mon</div></div>
+        <div>
+          <div class="event-row__title">vs Phoenix Flames</div>
+          <div class="event-row__meta">3:00 PM · Away · Game day</div>
+        </div>
+        <span class="tag tag--warn">Game</span>
+      </div>
+    </div>
+
+    <!-- 7-day load (replaces 2 separate progress widgets) -->
+    <div class="card trend-card span-4">
+      <div class="trend-card__head">
+        <div><h3>This week</h3></div>
+        <div class="trend-card__metric">
+          <div class="trend-card__num">4/5</div>
+          <div class="trend-card__delta">+1 vs last wk</div>
+        </div>
+      </div>
+      <div class="bars-wrap">
+        <div class="bars">
+          <div style="height: 65%" data-day="M"></div>
+          <div style="height: 80%" data-day="T"></div>
+          <div style="height: 0%" class="muted" data-day="W"></div>
+          <div style="height: 90%" data-day="T"></div>
+          <div style="height: 70%" data-day="F"></div>
+          <div style="height: 55%" data-day="S"></div>
+          <div style="height: 0%" class="muted" data-day="S"></div>
+        </div>
+      </div>
+      <div style="color: var(--text-2); font-size: 12px; margin-top: 6px;">RPE × duration (load units)</div>
+    </div>
+  </div>
+
+  <!-- 6. Secondary metrics — 3 stats, NOT duplicates of hero -->
+  <div class="bento" style="margin-bottom: 24px;">
+    <div class="card span-4">
+      <div class="stat">
+        <div class="stat__label">ACWR · 28d</div>
+        <div class="stat__value">1.18</div>
+        <div class="stat__delta">Green zone</div>
+      </div>
+      <div style="height: 4px; background: var(--bg-3); border-radius: 2px; margin-top: 16px; position: relative;">
+        <div style="position: absolute; left: 60%; top: -4px; width: 12px; height: 12px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 12px var(--accent);"></div>
+        <div style="position: absolute; left: 35%; width: 35%; height: 100%; background: rgba(0,224,122,0.4); border-radius: 2px;"></div>
+      </div>
+      <div style="display: flex; justify-content: space-between; font-size: 10px; color: var(--text-2); margin-top: 8px; letter-spacing: 0.08em;">
+        <span>0.6</span><span>0.8 — 1.3 OPTIMAL</span><span>1.5+</span>
+      </div>
+    </div>
+
+    <div class="card span-4">
+      <div class="stat">
+        <div class="stat__label">Sleep · 7d avg</div>
+        <div class="stat__value">7h 24m</div>
+        <div class="stat__delta">+18m vs last wk</div>
+      </div>
+      <div style="display: flex; gap: 4px; margin-top: 16px;">
+        <div style="flex: 1; height: 36px; background: var(--accent); border-radius: 4px; display: grid; place-items: end; padding: 4px; font-size: 10px; font-weight: 700; color: var(--bg-0);">7.6</div>
+        <div style="flex: 1; height: 32px; background: var(--accent-dim); border-radius: 4px;"></div>
+        <div style="flex: 1; height: 28px; background: var(--warn); border-radius: 4px;"></div>
+        <div style="flex: 1; height: 34px; background: var(--accent); border-radius: 4px;"></div>
+        <div style="flex: 1; height: 38px; background: var(--accent); border-radius: 4px;"></div>
+        <div style="flex: 1; height: 30px; background: var(--accent-dim); border-radius: 4px;"></div>
+        <div style="flex: 1; height: 36px; background: var(--accent); border-radius: 4px;"></div>
+      </div>
+    </div>
+
+    <div class="card span-4">
+      <div class="stat">
+        <div class="stat__label">Playbook</div>
+        <div class="stat__value">8/24</div>
+        <div class="stat__delta">3 plays to review</div>
+      </div>
+      <div class="progress-strip">
+        <div class="done"></div><div class="done"></div><div class="done"></div>
+        <div class="done"></div><div class="done"></div><div class="done"></div>
+        <div class="done"></div><div class="done"></div>
+        <div></div><div></div><div></div><div></div>
+        <div></div><div></div><div></div><div></div>
+        <div></div><div></div><div></div><div></div>
+        <div></div><div></div><div></div><div></div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<div class="mockup-banner">Mockup · Player Dashboard</div>
+
+</body>
+</html>

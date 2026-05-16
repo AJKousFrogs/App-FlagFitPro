@@ -1,0 +1,171 @@
+/**
+ * Hero Metric — premium athletic headline pattern.
+ * Uses canonical design tokens. Works in both light and dark themes.
+ * Adapts spacing on mobile.
+ */
+
+.hero-metric {
+  position: relative;
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--ds-primary-green) 6%, var(--surface-card)) 0%,
+    var(--surface-card) 100%
+  );
+  border: var(--component-card-border);
+  border-radius: var(--component-card-radius);
+  padding: var(--space-8) var(--space-8) var(--space-7);
+  display: grid;
+  gap: var(--space-3);
+  overflow: hidden;
+  box-shadow: var(--component-card-shadow);
+
+  // Subtle accent glow in the top-right corner — premium athletic vibe
+  &::before {
+    content: "";
+    position: absolute;
+    top: -120px;
+    right: -120px;
+    width: 360px;
+    height: 360px;
+    background: radial-gradient(
+      circle,
+      color-mix(in srgb, var(--ds-primary-green) 18%, transparent) 0%,
+      transparent 70%
+    );
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  // Empty state has a softer treatment (no green tint, no glow)
+  &--empty {
+    background: var(--surface-card);
+    &::before {
+      display: none;
+    }
+  }
+
+  > * {
+    position: relative;
+    z-index: 1;
+  }
+}
+
+.hero-metric__eyebrow {
+  font-size: var(--ds-font-size-xs);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-text-secondary);
+  font-weight: var(--ds-font-weight-bold);
+}
+
+.hero-metric__row {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+  margin-top: var(--space-1);
+}
+
+.hero-metric__number {
+  font-family: var(--ds-font-family-display, var(--ds-font-family-base));
+  font-size: clamp(3.5rem, 9vw, 6rem);
+  font-weight: var(--ds-font-weight-extrabold, 800);
+  line-height: 0.92;
+  letter-spacing: -0.04em;
+  color: var(--color-text-primary);
+  font-variant-numeric: tabular-nums;
+}
+
+.hero-metric__unit {
+  font-family: var(--ds-font-family-display, var(--ds-font-family-base));
+  font-size: var(--ds-font-size-xl);
+  color: var(--color-text-secondary);
+  font-weight: var(--ds-font-weight-semibold);
+}
+
+.hero-metric__empty-title {
+  font-family: var(--ds-font-family-display, var(--ds-font-family-base));
+  font-size: clamp(var(--ds-font-size-xl), 3vw, var(--ds-font-size-2xl));
+  font-weight: var(--ds-font-weight-bold);
+  line-height: var(--ds-line-height-tight);
+  color: var(--color-text-primary);
+  margin: var(--space-1) 0 0;
+}
+
+.hero-metric__context {
+  font-size: var(--ds-font-size-md);
+  line-height: var(--ds-line-height-relaxed);
+  color: var(--color-text-secondary);
+  max-width: 60ch;
+  margin: 0;
+}
+
+.hero-metric__badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-full);
+  font-size: var(--ds-font-size-xs);
+  font-weight: var(--ds-font-weight-extrabold, 800);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  align-self: center;
+
+  &--success {
+    background: color-mix(in srgb, var(--color-status-success) 18%, transparent);
+    color: var(--color-status-success);
+  }
+
+  &--warning {
+    background: color-mix(in srgb, var(--color-status-warning) 18%, transparent);
+    color: var(--color-status-warning);
+  }
+
+  &--danger {
+    background: color-mix(in srgb, var(--color-status-error) 18%, transparent);
+    color: var(--color-status-error);
+  }
+
+  &--info {
+    background: color-mix(in srgb, var(--color-status-info) 18%, transparent);
+    color: var(--color-status-info);
+  }
+
+  &--neutral {
+    background: var(--surface-tertiary);
+    color: var(--color-text-secondary);
+  }
+}
+
+.hero-metric__actions {
+  display: flex;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+  margin-top: var(--space-3);
+
+  // Hide the slot wrapper if no content was projected
+  &:empty {
+    display: none;
+  }
+}
+
+// Mobile: tighter padding, allow number to shrink
+@media (max-width: 640px) {
+  .hero-metric {
+    padding: var(--space-6) var(--space-5) var(--space-5);
+  }
+
+  .hero-metric__row {
+    gap: var(--space-3);
+  }
+
+  .hero-metric__actions {
+    flex-direction: column;
+
+    ::ng-deep app-button {
+      width: 100%;
+    }
+  }
+}

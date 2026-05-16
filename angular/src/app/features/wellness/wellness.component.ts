@@ -11,6 +11,7 @@ import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { ActivatedRoute, Router, RouterModule } from "@angular/router";
 import { InputNumberComponent } from "../../shared/components/input-number/input-number.component";
+import { RatingSliderComponent } from "../../shared/components/rating-slider/rating-slider.component";
 
 import { TOAST } from "../../core/constants/toast-messages.constants";
 import { LoggerService } from "../../core/services/logger.service";
@@ -79,6 +80,7 @@ interface WellnessEntryContext {
     RouterModule,
     MainLayoutComponent,
     InputNumberComponent,
+    RatingSliderComponent,
     AppLoadingComponent,
     ButtonComponent,
     PageHeaderComponent,

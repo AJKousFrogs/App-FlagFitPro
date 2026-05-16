@@ -1,0 +1,204 @@
+/**
+ * Rating Slider — 10-segment tap-target rating control.
+ * Uses canonical design tokens. Works in both light and dark themes.
+ */
+
+.rating-slider {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.rating-slider__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.rating-slider__label-group {
+  display: grid;
+  gap: var(--space-1);
+  min-width: 0;
+}
+
+.rating-slider__label {
+  font-size: var(--ds-font-size-md);
+  font-weight: var(--ds-font-weight-semibold);
+  color: var(--color-text-primary);
+  line-height: var(--ds-line-height-tight);
+  cursor: pointer;
+}
+
+.rating-slider__description {
+  margin: 0;
+  font-size: var(--ds-font-size-xs);
+  color: var(--color-text-secondary);
+  line-height: var(--ds-line-height-relaxed);
+}
+
+// Current value badge (right side of header)
+.rating-slider__value {
+  flex: none;
+  display: inline-flex;
+  align-items: baseline;
+  gap: 2px;
+  min-width: 3.5rem;
+  height: 2.25rem;
+  padding: 0 var(--space-3);
+  border-radius: var(--radius-full);
+  font-family: var(--ds-font-family-display, var(--ds-font-family-base));
+  font-weight: var(--ds-font-weight-extrabold, 800);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+  justify-content: center;
+
+  &--empty {
+    background: var(--surface-tertiary);
+    color: var(--color-text-tertiary);
+  }
+  &--success {
+    background: color-mix(in srgb, var(--color-status-success) 18%, transparent);
+    color: var(--color-status-success);
+  }
+  &--warning {
+    background: color-mix(in srgb, var(--color-status-warning) 18%, transparent);
+    color: var(--color-status-warning);
+  }
+  &--danger {
+    background: color-mix(in srgb, var(--color-status-error) 18%, transparent);
+    color: var(--color-status-error);
+  }
+}
+
+.rating-slider__value-num {
+  font-size: var(--ds-font-size-lg);
+}
+
+.rating-slider__value-max {
+  font-size: var(--ds-font-size-xs);
+  font-weight: var(--ds-font-weight-medium);
+  opacity: 0.75;
+}
+
+.rating-slider__value-placeholder {
+  font-size: var(--ds-font-size-md);
+  font-weight: var(--ds-font-weight-bold);
+}
+
+// 10-segment track
+.rating-slider__track {
+  display: grid;
+  grid-template-columns: repeat(10, 1fr);
+  gap: var(--space-1);
+}
+
+.rating-slider__segment {
+  // Reset native button styles
+  appearance: none;
+  border: var(--border-1) solid var(--color-border-secondary);
+  background: var(--surface-secondary);
+  color: var(--color-text-secondary);
+
+  // Layout
+  height: 3rem; // 48px — comfortable tap target
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  // Typography
+  font-family: var(--ds-font-family-display, var(--ds-font-family-base));
+  font-size: var(--ds-font-size-sm);
+  font-weight: var(--ds-font-weight-bold);
+  font-variant-numeric: tabular-nums;
+
+  // Behavior
+  cursor: pointer;
+  transition:
+    transform var(--transition-fast, 120ms) var(--ease-standard),
+    background-color var(--transition-fast, 120ms) var(--ease-standard),
+    border-color var(--transition-fast, 120ms) var(--ease-standard);
+
+  // Hover (pointer devices only — don't trigger on touch)
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      transform: translateY(-1px);
+      background: var(--surface-tertiary);
+    }
+  }
+
+  // Focus visible (keyboard)
+  &:focus-visible {
+    outline: 2px solid var(--color-brand-primary);
+    outline-offset: 2px;
+    z-index: 1;
+  }
+
+  // FILLED — segment has been "lit up" by the current value
+  &--filled {
+    color: var(--color-text-on-primary);
+    border-color: transparent;
+  }
+  &--filled.rating-slider__segment--success {
+    background: var(--color-status-success);
+  }
+  &--filled.rating-slider__segment--warning {
+    background: var(--color-status-warning);
+  }
+  &--filled.rating-slider__segment--danger {
+    background: var(--color-status-error);
+  }
+
+  // SELECTED — the actual chosen value gets a stronger ring
+  &--selected {
+    box-shadow: 0 0 0 var(--border-2) var(--color-text-primary);
+    z-index: 1;
+  }
+}
+
+.rating-slider__segment-num {
+  // Hide the number visually on small segments — we have the badge for the number.
+  // But keep it for screen readers.
+  // On larger viewports, show it.
+  font-size: var(--ds-font-size-xs);
+  opacity: 0.7;
+}
+
+// Endpoint labels under the track
+.rating-slider__endpoints {
+  display: flex;
+  justify-content: space-between;
+  font-size: var(--ds-font-size-xs);
+  color: var(--color-text-tertiary);
+  font-weight: var(--ds-font-weight-medium);
+  letter-spacing: 0.02em;
+}
+
+.rating-slider__endpoint {
+  max-width: 45%;
+}
+
+// Mobile: tighter segments + bigger tap targets
+@media (max-width: 640px) {
+  .rating-slider__segment {
+    height: 2.75rem;
+    border-radius: var(--radius-sm);
+  }
+  .rating-slider__track {
+    gap: 4px;
+  }
+  .rating-slider__segment-num {
+    font-size: 11px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rating-slider__segment {
+    transition: none;
+    @media (hover: hover) and (pointer: fine) {
+      &:hover {
+        transform: none;
+      }
+    }
+  }
+}

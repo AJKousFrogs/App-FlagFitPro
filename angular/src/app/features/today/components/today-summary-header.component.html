@@ -50,29 +50,35 @@
           <h2 class="exact-training-title">{{ summary.title }}</h2>
           <p class="exact-training-description">{{ summary.description }}</p>
 
-          <div class="exact-training-metrics">
-            <div class="exact-training-metric">
-              <span class="exact-training-metric__label">Blocks</span>
-              <strong class="exact-training-metric__value">{{
-                summary.blockCount
-              }}</strong>
-            </div>
-            <div class="exact-training-metric">
-              <span class="exact-training-metric__label">Exercises</span>
-              <strong class="exact-training-metric__value">{{
-                summary.exerciseCount
-              }}</strong>
-            </div>
-            <div class="exact-training-metric">
-              <span class="exact-training-metric__label">Duration</span>
-              <strong class="exact-training-metric__value">
+          <!--
+            Redesign 2026-05: replaced the 3-equal-tile row (BLOCKS/EXERCISES/DURATION)
+            with ONE prominent duration headline + a compact subline. The live audit
+            found "11 blocks / 67 exercises / 188 min" reads as overwhelming when
+            shown as 3 equal tiles. Duration is the only decision-relevant metric
+            ("can I do this today?"); block/exercise counts are supporting detail.
+          -->
+          <div class="exact-training-metrics exact-training-metrics--hero">
+            <div class="exact-training-metric exact-training-metric--hero">
+              <span class="exact-training-metric__label">Today's session</span>
+              <strong class="exact-training-metric__value exact-training-metric__value--hero">
                 @if (summary.estimatedMinutes > 0) {
                   ~{{ summary.estimatedMinutes }} min
                 } @else {
                   Adaptive
                 }
               </strong>
+              <span class="exact-training-metric__subline">
+                {{ summary.blockCount }} {{ summary.blockCount === 1 ? "block" : "blocks" }}
+                ·
+                {{ summary.exerciseCount }} {{ summary.exerciseCount === 1 ? "exercise" : "exercises" }}
+              </span>
             </div>
+            @if (summary.estimatedMinutes > 120) {
+              <p class="exact-training-metric__hint">
+                Long session today — the plan adapts as you log wellness check-ins.
+                Most players settle at 45–60 min after the first week.
+              </p>
+            }
           </div>
 
           @if (summary.featuredVideos.length > 0) {
