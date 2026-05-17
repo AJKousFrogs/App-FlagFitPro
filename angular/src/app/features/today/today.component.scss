@@ -6,19 +6,46 @@
  Uses tokens from: scss/tokens/design-system-tokens.scss
  ========================================================================== */
 
+// ────────────────────────────────────────────────────────────────────────────
+// TODAY v2 — premium athletic page chrome (2026-05 sprint 3)
+// Dramatic radial gradient bg + tighter bento with green-accent borders.
+// ────────────────────────────────────────────────────────────────────────────
 .today-page.bento-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: var(--space-5);
+  gap: var(--space-4);
   max-width: var(--layout-page-max-width-wide);
   margin: var(--space-0) auto;
   width: 100%;
-  padding-bottom: var(--space-8);
+  padding: var(--space-5) var(--space-5) var(--space-10);
+  position: relative;
+
+  // Subtle radial green accent at top of page
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: 360px;
+    background: radial-gradient(
+      ellipse 80% 100% at 50% 0%,
+      color-mix(in srgb, var(--ds-primary-green) 8%, transparent) 0%,
+      transparent 70%
+    );
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  > * {
+    position: relative;
+    z-index: 1;
+  }
 
   .bento-item {
-    @extend %bento-surface-card;
-    border: var(--border-1) solid var(--color-border-primary);
+    background: var(--surface-card);
+    border: var(--border-1) solid var(--color-border-secondary);
+    border-radius: var(--radius-xl);
     padding: var(--space-5);
+    box-shadow: var(--component-card-shadow, 0 1px 2px rgb(0 0 0 / 0.04));
     transition:
       transform var(--transition-fast) var(--ease-standard),
       border-color var(--transition-fast) var(--ease-standard),
@@ -26,22 +53,34 @@
 
     @media (hover: hover) and (pointer: fine) {
       &:not(.no-padding):hover {
-        transform: translateY(-1px);
-        border-color: var(--color-border-secondary);
-        box-shadow: var(--shadow-sm);
+        transform: translateY(-2px);
+        border-color: color-mix(in srgb, var(--ds-primary-green) 25%, var(--color-border-secondary));
+        box-shadow: 0 10px 30px color-mix(in srgb, var(--ds-primary-green) 8%, transparent);
       }
     }
 
     &.no-padding {
       border: none;
+      background: transparent;
+      box-shadow: none;
+      padding: 0;
     }
 
     .bento-title {
-      @extend %bento-title;
-      margin-bottom: var(--space-4);
+      display: flex;
+      align-items: center;
       gap: var(--space-2);
+      margin: 0 0 var(--space-4);
+      font-family: var(--ds-font-family-display, var(--ds-font-family-base));
+      font-size: var(--ds-font-size-md);
+      font-weight: var(--ds-font-weight-extrabold, 800);
+      letter-spacing: -0.005em;
+      color: var(--color-text-primary);
 
-      i { color: var(--ds-primary-green); }
+      i {
+        color: var(--ds-primary-green);
+        font-size: var(--ds-font-size-lg);
+      }
     }
   }
 
@@ -49,7 +88,35 @@
   .full-width { grid-column: 1 / -1; }
 
   .header-bento {
-    @extend %bento-header-shell;
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    padding: 0;
+
+    @media (hover: hover) and (pointer: fine) {
+      &:hover { transform: none; box-shadow: none; border: none; }
+    }
+  }
+
+  .schedule-bento,
+  .prescription-bento {
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    padding: 0;
+  }
+
+  @include respond-to(lg) {
+    grid-template-columns: repeat(2, 1fr);
+    .span-2 { grid-column: 1 / -1; }
+  }
+
+  @include respond-to(md) {
+    grid-template-columns: 1fr;
+    gap: var(--space-3);
+    padding: var(--space-3) var(--space-3) var(--space-10);
+
+    .span-2 { grid-column: 1; }
   }
 }
 

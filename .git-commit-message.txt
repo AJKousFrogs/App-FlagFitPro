@@ -1,29 +1,24 @@
-feat(design): sprint 2.6 - typography polish across long-tail pages
+feat(design): Today page structural rewrite — athletic chrome
 
-Athletic typography pass: display font + tabular-nums + uppercase
-eyebrow labels applied consistently across remaining high-traffic pages.
+Real structural change, not just typography polish. The Today page
+chrome now actually looks like the mockups instead of a SaaS dashboard
+with athletic numbers sprinkled on top.
 
-Pages touched:
-- Notifications: summary value gets display font + tabular nums, metric
-  labels become uppercase eyebrows
-- Training: exercise-card badge values use display font + tabular nums;
-  protocol-block title uses display font
-- Workout: workout/exercise titles use display font extrabold;
-  exercise details get tabular nums
-- Attendance: bento titles, stat labels (eyebrow), stat values
-  (display + tabular)
-- Game day readiness: H1 uses display clamp; ACWR label/value upgraded
-- Achievements: stat labels (eyebrow), stat values (display + tabular),
-  unlock h4 + points use display font
-- Exercise library: ex-name display font; ex-category becomes eyebrow
-- Film room: stat val/lbl pair fully upgraded; film-title display font
-- AI coach: H2 uses display clamp
-- Help: support-content h3 display font
-- Search: card headers display font extrabold; quick-link icons use
-  primary green; labels use display font
-- Depth chart: position-name becomes uppercase eyebrow
-- Sleep debt: debt-value uses clamp(36px,5vw,56px) display + tabular;
-  unit and label become eyebrows
-- Return-to-play: stage-number uses display clamp + tabular
+Page level (today.component.scss):
+- Radial green gradient atmosphere at top of page (was flat grey)
+- Bento items get green-tinted borders + green-glow hover shadow
+- Removed @extend chain to %bento-surface-card so the chrome
+  is page-owned and dramatic, not generic SaaS
+
+Hero header (today-summary-header.component.scss):
+- "Today" greeting jumps to clamp(40px, 5vw, 56px) display font
+  with -0.04em letter-spacing (was -0.025em)
+- Date sub-line becomes UPPERCASE EYEBROW with 0.08em tracking
+- "RECOVERY" kicker gets a pulsing green dot with glow shadow,
+  letter-spacing 0.16em
+- Hero "~68 min" metric goes from clamp(2.5rem, 5vw, 3.5rem)
+  to clamp(56px, 8vw, 96px) — nearly 2× the size
+- Hero card gets a radial green glow in upper-right corner
+- All sublines become uppercase eyebrows with extrabold weight
 
 Verified: npx tsc --noEmit -p tsconfig.app.json passes clean.
