@@ -40,9 +40,11 @@
 
 .tournament-title {
   margin: var(--space-0);
+  font-family: var(--ds-font-family-display, var(--ds-font-family-base));
   font-size: var(--ds-font-size-lg);
-  font-weight: var(--ds-font-weight-semibold);
-  line-height: var(--font-h3-line-height);
+  font-weight: var(--ds-font-weight-extrabold, 800);
+  letter-spacing: -0.02em;
+  line-height: 1.1;
   color: var(--color-text-primary);
 }
 
@@ -50,6 +52,7 @@
   margin: var(--space-1) 0 0;
   color: var(--color-text-secondary);
   font-size: var(--ds-font-size-sm);
+  font-weight: var(--ds-font-weight-medium);
 }
 
 .tags-row {
@@ -90,15 +93,17 @@
 }
 
 .info-label {
-  color: var(--color-text-tertiary);
-  font-size: var(--ds-font-size-xs);
+  color: var(--color-text-secondary);
+  font-size: 10px;
+  font-weight: var(--ds-font-weight-extrabold, 800);
   text-transform: uppercase;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.1em;
 }
 
 .info-value {
   color: var(--color-text-primary);
   font-size: var(--ds-font-size-sm);
+  font-weight: var(--ds-font-weight-semibold);
   line-height: 1.45;
   overflow-wrap: anywhere;
 }
@@ -108,16 +113,19 @@
   align-items: baseline;
   gap: var(--space-2);
   padding: var(--space-3) var(--space-4);
-  border-radius: var(--radius-md);
-  background: var(--surface-secondary);
-  border: var(--border-1) solid var(--color-border-subtle);
+  border-radius: var(--radius-lg);
+  background: color-mix(in srgb, var(--ds-primary-green) 8%, var(--surface-secondary));
+  border: var(--border-1) solid color-mix(in srgb, var(--ds-primary-green) 22%, var(--color-border-subtle));
 }
 
 .countdown-value {
-  font-size: var(--ds-font-size-2xl);
-  font-weight: var(--ds-font-weight-semibold);
+  font-family: var(--ds-font-family-display, var(--ds-font-family-base));
+  font-size: clamp(28px, 3vw, 36px);
+  font-weight: var(--ds-font-weight-extrabold, 800);
+  letter-spacing: -0.03em;
   line-height: 1;
-  color: var(--color-brand-primary);
+  font-variant-numeric: tabular-nums;
+  color: var(--ds-primary-green);
 }
 
 .countdown-label {

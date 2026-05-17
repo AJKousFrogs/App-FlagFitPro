@@ -53,8 +53,10 @@
 }
 
 .section-header span {
+  font-family: var(--ds-font-family-display, var(--ds-font-family-base));
   font-size: var(--ds-font-size-md);
-  font-weight: var(--ds-font-weight-semibold);
+  font-weight: var(--ds-font-weight-extrabold, 800);
+  letter-spacing: -0.005em;
   color: var(--color-text-primary);
 }
 
@@ -179,13 +181,20 @@
 }
 
 .budget-label {
-  font-size: var(--ds-font-size-xs);
+  font-size: 10px;
+  font-weight: var(--ds-font-weight-extrabold, 800);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
   color: var(--color-text-secondary);
 }
 
 .budget-value {
-  font-weight: var(--ds-font-weight-bold);
-  font-size: var(--ds-font-size-md);
+  font-family: var(--ds-font-family-display, var(--ds-font-family-base));
+  font-weight: var(--ds-font-weight-extrabold, 800);
+  font-size: var(--ds-font-size-lg);
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+  color: var(--color-text-primary);
 }
 
 /* Player Availability List */

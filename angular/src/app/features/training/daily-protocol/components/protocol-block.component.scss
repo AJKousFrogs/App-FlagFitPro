@@ -86,8 +86,10 @@
 
 .block-title {
   margin: var(--space-0);
+  font-family: var(--ds-font-family-display, var(--ds-font-family-base));
   font-size: var(--ds-font-size-md);
-  font-weight: var(--ds-font-weight-semibold);
+  font-weight: var(--ds-font-weight-extrabold, 800);
+  letter-spacing: -0.005em;
   color: var(--color-text-primary);
   line-height: var(--ds-line-height-normal);
 }

@@ -67,9 +67,13 @@
 
 .summary-value {
   margin: 0;
-  font-size: clamp(1.75rem, 3vw, 2.5rem);
-  font-weight: 700;
+  font-family: var(--ds-font-family-display, var(--ds-font-family-base));
+  font-size: clamp(28px, 3vw, 40px);
+  font-weight: var(--ds-font-weight-extrabold, 800);
+  letter-spacing: -0.03em;
   line-height: 1;
+  font-variant-numeric: tabular-nums;
+  color: var(--color-text-primary);
 }
 
 .summary-copy,
@@ -91,11 +95,11 @@
 }
 
 .overview-metric__label {
-  font-size: 0.8rem;
-  font-weight: 600;
-  color: var(--color-text-secondary, #5f6b7a);
+  font-size: 10px;
+  font-weight: var(--ds-font-weight-extrabold, 800);
+  color: var(--color-text-secondary);
   text-transform: uppercase;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.1em;
 }
 
 .spotlight-list {

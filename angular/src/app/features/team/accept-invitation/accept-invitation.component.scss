@@ -41,15 +41,30 @@
   margin: var(--space-0);
 }
 
+.accept-invitation-logo {
+  display: grid;
+  place-items: center;
+  width: 72px;
+  height: 72px;
+  border-radius: 18px;
+  background: linear-gradient(135deg,
+    color-mix(in srgb, var(--ds-primary-green) 22%, transparent),
+    color-mix(in srgb, var(--ds-primary-green) 8%, transparent));
+  box-shadow: 0 8px 22px color-mix(in srgb, var(--ds-primary-green) 22%, transparent);
+}
+
 .accept-invitation-logo i {
-  font-size: var(--ds-font-size-3rem);
-  color: var(--color-brand-primary);
+  font-size: 32px;
+  color: var(--ds-primary-green);
 }
 
 .accept-invitation-title {
   text-align: center;
-  font-size: var(--ds-font-size-2xl);
-  font-weight: var(--ds-font-weight-semibold);
+  font-family: var(--ds-font-family-display, var(--ds-font-family-base));
+  font-size: clamp(28px, 4vw, 36px);
+  font-weight: var(--ds-font-weight-extrabold, 800);
+  letter-spacing: -0.03em;
+  line-height: 1.1;
   margin: var(--space-0);
   color: var(--color-text-primary);
 }
@@ -60,8 +75,10 @@
 }
 
 .team-info h3 {
+  font-family: var(--ds-font-family-display, var(--ds-font-family-base));
   font-size: var(--ds-font-size-2xl);
-  font-weight: var(--ds-font-weight-semibold);
+  font-weight: var(--ds-font-weight-extrabold, 800);
+  letter-spacing: -0.02em;
   margin-bottom: var(--space-2);
   color: var(--color-text-primary);
 }

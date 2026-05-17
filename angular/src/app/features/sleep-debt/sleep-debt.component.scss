@@ -77,22 +77,30 @@
   }
 
   .debt-value {
-    font-size: var(--ds-font-size-3xl);
-    font-weight: var(--ds-font-weight-bold);
-    line-height: var(--ds-line-height-1);
+    font-family: var(--ds-font-family-display, var(--ds-font-family-base));
+    font-size: clamp(36px, 5vw, 56px);
+    font-weight: var(--ds-font-weight-extrabold, 800);
+    letter-spacing: -0.04em;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
   }
 
   .debt-unit {
-    font-size: var(--ds-font-size-md);
+    font-size: 11px;
+    font-weight: var(--ds-font-weight-extrabold, 800);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
     color: var(--color-text-secondary);
-    margin-top: var(--space-1);
+    margin-top: var(--space-2);
   }
 
   .debt-label {
+    font-family: var(--ds-font-family-display, var(--ds-font-family-base));
     font-size: var(--ds-font-size-md);
-    font-weight: var(--ds-font-weight-semibold);
+    font-weight: var(--ds-font-weight-extrabold, 800);
     margin-top: var(--space-1);
-    letter-spacing: var(--ds-letter-spacing-0-08em);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
   }
 }
 

@@ -43,110 +43,110 @@ import { AuthFlowDataService } from "../services/auth-flow-data.service";
     Password,
   ],
   template: `
-<div class="update-password-page">
-      <app-card-shell class="update-password-card">
-        <div class="update-password-intro">
-          <div class="update-password-logo">
-            <i class="pi pi-lock"></i>
-          </div>
-          <h1 class="update-password-title">Set New Password</h1>
-          <p class="update-password-subtitle">Enter your new password below</p>
-        </div>
+<div class="auth-shell-v2">
 
-        @if (isValidRecoverySession()) {
-          <form [formGroup]="passwordForm" (ngSubmit)="onSubmit()">
-            <div class="p-field mb-4">
-              <label for="password" class="p-label required"
-                >New Password</label
-              >
-              <p-password
-                id="password"
-                formControlName="password"
-                placeholder="Enter new password"
-                [toggleMask]="true"
-                [feedback]="true"
-                class="w-full"
-                inputStyleClass="w-full"
-                [class.ng-invalid]="isFieldInvalid('password')"
-                ariaLabel="New password"
-                [attr.aria-describedby]="
-                  isFieldInvalid('password') ? 'password-error' : null
-                "
-              ></p-password>
-              @if (isFieldInvalid("password")) {
-                <small id="password-error" class="p-error" role="alert">
-                  {{ getFieldError("password") }}
-                </small>
-              }
-              <small class="p-hint">
-                Min. 8 characters — must include uppercase, lowercase, number, and special character (@ $ ! % * ? &).
-              </small>
-            </div>
-
-            <div class="p-field mb-4">
-              <label for="confirmPassword" class="p-label required"
-                >Confirm Password</label
-              >
-              <p-password
-                id="confirmPassword"
-                formControlName="confirmPassword"
-                placeholder="Confirm new password"
-                [toggleMask]="true"
-                [feedback]="false"
-                class="w-full"
-                inputStyleClass="w-full"
-                [class.ng-invalid]="isFieldInvalid('confirmPassword')"
-                ariaLabel="Confirm new password"
-                [attr.aria-describedby]="
-                  isFieldInvalid('confirmPassword')
-                    ? 'confirmPassword-error'
-                    : null
-                "
-              ></p-password>
-              @if (isFieldInvalid("confirmPassword")) {
-                <small id="confirmPassword-error" class="p-error" role="alert">
-                  {{ getFieldError("confirmPassword") }}
-                </small>
-              }
-            </div>
-
-            <app-button
-              type="submit"
-              iconLeft="pi-check"
-              [loading]="isLoading()"
-              [disabled]="passwordForm.invalid"
-              [fullWidth]="true"
-              >Update Password</app-button
-            >
-          </form>
-        } @else if (isCheckingSession()) {
-          <div class="checking-session">
-            <i class="pi pi-spin pi-spinner icon-2xl"></i>
-            <p>Verifying your reset link...</p>
-          </div>
-        } @else {
-          <div class="invalid-session">
-            <app-alert
-              variant="error"
-              message="This password reset link is invalid or has expired."
-              styleClass="status-message"
-            />
-            <p class="mb-4 mt-4">Please request a new password reset link.</p>
-            <a [routerLink]="['/reset-password']" class="update-password-link">
-              Request New Reset Link
-            </a>
-          </div>
-        }
-
-        <div class="update-password-divider my-4">
-          <span>Or</span>
-        </div>
-
-        <a [routerLink]="['/login']" class="update-password-login-link">
-          Back to Sign In
-        </a>
-      </app-card-shell>
+  <!-- LEFT — brand stage -->
+  <aside class="auth-stage" aria-hidden="true">
+    <div class="auth-stage__inner">
+      <span class="auth-stage__eyebrow">
+        <span class="auth-stage__eyebrow-dot"></span>
+        FlagFit Pro · Secure update
+      </span>
+      <h2 class="auth-stage__title">
+        New password,<br>
+        new <span class="auth-stage__title-mark">access.</span>
+      </h2>
+      <p class="auth-stage__lead">
+        Pick something strong. We hash it server-side; we never see the plain text.
+      </p>
     </div>
+  </aside>
+
+  <!-- RIGHT — form -->
+  <main class="auth-form-wrap">
+    <div class="auth-form-v2">
+
+      <header class="auth-form-v2__head">
+        <h1 class="auth-form-v2__title">Set a new password.</h1>
+        <p class="auth-form-v2__sub">Min 8 chars, with upper, lower, number, symbol.</p>
+      </header>
+
+      @if (isValidRecoverySession()) {
+        <form [formGroup]="passwordForm" (ngSubmit)="onSubmit()" class="auth-form-v2__form" novalidate>
+          <div class="auth-field">
+            <label for="password" class="auth-field__label">New password</label>
+            <p-password
+              id="password"
+              formControlName="password"
+              placeholder="Enter new password"
+              [toggleMask]="true"
+              [feedback]="true"
+              styleClass="w-full"
+              inputStyleClass="w-full"
+              [class.ng-invalid]="isFieldInvalid('password')"
+              ariaLabel="New password"
+              [attr.aria-describedby]="isFieldInvalid('password') ? 'password-error' : null"
+            ></p-password>
+            @if (isFieldInvalid("password")) {
+              <small id="password-error" class="auth-field__error" role="alert">{{ getFieldError("password") }}</small>
+            }
+            <small class="auth-field__hint">
+              8+ chars · upper + lower + number + symbol (&commat; &#36; &#33; &#37; &#42; &#63; &amp;)
+            </small>
+          </div>
+
+          <div class="auth-field">
+            <label for="confirmPassword" class="auth-field__label">Confirm password</label>
+            <p-password
+              id="confirmPassword"
+              formControlName="confirmPassword"
+              placeholder="Repeat new password"
+              [toggleMask]="true"
+              [feedback]="false"
+              styleClass="w-full"
+              inputStyleClass="w-full"
+              [class.ng-invalid]="isFieldInvalid('confirmPassword')"
+              ariaLabel="Confirm new password"
+              [attr.aria-describedby]="isFieldInvalid('confirmPassword') ? 'confirmPassword-error' : null"
+            ></p-password>
+            @if (isFieldInvalid("confirmPassword")) {
+              <small id="confirmPassword-error" class="auth-field__error" role="alert">{{ getFieldError("confirmPassword") }}</small>
+            }
+          </div>
+
+          <app-button
+            type="submit"
+            iconLeft="pi-check"
+            [loading]="isLoading()"
+            [disabled]="passwordForm.invalid"
+            [fullWidth]="true"
+          >Update password</app-button>
+        </form>
+      } @else if (isCheckingSession()) {
+        <div class="auth-checking">
+          <i class="pi pi-spin pi-spinner" aria-hidden="true"></i>
+          <p>Verifying your reset link…</p>
+        </div>
+      } @else {
+        <div class="auth-invalid">
+          <app-alert
+            variant="error"
+            message="This password reset link is invalid or has expired."
+          />
+          <p class="auth-invalid__hint">Please request a new password reset link.</p>
+          <a [routerLink]="['/reset-password']" class="auth-link auth-link--bold">
+            Request new reset link
+          </a>
+        </div>
+      }
+
+      <p class="auth-form-v2__footnote">
+        Got it sorted?
+        <a [routerLink]="['/login']" class="auth-link auth-link--bold">Back to sign in</a>
+      </p>
+    </div>
+  </main>
+</div>
   `,
   styleUrl: "./update-password.component.scss",
 })

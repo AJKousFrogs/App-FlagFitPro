@@ -62,7 +62,11 @@
 }
 
 .position-name {
-  font-weight: var(--ds-font-weight-semibold);
+  font-family: var(--ds-font-family-display, var(--ds-font-family-base));
+  font-weight: var(--ds-font-weight-extrabold, 800);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  font-size: var(--ds-font-size-sm);
 }
 
 .players-list {

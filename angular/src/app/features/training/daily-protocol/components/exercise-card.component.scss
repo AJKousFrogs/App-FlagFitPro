@@ -211,14 +211,20 @@
 }
 
 .badge-value {
+  font-family: var(--ds-font-family-display, var(--ds-font-family-base));
   font-size: var(--ds-font-size-xl);
-  font-weight: var(--ds-font-weight-bold);
+  font-weight: var(--ds-font-weight-extrabold, 800);
+  letter-spacing: -0.02em;
   color: var(--color-text-primary);
-  line-height: var(--ds-line-height-1);
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
 }
 
 .badge-label {
-  font-size: var(--ds-font-size-xs);
+  font-size: 10px;
+  font-weight: var(--ds-font-weight-extrabold, 800);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
   color: var(--color-text-secondary);
   margin-top: var(--space-1);
 }

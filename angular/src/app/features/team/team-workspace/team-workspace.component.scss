@@ -34,9 +34,13 @@
 
 .workspace-stat-value {
   margin: 0;
-  font-size: clamp(1.75rem, 3vw, 2.5rem);
-  font-weight: var(--ds-font-weight-bold);
+  font-family: var(--ds-font-family-display, var(--ds-font-family-base));
+  font-size: clamp(28px, 3vw, 40px);
+  font-weight: var(--ds-font-weight-extrabold, 800);
+  letter-spacing: -0.03em;
   line-height: 1;
+  font-variant-numeric: tabular-nums;
+  color: var(--color-text-primary);
 }
 
 .workspace-stat-copy,

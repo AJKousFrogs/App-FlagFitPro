@@ -43,8 +43,10 @@
 .search-card__header h2,
 .results-header h2 {
   margin: var(--space-0);
+  font-family: var(--ds-font-family-display, var(--ds-font-family-base));
   font-size: var(--ds-font-size-lg);
-  font-weight: var(--ds-font-weight-semibold);
+  font-weight: var(--ds-font-weight-extrabold, 800);
+  letter-spacing: -0.02em;
 }
 
 .search-card__empty {
@@ -88,12 +90,14 @@
 }
 
 .quick-link-card i {
-  color: var(--color-brand-primary);
+  color: var(--ds-primary-green);
   font-size: var(--ds-font-size-xl);
 }
 
 .quick-link-card__label {
-  font-weight: var(--ds-font-weight-semibold);
+  font-family: var(--ds-font-family-display, var(--ds-font-family-base));
+  font-weight: var(--ds-font-weight-extrabold, 800);
+  letter-spacing: -0.005em;
 }
 
 .quick-link-card__description {

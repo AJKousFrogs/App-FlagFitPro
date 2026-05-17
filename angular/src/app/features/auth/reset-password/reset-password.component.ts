@@ -31,55 +31,67 @@ import { AuthFlowDataService } from "../services/auth-flow-data.service";
     FormInputComponent,
   ],
   template: `
-<div class="reset-password-page elite-auth-shell">
-      <app-card-shell class="reset-password-card elite-auth-card elite-auth-card--reset">
-        <div class="elite-auth-intro">
-          <div class="reset-password-logo elite-auth-logo">
-            <i class="pi pi-key"></i>
-          </div>
-          <span class="elite-auth-kicker">Account Recovery</span>
-          <h1 class="reset-password-title elite-auth-title">Reset Password</h1>
-          <p class="elite-auth-subtitle">
-            Enter the email tied to your account and we’ll send you a secure
-            reset link.
-          </p>
-        </div>
+<div class="auth-shell-v2">
 
-        <form [formGroup]="resetForm" (ngSubmit)="onSubmit()" class="elite-auth-form">
-          <div class="form-field elite-auth-field">
-            <app-form-input
-              label="Email"
-              formControlName="email"
-              placeholder="Enter your email"
-              styleClass="w-full"
-            />
-            @if (isFieldInvalid("email")) {
-              <small id="reset-email-error" class="form-error" role="alert">
-                {{ getFieldError("email") }}
-              </small>
-            }
-          </div>
-
-          <app-button
-            type="submit"
-            iconLeft="pi-send"
-            [loading]="isLoading()"
-            [disabled]="resetForm.invalid"
-            class="elite-auth-sticky-cta"
-            [fullWidth]="true"
-            >Send Reset Link</app-button
-          >
-        </form>
-
-        <div class="reset-password-divider elite-auth-divider">
-          <span>Or</span>
-        </div>
-
-        <a [routerLink]="['/login']" class="reset-password-login-link elite-auth-link elite-auth-link--centered"
-          >Back to Sign In</a
-        >
-      </app-card-shell>
+  <!-- LEFT — brand stage -->
+  <aside class="auth-stage" aria-hidden="true">
+    <div class="auth-stage__inner">
+      <span class="auth-stage__eyebrow">
+        <span class="auth-stage__eyebrow-dot"></span>
+        FlagFit Pro · Account recovery
+      </span>
+      <h2 class="auth-stage__title">
+        Locked out?<br>
+        We've <span class="auth-stage__title-mark">got you.</span>
+      </h2>
+      <p class="auth-stage__lead">
+        Enter the email tied to your account. We'll send a secure reset link in seconds.
+      </p>
     </div>
+  </aside>
+
+  <!-- RIGHT — form -->
+  <main class="auth-form-wrap">
+    <div class="auth-form-v2">
+
+      <header class="auth-form-v2__head">
+        <h1 class="auth-form-v2__title">Reset your password.</h1>
+        <p class="auth-form-v2__sub">We'll send a secure link to your inbox.</p>
+      </header>
+
+      <form [formGroup]="resetForm" (ngSubmit)="onSubmit()" class="auth-form-v2__form" novalidate>
+        <div class="auth-field">
+          <app-form-input
+            label="Email"
+            formControlName="email"
+            type="email"
+            autocomplete="email"
+            placeholder="you@team.com"
+            styleClass="w-full"
+          />
+          @if (isFieldInvalid("email")) {
+            <small id="reset-email-error" class="auth-field__error" role="alert">
+              {{ getFieldError("email") }}
+            </small>
+          }
+        </div>
+
+        <app-button
+          type="submit"
+          iconLeft="pi-send"
+          [loading]="isLoading()"
+          [disabled]="resetForm.invalid"
+          [fullWidth]="true"
+        >Send reset link</app-button>
+      </form>
+
+      <p class="auth-form-v2__footnote">
+        Remembered it?
+        <a [routerLink]="['/login']" class="auth-link auth-link--bold">Back to sign in</a>
+      </p>
+    </div>
+  </main>
+</div>
   `,
   styleUrl: "./reset-password.component.scss",
 })

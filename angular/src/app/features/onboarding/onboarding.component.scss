@@ -79,8 +79,12 @@
 }
 
 .ob-step-counter {
+  font-family: var(--ds-font-family-display, var(--ds-font-family-base));
   font-size: var(--ds-font-size-xs);
-  font-weight: 500;
+  font-weight: var(--ds-font-weight-extrabold, 800);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-variant-numeric: tabular-nums;
   color: var(--color-text-tertiary);
   white-space: nowrap;
 }
@@ -91,7 +95,10 @@
   font-size: var(--ds-font-size-sm);
 
   &--saving { color: var(--color-text-tertiary); }
-  &--saved  { color: var(--ds-primary-green); }
+  &--saved  {
+    color: var(--ds-primary-green);
+    filter: drop-shadow(0 0 6px color-mix(in srgb, var(--ds-primary-green) 50%, transparent));
+  }
 }
 
 // ── Scrollable content ─────────────────────────────────────────────────────
@@ -139,25 +146,32 @@
   height: var(--ob-cta-h);
   border: none;
   border-radius: var(--ob-cta-radius);
-  background: var(--ds-primary-green);
+  background: linear-gradient(135deg, var(--ds-primary-green), color-mix(in srgb, var(--ds-primary-green) 80%, black));
   color: var(--color-text-on-primary);
+  font-family: var(--ds-font-family-display, var(--ds-font-family-base));
   font-size: var(--ds-font-size-md);
-  font-weight: 600;
-  letter-spacing: 0.01em;
+  font-weight: var(--ds-font-weight-extrabold, 800);
+  letter-spacing: 0.02em;
   cursor: pointer;
+  box-shadow: 0 6px 18px color-mix(in srgb, var(--ds-primary-green) 28%, transparent);
   transition:
     transform 150ms var(--ob-spring, cubic-bezier(0.34, 1.56, 0.64, 1)),
     background var(--transition-fast) var(--ease-standard),
+    box-shadow var(--transition-fast) var(--ease-standard),
     opacity var(--transition-fast) var(--ease-standard);
 
   i { font-size: var(--ds-font-size-sm); }
 
-  &:hover:not(:disabled) { background: var(--ds-primary-green-dark); }
+  &:hover:not(:disabled) {
+    background: linear-gradient(135deg, color-mix(in srgb, var(--ds-primary-green) 90%, white), var(--ds-primary-green));
+    box-shadow: 0 10px 24px color-mix(in srgb, var(--ds-primary-green) 40%, transparent);
+  }
   &:active:not(:disabled) { transform: scale(0.97); }
 
   &:disabled {
     opacity: 0.45;
     cursor: not-allowed;
+    box-shadow: none;
   }
 
   &:focus-visible {

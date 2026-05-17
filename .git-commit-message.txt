@@ -1,22 +1,29 @@
-feat(design): sprint 2 - premium athletic redesign across app
+feat(design): sprint 2.6 - typography polish across long-tail pages
 
-Pages revamped (mockup -> Angular impl -> SCSS polish):
-- Landing, Player Dashboard, Coach Dashboard, Today's Practice
-- Wellness check-in (rating-slider component, inverse semantics)
-- Login + Register (split brand-stage v2 - auth-shell-v2 / auth-form-v2)
-- Roster (squared jersey badges, risk-tier borders, tabular metrics)
-- Analytics (display-font metric tiles, eyebrow labels, gradient icons)
-- ACWR Dashboard (conic-gradient gauge, premium SCSS)
-- Playbook (display names, eyebrow categories, glowing memorized badge)
-- Profile (athletic identity hero, jersey badge)
+Athletic typography pass: display font + tabular-nums + uppercase
+eyebrow labels applied consistently across remaining high-traffic pages.
 
-Shared:
-- New: app-rating-slider, app-readiness-ring
-- Removed: action-card, broadcast-card, hero-metric, status-strip
-  (replaced by inline implementations in the v2 templates)
-
-Foundation: canonical design tokens throughout
-  (--ds-primary-green, --surface-card, --color-text-primary,
-   --color-status-*, display font, tabular-nums on all metrics)
+Pages touched:
+- Notifications: summary value gets display font + tabular nums, metric
+  labels become uppercase eyebrows
+- Training: exercise-card badge values use display font + tabular nums;
+  protocol-block title uses display font
+- Workout: workout/exercise titles use display font extrabold;
+  exercise details get tabular nums
+- Attendance: bento titles, stat labels (eyebrow), stat values
+  (display + tabular)
+- Game day readiness: H1 uses display clamp; ACWR label/value upgraded
+- Achievements: stat labels (eyebrow), stat values (display + tabular),
+  unlock h4 + points use display font
+- Exercise library: ex-name display font; ex-category becomes eyebrow
+- Film room: stat val/lbl pair fully upgraded; film-title display font
+- AI coach: H2 uses display clamp
+- Help: support-content h3 display font
+- Search: card headers display font extrabold; quick-link icons use
+  primary green; labels use display font
+- Depth chart: position-name becomes uppercase eyebrow
+- Sleep debt: debt-value uses clamp(36px,5vw,56px) display + tabular;
+  unit and label become eyebrows
+- Return-to-play: stage-number uses display clamp + tabular
 
 Verified: npx tsc --noEmit -p tsconfig.app.json passes clean.

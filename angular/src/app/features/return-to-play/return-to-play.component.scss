@@ -115,8 +115,12 @@
     box-shadow var(--transition-fast) var(--ease-standard);
 
   .stage-number {
-    font-size: var(--ds-font-size-2xl);
-    font-weight: var(--ds-font-weight-bold);
+    font-family: var(--ds-font-family-display, var(--ds-font-family-base));
+    font-size: clamp(24px, 3vw, 32px);
+    font-weight: var(--ds-font-weight-extrabold, 800);
+    letter-spacing: -0.03em;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
     color: var(--color-text-secondary);
   }
 

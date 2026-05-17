@@ -41,99 +41,104 @@ import { AuthFlowDataService } from "../services/auth-flow-data.service";
   ],
 
   template: `
-<div class="verify-email-page">
-      <app-card-shell class="verify-email-card">
-        <div class="verify-email-intro">
-          <div class="verify-email-logo">
-            <i class="pi pi-envelope"></i>
-          </div>
-          <h1 class="verify-email-title">Verify Your Email</h1>
-        </div>
+<div class="auth-shell-v2">
 
-        @if (isVerifying()) {
-          <div class="verifying-state">
-            <app-alert
-              variant="info"
-              message="Verifying your email address..."
-              styleClass="status-message"
-            />
-          </div>
-        } @else if (isVerified()) {
-          <div class="verified-state">
-            <app-alert
-              variant="success"
-              message="Email verified successfully!"
-              styleClass="status-message status-message--success"
-            />
-            @if (showManualContinue()) {
-              <p class="verified-message">
-                Your email is already verified. Click below to continue.
-              </p>
-              <app-button
-                iconLeft="pi-arrow-right"
-                (clicked)="continueToApp()"
-                [fullWidth]="true"
-                >Continue to App</app-button
-              >
-            } @else {
-              <p class="verified-message">
-                Your email has been verified. We’ll take you straight into
-                onboarding so you can finish setting up your profile.
-              </p>
-              <app-button
-                iconLeft="pi-arrow-right"
-                routerLink="/onboarding"
-                [fullWidth]="true"
-                >Continue to Onboarding</app-button
-              >
-            }
-          </div>
-        } @else if (verificationError()) {
-          <div class="error-state">
-            <app-page-error-state
-              title="Unable to verify email"
-              [message]="verificationError() || 'We could not verify this email link.'"
-              [showRetry]="false"
-              helpText="Request a new verification email or return to sign in."
-            />
+  <!-- LEFT — brand stage -->
+  <aside class="auth-stage" aria-hidden="true">
+    <div class="auth-stage__inner">
+      <span class="auth-stage__eyebrow">
+        <span class="auth-stage__eyebrow-dot"></span>
+        FlagFit Pro · Email verification
+      </span>
+      <h2 class="auth-stage__title">
+        One click<br>
+        from <span class="auth-stage__title-mark">in.</span>
+      </h2>
+      <p class="auth-stage__lead">
+        Confirm your email and we'll drop you into onboarding to finish your athlete profile.
+      </p>
+    </div>
+  </aside>
+
+  <!-- RIGHT — verification state -->
+  <main class="auth-form-wrap">
+    <div class="auth-form-v2">
+
+      <header class="auth-form-v2__head">
+        <h1 class="auth-form-v2__title">Verify your email.</h1>
+        <p class="auth-form-v2__sub">We sent you a link. Click it to continue.</p>
+      </header>
+
+      @if (isVerifying()) {
+        <div class="auth-checking">
+          <i class="pi pi-spin pi-spinner" aria-hidden="true"></i>
+          <p>Verifying your email address…</p>
+        </div>
+      } @else if (isVerified()) {
+        <div class="auth-success">
+          <app-alert
+            variant="success"
+            message="Email verified successfully!"
+          />
+          @if (showManualContinue()) {
+            <p class="auth-success__msg">Your email is already verified. Continue when ready.</p>
             <app-button
-              iconLeft="pi-send"
-              variant="outlined"
-              (clicked)="resendVerification()"
-              [loading]="isResending()"
+              iconLeft="pi-arrow-right"
+              (clicked)="continueToApp()"
               [fullWidth]="true"
-              >Resend Verification Email</app-button
-            >
-            <a [routerLink]="['/login']" class="back-to-login-link mt-4"
-              >Back to Sign In</a
-            >
-          </div>
-        } @else {
-          <div class="pending-state">
-            <app-alert
-              variant="warning"
-              message="Please check your email"
-              styleClass="status-message"
-            />
-            <p class="pending-message">
-              We've sent a verification link to your email address. Please click
-              the link to verify your account before starting onboarding.
+            >Continue to app</app-button>
+          } @else {
+            <p class="auth-success__msg">
+              Email verified. Next: onboarding, so we can finish your athlete profile.
             </p>
             <app-button
-              iconLeft="pi-send"
-              variant="outlined"
-              (clicked)="resendVerification()"
-              [loading]="isResending()"
+              iconLeft="pi-arrow-right"
+              routerLink="/onboarding"
               [fullWidth]="true"
-              >Resend Verification Email</app-button
-            >
-            <a [routerLink]="['/login']" class="back-to-login-link mt-4"
-              >Back to Sign In</a
-            >
+            >Continue to onboarding</app-button>
+          }
+        </div>
+      } @else if (verificationError()) {
+        <div class="auth-error">
+          <app-page-error-state
+            title="Unable to verify email"
+            [message]="verificationError() || 'We could not verify this email link.'"
+            [showRetry]="false"
+            helpText="Request a new verification email or return to sign in."
+          />
+          <app-button
+            iconLeft="pi-send"
+            variant="outlined"
+            (clicked)="resendVerification()"
+            [loading]="isResending()"
+            [fullWidth]="true"
+          >Resend verification email</app-button>
+        </div>
+      } @else {
+        <div class="auth-pending">
+          <div class="auth-pending__icon" aria-hidden="true">
+            <i class="pi pi-envelope"></i>
           </div>
-        }
-      </app-card-shell>
+          <p class="auth-pending__msg">
+            We've sent a verification link to your inbox. Click it to verify your account before onboarding.
+          </p>
+          <app-button
+            iconLeft="pi-send"
+            variant="outlined"
+            (clicked)="resendVerification()"
+            [loading]="isResending()"
+            [fullWidth]="true"
+          >Resend verification email</app-button>
+        </div>
+      }
+
+      <p class="auth-form-v2__footnote">
+        Wrong account?
+        <a [routerLink]="['/login']" class="auth-link auth-link--bold">Back to sign in</a>
+      </p>
     </div>
+  </main>
+</div>
   `,
   styleUrl: "./verify-email.component.scss",
 })
