@@ -21,7 +21,6 @@ import {
 import { ActivatedRoute, Router, RouterModule } from "@angular/router";
 import { FormInputComponent } from "../../../shared/components/form-input/form-input.component";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
-import { CardShellComponent } from "../../../shared/components/card-shell/card-shell.component";
 import {
   AuthService,
   AuthSessionResult,
@@ -50,7 +49,6 @@ type LoginForm = FormGroup<{
     ReactiveFormsModule,
     FormsModule,
     ButtonComponent,
-    CardShellComponent,
     FormInputComponent,
   ],
   template: `

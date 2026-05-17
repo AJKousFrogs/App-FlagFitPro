@@ -33,7 +33,6 @@ import {
   isFormControlInvalid,
   markFormGroupTouched,
 } from "../../../shared/utils/form.utils";
-import { CardShellComponent } from "../../../shared/components/card-shell/card-shell.component";
 
 @Component({
   selector: "app-register",
@@ -42,7 +41,6 @@ import { CardShellComponent } from "../../../shared/components/card-shell/card-s
     RouterModule,
     ReactiveFormsModule,
     ButtonComponent,
-    CardShellComponent,
     FormInputComponent,
   ],
   template: `

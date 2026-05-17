@@ -8,7 +8,6 @@ import {
   viewChild,
 } from "@angular/core";
 import { Router, RouterModule } from "@angular/router";
-import { ButtonComponent } from "../../shared/components/button/button.component";
 import { ensurePrimeIconsStylesheet } from "../../core/utils/primeicons-loader";
 
 /**
@@ -28,7 +27,7 @@ import { ensurePrimeIconsStylesheet } from "../../core/utils/primeicons-loader";
 @Component({
   selector: "app-landing",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, RouterModule, ButtonComponent],
+  imports: [CommonModule, RouterModule],
   templateUrl: "./landing.component.html",
   styleUrl: "./landing.component.scss",
 })

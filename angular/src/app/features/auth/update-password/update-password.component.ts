@@ -20,7 +20,6 @@ import { ToastService } from "../../../core/services/toast.service";
 import { TOAST } from "../../../core/constants/toast-messages.constants";
 import { AlertComponent } from "../../../shared/components/alert/alert.component";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
-import { CardShellComponent } from "../../../shared/components/card-shell/card-shell.component";
 import { AuthFlowDataService } from "../services/auth-flow-data.service";
 
 /**
@@ -39,7 +38,6 @@ import { AuthFlowDataService } from "../services/auth-flow-data.service";
     ReactiveFormsModule,
     AlertComponent,
     ButtonComponent,
-    CardShellComponent,
     Password,
   ],
   template: `

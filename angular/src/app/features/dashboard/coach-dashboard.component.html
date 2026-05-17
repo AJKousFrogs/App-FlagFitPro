@@ -121,19 +121,14 @@
           <div>
             <div class="hero-card__eyebrow">Next game</div>
             <div class="hero-card__title">
-              {{ upcomingGames()[0].opponent }}{{ upcomingGames()[0].isHome ? " · Home" : " · Away" }}
+              {{ upcomingGames()[0].opponent }}
             </div>
             <div class="hero-card__meta">
-              {{ upcomingGames()[0].date | date: "EEEE, MMM d" }} · {{ upcomingGames()[0].time ?? "" }}
+              {{ upcomingGames()[0].date | date: "EEEE, MMM d" }}
               @if (upcomingGames()[0].location) { · {{ upcomingGames()[0].location }} }
+              @if (upcomingGames()[0].gameType) { · {{ upcomingGames()[0].gameType }} }
             </div>
             <div class="hero-card__kpis">
-              @if (upcomingGames()[0].rsvpCount !== undefined && upcomingGames()[0].rsvpTotal !== undefined) {
-                <div class="nk">
-                  <div class="nk__lab">RSVP</div>
-                  <div class="nk__val nk__val--ok">{{ upcomingGames()[0].rsvpCount }}/{{ upcomingGames()[0].rsvpTotal }}</div>
-                </div>
-              }
               <div class="nk">
                 <div class="nk__lab">Active squad</div>
                 <div class="nk__val nk__val--ok">{{ teamOverview().activePlayers }}</div>
@@ -193,9 +188,9 @@
               Game day
             }
           </h2>
-          @if (upcomingGames().length > 0 && upcomingGames()[0].time) {
+          @if (upcomingGames().length > 0) {
             <div class="hero-card__meta" style="margin-top: var(--space-3);">
-              {{ upcomingGames()[0].time }}
+              {{ upcomingGames()[0].date | date: "EEEE, MMM d" }}
               @if (upcomingGames()[0].location) { · {{ upcomingGames()[0].location }} }
             </div>
           }
@@ -220,7 +215,7 @@
             <div class="hero-card__eyebrow">Tonight's session</div>
             <div class="hero-card__title">{{ trainingSessions()[0].title }}</div>
             <div class="hero-card__meta">
-              {{ trainingSessions()[0].time ?? "" }}
+              {{ trainingSessions()[0].time }}
               @if (trainingSessions()[0].duration) { · ~{{ trainingSessions()[0].duration }} min }
             </div>
             <div class="hero-card__kpis">

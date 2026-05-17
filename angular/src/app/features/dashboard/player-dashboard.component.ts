@@ -35,7 +35,6 @@ import {
   PrivacySettingsService,
 } from "../../core/services/privacy-settings.service";
 import { ButtonComponent } from "../../shared/components/button/button.component";
-import { CardShellComponent } from "../../shared/components/card-shell/card-shell.component";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageErrorStateComponent } from "../../shared/components/page-error-state/page-error-state.component";
 import { LINE_CHART_OPTIONS } from "../../shared/config/chart.config";
@@ -96,7 +95,6 @@ interface QuickAction {
     DecimalPipe,
     RouterModule,
     ButtonComponent,
-    CardShellComponent,
     PlayerDashboardSetupCardComponent,
     DashboardSkeletonComponent,
     MainLayoutComponent,

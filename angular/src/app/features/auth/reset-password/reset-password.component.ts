@@ -17,7 +17,6 @@ import { FormInputComponent } from "../../../shared/components/form-input/form-i
 import { LoggerService } from "../../../core/services/logger.service";
 import { ToastService } from "../../../core/services/toast.service";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
-import { CardShellComponent } from "../../../shared/components/card-shell/card-shell.component";
 import { AuthFlowDataService } from "../services/auth-flow-data.service";
 
 @Component({
@@ -27,7 +26,6 @@ import { AuthFlowDataService } from "../services/auth-flow-data.service";
     RouterModule,
     ReactiveFormsModule,
     ButtonComponent,
-    CardShellComponent,
     FormInputComponent,
   ],
   template: `

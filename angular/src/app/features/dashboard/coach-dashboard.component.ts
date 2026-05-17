@@ -50,11 +50,10 @@ import { formatDate, getTimeAgo } from "../../shared/utils/date.utils";
 import {
   getStatusSeverity as getStatusSeverityValue,
 } from "../../shared/utils/status.utils";
-import { DatePipe } from "@angular/common";
+import { DatePipe, DecimalPipe } from "@angular/common";
 import { LINE_CHART_OPTIONS } from "../../shared/config/chart.config";
 import { CONSENT_BLOCKED_MESSAGES } from "../../shared/utils/privacy-ux-copy";
 import { UI_LIMITS } from "../../core/constants";
-import { CardShellComponent } from "../../shared/components/card-shell/card-shell.component";
 import { CoachDashboardPartialDataNoticeComponent } from "./components/coach-dashboard-partial-data-notice.component";
 import { CoachDashboardDataService } from "./services/coach-dashboard-data.service";
 
@@ -107,12 +106,12 @@ interface NewSessionDraft {
     AppLoadingComponent,
     AppDialogComponent,
     ButtonComponent,
-    CardShellComponent,
     MainLayoutComponent,
     PageErrorStateComponent,
     DialogFooterComponent,
     DialogHeaderComponent,
     DatePipe,
+    DecimalPipe,
     CoachDashboardPartialDataNoticeComponent,
   ],
   templateUrl: "./coach-dashboard.component.html",

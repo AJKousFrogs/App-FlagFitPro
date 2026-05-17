@@ -11,7 +11,6 @@ import { HomeRouteService } from "../../../core/services/home-route.service";
 import { ToastService } from "../../../core/services/toast.service";
 import { AlertComponent } from "../../../shared/components/alert/alert.component";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
-import { CardShellComponent } from "../../../shared/components/card-shell/card-shell.component";
 import { PageErrorStateComponent } from "../../../shared/components/page-error-state/page-error-state.component";
 import { getErrorMessage } from "../../../shared/utils/error.utils";
 import { AuthFlowDataService } from "../services/auth-flow-data.service";
@@ -36,7 +35,6 @@ import { AuthFlowDataService } from "../services/auth-flow-data.service";
     RouterModule,
     ButtonComponent,
     AlertComponent,
-    CardShellComponent,
     PageErrorStateComponent,
   ],
 
