@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FlagFit Pro — ACWR Dashboard (mockup)</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../_shared/tokens.css"><link rel="stylesheet" href="../_shared/base.css">
+<script src="../_shared/theme.js"></script>
+<style>
+  .shell { display: grid; gap: var(--space-5); max-width: 1100px; margin: 0 auto; padding: var(--space-6); padding-bottom: 120px; }
+  .head { display: flex; justify-content: space-between; align-items: flex-end; gap: var(--space-3); flex-wrap: wrap; }
+  .eyebrow { font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ok); font-weight: 800; margin-bottom: 6px; }
+  .head h1 { font-family: var(--font-display); font-size: clamp(36px, 5vw, 52px); font-weight: 800; letter-spacing: -0.03em; line-height: 1; }
+  .head .sub { color: var(--text-2); font-size: 14px; margin-top: 6px; font-weight: 600; }
+  /* Gauge hero — large */
+  .gauge-hero { padding: var(--space-8); border-radius: var(--radius-2xl); background: radial-gradient(circle at 80% 20%, color-mix(in srgb, var(--ok) 18%, transparent) 0%, transparent 50%), linear-gradient(135deg, var(--bg-1) 0%, var(--bg-elevated) 100%); border: 1px solid color-mix(in srgb, var(--ok) 22%, var(--bg-line)); display: grid; grid-template-columns: auto 1fr; gap: var(--space-8); align-items: center; }
+  .gauge-lg { width: 320px; height: 320px; position: relative; }
+  .gauge-lg__center { position: absolute; inset: 0; display: grid; place-items: center; text-align: center; }
+  .gauge-lg__num { font-family: var(--font-display); font-size: 96px; font-weight: 800; letter-spacing: -0.05em; line-height: 1; color: var(--ok); }
+  .gauge-lg__lab { font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-2); font-weight: 800; margin-top: 8px; }
+  .gauge-lg__zone { display: inline-flex; padding: 6px 14px; border-radius: var(--radius-full); background: color-mix(in srgb, var(--ok) 18%, transparent); color: var(--ok); font-size: 11px; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; margin-top: 12px; }
+  .gh-text h2 { font-family: var(--font-display); font-size: 32px; font-weight: 800; letter-spacing: -0.02em; line-height: 1.05; margin-bottom: var(--space-3); }
+  .gh-text p { color: var(--text-1); font-size: 15px; line-height: 1.6; margin-bottom: var(--space-4); max-width: 50ch; }
+  .gh-recs { display: grid; gap: var(--space-2); }
+  .gh-recs__item { display: flex; gap: 10px; align-items: flex-start; color: var(--text-1); font-size: 14px; }
+  .gh-recs__item::before { content: '→'; color: var(--accent); font-weight: 800; }
+  /* Two-col data */
+  .row { display: grid; grid-template-columns: 2fr 1fr; gap: var(--space-4); }
+  .card { background: var(--bg-1); border: 1px solid var(--bg-line); border-radius: var(--radius-xl); padding: var(--space-6); }
+  .card__head { margin-bottom: var(--space-4); }
+  .card__title { font-family: var(--font-display); font-size: 18px; font-weight: 800; letter-spacing: -0.01em; }
+  .card__sub { color: var(--text-2); font-size: 12px; margin-top: 4px; }
+  .progress-stat { display: grid; gap: 4px; padding-bottom: var(--space-4); margin-bottom: var(--space-4); border-bottom: 1px solid var(--bg-line); }
+  .progress-stat__num { font-family: var(--font-display); font-size: 44px; font-weight: 800; letter-spacing: -0.03em; line-height: 1; color: var(--ok); }
+  .progress-stat__lab { font-size: 12px; color: var(--text-2); font-weight: 600; }
+  .conf-bar { height: 8px; background: var(--bg-3); border-radius: 4px; overflow: hidden; }
+  .conf-bar__fill { display: block; height: 100%; background: var(--ok); border-radius: 4px; }
+  .conf-detail { margin-top: var(--space-2); font-size: 12px; color: var(--text-2); }
+  /* Quick actions */
+  .qa-list { display: grid; gap: var(--space-2); }
+  .qa { display: flex; justify-content: space-between; align-items: center; padding: 14px; background: var(--bg-2); border: 1px solid var(--bg-line); border-radius: var(--radius-md); color: var(--text-0); text-decoration: none; font-weight: 700; font-size: 14px; }
+  .qa:hover { border-color: color-mix(in srgb, var(--accent) 30%, var(--bg-line)); }
+  @media (max-width: 900px) { .gauge-hero, .row { grid-template-columns: 1fr; } .gauge-lg { margin: 0 auto; } }
+</style></head><body>
+
+<header class="page-chrome">
+  <div class="page-chrome__left"><div class="brand"><div class="brand__mark">F</div>FlagFit <span class="brand__sub">Pro</span></div><span class="crumb">32 · ACWR Dashboard</span><span class="mockup-status mockup-status--review">In review</span></div>
+  <div class="page-chrome__right"><a href="../index.html" class="theme-toggle" style="text-decoration:none;">← Index</a><button type="button" class="theme-toggle" data-theme-toggle><span data-theme-label>Light mode</span></button></div>
+</header>
+
+<div class="spec-strip"><div class="spec-strip__title">ACWR Dashboard</div><div class="spec-strip__meta"><span>Route: <strong>/acwr</strong></span><span>Pattern: <strong>large gauge hero + workload trend</strong></span></div></div>
+
+<main class="shell">
+
+  <div class="head">
+    <div>
+      <div class="eyebrow">● Prevention</div>
+      <h1>Load monitoring</h1>
+      <div class="sub">Track workload trends to prevent overtraining and injury.</div>
+    </div>
+  </div>
+
+  <!-- Gauge hero -->
+  <section class="gauge-hero">
+    <div class="gauge-lg">
+      <svg viewBox="0 0 320 320">
+        <circle cx="160" cy="160" r="140" stroke="rgba(255,255,255,0.06)" stroke-width="22" fill="none"/>
+        <defs><linearGradient id="g1" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="var(--ok)"/><stop offset="100%" stop-color="var(--accent)"/></linearGradient></defs>
+        <circle cx="160" cy="160" r="140" stroke="url(#g1)" stroke-width="22" fill="none" stroke-dasharray="880" stroke-dashoffset="704" stroke-linecap="round" transform="rotate(-90 160 160)"/>
+      </svg>
+      <div class="gauge-lg__center">
+        <div class="gauge-lg__num">1.18</div>
+        <div class="gauge-lg__lab">ACWR · 28d</div>
+        <div class="gauge-lg__zone">● Optimal</div>
+      </div>
+    </div>
+    <div class="gh-text">
+      <h2>You're in the green zone.</h2>
+      <p>Acute load (7d) is closely tracking chronic load (28d). Injury risk is minimized. Keep training as planned — the system will alert you if the ratio drifts outside 0.8–1.3.</p>
+      <div class="gh-recs">
+        <div class="gh-recs__item">Continue your current weekly load (~290 units)</div>
+        <div class="gh-recs__item">Log each session's RPE × duration to maintain confidence</div>
+        <div class="gh-recs__item">Watch for spikes: any acute load > 25% above chronic</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Weekly progression -->
+  <div class="row">
+    <section class="card">
+      <div class="card__head">
+        <div class="card__title">Workload trend · 28 days</div>
+        <div class="card__sub">Acute (7d) vs chronic (28d) — optimal corridor shaded</div>
+      </div>
+      <svg viewBox="0 0 800 220" style="width:100%; height:auto;">
+        <g stroke="rgba(255,255,255,0.05)"><line x1="40" x2="780" y1="40" y2="40"/><line x1="40" x2="780" y1="100" y2="100"/><line x1="40" x2="780" y1="160" y2="160"/></g>
+        <rect x="40" y="115" width="740" height="50" fill="color-mix(in srgb, var(--ok) 8%, transparent)"/>
+        <path d="M40,160 L120,150 L200,142 L280,134 L360,128 L440,122 L520,116 L600,110 L680,108 L780,106" stroke="var(--text-2)" stroke-width="2" fill="none" stroke-dasharray="4 4" opacity="0.6"/>
+        <path d="M40,170 L80,160 L120,165 L160,148 L200,152 L240,140 L280,135 L320,125 L360,128 L400,130 L440,130 L480,135 L520,140 L560,138 L600,130 L640,125 L680,120 L720,118 L760,115 L780,114" stroke="var(--ok)" stroke-width="3" fill="none" stroke-linecap="round"/>
+        <path d="M40,170 L80,160 L120,165 L160,148 L200,152 L240,140 L280,135 L320,125 L360,128 L400,130 L440,130 L480,135 L520,140 L560,138 L600,130 L640,125 L680,120 L720,118 L760,115 L780,114 L780,200 L40,200 Z" fill="color-mix(in srgb, var(--ok) 15%, transparent)"/>
+        <circle cx="780" cy="114" r="5" fill="var(--ok)"/>
+      </svg>
+    </section>
+    <section class="card">
+      <div class="card__head">
+        <div class="card__title">Data confidence</div>
+        <div class="card__sub">From training logs &amp; wellness</div>
+      </div>
+      <div class="progress-stat">
+        <div class="progress-stat__num">94%</div>
+        <div class="progress-stat__lab">High confidence</div>
+      </div>
+      <div>
+        <div style="display:flex; justify-content:space-between; margin-bottom: 6px; font-size: 11px; color: var(--text-2); font-weight: 700;">
+          <span>4 / 4 inputs</span><span>28 days logged</span>
+        </div>
+        <div class="conf-bar"><span class="conf-bar__fill" style="width: 94%;"></span></div>
+        <div class="conf-detail">All inputs (sleep, RPE, sessions, soreness) are current. Ratio is reliable.</div>
+      </div>
+    </section>
+  </div>
+
+  <!-- Quick actions -->
+  <section class="card">
+    <div class="card__head"><div class="card__title">Quick actions</div></div>
+    <div class="qa-list">
+      <a class="qa"><span>📝 Log today's session RPE</span><span style="color: var(--text-2);">→</span></a>
+      <a class="qa"><span>❤ Update wellness check-in</span><span style="color: var(--text-2);">→</span></a>
+      <a class="qa"><span>📊 View workload history (CSV)</span><span style="color: var(--text-2);">→</span></a>
+      <a class="qa"><span>📚 Learn how ACWR is calculated</span><span style="color: var(--text-2);">→</span></a>
+    </div>
+  </section>
+
+</main>
+
+<div class="mockup-banner">Mockup · 32 ACWR Dashboard</div>
+</body></html>

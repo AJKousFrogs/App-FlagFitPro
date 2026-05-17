@@ -54,113 +54,139 @@ type LoginForm = FormGroup<{
     FormInputComponent,
   ],
   template: `
-<div class="login-page elite-auth-shell">
-      <app-card-shell class="login-card elite-auth-card elite-auth-card--login">
-        <div class="elite-auth-intro">
-          <div class="login-logo elite-auth-logo">
-            <i class="pi pi-flag-fill"></i>
-          </div>
-          <h1 class="login-title elite-auth-title">Welcome back</h1>
-          <p class="elite-auth-subtitle">
-            Sign in to FlagFit Pro and pick up where you left off.
-          </p>
-        </div>
+<div class="auth-shell-v2">
 
-        @if (isDemoMode()) {
-          <div class="elite-auth-note" role="note">
-            <strong>Local environment.</strong> Sign-in still calls the real auth backend — use valid test credentials.
+  <!-- LEFT — brand stage (visible on desktop, top section on mobile) -->
+  <aside class="auth-stage" aria-hidden="true">
+    <div class="auth-stage__inner">
+      <span class="auth-stage__eyebrow">
+        <span class="auth-stage__eyebrow-dot"></span>
+        FlagFit Pro · Performance platform
+      </span>
+      <h2 class="auth-stage__title">
+        Train smarter.<br>
+        Win <span class="auth-stage__title-mark">Sundays.</span>
+      </h2>
+      <p class="auth-stage__lead">
+        Real-time readiness, ACWR injury monitoring, playbook quiz, premium analytics
+        — for serious flag football programs.
+      </p>
+      <div class="auth-stage__metrics">
+        <div class="auth-stage__metric">
+          <div class="auth-stage__metric-num">&minus;42<small>%</small></div>
+          <div class="auth-stage__metric-lab">injuries</div>
+        </div>
+        <div class="auth-stage__metric">
+          <div class="auth-stage__metric-num">3.4&times;</div>
+          <div class="auth-stage__metric-lab">efficiency</div>
+        </div>
+        <div class="auth-stage__metric">
+          <div class="auth-stage__metric-num">87<small>%</small></div>
+          <div class="auth-stage__metric-lab">adherence</div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- RIGHT — form -->
+  <main class="auth-form-wrap">
+    <div class="auth-form-v2">
+
+      <header class="auth-form-v2__head">
+        <h1 class="auth-form-v2__title">Welcome back.</h1>
+        <p class="auth-form-v2__sub">Sign in to pick up where you left off.</p>
+      </header>
+
+      @if (isDemoMode()) {
+        <div class="auth-note" role="note">
+          <strong>Local environment.</strong> Real auth backend — use valid credentials.
+        </div>
+      }
+
+      <form
+        [formGroup]="loginForm"
+        (ngSubmit)="onSubmit()"
+        class="auth-form-v2__form"
+        novalidate
+      >
+        <input type="hidden" [value]="csrfToken()" />
+
+        @if (submitError()) {
+          <div class="auth-form-v2__error" role="alert" aria-live="polite">
+            <i class="pi pi-exclamation-circle" aria-hidden="true"></i>
+            <div>
+              <strong>Unable to sign in</strong>
+              <p>{{ submitError() }}</p>
+            </div>
           </div>
         }
 
-        <form
-          [formGroup]="loginForm"
-          (ngSubmit)="onSubmit()"
-          class="elite-auth-form"
-        >
-          <input type="hidden" [value]="csrfToken()" />
-
-          @if (submitError()) {
-            <div
-              class="form-error-summary form-error-summary--auth"
-              role="alert"
-              aria-live="polite"
-            >
-              <div class="form-error-summary__header">
-                <i class="pi pi-exclamation-circle" aria-hidden="true"></i>
-                <p class="form-error-summary__title">Unable to sign in</p>
-              </div>
-              <p class="form-error-summary__body">{{ submitError() }}</p>
-            </div>
+        <div class="auth-field">
+          <app-form-input
+            label="Email"
+            formControlName="email"
+            type="email"
+            autocomplete="email"
+            placeholder="you@team.com"
+            data-testid="email-input"
+            styleClass="w-full"
+          />
+          @if (emailError()) {
+            <small id="email-error" class="auth-field__error" role="alert">
+              {{ emailError() }}
+            </small>
           }
+        </div>
 
-          <div class="form-field elite-auth-field">
-            <app-form-input
-              label="Email"
-              formControlName="email"
-              type="email"
-              autocomplete="email"
-              placeholder="Enter your email"
-              data-testid="email-input"
-              styleClass="w-full"
+        <div class="auth-field">
+          <app-form-input
+            label="Password"
+            formControlName="password"
+            type="password"
+            placeholder="At least 8 characters"
+            data-testid="password-input"
+            styleClass="w-full"
+          />
+          @if (passwordError()) {
+            <small id="password-error" class="auth-field__error" role="alert">
+              {{ passwordError() }}
+            </small>
+          }
+        </div>
+
+        <div class="auth-form-v2__row">
+          <label class="auth-check" for="remember">
+            <input
+              type="checkbox"
+              formControlName="remember"
+              id="remember"
+              class="auth-check__input"
             />
-            @if (emailError()) {
-              <small id="email-error" class="form-error" role="alert">
-                {{ emailError() }}
-              </small>
-            }
-          </div>
+            <span class="auth-check__box" aria-hidden="true"></span>
+            <span class="auth-check__label">Remember me</span>
+          </label>
+          <a [routerLink]="['/reset-password']" class="auth-link">
+            Forgot password?
+          </a>
+        </div>
 
-          <div class="form-field elite-auth-field">
-            <app-form-input
-              label="Password"
-              formControlName="password"
-              type="password"
-              placeholder="Enter your password"
-              data-testid="password-input"
-              styleClass="w-full"
-            />
-            @if (passwordError()) {
-              <small id="password-error" class="form-error" role="alert">
-                {{ passwordError() }}
-              </small>
-            }
-          </div>
+        <app-button
+          type="submit"
+          iconLeft="pi-lock"
+          [loading]="isLoading()"
+          [disabled]="!formValid() || isLoading()"
+          [fullWidth]="true"
+          testId="login-submit"
+        >Sign in</app-button>
+      </form>
 
-          <div class="form-inline-split login-form-options">
-            <label class="form-check" for="remember">
-              <input
-                type="checkbox"
-                formControlName="remember"
-                id="remember"
-                class="form-check__input"
-                [attr.aria-label]="'Remember me on this device'"
-              />
-              <span class="form-check__box" aria-hidden="true"></span>
-              <span class="form-check__label">Remember me</span>
-            </label>
-            <a [routerLink]="['/reset-password']" class="forgot-link ui-inline-link">
-              Forgot your password?
-            </a>
-          </div>
-
-          <app-button
-            type="submit"
-            iconLeft="pi-lock"
-            [loading]="isLoading()"
-            [disabled]="!formValid() || isLoading()"
-            [fullWidth]="true"
-            class="elite-auth-sticky-cta"
-            testId="login-submit"
-            >Sign in</app-button
-          >
-        </form>
-
-        <p class="elite-auth-footnote">
-          New here?
-          <a [routerLink]="['/register']" class="elite-auth-link">Create an account</a>
-        </p>
-      </app-card-shell>
+      <p class="auth-form-v2__footnote">
+        New here?
+        <a [routerLink]="['/register']" class="auth-link auth-link--bold">Create an account</a>
+      </p>
     </div>
+  </main>
+</div>
   `,
   styleUrl: "./login.component.scss",
 })

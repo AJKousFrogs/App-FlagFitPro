@@ -1,4 +1,1 @@
-export {
-  RatingSliderComponent,
-  type RatingDirection,
-} from "./rating-slider.component";
+export { RatingSliderComponent, type RatingDirection } from "./rating-slider.component";

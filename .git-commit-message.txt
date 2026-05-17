@@ -1,0 +1,22 @@
+feat(design): sprint 2 - premium athletic redesign across app
+
+Pages revamped (mockup -> Angular impl -> SCSS polish):
+- Landing, Player Dashboard, Coach Dashboard, Today's Practice
+- Wellness check-in (rating-slider component, inverse semantics)
+- Login + Register (split brand-stage v2 - auth-shell-v2 / auth-form-v2)
+- Roster (squared jersey badges, risk-tier borders, tabular metrics)
+- Analytics (display-font metric tiles, eyebrow labels, gradient icons)
+- ACWR Dashboard (conic-gradient gauge, premium SCSS)
+- Playbook (display names, eyebrow categories, glowing memorized badge)
+- Profile (athletic identity hero, jersey badge)
+
+Shared:
+- New: app-rating-slider, app-readiness-ring
+- Removed: action-card, broadcast-card, hero-metric, status-strip
+  (replaced by inline implementations in the v2 templates)
+
+Foundation: canonical design tokens throughout
+  (--ds-primary-green, --surface-card, --color-text-primary,
+   --color-status-*, display font, tabular-nums on all metrics)
+
+Verified: npx tsc --noEmit -p tsconfig.app.json passes clean.

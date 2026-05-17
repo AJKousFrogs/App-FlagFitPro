@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FlagFit Pro — Playbook (mockup)</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../_shared/tokens.css"><link rel="stylesheet" href="../_shared/base.css">
+<script src="../_shared/theme.js"></script>
+<style>
+  .shell { display: grid; gap: var(--space-5); max-width: 1280px; margin: 0 auto; padding: var(--space-6); padding-bottom: 120px; }
+  .head { display: flex; justify-content: space-between; align-items: flex-end; gap: var(--space-3); flex-wrap: wrap; }
+  .head h1 { font-family: var(--font-display); font-size: clamp(36px, 5vw, 52px); font-weight: 800; letter-spacing: -0.03em; line-height: 1; }
+  .head .sub { color: var(--text-2); font-size: 14px; margin-top: 6px; font-weight: 600; }
+  .btn { display: inline-flex; align-items: center; gap: 8px; padding: 10px 18px; border-radius: var(--radius-full); border: 0; font-family: inherit; font-size: 14px; font-weight: 700; cursor: pointer; text-decoration: none; }
+  .btn--primary { background: var(--accent); color: var(--text-inverse); }
+  .btn--ghost { background: transparent; color: var(--text-0); border: 1px solid var(--bg-line); }
+  /* Memorization hero */
+  .mem-hero { padding: var(--space-7); border-radius: var(--radius-2xl); background: linear-gradient(135deg, color-mix(in srgb, var(--accent) 12%, var(--bg-1)) 0%, var(--bg-1) 100%); border: 1px solid color-mix(in srgb, var(--accent) 22%, var(--bg-line)); display: grid; grid-template-columns: 1fr auto; gap: var(--space-6); align-items: center; }
+  .mem-hero__copy h2 { font-family: var(--font-display); font-size: clamp(28px, 4vw, 40px); font-weight: 800; letter-spacing: -0.03em; line-height: 1.05; }
+  .mem-hero__copy p { color: var(--text-1); font-size: 15px; line-height: 1.5; margin-top: var(--space-3); max-width: 50ch; }
+  .mem-hero__copy .cta { margin-top: var(--space-5); display: flex; gap: var(--space-3); flex-wrap: wrap; }
+  .mem-stat { background: var(--bg-0); border: 1px solid var(--bg-line); border-radius: var(--radius-xl); padding: var(--space-5); text-align: center; min-width: 180px; }
+  .mem-stat__num { font-family: var(--font-display); font-size: 64px; font-weight: 800; letter-spacing: -0.04em; line-height: 1; }
+  .mem-stat__num span { font-size: 0.4em; color: var(--text-2); font-weight: 600; }
+  .mem-stat__lab { font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-2); font-weight: 800; margin-top: 8px; }
+  .mem-stat__bar { height: 4px; background: var(--bg-3); border-radius: 2px; margin-top: var(--space-3); overflow: hidden; }
+  .mem-stat__bar > span { display: block; height: 100%; background: var(--accent); border-radius: 2px; }
+  /* Role filter + search */
+  .filter-bar { display: flex; gap: var(--space-3); align-items: center; flex-wrap: wrap; padding: var(--space-4); background: var(--bg-1); border: 1px solid var(--bg-line); border-radius: var(--radius-xl); }
+  .filter-bar__search { flex: 1; min-width: 240px; padding: 10px 14px; background: var(--bg-2); border: 1px solid var(--bg-line); border-radius: var(--radius-full); font-family: inherit; color: var(--text-0); font-size: 14px; }
+  .pills { display: flex; gap: 6px; flex-wrap: wrap; }
+  .pill { padding: 6px 12px; border-radius: var(--radius-full); background: var(--bg-2); border: 1px solid var(--bg-line); font-size: 12px; font-weight: 800; color: var(--text-1); cursor: pointer; }
+  .pill.active { background: var(--accent); color: var(--text-inverse); border-color: var(--accent); }
+  /* Play card grid */
+  .plays { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: var(--space-3); }
+  .play { background: var(--bg-1); border: 1px solid var(--bg-line); border-radius: var(--radius-xl); padding: var(--space-5); cursor: pointer; transition: all 120ms ease; display: grid; gap: var(--space-3); }
+  .play:hover { border-color: color-mix(in srgb, var(--accent) 30%, var(--bg-line)); transform: translateY(-2px); }
+  .play__head { display: flex; justify-content: space-between; align-items: flex-start; gap: var(--space-2); }
+  .play__name { font-family: var(--font-display); font-size: 18px; font-weight: 800; }
+  .play__cat { color: var(--text-2); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 800; margin-top: 4px; }
+  .play__status { font-size: 10px; padding: 4px 8px; border-radius: var(--radius-sm); font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; }
+  .play__status--memorized { background: color-mix(in srgb, var(--ok) 18%, transparent); color: var(--ok); }
+  .play__status--review { background: color-mix(in srgb, var(--warn) 18%, transparent); color: var(--warn); }
+  .play__status--new { background: var(--bg-3); color: var(--text-2); }
+  /* Mini formation diagram */
+  .formation { background: #0c2a1a; border-radius: var(--radius-md); padding: var(--space-3); height: 100px; position: relative; }
+  .formation svg { width: 100%; height: 100%; }
+  /* Play meta */
+  .play__meta { display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: var(--text-2); }
+  .play__meta strong { color: var(--text-0); font-weight: 700; }
+  .play__role { padding: 3px 8px; border-radius: var(--radius-sm); background: var(--bg-2); border: 1px solid var(--bg-line); font-size: 10px; font-weight: 800; letter-spacing: 0.06em; }
+</style></head><body>
+
+<header class="page-chrome">
+  <div class="page-chrome__left"><div class="brand"><div class="brand__mark">F</div>FlagFit <span class="brand__sub">Pro</span></div><span class="crumb">33 · Playbook</span><span class="mockup-status mockup-status--review">In review</span></div>
+  <div class="page-chrome__right"><a href="../index.html" class="theme-toggle" style="text-decoration:none;">← Index</a><button type="button" class="theme-toggle" data-theme-toggle><span data-theme-label>Light mode</span></button></div>
+</header>
+
+<div class="spec-strip"><div class="spec-strip__title">Playbook</div><div class="spec-strip__meta"><span>Route: <strong>/playbook</strong></span><span>Pattern: <strong>memorization hero + role-filtered grid</strong></span></div></div>
+
+<main class="shell">
+
+  <div class="head">
+    <div>
+      <h1>Playbook</h1>
+      <div class="sub">Your team's plays — organized, ranked by what to study next</div>
+    </div>
+    <a class="btn btn--ghost">+ Suggest play</a>
+  </div>
+
+  <!-- Memorization hero -->
+  <section class="mem-hero">
+    <div class="mem-hero__copy">
+      <h2>Run a 5-play quiz now.</h2>
+      <p>Three plays haven't been reviewed in 14+ days. Spaced repetition keeps them sharp before Sunday's game.</p>
+      <div class="cta">
+        <a class="btn btn--primary">▶ Start quiz · 5 plays</a>
+        <a class="btn btn--ghost">View all 24 plays</a>
+      </div>
+    </div>
+    <div class="mem-stat">
+      <div class="mem-stat__num">8<span>/24</span></div>
+      <div class="mem-stat__lab">memorized</div>
+      <div class="mem-stat__bar"><span style="width: 33%;"></span></div>
+    </div>
+  </section>
+
+  <!-- Filter bar with role pills -->
+  <div class="filter-bar">
+    <input class="filter-bar__search" placeholder="Search plays by name or call..." type="text">
+    <div class="pills">
+      <span class="pill active">All <span style="opacity:.65;">24</span></span>
+      <span class="pill">QB <span style="opacity:.65;">12</span></span>
+      <span class="pill">WR <span style="opacity:.65;">18</span></span>
+      <span class="pill">RB <span style="opacity:.65;">8</span></span>
+      <span class="pill">CB <span style="opacity:.65;">14</span></span>
+    </div>
+    <div class="pills">
+      <span class="pill">3rd down</span>
+      <span class="pill">Red zone</span>
+      <span class="pill">2-min drill</span>
+    </div>
+  </div>
+
+  <!-- Play grid -->
+  <div class="plays">
+
+    <div class="play">
+      <div class="play__head">
+        <div><div class="play__name">Strike Right</div><div class="play__cat">Pass · slant combo</div></div>
+        <span class="play__status play__status--review">Review</span>
+      </div>
+      <div class="formation">
+        <svg viewBox="0 0 220 100">
+          <line x1="0" y1="80" x2="220" y2="80" stroke="rgba(255,255,255,0.4)" stroke-width="1.5"/>
+          <circle cx="80" cy="80" r="6" fill="var(--accent)"/>
+          <circle cx="140" cy="80" r="6" fill="var(--accent)"/>
+          <circle cx="110" cy="80" r="6" fill="var(--accent)"/>
+          <circle cx="40" cy="80" r="6" fill="var(--accent)"/>
+          <circle cx="180" cy="80" r="6" fill="var(--accent)"/>
+          <path d="M 80 80 L 80 50 L 130 30" stroke="var(--accent)" stroke-width="2" fill="none"/>
+          <path d="M 140 80 L 140 50 L 90 30" stroke="var(--accent)" stroke-width="2" fill="none"/>
+          <path d="M 180 80 L 180 30" stroke="var(--accent)" stroke-width="2" fill="none"/>
+        </svg>
+      </div>
+      <div class="play__meta">
+        <span><strong>Spread · Trips Right</strong></span>
+        <span class="play__role">QB · WR</span>
+      </div>
+      <div class="play__meta"><span>Last studied: 18 days ago</span><span>72% recall</span></div>
+    </div>
+
+    <div class="play">
+      <div class="play__head">
+        <div><div class="play__name">Phantom</div><div class="play__cat">RPO · zone read</div></div>
+        <span class="play__status play__status--memorized">Memorized</span>
+      </div>
+      <div class="formation">
+        <svg viewBox="0 0 220 100">
+          <line x1="0" y1="80" x2="220" y2="80" stroke="rgba(255,255,255,0.4)" stroke-width="1.5"/>
+          <circle cx="110" cy="80" r="6" fill="var(--accent)"/>
+          <circle cx="50" cy="80" r="6" fill="var(--accent)"/>
+          <circle cx="170" cy="80" r="6" fill="var(--accent)"/>
+          <circle cx="110" cy="60" r="6" fill="var(--ok)"/>
+          <path d="M 110 80 L 80 60 L 60 30" stroke="var(--accent)" stroke-width="2" fill="none" stroke-dasharray="3 3"/>
+          <path d="M 170 80 L 170 30" stroke="var(--accent)" stroke-width="2" fill="none"/>
+        </svg>
+      </div>
+      <div class="play__meta">
+        <span><strong>I-formation</strong></span>
+        <span class="play__role">QB · RB</span>
+      </div>
+      <div class="play__meta"><span>Last studied: 3 days ago</span><span>98% recall</span></div>
+    </div>
+
+    <div class="play">
+      <div class="play__head">
+        <div><div class="play__name">Wheel Out</div><div class="play__cat">Pass · wheel route</div></div>
+        <span class="play__status play__status--review">Review</span>
+      </div>
+      <div class="formation">
+        <svg viewBox="0 0 220 100">
+          <line x1="0" y1="80" x2="220" y2="80" stroke="rgba(255,255,255,0.4)" stroke-width="1.5"/>
+          <circle cx="110" cy="80" r="6" fill="var(--accent)"/>
+          <circle cx="60" cy="80" r="6" fill="var(--accent)"/>
+          <circle cx="40" cy="80" r="6" fill="var(--accent)"/>
+          <circle cx="180" cy="80" r="6" fill="var(--accent)"/>
+          <path d="M 60 80 Q 80 50 130 40" stroke="var(--accent)" stroke-width="2" fill="none"/>
+          <path d="M 180 80 L 180 50" stroke="var(--accent)" stroke-width="2" fill="none"/>
+        </svg>
+      </div>
+      <div class="play__meta">
+        <span><strong>Trips Left</strong></span>
+        <span class="play__role">WR</span>
+      </div>
+      <div class="play__meta"><span>Last studied: 21 days ago</span><span>68% recall</span></div>
+    </div>
+
+    <div class="play">
+      <div class="play__head">
+        <div><div class="play__name">Smash Concept</div><div class="play__cat">Pass · corner + flat</div></div>
+        <span class="play__status play__status--new">New</span>
+      </div>
+      <div class="formation">
+        <svg viewBox="0 0 220 100">
+          <line x1="0" y1="80" x2="220" y2="80" stroke="rgba(255,255,255,0.4)" stroke-width="1.5"/>
+          <circle cx="110" cy="80" r="6" fill="var(--accent)"/>
+          <circle cx="60" cy="80" r="6" fill="var(--accent)"/>
+          <circle cx="180" cy="80" r="6" fill="var(--accent)"/>
+          <path d="M 60 80 L 60 40" stroke="var(--accent)" stroke-width="2" fill="none"/>
+          <path d="M 180 80 L 180 50 L 210 20" stroke="var(--accent)" stroke-width="2" fill="none"/>
+        </svg>
+      </div>
+      <div class="play__meta">
+        <span><strong>Spread</strong></span>
+        <span class="play__role">QB · WR</span>
+      </div>
+      <div class="play__meta"><span>Not studied yet</span><span>—</span></div>
+    </div>
+
+    <div class="play">
+      <div class="play__head">
+        <div><div class="play__name">Quick Slant</div><div class="play__cat">Pass · 3-step drop</div></div>
+        <span class="play__status play__status--memorized">Memorized</span>
+      </div>
+      <div class="formation">
+        <svg viewBox="0 0 220 100">
+          <line x1="0" y1="80" x2="220" y2="80" stroke="rgba(255,255,255,0.4)" stroke-width="1.5"/>
+          <circle cx="110" cy="80" r="6" fill="var(--accent)"/>
+          <circle cx="50" cy="80" r="6" fill="var(--accent)"/>
+          <circle cx="170" cy="80" r="6" fill="var(--accent)"/>
+          <path d="M 50 80 L 80 60" stroke="var(--accent)" stroke-width="2" fill="none"/>
+          <path d="M 170 80 L 140 60" stroke="var(--accent)" stroke-width="2" fill="none"/>
+        </svg>
+      </div>
+      <div class="play__meta">
+        <span><strong>Doubles</strong></span>
+        <span class="play__role">WR</span>
+      </div>
+      <div class="play__meta"><span>Last studied: 5 days ago</span><span>95% recall</span></div>
+    </div>
+
+    <div class="play">
+      <div class="play__head">
+        <div><div class="play__name">Cover 2 Blitz</div><div class="play__cat">Defense · zone</div></div>
+        <span class="play__status play__status--review">Review</span>
+      </div>
+      <div class="formation">
+        <svg viewBox="0 0 220 100">
+          <line x1="0" y1="80" x2="220" y2="80" stroke="rgba(255,255,255,0.4)" stroke-width="1.5"/>
+          <circle cx="60" cy="80" r="6" fill="var(--danger)"/>
+          <circle cx="110" cy="80" r="6" fill="var(--danger)"/>
+          <circle cx="160" cy="80" r="6" fill="var(--danger)"/>
+          <circle cx="40" cy="40" r="6" fill="var(--danger)"/>
+          <circle cx="180" cy="40" r="6" fill="var(--danger)"/>
+          <path d="M 60 80 L 100 40" stroke="var(--danger)" stroke-width="2" fill="none"/>
+        </svg>
+      </div>
+      <div class="play__meta">
+        <span><strong>4-1 defense</strong></span>
+        <span class="play__role">DEF</span>
+      </div>
+      <div class="play__meta"><span>Last studied: 16 days ago</span><span>74% recall</span></div>
+    </div>
+
+  </div>
+
+</main>
+
+<div class="mockup-banner">Mockup · 33 Playbook</div>
+</body></html>

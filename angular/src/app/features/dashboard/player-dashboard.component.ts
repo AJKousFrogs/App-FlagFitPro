@@ -1,5 +1,6 @@
 /** Athlete overview: readiness, schedule, and trend insights. */
 
+import { DecimalPipe } from "@angular/common";
 import {
   ChangeDetectionStrategy,
   Component,
@@ -35,10 +36,6 @@ import {
 } from "../../core/services/privacy-settings.service";
 import { ButtonComponent } from "../../shared/components/button/button.component";
 import { CardShellComponent } from "../../shared/components/card-shell/card-shell.component";
-import {
-  HeroMetricComponent,
-  type HeroMetricBadge,
-} from "../../shared/components/hero-metric/hero-metric.component";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageErrorStateComponent } from "../../shared/components/page-error-state/page-error-state.component";
 import { LINE_CHART_OPTIONS } from "../../shared/config/chart.config";
@@ -68,10 +65,7 @@ import {
 } from "../../core/utils/protocol-metrics-presentation";
 import { PlayerDashboardDataService } from "./services/player-dashboard-data.service";
 import { PlayerDashboardSetupCardComponent } from "./components/player-dashboard-setup-card.component";
-import { PlayerDashboardInsightsGridComponent } from "./components/player-dashboard-insights-grid.component";
-import { PlayerDashboardStatsOverviewComponent } from "./components/player-dashboard-stats-overview.component";
 import { PlayerDashboardStatusStackComponent } from "./components/player-dashboard-status-stack.component";
-import { PlayerDashboardEventsSectionComponent } from "./components/player-dashboard-events-section.component";
 import { SmartTrainingDataService } from "../training/services/smart-training-data.service";
 import {
   computeWellnessCheckinStreak,
@@ -99,18 +93,15 @@ interface QuickAction {
   selector: "app-player-dashboard",
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    DecimalPipe,
     RouterModule,
     ButtonComponent,
     CardShellComponent,
-    HeroMetricComponent,
     PlayerDashboardSetupCardComponent,
-    PlayerDashboardInsightsGridComponent,
     DashboardSkeletonComponent,
     MainLayoutComponent,
     PageErrorStateComponent,
-    PlayerDashboardStatsOverviewComponent,
     PlayerDashboardStatusStackComponent,
-    PlayerDashboardEventsSectionComponent,
   ],
   templateUrl: "./player-dashboard.component.html",
   styleUrl: "./player-dashboard.component.scss",
@@ -398,53 +389,6 @@ export class PlayerDashboardComponent {
       this.dashboardReadinessPresentation().score,
       this.dashboardAcwrDisplay().value,
     );
-  });
-
-  /**
-   * Hero metric eyebrow — shows greeting + name + today's date.
-   * Reads as: "GOOD AFTERNOON, AJ · SAT, MAY 16"
-   */
-  readonly heroEyebrow = computed(() => {
-    const todayLabel = new Date().toLocaleDateString("en-US", {
-      weekday: "short",
-      month: "short",
-      day: "numeric",
-    });
-    return `${this.greeting()}, ${this.userName()} · ${todayLabel}`;
-  });
-
-  /**
-   * Hero metric value — the readiness score from the protocol presentation
-   * (or null when no wellness data exists, which triggers the empty state).
-   */
-  readonly heroValue = computed<number | null>(() => {
-    return this.dashboardReadinessPresentation().score;
-  });
-
-  /**
-   * Hero metric badge — maps the existing severity to the hero badge tone.
-   * Returns null when there's no readiness data (empty state takes over).
-   */
-  readonly heroBadge = computed<HeroMetricBadge | null>(() => {
-    const presentation = this.dashboardReadinessPresentation();
-    if (presentation.score === null) {
-      return null;
-    }
-
-    // Map StatusSeverity → HeroMetricBadgeTone
-    const toneMap: Record<string, HeroMetricBadge["tone"]> = {
-      success: "success",
-      warning: "warning",
-      danger: "danger",
-      info: "info",
-      secondary: "neutral",
-      primary: "info",
-    };
-
-    return {
-      text: presentation.label,
-      tone: toneMap[presentation.severity] ?? "neutral",
-    };
   });
 
   weeklyProgress = computed(() =>
@@ -1008,4 +952,203 @@ export class PlayerDashboardComponent {
   getTimeAgoStr(date: Date | null | undefined): string {
     return getTimeAgo(date);
   }
+
+  // ============================================================================
+  // V2 REDESIGN COMPUTED SIGNALS (2026-05 sprint 2)
+  // Pure derivations from existing data.
+  // ============================================================================
+
+  readonly TRAINING_CONSTANT = TRAINING;
+
+  /** Header date label: "Saturday · May 16" */
+  readonly todayDateLabel = computed(() => {
+    const today = new Date().toLocaleDateString("en-US", {
+      weekday: "long",
+      month: "long",
+      day: "numeric",
+    });
+    return today;
+  });
+
+  /** Readiness ring value (null when no wellness data) */
+  readonly heroValue = computed<number | null>(() => this.dashboardReadinessPresentation().score);
+
+  /** Ring SVG dashoffset for the readiness percentage (circumference 628 for r=100) */
+  readonly ringDashOffset = computed(() => {
+    const v = this.heroValue();
+    if (v === null) return 628;
+    const clamped = Math.max(0, Math.min(100, v));
+    return 628 * (1 - clamped / 100);
+  });
+
+  /** Hero headline mapped from readiness score */
+  readonly heroHeadline = computed(() => {
+    const score = this.heroValue();
+    if (score === null) return "Check in to unlock today's readiness";
+    if (score >= 80) return "Train normally.";
+    if (score >= 60) return "Train smart — modest load.";
+    if (score >= 40) return "Reduce load. Focus on quality.";
+    return "Recovery day. Rest is the work.";
+  });
+
+  /** Hero badge tone + text */
+  readonly heroBadge = computed<{ text: string; tone: "success" | "warning" | "danger" | "info" } | null>(() => {
+    const p = this.dashboardReadinessPresentation();
+    if (p.score === null) return null;
+    const toneMap: Record<string, "success" | "warning" | "danger" | "info"> = {
+      success: "success", warning: "warning", danger: "danger", info: "info",
+      secondary: "info", primary: "info",
+    };
+    return { text: p.label, tone: toneMap[p.severity] ?? "info" };
+  });
+
+  /** Today's Practice action card subtitle */
+  readonly todayPracticeSubtitle = computed(() => {
+    const first = this.todaySchedule()[0];
+    if (!first) return "No session scheduled today";
+    const dur = first.duration ? `${first.duration} min · ` : "";
+    return `${dur}${first.title}`;
+  });
+
+  /** Wellness action card subtitle */
+  readonly wellnessCardSubtitle = computed(() => {
+    if (this.wellnessCheckedInToday()) {
+      return `Done today · streak ${this.checkinStreak()}`;
+    }
+    const days = this.daysSinceLastCheckin();
+    if (days === 0) return "2-minute daily ritual";
+    if (days === 1) return "Missed yesterday · 2 min to fix";
+    return `${days} days since last check-in · 2 min`;
+  });
+
+  /** Flat up-next list (today/tomorrow/upcoming merged) */
+  readonly nextEvents = computed(() => {
+    interface UpNextItem {
+      id: string; dateValue: number; dayNum: string; dayLabel: string;
+      title: string; meta: string; tag: string; tagTone: "accent" | "warn" | "neutral";
+    }
+    const today = new Date(); today.setHours(0, 0, 0, 0);
+    const tomorrow = new Date(today); tomorrow.setDate(tomorrow.getDate() + 1);
+    const items: UpNextItem[] = [];
+    for (const s of this.todaySchedule()) {
+      items.push({
+        id: `today-${s.id}`, dateValue: today.getTime(),
+        dayNum: String(today.getDate()), dayLabel: "Today",
+        title: s.title, meta: `${s.time ?? ""} · ${s.duration} min`,
+        tag: s.completed ? "Done" : "Required",
+        tagTone: s.completed ? "neutral" : "accent",
+      });
+    }
+    for (const s of this.tomorrowSchedule()) {
+      items.push({
+        id: `tom-${s.id}`, dateValue: tomorrow.getTime(),
+        dayNum: String(tomorrow.getDate()), dayLabel: "Tomorrow",
+        title: s.title, meta: `${s.time ?? ""} · ${s.duration} min`,
+        tag: "Planned", tagTone: "neutral",
+      });
+    }
+    for (const e of this.upcomingEvents()) {
+      const dayNum = Number.parseInt(e.day, 10);
+      const sortStamp = Number.isFinite(dayNum)
+        ? new Date(today.getFullYear(), today.getMonth(), dayNum, 12).getTime()
+        : Number.MAX_SAFE_INTEGER;
+      const isGame = e.type.toLowerCase().includes("game") || e.title.toLowerCase().startsWith("vs ");
+      items.push({
+        id: `event-${e.id}`, dateValue: sortStamp,
+        dayNum: e.day, dayLabel: e.month, title: e.title,
+        meta: e.typeLabel, tag: isGame ? "Game" : "Event",
+        tagTone: isGame ? "warn" : "neutral",
+      });
+    }
+    return items.sort((a, b) => a.dateValue - b.dateValue).slice(0, 4);
+  });
+
+  /** Week-trend bar class for a day */
+  weekDayClass(day: { completed: boolean; isToday: boolean; isFuture: boolean }): string {
+    const cls = ["pd-wt__bar"];
+    if (day.completed) cls.push("pd-wt__bar--done");
+    if (day.isToday) cls.push("pd-wt__bar--today");
+    if (day.isFuture) cls.push("pd-wt__bar--future");
+    return cls.join(" ");
+  }
+
+  /** ACWR zone label class */
+  readonly acwrZoneLabelClass = computed(() => {
+    const sev = this.dashboardAcwrDisplay().severity;
+    const tone = sev === "success" ? "ok" : sev === "warning" ? "warn" : sev === "danger" ? "danger" : "info";
+    return `pd-stat-block__delta pd-stat-block__delta--${tone}`;
+  });
+
+  /** ACWR meter dot position (0-100%) */
+  readonly acwrIndicatorPercent = computed(() => {
+    const v = this.dashboardAcwrDisplay().value;
+    if (v === null || v === undefined) return 50;
+    const min = 0.6, max = 1.7;
+    const clamped = Math.max(min, Math.min(max, v));
+    return Math.round(((clamped - min) / (max - min)) * 100);
+  });
+
+  /** 7-day sleep average */
+  readonly sleepAvgHours = computed<number | null>(() => {
+    const entries = this.wellnessService.wellnessData() ?? [];
+    const last7 = entries.slice(0, 7).filter((e) => typeof e.sleep === "number" && e.sleep > 0);
+    if (last7.length === 0) return null;
+    return last7.reduce((acc, e) => acc + (e.sleep as number), 0) / last7.length;
+  });
+
+  /** "7h 24m" */
+  readonly sleepAvgDisplay = computed(() => {
+    const avg = this.sleepAvgHours();
+    if (avg === null) return "—";
+    const h = Math.floor(avg);
+    const m = Math.round((avg - h) * 60);
+    return `${h}h ${m}m`;
+  });
+
+  /** "+18m vs last wk" */
+  readonly sleepDeltaLabel = computed<string | null>(() => {
+    const entries = this.wellnessService.wellnessData() ?? [];
+    if (entries.length < 14) return null;
+    const recent = entries.slice(0, 7).filter((e) => typeof e.sleep === "number");
+    const prior = entries.slice(7, 14).filter((e) => typeof e.sleep === "number");
+    if (recent.length === 0 || prior.length === 0) return null;
+    const ar = recent.reduce((a, e) => a + (e.sleep as number), 0) / recent.length;
+    const ap = prior.reduce((a, e) => a + (e.sleep as number), 0) / prior.length;
+    const dm = Math.round((ar - ap) * 60);
+    if (dm === 0) return "Steady vs last wk";
+    return `${dm > 0 ? "+" : ""}${dm}m vs last wk`;
+  });
+
+  /** Per-day sleep bars */
+  readonly sleepBars = computed(() => {
+    interface SleepBar { day: string; hoursLabel: string; tone: "ok" | "low" | "warn" | "empty"; heightPct: number; }
+    const entries = this.wellnessService.wellnessData() ?? [];
+    const byDate = new Map<string, number>();
+    for (const e of entries) {
+      if (typeof e.sleep === "number" && e.sleep > 0 && e.date) {
+        byDate.set(e.date.slice(0, 10), e.sleep);
+      }
+    }
+    const todayLocal = new Date();
+    const day = todayLocal.getDay();
+    const mondayOffset = day === 0 ? -6 : 1 - day;
+    const monday = new Date(todayLocal); monday.setDate(monday.getDate() + mondayOffset); monday.setHours(0, 0, 0, 0);
+    const names = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+    const out: SleepBar[] = [];
+    for (let i = 0; i < 7; i++) {
+      const d = new Date(monday); d.setDate(d.getDate() + i);
+      const key = this.formatDateOnlyLocal(d);
+      const hours = byDate.get(key);
+      if (hours === undefined) {
+        out.push({ day: names[i], hoursLabel: "—", tone: "empty", heightPct: 8 });
+      } else {
+        const heightPct = Math.min(100, Math.max(12, (hours / 9) * 100));
+        const tone: SleepBar["tone"] = hours >= 7.5 ? "ok" : hours >= 6 ? "warn" : "low";
+        out.push({ day: names[i], hoursLabel: `${hours.toFixed(1)}h`, tone, heightPct });
+      }
+    }
+    return out;
+  });
+
+  // Expose TRAINING for template (overlapping with existing — using existing TRAINING field)
 }

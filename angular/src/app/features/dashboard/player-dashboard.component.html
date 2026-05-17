@@ -1,199 +1,265 @@
+<!--
+  Player Dashboard v2 — premium athletic redesign (2026-05 sprint 2).
+  Matches redesign/static/pages/20-player-dashboard.html (auto-approved).
+-->
 <app-main-layout>
-      <!-- Loading State - Overview skeleton -->
-      @if (isLoading()) {
-        <app-dashboard-skeleton></app-dashboard-skeleton>
-      }
+  @if (isLoading()) {
+    <app-dashboard-skeleton></app-dashboard-skeleton>
+  }
 
-      <!-- Error State -->
-      @if (hasError()) {
-        <app-page-error-state
-          title="Unable to load overview"
-          [message]="errorMessage()"
-          (retry)="loadData()"
-        ></app-page-error-state>
-      }
+  @if (hasError()) {
+    <app-page-error-state
+      title="Unable to load overview"
+      [message]="errorMessage()"
+      (retry)="loadData()"
+    ></app-page-error-state>
+  }
 
-      <!-- Overview Content -->
-      @if (!isLoading() && !hasError()) {
-        <div class="player-dashboard bento-grid">
+  @if (!isLoading() && !hasError()) {
+    <div class="player-dash-v2">
 
-          <!-- ============================================================ -->
-          <!-- HERO METRIC — single source of truth for today's readiness.   -->
-          <!-- Replaces the old welcome card + duplicates the readiness used -->
-          <!-- to live separately in the stats-overview component. When no   -->
-          <!-- wellness data exists, the hero shows a friendly "Check in to  -->
-          <!-- unlock" prompt instead of the old "--" empty card.            -->
-          <!-- ============================================================ -->
-          <app-hero-metric
-            class="bento-item full-width no-padding"
-            [eyebrow]="heroEyebrow()"
-            [value]="heroValue()"
-            unit="%"
-            [badge]="heroBadge()"
-            [context]="merlinInsight()"
-            emptyTitle="Check in to unlock today's readiness"
-            emptyContext="A 2-minute wellness check-in turns into a personalized score and ACWR confidence."
-          >
-            <ng-container actions>
-              @if (heroValue() === null) {
-                <app-button
-                  variant="primary"
-                  iconLeft="pi-heart"
-                  size="md"
-                  (clicked)="navigateToWellness()"
-                >Start check-in</app-button>
-                <app-button
-                  variant="text"
-                  iconLeft="pi-comments"
-                  routerLink="/chat"
-                  size="md"
-                >Ask Merlin</app-button>
-              } @else {
-                <app-button
-                  variant="primary"
-                  iconLeft="pi-play"
-                  routerLink="/todays-practice"
-                  size="md"
-                >Start training</app-button>
-                <app-button
-                  variant="text"
-                  iconLeft="pi-comments"
-                  routerLink="/chat"
-                  size="md"
-                >Ask Merlin</app-button>
-              }
-            </ng-container>
-          </app-hero-metric>
+      <!-- Status banners (from sub-component, only when populated) -->
+      <app-player-dashboard-status-stack
+        class="status-row"
+        [announcement]="announcement()"
+        [announcementDismissed]="announcementDismissed()"
+        [announcementTimeAgo]="announcementTimeAgo()"
+        [overrideItems]="overrideDisplayItems()"
+        [currentUserId]="currentUserId()"
+        [activeTransitions]="activeTransitions()"
+        [missingWellnessStatus]="missingWellnessStatus()"
+        (dismissAnnouncement)="dismissAnnouncement()"
+      ></app-player-dashboard-status-stack>
 
-          <!-- ============================================================ -->
-          <!-- PRIORITY STATUS / ALERTS — full-width, only renders when      -->
-          <!-- there's actually something to show. Owns its own padding.     -->
-          <!-- ============================================================ -->
-          <app-player-dashboard-status-stack
-            class="bento-item full-width no-padding"
-            [announcement]="announcement()"
-            [announcementDismissed]="announcementDismissed()"
-            [announcementTimeAgo]="announcementTimeAgo()"
-            [overrideItems]="overrideDisplayItems()"
-            [currentUserId]="currentUserId()"
-            [activeTransitions]="activeTransitions()"
-            [missingWellnessStatus]="missingWellnessStatus()"
-            (dismissAnnouncement)="dismissAnnouncement()"
-          />
-
-          <!-- ============================================================ -->
-          <!-- SETUP / ONBOARDING — promoted ABOVE the schedule because if   -->
-          <!-- the player needs to complete onboarding, that's the next      -->
-          <!-- action; everything else is noise until they do.               -->
-          <!-- ============================================================ -->
-          @if (needsProgramAssignment()) {
-            <app-player-dashboard-setup-card
-              class="bento-item full-width"
-              [hasCompletedOnboarding]="hasCompletedOnboarding()"
-              [actionRequiredMeaning]="getOnboardingActionRequiredMeaning()"
-              (contactCoach)="contactCoach()"
-            />
-          }
-
-          <!-- ============================================================ -->
-          <!-- INSIGHTS GRID (left, spans 2) — week dots + chart + actions.  -->
-          <!-- DETAILED STATS (right, spans 1) — readiness/ACWR/streak       -->
-          <!-- detail cards. The hero already shows readiness as the headline-->
-          <!-- so these become supporting context, not the lead.             -->
-          <!-- ============================================================ -->
-          @defer (on viewport) {
-            <app-player-dashboard-insights-grid
-              class="bento-item span-2 no-padding"
-              [weekDays]="weekDays()"
-              [weeklyProgress]="weeklyProgress()"
-              [quickActions]="quickActions"
-              [performanceChartData]="performanceChartData()"
-              [chartOptions]="chartOptions"
-            />
-          } @placeholder {
-            <div class="player-dashboard-insights-placeholder bento-item span-2"></div>
-          }
-
-          <app-player-dashboard-stats-overview
-            class="bento-item stats-overview"
-            [readinessScore]="dashboardReadinessPresentation().score"
-            [readinessLabel]="dashboardReadinessPresentation().label"
-            [readinessSeverity]="dashboardReadinessPresentation().severity"
-            [nextGenEnabled]="nextGenEnabled()"
-            [nextGenReadinessScore]="nextGenReadinessScore()"
-            [wellnessCheckedInToday]="wellnessCheckedInToday()"
-            [checkinStreak]="checkinStreak()"
-            [checkinOverdue]="checkinOverdue()"
-            [daysSinceLastCheckin]="daysSinceLastCheckin()"
-            [acwrDataSufficient]="acwrDataSufficient()"
-            [acwrDisplay]="{
-              value: dashboardAcwrDisplay().value,
-              label: dashboardAcwrDisplay().label,
-              severity: dashboardAcwrDisplay().severity,
-              hasData: dashboardAcwrDisplay().hasData,
-              trainingDaysLogged: dashboardAcwrDisplay().trainingDaysLogged,
-            }"
-            [acwrConfidenceScore]="acwrConfidence().score"
-            [acwrConfidenceMissingInputs]="acwrConfidence().missingInputs"
-            [acwrIncompleteMeaning]="getACWRIncompleteDataMeaning()"
-            [currentStreak]="currentStreak()"
-            [weeklySessionsCompleted]="weeklySessionsCompleted()"
-            [weeklySessionsPlanned]="weeklySessionsPlanned()"
-            (navigateToWellness)="navigateToWellness()"
-            (navigateToAcwr)="navigateToACWR()"
-          />
-
-          <!-- ============================================================ -->
-          <!-- UP NEXT — single schedule view (full-width). Replaces the     -->
-          <!-- duplicate "Today's Schedule" inline card that previously      -->
-          <!-- showed the same items rendered by events-section.             -->
-          <!-- ============================================================ -->
-          @defer (on viewport) {
-            <app-player-dashboard-events-section
-              class="bento-item full-width no-padding"
-              [schedulePreviewCount]="UI_LIMITS.SCHEDULE_PREVIEW_COUNT"
-              [eventsPreviewCount]="UI_LIMITS.SCHEDULE_PREVIEW_COUNT"
-              [continuityEvents]="continuityDisplayEvents()"
-              [tomorrowSchedule]="tomorrowSchedule()"
-              [upcomingEvents]="upcomingEvents()"
-            />
-          } @placeholder {
-            <div
-              class="player-dashboard-events-placeholder bento-item full-width"
-            ></div>
-          }
-
-          <!-- ============================================================ -->
-          <!-- TEAM SHARING — small ambient card. Only renders when there's  -->
-          <!-- something meaningful to show.                                  -->
-          <!-- ============================================================ -->
-          @if (privacySharingStatus().totalMetrics > 0) {
-            <app-card-shell
-              class="bento-item sharing-card"
-              title="Team Sharing"
-              headerIcon="pi-shield"
-            >
-              <p class="sharing-card__summary">
-                {{ privacySharingStatus().sharedMetrics }} of
-                {{ privacySharingStatus().totalMetrics }} metric groups enabled
-                @if (!privacySharingStatus().sharingEnabled) {
-                  <span class="sharing-card__muted">No metrics are currently shared.</span>
-                }
-              </p>
-              <div class="card-footer-action">
-                <app-button
-                  variant="text"
-                  iconRight="pi-arrow-right"
-                  routerLink="/settings/privacy"
-                  size="sm"
-                >
-                  Review Sharing
-                </app-button>
-              </div>
-            </app-card-shell>
-          }
-
+      <!-- 1. Greeting + streak chip -->
+      <header class="pd-greet">
+        <div>
+          <h1 class="pd-greet__title">
+            {{ greeting() }}, <span class="accent">{{ userName() }}</span>.
+          </h1>
+          <div class="pd-greet__sub">{{ todayDateLabel() }}</div>
         </div>
+        @if (currentStreak() > 0) {
+          <span class="streak-chip">
+            <span class="streak-chip__dot" aria-hidden="true"></span>
+            Streak: {{ currentStreak() }} {{ currentStreak() === 1 ? "day" : "days" }}
+          </span>
+        }
+      </header>
+
+      <!-- 2. HERO — readiness ring + status -->
+      <section class="pd-hero" aria-label="Today's readiness">
+        <div class="pd-ring" aria-label="Readiness ring">
+          <svg viewBox="0 0 220 220">
+            <circle class="pd-ring__bg" cx="110" cy="110" r="100"/>
+            @if (heroValue() !== null) {
+              <circle
+                class="pd-ring__fg"
+                cx="110" cy="110" r="100"
+                stroke-dasharray="628"
+                [attr.stroke-dashoffset]="ringDashOffset()"
+                transform="rotate(-90 110 110)"
+              />
+            } @else {
+              <circle
+                class="pd-ring__fg pd-ring__fg--empty"
+                cx="110" cy="110" r="100"
+                stroke-dasharray="4 6"
+                fill="none"
+              />
+            }
+          </svg>
+          <div class="pd-ring__center">
+            @if (heroValue() !== null) {
+              <div class="pd-ring__num">{{ heroValue() }}</div>
+            } @else {
+              <div class="pd-ring__num pd-ring__num--empty">—</div>
+            }
+            <div class="pd-ring__lab">Readiness</div>
+          </div>
+        </div>
+
+        <div class="pd-hero__copy">
+          <div class="pd-hero__eyebrow">
+            <span class="pd-hero__dot" aria-hidden="true"></span>
+            Today's status
+          </div>
+          <h2 class="pd-hero__head">{{ heroHeadline() }}</h2>
+          @if (heroBadge(); as b) {
+            <span [class]="'pd-hero__badge pd-hero__badge--' + b.tone">● {{ b.text }}</span>
+          }
+          <p class="pd-hero__context">{{ merlinInsight() }}</p>
+          <div class="pd-hero__cta">
+            @if (heroValue() === null) {
+              <app-button variant="primary" iconLeft="pi-heart" (clicked)="navigateToWellness()">Start check-in</app-button>
+            } @else {
+              <app-button variant="primary" iconLeft="pi-play" routerLink="/todays-practice">Start training</app-button>
+            }
+            <app-button variant="text" iconLeft="pi-comments" routerLink="/chat">Ask Merlin</app-button>
+          </div>
+        </div>
+      </section>
+
+      <!-- 3. Setup card (only when onboarding incomplete) -->
+      @if (needsProgramAssignment()) {
+        <app-player-dashboard-setup-card
+          [hasCompletedOnboarding]="hasCompletedOnboarding()"
+          [actionRequiredMeaning]="getOnboardingActionRequiredMeaning()"
+          (contactCoach)="contactCoach()"
+        ></app-player-dashboard-setup-card>
       }
-    </app-main-layout>
-  
+
+      <!-- 4. Action grid (3 cards) -->
+      <div class="pd-actions">
+        <a class="pd-action pd-action--primary" routerLink="/todays-practice">
+          <div class="pd-action__icon" aria-hidden="true">▶</div>
+          <div class="pd-action__title">Today's Practice</div>
+          <div class="pd-action__sub">{{ todayPracticeSubtitle() }}</div>
+        </a>
+        <a class="pd-action" routerLink="/wellness">
+          <div class="pd-action__icon" aria-hidden="true">❤</div>
+          <div class="pd-action__title">Wellness Check-in</div>
+          <div class="pd-action__sub">{{ wellnessCardSubtitle() }}</div>
+        </a>
+        <a class="pd-action" routerLink="/playbook">
+          <div class="pd-action__icon" aria-hidden="true">⚐</div>
+          <div class="pd-action__title">Playbook</div>
+          <div class="pd-action__sub">Browse plays · run quiz</div>
+        </a>
+      </div>
+
+      <!-- 5. Up next + week trend (8/4) -->
+      <div class="pd-row-8-4">
+
+        <section class="pd-card">
+          <div class="pd-card__head">
+            <h3 class="pd-card__title">Up next</h3>
+            <a class="pd-card__link" routerLink="/training">View calendar →</a>
+          </div>
+          @if (nextEvents().length > 0) {
+            @for (ev of nextEvents(); track ev.id) {
+              <div class="pd-ev">
+                <div class="pd-ev__date">
+                  <div class="pd-ev__d">{{ ev.dayNum }}</div>
+                  <div class="pd-ev__m">{{ ev.dayLabel }}</div>
+                </div>
+                <div>
+                  <div class="pd-ev__title">{{ ev.title }}</div>
+                  <div class="pd-ev__meta">{{ ev.meta }}</div>
+                </div>
+                @if (ev.tag) {
+                  <span [class]="'pd-ev__tag pd-ev__tag--' + ev.tagTone">{{ ev.tag }}</span>
+                }
+              </div>
+            }
+          } @else {
+            <div class="pd-empty">
+              <i class="pi pi-calendar" aria-hidden="true"></i>
+              <p>No upcoming sessions yet.</p>
+            </div>
+          }
+        </section>
+
+        <section class="pd-card">
+          <div class="pd-card__head"><h3 class="pd-card__title">This week</h3></div>
+          <div class="pd-wt__head">
+            <div class="pd-wt__num">{{ weeklySessionsCompleted() }}<span>/{{ weeklySessionsPlanned() || 7 }}</span></div>
+            <div class="pd-wt__lab">sessions logged</div>
+          </div>
+          <div class="pd-wt__bars">
+            @for (day of weekDays(); track day.short) {
+              <div [class]="weekDayClass(day)" [attr.title]="day.name">
+                {{ day.short.charAt(0) }}
+              </div>
+            }
+          </div>
+        </section>
+
+      </div>
+
+      <!-- 6. 3-col secondary stats -->
+      <div class="pd-stats-3">
+
+        <section class="pd-card">
+          <div class="pd-card__head">
+            <h3 class="pd-card__title">ACWR · 28d</h3>
+            <a class="pd-card__link" (click)="navigateToACWR()">Details →</a>
+          </div>
+          @if (dashboardAcwrDisplay().hasData && dashboardAcwrDisplay().value !== null) {
+            <div class="pd-stat-block">
+              <div class="pd-stat-block__val">{{ dashboardAcwrDisplay().value | number: "1.2-2" }}</div>
+              <div [class]="acwrZoneLabelClass()">● {{ dashboardAcwrDisplay().label }}</div>
+            </div>
+            <div class="acwr-meter">
+              <div class="acwr-meter__optimal"></div>
+              <div class="acwr-meter__dot" [style.left.%]="acwrIndicatorPercent()"></div>
+            </div>
+            <div class="acwr-meter__scale">
+              <span>0.6</span>
+              <span>0.8 – 1.3 OPTIMAL</span>
+              <span>1.5+</span>
+            </div>
+          } @else {
+            <div class="pd-empty">
+              <p>Log {{ TRAINING.MIN_DAYS_FOR_CHRONIC }} sessions to unlock your ACWR.</p>
+            </div>
+          }
+        </section>
+
+        <section class="pd-card">
+          <div class="pd-card__head"><h3 class="pd-card__title">Sleep · 7d avg</h3></div>
+          @if (sleepAvgHours() !== null) {
+            <div class="pd-stat-block">
+              <div class="pd-stat-block__val">{{ sleepAvgDisplay() }}</div>
+              @if (sleepDeltaLabel()) {
+                <div class="pd-stat-block__delta pd-stat-block__delta--ok">{{ sleepDeltaLabel() }}</div>
+              }
+            </div>
+            <div class="sleep-bars">
+              @for (b of sleepBars(); track b.day) {
+                <div
+                  [class]="'sleep-bar sleep-bar--' + b.tone"
+                  [style.height.%]="b.heightPct"
+                  [attr.title]="b.day + ': ' + b.hoursLabel"
+                ></div>
+              }
+            </div>
+            <div class="sleep-legend">
+              <span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span><span>S</span>
+            </div>
+          } @else {
+            <div class="pd-empty">
+              <p>Log wellness check-ins to track sleep trends.</p>
+            </div>
+          }
+        </section>
+
+        <section class="pd-card">
+          <div class="pd-card__head">
+            <h3 class="pd-card__title">Playbook</h3>
+            <a class="pd-card__link" routerLink="/playbook">Open →</a>
+          </div>
+          <div class="pd-stat-block">
+            <div class="pd-stat-block__val">—</div>
+            <div class="pd-stat-block__delta">Open playbook to review</div>
+          </div>
+          <p class="pd-card__hint">Memorization tracking coming soon.</p>
+        </section>
+
+      </div>
+
+      @if (privacySharingStatus().totalMetrics > 0) {
+        <section class="pd-card sharing-card">
+          <div class="pd-card__head">
+            <h3 class="pd-card__title">Team Sharing</h3>
+            <a class="pd-card__link" routerLink="/settings/privacy">Review →</a>
+          </div>
+          <p style="margin: 0; color: var(--color-text-secondary); font-size: var(--ds-font-size-sm);">
+            {{ privacySharingStatus().sharedMetrics }} of {{ privacySharingStatus().totalMetrics }} metric groups enabled.
+          </p>
+        </section>
+      }
+
+    </div>
+  }
+</app-main-layout>

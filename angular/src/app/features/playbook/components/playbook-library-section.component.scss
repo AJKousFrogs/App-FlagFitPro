@@ -30,13 +30,22 @@
   }
 
   .stat-block__value {
-    font-size: var(--ds-font-size-2xl);
+    font-family: var(--ds-font-family-display, var(--ds-font-family-base));
+    font-size: clamp(28px, 3vw, 36px);
+    font-weight: var(--ds-font-weight-extrabold, 800);
+    letter-spacing: -0.03em;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
     color: var(--color-text-primary);
   }
 
   .stat-block__label {
-    font-size: var(--ds-font-size-md);
+    font-size: 11px;
+    font-weight: var(--ds-font-weight-extrabold, 800);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
     color: var(--color-text-secondary);
+    margin-top: 4px;
   }
 
   .stat-divider {
@@ -109,21 +118,26 @@
 
       h3 {
         margin: var(--space-0);
+        font-family: var(--ds-font-family-display, var(--ds-font-family-base));
         font-size: var(--ds-font-size-md);
-        font-weight: var(--ds-font-weight-semibold);
+        font-weight: var(--ds-font-weight-extrabold, 800);
+        letter-spacing: -0.01em;
         color: var(--color-text-primary);
       }
     }
   }
 
   .memorized-icon {
-    color: var(--color-brand-primary);
+    color: var(--ds-primary-green);
     font-size: var(--ds-font-size-2xl);
   }
 
   .play-formation {
     margin: var(--space-0) var(--space-0) var(--space-2) var(--space-0);
-    font-size: var(--ds-font-size-md);
+    font-size: 11px;
+    font-weight: var(--ds-font-weight-extrabold, 800);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
     color: var(--color-text-secondary);
   }
 

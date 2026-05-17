@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FlagFit Pro — Roster (mockup)</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../_shared/tokens.css">
+<link rel="stylesheet" href="../_shared/base.css">
+<script src="../_shared/theme.js"></script>
+<style>
+  .shell { display: grid; gap: var(--space-5); max-width: 1280px; margin: 0 auto; padding: var(--space-6); padding-bottom: 120px; }
+  .head { display: flex; justify-content: space-between; align-items: flex-end; gap: var(--space-3); flex-wrap: wrap; }
+  .head h1 { font-family: var(--font-display); font-size: clamp(36px, 5vw, 52px); font-weight: 800; letter-spacing: -0.03em; line-height: 1; }
+  .head .sub { color: var(--text-2); font-size: 14px; font-weight: 600; margin-top: 6px; }
+  .head__actions { display: flex; gap: var(--space-2); }
+  .btn { display: inline-flex; align-items: center; gap: 8px; padding: 10px 18px; border-radius: var(--radius-full); border: 0; font-family: inherit; font-size: 14px; font-weight: 700; cursor: pointer; text-decoration: none; }
+  .btn--primary { background: var(--accent); color: var(--text-inverse); }
+  .btn--ghost { background: transparent; color: var(--text-0); border: 1px solid var(--bg-line); }
+  /* Empty state hero — for new teams */
+  .empty-hero { padding: var(--space-12); background: linear-gradient(135deg, color-mix(in srgb, var(--accent) 14%, var(--bg-1)) 0%, var(--bg-1) 100%); border: 1px solid color-mix(in srgb, var(--accent) 30%, var(--bg-line)); border-radius: var(--radius-2xl); text-align: center; position: relative; overflow: hidden; }
+  .empty-hero::before { content: ''; position: absolute; top: -120px; right: -120px; width: 360px; height: 360px; background: radial-gradient(circle, color-mix(in srgb, var(--accent) 20%, transparent) 0%, transparent 65%); }
+  .empty-hero > * { position: relative; z-index: 1; }
+  .empty-hero__icon { width: 64px; height: 64px; border-radius: var(--radius-xl); background: color-mix(in srgb, var(--accent) 18%, transparent); color: var(--accent); display: grid; place-items: center; font-size: 28px; margin: 0 auto var(--space-4); }
+  .empty-hero h2 { font-family: var(--font-display); font-size: clamp(28px, 4vw, 40px); font-weight: 800; letter-spacing: -0.03em; line-height: 1.05; margin-bottom: var(--space-3); }
+  .empty-hero p { color: var(--text-1); font-size: 16px; line-height: 1.5; max-width: 480px; margin: 0 auto var(--space-6); }
+  .empty-hero__ctas { display: flex; gap: var(--space-3); justify-content: center; flex-wrap: wrap; }
+  /* Team stats strip */
+  .stats-strip { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--space-3); }
+  .ss { padding: var(--space-5); border-radius: var(--radius-xl); background: var(--bg-1); border: 1px solid var(--bg-line); }
+  .ss__lab { font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-2); font-weight: 800; margin-bottom: var(--space-2); }
+  .ss__val { font-family: var(--font-display); font-size: 36px; font-weight: 800; letter-spacing: -0.03em; line-height: 1; font-variant-numeric: tabular-nums; }
+  .ss__val--ok { color: var(--ok); } .ss__val--warn { color: var(--warn); } .ss__val--danger { color: var(--danger); }
+  .ss__sub { color: var(--text-2); font-size: 12px; margin-top: 6px; }
+  /* Filter bar */
+  .filter-bar { display: flex; gap: var(--space-3); align-items: center; flex-wrap: wrap; padding: var(--space-4); background: var(--bg-1); border: 1px solid var(--bg-line); border-radius: var(--radius-xl); }
+  .filter-bar__search { flex: 1; min-width: 200px; padding: 10px 14px; background: var(--bg-2); border: 1px solid var(--bg-line); border-radius: var(--radius-full); font-family: inherit; color: var(--text-0); font-size: 14px; }
+  .pos-pills { display: flex; gap: 6px; flex-wrap: wrap; }
+  .pos-pill { padding: 6px 12px; border-radius: var(--radius-full); background: var(--bg-2); border: 1px solid var(--bg-line); font-size: 12px; font-weight: 800; color: var(--text-1); cursor: pointer; }
+  .pos-pill.active { background: var(--accent); color: var(--text-inverse); border-color: var(--accent); }
+  .pos-pill .count { opacity: 0.65; margin-left: 6px; }
+  /* Player grid — mobile-first cards */
+  .player-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: var(--space-3); }
+  .pg { background: var(--bg-1); border: 1px solid var(--bg-line); border-radius: var(--radius-xl); padding: var(--space-5); cursor: pointer; transition: all 120ms ease; }
+  .pg:hover { border-color: color-mix(in srgb, var(--accent) 30%, var(--bg-line)); transform: translateY(-2px); }
+  .pg--at-risk { border-color: color-mix(in srgb, var(--warn) 30%, transparent); }
+  .pg--injured { border-color: color-mix(in srgb, var(--danger) 30%, transparent); }
+  .pg__head { display: flex; gap: var(--space-3); align-items: center; margin-bottom: var(--space-4); }
+  .pg__jersey { width: 44px; height: 44px; border-radius: 10px; background: var(--bg-0); display: grid; place-items: center; font-family: var(--font-display); font-weight: 800; font-size: 18px; }
+  .pg__name { font-family: var(--font-display); font-weight: 800; font-size: 16px; }
+  .pg__pos { color: var(--text-2); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 800; margin-top: 2px; }
+  .pg__metrics { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-3); padding-top: var(--space-3); border-top: 1px solid var(--bg-line); }
+  .pgm__lab { color: var(--text-3); font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 800; }
+  .pgm__val { font-family: var(--font-display); font-size: 18px; font-weight: 800; line-height: 1; margin-top: 4px; font-variant-numeric: tabular-nums; }
+  .pgm__val--ok { color: var(--ok); } .pgm__val--warn { color: var(--warn); } .pgm__val--danger { color: var(--danger); }
+  @media (max-width: 720px) {
+    .stats-strip { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<header class="page-chrome">
+  <div class="page-chrome__left">
+    <div class="brand"><div class="brand__mark">F</div>FlagFit <span class="brand__sub">Pro</span></div>
+    <span class="crumb">30 · Roster</span>
+    <span class="mockup-status mockup-status--review">In review</span>
+  </div>
+  <div class="page-chrome__right">
+    <a href="../index.html" class="theme-toggle" style="text-decoration:none;">← Index</a>
+    <button type="button" class="theme-toggle" data-theme-toggle><span data-theme-label>Light mode</span></button>
+  </div>
+</header>
+
+<div class="spec-strip">
+  <div class="spec-strip__title">Roster</div>
+  <div class="spec-strip__meta">
+    <span>Route: <strong>/roster</strong></span>
+    <span>Audience: <strong>Coaches</strong></span>
+    <span>Fix: <strong>empty-state hero (not filter-blame), mobile cards</strong></span>
+  </div>
+</div>
+
+<main class="shell">
+
+  <div class="head">
+    <div>
+      <h1>Team Roster</h1>
+      <div class="sub">18 active · 22 on roster · 2 at risk · 1 injured</div>
+    </div>
+    <div class="head__actions">
+      <a class="btn btn--ghost">Export CSV</a>
+      <a class="btn btn--primary">+ Add player</a>
+    </div>
+  </div>
+
+  <!-- Stats strip -->
+  <div class="stats-strip">
+    <div class="ss"><div class="ss__lab">Avg readiness</div><div class="ss__val ss__val--ok">82<span style="font-size:.45em; color:var(--text-2);">%</span></div><div class="ss__sub">Across active squad</div></div>
+    <div class="ss"><div class="ss__lab">At risk</div><div class="ss__val ss__val--warn">2</div><div class="ss__sub">Workload or readiness flag</div></div>
+    <div class="ss"><div class="ss__lab">Injured</div><div class="ss__val ss__val--danger">1</div><div class="ss__sub">In RTP protocol</div></div>
+    <div class="ss"><div class="ss__lab">Avg attendance</div><div class="ss__val">94<span style="font-size:.45em; color:var(--text-2);">%</span></div><div class="ss__sub">Last 7 sessions</div></div>
+  </div>
+
+  <!-- Filter bar -->
+  <div class="filter-bar">
+    <input class="filter-bar__search" placeholder="Search players by name..." type="text">
+    <div class="pos-pills">
+      <span class="pos-pill active">All <span class="count">18</span></span>
+      <span class="pos-pill">QB <span class="count">2</span></span>
+      <span class="pos-pill">WR <span class="count">5</span></span>
+      <span class="pos-pill">RB <span class="count">2</span></span>
+      <span class="pos-pill">CB <span class="count">4</span></span>
+      <span class="pos-pill">SAF <span class="count">3</span></span>
+      <span class="pos-pill">LB <span class="count">2</span></span>
+    </div>
+  </div>
+
+  <!-- Player grid (sorted by readiness asc, at-risk first) -->
+  <div class="player-grid">
+    <div class="pg pg--injured">
+      <div class="pg__head"><div class="pg__jersey">11</div><div><div class="pg__name">Marko Tomić</div><div class="pg__pos">WR · RTP st.4</div></div></div>
+      <div class="pg__metrics">
+        <div><div class="pgm__lab">Ready</div><div class="pgm__val pgm__val--danger">—</div></div>
+        <div><div class="pgm__lab">ACWR</div><div class="pgm__val pgm__val--danger">—</div></div>
+        <div><div class="pgm__lab">RTP day</div><div class="pgm__val pgm__val--danger">12</div></div>
+      </div>
+    </div>
+    <div class="pg pg--at-risk">
+      <div class="pg__head"><div class="pg__jersey">24</div><div><div class="pg__name">Luka Stojanović</div><div class="pg__pos">CB</div></div></div>
+      <div class="pg__metrics">
+        <div><div class="pgm__lab">Ready</div><div class="pgm__val pgm__val--warn">58%</div></div>
+        <div><div class="pgm__lab">ACWR</div><div class="pgm__val pgm__val--ok">1.04</div></div>
+        <div><div class="pgm__lab">Streak</div><div class="pgm__val">3</div></div>
+      </div>
+    </div>
+    <div class="pg pg--at-risk">
+      <div class="pg__head"><div class="pg__jersey">7</div><div><div class="pg__name">Jure Kos</div><div class="pg__pos">QB · captain</div></div></div>
+      <div class="pg__metrics">
+        <div><div class="pgm__lab">Ready</div><div class="pgm__val pgm__val--ok">88%</div></div>
+        <div><div class="pgm__lab">ACWR</div><div class="pgm__val pgm__val--warn">1.62</div></div>
+        <div><div class="pgm__lab">Streak</div><div class="pgm__val">7</div></div>
+      </div>
+    </div>
+    <div class="pg">
+      <div class="pg__head"><div class="pg__jersey">9</div><div><div class="pg__name">Anže Novak</div><div class="pg__pos">WR</div></div></div>
+      <div class="pg__metrics">
+        <div><div class="pgm__lab">Ready</div><div class="pgm__val pgm__val--ok">91%</div></div>
+        <div><div class="pgm__lab">ACWR</div><div class="pgm__val pgm__val--ok">1.12</div></div>
+        <div><div class="pgm__lab">Streak</div><div class="pgm__val">12</div></div>
+      </div>
+    </div>
+    <div class="pg">
+      <div class="pg__head"><div class="pg__jersey">22</div><div><div class="pg__name">Filip Horvat</div><div class="pg__pos">RB</div></div></div>
+      <div class="pg__metrics">
+        <div><div class="pgm__lab">Ready</div><div class="pgm__val pgm__val--ok">84%</div></div>
+        <div><div class="pgm__lab">ACWR</div><div class="pgm__val pgm__val--ok">1.21</div></div>
+        <div><div class="pgm__lab">Streak</div><div class="pgm__val">5</div></div>
+      </div>
+    </div>
+    <div class="pg">
+      <div class="pg__head"><div class="pg__jersey">5</div><div><div class="pg__name">Tomaž Petek</div><div class="pg__pos">SAF</div></div></div>
+      <div class="pg__metrics">
+        <div><div class="pgm__lab">Ready</div><div class="pgm__val pgm__val--ok">79%</div></div>
+        <div><div class="pgm__lab">ACWR</div><div class="pgm__val pgm__val--ok">0.94</div></div>
+        <div><div class="pgm__lab">Streak</div><div class="pgm__val">8</div></div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<div class="mockup-banner">Mockup · 30 Roster</div>
+
+</body>
+</html>

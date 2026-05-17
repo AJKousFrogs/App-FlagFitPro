@@ -1,116 +1,148 @@
+// ============================================================================
+// Profile v2 — premium athletic redesign (2026-05 sprint 2)
+// Matches redesign/static/pages/34-profile.html (auto-approved).
+// ============================================================================
+
 @use "styles/mixins" as *;
 @use "styles/foundations" as *;
 
-.profile-page.bento-grid {
+.profile-page {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: 1fr 2fr;
   gap: var(--space-4);
   max-width: var(--layout-page-max-width-wide);
-  margin: var(--space-0) auto;
+  margin: 0 auto;
   width: 100%;
-  padding-bottom: var(--space-10);
+  padding: var(--space-5);
 
-  .bento-item {
-    @extend %bento-surface-card;
+  @include respond-to(md) { grid-template-columns: 1fr; padding: var(--space-3); }
+}
+
+.bento-item {
+  background: var(--surface-card);
+  border: var(--border-1) solid var(--color-border-secondary);
+  border-radius: var(--radius-xl);
+  padding: var(--space-6);
+  min-width: 0;
+  box-shadow: var(--component-card-shadow);
+
+  &.no-padding { padding: 0; overflow: hidden; }
+  &.full-width { grid-column: 1 / -1; }
+  &.span-2 {
+    grid-column: span 2;
+    @include respond-to(md) { grid-column: 1; }
+  }
+}
+
+.bento-title {
+  display: flex; align-items: center; gap: var(--space-2);
+  font-family: var(--ds-font-family-display, var(--ds-font-family-base));
+  font-size: var(--ds-font-size-md);
+  font-weight: var(--ds-font-weight-extrabold, 800);
+  letter-spacing: -0.005em;
+  color: var(--color-text-primary);
+  margin: 0 0 var(--space-4);
+
+  i { color: var(--ds-primary-green); font-size: var(--ds-font-size-lg); }
+}
+
+// ────────────────────────────────────────────────────────────────────────────
+// Identity hero — full-width header with avatar + headline stat
+// ────────────────────────────────────────────────────────────────────────────
+.header-bento {
+  position: relative;
+  background: linear-gradient(135deg,
+    color-mix(in srgb, var(--ds-primary-green) 12%, var(--surface-card)) 0%,
+    var(--surface-card) 70%);
+  border-color: color-mix(in srgb, var(--ds-primary-green) 22%, var(--color-border-secondary));
+  overflow: hidden;
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: -120px; right: -120px;
+    width: 360px; height: 360px;
+    background: radial-gradient(circle, color-mix(in srgb, var(--ds-primary-green) 18%, transparent) 0%, transparent 65%);
+    pointer-events: none;
+  }
+}
+
+// ────────────────────────────────────────────────────────────────────────────
+// Bio card
+// ────────────────────────────────────────────────────────────────────────────
+.bio-bento {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.bio-content {
+  display: grid;
+  gap: var(--space-3);
+  justify-items: start;
+}
+
+.jersey-badge {
+  display: inline-grid;
+  place-items: center;
+  width: 64px;
+  height: 64px;
+  border-radius: var(--radius-xl);
+  background: linear-gradient(135deg, var(--ds-primary-green), color-mix(in srgb, var(--ds-primary-green) 70%, white));
+  color: var(--color-text-on-primary, white);
+  font-family: var(--ds-font-family-display, var(--ds-font-family-base));
+  font-size: 1.625rem;
+  font-weight: var(--ds-font-weight-extrabold, 800);
+  letter-spacing: -0.04em;
+  font-variant-numeric: tabular-nums;
+  box-shadow: 0 8px 24px color-mix(in srgb, var(--ds-primary-green) 30%, transparent);
+}
+
+.position-tag {
+  margin: 0;
+  font-family: var(--ds-font-family-display, var(--ds-font-family-base));
+  font-size: var(--ds-font-size-md);
+  font-weight: var(--ds-font-weight-extrabold, 800);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-text-primary);
+}
+
+.team-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  border-radius: var(--radius-full);
+  background: var(--surface-secondary);
+  border: var(--border-1) solid var(--color-border-secondary);
+  font-size: var(--ds-font-size-xs);
+  font-weight: var(--ds-font-weight-semibold);
+  color: var(--color-text-secondary);
+
+  i { color: var(--ds-primary-green); }
+}
+
+// ────────────────────────────────────────────────────────────────────────────
+// Stats bento (delegates to <app-stats-grid> sub-component)
+// ────────────────────────────────────────────────────────────────────────────
+.stats-bento {
+  background: var(--surface-card);
+  padding: var(--space-6);
+
+  // app-stats-grid handles its own layout; we just provide the shell
+}
+
+// ────────────────────────────────────────────────────────────────────────────
+// Tabs (overview / achievements / statistics)
+// ────────────────────────────────────────────────────────────────────────────
+.tabs-bento {
+  padding: 0;
+  overflow: visible;
+
+  // Ensure the embedded app-tabs uses the same canonical surfaces
+  :host ::ng-deep app-tabs {
+    display: block;
     background: var(--surface-card);
-    border: var(--border-1) solid var(--color-border-primary);
-    padding: var(--space-6);
-    transition:
-      transform var(--transition-fast) var(--ease-standard),
-      box-shadow var(--transition-fast) var(--ease-standard);
-
-    @media (hover: hover) and (pointer: fine) {
-      &:not(.no-padding):hover {
-        transform: translateY(-1px);
-        box-shadow: var(--shadow-md);
-      }
-    }
-
-    .bento-title {
-      @extend %bento-title;
-      margin-bottom: var(--space-4);
-      gap: var(--space-2);
-      letter-spacing: -0.015em;
-
-      i { color: var(--ds-primary-green); font-size: var(--ds-font-size-md); }
-    }
-  }
-
-  .span-2 { grid-column: span 2; }
-  .full-width { grid-column: 1 / -1; }
-
-  .header-bento {
-    @extend %bento-header-shell;
-  }
-
-  /* Bio Bento */
-  .bio-content {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: var(--space-4);
-    text-align: center;
-
-    .jersey-badge {
-      width: var(--space-20);
-      height: var(--space-20);
-      background: var(--gradient-primary);
-      color: var(--color-text-on-primary);
-      border-radius: var(--radius-xl);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 2.5rem;
-      font-weight: var(--ds-font-weight-bold);
-      box-shadow: 0 4px 16px rgba(var(--ds-primary-green-rgb), 0.3);
-      letter-spacing: -0.02em;
-    }
-
-    .position-tag {
-      font-size: var(--ds-font-size-md);
-      font-weight: var(--ds-font-weight-bold);
-      color: var(--ds-primary-green);
-      text-transform: uppercase;
-      margin: var(--space-0);
-    }
-
-    .team-link {
-      font-size: var(--ds-font-size-sm);
-      color: var(--color-text-secondary);
-      display: flex;
-      align-items: center;
-      gap: var(--space-2);
-    }
-  }
-
-}
-
-/* Tablet + smaller desktop: 2 columns */
-@include respond-to(lg) {
-  .profile-page.bento-grid {
-    grid-template-columns: repeat(2, 1fr);
-    padding: var(--space-4);
-    .bio-bento { grid-column: span 2; .bio-content { flex-direction: row; justify-content: center; } }
-  }
-}
-
-/* Mobile: 1 column */
-@include respond-to(sm) {
-  .profile-page.bento-grid {
-    grid-template-columns: 1fr;
-    gap: var(--space-4);
-    padding: var(--space-3);
-
-    .bento-item {
-      grid-column: span 1;
-      padding: var(--space-4);
-
-      .bento-title {
-        font-size: var(--ds-font-size-md);
-        gap: var(--space-2);
-      }
-    }
-
-    .bio-content { flex-direction: column; }
+    border-radius: var(--radius-xl);
   }
 }

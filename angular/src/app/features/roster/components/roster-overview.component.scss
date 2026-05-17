@@ -1,6 +1,7 @@
 // ============================================================================
-// roster-overview.component Styles
-// Design System Compliant
+// Roster Overview v2 — premium athletic redesign (2026-05 sprint 2)
+// Matches redesign/static/pages/30-roster.html .stats-strip / .ss
+// 4-up stat tiles · uppercase eyebrow label · big display value · tabular nums
 // ============================================================================
 
 @use "styles/mixins" as *;
@@ -11,100 +12,67 @@
 
 .team-overview-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(var(--grid-card-min-xs), 1fr));
-  gap: var(--layout-gap-md);
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-3);
 }
 
 .overview-stat {
-  text-align: center;
-  padding: var(--space-4);
+  padding: var(--space-5);
   background: var(--surface-card);
-  border: var(--border-1) solid var(--color-border-primary);
+  border: var(--border-1) solid var(--color-border-secondary);
   border-radius: var(--radius-xl);
+  text-align: left;
   transition:
     transform var(--transition-fast),
     border-color var(--transition-fast),
     box-shadow var(--transition-fast);
 }
 
-.overview-stat:hover {
-  transform: translateY(calc(var(--border-1) * -1));
-  border-color: var(--color-border-primary);
-  box-shadow: var(--shadow-sm);
-}
-
-.overview-value {
-  font-size: var(--ds-font-size-3xl);
-  font-weight: var(--ds-font-weight-bold);
-  color: var(--color-brand-primary);
-  margin-bottom: var(--space-2);
+@media (hover: hover) and (pointer: fine) {
+  .overview-stat:hover {
+    transform: translateY(-2px);
+    border-color: color-mix(in srgb, var(--ds-primary-green) 30%, var(--color-border-secondary));
+    box-shadow: var(--shadow-sm);
+  }
 }
 
 .overview-label {
-  font-size: var(--ds-font-size-md);
+  font-size: 11px;
+  font-weight: var(--ds-font-weight-extrabold, 800);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
   color: var(--color-text-secondary);
-  font-weight: var(--ds-font-weight-medium);
+  margin-bottom: var(--space-2);
 }
 
-/* Responsive */
-@include respond-min(xxl-wide) {
-  .team-overview-grid {
-    grid-template-columns: repeat(6, 1fr);
-  }
+.overview-value {
+  font-family: var(--ds-font-family-display, var(--ds-font-family-base));
+  font-size: clamp(28px, 4vw, 40px);
+  font-weight: var(--ds-font-weight-extrabold, 800);
+  letter-spacing: -0.03em;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  color: var(--color-text-primary);
 }
 
-@include respond-between(xl-min, xl-max) {
-  .team-overview-grid {
-    grid-template-columns: repeat(5, 1fr);
-  }
-}
-
-@include respond-between(lg, lg-max) {
-  .team-overview-grid {
-    grid-template-columns: repeat(4, 1fr);
-  }
-}
-
+// Responsive
 @include respond-between(md-min, lg) {
-  .team-overview-grid {
-    grid-template-columns: repeat(3, 1fr);
-  }
+  .team-overview-grid { grid-template-columns: repeat(3, 1fr); }
 }
 
 @include respond-to(md) {
-  .team-overview-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  .card-title {
-    font-size: var(--ds-font-size-2xl);
-  }
+  .team-overview-grid { grid-template-columns: repeat(2, 1fr); }
 }
 
 @include respond-to(sm) {
-  .team-overview-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: var(--space-2);
-  }
-
-  .overview-stat {
-    padding: var(--space-3);
-  }
-
-  .overview-value {
-    font-size: var(--ds-font-size-2xl);
-  }
+  .team-overview-grid { gap: var(--space-2); }
+  .overview-stat { padding: var(--space-4); }
 }
 
 @include respond-to(xs) {
-  .team-overview-grid {
-    grid-template-columns: 1fr;
-  }
+  .team-overview-grid { grid-template-columns: 1fr; }
 }
 
-/* Touch devices */
 @media (hover: none) and (pointer: coarse) {
-  .overview-stat:hover {
-    transform: none;
-  }
+  .overview-stat:hover { transform: none; }
 }

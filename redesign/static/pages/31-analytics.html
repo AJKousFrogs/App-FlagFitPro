@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FlagFit Pro — Analytics (mockup)</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../_shared/tokens.css"><link rel="stylesheet" href="../_shared/base.css">
+<script src="../_shared/theme.js"></script>
+<style>
+  .shell { display: grid; gap: var(--space-5); max-width: 1280px; margin: 0 auto; padding: var(--space-6); padding-bottom: 120px; }
+  .head { display: flex; justify-content: space-between; align-items: flex-end; gap: var(--space-3); flex-wrap: wrap; }
+  .head h1 { font-family: var(--font-display); font-size: clamp(36px, 5vw, 52px); font-weight: 800; letter-spacing: -0.03em; line-height: 1; }
+  .head .sub { color: var(--text-2); font-size: 14px; font-weight: 600; margin-top: 6px; }
+  .filters { display: flex; gap: 4px; padding: 4px; background: var(--bg-2); border-radius: var(--radius-full); border: 1px solid var(--bg-line); width: fit-content; }
+  .fchip { padding: 6px 14px; border-radius: var(--radius-full); background: transparent; border: 0; font-family: inherit; font-size: 12px; font-weight: 800; color: var(--text-2); cursor: pointer; }
+  .fchip.active { background: var(--accent); color: var(--text-inverse); }
+  /* Hero gauge */
+  .acwr-hero { padding: var(--space-8); border-radius: var(--radius-2xl); background: radial-gradient(circle at 80% 20%, color-mix(in srgb, var(--warn) 18%, transparent) 0%, transparent 50%), linear-gradient(135deg, var(--bg-1) 0%, var(--bg-elevated) 100%); border: 1px solid var(--bg-line); display: grid; grid-template-columns: auto 1fr auto; gap: var(--space-8); align-items: center; box-shadow: var(--shadow-card); }
+  .gauge { width: 260px; height: 260px; position: relative; }
+  .gauge__center { position: absolute; inset: 0; display: grid; place-items: center; text-align: center; z-index: 1; }
+  .gauge__num { font-family: var(--font-display); font-size: 80px; font-weight: 800; letter-spacing: -0.04em; line-height: 1; }
+  .gauge__lab { font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-2); font-weight: 800; margin-top: 4px; }
+  .gauge__zone { display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; border-radius: var(--radius-full); background: var(--warn); color: var(--bg-0); font-size: 10px; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; margin-top: 12px; }
+  .ah-text h2 { font-family: var(--font-display); font-size: 28px; font-weight: 800; letter-spacing: -0.02em; margin-bottom: var(--space-3); }
+  .ah-text p { color: var(--text-1); font-size: 15px; line-height: 1.6; max-width: 420px; margin-bottom: var(--space-4); }
+  .ah-recs { display: grid; gap: var(--space-2); }
+  .ah-recs__item { display: flex; gap: 10px; align-items: flex-start; color: var(--text-1); font-size: 13px; }
+  .ah-recs__item::before { content: '→'; color: var(--accent); font-weight: 800; }
+  .ah-mini { display: grid; gap: var(--space-3); min-width: 160px; }
+  .ahm { background: var(--bg-0); border: 1px solid var(--bg-line); border-radius: var(--radius-md); padding: 14px; }
+  .ahm__lab { font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-2); font-weight: 700; }
+  .ahm__val { font-family: var(--font-display); font-size: 22px; font-weight: 800; line-height: 1; margin-top: 6px; letter-spacing: -0.02em; }
+  .ahm__sub { color: var(--text-2); font-size: 10px; margin-top: 2px; }
+  /* Two-col charts */
+  .charts-row { display: grid; grid-template-columns: 2fr 1fr; gap: var(--space-4); }
+  .card { background: var(--bg-1); border: 1px solid var(--bg-line); border-radius: var(--radius-xl); padding: var(--space-6); }
+  .card__head { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: var(--space-4); }
+  .card__head h3 { font-family: var(--font-display); font-size: 18px; font-weight: 800; }
+  .card__sub { color: var(--text-2); font-size: 12px; margin-top: 4px; }
+  .legend { display: flex; gap: var(--space-4); }
+  .legend__item { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--text-1); font-weight: 600; }
+  .legend__item::before { content: ''; width: 10px; height: 10px; border-radius: 50%; }
+  .legend__item--ok::before { background: var(--ok); } .legend__item--warn::before { background: var(--warn); }
+  /* Bottom: leaderboard + focus */
+  .bottom-row { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-4); }
+  .lb-row { display: grid; grid-template-columns: 28px 1fr auto auto; gap: var(--space-3); align-items: center; padding: 12px 0; border-top: 1px solid var(--bg-line); }
+  .lb-row:first-of-type { border-top: 0; padding-top: 0; }
+  .lb-row.is-you { background: color-mix(in srgb, var(--accent) 8%, transparent); margin: 0 -16px; padding: 12px 16px; border-radius: var(--radius-sm); border-top: 0; }
+  .lb-rank { font-family: var(--font-display); font-weight: 800; color: var(--text-2); text-align: center; }
+  .lb-rank--gold { color: #FFD24A; } .lb-rank--silver { color: #C7CBD0; } .lb-rank--bronze { color: #D69155; }
+  .lb-name { font-weight: 700; font-size: 14px; }
+  .lb-val { font-family: var(--font-display); font-weight: 800; font-size: 18px; font-variant-numeric: tabular-nums; }
+  .lb-delta { font-size: 11px; font-weight: 700; color: var(--text-2); }
+  .lb-delta--up { color: var(--ok); }
+  .focus-list { display: grid; gap: var(--space-3); }
+  .focus-item { padding: var(--space-4); background: var(--bg-2); border-radius: var(--radius-md); }
+  .focus-item__head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: var(--space-2); }
+  .focus-item__title { font-weight: 700; font-size: 14px; }
+  .focus-item__gap { font-family: var(--font-display); font-weight: 800; font-size: 20px; color: var(--warn); }
+  .focus-item__bar { height: 6px; background: var(--bg-3); border-radius: 3px; overflow: hidden; margin-bottom: var(--space-2); }
+  .focus-item__bar > span { display: block; height: 100%; background: linear-gradient(90deg, var(--warn), var(--danger)); border-radius: 3px; }
+  .focus-item__rec { font-size: 12px; color: var(--text-2); }
+  @media (max-width: 900px) { .acwr-hero, .charts-row, .bottom-row { grid-template-columns: 1fr; } }
+</style></head><body>
+
+<header class="page-chrome">
+  <div class="page-chrome__left"><div class="brand"><div class="brand__mark">F</div>FlagFit <span class="brand__sub">Pro</span></div><span class="crumb">31 · Analytics</span><span class="mockup-status mockup-status--review">In review</span></div>
+  <div class="page-chrome__right"><a href="../index.html" class="theme-toggle" style="text-decoration:none;">← Index</a><button type="button" class="theme-toggle" data-theme-toggle><span data-theme-label>Light mode</span></button></div>
+</header>
+
+<div class="spec-strip"><div class="spec-strip__title">Analytics</div><div class="spec-strip__meta"><span>Route: <strong>/performance/insights</strong></span><span>Fix: <strong>hero ACWR + curated charts</strong></span></div></div>
+
+<main class="shell">
+
+  <div class="head">
+    <div><h1>Performance intelligence</h1><div class="sub">Anže Novak · WR · 28-day window</div></div>
+    <div class="filters"><button class="fchip">7d</button><button class="fchip active">28d</button><button class="fchip">90d</button><button class="fchip">Season</button></div>
+  </div>
+
+  <!-- HERO ACWR -->
+  <section class="acwr-hero">
+    <div class="gauge">
+      <svg viewBox="0 0 260 260">
+        <circle cx="130" cy="130" r="110" stroke="rgba(255,255,255,0.06)" stroke-width="18" fill="none"/>
+        <defs><linearGradient id="g1" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="var(--ok)"/><stop offset="60%" stop-color="var(--warn)"/><stop offset="100%" stop-color="var(--danger)"/></linearGradient></defs>
+        <circle cx="130" cy="130" r="110" stroke="url(#g1)" stroke-width="18" fill="none" stroke-dasharray="691" stroke-dashoffset="207" stroke-linecap="round"/>
+      </svg>
+      <div class="gauge__center">
+        <div class="gauge__num">1.42</div>
+        <div class="gauge__lab">ACWR · 28d</div>
+        <div class="gauge__zone">▲ Elevated</div>
+      </div>
+    </div>
+    <div class="ah-text">
+      <div style="font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--warn); font-weight: 800; margin-bottom: 12px;">● Workload status</div>
+      <h2>Take down volume next 3 sessions.</h2>
+      <p>Acute load is outpacing chronic — 14% above the optimal 0.8–1.3 window. Not danger yet, but the same pattern preceded the soft-tissue flag-up in 2025-09.</p>
+      <div class="ah-recs">
+        <div class="ah-recs__item">Cap RPE at 7 for Mon &amp; Wed sessions</div>
+        <div class="ah-recs__item">Replace one speed block with mobility / film</div>
+        <div class="ah-recs__item">Re-check after Sunday game — load should rebalance</div>
+      </div>
+    </div>
+    <div class="ah-mini">
+      <div class="ahm"><div class="ahm__lab">Acute · 7d</div><div class="ahm__val">412</div><div class="ahm__sub">load units</div></div>
+      <div class="ahm"><div class="ahm__lab">Chronic · 28d</div><div class="ahm__val">290</div><div class="ahm__sub">avg/week</div></div>
+      <div class="ahm"><div class="ahm__lab">Confidence</div><div class="ahm__val" style="color: var(--ok);">94%</div><div class="ahm__sub">data quality</div></div>
+    </div>
+  </section>
+
+  <!-- Two-col charts -->
+  <div class="charts-row">
+    <section class="card">
+      <div class="card__head"><div><h3>Load vs performance · 28 days</h3><div class="card__sub">When acute load rises, watch reaction time</div></div><div class="legend"><div class="legend__item legend__item--ok">Load</div><div class="legend__item legend__item--warn">Reaction</div></div></div>
+      <svg viewBox="0 0 700 220" style="width:100%; height:auto;">
+        <g stroke="rgba(255,255,255,0.05)"><line x1="0" x2="700" y1="40" y2="40"/><line x1="0" x2="700" y1="90" y2="90"/><line x1="0" x2="700" y1="140" y2="140"/><line x1="0" x2="700" y1="190" y2="190"/></g>
+        <rect x="0" y="100" width="700" height="55" fill="color-mix(in srgb, var(--ok) 6%, transparent)"/>
+        <path d="M0,160 L60,145 L120,155 L180,130 L240,140 L300,120 L360,110 L420,90 L480,75 L540,80 L600,60 L660,55 L700,50" stroke="var(--ok)" stroke-width="3" fill="none" stroke-linecap="round"/>
+        <path d="M0,160 L60,145 L120,155 L180,130 L240,140 L300,120 L360,110 L420,90 L480,75 L540,80 L600,60 L660,55 L700,50 L700,220 L0,220 Z" fill="color-mix(in srgb, var(--ok) 12%, transparent)"/>
+        <path d="M0,80 L60,82 L120,75 L180,90 L240,85 L300,95 L360,100 L420,110 L480,125 L540,130 L600,140 L660,150 L700,155" stroke="var(--warn)" stroke-width="3" fill="none" stroke-linecap="round"/>
+        <circle cx="660" cy="55" r="5" fill="var(--ok)"/>
+        <circle cx="660" cy="150" r="5" fill="var(--warn)"/>
+      </svg>
+    </section>
+    <section class="card">
+      <div class="card__head"><div><h3>Skill profile</h3><div class="card__sub">vs position elite (dim)</div></div></div>
+      <svg viewBox="0 0 220 200" width="100%">
+        <g stroke="rgba(255,255,255,0.08)" fill="none">
+          <polygon points="110,30 180,75 155,160 65,160 40,75"/>
+          <polygon points="110,55 162,87 145,140 75,140 58,87"/>
+          <polygon points="110,75 145,98 135,128 85,128 75,98"/>
+        </g>
+        <polygon points="110,38 175,80 150,155 70,155 45,80" fill="rgba(116,120,127,0.15)" stroke="rgba(116,120,127,0.6)" stroke-width="2"/>
+        <polygon points="110,50 170,90 140,150 80,140 50,90" fill="color-mix(in srgb, var(--ok) 25%, transparent)" stroke="var(--ok)" stroke-width="2.5"/>
+        <g font-family="Plus Jakarta Sans" font-size="11" font-weight="700" fill="var(--text-1)">
+          <text x="110" y="22" text-anchor="middle">SPEED</text>
+          <text x="190" y="78" text-anchor="middle">ROUTES</text>
+          <text x="165" y="178" text-anchor="middle">HANDS</text>
+          <text x="55" y="178" text-anchor="middle">BLOCK</text>
+          <text x="28" y="78" text-anchor="middle">IQ</text>
+        </g>
+      </svg>
+    </section>
+  </div>
+
+  <!-- Bottom: leaderboard + focus -->
+  <div class="bottom-row">
+    <section class="card">
+      <div class="card__head"><div><h3>Position leaderboard · WR</h3><div class="card__sub">By 40-yard dash, last 90 days</div></div></div>
+      <div class="lb-row"><div class="lb-rank lb-rank--gold">1</div><div class="lb-name">Klemen Vidmar · #14</div><div class="lb-val">4.38s</div><div class="lb-delta lb-delta--up">▲ 0.04</div></div>
+      <div class="lb-row is-you"><div class="lb-rank lb-rank--silver">2</div><div class="lb-name">Anže Novak · #9 (you)</div><div class="lb-val">4.45s</div><div class="lb-delta lb-delta--up">▲ 0.08</div></div>
+      <div class="lb-row"><div class="lb-rank lb-rank--bronze">3</div><div class="lb-name">Marko Tomić · #11</div><div class="lb-val">4.49s</div><div class="lb-delta">— 0.00</div></div>
+      <div class="lb-row"><div class="lb-rank">4</div><div class="lb-name">Jaka Cerar · #18</div><div class="lb-val">4.52s</div><div class="lb-delta lb-delta--up">▲ 0.01</div></div>
+      <div class="lb-row"><div class="lb-rank">5</div><div class="lb-name">Domen Krajnc · #21</div><div class="lb-val">4.61s</div><div class="lb-delta">— 0.00</div></div>
+      <div style="margin-top: 16px; padding-top: 12px; border-top: 1px solid var(--bg-line); display: flex; justify-content: space-between; align-items: center;">
+        <div style="font-size: 12px; color: var(--text-2);">Position elite benchmark: <strong style="color: var(--text-0); font-family: var(--font-display);">4.32s</strong></div>
+      </div>
+    </section>
+    <section class="card">
+      <div class="card__head"><div><h3>Focus areas · next 4 weeks</h3><div class="card__sub">Biggest gaps to position elite</div></div></div>
+      <div class="focus-list">
+        <div class="focus-item">
+          <div class="focus-item__head"><span class="focus-item__title">Top-end speed</span><span class="focus-item__gap">−7%</span></div>
+          <div class="focus-item__bar"><span style="width: 72%;"></span></div>
+          <div class="focus-item__rec">2× sprint blocks/week, 90% intensity</div>
+        </div>
+        <div class="focus-item">
+          <div class="focus-item__head"><span class="focus-item__title">Change-of-direction</span><span class="focus-item__gap">−12%</span></div>
+          <div class="focus-item__bar"><span style="width: 56%;"></span></div>
+          <div class="focus-item__rec">5-10-5 shuttle, T-drill, 2× per week</div>
+        </div>
+        <div class="focus-item">
+          <div class="focus-item__head"><span class="focus-item__title">Catch radius</span><span class="focus-item__gap">−18%</span></div>
+          <div class="focus-item__bar"><span style="width: 38%;"></span></div>
+          <div class="focus-item__rec">Contested catch drills, 1× per week</div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+</main>
+
+<div class="mockup-banner">Mockup · 31 Analytics</div>
+</body></html>

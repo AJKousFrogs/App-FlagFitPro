@@ -48,13 +48,16 @@
 }
 
 .analytics-hub-title {
-  font-weight: var(--ds-font-weight-semibold);
+  font-family: var(--ds-font-family-display, var(--ds-font-family-base));
+  font-weight: var(--ds-font-weight-extrabold, 800);
+  font-size: var(--ds-font-size-md);
+  letter-spacing: -0.005em;
   color: var(--color-text-primary);
 }
 
 .analytics-hub-subtitle {
   font-size: var(--ds-font-size-sm);
-  line-height: var(--ds-line-height-normal);
+  line-height: 1.5;
   color: var(--color-text-secondary);
 }
 
@@ -194,11 +197,13 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: var(--space-12);
-  height: var(--space-12);
-  min-width: var(--space-12);
-  border-radius: var(--radius-lg);
-  background: rgba(var(--ds-primary-green-rgb), 0.1);
+  width: 52px;
+  height: 52px;
+  min-width: 52px;
+  border-radius: 14px;
+  background: linear-gradient(135deg,
+    color-mix(in srgb, var(--ds-primary-green) 18%, transparent),
+    color-mix(in srgb, var(--ds-primary-green) 8%, transparent));
   color: var(--ds-primary-green);
   font-size: var(--ds-font-size-xl);
   flex-shrink: 0;
@@ -213,24 +218,31 @@
 }
 
 .metric-value {
+  font-family: var(--ds-font-family-display, var(--ds-font-family-base));
   color: var(--color-text-primary);
-  font-size: var(--ds-font-size-3xl);
-  font-weight: var(--ds-font-weight-bold);
-  line-height: var(--font-h2-line-height);
-  letter-spacing: -0.04em;
+  font-size: clamp(28px, 3vw, 36px);
+  font-weight: var(--ds-font-weight-extrabold, 800);
+  line-height: 1;
+  letter-spacing: -0.03em;
+  font-variant-numeric: tabular-nums;
 }
 
 .metric-label {
-  color: var(--color-text-primary);
-  font-size: var(--ds-font-size-sm);
-  font-weight: var(--ds-font-weight-semibold);
+  color: var(--color-text-secondary);
+  font-size: 11px;
+  font-weight: var(--ds-font-weight-extrabold, 800);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
   line-height: var(--ds-line-height-tight);
 }
 
 .metric-trend {
   color: var(--color-text-secondary);
   font-size: var(--ds-font-size-xs);
+  font-weight: var(--ds-font-weight-semibold);
+  font-variant-numeric: tabular-nums;
   line-height: var(--ds-line-height-normal);
+  margin-top: 2px;
 }
 
 .metric-trend.trend-positive {

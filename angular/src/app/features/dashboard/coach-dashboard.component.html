@@ -1,398 +1,566 @@
+<!--
+  Coach Dashboard v2 — premium athletic redesign (2026-05 sprint 2).
+  Matches redesign/static/pages/21-coach-dashboard.html (approved).
+
+  State auto-detects from upcoming-game distance:
+    live      = game today
+    pregame   = game within 3 days
+    practice  = game >3 days OR practice today, no urgent game
+    offseason = no game within 14 days
+
+  Drop a team photo at angular/src/assets/images/team-frogs.jpg
+  for the team-identity hero — gradient fallback if missing.
+-->
 <app-main-layout>
-      <!-- Loading State -->
-      <app-loading
-        [visible]="isPageLoading()"
-        variant="skeleton"
-        message="Loading coach dashboard..."
-      ></app-loading>
 
-      <!-- Error State -->
-      @if (hasPageError()) {
-        <app-page-error-state
-          title="Unable to load dashboard"
-          [message]="pageErrorMessage()"
-          (retry)="retryLoad()"
-        ></app-page-error-state>
-      }
+  <!-- Loading state -->
+  <app-loading
+    [visible]="isPageLoading()"
+    variant="skeleton"
+    message="Loading coach dashboard..."
+  ></app-loading>
 
-      <!-- Content -->
-      @else {
-        <div class="dashboard-content ui-page-shell ui-page-stack">
-          <!-- Lead with Coach Priority Command & Merlin Insight -->
-          <app-coach-dashboard-priority-section
-            [merlinCoachInsight]="merlinCoachInsight()"
-            [riskAlerts]="riskAlerts()"
-            [playersWithMissingData]="playersWithMissingData()"
-            [nextGenEnabled]="nextGenEnabled()"
-            (viewPlayer)="viewPlayer($event)"
-          />
+  <!-- Error state -->
+  @if (hasPageError()) {
+    <app-page-error-state
+      title="Unable to load dashboard"
+      [message]="pageErrorMessage()"
+      (retry)="retryLoad()"
+    ></app-page-error-state>
+  }
 
-          @defer (on viewport) {
-            <!-- Active Protocols Section -->
-            <app-coach-dashboard-protocols-section
-              [teamContinuity]="teamContinuity()"
-              (viewPlayer)="viewPlayer($event)"
-            />
-          } @placeholder {
-            <app-loading
-              [visible]="true"
-              variant="skeleton"
-              message="Loading team protocols..."
-            />
-          }
+  @if (!isPageLoading() && !hasPageError()) {
+    <div class="coach-dash-v2">
 
-          @defer (on viewport) {
-            <app-coach-dashboard-summary-section
-              [teamOverview]="teamOverview()"
-              [nextGenEnabled]="nextGenEnabled()"
-              (createSession)="openCreateSession()"
-              (openTeamMessage)="openTeamMessage()"
-            />
-          } @placeholder {
-            <app-loading
-              [visible]="true"
-              variant="skeleton"
-              message="Loading summary..."
-            />
-          }
+      <!-- ──────────────────────────────────────────────────────────────── -->
+      <!-- 1. GREETING                                                       -->
+      <!-- ──────────────────────────────────────────────────────────────── -->
+      <header class="coach-greeting">
+        <div>
+          <h1 class="coach-greeting__title">
+            Good day, <span class="accent">Coach</span>.
+          </h1>
+          <div class="coach-greeting__sub">{{ contextSubline() }}</div>
+        </div>
+        <div class="coach-greeting__actions">
+          <app-button
+            variant="outlined"
+            size="sm"
+            (clicked)="planTomorrow()"
+          >Schedule</app-button>
+          <app-button
+            variant="primary"
+            size="sm"
+            iconLeft="pi-plus"
+            (clicked)="openCreateSession()"
+          >New session</app-button>
+        </div>
+      </header>
 
-          <!-- Main Content Grid - Streamlined for Phase 2 -->
-          @if (hasBlockedPlayers()) {
-            <app-coach-dashboard-partial-data-notice
-              [message]="partialDataMessage()"
-            />
-          }
-
-          <!-- Main Content Grid - Streamlined for Phase 2 -->
-          <div class="dashboard-workspace">
-            <!-- Left Workspace: Roster -->
-            <div class="workspace-main">
-              <app-card-shell [flush]="true" class="workspace-card">
-                <div class="workspace-tabs-header">
-                  <div class="tab-triggers">
-                    <div class="tab-trigger active">
-                      <i class="pi pi-users" aria-hidden="true"></i> Team Roster
-                    </div>
-                  </div>
-                  <div class="tab-actions">
-                    <app-button
-                      variant="text"
-                      size="sm"
-                      icon="external-link"
-                      ariaLabel="Open performance workspace"
-                      (clicked)="navigateToAnalytics()"
-                      >Open Performance</app-button
-                    >
-                  </div>
-                </div>
-
-                <div class="tab-content">
-                  <app-coach-dashboard-roster-section
-                    [filteredPlayers]="filteredPlayers()"
-                    [playerFilter]="playerFilter()"
-                    [overrideCounts]="playerOverrideCounts()"
-                    (filterChange)="setPlayerFilter($event)"
-                    (selectPlayer)="viewPlayer($event)"
-                    (requestDataAccess)="requestDataSharing($event)"
-                    (viewOverrideHistory)="viewOverrideHistoryFromSection($event)"
-                  />
-                </div>
-              </app-card-shell>
+      <!-- ──────────────────────────────────────────────────────────────── -->
+      <!-- 2. TEAM IDENTITY HERO — photo + record + meta                     -->
+      <!-- ──────────────────────────────────────────────────────────────── -->
+      <section class="team-hero" aria-label="Team identity">
+        <div class="team-hero__inner">
+          <div>
+            <span class="team-hero__eyebrow">
+              <span class="team-hero__eyebrow-dot" aria-hidden="true"></span>
+              Your team
+            </span>
+            <h2 class="team-hero__name">
+              {{ teamOverview().teamName }}
+            </h2>
+            <div class="team-hero__meta">
+              <span class="team-hero__chip">
+                <span class="team-hero__chip-dot team-hero__chip-dot--accent" aria-hidden="true"></span>
+                <strong>{{ teamOverview().totalPlayers }}</strong> on roster
+              </span>
+              <span class="team-hero__chip">
+                <span class="team-hero__chip-dot team-hero__chip-dot--ok" aria-hidden="true"></span>
+                <strong>{{ teamOverview().activePlayers }}</strong> active
+              </span>
+              <span class="team-hero__chip">
+                Season <strong>{{ teamOverview().season }}</strong>
+              </span>
             </div>
-
-            @defer (on viewport) {
-              <!-- Right Workspace: Schedule & Quick -->
-              <div class="workspace-side">
-                <app-card-shell
-                  title="Today schedule"
-                  headerIcon="pi-calendar"
-                  density="compact"
-                >
-                  <div class="schedule-mini">
-                    @for (
-                      game of upcomingGames().slice(
-                        0,
-                        UI_LIMITS.UPCOMING_GAMES_PREVIEW
-                      );
-                      track game.gameId
-                    ) {
-                      <div class="mini-event game">
-                        <div class="ev-date">
-                          <span class="d">{{ game.date | date: "d" }}</span>
-                          <span class="m">{{ game.date | date: "MMM" }}</span>
-                        </div>
-                        <div class="ev-info">
-                          <span class="t">vs {{ game.opponent }}</span>
-                          <span class="s">Game Day</span>
-                        </div>
-                      </div>
-                    }
-                    @for (
-                      session of trainingSessions().slice(
-                        0,
-                        UI_LIMITS.TRAINING_SESSIONS_PREVIEW
-                      );
-                      track session.sessionId
-                    ) {
-                      <div class="mini-event practice">
-                        <div class="ev-date">
-                          <span class="d">{{ session.date | date: "d" }}</span>
-                          <span class="m">{{ session.date | date: "MMM" }}</span>
-                        </div>
-                        <div class="ev-info">
-                          <span class="t">{{ session.title }}</span>
-                          <span class="s">{{ session.time }}</span>
-                        </div>
-                      </div>
-                    }
-                  </div>
-                  <div footer class="schedule-card-footer">
-                    <app-button
-                      variant="text"
-                      size="sm"
-                      [fullWidth]="true"
-                      routerLink="/coach/planning"
-                      >Full Schedule</app-button
-                    >
-                    <app-button
-                      variant="outlined"
-                      size="sm"
-                      [fullWidth]="true"
-                      iconLeft="pi-calendar-plus"
-                      (clicked)="planTomorrow()"
-                      >Plan Tomorrow</app-button
-                    >
-                  </div>
-                </app-card-shell>
-
-                <app-card-shell
-                  title="Roster shortcuts"
-                  headerIcon="pi-users"
-                  density="compact"
-                >
-                  <div class="quick-command-grid">
-                    <app-button
-                      variant="outlined"
-                      icon="heart"
-                      (clicked)="viewInjuryReport()"
-                      >Injuries</app-button
-                    >
-                    <app-button
-                      variant="outlined"
-                      icon="exclamation-triangle"
-                      (clicked)="setPlayerFilter('at_risk')"
-                      >At Risk</app-button
-                    >
-                    <app-button
-                      variant="outlined"
-                      icon="users"
-                      (clicked)="manageRoster()"
-                      >Full Roster</app-button
-                    >
-                    <app-button
-                      variant="outlined"
-                      icon="chart-line"
-                      (clicked)="navigateToAnalytics()"
-                      >Performance</app-button
-                    >
-                  </div>
-                </app-card-shell>
+          </div>
+          <div class="team-hero__record">
+            <div class="team-hero__record-val">{{ teamRecordDisplay() }}</div>
+            <div class="team-hero__record-lab">Season record</div>
+            @if (teamOverview().streak && teamOverview().streak !== "-") {
+              <div class="team-hero__record-sub">
+                Streak <strong>{{ teamOverview().streak }}</strong>
               </div>
-            } @placeholder {
-              <app-loading
-                [visible]="true"
-                variant="skeleton"
-                message="Loading schedule..."
-              />
             }
           </div>
         </div>
+      </section>
 
-        <!-- Create Session Dialog -->
-        @defer (when showCreateSessionDialog()) {
-        <app-dialog
-          [visible]="showCreateSessionDialog()"
-          (visibleChange)="showCreateSessionDialog.set($event)"
-          [modal]="true"
-          class="dashboard-dialog"
-          [blockScroll]="true"
-          [draggable]="false"
-          ariaLabel="Create training session"
-        >
-          <app-dialog-header
-            icon="calendar-plus"
-            title="Create Training Session"
-            subtitle="Schedule a new practice, prep block, or recovery session."
-            (close)="resetCreateSessionDialog()"
-          />
-          <div class="session-form">
-            <div class="form-field">
-              <app-form-input
-                label="Session Title"
-                id="coach-sessionTitle"
-                name="sessionTitle"
-                type="text"
-                [value]="newSession.title"
-                (valueChange)="onNewSessionTitleInput($event)"
-                placeholder="e.g., Offensive Drills"
-                class="w-full"
-                autocomplete="off"
-              />
+      <!-- ──────────────────────────────────────────────────────────────── -->
+      <!-- 3. RIGHT-NOW ACTION BANNER                                        -->
+      <!-- ──────────────────────────────────────────────────────────────── -->
+      <div [class]="'right-now right-now--' + rightNowBanner().tone">
+        <span class="right-now__badge">{{ rightNowBanner().badge }}</span>
+        <div class="right-now__copy">
+          <div class="right-now__title">{{ rightNowBanner().title }}</div>
+          <div class="right-now__sub">{{ rightNowBanner().sub }}</div>
+        </div>
+        <button
+          type="button"
+          class="right-now__cta"
+          (click)="rightNowBanner().ctaAction()"
+        >{{ rightNowBanner().ctaLabel }}</button>
+      </div>
+
+      <!-- ──────────────────────────────────────────────────────────────── -->
+      <!-- 4. STATE-SPECIFIC HERO (next-game / today's session / live)       -->
+      <!-- ──────────────────────────────────────────────────────────────── -->
+
+      @if (currentState() === "pregame" && upcomingGames().length > 0) {
+        <section class="hero-card hero-card--game">
+          <div>
+            <div class="hero-card__eyebrow">Next game</div>
+            <div class="hero-card__title">
+              {{ upcomingGames()[0].opponent }}{{ upcomingGames()[0].isHome ? " · Home" : " · Away" }}
             </div>
-            <div class="form-field">
-              <app-select
-                label="Type"
-                inputId="coach-sessionType"
-                (change)="onNewSessionTypeSelect($event)"
-                [options]="sessionTypes"
-                optionLabel="label"
-                optionValue="value"
-                placeholder="Select type"
-                class="w-full"
-                appendTo="body"
-              ></app-select>
+            <div class="hero-card__meta">
+              {{ upcomingGames()[0].date | date: "EEEE, MMM d" }} · {{ upcomingGames()[0].time ?? "" }}
+              @if (upcomingGames()[0].location) { · {{ upcomingGames()[0].location }} }
             </div>
-            <div class="form-field">
-              <label for="coach-sessionDate">Date & Time</label>
-              <input
-                id="coach-sessionDate"
-                name="sessionDate"
-                type="datetime-local"
-                [value]="getNewSessionDateInputValue()"
-                (input)="onNewSessionDateInputEvent($event)"
-                class="w-full"
-              />
-            </div>
-            <div class="form-field">
-              <app-form-input
-                label="Duration (minutes)"
-                id="coach-sessionDuration"
-                name="sessionDuration"
-                type="number"
-                [value]="'' + newSession.duration"
-                (valueChange)="onNewSessionDurationInput($event)"
-                placeholder="90"
-                class="w-full"
-                autocomplete="off"
-              />
-            </div>
-            <div class="form-field">
-              <app-textarea
-                label="Notes"
-                id="coach-sessionNotes"
-                name="sessionNotes"
-                [value]="newSession.notes"
-                (valueChange)="onNewSessionNotesInput($event)"
-                placeholder="Session notes..."
-                [rows]="3"
-                class="w-full"
-                autocomplete="off"
-              ></app-textarea>
+            <div class="hero-card__kpis">
+              @if (upcomingGames()[0].rsvpCount !== undefined && upcomingGames()[0].rsvpTotal !== undefined) {
+                <div class="nk">
+                  <div class="nk__lab">RSVP</div>
+                  <div class="nk__val nk__val--ok">{{ upcomingGames()[0].rsvpCount }}/{{ upcomingGames()[0].rsvpTotal }}</div>
+                </div>
+              }
+              <div class="nk">
+                <div class="nk__lab">Active squad</div>
+                <div class="nk__val nk__val--ok">{{ teamOverview().activePlayers }}</div>
+              </div>
+              @if (injuredCount() > 0) {
+                <div class="nk">
+                  <div class="nk__lab">Injured</div>
+                  <div class="nk__val nk__val--warn">{{ injuredCount() }}</div>
+                </div>
+              }
+              @if (atRiskCount() > 0) {
+                <div class="nk">
+                  <div class="nk__lab">At risk</div>
+                  <div class="nk__val nk__val--warn">{{ atRiskCount() }}</div>
+                </div>
+              }
             </div>
           </div>
-          <app-dialog-footer
-            dialogFooter
-            cancelLabel="Cancel"
-            primaryLabel="Create"
-            primaryIcon="check"
-            (cancel)="resetCreateSessionDialog()"
-            (primary)="createSession()"
-          />
-        </app-dialog>
-        } @placeholder {
-          <span class="defer-dialog-chunk-placeholder"></span>
-        }
-
-        <!-- Team Message Dialog -->
-        @defer (when showTeamMessageDialog()) {
-        <app-dialog
-          [visible]="showTeamMessageDialog()"
-          (visibleChange)="showTeamMessageDialog.set($event)"
-          [modal]="true"
-          class="dashboard-dialog"
-          [blockScroll]="true"
-          [draggable]="false"
-          ariaLabel="Send team message"
-        >
-          <app-dialog-header
-            icon="send"
-            title="Send Team Message"
-            subtitle="Broadcast a clear update to the full team."
-            (close)="showTeamMessageDialog.set(false)"
-          />
-          <div class="message-form">
-            <div class="form-field">
-              <app-textarea
-                label="Message"
-                id="messageContent"
-                [value]="teamMessageContent()"
-                (valueChange)="onTeamMessageContentInput($event)"
-                placeholder="Type your message to the team..."
-                [rows]="5"
-                class="w-full"
-              ></app-textarea>
-            </div>
+          <div class="countdown">
+            <div class="countdown__d">{{ nextGameDaysUntil() }}d</div>
+            <div class="countdown__l">to kickoff</div>
           </div>
-          <app-dialog-footer
-            dialogFooter
-            cancelLabel="Cancel"
-            primaryLabel="Send"
-            primaryIcon="send"
-            (cancel)="showTeamMessageDialog.set(false)"
-            (primary)="sendTeamMessage()"
-          />
-        </app-dialog>
-        } @placeholder {
-          <span class="defer-dialog-chunk-placeholder"></span>
-        }
+        </section>
 
-        <!-- Request Access Dialog -->
-        @defer (when showRequestAccessDialog()) {
-        <app-dialog
-          [visible]="showRequestAccessDialog()"
-          (visibleChange)="showRequestAccessDialog.set($event)"
-          [modal]="true"
-          class="dashboard-dialog"
-          [blockScroll]="true"
-          [draggable]="false"
-          ariaLabel="Request data access"
-        >
-          <app-dialog-header
-            icon="shield"
-            title="Request Data Access"
-            subtitle="Ask a player to share their wellness and training data."
-            (close)="cancelAccessRequest()"
-          />
-          <div class="request-access-form">
-            <p class="request-intro">
-              Send a non-pushy request to the player to share their wellness and
-              training data.
-            </p>
-            <div class="form-field">
-              <app-textarea
-                label="Message"
-                id="accessMessage"
-                [value]="requestAccessMessage()"
-                (valueChange)="onRequestAccessMessageInput($event)"
-                placeholder="Type your request message..."
-                [rows]="4"
-                class="w-full"
-              ></app-textarea>
+        @if (prepTimelineSteps().length > 0) {
+          <section class="prep-timeline">
+            <div class="prep-timeline__head">
+              <div>
+                <div class="prep-timeline__title">Game prep · checklist</div>
+                <div class="prep-timeline__sub">Auto-tracked from your team activity</div>
+              </div>
             </div>
-          </div>
-          <app-dialog-footer
-            dialogFooter
-            cancelLabel="Cancel"
-            primaryLabel="Send Request"
-            primaryIcon="send"
-            (cancel)="cancelAccessRequest()"
-            (primary)="sendAccessRequest()"
-          />
-        </app-dialog>
-        } @placeholder {
-          <span class="defer-dialog-chunk-placeholder"></span>
+            <div class="prep-steps">
+              @for (step of prepTimelineSteps(); track step.label) {
+                <div [class]="
+                    'prep-step' +
+                    (step.done ? ' prep-step--done' : '') +
+                    (step.current ? ' prep-step--current' : '')
+                  ">
+                  <div class="prep-step__dot">{{ step.num }}</div>
+                  <div class="prep-step__label">{{ step.label }}</div>
+                  <div class="prep-step__sub">{{ step.sub }}</div>
+                </div>
+              }
+            </div>
+          </section>
         }
       }
-      <!-- End of @else for content -->
-    </app-main-layout>
-  
+
+      @if (currentState() === "live") {
+        <section class="hero-card hero-card--live">
+          <span class="live-badge">Live today</span>
+          <h2 class="hero-card__live-title">
+            @if (upcomingGames().length > 0) {
+              {{ upcomingGames()[0].opponent }}
+            } @else {
+              Game day
+            }
+          </h2>
+          @if (upcomingGames().length > 0 && upcomingGames()[0].time) {
+            <div class="hero-card__meta" style="margin-top: var(--space-3);">
+              {{ upcomingGames()[0].time }}
+              @if (upcomingGames()[0].location) { · {{ upcomingGames()[0].location }} }
+            </div>
+          }
+          <div class="live-cta-row">
+            <app-button
+              variant="primary"
+              iconLeft="pi-play"
+              routerLink="/game-tracker"
+            >Start live game tracker</app-button>
+            <app-button
+              variant="outlined"
+              iconLeft="pi-send"
+              (clicked)="openTeamMessage()"
+            >Send pre-game message</app-button>
+          </div>
+        </section>
+      }
+
+      @if (currentState() === "practice" && trainingSessions().length > 0) {
+        <section class="hero-card hero-card--practice">
+          <div>
+            <div class="hero-card__eyebrow">Tonight's session</div>
+            <div class="hero-card__title">{{ trainingSessions()[0].title }}</div>
+            <div class="hero-card__meta">
+              {{ trainingSessions()[0].time ?? "" }}
+              @if (trainingSessions()[0].duration) { · ~{{ trainingSessions()[0].duration }} min }
+            </div>
+            <div class="hero-card__kpis">
+              <div class="nk">
+                <div class="nk__lab">Active squad</div>
+                <div class="nk__val nk__val--ok">{{ teamOverview().activePlayers }}</div>
+              </div>
+              <div class="nk">
+                <div class="nk__lab">At risk</div>
+                <div [class]="atRiskCount() > 0 ? 'nk__val nk__val--warn' : 'nk__val nk__val--ok'">{{ atRiskCount() }}</div>
+              </div>
+            </div>
+          </div>
+        </section>
+      }
+
+      @if (currentState() === "offseason") {
+        <section class="hero-card hero-card--offseason">
+          <div>
+            <div class="hero-card__eyebrow">Off-season program</div>
+            <div class="hero-card__title">Build phase</div>
+            <div class="hero-card__meta">Goal: capacity + consistency · adapts to wellness data</div>
+            <div class="hero-card__kpis">
+              <div class="nk">
+                <div class="nk__lab">Active squad</div>
+                <div class="nk__val nk__val--ok">{{ teamOverview().activePlayers }}</div>
+              </div>
+              <div class="nk">
+                <div class="nk__lab">Attendance</div>
+                <div class="nk__val">{{ teamOverview().practiceAttendanceRate }}%</div>
+              </div>
+              <div class="nk">
+                <div class="nk__lab">Avg ACWR</div>
+                <div class="nk__val nk__val--ok">{{ teamOverview().avgTeamWorkload | number: "1.2-2" }}</div>
+              </div>
+            </div>
+          </div>
+        </section>
+      }
+
+      @if (hasBlockedPlayers()) {
+        <app-coach-dashboard-partial-data-notice
+          [message]="partialDataMessage()"
+        ></app-coach-dashboard-partial-data-notice>
+      }
+
+      <!-- ──────────────────────────────────────────────────────────────── -->
+      <!-- 5. SQUAD HEALTH STRIP                                             -->
+      <!-- ──────────────────────────────────────────────────────────────── -->
+      <section class="health-strip" aria-label="Squad health">
+        <div class="ht ht--ok">
+          <div class="ht__lab">Team readiness</div>
+          <div class="ht__row">
+            <span class="ht__val ht__val--ok">{{ teamOverview().overallRating }}<small>%</small></span>
+          </div>
+          <div class="ht__sub">Avg across active squad</div>
+        </div>
+
+        <div [class]="atRiskCount() > 0 ? 'ht ht--warn' : 'ht ht--ok'">
+          <div class="ht__lab">Workload spikes</div>
+          <div class="ht__row">
+            <span [class]="atRiskCount() > 0 ? 'ht__val ht__val--warn' : 'ht__val ht__val--ok'">{{ atRiskCount() }}</span>
+          </div>
+          <div class="ht__sub">ACWR &gt; 1.3 or readiness &lt; 40%</div>
+        </div>
+
+        <div [class]="injuredCount() > 0 ? 'ht ht--danger' : 'ht ht--ok'">
+          <div class="ht__lab">Active injuries</div>
+          <div class="ht__row">
+            <span [class]="injuredCount() > 0 ? 'ht__val ht__val--danger' : 'ht__val ht__val--ok'">{{ injuredCount() }}</span>
+          </div>
+          <div class="ht__sub">In RTP protocol</div>
+        </div>
+
+        <div class="ht">
+          <div class="ht__lab">Practice attend.</div>
+          <div class="ht__row">
+            <span class="ht__val">{{ teamOverview().practiceAttendanceRate }}<small>%</small></span>
+          </div>
+          <div class="ht__sub">Last 7 sessions</div>
+        </div>
+      </section>
+
+      <!-- ──────────────────────────────────────────────────────────────── -->
+      <!-- 6. ATTENTION LIST + QUICK ACTIONS (8/4)                           -->
+      <!-- ──────────────────────────────────────────────────────────────── -->
+      <div class="row-8-4">
+
+        <section class="panel">
+          <div class="panel__head">
+            <h3 class="panel__title">Needs attention now</h3>
+            <span class="panel__merlin">Surfaced by Merlin AI</span>
+          </div>
+
+          @if (attentionItems().length > 0) {
+            @for (item of attentionItems(); track item.id) {
+              <div [class]="'pa-row pa-row--' + item.tier">
+                <div [class]="'pa-avatar pa-avatar--' + item.avatarTone">{{ item.initials }}</div>
+                <div class="pa-body">
+                  <div class="pa-row__tier">{{ item.tierLabel }}</div>
+                  <div class="pa-name">{{ item.name }}</div>
+                  <div class="pa-reason">{{ item.reason }}</div>
+                  <div class="pa-suggest">
+                    <span class="pa-suggest__icon" aria-hidden="true">✦</span>
+                    <span class="pa-suggest__text"><strong>Suggested:</strong> {{ item.suggestion }}</span>
+                    <button type="button" class="pa-suggest__apply">{{ item.suggestionCta }}</button>
+                  </div>
+                </div>
+                <div class="pa-metric">
+                  <div [class]="'pa-metric__val pa-metric__val--' + item.metricTone">{{ item.metricValue }}</div>
+                  <div class="pa-metric__lab">{{ item.metricLabel }}</div>
+                </div>
+              </div>
+            }
+          } @else {
+            <div class="pa-empty">
+              <i class="pi pi-check-circle" aria-hidden="true"></i>
+              <p>All clear. No players flagged for attention right now.</p>
+            </div>
+          }
+        </section>
+
+        <aside class="panel">
+          <div class="panel__head">
+            <h3 class="panel__title-sm">Right-now actions</h3>
+          </div>
+          <div class="qa-list">
+            @for (qa of quickActionsForState(); track qa.label) {
+              <button
+                type="button"
+                [class]="qa.primary ? 'qa qa--primary' : 'qa'"
+                (click)="qa.action()"
+              >
+                <span class="qa__left">
+                  <span class="qa__icon" aria-hidden="true">{{ qa.icon }}</span>
+                  {{ qa.label }}
+                </span>
+                <span class="qa__arrow" aria-hidden="true">→</span>
+              </button>
+            }
+          </div>
+        </aside>
+      </div>
+
+    </div>
+
+    <!-- ──────────────────────────────────────────────────────────────── -->
+    <!-- DIALOGS — kept from original (working logic)                      -->
+    <!-- ──────────────────────────────────────────────────────────────── -->
+
+    @defer (when showCreateSessionDialog()) {
+      <app-dialog
+        [visible]="showCreateSessionDialog()"
+        (visibleChange)="showCreateSessionDialog.set($event)"
+        [modal]="true"
+        class="dashboard-dialog"
+        [blockScroll]="true"
+        [draggable]="false"
+        ariaLabel="Create training session"
+      >
+        <app-dialog-header
+          icon="calendar-plus"
+          title="Create Training Session"
+          subtitle="Schedule a new practice, prep block, or recovery session."
+          (close)="resetCreateSessionDialog()"
+        ></app-dialog-header>
+        <div class="session-form">
+          <div class="form-field">
+            <app-form-input
+              label="Session Title"
+              id="coach-sessionTitle"
+              name="sessionTitle"
+              type="text"
+              [value]="newSession.title"
+              (valueChange)="onNewSessionTitleInput($event)"
+              placeholder="e.g., Offensive Drills"
+              class="w-full"
+              autocomplete="off"
+            ></app-form-input>
+          </div>
+          <div class="form-field">
+            <app-select
+              label="Type"
+              inputId="coach-sessionType"
+              (change)="onNewSessionTypeSelect($event)"
+              [options]="sessionTypes"
+              optionLabel="label"
+              optionValue="value"
+              placeholder="Select type"
+              class="w-full"
+              appendTo="body"
+            ></app-select>
+          </div>
+          <div class="form-field">
+            <label for="coach-sessionDate">Date &amp; Time</label>
+            <input
+              id="coach-sessionDate"
+              name="sessionDate"
+              type="datetime-local"
+              [value]="getNewSessionDateInputValue()"
+              (input)="onNewSessionDateInputEvent($event)"
+              class="w-full"
+            />
+          </div>
+          <div class="form-field">
+            <app-form-input
+              label="Duration (minutes)"
+              id="coach-sessionDuration"
+              name="sessionDuration"
+              type="number"
+              [value]="'' + newSession.duration"
+              (valueChange)="onNewSessionDurationInput($event)"
+              placeholder="90"
+              class="w-full"
+              autocomplete="off"
+            ></app-form-input>
+          </div>
+          <div class="form-field">
+            <app-textarea
+              label="Notes"
+              id="coach-sessionNotes"
+              name="sessionNotes"
+              [value]="newSession.notes"
+              (valueChange)="onNewSessionNotesInput($event)"
+              placeholder="Session notes..."
+              [rows]="3"
+              class="w-full"
+              autocomplete="off"
+            ></app-textarea>
+          </div>
+        </div>
+        <app-dialog-footer
+          dialogFooter
+          cancelLabel="Cancel"
+          primaryLabel="Create"
+          primaryIcon="check"
+          (cancel)="resetCreateSessionDialog()"
+          (primary)="createSession()"
+        ></app-dialog-footer>
+      </app-dialog>
+    } @placeholder {
+      <span class="defer-dialog-chunk-placeholder"></span>
+    }
+
+    @defer (when showTeamMessageDialog()) {
+      <app-dialog
+        [visible]="showTeamMessageDialog()"
+        (visibleChange)="showTeamMessageDialog.set($event)"
+        [modal]="true"
+        class="dashboard-dialog"
+        [blockScroll]="true"
+        [draggable]="false"
+        ariaLabel="Send team message"
+      >
+        <app-dialog-header
+          icon="send"
+          title="Send Team Message"
+          subtitle="Broadcast a clear update to the full team."
+          (close)="showTeamMessageDialog.set(false)"
+        ></app-dialog-header>
+        <div class="message-form">
+          <div class="form-field">
+            <app-textarea
+              label="Message"
+              id="messageContent"
+              [value]="teamMessageContent()"
+              (valueChange)="onTeamMessageContentInput($event)"
+              placeholder="Type your message to the team..."
+              [rows]="5"
+              class="w-full"
+            ></app-textarea>
+          </div>
+        </div>
+        <app-dialog-footer
+          dialogFooter
+          cancelLabel="Cancel"
+          primaryLabel="Send"
+          primaryIcon="send"
+          (cancel)="showTeamMessageDialog.set(false)"
+          (primary)="sendTeamMessage()"
+        ></app-dialog-footer>
+      </app-dialog>
+    } @placeholder {
+      <span class="defer-dialog-chunk-placeholder"></span>
+    }
+
+    @defer (when showRequestAccessDialog()) {
+      <app-dialog
+        [visible]="showRequestAccessDialog()"
+        (visibleChange)="showRequestAccessDialog.set($event)"
+        [modal]="true"
+        class="dashboard-dialog"
+        [blockScroll]="true"
+        [draggable]="false"
+        ariaLabel="Request data access"
+      >
+        <app-dialog-header
+          icon="shield"
+          title="Request Data Access"
+          subtitle="Ask a player to share their wellness and training data."
+          (close)="cancelAccessRequest()"
+        ></app-dialog-header>
+        <div class="request-access-form">
+          <p class="request-intro">
+            Send a non-pushy request to the player to share their wellness and
+            training data.
+          </p>
+          <div class="form-field">
+            <app-textarea
+              label="Message"
+              id="accessMessage"
+              [value]="requestAccessMessage()"
+              (valueChange)="onRequestAccessMessageInput($event)"
+              placeholder="Type your request message..."
+              [rows]="4"
+              class="w-full"
+            ></app-textarea>
+          </div>
+        </div>
+        <app-dialog-footer
+          dialogFooter
+          cancelLabel="Cancel"
+          primaryLabel="Send Request"
+          primaryIcon="send"
+          (cancel)="cancelAccessRequest()"
+          (primary)="sendAccessRequest()"
+        ></app-dialog-footer>
+      </app-dialog>
+    } @placeholder {
+      <span class="defer-dialog-chunk-placeholder"></span>
+    }
+
+    <button
+      type="button"
+      class="broadcast-fab"
+      (click)="openTeamMessage()"
+      aria-label="Broadcast to team"
+    >
+      <span class="broadcast-fab__icon" aria-hidden="true">📣</span>
+      Broadcast to team
+    </button>
+  }
+</app-main-layout>

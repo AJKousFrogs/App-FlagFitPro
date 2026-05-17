@@ -56,10 +56,6 @@ import { CONSENT_BLOCKED_MESSAGES } from "../../shared/utils/privacy-ux-copy";
 import { UI_LIMITS } from "../../core/constants";
 import { CardShellComponent } from "../../shared/components/card-shell/card-shell.component";
 import { CoachDashboardPartialDataNoticeComponent } from "./components/coach-dashboard-partial-data-notice.component";
-import { CoachDashboardPrioritySectionComponent } from "./components/coach-dashboard-priority-section.component";
-import { CoachDashboardProtocolsSectionComponent } from "./components/coach-dashboard-protocols-section.component";
-import { CoachDashboardRosterSectionComponent } from "./components/coach-dashboard-roster-section.component";
-import { CoachDashboardSummarySectionComponent } from "./components/coach-dashboard-summary-section.component";
 import { CoachDashboardDataService } from "./services/coach-dashboard-data.service";
 
 /**
@@ -118,10 +114,6 @@ interface NewSessionDraft {
     DialogHeaderComponent,
     DatePipe,
     CoachDashboardPartialDataNoticeComponent,
-    CoachDashboardSummarySectionComponent,
-    CoachDashboardPrioritySectionComponent,
-    CoachDashboardProtocolsSectionComponent,
-    CoachDashboardRosterSectionComponent,
   ],
   templateUrl: "./coach-dashboard.component.html",
 
@@ -969,5 +961,243 @@ export class CoachDashboardComponent {
    */
   getTimeAgoStr(date: Date | undefined): string {
     return getTimeAgo(date);
+  }
+
+  // ============================================================================
+  // V2 REDESIGN COMPUTED SIGNALS (2026-05 sprint 2)
+  // ============================================================================
+  // Pure derivations from existing data — no service changes.
+  // The state engine auto-detects which "view mode" to render based on the
+  // next-game distance, instead of forcing the coach to pick.
+  // ============================================================================
+
+  /** Header date line: "Saturday · May 16" */
+  readonly todayDateLabel = computed(() =>
+    new Date().toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" }),
+  );
+
+  /** Days until the next scheduled game (null = no upcoming game) */
+  readonly nextGameDaysUntil = computed<number | null>(() => {
+    const next = this.upcomingGames()[0];
+    if (!next) return null;
+    const gameDate = new Date(next.date);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    gameDate.setHours(0, 0, 0, 0);
+    const diff = Math.round((gameDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+    return diff;
+  });
+
+  /**
+   * Auto-detected view state:
+   *   live      = game today
+   *   pregame   = game within 3 days
+   *   practice  = game >3 days away OR practice today, no urgent game
+   *   offseason = no game within 14 days
+   */
+  readonly currentState = computed<"live" | "pregame" | "practice" | "offseason">(() => {
+    const days = this.nextGameDaysUntil();
+    if (days === null) return "offseason";
+    if (days === 0) return "live";
+    if (days <= 3) return "pregame";
+    if (days > 14) return "offseason";
+    return "practice";
+  });
+
+  /** Team season record formatted "8–3" (or "—" if no data) */
+  readonly teamRecordDisplay = computed(() => {
+    const ov = this.teamOverview();
+    if (!ov || (ov.wins === 0 && ov.losses === 0 && ov.ties === 0)) return "—";
+    return `${ov.wins}–${ov.losses}${ov.ties ? `–${ov.ties}` : ""}`;
+  });
+
+  /** First-line greeting context: "Game day in 2 days" / "Practice in 1h" / etc. */
+  readonly contextSubline = computed(() => {
+    const date = this.todayDateLabel();
+    const days = this.nextGameDaysUntil();
+    if (days === 0) return `${date} · Game day`;
+    if (days !== null && days <= 7) return `${date} · Game in ${days} ${days === 1 ? "day" : "days"}`;
+    return date;
+  });
+
+  /** Game-prep timeline steps with completion state — only shown in pregame */
+  readonly prepTimelineSteps = computed(() => {
+    const days = this.nextGameDaysUntil();
+    if (days === null || days > 5) return [];
+    return [
+      { num: "✓",  label: "Roster confirmed", sub: "T-5",     done: days <= 5,  current: false },
+      { num: "✓",  label: "Practice plan",    sub: "T-4",     done: days <= 4,  current: false },
+      { num: "3",  label: "Set lineup",       sub: `T-${days}`, done: days < 2, current: days === 2 || days === 3 },
+      { num: "4",  label: "Send logistics",   sub: "T-1",     done: days < 1,  current: days === 1 },
+      { num: "5",  label: "Game time",        sub: "Sun",     done: days === 0, current: days === 0 },
+    ];
+  });
+
+  /**
+   * Attention rows mapped from riskAlerts + playersWithMissingData.
+   * Each row carries an urgency tier ("critical" / "watch" / "monitor")
+   * so the template can render the left-edge color stripe.
+   */
+  readonly attentionItems = computed(() => {
+    interface AttentionItem {
+      id: string;
+      tier: "critical" | "watch" | "monitor" | "good";
+      tierLabel: string;
+      initials: string;
+      avatarTone: "danger" | "warn" | "info" | "ok";
+      name: string;
+      reason: string;
+      metricValue: string;
+      metricLabel: string;
+      metricTone: "danger" | "warn" | "neutral";
+      suggestion: string;
+      suggestionCta: string;
+    }
+
+    const items: AttentionItem[] = [];
+
+    // From risk alerts (critical/watch)
+    for (const alert of this.riskAlerts().slice(0, 4)) {
+      const isCritical = alert.severity === "critical";
+      items.push({
+        id: `alert-${alert.playerId}-${alert.alertType}`,
+        tier: isCritical ? "critical" : "watch",
+        tierLabel: isCritical ? "Critical" : "Watch",
+        initials: this.initialsFor(alert.playerName),
+        avatarTone: isCritical ? "danger" : "warn",
+        name: `${alert.playerName}${alert.position ? ` · ${alert.position}` : ""}`,
+        reason: alert.message ?? "Risk flag",
+        metricValue: alert.readiness !== undefined ? `${alert.readiness}%` :
+                     alert.acwr !== undefined ? alert.acwr.toFixed(2) : "—",
+        metricLabel: alert.readiness !== undefined ? "Ready" : "ACWR",
+        metricTone: isCritical ? "danger" : "warn",
+        suggestion: this.suggestionFor(alert),
+        suggestionCta: isCritical ? "Schedule + flag" : "Apply",
+      });
+    }
+
+    // From missing data (monitor)
+    for (const md of this.playersWithMissingData().slice(0, 4 - items.length)) {
+      items.push({
+        id: `missing-${md.playerId}`,
+        tier: "monitor",
+        tierLabel: "Monitor",
+        initials: this.initialsFor(md.playerName),
+        avatarTone: "info",
+        name: md.playerName,
+        reason: `${md.daysMissing} day${md.daysMissing === 1 ? "" : "s"} since last check-in — data gap building`,
+        metricValue: `${md.daysMissing}d`,
+        metricLabel: "no log",
+        metricTone: "neutral",
+        suggestion: "Send 1-tap reminder; auto-pause confidence at 60% until logs resume.",
+        suggestionCta: "Send nudge",
+      });
+    }
+
+    return items.slice(0, 4);
+  });
+
+  /** Context-aware quick actions per state (2-3 per state) */
+  readonly quickActionsForState = computed(() => {
+    interface QuickAction {
+      icon: string;
+      label: string;
+      primary: boolean;
+      action: () => void;
+    }
+
+    switch (this.currentState()) {
+      case "live":
+        return [
+          { icon: "▶", label: "Start live tracker", primary: true, action: () => this.router.navigate(["/game-tracker"]) },
+          { icon: "🏈", label: "Open playbook", primary: false, action: () => this.router.navigate(["/playbook"]) },
+        ] as QuickAction[];
+      case "pregame":
+        return [
+          { icon: "🏈", label: "Set Sunday lineup", primary: true, action: () => this.router.navigate(["/coach/lineup"]) },
+          { icon: "🎬", label: "Review opponent film", primary: false, action: () => this.router.navigate(["/coach/scouting"]) },
+          { icon: "📋", label: "Send game logistics", primary: false, action: () => this.openTeamMessage() },
+        ] as QuickAction[];
+      case "offseason":
+        return [
+          { icon: "📅", label: "Plan next microcycle", primary: true, action: () => this.router.navigate(["/coach/planning"]) },
+          { icon: "📊", label: "Phase review", primary: false, action: () => this.navigateToCoachAnalytics() },
+          { icon: "📣", label: "Send weekly recap", primary: false, action: () => this.openTeamMessage() },
+        ] as QuickAction[];
+      default: // practice
+        return [
+          { icon: "⚡", label: "Start practice", primary: true, action: () => this.openCreateSession() },
+          { icon: "📋", label: "Mark attendance", primary: false, action: () => this.router.navigate(["/attendance"]) },
+          { icon: "📅", label: "Plan tomorrow", primary: false, action: () => this.planTomorrow() },
+        ] as QuickAction[];
+    }
+  });
+
+  /** "Right now" banner content per state */
+  readonly rightNowBanner = computed(() => {
+    const state = this.currentState();
+    const overview = this.teamOverview();
+
+    if (state === "live") {
+      return {
+        badge: "Now",
+        tone: "urgent" as const,
+        title: "Game today — open live tracker",
+        sub: "Lineup locked · 21/22 confirmed · field check ✓",
+        ctaLabel: "Open live tracker →",
+        ctaAction: () => this.router.navigate(["/game-tracker"]),
+      };
+    }
+    if (state === "pregame") {
+      const days = this.nextGameDaysUntil();
+      return {
+        badge: "Right now",
+        tone: "urgent" as const,
+        title: `Set Sunday's lineup — game in ${days} day${days === 1 ? "" : "s"}`,
+        sub: `${overview.activePlayers} active · ${overview.injuredPlayers} injured · ${this.atRiskCount()} at risk`,
+        ctaLabel: "Set lineup →",
+        ctaAction: () => this.router.navigate(["/coach/lineup"]),
+      };
+    }
+    if (state === "offseason") {
+      return {
+        badge: "This week",
+        tone: "neutral" as const,
+        title: "Plan next microcycle — week starts Monday",
+        sub: "Review last week's team load and adjust intensity for the upcoming block.",
+        ctaLabel: "Open planner →",
+        ctaAction: () => this.router.navigate(["/coach/planning"]),
+      };
+    }
+    // practice
+    const nextSession = this.trainingSessions()[0];
+    const sessionLabel = nextSession ? `${nextSession.title} at ${nextSession.time ?? "today"}` : "Today's training plan";
+    return {
+      badge: "Right now",
+      tone: "default" as const,
+      title: `Review ${sessionLabel}`,
+      sub: `${this.atRiskCount()} at risk · ${this.playersWithMissingData().length} pending check-ins`,
+      ctaLabel: "Open plan →",
+      ctaAction: () => this.openCreateSession(),
+    };
+  });
+
+  /** Helper: initials from a name */
+  private initialsFor(name: string): string {
+    return name.split(" ").map((s) => s.charAt(0)).slice(0, 2).join("").toUpperCase();
+  }
+
+  /** Merlin-suggested action text per alert (keeps tone consistent with mockup) */
+  private suggestionFor(alert: RiskAlert): string {
+    if (alert.alertType === "overtraining") {
+      return "Drop next session to 60% volume; cap warm-up reps at 50%.";
+    }
+    if (alert.alertType === "undertraining") {
+      return "Add a 2-block conditioning session this week to ease back into load.";
+    }
+    if (alert.alertType === "injury_risk") {
+      return "Schedule clearance assessment; mark as doubtful in lineup.";
+    }
+    return "Review situation and apply load adjustment if needed.";
   }
 }

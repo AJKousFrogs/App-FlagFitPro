@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FlagFit Pro — Static Mockups Index</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="_shared/tokens.css">
+<link rel="stylesheet" href="_shared/base.css">
+<script src="_shared/theme.js"></script>
+<style>
+  .hero-intro { padding: var(--space-12) var(--space-6) var(--space-8); text-align: center; background: radial-gradient(ellipse at top, color-mix(in srgb, var(--accent) 15%, transparent) 0%, transparent 60%); border-bottom: 1px solid var(--bg-line); }
+  .hero-intro h1 { font-size: clamp(40px, 6vw, 72px); line-height: 1; margin-bottom: var(--space-4); }
+  .hero-intro h1 .accent { color: var(--accent); }
+  .hero-intro p { color: var(--text-1); font-size: 18px; max-width: 640px; margin: 0 auto; line-height: 1.5; }
+  .section { max-width: var(--shell-max); margin: 0 auto; padding: var(--space-10) var(--content-pad); }
+  .section__head { display: flex; align-items: baseline; justify-content: space-between; gap: var(--space-4); margin-bottom: var(--space-6); border-bottom: 1px solid var(--bg-line); padding-bottom: var(--space-4); }
+  .section__head h2 { font-size: var(--fs-2xl); letter-spacing: -0.02em; }
+  .section__count { font-family: var(--font-mono); font-size: var(--fs-xs); color: var(--text-2); letter-spacing: 0.06em; }
+  .mockup-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: var(--space-4); }
+  .mockup-card { display: grid; grid-template-rows: auto 1fr auto; padding: var(--space-5); background: var(--bg-1); border: 1px solid var(--bg-line); border-radius: var(--radius-xl); text-decoration: none; color: var(--text-0); transition: all 120ms ease; min-height: 180px; }
+  .mockup-card:hover { transform: translateY(-2px); border-color: color-mix(in srgb, var(--accent) 40%, var(--bg-line)); text-decoration: none; }
+  .mockup-card--pending { opacity: 0.55; pointer-events: none; }
+  .mockup-card__row { display: flex; align-items: center; justify-content: space-between; gap: var(--space-2); }
+  .mockup-card__num { font-family: var(--font-mono); font-size: 11px; color: var(--text-2); letter-spacing: 0.06em; }
+  .mockup-card__status { font-family: var(--font-mono); font-size: 10px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; padding: 3px 8px; border-radius: var(--radius-sm); }
+  .status-review { background: color-mix(in srgb, var(--info) 18%, transparent); color: var(--info); }
+  .status-approved { background: color-mix(in srgb, var(--ok) 18%, transparent); color: var(--ok); }
+  .status-pending { background: var(--bg-2); color: var(--text-3); border: 1px dashed var(--bg-line); }
+  .mockup-card__title { font-family: var(--font-display); font-size: 22px; font-weight: 800; margin-top: 16px; letter-spacing: -0.01em; }
+  .mockup-card__desc { color: var(--text-1); font-size: 14px; line-height: 1.5; margin-top: var(--space-2); }
+  .mockup-card__route { font-family: var(--font-mono); font-size: 11px; color: var(--text-2); margin-top: var(--space-3); }
+</style>
+</head>
+<body>
+
+<header class="page-chrome">
+  <div class="page-chrome__left">
+    <div class="brand"><div class="brand__mark">F</div>FlagFit <span class="brand__sub">Pro</span></div>
+    <span class="crumb">Static mockups · v2</span>
+  </div>
+  <div class="page-chrome__right">
+    <button type="button" class="theme-toggle" data-theme-toggle><span data-theme-label>Light mode</span></button>
+  </div>
+</header>
+
+<section class="hero-intro">
+  <h1>Static mockups <span class="accent">complete.</span></h1>
+  <p>All 12 P0/P1 pages designed. Open any to preview the redesign in dark or light mode.</p>
+</section>
+
+<section class="section">
+  <div class="section__head">
+    <h2>Pages — P0/P1 (top 12)</h2>
+    <span class="section__count">3 shipped to Angular · 9 in review</span>
+  </div>
+  <div class="mockup-grid">
+    <a class="mockup-card" href="pages/10-landing.html"><div class="mockup-card__row"><span class="mockup-card__num">10</span><span class="mockup-card__status status-approved">✓ Shipped</span></div><div><div class="mockup-card__title">Landing</div><div class="mockup-card__desc">Public marketing · outcome-driven · charts inside</div><div class="mockup-card__route">/ · live in Angular</div></div></a>
+
+    <a class="mockup-card" href="pages/11-auth.html"><div class="mockup-card__row"><span class="mockup-card__num">11</span><span class="mockup-card__status status-review">In review</span></div><div><div class="mockup-card__title">Auth (Login + Register)</div><div class="mockup-card__desc">Split brand-stage + form · login/register toggle · SSO</div><div class="mockup-card__route">/login · /register</div></div></a>
+
+    <a class="mockup-card" href="pages/20-player-dashboard.html"><div class="mockup-card__row"><span class="mockup-card__num">20</span><span class="mockup-card__status status-approved">✓ Shipped</span></div><div><div class="mockup-card__title">Player Dashboard</div><div class="mockup-card__desc">Readiness ring hero · action grid · up next · 3 stats</div><div class="mockup-card__route">/player-dashboard · live</div></div></a>
+
+    <a class="mockup-card" href="pages/21-coach-dashboard.html"><div class="mockup-card__row"><span class="mockup-card__num">21</span><span class="mockup-card__status status-approved">✓ Shipped</span></div><div><div class="mockup-card__title">Coach Dashboard v2</div><div class="mockup-card__desc">Team hero · 4-state engine · Merlin suggestions · prep timeline</div><div class="mockup-card__route">/coach/dashboard · live</div></div></a>
+
+    <a class="mockup-card" href="pages/22-todays-practice.html"><div class="mockup-card__row"><span class="mockup-card__num">22</span><span class="mockup-card__status status-approved">✓ Shipped</span></div><div><div class="mockup-card__title">Today's Practice</div><div class="mockup-card__desc">Focused single-block view · kills 67-exercise overwhelm</div><div class="mockup-card__route">/todays-practice · partial</div></div></a>
+
+    <a class="mockup-card" href="../mockups/mockup-charts.html"><div class="mockup-card__row"><span class="mockup-card__num">23</span><span class="mockup-card__status status-review">Reference</span></div><div><div class="mockup-card__title">Wellness Check-in</div><div class="mockup-card__desc">Rating sliders implemented · static mockup pending</div><div class="mockup-card__route">/wellness · partial</div></div></a>
+
+    <a class="mockup-card" href="pages/30-roster.html"><div class="mockup-card__row"><span class="mockup-card__num">30</span><span class="mockup-card__status status-review">In review</span></div><div><div class="mockup-card__title">Roster</div><div class="mockup-card__desc">Empty-state hero · mobile-first cards · sortable</div><div class="mockup-card__route">/roster</div></div></a>
+
+    <a class="mockup-card" href="pages/31-analytics.html"><div class="mockup-card__row"><span class="mockup-card__num">31</span><span class="mockup-card__status status-review">In review</span></div><div><div class="mockup-card__title">Analytics</div><div class="mockup-card__desc">Hero ACWR gauge · curated charts · focus areas</div><div class="mockup-card__route">/performance/insights</div></div></a>
+
+    <a class="mockup-card" href="pages/32-acwr.html"><div class="mockup-card__row"><span class="mockup-card__num">32</span><span class="mockup-card__status status-review">In review</span></div><div><div class="mockup-card__title">ACWR Dashboard</div><div class="mockup-card__desc">Large gauge hero · workload trend · confidence indicator</div><div class="mockup-card__route">/acwr</div></div></a>
+
+    <a class="mockup-card" href="pages/33-playbook.html"><div class="mockup-card__row"><span class="mockup-card__num">33</span><span class="mockup-card__status status-review">In review</span></div><div><div class="mockup-card__title">Playbook</div><div class="mockup-card__desc">Memorization hero + 5-play quiz · role-filtered cards</div><div class="mockup-card__route">/playbook</div></div></a>
+
+    <a class="mockup-card" href="pages/34-profile.html"><div class="mockup-card__row"><span class="mockup-card__num">34</span><span class="mockup-card__status status-review">In review</span></div><div><div class="mockup-card__title">Profile</div><div class="mockup-card__desc">Identity hero · headline stat (best 40) · 52-week heatmap · achievements</div><div class="mockup-card__route">/profile</div></div></a>
+
+  </div>
+</section>
+
+<div class="mockup-banner">Mockup · Index</div>
+
+</body>
+</html>

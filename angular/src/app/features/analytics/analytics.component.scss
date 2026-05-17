@@ -33,16 +33,17 @@
     }
 
     .bento-title {
+      font-family: var(--ds-font-family-display, var(--ds-font-family-base));
       font-size: var(--ds-font-size-md);
-      font-weight: var(--ds-font-weight-semibold);
-      letter-spacing: -0.015em;
-      margin-bottom: var(--space-5);
+      font-weight: var(--ds-font-weight-extrabold, 800);
+      letter-spacing: -0.005em;
+      margin-bottom: var(--space-4);
       color: var(--color-text-primary);
       display: flex;
       align-items: center;
-      gap: var(--space-3);
+      gap: var(--space-2);
 
-      i { color: var(--ds-primary-green); font-size: var(--ds-font-size-md); }
+      i { color: var(--ds-primary-green); font-size: var(--ds-font-size-lg); }
     }
   }
 

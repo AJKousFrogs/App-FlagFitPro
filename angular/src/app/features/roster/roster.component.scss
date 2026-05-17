@@ -84,11 +84,11 @@
   }
 
   .section-nav__label {
-    font-size: var(--ds-font-size-xs);
-    font-weight: var(--ds-font-weight-semibold);
+    font-size: 11px;
+    font-weight: var(--ds-font-weight-extrabold, 800);
     color: var(--color-text-secondary);
-    text-transform: var(--ds-text-transform-uppercase);
-    letter-spacing: var(--ds-letter-spacing-wide);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
   }
 
   .invites-section {
@@ -172,35 +172,39 @@
     display: flex;
     align-items: center;
     gap: var(--space-3);
-    margin-bottom: var(--space-5);
+    margin-bottom: var(--space-4);
 
     i {
-      font-size: 1.25rem;
+      font-size: 1.125rem;
       color: var(--ds-primary-green);
     }
 
     h4 {
-      margin: var(--space-0);
+      margin: 0;
+      font-family: var(--ds-font-family-display, var(--ds-font-family-base));
       font-size: var(--ds-font-size-md);
-      font-weight: var(--ds-font-weight-bold);
+      font-weight: var(--ds-font-weight-extrabold, 800);
+      letter-spacing: 0.06em;
       text-transform: uppercase;
-      letter-spacing: 0.05em;
+      color: var(--color-text-primary);
     }
 
     .count {
       background: var(--surface-secondary);
-      padding: var(--space-0-5) var(--space-2-5);
+      padding: 2px var(--space-2-5);
       border-radius: var(--radius-full);
-      font-size: var(--ds-font-size-xs);
-      font-weight: var(--ds-font-weight-bold);
+      font-size: 11px;
+      font-weight: var(--ds-font-weight-extrabold, 800);
+      letter-spacing: 0.04em;
       color: var(--color-text-secondary);
+      font-variant-numeric: tabular-nums;
     }
   }
 
   .roster-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(var(--grid-card-min-md), 1fr));
-    gap: var(--space-4);
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: var(--space-3);
   }
 }
 

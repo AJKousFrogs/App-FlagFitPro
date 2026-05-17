@@ -46,155 +46,172 @@ import { CardShellComponent } from "../../../shared/components/card-shell/card-s
     FormInputComponent,
   ],
   template: `
-<div class="register-page elite-auth-shell">
-      <app-card-shell class="register-card elite-auth-card elite-auth-card--register">
-        <div class="elite-auth-intro">
-          <div class="register-logo elite-auth-logo">
-            <i class="pi pi-flag-fill"></i>
-          </div>
-          <span class="elite-auth-kicker">Get Started</span>
-          <h1 class="register-title elite-auth-title">Create Your Account</h1>
-          <p class="elite-auth-subtitle">
-            Set up your athlete profile and unlock training, readiness, and
-            daily practice in one account.
-          </p>
+<div class="auth-shell-v2">
+
+  <!-- LEFT — brand stage -->
+  <aside class="auth-stage" aria-hidden="true">
+    <div class="auth-stage__inner">
+      <span class="auth-stage__eyebrow">
+        <span class="auth-stage__eyebrow-dot"></span>
+        FlagFit Pro · Get started free
+      </span>
+      <h2 class="auth-stage__title">
+        Train smarter.<br>
+        Win <span class="auth-stage__title-mark">Sundays.</span>
+      </h2>
+      <p class="auth-stage__lead">
+        Build your athlete profile in 60 seconds. Free during beta.
+        No credit card. Cancel anytime.
+      </p>
+      <div class="auth-stage__metrics">
+        <div class="auth-stage__metric">
+          <div class="auth-stage__metric-num">&minus;42<small>%</small></div>
+          <div class="auth-stage__metric-lab">injuries</div>
         </div>
-
-        <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="elite-auth-form">
-          <div class="form-field elite-auth-field">
-            <app-form-input
-              label="Full Name"
-              formControlName="name"
-              placeholder="Enter your full name"
-              data-testid="name-input"
-              styleClass="w-full"
-            />
-            @if (isFieldInvalid("name")) {
-              <small id="name-error" class="form-error" role="alert">
-                {{ getFieldError("name") }}
-              </small>
-            }
-          </div>
-
-          <div class="form-field elite-auth-field">
-            <app-form-input
-              label="Email"
-              formControlName="email"
-              placeholder="Enter your email"
-              data-testid="email-input"
-              styleClass="w-full"
-            />
-            @if (isFieldInvalid("email")) {
-              <small id="register-email-error" class="form-error" role="alert">
-                {{ getFieldError("email") }}
-              </small>
-            }
-          </div>
-
-          <div class="form-field elite-auth-field">
-            <app-form-input
-              label="Password"
-              formControlName="password"
-              type="password"
-              placeholder="Create a password"
-              data-testid="password-input"
-              styleClass="w-full"
-            />
-            @if (isFieldInvalid("password")) {
-              <small id="register-password-error" class="form-error" role="alert">
-                {{ getFieldError("password") }}
-              </small>
-            }
-            <small id="register-password-hint" class="form-help">
-              Min. 8 characters — must include uppercase, lowercase, number, and special character (@ $ ! % * ? &).
-            </small>
-          </div>
-
-          <div class="form-field elite-auth-field">
-            <app-form-input
-              label="Confirm Password"
-              formControlName="confirmPassword"
-              type="password"
-              placeholder="Confirm your password"
-              data-testid="confirm-password-input"
-              styleClass="w-full"
-            />
-            @if (isFieldInvalid("confirmPassword")) {
-              <small
-                id="register-confirmPassword-error"
-                class="form-error"
-                role="alert"
-              >
-                {{ getFieldError("confirmPassword") }}
-              </small>
-            }
-          </div>
-
-          <div class="form-field elite-auth-field">
-            <label class="form-check age-verification" for="ageVerification">
-              <input
-                id="ageVerification"
-                type="checkbox"
-                formControlName="ageVerification"
-                class="form-check__input"
-                data-testid="age-checkbox"
-              />
-              <span class="form-check__box" aria-hidden="true"></span>
-              <span class="form-check__label age-label">
-                I confirm that I am <strong>16 years of age or older</strong>
-              </span>
-            </label>
-            @if (isFieldInvalid("ageVerification")) {
-              <small class="form-error">
-                You must be 16 or older to use this app
-              </small>
-            }
-          </div>
-
-          <div class="form-field elite-auth-field">
-            <label class="form-check terms-agreement" for="termsAccepted">
-              <input
-                id="termsAccepted"
-                type="checkbox"
-                formControlName="termsAccepted"
-                class="form-check__input"
-                data-testid="terms-checkbox"
-              />
-              <span class="form-check__box" aria-hidden="true"></span>
-              <span class="form-check__label terms-label">
-                I agree to the
-                <a href="/terms" target="_blank">Terms of Service</a> and
-                <a href="/privacy-policy" target="_blank">Privacy Policy</a>
-              </span>
-            </label>
-            @if (isFieldInvalid("termsAccepted")) {
-              <small class="form-error">
-                You must accept the Terms and Privacy Policy
-              </small>
-            }
-          </div>
-
-          <app-button
-            type="submit"
-            iconLeft="pi-user-plus"
-            [loading]="isLoading()"
-            [disabled]="registerForm.invalid || isLoading()"
-            [fullWidth]="true"
-            class="elite-auth-sticky-cta"
-            testId="register-submit"
-            >Create Account</app-button
-          >
-        </form>
-
-        <div class="register-divider elite-auth-divider">
-          <span>Or</span>
+        <div class="auth-stage__metric">
+          <div class="auth-stage__metric-num">3.4&times;</div>
+          <div class="auth-stage__metric-lab">efficiency</div>
         </div>
-
-        <a [routerLink]="['/login']" class="register-login-link elite-auth-link elite-auth-link--centered"
-          >Already have an account? Sign in</a
-        >
-      </app-card-shell>
+        <div class="auth-stage__metric">
+          <div class="auth-stage__metric-num">87<small>%</small></div>
+          <div class="auth-stage__metric-lab">adherence</div>
+        </div>
+      </div>
     </div>
+  </aside>
+
+  <!-- RIGHT — form -->
+  <main class="auth-form-wrap">
+    <div class="auth-form-v2">
+
+      <header class="auth-form-v2__head">
+        <h1 class="auth-form-v2__title">Get started.</h1>
+        <p class="auth-form-v2__sub">Free during beta. No credit card.</p>
+      </header>
+
+      <form
+        [formGroup]="registerForm"
+        (ngSubmit)="onSubmit()"
+        class="auth-form-v2__form"
+        novalidate
+      >
+
+        <div class="auth-field">
+          <app-form-input
+            label="Full Name"
+            formControlName="name"
+            placeholder="AJ Kous"
+            autocomplete="name"
+            data-testid="name-input"
+            styleClass="w-full"
+          />
+          @if (isFieldInvalid("name")) {
+            <small id="name-error" class="auth-field__error" role="alert">{{ getFieldError("name") }}</small>
+          }
+        </div>
+
+        <div class="auth-field">
+          <app-form-input
+            label="Email"
+            formControlName="email"
+            type="email"
+            placeholder="you@team.com"
+            autocomplete="email"
+            data-testid="email-input"
+            styleClass="w-full"
+          />
+          @if (isFieldInvalid("email")) {
+            <small id="register-email-error" class="auth-field__error" role="alert">{{ getFieldError("email") }}</small>
+          }
+        </div>
+
+        <div class="auth-field">
+          <app-form-input
+            label="Password"
+            formControlName="password"
+            type="password"
+            placeholder="At least 8 characters"
+            autocomplete="new-password"
+            data-testid="password-input"
+            styleClass="w-full"
+          />
+          @if (isFieldInvalid("password")) {
+            <small id="register-password-error" class="auth-field__error" role="alert">{{ getFieldError("password") }}</small>
+          }
+          <small class="auth-field__hint">
+            8+ chars · upper + lower + number + symbol (&commat; &#36; &#33; &#37; &#42; &#63; &amp;)
+          </small>
+        </div>
+
+        <div class="auth-field">
+          <app-form-input
+            label="Confirm Password"
+            formControlName="confirmPassword"
+            type="password"
+            placeholder="Repeat your password"
+            autocomplete="new-password"
+            data-testid="confirm-password-input"
+            styleClass="w-full"
+          />
+          @if (isFieldInvalid("confirmPassword")) {
+            <small id="register-confirmPassword-error" class="auth-field__error" role="alert">{{ getFieldError("confirmPassword") }}</small>
+          }
+        </div>
+
+        <label class="auth-check" for="ageVerification">
+          <input
+            id="ageVerification"
+            type="checkbox"
+            formControlName="ageVerification"
+            class="auth-check__input"
+            data-testid="age-checkbox"
+          />
+          <span class="auth-check__box" aria-hidden="true"></span>
+          <span class="auth-check__label">
+            I'm <strong>16 or older</strong>
+          </span>
+        </label>
+        @if (isFieldInvalid("ageVerification")) {
+          <small class="auth-field__error">You must be 16 or older to use this app.</small>
+        }
+
+        <label class="auth-check" for="termsAccepted">
+          <input
+            id="termsAccepted"
+            type="checkbox"
+            formControlName="termsAccepted"
+            class="auth-check__input"
+            data-testid="terms-checkbox"
+          />
+          <span class="auth-check__box" aria-hidden="true"></span>
+          <span class="auth-check__label">
+            I agree to the
+            <a href="/terms" target="_blank" class="auth-link">Terms</a>
+            and
+            <a href="/privacy-policy" target="_blank" class="auth-link">Privacy Policy</a>
+          </span>
+        </label>
+        @if (isFieldInvalid("termsAccepted")) {
+          <small class="auth-field__error">You must accept the Terms and Privacy Policy.</small>
+        }
+
+        <app-button
+          type="submit"
+          iconLeft="pi-user-plus"
+          [loading]="isLoading()"
+          [disabled]="registerForm.invalid || isLoading()"
+          [fullWidth]="true"
+          testId="register-submit"
+        >Create account</app-button>
+      </form>
+
+      <p class="auth-form-v2__footnote">
+        Already have an account?
+        <a [routerLink]="['/login']" class="auth-link auth-link--bold">Sign in</a>
+      </p>
+    </div>
+  </main>
+</div>
   `,
   styleUrl: "./register.component.scss",
 })

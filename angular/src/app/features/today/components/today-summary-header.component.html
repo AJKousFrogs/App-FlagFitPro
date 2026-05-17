@@ -51,11 +51,11 @@
           <p class="exact-training-description">{{ summary.description }}</p>
 
           <!--
-            Redesign 2026-05: replaced the 3-equal-tile row (BLOCKS/EXERCISES/DURATION)
-            with ONE prominent duration headline + a compact subline. The live audit
-            found "11 blocks / 67 exercises / 188 min" reads as overwhelming when
-            shown as 3 equal tiles. Duration is the only decision-relevant metric
-            ("can I do this today?"); block/exercise counts are supporting detail.
+            Redesign 2026-05: replaced the 3-equal-tile metric row (BLOCKS/EXERCISES/DURATION)
+            with ONE prominent duration headline + a compact subline.
+            Live audit found "11 blocks / 67 exercises / 188 min" reads as overwhelming.
+            Duration is the only decision-relevant metric ("can I do this today?");
+            block/exercise counts are supporting detail.
           -->
           <div class="exact-training-metrics exact-training-metrics--hero">
             <div class="exact-training-metric exact-training-metric--hero">
@@ -75,7 +75,7 @@
             </div>
             @if (summary.estimatedMinutes > 120) {
               <p class="exact-training-metric__hint">
-                Long session today — the plan adapts as you log wellness check-ins.
+                Long session — the plan adapts as you log wellness check-ins.
                 Most players settle at 45–60 min after the first week.
               </p>
             }
