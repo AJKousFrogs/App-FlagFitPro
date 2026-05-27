@@ -536,10 +536,17 @@
   flex: 1;
   background: transparent;
   border: none;
-  outline: none;
   font-size: var(--ds-font-size-md);
   color: var(--color-text-primary);
   padding: var(--space-2);
+
+  &:focus:not(:focus-visible) {
+    outline: none;
+  }
+  &:focus-visible {
+    outline: 2px solid var(--ds-primary-green);
+    outline-offset: 2px;
+  }
 }
 
 .message-input::placeholder {
@@ -559,6 +566,21 @@
   scrollbar-width: none;
   &::-webkit-scrollbar {
     display: none;
+  }
+}
+
+.quick-replies-container {
+  position: relative;
+
+  &::after {
+    content: "";
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width: 32px;
+    background: linear-gradient(to right, transparent, var(--surface-card));
+    pointer-events: none;
   }
 }
 

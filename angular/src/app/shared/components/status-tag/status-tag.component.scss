@@ -29,13 +29,20 @@
   border-radius: var(--component-badge-radius-md);
   border: none;
   box-shadow: var(--component-badge-shadow);
-  outline: none;
   background-color: var(--component-badge-success-bg);
   color: var(--component-badge-success-text);
   flex-shrink: 0;
   transition:
     box-shadow var(--transition-fast) var(--ease-standard),
     transform var(--transition-fast) var(--ease-standard);
+
+  &:focus:not(:focus-visible) {
+    outline: none;
+  }
+  &:focus-visible {
+    outline: 2px solid var(--ds-primary-green);
+    outline-offset: 2px;
+  }
 }
 
 .status-tag i {

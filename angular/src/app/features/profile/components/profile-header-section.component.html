@@ -7,11 +7,10 @@
     <div class="avatar-wrapper">
       @if (avatarUrl()) {
         <img
-          appMobileOptimized
+          [ngSrc]="avatarUrl()!"
           [width]="200"
           [height]="200"
-          [src]="avatarUrl()"
-          loading="eager"
+          priority
           alt="Profile picture"
           class="profile-avatar-img"
         />

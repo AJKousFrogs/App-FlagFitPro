@@ -26,6 +26,8 @@ import {
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { ActivatedRoute, ParamMap } from "@angular/router";
+import { ConfirmationService } from "primeng/api";
+import { ConfirmPopup } from "primeng/confirmpopup";
 import { AvatarComponent } from "../../shared/components/avatar/avatar.component";
 import { BadgeComponent } from "../../shared/components/badge/badge.component";
 import { Tooltip } from "primeng/tooltip";
@@ -66,6 +68,7 @@ import { ChatPinnedMessagesDialogComponent } from "./components/chat-pinned-mess
   imports: [
     AvatarComponent,
     BadgeComponent,
+    ConfirmPopup,
     ScrollingModule,
     Tooltip,
     MainLayoutComponent,
@@ -80,6 +83,7 @@ import { ChatPinnedMessagesDialogComponent } from "./components/chat-pinned-mess
     ChatPinnedMessagesDialogComponent,
     FormInputComponent,
   ],
+  providers: [ConfirmationService],
   templateUrl: "./chat.component.html",
 
   styleUrl: "./chat.component.scss",
@@ -95,6 +99,7 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
   private channelService = inject(ChannelService);
   private presenceService = inject(PresenceService);
   private dialogService = inject(DialogService);
+  private readonly confirmationService = inject(ConfirmationService);
   private route = inject(ActivatedRoute);
   private destroyRef = inject(DestroyRef);
 
@@ -499,10 +504,18 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
-  async deleteMessage(message: ChatMessage): Promise<void> {
-    const confirmed = await this.dialogService.confirm("Delete this message?");
-    if (!confirmed) return;
+  confirmDelete(event: Event, message: ChatMessage): void {
+    this.confirmationService.confirm({
+      target: event.target as EventTarget,
+      message: "Delete this message?",
+      icon: "pi pi-trash",
+      accept: () => {
+        this.deleteMessage(message);
+      },
+    });
+  }
 
+  async deleteMessage(message: ChatMessage): Promise<void> {
     try {
       await this.channelService.deleteMessage(message.id);
       this.toastService.success(TOAST.SUCCESS.MESSAGE_DELETED);
@@ -671,8 +684,13 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   formatMessageContent(content: string): string {
-    // Convert @mentions to styled spans
-    return content.replace(/@(\w+\s?\w*)/g, '<span class="mention">@$1</span>');
+    const escaped = content
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#x27;");
+    return escaped.replace(/@(\w+\s?\w*)/g, '<span class="mention">@$1</span>');
   }
 
   formatTime = (timestamp: string): string => getTimeAgo(timestamp);
@@ -794,9 +812,9 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
     return teamId;
   }
 
-  sendQuickReply(reply: string): void {
+  async sendQuickReply(reply: string): Promise<void> {
     this.newMessage = reply;
-    this.sendMessage();
+    await this.sendMessage();
   }
 
   openCreateChannelDialog(): void {

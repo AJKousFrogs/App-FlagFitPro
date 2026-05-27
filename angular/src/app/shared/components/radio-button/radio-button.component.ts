@@ -25,7 +25,7 @@ import { RadioButtonModule, RadioButtonClickEvent } from "primeng/radiobutton";
     },
   ],
   template: `
-    <div class="app-radio-button-wrapper flex align-items-center gap-2">
+    <div class="app-radio-button-wrapper" style="display: flex; align-items: center; gap: var(--space-2)">
       <p-radioButton
         [name]="name()"
         [value]="value()"
@@ -36,7 +36,7 @@ import { RadioButtonModule, RadioButtonClickEvent } from "primeng/radiobutton";
         styleClass="app-radio-button"
       ></p-radioButton>
       @if (label()) {
-        <label [for]="inputId()" class="cursor-pointer" [class.text-gray-500]="isDisabled()">
+        <label [for]="inputId()" style="cursor: pointer" [style.color]="isDisabled() ? 'var(--color-text-secondary)' : null">
           {{ label() }}
         </label>
       }

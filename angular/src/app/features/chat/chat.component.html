@@ -1,3 +1,4 @@
+<p-confirmpopup />
 <app-main-layout>
       <div class="chat-page">
         <!-- Chat Header -->
@@ -303,7 +304,7 @@
                                 icon="pi-trash"
                                 variant="text"
                                 size="sm"
-                                (clicked)="deleteMessage(message)"
+                                (clicked)="confirmDelete($event, message)"
                                 ariaLabel="Delete message"
                                 tooltip="Delete"
                               />

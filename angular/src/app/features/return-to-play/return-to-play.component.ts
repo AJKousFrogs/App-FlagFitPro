@@ -11,12 +11,14 @@ import { CommonModule } from "@angular/common";
 import {
   ChangeDetectionStrategy,
   Component,
+  computed,
   inject,
   OnInit,
   DestroyRef,
   signal,
 } from "@angular/core";
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { Timeline } from "primeng/timeline";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { ToastService } from "../../core/services/toast.service";
 import { TOAST } from "../../core/constants/toast-messages.constants";
@@ -304,6 +306,7 @@ const SEVERITY_LEVELS = [
     ProgressBarComponent,
     SelectComponent,
     Slider,
+    Timeline,
     TableComponent,
     StatusTagComponent,
     TextareaComponent,
@@ -347,6 +350,20 @@ export class ReturnToPlayComponent implements OnInit {
 
   // Constants
   readonly protocolStages = PROTOCOL_STAGES;
+
+  /** Timeline-friendly stages derived from the active protocol */
+  readonly stages = computed(() => {
+    const protocol = this.activeProtocol();
+    const currentStage = protocol?.currentStage ?? 1;
+    return PROTOCOL_STAGES.map((stage) => ({
+      number: stage.stage,
+      title: stage.shortName,
+      description: `${stage.loadPercentage}% load`,
+      completed: stage.stage < currentStage,
+      current: stage.stage === currentStage,
+    }));
+  });
+
   readonly injuryTypes = INJURY_TYPES;
   readonly injuryLocations = INJURY_LOCATIONS;
   readonly severityLevels = SEVERITY_LEVELS;

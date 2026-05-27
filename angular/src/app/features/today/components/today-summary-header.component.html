@@ -161,10 +161,9 @@
                       <div class="exact-training-videos__thumbnail">
                         @if (video.thumbnailUrl) {
                           <img
-                            [src]="video.thumbnailUrl"
+                            [ngSrc]="video.thumbnailUrl"
                             [alt]="video.exerciseName"
-                            loading="lazy"
-                            decoding="async"
+                            fill
                           />
                         } @else {
                           <i class="pi pi-play" aria-hidden="true"></i>

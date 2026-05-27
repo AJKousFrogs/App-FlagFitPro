@@ -25,7 +25,7 @@ import { CheckboxModule, CheckboxChangeEvent } from "primeng/checkbox";
     },
   ],
   template: `
-    <div class="app-checkbox-wrapper flex align-items-center gap-2">
+    <div class="app-checkbox-wrapper" style="display: flex; align-items: center; gap: var(--space-2)">
       <p-checkbox
         [binary]="binary()"
         [name]="name()"
@@ -36,7 +36,7 @@ import { CheckboxModule, CheckboxChangeEvent } from "primeng/checkbox";
         [inputId]="inputId()"
         styleClass="app-checkbox"
       ></p-checkbox>
-      <label [for]="inputId()" class="cursor-pointer flex align-items-center gap-2" [class.text-gray-500]="isDisabled()">
+      <label [for]="inputId()" [style.cursor]="'pointer'" [style.color]="isDisabled() ? 'var(--color-text-secondary)' : null" style="display: flex; align-items: center; gap: var(--space-2)">
         @if (label()) {
           {{ label() }}
         }
@@ -64,8 +64,6 @@ export class CheckboxComponent<T = unknown> implements ControlValueAccessor {
   binary = input(true);
   disabled = input(false);
   inputId = input<string>(`app-checkbox-${Math.random().toString(36).slice(2, 11)}`);
-  labelPosition = input<"left" | "right">("right");
-
   // Outputs
   change = output<CheckboxChangeEvent>();
   checkedChange = output<boolean>();

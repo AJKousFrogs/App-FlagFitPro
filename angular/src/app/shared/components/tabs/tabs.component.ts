@@ -54,6 +54,8 @@ export class AppTabPanelDirective {
     :host {
       display: block;
       width: 100%;
+      background: var(--tabs-background, transparent);
+      border-radius: var(--tabs-border-radius, 0);
     }
   `]
 })

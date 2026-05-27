@@ -292,23 +292,30 @@ async function updateStreak(supabase, userId, payload) {
   const unlocked = result?.[0]?.achievements_unlocked || [];
   const awardedAchievements = [];
 
-  for (const slug of unlocked) {
-    const awarded = await supabase.rpc("award_achievement", {
-      p_user_id: userId,
-      p_achievement_slug: slug,
-      p_context: { streak_length: result[0].new_streak },
-    });
+  if (unlocked.length > 0) {
+    // Batch-award all achievements in parallel
+    const awardResults = await Promise.all(
+      unlocked.map((slug) =>
+        supabase.rpc("award_achievement", {
+          p_user_id: userId,
+          p_achievement_slug: slug,
+          p_context: { streak_length: result[0].new_streak },
+        }),
+      ),
+    );
 
-    if (awarded.data) {
-      // Get achievement details
-      const { data: achDetail } = await supabase
+    // Collect slugs that were successfully awarded
+    const awardedSlugs = unlocked.filter((_, i) => awardResults[i].data);
+
+    if (awardedSlugs.length > 0) {
+      // Single query to fetch all achievement details at once
+      const { data: achDetails } = await supabase
         .from("achievement_definitions")
         .select("*")
-        .eq("slug", slug)
-        .single();
+        .in("slug", awardedSlugs);
 
-      if (achDetail) {
-        awardedAchievements.push(achDetail);
+      if (achDetails) {
+        awardedAchievements.push(...achDetails);
       }
     }
   }
@@ -356,22 +363,26 @@ async function checkAchievements(supabase, userId) {
 
   const newlyEarned = [];
 
-  for (const def of definitions || []) {
-    if (earnedSet.has(def.id)) {
-      continue;
-    }
+  // Determine which definitions should be awarded
+  const toAward = (definitions || []).filter(
+    (def) => !earnedSet.has(def.id) && checkCriteria(def.criteria, streakMap, stats),
+  );
 
-    const shouldAward = checkCriteria(def.criteria, streakMap, stats);
+  if (toAward.length > 0) {
+    // Batch-award all qualifying achievements in parallel
+    const awardResults = await Promise.all(
+      toAward.map((def) =>
+        supabase.rpc("award_achievement", {
+          p_user_id: userId,
+          p_achievement_slug: def.slug,
+          p_context: {},
+        }),
+      ),
+    );
 
-    if (shouldAward) {
-      const awarded = await supabase.rpc("award_achievement", {
-        p_user_id: userId,
-        p_achievement_slug: def.slug,
-        p_context: {},
-      });
-
-      if (awarded.data) {
-        newlyEarned.push(def);
+    for (let i = 0; i < toAward.length; i++) {
+      if (awardResults[i].data) {
+        newlyEarned.push(toAward[i]);
       }
     }
   }

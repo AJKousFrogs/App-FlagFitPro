@@ -42,6 +42,8 @@ import {
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { ActivatedRoute, ParamMap, Router } from "@angular/router";
 
+import { Avatar } from "primeng/avatar";
+import { AvatarGroup } from "primeng/avatargroup";
 import { ConfirmDialog } from "primeng/confirmdialog";
 import { ButtonComponent } from "../../shared/components/button/button.component";
 import { StatusTagComponent } from "../../shared/components/status-tag/status-tag.component";
@@ -103,6 +105,8 @@ import {
   selector: "app-roster",
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    Avatar,
+    AvatarGroup,
     StatusTagComponent,
     ConfirmDialog,
     DatePipe,

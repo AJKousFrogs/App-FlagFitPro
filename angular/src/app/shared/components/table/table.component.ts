@@ -116,11 +116,15 @@ import { TableModule, TablePageEvent, TableRowSelectEvent, TableRowUnSelectEvent
         width: 100%;
       }
       .app-table-container {
-        @apply w-full overflow-x-auto rounded-lg border border-surface-200 dark:border-surface-700;
+        width: 100%;
+        overflow-x: auto;
+        border-radius: var(--radius-lg);
+        border: 1px solid var(--color-border-primary);
         -webkit-overflow-scrolling: touch;
       }
       .app-table-host .p-datatable-header {
-        @apply bg-surface-50 dark:bg-surface-800 border-b border-surface-200 dark:border-surface-700;
+        background: var(--surface-secondary);
+        border-bottom: 1px solid var(--color-border-primary);
       }
       .app-table-host .app-table-surface-standard {
         --p-datatable-header-cell-padding: var(--space-4) var(--space-5);

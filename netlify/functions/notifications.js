@@ -37,17 +37,7 @@ const VALID_CONFIG_KEYS = new Set(["muted", "pushEnabled", "inAppEnabled"]);
 
 // ─── Shared response helpers ─────────────────────────────────────────────────
 
-function corsHeaders(req) {
-  const origin = req.headers.get("origin") || "*";
-  return {
-    "Access-Control-Allow-Origin": origin,
-    "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Request-Id, X-Correlation-Id",
-    "Access-Control-Allow-Methods": "GET, POST, PUT, PATCH, DELETE, OPTIONS",
-    "Access-Control-Allow-Credentials": "true",
-    "Content-Type": "application/json",
-    Vary: "Origin",
-  };
-}
+import { getCorsHeaders as corsHeaders } from "./utils/cors.js";
 
 function ok(data, req, status = 200) {
   return Response.json({ success: true, data }, { status, headers: corsHeaders(req) });

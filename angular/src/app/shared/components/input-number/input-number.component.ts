@@ -28,12 +28,12 @@ import { InputNumberModule } from "primeng/inputnumber";
     },
   ],
   template: `
-    <div class="app-input-number-wrapper w-full">
+    <div class="app-input-number-wrapper" style="width: 100%">
       @if (label()) {
-        <label [for]="inputId()" class="block mb-1 text-sm font-medium text-surface-900 dark:text-surface-0">
+        <label [for]="inputId()" style="display: block; margin-bottom: var(--space-1); font-size: var(--ds-font-size-sm); font-weight: var(--ds-font-weight-medium); color: var(--color-text-primary)">
           {{ label() }}
           @if (required()) {
-            <span class="text-red-500">*</span>
+            <span style="color: var(--color-status-danger)">*</span>
           }
         </label>
       }
@@ -59,7 +59,7 @@ import { InputNumberModule } from "primeng/inputnumber";
         (onBlur)="onBlur()"
       ></p-inputNumber>
       @if (hint()) {
-        <small class="block mt-1 text-surface-500">{{ hint() }}</small>
+        <small style="display: block; margin-top: var(--space-1); color: var(--color-text-secondary)">{{ hint() }}</small>
       }
     </div>
   `,

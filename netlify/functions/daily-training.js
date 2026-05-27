@@ -159,61 +159,69 @@ function sanitizeExecutionUpdates(input = {}) {
  */
 async function getUserContext(userId) {
   try {
-    // Get user profile
-    const { data: profile, error: profileError } = await supabaseAdmin
-      .from("user_profiles")
-      .select("*")
-      .eq("user_id", userId)
-      .single();
-
-    if (profileError && profileError.code !== "PGRST116") {
-      console.warn("[DailyTraining] Error fetching profile:", profileError);
-    }
-
-    // Get recent training sessions for ACWR calculation
+    // Prepare date boundaries
     const thirtyDaysAgo = new Date();
     thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
 
-    const { data: sessions, error: sessionsError } = await supabaseAdmin
-      .from("workout_logs")
-      .select("completed_at, rpe, duration_minutes, source_session_id")
-      .eq("player_id", userId)
-      .gte("completed_at", thirtyDaysAgo.toISOString())
-      .order("completed_at", { ascending: false });
-
-    if (sessionsError) {
-      console.warn("[DailyTraining] Error fetching sessions:", sessionsError);
-    }
-
-    // Get upcoming games in next 48 hours
     const today = new Date();
     const twoDaysFromNow = new Date();
     twoDaysFromNow.setDate(today.getDate() + 2);
-
-    const { data: games, error: gamesError } = await supabaseAdmin
-      .from("games")
-      .select("id, game_date, opponent_name")
-      .gte("game_date", today.toISOString().split("T")[0])
-      .lte("game_date", twoDaysFromNow.toISOString().split("T")[0])
-      .order("game_date", { ascending: true });
-
-    if (gamesError) {
-      console.warn("[DailyTraining] Error fetching games:", gamesError);
-    }
 
     const tomorrow = new Date(today);
     tomorrow.setDate(today.getDate() + 1);
     const tomorrowStr = tomorrow.toISOString().split("T")[0];
 
-    // Get today's and tomorrow's scheduled sessions
-    const { data: scheduledSessions, error: scheduledError } =
-      await supabaseAdmin
+    // Run all 4 independent queries in parallel
+    const [
+      { data: profile, error: profileError },
+      { data: sessions, error: sessionsError },
+      { data: games, error: gamesError },
+      { data: scheduledSessions, error: scheduledError },
+    ] = await Promise.all([
+      // Get user profile
+      supabaseAdmin
+        .from("user_profiles")
+        .select("*")
+        .eq("user_id", userId)
+        .single(),
+
+      // Get recent training sessions for ACWR calculation
+      supabaseAdmin
+        .from("workout_logs")
+        .select("completed_at, rpe, duration_minutes, source_session_id")
+        .eq("player_id", userId)
+        .gte("completed_at", thirtyDaysAgo.toISOString())
+        .order("completed_at", { ascending: false }),
+
+      // Get upcoming games in next 48 hours
+      supabaseAdmin
+        .from("games")
+        .select("id, game_date, opponent_name")
+        .gte("game_date", today.toISOString().split("T")[0])
+        .lte("game_date", twoDaysFromNow.toISOString().split("T")[0])
+        .order("game_date", { ascending: true }),
+
+      // Get today's and tomorrow's scheduled sessions
+      supabaseAdmin
         .from("training_sessions")
         .select("session_type, session_date, status")
         .eq("user_id", userId)
         .gte("session_date", today.toISOString().split("T")[0])
         .lte("session_date", tomorrowStr)
-        .order("session_date", { ascending: true });
+        .order("session_date", { ascending: true }),
+    ]);
+
+    if (profileError && profileError.code !== "PGRST116") {
+      console.warn("[DailyTraining] Error fetching profile:", profileError);
+    }
+
+    if (sessionsError) {
+      console.warn("[DailyTraining] Error fetching sessions:", sessionsError);
+    }
+
+    if (gamesError) {
+      console.warn("[DailyTraining] Error fetching games:", gamesError);
+    }
 
     if (scheduledError) {
       console.warn(

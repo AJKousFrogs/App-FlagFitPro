@@ -23,10 +23,10 @@ export class CoachSessionDataService {
     const { error } = await this.supabaseService.client
       .from("training_sessions")
       .insert({
-        coach_id: input.coachId,
+        user_id: input.coachId,
         title: input.title,
         session_type: input.sessionType,
-        scheduled_at: input.scheduledAt,
+        session_date: input.scheduledAt,
         duration_minutes: input.durationMinutes,
         location: input.location,
         notes: input.notes,

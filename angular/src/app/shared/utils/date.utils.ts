@@ -508,5 +508,39 @@ export function getDateKey(date: Date | string): string {
   return dateFnsFormat(parsed, "yyyy-MM-dd");
 }
 
+/**
+ * Parse a timeframe shorthand string (e.g. "6m", "30d", "1y") into days.
+ *
+ * Supported units:
+ *   d = days, w = weeks, m = months (30d), y = years (365d)
+ *
+ * Returns 180 (6 months) when the string cannot be parsed.
+ *
+ * @example
+ * parseTimeframeToDays("30d") // 30
+ * parseTimeframeToDays("3m")  // 90
+ * parseTimeframeToDays("1y")  // 365
+ */
+export function parseTimeframeToDays(timeframe: string): number {
+  const match = timeframe.match(/^(\d+)([dmyw])$/);
+  if (!match) return 180; // Default 6 months
+
+  const [, num, unit] = match;
+  const value = parseInt(num, 10);
+
+  switch (unit) {
+    case "d":
+      return value;
+    case "w":
+      return value * 7;
+    case "m":
+      return value * 30;
+    case "y":
+      return value * 365;
+    default:
+      return 180;
+  }
+}
+
 // Re-export parseISO for convenience
 export { parseISO } from "date-fns";

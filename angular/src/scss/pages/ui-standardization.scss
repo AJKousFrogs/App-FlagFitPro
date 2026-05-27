@@ -344,32 +344,7 @@
    ================================================================ */
 
 @layer overrides {
-  /* ================================
-     CARD - Enterprise styling
-     ================================ */
-  .p-card {
-    border-radius: var(--p-card-border-radius);
-    box-shadow: var(--p-card-shadow);
-  }
-
-  .p-card .p-card-body {
-    padding: var(--p-card-body-padding);
-    display: flex;
-    flex-direction: column;
-    gap: var(--p-card-body-gap);
-  }
-
-  .p-card .p-card-header {
-    padding: var(--p-card-header-padding);
-  }
-
-  .p-card .p-card-content {
-    padding: var(--p-card-content-padding);
-  }
-
-  .p-card .p-card-footer {
-    padding: var(--p-card-footer-padding);
-  }
+  /* Card/Dialog/Input styles consolidated in primeng/_brand-overrides.scss + _token-mapping.scss */
 
   /* ================================
      BUTTON - Enterprise styling
@@ -384,162 +359,6 @@
     min-width: var(--p-button-icon-only-width);
     min-height: var(--p-button-icon-only-height);
     flex-shrink: 0;
-  }
-
-  /* ================================
-     DIALOG - Enterprise styling
-     ================================ */
-  .p-dialog {
-    border-radius: var(--p-dialog-border-radius);
-  }
-
-  .p-dialog .p-dialog-header {
-    padding: var(--p-dialog-header-padding);
-    border-radius: var(--p-dialog-border-radius) var(--p-dialog-border-radius) 0
-      0;
-  }
-
-  .p-dialog .p-dialog-content {
-    padding: var(--p-dialog-content-padding);
-  }
-
-  .p-dialog .p-dialog-footer {
-    padding: var(--p-dialog-footer-padding);
-    gap: var(--p-dialog-footer-gap);
-    border-radius: 0 0 var(--p-dialog-border-radius)
-      var(--p-dialog-border-radius);
-  }
-
-  /* ================================
-     INPUT/SELECT - Enterprise styling
-     ================================ */
-  .p-inputtext {
-    min-height: var(--p-inputtext-min-height);
-    padding: var(--p-inputtext-padding-y) var(--p-inputtext-padding-x);
-    border-radius: var(--p-inputtext-border-radius);
-  }
-
-  .p-select {
-    border-radius: var(--p-select-border-radius);
-  }
-
-  .p-select .p-select-label {
-    padding: var(--p-select-padding-y) var(--p-select-padding-x);
-  }
-
-  .p-select-overlay {
-    border-radius: var(--p-select-border-radius);
-  }
-
-  /* Textarea consistent with inputs */
-  .p-textarea {
-    border-radius: var(--p-inputtext-border-radius);
-    padding: var(--p-inputtext-padding-y) var(--p-inputtext-padding-x);
-  }
-}
-
-/* ================================
-   MESSAGE/TOAST - Enterprise styling
-   NOTE: removed - CSS layers handle specificity
-   ================================ */
-@layer overrides {
-  .p-message {
-    border-radius: var(--p-message-border-radius);
-  }
-
-  .p-message .p-message-content {
-    padding: var(--p-message-content-padding);
-  }
-
-  .p-toast-message {
-    border-radius: var(--p-toast-border-radius);
-  }
-
-  .p-toast-message-content {
-    padding: var(--p-toast-content-padding);
-  }
-
-  /* ================================
-     CHECKBOX/TOGGLE - Unified Styling
-     No layout shift, consistent appearance
-     
-     Design Rules:
-     - Checkbox: 1.25rem box, 0.375rem radius, green check
-     - Toggle: 2.75rem width, 1.5rem height, green=ON
-     - Focus ring: var(--p-checkbox-focus-ring) / rgba(var(--ds-primary-green-rgb), 0.15)
-     - Disabled: opacity var(--opacity-muted), not interactive
-     ================================ */
-  .p-checkbox {
-    flex-shrink: 0;
-    width: var(--p-checkbox-width);
-    height: var(--p-checkbox-height);
-    min-width: var(--p-checkbox-width);
-    min-height: var(--p-checkbox-height);
-  }
-
-  /* NOTE: .p-toggleswitch styles consolidated in primeng/_brand-overrides.scss */
-
-  .p-checkbox .p-checkbox-box {
-    width: var(--p-checkbox-width);
-    height: var(--p-checkbox-height);
-    min-width: var(--p-checkbox-width);
-    min-height: var(--p-checkbox-height);
-    border-radius: var(--p-checkbox-border-radius);
-    border: var(--border-2) solid var(--color-border-default);
-    background: var(--color-surface-primary);
-    transition:
-      background-color var(--transition-base) var(--ease-standard),
-      border-color var(--transition-base) var(--ease-standard),
-      box-shadow var(--transition-base) var(--ease-standard);
-  }
-
-  .p-checkbox .p-checkbox-box.p-highlight {
-    background: var(--ds-primary-green);
-    border-color: var(--ds-primary-green);
-  }
-
-  .p-checkbox .p-checkbox-box .p-checkbox-icon {
-    color: var(--color-text-on-primary);
-  }
-
-  .p-checkbox.p-disabled {
-    opacity: var(--p-control-disabled-opacity);
-    cursor: not-allowed;
-    pointer-events: none;
-  }
-
-  /* NOTE: p-toggleswitch styles are defined in primeng/_brand-overrides.scss
-     using CSS custom properties from primeng/_token-mapping.scss */
-
-  /* ================================
-     FOCUS RING - Calm, consistent
-     Focus ring: var(--p-checkbox-focus-ring) / rgba(var(--ds-primary-green-rgb), 0.15)
-     ================================ */
-  .p-button:focus-visible,
-  .p-inputtext:focus-visible,
-  .p-select:focus-visible,
-  .p-textarea:focus-visible {
-    outline: var(--p-focus-ring-width) var(--p-focus-ring-style)
-      var(--p-focus-ring-color);
-    outline-offset: var(--p-focus-ring-offset);
-  }
-
-  /* Checkbox/Toggle use box-shadow for focus ring */
-  .p-checkbox:focus-visible .p-checkbox-box,
-  .p-checkbox .p-checkbox-box:focus-visible {
-    box-shadow: var(--p-checkbox-focus-ring);
-    outline: none;
-  }
-
-  /* NOTE: .p-toggleswitch focus styles consolidated in primeng/_brand-overrides.scss */
-
-  /* Input focus border */
-  .p-inputtext:focus-visible,
-  .p-select.p-focus,
-  .p-textarea:focus-visible {
-    border-color: var(--p-inputtext-focus-border-color);
-    box-shadow: 0 0 0 var(--p-inputtext-focus-ring-width)
-      var(--p-inputtext-focus-ring-color);
   }
 
   /* ================================
@@ -561,16 +380,13 @@
   /* ================================
      MENU/DROPDOWN - Consistent radius
      ================================ */
-  .p-menu {
-    border-radius: var(--p-card-border-radius);
-  }
-
   .p-contextmenu,
   .p-tieredmenu {
     border-radius: var(--p-card-border-radius);
   }
+}
 
-} /* End @layer overrides */
+/* Message/toast/checkbox/focus styles consolidated in primeng/_brand-overrides.scss */
 
 /* ================================================================
    RESPONSIVE ADJUSTMENTS
@@ -622,14 +438,10 @@
   outline-offset: var(--p-focus-ring-offset);
 }
 
-/* Reduced motion preference */
+/* PrimeNG reduced motion consolidated in primeng/_brand-overrides.scss */
 @media (prefers-reduced-motion: reduce) {
   .icon-btn,
-  .control-row,
-  .p-button,
-  .p-card,
-  .p-dialog,
-  .p-toast {
+  .control-row {
     transition: none;
     animation: none;
   }

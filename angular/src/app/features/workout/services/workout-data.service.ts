@@ -7,10 +7,12 @@ export interface WorkoutLogRecord {
   duration_minutes?: number | null;
   notes?: string | null;
   training_sessions?: {
-    name?: string | null;
+    id?: string;
+    session_type?: string | null;
     exercises?: unknown;
   } | {
-    name?: string | null;
+    id?: string;
+    session_type?: string | null;
     exercises?: unknown;
   }[] | null;
 }
@@ -30,14 +32,13 @@ export class WorkoutDataService {
       .select(
         `
           id,
-          session_id,
+          source_session_id,
           completed_at,
           rpe,
           duration_minutes,
           notes,
-          training_sessions (
+          training_sessions:source_session_id (
             id,
-            name,
             session_type,
             exercises
           )

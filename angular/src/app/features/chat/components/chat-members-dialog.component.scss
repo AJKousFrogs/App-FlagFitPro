@@ -95,6 +95,12 @@
   }
 }
 
+@media (prefers-reduced-motion: reduce) {
+  .online-dot {
+    animation: none;
+  }
+}
+
 .members-grid {
   display: flex;
   flex-direction: column;

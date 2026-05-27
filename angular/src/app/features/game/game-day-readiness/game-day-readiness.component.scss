@@ -63,7 +63,7 @@
 }
 
 .acwr-label {
-  font-size: 10px;
+  font-size: var(--ds-font-size-2xs);
   font-weight: var(--ds-font-weight-extrabold, 800);
   text-transform: uppercase;
   letter-spacing: 0.12em;

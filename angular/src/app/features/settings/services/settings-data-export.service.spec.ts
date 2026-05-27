@@ -67,12 +67,12 @@ describe("SettingsDataExportService", () => {
     });
 
     service = TestBed.inject(SettingsDataExportService);
-    vi.spyOn(service as never, "downloadExportFile" as never).mockImplementation(
-      (input: {
-        format: "json" | "csv";
-        data: Record<string, unknown>;
-      }) => {
-        capturedDownload = input;
+    vi.spyOn(service as any, "downloadExportFile").mockImplementation(
+      (...args: any[]) => {
+        capturedDownload = args[0] as {
+          format: "json" | "csv";
+          data: Record<string, unknown>;
+        };
       },
     );
   });

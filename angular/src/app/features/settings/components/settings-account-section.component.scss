@@ -55,6 +55,12 @@
   animation: ui-motion-enter-y var(--transition-fast) var(--ease-standard)-out;
 }
 
+@media (prefers-reduced-motion: reduce) {
+  .birthday-suggestion {
+    animation: none;
+  }
+}
+
 .suggestion-content {
   display: flex;
   align-items: center;

@@ -14,7 +14,7 @@
  * @version 1.0.0
  */
 
-import { Injectable, signal, computed, effect, inject } from "@angular/core";
+import { Injectable, signal, computed, effect, inject, linkedSignal } from "@angular/core";
 import { LoggerService } from "./logger.service";
 import { toLogContext } from "./logger.service";
 import { SupabaseService } from "./supabase.service";
@@ -39,8 +39,11 @@ export class AcwrAlertsService {
   private logger = inject(LoggerService);
   private supabaseService = inject(SupabaseService);
 
-  // Active alerts
-  private readonly alerts = signal<LoadAlert[]>([]);
+  // Active alerts — recomputed when ACWR data changes, writable for dismiss/acknowledge
+  private readonly alerts = linkedSignal({
+    source: () => this.acwrService.acwrData(),
+    computation: (data: ACWRData) => this.computeAlerts(data),
+  });
 
   // Alert history (last 30 days)
   private readonly alertHistory = signal<LoadAlert[]>([]);
@@ -62,90 +65,37 @@ export class AcwrAlertsService {
   });
 
   constructor() {
-    // Monitor ACWR changes and generate alerts
-    // Effect automatically cleans up when service is destroyed in Angular 21
+    // Side effects only: notifications and ownership transitions when alerts change
     effect(() => {
+      const currentAlerts = this.alerts();
+      for (const alert of currentAlerts) {
+        if (this.notificationEnabled()) {
+          this.sendNotification(alert);
+        }
+        if (alert.severity === "critical" && this.coachNotificationEnabled()) {
+          this.notifyCoach(alert);
+        }
+      }
+      // Log ownership transitions for critical/elevated ACWR
       const acwrData = this.acwrService.acwrData();
-      this.checkForAlerts(acwrData);
+      const acwrValue = acwrData.ratio ?? 0;
+      if (acwrValue > 1.5) {
+        this.logOwnershipTransition("acwr_critical", acwrValue);
+      } else if (acwrValue > 1.3) {
+        this.logOwnershipTransition("acwr_elevated", acwrValue);
+      }
     });
   }
 
   /**
-   * Check ACWR data and generate alerts if needed
+   * Pure computation: derive alerts from ACWR data.
+   * Used by linkedSignal so the alerts list resets when source data changes.
    */
-  private checkForAlerts(acwrData: ACWRData): void {
+  private computeAlerts(acwrData: ACWRData): LoadAlert[] {
     const { ratio, riskZone, weeklyProgression } = acwrData;
     const acwrValue = ratio ?? 0;
+    const results: LoadAlert[] = [];
 
-    // Check for danger zone (ACWR > 1.50)
-    if (acwrValue > 1.5) {
-      this.createAlert({
-        type: "danger-zone",
-        severity: "critical",
-        message: `CRITICAL: ACWR is ${acwrValue.toFixed(2)} - in danger zone!`,
-        recommendation: riskZone.recommendation,
-        acwrValue: acwrValue,
-      });
-
-      // Log ownership transition for critical ACWR
-      this.logOwnershipTransition("acwr_critical", acwrValue);
-    }
-    // Check for elevated risk (ACWR > 1.30)
-    else if (acwrValue > 1.3) {
-      this.createAlert({
-        type: "high-acwr",
-        severity: "warning",
-        message: `WARNING: ACWR is ${acwrValue.toFixed(2)} - elevated injury risk`,
-        recommendation: riskZone.recommendation,
-        acwrValue: acwrValue,
-      });
-
-      // Log ownership transition for elevated ACWR
-      this.logOwnershipTransition("acwr_elevated", acwrValue);
-    }
-    // Check for under-training (ACWR < 0.80)
-    else if (acwrValue > 0 && acwrValue < 0.8) {
-      this.createAlert({
-        type: "under-training",
-        severity: "info",
-        message: `INFO: ACWR is ${acwrValue.toFixed(2)} - player may lack conditioning`,
-        recommendation: riskZone.recommendation,
-        acwrValue: acwrValue,
-      });
-    }
-
-    // Check for weekly load spike
-    if (!weeklyProgression.isSafe && weeklyProgression.changePercent > 10) {
-      this.createAlert({
-        type: "spike-detected",
-        severity: "warning",
-        message: `WARNING: Weekly load increased by ${weeklyProgression.changePercent.toFixed(1)}%`,
-        recommendation: "Limit load increase to <10% week-over-week",
-        acwrValue: acwrValue,
-      });
-    }
-  }
-
-  /**
-   * Create a new alert
-   */
-  private createAlert(
-    alertData: Omit<
-      LoadAlert,
-      "id" | "playerId" | "playerName" | "timestamp" | "acknowledged"
-    >,
-  ): void {
-    // Check if similar alert already exists for today
-    const today = new Date().toDateString();
-    const existingAlert = this.alerts().find(
-      (a) => a.type === alertData.type && a.timestamp.toDateString() === today,
-    );
-
-    if (existingAlert) {
-      return; // Don't duplicate alerts
-    }
-
-    // Get player info from auth service
     const user = this.supabaseService.currentUser();
     const playerId = user?.id || "anonymous";
     const rawMetadata =
@@ -154,30 +104,71 @@ export class AcwrAlertsService {
     const playerName =
       rawMetadata?.full_name || user?.email?.split("@")[0] || "Player";
 
-    const alert: LoadAlert = {
+    const makeAlert = (
+      partial: Omit<
+        LoadAlert,
+        "id" | "playerId" | "playerName" | "timestamp" | "acknowledged"
+      >,
+    ): LoadAlert => ({
       id: this.generateAlertId(),
       playerId,
       playerName,
       timestamp: new Date(),
       acknowledged: false,
-      ...alertData,
-    };
+      ...partial,
+    });
 
-    // Add to active alerts
-    this.alerts.update((current) => [...current, alert]);
-
-    // Add to history
-    this.alertHistory.update((current) => [...current, alert]);
-
-    // Trigger notification if enabled
-    if (this.notificationEnabled()) {
-      this.sendNotification(alert);
+    // Danger zone (ACWR > 1.50)
+    if (acwrValue > 1.5) {
+      results.push(
+        makeAlert({
+          type: "danger-zone",
+          severity: "critical",
+          message: `CRITICAL: ACWR is ${acwrValue.toFixed(2)} - in danger zone!`,
+          recommendation: riskZone.recommendation,
+          acwrValue,
+        }),
+      );
+    }
+    // Elevated risk (ACWR > 1.30)
+    else if (acwrValue > 1.3) {
+      results.push(
+        makeAlert({
+          type: "high-acwr",
+          severity: "warning",
+          message: `WARNING: ACWR is ${acwrValue.toFixed(2)} - elevated injury risk`,
+          recommendation: riskZone.recommendation,
+          acwrValue,
+        }),
+      );
+    }
+    // Under-training (ACWR < 0.80)
+    else if (acwrValue > 0 && acwrValue < 0.8) {
+      results.push(
+        makeAlert({
+          type: "under-training",
+          severity: "info",
+          message: `INFO: ACWR is ${acwrValue.toFixed(2)} - player may lack conditioning`,
+          recommendation: riskZone.recommendation,
+          acwrValue,
+        }),
+      );
     }
 
-    // Notify coach if critical and enabled
-    if (alert.severity === "critical" && this.coachNotificationEnabled()) {
-      this.notifyCoach(alert);
+    // Weekly load spike
+    if (!weeklyProgression.isSafe && weeklyProgression.changePercent > 10) {
+      results.push(
+        makeAlert({
+          type: "spike-detected",
+          severity: "warning",
+          message: `WARNING: Weekly load increased by ${weeklyProgression.changePercent.toFixed(1)}%`,
+          recommendation: "Limit load increase to <10% week-over-week",
+          acwrValue,
+        }),
+      );
     }
+
+    return results;
   }
 
   /**

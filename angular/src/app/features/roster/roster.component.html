@@ -26,6 +26,25 @@
               icon="pi-users"
             >
               <div class="header-actions">
+                @if (rosterService.allPlayers().length > 0) {
+                  <p-avatarGroup>
+                    @for (player of rosterService.allPlayers().slice(0, 5); track player.id) {
+                      <p-avatar
+                        [label]="player.name.charAt(0)"
+                        shape="circle"
+                        size="large"
+                      />
+                    }
+                    @if (rosterService.allPlayers().length > 5) {
+                      <p-avatar
+                        [label]="'+' + (rosterService.allPlayers().length - 5)"
+                        shape="circle"
+                        size="large"
+                        [style]="{ 'background-color': 'var(--surface-tertiary)', 'color': 'var(--color-text-secondary)' }"
+                      />
+                    }
+                  </p-avatarGroup>
+                }
                 @if (rosterService.canManageRoster()) {
                   <app-button
                     variant="outlined"

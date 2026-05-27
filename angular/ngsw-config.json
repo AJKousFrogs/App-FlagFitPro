@@ -33,12 +33,23 @@
       "name": "api-performance",
       "urls": [
         "https://*.supabase.co/rest/v1/training_sessions*",
-        "https://*.supabase.co/rest/v1/wellness_logs*",
-        "https://*.supabase.co/rest/v1/exercises*"
+        "https://*.supabase.co/rest/v1/wellness_logs*"
       ],
       "cacheConfig": {
         "maxSize": 100,
         "maxAge": "5m",
+        "timeout": "10s",
+        "strategy": "performance"
+      }
+    },
+    {
+      "name": "api-reference-data",
+      "urls": [
+        "https://*.supabase.co/rest/v1/exercises*"
+      ],
+      "cacheConfig": {
+        "maxSize": 100,
+        "maxAge": "1d",
         "timeout": "10s",
         "strategy": "performance"
       }
@@ -57,6 +68,21 @@
         "strategy": "freshness"
       }
     }
+    ,
+    {
+      "name": "google-fonts",
+      "urls": [
+        "https://fonts.googleapis.com/**",
+        "https://fonts.gstatic.com/**"
+      ],
+      "cacheConfig": {
+        "maxSize": 20,
+        "maxAge": "30d",
+        "timeout": "10s",
+        "strategy": "performance"
+      }
+    }
   ],
-  "navigationUrls": ["/**", "!/**/*.*", "!/**/*__*", "!/**/*__*/**"]
+  "navigationUrls": ["/**", "!/**/*.*", "!/**/*__*", "!/**/*__*/**"],
+  "navigationRequestStrategy": "performance"
 }

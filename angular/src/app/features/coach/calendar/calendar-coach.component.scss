@@ -43,6 +43,22 @@
 // Calendar Grid
 .calendar-grid {
   overflow-x: auto;
+
+  @include respond-to(sm) {
+    position: relative;
+
+    &::after {
+      content: "";
+      position: sticky;
+      right: 0;
+      top: 0;
+      bottom: 0;
+      width: 24px;
+      background: linear-gradient(to right, transparent, var(--surface-card));
+      pointer-events: none;
+      flex-shrink: 0;
+    }
+  }
 }
 
 .calendar-weekdays {
@@ -59,6 +75,13 @@
     font-weight: var(--ds-font-weight-semibold);
     color: var(--color-text-secondary);
     padding: var(--space-2);
+  }
+
+  @include respond-to(sm) {
+    .weekday {
+      font-size: var(--ds-font-size-sm);
+      padding: var(--space-1);
+    }
   }
 }
 

@@ -83,8 +83,12 @@
   color: var(--color-text-secondary, #5f6b7a);
 }
 
-.report-search input:focus {
+.report-search input:focus:not(:focus-visible) {
   outline: none;
+}
+.report-search input:focus-visible {
+  outline: 2px solid var(--ds-primary-green);
+  outline-offset: 2px;
 }
 
 .report-filter-row {

@@ -498,3 +498,61 @@
     }
   }
 }
+
+@include respond-to(md) {
+  .ai-scheduler-page {
+    padding: var(--space-0);
+  }
+
+  .merlin-intro {
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+
+  .constraints-row {
+    flex-direction: column;
+    gap: var(--space-3);
+
+    .constraint-field {
+      min-width: 0;
+    }
+  }
+
+  .session-card {
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+
+  .schedule-header-actions {
+    flex-direction: column;
+
+    button {
+      width: 100%;
+    }
+  }
+}
+
+@include respond-to(sm) {
+  .import-dataset-container,
+  .ai-scheduler-page {
+    padding: var(--space-0);
+  }
+
+  .radio-group,
+  .checkbox-grid {
+    padding: var(--space-2);
+  }
+
+  .checkbox-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .periodization-timeline {
+    gap: var(--space-1);
+  }
+
+  .phase-block {
+    min-width: 120px;
+    padding: var(--space-2);
+  }
+}

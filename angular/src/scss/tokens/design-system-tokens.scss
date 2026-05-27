@@ -36,29 +36,50 @@ $ds-font-weight-extrabold: 800;
   color-scheme: dark;
 
   /* Canonical surface scale */
-  --bg-0: #0A0B0D;
-  --bg-1: #111316;
-  --bg-2: #16181C;
-  --bg-3: #1D2025;
+  --bg-0: #08090B;
+  --bg-1: #14161A;
+  --bg-2: #1C1F25;
+  --bg-3: #262A32;
+  --bg-elevated: #1F232A;
   --bg-hover: #22262C;
+  --bg-line: rgba(255, 255, 255, 0.08);
   --line: #22262C;
   --line-strong: #2D3239;
 
   /* Canonical text scale */
   --text-0: #F5F6F7;
-  --text-1: #B8BCC2;
-  --text-2: #6B7079;
-  --text-3: #444851;
+  --text-1: #B8BCC4;
+  --text-2: #74787F;
+  --text-3: #4A4D54;
+  --text-inverse: #0A0B0D;
 
   /* Canonical accent */
   --accent: #00E07A;
   --accent-rgb: 0, 224, 122;
+  --accent-dim: #00A85C;
   --accent-ink: #001A0E;
   --accent-soft: rgba(0, 224, 122, 0.10);
   --accent-line: rgba(0, 224, 122, 0.28);
+  --accent-glow: 0 0 24px rgba(0, 224, 122, 0.35);
+
+  /* Semantic status — dark overrides */
+  --ok: #00E07A;
+  --warn: #FFB020;
+  --danger: #FF4D5E;
+  --info: #4DA8FF;
+
+  /* Tints (subtle backgrounds for tone-aware surfaces) */
+  --tint-ok: rgba(0, 224, 122, 0.10);
+  --tint-warn: rgba(255, 176, 32, 0.10);
+  --tint-danger: rgba(255, 77, 94, 0.10);
+  --tint-info: rgba(77, 168, 255, 0.10);
+
+  /* Shadows — redesign tokens */
+  --shadow-card: 0 1px 0 rgba(255,255,255,0.03), 0 8px 24px rgba(0,0,0,0.5);
+  --shadow-glow: 0 0 32px rgba(0, 224, 122, 0.18);
 
   /* For rgba() compositions — explicit because it's a numeric tuple */
-  --surface-primary-rgb: 17, 19, 22;
+  --surface-primary-rgb: 20, 22, 26;
 
   /* Border values that use alpha channels stay explicit */
   --ui-border-subtle: rgba(255, 255, 255, 0.08);
@@ -156,7 +177,7 @@ $ds-font-weight-extrabold: 800;
   --ob-input-bg: var(--bg-3);
   --ob-input-border: var(--line);
   --ob-welcome-bg: var(--bg-0);
-  --ob-footer-bg: rgba(17, 19, 22, 0.94);
+  --ob-footer-bg: rgba(20, 22, 26, 0.94);
   --ob-footer-border: var(--line);
 }
 
@@ -184,8 +205,10 @@ body.dark-theme {
   --bg-0: #F4F5F2;
   --bg-1: #FFFFFF;
   --bg-2: #FAFAF7;
-  --bg-3: #F0F1ED;
+  --bg-3: #EDEEE8;
+  --bg-elevated: #FFFFFF;
   --bg-hover: #ECEEE8;
+  --bg-line: rgba(10, 11, 13, 0.10);
   --line: #E5E6E1;
   --line-strong: #D4D6CF;
 
@@ -194,15 +217,19 @@ body.dark-theme {
   --text-1: #3A3D43;
   --text-2: #74787F;
   --text-3: #A8ACB2;
+  --text-inverse: #FFFFFF;
 
   /* Accent (brand green) */
   --accent: #00A85C;
   --accent-rgb: 0, 168, 92;
+  --accent-dim: #008A48;
   --accent-ink: #FFFFFF;
   --accent-soft: rgba(0, 168, 92, 0.10);
   --accent-line: rgba(0, 168, 92, 0.28);
+  --accent-glow: 0 0 0 transparent;
 
   /* Semantic status */
+  --ok: #00A85C;
   --warn: #FFB020;
   --warn-rgb: 255, 176, 32;
   --warn-soft: rgba(255, 176, 32, 0.10);
@@ -212,6 +239,16 @@ body.dark-theme {
   --info: #4DA8FF;
   --info-rgb: 77, 168, 255;
   --info-soft: rgba(77, 168, 255, 0.10);
+
+  /* Tints (subtle backgrounds for tone-aware surfaces) */
+  --tint-ok: rgba(0, 168, 92, 0.08);
+  --tint-warn: rgba(179, 104, 0, 0.08);
+  --tint-danger: rgba(211, 47, 64, 0.08);
+  --tint-info: rgba(37, 99, 235, 0.08);
+
+  /* Redesign shadow tokens */
+  --shadow-card: 0 1px 2px rgba(10,11,13,0.04), 0 4px 12px rgba(10,11,13,0.06);
+  --shadow-glow: 0 0 0 transparent;
 
   /* ==============================
      BRAND / PRIMARY ALIASES
@@ -356,6 +393,11 @@ body.dark-theme {
   /* Gold */
   --primitive-gold-500: #ffd700;
   --primitive-gold-500-rgb: 255, 215, 0;
+
+  /* Rank colors (leaderboard) */
+  --color-rank-gold: #FFD24A;
+  --color-rank-silver: #C7CBD0;
+  --color-rank-bronze: #D69155;
 
   /* ==============================
      SEMANTIC SURFACE LAYER
@@ -850,16 +892,16 @@ body.dark-theme {
 
   /* ==============================
      BORDER RADIUS
-     Max 12px; --radius-xs added; 2xl/3xl capped.
+     Aligned with redesign mockup scale; caps removed.
      ============================== */
   --radius-none: 0;
   --radius-xs: 4px;
   --radius-sm: 6px;
   --radius-md: 8px;
-  --radius-lg: 10px;
-  --radius-xl: 12px;
-  --radius-2xl: 12px;   /* capped — was 16px */
-  --radius-3xl: 12px;   /* capped — was 24px */
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-2xl: 24px;
+  --radius-3xl: 32px;
   --radius-full: 9999px;
   --radius-circle: 50%;
   --radius-button: 6px;
@@ -1565,8 +1607,8 @@ body.dark-theme {
   --ds-toolbar-wrap:       wrap;
 
   /* Font sizes — only the ones not defined in the main font-size block */
-  --ds-font-size-2xs:      0.625rem;
-  --ds-font-size-0-625rem: 0.625rem;
+  --ds-font-size-2xs:      0.6875rem;
+  --ds-font-size-0-625rem: 0.6875rem;
 
   /* Line heights — only the numeric variants not in the main block */
   --ds-line-height-1-375: 1.375;
@@ -1614,7 +1656,7 @@ body.dark-theme {
   --premium-light-border-glass: rgba(229, 230, 225, 0.7);
 
   /* Dark-mode surfaces & borders */
-  --premium-dark-gradient-neutral: linear-gradient(145deg, #1D2025 0%, #111316 100%);
+  --premium-dark-gradient-neutral: linear-gradient(145deg, #262A32 0%, #14161A 100%);
   --premium-border-dark:           rgba(45, 50, 57, 0.9);
   --premium-border-dark-strong:    rgba(60, 67, 75, 0.9);
 
@@ -1626,10 +1668,10 @@ body.dark-theme {
   --premium-shadow-inner-white-strong: inset 0 1px 0 rgba(255, 255, 255, 0.12);
 
   /* Status dark gradients (used in dark-mode notification/feedback components) */
-  --premium-dark-gradient-success: linear-gradient(145deg, rgba(0, 224, 122, 0.12) 0%, #16181C 100%);
-  --premium-dark-gradient-warn:    linear-gradient(145deg, rgba(255, 176, 32,  0.12) 0%, #16181C 100%);
-  --premium-dark-gradient-error:   linear-gradient(145deg, rgba(255, 77,  94,  0.12) 0%, #16181C 100%);
-  --premium-dark-gradient-info:    linear-gradient(145deg, rgba(77,  168, 255, 0.12) 0%, #16181C 100%);
+  --premium-dark-gradient-success: linear-gradient(145deg, rgba(0, 224, 122, 0.12) 0%, #1C1F25 100%);
+  --premium-dark-gradient-warn:    linear-gradient(145deg, rgba(255, 176, 32,  0.12) 0%, #1C1F25 100%);
+  --premium-dark-gradient-error:   linear-gradient(145deg, rgba(255, 77,  94,  0.12) 0%, #1C1F25 100%);
+  --premium-dark-gradient-info:    linear-gradient(145deg, rgba(77,  168, 255, 0.12) 0%, #1C1F25 100%);
 
   /* Glow colors for radial-gradient overlays */
   --premium-glow-success: rgba(0,   224, 122, 0.28);
@@ -1656,14 +1698,17 @@ body.light-theme {
   --bg-0: #F4F5F2;
   --bg-1: #FFFFFF;
   --bg-2: #FAFAF7;
-  --bg-3: #F0F1ED;
+  --bg-3: #EDEEE8;
+  --bg-elevated: #FFFFFF;
   --bg-hover: #ECEEE8;
+  --bg-line: rgba(10, 11, 13, 0.10);
   --line: #E5E6E1;
   --line-strong: #D4D6CF;
   --text-0: #0A0B0D;
   --text-1: #3A3D43;
   --text-2: #74787F;
   --text-3: #A8ACB2;
+  --text-inverse: #FFFFFF;
   --accent: #00A85C;
   --accent-rgb: 0, 168, 92;
   --accent-ink: #FFFFFF;

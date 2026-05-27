@@ -61,7 +61,7 @@
 @if (filteredPlays().length > 0) {
   <div class="plays-grid">
     @for (play of filteredPlays(); track play.id) {
-      <app-card-shell class="play-card" [flush]="true" (click)="selectPlay.emit(play)">
+      <app-card-shell class="play-card" [flush]="true" state="interactive" (cardClick)="selectPlay.emit(play)">
         <div class="play-header">
           <div class="play-title">
             <h3>{{ play.name }}</h3>

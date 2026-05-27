@@ -265,6 +265,8 @@
       <!-- ──────────────────────────────────────────────────────────────── -->
       <!-- 5. SQUAD HEALTH STRIP                                             -->
       <!-- ──────────────────────────────────────────────────────────────── -->
+      <p-meterGroup [value]="squadHealthMeters()" />
+
       <section class="health-strip" aria-label="Squad health">
         <div class="ht ht--ok">
           <div class="ht__lab">Team readiness</div>
@@ -367,183 +369,26 @@
     <!-- ──────────────────────────────────────────────────────────────── -->
 
     @defer (when showCreateSessionDialog()) {
-      <app-dialog
-        [visible]="showCreateSessionDialog()"
-        (visibleChange)="showCreateSessionDialog.set($event)"
-        [modal]="true"
-        class="dashboard-dialog"
-        [blockScroll]="true"
-        [draggable]="false"
-        ariaLabel="Create training session"
-      >
-        <app-dialog-header
-          icon="calendar-plus"
-          title="Create Training Session"
-          subtitle="Schedule a new practice, prep block, or recovery session."
-          (close)="resetCreateSessionDialog()"
-        ></app-dialog-header>
-        <div class="session-form">
-          <div class="form-field">
-            <app-form-input
-              label="Session Title"
-              id="coach-sessionTitle"
-              name="sessionTitle"
-              type="text"
-              [value]="newSession.title"
-              (valueChange)="onNewSessionTitleInput($event)"
-              placeholder="e.g., Offensive Drills"
-              class="w-full"
-              autocomplete="off"
-            ></app-form-input>
-          </div>
-          <div class="form-field">
-            <app-select
-              label="Type"
-              inputId="coach-sessionType"
-              (change)="onNewSessionTypeSelect($event)"
-              [options]="sessionTypes"
-              optionLabel="label"
-              optionValue="value"
-              placeholder="Select type"
-              class="w-full"
-              appendTo="body"
-            ></app-select>
-          </div>
-          <div class="form-field">
-            <label for="coach-sessionDate">Date &amp; Time</label>
-            <input
-              id="coach-sessionDate"
-              name="sessionDate"
-              type="datetime-local"
-              [value]="getNewSessionDateInputValue()"
-              (input)="onNewSessionDateInputEvent($event)"
-              class="w-full"
-            />
-          </div>
-          <div class="form-field">
-            <app-form-input
-              label="Duration (minutes)"
-              id="coach-sessionDuration"
-              name="sessionDuration"
-              type="number"
-              [value]="'' + newSession.duration"
-              (valueChange)="onNewSessionDurationInput($event)"
-              placeholder="90"
-              class="w-full"
-              autocomplete="off"
-            ></app-form-input>
-          </div>
-          <div class="form-field">
-            <app-textarea
-              label="Notes"
-              id="coach-sessionNotes"
-              name="sessionNotes"
-              [value]="newSession.notes"
-              (valueChange)="onNewSessionNotesInput($event)"
-              placeholder="Session notes..."
-              [rows]="3"
-              class="w-full"
-              autocomplete="off"
-            ></app-textarea>
-          </div>
-        </div>
-        <app-dialog-footer
-          dialogFooter
-          cancelLabel="Cancel"
-          primaryLabel="Create"
-          primaryIcon="check"
-          (cancel)="resetCreateSessionDialog()"
-          (primary)="createSession()"
-        ></app-dialog-footer>
-      </app-dialog>
+      <app-coach-dashboard-create-session-dialog
+        [(visible)]="showCreateSessionDialog"
+      ></app-coach-dashboard-create-session-dialog>
     } @placeholder {
       <span class="defer-dialog-chunk-placeholder"></span>
     }
 
     @defer (when showTeamMessageDialog()) {
-      <app-dialog
-        [visible]="showTeamMessageDialog()"
-        (visibleChange)="showTeamMessageDialog.set($event)"
-        [modal]="true"
-        class="dashboard-dialog"
-        [blockScroll]="true"
-        [draggable]="false"
-        ariaLabel="Send team message"
-      >
-        <app-dialog-header
-          icon="send"
-          title="Send Team Message"
-          subtitle="Broadcast a clear update to the full team."
-          (close)="showTeamMessageDialog.set(false)"
-        ></app-dialog-header>
-        <div class="message-form">
-          <div class="form-field">
-            <app-textarea
-              label="Message"
-              id="messageContent"
-              [value]="teamMessageContent()"
-              (valueChange)="onTeamMessageContentInput($event)"
-              placeholder="Type your message to the team..."
-              [rows]="5"
-              class="w-full"
-            ></app-textarea>
-          </div>
-        </div>
-        <app-dialog-footer
-          dialogFooter
-          cancelLabel="Cancel"
-          primaryLabel="Send"
-          primaryIcon="send"
-          (cancel)="showTeamMessageDialog.set(false)"
-          (primary)="sendTeamMessage()"
-        ></app-dialog-footer>
-      </app-dialog>
+      <app-coach-dashboard-team-message-dialog
+        [(visible)]="showTeamMessageDialog"
+      ></app-coach-dashboard-team-message-dialog>
     } @placeholder {
       <span class="defer-dialog-chunk-placeholder"></span>
     }
 
     @defer (when showRequestAccessDialog()) {
-      <app-dialog
-        [visible]="showRequestAccessDialog()"
-        (visibleChange)="showRequestAccessDialog.set($event)"
-        [modal]="true"
-        class="dashboard-dialog"
-        [blockScroll]="true"
-        [draggable]="false"
-        ariaLabel="Request data access"
-      >
-        <app-dialog-header
-          icon="shield"
-          title="Request Data Access"
-          subtitle="Ask a player to share their wellness and training data."
-          (close)="cancelAccessRequest()"
-        ></app-dialog-header>
-        <div class="request-access-form">
-          <p class="request-intro">
-            Send a non-pushy request to the player to share their wellness and
-            training data.
-          </p>
-          <div class="form-field">
-            <app-textarea
-              label="Message"
-              id="accessMessage"
-              [value]="requestAccessMessage()"
-              (valueChange)="onRequestAccessMessageInput($event)"
-              placeholder="Type your request message..."
-              [rows]="4"
-              class="w-full"
-            ></app-textarea>
-          </div>
-        </div>
-        <app-dialog-footer
-          dialogFooter
-          cancelLabel="Cancel"
-          primaryLabel="Send Request"
-          primaryIcon="send"
-          (cancel)="cancelAccessRequest()"
-          (primary)="sendAccessRequest()"
-        ></app-dialog-footer>
-      </app-dialog>
+      <app-coach-dashboard-request-access-dialog
+        [(visible)]="showRequestAccessDialog"
+        [playerId]="requestAccessPlayerId()"
+      ></app-coach-dashboard-request-access-dialog>
     } @placeholder {
       <span class="defer-dialog-chunk-placeholder"></span>
     }

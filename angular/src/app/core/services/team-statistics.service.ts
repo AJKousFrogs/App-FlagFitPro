@@ -142,7 +142,7 @@ export interface UpcomingGame {
   teamReadiness: number;
 }
 
-export interface TrainingSession {
+export interface TeamScheduleSession {
   sessionId: string;
   date: Date;
   time: string;
@@ -341,12 +341,12 @@ export class TeamStatisticsService {
   getTrainingSchedule(
     teamId: string,
     days = 7,
-  ): Observable<TrainingSession[]> {
+  ): Observable<TeamScheduleSession[]> {
     return this.apiService
-      .get<TrainingSession[]>(API_ENDPOINTS.training.sessions, { teamId, days })
+      .get<TeamScheduleSession[]>(API_ENDPOINTS.training.sessions, { teamId, days })
       .pipe(
         map((response) => {
-          const sessions = extractApiArray<TrainingSession>(response);
+          const sessions = extractApiArray<TeamScheduleSession>(response);
           if (sessions.length > 0) {
             return sessions;
           }

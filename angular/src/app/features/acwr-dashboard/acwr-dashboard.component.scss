@@ -70,8 +70,8 @@
 }
 
 .ratio-circle {
-  width: 220px;
-  height: 220px;
+  width: 13.75rem;
+  height: 13.75rem;
   border-radius: 50%;
   background:
     radial-gradient(circle, var(--surface-secondary) 60%, transparent 61%),
@@ -90,7 +90,7 @@
   &::before {
     content: "";
     position: absolute;
-    inset: 16px;
+    inset: var(--space-4);
     background: var(--surface-card);
     border-radius: 50%;
   }
@@ -136,8 +136,8 @@
 .risk-badge {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 4px 12px;
+  gap: var(--space-1-5);
+  padding: var(--space-1) var(--space-3);
   border-radius: var(--radius-full);
   font-size: var(--ds-font-size-xs);
   font-weight: var(--ds-font-weight-extrabold, 800);
@@ -174,7 +174,7 @@
 
 .load-metric-box {
   display: grid;
-  gap: 4px;
+  gap: var(--space-1);
 
   .lbl {
     font-size: var(--ds-font-size-xs);
@@ -247,7 +247,7 @@
 // CHART
 // ────────────────────────────────────────────────────────────────────────────
 .chart-h {
-  height: 280px;
+  height: 17.5rem;
   position: relative;
 }
 
@@ -310,7 +310,7 @@
     font-size: var(--ds-font-size-sm);
     color: var(--color-text-secondary);
 
-    i { color: var(--ds-primary-green); flex: none; margin-top: 3px; }
+    i { color: var(--ds-primary-green); flex: none; margin-top: var(--space-0-75); }
   }
 }
 

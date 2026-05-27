@@ -38,6 +38,7 @@ import {
 } from "@angular/forms";
 
 // PrimeNG Components
+import { Carousel } from "primeng/carousel";
 
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { IconButtonComponent } from "../../../shared/components/button/icon-button.component";
@@ -65,10 +66,9 @@ import { SupabaseService } from "../../../core/services/supabase.service";
 import { ToastService } from "../../../core/services/toast.service";
 import { TOAST } from "../../../core/constants/toast-messages.constants";
 import { VideoSuggestionDataService } from "../services/video-suggestion-data.service";
-import {
-  FlagPosition,
-  TrainingFocus,
-} from "../../../core/models/training-video.models";
+import { FlagPosition } from "../../../core/constants/positions.constants";
+
+type TrainingFocus = string;
 
 // Layout
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
@@ -101,6 +101,7 @@ interface VideoSuggestion {
     TextareaComponent,
     MultiSelect,
 
+    Carousel,
     Skeleton,
     Chip,
     Divider,
@@ -130,6 +131,12 @@ export class VideoSuggestionComponent implements OnInit {
 
   // Expose constants to template
   protected readonly UI_LIMITS = UI_LIMITS;
+
+  // Carousel responsive options
+  readonly carouselResponsiveOptions = [
+    { breakpoint: '1024px', numVisible: 2, numScroll: 1 },
+    { breakpoint: '640px', numVisible: 1, numScroll: 1 },
+  ];
 
   // State
   isSubmitting = signal(false);

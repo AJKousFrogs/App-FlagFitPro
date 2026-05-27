@@ -9,11 +9,6 @@ import {
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { Router, RouterModule } from "@angular/router";
 
-import { FormInputComponent } from "../../shared/components/form-input/form-input.component";
-import { SelectComponent } from "../../shared/components/select/select.component";
-import { TextareaComponent } from "../../shared/components/textarea/textarea.component";
-import { firstValueFrom } from "rxjs";
-import { ApiService, API_ENDPOINTS } from "../../core/services/api.service";
 import { HeaderService } from "../../core/services/header.service";
 import { LoggerService } from "../../core/services/logger.service";
 import { FeatureFlagsService } from "../../core/services/feature-flags.service";
@@ -31,7 +26,7 @@ import {
   PlayerPerformanceStats,
   RiskAlert,
   TeamOverviewStats,
-  TrainingSession,
+  TeamScheduleSession,
   UpcomingGame,
 } from "../../core/services/team-statistics.service";
 import { TeamMembershipService } from "../../core/services/team-membership.service";
@@ -40,10 +35,7 @@ import { TOAST } from "../../core/constants/toast-messages.constants";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import {
   AppLoadingComponent,
-  AppDialogComponent,
   ButtonComponent,
-  DialogFooterComponent,
-  DialogHeaderComponent,
 } from "../../shared/components/ui-components";
 import { PageErrorStateComponent } from "../../shared/components/page-error-state/page-error-state.component";
 import { formatDate, getTimeAgo } from "../../shared/utils/date.utils";
@@ -51,10 +43,14 @@ import {
   getStatusSeverity as getStatusSeverityValue,
 } from "../../shared/utils/status.utils";
 import { DatePipe, DecimalPipe } from "@angular/common";
+import { MeterGroup } from "primeng/metergroup";
 import { LINE_CHART_OPTIONS } from "../../shared/config/chart.config";
 import { CONSENT_BLOCKED_MESSAGES } from "../../shared/utils/privacy-ux-copy";
 import { UI_LIMITS } from "../../core/constants";
 import { CoachDashboardPartialDataNoticeComponent } from "./components/coach-dashboard-partial-data-notice.component";
+import { CoachDashboardCreateSessionDialogComponent } from "./components/coach-dashboard-create-session-dialog.component";
+import { CoachDashboardTeamMessageDialogComponent } from "./components/coach-dashboard-team-message-dialog.component";
+import { CoachDashboardRequestAccessDialogComponent } from "./components/coach-dashboard-request-access-dialog.component";
 import { CoachDashboardDataService } from "./services/coach-dashboard-data.service";
 
 /**
@@ -87,32 +83,22 @@ interface ConsentInfo {
 
 type PlayerFilterType = "all" | "starters" | "injured" | "at_risk";
 
-interface NewSessionDraft {
-  title: string;
-  type: string;
-  date: Date;
-  duration: number;
-  notes: string;
-}
-
 @Component({
   selector: "app-coach-dashboard",
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     RouterModule,
-    FormInputComponent,
-    TextareaComponent,
-    SelectComponent,
     AppLoadingComponent,
-    AppDialogComponent,
     ButtonComponent,
     MainLayoutComponent,
     PageErrorStateComponent,
-    DialogFooterComponent,
-    DialogHeaderComponent,
+    MeterGroup,
     DatePipe,
     DecimalPipe,
     CoachDashboardPartialDataNoticeComponent,
+    CoachDashboardCreateSessionDialogComponent,
+    CoachDashboardTeamMessageDialogComponent,
+    CoachDashboardRequestAccessDialogComponent,
   ],
   templateUrl: "./coach-dashboard.component.html",
 
@@ -122,7 +108,6 @@ export class CoachDashboardComponent {
   // Expose constants for template use
   readonly UI_LIMITS = UI_LIMITS;
   private readonly router = inject(Router);
-  private readonly api = inject(ApiService);
   private readonly headerService = inject(HeaderService);
   private readonly teamMembershipService = inject(TeamMembershipService);
   private readonly coachDashboardDataService = inject(CoachDashboardDataService);
@@ -174,7 +159,7 @@ export class CoachDashboardComponent {
   playerOverrideCounts = signal<Record<string, number>>({});
   recentGames = signal<GameResult[]>([]);
   upcomingGames = signal<UpcomingGame[]>([]);
-  trainingSessions = signal<TrainingSession[]>([]);
+  trainingSessions = signal<TeamScheduleSession[]>([]);
   riskAlerts = signal<RiskAlert[]>([]);
   performanceTrend = signal<{ labels: string[]; scores: number[] }>({
     labels: [],
@@ -218,19 +203,8 @@ export class CoachDashboardComponent {
   showCreateSessionDialog = signal(false);
   showTeamMessageDialog = signal(false);
   showRequestAccessDialog = signal(false);
-  teamMessageContent = signal("");
-  requestAccessPlayerId: string | null = null;
-  requestAccessMessage = signal("");
-
-  // New session form
-  newSession: NewSessionDraft = this.createDefaultSessionDraft();
-
-  sessionTypes = [
-    { label: "Practice", value: "practice" },
-    { label: "Game Prep", value: "game_prep" },
-    { label: "Conditioning", value: "conditioning" },
-    { label: "Film Study", value: "film_study" },
-  ];
+  requestAccessPlayerId = signal<string | null>(null);
+  requestAccessInitialMessage = signal("");
 
   // Chart options
   lineChartOptions = {
@@ -311,6 +285,18 @@ export class CoachDashboardComponent {
     return `Team Briefing: ${sections.join(". ")}. ${atRisk > 0 ? `Recommendation: Review ${atRisk} at-risk player(s) before today's session.` : "All systems go for today's practice."}`;
   });
 
+  private atRiskPlayers = computed(() =>
+    this.players().filter(
+      (p) =>
+        p.riskLevel === "high" ||
+        p.status === "at_risk" ||
+        (p.readiness !== null &&
+          p.readiness !== undefined &&
+          p.readiness < 40) || // Wellness < 40%
+        (p.acwr !== null && p.acwr !== undefined && p.acwr > 1.3), // ACWR > 1.3
+    ),
+  );
+
   filteredPlayers = computed(() => {
     const filter = this.playerFilter();
     const allPlayers = this.players();
@@ -318,33 +304,16 @@ export class CoachDashboardComponent {
     switch (filter) {
       case "injured":
         return allPlayers.filter((p) => p.status === "injured");
+      case "starters":
+        return allPlayers.filter((p) => p.status === "active");
       case "at_risk":
-        return allPlayers.filter(
-          (p) =>
-            p.riskLevel === "high" ||
-            p.status === "at_risk" ||
-            (p.readiness !== null &&
-              p.readiness !== undefined &&
-              p.readiness < 40) || // Wellness < 40%
-            (p.acwr !== null && p.acwr !== undefined && p.acwr > 1.3), // ACWR > 1.3
-        );
+        return this.atRiskPlayers();
       default:
         return allPlayers;
     }
   });
 
-  atRiskCount = computed(
-    () =>
-      this.players().filter(
-        (p) =>
-          p.riskLevel === "high" ||
-          p.status === "at_risk" ||
-          (p.readiness !== null &&
-            p.readiness !== undefined &&
-            p.readiness < 40) || // Wellness < 40%
-          (p.acwr !== null && p.acwr !== undefined && p.acwr > 1.3), // ACWR > 1.3
-      ).length,
-  );
+  atRiskCount = computed(() => this.atRiskPlayers().length);
 
   injuredCount = computed(
     () => this.players().filter((p) => p.status === "injured").length,
@@ -591,131 +560,11 @@ export class CoachDashboardComponent {
 
   // Dialog methods
   openCreateSession(): void {
-    this.resetCreateSessionDialog();
     this.showCreateSessionDialog.set(true);
   }
 
-  onNewSessionTitleChange(value: string): void {
-    this.newSession = { ...this.newSession, title: value };
-  }
-
-  onNewSessionTitleInput(value: string): void {
-    this.onNewSessionTitleChange(value);
-  }
-
-  onNewSessionTypeChange(value: string | null): void {
-    this.newSession = { ...this.newSession, type: value ?? "practice" };
-  }
-
-  onNewSessionTypeSelect(value: unknown): void {
-    this.onNewSessionTypeChange(
-      typeof value === "string" ? value : null,
-    );
-  }
-
-  getNewSessionDateInputValue(): string {
-    const date = this.newSession.date;
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, "0");
-    const day = String(date.getDate()).padStart(2, "0");
-    const hours = String(date.getHours()).padStart(2, "0");
-    const minutes = String(date.getMinutes()).padStart(2, "0");
-    return `${year}-${month}-${day}T${hours}:${minutes}`;
-  }
-
-  onNewSessionDateInput(value: string): void {
-    if (!value) {
-      return;
-    }
-
-    const parsedDate = new Date(value);
-    if (Number.isNaN(parsedDate.getTime())) {
-      return;
-    }
-
-    this.newSession = { ...this.newSession, date: parsedDate };
-  }
-
-  onNewSessionDateInputEvent(event: Event): void {
-    this.onNewSessionDateInput(this.readInputValue(event));
-  }
-
-  onNewSessionDurationChange(value: number | string): void {
-    const parsedValue =
-      typeof value === "number" ? value : Number.parseInt(value, 10);
-    this.newSession = {
-      ...this.newSession,
-      duration: Number.isFinite(parsedValue)
-        ? parsedValue
-        : this.newSession.duration,
-    };
-  }
-
-  onNewSessionDurationInput(value: string): void {
-    this.onNewSessionDurationChange(value);
-  }
-
-  onNewSessionNotesChange(value: string): void {
-    this.newSession = { ...this.newSession, notes: value };
-  }
-
-  onNewSessionNotesInput(value: string): void {
-    this.onNewSessionNotesChange(value);
-  }
-
-  async createSession(): Promise<void> {
-    const title = this.newSession.title.trim();
-    if (!title) {
-      this.toastService.warn(TOAST.WARN.ENTER_SESSION_TITLE);
-      return;
-    }
-
-    try {
-      await firstValueFrom(
-        this.api.post(API_ENDPOINTS.coach.createTrainingSession, {
-          title,
-          type: this.newSession.type,
-          date: this.newSession.date.toISOString(),
-          duration: this.newSession.duration,
-          notes: this.newSession.notes,
-        }),
-      );
-      this.toastService.success(`Training session "${title}" created`);
-      this.resetCreateSessionDialog();
-    } catch (error) {
-      this.logger.warn("[CoachDashboard] createSession API call failed, feature may not be available yet", error);
-      this.toastService.warn(`Session creation is not available yet. Coming soon.`);
-    }
-  }
-
   openTeamMessage(): void {
-    this.resetTeamMessageDialog();
     this.showTeamMessageDialog.set(true);
-  }
-
-  onTeamMessageContentChange(value: string): void {
-    this.teamMessageContent.set(value);
-  }
-
-  onTeamMessageContentInput(value: string): void {
-    this.onTeamMessageContentChange(value);
-  }
-
-  async sendTeamMessage(): Promise<void> {
-    const message = this.teamMessageContent().trim();
-    if (!message) {
-      this.toastService.warn(TOAST.WARN.ENTER_MESSAGE);
-      return;
-    }
-
-    await this.runCoachMutation({
-      endpoint: API_ENDPOINTS.coach.teamMessage,
-      payload: { message },
-      successMessage: TOAST.SUCCESS.MESSAGE_SENT_TO_TEAM,
-      errorMessage: TOAST.ERROR.MESSAGE_SEND_FAILED,
-      logContext: "send team message",
-      onSuccess: () => this.resetTeamMessageDialog(),
-    });
   }
 
   requestDataAccess(playerId: string, event: Event): void {
@@ -723,75 +572,13 @@ export class CoachDashboardComponent {
     this.openRequestAccessDialog(playerId);
   }
 
-  private openRequestAccessDialog(playerId: string): void {
+  openRequestAccessDialog(playerId: string): void {
     const player = this.players().find((p) => p.playerId === playerId);
-    this.requestAccessPlayerId = playerId;
-    this.requestAccessMessage.set(`Hi ${player?.playerName || "there"}, I'd like to request access to your wellness and training data to better support your performance. This will help me provide personalized training recommendations.`);
+    this.requestAccessPlayerId.set(playerId);
+    this.requestAccessInitialMessage.set(
+      `Hi ${player?.playerName || "there"}, I'd like to request access to your wellness and training data to better support your performance. This will help me provide personalized training recommendations.`,
+    );
     this.showRequestAccessDialog.set(true);
-  }
-
-  async sendAccessRequest(): Promise<void> {
-    const playerId = this.requestAccessPlayerId;
-    const message = this.requestAccessMessage().trim();
-    if (!playerId || !message) {
-      this.toastService.warn(TOAST.WARN.ENTER_MESSAGE);
-      return;
-    }
-
-    await this.runCoachMutation({
-      endpoint: API_ENDPOINTS.coach.accessRequest,
-      payload: { playerId, message },
-      successMessage: TOAST.SUCCESS.ACCESS_REQUEST_SENT,
-      errorMessage: TOAST.ERROR.MESSAGE_SEND_FAILED,
-      logContext: "send access request",
-      onSuccess: () => this.resetAccessRequestDialog(),
-    });
-  }
-
-  cancelAccessRequest(): void {
-    this.resetAccessRequestDialog();
-  }
-
-  onRequestAccessMessageChange(value: string): void {
-    this.requestAccessMessage.set(value);
-  }
-
-  onRequestAccessMessageInput(value: string): void {
-    this.onRequestAccessMessageChange(value);
-  }
-
-  private readInputValue(event: Event): string {
-    const target = event.target;
-    if (target instanceof HTMLInputElement || target instanceof HTMLTextAreaElement) {
-      return target.value;
-    }
-    return "";
-  }
-
-  private resetTeamMessageDialog(): void {
-    this.showTeamMessageDialog.set(false);
-    this.teamMessageContent.set("");
-  }
-
-  resetCreateSessionDialog(): void {
-    this.showCreateSessionDialog.set(false);
-    this.newSession = this.createDefaultSessionDraft();
-  }
-
-  private resetAccessRequestDialog(): void {
-    this.showRequestAccessDialog.set(false);
-    this.requestAccessPlayerId = null;
-    this.requestAccessMessage.set("");
-  }
-
-  private createDefaultSessionDraft(): NewSessionDraft {
-    return {
-      title: "",
-      type: "practice",
-      date: new Date(),
-      duration: 90,
-      notes: "",
-    };
   }
 
   private navigateToCoachAnalytics(
@@ -814,33 +601,6 @@ export class CoachDashboardComponent {
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
     return tomorrow.toISOString().split("T")[0];
-  }
-
-  private async runCoachMutation({
-    endpoint,
-    payload,
-    successMessage,
-    errorMessage,
-    logContext,
-    onSuccess,
-  }: {
-    endpoint: string;
-    payload: Record<string, unknown>;
-    successMessage: string;
-    errorMessage: string;
-    logContext: string;
-    onSuccess?: () => void;
-  }): Promise<void> {
-    try {
-      await firstValueFrom(this.api.post(endpoint, payload));
-      this.toastService.success(successMessage);
-      onSuccess?.();
-    } catch (error) {
-      this.logger.error("coach_dashboard_operation_failed", error, {
-        operation: logContext,
-      });
-      this.toastService.error(errorMessage);
-    }
   }
 
   // Helper methods
@@ -969,6 +729,18 @@ export class CoachDashboardComponent {
   // The state engine auto-detects which "view mode" to render based on the
   // next-game distance, instead of forcing the coach to pick.
   // ============================================================================
+
+  /** MeterGroup data for squad health breakdown */
+  readonly squadHealthMeters = computed(() => {
+    const overview = this.teamOverview();
+    const total = overview.totalPlayers || 1;
+    const healthy = overview.activePlayers - overview.injuredPlayers - overview.playersAtRisk;
+    return [
+      { label: 'Healthy', value: Math.round((healthy / total) * 100), color: 'var(--color-status-success)' },
+      { label: 'At Risk', value: Math.round((overview.playersAtRisk / total) * 100), color: 'var(--color-status-warning)' },
+      { label: 'Injured', value: Math.round((overview.injuredPlayers / total) * 100), color: 'var(--color-status-danger)' },
+    ];
+  });
 
   /** Header date line: "Saturday · May 16" */
   readonly todayDateLabel = computed(() =>

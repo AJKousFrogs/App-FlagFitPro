@@ -50,33 +50,27 @@
       <!-- 2. HERO — readiness ring + status -->
       <section class="pd-hero" aria-label="Today's readiness">
         <div class="pd-ring" aria-label="Readiness ring">
-          <svg viewBox="0 0 220 220">
-            <circle class="pd-ring__bg" cx="110" cy="110" r="100"/>
-            @if (heroValue() !== null) {
-              <circle
-                class="pd-ring__fg"
-                cx="110" cy="110" r="100"
-                stroke-dasharray="628"
-                [attr.stroke-dashoffset]="ringDashOffset()"
-                transform="rotate(-90 110 110)"
-              />
-            } @else {
-              <circle
-                class="pd-ring__fg pd-ring__fg--empty"
-                cx="110" cy="110" r="100"
-                stroke-dasharray="4 6"
-                fill="none"
-              />
-            }
-          </svg>
-          <div class="pd-ring__center">
-            @if (heroValue() !== null) {
-              <div class="pd-ring__num">{{ heroValue() }}</div>
-            } @else {
-              <div class="pd-ring__num pd-ring__num--empty">—</div>
-            }
-            <div class="pd-ring__lab">Readiness</div>
-          </div>
+          @if (heroValue() !== null) {
+            <p-knob
+              [ngModel]="heroValue()!"
+              [readonly]="true"
+              [size]="200"
+              [strokeWidth]="8"
+              [valueColor]="readinessColor()"
+              [rangeColor]="'var(--surface-tertiary)'"
+              valueTemplate="{value}%"
+            />
+          } @else {
+            <p-knob
+              [ngModel]="0"
+              [readonly]="true"
+              [size]="200"
+              [strokeWidth]="8"
+              [rangeColor]="'var(--surface-tertiary)'"
+              [valueColor]="'var(--surface-tertiary)'"
+              valueTemplate="—"
+            />
+          }
         </div>
 
         <div class="pd-hero__copy">
@@ -183,7 +177,7 @@
         <section class="pd-card">
           <div class="pd-card__head">
             <h3 class="pd-card__title">ACWR · 28d</h3>
-            <a class="pd-card__link" (click)="navigateToACWR()">Details →</a>
+            <a class="pd-card__link" role="button" tabindex="0" (click)="navigateToACWR()" (keydown.enter)="navigateToACWR()">Details →</a>
           </div>
           @if (dashboardAcwrDisplay().hasData && dashboardAcwrDisplay().value !== null) {
             <div class="pd-stat-block">

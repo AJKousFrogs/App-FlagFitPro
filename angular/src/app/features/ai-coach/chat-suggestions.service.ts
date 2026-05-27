@@ -18,7 +18,6 @@ import {
   getProtocolAcwrDisplay,
   getProtocolReadinessPresentation,
 } from "../../core/utils/protocol-metrics-presentation";
-import type { AIModeStatus } from "../../shared/components/ai-mode-explanation/ai-mode-explanation.component";
 import { ChatMessagesService } from "./chat-messages.service";
 import { MerlinKnowledgeService, type NutritionPlanSummary } from "./merlin-knowledge.service";
 import { ProfileCompletionService } from "../../core/services/profile-completion.service";
@@ -41,6 +40,14 @@ export interface SessionContextItem {
   detail: string;
   icon: string;
   tone?: "default" | "warning";
+}
+
+export interface AIModeStatus {
+  isConservative: boolean;
+  confidence: number;
+  reason: string;
+  missingData: string[];
+  staleData: string[];
 }
 
 // ============================================================================

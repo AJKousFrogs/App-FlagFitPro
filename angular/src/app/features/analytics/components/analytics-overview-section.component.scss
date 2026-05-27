@@ -197,10 +197,10 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 52px;
-  height: 52px;
-  min-width: 52px;
-  border-radius: 14px;
+  width: var(--space-13, 52px);
+  height: var(--space-13, 52px);
+  min-width: var(--space-13, 52px);
+  border-radius: var(--radius-lg);
   background: linear-gradient(135deg,
     color-mix(in srgb, var(--ds-primary-green) 18%, transparent),
     color-mix(in srgb, var(--ds-primary-green) 8%, transparent));
@@ -229,7 +229,7 @@
 
 .metric-label {
   color: var(--color-text-secondary);
-  font-size: 11px;
+  font-size: var(--ds-font-size-2xs);
   font-weight: var(--ds-font-weight-extrabold, 800);
   letter-spacing: 0.1em;
   text-transform: uppercase;
@@ -242,7 +242,7 @@
   font-weight: var(--ds-font-weight-semibold);
   font-variant-numeric: tabular-nums;
   line-height: var(--ds-line-height-normal);
-  margin-top: 2px;
+  margin-top: var(--space-0-5);
 }
 
 .metric-trend.trend-positive {

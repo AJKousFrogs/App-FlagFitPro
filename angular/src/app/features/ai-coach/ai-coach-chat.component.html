@@ -273,6 +273,7 @@
                       <button
                         type="button"
                         class="grounding-toggle"
+                        [attr.aria-expanded]="message.isExpanded"
                         (click)="toggleCitations(message)"
                       >
                         {{ message.isExpanded ? "Hide sources" : "Show sources" }}

@@ -37,6 +37,7 @@ import { AlertComponent } from "../../../shared/components/alert/alert.component
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { Slider } from "primeng/slider";
 import { InputNumber } from "primeng/inputnumber";
+import { FloatLabel } from "primeng/floatlabel";
 import { TextareaComponent } from "../../../shared/components/textarea/textarea.component";
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";
@@ -76,6 +77,7 @@ interface ExistingTrainingSession {
     ReactiveFormsModule,
     Slider,
     InputNumber,
+    FloatLabel,
     TextareaComponent,
 
     MainLayoutComponent,

@@ -81,8 +81,15 @@
     input {
       border: none;
       background: transparent;
-      outline: none;
       min-width: var(--input-min-width-lg);
+
+      &:focus:not(:focus-visible) {
+        outline: none;
+      }
+      &:focus-visible {
+        outline: 2px solid var(--ds-primary-green);
+        outline-offset: 2px;
+      }
     }
   }
 }

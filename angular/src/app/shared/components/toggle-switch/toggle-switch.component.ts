@@ -25,7 +25,7 @@ import { ToggleSwitchModule, ToggleSwitchChangeEvent } from "primeng/toggleswitc
     },
   ],
   template: `
-    <div class="app-toggle-switch-wrapper flex align-items-center gap-2">
+    <div class="app-toggle-switch-wrapper" style="display: flex; align-items: center; gap: var(--space-2)">
       <p-toggleswitch
         [ngModel]="checked"
         [inputId]="inputId()"
@@ -34,7 +34,7 @@ import { ToggleSwitchModule, ToggleSwitchChangeEvent } from "primeng/toggleswitc
         styleClass="app-toggle-switch"
       ></p-toggleswitch>
       @if (label()) {
-        <label [for]="inputId()" class="cursor-pointer" [class.text-gray-500]="isDisabled()">
+        <label [for]="inputId()" style="cursor: pointer" [style.color]="isDisabled() ? 'var(--color-text-secondary)' : null">
           {{ label() }}
         </label>
       }

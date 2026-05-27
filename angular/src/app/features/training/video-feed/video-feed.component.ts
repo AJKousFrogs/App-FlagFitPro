@@ -29,6 +29,7 @@ import {
   signal,
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
+import { NgOptimizedImage } from "@angular/common";
 import { FormControl, ReactiveFormsModule } from "@angular/forms";
 import { Router } from "@angular/router";
 
@@ -56,10 +57,9 @@ import { SupabaseService } from "../../../core/services/supabase.service";
 import { ToastService } from "../../../core/services/toast.service";
 import { TOAST } from "../../../core/constants/toast-messages.constants";
 import { VideoBookmarkDataService } from "../services/video-bookmark-data.service";
-import {
-  FlagPosition,
-  TrainingFocus,
-} from "../../../core/models/training-video.models";
+import { FlagPosition } from "../../../core/constants/positions.constants";
+
+type TrainingFocus = string;
 
 // Layout
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
@@ -70,6 +70,7 @@ import { FilterChip } from "./video-feed.models";
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ReactiveFormsModule,
+    NgOptimizedImage,
     Skeleton,
     Tooltip,
 

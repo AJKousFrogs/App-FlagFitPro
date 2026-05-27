@@ -308,10 +308,15 @@ export class SearchService implements OnDestroy {
   private highlightText(text: string, query: string): string {
     if (!query) return text;
 
-    // Escape special regex characters in query
+    const escaped = text
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#x27;");
     const escapedQuery = query.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
     const regex = new RegExp(`(${escapedQuery})`, "gi");
-    return text.replace(regex, "<mark>$1</mark>");
+    return escaped.replace(regex, "<mark>$1</mark>");
   }
 
   /**

@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, input, output } from "@angular/core
 import { FormGroup, ReactiveFormsModule } from "@angular/forms";
 import { FormInputComponent } from "../../../shared/components/form-input/form-input.component";
 import { SelectComponent } from "../../../shared/components/select/select.component";
+import { FloatLabel } from "primeng/floatlabel";
 
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { CardShellComponent } from "../../../shared/components/card-shell/card-shell.component";
@@ -24,6 +25,7 @@ interface SelectOption {
     ReactiveFormsModule,
     FormInputComponent,
     SelectComponent,
+    FloatLabel,
     ButtonComponent,
     CardShellComponent,
     BirthdayInputSuggestionDirective,

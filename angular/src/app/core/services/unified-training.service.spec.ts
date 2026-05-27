@@ -7,7 +7,8 @@ import { ReadinessService } from "./readiness.service";
 import { PlayerProgramService } from "./player-program.service";
 import { WellnessService } from "./wellness.service";
 import { TrainingDataService } from "./training-data.service";
-import { PerformanceDataService } from "./performance-data.service";
+import { MeasurementDataService } from "./measurement-data.service";
+import { SupplementDataService } from "./supplement-data.service";
 import { LoggerService } from "./logger.service";
 import { firstValueFrom, Observable, of, throwError } from "rxjs";
 import { mockPlayerProgramService } from "./player-program.service.mock";
@@ -95,12 +96,15 @@ const mockTrainingDataService = {
   createTrainingSession: vi.fn().mockReturnValue(of({ success: true, data: {} })),
 };
 
-const mockPerformanceDataService = {
+const mockMeasurementDataService = {
   logMeasurement: vi.fn().mockReturnValue(of({ success: true, data: {} })),
-  logSupplement: vi.fn().mockReturnValue(of({ success: true, data: {} })),
-  todaysSupplements: signal([] as unknown[]),
   latestMeasurement: signal(null),
   recentMeasurements: signal([]),
+};
+
+const mockSupplementDataService = {
+  logSupplement: vi.fn().mockReturnValue(of({ success: true, data: {} })),
+  todaysSupplements: signal([] as unknown[]),
 };
 
 const mockAcwrService = {
@@ -157,7 +161,8 @@ describe("UnifiedTrainingService", () => {
   let playerProgramService: PlayerProgramService;
   let wellnessService: WellnessService;
   let trainingDataService: TrainingDataService;
-  let performanceDataService: PerformanceDataService;
+  let measurementDataService: MeasurementDataService;
+  let supplementDataService: SupplementDataService;
   let _loggerService: LoggerService;
   let _acwrService: AcwrService;
   let mockPlayerProgram: ReturnType<typeof mockPlayerProgramService>;
@@ -183,7 +188,8 @@ describe("UnifiedTrainingService", () => {
         { provide: PlayerProgramService, useValue: mockPlayerProgram },
         { provide: WellnessService, useValue: mockWellnessService },
         { provide: TrainingDataService, useValue: mockTrainingDataService },
-        { provide: PerformanceDataService, useValue: mockPerformanceDataService },
+        { provide: MeasurementDataService, useValue: mockMeasurementDataService },
+        { provide: SupplementDataService, useValue: mockSupplementDataService },
         { provide: LoggerService, useValue: mockLoggerInstance },
         { provide: AcwrService, useValue: mockAcwrService },
       ],
@@ -197,7 +203,8 @@ describe("UnifiedTrainingService", () => {
     playerProgramService = TestBed.inject(PlayerProgramService);
     wellnessService = TestBed.inject(WellnessService);
     trainingDataService = TestBed.inject(TrainingDataService);
-    performanceDataService = TestBed.inject(PerformanceDataService);
+    measurementDataService = TestBed.inject(MeasurementDataService);
+    supplementDataService = TestBed.inject(SupplementDataService);
     _loggerService = TestBed.inject(LoggerService);
     _acwrService = TestBed.inject(AcwrService);
 
@@ -206,10 +213,10 @@ describe("UnifiedTrainingService", () => {
     mockSupabaseAuthService.isAuthenticated.mockReturnValue(true);
 
     // Mock Supabase currentUser signal and session
-    supabaseService.currentUser = signal(mockUserForAuth);
-    supabaseService.session = vi.fn().mockReturnValue({ access_token: "mock-token", user: mockUserForAuth });
-    authService.currentUser = signal(mockUserForAuth); // Ensure authService's signal is also set
-    authService.isAuthenticated = signal(true);
+    Object.defineProperty(supabaseService, 'currentUser', { value: signal(mockUserForAuth), writable: true, configurable: true });
+    Object.defineProperty(supabaseService, 'session', { value: vi.fn().mockReturnValue({ access_token: "mock-token", user: mockUserForAuth }), writable: true, configurable: true });
+    (authService as any).currentUser = signal(mockUserForAuth);
+    (authService as any).isAuthenticated = signal(true);
     authService.getUser = vi.fn().mockReturnValue(mockUserForAuth);
 
     // Mock API service responses globally if needed
@@ -218,7 +225,7 @@ describe("UnifiedTrainingService", () => {
     mockApiService.delete.mockReturnValue(of({ success: true, data: {} }));
 
     // Mock Supabase client methods used by the service
-    supabaseService.client = {
+    Object.defineProperty(supabaseService, 'client', { value: {
       auth: {
         getUser: vi.fn().mockResolvedValue({ data: { user: mockUserForAuth } }),
         signOut: vi.fn().mockResolvedValue({ error: null }),
@@ -227,7 +234,7 @@ describe("UnifiedTrainingService", () => {
       select: vi.fn().mockReturnThis(),
       eq: vi.fn().mockReturnThis(),
       maybeSingle: vi.fn().mockResolvedValue({ data: { first_name: "John" } }),
-    } as any;
+    } as any, writable: true, configurable: true });
 
     // Mock other services
     mockReadinessService.current.mockReturnValue({
@@ -244,8 +251,8 @@ describe("UnifiedTrainingService", () => {
       muscleSoreness: 5,
     });
     mockTrainingDataService.createTrainingSession = vi.fn().mockReturnValue(of({ success: true, data: {} }));
-    mockPerformanceDataService.logMeasurement = vi.fn().mockReturnValue(of({ success: true, data: {} }));
-    mockPerformanceDataService.todaysSupplements = signal([]);
+    mockMeasurementDataService.logMeasurement = vi.fn().mockReturnValue(of({ success: true, data: {} }));
+    mockSupplementDataService.todaysSupplements = signal([]);
     mockAcwrService.acwrRatio = signal(1.0);
     mockAcwrService.acuteLoad = signal(500);
     mockAcwrService.chronicLoad = signal(500);
@@ -307,7 +314,7 @@ describe("UnifiedTrainingService", () => {
         }),
       );
 
-      const data = await firstValueFrom(service.getTodayOverview());
+      const data = await firstValueFrom(service.getTodayOverview()) as Record<string, unknown> | null;
       expect(data).not.toBeNull();
       expect(data?.aiInsight).toBe("Looks good!");
     });
@@ -323,11 +330,11 @@ describe("UnifiedTrainingService", () => {
 
     it("should return null if user is not authenticated", () => {
       // Simulate user not authenticated
-      authService.isAuthenticated = signal(false);
+      (authService as any).isAuthenticated = signal(false);
       mockSupabaseAuthService.isAuthenticated.mockReturnValue(false);
       // Supabase service signal also needs to be updated if it directly reflects auth state
-      supabaseService.currentUser = signal(null);
-      authService.currentUser = signal(null);
+      Object.defineProperty(supabaseService, 'currentUser', { value: signal(null), writable: true, configurable: true });
+      (authService as any).currentUser = signal(null);
 
       expect(service.getTodayOverview()).toBeInstanceOf(Observable);
       // The observable will emit null or an empty result. We test the *creation* of the observable here.
@@ -343,7 +350,7 @@ describe("UnifiedTrainingService", () => {
 
   describe("generateDailyProtocol", () => {
     it("should call the API to generate daily protocol", async () => {
-      apiService.post.mockReturnValue(of({ success: true, data: {} }));
+      (apiService.post as ReturnType<typeof vi.fn>).mockReturnValue(of({ success: true, data: {} }));
       const response = await firstValueFrom(service.generateDailyProtocol("2023-10-26"));
       expect(apiService.post).toHaveBeenCalledWith(
         API_ENDPOINTS.dailyProtocol.generate,
@@ -355,7 +362,7 @@ describe("UnifiedTrainingService", () => {
 
   describe("getProtocolForDate", () => {
     it("should call the API to get protocol for a specific date", async () => {
-      apiService.get.mockReturnValue(of({ success: true, data: {} }));
+      (apiService.get as ReturnType<typeof vi.fn>).mockReturnValue(of({ success: true, data: {} }));
       const response = await firstValueFrom(service.getProtocolForDate("2023-10-26"));
       expect(apiService.get).toHaveBeenCalledWith(
         `${API_ENDPOINTS.dailyProtocol.byDate("2023-10-26")}`,
@@ -395,7 +402,7 @@ describe("UnifiedTrainingService", () => {
   describe("addHydration", () => {
     it("should update hydration level", async () => {
       const currentWellness = { hydration: 8 };
-      wellnessService.latestWellnessEntry = signal(currentWellness);
+      (wellnessService as any).latestWellnessEntry = signal(currentWellness);
       wellnessService.logWellness = vi.fn().mockReturnValue(of({ success: true, data: {} }));
 
       await service.addHydration(500); // 500ml = 2 glasses
@@ -406,29 +413,29 @@ describe("UnifiedTrainingService", () => {
   });
 
   describe("logSupplement", () => {
-    it("should call performanceDataService.logSupplement", () => {
-      performanceDataService.logSupplement = vi.fn();
+    it("should call supplementDataService.logSupplement", () => {
+      supplementDataService.logSupplement = vi.fn();
       service.logSupplement({
         name: "Protein Powder",
         taken: true,
         timeOfDay: "morning",
         date: "2023-10-26",
       });
-      expect(performanceDataService.logSupplement).toHaveBeenCalled();
+      expect(supplementDataService.logSupplement).toHaveBeenCalled();
     });
   });
 
   describe("logBodyComp", () => {
-    it("should call performanceDataService.logMeasurement", async () => {
-      performanceDataService.logMeasurement = vi.fn().mockReturnValue(of({ success: true, data: {} }));
-      await service.logBodyComp({ weight_kg: 70 });
-      expect(performanceDataService.logMeasurement).toHaveBeenCalledWith({ weight_kg: 70 });
+    it("should call measurementDataService.logMeasurement", async () => {
+      measurementDataService.logMeasurement = vi.fn().mockReturnValue(of({ success: true, data: {} }));
+      await service.logBodyComp({ weight: 70 });
+      expect(measurementDataService.logMeasurement).toHaveBeenCalledWith({ weight: 70 });
     });
   });
 
   describe("getWellnessForDay", () => {
     it("should call API to get wellness for a date", () => {
-      apiService.get.mockReturnValue(of({ success: true, data: {} }));
+      (apiService.get as ReturnType<typeof vi.fn>).mockReturnValue(of({ success: true, data: {} }));
       service.getWellnessForDay("2023-10-26");
       expect(apiService.get).toHaveBeenCalledWith("/api/wellness/checkin?date=2023-10-26");
     });
@@ -580,19 +587,19 @@ describe("UnifiedTrainingService", () => {
         { id: "wake", label: "Wake Up", time: "07:00", icon: "pi-sun" },
       ];
       mockApiService.get.mockReturnValue(of({ success: true, data: { dailyRoutine: mockDailyRoutine } }));
-      await service.loadPlayerSettingsRoutine();
+      await (service as any).loadPlayerSettingsRoutine();
       expect(service.dailyRoutine()).toEqual(mockDailyRoutine);
     });
 
     it("should use default routine if none is loaded", async () => {
       mockApiService.get.mockReturnValue(of({ success: true, data: {} })); // No dailyRoutine
-      await service.loadPlayerSettingsRoutine();
+      await (service as any).loadPlayerSettingsRoutine();
       expect(service.dailyRoutine()).toEqual(DEFAULT_DAILY_ROUTINE_EXPECTED);
     });
 
     it("should handle API errors gracefully", async () => {
       mockApiService.get.mockReturnValue(throwError(() => new Error("API error")));
-      await service.loadPlayerSettingsRoutine();
+      await (service as any).loadPlayerSettingsRoutine();
       expect(service.dailyRoutine()).toEqual(DEFAULT_DAILY_ROUTINE_EXPECTED); // Falls back to default
     });
   });
@@ -600,7 +607,7 @@ describe("UnifiedTrainingService", () => {
   describe("addHydration", () => {
     it("should update hydration level", async () => {
       const currentWellness = { hydration: 8 };
-      wellnessService.latestWellnessEntry = signal(currentWellness);
+      (wellnessService as any).latestWellnessEntry = signal(currentWellness);
       wellnessService.logWellness = vi.fn().mockReturnValue(of({ success: true, data: {} }));
 
       await service.addHydration(500); // 500ml = 2 glasses

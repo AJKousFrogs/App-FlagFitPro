@@ -49,8 +49,12 @@
   color: var(--color-text-secondary, #5f6b7a);
 }
 
-.filter-search input:focus {
+.filter-search input:focus:not(:focus-visible) {
   outline: none;
+}
+.filter-search input:focus-visible {
+  outline: 2px solid var(--ds-primary-green);
+  outline-offset: 2px;
 }
 
 .summary-grid {
@@ -95,7 +99,7 @@
 }
 
 .overview-metric__label {
-  font-size: 10px;
+  font-size: var(--ds-font-size-2xs);
   font-weight: var(--ds-font-weight-extrabold, 800);
   color: var(--color-text-secondary);
   text-transform: uppercase;

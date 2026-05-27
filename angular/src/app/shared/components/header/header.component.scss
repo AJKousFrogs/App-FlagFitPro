@@ -166,11 +166,6 @@
   flex: 0 0 auto;
 }
 
-.header-right app-header-weather-widget {
-  /* Weather widget is a component host; make it behave like an inline control in the header row. */
-  display: inline-flex;
-  align-items: center;
-}
 
 .header-utility {
   display: flex;

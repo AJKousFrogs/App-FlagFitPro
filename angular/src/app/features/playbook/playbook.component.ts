@@ -11,8 +11,8 @@ import {
   Component,
   computed,
   inject,
-  OnInit,
   DestroyRef,
+  resource,
   signal,
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
@@ -20,6 +20,7 @@ import { ToastService } from "../../core/services/toast.service";
 
 import { firstValueFrom } from "rxjs";
 import { ApiService, API_ENDPOINTS } from "../../core/services/api.service";
+import { SupabaseService } from "../../core/services/supabase.service";
 import { extractApiPayload } from "../../core/utils/api-response-mapper";
 import { LoggerService } from "../../core/services/logger.service";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
@@ -53,18 +54,37 @@ import { PlaybookQuizDialogContentComponent } from "./components/playbook-quiz-d
   templateUrl: "./playbook.component.html",
   styleUrl: "./playbook.component.scss",
 })
-export class PlaybookComponent implements OnInit {
+export class PlaybookComponent {
   private readonly api = inject(ApiService);
   private destroyRef = inject(DestroyRef);
   private readonly logger = inject(LoggerService);
+  private readonly supabase = inject(SupabaseService);
   private readonly toastService = inject(ToastService);
 
-  // Design system tokens
+  // ---------------------------------------------------------------------------
+  // Playbook resource — auto-loads on auth.
+  // ---------------------------------------------------------------------------
+  private readonly playsResource = resource({
+    params: () => this.supabase.userId(),
+    loader: async ({ params: userId }) => {
+      if (!userId) return [] as Play[];
+      try {
+        const response = await firstValueFrom(
+          this.api.get<{ plays?: Play[] }>(API_ENDPOINTS.playbook.list),
+        );
+        const payload = extractApiPayload<{ plays?: Play[] }>(response);
+        return payload?.plays ?? [];
+      } catch (err) {
+        this.logger.error("Failed to load playbook data", err);
+        return [];
+      }
+    },
+  });
 
   // State
-  readonly plays = signal<Play[]>([]);
+  readonly plays = computed(() => this.playsResource.value() ?? []);
   readonly selectedPlay = signal<Play | null>(null);
-  readonly isLoading = signal(true);
+  readonly isLoading = this.playsResource.isLoading;
 
   // Filter state
   readonly searchQuery = signal("");
@@ -166,29 +186,6 @@ export class PlaybookComponent implements OnInit {
     this.selectedStatus.set(value ?? null);
   }
 
-  ngOnInit(): void {
-    this.loadData();
-  }
-
-  async loadData(): Promise<void> {
-    this.isLoading.set(true);
-
-    try {
-      const response = await firstValueFrom(
-        this.api.get<{ plays?: Play[] }>(API_ENDPOINTS.playbook.list),
-      );
-      const payload = extractApiPayload<{ plays?: Play[] }>(response);
-      if (payload?.plays) {
-        this.plays.set(payload.plays);
-      }
-    } catch (err) {
-      this.logger.error("Failed to load playbook data", err);
-      // No plays assigned to player yet
-      this.plays.set([]);
-    } finally {
-      this.isLoading.set(false);
-    }
-  }
 
   selectPlay(play: Play): void {
     this.selectedPlay.set(play);
@@ -203,8 +200,8 @@ export class PlaybookComponent implements OnInit {
   toggleMemorized(play: Play): void {
     const newStatus = !play.isMemorized;
 
-    this.plays.update((plays) =>
-      plays.map((p) =>
+    this.playsResource.value.update((plays) =>
+      (plays ?? []).map((p) =>
         p.id === play.id
           ? {
               ...p,

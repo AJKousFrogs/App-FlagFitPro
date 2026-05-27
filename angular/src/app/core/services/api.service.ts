@@ -625,11 +625,6 @@ export const API_ENDPOINTS = {
     base: "/api/qb-throwing",
     armCare: "/api/qb-throwing/arm-care",
   },
-  tournamentCalendar: {
-    list: "/api/tournament-calendar",
-    create: "/api/tournament-calendar",
-    delete: "/api/tournament-calendar/delete",
-  },
   // Health check
   health: "/api/health",
   // API documentation

@@ -4,11 +4,12 @@
  * Manages Merlin AI chat session persistence: loading recent sessions,
  * fetching full session message history, and URL query-param sync.
  */
-import { inject, Injectable, signal } from "@angular/core";
+import { computed, inject, Injectable, resource } from "@angular/core";
 import { Router } from "@angular/router";
 import { firstValueFrom } from "rxjs";
 import { ApiService, API_ENDPOINTS } from "../../core/services/api.service";
 import { LoggerService } from "../../core/services/logger.service";
+import { SupabaseService } from "../../core/services/supabase.service";
 import { extractApiPayload } from "../../core/utils/api-response-mapper";
 
 // ===== Exported Interfaces =====
@@ -48,28 +49,43 @@ export class ChatSessionService {
   private readonly api = inject(ApiService);
   private readonly logger = inject(LoggerService);
   private readonly router = inject(Router);
+  private readonly supabase = inject(SupabaseService);
 
-  readonly recentSessions = signal<RecentChatSession[]>([]);
-
-  async loadRecentSessions(): Promise<void> {
-    try {
-      const response = await firstValueFrom(
-        this.api.get<{ sessions?: RecentChatSession[] }>(
-          API_ENDPOINTS.aiChat.sessions,
-        ),
-      );
-      const payload = extractApiPayload<{
-        sessions?: RecentChatSession[];
-      }>(response);
-      this.recentSessions.set(
-        Array.isArray(payload?.sessions)
+  // ---------------------------------------------------------------------------
+  // Recent sessions resource — auto-loads on auth, resets on logout.
+  // ---------------------------------------------------------------------------
+  private readonly recentSessionsResource = resource({
+    params: () => this.supabase.userId(),
+    loader: async ({ params: userId }) => {
+      if (!userId) return [] as RecentChatSession[];
+      try {
+        const response = await firstValueFrom(
+          this.api.get<{ sessions?: RecentChatSession[] }>(
+            API_ENDPOINTS.aiChat.sessions,
+          ),
+        );
+        const payload = extractApiPayload<{
+          sessions?: RecentChatSession[];
+        }>(response);
+        return Array.isArray(payload?.sessions)
           ? payload.sessions.slice(0, 4)
-          : [],
-      );
-    } catch (error) {
-      this.logger.warn("[AI Chat] Failed to load recent sessions", error);
-      this.recentSessions.set([]);
-    }
+          : [];
+      } catch (error) {
+        this.logger.warn("[AI Chat] Failed to load recent sessions", error);
+        return [];
+      }
+    },
+  });
+
+  readonly recentSessions = computed(
+    () => this.recentSessionsResource.value() ?? [],
+  );
+
+  /**
+   * Reload recent sessions (e.g. after sending a new message).
+   */
+  reloadRecentSessions(): void {
+    this.recentSessionsResource.reload();
   }
 
   async fetchSessionMessages(

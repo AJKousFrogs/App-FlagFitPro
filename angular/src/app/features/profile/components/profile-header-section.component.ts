@@ -3,7 +3,7 @@ import { RouterModule } from "@angular/router";
 import { ProgressBarComponent } from "../../../shared/components/progress-bar/progress-bar.component";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { IconButtonComponent } from "../../../shared/components/button/icon-button.component";
-import { MobileOptimizedImageDirective } from "../../../shared/directives/mobile-optimized-image.directive";
+import { NgOptimizedImage } from "@angular/common";
 
 @Component({
   selector: "app-profile-header-section",
@@ -14,7 +14,7 @@ import { MobileOptimizedImageDirective } from "../../../shared/directives/mobile
     ProgressBarComponent,
     ButtonComponent,
     IconButtonComponent,
-    MobileOptimizedImageDirective,
+    NgOptimizedImage,
   ],
   templateUrl: "./profile-header-section.component.html",
   styleUrl: "./profile-header-section.component.scss",

@@ -41,8 +41,8 @@
 .auth-stage__eyebrow {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  padding: 6px 14px;
+  gap: var(--space-2);
+  padding: var(--space-1-5) var(--space-3-5);
   border-radius: var(--radius-full);
   background: var(--surface-card);
   border: var(--border-1) solid var(--color-border-secondary);
@@ -54,7 +54,7 @@
   margin-bottom: var(--space-6);
 }
 .auth-stage__eyebrow-dot {
-  width: 8px; height: 8px; border-radius: 50%;
+  width: var(--space-2); height: var(--space-2); border-radius: 50%;
   background: var(--ds-primary-green);
   box-shadow: 0 0 12px var(--ds-primary-green);
 }
@@ -113,7 +113,7 @@
   color: var(--color-text-secondary);
 
   i {
-    font-size: 28px;
+    font-size: var(--ds-font-size-1-75rem);
     color: var(--ds-primary-green);
   }
 
@@ -145,16 +145,16 @@
   text-align: center;
 
   &__icon {
-    width: 64px;
-    height: 64px;
-    border-radius: 16px;
+    width: var(--space-16);
+    height: var(--space-16);
+    border-radius: var(--radius-xl);
     background: linear-gradient(135deg,
       color-mix(in srgb, var(--ds-primary-green) 18%, transparent),
       color-mix(in srgb, var(--ds-primary-green) 8%, transparent));
     color: var(--ds-primary-green);
     display: grid;
     place-items: center;
-    font-size: 28px;
+    font-size: var(--ds-font-size-1-75rem);
   }
 
   &__msg {

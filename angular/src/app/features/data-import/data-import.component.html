@@ -12,7 +12,8 @@
             @for (type of importTypes; track type.id) {
               <app-card-shell
                 class="import-type-card"
-                (click)="selectImportType(type)"
+                state="interactive"
+                (cardClick)="selectImportType(type)"
               >
                 <div class="type-content">
                   <span class="type-icon" aria-hidden="true"

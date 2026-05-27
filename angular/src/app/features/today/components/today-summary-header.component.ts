@@ -9,6 +9,7 @@ import {
   signal,
   untracked,
 } from "@angular/core";
+import { NgOptimizedImage } from "@angular/common";
 import { DomSanitizer, SafeResourceUrl } from "@angular/platform-browser";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { CardShellComponent } from "../../../shared/components/card-shell/card-shell.component";
@@ -26,7 +27,7 @@ import type {
   selector: "app-today-summary-header",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ButtonComponent, CardShellComponent],
+  imports: [NgOptimizedImage, ButtonComponent, CardShellComponent],
   templateUrl: "./today-summary-header.component.html",
   styleUrl: "./today-summary-header.component.scss",
 })

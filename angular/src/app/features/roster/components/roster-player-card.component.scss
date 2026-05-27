@@ -79,14 +79,14 @@
 }
 
 .player-jersey {
-  width: 48px;
-  height: 48px;
-  border-radius: 12px;
+  width: var(--space-12);
+  height: var(--space-12);
+  border-radius: var(--radius-lg);
   display: grid;
   place-items: center;
   font-family: var(--ds-font-family-display, var(--ds-font-family-base));
   font-weight: var(--ds-font-weight-extrabold, 800);
-  font-size: 20px;
+  font-size: var(--ds-font-size-xl);
   letter-spacing: -0.02em;
   color: var(--color-text-on-primary, white);
   box-shadow: 0 4px 14px color-mix(in srgb, var(--ds-primary-green) 25%, transparent);
@@ -100,7 +100,7 @@
 }
 
 .player-name {
-  margin: 0 0 4px;
+  margin: 0 0 var(--space-1);
   font-family: var(--ds-font-family-display, var(--ds-font-family-base));
   font-size: var(--ds-font-size-md);
   font-weight: var(--ds-font-weight-extrabold, 800);
@@ -109,12 +109,12 @@
 }
 
 .player-position {
-  font-size: 11px;
+  font-size: var(--ds-font-size-2xs);
   font-weight: var(--ds-font-weight-extrabold, 800);
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--color-text-secondary);
-  margin-bottom: 2px;
+  margin-bottom: var(--space-0-5);
 }
 
 .player-meta {
@@ -122,7 +122,7 @@
   color: var(--color-text-secondary);
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: var(--space-1-5);
 }
 
 .country-flag { font-size: var(--ds-font-size-sm); line-height: 1; }
@@ -143,18 +143,18 @@
 .metric-item {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: var(--space-1);
 }
 
 .metric-header {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 2px;
+  gap: var(--space-0-5);
 }
 
 .metric-label {
-  font-size: 10px;
+  font-size: var(--ds-font-size-2xs);
   font-weight: var(--ds-font-weight-extrabold, 800);
   letter-spacing: 0.1em;
   text-transform: uppercase;
@@ -163,7 +163,7 @@
 
 .metric-value {
   font-family: var(--ds-font-family-display, var(--ds-font-family-base));
-  font-size: 18px;
+  font-size: var(--ds-font-size-lg);
   font-weight: var(--ds-font-weight-extrabold, 800);
   letter-spacing: -0.01em;
   line-height: 1;
@@ -180,16 +180,16 @@
 // Subtle readiness underline (replaces the noisy progress bar inside the card)
 .readiness-bar {
   height: 3px;
-  margin-top: 4px;
-  border-radius: 2px;
+  margin-top: var(--space-1);
+  border-radius: var(--space-0-5);
   opacity: 0.7;
 }
 
 // ACWR mini-zone indicator — kept compact
 .acwr-indicator {
   position: relative;
-  height: 6px;
-  margin-top: 6px;
+  height: var(--space-1-5);
+  margin-top: var(--space-1-5);
   background: linear-gradient(
     to right,
     var(--color-status-info) 0%,
@@ -198,14 +198,14 @@
     var(--color-status-warning) 75%,
     var(--color-status-error) 100%
   );
-  border-radius: 3px;
+  border-radius: var(--space-0-75);
   opacity: 0.6;
 }
 
 .acwr-zone {
   position: absolute;
   height: 100%;
-  border-radius: 3px;
+  border-radius: var(--space-0-75);
 
   &.safe {
     left: 40%;
@@ -218,8 +218,8 @@
 .acwr-marker {
   position: absolute;
   top: -2px;
-  width: 10px;
-  height: 10px;
+  width: var(--space-2-5);
+  height: var(--space-2-5);
   background: var(--color-text-primary);
   border: 2px solid var(--surface-card);
   border-radius: 50%;
@@ -266,11 +266,11 @@
 .detail-item {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: var(--space-0-5);
 }
 
 .detail-label {
-  font-size: 10px;
+  font-size: var(--ds-font-size-2xs);
   font-weight: var(--ds-font-weight-extrabold, 800);
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -307,9 +307,9 @@
   }
 
   .player-jersey {
-    width: 44px;
-    height: 44px;
-    font-size: 18px;
+    width: var(--space-11);
+    height: var(--space-11);
+    font-size: var(--ds-font-size-lg);
   }
 
   .card-actions { justify-content: flex-end; flex-wrap: wrap; }
@@ -322,7 +322,7 @@
 }
 
 @include respond-to(sm) {
-  .player-jersey { width: 40px; height: 40px; font-size: 16px; }
+  .player-jersey { width: var(--space-10); height: var(--space-10); font-size: var(--ds-font-size-md); }
 
   .player-details { flex-direction: column; gap: var(--space-2); }
 }

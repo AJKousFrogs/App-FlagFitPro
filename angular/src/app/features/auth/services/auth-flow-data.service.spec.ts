@@ -134,7 +134,7 @@ describe("AuthFlowDataService", () => {
     vi.spyOn(service, "getCurrentUser").mockReturnValue({
       id: "user-123",
       user_metadata: { role: "player" },
-    } as User);
+    } as unknown as User);
     vi.spyOn(service, "getUserOnboardingStatus").mockResolvedValue({
       data: { onboarding_completed: true },
       error: null,
@@ -149,7 +149,7 @@ describe("AuthFlowDataService", () => {
     vi.spyOn(service, "getCurrentUser").mockReturnValue({
       id: "user-123",
       user_metadata: { role: "coach" },
-    } as User);
+    } as unknown as User);
     vi.spyOn(service, "getUserOnboardingStatus").mockResolvedValue({
       data: { onboarding_completed: true },
       error: null,

@@ -16,6 +16,7 @@ import { PasswordModule } from "primeng/password";
   selector: "app-password-input",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
+  host: { class: "app-password-input-host" },
   imports: [PasswordModule, FormsModule],
   providers: [
     {
@@ -27,10 +28,10 @@ import { PasswordModule } from "primeng/password";
   template: `
     <div class="app-password-input-wrapper">
       @if (label()) {
-        <label [for]="inputId()" class="block mb-2 font-medium text-surface-900 dark:text-surface-0">
+        <label [for]="inputId()" style="display: block; margin-bottom: var(--space-2); font-weight: var(--ds-font-weight-medium); color: var(--color-text-primary)">
           {{ label() }}
           @if (required()) {
-             <span class="text-red-500">*</span>
+             <span style="color: var(--color-status-danger)">*</span>
           }
         </label>
       }
@@ -58,7 +59,7 @@ import { PasswordModule } from "primeng/password";
         </ng-template>
       </p-password>
       @if (hint()) {
-        <small class="block mt-1 text-gray-500">{{ hint() }}</small>
+        <small style="display: block; margin-top: var(--space-1); color: var(--color-text-secondary)">{{ hint() }}</small>
       }
     </div>
   `,

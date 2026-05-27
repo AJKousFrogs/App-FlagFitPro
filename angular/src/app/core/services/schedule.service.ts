@@ -1,10 +1,8 @@
 import {
   Injectable,
-  Signal,
   computed,
-  effect,
   inject,
-  signal,
+  resource,
 } from "@angular/core";
 import { firstValueFrom } from "rxjs";
 
@@ -35,31 +33,47 @@ export class ScheduleService {
   private readonly logger = inject(LoggerService);
   private readonly supabase = inject(SupabaseService);
 
-  private readonly _snapshot = signal<ScheduleSnapshot | null>(null);
-  private readonly _loading = signal(false);
-  private readonly _error = signal<string | null>(null);
-  private readonly _loadedForUserId = signal<string | null>(null);
+  // ---------------------------------------------------------------------------
+  // Core resource — auto-loads on userId change, resets on logout.
+  // ---------------------------------------------------------------------------
+  private readonly scheduleResource = resource({
+    params: () => this.supabase.userId(),
+    loader: async ({ params: userId }) => {
+      if (!userId) return null;
+      const response = await firstValueFrom(
+        this.api.get<ScheduleSnapshot>("schedule"),
+      );
+      if (response.success && response.data) {
+        return response.data;
+      }
+      throw new Error(response.error ?? "Failed to load schedule");
+    },
+  });
 
   /** Latest schedule snapshot, or `null` until first load. */
-  readonly snapshot: Signal<ScheduleSnapshot | null> = this._snapshot.asReadonly();
-  readonly loading: Signal<boolean> = this._loading.asReadonly();
-  readonly error: Signal<string | null> = this._error.asReadonly();
+  readonly snapshot = computed(() => this.scheduleResource.value() ?? null);
+  readonly loading = this.scheduleResource.isLoading;
+  readonly error = computed(() => {
+    const err = this.scheduleResource.error();
+    if (!err) return null;
+    return err instanceof Error ? err.message : String(err);
+  });
 
   /** Convenience signals — null-safe so consumers can bind directly. */
-  readonly nextEvent = computed(() => this._snapshot()?.nextEvent ?? null);
-  readonly lastEvent = computed(() => this._snapshot()?.lastEvent ?? null);
-  readonly upcoming = computed(() => this._snapshot()?.upcoming ?? []);
+  readonly nextEvent = computed(() => this.snapshot()?.nextEvent ?? null);
+  readonly lastEvent = computed(() => this.snapshot()?.lastEvent ?? null);
+  readonly upcoming = computed(() => this.snapshot()?.upcoming ?? []);
   readonly currentPhase = computed<CompetitionPhase>(
-    () => this._snapshot()?.currentPhase ?? "transition",
+    () => this.snapshot()?.currentPhase ?? "transition",
   );
   readonly density7d = computed<EventDensity | null>(
-    () => this._snapshot()?.density7d ?? null,
+    () => this.snapshot()?.density7d ?? null,
   );
   readonly density14d = computed<EventDensity | null>(
-    () => this._snapshot()?.density14d ?? null,
+    () => this.snapshot()?.density14d ?? null,
   );
   readonly density28d = computed<EventDensity | null>(
-    () => this._snapshot()?.density28d ?? null,
+    () => this.snapshot()?.density28d ?? null,
   );
 
   /**
@@ -75,47 +89,29 @@ export class ScheduleService {
     return Math.max(0, Math.floor(diffMs / 86_400_000));
   });
 
-  constructor() {
-    // Auto-load on auth, drop on logout. No manual refresh needed for boot.
-    effect(() => {
-      const userId = this.supabase.userId();
-      if (!userId) {
-        this._snapshot.set(null);
-        this._loadedForUserId.set(null);
-        return;
-      }
-      if (this._loadedForUserId() !== userId) {
-        void this.refresh();
-      }
-    });
-  }
-
   /**
    * Refresh the schedule snapshot. Call after any write that affects events.
+   *
+   * Returns a Promise so callers that need the data immediately after the
+   * refresh (e.g. `training-plan.service`) can `await` it. Internally sets
+   * the resource value directly to avoid a race between `reload()` and the
+   * caller's subsequent read.
    */
   async refresh(): Promise<void> {
     const userId = this.supabase.userId();
     if (!userId) {
       return;
     }
-    this._loading.set(true);
-    this._error.set(null);
     try {
       const response = await firstValueFrom(
         this.api.get<ScheduleSnapshot>("schedule"),
       );
       if (response.success && response.data) {
-        this._snapshot.set(response.data);
-        this._loadedForUserId.set(userId);
-      } else {
-        this._error.set(response.error ?? "Failed to load schedule");
+        this.scheduleResource.value.set(response.data);
       }
     } catch (err) {
       const msg = err instanceof Error ? err.message : "Unknown error";
       this.logger.error("[ScheduleService] refresh failed", { error: msg });
-      this._error.set(msg);
-    } finally {
-      this._loading.set(false);
     }
   }
 
@@ -124,7 +120,7 @@ export class ScheduleService {
    * start within the next 7 days. Pure read against the cached snapshot.
    */
   eventsInWindow(windowDays: number): CompetitionEvent[] {
-    const snap = this._snapshot();
+    const snap = this.snapshot();
     if (!snap) {
       return [];
     }
@@ -143,7 +139,7 @@ export class ScheduleService {
    * signal instead.
    */
   phaseFor(date: Date): CompetitionPhase {
-    const snap = this._snapshot();
+    const snap = this.snapshot();
     if (!snap) {
       return "transition";
     }

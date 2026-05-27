@@ -1,4 +1,4 @@
-export interface TrainingSession {
+export interface ScheduleCalendarSession {
   id: string;
   date: Date;
   type: string;

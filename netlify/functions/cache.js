@@ -245,16 +245,9 @@ function invalidatePrefixCache(prefix) {
   return cache.deletePattern(prefix);
 }
 
-// Auto-cleanup expired entries every 5 minutes
-setInterval(
-  () => {
-    const removed = cache.cleanup();
-    if (removed > 0) {
-      logger.info("cache_cleanup_completed", { removed });
-    }
-  },
-  5 * 60 * 1000,
-);
+// NOTE: No setInterval for cleanup — Netlify functions are stateless and
+// short-lived, so a periodic timer is wasteful and leaks handles.  Expired
+// entries are already evicted lazily inside `get()`.
 
 export {
   cache,

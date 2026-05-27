@@ -147,7 +147,8 @@ export async function loadTrainingSessionsSnapshot({
     .select("*")
     .eq("user_id", userId)
     .gte("session_date", startDate)
-    .order("session_date", { ascending: false });
+    .order("session_date", { ascending: false })
+    .limit(200);
 
   if (error) {
     onError?.("Failed to load training sessions", error);

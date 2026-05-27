@@ -13,8 +13,8 @@ import {
   Component,
   computed,
   inject,
-  OnInit,
   DestroyRef,
+  resource,
   signal,
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
@@ -31,6 +31,7 @@ import { StatusTagComponent } from "../../shared/components/status-tag/status-ta
 
 import { ApiService, API_ENDPOINTS } from "../../core/services/api.service";
 import { LoggerService } from "../../core/services/logger.service";
+import { SupabaseService } from "../../core/services/supabase.service";
 import { extractApiPayload } from "../../core/utils/api-response-mapper";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { AppLoadingComponent } from "../../shared/components/loading/loading.component";
@@ -40,7 +41,7 @@ import { EmptyStateComponent } from "../../shared/components/empty-state/empty-s
 import { CardShellComponent } from "../../shared/components/card-shell/card-shell.component";
 import { AppDialogComponent } from "../../shared/components/dialog/dialog.component";
 import { DialogHeaderComponent } from "../../shared/components/dialog-header/dialog-header.component";
-import { MobileOptimizedImageDirective } from "../../shared/directives/mobile-optimized-image.directive";
+import { NgOptimizedImage } from "@angular/common";
 
 // ===== Interfaces =====
 interface FilmSession {
@@ -92,7 +93,7 @@ interface DiscussionMessage {
     AppLoadingComponent,
     PageHeaderComponent,
     PageErrorStateComponent,
-    MobileOptimizedImageDirective,
+    NgOptimizedImage,
     ButtonComponent,
     EmptyStateComponent,
     CardShellComponent,
@@ -102,18 +103,44 @@ interface DiscussionMessage {
   templateUrl: "./film-room.component.html",
   styleUrl: "./film-room.component.scss",
 })
-export class FilmRoomComponent implements OnInit {
+export class FilmRoomComponent {
   private readonly api = inject(ApiService);
   private destroyRef = inject(DestroyRef);
   private readonly logger = inject(LoggerService);
+  private readonly supabase = inject(SupabaseService);
   private readonly toastService = inject(ToastService);
 
+  // ---------------------------------------------------------------------------
+  // Film room resource — auto-loads on auth.
+  // ---------------------------------------------------------------------------
+  private readonly filmsResource = resource({
+    params: () => this.supabase.userId(),
+    loader: async ({ params: userId }) => {
+      if (!userId) return [] as FilmSession[];
+      const response = await firstValueFrom(
+        this.api.get<{ films?: FilmSession[] }>("/api/film-room"),
+      );
+      const films =
+        extractApiPayload<{ films?: FilmSession[] }>(response)?.films ?? [];
+      return films;
+    },
+  });
+
   // State
-  readonly films = signal<FilmSession[]>([]);
+  readonly films = computed(() => this.filmsResource.value() ?? []);
   readonly selectedFilm = signal<FilmSession | null>(null);
   readonly expandedMoment = signal<string | null>(null);
-  readonly isLoading = signal(true);
-  readonly errorMessage = signal<string | null>(null);
+  readonly isLoading = this.filmsResource.isLoading;
+  readonly errorMessage = computed(() => {
+    const err = this.filmsResource.error();
+    if (!err) return null;
+    return "We couldn't load your assigned film right now. Please try again.";
+  });
+
+  /** Retry loading (called from error state template). */
+  loadData(): void {
+    this.filmsResource.reload();
+  }
 
   // Filter state
   readonly searchQuery = signal("");
@@ -179,31 +206,6 @@ export class FilmRoomComponent implements OnInit {
     this.selectedStatus.set(value ?? null);
   }
 
-  ngOnInit(): void {
-    this.loadData();
-  }
-
-  async loadData(): Promise<void> {
-    this.isLoading.set(true);
-    this.errorMessage.set(null);
-
-    try {
-      const response = await firstValueFrom(
-        this.api.get<{ films?: FilmSession[] }>("/api/film-room"),
-      );
-      const films =
-        extractApiPayload<{ films?: FilmSession[] }>(response)?.films ?? [];
-      this.films.set(films);
-    } catch (err) {
-      this.logger.error("Failed to load film room data", err);
-      this.films.set([]);
-      this.errorMessage.set(
-        "We couldn't load your assigned film right now. Please try again.",
-      );
-    } finally {
-      this.isLoading.set(false);
-    }
-  }
 
   selectFilm(film: FilmSession): void {
     this.closeFilmDetail();
@@ -221,8 +223,8 @@ export class FilmRoomComponent implements OnInit {
   toggleWatched(film: FilmSession): void {
     const newStatus = !film.isWatched;
 
-    this.films.update((films) =>
-      films.map((f) =>
+    this.filmsResource.value.update((films) =>
+      (films ?? []).map((f) =>
         f.id === film.id
           ? {
               ...f,
@@ -275,8 +277,8 @@ export class FilmRoomComponent implements OnInit {
     const progress = Math.round((video.currentTime / video.duration) * 100);
 
     // Update progress
-    this.films.update((films) =>
-      films.map((f) =>
+    this.filmsResource.value.update((films) =>
+      (films ?? []).map((f) =>
         f.id === film.id
           ? { ...f, watchProgress: Math.max(f.watchProgress, progress) }
           : f,
@@ -308,8 +310,8 @@ export class FilmRoomComponent implements OnInit {
       ),
     });
 
-    this.films.update((films) =>
-      films.map((candidateFilm) =>
+    this.filmsResource.value.update((films) =>
+      (films ?? []).map((candidateFilm) =>
         candidateFilm.id === film.id ? appendReply(candidateFilm) : candidateFilm,
       ),
     );

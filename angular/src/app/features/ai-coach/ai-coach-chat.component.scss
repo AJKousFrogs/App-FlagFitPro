@@ -908,6 +908,12 @@
   }
 }
 
+@media (prefers-reduced-motion: reduce) {
+  .merlin-loading-dots span {
+    animation: none;
+  }
+}
+
 /* Input Section */
 .input-section-bento {
   padding: var(--space-4) var(--space-6);

@@ -1,4 +1,6 @@
 import { ChangeDetectionStrategy, Component, input, output } from "@angular/core";
+import { FormsModule } from "@angular/forms";
+import { InputOtp } from "primeng/inputotp";
 import { AlertComponent } from "../../../../shared/components/alert/alert.component";
 import { ButtonComponent } from "../../../../shared/components/button/button.component";
 import { IconButtonComponent } from "../../../../shared/components/button/icon-button.component";
@@ -7,7 +9,7 @@ import {
   AppDialogComponent,
   DialogHeaderComponent,
 } from "../../../../shared/components/ui-components";
-import { MobileOptimizedImageDirective } from "../../../../shared/directives/mobile-optimized-image.directive";
+import { NgOptimizedImage } from "@angular/common";
 
 @Component({
   selector: "app-twofa-setup-dialog",
@@ -19,7 +21,9 @@ import { MobileOptimizedImageDirective } from "../../../../shared/directives/mob
     IconButtonComponent,
     DialogHeaderComponent,
     AppLoadingComponent,
-    MobileOptimizedImageDirective,
+    NgOptimizedImage,
+    FormsModule,
+    InputOtp,
   ],
   templateUrl: "./twofa-setup-dialog.component.html",
   styleUrl: "./twofa-setup-dialog.component.scss",

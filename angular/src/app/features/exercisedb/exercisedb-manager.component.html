@@ -142,15 +142,15 @@
                       <app-card-shell
                         class="exercise-card"
                         [flush]="true"
-                        (click)="openExerciseDetail(exercise)"
+                        state="interactive"
+                        (cardClick)="openExerciseDetail(exercise)"
                       >
                         <div class="exercise-image-container">
                           @if (exercise.gif_url) {
                             <img
-                              appMobileOptimized
+                              [ngSrc]="exercise.gif_url"
                               [width]="300"
                               [height]="300"
-                              [src]="exercise.gif_url"
                               [alt]="exercise.name"
                               class="exercise-gif"
                             />
@@ -405,10 +405,9 @@
                       <div class="approval-header">
                         @if (exercise.gif_url) {
                           <img
-                            appMobileOptimized
+                            [ngSrc]="exercise.gif_url"
                             [width]="200"
                             [height]="200"
-                            [src]="exercise.gif_url"
                             [alt]="exercise.name"
                             class="approval-gif"
                           />
@@ -496,12 +495,11 @@
             <div class="detail-content">
               <div class="detail-media">
                 @if (selectedExercise()?.gif_url) {
-                  <img
-                    appMobileOptimized
-                    [width]="400"
-                    [height]="400"
-                    [src]="selectedExercise()?.gif_url"
-                    [alt]="selectedExercise()?.name"
+                  <p-image
+                    [src]="selectedExercise()!.gif_url!"
+                    [alt]="selectedExercise()?.name ?? 'Exercise'"
+                    width="400"
+                    [preview]="true"
                     class="detail-gif"
                   />
                 }

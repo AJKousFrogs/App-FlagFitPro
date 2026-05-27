@@ -71,7 +71,7 @@ app-page-error-state.not-found-state {
 }
 
 .not-found-links p {
-  font-size: 11px;
+  font-size: var(--ds-font-size-2xs);
   font-weight: var(--ds-font-weight-extrabold, 800);
   letter-spacing: 0.12em;
   text-transform: uppercase;
@@ -94,7 +94,7 @@ app-page-error-state.not-found-state {
   text-decoration: none;
   font-size: var(--ds-font-size-sm);
   font-weight: var(--ds-font-weight-bold);
-  padding: 6px 14px;
+  padding: var(--space-1-5) var(--space-3-5);
   border-radius: var(--radius-full);
   border: var(--border-1) solid color-mix(in srgb, var(--ds-primary-green) 25%, var(--color-border-secondary));
   background: var(--surface-card);

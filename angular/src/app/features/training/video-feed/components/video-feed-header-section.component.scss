@@ -183,6 +183,18 @@
   }
 }
 
+@media (prefers-reduced-motion: reduce) {
+  .feed-header {
+    animation: none;
+  }
+  .stat-pill-interactive:hover i {
+    animation: none;
+  }
+  .stat-pill-interactive:hover .stat-action-icon {
+    animation: none;
+  }
+}
+
 .filter-section {
   padding: 0 var(--space-6);
   margin-bottom: var(--space-0);

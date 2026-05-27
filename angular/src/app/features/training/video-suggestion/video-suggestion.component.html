@@ -341,8 +341,14 @@
               [compact]="true"
             />
           } @else {
-            <div class="approved-videos-scroll">
-              @for (video of teamApprovedVideos(); track video.id) {
+            <p-carousel
+              [value]="teamApprovedVideos()"
+              [numVisible]="3"
+              [numScroll]="1"
+              [circular]="true"
+              [responsiveOptions]="carouselResponsiveOptions"
+            >
+              <ng-template let-video pTemplate="item">
                 <div
                   class="approved-video-card"
                   role="button"
@@ -376,8 +382,8 @@
                     </div>
                   </div>
                 </div>
-              }
-            </div>
+              </ng-template>
+            </p-carousel>
           }
         </section>
 

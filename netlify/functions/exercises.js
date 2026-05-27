@@ -41,15 +41,7 @@ async function dispatch(handler, req, url) {
   return fromLambdaResponse(await handler(await toLambdaEvent(req, url), {}));
 }
 
-function corsHeaders(req) {
-  return {
-    "Access-Control-Allow-Origin": req.headers.get("origin") || "*",
-    "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Request-Id, X-Correlation-Id",
-    "Access-Control-Allow-Methods": "GET, POST, PUT, PATCH, DELETE, OPTIONS",
-    "Access-Control-Allow-Credentials": "true",
-    "Content-Type": "application/json", Vary: "Origin",
-  };
-}
+import { getCorsHeaders as corsHeaders } from "./utils/cors.js";
 
 export default async (req) => {
   if (req.method === "OPTIONS") {return new Response(null, { status: 204, headers: corsHeaders(req) });}

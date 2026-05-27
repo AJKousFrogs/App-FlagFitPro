@@ -262,7 +262,7 @@ export class AiCoachChatComponent implements OnInit, AfterViewChecked {
     this.loadAIModeStatus();
     this.loadTrainingOverviewContext();
     void this.knowledge.loadMerlinGrounding();
-    void this.session.loadRecentSessions();
+    // recentSessions now auto-loads via resource() when userId is available
     this.initializeSpeechRecognition();
     this.handleRouteParams();
   }
@@ -875,11 +875,13 @@ export class AiCoachChatComponent implements OnInit, AfterViewChecked {
       .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>")
       .replace(/\*(.*?)\*/g, "<em>$1</em>")
       .replace(/^- (.*$)/gm, "<li>$1</li>")
-      .replace(/`(.*?)`/g, "<code>$1</code>")
+      .replace(/`(.*?)`/g, "<code>$1</code>");
+
+    html = html.replace(/(<li>.*<\/li>\n?)+/g, "<ul>$&</ul>");
+
+    html = html
       .replace(/\n\n/g, "</p><p>")
       .replace(/\n/g, "<br>");
-
-    html = html.replace(/(<li>.*<\/li>)+/g, "<ul>$&</ul>");
 
     // Step 3: Mark the result as trusted — we built the HTML ourselves from escaped input.
     return this.sanitizer.bypassSecurityTrustHtml(`<p>${html}</p>`);

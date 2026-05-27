@@ -97,37 +97,23 @@
             title="7-Stage Protocol Progress"
             headerIcon="pi-sitemap"
           >
-            <div class="stages-visual">
-              @for (stage of protocolStages; track stage.stage) {
-                <div
-                  class="stage-box"
-                  [class.completed]="stage.stage < protocol.currentStage"
-                  [class.current]="stage.stage === protocol.currentStage"
-                  [class.upcoming]="stage.stage > protocol.currentStage"
-                >
-                  <div class="stage-number">{{ stage.stage }}</div>
-                  <div class="stage-icon">
-                    @if (stage.stage < protocol.currentStage) {
-                      <i class="pi pi-check" aria-hidden="true"></i>
-                    } @else if (stage.stage === protocol.currentStage) {
-                      <i class="pi pi-circle-fill" aria-hidden="true"></i>
-                    }
-                  </div>
-                  <div class="stage-name">{{ stage.shortName }}</div>
-                  <div class="stage-load">{{ stage.loadPercentage }}%</div>
+            <p-timeline [value]="stages()" layout="horizontal">
+              <ng-template #marker let-stage>
+                <span class="stage-marker" [class.completed]="stage.completed" [class.current]="stage.current">
+                  @if (stage.completed) {
+                    <i class="pi pi-check"></i>
+                  } @else {
+                    {{ stage.number }}
+                  }
+                </span>
+              </ng-template>
+              <ng-template #content let-stage>
+                <div class="stage-content">
+                  <strong>{{ stage.title }}</strong>
+                  <p>{{ stage.description }}</p>
                 </div>
-                @if (stage.stage < 7) {
-                  <div
-                    class="stage-connector"
-                    [class.active]="stage.stage < protocol.currentStage"
-                  ></div>
-                }
-              }
-            </div>
-            <div class="current-indicator">
-              <i class="pi pi-arrow-up" aria-hidden="true"></i>
-              <span>CURRENT</span>
-            </div>
+              </ng-template>
+            </p-timeline>
           </app-card-shell>
 
           <!-- Current Stage Details -->

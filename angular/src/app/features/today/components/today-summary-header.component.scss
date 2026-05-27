@@ -72,9 +72,9 @@
 .exact-training-kicker {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: var(--space-1-5);
   margin: var(--space-0);
-  font-size: 11px;
+  font-size: var(--ds-font-size-2xs);
   font-weight: var(--ds-font-weight-extrabold, 800);
   letter-spacing: 0.16em;
   text-transform: uppercase;
@@ -189,7 +189,7 @@
   font-variant-numeric: tabular-nums;
 }
 .exact-training-metric__subline {
-  font-size: 11px;
+  font-size: var(--ds-font-size-2xs);
   font-weight: var(--ds-font-weight-extrabold, 800);
   letter-spacing: 0.12em;
   text-transform: uppercase;
@@ -279,7 +279,7 @@
   width: 100%;
   overflow: hidden;
   border-radius: var(--radius-xl);
-  background: #000;
+  background: var(--primitive-neutral-950);
 }
 
 .exact-training-video__frame--empty {
@@ -295,7 +295,7 @@
       rgba(var(--ds-primary-green-rgb), 0.22) 0%,
       rgba(0, 0, 0, 0.86) 100%
     ),
-    #000;
+    var(--primitive-neutral-950);
   font-size: var(--ds-font-size-sm);
   font-weight: var(--ds-font-weight-medium);
   text-align: center;
@@ -397,6 +397,7 @@
 }
 
 .exact-training-videos__thumbnail {
+  position: relative;
   width: 5.75rem;
   aspect-ratio: 16 / 9;
   overflow: hidden;

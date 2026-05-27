@@ -198,19 +198,29 @@ async function getCoachDashboard(userId) {
     const allBlockedPlayerIds = new Set();
     let totalAccessibleCount = 0;
 
+    // Batch-fetch all user details in a single query (avoids N+1)
+    const memberUserIds = teamMembers.map((m) => m.user_id);
+    const { data: allUserData, error: allUserError } = await supabaseAdmin
+      .from("users")
+      .select("id, full_name, position")
+      .in("id", memberUserIds);
+
+    if (allUserError) {
+      console.warn("[CoachCore] Error batch-fetching users:", allUserError);
+    }
+
+    const userDataMap = new Map();
+    (allUserData || []).forEach((u) => userDataMap.set(u.id, u));
+
     // Get squad member details with workload and ACWR
     const squadMembers = [];
 
     for (const member of teamMembers) {
       try {
-        // Get user details (note: role is in team_members, not users)
-        const { data: userData, error: userError } = await supabaseAdmin
-          .from("users")
-          .select("id, full_name, position")
-          .eq("id", member.user_id)
-          .single();
+        // Get user details from pre-fetched map
+        const userData = userDataMap.get(member.user_id);
 
-        if (userError || !userData) {
+        if (!userData) {
           continue;
         }
 

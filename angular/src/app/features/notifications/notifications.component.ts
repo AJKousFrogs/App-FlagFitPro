@@ -1,6 +1,8 @@
 import { ChangeDetectionStrategy, Component, OnInit, computed, inject, signal } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { Router, RouterModule } from "@angular/router";
+import { Paginator } from "primeng/paginator";
+import { PaginatorState } from "primeng/types/paginator";
 
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
@@ -28,6 +30,7 @@ interface NotificationCategoryTab {
   imports: [
     FormsModule,
     RouterModule,
+    Paginator,
     MainLayoutComponent,
     PageHeaderComponent,
     ButtonComponent,
@@ -144,6 +147,24 @@ export class NotificationsComponent implements OnInit {
       })
       .slice(0, 3),
   );
+
+  readonly pageSize = signal(15);
+  readonly currentPage = signal(0);
+
+  readonly paginatedNotifications = computed(() => {
+    const all = this.filteredNotifications();
+    const start = this.currentPage() * this.pageSize();
+    return all.slice(start, start + this.pageSize());
+  });
+
+  readonly totalRecords = computed(() => this.filteredNotifications().length);
+
+  onPageChange(event: PaginatorState): void {
+    const first = event.first ?? 0;
+    const rows = event.rows ?? this.pageSize();
+    this.currentPage.set(Math.floor(first / rows));
+    this.pageSize.set(rows);
+  }
 
   readonly hasActiveFilters = computed(
     () =>

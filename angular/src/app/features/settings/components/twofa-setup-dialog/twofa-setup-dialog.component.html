@@ -63,11 +63,10 @@
           <div class="qr-wrapper">
             @if (qrCodeUrl()) {
               <img
-                appMobileOptimized
+                [ngSrc]="qrCodeUrl()"
                 [width]="256"
                 [height]="256"
-                [src]="qrCodeUrl()"
-                loading="eager"
+                priority
                 alt="2FA QR Code"
                 class="qr-image"
               />
@@ -95,18 +94,11 @@
           <h3>Verify Setup</h3>
           <p class="step-desc">Enter the 6-digit code from your app:</p>
           <div class="code-input-wrapper">
-            <input
-              id="settings-2fa-code"
-              name="twoFACode"
-              type="text"
-              [value]="verificationCode()"
-              (input)="onVerificationCodeInput($event)"
-              placeholder="000000"
-              maxlength="6"
-              class="verification-code-input"
-              autocomplete="one-time-code"
-              inputmode="numeric"
-              (keyup.enter)="verify.emit()"
+            <p-inputOtp
+              [length]="6"
+              [ngModel]="verificationCode()"
+              (ngModelChange)="verificationCodeChange.emit($event ?? '')"
+              [integerOnly]="true"
             />
           </div>
           @if (twoFAError()) {

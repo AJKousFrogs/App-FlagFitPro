@@ -8,6 +8,7 @@ import {
   viewChild,
 } from "@angular/core";
 import { Router, RouterModule } from "@angular/router";
+import { AnimateOnScroll } from "primeng/animateonscroll";
 import { ensurePrimeIconsStylesheet } from "../../core/utils/primeicons-loader";
 
 /**
@@ -27,7 +28,7 @@ import { ensurePrimeIconsStylesheet } from "../../core/utils/primeicons-loader";
 @Component({
   selector: "app-landing",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, AnimateOnScroll],
   templateUrl: "./landing.component.html",
   styleUrl: "./landing.component.scss",
 })

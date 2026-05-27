@@ -32,7 +32,7 @@ describe("ThemeService", () => {
   const mockUser = { id: "user-123" };
   const mockSaveUpsert = vi.fn(() => Promise.resolve({ error: null }));
   const mockMaybeSingle = vi.fn(() =>
-    Promise.resolve({ data: null, error: null }),
+    Promise.resolve({ data: null as { setting_value: string } | null, error: null }),
   );
   const mockSelectChain = {
     eq: vi.fn(() => mockSelectChain),

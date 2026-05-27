@@ -1,6 +1,7 @@
 /** Athlete overview: readiness, schedule, and trend insights. */
 
 import { DecimalPipe } from "@angular/common";
+import { FormsModule } from "@angular/forms";
 import {
   ChangeDetectionStrategy,
   Component,
@@ -8,6 +9,7 @@ import {
   DestroyRef,
   effect,
   inject,
+  linkedSignal,
   signal,
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
@@ -57,6 +59,7 @@ import { TeamMembershipService } from "../../core/services/team-membership.servi
 import { FeatureFlagsService } from "../../core/services/feature-flags.service";
 import { NextGenMetricsService } from "../../core/services/next-gen-metrics.service";
 import { ROUTES, TRAINING, UI_LIMITS } from "../../core/constants/app.constants";
+import { Knob } from "primeng/knob";
 import { getTimeAgo } from "../../shared/utils/date.utils";
 import {
   getProtocolAcwrDisplay,
@@ -93,7 +96,9 @@ interface QuickAction {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     DecimalPipe,
+    FormsModule,
     RouterModule,
+    Knob,
     ButtonComponent,
     PlayerDashboardSetupCardComponent,
     DashboardSkeletonComponent,
@@ -160,7 +165,18 @@ export class PlayerDashboardComponent {
   private overviewLoadedForUser = signal<string | null>(null);
 
   // Announcement (first unread team chat announcement)
-  announcement = signal<DashboardAnnouncementBanner | null>(null);
+  announcement = linkedSignal<DashboardAnnouncementBanner | null>(() => {
+    const unread = this.teamNotificationService.unreadAnnouncements();
+    const first = unread[0];
+    if (!first) return null;
+    return {
+      id: first.id,
+      message: first.message,
+      coachName: first.author_name?.trim() || null,
+      postedAt: first.created_at ? new Date(first.created_at) : null,
+      priority: first.is_important ? 'important' : 'info',
+    };
+  });
   announcementDismissed = signal(false);
 
   // Phase 2.1 - Coach Override Notifications
@@ -182,7 +198,10 @@ export class PlayerDashboardComponent {
   acwr = signal<number | null>(null); // Load from training stats - no fallback
   currentStreak = signal(0);
   weeklySessionsCompleted = signal(0);
-  weeklySessionsPlanned = signal(7);
+  weeklySessionsPlanned = linkedSignal(() => {
+    const schedule = this.unifiedTrainingService.weeklySchedule();
+    return schedule.reduce((sum, day) => sum + (day.sessions?.length || 0), 0) || 7;
+  });
 
   // Next-gen preview
   nextGenEnabled = this.featureFlags.nextGenMetricsPreview;
@@ -482,15 +501,6 @@ export class PlayerDashboardComponent {
       }
     });
 
-    effect(() => {
-      const schedule = this.unifiedTrainingService.weeklySchedule();
-      const planned = schedule.reduce(
-        (sum, day) => sum + (day.sessions?.length || 0),
-        0,
-      );
-      this.weeklySessionsPlanned.set(planned);
-    });
-
     // Check if we need to refresh program assignment (e.g., after onboarding)
     const refreshProgramAssignment = sessionStorage.getItem(
       "refreshProgramAssignment",
@@ -527,11 +537,11 @@ export class PlayerDashboardComponent {
         });
     });
 
+    // Reset dismissed flag when a new announcement arrives
     effect(() => {
       const unread = this.teamNotificationService.unreadAnnouncements();
       const first = unread[0];
       if (!first) {
-        this.announcement.set(null);
         this.lastAnnouncementSyncId = null;
         return;
       }
@@ -539,13 +549,6 @@ export class PlayerDashboardComponent {
         this.lastAnnouncementSyncId = first.id;
         this.announcementDismissed.set(false);
       }
-      this.announcement.set({
-        id: first.id,
-        message: first.message,
-        coachName: first.author_name?.trim() || null,
-        postedAt: first.created_at ? new Date(first.created_at) : null,
-        priority: first.is_important ? "important" : "info",
-      });
     });
   }
 
@@ -977,6 +980,15 @@ export class PlayerDashboardComponent {
     if (v === null) return 628;
     const clamped = Math.max(0, Math.min(100, v));
     return 628 * (1 - clamped / 100);
+  });
+
+  /** Color for the PrimeNG Knob readiness ring */
+  readonly readinessColor = computed(() => {
+    const v = this.heroValue();
+    if (v === null) return 'var(--surface-tertiary)';
+    if (v >= 70) return 'var(--color-status-success)';
+    if (v >= 40) return 'var(--color-status-warning)';
+    return 'var(--color-status-danger)';
   });
 
   /** Hero headline mapped from readiness score */

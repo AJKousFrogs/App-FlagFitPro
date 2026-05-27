@@ -244,3 +244,27 @@
   gap: var(--space-1);
   list-style: disc;
 }
+
+@include respond-to(md) {
+  .import-dataset-container {
+    padding: var(--space-4);
+  }
+
+  .import-tabs {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    white-space: nowrap;
+    gap: var(--space-1);
+  }
+}
+
+@include respond-to(sm) {
+  .import-dataset-container {
+    padding: var(--space-3);
+    border-radius: var(--radius-md);
+  }
+
+  .import-title {
+    font-size: var(--ds-font-size-xl);
+  }
+}

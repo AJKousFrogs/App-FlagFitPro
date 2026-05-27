@@ -31,10 +31,9 @@ import {
 import { AcwrService } from "./acwr.service";
 import { ApiService, API_ENDPOINTS } from "./api.service";
 import { LoggerService, toLogContext } from "./logger.service";
-import {
-    PerformanceDataService,
-    PhysicalMeasurement,
-} from "./performance-data.service";
+import { MeasurementDataService } from "./measurement-data.service";
+import { SupplementDataService } from "./supplement-data.service";
+import { PhysicalMeasurement } from "../models/performance-data.models";
 import {
   type ProtocolMetricsSnapshot,
 } from "../utils/protocol-metrics-presentation";
@@ -129,7 +128,8 @@ export class UnifiedTrainingService {
   private acwrService = inject(AcwrService);
   private readinessService = inject(ReadinessService);
   private trainingDataService = inject(TrainingDataService);
-  private performanceDataService = inject(PerformanceDataService);
+  private measurementDataService = inject(MeasurementDataService);
+  private supplementDataService = inject(SupplementDataService);
   private wellnessService = inject(WellnessService);
   private api = inject(ApiService);
   private logger = inject(LoggerService);
@@ -221,8 +221,8 @@ export class UnifiedTrainingService {
   });
 
   // Body Composition Facade
-  readonly latestMeasurement = this.performanceDataService.latestMeasurement;
-  readonly recentMeasurements = this.performanceDataService.recentMeasurements;
+  readonly latestMeasurement = this.measurementDataService.latestMeasurement;
+  readonly recentMeasurements = this.measurementDataService.recentMeasurements;
 
   // Hydration Facade
   readonly hydrationLevel = computed(
@@ -250,7 +250,7 @@ export class UnifiedTrainingService {
     const userRoutine = this._dailyRoutine();
 
     const todaysSupplements =
-      this.performanceDataService.todaysSupplements() as SupplementEntry[];
+      this.supplementDataService.todaysSupplements() as SupplementEntry[];
 
     const now = new Date();
     const currentHour = now.getHours();
@@ -743,7 +743,7 @@ export class UnifiedTrainingService {
       | "post-workout";
     date: string;
   }) {
-    return this.performanceDataService.logSupplement(supplement);
+    return this.supplementDataService.logSupplement(supplement);
   }
 
   /**
@@ -751,7 +751,7 @@ export class UnifiedTrainingService {
    */
   async logBodyComp(measurement: Partial<PhysicalMeasurement>) {
     const result = await firstValueFrom(
-      this.performanceDataService.logMeasurement(measurement),
+      this.measurementDataService.logMeasurement(measurement),
     );
     if (isSuccessfulApiResponse(result)) {
       this.refreshAfterMutation();

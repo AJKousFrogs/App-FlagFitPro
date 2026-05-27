@@ -6,7 +6,7 @@ import { getDateKey } from "../../../shared/utils/date.utils";
 import type {
   CalendarDateMarker,
   MonthlyStats,
-  TrainingSession,
+  ScheduleCalendarSession,
 } from "./training-schedule.types";
 
 function mapDbStatusToUiStatus(
@@ -35,7 +35,7 @@ export class TrainingScheduleStateService {
   private readonly dataService = inject(TrainingScheduleDataService);
   private readonly logger = inject(LoggerService);
 
-  private readonly _sessions = signal<TrainingSession[]>([]);
+  private readonly _sessions = signal<ScheduleCalendarSession[]>([]);
   private readonly _isLoading = signal(false);
   private readonly _hasError = signal(false);
   private readonly _errorMessage = signal("Failed to load training sessions. Please try again.");
@@ -59,7 +59,7 @@ export class TrainingScheduleStateService {
   readonly dateMarkers = this._dateMarkers.asReadonly();
   readonly monthlyStats = this._monthlyStats.asReadonly();
 
-  updateSessionStatus(sessionId: string, status: TrainingSession["status"]): void {
+  updateSessionStatus(sessionId: string, status: ScheduleCalendarSession["status"]): void {
     this._sessions.update((sessions) =>
       sessions.map((s) => (s.id === sessionId ? { ...s, status } : s)),
     );
@@ -127,7 +127,7 @@ export class TrainingScheduleStateService {
         throw new Error(sessionsError.message);
       }
 
-      const mappedActualSessions: TrainingSession[] = (actualSessions || []).map((session) => ({
+      const mappedActualSessions: ScheduleCalendarSession[] = (actualSessions || []).map((session) => ({
         id: session.id,
         date: new Date(session.session_date),
         type: session.session_type || "Training",
@@ -136,7 +136,7 @@ export class TrainingScheduleStateService {
         isTemplate: false,
       }));
 
-      let mappedScheduledSessions: TrainingSession[] = [];
+      let mappedScheduledSessions: ScheduleCalendarSession[] = [];
       if (!templatesError && scheduledTemplates) {
         const withWeekData = scheduledTemplates.filter((template) => {
           const weeks = template.training_weeks;
@@ -167,7 +167,7 @@ export class TrainingScheduleStateService {
         this.logger.error("Error loading templates", templatesError);
       }
 
-      const allSessions: TrainingSession[] = [
+      const allSessions: ScheduleCalendarSession[] = [
         ...mappedScheduledSessions,
         ...mappedActualSessions,
       ].sort((a, b) => {

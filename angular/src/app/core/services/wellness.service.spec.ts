@@ -649,7 +649,7 @@ describe("WellnessService", () => {
 
   describe("Wellness Data Loading", () => {
     it("maps extended daily_wellness_checkin fields from the database", async () => {
-      mockSupabaseService.client.from.mockReturnValueOnce({
+      (mockSupabaseService.client.from as ReturnType<typeof vi.fn>).mockReturnValueOnce({
         select: vi.fn(() => ({
           eq: vi.fn(() => ({
             gte: vi.fn(() => ({

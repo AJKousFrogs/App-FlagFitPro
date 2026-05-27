@@ -50,7 +50,7 @@
     gap: var(--space-1);
 
     .lbl {
-      font-size: 10px;
+      font-size: var(--ds-font-size-2xs);
       font-weight: var(--ds-font-weight-extrabold, 800);
       letter-spacing: 0.1em;
       color: var(--color-text-secondary);
@@ -162,6 +162,19 @@
     scrollbar-color: var(--color-border-primary) transparent;
     -webkit-overflow-scrolling: touch;
     scroll-behavior: smooth;
+    position: relative;
+
+    &::after {
+      content: "";
+      position: sticky;
+      right: 0;
+      top: 0;
+      bottom: 0;
+      width: 32px;
+      background: linear-gradient(to right, transparent, var(--surface-card));
+      pointer-events: none;
+      flex-shrink: 0;
+    }
 
     // Hide scrollbar on mobile for cleaner look
     &::-webkit-scrollbar {

@@ -42,7 +42,7 @@ import { TrainingScheduleStateService } from "./training-schedule-state.service"
 import type {
   CalendarDateMarker,
   TrainingEntryContext,
-  TrainingSession,
+  ScheduleCalendarSession,
 } from "./training-schedule.types";
 
 function toLocalDateKey(date: Date | null | undefined): string {
@@ -230,7 +230,7 @@ export class TrainingScheduleComponent implements OnInit {
     event.preventDefault();
   }
 
-  trackSession(session: TrainingSession): string {
+  trackSession(session: ScheduleCalendarSession): string {
     return `${session.id}-${session.date.getTime()}`;
   }
 
@@ -485,12 +485,12 @@ export class TrainingScheduleComponent implements OnInit {
     this.logger.debug("Navigating to session creation form", { date: selectedDateStr });
   }
 
-  viewSession(session: TrainingSession): void {
+  viewSession(session: ScheduleCalendarSession): void {
     this.dismissEntryContext();
     this.router.navigate(["/training/session", session.id]);
   }
 
-  async markComplete(event: Event, session: TrainingSession): Promise<void> {
+  async markComplete(event: Event, session: ScheduleCalendarSession): Promise<void> {
     event.stopPropagation();
     this.dismissEntryContext();
 
@@ -514,7 +514,7 @@ export class TrainingScheduleComponent implements OnInit {
     }
   }
 
-  async startTemplateSession(event: Event, session: TrainingSession): Promise<void> {
+  async startTemplateSession(event: Event, session: ScheduleCalendarSession): Promise<void> {
     event.stopPropagation();
     this.dismissEntryContext();
 
@@ -653,7 +653,7 @@ export class TrainingScheduleComponent implements OnInit {
       });
   }
 
-  cancelForWeather(event: Event, session: TrainingSession): void {
+  cancelForWeather(event: Event, session: ScheduleCalendarSession): void {
     event.stopPropagation();
 
     const weather = this.currentWeather();

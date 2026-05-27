@@ -3,6 +3,7 @@ import { validateRequestBody } from "./validation.js";
 import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { buildRequestLogContext, createLogger } from "./utils/structured-logger.js";
+import { supabaseAdmin } from "./supabase-client.js";
 
 const logger = createLogger({ service: "netlify.auth-reset-password" });
 
@@ -121,10 +122,26 @@ const handler = async (event, context) => {
           );
         }
 
-        // Mark token as used
+        // Actually update the password in Supabase before consuming the token
+        const { error: updateError } = await supabaseAdmin.auth.admin.updateUserById(
+          verification.userId,
+          { password: newPassword },
+        );
+        if (updateError) {
+          requestLogger.error("password_update_failed", updateError, {
+            user_id: verification.userId,
+          });
+          return createErrorResponse(
+            "Failed to update password",
+            500,
+            "server_error",
+            requestId,
+          );
+        }
+
+        // Mark token as used only after successful password update
         emailService.useResetToken(token);
 
-        // In a real app, you would update the password in the database here
         return createSuccessResponse(
           {
             message: "Password reset successful",

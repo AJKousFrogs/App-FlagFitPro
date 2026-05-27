@@ -63,21 +63,6 @@ export type TrainingFocus =
 // TRAINING SESSION TYPES
 // ============================================================================
 
-export interface TrainingSession {
-  id: string;
-  userId: string;
-  date: Date;
-  type: SessionType;
-  duration: number; // in minutes
-  workload?: number;
-  intensity?: number;
-  videos?: TrainingVideo[];
-  exercises?: Exercise[];
-  notes?: string;
-  completed: boolean;
-  performance?: SessionPerformance;
-}
-
 /**
  * Session types - aligned with DB training_sessions.session_type
  * DB also accepts: conditioning, technique, team_practice, scrimmage
@@ -150,7 +135,7 @@ export interface WeeklyPlan {
   weekNumber: number;
   theme: string;
   focus: TrainingFocus[];
-  sessions: TrainingSession[];
+  sessions: Workout[];
   targetWorkload?: number;
   notes?: string;
 }

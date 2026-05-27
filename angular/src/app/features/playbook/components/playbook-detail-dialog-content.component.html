@@ -2,10 +2,9 @@
   @if (play().diagramUrl) {
     <div class="play-diagram">
       <img
-        appMobileOptimized
+        [ngSrc]="play().diagramUrl!"
         [width]="600"
         [height]="400"
-        [src]="play().diagramUrl!"
         [alt]="play().name + ' diagram'"
       />
     </div>

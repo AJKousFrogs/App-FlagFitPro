@@ -69,14 +69,16 @@
           <!-- Session Date -->
           <app-card-shell title="Session Date" headerIcon="pi-calendar">
             <div class="form-field">
-              <label for="sessionDate">When did this session occur?</label>
-              <input
-                type="date"
-                id="sessionDate"
-                formControlName="sessionDate"
-                class="date-input"
-                [max]="today"
-              />
+              <p-floatlabel>
+                <input
+                  type="date"
+                  id="sessionDate"
+                  formControlName="sessionDate"
+                  class="date-input p-inputtext"
+                  [max]="today"
+                />
+                <label for="sessionDate">When did this session occur?</label>
+              </p-floatlabel>
               <small>Select the date when this session actually occurred</small>
             </div>
           </app-card-shell>
@@ -85,15 +87,17 @@
           <app-card-shell title="Duration & Intensity" headerIcon="pi-clock">
             <div class="form-grid">
               <div class="form-field">
-                <label for="duration">Duration (minutes)</label>
-                <p-inputNumber
-                  id="duration"
-                  formControlName="durationMinutes"
-                  [min]="1"
-                  [max]="300"
-                  [showButtons]="true"
-                  placeholder="Enter duration"
-                ></p-inputNumber>
+                <p-floatlabel>
+                  <p-inputNumber
+                    id="duration"
+                    formControlName="durationMinutes"
+                    [min]="1"
+                    [max]="300"
+                    [showButtons]="true"
+                    placeholder="Enter duration"
+                  ></p-inputNumber>
+                  <label for="duration">Duration (minutes)</label>
+                </p-floatlabel>
                 @if (sessionForm.get("durationMinutes")?.value) {
                   <small class="state-narration">
                     <strong>What changed:</strong> Duration set to
@@ -204,54 +208,62 @@
             >
               <div class="form-grid">
                 <div class="form-field">
-                  <label for="sprints">Sprint Repetitions</label>
-                  <p-inputNumber
-                    id="sprints"
-                    formControlName="sprintReps"
-                    [min]="0"
-                    [max]="100"
-                    [showButtons]="true"
-                    placeholder="0"
-                  ></p-inputNumber>
+                  <p-floatlabel>
+                    <p-inputNumber
+                      id="sprints"
+                      formControlName="sprintReps"
+                      [min]="0"
+                      [max]="100"
+                      [showButtons]="true"
+                      placeholder="0"
+                    ></p-inputNumber>
+                    <label for="sprints">Sprint Repetitions</label>
+                  </p-floatlabel>
                   <small>Max recommended: 30/session</small>
                 </div>
 
                 <div class="form-field">
-                  <label for="cuts">Cutting Movements</label>
-                  <p-inputNumber
-                    id="cuts"
-                    formControlName="cuttingMovements"
-                    [min]="0"
-                    [max]="200"
-                    [showButtons]="true"
-                    placeholder="0"
-                  ></p-inputNumber>
+                  <p-floatlabel>
+                    <p-inputNumber
+                      id="cuts"
+                      formControlName="cuttingMovements"
+                      [min]="0"
+                      [max]="200"
+                      [showButtons]="true"
+                      placeholder="0"
+                    ></p-inputNumber>
+                    <label for="cuts">Cutting Movements</label>
+                  </p-floatlabel>
                   <small>Max recommended: 50/session</small>
                 </div>
 
                 <div class="form-field">
-                  <label for="throws">Throws (QB only)</label>
-                  <p-inputNumber
-                    id="throws"
-                    formControlName="throwCount"
-                    [min]="0"
-                    [max]="150"
-                    [showButtons]="true"
-                    placeholder="0"
-                  ></p-inputNumber>
+                  <p-floatlabel>
+                    <p-inputNumber
+                      id="throws"
+                      formControlName="throwCount"
+                      [min]="0"
+                      [max]="150"
+                      [showButtons]="true"
+                      placeholder="0"
+                    ></p-inputNumber>
+                    <label for="throws">Throws (QB only)</label>
+                  </p-floatlabel>
                   <small>Max recommended: 60/session</small>
                 </div>
 
                 <div class="form-field">
-                  <label for="jumps">Jump/Plyo Count</label>
-                  <p-inputNumber
-                    id="jumps"
-                    formControlName="jumpCount"
-                    [min]="0"
-                    [max]="100"
-                    [showButtons]="true"
-                    placeholder="0"
-                  ></p-inputNumber>
+                  <p-floatlabel>
+                    <p-inputNumber
+                      id="jumps"
+                      formControlName="jumpCount"
+                      [min]="0"
+                      [max]="100"
+                      [showButtons]="true"
+                      placeholder="0"
+                    ></p-inputNumber>
+                    <label for="jumps">Jump/Plyo Count</label>
+                  </p-floatlabel>
                   <small>Max recommended: 40/session</small>
                 </div>
               </div>

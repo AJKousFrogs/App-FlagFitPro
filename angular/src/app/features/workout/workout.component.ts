@@ -3,11 +3,14 @@ import {
   OnInit,
   inject,
   signal,
+  computed,
   ChangeDetectionStrategy,
   DestroyRef,
 } from "@angular/core";
 
 import { FormsModule } from "@angular/forms";
+import { Paginator } from "primeng/paginator";
+import { PaginatorState } from "primeng/types/paginator";
 import { ButtonComponent } from "../../shared/components/button/button.component";
 import { CardShellComponent } from "../../shared/components/card-shell/card-shell.component";
 
@@ -49,6 +52,7 @@ interface Workout {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     FormsModule,
+    Paginator,
     CheckboxComponent,
     StatusTagComponent,
     MainLayoutComponent,
@@ -71,6 +75,24 @@ export class WorkoutComponent implements OnInit {
   activeWorkout = signal<Workout | null>(null);
   workoutHistory = signal<Workout[]>([]);
   isLoading = signal(true);
+
+  readonly historyPageSize = signal(10);
+  readonly historyCurrentPage = signal(0);
+
+  readonly paginatedHistory = computed(() => {
+    const all = this.workoutHistory();
+    const start = this.historyCurrentPage() * this.historyPageSize();
+    return all.slice(start, start + this.historyPageSize());
+  });
+
+  readonly historyTotalRecords = computed(() => this.workoutHistory().length);
+
+  onHistoryPageChange(event: PaginatorState): void {
+    const first = event.first ?? 0;
+    const rows = event.rows ?? this.historyPageSize();
+    this.historyCurrentPage.set(Math.floor(first / rows));
+    this.historyPageSize.set(rows);
+  }
 
   private currentUserId(): string | null {
     return this.supabase.userId();
@@ -199,7 +221,7 @@ export class WorkoutComponent implements OnInit {
 
           return {
             id: log.id,
-            name: session?.name || this.inferWorkoutName(log.notes ?? null),
+            name: session?.session_type || this.inferWorkoutName(log.notes ?? null),
             date: formatDate(log.completed_at, "P"),
             exercises,
             duration: log.duration_minutes ?? undefined,

@@ -101,6 +101,7 @@
                     <div class="fee-breakdown">
                       <button
                         class="breakdown-toggle"
+                        [attr.aria-expanded]="expandedFee() === fee.id"
                         (click)="toggleBreakdown(fee.id)"
                       >
                         <i
@@ -152,11 +153,11 @@
               <table class="payments-history-table">
                 <thead>
                   <tr>
-                    <th>Date</th>
-                    <th>Description</th>
-                    <th>Method</th>
-                    <th class="amount-col">Amount</th>
-                    <th class="history-actions-col"></th>
+                    <th scope="col">Date</th>
+                    <th scope="col">Description</th>
+                    <th scope="col">Method</th>
+                    <th scope="col" class="amount-col">Amount</th>
+                    <th scope="col" class="history-actions-col" aria-label="Actions"></th>
                   </tr>
                 </thead>
                 <tbody>

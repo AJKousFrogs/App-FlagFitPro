@@ -119,6 +119,8 @@
               @for (filter of priorityFilters; track filter.id) {
                 <button
                   type="button"
+                  role="tab"
+                  [attr.aria-selected]="selectedPriority() === filter.id"
                   class="filter-chip"
                   [class.filter-chip--active]="selectedPriority() === filter.id"
                   (click)="selectedPriority.set(filter.id)"
@@ -132,6 +134,8 @@
               @for (filter of statusFilters; track filter.id) {
                 <button
                   type="button"
+                  role="tab"
+                  [attr.aria-selected]="selectedStatus() === filter.id"
                   class="filter-chip"
                   [class.filter-chip--active]="selectedStatus() === filter.id"
                   (click)="selectedStatus.set(filter.id)"
@@ -145,6 +149,8 @@
               @for (tab of categoryTabs; track tab.id) {
                 <button
                   type="button"
+                  role="tab"
+                  [attr.aria-selected]="selectedCategory() === tab.id"
                   class="filter-chip"
                   [class.filter-chip--active]="selectedCategory() === tab.id"
                   (click)="selectedCategory.set(tab.id)"
@@ -216,7 +222,7 @@
           />
         } @else {
           <section class="list-stack" aria-label="Notification list">
-            @for (notification of filteredNotifications(); track notification.id) {
+            @for (notification of paginatedNotifications(); track notification.id) {
               <app-card-shell
                 class="notification-card"
                 [title]="notification.title || getNotificationLabel(notification)"
@@ -289,6 +295,14 @@
               </app-card-shell>
             }
           </section>
+          @if (totalRecords() > pageSize()) {
+            <p-paginator
+              [rows]="pageSize()"
+              [totalRecords]="totalRecords()"
+              [rowsPerPageOptions]="[15, 30, 50]"
+              (onPageChange)="onPageChange($event)"
+            />
+          }
         }
       </div>
     </app-main-layout>

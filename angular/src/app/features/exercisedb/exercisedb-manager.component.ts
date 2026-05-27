@@ -4,7 +4,7 @@ import {
   inject,
   signal,
   computed,
-  effect,
+  linkedSignal,
   DestroyRef,
   ChangeDetectionStrategy,
 } from "@angular/core";
@@ -18,6 +18,7 @@ import { MultiSelect, type MultiSelectChangeEvent } from "primeng/multiselect";
 import { ProgressBarComponent } from "../../shared/components/progress-bar/progress-bar.component";
 import { Tabs, TabList, Tab, TabPanels, TabPanel } from "primeng/tabs";
 import { Chip } from "primeng/chip";
+import { Image } from "primeng/image";
 import { BadgeComponent } from "../../shared/components/badge/badge.component";
 
 import { ToastService } from "../../core/services/toast.service";
@@ -37,7 +38,7 @@ import {
   ImportLog,
   ExerciseApprovalData,
 } from "../../core/services/exercisedb.service";
-import { MobileOptimizedImageDirective } from "../../shared/directives/mobile-optimized-image.directive";
+import { NgOptimizedImage } from "@angular/common";
 import { capitalize } from "../../shared/utils/format.utils";
 import { SkeletonRepeatComponent } from "../../shared/components/skeleton-loader/skeleton-loader.component";
 
@@ -55,10 +56,11 @@ import { SkeletonRepeatComponent } from "../../shared/components/skeleton-loader
     TabPanels,
     TabPanel,
     Chip,
+    Image,
     BadgeComponent,
     MainLayoutComponent,
     PageHeaderComponent,
-    MobileOptimizedImageDirective,
+    NgOptimizedImage,
     ButtonComponent,
     EmptyStateComponent,
     StatusTagComponent,
@@ -86,9 +88,9 @@ export class ExerciseDBManagerComponent implements OnInit {
   exerciseToApprove = signal<ExerciseDBExercise | null>(null);
   lastImportStats = signal<ImportStats | null>(null);
 
-  // Loading states
-  loading = signal(false);
-  importing = signal(false);
+  // Loading states — auto-sync from service via linkedSignal
+  loading = linkedSignal(() => this.exerciseDBService.isLoading());
+  importing = linkedSignal(() => this.exerciseDBService.isImporting());
 
   // Dialogs
   showDetailDialog = false;
@@ -219,18 +221,6 @@ export class ExerciseDBManagerComponent implements OnInit {
       ...categories.map((c) => ({ label: c, value: c })),
     ];
   });
-
-  constructor() {
-    // Keep these effects in an injection context. Angular 21 rejects creating
-    // them in ngOnInit() with NG0203.
-    effect(() => {
-      this.loading.set(this.exerciseDBService.isLoading());
-    });
-
-    effect(() => {
-      this.importing.set(this.exerciseDBService.isImporting());
-    });
-  }
 
   ngOnInit(): void {
     this.loadExercises();

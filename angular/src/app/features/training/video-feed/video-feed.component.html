@@ -91,10 +91,10 @@
                     } @else {
                       <!-- Instagram Thumbnail Image -->
                       <img
-                        [src]="getVideoThumbnail(video)"
+                        [ngSrc]="getVideoThumbnail(video)"
                         [alt]="video.title"
                         class="video-thumbnail-img"
-                        loading="lazy"
+                        fill
                         (error)="onThumbnailError($event)"
                       />
                       <div class="thumbnail-overlay">

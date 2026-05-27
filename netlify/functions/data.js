@@ -24,9 +24,7 @@ function fromLambdaResponse(r) {
   return new Response(typeof r.body === "string" ? r.body : JSON.stringify(r.body ?? null), { status: r.statusCode ?? 200, headers: r.headers ?? { "Content-Type": "application/json" } });
 }
 async function dispatch(h, req, url) { return fromLambdaResponse(await h(await toLambdaEvent(req, url), {})); }
-function cors(req) {
-  return { "Access-Control-Allow-Origin": req.headers.get("origin") || "*", "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Request-Id, X-Correlation-Id", "Access-Control-Allow-Methods": "GET, POST, PUT, PATCH, DELETE, OPTIONS", "Access-Control-Allow-Credentials": "true", "Content-Type": "application/json", Vary: "Origin" };
-}
+import { getCorsHeaders as cors } from "./utils/cors.js";
 
 export default async (req) => {
   if (req.method === "OPTIONS") {return new Response(null, { status: 204, headers: cors(req) });}

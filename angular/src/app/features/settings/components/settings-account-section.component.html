@@ -39,21 +39,23 @@
         ></app-form-input>
       </div>
       <div class="form-field">
-        <label for="settings-dob" class="form-label">Date of Birth</label>
         <div class="datepicker-with-suggestion">
-          <input
-            appBirthdayInputSuggestion
-            id="settings-dob"
-            name="dateOfBirth"
-            type="date"
-            [value]="getDateOfBirthInputValue()"
-            (input)="onDateOfBirthInputEvent($event)"
-            [max]="getMaxBirthDateInputValue()"
-            placeholder="Select your date of birth"
-            class="w-full"
-            (inputTyped)="birthdayInputTyped.emit($event)"
-            (inputBlurred)="birthdayInputBlurred.emit()"
-          />
+          <p-floatlabel>
+            <input
+              appBirthdayInputSuggestion
+              id="settings-dob"
+              name="dateOfBirth"
+              type="date"
+              [value]="getDateOfBirthInputValue()"
+              (input)="onDateOfBirthInputEvent($event)"
+              [max]="getMaxBirthDateInputValue()"
+              placeholder="Select your date of birth"
+              class="w-full p-inputtext"
+              (inputTyped)="birthdayInputTyped.emit($event)"
+              (inputBlurred)="birthdayInputBlurred.emit()"
+            />
+            <label for="settings-dob">Date of Birth</label>
+          </p-floatlabel>
           @if (birthdaySuggestion(); as suggestion) {
             <div class="birthday-suggestion">
               <div class="suggestion-content">

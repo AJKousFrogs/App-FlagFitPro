@@ -48,31 +48,43 @@ async function persistMappedRows(supabase, userId, rows, mappings) {
   let imported = 0;
   const warnings = [];
 
-  for (const rawRow of rows) {
+  // Pre-map all rows before processing
+  const mapped = rows.map((rawRow) => {
     const row = buildMappedRow(rawRow, mappings);
     const duration = normalizeDuration(row.duration);
     const rpe = normalizeRpe(row.rpe);
     const sessionDate = `${row.date || ""}`.trim() || new Date().toISOString().split("T")[0];
     const sessionType = `${row.trainingType || "imported_session"}`.trim();
     const workload = Math.round(duration * rpe);
+    return { sessionDate, sessionType, duration, workload, notes: typeof row.notes === "string" ? row.notes : null };
+  });
 
-    const result = await supabase.rpc("log_training_session", {
-      p_user_id: userId,
-      p_session_date: sessionDate,
-      p_session_type: sessionType,
-      p_duration_minutes: duration,
-      p_session_load: workload,
-      p_status: "completed",
-      p_notes: typeof row.notes === "string" ? row.notes : null,
-      p_source: "manual_import",
-    });
+  // Process in batches of 10 for concurrency control
+  const BATCH_SIZE = 10;
+  for (let i = 0; i < mapped.length; i += BATCH_SIZE) {
+    const batch = mapped.slice(i, i + BATCH_SIZE);
+    const results = await Promise.all(
+      batch.map((r) =>
+        supabase.rpc("log_training_session", {
+          p_user_id: userId,
+          p_session_date: r.sessionDate,
+          p_session_type: r.sessionType,
+          p_duration_minutes: r.duration,
+          p_session_load: r.workload,
+          p_status: "completed",
+          p_notes: r.notes,
+          p_source: "manual_import",
+        }),
+      ),
+    );
 
-    if (result.error) {
-      warnings.push(`Skipped row for ${sessionDate}: ${result.error.message}`);
-      continue;
+    for (let j = 0; j < results.length; j++) {
+      if (results[j].error) {
+        warnings.push(`Skipped row for ${batch[j].sessionDate}: ${results[j].error.message}`);
+      } else {
+        imported += 1;
+      }
     }
-
-    imported += 1;
   }
 
   return { imported, warnings };

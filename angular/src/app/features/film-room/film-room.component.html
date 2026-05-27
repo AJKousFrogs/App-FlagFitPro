@@ -92,10 +92,9 @@
                   <div class="film-thumbnail">
                     @if (film.thumbnailUrl) {
                       <img
-                        appMobileOptimized
+                        [ngSrc]="film.thumbnailUrl"
                         [width]="320"
                         [height]="180"
-                        [src]="film.thumbnailUrl"
                         [alt]="film.title"
                       />
                     } @else {
