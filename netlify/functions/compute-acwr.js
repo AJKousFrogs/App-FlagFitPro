@@ -11,6 +11,7 @@ import { getUserRole } from "./utils/authorization-guard.js";
 import { hasAnyRole, LOAD_MANAGEMENT_ACCESS_ROLES } from "./utils/role-sets.js";
 import { parseJsonObjectBody } from "./utils/input-validator.js";
 import { buildRequestLogContext, createLogger } from "./utils/structured-logger.js";
+import { computeAcwrAt } from "./utils/acwr.js";
 
 function asFiniteNumber(value, fallback = 0) {
   const parsed = Number(value);
@@ -62,40 +63,15 @@ function calculateSeriesFromSessions(sessions, rangeDays = 42) {
     const sessionDate = formatDate(cursor);
     const load = Math.round((dailyLoads.get(sessionDate) || 0) * 100) / 100;
 
-    const acuteLoads = [];
-    const chronicLoads = [];
-    for (let offset = 0; offset < 7; offset += 1) {
-      const day = new Date(cursor);
-      day.setDate(day.getDate() - offset);
-      acuteLoads.push(dailyLoads.get(formatDate(day)) || 0);
-    }
-    for (let offset = 0; offset < 28; offset += 1) {
-      const day = new Date(cursor);
-      day.setDate(day.getDate() - offset);
-      chronicLoads.push(dailyLoads.get(formatDate(day)) || 0);
-    }
-
-    const acuteLoad =
-      Math.round(
-        (acuteLoads.reduce((sum, value) => sum + value, 0) / acuteLoads.length) *
-          100,
-      ) / 100;
-    const chronicLoad =
-      Math.round(
-        (chronicLoads.reduce((sum, value) => sum + value, 0) /
-          chronicLoads.length) *
-          100,
-      ) / 100;
+    // Canonical EWMA + uncoupled ACWR (single source of truth in utils/acwr.js).
+    const { acuteLoad, chronicLoad, acwr } = computeAcwrAt(dailyLoads, cursor);
 
     rows.push({
       session_date: sessionDate,
       load,
       acute_load: acuteLoad,
       chronic_load: chronicLoad,
-      acwr:
-        chronicLoad > 0
-          ? Math.round((acuteLoad / chronicLoad) * 1000) / 1000
-          : null,
+      acwr,
     });
   }
 
@@ -253,27 +229,17 @@ const handler = async (event, context) => {
         );
       }
 
-      // Call the stored procedure for the current-point summary when available.
-      const { data: rpcData, error } = await supabaseAdmin.rpc("compute_acwr", {
-        athlete: athleteId,
-      });
-
-      if (error) {
-        requestLogger.error("acwr_rpc_failed", error, {
-          athlete_id: athleteId,
-        });
-      }
-
+      // ACWR (current + series) comes from the canonical EWMA util so the summary
+      // and the series are always consistent. The legacy `compute_acwr` Postgres
+      // stored procedure used a coupled rolling average and is superseded; it
+      // should be dropped in a migration (tracked as a data-layer decision).
       const series = calculateSeriesFromSessions(sessionsResult.data || []);
       return createSuccessResponse(
         {
           data: series,
           summary: {
             athleteId,
-            current_acwr:
-              rpcData === null || rpcData === undefined
-                ? series.at(-1)?.acwr ?? null
-                : rpcData,
+            current_acwr: series.at(-1)?.acwr ?? null,
             acute_load: series.at(-1)?.acute_load ?? null,
             chronic_load: series.at(-1)?.chronic_load ?? null,
             latest_session_date: series.at(-1)?.session_date ?? null,

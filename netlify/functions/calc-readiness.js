@@ -9,6 +9,7 @@ import {
   buildRequestLogContext,
   createLogger,
 } from "./utils/structured-logger.js";
+import { computeAcwrAt } from "./utils/acwr.js";
 
 // Netlify Function: Calculate Readiness Score
 // Evidence-based readiness scoring combining session-RPE, ACWR, wellness, and game proximity
@@ -517,11 +518,9 @@ const handler = async (event, context) => {
       }
 
       // 1) Load training sessions for ACWR calculation (session-RPE: RPE × minutes)
+      // Fetch 28 days so the uncoupled chronic window (21d) + acute window (7d) are covered.
       const startChronic = new Date(targetDate);
       startChronic.setDate(startChronic.getDate() - 27); // 28 days inclusive
-
-      const startAcute = new Date(targetDate);
-      startAcute.setDate(startAcute.getDate() - 6); // 7 days inclusive
 
       // Get sessions from training_sessions table
       // Include both rpe and intensity_level (fallback for RPE)
@@ -592,24 +591,13 @@ const handler = async (event, context) => {
         }
       }
 
-      // Calculate acute load (7-day sum)
-      const acuteLoad = Array.from(loadsByDay.entries())
-        .filter(([d]) => d >= startAcute.toISOString().slice(0, 10))
-        .reduce((sum, [, v]) => sum + v, 0);
-
-      // Calculate chronic load (28-day weekly average)
-      const chronicWindowDays = 28;
-      let chronicSum = 0;
-      for (let i = 0; i < chronicWindowDays; i++) {
-        const d = new Date(startChronic);
-        d.setDate(startChronic.getDate() + i);
-        const key = d.toISOString().slice(0, 10);
-        chronicSum += loadsByDay.get(key) || 0;
-      }
-      const chronicLoad = chronicSum / (chronicWindowDays / 7); // Weekly average
-
-      // Calculate ACWR
-      const acwr = chronicLoad > 0 ? acuteLoad / chronicLoad : 0;
+      // Canonical EWMA + uncoupled ACWR (single source of truth in utils/acwr.js).
+      // EWMA is more sensitive than rolling averages (Williams 2017); the uncoupled
+      // window avoids the spurious correlation of coupled ACWR (Lolli 2017).
+      const acwrResult = computeAcwrAt(loadsByDay, targetDate);
+      const acuteLoad = acwrResult.acuteLoad;
+      const chronicLoad = acwrResult.chronicLoad;
+      const acwr = acwrResult.acwr ?? 0;
 
       // 2) Get wellness log for the day
       requestLogger.debug("readiness_wellness_fetch_started", {

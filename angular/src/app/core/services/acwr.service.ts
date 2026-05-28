@@ -223,6 +223,18 @@ export class AcwrService {
    *
    * Uses precision utilities for consistent rounding.
    *
+   * ⚠️ CANONICAL ACWR IS SERVER-SIDE: `netlify/functions/utils/acwr.js`
+   * (EWMA + uncoupled, used by calc-readiness + compute-acwr). This client copy
+   * exists only for dashboard display and currently DIVERGES from canonical in
+   * two ways, to be reconciled when the ACWR dashboard is rebuilt (port phase):
+   *   1. RECENCY BUG — `loads` is "most recent first" and this seeds on loads[0]
+   *      then folds older days in, so the OLDEST day ends up weighted most
+   *      (recency inverted). Should process oldest→newest.
+   *   2. COUPLED — chronic uses a 28-day window that includes the acute 7 days;
+   *      canonical is uncoupled (chronic = the 21 days preceding the acute week).
+   * Plan: make this read-through to the server value, or mirror utils/acwr.js
+   * exactly (λ = 2/(N+1), uncoupled), with the spec updated accordingly.
+   *
    * @param loads - Array of daily loads (most recent first)
    * @param lambda - Decay factor (0-1), higher = more weight to recent
    * @param days - Number of days to calculate over
