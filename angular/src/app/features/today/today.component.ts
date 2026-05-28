@@ -59,12 +59,11 @@ import {
   ExactTrainingSummary,
   TodayProtocolFacade,
 } from "./today-protocol.facade";
-import { TodaySummaryHeaderComponent } from "./components/today-summary-header.component";
 import { TodayQuickCheckinDialogComponent } from "./components/today-quick-checkin-dialog.component";
-import { TodayPrescriptionCardComponent } from "./components/today-prescription-card.component";
 import { TodayProtocolSectionComponent } from "./components/today-protocol-section.component";
-import { TodayScheduleBannerComponent } from "./components/today-schedule-banner.component";
 import { TodayStatusStackComponent } from "./components/today-status-stack.component";
+import { TodayHeroComponent } from "./components/today-hero.component";
+import { TodayStickyBarComponent } from "./components/today-sticky-bar.component";
 import { TodayCoachMessagesService } from "./services/today-coach-messages.service";
 import { TodayProtocolStateService } from "./services/today-protocol-state.service";
 
@@ -125,12 +124,11 @@ interface QuickFormData {
     PageErrorStateComponent,
     ButtonComponent,
     MainLayoutComponent,
-    TodayScheduleBannerComponent,
-    TodayPrescriptionCardComponent,
-    TodaySummaryHeaderComponent,
     TodayQuickCheckinDialogComponent,
     TodayProtocolSectionComponent,
     TodayStatusStackComponent,
+    TodayHeroComponent,
+    TodayStickyBarComponent,
   ],
   templateUrl: "./today.component.html",
   styleUrl: "./today.component.scss",

@@ -1,4 +1,10 @@
 @use "styles/mixins" as *;
+@use "styles/foundations" as *;
+
+/* ==========================================================================
+   SUPERADMIN TEAMS — Wave 3b Redesign
+   Token-driven, accessible, responsive
+   ========================================================================== */
 
 .teams-content {
   width: 100%;
@@ -6,10 +12,55 @@
   min-width: 0;
 }
 
-.teams-table-card {
-  --app-card-shell-header-padding: var(--space-4);
-  --app-card-shell-header-border-bottom: var(--border-1) solid
-    var(--color-border-subtle);
+.header-actions {
+  display: flex;
+  gap: var(--space-2);
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+/* ---------------- Stats summary ---------------- */
+.stats-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(var(--size-150), 1fr));
+  gap: var(--space-3);
+}
+
+.stat-card {
+  --app-card-shell-padding: var(--space-4);
+}
+
+.stat-content {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
+  gap: var(--space-1);
+}
+
+.stat-block__value {
+  @extend %stat-value;
+  font-family: var(--ds-font-family-display, var(--ds-font-family-base));
+  font-size: var(--ds-font-size-3xl);
+  font-weight: var(--ds-font-weight-extrabold, 800);
+  color: var(--color-text-primary);
+  line-height: var(--ds-line-height-tight);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+}
+
+.stat-block__label {
+  @extend %stat-label;
+  font-size: var(--ds-font-size-2xs);
+  font-weight: var(--ds-font-weight-bold);
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+/* ---------------- Filters card ---------------- */
+.filters-card {
+  --app-card-shell-padding: var(--space-4);
 }
 
 .filters-row {
@@ -26,14 +77,67 @@
 
 .filter-buttons {
   display: flex;
-  gap: var(--space-1);
+  gap: var(--space-2);
   flex-wrap: wrap;
+}
+
+/* ---------------- Teams table card ---------------- */
+.teams-table-card {
+  --app-card-shell-header-padding: var(--space-4);
+  --app-card-shell-header-border-bottom: var(--border-1) solid
+    var(--color-border-subtle);
+
+  /* Horizontal scroll wrapper for table on small screens */
+  :where(p-table) {
+    display: block;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
 }
 
 .action-buttons {
   display: flex;
   gap: var(--space-1);
   flex-wrap: wrap;
+  align-items: center;
+}
+
+/* ---------------- Dialog ---------------- */
+.goal-details {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
+}
+
+.goal-detail-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  padding: var(--space-3);
+  background: var(--surface-secondary);
+  border-radius: var(--radius-md);
+}
+
+.goal-detail-label {
+  font-size: var(--ds-font-size-2xs);
+  font-weight: var(--ds-font-weight-bold);
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.goal-detail-value {
+  font-size: var(--ds-font-size-md);
+  font-weight: var(--ds-font-weight-semibold);
+  color: var(--color-text-primary);
+}
+
+/* ---------------- Responsive ---------------- */
+@include respond-to(lg) {
+  .stats-row {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 
 @include respond-to(md) {
@@ -45,5 +149,19 @@
   .teams-search,
   .filter-buttons {
     width: 100%;
+  }
+
+  .filter-buttons {
+    justify-content: flex-start;
+  }
+
+  .goal-details {
+    grid-template-columns: 1fr;
+  }
+}
+
+@include respond-to(sm) {
+  .stats-row {
+    grid-template-columns: 1fr;
   }
 }

@@ -1,8 +1,10 @@
     <app-main-layout>
       <div class="users-content ui-page-shell ui-page-shell--wide ui-page-stack">
         <app-page-header
+          eyebrow="SUPERADMIN"
           title="User Management"
           subtitle="View and manage all users on the platform"
+          icon="pi-users"
         >
           <div class="header-actions">
             <app-button
@@ -13,6 +15,34 @@
             >
           </div>
         </app-page-header>
+
+        <!-- Stats Summary -->
+        <div class="stats-row" role="group" aria-label="User statistics">
+          <app-card-shell class="stat-card">
+            <div class="stat-content stat-block__content">
+              <span class="stat-block__value">{{ totalUsers }}</span>
+              <span class="stat-block__label">Total Users</span>
+            </div>
+          </app-card-shell>
+          <app-card-shell class="stat-card">
+            <div class="stat-content stat-block__content">
+              <span class="stat-block__value">{{ playerCount }}</span>
+              <span class="stat-block__label">Players</span>
+            </div>
+          </app-card-shell>
+          <app-card-shell class="stat-card">
+            <div class="stat-content stat-block__content">
+              <span class="stat-block__value">{{ coachCount }}</span>
+              <span class="stat-block__label">Coaches</span>
+            </div>
+          </app-card-shell>
+          <app-card-shell class="stat-card">
+            <div class="stat-content stat-block__content">
+              <span class="stat-block__value">{{ adminCount }}</span>
+              <span class="stat-block__label">Admins</span>
+            </div>
+          </app-card-shell>
+        </div>
 
         <!-- Filters -->
         <app-card-shell class="filters-card">
@@ -146,34 +176,6 @@
             </p-table>
           }
         </app-card-shell>
-
-        <!-- Stats Summary -->
-        <div class="stats-row">
-          <app-card-shell class="stat-card">
-            <div class="stat-content stat-block__content">
-              <span class="stat-block__value">{{ totalUsers }}</span>
-              <span class="stat-block__label">Total Users</span>
-            </div>
-          </app-card-shell>
-          <app-card-shell class="stat-card">
-            <div class="stat-content stat-block__content">
-              <span class="stat-block__value">{{ playerCount }}</span>
-              <span class="stat-block__label">Players</span>
-            </div>
-          </app-card-shell>
-          <app-card-shell class="stat-card">
-            <div class="stat-content stat-block__content">
-              <span class="stat-block__value">{{ coachCount }}</span>
-              <span class="stat-block__label">Coaches</span>
-            </div>
-          </app-card-shell>
-          <app-card-shell class="stat-card">
-            <div class="stat-content stat-block__content">
-              <span class="stat-block__value">{{ adminCount }}</span>
-              <span class="stat-block__label">Admins</span>
-            </div>
-          </app-card-shell>
-        </div>
 
         <app-dialog
           [(visible)]="showUserDialog"

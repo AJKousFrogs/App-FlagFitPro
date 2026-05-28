@@ -11,31 +11,39 @@
         </app-page-header>
 
         <!-- Tab Navigation -->
-        <div class="tab-navigation">
-          <button
+        <div class="tab-navigation" role="tablist" aria-label="Payment management views">
+          <button type="button"
             class="tab-btn"
+            role="tab"
             [class.active]="activeTab() === 'overview'"
+            [attr.aria-selected]="activeTab() === 'overview'"
             (click)="activeTab.set('overview')"
           >
             Overview
           </button>
-          <button
+          <button type="button"
             class="tab-btn"
+            role="tab"
             [class.active]="activeTab() === 'fees'"
+            [attr.aria-selected]="activeTab() === 'fees'"
             (click)="activeTab.set('fees')"
           >
             Active Fees
           </button>
-          <button
+          <button type="button"
             class="tab-btn"
+            role="tab"
             [class.active]="activeTab() === 'balances'"
+            [attr.aria-selected]="activeTab() === 'balances'"
             (click)="activeTab.set('balances')"
           >
             Player Balances
           </button>
-          <button
+          <button type="button"
             class="tab-btn"
+            role="tab"
             [class.active]="activeTab() === 'history'"
+            [attr.aria-selected]="activeTab() === 'history'"
             (click)="activeTab.set('history')"
           >
             Payment History

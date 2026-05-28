@@ -41,7 +41,7 @@ export class ScheduleService {
     loader: async ({ params: userId }) => {
       if (!userId) return null;
       const response = await firstValueFrom(
-        this.api.get<ScheduleSnapshot>("schedule"),
+        this.api.get<ScheduleSnapshot>("/api/schedule"),
       );
       if (response.success && response.data) {
         return response.data;
@@ -104,7 +104,7 @@ export class ScheduleService {
     }
     try {
       const response = await firstValueFrom(
-        this.api.get<ScheduleSnapshot>("schedule"),
+        this.api.get<ScheduleSnapshot>("/api/schedule"),
       );
       if (response.success && response.data) {
         this.scheduleResource.value.set(response.data);

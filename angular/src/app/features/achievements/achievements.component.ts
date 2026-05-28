@@ -27,7 +27,6 @@ import { LoggerService } from "../../core/services/logger.service";
 import { extractApiPayload } from "../../core/utils/api-response-mapper";
 import { TABLE_COLUMN_WIDTHS } from "../../core/utils/design-tokens.util";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
-import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
 import { getTimeAgo } from "../../shared/utils/date.utils";
 import { UI_LIMITS } from "../../core/constants";
 
@@ -263,7 +262,6 @@ const CATEGORY_LABELS: Record<
     TableModule,
     StatusTagComponent,
     MainLayoutComponent,
-    PageHeaderComponent,
   ],
   templateUrl: "./achievements.component.html",
   styleUrl: "./achievements.component.scss",

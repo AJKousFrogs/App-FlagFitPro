@@ -60,8 +60,10 @@
   &::before {
     content: "";
     position: absolute;
-    top: -120px; right: -120px;
-    width: 360px; height: 360px;
+    top: calc(-1 * var(--space-20));
+    right: calc(-1 * var(--space-20));
+    width: calc(var(--space-20) * 4 + var(--space-10));
+    height: calc(var(--space-20) * 4 + var(--space-10));
     background: radial-gradient(circle, color-mix(in srgb, var(--ds-primary-green) 18%, transparent) 0%, transparent 65%);
     pointer-events: none;
   }
@@ -90,11 +92,11 @@
   background: linear-gradient(135deg, var(--ds-primary-green), color-mix(in srgb, var(--ds-primary-green) 70%, white));
   color: var(--color-text-on-primary, white);
   font-family: var(--ds-font-family-display, var(--ds-font-family-base));
-  font-size: 1.625rem;
+  font-size: var(--ds-font-size-2xl);
   font-weight: var(--ds-font-weight-extrabold, 800);
   letter-spacing: -0.04em;
   font-variant-numeric: tabular-nums;
-  box-shadow: 0 8px 24px color-mix(in srgb, var(--ds-primary-green) 30%, transparent);
+  box-shadow: var(--shadow-md, 0 var(--space-2) var(--space-6) color-mix(in srgb, var(--ds-primary-green) 30%, transparent));
 }
 
 .position-tag {

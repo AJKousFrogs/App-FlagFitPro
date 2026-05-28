@@ -1,5 +1,11 @@
 @use "styles/mixins" as *;
 
+/* ==========================================================================
+   PLAYER DEVELOPMENT — Wave 2c Redesign
+   Player selector, stats grid, goal cards, skill radar,
+   responsive at lg/md/sm, WCAG touch targets.
+   ========================================================================== */
+
 .goal-progress-bar {
   height: var(--space-3);
   flex: 1;
@@ -7,13 +13,20 @@
 
 .player-development-page {
   width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: var(--layout-page-section-gap);
 }
 
-// Selection Row
+/* ---- Selector header (player + compare) ---- */
 .selection-row {
   display: flex;
   gap: var(--space-4);
   flex-wrap: wrap;
+  padding: var(--space-4);
+  background: var(--surface-card);
+  border: var(--border-1) solid var(--color-border-primary);
+  border-radius: var(--radius-lg);
 
   .selection-field {
     flex: 1;
@@ -22,14 +35,16 @@
     label {
       display: block;
       margin-bottom: var(--space-1);
-      font-size: var(--ds-font-size-md);
-      font-weight: var(--ds-font-weight-medium);
+      font-size: var(--ds-font-size-xs);
+      font-weight: var(--ds-font-weight-semibold);
       color: var(--color-text-secondary);
+      text-transform: uppercase;
+      letter-spacing: var(--ds-letter-spacing-wide, 0.04em);
     }
   }
 }
 
-// Stats Summary
+/* ---- Stats summary ---- */
 .stats-summary {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(var(--grid-card-min-xs), 1fr));
@@ -40,11 +55,43 @@
   display: flex;
   align-items: center;
   gap: var(--space-3);
-  padding: var(--space-3);
+  padding: var(--space-4);
   background: var(--surface-card);
+  border: var(--border-1) solid var(--color-border-primary);
   border-radius: var(--radius-lg);
+  transition: border-color var(--transition-fast) var(--ease-standard);
 
-  // @see docs/CARD_SHELL_CONTRACT.md §9 Stat Block Standard
+  &:hover {
+    border-color: var(--ds-primary-green);
+  }
+
+  .stat-icon {
+    font-size: var(--ds-font-size-2xl);
+    color: var(--color-text-secondary);
+  }
+
+  .stat-content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-0-5);
+  }
+
+  .stat-block__value {
+    font-size: var(--ds-font-size-2xl);
+    font-weight: var(--ds-font-weight-bold);
+    color: var(--color-text-primary);
+    line-height: 1.1;
+
+    &.positive {
+      color: var(--ds-primary-green);
+    }
+  }
+
+  .stat-block__label {
+    font-size: var(--ds-font-size-sm);
+    font-weight: var(--ds-font-weight-medium);
+    color: var(--color-text-primary);
+  }
 
   .stat-sub {
     font-size: var(--ds-font-size-xs);
@@ -52,7 +99,7 @@
   }
 }
 
-// Spider Chart
+/* ---- Spider/Radar chart card ---- */
 .spider-chart-container {
   display: flex;
   justify-content: center;
@@ -72,7 +119,7 @@
     display: flex;
     align-items: center;
     gap: var(--space-2);
-    font-size: var(--ds-font-size-md);
+    font-size: var(--ds-font-size-sm);
     color: var(--color-text-secondary);
   }
 
@@ -95,7 +142,7 @@
   }
 }
 
-// Goals Card
+/* ---- Goals card ---- */
 .goals-list {
   display: flex;
   flex-direction: column;
@@ -103,7 +150,7 @@
 }
 
 .goal-item {
-  padding: var(--space-3);
+  padding: var(--space-4);
   background: var(--surface-secondary);
   border-radius: var(--radius-md);
   border-left: var(--space-0-75) solid var(--ds-primary-green);
@@ -112,7 +159,7 @@
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
-    margin-bottom: var(--space-2);
+    margin-bottom: var(--space-3);
     flex-wrap: wrap;
     gap: var(--space-2);
 
@@ -122,14 +169,16 @@
       gap: var(--space-2);
       font-weight: var(--ds-font-weight-medium);
       color: var(--color-text-primary);
+      font-size: var(--ds-font-size-md);
 
       .goal-icon {
         font-size: var(--ds-font-size-2xl);
+        color: var(--ds-primary-green);
       }
     }
 
     .goal-due {
-      font-size: var(--ds-font-size-md);
+      font-size: var(--ds-font-size-sm);
       color: var(--color-text-tertiary);
     }
   }
@@ -141,14 +190,14 @@
     margin-bottom: var(--space-2);
 
     .progress-label {
-      font-size: var(--ds-font-size-md);
+      font-size: var(--ds-font-size-sm);
       color: var(--color-text-secondary);
       min-width: var(--badge-min-width-md);
     }
 
     .progress-value {
       font-size: var(--ds-font-size-md);
-      font-weight: var(--ds-font-weight-medium);
+      font-weight: var(--ds-font-weight-semibold);
       color: var(--color-text-primary);
       min-width: var(--icon-min-width-md);
     }
@@ -158,7 +207,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: var(--space-2);
+    margin-bottom: var(--space-3);
     flex-wrap: wrap;
     gap: var(--space-2);
 
@@ -171,14 +220,15 @@
   .goal-actions {
     display: flex;
     gap: var(--space-2);
-    padding-top: var(--space-2);
+    padding-top: var(--space-3);
     border-top: var(--border-1) solid var(--color-border-secondary);
+    flex-wrap: wrap;
   }
 }
 
 .empty-goals {
   text-align: center;
-  padding: var(--space-4);
+  padding: var(--space-5);
   color: var(--color-text-secondary);
 
   p {
@@ -186,7 +236,7 @@
   }
 }
 
-// History Card
+/* ---- History card ---- */
 .history-filters {
   display: flex;
   gap: var(--space-3);
@@ -210,10 +260,15 @@
   span {
     font-size: var(--ds-font-size-md);
     color: var(--color-text-secondary);
+
+    strong {
+      color: var(--color-text-primary);
+      font-weight: var(--ds-font-weight-semibold);
+    }
   }
 }
 
-// Assessments Card
+/* ---- Assessments card (skill rows) ---- */
 .assessment-actions {
   display: flex;
   align-items: center;
@@ -221,7 +276,7 @@
   flex-wrap: wrap;
 
   .last-assessment {
-    font-size: var(--ds-font-size-md);
+    font-size: var(--ds-font-size-sm);
     color: var(--color-text-tertiary);
   }
 }
@@ -236,11 +291,13 @@
   display: flex;
   align-items: center;
   gap: var(--space-3);
+  min-height: var(--space-11);
 
   .skill-name {
     min-width: var(--input-min-width-md);
     font-size: var(--ds-font-size-md);
     color: var(--color-text-primary);
+    font-weight: var(--ds-font-weight-medium);
   }
 
   .skill-bar {
@@ -251,7 +308,7 @@
   .skill-score {
     min-width: var(--icon-min-width-lg);
     font-size: var(--ds-font-size-md);
-    font-weight: var(--ds-font-weight-medium);
+    font-weight: var(--ds-font-weight-semibold);
     color: var(--color-text-primary);
     text-align: right;
   }
@@ -263,9 +320,13 @@
   border-top: var(--border-1) solid var(--color-border-secondary);
   font-size: var(--ds-font-size-md);
   color: var(--color-text-primary);
+
+  strong {
+    font-weight: var(--ds-font-weight-semibold);
+  }
 }
 
-// Notes Card
+/* ---- Notes card ---- */
 .notes-list {
   display: flex;
   flex-direction: column;
@@ -285,17 +346,20 @@
     display: flex;
     gap: var(--space-2);
     margin-bottom: var(--space-2);
+    align-items: baseline;
 
     .note-date {
-      font-weight: var(--ds-font-weight-medium);
+      font-weight: var(--ds-font-weight-semibold);
       color: var(--color-text-primary);
+      font-size: var(--ds-font-size-md);
     }
 
     .note-author {
       color: var(--color-text-tertiary);
+      font-size: var(--ds-font-size-sm);
 
       &::before {
-        content: "- ";
+        content: "— ";
       }
     }
   }
@@ -304,16 +368,16 @@
     margin: var(--space-0);
     font-size: var(--ds-font-size-md);
     color: var(--color-text-secondary);
-    line-height: var(--ds-line-height-1-6);
+    line-height: var(--ds-line-height-relaxed, 1.6);
   }
 }
 
-// Form Styles
+/* ---- Dialog forms ---- */
 .goal-form,
 .note-form {
   display: flex;
   flex-direction: column;
-  gap: var(--space-3);
+  gap: var(--space-4);
 }
 
 .goal-details {
@@ -335,14 +399,17 @@
 }
 
 .goal-detail-label {
-  font-size: var(--ds-font-size-sm);
-  font-weight: var(--ds-font-weight-medium);
+  font-size: var(--ds-font-size-xs);
+  font-weight: var(--ds-font-weight-semibold);
   color: var(--color-text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: var(--ds-letter-spacing-wide, 0.04em);
 }
 
 .goal-detail-value {
   font-size: var(--ds-font-size-md);
   color: var(--color-text-primary);
+  font-weight: var(--ds-font-weight-medium);
 }
 
 .goal-detail-progress {
@@ -352,6 +419,10 @@
 }
 
 .form-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+
   label {
     display: block;
     margin-bottom: var(--space-1);
@@ -376,7 +447,7 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-2);
-  padding: var(--space-2);
+  padding: var(--space-3);
   background: var(--surface-secondary);
   border-radius: var(--radius-md);
 
@@ -384,25 +455,38 @@
     display: flex;
     align-items: center;
     gap: var(--space-2);
+    min-height: var(--space-11);
 
     label {
       margin: var(--space-0);
       cursor: pointer;
+      color: var(--color-text-primary);
     }
   }
 }
 
-// Responsive
+/* ==========================================================================
+   RESPONSIVE — lg (≤1024px), md (≤768px), sm (≤640px)
+   ========================================================================== */
+
+@include respond-to(lg) {
+  .stats-summary {
+    grid-template-columns: repeat(auto-fit, minmax(var(--grid-card-min-sm), 1fr));
+  }
+}
+
 @include respond-to(md) {
   .player-development-page {
-    padding: var(--space-3);
+    gap: var(--layout-page-section-gap-tight);
   }
 
   .selection-row {
     flex-direction: column;
+    padding: var(--space-3);
 
     .selection-field {
       width: 100%;
+      min-width: 0;
     }
   }
 
@@ -420,6 +504,7 @@
 
     .skill-name {
       width: 100%;
+      min-width: 0;
     }
   }
 
@@ -431,4 +516,31 @@
     grid-template-columns: 1fr;
   }
 
+  .assessment-actions {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+@include respond-to(sm) {
+  .stats-summary {
+    grid-template-columns: 1fr;
+  }
+
+  .stat-card {
+    padding: var(--space-3);
+  }
+
+  .goal-item {
+    padding: var(--space-3);
+  }
+
+  .history-filters {
+    flex-direction: column;
+  }
+
+  .history-stats {
+    flex-direction: column;
+    gap: var(--space-2);
+  }
 }

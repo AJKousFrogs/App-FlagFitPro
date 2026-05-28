@@ -1,42 +1,69 @@
 @use "styles/mixins" as *;
 
+/* ==========================================================================
+   COACH · PROGRAM BUILDER — Wave 2b Redesign
+   Token-driven · responsive · 44px touch targets · aligned with Today's
+   Practice design system.
+   ========================================================================== */
+
 .program-builder-page {
   width: min(100%, var(--content-max-width-xl));
   margin-inline: auto;
   padding: var(--space-0);
   display: flex;
   flex-direction: column;
-  gap: var(--layout-page-section-gap);
+  gap: var(--space-6);
+
+  @include respond-to(lg) {
+    gap: var(--space-5);
+  }
+
+  @include respond-to(md) {
+    gap: var(--space-4);
+  }
+
+  @include respond-to(sm) {
+    gap: var(--space-3);
+  }
 }
 
-// Tab Navigation
+/* --------------------------------------------------------------------------
+   TAB NAVIGATION
+   -------------------------------------------------------------------------- */
 .tab-navigation {
   display: flex;
   gap: var(--space-2);
-  border-bottom: var(--border-1) solid var(--color-border-secondary);
+  border-bottom: var(--border-1) solid var(--color-border-subtle);
   padding-bottom: var(--space-2);
   overflow-x: auto;
+  scrollbar-width: thin;
 
   .tab-btn {
-    min-height: var(--component-button-height-sm);
-    padding: 0 var(--space-4);
+    min-height: var(--touch-target-min, 44px);
+    padding: var(--space-2) var(--space-4);
     background: var(--surface-secondary);
     border: var(--border-1) solid transparent;
     border-radius: var(--radius-md);
-    font-size: var(--ds-font-size-md);
-    font-weight: var(--ds-font-weight-medium);
+    font-size: var(--ds-font-size-sm);
+    font-weight: var(--ds-font-weight-semibold);
     color: var(--color-text-secondary);
     cursor: pointer;
+    white-space: nowrap;
     transition:
       background-color var(--transition-fast) var(--ease-standard),
       border-color var(--transition-fast) var(--ease-standard),
+      color var(--transition-fast) var(--ease-standard),
       box-shadow var(--transition-fast) var(--ease-standard);
-    white-space: nowrap;
 
     &:hover {
       background: var(--surface-card);
       border-color: var(--color-border-subtle);
       color: var(--color-text-primary);
+    }
+
+    &:focus-visible {
+      outline: var(--focus-outline-width) solid var(--ds-primary-green);
+      outline-offset: var(--focus-outline-offset);
     }
 
     &.active {
@@ -47,16 +74,19 @@
         var(--color-brand-primary) 22%,
         transparent
       );
+      box-shadow: var(--shadow-sm);
     }
   }
 }
 
-// Programs Section
+/* --------------------------------------------------------------------------
+   PROGRAMS SECTION
+   -------------------------------------------------------------------------- */
 .programs-section {
   h3 {
-    margin: var(--space-0) var(--space-0) var(--space-3) var(--space-0);
-    font-size: var(--ds-font-size-md);
-    font-weight: var(--ds-font-weight-semibold);
+    margin: var(--space-0) var(--space-0) var(--space-4) var(--space-0);
+    font-size: var(--ds-font-size-lg);
+    font-weight: var(--ds-font-weight-bold);
     color: var(--color-text-primary);
   }
 }
@@ -64,12 +94,21 @@
 .programs-list {
   display: flex;
   flex-direction: column;
-  gap: var(--layout-page-section-gap-tight);
+  gap: var(--space-4);
 }
 
-// Program Card
+/* --------------------------------------------------------------------------
+   PROGRAM CARD — phase/week/session hierarchy
+   -------------------------------------------------------------------------- */
 .program-card {
   border-left: var(--space-1) solid var(--ds-primary-green);
+  border-radius: var(--radius-2xl);
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow var(--transition-base) var(--ease-standard);
+
+  &:hover {
+    box-shadow: var(--shadow-md);
+  }
 
   &.draft {
     border-left-color: var(--color-text-tertiary);
@@ -81,21 +120,33 @@
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  margin-bottom: var(--space-3);
+  margin-bottom: var(--space-4);
+  flex-wrap: wrap;
+  gap: var(--space-3);
 
   .program-title {
     display: flex;
     align-items: center;
-    gap: var(--space-2);
+    gap: var(--space-3);
+    flex: 1;
+    min-width: 0;
 
     .program-icon {
-      font-size: var(--ds-font-size-2xl);
+      display: grid;
+      place-items: center;
+      width: var(--space-10);
+      height: var(--space-10);
+      border-radius: var(--radius-lg);
+      background: var(--color-brand-primary-subtle);
+      color: var(--ds-primary-green);
+      font-size: var(--ds-font-size-xl);
+      flex-shrink: 0;
     }
 
     h4 {
       margin: var(--space-0);
-      font-size: var(--ds-font-size-md);
-      font-weight: var(--ds-font-weight-semibold);
+      font-size: var(--ds-font-size-lg);
+      font-weight: var(--ds-font-weight-bold);
       color: var(--color-text-primary);
     }
   }
@@ -104,28 +155,47 @@
     display: flex;
     gap: var(--space-1);
   }
+
+  @include respond-to(md) {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-3);
+
+    .program-actions {
+      width: 100%;
+      justify-content: flex-end;
+    }
+  }
 }
 
 .program-details {
   display: flex;
   flex-direction: column;
   gap: var(--space-2);
-  margin-bottom: var(--space-3);
+  margin-bottom: var(--space-4);
+  padding: var(--space-3);
+  background: var(--surface-secondary);
+  border-radius: var(--radius-lg);
 
   .detail-row {
     display: flex;
     flex-wrap: wrap;
     gap: var(--space-2);
     align-items: center;
-    font-size: var(--ds-font-size-md);
+    font-size: var(--ds-font-size-sm);
 
     .detail-label {
       color: var(--color-text-tertiary);
       min-width: var(--badge-min-width-md);
+      font-weight: var(--ds-font-weight-semibold);
+      text-transform: uppercase;
+      letter-spacing: var(--ds-letter-spacing-wide);
+      font-size: var(--ds-font-size-xs);
     }
 
     .compliance {
-      font-weight: var(--ds-font-weight-semibold);
+      font-weight: var(--ds-font-weight-bold);
+      font-variant-numeric: tabular-nums;
 
       &.good {
         color: var(--ds-primary-green);
@@ -135,17 +205,22 @@
 }
 
 .program-progress {
-  margin-bottom: var(--space-3);
+  margin-bottom: var(--space-4);
 
   .progress-label {
     display: block;
     margin-top: var(--space-1);
     font-size: var(--ds-font-size-xs);
+    font-weight: var(--ds-font-weight-semibold);
     color: var(--color-text-tertiary);
     text-align: right;
+    font-variant-numeric: tabular-nums;
   }
 }
 
+/* --------------------------------------------------------------------------
+   PHASE TIMELINE — week/phase hierarchy chips
+   -------------------------------------------------------------------------- */
 .phase-timeline {
   display: flex;
   align-items: center;
@@ -153,25 +228,34 @@
   margin-bottom: var(--space-4);
   overflow-x: auto;
   padding-bottom: var(--space-2);
+  scrollbar-width: thin;
 
   .phase-chip {
-    padding: var(--space-1) var(--space-2);
+    padding: var(--space-1-5) var(--space-3);
     background: var(--surface-secondary);
+    border: var(--border-1) solid var(--color-border-default);
     border-radius: var(--radius-full);
     font-size: var(--ds-font-size-xs);
+    font-weight: var(--ds-font-weight-semibold);
     color: var(--color-text-secondary);
     white-space: nowrap;
+    min-height: var(--space-7);
+    display: inline-flex;
+    align-items: center;
 
     &.current {
       background: var(--ds-primary-green);
+      border-color: var(--ds-primary-green);
       color: var(--color-text-on-primary);
-      font-weight: var(--ds-font-weight-medium);
+      font-weight: var(--ds-font-weight-bold);
+      box-shadow: var(--shadow-sm);
     }
   }
 
   i {
-    font-size: var(--ds-font-size-xs); /* calc(var(--space-2) + var(--space-0-5)) - micro icon */
+    font-size: var(--ds-font-size-xs);
     color: var(--color-text-tertiary);
+    flex-shrink: 0;
   }
 }
 
@@ -180,14 +264,24 @@
   gap: var(--space-2);
   flex-wrap: wrap;
   padding-top: var(--space-3);
-  border-top: var(--border-1) solid var(--color-border-secondary);
+  border-top: var(--border-1) solid var(--color-border-subtle);
+
+  @include respond-to(md) {
+    flex-direction: column;
+
+    app-button {
+      width: 100%;
+    }
+  }
 }
 
-// Program Dialog Form
+/* --------------------------------------------------------------------------
+   PROGRAM DIALOG FORM
+   -------------------------------------------------------------------------- */
 .program-form {
   display: flex;
   flex-direction: column;
-  gap: var(--layout-page-section-gap-tight);
+  gap: var(--space-4);
   max-height: 70vh;
   overflow-y: auto;
 }
@@ -203,6 +297,10 @@
 .compliance-status-grid {
   @include grid-cols-equal(2);
   gap: var(--space-3);
+
+  @include respond-to(md) {
+    grid-template-columns: 1fr;
+  }
 }
 
 .program-detail-card,
@@ -211,7 +309,7 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-2);
-  padding: var(--space-3);
+  padding: var(--space-3) var(--space-4);
   background: var(--surface-secondary);
   border-radius: var(--radius-lg);
 }
@@ -221,13 +319,16 @@
 }
 
 .program-detail-label {
-  font-size: var(--ds-font-size-sm);
-  font-weight: var(--ds-font-weight-medium);
+  font-size: var(--ds-font-size-xs);
+  font-weight: var(--ds-font-weight-bold);
+  text-transform: uppercase;
+  letter-spacing: var(--ds-letter-spacing-wide);
   color: var(--color-text-tertiary);
 }
 
 .program-detail-value {
   font-size: var(--ds-font-size-md);
+  font-weight: var(--ds-font-weight-medium);
   color: var(--color-text-primary);
 }
 
@@ -240,8 +341,8 @@
   display: flex;
   justify-content: space-between;
   gap: var(--space-3);
-  padding-top: var(--space-2);
-  border-top: var(--border-1) solid var(--color-border-secondary);
+  padding-top: var(--space-3);
+  border-top: var(--border-1) solid var(--color-border-subtle);
 
   &:first-child {
     border-top: none;
@@ -253,11 +354,20 @@
     flex-direction: column;
     gap: var(--space-1);
   }
+
+  @include respond-to(md) {
+    flex-direction: column;
+  }
 }
 
 .phase-detail-meta {
   align-items: flex-end;
   color: var(--color-text-secondary);
+  font-size: var(--ds-font-size-sm);
+
+  @include respond-to(md) {
+    align-items: flex-start;
+  }
 }
 
 .compliance-bar-row {
@@ -267,17 +377,19 @@
 }
 
 .form-section {
-  padding: var(--component-card-padding-compact);
+  padding: var(--space-4);
   background: var(--surface-secondary);
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-xl);
 
   h4 {
     margin: var(--space-0) var(--space-0) var(--space-3) var(--space-0);
-    font-size: var(--ds-font-size-md);
-    font-weight: var(--ds-font-weight-semibold);
-    color: var(--color-text-primary);
+    font-size: var(--ds-font-size-sm);
+    font-weight: var(--ds-font-weight-bold);
+    text-transform: uppercase;
+    letter-spacing: var(--ds-letter-spacing-wide);
+    color: var(--color-text-tertiary);
     padding-bottom: var(--space-2);
-    border-bottom: var(--border-1) solid var(--color-border-secondary);
+    border-bottom: var(--border-1) solid var(--color-border-subtle);
   }
 }
 
@@ -287,8 +399,8 @@
   label {
     display: block;
     margin-bottom: var(--space-1);
-    font-size: var(--ds-font-size-md);
-    font-weight: var(--ds-font-weight-medium);
+    font-size: var(--ds-font-size-sm);
+    font-weight: var(--ds-font-weight-semibold);
     color: var(--color-text-primary);
   }
 
@@ -300,27 +412,35 @@
 
 .form-row {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(var(--grid-card-min-sm), 1fr));
-  gap: var(--layout-page-section-gap-tight);
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-3);
+
+  @include respond-to(md) {
+    grid-template-columns: 1fr;
+  }
 }
 
-// Phases Timeline
+/* --------------------------------------------------------------------------
+   PHASES TIMELINE (form editor)
+   -------------------------------------------------------------------------- */
 .phases-timeline {
   display: flex;
   gap: var(--space-2);
   overflow-x: auto;
-  padding: var(--space-2) 0;
+  padding: var(--space-2) var(--space-0);
   margin-bottom: var(--space-3);
+  scrollbar-width: thin;
 }
 
 .phase-block {
   flex: 0 0 auto;
   min-width: var(--input-min-width-sm);
-  padding: var(--space-2);
+  padding: var(--space-3);
   background: var(--surface-card);
-  border-radius: var(--radius-md);
-  border: var(--border-1) solid var(--color-border-primary);
+  border-radius: var(--radius-lg);
+  border: var(--border-1) solid var(--color-border-default);
   text-align: center;
+  box-shadow: var(--shadow-sm);
 
   .phase-header {
     display: flex;
@@ -328,26 +448,30 @@
     gap: var(--space-1);
 
     .phase-name {
-      font-weight: var(--ds-font-weight-semibold);
-      font-size: var(--ds-font-size-md);
+      font-weight: var(--ds-font-weight-bold);
+      font-size: var(--ds-font-size-sm);
       color: var(--color-text-primary);
     }
 
     .phase-weeks {
       font-size: var(--ds-font-size-xs);
       color: var(--color-text-tertiary);
+      font-variant-numeric: tabular-nums;
     }
   }
 
   .phase-load {
     margin-top: var(--space-2);
     font-size: var(--ds-font-size-xs);
+    font-weight: var(--ds-font-weight-bold);
     color: var(--ds-primary-green);
-    font-weight: var(--ds-font-weight-medium);
+    font-variant-numeric: tabular-nums;
   }
 }
 
-// Week Schedule
+/* --------------------------------------------------------------------------
+   WEEK SCHEDULE (session rows)
+   -------------------------------------------------------------------------- */
 .week-schedule {
   display: flex;
   flex-direction: column;
@@ -373,66 +497,99 @@
   display: flex;
   align-items: center;
   gap: var(--space-3);
-  padding: var(--space-2);
+  padding: var(--space-3);
   background: var(--surface-card);
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-lg);
   flex-wrap: wrap;
+  min-height: var(--touch-target-min, 44px);
 
   .day-label {
     min-width: var(--icon-min-width-md);
-    font-weight: var(--ds-font-weight-semibold);
-    font-size: var(--ds-font-size-md);
+    font-weight: var(--ds-font-weight-bold);
+    font-size: var(--ds-font-size-sm);
     color: var(--color-text-primary);
+    text-transform: uppercase;
+    letter-spacing: var(--ds-letter-spacing-wide);
   }
 
   .rpe-label {
-    font-size: var(--ds-font-size-md);
+    font-size: var(--ds-font-size-xs);
+    font-weight: var(--ds-font-weight-semibold);
     color: var(--color-text-tertiary);
+    text-transform: uppercase;
+    letter-spacing: var(--ds-letter-spacing-wide);
+  }
+
+  @include respond-to(md) {
+    .day-label {
+      width: 100%;
+    }
   }
 }
 
-// Player Selection
+/* --------------------------------------------------------------------------
+   PLAYER SELECTION
+   -------------------------------------------------------------------------- */
 .player-selection {
   .select-all {
     display: flex;
     align-items: center;
     gap: var(--space-2);
-    padding: var(--space-2);
+    padding: var(--space-3);
     background: var(--surface-card);
-    border-radius: var(--radius-md);
+    border-radius: var(--radius-lg);
     margin-bottom: var(--space-3);
+    min-height: var(--touch-target-min, 44px);
 
     label {
-      font-weight: var(--ds-font-weight-medium);
+      font-weight: var(--ds-font-weight-semibold);
       cursor: pointer;
+      font-size: var(--ds-font-size-sm);
+      color: var(--color-text-primary);
     }
   }
 }
 
 .players-grid {
   display: grid;
-  grid-template-columns: repeat(
-    auto-fill,
-    minmax(var(--grid-card-min-sm), 1fr)
-  );
+  grid-template-columns: repeat(3, 1fr);
   gap: var(--space-2);
+
+  @include respond-to(lg) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @include respond-to(md) {
+    grid-template-columns: 1fr;
+  }
 }
 
 .player-option {
   display: flex;
   align-items: center;
   gap: var(--space-2);
-  padding: var(--space-2);
+  padding: var(--space-2) var(--space-3);
   background: var(--surface-card);
   border-radius: var(--radius-md);
+  min-height: var(--touch-target-min, 44px);
+  transition: background var(--transition-fast) var(--ease-standard);
+
+  &:hover:not(.disabled) {
+    background: color-mix(
+      in srgb,
+      var(--color-brand-primary-subtle) 50%,
+      var(--surface-card)
+    );
+  }
 
   &.disabled {
     opacity: var(--opacity-dimmed);
   }
 
   label {
-    font-size: var(--ds-font-size-md);
+    font-size: var(--ds-font-size-sm);
     cursor: pointer;
+    color: var(--color-text-primary);
 
     .player-status {
       color: var(--color-text-tertiary);
@@ -442,59 +599,9 @@
 }
 
 .selected-count {
-  margin: var(--space-3) 0 0 0;
-  font-size: var(--ds-font-size-md);
+  margin: var(--space-3) var(--space-0) var(--space-0);
+  font-size: var(--ds-font-size-sm);
+  font-weight: var(--ds-font-weight-semibold);
   color: var(--color-text-secondary);
-}
-
-// Responsive
-@include respond-to(md) {
-  .program-builder-page {
-    gap: var(--layout-page-section-gap-tight);
-  }
-
-  .program-header {
-    flex-direction: column;
-    gap: var(--space-3);
-
-    .program-actions {
-      width: 100%;
-      justify-content: flex-end;
-    }
-  }
-
-  .program-footer {
-    flex-direction: column;
-
-    app-button {
-      width: 100%;
-    }
-  }
-
-  .day-row {
-    .day-label {
-      width: 100%;
-    }
-  }
-
-  .form-row {
-    grid-template-columns: 1fr;
-  }
-
-  .players-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .program-detail-grid,
-  .compliance-status-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .phase-detail-row {
-    flex-direction: column;
-  }
-
-  .phase-detail-meta {
-    align-items: flex-start;
-  }
+  font-variant-numeric: tabular-nums;
 }

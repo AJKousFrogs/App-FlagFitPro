@@ -11,38 +11,48 @@
         </app-page-header>
 
         <!-- Tab Navigation -->
-        <div class="tab-navigation">
-          <button
+        <div class="tab-navigation" role="tablist" aria-label="Playbook views">
+          <button type="button"
             class="tab-btn"
+            role="tab"
             [class.active]="activeTab() === 'all'"
+            [attr.aria-selected]="activeTab() === 'all'"
             (click)="activeTab.set('all')"
           >
             All Plays
           </button>
-          <button
+          <button type="button"
             class="tab-btn"
+            role="tab"
             [class.active]="activeTab() === 'offense'"
+            [attr.aria-selected]="activeTab() === 'offense'"
             (click)="activeTab.set('offense')"
           >
             Offense
           </button>
-          <button
+          <button type="button"
             class="tab-btn"
+            role="tab"
             [class.active]="activeTab() === 'defense'"
+            [attr.aria-selected]="activeTab() === 'defense'"
             (click)="activeTab.set('defense')"
           >
             Defense
           </button>
-          <button
+          <button type="button"
             class="tab-btn"
+            role="tab"
             [class.active]="activeTab() === 'special'"
+            [attr.aria-selected]="activeTab() === 'special'"
             (click)="activeTab.set('special')"
           >
             Special
           </button>
-          <button
+          <button type="button"
             class="tab-btn"
+            role="tab"
             [class.active]="activeTab() === 'archived'"
+            [attr.aria-selected]="activeTab() === 'archived'"
             (click)="activeTab.set('archived')"
           >
             Archived

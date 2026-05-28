@@ -1,57 +1,77 @@
 @use "styles/mixins" as *;
 @include stat-block;
 
-.fees-preview-progress {
-  height: var(--space-3);
-}
-
-.fees-list-progress {
-  height: var(--space-4);
-}
+/* ==========================================================================
+   COACH · PAYMENT MANAGEMENT — Wave 2b Redesign
+   Token-driven · responsive · 44px touch targets · aligned with Today's
+   Practice design system.
+   ========================================================================== */
 
 .payment-management-page {
   width: 100%;
   padding: var(--space-0);
   display: flex;
   flex-direction: column;
-  gap: var(--layout-page-section-gap);
+  gap: var(--space-6);
   min-width: 0;
+
+  @include respond-to(lg) {
+    gap: var(--space-5);
+  }
+
+  @include respond-to(md) {
+    gap: var(--space-4);
+  }
+
+  @include respond-to(sm) {
+    gap: var(--space-3);
+  }
 }
 
 .payment-shell-card {
   --app-card-shell-header-padding: var(--space-4);
   --app-card-shell-header-border-bottom: var(--border-1) solid
     var(--color-border-subtle);
+  border-radius: var(--radius-2xl);
 }
 
-// Tab Navigation
+/* --------------------------------------------------------------------------
+   TAB NAVIGATION
+   -------------------------------------------------------------------------- */
 .tab-navigation {
   display: flex;
   gap: var(--space-2);
   border-bottom: var(--border-1) solid var(--color-border-subtle);
   padding-bottom: var(--space-2);
   overflow-x: auto;
+  scrollbar-width: thin;
 
   .tab-btn {
-    min-height: var(--component-button-height-sm);
-    padding: 0 var(--space-4);
+    min-height: var(--touch-target-min, 44px);
+    padding: var(--space-2) var(--space-4);
     background: var(--surface-secondary);
     border: var(--border-1) solid transparent;
     border-radius: var(--radius-md);
-    font-size: var(--ds-font-size-md);
-    font-weight: var(--ds-font-weight-medium);
+    font-size: var(--ds-font-size-sm);
+    font-weight: var(--ds-font-weight-semibold);
     color: var(--color-text-secondary);
     cursor: pointer;
+    white-space: nowrap;
     transition:
       background-color var(--transition-fast) var(--ease-standard),
       border-color var(--transition-fast) var(--ease-standard),
+      color var(--transition-fast) var(--ease-standard),
       box-shadow var(--transition-fast) var(--ease-standard);
-    white-space: nowrap;
 
     &:hover {
       background: var(--surface-card);
       border-color: var(--color-border-subtle);
       color: var(--color-text-primary);
+    }
+
+    &:focus-visible {
+      outline: var(--focus-outline-width) solid var(--ds-primary-green);
+      outline-offset: var(--focus-outline-offset);
     }
 
     &.active {
@@ -62,32 +82,54 @@
         var(--color-brand-primary) 22%,
         transparent
       );
+      box-shadow: var(--shadow-sm);
     }
   }
 }
 
-// Financial Overview
+/* --------------------------------------------------------------------------
+   FINANCIAL OVERVIEW — summary stat grid
+   -------------------------------------------------------------------------- */
 .financial-overview {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(var(--grid-card-min-sm), 1fr));
-  gap: var(--layout-page-section-gap-tight);
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-4);
+
+  @include respond-to(lg) {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-3);
+  }
+
+  @include respond-to(sm) {
+    grid-template-columns: 1fr;
+  }
 }
 
 .stat-card {
   display: flex;
   align-items: center;
   gap: var(--space-3);
-  padding: var(--space-4);
+  padding: var(--space-4) var(--space-5);
   background: var(--surface-card);
-  border-radius: var(--radius-lg);
-  border-left: var(--border-4) solid var(--color-border-default);
+  border: var(--border-1) solid var(--color-border-default);
+  border-radius: var(--radius-2xl);
+  border-left: var(--space-1) solid var(--color-border-default);
+  box-shadow: var(--shadow-sm);
+  transition:
+    box-shadow var(--transition-base) var(--ease-standard),
+    transform var(--transition-fast) var(--ease-standard);
+
+  &:hover {
+    box-shadow: var(--shadow-md);
+    transform: translateY(-1px);
+  }
 
   &.balance {
     border-left-color: var(--color-status-error);
   }
 
   &.collected {
-    border-left-color: var(--color-brand-primary);
+    border-left-color: var(--ds-primary-green);
   }
 
   &.due {
@@ -99,34 +141,66 @@
   }
 
   .stat-icon {
-    font-size: var(--ds-font-size-2xl);
+    display: grid;
+    place-items: center;
+    width: var(--space-10);
+    height: var(--space-10);
+    border-radius: var(--radius-lg);
+    background: var(--surface-secondary);
+    color: var(--color-text-secondary);
+    font-size: var(--ds-font-size-xl);
+    flex-shrink: 0;
+  }
+
+  &.balance .stat-icon,
+  &.overdue .stat-icon {
+    background: var(--color-danger-bg);
+    color: var(--color-status-error);
+  }
+
+  &.collected .stat-icon {
+    background: var(--color-success-bg);
+    color: var(--ds-primary-green);
+  }
+
+  &.due .stat-icon {
+    background: var(--color-warning-bg);
+    color: var(--color-status-warning);
   }
 
   .stat-content {
     display: flex;
     flex-direction: column;
+    gap: var(--space-0-5);
+    min-width: 0;
 
     .stat-block__value {
+      font-family: var(--font-display, inherit);
       font-size: var(--ds-font-size-2xl);
-      font-weight: var(--ds-font-weight-bold);
+      font-weight: var(--ds-font-weight-extrabold);
+      line-height: var(--ds-line-height-tight);
       color: var(--color-text-primary);
+      font-variant-numeric: tabular-nums;
     }
 
     .stat-block__label {
-      font-size: var(--ds-font-size-md);
-      font-weight: var(--ds-font-weight-medium);
+      font-size: var(--ds-font-size-sm);
+      font-weight: var(--ds-font-weight-semibold);
       color: var(--color-text-primary);
     }
 
     .stat-sub {
       font-size: var(--ds-font-size-xs);
       color: var(--color-text-tertiary);
+      letter-spacing: var(--ds-letter-spacing-wide);
+      text-transform: uppercase;
     }
   }
 }
 
-// Note: .balance-filters should be moved to header-actions slot
-
+/* --------------------------------------------------------------------------
+   BALANCE FILTERS
+   -------------------------------------------------------------------------- */
 .balance-filters {
   display: flex;
   gap: var(--space-3);
@@ -137,9 +211,15 @@
     flex: 1 1 var(--input-min-width-md);
     min-width: 0;
   }
+
+  @include respond-to(md) {
+    width: 100%;
+  }
 }
 
-// Fees Preview
+/* --------------------------------------------------------------------------
+   FEES PREVIEW (overview tab)
+   -------------------------------------------------------------------------- */
 .fees-preview {
   display: flex;
   flex-direction: column;
@@ -147,10 +227,15 @@
 }
 
 .fee-preview-card {
-  padding: var(--space-3);
+  padding: var(--space-3) var(--space-4);
   background: var(--surface-secondary);
-  border-radius: var(--radius-md);
-  border-left: var(--border-3) solid var(--color-brand-primary);
+  border-radius: var(--radius-lg);
+  border-left: var(--space-1) solid var(--ds-primary-green);
+  transition: background var(--transition-fast) var(--ease-standard);
+
+  &:hover {
+    background: var(--surface-card);
+  }
 
   &.overdue {
     border-left-color: var(--color-status-error);
@@ -163,43 +248,74 @@
     margin-bottom: var(--space-2);
 
     .fee-icon {
-      font-size: var(--ds-font-size-2xl);
+      display: grid;
+      place-items: center;
+      width: var(--space-8);
+      height: var(--space-8);
+      border-radius: var(--radius-md);
+      background: var(--color-brand-primary-subtle);
+      color: var(--ds-primary-green);
+      font-size: var(--ds-font-size-md);
+      flex-shrink: 0;
     }
 
     h4 {
       margin: var(--space-0);
       font-size: var(--ds-font-size-md);
-      font-weight: var(--ds-font-weight-medium);
+      font-weight: var(--ds-font-weight-semibold);
       color: var(--color-text-primary);
       flex: 1;
+      min-width: 0;
     }
   }
 
   .fee-progress {
     .progress-text {
       display: block;
-      margin-top: var(--space-1);
-      font-size: var(--ds-font-size-md);
+      margin-top: var(--space-1-5);
+      font-size: var(--ds-font-size-sm);
+      font-weight: var(--ds-font-weight-medium);
       color: var(--color-text-secondary);
+      font-variant-numeric: tabular-nums;
     }
   }
 }
 
-// Fees List
+.fees-preview-progress {
+  height: var(--space-2);
+}
+
+.fees-list-progress {
+  height: var(--space-3);
+}
+
+/* --------------------------------------------------------------------------
+   FEES LIST
+   -------------------------------------------------------------------------- */
 .fees-list {
   display: flex;
   flex-direction: column;
-  gap: var(--layout-page-section-gap-tight);
+  gap: var(--space-4);
 }
 
 .fee-card {
   background: var(--surface-card);
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-2xl);
   border: var(--border-1) solid var(--color-border-default);
+  box-shadow: var(--shadow-sm);
   overflow: hidden;
+  transition: box-shadow var(--transition-base) var(--ease-standard);
+
+  &:hover {
+    box-shadow: var(--shadow-md);
+  }
 
   &.overdue {
-    border-color: var(--color-status-error);
+    border-color: color-mix(
+      in srgb,
+      var(--color-status-error) 38%,
+      var(--color-border-default)
+    );
   }
 }
 
@@ -211,20 +327,31 @@
   padding: var(--space-3) var(--space-4);
   background: var(--surface-secondary);
   border-bottom: var(--border-1) solid var(--color-border-subtle);
+  flex-wrap: wrap;
 
   .fee-title {
     display: flex;
     align-items: center;
     gap: var(--space-2);
+    flex: 1;
+    min-width: 0;
 
     .fee-icon {
-      font-size: var(--ds-font-size-2xl);
+      display: grid;
+      place-items: center;
+      width: var(--space-10);
+      height: var(--space-10);
+      border-radius: var(--radius-lg);
+      background: var(--color-brand-primary-subtle);
+      color: var(--ds-primary-green);
+      font-size: var(--ds-font-size-lg);
+      flex-shrink: 0;
     }
 
     h3 {
       margin: var(--space-0);
-      font-size: var(--ds-font-size-md);
-      font-weight: var(--ds-font-weight-semibold);
+      font-size: var(--ds-font-size-lg);
+      font-weight: var(--ds-font-weight-bold);
       color: var(--color-text-primary);
     }
   }
@@ -232,6 +359,16 @@
   .fee-actions {
     display: flex;
     gap: var(--space-1);
+  }
+
+  @include respond-to(md) {
+    flex-direction: column;
+    align-items: flex-start;
+
+    .fee-actions {
+      width: 100%;
+      flex-wrap: wrap;
+    }
   }
 }
 
@@ -241,11 +378,12 @@
 
   p {
     margin: var(--space-0) var(--space-0) var(--space-1) var(--space-0);
-    font-size: var(--ds-font-size-md);
+    font-size: var(--ds-font-size-sm);
     color: var(--color-text-secondary);
 
     strong {
       color: var(--color-text-primary);
+      font-weight: var(--ds-font-weight-semibold);
     }
 
     .guest-fee {
@@ -253,9 +391,18 @@
     }
 
     .overdue-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-1);
       margin-left: var(--space-2);
+      padding: var(--space-0-5) var(--space-2);
+      background: var(--color-danger-bg);
       color: var(--color-status-error);
-      font-weight: var(--ds-font-weight-medium);
+      border-radius: var(--radius-full);
+      font-size: var(--ds-font-size-xs);
+      font-weight: var(--ds-font-weight-bold);
+      letter-spacing: var(--ds-letter-spacing-wide);
+      text-transform: uppercase;
     }
   }
 }
@@ -266,21 +413,25 @@
 
   h4 {
     margin: var(--space-0) var(--space-0) var(--space-2) var(--space-0);
-    font-size: var(--ds-font-size-md);
-    font-weight: var(--ds-font-weight-semibold);
-    color: var(--color-text-primary);
+    font-size: var(--ds-font-size-xs);
+    font-weight: var(--ds-font-weight-bold);
+    text-transform: uppercase;
+    letter-spacing: var(--ds-letter-spacing-wide);
+    color: var(--color-text-tertiary);
   }
 
   .progress-detail {
     display: block;
-    margin-top: var(--space-1);
-    font-size: var(--ds-font-size-md);
+    margin-top: var(--space-2);
+    font-size: var(--ds-font-size-sm);
+    font-weight: var(--ds-font-weight-medium);
     color: var(--color-text-secondary);
+    font-variant-numeric: tabular-nums;
   }
 
   .status-counts {
-    margin: var(--space-2) 0 0 0;
-    font-size: var(--ds-font-size-md);
+    margin: var(--space-2) var(--space-0) var(--space-0);
+    font-size: var(--ds-font-size-xs);
     color: var(--color-text-tertiary);
   }
 }
@@ -291,9 +442,11 @@
 
   h4 {
     margin: var(--space-0) var(--space-0) var(--space-2) var(--space-0);
-    font-size: var(--ds-font-size-md);
-    font-weight: var(--ds-font-weight-semibold);
-    color: var(--color-text-primary);
+    font-size: var(--ds-font-size-xs);
+    font-weight: var(--ds-font-weight-bold);
+    text-transform: uppercase;
+    letter-spacing: var(--ds-letter-spacing-wide);
+    color: var(--color-text-tertiary);
   }
 
   .outstanding-list {
@@ -301,7 +454,7 @@
     padding-left: var(--space-4);
 
     li {
-      font-size: var(--ds-font-size-md);
+      font-size: var(--ds-font-size-sm);
       color: var(--color-status-error);
       margin-bottom: var(--space-1);
     }
@@ -313,24 +466,41 @@
   gap: var(--space-2);
   padding: var(--space-3) var(--space-4);
   flex-wrap: wrap;
+
+  @include respond-to(md) {
+    flex-direction: column;
+
+    app-button,
+    p-button {
+      width: 100%;
+    }
+  }
 }
 
-// Player Balances
+/* --------------------------------------------------------------------------
+   PLAYER BALANCES TABLE
+   -------------------------------------------------------------------------- */
 .balance-actions {
   display: flex;
   justify-content: flex-end;
   gap: var(--space-3);
-  margin-top: var(--layout-page-section-gap-tight);
+  margin-top: var(--space-4);
   padding-top: var(--space-3);
   border-top: var(--border-1) solid var(--color-border-subtle);
+
+  @include respond-to(md) {
+    flex-direction: column;
+  }
 }
 
 .owes {
   color: var(--color-status-error);
-  font-weight: var(--ds-font-weight-medium);
+  font-weight: var(--ds-font-weight-semibold);
 }
 
-// Form Styles
+/* --------------------------------------------------------------------------
+   FORM STYLES
+   -------------------------------------------------------------------------- */
 .fee-form,
 .payment-form,
 .fee-details-dialog-content {
@@ -342,6 +512,10 @@
 .fee-details-grid {
   @include grid-cols-equal(2);
   gap: var(--space-3);
+
+  @include respond-to(md) {
+    grid-template-columns: 1fr;
+  }
 }
 
 .fee-detail-card,
@@ -351,7 +525,7 @@
   gap: var(--space-2);
   padding: var(--space-3);
   background: var(--surface-secondary);
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-lg);
 }
 
 .fee-detail-card--wide {
@@ -359,13 +533,16 @@
 }
 
 .fee-detail-label {
-  font-size: var(--ds-font-size-sm);
-  font-weight: var(--ds-font-weight-medium);
+  font-size: var(--ds-font-size-xs);
+  font-weight: var(--ds-font-weight-bold);
+  text-transform: uppercase;
+  letter-spacing: var(--ds-letter-spacing-wide);
   color: var(--color-text-tertiary);
 }
 
 .fee-detail-value {
   font-size: var(--ds-font-size-md);
+  font-weight: var(--ds-font-weight-medium);
   color: var(--color-text-primary);
 }
 
@@ -398,12 +575,16 @@
   grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
   gap: var(--space-3);
   align-items: center;
-  padding: var(--space-2) 0;
+  padding: var(--space-2) var(--space-0);
   border-top: var(--border-1) solid var(--color-border-subtle);
 
   &:first-child {
     border-top: none;
     padding-top: var(--space-0);
+  }
+
+  @include respond-to(md) {
+    grid-template-columns: 1fr;
   }
 }
 
@@ -415,8 +596,8 @@
   label {
     display: block;
     margin-bottom: var(--space-1);
-    font-size: var(--ds-font-size-md);
-    font-weight: var(--ds-font-weight-medium);
+    font-size: var(--ds-font-size-sm);
+    font-weight: var(--ds-font-weight-semibold);
     color: var(--color-text-primary);
   }
 
@@ -430,20 +611,25 @@
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: var(--space-3);
+
+  @include respond-to(md) {
+    grid-template-columns: 1fr;
+  }
 }
 
 .radio-group {
   display: flex;
   flex-direction: column;
   gap: var(--space-2);
-  padding: var(--space-2);
+  padding: var(--space-3);
   background: var(--surface-secondary);
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-lg);
 
   .radio-option {
     display: flex;
     align-items: center;
     gap: var(--space-2);
+    min-height: var(--space-8);
 
     label {
       margin: var(--space-0);
@@ -456,15 +642,16 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-2);
-  padding: var(--space-2);
+  padding: var(--space-3);
   background: var(--surface-secondary);
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-lg);
 }
 
 .checkbox-option {
   display: flex;
   align-items: center;
   gap: var(--space-2);
+  min-height: var(--space-8);
 
   label {
     margin: var(--space-0);
@@ -475,58 +662,12 @@
 .current-balance {
   padding: var(--space-3);
   background: var(--surface-secondary);
-  border-radius: var(--radius-md);
-  font-size: var(--ds-font-size-md);
+  border-radius: var(--radius-lg);
+  font-size: var(--ds-font-size-sm);
   color: var(--color-text-secondary);
 
   strong {
     color: var(--color-status-error);
-  }
-}
-
-// Responsive
-@include respond-to(md) {
-  .payment-management-page {
-    gap: var(--layout-page-section-gap-tight);
-  }
-
-  .financial-overview {
-    grid-template-columns: 1fr;
-  }
-
-  // Note: .balance-filters responsive styles moved here
-  .balance-filters {
-    width: 100%;
-  }
-
-  .fee-card > .fee-header {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .fee-card > .fee-header .fee-actions {
-    width: 100%;
-    flex-wrap: wrap;
-  }
-
-  .fee-card-actions {
-    flex-direction: column;
-
-    p-button {
-      width: 100%;
-    }
-  }
-
-  .form-row {
-    grid-template-columns: 1fr;
-  }
-
-  .balance-actions {
-    flex-direction: column;
-  }
-
-  .fee-details-grid,
-  .fee-outstanding-row {
-    grid-template-columns: 1fr;
+    font-weight: var(--ds-font-weight-bold);
   }
 }

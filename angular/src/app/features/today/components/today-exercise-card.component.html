@@ -1,0 +1,128 @@
+@if (exercise(); as ex) {
+  <!-- Completed exercise variant -->
+  @if (ex.isCompleted) {
+    <article class="exercise-card exercise-card--success">
+      <div class="exercise-card__row">
+        <div class="exercise-card__thumb" [ngClass]="thumbnailClass" style="opacity:.7">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"
+               class="exercise-card__thumb-play" aria-hidden="true">
+            <path d="M5 12l5 5 9-11"/>
+          </svg>
+        </div>
+        <div class="exercise-card__body">
+          <div class="exercise-card__tags">
+            @for (tag of ex.tags; track tag) {
+              <span class="chip chip--success">{{ tag }}</span>
+            }
+          </div>
+          <div class="exercise-card__title exercise-card__title--done">{{ ex.name }}</div>
+          <div class="exercise-card__meta exercise-card__meta--done">{{ ex.meta }}</div>
+        </div>
+        <div class="exercise-card__actions">
+          <button class="btn btn--outline btn--sm btn--done" (click)="startExercise.emit()">
+            Re-do
+          </button>
+        </div>
+      </div>
+    </article>
+  }
+
+  <!-- Superset variant -->
+  @else if (ex.isSuperset) {
+    <article class="exercise-card">
+      <div class="exercise-card__superset">
+        <div class="exercise-card__accent-bar" aria-hidden="true"></div>
+        <div class="exercise-card__superset-body">
+          <div class="exercise-card__tags">
+            @for (tag of ex.tags; track tag) {
+              <span class="chip chip--accent">{{ tag }}</span>
+            }
+          </div>
+          <div class="exercise-card__superset-grid">
+            <!-- Primary exercise -->
+            <div class="exercise-card__superset-half">
+              <div class="exercise-card__thumb exercise-card__thumb--sm" [ngClass]="thumbnailClass">
+                <svg class="exercise-card__thumb-play exercise-card__thumb-play--sm"
+                     viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                  <path d="M8 5v14l11-7z"/>
+                </svg>
+              </div>
+              <div>
+                <div class="exercise-card__title-sm">{{ ex.name }}</div>
+                <div class="exercise-card__meta-sm">{{ ex.meta }}</div>
+              </div>
+            </div>
+            <!-- Paired exercise -->
+            @if (ex.supersetPair) {
+              <div class="exercise-card__superset-half">
+                <div class="exercise-card__thumb exercise-card__thumb--sm exercise-card__thumb--focus" style="opacity:.9">
+                  <svg class="exercise-card__thumb-play exercise-card__thumb-play--sm"
+                       viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                    <path d="M8 5v14l11-7z"/>
+                  </svg>
+                </div>
+                <div>
+                  <div class="exercise-card__title-sm">{{ ex.supersetPair.name }}</div>
+                  <div class="exercise-card__meta-sm">{{ ex.supersetPair.meta }}</div>
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+        <button class="btn btn--accent btn--sm exercise-card__superset-cta" (click)="startExercise.emit()">
+          Start superset &#9658;
+        </button>
+      </div>
+    </article>
+  }
+
+  <!-- Normal exercise variant -->
+  @else {
+    <article class="exercise-card">
+      <div class="exercise-card__row">
+        <div class="exercise-card__thumb" [ngClass]="thumbnailClass">
+          <svg class="exercise-card__thumb-play" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M8 5v14l11-7z"/>
+          </svg>
+          @if (ex.isKeystone) {
+            <span class="exercise-card__thumb-tag-br chip chip--strength">&#9733;</span>
+          }
+        </div>
+        <div class="exercise-card__body">
+          <div class="exercise-card__tags">
+            @for (tag of ex.tags; track tag) {
+              <span class="chip">{{ tag }}</span>
+            }
+          </div>
+          <div class="exercise-card__title">{{ ex.name }}</div>
+          <div class="exercise-card__meta">{{ ex.meta }}</div>
+        </div>
+        <div class="exercise-card__actions">
+          <button class="btn btn--primary btn--sm" (click)="startExercise.emit()">
+            Start &#9658;
+          </button>
+          <button class="btn btn--ghost btn--sm" (click)="swapExercise.emit()">Swap</button>
+          <button class="btn btn--ghost btn--sm" (click)="viewHistory.emit()">History</button>
+        </div>
+      </div>
+
+      <!-- Set pills grid -->
+      @if (showSets() && ex.sets.length > 0) {
+        <div class="exercise-card__sets">
+          @for (set of ex.sets; track $index) {
+            <div
+              class="set-pill"
+              [class.set-pill--done]="set.status === 'done'"
+              [class.set-pill--active]="set.status === 'active'"
+              [class.set-pill--upcoming]="set.status === 'upcoming'"
+            >
+              <div class="set-pill__label">{{ set.label }}</div>
+              <div class="set-pill__value">{{ set.value }}</div>
+              <div class="set-pill__note">{{ set.note }}</div>
+            </div>
+          }
+        </div>
+      }
+    </article>
+  }
+}

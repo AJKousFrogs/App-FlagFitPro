@@ -35,13 +35,14 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: var(--space-3);
   padding: var(--space-5) var(--space-6);
   background: var(--surface-card);
   border-bottom: var(--border-1) solid var(--color-border-secondary);
-  box-shadow: var(--shadow-2);
+  box-shadow: var(--shadow-sm);
 
   --ui-motion-enter-from-y: calc(-1 * var(--space-5));
-  animation: ui-motion-enter-y 400ms ease-out;
+  animation: ui-motion-enter-y var(--transition-slow, 400ms) var(--ease-standard);
 }
 
 .header-content {
@@ -92,24 +93,28 @@
   @include flex-center;
   width: var(--space-12);
   height: var(--space-12);
-  background: var(--overlay-white-15);
+  background: var(--gradient-primary);
   border-radius: var(--radius-lg);
   color: var(--color-text-on-primary);
-  font-size: var(--ds-font-size-2xl);
-  box-shadow: var(--shadow-1);
-  border: var(--border-1) solid var(--overlay-white-20);
+  font-size: var(--ds-font-size-xl);
+  font-weight: var(--ds-font-weight-extrabold);
+  box-shadow: var(--shadow-sm);
+  flex-shrink: 0;
 }
 
 .chat-title {
-  font-size: var(--ds-font-size-2xl);
-  font-weight: var(--ds-font-weight-bold);
+  font-family: var(--ds-font-family-display, var(--ds-font-family-base));
+  font-size: var(--ds-font-size-xl);
+  font-weight: var(--ds-font-weight-extrabold);
+  letter-spacing: -0.02em;
+  line-height: var(--ds-line-height-tight);
   margin: var(--space-0);
-  color: var(--color-text-on-primary);
+  color: var(--color-text-primary);
 }
 
 .chat-subtitle {
-  font-size: var(--ds-font-size-md);
-  color: var(--overlay-white-90);
+  font-size: var(--ds-font-size-sm);
+  color: var(--color-text-secondary);
   margin: var(--space-0);
 }
 
@@ -194,6 +199,7 @@
   align-items: center;
   gap: var(--space-3);
   padding: var(--space-3) var(--space-4);
+  min-height: var(--touch-target-md);
   border-radius: var(--radius-lg);
   cursor: pointer;
   text-align: left;
@@ -205,6 +211,11 @@
   margin-bottom: var(--space-2);
   position: relative;
   overflow: hidden;
+
+  &:focus-visible {
+    outline: var(--border-2) solid var(--ds-primary-green);
+    outline-offset: var(--space-0-5);
+  }
 
   @include pseudo-before("", block, absolute) {
     left: 0;
@@ -313,9 +324,9 @@
 }
 
 .no-channel-selected i {
-  font-size: 3rem;
+  font-size: var(--ds-font-size-3xl);
   color: var(--ds-primary-green);
-  opacity: 0.6;
+  opacity: var(--opacity-soft, 0.6);
 
   --ui-motion-scale-pulse-mid: 0.95;
   --ui-motion-scale-pulse-opacity-mid: 0.45;
@@ -341,7 +352,7 @@
   color: var(--color-text-secondary);
   margin: var(--space-0);
   text-align: center;
-  max-width: 22rem;
+  max-width: var(--content-max-width-xs, 22rem);
   line-height: var(--ds-line-height-relaxed);
 }
 
@@ -381,7 +392,7 @@
   position: relative;
 
   --ui-motion-enter-from-y: var(--space-4);
-  animation: ui-motion-enter-y var(--transition-base) var(--ease-standard)-out;
+  animation: ui-motion-enter-y var(--transition-base) var(--ease-standard);
 }
 
 .message-row {
@@ -539,13 +550,14 @@
   font-size: var(--ds-font-size-md);
   color: var(--color-text-primary);
   padding: var(--space-2);
+  min-height: var(--touch-target-md);
 
   &:focus:not(:focus-visible) {
     outline: none;
   }
   &:focus-visible {
-    outline: 2px solid var(--ds-primary-green);
-    outline-offset: 2px;
+    outline: var(--border-2) solid var(--ds-primary-green);
+    outline-offset: var(--space-0-5);
   }
 }
 
@@ -578,7 +590,7 @@
     right: 0;
     top: 0;
     bottom: 0;
-    width: 32px;
+    width: var(--space-8);
     background: linear-gradient(to right, transparent, var(--surface-card));
     pointer-events: none;
   }
@@ -586,16 +598,19 @@
 
 .quick-reply-btn {
   white-space: nowrap;
-  padding: var(--space-2) var(--space-4);
+  padding: var(--space-2) var(--space-3);
+  min-height: var(--touch-target-md);
   background: var(--surface-tertiary);
   border: var(--border-1) solid var(--color-border-secondary);
   border-radius: var(--radius-full);
   font-size: var(--ds-font-size-xs);
+  font-weight: var(--ds-font-weight-semibold);
   color: var(--color-text-secondary);
   cursor: pointer;
   transition:
     background-color var(--transition-fast) var(--ease-standard),
-    color var(--transition-fast) var(--ease-standard);
+    color var(--transition-fast) var(--ease-standard),
+    border-color var(--transition-fast) var(--ease-standard);
 
   @media (hover: hover) and (pointer: fine) {
     &:hover {
@@ -603,6 +618,11 @@
       color: var(--ds-primary-green);
       border-color: var(--ds-primary-green);
     }
+  }
+
+  &:focus-visible {
+    outline: var(--border-2) solid var(--ds-primary-green);
+    outline-offset: var(--space-0-5);
   }
 }
 

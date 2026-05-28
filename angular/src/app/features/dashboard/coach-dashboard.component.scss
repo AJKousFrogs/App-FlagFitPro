@@ -544,7 +544,9 @@
   grid-template-columns: repeat(4, 1fr);
   gap: var(--space-3);
 
+  @include respond-to(lg) { grid-template-columns: repeat(4, 1fr); }
   @include respond-to(md) { grid-template-columns: repeat(2, 1fr); }
+  @include respond-to(sm) { grid-template-columns: 1fr; gap: var(--space-2); }
 }
 .ht {
   padding: var(--space-5);
@@ -811,6 +813,7 @@
   align-items: center;
   gap: var(--space-3);
   padding: var(--space-4);
+  min-height: var(--touch-target-min);
   border-radius: var(--radius-lg);
   background: var(--surface-secondary);
   border: var(--border-1) solid var(--color-border-secondary);
@@ -823,6 +826,12 @@
   transition: border-color var(--transition-fast, 120ms) var(--ease-standard),
               transform var(--transition-fast, 120ms) var(--ease-standard),
               background-color var(--transition-fast, 120ms) var(--ease-standard);
+
+  &:focus-visible {
+    outline: none;
+    border-color: var(--ds-primary-green);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--ds-primary-green) 30%, transparent);
+  }
 
   &:hover {
     border-color: color-mix(in srgb, var(--ds-primary-green) 40%, var(--color-border-secondary));

@@ -11,24 +11,30 @@
         </app-page-header>
 
         <!-- Tab Navigation -->
-        <div class="tab-navigation">
-          <button
+        <div class="tab-navigation" role="tablist" aria-label="Practice plan views">
+          <button type="button"
             class="tab-btn"
+            role="tab"
             [class.active]="activeTab() === 'upcoming'"
+            [attr.aria-selected]="activeTab() === 'upcoming'"
             (click)="activeTab.set('upcoming')"
           >
             Upcoming Practices
           </button>
-          <button
+          <button type="button"
             class="tab-btn"
+            role="tab"
             [class.active]="activeTab() === 'past'"
+            [attr.aria-selected]="activeTab() === 'past'"
             (click)="activeTab.set('past')"
           >
             Past Practices
           </button>
-          <button
+          <button type="button"
             class="tab-btn"
+            role="tab"
             [class.active]="activeTab() === 'templates'"
+            [attr.aria-selected]="activeTab() === 'templates'"
             (click)="activeTab.set('templates')"
           >
             Templates

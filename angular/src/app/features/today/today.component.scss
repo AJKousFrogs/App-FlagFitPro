@@ -2,124 +2,110 @@
 @use "styles/foundations" as *;
 
 /* ==========================================================================
- TODAY'S PRACTICE - Design System Compliant Styles
- Uses tokens from: scss/tokens/design-system-tokens.scss
- ========================================================================== */
+   TODAY'S PRACTICE — V2 Redesign
+   Uses tokens from: scss/tokens/design-system-tokens.scss
+   ========================================================================== */
 
-// ────────────────────────────────────────────────────────────────────────────
-// TODAY v2 — premium athletic page chrome (2026-05 sprint 3)
-// Dramatic radial gradient bg + tighter bento with green-accent borders.
-// ────────────────────────────────────────────────────────────────────────────
-.today-page.bento-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: var(--space-4);
+/* --------------------------------------------------------------------------
+   TODAY V2 LAYOUT
+   -------------------------------------------------------------------------- */
+.today-v2 {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
   max-width: var(--layout-page-max-width-wide);
   margin: var(--space-0) auto;
   width: 100%;
   padding: var(--space-5) var(--space-5) var(--space-10);
   position: relative;
+}
 
-  // Subtle radial green accent at top of page
-  &::before {
-    content: '';
-    position: absolute;
-    inset: 0 0 auto 0;
-    height: 360px;
-    background: radial-gradient(
-      ellipse 80% 100% at 50% 0%,
-      color-mix(in srgb, var(--ds-primary-green) 8%, transparent) 0%,
-      transparent 70%
-    );
-    pointer-events: none;
-    z-index: 0;
+/* ---- 12-col main grid for exercises + side panel ---- */
+.today-v2__main-grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: var(--space-6);
+}
+
+.today-v2__side-panel {
+  /* inherits from grid__col-4 via template class */
+}
+
+.grid__col-4 {
+  grid-column: span 4;
+}
+
+.grid__col-8 {
+  grid-column: span 8;
+}
+
+.grid--12 {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: var(--space-6);
+}
+
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.stack--md {
+  gap: var(--space-4);
+}
+
+.stack--lg {
+  gap: var(--space-6);
+}
+
+/* ---- Responsive: 1024px ---- */
+@include respond-to(lg) {
+  .today-v2 {
+    padding: var(--space-4);
   }
 
-  > * {
-    position: relative;
-    z-index: 1;
+  .today-v2__main-grid {
+    grid-template-columns: repeat(8, 1fr);
   }
 
-  .bento-item {
-    background: var(--surface-card);
-    border: var(--border-1) solid var(--color-border-secondary);
-    border-radius: var(--radius-xl);
-    padding: var(--space-5);
-    box-shadow: var(--component-card-shadow, 0 1px 2px rgb(0 0 0 / 0.04));
-    transition:
-      transform var(--transition-fast) var(--ease-standard),
-      border-color var(--transition-fast) var(--ease-standard),
-      box-shadow var(--transition-fast) var(--ease-standard);
-
-    @media (hover: hover) and (pointer: fine) {
-      &:not(.no-padding):hover {
-        transform: translateY(-2px);
-        border-color: color-mix(in srgb, var(--ds-primary-green) 25%, var(--color-border-secondary));
-        box-shadow: 0 10px 30px color-mix(in srgb, var(--ds-primary-green) 8%, transparent);
-      }
-    }
-
-    &.no-padding {
-      border: none;
-      background: transparent;
-      box-shadow: none;
-      padding: 0;
-    }
-
-    .bento-title {
-      display: flex;
-      align-items: center;
-      gap: var(--space-2);
-      margin: 0 0 var(--space-4);
-      font-family: var(--ds-font-family-display, var(--ds-font-family-base));
-      font-size: var(--ds-font-size-md);
-      font-weight: var(--ds-font-weight-extrabold, 800);
-      letter-spacing: -0.005em;
-      color: var(--color-text-primary);
-
-      i {
-        color: var(--ds-primary-green);
-        font-size: var(--ds-font-size-lg);
-      }
-    }
+  .grid__col-8 {
+    grid-column: span 8;
   }
 
-  .span-2 { grid-column: span 2; }
-  .full-width { grid-column: 1 / -1; }
-
-  .header-bento {
-    background: transparent;
-    border: none;
-    box-shadow: none;
-    padding: 0;
-
-    @media (hover: hover) and (pointer: fine) {
-      &:hover { transform: none; box-shadow: none; border: none; }
-    }
-  }
-
-  .schedule-bento,
-  .prescription-bento {
-    background: transparent;
-    border: none;
-    box-shadow: none;
-    padding: 0;
-  }
-
-  @include respond-to(lg) {
-    grid-template-columns: repeat(2, 1fr);
-    .span-2 { grid-column: 1 / -1; }
-  }
-
-  @include respond-to(md) {
-    grid-template-columns: 1fr;
-    gap: var(--space-3);
-    padding: var(--space-3) var(--space-3) var(--space-10);
-
-    .span-2 { grid-column: 1; }
+  .grid__col-4 {
+    grid-column: span 8;
   }
 }
 
+/* ---- Responsive: 768px ---- */
+@include respond-to(md) {
+  .today-v2 {
+    gap: var(--space-4);
+    padding: var(--space-3) var(--space-3) var(--space-10);
+  }
+
+  .today-v2__main-grid {
+    grid-template-columns: 1fr;
+    gap: var(--space-4);
+  }
+
+  .grid__col-4,
+  .grid__col-8 {
+    grid-column: span 1;
+  }
+}
+
+/* ---- Responsive: 640px ---- */
+@include respond-to(sm) {
+  .today-v2 {
+    padding: var(--space-3);
+  }
+}
+
+/* --------------------------------------------------------------------------
+   ENTRY CONTEXT BANNER (Merlin deep-link)
+   -------------------------------------------------------------------------- */
 .entry-context-banner {
   display: flex;
   align-items: flex-start;
@@ -187,285 +173,9 @@
   margin-top: calc(var(--space-4) * -1);
 }
 
-/* Tablet + smaller desktop: 2 Columns */
-@include respond-to(lg) {
-  .today-page.bento-grid {
-    grid-template-columns: repeat(2, 1fr);
-    padding: var(--space-4);
-
-    .status-bento { grid-column: span 2; }
-  }
-}
-
-/* Mobile: 1 Column */
-@include respond-to(sm) {
-  .today-page.bento-grid {
-    grid-template-columns: 1fr;
-    gap: var(--space-4);
-    padding: var(--space-3);
-
-    .bento-item {
-      grid-column: span 1;
-      padding: var(--space-4);
-
-      .bento-title {
-        font-size: var(--ds-font-size-md);
-      }
-    }
-  }
-}
-
 /* --------------------------------------------------------------------------
- ONBOARDING BANNER (First-time users)
- PrimeNG card styling handled globally in _brand-overrides.scss
- -------------------------------------------------------------------------- */
-.onboarding-banner {
-  position: sticky;
-  top: 0;
-  z-index: var(--z-index-sticky);
-}
-
-.onboarding-content {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-6);
-  color: var(--color-text-on-primary);
-}
-
-.onboarding-info {
-  display: flex;
-  align-items: center;
-  gap: var(--space-4);
-}
-
-.onboarding-avatar {
-  width: var(--space-12);
-  height: var(--space-12);
-  min-width: var(--space-12);
-  background: var(--overlay-white-20);
-  border-radius: var(--radius-full);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: var(--ds-font-size-md);
-}
-
-.onboarding-text h2 {
-  margin: var(--space-0);
-  font-size: var(--ds-font-size-md);
-  font-weight: var(--ds-font-weight-semibold);
-}
-
-.onboarding-text p {
-  margin: var(--space-1) 0 0;
-  font-size: var(--ds-font-size-sm);
-  opacity: var(--opacity-strong);
-}
-
-.welcome-hint {
-  font-size: var(--ds-font-size-sm);
-  color: var(--color-text-secondary);
-  margin: var(--space-1) 0 0;
-}
-
-/* --------------------------------------------------------------------------
- STATS GRID
- PrimeNG card styling handled globally in _brand-overrides.scss
- -------------------------------------------------------------------------- */
-.stats-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: var(--space-3);
-}
-
-.stat-row {
-  display: flex;
-  align-items: center;
-  gap: var(--space-3);
-}
-
-.stat-icon {
-  width: var(--space-10);
-  height: var(--space-10);
-  min-width: var(--space-10);
-  border-radius: var(--radius-md);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: var(--ds-font-size-md); /* 16px - standard icon */
-}
-
-.stat-icon.acwr {
-  background: var(--color-status-info-light);
-  color: var(--color-status-info);
-}
-
-.stat-icon.readiness {
-  background: var(--color-status-error-light);
-  color: var(--color-status-error);
-}
-
-.stat-info {
-  flex: 1;
-  min-width: 0;
-}
-
-.stat-value-row {
-  display: flex;
-  align-items: baseline;
-  gap: var(--space-2);
-  flex-wrap: wrap;
-}
-
-.stat-block__value {
-  @extend %stat-value;
-  font-size: var(--ds-font-size-2xl); /* Metric: KPI numbers - 24px */
-  font-weight: var(--ds-font-weight-bold); /* Metric: Bold (700) */
-  line-height: var(--ds-line-height-tight); /* Metric: 1.2 */
-  color: var(--color-text-primary);
-}
-
-.stat-status-label {
-  font-size: var(--ds-font-size-xs);
-  color: var(--color-text-secondary);
-  font-weight: var(--ds-font-weight-medium);
-}
-
-.stat-chevron {
-  color: var(--color-text-muted);
-  opacity: var(--opacity-muted);
-  font-size: var(--ds-font-size-sm); /* 14px - small icon */
-}
-
-.stat-block__value.optimal,
-.stat-block__value.high {
-  color: var(--color-brand-primary);
-}
-.stat-block__value.moderate {
-  color: var(--color-status-warning);
-}
-.stat-block__value.risk,
-.stat-block__value.low {
-  color: var(--color-status-error);
-}
-
-.stat-block__label {
-  @extend %stat-label;
-  font-size: var(--ds-font-size-xs); /* Caption: Helper text - 13px */
-  font-weight: var(--ds-font-weight-regular); /* Caption: Regular (400) */
-  color: var(--color-text-muted);
-  text-transform: var(--ds-text-transform-uppercase);
-  letter-spacing: var(--ds-letter-spacing-caption);
-}
-
-/* --------------------------------------------------------------------------
- WEEK PROGRESS CARD
- PrimeNG card styling handled globally in _brand-overrides.scss
- -------------------------------------------------------------------------- */
-
-.card-description {
-  font-size: var(--ds-font-size-sm);
-  color: var(--color-text-secondary);
-  margin: var(--space-0) var(--space-0) var(--space-4);
-  line-height: var(--ds-line-height-body);
-}
-
-/* --------------------------------------------------------------------------
- MERLIN INSIGHT CARD
- PrimeNG card styling handled globally in _brand-overrides.scss
- -------------------------------------------------------------------------- */
-.insight-content {
-  display: flex;
-  gap: var(--space-4);
-  color: var(--color-text-primary);
-}
-
-.insight-avatar {
-  width: var(--touch-target-md);
-  height: var(--touch-target-md);
-  min-width: var(--touch-target-md);
-  background: rgba(var(--ds-primary-green-rgb), 0.1);
-  border-radius: var(--radius-xl);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: var(--ds-font-size-md);
-  color: var(--color-brand-primary);
-}
-
-.insight-text {
-  flex: 1;
-}
-
-.insight-title {
-  margin: var(--space-0) var(--space-0) var(--space-2);
-  font-size: var(--ds-font-size-md);
-  font-weight: var(--ds-font-weight-semibold);
-  color: var(--color-text-primary);
-}
-
-.insight-message {
-  margin: var(--space-0) var(--space-0) var(--space-3);
-  font-size: var(--ds-font-size-sm);
-  line-height: var(--ds-line-height-body);
-  color: var(--color-text-secondary);
-}
-
-/* --------------------------------------------------------------------------
- WRAP-UP ACTION CARDS
- PrimeNG card styling handled globally in _brand-overrides.scss
- -------------------------------------------------------------------------- */
-.action-list {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-3);
-}
-
-.action-row {
-  display: flex;
-  align-items: center;
-  gap: var(--space-3);
-}
-
-.action-icon {
-  width: var(--space-10);
-  height: var(--space-10);
-  min-width: var(--space-10);
-  background: var(--ds-primary-green-ultra-subtle);
-  color: var(--color-brand-primary);
-  border-radius: var(--radius-md);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: var(--ds-font-size-md); /* 16px - standard icon */
-}
-
-.action-text {
-  flex: 1;
-}
-
-.action-text h4 {
-  margin: var(--space-0);
-  font-size: var(--ds-font-size-sm);
-  font-weight: var(--ds-font-weight-medium);
-  color: var(--color-text-primary);
-}
-
-.action-text p {
-  margin: var(--space-1) 0 0;
-  font-size: var(--ds-font-size-xs);
-  color: var(--color-text-secondary);
-}
-
-.action-chevron {
-  color: var(--color-text-muted);
-  opacity: var(--opacity-half);
-}
-
-/* --------------------------------------------------------------------------
- SKELETON LOADING
- -------------------------------------------------------------------------- */
+   SKELETON LOADING
+   -------------------------------------------------------------------------- */
 .skeleton-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -474,301 +184,8 @@
 }
 
 /* --------------------------------------------------------------------------
- RESPONSIVE ADJUSTMENTS
- -------------------------------------------------------------------------- */
-@include respond-to(sm) {
-  .today-page {
-    padding: var(--space-3);
-    gap: var(--space-4);
-  }
-
-  .welcome-cta {
-    margin-top: var(--space-2);
-  }
-
-  .stats-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .onboarding-content {
-    flex-direction: column;
-    text-align: center;
-  }
-
-  .onboarding-info {
-    flex-direction: column;
-  }
-
-  .insight-content {
-    flex-direction: column;
-    text-align: center;
-  }
-
-  .insight-avatar {
-    margin: var(--space-0) auto;
-  }
-}
-
-/* --------------------------------------------------------------------------
- QUICK CHECK-IN BUTTONS
- -------------------------------------------------------------------------- */
-.checkin-buttons {
-  display: flex;
-  gap: var(--space-2);
-}
-
-/* --------------------------------------------------------------------------
- QUICK CHECK-IN DIALOG
- -------------------------------------------------------------------------- */
-.quick-checkin-form {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-5);
-}
-
-.quick-intro {
-  text-align: center;
-  color: var(--color-text-secondary);
-  font-size: var(--ds-font-size-sm);
-  margin: var(--space-0);
-}
-
-.quick-section {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-3);
-}
-
-.quick-label {
-  font-size: var(--ds-font-size-sm);
-  font-weight: var(--ds-font-weight-semibold);
-  color: var(--color-text-primary);
-}
-
-.mood-selector {
-  display: flex;
-  justify-content: space-between;
-  gap: var(--space-2);
-}
-
-.mood-btn {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: var(--space-1);
-  padding: var(--space-3) var(--space-2);
-  background: var(--surface-secondary);
-  border: var(--border-2) solid var(--color-border-secondary);
-  border-radius: var(--radius-xl);
-  cursor: pointer;
-  transition:
-    background-color var(--transition-fast) var(--ease-standard),
-    border-color var(--transition-fast) var(--ease-standard),
-    transform var(--transition-fast) var(--ease-standard);
-}
-
-@media (hover: hover) and (pointer: fine) {
-  .mood-btn:hover {
-    border-color: var(--color-brand-primary);
-    background: var(--hover-bg-secondary);
-  }
-}
-
-.mood-btn:focus-visible {
-  outline: var(--focus-outline-width) solid var(--ds-primary-green);
-  outline-offset: var(--focus-outline-offset);
-}
-
-.mood-btn:active {
-  transform: scale(0.97);
-}
-
-.mood-btn.selected {
-  border-color: var(--color-brand-primary);
-  background: var(--ds-primary-green-ultra-subtle);
-}
-
-.mood-icon {
-  font-size: var(--ds-font-size-xl);
-  color: var(--color-brand-primary);
-
-  .pi {
-    font-size: inherit;
-  }
-}
-
-.mood-text {
-  font-size: var(--ds-font-size-xs);
-  color: var(--color-text-secondary);
-}
-
-.mood-btn.selected .mood-text {
-  color: var(--color-brand-primary);
-  font-weight: var(--ds-font-weight-medium);
-}
-
-.energy-selector {
-  display: flex;
-  gap: var(--space-2);
-}
-
-.energy-btn {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: var(--space-1);
-  padding: var(--space-2);
-  background: var(--surface-secondary);
-  border: var(--border-2) solid var(--color-border-secondary);
-  border-radius: var(--radius-xl);
-  cursor: pointer;
-  transition:
-    background-color var(--transition-fast) var(--ease-standard),
-    border-color var(--transition-fast) var(--ease-standard),
-    color var(--transition-fast) var(--ease-standard),
-    transform var(--transition-fast) var(--ease-standard);
-  font-size: var(--ds-font-size-xs);
-  color: var(--color-text-secondary);
-}
-
-.energy-btn i {
-  font-size: var(--ds-font-size-md);
-  color: var(--color-status-warning);
-}
-
-.energy-icon--1 {
-  opacity: var(--opacity-minimal);
-}
-
-.energy-icon--2 {
-  opacity: var(--opacity-muted);
-}
-
-.energy-icon--3 {
-  opacity: var(--opacity-strong);
-}
-
-.energy-icon--4,
-.energy-icon--5 {
-  opacity: 1;
-}
-
-@media (hover: hover) and (pointer: fine) {
-  .energy-btn:hover {
-    border-color: var(--color-brand-primary);
-  }
-}
-
-.energy-btn:focus-visible {
-  outline: var(--focus-outline-width) solid var(--ds-primary-green);
-  outline-offset: var(--focus-outline-offset);
-}
-
-.energy-btn:active {
-  transform: scale(0.97);
-}
-
-.energy-btn.selected {
-  border-color: var(--color-brand-primary);
-  background: var(--ds-primary-green-ultra-subtle);
-  color: var(--color-brand-primary);
-}
-
-.soreness-selector {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: var(--space-3);
-}
-
-.soreness-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--space-2);
-  padding: var(--space-3);
-  background: var(--surface-secondary);
-  border: var(--border-2) solid var(--color-border-secondary);
-  border-radius: var(--radius-xl);
-  cursor: pointer;
-  transition:
-    background-color var(--transition-fast) var(--ease-standard),
-    border-color var(--transition-fast) var(--ease-standard),
-    color var(--transition-fast) var(--ease-standard),
-    transform var(--transition-fast) var(--ease-standard);
-  font-size: var(--ds-font-size-sm);
-  color: var(--color-text-secondary);
-}
-
-.soreness-btn i {
-  font-size: var(--ds-font-size-md);
-}
-
-@media (hover: hover) and (pointer: fine) {
-  .soreness-btn:hover {
-    border-color: var(--color-brand-primary);
-  }
-}
-
-.soreness-btn:focus-visible {
-  outline: var(--focus-outline-width) solid var(--ds-primary-green);
-  outline-offset: var(--focus-outline-offset);
-}
-
-.soreness-btn:active {
-  transform: scale(0.97);
-}
-
-.soreness-btn.selected {
-  border-color: var(--color-brand-primary);
-  background: var(--ds-primary-green-ultra-subtle);
-  color: var(--color-brand-primary);
-}
-
-.soreness-btn.soreness-yes.selected {
-  border-color: var(--color-status-warning);
-  background: var(--color-status-warning-light);
-  color: var(--color-status-warning);
-}
-
-.quick-preview {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: var(--space-3);
-  background: var(--surface-tertiary);
-  border-radius: var(--radius-md);
-}
-
-.quick-preview .preview-label {
-  font-size: var(--ds-font-size-sm);
-  color: var(--color-text-secondary);
-}
-
-.quick-preview .preview-score {
-  font-size: var(--ds-font-size-xl);
-  font-weight: var(--ds-font-weight-bold);
-}
-
-.quick-preview .preview-score.high {
-  color: var(--color-brand-primary);
-}
-.quick-preview .preview-score.moderate {
-  color: var(--color-status-warning);
-}
-.quick-preview .preview-score.low {
-  color: var(--color-status-error);
-}
-
-/* --------------------------------------------------------------------------
- QUICK CHECK-IN MODAL - Styles moved to global exceptions file
- See: angular/src/assets/styles/overrides/_component-overrides.scss (DS-EXC-036b)
- -------------------------------------------------------------------------- */
-
-/* --------------------------------------------------------------------------
- CELEBRATION OVERLAY
- -------------------------------------------------------------------------- */
+   CELEBRATION OVERLAY (preserved from v1)
+   -------------------------------------------------------------------------- */
 .celebration-overlay {
   position: fixed;
   inset: var(--space-0);
@@ -1018,117 +435,6 @@
   letter-spacing: var(--ds-letter-spacing-wide);
 }
 
-.welcome-stats {
-  margin-top: var(--space-2);
-  display: flex;
-  gap: var(--space-4);
-  flex-wrap: wrap;
-}
-
-.stat-item {
-  display: flex;
-  align-items: baseline;
-  gap: var(--space-2);
-  font-size: var(--ds-font-size-sm);
-}
-
-.stat-item .stat-block__label {
-  color: var(--color-text-secondary);
-}
-
-.stat-item .stat-block__value {
-  font-weight: var(--ds-font-weight-semibold);
-  color: var(--color-text-primary);
-}
-
-.stat-item .stat-block__value.logged {
-  color: var(--ds-primary-green);
-}
-
-.stat-check-icon {
-  margin-left: var(--space-1);
-}
-
-/* --------------------------------------------------------------------------
- TOMORROW'S TRAINING PREVIEW
- -------------------------------------------------------------------------- */
-.tomorrow-loading {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-3);
-}
-
-.tomorrow-preview {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-4);
-}
-
-.tomorrow-rationale {
-  font-size: var(--ds-font-size-sm);
-  color: var(--color-text-secondary);
-  line-height: var(--ds-line-height-body);
-  margin: var(--space-0);
-  padding: var(--space-3);
-  background: var(--surface-tertiary);
-  border-radius: var(--radius-md);
-  border-left: var(--border-2) solid var(--color-brand-primary);
-}
-
-.tomorrow-blocks {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2);
-}
-
-.tomorrow-block-item {
-  display: flex;
-  align-items: center;
-  gap: var(--space-3);
-  padding: var(--space-3);
-  background: var(--surface-secondary);
-  border-radius: var(--radius-md);
-  border: var(--border-1) solid var(--color-border-secondary);
-}
-
-.tomorrow-block-item i {
-  color: var(--color-brand-primary);
-  font-size: var(--ds-font-size-md);
-}
-
-.tomorrow-block-item span:nth-child(2) {
-  flex: 1;
-  font-size: var(--ds-font-size-sm);
-  font-weight: var(--ds-font-weight-medium);
-  color: var(--color-text-primary);
-}
-
-.tomorrow-block-item .block-count {
-  font-size: var(--ds-font-size-xs);
-  color: var(--color-text-secondary);
-}
-
-.tomorrow-actions {
-  display: flex;
-  justify-content: center;
-  padding-top: var(--space-2);
-}
-
-.tomorrow-empty {
-  text-align: center;
-  padding: var(--space-4);
-}
-
-.tomorrow-empty p {
-  margin: var(--space-0) var(--space-0) var(--space-3);
-  font-size: var(--ds-font-size-sm);
-  color: var(--color-text-secondary);
-}
-
-/* --------------------------------------------------------------------------
- ACCESSIBILITY - Reduced Motion
- PrimeNG card transitions handled globally in _brand-overrides.scss
- -------------------------------------------------------------------------- */
 @media (prefers-reduced-motion: reduce) {
   .confetti-piece {
     animation: none;

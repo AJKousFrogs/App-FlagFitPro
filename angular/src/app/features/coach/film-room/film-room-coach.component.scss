@@ -1,6 +1,11 @@
 @use "styles/mixins" as *;
 @include stat-block;
 
+/* ==========================================================================
+   FILM ROOM (COACH) — Wave 2c Redesign
+   Token-driven, responsive at lg/md/sm, WCAG touch targets.
+   ========================================================================== */
+
 .film-watch-progress {
   height: var(--space-3);
 }
@@ -14,28 +19,28 @@
   gap: var(--layout-page-section-gap);
 }
 
-// Tab Navigation
+/* ---- Tab navigation ---- */
 .tab-navigation {
   display: flex;
   gap: var(--space-2);
-  border-bottom: var(--border-1) solid var(--ds-border-subtle);
+  border-bottom: var(--border-1) solid var(--color-border-secondary);
   padding-bottom: var(--space-2);
   overflow-x: auto;
+  scrollbar-width: thin;
 
   .tab-btn {
-    min-height: var(--component-button-height-sm);
-    padding: 0 var(--space-4);
+    min-height: var(--space-11); /* 44px touch target */
+    padding: var(--space-0) var(--space-4);
     background: var(--surface-secondary);
     border: var(--border-1) solid transparent;
     border-radius: var(--radius-md);
     font-size: var(--ds-font-size-md);
     font-weight: var(--ds-font-weight-medium);
-    color: var(--ds-text-secondary);
+    color: var(--color-text-secondary);
     cursor: pointer;
     transition:
       background-color var(--transition-base) var(--ease-standard),
-      border-color var(--transition-base) var(--ease-standard),
-      box-shadow var(--transition-base) var(--ease-standard);
+      border-color var(--transition-base) var(--ease-standard);
     white-space: nowrap;
 
     &:hover {
@@ -44,19 +49,20 @@
       color: var(--color-text-primary);
     }
 
+    &:focus-visible {
+      outline: var(--border-2) solid var(--color-brand-primary);
+      outline-offset: var(--space-1);
+    }
+
     &.active {
       background: var(--color-brand-primary-subtle);
       color: var(--color-brand-primary);
-      border-color: color-mix(
-        in srgb,
-        var(--color-brand-primary) 22%,
-        transparent
-      );
+      border-color: color-mix(in srgb, var(--color-brand-primary) 22%, transparent);
     }
   }
 }
 
-// Film Stats
+/* ---- Film stats grid ---- */
 .film-stats {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(var(--grid-card-min-xs), 1fr));
@@ -67,38 +73,42 @@
   display: flex;
   align-items: center;
   gap: var(--space-3);
-  padding: var(--space-3);
-  background: var(--ds-surface-elevated);
+  padding: var(--space-4);
+  background: var(--surface-card);
+  border: var(--border-1) solid var(--color-border-primary);
   border-radius: var(--radius-lg);
 
   .stat-icon {
     font-size: var(--ds-font-size-2xl);
+    color: var(--color-text-secondary);
   }
 
   .stat-content {
     display: flex;
     flex-direction: column;
+    gap: var(--space-0-5);
 
     .stat-block__value {
       font-size: var(--ds-font-size-2xl);
       font-weight: var(--ds-font-weight-bold);
-      color: var(--ds-text-primary);
+      color: var(--color-text-primary);
+      line-height: 1.1;
     }
 
     .stat-block__label {
-      font-size: var(--ds-font-size-md);
+      font-size: var(--ds-font-size-sm);
       font-weight: var(--ds-font-weight-medium);
-      color: var(--ds-text-primary);
+      color: var(--color-text-primary);
     }
 
     .stat-sub {
       font-size: var(--ds-font-size-xs);
-      color: var(--ds-text-tertiary);
+      color: var(--color-text-tertiary);
     }
   }
 }
 
-// Film List
+/* ---- Film list / cards ---- */
 .film-list {
   display: flex;
   flex-direction: column;
@@ -106,10 +116,18 @@
 }
 
 .film-card {
-  background: var(--ds-surface-elevated);
+  background: var(--surface-card);
   border-radius: var(--radius-lg);
-  border: var(--border-1) solid var(--ds-border-default);
+  border: var(--border-1) solid var(--color-border-primary);
   overflow: hidden;
+  transition:
+    border-color var(--transition-fast) var(--ease-standard),
+    box-shadow var(--transition-fast) var(--ease-standard);
+
+  &:hover {
+    border-color: var(--color-border-strong, var(--ds-primary-green));
+    box-shadow: var(--shadow-sm, 0 1px 3px rgba(0, 0, 0, 0.06));
+  }
 }
 
 .film-header {
@@ -117,8 +135,8 @@
   justify-content: space-between;
   align-items: center;
   padding: var(--space-3) var(--space-4);
-  background: var(--ds-surface-base);
-  border-bottom: var(--border-1) solid var(--ds-border-subtle);
+  background: var(--surface-secondary);
+  border-bottom: var(--border-1) solid var(--color-border-secondary);
 
   .film-title {
     display: flex;
@@ -127,13 +145,14 @@
 
     .film-icon {
       font-size: var(--ds-font-size-2xl);
+      color: var(--ds-primary-green);
     }
 
     h3 {
       margin: var(--space-0);
       font-size: var(--ds-font-size-md);
       font-weight: var(--ds-font-weight-semibold);
-      color: var(--ds-text-primary);
+      color: var(--color-text-primary);
     }
   }
 
@@ -147,9 +166,10 @@
   display: flex;
   gap: var(--space-4);
   padding: var(--space-4);
-  border-bottom: var(--border-1) solid var(--ds-border-subtle);
+  border-bottom: var(--border-1) solid var(--color-border-secondary);
 }
 
+/* ---- Thumbnails (video) ---- */
 .film-thumbnail {
   flex-shrink: 0;
 
@@ -175,10 +195,11 @@
   p {
     margin: var(--space-0) var(--space-0) var(--space-1) var(--space-0);
     font-size: var(--ds-font-size-md);
-    color: var(--ds-text-secondary);
+    color: var(--color-text-secondary);
 
     strong {
-      color: var(--ds-text-primary);
+      color: var(--color-text-primary);
+      font-weight: var(--ds-font-weight-semibold);
     }
 
     &:last-child {
@@ -189,20 +210,21 @@
 
 .film-assignment {
   padding: var(--space-3) var(--space-4);
-  border-bottom: var(--border-1) solid var(--ds-border-subtle);
+  border-bottom: var(--border-1) solid var(--color-border-secondary);
 
   p {
     margin: var(--space-0) var(--space-0) var(--space-2) var(--space-0);
     font-size: var(--ds-font-size-md);
-    color: var(--ds-text-secondary);
+    color: var(--color-text-secondary);
 
     strong {
-      color: var(--ds-text-primary);
+      color: var(--color-text-primary);
+      font-weight: var(--ds-font-weight-semibold);
     }
 
     .due-date {
       margin-left: var(--space-3);
-      color: var(--ds-text-tertiary);
+      color: var(--color-text-tertiary);
     }
   }
 
@@ -212,13 +234,13 @@
     .progress-label {
       display: block;
       margin-bottom: var(--space-1);
-      font-size: var(--ds-font-size-md);
-      color: var(--ds-text-secondary);
+      font-size: var(--ds-font-size-sm);
+      color: var(--color-text-secondary);
     }
   }
 
   .not-watched {
-    font-size: var(--ds-font-size-md);
+    font-size: var(--ds-font-size-sm);
     color: var(--primitive-warning-500);
   }
 }
@@ -230,14 +252,14 @@
   flex-wrap: wrap;
 }
 
-// Form Styles
+/* ---- Forms (dialogs) ---- */
 .upload-form,
 .tag-form,
 .film-session-detail,
 .film-compliance-detail {
   display: flex;
   flex-direction: column;
-  gap: var(--space-3);
+  gap: var(--space-4);
 }
 
 .film-session-preview {
@@ -270,7 +292,7 @@
   flex-direction: column;
   gap: var(--space-2);
   padding: var(--space-3);
-  background: var(--ds-surface-base);
+  background: var(--surface-secondary);
   border-radius: var(--radius-lg);
 }
 
@@ -280,15 +302,17 @@
 }
 
 .detail-label {
-  font-size: var(--ds-font-size-sm);
-  font-weight: var(--ds-font-weight-medium);
-  color: var(--ds-text-tertiary);
+  font-size: var(--ds-font-size-xs);
+  font-weight: var(--ds-font-weight-semibold);
+  color: var(--color-text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: var(--ds-letter-spacing-wide, 0.04em);
 }
 
 .detail-value {
   font-size: var(--ds-font-size-lg);
   font-weight: var(--ds-font-weight-semibold);
-  color: var(--ds-text-primary);
+  color: var(--color-text-primary);
 }
 
 .compliance-list {
@@ -296,14 +320,25 @@
   p {
     margin: var(--space-0);
   }
+
+  h4 {
+    font-size: var(--ds-font-size-md);
+    font-weight: var(--ds-font-weight-semibold);
+    color: var(--color-text-primary);
+  }
+
+  p {
+    font-size: var(--ds-font-size-md);
+    color: var(--color-text-secondary);
+  }
 }
 
 .compliance-pill {
   display: inline-flex;
   align-items: center;
   width: fit-content;
-  min-height: var(--component-button-height-sm);
-  padding: 0 var(--space-3);
+  min-height: var(--space-8);
+  padding: var(--space-0) var(--space-3);
   border-radius: var(--radius-full);
   font-size: var(--ds-font-size-sm);
   font-weight: var(--ds-font-weight-medium);
@@ -311,29 +346,34 @@
 
 .compliance-pill--pending {
   background: color-mix(in srgb, var(--primitive-warning-500) 14%, transparent);
-  color: var(--primitive-warning-500);
+  color: var(--primitive-warning-700);
 }
 
 .tag-timestamp {
   margin: var(--space-0);
-  padding: var(--space-2);
-  background: var(--ds-surface-base);
+  padding: var(--space-3);
+  background: var(--surface-secondary);
   border-radius: var(--radius-md);
   font-size: var(--ds-font-size-md);
-  color: var(--ds-text-secondary);
+  color: var(--color-text-secondary);
 
   strong {
     color: var(--ds-primary-green);
+    font-weight: var(--ds-font-weight-semibold);
   }
 }
 
 .form-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+
   label {
     display: block;
     margin-bottom: var(--space-1);
     font-size: var(--ds-font-size-md);
     font-weight: var(--ds-font-weight-medium);
-    color: var(--ds-text-primary);
+    color: var(--color-text-primary);
   }
 
   input,
@@ -346,26 +386,28 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-2);
-  padding: var(--space-2);
-  background: var(--ds-surface-base);
+  padding: var(--space-3);
+  background: var(--surface-secondary);
   border-radius: var(--radius-md);
 
   .radio-option {
     display: flex;
     align-items: center;
     gap: var(--space-2);
+    min-height: var(--space-11);
 
     label {
       margin: var(--space-0);
       cursor: pointer;
+      color: var(--color-text-primary);
     }
   }
 }
 
 .player-checkboxes {
   margin-top: var(--space-2);
-  padding: var(--space-2);
-  background: var(--ds-surface-elevated);
+  padding: var(--space-3);
+  background: var(--surface-card);
   border-radius: var(--radius-md);
   max-height: var(--size-200);
   overflow-y: auto;
@@ -375,6 +417,7 @@
     align-items: center;
     gap: var(--space-2);
     margin-bottom: var(--space-2);
+    min-height: var(--space-11);
 
     &:last-child {
       margin-bottom: var(--space-0);
@@ -382,11 +425,21 @@
 
     label {
       cursor: pointer;
+      color: var(--color-text-primary);
     }
   }
 }
 
-// Responsive
+/* ==========================================================================
+   RESPONSIVE — lg (≤1024px), md (≤768px), sm (≤640px)
+   ========================================================================== */
+
+@include respond-to(lg) {
+  .film-stats {
+    grid-template-columns: repeat(auto-fit, minmax(var(--grid-card-min-sm), 1fr));
+  }
+}
+
 @include respond-to(md) {
   .film-room-page {
     gap: var(--layout-page-section-gap-tight);
@@ -427,5 +480,33 @@
   .film-session-grid,
   .compliance-columns {
     grid-template-columns: 1fr;
+  }
+}
+
+@include respond-to(sm) {
+  .film-room-page {
+    padding: var(--space-0);
+  }
+
+  .film-stats {
+    grid-template-columns: 1fr;
+  }
+
+  .stat-card {
+    padding: var(--space-3);
+  }
+
+  .film-header,
+  .film-body,
+  .film-assignment,
+  .film-actions {
+    padding: var(--space-3);
+  }
+
+  .tab-navigation {
+    .tab-btn {
+      padding: var(--space-0) var(--space-3);
+      font-size: var(--ds-font-size-sm);
+    }
   }
 }

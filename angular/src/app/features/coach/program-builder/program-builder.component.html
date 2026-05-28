@@ -11,24 +11,30 @@
         </app-page-header>
 
         <!-- Tab Navigation -->
-        <div class="tab-navigation">
-          <button
+        <div class="tab-navigation" role="tablist" aria-label="Training program views">
+          <button type="button"
             class="tab-btn"
+            role="tab"
             [class.active]="activeTab() === 'my'"
+            [attr.aria-selected]="activeTab() === 'my'"
             (click)="activeTab.set('my')"
           >
             My Programs
           </button>
-          <button
+          <button type="button"
             class="tab-btn"
+            role="tab"
             [class.active]="activeTab() === 'team'"
+            [attr.aria-selected]="activeTab() === 'team'"
             (click)="activeTab.set('team')"
           >
             Team Programs
           </button>
-          <button
+          <button type="button"
             class="tab-btn"
+            role="tab"
             [class.active]="activeTab() === 'templates'"
+            [attr.aria-selected]="activeTab() === 'templates'"
             (click)="activeTab.set('templates')"
           >
             Templates

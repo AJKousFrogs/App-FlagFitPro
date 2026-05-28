@@ -1,102 +1,174 @@
 // ============================================================================
-// Wellness Component Styles — Apple-style redesign
+// Wellness Component Styles — Wave 1 redesign (2026-05 sprint 2)
+// Matches redesign/static/pages/30-todays-practice.html token system.
 // ============================================================================
 
 @use "styles/mixins" as *;
 
-.wellness-page.bento-grid {
+.wellness-v2 {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: var(--space-4);
+  gap: var(--space-5);
   max-width: var(--layout-page-max-width-wide);
-  margin: var(--space-0) auto;
+  margin: 0 auto;
   width: 100%;
-  padding-bottom: var(--space-10);
+  padding: var(--space-5);
 
-  .bento-item {
-    background: var(--surface-card);
-    border: var(--border-1) solid var(--color-border-primary);
-    border-radius: var(--radius-xl);
-    padding: var(--space-5);
-    box-shadow: var(--shadow-sm);
-    min-width: 0;
-    transition:
-      transform var(--transition-fast) var(--ease-standard),
-      box-shadow var(--transition-fast) var(--ease-standard);
-
-    @media (hover: hover) and (pointer: fine) {
-      &:hover {
-        transform: translateY(-1px);
-        box-shadow: var(--shadow-md);
-      }
-    }
-
-    .bento-title {
-      font-size: var(--ds-font-size-md);
-      font-weight: var(--ds-font-weight-semibold);
-      margin-bottom: var(--space-4);
-      color: var(--color-text-primary);
-      letter-spacing: -0.015em;
-    }
-  }
-
-  /* Grid Logic */
-  .span-2 { grid-column: span 2; }
-  .full-width { grid-column: 1 / -1; }
-
-  .alerts-container {
-    display: grid;
-    gap: var(--space-3);
-    background: transparent;
-    border: none;
-    padding: var(--space-0);
-    box-shadow: none;
-  }
+  @include respond-to(md) { padding: var(--space-4); gap: var(--space-4); }
+  @include respond-to(sm) { padding: var(--space-3); }
 }
 
-/* Tablet + smaller desktop: 2 Columns */
-@include respond-to(lg) {
-  .wellness-page.bento-grid {
-    grid-template-columns: repeat(2, 1fr);
-    padding: var(--space-4);
+// ── HERO ─────────────────────────────────────────────────────────────────
+.wn-hero {
+  position: relative;
+  overflow: hidden;
+  padding: var(--space-8);
+  border-radius: var(--radius-2xl);
+  background: linear-gradient(
+    135deg,
+    #08090B 0%,
+    #0f2a22 45%,
+    color-mix(in srgb, var(--ds-primary-green) 80%, #08090B) 100%
+  );
+  color: var(--color-text-on-primary, white);
+  border: var(--border-1) solid color-mix(in srgb, var(--ds-primary-green) 30%, transparent);
+  box-shadow: var(--shadow-lg, var(--component-card-shadow));
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: var(--space-8);
+  align-items: center;
 
-    .span-2, .metrics-overview, .supplements-card {
-      grid-column: span 2;
-    }
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(rgba(255, 255, 255, 0.07) 1px, transparent 1px);
+    background-size: 18px 18px;
+    opacity: 0.6;
+    pointer-events: none;
   }
-}
 
-/* Mobile: 1 Column */
-@include respond-to(sm) {
-  .wellness-page.bento-grid {
+  > * { position: relative; z-index: 1; }
+
+  @include respond-to(md) {
     grid-template-columns: 1fr;
-    gap: var(--space-3);
-    padding: var(--space-3);
-    padding-bottom: var(--space-8);
-
-    .bento-item {
-      grid-column: span 1;
-      padding: var(--space-4);
-
-      .bento-title {
-        font-size: var(--ds-font-size-md);
-        margin-bottom: var(--space-3);
-      }
-    }
+    text-align: center;
+    padding: var(--space-5);
+    gap: var(--space-5);
+  }
+  @include respond-to(sm) {
+    padding: var(--space-4);
+    border-radius: var(--radius-xl);
   }
 }
 
-// ── Confidence card ──────────────────────────────────────────────────────────
-.confidence-card {
-  width: 100%;
+.wn-hero__ring {
+  --p: 0;
+  position: relative;
+  width: clamp(8.75rem, 18vw, 13.75rem);
+  height: clamp(8.75rem, 18vw, 13.75rem);
+  border-radius: 50%;
+  background: conic-gradient(
+    color-mix(in srgb, var(--ds-primary-green) 65%, white) calc(var(--p) * 1%),
+    rgba(255, 255, 255, 0.12) 0
+  );
+
+  @include respond-to(md) { margin: 0 auto; }
 }
 
-// ── Check-in card + anchor ───────────────────────────────────────────────────
-.checkin-card,
-.checkin-card-anchor {
-  width: 100%;
+.wn-hero__ring-inner {
+  position: absolute;
+  inset: var(--space-2);
+  border-radius: 50%;
+  background: rgba(8, 9, 11, 0.85);
+  display: grid;
+  place-items: center;
+  text-align: center;
+  gap: var(--space-0-5);
+  align-content: center;
 }
 
+.wn-hero__ring-num {
+  font-family: var(--ds-font-family-display, var(--ds-font-family-base));
+  font-size: clamp(2rem, 5vw, 3rem);
+  font-weight: var(--ds-font-weight-extrabold, 800);
+  line-height: 1;
+  color: var(--color-text-on-primary, white);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.03em;
+}
+
+.wn-hero__ring-den {
+  font-size: var(--ds-font-size-sm);
+  color: rgba(255, 255, 255, 0.65);
+  font-weight: var(--ds-font-weight-semibold);
+  font-variant-numeric: tabular-nums;
+}
+
+.wn-hero__ring-lab {
+  font-size: var(--ds-font-size-2xs);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.7);
+  font-weight: var(--ds-font-weight-extrabold, 800);
+  margin-top: var(--space-1);
+}
+
+.wn-hero__copy {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.wn-hero__eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--ds-font-size-xs);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--ds-primary-green) 65%, white);
+  font-weight: var(--ds-font-weight-extrabold, 800);
+
+  @include respond-to(md) { justify-content: center; }
+}
+
+.wn-hero__dot {
+  width: var(--space-2);
+  height: var(--space-2);
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--ds-primary-green) 65%, white);
+  box-shadow: 0 0 12px color-mix(in srgb, var(--ds-primary-green) 70%, transparent);
+}
+
+.wn-hero__title {
+  margin: 0;
+  font-family: var(--ds-font-family-display, var(--ds-font-family-base));
+  font-size: clamp(1.75rem, 4vw, 2.75rem);
+  font-weight: var(--ds-font-weight-extrabold, 800);
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+  color: var(--color-text-on-primary, white);
+}
+
+.wn-hero__lede {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.72);
+  font-size: var(--ds-font-size-md);
+  line-height: var(--ds-line-height-relaxed, 1.6);
+  max-width: 32rem;
+
+  @include respond-to(md) { margin: 0 auto; }
+}
+
+.wn-hero__cta {
+  display: flex;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+  margin-top: var(--space-2);
+
+  @include respond-to(md) { justify-content: center; }
+}
+
+// ── ENTRY CONTEXT BANNER (Merlin handoff) ────────────────────────────────
 .entry-context-banner {
   display: flex;
   align-items: flex-start;
@@ -124,6 +196,8 @@
 }
 
 .entry-context-banner__content {
+  flex: 1;
+
   strong {
     display: block;
     margin-bottom: var(--space-1);
@@ -146,9 +220,10 @@
   color: var(--color-text-secondary);
   font-size: var(--ds-font-size-xs);
   font-weight: var(--ds-font-weight-semibold);
-  padding: var(--space-1) var(--space-2);
+  padding: var(--space-2) var(--space-3);
   border-radius: var(--radius-full);
   cursor: pointer;
+  min-height: var(--touch-target-md, 44px);
 
   @media (hover: hover) and (pointer: fine) {
     &:hover {
@@ -156,76 +231,80 @@
       background: rgba(var(--ds-primary-green-rgb), 0.08);
     }
   }
+
+  &:focus-visible {
+    outline: var(--border-2, 2px) solid var(--ds-primary-green);
+    outline-offset: var(--focus-outline-offset, 2px);
+  }
 }
 
-.merlin-return-link {
-  display: flex;
-  justify-content: flex-start;
-  margin-top: calc(var(--space-4) * -1);
+// ── CARD (shared `.wn-card` pattern) ─────────────────────────────────────
+.wn-card {
+  background: var(--surface-card);
+  border: var(--border-1) solid var(--color-border-secondary);
+  border-radius: var(--radius-2xl);
+  padding: var(--space-6);
+  box-shadow: var(--shadow-sm);
+
+  @include respond-to(sm) {
+    padding: var(--space-4);
+    border-radius: var(--radius-xl);
+  }
 }
 
-/* Check-in header layout handled via the modern overrides layer */
+.wn-card__head {
+  display: grid;
+  gap: var(--space-1);
+  margin-bottom: var(--space-5);
+}
 
-// ── Check-in form shell ──────────────────────────────────────────────────────
-.checkin-form {
+.wn-card__title {
+  margin: 0;
+  font-family: var(--ds-font-family-display, var(--ds-font-family-base));
+  font-size: var(--ds-font-size-xl);
+  font-weight: var(--ds-font-weight-extrabold, 800);
+  letter-spacing: -0.01em;
+  color: var(--color-text-primary);
+}
+
+.wn-card__sub {
+  margin: 0;
+  font-size: var(--ds-font-size-sm);
+  color: var(--color-text-secondary);
+  line-height: var(--ds-line-height-relaxed, 1.6);
+}
+
+// ── CHECK-IN ─────────────────────────────────────────────────────────────
+.wn-checkin-anchor { width: 100%; }
+
+.wn-stack {
   display: flex;
   flex-direction: column;
   gap: var(--space-5);
-  padding: var(--space-6);
-
-  @include respond-to(md) {
-    gap: var(--space-4);
-    padding: var(--space-4);
-  }
 }
 
-// Impact note — subtle callout box
-.checkin-impact-note {
-  display: flex;
-  align-items: flex-start;
-  gap: var(--space-3);
-  margin: 0;
-  padding: var(--space-4) var(--space-5);
-  font-size: var(--ds-font-size-sm);
-  color: var(--color-text-secondary);
-  background: var(--surface-secondary);
-  border: var(--border-1) solid color-mix(in srgb, var(--ds-primary-green) 12%, var(--color-border-primary));
-  border-radius: var(--radius-lg);
-  line-height: var(--ds-line-height-relaxed);
-
-  &::before {
-    content: "\e974"; // pi-info-circle unicode
-    font-family: "primeicons";
-    font-size: var(--ds-font-size-md);
-    color: var(--ds-primary-green);
-    opacity: 0.75;
-    flex-shrink: 0;
-    margin-top: 1px;
-  }
-}
-
-// ── Check-in sections ────────────────────────────────────────────────────────
-.checkin-section {
+.wn-section {
   padding: var(--space-5);
   background: color-mix(in srgb, var(--ds-primary-green) 4%, var(--surface-card));
   border: var(--border-1) solid color-mix(in srgb, var(--ds-primary-green) 10%, var(--color-border-primary));
   border-radius: var(--radius-xl);
+
+  @include respond-to(sm) {
+    padding: var(--space-4);
+    border-radius: var(--radius-lg);
+  }
 }
 
-.checkin-section .checkin-row + .checkin-row {
-  margin-top: var(--space-4);
-}
-
-// Section label — icon badge + label text
-.section-label {
+.wn-section__eyebrow {
   display: flex;
   align-items: center;
   gap: var(--space-2);
-  font-size: var(--ds-font-size-sm);
-  font-weight: var(--ds-font-weight-semibold);
-  color: var(--color-text-primary);
-  margin: 0 0 var(--space-4);
-  letter-spacing: -0.01em;
+  margin-bottom: var(--space-4);
+  font-size: var(--ds-font-size-2xs);
+  font-weight: var(--ds-font-weight-extrabold, 800);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ds-primary-green);
 
   i {
     display: flex;
@@ -241,15 +320,13 @@
   }
 }
 
-// ── Field grid ───────────────────────────────────────────────────────────────
-.checkin-row {
+.wn-fields {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: var(--space-4) var(--space-5);
-  align-items: start;
+  grid-template-columns: 1fr;
+  gap: var(--space-4);
 }
 
-.checkin-item {
+.wn-field {
   display: flex;
   flex-direction: column;
   gap: var(--space-2);
@@ -262,14 +339,8 @@
   }
 }
 
-.help-text {
-  font-size: var(--ds-font-size-xs);
-  color: var(--color-text-secondary);
-  margin-top: var(--space-1);
-}
-
-// ── Submit area — green-tinted CTA card ──────────────────────────────────────
-.checkin-submit {
+// ── Submit area ──────────────────────────────────────────────────────────
+.wn-submit {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -282,16 +353,43 @@
   );
   border: var(--border-1) solid color-mix(in srgb, var(--ds-primary-green) 20%, var(--color-border-primary));
   border-radius: var(--radius-xl);
-  margin-top: var(--space-2);
+
+  @include respond-to(sm) { padding: var(--space-4); }
 }
 
-.submit-note {
+.wn-submit__note {
   font-size: var(--ds-font-size-xs);
   color: var(--color-text-tertiary);
   text-align: center;
 }
 
-// ── Alerts section ───────────────────────────────────────────────────────────
+// ── Confidence card ──────────────────────────────────────────────────────
+.wn-confidence {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.wn-confidence__msg {
+  margin: 0;
+  font-size: var(--ds-font-size-sm);
+  color: var(--color-text-secondary);
+  line-height: var(--ds-line-height-relaxed, 1.6);
+}
+
+// ── Charts card ──────────────────────────────────────────────────────────
+.wn-charts {
+  width: 100%;
+
+  @include respond-to(md) {
+    app-wellness-charts-section {
+      display: block;
+      width: 100%;
+    }
+  }
+}
+
+// ── Alerts section ───────────────────────────────────────────────────────
 .alerts-section {
   display: flex;
   flex-direction: column;
@@ -340,7 +438,7 @@ app-alert.wellness-route-alert {
   margin-top: var(--space-4);
 }
 
-// ── Cycle tracking card ──────────────────────────────────────────────────────
+// ── Cycle tracking card ──────────────────────────────────────────────────
 .cycle-tracking-content {
   display: flex;
   flex-direction: column;
@@ -371,20 +469,5 @@ app-alert.wellness-route-alert {
     color: var(--ds-primary-green);
     font-size: var(--ds-font-size-sm);
     flex-shrink: 0;
-  }
-}
-
-// ── Mobile overrides ─────────────────────────────────────────────────────────
-@include respond-to(sm) {
-  .checkin-row {
-    grid-template-columns: 1fr;
-  }
-
-  .checkin-section {
-    padding: var(--space-4);
-  }
-
-  .checkin-submit {
-    padding: var(--space-4);
   }
 }

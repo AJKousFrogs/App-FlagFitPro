@@ -1,107 +1,228 @@
+// ============================================================================
+// Nutritionist Dashboard — Wave 3a redesign
+// Matches redesign/static/pages/30-todays-practice.html token system.
+// ============================================================================
+
 @use "styles/mixins" as *;
 @include stat-block;
 
 .nutritionist-dashboard {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  max-width: var(--layout-page-max-width-wide);
+  margin: 0 auto;
   width: 100%;
+  padding: var(--space-5) var(--space-5) var(--space-10);
+
+  @include respond-to(lg) {
+    padding: var(--space-4);
+    gap: var(--space-5);
+  }
+
+  @include respond-to(md) {
+    padding: var(--space-3) var(--space-3) var(--space-8);
+    gap: var(--space-4);
+  }
+
+  @include respond-to(sm) {
+    padding: var(--space-3);
+  }
 }
 
-// Stats Grid
+// ── Page header hero treatment ──────────────────────────────────────────────
+:host ::ng-deep app-page-header {
+  display: block;
+  position: relative;
+  padding: var(--space-7);
+  border-radius: var(--radius-2xl);
+  background: linear-gradient(
+    135deg,
+    #08090b 0%,
+    #0f2a22 45%,
+    color-mix(in srgb, var(--ds-primary-green) 78%, #08090b) 100%
+  );
+  color: var(--color-text-on-primary, #fff);
+  border: var(--border-1) solid color-mix(in srgb, var(--ds-primary-green) 28%, transparent);
+  box-shadow: var(--shadow-lg, var(--component-card-shadow));
+  overflow: hidden;
+
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(rgba(255, 255, 255, 0.07) 1px, transparent 1px);
+    background-size: 18px 18px;
+    opacity: 0.6;
+    pointer-events: none;
+  }
+
+  .page-header,
+  .ds-page-header,
+  .page-header__title,
+  .ds-page-header__title,
+  h1, h2 {
+    color: var(--color-text-on-primary, #fff);
+  }
+
+  .page-header__subtitle,
+  .ds-page-header__subtitle,
+  .page-header__eyebrow,
+  .ds-page-header__eyebrow {
+    color: rgba(255, 255, 255, 0.78);
+  }
+
+  @include respond-to(md) {
+    padding: var(--space-5);
+    border-radius: var(--radius-xl);
+  }
+
+  @include respond-to(sm) {
+    padding: var(--space-4);
+  }
+}
+
+// ── Stats grid ──────────────────────────────────────────────────────────────
 .stats-grid {
-  @include stats-grid;
-  gap: var(--ds-spacing-md);
-  margin-bottom: var(--ds-spacing-xl);
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--space-4);
+
+  @include respond-to(lg) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  @include respond-to(sm) {
+    grid-template-columns: 1fr;
+    gap: var(--space-3);
+  }
 }
 
 .stat-card {
   display: flex;
   align-items: center;
-  gap: var(--ds-spacing-md);
-  padding: var(--ds-spacing-lg);
+  gap: var(--space-4);
+  padding: var(--space-5);
   background: var(--surface-card);
-  border-radius: var(--ds-radius-lg);
-  border: var(--border-1) solid var(--color-border-primary);
+  border: var(--border-1) solid var(--color-border-secondary);
+  border-radius: var(--radius-2xl);
+  box-shadow: var(--shadow-sm);
+  min-height: 44px;
+  transition:
+    transform var(--transition-fast) var(--ease-standard),
+    box-shadow var(--transition-fast) var(--ease-standard);
+
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-md);
+    }
+  }
+
+  @include respond-to(sm) {
+    padding: var(--space-4);
+    border-radius: var(--radius-xl);
+  }
 
   .stat-icon {
     width: var(--space-12);
     height: var(--space-12);
-    border-radius: var(--ds-radius-md);
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    border-radius: var(--radius-lg);
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
 
     i {
-      font-size: var(--ds-font-size-2xl);
-      color: var(--color-text-on-primary);
+      font-size: var(--ds-font-size-xl);
+      color: var(--color-text-on-primary, #fff);
     }
 
     &.athletes {
-      background: var(--color-brand-primary);
+      background: linear-gradient(135deg, var(--ds-primary-green), color-mix(in srgb, var(--ds-primary-green) 80%, #000));
     }
+
     &.compliance {
-      background: var(--green-500);
+      background: linear-gradient(135deg, var(--green-500, #22c55e), var(--green-600, #16a34a));
     }
+
     &.alerts {
-      background: var(--orange-500);
+      background: linear-gradient(135deg, var(--orange-500, #f97316), var(--orange-600, #ea580c));
     }
+
     &.hydration {
-      background: var(--cyan-500);
+      background: linear-gradient(135deg, var(--cyan-400, #22d3ee), var(--cyan-500, #06b6d4));
     }
   }
 
-  // @see docs/CARD_SHELL_CONTRACT.md §9 Stat Block Standard
+  .stat-block__content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-0-5);
+    min-width: 0;
+  }
+
+  .stat-block__value {
+    font-family: var(--ds-font-family-display, var(--ds-font-family-base));
+    font-size: var(--ds-font-size-3xl);
+    font-weight: var(--ds-font-weight-extrabold, 800);
+    line-height: 1.1;
+    color: var(--color-text-primary);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.02em;
+  }
+
+  .stat-block__label {
+    font-size: var(--ds-font-size-xs);
+    font-weight: var(--ds-font-weight-bold);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--color-text-secondary);
+  }
 }
 
-// Section styles
+// ── Section header ──────────────────────────────────────────────────────────
 .section-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: var(--ds-spacing-lg);
+  margin-bottom: var(--space-5);
   flex-wrap: wrap;
-  gap: var(--ds-spacing-md);
+  gap: var(--space-3);
 
   h3 {
-    margin: var(--space-0);
-    font-size: var(--ds-font-size-2xl);
-    font-weight: var(--ds-font-weight-semibold);
+    margin: 0;
+    font-family: var(--ds-font-family-display, var(--ds-font-family-base));
+    font-size: var(--ds-font-size-xl);
+    font-weight: var(--ds-font-weight-extrabold, 800);
+    color: var(--color-text-primary);
+    letter-spacing: -0.01em;
   }
 
   .search-box {
     display: flex;
     align-items: center;
-    gap: var(--ds-spacing-sm);
-    background: var(--surface-secondary);
-    padding: var(--ds-spacing-sm) var(--ds-spacing-md);
-    border-radius: var(--ds-radius-md);
+    gap: var(--space-2);
+    min-width: 16rem;
+    max-width: 24rem;
+    flex: 1;
 
-    i {
-      color: var(--color-text-secondary);
-    }
-
-    input {
-      border: none;
-      background: transparent;
-      min-width: var(--input-min-width-lg);
-
-      &:focus:not(:focus-visible) {
-        outline: none;
-      }
-      &:focus-visible {
-        outline: 2px solid var(--ds-primary-green);
-        outline-offset: 2px;
-      }
+    @include respond-to(sm) {
+      min-width: 0;
+      width: 100%;
     }
   }
 }
 
-// Athletes Table
+// ── Athletes section ────────────────────────────────────────────────────────
 .athletes-section {
   .athlete-cell {
     display: flex;
     flex-direction: column;
+    gap: var(--space-0-5);
 
     .athlete-name {
       font-weight: var(--ds-font-weight-semibold);
+      color: var(--color-text-primary);
     }
 
     .athlete-age {
@@ -116,23 +237,25 @@
   }
 
   .no-data {
-    color: var(--color-text-secondary);
+    color: var(--color-text-tertiary, var(--color-text-secondary));
     font-style: italic;
   }
 
   .compliance-cell {
     display: flex;
     align-items: center;
-    gap: var(--ds-spacing-sm);
+    gap: var(--space-2);
 
     .compliance-bar {
-      width: var(--avatar-size-xl);
+      width: var(--avatar-size-xl, 4rem);
       height: var(--space-2);
     }
 
     span {
-      font-size: var(--ds-font-size-md);
+      font-size: var(--ds-font-size-sm);
       font-weight: var(--ds-font-weight-medium);
+      color: var(--color-text-primary);
+      font-variant-numeric: tabular-nums;
     }
   }
 
@@ -140,44 +263,63 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: var(--space-6);
+    min-width: var(--space-6);
     height: var(--space-6);
-    border-radius: var(--radius-circle);
-    background: var(--red-500);
-    color: var(--color-text-on-primary);
+    padding: 0 var(--space-2);
+    border-radius: var(--radius-full);
+    background: var(--red-500, #ef4444);
+    color: var(--color-text-on-primary, #fff);
     font-size: var(--ds-font-size-xs);
-    font-weight: var(--ds-font-weight-medium);
+    font-weight: var(--ds-font-weight-bold);
   }
 
   .ok-icon {
-    color: var(--green-500);
+    color: var(--green-500, #22c55e);
+    font-size: var(--ds-font-size-md);
   }
 
   .empty-message {
     text-align: center;
-    padding: var(--ds-spacing-xl);
+    padding: var(--space-8);
     color: var(--color-text-secondary);
   }
 }
 
-// Body Composition - .charts-grid from primitives/_charts.scss
+// ── Body composition section ────────────────────────────────────────────────
 .body-composition-section {
-  .charts-grid p-chart {
-    height: var(--card-min-height-xl);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+
+  .charts-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-4);
+
+    @include respond-to(md) {
+      grid-template-columns: 1fr;
+    }
+
+    p-chart {
+      height: var(--card-min-height-xl, 16rem);
+    }
   }
 
   .alerts-section {
-    background: var(--orange-50);
-    border: var(--border-1) solid var(--orange-200);
-    border-radius: var(--ds-radius-md);
-    padding: var(--ds-spacing-md);
+    padding: var(--space-4);
+    background: color-mix(in srgb, var(--orange-500, #f97316) 6%, var(--surface-card));
+    border: var(--border-1) solid color-mix(in srgb, var(--orange-500, #f97316) 22%, var(--color-border-primary));
+    border-radius: var(--radius-xl);
 
     h4 {
       display: flex;
       align-items: center;
-      gap: var(--ds-spacing-sm);
-      margin: var(--space-0) var(--space-0) var(--ds-spacing-sm);
-      color: var(--orange-700);
+      gap: var(--space-2);
+      margin: 0 0 var(--space-2);
+      font-family: var(--ds-font-family-display, var(--ds-font-family-base));
+      font-size: var(--ds-font-size-md);
+      font-weight: var(--ds-font-weight-bold);
+      color: var(--orange-700, #c2410c);
 
       i {
         font-size: var(--ds-font-size-md);
@@ -185,12 +327,12 @@
     }
 
     .alert-list {
-      margin: var(--space-0);
-      padding-left: var(--ds-spacing-lg);
+      margin: 0;
+      padding-left: var(--space-5);
 
       .alert-item {
-        color: var(--orange-800);
-        margin-bottom: var(--ds-spacing-xs);
+        color: var(--orange-700, #c2410c);
+        margin-bottom: var(--space-1);
       }
     }
   }
@@ -200,36 +342,46 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: var(--ds-spacing-3xl);
+    padding: var(--space-10);
     color: var(--color-text-secondary);
+    text-align: center;
 
     i {
       font-size: var(--ds-font-size-3xl);
-      margin-bottom: var(--ds-spacing-md);
-      opacity: var(--opacity-dimmed);
+      margin-bottom: var(--space-3);
+      opacity: 0.55;
     }
 
     p {
-      margin: var(--space-0);
+      margin: 0;
     }
   }
 }
 
-// Dialogs
+// ── Dialog: athlete details ─────────────────────────────────────────────────
 .athlete-details {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+
   .detail-header {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
-    margin-bottom: var(--ds-spacing-lg);
+    gap: var(--space-3);
+    flex-wrap: wrap;
 
     .athlete-info {
       h3 {
-        margin: var(--space-0) var(--space-0) var(--ds-spacing-xs);
+        margin: 0 0 var(--space-1);
+        font-family: var(--ds-font-family-display, var(--ds-font-family-base));
+        font-size: var(--ds-font-size-xl);
+        font-weight: var(--ds-font-weight-extrabold, 800);
+        color: var(--color-text-primary);
       }
 
       p {
-        margin: var(--space-0);
+        margin: 0;
         color: var(--color-text-secondary);
       }
     }
@@ -239,12 +391,15 @@
 
       .current-weight {
         display: block;
+        font-family: var(--ds-font-family-display, var(--ds-font-family-base));
         font-size: var(--ds-font-size-2xl);
-        font-weight: var(--ds-font-weight-bold);
+        font-weight: var(--ds-font-weight-extrabold, 800);
+        color: var(--color-text-primary);
+        font-variant-numeric: tabular-nums;
       }
 
       .target {
-        font-size: var(--ds-font-size-md);
+        font-size: var(--ds-font-size-sm);
         color: var(--color-text-secondary);
       }
     }
@@ -252,80 +407,91 @@
 
   .metrics-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: var(--ds-spacing-md);
-    margin-bottom: var(--ds-spacing-lg);
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--space-3);
+
+    @include respond-to(md) {
+      grid-template-columns: 1fr;
+    }
 
     .metric-card {
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding: var(--ds-spacing-md);
-      background: var(--surface-secondary);
-      border-radius: var(--ds-radius-md);
+      gap: var(--space-1);
+      padding: var(--space-4);
+      background: color-mix(in srgb, var(--ds-primary-green) 4%, var(--surface-card));
+      border: var(--border-1) solid color-mix(in srgb, var(--ds-primary-green) 10%, var(--color-border-primary));
+      border-radius: var(--radius-xl);
+
+      .metric-label {
+        font-size: var(--ds-font-size-2xs);
+        font-weight: var(--ds-font-weight-bold);
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        color: var(--color-text-secondary);
+      }
+
+      .metric-value {
+        font-family: var(--ds-font-family-display, var(--ds-font-family-base));
+        font-size: var(--ds-font-size-xl);
+        font-weight: var(--ds-font-weight-extrabold, 800);
+        color: var(--color-text-primary);
+        font-variant-numeric: tabular-nums;
+      }
     }
   }
 
   .recommendations-section {
     h4 {
-      margin: var(--space-0) var(--space-0) var(--ds-spacing-sm);
       display: flex;
       align-items: center;
-      gap: var(--ds-spacing-sm);
+      gap: var(--space-2);
+      margin: 0 0 var(--space-2);
+      font-family: var(--ds-font-family-display, var(--ds-font-family-base));
+      font-size: var(--ds-font-size-md);
+      font-weight: var(--ds-font-weight-bold);
+      color: var(--color-text-primary);
     }
 
     .recommendations-list {
-      margin: var(--space-0);
-      padding-left: var(--ds-spacing-lg);
+      margin: 0;
+      padding-left: var(--space-5);
 
       li {
-        margin-bottom: var(--ds-spacing-xs);
+        margin-bottom: var(--space-1);
         color: var(--color-text-secondary);
       }
     }
   }
 }
 
-// Forms
+// ── Forms ───────────────────────────────────────────────────────────────────
 .report-form,
 .tournament-form {
   display: flex;
   flex-direction: column;
-  gap: var(--ds-spacing-md);
+  gap: var(--space-4);
 
   .form-group {
     display: flex;
     flex-direction: column;
-    gap: var(--ds-spacing-xs);
+    gap: var(--space-1);
 
     label {
       font-weight: var(--ds-font-weight-medium);
-      font-size: var(--ds-font-size-md);
+      font-size: var(--ds-font-size-sm);
+      color: var(--color-text-primary);
     }
   }
 
   .form-row {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: var(--ds-spacing-md);
-  }
-}
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-3);
 
-// Responsive
-@include respond-to(md) {
-  .nutritionist-dashboard {
-    padding: var(--ds-spacing-md);
-  }
-
-  .stats-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  .tournament-form .form-row {
-    grid-template-columns: 1fr;
-  }
-
-  .athlete-details .metrics-grid {
-    grid-template-columns: 1fr;
+    @include respond-to(md) {
+      grid-template-columns: 1fr;
+    }
   }
 }

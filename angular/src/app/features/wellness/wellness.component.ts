@@ -29,7 +29,6 @@ import { ConfidenceIndicatorComponent } from "../../shared/components/confidence
 import { HydrationTrackerComponent } from "../../shared/components/hydration-tracker/hydration-tracker.component";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageErrorStateComponent } from "../../shared/components/page-error-state/page-error-state.component";
-import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
 import { AlertComponent, AlertVariant } from "../../shared/components/alert/alert.component";
 import { CardShellComponent } from "../../shared/components/card-shell/card-shell.component";
 import {
@@ -83,7 +82,6 @@ interface WellnessEntryContext {
     RatingSliderComponent,
     AppLoadingComponent,
     ButtonComponent,
-    PageHeaderComponent,
     StatsGridComponent,
     PageErrorStateComponent,
     BodyCompositionCardComponent,

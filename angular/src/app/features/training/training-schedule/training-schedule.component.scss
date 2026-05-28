@@ -1,28 +1,41 @@
 @use "styles/mixins" as *;
 
-/**
- * Training Schedule - Mobile Responsive Styles
- * ================================================================
- * Optimized for Chrome Mobile & Safari iOS
- * Focus: Calendar, session cards, date picker, monthly stats
- * ================================================================
- */
-
-// ================================================================
-// MAIN CONTAINER
-// ================================================================
+/* ==========================================================================
+   TRAINING SCHEDULE — Wave 1 Redesign
+   Token-driven, responsive at 1024 / 768 / 640
+   ========================================================================== */
 
 :host {
   display: block;
-  padding: var(--space-4);
 }
 
 .training-schedule-page {
   display: flex;
   flex-direction: column;
   gap: var(--space-6);
+  max-width: var(--layout-page-max-width-wide);
+  margin: 0 auto;
+  width: 100%;
+  padding: var(--space-5) var(--space-5) var(--space-10);
+
+  @include respond-to(lg) {
+    padding: var(--space-4);
+    gap: var(--space-5);
+  }
+
+  @include respond-to(md) {
+    padding: var(--space-3) var(--space-3) var(--space-8);
+    gap: var(--space-4);
+  }
+
+  @include respond-to(sm) {
+    padding: var(--space-3);
+  }
 }
 
+/* --------------------------------------------------------------------------
+   ENTRY CONTEXT BANNER (Merlin deep-link)
+   -------------------------------------------------------------------------- */
 .entry-context-banner {
   display: flex;
   align-items: flex-start;
@@ -50,6 +63,8 @@
 }
 
 .entry-context-banner__content {
+  flex: 1;
+
   strong {
     display: block;
     margin-bottom: var(--space-1);
@@ -67,12 +82,14 @@
 
 .entry-context-banner__close {
   align-self: flex-start;
+  min-height: var(--touch-target-md);
+  min-width: var(--touch-target-md);
   border: none;
   background: transparent;
   color: var(--color-text-secondary);
   font-size: var(--ds-font-size-xs);
   font-weight: var(--ds-font-weight-semibold);
-  padding: var(--space-1) var(--space-2);
+  padding: var(--space-2) var(--space-3);
   border-radius: var(--radius-full);
   cursor: pointer;
 
@@ -82,6 +99,8 @@
       background: rgba(var(--ds-primary-green-rgb), 0.08);
     }
   }
+
+  @include ds-focus-ring;
 }
 
 .merlin-return-link {
@@ -90,13 +109,22 @@
   margin-top: calc(var(--space-4) * -1);
 }
 
+/* --------------------------------------------------------------------------
+   TRAINING HUB GRID — related tools
+   -------------------------------------------------------------------------- */
 .training-hub-grid {
   display: grid;
-  grid-template-columns: repeat(
-    auto-fit,
-    minmax(var(--grid-card-min-sm), 1fr)
-  );
+  grid-template-columns: repeat(auto-fit, minmax(var(--grid-card-min-sm), 1fr));
   gap: var(--space-3);
+
+  @include respond-to(md) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-2);
+  }
+
+  @include respond-to(sm) {
+    grid-template-columns: 1fr;
+  }
 }
 
 .training-hub-link {
@@ -104,6 +132,7 @@
   flex-direction: column;
   gap: var(--space-1);
   padding: var(--space-4);
+  min-height: var(--touch-target-lg);
   border-radius: var(--radius-md);
   border: var(--border-1) solid var(--color-border-primary);
   background: var(--surface-card);
@@ -111,14 +140,18 @@
   text-decoration: none;
   transition:
     transform var(--transition-fast),
-    box-shadow var(--transition-fast);
+    box-shadow var(--transition-fast),
+    border-color var(--transition-fast);
 
   @include ds-focus-ring;
-}
 
-.training-hub-link:hover {
-  transform: var(--transform-hover-lift);
-  box-shadow: var(--shadow-sm);
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      transform: var(--transform-hover-lift);
+      box-shadow: var(--shadow-sm);
+      border-color: var(--ds-primary-green);
+    }
+  }
 }
 
 .training-hub-icon {
@@ -134,27 +167,18 @@
 .training-hub-title {
   font-weight: var(--ds-font-weight-semibold);
   color: var(--color-text-primary);
+  font-size: var(--ds-font-size-md);
 }
 
 .training-hub-subtitle {
   font-size: var(--ds-font-size-sm);
   color: var(--color-text-secondary);
+  line-height: var(--ds-line-height-normal);
 }
 
-/* Skeleton States */
-.skeleton-date {
-  width: 60%;
-}
-
-.skeleton-duration {
-  width: 40%;
-}
-
-/* Completion Rate */
-// ================================================================
-// SCHEDULE CONTENT LAYOUT - RESPONSIVE GRID
-// ================================================================
-
+/* --------------------------------------------------------------------------
+   SCHEDULE CONTENT LAYOUT
+   -------------------------------------------------------------------------- */
 .schedule-content {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -171,59 +195,171 @@
     grid-column: 1;
   }
 
-  // Sessions list card - right column (third child if monthly stats visible, second if not)
+  // Sessions list card - right column
   app-card-shell:last-child {
     grid-column: 2;
-    grid-row: 1 / -1; // Span all rows
+    grid-row: 1 / -1;
+  }
+
+  @include respond-to(lg) {
+    gap: var(--space-4);
+  }
+
+  @include respond-to(md) {
+    grid-template-columns: 1fr;
+    gap: var(--space-4);
+
+    app-card-shell:last-child {
+      grid-column: 1;
+      grid-row: auto;
+    }
   }
 }
 
-// ================================================================
-// MONTHLY STATS SIDEBAR - RESPONSIVE
-// ================================================================
+/* --------------------------------------------------------------------------
+   CALENDAR LEGEND
+   -------------------------------------------------------------------------- */
+.calendar-legend {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  padding: var(--space-4);
+  background: var(--surface-secondary);
+  border-radius: var(--radius-md);
+  margin-top: var(--space-4);
 
-/* monthly-stats: PrimeNG overrides in _component-overrides.scss (DS-EXC-020) */
+  @include respond-to(md) {
+    gap: var(--space-3);
+    padding: var(--space-3);
+    margin-top: var(--space-3);
+  }
+}
+
+.legend-today {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--ds-font-size-md);
+  font-weight: var(--ds-font-weight-medium);
+  color: var(--color-text-primary);
+  margin: 0;
+}
+
+.legend-today-icon {
+  color: var(--ds-primary-green);
+  font-size: var(--ds-font-size-md);
+}
+
+.legend-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.legend-label {
+  font-size: var(--ds-font-size-sm);
+  font-weight: var(--ds-font-weight-semibold);
+  color: var(--color-text-primary);
+  letter-spacing: var(--ds-letter-spacing-wide);
+  text-transform: uppercase;
+}
+
+.legend-items {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+
+  @include respond-to(md) {
+    gap: var(--space-2);
+  }
+}
+
+.legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  font-size: var(--ds-font-size-xs);
+  color: var(--color-text-secondary);
+
+  i {
+    font-size: var(--ds-font-size-md);
+
+    &.legend-completed { color: var(--color-status-success); }
+    &.legend-scheduled { color: var(--ds-primary-green); }
+    &.legend-in-progress { color: var(--color-status-warning); }
+    &.legend-missed { color: var(--color-status-error); }
+    &.legend-replaced { color: var(--color-text-secondary); }
+  }
+}
+
+.show-week-toggle {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.view-toggle {
+  display: flex;
+  gap: var(--space-2);
+
+  @include respond-to(sm) {
+    width: 100%;
+
+    app-button {
+      flex: 1;
+    }
+  }
+}
+
+/* --------------------------------------------------------------------------
+   MONTHLY STATS
+   -------------------------------------------------------------------------- */
+.monthly-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(var(--grid-card-min-xs), 1fr));
+  gap: var(--space-3);
+
+  @include respond-to(md) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-2);
+  }
+
+  @include respond-to(sm) {
+    grid-template-columns: 1fr;
+  }
+}
 
 .stat-item {
-  @include surface-panel(
-    $background: var(--surface-secondary)
-  );
+  padding: var(--space-3) var(--space-4);
+  background: var(--surface-secondary);
+  border-radius: var(--radius-md);
   border-left: var(--border-2) solid var(--ds-primary-green);
-  margin-bottom: var(--space-3);
 
-  &:last-child {
-    margin-bottom: var(--space-0);
+  &.completed {
+    border-left-color: var(--color-status-success);
+  }
+
+  &.missed {
+    border-left-color: var(--color-status-error);
+  }
+
+  &.completion {
+    border-left-color: var(--ds-primary-green);
   }
 }
 
-/* stat-block--stat-item: use primitives (_dashboard.scss) */
-
-// ================================================================
-// SESSION LIST - RESPONSIVE
-// ================================================================
-
+/* --------------------------------------------------------------------------
+   SESSIONS LIST
+   -------------------------------------------------------------------------- */
 .schedule-trim-alert {
   margin-bottom: var(--space-3);
 }
 
 .schedule-trim-alert__text {
-  margin: var(--space-0);
+  margin: 0;
   font-size: var(--ds-font-size-sm);
   line-height: var(--ds-line-height-body);
   color: var(--color-text-secondary);
-}
-
-.program-badge {
-  display: inline-flex;
-  align-items: center;
-  padding: 0 var(--space-2);
-  background: var(--surface-tertiary);
-  color: var(--color-text-secondary);
-  border-radius: var(--radius-sm);
-  font-size: var(--ds-font-size-xs);
-  font-weight: var(--ds-font-weight-medium);
-  margin-left: var(--space-2);
-  vertical-align: middle;
 }
 
 .sessions-list {
@@ -233,34 +369,41 @@
 }
 
 .session-item {
+  position: relative;
   display: flex;
   width: 100%;
   justify-content: space-between;
   align-items: flex-start;
   gap: var(--space-4);
   padding: var(--space-4);
-  background: var(--surface-secondary);
-  border-left: var(--border-accent, var(--border-4)) solid var(--ds-primary-green);
-  border-right: none;
-  border-top: none;
-  border-bottom: none;
-  border-radius: var(--radius-md);
+  background: var(--surface-card);
+  border: var(--border-1) solid var(--color-border-primary);
+  border-left: var(--border-3) solid var(--ds-primary-green);
+  border-radius: var(--radius-lg);
   text-align: left;
   cursor: pointer;
+  min-height: var(--touch-target-lg);
   transition:
-    opacity var(--transition-fast),
     transform var(--transition-fast),
     background-color var(--transition-fast),
     border-color var(--transition-fast),
     box-shadow var(--transition-fast);
 
-  &:hover {
-    background: var(--surface-tertiary);
-    transform: translateX(var(--space-0-5));
-    box-shadow: var(--shadow-sm);
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      background: var(--surface-secondary);
+      transform: translateX(var(--space-0-5));
+      box-shadow: var(--shadow-sm);
+    }
   }
 
   @include ds-focus-ring;
+
+  @include respond-to(md) {
+    flex-direction: column;
+    gap: var(--space-3);
+    padding: var(--space-3);
+  }
 }
 
 .session-item-skeleton {
@@ -281,17 +424,11 @@
 }
 
 .session-type-indicator {
-  display: inline-block;
-  width: var(--indicator-size-xs);
-  height: 100%;
-  position: absolute;
-  left: 0;
-  top: 0;
-  border-radius: var(--radius-sm) 0 0 var(--radius-sm);
+  display: none; /* hidden; left-border on .session-item carries color */
 }
 
 .session-title {
-  margin: var(--space-0);
+  margin: 0;
   font-size: var(--ds-font-size-md);
   font-weight: var(--ds-font-weight-semibold);
   color: var(--color-text-primary);
@@ -305,11 +442,11 @@
   display: inline-flex;
   align-items: center;
   gap: var(--space-1);
-  padding: 0 var(--space-2);
-  border-radius: var(--radius-md);
-  font-size: var(--ds-font-size-xs);
-  font-weight: var(--ds-font-weight-medium);
-  background: var(--surface-tertiary);
+  padding: var(--space-0-5) var(--space-2);
+  border-radius: var(--radius-full);
+  font-size: var(--ds-font-size-2xs);
+  font-weight: var(--ds-font-weight-semibold);
+  background: var(--surface-secondary);
   color: var(--color-text-secondary);
 
   &--logged {
@@ -317,21 +454,27 @@
     color: var(--color-status-success);
   }
 
+  &--replaced {
+    background: var(--surface-tertiary);
+    color: var(--color-text-secondary);
+  }
+
   i {
-    font-size: var(--ds-font-size-xs);
+    font-size: var(--ds-font-size-2xs);
   }
 }
 
 .session-date {
-  margin: var(--space-0);
-  font-size: var(--ds-font-size-md);
+  margin: 0;
+  font-size: var(--ds-font-size-sm);
   color: var(--color-text-secondary);
 }
 
 .session-duration {
-  margin: var(--space-0);
-  font-size: var(--ds-font-size-md);
+  margin: 0;
+  font-size: var(--ds-font-size-sm);
   color: var(--color-text-muted);
+  font-variant-numeric: tabular-nums;
 }
 
 .session-actions {
@@ -340,6 +483,18 @@
   align-items: flex-end;
   gap: var(--space-2);
   flex-shrink: 0;
+
+  @include respond-to(md) {
+    width: 100%;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: stretch;
+    justify-content: flex-start;
+
+    app-button {
+      flex: 1;
+    }
+  }
 }
 
 .status-tag {
@@ -347,9 +502,13 @@
   align-items: center;
   gap: var(--space-1);
   padding: var(--space-1) var(--space-2);
-  border-radius: var(--radius-md);
-  font-size: var(--ds-font-size-xs);
-  font-weight: var(--ds-font-weight-medium);
+  border-radius: var(--radius-full);
+  font-size: var(--ds-font-size-2xs);
+  font-weight: var(--ds-font-weight-semibold);
+  letter-spacing: var(--ds-letter-spacing-wide);
+  text-transform: uppercase;
+  background: var(--surface-secondary);
+  color: var(--color-text-secondary);
 
   &.status-completed {
     background: var(--color-status-success-subtle);
@@ -377,161 +536,58 @@
   }
 }
 
-.error-state {
-  display: flex;
-  flex-direction: column;
+/* --------------------------------------------------------------------------
+   SESSION BADGES
+   -------------------------------------------------------------------------- */
+.program-badge,
+.team-badge,
+.outdoor-badge {
+  display: inline-flex;
   align-items: center;
-  gap: var(--space-4);
-  padding: var(--space-6);
-  text-align: center;
-}
-
-.error-icon {
-  font-size: var(--ds-font-size-3xl);
-  color: var(--color-status-error);
-}
-
-.error-text {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2);
-
-  strong {
-    font-size: var(--ds-font-size-md);
-    color: var(--color-text-primary);
-  }
-
-  p {
-    margin: var(--space-0);
-    font-size: var(--ds-font-size-md);
-    color: var(--color-text-secondary);
-  }
-}
-
-.session-actions {
-  display: flex;
-  gap: var(--space-2);
-  margin-top: var(--space-3);
-  padding-top: var(--space-3);
-  border-top: var(--border-1) solid var(--color-border-primary);
-
-  // Mobile: Stack buttons vertically for better touch targets
-  @include respond-to(sm) {
-    flex-direction: column;
-
-    app-button {
-      width: 100%;
-
-      button {
-        width: 100%;
-        justify-content: center;
-        min-height: var(--input-height);
-      }
-    }
-  }
-}
-
-// ================================================================
-// LEGEND - MOBILE OPTIMIZED
-// ================================================================
-
-.calendar-legend {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-4);
-  @include surface-panel(
-    $padding: var(--space-4),
-    $background: var(--surface-secondary)
-  );
-  margin-top: var(--space-4);
-}
-
-.legend-today {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-  font-size: var(--ds-font-size-md);
-  font-weight: var(--ds-font-weight-medium);
-  color: var(--color-text-primary);
-  margin: var(--space-0);
-}
-
-.legend-today-icon {
-  color: var(--ds-primary-green);
-  font-size: var(--ds-font-size-md);
-}
-
-.legend-section {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2);
-}
-
-.legend-label {
-  font-size: var(--ds-font-size-md);
+  gap: var(--space-1);
+  padding: var(--space-0-5) var(--space-2);
+  border-radius: var(--radius-full);
+  font-size: var(--ds-font-size-2xs);
   font-weight: var(--ds-font-weight-semibold);
-  color: var(--color-text-primary);
+  vertical-align: middle;
 }
 
-.legend-items {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-3);
+.program-badge {
+  background: var(--surface-tertiary);
+  color: var(--color-text-secondary);
 }
 
-/* legend-item: use primitives; responsive override */
-.legend-item {
+.team-badge {
+  background: var(--color-status-info-subtle);
+  color: var(--color-status-info);
+
   i {
-    font-size: var(--ds-font-size-md);
-
-    &.legend-completed {
-      color: var(--color-status-success);
-    }
-
-    &.legend-scheduled {
-      color: var(--ds-primary-green);
-    }
-
-    &.legend-in-progress {
-      color: var(--color-status-warning);
-    }
-
-    &.legend-missed {
-      color: var(--color-status-error);
-    }
-
-    &.legend-replaced {
-      color: var(--color-text-secondary);
-    }
+    font-size: var(--ds-font-size-2xs);
   }
 }
 
-.show-week-toggle {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
+.outdoor-badge {
+  width: var(--space-5);
+  height: var(--space-5);
+  justify-content: center;
+  padding: 0;
+  background: var(--color-status-warning-subtle);
+  color: var(--color-status-warning);
+  border-radius: var(--radius-circle);
+  cursor: help;
 
-  label {
-    font-size: var(--ds-font-size-md);
-    color: var(--color-text-primary);
-    cursor: pointer;
-    margin: var(--space-0);
+  i {
+    font-size: var(--ds-font-size-2xs);
   }
 }
 
-.view-toggle {
-  display: flex;
-  gap: var(--space-2);
-}
-
-// ================================================================
-// WEATHER ALERT - RESPONSIVE
-// ================================================================
-
+/* --------------------------------------------------------------------------
+   WEATHER ALERT
+   -------------------------------------------------------------------------- */
 app-alert.weather-alert {
   display: block;
   margin-bottom: var(--space-4);
-  grid-column: 1 / -1; // Span full width in grid
+  grid-column: 1 / -1;
 }
 
 .weather-alert__details {
@@ -542,15 +598,16 @@ app-alert.weather-alert {
 }
 
 .weather-alert__recommendation {
-  margin: var(--space-0);
+  margin: 0;
   font-size: var(--ds-font-size-md);
   color: var(--color-text-secondary);
 }
 
 .weather-alert__conditions {
-  margin: var(--space-0);
+  margin: 0;
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   gap: var(--space-3);
   font-size: var(--ds-font-size-sm);
   color: var(--color-text-tertiary);
@@ -571,14 +628,18 @@ app-alert.weather-alert {
   gap: var(--space-2);
   margin-top: var(--space-3);
   flex-shrink: 0;
+
+  @include respond-to(md) {
+    width: 100%;
+    flex-direction: column;
+  }
 }
 
-// ================================================================
-// SUBSTITUTE WORKOUT CARD - RESPONSIVE
-// ================================================================
-
+/* --------------------------------------------------------------------------
+   SUBSTITUTE WORKOUT CARD
+   -------------------------------------------------------------------------- */
 .substitute-workout-card {
-  grid-column: 1 / -1; // Span full width in grid
+  grid-column: 1 / -1;
 }
 
 .substitute-workout {
@@ -594,7 +655,7 @@ app-alert.weather-alert {
 }
 
 .substitute-workout__name {
-  margin: var(--space-0);
+  margin: 0;
   font-size: var(--ds-font-size-xl);
   font-weight: var(--ds-font-weight-bold);
   color: var(--color-text-primary);
@@ -611,12 +672,12 @@ app-alert.weather-alert {
   align-items: center;
   gap: var(--space-1);
   padding: var(--space-1) var(--space-2);
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-full);
   font-size: var(--ds-font-size-xs);
-  font-weight: var(--ds-font-weight-medium);
+  font-weight: var(--ds-font-weight-semibold);
 
   &--info {
-    background: var(--color-status-info-surface);
+    background: var(--color-status-info-subtle);
     color: var(--color-status-info);
   }
 
@@ -632,7 +693,7 @@ app-alert.weather-alert {
 }
 
 .substitute-workout__description {
-  margin: var(--space-0);
+  margin: 0;
   font-size: var(--ds-font-size-md);
   color: var(--color-text-secondary);
   line-height: var(--ds-line-height-body);
@@ -640,7 +701,7 @@ app-alert.weather-alert {
 
 .substitute-workout__equipment {
   h4 {
-    margin: var(--space-0) var(--space-0) var(--space-2) var(--space-0);
+    margin: 0 0 var(--space-2);
     font-size: var(--ds-font-size-md);
     font-weight: var(--ds-font-weight-semibold);
     color: var(--color-text-primary);
@@ -672,14 +733,14 @@ app-alert.weather-alert {
   display: flex;
   flex-direction: column;
   gap: var(--space-3);
-  padding: var(--space-3);
+  padding: var(--space-4);
   background: var(--surface-secondary);
   border-radius: var(--radius-md);
 }
 
 .workout-phase {
   h4 {
-    margin: var(--space-0) var(--space-0) var(--space-2) var(--space-0);
+    margin: 0 0 var(--space-2);
     font-size: var(--ds-font-size-md);
     font-weight: var(--ds-font-weight-semibold);
     color: var(--color-text-primary);
@@ -693,7 +754,7 @@ app-alert.weather-alert {
   }
 
   p {
-    margin: var(--space-0);
+    margin: 0;
     font-size: var(--ds-font-size-sm);
     color: var(--color-text-secondary);
     padding-left: var(--space-5);
@@ -701,7 +762,7 @@ app-alert.weather-alert {
 }
 
 .exercise-preview-list {
-  margin: var(--space-0);
+  margin: 0;
   padding-left: var(--space-5);
   list-style: none;
 
@@ -723,7 +784,7 @@ app-alert.weather-alert {
 
 .substitute-workout__goals {
   h4 {
-    margin: var(--space-0) var(--space-0) var(--space-2) var(--space-0);
+    margin: 0 0 var(--space-2);
     font-size: var(--ds-font-size-md);
     font-weight: var(--ds-font-weight-semibold);
     color: var(--color-text-primary);
@@ -747,9 +808,9 @@ app-alert.weather-alert {
   padding: var(--space-1) var(--space-2);
   background: var(--ds-primary-green-subtle);
   color: var(--ds-primary-green);
-  border-radius: var(--radius-sm);
-  font-size: var(--ds-font-size-sm);
-  font-weight: var(--ds-font-weight-medium);
+  border-radius: var(--radius-full);
+  font-size: var(--ds-font-size-xs);
+  font-weight: var(--ds-font-weight-semibold);
 }
 
 .substitute-workout__actions {
@@ -757,111 +818,8 @@ app-alert.weather-alert {
   gap: var(--space-3);
   padding-top: var(--space-3);
   border-top: var(--border-1) solid var(--color-border-primary);
-}
 
-@include respond-to(lg) {
-  .schedule-content {
-    gap: var(--space-4);
-  }
-}
-
-@include respond-to(md) {
-  :host {
-    padding: var(--space-3);
-  }
-
-  .schedule-content {
-    grid-template-columns: 1fr;
-    gap: var(--space-4);
-
-    app-card-shell:last-child {
-      grid-column: 1;
-      grid-row: auto;
-    }
-  }
-
-  .stat-item {
-    padding: var(--space-2);
-    margin-bottom: var(--space-0);
-  }
-
-  .session-item {
+  @include respond-to(md) {
     flex-direction: column;
-    gap: var(--space-3);
-    padding: var(--space-3);
-  }
-
-  .session-actions {
-    width: 100%;
-    align-items: stretch;
-  }
-
-  .calendar-legend {
-    gap: var(--space-3);
-    padding: var(--space-3);
-    margin-top: var(--space-3);
-  }
-
-  .legend-items {
-    gap: var(--space-2);
-  }
-
-  .legend-item {
-    font-size: var(--ds-font-size-xs);
-  }
-
-  .weather-alert__actions {
-    width: 100%;
-    flex-direction: column;
-  }
-
-  .substitute-workout__actions {
-    flex-direction: column;
-  }
-}
-
-@include respond-to(sm) {
-  :host {
-    padding: var(--space-2);
-  }
-}
-
-// ================================================================
-// SESSION BADGES (Team, Outdoor)
-// ================================================================
-
-.team-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-1);
-  padding: var(--space-0) var(--space-2);
-  background: var(--primitive-blue-50);
-  color: var(--primitive-blue-700);
-  border-radius: var(--radius-sm);
-  font-size: var(--ds-font-size-xs);
-  font-weight: var(--ds-font-weight-medium);
-  margin-left: var(--space-2);
-  vertical-align: middle;
-
-  i {
-    font-size: var(--ds-font-size-xs);
-  }
-}
-
-.outdoor-badge {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: var(--space-5);
-  height: var(--space-5);
-  background: var(--color-status-warning-surface);
-  color: var(--color-status-warning);
-  border-radius: var(--radius-circle);
-  margin-left: var(--space-2);
-  vertical-align: middle;
-  cursor: help;
-
-  i {
-    font-size: var(--ds-font-size-xs);
   }
 }

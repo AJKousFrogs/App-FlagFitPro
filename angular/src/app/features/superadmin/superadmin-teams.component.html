@@ -1,8 +1,10 @@
     <app-main-layout>
       <div class="teams-content ui-page-shell ui-page-shell--wide ui-page-stack">
         <app-page-header
+          eyebrow="SUPERADMIN"
           title="Team Management"
           subtitle="View and manage all teams on the platform"
+          icon="pi-building"
         >
           <div class="header-actions">
             <app-button
@@ -13,6 +15,22 @@
             >
           </div>
         </app-page-header>
+
+        <!-- Stats summary -->
+        <div class="stats-row" role="group" aria-label="Team statistics">
+          <app-card-shell class="stat-card">
+            <div class="stat-content">
+              <span class="stat-block__value">{{ teams.length }}</span>
+              <span class="stat-block__label">Total Teams</span>
+            </div>
+          </app-card-shell>
+          <app-card-shell class="stat-card">
+            <div class="stat-content">
+              <span class="stat-block__value">{{ filteredTeams.length }}</span>
+              <span class="stat-block__label">Showing</span>
+            </div>
+          </app-card-shell>
+        </div>
 
         <!-- Filters -->
         <app-card-shell class="filters-card">

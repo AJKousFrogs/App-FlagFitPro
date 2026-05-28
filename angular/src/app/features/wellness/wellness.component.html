@@ -14,30 +14,49 @@
   }
 
   @if (!isPageLoading() && !hasPageError()) {
-    <div class="wellness-page ui-page-shell ui-page-stack">
-      <app-page-header
-        eyebrow="WELLNESS"
-        title="Wellness & Recovery"
-        subtitle="Start with today’s check-in, then review recovery trends and alerts."
-        icon="pi-heart"
-      >
-        <app-button iconLeft="pi-plus" (clicked)="openCheckIn()"
-          >Log Check-in</app-button
-        >
-      </app-page-header>
+    <div class="wellness-v2">
 
-      @if (merlinSessionId() && !entryContext()) {
-        <div class="merlin-return-link">
-          <app-button
-            variant="text"
-            iconLeft="pi-arrow-left"
-            routerLink="/chat"
-            [queryParams]="{ session: merlinSessionId(), draft: merlinReturnDraft(), from: 'wellness' }"
-          >
-            Back to Merlin
-          </app-button>
+      <!-- 1. WELLNESS HERO — greeting + readiness ring -->
+      <section class="wn-hero" aria-label="Today's wellness check-in">
+        <div
+          class="wn-hero__ring"
+          role="img"
+          [attr.aria-label]="'Check-in completion ' + completedMetricsCount() + ' of ' + totalMetricsCount() + ' metrics'"
+          [style.--p]="(completedMetricsCount() / totalMetricsCount()) * 100"
+        >
+          <div class="wn-hero__ring-inner">
+            <span class="wn-hero__ring-num">{{ completedMetricsCount() }}</span>
+            <span class="wn-hero__ring-den">/ {{ totalMetricsCount() }}</span>
+            <span class="wn-hero__ring-lab">metrics</span>
+          </div>
         </div>
-      }
+
+        <div class="wn-hero__copy">
+          <div class="wn-hero__eyebrow">
+            <span class="wn-hero__dot" aria-hidden="true"></span>
+            Today's check-in
+          </div>
+          <h1 class="wn-hero__title">Wellness &amp; Recovery</h1>
+          <p class="wn-hero__lede">
+            Start with today's check-in, then review recovery trends and alerts.
+          </p>
+          <div class="wn-hero__cta">
+            <app-button iconLeft="pi-plus" (clicked)="openCheckIn()"
+              >Log Check-in</app-button
+            >
+            @if (merlinSessionId() && !entryContext()) {
+              <app-button
+                variant="text"
+                iconLeft="pi-arrow-left"
+                routerLink="/chat"
+                [queryParams]="{ session: merlinSessionId(), draft: merlinReturnDraft(), from: 'wellness' }"
+              >
+                Back to Merlin
+              </app-button>
+            }
+          </div>
+        </div>
+      </section>
 
       @if (entryContext(); as entryContextMessage) {
         <div class="entry-context-banner" role="status" aria-live="polite">
@@ -69,27 +88,29 @@
         </div>
       }
 
+      <!-- 2. CHECK-IN CARD — grouped sections -->
       <div
         #checkinCard
-        class="checkin-card-anchor ui-page-shell ui-page-shell--content-lg"
+        class="wn-checkin-anchor"
       >
-        <app-card-shell
-          title="Daily Wellness Check-in"
-          class="checkin-card"
-          [flush]="true"
-        >
-          <div class="checkin-form">
-            <p class="checkin-impact-note">
+        <section class="wn-card wn-checkin" aria-labelledby="checkin-heading">
+          <header class="wn-card__head">
+            <h2 id="checkin-heading" class="wn-card__title">Daily Wellness Check-in</h2>
+            <p class="wn-card__sub">
               These inputs drive readiness, recovery, and wellness analytics.
               All 1–10 fields use the same scale unless noted.
             </p>
+          </header>
 
-            <div class="checkin-section">
-              <h4 class="section-label">
-                <i class="pi pi-moon" aria-hidden="true"></i> Sleep & Recovery
-              </h4>
-              <div class="checkin-row">
-                <div class="checkin-item">
+          <div class="wn-stack">
+            <!-- Sleep & Recovery -->
+            <div class="wn-section">
+              <div class="wn-section__eyebrow">
+                <i class="pi pi-moon" aria-hidden="true"></i>
+                <span>Sleep &amp; Recovery</span>
+              </div>
+              <div class="wn-fields">
+                <div class="wn-field">
                   <app-input-number
                     label="Sleep Hours"
                     inputId="sleepHours"
@@ -104,7 +125,7 @@
                     [attr.aria-label]="'Sleep hours'"
                   ></app-input-number>
                 </div>
-                <div class="checkin-item">
+                <div class="wn-field">
                   <app-rating-slider
                     label="Sleep Quality"
                     description="How well did you sleep?"
@@ -119,12 +140,14 @@
               </div>
             </div>
 
-            <div class="checkin-section">
-              <h4 class="section-label">
-                <i class="pi pi-heart" aria-hidden="true"></i> Physical State
-              </h4>
-              <div class="checkin-row">
-                <div class="checkin-item">
+            <!-- Physical State -->
+            <div class="wn-section">
+              <div class="wn-section__eyebrow">
+                <i class="pi pi-heart" aria-hidden="true"></i>
+                <span>Physical State</span>
+              </div>
+              <div class="wn-fields">
+                <div class="wn-field">
                   <app-rating-slider
                     label="Energy Level"
                     description="How much energy do you have today?"
@@ -136,7 +159,7 @@
                     (valueChange)="onCheckInFieldChange('energyLevel', $event)"
                   />
                 </div>
-                <div class="checkin-item">
+                <div class="wn-field">
                   <app-rating-slider
                     label="Muscle Soreness"
                     description="Higher = more sore"
@@ -148,9 +171,7 @@
                     (valueChange)="onCheckInFieldChange('soreness', $event)"
                   />
                 </div>
-              </div>
-              <div class="checkin-row">
-                <div class="checkin-item">
+                <div class="wn-field">
                   <app-input-number
                     label="Hydration (glasses of water)"
                     inputId="hydrationGlasses"
@@ -164,7 +185,7 @@
                     hint="Target: 8+ glasses daily"
                   ></app-input-number>
                 </div>
-                <div class="checkin-item">
+                <div class="wn-field">
                   <app-input-number
                     label="Resting Heart Rate (BPM)"
                     inputId="restingHR"
@@ -183,12 +204,14 @@
               </div>
             </div>
 
-            <div class="checkin-section">
-              <h4 class="section-label">
-                <i class="pi pi-sparkles" aria-hidden="true"></i> Mental State
-              </h4>
-              <div class="checkin-row">
-                <div class="checkin-item">
+            <!-- Mental State -->
+            <div class="wn-section">
+              <div class="wn-section__eyebrow">
+                <i class="pi pi-sparkles" aria-hidden="true"></i>
+                <span>Mental State</span>
+              </div>
+              <div class="wn-fields">
+                <div class="wn-field">
                   <app-rating-slider
                     label="Mood"
                     description="How are you feeling today?"
@@ -200,7 +223,7 @@
                     (valueChange)="onCheckInFieldChange('mood', $event)"
                   />
                 </div>
-                <div class="checkin-item">
+                <div class="wn-field">
                   <app-rating-slider
                     label="Stress Level"
                     description="Higher = more stressed"
@@ -212,9 +235,7 @@
                     (valueChange)="onCheckInFieldChange('stress', $event)"
                   />
                 </div>
-              </div>
-              <div class="checkin-row">
-                <div class="checkin-item">
+                <div class="wn-field">
                   <app-rating-slider
                     label="Training Motivation"
                     description="How much do you want to train?"
@@ -226,7 +247,7 @@
                     (valueChange)="onCheckInFieldChange('motivation', $event)"
                   />
                 </div>
-                <div class="checkin-item">
+                <div class="wn-field">
                   <app-rating-slider
                     label="Readiness to Train"
                     description="Your gut call on training today"
@@ -241,45 +262,49 @@
               </div>
             </div>
 
-            <div class="checkin-submit">
+            <div class="wn-submit">
               <app-button
                 icon="check"
                 [loading]="isSubmitting()"
                 (clicked)="submitCheckIn()"
                 >Submit Check-in</app-button
               >
-              <small class="submit-note"
+              <small class="wn-submit__note"
                 >Daily check-ins help optimize your training load</small
               >
             </div>
           </div>
-        </app-card-shell>
+        </section>
       </div>
 
       <app-stats-grid [stats]="wellnessStats()"></app-stats-grid>
 
       @if (wellnessConfidence().score < 1.0) {
-        <app-card-shell class="confidence-card">
-          <div class="confidence-warning">
-            <app-confidence-indicator
-              [score]="wellnessConfidence().score"
-              [missingInputs]="wellnessConfidence().missingInputs"
-              [showDetails]="true"
-            ></app-confidence-indicator>
-            <p class="confidence-message">
-              Your wellness score is calculated from
-              {{ completedMetricsCount() }}/{{ totalMetricsCount() }}
-              metrics. Complete all fields for a more accurate score.
-            </p>
-          </div>
-        </app-card-shell>
+        <section class="wn-card wn-confidence">
+          <app-confidence-indicator
+            [score]="wellnessConfidence().score"
+            [missingInputs]="wellnessConfidence().missingInputs"
+            [showDetails]="true"
+          ></app-confidence-indicator>
+          <p class="wn-confidence__msg">
+            Your wellness score is calculated from
+            {{ completedMetricsCount() }}/{{ totalMetricsCount() }}
+            metrics. Complete all fields for a more accurate score.
+          </p>
+        </section>
       }
 
-      <app-wellness-charts-section
-        [sleepChartData]="sleepChartData()"
-        [recoveryChartData]="recoveryChartData()"
-        [chartOptions]="chartOptions"
-      />
+      <section class="wn-card wn-charts" aria-labelledby="charts-heading">
+        <header class="wn-card__head">
+          <h2 id="charts-heading" class="wn-card__title">Recovery trends</h2>
+          <p class="wn-card__sub">Last 7 days of sleep and recovery.</p>
+        </header>
+        <app-wellness-charts-section
+          [sleepChartData]="sleepChartData()"
+          [recoveryChartData]="recoveryChartData()"
+          [chartOptions]="chartOptions"
+        />
+      </section>
 
       @defer (on viewport) {
         <app-body-composition-card></app-body-composition-card>

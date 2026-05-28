@@ -1,52 +1,60 @@
 @use "styles/mixins" as *;
 
+/* ==========================================================================
+   SETTINGS — Wave 3b Redesign
+   Token-driven, accessible, responsive (1024/768/640)
+   ========================================================================== */
+
 .settings-page.bento-grid {
   display: grid;
-  grid-template-columns: minmax(14rem, 1fr) 2.5fr;
-  gap: var(--space-4);
+  grid-template-columns: minmax(15rem, 18rem) minmax(0, 1fr);
+  gap: var(--space-6);
   max-width: var(--layout-page-max-width-wide);
   margin: var(--space-0) auto;
   width: 100%;
-  padding-bottom: var(--space-10);
+  padding: var(--space-5) var(--space-5) var(--space-10);
   align-items: start;
-
   min-height: 0;
   overflow: visible;
 
   .bento-item {
     background: var(--surface-card);
     border: var(--border-1) solid var(--color-border-primary);
-    border-radius: var(--radius-xl);
+    border-radius: var(--radius-2xl);
     padding: var(--space-6);
     box-shadow: var(--shadow-sm);
     min-width: 0;
     transition:
-      transform var(--transition-fast) var(--ease-standard),
-      box-shadow var(--transition-fast) var(--ease-standard);
+      box-shadow var(--transition-base) var(--ease-standard);
 
-    @media (hover: hover) and (pointer: fine) {
+    @include hover-support {
       &:not(.settings-nav-card):hover {
-        transform: translateY(-1px);
         box-shadow: var(--shadow-md);
       }
     }
 
     .bento-title {
       font-family: var(--ds-font-family-display, var(--ds-font-family-base));
-      font-size: var(--ds-font-size-md);
+      font-size: var(--ds-font-size-lg);
       font-weight: var(--ds-font-weight-extrabold, 800);
-      margin-bottom: var(--space-4);
+      margin: var(--space-0) var(--space-0) var(--space-5) var(--space-0);
       color: var(--color-text-primary);
       display: flex;
       align-items: center;
       gap: var(--space-2);
-      letter-spacing: -0.005em;
+      letter-spacing: -0.01em;
+      line-height: var(--ds-line-height-tight);
 
-      i { color: var(--ds-primary-green); font-size: var(--ds-font-size-lg); }
+      i {
+        color: var(--ds-primary-green);
+        font-size: var(--ds-font-size-lg);
+      }
     }
   }
 
-  .full-width { grid-column: 1 / -1; }
+  .full-width {
+    grid-column: 1 / -1;
+  }
 
   .header-bento {
     background: transparent;
@@ -70,9 +78,9 @@
   }
 
   .settings-search__label {
-    font-size: 11px;
+    font-size: var(--ds-font-size-2xs);
     font-weight: var(--ds-font-weight-extrabold, 800);
-    color: var(--color-text-secondary);
+    color: var(--color-text-muted);
     text-transform: uppercase;
     letter-spacing: 0.12em;
   }
@@ -81,14 +89,24 @@
     display: flex;
     align-items: center;
     gap: var(--space-2);
-    padding: 0 var(--space-3);
+    padding: var(--space-0) var(--space-3);
     border: var(--border-1) solid var(--color-border-primary);
     border-radius: var(--radius-lg);
-    background: var(--surface-secondary);
+    background: var(--surface-card);
+    min-height: var(--touch-target-md);
+    transition:
+      border-color var(--transition-fast) var(--ease-standard),
+      box-shadow var(--transition-fast) var(--ease-standard);
+
+    &:focus-within {
+      border-color: var(--ds-primary-green);
+      box-shadow: 0 0 0 3px rgba(var(--ds-primary-green-rgb, 16, 185, 129), 0.15);
+    }
 
     i {
-      color: var(--color-text-secondary);
+      color: var(--color-text-muted);
       flex-shrink: 0;
+      font-size: var(--ds-font-size-md);
     }
 
     input {
@@ -96,19 +114,20 @@
       border: none;
       background: transparent;
       color: var(--color-text-primary);
-      padding: var(--space-3) 0;
+      padding: var(--space-3) var(--space-0);
       font: inherit;
+      min-height: var(--touch-target-md);
 
       &::placeholder {
-        color: var(--color-text-secondary);
+        color: var(--color-text-muted);
       }
 
       &:focus:not(:focus-visible) {
         outline: none;
       }
+
       &:focus-visible {
-        outline: 2px solid var(--ds-primary-green);
-        outline-offset: 2px;
+        outline: none;
       }
     }
   }
@@ -120,32 +139,46 @@
     font-size: var(--ds-font-size-xs);
     font-weight: var(--ds-font-weight-semibold);
     cursor: pointer;
-    padding: var(--space-1) 0;
+    padding: var(--space-2) var(--space-1);
     flex-shrink: 0;
+    border-radius: var(--radius-sm);
+    min-height: var(--touch-target-sm);
+
+    @include hover-support {
+      &:hover {
+        color: var(--color-text-primary);
+        background: var(--surface-secondary);
+      }
+    }
   }
 
   .settings-search__empty {
-    margin: 0;
+    margin: var(--space-0);
     color: var(--color-text-secondary);
     font-size: var(--ds-font-size-sm);
     line-height: var(--ds-line-height-relaxed);
+    padding: var(--space-3);
+    background: var(--surface-secondary);
+    border-radius: var(--radius-md);
   }
 
   .settings-content-column {
     display: flex;
     flex-direction: column;
-    gap: var(--space-4);
+    gap: var(--space-5);
     -webkit-overflow-scrolling: touch;
     scroll-behavior: smooth;
+    min-width: 0;
   }
 }
 
-/* Tablet: Show horizontal nav instead of sidebar */
+/* Tablet: collapse sidebar to top */
 @include respond-to(lg) {
   .settings-page.bento-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
     gap: var(--space-4);
-    
+    padding: var(--space-4);
+
     .settings-nav-card {
       position: static;
       max-height: none;
@@ -158,34 +191,28 @@
   }
 }
 
-/* Mobile: Stacked layout with compact spacing */
-@include respond-to(sm) {
+/* Mobile: stacked layout, compact spacing */
+@include respond-to(md) {
   .settings-page.bento-grid {
     gap: var(--space-4);
     padding: var(--space-3);
 
     .bento-item {
       padding: var(--space-4);
-      border-radius: var(--radius-lg);
+      border-radius: var(--radius-xl);
 
       .bento-title {
         font-size: var(--ds-font-size-md);
-        margin-bottom: var(--space-4);
+        margin-bottom: var(--space-3);
         gap: var(--space-2);
 
-        i { font-size: var(--ds-font-size-md); }
+        i {
+          font-size: var(--ds-font-size-md);
+        }
       }
     }
   }
-}
 
-/* ================================================================
-   MOBILE RESPONSIVENESS FIXES
-   Target devices: iPhone 11-17 (414-26.875rem), Samsung S23-S25 (412-26.875rem)
-   ================================================================ */
-
-/* Tablet and below */
-@include respond-to(lg) {
   app-settings-nav-section {
     width: 100%;
   }
@@ -193,21 +220,10 @@
   :where(app-settings-nav-section) .settings-nav-item {
     width: 100%;
     min-height: var(--touch-target-md);
-  }
-}
-
-/* Mobile */
-@include respond-to(md) {
-  .settings-grid {
-    grid-template-columns: minmax(0, 1fr);
-    gap: var(--space-5);
-  }
-
-  :where(app-settings-nav-section) .settings-nav-item {
     justify-content: flex-start;
   }
 
-  // Prevent iOS zoom on form focus
+  /* Prevent iOS zoom on form focus */
   input,
   textarea,
   select,
@@ -223,20 +239,18 @@
   }
 }
 
-/* Small mobile */
 @include respond-to(sm) {
+  .settings-page.bento-grid {
+    padding: var(--space-3) var(--space-2) var(--space-8);
+
+    .bento-item {
+      padding: var(--space-4);
+      border-radius: var(--radius-lg);
+    }
+  }
+
   :where(app-settings-nav-section) .settings-nav-item {
     padding: var(--space-3);
-  }
-}
-
-@include respond-to(md) {
-  .settings-grid {
-    gap: var(--space-6);
-  }
-
-  .settings-section {
-    margin-bottom: var(--space-6);
   }
 }
 
@@ -246,16 +260,8 @@
    ================================================================ */
 
 /*
- * NOTE: Toggle switch styling is now handled globally in:
- * - _token-mapping.scss (CSS custom properties)
- * - _brand-overrides.scss (structural styles)
- * 
+ * NOTE: Toggle switch styling is handled globally.
  * Local overrides removed to ensure consistent appearance.
- * All toggles now use: 2.calc(var(--size-200) * 6) width, var(--ds-font-size-2xl) height, green=ON, neutral=OFF
  */
 
 /* NOTE: .btn styling handled by global @layer overrides in styles.scss */
-
-/* ================================================================
-   DATA EXPORT DIALOG
-   ================================================================ */

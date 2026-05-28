@@ -11,17 +11,38 @@
         </app-page-header>
 
         <!-- Active Workout -->
-        @if (activeWorkout()) {
+        @if (activeWorkout(); as active) {
           <app-card-shell
             class="active-workout-card"
-            [title]="activeWorkout()?.name || ''"
+            [title]="active.name || ''"
           >
             <app-status-tag
               header-actions
-              [value]="activeWorkout()?.completed ? 'Completed' : 'In Progress'"
-              [severity]="activeWorkout()?.completed ? 'success' : 'info'"
+              [value]="active.completed ? 'Completed' : 'In Progress'"
+              [severity]="active.completed ? 'success' : 'info'"
               size="sm"
             />
+
+            <!-- Progress bar -->
+            <div class="workout-progress">
+              <div class="workout-progress__header">
+                <span class="workout-progress__label">Progress</span>
+                <span class="workout-progress__value">
+                  {{ active.exercises.length }} exercise{{ active.exercises.length === 1 ? '' : 's' }}
+                </span>
+              </div>
+              <div
+                class="workout-progress__bar"
+                role="progressbar"
+                aria-label="Workout completion progress"
+                [attr.aria-valuenow]="active.completed ? 100 : 0"
+                aria-valuemin="0"
+                aria-valuemax="100"
+              >
+                <i [style.width.%]="active.completed ? 100 : 0"></i>
+              </div>
+            </div>
+
             <div class="exercises-list">
               @for (
                 exercise of activeWorkout()?.exercises;

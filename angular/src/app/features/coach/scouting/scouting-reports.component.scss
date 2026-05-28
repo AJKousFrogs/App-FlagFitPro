@@ -1,28 +1,38 @@
 @use "styles/mixins" as *;
 
+/* ==========================================================================
+   SCOUTING REPORTS — Wave 2c Redesign
+   Token-driven, responsive at lg/md/sm, WCAG touch targets.
+   ========================================================================== */
+
 .scouting-reports {
   width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: var(--layout-page-section-gap);
 }
 
-// Section styles
+/* ---- Section headers (used by subcomponents too) ---- */
 .section-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: var(--ds-spacing-lg);
+  margin-bottom: var(--space-4);
   flex-wrap: wrap;
-  gap: var(--ds-spacing-md);
+  gap: var(--space-3);
 
   h3 {
     margin: var(--space-0);
     font-size: var(--ds-font-size-2xl);
     font-weight: var(--ds-font-weight-semibold);
+    color: var(--color-text-primary);
+    letter-spacing: var(--ds-letter-spacing-tight, -0.01em);
   }
 }
 
 .filter-group {
   display: flex;
-  gap: var(--ds-spacing-md);
+  gap: var(--space-3);
   align-items: center;
   flex-wrap: wrap;
 }
@@ -31,68 +41,101 @@
   width: 100%;
 }
 
-// View Report Dialog
+/* ---- View Report dialog (reading view) ---- */
 .view-report {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+
   .report-meta-header {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
-    margin-bottom: var(--ds-spacing-lg);
-    padding-bottom: var(--ds-spacing-lg);
+    margin-bottom: var(--space-4);
+    padding-bottom: var(--space-4);
     border-bottom: var(--border-1) solid var(--ui-border-subtle);
+    gap: var(--space-3);
+    flex-wrap: wrap;
 
     h3 {
-      margin: var(--space-0) var(--space-0) var(--ds-spacing-xs);
+      margin: var(--space-0) var(--space-0) var(--space-1);
+      font-size: var(--ds-font-size-2xl);
+      font-weight: var(--ds-font-weight-semibold);
+      color: var(--color-text-primary);
+      letter-spacing: var(--ds-letter-spacing-tight, -0.01em);
     }
 
     p {
       margin: var(--space-0);
       color: var(--color-text-secondary);
+      font-size: var(--ds-font-size-md);
     }
   }
 
   .report-section {
-    margin-bottom: var(--ds-spacing-lg);
+    margin-bottom: var(--space-5);
 
     h4 {
-      margin: var(--space-0) var(--space-0) var(--ds-spacing-sm);
+      margin: var(--space-0) var(--space-0) var(--space-2);
+      font-size: var(--ds-font-size-xs);
+      font-weight: var(--ds-font-weight-semibold);
       color: var(--color-brand-primary);
+      text-transform: uppercase;
+      letter-spacing: var(--ds-letter-spacing-wide, 0.04em);
     }
 
     p {
       margin: var(--space-0);
-      line-height: var(--ds-line-height-1-6);
+      line-height: var(--ds-line-height-relaxed, 1.6);
+      font-size: var(--ds-font-size-md);
+      color: var(--color-text-primary);
     }
   }
 
   .plan-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: var(--ds-spacing-lg);
+    gap: var(--space-4);
 
     .plan-item {
+      padding: var(--space-3);
+      background: var(--surface-secondary);
+      border-radius: var(--radius-md);
+
       h5 {
-        margin: var(--space-0) var(--space-0) var(--ds-spacing-sm);
+        margin: var(--space-0) var(--space-0) var(--space-2);
         font-size: var(--ds-font-size-md);
-        color: var(--color-text-secondary);
+        font-weight: var(--ds-font-weight-semibold);
+        color: var(--color-text-primary);
       }
 
       ul {
         margin: var(--space-0);
-        padding-left: var(--ds-spacing-lg);
+        padding-left: var(--space-5);
+        color: var(--color-text-secondary);
+        font-size: var(--ds-font-size-md);
+
+        li {
+          margin-bottom: var(--space-1);
+        }
       }
     }
   }
 
   .matchups-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+
     .matchup {
       display: flex;
       align-items: center;
-      gap: var(--ds-spacing-sm);
-      padding: var(--ds-spacing-sm);
-      background: var(--surface-ground);
-      border-radius: var(--ds-radius-sm);
-      margin-bottom: var(--ds-spacing-sm);
+      gap: var(--space-2);
+      padding: var(--space-3);
+      background: var(--surface-secondary);
+      border-radius: var(--radius-md);
+      flex-wrap: wrap;
+      min-height: var(--space-11);
 
       .our-player {
         font-weight: var(--ds-font-weight-semibold);
@@ -101,16 +144,17 @@
 
       .vs {
         color: var(--color-text-secondary);
+        font-weight: var(--ds-font-weight-medium);
       }
 
       .their-player {
         font-weight: var(--ds-font-weight-semibold);
-        color: var(--red-600);
+        color: var(--primitive-error-500);
       }
 
       .matchup-notes {
         margin-left: auto;
-        font-size: var(--ds-font-size-xs);
+        font-size: var(--ds-font-size-sm);
         color: var(--color-text-secondary);
         font-style: italic;
       }
@@ -118,56 +162,55 @@
   }
 }
 
+/* ---- Formation bars (used by sub-component templates) ---- */
 :is(.reports-section .formation-bars) .formation-bar .bar-container .bar-fill {
   height: 100%;
   background: var(--color-brand-primary);
-  border-radius: var(--ds-radius-sm);
+  border-radius: var(--radius-sm);
   transition: width var(--transition-slow) var(--ease-standard);
 }
 
-:is(
-    .reports-section .formation-bars
-  )
-  .formation-bar
-  .bar-container
-  .bar-fill.defensive {
-  background: var(--orange-500);
+:is(.reports-section .formation-bars) .formation-bar .bar-container .bar-fill.defensive {
+  background: var(--primitive-warning-500);
 }
 
 :is(.reports-section .plan-grid) .plan-item ul li {
-  margin-bottom: var(--ds-spacing-xs);
+  margin-bottom: var(--space-1);
 }
 
-// Forms
+/* ---- Forms ---- */
 .report-form,
 .opponent-form {
   display: flex;
   flex-direction: column;
-  gap: var(--ds-spacing-md);
+  gap: var(--space-4);
 
   .form-group {
     display: flex;
     flex-direction: column;
-    gap: var(--ds-spacing-xs);
+    gap: var(--space-1);
 
     label {
       font-weight: var(--ds-font-weight-medium);
       font-size: var(--ds-font-size-md);
+      color: var(--color-text-primary);
     }
   }
 
   .form-section {
-    padding: var(--ds-spacing-md);
-    background: var(--surface-ground);
-    border-radius: var(--ds-radius-md);
+    padding: var(--space-4);
+    background: var(--surface-secondary);
+    border-radius: var(--radius-md);
 
     h4 {
-      margin: var(--space-0) var(--space-0) var(--ds-spacing-md);
+      margin: var(--space-0) var(--space-0) var(--space-3);
       font-size: var(--ds-font-size-md);
+      font-weight: var(--ds-font-weight-semibold);
+      color: var(--color-text-primary);
     }
 
     .form-group {
-      margin-bottom: var(--ds-spacing-md);
+      margin-bottom: var(--space-3);
 
       &:last-child {
         margin-bottom: var(--space-0);
@@ -178,25 +221,35 @@
   .form-row {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: var(--ds-spacing-md);
+    gap: var(--space-3);
   }
 
   .checkbox-group {
     justify-content: center;
+    min-height: var(--space-11);
 
     label {
       display: flex;
       align-items: center;
-      gap: var(--ds-spacing-sm);
+      gap: var(--space-2);
       cursor: pointer;
     }
   }
 }
 
-// Responsive
+/* ==========================================================================
+   RESPONSIVE — lg (≤1024px), md (≤768px), sm (≤640px)
+   ========================================================================== */
+
+@include respond-to(lg) {
+  .view-report .plan-grid {
+    gap: var(--space-3);
+  }
+}
+
 @include respond-to(md) {
   .scouting-reports {
-    padding: var(--ds-spacing-md);
+    gap: var(--layout-page-section-gap-tight);
   }
 
   .reports-section .reports-grid,
@@ -215,5 +268,30 @@
   .report-form .form-row,
   .opponent-form .form-row {
     grid-template-columns: 1fr;
+  }
+
+  .section-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+@include respond-to(sm) {
+  .scouting-reports {
+    padding: var(--space-0);
+  }
+
+  .view-report .report-meta-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .view-report .matchups-list .matchup {
+    flex-direction: column;
+    align-items: flex-start;
+
+    .matchup-notes {
+      margin-left: var(--space-0);
+    }
   }
 }

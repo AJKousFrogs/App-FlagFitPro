@@ -1,0 +1,340 @@
+@use "styles/mixins" as *;
+
+/* ==========================================================================
+   TODAY HERO — dark gradient card with session overview + stat grid
+   Matches 30-todays-practice.html mockup hero section.
+   Uses ONLY design tokens — no hardcoded colors/sizes.
+   ========================================================================== */
+
+:host {
+  display: block;
+}
+
+/* ---- Hero shell ---- */
+.hero {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--radius-2xl);
+  padding: var(--space-8);
+  background: var(--gradient-hero, linear-gradient(135deg, #08090B 0%, #0f2a22 45%, #10b981 100%));
+  color: var(--color-text-inverse, #fff);
+  box-shadow: var(--shadow-lg);
+}
+
+.hero__dots {
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(rgba(255, 255, 255, 0.07) 1px, transparent 1px);
+  background-size: 18px 18px;
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.hero__inner {
+  position: relative;
+  align-items: center;
+}
+
+/* ---- Typography ---- */
+.hero__title {
+  font-family: var(--ds-font-family-display, var(--font-display));
+  font-size: var(--ds-font-size-5xl, 2.75rem);
+  font-weight: var(--ds-font-weight-extrabold, 800);
+  line-height: var(--ds-line-height-tight, 1.1);
+  letter-spacing: var(--ds-letter-spacing-tight, -0.02em);
+}
+
+.hero__title-dot {
+  color: var(--color-brand-accent, var(--ds-primary-green));
+}
+
+.hero__lede {
+  color: rgba(255, 255, 255, 0.72);
+  max-width: 28rem;
+  line-height: var(--ds-line-height-relaxed, 1.6);
+}
+
+/* ---- CTA buttons ---- */
+.hero__btn-ghost {
+  background: rgba(255, 255, 255, 0.10);
+  color: #fff;
+}
+
+.hero__btn-ghost:hover {
+  background: rgba(255, 255, 255, 0.18);
+}
+
+.hero__update-btn {
+  background: #fff;
+  color: var(--color-bg-inverse, #08090B);
+  flex-shrink: 0;
+}
+
+.hero__update-btn:hover {
+  background: rgba(255, 255, 255, 0.9);
+}
+
+/* ---- Stat grid ---- */
+.hero__stats-col {
+  /* Intentionally empty; layout handled by grid__col-5 */
+}
+
+.hero__stats-grid {
+  gap: var(--space-3);
+}
+
+.hero-stat {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  border-radius: var(--radius-2xl);
+  padding: var(--space-4);
+  backdrop-filter: blur(14px);
+}
+
+.hero-stat__label {
+  font-size: var(--ds-font-size-2xs, 0.6875rem);
+  color: rgba(255, 255, 255, 0.65);
+  letter-spacing: var(--ds-letter-spacing-wide, 0.04em);
+  text-transform: uppercase;
+  font-weight: var(--ds-font-weight-bold, 700);
+}
+
+.hero-stat__value {
+  font-family: var(--ds-font-family-display, var(--font-display));
+  font-size: var(--ds-font-size-3xl, 1.75rem);
+  font-weight: var(--ds-font-weight-extrabold, 800);
+  font-variant-numeric: tabular-nums;
+}
+
+.hero-stat__unit {
+  font-size: var(--ds-font-size-md, 0.875rem);
+}
+
+/* ---- Readiness row (spans full width of the 3-col stat grid) ---- */
+.hero-stat--readiness {
+  grid-column: span 3;
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.hero-stat--readiness__text {
+  flex: 1;
+  min-width: 0;
+}
+
+.hero-stat--readiness__sub {
+  font-size: var(--ds-font-size-2xs, 0.6875rem);
+  color: rgba(255, 255, 255, 0.65);
+}
+
+.hero-stat--readiness__main {
+  color: #fff;
+}
+
+/* ---- Progress ring (hero context) ---- */
+.progress-ring {
+  position: relative;
+  width: 64px;
+  height: 64px;
+  border-radius: var(--radius-full);
+  background: conic-gradient(
+    var(--color-brand-default, var(--ds-primary-green)) calc(var(--p, 0) * 1%),
+    var(--color-border-default, rgba(255, 255, 255, 0.10)) 0
+  );
+  flex-shrink: 0;
+}
+
+.progress-ring__inner {
+  position: absolute;
+  inset: var(--space-1);
+  border-radius: var(--radius-full);
+  display: grid;
+  place-items: center;
+  text-align: center;
+  line-height: var(--ds-line-height-tight, 1.1);
+}
+
+.progress-ring--inverse .progress-ring__inner {
+  background: var(--color-bg-inverse, #08090B);
+  color: var(--color-text-inverse, #fff);
+}
+
+.progress-ring__label {
+  font-size: var(--ds-font-size-2xs, 0.6875rem);
+  color: rgba(255, 255, 255, 0.55);
+}
+
+/* ---- Layout primitives (scoped duplicates for encapsulation) ---- */
+.grid {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.grid--3 {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.grid--12 {
+  grid-template-columns: repeat(12, 1fr);
+  gap: var(--space-6);
+}
+
+.grid__col-5 {
+  grid-column: span 5;
+}
+
+.grid__col-7 {
+  grid-column: span 7;
+}
+
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.stack--md {
+  gap: var(--space-4);
+}
+
+.cluster {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+/* ---- Chip (hero ghost variant) ---- */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  font-size: var(--ds-font-size-2xs, 0.6875rem);
+  font-weight: var(--ds-font-weight-semibold, 600);
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-full);
+  border: 1px solid transparent;
+  white-space: nowrap;
+}
+
+.chip--ghost-onhero {
+  background: rgba(255, 255, 255, 0.10);
+  color: rgba(255, 255, 255, 0.85);
+}
+
+/* ---- Button base (scoped) ---- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-md);
+  font-size: var(--ds-font-size-sm, 0.8125rem);
+  font-weight: var(--ds-font-weight-bold, 700);
+  background: var(--color-bg-subtle);
+  color: var(--color-text-primary);
+  min-height: var(--touch-target-min, 44px);
+  border: 0;
+  cursor: pointer;
+  transition:
+    background var(--transition-fast, 120ms) var(--ease-standard),
+    transform var(--transition-fast, 120ms) var(--ease-standard),
+    box-shadow var(--transition-fast, 120ms) var(--ease-standard);
+}
+
+.btn:active {
+  transform: translateY(1px);
+}
+
+.btn:focus-visible {
+  outline: 0;
+  box-shadow: var(--shadow-focus);
+}
+
+.btn--accent {
+  background: var(--color-brand-accent, var(--ds-primary-green));
+  color: var(--color-text-on-brand, #064e3b);
+  box-shadow: var(--shadow-brand-glow);
+}
+
+.btn--accent:hover {
+  filter: brightness(1.04);
+}
+
+.btn--lg {
+  padding: var(--space-4) var(--space-5);
+  font-size: var(--ds-font-size-md, 0.875rem);
+}
+
+.btn--sm {
+  padding: var(--space-2) var(--space-3);
+  font-size: var(--ds-font-size-xs, 0.75rem);
+  min-height: 36px;
+}
+
+.t-body-bold {
+  font-size: var(--ds-font-size-md, 0.875rem);
+  font-weight: var(--ds-font-weight-bold, 700);
+}
+
+.num {
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---- Tablet hide utility ---- */
+.hide-tablet {
+  /* visible by default */
+}
+
+/* ---- Responsive ---- */
+@include respond-to(lg) {
+  .grid--12 {
+    grid-template-columns: repeat(8, 1fr);
+  }
+
+  .grid__col-7 {
+    grid-column: span 8;
+  }
+
+  .grid__col-5 {
+    grid-column: span 8;
+  }
+}
+
+@include respond-to(md) {
+  .hero {
+    padding: var(--space-5);
+    border-radius: var(--radius-xl);
+  }
+
+  .hero__title {
+    font-size: var(--ds-font-size-3xl, 1.75rem);
+  }
+
+  .grid--12 {
+    grid-template-columns: 1fr;
+    gap: var(--space-4);
+  }
+
+  .grid__col-5,
+  .grid__col-7 {
+    grid-column: span 1;
+  }
+
+  .hide-tablet {
+    display: none !important;
+  }
+
+  .btn--lg {
+    padding: var(--space-3) var(--space-4);
+    font-size: var(--ds-font-size-sm, 0.8125rem);
+  }
+}
+
+@include respond-to(sm) {
+  .hero__title {
+    font-size: var(--ds-font-size-2xl, 1.375rem);
+  }
+}

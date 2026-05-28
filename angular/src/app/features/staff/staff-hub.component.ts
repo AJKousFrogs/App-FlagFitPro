@@ -24,25 +24,45 @@ import { CardShellComponent } from "../../shared/components/card-shell/card-shel
 
         <app-card-shell title="Staff Areas" headerIcon="pi-compass">
           <div class="staff-hub-grid">
-            <a routerLink="/staff/nutritionist" class="staff-hub-link">
-              <span class="staff-hub-icon">🥗</span>
+            <a
+              routerLink="/staff/nutritionist"
+              class="staff-hub-link"
+              aria-label="Open Nutritionist workspace"
+            >
+              <span class="staff-hub-icon" aria-hidden="true">🥗</span>
               <span class="staff-hub-title">Nutritionist</span>
               <span class="staff-hub-subtitle">Plans and fueling</span>
+              <span class="staff-hub-meta">Open workspace</span>
             </a>
-            <a routerLink="/staff/physiotherapist" class="staff-hub-link">
-              <span class="staff-hub-icon">🩺</span>
+            <a
+              routerLink="/staff/physiotherapist"
+              class="staff-hub-link"
+              aria-label="Open Physiotherapist workspace"
+            >
+              <span class="staff-hub-icon" aria-hidden="true">🩺</span>
               <span class="staff-hub-title">Physiotherapist</span>
               <span class="staff-hub-subtitle">Recovery & rehab</span>
+              <span class="staff-hub-meta">Open workspace</span>
             </a>
-            <a routerLink="/staff/psychology" class="staff-hub-link">
-              <span class="staff-hub-icon">🧠</span>
+            <a
+              routerLink="/staff/psychology"
+              class="staff-hub-link"
+              aria-label="Open Psychology workspace"
+            >
+              <span class="staff-hub-icon" aria-hidden="true">🧠</span>
               <span class="staff-hub-title">Psychology</span>
               <span class="staff-hub-subtitle">Mental performance</span>
+              <span class="staff-hub-meta">Open workspace</span>
             </a>
-            <a routerLink="/staff/decisions" class="staff-hub-link">
-              <span class="staff-hub-icon">📌</span>
+            <a
+              routerLink="/staff/decisions"
+              class="staff-hub-link"
+              aria-label="Open Decisions workspace"
+            >
+              <span class="staff-hub-icon" aria-hidden="true">📌</span>
               <span class="staff-hub-title">Decisions</span>
               <span class="staff-hub-subtitle">Clinical notes</span>
+              <span class="staff-hub-meta">Open workspace</span>
             </a>
           </div>
         </app-card-shell>
