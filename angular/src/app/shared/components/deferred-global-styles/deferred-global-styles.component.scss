@@ -1,8 +1,0 @@
-/**
- * Non-critical global skins loaded after idle (hub/internal routes).
- * ECC tokens + phase-2 layout live in styles.scss for first-paint consistency (Phase 0).
- */
-@use "scss/components/dialog-overrides" as *;
-@use "scss/pages/premium-essential" as *;
-@use "scss/pages/ui-standardization" as *;
-@use "assets/styles/overrides/component-overrides" as *;
