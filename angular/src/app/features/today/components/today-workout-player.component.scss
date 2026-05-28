@@ -1,0 +1,278 @@
+.player {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-index-modal);
+  display: flex;
+  flex-direction: column;
+  background: #0b0e13;
+  color: #fff;
+  overflow: hidden;
+}
+
+/* ── Header ───────────────────────────────────────────────── */
+.player__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-4) var(--space-5);
+  padding-top: max(var(--space-4), env(safe-area-inset-top));
+  flex-shrink: 0;
+  z-index: 2;
+}
+
+.player__back {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--space-10);
+  height: var(--space-10);
+  border: none;
+  border-radius: var(--radius-full);
+  background: rgba(255 255 255 / 0.08);
+  color: #fff;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background var(--motion-feedback-duration-fast) var(--ease-standard);
+
+  &:hover { background: rgba(255 255 255 / 0.14); }
+  &:active { background: rgba(255 255 255 / 0.20); }
+  &:focus-visible {
+    outline: 2px solid var(--ui-primary);
+    outline-offset: 2px;
+  }
+}
+
+.player__header-center {
+  flex: 1;
+  text-align: center;
+}
+
+.player__block-name {
+  margin: 0;
+  font-size: var(--ds-font-size-xs);
+  font-weight: var(--ds-font-weight-semibold);
+  color: rgba(255 255 255 / 0.5);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.player__progress-label {
+  margin: 0;
+  font-size: var(--ds-font-size-sm);
+  font-weight: var(--ds-font-weight-bold);
+  color: #fff;
+}
+
+.player__set-tracker {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1-5);
+  flex-shrink: 0;
+}
+
+.player__set-dot {
+  width: var(--space-2);
+  height: var(--space-2);
+  border-radius: var(--radius-full);
+  background: rgba(255 255 255 / 0.25);
+  transition: background var(--motion-feedback-duration-fast) var(--ease-standard),
+              transform var(--motion-feedback-duration-fast) var(--ease-standard);
+
+  &--done    { background: var(--ui-primary); }
+  &--active  {
+    background: var(--ui-primary);
+    transform: scale(1.5);
+    box-shadow: 0 0 0 3px rgba(var(--ds-primary-green-rgb), 0.25);
+  }
+}
+
+/* ── Video ────────────────────────────────────────────────── */
+.player__video-wrap {
+  position: relative;
+  flex: 1 1 0;
+  min-height: 0;
+  background: #000;
+  overflow: hidden;
+}
+
+.player__iframe {
+  width: 100%;
+  height: 100%;
+  display: block;
+  border: 0;
+}
+
+.player__no-video {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3);
+  width: 100%;
+  height: 100%;
+  color: rgba(255 255 255 / 0.4);
+  font-size: var(--ds-font-size-sm);
+}
+
+.player__video-label {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: var(--space-10) var(--space-5) var(--space-4);
+  background: linear-gradient(to top, rgba(0 0 0 / 0.85) 0%, transparent 100%);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.player__exercise-name {
+  font-size: var(--ds-font-size-xl);
+  font-weight: var(--ds-font-weight-bold);
+  color: #fff;
+  line-height: 1.2;
+}
+
+.player__prescription {
+  font-size: var(--ds-font-size-sm);
+  color: rgba(255 255 255 / 0.75);
+}
+
+/* ── Bottom sheet ─────────────────────────────────────────── */
+.player__sheet {
+  flex-shrink: 0;
+  background: var(--surface-card);
+  border-radius: var(--radius-2xl) var(--radius-2xl) 0 0;
+  padding: var(--space-5) var(--space-5) max(var(--space-6), env(safe-area-inset-bottom));
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  /* Pull the sheet up to overlap the video gradient */
+  margin-top: calc(var(--radius-2xl) * -1);
+  position: relative;
+  z-index: 1;
+}
+
+/* ── Set info row ─────────────────────────────────────────── */
+.player__set-info {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-8);
+}
+
+.player__set-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.player__set-stat-label {
+  font-size: var(--ds-font-size-xs);
+  font-weight: var(--ds-font-weight-semibold);
+  color: var(--color-text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.player__set-stat-value {
+  font-size: var(--ds-font-size-4xl, 2.5rem);
+  font-weight: var(--ds-font-weight-bold);
+  color: var(--color-text-primary);
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+.player__set-stat-total {
+  font-size: var(--ds-font-size-lg);
+  color: var(--color-text-tertiary);
+}
+
+/* ── Timer section ────────────────────────────────────────── */
+.player__timer-section {
+  /* Let the countdown timer render full-width */
+  ::ng-deep .countdown-timer {
+    background: transparent;
+    border: none;
+    padding: 0;
+  }
+}
+
+/* ── HOW instruction ─────────────────────────────────────── */
+.player__how {
+  margin: 0;
+  font-size: var(--ds-font-size-sm);
+  color: var(--color-text-secondary);
+  line-height: var(--ds-line-height-body);
+  max-height: 3.6em;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+}
+
+/* ── Actions ──────────────────────────────────────────────── */
+.player__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.player__btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-1-5);
+  min-height: var(--button-height-lg, 3rem);
+  padding: 0 var(--space-5);
+  border-radius: var(--radius-full);
+  font-size: var(--ds-font-size-md);
+  font-weight: var(--ds-font-weight-semibold);
+  cursor: pointer;
+  transition:
+    background var(--motion-feedback-duration-fast) var(--ease-standard),
+    transform var(--motion-feedback-duration-fast) var(--ease-standard);
+
+  &:active { transform: scale(0.97); }
+  &:focus-visible {
+    outline: 2px solid var(--ui-primary);
+    outline-offset: 2px;
+  }
+
+  &--primary {
+    flex: 1;
+    background: var(--ui-primary);
+    color: var(--color-text-on-primary);
+    border: none;
+    font-size: var(--ds-font-size-lg);
+
+    &:hover { background: var(--ui-primary-hover); }
+  }
+
+  &--outline {
+    background: transparent;
+    color: var(--color-text-secondary);
+    border: var(--border-1) solid var(--color-border-default);
+
+    &:hover {
+      background: var(--surface-secondary);
+      color: var(--color-text-primary);
+    }
+  }
+
+  &--ghost {
+    background: var(--surface-secondary);
+    color: var(--color-text-secondary);
+    border: none;
+    padding: 0;
+    width: var(--space-12);
+    flex-shrink: 0;
+
+    &:hover {
+      background: var(--surface-tertiary, var(--surface-secondary));
+      color: var(--color-text-primary);
+    }
+  }
+}

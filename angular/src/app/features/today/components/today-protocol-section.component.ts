@@ -7,6 +7,7 @@ import { EmptyStateComponent } from "../../../shared/components/ui-components";
 import { ProtocolBlockComponent } from "../../training/daily-protocol/components/protocol-block.component";
 import {
   DailyProtocol,
+  PrescribedExercise,
   ProtocolBlock,
 } from "../../training/daily-protocol/daily-protocol.models";
 import type { TodayViewModel } from "../resolution/today-state.resolver";
@@ -42,4 +43,5 @@ export class TodayProtocolSectionComponent {
   refresh = output<void>();
   generate = output<void>();
   exerciseComplete = output<void>();
+  startExercise = output<{ exercise: PrescribedExercise; blockName: string; index: number; total: number }>();
 }

@@ -146,7 +146,7 @@ import { ExerciseCardComponent } from "./exercise-card.component";
           <div class="exercise-list" data-testid="protocol-block-exercise-list">
             @if (simpleView()) {
               <!-- Simple list view matching wireframe -->
-              @for (exercise of block().exercises; track exercise.id) {
+              @for (exercise of block().exercises; track exercise.id; let i = $index) {
                 <div
                   class="exercise-list-item"
                   [attr.data-testid]="'exercise-item-' + exercise.id"
@@ -158,34 +158,24 @@ import { ExerciseCardComponent } from "./exercise-card.component";
                       [attr.data-testid]="'exercise-checkbox-' + exercise.id"
                       [checked]="exercise.status === 'complete'"
                       (change)="onExerciseToggle(exercise)"
-                      [attr.aria-label]="
-                        'Mark ' + exercise.exercise.name + ' as complete'
-                      "
+                      [attr.aria-label]="'Mark ' + exercise.exercise.name + ' as complete'"
                     />
-                    <span class="exercise-name">{{
-                      exercise.exercise.name
-                    }}</span>
-                    <span class="exercise-prescription"
-                      >– {{ formatPrescriptionText(exercise) }}</span
-                    >
-                    @if (
-                      exercise.exercise.videoUrl || exercise.exercise.videoId
-                    ) {
-                      <a
-                        [href]="
-                          exercise.exercise.videoUrl ||
-                          'https://www.youtube.com/watch?v=' +
-                            exercise.exercise.videoId
-                        "
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        class="video-link"
-                        (click)="$event.stopPropagation()"
-                      >
-                        [► Video]
-                      </a>
-                    }
+                    <span class="exercise-name">{{ exercise.exercise.name }}</span>
+                    <span class="exercise-prescription">– {{ formatPrescriptionText(exercise) }}</span>
                   </label>
+                  <button
+                    type="button"
+                    class="play-btn"
+                    [class.play-btn--complete]="exercise.status === 'complete'"
+                    (click)="startExercise.emit({ exercise, blockName: block().title, index: i, total: block().exercises.length })"
+                    [attr.aria-label]="'Start ' + exercise.exercise.name"
+                  >
+                    @if (exercise.status === 'complete') {
+                      <i class="pi pi-check" aria-hidden="true"></i>
+                    } @else {
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+                    }
+                  </button>
                 </div>
               }
             } @else {
@@ -250,6 +240,7 @@ export class ProtocolBlockComponent implements OnInit {
   exerciseSkip = output<PrescribedExercise>();
   markAllComplete = output<ProtocolBlock>();
   skipBlock = output<ProtocolBlock>();
+  startExercise = output<{ exercise: PrescribedExercise; blockName: string; index: number; total: number }>();
 
   // Local state
   isExpanded = signal(false);

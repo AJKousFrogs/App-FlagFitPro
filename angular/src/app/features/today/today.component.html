@@ -177,6 +177,7 @@
               (refresh)="refreshProtocol()"
               (generate)="generateProtocol()"
               (exerciseComplete)="refreshProtocol()"
+              (startExercise)="openWorkoutPlayer($event)"
             />
           } @placeholder {
             <app-skeleton-loader
@@ -235,6 +236,25 @@
         (skipExercise)="handleCta('start_training')"
       />
     </div>
+  }
+
+  <!-- ========================================================================
+       WORKOUT PLAYER (full-screen overlay)
+       ======================================================================== -->
+  @if (playerExercise()) {
+    <app-today-workout-player
+      [exercise]="playerExercise()!"
+      [blockName]="playerBlockName()"
+      [exerciseIndex]="playerIndex()"
+      [totalExercises]="playerTotal()"
+      [hasPrev]="playerIndex() > 0"
+      [hasNext]="playerIndex() < playerTotal() - 1"
+      (close)="closeWorkoutPlayer()"
+      (complete)="onPlayerComplete($event)"
+      (skip)="onPlayerSkip($event)"
+      (prev)="navigatePlayer(-1)"
+      (next)="navigatePlayer(1)"
+    />
   }
 
   <!-- ========================================================================

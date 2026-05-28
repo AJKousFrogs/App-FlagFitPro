@@ -195,6 +195,9 @@
 
 /* Simple List View (Wireframe Style) */
 .exercise-list-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
   padding: var(--space-2) 0;
   border-bottom: var(--border-1) solid var(--primitive-neutral-100);
 }
@@ -211,7 +214,8 @@
   font-size: var(--ds-font-size-md);
   color: var(--color-text-primary);
   user-select: none;
-  width: 100%;
+  flex: 1;
+  min-width: 0;
 }
 
 .exercise-checkbox input[type="checkbox"] {
@@ -243,23 +247,34 @@
   white-space: nowrap;
 }
 
-.video-link {
-  margin-left: auto;
-  color: var(--color-brand-primary);
-  text-decoration: none;
-  font-size: var(--ds-font-size-md);
-  font-weight: var(--ds-font-weight-medium);
-  white-space: nowrap;
-  transition: color var(--transition-fast);
+.play-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--space-9);
+  height: var(--space-9);
+  min-width: var(--space-9);
+  border: none;
+  border-radius: var(--radius-full);
+  background: var(--ui-primary);
+  color: var(--color-text-on-primary);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition:
+    background var(--motion-feedback-duration-fast) var(--ease-standard),
+    transform var(--motion-feedback-duration-fast) var(--ease-standard);
 
-  &:hover {
-    color: var(--color-brand-primary-hover);
-    text-decoration: underline;
+  &:hover  { background: var(--ui-primary-hover); }
+  &:active { transform: scale(0.92); }
+  &:focus-visible {
+    outline: 2px solid var(--color-focus-ring);
+    outline-offset: 2px;
   }
-}
 
-.video-link:hover {
-  text-decoration: underline;
+  &--complete {
+    background: var(--ui-surface-subtle);
+    color: var(--ui-success);
+  }
 }
 
 /* Block Actions */

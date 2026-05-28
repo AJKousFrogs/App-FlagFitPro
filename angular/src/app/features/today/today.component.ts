@@ -66,6 +66,8 @@ import { TodayHeroComponent } from "./components/today-hero.component";
 import { TodayStickyBarComponent } from "./components/today-sticky-bar.component";
 import { TodayBlockFlowComponent, BlockFlowItem } from "./components/today-block-flow.component";
 import { TodaySidePanelComponent } from "./components/today-side-panel.component";
+import { TodayWorkoutPlayerComponent } from "./components/today-workout-player.component";
+import { PrescribedExercise } from "../training/daily-protocol/daily-protocol.models";
 import { TodayCoachMessagesService } from "./services/today-coach-messages.service";
 import { TodayProtocolStateService } from "./services/today-protocol-state.service";
 
@@ -133,6 +135,7 @@ interface QuickFormData {
     TodayStickyBarComponent,
     TodayBlockFlowComponent,
     TodaySidePanelComponent,
+    TodayWorkoutPlayerComponent,
   ],
   templateUrl: "./today.component.html",
   styleUrl: "./today.component.scss",
@@ -189,6 +192,13 @@ export class TodayComponent {
     stressLevel: null,
     sorenessAreas: [],
   });
+
+  // Workout Player State
+  readonly playerExercise  = signal<PrescribedExercise | null>(null);
+  readonly playerBlockName = signal<string>("");
+  readonly playerIndex     = signal<number>(0);
+  readonly playerTotal     = signal<number>(1);
+  private _playerExerciseList: PrescribedExercise[] = [];
 
   // Celebration State
   readonly showCelebration = signal(false);
@@ -649,6 +659,48 @@ export class TodayComponent {
         });
       });
     });
+  }
+
+  // ============================================================================
+  // WORKOUT PLAYER
+  // ============================================================================
+  openWorkoutPlayer(event: { exercise: PrescribedExercise; blockName: string; index: number; total: number }): void {
+    // Collect all exercises from all displayed blocks for prev/next navigation
+    this._playerExerciseList = this.protocolDisplayBlocks().flatMap(b => b.exercises);
+    const globalIndex = this._playerExerciseList.findIndex(e => e.id === event.exercise.id);
+
+    this.playerExercise.set(event.exercise);
+    this.playerBlockName.set(event.blockName);
+    this.playerIndex.set(globalIndex >= 0 ? globalIndex : event.index);
+    this.playerTotal.set(this._playerExerciseList.length || event.total);
+  }
+
+  closeWorkoutPlayer(): void {
+    this.playerExercise.set(null);
+  }
+
+  onPlayerComplete(exercise: PrescribedExercise): void {
+    this.logger.info("[TodayComponent] Player exercise complete", exercise.id);
+    this.refreshProtocol();
+    this.navigatePlayer(1);
+  }
+
+  onPlayerSkip(exercise: PrescribedExercise): void {
+    this.logger.info("[TodayComponent] Player exercise skipped", exercise.id);
+    this.navigatePlayer(1);
+  }
+
+  navigatePlayer(direction: 1 | -1): void {
+    const next = this.playerIndex() + direction;
+    if (next < 0 || next >= this._playerExerciseList.length) {
+      this.closeWorkoutPlayer();
+      return;
+    }
+    const nextEx = this._playerExerciseList[next];
+    const block = this.protocolDisplayBlocks().find(b => b.exercises.some(e => e.id === nextEx.id));
+    this.playerExercise.set(nextEx);
+    this.playerBlockName.set(block?.title ?? "");
+    this.playerIndex.set(next);
   }
 
   private resolveAndUpdateViewModel(protocolJson: ProtocolJson): void {

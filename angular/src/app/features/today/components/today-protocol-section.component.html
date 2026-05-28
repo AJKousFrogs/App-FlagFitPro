@@ -49,9 +49,10 @@
                 <app-protocol-block
                   [attr.data-block-type]="block.type"
                   [block]="block"
-                  [simpleView]="false"
+                  [simpleView]="true"
                   [defaultExpanded]="true"
                   (exerciseComplete)="exerciseComplete.emit()"
+                  (startExercise)="startExercise.emit($event)"
                 />
               }
             </div>

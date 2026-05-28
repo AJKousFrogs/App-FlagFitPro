@@ -1,0 +1,120 @@
+<div class="player" role="dialog" aria-modal="true" [attr.aria-label]="exercise().exercise.name">
+
+  <!-- ── Header ─────────────────────────────────────────────── -->
+  <header class="player__header">
+    <button class="player__back" type="button" (click)="close.emit()" aria-label="Close player">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
+    </button>
+
+    <div class="player__header-center">
+      <p class="player__block-name">{{ blockName() }}</p>
+      <p class="player__progress-label">{{ exerciseIndex() + 1 }} of {{ totalExercises() }}</p>
+    </div>
+
+    <div class="player__set-tracker" aria-label="Set progress">
+      @for (dot of setDots(); track $index) {
+        <span
+          class="player__set-dot"
+          [class.player__set-dot--done]="$index + 1 < currentSet()"
+          [class.player__set-dot--active]="$index + 1 === currentSet()"
+        ></span>
+      }
+    </div>
+  </header>
+
+  <!-- ── Video ──────────────────────────────────────────────── -->
+  <div class="player__video-wrap">
+    @if (videoEmbedUrl()) {
+      <iframe
+        [src]="videoEmbedUrl()"
+        class="player__iframe"
+        frameborder="0"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"
+        allowfullscreen
+        [title]="exercise().exercise.name + ' demo'"
+      ></iframe>
+    } @else {
+      <div class="player__no-video">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="currentColor" opacity="0.4" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+        <p>No video for this exercise yet</p>
+      </div>
+    }
+
+    <!-- Exercise name overlay on video -->
+    <div class="player__video-label">
+      <span class="player__exercise-name">{{ exercise().exercise.name }}</span>
+      <span class="player__prescription">{{ prescriptionText() }}</span>
+    </div>
+  </div>
+
+  <!-- ── Bottom sheet ───────────────────────────────────────── -->
+  <div class="player__sheet">
+
+    <!-- Timer section -->
+    @if (hasDuration()) {
+      <div class="player__timer-section">
+        <app-countdown-timer
+          [initialSeconds]="exercise().prescribedDurationSeconds!"
+          [autoStart]="false"
+          [showPresets]="false"
+          [showProgressBar]="true"
+          label="remaining"
+          (timerComplete)="onTimerComplete()"
+        />
+      </div>
+    } @else {
+      <div class="player__set-info">
+        <div class="player__set-stat">
+          <span class="player__set-stat-label">Sets</span>
+          <span class="player__set-stat-value">{{ currentSet() }}<span class="player__set-stat-total">/{{ totalSets() }}</span></span>
+        </div>
+        @if (exercise().prescribedReps) {
+          <div class="player__set-stat">
+            <span class="player__set-stat-label">Reps</span>
+            <span class="player__set-stat-value">{{ exercise().prescribedReps }}</span>
+          </div>
+        }
+        @if (exercise().prescribedHoldSeconds) {
+          <div class="player__set-stat">
+            <span class="player__set-stat-label">Hold</span>
+            <span class="player__set-stat-value">{{ exercise().prescribedHoldSeconds }}<span class="player__set-stat-total">s</span></span>
+          </div>
+        }
+      </div>
+    }
+
+    <!-- HOW instruction -->
+    @if (exercise().exercise.howText) {
+      <p class="player__how">{{ exercise().exercise.howText }}</p>
+    }
+
+    <!-- Actions -->
+    <div class="player__actions">
+      @if (hasPrev()) {
+        <button class="player__btn player__btn--ghost" type="button" (click)="prev.emit()" aria-label="Previous exercise">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M15.41 16.59L10.83 12l4.58-4.59L14 6l-6 6 6 6 1.41-1.41z"/></svg>
+        </button>
+      }
+
+      <button class="player__btn player__btn--outline" type="button" (click)="onSkip()">
+        Skip
+      </button>
+
+      @if (hasDuration()) {
+        <button class="player__btn player__btn--primary" type="button" (click)="advanceSet()">
+          @if (currentSet() >= totalSets()) { Done } @else { Next Set }
+        </button>
+      } @else {
+        <button class="player__btn player__btn--primary" type="button" (click)="advanceSet()">
+          @if (currentSet() >= totalSets()) { Complete } @else { Set {{ currentSet() }} Done →  }
+        </button>
+      }
+
+      @if (hasNext()) {
+        <button class="player__btn player__btn--ghost" type="button" (click)="next.emit()" aria-label="Next exercise">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/></svg>
+        </button>
+      }
+    </div>
+  </div>
+</div>
