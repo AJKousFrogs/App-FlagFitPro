@@ -3,6 +3,7 @@ import { LoggerService } from "../../../core/services/logger.service";
 import { RealtimeService } from "../../../core/services/realtime.service";
 import { SupabaseService } from "../../../core/services/supabase.service";
 import { TeamMembershipService } from "../../../core/services/team-membership.service";
+import { isBenignSupabaseQueryError } from "../../../shared/utils/error.utils";
 
 export interface TournamentNutritionHydrationLog {
   time: string;
@@ -72,16 +73,19 @@ export class TournamentNutritionStateService {
           .order("log_time", { ascending: true }),
       ]);
 
-      const planErrorMessage = String(planResult.error?.message || "");
-      const hydrationErrorMessage = String(hydrationResult.error?.message || "");
-
-      if (planResult.error && !planErrorMessage.includes("relation")) {
+      // Only swallow expected "table not provisioned yet" / no-rows errors.
+      // Genuine failures (RLS denial, network, schema mismatch) must surface so
+      // a failed plan/hydration load isn't silently shown as an empty day.
+      if (planResult.error && !isBenignSupabaseQueryError(planResult.error)) {
         this.logger.warn("tournament_nutrition_persist_load_failed", {
           error: planResult.error,
         });
       }
 
-      if (hydrationResult.error && !hydrationErrorMessage.includes("relation")) {
+      if (
+        hydrationResult.error &&
+        !isBenignSupabaseQueryError(hydrationResult.error)
+      ) {
         this.logger.warn(
           "tournament_nutrition_hydration_persist_load_failed",
           {

@@ -84,6 +84,29 @@ Rules:
 - Dashboard, Today, and coach continuity surfaces should consume one continuity model.
 - Travel, recovery, and readiness warnings must not be recomputed differently by route.
 
+### Readiness, Wellness & Load
+
+- **Canonical authority: the server.** `netlify/functions/calc-readiness.js` is the
+  only place readiness is scored, cut-points applied, suggestion chosen, and the
+  calibration note written. ACWR (acute:chronic load) used for prescription is
+  also server-canonical (game-proximity aware).
+- **Preferred read model:** `ReadinessService` (`core/services/readiness.service.ts`)
+  — a thin read-through to `/api/calc-readiness` + `/api/readiness-history`.
+  Clients read `current().score / level / suggestion / acwr / calibrationNote`
+  directly off the server response and never recompute them.
+- **Not competing scores (verified 2026-05-29):**
+  - `wellness.service.getWellnessScore()` is a labelled *wellness average* (a
+    sub-signal), and already defers to `ReadinessService` for the real score.
+  - `next-gen-metrics.service` *fetches* a server preview (no client scoring).
+- **Drift watch:** `load-monitoring.service` computes load/ACWR **client-side**
+  (`calculateInternalLoad` / `calculateExternalLoad` / `calculateWellnessFactor`).
+  This must stay an in-session aid only and must not become a second readiness/ACWR
+  authority. Consolidate or clearly fence it when its screens are rebuilt.
+
+Rules:
+- One readiness/ACWR authority: the server. Clients are read-through.
+- No route may recompute a readiness score or ACWR for display; read the server values.
+
 ### Travel Recovery
 
 - Canonical authority: `athlete_travel_log`
