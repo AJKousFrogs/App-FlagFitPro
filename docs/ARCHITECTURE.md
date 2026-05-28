@@ -14,9 +14,7 @@ This document is the system overview, not the only architecture authority.
 
 For current codebase grounding, also use:
 - `docs/SINGLE_SOURCE_OF_TRUTH.md`
-- `docs/CODEBASE_MAP.md`
 - `docs/REPO_DISCOVERY_GUIDE.md`
-- `docs/DRIFT_REGISTER.md`
 - `docs/DATA_CONTINUITY_MODEL.md`
 - `docs/ROLE_AUTHORIZATION_MODEL.md`
 
@@ -527,9 +525,6 @@ export abstract class BaseViewModel {
 
 ## 📚 Related Documentation
 
-- [FEATURE_DOCUMENTATION.md](./FEATURE_DOCUMENTATION.md) - Complete feature & business logic guide
-- [../angular/DEBUG_SERVICE_ARCHITECTURE.md](../angular/DEBUG_SERVICE_ARCHITECTURE.md) - DevTools/Debug service architecture
-- [ANGULAR_PRIMENG_GUIDE.md](./ANGULAR_PRIMENG_GUIDE.md) - Angular 21 + PrimeNG 21 patterns
 - [API.md](./API.md) - API reference
 - [DATABASE_SETUP.md](./DATABASE_SETUP.md) - Database schema
 - [SECURITY.md](./SECURITY.md) - Security architecture

@@ -19,14 +19,10 @@ This file is the canonical entry point for durable documentation in the repo.
 | Overall architecture (v4 baseline) | [ARCHITECTURE.md](./ARCHITECTURE.md) |
 | Canonical ownership rules | [SINGLE_SOURCE_OF_TRUTH.md](./SINGLE_SOURCE_OF_TRUTH.md) |
 | Repo navigation | [REPO_DISCOVERY_GUIDE.md](./REPO_DISCOVERY_GUIDE.md) |
-| Feature and product behavior | [FEATURE_DOCUMENTATION.md](./FEATURE_DOCUMENTATION.md) |
 | Local setup | [LOCAL_DEVELOPMENT_SETUP.md](./LOCAL_DEVELOPMENT_SETUP.md) |
-| Angular and PrimeNG implementation | [ANGULAR_PRIMENG_GUIDE.md](./ANGULAR_PRIMENG_GUIDE.md) |
-| Design system rules | [DESIGN_SYSTEM_RULES.md](./DESIGN_SYSTEM_RULES.md) |
 
 ## Product And Domain Docs
 
-- [FEATURE_DOCUMENTATION.md](./FEATURE_DOCUMENTATION.md)
 - [FLAG_FOOTBALL_TRAINING_SCIENCE.md](./FLAG_FOOTBALL_TRAINING_SCIENCE.md)
 - [CALCULATION_SPEC.md](./CALCULATION_SPEC.md)
 - [CALCULATION_MAP.md](./CALCULATION_MAP.md)
@@ -41,9 +37,7 @@ This file is the canonical entry point for durable documentation in the repo.
 - [PRESCRIPTION_SPEC.md](./PRESCRIPTION_SPEC.md) — `prescribeFor` algorithm contract
 - [ARCHITECTURE.md](./ARCHITECTURE.md)
 - [SINGLE_SOURCE_OF_TRUTH.md](./SINGLE_SOURCE_OF_TRUTH.md)
-- [CODEBASE_MAP.md](./CODEBASE_MAP.md)
 - [REPO_DISCOVERY_GUIDE.md](./REPO_DISCOVERY_GUIDE.md)
-- [ROUTE_MAP.md](./ROUTE_MAP.md)
 - [TECH_STACK.md](./TECH_STACK.md)
 - [API.md](./API.md)
 - [BACKEND_SETUP.md](./BACKEND_SETUP.md)
@@ -53,17 +47,12 @@ This file is the canonical entry point for durable documentation in the repo.
 
 ## Design System And UI Docs
 
-- [DESIGN_SYSTEM_RULES.md](./DESIGN_SYSTEM_RULES.md)
-- [ANGULAR_PRIMENG_GUIDE.md](./ANGULAR_PRIMENG_GUIDE.md)
-- [CARD_COMPONENT_GUIDELINES.md](./CARD_COMPONENT_GUIDELINES.md)
-- [UI_STATE_CONTRACT.md](./UI_STATE_CONTRACT.md)
-- [UX_READY_CRITERIA.md](./UX_READY_CRITERIA.md)
-- [../angular/src/scss/README.design-system.md](../angular/src/scss/README.design-system.md)
-- [../angular/src/scss/SCSS_PRIMITIVES.md](../angular/src/scss/SCSS_PRIMITIVES.md)
-- [../angular/docs/COMPONENT_OVERRIDES_TRACKING.md](../angular/docs/COMPONENT_OVERRIDES_TRACKING.md)
-- [../angular/docs/EMPTY_STATE_COMPONENTS.md](../angular/docs/EMPTY_STATE_COMPONENTS.md)
-- [../angular/docs/NUMBER_COUNTER_GUIDE.md](../angular/docs/NUMBER_COUNTER_GUIDE.md)
-- [../angular/docs/ROUTE_ANIMATIONS_GUIDE.md](../angular/docs/ROUTE_ANIMATIONS_GUIDE.md)
+> **Removed during the static-first front-end rebuild.** The old design-system /
+> UI docs (design-system rules, PrimeNG guide, card guidelines, UI-state
+> contract, UX-ready criteria, SCSS primitives, component-override trackers)
+> described the demolished UI layer and conflicted with the new single source of
+> truth. The new design system is being authored statically in
+> `redesign/ground-zero/` and will be documented here once locked (Phase C/E).
 
 ## Debugging And Testing Docs
 
@@ -79,7 +68,6 @@ This file is the canonical entry point for durable documentation in the repo.
 
 - [SECURITY.md](./SECURITY.md)
 - [THREAT_MODEL.md](./THREAT_MODEL.md)
-- [QA_CONTINUITY_CHECKLIST.md](./QA_CONTINUITY_CHECKLIST.md)
 - [RUNBOOKS/README.md](./RUNBOOKS/README.md)
 - [RUNBOOKS/INCIDENT_RESPONSE.md](./RUNBOOKS/INCIDENT_RESPONSE.md)
 - [RUNBOOKS/DEPLOYMENT_ROLLBACK.md](./RUNBOOKS/DEPLOYMENT_ROLLBACK.md)
@@ -117,3 +105,12 @@ These report-style docs were intentionally removed because they were temporary s
 - responsive audit/fixes summaries
 - upgrade plans and changeset trackers
 - dated UI audit markdown snapshots under `angular/docs/`
+
+**Static-first rebuild purge (Phase A.2):** removed docs describing the demolished
+UI layer / old design system that conflicted with the new single source of truth —
+`AUDIT.md`, `DISCOVERY.md`, `REVAMP.md`; `DESIGN_SYSTEM_RULES.md`,
+`ANGULAR_PRIMENG_GUIDE.md`, `CARD_COMPONENT_GUIDELINES.md`, `UI_STATE_CONTRACT.md`,
+`UX_READY_CRITERIA.md`, `DRIFT_REGISTER.md`, `QA_CONTINUITY_CHECKLIST.md`,
+`CODEBASE_MAP.md`, `ROUTE_MAP.md`, `FEATURE_DOCUMENTATION.md`; and the
+`angular/docs/` UI guides. CODEBASE_MAP / ROUTE_MAP / FEATURE_DOCUMENTATION are
+regenerated after the rebuild. All recoverable from tag `pre-rebuild-main`.

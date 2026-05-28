@@ -3,6 +3,12 @@
 **Application release:** 4.0.0  
 **Purpose:** Provide a fast starting point for navigating the FlagFit Pro repo without already knowing its layout.
 
+> **Note (static-first rebuild):** `CODEBASE_MAP.md`, `ROUTE_MAP.md`, and
+> `FEATURE_DOCUMENTATION.md` were removed during the front-end demolition and are
+> **regenerated after the rebuild** (they described the old, now-replaced UI
+> structure). References to them below are placeholders until then. The current
+> route/nav spec lives at `redesign/_reference/`.
+
 ## Start Here
 
 If you are new to the repo:

@@ -8,8 +8,7 @@ This directory contains the primary Angular application for athlete, coach, staf
 
 - Documentation index: [../docs/DOCS_INDEX.md](../docs/DOCS_INDEX.md)
 - Architecture: [../docs/ARCHITECTURE.md](../docs/ARCHITECTURE.md)
-- Angular and PrimeNG patterns: [../docs/ANGULAR_PRIMENG_GUIDE.md](../docs/ANGULAR_PRIMENG_GUIDE.md)
-- Design rules: [../docs/DESIGN_SYSTEM_RULES.md](../docs/DESIGN_SYSTEM_RULES.md)
+- Design system & UI patterns: being rebuilt static-first in `redesign/ground-zero/` (documented here once locked — Phase C/E).
 - Debugging index: [ANGULAR_DEBUGGING_INDEX.md](./ANGULAR_DEBUGGING_INDEX.md)
 
 ## Prerequisites

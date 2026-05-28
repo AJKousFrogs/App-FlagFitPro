@@ -139,19 +139,20 @@ Rules:
 
 ### Design Tokens
 
-- Canonical authority: token system and design rules
-- Key docs:
-  - `docs/DESIGN_SYSTEM_RULES.md`
-  - `docs/ANGULAR_PRIMENG_GUIDE.md`
-- Key code:
-  - `angular/src/scss/tokens/design-system-tokens.scss`
-  - `angular/src/app/core/utils/design-tokens.util.ts`
-  - `angular/src/styles.scss`
+> **Being rebuilt (static-first).** The previous SCSS token system and UI design
+> docs were removed in the front-end demolition. The new single source is being
+> authored statically as one `redesign/ground-zero/_shared/tokens.css` + a
+> component gallery, then promoted to `angular/src/scss/tokens/` during the port
+> (Phase C/E). Until then, `angular/src/styles.scss` holds only the cascade
+> layer order + a dark canvas.
 
-Rules:
-- Semantic UI decisions should flow from tokenized design rules, not one-off component overrides.
-- SCSS tokens are the canonical source. TS consumers must read them through the bridge layer instead of redefining values.
-- PrimeNG theme and shared wrappers must consume the same token system rather than inventing parallel palettes or spacing scales.
+- Canonical authority (target): one `tokens.css` design system, no competing families
+- Key code (current): `angular/src/styles.scss`, `angular/src/app/theme/flagfit-preset.ts`
+
+Rules (carry forward into the rebuild):
+- Semantic UI decisions flow from tokenized design rules, not one-off component overrides.
+- One canonical token per concept — no parallel or duplicate token families.
+- PrimeNG theme and wrappers consume the same token system rather than inventing parallel palettes or spacing scales; theme via tokens + the `pt` API, no `::ng-deep`.
 
 ## Drift Register
 
@@ -183,6 +184,4 @@ Before adding or changing a feature:
 
 - `docs/DATA_CONTINUITY_MODEL.md`
 - `docs/ROLE_AUTHORIZATION_MODEL.md`
-- `docs/ROUTE_MAP.md`
-- `docs/CODEBASE_MAP.md`
 - `docs/REPO_DISCOVERY_GUIDE.md`

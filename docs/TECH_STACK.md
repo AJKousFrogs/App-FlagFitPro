@@ -34,12 +34,12 @@ This file is the canonical high-level stack summary. For detailed setup and work
 
 ## Design System
 
-Canonical sources:
-
-- Tokens: `angular/src/scss/tokens/design-system-tokens.scss`
-- TS bridge: `angular/src/app/core/utils/design-tokens.util.ts`
-- Rules: [DESIGN_SYSTEM_RULES.md](./DESIGN_SYSTEM_RULES.md)
-- Angular implementation patterns: [ANGULAR_PRIMENG_GUIDE.md](./ANGULAR_PRIMENG_GUIDE.md)
+> **Being rebuilt (static-first).** The previous SCSS token system and UI docs
+> were removed in the front-end demolition. The new single-source design system
+> is authored statically in `redesign/ground-zero/` (one `tokens.css` + a
+> component gallery) and promoted into `angular/src/scss/tokens/` during the
+> port (Phase C/E). Substrate: PrimeNG (Aura), themed via tokens + the `pt` API,
+> no `::ng-deep`.
 
 ## Verification Commands
 
@@ -56,4 +56,3 @@ npm run lint:tokens
 - [ARCHITECTURE.md](./ARCHITECTURE.md)
 - [SINGLE_SOURCE_OF_TRUTH.md](./SINGLE_SOURCE_OF_TRUTH.md)
 - [LOCAL_DEVELOPMENT_SETUP.md](./LOCAL_DEVELOPMENT_SETUP.md)
-- [DESIGN_SYSTEM_RULES.md](./DESIGN_SYSTEM_RULES.md)
