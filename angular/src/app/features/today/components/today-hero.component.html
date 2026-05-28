@@ -15,11 +15,9 @@
         }
       </div>
 
-      <h1 class="hero__title">{{ sessionTitle() }}<span class="hero__title-dot">.</span></h1>
+      <h1 class="hero__title">{{ sessionTitle() || "Today's Practice" }}<span class="hero__title-dot">.</span></h1>
 
-      @if (description()) {
-        <p class="hero__lede">{{ description() }}</p>
-      }
+      <p class="hero__lede">{{ description() || "Your training session, prescribed and ready." }}</p>
 
       <div class="cluster">
         <button
@@ -46,20 +44,24 @@
         <!-- Blocks -->
         <div class="hero-stat">
           <div class="hero-stat__label">Blocks</div>
-          <div class="hero-stat__value num">{{ blockCount() }}</div>
+          <div class="hero-stat__value num">{{ blockCount() || '—' }}</div>
         </div>
 
         <!-- Exercises -->
         <div class="hero-stat">
           <div class="hero-stat__label">Exercises</div>
-          <div class="hero-stat__value num">{{ exerciseCount() }}</div>
+          <div class="hero-stat__value num">{{ exerciseCount() || '—' }}</div>
         </div>
 
         <!-- Duration -->
         <div class="hero-stat">
           <div class="hero-stat__label">Duration</div>
           <div class="hero-stat__value num">
-            {{ durationDisplay() }}<span class="hero-stat__unit">m</span>
+            @if (durationMinutes() > 0) {
+              {{ durationMinutes() }}<span class="hero-stat__unit">m</span>
+            } @else {
+              —
+            }
           </div>
         </div>
 

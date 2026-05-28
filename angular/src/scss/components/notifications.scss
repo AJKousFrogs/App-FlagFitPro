@@ -301,186 +301,130 @@
   }
 
   .app-toast.p-toast {
-    width: min(28rem, calc(100vw - var(--space-4)));
+    width: min(24rem, calc(100vw - var(--space-6)));
   }
 
   .app-toast .p-toast-message {
-    min-height: 5.5rem;
-    border: var(--border-1) solid var(--premium-border-dark);
-    border-radius: var(--radius-2xl);
-    background: var(--premium-dark-gradient-success);
-    box-shadow: 
-      var(--premium-shadow-dark-xl),
-      var(--premium-shadow-inner-white);
+    border: var(--border-1) solid var(--color-border-default);
+    border-radius: var(--radius-xl);
+    background: var(--surface-card);
+    box-shadow: var(--shadow-lg);
     overflow: hidden;
     position: relative;
-    backdrop-filter: blur(var(--premium-glass-blur-md));
-    -webkit-backdrop-filter: blur(var(--premium-glass-blur-md));
-    animation: feedback-slide-in-right var(--motion-feedback-duration)
-      var(--ease-standard);
-
-    &::before {
-      content: "";
-      position: absolute;
-      top: 0;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 120px;
-      height: 40px;
-      background: radial-gradient(
-        circle,
-        var(--premium-glow-success) 0%,
-        transparent 70%
-      );
-      filter: blur(15px);
-      z-index: 0;
-      pointer-events: none;
-    }
+    border-left-width: var(--space-1);
   }
 
   .app-toast .p-toast-message-content {
     display: flex;
     align-items: center;
-    gap: var(--space-4);
-    padding: var(--space-3);
-    position: relative;
-    z-index: 1;
+    gap: var(--space-3);
+    padding: var(--space-3) var(--space-4);
   }
 
   .app-toast .p-toast-message-success {
-    background: var(--premium-dark-gradient-success);
-    border-color: rgba(var(--ds-primary-green-rgb), 0.3);
-    
-    &::before {
-      background: radial-gradient(circle, var(--premium-glow-success) 0%, transparent 70%);
-    }
+    border-left-color: var(--ds-primary-green);
   }
 
   .app-toast .p-toast-message-info {
-    background: var(--premium-dark-gradient-info);
-    border-color: rgba(14, 165, 233, 0.3);
-    
-    &::before {
-      background: radial-gradient(circle, var(--premium-glow-info) 0%, transparent 70%);
-    }
+    border-left-color: #0ea5e9;
   }
 
   .app-toast .p-toast-message-warn {
-    background: var(--premium-dark-gradient-warn);
-    border-color: rgba(245, 158, 11, 0.3);
-    
-    &::before {
-      background: radial-gradient(circle, var(--premium-glow-warn) 0%, transparent 70%);
-    }
+    border-left-color: #f59e0b;
   }
 
   .app-toast .p-toast-message-error {
-    background: var(--premium-dark-gradient-error);
-    border-color: rgba(239, 68, 68, 0.3);
-    
-    &::before {
-      background: radial-gradient(circle, var(--premium-glow-error) 0%, transparent 70%);
-    }
+    border-left-color: #ef4444;
   }
 
   .app-toast .p-toast-close-button {
-    width: 3.5rem;
-    height: 3.5rem;
-    min-width: 3.5rem;
-    min-height: 3.5rem;
-    border-radius: var(--radius-xl);
-    border: 1px solid var(--premium-border-dark);
-    background: var(--premium-boxed-bg);
-    color: var(--color-text-on-primary);
-    display: flex;
+    width: var(--space-8);
+    height: var(--space-8);
+    min-width: var(--space-8);
+    min-height: var(--space-8);
+    border-radius: var(--radius-md);
+    border: 0;
+    background: transparent;
+    color: var(--color-text-tertiary);
+    display: inline-flex;
     align-items: center;
     justify-content: center;
     margin-inline-start: auto;
-    transition: all var(--motion-feedback-duration-fast) var(--ease-standard);
+    transition: background var(--motion-feedback-duration-fast) var(--ease-standard),
+                color var(--motion-feedback-duration-fast) var(--ease-standard);
     cursor: pointer;
+    flex-shrink: 0;
   }
 
   .app-toast .p-toast-close-button:hover {
-    background: var(--premium-border-dark);
-    border-color: var(--premium-border-dark-strong);
-    transform: scale(1.05);
-  }
-
-  .app-toast .p-toast-close-button:active {
-    transform: scale(0.95);
+    background: var(--surface-secondary);
+    color: var(--color-text-primary);
   }
 
   .app-toast .p-toast-close-button:focus-visible {
-    outline: var(--focus-outline-width) solid var(--color-focus-ring);
+    outline: var(--focus-outline-width) solid var(--ds-primary-green);
     outline-offset: var(--focus-outline-offset);
-    box-shadow: var(--shadow-focus);
   }
 
   .toast-content {
     display: flex;
     align-items: center;
-    gap: var(--space-4);
+    gap: var(--space-3);
     width: 100%;
+    min-width: 0;
   }
 
   .app-icon-box {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 3.5rem;
-    height: 3.5rem;
+    width: var(--space-10);
+    height: var(--space-10);
     flex-shrink: 0;
-    border-radius: var(--radius-xl);
-    font-size: 1.5rem;
-    background: var(--premium-boxed-bg);
-    border: 1px solid var(--premium-boxed-border);
-    box-shadow: var(--premium-boxed-shadow);
+    border-radius: var(--radius-md);
+    font-size: var(--ds-font-size-lg);
   }
 
   .app-icon-box--success {
-    background: rgba(var(--ds-primary-green-rgb), 0.15);
-    border-color: rgba(var(--ds-primary-green-rgb), 0.25);
+    background: rgba(var(--ds-primary-green-rgb), 0.10);
     color: var(--ds-primary-green);
   }
 
   .app-icon-box--info {
-    background: rgba(14, 165, 233, 0.15);
-    border-color: rgba(14, 165, 233, 0.25);
+    background: rgba(14, 165, 233, 0.10);
     color: #0ea5e9;
   }
 
   .app-icon-box--warn {
-    background: rgba(245, 158, 11, 0.15);
-    border-color: rgba(245, 158, 11, 0.25);
-    color: #f59e0b;
+    background: rgba(245, 158, 11, 0.10);
+    color: #d97706;
   }
 
   .app-icon-box--error {
-    background: rgba(239, 68, 68, 0.15);
-    border-color: rgba(239, 68, 68, 0.25);
-    color: #ef4444;
+    background: rgba(239, 68, 68, 0.10);
+    color: #dc2626;
   }
 
   .toast-text {
     display: flex;
     flex: 1;
     flex-direction: column;
-    gap: var(--space-0);
+    gap: var(--space-0-5);
     min-width: 0;
   }
 
   .toast-summary {
     margin: var(--space-0);
-    font-size: var(--ds-font-size-lg);
+    font-size: var(--ds-font-size-md);
     font-weight: var(--ds-font-weight-bold);
-    color: var(--color-text-on-primary);
+    color: var(--color-text-primary);
     line-height: var(--line-height-tight);
   }
 
   .toast-detail {
     margin: var(--space-0);
-    font-size: var(--ds-font-size-md);
-    color: rgba(255, 255, 255, 0.7);
+    font-size: var(--ds-font-size-sm);
+    color: var(--color-text-secondary);
     line-height: var(--line-height-normal);
   }
 

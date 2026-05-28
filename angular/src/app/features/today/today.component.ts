@@ -64,6 +64,8 @@ import { TodayProtocolSectionComponent } from "./components/today-protocol-secti
 import { TodayStatusStackComponent } from "./components/today-status-stack.component";
 import { TodayHeroComponent } from "./components/today-hero.component";
 import { TodayStickyBarComponent } from "./components/today-sticky-bar.component";
+import { TodayBlockFlowComponent, BlockFlowItem } from "./components/today-block-flow.component";
+import { TodaySidePanelComponent } from "./components/today-side-panel.component";
 import { TodayCoachMessagesService } from "./services/today-coach-messages.service";
 import { TodayProtocolStateService } from "./services/today-protocol-state.service";
 
@@ -129,6 +131,8 @@ interface QuickFormData {
     TodayStatusStackComponent,
     TodayHeroComponent,
     TodayStickyBarComponent,
+    TodayBlockFlowComponent,
+    TodaySidePanelComponent,
   ],
   templateUrl: "./today.component.html",
   styleUrl: "./today.component.scss",
@@ -456,6 +460,24 @@ export class TodayComponent {
       .map((blockType) => this.getBlockByType(protocol, blockType))
       .filter((block): block is ProtocolBlock => Boolean(block))
       .filter((block) => block.totalCount > 0);
+  });
+
+  readonly blockFlowItems = computed<BlockFlowItem[]>(() => {
+    return this.protocolDisplayBlocks().map((block, index, all) => {
+      const completed = block.completedCount ?? 0;
+      const total = block.totalCount ?? 0;
+      const progress = total > 0 ? Math.round((completed / total) * 100) : 0;
+      const isFullyDone = progress === 100;
+      const isActive = !isFullyDone && index === all.findIndex(b => (b.completedCount ?? 0) < (b.totalCount ?? 1));
+      return {
+        name: block.title || block.type,
+        exerciseCount: total,
+        durationMinutes: 0,
+        status: isFullyDone ? 'done' : isActive ? 'active' : 'upcoming',
+        progress,
+        isKeystone: false,
+      } satisfies BlockFlowItem;
+    });
   });
 
   /**

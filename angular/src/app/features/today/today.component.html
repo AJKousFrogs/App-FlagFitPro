@@ -151,16 +151,21 @@
       }
 
       <!-- ═══════════════════════════════════════════════════════════════════
-           BLOCK FLOW (placeholder — will be created by other agent)
+           BLOCK FLOW (horizontal scrollable strip)
            ═══════════════════════════════════════════════════════════════════ -->
-      <!-- <app-today-block-flow /> -->
+      @if (blockFlowItems().length > 0) {
+        <app-today-block-flow
+          [blocks]="blockFlowItems()"
+          [overallProgress]="protocol()?.overallProgress ?? 0"
+        />
+      }
 
       <!-- ═══════════════════════════════════════════════════════════════════
            EXERCISE CARDS + SIDE PANEL (12-col grid)
            ═══════════════════════════════════════════════════════════════════ -->
-      <div class="today-v2__main-grid grid grid--12">
+      <div class="today-v2__main-grid grid grid--12" #protocolBlocks>
         <!-- Protocol section (8 cols) -->
-        <div class="grid__col-8" #protocolBlocks>
+        <div class="grid__col-8 stack stack--md">
           @defer (on viewport) {
             <app-today-protocol-section
               [protocol]="protocol()"
@@ -185,6 +190,16 @@
 
         <!-- Side panel (4 cols) -->
         <aside class="grid__col-4 today-v2__side-panel stack stack--md">
+          <app-today-side-panel
+            [acwrRatio]="acwrValue()"
+            [acwrRiskZone]="acwrRiskZone().level || 'no-data'"
+            [acwrBaselineDays]="vm.acwrBaseline?.trainingDaysLogged ?? 0"
+            [acwrMaxDays]="21"
+            [merlinInsight]="aiInsight()"
+            (applyMerlinSuggestion)="handleCta('start_training')"
+            (dismissMerlinSuggestion)="dismissEntryContext()"
+          />
+
           @defer (on viewport) {
             <app-today-status-stack
               [errorState]="vm.errorState"

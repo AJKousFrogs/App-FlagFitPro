@@ -354,6 +354,10 @@ async function persistReadinessScore(payload) {
   const attempts = [
     () =>
       supabaseAdmin.from("readiness_scores").upsert(payload, {
+        onConflict: "athlete_id,date",
+      }),
+    () =>
+      supabaseAdmin.from("readiness_scores").upsert(payload, {
         onConflict: "athlete_id,day",
       }),
     () =>

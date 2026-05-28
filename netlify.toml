@@ -237,6 +237,18 @@
   force = true
 
 [[redirects]]
+  from = "/api/schedule/*"
+  to = "/.netlify/functions/schedule"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/schedule"
+  to = "/.netlify/functions/schedule"
+  status = 200
+  force = true
+
+[[redirects]]
   from = "/api/return-to-play/*"
   to = "/.netlify/functions/health"
   status = 200
@@ -927,13 +939,13 @@
 # API Routes for Supplements
 [[redirects]]
   from = "/api/supplements"
-  to = "/.netlify/functions/wellness"
+  to = "/.netlify/functions/supplements"
   status = 200
   force = true
 
 [[redirects]]
   from = "/api/supplements/*"
-  to = "/.netlify/functions/wellness"
+  to = "/.netlify/functions/supplements"
   status = 200
   force = true
 
