@@ -54,7 +54,7 @@ const VALID_STATUSES = new Set(["active", "paused", "completed", "inactive"]);
 
 const ASSIGNMENT_SELECT_COLUMNS = `
   id,
-  player_id,
+  user_id,
   program_id,
   status,
   start_date,
@@ -108,7 +108,7 @@ function mapAssignmentRecord(assignmentRecord, program) {
 
   return {
     id: assignmentRecord.id,
-    player_id: assignmentRecord.player_id,
+    user_id: assignmentRecord.user_id,
     program_id: assignmentRecord.program_id,
     status: assignmentRecord.status,
     start_date: assignmentRecord.start_date,
@@ -170,7 +170,7 @@ async function getActiveAssignment(supabase, userId) {
   const { data, error } = await supabase
     .from("player_programs")
     .select(ASSIGNMENT_SELECT_COLUMNS)
-    .eq("player_id", userId)
+    .eq("user_id", userId)
     .eq("status", "active")
     .maybeSingle();
 
@@ -297,7 +297,7 @@ async function handlePost(event, context, { userId }) {
 
   // Create new assignment
   const newAssignment = {
-    player_id: userId,
+    user_id: userId,
     program_id,
     status,
     start_date: start_date || new Date().toISOString().split("T")[0],
@@ -421,7 +421,7 @@ async function handlePut(event, context, { userId }) {
     .from("player_programs")
     .select(ASSIGNMENT_SELECT_COLUMNS)
     .eq("id", assignmentId)
-    .eq("player_id", userId) // Security: user can only update own assignments
+    .eq("user_id", userId) // Security: user can only update own assignments
     .single();
 
   if (fetchError || !existing) {
@@ -463,7 +463,7 @@ async function handlePut(event, context, { userId }) {
 
     // Create new assignment
     const newAssignment = {
-      player_id: userId,
+      user_id: userId,
       program_id,
       status: "active",
       start_date: today,
