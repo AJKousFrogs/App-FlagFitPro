@@ -36,7 +36,7 @@ async function fetchReadinessHistory(athleteId, startDate, endDate) {
         .select(
           "day, score, level, suggestion, acwr, acute_load, chronic_load, data_mode",
         )
-        .eq("athlete_id", athleteId)
+        .eq("user_id", athleteId)
         .gte("day", startDate)
         .lte("day", endDate)
         .order("day", { ascending: false }),

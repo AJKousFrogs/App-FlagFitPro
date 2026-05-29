@@ -28,7 +28,7 @@ async function canCoachViewReadiness(coachId, athleteId) {
   const { data: readiness } = await supabaseAdmin
     .from("readiness_scores")
     .select("acwr")
-    .eq("athlete_id", athleteId)
+    .eq("user_id", athleteId)
     .order("day", { ascending: false })
     .limit(1)
     .single();

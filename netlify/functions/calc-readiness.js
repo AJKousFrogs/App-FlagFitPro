@@ -305,34 +305,10 @@ async function fetchNextGame(targetDate, athleteId) {
 }
 
 async function persistReadinessScore(payload) {
-  const attempts = [
-    () =>
-      supabaseAdmin.from("readiness_scores").upsert(payload, {
-        onConflict: "athlete_id,date",
-      }),
-    () =>
-      supabaseAdmin.from("readiness_scores").upsert(payload, {
-        onConflict: "athlete_id,day",
-      }),
-    () =>
-      supabaseAdmin.from("readiness_scores").upsert(payload, {
-        onConflict: "user_id,day",
-      }),
-  ];
-
-  let lastError = null;
-  for (const attempt of attempts) {
-    const result = await attempt();
-    if (!result.error) {
-      return result;
-    }
-    lastError = result.error;
-    if (!isOptionalSchemaError(result.error)) {
-      return result;
-    }
-  }
-
-  return { error: lastError };
+  // readiness_scores is keyed (user_id, day) after the v11 identity collapse.
+  return supabaseAdmin.from("readiness_scores").upsert(payload, {
+    onConflict: "user_id,day",
+  });
 }
 
 async function verifyAthleteAccess(requestUserId, athleteId) {
@@ -736,8 +712,7 @@ const handler = async (event, context) => {
 
       // Store readiness score
       const { error: upsertErr } = await persistReadinessScore({
-        athlete_id: athleteId,
-        user_id: athleteId, // Standardized ID
+        user_id: athleteId,
         day: dayStr,
         score,
         level,

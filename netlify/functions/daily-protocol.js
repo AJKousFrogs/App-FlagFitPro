@@ -551,7 +551,7 @@ async function getUserTrainingContext(supabase, userId, date, log = logger) {
 
     if (oldReadiness) {
       readiness = {
-        score: oldReadiness.score || oldReadiness.readiness_score,
+        score: oldReadiness.score,
         acwr: oldReadiness.acwr,
         hasCheckin: true,
       };
