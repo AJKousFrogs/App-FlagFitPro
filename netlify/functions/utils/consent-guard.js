@@ -14,7 +14,7 @@ async function canCoachViewReadiness(coachId, athleteId) {
   const { data: consent, error } = await supabaseAdmin
     .from("athlete_consent_settings")
     .select("share_readiness_with_coach")
-    .eq("athlete_id", athleteId)
+    .eq("user_id", athleteId)
     .single();
 
   if (error && error.code !== "PGRST116") {
@@ -55,7 +55,7 @@ async function canCoachViewWellness(coachId, athleteId) {
   const { data: consent, error } = await supabaseAdmin
     .from("athlete_consent_settings")
     .select("share_wellness_answers_with_coach")
-    .eq("athlete_id", athleteId)
+    .eq("user_id", athleteId)
     .single();
 
   if (error && error.code !== "PGRST116") {
