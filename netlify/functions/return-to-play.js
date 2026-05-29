@@ -91,7 +91,7 @@ async function getActiveProtocol(supabase, userId) {
   return supabase
     .from("return_to_play_protocols")
     .select("*")
-    .eq("athlete_id", userId)
+    .eq("user_id", userId)
     .eq("status", "active")
     .order("updated_at", { ascending: false })
     .limit(1)
@@ -165,7 +165,7 @@ const handler = async (event, context) =>
           const { data, error } = await supabase
             .from("return_to_play_protocols")
             .insert({
-              athlete_id: userId,
+              user_id: userId,
               status: "active",
               current_phase: 1,
               start_date: startDate,
@@ -220,7 +220,7 @@ const handler = async (event, context) =>
               updated_at: new Date().toISOString(),
             })
             .eq("id", protocol.id)
-            .eq("athlete_id", userId);
+            .eq("user_id", userId);
 
           if (error) {
             throw error;
@@ -245,7 +245,7 @@ const handler = async (event, context) =>
               updated_at: new Date().toISOString(),
             })
             .eq("id", protocol.id)
-            .eq("athlete_id", userId);
+            .eq("user_id", userId);
 
           if (error) {
             throw error;
@@ -275,7 +275,7 @@ const handler = async (event, context) =>
               updated_at: new Date().toISOString(),
             })
             .eq("id", protocol.id)
-            .eq("athlete_id", userId);
+            .eq("user_id", userId);
 
           if (error) {
             throw error;

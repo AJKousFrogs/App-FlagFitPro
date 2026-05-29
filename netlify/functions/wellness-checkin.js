@@ -369,7 +369,7 @@ async function saveCheckin(supabase, userId, payload, requestId, log = logger) {
       const { data: existing } = await supabase
         .from("recovery_blocks")
         .select("id")
-        .eq("player_id", userId)
+        .eq("user_id", userId)
         .eq("block_date", tomorrowStr)
         .eq("protocol_type", "wellness_recovery")
         .maybeSingle();
@@ -377,7 +377,7 @@ async function saveCheckin(supabase, userId, payload, requestId, log = logger) {
       if (!existing) {
         // Create recovery block for tomorrow
         await supabase.from("recovery_blocks").insert({
-          player_id: userId,
+          user_id: userId,
           block_date: tomorrowStr,
           max_load_percent: 50,
           focus: "recovery",

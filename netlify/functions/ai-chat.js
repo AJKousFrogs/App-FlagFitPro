@@ -406,7 +406,7 @@ async function getUserContext(userId) {
     const { data: activeRecovery } = await supabaseAdmin
       .from("recovery_blocks")
       .select("protocol_type, block_date, max_load_percent, focus")
-      .eq("player_id", userId)
+      .eq("user_id", userId)
       .eq("block_date", today)
       .maybeSingle();
 

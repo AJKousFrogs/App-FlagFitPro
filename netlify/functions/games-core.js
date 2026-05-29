@@ -459,7 +459,7 @@ async function triggerGameDayRecovery(playerId, gameDate) {
 
     // Create recovery protocol
     await supabaseAdmin.from("recovery_protocols").insert({
-      player_id: playerId,
+      user_id: playerId,
       protocol_type: "game_day_recovery",
       start_date: day1.toISOString().split("T")[0],
       end_date: endDate.toISOString().split("T")[0],
@@ -477,7 +477,7 @@ async function triggerGameDayRecovery(playerId, gameDate) {
     // Create recovery blocks
     await Promise.all([
       supabaseAdmin.from("recovery_blocks").insert({
-        player_id: playerId,
+        user_id: playerId,
         block_date: day1.toISOString().split("T")[0],
         max_load_percent: 30,
         focus: "sleep",
@@ -486,7 +486,7 @@ async function triggerGameDayRecovery(playerId, gameDate) {
         created_at: new Date().toISOString(),
       }),
       supabaseAdmin.from("recovery_blocks").insert({
-        player_id: playerId,
+        user_id: playerId,
         block_date: day2.toISOString().split("T")[0],
         max_load_percent: 50,
         focus: "active_recovery",
@@ -881,7 +881,7 @@ const manageConsent = async (playerId, coachId, action, options = {}) => {
         .from("player_stats_consent")
         .upsert(
           {
-            player_id: playerId,
+            user_id: playerId,
             coach_id: coachId,
             consent_granted: true,
             consent_type: options.consentType || "full",
