@@ -32,19 +32,14 @@ import { DataState, wrapWithDataState as _wrapWithDataState, MINIMUM_DATA_REQUIR
  */
 const CONSENT_PROTECTED_TABLES = [
   "workout_logs",
-  "load_monitoring",
-  "training_load_metrics",
   "metric_entries",
   "training_sessions",
-  "wellness_entries",
-  "wellness_logs",
 ];
 
 /**
  * Consent views that MUST be used instead of raw tables
  */
 const CONSENT_VIEWS = {
-  load_monitoring: "v_load_monitoring_consent",
   workout_logs: "v_workout_logs_consent",
   // Add more as views are created
 };
