@@ -187,9 +187,10 @@ async function getUserContext(userId) {
 
       // Get recent training sessions for ACWR calculation
       supabaseAdmin
-        .from("workout_logs")
-        .select("completed_at, rpe, duration_minutes, source_session_id")
-        .eq("player_id", userId)
+        .from("training_sessions")
+        .select("completed_at, rpe, duration_minutes, source_session_id:id")
+        .eq("user_id", userId)
+        .not("completed_at", "is", null)
         .gte("completed_at", thirtyDaysAgo.toISOString())
         .order("completed_at", { ascending: false }),
 

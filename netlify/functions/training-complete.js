@@ -199,70 +199,11 @@ async function syncWorkoutLog(
   durationMinutes,
   log = logger,
 ) {
-  try {
-    const { data: existing, error: fetchError } = await supabaseAdmin
-      .from("workout_logs")
-      .select("id")
-      .eq("player_id", userId)
-      .eq("source_session_id", sessionId)
-      .maybeSingle();
-
-    if (fetchError) {
-      log.warn(
-        "training_workout_log_check_failed",
-        {
-          user_id: userId,
-          session_id: sessionId,
-        },
-        fetchError,
-      );
-      return false;
-    }
-
-    if (existing) {
-      return false;
-    }
-
-    const { error: insertError } = await supabaseAdmin
-      .from("workout_logs")
-      .insert({
-        player_id: userId,
-        source_session_id: sessionId,
-        workout_type: workoutType || "scheduled",
-        planned_date: plannedDate || completedAt.slice(0, 10),
-        completed_at: completedAt,
-        rpe: rpe ?? null,
-        duration_minutes: durationMinutes,
-      });
-
-    if (insertError) {
-      log.warn(
-        "training_workout_log_sync_failed",
-        {
-          user_id: userId,
-          session_id: sessionId,
-        },
-        insertError,
-      );
-      return false;
-    }
-
-    log.info("training_workout_log_synced", {
-      user_id: userId,
-      session_id: sessionId,
-    });
-    return true;
-  } catch (error) {
-    log.warn(
-      "training_workout_log_sync_exception",
-      {
-        user_id: userId,
-        session_id: sessionId,
-      },
-      error,
-    );
-    return false;
-  }
+  // workout_logs has been merged into training_sessions: the completed session is already
+  // persisted there (the canonical ACWR load source), so no shadow sync is needed.
+  // No-op retained to preserve call sites; params intentionally unused.
+  void userId, sessionId, workoutType, plannedDate, completedAt, rpe, durationMinutes, log;
+  return true;
 }
 
 async function completeTrainingSessionViaRpc(userId, sessionId, completionData) {

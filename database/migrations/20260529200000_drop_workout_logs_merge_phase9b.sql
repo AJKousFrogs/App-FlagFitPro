@@ -1,0 +1,24 @@
+-- Backend de-drift — Phase 9b: complete the workout_logs → training_sessions merge.
+--
+-- workout_logs was a redundant shadow of training_sessions completions (0 rows, no FK
+-- deps). The canonical ACWR load source (calc-readiness) already reads only
+-- training_sessions, so there was no double-count. Phase 9a created + verified the
+-- consent view v_training_sessions_consent (auth.uid()-gated, for client reads).
+--
+-- LIVE netlify code repointed before this drop:
+--   - utils/consent-data-reader.js: both readWorkoutLogs paths now query training_sessions
+--     directly (service-role + explicit code consent), aliasing user_id → player_id to keep
+--     the legacy result shape, filtered to completed sessions; CONSENT_VIEWS +
+--     CONSENT_PROTECTED_TABLES cleaned of workout_logs.
+--   - daily-training.js: 30-day ACWR history read → training_sessions (completed-only).
+--   - training-complete.js syncWorkoutLog + training-sessions.js create: shadow writes
+--     removed — the completed session is already persisted to training_sessions.
+--
+-- Dormant Angular readers/writers/realtime (workout-data, training-data, training-safety,
+-- acwr.service, load-monitoring, privacy-settings) reference workout_logs/v_workout_logs_consent
+-- as strings (UI deleted, unwired; supabase-types keep tsc green). They are repointed with
+-- the planned supabase-types regen task. See docs/DATA_MODEL.md + redesign/WORKOUT_LOGS_MERGE_PLAN.md.
+--
+-- Applied via Supabase MCP on 2026-05-29 (project grfjmnjpzvknmsxrwesx).
+DROP VIEW IF EXISTS public.v_workout_logs_consent;
+DROP TABLE IF EXISTS public.workout_logs;

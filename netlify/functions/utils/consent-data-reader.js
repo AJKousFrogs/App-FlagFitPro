@@ -31,7 +31,6 @@ import { DataState, wrapWithDataState as _wrapWithDataState, MINIMUM_DATA_REQUIR
  * Direct access to these tables is FORBIDDEN for coach-facing endpoints
  */
 const CONSENT_PROTECTED_TABLES = [
-  "workout_logs",
   "metric_entries",
   "training_sessions",
 ];
@@ -40,8 +39,10 @@ const CONSENT_PROTECTED_TABLES = [
  * Consent views that MUST be used instead of raw tables
  */
 const CONSENT_VIEWS = {
-  workout_logs: "v_workout_logs_consent",
-  // Add more as views are created
+  // Backend functions use the service-role client (no requester JWT), so the
+  // auth.uid()-based consent views aren't usable here — consent is enforced in code
+  // (resolve consented player IDs, then query the raw table). The auth.uid() views
+  // (e.g. v_training_sessions_consent) serve client/anon-key reads.
 };
 
 /**
@@ -170,10 +171,13 @@ class ConsentDataReader {
     }
 
     const { targetPlayerId } = ownAccess;
+    // Canonical completed-session source is training_sessions (workout_logs merged in).
+    // `player_id:user_id` keeps the legacy result shape for consumers.
     let query = this.supabase
-      .from("workout_logs")
-      .select("*")
-      .eq("player_id", targetPlayerId);
+      .from("training_sessions")
+      .select("*, player_id:user_id")
+      .eq("user_id", targetPlayerId)
+      .not("completed_at", "is", null);
 
     if (filters.startDate) {
       query = query.gte("completed_at", filters.startDate);
@@ -319,9 +323,10 @@ class ConsentDataReader {
     }
 
     let query = this.supabase
-      .from("workout_logs")
-      .select("*")
-      .in("player_id", access.targetUserIds);
+      .from("training_sessions")
+      .select("*, player_id:user_id")
+      .in("user_id", access.targetUserIds)
+      .not("completed_at", "is", null);
 
     if (filters.startDate) {
       query = query.gte("completed_at", filters.startDate);

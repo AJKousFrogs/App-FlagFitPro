@@ -423,24 +423,9 @@ async function createTrainingLogSession(
       throw error;
     }
 
-    let workoutLogSynced = false;
-    if (session?.id) {
-      const completedAt = payload.sessionDate
-        ? new Date(payload.sessionDate).toISOString()
-        : new Date().toISOString();
-      const { error: logError } = await supabase.from("workout_logs").insert({
-        player_id: userId,
-        source_session_id: session.id,
-        workout_type: payload.sessionType || "scheduled",
-        planned_date: payload.sessionDate || completedAt.slice(0, 10),
-        completed_at: completedAt,
-        rpe: payload.rpe ?? null,
-        duration_minutes: payload.durationMinutes,
-      });
-      if (!logError) {
-        workoutLogSynced = true;
-      }
-    }
+    // workout_logs merged into training_sessions — the session row above IS the record;
+    // no shadow write needed.
+    const workoutLogSynced = false;
 
     return { success: true, session, workoutLogSynced };
   } catch (error) {
