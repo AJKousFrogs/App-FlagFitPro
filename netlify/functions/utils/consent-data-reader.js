@@ -406,7 +406,7 @@ class ConsentDataReader {
       .from("training_sessions")
       .select("*")
       .or(
-        `user_id.eq.${ownAccess.targetPlayerId},athlete_id.eq.${ownAccess.targetPlayerId}`,
+        `user_id.eq.${ownAccess.targetPlayerId}`,
       );
 
     if (filters.startDate) {
@@ -474,11 +474,11 @@ class ConsentDataReader {
 
     if (access.targetUserIds.length === 1) {
       query = query.or(
-        `user_id.eq.${access.targetUserIds[0]},athlete_id.eq.${access.targetUserIds[0]}`,
+        `user_id.eq.${access.targetUserIds[0]}`,
       );
     } else {
       query = query.or(
-        `user_id.in.(${access.targetUserIds.join(",")}),athlete_id.in.(${access.targetUserIds.join(",")})`,
+        `user_id.in.(${access.targetUserIds.join(",")})`,
       );
     }
 

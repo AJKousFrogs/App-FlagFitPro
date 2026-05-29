@@ -197,45 +197,14 @@ function isOptionalSchemaError(error) {
 }
 
 async function fetchTrainingSessions(athleteId, startDate, endDate) {
-  const queryAttempts = [
-    () =>
-      supabaseAdmin
-        .from("training_sessions")
-        .select("session_date, duration_minutes, rpe, workload, intensity_level")
-        .eq("user_id", athleteId)
-        .gte("session_date", startDate)
-        .lte("session_date", endDate)
-        .order("session_date", { ascending: false }),
-    () =>
-      supabaseAdmin
-        .from("training_sessions")
-        .select("session_date, duration_minutes, rpe, workload, intensity_level")
-        .eq("athlete_id", athleteId)
-        .gte("session_date", startDate)
-        .lte("session_date", endDate)
-        .order("session_date", { ascending: false }),
-    () =>
-      supabaseAdmin
-        .from("training_sessions")
-        .select("session_date, duration_minutes, rpe, workload, intensity_level")
-        .gte("session_date", startDate)
-        .lte("session_date", endDate)
-        .order("session_date", { ascending: false }),
-  ];
-
-  let lastError = null;
-  for (const runQuery of queryAttempts) {
-    const result = await runQuery();
-    if (!result.error) {
-      return result;
-    }
-    lastError = result.error;
-    if (!isOptionalSchemaError(result.error)) {
-      return result;
-    }
-  }
-
-  return { data: [], error: lastError };
+  // training_sessions is keyed user_id after the v11 identity standardization.
+  return supabaseAdmin
+    .from("training_sessions")
+    .select("session_date, duration_minutes, rpe, workload, intensity_level")
+    .eq("user_id", athleteId)
+    .gte("session_date", startDate)
+    .lte("session_date", endDate)
+    .order("session_date", { ascending: false });
 }
 
 async function fetchWellnessForReadiness(athleteId, dayStr) {

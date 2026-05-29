@@ -1,0 +1,6 @@
+-- Follow-up to Cluster 3: process_hard_deletion deleted readiness_scores via
+-- coalesce(user_id, athlete_id); Cluster 3 dropped readiness_scores.athlete_id, so the GDPR
+-- hard-delete silently failed (EXCEPTION WHEN OTHERS → status 'failed'). Repointed to user_id.
+-- (athlete_achievements.athlete_id left intact — migrated in a later cluster.)
+-- LESSON: multi-statement execute_sql returns only the LAST result; run verification
+-- function-body scans as SINGLE statements (this regression slipped past a combined check).
