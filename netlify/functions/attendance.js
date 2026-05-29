@@ -231,7 +231,7 @@ const getEventAttendance = async (userId, eventId) => {
     .select(
       `
       *,
-      users:player_id (
+      users:user_id (
         id,
         name,
         avatar_url
@@ -294,7 +294,7 @@ const recordAttendance = async (userId, attendanceData) => {
     .upsert(
       {
         event_id,
-        player_id,
+        user_id: player_id,
         status,
         notes,
         check_in_time:
@@ -303,7 +303,7 @@ const recordAttendance = async (userId, attendanceData) => {
             : null,
         recorded_by: userId,
       },
-      { onConflict: "event_id,player_id" },
+      { onConflict: "event_id,user_id" },
     )
     .select()
     .single();
@@ -359,7 +359,7 @@ const bulkRecordAttendance = async (userId, bulkData) => {
   const normalizedRecords = [...dedupedRecords.values()];
   const attendanceRecords = normalizedRecords.map((record) => ({
     event_id,
-    player_id: record.player_id,
+    user_id: record.player_id,
     status: record.status,
     notes: record.notes,
     check_in_time:
@@ -371,7 +371,7 @@ const bulkRecordAttendance = async (userId, bulkData) => {
 
   const { data, error } = await supabaseAdmin
     .from("attendance_records")
-    .upsert(attendanceRecords, { onConflict: "event_id,player_id" })
+    .upsert(attendanceRecords, { onConflict: "event_id,user_id" })
     .select();
 
   if (error) {
@@ -397,7 +397,7 @@ const updatePlayerAttendanceStats = async (playerId, teamId) => {
       team_events!inner (team_id)
     `,
     )
-    .eq("player_id", playerId)
+    .eq("user_id", playerId)
     .eq("team_events.team_id", teamId);
 
   if (recordsError) {
@@ -631,12 +631,12 @@ const reviewAbsenceRequest = async (userId, requestId, status) => {
     await supabaseAdmin.from("attendance_records").upsert(
       {
         event_id: request.event_id,
-        player_id: request.player_id,
+        user_id: request.player_id,
         status: "excused",
         notes: `Absence request approved: ${request.reason}`,
         recorded_by: userId,
       },
-      { onConflict: "event_id,player_id" },
+      { onConflict: "event_id,user_id" },
     );
 
     await updatePlayerAttendanceStats(

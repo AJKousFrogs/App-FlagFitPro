@@ -81,7 +81,7 @@ const getPlayerPayments = async (userId, queryParams) => {
   const { data: payments, error: paymentsError } = await supabaseAdmin
     .from("player_payments")
     .select("*")
-    .eq("player_id", playerId)
+    .eq("user_id", playerId)
     .eq("team_id", finalTeamId)
     .order("created_at", { ascending: false });
 
@@ -259,7 +259,7 @@ const getCoachPayments = async (userId, queryParams) => {
     } else if (p.status === "pending") {
       fee.unpaidCount++;
       fee.outstanding.push({
-        playerId: p.player_id,
+        playerId: p.user_id,
         playerName: p.team_members?.display_name || "Unknown",
         amount: parseFloat(p.amount || 0),
         note: null,
@@ -284,10 +284,10 @@ const getCoachPayments = async (userId, queryParams) => {
   });
 
   payments?.forEach((p) => {
-    if (!balancesMap.has(p.player_id)) {
+    if (!balancesMap.has(p.user_id)) {
       return;
     }
-    const balance = balancesMap.get(p.player_id);
+    const balance = balancesMap.get(p.user_id);
     if (p.status === "pending") {
       balance.balance += parseFloat(p.amount || 0);
       balance.status =
@@ -399,7 +399,7 @@ const createFee = async (userId, body) => {
 
   // Create payment records for each member
   const paymentRecords = membersToApply.map((member) => ({
-    player_id: member.id,
+    user_id: member.id,
     team_id,
     payment_type,
     description: name,
@@ -482,7 +482,7 @@ const recordPayment = async (userId, body) => {
   const { data, error } = await supabaseAdmin
     .from("player_payments")
     .insert({
-      player_id,
+      user_id: player_id,
       team_id,
       payment_type: "other",
       description: "Payment recorded",

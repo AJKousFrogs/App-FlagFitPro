@@ -136,13 +136,13 @@ const handler = async (event, context) =>
             .from("game_participations")
             .select("id")
             .eq("game_id", body.gameId)
-            .eq("player_id", body.playerId)
+            .eq("user_id", body.playerId)
             .maybeSingle();
 
           const payload = {
             game_id: body.gameId,
             team_id: game.data.team_id,
-            player_id: body.playerId,
+            user_id: body.playerId,
             status: body.present === false ? "absent" : "present",
             updated_at: new Date().toISOString(),
           };

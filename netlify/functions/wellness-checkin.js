@@ -624,7 +624,7 @@ async function saveCheckin(supabase, userId, payload, requestId, log = logger) {
       const { data: tournamentAvailability } = await supabase
         .from("player_tournament_availability")
         .select("tournament_id")
-        .eq("player_id", userId)
+        .eq("user_id", userId)
         .eq("status", "confirmed")
         .single();
 

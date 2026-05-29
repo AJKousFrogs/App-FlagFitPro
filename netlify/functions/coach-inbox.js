@@ -172,7 +172,7 @@ async function listInboxItems(coachId, teamIds, filters = {}, log = logger) {
       id,
       coach_id,
       team_id,
-      player_id,
+      user_id,
       inbox_type,
       priority,
       source_type,
@@ -230,7 +230,7 @@ async function listInboxItems(coachId, teamIds, filters = {}, log = logger) {
   }
 
   // Fetch player info for all items
-  const playerIds = [...new Set(items.map((i) => i.player_id))];
+  const playerIds = [...new Set(items.map((i) => i.user_id))];
   const { data: players } = await supabaseAdmin
     .from("users")
     .select("id, first_name, last_name, position, email")
@@ -253,8 +253,8 @@ async function listInboxItems(coachId, teamIds, filters = {}, log = logger) {
   // Enrich items with player info
   return items.map((item) => ({
     ...item,
-    player: playerMap.get(item.player_id) || {
-      id: item.player_id,
+    player: playerMap.get(item.user_id) || {
+      id: item.user_id,
       name: "Unknown",
       position: null,
     },
@@ -407,7 +407,7 @@ async function getInboxItemDetail(itemId, coachId) {
   const { data: player } = await supabaseAdmin
     .from("users")
     .select("id, first_name, last_name, position, email, birth_date")
-    .eq("id", item.player_id)
+    .eq("id", item.user_id)
     .single();
 
   // Get source message if applicable

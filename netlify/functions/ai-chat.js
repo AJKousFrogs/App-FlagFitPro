@@ -3352,7 +3352,7 @@ async function createCoachInboxItem(
     const inboxItems = coaches.map((coach) => ({
       coach_id: coach.user_id,
       team_id: coach.team_id,
-      player_id: userId,
+      user_id: userId,
       item_type: reviewNeed.inboxType,
       priority: reviewNeed.priority,
       source: "ai_message",
