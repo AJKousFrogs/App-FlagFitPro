@@ -305,19 +305,19 @@ async function generateNutritionReport(userId, reportType = "weekly") {
     .eq("user_id", userId)
     .gte("date", startDate.toISOString().split("T")[0]);
 
-  // Get hydration logs
+  // Get hydration logs (canonical: athlete_hydration_logs)
   const { data: hydration } = await supabaseAdmin
-    .from("hydration_logs")
+    .from("athlete_hydration_logs")
     .select("*")
     .eq("user_id", userId)
-    .gte("log_date", startDate.toISOString().split("T")[0]);
+    .gte("logged_at", startDate.toISOString().split("T")[0]);
 
   // Calculate metrics
   const supplementsTaken = supplements?.filter((s) => s.taken)?.length || 0;
   const supplementsExpected = supplements?.length || 0;
 
   const avgHydration = hydration?.length
-    ? hydration.reduce((sum, h) => sum + (h.fluid_ml || 0), 0) /
+    ? hydration.reduce((sum, h) => sum + (h.amount_ml || 0), 0) /
       hydration.length
     : 0;
 

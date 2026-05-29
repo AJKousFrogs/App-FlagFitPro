@@ -32,11 +32,10 @@ interface TournamentDayPlanRow extends Record<string, unknown> {
 }
 
 interface HydrationLogRow extends Record<string, unknown> {
-  fluid_ml: number | null;
-  fluid_type: TournamentNutritionHydrationLog["type"] | null;
-  log_time: string | null;
-  log_date?: string | null;
-  context?: string | null;
+  amount_ml: number | null;
+  beverage_type: TournamentNutritionHydrationLog["type"] | null;
+  logged_at: string | null;
+  metadata?: { context?: string } | null;
 }
 
 @Injectable({
@@ -65,12 +64,13 @@ export class TournamentNutritionStateService {
           .eq("tournament_date", date)
           .maybeSingle(),
         this.supabaseService.client
-          .from("hydration_logs")
-          .select("fluid_ml, fluid_type, log_time")
+          .from("athlete_hydration_logs")
+          .select("amount_ml, beverage_type, logged_at, metadata")
           .eq("user_id", userId)
-          .eq("log_date", date)
-          .eq("context", this.getHydrationContext(date))
-          .order("log_time", { ascending: true }),
+          .gte("logged_at", date)
+          .lt("logged_at", this.getNextIsoDate(date))
+          .eq("metadata->>context", this.getHydrationContext(date))
+          .order("logged_at", { ascending: true }),
       ]);
 
       // Only swallow expected "table not provisioned yet" / no-rows errors.
@@ -108,11 +108,11 @@ export class TournamentNutritionStateService {
         nutritionWindows: Array.isArray(planResult.data?.nutrition_windows)
           ? planResult.data.nutrition_windows
           : [],
-        hydrationLogs: hydrationLogs.map((log) => ({
-          time: log.log_time?.slice(0, 5) || "00:00",
-          amount: log.fluid_ml || 0,
+        hydrationLogs: hydrationLogs.map((row) => ({
+          time: row.logged_at?.slice(11, 16) || "00:00",
+          amount: row.amount_ml || 0,
           type:
-            (log.fluid_type as TournamentNutritionHydrationLog["type"]) ||
+            (row.beverage_type as TournamentNutritionHydrationLog["type"]) ||
             "water",
         })),
       };
@@ -178,16 +178,17 @@ export class TournamentNutritionStateService {
 
     try {
       const { error } = await this.supabaseService.client
-        .from("hydration_logs")
+        .from("athlete_hydration_logs")
         .insert({
           user_id: userId,
-          team_id: membership?.teamId || null,
-          fluid_ml: log.amount,
-          fluid_type: log.type,
-          log_date: date,
-          log_time: `${log.time}:00`,
-          context: this.getHydrationContext(date),
-          created_at: new Date().toISOString(),
+          amount_ml: log.amount,
+          beverage_type: log.type,
+          logged_at: `${date}T${log.time}:00`,
+          source: "manual",
+          metadata: {
+            context: this.getHydrationContext(date),
+            team_id: membership?.teamId || null,
+          },
         });
 
       if (error) {
@@ -238,16 +239,22 @@ export class TournamentNutritionStateService {
     );
 
     const unsubscribeHydration = this.realtimeService.subscribe<HydrationLogRow>(
-      "hydration_logs",
+      "athlete_hydration_logs",
       `user_id=eq.${userId}`,
       {
         onInsert: (event) => {
-          if (event.new?.log_date === date && event.new?.context === context) {
+          if (
+            event.new?.logged_at?.slice(0, 10) === date &&
+            event.new?.metadata?.context === context
+          ) {
             onChange();
           }
         },
         onUpdate: (event) => {
-          if (event.new?.log_date === date && event.new?.context === context) {
+          if (
+            event.new?.logged_at?.slice(0, 10) === date &&
+            event.new?.metadata?.context === context
+          ) {
             onChange();
           }
         },
@@ -279,11 +286,12 @@ export class TournamentNutritionStateService {
           .eq("user_id", userId)
           .eq("tournament_date", date),
         this.supabaseService.client
-          .from("hydration_logs")
+          .from("athlete_hydration_logs")
           .delete()
           .eq("user_id", userId)
-          .eq("log_date", date)
-          .eq("context", this.getHydrationContext(date)),
+          .gte("logged_at", date)
+          .lt("logged_at", this.getNextIsoDate(date))
+          .eq("metadata->>context", this.getHydrationContext(date)),
       ]);
     } catch (error) {
       this.logger.warn("tournament_nutrition_persist_clear_failed", {
@@ -294,6 +302,12 @@ export class TournamentNutritionStateService {
 
   private getTodayIsoDate(): string {
     return new Date().toISOString().split("T")[0];
+  }
+
+  private getNextIsoDate(date: string): string {
+    return new Date(new Date(`${date}T00:00:00Z`).getTime() + 86_400_000)
+      .toISOString()
+      .split("T")[0];
   }
 
   private getHydrationContext(date: string): string {

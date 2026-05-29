@@ -34,33 +34,39 @@ function parseBoundedInt(value, fallback, { min, max, field }) {
   return parsed;
 }
 
+// Canonical hydration store: public.athlete_hydration_logs
+// (id, user_id, logged_at timestamptz, amount_ml int, beverage_type text,
+//  note text, source text, metadata jsonb). One row per drink.
+const HYDRATION_BEVERAGE_TYPES = new Set([
+  "water",
+  "electrolyte",
+  "sports-drink",
+  "smoothie",
+  "protein-shake",
+  "coconut",
+  "other",
+]);
+const normalizeBeverageType = (type) =>
+  HYDRATION_BEVERAGE_TYPES.has(type) ? type : "other";
+
 /**
  * Get today's hydration logs
  * GET /api/hydration
- *
- * Database schema:
- * - id: uuid
- * - user_id: uuid
- * - log_date: date
- * - log_time: time
- * - fluid_ml: integer
- * - fluid_type: varchar
- * - context: varchar
- * - sodium_mg: integer
- * - potassium_mg: integer
- * - notes: text
- * - created_at: timestamptz
  */
 async function getTodayHydrationLogs(userId, log = logger) {
   try {
     const today = new Date().toISOString().split("T")[0];
+    const tomorrow = new Date(Date.now() + 86_400_000)
+      .toISOString()
+      .split("T")[0];
 
     const { data, error } = await supabaseAdmin
-      .from("hydration_logs")
+      .from("athlete_hydration_logs")
       .select("*")
       .eq("user_id", userId)
-      .eq("log_date", today)
-      .order("log_time", { ascending: true });
+      .gte("logged_at", today)
+      .lt("logged_at", tomorrow)
+      .order("logged_at", { ascending: true });
 
     if (error) {
       log.warn("hydration_today_query_failed", { user_id: userId }, error);
@@ -68,12 +74,11 @@ async function getTodayHydrationLogs(userId, log = logger) {
     }
 
     // Map to expected format for HydrationTrackerComponent
-    return (data || []).map((log) => ({
-      id: log.id,
-      amount: log.fluid_ml,
-      timestamp:
-        log.created_at || `${log.log_date}T${log.log_time || "00:00:00"}`,
-      type: log.fluid_type || "water",
+    return (data || []).map((row) => ({
+      id: row.id,
+      amount: row.amount_ml,
+      timestamp: row.logged_at,
+      type: row.beverage_type || "water",
     }));
   } catch (error) {
     log.error("hydration_today_query_exception", error, { user_id: userId });
@@ -98,21 +103,15 @@ async function logHydration(userId, hydrationData, log = logger) {
       throw new Error("amount cannot exceed 5000ml");
     }
 
-    const now = new Date();
-    const logDate = now.toISOString().split("T")[0];
-    const logTime = now.toTimeString().split(" ")[0]; // HH:MM:SS
-
-    // Insert hydration log using correct schema
     const { data, error } = await supabaseAdmin
-      .from("hydration_logs")
+      .from("athlete_hydration_logs")
       .insert({
         user_id: userId,
-        fluid_ml: amount,
-        fluid_type: type,
-        log_date: logDate,
-        log_time: logTime,
-        context: context || null,
-        created_at: now.toISOString(),
+        amount_ml: amount,
+        beverage_type: normalizeBeverageType(type),
+        logged_at: new Date().toISOString(),
+        source: "manual",
+        metadata: context ? { context } : {},
       })
       .select()
       .single();
@@ -127,9 +126,9 @@ async function logHydration(userId, hydrationData, log = logger) {
 
     return {
       id: data.id,
-      amount: data.fluid_ml,
-      timestamp: data.created_at,
-      type: data.fluid_type,
+      amount: data.amount_ml,
+      timestamp: data.logged_at,
+      type: data.beverage_type,
     };
   } catch (error) {
     log.error("hydration_log_failed", error, { user_id: userId });
@@ -148,12 +147,11 @@ async function getHydrationHistory(userId, days = 7, log = logger) {
     const startDateStr = startDate.toISOString().split("T")[0];
 
     const { data, error } = await supabaseAdmin
-      .from("hydration_logs")
+      .from("athlete_hydration_logs")
       .select("*")
       .eq("user_id", userId)
-      .gte("log_date", startDateStr)
-      .order("log_date", { ascending: false })
-      .order("log_time", { ascending: false });
+      .gte("logged_at", startDateStr)
+      .order("logged_at", { ascending: false });
 
     if (error) {
       log.warn(
@@ -164,12 +162,11 @@ async function getHydrationHistory(userId, days = 7, log = logger) {
       return [];
     }
 
-    return (data || []).map((log) => ({
-      id: log.id,
-      amount: log.fluid_ml,
-      timestamp:
-        log.created_at || `${log.log_date}T${log.log_time || "00:00:00"}`,
-      type: log.fluid_type || "water",
+    return (data || []).map((row) => ({
+      id: row.id,
+      amount: row.amount_ml,
+      timestamp: row.logged_at,
+      type: row.beverage_type || "water",
     }));
   } catch (error) {
     log.error("hydration_history_failed", error, {
