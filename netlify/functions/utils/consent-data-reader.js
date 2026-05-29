@@ -554,23 +554,21 @@ class ConsentDataReader {
       return ownAccess.errorResponse;
     }
 
-    // For player's own data
+    // For player's own data (canonical: daily_wellness_checkin, keyed by user_id)
     let query = this.supabase
-      .from("wellness_entries")
+      .from("daily_wellness_checkin")
       .select("*")
-      .or(
-        `user_id.eq.${ownAccess.targetPlayerId},athlete_id.eq.${ownAccess.targetPlayerId}`,
-      );
+      .eq("user_id", ownAccess.targetPlayerId);
 
     if (filters.startDate) {
-      query = query.gte("date", filters.startDate);
+      query = query.gte("checkin_date", filters.startDate);
     }
 
     if (filters.endDate) {
-      query = query.lte("date", filters.endDate);
+      query = query.lte("checkin_date", filters.endDate);
     }
 
-    query = query.order("date", { ascending: false });
+    query = query.order("checkin_date", { ascending: false });
 
     if (filters.limit) {
       query = query.limit(filters.limit);
@@ -622,31 +620,24 @@ class ConsentDataReader {
       );
     }
 
-    // Query wellness entries for consented users
-    // wellness_entries may use user_id or athlete_id
-    let query = this.supabase.from("wellness_entries").select("*");
+    // Query canonical daily_wellness_checkin for consented users (keyed by user_id)
+    let query = this.supabase.from("daily_wellness_checkin").select("*");
 
-    // Build OR condition for all consented user IDs
     if (access.targetUserIds.length === 1) {
-      query = query.or(
-        `user_id.eq.${access.targetUserIds[0]},athlete_id.eq.${access.targetUserIds[0]}`,
-      );
+      query = query.eq("user_id", access.targetUserIds[0]);
     } else {
-      // For multiple users, use IN clause on both columns
-      query = query.or(
-        `user_id.in.(${access.targetUserIds.join(",")}),athlete_id.in.(${access.targetUserIds.join(",")})`,
-      );
+      query = query.in("user_id", access.targetUserIds);
     }
 
     if (filters.startDate) {
-      query = query.gte("date", filters.startDate);
+      query = query.gte("checkin_date", filters.startDate);
     }
 
     if (filters.endDate) {
-      query = query.lte("date", filters.endDate);
+      query = query.lte("checkin_date", filters.endDate);
     }
 
-    query = query.order("date", { ascending: false });
+    query = query.order("checkin_date", { ascending: false });
 
     if (filters.limit) {
       query = query.limit(filters.limit);

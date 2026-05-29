@@ -37,6 +37,7 @@ This file is the canonical entry point for durable documentation in the repo.
 - [PRESCRIPTION_SPEC.md](./PRESCRIPTION_SPEC.md) — `prescribeFor` algorithm contract
 - [ARCHITECTURE.md](./ARCHITECTURE.md)
 - [SINGLE_SOURCE_OF_TRUTH.md](./SINGLE_SOURCE_OF_TRUTH.md)
+- [ATHLETE_ID_CONVENTION.md](./ATHLETE_ID_CONVENTION.md) — `user_id` standard + per-table migration recipe
 - [REPO_DISCOVERY_GUIDE.md](./REPO_DISCOVERY_GUIDE.md)
 - [TECH_STACK.md](./TECH_STACK.md)
 - [API.md](./API.md)

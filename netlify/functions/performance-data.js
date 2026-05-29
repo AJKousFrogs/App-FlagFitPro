@@ -842,21 +842,25 @@ async function handleWellness(method, userId, requestedAthleteId, body, query, _
       }
 
       try {
+        // Wellness consolidation: write to the canonical daily_wellness_checkin.
         const { data, error } = await supabaseAdmin
-          .from("wellness_entries")
-          .insert({
-            athlete_id: userId,
-            user_id: userId, // Keep for compatibility
-            date: wellnessData.date || new Date().toISOString().split("T")[0],
-            sleep_quality: wellnessData.sleep,
-            energy_level: wellnessData.energy,
-            stress_level: wellnessData.stress,
-            muscle_soreness: wellnessData.soreness,
-            motivation_level: wellnessData.motivation,
-            mood: wellnessData.mood,
-            hydration_level: wellnessData.hydration,
-            notes: wellnessData.notes,
-          })
+          .from("daily_wellness_checkin")
+          .upsert(
+            {
+              user_id: userId,
+              checkin_date:
+                wellnessData.date || new Date().toISOString().split("T")[0],
+              sleep_quality: wellnessData.sleep,
+              energy_level: wellnessData.energy,
+              stress_level: wellnessData.stress,
+              muscle_soreness: wellnessData.soreness,
+              motivation_level: wellnessData.motivation,
+              mood: wellnessData.mood,
+              hydration_level: wellnessData.hydration,
+              notes: wellnessData.notes,
+            },
+            { onConflict: "user_id,checkin_date" },
+          )
           .select()
           .single();
 

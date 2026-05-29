@@ -134,20 +134,8 @@ async function fetchWellnessCheckinRecord(supabase, athleteId, date) {
     .eq("checkin_date", date)
     .single();
 
-  if (!primary.error || primary.error.code === "PGRST116") {
-    return primary;
-  }
-
-  if (!isOptionalSchemaError(primary.error)) {
-    return primary;
-  }
-
-  return supabase
-    .from("wellness_logs")
-    .select("*")
-    .or(`user_id.eq.${athleteId},athlete_id.eq.${athleteId}`)
-    .eq("log_date", date)
-    .maybeSingle();
+  // daily_wellness_checkin is canonical (wellness consolidation Phase 3).
+  return primary;
 }
 
 async function savePrimaryWellnessCheckin(supabase, userId, targetDate, payload) {
@@ -175,41 +163,8 @@ async function savePrimaryWellnessCheckin(supabase, userId, targetDate, payload)
     .select()
     .single();
 
-  if (!primaryResult.error) {
-    return primaryResult;
-  }
-
-  if (!isOptionalSchemaError(primaryResult.error)) {
-    return primaryResult;
-  }
-
-  const legacyPayload = {
-    athlete_id: userId,
-    user_id: userId,
-    log_date: targetDate,
-    date: targetDate,
-    sleep_quality: payload.sleepQuality,
-    sleep_hours: payload.sleepHours,
-    energy_level: payload.energyLevel,
-    muscle_soreness: payload.muscleSoreness,
-    stress_level: payload.stressLevel,
-    soreness_areas: payload.sorenessAreas || [],
-    notes: payload.notes,
-    calculated_readiness: payload.calculatedReadiness,
-    motivation_level: payload.motivationLevel,
-    motivation: payload.motivationLevel,
-    mood: payload.mood,
-    hydration_level: payload.hydrationLevel,
-    updated_at: new Date().toISOString(),
-  };
-
-  return supabase
-    .from("wellness_logs")
-    .upsert(legacyPayload, {
-      onConflict: "athlete_id,log_date",
-    })
-    .select()
-    .single();
+  // daily_wellness_checkin is canonical (wellness consolidation Phase 3) — no legacy write.
+  return primaryResult;
 }
 
 async function saveWellnessCheckinTransactional(supabase, userId, targetDate, payload) {
@@ -506,7 +461,7 @@ async function saveCheckin(supabase, userId, payload, requestId, log = logger) {
   }
 
   // Upsert the checkin to daily_wellness_checkin (primary table)
-  const { data, error, usedRpc } = await saveWellnessCheckinTransactional(
+  const { data, error } = await saveWellnessCheckinTransactional(
     supabase,
     userId,
     targetDate,
@@ -534,40 +489,8 @@ async function saveCheckin(supabase, userId, payload, requestId, log = logger) {
     );
   }
 
-  // PHASE 2: Dual-write to wellness_entries for historical continuity
-  // This ensures legacy reads (exports, trends, historical data) continue to work
-  // while we migrate all reads to daily_wellness_checkin in Phase 3
-  if (!usedRpc) {
-    try {
-      await supabase.from("wellness_entries").upsert(
-        {
-          athlete_id: userId,
-          user_id: userId,
-          date: targetDate,
-          sleep_quality: sleepQuality,
-          energy_level: energyLevel,
-          stress_level: stressLevel,
-          muscle_soreness: muscleSoreness,
-          motivation_level: motivationLevel,
-          mood,
-          hydration_level: hydrationLevel,
-          notes,
-          updated_at: new Date().toISOString(),
-        },
-        {
-          onConflict: "athlete_id,date",
-        },
-      );
-    } catch (dualWriteError) {
-      if (!isOptionalSchemaError(dualWriteError)) {
-        log.warn("wellness_legacy_dual_write_failed", {
-          user_id: userId,
-          target_date: targetDate,
-          table: "wellness_entries",
-        }, dualWriteError);
-      }
-    }
-  }
+  // Wellness consolidation Phase 3 complete: daily_wellness_checkin is the single
+  // source of truth. The legacy dual-write to wellness_entries has been removed.
 
   // Update wellness streak
   try {

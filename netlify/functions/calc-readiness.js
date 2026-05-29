@@ -264,30 +264,8 @@ async function fetchWellnessForReadiness(athleteId, dayStr) {
     };
   }
 
-  if (!isOptionalSchemaError(primary.error)) {
-    return primary;
-  }
-
-  return supabaseAdmin
-    .from("wellness_logs")
-    .select("*")
-    .eq("user_id", athleteId)
-    .eq("log_date", dayStr)
-    .maybeSingle()
-    .then((result) => {
-      if (!result.error || result.error.code === "PGRST116") {
-        return result;
-      }
-      if (!isOptionalSchemaError(result.error)) {
-        return result;
-      }
-      return supabaseAdmin
-        .from("wellness_logs")
-        .select("*")
-        .eq("athlete_id", athleteId)
-        .eq("log_date", dayStr)
-        .maybeSingle();
-    });
+  // daily_wellness_checkin is canonical (wellness consolidation Phase 3) — no legacy fallback.
+  return primary;
 }
 
 async function fetchNextGame(targetDate, athleteId) {
