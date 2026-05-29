@@ -476,24 +476,14 @@ async function awardAchievement(
   points,
 ) {
   try {
-    await supabaseAdmin.from("athlete_achievements").upsert(
-      {
-        user_id: userId,
-        achievement_type: achievementType,
-        achievement_name: name,
-        achievement_description: description,
-        category,
-        points_awarded: points,
-        progress_target: 1,
-        progress_current: 1,
-        is_completed: true,
-        completed_at: new Date().toISOString(),
-      },
-      {
-        onConflict: "user_id,achievement_type",
-        ignoreDuplicates: true,
-      },
-    );
+    // Canonical achievement path: award_achievement() writes player_achievements
+    // (keyed by achievement_definitions slug) + player_training_stats. No-ops for
+    // an undefined slug. (Replaces a dead direct write to the dropped athlete_achievements.)
+    await supabaseAdmin.rpc("award_achievement", {
+      p_user_id: userId,
+      p_achievement_slug: achievementType,
+      p_context: { name, description, category, points },
+    });
   } catch (error) {
     console.log(
       "[Response Feedback] Could not award achievement:",
