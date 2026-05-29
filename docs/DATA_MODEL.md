@@ -77,6 +77,11 @@
 
 ---
 
+## Progress log
+- **2026-05-29 — Phase 1 done (live DB):** dropped 6 verified-dead tables (`session_rpe_data`, `training_stress_balance`, `load_metrics`, `exercise_logs`, `exercise_library`, `supplements_data`) + the superseded `compute_acwr()` proc. Migration `20260529120000_drop_dead_tables_phase1.sql`.
+- **Audit corrections:** `user_preferences` (3 refs) and `exercisedb_exercises` (1 ref) are NOT dead — keep/repoint, don't drop. The aspirational tables `exercise_registry`, `ff_exercise_mappings`, `movement_patterns` **do not exist** in the DB — removed from scope.
+- **Still dead-cache, but ghost-READ by code (repoint reader → `/api/compute-acwr` first, THEN drop):** `load_daily`, `load_monitoring`, `training_load_metrics`, `acwr_calculations`, `acwr_history`, `acwr_reports`, `load_caps`.
+
 ## Migration sequence (reversible Supabase migrations, pre-launch = cheap)
 1. **Wellness** — drop `wellness_entries`/`wellness_data` (post-deploy); remove `hydration_level` from check-in.
 2. **Hydration** — repoint code `hydration_logs` → `athlete_hydration_logs`; migrate rows; drop `hydration_logs`.
