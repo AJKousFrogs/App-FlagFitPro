@@ -45,8 +45,13 @@
 ### Nutrition & Supplements  ·  **input + reference**
 - Inputs: `nutrition_logs`, `supplement_logs`. Goals: `nutrition_goals`. **Verify & merge:** `supplements_data` vs `supplement_logs` (one is intake events, one looks like a catalog — keep events as input, fold/relabel the other as reference or drop).
 
-### Schedule & Competition  ·  **input (spine)**
-- **Canonical: `competitions` + `competition_events`** (+ `v_athlete_schedule`). **DROP legacy:** `tournaments`, `games`, `fixtures` (migrate the one `profile-data` read off `games`). Game detail: `game_events`, `game_participations`, `player_game_summary` (keep). Tournament logistics: `tournament_day_plans`, `tournament_budgets`, `tournament_lineups`.
+### Schedule & Competition  ·  **input**
+**CORRECTION (2026-05-29, deep audit):** `games` is **NOT** a duplicate of the spine — they are two distinct domains, both canonical:
+- **Schedule-density spine** (`competitions` + `competition_events` + `v_athlete_schedule`): per-team calendar *event slots* (`starts_at`, `expected_game_count`, `importance`) that drive load/density planning. Canonical for "what's coming + how dense".
+- **Game detail** (`games` + `game_events` + `game_participations` + `player_game_summary`): individual games with `opponent_team_name`, scores, `is_home_game`, `game_time`, and `game_id` (the join key for play-level stats). Read by ~14 functions (daily-training, ai-chat, team-calendar, player-stats, scouting, game-tracker…) **and written** (games-core create/update, game-events). The spine cannot express opponent/score/game_id → **`games` must NOT be dropped.**
+- **`fixtures`** (legacy, empty): retired from the readiness path (calc-readiness now spine-only). Remaining user is the `fixtures.js` CRUD endpoint; drop deferred until that endpoint is retired with the federation-import work.
+- **Broken readers to fix (separate correctness task):** `coach-core.js:759`, `scouting.js:191`, `utils/supabase-client.js:681` query non-existent `home_team_id`/`away_team_id`/`game_start`; `game-day-recovery.service.ts:42` reads non-existent `player_id`; `profile-data.service.ts:65` reads non-existent `participants`. These silently return empty — fix or delete.
+- Tournament logistics: `tournament_day_plans`, `tournament_budgets`, `tournament_lineups` (keep). `tournaments` (empty) — review with federation import.
 
 ### Identity / Profile / Teams  ·  **input**
 - `users` (identity), `team_members` (role), `teams`. **Merge `team_players` → projection of users+team_members.** `physical_measurements` canonical; `physical_measurements_latest` = derived view (keep as view, not a table). Settings: collapse the `*_preferences`/`*_settings` sprawl (`user_preferences`, `user_settings`, `user_ai_preferences`, `notification_preferences`, `user_notification_preferences`) → one `user_settings` (JSON) + keep `athlete_training_config` for training params.
@@ -71,13 +76,14 @@
 | 8 load/ACWR cache tables + dead `compute_acwr` proc | derive via util; keep ≤1 history cache; drop rest + proc |
 | `sessions`/`workout_logs` vs `training_sessions` | merge to one session model |
 | `supplements_data` vs `supplement_logs` | events = input; other = reference or drop |
-| legacy `tournaments`/`games`/`fixtures` | migrate to spine; drop |
+| ~~legacy `games`/`fixtures`/`tournaments` → spine; drop~~ | **CORRECTED:** `games` = canonical game-detail (keep, distinct from spine); `fixtures` retired from readiness (drop deferred); `tournaments` review w/ federation |
 | 3 identity conventions | → `user_id` (A2, per feature) |
 | settings/preferences sprawl | collapse to `user_settings` (+ `athlete_training_config`) |
 
 ---
 
 ## Progress log
+- **2026-05-29 — Phase 6 (schedule) done (code only):** deep audit **overturned the "drop `games`→spine" plan** — `games` is canonical game-detail (opponent/scores/`game_id` joins + write paths), a distinct domain from the density spine; **kept.** Removed `calc-readiness`'s stale `fixtures` fallback (spine `v_athlete_schedule` is sole next-event source). `fixtures` drop deferred (CRUD endpoint). No table dropped. Flagged 5 broken readers (querying non-existent columns) for a separate correctness fix.
 - **2026-05-29 — Phase 5 (partial) done (live DB):** dropped legacy `sessions` table (never written; trends.js guarded, training-metrics graceful). Canonical = `training_sessions`. Migration `20260529160000`. **Deferred:** merge `workout_logs` → `training_sessions` + re-home daily-protocol's training-load write out of `wellness_logs`, then drop `wellness_logs` (live write paths → own phase).
 - **2026-05-29 — Phase 4 done (live DB):** dropped 6 never-written ACWR/load cache tables (`load_daily`, `training_load_metrics`, `acwr_calculations`, `acwr_history`, `acwr_reports`, `load_caps`); ACWR is computed on-read via `utils/acwr.js`. Guarded `consent-data-reader` so missing tables read empty. **Deferred:** `load_monitoring` (consent view `v_load_monitoring_consent` + resource→view map) and dormant Angular readers (repoint to `/api/compute-acwr` at rebuild). Migration `20260529150000`.
 - **2026-05-29 — Phase 3 done (live DB):** wellness consolidation finished — dropped legacy `wellness_entries` + `wellness_data` (0 queries, no FK deps). `daily_wellness_checkin` is the sole subjective wellness table. `wellness_logs` kept until the sessions/load phase (dual-purpose training-load). Migration `20260529140000`.

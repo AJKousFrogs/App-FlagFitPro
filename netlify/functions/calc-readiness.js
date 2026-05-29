@@ -269,9 +269,8 @@ async function fetchWellnessForReadiness(athleteId, dayStr) {
 }
 
 async function fetchNextGame(targetDate, athleteId) {
-  // v10 canonical source: union across active team memberships, schedule spine.
-  // Falls back to legacy `fixtures` table if the spine returns nothing or the
-  // view is not yet deployed (older environments).
+  // v10 canonical source: the schedule spine (union across active team memberships).
+  // No legacy `fixtures` fallback — the spine is the single source for next-event proximity.
   const spineQuery = await supabaseAdmin
     .from("v_athlete_schedule")
     .select("starts_at, importance, expected_game_count")
@@ -282,51 +281,27 @@ async function fetchNextGame(targetDate, athleteId) {
     .limit(1)
     .maybeSingle();
 
-  if (
-    spineQuery.data &&
-    (!spineQuery.error || spineQuery.error.code === "PGRST116")
-  ) {
+  if (spineQuery.error && spineQuery.error.code !== "PGRST116") {
+    // Spine view unavailable (e.g. not deployed in an older env) — degrade to
+    // "no upcoming game" rather than reading the retired legacy `fixtures` table.
     return {
-      data: {
-        game_start: spineQuery.data.starts_at,
-        importance: spineQuery.data.importance,
-        expected_game_count: spineQuery.data.expected_game_count,
-      },
-      error: null,
+      data: null,
+      error: isOptionalSchemaError(spineQuery.error) ? null : spineQuery.error,
     };
   }
 
-  const legacyQueries = [
-    () =>
-      supabaseAdmin
-        .from("fixtures")
-        .select("game_start")
-        .eq("athlete_id", athleteId)
-        .gte("game_start", targetDate.toISOString())
-        .order("game_start", { ascending: true })
-        .limit(1)
-        .maybeSingle(),
-    () =>
-      supabaseAdmin
-        .from("fixtures")
-        .select("game_start")
-        .gte("game_start", targetDate.toISOString())
-        .order("game_start", { ascending: true })
-        .limit(1)
-        .maybeSingle(),
-  ];
-
-  for (const runQuery of legacyQueries) {
-    const result = await runQuery();
-    if (!result.error || result.error.code === "PGRST116") {
-      return result;
-    }
-    if (!isOptionalSchemaError(result.error)) {
-      return result;
-    }
+  if (!spineQuery.data) {
+    return { data: null, error: null };
   }
 
-  return { data: null, error: null };
+  return {
+    data: {
+      game_start: spineQuery.data.starts_at,
+      importance: spineQuery.data.importance,
+      expected_game_count: spineQuery.data.expected_game_count,
+    },
+    error: null,
+  };
 }
 
 async function persistReadinessScore(payload) {
