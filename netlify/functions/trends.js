@@ -40,7 +40,8 @@ async function getChangeOfDirectionTrend(athleteId, weeks = 4) {
       "drill_type.ilike.%change%,drill_type.ilike.%cod%,drill_type.ilike.%agility%,session_type.ilike.%agility%",
     );
 
-  if (error) {
+  // Legacy `sessions` table is being retired; a missing table means no data, not a failure.
+  if (error && error.code !== "42P01") {
     throw error;
   }
 
@@ -95,7 +96,8 @@ async function getSprintVolumeTrend(athleteId, weeks = 4) {
     .lte("date", endDate.toISOString().split("T")[0])
     .not("sprint_count", "is", null);
 
-  if (error) {
+  // Legacy `sessions` table is being retired; a missing table means no data, not a failure.
+  if (error && error.code !== "42P01") {
     throw error;
   }
 
