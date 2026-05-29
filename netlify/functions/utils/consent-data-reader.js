@@ -33,6 +33,9 @@ import { DataState, wrapWithDataState as _wrapWithDataState, MINIMUM_DATA_REQUIR
 const CONSENT_PROTECTED_TABLES = [
   "metric_entries",
   "training_sessions",
+  // Canonical wellness table (wellness consolidation: replaced wellness_entries/wellness_logs).
+  // Wellness is health data — direct coach access must go through consent.
+  "daily_wellness_checkin",
 ];
 
 /**

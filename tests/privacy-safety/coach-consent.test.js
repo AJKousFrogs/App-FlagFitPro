@@ -293,13 +293,13 @@ describe("Coach API Consent Unit Tests", () => {
   });
 
   describe("CONSENT_PROTECTED_TABLES", () => {
-    it("should include training_sessions and wellness_entries", async () => {
+    it("should include training_sessions and the canonical wellness table", async () => {
       const { CONSENT_PROTECTED_TABLES } =
         await import("../../netlify/functions/utils/consent-data-reader.js");
 
       expect(CONSENT_PROTECTED_TABLES).toContain("training_sessions");
-      expect(CONSENT_PROTECTED_TABLES).toContain("wellness_entries");
-      expect(CONSENT_PROTECTED_TABLES).toContain("wellness_logs");
+      // wellness_entries/wellness_logs were consolidated into daily_wellness_checkin.
+      expect(CONSENT_PROTECTED_TABLES).toContain("daily_wellness_checkin");
     });
   });
 
@@ -309,7 +309,7 @@ describe("Coach API Consent Unit Tests", () => {
         await import("../../netlify/functions/utils/consent-data-reader.js");
 
       expect(isConsentProtectedTable("training_sessions")).toBe(true);
-      expect(isConsentProtectedTable("wellness_entries")).toBe(true);
+      expect(isConsentProtectedTable("daily_wellness_checkin")).toBe(true);
       expect(isConsentProtectedTable("users")).toBe(false);
       expect(isConsentProtectedTable("teams")).toBe(false);
     });
