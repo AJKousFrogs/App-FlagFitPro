@@ -11,6 +11,7 @@
  */
 
 import { handler as analyticsCoreHandler } from "./analytics-core.js";
+import { toLambdaHandler } from "./utils/lambda-adapter.js";
 import { handler as performanceDataHandler } from "./performance-data.js";
 import { handler as performanceHeatmapHandler } from "./performance-heatmap.js";
 import { handler as performanceMetricsHandler } from "./performance-metrics.js";
@@ -63,7 +64,7 @@ import { getCorsHeaders as corsHeaders } from "./utils/cors.js";
 
 // ─── Main router ─────────────────────────────────────────────────────────────
 
-export default async (req) => {
+const handleRequest = async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { status: 204, headers: corsHeaders(req) });
   }
@@ -90,3 +91,6 @@ export default async (req) => {
     { status: 404, headers: corsHeaders(req) },
   );
 };
+
+export default handleRequest;
+export const handler = toLambdaHandler(handleRequest);

@@ -19,6 +19,7 @@
  */
 
 import { db } from "./supabase-client.js";
+import { toLambdaHandler } from "./utils/lambda-adapter.js";
 import { authenticateRequest } from "./utils/auth-helper.js";
 import { applyRateLimit } from "./utils/rate-limiter.js";
 import { createLogger } from "./utils/structured-logger.js";
@@ -325,7 +326,7 @@ async function handleUpdatePreferences(req, userId) {
 
 // ─── Main router ─────────────────────────────────────────────────────────────
 
-export default async (req) => {
+const handleRequest = async (req) => {
   // CORS preflight
   if (req.method === "OPTIONS") {
     return new Response(null, { status: 204, headers: corsHeaders(req) });
@@ -382,3 +383,6 @@ export default async (req) => {
     return err("Internal server error", req, 500, "internal_error");
   }
 };
+
+export default handleRequest;
+export const handler = toLambdaHandler(handleRequest);

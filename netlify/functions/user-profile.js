@@ -10,6 +10,7 @@
  */
 
 import { handler as userProfileCoreHandler } from "./user-profile-core.js";
+import { toLambdaHandler } from "./utils/lambda-adapter.js";
 import { handler as userContextHandler } from "./user-context.js";
 import { handler as privacySettingsHandler } from "./privacy-settings.js";
 
@@ -37,7 +38,7 @@ async function dispatch(handler, req, url) {
 
 import { getCorsHeaders as corsHeaders } from "./utils/cors.js";
 
-export default async (req) => {
+const handleRequest = async (req) => {
   if (req.method === "OPTIONS") {return new Response(null, { status: 204, headers: corsHeaders(req) });}
   const url = new URL(req.url);
   const path = url.pathname;
@@ -47,3 +48,6 @@ export default async (req) => {
   // user-profile and user/profile both handled by core handler
   return dispatch(userProfileCoreHandler, req, url);
 };
+
+export default handleRequest;
+export const handler = toLambdaHandler(handleRequest);

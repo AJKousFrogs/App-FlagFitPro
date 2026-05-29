@@ -12,6 +12,7 @@
  */
 
 import { handler as coachCoreHandler } from "./coach-core.js";
+import { toLambdaHandler } from "./utils/lambda-adapter.js";
 import { handler as coachActivityHandler } from "./coach-activity.js";
 import { handler as coachAnalyticsHandler } from "./coach-analytics.js";
 import { handler as coachAlertsHandler } from "./coach-alerts.js";
@@ -65,7 +66,7 @@ import { getCorsHeaders as corsHeaders } from "./utils/cors.js";
 
 // ─── Main router ─────────────────────────────────────────────────────────────
 
-export default async (req) => {
+const handleRequest = async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { status: 204, headers: corsHeaders(req) });
   }
@@ -84,3 +85,6 @@ export default async (req) => {
     { status: 404, headers: corsHeaders(req) },
   );
 };
+
+export default handleRequest;
+export const handler = toLambdaHandler(handleRequest);

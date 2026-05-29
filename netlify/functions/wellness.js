@@ -15,6 +15,7 @@
  */
 
 import { handler as wellnessLogsHandler } from "./wellness-logs.js";
+import { toLambdaHandler } from "./utils/lambda-adapter.js";
 import { handler as wellnessCheckinHandler } from "./wellness-checkin.js";
 import { handler as sleepDataHandler } from "./sleep-data.js";
 import { handler as hydrationHandler } from "./hydration.js";
@@ -71,7 +72,7 @@ import { getCorsHeaders as corsHeaders } from "./utils/cors.js";
 
 // ─── Main router ─────────────────────────────────────────────────────────────
 
-export default async (req) => {
+const handleRequest = async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { status: 204, headers: corsHeaders(req) });
   }
@@ -114,3 +115,6 @@ export default async (req) => {
     { status: 404, headers: corsHeaders(req) },
   );
 };
+
+export default handleRequest;
+export const handler = toLambdaHandler(handleRequest);

@@ -5,6 +5,7 @@
  */
 
 import { handler as paymentsHandler } from "./payments-core.js";
+import { toLambdaHandler } from "./utils/lambda-adapter.js";
 import { handler as sponsorsHandler } from "./sponsors.js";
 import { handler as sponsorLogoHandler } from "./sponsor-logo.js";
 
@@ -25,7 +26,7 @@ function fromLambdaResponse(r) {
 async function dispatch(h, req, url) { return fromLambdaResponse(await h(await toLambdaEvent(req, url), {})); }
 import { getCorsHeaders as cors } from "./utils/cors.js";
 
-export default async (req) => {
+const handleRequest = async (req) => {
   if (req.method === "OPTIONS") {return new Response(null, { status: 204, headers: cors(req) });}
   const url = new URL(req.url);
   const path = url.pathname;
@@ -34,3 +35,6 @@ export default async (req) => {
   if (path.includes("/payments")) {return dispatch(paymentsHandler, req, url);}
   return new Response(JSON.stringify({ success: false, error: `Not found: ${req.method} ${path}`, code: "not_found" }), { status: 404, headers: cors(req) });
 };
+
+export default handleRequest;
+export const handler = toLambdaHandler(handleRequest);
