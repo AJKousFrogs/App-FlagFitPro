@@ -207,7 +207,7 @@ async function getSchedule(event, _context, { userId }) {
   const { data, error } = await supabaseAdmin
     .from("v_athlete_schedule")
     .select("*")
-    .eq("athlete_id", userId)
+    .eq("user_id", userId)
     .gte("starts_at", from.toISOString())
     .lte("starts_at", to.toISOString())
     .order("starts_at", { ascending: true });

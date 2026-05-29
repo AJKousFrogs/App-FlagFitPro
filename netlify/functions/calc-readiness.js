@@ -243,7 +243,7 @@ async function fetchNextGame(targetDate, athleteId) {
   const spineQuery = await supabaseAdmin
     .from("v_athlete_schedule")
     .select("starts_at, importance, expected_game_count")
-    .eq("athlete_id", athleteId)
+    .eq("user_id", athleteId)
     .gte("starts_at", targetDate.toISOString())
     .neq("status", "cancelled")
     .order("starts_at", { ascending: true })
