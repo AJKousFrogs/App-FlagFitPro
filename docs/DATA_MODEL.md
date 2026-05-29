@@ -78,6 +78,7 @@
 ---
 
 ## Progress log
+- **2026-05-29 — Phase 3 done (live DB):** wellness consolidation finished — dropped legacy `wellness_entries` + `wellness_data` (0 queries, no FK deps). `daily_wellness_checkin` is the sole subjective wellness table. `wellness_logs` kept until the sessions/load phase (dual-purpose training-load). Migration `20260529140000`.
 - **2026-05-29 — Phase 2 done (live DB):** hydration consolidated onto `athlete_hydration_logs`; all code repointed (hydration.js, staff-nutritionist.js, tournament-nutrition-state.service); dropped legacy `hydration_logs`. Migration `20260529130000`. **Deferred:** remove subjective `daily_wellness_checkin.hydration_level` + its RPC param at wellness-screen rebuild (hydration must not be a wellness field → no double entry).
 - **2026-05-29 — Phase 1 done (live DB):** dropped 6 verified-dead tables (`session_rpe_data`, `training_stress_balance`, `load_metrics`, `exercise_logs`, `exercise_library`, `supplements_data`) + the superseded `compute_acwr()` proc. Migration `20260529120000_drop_dead_tables_phase1.sql`.
 - **Audit corrections:** `user_preferences` (3 refs) and `exercisedb_exercises` (1 ref) are NOT dead — keep/repoint, don't drop. The aspirational tables `exercise_registry`, `ff_exercise_mappings`, `movement_patterns` **do not exist** in the DB — removed from scope.
