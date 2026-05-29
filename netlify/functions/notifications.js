@@ -169,9 +169,11 @@ async function handleMarkRead(req, userId) {
   let body;
   try {
     body = await req.json();
-    if (!body || typeof body !== "object" || Array.isArray(body)) {throw new Error("body must be an object");}
   } catch {
-    return err("Request body must be a JSON object", req, 400, "invalid_json");
+    return err("Request body must be valid JSON", req, 400, "invalid_json");
+  }
+  if (!body || typeof body !== "object" || Array.isArray(body)) {
+    return err("Request body must be a JSON object", req, 422, "validation_error");
   }
 
   const { notificationId, ids } = body;
@@ -275,6 +277,20 @@ async function handleCreate(req, userId) {
 async function handleUpdateLastOpened(req, userId) {
   const rl = checkRateLimit(req, userId, "UPDATE");
   if (rl) {return Response.json(JSON.parse(rl.body), { status: rl.statusCode, headers: corsHeaders(req) });}
+
+  // last-opened is derived server-side; still reject a malformed body if one was sent.
+  const raw = await req.text();
+  if (raw && raw.trim()) {
+    let parsed;
+    try {
+      parsed = JSON.parse(raw);
+    } catch {
+      return err("Request body must be valid JSON", req, 400, "invalid_json");
+    }
+    if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) {
+      return err("Request body must be a JSON object", req, 422, "validation_error");
+    }
+  }
 
   try {
     await db.notifications.updateLastOpenedAt(userId);

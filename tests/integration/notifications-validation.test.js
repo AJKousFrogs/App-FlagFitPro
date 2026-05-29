@@ -1,8 +1,9 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-vi.mock("../../netlify/functions/utils/base-handler.js", () => ({
-  baseHandler: async (event, context, options) =>
-    options.handler(event, context, { userId: "user-1" }),
+// notifications.js authenticates inline via authenticateRequest (not base-handler);
+// mock it so the validation logic is reachable in tests.
+vi.mock("../../netlify/functions/utils/auth-helper.js", () => ({
+  authenticateRequest: async () => ({ success: true, user: { id: "user-1" } }),
 }));
 
 vi.mock("../../netlify/functions/supabase-client.js", () => ({

@@ -105,6 +105,11 @@ function createFakeSupabase() {
     from(table) {
       return new Query(table);
     },
+    // complete_training_session RPC — succeed so the completion flow proceeds
+    // (the test then exercises the sponsor-reward failure path).
+    rpc() {
+      return Promise.resolve({ data: [{ ...state.session }], error: null });
+    },
   };
 }
 
