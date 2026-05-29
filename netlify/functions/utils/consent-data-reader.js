@@ -132,11 +132,13 @@ class ConsentDataReader {
 
     const { data, error } = await query;
 
-    if (error) {
+    // load_monitoring is a never-written derived ACWR cache pending removal; a missing
+    // table means "no cached rows", not a failure — return empty rather than erroring.
+    if (error && error.code !== "42P01") {
       return this._createErrorResponse(error, "load_monitoring");
     }
 
-    const processedData = this._processConsentResults(data, context);
+    const processedData = this._processConsentResults(data || [], context);
 
     return this._wrapResponse(processedData, "acwr");
   }
@@ -264,7 +266,7 @@ class ConsentDataReader {
 
     const { data, error } = await query;
 
-    if (error) {
+    if (error && error.code !== "42P01") {
       return this._createErrorResponse(error, "load_monitoring");
     }
 
