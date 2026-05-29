@@ -2206,33 +2206,9 @@ async function logSession(supabase, userId, payload, headers, log = logger) {
     // Non-fatal - ACWR will be recalculated on next load
   }
 
-  // Update wellness tracking - log the training
-  try {
-    await supabase.from("wellness_logs").upsert(
-      {
-        user_id: userId,
-        log_date: protocol.protocol_date,
-        training_load: actualLoadAu,
-        training_duration: actualDurationMinutes,
-        training_rpe: actualRpe,
-      },
-      {
-        onConflict: "user_id,log_date",
-        ignoreDuplicates: false,
-      },
-    );
-  } catch (wellnessError) {
-    log.warn(
-      "daily_protocol_wellness_update_failed",
-      {
-        user_id: userId,
-        protocol_id: protocolId,
-        session_date: protocol.protocol_date,
-      },
-      wellnessError,
-    );
-    // Non-fatal
-  }
+  // (Removed: a dead duplicate write of training_load/duration/rpe to wellness_logs.
+  // The completed session is already logged to training_sessions above — the canonical
+  // load source for ACWR — so this was write-only dead data. wellness_logs is retired.)
 
   // Mark completions as logged to ACWR
   try {

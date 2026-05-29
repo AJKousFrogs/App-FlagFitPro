@@ -86,39 +86,7 @@ const handler = async (event, context) =>
           throw primarySleep.error;
         }
 
-        if (sleepHistory.length === 0) {
-          const legacySleep = await supabase
-            .from("wellness_logs")
-            .select("log_date, date, sleep, sleep_hours, sleep_quality")
-            .or(`user_id.eq.${userId},athlete_id.eq.${userId}`)
-            .order("log_date", { ascending: false })
-            .limit(30);
-
-          if (!legacySleep.error) {
-            sleepHistory = (legacySleep.data || [])
-              .map((row) => ({
-                date: row.log_date || row.date || null,
-                hoursSlept:
-                  row.sleep_hours !== null && row.sleep_hours !== undefined
-                    ? Number(row.sleep_hours)
-                    : row.sleep !== null && row.sleep !== undefined
-                      ? Number(row.sleep)
-                      : 0,
-                quality:
-                  row.sleep_quality !== null && row.sleep_quality !== undefined
-                    ? Number(row.sleep_quality)
-                    : null,
-              }))
-              .filter(
-                (row) =>
-                  row.date &&
-                  Number.isFinite(row.hoursSlept) &&
-                  row.hoursSlept > 0,
-              );
-          } else if (!isOptionalSchemaError(legacySleep.error)) {
-            throw legacySleep.error;
-          }
-        }
+        // daily_wellness_checkin is canonical for sleep; no legacy wellness_logs fallback.
 
         return createSuccessResponse({
           sleepHistory,

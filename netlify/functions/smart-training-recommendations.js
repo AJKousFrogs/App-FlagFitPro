@@ -204,15 +204,24 @@ async function getActiveInjuries(userId) {
  */
 async function getWellnessData(userId, date) {
   const { data: wellness } = await supabaseAdmin
-    .from("wellness_logs")
+    .from("daily_wellness_checkin")
     .select("*")
-    .eq("athlete_id", userId)
-    .lte("log_date", date.toISOString().split("T")[0])
-    .order("log_date", { descending: true })
+    .eq("user_id", userId)
+    .lte("checkin_date", date.toISOString().split("T")[0])
+    .order("checkin_date", { ascending: false })
     .limit(1)
     .maybeSingle();
 
-  return wellness;
+  if (!wellness) {
+    return wellness;
+  }
+
+  // Normalize to the field names this module's consumers read.
+  return {
+    ...wellness,
+    soreness: wellness.muscle_soreness,
+    energy: wellness.energy_level,
+  };
 }
 
 /**
