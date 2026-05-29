@@ -13,33 +13,12 @@
  */
 
 import { handler as teamCalendarHandler } from "./team-calendar.js";
+import { dispatch } from "./utils/web-lambda-bridge.js";
 import { handler as teamInviteHandler } from "./team-invite.js";
 import { handler as teamTemplatesHandler } from "./team-templates.js";
 import { handler as seasonArchiveHandler } from "./season-archive.js";
 import { handler as seasonReportsHandler } from "./season-reports.js";
 import { handler as attendanceHandler } from "./attendance.js";
-
-async function toLambdaEvent(req, url) {
-  const headers = Object.fromEntries(req.headers);
-  const method = req.method.toUpperCase();
-  let body = null;
-  if (method !== "GET" && method !== "HEAD" && method !== "OPTIONS") {body = await req.text();}
-  return {
-    httpMethod: method, path: url.pathname, headers,
-    queryStringParameters: url.searchParams.size > 0 ? Object.fromEntries(url.searchParams) : {},
-    multiValueQueryStringParameters: {}, body: body || null, isBase64Encoded: false,
-  };
-}
-
-function fromLambdaResponse(r) {
-  if (!r) {return new Response(JSON.stringify({ success: false, error: "No response" }), { status: 500, headers: { "Content-Type": "application/json" } });}
-  const body = typeof r.body === "string" ? r.body : JSON.stringify(r.body ?? null);
-  return new Response(body, { status: r.statusCode ?? 200, headers: r.headers ?? { "Content-Type": "application/json" } });
-}
-
-async function dispatch(handler, req, url) {
-  return fromLambdaResponse(await handler(await toLambdaEvent(req, url), {}));
-}
 
 import { getCorsHeaders as corsHeaders } from "./utils/cors.js";
 

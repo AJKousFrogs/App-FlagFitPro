@@ -18,6 +18,7 @@
  */
 
 import { handler as trainingSessionsHandler } from "./training-sessions.js";
+import { dispatch } from "./utils/web-lambda-bridge.js";
 import { handler as trainingCompleteHandler } from "./training-complete.js";
 import { handler as trainingSuggestionsHandler } from "./training-suggestions.js";
 import { handler as trainingMetricsHandler } from "./training-metrics.js";
@@ -33,54 +34,12 @@ import { handler as dailyTrainingHandler } from "./daily-training.js";
  * Convert a native Fetch API Request into a Lambda-style event object.
  * The underlying sub-handlers use baseHandler which expects the Lambda format.
  */
-async function toLambdaEvent(req, url) {
-  const headers = Object.fromEntries(req.headers);
-  const method = req.method.toUpperCase();
-  let body = null;
-  if (method !== "GET" && method !== "HEAD" && method !== "OPTIONS") {
-    body = await req.text();
-  }
-  return {
-    httpMethod: method,
-    path: url.pathname,
-    headers,
-    queryStringParameters: url.searchParams.size > 0
-      ? Object.fromEntries(url.searchParams)
-      : {},
-    multiValueQueryStringParameters: {},
-    body: body || null,
-    isBase64Encoded: false,
-  };
-}
-
 /**
  * Convert a Lambda-style response object to a native Fetch API Response.
  */
-function fromLambdaResponse(lambdaResp) {
-  if (!lambdaResp) {
-    return new Response(
-      JSON.stringify({ success: false, error: "Handler returned no response" }),
-      { status: 500, headers: { "Content-Type": "application/json" } },
-    );
-  }
-  const body = typeof lambdaResp.body === "string"
-    ? lambdaResp.body
-    : JSON.stringify(lambdaResp.body ?? null);
-  return new Response(body, {
-    status: lambdaResp.statusCode ?? 200,
-    headers: lambdaResp.headers ?? { "Content-Type": "application/json" },
-  });
-}
-
 /**
  * Dispatch a request to a Lambda-style handler using the adapter pair above.
  */
-async function dispatch(handler, req, url) {
-  const event = await toLambdaEvent(req, url);
-  const result = await handler(event, {});
-  return fromLambdaResponse(result);
-}
-
 // ─── CORS ─────────────────────────────────────────────────────────────────────
 
 import { getCorsHeaders as corsHeaders } from "./utils/cors.js";

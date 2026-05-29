@@ -5,25 +5,11 @@
  */
 
 import { handler as paymentsHandler } from "./payments-core.js";
+import { dispatch } from "./utils/web-lambda-bridge.js";
 import { toLambdaHandler } from "./utils/lambda-adapter.js";
 import { handler as sponsorsHandler } from "./sponsors.js";
 import { handler as sponsorLogoHandler } from "./sponsor-logo.js";
 
-async function toLambdaEvent(req, url) {
-  const m = req.method.toUpperCase();
-  return {
-    httpMethod: m, path: url.pathname, headers: Object.fromEntries(req.headers),
-    queryStringParameters: url.searchParams.size > 0 ? Object.fromEntries(url.searchParams) : {},
-    multiValueQueryStringParameters: {},
-    body: m !== "GET" && m !== "HEAD" && m !== "OPTIONS" ? await req.text() : null,
-    isBase64Encoded: false,
-  };
-}
-function fromLambdaResponse(r) {
-  if (!r) {return new Response(JSON.stringify({ success: false, error: "No response" }), { status: 500, headers: { "Content-Type": "application/json" } });}
-  return new Response(typeof r.body === "string" ? r.body : JSON.stringify(r.body ?? null), { status: r.statusCode ?? 200, headers: r.headers ?? { "Content-Type": "application/json" } });
-}
-async function dispatch(h, req, url) { return fromLambdaResponse(await h(await toLambdaEvent(req, url), {})); }
 import { getCorsHeaders as cors } from "./utils/cors.js";
 
 const handleRequest = async (req) => {

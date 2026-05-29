@@ -10,52 +10,11 @@
  */
 
 import { handler as staffNutritionistHandler } from "./staff-nutritionist.js";
+import { dispatch } from "./utils/web-lambda-bridge.js";
 import { handler as staffPhysiotherapistHandler } from "./staff-physiotherapist.js";
 import { handler as staffPsychologyHandler } from "./staff-psychology.js";
 
 // ─── Adapters ────────────────────────────────────────────────────────────────
-
-async function toLambdaEvent(req, url) {
-  const headers = Object.fromEntries(req.headers);
-  const method = req.method.toUpperCase();
-  let body = null;
-  if (method !== "GET" && method !== "HEAD" && method !== "OPTIONS") {
-    body = await req.text();
-  }
-  return {
-    httpMethod: method,
-    path: url.pathname,
-    headers,
-    queryStringParameters: url.searchParams.size > 0
-      ? Object.fromEntries(url.searchParams)
-      : {},
-    multiValueQueryStringParameters: {},
-    body: body || null,
-    isBase64Encoded: false,
-  };
-}
-
-function fromLambdaResponse(lambdaResp) {
-  if (!lambdaResp) {
-    return new Response(
-      JSON.stringify({ success: false, error: "Handler returned no response" }),
-      { status: 500, headers: { "Content-Type": "application/json" } },
-    );
-  }
-  const body = typeof lambdaResp.body === "string"
-    ? lambdaResp.body
-    : JSON.stringify(lambdaResp.body ?? null);
-  return new Response(body, {
-    status: lambdaResp.statusCode ?? 200,
-    headers: lambdaResp.headers ?? { "Content-Type": "application/json" },
-  });
-}
-
-async function dispatch(handler, req, url) {
-  const event = await toLambdaEvent(req, url);
-  const result = await handler(event, {});
-  return fromLambdaResponse(result);
-}
 
 import { getCorsHeaders as corsHeaders } from "./utils/cors.js";
 
