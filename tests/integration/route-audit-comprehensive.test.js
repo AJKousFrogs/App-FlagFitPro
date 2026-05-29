@@ -14,12 +14,15 @@ import {
   beforeAll,
   afterAll,
   beforeEach,
-} from "@jest/globals";
+} from "vitest";
 
 // Configuration
 const API_BASE_URL = process.env.API_BASE_URL || "http://localhost:3001";
 const TEST_USER_EMAIL = process.env.TEST_USER_EMAIL || "test@example.com";
 const TEST_USER_PASSWORD = process.env.TEST_USER_PASSWORD || "testpassword123";
+
+// Live-server e2e (jest-era, supertest against a running API). Skipped unless RUN_API_E2E=1.
+const RUN_API_E2E = process.env.RUN_API_E2E === "1";
 
 let authToken = null;
 let userId = null;
@@ -30,6 +33,7 @@ let createdSessionId = null;
 // ============================================================================
 
 beforeAll(async () => {
+  if (!RUN_API_E2E) {return;}
   // Authenticate test user
   const response = await request(API_BASE_URL).post("/api/auth/login").send({
     email: TEST_USER_EMAIL,
@@ -47,6 +51,7 @@ beforeAll(async () => {
 });
 
 afterAll(async () => {
+  if (!RUN_API_E2E) {return;}
   // Cleanup created resources
   if (createdSessionId && authToken) {
     await request(API_BASE_URL)
@@ -95,7 +100,7 @@ function expectRateLimitHeaders(response) {
 // TEST SUITE 1: CRUD OPERATIONS
 // ============================================================================
 
-describe("Route Audit: CRUD Operations", () => {
+describe.skipIf(!RUN_API_E2E)("Route Audit: CRUD Operations", () => {
   describe("CREATE Operations", () => {
     test("should create a training session with valid data", async () => {
       const response = await request(API_BASE_URL)
@@ -251,7 +256,7 @@ describe("Route Audit: CRUD Operations", () => {
 // TEST SUITE 2: INPUT VALIDATION
 // ============================================================================
 
-describe("Route Audit: Input Validation", () => {
+describe.skipIf(!RUN_API_E2E)("Route Audit: Input Validation", () => {
   describe("UUID Validation", () => {
     test("should accept valid UUID", async () => {
       const response = await request(API_BASE_URL)
@@ -446,7 +451,7 @@ describe("Route Audit: Input Validation", () => {
 // TEST SUITE 3: ERROR HANDLING
 // ============================================================================
 
-describe("Route Audit: Error Handling", () => {
+describe.skipIf(!RUN_API_E2E)("Route Audit: Error Handling", () => {
   describe("400 - Bad Request", () => {
     test("should return 400 for missing required userId", async () => {
       const response = await request(API_BASE_URL).get(
@@ -544,7 +549,7 @@ describe("Route Audit: Error Handling", () => {
 // TEST SUITE 4: RATE LIMITING
 // ============================================================================
 
-describe("Route Audit: Rate Limiting", () => {
+describe.skipIf(!RUN_API_E2E)("Route Audit: Rate Limiting", () => {
   describe("Rate Limit Headers", () => {
     test("should include rate limit headers", async () => {
       const response = await request(API_BASE_URL)
@@ -645,7 +650,7 @@ describe("Route Audit: Rate Limiting", () => {
 // TEST SUITE 5: SECURITY
 // ============================================================================
 
-describe("Route Audit: Security", () => {
+describe.skipIf(!RUN_API_E2E)("Route Audit: Security", () => {
   describe("SQL Injection Prevention", () => {
     const sqlInjectionPayloads = [
       "'; DROP TABLE workout_logs--",
@@ -757,7 +762,7 @@ describe("Route Audit: Security", () => {
 // TEST SUITE 6: DATABASE PERFORMANCE
 // ============================================================================
 
-describe("Route Audit: Database Performance", () => {
+describe.skipIf(!RUN_API_E2E)("Route Audit: Database Performance", () => {
   describe("Query Performance", () => {
     test("should respond within acceptable time (< 1s)", async () => {
       const start = Date.now();
@@ -834,7 +839,7 @@ describe("Route Audit: Database Performance", () => {
 // TEST SUMMARY
 // ============================================================================
 
-describe("Route Audit: Test Summary", () => {
+describe.skipIf(!RUN_API_E2E)("Route Audit: Test Summary", () => {
   test("should generate test report", () => {
     console.log("\n📊 Route Audit Test Summary:");
     console.log("✅ CRUD Operations: Tested");
