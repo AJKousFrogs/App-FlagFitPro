@@ -66,7 +66,7 @@ describe("recovery endpoint validation", () => {
 
   beforeEach(async () => {
     vi.resetModules();
-    const mod = await import("../../netlify/functions/recovery.js");
+    const mod = await import("../../netlify/functions/recovery-core.js");
     handler = mod.handler;
   });
 
