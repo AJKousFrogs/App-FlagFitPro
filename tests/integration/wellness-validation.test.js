@@ -89,7 +89,7 @@ describe("wellness validation hardening", () => {
         path: "/.netlify/functions/wellness/checkin",
         headers: { authorization: "Bearer test-token" },
         queryStringParameters: {},
-        body: JSON.stringify({ readiness: 11 }),
+        body: JSON.stringify({ readinessScore: 150 }),
       },
       {},
     );

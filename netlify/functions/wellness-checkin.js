@@ -4,7 +4,7 @@ import { detectPainTrigger } from "./utils/safety-override.js";
 import { getUserRole } from "./utils/authorization-guard.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { createErrorResponse } from "./utils/error-handler.js";
-import { tryParseJsonObjectBody } from "./utils/input-validator.js";
+import { parseJsonObjectBody } from "./utils/input-validator.js";
 import { hasAnyRole, HEALTH_DATA_ACCESS_ROLES } from "./utils/role-sets.js";
 import { buildRequestLogContext, createLogger } from "./utils/structured-logger.js";
 
@@ -229,16 +229,41 @@ const handler = async (event, context) =>
       try {
         if (evt.httpMethod === "GET") {
           const params = evt.queryStringParameters || {};
+          if (params.limit !== undefined) {
+            const limit = Number(params.limit);
+            if (!Number.isInteger(limit) || limit < 1 || limit > 100) {
+              return createErrorResponse(
+                "limit must be an integer between 1 and 100",
+                422,
+                "validation_error",
+                requestId,
+              );
+            }
+          }
           const date = params.date || new Date().toISOString().split("T")[0];
           const athleteId = params.athleteId || userId;
           return getCheckin(supabaseAdmin, userId, athleteId, date, requestId);
         }
 
-        const parsedPayload = tryParseJsonObjectBody(evt.body);
-        if (!parsedPayload.ok) {
-          return parsedPayload.error;
+        let payload;
+        try {
+          payload = parseJsonObjectBody(evt.body);
+        } catch (parseError) {
+          if (parseError?.message === "Request body must be an object") {
+            return createErrorResponse(
+              "Request body must be an object",
+              422,
+              "validation_error",
+              requestId,
+            );
+          }
+          return createErrorResponse(
+            "Invalid JSON in request body",
+            400,
+            "invalid_json",
+            requestId,
+          );
         }
-        const payload = parsedPayload.data;
         return saveCheckin(supabaseAdmin, userId, payload, requestId, requestLogger);
       } catch (error) {
         requestLogger.error("wellness_checkin_request_failed", error, {
@@ -335,6 +360,31 @@ async function saveCheckin(supabase, userId, payload, requestId, log = logger) {
     mood,
     hydrationLevel,
   } = payload;
+
+  // Reject out-of-range numeric wellness inputs up front (422, not a downstream 500).
+  const rangeChecks = [
+    ["sleepQuality", sleepQuality, 1, 10],
+    ["energyLevel", energyLevel, 1, 10],
+    ["muscleSoreness", muscleSoreness, 1, 10],
+    ["stressLevel", stressLevel, 1, 10],
+    ["motivationLevel", motivationLevel, 1, 10],
+    ["mood", mood, 1, 10],
+    ["readinessScore", readinessScore, 0, 100],
+  ];
+  for (const [field, value, min, max] of rangeChecks) {
+    if (
+      value !== undefined &&
+      value !== null &&
+      (typeof value !== "number" || Number.isNaN(value) || value < min || value > max)
+    ) {
+      return createErrorResponse(
+        `${field} must be a number between ${min} and ${max}`,
+        422,
+        "validation_error",
+        requestId,
+      );
+    }
+  }
 
   const targetDate = date || new Date().toISOString().split("T")[0];
 
@@ -480,7 +530,7 @@ async function saveCheckin(supabase, userId, payload, requestId, log = logger) {
     },
   );
 
-  if (error) {
+  if (error || !data) {
     return createErrorResponse(
       "Failed to save wellness check-in",
       500,
