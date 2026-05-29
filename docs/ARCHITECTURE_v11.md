@@ -1,4 +1,4 @@
-# FlagFit Pro — v10 Architecture
+# FlagFit Pro — v11 Architecture
 
 **Status:** in progress, additive on top of v4.0.0
 **Premise:** Flag football athletes are time-poor and unorganized. The app

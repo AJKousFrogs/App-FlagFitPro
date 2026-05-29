@@ -1,6 +1,6 @@
 # FlagFit Pro — Engine Contract
 
-**Status:** authoritative contract for the prescriptive engine + how data flows into it (2026-05-29). Companion to `PRESCRIPTION_SPEC.md` (the `prescribeFor` algorithm), `DATA_MODEL.md` (canonical tables), `ATHLETE_ID_CONVENTION.md` (`user_id`), `ARCHITECTURE_v10.md` (schedule spine). **This file is the guardrail against scattered data + wrong calculations:** it defines, for every input, where it is saved (one place, under the athlete) and how it reaches the daily plan.
+**Status:** authoritative contract for the prescriptive engine + how data flows into it (2026-05-29). Companion to `PRESCRIPTION_SPEC.md` (the `prescribeFor` algorithm), `DATA_MODEL.md` (canonical tables), `ATHLETE_ID_CONVENTION.md` (`user_id`), `ARCHITECTURE_v11.md` (schedule spine). **This file is the guardrail against scattered data + wrong calculations:** it defines, for every input, where it is saved (one place, under the athlete) and how it reaches the daily plan.
 
 ## 0. The one rule
 Everything an athlete needs to know — *what to train, how hard, what to eat, when to hydrate, how to recover* — is **derived** from inputs the athlete and their staff log. The athlete never enters a derived value; the engine never invents an input. Data flows **one direction**: inputs → derived signals → prescription.

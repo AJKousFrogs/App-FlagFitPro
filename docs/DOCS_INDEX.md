@@ -14,10 +14,10 @@ This file is the canonical entry point for durable documentation in the repo.
 | Need | Document |
 | --- | --- |
 | **Engine contract** (pipeline + roles + authority + consent) | [ENGINE_CONTRACT.md](./ENGINE_CONTRACT.md) |
-| **v10 architecture** (in progress, additive on v4) | [ARCHITECTURE_v10.md](./ARCHITECTURE_v10.md) |
+| **Current version baseline (v11)** | [RELEASE_NOTES_11.0.0.md](./RELEASE_NOTES_11.0.0.md) |
+| **v11 architecture** (schedule spine + engine) | [ARCHITECTURE_v11.md](./ARCHITECTURE_v11.md) |
 | **Daily prescription contract** | [PRESCRIPTION_SPEC.md](./PRESCRIPTION_SPEC.md) |
-| Current release (v4.0) | [RELEASE_NOTES_4.0.0.md](./RELEASE_NOTES_4.0.0.md) |
-| Overall architecture (v4 baseline) | [ARCHITECTURE.md](./ARCHITECTURE.md) |
+| Overall architecture (legacy v4 baseline doc) | [ARCHITECTURE.md](./ARCHITECTURE.md) |
 | Canonical ownership rules | [SINGLE_SOURCE_OF_TRUTH.md](./SINGLE_SOURCE_OF_TRUTH.md) |
 | Repo navigation | [REPO_DISCOVERY_GUIDE.md](./REPO_DISCOVERY_GUIDE.md) |
 | Local setup | [LOCAL_DEVELOPMENT_SETUP.md](./LOCAL_DEVELOPMENT_SETUP.md) |
@@ -34,7 +34,7 @@ This file is the canonical entry point for durable documentation in the repo.
 
 ## Engineering And Architecture Docs
 
-- [ARCHITECTURE_v10.md](./ARCHITECTURE_v10.md) — schedule spine + prescription engine (current direction)
+- [ARCHITECTURE_v11.md](./ARCHITECTURE_v11.md) — schedule spine + prescription engine (current direction)
 - [PRESCRIPTION_SPEC.md](./PRESCRIPTION_SPEC.md) — `prescribeFor` algorithm contract
 - [ARCHITECTURE.md](./ARCHITECTURE.md)
 - [SINGLE_SOURCE_OF_TRUTH.md](./SINGLE_SOURCE_OF_TRUTH.md)
@@ -80,6 +80,7 @@ This file is the canonical entry point for durable documentation in the repo.
 
 ## Release And Change History
 
+- [RELEASE_NOTES_11.0.0.md](./RELEASE_NOTES_11.0.0.md) — **current baseline** (unifies v4 release + v10 architecture)
 - [RELEASE_NOTES_4.0.0.md](./RELEASE_NOTES_4.0.0.md)
 - [RELEASE_NOTES_3.4.0.md](./RELEASE_NOTES_3.4.0.md)
 - [RELEASE_NOTES_2.1.0.md](./RELEASE_NOTES_2.1.0.md)

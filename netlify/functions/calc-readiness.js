@@ -269,7 +269,7 @@ async function fetchWellnessForReadiness(athleteId, dayStr) {
 }
 
 async function fetchNextGame(targetDate, athleteId) {
-  // v10 canonical source: the schedule spine (union across active team memberships).
+  // v11 canonical source: the schedule spine (union across active team memberships).
   // No legacy `fixtures` fallback — the spine is the single source for next-event proximity.
   const spineQuery = await supabaseAdmin
     .from("v_athlete_schedule")

@@ -1,7 +1,7 @@
 /**
  * Daily Prescription Models
  *
- * v10 mechanic: every day the athlete opens the app, they see a single
+ * v11 mechanic: every day the athlete opens the app, they see a single
  * prescription — what to do, how hard, how long, why. The prescription is
  * deterministic given (schedule, ACWR, readiness, bodyweight). No options,
  * no decisions. Lazy athletes do what they're told; the algorithm is

@@ -4,7 +4,7 @@
  * Canonical types for the schedule spine. Backed by the `competitions` and
  * `competition_events` tables and the `v_athlete_schedule` view.
  *
- * The schedule is the *spine* of the v10 product: periodization, readiness,
+ * The schedule is the *spine* of the v11 product: periodization, readiness,
  * nutrition timing, hydration targets, and recovery prescriptions all read
  * from these types. Add new fields here, never re-derive ad-hoc in components.
  */

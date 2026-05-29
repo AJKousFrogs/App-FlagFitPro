@@ -18,7 +18,7 @@ import {
 } from "../models/schedule.models";
 
 /**
- * Schedule Service — canonical read API for the v10 spine.
+ * Schedule Service — canonical read API for the v11 spine.
  *
  * One service. One source of truth. Today, training, nutrition, hydration,
  * recovery, and readiness all consume from here. **Do not** re-derive

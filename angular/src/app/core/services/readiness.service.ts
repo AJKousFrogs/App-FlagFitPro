@@ -3,7 +3,7 @@
  *
  * Thin client for `/api/calc-readiness` and `/api/readiness-history`.
  *
- * v10 contract (architecture doc §6 item 6): the **server is canonical** for
+ * v11 contract (architecture doc §6 item 6): the **server is canonical** for
  * readiness scoring. The Netlify function (`netlify/functions/calc-readiness.js`)
  * is the only place that computes a score, applies cut-points, picks a
  * suggestion, and writes the calibration note. Clients are read-through.

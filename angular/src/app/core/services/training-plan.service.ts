@@ -22,7 +22,7 @@ import type { GameWeekType } from "./flag-football-performance-system.data";
 /**
  * Spine-derived schedule context for one call to `generateWeeklyPlan`.
  * Holds the four periodization inputs that the caller used to be required
- * to pre-fetch. With the v10 spine the defaults come from the snapshot.
+ * to pre-fetch. With the v11 spine the defaults come from the snapshot.
  */
 interface ResolvedScheduleContext {
   gameDays: Date[];
@@ -173,7 +173,7 @@ export class TrainingPlanService {
    * Generate goal-based weekly training plan.
    *
    * Schedule-derived fields (`gameDays`, `competitionDate`, `tournaments`,
-   * `gameWeekType`) are resolved from the v10 schedule spine when the caller
+   * `gameWeekType`) are resolved from the v11 schedule spine when the caller
    * doesn't supply them. Anything passed in `config` always wins, so existing
    * coach-side flows and tests keep working unchanged.
    */
@@ -852,7 +852,7 @@ export class TrainingPlanService {
     athleteId: string,
     days = 14,
   ): Promise<Date[]> {
-    // v10 canonical: read from the schedule spine (`v_athlete_schedule`).
+    // v11 canonical: read from the schedule spine (`v_athlete_schedule`).
     // The spine is a union across the athlete's active team memberships, so
     // an athlete playing in Slovenian + Austrian leagues + Copenhagen Bowl
     // sees one merged calendar instead of three disjoint fixture lists.

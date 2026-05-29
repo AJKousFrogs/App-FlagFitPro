@@ -1,6 +1,6 @@
 {
   "name": "flagfit-pro",
-  "version": "4.0.0",
+  "version": "11.0.0",
   "type": "module",
   "description": "FlagFit Pro v4.0 - consolidated flag football performance, wellness, and team operations platform",
   "main": "index.js",
