@@ -64,6 +64,14 @@ function createFakeSupabase() {
         }
       }
 
+      // Dashboard batch-fetches member user details via .in("id", [...]).
+      if (this.table === "users") {
+        return {
+          data: [{ id: "athlete-1", full_name: "Athlete One", position: "WR" }],
+          error: null,
+        };
+      }
+
       return { data: [], error: null };
     }
 

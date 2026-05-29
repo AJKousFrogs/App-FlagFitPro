@@ -13,7 +13,14 @@ const buildEvent = (path) => ({
   isBase64Encoded: false,
 });
 
-describe("Netlify Functions (API smoke)", () => {
+// Live-Supabase smoke test; skip (don't fail) when credentials are absent — e.g. headless runs.
+const hasSupabaseEnv = Boolean(
+  process.env.SUPABASE_URL &&
+    process.env.SUPABASE_ANON_KEY &&
+    (process.env.SUPABASE_SERVICE_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY),
+);
+
+describe.skipIf(!hasSupabaseEnv)("Netlify Functions (API smoke)", () => {
   beforeAll(async () => {
     if (
       !process.env.SUPABASE_SERVICE_KEY &&

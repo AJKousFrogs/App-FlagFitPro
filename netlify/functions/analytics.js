@@ -72,6 +72,11 @@ const handleRequest = async (req) => {
   const url = new URL(req.url);
   const path = url.pathname;
 
+  // /analytics/* first — its sub-routes (e.g. /analytics/performance-trends) contain the
+  // substring "performance" and must not be intercepted by the generic performance match below.
+  if (path.includes("/analytics")) {
+    return dispatch(analyticsCoreHandler, req, url);
+  }
   // performance/* sub-routes — match heatmap before metrics to avoid prefix overlap
   if (path.includes("/performance/heatmap") || path.includes("/performance-heatmap")) {
     return dispatch(performanceHeatmapHandler, req, url);
@@ -81,9 +86,6 @@ const handleRequest = async (req) => {
   }
   if (path.includes("/performance/data") || path.includes("/performance-data") || path.includes("/performance")) {
     return dispatch(performanceDataHandler, req, url);
-  }
-  if (path.includes("/analytics")) {
-    return dispatch(analyticsCoreHandler, req, url);
   }
 
   return new Response(

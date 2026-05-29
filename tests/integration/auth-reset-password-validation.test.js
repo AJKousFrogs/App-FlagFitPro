@@ -45,6 +45,13 @@ vi.mock("../../netlify/functions/utils/email-service.js", () => ({
   },
 }));
 
+// reset action updates the password via supabaseAdmin.auth.admin.updateUserById
+vi.mock("../../netlify/functions/supabase-client.js", () => ({
+  supabaseAdmin: {
+    auth: { admin: { updateUserById: async () => ({ error: null }) } },
+  },
+}));
+
 describe("auth-reset-password validation hardening", () => {
   beforeEach(() => {
     vi.resetModules();
