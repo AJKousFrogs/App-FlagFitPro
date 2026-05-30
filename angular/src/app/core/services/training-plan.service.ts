@@ -118,11 +118,6 @@ export interface PeriodizationState {
   message: string;
 }
 
-interface FixtureResponse {
-  game_start: string;
-  [key: string]: unknown;
-}
-
 interface PlanSaveResponse {
   success?: boolean;
 }
@@ -865,23 +860,9 @@ export class TrainingPlanService {
       }
     }
 
-    // Legacy fallback: `/api/fixtures` for cross-athlete (coach) views or
-    // environments where the schedule spine has not yet been seeded.
-    try {
-      const response = await firstValueFrom(
-        this.apiService.get<FixtureResponse[]>("/api/fixtures", {
-          athleteId,
-          days,
-        }),
-      );
-
-      return extractApiArray<FixtureResponse>(response).map(
-        (f: FixtureResponse) => new Date(f.game_start),
-      );
-    } catch (error) {
-      this.logger.error("Error fetching fixtures:", error);
-      return [];
-    }
+    // v11: the schedule spine is canonical. No legacy /api/fixtures fallback —
+    // an empty window simply means no upcoming events for this athlete.
+    return [];
   }
 
   /**

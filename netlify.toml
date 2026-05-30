@@ -864,13 +864,6 @@
   status = 200
   force = true
 
-# API Routes for Fixtures
-[[redirects]]
-  from = "/api/fixtures"
-  to = "/.netlify/functions/games"
-  status = 200
-  force = true
-
 # API Routes for Trends
 [[redirects]]
   from = "/api/trends/*"
