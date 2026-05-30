@@ -25,7 +25,7 @@ import { supabaseAdmin, checkEnvVars } from "./supabase-client.js";
 
 import { baseHandler } from "./utils/base-handler.js";
 import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
-import { parseJsonObjectBody } from "./utils/input-validator.js";
+import { parseJsonObjectBody, isValidId } from "./utils/input-validator.js";
 
 // =====================================================
 // HELPER FUNCTIONS
@@ -33,15 +33,6 @@ import { parseJsonObjectBody } from "./utils/input-validator.js";
 
 function isPlainObject(value) {
   return value !== null && typeof value === "object" && !Array.isArray(value);
-}
-
-function isValidId(value) {
-  return (
-    typeof value === "string" &&
-    value.trim().length > 0 &&
-    value.trim().length <= 128 &&
-    /^[A-Za-z0-9_-]+$/.test(value.trim())
-  );
 }
 
 function parseBoundedInt(value, field, min, max, defaultValue = null) {

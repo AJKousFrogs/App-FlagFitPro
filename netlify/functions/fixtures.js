@@ -7,6 +7,7 @@
 // Reduced from 94 lines to 45 lines (52% reduction)
 
 import { supabaseAdmin } from "./supabase-client.js";
+import { isValidId } from "./utils/input-validator.js";
 
 import { baseHandler } from "./utils/base-handler.js";
 import { createErrorResponse } from "./utils/error-handler.js";
@@ -14,15 +15,6 @@ import { calculateDateRange } from "./utils/db-query-helper.js";
 import { successResponse } from "./utils/response-helper.js";
 import { getUserRole } from "./utils/authorization-guard.js";
 import { hasAnyRole, LOAD_MANAGEMENT_ACCESS_ROLES } from "./utils/role-sets.js";
-
-function isValidId(value) {
-  return (
-    typeof value === "string" &&
-    value.trim().length > 0 &&
-    value.trim().length <= 128 &&
-    /^[A-Za-z0-9_-]+$/.test(value.trim())
-  );
-}
 
 function parseRequestedAthleteId(event, userId) {
   const rawAthleteId = event.queryStringParameters?.athleteId;

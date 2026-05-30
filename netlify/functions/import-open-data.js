@@ -9,7 +9,7 @@ import { createSuccessResponse, createErrorResponse, handleValidationError } fro
 import { baseHandler } from "./utils/base-handler.js";
 import { getUserRole } from "./utils/authorization-guard.js";
 import { hasAnyRole, LOAD_MANAGEMENT_ACCESS_ROLES } from "./utils/role-sets.js";
-import { parseJsonObjectBody } from "./utils/input-validator.js";
+import { parseJsonObjectBody, isValidId } from "./utils/input-validator.js";
 import { buildRequestLogContext, createLogger } from "./utils/structured-logger.js";
 
 const logger = createLogger({ service: "netlify.import-open-data" });
@@ -31,15 +31,6 @@ const MAX_DATASET_SIZE = 10000;
 
 function isPlainObject(value) {
   return value !== null && typeof value === "object" && !Array.isArray(value);
-}
-
-function isValidId(value) {
-  return (
-    typeof value === "string" &&
-    value.trim().length > 0 &&
-    value.trim().length <= 128 &&
-    /^[A-Za-z0-9_-]+$/.test(value.trim())
-  );
 }
 
 async function verifyAthleteAccess(requestUserId, athleteId) {

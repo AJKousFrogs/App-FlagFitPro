@@ -1,7 +1,7 @@
 import { baseHandler } from "./utils/base-handler.js";
 import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
 import { getSupabaseClient } from "./supabase-client.js";
-import { parseJsonObjectBody } from "./utils/input-validator.js";
+import { parseJsonObjectBody, isValidId } from "./utils/input-validator.js";
 
 /**
  * Privacy Settings API
@@ -35,15 +35,6 @@ function isPlainObject(value) {
 
 function isBoolean(value) {
   return typeof value === "boolean";
-}
-
-function isValidId(value) {
-  return (
-    typeof value === "string" &&
-    value.trim().length > 0 &&
-    value.trim().length <= 128 &&
-    /^[A-Za-z0-9_-]+$/.test(value.trim())
-  );
 }
 
 function validateEmergencyContacts(contacts) {

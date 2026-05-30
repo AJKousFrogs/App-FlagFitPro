@@ -3,7 +3,7 @@ import { createSuccessResponse, createErrorResponse } from "./utils/error-handle
 import { supabaseAdmin } from "./supabase-client.js";
 import { getUserRole } from "./utils/authorization-guard.js";
 import { hasAnyRole, LOAD_MANAGEMENT_ACCESS_ROLES } from "./utils/role-sets.js";
-import { parseJsonObjectBody } from "./utils/input-validator.js";
+import { parseJsonObjectBody, isValidId } from "./utils/input-validator.js";
 import { buildRequestLogContext, createLogger } from "./utils/structured-logger.js";
 
 const logger = createLogger({ service: "netlify.calibration-logs" });
@@ -100,15 +100,6 @@ async function logRecommendation(userId, data, log = logger) {
 
 function isPlainObject(value) {
   return value !== null && typeof value === "object" && !Array.isArray(value);
-}
-
-function isValidId(value) {
-  return (
-    typeof value === "string" &&
-    value.trim().length > 0 &&
-    value.trim().length <= 128 &&
-    /^[A-Za-z0-9_-]+$/.test(value.trim())
-  );
 }
 
 async function verifyAthleteAccess(requestUserId, athleteId) {

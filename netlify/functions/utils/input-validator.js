@@ -396,7 +396,21 @@ const COMMON_SCHEMAS = {
   },
 };
 
+/**
+ * Lightweight opaque-id validator: non-empty, ≤128 chars, [A-Za-z0-9_-].
+ * Shared by handlers that accept slug/uuid-ish path or body identifiers.
+ */
+function isValidId(value) {
+  return (
+    typeof value === "string" &&
+    value.trim().length > 0 &&
+    value.trim().length <= 128 &&
+    /^[A-Za-z0-9_-]+$/.test(value.trim())
+  );
+}
+
 export {
+  isValidId,
   validateInput,
   sanitizeString,
   sanitizeObject,
@@ -410,6 +424,7 @@ export {
 };
 
 export default {
+  isValidId,
   validateInput,
   sanitizeString,
   sanitizeObject,
