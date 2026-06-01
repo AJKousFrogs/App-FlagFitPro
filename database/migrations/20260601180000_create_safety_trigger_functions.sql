@@ -1,0 +1,6 @@
+-- Audit fix: safety-override.js called detect_pain_trigger / detect_acwr_trigger which never
+-- existed (pain/ACWR safety-override logging silently no-op'd). Created both as SECURITY
+-- DEFINER fns that log a safety_override_log row (disclosing the flagged data to the athlete's
+-- team physio/medical/coach staff) with a 24h dedup guard; return the override id or NULL.
+-- Applied via Supabase MCP 2026-06-01. anon EXECUTE revoked (called via service role).
+-- See the applied migration for full bodies.
