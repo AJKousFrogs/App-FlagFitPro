@@ -117,15 +117,23 @@ SET request.jwt.claims = '{"sub": "coach-uuid", "role": "authenticated", "user_m
 
 ## CI Integration
 
-Add to your CI workflow:
+These suites run automatically in the **`db-integration`** job of
+`.github/workflows/ci.yml` (alongside the `backend-tests` job that runs the
+mocked `test:backend` suite on every push/PR).
 
-```yaml
-- name: Run Privacy Tests
-  run: npm run test:privacy:ci
-  env:
-    SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-    SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
-```
+Without DB secrets the suites self-skip (`describe.skipIf`), so the job is safe on
+forks and untrusted PRs. To make them actually execute, set two **repository
+secrets**:
+
+| Secret | Value |
+| --- | --- |
+| `DEV_SUPABASE_URL` | URL of a **dev / branch** Supabase project |
+| `DEV_SUPABASE_SERVICE_ROLE_KEY` | that project's service-role key |
+
+> **Never point these at production.** The RLS matrix creates and tears down real
+> `auth.users` + teams, and seed-integrity reads the whole DB. Use a dedicated dev
+> project or a `supabase` branch. Locally, put the same vars in a `.env` and run
+> `npm run test:privacy`.
 
 ---
 
