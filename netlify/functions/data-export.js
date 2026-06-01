@@ -127,7 +127,7 @@ const USER_DATA_TABLES = [
     exportName: "notification_settings",
   },
   {
-    table: "push_notification_preferences",
+    table: "user_notification_preferences",
     userIdColumn: "user_id",
     description: "Notification preferences",
     exportName: "notification_preferences",
