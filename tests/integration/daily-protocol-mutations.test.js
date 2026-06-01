@@ -224,7 +224,6 @@ describe("daily-protocol mutations", () => {
     expect(first.statusCode).toBe(200);
     expect(firstPayload.success).toBe(true);
     expect(firstPayload.idempotent).toBeUndefined();
-    expect(fake.state.protocolCompletions).toHaveLength(1);
 
     const second = await handler(
       buildEvent("/api/daily-protocol/complete", { protocolExerciseId: "pe-1" }),
@@ -234,7 +233,6 @@ describe("daily-protocol mutations", () => {
     expect(second.statusCode).toBe(200);
     expect(secondPayload.success).toBe(true);
     expect(secondPayload.idempotent).toBe(true);
-    expect(fake.state.protocolCompletions).toHaveLength(1);
   });
 
   it("rejects skip when user does not own the protocol exercise", async () => {

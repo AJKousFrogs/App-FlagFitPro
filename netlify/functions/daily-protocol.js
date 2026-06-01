@@ -1803,19 +1803,9 @@ async function completeExercise(supabase, userId, payload, headers) {
     throw updateError;
   }
 
-  // Log completion only when a transition to complete occurred.
-  if (updatedExercise) {
-    await supabase.from("protocol_completions").insert({
-      user_id: userId,
-      protocol_id: exercise.protocol_id,
-      protocol_exercise_id: protocolExerciseId,
-      completion_date: exercise.daily_protocols.protocol_date,
-      block_type: exercise.block_type,
-      exercise_id: exercise.exercise_id,
-    });
-  }
-
-  // The trigger will update protocol progress automatically
+  // (Per-exercise completion ledger removed — protocol_completions was never created.
+  // The exercise status update above is the source of truth; the protocol's load reaches
+  // ACWR via the training_sessions log on completion. The DB trigger updates progress.)
 
   return {
     statusCode: 200,
@@ -1945,16 +1935,8 @@ async function completeBlock(supabase, userId, payload, headers) {
 
   // Log completions
   if (exercises && exercises.length > 0) {
-    const completions = exercises.map((ex) => ({
-      user_id: userId,
-      protocol_id: protocolId,
-      protocol_exercise_id: ex.id,
-      completion_date: protocol.protocol_date,
-      block_type: blockType,
-      exercise_id: ex.exercise_id,
-    }));
-
-    await supabase.from("protocol_completions").insert(completions);
+    // (Per-exercise completion ledger removed — protocol_completions was never created;
+    // block status is updated above, and session load reaches ACWR via training_sessions.)
   }
 
   return {
@@ -2137,9 +2119,8 @@ async function logSession(supabase, userId, payload, headers, log = logger) {
       session_type: sessionType,
       duration_minutes: actualDurationMinutes,
       rpe: actualRpe,
-      load_au: actualLoadAu,
+      workload: actualLoadAu,
       notes: sessionNotes,
-      source: "daily_protocol",
       session_state: "COMPLETED", // Execution logging creates completed session
       coach_locked: false, // Execution logs are not coach-locked
       log_status: logStatus,
@@ -2197,24 +2178,6 @@ async function logSession(supabase, userId, payload, headers, log = logger) {
   // (Removed: a dead duplicate write of training_load/duration/rpe to wellness_logs.
   // The completed session is already logged to training_sessions above — the canonical
   // load source for ACWR — so this was write-only dead data. wellness_logs is retired.)
-
-  // Mark completions as logged to ACWR
-  try {
-    await supabase
-      .from("protocol_completions")
-      .update({ logged_to_acwr: true, logged_to_wellness: true })
-      .eq("protocol_id", protocolId)
-      .eq("user_id", userId);
-  } catch (completionError) {
-    log.warn(
-      "daily_protocol_completion_update_failed",
-      {
-        user_id: userId,
-        protocol_id: protocolId,
-      },
-      completionError,
-    );
-  }
 
   // Update training streak
   let streakResult = null;
