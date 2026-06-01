@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FlagFit — Settings (hi-fi)</title>
+<link rel="stylesheet" href="../01-system/system.css">
+<style>.sw{width:42px;height:24px;border-radius:var(--r-pill);background:var(--surface-2);position:relative;display:inline-block}
+.sw::after{content:"";position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:var(--r-pill);background:var(--text-faint)}
+.sw.on{background:var(--accent)}.sw.on::after{left:21px;background:var(--on-accent)}
+.tabs{display:flex;gap:16px;border-bottom:1px solid var(--border-soft);padding-bottom:8px;font-size:14px;font-weight:600}
+.tabs a{color:var(--text-faint)}.tabs a.on{color:var(--text-strong);border-bottom:2px solid var(--accent);padding-bottom:8px}</style></head>
+<body>
+<p style="max-width:412px;margin:12px auto;color:var(--text-faint);font-size:12px;text-align:center">HI-FI · Settings <a href="index.html">· all hi-fi</a></p>
+<div class="phone">
+  <div class="topbar"><div><h1 style="font-size:21px">Settings</h1></div><span class="avatar">AK</span></div>
+  <div class="screen">
+    <div class="tabs"><a class="on">Notifications</a><a>Privacy</a><a>Prefs</a><a>Security</a></div>
+    <div class="section-h"><h2>Notifications</h2></div>
+    <div class="card">
+      <div class="lrow"><span>Training reminders</span><span class="sw on"></span></div>
+      <div class="lrow"><span>Game-day alerts</span><span class="sw on"></span></div>
+      <div class="lrow"><span>ACWR / safety alerts</span><span class="sw on"></span></div>
+      <div class="lrow"><span>Coach messages</span><span class="sw on"></span></div>
+    </div>
+    <div class="section-h"><h2>Privacy &amp; consent</h2></div>
+    <div class="card">
+      <div class="lrow"><span>AI personalisation (Merlin)</span><span class="sw"></span></div>
+      <div class="lrow"><span>Share performance with coaches</span><span class="sw on"></span></div>
+      <div class="lrow"><span>Share health with medical staff</span><span class="sw"></span></div>
+    </div>
+    <div class="section-h"><h2>Account</h2></div>
+    <div class="card">
+      <div class="lrow"><span>Change password</span><span class="faint">›</span></div>
+      <div class="lrow"><span style="color:var(--danger)">Delete account &amp; data</span><span class="faint">›</span></div>
+    </div>
+  </div>
+  <nav class="tabbar"><a><span class="ic">▦</span>Today</a><a><span class="ic">⚡</span>Training</a><a><span class="ic">♥</span>Wellness</a><a><span class="ic">📈</span>Stats</a><a class="active"><span class="ic">⋯</span>More</a></nav>
+</div>
+</body></html>

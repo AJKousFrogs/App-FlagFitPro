@@ -149,7 +149,7 @@ nav.
 | A — preserve & demolish | ✅ (UI deleted, engine kept, shell builds) |
 | B — wireframes + data/engine wiring | ✅ (15 screens + gallery + 5 design/logic docs) |
 | C — design system (`tokens.css` + styled gallery) | ✅ this round |
-| D — hi-fi static pages | ◧ started (Today); apply tokens to the rest |
+| D — hi-fi static pages | ✅ athlete app complete (15 screens in `02-hifi/`); coach track its own pass |
 | E — port to Angular (mechanical, per screen, reuse engine) | ⏳ pending sign-off |
 | F — responsive validation (Playwright vs hi-fi) | ⏳ |
 

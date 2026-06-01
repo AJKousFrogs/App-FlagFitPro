@@ -4,17 +4,35 @@
 <title>FlagFit — Hi-fi (Phase D)</title>
 <link rel="stylesheet" href="../01-system/system.css"></head>
 <body>
-<div style="max-width:680px;margin:0 auto;padding:28px 20px">
+<div style="max-width:720px;margin:0 auto;padding:28px 20px">
   <p class="eyebrow" style="color:var(--accent);font-weight:700;letter-spacing:.1em;text-transform:uppercase;font-size:12px">Phase D · hi-fi</p>
-  <h1 style="font-size:30px">The athlete spine in the locked system</h1>
-  <p class="muted">Built only from the Phase C gallery (<a href="../01-system/gallery.html">design system →</a>). Lo-fi + data wiring: <a href="../00-wireframes/wireframes/index.html">wireframes →</a> · master doc: <a href="../FLAGFIT_SPEC.md">FLAGFIT_SPEC.md</a></p>
-  <div class="card stack" style="margin-top:20px">
-    <div class="lrow"><a href="today.html">▦ Today</a><small>answer-first: plan hero · context strip · diagnostics below</small></div>
-    <div class="lrow"><a href="wellness.html">♥ Wellness</a><small>check-in → readiness gauge → ACWR → hydration</small></div>
-    <div class="lrow"><a href="training.html">⚡ Training</a><small>session hero + complete · week · season block</small></div>
-    <div class="lrow"><a href="stats.html">📈 Stats</a><small>ACWR + readiness charts · performance</small></div>
-    <div class="lrow"><a href="more.html">⋯ More</a><small>grouped hub: Compete / Recovery / Tools / Me</small></div>
+  <h1 style="font-size:30px">The athlete app in the locked system</h1>
+  <p class="muted">Every screen built only from the Phase C gallery (<a href="../01-system/gallery.html">design system →</a>). Lo-fi + data wiring: <a href="../00-wireframes/wireframes/index.html">wireframes →</a> · master doc: <a href="../FLAGFIT_SPEC.md">FLAGFIT_SPEC.md</a></p>
+
+  <div class="card stack" style="margin-top:18px">
+    <b class="muted" style="font-size:13px;text-transform:uppercase;letter-spacing:.06em">Entry</b>
+    <div class="lrow"><a href="landing.html">Landing</a><small>hero video · value props · auth</small></div>
+    <div class="lrow"><a href="onboarding.html">Onboarding</a><small>stepper · season periods (player-declared)</small></div>
   </div>
-  <p class="muted" style="margin-top:16px">Remaining hi-fi (onboarding, landing, profile, settings + secondary) are a mechanical re-skin of their lo-fi wireframes against the same tokens — no new design decisions. Then Phase E (Angular port).</p>
+  <div class="card stack" style="margin-top:14px">
+    <b class="muted" style="font-size:13px;text-transform:uppercase;letter-spacing:.06em">5-tab spine</b>
+    <div class="lrow"><a href="today.html">▦ Today</a><small>answer-first plan hero</small></div>
+    <div class="lrow"><a href="wellness.html">♥ Wellness</a><small>check-in → readiness → ACWR → hydration</small></div>
+    <div class="lrow"><a href="training.html">⚡ Training</a><small>session + complete · week · season</small></div>
+    <div class="lrow"><a href="stats.html">📈 Stats</a><small>ACWR + readiness charts · performance</small></div>
+    <div class="lrow"><a href="more.html">⋯ More</a><small>grouped hub</small></div>
+  </div>
+  <div class="card stack" style="margin-top:14px">
+    <b class="muted" style="font-size:13px;text-transform:uppercase;letter-spacing:.06em">Secondary &amp; Me</b>
+    <div class="lrow"><a href="acwr.html">Load / ACWR</a><small>verdict · chart · can-I-train · spike</small></div>
+    <div class="lrow"><a href="competition.html">Competition</a><small>RSVP + post-event actuals</small></div>
+    <div class="lrow"><a href="gameday.html">Game day</a><small>prescription · weather · fueling</small></div>
+    <div class="lrow"><a href="achievements.html">Achievements</a><small>streak · earned · next</small></div>
+    <div class="lrow"><a href="chat.html">Merlin AI</a><small>context-aware coach</small></div>
+    <div class="lrow"><a href="notifications.html">Notifications</a><small>safety · game · coach</small></div>
+    <div class="lrow"><a href="profile.html">Profile</a><small>view + edit · injuries</small></div>
+    <div class="lrow"><a href="settings.html">Settings</a><small>notifications · privacy · account</small></div>
+  </div>
+  <p class="muted" style="margin-top:16px">Phase D complete for the athlete app. Next: Phase E — Angular port (rebuild each component 1:1, reuse the engine, restore routes/guards, theme PrimeNG via tokens) + implement the weather/season engine inputs. Coach track is its own pass.</p>
 </div>
 </body></html>
