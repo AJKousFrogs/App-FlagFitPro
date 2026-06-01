@@ -112,19 +112,24 @@ async function createWellnessCheckin(userId, checkinData, log = logger) {
       throw new Error("soreness must be between 1 and 10");
     }
 
-    // Insert wellness check-in
+    // Upsert the day's check-in into the canonical daily_wellness_checkin (one row per
+    // user/day). This simpler form maps onto the canonical columns; the rich /wellness/checkin
+    // path writes the same table. (Was a broken write to a nonexistent wellness_checkins table.)
     const { data, error } = await supabaseAdmin
-      .from("wellness_checkins")
-      .insert({
-        user_id: userId,
-        readiness,
-        sleep: sleep || null,
-        energy: energy || null,
-        mood: mood || null,
-        soreness: soreness || null,
-        notes: notes || null,
-        created_at: new Date().toISOString(),
-      })
+      .from("daily_wellness_checkin")
+      .upsert(
+        {
+          user_id: userId,
+          checkin_date: new Date().toISOString().split("T")[0],
+          calculated_readiness: readiness,
+          sleep_hours: sleep ?? null,
+          energy_level: energy ?? null,
+          mood: mood ?? null,
+          muscle_soreness: soreness ?? null,
+          notes: notes || null,
+        },
+        { onConflict: "user_id,checkin_date" },
+      )
       .select()
       .single();
 
@@ -142,11 +147,11 @@ async function createWellnessCheckin(userId, checkinData, log = logger) {
     return {
       id: data.id,
       checkinAt: data.created_at,
-      readiness: data.readiness,
-      sleep: data.sleep,
-      energy: data.energy,
+      readiness: data.calculated_readiness,
+      sleep: data.sleep_hours,
+      energy: data.energy_level,
       mood: data.mood,
-      soreness: data.soreness,
+      soreness: data.muscle_soreness,
       notes: data.notes,
     };
   } catch (error) {
@@ -183,7 +188,7 @@ async function getWellnessCheckins(
       if (!consentCheck.allowed) {
         // Return compliance-only data
         const { data } = await supabaseAdmin
-          .from("wellness_checkins")
+          .from("daily_wellness_checkin")
           .select("id, created_at, user_id")
           .eq("user_id", targetAthleteId)
           .order("created_at", { ascending: false })
@@ -197,7 +202,7 @@ async function getWellnessCheckins(
     }
 
     const { data, error } = await supabaseAdmin
-      .from("wellness_checkins")
+      .from("daily_wellness_checkin")
       .select("*")
       .eq("user_id", targetAthleteId)
       .order("created_at", { ascending: false })
@@ -247,7 +252,7 @@ async function getWellnessCheckins(
 async function getLatestWellnessCheckin(userId, log = logger) {
   try {
     const { data, error } = await supabaseAdmin
-      .from("wellness_checkins")
+      .from("daily_wellness_checkin")
       .select("*")
       .eq("user_id", userId)
       .order("created_at", { ascending: false })
