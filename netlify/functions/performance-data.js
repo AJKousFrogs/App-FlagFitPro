@@ -1076,7 +1076,7 @@ async function handleInjuries(method, userId, body, query, resourceId, log = log
           .from("injuries")
           .select("*")
           .eq("user_id", targetUserId)
-          .order("start_date", { ascending: false });
+          .order("injury_date", { ascending: false });
 
         if (status && status !== "all") {
           queryBuilder = queryBuilder.eq("status", status);
@@ -1097,11 +1097,11 @@ async function handleInjuries(method, userId, body, query, resourceId, log = log
         const transformed = (injuries || []).map((injury) => ({
           id: injury.id,
           userId: injury.user_id,
-          type: injury.type,
+          type: injury.injury_type,
           severity: injury.severity,
           description: injury.description,
           status: injury.status,
-          startDate: injury.start_date,
+          startDate: injury.injury_date,
           recoveryDate: injury.recovery_date,
           createdAt: injury.created_at,
           updatedAt: injury.updated_at,
@@ -1158,12 +1158,13 @@ async function handleInjuries(method, userId, body, query, resourceId, log = log
       try {
         const newInjury = {
           user_id: userId,
-          type: injuryData.type,
+          injury_type: injuryData.type,
           severity: parseInt(injuryData.severity),
           description: injuryData.description || null,
           status: injuryData.status || "active",
-          start_date: injuryData.startDate,
-          recovery_date: injuryData.recoveryDate || null,
+          injury_date: injuryData.startDate,
+          // recoveryDate omitted: injuries has recovery_start/expected/actual_recovery_date
+          // (no single recovery_date) — set the right one when the injury feature is modeled.
         };
 
         const { data: insertedInjury, error: insertError } = await supabaseAdmin
@@ -1190,11 +1191,11 @@ async function handleInjuries(method, userId, body, query, resourceId, log = log
         const transformed = {
           id: insertedInjury.id,
           userId: insertedInjury.user_id,
-          type: insertedInjury.type,
+          type: insertedInjury.injury_type,
           severity: insertedInjury.severity,
           description: insertedInjury.description,
           status: insertedInjury.status,
-          startDate: insertedInjury.start_date,
+          startDate: insertedInjury.injury_date,
           recoveryDate: insertedInjury.recovery_date,
           createdAt: insertedInjury.created_at,
           updatedAt: insertedInjury.updated_at,

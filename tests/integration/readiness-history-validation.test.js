@@ -113,21 +113,4 @@ describe("readiness-history validation and authorization hardening", () => {
     expect(body.error.message).toBe("Failed to retrieve readiness history");
     expect(body.error.message.includes("sensitive")).toBe(false);
   });
-
-  it("falls back from athlete_id to user_id schema when needed", async () => {
-    state.dbErrorMessage = "column athlete_id does not exist";
-    state.fallbackOnly = true;
-    const response = await handler(
-      {
-        httpMethod: "GET",
-        path: "/.netlify/functions/readiness-history",
-        headers: { authorization: "Bearer test-token" },
-        queryStringParameters: {},
-      },
-      {},
-    );
-
-    expect(response.statusCode).toBe(200);
-    expect(state.attempts).toBe(2);
-  });
 });

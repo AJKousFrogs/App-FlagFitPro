@@ -16,55 +16,16 @@ import { canCoachViewReadiness, filterReadinessForCoach } from "./utils/consent-
 import { getUserRole } from "./utils/authorization-guard.js";
 import { hasAnyRole, LOAD_MANAGEMENT_ACCESS_ROLES } from "./utils/role-sets.js";
 
-function isOptionalSchemaError(error) {
-  const code = error?.code;
-  const message = `${error?.message || ""}`.toLowerCase();
-  return (
-    ["PGRST106", "PGRST116", "PGRST204", "42P01", "42703"].includes(code) ||
-    message.includes("relation") ||
-    message.includes("schema cache") ||
-    message.includes("does not exist") ||
-    message.includes("column")
-  );
-}
-
 async function fetchReadinessHistory(athleteId, startDate, endDate) {
-  const attempts = [
-    () =>
-      supabaseAdmin
-        .from("readiness_scores")
-        .select(
-          "day, score, level, suggestion, acwr, acute_load, chronic_load, data_mode",
-        )
-        .eq("user_id", athleteId)
-        .gte("day", startDate)
-        .lte("day", endDate)
-        .order("day", { ascending: false }),
-    () =>
-      supabaseAdmin
-        .from("readiness_scores")
-        .select(
-          "day, score, level, suggestion, acwr, acute_load, chronic_load, data_mode",
-        )
-        .eq("user_id", athleteId)
-        .gte("day", startDate)
-        .lte("day", endDate)
-        .order("day", { ascending: false }),
-  ];
-
-  let lastError = null;
-  for (const attempt of attempts) {
-    const result = await attempt();
-    if (!result.error) {
-      return result;
-    }
-    lastError = result.error;
-    if (!isOptionalSchemaError(result.error)) {
-      return result;
-    }
-  }
-
-  return { data: [], error: lastError };
+  // readiness_scores has no data_mode column; the previous dual-attempt fallback
+  // existed only to tolerate that nonexistent column, so it never actually retried.
+  return supabaseAdmin
+    .from("readiness_scores")
+    .select("day, score, level, suggestion, acwr, acute_load, chronic_load")
+    .eq("user_id", athleteId)
+    .gte("day", startDate)
+    .lte("day", endDate)
+    .order("day", { ascending: false });
 }
 
 /**

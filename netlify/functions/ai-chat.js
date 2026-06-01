@@ -273,7 +273,7 @@ async function getUserContext(userId) {
     // 1. Get active injuries
     const { data: injuries } = await supabaseAdmin
       .from("injuries")
-      .select("type, severity, body_part, status")
+      .select("type:injury_type, severity, body_part, status")
       .eq("user_id", userId)
       .in("status", ["active", "recovering", "monitoring"])
       .order("severity", { ascending: false })
@@ -1280,10 +1280,10 @@ async function buildAthleteStateGates(userId) {
 
     const { data: injuries } = await supabaseAdmin
       .from("injuries")
-      .select("id, type, severity, body_part, status, start_date")
+      .select("id, type:injury_type, severity, body_part, status, start_date:injury_date")
       .eq("user_id", userId)
       .in("status", ["active", "recovering", "monitoring"])
-      .gte("start_date", thirtyDaysAgo.toISOString().split("T")[0])
+      .gte("injury_date", thirtyDaysAgo.toISOString().split("T")[0])
       .order("severity", { ascending: false });
     gates.injuries = injuries || [];
 
