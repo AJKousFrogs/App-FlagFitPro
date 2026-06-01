@@ -670,21 +670,37 @@ async function saveCheckin(supabase, userId, payload, requestId, log = logger) {
       .single();
 
     if (teamMember) {
-      // Check if player is in active tournament (check player_tournament_availability)
-      const { data: tournamentAvailability } = await supabase
-        .from("player_tournament_availability")
-        .select("tournament_id")
+      // Is the athlete confirmed for a competition event? (event_availability + the schedule
+      // spine — replaces the legacy player_tournament_availability/tournaments tables)
+      const { data: confirmedAvail } = await supabase
+        .from("event_availability")
+        .select("competition_event_id")
         .eq("user_id", userId)
-        .eq("status", "confirmed")
-        .single();
+        .eq("status", "confirmed");
+      const confirmedEventIds = (confirmedAvail || [])
+        .map((a) => a.competition_event_id)
+        .filter(Boolean);
+      const tournamentAvailability =
+        confirmedEventIds.length > 0 ? { confirmedEventIds } : null;
 
       if (tournamentAvailability) {
-        // Get tournament details
-        const { data: tournament } = await supabase
-          .from("tournaments")
-          .select("id, name, start_date, end_date")
-          .eq("id", tournamentAvailability.tournament_id)
-          .single();
+        // Resolve the active competition event spanning the check-in date.
+        const { data: events } = await supabase
+          .from("competition_events")
+          .select("id, label, starts_at, ends_at, competitions(name)")
+          .in("id", confirmedEventIds);
+        const active = (events || []).find((e) => {
+          const checkin = new Date(targetDate);
+          return checkin >= new Date(e.starts_at) && checkin <= new Date(e.ends_at);
+        });
+        const tournament = active
+          ? {
+              id: active.id,
+              name: active.label || active.competitions?.name || "Competition",
+              start_date: active.starts_at,
+              end_date: active.ends_at,
+            }
+          : null;
 
         if (tournament) {
           const tournamentStart = new Date(tournament.start_date);
