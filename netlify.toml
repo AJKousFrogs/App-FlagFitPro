@@ -199,6 +199,19 @@
     Cache-Control = "public, max-age=0, must-revalidate"
 
 # API Routes for Dashboard (must come before page redirects)
+# API Routes for Event Participation (post-event actuals → ACWR)
+[[redirects]]
+  from = "/api/event-participation/*"
+  to = "/.netlify/functions/event-participation"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/event-participation"
+  to = "/.netlify/functions/event-participation"
+  status = 200
+  force = true
+
 [[redirects]]
   from = "/api/dashboard/*"
   to = "/.netlify/functions/dashboard"
