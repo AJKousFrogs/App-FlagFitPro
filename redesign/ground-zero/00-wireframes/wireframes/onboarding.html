@@ -52,12 +52,13 @@
       <div class="row"><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span><span>S</span></div>
       <p><small>Preferred training time</small></p><div class="card block">Evening ▾</div>
 
-      <p><small>Your season</small></p>
-      <div class="card block" style="margin:2px 0"><div class="row"><span>Slovenia D1 — season Sep–Apr</span><span>auto · from league</span></div></div>
-      <small>Your season is read from your league's schedule (every domestic league differs — nothing fixed in the app). Add a personal off-block only if yours differs:</small>
-      <div class="row" style="flex-wrap:wrap"><span>＋ Personal off-season:</span><span>☑ Jul</span><span>◧ Aug→15</span><span>☑ Nov</span></div>
+      <p><small>Your season — tell us your periods (from → to)</small></p>
+      <div class="card block" style="margin:2px 0"><div class="row"><span>In-season · 1 Sep → 30 Apr</span><a class="btn ghost" href="#">edit</a></div><small>prefilled from Slovenia D1 — edit if yours differs</small></div>
+      <div class="card block" style="margin:2px 0"><div class="row"><span>Off-season · 1 Jul → 15 Aug</span><a class="btn ghost" href="#">edit</a></div></div>
+      <div class="card block" style="margin:2px 0"><div class="row"><span>Off-season · 1 Nov → 30 Nov</span><a class="btn ghost" href="#">edit</a></div></div>
+      <a class="btn ghost block" href="#">＋ Add a period (from / to / phase)</a>
       <a class="btn primary block" href="#step4">Continue →</a>
-      <div class="wire"><b>WRITE</b> <code>POST /api/player-settings</code> → upsert <code>athlete_training_config</code> (equipment, availability, training time, optional <b><code>season_calendar</code></b> personal override) + <code>users.date_of_birth</code>. <b>League season is data</b> (competitions.season_start/end or derived from events) — not hardcoded. macroPhaseFor resolves league windows + your override. See SEASON_LOGIC.md.</div>
+      <div class="wire"><b>WRITE</b> <code>POST /api/player-settings</code> → upsert <code>athlete_training_config.season_calendar</code> = the player's declared blocks <code>{phase, from, to}</code> (specific or recurring; non-contiguous). <b>Player declares; league only pre-fills</b> (competitions.season_start/end OR derived from events — both supported). macroPhaseFor resolves these. Nothing hardcoded. See SEASON_LOGIC.md.</div>
     </div>
   </div>
 </div>

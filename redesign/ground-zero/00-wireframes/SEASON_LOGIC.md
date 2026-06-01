@@ -39,40 +39,42 @@ event-only phase model (`accumulation`/`transition`) with a real calendar.
 ## Where the windows come from — NOTHING is hardcoded
 
 The engine must contain **zero baked-in months**. Players are in different
-domestic leagues, so the season is *data*, resolved per athlete in this order:
+domestic leagues, so the season is *data* — and **the player is the source of
+truth: they tell the app, from-when to-when, what they have.** Resolved per
+athlete in this order:
 
-1. **League / competition season (primary, data-driven).** Each league is a
-   `competitions` row; its season span is data — either an explicit
-   `season_start` / `season_end` on the competition, or **derived from the spread
-   of its `competition_events`** (first→last event = in-season; the weeks before =
-   pre-season; gaps between a league's seasons = off-season). Because every league
-   carries its own dates, **two players in different leagues automatically get
-   different seasons** with no code change.
-2. **Athlete override (optional).** A personal adjustment on
-   `athlete_training_config.season_calendar` (jsonb dated blocks, non-contiguous)
-   for someone whose personal off-season differs from their league's — e.g. a
-   self-imposed off-block. Overrides/augments the league-derived windows.
-3. **Resolve.** The athlete's macro phase = `macroPhaseFor(today, resolvedWindows)`
-   where `resolvedWindows` = union of their active teams'/leagues' season spans,
-   with personal overrides applied. **The function is generic; the dates are 100%
-   data.**
+1. **Athlete-declared windows (PRIMARY).** The player states their own periods —
+   blocks of `{ from-date → to-date : phase }` (in-season / off-season /
+   pre-season / transition). Stored on `athlete_training_config.season_calendar`.
+   This is what they enter at onboarding and can edit anytime. It always wins.
+2. **League seed / fallback (convenience — support BOTH).** To save typing, the
+   player's windows are pre-filled from their league: either an explicit
+   `competitions.season_start` / `season_end`, **or derived from the spread of the
+   league's `competition_events`**. The player accepts or edits the prefill — they
+   are never forced to take it. Different leagues → different prefills automatically.
+3. **Resolve.** macro phase = `macroPhaseFor(today, resolvedWindows)` where
+   `resolvedWindows` = the athlete's declared blocks (falling back to the league
+   seed for any uncovered span). **Generic function; dates are 100% data, declared
+   by the player.**
 
 ## Storage
 
-- Per-league: `competitions.season_start` / `competitions.season_end` (or derive
-  from `competition_events`). *(Confirm: explicit columns vs derive-from-events.)*
-- Per-athlete override: `athlete_training_config.season_calendar jsonb` (array of
-  `{ phase, start: "MM-DD", end: "MM-DD" }`, recurs yearly), written via
-  `POST /api/player-settings`. Empty = pure league-derived.
+- **Athlete-declared (primary): `athlete_training_config.season_calendar jsonb`** —
+  array of `{ phase, from, to }` blocks the player enters. Support both a specific
+  span (`"2025-09-01" → "2026-04-30"`) and a recurring annual one (`"09-01" →
+  "04-30"`); non-contiguous allowed. Written via `POST /api/player-settings`.
+- **League seed (both supported):** `competitions.season_start` /
+  `competitions.season_end` if set, else derived from `competition_events`. Used to
+  pre-fill the player's blocks; not authoritative over the player's edits.
 - The phase→emphasis mapping (off-season = S&C, etc.) is a sport-science **default
   in code, team-overridable** — not league dates.
 
 ## Engine change (`prescribeFor`)
 
 - **Input:** add `seasonPhase` derived by `macroPhaseFor(today, resolvedWindows)`
-  where `resolvedWindows` = union of the athlete's leagues' season spans (from
-  `competitions` / their events) with personal `season_calendar` overrides applied
-  (offseason | preseason | inseason | transition). **No months in code.**
+  where `resolvedWindows` = the athlete's **declared** `season_calendar` blocks,
+  with the league seed filling any uncovered span (offseason | preseason |
+  inseason | transition). **No months in code.**
 - **Use:** when no event-proximity micro-phase is active (step 5), pick the week
   shape from `seasonPhase` instead of the generic accumulation default — off-season
   weeks become strength/conditioning-led; in-season weeks maintain.
@@ -83,14 +85,11 @@ domestic leagues, so the season is *data*, resolved per athlete in this order:
   gap → maintain; event near off-season → micro still overrides). Fold into
   `docs/PRESCRIPTION_SPEC.md`.
 
-## Confirm (no dates needed — they're data)
+## Settled (per user)
 
-The only decision is the **source mechanism**, not any months:
-- League season: **explicit `season_start`/`season_end` on `competitions`** (a
-  coach/admin sets it per league) **vs derive from the league's events** (zero
-  entry, but needs the schedule populated). Recommendation: support both — derive
-  by default, allow an explicit override per league.
-- Keep the per-athlete `season_calendar` override for personal off-blocks. ✓
-
-Everything else (the 4 phases + the off-season=S&C emphasis) is generic logic +
-an overridable default. No hardcoded calendars anywhere.
+- **The player declares their own periods** (from-when → to-when : phase) — primary
+  source of truth, on `season_calendar`.
+- **Support both league seeds** (explicit `competitions.season_start/end` *and*
+  derive-from-events) purely to **pre-fill** the player's blocks; the player edits.
+- Everything else (the 4 phases + off-season=S&C emphasis) is generic logic + an
+  overridable default. No hardcoded calendars anywhere.
