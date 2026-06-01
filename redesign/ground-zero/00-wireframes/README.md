@@ -15,6 +15,9 @@ Read in this order:
    "what to wire and how to save real data."
 3. **`COMPONENT_INVENTORY.md`** — the component list the Phase C gallery must
    contain (every screen is assembled only from these).
+4. **`WEATHER_LOGIC.md`** — weather as a constraint layer on the prescription
+   (wet grass → no sprints; heat → no outdoor plyo; lightning → stop), the
+   threshold matrix, the heat→ACWR/RPE coupling, and the engine change.
 4. **`wireframes/`** — browsable lo-fi HTML. Open `wireframes/index.html`.
 
 ## Scope of this cut

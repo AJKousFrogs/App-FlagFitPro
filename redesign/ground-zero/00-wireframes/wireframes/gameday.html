@@ -24,6 +24,13 @@
       <div class="wire"><b>READ</b> <code>GET /api/calc-readiness</code> → <code>readiness_scores</code>. Game-proximity penalty already baked in (≤24h).</div>
     </div>
 
+    <!-- WEATHER (venue) -->
+    <div class="card block">
+      <div class="row"><h3>☀️ 34°C · feels 37°C · humid</h3><span class="band">heat: avoid intense</span></div>
+      <small>Extreme heat — aggressive hydration + cooling between games; expect RPE to feel ~1 higher.</small>
+      <div class="wire"><b>READ</b> <code>GET /api/weather</code> at the venue (competition_events lat/lon). On game day weather can't move the games, so it drives hydration/cooling + a heat load-scaling flag (≥32°C ×1.1, ≥35°C ×1.2) on the games' recorded load. Lightning (95–99) = play stopped by officials.</div>
+    </div>
+
     <!-- FUELING TIMELINE (engine-derived) -->
     <h2>Fueling timeline</h2>
     <div class="card">

@@ -80,6 +80,17 @@ fueling timeline driven by `expected_game_count`.
 
 ---
 
+### A8. Weather constraint (NEW — see WEATHER_LOGIC.md)
+Weather is a **constraint layer on the prescribed intent**, not an ACWR input.
+Outdoor intense intents (sprint/plyo/agility/conditioning) get **relocated /
+substituted / scaled / stopped** by conditions; precedence is physio ▷ coach
+override ▷ **weather** ▷ engine. Athlete-facing copy examples: *"Rain on grass —
+sprints moved indoors to tempo + strength."* / *"34 °C — no outdoor plyometrics;
+hydrate hard, expect RPE ~1 higher."* / *"Thunderstorm — outdoor training
+stopped."* Heat ≥32 °C also **scales internal load ×1.1–1.2** (so ACWR reflects
+true strain) and flags higher perceived RPE. Thresholds in WEATHER_LOGIC.md
+(proposed defaults, pending your confirmation).
+
 ## B. CTA → endpoint → table (what saves where)
 
 ### Onboarding / profile / settings
@@ -113,7 +124,9 @@ fueling timeline driven by `expected_game_count`.
 Schedule GET `/api/schedule` → view `v_athlete_schedule`. ACWR POST
 `/api/compute-acwr` → reads `training_sessions.workload`. Readiness history GET
 `/api/readiness-history` → `readiness_scores`. Achievements GET `/api/achievements`
-→ `player_achievements` + `achievement_definitions` + `player_streaks`.
+→ `player_achievements` + `achievement_definitions` + `player_streaks`. Weather GET
+`/api/weather` → Open-Meteo (live, no table) — temp/apparent/precip/wind/condition/
+suitability; feeds the prescription weather guard (A8).
 
 ---
 

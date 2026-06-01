@@ -44,6 +44,10 @@ what stops the per-screen drift. Derived from the core-journey wireframes.
   log/complete action.
 - **Achievement / streak card** — earned badges + current streak.
 - **Safety / alert banner** — injury/RTP block, ACWR danger, pain trigger.
+- **Weather card** — current temp/feels-like/condition/wind + outdoor-suitability
+  band (good/moderate/poor); drives the weather-adjusted prescription variant.
+- **Weather-adjusted prescription** — variant of the prescription card showing the
+  original→adjusted intent + reason ("rain → moved indoors"). See WEATHER_LOGIC.md.
 
 ## Shell
 - **Top bar** — contextual title/greeting + date + overflow.

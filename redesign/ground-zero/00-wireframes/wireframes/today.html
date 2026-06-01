@@ -21,11 +21,25 @@
       <div class="wire"><b>READ</b> phase + countdown ← <code>GET /api/schedule</code> → view <code>v_athlete_schedule</code> (union of all your teams' <code>competition_events</code>). Phase: competition / taper / recovery / transition / accumulation.</div>
     </div>
 
+    <!-- WEATHER (constrains the outdoor plan) -->
+    <div class="card block">
+      <div class="row"><h3>🌧️ 12°C · Rain · wind 18 km/h</h3><span class="band">Outdoor: poor</span></div>
+      <small>Wet grass — high slip/ACL risk for sprints &amp; cuts. Indoor advised.</small>
+      <div class="wire"><b>READ</b> <code>GET /api/weather</code> (Open-Meteo, free) — temp, apparent, precip, wind, condition, suitability. Location = event venue (<code>competition_events</code>) else your city. ⚠ switch units to °C/km·h (metric club). Feeds the weather guard below.</div>
+    </div>
+
     <!-- PRESCRIPTION HERO — the headline of the app -->
     <h2>Today's plan</h2>
     <div class="card hero">
       <div class="row"><h1>Sprint focus</h1><span class="band">RPE 8</span></div>
       <p>“Build phase. Today is a sprint day.”</p>
+
+      <!-- WEATHER-ADJUSTED VARIANT (shown when the weather guard fires) -->
+      <div class="card block" style="margin:8px 0">
+        <div class="row"><b>↻ Adjusted for weather</b><span class="band">moved indoors</span></div>
+        <small>“Rain on grass — sprints moved indoors to a tempo + strength session. Same training intent, safe surface.”</small>
+        <div class="wire"><b>GUARD</b> <code>prescribeFor</code> weather layer: rain/wet → relocate or substitute (sprint→tempo/strength · plyo→gym · agility→skills). Heat ≥35°C → relocate; thunderstorm → stop outdoors. Precedence: physio ▷ coach override ▷ <b>weather</b> ▷ engine. Heat ≥32°C also scales internal load (ACWR) ×1.1–1.2 and warns RPE will feel ~1 higher. See WEATHER_LOGIC.md.</div>
+      </div>
       <div class="note">↑ the engine's one-sentence <code>reasoning</code> — ALWAYS rendered (trust-builder)</div>
       <div class="targets">
         <div><b>60</b><small>minutes</small></div>
