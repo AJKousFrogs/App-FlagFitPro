@@ -4,6 +4,10 @@ Static, lo-fi wireframes + the data/UX contract behind them. **No color/styling
 here** — structure, hierarchy, content, copy, CTA placement, and the exact data
 wiring. Visual language is locked separately in Phase C (`tokens.css` + gallery).
 
+**`UX_RULES.md`** — the cross-cutting design laws (answer-first, one winning card,
+metric literacy, nutrition-as-food, back-nav, honest states). Read first; they
+govern every screen.
+
 Read in this order:
 
 1. **`IA_AND_PAGE_INVENTORY.md`** — the full page audit (every route), the

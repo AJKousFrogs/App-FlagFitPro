@@ -4,104 +4,46 @@
 <title>Wireframe — Today</title>
 <link rel="stylesheet" href="wireframe.css"></head>
 <body>
-<p class="legend">LO-FI WIREFRAME · no color/styling (Phase C) · grey monospace boxes = data wiring, not UI · <a href="index.html">← all screens</a></p>
+<p class="legend">LO-FI WIREFRAME · Today, rebuilt: answer-first · one winning plan card · context collapsed · diagnostics below the fold · <a href="index.html">← all screens</a></p>
 
+<!-- ════════ FRAME 1 — LOGGED (happy path): the plan IS the answer ════════ -->
 <div class="phone">
   <div class="topbar">
-    <div><b>Good morning, Aljoša</b><div class="date">Mon · 1 Jun · In-season · build week</div></div>
-    <div>⋯</div>
+    <div><b>Today</b><div class="date">Mon 1 Jun · In-season</div></div>
+    <div class="inline">🔔<sup>2</sup> &nbsp; <span class="gauge" style="width:30px;height:30px;display:inline-flex;align-items:center;justify-content:center">AK</span></div>
   </div>
 
   <div class="screen">
+    <!-- THIN CONTEXT STRIP (game + weather collapsed into one tappable line) -->
+    <div class="card block" style="padding:7px 10px"><div class="row"><small>⚑ 2d → Big Bowl · 🌧️ 12°C rain · indoor advised</small><small>▾</small></div></div>
+    <div class="note" style="margin:2px 0">↑ ONE strip replaces the old game-banner + weather cards. Tap → expands countdown + full forecast. Spends ~0 vertical space before the answer.</div>
 
-    <!-- GAME PROXIMITY / PHASE BANNER -->
-    <div class="card block">
-      <div class="row"><h3>⚑ Big Bowl · 8 games</h3><small>in 2d 14h</small></div>
-      <small>Taper window opens — keep sharp, not heavy.</small>
-      <div class="wire"><b>READ</b> phase + countdown ← <code>GET /api/schedule</code> → view <code>v_athlete_schedule</code> (union of all your teams' <code>competition_events</code>). Phase: competition / taper / recovery / transition / accumulation.</div>
-    </div>
-
-    <!-- WEATHER (constrains the outdoor plan) -->
-    <div class="card block">
-      <div class="row"><h3>🌧️ 12°C · Rain · wind 18 km/h</h3><span class="band">Outdoor: poor</span></div>
-      <small>Wet grass — high slip/ACL risk for sprints &amp; cuts. Indoor advised.</small>
-      <div class="wire"><b>READ</b> <code>GET /api/weather</code> (Open-Meteo, free) — temp, apparent, precip, wind, condition, suitability. Location = event venue (<code>competition_events</code>) else your city. ⚠ switch units to °C/km·h (metric club). Feeds the weather guard below.</div>
-    </div>
-
-    <!-- PRESCRIPTION HERO — the headline of the app -->
-    <h2>Today's plan</h2>
+    <!-- THE ANSWER — single winning plan card (here: engine plan, conditions clear-ish) -->
     <div class="card hero">
-      <div class="row"><h1>Sprint focus</h1><span class="band">RPE 8</span></div>
-      <p>“Build phase. Today is a sprint day.”</p>
-      <div class="row"><span class="band">In-season</span><small>macro emphasis: maintain + skill</small></div>
-      <div class="wire"><b>MACRO</b> phase resolved from your <b>league's season</b> (competitions data, differs per domestic league) + personal override — macroPhaseFor → off-season = strength&amp;conditioning · pre-season = build · in-season = maintain. No months hardcoded. Near a game the spine micro-phase (taper/comp/recovery) overrides. See SEASON_LOGIC.md.</div>
-
-      <!-- WEATHER-ADJUSTED VARIANT (shown when the weather guard fires) -->
-      <div class="card block" style="margin:8px 0">
-        <div class="row"><b>↻ Adjusted for weather</b><span class="band">moved indoors</span></div>
-        <small>“Rain on grass — sprints moved indoors to a tempo + strength session. Same training intent, safe surface.”</small>
-        <div class="wire"><b>GUARD</b> <code>prescribeFor</code> weather layer: rain/wet → relocate or substitute (sprint→tempo/strength · plyo→gym · agility→skills). Heat ≥35°C → relocate; thunderstorm → stop outdoors. Precedence: physio ▷ coach override ▷ <b>weather</b> ▷ engine. Heat ≥32°C also scales internal load (ACWR) ×1.1–1.2 and warns RPE will feel ~1 higher. See WEATHER_LOGIC.md.</div>
-      </div>
-      <div class="note">↑ the engine's one-sentence <code>reasoning</code> — ALWAYS rendered (trust-builder)</div>
+      <div class="row"><h1>Sprint focus</h1><span class="band">indoor</span></div>
+      <p style="font-size:15px">“Your load’s in the sweet spot (1.18) and you’re recovered (68/100) — so we’re pushing sprint volume. Rain’s moved it indoors to keep the surface safe.”</p>
+      <div class="note">↑ personalized reasoning — names HIS ACWR + readiness + the weather call. This is the trust anchor, given room.</div>
       <div class="targets">
-        <div><b>60</b><small>minutes</small></div>
-        <div><b>10</b><small>sprint reps</small></div>
-        <div><b>—</b><small>strength sets</small></div>
-        <div><b>low</b><small>recovery</small></div>
+        <div><b>8</b><small>RPE · hard, not max</small></div>
+        <div><b>~60</b><small>min</small></div>
+        <div><b>10</b><small>sprints</small></div>
       </div>
-      <div class="row">
-        <div><small>Fuel today</small><br><b>6 g/kg carbs · 1.8 g/kg protein · 2.8 L</b></div>
-      </div>
-      <a class="btn primary block" href="training.html">Start session →</a>
-      <div class="wire"><b>COMPUTED</b> client engine <code>prescribeFor()</code> (PeriodizationService) from the spine snapshot + server ACWR + readiness. Priority: competition → ≤24h taper-prime → ACWR&gt;1.5 rest → readiness&lt;55 recovery → phase default. Nutrition is engine-derived (no DB write).</div>
+      <div class="card block" style="margin:8px 0;padding:8px"><b>Fuel</b> <small>(for your 82kg)</small><br>
+        <b>490g carbs</b> <small>≈ big pasta bowl + oats + 2 fruit</small> · <b>148g protein</b> <small>≈ chicken breast + shake + eggs</small> · <b>2.8 L</b> fluid</div>
+      <a class="btn primary block">Start session →</a>
+      <div class="wire"><b>WINNER</b> one plan card only. Title/targets are already the weather-adjusted ones (indoor) — not "Sprint focus" + a nested "moved indoors". Precedence resolved server-side: physio ▷ coach ▷ weather ▷ engine (states shown in the reference below). Nutrition = engine g/kg × bodyweight, shown as grams + food, never raw g/kg.</div>
     </div>
 
-    <!-- SAFETY-BLOCK VARIANT (shown INSTEAD of the plan when active) -->
-    <div class="card block">
-      <div class="note">VARIANT — when a safety block is active this REPLACES the plan card and leads:</div>
-      <h3>🛑 Physio block: right hamstring</h3>
-      <small>No sprints until cleared. Mobility + upper-body only.</small>
-      <div class="wire"><b>READ</b> precedence: physio injury/RTP (absolute) ▷ coach override ▷ nutritionist ▷ engine. ← active <code>injuries</code> / <code>return_to_play_protocols</code>; ACWR&gt;1.5 also forces a Rest plan.</div>
-    </div>
+    <!-- BELOW THE FOLD: diagnostics + history (not the answer) -->
+    <h2>Why / how you're tracking</h2>
+    <div class="card"><div class="row"><div>Readiness <span class="band">68 · ready</span></div><a class="btn ghost" href="wellness-checkin.html">breakdown →</a></div>
+      <small>Logged 07:14. Sleep good, slight soreness.</small></div>
+    <div class="card"><div class="row"><div>Load (ACWR) <span class="band">1.18 · sweet spot</span></div><a class="btn ghost" href="acwr.html">trend →</a></div>
+      <small>Safe zone — lowest injury risk. Keep it here.</small></div>
 
-    <!-- WELLNESS CHECK-IN PROMPT (only if not logged today) -->
-    <h2>Before you train</h2>
-    <div class="card">
-      <h3>Log today's wellness</h3>
-      <p><small>Takes 20s. Drives your readiness, load adjustment, and streak.</small></p>
-      <a class="btn primary block" href="wellness-checkin.html">Check in →</a>
-      <div class="wire"><b>WRITE</b> <code>POST /api/wellness/checkin</code> → upsert <code>daily_wellness_checkin</code>. If no log today, readiness = <code>null</code> → show THIS prompt, not a fake score.</div>
-    </div>
-
-    <!-- READINESS SUMMARY (when wellness IS logged) -->
-    <div class="card">
-      <div class="row">
-        <div><h3>Readiness</h3><span class="band">Moderate · maintain</span></div>
-        <div class="gauge"><span class="num">68</span><br><small>/100</small></div>
-      </div>
-      <small>Sleep 20% · Wellness 30% · Load/ACWR 35% · Game proximity 15%</small>
-      <div class="wire"><b>READ/WRITE</b> <code>GET/POST /api/calc-readiness</code> → upsert <code>readiness_scores</code>(user_id,day). Bands: &lt;55 low/deload · 55–75 moderate/maintain · &gt;75 high/push.</div>
-    </div>
-
-    <!-- ACWR MINI (links to full load view) -->
-    <div class="card">
-      <div class="row"><div><h3>Load (ACWR)</h3><span class="band">1.18 · Sweet spot</span></div><a class="btn ghost" href="stats.html">Trend →</a></div>
-      <small>Optimal load — lowest injury risk. Maintain.</small>
-      <div class="wire"><b>READ</b> <code>POST /api/compute-acwr</code> ← <code>training_sessions.workload</code> (RPE×min, EWMA uncoupled). null ⇒ "Insufficient data" card (NOT under-training).</div>
-    </div>
-
-    <!-- POST-EVENT PROMPT (only when a recent event has no confirmed actuals) -->
-    <h2>Last weekend</h2>
-    <div class="card block">
-      <h3>Were you at Spring Cup?</h3>
-      <p><small>How many of 6 games did you play?</small></p>
-      <div class="row">
-        <a class="btn" href="#">Didn't go</a>
-        <a class="btn primary" href="#">Yes — log games</a>
-      </div>
-      <div class="wire"><b>WRITE</b> <code>POST /api/event-participation</code> → RPC <code>record_event_participation</code> → writes a <code>session_type='competition'</code> row in <code>training_sessions</code> (so real games feed ACWR). List ← <code>v_pending_event_participation</code>.</div>
-    </div>
-
+    <!-- POST-EVENT (guarded) -->
+    <div class="card block"><div class="row"><span>Were you at Spring Cup? (last wknd)</span><a class="btn" href="competition.html">Log →</a></div>
+      <div class="wire"><b>GUARD</b> only shows if the event ended recently AND started ≥ the athlete's signup date (don't prompt for events before they joined) AND no participation logged yet (v_pending_event_participation).</div></div>
   </div>
 
   <nav class="bottomnav">
@@ -110,5 +52,41 @@
     <a href="wellness-checkin.html"><span class="tab-ico">♥</span>Wellness</a>
     <a href="stats.html"><span class="tab-ico">📈</span>Stats</a>
   </nav>
+</div>
+
+<!-- ════════ FRAME 2 — NOT LOGGED: check-in leads, plan is provisional ════════ -->
+<div class="phone">
+  <div class="topbar"><div><b>Today</b><div class="date">Mon 1 Jun · In-season</div></div><div class="inline">🔔 <span class="gauge" style="width:30px;height:30px;display:inline-flex;align-items:center;justify-content:center">AK</span></div></div>
+  <div class="screen">
+    <div class="card block" style="padding:7px 10px"><small>⚑ 2d → Big Bowl · 🌧️ 12°C rain · indoor advised ▾</small></div>
+
+    <!-- CHECK-IN FIRST (it unlocks an accurate plan) -->
+    <div class="card hero">
+      <h1>Check in first</h1>
+      <p>20 seconds — log how you slept and feel, and today’s plan sharpens to match.</p>
+      <a class="btn primary block" href="wellness-checkin.html">Start check-in →</a>
+      <div class="wire"><b>ORDER FIX</b> readiness needs the check-in; so when not logged, the check-in leads and the plan below is explicitly provisional — never presented as authoritative on null/stale readiness.</div>
+    </div>
+
+    <!-- provisional, muted plan -->
+    <div class="card" style="opacity:.6">
+      <div class="row"><h3>Provisional: Sprint focus</h3><small>est.</small></div>
+      <small>Based on your recent data — check in to confirm RPE, volume, and recovery for today.</small>
+    </div>
+  </div>
+  <nav class="bottomnav"><a class="active">▦ Today</a><a>⚡ Training</a><a>♥ Wellness</a><a>📈 Stats</a></nav>
+</div>
+
+<!-- ════════ REFERENCE — plan-card states (ONLY ONE renders, by precedence) ════════ -->
+<div class="wrap" style="max-width:420px;margin:8px auto;padding:0 14px">
+  <div class="note" style="border:1px dashed #999;border-radius:8px;padding:10px">
+    <b>Plan-card precedence — only the highest active state renders as the hero above.</b> Reviewers: the screen is never all of these at once.
+    <ol style="margin:6px 0 0;padding-left:18px;font-size:12px">
+      <li><b>🛑 Physio block</b> (absolute) — “Right hamstring: no sprints until cleared. Mobility + upper only.”</li>
+      <li><b>👔 Coach override</b> — “Coach set a team session: practice 18:00.”</li>
+      <li><b>🌧️ Weather-adjusted</b> — engine intent kept, relocated/substituted (shown above as the indoor sprint).</li>
+      <li><b>⚙️ Engine</b> — the default prescription (shown above when 1–3 inactive).</li>
+    </ol>
+  </div>
 </div>
 </body></html>
