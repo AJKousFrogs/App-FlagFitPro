@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wireframe — Competition</title>
+<link rel="stylesheet" href="wireframe.css"></head>
+<body>
+<p class="legend">LO-FI WIREFRAME · Competition (tournaments) · "Team" nav group · <a href="index.html">← all screens</a></p>
+
+<div class="phone">
+  <div class="topbar"><div><b>Competition</b><div class="date">your events · all teams</div></div><div>⋯</div></div>
+  <div class="screen">
+
+    <!-- UPCOMING + RSVP -->
+    <h2>Upcoming</h2>
+    <div class="card hero">
+      <div class="row"><h3>⚑ Big Bowl</h3><small>in 2d · 8 games</small></div>
+      <small>Spring League · Sat–Sun · taper window open</small>
+      <p><small>Will you be there?</small></p>
+      <div class="row">
+        <a class="btn" href="#">Can't make it</a>
+        <a class="btn" href="#">Maybe</a>
+        <a class="btn primary" href="#">I'm in</a>
+      </div>
+      <div class="wire"><b>WRITE</b> RSVP → <code>POST /api/event-availability</code> {competitionEventId, status} → RPC <code>set_event_availability</code> → upsert <code>event_availability</code> (status available/maybe/confirmed/declined…; DB enforces auth + active team-membership). "I'm in" = confirmed.</div>
+      <div class="wire"><b>READ</b> events ← <code>GET /api/schedule</code> → <code>v_athlete_schedule</code> (union of all teams' <code>competition_events</code>). Your current RSVP ← <code>GET /api/event-availability</code>.</div>
+    </div>
+
+    <div class="card">
+      <div class="row"><span>Regional Cup · in 3 wks · 4 games</span><span>—</span></div>
+      <div class="row"><a class="btn ghost" href="#">RSVP</a></div>
+    </div>
+
+    <!-- POST-EVENT ACTUALS -->
+    <h2>Tell us how it went</h2>
+    <div class="card block">
+      <h3>Spring Cup (last weekend)</h3>
+      <p><small>You were rostered for 6 games. How many did you play?</small></p>
+      <div class="row"><a class="btn" href="#">Didn't go</a><div class="slider" style="flex:1"><label>Games</label><div class="track"></div><span class="val">5</span></div></div>
+      <div class="slider"><label>Avg RPE</label><div class="track"></div><span class="val">8</span></div>
+      <a class="btn primary block" href="#">Log it</a>
+      <div class="wire"><b>WRITE</b> <code>POST /api/event-participation</code> → RPC <code>record_event_participation</code> → writes a <code>session_type='competition'</code> <code>training_sessions</code> row (real games feed ACWR). Pending list ← <code>v_pending_event_participation</code>.</div>
+      <div class="note">This is the ACTUALS half of plan-vs-actuals: RSVP above is the plan; this is what really happened (hamstring → 5 of 8).</div>
+    </div>
+
+    <!-- DETAIL HINT -->
+    <div class="card block"><a class="btn ghost block" href="gameday.html">Game-day mode (readiness + fueling) →</a></div>
+
+  </div>
+  <nav class="bottomnav">
+    <a href="today.html"><span class="tab-ico">▦</span>Today</a>
+    <a href="training.html"><span class="tab-ico">⚡</span>Training</a>
+    <a href="wellness-checkin.html"><span class="tab-ico">♥</span>Wellness</a>
+    <a href="stats.html"><span class="tab-ico">📈</span>Stats</a>
+  </nav>
+</div>
+</body></html>

@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wireframe — Notifications</title>
+<link rel="stylesheet" href="wireframe.css"></head>
+<body>
+<p class="legend">LO-FI WIREFRAME · "Me" group · <a href="index.html">← all screens</a></p>
+
+<div class="phone">
+  <div class="topbar"><div><b>Notifications</b></div><a class="btn ghost" href="#">Mark all read</a></div>
+  <div class="screen">
+
+    <div class="card hero"><div class="row"><h3>🛑 ACWR danger</h3><small>2h ago</small></div><small>“ACWR 1.62 — in danger zone. Rest recommended today.”</small></div>
+    <div class="card"><div class="row"><h3>⚑ Game in 2 days</h3><small>today</small></div><small>Big Bowl — taper window open. Confirm your availability.</small></div>
+    <div class="card"><div class="row"><span>💬 Coach left feedback on your session</span><small>1d</small></div></div>
+    <div class="card"><div class="row"><span>🏅 7-day streak unlocked</span><small>1d</small></div></div>
+
+    <div class="wire"><b>READ</b> <code>GET /api/notifications</code> ← <code>notifications</code> (per-user). Types: safety/ACWR alerts, game proximity, coach messages, achievements. Mark-read → PATCH/POST. What's delivered is governed by <code>user_notification_preferences</code> (Settings).</div>
+    <div class="note">⚠ Push delivery (device tokens) writes to phantom tables today — see register (push subsystem unbuilt). In-app notifications list works.</div>
+
+  </div>
+  <nav class="bottomnav">
+    <a href="today.html"><span class="tab-ico">▦</span>Today</a>
+    <a href="training.html"><span class="tab-ico">⚡</span>Training</a>
+    <a href="wellness-checkin.html"><span class="tab-ico">♥</span>Wellness</a>
+    <a href="stats.html"><span class="tab-ico">📈</span>Stats</a>
+  </nav>
+</div>
+</body></html>

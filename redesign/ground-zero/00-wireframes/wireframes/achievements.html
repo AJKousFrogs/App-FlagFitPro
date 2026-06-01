@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wireframe — Achievements</title>
+<link rel="stylesheet" href="wireframe.css"></head>
+<body>
+<p class="legend">LO-FI WIREFRAME · gamification · "Me" group · <a href="index.html">← all screens</a></p>
+
+<div class="phone">
+  <div class="topbar"><div><b>Achievements</b></div><div>⋯</div></div>
+  <div class="screen">
+
+    <!-- STREAK + POINTS -->
+    <div class="card hero">
+      <div class="targets">
+        <div><b>12</b><small>day streak 🔥</small></div>
+        <div><b>1 480</b><small>points</small></div>
+        <div><b>L7</b><small>level</small></div>
+      </div>
+      <div class="wire"><b>READ</b> <code>GET /api/achievements</code> ← <code>player_streaks</code> + <code>player_training_stats</code> (incl. new monthly cols). Streak updated as a side-effect of the daily wellness check-in / session complete (RPC <code>update_player_streak</code>).</div>
+    </div>
+
+    <!-- EARNED -->
+    <h2>Earned</h2>
+    <div class="card">
+      <div class="row"><span>🏅 First check-in</span><span>✓</span></div>
+      <div class="row"><span>🏅 7-day streak</span><span>✓</span></div>
+      <div class="row"><span>🏅 Sweet-spot week</span><span>✓</span></div>
+      <div class="wire"><b>READ</b> <code>player_achievements</code> (slug) ⨝ <code>achievement_definitions</code> (name, icon, points). Awards via RPC <code>award_achievement</code> (fired by wellness/training-complete) — never a direct client write.</div>
+    </div>
+
+    <!-- NEXT -->
+    <h2>Next up</h2>
+    <div class="card block">
+      <div class="row"><span>🔒 30-day streak</span><small>12/30</small></div>
+      <div class="row"><span>🔒 100 sessions</span><small>78/100</small></div>
+      <div class="wire"><b>READ</b> locked = <code>achievement_definitions</code> minus earned, with progress from <code>player_training_stats</code>.</div>
+    </div>
+  </div>
+  <nav class="bottomnav">
+    <a href="today.html"><span class="tab-ico">▦</span>Today</a>
+    <a href="training.html"><span class="tab-ico">⚡</span>Training</a>
+    <a href="wellness-checkin.html"><span class="tab-ico">♥</span>Wellness</a>
+    <a href="stats.html"><span class="tab-ico">📈</span>Stats</a>
+  </nav>
+</div>
+</body></html>

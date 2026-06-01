@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wireframe — Load / ACWR</title>
+<link rel="stylesheet" href="wireframe.css"></head>
+<body>
+<p class="legend">LO-FI WIREFRAME · load monitoring detail (from Wellness/Stats) · <a href="index.html">← all screens</a></p>
+
+<div class="phone">
+  <div class="topbar"><div><b>Load monitoring</b><div class="date">ACWR · last 28 days</div></div><div>⋯</div></div>
+  <div class="screen">
+
+    <!-- VERDICT -->
+    <div class="card hero">
+      <div class="row">
+        <div class="gauge"><span class="num">1.18</span><br><small>ACWR</small></div>
+        <div style="flex:1;text-align:right"><span class="band">Sweet spot</span><br><b>Train as planned</b></div>
+      </div>
+      <p><small>“Optimal load — lowest injury risk (Gabbett 2016). Maintain.”</small></p>
+      <div class="wire"><b>READ</b> <code>POST /api/compute-acwr</code> ← <code>training_sessions.workload</code> (RPE×min). EWMA, uncoupled (acute 7d / chronic prior-21d), chronic floor 50 AU. Bands &lt;0.8 under · 0.8–1.3 sweet · &gt;1.3–1.5 elevated · &gt;1.5 danger.</div>
+    </div>
+
+    <!-- LOAD TILES -->
+    <div class="targets">
+      <div><b>2 480</b><small>acute (7d AU)</small></div>
+      <div><b>2 100</b><small>chronic AU</small></div>
+      <div><b>+8%</b><small>week vs last</small></div>
+    </div>
+
+    <!-- TREND -->
+    <h2>Trend</h2>
+    <div class="card"><div class="media">▦ ACWR line · sweet-spot 0.8–1.3 shaded · danger 1.5 line</div>
+      <div class="wire"><b>READ</b> series from <code>readiness_scores</code>(acwr,day) + recomputed daily load.</div></div>
+
+    <!-- "CAN I TRAIN TODAY?" -->
+    <h2>Can I train today?</h2>
+    <div class="card block">
+      <h3>✅ All systems green — train as planned</h3>
+      <small>Switches to “⚠ train with modifications” (elevated) or “🛑 rest recommended” (danger / critical alert).</small>
+      <div class="wire"><b>COMPUTED</b> client <code>canTrainToday</code> from the ACWR alert severity. Danger (&gt;1.5) → false + modifications; also notifies coach + logs ownership transition.</div>
+    </div>
+
+    <!-- WEEKLY SPIKE -->
+    <div class="card block">
+      <div class="note">VARIANT — spike warning when weekly load jumps &gt;10%:</div>
+      <h3>⚠ Weekly load +14%</h3>
+      <small>“Limit increases to &lt;10% week-over-week (Gabbett 2016).”</small>
+    </div>
+
+    <!-- EMPTY STATE -->
+    <div class="empty">EMPTY — “Insufficient data · 12 of 21 days.” Progress bar, low-confidence caveat if &lt;14 days. null ≠ under-training.</div>
+
+  </div>
+  <nav class="bottomnav">
+    <a href="today.html"><span class="tab-ico">▦</span>Today</a>
+    <a href="training.html"><span class="tab-ico">⚡</span>Training</a>
+    <a class="active" href="wellness-checkin.html"><span class="tab-ico">♥</span>Wellness</a>
+    <a href="stats.html"><span class="tab-ico">📈</span>Stats</a>
+  </nav>
+</div>
+</body></html>
