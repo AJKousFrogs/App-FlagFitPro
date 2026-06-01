@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wireframe — Landing</title>
+<link rel="stylesheet" href="wireframe.css"></head>
+<body>
+<p class="legend">LO-FI WIREFRAME · public / pre-auth · no bottom nav · <a href="index.html">← all screens</a></p>
+
+<div class="phone">
+  <div class="topbar"><div><b>FlagFit Pro</b></div><a class="btn ghost" href="auth.html">Log in</a></div>
+
+  <div class="screen" style="padding-top:0">
+
+    <!-- HERO (the one place a feature video lives) -->
+    <div class="media" style="height:200px">▶ HERO VIDEO (autoplay muted loop · athletes training/competing)</div>
+    <div class="note">VIDEO HOME (b): feature player — Landing + Film only. Muted autoplay loop; tap to unmute.</div>
+    <h1 style="font-size:24px">Open the app. Know exactly what to train, eat, and recover — today.</h1>
+    <p>Schedule-driven training for flag football. Your games drive your plan, your wellness drives your load, and the engine tells you why.</p>
+    <a class="btn primary block" href="onboarding.html">Get started →</a>
+    <a class="btn ghost block" href="auth.html">I already have an account</a>
+    <div class="note">"Get started" → register (Supabase Auth SDK) → onboarding. The <code>users</code> row is created lazily on the first authenticated write (onboarding step 1).</div>
+
+    <!-- VALUE PROPS -->
+    <h2>Why it's different</h2>
+    <div class="card block"><h3>⚑ Your schedule is the spine</h3><small>Games and tournaments across all your teams drive one daily plan — taper before, recover after.</small></div>
+    <div class="card block"><h3>📈 Load you can trust</h3><small>ACWR (acute:chronic) flags injury risk before it bites — sweet spot 0.8–1.3, danger above 1.5.</small></div>
+    <div class="card block"><h3>♥ One check-in</h3><small>20 seconds of wellness → today's readiness, load adjustment, and a clear "push / maintain / deload".</small></div>
+
+    <!-- FOOTER -->
+    <div class="card block">
+      <div class="row"><a class="btn ghost" href="#">Terms</a><a class="btn ghost" href="#">Privacy</a></div>
+      <div class="note">Routes: <code>/</code> landing · <code>/terms</code> · <code>/privacy</code> (public).</div>
+    </div>
+  </div>
+</div>
+
+<!-- AUTH (compact — Supabase SDK, no backend signup endpoint) -->
+<div class="phone">
+  <div class="topbar"><div><b>Log in / Register</b></div><a href="landing.html">×</a></div>
+  <div class="screen">
+    <h2>Welcome back</h2>
+    <div class="card">
+      <p><small>Email</small></p><div class="card block" style="margin:2px 0">athlete@example.com</div>
+      <p><small>Password</small></p><div class="card block" style="margin:2px 0">••••••••</div>
+      <a class="btn primary block" href="today.html">Log in</a>
+      <a class="btn ghost block" href="#">Forgot password?</a>
+      <div class="wire"><b>AUTH</b> Supabase Auth SDK (client) <code>signInWithPassword</code> / <code>signUp</code>. No app-table write here. <code>POST /api/auth/reset-password</code> for recovery. New accounts → onboarding.</div>
+    </div>
+  </div>
+</div>
+</body></html>

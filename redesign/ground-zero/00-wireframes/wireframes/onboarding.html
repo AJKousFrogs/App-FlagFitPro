@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wireframe — Onboarding</title>
+<link rel="stylesheet" href="wireframe.css"></head>
+<body>
+<p class="legend">LO-FI WIREFRAME · one-time setup, outside the app shell · 4 steps · <a href="index.html">← all screens</a></p>
+
+<!-- STEP 1 — IDENTITY + POSITION (first authenticated write → creates users row) -->
+<div class="phone">
+  <div class="topbar"><div><b>Set up · 1 of 4</b><div class="date">○●●●  Profile</div></div></div>
+  <div class="screen">
+    <h1>Who are you on the field?</h1>
+    <div class="card">
+      <p><small>Full name</small></p><div class="card block">Aljoša K.</div>
+      <p><small>Date of birth</small></p><div class="card block">1996-04-12</div>
+      <p><small>Primary position</small></p><div class="card block">QB ▾</div>
+      <p><small>Secondary position (optional)</small></p><div class="card block">WR ▾</div>
+      <p><small>Jersey #</small></p><div class="card block">7</div>
+      <a class="btn primary block" href="#step2">Continue →</a>
+      <div class="wire"><b>WRITE</b> <code>PUT /api/user-profile</code> → <code>users</code> (full_name, date_of_birth, position, secondary_position, jersey_number). <b>This first authenticated write creates the <code>users</code> row.</b></div>
+      <div class="note">Club context: male athletes 16+. Age gate uses date_of_birth; no parental-consent flow (adults). Under-16 path is out of scope for this club.</div>
+    </div>
+  </div>
+</div>
+
+<!-- STEP 2 — BODY METRICS (feeds nutrition + readiness) -->
+<div class="phone" id="step2">
+  <div class="topbar"><div><b>Set up · 2 of 4</b><div class="date">●○●●  Body</div></div></div>
+  <div class="screen">
+    <h1>Your body</h1>
+    <div class="card">
+      <div class="slider"><label>Height (cm)</label><div class="track"></div><span class="val">183</span></div>
+      <div class="slider"><label>Weight (kg)</label><div class="track"></div><span class="val">82</span></div>
+      <p><small>Experience level</small></p><div class="card block">Advanced ▾</div>
+      <a class="btn primary block" href="#step3">Continue →</a>
+      <a class="btn ghost block" href="#step3">Skip for now</a>
+      <div class="wire"><b>WRITE</b> <code>PUT /api/user-profile</code> → <code>users</code> (height_cm, weight_kg, experience_level). Bodyweight feeds nutrition targets (g/kg) and is reused by the prescription engine.</div>
+    </div>
+  </div>
+</div>
+
+<!-- STEP 3 — TRAINING CONFIG (equipment / availability / routine) -->
+<div class="phone" id="step3">
+  <div class="topbar"><div><b>Set up · 3 of 4</b><div class="date">●●○●  Training</div></div></div>
+  <div class="screen">
+    <h1>How you train</h1>
+    <div class="card">
+      <p><small>Equipment available</small></p>
+      <div class="row"><span>☑ Gym</span><span>☑ Field</span><span>☐ Sled</span><span>☑ Bands</span></div>
+      <p><small>Days you can train</small></p>
+      <div class="row"><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span><span>S</span></div>
+      <p><small>Preferred training time</small></p><div class="card block">Evening ▾</div>
+      <a class="btn primary block" href="#step4">Continue →</a>
+      <div class="wire"><b>WRITE</b> <code>POST /api/player-settings</code> → upsert <code>athlete_training_config</code> (equipment, availability, routine, training time) + <code>users.date_of_birth</code>. Drives <code>prescribeFor</code> volume/intent feasibility.</div>
+    </div>
+  </div>
+</div>
+
+<!-- STEP 4 — PRIVACY / CONSENT (privacy-first; opt-in) -->
+<div class="phone" id="step4">
+  <div class="topbar"><div><b>Set up · 4 of 4</b><div class="date">●●●○  Privacy</div></div></div>
+  <div class="screen">
+    <h1>Your data, your call</h1>
+    <div class="card">
+      <div class="row"><span>Let AI personalise my training (Merlin)</span><span>☐ off</span></div>
+      <div class="row"><span>Share performance with my coaches</span><span>☐ off</span></div>
+      <div class="row"><span>Share health/wellness with medical staff</span><span>☐ off</span></div>
+      <div class="row"><span>Anonymous research use</span><span>☐ off</span></div>
+      <small>Everything defaults OFF (privacy-first). Turn on what you want.</small>
+      <a class="btn primary block" href="wellness-checkin.html">Finish → first check-in</a>
+      <div class="wire"><b>WRITE</b> <code>PUT /api/privacy-settings</code> → upsert <code>privacy_settings</code> (ai_processing_enabled, performance/health_sharing_default, research opt-in). Coach/medical data access is gated by these + per-team <code>team_sharing_settings</code>.</div>
+      <div class="note">Finish routes to the first wellness check-in so readiness has data on day one.</div>
+    </div>
+  </div>
+</div>
+</body></html>
