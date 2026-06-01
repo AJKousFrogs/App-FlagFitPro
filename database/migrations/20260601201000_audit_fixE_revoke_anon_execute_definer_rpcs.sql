@@ -1,0 +1,7 @@
+-- Audit fix E: restrict SECURITY DEFINER application RPCs. Applied via Supabase MCP 2026-06-01.
+-- REVOKE EXECUTE FROM PUBLIC + anon, GRANT to authenticated+service_role (or service_role only
+-- for cron/admin fns: process_hard_deletion, get_deletions_ready_for_processing,
+-- cleanup_expired_emergency_records, ensure_public_user_profile, sync_public_user_from_auth_row,
+-- debug_count_public_user_refs). Fns referenced by RLS policies/views left PUBLIC (anon RLS
+-- evaluation must not error). anon definer-RPC EXECUTE: 71 → 10 (the 10 = RLS/view helpers).
+-- See applied migrations 20260601 audit_fixE2/E3 for the full dynamic DO-block bodies.
