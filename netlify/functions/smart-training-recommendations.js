@@ -156,27 +156,34 @@ async function getUpcomingTournaments(userId, daysAhead = 30) {
   const endDate = new Date();
   endDate.setDate(endDate.getDate() + daysAhead);
 
-  // Get tournaments from database
-  const { data: tournaments } = await supabaseAdmin
-    .from("tournaments")
-    .select("*")
-    .gte("start_date", today.toISOString().split("T")[0])
-    .lte("start_date", endDate.toISOString().split("T")[0])
-    .order("start_date", { ascending: true });
+  // Upcoming competition events from the schedule spine (per-athlete union across teams).
+  const { data: events } = await supabaseAdmin
+    .from("v_athlete_schedule")
+    .select(
+      "id, label, competition_name, competition_level, starts_at, expected_game_count",
+    )
+    .eq("user_id", userId)
+    .gte("starts_at", today.toISOString())
+    .lte("starts_at", endDate.toISOString())
+    .order("starts_at", { ascending: true });
 
-  if (!tournaments || tournaments.length === 0) {
+  if (!events || events.length === 0) {
     return [];
   }
 
-  return tournaments.map((t) => {
-    const startDate = new Date(t.start_date);
+  return events.map((e) => {
+    const startDate = new Date(e.starts_at);
     const daysUntil = Math.ceil((startDate - today) / (1000 * 60 * 60 * 24));
     const importance =
-      TOURNAMENT_IMPORTANCE[t.competition_level] ||
+      TOURNAMENT_IMPORTANCE[e.competition_level] ||
       TOURNAMENT_IMPORTANCE.regional;
 
     return {
-      ...t,
+      id: e.id,
+      name: e.label || e.competition_name,
+      start_date: e.starts_at,
+      competition_level: e.competition_level,
+      expected_game_count: e.expected_game_count,
       daysUntil,
       importance,
       inTaperWindow: daysUntil <= importance.taperDays,

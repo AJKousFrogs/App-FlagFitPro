@@ -60,7 +60,6 @@ async function getHealthMetrics() {
     "training_sessions",
     "teams",
     "posts",
-    "tournaments",
     "games",
   ];
   const tableStats = {};
@@ -472,7 +471,6 @@ async function createDatabaseBackup() {
       "athlete_performance_metrics",
       "posts",
       "comments",
-      "tournaments",
       "games",
       "game_stats",
       "usda_foods",
