@@ -79,7 +79,7 @@ const handler = async (event, context) =>
               .eq("user_id", userId)
               .order("logged_date", { ascending: false })
               .limit(30),
-            supabase.rpc("compute_acwr", { p_user_id: userId }),
+            supabase.from("readiness_scores").select("acwr").eq("user_id", userId).order("day", { ascending: false }).limit(1).maybeSingle(),
           ]);
 
           if (entries.error) {

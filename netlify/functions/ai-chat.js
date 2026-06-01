@@ -491,9 +491,9 @@ async function getUserContext(userId) {
 
     // 7. Get user profile and body comp
     const { data: profile } = await supabaseAdmin
-      .from("user_profiles")
-      .select("position, role, height_cm, weight_kg")
-      .eq("user_id", userId)
+      .from("users")
+      .select("position, height_cm, weight_kg")
+      .eq("id", userId)
       .single();
 
     if (profile) {

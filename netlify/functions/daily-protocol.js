@@ -2190,21 +2190,9 @@ async function logSession(supabase, userId, payload, headers, log = logger) {
     // Non-fatal - continue
   }
 
-  // Trigger ACWR recalculation
-  try {
-    await supabase.rpc("compute_acwr", { athlete: userId });
-  } catch (acwrError) {
-    log.warn(
-      "daily_protocol_acwr_recalculation_failed",
-      {
-        user_id: userId,
-        protocol_id: protocolId,
-        session_date: protocol.protocol_date,
-      },
-      acwrError,
-    );
-    // Non-fatal - ACWR will be recalculated on next load
-  }
+  // (Removed: a dead .rpc("compute_acwr") recalc trigger — that Postgres proc was retired
+  // when ACWR moved to the JS pipeline (utils/acwr.js). The completed session is already
+  // logged to training_sessions above, the canonical load source ACWR reads on demand.)
 
   // (Removed: a dead duplicate write of training_load/duration/rpe to wellness_logs.
   // The completed session is already logged to training_sessions above — the canonical

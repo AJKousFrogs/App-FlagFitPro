@@ -180,9 +180,9 @@ async function getUserContext(userId) {
     ] = await Promise.all([
       // Get user profile
       supabaseAdmin
-        .from("user_profiles")
+        .from("users")
         .select("*")
-        .eq("user_id", userId)
+        .eq("id", userId)
         .single(),
 
       // Get recent training sessions for ACWR calculation
@@ -357,7 +357,7 @@ function calculateACWR(sessions) {
 async function getPlyometricExercises(difficulty = "intermediate", limit = 3) {
   try {
     const { data, error } = await supabaseAdmin
-      .from("plyometric_exercises")
+      .from("plyometrics_exercises")
       .select("*")
       .eq("difficulty_level", difficulty)
       .limit(limit);
@@ -381,7 +381,7 @@ async function getPlyometricExercises(difficulty = "intermediate", limit = 3) {
 async function getIsometricExercises(_category = "lower_body", limit = 3) {
   try {
     const { data, error } = await supabaseAdmin
-      .from("isometric_exercises")
+      .from("isometrics_exercises")
       .select("*")
       .limit(limit);
 
