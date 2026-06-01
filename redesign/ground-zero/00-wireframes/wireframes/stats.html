@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wireframe — Stats</title>
+<link rel="stylesheet" href="wireframe.css"></head>
+<body>
+<p class="legend">LO-FI WIREFRAME · grey monospace boxes = data wiring · <a href="index.html">← all screens</a></p>
+
+<div class="phone">
+  <div class="topbar"><div><b>Stats</b><div class="date">Last 28 days</div></div><div>⋯</div></div>
+  <div class="screen">
+
+    <!-- ACWR TREND -->
+    <h2>Load (ACWR)</h2>
+    <div class="card hero">
+      <div class="row"><span class="band">1.18 · Sweet spot</span><small>low-confidence if &lt;14 days</small></div>
+      <div class="media">▦ ACWR line chart · sweet-spot band 0.8–1.3 shaded</div>
+      <small>“Optimal load — lowest injury risk. Maintain.”</small>
+      <div class="wire"><b>READ</b> <code>POST /api/compute-acwr</code> ← <code>training_sessions.workload</code> (EWMA, acute 7d / chronic prior-21d, chronic floor 50 AU).</div>
+    </div>
+
+    <!-- EMPTY-STATE VARIANT -->
+    <div class="empty">
+      EMPTY STATE — “Insufficient data · 12 of 21 days.” Show a progress bar, NOT an "under-training" reading. (null ≠ low ratio.)
+    </div>
+
+    <!-- READINESS HISTORY -->
+    <h2>Readiness history</h2>
+    <div class="card">
+      <div class="media">▦ readiness 0–100 over time · 55 & 75 cut-lines</div>
+      <div class="wire"><b>READ</b> <code>GET /api/readiness-history</code> ← <code>readiness_scores</code>(user_id,day).</div>
+    </div>
+
+    <!-- PERFORMANCE TESTS / RECORDS -->
+    <h2>Performance</h2>
+    <div class="card">
+      <div class="row"><span>40-yd · 4.9s</span><span>↓0.1</span></div>
+      <div class="row"><span>Vertical · 71 cm</span><span>↑2</span></div>
+      <div class="wire"><b>READ</b> <code>GET /api/performance-data</code> (tests/records). Injuries read repointed to <code>injury_type</code>/<code>injury_date</code> (fixed). &lt;2 weight entries ⇒ trend "stable" + "log weight" nudge.</div>
+    </div>
+
+    <div class="card block">
+      <a class="btn ghost block" href="#">Full dashboard → /player-dashboard</a>
+      <div class="note">"Overview" demoted from a nav tab into here (deep view), per IA decision.</div>
+    </div>
+
+  </div>
+  <nav class="bottomnav">
+    <a href="today.html"><span class="tab-ico">▦</span>Today</a>
+    <a href="training.html"><span class="tab-ico">⚡</span>Training</a>
+    <a href="wellness-checkin.html"><span class="tab-ico">♥</span>Wellness</a>
+    <a class="active" href="stats.html"><span class="tab-ico">📈</span>Stats</a>
+  </nav>
+</div>
+</body></html>

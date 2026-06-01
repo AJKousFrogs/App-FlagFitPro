@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wireframe — Training</title>
+<link rel="stylesheet" href="wireframe.css"></head>
+<body>
+<p class="legend">LO-FI WIREFRAME · grey monospace boxes = data wiring · <a href="index.html">← all screens</a></p>
+
+<div class="phone">
+  <div class="topbar"><div><b>Training</b><div class="date">Sprint focus · today</div></div><div>⋯</div></div>
+  <div class="screen">
+
+    <!-- HUB TABS (the 18 old training/* sub-tools collapse into these) -->
+    <div class="row" style="border-bottom:1px dashed #999;padding-bottom:6px">
+      <b>Today</b><span>Schedule</span><span>Programs</span><span>Library</span>
+    </div>
+    <div class="note">Tabs replace 18 standalone <code>training/*</code> screens (advanced, log, ai-scheduler, microcycle, qb, videos, periodization…). One hub, panels — not destinations.</div>
+
+    <!-- TODAY'S SESSION DETAIL + COMPLETE -->
+    <h2>Today's session</h2>
+    <div class="card hero">
+      <div class="row"><h3>Sprint focus · RPE 8</h3><small>~60 min</small></div>
+      <div class="media">▶ exercise demo loop (muted, inline)</div>
+      <div class="note">VIDEO HOME (a): demo loop inside session/exercise detail ← exercisedb/exercises.</div>
+      <ol>
+        <li>Warm-up — RAMP, 12 min</li>
+        <li>Sprints — 10 × 30 m, full recovery</li>
+        <li>Cool-down + mobility</li>
+      </ol>
+      <h3>Log it</h3>
+      <div class="slider"><label>Actual RPE</label><div class="track"></div><span class="val">8</span></div>
+      <div class="slider"><label>Duration</label><div class="track"></div><span class="val">58</span></div>
+      <a class="btn primary block" href="#">Complete session</a>
+      <div class="wire"><b>WRITE</b> <code>POST /api/training/complete</code> → RPC <code>complete_training_session</code> → sets status + <code>training_sessions.workload</code> (= RPE×min). <b>This is THE ACWR feed.</b></div>
+      <div class="wire"><b>WRITE</b> create/plan: <code>POST /api/training-sessions</code> → insert <code>training_sessions</code> (PLANNED). Protocol steps complete: <code>POST /api/daily-protocol/complete[-block]</code> → <code>protocol_exercises</code>.</div>
+    </div>
+
+    <!-- SCHEDULE LIST -->
+    <h2>This week</h2>
+    <div class="card">
+      <div class="row"><span>Mon · Sprint focus</span><span>RPE 8</span></div>
+      <div class="row"><span>Tue · Strength</span><span>RPE 7</span></div>
+      <div class="row"><span>Wed · Mobility</span><span>RPE 6</span></div>
+      <div class="row"><span>Sat · ⚑ Big Bowl (8 games)</span><span>game</span></div>
+      <div class="wire"><b>READ</b> <code>GET /api/schedule</code> → <code>v_athlete_schedule</code> + <code>GET /api/training-plan</code> ← <code>training_sessions</code>/<code>training_programs</code>/<code>games</code>. Engine shapes the week from the phase (accumulation week: Mon strength · Tue/Fri sprint · Wed mobility · Sat mixed).</div>
+    </div>
+
+    <!-- PROGRAMS -->
+    <h2>Programs</h2>
+    <div class="card block">
+      <div class="row"><span>Pre-season GPP · week 3/8</span><a class="btn ghost" href="#">Open</a></div>
+      <div class="wire"><b>READ</b> <code>GET /api/training-programs</code> ← <code>training_programs</code> → phases/weeks/session-templates/exercises.</div>
+    </div>
+
+  </div>
+  <nav class="bottomnav">
+    <a href="today.html"><span class="tab-ico">▦</span>Today</a>
+    <a class="active" href="training.html"><span class="tab-ico">⚡</span>Training</a>
+    <a href="wellness-checkin.html"><span class="tab-ico">♥</span>Wellness</a>
+    <a href="stats.html"><span class="tab-ico">📈</span>Stats</a>
+  </nav>
+</div>
+</body></html>

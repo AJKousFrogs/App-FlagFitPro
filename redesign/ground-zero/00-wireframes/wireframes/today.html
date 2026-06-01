@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wireframe — Today</title>
+<link rel="stylesheet" href="wireframe.css"></head>
+<body>
+<p class="legend">LO-FI WIREFRAME · no color/styling (Phase C) · grey monospace boxes = data wiring, not UI · <a href="index.html">← all screens</a></p>
+
+<div class="phone">
+  <div class="topbar">
+    <div><b>Good morning, Aljoša</b><div class="date">Mon · 1 Jun · Accumulation phase</div></div>
+    <div>⋯</div>
+  </div>
+
+  <div class="screen">
+
+    <!-- GAME PROXIMITY / PHASE BANNER -->
+    <div class="card block">
+      <div class="row"><h3>⚑ Big Bowl · 8 games</h3><small>in 2d 14h</small></div>
+      <small>Taper window opens — keep sharp, not heavy.</small>
+      <div class="wire"><b>READ</b> phase + countdown ← <code>GET /api/schedule</code> → view <code>v_athlete_schedule</code> (union of all your teams' <code>competition_events</code>). Phase: competition / taper / recovery / transition / accumulation.</div>
+    </div>
+
+    <!-- PRESCRIPTION HERO — the headline of the app -->
+    <h2>Today's plan</h2>
+    <div class="card hero">
+      <div class="row"><h1>Sprint focus</h1><span class="band">RPE 8</span></div>
+      <p>“Build phase. Today is a sprint day.”</p>
+      <div class="note">↑ the engine's one-sentence <code>reasoning</code> — ALWAYS rendered (trust-builder)</div>
+      <div class="targets">
+        <div><b>60</b><small>minutes</small></div>
+        <div><b>10</b><small>sprint reps</small></div>
+        <div><b>—</b><small>strength sets</small></div>
+        <div><b>low</b><small>recovery</small></div>
+      </div>
+      <div class="row">
+        <div><small>Fuel today</small><br><b>6 g/kg carbs · 1.8 g/kg protein · 2.8 L</b></div>
+      </div>
+      <a class="btn primary block" href="training.html">Start session →</a>
+      <div class="wire"><b>COMPUTED</b> client engine <code>prescribeFor()</code> (PeriodizationService) from the spine snapshot + server ACWR + readiness. Priority: competition → ≤24h taper-prime → ACWR&gt;1.5 rest → readiness&lt;55 recovery → phase default. Nutrition is engine-derived (no DB write).</div>
+    </div>
+
+    <!-- SAFETY-BLOCK VARIANT (shown INSTEAD of the plan when active) -->
+    <div class="card block">
+      <div class="note">VARIANT — when a safety block is active this REPLACES the plan card and leads:</div>
+      <h3>🛑 Physio block: right hamstring</h3>
+      <small>No sprints until cleared. Mobility + upper-body only.</small>
+      <div class="wire"><b>READ</b> precedence: physio injury/RTP (absolute) ▷ coach override ▷ nutritionist ▷ engine. ← active <code>injuries</code> / <code>return_to_play_protocols</code>; ACWR&gt;1.5 also forces a Rest plan.</div>
+    </div>
+
+    <!-- WELLNESS CHECK-IN PROMPT (only if not logged today) -->
+    <h2>Before you train</h2>
+    <div class="card">
+      <h3>Log today's wellness</h3>
+      <p><small>Takes 20s. Drives your readiness, load adjustment, and streak.</small></p>
+      <a class="btn primary block" href="wellness-checkin.html">Check in →</a>
+      <div class="wire"><b>WRITE</b> <code>POST /api/wellness/checkin</code> → upsert <code>daily_wellness_checkin</code>. If no log today, readiness = <code>null</code> → show THIS prompt, not a fake score.</div>
+    </div>
+
+    <!-- READINESS SUMMARY (when wellness IS logged) -->
+    <div class="card">
+      <div class="row">
+        <div><h3>Readiness</h3><span class="band">Moderate · maintain</span></div>
+        <div class="gauge"><span class="num">68</span><br><small>/100</small></div>
+      </div>
+      <small>Sleep 20% · Wellness 30% · Load/ACWR 35% · Game proximity 15%</small>
+      <div class="wire"><b>READ/WRITE</b> <code>GET/POST /api/calc-readiness</code> → upsert <code>readiness_scores</code>(user_id,day). Bands: &lt;55 low/deload · 55–75 moderate/maintain · &gt;75 high/push.</div>
+    </div>
+
+    <!-- ACWR MINI (links to full load view) -->
+    <div class="card">
+      <div class="row"><div><h3>Load (ACWR)</h3><span class="band">1.18 · Sweet spot</span></div><a class="btn ghost" href="stats.html">Trend →</a></div>
+      <small>Optimal load — lowest injury risk. Maintain.</small>
+      <div class="wire"><b>READ</b> <code>POST /api/compute-acwr</code> ← <code>training_sessions.workload</code> (RPE×min, EWMA uncoupled). null ⇒ "Insufficient data" card (NOT under-training).</div>
+    </div>
+
+    <!-- POST-EVENT PROMPT (only when a recent event has no confirmed actuals) -->
+    <h2>Last weekend</h2>
+    <div class="card block">
+      <h3>Were you at Spring Cup?</h3>
+      <p><small>How many of 6 games did you play?</small></p>
+      <div class="row">
+        <a class="btn" href="#">Didn't go</a>
+        <a class="btn primary" href="#">Yes — log games</a>
+      </div>
+      <div class="wire"><b>WRITE</b> <code>POST /api/event-participation</code> → RPC <code>record_event_participation</code> → writes a <code>session_type='competition'</code> row in <code>training_sessions</code> (so real games feed ACWR). List ← <code>v_pending_event_participation</code>.</div>
+    </div>
+
+  </div>
+
+  <nav class="bottomnav">
+    <a class="active" href="today.html"><span class="tab-ico">▦</span>Today</a>
+    <a href="training.html"><span class="tab-ico">⚡</span>Training</a>
+    <a href="wellness-checkin.html"><span class="tab-ico">♥</span>Wellness</a>
+    <a href="stats.html"><span class="tab-ico">📈</span>Stats</a>
+  </nav>
+</div>
+</body></html>

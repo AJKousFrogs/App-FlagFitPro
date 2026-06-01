@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wireframe — Wellness</title>
+<link rel="stylesheet" href="wireframe.css"></head>
+<body>
+<p class="legend">LO-FI WIREFRAME · grey monospace boxes = data wiring · <a href="index.html">← all screens</a></p>
+
+<div class="phone">
+  <div class="topbar"><div><b>Wellness</b><div class="date">Daily check-in · Mon 1 Jun</div></div><div>⋯</div></div>
+
+  <div class="screen">
+
+    <!-- CHECK-IN FORM -->
+    <h2>How do you feel?</h2>
+    <div class="card">
+      <div class="slider"><label>Sleep quality</label><div class="track"></div><span class="val">7</span></div>
+      <div class="slider"><label>Sleep hours</label><div class="track"></div><span class="val">7.5</span></div>
+      <div class="slider"><label>Soreness</label><div class="track"></div><span class="val">4</span></div>
+      <div class="slider"><label>Energy</label><div class="track"></div><span class="val">6</span></div>
+      <div class="slider"><label>Mood</label><div class="track"></div><span class="val">7</span></div>
+      <div class="slider"><label>Stress</label><div class="track"></div><span class="val">3</span></div>
+      <div class="note">1–10 sliders. Required: sleep quality, soreness, sleep hours. Optional: energy, mood, stress (more = higher confidence).</div>
+      <a class="btn primary block" href="#">Submit check-in</a>
+      <div class="wire"><b>WRITE</b> <code>POST /api/wellness/checkin</code> → upsert <code>daily_wellness_checkin</code> (RPC <code>upsert_wellness_checkin</code>). Side-effects: <code>update_player_streak</code>, <code>award_achievement</code>, team <code>shared_insights</code> (if sharing on). First-ever submit also creates the <code>users</code> row.</div>
+      <div class="wire"><b>SAFETY</b> soreness/pain &gt; 3 → auto <code>detect_pain_trigger</code> (logs <code>safety_override_log</code>, may notify physio). Surfaced as a banner on Today.</div>
+    </div>
+
+    <!-- RESULT: READINESS (after submit) -->
+    <h2>Your readiness</h2>
+    <div class="card hero">
+      <div class="row">
+        <div class="gauge"><span class="num">68</span><br><small>/100</small></div>
+        <div style="flex:1;text-align:right"><span class="band">Moderate</span><br><b>Maintain — train as planned</b></div>
+      </div>
+      <div class="targets">
+        <div><b>35%</b><small>Load/ACWR</small></div>
+        <div><b>30%</b><small>Wellness</small></div>
+        <div><b>20%</b><small>Sleep</small></div>
+        <div><b>15%</b><small>Proximity</small></div>
+      </div>
+      <small>Bands: &lt;55 deload · 55–75 maintain · &gt;75 push. Calibrate to team history over time.</small>
+      <div class="wire"><b>WRITE</b> <code>GET/POST /api/calc-readiness</code> → upsert <code>readiness_scores</code>(user_id,day). Reads <code>daily_wellness_checkin</code> + <code>training_sessions</code> + <code>v_athlete_schedule</code>. Wellness completeness &lt;60% ⇒ "reduced (sleep-proxy) mode" — label lower confidence.</div>
+    </div>
+
+    <!-- REDUCED / EMPTY STATE -->
+    <div class="empty">
+      <div class="note" style="margin:0">EMPTY STATE (no log yet today)</div>
+      “Log your wellness to calculate readiness.” → primary CTA scrolls to form.
+    </div>
+
+    <!-- LOAD / ACWR CARD -->
+    <h2>Load monitoring</h2>
+    <div class="card">
+      <div class="row"><div><h3>ACWR</h3><span class="band">1.18 · Sweet spot</span></div><a class="btn ghost" href="stats.html">Full trend →</a></div>
+      <small>“Optimal load — lowest injury risk. Maintain.”</small>
+      <div class="wire"><b>READ</b> <code>POST /api/compute-acwr</code> ← <code>training_sessions.workload</code>. Bands &lt;0.8 under · 0.8–1.3 sweet · &gt;1.3–1.5 elevated · &gt;1.5 danger. &lt;14 days data ⇒ "low confidence" caveat; null ⇒ gray "Insufficient data" with "12/21 days" progress.</div>
+    </div>
+
+    <!-- HYDRATION LOGGER -->
+    <h2>Hydration</h2>
+    <div class="card">
+      <div class="row"><div><b>1.4 L</b> <small>/ 2.8 L target</small></div>
+      <div><a class="btn" href="#">+250</a> <a class="btn" href="#">+500 ml</a></div></div>
+      <div class="wire"><b>WRITE</b> <code>POST /api/hydration/log</code> → insert <code>athlete_hydration_logs</code> (amount_ml). Target = engine-derived from today's prescription.</div>
+    </div>
+
+    <!-- RECOVERY LINKS -->
+    <h2>Recovery</h2>
+    <div class="card block">
+      <div class="row"><a class="btn ghost" href="#">Return to play</a><a class="btn ghost" href="#">Sleep debt</a></div>
+      <div class="note">⚠ Nutrition meal-plan save is intentionally NOT here — its tables don't exist yet (see wiring doc §C). Engine-derived fuel targets show on Today only.</div>
+    </div>
+
+  </div>
+
+  <nav class="bottomnav">
+    <a href="today.html"><span class="tab-ico">▦</span>Today</a>
+    <a href="training.html"><span class="tab-ico">⚡</span>Training</a>
+    <a class="active" href="wellness-checkin.html"><span class="tab-ico">♥</span>Wellness</a>
+    <a href="stats.html"><span class="tab-ico">📈</span>Stats</a>
+  </nav>
+</div>
+</body></html>

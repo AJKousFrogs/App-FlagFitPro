@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FlagFit — Phase B Wireframes</title>
+<link rel="stylesheet" href="wireframe.css"></head>
+<body>
+<div style="max-width:640px;margin:24px auto;padding:0 16px">
+  <h1>FlagFit Pro — Phase B Wireframes (athlete-first)</h1>
+  <p>Lo-fi, no color. Every CTA + metric is annotated with its real endpoint /
+  table / engine message. Read the docs in the parent folder first:
+  <code>IA_AND_PAGE_INVENTORY.md</code>, <code>ENGINE_MESSAGING_AND_WIRING.md</code>,
+  <code>COMPONENT_INVENTORY.md</code>.</p>
+
+  <h2>Athlete core journey — wireframed</h2>
+  <ul>
+    <li><a href="today.html"><b>Today</b></a> — prescription hero · phase/countdown · check-in prompt · readiness · ACWR mini · post-event prompt · safety-block variant</li>
+    <li><a href="wellness-checkin.html"><b>Wellness check-in</b></a> — sliders → <code>daily_wellness_checkin</code> · readiness result · hydration · empty/reduced states</li>
+    <li><a href="training.html"><b>Training hub</b></a> — session detail + complete (ACWR feed) · week schedule · programs · demo video slot</li>
+    <li><a href="stats.html"><b>Stats</b></a> — ACWR trend + band · readiness history · performance · empty-state</li>
+  </ul>
+
+  <h2>Core journey — next (after this is approved)</h2>
+  <ul>
+    <li><b>Landing</b> (hero video) + <b>Login / Register</b> (Supabase SDK)</li>
+    <li><b>Onboarding</b> — position / DOB / equipment / availability → <code>athlete_training_config</code>; triggers first <code>users</code> write</li>
+    <li><b>Profile</b> &amp; <b>Settings</b> (incl. privacy/consent → <code>privacy_settings</code>, notifications → <code>user_notification_preferences</code>)</li>
+  </ul>
+
+  <h2>Athlete secondary — mapped, wireframed after core</h2>
+  <p><small>ACWR full view, Competition/tournaments, Game-day readiness, Tournament fueling (engine-derived only — ⚠ nutrition tables missing), Achievements, Knowledge, Merlin AI chat, Team chat, Notifications, Roster, Playbook, Film, Calendar, Payments, Return-to-play, Sleep-debt. Cut for this club: cycle-tracking (female-only).</small></p>
+
+  <h2>Coach / staff &amp; superadmin</h2>
+  <p><small>Separate track — wireframed after the athlete journey is locked. See IA inventory §2.</small></p>
+
+  <hr>
+  <p><small>⚠ NO-WIRE flags (don't design a save CTA on these until backend exists):
+  nutrition meal-plan save, event RSVP write, generic <code>users</code> profile edit.
+  See <code>ENGINE_MESSAGING_AND_WIRING.md</code> §C + <code>redesign/PORT_BUG_REGISTER.md</code>.</small></p>
+</div>
+</body></html>
