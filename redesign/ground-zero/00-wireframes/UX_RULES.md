@@ -51,10 +51,9 @@ ACWR data shows a progress card, not "under-training"). Guard contextual prompts
 the post-event "Were you at X?" only shows if the event ended recently, started
 **after** the athlete's signup, and isn't already logged.
 
-## Open: navigation IA (confirm before locking)
-4 bottom tabs (Today/Training/Wellness/Stats) can't hold ~14 screens. Proposed:
-top bar carries **🔔 Notifications** + **avatar → Profile/Settings** (off the
-overflow); Competition/Game-day surface contextually on Today when an event is
-near; Merlin = a persistent action; the rest live in a **"More" hub screen**
-(grouped Compete / Recovery / Tools / Me), not a tiny "⋯" menu. **Needs your call**
-— see the question in chat.
+## Navigation IA (DECIDED)
+**5 bottom tabs: Today · Training · Wellness · Stats · More.** The 5th ("More")
+opens a grouped hub screen (`more.html`): Compete / Recovery & health / Tools / Me.
+**🔔 Notifications + avatar → Profile/Settings stay in the top bar** on every
+screen (not buried in More). Competition/Game-day also surface contextually on
+Today when an event is near. Coach/staff get a separate role-aware nav set.

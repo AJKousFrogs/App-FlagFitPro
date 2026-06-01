@@ -13,8 +13,8 @@ is a secondary surface; superadmin is a thin ops surface.
 
 ## 1. The athlete shell (global chrome)
 
-**Bottom nav — 4 tabs** (the only mobile-primary items; everything else lives in
-"More"):
+**Bottom nav — 5 tabs** (DECIDED). Top bar also carries 🔔 Notifications + avatar →
+Profile/Settings on every screen.
 
 | Tab | Route | Icon | Purpose |
 |-----|-------|------|---------|
@@ -22,6 +22,7 @@ is a secondary surface; superadmin is a thin ops surface.
 | **Training** | `/training` | bolt | Calendar/hub of sessions & programs |
 | **Wellness** | `/wellness` | heart | Daily check-in + recovery/load |
 | **Stats** | `/performance/insights` | chart-line | Trends, ACWR, performance |
+| **More** | `/more` | ⋯ | Grouped hub: Compete · Recovery & health · Tools · Me |
 
 **Top bar:** contextual per section (`headerPreset`: default / dashboard /
 training / analytics). Carries: greeting + date on Today; section title + back
