@@ -604,19 +604,6 @@
   status = 200
   force = true
 
-# API Routes for Tournaments
-[[redirects]]
-  from = "/api/tournaments"
-  to = "/.netlify/functions/games"
-  status = 200
-  force = true
-
-[[redirects]]
-  from = "/api/tournaments/*"
-  to = "/.netlify/functions/games"
-  status = 200
-  force = true
-
 # API Routes for Auth
 # Note: Login and Register use Supabase directly (not backend functions)
 # Only auth-me endpoint uses backend function for token verification

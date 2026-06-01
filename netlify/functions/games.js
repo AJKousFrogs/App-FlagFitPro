@@ -6,7 +6,6 @@
  * Routes handled:
  *   /api/games, /api/games/*
  *   /api/game-events, /api/game-events/*
- *   /api/tournaments, /api/tournaments/*
  *   /api/tournament-calendar, /api/tournament-calendar/*
  */
 
@@ -14,7 +13,6 @@ import { handler as gamesCoreHandler } from "./games-core.js";
 import { dispatch } from "./utils/web-lambda-bridge.js";
 import { toLambdaHandler } from "./utils/lambda-adapter.js";
 import { handler as gameEventsHandler } from "./game-events.js";
-import { handler as tournamentsHandler } from "./tournaments.js";
 import { handler as tournamentCalendarHandler } from "./tournament-calendar.js";
 
 // ─── Adapters ────────────────────────────────────────────────────────────────
@@ -34,7 +32,6 @@ const handleRequest = async (req) => {
   // More-specific paths first to avoid prefix collision
   if (path.includes("/game-events")) {return dispatch(gameEventsHandler, req, url);}
   if (path.includes("/tournament-calendar")) {return dispatch(tournamentCalendarHandler, req, url);}
-  if (path.includes("/tournaments")) {return dispatch(tournamentsHandler, req, url);}
   if (path.includes("/games")) {return dispatch(gamesCoreHandler, req, url);}
 
   return new Response(
