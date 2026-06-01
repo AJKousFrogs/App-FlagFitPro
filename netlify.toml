@@ -305,7 +305,7 @@
 
 [[redirects]]
   from = "/api/wearables/status"
-  to = "/.netlify/functions/readiness"
+  to = "/.netlify/functions/data"
   status = 200
   force = true
 
