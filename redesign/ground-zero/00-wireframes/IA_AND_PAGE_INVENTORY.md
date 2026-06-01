@@ -69,13 +69,10 @@ hub), `wellness` (check-in), `performance/insights` (Stats), `roster` (Team),
 - **Cut for this club:** `cycle-tracking` (femaleAthleteGuard — dead here).
 - **Guard fix:** `exercisedb` is commented "coach-only" but only `authGuard` — at
   port, gate it correctly.
-- **⚠ Broken backend (flag before building UI):** the whole **nutrition** surface
-  (`nutrition/profile`, `nutrition/plan`, `nutrition/meals`) targets tables that
-  **don't exist** (`athlete_nutrition_profiles`, `nutrition_plans`,
-  `meal_templates`). Either build those tables or design nutrition as
-  prescription-derived only (the engine already computes carb/protein/fluid
-  targets — see wiring doc §Nutrition). **Do not ship a nutrition save CTA until
-  this is resolved.**
+- **Nutrition backend** — ✅ built (2026-06-01): `athlete_nutrition_profiles`,
+  `nutrition_plans`, `meal_templates` now exist (RLS self-scoped). Save CTAs are
+  live. Still also show the engine-derived carb/protein/fluid targets from the
+  prescription (complementary). See wiring doc §C.
 
 ### COACH / STAFF — KEEP as a separate track (not in this Phase B cut)
 All `coach/*`, `staff/*`, `attendance`, role-gated. Wireframed after the athlete

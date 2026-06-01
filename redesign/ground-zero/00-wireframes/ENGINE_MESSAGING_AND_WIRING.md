@@ -89,6 +89,9 @@ fueling timeline driven by `expected_game_count`.
 | Save onboarding profile (position, DOB, equipment, availability, routine) | POST `/api/player-settings` | upsert **`athlete_training_config`** + `users.date_of_birth` |
 | Privacy / consent (AI, research, sharing) | PUT `/api/privacy-settings` | upsert **`privacy_settings`** (+ reads `team_sharing_settings`) |
 | Notification prefs | PUT `/api/notifications/preferences` | **`user_notification_preferences`** |
+| Edit profile (height/weight/position/jersey/bio/…) | PUT `/api/user-profile` | whitelist update on **`users`** (self only) |
+| Save nutrition profile | POST `/api/nutrition/profile` | upsert **`athlete_nutrition_profiles`** |
+| Save nutrition plan | POST `/api/nutrition/plan` | insert **`nutrition_plans`** (one active/user) |
 
 ### Today / Wellness
 | CTA | Endpoint | Saves to |
@@ -97,6 +100,7 @@ fueling timeline driven by `expected_game_count`.
 | (auto) Readiness | GET/POST `/api/calc-readiness` | upsert **`readiness_scores`** (user_id, day) |
 | Record post-event participation (attended? games? minutes? RPE?) | POST `/api/event-participation` | RPC **`record_event_participation`** → writes a `session_type='competition'` row in **`training_sessions`** (feeds ACWR) |
 | Log hydration | POST `/api/hydration/log` | insert **`athlete_hydration_logs`** |
+| RSVP to a competition event | POST `/api/event-availability` `{competitionEventId,status,reason?}` | RPC `set_event_availability` → upsert **`event_availability`** |
 
 ### Training
 | CTA | Endpoint | Saves to |
@@ -113,21 +117,25 @@ Schedule GET `/api/schedule` → view `v_athlete_schedule`. ACWR POST
 
 ---
 
-## C. ⚠ Broken / missing backend paths — DO NOT wire a save CTA to these yet
+## C. Backend gaps — status
 
-1. **Nutrition (profile / plan / meals)** — handlers target
-   `athlete_nutrition_profiles`, `nutrition_plans`, `meal_templates` which **don't
-   exist**. → For Phase B, design nutrition as **prescription-derived display
-   only** (A5). A "save my meal plan" CTA needs the tables built first.
-2. **Event availability / RSVP** — there is **no backend write** for
-   `event_availability`; it's read-only. An "RSVP / I'm in" CTA has nowhere to
-   save. → Either add a write endpoint (recommended — it's the *plan* side of the
-   plan-vs-actuals model) or omit the RSVP CTA until it exists.
-3. **Generic profile edit (height/weight/position on `users`)** — no write
-   endpoint; only `player-settings` (→ `athlete_training_config`). → Route profile
-   edits through `player-settings`, or add a `users` update endpoint.
+1. **Nutrition (profile / plan / meals)** — ✅ **BUILT** (2026-06-01). Tables
+   `athlete_nutrition_profiles`, `nutrition_plans` (one active/user enforced by a
+   partial unique index), `meal_templates` (seeded) now exist, RLS self-scoped,
+   `user_id = auth.uid()`. Save CTAs are live: POST `/api/nutrition/profile`,
+   POST `/api/nutrition/plan`, GET `/api/nutrition/meals`. (You may still *also*
+   show the engine-derived targets from A5 — they're complementary.)
+2. **Event availability / RSVP** — ✅ **BUILT** (2026-06-01). New write path:
+   POST `/api/event-availability` `{ competitionEventId, status, reason? }` →
+   RPC `set_event_availability` → upsert **`event_availability`** (status ∈
+   available/unavailable/maybe/tentative/confirmed/declined; auth + active
+   team-membership enforced in the DB). This is the *plan* side of plan-vs-actuals.
+3. **Generic profile edit** — ✅ **BUILT** (2026-06-01). PUT `/api/user-profile`
+   updates a whitelist on **`users`** (full_name, position, secondary_position,
+   jersey_number, height_cm, weight_kg, date_of_birth, bio, phone, throwing_arm,
+   preferred_units, country, avatar_url), always scoped to the caller.
 4. **`user-context` wellness block** reads dead `wellness_checkins` → always null.
-   Cosmetic for AI context; repoint to `daily_wellness_checkin` at port.
+   Cosmetic for AI context; repoint to `daily_wellness_checkin` at port. (Still
+   open — in `redesign/PORT_BUG_REGISTER.md`.)
 
-> These four are also in `redesign/PORT_BUG_REGISTER.md`. Wireframes mark any CTA
-> touching them as **⚠ NO-WIRE** so we don't design a dead button.
+> Items 1–3 are wired; design the save CTAs normally. Only #4 remains deferred.

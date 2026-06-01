@@ -212,6 +212,19 @@
   status = 200
   force = true
 
+# API Routes for Event Availability (RSVP — the plan side)
+[[redirects]]
+  from = "/api/event-availability/*"
+  to = "/.netlify/functions/event-availability"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/event-availability"
+  to = "/.netlify/functions/event-availability"
+  status = 200
+  force = true
+
 [[redirects]]
   from = "/api/dashboard/*"
   to = "/.netlify/functions/dashboard"

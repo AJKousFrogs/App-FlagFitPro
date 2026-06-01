@@ -103,13 +103,22 @@ const PROTEIN_PER_KG = {
   bulking: 1.8, // Muscle building
 };
 
-const NUTRITION_PLAN_FORBIDDEN_FIELDS = new Set([
-  "id",
-  "user_id",
-  "is_active",
-  "created_at",
-  "updated_at",
-]);
+// Whitelist of columns a client may set on a nutrition_plans row. Anything else
+// (id, user_id, is_active, timestamps, or unknown keys) is ignored so a stray
+// payload field can never break the insert.
+const NUTRITION_PLAN_ALLOWED_FIELDS = [
+  "name",
+  "plan_type",
+  "calories",
+  "protein_g",
+  "carbs_g",
+  "fat_g",
+  "fluid_l",
+  "meals",
+  "start_date",
+  "end_date",
+  "notes",
+];
 const VALID_SEXES = new Set(["male", "female"]);
 const VALID_ACTIVITY_LEVELS = new Set(Object.keys(ACTIVITY_MULTIPLIERS));
 const VALID_GOALS = new Set(Object.keys(CALORIE_ADJUSTMENTS));
@@ -598,9 +607,11 @@ async function getNutritionPlan(userId) {
  * Create or update nutrition plan
  */
 async function saveNutritionPlan(userId, planData) {
-  const sanitizedPlanData = { ...(planData || {}) };
-  for (const field of NUTRITION_PLAN_FORBIDDEN_FIELDS) {
-    delete sanitizedPlanData[field];
+  const sanitizedPlanData = {};
+  for (const field of NUTRITION_PLAN_ALLOWED_FIELDS) {
+    if (planData && planData[field] !== undefined) {
+      sanitizedPlanData[field] = planData[field];
+    }
   }
 
   // Deactivate existing plans
