@@ -51,8 +51,13 @@
       <p><small>Days you can train</small></p>
       <div class="row"><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span><span>S</span></div>
       <p><small>Preferred training time</small></p><div class="card block">Evening ▾</div>
+
+      <p><small>Your season — pick your OFF-season months (more strength &amp; conditioning)</small></p>
+      <div class="row" style="flex-wrap:wrap"><span>J F M A M Jun</span></div>
+      <div class="row" style="flex-wrap:wrap"><span>☑ Jul</span><span>◧ Aug (to 15th)</span><span>S O</span><span>☑ Nov</span><span>D</span></div>
+      <small>The rest = in-season; the weeks before in-season = pre-season (build). Supports split/non-contiguous windows.</small>
       <a class="btn primary block" href="#step4">Continue →</a>
-      <div class="wire"><b>WRITE</b> <code>POST /api/player-settings</code> → upsert <code>athlete_training_config</code> (equipment, availability, routine, training time) + <code>users.date_of_birth</code>. Drives <code>prescribeFor</code> volume/intent feasibility.</div>
+      <div class="wire"><b>WRITE</b> <code>POST /api/player-settings</code> → upsert <code>athlete_training_config</code> (equipment, availability, training time, <b><code>season_calendar</code> jsonb</b>) + <code>users.date_of_birth</code>. season_calendar = dated blocks (e.g. offseason 07-01→08-15 &amp; 11-01→11-30). Drives the macro phase in <code>prescribeFor</code> — see SEASON_LOGIC.md.</div>
     </div>
   </div>
 </div>

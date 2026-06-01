@@ -35,6 +35,10 @@ what stops the per-screen drift. Derived from the core-journey wireframes.
   sentence + targets (RPE/min/sprints/sets) + nutrition mini-summary. Variants per
   intent incl. **rest** and **safety-block** (leads with the block).
 - **Game-proximity / phase banner** — countdown + event name + game count + phase.
+- **Season / macro-phase banner** — off-season / pre-season / in-season / transition
+  + week-in-block; links to the season-calendar editor. See SEASON_LOGIC.md.
+- **Season-calendar editor** — pick off-season months / windows (non-contiguous);
+  used in onboarding + Settings.
 - **Check-in form card** — the wellness sliders + submit; and its "logged ✓"
   collapsed state.
 - **Post-event prompt** — "Were you at {event}? How many of {N} games?" inline form.

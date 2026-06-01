@@ -18,6 +18,10 @@ Read in this order:
 4. **`WEATHER_LOGIC.md`** — weather as a constraint layer on the prescription
    (wet grass → no sprints; heat → no outdoor plyo; lightning → stop), the
    threshold matrix, the heat→ACWR/RPE coupling, and the engine change.
+5. **`SEASON_LOGIC.md`** — per-athlete macro periodization (off/pre/in-season +
+   transition months drive the baseline emphasis; off-season = strength &
+   conditioning), how it combines with the spine's event micro-phases, storage on
+   `athlete_training_config.season_calendar`, and the engine change.
 4. **`wireframes/`** — browsable lo-fi HTML. Open `wireframes/index.html`.
 
 ## Scope of this cut
