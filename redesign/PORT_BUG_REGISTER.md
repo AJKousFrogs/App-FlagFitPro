@@ -38,6 +38,44 @@ in training-metrics/load-management — were already fixed; see commit history.)
 | `calibration-logs.js` | `calibration_logs` (never built) | build feature or remove | Dormant feature scaffold. |
 | `utils/team-activity-resolver.js` | `team_activity_attendance` (never built) | build feature or remove | Dormant feature scaffold. |
 
+## Write-path audit (2026-06-01) — unbuilt features & divergent tables
+
+A full sweep of every backend write (`insert`/`upsert`/`update`/`delete`/`rpc`)
+against the live schema. All items below are **NEEDS-INTENT** (unbuilt feature, or
+a real-but-structurally-different table where a blind rename would corrupt/drop
+data) — build the feature's tables/columns or repoint deliberately at port time.
+None are user-facing now (UI demolished). The one safe fix found —
+`player_training_stats` monthly columns — was applied (additive), not deferred.
+
+**Wholly-unbuilt feature subsystems (tables never created):**
+
+| Feature | Files | Missing tables | Routing |
+|---|---|---|---|
+| Officials | officials.js | `officials`, `game_officials`, `official_availability` | ⚠ also unrouted — `/api/officials`→team.js has no branch (404) |
+| Equipment | equipment.js | `equipment_items`, `equipment_assignments` | ⚠ also unrouted — `/api/equipment`→team.js (404) |
+| Depth chart | depth-chart.js | `depth_chart_templates`, `depth_chart_entries`, `depth_chart_history` | routed (roster.js) |
+| Scouting | scouting.js | `scouting_reports` (live has different `opponent_analysis`) | routed |
+| Staff psychology | staff-psychology.js | `mental_wellness_reports`, `psychological_assessments`, `mental_performance_logs` | routed (staff.js) |
+| Program cycles | program-cycles.js | `player_program_cycles`, `program_cycles` | routed (programs.js) |
+| Recovery profiles | recovery-core.js | `athlete_recovery_profiles` (spreads `...profileData`) | routed (health.js) |
+| Push notifications | push.js | writes `user_notification_tokens` + `push_notification_preferences`; live has `push_subscriptions` (endpoint/p256dh_key/auth_key) + per-type `user_notification_preferences` rows — different models | routed |
+| Admin/research sync | admin.js, research-sync.js | `usda_foods`, `sync_logs`, `research_studies`, `research_institutions`, `research_topics` (live has `research_articles`, different) | routed; dormant (gated on missing API keys) |
+| AI extras | utils/smart-ai-service.js | `conversation_summaries`, `proactive_checkins`; RPC `learn_user_preferences` missing | reachable via ai-chat; all in try/catch (silent no-op) |
+
+**Real tables, divergent shape (repoint deliberately — not a rename):**
+
+| File:line | Writes to | Live canonical | Note |
+|---|---|---|---|
+| staff-physiotherapist.js:275,412 | `athlete_injuries` | `injuries` | payload differs; align to injury_type/injury_date |
+| games-core.js:882,910 | `player_stats_consent` | consent tables exist, different shape | |
+| season-reports.js:147 | `season_summary_reports` | `season_archives` | |
+| tournament-calendar.js:266,281,347 | `tournament_calendar` | `competition_events`/`competitions`/`tournament_day_plans` | the spine — model is different |
+| training-complete.js:122,129 | `sponsor_rewards` | only `sponsors` exists | reward ledger unbuilt |
+| data-export.js:279,375 | `gdpr_data_processing_log` | `privacy_audit_log` (diff columns) | GDPR export audit write fails |
+
+All the above are swallowed (caught) or unreached today, so they don't break live
+flows — but each is a dead save. Fix when the feature is (re)built.
+
 ## Rule for the port
 
 When porting a feature whose handler appears above, resolve its row here as part
