@@ -17,6 +17,7 @@ Operational runbooks for FlagFit Pro production systems.
 | [ACCOUNT_DELETION.md](./ACCOUNT_DELETION.md)       | Handle deletion queue issues    | Backlog growing, failures, user complaints |
 | [RETENTION_CLEANUP.md](./RETENTION_CLEANUP.md)     | Handle retention/cleanup issues | Expired records, cleanup failures          |
 | [PRIVACY_INCIDENT.md](./PRIVACY_INCIDENT.md)       | Handle privacy incidents        | Consent violations, data breaches          |
+| [AUTH_HARDENING.md](./AUTH_HARDENING.md)           | Auth hardening & advisor posture | Enable leaked-password protection; review advisor WARNs |
 
 ---
 
