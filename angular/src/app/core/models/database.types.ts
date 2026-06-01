@@ -1,7 +1,7 @@
 // Supabase-generated database types — canonical DB↔TS contract.
-// Generated via Supabase MCP generate_typescript_types (project grfjmnjpzvknmsxrwesx), 2026-06-01.
-// Regenerate after schema changes; do not hand-edit. Adopt across core services during the UI rebuild.
-
+// Generated from project grfjmnjpzvknmsxrwesx. Regenerate after schema changes;
+// do not hand-edit. Last regenerated 2026-06-01 (nutrition tables, event RSVP,
+// player_training_stats monthly columns, profile-edit surface).
 export type Json =
   | string
   | number
@@ -666,6 +666,69 @@ export type Database = {
           source?: string
           updated_at?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      athlete_nutrition_profiles: {
+        Row: {
+          activity_level: string | null
+          age: number | null
+          bmr: number | null
+          calculated_profile: Json | null
+          carbs_g: number | null
+          created_at: string
+          fat_g: number | null
+          goal: string | null
+          height_cm: number | null
+          id: string
+          protein_g: number | null
+          sex: string | null
+          target_calories: number | null
+          tdee: number | null
+          training_time: string | null
+          updated_at: string
+          user_id: string
+          weight_kg: number | null
+        }
+        Insert: {
+          activity_level?: string | null
+          age?: number | null
+          bmr?: number | null
+          calculated_profile?: Json | null
+          carbs_g?: number | null
+          created_at?: string
+          fat_g?: number | null
+          goal?: string | null
+          height_cm?: number | null
+          id?: string
+          protein_g?: number | null
+          sex?: string | null
+          target_calories?: number | null
+          tdee?: number | null
+          training_time?: string | null
+          updated_at?: string
+          user_id: string
+          weight_kg?: number | null
+        }
+        Update: {
+          activity_level?: string | null
+          age?: number | null
+          bmr?: number | null
+          calculated_profile?: Json | null
+          carbs_g?: number | null
+          created_at?: string
+          fat_g?: number | null
+          goal?: string | null
+          height_cm?: number | null
+          id?: string
+          protein_g?: number | null
+          sex?: string | null
+          target_calories?: number | null
+          tdee?: number | null
+          training_time?: string | null
+          updated_at?: string
+          user_id?: string
+          weight_kg?: number | null
         }
         Relationships: []
       }
@@ -3701,6 +3764,57 @@ export type Database = {
           },
         ]
       }
+      meal_templates: {
+        Row: {
+          calories: number | null
+          carbs_g: number | null
+          category: string | null
+          created_at: string
+          created_by: string | null
+          fat_g: number | null
+          id: string
+          ingredients: Json | null
+          instructions: string | null
+          is_active: boolean
+          meal_type: string | null
+          name: string
+          protein_g: number | null
+          updated_at: string
+        }
+        Insert: {
+          calories?: number | null
+          carbs_g?: number | null
+          category?: string | null
+          created_at?: string
+          created_by?: string | null
+          fat_g?: number | null
+          id?: string
+          ingredients?: Json | null
+          instructions?: string | null
+          is_active?: boolean
+          meal_type?: string | null
+          name: string
+          protein_g?: number | null
+          updated_at?: string
+        }
+        Update: {
+          calories?: number | null
+          carbs_g?: number | null
+          category?: string | null
+          created_at?: string
+          created_by?: string | null
+          fat_g?: number | null
+          id?: string
+          ingredients?: Json | null
+          instructions?: string | null
+          is_active?: boolean
+          meal_type?: string | null
+          name?: string
+          protein_g?: number | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       merlin_violation_log: {
         Row: {
           endpoint: string
@@ -4143,6 +4257,63 @@ export type Database = {
           meal_type?: string | null
           notes?: string | null
           protein?: number | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      nutrition_plans: {
+        Row: {
+          calories: number | null
+          carbs_g: number | null
+          created_at: string
+          end_date: string | null
+          fat_g: number | null
+          fluid_l: number | null
+          id: string
+          is_active: boolean
+          meals: Json | null
+          name: string | null
+          notes: string | null
+          plan_type: string | null
+          protein_g: number | null
+          start_date: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          calories?: number | null
+          carbs_g?: number | null
+          created_at?: string
+          end_date?: string | null
+          fat_g?: number | null
+          fluid_l?: number | null
+          id?: string
+          is_active?: boolean
+          meals?: Json | null
+          name?: string | null
+          notes?: string | null
+          plan_type?: string | null
+          protein_g?: number | null
+          start_date?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          calories?: number | null
+          carbs_g?: number | null
+          created_at?: string
+          end_date?: string | null
+          fat_g?: number | null
+          fluid_l?: number | null
+          id?: string
+          is_active?: boolean
+          meals?: Json | null
+          name?: string | null
+          notes?: string | null
+          plan_type?: string | null
+          protein_g?: number | null
+          start_date?: string | null
+          updated_at?: string
           user_id?: string
         }
         Relationships: []
@@ -5123,6 +5294,9 @@ export type Database = {
       player_training_stats: {
         Row: {
           created_at: string
+          current_month: string | null
+          month_load_au: number
+          month_sessions: number
           total_achievements: number
           total_exercises: number
           total_load_au: number
@@ -5136,6 +5310,9 @@ export type Database = {
         }
         Insert: {
           created_at?: string
+          current_month?: string | null
+          month_load_au?: number
+          month_sessions?: number
           total_achievements?: number
           total_exercises?: number
           total_load_au?: number
@@ -5149,6 +5326,9 @@ export type Database = {
         }
         Update: {
           created_at?: string
+          current_month?: string | null
+          month_load_au?: number
+          month_sessions?: number
           total_achievements?: number
           total_exercises?: number
           total_load_au?: number
@@ -8836,6 +9016,13 @@ export type Database = {
           },
         ]
       }
+      v_seed_integrity: {
+        Row: {
+          check_name: string | null
+          violations: number | null
+        }
+        Relationships: []
+      }
       v_training_sessions_consent: {
         Row: {
           access_reason: string | null
@@ -9280,6 +9467,39 @@ export type Database = {
       }
       require_ai_consent: { Args: { p_user_id: string }; Returns: boolean }
       resume_account: { Args: { p_user_id: string }; Returns: boolean }
+      set_event_availability: {
+        Args: {
+          p_competition_event_id: string
+          p_reason?: string
+          p_status: string
+        }
+        Returns: {
+          accommodation_needed: boolean | null
+          amount_due: number | null
+          amount_paid: number | null
+          arrival_date: string | null
+          competition_event_id: string
+          created_at: string | null
+          departure_date: string | null
+          dietary_restrictions: string | null
+          id: string
+          payment_deadline: string | null
+          payment_status: string | null
+          reason: string | null
+          responded_at: string | null
+          status: string
+          team_id: string
+          transportation_needed: boolean | null
+          updated_at: string | null
+          user_id: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "event_availability"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
       sync_public_user_from_auth_row: {
         Args: { p_auth_user: Database["public"]["Tables"]["users"]["Row"] }
         Returns: undefined
