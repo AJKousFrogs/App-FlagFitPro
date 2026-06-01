@@ -1,7 +1,3 @@
--- ============================================================================
--- Canonical RPC for completing an existing training session
--- ============================================================================
-
 CREATE OR REPLACE FUNCTION public.complete_training_session(
   p_user_id uuid,
   p_session_id uuid,

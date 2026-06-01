@@ -1,9 +1,7 @@
--- ============================================================================
 -- ACWR server calculation (public.calculate_acwr)
 -- Daily wellness uniqueness: idx_wellness_checkin_unique_user_date on
 -- (user_id, checkin_date) WHERE deleted_at IS NULL — see 20260109 migration.
 -- Wellness check-ins do not affect ACWR; workload comes from workout_logs.
--- ============================================================================
 
 CREATE OR REPLACE FUNCTION public.calculate_acwr(p_user_id uuid)
 RETURNS jsonb

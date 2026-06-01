@@ -1,7 +1,3 @@
--- Additional conservative index cleanup:
--- Drop single-column indexes that are covered by existing multi-column indexes
--- with the same leading key on the same table.
-
 DROP INDEX IF EXISTS public.idx_session_version_history_session_version_history_session_id_;
 DROP INDEX IF EXISTS public.idx_team_members_team_id;
 DROP INDEX IF EXISTS public.idx_team_members_user_id;

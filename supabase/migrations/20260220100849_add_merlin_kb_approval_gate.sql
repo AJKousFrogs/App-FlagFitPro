@@ -1,6 +1,3 @@
--- Enforce explicit nutritionist approval before Merlin consumes KB entries.
--- Existing legacy entries are backfilled as approved for backward compatibility.
-
 ALTER TABLE public.knowledge_base_entries
   ADD COLUMN IF NOT EXISTS is_merlin_approved boolean NOT NULL DEFAULT false,
   ADD COLUMN IF NOT EXISTS merlin_approval_status text NOT NULL DEFAULT 'pending',
@@ -60,7 +57,6 @@ CREATE INDEX IF NOT EXISTS idx_kb_merlin_approval_status
 CREATE INDEX IF NOT EXISTS idx_kb_merlin_submitted_by
   ON public.knowledge_base_entries(merlin_submitted_by);
 
--- Backfill existing rows so current behavior is preserved.
 UPDATE public.knowledge_base_entries
 SET
   is_merlin_approved = true,

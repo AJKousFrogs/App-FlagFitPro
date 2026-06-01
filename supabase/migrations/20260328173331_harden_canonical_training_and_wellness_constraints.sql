@@ -1,7 +1,3 @@
--- ============================================================================
--- Harden canonical training / wellness write tables with value constraints
--- ============================================================================
-
 ALTER TABLE public.daily_wellness_checkin
   DROP CONSTRAINT IF EXISTS daily_wellness_checkin_sleep_hours_check,
   ADD CONSTRAINT daily_wellness_checkin_sleep_hours_check

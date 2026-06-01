@@ -1,0 +1,73 @@
+
+-- Research Articles Table (required by knowledge_base_entries.supporting_articles)
+CREATE TABLE IF NOT EXISTS research_articles (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    title TEXT NOT NULL,
+    authors TEXT[],
+    publication_year INTEGER,
+    journal VARCHAR(300),
+    publisher VARCHAR(200),
+    doi VARCHAR(100) UNIQUE,
+    pubmed_id VARCHAR(20),
+    pmc_id VARCHAR(20),
+    arxiv_id VARCHAR(50),
+    semantic_scholar_id VARCHAR(100),
+    abstract TEXT,
+    full_text TEXT,
+    full_text_url TEXT,
+    pdf_url TEXT,
+    primary_category VARCHAR(100),
+    categories TEXT[],
+    tags TEXT[],
+    study_type VARCHAR(50),
+    evidence_level VARCHAR(20),
+    sample_size INTEGER,
+    population_type VARCHAR(100),
+    sport_type VARCHAR(100),
+    key_findings TEXT,
+    methodology TEXT,
+    results_summary TEXT,
+    conclusions TEXT,
+    practical_applications TEXT[],
+    injury_types TEXT[],
+    supplement_types TEXT[],
+    recovery_methods TEXT[],
+    training_types TEXT[],
+    psychological_topics TEXT[],
+    food_sources JSONB,
+    absorption_tips TEXT[],
+    supplement_guidance JSONB,
+    safety_warnings TEXT[],
+    sauna_protocols JSONB,
+    cold_therapy_protocols JSONB,
+    massage_gun_protocols JSONB,
+    training_protocols JSONB,
+    periodization_phases TEXT[],
+    psychological_techniques TEXT[],
+    mental_training_methods TEXT[],
+    citation_count INTEGER DEFAULT 0,
+    altmetric_score DECIMAL(10,2),
+    impact_factor DECIMAL(5,2),
+    source_type VARCHAR(50),
+    is_open_access BOOLEAN DEFAULT true,
+    license_type VARCHAR(50),
+    verified BOOLEAN DEFAULT false,
+    verified_by VARCHAR(100),
+    verification_date TIMESTAMP,
+    quality_score INTEGER CHECK (quality_score BETWEEN 1 AND 10),
+    integrated_into_chatbot BOOLEAN DEFAULT false,
+    chatbot_usage_count INTEGER DEFAULT 0,
+    last_used_at TIMESTAMP,
+    keywords TEXT[],
+    mesh_terms TEXT[],
+    created_at TIMESTAMP DEFAULT NOW(),
+    updated_at TIMESTAMP DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_articles_category ON research_articles(primary_category);
+CREATE INDEX IF NOT EXISTS idx_articles_year ON research_articles(publication_year);
+CREATE INDEX IF NOT EXISTS idx_articles_evidence_level ON research_articles(evidence_level);
+CREATE INDEX IF NOT EXISTS idx_articles_sport ON research_articles(sport_type);
+CREATE INDEX IF NOT EXISTS idx_articles_tags ON research_articles USING GIN(tags);
+
+COMMENT ON TABLE research_articles IS 'Evidence-based research articles supporting knowledge base entries';

@@ -1,0 +1,11 @@
+CREATE INDEX IF NOT EXISTS idx_account_pause_requests_user_id ON public.account_pause_requests (user_id);
+CREATE INDEX IF NOT EXISTS idx_blocked_users_blocked_user_id ON public.blocked_users (blocked_user_id);
+CREATE INDEX IF NOT EXISTS idx_comment_likes_user_id ON public.comment_likes (user_id);
+CREATE INDEX IF NOT EXISTS idx_community_poll_votes_user_id ON public.community_poll_votes (user_id);
+CREATE INDEX IF NOT EXISTS idx_community_polls_post_id ON public.community_polls (post_id);
+CREATE INDEX IF NOT EXISTS idx_player_achievements_achievement_id ON public.player_achievements (achievement_id);
+CREATE INDEX IF NOT EXISTS idx_post_bookmarks_user_id ON public.post_bookmarks (user_id);
+CREATE INDEX IF NOT EXISTS idx_post_comments_user_id ON public.post_comments (user_id);
+CREATE INDEX IF NOT EXISTS idx_post_likes_user_id ON public.post_likes (user_id);
+CREATE INDEX IF NOT EXISTS idx_posts_team_id ON public.posts (team_id);
+CREATE INDEX IF NOT EXISTS idx_team_players_created_by ON public.team_players (created_by);

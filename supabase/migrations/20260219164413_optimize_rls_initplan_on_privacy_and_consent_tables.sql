@@ -1,5 +1,7 @@
--- Optimize RLS policies to avoid per-row auth.uid() re-evaluation.
+-- Optimize RLS policies to avoid per-row auth.uid() re-evaluation
+-- by wrapping auth.uid() in a SELECT initplan.
 
+-- parental_consent
 DROP POLICY IF EXISTS parental_consent_delete_owner ON public.parental_consent;
 CREATE POLICY parental_consent_delete_owner ON public.parental_consent
   FOR DELETE TO authenticated
@@ -29,6 +31,7 @@ CREATE POLICY parental_consent_update_owner ON public.parental_consent
   USING (minor_user_id = (select auth.uid()))
   WITH CHECK (minor_user_id = (select auth.uid()));
 
+-- account_deletion_requests
 DROP POLICY IF EXISTS account_deletion_requests_owner_delete ON public.account_deletion_requests;
 CREATE POLICY account_deletion_requests_owner_delete ON public.account_deletion_requests
   FOR DELETE TO authenticated
@@ -50,6 +53,7 @@ CREATE POLICY account_deletion_requests_owner_update ON public.account_deletion_
   USING (user_id = (select auth.uid()))
   WITH CHECK (user_id = (select auth.uid()));
 
+-- emergency_medical_records
 DROP POLICY IF EXISTS emergency_medical_records_owner_delete ON public.emergency_medical_records;
 CREATE POLICY emergency_medical_records_owner_delete ON public.emergency_medical_records
   FOR DELETE TO authenticated
@@ -71,6 +75,7 @@ CREATE POLICY emergency_medical_records_owner_update ON public.emergency_medical
   USING (user_id = (select auth.uid()))
   WITH CHECK (user_id = (select auth.uid()));
 
+-- privacy_audit_log
 DROP POLICY IF EXISTS privacy_audit_log_scoped_insert ON public.privacy_audit_log;
 CREATE POLICY privacy_audit_log_scoped_insert ON public.privacy_audit_log
   FOR INSERT TO authenticated
@@ -87,6 +92,7 @@ CREATE POLICY privacy_audit_log_scoped_select ON public.privacy_audit_log
     OR actor_user_id = (select auth.uid())
   );
 
+-- privacy_settings
 DROP POLICY IF EXISTS privacy_settings_owner_delete ON public.privacy_settings;
 CREATE POLICY privacy_settings_owner_delete ON public.privacy_settings
   FOR DELETE TO authenticated
@@ -108,6 +114,7 @@ CREATE POLICY privacy_settings_owner_update ON public.privacy_settings
   USING (user_id = (select auth.uid()))
   WITH CHECK (user_id = (select auth.uid()));
 
+-- team_sharing_settings
 DROP POLICY IF EXISTS team_sharing_settings_owner_delete ON public.team_sharing_settings;
 CREATE POLICY team_sharing_settings_owner_delete ON public.team_sharing_settings
   FOR DELETE TO authenticated
@@ -138,6 +145,7 @@ CREATE POLICY team_sharing_settings_scoped_select ON public.team_sharing_setting
     )
   );
 
+-- state_transition_history
 DROP POLICY IF EXISTS state_history_select_own ON public.state_transition_history;
 CREATE POLICY state_history_select_own ON public.state_transition_history
   FOR SELECT TO authenticated

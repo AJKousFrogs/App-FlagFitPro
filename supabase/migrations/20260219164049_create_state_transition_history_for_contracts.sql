@@ -11,6 +11,7 @@ CREATE TABLE IF NOT EXISTS public.state_transition_history (
   metadata JSONB
 );
 
+-- Add checks only if absent (idempotent)
 DO $$
 BEGIN
   IF NOT EXISTS (
@@ -36,9 +37,8 @@ CREATE INDEX IF NOT EXISTS idx_state_transition_history_session_id
   ON public.state_transition_history(session_id);
 CREATE INDEX IF NOT EXISTS idx_state_transition_history_transitioned_at
   ON public.state_transition_history(transitioned_at DESC);
-CREATE INDEX IF NOT EXISTS idx_state_transition_history_actor_id
-  ON public.state_transition_history(actor_id) WHERE actor_id IS NOT NULL;
 
+-- Append-only protection
 CREATE OR REPLACE FUNCTION public.prevent_state_history_modification()
 RETURNS trigger
 LANGUAGE plpgsql
@@ -61,6 +61,7 @@ CREATE TRIGGER prevent_state_history_modification_trigger
   FOR EACH ROW
   EXECUTE FUNCTION public.prevent_state_history_modification();
 
+-- Optional automatic logging trigger (compatible with current schema)
 CREATE OR REPLACE FUNCTION public.log_session_state_transition()
 RETURNS trigger
 LANGUAGE plpgsql
@@ -98,12 +99,14 @@ CREATE TRIGGER log_session_state_transition_trigger
   WHEN (OLD.session_state IS DISTINCT FROM NEW.session_state)
   EXECUTE FUNCTION public.log_session_state_transition();
 
+-- Ensure API roles can access table over PostgREST; RLS enforces scope
 ALTER TABLE public.state_transition_history ENABLE ROW LEVEL SECURITY;
 
 GRANT SELECT, INSERT ON public.state_transition_history TO authenticated;
 GRANT SELECT ON public.state_transition_history TO anon;
 GRANT ALL ON public.state_transition_history TO service_role;
 
+-- Policies (idempotent)
 DO $$
 BEGIN
   IF NOT EXISTS (
@@ -120,7 +123,7 @@ BEGIN
           SELECT 1
           FROM public.training_sessions ts
           WHERE ts.id = state_transition_history.session_id
-            AND ts.user_id = (select auth.uid())
+            AND ts.user_id = auth.uid()
         )
       );
   END IF;

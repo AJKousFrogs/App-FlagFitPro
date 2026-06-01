@@ -1,7 +1,3 @@
--- ============================================================================
--- Add canonical RPCs for wellness and training write paths
--- ============================================================================
-
 CREATE OR REPLACE FUNCTION public.ensure_public_user_profile(p_user_id uuid)
 RETURNS void
 LANGUAGE plpgsql

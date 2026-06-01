@@ -7,7 +7,6 @@ UPDATE public.performance_records
 SET performance_day = (recorded_at AT TIME ZONE 'UTC')::date
 WHERE performance_day IS NULL;
 
--- Keep the newest row per (user_id, day); drop older duplicates from historical data.
 DELETE FROM public.performance_records pr
 WHERE pr.ctid IN (
   SELECT ctid
