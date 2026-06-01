@@ -36,27 +36,43 @@ it (micro overrides); and in-season, a long gap defaults to maintain — not the
 generic "accumulation" the engine uses today. This **refines** the current
 event-only phase model (`accumulation`/`transition`) with a real calendar.
 
-## Data / storage
+## Where the windows come from — NOTHING is hardcoded
 
-Per-athlete, on **`athlete_training_config`** — add `season_calendar jsonb`: an
-array of dated blocks supporting **non-contiguous** windows:
+The engine must contain **zero baked-in months**. Players are in different
+domestic leagues, so the season is *data*, resolved per athlete in this order:
 
-```json
-{ "season_calendar": [
-  { "phase": "offseason", "start": "07-01", "end": "08-15" },
-  { "phase": "offseason", "start": "11-01", "end": "11-30" },
-  { "phase": "preseason", "start": "08-16", "end": "09-15" }
-] }
-```
-Months not covered default to **in-season** (or derive pre-season as the N weeks
-before the first in-season block). `MM-DD` (recurs yearly); a team default can
-seed it, athlete can override. Written via `POST /api/player-settings` (the
-existing onboarding/settings write path → `athlete_training_config`).
+1. **League / competition season (primary, data-driven).** Each league is a
+   `competitions` row; its season span is data — either an explicit
+   `season_start` / `season_end` on the competition, or **derived from the spread
+   of its `competition_events`** (first→last event = in-season; the weeks before =
+   pre-season; gaps between a league's seasons = off-season). Because every league
+   carries its own dates, **two players in different leagues automatically get
+   different seasons** with no code change.
+2. **Athlete override (optional).** A personal adjustment on
+   `athlete_training_config.season_calendar` (jsonb dated blocks, non-contiguous)
+   for someone whose personal off-season differs from their league's — e.g. a
+   self-imposed off-block. Overrides/augments the league-derived windows.
+3. **Resolve.** The athlete's macro phase = `macroPhaseFor(today, resolvedWindows)`
+   where `resolvedWindows` = union of their active teams'/leagues' season spans,
+   with personal overrides applied. **The function is generic; the dates are 100%
+   data.**
+
+## Storage
+
+- Per-league: `competitions.season_start` / `competitions.season_end` (or derive
+  from `competition_events`). *(Confirm: explicit columns vs derive-from-events.)*
+- Per-athlete override: `athlete_training_config.season_calendar jsonb` (array of
+  `{ phase, start: "MM-DD", end: "MM-DD" }`, recurs yearly), written via
+  `POST /api/player-settings`. Empty = pure league-derived.
+- The phase→emphasis mapping (off-season = S&C, etc.) is a sport-science **default
+  in code, team-overridable** — not league dates.
 
 ## Engine change (`prescribeFor`)
 
-- **Input:** add `seasonPhase` derived by `macroPhaseFor(today, season_calendar)`
-  (offseason | preseason | inseason | transition).
+- **Input:** add `seasonPhase` derived by `macroPhaseFor(today, resolvedWindows)`
+  where `resolvedWindows` = union of the athlete's leagues' season spans (from
+  `competitions` / their events) with personal `season_calendar` overrides applied
+  (offseason | preseason | inseason | transition). **No months in code.**
 - **Use:** when no event-proximity micro-phase is active (step 5), pick the week
   shape from `seasonPhase` instead of the generic accumulation default — off-season
   weeks become strength/conditioning-led; in-season weeks maintain.
@@ -67,10 +83,14 @@ existing onboarding/settings write path → `athlete_training_config`).
   gap → maintain; event near off-season → micro still overrides). Fold into
   `docs/PRESCRIPTION_SPEC.md`.
 
-## Confirm
+## Confirm (no dates needed — they're data)
 
-Proposed: per-athlete `season_calendar`, the 4 macro phases above, and the
-emphasis mapping. **Tell me your real windows** (e.g. off-season = Jul 1–Aug 15 &
-Nov 1–30; in-season = the rest; pre-season = Aug 16–? ) and whether the default
-should be **per-athlete** or **per-team with athlete override** — then it goes
-into onboarding + the engine.
+The only decision is the **source mechanism**, not any months:
+- League season: **explicit `season_start`/`season_end` on `competitions`** (a
+  coach/admin sets it per league) **vs derive from the league's events** (zero
+  entry, but needs the schedule populated). Recommendation: support both — derive
+  by default, allow an explicit override per league.
+- Keep the per-athlete `season_calendar` override for personal off-blocks. ✓
+
+Everything else (the 4 phases + the off-season=S&C emphasis) is generic logic +
+an overridable default. No hardcoded calendars anywhere.
