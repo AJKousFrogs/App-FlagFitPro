@@ -32,6 +32,19 @@
 | User under 16 without parental consent        | Features blocked server-side             | `age-gating.test.js`         | CRITICAL |
 | User under 16 with parental consent           | Features enabled                         | `age-gating.test.js`         | HIGH     |
 | User 16+                                      | Full access                              | `age-gating.test.js`         | HIGH     |
+| **Per-Role Access Matrix**                    |                                          |                              |          |
+| anon (null viewer) views any player data      | Denied (false)                           | `rls-matrix.test.js`         | CRITICAL |
+| Player views own performance/health           | Allowed (always)                         | `rls-matrix.test.js`         | CRITICAL |
+| Player views another player's data            | Denied (not staff)                       | `rls-matrix.test.js`         | CRITICAL |
+| Same-team coach + performance consent         | Performance visible                      | `rls-matrix.test.js`         | CRITICAL |
+| Same-team coach, no consent                   | Denied                                   | `rls-matrix.test.js`         | CRITICAL |
+| Cross-team coach (different team)             | Denied (tenant isolation)                | `rls-matrix.test.js`         | CRITICAL |
+| Coach views health while only perf shared     | Denied (health gated separately)         | `rls-matrix.test.js`         | CRITICAL |
+| Staff/member predicates (ff_is_team_staff…)   | Correct per role/relationship            | `rls-matrix.test.js`         | HIGH     |
+| **Seed-Data Integrity**                       |                                          |                              |          |
+| Consolidated spine has dangling FKs           | Zero violations (`v_seed_integrity`)     | `seed-integrity.test.js`     | HIGH     |
+| event_participation ↔ training_sessions user  | Consistent user_id                       | `seed-integrity.test.js`     | HIGH     |
+| Orphaned team_members / achievements          | None                                     | `seed-integrity.test.js`     | HIGH     |
 
 ---
 
@@ -71,6 +84,12 @@ npx vitest run tests/privacy-safety/deletion-lifecycle.test.js
 
 # Data state contract tests
 npx vitest run tests/privacy-safety/data-state.test.js
+
+# Per-role access matrix (anon / player / coach, with consent gating)
+npx vitest run tests/privacy-safety/rls-matrix.test.js
+
+# Seed-data referential integrity (consolidated spine)
+npx vitest run tests/privacy-safety/seed-integrity.test.js
 ```
 
 ### Run in CI
