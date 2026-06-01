@@ -96,7 +96,7 @@ async function calculateACWR(userId, date) {
   const { data: sessions } = await supabaseAdmin
     .from("training_sessions")
     .select("session_date, duration_minutes, rpe, intensity_level")
-    .eq("athlete_id", userId)
+    .eq("user_id", userId)
     .gte("session_date", chronicStart.toISOString().split("T")[0])
     .lte("session_date", endDate.toISOString().split("T")[0])
     .in("status", ["completed", "in_progress"]);
@@ -274,7 +274,7 @@ async function calculateMonotony(userId, date) {
   const { data: sessions } = await supabaseAdmin
     .from("training_sessions")
     .select("session_date, duration_minutes, rpe, intensity_level")
-    .eq("athlete_id", userId)
+    .eq("user_id", userId)
     .gte("session_date", weekStart.toISOString().split("T")[0])
     .lte("session_date", date.toISOString().split("T")[0])
     .in("status", ["completed", "in_progress"]);

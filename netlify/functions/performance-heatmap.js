@@ -67,11 +67,11 @@ async function getHeatmapData(userId, timeRange) {
       startDate.setMonth(endDate.getMonth() - 6);
   }
 
-  // Get training sessions in date range (handle both athlete_id and user_id columns)
+  // Get training sessions in date range (user_id is the canonical athlete key)
   const { data: sessions, error } = await supabaseAdmin
     .from("training_sessions")
     .select("*")
-    .or(`athlete_id.eq.${userId},user_id.eq.${userId}`)
+    .eq("user_id", userId)
     .gte("session_date", startDate.toISOString().split("T")[0])
     .lte("session_date", endDate.toISOString().split("T")[0])
     .order("session_date", { ascending: true });

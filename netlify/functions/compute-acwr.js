@@ -97,7 +97,7 @@ async function fetchTrainingSessionsForAcwr(athleteId) {
   const { data, error } = await supabaseAdmin
     .from("training_sessions")
     .select("session_date, duration_minutes, rpe, workload, status")
-    .or(`user_id.eq.${athleteId},athlete_id.eq.${athleteId}`)
+    .eq("user_id", athleteId)
     .gte("session_date", formatDate(startDate))
     .order("session_date", { ascending: false });
 

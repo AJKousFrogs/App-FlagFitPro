@@ -3,9 +3,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 const state = vi.hoisted(() => ({
   role: "player",
   trainingSessionsError: null,
-  legacySessionsError: null,
   trainingSessionsData: [],
-  legacySessionsData: [],
 }));
 
 vi.mock("../../netlify/functions/utils/base-handler.js", () => ({
@@ -25,30 +23,12 @@ vi.mock("../../netlify/functions/supabase-client.js", () => ({
           select() {
             return this;
           },
-          or() {
+          eq() {
             return this;
           },
           order: async () => ({
             data: state.trainingSessionsData,
             error: state.trainingSessionsError,
-          }),
-          gte() {
-            return this;
-          },
-        };
-      }
-
-      if (table === "sessions") {
-        return {
-          select() {
-            return this;
-          },
-          eq() {
-            return this;
-          },
-          order: async () => ({
-            data: state.legacySessionsData,
-            error: state.legacySessionsError,
           }),
           gte() {
             return this;
@@ -133,7 +113,7 @@ describe("training-metrics authorization and validation hardening", () => {
     expect(body.error.details).toBeFalsy();
   });
 
-  it("prefers canonical training session metrics over legacy rows", async () => {
+  it("returns canonical training session metrics", async () => {
     state.trainingSessionsData = [
       {
         session_date: "2026-03-20",
@@ -147,16 +127,6 @@ describe("training-metrics authorization and validation hardening", () => {
           sprint_count: 12,
           data_source: "open_dataset",
         },
-      },
-    ];
-    state.legacySessionsData = [
-      {
-        date: "2026-03-20",
-        total_volume: 900,
-        high_speed_distance: 90,
-        sprint_count: 4,
-        duration_minutes: 35,
-        data_source: "legacy_session",
       },
     ];
 

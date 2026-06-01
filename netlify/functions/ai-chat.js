@@ -139,7 +139,7 @@ async function calculateUserACWR(userId) {
     const { data: sessions } = await supabaseAdmin
       .from("training_sessions")
       .select("session_date, duration_minutes, rpe, intensity_level")
-      .eq("athlete_id", userId)
+      .eq("user_id", userId)
       .gte("session_date", chronicStartDate.toISOString().split("T")[0])
       .lte("session_date", today.toISOString().split("T")[0])
       .in("status", ["completed", "in_progress"]);

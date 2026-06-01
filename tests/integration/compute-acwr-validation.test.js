@@ -38,7 +38,7 @@ vi.mock("../../netlify/functions/supabase-client.js", () => ({
           select() {
             return this;
           },
-          or() {
+          eq() {
             return this;
           },
           gte() {

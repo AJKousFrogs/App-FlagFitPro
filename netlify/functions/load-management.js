@@ -204,36 +204,13 @@ async function getTrainingLoads(
       };
     }
 
-    // For player's own data, use direct access (RLS protects)
-    // First, try to get from training_load_metrics table
-    const { data: metricsData, error: metricsError } = await supabase
-      .from("training_load_metrics")
-      .select("date, session_load, acute_load")
-      .eq("user_id", targetUserId)
-      .gte("date", startDateStr)
-      .lte("date", endDateStr)
-      .order("date", { ascending: true });
-
-    if (!metricsError && metricsData && metricsData.length > 0) {
-      return {
-        loads: metricsData.map((row) => ({
-          date: row.date,
-          load: row.session_load || row.acute_load || 0,
-        })),
-        consentInfo: {
-          blockedPlayerIds: [],
-          accessibleCount: metricsData.length,
-        },
-        dataState:
-          metricsData.length > 0 ? DataState.REAL_DATA : DataState.NO_DATA,
-      };
-    }
-
-    // Fallback: Calculate from training_sessions (RPE * duration)
+    // For player's own data, use direct access (RLS protects).
+    // Compute load from training_sessions (RPE * duration); the legacy
+    // training_load_metrics cache table was retired.
     const { data: sessionsData, error: sessionsError } = await supabase
       .from("training_sessions")
       .select("session_date, rpe, duration_minutes, workload")
-      .or(`athlete_id.eq.${targetUserId},user_id.eq.${targetUserId}`)
+      .eq("user_id", targetUserId)
       .gte("session_date", startDateStr)
       .lte("session_date", endDateStr)
       .eq("status", "completed")
