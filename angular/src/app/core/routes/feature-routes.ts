@@ -21,6 +21,12 @@ export const featureRoutes: Routes = [
         title: "Today · FlagFit",
       },
       {
+        path: "wellness",
+        loadComponent: () =>
+          import("../../wellness/wellness.component").then((m) => m.WellnessComponent),
+        title: "Wellness · FlagFit",
+      },
+      {
         path: "gallery",
         loadComponent: () =>
           import("../../gallery/gallery.component").then((m) => m.GalleryComponent),
