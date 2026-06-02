@@ -1,0 +1,75 @@
+<header class="topbar">
+  <div>
+    <div class="eyebrow">your events · all teams</div>
+    <h1 style="font-size:21px">Competition</h1>
+  </div>
+  <div class="inline">
+    <span class="icon-btn" role="button" aria-label="Notifications"><lucide-icon name="bell" /><span class="dot"></span></span>
+    <span class="avatar"><img src="assets/images/rebuild/avatar.jpg" alt="Your profile" /></span>
+  </div>
+</header>
+
+<main class="screen">
+  <div class="screen-hero">
+    <img src="assets/images/rebuild/hero-competition.jpg" alt="Ljubljana Frogs" />
+    <div class="scrim"></div>
+    <div class="content">
+      <div class="eyebrow">Next up</div>
+      @if (nextEvent(); as ev) {
+        <h2>{{ ev.competitionShortName || ev.competitionName }} · {{ ev.expectedGameCount }} games</h2>
+      } @else { <h2>No events scheduled</h2> }
+    </div>
+  </div>
+
+  <div class="section-h"><h2>Upcoming</h2></div>
+  @if (nextEvent(); as ev) {
+    <div class="hero">
+      <div class="row">
+        <h1 class="inline"><lucide-icon name="flag" /> {{ ev.competitionShortName || ev.competitionName }}</h1>
+        <span class="band caution">in {{ daysTo(ev) }}d · {{ ev.expectedGameCount }} games</span>
+      </div>
+      <small>{{ ev.competitionName }}@if (ev.venue) { · {{ ev.venue }} }</small>
+      <div style="margin-top:14px"><small>Will you be there?</small>
+        <div class="row" style="margin-top:8px">
+          <button class="btn ghost sm" type="button" (click)="rsvp(ev, 'declined')">Can't</button>
+          <button class="btn ghost sm" type="button" (click)="rsvp(ev, 'maybe')">Maybe</button>
+          <button class="btn primary" type="button" style="flex:1;margin-left:8px" (click)="rsvp(ev, 'confirmed')">I'm in</button>
+        </div>
+      </div>
+    </div>
+
+    @for (e of rest(); track e.id) {
+      <div class="card"><div class="lrow">
+        <span>{{ e.competitionShortName || e.competitionName }} · in {{ daysTo(e) }}d · {{ e.expectedGameCount }} games</span>
+        <button class="btn ghost sm" type="button" (click)="rsvp(e, 'confirmed')">RSVP</button>
+      </div></div>
+    }
+  } @else {
+    <div class="empty">No upcoming events — add your competitions to plan your season.</div>
+  }
+
+  @if (pending().length) {
+    <div class="section-h"><h2>Tell us how it went</h2></div>
+    <div class="card">
+      <b>{{ pending()[0].competition_name || "Last event" }} <small>recently</small></b>
+      <p class="muted" style="font-size:var(--fs-sm)">You were rostered for {{ pendingGamesExpected() }} games. How many did you play?</p>
+      <div class="slider">
+        <label for="gp">Games</label>
+        <input class="rng" id="gp" type="range" min="0" [max]="pendingGamesExpected()" [value]="games()"
+               (input)="games.set(+$any($event.target).value)" aria-label="Games played" />
+        <span class="val">{{ games() }}</span>
+      </div>
+      <div class="slider">
+        <label for="arpe">Avg RPE</label>
+        <input class="rng" id="arpe" type="range" min="1" max="10" [value]="avgRpe()"
+               (input)="avgRpe.set(+$any($event.target).value)" aria-label="Average RPE 1 to 10" />
+        <span class="val">{{ avgRpe() }}</span>
+      </div>
+      @if (logged()) {
+        <button class="btn secondary block" type="button" disabled><lucide-icon name="check" /> Logged</button>
+      } @else {
+        <button class="btn primary block" type="button" (click)="logParticipation()">Log it</button>
+      }
+    </div>
+  }
+</main>

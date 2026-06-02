@@ -81,6 +81,18 @@ export const featureRoutes: Routes = [
         title: "Profile · FlagFit",
       },
       {
+        path: "competition",
+        loadComponent: () =>
+          import("../../competition/competition.component").then((m) => m.CompetitionComponent),
+        title: "Competition · FlagFit",
+      },
+      {
+        path: "gameday",
+        loadComponent: () =>
+          import("../../gameday/gameday.component").then((m) => m.GamedayComponent),
+        title: "Game day · FlagFit",
+      },
+      {
         path: "gallery",
         loadComponent: () =>
           import("../../gallery/gallery.component").then((m) => m.GalleryComponent),

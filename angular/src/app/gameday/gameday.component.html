@@ -1,0 +1,67 @@
+<header class="topbar">
+  <div>
+    <div class="eyebrow">
+      @if (nextEvent(); as ev) { {{ ev.competitionShortName || ev.competitionName }} · {{ ev.expectedGameCount }} games }
+      @else { Game day }
+    </div>
+    <h1 class="inline" style="font-size:21px"><lucide-icon name="flag" /> Game day</h1>
+  </div>
+  <div class="inline">
+    <span class="icon-btn" role="button" aria-label="Notifications"><lucide-icon name="bell" /><span class="dot"></span></span>
+    <span class="avatar"><img src="assets/images/rebuild/avatar.jpg" alt="Your profile" /></span>
+  </div>
+</header>
+
+<main class="screen">
+  <div class="screen-hero">
+    <img src="assets/images/rebuild/hero-gameday.jpg" alt="Ljubljana Frogs" />
+    <div class="scrim"></div>
+    <div class="content">
+      <div class="eyebrow">Game day</div>
+      <h2>@if (nextEvent(); as ev) { {{ ev.competitionShortName || ev.competitionName }} — go time } @else { Go time }</h2>
+    </div>
+  </div>
+
+  <div class="hero">
+    <h1>Game day</h1>
+    <p style="margin:8px 0 0;color:var(--text)">{{ reasoning() }}</p>
+    <div class="tiles" style="margin-top:14px">
+      <div><b>activate</b><small>warm-up</small></div>
+      <div><b>refuel</b><small>between</small></div>
+      <div><b>critical</b><small>recovery</small></div>
+    </div>
+  </div>
+
+  @if (weather(); as w) {
+    <div class="card" style="border-left:3px solid var(--warn)">
+      <div class="inline"><lucide-icon name="sun" /> <b>Conditions</b>
+        @if (w.heatLoadFactor > 1) { <span class="band danger">heat</span> }
+      </div>
+      <small>{{ w.reason }}</small>
+    </div>
+  }
+
+  <div class="section-h"><h2>Fueling timeline</h2></div>
+  @if (fuel(); as f) {
+    <div class="card">
+      <div class="lrow"><span>2–3h before G1</span>
+        <b class="inline"><iconify-icon icon="mdi:rice"></iconify-icon> {{ f.before }}g carbs</b></div>
+      <div class="lrow"><span>Between games</span>
+        <b class="inline"><iconify-icon icon="mdi:food-apple"></iconify-icon> {{ f.betweenCarb }}g + <iconify-icon icon="mdi:cup-water"></iconify-icon> 250ml/15min</b></div>
+      <div class="lrow"><span>After final game</span>
+        <b class="inline"><iconify-icon icon="mdi:food-drumstick"></iconify-icon> {{ f.afterCarb }}g carbs + {{ f.afterProtein }}g protein</b></div>
+    </div>
+  } @else {
+    <div class="empty">Fueling plan appears once today's prescription is generated.</div>
+  }
+
+  <div class="card">
+    <div class="row">
+      <div><b>Hydration</b> <small>{{ hydrationL() }} L today</small></div>
+      <div class="inline">
+        <button class="btn secondary sm" type="button" (click)="addHydration(250)">+250</button>
+        <button class="btn secondary sm" type="button" (click)="addHydration(500)">+500</button>
+      </div>
+    </div>
+  </div>
+</main>
