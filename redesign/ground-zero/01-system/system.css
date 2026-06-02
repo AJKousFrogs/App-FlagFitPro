@@ -164,5 +164,30 @@ a:focus-visible{outline:none;box-shadow:var(--focus);border-radius:4px;}
   font-size:28px;font-weight:var(--fw-bold);box-shadow:var(--e-3);border:0;cursor:pointer;z-index:6;}
 .fab:focus-visible{outline:none;box-shadow:var(--focus),var(--e-3);}
 
+/* video embed — YouTube-style player (16:9 thumb + play + duration). A real
+   <iframe>/<video> replaces it at port; the photo placeholder shows otherwise. */
+.video{position:relative;aspect-ratio:16/9;border-radius:var(--r-md);overflow:hidden;background:var(--grad-brand-soft);}
+.video>img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;}
+.video::before{content:"";position:absolute;inset:0;background:rgba(8,9,11,.28);}
+.video .play{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:58px;height:58px;border-radius:var(--r-pill);
+  background:rgba(8,9,11,.55);border:2.5px solid #fff;color:#fff;display:flex;align-items:center;justify-content:center;font-size:20px;cursor:pointer;}
+.video .play:focus-visible{outline:none;box-shadow:var(--focus);}
+.video .vtitle{position:absolute;left:12px;bottom:10px;color:#fff;font-weight:var(--fw-semi);font-size:var(--fs-sm);
+  text-shadow:0 1px 6px rgba(0,0,0,.7);max-width:72%;z-index:1;}
+.video .duration{position:absolute;right:8px;bottom:8px;background:rgba(8,9,11,.85);color:#fff;font-size:var(--fs-xs);
+  font-weight:var(--fw-semi);padding:2px 6px;border-radius:4px;z-index:1;}
+/* small inline video thumbnail (exercise rows) */
+.vthumb{position:relative;width:84px;height:52px;border-radius:var(--r-sm);overflow:hidden;background:var(--grad-brand-soft);flex:0 0 auto;}
+.vthumb::after{content:"▶";position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);color:#fff;font-size:13px;
+  width:24px;height:24px;border-radius:var(--r-pill);background:rgba(8,9,11,.55);display:flex;align-items:center;justify-content:center;}
+
+/* compact photo banner at the top of a screen (context, not a title repeat) */
+.screen-hero{position:relative;height:150px;border-radius:var(--r-lg);overflow:hidden;background:var(--grad-brand-soft);display:flex;}
+.screen-hero>img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;}
+.screen-hero .scrim{position:absolute;inset:0;background:var(--grad-scrim);}
+.screen-hero .content{position:relative;margin-top:auto;padding:var(--s-4);z-index:1;width:100%;}
+.screen-hero .content h2{color:#fff;font-size:var(--fs-h1);}
+.screen-hero .eyebrow{color:#fff;opacity:.85;}
+
 /* note (spec annotation, not UI) */
 .note{font-size:var(--fs-xs);color:var(--text-faint);font-style:italic;}
