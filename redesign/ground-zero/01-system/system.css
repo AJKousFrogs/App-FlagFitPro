@@ -32,8 +32,11 @@ a{color:var(--accent);text-decoration:none;}
 .icon-btn{width:44px;height:44px;border-radius:var(--r-pill);background:var(--surface-2);border:1px solid var(--border-soft);
   display:inline-flex;align-items:center;justify-content:center;color:var(--text);position:relative;cursor:pointer;}
 .icon-btn:focus-visible,.avatar:focus-visible{outline:none;box-shadow:var(--focus);}
-.avatar{width:38px;height:38px;border-radius:var(--r-pill);background:var(--surface-raised);
-  display:inline-flex;align-items:center;justify-content:center;font-weight:var(--fw-bold);font-size:var(--fs-sm);color:var(--text-strong);}
+.avatar{width:44px;height:44px;border-radius:var(--r-pill);background:var(--surface-raised);overflow:hidden;
+  display:inline-flex;align-items:center;justify-content:center;font-weight:var(--fw-bold);font-size:var(--fs-sm);
+  color:var(--text-strong);flex:0 0 auto;}
+.avatar>img{width:100%;height:100%;object-fit:cover;}
+.avatar.lg{width:64px;height:64px;font-size:var(--fs-h3);}
 .dot{position:absolute;top:6px;right:7px;width:8px;height:8px;border-radius:var(--r-pill);background:var(--accent);border:2px solid var(--bg);}
 
 /* surfaces */
