@@ -8,10 +8,12 @@
    reference ONLY these tokens — the anti-drift contract.
    ================================================================ */
 
-/* Design tokens — first statement (Sass @use ordering). Emits :root custom
-   properties unlayered: variable definitions don't compete across @layers, so
-   this is safe and sidesteps layer-order hazards. */
+/* Design tokens + component vocabulary — Sass @use must lead the file. Tokens
+   emit :root custom properties (unlayered, safe). The component system is a mixin
+   (emits nothing here) so it can be included inside @layer components below, in
+   correct cascade order without @import deprecation. */
 @use "scss/tokens/tokens";
+@use "scss/system/system" as system;
 
 @layer reset, tokens, primeng-base, primeng-brand, primitives, components,
   utilities, mobile, features, overrides;
@@ -39,4 +41,9 @@
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
   }
+}
+
+/* Locked component vocabulary — every screen assembles from these classes only. */
+@layer components {
+  @include system.all;
 }

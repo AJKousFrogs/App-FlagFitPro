@@ -1,13 +1,25 @@
 import { Routes } from "@angular/router";
+import { ShellComponent } from "../../shell/shell.component";
 
 /**
- * Feature Route Groups Composition
- *
- * STATIC-FIRST REBUILD: all screen routes were removed alongside the UI layer.
- * The original per-group route definitions (path → screen → guard / preload /
- * showBottomNav) are preserved uncompiled in `redesign/_reference/routes/` and
- * are restored incrementally in Phase E as each screen is rebuilt from the
- * approved static design. The kept business-logic services remain available for
- * those rebuilt screens to consume.
+ * Feature routes — rebuilt incrementally in Phase E from the approved static
+ * design (redesign/ground-zero). Screens render inside the persistent
+ * ShellComponent (each screen renders its own top bar; the bottom nav + FAB are
+ * the shell). Original path→screen→guard mapping is preserved uncompiled in
+ * redesign/_reference/routes/ and restored as each screen is ported.
  */
-export const featureRoutes: Routes = [];
+export const featureRoutes: Routes = [
+  {
+    path: "",
+    component: ShellComponent,
+    children: [
+      { path: "", pathMatch: "full", redirectTo: "gallery" },
+      {
+        path: "gallery",
+        loadComponent: () =>
+          import("../../gallery/gallery.component").then((m) => m.GalleryComponent),
+        title: "Design System · FlagFit",
+      },
+    ],
+  },
+];

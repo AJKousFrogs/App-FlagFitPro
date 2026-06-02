@@ -2,8 +2,33 @@ import {
   ApplicationConfig,
   ErrorHandler,
   LOCALE_ID,
+  importProvidersFrom,
   provideZonelessChangeDetection,
 } from "@angular/core";
+import {
+  LucideAngularModule,
+  Home,
+  Dumbbell,
+  HeartPulse,
+  LineChart,
+  Menu,
+  Plus,
+  Bell,
+  Flag,
+  CloudRain,
+  Play,
+  Info,
+  Pill,
+  ArrowUpRight,
+  ChevronDown,
+  ChevronRight,
+  Droplet,
+  Moon,
+  Activity,
+  Check,
+  Coffee,
+  ShieldHalf,
+} from "lucide-angular";
 import { provideClientHydration } from "@angular/platform-browser";
 import { provideAnimations } from "@angular/platform-browser/animations";
 import {
@@ -41,6 +66,16 @@ export const appConfig: ApplicationConfig = {
   providers: [
     // Locale configuration for i18n (date/number formatting)
     { provide: LOCALE_ID, useValue: "en-US" },
+
+    // Lucide icons (the locked icon set — registered once, used app-wide via
+    // <lucide-icon name="…">). Add new glyphs here as screens are ported.
+    importProvidersFrom(
+      LucideAngularModule.pick({
+        Home, Dumbbell, HeartPulse, LineChart, Menu, Plus, Bell, Flag,
+        CloudRain, Play, Info, Pill, ArrowUpRight, ChevronDown, ChevronRight,
+        Droplet, Moon, Activity, Check, Coffee, ShieldHalf,
+      }),
+    ),
 
     // Angular 21+: Zoneless is the default change-detection mode.
     // Explicitly enabling stable experimental zoneless for performance.
