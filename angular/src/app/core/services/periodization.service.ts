@@ -3,6 +3,7 @@ import {
   Signal,
   computed,
   inject,
+  signal,
 } from "@angular/core";
 
 import {
@@ -22,6 +23,7 @@ import { AcwrService } from "./acwr.service";
 import { ReadinessService } from "./readiness.service";
 import { ScheduleService } from "./schedule.service";
 import { SupabaseService } from "./supabase.service";
+import { ApiService } from "./api.service";
 
 /**
  * PeriodizationService — turns the schedule into prescriptions.
@@ -40,6 +42,34 @@ export class PeriodizationService {
   private readonly acwrService = inject(AcwrService);
   private readonly readinessService = inject(ReadinessService);
   private readonly supabase = inject(SupabaseService);
+  private readonly api = inject(ApiService);
+
+  /**
+   * The athlete's declared season calendar (athlete_training_config.season_calendar),
+   * fed to macroPhaseFor to set the macro season phase. Empty until loaded → the
+   * engine falls back to the generic build week. NOTHING hardcoded.
+   */
+  readonly seasonCalendar = signal<SeasonWindow[]>([]);
+
+  constructor() {
+    this.api
+      .get<{ season_calendar?: SeasonWindow[]; seasonCalendar?: SeasonWindow[] }>(
+        "/api/player-settings",
+      )
+      .subscribe({
+        next: (res) => {
+          const d = (res?.data ?? {}) as {
+            season_calendar?: SeasonWindow[];
+            seasonCalendar?: SeasonWindow[];
+          };
+          const cal = d.season_calendar ?? d.seasonCalendar;
+          if (Array.isArray(cal)) this.seasonCalendar.set(cal);
+        },
+        error: () => {
+          /* no config yet → generic build week */
+        },
+      });
+  }
 
   /**
    * Today's prescription. Reactive — updates whenever the schedule, ACWR,
@@ -50,8 +80,9 @@ export class PeriodizationService {
     if (!snap) {
       return null;
     }
+    const now = new Date();
     return prescribeFor({
-      date: new Date(),
+      date: now,
       phase: snap.currentPhase,
       upcoming: snap.upcoming,
       lastEvent: snap.lastEvent,
@@ -64,6 +95,7 @@ export class PeriodizationService {
             hasPeakImportance: snap.density14d.hasPeakImportance,
           }
         : null,
+      seasonPhase: macroPhaseFor(now, this.seasonCalendar()),
     });
   });
 
@@ -103,6 +135,7 @@ export class PeriodizationService {
                 hasPeakImportance: snap.density14d.hasPeakImportance,
               }
             : null,
+          seasonPhase: macroPhaseFor(date, this.seasonCalendar()),
         }),
       );
     }
