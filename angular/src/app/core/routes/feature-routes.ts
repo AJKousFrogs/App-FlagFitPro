@@ -93,6 +93,12 @@ export const featureRoutes: Routes = [
         title: "Game day · FlagFit",
       },
       {
+        path: "chat",
+        loadComponent: () =>
+          import("../../chat/chat.component").then((m) => m.ChatComponent),
+        title: "Merlin · FlagFit",
+      },
+      {
         path: "gallery",
         loadComponent: () =>
           import("../../gallery/gallery.component").then((m) => m.GalleryComponent),
