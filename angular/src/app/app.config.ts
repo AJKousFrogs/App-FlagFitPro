@@ -40,6 +40,7 @@ import {
   Flame,
   Settings,
   Camera,
+  Lock,
 } from "lucide-angular";
 import { provideClientHydration } from "@angular/platform-browser";
 import { provideAnimations } from "@angular/platform-browser/animations";
@@ -87,7 +88,7 @@ export const appConfig: ApplicationConfig = {
         CloudRain, Play, Info, Pill, ArrowUpRight, ChevronDown, ChevronRight,
         Droplet, Moon, Activity, Check, Coffee, ShieldHalf,
         Trophy, Users, MessageCircle, BarChart3, Sparkles, BookOpen, FileText,
-        User, Medal, Flame, Settings, Camera,
+        User, Medal, Flame, Settings, Camera, Lock,
       }),
     ),
 

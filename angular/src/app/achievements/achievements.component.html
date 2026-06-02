@@ -1,0 +1,51 @@
+<header class="topbar">
+  <div><h1 style="font-size:21px">Achievements</h1></div>
+  <div class="inline">
+    <span class="icon-btn" role="button" aria-label="Notifications"><lucide-icon name="bell" /><span class="dot"></span></span>
+    <span class="avatar"><img src="assets/images/rebuild/avatar.jpg" alt="Your profile" /></span>
+  </div>
+</header>
+
+<main class="screen">
+  <div class="screen-hero">
+    <img src="assets/images/rebuild/hero-achieve.jpg" alt="Ljubljana Frogs" />
+    <div class="scrim"></div>
+    <div class="content">
+      <div class="eyebrow">Your streak</div>
+      <h2>{{ streak() !== null ? streak() + " days and counting" : "Keep your streak going" }}</h2>
+    </div>
+  </div>
+
+  <div class="hero">
+    <div class="tiles">
+      <div><b class="inline"><lucide-icon name="flame" />{{ streak() ?? "—" }}</b><small>day streak</small></div>
+      <div><b>{{ points() ?? "—" }}</b><small>points</small></div>
+      <div><b>{{ earnedCount() ?? "—" }}</b><small>earned</small></div>
+    </div>
+  </div>
+
+  <div class="section-h"><h2>Earned</h2></div>
+  @if (earned().length) {
+    <div class="card">
+      @for (a of earned(); track a.name) {
+        <div class="lrow"><span class="inline"><lucide-icon name="medal" /> {{ a.name }}</span><span class="band good">earned</span></div>
+      }
+    </div>
+  } @else {
+    <div class="empty">No badges yet — your first check-in earns one.</div>
+  }
+
+  <div class="section-h"><h2>Next up</h2></div>
+  @if (nextUp().length) {
+    <div class="card">
+      @for (a of nextUp(); track a.name) {
+        <div class="lrow">
+          <span class="inline"><lucide-icon name="lock" /> {{ a.name }}</span>
+          @if (a.progressMax) { <small>{{ a.progress ?? 0 }}/{{ a.progressMax }}</small> }
+        </div>
+      }
+    </div>
+  } @else {
+    <div class="empty">All caught up — new goals unlock as you train.</div>
+  }
+</main>

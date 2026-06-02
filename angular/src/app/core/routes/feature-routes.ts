@@ -57,6 +57,18 @@ export const featureRoutes: Routes = [
         title: "Settings · FlagFit",
       },
       {
+        path: "achievements",
+        loadComponent: () =>
+          import("../../achievements/achievements.component").then((m) => m.AchievementsComponent),
+        title: "Achievements · FlagFit",
+      },
+      {
+        path: "notifications",
+        loadComponent: () =>
+          import("../../notifications/notifications.component").then((m) => m.NotificationsComponent),
+        title: "Notifications · FlagFit",
+      },
+      {
         path: "gallery",
         loadComponent: () =>
           import("../../gallery/gallery.component").then((m) => m.GalleryComponent),

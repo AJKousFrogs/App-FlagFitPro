@@ -47,8 +47,12 @@
   <div class="section-h"><h2>Me</h2></div>
   <div class="card">
     <div class="lrow"><span class="inline"><lucide-icon name="user" /> Profile</span><span class="faint">›</span></div>
-    <div class="lrow"><span class="inline"><lucide-icon name="medal" /> Achievements</span><span class="faint">›</span></div>
-    <div class="lrow"><span class="inline"><lucide-icon name="bell" /> Notifications</span><span class="faint">›</span></div>
+    <a class="lrow" routerLink="/achievements" style="color:inherit">
+      <span class="inline"><lucide-icon name="medal" /> Achievements</span><span class="faint">›</span>
+    </a>
+    <a class="lrow" routerLink="/notifications" style="color:inherit">
+      <span class="inline"><lucide-icon name="bell" /> Notifications</span><span class="faint">›</span>
+    </a>
     <a class="lrow" routerLink="/settings" style="color:inherit">
       <span class="inline"><lucide-icon name="settings" /> Settings</span><span class="faint">›</span>
     </a>

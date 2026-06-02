@@ -1,0 +1,24 @@
+<header class="topbar">
+  <div><h1 style="font-size:21px">Notifications</h1></div>
+  <button class="btn ghost sm" type="button" (click)="markAllRead()">Mark all read</button>
+</header>
+
+<main class="screen">
+  @if (items() === null) {
+    <div class="empty">Loading…</div>
+  } @else if (items()!.length === 0) {
+    <div class="empty">You're all caught up.</div>
+  } @else {
+    @for (n of items()!; track n.id) {
+      <div class="card" [style.border-left]="'3px solid ' + accent(n)">
+        <div class="row">
+          <b class="inline"><lucide-icon [name]="icon(n)" /> {{ n.title || n.type || "Update" }}</b>
+          <small>{{ ago(n.created_at) }}</small>
+        </div>
+        @if (n.message || n.body) {
+          <small>{{ n.message || n.body }}</small>
+        }
+      </div>
+    }
+  }
+</main>
