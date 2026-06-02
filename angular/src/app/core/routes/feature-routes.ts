@@ -33,6 +33,12 @@ export const featureRoutes: Routes = [
         title: "Wellness · FlagFit",
       },
       {
+        path: "stats",
+        loadComponent: () =>
+          import("../../stats/stats.component").then((m) => m.StatsComponent),
+        title: "Stats · FlagFit",
+      },
+      {
         path: "gallery",
         loadComponent: () =>
           import("../../gallery/gallery.component").then((m) => m.GalleryComponent),

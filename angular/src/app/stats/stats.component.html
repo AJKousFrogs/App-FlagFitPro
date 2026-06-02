@@ -1,0 +1,69 @@
+<header class="topbar">
+  <div>
+    <div class="eyebrow">Last 28 days</div>
+    <h1 style="font-size:21px">Stats</h1>
+  </div>
+  <div class="inline">
+    <span class="icon-btn" role="button" aria-label="Notifications">
+      <lucide-icon name="bell" /><span class="dot"></span>
+    </span>
+    <span class="avatar"><img src="assets/images/rebuild/avatar.jpg" alt="Your profile" /></span>
+  </div>
+</header>
+
+<main class="screen">
+  <div class="screen-hero">
+    <img src="assets/images/rebuild/hero-stats.jpg" alt="Ljubljana Frogs" />
+    <div class="scrim"></div>
+    <div class="content"><div class="eyebrow">Last 28 days</div><h2>Your trends</h2></div>
+  </div>
+
+  <!-- Load (ACWR) -->
+  <div class="section-h"><h2>Load (ACWR)</h2></div>
+  @if (acwrBand() && acwrChart(); as _) {
+    <div class="hero">
+      <div class="row">
+        <span class="band {{ acwrBand()!.cls }}">{{ acwrBand()!.label }}</span>
+        <small>lowest injury risk in the sweet spot</small>
+      </div>
+      <svg width="100%" height="120" viewBox="0 0 360 120" preserveAspectRatio="none" style="margin-top:12px">
+        <rect x="0" y="45" width="360" height="25" fill="var(--good-soft)" />
+        <text x="6" y="59" font-size="10" fill="var(--text-faint)">sweet 0.8–1.3</text>
+        <line x1="0" y1="35" x2="360" y2="35" stroke="var(--danger)" stroke-dasharray="5 3" opacity=".7" />
+        <text x="6" y="31" font-size="10" fill="var(--text-faint)">danger 1.5</text>
+        <polyline fill="none" stroke="var(--accent)" stroke-width="2.5" [attr.points]="acwrChart()!.points" />
+        <circle [attr.cx]="acwrChart()!.last.x" [attr.cy]="acwrChart()!.last.y" r="4" fill="var(--accent)" />
+      </svg>
+    </div>
+  } @else {
+    <div class="empty">
+      <b style="color:var(--text)">ACWR — building up</b>
+      <div style="height:8px;border-radius:var(--r-pill);background:var(--surface-2);overflow:hidden;margin:10px 0 6px">
+        <div [style.height.px]="8" [style.width.%]="(daysLogged() / 21) * 100" style="background:var(--accent)"></div>
+      </div>
+      {{ daysLogged() }} / 21 days logged · keep training and it'll appear.
+      <small>(null ≠ low — we never show a fake "under-training".)</small>
+    </div>
+  }
+
+  <!-- Readiness history -->
+  <div class="section-h"><h2>Readiness history</h2></div>
+  @if (readyChart(); as chart) {
+    <div class="card">
+      <svg width="100%" height="110" viewBox="0 0 360 110" preserveAspectRatio="none">
+        <line x1="0" y1="42" x2="360" y2="42" stroke="var(--border)" stroke-dasharray="3 3" />
+        <text x="6" y="38" font-size="10" fill="var(--text-faint)">75</text>
+        <line x1="0" y1="66" x2="360" y2="66" stroke="var(--border)" stroke-dasharray="3 3" />
+        <text x="6" y="62" font-size="10" fill="var(--text-faint)">55</text>
+        <polyline fill="none" stroke="var(--info)" stroke-width="2.5" [attr.points]="chart.points" />
+        <circle [attr.cx]="chart.last.x" [attr.cy]="chart.last.y" r="4" fill="var(--info)" />
+      </svg>
+    </div>
+  } @else {
+    <div class="empty">Log a few daily check-ins and your readiness trend appears here.</div>
+  }
+
+  <!-- Performance (combine tests) -->
+  <div class="section-h"><h2>Performance</h2></div>
+  <div class="empty">Log a combine test (40-yd, vertical, sessions) to track your trends.</div>
+</main>
