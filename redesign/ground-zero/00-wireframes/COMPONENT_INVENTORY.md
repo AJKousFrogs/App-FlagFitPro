@@ -47,7 +47,10 @@ what stops the per-screen drift. Derived from the core-journey wireframes.
   collapsed state.
 - **Post-event prompt** — "Were you at {event}? How many of {N} games?" inline form.
 - **Hydration logger** — quick-add (e.g. +250/+500 ml) + daily total vs target.
-- **Nutrition target card** — engine-derived carbs/protein/fluid (display-only).
+- **Nutrition / fuel card** — engine-derived carbs/protein/fluid as **macro tiles
+  (Lucide food icon + number)** + **food chips (icon + word)** — numbers, words,
+  and visuals matched. Icons: wheat (carbs), drumstick (protein), glass-water
+  (fluid), apple/milk/egg (foods).
 - **Session row + detail** — with **exercise demo video** slot (loop) and
   log/complete action.
 - **Achievement / streak card** — earned badges + current streak.
