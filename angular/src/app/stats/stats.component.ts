@@ -5,6 +5,7 @@ import {
   inject,
   signal,
 } from "@angular/core";
+import { RouterLink } from "@angular/router";
 import { LucideAngularModule } from "lucide-angular";
 
 import { ReadinessService } from "../core/services/readiness.service";
@@ -27,7 +28,7 @@ const clamp = (v: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, v
 @Component({
   selector: "app-stats",
   standalone: true,
-  imports: [LucideAngularModule],
+  imports: [RouterLink, LucideAngularModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: "./stats.component.html",
 })

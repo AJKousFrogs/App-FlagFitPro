@@ -5,6 +5,7 @@ import {
   inject,
   signal,
 } from "@angular/core";
+import { RouterLink } from "@angular/router";
 import { LucideAngularModule } from "lucide-angular";
 
 import { ApiService } from "../core/services/api.service";
@@ -26,7 +27,7 @@ interface SuppLog {
 @Component({
   selector: "app-supplements",
   standalone: true,
-  imports: [LucideAngularModule],
+  imports: [RouterLink, LucideAngularModule],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: "./supplements.component.html",

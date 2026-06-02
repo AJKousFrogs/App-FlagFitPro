@@ -5,6 +5,7 @@ import {
   inject,
   signal,
 } from "@angular/core";
+import { RouterLink } from "@angular/router";
 import { LucideAngularModule } from "lucide-angular";
 
 import { ApiService } from "../core/services/api.service";
@@ -29,7 +30,7 @@ interface AchievementsData {
 @Component({
   selector: "app-achievements",
   standalone: true,
-  imports: [LucideAngularModule],
+  imports: [RouterLink, LucideAngularModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: "./achievements.component.html",
 })

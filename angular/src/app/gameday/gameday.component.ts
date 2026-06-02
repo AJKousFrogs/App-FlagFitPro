@@ -6,6 +6,7 @@ import {
   inject,
   signal,
 } from "@angular/core";
+import { RouterLink } from "@angular/router";
 import { LucideAngularModule } from "lucide-angular";
 
 import { ScheduleService } from "../core/services/schedule.service";
@@ -22,7 +23,7 @@ import { LoggerService } from "../core/services/logger.service";
 @Component({
   selector: "app-gameday",
   standalone: true,
-  imports: [LucideAngularModule],
+  imports: [RouterLink, LucideAngularModule],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: "./gameday.component.html",

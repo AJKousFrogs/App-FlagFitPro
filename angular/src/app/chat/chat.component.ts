@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component } from "@angular/core";
+import { RouterLink } from "@angular/router";
 import { LucideAngularModule } from "lucide-angular";
 
 /**
@@ -12,7 +13,7 @@ import { LucideAngularModule } from "lucide-angular";
 @Component({
   selector: "app-chat",
   standalone: true,
-  imports: [LucideAngularModule],
+  imports: [RouterLink, LucideAngularModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: "./chat.component.html",
   styles: [

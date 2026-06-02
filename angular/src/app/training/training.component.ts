@@ -5,6 +5,7 @@ import {
   inject,
   signal,
 } from "@angular/core";
+import { RouterLink } from "@angular/router";
 import { LucideAngularModule } from "lucide-angular";
 
 import { PeriodizationService } from "../core/services/periodization.service";
@@ -29,7 +30,7 @@ interface WeekRow {
 @Component({
   selector: "app-training",
   standalone: true,
-  imports: [LucideAngularModule],
+  imports: [RouterLink, LucideAngularModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: "./training.component.html",
   styles: [

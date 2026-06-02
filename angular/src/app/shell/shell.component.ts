@@ -20,9 +20,9 @@ import { LucideAngularModule } from "lucide-angular";
     <div class="app-shell">
       <router-outlet />
 
-      <button class="fab" type="button" aria-label="Quick log">
+      <a class="fab" routerLink="/wellness" aria-label="Log today's check-in">
         <lucide-icon name="plus" />
-      </button>
+      </a>
 
       <nav class="tabbar" aria-label="Primary">
         <a routerLink="/today" routerLinkActive="active" ariaCurrentWhenActive="page">

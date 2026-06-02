@@ -5,6 +5,7 @@ import {
   inject,
   signal,
 } from "@angular/core";
+import { RouterLink } from "@angular/router";
 import { LucideAngularModule } from "lucide-angular";
 
 import { ScheduleService } from "../core/services/schedule.service";
@@ -30,7 +31,7 @@ interface PendingEvent {
 @Component({
   selector: "app-competition",
   standalone: true,
-  imports: [LucideAngularModule],
+  imports: [RouterLink, LucideAngularModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: "./competition.component.html",
 })
