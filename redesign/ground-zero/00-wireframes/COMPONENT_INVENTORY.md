@@ -49,8 +49,11 @@ what stops the per-screen drift. Derived from the core-journey wireframes.
 - **Hydration logger** — quick-add (e.g. +250/+500 ml) + daily total vs target.
 - **Nutrition / fuel card** — engine-derived carbs/protein/fluid as **macro tiles
   (Lucide food icon + number)** + **food chips (icon + word)** — numbers, words,
-  and visuals matched. Icons: wheat (carbs), drumstick (protein), glass-water
-  (fluid), apple/milk/egg (foods).
+  and visuals matched. Food icons from **Material Design Icons via Iconify**
+  (Lucide lacks rice/oats/shake): mdi:barley (carbs), mdi:food-drumstick (protein),
+  mdi:cup-water (fluid), mdi:rice, mdi:food-apple, mdi:cup (shake), mdi:egg.
+  (UI shell stays Lucide; foods use MDI — both render via their CDN runtimes;
+  consolidate to one icon package at the Angular port.)
 - **Session row + detail** — with **exercise demo video** slot (loop) and
   log/complete action.
 - **Achievement / streak card** — earned badges + current streak.
