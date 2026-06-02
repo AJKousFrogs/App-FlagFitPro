@@ -8,16 +8,22 @@
  * - Default visibility rules
  */
 
-const { describe, it, expect, beforeAll, afterAll } = require("@jest/globals");
-const { createClient } = require("@supabase/supabase-js");
+import { describe, it, expect, beforeAll, afterAll } from "vitest";
+import { createClient } from "@supabase/supabase-js";
 
 const SUPABASE_URL = process.env.SUPABASE_URL || "http://localhost:54321";
 const SUPABASE_SERVICE_KEY =
   process.env.SUPABASE_SERVICE_KEY || "test-service-key";
 
+// LIVE contract test — needs a real Supabase (service key). Skips on the
+// localhost placeholder so it stays green without a DB; set SUPABASE_URL +
+// SUPABASE_SERVICE_KEY to run it.
+const HAS_LIVE_DB = Boolean(
+  process.env.SUPABASE_URL && SUPABASE_SERVICE_KEY !== "test-service-key",
+);
 const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY);
 
-describe("Contract: Data Consent & Visibility", () => {
+describe.skipIf(!HAS_LIVE_DB)("Contract: Data Consent & Visibility", () => {
   let testCoachId;
   let testAthleteId;
 

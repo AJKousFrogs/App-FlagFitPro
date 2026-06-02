@@ -122,6 +122,7 @@ water weight so the bodyweight trend + per-kg nutrition stay honest.
 | Log hydration | POST `/api/hydration/log` | insert **`athlete_hydration_logs`** |
 | RSVP to a competition event | POST `/api/event-availability` `{competitionEventId,status,reason?}` | RPC `set_event_availability` → upsert **`event_availability`** |
 | Log today's supplements (daily, in check-in) | POST `/api/supplements` ✅ **BUILT** (2026-06-02) | upsert **`supplement_logs`** keyed on (user_id, supplement_name, date): name, dosage, taken, time_of_day, notes. Idempotent daily toggle; accepts `{date?, supplements:[…]}` batch or a single item. Legacy `POST /api/supplements/log` kept (now also upserts). |
+| Add/edit a supplement in your stack ("Add supplement") | POST `/api/supplements/stack` ✅ **BUILT** (2026-06-02) | upsert **`user_supplements`** keyed on (user_id, name): name, dosage, timing, category, active. Set `active:false` to retire. GET `/api/supplements` returns this curated stack with today's taken-status. |
 
 ### Training
 | CTA | Endpoint | Saves to |

@@ -140,6 +140,58 @@ async function logSupplement(userId, supplementData) {
 }
 
 /**
+ * Add or update a supplement in the athlete's own curated stack.
+ * POST /api/supplements/stack  { name, dosage?, timing?, category?, active? }
+ * Upserts on (user_id, name); set active:false to retire one. This is the user's
+ * personal list — the engine/AI never writes dosing here.
+ */
+async function upsertUserSupplement(userId, data) {
+  if (!data || typeof data !== "object") {
+    throw validationError("request body must be an object");
+  }
+  const name = data.name?.toString().trim();
+  if (!name) throw validationError("supplement name is required");
+  if (name.length > NAME_MAX) {
+    throw validationError(`supplement name must be ${NAME_MAX} characters or less`);
+  }
+
+  const row = {
+    user_id: userId,
+    name,
+    dosage:
+      data.dosage !== undefined && data.dosage !== null && data.dosage !== ""
+        ? String(data.dosage).trim().slice(0, DOSAGE_MAX)
+        : null,
+    timing: data.timing
+      ? String(data.timing).trim().slice(0, TIME_OF_DAY_MAX)
+      : "anytime",
+    category: data.category ? String(data.category).trim().slice(0, 50) : "other",
+    active: data.active === undefined ? true : Boolean(data.active),
+    updated_at: new Date().toISOString(),
+  };
+
+  const { data: out, error } = await supabaseAdmin
+    .from("user_supplements")
+    .upsert(row, { onConflict: "user_id,name" })
+    .select()
+    .single();
+
+  if (error) {
+    console.error("Error upserting user supplement:", error);
+    throw error;
+  }
+
+  return {
+    id: out.id,
+    name: out.name,
+    dosage: out.dosage ?? null,
+    timing: out.timing,
+    category: out.category,
+    active: out.active,
+  };
+}
+
+/**
  * Get supplement logs for user
  * GET /api/supplements/logs
  */
@@ -276,6 +328,12 @@ const handler = async (event, context) => {
               400,
               "invalid_json",
             );
+          }
+
+          // POST /api/supplements/stack — manage the athlete's curated supplement list
+          if (path.includes("/stack")) {
+            const result = await upsertUserSupplement(userId, body);
+            return createSuccessResponse(result, 201, "Supplement saved to your stack");
           }
 
           // POST /api/supplements/log — legacy single-log (now idempotent upsert)

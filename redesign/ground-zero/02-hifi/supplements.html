@@ -24,6 +24,7 @@
       <div class="lrow"><span id="t-cf"><iconify-icon icon="mdi:coffee" class="suppi"></iconify-icon>Caffeine <small>200 mg · pre-session</small></span><button class="sw" role="switch" aria-checked="true" aria-labelledby="t-cf"></button></div>
       <div class="lrow"><span id="t-ba"><iconify-icon icon="mdi:shield-half-full" class="suppi"></iconify-icon>Beta-alanine <small>4 g</small></span><button class="sw" role="switch" aria-checked="false" aria-labelledby="t-ba"></button></div>
       <a class="btn ghost block sm" style="margin-top:8px"><i data-lucide="plus"></i> Add supplement</a>
+      <p class="devnote">Add supplement → POST /api/supplements/stack upserts <code>user_supplements</code> (built). Daily on/off → POST /api/supplements upserts <code>supplement_logs</code>.</p>
     </div>
 
     <!-- the RPE/ACWR honesty note -->

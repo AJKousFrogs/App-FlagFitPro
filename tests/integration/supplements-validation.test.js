@@ -67,6 +67,10 @@ function createFakeSupabase() {
         };
       }
 
+      if (this.table === "user_supplements" && this.mode === "upsert") {
+        return { data: { id: "stack-1", ...this.payload }, error: null };
+      }
+
       return { data: null, error: null };
     }
 
@@ -193,6 +197,33 @@ describe("supplements validation and mapping", () => {
       supplement: "Caffeine",
       taken: false,
       timeOfDay: "pre-session",
+    });
+  });
+
+  it("adds a supplement to the athlete's stack (POST /api/supplements/stack)", async () => {
+    const response = await handler(
+      {
+        httpMethod: "POST",
+        path: "/.netlify/functions/supplements/stack",
+        headers: { authorization: "Bearer test-token" },
+        body: JSON.stringify({
+          name: "Vitamin D",
+          dosage: "2000 IU",
+          timing: "morning",
+          category: "micronutrient",
+        }),
+      },
+      {},
+    );
+
+    expect(response.statusCode).toBe(201);
+    const payload = JSON.parse(response.body);
+    expect(payload.data).toMatchObject({
+      name: "Vitamin D",
+      dosage: "2000 IU",
+      timing: "morning",
+      category: "micronutrient",
+      active: true,
     });
   });
 

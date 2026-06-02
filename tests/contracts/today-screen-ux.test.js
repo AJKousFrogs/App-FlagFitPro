@@ -8,7 +8,7 @@
  * - Wellness check-in authority rules
  */
 
-const { describe, it, expect, beforeAll } = require("@jest/globals");
+import { describe, it, expect, beforeAll } from "vitest";
 
 describe("Contract: TODAY Screen UX Authority", () => {
   describe("Information Priority Order", () => {

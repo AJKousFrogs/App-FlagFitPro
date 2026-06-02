@@ -8,8 +8,8 @@
  * - Coach attribution enforcement
  */
 
-const { describe, it, expect, beforeAll, afterAll } = require("@jest/globals");
-const { createClient } = require("@supabase/supabase-js");
+import { describe, it, expect, beforeAll, afterAll } from "vitest";
+import { createClient } from "@supabase/supabase-js";
 
 // Test configuration
 const SUPABASE_URL =
@@ -21,18 +21,17 @@ const SUPABASE_SERVICE_KEY =
   process.env.SUPABASE_SERVICE_ROLE_KEY ||
   "test-service-key";
 
-if (!SUPABASE_URL || SUPABASE_URL === "http://localhost:54321") {
-  console.warn(
-    "⚠️  SUPABASE_URL not set. Tests require a real Supabase instance.",
-  );
-  console.warn(
-    "   Set SUPABASE_URL and SUPABASE_SERVICE_KEY environment variables.",
-  );
-}
+// LIVE contract test — needs a real Supabase (service key). Skips on the
+// localhost placeholder so it stays green without a DB; set SUPABASE_URL +
+// SUPABASE_SERVICE_KEY (or the *_ROLE_KEY / VITE_ variants) to run it.
+const HAS_LIVE_DB = Boolean(
+  SUPABASE_URL !== "http://localhost:54321" &&
+    SUPABASE_SERVICE_KEY !== "test-service-key",
+);
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY);
 
-describe("Contract: Session Lifecycle & Immutability", () => {
+describe.skipIf(!HAS_LIVE_DB)("Contract: Session Lifecycle & Immutability", () => {
   let testCoachId;
   let testAthleteId;
   let testSessionId;
