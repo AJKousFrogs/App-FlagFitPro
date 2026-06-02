@@ -22,4 +22,13 @@ test("capture core-journey screenshots", async ({ page }) => {
       fullPage: true,
     });
   }
+
+  // secondary screens (reached from More)
+  for (const dest of ["supplements", "settings"]) {
+    await page.locator(".tabbar a", { hasText: "More" }).click();
+    await page.locator(`a[href="/${dest}"]`).first().click();
+    await page.locator("main.screen").waitFor({ state: "visible" });
+    await page.waitForTimeout(400);
+    await page.screenshot({ path: `${DIR}/${dest}-${w}.png`, fullPage: true });
+  }
 });

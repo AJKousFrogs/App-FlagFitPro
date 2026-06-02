@@ -45,6 +45,18 @@ export const featureRoutes: Routes = [
         title: "More · FlagFit",
       },
       {
+        path: "supplements",
+        loadComponent: () =>
+          import("../../supplements/supplements.component").then((m) => m.SupplementsComponent),
+        title: "Supplements · FlagFit",
+      },
+      {
+        path: "settings",
+        loadComponent: () =>
+          import("../../settings/settings.component").then((m) => m.SettingsComponent),
+        title: "Settings · FlagFit",
+      },
+      {
         path: "gallery",
         loadComponent: () =>
           import("../../gallery/gallery.component").then((m) => m.GalleryComponent),

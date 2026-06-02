@@ -1,0 +1,66 @@
+<header class="topbar">
+  <div><h1 style="font-size:21px">Settings</h1></div>
+  <span class="avatar"><img src="assets/images/rebuild/avatar.jpg" alt="Your profile" /></span>
+</header>
+
+<main class="screen">
+  <!-- profile -->
+  <div class="card" style="display:flex;align-items:center;gap:var(--s-4)">
+    <span class="avatar lg"><img src="assets/images/rebuild/avatar.jpg" alt="Your profile" /></span>
+    <div style="flex:1">
+      <b style="font-family:var(--font-display);font-size:var(--fs-h3)">{{ name() }}</b>
+      <div class="muted" style="font-size:var(--fs-sm)">{{ subtitle() }}</div>
+    </div>
+    <button class="btn ghost sm" type="button"><lucide-icon name="camera" /> Change photo</button>
+  </div>
+
+  <nav class="st-tabs" aria-label="Settings sections">
+    @for (t of tabs; track t) {
+      <button type="button" class="st-tab" [class.on]="tab() === t" (click)="tab.set(t)">{{ t }}</button>
+    }
+  </nav>
+
+  @switch (tab()) {
+    @case ("Notifications") {
+      <div class="section-h"><h2>Notifications</h2></div>
+      <div class="card">
+        <div class="lrow"><span id="l-tr">Training reminders</span>
+          <button class="sw" role="switch" [attr.aria-checked]="trainingReminders()" aria-labelledby="l-tr"
+                  (click)="trainingReminders.set(!trainingReminders()); saveNotifications()"></button></div>
+        <div class="lrow"><span id="l-gd">Game-day alerts</span>
+          <button class="sw" role="switch" [attr.aria-checked]="gameDayAlerts()" aria-labelledby="l-gd"
+                  (click)="gameDayAlerts.set(!gameDayAlerts()); saveNotifications()"></button></div>
+        <div class="lrow"><span id="l-ac">ACWR / safety alerts</span>
+          <button class="sw" role="switch" [attr.aria-checked]="acwrAlerts()" aria-labelledby="l-ac"
+                  (click)="acwrAlerts.set(!acwrAlerts()); saveNotifications()"></button></div>
+        <div class="lrow"><span id="l-cm">Coach messages</span>
+          <button class="sw" role="switch" [attr.aria-checked]="coachMessages()" aria-labelledby="l-cm"
+                  (click)="coachMessages.set(!coachMessages()); saveNotifications()"></button></div>
+      </div>
+    }
+    @case ("Privacy") {
+      <div class="section-h"><h2>Privacy &amp; consent</h2></div>
+      <div class="card">
+        <div class="lrow"><span id="l-ai">AI personalisation (Merlin)</span>
+          <button class="sw" role="switch" [attr.aria-checked]="aiPersonalisation()" aria-labelledby="l-ai"
+                  (click)="aiPersonalisation.set(!aiPersonalisation()); savePrivacy()"></button></div>
+        <div class="lrow"><span id="l-sp">Share performance with coaches</span>
+          <button class="sw" role="switch" [attr.aria-checked]="sharePerformance()" aria-labelledby="l-sp"
+                  (click)="sharePerformance.set(!sharePerformance()); savePrivacy()"></button></div>
+        <div class="lrow"><span id="l-sh">Share health with medical staff</span>
+          <button class="sw" role="switch" [attr.aria-checked]="shareHealth()" aria-labelledby="l-sh"
+                  (click)="shareHealth.set(!shareHealth()); savePrivacy()"></button></div>
+      </div>
+      <p class="note">Privacy-first: sharing is off by default and only applies to teams you allow.</p>
+    }
+    @default {
+      <div class="empty">{{ tab() }} settings land as the rebuild continues.</div>
+    }
+  }
+
+  <div class="section-h"><h2>Account</h2></div>
+  <div class="card">
+    <div class="lrow"><span>Change password</span><span class="faint">›</span></div>
+    <div class="lrow"><span style="color:var(--danger)">Delete account &amp; data</span><span class="faint">›</span></div>
+  </div>
+</main>
