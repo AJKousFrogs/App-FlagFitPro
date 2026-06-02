@@ -64,12 +64,17 @@ export class SettingsComponent {
   readonly coachMessages = signal(true);
 
   saveNotifications(): void {
+    // Endpoint expects { preferences: { <type>: { muted, pushEnabled, inAppEnabled } } }
+    // with backend notification types. A toggle ON = delivered, OFF = muted.
+    const cfg = (on: boolean) => ({ muted: !on, pushEnabled: on, inAppEnabled: on });
     this.api
       .put("/api/notifications/preferences", {
-        trainingReminders: this.trainingReminders(),
-        gameDayAlerts: this.gameDayAlerts(),
-        acwrAlerts: this.acwrAlerts(),
-        coachMessages: this.coachMessages(),
+        preferences: {
+          training: cfg(this.trainingReminders()),
+          game: cfg(this.gameDayAlerts()),
+          injury_risk: cfg(this.acwrAlerts()),
+          team: cfg(this.coachMessages()),
+        },
       })
       .subscribe({ error: (e) => this.logger.error("notif_prefs_save_failed", e) });
   }
@@ -80,11 +85,14 @@ export class SettingsComponent {
   readonly shareHealth = signal(false);
 
   savePrivacy(): void {
+    // Endpoint expects the settings wrapped under a `settings` key.
     this.api
       .put("/api/privacy-settings", {
-        aiProcessingEnabled: this.aiPersonalisation(),
-        performanceSharingDefault: this.sharePerformance(),
-        healthSharingDefault: this.shareHealth(),
+        settings: {
+          aiProcessingEnabled: this.aiPersonalisation(),
+          performanceSharingDefault: this.sharePerformance(),
+          healthSharingDefault: this.shareHealth(),
+        },
       })
       .subscribe({ error: (e) => this.logger.error("privacy_save_failed", e) });
   }

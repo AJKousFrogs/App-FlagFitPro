@@ -96,11 +96,16 @@ export class TrainingComponent {
     if (this.completing()) return;
     this.completing.set(true);
     this.completeError.set(null);
+    // Log a COMPLETED session in one call: a training-log payload (date+type+
+    // duration) routes to createTrainingLogSession → a completed training_sessions
+    // row. compute-acwr derives load = rpe × duration when workload is null, so this
+    // feeds ACWR. (POST /api/training/complete needs a pre-existing sessionId.)
     this.api
-      .post("/api/training/complete", {
-        rpe: this.actualRpe(),
-        durationMinutes: this.duration(),
+      .post("/api/training-sessions", {
         date: new Date().toISOString().split("T")[0],
+        sessionType: this.rx()?.intent ?? "training",
+        durationMinutes: this.duration(),
+        rpe: this.actualRpe(),
       })
       .subscribe({
         next: () => {

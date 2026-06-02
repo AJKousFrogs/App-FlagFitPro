@@ -61,7 +61,7 @@ export class GamedayComponent {
   addHydration(ml: number): void {
     this.hydrationMl.update((v) => v + ml);
     this.api
-      .post("/api/hydration/log", { amountMl: ml })
+      .post("/api/hydration/log", { amount: ml })
       .subscribe({ error: (e) => this.logger.error("hydration_log_failed", e) });
   }
 }

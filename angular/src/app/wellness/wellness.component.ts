@@ -127,7 +127,7 @@ export class WellnessComponent {
   addHydration(ml: number): void {
     this.hydrationMl.update((v) => v + ml);
     this.api
-      .post("/api/hydration/log", { amountMl: ml })
+      .post("/api/hydration/log", { amount: ml })
       .subscribe({ error: (err) => this.logger.error("hydration_log_failed", err) });
   }
   readonly hydrationL = computed(() => (this.hydrationMl() / 1000).toFixed(1));

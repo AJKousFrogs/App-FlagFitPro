@@ -53,7 +53,7 @@ export class NotificationsComponent {
 
   markAllRead(): void {
     this.items.set([]);
-    this.api.post("/api/notifications", { markAll: true }).subscribe({
+    this.api.post("/api/notifications", { notificationId: "all" }).subscribe({
       error: (e) => this.logger.error("notifications_mark_read_failed", e),
     });
   }
