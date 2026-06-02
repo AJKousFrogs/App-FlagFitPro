@@ -9,6 +9,22 @@ import { ShellComponent } from "../../shell/shell.component";
  * redesign/_reference/routes/ and restored as each screen is ported.
  */
 export const featureRoutes: Routes = [
+  // Entry flow — outside the app shell (no bottom nav).
+  {
+    path: "landing",
+    loadComponent: () => import("../../landing/landing.component").then((m) => m.LandingComponent),
+    title: "FlagFit Pro",
+  },
+  {
+    path: "login",
+    loadComponent: () => import("../../landing/landing.component").then((m) => m.LandingComponent),
+    title: "Sign in · FlagFit",
+  },
+  {
+    path: "onboarding",
+    loadComponent: () => import("../../onboarding/onboarding.component").then((m) => m.OnboardingComponent),
+    title: "Get started · FlagFit",
+  },
   {
     path: "",
     component: ShellComponent,

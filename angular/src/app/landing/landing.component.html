@@ -1,0 +1,53 @@
+<header class="topbar">
+  <div><span class="brand">FlagFit</span> <span style="color:var(--accent)">Pro</span></div>
+  <button class="btn ghost sm" type="button" (click)="showSignIn.set(!showSignIn())">
+    {{ showSignIn() ? "Close" : "Log in" }}
+  </button>
+</header>
+
+<main class="screen" style="padding-top:12px">
+  <div class="hero-photo" style="min-height:450px">
+    <img src="assets/images/rebuild/hero-landing.jpg" alt="Ljubljana Frogs player in action" />
+    <div class="scrim"></div>
+    <div class="content">
+      <div class="ovr-title" style="font-size:52px;letter-spacing:-.02em">FLAG<br />FIT</div>
+      <p style="color:#fff;opacity:.92;font-weight:600;margin:10px 0 16px">
+        Find your edge. Open the app, know exactly what to train today — and why.
+      </p>
+      <a class="btn primary" routerLink="/onboarding" style="background:#fff;color:#08090B">Start now →</a>
+    </div>
+  </div>
+
+  @if (showSignIn()) {
+    <div class="card signin">
+      <h2 style="margin-bottom:4px">Welcome back</h2>
+      <input type="email" placeholder="Email" autocomplete="email"
+             [value]="email()" (input)="email.set($any($event.target).value)" aria-label="Email" />
+      <input type="password" placeholder="Password" autocomplete="current-password"
+             [value]="password()" (input)="password.set($any($event.target).value)" aria-label="Password" />
+      @if (error(); as e) { <p class="note" style="color:var(--danger)">{{ e }}</p> }
+      <button class="btn primary block" type="button" style="margin-top:12px"
+              [attr.aria-disabled]="busy()" (click)="submitSignIn()">
+        {{ busy() ? "Signing in…" : "Sign in" }}
+      </button>
+    </div>
+  } @else {
+    <button class="btn ghost block" type="button" (click)="showSignIn.set(true)">I already have an account</button>
+  }
+
+  <div class="card thumb-card">
+    <div class="thumb"><img src="assets/images/rebuild/thumb-a.jpg" alt="" /></div>
+    <div><b class="inline"><lucide-icon name="flag" /> Your schedule is the spine</b>
+      <div class="muted" style="font-size:var(--fs-sm)">Games drive one daily plan — taper before, recover after.</div></div>
+  </div>
+  <div class="card thumb-card">
+    <div class="thumb"><img src="assets/images/rebuild/thumb-b.jpg" alt="" /></div>
+    <div><b class="inline"><lucide-icon name="trending-up" /> Load you can trust</b>
+      <div class="muted" style="font-size:var(--fs-sm)">ACWR flags injury risk before it bites.</div></div>
+  </div>
+  <div class="card thumb-card">
+    <div class="thumb"><img src="assets/images/rebuild/thumb-c.jpg" alt="" /></div>
+    <div><b class="inline"><lucide-icon name="heart-pulse" /> One 20-second check-in</b>
+      <div class="muted" style="font-size:var(--fs-sm)">→ today's readiness: push / maintain / deload.</div></div>
+  </div>
+</main>
