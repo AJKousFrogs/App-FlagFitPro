@@ -117,6 +117,14 @@ input[type="range"].rng::-moz-range-thumb{width:22px;height:22px;border:2px soli
 input[type="range"].rng:focus-visible::-webkit-slider-thumb{box-shadow:var(--focus);}
 input[type="range"].rng:focus-visible::-moz-range-thumb{box-shadow:var(--focus);}
 
+/* switch — role=switch button, 44px tap target, focusable (shared primitive) */
+.sw{appearance:none;-webkit-appearance:none;border:0;background:none;width:52px;height:44px;position:relative;cursor:pointer;padding:0;flex:0 0 auto;}
+.sw::before{content:"";position:absolute;top:10px;left:5px;width:42px;height:24px;border-radius:var(--r-pill);background:var(--surface-2);}
+.sw::after{content:"";position:absolute;top:13px;left:8px;width:18px;height:18px;border-radius:var(--r-pill);background:var(--text-faint);transition:left var(--t-fast) var(--ease);}
+.sw[aria-checked="true"]::before{background:var(--accent);}
+.sw[aria-checked="true"]::after{left:29px;background:var(--on-accent);}
+.sw:focus-visible{outline:none;}.sw:focus-visible::before{box-shadow:var(--focus);}
+
 /* list row */
 .lrow{display:flex;justify-content:space-between;align-items:center;padding:var(--s-3) 0;border-bottom:1px solid var(--border-soft);}
 .lrow:last-child{border-bottom:0;}

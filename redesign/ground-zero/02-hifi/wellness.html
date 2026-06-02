@@ -24,6 +24,18 @@
       <a class="btn primary block">Submit check-in</a>
     </div>
 
+    <!-- SUPPLEMENTS — daily log, like sleep (part of the daily check-in) -->
+    <div class="section-h"><h2>Today's supplements</h2><a class="faint" href="supplements.html" style="font-size:13px">stack →</a></div>
+    <div class="card" style="border-left:3px solid var(--accent)">
+      <div class="inline" style="gap:8px"><i data-lucide="pill"></i><small>Sprint-dense week — <b style="color:var(--text)">creatine</b> recommended for your repeated-sprint load.</small></div>
+    </div>
+    <div class="card">
+      <div class="lrow"><span id="s-cr">Creatine <small>5 g</small></span><button class="sw" role="switch" aria-checked="true" aria-labelledby="s-cr"></button></div>
+      <div class="lrow"><span id="s-cf">Caffeine <small>200 mg · pre-session</small></span><button class="sw" role="switch" aria-checked="true" aria-labelledby="s-cf"></button></div>
+      <div class="lrow"><span id="s-ba">Beta-alanine <small>4 g</small></span><button class="sw" role="switch" aria-checked="false" aria-labelledby="s-ba"></button></div>
+      <p class="note">Daily log → <code>supplement_logs</code> (POST /api/supplements to build). Caffeine pre-session flags today's RPE/load as lower-confidence — see SUPPLEMENTS_LOGIC.md.</p>
+    </div>
+
     <div class="section-h"><h2>Your readiness</h2></div>
     <div class="hero">
       <div class="row">

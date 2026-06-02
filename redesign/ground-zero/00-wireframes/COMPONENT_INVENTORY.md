@@ -9,6 +9,8 @@ what stops the per-screen drift. Derived from the core-journey wireframes.
   states: default/hover/active/focus/disabled/loading; icon-leading + icon-only.
 - **Input** — text, number, textarea, select; with label, helper, error, unit
   suffix (kg, ml, hrs).
+- **Switch** (`.sw`) — `role="switch"` button, 44px tap, focus ring; settings
+  toggles + the daily supplement log.
 - **Slider / stepper** — the 1–10 RPE & wellness scales (sleep, soreness, energy,
   mood, stress); discrete ticks + current value.
 - **Chip / tag** — phase ("Accumulation"), intent ("Sprint focus"), status.

@@ -91,6 +91,15 @@ stopped."* Heat ≥32 °C also **scales internal load ×1.1–1.2** (so ACWR ref
 true strain) and flags higher perceived RPE. Thresholds in WEATHER_LOGIC.md
 (proposed defaults, pending your confirmation).
 
+### A9. Supplements (NEW — see SUPPLEMENTS_LOGIC.md)
+Evidence-based ergogenics (caffeine/creatine/beta-alanine…) are a **daily log**
+(in the Wellness check-in) and an engine **context layer — NOT an ACWR input**.
+The engine (a) **recommends proportionally to your sprint/power load** from the
+spine ("3 sprint sessions → creatine helps"), (b) **flags the caffeine→RPE
+confound** (caffeine lowers RPE → that session's sRPE load is marked
+lower-confidence; ACWR is never silently rewritten), (c) notes creatine's +1–2 kg
+water weight so the bodyweight trend + per-kg nutrition stay honest.
+
 ## B. CTA → endpoint → table (what saves where)
 
 ### Onboarding / profile / settings
@@ -112,6 +121,7 @@ true strain) and flags higher perceived RPE. Thresholds in WEATHER_LOGIC.md
 | Record post-event participation (attended? games? minutes? RPE?) | POST `/api/event-participation` | RPC **`record_event_participation`** → writes a `session_type='competition'` row in **`training_sessions`** (feeds ACWR) |
 | Log hydration | POST `/api/hydration/log` | insert **`athlete_hydration_logs`** |
 | RSVP to a competition event | POST `/api/event-availability` `{competitionEventId,status,reason?}` | RPC `set_event_availability` → upsert **`event_availability`** |
+| Log today's supplements (daily, in check-in) | POST `/api/supplements` *(to build — table is read-only today)* | upsert **`supplement_logs`** (row/supplement/day: name, dosage, taken, time_of_day) |
 
 ### Training
 | CTA | Endpoint | Saves to |

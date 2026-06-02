@@ -22,6 +22,9 @@ Read in this order:
 4. **`WEATHER_LOGIC.md`** — weather as a constraint layer on the prescription
    (wet grass → no sprints; heat → no outdoor plyo; lightning → stop), the
    threshold matrix, the heat→ACWR/RPE coupling, and the engine change.
+6. **`SUPPLEMENTS_LOGIC.md`** — evidence-based supplements as a daily log (in the
+   Wellness check-in) + an engine context layer: recommend proportional to load,
+   flag the caffeine→RPE confound, never silently rewrite ACWR.
 5. **`SEASON_LOGIC.md`** — per-athlete macro periodization (off/pre/in-season +
    transition months drive the baseline emphasis; off-season = strength &
    conditioning), how it combines with the spine's event micro-phases, storage on
