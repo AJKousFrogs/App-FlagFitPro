@@ -5,6 +5,7 @@ import {
   inject,
   signal,
 } from "@angular/core";
+import { RouterLink } from "@angular/router";
 import { LucideAngularModule } from "lucide-angular";
 
 import { ApiService } from "../core/services/api.service";
@@ -23,7 +24,7 @@ type Tab = "Notifications" | "Privacy" | "Prefs" | "Security";
 @Component({
   selector: "app-settings",
   standalone: true,
-  imports: [LucideAngularModule],
+  imports: [RouterLink, LucideAngularModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: "./settings.component.html",
   styles: [
