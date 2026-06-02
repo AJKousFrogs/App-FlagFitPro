@@ -2,7 +2,7 @@ import { inject } from "@angular/core";
 import { CanActivateFn, Router } from "@angular/router";
 import { LoggerService } from "../services/logger.service";
 import { SupabaseService } from "../services/supabase.service";
-import { AuthFlowDataService } from "../../features/auth/services/auth-flow-data.service";
+import { AuthFlowDataService } from "../services/auth-flow-data.service";
 
 export const authGuard: CanActivateFn = async (route, state) => {
   const supabaseService = inject(SupabaseService);

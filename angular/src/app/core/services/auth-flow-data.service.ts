@@ -1,8 +1,8 @@
 import { Injectable, inject } from "@angular/core";
 import type { Session } from "@supabase/supabase-js";
-import { HomeRouteService } from "../../../core/services/home-route.service";
-import { PlatformService } from "../../../core/services/platform.service";
-import { SupabaseService } from "../../../core/services/supabase.service";
+import { HomeRouteService } from "./home-route.service";
+import { PlatformService } from "./platform.service";
+import { SupabaseService } from "./supabase.service";
 
 @Injectable({
   providedIn: "root",
