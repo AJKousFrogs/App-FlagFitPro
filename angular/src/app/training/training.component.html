@@ -1,0 +1,97 @@
+<header class="topbar">
+  <div>
+    <div class="eyebrow">{{ seasonLabel() }}</div>
+    <h1 style="font-size:21px">Training</h1>
+  </div>
+  <div class="inline">
+    <span class="icon-btn" role="button" aria-label="Notifications">
+      <lucide-icon name="bell" /><span class="dot"></span>
+    </span>
+    <span class="avatar"><img src="assets/images/rebuild/avatar.jpg" alt="Your profile" /></span>
+  </div>
+</header>
+
+<main class="screen">
+  <!-- section tabs (Today populated; the rest land as the port continues) -->
+  <nav class="tt-tabs" aria-label="Training sections">
+    @for (t of tabs; track t) {
+      <button type="button" class="tt-tab" [class.on]="tab() === t" (click)="tab.set(t)">{{ t }}</button>
+    }
+  </nav>
+
+  @if (tab() === "Today") {
+    @if (rx(); as p) {
+      <div class="hero">
+        <div class="row">
+          <h1>{{ p.intentLabel }}</h1>
+          @if (heroBand(); as b) { <span class="band {{ b.cls }}">{{ b.label }}</span> }
+        </div>
+        <p style="margin:8px 0 0;color:var(--text)">{{ p.reasoning }}</p>
+
+        <div class="video" style="margin:14px 0">
+          <img src="assets/images/rebuild/video-session.jpg" alt="" />
+          <button class="play" type="button" aria-label="Play session video"><lucide-icon name="play" /></button>
+          <span class="vtitle">Watch the full session</span>
+          <span class="duration">18:30</span>
+        </div>
+
+        @for (blk of blocks(); track blk.title) {
+          <div class="lrow">
+            <div class="thumb-card">
+              <div class="vthumb"><img [src]="'assets/images/rebuild/' + blk.thumb + '.jpg'" alt="" /></div>
+              <div><b>{{ blk.title }}</b><br /><small>{{ blk.meta }}</small></div>
+            </div>
+            <span class="duration" style="position:static">{{ blk.time }}</span>
+          </div>
+        }
+
+        <div class="slider">
+          <label for="rpe">Actual RPE</label>
+          <input class="rng" id="rpe" type="range" min="1" max="10" [value]="actualRpe()"
+                 (input)="actualRpe.set(+$any($event.target).value)" aria-label="Actual RPE 1 to 10" />
+          <span class="val">{{ actualRpe() }}</span>
+        </div>
+        <div class="slider">
+          <label for="dur">Duration</label>
+          <input class="rng" id="dur" type="range" min="0" max="120" step="5" [value]="duration()"
+                 (input)="duration.set(+$any($event.target).value)" aria-label="Duration in minutes" />
+          <span class="val">{{ duration() }}</span>
+        </div>
+
+        @if (completed()) {
+          <button class="btn secondary block" type="button" disabled>
+            <lucide-icon name="check" /> Session logged
+          </button>
+        } @else {
+          <button class="btn primary block" type="button" [attr.aria-disabled]="completing()"
+                  (click)="completeSession()">
+            {{ completing() ? "Logging…" : "Complete session" }}
+          </button>
+        }
+        @if (completeError(); as e) { <p class="note" style="color:var(--danger)">{{ e }}</p> }
+      </div>
+    } @else {
+      <div class="empty">No session planned yet — log a wellness check-in to generate today's plan.</div>
+    }
+
+    <div class="section-h"><h2>This week</h2></div>
+    @if (week().length) {
+      <div class="card">
+        @for (d of week(); track $index) {
+          <div class="lrow">
+            <span>{{ d.day }} · {{ d.label }}</span>
+            @if (d.isGame) {
+              <span class="band caution"><lucide-icon name="flag" /> game</span>
+            } @else if (d.rpe !== null) {
+              <span class="chip">RPE {{ d.rpe }}</span>
+            }
+          </div>
+        }
+      </div>
+    } @else {
+      <div class="empty">No schedule yet — add your competitions to see the week shape.</div>
+    }
+  } @else {
+    <div class="empty">{{ tab() }} lands as the rebuild continues.</div>
+  }
+</main>
