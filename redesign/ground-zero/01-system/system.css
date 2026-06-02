@@ -86,9 +86,11 @@ a{color:var(--accent);text-decoration:none;}
 /* metric / stat */
 .metric .num{font-family:var(--font-display);font-size:var(--fs-display);font-weight:var(--fw-bold);color:var(--text-strong);line-height:1;}
 .tiles{display:flex;gap:var(--s-4);}
-.tiles>div{flex:1;}
+.tiles>div{flex:1;text-align:center;}   /* centered numbers + labels */
 .tiles b{font-family:var(--font-display);font-size:var(--fs-h1);color:var(--text-strong);display:block;}
 .tiles small{font-size:var(--fs-xs);color:var(--text-muted);text-transform:uppercase;letter-spacing:.04em;}
+/* divider between the "why" text and the numbers inside a hero card */
+.hero .tiles{border-top:1px solid var(--border-soft);margin-top:var(--s-4);padding-top:var(--s-4);}
 
 /* radial gauge */
 .gauge{--p:68;--col:var(--accent);width:84px;height:84px;border-radius:var(--r-pill);

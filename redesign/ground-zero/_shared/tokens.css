@@ -52,8 +52,8 @@
   --surface:var(--c-ink-800);
   --surface-2:var(--c-ink-700);
   --surface-raised:var(--c-ink-600);
-  --border:var(--c-ink-500);
-  --border-soft:var(--c-ink-600);
+  --border:#333845;      /* visible outline (cards/hero) — was too faint at ink-500 */
+  --border-soft:#262A33; /* visible hairline divider (lrow, topbar, tabs) — was invisible at ink-600 */
 
   --text:var(--c-ink-050);
   --text-strong:var(--c-white);
