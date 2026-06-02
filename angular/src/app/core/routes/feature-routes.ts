@@ -69,6 +69,18 @@ export const featureRoutes: Routes = [
         title: "Notifications · FlagFit",
       },
       {
+        path: "acwr",
+        loadComponent: () =>
+          import("../../acwr/acwr.component").then((m) => m.AcwrComponent),
+        title: "Load · FlagFit",
+      },
+      {
+        path: "profile",
+        loadComponent: () =>
+          import("../../profile/profile.component").then((m) => m.ProfileComponent),
+        title: "Profile · FlagFit",
+      },
+      {
         path: "gallery",
         loadComponent: () =>
           import("../../gallery/gallery.component").then((m) => m.GalleryComponent),

@@ -1,0 +1,31 @@
+<header class="topbar">
+  <div><h1 style="font-size:21px">Profile</h1></div>
+  <a class="btn ghost sm" routerLink="/settings">Edit</a>
+</header>
+
+<main class="screen">
+  <div class="hero">
+    <div class="row">
+      <span class="avatar lg"><img src="assets/images/rebuild/avatar.jpg" alt="Your profile" /></span>
+      <div style="text-align:right">
+        <h1 style="margin:0">{{ name() }}@if (jersey() !== null) { · #{{ jersey() }} }</h1>
+        <small>{{ position() || "Athlete" }}</small>
+      </div>
+    </div>
+    <div class="tiles" style="margin-top:16px">
+      <div><b>{{ heightCm() ?? "—" }}</b><small>cm</small></div>
+      <div><b>{{ weightKg() ?? "—" }}</b><small>kg</small></div>
+      <div><b>{{ age() ?? "—" }}</b><small>yrs</small></div>
+    </div>
+  </div>
+
+  <div class="section-h"><h2>Training · 30 days</h2></div>
+  <div class="empty">Log sessions to see your 30-day training summary.</div>
+
+  <div class="section-h"><h2>Injuries</h2></div>
+  <div class="empty">No active injuries on file.</div>
+
+  <a class="card" routerLink="/settings" style="color:inherit">
+    <div class="row"><span class="inline"><lucide-icon name="settings" /> Settings</span><span class="faint">›</span></div>
+  </a>
+</main>

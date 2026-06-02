@@ -25,7 +25,7 @@
 
   <div class="section-h"><h2>Recovery &amp; health</h2></div>
   <div class="card">
-    <a class="lrow" routerLink="/stats" style="color:inherit">
+    <a class="lrow" routerLink="/acwr" style="color:inherit">
       <span class="inline"><lucide-icon name="bar-chart-3" /> Load / ACWR</span>
       @if (acwrBand(); as b) { <span class="band {{ b.cls }}">{{ b.label }}</span> }
       @else { <span class="faint">›</span> }
@@ -46,7 +46,9 @@
 
   <div class="section-h"><h2>Me</h2></div>
   <div class="card">
-    <div class="lrow"><span class="inline"><lucide-icon name="user" /> Profile</span><span class="faint">›</span></div>
+    <a class="lrow" routerLink="/profile" style="color:inherit">
+      <span class="inline"><lucide-icon name="user" /> Profile</span><span class="faint">›</span>
+    </a>
     <a class="lrow" routerLink="/achievements" style="color:inherit">
       <span class="inline"><lucide-icon name="medal" /> Achievements</span><span class="faint">›</span>
     </a>
