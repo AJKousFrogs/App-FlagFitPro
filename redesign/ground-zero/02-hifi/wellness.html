@@ -33,7 +33,8 @@
       <div class="lrow"><span id="s-cr"><iconify-icon icon="mdi:lightning-bolt" class="suppi"></iconify-icon>Creatine <small>5 g</small></span><button class="sw" role="switch" aria-checked="true" aria-labelledby="s-cr"></button></div>
       <div class="lrow"><span id="s-cf"><iconify-icon icon="mdi:coffee" class="suppi"></iconify-icon>Caffeine <small>200 mg · pre-session</small></span><button class="sw" role="switch" aria-checked="true" aria-labelledby="s-cf"></button></div>
       <div class="lrow"><span id="s-ba"><iconify-icon icon="mdi:shield-half-full" class="suppi"></iconify-icon>Beta-alanine <small>4 g</small></span><button class="sw" role="switch" aria-checked="false" aria-labelledby="s-ba"></button></div>
-      <p class="note">Daily log → <code>supplement_logs</code> (POST /api/supplements to build). Caffeine pre-session flags today's RPE/load as lower-confidence — see SUPPLEMENTS_LOGIC.md.</p>
+      <p class="note">Logged daily, like your check-in. Caffeine before a session makes effort feel easier — we account for that so your load stays honest.</p>
+      <p class="devnote">Daily log → upsert <code>supplement_logs</code> (POST /api/supplements — to build). Caffeine pre-session flags today's sRPE load lower-confidence; never rewrites ACWR. See SUPPLEMENTS_LOGIC.md.</p>
     </div>
 
     <div class="section-h"><h2>Your readiness</h2></div>

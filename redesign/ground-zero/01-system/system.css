@@ -230,4 +230,12 @@ i[data-lucide]{display:inline-block;width:18px;height:18px;} /* pre-hydrate plac
 .video .play svg.lucide{width:24px;height:24px;}
 
 /* note (spec annotation, not UI) */
-.note{font-size:var(--fs-xs);color:var(--text-faint);font-style:italic;}
+.note{font-size:var(--fs-xs);color:var(--text-faint);font-style:italic;}  /* athlete-facing helper copy */
+/* DEV-ONLY annotation — wiring/prototype notes that the END USER NEVER SEES.
+   Visually unmistakable as scaffolding (dashed, mono, "DEV" tag) so it's never
+   confused for product copy. Stripped at the Angular port. */
+.devnote{font-family:var(--font-mono,ui-monospace,SFMono-Regular,Menlo,monospace);
+  font-size:11px;line-height:1.45;color:var(--text-faint);background:rgba(139,124,255,.05);
+  border:1px dashed var(--border);border-radius:8px;padding:7px 10px;margin-top:10px;}
+.devnote::before{content:"DEV";font-weight:700;color:var(--accent-2);letter-spacing:.06em;margin-right:7px;}
+.devnote code{font-size:11px;}
