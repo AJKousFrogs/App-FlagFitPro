@@ -13,6 +13,10 @@ import {
   NutritionTargets,
   PeriodizationInputs,
   PrescriptionIntent,
+  SeasonPhase,
+  SeasonWindow,
+  WeatherAdjustment,
+  WeatherInput,
 } from "../models/prescription.models";
 import { AcwrService } from "./acwr.service";
 import { ReadinessService } from "./readiness.service";
@@ -173,10 +177,22 @@ const INTENT_LABELS: Record<PrescriptionIntent, string> = {
 };
 
 /**
- * The core decision. Read top-to-bottom: highest-priority overrides first
- * (game day, taper, recovery, ACWR safety), then phase defaults.
+ * Public entry point. Picks the base prescription (game day → taper → safety →
+ * phase/season defaults), then applies the WEATHER GUARD on top — relocate /
+ * substitute / scale / stop the intent for the conditions. Precedence:
+ * physio ▷ coach ▷ **weather** ▷ engine (physio/coach are applied by the caller;
+ * `coachOverride` here bypasses the weather guard's intent changes).
  */
 export function prescribeFor(inputs: PeriodizationInputs): DailyPrescription {
+  const base = decideBasePrescription(inputs);
+  return applyWeatherGuard(base, inputs.weather ?? null, inputs.coachOverride ?? false);
+}
+
+/**
+ * The core decision. Read top-to-bottom: highest-priority overrides first
+ * (game day, taper, recovery, ACWR safety), then phase/season defaults.
+ */
+function decideBasePrescription(inputs: PeriodizationInputs): DailyPrescription {
   const {
     date,
     phase,
@@ -186,6 +202,7 @@ export function prescribeFor(inputs: PeriodizationInputs): DailyPrescription {
     readiness,
     bodyweightKg,
     density14d,
+    seasonPhase = null,
   } = inputs;
 
   const driverEvent = pickDriverEvent(date, upcoming, lastEvent);
@@ -336,6 +353,31 @@ export function prescribeFor(inputs: PeriodizationInputs): DailyPrescription {
 
     case "accumulation":
     default: {
+      // No event micro-phase is driving the week. If the athlete's macro season
+      // phase is known, let it shape the week (off-season = strength/conditioning,
+      // in-season = maintain + skill, transition = base); otherwise fall back to
+      // the generic build shape. Pre-season == the generic progressive build.
+      if (seasonPhase && seasonPhase !== "preseason") {
+        const intent = seasonShapedIntent(date, seasonPhase, acwr, heavyDensity);
+        const t = baseTargets(intent);
+        return finalize({
+          date,
+          phase,
+          intent,
+          targetRpe: t.targetRpe,
+          targetMinutes: t.targetMinutes,
+          sprintReps: t.sprintReps,
+          strengthSets: t.strengthSets,
+          reasoning: seasonReasoning(seasonPhase, intent),
+          recoveryEmphasis: heavyDensity ? "medium" : "low",
+          nutrition: nutritionFor(intent, bodyweight, heavyDensity),
+          driverEvent,
+          hoursUntilNextEvent: hoursUntilNext,
+          acwrAtIssue: acwr,
+          seasonPhase,
+        });
+      }
+
       // Choose intent by day of week to give the week a shape.
       const intent = pickAccumulationIntent(date, acwr, heavyDensity);
       return finalize({
@@ -352,8 +394,320 @@ export function prescribeFor(inputs: PeriodizationInputs): DailyPrescription {
         driverEvent,
         hoursUntilNextEvent: hoursUntilNext,
         acwrAtIssue: acwr,
+        seasonPhase: seasonPhase ?? null,
       });
     }
+  }
+}
+
+// =============================================================================
+// MACRO SEASON PHASE — annual periodization (athlete-declared, no hardcoded months)
+// =============================================================================
+
+/**
+ * Resolve the athlete's macro season phase for a date from their declared
+ * `season_calendar` windows. Supports specific spans ("YYYY-MM-DD") and recurring
+ * annual ones ("MM-DD", may wrap the year end). First matching window wins.
+ * Returns null when no window covers the date (caller falls back to a generic
+ * build). NOTHING is hardcoded — the windows are 100% the player's data.
+ */
+export function macroPhaseFor(
+  date: Date,
+  windows: SeasonWindow[] | null | undefined,
+): SeasonPhase | null {
+  if (!windows || windows.length === 0) {
+    return null;
+  }
+  const iso = toIsoDate(date); // YYYY-MM-DD
+  const md = iso.slice(5); // MM-DD
+  for (const w of windows) {
+    if (w && w.from && w.to && inSeasonWindow(iso, md, w.from, w.to)) {
+      return w.phase;
+    }
+  }
+  return null;
+}
+
+function inSeasonWindow(
+  iso: string,
+  md: string,
+  from: string,
+  to: string,
+): boolean {
+  const recurring = from.length === 5 && to.length === 5; // "MM-DD"
+  if (recurring) {
+    return from <= to ? md >= from && md <= to : md >= from || md <= to;
+  }
+  const f = from.slice(0, 10);
+  const t = to.slice(0, 10);
+  return f <= t ? iso >= f && iso <= t : iso >= f || iso <= t;
+}
+
+/**
+ * Day-of-week week shape biased by macro season phase. Off-season is
+ * strength/conditioning-led; in-season maintains strength + sharpens skills;
+ * transition is active-rest/base. Pre-season uses the generic build shape.
+ * Safety modulation (elevated ACWR / heavy density) mirrors accumulation.
+ */
+function seasonShapedIntent(
+  date: Date,
+  season: SeasonPhase,
+  acwr: number | null,
+  heavyDensity: boolean,
+): PrescriptionIntent {
+  const dow = date.getDay(); // 0 = Sun
+  let week: PrescriptionIntent[];
+  switch (season) {
+    case "offseason": // GPP — get strong, build base
+      week = ["rest", "strength", "mixed", "mobility", "strength", "mixed", "strength"];
+      break;
+    case "inseason": // maintain + skill
+      week = ["rest", "strength", "technical", "mobility", "technical", "strength", "mixed"];
+      break;
+    case "transition": // active rest / aerobic base
+      week = ["rest", "recovery", "mobility", "recovery", "mobility", "mixed", "recovery"];
+      break;
+    case "preseason":
+    default:
+      return pickAccumulationIntent(date, acwr, heavyDensity);
+  }
+  let intent = week[dow];
+  if (acwr !== null && acwr > ACWR_ELEVATED) {
+    if (intent === "sprint" || intent === "strength") intent = "mobility";
+    else if (intent === "mixed") intent = "technical";
+  }
+  if (heavyDensity && intent !== "rest") {
+    if (intent === "strength") intent = "technical";
+    if (intent === "mixed") intent = "mobility";
+  }
+  return intent;
+}
+
+function seasonReasoning(season: SeasonPhase, intent: PrescriptionIntent): string {
+  switch (season) {
+    case "offseason":
+      return `Off-season · strength & conditioning block. Today is a ${intent} day.`;
+    case "inseason":
+      return `In-season · maintain strength and sharpen skills. Today is a ${intent} day.`;
+    case "transition":
+      return `Transition · active rest and aerobic base. Today is a ${intent} day.`;
+    case "preseason":
+    default:
+      return `Pre-season build — progressing load toward the season. Today is a ${intent} day.`;
+  }
+}
+
+// =============================================================================
+// WEATHER GUARD — constrains the chosen intent for safe outdoor training
+// =============================================================================
+
+// Spec defaults (°C apparent, km/h, mm) — team-configurable later, like the
+// ACWR/readiness thresholds. See WEATHER_LOGIC.md.
+const HEAT_CAUTION_C = 28;
+const HEAT_REDUCE_C = 32;
+const HEAT_AVOID_C = 35;
+const HEAT_STOP_C = 38;
+const COLD_CAUTION_C = 4;
+const COLD_AVOID_C = -5;
+const WIND_UNRELIABLE_KMH = 40;
+const RAIN_PRECIP_MM = 0.5;
+const RAIN_WEATHER_CODE = 61;
+const STORM_CODE_MIN = 95;
+const STORM_CODE_MAX = 99;
+const HEAT_LOAD_FACTOR_REDUCE = 1.1;
+const HEAT_LOAD_FACTOR_AVOID = 1.2;
+const HEAT_VOLUME_CUT = 0.8;
+
+// Intense + outdoor intents → subject to the guard. Strength (indoor), mobility,
+// technical, recovery, rest, and competition (organiser's call) are agnostic.
+const OUTDOOR_INTENSE: ReadonlySet<PrescriptionIntent> = new Set<PrescriptionIntent>([
+  "sprint",
+  "mixed",
+  "taper-prime",
+]);
+
+function substituteForWet(intent: PrescriptionIntent): PrescriptionIntent {
+  // Wet grass kills sprints/cuts; move to an indoor session.
+  return intent === "taper-prime" ? "mobility" : "strength";
+}
+
+/**
+ * Apply the weather guard to a base prescription. Returns the prescription
+ * unchanged (no `weatherAdjustment`) when weather is unknown, the intent is
+ * weather-agnostic, or conditions are benign. A coach override keeps the planned
+ * session but records the call (a thunderstorm still warns).
+ */
+export function applyWeatherGuard(
+  rx: DailyPrescription,
+  weather: WeatherInput | null,
+  coachOverride: boolean,
+): DailyPrescription {
+  if (!weather || !OUTDOOR_INTENSE.has(rx.intent)) {
+    return rx;
+  }
+
+  const apparent =
+    typeof weather.apparentC === "number"
+      ? weather.apparentC
+      : typeof weather.tempC === "number"
+        ? weather.tempC
+        : null;
+  const code = weather.weatherCode;
+  const storm = code !== null && code >= STORM_CODE_MIN && code <= STORM_CODE_MAX;
+  const wet =
+    (code !== null && code >= RAIN_WEATHER_CODE && code < STORM_CODE_MIN) ||
+    (weather.precipMm !== null && weather.precipMm > RAIN_PRECIP_MM);
+  const wind = weather.windKmh;
+
+  const original = rx.intent;
+  const heatLoadFactor =
+    apparent === null
+      ? 1
+      : apparent >= HEAT_AVOID_C
+        ? HEAT_LOAD_FACTOR_AVOID
+        : apparent >= HEAT_REDUCE_C
+          ? HEAT_LOAD_FACTOR_REDUCE
+          : 1;
+  const t = (n: number) => Math.round(n);
+
+  let action: WeatherAdjustment["action"] = "none";
+  let adjusted = original;
+  let reason = "";
+
+  if (storm) {
+    action = "stop";
+    adjusted = "recovery";
+    reason =
+      "Thunderstorm — lightning risk. Outdoor training stopped; move indoors or rest.";
+  } else if (apparent !== null && apparent >= HEAT_STOP_C) {
+    action = "stop";
+    adjusted = "recovery";
+    reason = `${t(apparent)}°C feels-like — too hot to train outdoors. Indoor recovery or rest today.`;
+  } else if (apparent !== null && apparent >= HEAT_AVOID_C) {
+    action = "relocate";
+    adjusted = "mobility";
+    reason = `${t(apparent)}°C feels-like — no intense outdoor work. Moved to indoor mobility & skills; hydrate hard.`;
+  } else if (wet) {
+    action = "substitute";
+    adjusted = substituteForWet(original);
+    reason =
+      "Wet grass — slip/ACL risk on sprints & cuts. Moved indoors to a tempo + strength session.";
+  } else if (apparent !== null && apparent <= COLD_AVOID_C) {
+    action = "substitute";
+    adjusted = "mobility";
+    reason = `${t(apparent)}°C feels-like — no outdoor max-effort in the cold. Indoor low-intensity mobility instead.`;
+  } else if (apparent !== null && apparent >= HEAT_REDUCE_C) {
+    action = "scale";
+    reason = `${t(apparent)}°C feels-like — cut intense volume ~20%, train in the cooler hour, hydrate. Expect RPE to feel ~1 higher; log what you actually felt.`;
+  } else if (apparent !== null && apparent >= HEAT_CAUTION_C) {
+    reason = `${t(apparent)}°C — warm. Add hydration and breaks; session unchanged.`;
+  } else if (apparent !== null && apparent <= COLD_CAUTION_C) {
+    reason = `${t(apparent)}°C — cold muscles. Extend your warm-up; ease into max-velocity work.`;
+  } else if (wind !== null && wind >= WIND_UNRELIABLE_KMH) {
+    reason = `${t(wind)} km/h wind — throwing accuracy and sprint timing are unreliable; deprioritise testing.`;
+  } else {
+    return rx; // benign weather
+  }
+
+  // Coach override: keep the planned session; record the call. Storm still warns.
+  if (coachOverride) {
+    const note = storm
+      ? "Coach override: training as planned — but lightning is present, take shelter if it nears."
+      : `Coach override: training as planned despite conditions — ${reason}`;
+    return {
+      ...rx,
+      weatherAdjustment: {
+        applied: false,
+        action: "none",
+        originalIntent: original,
+        adjustedIntent: original,
+        heatLoadFactor,
+        reason: note,
+      },
+    };
+  }
+
+  if (action === "none") {
+    return {
+      ...rx,
+      weatherAdjustment: {
+        applied: false,
+        action: "none",
+        originalIntent: original,
+        adjustedIntent: original,
+        heatLoadFactor,
+        reason,
+      },
+    };
+  }
+
+  if (action === "scale") {
+    // Same intent, reduced volume; heat load-scaling reflects true strain at port.
+    return {
+      ...rx,
+      targetMinutes: t(rx.targetMinutes * HEAT_VOLUME_CUT),
+      sprintReps: t(rx.sprintReps * HEAT_VOLUME_CUT),
+      reasoning: `${reason} ${rx.reasoning}`,
+      weatherAdjustment: {
+        applied: true,
+        action,
+        originalIntent: original,
+        adjustedIntent: original,
+        heatLoadFactor,
+        reason,
+      },
+    };
+  }
+
+  // relocate / substitute / stop → swap intent + targets (nutrition stays as the
+  // day's plan; a lighter indoor session is safely over-fuelled, not under).
+  const nt = baseTargets(adjusted);
+  return {
+    ...rx,
+    intent: adjusted,
+    intentLabel: INTENT_LABELS[adjusted],
+    targetRpe: nt.targetRpe,
+    targetMinutes: nt.targetMinutes,
+    sprintReps: nt.sprintReps,
+    strengthSets: nt.strengthSets,
+    reasoning: `${reason} ${rx.reasoning}`,
+    weatherAdjustment: {
+      applied: true,
+      action,
+      originalIntent: original,
+      adjustedIntent: adjusted,
+      heatLoadFactor,
+      reason,
+    },
+  };
+}
+
+/** Canonical target bundle per intent (single source for season + weather paths). */
+function baseTargets(intent: PrescriptionIntent): {
+  targetRpe: number | null;
+  targetMinutes: number;
+  sprintReps: number;
+  strengthSets: number;
+} {
+  switch (intent) {
+    case "rest":
+      return { targetRpe: null, targetMinutes: 0, sprintReps: 0, strengthSets: 0 };
+    case "recovery":
+      return { targetRpe: 3, targetMinutes: 30, sprintReps: 0, strengthSets: 0 };
+    case "mobility":
+      return { targetRpe: 4, targetMinutes: 45, sprintReps: 0, strengthSets: 0 };
+    case "technical":
+      return { targetRpe: 5, targetMinutes: 60, sprintReps: 0, strengthSets: 0 };
+    case "sprint":
+      return { targetRpe: 8, targetMinutes: 60, sprintReps: 10, strengthSets: 0 };
+    case "strength":
+      return { targetRpe: 7, targetMinutes: 75, sprintReps: 0, strengthSets: 18 };
+    case "mixed":
+      return { targetRpe: 6, targetMinutes: 75, sprintReps: 6, strengthSets: 8 };
+    case "taper-prime":
+      return { targetRpe: 4, targetMinutes: 25, sprintReps: 4, strengthSets: 0 };
+    case "competition":
+      return { targetRpe: null, targetMinutes: 60, sprintReps: 0, strengthSets: 0 };
   }
 }
 
@@ -551,5 +905,9 @@ export const __periodization__ = {
   prescribeFor,
   nutritionFor,
   pickAccumulationIntent,
+  macroPhaseFor,
+  applyWeatherGuard,
+  seasonShapedIntent,
+  baseTargets,
   CARB_PER_KG,
 };

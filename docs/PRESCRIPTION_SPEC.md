@@ -50,7 +50,10 @@ rules don't run.
 | 5 | `phase === "recovery"` | `recovery` | Post-event repair |
 | 6 | `phase === "taper"` | `mobility` (≤ 2 days out) or `sprint` | Stay sharp, drop volume |
 | 7 | `phase === "transition"` | `mobility` if heavy density else `mixed` | Off-season GPP |
-| 8 | `phase === "accumulation"` | day-of-week shape (see §3) | Default working week |
+| 8 | `phase === "accumulation"` | season-shaped week (§8a) if `seasonPhase` set, else day-of-week shape (§3) | Default working week |
+
+After a base intent is chosen, the result is passed through the **weather guard**
+(§8b), which may relocate / substitute / scale / stop intense outdoor intents.
 
 ---
 
@@ -190,11 +193,64 @@ Owned by `ScheduleService.phaseFor()` and the matching netlify resolver in
 
 ---
 
+## 8a. Season Macro-Phase (annual periodization)
+
+Above the event-proximity micro-phases sits an athlete-declared **macro season
+phase**. `macroPhaseFor(date, windows)` resolves it from the player's
+`athlete_training_config.season_calendar` blocks — `{ phase, from, to }` where
+`from`/`to` are a specific span (`"YYYY-MM-DD"`) or a recurring annual one
+(`"MM-DD"`, may wrap the year end). First matching window wins; `null` → generic
+build. **No months are hardcoded — the player is the source of truth.**
+
+When **no event micro-phase** drives the week (decision rule #8, `accumulation`),
+`seasonPhase` shapes the week instead of the plain day-of-week default:
+
+| Season phase | Week emphasis |
+|---|---|
+| `offseason` | Strength & conditioning (Mon/Thu/Sat strength, Tue/Fri mixed) |
+| `inseason` | Maintain + skill (strength maintained, more technical/mobility) |
+| `transition` | Active rest / aerobic base (recovery + mobility) |
+| `preseason` | Generic progressive build (same as default §3) |
+
+Event micro-phases (competition / taper-prime / recovery, rules #1–#6) still
+**override** the macro phase — a friendly tournament in the off-season still
+triggers taper/recovery around it. Surfaced on the output as `seasonPhase`.
+
+## 8b. Weather Guard (outdoor-safety constraint layer)
+
+`applyWeatherGuard(rx, weather, coachOverride)` runs **on top of** the base
+prescription (precedence: physio ▷ coach ▷ **weather** ▷ engine). It only touches
+**intense outdoor** intents (`sprint`, `mixed`, `taper-prime`); strength (indoor),
+mobility, technical, recovery, rest and competition are weather-agnostic. Inputs
+are metric (`weather.js` now requests °C / km/h / mm). Actions, highest-priority
+first:
+
+| Trigger (apparent °C / code / mm) | Action | Effect |
+|---|---|---|
+| Thunderstorm (code 95–99) | `stop` | → `recovery` indoors/rest |
+| apparent ≥ 38 | `stop` | → `recovery` |
+| apparent ≥ 35 | `relocate` | → indoor `mobility`; `heatLoadFactor` 1.2 |
+| Wet (code ≥ 61 or precip > 0.5 mm) | `substitute` | sprint/mixed → `strength`, taper-prime → `mobility` |
+| apparent ≤ −5 | `substitute` | → indoor `mobility` |
+| apparent ≥ 32 | `scale` | same intent, volume −20%, `heatLoadFactor` 1.1, "RPE feels ~1 higher" |
+| apparent ≥ 28 / ≤ 4 / wind ≥ 40 km/h | `none` | advisory note only, intent unchanged |
+| otherwise | — | no `weatherAdjustment` emitted |
+
+`coachOverride: true` keeps the planned session (records `applied:false`); a
+thunderstorm still warns. Output: `weatherAdjustment { applied, action,
+originalIntent, adjustedIntent, heatLoadFactor, reason }`, with `reason` prepended
+to `reasoning`. Heat `heatLoadFactor` feeds `training_sessions.workload` at port so
+ACWR reflects true strain; we never rewrite the athlete's logged RPE. Thresholds
+are named constants (team-configurable later). `weather: null` → no-op.
+
 ## 9. Versioning
 
 Bump the version field in this file when behavior-affecting changes ship:
 
 - **v1 (2026-05)**: initial spec; 30-test regression suite green.
+- **v2 (2026-06)**: added the season macro-phase (§8a, `macroPhaseFor` +
+  `seasonShapedIntent`) and the weather guard (§8b, `applyWeatherGuard`); weather
+  units fixed to metric. Regression suite now 45 green.
 
 When the algorithm changes:
 1. Update `prescribeFor` in `periodization.service.ts`.

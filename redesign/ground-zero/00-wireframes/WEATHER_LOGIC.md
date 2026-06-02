@@ -30,11 +30,10 @@ temp**, humidity, wind, precipitation, weather_code, condition, and a `suitabili
 level. Location = the event venue lat/lon (`competition_events`) when there's an
 event, else the athlete's city/location.
 
-> ⚠ **Unit fix required:** `weather.js` currently requests Fahrenheit + mph. This
-> is a metric club (Ljubljana; `users.preferred_units = metric`) — switch the
-> Open-Meteo call to `temperature_unit=celsius`, `wind_speed_unit=kmh`,
-> `precipitation_unit=mm` (and reconcile `ai-chat.js`'s bare `temperature > 30`
-> check, which is unit-ambiguous). All thresholds below are **°C**.
+> ✅ **Unit fix DONE (2026-06-02):** `weather.js` now requests
+> `temperature_unit=celsius`, `wind_speed_unit=kmh`, `precipitation_unit=mm`, and
+> its suitability thresholds were converted from °F/mph/inch to metric. `ai-chat.js`'s
+> heat/cold insight was aligned to °C (≥28 / ≤4). All thresholds below are **°C**.
 
 ## Constraint matrix (PROPOSED DEFAULTS — confirm/tune these)
 
@@ -82,7 +81,13 @@ changes intent → which changes the planned RPE/volume via the normal prescript
   'substitute' | 'scale' | 'stop' | 'none', originalIntent, adjustedIntent,
   reason }`, and prepend the reason to `reasoning` when applied
   (e.g. *"Rain on grass — sprints moved indoors to a tempo + strength session."*).
-- Implement after thresholds are confirmed; add regression cases to
-  `periodization.service.spec.ts` (rain→substitute, ≥35 °C→relocate,
-  thunderstorm→stop, heat→load-scale, coach-override→bypass). Fold this section
-  into `docs/PRESCRIPTION_SPEC.md` at implementation time.
+- ✅ **IMPLEMENTED (2026-06-02)** in `periodization.service.ts` as
+  `applyWeatherGuard(rx, weather, coachOverride)`, applied on top of the base
+  prescription in `prescribeFor`. `PeriodizationInputs` gained `weather` +
+  `coachOverride`; `DailyPrescription` gained `weatherAdjustment`. Regression cases
+  added to `periodization.service.spec.ts` (rain→substitute, ≥35 °C→relocate,
+  thunderstorm→stop, ≥32 °C→scale+heatLoadFactor 1.1, coach-override→bypass,
+  indoor-intent untouched, benign/null→no-op) — 45/45 green. Thresholds are the
+  proposed defaults above, as named constants (team-configurable later). Folded
+  into `docs/PRESCRIPTION_SPEC.md`. **Note:** the engine function is wired; feeding
+  it live `weather` from `WeatherService` happens at the Angular port (Phase E).

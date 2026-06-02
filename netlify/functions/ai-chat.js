@@ -3531,7 +3531,9 @@ async function analyzeContext(context, userContext) {
   // Add environmental insights if available
   if (context.environmentalFactors) {
     const env = context.environmentalFactors;
-    if (env.temperature && env.temperature > 30) {
+    // env.temperature is °C (weather.js requests metric) — heat caution ≥28 °C,
+    // cold caution ≤4 °C, per WEATHER_LOGIC.md.
+    if (env.temperature && env.temperature >= 28) {
       insights.push({
         id: "heat-warning",
         type: "Safety",
@@ -3540,7 +3542,7 @@ async function analyzeContext(context, userContext) {
         icon: "pi pi-sun",
         priority: "high",
       });
-    } else if (env.temperature && env.temperature < 5) {
+    } else if (env.temperature && env.temperature <= 4) {
       insights.push({
         id: "cold-warning",
         type: "Safety",

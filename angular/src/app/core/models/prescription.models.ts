@@ -28,6 +28,62 @@ export type PrescriptionIntent =
   | "competition"; // Game day. Warm up, play, recover.
 
 /**
+ * Macro season phase — the annual periodization layer that sits above the
+ * event-proximity micro-phases. Athlete-declared (see SeasonWindow); off-season
+ * biases toward strength & conditioning, in-season toward maintain + skill.
+ */
+export type SeasonPhase = "offseason" | "preseason" | "inseason" | "transition";
+
+/**
+ * One athlete-declared season window. `from`/`to` are either a specific span
+ * ("YYYY-MM-DD") or a recurring annual one ("MM-DD"); recurring windows may wrap
+ * the year end (e.g. "09-01" → "04-30"). Stored on
+ * `athlete_training_config.season_calendar`. NOTHING is hardcoded — the player
+ * is the source of truth.
+ */
+export interface SeasonWindow {
+  phase: SeasonPhase;
+  from: string;
+  to: string;
+}
+
+/**
+ * Live weather the guard reasons over. Temps °C, wind km/h, precip mm.
+ * Any null field = unknown → the guard fails safe (warns, never green-lights
+ * intense outdoor work in unknown weather).
+ */
+export interface WeatherInput {
+  tempC: number | null;
+  /** Feels-like / apparent temperature — the value the guard prefers. */
+  apparentC: number | null;
+  condition: string | null;
+  /** Open-Meteo WMO weather code (95–99 = thunderstorm, ≥61 = rain). */
+  weatherCode: number | null;
+  precipMm: number | null;
+  windKmh: number | null;
+  suitability?: "excellent" | "good" | "fair" | "poor" | null;
+}
+
+/**
+ * What the weather guard did to today's intent. Present only when weather was
+ * provided. `action`:
+ *  - none      → advisory only (hydration / warm-up / wind), intent unchanged
+ *  - scale     → same intent, volume cut + heat load-scaling applied
+ *  - substitute→ swapped to a weather-safe intent (e.g. rain: sprint → strength)
+ *  - relocate  → moved indoors (e.g. ≥35 °C: sprint → indoor mobility/skills)
+ *  - stop      → outdoor unsafe (thunderstorm / extreme heat) → indoor/rest
+ */
+export interface WeatherAdjustment {
+  applied: boolean;
+  action: "none" | "relocate" | "substitute" | "scale" | "stop";
+  originalIntent: PrescriptionIntent;
+  adjustedIntent: PrescriptionIntent;
+  /** Internal-load multiplier for heat (1.0 = none) — feeds workload at port. */
+  heatLoadFactor: number;
+  reason: string;
+}
+
+/**
  * Carb / protein / hydration targets for the day, in absolute amounts.
  * Computed from bodyweight × per-kg targets that vary by phase.
  */
@@ -74,6 +130,10 @@ export interface DailyPrescription {
   hoursUntilNextEvent: number | null;
   /** ACWR snapshot at prescription time. Null if no ACWR data. */
   acwrAtIssue: number | null;
+  /** Macro season phase that shaped a non-event week, if one was supplied. */
+  seasonPhase?: SeasonPhase | null;
+  /** Weather guard result, present only when weather was supplied. */
+  weatherAdjustment?: WeatherAdjustment | null;
 }
 
 /**
@@ -93,4 +153,20 @@ export interface PeriodizationInputs {
   bodyweightKg: number | null;
   /** Density of upcoming load over 14 days. Used for week-scale modulation. */
   density14d: { totalGames: number; hasPeakImportance: boolean } | null;
+  /**
+   * Macro season phase for `date` (from `macroPhaseFor` over the athlete's
+   * declared `season_calendar`). Refines the generic "build" week when no
+   * event micro-phase is active. Null/undefined → current generic default.
+   */
+  seasonPhase?: SeasonPhase | null;
+  /**
+   * Live weather at the venue / athlete location. Null/undefined → no guard
+   * (unknown weather is left unguarded here; the caller may warn separately).
+   */
+  weather?: WeatherInput | null;
+  /**
+   * Coach "we train/play regardless" — bypasses the weather guard's
+   * intent changes (a thunderstorm still warns). Default false.
+   */
+  coachOverride?: boolean;
 }

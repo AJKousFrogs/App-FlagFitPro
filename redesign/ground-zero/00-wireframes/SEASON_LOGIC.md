@@ -80,10 +80,17 @@ athlete in this order:
   weeks become strength/conditioning-led; in-season weeks maintain.
 - **Output:** surface `seasonPhase` + label so Today/Training can show
   *"Off-season · strength & conditioning block"*.
-- Implement with the weather guard (after confirmation); add regression cases to
-  `periodization.service.spec.ts` (off-season default → strength bias; in-season
-  gap → maintain; event near off-season → micro still overrides). Fold into
-  `docs/PRESCRIPTION_SPEC.md`.
+- ✅ **IMPLEMENTED (2026-06-02)** in `periodization.service.ts`:
+  `macroPhaseFor(today, windows)` resolves the phase from declared windows
+  (specific "YYYY-MM-DD" + recurring "MM-DD" with year-end wrap; first match wins;
+  null → generic build). `PeriodizationInputs` gained `seasonPhase`; when no event
+  micro-phase drives the week, `seasonShapedIntent` picks the week shape
+  (off-season → strength/conditioning, in-season → maintain + skill, transition →
+  base; pre-season = generic build). `DailyPrescription` surfaces `seasonPhase`.
+  Regression cases added (off-season→strength bias, in-season→technical/maintain,
+  transition→base, event-near→micro overrides, macroPhaseFor span/recurring/wrap) —
+  45/45 green. **Note:** `macroPhaseFor` is fed the athlete's `season_calendar` at
+  the Angular port (Phase E); the resolver + engine logic are done now.
 
 ## Settled (per user)
 

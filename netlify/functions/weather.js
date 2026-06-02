@@ -101,7 +101,9 @@ async function getOpenMeteoData(latitude, longitude, city) {
     }
 
     // Call Open-Meteo API
-    const weatherUrl = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,apparent_temperature,relative_humidity_2m,weather_code,wind_speed_10m,precipitation,cloud_cover&temperature_unit=fahrenheit&wind_speed_unit=mph&precipitation_unit=inch&timezone=auto`;
+    // Metric units — this is a metric club (Ljubljana; users.preferred_units=metric)
+    // and all training thresholds are °C / km/h / mm. See WEATHER_LOGIC.md.
+    const weatherUrl = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,apparent_temperature,relative_humidity_2m,weather_code,wind_speed_10m,precipitation,cloud_cover&temperature_unit=celsius&wind_speed_unit=kmh&precipitation_unit=mm&timezone=auto`;
 
     const weatherResponse = await fetchWithTimeout(weatherUrl);
 
@@ -306,13 +308,14 @@ function calculateOpenMeteoSuitability({
   if (weatherCode === 65 || weatherCode === 82 || weatherCode === 66 || weatherCode === 67) {
     return { suitable: false, level: "poor" };
   }
-  if ((precipitation || 0) >= 0.12) {
+  // Thresholds are METRIC (°C, km/h, mm) — converted from the prior °F/mph/inch.
+  if ((precipitation || 0) >= 3) {
     return { suitable: false, level: "poor" };
   }
-  if (effectiveTemp < 32 || effectiveTemp > 95) {
+  if (effectiveTemp < 0 || effectiveTemp > 35) {
     return { suitable: false, level: "poor" };
   }
-  if (windSpeed >= 30) {
+  if (windSpeed >= 48) {
     return { suitable: false, level: "poor" };
   }
 
@@ -320,13 +323,13 @@ function calculateOpenMeteoSuitability({
   if (weatherCode === 63 || weatherCode === 80 || weatherCode === 81) {
     return { suitable: true, level: "fair" };
   }
-  if ((precipitation || 0) >= 0.03) {
+  if ((precipitation || 0) >= 0.8) {
     return { suitable: true, level: "fair" };
   }
   if (weatherCode === 45 || weatherCode === 48 || weatherCode === 51 || weatherCode === 53 || weatherCode === 55) {
     return { suitable: true, level: "fair" };
   }
-  if (effectiveTemp < 40 || effectiveTemp > 85 || windSpeed >= 20) {
+  if (effectiveTemp < 4 || effectiveTemp > 29 || windSpeed >= 32) {
     return { suitable: true, level: "fair" };
   }
 
@@ -334,7 +337,7 @@ function calculateOpenMeteoSuitability({
   if (weatherCode >= 1 && weatherCode <= 3) {
     return { suitable: true, level: "good" };
   }
-  if (effectiveTemp < 50 || effectiveTemp > 78 || windSpeed >= 10) {
+  if (effectiveTemp < 10 || effectiveTemp > 26 || windSpeed >= 16) {
     return { suitable: true, level: "good" };
   }
 

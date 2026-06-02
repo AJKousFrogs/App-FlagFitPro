@@ -10,9 +10,14 @@
  */
 
 import { describe, it, expect } from "vitest";
-import { prescribeFor, __periodization__ } from "./periodization.service";
+import {
+  prescribeFor,
+  macroPhaseFor,
+  __periodization__,
+} from "./periodization.service";
 import {
   PeriodizationInputs,
+  WeatherInput,
 } from "../models/prescription.models";
 import { CompetitionEvent } from "../models/schedule.models";
 
@@ -389,6 +394,155 @@ describe("prescribeFor — reasoning contract", () => {
   it("hoursUntilNextEvent is null when nothing upcoming", () => {
     const rx = prescribeFor(inputs({ upcoming: [] }));
     expect(rx.hoursUntilNextEvent).toBeNull();
+  });
+});
+
+// =============================================================================
+// WEATHER GUARD
+// =============================================================================
+
+function weather(over: Partial<WeatherInput> = {}): WeatherInput {
+  return {
+    tempC: 18,
+    apparentC: 18,
+    condition: "clear",
+    weatherCode: 1,
+    precipMm: 0,
+    windKmh: 5,
+    suitability: "good",
+    ...over,
+  };
+}
+
+const tuesday = new Date("2026-05-05T10:00:00Z"); // accumulation → sprint
+
+describe("prescribeFor — weather guard", () => {
+  it("rain substitutes a sprint for an indoor strength session", () => {
+    const rx = prescribeFor(
+      inputs({ date: tuesday, weather: weather({ weatherCode: 63, precipMm: 2 }) }),
+    );
+    expect(rx.intent).toBe("strength");
+    expect(rx.weatherAdjustment?.applied).toBe(true);
+    expect(rx.weatherAdjustment?.action).toBe("substitute");
+    expect(rx.weatherAdjustment?.originalIntent).toBe("sprint");
+  });
+
+  it("≥35°C relocates intense outdoor work to indoor mobility", () => {
+    const rx = prescribeFor(
+      inputs({ date: tuesday, weather: weather({ apparentC: 36, tempC: 34 }) }),
+    );
+    expect(rx.weatherAdjustment?.action).toBe("relocate");
+    expect(rx.intent).toBe("mobility");
+    expect(rx.weatherAdjustment?.heatLoadFactor).toBe(1.2);
+  });
+
+  it("thunderstorm hard-stops outdoor training", () => {
+    const rx = prescribeFor(
+      inputs({ date: tuesday, weather: weather({ weatherCode: 96 }) }),
+    );
+    expect(rx.weatherAdjustment?.action).toBe("stop");
+    expect(rx.intent).toBe("recovery");
+  });
+
+  it("≥32°C scales volume and applies a heat load factor (intent unchanged)", () => {
+    const rx = prescribeFor(
+      inputs({ date: tuesday, weather: weather({ apparentC: 33 }) }),
+    );
+    expect(rx.intent).toBe("sprint");
+    expect(rx.weatherAdjustment?.action).toBe("scale");
+    expect(rx.weatherAdjustment?.heatLoadFactor).toBe(1.1);
+    expect(rx.targetMinutes).toBeLessThan(60); // 60 → 48
+    expect(rx.sprintReps).toBeLessThan(10);
+  });
+
+  it("coach override bypasses the guard (keeps the planned session)", () => {
+    const rx = prescribeFor(
+      inputs({
+        date: tuesday,
+        weather: weather({ apparentC: 36 }),
+        coachOverride: true,
+      }),
+    );
+    expect(rx.intent).toBe("sprint"); // not relocated
+    expect(rx.weatherAdjustment?.applied).toBe(false);
+  });
+
+  it("weather-agnostic intents (indoor strength) are untouched", () => {
+    const monday = new Date("2026-05-04T10:00:00Z"); // → strength
+    const rx = prescribeFor(
+      inputs({ date: monday, weather: weather({ weatherCode: 96 }) }),
+    );
+    expect(rx.intent).toBe("strength");
+    expect(rx.weatherAdjustment).toBeUndefined();
+  });
+
+  it("benign weather leaves no adjustment; null weather is a no-op", () => {
+    const benign = prescribeFor(inputs({ date: tuesday, weather: weather() }));
+    expect(benign.weatherAdjustment).toBeUndefined();
+    const none = prescribeFor(inputs({ date: tuesday, weather: null }));
+    expect(none.weatherAdjustment).toBeUndefined();
+    expect(none.intent).toBe("sprint");
+  });
+});
+
+// =============================================================================
+// MACRO SEASON PHASE
+// =============================================================================
+
+describe("macroPhaseFor — athlete-declared windows", () => {
+  it("resolves a specific span", () => {
+    const w = [{ phase: "inseason" as const, from: "2025-09-01", to: "2026-04-30" }];
+    expect(macroPhaseFor(new Date("2026-03-01T10:00:00Z"), w)).toBe("inseason");
+    expect(macroPhaseFor(new Date("2026-07-01T10:00:00Z"), w)).toBeNull();
+  });
+
+  it("resolves a recurring annual window, including year-end wrap", () => {
+    const w = [{ phase: "inseason" as const, from: "09-01", to: "04-30" }];
+    expect(macroPhaseFor(new Date("2026-02-15T10:00:00Z"), w)).toBe("inseason");
+    expect(macroPhaseFor(new Date("2026-06-15T10:00:00Z"), w)).toBeNull();
+  });
+
+  it("returns null when no window covers the date (generic fallback)", () => {
+    expect(macroPhaseFor(new Date("2026-07-20T10:00:00Z"), [])).toBeNull();
+    expect(macroPhaseFor(new Date("2026-07-20T10:00:00Z"), null)).toBeNull();
+  });
+});
+
+describe("prescribeFor — season macro-phase shapes the non-event week", () => {
+  const monday = new Date("2026-05-04T10:00:00Z");
+
+  it("off-season biases toward strength & conditioning", () => {
+    const rx = prescribeFor(inputs({ date: monday, seasonPhase: "offseason" }));
+    expect(rx.intent).toBe("strength");
+    expect(rx.seasonPhase).toBe("offseason");
+    expect(rx.reasoning).toMatch(/off-season/i);
+  });
+
+  it("in-season maintains + sharpens skills (a Tuesday is technical, not a sprint peak)", () => {
+    const rx = prescribeFor(inputs({ date: tuesday, seasonPhase: "inseason" }));
+    expect(rx.intent).toBe("technical");
+    expect(rx.reasoning).toMatch(/in-season/i);
+  });
+
+  it("transition is active rest / base", () => {
+    const rx = prescribeFor(inputs({ date: tuesday, seasonPhase: "transition" }));
+    expect(rx.intent).toBe("mobility");
+  });
+
+  it("pre-season uses the generic progressive build (Tuesday → sprint)", () => {
+    const rx = prescribeFor(inputs({ date: tuesday, seasonPhase: "preseason" }));
+    expect(rx.intent).toBe("sprint");
+  });
+
+  it("an event micro-phase still overrides the macro season (taper-prime near a game)", () => {
+    const rx = prescribeFor(
+      inputs({
+        date: new Date("2026-05-08T20:00:00Z"), // 12h before
+        seasonPhase: "offseason",
+        upcoming: [event({ startsAt: "2026-05-09T08:00:00Z" })],
+      }),
+    );
+    expect(rx.intent).toBe("taper-prime");
   });
 });
 
