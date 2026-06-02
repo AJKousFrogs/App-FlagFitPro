@@ -81,5 +81,6 @@ what stops the per-screen drift. Derived from the core-journey wireframes.
   is an accent, not a wash.
 
 > **Club imagery rule:** all photography is **male flag-football athletes** (this is
-> a male 16+ club). No stock fitness models / women / youth. Prototype uses labeled
-> placeholders; licensed shots go in at port.
+> a male 16+ club). No stock fitness models / women / youth. **Real Ljubljana Frogs
+> photos are now wired** (web-optimized copies in `_shared/img/`, from the club's own
+> library); video slots still use a photo poster until the YouTube embeds land at port.
