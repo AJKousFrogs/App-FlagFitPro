@@ -1,13 +1,17 @@
 /* ================================================================
    FlagFit Pro — global styles (rebuilt fresh, static-first).
 
-   The full design system (tokens, primitives, components, utilities)
-   is reintroduced in Phase E from the approved static workspace at
-   `redesign/ground-zero/`. This file is intentionally minimal: it
-   declares the cascade @layer order (synced with the providePrimeNG
-   cssLayer config in app.config.ts) and a dark-first canvas so the
-   shell renders intentionally during the rebuild.
+   Phase E foundation: the design tokens (single source of truth) are
+   promoted from redesign/ground-zero/_shared/tokens.css into
+   scss/tokens/_tokens.scss and loaded here. Primitives/components are
+   added as standalone Angular components (encapsulated SCSS) that
+   reference ONLY these tokens — the anti-drift contract.
    ================================================================ */
+
+/* Design tokens — first statement (Sass @use ordering). Emits :root custom
+   properties unlayered: variable definitions don't compete across @layers, so
+   this is safe and sidesteps layer-order hazards. */
+@use "scss/tokens/tokens";
 
 @layer reset, tokens, primeng-base, primeng-brand, primitives, components,
   utilities, mobile, features, overrides;
@@ -27,9 +31,11 @@
 
   body {
     min-height: 100dvh;
-    background: #08090b;
-    color: #f5f6f7;
-    font-family: "Plus Jakarta Sans", "Inter", system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-body);
+    font-size: var(--fs-body);
+    line-height: var(--lh-body);
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
   }
