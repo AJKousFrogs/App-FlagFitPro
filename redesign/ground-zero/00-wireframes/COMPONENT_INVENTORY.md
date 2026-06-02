@@ -13,7 +13,11 @@ what stops the per-screen drift. Derived from the core-journey wireframes.
   mood, stress); discrete ticks + current value.
 - **Chip / tag** — phase ("Accumulation"), intent ("Sprint focus"), status.
 - **Badge** — numeric (notification count), streak count.
-- **Icon** — the nav + status icon set (calendar, bolt, heart, chart-line, …).
+- **Icon** — **Lucide** line icons (clean/minimal, `currentColor`, 2px stroke). No
+  emoji anywhere in UI. Shell mapping: Today=home · Training=dumbbell ·
+  Wellness=heart-pulse · Stats=line-chart · More=menu · bell · plus (FAB) · play.
+  Prototype loads Lucide via CDN (`lucide.createIcons()`); at port use the Lucide
+  Angular/SVG package.
 - **Avatar** — athlete photo + initials fallback.
 - **Tabs** — section switcher (Training hub, Settings, Stats).
 - **Progress** — linear (data sufficiency "12/21 days") + radial (readiness 0–100).

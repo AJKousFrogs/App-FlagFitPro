@@ -69,7 +69,7 @@
     </div>
 
     <div class="cell"><h3>Stat tiles</h3>
-      <div class="tiles"><div><b>4</b><small>sessions/wk</small></div><div><b>62</b><small>avg min</small></div><div><b>🔥12</b><small>streak</small></div></div>
+      <div class="tiles"><div><b>4</b><small>sessions/wk</small></div><div><b>62</b><small>avg min</small></div><div><b><i data-lucide="flame"></i>12</b><small>streak</small></div></div>
     </div>
 
     <div class="cell"><h3>Sliders (1–10)</h3>
@@ -111,19 +111,19 @@
 
     <div class="cell"><h3>Floating action (FAB)</h3>
       <div style="position:relative;height:90px;background:var(--surface-2);border-radius:var(--r-md)">
-        <button class="fab" style="position:absolute;right:14px;bottom:14px">＋</button>
+        <button class="fab" style="position:absolute;right:14px;bottom:14px"><i data-lucide="plus"></i></button>
       </div>
       <small>quick-log: check-in / hydration / session — floats above the tab bar</small>
     </div>
 
     <div class="cell"><h3>List rows</h3>
       <div class="lrow"><span>Mon · Sprint focus</span><span class="band good">RPE 8</span></div>
-      <div class="lrow"><span>⚑ Big Bowl · 8 games</span><small>in 2d</small></div>
-      <div class="lrow"><span>🛑 ACWR danger</span><small>2h</small></div>
+      <div class="lrow"><span><i data-lucide="flag"></i> Big Bowl · 8 games</span><small>in 2d</small></div>
+      <div class="lrow"><span><i data-lucide="shield-alert"></i> ACWR danger</span><small>2h</small></div>
     </div>
 
     <div class="cell"><h3>Context strip · empty</h3><div class="stack">
-      <div class="strip"><span>⚑ 2d → Big Bowl · 🌧️ 12°C · indoor</span><span>▾</span></div>
+      <div class="strip"><span><i data-lucide="flag"></i> 2d → Big Bowl · <i data-lucide="cloud-rain"></i> 12°C · indoor</span><span>▾</span></div>
       <div class="empty">Insufficient data · 12 / 21 days</div>
     </div></div>
 
@@ -142,12 +142,13 @@
   <h2 style="margin:28px 0 8px;text-transform:uppercase;letter-spacing:.06em;color:var(--text-muted);font-family:var(--font-body)">Shell — top bar + 5-tab bar</h2>
   <div class="phone" style="min-height:auto">
     <div class="topbar"><div><div class="eyebrow">Mon 1 Jun · In-season</div><h1 style="font-size:20px">Today</h1></div>
-      <div class="inline"><span class="icon-btn">🔔<span class="dot"></span></span><span class="avatar">AK</span></div></div>
+      <div class="inline"><span class="icon-btn"><i data-lucide="bell"></i><span class="dot"></span></span><span class="avatar">AK</span></div></div>
     <div style="height:40px"></div>
     <nav class="tabbar">
-      <a class="active" aria-current="page"><span class="ic">▦</span>Today</a><a><span class="ic">⚡</span>Training</a>
-      <a><span class="ic">♥</span>Wellness</a><a><span class="ic">📈</span>Stats</a><a><span class="ic">⋯</span>More</a>
+      <a class="active" aria-current="page"><i data-lucide="home" class="ic"></i>Today</a><a><i data-lucide="dumbbell" class="ic"></i>Training</a>
+      <a><i data-lucide="heart-pulse" class="ic"></i>Wellness</a><a><i data-lucide="line-chart" class="ic"></i>Stats</a><a><i data-lucide="menu" class="ic"></i>More</a>
     </nav>
   </div>
 </div>
+<script src="https://unpkg.com/lucide@latest"></script><script>lucide.createIcons();</script>
 </body></html>

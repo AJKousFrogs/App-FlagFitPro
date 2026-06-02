@@ -10,13 +10,13 @@
 <div class="phone">
   <div class="topbar">
     <div><div class="eyebrow">Mon 1 Jun · In-season</div><h1 style="font-size:21px">Good morning, Aljoša</h1></div>
-    <div class="inline"><span class="icon-btn">🔔<span class="dot"></span></span><span class="avatar">AK</span></div>
+    <div class="inline"><span class="icon-btn"><i data-lucide="bell"></i><span class="dot"></span></span><span class="avatar">AK</span></div>
   </div>
 
   <div class="screen">
     <!-- NOTE: all metrics/bands/verdicts below are STATIC stand-ins. Wire to server at port; UI never re-derives them (spec §4 server-canonical). -->
     <!-- thin context strip: game + weather collapsed -->
-    <div class="strip"><span>⚑ 2d → Big Bowl · 🌧️ 12°C rain · indoor advised</span><span>▾</span></div>
+    <div class="strip"><span><i data-lucide="flag"></i> 2d → Big Bowl · <i data-lucide="cloud-rain"></i> 12°C rain · indoor advised</span><span>▾</span></div>
 
     <!-- THE ANSWER — physio block WINS (absolute, above ACWR/weather/engine) -->
     <!-- static stand-in; port wires plan + reason from server (never re-derive client-side) -->
@@ -28,7 +28,7 @@
         <div class="row" style="align-items:baseline"><b>Fuel today</b><small>for your 82kg</small></div>
         <div class="muted" style="font-size:var(--fs-sm);margin-top:4px">Maintenance day: 330g carbs ≈ rice + oats + fruit · 148g protein ≈ chicken + shake + eggs · 2.5 L fluid</div>
       </div>
-      <div class="video" style="margin-bottom:14px"><img src="../_shared/img/video-session.jpg" alt=""><button class="play" aria-label="Play session video">▶</button><span class="vtitle">Watch today's session</span><span class="duration">18:30</span></div>
+      <div class="video" style="margin-bottom:14px"><img src="../_shared/img/video-session.jpg" alt=""><button class="play" aria-label="Play session video"><i data-lucide="play"></i></button><span class="vtitle">Watch today's session</span><span class="duration">18:30</span></div>
       <a class="btn primary block">Start safe session →</a>
     </div>
 
@@ -57,11 +57,12 @@
   </div>
 
   <!-- floating quick-action: log check-in / hydration / session from anywhere -->
-  <button class="fab" aria-label="Quick log">＋</button>
+  <button class="fab" aria-label="Quick log"><i data-lucide="plus"></i></button>
 
   <nav class="tabbar">
-    <a class="active" aria-current="page"><span class="ic">▦</span>Today</a><a><span class="ic">⚡</span>Training</a>
-    <a><span class="ic">♥</span>Wellness</a><a><span class="ic">📈</span>Stats</a><a><span class="ic">⋯</span>More</a>
+    <a class="active" aria-current="page"><i data-lucide="home" class="ic"></i>Today</a><a><i data-lucide="dumbbell" class="ic"></i>Training</a>
+    <a><i data-lucide="heart-pulse" class="ic"></i>Wellness</a><a><i data-lucide="line-chart" class="ic"></i>Stats</a><a><i data-lucide="menu" class="ic"></i>More</a>
   </nav>
 </div>
+<script src="https://unpkg.com/lucide@latest"></script><script>lucide.createIcons();</script>
 </body></html>

@@ -10,7 +10,7 @@
 <body>
 <p style="max-width:412px;margin:12px auto;color:var(--text-faint);font-size:12px;text-align:center">HI-FI · Merlin AI <a href="index.html">· all hi-fi</a></p>
 <div class="phone">
-  <div class="topbar"><div><div class="eyebrow">context-aware coach</div><h1 style="font-size:21px">✨ Merlin</h1></div><span class="avatar">AK</span></div>
+  <div class="topbar"><div><div class="eyebrow">context-aware coach</div><h1 style="font-size:21px"><i data-lucide="sparkles"></i> Merlin</h1></div><span class="avatar">AK</span></div>
   <div class="screen">
     <div class="thread">
       <div class="bubble me">Should I sprint today? My hamstring still feels tight.</div>
@@ -22,6 +22,7 @@
       <button class="btn primary sm" disabled aria-disabled="true">Send</button></div></div>
     <p class="note">⚠ Prototype: the input + Send are non-functional stubs (wire to <code>POST /api/ai/process-command</code> at port). Gated on AI consent (ai_processing_enabled); context includes injuries, ACWR, today's sessions, wellness, schedule.</p>
   </div>
-  <nav class="tabbar"><a><span class="ic">▦</span>Today</a><a><span class="ic">⚡</span>Training</a><a><span class="ic">♥</span>Wellness</a><a><span class="ic">📈</span>Stats</a><a class="active" aria-current="page"><span class="ic">⋯</span>More</a></nav>
+  <nav class="tabbar"><a><i data-lucide="home" class="ic"></i>Today</a><a><i data-lucide="dumbbell" class="ic"></i>Training</a><a><i data-lucide="heart-pulse" class="ic"></i>Wellness</a><a><i data-lucide="line-chart" class="ic"></i>Stats</a><a class="active" aria-current="page"><i data-lucide="menu" class="ic"></i>More</a></nav>
 </div>
+<script src="https://unpkg.com/lucide@latest"></script><script>lucide.createIcons();</script>
 </body></html>

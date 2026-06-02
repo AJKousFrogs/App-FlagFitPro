@@ -190,5 +190,13 @@ a:focus-visible{outline:none;box-shadow:var(--focus);border-radius:4px;}
 .screen-hero .content h2{color:#fff;font-size:var(--fs-h1);}
 .screen-hero .eyebrow{color:#fff;opacity:.85;}
 
+/* ---- icons: Lucide (clean line icons, currentColor) ---------------------- */
+svg.lucide{width:18px;height:18px;stroke-width:2;vertical-align:-.18em;flex:0 0 auto;}
+i[data-lucide]{display:inline-block;width:18px;height:18px;} /* pre-hydrate placeholder */
+.tabbar .ic{width:24px;height:24px;}                 /* tab-bar glyphs */
+.icon-btn svg.lucide{width:22px;height:22px;}
+.fab svg.lucide{width:26px;height:26px;stroke-width:2.25;}
+.video .play svg.lucide{width:24px;height:24px;}
+
 /* note (spec annotation, not UI) */
 .note{font-size:var(--fs-xs);color:var(--text-faint);font-style:italic;}
