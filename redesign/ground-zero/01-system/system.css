@@ -52,6 +52,12 @@ a{color:var(--accent);text-decoration:none;}
 .inline{display:inline-flex;align-items:center;gap:var(--s-2);}  /* icon+text groups, top-bar actions */
 .inline svg.lucide{margin:0;}
 .suppi{font-size:18px;color:var(--text-muted);vertical-align:-3px;margin-right:8px;}  /* supplement row glyph — monochrome, minimal */
+/* tappable card that links out (store, partner, external resource) */
+.linkcard{display:flex;align-items:center;justify-content:space-between;gap:var(--s-3);text-decoration:none;color:var(--text);transition:border-color .15s;}
+.linkcard:hover,.linkcard:focus-visible{border-color:var(--accent);}
+.linkcard .lc-ic{width:42px;height:42px;border-radius:12px;display:grid;place-items:center;background:var(--grad-brand-soft);color:var(--accent);flex:none;}
+.linkcard .lc-ic iconify-icon{font-size:22px;}
+.linkcard .lc-go{color:var(--text-muted);flex:none;}
 
 /* buttons */
 .btn{font-family:var(--font-body);font-weight:var(--fw-semi);font-size:var(--fs-body);
