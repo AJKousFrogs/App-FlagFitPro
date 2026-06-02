@@ -13,6 +13,14 @@
     <div class="content"><div class="eyebrow">{{ identity() }}</div><h2>Your hub</h2></div>
   </div>
 
+  @if (isStaff()) {
+    <a class="card linkcard" routerLink="/staff" style="margin-bottom:4px">
+      <span class="lc-ic"><lucide-icon name="users" /></span>
+      <div style="flex:1"><b>Staff view</b><div class="muted" style="font-size:var(--fs-sm)">Roster, alerts &amp; athlete monitoring</div></div>
+      <lucide-icon name="chevron-right" class="lc-go" />
+    </a>
+  }
+
   <div class="section-h"><h2>Compete</h2></div>
   <div class="card">
     <a class="lrow" routerLink="/competition" style="color:inherit">

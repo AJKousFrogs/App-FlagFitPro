@@ -1,0 +1,43 @@
+<header class="topbar">
+  <div>
+    <div class="eyebrow">{{ spec().title }}</div>
+    <h1 style="font-size:21px">Athlete</h1>
+  </div>
+  <span class="avatar">{{ initials() }}</span>
+</header>
+
+<main class="screen">
+  <div class="hero">
+    <div class="row">
+      <span class="avatar lg">{{ initials() }}</span>
+      <div style="text-align:right">
+        <h1 style="margin:0">{{ name }}@if (jersey !== null) { · #{{ jersey }} }</h1>
+        <small>{{ position || "Athlete" }}</small>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-h"><h2>{{ spec().title }}</h2></div>
+
+  @if (!loaded()) {
+    <div class="empty">Loading…</div>
+  } @else if (hasData()) {
+    <!-- shared data present — summarized; full per-section views land as the staff track deepens -->
+    <div class="card">
+      <p class="muted" style="font-size:var(--fs-sm)">
+        {{ name }} has shared their {{ spec().consent }} data with staff. Detailed
+        {{ spec().title | lowercase }} views render here.
+      </p>
+      <pre style="white-space:pre-wrap;font-size:11px;color:var(--text-muted);margin:8px 0 0">{{ data() | json }}</pre>
+    </div>
+  } @else {
+    <div class="empty">
+      <b style="color:var(--text)">Not shared</b>
+      <p class="note" style="margin-top:8px">
+        {{ name }} hasn't shared their {{ spec().consent }} data with staff (or there's
+        nothing logged yet). Sharing is private by default — the athlete enables it in
+        their privacy settings.
+      </p>
+    </div>
+  }
+</main>

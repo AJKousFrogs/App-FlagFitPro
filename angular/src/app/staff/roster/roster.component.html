@@ -1,0 +1,32 @@
+<header class="topbar">
+  <div>
+    <div class="eyebrow">{{ teamName() || "Your team" }}</div>
+    <h1 style="font-size:21px">Roster</h1>
+  </div>
+  <span class="chip">{{ roleLabel() }}</span>
+</header>
+
+<main class="screen">
+  @if (players() === null) {
+    <div class="empty">Loading roster…</div>
+  } @else if (players()!.length === 0) {
+    <div class="empty">No athletes on this team yet.</div>
+  } @else {
+    <div class="card">
+      @for (p of players()!; track pid(p)) {
+        <a class="lrow" [routerLink]="['/staff/athlete', pid(p)]"
+           [state]="{ name: p.name, jersey: jersey(p), position: p.position }" style="color:inherit">
+          <span class="thumb-card">
+            <span class="avatar">{{ initials(p) }}</span>
+            <span>
+              <b>{{ p.name || "Athlete" }}</b><br />
+              <small>@if (jersey(p) !== null) { #{{ jersey(p) }} · }{{ p.position || "—" }}</small>
+            </span>
+          </span>
+          <span class="faint">›</span>
+        </a>
+      }
+    </div>
+    <p class="note">Per-athlete data is private by default — each athlete chooses what to share with staff.</p>
+  }
+</main>

@@ -10,6 +10,8 @@ import { LucideAngularModule } from "lucide-angular";
 
 import { SupabaseService } from "../core/services/supabase.service";
 import { LoggerService } from "../core/services/logger.service";
+import { TeamMembershipService } from "../core/services/team-membership.service";
+import { staffLaneFor } from "../core/guards/staff.guard";
 
 /**
  * Landing — the marketing entry + sign-in. Ported 1:1 from
@@ -36,6 +38,7 @@ export class LandingComponent {
   private readonly supabase = inject(SupabaseService);
   private readonly router = inject(Router);
   private readonly logger = inject(LoggerService);
+  private readonly membership = inject(TeamMembershipService);
 
   readonly showSignIn = signal(false);
   readonly email = signal("");
@@ -52,7 +55,10 @@ export class LandingComponent {
       if (error) {
         this.error.set(error.message ?? "Sign-in failed");
       } else {
-        await this.router.navigate(["/today"]);
+        // Staff land on the staff track; athletes on the athlete app.
+        await this.membership.loadMembership(true).catch(() => null);
+        const dest = staffLaneFor(this.membership.role()) ? "/staff" : "/today";
+        await this.router.navigate([dest]);
       }
     } catch (e) {
       this.logger.error("signin_failed", e);

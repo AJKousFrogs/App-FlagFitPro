@@ -9,6 +9,8 @@ import { LucideAngularModule } from "lucide-angular";
 
 import { AcwrService } from "../core/services/acwr.service";
 import { SupabaseService } from "../core/services/supabase.service";
+import { TeamMembershipService } from "../core/services/team-membership.service";
+import { staffLaneFor } from "../core/guards/staff.guard";
 
 /**
  * More — the grouped hub. Ported 1:1 from redesign/ground-zero/02-hifi/more.html.
@@ -26,6 +28,14 @@ import { SupabaseService } from "../core/services/supabase.service";
 export class MoreComponent {
   private readonly acwrSvc = inject(AcwrService);
   private readonly supabase = inject(SupabaseService);
+  private readonly membership = inject(TeamMembershipService);
+
+  /** Staff (coach/physio/nutritionist/psychologist) can jump to the staff track. */
+  readonly isStaff = computed(() => staffLaneFor(this.membership.role()) !== null);
+
+  constructor() {
+    this.membership.loadMembership().catch(() => null);
+  }
 
   /** "Joao Maioto · #1 · QB" from the signed-in user; generic fallback. */
   readonly identity = computed(() => {

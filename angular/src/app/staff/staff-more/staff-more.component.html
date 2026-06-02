@@ -1,0 +1,25 @@
+<header class="topbar">
+  <div><h1 style="font-size:21px">More</h1></div>
+  <span class="chip">{{ roleLabel() }}</span>
+</header>
+
+<main class="screen">
+  <div class="hero">
+    <div class="eyebrow muted">{{ teamName() || "Your team" }}</div>
+    <h2>{{ roleLabel() }} view</h2>
+    <p class="muted" style="margin:6px 0 0;font-size:var(--fs-sm)">
+      You're seeing the staff experience for this team. Athlete data is consent-gated —
+      only what athletes choose to share appears.
+    </p>
+  </div>
+
+  <div class="section-h"><h2>You</h2></div>
+  <div class="card">
+    <button class="lrow" type="button" style="width:100%;background:none;border:0;cursor:pointer;color:inherit" (click)="goAthlete()">
+      <span class="inline"><lucide-icon name="home" /> My athlete view</span><span class="faint">›</span>
+    </button>
+    <button class="lrow" type="button" style="width:100%;background:none;border:0;cursor:pointer;color:var(--danger)" (click)="signOut()">
+      <span class="inline"><lucide-icon name="arrow-up-right" /> Sign out</span><span class="faint">›</span>
+    </button>
+  </div>
+</main>

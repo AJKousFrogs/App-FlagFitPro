@@ -1,0 +1,27 @@
+<header class="topbar">
+  <div><h1 style="font-size:21px">Alerts</h1></div>
+  <span class="chip">Coach</span>
+</header>
+
+<main class="screen">
+  @if (alerts() === null) {
+    <div class="empty">Loading…</div>
+  } @else if (alerts()!.length === 0) {
+    <div class="empty">No active alerts — your team is in the clear.</div>
+  } @else {
+    @for (a of alerts()!; track a.id) {
+      <div class="card" [style.border-left]="'3px solid ' + accent(a)">
+        <div class="row">
+          <b class="inline"><lucide-icon [name]="icon(a)" /> {{ athleteName(a) }}</b>
+          <button class="btn ghost sm" type="button" (click)="acknowledge(a)">Ack</button>
+        </div>
+        @if (a.message) { <small>{{ a.message }}</small> }
+        @if (athleteId(a)) {
+          <a class="faint" style="font-size:13px;display:inline-block;margin-top:6px"
+             [routerLink]="['/staff/athlete', athleteId(a)]"
+             [state]="{ name: athleteName(a) }">view athlete →</a>
+        }
+      </div>
+    }
+  }
+</main>

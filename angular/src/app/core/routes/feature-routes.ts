@@ -1,5 +1,6 @@
 import { Routes } from "@angular/router";
 import { ShellComponent } from "../../shell/shell.component";
+import { staffGuard } from "../guards/staff.guard";
 
 /**
  * Feature routes — rebuilt incrementally in Phase E from the approved static
@@ -24,6 +25,19 @@ export const featureRoutes: Routes = [
     path: "onboarding",
     loadComponent: () => import("../../onboarding/onboarding.component").then((m) => m.OnboardingComponent),
     title: "Get started · FlagFit",
+  },
+  // Staff track (coach / physio / nutritionist / psychologist) — guarded by role.
+  {
+    path: "staff",
+    canActivate: [staffGuard],
+    loadComponent: () => import("../../staff/staff-shell.component").then((m) => m.StaffShellComponent),
+    children: [
+      { path: "", pathMatch: "full", redirectTo: "roster" },
+      { path: "roster", loadComponent: () => import("../../staff/roster/roster.component").then((m) => m.RosterComponent), title: "Roster · FlagFit" },
+      { path: "athlete/:id", loadComponent: () => import("../../staff/athlete-detail/athlete-detail.component").then((m) => m.AthleteDetailComponent), title: "Athlete · FlagFit" },
+      { path: "alerts", loadComponent: () => import("../../staff/alerts/alerts.component").then((m) => m.AlertsComponent), title: "Alerts · FlagFit" },
+      { path: "more", loadComponent: () => import("../../staff/staff-more/staff-more.component").then((m) => m.StaffMoreComponent), title: "More · FlagFit" },
+    ],
   },
   {
     path: "",
