@@ -14,7 +14,7 @@
   /* neutral ramp (dark) */
   --c-ink-900:#08090B; --c-ink-850:#0D0F12; --c-ink-800:#111317;
   --c-ink-700:#16181D; --c-ink-600:#1D2026; --c-ink-500:#272B33;
-  --c-ink-400:#3A3F49; --c-ink-300:#565C68; --c-ink-200:#8A909C;
+  --c-ink-400:#3A3F49; --c-ink-300:#565C68; --c-ink-250:#868D98; --c-ink-200:#8A909C;
   --c-ink-100:#B9BEC8; --c-ink-050:#E6E9EF; --c-white:#FFFFFF;
   /* brand + state */
   --c-green-500:#00E07A; --c-green-600:#00B863; --c-green-200:#15402F;
@@ -57,7 +57,7 @@
   --text:var(--c-ink-050);
   --text-strong:var(--c-white);
   --text-muted:var(--c-ink-200);
-  --text-faint:var(--c-ink-300);
+  --text-faint:var(--c-ink-250); /* WCAG AA: #868D98 ≈ 5.9:1 on --bg (was #565C68 ≈ 2.6:1, failed) */
 
   --accent:var(--c-green-500);
   --accent-press:var(--c-green-600);

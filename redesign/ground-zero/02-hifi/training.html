@@ -16,25 +16,27 @@ ol{margin:8px 0;padding-left:18px;color:var(--text);} ol li{margin:4px 0;}</styl
 
     <div class="strip"><span>🗓️ In-season · build week — strength maintained, skill up</span><span>edit ›</span></div>
 
+    <!-- physio block active → sprints suppressed; substitute session (consistent w/ Today) -->
     <div class="hero">
-      <div class="row"><h1>Sprint focus</h1><span class="band good">RPE 8 · hard</span></div>
+      <div class="row"><h1>Mobility + upper body</h1><span class="band danger">physio block</span></div>
+      <p style="margin:8px 0 0;color:var(--text)">Right hamstring (grade 1) — sprints &amp; cuts suppressed until physio clears it.</p>
       <div class="card flat" style="margin:14px 0;height:120px;display:flex;align-items:center;justify-content:center;color:var(--text-faint);border-style:dashed">▶ exercise demo loop</div>
-      <ol><li>Warm-up — RAMP, 12 min</li><li>Sprints — 10 × 30 m, full recovery</li><li>Cool-down + mobility</li></ol>
-      <div class="slider"><label>Actual RPE</label><div class="track" style="--v:80%"></div><span class="val">8</span></div>
-      <div class="slider"><label>Duration</label><div class="track" style="--v:72%"></div><span class="val">58</span></div>
+      <ol><li>Warm-up — RAMP (no max effort), 10 min</li><li>Upper-body strength — push/pull, 4 sets</li><li>Hamstring rehab + mobility (physio set)</li></ol>
+      <div class="slider"><label for="rpe">Actual RPE</label><input class="rng" id="rpe" type="range" min="1" max="10" value="5" aria-label="Actual RPE 1 to 10"><span class="val" aria-hidden="true">5</span></div>
+      <div class="slider"><label for="dur">Duration</label><input class="rng" id="dur" type="range" min="0" max="120" step="5" value="58" aria-label="Duration in minutes"><span class="val" aria-hidden="true">58</span></div>
       <a class="btn primary block">Complete session</a>
     </div>
 
     <div class="section-h"><h2>This week</h2></div>
     <div class="card">
-      <div class="lrow"><span>Mon · Sprint focus</span><span class="band good">RPE 8</span></div>
+      <div class="lrow"><span>Mon · Mobility + upper <small>(physio)</small></span><span class="band danger">no sprints</span></div>
       <div class="lrow"><span>Tue · Strength</span><span class="chip">RPE 7</span></div>
       <div class="lrow"><span>Wed · Mobility</span><span class="chip">RPE 6</span></div>
       <div class="lrow"><span>Sat · ⚑ Big Bowl</span><span class="band caution">8 games</span></div>
     </div>
   </div>
   <nav class="tabbar">
-    <a><span class="ic">▦</span>Today</a><a class="active"><span class="ic">⚡</span>Training</a>
+    <a><span class="ic">▦</span>Today</a><a class="active" aria-current="page"><span class="ic">⚡</span>Training</a>
     <a><span class="ic">♥</span>Wellness</a><a><span class="ic">📈</span>Stats</a><a><span class="ic">⋯</span>More</a>
   </nav>
 </div>

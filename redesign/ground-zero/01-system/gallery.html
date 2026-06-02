@@ -73,9 +73,9 @@
     </div>
 
     <div class="cell"><h3>Sliders (1–10)</h3>
-      <div class="slider"><label>RPE</label><div class="track" style="--v:80%"></div><span class="val">8</span></div>
-      <div class="slider"><label>Sleep</label><div class="track" style="--v:70%"></div><span class="val">7</span></div>
-      <div class="slider"><label>Soreness</label><div class="track" style="--v:40%"></div><span class="val">4</span></div>
+      <div class="slider"><label for="grpe">RPE</label><input class="rng" id="grpe" type="range" min="1" max="10" value="8" aria-label="RPE"><span class="val" aria-hidden="true">8</span></div>
+      <div class="slider"><label for="gsl">Sleep</label><input class="rng" id="gsl" type="range" min="1" max="10" value="7" aria-label="Sleep"><span class="val" aria-hidden="true">7</span></div>
+      <div class="slider"><label for="gso">Soreness</label><input class="rng" id="gso" type="range" min="1" max="10" value="4" aria-label="Soreness"><span class="val" aria-hidden="true">4</span></div>
     </div>
 
     <div class="cell"><h3>Charts</h3>
@@ -117,7 +117,7 @@
       <div class="inline"><span class="icon-btn">🔔<span class="dot"></span></span><span class="avatar">AK</span></div></div>
     <div style="height:40px"></div>
     <nav class="tabbar">
-      <a class="active"><span class="ic">▦</span>Today</a><a><span class="ic">⚡</span>Training</a>
+      <a class="active" aria-current="page"><span class="ic">▦</span>Today</a><a><span class="ic">⚡</span>Training</a>
       <a><span class="ic">♥</span>Wellness</a><a><span class="ic">📈</span>Stats</a><a><span class="ic">⋯</span>More</a>
     </nav>
   </div>

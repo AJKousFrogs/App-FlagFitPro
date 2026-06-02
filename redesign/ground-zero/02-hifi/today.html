@@ -14,19 +14,21 @@
   </div>
 
   <div class="screen">
+    <!-- NOTE: all metrics/bands/verdicts below are STATIC stand-ins. Wire to server at port; UI never re-derives them (spec §4 server-canonical). -->
     <!-- thin context strip: game + weather collapsed -->
     <div class="strip"><span>⚑ 2d → Big Bowl · 🌧️ 12°C rain · indoor advised</span><span>▾</span></div>
 
-    <!-- THE ANSWER -->
+    <!-- THE ANSWER — physio block WINS (absolute, above ACWR/weather/engine) -->
+    <!-- static stand-in; port wires plan + reason from server (never re-derive client-side) -->
     <div class="hero">
-      <div class="row"><h1>Sprint focus</h1><span class="band good">indoor</span></div>
-      <p style="margin:10px 0 0;color:var(--text)">“Your load’s in the <b style="color:var(--accent)">sweet spot (1.18)</b> and you’re <b style="color:var(--accent)">recovered (68/100)</b> — so we’re pushing sprint volume. Rain moved it indoors to keep the surface safe.”</p>
-      <div class="tiles" style="margin:18px 0"><div><b>8</b><small>RPE · hard, not max</small></div><div><b>~60</b><small>min</small></div><div><b>10</b><small>sprints</small></div></div>
+      <div class="row"><h1>Mobility + upper body</h1><span class="band danger">physio block</span></div>
+      <p style="margin:10px 0 0;color:var(--text)">“Your <b style="color:var(--danger)">right hamstring (grade 1)</b> is still healing — <b>no sprints or cuts</b> until your physio clears it. Even though your load’s in the sweet spot (1.18) and you’re recovered (68/100), the leg comes first. Here’s a safe session that keeps you moving.”</p>
+      <div class="tiles" style="margin:18px 0"><div><b>5</b><small>RPE · easy–moderate</small></div><div><b>~40</b><small>min</small></div><div><b>0</b><small>sprints</small></div></div>
       <div class="card flat" style="margin-bottom:16px">
         <div class="row" style="align-items:baseline"><b>Fuel today</b><small>for your 82kg</small></div>
-        <div class="muted" style="font-size:var(--fs-sm);margin-top:4px">490g carbs ≈ big pasta bowl + oats + 2 fruit · 148g protein ≈ chicken + shake + eggs · 2.8 L fluid</div>
+        <div class="muted" style="font-size:var(--fs-sm);margin-top:4px">Maintenance day: 330g carbs ≈ rice + oats + fruit · 148g protein ≈ chicken + shake + eggs · 2.5 L fluid</div>
       </div>
-      <a class="btn primary block">Start session →</a>
+      <a class="btn primary block">Start safe session →</a>
     </div>
 
     <!-- diagnostics below the fold -->
@@ -34,11 +36,15 @@
     <div class="card"><div class="row"><div class="inline"><span>Readiness</span><span class="band good">68 · ready</span></div><a class="faint" style="font-size:13px">breakdown →</a></div></div>
     <div class="card"><div class="row"><div class="inline"><span>Load (ACWR)</span><span class="band good">1.18 · sweet spot</span></div><a class="faint" style="font-size:13px">trend →</a></div></div>
 
+    <!-- STATE VARIANT (reference): early athlete with <21d data — guarded, no fake number -->
+    <div class="card flat"><div class="row"><span>Load (ACWR)</span><span class="band neutral">building · 12/21 days</span></div>
+      <div style="height:6px;border-radius:var(--r-pill);background:var(--surface-2);overflow:hidden;margin-top:8px"><div style="height:6px;width:57%;background:var(--accent)"></div></div></div>
+
     <div class="card flat"><div class="row"><span>Were you at Spring Cup? <small>last wknd</small></span><a class="btn secondary sm">Log</a></div></div>
   </div>
 
   <nav class="tabbar">
-    <a class="active"><span class="ic">▦</span>Today</a><a><span class="ic">⚡</span>Training</a>
+    <a class="active" aria-current="page"><span class="ic">▦</span>Today</a><a><span class="ic">⚡</span>Training</a>
     <a><span class="ic">♥</span>Wellness</a><a><span class="ic">📈</span>Stats</a><a><span class="ic">⋯</span>More</a>
   </nav>
 </div>

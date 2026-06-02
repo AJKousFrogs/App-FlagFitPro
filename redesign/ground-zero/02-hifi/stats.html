@@ -9,14 +9,16 @@
   <div class="topbar"><div><div class="eyebrow">Last 28 days</div><h1 style="font-size:21px">Stats</h1></div>
     <div class="inline"><span class="icon-btn">🔔<span class="dot"></span></span><span class="avatar">AK</span></div></div>
   <div class="screen">
+    <!-- NOTE: all metrics/bands/verdicts below are STATIC stand-ins. Wire to server at port; UI never re-derives them (spec §4 server-canonical). -->
     <div class="section-h"><h2>Load (ACWR)</h2></div>
     <div class="hero">
       <div class="row"><span class="band good">1.18 · Sweet spot</span><small>lowest injury risk</small></div>
       <svg width="100%" height="120" viewBox="0 0 360 120" preserveAspectRatio="none" style="margin-top:12px">
-        <rect x="0" y="46" width="360" height="38" fill="var(--good-soft)"/><text x="6" y="60" font-size="10" fill="var(--text-faint)">sweet 0.8–1.3</text>
-        <line x1="0" y1="28" x2="360" y2="28" stroke="var(--danger)" stroke-dasharray="5 3" opacity=".7"/><text x="6" y="24" font-size="10" fill="var(--text-faint)">danger 1.5</text>
-        <polyline fill="none" stroke="var(--accent)" stroke-width="2.5" points="0,72 50,64 100,58 150,55 200,60 250,52 300,57 359,59"/>
-        <circle cx="359" cy="59" r="4" fill="var(--accent)"/>
+        <!-- shared ACWR y-scale: y = 110 − (acwr/2)·100 → danger 1.5=y35, band 1.3–0.8=y45..70 -->
+        <rect x="0" y="45" width="360" height="25" fill="var(--good-soft)"/><text x="6" y="59" font-size="10" fill="var(--text-faint)">sweet 0.8–1.3</text>
+        <line x1="0" y1="35" x2="360" y2="35" stroke="var(--danger)" stroke-dasharray="5 3" opacity=".7"/><text x="6" y="31" font-size="10" fill="var(--text-faint)">danger 1.5</text>
+        <polyline fill="none" stroke="var(--accent)" stroke-width="2.5" points="0,64 51,58 103,54 154,52 206,56 257,50 309,55 359,53"/>
+        <circle cx="359" cy="53" r="4" fill="var(--accent)"/>
       </svg>
     </div>
 
@@ -37,10 +39,18 @@
       <div class="lrow"><span>Sessions / wk</span><span>4</span></div>
     </div>
     <a class="btn ghost block" href="#">Full dashboard →</a>
+
+    <!-- STATE VARIANT (reference) — when <21 days of load data, show progress, NOT a fake ratio -->
+    <div class="section-h"><h2>State variant · insufficient data</h2></div>
+    <div class="empty">
+      <b style="color:var(--text)">ACWR — building up</b>
+      <div style="height:8px;border-radius:var(--r-pill);background:var(--surface-2);overflow:hidden;margin:10px 0 6px"><div style="height:8px;width:57%;background:var(--accent)"></div></div>
+      12 / 21 days logged · keep training and it’ll appear. <small>(null ≠ low — we never show a fake “under-training”.)</small>
+    </div>
   </div>
   <nav class="tabbar">
     <a><span class="ic">▦</span>Today</a><a><span class="ic">⚡</span>Training</a>
-    <a><span class="ic">♥</span>Wellness</a><a class="active"><span class="ic">📈</span>Stats</a><a><span class="ic">⋯</span>More</a>
+    <a><span class="ic">♥</span>Wellness</a><a class="active" aria-current="page"><span class="ic">📈</span>Stats</a><a><span class="ic">⋯</span>More</a>
   </nav>
 </div>
 </body></html>

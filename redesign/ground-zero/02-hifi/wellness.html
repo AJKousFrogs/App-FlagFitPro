@@ -11,14 +11,15 @@
     <div class="inline"><span class="icon-btn">🔔<span class="dot"></span></span><span class="avatar">AK</span></div>
   </div>
   <div class="screen">
+    <!-- NOTE: all metrics/bands/verdicts below are STATIC stand-ins. Wire to server at port; UI never re-derives them (spec §4 server-canonical). -->
     <div class="section-h"><h2>How do you feel?</h2></div>
     <div class="card stack">
-      <div class="slider"><label>Sleep quality</label><div class="track" style="--v:70%"></div><span class="val">7</span></div>
-      <div class="slider"><label>Sleep hours</label><div class="track" style="--v:75%"></div><span class="val">7.5</span></div>
-      <div class="slider"><label>Soreness</label><div class="track" style="--v:40%"></div><span class="val">4</span></div>
-      <div class="slider"><label>Energy</label><div class="track" style="--v:60%"></div><span class="val">6</span></div>
-      <div class="slider"><label>Mood</label><div class="track" style="--v:70%"></div><span class="val">7</span></div>
-      <div class="slider"><label>Stress</label><div class="track" style="--v:30%"></div><span class="val">3</span></div>
+      <div class="slider"><label for="sq">Sleep quality</label><input class="rng" id="sq" type="range" min="1" max="10" value="7" aria-label="Sleep quality 1 to 10"><span class="val" aria-hidden="true">7</span></div>
+      <div class="slider"><label for="sh">Sleep hours</label><input class="rng" id="sh" type="range" min="0" max="12" step="0.5" value="7.5" aria-label="Sleep hours 0 to 12"><span class="val" aria-hidden="true">7.5</span></div>
+      <div class="slider"><label for="so">Soreness</label><input class="rng" id="so" type="range" min="1" max="10" value="4" aria-label="Soreness 1 to 10"><span class="val" aria-hidden="true">4</span></div>
+      <div class="slider"><label for="en">Energy</label><input class="rng" id="en" type="range" min="1" max="10" value="6" aria-label="Energy 1 to 10"><span class="val" aria-hidden="true">6</span></div>
+      <div class="slider"><label for="mo">Mood</label><input class="rng" id="mo" type="range" min="1" max="10" value="7" aria-label="Mood 1 to 10"><span class="val" aria-hidden="true">7</span></div>
+      <div class="slider"><label for="st">Stress</label><input class="rng" id="st" type="range" min="1" max="10" value="3" aria-label="Stress 1 to 10"><span class="val" aria-hidden="true">3</span></div>
       <a class="btn primary block">Submit check-in</a>
     </div>
 
@@ -37,7 +38,7 @@
   </div>
   <nav class="tabbar">
     <a><span class="ic">▦</span>Today</a><a><span class="ic">⚡</span>Training</a>
-    <a class="active"><span class="ic">♥</span>Wellness</a><a><span class="ic">📈</span>Stats</a><a><span class="ic">⋯</span>More</a>
+    <a class="active" aria-current="page"><span class="ic">♥</span>Wellness</a><a><span class="ic">📈</span>Stats</a><a><span class="ic">⋯</span>More</a>
   </nav>
 </div>
 </body></html>

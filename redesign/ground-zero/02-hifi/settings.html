@@ -3,9 +3,13 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>FlagFit — Settings (hi-fi)</title>
 <link rel="stylesheet" href="../01-system/system.css">
-<style>.sw{width:42px;height:24px;border-radius:var(--r-pill);background:var(--surface-2);position:relative;display:inline-block}
-.sw::after{content:"";position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:var(--r-pill);background:var(--text-faint)}
-.sw.on{background:var(--accent)}.sw.on::after{left:21px;background:var(--on-accent)}
+<style>/* switch = real role=switch button, 44px tap target, focusable */
+.sw{appearance:none;-webkit-appearance:none;border:0;background:none;width:52px;height:44px;position:relative;cursor:pointer;padding:0}
+.sw::before{content:"";position:absolute;top:10px;left:5px;width:42px;height:24px;border-radius:var(--r-pill);background:var(--surface-2)}
+.sw::after{content:"";position:absolute;top:13px;left:8px;width:18px;height:18px;border-radius:var(--r-pill);background:var(--text-faint);transition:left var(--t-fast) var(--ease)}
+.sw[aria-checked="true"]::before{background:var(--accent)}
+.sw[aria-checked="true"]::after{left:29px;background:var(--on-accent)}
+.sw:focus-visible{outline:none}.sw:focus-visible::before{box-shadow:var(--focus)}
 .tabs{display:flex;gap:16px;border-bottom:1px solid var(--border-soft);padding-bottom:8px;font-size:14px;font-weight:600}
 .tabs a{color:var(--text-faint)}.tabs a.on{color:var(--text-strong);border-bottom:2px solid var(--accent);padding-bottom:8px}</style></head>
 <body>
@@ -16,16 +20,16 @@
     <div class="tabs"><a class="on">Notifications</a><a>Privacy</a><a>Prefs</a><a>Security</a></div>
     <div class="section-h"><h2>Notifications</h2></div>
     <div class="card">
-      <div class="lrow"><span>Training reminders</span><span class="sw on"></span></div>
-      <div class="lrow"><span>Game-day alerts</span><span class="sw on"></span></div>
-      <div class="lrow"><span>ACWR / safety alerts</span><span class="sw on"></span></div>
-      <div class="lrow"><span>Coach messages</span><span class="sw on"></span></div>
+      <div class="lrow"><span id="l-tr">Training reminders</span><button class="sw" role="switch" aria-checked="true" aria-labelledby="l-tr"></button></div>
+      <div class="lrow"><span id="l-gd">Game-day alerts</span><button class="sw" role="switch" aria-checked="true" aria-labelledby="l-gd"></button></div>
+      <div class="lrow"><span id="l-ac">ACWR / safety alerts</span><button class="sw" role="switch" aria-checked="true" aria-labelledby="l-ac"></button></div>
+      <div class="lrow"><span id="l-cm">Coach messages</span><button class="sw" role="switch" aria-checked="true" aria-labelledby="l-cm"></button></div>
     </div>
     <div class="section-h"><h2>Privacy &amp; consent</h2></div>
     <div class="card">
-      <div class="lrow"><span>AI personalisation (Merlin)</span><span class="sw"></span></div>
-      <div class="lrow"><span>Share performance with coaches</span><span class="sw on"></span></div>
-      <div class="lrow"><span>Share health with medical staff</span><span class="sw"></span></div>
+      <div class="lrow"><span id="l-ai">AI personalisation (Merlin)</span><button class="sw" role="switch" aria-checked="false" aria-labelledby="l-ai"></button></div>
+      <div class="lrow"><span id="l-sp">Share performance with coaches</span><button class="sw" role="switch" aria-checked="true" aria-labelledby="l-sp"></button></div>
+      <div class="lrow"><span id="l-sh">Share health with medical staff</span><button class="sw" role="switch" aria-checked="false" aria-labelledby="l-sh"></button></div>
     </div>
     <div class="section-h"><h2>Account</h2></div>
     <div class="card">
@@ -33,6 +37,6 @@
       <div class="lrow"><span style="color:var(--danger)">Delete account &amp; data</span><span class="faint">›</span></div>
     </div>
   </div>
-  <nav class="tabbar"><a><span class="ic">▦</span>Today</a><a><span class="ic">⚡</span>Training</a><a><span class="ic">♥</span>Wellness</a><a><span class="ic">📈</span>Stats</a><a class="active"><span class="ic">⋯</span>More</a></nav>
+  <nav class="tabbar"><a><span class="ic">▦</span>Today</a><a><span class="ic">⚡</span>Training</a><a><span class="ic">♥</span>Wellness</a><a><span class="ic">📈</span>Stats</a><a class="active" aria-current="page"><span class="ic">⋯</span>More</a></nav>
 </div>
 </body></html>
