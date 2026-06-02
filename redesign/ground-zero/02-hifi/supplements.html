@@ -20,9 +20,9 @@
     <!-- today's log (mirrors the daily check-in) -->
     <div class="section-h"><h2>Today</h2></div>
     <div class="card">
-      <div class="lrow"><span id="t-cr">Creatine <small>5 g</small></span><button class="sw" role="switch" aria-checked="true" aria-labelledby="t-cr"></button></div>
-      <div class="lrow"><span id="t-cf">Caffeine <small>200 mg · pre-session</small></span><button class="sw" role="switch" aria-checked="true" aria-labelledby="t-cf"></button></div>
-      <div class="lrow"><span id="t-ba">Beta-alanine <small>4 g</small></span><button class="sw" role="switch" aria-checked="false" aria-labelledby="t-ba"></button></div>
+      <div class="lrow"><span id="t-cr"><iconify-icon icon="mdi:lightning-bolt" class="suppi"></iconify-icon>Creatine <small>5 g</small></span><button class="sw" role="switch" aria-checked="true" aria-labelledby="t-cr"></button></div>
+      <div class="lrow"><span id="t-cf"><iconify-icon icon="mdi:coffee" class="suppi"></iconify-icon>Caffeine <small>200 mg · pre-session</small></span><button class="sw" role="switch" aria-checked="true" aria-labelledby="t-cf"></button></div>
+      <div class="lrow"><span id="t-ba"><iconify-icon icon="mdi:shield-half-full" class="suppi"></iconify-icon>Beta-alanine <small>4 g</small></span><button class="sw" role="switch" aria-checked="false" aria-labelledby="t-ba"></button></div>
       <a class="btn ghost block sm" style="margin-top:8px"><i data-lucide="plus"></i> Add supplement</a>
     </div>
 
@@ -39,13 +39,14 @@
     <!-- the stack: evidence + dose + caution -->
     <div class="section-h"><h2>Your stack</h2></div>
     <div class="card">
-      <div class="lrow"><div><b>Creatine</b><div class="muted" style="font-size:var(--fs-sm)">repeated-sprint power · 3–5 g/day · +1–2 kg water</div></div><span class="band good">daily</span></div>
-      <div class="lrow"><div><b>Caffeine</b><div class="muted" style="font-size:var(--fs-sm)">↓RPE, ↑power · 3–6 mg/kg pre · watch sleep</div></div><span class="band info">pre-session</span></div>
-      <div class="lrow"><div><b>Beta-alanine</b><div class="muted" style="font-size:var(--fs-sm)">buffer repeated efforts · 3–6 g/day · may tingle</div></div><span class="band neutral">optional</span></div>
+      <div class="lrow"><div><b><iconify-icon icon="mdi:lightning-bolt" class="suppi"></iconify-icon>Creatine</b><div class="muted" style="font-size:var(--fs-sm)">repeated-sprint power · 3–5 g/day · +1–2 kg water</div></div><span class="band good">daily</span></div>
+      <div class="lrow"><div><b><iconify-icon icon="mdi:coffee" class="suppi"></iconify-icon>Caffeine</b><div class="muted" style="font-size:var(--fs-sm)">↓RPE, ↑power · 3–6 mg/kg pre · watch sleep</div></div><span class="band info">pre-session</span></div>
+      <div class="lrow"><div><b><iconify-icon icon="mdi:shield-half-full" class="suppi"></iconify-icon>Beta-alanine</b><div class="muted" style="font-size:var(--fs-sm)">buffer repeated efforts · 3–6 g/day · may tingle</div></div><span class="band neutral">optional</span></div>
     </div>
     <p class="note">Evidence: IOC consensus A-list + ISSN positions. Health-adjacent → consent-gated for coaches. See SUPPLEMENTS_LOGIC.md.</p>
   </div>
   <nav class="tabbar"><a><i data-lucide="home" class="ic"></i>Today</a><a><i data-lucide="dumbbell" class="ic"></i>Training</a><a><i data-lucide="heart-pulse" class="ic"></i>Wellness</a><a><i data-lucide="line-chart" class="ic"></i>Stats</a><a class="active" aria-current="page"><i data-lucide="menu" class="ic"></i>More</a></nav>
 </div>
 <script src="https://unpkg.com/lucide@latest"></script><script>lucide.createIcons();</script>
+<script src="https://code.iconify.design/iconify-icon/2.1.0/iconify-icon.min.js"></script>
 </body></html>

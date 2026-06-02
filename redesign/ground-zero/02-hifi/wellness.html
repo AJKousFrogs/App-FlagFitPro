@@ -30,9 +30,9 @@
       <div class="inline" style="gap:8px"><i data-lucide="pill"></i><small>Sprint-dense week — <b style="color:var(--text)">creatine</b> recommended for your repeated-sprint load.</small></div>
     </div>
     <div class="card">
-      <div class="lrow"><span id="s-cr">Creatine <small>5 g</small></span><button class="sw" role="switch" aria-checked="true" aria-labelledby="s-cr"></button></div>
-      <div class="lrow"><span id="s-cf">Caffeine <small>200 mg · pre-session</small></span><button class="sw" role="switch" aria-checked="true" aria-labelledby="s-cf"></button></div>
-      <div class="lrow"><span id="s-ba">Beta-alanine <small>4 g</small></span><button class="sw" role="switch" aria-checked="false" aria-labelledby="s-ba"></button></div>
+      <div class="lrow"><span id="s-cr"><iconify-icon icon="mdi:lightning-bolt" class="suppi"></iconify-icon>Creatine <small>5 g</small></span><button class="sw" role="switch" aria-checked="true" aria-labelledby="s-cr"></button></div>
+      <div class="lrow"><span id="s-cf"><iconify-icon icon="mdi:coffee" class="suppi"></iconify-icon>Caffeine <small>200 mg · pre-session</small></span><button class="sw" role="switch" aria-checked="true" aria-labelledby="s-cf"></button></div>
+      <div class="lrow"><span id="s-ba"><iconify-icon icon="mdi:shield-half-full" class="suppi"></iconify-icon>Beta-alanine <small>4 g</small></span><button class="sw" role="switch" aria-checked="false" aria-labelledby="s-ba"></button></div>
       <p class="note">Daily log → <code>supplement_logs</code> (POST /api/supplements to build). Caffeine pre-session flags today's RPE/load as lower-confidence — see SUPPLEMENTS_LOGIC.md.</p>
     </div>
 
@@ -56,4 +56,5 @@
   </nav>
 </div>
 <script src="https://unpkg.com/lucide@latest"></script><script>lucide.createIcons();</script>
+<script src="https://code.iconify.design/iconify-icon/2.1.0/iconify-icon.min.js"></script>
 </body></html>
