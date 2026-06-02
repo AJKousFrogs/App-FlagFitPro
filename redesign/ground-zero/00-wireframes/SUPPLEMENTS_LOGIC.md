@@ -25,10 +25,15 @@ date, time_of_day, notes }`. One row per supplement per day:
 - **Beta-alanine** — taken ✓/✗, dose, daily.
 - (extensible: nitrate/beetroot, bicarbonate, protein, vit-D, omega-3.)
 
-⚠ **Write path to build:** `supplement_logs` is currently read-only in code (no
-insert endpoint). Add `POST /api/supplements` (upsert a day's rows) + GET
-(today + history). Health-adjacent → consent-gated for coach visibility like
-wellness.
+✅ **Write path BUILT (2026-06-02):** `POST /api/supplements` upserts a day's rows
+into `supplement_logs`, idempotent on `(user_id, supplement_name, date)` (added a
+unique constraint + deduped the table). Accepts the daily-log batch
+`{ date?, supplements: [{ name, taken, dosage?, timeOfDay?, notes? }] }` or a
+single item; toggling a switch on/off updates the same row instead of stacking
+duplicates. Legacy `POST /api/supplements/log` is retained (now also upserts).
+Reads already existed: GET `/api/supplements` (today's status), `/logs`, `/recent`.
+Health-adjacent → consent-gated for coach visibility like wellness. (The AI reads
+logs but never writes dosing — unchanged.)
 
 ## How the engine uses it (context layer — NOT an ACWR input)
 

@@ -121,7 +121,7 @@ water weight so the bodyweight trend + per-kg nutrition stay honest.
 | Record post-event participation (attended? games? minutes? RPE?) | POST `/api/event-participation` | RPC **`record_event_participation`** → writes a `session_type='competition'` row in **`training_sessions`** (feeds ACWR) |
 | Log hydration | POST `/api/hydration/log` | insert **`athlete_hydration_logs`** |
 | RSVP to a competition event | POST `/api/event-availability` `{competitionEventId,status,reason?}` | RPC `set_event_availability` → upsert **`event_availability`** |
-| Log today's supplements (daily, in check-in) | POST `/api/supplements` *(to build — table is read-only today)* | upsert **`supplement_logs`** (row/supplement/day: name, dosage, taken, time_of_day) |
+| Log today's supplements (daily, in check-in) | POST `/api/supplements` ✅ **BUILT** (2026-06-02) | upsert **`supplement_logs`** keyed on (user_id, supplement_name, date): name, dosage, taken, time_of_day, notes. Idempotent daily toggle; accepts `{date?, supplements:[…]}` batch or a single item. Legacy `POST /api/supplements/log` kept (now also upserts). |
 
 ### Training
 | CTA | Endpoint | Saves to |

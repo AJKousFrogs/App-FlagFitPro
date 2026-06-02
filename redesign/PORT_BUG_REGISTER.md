@@ -55,6 +55,7 @@ None are user-facing now (UI demolished). The one safe fix found —
 | Equipment | equipment.js | `equipment_items`, `equipment_assignments` | ⚠ also unrouted — `/api/equipment`→team.js (404) |
 | Depth chart | depth-chart.js | `depth_chart_templates`, `depth_chart_entries`, `depth_chart_history` | routed (roster.js) |
 | Scouting | scouting.js | `scouting_reports` (live has different `opponent_analysis`) | routed |
+| Custom supplement list | supplements.js (`getUserSupplements`) | `user_supplements` (active/name/dosage/timing/category) — never created; query swallowed in try/catch → always returns `[]`, frontend falls back to default supplement list | routed (supplements.js); **write path `POST /api/supplements` BUILT 2026-06-02** against `supplement_logs` (the *daily log* — unaffected). Only the *custom user list* table is missing; build `user_supplements` if/when users curate their own stack. |
 | Staff psychology | staff-psychology.js | `mental_wellness_reports`, `psychological_assessments`, `mental_performance_logs` | routed (staff.js) |
 | Program cycles | program-cycles.js | `player_program_cycles`, `program_cycles` | routed (programs.js) |
 | Recovery profiles | recovery-core.js | `athlete_recovery_profiles` (spreads `...profileData`) | routed (health.js) |

@@ -17,77 +17,126 @@ const parseBoundedInt = (value, fieldName, { min, max }) => {
   return parsed;
 };
 
+const NAME_MAX = 100;
+const DOSAGE_MAX = 100;
+const TIME_OF_DAY_MAX = 50;
+const NOTES_MAX = 1000;
+const MAX_ITEMS = 50;
+
+const validationError = (message) => {
+  const error = new Error(message);
+  error.isValidation = true;
+  return error;
+};
+
+// Normalize a single supplement payload (accepts both the daily-log shape
+// {name, taken, dosage, timeOfDay} and the legacy /log shape {supplement, dose}).
+function normalizeSupplementItem(raw) {
+  if (!raw || typeof raw !== "object") {
+    throw validationError("each supplement must be an object");
+  }
+  const name = (raw.name ?? raw.supplement)?.toString().trim();
+  if (!name) throw validationError("supplement name is required");
+  if (name.length > NAME_MAX) {
+    throw validationError(`supplement name must be ${NAME_MAX} characters or less`);
+  }
+
+  const dosageRaw = raw.dosage ?? raw.dose;
+  let dosage = null;
+  if (dosageRaw !== undefined && dosageRaw !== null && dosageRaw !== "") {
+    dosage = String(dosageRaw).trim().slice(0, DOSAGE_MAX);
+  }
+
+  // taken defaults to true (a plain "I took X"); the daily toggle sends it explicitly
+  const taken = raw.taken === undefined ? true : Boolean(raw.taken);
+
+  let timeOfDay = raw.timeOfDay ?? raw.time_of_day ?? null;
+  if (timeOfDay !== null && timeOfDay !== undefined) {
+    timeOfDay = String(timeOfDay).trim().slice(0, TIME_OF_DAY_MAX) || null;
+  }
+
+  const notes = raw.notes ? String(raw.notes).slice(0, NOTES_MAX) : null;
+
+  return { name, dosage, taken, timeOfDay, notes };
+}
+
+// Resolve the log date to a YYYY-MM-DD string (defaults to today).
+function resolveLogDate(rawDate) {
+  if (!rawDate) return new Date().toISOString().split("T")[0];
+  let s = String(rawDate);
+  // tolerate a full ISO timestamp (legacy takenAt) by taking the date part
+  if (s.includes("T")) s = s.split("T")[0];
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(s)) {
+    throw validationError("date must be in YYYY-MM-DD format");
+  }
+  if (Number.isNaN(new Date(`${s}T00:00:00Z`).getTime())) {
+    throw validationError("date is not a valid calendar date");
+  }
+  return s;
+}
+
 /**
- * Log supplement usage
- * POST /api/supplements/log
- * Note: AI can read logs but never writes dosing recommendations
+ * Upsert one or more daily supplement logs.
+ * POST /api/supplements  (daily check-in: { date?, supplements: [...] } or a single item)
+ * Idempotent per (user_id, supplement_name, date) — toggling a switch on/off updates
+ * the same row instead of accumulating duplicates.
+ * Note: the athlete logs dose/timing; the engine/AI reads but never writes dosing.
  */
-async function logSupplement(userId, supplementData) {
-  try {
-    const { supplement, dose, takenAt, notes } = supplementData;
+async function upsertSupplements(userId, items, rawDate) {
+  const date = resolveLogDate(rawDate);
+  const list = (Array.isArray(items) ? items : [items]).map(normalizeSupplementItem);
 
-    // Validate required fields
-    if (
-      !supplement ||
-      typeof supplement !== "string" ||
-      supplement.trim().length === 0
-    ) {
-      const error = new Error("supplement name is required");
-      error.isValidation = true;
-      throw error;
-    }
+  if (list.length === 0) throw validationError("at least one supplement is required");
+  if (list.length > MAX_ITEMS) {
+    throw validationError(`too many supplements in one request (max ${MAX_ITEMS})`);
+  }
 
-    // Validate supplement name length
-    if (supplement.length > 100) {
-      const error = new Error("supplement name must be 100 characters or less");
-      error.isValidation = true;
-      throw error;
-    }
+  const rows = list.map((it) => ({
+    user_id: userId,
+    supplement_name: it.name,
+    dosage: it.dosage,
+    taken: it.taken,
+    date,
+    time_of_day: it.timeOfDay,
+    notes: it.notes,
+  }));
 
-    // Note: dose is optional - user logs it, but AI never recommends it
-    if (dose !== undefined && dose !== null) {
-      if (typeof dose !== "number" || dose < 0) {
-        const error = new Error("dose must be a positive number if provided");
-        error.isValidation = true;
-        throw error;
-      }
-    }
+  const { data, error } = await supabaseAdmin
+    .from("supplement_logs")
+    .upsert(rows, { onConflict: "user_id,supplement_name,date" })
+    .select();
 
-    // Parse takenAt or use current time
-    const takenAtDate = takenAt ? new Date(takenAt) : new Date();
-
-    // Insert supplement log
-    const { data, error } = await supabaseAdmin
-      .from("supplement_logs")
-      .insert({
-        user_id: userId,
-        supplement_name: supplement.trim(),
-        dosage: dose ? String(dose) : null,
-        taken: true,
-        date: takenAtDate.toISOString().split("T")[0],
-        notes: notes || null,
-        created_at: new Date().toISOString(),
-      })
-      .select()
-      .single();
-
-    if (error) {
-      console.error("Error logging supplement:", error);
-      throw error;
-    }
-
-    return {
-      id: data.id,
-      loggedAt: data.created_at,
-      supplement: data.supplement_name,
-      dose: data.dosage ?? null,
-      takenAt: data.date,
-      notes: data.notes,
-    };
-  } catch (error) {
-    console.error("Error in logSupplement:", error);
+  if (error) {
+    console.error("Error upserting supplement logs:", error);
     throw error;
   }
+
+  return {
+    date,
+    logged: data.length,
+    supplements: data.map((d) => ({
+      id: d.id,
+      supplement: d.supplement_name,
+      dosage: d.dosage ?? null,
+      taken: d.taken,
+      date: d.date,
+      timeOfDay: d.time_of_day ?? null,
+      notes: d.notes ?? null,
+    })),
+  };
+}
+
+/**
+ * Legacy single-log path. POST /api/supplements/log
+ * Kept for backward compatibility; now upserts (idempotent) like the daily log.
+ */
+async function logSupplement(userId, supplementData) {
+  const result = await upsertSupplements(
+    userId,
+    [supplementData],
+    supplementData.date ?? supplementData.takenAt,
+  );
+  return result.supplements[0];
 }
 
 /**
@@ -211,31 +260,34 @@ const handler = async (event, context) => {
     handler: async (event, context, { userId }) => {
       try {
         if (event.httpMethod === "POST") {
-          // Handle POST /api/supplements/log
-          if (path.includes("/log") || path.endsWith("/log")) {
-            let supplementData;
-            try {
-              supplementData = parseJsonObjectBody(event.body);
-            } catch (error) {
-              if (error?.message === "Request body must be an object") {
-                return createErrorResponse(
-                  "Request body must be an object",
-                  422,
-                  "validation_error",
-                );
-              }
+          let body;
+          try {
+            body = parseJsonObjectBody(event.body);
+          } catch (error) {
+            if (error?.message === "Request body must be an object") {
               return createErrorResponse(
-                "Invalid JSON in request body",
-                400,
-                "invalid_json",
+                "Request body must be an object",
+                422,
+                "validation_error",
               );
             }
+            return createErrorResponse(
+              "Invalid JSON in request body",
+              400,
+              "invalid_json",
+            );
+          }
 
-            const result = await logSupplement(userId, supplementData);
+          // POST /api/supplements/log — legacy single-log (now idempotent upsert)
+          if (path.includes("/log") || path.endsWith("/log")) {
+            const result = await logSupplement(userId, body);
             return createSuccessResponse(result, 201, "Supplement logged");
           }
 
-          return createErrorResponse("Endpoint not found", 404, "not_found");
+          // POST /api/supplements — daily log: { date?, supplements: [...] } or a single item
+          const items = Array.isArray(body.supplements) ? body.supplements : [body];
+          const result = await upsertSupplements(userId, items, body.date);
+          return createSuccessResponse(result, 200, "Supplements logged");
         }
 
         // Handle GET requests

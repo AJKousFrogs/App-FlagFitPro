@@ -20,6 +20,12 @@ function createFakeSupabase() {
       return this;
     }
 
+    upsert(payload) {
+      this.mode = "upsert";
+      this.payload = payload;
+      return this;
+    }
+
     eq(field, value) {
       this.filters.push({ type: "eq", field, value });
       return this;
@@ -65,6 +71,14 @@ function createFakeSupabase() {
     }
 
     runList() {
+      if (this.table === "supplement_logs" && this.mode === "upsert") {
+        const rows = Array.isArray(this.payload) ? this.payload : [this.payload];
+        return {
+          data: rows.map((r, i) => ({ id: `log-${i + 1}`, ...r })),
+          error: null,
+        };
+      }
+
       if (this.table === "supplement_logs") {
         return {
           data: [
@@ -129,7 +143,7 @@ describe("supplements validation and mapping", () => {
     expect(payload.error?.message).toContain("limit must be an integer between 1 and 200");
   });
 
-  it("returns normalized fields for supplement log create", async () => {
+  it("returns normalized fields for legacy single supplement log (now idempotent upsert)", async () => {
     const response = await handler(
       {
         httpMethod: "POST",
@@ -148,7 +162,53 @@ describe("supplements validation and mapping", () => {
     expect(response.statusCode).toBe(201);
     const payload = JSON.parse(response.body);
     expect(payload.data.supplement).toBe("Creatine");
-    expect(payload.data.dose).toBe("5");
-    expect(payload.data.takenAt).toBe("2026-02-13");
+    expect(payload.data.dosage).toBe("5");
+    expect(payload.data.taken).toBe(true);
+    expect(payload.data.date).toBe("2026-02-13");
+  });
+
+  it("upserts a batch daily log (POST /api/supplements) and echoes taken/timing", async () => {
+    const response = await handler(
+      {
+        httpMethod: "POST",
+        path: "/.netlify/functions/supplements",
+        headers: { authorization: "Bearer test-token" },
+        body: JSON.stringify({
+          date: "2026-02-13",
+          supplements: [
+            { name: "Creatine", taken: true, dosage: "5 g" },
+            { name: "Caffeine", taken: false, dosage: "200 mg", timeOfDay: "pre-session" },
+          ],
+        }),
+      },
+      {},
+    );
+
+    expect(response.statusCode).toBe(200);
+    const payload = JSON.parse(response.body);
+    expect(payload.data.logged).toBe(2);
+    expect(payload.data.date).toBe("2026-02-13");
+    expect(payload.data.supplements[0]).toMatchObject({ supplement: "Creatine", taken: true });
+    expect(payload.data.supplements[1]).toMatchObject({
+      supplement: "Caffeine",
+      taken: false,
+      timeOfDay: "pre-session",
+    });
+  });
+
+  it("rejects a daily log with a missing supplement name (422)", async () => {
+    const response = await handler(
+      {
+        httpMethod: "POST",
+        path: "/.netlify/functions/supplements",
+        headers: { authorization: "Bearer test-token" },
+        body: JSON.stringify({ supplements: [{ taken: true, dosage: "5 g" }] }),
+      },
+      {},
+    );
+
+    expect(response.statusCode).toBe(422);
+    const payload = JSON.parse(response.body);
+    expect(payload.error?.message).toContain("supplement name is required");
   });
 });
