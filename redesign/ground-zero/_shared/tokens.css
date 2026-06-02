@@ -18,6 +18,7 @@
   --c-ink-100:#B9BEC8; --c-ink-050:#E6E9EF; --c-white:#FFFFFF;
   /* brand + state */
   --c-green-500:#00E07A; --c-green-600:#00B863; --c-green-200:#15402F;
+  --c-violet-500:#8B7CFF; --c-violet-400:#A99BFF; --c-violet-200:#241F3A; /* 2nd accent for gradients */
   --c-red-500:#FF4D4D;   --c-red-200:#3A1A1E;
   --c-amber-500:#FFB020; --c-amber-200:#3A2E14;
   --c-orange-500:#FF7A3C;
@@ -63,6 +64,11 @@
   --accent-press:var(--c-green-600);
   --accent-soft:var(--c-green-200);
   --on-accent:var(--c-ink-900);
+  --accent-2:var(--c-violet-500);
+  /* brand gradient (mint → lavender) for heroes, rings, FAB, featured cards */
+  --grad-brand:linear-gradient(135deg, var(--accent) 0%, var(--accent-2) 100%);
+  --grad-brand-soft:linear-gradient(135deg, var(--accent-soft) 0%, var(--c-violet-200) 100%);
+  --grad-scrim:linear-gradient(180deg, transparent 0%, rgba(8,9,11,.15) 45%, rgba(8,9,11,.92) 100%);
 
   /* state / band colors (ACWR + readiness + safety) */
   --danger:var(--c-red-500);   --danger-soft:var(--c-red-200);

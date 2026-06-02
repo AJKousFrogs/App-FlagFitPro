@@ -65,3 +65,21 @@ what stops the per-screen drift. Derived from the core-journey wireframes.
 - **Video embed** — two presets: (a) **demo loop** (muted, inline, in exercise/
   session detail), (b) **feature player** (Film/VideoFeed + Landing hero).
 - **Hero block** — Landing/onboarding only (headline + sub + primary CTA + media).
+
+## Imagery & motion layer (added 2026-06-02 — makes it feel like an app)
+- **Photo hero** (`.hero-photo`) — full-bleed athlete photo + bottom scrim +
+  overlaid display type/CTA. Sizes: full (landing) + `.sm` (featured/"For you").
+- **Photo slot** (`.photo`) — generic image area; real `<img>` covers it, gradient
+  placeholder otherwise.
+- **Photo thumb card** (`.thumb-card` + `.thumb`) — list/progress row with a photo
+  thumbnail (drills, programs, featured).
+- **Gradient gauge** (`.gauge.grad`) — readiness ring in the brand gradient.
+- **FAB** (`.fab`) — floating quick-action (log check-in / hydration / session),
+  brand-gradient, above the tab bar on the 5 spine screens.
+- **Brand gradient** — `--grad-brand` (mint `--accent` → lavender `--accent-2`):
+  rings, FAB, featured cards, value-prop thumbs. The dark base stays; the gradient
+  is an accent, not a wash.
+
+> **Club imagery rule:** all photography is **male flag-football athletes** (this is
+> a male 16+ club). No stock fitness models / women / youth. Prototype uses labeled
+> placeholders; licensed shots go in at port.
