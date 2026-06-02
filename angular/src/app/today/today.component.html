@@ -1,0 +1,118 @@
+<header class="topbar">
+  <div>
+    <div class="eyebrow">{{ eyebrow() }}</div>
+    <h1 style="font-size:21px">{{ greeting() }}</h1>
+  </div>
+  <div class="inline">
+    <span class="icon-btn" role="button" aria-label="Notifications">
+      <lucide-icon name="bell" /><span class="dot"></span>
+    </span>
+    <span class="avatar"><img src="assets/images/rebuild/avatar.jpg" alt="Your profile" /></span>
+  </div>
+</header>
+
+<main class="screen">
+  <!-- context strip: next event + any weather adjustment -->
+  @if (nextEvent(); as ev) {
+    <div class="strip">
+      <span class="inline">
+        <lucide-icon name="flag" />
+        {{ daysToNext() }}d → {{ ev.competitionShortName || ev.competitionName }}
+        @if (weather(); as w) {
+          · <lucide-icon name="cloud-rain" /> {{ w.reason }}
+        }
+      </span>
+      <lucide-icon name="chevron-down" />
+    </div>
+  }
+
+  <!-- THE ANSWER — today's prescription (server-canonical) -->
+  @if (rx(); as p) {
+    <div class="hero">
+      <div class="row">
+        <h1>{{ p.intentLabel }}</h1>
+        @if (heroBand(); as b) {
+          <span class="band {{ b.cls }}">{{ b.label }}</span>
+        }
+      </div>
+      <p style="margin:10px 0 0;color:var(--text)">{{ p.reasoning }}</p>
+
+      <div class="tiles" style="margin:18px 0">
+        <div><b>{{ rpeLabel() }}</b><small>RPE</small></div>
+        <div><b>{{ p.targetMinutes }}</b><small>min</small></div>
+        <div><b>{{ p.sprintReps }}</b><small>sprints</small></div>
+      </div>
+
+      <!-- fuel: engine-derived macros + illustrative food chips -->
+      <div class="card flat" style="margin-bottom:16px">
+        <div class="row" style="align-items:baseline">
+          <b>Fuel today</b><small>{{ p.nutrition.rationale }}</small>
+        </div>
+        <div class="fuel-macros">
+          <div><iconify-icon icon="mdi:barley"></iconify-icon><b>{{ p.nutrition.carbsG }}g</b><small>carbs</small></div>
+          <div><iconify-icon icon="mdi:food-drumstick"></iconify-icon><b>{{ p.nutrition.proteinG }}g</b><small>protein</small></div>
+          <div><iconify-icon icon="mdi:cup-water"></iconify-icon><b>{{ p.nutrition.hydrationL }}L</b><small>fluid</small></div>
+        </div>
+        <div class="fuel-foods">
+          <span class="foodchip"><iconify-icon icon="mdi:rice"></iconify-icon>rice</span>
+          <span class="foodchip"><iconify-icon icon="mdi:barley"></iconify-icon>oats</span>
+          <span class="foodchip"><iconify-icon icon="mdi:food-apple"></iconify-icon>fruit</span>
+          <span class="foodchip"><iconify-icon icon="mdi:food-drumstick"></iconify-icon>chicken</span>
+          <span class="foodchip"><iconify-icon icon="mdi:cup"></iconify-icon>shake</span>
+          <span class="foodchip"><iconify-icon icon="mdi:egg"></iconify-icon>eggs</span>
+        </div>
+      </div>
+
+      <!-- session video (poster stands in; real embed at the media wiring step) -->
+      <div class="video" style="margin-bottom:14px">
+        <img src="assets/images/rebuild/video-session.jpg" alt="" />
+        <button class="play" type="button" aria-label="Play session video">
+          <lucide-icon name="play" />
+        </button>
+        <span class="vtitle">Watch today's session</span>
+        <span class="duration">18:30</span>
+      </div>
+
+      <a class="btn primary block" routerLink="/training">Start session →</a>
+    </div>
+  } @else {
+    <!-- data-state: no plan yet (no schedule / not logged in) -->
+    <div class="empty">
+      <p style="margin:0 0 12px">No plan yet. Log today's wellness check-in and we'll
+        calculate your readiness and what to train.</p>
+      <a class="btn primary" routerLink="/wellness">Check in →</a>
+    </div>
+  }
+
+  <!-- diagnostics below the fold -->
+  <div class="section-h"><h2>How you're tracking</h2></div>
+
+  <div class="card">
+    <div class="row">
+      <div class="inline">
+        <span>Readiness</span>
+        @if (readinessBand(); as b) {
+          <span class="band {{ b.cls }}">{{ b.label }}</span>
+        } @else {
+          <span class="band neutral">not logged today</span>
+        }
+      </div>
+      <a class="faint" style="font-size:13px" routerLink="/wellness">breakdown →</a>
+    </div>
+  </div>
+
+  @if (acwrBand(); as b) {
+    <div class="card">
+      <div class="row">
+        <div class="inline"><span>Load (ACWR)</span><span class="band {{ b.cls }}">{{ b.label }}</span></div>
+        <a class="faint" style="font-size:13px" routerLink="/stats">trend →</a>
+      </div>
+    </div>
+  } @else {
+    <!-- insufficient history: guarded, no fake number -->
+    <div class="card flat">
+      <div class="row"><span>Load (ACWR)</span><span class="band neutral">building · need ~21 days</span></div>
+      <p class="note" style="margin-top:8px">Keep logging sessions — a reliable ratio needs ~21 days &amp; 12 sessions.</p>
+    </div>
+  }
+</main>

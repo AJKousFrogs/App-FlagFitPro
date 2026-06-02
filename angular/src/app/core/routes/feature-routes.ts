@@ -13,7 +13,13 @@ export const featureRoutes: Routes = [
     path: "",
     component: ShellComponent,
     children: [
-      { path: "", pathMatch: "full", redirectTo: "gallery" },
+      { path: "", pathMatch: "full", redirectTo: "today" },
+      {
+        path: "today",
+        loadComponent: () =>
+          import("../../today/today.component").then((m) => m.TodayComponent),
+        title: "Today · FlagFit",
+      },
       {
         path: "gallery",
         loadComponent: () =>
