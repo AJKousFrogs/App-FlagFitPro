@@ -78,7 +78,9 @@
 
   /* ---- chips / bands ---- */
   .chip { display: inline-flex; align-items: center; gap: 6px; font-size: var(--fs-xs); font-weight: var(--fw-semi);
-    padding: 4px 10px; border-radius: var(--r-pill); background: var(--surface-2); color: var(--text-muted); border: 1px solid var(--border-soft); }
+    padding: 4px 10px; border-radius: var(--r-pill); background: var(--surface-2); color: var(--text-muted); border: 1px solid var(--border-soft);
+    cursor: pointer; }
+  .chip.sel { background: var(--accent-soft); color: var(--accent); border-color: var(--accent); }  /* selected (filters, format, equipment) */
   .band { display: inline-flex; align-items: center; gap: 5px; font-size: var(--fs-xs); font-weight: var(--fw-bold);
     padding: 4px 10px; border-radius: var(--r-pill); white-space: nowrap; flex: none; }
   .band::before { font-size: 9px; line-height: 1; }

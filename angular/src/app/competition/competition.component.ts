@@ -50,6 +50,15 @@ export class CompetitionComponent {
   readonly avgRpe = signal(8);
   readonly logged = signal(false);
 
+  // Game format → per-game minutes. This is what makes 2x12 vs 2x20 vs 2x40 load
+  // honest (a flat 40-min/game otherwise mis-scores short and World-champ formats).
+  readonly formats = [
+    { label: "2 × 12 min", min: 24 },
+    { label: "2 × 20 min", min: 40 },
+    { label: "2 × 40 min", min: 80 },
+  ] as const;
+  readonly minutesPerGame = signal(40);
+
   constructor() {
     this.api.get<{ events?: PendingEvent[] } | PendingEvent[]>("/api/event-participation").subscribe({
       next: (res) => {
@@ -81,6 +90,8 @@ export class CompetitionComponent {
         attended: true,
         gamesPlayed: this.games(),
         avgRpe: this.avgRpe(),
+        // real minutes from the chosen format → correct competition load
+        totalMinutes: this.games() * this.minutesPerGame(),
       })
       .subscribe({ error: (e) => this.logger.error("participation_failed", e) });
   }

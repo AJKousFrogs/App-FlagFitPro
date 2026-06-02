@@ -53,6 +53,15 @@
     <div class="card">
       <b>{{ pending()[0].competition_name || "Last event" }} <small>recently</small></b>
       <p class="muted" style="font-size:var(--fs-sm)">You were rostered for {{ pendingGamesExpected() }} games. How many did you play?</p>
+      <div style="margin:8px 0">
+        <label style="font-size:var(--fs-sm);color:var(--text-muted);display:block;margin-bottom:6px">Game format</label>
+        <div class="inline" style="flex-wrap:wrap;gap:8px">
+          @for (f of formats; track f.min) {
+            <button type="button" class="chip" [class.sel]="minutesPerGame() === f.min"
+                    (click)="minutesPerGame.set(f.min)">{{ f.label }}</button>
+          }
+        </div>
+      </div>
       <div class="slider">
         <label for="gp">Games</label>
         <input class="rng" id="gp" type="range" min="0" [max]="pendingGamesExpected()" [value]="games()"
