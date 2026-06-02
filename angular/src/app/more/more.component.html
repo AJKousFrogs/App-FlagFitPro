@@ -1,0 +1,54 @@
+<header class="topbar">
+  <div><h1 style="font-size:21px">More</h1></div>
+  <div class="inline">
+    <span class="icon-btn" role="button" aria-label="Notifications">
+      <lucide-icon name="bell" /><span class="dot"></span>
+    </span>
+    <span class="avatar"><img src="assets/images/rebuild/avatar.jpg" alt="Your profile" /></span>
+  </div>
+</header>
+
+<main class="screen">
+  <div class="screen-hero">
+    <img src="assets/images/rebuild/hero-team.jpg" alt="Ljubljana Frogs" />
+    <div class="scrim"></div>
+    <div class="content"><div class="eyebrow">{{ identity() }}</div><h2>Your hub</h2></div>
+  </div>
+
+  <div class="section-h"><h2>Compete</h2></div>
+  <div class="card">
+    <div class="lrow"><span class="inline"><lucide-icon name="trophy" /> Competition</span><small>events · RSVP · actuals</small></div>
+    <div class="lrow"><span class="inline"><lucide-icon name="flag" /> Game day</span><small>readiness + fueling</small></div>
+    <div class="lrow"><span class="inline"><lucide-icon name="users" /> Team / Roster</span><span class="faint">›</span></div>
+    <div class="lrow"><span class="inline"><lucide-icon name="message-circle" /> Team chat</span><span class="faint">›</span></div>
+  </div>
+
+  <div class="section-h"><h2>Recovery &amp; health</h2></div>
+  <div class="card">
+    <a class="lrow" routerLink="/stats" style="color:inherit">
+      <span class="inline"><lucide-icon name="bar-chart-3" /> Load / ACWR</span>
+      @if (acwrBand(); as b) { <span class="band {{ b.cls }}">{{ b.label }}</span> }
+      @else { <span class="faint">›</span> }
+    </a>
+    <div class="lrow"><span class="inline"><lucide-icon name="activity" /> Return to play</span><span class="faint">›</span></div>
+    <div class="lrow"><span class="inline"><lucide-icon name="moon" /> Sleep debt</span><span class="faint">›</span></div>
+    <div class="lrow"><span class="inline"><lucide-icon name="pill" /> Supplements</span><span class="faint">›</span></div>
+  </div>
+
+  <div class="section-h"><h2>Tools</h2></div>
+  <div class="card">
+    <div class="lrow"><span class="inline"><lucide-icon name="sparkles" /> Merlin AI</span><small>context-aware coach</small></div>
+    <div class="lrow"><span class="inline"><lucide-icon name="book-open" /> Knowledge</span><span class="faint">›</span></div>
+    <div class="lrow"><span class="inline"><lucide-icon name="file-text" /> Reports</span><span class="faint">›</span></div>
+  </div>
+
+  <div class="section-h"><h2>Me</h2></div>
+  <div class="card">
+    <div class="lrow"><span class="inline"><lucide-icon name="user" /> Profile</span><span class="faint">›</span></div>
+    <div class="lrow"><span class="inline"><lucide-icon name="medal" /> Achievements</span><span class="faint">›</span></div>
+    <div class="lrow"><span class="inline"><lucide-icon name="bell" /> Notifications</span><span class="faint">›</span></div>
+    <div class="lrow"><span class="inline"><lucide-icon name="settings" /> Settings</span><span class="faint">›</span></div>
+  </div>
+
+  <p class="note">More sections activate as their screens are rebuilt after the core-journey review.</p>
+</main>

@@ -28,6 +28,17 @@ import {
   Check,
   Coffee,
   ShieldHalf,
+  Trophy,
+  Users,
+  MessageCircle,
+  BarChart3,
+  Sparkles,
+  BookOpen,
+  FileText,
+  User,
+  Medal,
+  Flame,
+  Settings,
 } from "lucide-angular";
 import { provideClientHydration } from "@angular/platform-browser";
 import { provideAnimations } from "@angular/platform-browser/animations";
@@ -74,6 +85,8 @@ export const appConfig: ApplicationConfig = {
         Home, Dumbbell, HeartPulse, LineChart, Menu, Plus, Bell, Flag,
         CloudRain, Play, Info, Pill, ArrowUpRight, ChevronDown, ChevronRight,
         Droplet, Moon, Activity, Check, Coffee, ShieldHalf,
+        Trophy, Users, MessageCircle, BarChart3, Sparkles, BookOpen, FileText,
+        User, Medal, Flame, Settings,
       }),
     ),
 

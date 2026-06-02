@@ -39,6 +39,12 @@ export const featureRoutes: Routes = [
         title: "Stats · FlagFit",
       },
       {
+        path: "more",
+        loadComponent: () =>
+          import("../../more/more.component").then((m) => m.MoreComponent),
+        title: "More · FlagFit",
+      },
+      {
         path: "gallery",
         loadComponent: () =>
           import("../../gallery/gallery.component").then((m) => m.GalleryComponent),
