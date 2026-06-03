@@ -276,13 +276,13 @@
 
 [[redirects]]
   from = "/api/return-to-play/*"
-  to = "/.netlify/functions/health"
+  to = "/.netlify/functions/return-to-play"
   status = 200
   force = true
 
 [[redirects]]
   from = "/api/return-to-play"
-  to = "/.netlify/functions/health"
+  to = "/.netlify/functions/return-to-play"
   status = 200
   force = true
 

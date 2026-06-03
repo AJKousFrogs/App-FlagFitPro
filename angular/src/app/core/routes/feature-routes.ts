@@ -114,6 +114,12 @@ export const featureRoutes: Routes = [
         title: "Load · FlagFit",
       },
       {
+        path: "return-to-play",
+        loadComponent: () =>
+          import("../../return-to-play/return-to-play.component").then((m) => m.ReturnToPlayComponent),
+        title: "Return to play · FlagFit",
+      },
+      {
         path: "profile",
         loadComponent: () =>
           import("../../profile/profile.component").then((m) => m.ProfileComponent),

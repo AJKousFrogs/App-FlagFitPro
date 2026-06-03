@@ -40,7 +40,9 @@
       @if (acwrBand(); as b) { <span class="band {{ b.cls }}">{{ b.label }}</span> }
       @else { <span class="faint">›</span> }
     </a>
-    <div class="lrow soon"><span class="inline"><lucide-icon name="activity" /> Return to play</span><span class="band neutral">Soon</span></div>
+    <a class="lrow" routerLink="/return-to-play" style="color:inherit">
+      <span class="inline"><lucide-icon name="activity" /> Return to play</span><span class="faint">›</span>
+    </a>
     <div class="lrow soon"><span class="inline"><lucide-icon name="moon" /> Sleep debt</span><span class="band neutral">Soon</span></div>
     <a class="lrow" routerLink="/supplements" style="color:inherit">
       <span class="inline"><lucide-icon name="pill" /> Supplements</span><span class="faint">›</span>

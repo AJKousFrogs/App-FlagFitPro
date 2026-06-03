@@ -1,0 +1,95 @@
+<header class="topbar">
+  <div>
+    <div class="eyebrow">rehab &amp; recovery</div>
+    <h1 style="font-size:21px">Return to play</h1>
+  </div>
+  <a class="icon-btn" routerLink="/more" aria-label="Back"><lucide-icon name="chevron-right" style="transform:rotate(180deg)" /></a>
+</header>
+
+<main class="screen">
+  @if (toast(); as t) {
+    <div class="card" style="border-left:3px solid var(--accent)"><b class="inline"><lucide-icon name="check" /> {{ t }}</b></div>
+  }
+
+  @if (!loaded()) {
+    <div class="empty">Loading…</div>
+  } @else if (!protocol()) {
+    <div class="empty">
+      <b style="color:var(--text)">No active rehab</b>
+      <p class="note" style="margin-top:8px">You're clear — no return-to-play protocol is open. If you pick up an injury, your physio starts one here and you'll track your stages and check-ins.</p>
+    </div>
+  } @else {
+    @if (protocol(); as p) {
+      <!-- injury + progress -->
+      <div class="card stack">
+        <div class="row">
+          <div>
+            <b style="font-size:var(--fs-h3)">{{ p.injuryType || "Injury" }}@if (p.injuryLocation) { · {{ p.injuryLocation }} }</b>
+            <div class="muted" style="font-size:var(--fs-sm)">Day {{ p.daysInRecovery }} of recovery</div>
+          </div>
+          <span class="band {{ severityBand().cls }}">{{ severityBand().label }}</span>
+        </div>
+        <div class="bar"><i [style.width.%]="p.progressPercentage"></i></div>
+        <div class="row" style="font-size:var(--fs-sm)">
+          <span class="muted">Stage {{ p.currentStage }} of {{ totalStages }} · {{ stageName(p.currentStage) }}</span>
+          <span class="muted">{{ p.progressPercentage }}%</span>
+        </div>
+      </div>
+
+      <!-- key dates -->
+      <div class="card"><div class="tiles">
+        <div><b>{{ p.daysInCurrentStage }}</b><small>days this stage</small></div>
+        <div><b>{{ p.targetReturnDate || "—" }}</b><small>target return</small></div>
+        <div><b>{{ p.startDate || "—" }}</b><small>since</small></div>
+      </div></div>
+
+      <!-- stage progression -->
+      <div class="section-h"><h2>Your stages</h2></div>
+      <div class="card">
+        <div class="steps">
+          @for (s of stages; track $index; let i = $index) {
+            <div class="step" [class.done]="i + 1 < p.currentStage" [class.now]="i + 1 === p.currentStage">
+              <span class="pip">@if (i + 1 < p.currentStage) { <lucide-icon name="check" /> } @else { {{ i + 1 }} }</span>
+              <span class="lbl">{{ s }}</span>
+            </div>
+          }
+        </div>
+        <p class="note" style="margin-top:8px">Your physio advances you a stage when you're ready — keep logging how you feel below.</p>
+      </div>
+
+      <!-- physio notes -->
+      @if (p.medicalNotes) {
+        <div class="section-h"><h2>From your physio</h2></div>
+        <div class="card"><p style="margin:0;white-space:pre-wrap">{{ p.medicalNotes }}</p></div>
+      }
+
+      <!-- self-report check-in -->
+      <div class="section-h"><h2>Today's check-in</h2></div>
+      <div class="card stack">
+        <div class="slider"><label for="pain">Pain</label>
+          <input id="pain" class="rng" type="range" min="0" max="10" [value]="pain()" (input)="pain.set(+$any($event.target).value)" />
+          <span class="val">{{ pain() }}</span></div>
+        <div class="slider"><label for="conf">Confidence</label>
+          <input id="conf" class="rng" type="range" min="0" max="10" [value]="confidence()" (input)="confidence.set(+$any($event.target).value)" />
+          <span class="val">{{ confidence() }}</span></div>
+        <input class="ci-note" type="text" placeholder="How did it feel? (optional)" [value]="note()" (input)="note.set($any($event.target).value)" />
+        <button class="btn primary block" type="button" [attr.aria-disabled]="busy()" (click)="submitCheckin()">{{ busy() ? "Saving…" : "Log check-in" }}</button>
+      </div>
+
+      <!-- recent check-ins -->
+      @if (checkins().length) {
+        <div class="section-h"><h2>Recent check-ins</h2></div>
+        <div class="card">
+          @for (c of checkins(); track c.id) {
+            <div class="lrow">
+              <div>
+                <b>{{ c.date }}</b>
+                <div class="muted" style="font-size:var(--fs-sm)">Pain {{ c.painLevel }} · confidence {{ c.confidenceLevel }}@if (c.notes) { · {{ c.notes }} }</div>
+              </div>
+            </div>
+          }
+        </div>
+      }
+    }
+  }
+</main>
