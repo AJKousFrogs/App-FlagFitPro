@@ -121,6 +121,52 @@ export class SettingsComponent {
     this.photoMsg.set(msg);
   }
 
+  // account actions
+  readonly accountBusy = signal(false);
+  readonly accountMsg = signal<string | null>(null);
+  readonly confirmingDelete = signal(false);
+
+  async changePassword(): Promise<void> {
+    if (this.accountBusy()) return;
+    const email = this.supabase.currentUser()?.email;
+    if (!email) {
+      this.accountMsg.set("Sign in again to change your password.");
+      return;
+    }
+    this.accountBusy.set(true);
+    this.accountMsg.set(null);
+    try {
+      const { error } = await this.supabase.resetPassword(email);
+      if (error) throw error;
+      this.accountMsg.set(`Password reset link sent to ${email}.`);
+    } catch (err) {
+      this.logger.error("password_reset_failed", err);
+      this.accountMsg.set("Couldn't send the reset link — try again.");
+    } finally {
+      this.accountBusy.set(false);
+    }
+  }
+
+  async confirmDeletion(): Promise<void> {
+    if (this.accountBusy()) return;
+    this.accountBusy.set(true);
+    this.accountMsg.set(null);
+    try {
+      await firstValueFrom(
+        this.api.post("/api/account/delete", { confirmDelete: true }),
+      );
+      this.confirmingDelete.set(false);
+      this.accountMsg.set(
+        "Deletion scheduled. Your data is removed after a 30-day grace period — sign back in any time before then to cancel.",
+      );
+    } catch (err) {
+      this.logger.error("account_deletion_failed", err);
+      this.accountMsg.set("Couldn't schedule deletion — try again.");
+    } finally {
+      this.accountBusy.set(false);
+    }
+  }
+
   // notification prefs
   readonly trainingReminders = signal(true);
   readonly gameDayAlerts = signal(true);

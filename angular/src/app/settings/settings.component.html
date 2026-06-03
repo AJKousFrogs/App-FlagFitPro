@@ -66,7 +66,28 @@
 
   <div class="section-h"><h2>Account</h2></div>
   <div class="card">
-    <div class="lrow"><span>Change password</span><span class="faint">›</span></div>
-    <div class="lrow"><span style="color:var(--danger)">Delete account &amp; data</span><span class="faint">›</span></div>
+    <button type="button" class="lrow" style="width:100%;background:none;border:0;cursor:pointer;text-align:left;color:inherit;font:inherit"
+            [attr.aria-disabled]="accountBusy()" (click)="changePassword()">
+      <span>{{ accountBusy() ? "Working…" : "Change password" }}</span><span class="faint">›</span>
+    </button>
+    <button type="button" class="lrow" style="width:100%;background:none;border:0;cursor:pointer;text-align:left;color:inherit;font:inherit"
+            [attr.aria-disabled]="accountBusy()" (click)="confirmingDelete.set(!confirmingDelete())">
+      <span style="color:var(--danger)">Delete account &amp; data</span><span class="faint">›</span>
+    </button>
   </div>
+
+  @if (confirmingDelete()) {
+    <div class="card stack" style="border-left:3px solid var(--danger)">
+      <b style="color:var(--danger)">Delete your account &amp; data?</b>
+      <p class="note">Your account is deactivated now and permanently erased after a 30-day grace period. Sign back in before then to cancel. This affects only your data.</p>
+      <div class="inline" style="gap:8px">
+        <button class="btn danger sm" type="button" [attr.aria-disabled]="accountBusy()" (click)="confirmDeletion()">
+          {{ accountBusy() ? "Scheduling…" : "Yes, delete my account" }}
+        </button>
+        <button class="btn ghost sm" type="button" (click)="confirmingDelete.set(false)">Cancel</button>
+      </div>
+    </div>
+  }
+
+  @if (accountMsg(); as m) { <p class="note">{{ m }}</p> }
 </main>
