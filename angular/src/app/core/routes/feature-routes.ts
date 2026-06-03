@@ -132,6 +132,12 @@ export const featureRoutes: Routes = [
         title: "Roster · FlagFit",
       },
       {
+        path: "knowledge",
+        loadComponent: () =>
+          import("../../knowledge/knowledge.component").then((m) => m.KnowledgeComponent),
+        title: "Knowledge · FlagFit",
+      },
+      {
         // Built and routable, but deliberately not surfaced in nav — the team
         // uses WhatsApp. Flip the More "Team chat" row to routerLink="/team-chat"
         // to expose it.
