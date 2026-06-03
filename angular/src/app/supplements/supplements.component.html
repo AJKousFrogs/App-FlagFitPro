@@ -34,7 +34,22 @@
       <span id="t-ba"><iconify-icon icon="mdi:shield-half-full" class="suppi"></iconify-icon>Beta-alanine <small>4 g</small></span>
       <button class="sw" role="switch" [attr.aria-checked]="beta()" aria-labelledby="t-ba" (click)="toggle('beta')"></button>
     </div>
-    <button class="btn ghost block sm" type="button" style="margin-top:8px"><lucide-icon name="plus" /> Add supplement</button>
+    @for (s of added(); track s) {
+      <div class="lrow"><span><iconify-icon icon="mdi:pill" class="suppi"></iconify-icon>{{ s }}</span><span class="band good">added</span></div>
+    }
+    @if (adding()) {
+      <div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap">
+        <input type="text" placeholder="Name (e.g. Vitamin D)" [value]="newName()" (input)="newName.set($any($event.target).value)"
+               aria-label="Supplement name"
+               style="flex:2;min-width:140px;background:var(--surface-2);border:1px solid var(--border-soft);border-radius:var(--r-sm);padding:10px 12px;color:var(--text-strong);font-family:var(--font-body)" />
+        <input type="text" placeholder="Dose" [value]="newDose()" (input)="newDose.set($any($event.target).value)"
+               aria-label="Dose"
+               style="flex:1;min-width:80px;background:var(--surface-2);border:1px solid var(--border-soft);border-radius:var(--r-sm);padding:10px 12px;color:var(--text-strong);font-family:var(--font-body)" />
+        <button class="btn primary sm" type="button" (click)="saveSupplement()">Add</button>
+      </div>
+    } @else {
+      <button class="btn ghost block sm" type="button" style="margin-top:8px" (click)="adding.set(true)"><lucide-icon name="plus" /> Add supplement</button>
+    }
   </div>
 
   <!-- RPE/ACWR honesty note -->

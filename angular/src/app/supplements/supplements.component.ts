@@ -44,6 +44,29 @@ export class SupplementsComponent {
   /** creatine-taken days in the last 7 (real adherence); null until loaded. */
   readonly creatineDays = signal<number | null>(null);
 
+  // add-to-stack inline form
+  readonly adding = signal(false);
+  readonly newName = signal("");
+  readonly newDose = signal("");
+  readonly added = signal<string[]>([]);
+
+  saveSupplement(): void {
+    const name = this.newName().trim();
+    if (!name) return;
+    const dosage = this.newDose().trim();
+    this.api
+      .post("/api/supplements/stack", { name, dosage: dosage || null, active: true })
+      .subscribe({
+        next: () => {
+          this.added.update((a) => [...a, name]);
+          this.newName.set("");
+          this.newDose.set("");
+          this.adding.set(false);
+        },
+        error: (e) => this.logger.error("supplement_stack_failed", e),
+      });
+  }
+
   constructor() {
     this.api.get<{ logs?: SuppLog[] }>("/api/supplements/recent").subscribe({
       next: (res) => {
