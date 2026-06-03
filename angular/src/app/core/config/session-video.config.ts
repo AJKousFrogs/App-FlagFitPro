@@ -1,11 +1,13 @@
 /**
- * Session video source. Playback uses the YouTube IFrame Player API — only a
- * video ID is needed (no API key, no quota).
+ * Last-resort fallback for the Today session-video card. The card is fed by the
+ * real library: TodayComponent reads TrainingVideoService.forIntent(rx.intent),
+ * which resolves a YouTube ID from public.training_videos (global + team-scoped),
+ * mapped category-per-intent. The seeded global library covers every intent
+ * category, so a real, relevant video is shown in practice.
  *
- * TODO (content): replace this placeholder with the club's real videos. The
- * proper model is to assign a YouTube ID per session/exercise (coach-side) and
- * read it from the data (e.g. protocol_exercises.youtube_id). Until that's wired,
- * this constant lets the player work end-to-end; set it to `null` to show the
- * honest "video coming from your coach" poster instead.
+ * This constant only surfaces if the library genuinely fails to load (or is
+ * emptied). It is deliberately `null` — per the data-source contract we never
+ * show an unrelated demo clip as if it were the athlete's session; the player
+ * renders an honest "video coming from your coach" poster instead.
  */
-export const SESSION_VIDEO_ID: string | null = "M7lc1UVf-VE"; // placeholder demo clip
+export const SESSION_VIDEO_ID: string | null = null;
