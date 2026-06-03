@@ -1036,6 +1036,14 @@ async function handleSupplements(method, userId, body, query, _resourceId, log =
 }
 
 // Injuries Handler - Fully migrated to Supabase
+// LEGACY / UNREACHABLE: this CRUD still targets the legacy `injuries` table (empty),
+// not the consolidated clinical source athlete_injuries. It has no shipped frontend
+// caller (api.service endpoints.performanceData.injuries is defined but unused). Its
+// GET/POST/PUT stay together on `injuries` to remain read-after-write consistent. The
+// CROSS-CUTTING readers (Merlin/ai-chat, smart-training-recommendations, user-context)
+// and the data export read athlete_injuries via v_injuries_unified. Before wiring this
+// CRUD into the UI, migrate it to athlete_injuries (note: injury_grade is TEXT 'Grade
+// N', recovery_status NOT NULL — not the numeric `severity`/`status` columns used here).
 async function handleInjuries(method, userId, body, query, resourceId, log = logger) {
   switch (method) {
     case "GET": {
@@ -1497,7 +1505,11 @@ async function handleExport(userId, query, log = logger) {
         .select("*")
         .eq("user_id", userId)
         .gte("date", startDate.toISOString().split("T")[0]),
-      supabaseAdmin.from("injuries").select("*").eq("user_id", userId),
+      // Read clinical injuries via the compat view so the athlete's data export
+      // (GDPR right-to-access) reflects the single source (athlete_injuries), not the
+      // empty legacy injuries table. Mapping below uses the legacy field names the view
+      // provides; recovery_date is absent in the clinical model (tracked via phases).
+      supabaseAdmin.from("v_injuries_unified").select("*").eq("user_id", userId),
     ]);
 
     const allData = {

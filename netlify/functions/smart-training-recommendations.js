@@ -197,11 +197,16 @@ async function getUpcomingTournaments(userId, daysAhead = 30) {
  */
 async function getActiveInjuries(userId) {
   const { data: injuries } = await supabaseAdmin
-    .from("injuries")
+    // v_injuries_unified surfaces the clinical athlete_injuries rows with injury_grade
+    // mapped to the numeric 1-10 severity this module's math (worstInjury.severity / 2,
+    // >= 7, >= 4) depends on. { ascending: false } so injuries[0] is the WORST injury —
+    // postgrest ignores the prior { descending: true }, so it was keying safety cuts off
+    // the mildest active injury and under-warning athletes carrying a more severe one.
+    .from("v_injuries_unified")
     .select("*")
     .eq("user_id", userId)
     .in("status", ["active", "recovering", "monitoring"])
-    .order("severity", { descending: true });
+    .order("severity", { ascending: false });
 
   return injuries || [];
 }

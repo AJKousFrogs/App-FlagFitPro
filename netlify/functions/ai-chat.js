@@ -272,7 +272,9 @@ async function getUserContext(userId) {
 
     // 1. Get active injuries
     const { data: injuries } = await supabaseAdmin
-      .from("injuries")
+      // v_injuries_unified maps the clinical athlete_injuries table (physio-written)
+      // onto the legacy injuries column shape, incl. injury_grade → numeric severity.
+      .from("v_injuries_unified")
       .select("type:injury_type, severity, body_part, status")
       .eq("user_id", userId)
       .in("status", ["active", "recovering", "monitoring"])
@@ -1279,7 +1281,8 @@ async function buildAthleteStateGates(userId) {
     thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
 
     const { data: injuries } = await supabaseAdmin
-      .from("injuries")
+      // clinical injuries via the compat view (see safety-context read above)
+      .from("v_injuries_unified")
       .select("id, type:injury_type, severity, body_part, status, start_date:injury_date")
       .eq("user_id", userId)
       .in("status", ["active", "recovering", "monitoring"])

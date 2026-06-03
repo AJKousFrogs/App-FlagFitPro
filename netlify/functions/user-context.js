@@ -36,7 +36,8 @@ async function getUserContext(userId) {
 
     // Get injuries (active and recent)
     const { data: injuries, error: injuriesError } = await supabaseAdmin
-      .from("injuries")
+      // clinical injuries via the compat view (athlete_injuries → legacy column shape)
+      .from("v_injuries_unified")
       .select("id, type, severity, occurred_at, status, restrictions")
       .eq("user_id", userId)
       .in("status", ["active", "recovering"])
