@@ -1,7 +1,7 @@
 <header class="topbar">
   <div>
     <div class="eyebrow">game format → honest load</div>
-    <h1 style="font-size:21px">Events</h1>
+    <h1>Events</h1>
   </div>
   <span class="chip">Coach</span>
 </header>
@@ -21,7 +21,7 @@
           <b class="inline"><lucide-icon name="flag" /> {{ e.name }}</b>
           <small>{{ date(e.startsAt) }} · {{ e.games ?? "—" }} games</small>
         </div>
-        <div class="inline" style="flex-wrap:wrap;gap:8px;margin-top:10px">
+        <div class="inline" style="flex-wrap:wrap;gap:var(--s-2);margin-top:var(--s-3)">
           @for (f of formats; track f.min) {
             <button type="button" class="chip" [class.sel]="e.minutesPerGame === f.min"
                     (click)="setFormat(e, f.min, f.label)">{{ f.label }}</button>

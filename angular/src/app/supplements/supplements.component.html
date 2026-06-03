@@ -1,7 +1,7 @@
 <header class="topbar">
   <div>
     <div class="eyebrow">evidence-based · daily</div>
-    <h1 style="font-size:21px">Supplements</h1>
+    <h1>Supplements</h1>
   </div>
   <div class="inline">
     <a class="icon-btn" routerLink="/notifications" aria-label="Notifications"><lucide-icon name="bell" /><span class="dot"></span></a>
@@ -12,8 +12,8 @@
 <main class="screen">
   <!-- recommendation, proportional to load -->
   <div class="card" style="border-left:3px solid var(--accent)">
-    <div class="inline" style="gap:8px"><lucide-icon name="pill" /><b>Recommended for your week</b></div>
-    <p class="muted" style="font-size:var(--fs-sm);margin-top:6px">
+    <div class="inline" style="gap:var(--s-2)"><lucide-icon name="pill" /><b>Recommended for your week</b></div>
+    <p class="muted" style="font-size:var(--fs-sm);margin-top:var(--s-2)">
       A sprint-dense week → <b style="color:var(--text)">creatine 5 g/day</b> supports repeated-sprint
       power &amp; recovery. We recommend in proportion to your load — not a blanket push.
     </p>
@@ -38,24 +38,24 @@
       <div class="lrow"><span><iconify-icon icon="mdi:pill" class="suppi"></iconify-icon>{{ s }}</span><span class="band good">added</span></div>
     }
     @if (adding()) {
-      <div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap">
+      <div style="margin-top:var(--s-2);display:flex;gap:var(--s-2);flex-wrap:wrap">
         <input type="text" placeholder="Name (e.g. Vitamin D)" [value]="newName()" (input)="newName.set($any($event.target).value)"
                aria-label="Supplement name"
-               style="flex:2;min-width:140px;background:var(--surface-2);border:1px solid var(--border-soft);border-radius:var(--r-sm);padding:10px 12px;color:var(--text-strong);font-family:var(--font-body)" />
+               style="flex:2;min-width:140px;background:var(--surface-2);border:1px solid var(--border-soft);border-radius:var(--r-sm);padding:var(--s-3) var(--s-3);color:var(--text-strong);font-family:var(--font-body)" />
         <input type="text" placeholder="Dose" [value]="newDose()" (input)="newDose.set($any($event.target).value)"
                aria-label="Dose"
-               style="flex:1;min-width:80px;background:var(--surface-2);border:1px solid var(--border-soft);border-radius:var(--r-sm);padding:10px 12px;color:var(--text-strong);font-family:var(--font-body)" />
+               style="flex:1;min-width:80px;background:var(--surface-2);border:1px solid var(--border-soft);border-radius:var(--r-sm);padding:var(--s-3) var(--s-3);color:var(--text-strong);font-family:var(--font-body)" />
         <button class="btn primary sm" type="button" (click)="saveSupplement()">Add</button>
       </div>
     } @else {
-      <button class="btn ghost block sm" type="button" style="margin-top:8px" (click)="adding.set(true)"><lucide-icon name="plus" /> Add supplement</button>
+      <button class="btn ghost block sm" type="button" style="margin-top:var(--s-2)" (click)="adding.set(true)"><lucide-icon name="plus" /> Add supplement</button>
     }
   </div>
 
   <!-- RPE/ACWR honesty note -->
   <div class="card" style="border-left:3px solid var(--warn)">
     <b class="inline"><lucide-icon name="info" /> Caffeine &amp; today's load</b>
-    <p class="muted" style="font-size:var(--fs-sm);margin-top:4px">
+    <p class="muted" style="font-size:var(--fs-sm);margin-top:var(--s-1)">
       Caffeine lowers perceived effort, so today's RPE reads a bit low — we mark the session load
       <b style="color:var(--text)">lower-confidence</b>. We never silently rewrite your ACWR.
     </p>

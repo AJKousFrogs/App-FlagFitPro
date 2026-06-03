@@ -1,5 +1,5 @@
 <header class="topbar">
-  <div><h1 style="font-size:21px">More</h1></div>
+  <div><h1>More</h1></div>
   <div class="inline">
     <a class="icon-btn" routerLink="/notifications" aria-label="Notifications"><lucide-icon name="bell" /><span class="dot"></span></a>
     <a class="avatar" routerLink="/profile" aria-label="Profile"><app-avatar /></a>
@@ -14,7 +14,7 @@
   </div>
 
   @if (isStaff()) {
-    <a class="card linkcard" routerLink="/staff" style="margin-bottom:4px">
+    <a class="card linkcard" routerLink="/staff" style="margin-bottom:var(--s-1)">
       <span class="lc-ic"><lucide-icon name="users" /></span>
       <div style="flex:1"><b>Staff view</b><div class="muted" style="font-size:var(--fs-sm)">Roster, alerts &amp; athlete monitoring</div></div>
       <lucide-icon name="chevron-right" class="lc-go" />

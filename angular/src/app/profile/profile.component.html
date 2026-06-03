@@ -1,5 +1,5 @@
 <header class="topbar">
-  <div><h1 style="font-size:21px">Profile</h1></div>
+  <div><h1>Profile</h1></div>
   <a class="btn ghost sm" routerLink="/settings">Edit</a>
 </header>
 
@@ -12,7 +12,7 @@
         <small>{{ position() || "Athlete" }}@if (teamName()) { · {{ teamName() }} }</small>
       </div>
     </div>
-    <div class="tiles" style="margin-top:16px">
+    <div class="tiles" style="margin-top:var(--s-4)">
       <div><b>{{ heightCm() ?? "—" }}</b><small>cm</small></div>
       <div><b>{{ weightKg() ?? "—" }}</b><small>kg</small></div>
       <div><b>{{ age() ?? "—" }}</b><small>yrs</small></div>

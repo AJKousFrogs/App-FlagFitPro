@@ -4,7 +4,7 @@
       @if (nextEvent(); as ev) { {{ ev.competitionShortName || ev.competitionName }} · {{ ev.expectedGameCount }} games }
       @else { Game day }
     </div>
-    <h1 class="inline" style="font-size:21px"><lucide-icon name="flag" /> Game day</h1>
+    <h1 class="inline"><lucide-icon name="flag" /> Game day</h1>
   </div>
   <div class="inline">
     <a class="icon-btn" routerLink="/notifications" aria-label="Notifications"><lucide-icon name="bell" /><span class="dot"></span></a>
@@ -24,8 +24,8 @@
 
   <div class="hero">
     <h1>Game day</h1>
-    <p style="margin:8px 0 0;color:var(--text)">{{ reasoning() }}</p>
-    <div class="tiles" style="margin-top:14px">
+    <p style="margin:var(--s-2) 0 0;color:var(--text)">{{ reasoning() }}</p>
+    <div class="tiles" style="margin-top:var(--s-4)">
       <div><b>activate</b><small>warm-up</small></div>
       <div><b>refuel</b><small>between</small></div>
       <div><b>critical</b><small>recovery</small></div>

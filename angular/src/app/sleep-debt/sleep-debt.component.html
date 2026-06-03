@@ -1,7 +1,7 @@
 <header class="topbar">
   <div>
     <div class="eyebrow">recovery</div>
-    <h1 class="inline" style="font-size:21px"><lucide-icon name="moon" /> Sleep debt</h1>
+    <h1 class="inline"><lucide-icon name="moon" /> Sleep debt</h1>
   </div>
   <a class="icon-btn" routerLink="/more" aria-label="Back"><lucide-icon name="chevron-right" style="transform:rotate(180deg)" /></a>
 </header>
@@ -12,12 +12,12 @@
   } @else if (!last7().length) {
     <div class="empty">
       <b style="color:var(--text)">No sleep logged</b>
-      <p class="note" style="margin-top:8px">Log how you slept in your <a routerLink="/wellness" style="color:var(--accent)">daily wellness check-in</a> and your 7-night sleep debt builds here.</p>
+      <p class="note" style="margin-top:var(--s-2)">Log how you slept in your <a routerLink="/wellness" style="color:var(--accent)">daily wellness check-in</a> and your 7-night sleep debt builds here.</p>
     </div>
   } @else {
     <!-- headline -->
     <div class="card stack" style="align-items:center;text-align:center">
-      <span class="big">{{ round1(debtHours()) }}<small style="font-size:18px"> h</small></span>
+      <span class="big">{{ round1(debtHours()) }}<small style="font-size:var(--fs-h2)"> h</small></span>
       <div class="inline"><span class="muted">sleep debt · last 7 nights</span> <span class="band {{ debtBand().cls }}">{{ debtBand().label }}</span></div>
     </div>
 

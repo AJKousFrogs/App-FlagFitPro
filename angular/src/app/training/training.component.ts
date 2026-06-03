@@ -40,9 +40,9 @@ interface WeekRow {
   templateUrl: "./training.component.html",
   styles: [
     `
-      .tt-tabs { display: flex; gap: 18px; border-bottom: 1px solid var(--border-soft); padding-bottom: 8px; }
-      .tt-tab { background: none; border: 0; cursor: pointer; padding: 0 0 8px;
-        color: var(--text-faint); font-weight: 600; font-size: 14px; font-family: var(--font-body); }
+      .tt-tabs { display: flex; gap: var(--s-4); border-bottom: 1px solid var(--border-soft); padding-bottom: var(--s-2); }
+      .tt-tab { background: none; border: 0; cursor: pointer; padding: 0 0 var(--s-2);
+        color: var(--text-faint); font-weight: var(--fw-semi); font-size: var(--fs-sm); font-family: var(--font-body); }
       .tt-tab.on { color: var(--text-strong); border-bottom: 2px solid var(--accent); }
       .tt-tab:focus-visible { outline: none; box-shadow: var(--focus); border-radius: 4px; }
     `,

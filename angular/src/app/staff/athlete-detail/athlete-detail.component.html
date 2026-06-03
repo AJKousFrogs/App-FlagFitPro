@@ -1,7 +1,7 @@
 <header class="topbar">
   <div>
     <div class="eyebrow">{{ title() }}</div>
-    <h1 style="font-size:21px">{{ name }}</h1>
+    <h1>{{ name }}</h1>
   </div>
   <span class="avatar">{{ initials() }}</span>
 </header>
@@ -26,7 +26,7 @@
   } @else if (!hasData() && lane() !== "physio" && lane() !== "psych") {
     <div class="empty">
       <b style="color:var(--text)">Not shared</b>
-      <p class="note" style="margin-top:8px">{{ name }} hasn't shared their {{ consent() }} data with staff yet, or there's nothing logged.</p>
+      <p class="note" style="margin-top:var(--s-2)">{{ name }} hasn't shared their {{ consent() }} data with staff yet, or there's nothing logged.</p>
     </div>
   } @else {
     @switch (lane()) {
@@ -38,7 +38,7 @@
           <div class="card"><div class="row"><div class="inline"><span>Load (ACWR)</span>
             @if (acwrBand(); as b) { <span class="band {{ b.cls }}">{{ b.label }}</span> } @else { <span class="band neutral">building</span> }</div></div></div>
         } @else {
-          <div class="empty"><b style="color:var(--text)">Not shared</b><p class="note" style="margin-top:8px">{{ name }} hasn't shared performance data with staff.</p></div>
+          <div class="empty"><b style="color:var(--text)">Not shared</b><p class="note" style="margin-top:var(--s-2)">{{ name }} hasn't shared performance data with staff.</p></div>
         }
       }
 
@@ -66,11 +66,11 @@
             <div class="slider"><label for="rp">Progress</label>
               <input id="rp" class="rng" type="range" min="0" max="100" step="5" [value]="rtpProgress()" (input)="rtpProgress.set(+$any($event.target).value)" />
               <span class="val">{{ rtpProgress() }}%</span></div>
-            <div class="inline" style="flex-wrap:wrap;gap:8px">
+            <div class="inline" style="flex-wrap:wrap;gap:var(--s-2)">
               @for (p of rtpPhases; track p) { <button type="button" class="chip" [class.sel]="rtpNewPhase() === p" (click)="rtpNewPhase.set(p)">{{ p }}</button> }
             </div>
             <input type="text" placeholder="Notes (optional)" [value]="rtpNotes()" (input)="rtpNotes.set($any($event.target).value)"
-                   style="background:var(--surface-2);border:1px solid var(--border-soft);border-radius:var(--r-sm);padding:10px 12px;color:var(--text-strong);font-family:var(--font-body)" />
+                   style="background:var(--surface-2);border:1px solid var(--border-soft);border-radius:var(--r-sm);padding:var(--s-3) var(--s-3);color:var(--text-strong);font-family:var(--font-body)" />
             <button class="btn primary block" type="button" [attr.aria-disabled]="busy()" (click)="saveRtp()">{{ busy() ? "Saving…" : "Save RTP" }}</button>
           </div>
         }
@@ -79,10 +79,10 @@
           <div class="card stack">
             <b>Log injury</b>
             <input type="text" placeholder="Type (e.g. hamstring strain)" [value]="injType()" (input)="injType.set($any($event.target).value)"
-                   style="background:var(--surface-2);border:1px solid var(--border-soft);border-radius:var(--r-sm);padding:10px 12px;color:var(--text-strong);font-family:var(--font-body)" />
+                   style="background:var(--surface-2);border:1px solid var(--border-soft);border-radius:var(--r-sm);padding:var(--s-3) var(--s-3);color:var(--text-strong);font-family:var(--font-body)" />
             <input type="text" placeholder="Location (e.g. right)" [value]="injLocation()" (input)="injLocation.set($any($event.target).value)"
-                   style="background:var(--surface-2);border:1px solid var(--border-soft);border-radius:var(--r-sm);padding:10px 12px;color:var(--text-strong);font-family:var(--font-body)" />
-            <div class="inline" style="gap:8px">@for (g of grades; track g) { <button type="button" class="chip" [class.sel]="injGrade() === g" (click)="injGrade.set(g)">{{ g }}</button> }</div>
+                   style="background:var(--surface-2);border:1px solid var(--border-soft);border-radius:var(--r-sm);padding:var(--s-3) var(--s-3);color:var(--text-strong);font-family:var(--font-body)" />
+            <div class="inline" style="gap:var(--s-2)">@for (g of grades; track g) { <button type="button" class="chip" [class.sel]="injGrade() === g" (click)="injGrade.set(g)">{{ g }}</button> }</div>
             <button class="btn primary block" type="button" [attr.aria-disabled]="busy()" (click)="logInjury()">{{ busy() ? "Saving…" : "Log injury" }}</button>
           </div>
         } @else {
@@ -103,7 +103,7 @@
         }
         <div class="card stack">
           <b>Generate report</b>
-          <div class="inline" style="gap:8px">
+          <div class="inline" style="gap:var(--s-2)">
             <button class="btn secondary sm" type="button" [attr.aria-disabled]="busy()" (click)="generateReport('weekly')">Weekly</button>
             <button class="btn secondary sm" type="button" [attr.aria-disabled]="busy()" (click)="generateReport('monthly')">Monthly</button>
           </div>
@@ -125,11 +125,11 @@
           <div class="card stack">
             <b>Log assessment</b>
             <input type="text" placeholder="Type (e.g. pre-competition anxiety)" [value]="asmtType()" (input)="asmtType.set($any($event.target).value)"
-                   style="background:var(--surface-2);border:1px solid var(--border-soft);border-radius:var(--r-sm);padding:10px 12px;color:var(--text-strong);font-family:var(--font-body)" />
+                   style="background:var(--surface-2);border:1px solid var(--border-soft);border-radius:var(--r-sm);padding:var(--s-3) var(--s-3);color:var(--text-strong);font-family:var(--font-body)" />
             <div class="slider"><label for="as">Score</label>
               <input id="as" class="rng" type="range" min="1" max="10" [value]="asmtScore()" (input)="asmtScore.set(+$any($event.target).value)" /><span class="val">{{ asmtScore() }}</span></div>
             <input type="text" placeholder="Interpretation / note" [value]="asmtNote()" (input)="asmtNote.set($any($event.target).value)"
-                   style="background:var(--surface-2);border:1px solid var(--border-soft);border-radius:var(--r-sm);padding:10px 12px;color:var(--text-strong);font-family:var(--font-body)" />
+                   style="background:var(--surface-2);border:1px solid var(--border-soft);border-radius:var(--r-sm);padding:var(--s-3) var(--s-3);color:var(--text-strong);font-family:var(--font-body)" />
             <div class="lrow"><span id="rev">Requires professional review</span>
               <button class="sw" role="switch" [attr.aria-checked]="asmtReview()" aria-labelledby="rev" (click)="asmtReview.set(!asmtReview())"></button></div>
             <button class="btn primary block" type="button" [attr.aria-disabled]="busy()" (click)="logAssessment()">{{ busy() ? "Saving…" : "Log assessment" }}</button>

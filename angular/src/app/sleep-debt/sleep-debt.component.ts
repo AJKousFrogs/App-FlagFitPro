@@ -34,7 +34,7 @@ interface SleepNight {
     `
       .bar { height: 8px; border-radius: var(--r-pill); background: var(--surface-2); overflow: hidden; flex: 1; }
       .bar > i { display: block; height: 100%; border-radius: var(--r-pill); }
-      .nrow { display: flex; align-items: center; gap: 12px; padding: 9px 0; }
+      .nrow { display: flex; align-items: center; gap: var(--s-3); padding: var(--s-2) 0; }
       .nrow .d { width: 52px; font-size: var(--fs-sm); color: var(--text-muted); flex: 0 0 auto; }
       .nrow .h { width: 58px; text-align: right; font-size: var(--fs-sm); font-weight: var(--fw-bold); flex: 0 0 auto; }
       .big { font-family: var(--font-display); font-size: 40px; line-height: 1; font-weight: var(--fw-bold); }

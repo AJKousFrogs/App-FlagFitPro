@@ -40,17 +40,17 @@ interface Turn {
     `
       :host { display: flex; flex-direction: column; min-height: 100dvh; }
       main.screen { flex: 1; display: flex; flex-direction: column; }
-      .thread { display: flex; flex-direction: column; gap: 10px; overflow-y: auto; flex: 1; padding-bottom: 8px; }
-      .bubble { max-width: 85%; padding: 10px 14px; border-radius: var(--r-lg); white-space: pre-wrap; line-height: 1.5; }
+      .thread { display: flex; flex-direction: column; gap: var(--s-3); overflow-y: auto; flex: 1; padding-bottom: var(--s-2); }
+      .bubble { max-width: 85%; padding: var(--s-3) var(--s-4); border-radius: var(--r-lg); white-space: pre-wrap; line-height: var(--lh-body); }
       .me { background: var(--accent); color: var(--on-accent); align-self: flex-end; border-bottom-right-radius: 4px; }
       .ai { background: var(--surface-2); align-self: flex-start; border-bottom-left-radius: 4px; }
       .ai.blocked { border: 1px solid var(--danger); }
-      .disc { font-size: var(--fs-sm); color: var(--text-faint); align-self: flex-start; max-width: 85%; margin: -4px 0 2px; }
-      .acts { display: flex; flex-wrap: wrap; gap: 8px; align-self: flex-start; }
+      .disc { font-size: var(--fs-sm); color: var(--text-faint); align-self: flex-start; max-width: 85%; margin: calc(-1 * var(--s-1)) 0 2px; }
+      .acts { display: flex; flex-wrap: wrap; gap: var(--s-2); align-self: flex-start; }
       .typing { align-self: flex-start; color: var(--text-faint); font-size: var(--fs-sm); }
       .composer { margin-top: auto; }
       .composer input { flex: 1; background: var(--surface-2); border: 1px solid var(--border-soft);
-        border-radius: var(--r-pill); padding: 12px 14px; color: var(--text-strong); font-family: var(--font-body); }
+        border-radius: var(--r-pill); padding: var(--s-3) var(--s-4); color: var(--text-strong); font-family: var(--font-body); }
       .composer input:disabled { color: var(--text-faint); }
     `,
   ],

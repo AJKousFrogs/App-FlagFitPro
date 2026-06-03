@@ -11,7 +11,7 @@
       <h1>Who are you on the field?</h1>
       <div class="field">
         <label>Position</label>
-        <div class="inline" style="flex-wrap:wrap;gap:8px">
+        <div class="inline" style="flex-wrap:wrap;gap:var(--s-2)">
           @for (p of positions; track p) {
             <button type="button" class="chip" [class.sel]="position() === p" (click)="position.set(p)">{{ p }}</button>
           }
@@ -34,16 +34,16 @@
     }
     @case (2) {
       <h1>Your season</h1>
-      <p class="muted" style="font-size:var(--fs-sm);margin:0 0 8px">Tell us your periods (use YYYY-MM-DD for a specific span, or MM-DD for a yearly one). Edit freely.</p>
+      <p class="muted" style="font-size:var(--fs-sm);margin:0 0 var(--s-2)">Tell us your periods (use YYYY-MM-DD for a specific span, or MM-DD for a yearly one). Edit freely.</p>
       @for (w of season(); track $index) {
-        <div class="card flat" style="margin:6px 0">
+        <div class="card flat" style="margin:var(--s-2) 0">
           <div class="seasonrow">
             <select class="input" [value]="w.phase" (change)="setPhase($index, $any($event.target).value)" aria-label="Phase">
               @for (p of phases; track p) { <option [value]="p">{{ p }}</option> }
             </select>
             <button class="btn ghost sm" type="button" (click)="removePeriod($index)" aria-label="Remove period">✕</button>
           </div>
-          <div class="seasonrow" style="margin-top:6px">
+          <div class="seasonrow" style="margin-top:var(--s-2)">
             <input class="input" placeholder="from" [value]="w.from" (input)="setFrom($index, $any($event.target).value)" aria-label="From" />
             <span class="faint">→</span>
             <input class="input" placeholder="to" [value]="w.to" (input)="setTo($index, $any($event.target).value)" aria-label="To" />
@@ -57,7 +57,7 @@
       <h1>How you train</h1>
       <div class="field">
         <label>Equipment</label>
-        <div class="inline" style="flex-wrap:wrap;gap:8px">
+        <div class="inline" style="flex-wrap:wrap;gap:var(--s-2)">
           @for (k of ['Gym','Field','Sled','Bands']; track k) {
             <button type="button" class="chip" [class.sel]="equipment()[k]" (click)="toggleEquip(k)">
               @if (equipment()[k]) { ✓ }{{ k }}
@@ -77,9 +77,9 @@
     }
   }
 
-  <div class="row" style="margin-top:16px">
+  <div class="row" style="margin-top:var(--s-4)">
     @if (step() > 0) { <button class="btn ghost" type="button" (click)="back()">← Back</button> }
-    <button class="btn primary" type="button" style="flex:1;margin-left:10px" [attr.aria-disabled]="saving()" (click)="next()">
+    <button class="btn primary" type="button" style="flex:1;margin-left:var(--s-3)" [attr.aria-disabled]="saving()" (click)="next()">
       {{ step() === STEPS - 1 ? (saving() ? "Saving…" : "Finish →") : "Continue →" }}
     </button>
   </div>

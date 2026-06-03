@@ -29,16 +29,16 @@ import { SeasonPhase, SeasonWindow } from "../core/models/prescription.models";
   styles: [
     `
       :host { display: block; max-width: 480px; margin: 0 auto; min-height: 100dvh; }
-      .dots { display: flex; gap: 6px; }
+      .dots { display: flex; gap: var(--s-2); }
       .dots i { width: 8px; height: 8px; border-radius: var(--r-pill); background: var(--surface-2); display: inline-block; transition: width .15s; }
       .dots i.on { background: var(--accent); width: 20px; }
-      .field { margin: 10px 0; }
-      .field label { font-size: var(--fs-sm); color: var(--text-muted); display: block; margin-bottom: 4px; }
+      .field { margin: var(--s-3) 0; }
+      .field label { font-size: var(--fs-sm); color: var(--text-muted); display: block; margin-bottom: var(--s-1); }
       .input { width: 100%; background: var(--surface-2); border: 1px solid var(--border-soft);
-        border-radius: var(--r-sm); padding: 11px 12px; color: var(--text-strong); font-family: var(--font-body); }
+        border-radius: var(--r-sm); padding: var(--s-3) var(--s-3); color: var(--text-strong); font-family: var(--font-body); }
       .chip.sel { background: var(--accent-soft); color: var(--accent); border-color: var(--accent); }
-      .seasonrow { display: flex; gap: 6px; align-items: center; }
-      .seasonrow .input { padding: 8px 10px; }
+      .seasonrow { display: flex; gap: var(--s-2); align-items: center; }
+      .seasonrow .input { padding: var(--s-2) var(--s-3); }
     `,
   ],
 })

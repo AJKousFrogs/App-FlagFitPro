@@ -31,6 +31,7 @@
   .topbar { display: flex; justify-content: space-between; align-items: center; padding: var(--s-4);
     border-bottom: 1px solid var(--border-soft); background: var(--bg); position: sticky; top: 0; z-index: 5; }
   .topbar .eyebrow { font-size: var(--fs-xs); color: var(--text-muted); text-transform: uppercase; letter-spacing: .08em; }
+  .topbar h1 { font-size: var(--fs-title); }
   .icon-btn { width: 44px; height: 44px; border-radius: var(--r-pill); background: var(--surface-2); border: 1px solid var(--border-soft);
     display: inline-flex; align-items: center; justify-content: center; color: var(--text); position: relative; cursor: pointer; }
   .icon-btn:focus-visible, .avatar:focus-visible { outline: none; box-shadow: var(--focus); }

@@ -1,7 +1,7 @@
 <header class="topbar">
   <div>
     <div class="eyebrow">{{ eyebrow() }}</div>
-    <h1 style="font-size:21px">{{ greeting() }}</h1>
+    <h1>{{ greeting() }}</h1>
   </div>
   <div class="inline">
     <a class="icon-btn" routerLink="/notifications" aria-label="Notifications"><lucide-icon name="bell" /><span class="dot"></span></a>
@@ -33,16 +33,16 @@
           <span class="band {{ b.cls }}">{{ b.label }}</span>
         }
       </div>
-      <p style="margin:10px 0 0;color:var(--text)">{{ p.reasoning }}</p>
+      <p style="margin:var(--s-3) 0 0;color:var(--text)">{{ p.reasoning }}</p>
 
-      <div class="tiles" style="margin:18px 0">
+      <div class="tiles" style="margin:var(--s-4) 0">
         <div><b>{{ rpeLabel() }}</b><small>RPE</small></div>
         <div><b>{{ p.targetMinutes }}</b><small>min</small></div>
         <div><b>{{ p.sprintReps }}</b><small>sprints</small></div>
       </div>
 
       <!-- fuel: engine-derived macros + illustrative food chips -->
-      <div class="card flat" style="margin-bottom:16px">
+      <div class="card flat" style="margin-bottom:var(--s-4)">
         <div class="row" style="align-items:baseline">
           <b>Fuel today</b><small>{{ p.nutrition.rationale }}</small>
         </div>
@@ -62,7 +62,7 @@
       </div>
 
       <!-- session video — real YouTube IFrame Player (no API key) -->
-      <div style="margin-bottom:14px">
+      <div style="margin-bottom:var(--s-4)">
         <app-yt-video [videoId]="sessionVideoId()" poster="assets/images/rebuild/video-session.jpg"
                       title="Watch today's session" duration="18:30" />
       </div>
@@ -72,7 +72,7 @@
   } @else {
     <!-- data-state: no plan yet (no schedule / not logged in) -->
     <div class="empty">
-      <p style="margin:0 0 12px">No plan yet. Log today's wellness check-in and we'll
+      <p style="margin:0 0 var(--s-3)">No plan yet. Log today's wellness check-in and we'll
         calculate your readiness and what to train.</p>
       <a class="btn primary" routerLink="/wellness">Check in →</a>
     </div>
@@ -91,7 +91,7 @@
           <span class="band neutral">not logged today</span>
         }
       </div>
-      <a class="faint" style="font-size:13px" routerLink="/wellness">breakdown →</a>
+      <a class="faint" style="font-size:var(--fs-sm)" routerLink="/wellness">breakdown →</a>
     </div>
   </div>
 
@@ -99,14 +99,14 @@
     <div class="card">
       <div class="row">
         <div class="inline"><span>Load (ACWR)</span><span class="band {{ b.cls }}">{{ b.label }}</span></div>
-        <a class="faint" style="font-size:13px" routerLink="/stats">trend →</a>
+        <a class="faint" style="font-size:var(--fs-sm)" routerLink="/stats">trend →</a>
       </div>
     </div>
   } @else {
     <!-- insufficient history: guarded, no fake number -->
     <div class="card flat">
       <div class="row"><span>Load (ACWR)</span><span class="band neutral">building · need ~21 days</span></div>
-      <p class="note" style="margin-top:8px">Keep logging sessions — a reliable ratio needs ~21 days &amp; 12 sessions.</p>
+      <p class="note" style="margin-top:var(--s-2)">Keep logging sessions — a reliable ratio needs ~21 days &amp; 12 sessions.</p>
     </div>
   }
 </main>

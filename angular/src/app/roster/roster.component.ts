@@ -42,9 +42,9 @@ interface Mate {
   templateUrl: "./roster.component.html",
   styles: [
     `
-      .mate { display: flex; align-items: center; gap: 12px; padding: 10px 0; }
+      .mate { display: flex; align-items: center; gap: var(--s-3); padding: var(--s-3) 0; }
       .ava { width: 38px; height: 38px; border-radius: var(--r-pill); flex: 0 0 auto; display: grid;
-        place-items: center; background: var(--surface-2); color: var(--text-faint); font-size: 13px; font-weight: var(--fw-bold); }
+        place-items: center; background: var(--surface-2); color: var(--text-faint); font-size: var(--fs-sm); font-weight: var(--fw-bold); }
       .mate.me .ava { background: var(--accent); color: var(--on-accent); }
       .jersey { margin-left: auto; font-family: var(--font-display); font-weight: var(--fw-bold); color: var(--text-muted); }
     `,

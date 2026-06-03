@@ -1,7 +1,7 @@
 <header class="topbar">
   <div>
     <div class="eyebrow">rehab &amp; recovery</div>
-    <h1 style="font-size:21px">Return to play</h1>
+    <h1>Return to play</h1>
   </div>
   <a class="icon-btn" routerLink="/more" aria-label="Back"><lucide-icon name="chevron-right" style="transform:rotate(180deg)" /></a>
 </header>
@@ -16,7 +16,7 @@
   } @else if (!protocol()) {
     <div class="empty">
       <b style="color:var(--text)">No active rehab</b>
-      <p class="note" style="margin-top:8px">You're clear — no return-to-play protocol is open. If you pick up an injury, your physio starts one here and you'll track your stages and check-ins.</p>
+      <p class="note" style="margin-top:var(--s-2)">You're clear — no return-to-play protocol is open. If you pick up an injury, your physio starts one here and you'll track your stages and check-ins.</p>
     </div>
   } @else {
     @if (protocol(); as p) {
@@ -54,7 +54,7 @@
             </div>
           }
         </div>
-        <p class="note" style="margin-top:8px">Your physio advances you a stage when you're ready — keep logging how you feel below.</p>
+        <p class="note" style="margin-top:var(--s-2)">Your physio advances you a stage when you're ready — keep logging how you feel below.</p>
       </div>
 
       <!-- physio notes -->

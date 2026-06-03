@@ -65,16 +65,16 @@ const STAGES = [
       .bar { height: 8px; border-radius: var(--r-pill); background: var(--surface-2); overflow: hidden; }
       .bar > i { display: block; height: 100%; background: var(--accent); border-radius: var(--r-pill); }
       .steps { display: flex; flex-direction: column; gap: 0; }
-      .step { display: flex; align-items: center; gap: 12px; padding: 8px 0; }
+      .step { display: flex; align-items: center; gap: var(--s-3); padding: var(--s-2) 0; }
       .step .pip { width: 22px; height: 22px; border-radius: var(--r-pill); flex: 0 0 auto;
-        display: grid; place-items: center; font-size: 11px; font-weight: var(--fw-bold);
+        display: grid; place-items: center; font-size: var(--fs-xs); font-weight: var(--fw-bold);
         background: var(--surface-2); color: var(--text-faint); border: 1px solid var(--border-soft); }
       .step.done .pip { background: var(--good-soft); color: var(--good); border-color: transparent; }
       .step.now .pip { background: var(--accent); color: var(--on-accent); border-color: transparent; }
       .step .lbl { font-size: var(--fs-sm); color: var(--text-muted); }
       .step.now .lbl { color: var(--text-strong); font-weight: var(--fw-bold); }
       .ci-note { width: 100%; background: var(--surface-2); border: 1px solid var(--border-soft);
-        border-radius: var(--r-sm); padding: 10px 12px; color: var(--text-strong); font-family: var(--font-body); }
+        border-radius: var(--r-sm); padding: var(--s-3) var(--s-3); color: var(--text-strong); font-family: var(--font-body); }
     `,
   ],
 })

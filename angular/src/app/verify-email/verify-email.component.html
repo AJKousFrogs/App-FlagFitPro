@@ -1,7 +1,7 @@
-<main class="screen" style="display:flex;flex-direction:column;justify-content:center;gap:18px;min-height:100dvh">
+<main class="screen" style="display:flex;flex-direction:column;justify-content:center;gap:var(--s-4);min-height:100dvh">
   <div class="hero">
     <span class="avatar lg"><lucide-icon name="mail" /></span>
-    <h1 class="brand" style="margin:16px 0 4px">Check your inbox</h1>
+    <h1 class="brand" style="margin:var(--s-4) 0 var(--s-1)">Check your inbox</h1>
     <p class="note">
       @if (email()) {
         We sent a verification link to <b style="color:var(--text-strong)">{{ email() }}</b>.
@@ -16,7 +16,7 @@
     @if (!email()) {
       <input type="email" inputmode="email" placeholder="you@email.com" [value]="email()"
              (input)="email.set($any($event.target).value)"
-             style="width:100%;background:var(--surface-2);border:1px solid var(--border-soft);border-radius:var(--r-sm);padding:11px 12px;color:var(--text-strong);font-family:var(--font-body)" />
+             style="width:100%;background:var(--surface-2);border:1px solid var(--border-soft);border-radius:var(--r-sm);padding:var(--s-3) var(--s-3);color:var(--text-strong);font-family:var(--font-body)" />
     }
     @if (sent()) {
       <b class="inline" style="color:var(--accent)"><lucide-icon name="check" /> Link sent — check your inbox.</b>

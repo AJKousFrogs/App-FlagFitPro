@@ -1,7 +1,7 @@
 <header class="topbar">
   <div>
     <div class="eyebrow">evidence base</div>
-    <h1 class="inline" style="font-size:21px"><lucide-icon name="book-open" /> Knowledge</h1>
+    <h1 class="inline"><lucide-icon name="book-open" /> Knowledge</h1>
   </div>
   <a class="icon-btn" routerLink="/more" aria-label="Back"><lucide-icon name="chevron-right" style="transform:rotate(180deg)" /></a>
 </header>
@@ -26,7 +26,7 @@
   } @else if (!entries().length) {
     <div class="empty">
       <b style="color:var(--text)">{{ searchMode() ? "Nothing found" : "No entries yet" }}</b>
-      <p class="note" style="margin-top:8px">{{ searchMode() ? "Try a different search — or ask " : "Knowledge entries appear here once approved. In the meantime, ask " }}<a routerLink="/chat" style="color:var(--accent)">Merlin</a>.</p>
+      <p class="note" style="margin-top:var(--s-2)">{{ searchMode() ? "Try a different search — or ask " : "Knowledge entries appear here once approved. In the meantime, ask " }}<a routerLink="/chat" style="color:var(--accent)">Merlin</a>.</p>
     </div>
   } @else {
     @if (searchMode()) {

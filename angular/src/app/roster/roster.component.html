@@ -1,7 +1,7 @@
 <header class="topbar">
   <div>
     <div class="eyebrow">{{ teamName() || "your team" }}</div>
-    <h1 class="inline" style="font-size:21px"><lucide-icon name="users" /> Roster</h1>
+    <h1 class="inline"><lucide-icon name="users" /> Roster</h1>
   </div>
   <a class="icon-btn" routerLink="/more" aria-label="Back"><lucide-icon name="chevron-right" style="transform:rotate(180deg)" /></a>
 </header>
@@ -12,7 +12,7 @@
   } @else if (!count()) {
     <div class="empty">
       <b style="color:var(--text)">No team yet</b>
-      <p class="note" style="margin-top:8px">You're not on a team roster yet. Once your coach adds you, your squad shows up here.</p>
+      <p class="note" style="margin-top:var(--s-2)">You're not on a team roster yet. Once your coach adds you, your squad shows up here.</p>
     </div>
   } @else {
     <div class="section-h"><h2>Squad</h2><span class="faint">{{ count() }} players</span></div>
@@ -21,7 +21,7 @@
         <div class="mate" [class.me]="m.me">
           <span class="ava">{{ initials(m.name) }}</span>
           <div>
-            <b>{{ m.name }}@if (m.me) { <span class="band info" style="margin-left:6px">You</span> }</b>
+            <b>{{ m.name }}@if (m.me) { <span class="band info" style="margin-left:var(--s-2)">You</span> }</b>
             <div class="muted" style="font-size:var(--fs-sm)">{{ m.position || "Squad" }}</div>
           </div>
           <span class="jersey">@if (m.jersey !== null) { #{{ m.jersey }} }</span>

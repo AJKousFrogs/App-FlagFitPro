@@ -1,7 +1,7 @@
 <header class="topbar">
   <div>
     <div class="eyebrow">{{ teamName() || "Your team" }}</div>
-    <h1 style="font-size:21px">Roster</h1>
+    <h1>Roster</h1>
   </div>
   <span class="chip">{{ roleLabel() }}</span>
 </header>
@@ -26,7 +26,7 @@
           </span>
           @if (isCoach()) {
             @if (r.shared) {
-              <span class="inline" style="gap:6px">
+              <span class="inline" style="gap:var(--s-2)">
                 @if (readyBand(r.readiness); as b) { <span class="band {{ b.cls }}">{{ b.label }}</span> }
                 @if (acwrBand(r.acwr); as b) { <span class="band {{ b.cls }}">{{ b.label }}</span> }
               </span>

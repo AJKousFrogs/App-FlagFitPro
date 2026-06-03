@@ -1,7 +1,7 @@
 <header class="topbar">
   <div>
     <div class="eyebrow">team training videos</div>
-    <h1 style="font-size:21px">Library</h1>
+    <h1>Library</h1>
   </div>
   <span class="chip">Coach</span>
 </header>
@@ -11,20 +11,20 @@
   <div class="section-h"><h2>Add a video</h2></div>
   <div class="card stack">
     <div class="field">
-      <label for="url" style="font-size:var(--fs-sm);color:var(--text-muted);display:block;margin-bottom:4px">YouTube link or ID</label>
+      <label for="url" style="font-size:var(--fs-sm);color:var(--text-muted);display:block;margin-bottom:var(--s-1)">YouTube link or ID</label>
       <input id="url" class="input" type="text" placeholder="https://youtu.be/… or video ID"
              [value]="url()" (input)="url.set($any($event.target).value)"
-             style="width:100%;background:var(--surface-2);border:1px solid var(--border-soft);border-radius:var(--r-sm);padding:11px 12px;color:var(--text-strong);font-family:var(--font-body)" />
+             style="width:100%;background:var(--surface-2);border:1px solid var(--border-soft);border-radius:var(--r-sm);padding:var(--s-3) var(--s-3);color:var(--text-strong);font-family:var(--font-body)" />
     </div>
     <div class="field">
-      <label for="vtitle" style="font-size:var(--fs-sm);color:var(--text-muted);display:block;margin-bottom:4px">Title</label>
+      <label for="vtitle" style="font-size:var(--fs-sm);color:var(--text-muted);display:block;margin-bottom:var(--s-1)">Title</label>
       <input id="vtitle" class="input" type="text" placeholder="e.g. Sprint mechanics — wall drill"
              [value]="title()" (input)="title.set($any($event.target).value)"
-             style="width:100%;background:var(--surface-2);border:1px solid var(--border-soft);border-radius:var(--r-sm);padding:11px 12px;color:var(--text-strong);font-family:var(--font-body)" />
+             style="width:100%;background:var(--surface-2);border:1px solid var(--border-soft);border-radius:var(--r-sm);padding:var(--s-3) var(--s-3);color:var(--text-strong);font-family:var(--font-body)" />
     </div>
     <div class="field">
-      <label style="font-size:var(--fs-sm);color:var(--text-muted);display:block;margin-bottom:6px">Category</label>
-      <div class="inline" style="flex-wrap:wrap;gap:8px">
+      <label style="font-size:var(--fs-sm);color:var(--text-muted);display:block;margin-bottom:var(--s-2)">Category</label>
+      <div class="inline" style="flex-wrap:wrap;gap:var(--s-2)">
         @for (c of categories; track c) {
           <button type="button" class="chip" [class.sel]="category() === c" (click)="category.set(c)">{{ c }}</button>
         }

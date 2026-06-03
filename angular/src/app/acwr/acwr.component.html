@@ -1,7 +1,7 @@
 <header class="topbar">
   <div>
     <div class="eyebrow">ACWR · last 28 days</div>
-    <h1 style="font-size:21px">Load monitoring</h1>
+    <h1>Load monitoring</h1>
   </div>
   <div class="inline">
     <a class="icon-btn" routerLink="/notifications" aria-label="Notifications"><lucide-icon name="bell" /><span class="dot"></span></a>
@@ -26,7 +26,7 @@
         </div>
       </div>
       @if (chart(); as c) {
-        <svg width="100%" height="120" viewBox="0 0 360 120" preserveAspectRatio="none" style="margin-top:14px">
+        <svg width="100%" height="120" viewBox="0 0 360 120" preserveAspectRatio="none" style="margin-top:var(--s-4)">
           <rect x="0" y="45" width="360" height="25" fill="var(--good-soft)" />
           <text x="6" y="59" font-size="10" fill="var(--text-faint)">sweet 0.8–1.3</text>
           <line x1="0" y1="35" x2="360" y2="35" stroke="var(--danger)" stroke-dasharray="5 3" opacity=".7" />
@@ -57,7 +57,7 @@
   } @else {
     <div class="empty">
       <b style="color:var(--text)">Not enough history yet</b>
-      <p class="note" style="margin-top:8px">A reliable ratio needs ~21 days &amp; 12 sessions (&lt;14 days = low-confidence). Keep logging — null ≠ under-training.</p>
+      <p class="note" style="margin-top:var(--s-2)">A reliable ratio needs ~21 days &amp; 12 sessions (&lt;14 days = low-confidence). Keep logging — null ≠ under-training.</p>
     </div>
   }
 </main>

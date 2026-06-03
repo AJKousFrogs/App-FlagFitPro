@@ -18,7 +18,7 @@ import { YtVideoComponent } from "../shared/yt-video.component";
     <header class="topbar">
       <div>
         <div class="eyebrow">Phase E · design system</div>
-        <h1 style="font-size:21px">Component gallery</h1>
+        <h1>Component gallery</h1>
       </div>
       <div class="inline">
         <span class="icon-btn"><lucide-icon name="bell" /><span class="dot"></span></span>
@@ -34,7 +34,7 @@ import { YtVideoComponent } from "../shared/yt-video.component";
 
       <div class="section-h"><h2>Buttons</h2></div>
       <div class="card stack">
-        <div class="inline" style="flex-wrap:wrap;gap:8px">
+        <div class="inline" style="flex-wrap:wrap;gap:var(--s-2)">
           <button class="btn primary">Primary</button>
           <button class="btn secondary">Secondary</button>
           <button class="btn ghost">Ghost</button>
@@ -46,7 +46,7 @@ import { YtVideoComponent } from "../shared/yt-video.component";
 
       <div class="section-h"><h2>Bands</h2></div>
       <div class="card">
-        <div class="inline" style="flex-wrap:wrap;gap:8px">
+        <div class="inline" style="flex-wrap:wrap;gap:var(--s-2)">
           <span class="band good">Sweet spot</span>
           <span class="band caution">Elevated</span>
           <span class="band danger">Danger</span>
@@ -61,7 +61,7 @@ import { YtVideoComponent } from "../shared/yt-video.component";
           <div>
             <div class="eyebrow muted">Today</div>
             <h2>Mobility &amp; technique</h2>
-            <p class="muted" style="margin:6px 0 0">Physio block — right hamstring. RPE 5, no sprints.</p>
+            <p class="muted" style="margin:var(--s-2) 0 0">Physio block — right hamstring. RPE 5, no sprints.</p>
           </div>
           <div class="gauge grad" style="--p:72"><div class="inner"><b>72</b><small>ready</small></div></div>
         </div>
@@ -114,7 +114,7 @@ import { YtVideoComponent } from "../shared/yt-video.component";
   styles: [
     `
       :host { display: block; }
-      .suppi-i { color: var(--text-muted); margin-right: 6px; vertical-align: -3px; }
+      .suppi-i { color: var(--text-muted); margin-right: var(--s-2); vertical-align: -3px; }
     `,
   ],
 })

@@ -1,7 +1,7 @@
 <header class="topbar">
   <div>
     <div class="eyebrow">your events · all teams</div>
-    <h1 style="font-size:21px">Competition</h1>
+    <h1>Competition</h1>
   </div>
   <div class="inline">
     <a class="icon-btn" routerLink="/notifications" aria-label="Notifications"><lucide-icon name="bell" /><span class="dot"></span></a>
@@ -29,11 +29,11 @@
         <span class="band caution">in {{ daysTo(ev) }}d · {{ ev.expectedGameCount }} games</span>
       </div>
       <small>{{ ev.competitionName }}@if (ev.venue) { · {{ ev.venue }} }</small>
-      <div style="margin-top:14px"><small>Will you be there?</small>
-        <div class="row" style="margin-top:8px">
+      <div style="margin-top:var(--s-4)"><small>Will you be there?</small>
+        <div class="row" style="margin-top:var(--s-2)">
           <button class="btn ghost sm" type="button" (click)="rsvp(ev, 'declined')">Can't</button>
           <button class="btn ghost sm" type="button" (click)="rsvp(ev, 'maybe')">Maybe</button>
-          <button class="btn primary" type="button" style="flex:1;margin-left:8px" (click)="rsvp(ev, 'confirmed')">I'm in</button>
+          <button class="btn primary" type="button" style="flex:1;margin-left:var(--s-2)" (click)="rsvp(ev, 'confirmed')">I'm in</button>
         </div>
       </div>
     </div>
@@ -53,9 +53,9 @@
     <div class="card">
       <b>{{ pending()[0].competition_name || "Last event" }} <small>recently</small></b>
       <p class="muted" style="font-size:var(--fs-sm)">You were rostered for {{ pendingGamesExpected() }} games. How many did you play?</p>
-      <div style="margin:8px 0">
-        <label style="font-size:var(--fs-sm);color:var(--text-muted);display:block;margin-bottom:6px">Game format</label>
-        <div class="inline" style="flex-wrap:wrap;gap:8px">
+      <div style="margin:var(--s-2) 0">
+        <label style="font-size:var(--fs-sm);color:var(--text-muted);display:block;margin-bottom:var(--s-2)">Game format</label>
+        <div class="inline" style="flex-wrap:wrap;gap:var(--s-2)">
           @for (f of formats; track f.min) {
             <button type="button" class="chip" [class.sel]="minutesPerGame() === f.min"
                     (click)="minutesPerGame.set(f.min)">{{ f.label }}</button>

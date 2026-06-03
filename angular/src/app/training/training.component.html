@@ -1,7 +1,7 @@
 <header class="topbar">
   <div>
     <div class="eyebrow">{{ seasonLabel() }}</div>
-    <h1 style="font-size:21px">Training</h1>
+    <h1>Training</h1>
   </div>
   <div class="inline">
     <a class="icon-btn" routerLink="/notifications" aria-label="Notifications"><lucide-icon name="bell" /><span class="dot"></span></a>
@@ -24,16 +24,16 @@
           <h1>{{ p.intentLabel }}</h1>
           @if (heroBand(); as b) { <span class="band {{ b.cls }}">{{ b.label }}</span> }
         </div>
-        <p style="margin:8px 0 0;color:var(--text)">{{ p.reasoning }}</p>
+        <p style="margin:var(--s-2) 0 0;color:var(--text)">{{ p.reasoning }}</p>
 
-        <div style="margin:14px 0">
+        <div style="margin:var(--s-4) 0">
           <app-yt-video [videoId]="sessionVideoId()" poster="assets/images/rebuild/video-session.jpg"
                         title="Watch the full session" duration="18:30" />
         </div>
 
         @for (blk of blocks(); track blk.title) {
-          <div style="margin-bottom:12px">
-            <div class="row" style="margin-bottom:6px"><b>{{ blk.title }}</b><small>{{ blk.meta }}</small></div>
+          <div style="margin-bottom:var(--s-3)">
+            <div class="row" style="margin-bottom:var(--s-2)"><b>{{ blk.title }}</b><small>{{ blk.meta }}</small></div>
             <app-yt-video [videoId]="blk.video?.youtubeId ?? null"
                           [poster]="blk.video?.thumbnail || 'assets/images/rebuild/video-session.jpg'"
                           [title]="blk.title" [duration]="blk.video?.duration || ''" />
@@ -94,7 +94,7 @@
         <div class="section-h"><h2>{{ cat }}</h2></div>
         @for (v of videos(); track v.id) {
           @if (v.category === cat) {
-            <div style="margin-bottom:12px">
+            <div style="margin-bottom:var(--s-3)">
               <app-yt-video [videoId]="v.youtubeId" [poster]="v.thumbnail || 'assets/images/rebuild/video-session.jpg'"
                             [title]="v.title" [duration]="v.duration" />
             </div>

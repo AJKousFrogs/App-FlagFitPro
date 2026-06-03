@@ -37,22 +37,22 @@ import { LoggerService } from "../core/services/logger.service";
     `
       :host { display: flex; flex-direction: column; min-height: 100dvh; }
       main.screen { flex: 1; display: flex; flex-direction: column; }
-      .chans { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px; }
-      .thread { display: flex; flex-direction: column; gap: 12px; overflow-y: auto; flex: 1; padding: 4px 0 8px; }
-      .msg { display: flex; gap: 10px; max-width: 92%; }
+      .chans { display: flex; gap: var(--s-2); overflow-x: auto; padding-bottom: var(--s-1); }
+      .thread { display: flex; flex-direction: column; gap: var(--s-3); overflow-y: auto; flex: 1; padding: var(--s-1) 0 var(--s-2); }
+      .msg { display: flex; gap: var(--s-3); max-width: 92%; }
       .msg.me { align-self: flex-end; flex-direction: row-reverse; }
       .ava { width: 30px; height: 30px; border-radius: var(--r-pill); flex: 0 0 auto; object-fit: cover;
         display: grid; place-items: center; background: var(--surface-2); color: var(--text-faint);
-        font-size: 11px; font-weight: var(--fw-bold); }
+        font-size: var(--fs-xs); font-weight: var(--fw-bold); }
       .body { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
-      .meta { font-size: var(--fs-xs); color: var(--text-faint); display: flex; gap: 6px; }
+      .meta { font-size: var(--fs-xs); color: var(--text-faint); display: flex; gap: var(--s-2); }
       .msg.me .meta { justify-content: flex-end; }
-      .bubble { padding: 9px 13px; border-radius: var(--r-lg); white-space: pre-wrap; word-break: break-word; line-height: 1.45; }
+      .bubble { padding: var(--s-2) var(--s-3); border-radius: var(--r-lg); white-space: pre-wrap; word-break: break-word; line-height: var(--lh-body); }
       .msg:not(.me) .bubble { background: var(--surface-2); border-bottom-left-radius: 4px; }
       .msg.me .bubble { background: var(--accent); color: var(--on-accent); border-bottom-right-radius: 4px; }
       .composer { margin-top: auto; }
       .composer input { flex: 1; background: var(--surface-2); border: 1px solid var(--border-soft);
-        border-radius: var(--r-pill); padding: 12px 14px; color: var(--text-strong); font-family: var(--font-body); }
+        border-radius: var(--r-pill); padding: var(--s-3) var(--s-4); color: var(--text-strong); font-family: var(--font-body); }
     `,
   ],
 })

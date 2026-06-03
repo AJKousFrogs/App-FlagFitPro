@@ -1,5 +1,5 @@
 <header class="topbar">
-  <div><h1 style="font-size:21px">Settings</h1></div>
+  <div><h1>Settings</h1></div>
   <a class="avatar" routerLink="/profile" aria-label="Profile"><app-avatar /></a>
 </header>
 
@@ -18,7 +18,7 @@
     <input #photoInput type="file" accept="image/jpeg,image/png,image/webp,image/gif"
            hidden (change)="onPhotoSelected($event)" />
   </div>
-  @if (photoMsg(); as m) { <p class="note" style="margin-top:-6px" role="status" aria-live="polite">{{ m }}</p> }
+  @if (photoMsg(); as m) { <p class="note" style="margin-top:calc(-1 * var(--s-2))" role="status" aria-live="polite">{{ m }}</p> }
 
   <nav class="st-tabs" aria-label="Settings sections">
     @for (t of tabs; track t) {
@@ -80,7 +80,7 @@
     <div class="card stack" style="border-left:3px solid var(--danger)">
       <b style="color:var(--danger)">Delete your account &amp; data?</b>
       <p class="note">Your account is deactivated now and permanently erased after a 30-day grace period. Sign back in before then to cancel. This affects only your data.</p>
-      <div class="inline" style="gap:8px">
+      <div class="inline" style="gap:var(--s-2)">
         <button class="btn danger sm" type="button" [attr.aria-disabled]="accountBusy()" (click)="confirmDeletion()">
           {{ accountBusy() ? "Scheduling…" : "Yes, delete my account" }}
         </button>
