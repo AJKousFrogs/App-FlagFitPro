@@ -3,8 +3,16 @@ import { CanActivateFn, Router } from "@angular/router";
 import { LoggerService } from "../services/logger.service";
 import { SupabaseService } from "../services/supabase.service";
 import { AuthFlowDataService } from "../services/auth-flow-data.service";
+import { environment } from "../../../environments/environment";
 
 export const authGuard: CanActivateFn = async (route, state) => {
+  // Auth enforcement is config-gated (see environment.auth.required): the guard is
+  // wired on every protected route, but stays open in local dev/smoke and bites in
+  // production. Bail before touching Supabase when enforcement is off.
+  if (!environment.auth.required) {
+    return true;
+  }
+
   const supabaseService = inject(SupabaseService);
   const authFlowDataService = inject(AuthFlowDataService);
   const router = inject(Router);

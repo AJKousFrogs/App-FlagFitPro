@@ -40,6 +40,11 @@ export const environment = {
       DEFAULT_SUPABASE_ANON_KEY,
     ),
   },
+  // Production always enforces the authGuard — every protected route requires a
+  // verified Supabase session. (Can be overridden via window._env.AUTH_REQUIRED.)
+  auth: {
+    required: getEnvValue(["AUTH_REQUIRED"], "true") !== "false",
+  },
   // Angular DevTools configuration (disabled in production for security)
   devtools: {
     enabled: false,

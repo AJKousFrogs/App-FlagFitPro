@@ -15,7 +15,7 @@ export default defineConfig({
   reporter: [["list"]],
   use: { baseURL: "http://localhost:4319", trace: "off" },
   webServer: {
-    command: "npx http-server dist/flagfit-pro/browser -p 4319 -c-1 --silent",
+    command: "npx http-server dist/flagfit-pro/browser -p 4319 -c-1 --silent --proxy http://localhost:4319?",
     url: "http://localhost:4319",
     reuseExistingServer: true,
     timeout: 60_000,

@@ -1,6 +1,7 @@
 import { Routes } from "@angular/router";
 import { ShellComponent } from "../../shell/shell.component";
 import { staffGuard } from "../guards/staff.guard";
+import { authGuard } from "../guards/auth.guard";
 
 /**
  * Feature routes — rebuilt incrementally in Phase E from the approved static
@@ -26,10 +27,15 @@ export const featureRoutes: Routes = [
     loadComponent: () => import("../../onboarding/onboarding.component").then((m) => m.OnboardingComponent),
     title: "Get started · FlagFit",
   },
-  // Staff track (coach / physio / nutritionist / psychologist) — guarded by role.
+  {
+    path: "verify-email",
+    loadComponent: () => import("../../verify-email/verify-email.component").then((m) => m.VerifyEmailComponent),
+    title: "Verify email · FlagFit",
+  },
+  // Staff track (coach / physio / nutritionist / psychologist) — auth + role guarded.
   {
     path: "staff",
-    canActivate: [staffGuard],
+    canActivate: [authGuard, staffGuard],
     loadComponent: () => import("../../staff/staff-shell.component").then((m) => m.StaffShellComponent),
     children: [
       { path: "", pathMatch: "full", redirectTo: "roster" },
@@ -44,6 +50,7 @@ export const featureRoutes: Routes = [
   {
     path: "",
     component: ShellComponent,
+    canActivate: [authGuard],
     children: [
       { path: "", pathMatch: "full", redirectTo: "today" },
       {

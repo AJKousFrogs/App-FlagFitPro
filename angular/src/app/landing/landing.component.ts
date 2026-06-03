@@ -5,7 +5,7 @@ import {
   signal,
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
-import { Router, RouterLink } from "@angular/router";
+import { ActivatedRoute, Router, RouterLink } from "@angular/router";
 import { LucideAngularModule } from "lucide-angular";
 
 import { SupabaseService } from "../core/services/supabase.service";
@@ -39,6 +39,7 @@ export class LandingComponent {
   private readonly router = inject(Router);
   private readonly logger = inject(LoggerService);
   private readonly membership = inject(TeamMembershipService);
+  private readonly route = inject(ActivatedRoute);
 
   readonly showSignIn = signal(false);
   readonly email = signal("");
@@ -55,10 +56,14 @@ export class LandingComponent {
       if (error) {
         this.error.set(error.message ?? "Sign-in failed");
       } else {
-        // Staff land on the staff track; athletes on the athlete app.
+        // Staff land on the staff track; athletes on the athlete app — unless the
+        // authGuard bounced them here from a deep link (returnUrl), in which case
+        // honour it so the original destination is restored after login.
         await this.membership.loadMembership(true).catch(() => null);
-        const dest = staffLaneFor(this.membership.role()) ? "/staff" : "/today";
-        await this.router.navigate([dest]);
+        const roleDest = staffLaneFor(this.membership.role()) ? "/staff" : "/today";
+        const returnUrl = this.route.snapshot.queryParamMap.get("returnUrl");
+        const dest = returnUrl && returnUrl.startsWith("/") ? returnUrl : roleDest;
+        await this.router.navigateByUrl(dest);
       }
     } catch (e) {
       this.logger.error("signin_failed", e);

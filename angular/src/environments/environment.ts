@@ -16,6 +16,7 @@ declare global {
       SUPABASE_URL?: string;
       SUPABASE_ANON_KEY?: string;
       API_URL?: string;
+      AUTH_REQUIRED?: string;
     };
   }
 }
@@ -78,6 +79,14 @@ export const environment = {
   supabase: {
     url: getEnvValue("SUPABASE_URL", DEFAULTS.SUPABASE_URL),
     anonKey: getEnvValue("SUPABASE_ANON_KEY", DEFAULTS.SUPABASE_ANON_KEY),
+  },
+  // Auth enforcement. The authGuard is WIRED on every protected route; this flag
+  // decides whether it bites. Off in local dev so the app stays openable for
+  // review/smoke without a Supabase session; production replaces this file with
+  // environment.prod.ts (required:true), so deployed builds always require login.
+  // Flip locally with window._env.AUTH_REQUIRED='true' to exercise the login flow.
+  auth: {
+    required: getEnvValue("AUTH_REQUIRED", "false") === "true",
   },
   // VAPID public key for push notifications (generate your own for production)
   // To generate: npx web-push generate-vapid-keys
