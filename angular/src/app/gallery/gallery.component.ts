@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, signal } from "@angular/core";
 import { LucideAngularModule } from "lucide-angular";
+import { YtVideoComponent } from "../shared/yt-video.component";
 
 /**
  * Component gallery — the locked visual language rendered once, in Angular.
@@ -11,7 +12,7 @@ import { LucideAngularModule } from "lucide-angular";
 @Component({
   selector: "app-gallery",
   standalone: true,
-  imports: [LucideAngularModule],
+  imports: [LucideAngularModule, YtVideoComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <header class="topbar">
@@ -96,6 +97,10 @@ import { LucideAngularModule } from "lucide-angular";
           <span class="val">{{ sleep() }}</span>
         </div>
       </div>
+
+      <div class="section-h"><h2>Session video (YouTube IFrame player)</h2></div>
+      <app-yt-video videoId="M7lc1UVf-VE" poster="assets/images/rebuild/video-session.jpg"
+                    title="Tap to play" duration="0:15" />
 
       <div class="section-h"><h2>Link card + empty state</h2></div>
       <a class="card linkcard" href="https://www.laprimafit.eu" target="_blank" rel="noopener">

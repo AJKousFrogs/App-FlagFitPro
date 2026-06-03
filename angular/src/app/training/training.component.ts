@@ -8,6 +8,8 @@ import {
 import { RouterLink } from "@angular/router";
 import { LucideAngularModule } from "lucide-angular";
 import { AvatarComponent } from "../shared/avatar.component";
+import { YtVideoComponent } from "../shared/yt-video.component";
+import { SESSION_VIDEO_ID } from "../core/config/session-video.config";
 
 import { PeriodizationService } from "../core/services/periodization.service";
 import { ApiService } from "../core/services/api.service";
@@ -31,7 +33,7 @@ interface WeekRow {
 @Component({
   selector: "app-training",
   standalone: true,
-  imports: [AvatarComponent, RouterLink, LucideAngularModule],
+  imports: [AvatarComponent, YtVideoComponent, RouterLink, LucideAngularModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: "./training.component.html",
   styles: [
@@ -49,6 +51,7 @@ export class TrainingComponent {
   private readonly api = inject(ApiService);
   private readonly logger = inject(LoggerService);
 
+  readonly sessionVideoId = SESSION_VIDEO_ID;
   readonly tabs = ["Today", "Schedule", "Programs", "Library"] as const;
   readonly tab = signal<(typeof this.tabs)[number]>("Today");
 

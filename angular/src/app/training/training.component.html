@@ -26,11 +26,9 @@
         </div>
         <p style="margin:8px 0 0;color:var(--text)">{{ p.reasoning }}</p>
 
-        <div class="video" style="margin:14px 0">
-          <img src="assets/images/rebuild/video-session.jpg" alt="" />
-          <button class="play" type="button" aria-label="Play session video"><lucide-icon name="play" /></button>
-          <span class="vtitle">Watch the full session</span>
-          <span class="duration">18:30</span>
+        <div style="margin:14px 0">
+          <app-yt-video [videoId]="sessionVideoId" poster="assets/images/rebuild/video-session.jpg"
+                        title="Watch the full session" duration="18:30" />
         </div>
 
         @for (blk of blocks(); track blk.title) {

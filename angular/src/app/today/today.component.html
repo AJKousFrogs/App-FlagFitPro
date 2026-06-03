@@ -61,14 +61,10 @@
         </div>
       </div>
 
-      <!-- session video (poster stands in; real embed at the media wiring step) -->
-      <div class="video" style="margin-bottom:14px">
-        <img src="assets/images/rebuild/video-session.jpg" alt="" />
-        <button class="play" type="button" aria-label="Play session video">
-          <lucide-icon name="play" />
-        </button>
-        <span class="vtitle">Watch today's session</span>
-        <span class="duration">18:30</span>
+      <!-- session video — real YouTube IFrame Player (no API key) -->
+      <div style="margin-bottom:14px">
+        <app-yt-video [videoId]="sessionVideoId" poster="assets/images/rebuild/video-session.jpg"
+                      title="Watch today's session" duration="18:30" />
       </div>
 
       <a class="btn primary block" routerLink="/training">Start session →</a>

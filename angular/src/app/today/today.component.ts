@@ -8,6 +8,8 @@ import {
 import { RouterLink } from "@angular/router";
 import { LucideAngularModule } from "lucide-angular";
 import { AvatarComponent } from "../shared/avatar.component";
+import { YtVideoComponent } from "../shared/yt-video.component";
+import { SESSION_VIDEO_ID } from "../core/config/session-video.config";
 
 import { PeriodizationService } from "../core/services/periodization.service";
 import { ReadinessService } from "../core/services/readiness.service";
@@ -25,12 +27,13 @@ import { IdentityService } from "../core/services/identity.service";
 @Component({
   selector: "app-today",
   standalone: true,
-  imports: [AvatarComponent, RouterLink, LucideAngularModule],
+  imports: [AvatarComponent, YtVideoComponent, RouterLink, LucideAngularModule],
   schemas: [CUSTOM_ELEMENTS_SCHEMA], // <iconify-icon> web component (MDI food glyphs)
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: "./today.component.html",
 })
 export class TodayComponent {
+  readonly sessionVideoId = SESSION_VIDEO_ID;
   private readonly periodization = inject(PeriodizationService);
   private readonly readinessSvc = inject(ReadinessService);
   private readonly acwrSvc = inject(AcwrService);

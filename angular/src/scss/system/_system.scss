@@ -173,6 +173,9 @@
     text-shadow: 0 1px 6px rgba(0, 0, 0, .7); max-width: 72%; z-index: 1; }
   .video .duration { position: absolute; right: 8px; bottom: 8px; background: rgba(8, 9, 11, .85); color: #fff; font-size: var(--fs-xs);
     font-weight: var(--fw-semi); padding: 2px 6px; border-radius: 4px; z-index: 1; }
+  /* YouTube IFrame Player fills the .video frame (global so it reaches the
+     player's injected <iframe>, which lives outside the component view) */
+  .yt-host iframe { width: 100%; height: 100%; border: 0; }
   .vthumb { position: relative; width: 84px; height: 52px; border-radius: var(--r-sm); overflow: hidden; background: var(--grad-brand-soft); flex: 0 0 auto; }
   .vthumb::after { content: "\25B6"; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: #fff; font-size: 13px;
     width: 24px; height: 24px; border-radius: var(--r-pill); background: rgba(8, 9, 11, .55); display: flex; align-items: center; justify-content: center; }
