@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, inject } from "@angular/core";
-import { Router } from "@angular/router";
+import { Router, RouterLink } from "@angular/router";
 import { LucideAngularModule } from "lucide-angular";
 
 import { TeamMembershipService } from "../../core/services/team-membership.service";
@@ -14,7 +14,7 @@ const LANE_LABEL: Record<string, string> = {
 @Component({
   selector: "app-staff-more",
   standalone: true,
-  imports: [LucideAngularModule],
+  imports: [LucideAngularModule, RouterLink],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: "./staff-more.component.html",
 })
@@ -24,7 +24,8 @@ export class StaffMoreComponent {
   private readonly router = inject(Router);
 
   readonly teamName = this.membership.teamName;
-  readonly roleLabel = computed(() => LANE_LABEL[staffLaneFor(this.membership.role()) ?? ""] ?? "Staff");
+  readonly lane = computed(() => staffLaneFor(this.membership.role()));
+  readonly roleLabel = computed(() => LANE_LABEL[this.lane() ?? ""] ?? "Staff");
 
   goAthlete(): void {
     this.router.navigate(["/today"]);

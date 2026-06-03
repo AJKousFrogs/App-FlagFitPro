@@ -102,7 +102,21 @@
         }
       }
     }
+  } @else if (tab() === "Schedule") {
+    <div class="section-h"><h2>Upcoming</h2></div>
+    @if (upcoming().length) {
+      <div class="card">
+        @for (e of upcoming(); track e.id) {
+          <div class="lrow">
+            <span class="inline"><lucide-icon name="flag" /> {{ e.competitionShortName || e.competitionName }}</span>
+            <span class="band caution">in {{ daysTo(e.startsAt) }}d · {{ e.expectedGameCount }} games</span>
+          </div>
+        }
+      </div>
+    } @else {
+      <div class="empty">No upcoming events — add your competitions to plan the season.</div>
+    }
   } @else {
-    <div class="empty">{{ tab() }} lands as the rebuild continues.</div>
+    <div class="empty">Programs land as the rebuild continues — your coach assigns them here.</div>
   }
 </main>

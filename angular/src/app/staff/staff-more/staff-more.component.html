@@ -13,6 +13,18 @@
     </p>
   </div>
 
+  @if (lane() === "coach") {
+    <div class="section-h"><h2>Manage</h2></div>
+    <div class="card">
+      <a class="lrow" routerLink="/staff/events" style="color:inherit">
+        <span class="inline"><lucide-icon name="flag" /> Events &amp; game format</span><span class="faint">›</span>
+      </a>
+      <a class="lrow" routerLink="/staff/library" style="color:inherit">
+        <span class="inline"><lucide-icon name="video" /> Video library</span><span class="faint">›</span>
+      </a>
+    </div>
+  }
+
   <div class="section-h"><h2>You</h2></div>
   <div class="card">
     <button class="lrow" type="button" style="width:100%;background:none;border:0;cursor:pointer;color:inherit" (click)="goAthlete()">

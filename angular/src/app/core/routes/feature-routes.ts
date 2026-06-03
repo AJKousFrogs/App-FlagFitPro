@@ -37,6 +37,7 @@ export const featureRoutes: Routes = [
       { path: "athlete/:id", loadComponent: () => import("../../staff/athlete-detail/athlete-detail.component").then((m) => m.AthleteDetailComponent), title: "Athlete · FlagFit" },
       { path: "alerts", loadComponent: () => import("../../staff/alerts/alerts.component").then((m) => m.AlertsComponent), title: "Alerts · FlagFit" },
       { path: "library", loadComponent: () => import("../../staff/library/library.component").then((m) => m.StaffLibraryComponent), title: "Library · FlagFit" },
+      { path: "events", loadComponent: () => import("../../staff/events/events.component").then((m) => m.StaffEventsComponent), title: "Events · FlagFit" },
       { path: "more", loadComponent: () => import("../../staff/staff-more/staff-more.component").then((m) => m.StaffMoreComponent), title: "More · FlagFit" },
     ],
   },

@@ -12,6 +12,7 @@ import { YtVideoComponent } from "../shared/yt-video.component";
 import { SESSION_VIDEO_ID } from "../core/config/session-video.config";
 
 import { PeriodizationService } from "../core/services/periodization.service";
+import { ScheduleService } from "../core/services/schedule.service";
 import { ApiService } from "../core/services/api.service";
 import { LoggerService } from "../core/services/logger.service";
 import { TrainingVideoService } from "../core/services/training-video.service";
@@ -49,9 +50,16 @@ interface WeekRow {
 })
 export class TrainingComponent {
   private readonly periodization = inject(PeriodizationService);
+  private readonly schedule = inject(ScheduleService);
   private readonly api = inject(ApiService);
   private readonly logger = inject(LoggerService);
   private readonly videoSvc = inject(TrainingVideoService);
+
+  /** Upcoming events (the spine) for the Schedule tab. */
+  readonly upcoming = this.schedule.upcoming;
+  daysTo(iso: string): number {
+    return Math.max(0, Math.round((new Date(iso).getTime() - Date.now()) / 864e5));
+  }
 
   readonly tabs = ["Today", "Schedule", "Programs", "Library"] as const;
   readonly tab = signal<(typeof this.tabs)[number]>("Today");
