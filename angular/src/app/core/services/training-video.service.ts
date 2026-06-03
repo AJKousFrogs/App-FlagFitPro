@@ -100,12 +100,16 @@ export class TrainingVideoService {
   }
 
   private map(r: Record<string, unknown>): TrainingVideo {
+    const youtubeId = parseYouTubeId(r["video_url"] as string);
     return {
       id: String(r["id"]),
       title: (r["title"] as string) ?? "Untitled",
       description: (r["description"] as string) ?? null,
-      youtubeId: parseYouTubeId(r["video_url"] as string),
-      thumbnail: (r["thumbnail_url"] as string) ?? null,
+      youtubeId,
+      // real YouTube thumbnail (public, no API) when no custom one is set
+      thumbnail:
+        (r["thumbnail_url"] as string) ??
+        (youtubeId ? `https://img.youtube.com/vi/${youtubeId}/hqdefault.jpg` : null),
       duration: fmtDuration(r["duration_seconds"] as number),
       category: (r["category"] as string) ?? "general",
       position: (r["position"] as string) ?? null,
