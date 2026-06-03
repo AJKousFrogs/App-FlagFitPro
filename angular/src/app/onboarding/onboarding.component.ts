@@ -121,8 +121,14 @@ export class OnboardingComponent {
         next: () => this.router.navigate(["/today"]),
         error: (e) => {
           this.logger.error("onboarding_save_failed", e);
-          // don't trap the athlete on a setup error — proceed into the app
-          this.router.navigate(["/today"]);
+          // Onboarding's whole job is to persist the profile the engine needs
+          // (position, DOB, season). Proceeding on a save failure would drop the
+          // athlete into the app with no profile and no way back in — so surface
+          // the error and let them retry rather than silently losing their setup.
+          this.saving.set(false);
+          this.error.set(
+            "Couldn't save your profile — check your connection and tap Finish again.",
+          );
         },
       });
   }

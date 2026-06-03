@@ -347,6 +347,8 @@ async function getSettings(supabase, userId) {
           primaryPosition: "wr_db",
           secondaryPosition: null,
           birthDate: userData?.date_of_birth || userData?.birth_date || null,
+          seasonCalendar: [],
+          season_calendar: [],
           availabilitySchedule: [],
           availabilityDisclaimer:
             "Availability does not schedule practice. Coaches schedule team activities.",
@@ -389,6 +391,8 @@ async function getSettings(supabase, userId) {
           "bodyweight",
           "resistance_bands",
         ],
+        seasonCalendar: config.season_calendar || [],
+        season_calendar: config.season_calendar || [],
         currentLimitations: config.current_limitations || [],
       },
     }),
@@ -400,9 +404,7 @@ async function getSettings(supabase, userId) {
  */
 async function saveSettings(supabase, userId, payload, log = logger) {
   const {
-    primaryPosition,
     secondaryPosition,
-    birthDate,
     availabilitySchedule, // PROMPT 2.11: Renamed from flagPracticeSchedule
     preferredTrainingDays,
     dailyRoutine,
@@ -410,9 +412,18 @@ async function saveSettings(supabase, userId, payload, log = logger) {
     hasGymAccess,
     hasFieldAccess,
     warmupFocus,
-    availableEquipment,
     currentLimitations,
   } = payload;
+
+  // Accept BOTH the Settings-screen contract and the onboarding payload shape.
+  // Onboarding sends position/dateOfBirth/equipment/seasonCalendar/jerseyNumber/
+  // heightCm/weightKg; without these aliases the whole onboarding form was dropped
+  // (primary_position silently defaulted to "wr_db", DOB/season/physicals lost).
+  const primaryPosition = payload.primaryPosition ?? payload.position;
+  const birthDate = payload.birthDate ?? payload.dateOfBirth;
+  const availableEquipment = payload.availableEquipment ?? payload.equipment;
+  const seasonCalendar = payload.seasonCalendar ?? payload.season_calendar;
+  const { jerseyNumber, heightCm, weightKg } = payload;
 
   // Map availabilitySchedule back to DB field (for backward compatibility)
   const flagPracticeSchedule =
@@ -455,6 +466,7 @@ async function saveSettings(supabase, userId, payload, log = logger) {
         has_field_access: hasFieldAccess !== false,
         warmup_focus: warmupFocus || null,
         available_equipment: availableEquipment || [],
+        season_calendar: Array.isArray(seasonCalendar) ? seasonCalendar : [],
         current_limitations: currentLimitations || null,
         age_recovery_modifier: ageRecoveryModifier,
         acwr_target_min: acwrTargetMin,
@@ -472,20 +484,28 @@ async function saveSettings(supabase, userId, payload, log = logger) {
     throw error;
   }
 
-  // Also update users table with birth date if provided
-  if (birthDate) {
+  // Mirror identity/physical fields onto users (onboarding collects these and the
+  // profile/roster/nutrition screens read them from users — previously only DOB
+  // was written, so jersey/height/weight/position from onboarding were lost).
+  const userUpdate = {};
+  if (birthDate) userUpdate.date_of_birth = birthDate;
+  if (primaryPosition) userUpdate.position = primaryPosition;
+  if (jerseyNumber !== undefined && jerseyNumber !== null && !Number.isNaN(Number(jerseyNumber)))
+    userUpdate.jersey_number = Number(jerseyNumber);
+  if (heightCm !== undefined && heightCm !== null && !Number.isNaN(Number(heightCm)))
+    userUpdate.height_cm = Number(heightCm);
+  if (weightKg !== undefined && weightKg !== null && !Number.isNaN(Number(weightKg)))
+    userUpdate.weight_kg = Number(weightKg);
+  if (Object.keys(userUpdate).length > 0) {
     try {
-      await supabase
-        .from("users")
-        .update({ date_of_birth: birthDate })
-        .eq("id", userId);
-      } catch (updateError) {
-        log.warn("player_settings_user_update_warning", {
-          message: "Could not update users table",
-          err: updateError.message,
-          user_id: userId,
-        });
-      }
+      await supabase.from("users").update(userUpdate).eq("id", userId);
+    } catch (updateError) {
+      log.warn("player_settings_user_update_warning", {
+        message: "Could not update users table",
+        err: updateError.message,
+        user_id: userId,
+      });
+    }
   }
 
   return {
@@ -496,6 +516,8 @@ async function saveSettings(supabase, userId, payload, log = logger) {
         primaryPosition: config.primary_position,
         secondaryPosition: config.secondary_position,
         birthDate: config.birth_date,
+        seasonCalendar: config.season_calendar || [],
+        season_calendar: config.season_calendar || [],
         availabilitySchedule: config.flag_practice_schedule, // PROMPT 2.11: Renamed
         availabilityDisclaimer:
           "Availability does not schedule practice. Coaches schedule team activities.",
