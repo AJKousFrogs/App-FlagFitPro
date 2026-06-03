@@ -120,6 +120,15 @@ export const featureRoutes: Routes = [
         title: "Return to play · FlagFit",
       },
       {
+        // Built and routable, but deliberately not surfaced in nav — the team
+        // uses WhatsApp. Flip the More "Team chat" row to routerLink="/team-chat"
+        // to expose it.
+        path: "team-chat",
+        loadComponent: () =>
+          import("../../team-chat/team-chat.component").then((m) => m.TeamChatComponent),
+        title: "Team chat · FlagFit",
+      },
+      {
         path: "profile",
         loadComponent: () =>
           import("../../profile/profile.component").then((m) => m.ProfileComponent),

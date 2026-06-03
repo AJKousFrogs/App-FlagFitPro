@@ -1,0 +1,53 @@
+<header class="topbar">
+  <div>
+    <div class="eyebrow">team channel</div>
+    <h1 class="inline" style="font-size:21px"><lucide-icon name="message-circle" /> {{ current()?.name || "Team chat" }}</h1>
+  </div>
+  <a class="icon-btn" routerLink="/more" aria-label="Back"><lucide-icon name="chevron-right" style="transform:rotate(180deg)" /></a>
+</header>
+
+<main class="screen">
+  @if (channelList().length > 1) {
+    <div class="chans">
+      @for (c of channelList(); track c.id) {
+        <button type="button" class="chip" [class.sel]="current()?.id === c.id" (click)="open(c)">{{ c.name }}</button>
+      }
+    </div>
+  }
+
+  @if (!loaded()) {
+    <div class="empty">Loading…</div>
+  } @else if (!current()) {
+    <div class="empty">
+      <b style="color:var(--text)">No team channel</b>
+      <p class="note" style="margin-top:8px">You're not in a team channel yet. When your team sets one up it shows here — for now the squad chats on WhatsApp.</p>
+    </div>
+  } @else {
+    <div class="thread" #thread>
+      @for (m of messages(); track m.id) {
+        <div class="msg" [class.me]="mine(m)">
+          @if (m.author?.avatar_url) {
+            <img class="ava" [src]="m.author!.avatar_url" alt="" />
+          } @else {
+            <span class="ava">{{ initials(m.author?.full_name) }}</span>
+          }
+          <div class="body">
+            <div class="meta"><b style="color:var(--text-muted)">{{ mine(m) ? "You" : (m.author?.full_name || "Teammate") }}</b><span>{{ time(m.created_at) }}</span></div>
+            <div class="bubble">{{ m.message }}</div>
+          </div>
+        </div>
+      } @empty {
+        <div class="empty" style="margin:auto">Say hello — no messages yet.</div>
+      }
+    </div>
+
+    <div class="card composer">
+      <div class="row" style="gap:8px">
+        <input type="text" [value]="draft()" (input)="draft.set($any($event.target).value)"
+               (keydown.enter)="send()" [disabled]="busy()"
+               placeholder="Message {{ current()?.name }}…" aria-label="Message the team" />
+        <button class="btn primary sm" type="button" [attr.aria-disabled]="!canSend()" (click)="send()">Send</button>
+      </div>
+    </div>
+  }
+</main>
