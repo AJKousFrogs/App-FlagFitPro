@@ -13,6 +13,7 @@ import { AvatarComponent } from "../shared/avatar.component";
 import { ApiService } from "../core/services/api.service";
 import { SupabaseService } from "../core/services/supabase.service";
 import { LoggerService } from "../core/services/logger.service";
+import { PrivacySettingsService } from "../core/services/privacy-settings.service";
 import { extractApiPayload } from "../core/utils/api-response-mapper";
 
 type Tab = "Notifications" | "Privacy" | "Prefs" | "Security";
@@ -46,9 +47,47 @@ export class SettingsComponent {
   private readonly api = inject(ApiService);
   private readonly supabase = inject(SupabaseService);
   private readonly logger = inject(LoggerService);
+  private readonly privacy = inject(PrivacySettingsService);
 
   readonly tabs: Tab[] = ["Notifications", "Privacy", "Prefs", "Security"];
   readonly tab = signal<Tab>("Notifications");
+
+  // Real server state must load before any toggle write fires — otherwise the
+  // hardcoded defaults below would be persisted over the athlete's actual consent.
+  readonly prefsLoaded = signal(false);
+
+  constructor() {
+    void this.loadPrefs();
+  }
+
+  private async loadPrefs(): Promise<void> {
+    // Privacy / consent — seed from the canonical privacy settings.
+    try {
+      await this.privacy.loadSettings();
+      const s = this.privacy.settings();
+      this.aiPersonalisation.set(this.privacy.aiProcessingEnabled());
+      this.sharePerformance.set(s?.performanceSharingDefault ?? true);
+      this.shareHealth.set(s?.healthSharingDefault ?? false);
+    } catch (e) {
+      this.logger.error("settings_privacy_load_failed", e);
+    }
+    // Notification preferences — ON = not muted.
+    try {
+      const res = await firstValueFrom(
+        this.api.get<Record<string, unknown>>("/api/notifications/preferences"),
+      );
+      const payload = (extractApiPayload<Record<string, unknown>>(res) ?? {}) as Record<string, unknown>;
+      const prefs = ((payload["preferences"] ?? payload) ?? {}) as Record<string, { muted?: boolean }>;
+      const on = (type: string) => prefs[type]?.muted !== true;
+      this.trainingReminders.set(on("training"));
+      this.gameDayAlerts.set(on("game"));
+      this.acwrAlerts.set(on("injury_risk"));
+      this.coachMessages.set(on("team"));
+    } catch (e) {
+      this.logger.error("settings_notif_load_failed", e);
+    }
+    this.prefsLoaded.set(true);
+  }
 
   readonly name = computed(() => {
     const meta = (this.supabase.currentUser()?.user_metadata ?? {}) as Record<string, unknown>;
@@ -96,10 +135,11 @@ export class SettingsComponent {
       const url = extractApiPayload<{ url?: string }>(res)?.url;
       if (!url) throw new Error("Upload returned no URL");
 
-      const { error } = await this.supabase.client.auth.updateUser({
-        data: { avatar_url: url },
-      });
+      const { error } = await this.supabase.updateUser({ data: { avatar_url: url } });
       if (error) throw error;
+      // updateUser doesn't always push a fresh currentUser() into the signal, so
+      // pull it explicitly — that's what makes every <app-avatar> re-render.
+      await this.supabase.refreshCurrentUser();
       this.flashPhoto("Photo updated");
     } catch (err) {
       this.logger.error("avatar_upload_failed", err);
@@ -174,6 +214,7 @@ export class SettingsComponent {
   readonly coachMessages = signal(true);
 
   saveNotifications(): void {
+    if (!this.prefsLoaded()) return; // never write before real state has loaded
     // Endpoint expects { preferences: { <type>: { muted, pushEnabled, inAppEnabled } } }
     // with backend notification types. A toggle ON = delivered, OFF = muted.
     const cfg = (on: boolean) => ({ muted: !on, pushEnabled: on, inAppEnabled: on });
@@ -195,6 +236,7 @@ export class SettingsComponent {
   readonly shareHealth = signal(false);
 
   savePrivacy(): void {
+    if (!this.prefsLoaded()) return; // never write fabricated consent before load
     // Endpoint expects the settings wrapped under a `settings` key.
     this.api
       .put("/api/privacy-settings", {

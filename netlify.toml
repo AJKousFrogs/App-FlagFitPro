@@ -1274,26 +1274,26 @@
 # Equipment API - Gear and equipment tracking
 [[redirects]]
   from = "/api/equipment/*"
-  to = "/.netlify/functions/team"
+  to = "/.netlify/functions/equipment"
   status = 200
   force = true
 
 [[redirects]]
   from = "/api/equipment"
-  to = "/.netlify/functions/team"
+  to = "/.netlify/functions/equipment"
   status = 200
   force = true
 
 # Officials API - Referee scheduling
 [[redirects]]
   from = "/api/officials/*"
-  to = "/.netlify/functions/team"
+  to = "/.netlify/functions/officials"
   status = 200
   force = true
 
 [[redirects]]
   from = "/api/officials"
-  to = "/.netlify/functions/team"
+  to = "/.netlify/functions/officials"
   status = 200
   force = true
 

@@ -65,6 +65,7 @@ export class ChatComponent implements AfterViewChecked {
   readonly turns = signal<Turn[]>([]);
   readonly draft = signal("");
   readonly busy = signal(false);
+  readonly prefsLoaded = signal(false);
   readonly aiEnabled = this.privacy.aiProcessingEnabled;
   readonly canSend = computed(
     () => this.aiEnabled() && !this.busy() && this.draft().trim().length > 0,
@@ -75,8 +76,13 @@ export class ChatComponent implements AfterViewChecked {
 
   constructor() {
     // Refresh privacy settings so the consent gate reflects reality (the signal
-    // defaults to enabled; loadSettings corrects it for opted-out athletes).
-    void this.privacy.loadSettings().catch(() => null);
+    // defaults to enabled; loadSettings corrects it for opted-out athletes). Until
+    // it resolves we hold the composer in a neutral disabled state — never flash an
+    // enabled input that lets the user type before the consent check completes.
+    void this.privacy
+      .loadSettings()
+      .catch(() => null)
+      .finally(() => this.prefsLoaded.set(true));
   }
 
   ngAfterViewChecked(): void {

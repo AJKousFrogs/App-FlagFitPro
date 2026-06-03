@@ -112,6 +112,13 @@
   .gauge .inner b { font-family: var(--font-display); font-size: var(--fs-h1); color: var(--text-strong); }
   .gauge.grad { background: conic-gradient(from -90deg, var(--accent) 0%, var(--accent-2) calc(var(--p, 68) * 1%), var(--surface-2) calc(var(--p, 68) * 1%)); }
 
+  /* ---- text inputs: one keyboard-focus ring for every text field app-wide ---- */
+  input[type="text"]:focus-visible, input[type="email"]:focus-visible,
+  input[type="search"]:focus-visible, input[type="number"]:focus-visible,
+  input[type="password"]:focus-visible, textarea:focus-visible {
+    outline: none; box-shadow: var(--focus); border-color: var(--accent);
+  }
+
   /* ---- slider (real range input) ---- */
   .slider { display: flex; align-items: center; gap: var(--s-3); margin: var(--s-2) 0; }
   .slider label { width: 96px; font-size: var(--fs-sm); color: var(--text-muted); }

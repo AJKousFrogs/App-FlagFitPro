@@ -30,7 +30,7 @@
     </div>
   } @else {
     @if (searchMode()) {
-      <p class="note">{{ entries().length }} result(s) for "{{ query() }}" · <a (click)="query.set(''); search()" style="color:var(--accent);cursor:pointer">clear</a></p>
+      <p class="note">{{ entries().length }} result(s) for "{{ query() }}" · <button type="button" (click)="query.set(''); search()" style="background:none;border:0;padding:0;color:var(--accent);cursor:pointer;font:inherit">clear</button></p>
     }
     @for (e of entries(); track e.id) {
       <div class="card entry">

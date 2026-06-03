@@ -768,7 +768,9 @@ export const API_ENDPOINTS = {
   },
   // Season/Account management endpoints
   season: {
-    archive: "/api/season/archive",
+    // Canonical hyphenated path: /api/season-archive routes (via the team
+    // dispatcher) to season-archive.js. "/api/season/archive" 404s — no handler.
+    archive: "/api/season-archive",
   },
   account: {
     resume: "/api/account/resume",

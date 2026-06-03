@@ -22,7 +22,7 @@
       <b class="inline" style="color:var(--accent)"><lucide-icon name="check" /> Link sent — check your inbox.</b>
     }
     @if (error(); as e) {
-      <small style="color:var(--danger)">{{ e }}</small>
+      <small style="color:var(--danger)" role="alert">{{ e }}</small>
     }
     <button class="btn primary block" type="button" [attr.aria-disabled]="busy()" (click)="resend()">
       {{ busy() ? "Sending…" : "Resend verification email" }}

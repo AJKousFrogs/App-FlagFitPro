@@ -12,13 +12,13 @@
       <div class="muted" style="font-size:var(--fs-sm)">{{ subtitle() }}</div>
     </div>
     <button class="btn ghost sm" type="button" [attr.aria-disabled]="photoBusy()"
-            (click)="photoInput.click()">
-      <lucide-icon name="camera" /> {{ photoBusy() ? "Uploading…" : "Change photo" }}
+            (click)="!photoBusy() && photoInput.click()">
+      <lucide-icon name="camera" aria-hidden="true" /> {{ photoBusy() ? "Uploading…" : "Change photo" }}
     </button>
     <input #photoInput type="file" accept="image/jpeg,image/png,image/webp,image/gif"
            hidden (change)="onPhotoSelected($event)" />
   </div>
-  @if (photoMsg(); as m) { <p class="note" style="margin-top:-6px">{{ m }}</p> }
+  @if (photoMsg(); as m) { <p class="note" style="margin-top:-6px" role="status" aria-live="polite">{{ m }}</p> }
 
   <nav class="st-tabs" aria-label="Settings sections">
     @for (t of tabs; track t) {
@@ -89,5 +89,5 @@
     </div>
   }
 
-  @if (accountMsg(); as m) { <p class="note">{{ m }}</p> }
+  @if (accountMsg(); as m) { <p class="note" role="status" aria-live="polite">{{ m }}</p> }
 </main>
