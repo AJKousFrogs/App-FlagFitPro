@@ -10,11 +10,13 @@ import { LucideAngularModule } from "lucide-angular";
 
 import { ApiService } from "../../core/services/api.service";
 import { TeamMembershipService } from "../../core/services/team-membership.service";
+import { LoggerService } from "../../core/services/logger.service";
 import { staffLaneFor } from "../../core/guards/staff.guard";
 
 type Lane = "coach" | "physio" | "nutrition" | "psych";
 
 interface Injury {
+  id?: string;
   injury_type?: string; injury_location?: string; injury_grade?: string;
   recovery_status?: string; current_phase?: string; rtp_progress?: number;
   injury_date?: string; expected_return_date?: string | null;
@@ -30,12 +32,13 @@ const TITLE: Record<Lane, string> = {
 const CONSENT: Record<Lane, "performance" | "health"> = {
   coach: "performance", physio: "health", nutrition: "health", psych: "health",
 };
+const RTP_PHASES = ["Phase 1", "Phase 2", "Phase 3", "Phase 4", "Cleared"];
 
 /**
- * Athlete detail (staff) — role-aware, wired to the real per-athlete staff endpoints.
- * Privacy-first: a 403 / empty payload renders the explicit "Not shared" state,
- * never a fabricated value. Coach metrics come from the team feed (passed via state)
- * since coach-core has no per-athlete route.
+ * Athlete detail (staff) — role-aware READ + WRITE. Reads the per-athlete staff
+ * endpoint (privacy-first "Not shared" when gated/empty); the clinical roles can
+ * also act: physio updates RTP / logs an injury, nutritionist generates a report,
+ * psychologist logs an assessment. Coach metrics arrive via the team feed (state).
  */
 @Component({
   selector: "app-athlete-detail",
@@ -48,6 +51,7 @@ export class AthleteDetailComponent {
   private readonly api = inject(ApiService);
   private readonly route = inject(ActivatedRoute);
   private readonly membership = inject(TeamMembershipService);
+  private readonly logger = inject(LoggerService);
 
   readonly id = this.route.snapshot.paramMap.get("id") ?? "";
   private readonly nav = (inject(Router).getCurrentNavigation()?.extras.state ?? history.state ?? {}) as Record<string, unknown>;
@@ -58,6 +62,7 @@ export class AthleteDetailComponent {
   readonly lane = computed<Lane>(() => (staffLaneFor(this.membership.role()) ?? "coach") as Lane);
   readonly title = computed(() => TITLE[this.lane()]);
   readonly consent = computed(() => CONSENT[this.lane()]);
+  readonly rtpPhases = RTP_PHASES;
 
   // coach (from team feed via state)
   readonly coachShared = (this.nav["shared"] as boolean) ?? false;
@@ -78,6 +83,11 @@ export class AthleteDetailComponent {
       this.loaded.set(true);
       return;
     }
+    this.fetch();
+  }
+
+  private fetch(): void {
+    const lane = this.lane();
     const url =
       lane === "physio" ? `/api/staff-physiotherapist/athletes/${this.id}` :
       lane === "nutrition" ? `/api/staff-nutritionist/athletes/${this.id}/trends` :
@@ -97,7 +107,7 @@ export class AthleteDetailComponent {
         }
         this.loaded.set(true);
       },
-      error: () => this.loaded.set(true), // 403 / no consent → empty → "not shared"
+      error: () => this.loaded.set(true),
     });
   }
 
@@ -140,4 +150,87 @@ export class AthleteDetailComponent {
   readonly initials = computed(() =>
     this.name.split(/\s+/).map((w) => w[0]).slice(0, 2).join("").toUpperCase(),
   );
+
+  // ---- WRITE: physio RTP update ----
+  readonly editingRtp = signal<string | null>(null);
+  readonly rtpProgress = signal(50);
+  readonly rtpNewPhase = signal("Phase 1");
+  readonly rtpNotes = signal("");
+  readonly busy = signal(false);
+  readonly toast = signal<string | null>(null);
+
+  openRtp(inj: Injury): void {
+    this.editingRtp.set(inj.id ?? null);
+    this.rtpProgress.set(inj.rtp_progress ?? 50);
+    this.rtpNewPhase.set(inj.current_phase ?? "Phase 1");
+    this.rtpNotes.set("");
+  }
+  saveRtp(): void {
+    const injuryId = this.editingRtp();
+    if (!injuryId || this.busy()) return;
+    this.busy.set(true);
+    this.api
+      .put(`/api/staff-physiotherapist/rtp/${injuryId}`, {
+        progress: this.rtpProgress(), phase: this.rtpNewPhase(), notes: this.rtpNotes() || undefined,
+      })
+      .subscribe({
+        next: () => { this.busy.set(false); this.editingRtp.set(null); this.flash("RTP updated"); this.fetch(); },
+        error: (e) => { this.busy.set(false); this.logger.error("rtp_update_failed", e); this.flash("Couldn't update RTP"); },
+      });
+  }
+
+  // ---- WRITE: physio log injury ----
+  readonly addingInjury = signal(false);
+  readonly injType = signal("");
+  readonly injLocation = signal("");
+  readonly injGrade = signal("Grade 1");
+  readonly grades = ["Grade 1", "Grade 2", "Grade 3"];
+  logInjury(): void {
+    if (this.busy() || !this.injType().trim() || !this.injLocation().trim()) return;
+    this.busy.set(true);
+    this.api
+      .post("/api/staff-physiotherapist/injuries", {
+        userId: this.id, type: this.injType().trim(), location: this.injLocation().trim(), grade: this.injGrade(),
+      })
+      .subscribe({
+        next: () => { this.busy.set(false); this.addingInjury.set(false); this.injType.set(""); this.injLocation.set(""); this.flash("Injury logged"); this.fetch(); },
+        error: (e) => { this.busy.set(false); this.logger.error("log_injury_failed", e); this.flash("Couldn't log injury"); },
+      });
+  }
+
+  // ---- WRITE: nutritionist generate report ----
+  generateReport(type: "weekly" | "monthly"): void {
+    if (this.busy()) return;
+    this.busy.set(true);
+    this.api
+      .post(`/api/staff-nutritionist/reports/${this.id}`, { type })
+      .subscribe({
+        next: () => { this.busy.set(false); this.flash(`${type} report generated`); },
+        error: (e) => { this.busy.set(false); this.logger.error("nutrition_report_failed", e); this.flash("Couldn't generate report"); },
+      });
+  }
+
+  // ---- WRITE: psychologist log assessment ----
+  readonly addingAssessment = signal(false);
+  readonly asmtType = signal("");
+  readonly asmtScore = signal(5);
+  readonly asmtNote = signal("");
+  readonly asmtReview = signal(false);
+  logAssessment(): void {
+    if (this.busy() || !this.asmtType().trim()) return;
+    this.busy.set(true);
+    this.api
+      .post("/api/staff-psychology/assessments", {
+        athleteId: this.id, type: this.asmtType().trim(), score: this.asmtScore(),
+        interpretation: this.asmtNote() || undefined, requiresReview: this.asmtReview(),
+      })
+      .subscribe({
+        next: () => { this.busy.set(false); this.addingAssessment.set(false); this.asmtType.set(""); this.asmtNote.set(""); this.flash("Assessment logged"); },
+        error: (e) => { this.busy.set(false); this.logger.error("assessment_failed", e); this.flash("Couldn't log assessment"); },
+      });
+  }
+
+  private flash(msg: string): void {
+    this.toast.set(msg);
+  }
 }
