@@ -1,0 +1,61 @@
+<header class="topbar">
+  <div>
+    <div class="eyebrow">training report</div>
+    <h1 class="inline"><lucide-icon name="file-text" /> Reports</h1>
+  </div>
+  <a class="icon-btn" routerLink="/more" aria-label="Back"><lucide-icon name="chevron-right" style="transform:rotate(180deg)" /></a>
+</header>
+
+<main class="screen">
+  <div class="chips">
+    <button type="button" class="chip" [class.sel]="periodDays() === 7" (click)="setPeriod(7)">This week</button>
+    <button type="button" class="chip" [class.sel]="periodDays() === 30" (click)="setPeriod(30)">This month</button>
+  </div>
+
+  @if (!loaded()) {
+    <div class="empty">Loading…</div>
+  } @else if (!hasData()) {
+    <div class="empty">
+      <b style="color:var(--text)">No sessions {{ periodDays() === 7 ? "this week" : "this month" }}</b>
+      <p class="note" style="margin-top:var(--s-2)">Log training in <a routerLink="/training" style="color:var(--accent)">Training</a> and your report builds here — volume, load, streak and a by-type breakdown.</p>
+    </div>
+  } @else {
+    @if (stats(); as s) {
+      <!-- headline -->
+      <div class="card"><div class="tiles">
+        <div><b>{{ s.totalSessions }}</b><small>sessions</small></div>
+        <div><b>{{ s.totalLoad }}</b><small>load (AU)</small></div>
+        <div><b>{{ hours(s.totalDuration) }}</b><small>trained</small></div>
+      </div></div>
+
+      <div class="card"><div class="tiles">
+        <div><b>{{ s.avgLoad }}</b><small>avg / session</small></div>
+        <div><b>{{ hours(s.avgDuration) }}</b><small>avg length</small></div>
+        <div><b>{{ s.currentStreak ?? 0 }}</b><small>day streak</small></div>
+      </div></div>
+
+      <!-- load & risk -->
+      <div class="section-h"><h2>Load &amp; risk</h2></div>
+      <div class="card stack">
+        <div class="row"><span>ACWR</span><span class="band {{ acwrBand().cls }}">{{ acwrBand().label }}</span></div>
+        @if (s.acwrMessage) { <small class="muted">{{ s.acwrMessage }}</small> }
+      </div>
+
+      <!-- by type -->
+      @if (typeRows().length) {
+        <div class="section-h"><h2>By session type</h2></div>
+        <div class="card">
+          @for (r of typeRows(); track r.type) {
+            <div class="trow">
+              <span class="t">{{ r.type }}</span>
+              <div class="bar"><i [style.width.%]="r.pct"></i></div>
+              <span class="v muted">{{ r.count }}× · {{ r.load }}</span>
+            </div>
+          }
+        </div>
+      }
+
+      <p class="note">A live summary of your logged sessions over the {{ periodDays() === 7 ? "last 7 days" : "last 30 days" }} — load is RPE × minutes (arbitrary units).</p>
+    }
+  }
+</main>
