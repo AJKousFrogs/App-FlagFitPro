@@ -6,9 +6,10 @@ import {
 } from "@angular/core";
 import { RouterLink } from "@angular/router";
 import { LucideAngularModule } from "lucide-angular";
+import { AvatarComponent } from "../shared/avatar.component";
 
 import { AcwrService } from "../core/services/acwr.service";
-import { SupabaseService } from "../core/services/supabase.service";
+import { IdentityService } from "../core/services/identity.service";
 import { TeamMembershipService } from "../core/services/team-membership.service";
 import { staffLaneFor } from "../core/guards/staff.guard";
 
@@ -21,14 +22,14 @@ import { staffLaneFor } from "../core/guards/staff.guard";
 @Component({
   selector: "app-more",
   standalone: true,
-  imports: [RouterLink, LucideAngularModule],
+  imports: [AvatarComponent, RouterLink, LucideAngularModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: "./more.component.html",
 })
 export class MoreComponent {
   private readonly acwrSvc = inject(AcwrService);
-  private readonly supabase = inject(SupabaseService);
   private readonly membership = inject(TeamMembershipService);
+  private readonly identitySvc = inject(IdentityService);
 
   /** Staff (coach/physio/nutritionist/psychologist) can jump to the staff track. */
   readonly isStaff = computed(() => staffLaneFor(this.membership.role()) !== null);
@@ -37,14 +38,14 @@ export class MoreComponent {
     this.membership.loadMembership().catch(() => null);
   }
 
-  /** "Joao Maioto · #1 · QB" from the signed-in user; generic fallback. */
+  /** "Joao Maioto · #1 · QB · Ljubljana Frogs" from the signed-in user + team. */
   readonly identity = computed(() => {
-    const meta = (this.supabase.currentUser()?.user_metadata ?? {}) as Record<string, unknown>;
-    const name = ((meta["full_name"] ?? meta["name"] ?? "") as string).trim();
-    const jersey = meta["jersey_number"];
-    const pos = (meta["position"] ?? "") as string;
-    if (!name) return "Your hub";
-    return [name, jersey != null ? `#${jersey}` : null, pos || null].filter(Boolean).join(" · ");
+    const id = this.identitySvc;
+    const name = id.displayName();
+    const j = id.jersey();
+    return [name, j != null ? `#${j}` : null, id.position() || null, id.teamName() || null]
+      .filter(Boolean)
+      .join(" · ");
   });
 
   /** Live ACWR band for the Load row (null → no number, never faked). */

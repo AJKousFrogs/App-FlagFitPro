@@ -8,6 +8,7 @@ import {
 } from "@angular/core";
 import { RouterLink } from "@angular/router";
 import { LucideAngularModule } from "lucide-angular";
+import { AvatarComponent } from "../shared/avatar.component";
 
 import { ScheduleService } from "../core/services/schedule.service";
 import { PeriodizationService } from "../core/services/periodization.service";
@@ -23,7 +24,7 @@ import { LoggerService } from "../core/services/logger.service";
 @Component({
   selector: "app-gameday",
   standalone: true,
-  imports: [RouterLink, LucideAngularModule],
+  imports: [AvatarComponent, RouterLink, LucideAngularModule],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: "./gameday.component.html",

@@ -7,6 +7,7 @@ import {
 } from "@angular/core";
 import { RouterLink } from "@angular/router";
 import { LucideAngularModule } from "lucide-angular";
+import { AvatarComponent } from "../shared/avatar.component";
 
 import { PeriodizationService } from "../core/services/periodization.service";
 import { ApiService } from "../core/services/api.service";
@@ -30,7 +31,7 @@ interface WeekRow {
 @Component({
   selector: "app-training",
   standalone: true,
-  imports: [RouterLink, LucideAngularModule],
+  imports: [AvatarComponent, RouterLink, LucideAngularModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: "./training.component.html",
   styles: [

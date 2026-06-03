@@ -7,6 +7,7 @@ import {
 } from "@angular/core";
 import { RouterLink } from "@angular/router";
 import { LucideAngularModule } from "lucide-angular";
+import { AvatarComponent } from "../shared/avatar.component";
 
 import { ScheduleService } from "../core/services/schedule.service";
 import { ApiService } from "../core/services/api.service";
@@ -31,7 +32,7 @@ interface PendingEvent {
 @Component({
   selector: "app-competition",
   standalone: true,
-  imports: [RouterLink, LucideAngularModule],
+  imports: [AvatarComponent, RouterLink, LucideAngularModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: "./competition.component.html",
 })

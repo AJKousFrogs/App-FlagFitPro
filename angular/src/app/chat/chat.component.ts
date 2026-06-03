@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component } from "@angular/core";
 import { RouterLink } from "@angular/router";
 import { LucideAngularModule } from "lucide-angular";
+import { AvatarComponent } from "../shared/avatar.component";
 
 /**
  * Merlin — the context-aware AI coach. Ported 1:1 from
@@ -13,7 +14,7 @@ import { LucideAngularModule } from "lucide-angular";
 @Component({
   selector: "app-chat",
   standalone: true,
-  imports: [RouterLink, LucideAngularModule],
+  imports: [AvatarComponent, RouterLink, LucideAngularModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: "./chat.component.html",
   styles: [

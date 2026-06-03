@@ -7,12 +7,13 @@ import {
 } from "@angular/core";
 import { RouterLink } from "@angular/router";
 import { LucideAngularModule } from "lucide-angular";
+import { AvatarComponent } from "../shared/avatar.component";
 
 import { PeriodizationService } from "../core/services/periodization.service";
 import { ReadinessService } from "../core/services/readiness.service";
 import { AcwrService } from "../core/services/acwr.service";
 import { ScheduleService } from "../core/services/schedule.service";
-import { SupabaseService } from "../core/services/supabase.service";
+import { IdentityService } from "../core/services/identity.service";
 
 /**
  * Today — the answer-first home screen. Ported 1:1 from the approved hi-fi
@@ -24,7 +25,7 @@ import { SupabaseService } from "../core/services/supabase.service";
 @Component({
   selector: "app-today",
   standalone: true,
-  imports: [RouterLink, LucideAngularModule],
+  imports: [AvatarComponent, RouterLink, LucideAngularModule],
   schemas: [CUSTOM_ELEMENTS_SCHEMA], // <iconify-icon> web component (MDI food glyphs)
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: "./today.component.html",
@@ -34,19 +35,16 @@ export class TodayComponent {
   private readonly readinessSvc = inject(ReadinessService);
   private readonly acwrSvc = inject(AcwrService);
   private readonly schedule = inject(ScheduleService);
-  private readonly supabase = inject(SupabaseService);
+  private readonly identity = inject(IdentityService);
 
   /** Today's prescription (engine). Null until the schedule snapshot resolves. */
   readonly rx = this.periodization.today;
 
-  /** "Good morning, Joao" — time-of-day greeting + first name (fallback athlete). */
+  /** "Good morning, Joao" — time-of-day greeting + the signed-in user's first name. */
   readonly greeting = computed(() => {
     const h = new Date().getHours();
     const part = h < 12 ? "morning" : h < 18 ? "afternoon" : "evening";
-    const meta = (this.supabase.currentUser()?.user_metadata ?? {}) as Record<string, unknown>;
-    const full = (meta["full_name"] ?? meta["name"] ?? "") as string;
-    const first = full.trim().split(/\s+/)[0] || "athlete";
-    return `Good ${part}, ${first}`;
+    return `Good ${part}, ${this.identity.firstName()}`;
   });
 
   /** "Mon 1 Jun" + macro season label when known. */

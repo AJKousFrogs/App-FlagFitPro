@@ -7,6 +7,7 @@ import {
 } from "@angular/core";
 import { RouterLink } from "@angular/router";
 import { LucideAngularModule } from "lucide-angular";
+import { AvatarComponent } from "../shared/avatar.component";
 
 import { ApiService } from "../core/services/api.service";
 import { SupabaseService } from "../core/services/supabase.service";
@@ -24,7 +25,7 @@ type Tab = "Notifications" | "Privacy" | "Prefs" | "Security";
 @Component({
   selector: "app-settings",
   standalone: true,
-  imports: [RouterLink, LucideAngularModule],
+  imports: [AvatarComponent, RouterLink, LucideAngularModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: "./settings.component.html",
   styles: [

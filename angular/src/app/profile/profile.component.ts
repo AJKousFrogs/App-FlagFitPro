@@ -7,9 +7,11 @@ import {
 } from "@angular/core";
 import { RouterLink } from "@angular/router";
 import { LucideAngularModule } from "lucide-angular";
+import { AvatarComponent } from "../shared/avatar.component";
 
 import { SupabaseService } from "../core/services/supabase.service";
 import { ApiService } from "../core/services/api.service";
+import { IdentityService } from "../core/services/identity.service";
 
 interface Injury {
   type?: string;
@@ -39,13 +41,14 @@ interface Profile {
 @Component({
   selector: "app-profile",
   standalone: true,
-  imports: [RouterLink, LucideAngularModule],
+  imports: [AvatarComponent, RouterLink, LucideAngularModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: "./profile.component.html",
 })
 export class ProfileComponent {
   private readonly supabase = inject(SupabaseService);
   private readonly api = inject(ApiService);
+  private readonly identity = inject(IdentityService);
 
   private readonly profile = signal<Profile | null>(null);
   private readonly meta = computed(
@@ -59,9 +62,10 @@ export class ProfileComponent {
     });
   }
 
-  readonly name = computed(() => ((this.meta()["full_name"] ?? this.meta()["name"] ?? "Athlete") as string).trim() || "Athlete");
-  readonly jersey = computed(() => this.meta()["jersey_number"] ?? null);
-  readonly position = computed(() => this.profile()?.position || ((this.meta()["position"] ?? "") as string));
+  readonly name = this.identity.displayName;
+  readonly jersey = this.identity.jersey;
+  readonly teamName = this.identity.teamName;
+  readonly position = computed(() => this.profile()?.position || this.identity.position());
 
   readonly heightCm = computed(() => this.num(this.profile()?.heightCm ?? this.meta()["height_cm"] ?? this.meta()["height"]));
   readonly weightKg = computed(() => this.num(this.profile()?.weightKg ?? this.meta()["weight_kg"] ?? this.meta()["weight"]));

@@ -1,12 +1,12 @@
 <header class="topbar">
   <div><h1 style="font-size:21px">Settings</h1></div>
-  <a class="avatar" routerLink="/profile" aria-label="Profile"><img src="assets/images/rebuild/avatar.jpg" alt="Your profile" /></a>
+  <a class="avatar" routerLink="/profile" aria-label="Profile"><app-avatar /></a>
 </header>
 
 <main class="screen">
   <!-- profile -->
   <div class="card" style="display:flex;align-items:center;gap:var(--s-4)">
-    <span class="avatar lg"><img src="assets/images/rebuild/avatar.jpg" alt="Your profile" /></span>
+    <span class="avatar lg"><app-avatar /></span>
     <div style="flex:1">
       <b style="font-family:var(--font-display);font-size:var(--fs-h3)">{{ name() }}</b>
       <div class="muted" style="font-size:var(--fs-sm)">{{ subtitle() }}</div>

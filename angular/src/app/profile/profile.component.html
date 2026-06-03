@@ -6,10 +6,10 @@
 <main class="screen">
   <div class="hero">
     <div class="row">
-      <span class="avatar lg"><img src="assets/images/rebuild/avatar.jpg" alt="Your profile" /></span>
+      <span class="avatar lg"><app-avatar /></span>
       <div style="text-align:right">
         <h1 style="margin:0">{{ name() }}@if (jersey() !== null) { · #{{ jersey() }} }</h1>
-        <small>{{ position() || "Athlete" }}</small>
+        <small>{{ position() || "Athlete" }}@if (teamName()) { · {{ teamName() }} }</small>
       </div>
     </div>
     <div class="tiles" style="margin-top:16px">
