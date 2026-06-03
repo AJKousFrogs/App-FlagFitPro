@@ -10,6 +10,8 @@
   <p class="note">Set each event's format so competition load is scored correctly — a
     2×40 tournament counts its true spike, not a flat 40-min default.</p>
 
+  @if (formatError(); as e) { <p class="note" style="color:var(--danger)" role="alert">{{ e }}</p> }
+
   @if (events() === null) {
     <div class="empty">Loading…</div>
   } @else if (!events()!.length) {

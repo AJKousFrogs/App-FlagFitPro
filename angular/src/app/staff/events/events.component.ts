@@ -45,6 +45,7 @@ export class StaffEventsComponent {
   readonly formats = FORMATS;
   readonly events = signal<EventRow[] | null>(null);
   readonly saved = signal<Set<string>>(new Set());
+  readonly formatError = signal<string | null>(null);
 
   constructor() {
     void this.load();
@@ -82,6 +83,7 @@ export class StaffEventsComponent {
   }
 
   async setFormat(ev: EventRow, min: number, label: string): Promise<void> {
+    const prevMin = ev.minutesPerGame; // for rollback if the write is rejected
     this.events.update((list) =>
       (list ?? []).map((e) => (e.id === ev.id ? { ...e, minutesPerGame: min } : e)),
     );
@@ -90,8 +92,15 @@ export class StaffEventsComponent {
       .update({ minutes_per_game: min, game_format: label.replace(/\s/g, "") })
       .eq("id", ev.id);
     if (error) {
+      // Direct client write under RLS — if it's rejected (e.g. not team staff), roll
+      // the optimistic chip back so the UI doesn't show a format that never saved.
+      this.events.update((list) =>
+        (list ?? []).map((e) => (e.id === ev.id ? { ...e, minutesPerGame: prevMin } : e)),
+      );
+      this.formatError.set("Couldn't save the format — try again.");
       this.logger.error("event_format_save_failed", error);
     } else {
+      this.formatError.set(null);
       this.saved.update((s) => new Set(s).add(ev.id));
     }
   }
