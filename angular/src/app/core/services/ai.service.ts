@@ -72,6 +72,32 @@ export interface TrainingSuggestionParams {
   preferences?: UserPreferences;
 }
 
+export interface MerlinSuggestedAction {
+  label?: string;
+  action?: string;
+  route?: string;
+  [key: string]: unknown;
+}
+
+/** A single Merlin (AI coach) reply — the structured payload from POST /api/ai/chat. */
+export interface MerlinReply {
+  chatSessionId: string | null;
+  answer: string;
+  riskLevel: string | null;
+  disclaimer: string | null;
+  suggestedActions: MerlinSuggestedAction[];
+  isBlocked: boolean;
+}
+
+interface RawMerlinReply {
+  chat_session_id?: string | null;
+  answer_markdown?: string;
+  risk_level?: string | null;
+  disclaimer?: string | null;
+  suggested_actions?: MerlinSuggestedAction[];
+  is_blocked?: boolean;
+}
+
 @Injectable({
   providedIn: "root",
 })
@@ -119,6 +145,45 @@ export class AIService {
               error.message || "AI processing failed or consent required",
             ),
         );
+      }),
+    );
+  }
+
+  /**
+   * Send a message to Merlin (the context-aware AI coach) and get a structured
+   * reply. POST /api/ai/chat builds the athlete's context server-side (injuries,
+   * ACWR, today's sessions, wellness, schedule), applies the safety tiers + ACWR
+   * override, and returns the answer plus any suggested actions. GDPR Article 22:
+   * gated on explicit AI-processing consent — rejects if consent isn't granted.
+   */
+  sendMessage(message: string, sessionId?: string | null): Observable<MerlinReply> {
+    const body: Record<string, unknown> = { message };
+    if (sessionId) body["session_id"] = sessionId;
+    return from(this.privacySettingsService.requireAiConsent()).pipe(
+      switchMap(() =>
+        this.apiService.post<RawMerlinReply>(API_ENDPOINTS.aiChat.send, body).pipe(
+          map((response): MerlinReply => {
+            const raw = extractApiPayload<RawMerlinReply>(response) ?? {};
+            const answer = (raw.answer_markdown ?? "").trim();
+            if (!answer) {
+              throw new Error("Merlin returned an empty response");
+            }
+            return {
+              chatSessionId: raw.chat_session_id ?? null,
+              answer,
+              riskLevel: raw.risk_level ?? null,
+              disclaimer: raw.disclaimer ?? null,
+              suggestedActions: Array.isArray(raw.suggested_actions)
+                ? raw.suggested_actions
+                : [],
+              isBlocked: !!raw.is_blocked,
+            };
+          }),
+        ),
+      ),
+      catchError((error: unknown) => {
+        this.logger.error("merlin_send_failed", error);
+        return throwError(() => error);
       }),
     );
   }
