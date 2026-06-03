@@ -167,12 +167,17 @@ const handler = async (event, context) => {
 
         const userInfo = userResult.rows[0];
 
-        // Get active and recent injuries
+        // Get active and recent injuries. Read from athlete_injuries (the clinical
+        // table the physio writes via /api/staff-physiotherapist) — the shipped app
+        // has no athlete self-log path to the legacy `injuries` table, so reading it
+        // left the profile's injuries section permanently empty even when the physio
+        // had logged one. Alias the clinical columns to the profile's expected shape.
         const injuriesResult = await pool.query(
-          `SELECT injury_type AS type, severity, status, injury_date AS start_date, description
-           FROM injuries
+          `SELECT injury_type AS type, injury_grade AS severity, recovery_status AS status,
+                  injury_date AS start_date, diagnosis AS description
+           FROM athlete_injuries
            WHERE user_id = $1
-             AND status IN ('active', 'recovering', 'monitoring', 'recovered')
+             AND recovery_status IN ('active', 'recovering', 'rehab')
            ORDER BY injury_date DESC
            LIMIT 10`,
           [targetUserId],
