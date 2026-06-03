@@ -7,11 +7,13 @@ import {
 } from "@angular/core";
 import { RouterLink } from "@angular/router";
 import { LucideAngularModule } from "lucide-angular";
+import { firstValueFrom } from "rxjs";
 import { AvatarComponent } from "../shared/avatar.component";
 
 import { ApiService } from "../core/services/api.service";
 import { SupabaseService } from "../core/services/supabase.service";
 import { LoggerService } from "../core/services/logger.service";
+import { extractApiPayload } from "../core/utils/api-response-mapper";
 
 type Tab = "Notifications" | "Privacy" | "Prefs" | "Security";
 
@@ -19,8 +21,9 @@ type Tab = "Notifications" | "Privacy" | "Prefs" | "Security";
  * Settings — ported 1:1 from redesign/ground-zero/02-hifi/settings.html.
  * Notification toggles → PUT /api/notifications/preferences; privacy/consent
  * toggles → PUT /api/privacy-settings (both best-effort, optimistic UI). Identity
- * reads the signed-in user. Photo upload + account actions are flagged for their
- * own steps.
+ * reads the signed-in user. "Change photo" uploads to storage (POST /api/upload)
+ * and writes avatar_url to the auth user metadata — which the avatar reads
+ * reactively everywhere. Account actions are flagged for their own steps.
  */
 @Component({
   selector: "app-settings",
@@ -57,6 +60,66 @@ export class SettingsComponent {
     const pos = (meta["position"] ?? "") as string;
     return [j != null ? `#${j}` : null, pos || null].filter(Boolean).join(" · ") || "Your profile";
   });
+
+  // profile photo upload
+  readonly photoBusy = signal(false);
+  readonly photoMsg = signal<string | null>(null);
+  private static readonly MAX_PHOTO_BYTES = 5 * 1024 * 1024; // 5MB
+  private static readonly PHOTO_TYPES = ["image/jpeg", "image/png", "image/webp", "image/gif"];
+
+  async onPhotoSelected(event: Event): Promise<void> {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    input.value = ""; // allow re-selecting the same file later
+    if (!file || this.photoBusy()) return;
+
+    if (!SettingsComponent.PHOTO_TYPES.includes(file.type)) {
+      this.flashPhoto("Use a JPG, PNG, WebP or GIF image.");
+      return;
+    }
+    if (file.size > SettingsComponent.MAX_PHOTO_BYTES) {
+      this.flashPhoto("Image too large — keep it under 5MB.");
+      return;
+    }
+
+    this.photoBusy.set(true);
+    this.photoMsg.set(null);
+    try {
+      const dataUrl = await this.readAsDataUrl(file);
+      const res = await firstValueFrom(
+        this.api.post<{ url?: string }>("/api/upload", {
+          file: dataUrl,
+          fileType: file.type,
+          fileName: file.name,
+        }),
+      );
+      const url = extractApiPayload<{ url?: string }>(res)?.url;
+      if (!url) throw new Error("Upload returned no URL");
+
+      const { error } = await this.supabase.client.auth.updateUser({
+        data: { avatar_url: url },
+      });
+      if (error) throw error;
+      this.flashPhoto("Photo updated");
+    } catch (err) {
+      this.logger.error("avatar_upload_failed", err);
+      this.flashPhoto("Couldn't update photo — try again.");
+    } finally {
+      this.photoBusy.set(false);
+    }
+  }
+
+  private readAsDataUrl(file: File): Promise<string> {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(String(reader.result));
+      reader.onerror = () => reject(reader.error ?? new Error("read failed"));
+      reader.readAsDataURL(file);
+    });
+  }
+  private flashPhoto(msg: string): void {
+    this.photoMsg.set(msg);
+  }
 
   // notification prefs
   readonly trainingReminders = signal(true);

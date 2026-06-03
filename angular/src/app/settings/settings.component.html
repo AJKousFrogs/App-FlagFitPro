@@ -11,8 +11,14 @@
       <b style="font-family:var(--font-display);font-size:var(--fs-h3)">{{ name() }}</b>
       <div class="muted" style="font-size:var(--fs-sm)">{{ subtitle() }}</div>
     </div>
-    <button class="btn ghost sm" type="button"><lucide-icon name="camera" /> Change photo</button>
+    <button class="btn ghost sm" type="button" [attr.aria-disabled]="photoBusy()"
+            (click)="photoInput.click()">
+      <lucide-icon name="camera" /> {{ photoBusy() ? "Uploading…" : "Change photo" }}
+    </button>
+    <input #photoInput type="file" accept="image/jpeg,image/png,image/webp,image/gif"
+           hidden (change)="onPhotoSelected($event)" />
   </div>
+  @if (photoMsg(); as m) { <p class="note" style="margin-top:-6px">{{ m }}</p> }
 
   <nav class="st-tabs" aria-label="Settings sections">
     @for (t of tabs; track t) {
