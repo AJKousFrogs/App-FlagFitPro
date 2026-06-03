@@ -15,7 +15,7 @@
 @use "scss/tokens/tokens";
 @use "scss/system/system" as system;
 
-@layer reset, tokens, primeng-base, primeng-brand, primitives, components,
+@layer reset, tokens, primitives, components,
   utilities, mobile, features, overrides;
 
 @layer reset {

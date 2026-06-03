@@ -5,8 +5,7 @@
  * for destructive actions throughout the application.
  */
 
-import { Injectable, inject } from "@angular/core";
-import { ConfirmationService } from "primeng/api";
+import { Injectable } from "@angular/core";
 
 export interface ConfirmDialogOptions {
   title?: string;
@@ -51,8 +50,6 @@ export type ConfirmationType =
   providedIn: "root",
 })
 export class ConfirmDialogService {
-  private confirmationService = inject(ConfirmationService);
-
   // Predefined confirmation configurations
   private readonly presets: Record<string, Partial<ConfirmDialogOptions>> = {
     delete: {
@@ -117,26 +114,15 @@ export class ConfirmDialogService {
    * Show a confirmation dialog and return a promise
    */
   confirm(options: ConfirmDialogOptions): Promise<boolean> {
-    return new Promise((resolve) => {
-      this.confirmationService.confirm({
-        header: options.title || "Confirm",
-        message: options.message,
-        icon: options.icon || "pi pi-question-circle",
-        acceptLabel: options.acceptLabel || "Yes",
-        rejectLabel: options.rejectLabel || "No",
-        acceptIcon: options.acceptIcon,
-        rejectIcon: options.rejectIcon,
-        acceptButtonStyleClass: this.getSeverityClass(
-          options.acceptSeverity || "primary",
-        ),
-        rejectButtonStyleClass:
-          this.getSeverityClass(options.rejectSeverity || "secondary") +
-          " p-button-outlined",
-        defaultFocus: options.defaultFocus || "accept",
-        accept: () => resolve(true),
-        reject: () => resolve(false),
-      });
-    });
+    // Native confirm — PrimeNG's <p-confirmDialog> isn't part of the rebuilt UI.
+    // Components that need a styled confirm use an inline confirm gate (e.g. the
+    // Settings delete-account flow) rather than this service.
+    const title = options.title ? `${options.title}\n\n` : "";
+    const ok =
+      typeof window !== "undefined" && typeof window.confirm === "function"
+        ? window.confirm(`${title}${options.message}`)
+        : true;
+    return Promise.resolve(ok);
   }
 
   /**
@@ -265,27 +251,4 @@ export class ConfirmDialogService {
     });
   }
 
-  /**
-   * Convert severity to PrimeNG button class
-   */
-  private getSeverityClass(severity: string): string {
-    switch (severity) {
-      case "danger":
-        return "p-button-danger";
-      case "warning":
-        return "p-button-warning";
-      case "success":
-        return "p-button-success";
-      case "info":
-        return "p-button-info";
-      case "secondary":
-        return "p-button-secondary";
-      case "help":
-        return "p-button-help";
-      case "contrast":
-        return "p-button-contrast";
-      default:
-        return "";
-    }
-  }
 }
