@@ -52,9 +52,15 @@ export class NotificationsComponent {
   }
 
   markAllRead(): void {
+    const prev = this.items();
     this.items.set([]);
     this.api.post("/api/notifications", { notificationId: "all" }).subscribe({
-      error: (e) => this.logger.error("notifications_mark_read_failed", e),
+      // Restore the list if the server didn't clear it, so it doesn't look
+      // cleared while still unread (and reappear on the next reload).
+      error: (e) => {
+        this.items.set(prev);
+        this.logger.error("notifications_mark_read_failed", e);
+      },
     });
   }
 

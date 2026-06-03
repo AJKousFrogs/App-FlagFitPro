@@ -213,8 +213,17 @@ export class SettingsComponent {
   readonly acwrAlerts = signal(true);
   readonly coachMessages = signal(true);
 
+  // Toggle-save failures must not leave the UI showing a consent/notification state
+  // the server never accepted — reconcile from the server + tell the user.
+  readonly prefsMsg = signal<string | null>(null);
+  private reconcilePrefs(): void {
+    this.prefsMsg.set("Couldn't save — reverted to your saved setting.");
+    void this.loadPrefs(); // re-pull server truth so the toggle snaps back
+  }
+
   saveNotifications(): void {
     if (!this.prefsLoaded()) return; // never write before real state has loaded
+    this.prefsMsg.set(null);
     // Endpoint expects { preferences: { <type>: { muted, pushEnabled, inAppEnabled } } }
     // with backend notification types. A toggle ON = delivered, OFF = muted.
     const cfg = (on: boolean) => ({ muted: !on, pushEnabled: on, inAppEnabled: on });
@@ -227,7 +236,12 @@ export class SettingsComponent {
           team: cfg(this.coachMessages()),
         },
       })
-      .subscribe({ error: (e) => this.logger.error("notif_prefs_save_failed", e) });
+      .subscribe({
+        error: (e) => {
+          this.logger.error("notif_prefs_save_failed", e);
+          this.reconcilePrefs();
+        },
+      });
   }
 
   // privacy / consent
@@ -237,6 +251,7 @@ export class SettingsComponent {
 
   savePrivacy(): void {
     if (!this.prefsLoaded()) return; // never write fabricated consent before load
+    this.prefsMsg.set(null);
     // Endpoint expects the settings wrapped under a `settings` key.
     this.api
       .put("/api/privacy-settings", {
@@ -246,6 +261,11 @@ export class SettingsComponent {
           healthSharingDefault: this.shareHealth(),
         },
       })
-      .subscribe({ error: (e) => this.logger.error("privacy_save_failed", e) });
+      .subscribe({
+        error: (e) => {
+          this.logger.error("privacy_save_failed", e);
+          this.reconcilePrefs();
+        },
+      });
   }
 }

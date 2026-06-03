@@ -135,7 +135,14 @@ export class WellnessComponent {
     this.hydrationMl.update((v) => v + ml);
     this.api
       .post("/api/hydration/log", { amount: ml })
-      .subscribe({ error: (err) => this.logger.error("hydration_log_failed", err) });
+      .subscribe({
+        // Roll the optimistic total back if the log didn't persist, so the UI
+        // never shows water that isn't actually recorded.
+        error: (err) => {
+          this.hydrationMl.update((v) => v - ml);
+          this.logger.error("hydration_log_failed", err);
+        },
+      });
   }
   readonly hydrationL = computed(() => (this.hydrationMl() / 1000).toFixed(1));
 }

@@ -82,6 +82,12 @@ export class GamedayComponent {
     this.hydrationMl.update((v) => v + ml);
     this.api
       .post("/api/hydration/log", { amount: ml })
-      .subscribe({ error: (e) => this.logger.error("hydration_log_failed", e) });
+      .subscribe({
+        // Roll back the optimistic total if the log didn't persist.
+        error: (e) => {
+          this.hydrationMl.update((v) => v - ml);
+          this.logger.error("hydration_log_failed", e);
+        },
+      });
   }
 }
