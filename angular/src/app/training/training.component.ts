@@ -14,6 +14,7 @@ import { SESSION_VIDEO_ID } from "../core/config/session-video.config";
 import { PeriodizationService } from "../core/services/periodization.service";
 import { ApiService } from "../core/services/api.service";
 import { LoggerService } from "../core/services/logger.service";
+import { TrainingVideoService } from "../core/services/training-video.service";
 import { DailyPrescription } from "../core/models/prescription.models";
 
 interface WeekRow {
@@ -50,12 +51,24 @@ export class TrainingComponent {
   private readonly periodization = inject(PeriodizationService);
   private readonly api = inject(ApiService);
   private readonly logger = inject(LoggerService);
+  private readonly videoSvc = inject(TrainingVideoService);
 
-  readonly sessionVideoId = SESSION_VIDEO_ID;
   readonly tabs = ["Today", "Schedule", "Programs", "Library"] as const;
   readonly tab = signal<(typeof this.tabs)[number]>("Today");
 
   readonly rx = this.periodization.today;
+
+  /** Library + session video. */
+  readonly videos = this.videoSvc.videos;
+  readonly categories = this.videoSvc.categories;
+  /** Session video = a library clip matching today's intent, else the placeholder. */
+  readonly sessionVideoId = computed(
+    () => this.videoSvc.forIntent(this.rx()?.intent)?.youtubeId ?? SESSION_VIDEO_ID,
+  );
+
+  constructor() {
+    if (!this.videoSvc.loaded()) void this.videoSvc.load();
+  }
 
   readonly seasonLabel = computed(() => {
     const s = this.rx()?.seasonPhase;

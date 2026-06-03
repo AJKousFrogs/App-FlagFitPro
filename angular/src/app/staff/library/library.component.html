@@ -1,0 +1,58 @@
+<header class="topbar">
+  <div>
+    <div class="eyebrow">team training videos</div>
+    <h1 style="font-size:21px">Library</h1>
+  </div>
+  <span class="chip">Coach</span>
+</header>
+
+<main class="screen">
+  <!-- add a video -->
+  <div class="section-h"><h2>Add a video</h2></div>
+  <div class="card stack">
+    <div class="field">
+      <label for="url" style="font-size:var(--fs-sm);color:var(--text-muted);display:block;margin-bottom:4px">YouTube link or ID</label>
+      <input id="url" class="input" type="text" placeholder="https://youtu.be/… or video ID"
+             [value]="url()" (input)="url.set($any($event.target).value)"
+             style="width:100%;background:var(--surface-2);border:1px solid var(--border-soft);border-radius:var(--r-sm);padding:11px 12px;color:var(--text-strong);font-family:var(--font-body)" />
+    </div>
+    <div class="field">
+      <label for="vtitle" style="font-size:var(--fs-sm);color:var(--text-muted);display:block;margin-bottom:4px">Title</label>
+      <input id="vtitle" class="input" type="text" placeholder="e.g. Sprint mechanics — wall drill"
+             [value]="title()" (input)="title.set($any($event.target).value)"
+             style="width:100%;background:var(--surface-2);border:1px solid var(--border-soft);border-radius:var(--r-sm);padding:11px 12px;color:var(--text-strong);font-family:var(--font-body)" />
+    </div>
+    <div class="field">
+      <label style="font-size:var(--fs-sm);color:var(--text-muted);display:block;margin-bottom:6px">Category</label>
+      <div class="inline" style="flex-wrap:wrap;gap:8px">
+        @for (c of categories; track c) {
+          <button type="button" class="chip" [class.sel]="category() === c" (click)="category.set(c)">{{ c }}</button>
+        }
+      </div>
+    </div>
+
+    @if (previewId(); as pid) {
+      <app-yt-video [videoId]="pid" title="Preview" />
+    }
+    @if (error(); as e) { <p class="note" style="color:var(--danger)">{{ e }}</p> }
+    <button class="btn primary block" type="button" [attr.aria-disabled]="!canSave() || saving()"
+            (click)="save()">{{ saving() ? "Adding…" : "Add to library" }}</button>
+  </div>
+
+  <!-- current library -->
+  <div class="section-h"><h2>In the library</h2></div>
+  @if (!loaded()) {
+    <div class="empty">Loading…</div>
+  } @else if (!videos().length) {
+    <div class="empty">No videos yet — add your first above.</div>
+  } @else {
+    <div class="card">
+      @for (v of videos(); track v.id) {
+        <div class="lrow">
+          <span class="inline"><lucide-icon name="video" /> {{ v.title }}</span>
+          <span class="chip">{{ v.category }}</span>
+        </div>
+      }
+    </div>
+  }
+</main>

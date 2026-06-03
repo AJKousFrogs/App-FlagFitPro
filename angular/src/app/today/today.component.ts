@@ -16,6 +16,7 @@ import { ReadinessService } from "../core/services/readiness.service";
 import { AcwrService } from "../core/services/acwr.service";
 import { ScheduleService } from "../core/services/schedule.service";
 import { IdentityService } from "../core/services/identity.service";
+import { TrainingVideoService } from "../core/services/training-video.service";
 
 /**
  * Today — the answer-first home screen. Ported 1:1 from the approved hi-fi
@@ -33,7 +34,16 @@ import { IdentityService } from "../core/services/identity.service";
   templateUrl: "./today.component.html",
 })
 export class TodayComponent {
-  readonly sessionVideoId = SESSION_VIDEO_ID;
+  private readonly videoSvc = inject(TrainingVideoService);
+
+  /** Session video = a library clip matching today's intent, else the placeholder. */
+  readonly sessionVideoId = computed(
+    () => this.videoSvc.forIntent(this.rx()?.intent)?.youtubeId ?? SESSION_VIDEO_ID,
+  );
+
+  constructor() {
+    if (!this.videoSvc.loaded()) void this.videoSvc.load();
+  }
   private readonly periodization = inject(PeriodizationService);
   private readonly readinessSvc = inject(ReadinessService);
   private readonly acwrSvc = inject(AcwrService);

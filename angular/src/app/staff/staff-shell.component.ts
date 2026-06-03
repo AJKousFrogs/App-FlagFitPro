@@ -27,6 +27,9 @@ import { staffLaneFor } from "../core/guards/staff.guard";
           <a routerLink="/staff/alerts" routerLinkActive="active" ariaCurrentWhenActive="page">
             <lucide-icon name="bell" />Alerts
           </a>
+          <a routerLink="/staff/library" routerLinkActive="active" ariaCurrentWhenActive="page">
+            <lucide-icon name="video" />Library
+          </a>
         }
         <a routerLink="/staff/more" routerLinkActive="active" ariaCurrentWhenActive="page">
           <lucide-icon name="menu" />More
@@ -38,5 +41,5 @@ import { staffLaneFor } from "../core/guards/staff.guard";
 export class StaffShellComponent {
   private readonly membership = inject(TeamMembershipService);
   readonly lane = computed(() => staffLaneFor(this.membership.role()));
-  readonly navCount = computed(() => (this.lane() === "coach" ? 3 : 2));
+  readonly navCount = computed(() => (this.lane() === "coach" ? 4 : 2));
 }
