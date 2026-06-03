@@ -154,6 +154,13 @@
   /* ---- list row ---- */
   .lrow { display: flex; justify-content: space-between; align-items: center; gap: var(--s-3); padding: var(--s-3) 0; border-bottom: 1px solid var(--border); }
   .lrow:last-child { border-bottom: 0; }
+  /* interactive rows (rendered as <a>/<button>) get a pointer-device hover cue */
+  a.lrow, button.lrow { cursor: pointer; transition: background var(--t-fast); }
+  a.lrow:hover, button.lrow:hover { background: var(--surface-2); }
+
+  /* text inputs / selects — single definition replacing repeated inline styling */
+  .input { background: var(--surface-2); border: 1px solid var(--border-soft);
+    border-radius: var(--r-sm); padding: var(--s-3); color: var(--text-strong); font-family: var(--font-body); }
 
   /* ---- empty / provisional ---- */
   .empty { border: 1px dashed var(--border); border-radius: var(--r-md); padding: var(--s-5); text-align: center; color: var(--text-muted); }

@@ -70,7 +70,7 @@
               @for (p of rtpPhases; track p) { <button type="button" class="chip" [class.sel]="rtpNewPhase() === p" (click)="rtpNewPhase.set(p)">{{ p }}</button> }
             </div>
             <input type="text" placeholder="Notes (optional)" [value]="rtpNotes()" (input)="rtpNotes.set($any($event.target).value)"
-                   style="background:var(--surface-2);border:1px solid var(--border-soft);border-radius:var(--r-sm);padding:var(--s-3) var(--s-3);color:var(--text-strong);font-family:var(--font-body)" />
+                   class="input" />
             <div class="inline" style="gap:var(--s-2)">
               <button class="btn ghost sm" type="button" (click)="cancelRtp()">Cancel</button>
               <button class="btn primary block" type="button" style="flex:1" [attr.aria-disabled]="busy()" (click)="saveRtp()">{{ busy() ? "Saving…" : "Save RTP" }}</button>
@@ -82,9 +82,9 @@
           <div class="card stack">
             <b>Log injury</b>
             <input type="text" placeholder="Type (e.g. hamstring strain)" [value]="injType()" (input)="injType.set($any($event.target).value)"
-                   style="background:var(--surface-2);border:1px solid var(--border-soft);border-radius:var(--r-sm);padding:var(--s-3) var(--s-3);color:var(--text-strong);font-family:var(--font-body)" />
+                   class="input" />
             <input type="text" placeholder="Location (e.g. right)" [value]="injLocation()" (input)="injLocation.set($any($event.target).value)"
-                   style="background:var(--surface-2);border:1px solid var(--border-soft);border-radius:var(--r-sm);padding:var(--s-3) var(--s-3);color:var(--text-strong);font-family:var(--font-body)" />
+                   class="input" />
             <div class="inline" style="gap:var(--s-2)">@for (g of grades; track g) { <button type="button" class="chip" [class.sel]="injGrade() === g" (click)="injGrade.set(g)">{{ g }}</button> }</div>
             <div class="inline" style="gap:var(--s-2)">
               <button class="btn ghost sm" type="button" (click)="cancelInjury()">Cancel</button>
@@ -131,11 +131,11 @@
           <div class="card stack">
             <b>Log assessment</b>
             <input type="text" placeholder="Type (e.g. pre-competition anxiety)" [value]="asmtType()" (input)="asmtType.set($any($event.target).value)"
-                   style="background:var(--surface-2);border:1px solid var(--border-soft);border-radius:var(--r-sm);padding:var(--s-3) var(--s-3);color:var(--text-strong);font-family:var(--font-body)" />
+                   class="input" />
             <div class="slider"><label for="as">Score</label>
               <input id="as" class="rng" type="range" min="1" max="10" [value]="asmtScore()" (input)="asmtScore.set(+$any($event.target).value)" /><span class="val">{{ asmtScore() }}</span></div>
             <input type="text" placeholder="Interpretation / note" [value]="asmtNote()" (input)="asmtNote.set($any($event.target).value)"
-                   style="background:var(--surface-2);border:1px solid var(--border-soft);border-radius:var(--r-sm);padding:var(--s-3) var(--s-3);color:var(--text-strong);font-family:var(--font-body)" />
+                   class="input" />
             <div class="lrow"><span id="rev">Requires professional review</span>
               <button class="sw" role="switch" [attr.aria-checked]="asmtReview()" aria-labelledby="rev" (click)="asmtReview.set(!asmtReview())"></button></div>
             <div class="inline" style="gap:var(--s-2)">

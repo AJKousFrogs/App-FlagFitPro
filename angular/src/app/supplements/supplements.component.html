@@ -41,10 +41,10 @@
       <div style="margin-top:var(--s-2);display:flex;gap:var(--s-2);flex-wrap:wrap">
         <input type="text" placeholder="Name (e.g. Vitamin D)" [value]="newName()" (input)="newName.set($any($event.target).value)"
                aria-label="Supplement name"
-               style="flex:2;min-width:140px;background:var(--surface-2);border:1px solid var(--border-soft);border-radius:var(--r-sm);padding:var(--s-3) var(--s-3);color:var(--text-strong);font-family:var(--font-body)" />
+               class="input" style="flex:2;min-width:140px" />
         <input type="text" placeholder="Dose" [value]="newDose()" (input)="newDose.set($any($event.target).value)"
                aria-label="Dose"
-               style="flex:1;min-width:80px;background:var(--surface-2);border:1px solid var(--border-soft);border-radius:var(--r-sm);padding:var(--s-3) var(--s-3);color:var(--text-strong);font-family:var(--font-body)" />
+               class="input" style="flex:1;min-width:80px" />
         <button class="btn primary sm" type="button" (click)="saveSupplement()">Add</button>
       </div>
     } @else {
