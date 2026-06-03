@@ -9,6 +9,7 @@ import { RouterLink } from "@angular/router";
 import { LucideAngularModule } from "lucide-angular";
 
 import { ApiService } from "../core/services/api.service";
+import { SupabaseService } from "../core/services/supabase.service";
 import { extractApiPayload } from "../core/utils/api-response-mapper";
 
 interface TypeAgg {
@@ -33,6 +34,21 @@ interface TypeRow {
   count: number;
   load: number;
   pct: number;
+}
+interface NutritionRec {
+  priority?: string;
+  message?: string;
+}
+interface NutritionReportRow {
+  id: string;
+  report_type?: string;
+  period_start?: string | null;
+  period_end?: string | null;
+  created_at?: string;
+  report_data?: {
+    metrics?: Record<string, number>;
+    recommendations?: NutritionRec[];
+  };
 }
 
 /** Athlete-friendly labels for the engine's session types. */
@@ -75,13 +91,40 @@ const TYPE_LABEL: Record<string, string> = {
 })
 export class ReportsComponent {
   private readonly api = inject(ApiService);
+  private readonly supabase = inject(SupabaseService);
 
   readonly periodDays = signal(30);
   readonly loaded = signal(false);
   readonly stats = signal<ReportStats | null>(null);
 
+  // Reports the nutritionist generated for this athlete (RLS scopes to own rows).
+  readonly nutritionReports = signal<NutritionReportRow[]>([]);
+
   constructor() {
     this.fetch();
+    this.loadNutritionReports();
+  }
+
+  private loadNutritionReports(): void {
+    void this.supabase.client
+      .from("nutrition_reports")
+      .select("id, report_type, period_start, period_end, created_at, report_data")
+      .order("created_at", { ascending: false })
+      .limit(10)
+      .then(({ data }) =>
+        this.nutritionReports.set((data as NutritionReportRow[] | null) ?? []),
+      );
+  }
+
+  metric(r: NutritionReportRow, key: string): string {
+    const v = r.report_data?.metrics?.[key];
+    return v == null ? "—" : `${Math.round(v * 10) / 10}`;
+  }
+  recs(r: NutritionReportRow): NutritionRec[] {
+    return r.report_data?.recommendations ?? [];
+  }
+  recBand(priority?: string): string {
+    return priority === "high" ? "danger" : priority === "medium" ? "caution" : "info";
   }
 
   setPeriod(days: number): void {

@@ -524,7 +524,28 @@ async function handleRequest(event, _context, { userId }) {
         );
       }
       const report = await generateNutritionReport(athleteId, reportType);
-      return createSuccessResponse({ report });
+      // Persist so the athlete can read it in their Reports screen (staff→athlete
+      // loop). Best-effort: a storage hiccup shouldn't fail the generation itself.
+      let reportId = null;
+      try {
+        const { data: saved } = await supabaseAdmin
+          .from("nutrition_reports")
+          .insert({
+            user_id: athleteId,
+            created_by: userId,
+            team_id: teamId,
+            report_type: reportType,
+            report_data: report,
+            period_start: report.startDate ? report.startDate.split("T")[0] : null,
+            period_end: report.endDate ? report.endDate.split("T")[0] : null,
+          })
+          .select("id")
+          .single();
+        reportId = saved?.id ?? null;
+      } catch {
+        // swallow — report is still returned to the requester
+      }
+      return createSuccessResponse({ report, reportId });
     }
 
     // GET /summary - Dashboard summary
