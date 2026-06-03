@@ -37,7 +37,7 @@
     <div class="empty">
       <b style="color:var(--text)">ACWR — building up</b>
       <div style="height:8px;border-radius:var(--r-pill);background:var(--surface-2);overflow:hidden;margin:var(--s-3) 0 var(--s-2)">
-        <div [style.height.px]="8" [style.width.%]="(daysLogged() / 21) * 100" style="background:var(--accent)"></div>
+        <div [style.width.%]="(daysLogged() / 21) * 100" style="height:100%;background:var(--accent)"></div>
       </div>
       {{ daysLogged() }} / 21 days logged · keep training and it'll appear.
       <small>(null ≠ low — we never show a fake "under-training".)</small>
