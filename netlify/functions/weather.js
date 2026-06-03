@@ -129,6 +129,11 @@ async function getOpenMeteoData(latitude, longitude, city) {
 
     return {
       temp: Math.round(current.temperature_2m),
+      // raw metric fields the prescription weather guard consumes (°C, mm, km/h)
+      apparentC: current.apparent_temperature,
+      weatherCode: current.weather_code,
+      precipMm: current.precipitation || 0,
+      windKmh: current.wind_speed_10m,
       condition: weatherCondition.condition,
       description: weatherCondition.description,
       humidity: current.relative_humidity_2m,

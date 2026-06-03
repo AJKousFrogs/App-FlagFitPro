@@ -51,6 +51,12 @@ export class PeriodizationService {
    */
   readonly seasonCalendar = signal<SeasonWindow[]>([]);
 
+  /**
+   * Live weather at the athlete's location, fed to the weather guard (rain →
+   * relocate sprints, heat → scale, storm → stop). Null until loaded → no guard.
+   */
+  readonly weather = signal<WeatherInput | null>(null);
+
   constructor() {
     this.api
       .get<{ season_calendar?: SeasonWindow[]; seasonCalendar?: SeasonWindow[] }>(
@@ -67,6 +73,33 @@ export class PeriodizationService {
         },
         error: () => {
           /* no config yet → generic build week */
+        },
+      });
+
+    // Live weather → the prescription weather guard (metric: °C / mm / km/h).
+    this.api
+      .get<{
+        temp?: number; apparentC?: number; weatherCode?: number;
+        precipMm?: number; windKmh?: number; windSpeed?: number;
+        condition?: string; suitability?: string;
+      }>("/api/weather")
+      .subscribe({
+        next: (res) => {
+          const d = res?.data;
+          if (!d) return;
+          this.weather.set({
+            tempC: d.temp ?? null,
+            apparentC: d.apparentC ?? d.temp ?? null,
+            condition: d.condition ?? null,
+            weatherCode: d.weatherCode ?? null,
+            precipMm: d.precipMm ?? null,
+            windKmh: d.windKmh ?? d.windSpeed ?? null,
+            suitability:
+              (d.suitability as "excellent" | "good" | "fair" | "poor" | undefined) ?? null,
+          });
+        },
+        error: () => {
+          /* no weather → guard stays off (fail-safe) */
         },
       });
   }
@@ -96,6 +129,7 @@ export class PeriodizationService {
           }
         : null,
       seasonPhase: macroPhaseFor(now, this.seasonCalendar()),
+      weather: this.weather(),
     });
   });
 
