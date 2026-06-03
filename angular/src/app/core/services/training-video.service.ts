@@ -74,6 +74,11 @@ export class TrainingVideoService {
     return this.videos().filter((v) => v.category === category);
   }
 
+  /** First playable video in a category (for an exercise-block demo). */
+  first(category: string): TrainingVideo | null {
+    return this.videos().find((v) => v.category === category && v.youtubeId) ?? null;
+  }
+
   /** First library video matching a prescription intent (for the session video). */
   forIntent(intent: PrescriptionIntent | null | undefined): TrainingVideo | null {
     if (!intent) return null;

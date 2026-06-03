@@ -32,12 +32,11 @@
         </div>
 
         @for (blk of blocks(); track blk.title) {
-          <div class="lrow">
-            <div class="thumb-card">
-              <div class="vthumb"><img [src]="'assets/images/rebuild/' + blk.thumb + '.jpg'" alt="" /></div>
-              <div><b>{{ blk.title }}</b><br /><small>{{ blk.meta }}</small></div>
-            </div>
-            <span class="duration" style="position:static">{{ blk.time }}</span>
+          <div style="margin-bottom:12px">
+            <div class="row" style="margin-bottom:6px"><b>{{ blk.title }}</b><small>{{ blk.meta }}</small></div>
+            <app-yt-video [videoId]="blk.video?.youtubeId ?? null"
+                          [poster]="blk.video?.thumbnail || 'assets/images/rebuild/video-session.jpg'"
+                          [title]="blk.title" [duration]="blk.video?.duration || ''" />
           </div>
         }
 

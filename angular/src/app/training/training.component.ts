@@ -90,15 +90,18 @@ export class TrainingComponent {
     return { label: "today", cls: "good" };
   });
 
-  /** Derived session blocks (a structural template around the prescription —
-   *  detailed protocol exercises + per-exercise video wire in a later step). */
+  /** Session blocks around the prescription — each a playable library demo
+   *  (warm-up → warmup category, main → today's intent, cooldown → recovery). */
   readonly blocks = computed(() => {
     const rx = this.rx();
-    const main = rx?.intentLabel ?? "Main block";
     return [
-      { thumb: "thumb-a", title: "Warm-up — RAMP", meta: "10 min · no max effort", time: "4:10" },
-      { thumb: "thumb-b", title: main, meta: `RPE ${rx?.targetRpe ?? "—"} · ${rx?.targetMinutes ?? "—"} min`, time: "6:00" },
-      { thumb: "thumb-c", title: "Cooldown & mobility", meta: "easy", time: "8:20" },
+      { title: "Warm-up — RAMP", meta: "10 min · no max effort", video: this.videoSvc.first("warmup") },
+      {
+        title: rx?.intentLabel ?? "Main block",
+        meta: `RPE ${rx?.targetRpe ?? "—"} · ${rx?.targetMinutes ?? "—"} min`,
+        video: this.videoSvc.forIntent(rx?.intent),
+      },
+      { title: "Cooldown & mobility", meta: "easy", video: this.videoSvc.first("recovery") },
     ];
   });
 
