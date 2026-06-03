@@ -55,10 +55,11 @@ export class OnboardingComponent {
   readonly jersey = signal<number | null>(null);
   readonly positions = ["QB", "WR", "RB", "C", "Rusher", "Safety", "CB"];
 
-  // step 2 — physicals
+  // step 2 — physicals (input-level bounds so garbage can't be entered/saved)
   readonly heightCm = signal<number | null>(null);
   readonly weightKg = signal<number | null>(null);
   readonly dob = signal("");
+  readonly maxDob = new Date().toISOString().split("T")[0]; // no future birth dates
 
   // step 3 — season calendar (athlete-declared)
   readonly season = signal<SeasonWindow[]>([

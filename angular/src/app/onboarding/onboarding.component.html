@@ -2,7 +2,7 @@
   <div class="dots">
     @for (s of [0,1,2,3]; track s) { <i [class.on]="step() >= s"></i> }
   </div>
-  <a class="faint" routerLink="/landing" aria-label="Exit onboarding">✕</a>
+  <a class="icon-btn" routerLink="/landing" aria-label="Exit onboarding">✕</a>
 </header>
 
 <main class="screen">
@@ -26,11 +26,11 @@
     @case (1) {
       <h1>Your physicals</h1>
       <div class="field"><label for="h">Height (cm)</label>
-        <input id="h" class="input" type="number" [value]="heightCm() ?? ''" (input)="heightCm.set($any($event.target).valueAsNumber)" /></div>
+        <input id="h" class="input" type="number" min="120" max="230" step="1" inputmode="numeric" [value]="heightCm() ?? ''" (input)="heightCm.set($any($event.target).valueAsNumber)" /></div>
       <div class="field"><label for="w">Weight (kg)</label>
-        <input id="w" class="input" type="number" [value]="weightKg() ?? ''" (input)="weightKg.set($any($event.target).valueAsNumber)" /></div>
+        <input id="w" class="input" type="number" min="30" max="200" step="0.1" inputmode="decimal" [value]="weightKg() ?? ''" (input)="weightKg.set($any($event.target).valueAsNumber)" /></div>
       <div class="field"><label for="dob">Date of birth</label>
-        <input id="dob" class="input" type="date" [value]="dob()" (input)="dob.set($any($event.target).value)" /></div>
+        <input id="dob" class="input" type="date" min="1940-01-01" [max]="maxDob" [value]="dob()" (input)="dob.set($any($event.target).value)" /></div>
     }
     @case (2) {
       <h1>Your season</h1>
