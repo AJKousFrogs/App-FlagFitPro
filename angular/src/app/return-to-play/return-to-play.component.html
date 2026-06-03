@@ -8,7 +8,7 @@
 
 <main class="screen">
   @if (toast(); as t) {
-    <div class="card" style="border-left:3px solid var(--accent)"><b class="inline"><lucide-icon name="check" /> {{ t }}</b></div>
+    <div class="card accent"><b class="inline"><lucide-icon name="check" /> {{ t }}</b></div>
   }
 
   @if (!loaded()) {

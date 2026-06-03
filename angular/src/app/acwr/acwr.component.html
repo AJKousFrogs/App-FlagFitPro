@@ -49,7 +49,7 @@
     </div>
 
     @if (!weekly().isSafe) {
-      <div class="card" style="border-left:3px solid var(--warn)">
+      <div class="card warn">
         <b>Weekly load {{ weeklyPct() > 0 ? "+" : "" }}{{ weeklyPct() }}%</b>
         <div class="muted" style="font-size:var(--fs-sm)">{{ weekly().warning || "Limit increases to <10% week-over-week." }}</div>
       </div>

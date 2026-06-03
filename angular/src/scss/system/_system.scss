@@ -45,6 +45,11 @@
   /* ---- surfaces ---- */
   .card { background: var(--surface); border: 1px solid var(--border-soft); border-radius: var(--r-md); padding: var(--s-4); }
   .card.flat { background: var(--surface-2); }
+  /* status cards — a left accent bar instead of per-screen inline border-left */
+  .card.accent { border-left: 3px solid var(--accent); }
+  .card.danger { border-left: 3px solid var(--danger); }
+  .card.warn   { border-left: 3px solid var(--warn); }
+  .card.info   { border-left: 3px solid var(--info); }
   .hero { background: linear-gradient(180deg, var(--surface-raised), var(--surface)); border: 1px solid var(--border);
     border-radius: var(--r-lg); padding: var(--s-5); box-shadow: var(--e-2); }
   .strip { display: flex; justify-content: space-between; align-items: center; gap: var(--s-2);

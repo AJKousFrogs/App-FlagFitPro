@@ -33,7 +33,7 @@
   </div>
 
   @if (weather(); as w) {
-    <div class="card" style="border-left:3px solid var(--warn)">
+    <div class="card warn">
       <div class="inline"><lucide-icon name="sun" /> <b>Conditions</b>
         @if (w.heatLoadFactor > 1) { <span class="band danger">heat</span> }
       </div>
