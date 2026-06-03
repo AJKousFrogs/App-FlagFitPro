@@ -120,6 +120,12 @@ export const featureRoutes: Routes = [
         title: "Return to play · FlagFit",
       },
       {
+        path: "sleep-debt",
+        loadComponent: () =>
+          import("../../sleep-debt/sleep-debt.component").then((m) => m.SleepDebtComponent),
+        title: "Sleep debt · FlagFit",
+      },
+      {
         // Built and routable, but deliberately not surfaced in nav — the team
         // uses WhatsApp. Flip the More "Team chat" row to routerLink="/team-chat"
         // to expose it.

@@ -10,7 +10,7 @@ const ROUTES = [
   "today", "training", "wellness", "stats", "more",
   "supplements", "settings", "achievements", "notifications",
   "acwr", "profile", "competition", "gameday", "chat",
-  "return-to-play", "team-chat", "landing", "onboarding",
+  "return-to-play", "team-chat", "sleep-debt", "landing", "onboarding",
 ] as const;
 const DIR = "e2e-smoke/__shots__/responsive";
 
