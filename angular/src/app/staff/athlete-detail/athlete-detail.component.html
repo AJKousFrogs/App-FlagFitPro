@@ -10,14 +10,14 @@
   <div class="hero">
     <div class="row">
       <span class="avatar lg">{{ initials() }}</span>
-      <div style="text-align:right">
+      <div>
         <h1 style="margin:0">{{ name }}@if (jersey !== null) { · #{{ jersey }} }</h1>
         <small>{{ position || "Athlete" }}</small>
       </div>
     </div>
   </div>
 
-  @if (toast(); as t) { <div class="card accent"><b class="inline"><lucide-icon name="check" /> {{ t }}</b></div> }
+  @if (toast(); as t) { <div class="card" [class.accent]="!toastError()" [class.danger]="toastError()" role="status" aria-live="polite"><b class="inline"><lucide-icon [name]="toastError() ? 'info' : 'check'" /> {{ t }}</b></div> }
 
   <div class="section-h"><h2>{{ title() }}</h2></div>
 
@@ -71,7 +71,10 @@
             </div>
             <input type="text" placeholder="Notes (optional)" [value]="rtpNotes()" (input)="rtpNotes.set($any($event.target).value)"
                    style="background:var(--surface-2);border:1px solid var(--border-soft);border-radius:var(--r-sm);padding:var(--s-3) var(--s-3);color:var(--text-strong);font-family:var(--font-body)" />
-            <button class="btn primary block" type="button" [attr.aria-disabled]="busy()" (click)="saveRtp()">{{ busy() ? "Saving…" : "Save RTP" }}</button>
+            <div class="inline" style="gap:var(--s-2)">
+              <button class="btn ghost sm" type="button" (click)="cancelRtp()">Cancel</button>
+              <button class="btn primary block" type="button" style="flex:1" [attr.aria-disabled]="busy()" (click)="saveRtp()">{{ busy() ? "Saving…" : "Save RTP" }}</button>
+            </div>
           </div>
         }
 
@@ -83,7 +86,10 @@
             <input type="text" placeholder="Location (e.g. right)" [value]="injLocation()" (input)="injLocation.set($any($event.target).value)"
                    style="background:var(--surface-2);border:1px solid var(--border-soft);border-radius:var(--r-sm);padding:var(--s-3) var(--s-3);color:var(--text-strong);font-family:var(--font-body)" />
             <div class="inline" style="gap:var(--s-2)">@for (g of grades; track g) { <button type="button" class="chip" [class.sel]="injGrade() === g" (click)="injGrade.set(g)">{{ g }}</button> }</div>
-            <button class="btn primary block" type="button" [attr.aria-disabled]="busy()" (click)="logInjury()">{{ busy() ? "Saving…" : "Log injury" }}</button>
+            <div class="inline" style="gap:var(--s-2)">
+              <button class="btn ghost sm" type="button" (click)="cancelInjury()">Cancel</button>
+              <button class="btn primary block" type="button" style="flex:1" [attr.aria-disabled]="busy()" (click)="logInjury()">{{ busy() ? "Saving…" : "Log injury" }}</button>
+            </div>
           </div>
         } @else {
           <button class="btn ghost block sm" type="button" (click)="addingInjury.set(true)"><lucide-icon name="plus" /> Log injury</button>
@@ -132,7 +138,10 @@
                    style="background:var(--surface-2);border:1px solid var(--border-soft);border-radius:var(--r-sm);padding:var(--s-3) var(--s-3);color:var(--text-strong);font-family:var(--font-body)" />
             <div class="lrow"><span id="rev">Requires professional review</span>
               <button class="sw" role="switch" [attr.aria-checked]="asmtReview()" aria-labelledby="rev" (click)="asmtReview.set(!asmtReview())"></button></div>
-            <button class="btn primary block" type="button" [attr.aria-disabled]="busy()" (click)="logAssessment()">{{ busy() ? "Saving…" : "Log assessment" }}</button>
+            <div class="inline" style="gap:var(--s-2)">
+              <button class="btn ghost sm" type="button" (click)="cancelAssessment()">Cancel</button>
+              <button class="btn primary block" type="button" style="flex:1" [attr.aria-disabled]="busy()" (click)="logAssessment()">{{ busy() ? "Saving…" : "Log assessment" }}</button>
+            </div>
           </div>
         } @else {
           <button class="btn ghost block sm" type="button" (click)="addingAssessment.set(true)"><lucide-icon name="plus" /> Log assessment</button>

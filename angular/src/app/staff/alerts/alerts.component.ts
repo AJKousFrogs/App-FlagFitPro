@@ -63,11 +63,12 @@ export class AlertsComponent {
   athleteName(a: Alert): string {
     return (a.athlete_name ?? a.athleteName ?? "Athlete") as string;
   }
-  accent(a: Alert): string {
+  /** Status-card modifier class (see .card.danger/.warn in the system layer). */
+  accentClass(a: Alert): string {
     const s = (a.severity ?? a.type ?? "").toLowerCase();
-    if (/(danger|critical|injur|block|high)/.test(s)) return "var(--danger)";
-    if (/(elevat|warn|moderate|low_readiness)/.test(s)) return "var(--warn)";
-    return "var(--border-soft)";
+    if (/(danger|critical|injur|block|high)/.test(s)) return "danger";
+    if (/(elevat|warn|moderate|low_readiness)/.test(s)) return "warn";
+    return "";
   }
   icon(a: Alert): string {
     const s = (a.type ?? "").toLowerCase();

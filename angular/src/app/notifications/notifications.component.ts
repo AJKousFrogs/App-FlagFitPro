@@ -58,11 +58,12 @@ export class NotificationsComponent {
     });
   }
 
-  accent(n: Notif): string {
+  /** Status-card modifier class (see .card.danger/.accent in the system layer). */
+  accentClass(n: Notif): string {
     const t = (n.type ?? "").toLowerCase();
-    if (/(physio|injur|safety|acwr|danger|rtp)/.test(t)) return "var(--danger)";
-    if (/(game|event|comp|taper)/.test(t)) return "var(--accent)";
-    return "var(--border-soft)";
+    if (/(physio|injur|safety|acwr|danger|rtp)/.test(t)) return "danger";
+    if (/(game|event|comp|taper)/.test(t)) return "accent";
+    return "";
   }
 
   icon(n: Notif): string {

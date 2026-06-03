@@ -95,7 +95,8 @@ export class WellnessComponent {
 
   toggleSupplement(which: "creatine" | "caffeine" | "beta"): void {
     const sig = { creatine: this.creatine, caffeine: this.caffeine, beta: this.beta }[which];
-    sig.set(!sig());
+    const prev = sig();
+    sig.set(!prev);
     this.api
       .post("/api/supplements", {
         supplements: [
@@ -105,7 +106,12 @@ export class WellnessComponent {
         ],
       })
       .subscribe({
-        error: (err) => this.logger.error("supplement_log_failed", err),
+        // Revert the optimistic flip on failure so the switch never misrepresents
+        // what's actually logged (ACWR/coach views read this).
+        error: (err) => {
+          sig.set(prev);
+          this.logger.error("supplement_log_failed", err);
+        },
       });
   }
 

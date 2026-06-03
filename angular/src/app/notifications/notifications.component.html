@@ -10,7 +10,7 @@
     <div class="empty">You're all caught up.</div>
   } @else {
     @for (n of items()!; track n.id) {
-      <div class="card" [style.border-left]="'3px solid ' + accent(n)">
+      <div class="card {{ accentClass(n) }}">
         <div class="row">
           <b class="inline"><lucide-icon [name]="icon(n)" /> {{ n.title || n.type || "Update" }}</b>
           <small>{{ ago(n.created_at) }}</small>

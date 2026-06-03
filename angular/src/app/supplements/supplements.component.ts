@@ -84,7 +84,8 @@ export class SupplementsComponent {
 
   toggle(which: "creatine" | "caffeine" | "beta"): void {
     const sig = { creatine: this.creatine, caffeine: this.caffeine, beta: this.beta }[which];
-    sig.set(!sig());
+    const prev = sig();
+    sig.set(!prev);
     this.api
       .post("/api/supplements", {
         supplements: [
@@ -93,6 +94,12 @@ export class SupplementsComponent {
           { name: "Beta-alanine", taken: this.beta(), dosage: "4 g" },
         ],
       })
-      .subscribe({ error: (e) => this.logger.error("supplement_log_failed", e) });
+      // Revert the optimistic flip on failure (don't misrepresent the logged state).
+      .subscribe({
+        error: (e) => {
+          sig.set(prev);
+          this.logger.error("supplement_log_failed", e);
+        },
+      });
   }
 }

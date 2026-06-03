@@ -158,6 +158,8 @@ export class AthleteDetailComponent {
   readonly rtpNotes = signal("");
   readonly busy = signal(false);
   readonly toast = signal<string | null>(null);
+  readonly toastError = signal(false);
+  private toastTimer: ReturnType<typeof setTimeout> | null = null;
 
   openRtp(inj: Injury): void {
     this.editingRtp.set(inj.id ?? null);
@@ -175,7 +177,7 @@ export class AthleteDetailComponent {
       })
       .subscribe({
         next: () => { this.busy.set(false); this.editingRtp.set(null); this.flash("RTP updated"); this.fetch(); },
-        error: (e) => { this.busy.set(false); this.logger.error("rtp_update_failed", e); this.flash("Couldn't update RTP"); },
+        error: (e) => { this.busy.set(false); this.logger.error("rtp_update_failed", e); this.flash("Couldn't update RTP", true); },
       });
   }
 
@@ -194,7 +196,7 @@ export class AthleteDetailComponent {
       })
       .subscribe({
         next: () => { this.busy.set(false); this.addingInjury.set(false); this.injType.set(""); this.injLocation.set(""); this.flash("Injury logged"); this.fetch(); },
-        error: (e) => { this.busy.set(false); this.logger.error("log_injury_failed", e); this.flash("Couldn't log injury"); },
+        error: (e) => { this.busy.set(false); this.logger.error("log_injury_failed", e); this.flash("Couldn't log injury", true); },
       });
   }
 
@@ -206,7 +208,7 @@ export class AthleteDetailComponent {
       .post(`/api/staff-nutritionist/reports/${this.id}`, { type })
       .subscribe({
         next: () => { this.busy.set(false); this.flash(`${type} report generated`); },
-        error: (e) => { this.busy.set(false); this.logger.error("nutrition_report_failed", e); this.flash("Couldn't generate report"); },
+        error: (e) => { this.busy.set(false); this.logger.error("nutrition_report_failed", e); this.flash("Couldn't generate report", true); },
       });
   }
 
@@ -226,11 +228,28 @@ export class AthleteDetailComponent {
       })
       .subscribe({
         next: () => { this.busy.set(false); this.addingAssessment.set(false); this.asmtType.set(""); this.asmtNote.set(""); this.flash("Assessment logged"); },
-        error: (e) => { this.busy.set(false); this.logger.error("assessment_failed", e); this.flash("Couldn't log assessment"); },
+        error: (e) => { this.busy.set(false); this.logger.error("assessment_failed", e); this.flash("Couldn't log assessment", true); },
       });
   }
 
-  private flash(msg: string): void {
+  private flash(msg: string, isError = false): void {
     this.toast.set(msg);
+    this.toastError.set(isError);
+    if (this.toastTimer) clearTimeout(this.toastTimer);
+    this.toastTimer = setTimeout(() => this.toast.set(null), 4000);
+  }
+
+  cancelRtp(): void {
+    this.editingRtp.set(null);
+  }
+  cancelInjury(): void {
+    this.addingInjury.set(false);
+    this.injType.set("");
+    this.injLocation.set("");
+  }
+  cancelAssessment(): void {
+    this.addingAssessment.set(false);
+    this.asmtType.set("");
+    this.asmtNote.set("");
   }
 }

@@ -33,12 +33,14 @@
   </div>
 
   @if (weather(); as w) {
-    <div class="card warn">
-      <div class="inline"><lucide-icon name="sun" /> <b>Conditions</b>
-        @if (w.heatLoadFactor > 1) { <span class="band danger">heat</span> }
+    @if (conditions(); as c) {
+      <div class="card" [class.warn]="c.band !== 'info'" [class.info]="c.band === 'info'">
+        <div class="inline"><lucide-icon [name]="c.icon" /> <b>Conditions</b>
+          @if (c.label) { <span class="band {{ c.band }}">{{ c.label }}</span> }
+        </div>
+        <small>{{ w.reason }}</small>
       </div>
-      <small>{{ w.reason }}</small>
-    </div>
+    }
   }
 
   <div class="section-h"><h2>Fueling timeline</h2></div>

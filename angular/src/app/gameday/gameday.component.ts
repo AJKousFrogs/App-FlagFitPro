@@ -39,6 +39,25 @@ export class GamedayComponent {
   readonly rx = this.periodization.today;
   readonly weather = computed(() => this.rx()?.weatherAdjustment ?? null);
 
+  /**
+   * Pick the conditions icon + band from the actual adjustment, not a fixed sun —
+   * a cold/wet/windy day must not render with a sunny glyph. Derived from the
+   * heat-load factor and the engine's reason text (which carries the weather cue).
+   */
+  readonly conditions = computed(() => {
+    const w = this.weather();
+    if (!w) return null;
+    const r = (w.reason ?? "").toLowerCase();
+    if (w.heatLoadFactor > 1 || /too hot|feels-like.*hot|heat/.test(r))
+      return { icon: "flame", band: "danger", label: "heat" };
+    if (/storm|lightning/.test(r)) return { icon: "cloud-rain", band: "danger", label: "storm" };
+    if (/warm/.test(r)) return { icon: "sun", band: "caution", label: "warm" };
+    if (/cold/.test(r)) return { icon: "cloud-rain", band: "info", label: "cold" };
+    if (/wind/.test(r)) return { icon: "cloud-rain", band: "info", label: "wind" };
+    if (/rain|wet/.test(r)) return { icon: "cloud-rain", band: "info", label: "wet" };
+    return { icon: "sun", band: null as string | null, label: null as string | null };
+  });
+
   readonly reasoning = computed(
     () =>
       this.rx()?.reasoning ??

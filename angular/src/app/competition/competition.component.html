@@ -29,19 +29,27 @@
         <span class="band caution">in {{ daysTo(ev) }}d · {{ ev.expectedGameCount }} games</span>
       </div>
       <small>{{ ev.competitionName }}@if (ev.venue) { · {{ ev.venue }} }</small>
-      <div style="margin-top:var(--s-4)"><small>Will you be there?</small>
+      <div style="margin-top:var(--s-4)">
+        @if (rsvpState()[ev.id]; as s) {
+          <small class="inline" style="color:var(--accent)"><lucide-icon name="check" /> {{ rsvpLabel(s) }} · tap to change</small>
+        } @else {
+          <small>Will you be there?</small>
+        }
         <div class="row" style="margin-top:var(--s-2)">
-          <button class="btn ghost sm" type="button" (click)="rsvp(ev, 'declined')">Can't</button>
-          <button class="btn ghost sm" type="button" (click)="rsvp(ev, 'maybe')">Maybe</button>
-          <button class="btn primary" type="button" style="flex:1;margin-left:var(--s-2)" (click)="rsvp(ev, 'confirmed')">I'm in</button>
+          <button class="btn ghost sm" type="button" [attr.aria-pressed]="rsvpState()[ev.id] === 'declined'" [attr.aria-disabled]="rsvpBusy() === ev.id" (click)="rsvp(ev, 'declined')">Can't</button>
+          <button class="btn ghost sm" type="button" [attr.aria-pressed]="rsvpState()[ev.id] === 'maybe'" [attr.aria-disabled]="rsvpBusy() === ev.id" (click)="rsvp(ev, 'maybe')">Maybe</button>
+          <button class="btn primary" type="button" style="flex:1;margin-left:var(--s-2)" [attr.aria-pressed]="rsvpState()[ev.id] === 'confirmed'" [attr.aria-disabled]="rsvpBusy() === ev.id" (click)="rsvp(ev, 'confirmed')">{{ rsvpBusy() === ev.id ? "Saving…" : (rsvpState()[ev.id] === 'confirmed' ? "You're in ✓" : "I'm in") }}</button>
         </div>
+        @if (rsvpError() === ev.id) { <small style="color:var(--danger)" role="alert">Couldn't save — try again.</small> }
       </div>
     </div>
 
     @for (e of rest(); track e.id) {
       <div class="card"><div class="lrow">
         <span>{{ e.competitionShortName || e.competitionName }} · in {{ daysTo(e) }}d · {{ e.expectedGameCount }} games</span>
-        <button class="btn ghost sm" type="button" (click)="rsvp(e, 'confirmed')">RSVP</button>
+        <button class="btn ghost sm" type="button" [attr.aria-disabled]="rsvpBusy() === e.id" (click)="rsvp(e, 'confirmed')">
+          @if (rsvpState()[e.id]) { <lucide-icon name="check" /> Going } @else { RSVP }
+        </button>
       </div></div>
     }
   } @else {

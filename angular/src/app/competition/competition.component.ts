@@ -75,16 +75,37 @@ export class CompetitionComponent {
     return Math.max(0, Math.round(ms / 864e5));
   }
 
+  // RSVP feedback: chosen status per event, which is in-flight, and which errored.
+  readonly rsvpState = signal<Record<string, "declined" | "maybe" | "confirmed">>({});
+  readonly rsvpBusy = signal<string | null>(null);
+  readonly rsvpError = signal<string | null>(null);
+
   rsvp(ev: CompetitionEvent, status: "declined" | "maybe" | "confirmed"): void {
+    if (this.rsvpBusy()) return;
+    this.rsvpBusy.set(ev.id);
+    this.rsvpError.set(null);
     this.api
       .post("/api/event-availability", { competitionEventId: ev.id, status })
-      .subscribe({ error: (e) => this.logger.error("rsvp_failed", e) });
+      .subscribe({
+        next: () => {
+          this.rsvpState.update((m) => ({ ...m, [ev.id]: status }));
+          this.rsvpBusy.set(null);
+        },
+        error: (e) => {
+          this.logger.error("rsvp_failed", e);
+          this.rsvpError.set(ev.id);
+          this.rsvpBusy.set(null);
+        },
+      });
+  }
+  rsvpLabel(status: string): string {
+    return status === "confirmed" ? "You're in" : status === "maybe" ? "Maybe" : "Can't make it";
   }
 
   logParticipation(): void {
+    if (this.logged()) return;
     const p = this.pending()[0];
     const id = p?.competition_event_id ?? p?.competitionEventId;
-    this.logged.set(true);
     this.api
       .post("/api/event-participation", {
         competitionEventId: id,
@@ -94,7 +115,10 @@ export class CompetitionComponent {
         // real minutes from the chosen format → correct competition load
         totalMinutes: this.games() * this.minutesPerGame(),
       })
-      .subscribe({ error: (e) => this.logger.error("participation_failed", e) });
+      .subscribe({
+        next: () => this.logged.set(true),
+        error: (e) => this.logger.error("participation_failed", e),
+      });
   }
 
   pendingGamesExpected(): number {

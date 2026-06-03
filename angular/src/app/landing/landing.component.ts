@@ -29,6 +29,8 @@ import { staffLaneFor } from "../core/guards/staff.guard";
     `
       :host { display: block; max-width: 480px; margin: 0 auto; min-height: 100dvh; }
       .brand { font-family: var(--font-display); font-weight: var(--fw-bold); }
+      /* Hero wordmark — a deliberate one-off larger than the --fs-display token (32px). */
+      .ovr-title { font-size: 52px; letter-spacing: -0.02em; }
       .signin input { width: 100%; background: var(--surface-2); border: 1px solid var(--border-soft);
         border-radius: var(--r-sm); padding: var(--s-3) var(--s-3); color: var(--text-strong); font-family: var(--font-body); margin-top: var(--s-2); }
     `,
