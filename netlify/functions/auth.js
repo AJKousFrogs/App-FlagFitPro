@@ -53,7 +53,9 @@ export default async (req) => {
   if (path.includes("/auth/me") || path.includes("/auth-me")) {
     return dispatch(authMeHandler, req, url);
   }
-  if (path.includes("/account/deletion") || path.includes("/account-deletion")) {
+  // Match both /account/delete and /account/deletion (a redirect exists for each);
+  // "deletion" contains "delete", so the shorter token covers both.
+  if (path.includes("/account/delete") || path.includes("/account-deletion")) {
     return dispatch(accountDeletionHandler, req, url);
   }
   if (path.includes("/account/pause") || path.includes("/account-pause")) {

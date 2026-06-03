@@ -153,7 +153,7 @@ export class SettingsComponent {
     this.accountMsg.set(null);
     try {
       await firstValueFrom(
-        this.api.post("/api/account/delete", { confirmDelete: true }),
+        this.api.post("/api/account/deletion", { confirmDelete: true }),
       );
       this.confirmingDelete.set(false);
       this.accountMsg.set(

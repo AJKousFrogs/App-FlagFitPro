@@ -489,7 +489,7 @@
 # API Routes for Recovery
 [[redirects]]
   from = "/api/recovery/*"
-  to = "/.netlify/functions/health"
+  to = "/.netlify/functions/recovery-core"
   status = 200
   force = true
 
