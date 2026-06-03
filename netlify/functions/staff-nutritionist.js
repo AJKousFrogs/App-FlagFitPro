@@ -94,7 +94,7 @@ async function getAthleteNutritionOverview(teamId, requesterId) {
       .from("physical_measurements")
       .select("*")
       .eq("user_id", userId)
-      .order("measurement_date", { ascending: false })
+      .order("created_at", { ascending: false })
       .limit(1)
       .single();
 
@@ -127,19 +127,19 @@ async function getAthleteNutritionOverview(teamId, requesterId) {
       name: user.full_name || "Unknown",
       position: user.position || "N/A",
       avatarUrl: user.avatar_url,
-      weight: measurements?.weight_kg || nutritionProfile?.weight_kg || null,
+      weight: measurements?.weight || nutritionProfile?.weight_kg || null,
       bodyFat:
-        measurements?.body_fat_percentage ||
+        measurements?.body_fat ||
         nutritionProfile?.body_fat_percentage ||
         null,
       leanMass:
-        measurements?.muscle_mass_kg || nutritionProfile?.lean_mass_kg || null,
+        measurements?.muscle_mass || nutritionProfile?.lean_mass_kg || null,
       hydrationStatus: getHydrationStatus(wellness?.hydration_level),
       supplementCompliance,
       dailyCalories: nutritionProfile?.tdee_kcal || null,
       proteinTarget: nutritionProfile?.protein_target_g || null,
       lastUpdated:
-        measurements?.measurement_date || nutritionProfile?.updated_at || null,
+        measurements?.created_at || nutritionProfile?.updated_at || null,
     });
   }
 
@@ -155,20 +155,23 @@ async function getBodyCompositionTrends(userId, days = 90) {
 
   const { data, error } = await supabaseAdmin
     .from("physical_measurements")
-    .select("measurement_date, weight_kg, body_fat_percentage, muscle_mass_kg")
+    // physical_measurements columns are weight/body_fat/muscle_mass (+ created_at
+    // as the measurement timestamp) — NOT the *_kg / *_percentage / measurement_date
+    // names this function used, which 400'd the query and 500'd the /trends lane.
+    .select("created_at, weight, body_fat, muscle_mass")
     .eq("user_id", userId)
-    .gte("measurement_date", startDate.toISOString().split("T")[0])
-    .order("measurement_date", { ascending: true });
+    .gte("created_at", startDate.toISOString())
+    .order("created_at", { ascending: true });
 
   if (error) {
     throw error;
   }
 
   return (data || []).map((m) => ({
-    date: m.measurement_date,
-    weight: m.weight_kg,
-    bodyFat: m.body_fat_percentage,
-    leanMass: m.muscle_mass_kg,
+    date: m.created_at,
+    weight: m.weight,
+    bodyFat: m.body_fat,
+    leanMass: m.muscle_mass,
   }));
 }
 
@@ -295,8 +298,8 @@ async function generateNutritionReport(userId, reportType = "weekly") {
     .from("physical_measurements")
     .select("*")
     .eq("user_id", userId)
-    .gte("measurement_date", startDate.toISOString().split("T")[0])
-    .order("measurement_date", { ascending: true });
+    .gte("created_at", startDate.toISOString())
+    .order("created_at", { ascending: true });
 
   // Get supplement logs
   const { data: supplements } = await supabaseAdmin
@@ -323,8 +326,8 @@ async function generateNutritionReport(userId, reportType = "weekly") {
 
   const weightChange =
     measurements?.length >= 2
-      ? measurements[measurements.length - 1].weight_kg -
-        measurements[0].weight_kg
+      ? measurements[measurements.length - 1].weight -
+        measurements[0].weight
       : 0;
 
   return {
@@ -334,13 +337,13 @@ async function generateNutritionReport(userId, reportType = "weekly") {
     profile: profile || {},
     metrics: {
       currentWeight:
-        measurements?.[measurements.length - 1]?.weight_kg ||
+        measurements?.[measurements.length - 1]?.weight ||
         profile?.weight_kg,
       weightChange,
       bodyFatChange:
         measurements?.length >= 2
-          ? (measurements[measurements.length - 1].body_fat_percentage || 0) -
-            (measurements[0].body_fat_percentage || 0)
+          ? (measurements[measurements.length - 1].body_fat || 0) -
+            (measurements[0].body_fat || 0)
           : 0,
       supplementCompliance:
         supplementsExpected > 0
