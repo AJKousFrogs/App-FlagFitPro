@@ -287,18 +287,6 @@
   force = true
 
 [[redirects]]
-  from = "/api/cycle-tracking/*"
-  to = "/.netlify/functions/wellness"
-  status = 200
-  force = true
-
-[[redirects]]
-  from = "/api/cycle-tracking"
-  to = "/.netlify/functions/wellness"
-  status = 200
-  force = true
-
-[[redirects]]
   from = "/api/game-events/*"
   to = "/.netlify/functions/games"
   status = 200

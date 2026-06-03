@@ -615,12 +615,6 @@ export const API_ENDPOINTS = {
   payments: "/api/payments",
   sleepData: "/api/sleep-data",
   programCycles: "/api/program-cycles",
-  cycleTracking: {
-    base: "/api/cycle-tracking",
-    period: "/api/cycle-tracking/period",
-    symptoms: "/api/cycle-tracking/symptoms",
-    clearAll: "/api/cycle-tracking/all",
-  },
   qbThrowing: {
     base: "/api/qb-throwing",
     armCare: "/api/qb-throwing/arm-care",
