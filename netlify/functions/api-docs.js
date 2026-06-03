@@ -205,20 +205,6 @@ const API_ENDPOINTS = {
       "POST /checkin - Save a daily RTP check-in",
     ],
   },
-  "cycle-tracking": {
-    path: "/api/cycle-tracking",
-    method: "GET, POST, DELETE",
-    description:
-      "Private menstrual-cycle tracking with cycle history, symptom logging, and phase-aware ACWR context",
-    auth: true,
-    rateLimit: "READ/UPDATE",
-    subEndpoints: [
-      "GET / - Get cycle status, history, and ACWR context",
-      "POST /period - Log a new cycle entry",
-      "POST /symptoms - Save daily symptoms",
-      "DELETE /all - Delete all cycle tracking data",
-    ],
-  },
   "sleep-data": {
     path: "/api/sleep-data",
     method: "GET",

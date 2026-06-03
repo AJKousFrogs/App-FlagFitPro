@@ -10,7 +10,6 @@
  *   /api/wellness/*           (general wellness data — logs, history, etc.)
  *   /api/sleep-data, /api/sleep-data/*
  *   /api/hydration, /api/hydration/*
- *   /api/cycle-tracking, /api/cycle-tracking/*
  *   /api/nutrition, /api/nutrition/*
  */
 
@@ -20,7 +19,6 @@ import { toLambdaHandler } from "./utils/lambda-adapter.js";
 import { handler as wellnessCheckinHandler } from "./wellness-checkin.js";
 import { handler as sleepDataHandler } from "./sleep-data.js";
 import { handler as hydrationHandler } from "./hydration.js";
-import { handler as cycleTrackingHandler } from "./cycle-tracking.js";
 import { handler as nutritionHandler } from "./nutrition.js";
 
 // ─── Adapters ────────────────────────────────────────────────────────────────
@@ -52,11 +50,6 @@ const handleRequest = async (req) => {
   // Hydration: /api/hydration
   if (path.includes("/hydration")) {
     return dispatch(hydrationHandler, req, url);
-  }
-
-  // Cycle tracking: /api/cycle-tracking
-  if (path.includes("/cycle-tracking")) {
-    return dispatch(cycleTrackingHandler, req, url);
   }
 
   // Nutrition: /api/nutrition
