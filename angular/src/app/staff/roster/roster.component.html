@@ -7,23 +7,35 @@
 </header>
 
 <main class="screen">
-  @if (players() === null) {
+  @if (rows() === null) {
     <div class="empty">Loading roster…</div>
-  } @else if (players()!.length === 0) {
+  } @else if (rows()!.length === 0) {
     <div class="empty">No athletes on this team yet.</div>
   } @else {
     <div class="card">
-      @for (p of players()!; track pid(p)) {
-        <a class="lrow" [routerLink]="['/staff/athlete', pid(p)]"
-           [state]="{ name: p.name, jersey: jersey(p), position: p.position }" style="color:inherit">
+      @for (r of rows()!; track r.id) {
+        <a class="lrow" [routerLink]="['/staff/athlete', r.id]"
+           [state]="{ name: r.name, position: r.position, jersey: r.jersey, acwr: r.acwr, readiness: r.readiness, shared: r.shared }"
+           style="color:inherit">
           <span class="thumb-card">
-            <span class="avatar">{{ initials(p) }}</span>
+            <span class="avatar">{{ initials(r.name) }}</span>
             <span>
-              <b>{{ p.name || "Athlete" }}</b><br />
-              <small>@if (jersey(p) !== null) { #{{ jersey(p) }} · }{{ p.position || "—" }}</small>
+              <b>{{ r.name }}</b><br />
+              <small>@if (r.jersey !== null) { #{{ r.jersey }} · }{{ r.position || "—" }}</small>
             </span>
           </span>
-          <span class="faint">›</span>
+          @if (isCoach()) {
+            @if (r.shared) {
+              <span class="inline" style="gap:6px">
+                @if (readyBand(r.readiness); as b) { <span class="band {{ b.cls }}">{{ b.label }}</span> }
+                @if (acwrBand(r.acwr); as b) { <span class="band {{ b.cls }}">{{ b.label }}</span> }
+              </span>
+            } @else {
+              <span class="band neutral">not shared</span>
+            }
+          } @else {
+            <span class="faint">›</span>
+          }
         </a>
       }
     </div>

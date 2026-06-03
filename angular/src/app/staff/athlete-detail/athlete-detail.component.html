@@ -1,7 +1,7 @@
 <header class="topbar">
   <div>
-    <div class="eyebrow">{{ spec().title }}</div>
-    <h1 style="font-size:21px">Athlete</h1>
+    <div class="eyebrow">{{ title() }}</div>
+    <h1 style="font-size:21px">{{ name }}</h1>
   </div>
   <span class="avatar">{{ initials() }}</span>
 </header>
@@ -17,27 +17,81 @@
     </div>
   </div>
 
-  <div class="section-h"><h2>{{ spec().title }}</h2></div>
+  <div class="section-h"><h2>{{ title() }}</h2></div>
 
   @if (!loaded()) {
     <div class="empty">Loading…</div>
-  } @else if (hasData()) {
-    <!-- shared data present — summarized; full per-section views land as the staff track deepens -->
-    <div class="card">
-      <p class="muted" style="font-size:var(--fs-sm)">
-        {{ name }} has shared their {{ spec().consent }} data with staff. Detailed
-        {{ spec().title | lowercase }} views render here.
-      </p>
-      <pre style="white-space:pre-wrap;font-size:11px;color:var(--text-muted);margin:8px 0 0">{{ data() | json }}</pre>
-    </div>
-  } @else {
+  } @else if (!hasData()) {
     <div class="empty">
       <b style="color:var(--text)">Not shared</b>
       <p class="note" style="margin-top:8px">
-        {{ name }} hasn't shared their {{ spec().consent }} data with staff (or there's
-        nothing logged yet). Sharing is private by default — the athlete enables it in
-        their privacy settings.
+        {{ name }} hasn't shared their {{ consent() }} data with staff (or there's nothing
+        logged yet). Sharing is private by default — the athlete enables it in their settings.
       </p>
     </div>
+  } @else {
+    @switch (lane()) {
+      <!-- COACH: load + readiness -->
+      @case ("coach") {
+        <div class="card">
+          <div class="row">
+            <div class="inline"><span>Readiness</span>
+              @if (readyBand(); as b) { <span class="band {{ b.cls }}">{{ b.label }}</span> }
+              @else { <span class="band neutral">—</span> }
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="row">
+            <div class="inline"><span>Load (ACWR)</span>
+              @if (acwrBand(); as b) { <span class="band {{ b.cls }}">{{ b.label }}</span> }
+              @else { <span class="band neutral">building</span> }
+            </div>
+          </div>
+        </div>
+      }
+
+      <!-- PHYSIO: injuries + RTP -->
+      @case ("physio") {
+        @if (rtpPhase(); as ph) {
+          <div class="card"><div class="row"><b>Return-to-play</b><span class="band caution">{{ ph }}</span></div></div>
+        }
+        <div class="card">
+          @for (inj of injuries(); track $index) {
+            <div class="lrow">
+              <div>
+                <b>{{ inj.injury_type || "Injury" }}@if (inj.injury_location) { · {{ inj.injury_location }} }</b>
+                <div class="muted" style="font-size:var(--fs-sm)">
+                  @if (inj.injury_grade) { {{ inj.injury_grade }} · }@if (inj.rtp_progress != null) { RTP {{ inj.rtp_progress }}% · }since {{ inj.injury_date }}
+                </div>
+              </div>
+              <span class="band {{ injuryBand(inj.recovery_status) }}">{{ inj.recovery_status || "active" }}</span>
+            </div>
+          }
+        </div>
+      }
+
+      <!-- NUTRITION: body composition -->
+      @case ("nutrition") {
+        @if (latestBody(); as b) {
+          <div class="card"><div class="tiles">
+            <div><b>{{ b.weight ?? "—" }}</b><small>kg</small></div>
+            <div><b>{{ b.bodyFat ?? "—" }}</b><small>% fat</small></div>
+            <div><b>{{ b.leanMass ?? "—" }}</b><small>lean kg</small></div>
+          </div></div>
+          <p class="note">Latest body composition ({{ b.date }}). Trend over {{ body().length }} points.</p>
+        }
+      }
+
+      <!-- PSYCH: mental wellness -->
+      @case ("psych") {
+        <div class="card"><div class="tiles">
+          <div><b>{{ latestMental() ?? "—" }}</b><small>mental readiness</small></div>
+          <div><b>{{ latestWellness()?.mood ?? "—" }}</b><small>mood</small></div>
+          <div><b>{{ latestWellness()?.stress_level ?? "—" }}</b><small>stress</small></div>
+        </div></div>
+        <p class="note">Latest check-in. {{ mental().length }} mental logs over the window.</p>
+      }
+    }
   }
 </main>
