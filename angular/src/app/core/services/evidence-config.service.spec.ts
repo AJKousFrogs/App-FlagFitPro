@@ -12,7 +12,6 @@ import { TestBed } from "@angular/core/testing";
 import { EvidenceConfigService } from "./evidence-config.service";
 import { LoggerService } from "./logger.service";
 import { SupabaseService } from "./supabase.service";
-import { AuthService } from "./auth.service";
 
 // Mock LoggerService
 const mockLoggerService = {
@@ -42,11 +41,6 @@ const mockSupabaseService = {
   },
 };
 
-// Mock AuthService
-const mockAuthService = {
-  getUser: vi.fn(() => null),
-};
-
 describe("EvidenceConfigService", () => {
   let service: EvidenceConfigService;
 
@@ -58,7 +52,6 @@ describe("EvidenceConfigService", () => {
         EvidenceConfigService,
         { provide: LoggerService, useValue: mockLoggerService },
         { provide: SupabaseService, useValue: mockSupabaseService },
-        { provide: AuthService, useValue: mockAuthService },
       ],
     });
 
