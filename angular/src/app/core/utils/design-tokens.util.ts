@@ -6,7 +6,7 @@
  *
  * Usage:
  * - DOM / styles: Prefer `var(--token)` via BRAND_COLORS, STATUS_COLORS, etc.
- * - Chart.js / canvas: Pass resolved colors from ThemeService.getChartColors() or
+ * - Canvas charts: resolve CHART_SERIES_CSS_VARS via
  *   getCssVariable("--color-chart-N"). For SSR or missing document, use
  *   CANVAS_CHART_FALLBACK_HEX (must stay in sync with :root --color-chart-* in SCSS).
  * - Do not duplicate brand hex in feature code; use tokens above.
@@ -130,18 +130,6 @@ export const BLOCK_COLORS = {
   main_session: "var(--ds-primary-green)", // brand green var(--p-highlight-text-color)
   cool_down: "var(--color-chart-tertiary)", // blue var(--color-chart-tertiary)
   evening_recovery: "var(--color-status-help)", // purple var(--color-chart-senary)
-} as const;
-
-/**
- * Cycle tracking phase colors
- * Maps menstrual cycle phases to appropriate colors
- */
-export const CYCLE_PHASE_COLORS = {
-  menstrual: "var(--primitive-error-500)", // red var(--color-chart-quinary)
-  follicular: "var(--color-status-success)", // green (use success, not raw green for better a11y)
-  ovulation: "var(--primitive-warning-500)", // amber var(--color-chart-quaternary)
-  luteal: "var(--color-status-help)", // purple var(--color-chart-senary)
-  late_luteal: "var(--color-staff-coaching)", // indigo var(--color-phase-reload)
 } as const;
 
 /**
@@ -344,51 +332,19 @@ export const STATUS_HEX_COLORS = {
   neutral: "var(--color-workout-rest)", // --color-workout-rest
 } as const;
 
-/**
- * Get status hex color for Chart.js/Canvas contexts
- */
-export function getStatusHexColor(
-  value: number,
-  goodThreshold: number,
-  fairThreshold: number,
-): string {
-  if (value >= goodThreshold) {
-    return STATUS_HEX_COLORS.success;
-  } else if (value >= fairThreshold) {
-    return STATUS_HEX_COLORS.warning;
-  }
-  return STATUS_HEX_COLORS.error;
-}
-
-/**
- * Get inverted status hex color for Chart.js/Canvas (lower is better)
- */
-export function getInvertedStatusHexColor(
-  value: number,
-  goodThreshold: number,
-  fairThreshold: number,
-): string {
-  if (value <= goodThreshold) {
-    return STATUS_HEX_COLORS.success;
-  } else if (value <= fairThreshold) {
-    return STATUS_HEX_COLORS.warning;
-  }
-  return STATUS_HEX_COLORS.error;
-}
-
 // ============================================================================
 // SPACING & SIZING TOKENS
 // ============================================================================
 
 /**
- * Breakpoint bridge constants for TS-only APIs such as PrimeNG dialog breakpoint maps.
+ * Breakpoint bridge constants for TS-only APIs (e.g. responsive style/media maps).
  * These mirror the canonical CSS token values in design-system-tokens.scss.
  */
 export const BREAKPOINTS = {
   xs: "374px",
   sm: "640px",
   md: "768px",
-  /** Just below `md` — matches `--breakpoint-md-max` (767px) for PrimeNG `breakpoint` props */
+  /** Just below `md` — matches `--breakpoint-md-max` (767px) for max-width media queries */
   mdMax: "767px",
   lg: "1024px",
   xl: "1280px",
@@ -456,139 +412,4 @@ export const COMPONENT_SIZES = {
     md: cssToken("--button-height-md"),
     lg: cssToken("--button-height-lg"),
   },
-} as const;
-
-// ============================================================================
-// DIALOG / MODAL WIDTH TOKENS
-// Standardized widths for PrimeNG dialogs and modals
-// ============================================================================
-
-/**
- * Dialog width presets
- * Use these for consistent modal sizing across the application
- *
- * Maps to design system breakpoints:
- * - xs: Small alerts, confirmations (320px)
- * - sm: Simple forms, messages (400px)
- * - md: Standard forms, details (500px)
- * - lg: Complex forms, multi-section (600px)
- * - xl: Wide content, tables (700px)
- * - 2xl: Full-width content (800px)
- * - full: Maximum viewport width with margin
- */
-export const DIALOG_WIDTHS = {
-  xs: cssToken("--dialog-max-width-xs"),
-  sm: cssToken("--dialog-max-width-sm"),
-  md: cssToken("--dialog-max-width-md"),
-  lg: cssToken("--dialog-max-width-lg"),
-  xl: cssToken("--dialog-max-width-xl"),
-  "2xl": cssToken("--dialog-max-width-2xl"),
-  "3xl": cssToken("--dialog-max-width-3xl"),
-  full: "95vw",
-} as const;
-
-export const DIALOG_BREAKPOINTS = {
-  mobileFull: {
-    [BREAKPOINTS.mobile]: DIALOG_WIDTHS.full,
-  },
-  standard: {
-    "960px": "92vw",
-    [BREAKPOINTS.mobile]: "96vw",
-  },
-  wide: {
-    "1200px": "92vw",
-    [BREAKPOINTS.mobile]: "96vw",
-  },
-  wideComfortable: {
-    "1200px": "94vw",
-    "960px": "96vw",
-  },
-} as const;
-
-/**
- * Responsive dialog width with mobile fallback
- * Returns object suitable for PrimeNG [style] binding
- *
- * @param desktopWidth - Width on desktop (from DIALOG_WIDTHS)
- * @param mobileWidth - Optional mobile fallback (defaults to '95vw')
- */
-export function getDialogStyle(
-  desktopWidth: string,
-  options?: { maxWidth?: string; maxHeight?: string },
-): Record<string, string> {
-  const style: Record<string, string> = {
-    width: "95vw",
-    maxWidth: options?.maxWidth ?? desktopWidth,
-  };
-  if (options?.maxHeight) {
-    style["maxHeight"] = options.maxHeight;
-  }
-  return style;
-}
-
-/**
- * Pre-built dialog style objects for common use cases
- * These are optimized for mobile-first responsive design
- */
-export const DIALOG_STYLES = {
-  /** Alert/confirmation dialogs (xs: 320px) */
-  alert: { width: "95vw", maxWidth: DIALOG_WIDTHS.xs },
-
-  /** Simple forms, quick actions (sm: 400px) */
-  form: { width: "95vw", maxWidth: DIALOG_WIDTHS.sm },
-
-  /** Standard dialogs (md: 500px) */
-  standard: { width: "95vw", maxWidth: DIALOG_WIDTHS.md },
-
-  /** Complex forms, multi-step (lg: 600px) */
-  complex: { width: "95vw", maxWidth: DIALOG_WIDTHS.lg },
-
-  /** Wide content, data tables (xl: 700px) */
-  wide: { width: "95vw", maxWidth: DIALOG_WIDTHS.xl },
-
-  /** Full-width dialogs (2xl: 800px) */
-  fullWidth: { width: "95vw", maxWidth: DIALOG_WIDTHS["2xl"] },
-
-  /** Extra wide (3xl: 900px) */
-  extraWide: { width: "95vw", maxWidth: DIALOG_WIDTHS["3xl"] },
-
-  /** Scrollable content dialogs */
-  scrollable: { width: "95vw", maxWidth: DIALOG_WIDTHS.lg, maxHeight: "80vh" },
-
-  /** Player detail / roster dialogs */
-  playerDetail: {
-    width: "95vw",
-    maxWidth: DIALOG_WIDTHS.xl,
-    maxHeight: "90vh",
-  },
-} as const;
-
-/**
- * Dropdown/Select widths for inline controls
- */
-export const DROPDOWN_WIDTHS = {
-  xs: cssToken("--dropdown-width-xs"),
-  sm: cssToken("--dropdown-width-sm"),
-  md: cssToken("--dropdown-width-md"),
-  lg: cssToken("--dropdown-width-lg"),
-  xl: cssToken("--dropdown-width-xl"),
-  auto: "auto",
-} as const;
-
-/**
- * Table column widths
- */
-export const TABLE_COLUMN_WIDTHS = {
-  /** Checkbox/action column */
-  action: cssToken("--table-column-width-action"),
-  /** Small badge/status column */
-  badge: cssToken("--table-column-width-badge"),
-  /** Standard icon column */
-  icon: cssToken("--table-column-width-icon"),
-  /** Rank/number column */
-  rank: cssToken("--table-column-width-rank"),
-  /** Points/score column */
-  score: cssToken("--table-column-width-score"),
-  /** Avatar + name column */
-  avatar: cssToken("--table-column-width-avatar"),
 } as const;

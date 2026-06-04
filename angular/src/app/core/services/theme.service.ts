@@ -18,10 +18,6 @@ import {
   OnDestroy,
   signal,
 } from "@angular/core";
-import {
-  CANVAS_CHART_FALLBACK_HEX,
-  CHART_SERIES_CSS_VARS,
-} from "../utils/design-tokens.util";
 import { LoggerService } from "./logger.service";
 import { SupabaseService } from "./supabase.service";
 
@@ -138,20 +134,6 @@ export class ThemeService implements OnDestroy {
     return getComputedStyle(document.documentElement)
       .getPropertyValue(name)
       .trim();
-  }
-
-  /**
-   * Get chart color palette from design system
-   * Returns array of hex colors for Chart.js
-   *
-   * Prefer CHART_SERIES_CSS_VARS + CANVAS_CHART_FALLBACK_HEX from design-tokens.util.
-   */
-  getChartColors(): string[] {
-    const cssColors = CHART_SERIES_CSS_VARS.map((name) =>
-      this.getCssVariable(name),
-    ).filter((c) => c);
-
-    return cssColors.length === 6 ? cssColors : [...CANVAS_CHART_FALLBACK_HEX];
   }
 
   /**
