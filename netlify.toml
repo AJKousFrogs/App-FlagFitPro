@@ -868,13 +868,13 @@
 # API Routes for Trends
 [[redirects]]
   from = "/api/trends/*"
-  to = "/.netlify/functions/analytics"
+  to = "/.netlify/functions/trends"
   status = 200
   force = true
 
 [[redirects]]
   from = "/api/trends"
-  to = "/.netlify/functions/analytics"
+  to = "/.netlify/functions/trends"
   status = 200
   force = true
 
@@ -1219,13 +1219,13 @@
 # API Routes for Calibration Logs
 [[redirects]]
   from = "/api/calibration-logs"
-  to = "/.netlify/functions/readiness"
+  to = "/.netlify/functions/calibration-logs"
   status = 200
   force = true
 
 [[redirects]]
   from = "/api/calibration-logs/*"
-  to = "/.netlify/functions/readiness"
+  to = "/.netlify/functions/calibration-logs"
   status = 200
   force = true
 
@@ -1681,13 +1681,13 @@
 # Response Feedback API (AI response feedback)
 [[redirects]]
   from = "/api/response-feedback/*"
-  to = "/.netlify/functions/ai-chat"
+  to = "/.netlify/functions/response-feedback"
   status = 200
   force = true
 
 [[redirects]]
   from = "/api/response-feedback"
-  to = "/.netlify/functions/ai-chat"
+  to = "/.netlify/functions/response-feedback"
   status = 200
   force = true
 

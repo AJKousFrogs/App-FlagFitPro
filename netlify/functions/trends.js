@@ -29,19 +29,20 @@ async function getChangeOfDirectionTrend(athleteId, weeks = 4) {
   const startDate = new Date();
   startDate.setDate(startDate.getDate() - weeks * 7);
 
-  // Query sessions with change of direction drills
+  // Change-of-direction / agility sessions from the live training_sessions table
+  // (the legacy per-athlete `sessions` table was retired). training_sessions carries
+  // both drill_type and session_type, keyed on user_id + session_date.
   const { data, error } = await supabaseAdmin
-    .from("sessions")
-    .select("*")
-    .eq("athlete_id", athleteId)
-    .gte("date", startDate.toISOString().split("T")[0])
-    .lte("date", endDate.toISOString().split("T")[0])
+    .from("training_sessions")
+    .select("session_date, drill_type, session_type")
+    .eq("user_id", athleteId)
+    .gte("session_date", startDate.toISOString().split("T")[0])
+    .lte("session_date", endDate.toISOString().split("T")[0])
     .or(
       "drill_type.ilike.%change%,drill_type.ilike.%cod%,drill_type.ilike.%agility%,session_type.ilike.%agility%",
     );
 
-  // Legacy `sessions` table is being retired; a missing table means no data, not a failure.
-  if (error && error.code !== "42P01") {
+  if (error) {
     throw error;
   }
 
@@ -50,7 +51,7 @@ async function getChangeOfDirectionTrend(athleteId, weeks = 4) {
   const sessions = data || [];
 
   sessions.forEach((session) => {
-    const date = new Date(session.date);
+    const date = new Date(session.session_date);
     const weekKey = `${date.getFullYear()}-W${getWeekNumber(date)}`;
     weeklyCounts.set(weekKey, (weeklyCounts.get(weekKey) || 0) + 1);
   });
@@ -87,17 +88,20 @@ async function getSprintVolumeTrend(athleteId, weeks = 4) {
   const startDate = new Date();
   startDate.setDate(startDate.getDate() - weeks * 7);
 
-  // Query sessions with sprint data
+  // Sprint/speed training volume from the live training_sessions table. The retired
+  // `sessions` table had a numeric sprint_count; training_sessions doesn't, so volume is
+  // the count of speed-oriented sessions per week (by drill_type/session_type).
   const { data, error } = await supabaseAdmin
-    .from("sessions")
-    .select("sprint_count, date")
-    .eq("athlete_id", athleteId)
-    .gte("date", startDate.toISOString().split("T")[0])
-    .lte("date", endDate.toISOString().split("T")[0])
-    .not("sprint_count", "is", null);
+    .from("training_sessions")
+    .select("session_date, drill_type, session_type")
+    .eq("user_id", athleteId)
+    .gte("session_date", startDate.toISOString().split("T")[0])
+    .lte("session_date", endDate.toISOString().split("T")[0])
+    .or(
+      "drill_type.ilike.%sprint%,drill_type.ilike.%speed%,session_type.ilike.%sprint%,session_type.ilike.%speed%",
+    );
 
-  // Legacy `sessions` table is being retired; a missing table means no data, not a failure.
-  if (error && error.code !== "42P01") {
+  if (error) {
     throw error;
   }
 
@@ -106,12 +110,9 @@ async function getSprintVolumeTrend(athleteId, weeks = 4) {
   const sessions = data || [];
 
   sessions.forEach((session) => {
-    const date = new Date(session.date);
+    const date = new Date(session.session_date);
     const weekKey = `${date.getFullYear()}-W${getWeekNumber(date)}`;
-    weeklyVolumes.set(
-      weekKey,
-      (weeklyVolumes.get(weekKey) || 0) + (session.sprint_count || 0),
-    );
+    weeklyVolumes.set(weekKey, (weeklyVolumes.get(weekKey) || 0) + 1);
   });
 
   const weeksData = Array.from(weeklyVolumes.entries())
