@@ -118,7 +118,6 @@ export const ROUTES = {
 
   // Wellness
   WELLNESS: "/wellness",
-  CYCLE_TRACKING: "/cycle-tracking",
   SLEEP_DEBT: "/sleep-debt",
   TRAVEL_RECOVERY: "/wellness",
 
