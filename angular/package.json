@@ -85,13 +85,13 @@
     "@types/node": "^22.15.0",
     "@vitest/coverage-v8": "^4.1.2",
     "@vitest/ui": "^4.0.18",
-    "angular-eslint": "21.3.0",
+    "angular-eslint": "21.4.0",
     "eslint": "^10.0.2",
     "globals": "^17.3.0",
     "jsdom": "^29.1.1",
     "tsx": "^4.21.0",
     "typescript": "^5.9.3",
-    "typescript-eslint": "8.56.1",
+    "typescript-eslint": "8.60.1",
     "vitest": "^4.1.0"
   },
   "overrides": {

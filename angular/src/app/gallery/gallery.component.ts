@@ -75,16 +75,16 @@ import { YtVideoComponent } from "../shared/yt-video.component";
       <div class="section-h"><h2>List rows + switch</h2></div>
       <div class="card">
         <div class="lrow">
-          <span><lucide-icon name="pill" class="suppi-i" /> Creatine <small>5 g</small></span>
-          <button class="sw" role="switch" [attr.aria-checked]="creatine()" (click)="creatine.set(!creatine())"></button>
+          <span id="g-cr"><lucide-icon name="pill" class="suppi-i" /> Creatine <small>5 g</small></span>
+          <button class="sw" role="switch" [attr.aria-checked]="creatine()" aria-labelledby="g-cr" (click)="creatine.set(!creatine())"></button>
         </div>
         <div class="lrow">
-          <span><lucide-icon name="coffee" class="suppi-i" /> Caffeine <small>200 mg · pre-session</small></span>
-          <button class="sw" role="switch" [attr.aria-checked]="caffeine()" (click)="caffeine.set(!caffeine())"></button>
+          <span id="g-cf"><lucide-icon name="coffee" class="suppi-i" /> Caffeine <small>200 mg · pre-session</small></span>
+          <button class="sw" role="switch" [attr.aria-checked]="caffeine()" aria-labelledby="g-cf" (click)="caffeine.set(!caffeine())"></button>
         </div>
         <div class="lrow">
-          <span><lucide-icon name="shield-half" class="suppi-i" /> Beta-alanine <small>4 g</small></span>
-          <button class="sw" role="switch" [attr.aria-checked]="beta()" (click)="beta.set(!beta())"></button>
+          <span id="g-ba"><lucide-icon name="shield-half" class="suppi-i" /> Beta-alanine <small>4 g</small></span>
+          <button class="sw" role="switch" [attr.aria-checked]="beta()" aria-labelledby="g-ba" (click)="beta.set(!beta())"></button>
         </div>
       </div>
 

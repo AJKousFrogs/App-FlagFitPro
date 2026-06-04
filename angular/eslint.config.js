@@ -32,6 +32,13 @@ export default defineConfig([
         },
       ],
 
+      // ── Defensive default assignments ─────────────────────────────────────
+      // `no-useless-assignment` (new in ESLint 10's recommended set) flags the
+      // `let x = fallback; if (…) x = …; else if (…) x = …` idiom where the
+      // initializer is the value used when no branch matches. Removing those
+      // initializers would change behaviour, so the rule is disabled.
+      "no-useless-assignment": "off",
+
       // ── Unused variables ──────────────────────────────────────────────────
       // Allow _-prefixed names (intentional "unused" params in interfaces/CVA).
       "@typescript-eslint/no-unused-vars": [
@@ -82,6 +89,32 @@ export default defineConfig([
       angular.configs.templateAccessibility,
     ],
     rules: {
+      // `elements-content` treats `aria-label` as an accessible name but omits
+      // `aria-labelledby`, which is an equally valid WCAG technique used by the
+      // toggle-switch buttons (role="switch" + aria-labelledby pointing at a
+      // sibling label). Add it to the safelist so correctly-labelled controls
+      // are not flagged. (Defaults per @angular-eslint, plus aria-labelledby.)
+      "@angular-eslint/template/elements-content": [
+        "error",
+        {
+          allowList: [
+            "aria-label",
+            "aria-labelledby",
+            "innerHtml",
+            "innerHTML",
+            "innerText",
+            "outerHTML",
+            "textContent",
+            "title",
+          ],
+        },
+      ],
+      // Permit the `value != null` / `value == null` idiom, which checks for
+      // null and undefined together; strict equality is still required elsewhere.
+      "@angular-eslint/template/eqeqeq": [
+        "error",
+        { allowNullOrUndefined: true },
+      ],
       // ── Accessibility — warn, not error ───────────────────────────────────
       // These are real issues worth tracking but too numerous to block CI today.
       // Address in a dedicated a11y sprint.
