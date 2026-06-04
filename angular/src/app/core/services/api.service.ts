@@ -771,11 +771,6 @@ export const API_ENDPOINTS = {
   player: {
     notifyInactive: "/api/player/notify-inactive",
   },
-  // Calibration logging endpoints
-  calibration: {
-    logs: "/api/calibration-logs",
-    outcome: "/api/calibration-logs/outcome",
-  },
   // Micro-sessions endpoints
   microSessions: {
     analytics: "/api/micro-sessions/analytics",
@@ -784,6 +779,4 @@ export const API_ENDPOINTS = {
     generate: "/api/daily-protocol/generate",
     byDate: (date: string) => `/api/daily-protocol?date=${date}`,
   },
-  // Response feedback (AI response rating)
-  responseFeedback: "/api/response-feedback",
 };
