@@ -82,7 +82,7 @@ describe("design-tokens.util", () => {
     expect(SPACING[11]).toBe(cssToken("--space-11"));
   });
 
-  it("BREAKPOINTS.mdMax matches CSS --breakpoint-md-max (767px) for PrimeNG APIs", () => {
+  it("BREAKPOINTS.mdMax matches CSS --breakpoint-md-max (767px) for max-width media queries", () => {
     expect(BREAKPOINTS.mdMax).toBe("767px");
   });
 

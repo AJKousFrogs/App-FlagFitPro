@@ -113,7 +113,7 @@ export const appConfig: ApplicationConfig = {
       }),
     ),
 
-    /** Onboarding step transitions; PrimeNG v21 uses CSS for component micro-motion. */
+    /** Onboarding step transitions; component micro-motion is handled in CSS. */
     provideAnimations(),
 
     provideHttpClient(

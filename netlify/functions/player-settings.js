@@ -102,7 +102,7 @@ function coercePreferredTrainingDaysArray(value) {
 }
 
 /**
- * Coerce client payloads (PrimeNG multiselect, JSON) into integer day indices 0–6.
+ * Coerce client payloads (multi-select form input, JSON) into integer day indices 0–6.
  * Mutates payload.preferredTrainingDays when present.
  */
 function normalizePreferredTrainingDaysPayload(payload) {

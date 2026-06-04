@@ -88,7 +88,7 @@ export const ALL_POSITIONS = [
 
 /**
  * Position select options for dropdowns
- * Pre-formatted for PrimeNG Select component
+ * Pre-formatted ({ label, value }) for native select / dropdown components
  */
 export const POSITION_SELECT_OPTIONS = [
   { label: "Quarterback (QB)", value: "QB" },

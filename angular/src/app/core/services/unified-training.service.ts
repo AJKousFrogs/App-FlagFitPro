@@ -205,15 +205,6 @@ export class UnifiedTrainingService {
     () => this.readinessService.current()?.level ?? null,
   );
 
-  /**
-   * Get severity color for PrimeNG Tag
-   */
-  getReadinessSeverity(level: string): "success" | "warning" | "danger" {
-    if (level === "high") return "success";
-    if (level === "moderate") return "warning";
-    return "danger";
-  }
-
   readonly hasCheckedInToday = computed(() => {
     const current = this.readinessService.current();
     if (!current) return false;

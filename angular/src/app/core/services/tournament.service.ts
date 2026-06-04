@@ -346,24 +346,6 @@ export class TournamentService {
   }
 
   /**
-   * Get status severity for PrimeNG tags
-   */
-  getStatusSeverity(
-    status: string,
-  ): "info" | "success" | "secondary" | "warning" | "danger" {
-    const severities: Record<
-      string,
-      "info" | "success" | "secondary" | "warning" | "danger"
-    > = {
-      upcoming: "info",
-      ongoing: "success",
-      completed: "secondary",
-      registration: "warning",
-    };
-    return severities[status] || "info";
-  }
-
-  /**
    * Format date for display
    */
   formatDateRange(startDate: string, endDate?: string): string {
