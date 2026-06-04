@@ -135,23 +135,6 @@
             "buildTarget": "flagfit-pro:build"
           }
         },
-        "storybook": {
-          "builder": "@storybook/angular:start-storybook",
-          "options": {
-            "browserTarget": "flagfit-pro:build",
-            "port": 6006,
-            "compodoc": false,
-            "tsConfig": ".storybook/tsconfig.json"
-          }
-        },
-        "build-storybook": {
-          "builder": "@storybook/angular:build-storybook",
-          "options": {
-            "browserTarget": "flagfit-pro:build",
-            "compodoc": false,
-            "outputDir": "storybook-static"
-          }
-        },
         "serve-ssr": {
           "builder": "@angular-devkit/build-angular:ssr-dev-server",
           "configurations": {

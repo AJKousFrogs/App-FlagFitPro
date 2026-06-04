@@ -7,16 +7,11 @@
  * Run with: npx playwright test visual-regression
  * Update baselines: npx playwright test visual-regression --update-snapshots
  *
- * NOTE: Storybook component tests are currently skipped due to
- * Storybook 10 + @storybook/test-runner incompatibility (MissingStoryFromCsfFileError).
- * Use app page screenshots until @storybook/test@10.x is released.
- *
  * @version 1.0.0
  */
 
 import { test, expect, Page } from "@playwright/test";
 
-const STORYBOOK_URL = process.env["STORYBOOK_URL"] || "http://localhost:6006";
 const APP_URL = process.env["BASE_URL"] || "http://localhost:4200";
 
 // Test credentials for app screenshots
@@ -27,27 +22,6 @@ const TEST_USER = {
 const HAS_EXPLICIT_TEST_CREDENTIALS = Boolean(
   process.env["TEST_USER_EMAIL"] && process.env["TEST_USER_PASSWORD"],
 );
-
-/**
- * Wait for Storybook story to fully render and check for errors
- */
-async function waitForStorybook(page: Page): Promise<boolean> {
-  await page.waitForLoadState("networkidle");
-  await page.waitForTimeout(500);
-
-  // Check if story rendered or has error
-  const hasError = await page
-    .locator('text="Couldn\'t find story"')
-    .isVisible({ timeout: 1000 })
-    .catch(() => false);
-
-  if (hasError) {
-    return false;
-  }
-
-  await page.waitForTimeout(500);
-  return true;
-}
 
 /**
  * Login helper for app screenshots
@@ -141,40 +115,6 @@ async function maskDynamicContent(page: Page): Promise<void> {
     });
   });
 }
-
-// ============================================================================
-// STORYBOOK COMPONENT TESTS - SKIPPED UNTIL @storybook/test@10.x
-// ============================================================================
-// These tests are skipped due to Storybook 10 CSF loading bug
-// Uncomment when @storybook/test@10.x is released
-
-test.describe.skip("Storybook Components (blocked by SB10 bug)", () => {
-  test("Button - Primary variant unchanged", async ({ page }) => {
-    await page.goto(
-      `${STORYBOOK_URL}/iframe.html?id=design-system-button--primary&viewMode=story`,
-    );
-    const ready = await waitForStorybook(page);
-    test.skip(!ready, "Story not rendering due to Storybook 10 bug");
-
-    const storyRoot = page.locator("#storybook-root");
-    await expect(storyRoot).toHaveScreenshot("button-primary.png", {
-      maxDiffPixels: 50,
-    });
-  });
-
-  test("Empty State - Default unchanged", async ({ page }) => {
-    await page.goto(
-      `${STORYBOOK_URL}/iframe.html?id=components-emptystate--default&viewMode=story`,
-    );
-    const ready = await waitForStorybook(page);
-    test.skip(!ready, "Story not rendering due to Storybook 10 bug");
-
-    const storyRoot = page.locator("#storybook-root");
-    await expect(storyRoot).toHaveScreenshot("empty-state-default.png", {
-      maxDiffPixels: 50,
-    });
-  });
-});
 
 // ============================================================================
 // APP PAGE VISUAL REGRESSION TESTS - PRIMARY WORKAROUND

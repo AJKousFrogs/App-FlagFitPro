@@ -1,5 +1,3 @@
-// For more info, see https://github.com/storybookjs/eslint-plugin-storybook#configuration-flat-config-format
-import storybook from "eslint-plugin-storybook";
 import templatePlugin from "@angular-eslint/eslint-plugin-template";
 import templateParser from "@angular-eslint/template-parser";
 
@@ -38,7 +36,6 @@ export default tseslint.config(
       "vitest.config.ts",
       "playwright.config.ts",
       "server.ts",
-      ".storybook/**",
     ],
   },
   // ============================================
@@ -305,5 +302,4 @@ export default tseslint.config(
       "no-await-in-loop": "off",
     },
   },
-  storybook.configs["flat/recommended"],
 );
