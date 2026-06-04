@@ -98,19 +98,6 @@ const dataMappers = {
     timeOfDay: s.time_of_day,
     notes: s.notes,
   }),
-
-  injury: (i) => ({
-    id: i.id,
-    userId: i.user_id,
-    type: i.type,
-    location: i.location,
-    severity: i.severity,
-    date: i.date,
-    status: i.status,
-    recoveryDate: i.recovery_date,
-    treatment: i.treatment,
-    notes: i.notes,
-  }),
 };
 
 // Handler registry pattern - cleaner than switch statement
@@ -119,7 +106,6 @@ const ENDPOINT_HANDLERS = {
   "performance-tests": handlePerformanceTests,
   wellness: handleWellness,
   supplements: handleSupplements,
-  injuries: handleInjuries,
   trends: handleTrends,
   export: handleExport,
 };
@@ -285,7 +271,7 @@ const handler = async (event, context) => {
       let endpoint = pathSegments[pathSegments.length - 1];
       let resourceId = null;
 
-      // Support nested resource paths like /performance-data/injuries/:id
+      // Support nested resource paths like /performance-data/measurements/:id
       if (!knownEndpoints.has(endpoint) && pathSegments.length >= 2) {
         const candidateEndpoint = pathSegments[pathSegments.length - 2];
         if (knownEndpoints.has(candidateEndpoint)) {
@@ -321,7 +307,6 @@ const handler = async (event, context) => {
         );
       }
 
-      // injuries supports optional ?athleteId= with server-side team membership enforcement
       return await handler(
         httpMethod,
         userId,
@@ -1023,302 +1008,6 @@ async function handleSupplements(method, userId, body, query, _resourceId, log =
           500,
           "server_error",
         );
-      }
-    }
-
-    default:
-      return createErrorResponse(
-        "Method not allowed",
-        405,
-        "method_not_allowed",
-      );
-  }
-}
-
-// Injuries Handler - Fully migrated to Supabase
-// LEGACY / UNREACHABLE: this CRUD still targets the legacy `injuries` table (empty),
-// not the consolidated clinical source athlete_injuries. It has no shipped frontend
-// caller (api.service endpoints.performanceData.injuries is defined but unused). Its
-// GET/POST/PUT stay together on `injuries` to remain read-after-write consistent. The
-// CROSS-CUTTING readers (Merlin/ai-chat, smart-training-recommendations, user-context)
-// and the data export read athlete_injuries via v_injuries_unified. Before wiring this
-// CRUD into the UI, migrate it to athlete_injuries (note: injury_grade is TEXT 'Grade
-// N', recovery_status NOT NULL — not the numeric `severity`/`status` columns used here).
-async function handleInjuries(method, userId, body, query, resourceId, log = logger) {
-  switch (method) {
-    case "GET": {
-      const status = query?.status; // active, recovered, all
-
-      // Determine whose injuries to fetch. Coaches may pass ?athleteId= to view an athlete's
-      // injuries, but we MUST verify team membership before querying across users because
-      // supabaseAdmin bypasses RLS.
-      const targetUserId = query?.athleteId || userId;
-      if (targetUserId !== userId) {
-        const { data: membership, error: membershipError } = await supabaseAdmin
-          .from("team_members")
-          .select("team_id")
-          .eq("user_id", userId)
-          .eq("role", "coach")
-          .limit(1);
-
-        if (membershipError || !membership?.length) {
-          return createErrorResponse("Forbidden", 403, "forbidden");
-        }
-
-        const coachTeamIds = membership.map((m) => m.team_id);
-        const { data: athleteMembership, error: athleteErr } = await supabaseAdmin
-          .from("team_members")
-          .select("team_id")
-          .eq("user_id", targetUserId)
-          .in("team_id", coachTeamIds)
-          .limit(1);
-
-        if (athleteErr || !athleteMembership?.length) {
-          return createErrorResponse("Forbidden", 403, "forbidden");
-        }
-      }
-
-      // Try Supabase first
-      try {
-        let queryBuilder = supabaseAdmin
-          .from("injuries")
-          .select("*")
-          .eq("user_id", targetUserId)
-          .order("injury_date", { ascending: false });
-
-        if (status && status !== "all") {
-          queryBuilder = queryBuilder.eq("status", status);
-        } else {
-          queryBuilder = queryBuilder.in("status", [
-            "active",
-            "recovering",
-            "monitoring",
-          ]);
-        }
-
-        const { data: injuries, error: getError } = await queryBuilder;
-
-        if (getError && getError.code !== "42P01") {
-          throw getError;
-        }
-
-        const transformed = (injuries || []).map((injury) => ({
-          id: injury.id,
-          userId: injury.user_id,
-          type: injury.injury_type,
-          severity: injury.severity,
-          description: injury.description,
-          status: injury.status,
-          startDate: injury.injury_date,
-          recoveryDate: injury.recovery_date,
-          createdAt: injury.created_at,
-          updatedAt: injury.updated_at,
-        }));
-
-        return {
-          statusCode: 200,
-          headers: CORS_HEADERS,
-          body: JSON.stringify({
-            success: true,
-            data: transformed,
-            statistics: calculateInjuryStatistics(transformed),
-          }),
-        };
-      } catch (dbError) {
-        log.error("performance_injuries_fetch_failed", dbError);
-        return {
-          statusCode: 200,
-          headers: CORS_HEADERS,
-          body: JSON.stringify({
-            success: true,
-            data: [],
-            statistics: {
-              total: 0,
-              active: 0,
-              recovered: 0,
-              byType: {},
-              avgRecoveryTime: null,
-            },
-          }),
-        };
-      }
-    }
-
-    case "POST": {
-      const parsedBody = parseJsonObjectBody(body);
-      if (!parsedBody.ok) {
-        return { ...parsedBody.response, headers: CORS_HEADERS };
-      }
-      const injuryData = parsedBody.data;
-
-      // Validate required fields
-      if (!injuryData.type || !injuryData.severity || !injuryData.startDate) {
-        return {
-          statusCode: 400,
-          headers: CORS_HEADERS,
-          body: JSON.stringify({
-            error: "Missing required fields: type, severity, startDate",
-          }),
-        };
-      }
-
-      // Try Supabase first
-      try {
-        const newInjury = {
-          user_id: userId,
-          injury_type: injuryData.type,
-          severity: parseInt(injuryData.severity),
-          description: injuryData.description || null,
-          status: injuryData.status || "active",
-          injury_date: injuryData.startDate,
-          // recoveryDate omitted: injuries has recovery_start/expected/actual_recovery_date
-          // (no single recovery_date) — set the right one when the injury feature is modeled.
-        };
-
-        const { data: insertedInjury, error: insertError } = await supabaseAdmin
-          .from("injuries")
-          .insert(newInjury)
-          .select()
-          .single();
-
-        if (insertError) {
-          if (insertError.code === "42P01") {
-            return {
-              statusCode: 201,
-              headers: CORS_HEADERS,
-              body: JSON.stringify({
-                success: true,
-                id: `temp_${Date.now()}`,
-                note: "Injuries table needs to be created via migration",
-              }),
-            };
-          }
-          throw insertError;
-        }
-
-        const transformed = {
-          id: insertedInjury.id,
-          userId: insertedInjury.user_id,
-          type: insertedInjury.injury_type,
-          severity: insertedInjury.severity,
-          description: insertedInjury.description,
-          status: insertedInjury.status,
-          startDate: insertedInjury.injury_date,
-          recoveryDate: insertedInjury.recovery_date,
-          createdAt: insertedInjury.created_at,
-          updatedAt: insertedInjury.updated_at,
-        };
-
-        return {
-          statusCode: 201,
-          headers: CORS_HEADERS,
-          body: JSON.stringify({
-            success: true,
-            data: transformed,
-          }),
-        };
-      } catch (dbError) {
-        log.error("performance_injury_create_failed", dbError, {
-          injury_type: injuryData.type,
-        });
-        return {
-          statusCode: 500,
-          headers: CORS_HEADERS,
-          body: JSON.stringify({
-            error: "Failed to create injury record",
-          }),
-        };
-      }
-    }
-
-    case "PATCH":
-    case "PUT": {
-      const parsedBody = parseJsonObjectBody(body);
-      if (!parsedBody.ok) {
-        return { ...parsedBody.response, headers: CORS_HEADERS };
-      }
-      const updateData = parsedBody.data;
-      const injuryId = resourceId || query?.id;
-
-      if (!injuryId) {
-        return {
-          ...handleValidationError("injuryId is required"),
-          headers: CORS_HEADERS,
-        };
-      }
-
-      // Try Supabase first
-      try {
-        const updatePayload = {};
-        if (updateData.status) {
-          updatePayload.status = updateData.status;
-        }
-        if (updateData.severity) {
-          updatePayload.severity = parseInt(updateData.severity);
-        }
-        if (updateData.description !== undefined) {
-          updatePayload.description = updateData.description;
-        }
-        if (updateData.recoveryDate) {
-          updatePayload.recovery_date = updateData.recoveryDate;
-        }
-        if (updateData.type) {
-          updatePayload.type = updateData.type;
-        }
-        updatePayload.updated_at = new Date().toISOString();
-
-        const { data: updatedInjury, error: updateError } = await supabaseAdmin
-          .from("injuries")
-          .update(updatePayload)
-          .eq("id", injuryId)
-          .eq("user_id", userId)
-          .select()
-          .single();
-
-        if (updateError) {
-          if (updateError.code === "PGRST116") {
-            // No rows updated - injury not found
-            return {
-              ...createErrorResponse("Injury not found", 404, "not_found"),
-              headers: CORS_HEADERS,
-            };
-          }
-          throw updateError;
-        }
-
-        const transformed = {
-          id: updatedInjury.id,
-          userId: updatedInjury.user_id,
-          type: updatedInjury.type,
-          severity: updatedInjury.severity,
-          description: updatedInjury.description,
-          status: updatedInjury.status,
-          startDate: updatedInjury.start_date,
-          recoveryDate: updatedInjury.recovery_date,
-          createdAt: updatedInjury.created_at,
-          updatedAt: updatedInjury.updated_at,
-        };
-
-        return {
-          statusCode: 200,
-          headers: CORS_HEADERS,
-          body: JSON.stringify({
-            success: true,
-            data: transformed,
-          }),
-        };
-      } catch (dbError) {
-        log.error("performance_injury_update_failed", dbError, {
-          injury_id: injuryId,
-        });
-        return {
-          ...createErrorResponse(
-            "Failed to update injury record",
-            500,
-            "server_error",
-          ),
-          headers: CORS_HEADERS,
-        };
       }
     }
 

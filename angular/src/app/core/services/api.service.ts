@@ -541,7 +541,6 @@ export const API_ENDPOINTS = {
     performanceTests: "/api/performance-data/performance-tests",
     wellness: "/api/performance-data/wellness",
     supplements: "/api/performance-data/supplements",
-    injuries: "/api/performance-data/injuries",
     trends: "/api/performance-data/trends",
     export: "/api/performance-data/export",
   },
