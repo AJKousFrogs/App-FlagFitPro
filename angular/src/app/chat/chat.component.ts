@@ -20,6 +20,10 @@ interface Turn {
   disclaimer?: string | null;
   actions?: MerlinSuggestedAction[];
   blocked?: boolean;
+  /** ai_messages row id for an AI turn — enables thumbs-up/down feedback. */
+  messageId?: string | null;
+  /** The athlete's feedback on this AI turn, once given. */
+  feedback?: "up" | "down";
 }
 
 /**
@@ -52,6 +56,12 @@ interface Turn {
       .composer input { flex: 1; background: var(--surface-2); border: 1px solid var(--border-soft);
         border-radius: var(--r-pill); padding: var(--s-3) var(--s-4); color: var(--text-strong); font-family: var(--font-body); }
       .composer input:disabled { color: var(--text-faint); }
+      .fb { display: flex; gap: var(--s-1); align-self: flex-start; margin-top: calc(-1 * var(--s-1)); }
+      .fb-btn { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px;
+        border: 1px solid var(--border-soft); border-radius: var(--r-md); background: transparent;
+        color: var(--text-faint); cursor: pointer; }
+      .fb-btn:hover { color: var(--text-strong); border-color: var(--border-strong); }
+      .fb-done { align-self: flex-start; font-size: var(--fs-sm); color: var(--text-faint); margin-top: calc(-1 * var(--s-1)); }
     `,
   ],
 })
@@ -112,6 +122,7 @@ export class ChatComponent implements AfterViewChecked {
             disclaimer: reply.disclaimer,
             actions: reply.suggestedActions,
             blocked: reply.isBlocked,
+            messageId: reply.messageId,
           },
         ]);
         this.busy.set(false);
@@ -134,5 +145,26 @@ export class ChatComponent implements AfterViewChecked {
     if (route && typeof route === "string" && route.startsWith("/")) {
       void this.router.navigateByUrl(route);
     }
+  }
+
+  /**
+   * Record thumbs-up/down on a Merlin answer. Optimistically marks the turn, reverts
+   * if the POST fails. No-op if the turn has no messageId or was already rated.
+   */
+  rate(index: number, helpful: boolean): void {
+    const turn = this.turns()[index];
+    if (!turn || turn.role !== "ai" || !turn.messageId || turn.feedback) return;
+    const vote: "up" | "down" = helpful ? "up" : "down";
+    const messageId = turn.messageId;
+    this.turns.update((t) =>
+      t.map((x, i) => (i === index ? { ...x, feedback: vote } : x)),
+    );
+    this.ai.submitResponseFeedback(messageId, helpful).subscribe({
+      error: () => {
+        this.turns.update((t) =>
+          t.map((x, i) => (i === index ? { ...x, feedback: undefined } : x)),
+        );
+      },
+    });
   }
 }

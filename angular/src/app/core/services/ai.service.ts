@@ -82,6 +82,8 @@ export interface MerlinSuggestedAction {
 /** A single Merlin (AI coach) reply — the structured payload from POST /api/ai/chat. */
 export interface MerlinReply {
   chatSessionId: string | null;
+  /** Persisted ai_messages row id — used to attach thumbs-up/down feedback. */
+  messageId: string | null;
   answer: string;
   riskLevel: string | null;
   disclaimer: string | null;
@@ -91,6 +93,7 @@ export interface MerlinReply {
 
 interface RawMerlinReply {
   chat_session_id?: string | null;
+  message_id?: string | null;
   answer_markdown?: string;
   risk_level?: string | null;
   disclaimer?: string | null;
@@ -170,6 +173,7 @@ export class AIService {
             }
             return {
               chatSessionId: raw.chat_session_id ?? null,
+              messageId: raw.message_id ?? null,
               answer,
               riskLevel: raw.risk_level ?? null,
               disclaimer: raw.disclaimer ?? null,
@@ -186,6 +190,21 @@ export class AIService {
         return throwError(() => error);
       }),
     );
+  }
+
+  /**
+   * Submit athlete thumbs-up / thumbs-down feedback on a Merlin response.
+   * POST /api/response-feedback { messageId, wasHelpful } — closes the AI feedback
+   * loop (the backend records it and nudges the user's learned preferences).
+   */
+  submitResponseFeedback(
+    messageId: string,
+    wasHelpful: boolean,
+  ): Observable<unknown> {
+    return this.apiService.post(API_ENDPOINTS.responseFeedback, {
+      messageId,
+      wasHelpful,
+    });
   }
 
   private getDaysUntil(date: string | Date): number {

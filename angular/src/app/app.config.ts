@@ -45,6 +45,8 @@ import {
   TrendingUp,
   Video,
   Mail,
+  ThumbsUp,
+  ThumbsDown,
 } from "lucide-angular";
 import { provideClientHydration } from "@angular/platform-browser";
 import { provideAnimations } from "@angular/platform-browser/animations";
@@ -85,6 +87,7 @@ export const appConfig: ApplicationConfig = {
         Droplet, Moon, Activity, Check, Coffee, ShieldHalf,
         Trophy, Users, MessageCircle, BarChart3, Sparkles, BookOpen, FileText,
         User, Medal, Flame, Settings, Camera, Lock, Sun, TrendingUp, Video, Mail,
+        ThumbsUp, ThumbsDown,
       }),
     ),
 

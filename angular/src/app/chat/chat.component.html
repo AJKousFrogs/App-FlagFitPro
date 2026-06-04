@@ -27,6 +27,16 @@
           }
         </div>
       }
+      @if (turn.role === 'ai' && turn.messageId && !turn.blocked) {
+        @if (turn.feedback) {
+          <div class="fb-done">Thanks for the feedback</div>
+        } @else {
+          <div class="fb">
+            <button class="fb-btn" type="button" aria-label="Helpful" (click)="rate($index, true)"><lucide-icon name="thumbs-up" /></button>
+            <button class="fb-btn" type="button" aria-label="Not helpful" (click)="rate($index, false)"><lucide-icon name="thumbs-down" /></button>
+          </div>
+        }
+      }
     }
 
     @if (busy()) { <div class="typing">Merlin is thinking…</div> }
