@@ -1,11 +1,6 @@
-import "@analogjs/vitest-angular/setup-zone";
-
-import { getTestBed, TestBed } from "@angular/core/testing";
-import {
-  BrowserDynamicTestingModule,
-  platformBrowserDynamicTesting,
-} from "@angular/platform-browser-dynamic/testing";
-import { afterEach, beforeAll, vi } from "vitest";
+import "@analogjs/vitest-angular/setup-snapshots";
+import { setupTestBed } from "@analogjs/vitest-angular/setup-testbed";
+import { vi } from "vitest";
 
 // Jasmine compatibility shim for tests that use jasmine.createSpyObj
 (globalThis as unknown as { jasmine: unknown }).jasmine = {
@@ -32,18 +27,8 @@ vi.stubGlobal("import.meta", {
   },
 });
 
-// Initialize Angular testing environment once
-beforeAll(() => {
-  const testBed = getTestBed();
-  if (!testBed.platform) {
-    TestBed.initTestEnvironment(
-      BrowserDynamicTestingModule,
-      platformBrowserDynamicTesting(),
-    );
-  }
-});
-
-// Reset TestBed after each test to prevent state leakage
-afterEach(() => {
-  TestBed.resetTestingModule();
-});
+// Initialize the Angular zoneless testing environment. The app uses
+// provideZonelessChangeDetection(), so the test harness must match it instead of
+// importing the zone.js-based setup. setupTestBed() registers TestBed cleanup
+// hooks and initializes the environment once with zoneless change detection.
+setupTestBed();

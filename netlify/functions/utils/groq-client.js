@@ -230,7 +230,7 @@ async function chatCompletion({
       throw error;
     }
     logger.error("groq_request_failed", error);
-    throw new Error("Failed to connect to AI service");
+    throw new Error("Failed to connect to AI service", { cause: error });
   }
 }
 

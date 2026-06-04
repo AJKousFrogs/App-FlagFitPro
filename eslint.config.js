@@ -6,6 +6,17 @@ export default [
   js.configs.recommended,
 
   {
+    // `no-useless-assignment` became a recommended rule in ESLint 10. It flags the
+    // defensive-default idiom used throughout the Netlify functions
+    // (`let result = fallback; try { result = await ... } catch { /* keep fallback */ }`),
+    // where the initializer is intentionally the value used on the error path. Removing
+    // those initializers would reduce safety, so the rule is disabled rather than worked around.
+    rules: {
+      "no-useless-assignment": "off",
+    },
+  },
+
+  {
     ignores: [
       "node_modules/**",
       "node_modules.bak*/**",

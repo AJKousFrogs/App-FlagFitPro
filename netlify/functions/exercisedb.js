@@ -262,7 +262,7 @@ async function searchExerciseDB(params) {
     };
   } catch (error) {
     console.error("ExerciseDB API search error:", error);
-    throw new Error(`Failed to search ExerciseDB: ${error.message}`);
+    throw new Error(`Failed to search ExerciseDB: ${error.message}`, { cause: error });
   }
 }
 

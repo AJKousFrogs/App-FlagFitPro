@@ -139,7 +139,7 @@ class MCPServerManager {
       if (server.port) {
         this.portManager.releasePort("mcp");
       }
-      throw new Error(`Failed to start ${server.name}: ${error.message}`);
+      throw new Error(`Failed to start ${server.name}: ${error.message}`, { cause: error });
     }
   }
 

@@ -209,7 +209,6 @@ const config = {
     "keyframes-name-pattern": null,
     "scss/dollar-variable-pattern": null,
     "scss/percent-placeholder-pattern": null,
-    "scss/at-import-partial-extension": null,
     "scss/comment-no-empty": null,
     "scss/no-global-function-names": null,
     "scss/at-extend-no-missing-placeholder": null,
