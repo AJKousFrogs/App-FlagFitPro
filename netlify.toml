@@ -865,6 +865,19 @@
   status = 200
   force = true
 
+# API Routes for Trends
+[[redirects]]
+  from = "/api/trends/*"
+  to = "/.netlify/functions/analytics"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/trends"
+  to = "/.netlify/functions/analytics"
+  status = 200
+  force = true
+
 # API Routes for Player Stats
 [[redirects]]
   from = "/api/player-stats/*"
@@ -1200,6 +1213,19 @@
 [[redirects]]
   from = "/api/daily-training/*"
   to = "/.netlify/functions/training"
+  status = 200
+  force = true
+
+# API Routes for Calibration Logs
+[[redirects]]
+  from = "/api/calibration-logs"
+  to = "/.netlify/functions/readiness"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/calibration-logs/*"
+  to = "/.netlify/functions/readiness"
   status = 200
   force = true
 
@@ -1649,6 +1675,19 @@
 [[redirects]]
   from = "/api/team-templates"
   to = "/.netlify/functions/team"
+  status = 200
+  force = true
+
+# Response Feedback API (AI response feedback)
+[[redirects]]
+  from = "/api/response-feedback/*"
+  to = "/.netlify/functions/ai-chat"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/response-feedback"
+  to = "/.netlify/functions/ai-chat"
   status = 200
   force = true
 

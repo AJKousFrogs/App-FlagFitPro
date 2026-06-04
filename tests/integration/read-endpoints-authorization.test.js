@@ -44,6 +44,27 @@ describe("read endpoint authorization hardening", () => {
     vi.resetModules();
   });
 
+  it("blocks cross-athlete access on trends endpoint", async () => {
+    vi.doMock("../../netlify/functions/utils/base-handler.js", () => ({
+      baseHandler: baseHandlerMock,
+    }));
+    vi.doMock("../../netlify/functions/supabase-client.js", () => ({
+      supabaseAdmin: createNoopSupabase(),
+    }));
+
+    const mod = await import("../../netlify/functions/trends.js");
+    const response = await mod.handler(
+      {
+        httpMethod: "GET",
+        path: "/.netlify/functions/trends/change-of-direction",
+        queryStringParameters: { athleteId: "athlete-2" },
+      },
+      {},
+    );
+
+    expect(response.statusCode).toBe(403);
+  });
+
   it("blocks cross-athlete access on performance-metrics endpoint", async () => {
     vi.doMock("../../netlify/functions/utils/base-handler.js", () => ({
       baseHandler: baseHandlerMock,
