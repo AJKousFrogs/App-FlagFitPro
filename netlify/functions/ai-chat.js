@@ -1273,65 +1273,69 @@ async function buildAthleteStateGates(userId) {
   };
 
   try {
-    // 1. ACWR (existing calculation)
-    gates.acwr = await calculateUserACWR(userId);
-
-    // 2. Recent injuries (last 30 days)
+    // Athlete-state gates: ACWR + injuries + age group + today's readiness + upcoming
+    // game + profile all read by userId (+ constant date windows) and are independent —
+    // fetch concurrently (6 sequential round-trips -> 1).
     const thirtyDaysAgo = new Date();
     thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+    const today = new Date().toISOString().split("T")[0];
+    const twoDaysFromNow = new Date();
+    twoDaysFromNow.setDate(twoDaysFromNow.getDate() + 2);
 
-    const { data: injuries } = await supabaseAdmin
+    const [
+      acwrResult,
+      { data: injuries },
+      { data: ageData },
+      { data: dailyState },
+      { data: upcomingGame },
+      { data: userProfile },
+    ] = await Promise.all([
+      calculateUserACWR(userId),
       // clinical injuries via the compat view (see safety-context read above)
-      .from("v_injuries_unified")
-      .select("id, type:injury_type, severity, body_part, status, start_date:injury_date")
-      .eq("user_id", userId)
-      .in("status", ["active", "recovering", "monitoring"])
-      .gte("injury_date", thirtyDaysAgo.toISOString().split("T")[0])
-      .order("severity", { ascending: false });
-    gates.injuries = injuries || [];
+      supabaseAdmin
+        .from("v_injuries_unified")
+        .select("id, type:injury_type, severity, body_part, status, start_date:injury_date")
+        .eq("user_id", userId)
+        .in("status", ["active", "recovering", "monitoring"])
+        .gte("injury_date", thirtyDaysAgo.toISOString().split("T")[0])
+        .order("severity", { ascending: false }),
+      supabaseAdmin
+        .from("user_age_groups")
+        .select("age_group, age_years")
+        .eq("user_id", userId)
+        .single(),
+      supabaseAdmin
+        .from("daily_wellness_checkin")
+        .select("*, readiness_score:calculated_readiness")
+        .eq("user_id", userId)
+        .eq("checkin_date", today)
+        .single(),
+      supabaseAdmin
+        .from("games")
+        .select("game_id, game_date, opponent_team_name, game_time")
+        .gte("game_date", today)
+        .lte("game_date", twoDaysFromNow.toISOString().split("T")[0])
+        .order("game_date", { ascending: true })
+        .limit(1)
+        .single(),
+      supabaseAdmin
+        .from("users")
+        .select("position, full_name, first_name")
+        .eq("id", userId)
+        .single(),
+    ]);
 
-    // 3. Age group from view
-    const { data: ageData } = await supabaseAdmin
-      .from("user_age_groups")
-      .select("age_group, age_years")
-      .eq("user_id", userId)
-      .single();
+    gates.acwr = acwrResult;
+    gates.injuries = injuries || [];
 
     if (ageData) {
       gates.ageGroup = ageData.age_group || "adult";
       gates.ageYears = ageData.age_years;
     }
 
-    // 4. Today's daily state (readiness check)
-    const today = new Date().toISOString().split("T")[0];
-    const { data: dailyState } = await supabaseAdmin
-      .from("daily_wellness_checkin")
-      .select("*, readiness_score:calculated_readiness")
-      .eq("user_id", userId)
-      .eq("checkin_date", today)
-      .single();
     gates.dailyState = dailyState;
-
-    // 5. Upcoming game (next 48 hours)
-    const twoDaysFromNow = new Date();
-    twoDaysFromNow.setDate(twoDaysFromNow.getDate() + 2);
-
-    const { data: upcomingGame } = await supabaseAdmin
-      .from("games")
-      .select("game_id, game_date, opponent_team_name, game_time")
-      .gte("game_date", today)
-      .lte("game_date", twoDaysFromNow.toISOString().split("T")[0])
-      .order("game_date", { ascending: true })
-      .limit(1)
-      .single();
     gates.upcomingGame = upcomingGame;
 
-    // 6. Get user position and name
-    const { data: userProfile } = await supabaseAdmin
-      .from("users")
-      .select("position, full_name, first_name")
-      .eq("id", userId)
-      .single();
     gates.position = userProfile?.position;
     // Extract first name for personalized conversation
     if (userProfile?.first_name) {

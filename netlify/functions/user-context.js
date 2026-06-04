@@ -34,38 +34,72 @@ async function getUserContext(userId) {
     throw userError;
   }
 
-    // Get injuries (active and recent)
-    const { data: injuries, error: injuriesError } = await supabaseAdmin
-      // clinical injuries via the compat view (athlete_injuries → legacy column shape)
-      .from("v_injuries_unified")
-      .select("id, type, severity, occurred_at, status, restrictions")
-      .eq("user_id", userId)
-      .in("status", ["active", "recovering"])
-      .order("occurred_at", { ascending: false })
-      .limit(10);
-
-    if (injuriesError) {
-      console.error("Error fetching injuries:", injuriesError);
-      // Don't throw - injuries are optional
-    }
-
-    // Get training sessions for load calculation (last 28 days)
+    // Injuries, last-28d sessions, latest wellness, recent supplements, and team
+    // membership all read by userId (+ constant date windows) and are independent of one
+    // another — fetch concurrently (5 sequential round-trips -> 1). ACWR is computed
+    // in-memory from the sessions result below.
     const twentyEightDaysAgo = new Date();
     twentyEightDaysAgo.setDate(twentyEightDaysAgo.getDate() - 28);
+    const sevenDaysAgo = new Date();
+    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+    const supplementsSince = sevenDaysAgo.toISOString().split("T")[0];
 
-    const { data: sessions, error: sessionsError } = await supabaseAdmin
-      .from("training_sessions")
-      .select("workload, session_date, completed_at")
-      .eq("user_id", userId)
-      .gte("completed_at", twentyEightDaysAgo.toISOString())
-      .order("completed_at", { ascending: false });
+    const [
+      { data: injuries, error: injuriesError },
+      { data: sessions, error: sessionsError },
+      { data: latestWellness, error: wellnessError },
+      { data: supplements, error: supplementsError },
+      { data: teamMemberships },
+    ] = await Promise.all([
+      // clinical injuries via the compat view (athlete_injuries -> legacy column shape)
+      supabaseAdmin
+        .from("v_injuries_unified")
+        .select("id, type, severity, occurred_at, status, restrictions")
+        .eq("user_id", userId)
+        .in("status", ["active", "recovering"])
+        .order("occurred_at", { ascending: false })
+        .limit(10),
+      supabaseAdmin
+        .from("training_sessions")
+        .select("workload, session_date, completed_at")
+        .eq("user_id", userId)
+        .gte("completed_at", twentyEightDaysAgo.toISOString())
+        .order("completed_at", { ascending: false }),
+      supabaseAdmin
+        .from("wellness_checkins")
+        .select("*")
+        .eq("user_id", userId)
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .single(),
+      supabaseAdmin
+        .from("supplement_logs")
+        .select("supplement_name, created_at, date, dosage")
+        .eq("user_id", userId)
+        .gte("date", supplementsSince)
+        .order("date", { ascending: false })
+        .limit(10),
+      supabaseAdmin
+        .from("team_members")
+        .select("team_id, role")
+        .eq("user_id", userId)
+        .limit(1),
+    ]);
 
+    if (injuriesError) {
+      console.error("Error fetching injuries:", injuriesError); // optional
+    }
     if (sessionsError) {
-      console.error("Error fetching training sessions:", sessionsError);
-      // Don't throw - sessions are optional
+      console.error("Error fetching training sessions:", sessionsError); // optional
+    }
+    if (wellnessError && wellnessError.code !== "PGRST116") {
+      console.error("Error fetching wellness:", wellnessError); // optional
+    }
+    if (supplementsError) {
+      console.error("Error fetching supplements:", supplementsError); // optional
     }
 
-    // Calculate ACWR (Acute:Chronic Workload Ratio)
+    // Calculate ACWR (Acute:Chronic Workload Ratio) from the sessions just fetched.
     // CRITICAL: Use null when no data - do not use fake defaults
     let acuteLoad = 0;
     let chronicLoad = 0;
@@ -74,27 +108,19 @@ async function getUserContext(userId) {
     const _last28Days = [];
 
     if (sessions && sessions.length > 0) {
-      // Last 7 days (acute)
-      const sevenDaysAgo = new Date();
-      sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
-
       const acuteSessions = sessions.filter(
         (s) => new Date(s.completed_at || s.session_date) >= sevenDaysAgo,
       );
       acuteLoad = acuteSessions.reduce((sum, s) => sum + (s.workload || 0), 0);
 
-      // Last 28 days (chronic) - average weekly load
       const chronicSessions = sessions.slice(0, 28);
       chronicLoad =
         chronicSessions.length >= 14
-          ? chronicSessions.reduce((sum, s) => sum + (s.workload || 0), 0) / 4 // Average weekly
+          ? chronicSessions.reduce((sum, s) => sum + (s.workload || 0), 0) / 4
           : acuteLoad;
 
-      // Only calculate ACWR if we have meaningful chronic load
-      // Use null to indicate insufficient data
       acwr = chronicLoad > 0 ? acuteLoad / chronicLoad : null;
 
-      // Build daily load arrays
       const last7DaysMap = new Map();
       const last28DaysMap = new Map();
 
@@ -102,72 +128,23 @@ async function getUserContext(userId) {
         const date = new Date(session.completed_at || session.session_date);
         const dateKey = date.toISOString().split("T")[0];
         const workload = session.workload || 0;
-
         if (date >= sevenDaysAgo) {
-          last7DaysMap.set(
-            dateKey,
-            (last7DaysMap.get(dateKey) || 0) + workload,
-          );
+          last7DaysMap.set(dateKey, (last7DaysMap.get(dateKey) || 0) + workload);
         }
         if (date >= twentyEightDaysAgo) {
-          last28DaysMap.set(
-            dateKey,
-            (last28DaysMap.get(dateKey) || 0) + workload,
-          );
+          last28DaysMap.set(dateKey, (last28DaysMap.get(dateKey) || 0) + workload);
         }
       });
 
-      // Convert maps to arrays
       for (let i = 6; i >= 0; i--) {
         const date = new Date();
         date.setDate(date.getDate() - i);
         const dateKey = date.toISOString().split("T")[0];
-        last7Days.push({
-          date: dateKey,
-          load: last7DaysMap.get(dateKey) || 0,
-        });
+        last7Days.push({ date: dateKey, load: last7DaysMap.get(dateKey) || 0 });
       }
     }
 
-    // Get latest wellness check-in
-    const { data: latestWellness, error: wellnessError } = await supabaseAdmin
-      .from("wellness_checkins")
-      .select("*")
-      .eq("user_id", userId)
-      .order("created_at", { ascending: false })
-      .limit(1)
-      .single();
-
-    if (wellnessError && wellnessError.code !== "PGRST116") {
-      console.error("Error fetching wellness:", wellnessError);
-      // Don't throw - wellness is optional
-    }
-
-    // Get recent supplement logs (last 7 days)
-    const sevenDaysAgo = new Date();
-    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
-    const dateStr = sevenDaysAgo.toISOString().split("T")[0];
-
-    const { data: supplements, error: supplementsError } = await supabaseAdmin
-      .from("supplement_logs")
-      .select("supplement_name, created_at, date, dosage")
-      .eq("user_id", userId)
-      .gte("date", dateStr)
-      .order("date", { ascending: false })
-      .limit(10);
-
-    if (supplementsError) {
-      console.error("Error fetching supplements:", supplementsError);
-      // Don't throw - supplements are optional
-    }
-
-    // Get team membership (for team role)
-    const { data: teamMemberships, error: _teamError } = await supabaseAdmin
-      .from("team_members")
-      .select("team_id, role")
-      .eq("user_id", userId)
-      .limit(1);
-
+    // Team role from membership
     let teamRole = null;
     if (teamMemberships && teamMemberships.length > 0) {
       teamRole = teamMemberships[0].role; // 'captain', 'member', etc.
