@@ -167,47 +167,46 @@ const handler = async (event, context) => {
 
         const userInfo = userResult.rows[0];
 
-        // Get active and recent injuries. Read from athlete_injuries (the clinical
-        // table the physio writes via /api/staff-physiotherapist) — the shipped app
-        // has no athlete self-log path to the legacy `injuries` table, so reading it
-        // left the profile's injuries section permanently empty even when the physio
-        // had logged one. Alias the clinical columns to the profile's expected shape.
-        const injuriesResult = await pool.query(
-          `SELECT injury_type AS type, injury_grade AS severity, recovery_status AS status,
-                  injury_date AS start_date, diagnosis AS description
-           FROM athlete_injuries
-           WHERE user_id = $1
-             AND recovery_status IN ('active', 'recovering', 'rehab')
-           ORDER BY injury_date DESC
-           LIMIT 10`,
-          [targetUserId],
-        );
-
-        // Get training frequency and statistics (last 30 days)
-        const trainingResult = await pool.query(
-          `SELECT 
-             COUNT(*) as session_count,
-             AVG(duration_minutes) as avg_duration,
-             AVG(intensity_level) as avg_intensity,
-             array_agg(DISTINCT session_type) FILTER (WHERE session_type IS NOT NULL) as session_types
-           FROM training_sessions
-           WHERE user_id = $1
-             AND session_date >= CURRENT_DATE - INTERVAL '30 days'
-             AND status = 'completed'`,
-          [targetUserId],
-        );
-
-        // Get recent training sessions (last 7 days) for context
-        const recentSessionsResult = await pool.query(
-          `SELECT session_type, duration_minutes, intensity_level, session_date
-           FROM training_sessions
-           WHERE user_id = $1
-             AND session_date >= CURRENT_DATE - INTERVAL '7 days'
-             AND status = 'completed'
-           ORDER BY session_date DESC
-           LIMIT 5`,
-          [targetUserId],
-        );
+        // Injuries + 30-day stats + recent sessions are all keyed on targetUserId and
+        // independent of each other — run concurrently (3 sequential round-trips → 1).
+        // Injuries read from athlete_injuries (the clinical table the physio writes via
+        // /api/staff-physiotherapist); the shipped app has no athlete self-log path to the
+        // legacy `injuries` table. Clinical columns aliased to the profile's expected shape.
+        const [injuriesResult, trainingResult, recentSessionsResult] =
+          await Promise.all([
+            pool.query(
+              `SELECT injury_type AS type, injury_grade AS severity, recovery_status AS status,
+                      injury_date AS start_date, diagnosis AS description
+               FROM athlete_injuries
+               WHERE user_id = $1
+                 AND recovery_status IN ('active', 'recovering', 'rehab')
+               ORDER BY injury_date DESC
+               LIMIT 10`,
+              [targetUserId],
+            ),
+            pool.query(
+              `SELECT
+                 COUNT(*) as session_count,
+                 AVG(duration_minutes) as avg_duration,
+                 AVG(intensity_level) as avg_intensity,
+                 array_agg(DISTINCT session_type) FILTER (WHERE session_type IS NOT NULL) as session_types
+               FROM training_sessions
+               WHERE user_id = $1
+                 AND session_date >= CURRENT_DATE - INTERVAL '30 days'
+                 AND status = 'completed'`,
+              [targetUserId],
+            ),
+            pool.query(
+              `SELECT session_type, duration_minutes, intensity_level, session_date
+               FROM training_sessions
+               WHERE user_id = $1
+                 AND session_date >= CURRENT_DATE - INTERVAL '7 days'
+                 AND status = 'completed'
+               ORDER BY session_date DESC
+               LIMIT 5`,
+              [targetUserId],
+            ),
+          ]);
 
       // Calculate training frequency (sessions per week)
       const trainingData = trainingResult.rows[0] || {};

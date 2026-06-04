@@ -12,9 +12,11 @@ import { baseHandler } from "./utils/base-handler.js";
 // Get real dashboard data from Supabase database
 const getDashboardData = async (userId) => {
   try {
-    // Get user's training sessions
-    const trainingSessions = await db.training.getUserStats(userId);
-    const recentSessions = await db.training.getRecentSessions(userId, 5);
+    // Get user's training sessions (independent queries — run concurrently)
+    const [trainingSessions, recentSessions] = await Promise.all([
+      db.training.getUserStats(userId),
+      db.training.getRecentSessions(userId, 5),
+    ]);
 
     // Calculate statistics from real data
     const totalTrainingHours =
@@ -207,26 +209,29 @@ const getTeamChemistry = async (userId) => {
 
     const teamId = teamMemberships[0].team_id;
 
-    // Get team members
-    const { data: members, error: membersError } = await supabaseAdmin
-      .from("team_members")
-      .select("user_id, role, position, jersey_number, status")
-      .eq("team_id", teamId)
-      .eq("status", "active");
+    // Members + latest chemistry both key on teamId but are independent — run concurrently
+    const [
+      { data: members, error: membersError },
+      { data: chemistryData, error: chemistryError },
+    ] = await Promise.all([
+      supabaseAdmin
+        .from("team_members")
+        .select("user_id, role, position, jersey_number, status")
+        .eq("team_id", teamId)
+        .eq("status", "active"),
+      supabaseAdmin
+        .from("team_chemistry")
+        .select(
+          "overall_chemistry, communication_score, trust_score, cohesion_score, leadership_score",
+        )
+        .eq("team_id", teamId)
+        .order("created_at", { ascending: false })
+        .limit(1),
+    ]);
 
     if (membersError) {
       console.error("Error fetching team members:", membersError);
     }
-
-    // Try to get team chemistry from database
-    const { data: chemistryData, error: chemistryError } = await supabaseAdmin
-      .from("team_chemistry")
-      .select(
-        "overall_chemistry, communication_score, trust_score, cohesion_score, leadership_score",
-      )
-      .eq("team_id", teamId)
-      .order("created_at", { ascending: false })
-      .limit(1);
 
     let chemistry = null;
     let chemistryDetails = null;
