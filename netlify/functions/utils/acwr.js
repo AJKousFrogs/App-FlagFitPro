@@ -50,7 +50,9 @@ function round(value, precision) {
  * newest day gets weight lambda; older days decay by (1 - lambda).
  */
 export function ewma(series, lambda) {
-  if (!Array.isArray(series) || series.length === 0) return 0;
+  if (!Array.isArray(series) || series.length === 0) {
+    return 0;
+  }
   const l = Math.min(Math.max(lambda, 0), 1);
   let value = series[0] || 0;
   for (let i = 1; i < series.length; i += 1) {
@@ -107,7 +109,8 @@ export function computeAcwrAt(dailyLoads, targetDate, opts = {}) {
   ).length;
 
   return {
-    acwr: chronicLoad > 0 ? round(acuteLoad / chronicLoad, cfg.precision) : null,
+    acwr:
+      chronicLoad > 0 ? round(acuteLoad / chronicLoad, cfg.precision) : null,
     acuteLoad,
     chronicLoad,
     lowConfidence: daysWithData < cfg.minDaysWithData,

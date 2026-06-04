@@ -1,5 +1,8 @@
 import { baseHandler } from "./utils/base-handler.js";
-import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
+import {
+  createSuccessResponse,
+  createErrorResponse,
+} from "./utils/error-handler.js";
 import { supabaseAdmin } from "./supabase-client.js";
 import { parseJsonObjectBody } from "./utils/input-validator.js";
 
@@ -8,11 +11,19 @@ import { parseJsonObjectBody } from "./utils/input-validator.js";
 
 const parseBoundedInt = (value, fieldName, { min, max }) => {
   const parsed = Number.parseInt(value, 10);
-  if (!Number.isFinite(parsed) || Number.isNaN(parsed) || String(parsed) !== String(value)) {
-    throw new Error(`${fieldName} must be an integer between ${min} and ${max}`);
+  if (
+    !Number.isFinite(parsed) ||
+    Number.isNaN(parsed) ||
+    String(parsed) !== String(value)
+  ) {
+    throw new Error(
+      `${fieldName} must be an integer between ${min} and ${max}`,
+    );
   }
   if (parsed < min || parsed > max) {
-    throw new Error(`${fieldName} must be an integer between ${min} and ${max}`);
+    throw new Error(
+      `${fieldName} must be an integer between ${min} and ${max}`,
+    );
   }
   return parsed;
 };
@@ -36,9 +47,13 @@ function normalizeSupplementItem(raw) {
     throw validationError("each supplement must be an object");
   }
   const name = (raw.name ?? raw.supplement)?.toString().trim();
-  if (!name) throw validationError("supplement name is required");
+  if (!name) {
+    throw validationError("supplement name is required");
+  }
   if (name.length > NAME_MAX) {
-    throw validationError(`supplement name must be ${NAME_MAX} characters or less`);
+    throw validationError(
+      `supplement name must be ${NAME_MAX} characters or less`,
+    );
   }
 
   const dosageRaw = raw.dosage ?? raw.dose;
@@ -62,10 +77,14 @@ function normalizeSupplementItem(raw) {
 
 // Resolve the log date to a YYYY-MM-DD string (defaults to today).
 function resolveLogDate(rawDate) {
-  if (!rawDate) return new Date().toISOString().split("T")[0];
+  if (!rawDate) {
+    return new Date().toISOString().split("T")[0];
+  }
   let s = String(rawDate);
   // tolerate a full ISO timestamp (legacy takenAt) by taking the date part
-  if (s.includes("T")) s = s.split("T")[0];
+  if (s.includes("T")) {
+    s = s.split("T")[0];
+  }
   if (!/^\d{4}-\d{2}-\d{2}$/.test(s)) {
     throw validationError("date must be in YYYY-MM-DD format");
   }
@@ -84,11 +103,17 @@ function resolveLogDate(rawDate) {
  */
 async function upsertSupplements(userId, items, rawDate) {
   const date = resolveLogDate(rawDate);
-  const list = (Array.isArray(items) ? items : [items]).map(normalizeSupplementItem);
+  const list = (Array.isArray(items) ? items : [items]).map(
+    normalizeSupplementItem,
+  );
 
-  if (list.length === 0) throw validationError("at least one supplement is required");
+  if (list.length === 0) {
+    throw validationError("at least one supplement is required");
+  }
   if (list.length > MAX_ITEMS) {
-    throw validationError(`too many supplements in one request (max ${MAX_ITEMS})`);
+    throw validationError(
+      `too many supplements in one request (max ${MAX_ITEMS})`,
+    );
   }
 
   const rows = list.map((it) => ({
@@ -150,9 +175,13 @@ async function upsertUserSupplement(userId, data) {
     throw validationError("request body must be an object");
   }
   const name = data.name?.toString().trim();
-  if (!name) throw validationError("supplement name is required");
+  if (!name) {
+    throw validationError("supplement name is required");
+  }
   if (name.length > NAME_MAX) {
-    throw validationError(`supplement name must be ${NAME_MAX} characters or less`);
+    throw validationError(
+      `supplement name must be ${NAME_MAX} characters or less`,
+    );
   }
 
   const row = {
@@ -165,7 +194,9 @@ async function upsertUserSupplement(userId, data) {
     timing: data.timing
       ? String(data.timing).trim().slice(0, TIME_OF_DAY_MAX)
       : "anytime",
-    category: data.category ? String(data.category).trim().slice(0, 50) : "other",
+    category: data.category
+      ? String(data.category).trim().slice(0, 50)
+      : "other",
     active: data.active === undefined ? true : Boolean(data.active),
     updated_at: new Date().toISOString(),
   };
@@ -333,7 +364,11 @@ const handler = async (event, context) => {
           // POST /api/supplements/stack — manage the athlete's curated supplement list
           if (path.includes("/stack")) {
             const result = await upsertUserSupplement(userId, body);
-            return createSuccessResponse(result, 201, "Supplement saved to your stack");
+            return createSuccessResponse(
+              result,
+              201,
+              "Supplement saved to your stack",
+            );
           }
 
           // POST /api/supplements/log — legacy single-log (now idempotent upsert)
@@ -343,7 +378,9 @@ const handler = async (event, context) => {
           }
 
           // POST /api/supplements — daily log: { date?, supplements: [...] } or a single item
-          const items = Array.isArray(body.supplements) ? body.supplements : [body];
+          const items = Array.isArray(body.supplements)
+            ? body.supplements
+            : [body];
           const result = await upsertSupplements(userId, items, body.date);
           return createSuccessResponse(result, 200, "Supplements logged");
         }
@@ -359,7 +396,10 @@ const handler = async (event, context) => {
           const limit =
             queryLimit === undefined
               ? 30
-              : parseBoundedInt(String(queryLimit), "limit", { min: 1, max: 200 });
+              : parseBoundedInt(String(queryLimit), "limit", {
+                  min: 1,
+                  max: 200,
+                });
           const result = await getSupplementLogs(userId, limit);
           return createSuccessResponse({ logs: result });
         }
@@ -372,11 +412,7 @@ const handler = async (event, context) => {
           error?.isValidation ||
           error?.message?.includes("must be an integer between")
         ) {
-          return createErrorResponse(
-            error.message,
-            422,
-            "validation_error",
-          );
+          return createErrorResponse(error.message, 422, "validation_error");
         }
 
         return createErrorResponse(

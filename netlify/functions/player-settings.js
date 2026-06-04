@@ -1,7 +1,13 @@
 import { baseHandler } from "./utils/base-handler.js";
-import { createErrorResponse, handleValidationError } from "./utils/error-handler.js";
+import {
+  createErrorResponse,
+  handleValidationError,
+} from "./utils/error-handler.js";
 import { parseJsonObjectBody } from "./utils/input-validator.js";
-import { buildRequestLogContext, createLogger } from "./utils/structured-logger.js";
+import {
+  buildRequestLogContext,
+  createLogger,
+} from "./utils/structured-logger.js";
 
 const DEFAULT_DAILY_ROUTINE = [
   { id: "wake", label: "Wake Up", time: "07:00", icon: "pi-sun" },
@@ -72,7 +78,8 @@ function isValidRoutineSlot(value) {
     isValidTimeString(value.time) &&
     (value.description === undefined ||
       value.description === null ||
-      (typeof value.description === "string" && value.description.length <= 240)) &&
+      (typeof value.description === "string" &&
+        value.description.length <= 240)) &&
     (value.icon === undefined ||
       value.icon === null ||
       (typeof value.icon === "string" && value.icon.length <= 64))
@@ -87,8 +94,7 @@ function coercePreferredTrainingDaysArray(value) {
   const seen = new Set();
   const out = [];
   for (const raw of value) {
-    const n =
-      typeof raw === "string" ? Number.parseInt(raw, 10) : Number(raw);
+    const n = typeof raw === "string" ? Number.parseInt(raw, 10) : Number(raw);
     if (!Number.isInteger(n) || n < 0 || n > 6) {
       continue;
     }
@@ -125,8 +131,7 @@ function normalizeNumericFieldsPayload(payload) {
     payload.maxSessionsPerWeek !== null
   ) {
     const raw = payload.maxSessionsPerWeek;
-    const n =
-      typeof raw === "string" ? Number.parseInt(raw, 10) : Number(raw);
+    const n = typeof raw === "string" ? Number.parseInt(raw, 10) : Number(raw);
     if (Number.isFinite(n)) {
       payload.maxSessionsPerWeek = Math.round(n);
     }
@@ -149,15 +154,15 @@ function sanitizeDailyRoutine(value) {
   const normalized = value
     .filter((slot) => isValidRoutineSlot(slot))
     .map((slot) => ({
-    id: slot.id.trim(),
-    label: slot.label.trim(),
-    time: slot.time,
-    ...(typeof slot.description === "string" && slot.description.trim()
-      ? { description: slot.description.trim() }
-      : {}),
-    ...(typeof slot.icon === "string" && slot.icon.trim()
-      ? { icon: slot.icon.trim() }
-      : {}),
+      id: slot.id.trim(),
+      label: slot.label.trim(),
+      time: slot.time,
+      ...(typeof slot.description === "string" && slot.description.trim()
+        ? { description: slot.description.trim() }
+        : {}),
+      ...(typeof slot.icon === "string" && slot.icon.trim()
+        ? { icon: slot.icon.trim() }
+        : {}),
     }));
 
   return normalized.length > 0
@@ -230,7 +235,8 @@ function validateSettingsPayload(payload) {
   if (
     payload.warmupFocus !== undefined &&
     payload.warmupFocus !== null &&
-    (typeof payload.warmupFocus !== "string" || payload.warmupFocus.length > 120)
+    (typeof payload.warmupFocus !== "string" ||
+      payload.warmupFocus.length > 120)
   ) {
     return "warmupFocus must be a string up to 120 characters";
   }
@@ -284,7 +290,11 @@ const handler = async (event, context) =>
     allowedMethods: ["GET", "POST"],
     rateLimitType: "UPDATE",
     requireAuth: true,
-    handler: async (evt, _ctx, { userId, supabase, requestId, correlationId }) => {
+    handler: async (
+      evt,
+      _ctx,
+      { userId, supabase, requestId, correlationId },
+    ) => {
       const requestLogger = createRequestLogger(evt, {
         requestId,
         correlationId,
@@ -310,7 +320,11 @@ const handler = async (event, context) =>
         requestLogger.error("player_settings_handler_error", err, {
           user_id: userId,
         });
-        return createErrorResponse("Internal server error", 500, "server_error");
+        return createErrorResponse(
+          "Internal server error",
+          500,
+          "server_error",
+        );
       }
     },
   });
@@ -378,10 +392,9 @@ async function getSettings(supabase, userId) {
         availabilitySchedule: config.flag_practice_schedule || [], // Keep DB field name for now
         availabilityDisclaimer:
           "Availability does not schedule practice. Coaches schedule team activities.",
-        preferredTrainingDays:
-          coercePreferredTrainingDaysArray(config.preferred_training_days) ?? [
-            1, 2, 4, 5, 6,
-          ],
+        preferredTrainingDays: coercePreferredTrainingDaysArray(
+          config.preferred_training_days,
+        ) ?? [1, 2, 4, 5, 6],
         dailyRoutine: sanitizeDailyRoutine(config.daily_routine),
         maxSessionsPerWeek: config.max_sessions_per_week || 5,
         hasGymAccess: config.has_gym_access !== false,
@@ -488,14 +501,33 @@ async function saveSettings(supabase, userId, payload, log = logger) {
   // profile/roster/nutrition screens read them from users — previously only DOB
   // was written, so jersey/height/weight/position from onboarding were lost).
   const userUpdate = {};
-  if (birthDate) userUpdate.date_of_birth = birthDate;
-  if (primaryPosition) userUpdate.position = primaryPosition;
-  if (jerseyNumber !== undefined && jerseyNumber !== null && !Number.isNaN(Number(jerseyNumber)))
+  if (birthDate) {
+    userUpdate.date_of_birth = birthDate;
+  }
+  if (primaryPosition) {
+    userUpdate.position = primaryPosition;
+  }
+  if (
+    jerseyNumber !== undefined &&
+    jerseyNumber !== null &&
+    !Number.isNaN(Number(jerseyNumber))
+  ) {
     userUpdate.jersey_number = Number(jerseyNumber);
-  if (heightCm !== undefined && heightCm !== null && !Number.isNaN(Number(heightCm)))
+  }
+  if (
+    heightCm !== undefined &&
+    heightCm !== null &&
+    !Number.isNaN(Number(heightCm))
+  ) {
     userUpdate.height_cm = Number(heightCm);
-  if (weightKg !== undefined && weightKg !== null && !Number.isNaN(Number(weightKg)))
+  }
+  if (
+    weightKg !== undefined &&
+    weightKg !== null &&
+    !Number.isNaN(Number(weightKg))
+  ) {
     userUpdate.weight_kg = Number(weightKg);
+  }
   if (Object.keys(userUpdate).length > 0) {
     try {
       await supabase.from("users").update(userUpdate).eq("id", userId);

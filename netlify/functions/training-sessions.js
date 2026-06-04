@@ -1,6 +1,14 @@
 import { parseJsonObjectBody, validateInput } from "./utils/input-validator.js";
-import { createSuccessResponse, createErrorResponse, handleValidationError } from "./utils/error-handler.js";
-import { requireAuthorization, getUserRole, logViolation } from "./utils/authorization-guard.js";
+import {
+  createSuccessResponse,
+  createErrorResponse,
+  handleValidationError,
+} from "./utils/error-handler.js";
+import {
+  requireAuthorization,
+  getUserRole,
+  logViolation,
+} from "./utils/authorization-guard.js";
 import { guardMerlinRequest } from "./utils/merlin-guard.js";
 import { prepareStateTransition } from "./utils/session-state-helper.js";
 import { baseHandler } from "./utils/base-handler.js";
@@ -37,11 +45,15 @@ function parseBoundedInt(value, fieldName, { min, max }) {
   }
   const normalized = String(value).trim();
   if (!/^-?\d+$/.test(normalized)) {
-    throw new Error(`${fieldName} must be an integer between ${min} and ${max}`);
+    throw new Error(
+      `${fieldName} must be an integer between ${min} and ${max}`,
+    );
   }
   const parsed = Number.parseInt(normalized, 10);
   if (!Number.isInteger(parsed) || parsed < min || parsed > max) {
-    throw new Error(`${fieldName} must be an integer between ${min} and ${max}`);
+    throw new Error(
+      `${fieldName} must be an integer between ${min} and ${max}`,
+    );
   }
   return parsed;
 }
@@ -394,10 +406,11 @@ async function createTrainingLogSession(
     // which sums the workload column — sees athlete-logged sessions. Without this
     // the column stayed null and coach ACWR/workload read 0, even though the
     // athlete's own ACWR (computed on the fly) was correct.
+    const hasDuration =
+      cleaned.durationMinutes !== null && cleaned.durationMinutes !== undefined;
+    const hasRpe = cleaned.rpe !== null && cleaned.rpe !== undefined;
     const workload =
-      cleaned.durationMinutes != null && cleaned.rpe != null
-        ? cleaned.durationMinutes * cleaned.rpe
-        : null;
+      hasDuration && hasRpe ? cleaned.durationMinutes * cleaned.rpe : null;
 
     const sessionRecord = {
       user_id: userId,
@@ -478,7 +491,8 @@ function extractSessionIdFromPath(path = "") {
  */
 async function getTrainingSessions(userId, queryParams, supabase) {
   const { limit = 50 } = queryParams || {};
-  const parsedLimit = parseBoundedInt(limit, "limit", { min: 1, max: 200 }) || 50;
+  const parsedLimit =
+    parseBoundedInt(limit, "limit", { min: 1, max: 200 }) || 50;
 
   try {
     if (!supabase) {

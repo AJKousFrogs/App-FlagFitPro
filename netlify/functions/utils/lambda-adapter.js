@@ -19,7 +19,11 @@ export function toLambdaHandler(webHandler) {
     const url = `https://local.test${event.path || "/"}${qs}`;
 
     const init = { method, headers: event.headers || {} };
-    if (!["GET", "HEAD", "OPTIONS"].includes(method) && event.body != null) {
+    if (
+      !["GET", "HEAD", "OPTIONS"].includes(method) &&
+      event.body !== null &&
+      event.body !== undefined
+    ) {
       init.body = event.body;
     }
 
