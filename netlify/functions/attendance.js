@@ -352,9 +352,16 @@ const bulkRecordAttendance = async (userId, bulkData) => {
         `Invalid attendance status. Allowed: ${Array.from(VALID_ATTENDANCE_STATUSES).join(", ")}`,
       );
     }
-    await assertActiveTeamPlayer(event.team_id, record.player_id);
     dedupedRecords.set(record.player_id, record);
   }
+
+  // Verify every (deduped) player is an active team player — concurrently, not one
+  // serial round-trip per record. Throws if any player is invalid, as before.
+  await Promise.all(
+    [...dedupedRecords.keys()].map((playerId) =>
+      assertActiveTeamPlayer(event.team_id, playerId),
+    ),
+  );
 
   const normalizedRecords = [...dedupedRecords.values()];
   const attendanceRecords = normalizedRecords.map((record) => ({
@@ -378,10 +385,12 @@ const bulkRecordAttendance = async (userId, bulkData) => {
     throw error;
   }
 
-  // Update stats for all affected players
-  for (const record of normalizedRecords) {
-    await updatePlayerAttendanceStats(record.player_id, event.team_id);
-  }
+  // Recompute stats for all affected players concurrently (was sequential per player)
+  await Promise.all(
+    normalizedRecords.map((record) =>
+      updatePlayerAttendanceStats(record.player_id, event.team_id),
+    ),
+  );
 
   return data;
 };

@@ -622,10 +622,13 @@ const updateGame = async (userId, gameId, updates) => {
 
       if (teamMembers && teamMembers.length > 0) {
         const gameDate = new Date(updatedGame.game_date);
-        // Trigger recovery for each player
-        for (const member of teamMembers) {
-          await triggerGameDayRecovery(member.user_id, gameDate);
-        }
+        // Trigger recovery for every player concurrently (was sequential per player —
+        // game completion previously blocked on N serial recovery writes)
+        await Promise.all(
+          teamMembers.map((member) =>
+            triggerGameDayRecovery(member.user_id, gameDate),
+          ),
+        );
       }
     }
 
