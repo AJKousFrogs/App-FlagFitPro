@@ -269,39 +269,46 @@ async function getUserContext(userId) {
 
   try {
     const today = new Date().toISOString().split("T")[0];
+    const yesterday = new Date();
+    yesterday.setDate(yesterday.getDate() - 1);
+    const yesterdayStr = yesterday.toISOString().split("T")[0];
+    const sevenDaysAgo = new Date();
+    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+    const sevenDaysAgoStr = sevenDaysAgo.toISOString().split("T")[0];
 
-    // 1. Get active injuries
-    const { data: injuries } = await supabaseAdmin
-      // v_injuries_unified maps the clinical athlete_injuries table (physio-written)
-      // onto the legacy injuries column shape, incl. injury_grade → numeric severity.
-      .from("v_injuries_unified")
-      .select("type:injury_type, severity, body_part, status")
-      .eq("user_id", userId)
-      .in("status", ["active", "recovering", "monitoring"])
-      .order("severity", { ascending: false })
-      .limit(5);
-
-    context.injuries = injuries || [];
-
-    // 2. Calculate ACWR for safety checks
-    context.acwr = await calculateUserACWR(userId);
-
-    // 3. Get recent load summary
-    if (context.acwr && context.acwr.acuteLoad > 0) {
-      context.recentLoad = {
-        weeklyLoad: context.acwr.acuteLoad,
-        sessionCount: context.acwr.sessionCount || 0,
-        avgRPE: context.acwr.acuteLoad / (context.acwr.sessionCount || 1) / 60,
-        acwr: context.acwr.acwr,
-        riskZone: context.acwr.riskZone,
-      };
-    }
-
-    // 4. Get today's protocol and exercises
-    const { data: protocol } = await supabaseAdmin
-      .from("daily_protocols")
-      .select(
-        `
+    // Every read below keys only on userId (+ constant date windows) and is independent of
+    // the others — fetch them all concurrently (~13 sequential round-trips -> 1). All
+    // derivation (recentLoad, dataConfidence, bodyStats, ...) is in-memory after the fetch.
+    // This runs on every Merlin message, so the latency win is large.
+    const [
+      acwrResult,
+      { data: injuries },
+      { data: protocol },
+      { data: recentSessions },
+      { data: wellness },
+      { data: yesterdayWellness },
+      { data: recentGames },
+      { data: nutritionPlan },
+      { data: activeRecovery },
+      { data: loadCap },
+      { data: profile },
+      { data: measurement },
+      { data: teamMembership },
+    ] = await Promise.all([
+      calculateUserACWR(userId),
+      // v_injuries_unified maps the clinical athlete_injuries table onto the legacy injuries
+      // column shape, incl. injury_grade -> numeric severity.
+      supabaseAdmin
+        .from("v_injuries_unified")
+        .select("type:injury_type, severity, body_part, status")
+        .eq("user_id", userId)
+        .in("status", ["active", "recovering", "monitoring"])
+        .order("severity", { ascending: false })
+        .limit(5),
+      supabaseAdmin
+        .from("daily_protocols")
+        .select(
+          `
         *,
         exercises:protocol_exercises(
           exercise_id,
@@ -313,10 +320,96 @@ async function getUserContext(userId) {
           exercises(name)
         )
       `,
-      )
-      .eq("user_id", userId)
-      .eq("protocol_date", today)
-      .single();
+        )
+        .eq("user_id", userId)
+        .eq("protocol_date", today)
+        .single(),
+      supabaseAdmin
+        .from("training_sessions")
+        .select(
+          "session_date, session_type, duration_minutes, intensity_level, performance_score",
+        )
+        .eq("user_id", userId)
+        .order("session_date", { ascending: false })
+        .limit(3),
+      supabaseAdmin
+        .from("daily_wellness_checkin")
+        .select("*")
+        .eq("user_id", userId)
+        .eq("checkin_date", today)
+        .single(),
+      supabaseAdmin
+        .from("daily_wellness_checkin")
+        .select("calculated_readiness")
+        .eq("user_id", userId)
+        .eq("checkin_date", yesterdayStr)
+        .maybeSingle(),
+      supabaseAdmin
+        .from("games")
+        .select("game_date, our_score, opponent_score")
+        .or(
+          `player_id.eq.${userId},team_id.in.(SELECT team_id FROM team_members WHERE user_id.eq.${userId})`,
+        )
+        .gte("game_date", sevenDaysAgoStr)
+        .order("game_date", { ascending: false })
+        .limit(3),
+      supabaseAdmin
+        .from("nutrition_plans")
+        .select(
+          "plan_name, target_calories, protein_g, carbs_g, fat_g, hydration_goal_liters, meal_timing_notes",
+        )
+        .eq("user_id", userId)
+        .eq("is_active", true)
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .maybeSingle(),
+      supabaseAdmin
+        .from("recovery_blocks")
+        .select("protocol_type, block_date, max_load_percent, focus")
+        .eq("user_id", userId)
+        .eq("block_date", today)
+        .maybeSingle(),
+      supabaseAdmin
+        .from("load_caps")
+        .select("sessions_remaining, max_load_percent, reason")
+        .eq("player_id", userId)
+        .eq("status", "active")
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .maybeSingle(),
+      supabaseAdmin
+        .from("users")
+        .select("position, height_cm, weight_kg")
+        .eq("id", userId)
+        .single(),
+      supabaseAdmin
+        .from("physical_measurements")
+        .select("*")
+        .eq("user_id", userId)
+        .order("measurement_date", { ascending: false })
+        .limit(1)
+        .single(),
+      supabaseAdmin
+        .from("team_members")
+        .select("team_id, role")
+        .eq("user_id", userId)
+        .limit(1)
+        .maybeSingle(),
+    ]);
+
+    // In-memory assembly (order + semantics preserved from the original sequential code).
+    context.injuries = injuries || [];
+
+    context.acwr = acwrResult;
+    if (context.acwr && context.acwr.acuteLoad > 0) {
+      context.recentLoad = {
+        weeklyLoad: context.acwr.acuteLoad,
+        sessionCount: context.acwr.sessionCount || 0,
+        avgRPE: context.acwr.acuteLoad / (context.acwr.sessionCount || 1) / 60,
+        acwr: context.acwr.acwr,
+        riskZone: context.acwr.riskZone,
+      };
+    }
 
     if (protocol) {
       context.todayProtocol = {
@@ -334,39 +427,8 @@ async function getUserContext(userId) {
       };
     }
 
-    // 5. Get recent session history (last 3)
-    const { data: recentSessions } = await supabaseAdmin
-      .from("training_sessions")
-      .select(
-        "session_date, session_type, duration_minutes, intensity_level, performance_score",
-      )
-      .eq("user_id", userId)
-      .order("session_date", { ascending: false })
-      .limit(3);
-
     context.recentSessions = recentSessions || [];
-
-    // 6. Get latest wellness entry
-    const { data: wellness } = await supabaseAdmin
-      .from("daily_wellness_checkin")
-      .select("*")
-      .eq("user_id", userId)
-      .eq("checkin_date", today)
-      .single();
-
     context.latestWellness = wellness;
-
-    // 6a. Get yesterday's wellness for recovery context
-    const yesterday = new Date();
-    yesterday.setDate(yesterday.getDate() - 1);
-    const yesterdayStr = yesterday.toISOString().split("T")[0];
-
-    const { data: yesterdayWellness } = await supabaseAdmin
-      .from("daily_wellness_checkin")
-      .select("calculated_readiness")
-      .eq("user_id", userId)
-      .eq("checkin_date", yesterdayStr)
-      .maybeSingle();
 
     if (yesterdayWellness && yesterdayWellness.calculated_readiness < 40) {
       context.yesterdayWellness = {
@@ -374,43 +436,8 @@ async function getUserContext(userId) {
       };
     }
 
-    // 6b. Get recent games (last 7 days) for temporal context
-    const sevenDaysAgo = new Date();
-    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
-
-    const { data: recentGames } = await supabaseAdmin
-      .from("games")
-      .select("game_date, our_score, opponent_score")
-      .or(
-        `player_id.eq.${userId},team_id.in.(SELECT team_id FROM team_members WHERE user_id.eq.${userId})`,
-      )
-      .gte("game_date", sevenDaysAgo.toISOString().split("T")[0])
-      .order("game_date", { ascending: false })
-      .limit(3);
-
     context.recentGames = recentGames || [];
-
-    // 6c. Get active nutrition plan for fueling and recovery guidance
-    const { data: nutritionPlan } = await supabaseAdmin
-      .from("nutrition_plans")
-      .select(
-        "plan_name, target_calories, protein_g, carbs_g, fat_g, hydration_goal_liters, meal_timing_notes",
-      )
-      .eq("user_id", userId)
-      .eq("is_active", true)
-      .order("created_at", { ascending: false })
-      .limit(1)
-      .maybeSingle();
-
     context.nutritionPlan = nutritionPlan || null;
-
-    // 6d. Get active recovery protocols
-    const { data: activeRecovery } = await supabaseAdmin
-      .from("recovery_blocks")
-      .select("protocol_type, block_date, max_load_percent, focus")
-      .eq("user_id", userId)
-      .eq("block_date", today)
-      .maybeSingle();
 
     if (activeRecovery) {
       context.activeRecovery = {
@@ -420,16 +447,7 @@ async function getUserContext(userId) {
       };
     }
 
-    // 6e. Get active load cap
-    const { data: loadCap } = await supabaseAdmin
-      .from("load_caps")
-      .select("sessions_remaining, max_load_percent, reason")
-      .eq("player_id", userId)
-      .eq("status", "active")
-      .order("created_at", { ascending: false })
-      .limit(1)
-      .maybeSingle();
-
+    // load_cap overrides the recovery-block activeRecovery when both exist (order preserved)
     if (loadCap) {
       context.activeRecovery = {
         type: "load_cap",
@@ -439,17 +457,15 @@ async function getUserContext(userId) {
       };
     }
 
-    // 6f. Calculate data confidence
+    // Data confidence
     const missingInputs = [];
     const staleData = [];
     let confidenceScore = 1.0;
 
-    // Check wellness data completeness
     if (!wellness) {
       missingInputs.push("wellness_checkin");
       confidenceScore *= 0.7;
     } else {
-      // Check if wellness has all metrics
       const requiredMetrics = [
         "sleep_quality",
         "energy_level",
@@ -466,7 +482,6 @@ async function getUserContext(userId) {
       }
     }
 
-    // Check training data completeness (for ACWR)
     if (context.recentSessions.length < 10) {
       missingInputs.push(
         `${10 - context.recentSessions.length} training_sessions`,
@@ -474,7 +489,6 @@ async function getUserContext(userId) {
       confidenceScore *= Math.min(context.recentSessions.length / 10, 1.0);
     }
 
-    // Check if wellness is stale (older than 2 days)
     if (wellness && wellness.state_date) {
       const wellnessDate = new Date(wellness.state_date);
       const daysSince =
@@ -491,25 +505,9 @@ async function getUserContext(userId) {
       staleData,
     };
 
-    // 7. Get user profile and body comp
-    const { data: profile } = await supabaseAdmin
-      .from("users")
-      .select("position, height_cm, weight_kg")
-      .eq("id", userId)
-      .single();
-
     if (profile) {
       context.position = profile.position;
       context.role = profile.role;
-
-      // Get latest body measurement
-      const { data: measurement } = await supabaseAdmin
-        .from("physical_measurements")
-        .select("*")
-        .eq("user_id", userId)
-        .order("measurement_date", { ascending: false })
-        .limit(1)
-        .single();
 
       context.bodyStats = {
         height: profile.height_cm,
@@ -519,14 +517,6 @@ async function getUserContext(userId) {
         hydration: wellness?.hydration_level,
       };
     }
-
-    // 8. Get team membership
-    const { data: teamMembership } = await supabaseAdmin
-      .from("team_members")
-      .select("team_id, role")
-      .eq("user_id", userId)
-      .limit(1)
-      .maybeSingle();
 
     if (teamMembership) {
       context.teamId = teamMembership.team_id;
