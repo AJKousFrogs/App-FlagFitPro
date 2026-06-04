@@ -6,9 +6,6 @@
  *
  * Usage:
  * - DOM / styles: Prefer `var(--token)` via BRAND_COLORS, STATUS_COLORS, etc.
- * - Canvas charts: resolve CHART_SERIES_CSS_VARS via
- *   getCssVariable("--color-chart-N"). For SSR or missing document, use
- *   CANVAS_CHART_FALLBACK_HEX (must stay in sync with :root --color-chart-* in SCSS).
  * - Do not duplicate brand hex in feature code; use tokens above.
  */
 
@@ -159,34 +156,6 @@ export const PHASE_COLORS = {
   peak: "var(--color-phase-peak)",
   lateSeason: "var(--color-phase-late-season)",
 } as const;
-
-// ============================================================================
-// CHART.JS / CANVAS — series tokens (see design-system-tokens.scss CONTRACT)
-// ============================================================================
-
-/** Canonical CSS var names for the six primary chart series (single source for ThemeService). */
-export const CHART_SERIES_CSS_VARS = [
-  "--color-chart-1",
-  "--color-chart-2",
-  "--color-chart-3",
-  "--color-chart-4",
-  "--color-chart-5",
-  "--color-chart-6",
-] as const;
-
-/**
- * Light-theme hex fallbacks when computed styles are unavailable (SSR).
- * MUST match :root --color-chart-1 … --color-chart-6 resolved values in
- * design-system-tokens.scss (brand green + five fixed accents).
- */
-export const CANVAS_CHART_FALLBACK_HEX: readonly string[] = [
-  "#00A85C",
-  "#22c55e",
-  "#f1c40f",
-  "#e74c3c",
-  "#3498db",
-  "#9b59b6",
-];
 
 /**
  * Default coach team branding when API has no custom colors (matches primitives).

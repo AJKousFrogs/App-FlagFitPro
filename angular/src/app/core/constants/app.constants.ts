@@ -365,8 +365,6 @@ export const UI_LIMITS = {
  * Design system color references (CSS custom properties)
  *
  * For DOM: prefer BRAND_COLORS / STATUS_COLORS from `@core/utils/design-tokens.util`.
- * For canvas datasets: resolve CHART_SERIES_CSS_VARS via getCssVariable, or fall back to
- * CANVAS_CHART_FALLBACK_HEX from design-tokens.util (see design-system-tokens CONTRACT).
  *
  * Maps to design-system-tokens.scss — avoid duplicating raw hex in feature code.
  */
