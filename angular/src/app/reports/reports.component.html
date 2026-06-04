@@ -58,6 +58,26 @@
       </div>
     }
 
+    <!-- rolling 4-week training trends (agility/sprint sessions + game performance) -->
+    @if (trends(); as t) {
+      <div class="section-h"><h2>Trends · last 4 weeks</h2></div>
+      <div class="card stack">
+        <div class="row">
+          <span>Agility / change-of-direction</span>
+          <span class="band {{ trendDir(t.cod?.change).cls }}">{{ trendDir(t.cod?.change).arrow }} {{ weekTrendLabel(t.cod) }}</span>
+        </div>
+        <div class="row">
+          <span>Sprint / speed sessions</span>
+          <span class="band {{ trendDir(t.sprint?.change).cls }}">{{ trendDir(t.sprint?.change).arrow }} {{ weekTrendLabel(t.sprint) }}</span>
+        </div>
+        <div class="row">
+          <span>Game performance</span>
+          <span class="band {{ gamePerf(t.game).cls }}">{{ gamePerf(t.game).label }}</span>
+        </div>
+        <small class="muted">Sessions/week this fortnight vs the previous one, from your logged training. Game performance trends across your recent games.</small>
+      </div>
+    }
+
     <!-- reports your nutritionist generated for you -->
     @if (nutritionReports().length) {
       <div class="section-h"><h2>From your nutritionist</h2></div>

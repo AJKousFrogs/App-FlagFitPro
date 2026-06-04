@@ -8,7 +8,7 @@ import {
 import { RouterLink } from "@angular/router";
 import { LucideAngularModule } from "lucide-angular";
 
-import { ApiService } from "../core/services/api.service";
+import { ApiService, API_ENDPOINTS } from "../core/services/api.service";
 import { SupabaseService } from "../core/services/supabase.service";
 import { extractApiPayload } from "../core/utils/api-response-mapper";
 
@@ -49,6 +49,25 @@ interface NutritionReportRow {
     metrics?: Record<string, number>;
     recommendations?: NutritionRec[];
   };
+}
+/** GET /api/trends/{change-of-direction,sprint-volume}: current vs previous fortnight. */
+interface WeekTrend {
+  current: number;
+  previous: number;
+  change: number;
+  weeks: unknown[];
+}
+/** GET /api/trends/game-performance. */
+interface GameTrend {
+  games: unknown[];
+  averagePerformance: number;
+  trend: string;
+  message?: string;
+}
+interface TrendsState {
+  cod: WeekTrend | null;
+  sprint: WeekTrend | null;
+  game: GameTrend | null;
 }
 
 /** Athlete-friendly labels for the engine's session types. */
@@ -100,9 +119,65 @@ export class ReportsComponent {
   // Reports the nutritionist generated for this athlete (RLS scopes to own rows).
   readonly nutritionReports = signal<NutritionReportRow[]>([]);
 
+  // Rolling 4-week training trends (agility / sprint sessions, game performance).
+  readonly trends = signal<TrendsState | null>(null);
+
   constructor() {
     this.fetch();
     this.loadNutritionReports();
+    this.loadTrends();
+  }
+
+  private loadTrends(): void {
+    const e = API_ENDPOINTS.trends;
+    this.trends.set({ cod: null, sprint: null, game: null });
+    this.api.get<WeekTrend>(e.changeOfDirection).subscribe({
+      next: (r) =>
+        this.trends.update((s) => ({
+          ...(s ?? { cod: null, sprint: null, game: null }),
+          cod: extractApiPayload<WeekTrend>(r) ?? null,
+        })),
+      error: () => undefined,
+    });
+    this.api.get<WeekTrend>(e.sprintVolume).subscribe({
+      next: (r) =>
+        this.trends.update((s) => ({
+          ...(s ?? { cod: null, sprint: null, game: null }),
+          sprint: extractApiPayload<WeekTrend>(r) ?? null,
+        })),
+      error: () => undefined,
+    });
+    this.api.get<GameTrend>(e.gamePerformance).subscribe({
+      next: (r) =>
+        this.trends.update((s) => ({
+          ...(s ?? { cod: null, sprint: null, game: null }),
+          game: extractApiPayload<GameTrend>(r) ?? null,
+        })),
+      error: () => undefined,
+    });
+  }
+
+  /** Direction indicator for a current-vs-previous change %. */
+  trendDir(change: number | undefined | null): { cls: string; arrow: string } {
+    const c = change ?? 0;
+    if (c > 2) return { cls: "good", arrow: "↑" };
+    if (c < -2) return { cls: "caution", arrow: "↓" };
+    return { cls: "neutral", arrow: "→" };
+  }
+  weekTrendLabel(t: WeekTrend | null): string {
+    return t ? `${t.current} vs ${t.previous}` : "—";
+  }
+  gamePerf(t: GameTrend | null): { label: string; cls: string } {
+    if (!t || t.message || !t.games?.length) {
+      return { label: "no games yet", cls: "neutral" };
+    }
+    const cls =
+      t.trend === "improving"
+        ? "good"
+        : t.trend === "declining"
+          ? "caution"
+          : "neutral";
+    return { label: `${t.trend} · avg ${Math.round(t.averagePerformance)}`, cls };
   }
 
   private loadNutritionReports(): void {
