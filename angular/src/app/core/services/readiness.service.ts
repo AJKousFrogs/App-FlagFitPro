@@ -19,7 +19,7 @@
 import { Injectable, inject, signal } from "@angular/core";
 import { Observable, throwError } from "rxjs";
 import { catchError, finalize, map, tap } from "rxjs";
-import { ApiService } from "./api.service";
+import { ApiService, API_ENDPOINTS } from "./api.service";
 import { LoggerService } from "./logger.service";
 import { getErrorMessage } from "../../shared/utils/error.utils";
 import {
@@ -115,7 +115,10 @@ export class ReadinessService {
             extractApiPayload<ReadinessResponse>(response) ||
             ({} as ReadinessResponse),
         ),
-        tap((res) => this.current.set(res)),
+        tap((res) => {
+          this.current.set(res);
+          this.logCalibration(res);
+        }),
         catchError((error) => {
           this.error.set(getErrorMessage(error, "Failed to calculate readiness"));
           return throwError(() => error);
@@ -124,4 +127,25 @@ export class ReadinessService {
       );
   }
 
+  /**
+   * Fire-and-forget: record the deload/maintain/push recommendation that was shown to
+   * the athlete so the server can later correlate it with outcomes and calibrate the
+   * readiness model. POST /api/calibration-logs (athleteId defaults to the authed user
+   * server-side). Never blocks or fails the readiness calc.
+   */
+  private logCalibration(res: ReadinessResponse): void {
+    if (!res?.suggestion) {
+      return;
+    }
+    this.apiService
+      .post(API_ENDPOINTS.calibration.logs, {
+        recommendation: {
+          type: res.suggestion,
+          readinessScore: res.score,
+          acwr: res.acwr,
+          rationale: res.calibrationNote ?? null,
+        },
+      })
+      .subscribe({ error: () => undefined });
+  }
 }

@@ -565,6 +565,11 @@ const handler = async (event, context) => {
             );
           }
 
+          // Default to the authenticated athlete for self-logging (see POST handler below).
+          if (!outcomeData.athleteId) {
+            outcomeData.athleteId = userId;
+          }
+
           const outcomeValidationError = validateOutcomePayload(outcomeData);
           if (outcomeValidationError) {
             return createErrorResponse(
@@ -616,6 +621,12 @@ const handler = async (event, context) => {
             "invalid_json",
             requestId,
           );
+        }
+
+        // Default to the authenticated athlete for self-logging; coaches still pass
+        // athleteId explicitly to log a recommendation for one of their athletes.
+        if (!recommendationData.athleteId) {
+          recommendationData.athleteId = userId;
         }
 
         const recommendationValidationError =
