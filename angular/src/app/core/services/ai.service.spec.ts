@@ -16,6 +16,7 @@ import { LoggerService } from "./logger.service";
 
 const rawReply = {
   chat_session_id: "sess-1",
+  message_id: "msg-1",
   answer_markdown: "Skip the sprints today — your ACWR is elevated.",
   risk_level: "medium",
   disclaimer: "Not medical advice.",
@@ -58,6 +59,7 @@ describe("AIService.sendMessage", () => {
     const reply = await firstValueFrom(service.sendMessage("should I sprint?"));
     expect(reply).toEqual({
       chatSessionId: "sess-1",
+      messageId: "msg-1",
       answer: "Skip the sprints today — your ACWR is elevated.",
       riskLevel: "medium",
       disclaimer: "Not medical advice.",
