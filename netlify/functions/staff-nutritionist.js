@@ -70,78 +70,85 @@ async function getAthleteNutritionOverview(teamId, requesterId) {
     throw membersError;
   }
 
-  const athletes = [];
+  // Was an N+1: 4 sequential reads × every player, serially. Fan out players concurrently
+  // (Promise.all preserves member order) and run each player's 4 independent reads
+  // concurrently. Skipped members → null, filtered out.
+  const sevenDaysAgo = new Date();
+  sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+  const supplementsSince = sevenDaysAgo.toISOString().split("T")[0];
 
-  for (const member of members || []) {
-    const userId = member.user_id;
-    const user = member.users;
+  const athletes = (
+    await Promise.all(
+      (members || []).map(async (member) => {
+        const userId = member.user_id;
+        const user = member.users;
+        if (!user) {
+          return null;
+        }
 
-    if (!user) {
-      continue;
-    }
+        const [
+          { data: nutritionProfile },
+          { data: measurements },
+          wellnessResult,
+          { data: supplementLogs },
+        ] = await Promise.all([
+          supabaseAdmin
+            .from("athlete_nutrition_profiles")
+            .select("*")
+            .eq("user_id", userId)
+            .order("updated_at", { ascending: false })
+            .limit(1)
+            .single(),
+          supabaseAdmin
+            .from("physical_measurements")
+            .select("*")
+            .eq("user_id", userId)
+            .order("created_at", { ascending: false })
+            .limit(1)
+            .single(),
+          consentReader.readWellnessEntries({
+            requesterId,
+            playerId: userId,
+            teamId,
+            context: AccessContext.COACH_TEAM_DATA,
+            filters: { limit: 1 },
+          }),
+          supabaseAdmin
+            .from("supplement_logs")
+            .select("*")
+            .eq("user_id", userId)
+            .gte("date", supplementsSince)
+            .order("date", { ascending: false }),
+        ]);
 
-    // Get nutrition profile
-    const { data: nutritionProfile } = await supabaseAdmin
-      .from("athlete_nutrition_profiles")
-      .select("*")
-      .eq("user_id", userId)
-      .order("updated_at", { ascending: false })
-      .limit(1)
-      .single();
+        const wellness = wellnessResult.success
+          ? (wellnessResult.data || [])[0]
+          : null;
+        const supplementCompliance =
+          calculateSupplementCompliance(supplementLogs);
 
-    // Get latest physical measurements
-    const { data: measurements } = await supabaseAdmin
-      .from("physical_measurements")
-      .select("*")
-      .eq("user_id", userId)
-      .order("created_at", { ascending: false })
-      .limit(1)
-      .single();
-
-    // Get recent wellness entry for hydration
-    const wellnessResult = await consentReader.readWellnessEntries({
-      requesterId,
-      playerId: userId,
-      teamId,
-      context: AccessContext.COACH_TEAM_DATA,
-      filters: { limit: 1 },
-    });
-    const wellness = wellnessResult.success ? (wellnessResult.data || [])[0] : null;
-
-    // Get recent supplement logs (last 7 days)
-    const sevenDaysAgo = new Date();
-    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
-
-    const { data: supplementLogs } = await supabaseAdmin
-      .from("supplement_logs")
-      .select("*")
-      .eq("user_id", userId)
-      .gte("date", sevenDaysAgo.toISOString().split("T")[0])
-      .order("date", { ascending: false });
-
-    // Calculate supplement compliance
-    const supplementCompliance = calculateSupplementCompliance(supplementLogs);
-
-    athletes.push({
-      id: user.id,
-      name: user.full_name || "Unknown",
-      position: user.position || "N/A",
-      avatarUrl: user.avatar_url,
-      weight: measurements?.weight || nutritionProfile?.weight_kg || null,
-      bodyFat:
-        measurements?.body_fat ||
-        nutritionProfile?.body_fat_percentage ||
-        null,
-      leanMass:
-        measurements?.muscle_mass || nutritionProfile?.lean_mass_kg || null,
-      hydrationStatus: getHydrationStatus(wellness?.hydration_level),
-      supplementCompliance,
-      dailyCalories: nutritionProfile?.tdee_kcal || null,
-      proteinTarget: nutritionProfile?.protein_target_g || null,
-      lastUpdated:
-        measurements?.created_at || nutritionProfile?.updated_at || null,
-    });
-  }
+        return {
+          id: user.id,
+          name: user.full_name || "Unknown",
+          position: user.position || "N/A",
+          avatarUrl: user.avatar_url,
+          weight: measurements?.weight || nutritionProfile?.weight_kg || null,
+          bodyFat:
+            measurements?.body_fat ||
+            nutritionProfile?.body_fat_percentage ||
+            null,
+          leanMass:
+            measurements?.muscle_mass || nutritionProfile?.lean_mass_kg || null,
+          hydrationStatus: getHydrationStatus(wellness?.hydration_level),
+          supplementCompliance,
+          dailyCalories: nutritionProfile?.tdee_kcal || null,
+          proteinTarget: nutritionProfile?.protein_target_g || null,
+          lastUpdated:
+            measurements?.created_at || nutritionProfile?.updated_at || null,
+        };
+      }),
+    )
+  ).filter(Boolean);
 
   return athletes;
 }
@@ -187,30 +194,54 @@ async function getTeamSupplementCompliance(teamId) {
 
   const sevenDaysAgo = new Date();
   sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+  const since = sevenDaysAgo.toISOString().split("T")[0];
+
+  const memberIds = (members || []).map((m) => m.user_id);
+  if (memberIds.length === 0) {
+    return [];
+  }
+
+  // Was an N+1 (2 queries per player). Two batched reads + in-memory grouping instead.
+  const [{ data: allLogs }, { data: allSupplements }] = await Promise.all([
+    supabaseAdmin
+      .from("supplement_logs")
+      .select("user_id, taken")
+      .in("user_id", memberIds)
+      .gte("date", since),
+    supabaseAdmin
+      .from("user_supplements")
+      .select("user_id, supplement_name")
+      .in("user_id", memberIds)
+      .eq("is_active", true),
+  ]);
+
+  const logsByUser = new Map();
+  for (const l of allLogs || []) {
+    if (!logsByUser.has(l.user_id)) {
+      logsByUser.set(l.user_id, []);
+    }
+    logsByUser.get(l.user_id).push(l);
+  }
+  const supplementsByUser = new Map();
+  for (const s of allSupplements || []) {
+    if (!supplementsByUser.has(s.user_id)) {
+      supplementsByUser.set(s.user_id, []);
+    }
+    supplementsByUser.get(s.user_id).push(s);
+  }
 
   const compliance = [];
-
   for (const member of members || []) {
-    const { data: logs } = await supabaseAdmin
-      .from("supplement_logs")
-      .select("*")
-      .eq("user_id", member.user_id)
-      .gte("date", sevenDaysAgo.toISOString().split("T")[0]);
-
-    const { data: supplements } = await supabaseAdmin
-      .from("user_supplements")
-      .select("supplement_name")
-      .eq("user_id", member.user_id)
-      .eq("is_active", true);
-
-    const totalSupplements = supplements?.length || 0;
-    const takenCount = logs?.filter((l) => l.taken)?.length || 0;
+    const logs = logsByUser.get(member.user_id) || [];
+    const supplements = supplementsByUser.get(member.user_id) || [];
+    const totalSupplements = supplements.length;
+    const takenCount = logs.filter((l) => l.taken).length;
     const expectedDoses = totalSupplements * 7; // 7 days
 
     compliance.push({
       athleteId: member.user_id,
       athleteName: member.users?.full_name || "Unknown",
-      supplements: supplements?.map((s) => s.supplement_name) || [],
+      supplements: supplements.map((s) => s.supplement_name),
       compliance:
         expectedDoses > 0 ? Math.round((takenCount / expectedDoses) * 100) : 0,
       takenCount,
@@ -286,34 +317,37 @@ async function generateNutritionReport(userId, reportType = "weekly") {
   const startDate = new Date();
   startDate.setDate(startDate.getDate() - days);
 
-  // Get nutrition profile
-  const { data: profile } = await supabaseAdmin
-    .from("athlete_nutrition_profiles")
-    .select("*")
-    .eq("user_id", userId)
-    .single();
-
-  // Get physical measurements trend
-  const { data: measurements } = await supabaseAdmin
-    .from("physical_measurements")
-    .select("*")
-    .eq("user_id", userId)
-    .gte("created_at", startDate.toISOString())
-    .order("created_at", { ascending: true });
-
-  // Get supplement logs
-  const { data: supplements } = await supabaseAdmin
-    .from("supplement_logs")
-    .select("*")
-    .eq("user_id", userId)
-    .gte("date", startDate.toISOString().split("T")[0]);
-
-  // Get hydration logs (canonical: athlete_hydration_logs)
-  const { data: hydration } = await supabaseAdmin
-    .from("athlete_hydration_logs")
-    .select("*")
-    .eq("user_id", userId)
-    .gte("logged_at", startDate.toISOString().split("T")[0]);
+  // Profile, measurements, supplement logs, and hydration logs all key on userId +
+  // startDate and are independent — fetch concurrently (4 sequential round-trips → 1).
+  const startDateStr = startDate.toISOString().split("T")[0];
+  const [
+    { data: profile },
+    { data: measurements },
+    { data: supplements },
+    { data: hydration },
+  ] = await Promise.all([
+    supabaseAdmin
+      .from("athlete_nutrition_profiles")
+      .select("*")
+      .eq("user_id", userId)
+      .single(),
+    supabaseAdmin
+      .from("physical_measurements")
+      .select("*")
+      .eq("user_id", userId)
+      .gte("created_at", startDate.toISOString())
+      .order("created_at", { ascending: true }),
+    supabaseAdmin
+      .from("supplement_logs")
+      .select("*")
+      .eq("user_id", userId)
+      .gte("date", startDateStr),
+    supabaseAdmin
+      .from("athlete_hydration_logs")
+      .select("*")
+      .eq("user_id", userId)
+      .gte("logged_at", startDateStr),
+  ]);
 
   // Calculate metrics
   const supplementsTaken = supplements?.filter((s) => s.taken)?.length || 0;

@@ -67,71 +67,75 @@ async function getAthletePhysioOverview(teamId) {
     .eq("team_id", teamId)
     .eq("role", "player");
 
-  const athletes = [];
+  // Per-athlete overview was an N+1: 2 sequential queries × every player, serially.
+  // Fan out across players concurrently (Promise.all preserves member order), and run
+  // each player's two independent reads concurrently too. Skipped members → null, filtered.
+  const athletes = (
+    await Promise.all(
+      (members || []).map(async (member) => {
+        const userId = member.user_id;
+        const user = member.users;
+        if (!user) {
+          return null;
+        }
 
-  for (const member of members || []) {
-    const userId = member.user_id;
-    const user = member.users;
-    if (!user) {
-      continue;
-    }
+        const [{ data: injuries }, { data: loadData }] = await Promise.all([
+          supabaseAdmin
+            .from("athlete_injuries")
+            .select("*")
+            .eq("user_id", userId)
+            .in("recovery_status", ["active", "recovering", "rehab"])
+            .order("injury_date", { ascending: false }),
+          supabaseAdmin
+            .from("load_daily")
+            .select("acwr, acute_load, chronic_load, date")
+            .eq("user_id", userId)
+            .order("date", { ascending: false })
+            .limit(1)
+            .single(),
+        ]);
 
-    // Get active injuries
-    const { data: injuries } = await supabaseAdmin
-      .from("athlete_injuries")
-      .select("*")
-      .eq("user_id", userId)
-      .in("recovery_status", ["active", "recovering", "rehab"])
-      .order("injury_date", { ascending: false });
+        // Determine clearance status
+        let clearanceStatus = "cleared";
+        let restrictions = [];
 
-    // Get ACWR from load_daily
-    const { data: loadData } = await supabaseAdmin
-      .from("load_daily")
-      .select("acwr, acute_load, chronic_load, date")
-      .eq("user_id", userId)
-      .order("date", { ascending: false })
-      .limit(1)
-      .single();
-
-    // Determine clearance status
-    let clearanceStatus = "cleared";
-    let restrictions = [];
-
-    if (injuries && injuries.length > 0) {
-      const activeInjury = injuries[0];
-      if (activeInjury.recovery_status === "active") {
-        clearanceStatus = "not_cleared";
-      } else if (
-        activeInjury.recovery_status === "recovering" ||
-        activeInjury.recovery_status === "rehab"
-      ) {
-        clearanceStatus = "limited";
-      }
-      restrictions = activeInjury.activity_restrictions || [];
-    }
-
-    athletes.push({
-      id: user.id,
-      name: user.full_name || "Unknown",
-      position: user.position || "N/A",
-      avatarUrl: user.avatar_url,
-      clearanceStatus,
-      activeInjuries: injuries?.length || 0,
-      currentInjury: injuries?.[0]
-        ? {
-            type: injuries[0].injury_type,
-            location: injuries[0].injury_location,
-            grade: injuries[0].injury_grade,
-            phase: injuries[0].current_phase,
-            rtpProgress: injuries[0].rtp_progress || 0,
-            expectedReturn: injuries[0].expected_return_date,
+        if (injuries && injuries.length > 0) {
+          const activeInjury = injuries[0];
+          if (activeInjury.recovery_status === "active") {
+            clearanceStatus = "not_cleared";
+          } else if (
+            activeInjury.recovery_status === "recovering" ||
+            activeInjury.recovery_status === "rehab"
+          ) {
+            clearanceStatus = "limited";
           }
-        : null,
-      restrictions,
-      acwr: loadData?.acwr || null,
-      riskLevel: calculateRiskLevel(loadData?.acwr, injuries),
-    });
-  }
+          restrictions = activeInjury.activity_restrictions || [];
+        }
+
+        return {
+          id: user.id,
+          name: user.full_name || "Unknown",
+          position: user.position || "N/A",
+          avatarUrl: user.avatar_url,
+          clearanceStatus,
+          activeInjuries: injuries?.length || 0,
+          currentInjury: injuries?.[0]
+            ? {
+                type: injuries[0].injury_type,
+                location: injuries[0].injury_location,
+                grade: injuries[0].injury_grade,
+                phase: injuries[0].current_phase,
+                rtpProgress: injuries[0].rtp_progress || 0,
+                expectedReturn: injuries[0].expected_return_date,
+              }
+            : null,
+          restrictions,
+          acwr: loadData?.acwr || null,
+          riskLevel: calculateRiskLevel(loadData?.acwr, injuries),
+        };
+      }),
+    )
+  ).filter(Boolean);
 
   return athletes;
 }
@@ -140,21 +144,29 @@ async function getAthletePhysioOverview(teamId) {
  * Get detailed injury data for an athlete
  */
 async function getAthleteInjuryDetails(athleteId) {
-  // Get all injuries (active and history)
-  const { data: injuries } = await supabaseAdmin
-    .from("athlete_injuries")
-    .select("*")
-    .eq("user_id", athleteId)
-    .order("injury_date", { ascending: false });
+  // All-injuries, injury-tracking, and 28d load history all key on athleteId and are
+  // independent — fetch concurrently (3 sequential round-trips → 1).
+  const [{ data: injuries }, { data: tracking }, { data: loadHistory }] =
+    await Promise.all([
+      supabaseAdmin
+        .from("athlete_injuries")
+        .select("*")
+        .eq("user_id", athleteId)
+        .order("injury_date", { ascending: false }),
+      supabaseAdmin
+        .from("injury_tracking")
+        .select("*")
+        .or(`user_id.eq.${athleteId},player_id.eq.${athleteId}`)
+        .order("injury_date", { ascending: false }),
+      supabaseAdmin
+        .from("load_daily")
+        .select("date, acwr, acute_load, chronic_load")
+        .eq("user_id", athleteId)
+        .order("date", { ascending: false })
+        .limit(28),
+    ]);
 
-  // Get injury tracking data
-  const { data: tracking } = await supabaseAdmin
-    .from("injury_tracking")
-    .select("*")
-    .or(`user_id.eq.${athleteId},player_id.eq.${athleteId}`)
-    .order("injury_date", { ascending: false });
-
-  // Get rehab protocol if active injury
+  // Rehab protocol depends on the active injury — fetch after injuries resolve
   const activeInjury = injuries?.find((i) =>
     ["active", "recovering", "rehab"].includes(i.recovery_status),
   );
@@ -170,14 +182,6 @@ async function getAthleteInjuryDetails(athleteId) {
 
     rehabProtocol = protocol;
   }
-
-  // Get load history for risk analysis
-  const { data: loadHistory } = await supabaseAdmin
-    .from("load_daily")
-    .select("date, acwr, acute_load, chronic_load")
-    .eq("user_id", athleteId)
-    .order("date", { ascending: false })
-    .limit(28);
 
   return {
     activeInjuries:
@@ -203,19 +207,31 @@ async function getRTPAthletes(teamId) {
     .eq("team_id", teamId)
     .eq("role", "player");
 
+  const memberIds = (members || []).map((m) => m.user_id);
+  if (memberIds.length === 0) {
+    return [];
+  }
+
+  // Was an N+1 (one query per player). Single batched read instead; ordered by injury_date
+  // desc so the first row seen per user is their latest in-rehab injury.
+  const { data: injuryRows } = await supabaseAdmin
+    .from("athlete_injuries")
+    .select("*")
+    .in("user_id", memberIds)
+    .in("recovery_status", ["recovering", "rehab"])
+    .order("injury_date", { ascending: false });
+
+  const latestByUser = new Map();
+  for (const row of injuryRows || []) {
+    if (!latestByUser.has(row.user_id)) {
+      latestByUser.set(row.user_id, row);
+    }
+  }
+
   const rtpAthletes = [];
-
   for (const member of members || []) {
-    const { data: injuries } = await supabaseAdmin
-      .from("athlete_injuries")
-      .select("*")
-      .eq("user_id", member.user_id)
-      .in("recovery_status", ["recovering", "rehab"])
-      .order("injury_date", { ascending: false })
-      .limit(1);
-
-    if (injuries && injuries.length > 0) {
-      const injury = injuries[0];
+    const injury = latestByUser.get(member.user_id);
+    if (injury) {
       rtpAthletes.push({
         athleteId: member.user_id,
         athleteName: member.users?.full_name || "Unknown",
