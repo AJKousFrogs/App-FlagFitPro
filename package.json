@@ -5,7 +5,7 @@
   "description": "FlagFit Pro v4.0 - consolidated flag football performance, wellness, and team operations platform",
   "main": "index.js",
   "engines": {
-    "node": ">=22.0.0"
+    "node": ">=22.22.3"
   },
   "packageManager": "npm@11.4.2",
   "scripts": {
