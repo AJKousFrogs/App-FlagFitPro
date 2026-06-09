@@ -3,6 +3,7 @@ import {
   Component,
   CUSTOM_ELEMENTS_SCHEMA,
   computed,
+  effect,
   inject,
   signal,
 } from "@angular/core";
@@ -10,6 +11,13 @@ import { Router, RouterLink } from "@angular/router";
 import { LucideAngularModule } from "lucide-angular";
 import { AvatarComponent } from "../shared/avatar.component";
 import { ReadinessTrendComponent } from "../shared/readiness-trend.component";
+
+/** Shape of a row from GET /api/supplements/recent. */
+interface SuppLog {
+  supplement_name?: string;
+  taken?: boolean;
+  date?: string;
+}
 
 import { WellnessService } from "../core/services/wellness.service";
 import { ReadinessService } from "../core/services/readiness.service";
@@ -37,6 +45,46 @@ export class WellnessComponent {
   private readonly api = inject(ApiService);
   private readonly logger = inject(LoggerService);
   private readonly router = inject(Router);
+
+  private prefilledCheckin = false;
+
+  constructor() {
+    // Prefill the sliders from today's existing daily_wellness_checkin row so the
+    // form shows what was actually logged instead of fixed defaults. Without this,
+    // reopening Wellness shows 7/7.5/4/6/7/3 and re-submitting (an upsert) would
+    // overwrite the real entry with those literals — corrupting readiness/ACWR.
+    // WellnessService auto-loads on login; prefill once when today's row appears.
+    effect(() => {
+      if (this.prefilledCheckin) return;
+      const todayKey = new Date().toISOString().slice(0, 10);
+      const entry = this.wellnessSvc.wellnessData().find((e) => e.date === todayKey);
+      if (!entry) return;
+      this.prefilledCheckin = true;
+      if (entry.sleep != null) this.sleepQuality.set(entry.sleep);
+      if (entry.sleepHours != null) this.sleepHours.set(entry.sleepHours);
+      if (entry.soreness != null) this.soreness.set(entry.soreness);
+      if (entry.energy != null) this.energy.set(entry.energy);
+      if (entry.mood != null) this.mood.set(entry.mood);
+      if (entry.stress != null) this.stress.set(entry.stress);
+    });
+
+    // Reflect today's ACTUAL supplement logs rather than fabricated ON/ON/OFF —
+    // otherwise re-toggling overwrites the real log with literals.
+    this.api.get<{ logs?: SuppLog[] }>("/api/supplements/recent").subscribe({
+      next: (res) => {
+        const logs = res?.data?.logs ?? [];
+        const todayKey = new Date().toISOString().slice(0, 10);
+        const takenToday = (re: RegExp): boolean =>
+          logs.some(
+            (l) => l.date === todayKey && !!l.taken && re.test(l.supplement_name ?? ""),
+          );
+        this.creatine.set(takenToday(/creatine/i));
+        this.caffeine.set(takenToday(/caffeine/i));
+        this.beta.set(takenToday(/beta/i));
+      },
+      error: (e) => this.logger.error("supplements_recent_load_failed", e),
+    });
+  }
 
   readonly today = new Date().toLocaleDateString("en-GB", {
     weekday: "short",

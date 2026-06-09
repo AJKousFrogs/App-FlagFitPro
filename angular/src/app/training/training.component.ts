@@ -2,6 +2,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
+  effect,
   inject,
   signal,
 } from "@angular/core";
@@ -55,6 +56,8 @@ export class TrainingComponent {
   private readonly logger = inject(LoggerService);
   private readonly videoSvc = inject(TrainingVideoService);
 
+  private prefilledLog = false;
+
   /** Upcoming events (the spine) for the Schedule tab. */
   readonly upcoming = this.schedule.upcoming;
   daysTo(iso: string): number {
@@ -76,6 +79,17 @@ export class TrainingComponent {
 
   constructor() {
     if (!this.videoSvc.loaded()) void this.videoSvc.load();
+    // Default the session-log RPE/duration to today's PRESCRIBED values once the
+    // prescription resolves, instead of the fabricated 5 / 58. The athlete adjusts
+    // to actuals before completing; this feeds ACWR (load = rpe × duration).
+    effect(() => {
+      if (this.prefilledLog) return;
+      const rx = this.rx();
+      if (!rx) return;
+      this.prefilledLog = true;
+      if (rx.targetRpe != null) this.actualRpe.set(rx.targetRpe);
+      if (rx.targetMinutes != null) this.duration.set(rx.targetMinutes);
+    });
   }
 
   readonly seasonLabel = computed(() => {

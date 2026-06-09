@@ -77,6 +77,17 @@ export class SupplementsComponent {
             .map((l) => l.date),
         );
         this.creatineDays.set(days.size);
+
+        // Reflect today's ACTUAL logged state instead of fabricated ON/ON/OFF —
+        // re-toggling otherwise overwrites the real daily log with literals.
+        const todayKey = new Date().toISOString().slice(0, 10);
+        const takenToday = (re: RegExp): boolean =>
+          logs.some(
+            (l) => l.date === todayKey && !!l.taken && re.test(l.supplement_name ?? ""),
+          );
+        this.creatine.set(takenToday(/creatine/i));
+        this.caffeine.set(takenToday(/caffeine/i));
+        this.beta.set(takenToday(/beta/i));
       },
       error: (e) => this.logger.error("supplements_recent_failed", e),
     });
