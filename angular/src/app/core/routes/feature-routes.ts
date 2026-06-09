@@ -159,6 +159,12 @@ export const featureRoutes: Routes = [
         title: "Profile · FlagFit",
       },
       {
+        path: "profile/edit",
+        loadComponent: () =>
+          import("../../profile/profile-edit.component").then((m) => m.ProfileEditComponent),
+        title: "Edit profile · FlagFit",
+      },
+      {
         path: "schedule",
         loadComponent: () =>
           import("../../schedule/schedule.component").then((m) => m.ScheduleComponent),
