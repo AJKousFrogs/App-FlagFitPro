@@ -143,10 +143,22 @@ export class ScheduleService {
     if (!snap) {
       return "transition";
     }
+    // Resolve the "last event" relative to `date`, not to now — otherwise a game
+    // that's still in the future relative to today never counts as a past event
+    // for the days after it, and the week-ahead would miss post-game recovery
+    // (e.g. the Monday after this weekend's games should read as recovery).
+    const all = snap.lastEvent ? [snap.lastEvent, ...snap.upcoming] : snap.upcoming;
+    const priorByDate = all
+      .filter((e) => new Date(e.endsAt ?? e.startsAt).getTime() < date.getTime())
+      .sort(
+        (a, b) =>
+          new Date(b.endsAt ?? b.startsAt).getTime() -
+          new Date(a.endsAt ?? a.startsAt).getTime(),
+      );
     return resolvePhase({
       date,
       upcoming: snap.upcoming,
-      lastEvent: snap.lastEvent,
+      lastEvent: priorByDate[0] ?? null,
     });
   }
 
