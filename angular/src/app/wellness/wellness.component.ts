@@ -9,6 +9,7 @@ import {
 import { Router, RouterLink } from "@angular/router";
 import { LucideAngularModule } from "lucide-angular";
 import { AvatarComponent } from "../shared/avatar.component";
+import { ReadinessTrendComponent } from "../shared/readiness-trend.component";
 
 import { WellnessService } from "../core/services/wellness.service";
 import { ReadinessService } from "../core/services/readiness.service";
@@ -25,7 +26,7 @@ import { LoggerService } from "../core/services/logger.service";
 @Component({
   selector: "app-wellness",
   standalone: true,
-  imports: [AvatarComponent, RouterLink, LucideAngularModule],
+  imports: [AvatarComponent, ReadinessTrendComponent, RouterLink, LucideAngularModule],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: "./wellness.component.html",

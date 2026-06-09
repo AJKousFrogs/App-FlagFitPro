@@ -194,6 +194,11 @@ export const featureRoutes: Routes = [
           import("../../gallery/gallery.component").then((m) => m.GalleryComponent),
         title: "Design System · FlagFit",
       },
+      // Unknown sub-path inside the shell → home, instead of an uncaught
+      // NG04002. (e.g. a stale deep link or a bad in-app navigation target.)
+      { path: "**", redirectTo: "today" },
     ],
   },
+  // Catch-all for anything outside the shell (bad top-level deep links) → home.
+  { path: "**", redirectTo: "today" },
 ];
