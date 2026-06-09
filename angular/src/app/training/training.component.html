@@ -103,7 +103,10 @@
       }
     }
   } @else if (tab() === "Schedule") {
-    <div class="section-h"><h2>Upcoming</h2></div>
+    <div class="section-h">
+      <h2>Upcoming</h2>
+      <a class="btn primary sm" routerLink="/schedule"><lucide-icon name="calendar-plus" /> Add event</a>
+    </div>
     @if (upcoming().length) {
       <div class="card">
         @for (e of upcoming(); track e.id) {
@@ -114,7 +117,10 @@
         }
       </div>
     } @else {
-      <div class="empty">No upcoming events — add your competitions to plan the season.</div>
+      <div class="empty">
+        <p style="margin:0 0 var(--s-3)">No upcoming events — add your camps, tournaments &amp; gamedays so your plan adapts.</p>
+        <a class="btn primary" routerLink="/schedule"><lucide-icon name="calendar-plus" /> Add an event</a>
+      </div>
     }
   } @else {
     <div class="empty">Programs land as the rebuild continues — your coach assigns them here.</div>

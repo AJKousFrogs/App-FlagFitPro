@@ -1,5 +1,18 @@
-import { ChangeDetectionStrategy, Component } from "@angular/core";
-import { RouterLink, RouterLinkActive, RouterOutlet } from "@angular/router";
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+} from "@angular/core";
+import { toSignal } from "@angular/core/rxjs-interop";
+import {
+  NavigationEnd,
+  Router,
+  RouterLink,
+  RouterLinkActive,
+  RouterOutlet,
+} from "@angular/router";
+import { filter, map, startWith } from "rxjs/operators";
 import { LucideAngularModule } from "lucide-angular";
 
 /**
@@ -49,9 +62,11 @@ import { LucideAngularModule } from "lucide-angular";
         <router-outlet />
       </div>
 
-      <!-- phone/tablet quick-log FAB (hidden ≥1024px via CSS) -->
-      <a class="fab" routerLink="/wellness" aria-label="Log today's check-in">
-        <lucide-icon name="plus" />
+      <!-- phone/tablet quick-log FAB (hidden ≥1024px via CSS).
+           Context-aware: on the schedule/training screens it adds an event;
+           elsewhere it opens the daily wellness check-in. -->
+      <a class="fab" [routerLink]="fab().link" [attr.aria-label]="fab().label">
+        <lucide-icon [name]="fab().icon" />
       </a>
 
       <!-- phone/tablet bottom tab bar (hidden ≥1024px via CSS) -->
@@ -75,4 +90,25 @@ import { LucideAngularModule } from "lucide-angular";
     </div>
   `,
 })
-export class ShellComponent {}
+export class ShellComponent {
+  private readonly router = inject(Router);
+
+  /** Current URL as a signal, updated on every navigation. */
+  private readonly url = toSignal(
+    this.router.events.pipe(
+      filter((e): e is NavigationEnd => e instanceof NavigationEnd),
+      map((e) => e.urlAfterRedirects),
+      startWith(this.router.url),
+    ),
+    { initialValue: this.router.url },
+  );
+
+  /** Context-aware FAB action. Schedule/Training → add event; else → check-in. */
+  readonly fab = computed(() => {
+    const u = this.url();
+    if (u.startsWith("/schedule") || u.startsWith("/training")) {
+      return { link: "/schedule", label: "Add a schedule event", icon: "calendar-plus" };
+    }
+    return { link: "/wellness", label: "Log today's check-in", icon: "plus" };
+  });
+}

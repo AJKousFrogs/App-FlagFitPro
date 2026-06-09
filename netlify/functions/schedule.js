@@ -164,6 +164,53 @@ function resolvePhase(now, upcoming, lastEvent) {
   return "accumulation";
 }
 
+// Athlete-entered events (personal / domestic / national) are stored in
+// `athlete_events` and projected onto the same row shape as `v_athlete_schedule`
+// so phase/density/snapshot logic treats them identically.
+const ATHLETE_EVENT_LEVEL = {
+  personal: "club",
+  domestic: "national",
+  national: "international",
+};
+const ATHLETE_EVENT_KIND = {
+  gameday: "league",
+  tournament: "tournament",
+  camp: "friendly",
+  friendly: "friendly",
+  other: "friendly",
+};
+const ATHLETE_EVENT_TEAM_LABEL = {
+  personal: "Personal",
+  domestic: "Domestic",
+  national: "National team",
+};
+
+function athleteEventToRow(ev) {
+  return {
+    id: ev.id,
+    competition_id: null,
+    team_id: null,
+    starts_at: ev.starts_at,
+    ends_at: ev.ends_at,
+    expected_game_count: ev.expected_game_count ?? 1,
+    importance: ev.importance ?? "regular",
+    label: ev.title,
+    location: ev.location,
+    venue: ev.venue,
+    notes: ev.notes,
+    status: ev.status ?? "scheduled",
+    competition_name: ev.title,
+    competition_short_name: null,
+    competition_kind: ATHLETE_EVENT_KIND[ev.kind] ?? "friendly",
+    competition_level: ATHLETE_EVENT_LEVEL[ev.category] ?? "club",
+    competition_country: null,
+    competition_season_year: null,
+    team_name: ATHLETE_EVENT_TEAM_LABEL[ev.category] ?? "Personal",
+    // marker so consumers can tell athlete-entered events apart from team events
+    source: "athlete",
+  };
+}
+
 function rowToEvent(row) {
   return {
     id: row.id,
@@ -185,6 +232,7 @@ function rowToEvent(row) {
     competitionCountry: row.competition_country,
     competitionSeasonYear: row.competition_season_year,
     teamName: row.team_name,
+    source: row.source ?? "team",
   };
 }
 
@@ -204,24 +252,47 @@ async function getSchedule(event, _context, { userId }) {
     ),
   );
 
-  const { data, error } = await supabaseAdmin
-    .from("v_athlete_schedule")
-    .select("*")
-    .eq("user_id", userId)
-    .gte("starts_at", from.toISOString())
-    .lte("starts_at", to.toISOString())
-    .order("starts_at", { ascending: true });
+  // Team/competition events (shared spine) + athlete-entered events (personal,
+  // domestic, national) are read in parallel and merged into one timeline.
+  const [teamRes, athleteRes] = await Promise.all([
+    supabaseAdmin
+      .from("v_athlete_schedule")
+      .select("*")
+      .eq("user_id", userId)
+      .gte("starts_at", from.toISOString())
+      .lte("starts_at", to.toISOString())
+      .order("starts_at", { ascending: true }),
+    supabaseAdmin
+      .from("athlete_events")
+      .select("*")
+      .eq("user_id", userId)
+      .gte("starts_at", from.toISOString())
+      .lte("starts_at", to.toISOString())
+      .order("starts_at", { ascending: true }),
+  ]);
 
-  if (error) {
+  if (teamRes.error) {
     logger.error("schedule.read_failed", {
       userId,
-      error: error.message,
-      code: error.code,
+      error: teamRes.error.message,
+      code: teamRes.error.code,
     });
     return createErrorResponse("Failed to read schedule", 500);
   }
+  // Athlete-entered events are additive; a read failure there must not blank the
+  // whole schedule, so log and continue with the team events alone.
+  if (athleteRes.error) {
+    logger.error("schedule.athlete_events_read_failed", {
+      userId,
+      error: athleteRes.error.message,
+      code: athleteRes.error.code,
+    });
+  }
 
-  const rows = data ?? [];
+  const rows = [
+    ...(teamRes.data ?? []),
+    ...((athleteRes.data ?? []).map(athleteEventToRow)),
+  ].sort((a, b) => new Date(a.starts_at) - new Date(b.starts_at));
   const upcoming = rows
     .filter((r) => new Date(r.ends_at ?? r.starts_at) >= now)
     .filter((r) => r.status !== "cancelled")

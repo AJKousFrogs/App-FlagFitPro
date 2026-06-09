@@ -47,6 +47,12 @@ import {
   Mail,
   ThumbsUp,
   ThumbsDown,
+  Calendar,
+  CalendarPlus,
+  Pencil,
+  Trash2,
+  MapPin,
+  X,
 } from "lucide-angular";
 import { provideClientHydration } from "@angular/platform-browser";
 import { provideAnimations } from "@angular/platform-browser/animations";
@@ -88,6 +94,7 @@ export const appConfig: ApplicationConfig = {
         Trophy, Users, MessageCircle, BarChart3, Sparkles, BookOpen, FileText,
         User, Medal, Flame, Settings, Camera, Lock, Sun, TrendingUp, Video, Mail,
         ThumbsUp, ThumbsDown,
+        Calendar, CalendarPlus, Pencil, Trash2, MapPin, X,
       }),
     ),
 

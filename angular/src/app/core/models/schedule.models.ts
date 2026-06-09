@@ -91,6 +91,14 @@ export interface CompetitionEvent {
 
   // Joined from teams
   teamName: string;
+
+  /**
+   * Where the event came from: `team` = the shared competition spine
+   * (`competition_events`), `athlete` = entered by the athlete themselves
+   * (`athlete_events`). Athlete-entered events are editable from the Schedule
+   * screen; team events are read-only there.
+   */
+  source: "team" | "athlete";
 }
 
 /**

@@ -159,6 +159,12 @@ export const featureRoutes: Routes = [
         title: "Profile · FlagFit",
       },
       {
+        path: "schedule",
+        loadComponent: () =>
+          import("../../schedule/schedule.component").then((m) => m.ScheduleComponent),
+        title: "Schedule · FlagFit",
+      },
+      {
         path: "competition",
         loadComponent: () =>
           import("../../competition/competition.component").then((m) => m.CompetitionComponent),

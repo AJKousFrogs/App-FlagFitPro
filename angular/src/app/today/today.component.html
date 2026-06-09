@@ -79,6 +79,20 @@
     </div>
   }
 
+  <!-- schedule entry — athlete-entered camps / tournaments / gamedays drive the plan -->
+  <a class="card linkcard" routerLink="/schedule">
+    <span class="lc-ic"><lucide-icon name="calendar" /></span>
+    <div class="stack" style="gap:2px;flex:1">
+      <b>Your schedule</b>
+      @if (nextEvent(); as ev) {
+        <small class="muted">Next: {{ ev.competitionShortName || ev.competitionName }} · in {{ daysToNext() }}d</small>
+      } @else {
+        <small class="muted">Add camps, tournaments &amp; gamedays so your plan adapts</small>
+      }
+    </div>
+    <lucide-icon class="lc-go" name="chevron-right" />
+  </a>
+
   <!-- diagnostics below the fold -->
   <div class="section-h"><h2>How you're tracking</h2></div>
 

@@ -212,6 +212,19 @@
   status = 200
   force = true
 
+# API Routes for Athlete Events (athlete-entered personal/domestic/national schedule)
+[[redirects]]
+  from = "/api/athlete-events/*"
+  to = "/.netlify/functions/athlete-events"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/athlete-events"
+  to = "/.netlify/functions/athlete-events"
+  status = 200
+  force = true
+
 # API Routes for Event Availability (RSVP — the plan side)
 [[redirects]]
   from = "/api/event-availability/*"
