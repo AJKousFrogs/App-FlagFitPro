@@ -6,7 +6,7 @@ import {
   inject,
   signal,
 } from "@angular/core";
-import { RouterLink } from "@angular/router";
+import { Router, RouterLink } from "@angular/router";
 import { LucideAngularModule } from "lucide-angular";
 import { AvatarComponent } from "../shared/avatar.component";
 
@@ -35,6 +35,7 @@ export class WellnessComponent {
   private readonly readinessSvc = inject(ReadinessService);
   private readonly api = inject(ApiService);
   private readonly logger = inject(LoggerService);
+  private readonly router = inject(Router);
 
   readonly today = new Date().toLocaleDateString("en-GB", {
     weekday: "short",
@@ -72,9 +73,15 @@ export class WellnessComponent {
           this.submitting.set(false);
           if (res.success) {
             this.submitted.set(true);
-            // refresh readiness (recomputed server-side from the new check-in)
+            // Recompute readiness server-side from the new check-in, THEN land on
+            // Today so it reflects the just-logged session. Navigate even if the
+            // recalc fails so the user is never stranded on the check-in screen.
             this.readinessSvc.calculateToday().subscribe({
-              error: (err) => this.logger.error("readiness_recalc_failed", err),
+              next: () => this.goToToday(),
+              error: (err) => {
+                this.logger.error("readiness_recalc_failed", err);
+                this.goToToday();
+              },
             });
           } else {
             this.submitError.set(res.error ?? "Could not save check-in");
@@ -86,6 +93,10 @@ export class WellnessComponent {
           this.logger.error("wellness_submit_failed", err);
         },
       });
+  }
+
+  private goToToday(): void {
+    void this.router.navigate(["/today"]);
   }
 
   // --- daily supplement log (upsert batch) ---
