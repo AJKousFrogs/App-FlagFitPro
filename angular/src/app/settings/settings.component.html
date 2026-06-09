@@ -89,6 +89,24 @@
           <a routerLink="/schedule">Schedule</a> as a “Team training”.
         </p>
       </div>
+
+      <div class="section-h"><h2>Recovery equipment</h2></div>
+      <div class="card stack">
+        <p class="muted" style="margin:0">
+          What recovery gear do you have? We only ever suggest modalities you actually own.
+        </p>
+        <div class="chiprow">
+          @for (e of recoveryEquipment; track e.id) {
+            <button type="button" class="chip" [class.sel]="ownedEquipment().includes(e.id)"
+                    (click)="toggleEquipment(e.id)">{{ e.label }}</button>
+          }
+        </div>
+        @if (equipMsg(); as m) { <small class="muted">{{ m }}</small> }
+        <div class="row" style="justify-content:flex-end">
+          <button class="btn primary sm" type="button" [attr.aria-disabled]="savingEquip()"
+                  (click)="saveEquipment()">{{ savingEquip() ? "Saving…" : "Save equipment" }}</button>
+        </div>
+      </div>
     }
     @default {
       <div class="empty">{{ tab() }} settings land as the rebuild continues.</div>

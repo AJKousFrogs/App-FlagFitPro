@@ -96,6 +96,28 @@
     <lucide-icon class="lc-go" name="chevron-right" />
   </a>
 
+  <!-- recovery modalities — gated by owned equipment -->
+  @if (recovery().length) {
+    <div class="section-h"><h2>Recovery today</h2></div>
+    <div class="card stack">
+      @for (r of recovery(); track r.id) {
+        <div class="row">
+          <span class="inline"><lucide-icon name="heart-pulse" /> {{ r.label }}</span>
+          <small class="muted">{{ r.reason }}</small>
+        </div>
+      }
+    </div>
+  } @else if (!hasEquipment()) {
+    <a class="card linkcard" routerLink="/settings">
+      <span class="lc-ic"><lucide-icon name="heart-pulse" /></span>
+      <div class="stack" style="gap:2px;flex:1">
+        <b>Recovery</b>
+        <small class="muted">Add your recovery gear in Settings for tailored modalities</small>
+      </div>
+      <lucide-icon class="lc-go" name="chevron-right" />
+    </a>
+  }
+
   <!-- diagnostics below the fold -->
   <div class="section-h"><h2>How you're tracking</h2></div>
 

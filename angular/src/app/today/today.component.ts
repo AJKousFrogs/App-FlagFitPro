@@ -17,6 +17,7 @@ import { AcwrService } from "../core/services/acwr.service";
 import { ScheduleService } from "../core/services/schedule.service";
 import { IdentityService } from "../core/services/identity.service";
 import { TrainingVideoService } from "../core/services/training-video.service";
+import { RecoveryService } from "../core/services/recovery.service";
 
 /**
  * Today — the answer-first home screen. Ported 1:1 from the approved hi-fi
@@ -56,6 +57,11 @@ export class TodayComponent {
   private readonly acwrSvc = inject(AcwrService);
   private readonly schedule = inject(ScheduleService);
   private readonly identity = inject(IdentityService);
+  private readonly recoverySvc = inject(RecoveryService);
+
+  /** Recovery modalities recommended for today, gated by owned equipment. */
+  readonly recovery = this.recoverySvc.recommendations;
+  readonly hasEquipment = computed(() => this.recoverySvc.ownedEquipment().length > 0);
 
   /** Today's prescription (engine). Null until the schedule snapshot resolves. */
   readonly rx = this.periodization.today;

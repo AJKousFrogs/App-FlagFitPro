@@ -15,6 +15,8 @@ import { SupabaseService } from "../core/services/supabase.service";
 import { LoggerService } from "../core/services/logger.service";
 import { PrivacySettingsService } from "../core/services/privacy-settings.service";
 import { PeriodizationService } from "../core/services/periodization.service";
+import { RecoveryService } from "../core/services/recovery.service";
+import { RECOVERY_EQUIPMENT } from "../core/models/recovery-modalities";
 import { extractApiPayload } from "../core/utils/api-response-mapper";
 
 type Tab = "Notifications" | "Privacy" | "Prefs" | "Security";
@@ -52,6 +54,44 @@ export class SettingsComponent {
   private readonly logger = inject(LoggerService);
   private readonly privacy = inject(PrivacySettingsService);
   private readonly periodization = inject(PeriodizationService);
+  private readonly recovery = inject(RecoveryService);
+
+  // Recovery equipment (Prefs tab) — reuses athlete_training_config.available_equipment.
+  readonly recoveryEquipment = RECOVERY_EQUIPMENT;
+  readonly ownedEquipment = signal<string[]>([]);
+  readonly savingEquip = signal(false);
+  readonly equipMsg = signal<string | null>(null);
+
+  toggleEquipment(id: string): void {
+    const cur = this.ownedEquipment();
+    this.ownedEquipment.set(
+      cur.includes(id) ? cur.filter((e) => e !== id) : [...cur, id],
+    );
+  }
+
+  async saveEquipment(): Promise<void> {
+    if (this.savingEquip()) return;
+    this.savingEquip.set(true);
+    this.equipMsg.set(null);
+    try {
+      const res = await firstValueFrom(
+        this.api.post("/api/player-settings", {
+          availableEquipment: this.ownedEquipment(),
+        }),
+      );
+      if (res.success) {
+        this.equipMsg.set("Saved — recovery suggestions now match your gear.");
+        void this.recovery.loadEquipment();
+      } else {
+        this.equipMsg.set(res.error ?? "Couldn't save — try again.");
+      }
+    } catch (e) {
+      this.logger.error("settings_equipment_save_failed", e);
+      this.equipMsg.set("Couldn't save — try again.");
+    } finally {
+      this.savingEquip.set(false);
+    }
+  }
 
   readonly tabs: Tab[] = ["Notifications", "Privacy", "Prefs", "Security"];
   readonly tab = signal<Tab>("Notifications");
@@ -140,21 +180,29 @@ export class SettingsComponent {
     } catch (e) {
       this.logger.error("settings_notif_load_failed", e);
     }
-    // Flag football team-practice days.
+    // Flag football team-practice days + owned recovery equipment.
     try {
       const res = await firstValueFrom(
-        this.api.get<{ teamTrainingDays?: { days?: number[]; time?: string } }>(
-          "/api/player-settings",
-        ),
+        this.api.get<{
+          teamTrainingDays?: { days?: number[]; time?: string };
+          availableEquipment?: string[];
+        }>("/api/player-settings"),
       );
-      const ttd = (extractApiPayload<{ teamTrainingDays?: { days?: number[]; time?: string } }>(res) ?? {})
-        .teamTrainingDays;
+      const data =
+        extractApiPayload<{
+          teamTrainingDays?: { days?: number[]; time?: string };
+          availableEquipment?: string[];
+        }>(res) ?? {};
+      const ttd = data.teamTrainingDays;
       if (ttd) {
         if (Array.isArray(ttd.days)) this.trainingDays.set(ttd.days);
         if (ttd.time) this.trainingTime.set(ttd.time);
       }
+      if (Array.isArray(data.availableEquipment)) {
+        this.ownedEquipment.set(data.availableEquipment.map(String));
+      }
     } catch (e) {
-      this.logger.error("settings_training_days_load_failed", e);
+      this.logger.error("settings_prefs_load_failed", e);
     }
     this.prefsLoaded.set(true);
   }
