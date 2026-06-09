@@ -425,11 +425,44 @@ async function createTrainingLogSession(
       updated_at: new Date().toISOString(),
     };
 
-    const { data: session, error } = await supabase
+    // Idempotent per (user_id, session_date, session_type): re-logging the same
+    // day's session UPDATES the existing row rather than appending a duplicate —
+    // training_sessions has no dedupe key, and a duplicate would double-count in
+    // ACWR (workload is summed). The athlete logs one prescribed session per day.
+    const { data: existing } = await supabase
       .from("training_sessions")
-      .insert(sessionRecord)
-      .select()
-      .single();
+      .select("id")
+      .eq("user_id", userId)
+      .eq("session_date", cleaned.sessionDate)
+      .eq("session_type", cleaned.sessionType)
+      .order("created_at", { ascending: true })
+      .limit(1)
+      .maybeSingle();
+
+    let session;
+    let error;
+    if (existing?.id) {
+      ({ data: session, error } = await supabase
+        .from("training_sessions")
+        .update({
+          duration_minutes: sessionRecord.duration_minutes,
+          rpe: sessionRecord.rpe,
+          workload: sessionRecord.workload,
+          notes: sessionRecord.notes,
+          status: sessionRecord.status,
+          updated_at: sessionRecord.updated_at,
+        })
+        .eq("id", existing.id)
+        .eq("user_id", userId)
+        .select()
+        .single());
+    } else {
+      ({ data: session, error } = await supabase
+        .from("training_sessions")
+        .insert(sessionRecord)
+        .select()
+        .single());
+    }
 
     if (error) {
       if (error.code === "42P01") {
