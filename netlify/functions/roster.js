@@ -5,16 +5,12 @@
  *
  * Routes handled:
  *   /api/roster, /api/roster/*
- *   /api/depth-chart, /api/depth-chart/*
- *   /api/scouting, /api/scouting/*
  *   /api/player-stats, /api/player-stats/*
  *   /api/player-settings, /api/player-settings/*
  */
 
 import { handler as rosterCoreHandler } from "./roster-core.js";
 import { dispatch } from "./utils/web-lambda-bridge.js";
-import { handler as depthChartHandler } from "./depth-chart.js";
-import { handler as scoutingHandler } from "./scouting.js";
 import { handler as playerStatsHandler } from "./player-stats.js";
 import { handler as playerSettingsHandler } from "./player-settings.js";
 
@@ -32,8 +28,6 @@ export default async (req) => {
   const url = new URL(req.url);
   const path = url.pathname;
 
-  if (path.includes("/depth-chart")) {return dispatch(depthChartHandler, req, url);}
-  if (path.includes("/scouting")) {return dispatch(scoutingHandler, req, url);}
   if (path.includes("/player-stats")) {return dispatch(playerStatsHandler, req, url);}
   if (path.includes("/player-settings")) {return dispatch(playerSettingsHandler, req, url);}
   if (path.includes("/roster")) {return dispatch(rosterCoreHandler, req, url);}

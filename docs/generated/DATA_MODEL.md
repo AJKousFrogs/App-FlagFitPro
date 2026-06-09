@@ -433,7 +433,7 @@ Touched by: `chat`
 - `updated_at` timestamp with time zone · not null
 
 ### `chat_messages`
-Touched by: `chat`, `scouting`
+Touched by: `chat`
 
 - `id` uuid · not null
 - `user_id` uuid
@@ -1099,7 +1099,7 @@ Touched by: `game-events`
 - `updated_at` timestamp with time zone · not null
 
 ### `games`
-Touched by: `ai-chat`, `coach-core`, `daily-training`, `game-events`, `games-core`, `player-stats`, `scouting`, `team-calendar`, `training-plan`, `trends`
+Touched by: `ai-chat`, `coach-core`, `daily-training`, `game-events`, `games-core`, `player-stats`, `team-calendar`, `training-plan`, `trends`
 
 - `id` integer · not null
 - `game_id` character varying · not null
@@ -2407,7 +2407,7 @@ Touched by: `accept-invitation`, `team-invite`, `validate-invitation`
 - `updated_at` timestamp with time zone · not null
 
 ### `team_members`
-Touched by: `accept-invitation`, `ai-chat`, `ai-telemetry`, `analytics-core`, `attendance`, `calc-readiness`, `calibration-logs`, `chat`, `coach-activity`, `coach-analytics`, `coach-core`, `coach-inbox`, `community`, `compute-acwr`, `daily-protocol`, `dashboard`, `decisions`, `depth-chart`, `exercisedb`, `games-core`, `import-open-data`, `load-management`, `officials`, `payments-core`, `performance-data`, `player-stats`, `privacy-settings`, `push`, `response-feedback`, `roster-core`, `scouting`, `season-reports`, `smart-training-recommendations`, `staff-nutritionist`, `staff-physiotherapist`, `staff-psychology`, `team-invite`, `team-templates`, `tournament-calendar`, `training-metrics`, `training-plan`, `user-context`, `wellness-checkin`
+Touched by: `accept-invitation`, `ai-chat`, `ai-telemetry`, `analytics-core`, `attendance`, `calc-readiness`, `calibration-logs`, `chat`, `coach-activity`, `coach-analytics`, `coach-core`, `coach-inbox`, `community`, `compute-acwr`, `daily-protocol`, `dashboard`, `decisions`, `exercisedb`, `games-core`, `import-open-data`, `load-management`, `payments-core`, `performance-data`, `player-stats`, `privacy-settings`, `response-feedback`, `roster-core`, `season-reports`, `smart-training-recommendations`, `staff-nutritionist`, `staff-physiotherapist`, `staff-psychology`, `team-invite`, `team-templates`, `training-metrics`, `training-plan`, `user-context`, `wellness-checkin`
 
 - `id` uuid · not null
 - `team_id` uuid · not null

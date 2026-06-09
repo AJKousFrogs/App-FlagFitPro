@@ -1285,45 +1285,6 @@
   status = 200
   force = true
 
-# Equipment API - Gear and equipment tracking
-[[redirects]]
-  from = "/api/equipment/*"
-  to = "/.netlify/functions/equipment"
-  status = 200
-  force = true
-
-[[redirects]]
-  from = "/api/equipment"
-  to = "/.netlify/functions/equipment"
-  status = 200
-  force = true
-
-# Officials API - Referee scheduling
-[[redirects]]
-  from = "/api/officials/*"
-  to = "/.netlify/functions/officials"
-  status = 200
-  force = true
-
-[[redirects]]
-  from = "/api/officials"
-  to = "/.netlify/functions/officials"
-  status = 200
-  force = true
-
-# Push Notifications API
-[[redirects]]
-  from = "/api/push/*"
-  to = "/.netlify/functions/push"
-  status = 200
-  force = true
-
-[[redirects]]
-  from = "/api/push"
-  to = "/.netlify/functions/push"
-  status = 200
-  force = true
-
 # API Routes for Daily Protocol System
 [[redirects]]
   from = "/api/daily-protocol"

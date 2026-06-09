@@ -3,7 +3,7 @@
 > Regenerate: `npm run docs:regen` (parses `netlify.toml` + `netlify/functions/*.js` + scans `angular/src`).
 > **Last verified: 2026-06-09**
 
-**121 functions: 120 exercised, 1 orphaned.** A table name with ⚠️ is referenced in code but not a live table (possible drift/typo); _(bucket)_ = Storage bucket, not a DB table.
+**114 functions: 113 exercised, 1 orphaned.** A table name with ⚠️ is referenced in code but not a live table (possible drift/typo); _(bucket)_ = Storage bucket, not a DB table.
 
 ## Exercised
 
@@ -44,8 +44,6 @@
 | `data` | OPTIONS | /api/wearables/status<br>/api/import/fetch-url<br>/api/import/process<br>/api/import-open-data<br>/api/data-export/*<br>/api/data-export | — |
 | `data-export` | GET, POST | _(router submodule)_ | gdpr_data_processing_log ⚠️ |
 | `decisions` | GET, POST | _(router submodule)_ | team_members, decision_ledger |
-| `depth-chart` | GET, POST, PUT, DELETE | _(router submodule)_ | team_members, depth_chart_templates ⚠️, depth_chart_entries ⚠️, depth_chart_history ⚠️ |
-| `equipment` | GET, POST, PUT, DELETE | /api/equipment/*<br>/api/equipment | equipment_items ⚠️, equipment_assignments ⚠️ |
 | `event-availability` | GET, POST | /api/event-availability/*<br>/api/event-availability | event_availability, set_event_availability() |
 | `event-participation` | GET, POST | /api/event-participation/*<br>/api/event-participation | v_pending_event_participation, record_event_participation() |
 | `exercise-progression` | POST | _(router submodule)_ | protocol_exercises, exercises |
@@ -67,7 +65,6 @@
 | `micro-sessions` | GET, POST, PATCH | _(router submodule)_ | micro_sessions, micro_session_analytics |
 | `notifications` | OPTIONS | /api/notifications<br>/api/notifications/*<br>/api/dashboard/notifications<br>/api/dashboard/notifications/*<br>/api/dashboard/notifications/count<br>/api/dashboard/notifications/create<br>/api/dashboard/notifications/preferences | — |
 | `nutrition` | GET, POST, PUT | _(router submodule)_ | athlete_nutrition_profiles, nutrition_plans, meal_templates, usda_foods ⚠️ |
-| `officials` | GET, POST, PUT, DELETE | /api/officials/*<br>/api/officials | team_members, officials ⚠️, game_officials ⚠️, official_availability ⚠️ |
 | `parental-consent` | GET, POST, PUT | _(router submodule)_ | users, parental_consent, privacy_audit_log |
 | `payments` | OPTIONS | /api/payments/*<br>/api/payments<br>/api/sponsors/*<br>/api/sponsors<br>/api/sponsor-logo/* | — |
 | `payments-core` | GET, POST, PUT | _(router submodule)_ | team_members, player_payments |
@@ -79,9 +76,7 @@
 | `player-stats` | GET | _(router submodule)_ | games, game_events, team_members, player_stats_consent ⚠️ |
 | `plyometrics` | GET | _(router submodule)_ | plyometrics_exercises |
 | `privacy-settings` | GET, PUT | _(router submodule)_ | privacy_settings, team_sharing_settings, users, parental_consent, team_members, privacy_audit_log |
-| `program-cycles` | GET, POST | _(router submodule)_ | program_cycles ⚠️, player_program_cycles ⚠️ |
 | `programs` | OPTIONS | /api/decisions/*<br>/api/decisions<br>/api/player-programs<br>/api/player-programs/*<br>/api/program-cycles<br>/api/program-cycles/*<br>/api/micro-sessions/*<br>/api/micro-sessions | — |
-| `push` | GET, POST, PUT, DELETE | /api/push/*<br>/api/push | team_members, user_notification_tokens ⚠️, push_notification_preferences ⚠️ |
 | `qb-throwing` | GET, POST | _(router submodule)_ | qb_throwing_sessions, get_qb_throwing_progression() |
 | `readiness` | OPTIONS | /api/compute-acwr<br>/api/calc-readiness<br>/api/readiness-history<br>/api/load-management/*<br>/api/load-management | — |
 | `readiness-history` | GET | _(router submodule)_ | readiness_scores |
@@ -92,7 +87,6 @@
 | `roster` | OPTIONS | /api/roster/*<br>/api/scouting/*<br>/api/scouting<br>/api/player-stats<br>/api/player-stats/*<br>/api/depth-chart/*<br>/api/depth-chart<br>/api/player-settings<br>/api/player-settings/* | — |
 | `roster-core` | GET | _(router submodule)_ | team_members |
 | `schedule` | GET | /api/schedule/*<br>/api/schedule | v_athlete_schedule, athlete_events |
-| `scouting` | GET | _(router submodule)_ | team_members, scouting_reports ⚠️, games, chat_messages |
 | `season-archive` | POST | _(router submodule)_ | archive_season_data() |
 | `season-reports` | POST | _(router submodule)_ | seasons ⚠️, team_members, season_summary_reports ⚠️, daily_wellness_checkin, acwr_history ⚠️ |
 | `sleep-data` | GET | _(router submodule)_ | users, daily_wellness_checkin |
@@ -109,7 +103,6 @@
 | `team-calendar` | GET, POST | _(router submodule)_ | attendance_records, games, practice_plans, team_events |
 | `team-invite` | POST | _(router submodule)_ | teams, team_members, team_invitations, users |
 | `team-templates` | GET, POST, PATCH, DELETE | _(router submodule)_ | team_members, team_templates, coach_inbox_items, ai_messages, micro_sessions, template_assignments |
-| `tournament-calendar` | GET, POST | _(router submodule)_ | team_members, tournament_calendar ⚠️ |
 | `training` | OPTIONS | /api/training/sessions<br>/api/training-sessions<br>/api/training/sessions/*<br>/api/training-sessions/*<br>/api/training/complete<br>/api/training/complete/*<br>/api/training/suggestions<br>/api/training/suggestions/*<br>/api/training-metrics<br>/api/training-plan<br>/api/training-plan/*<br>/api/training/plan<br>/api/training/plan/*<br>/api/training/stats<br>/api/training/stats-enhanced<br>/api/training-programs<br>/api/training-programs/*<br>/api/smart-training<br>/api/smart-training/*<br>/api/training/programs<br>/api/training/programs/*<br>/api/daily-training<br>/api/daily-training/* | — |
 | `training-complete` | POST | _(router submodule)_ | sponsor_rewards ⚠️, notifications, training_sessions, complete_training_session() |
 | `training-metrics` | GET | _(router submodule)_ | training_sessions, team_members |
