@@ -169,4 +169,11 @@ export interface PeriodizationInputs {
    * intent changes (a thunderstorm still warns). Default false.
    */
   coachOverride?: boolean;
+  /**
+   * True when the athlete has flag-football team practice on `date` (recurring
+   * weekday or a one-off). On a practice day with no event micro-phase, practice
+   * IS the session — the plan prescribes only light complementary work. Event
+   * windows (competition/taper/recovery) and safety guards take precedence.
+   */
+  isTeamPractice?: boolean;
 }

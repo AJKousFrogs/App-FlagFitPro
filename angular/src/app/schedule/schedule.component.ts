@@ -36,6 +36,7 @@ const KIND_DEFAULT_IMPORTANCE: Record<AthleteEventKind, AthleteEventImportance> 
   tournament: "peak",
   camp: "regular",
   friendly: "regular",
+  training: "regular",
   other: "regular",
 };
 
@@ -237,6 +238,7 @@ export class ScheduleComponent implements OnInit {
     { key: "tournament", label: "Tournament" },
     { key: "camp", label: "Camp" },
     { key: "friendly", label: "Friendly" },
+    { key: "training", label: "Team training" },
     { key: "other", label: "Other" },
   ];
   readonly importances: { key: AthleteEventImportance; label: string }[] = [

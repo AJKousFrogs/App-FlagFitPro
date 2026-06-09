@@ -52,29 +52,20 @@ export class PeriodizationService {
   readonly seasonCalendar = signal<SeasonWindow[]>([]);
 
   /**
+   * Recurring flag-football team-practice weekdays (0=Sun…6=Sat) the athlete
+   * declared in Settings. On these days practice is the session (see prescribeFor).
+   * Empty until loaded.
+   */
+  readonly teamTrainingDays = signal<number[]>([]);
+
+  /**
    * Live weather at the athlete's location, fed to the weather guard (rain →
    * relocate sprints, heat → scale, storm → stop). Null until loaded → no guard.
    */
   readonly weather = signal<WeatherInput | null>(null);
 
   constructor() {
-    this.api
-      .get<{ season_calendar?: SeasonWindow[]; seasonCalendar?: SeasonWindow[] }>(
-        "/api/player-settings",
-      )
-      .subscribe({
-        next: (res) => {
-          const d = (res?.data ?? {}) as {
-            season_calendar?: SeasonWindow[];
-            seasonCalendar?: SeasonWindow[];
-          };
-          const cal = d.season_calendar ?? d.seasonCalendar;
-          if (Array.isArray(cal)) this.seasonCalendar.set(cal);
-        },
-        error: () => {
-          /* no config yet → generic build week */
-        },
-      });
+    this.loadSettings();
 
     // Live weather → the prescription weather guard (metric: °C / mm / km/h).
     this.api
@@ -105,6 +96,44 @@ export class PeriodizationService {
   }
 
   /**
+   * Load season calendar + recurring team-practice days from player-settings.
+   * Called once on construct; re-callable via {@link refreshSettings} so a save
+   * in Settings reflects in the plan without a full reload.
+   */
+  private loadSettings(): void {
+    this.api
+      .get<{
+        season_calendar?: SeasonWindow[];
+        seasonCalendar?: SeasonWindow[];
+        teamTrainingDays?: { days?: number[]; time?: string } | number[];
+      }>("/api/player-settings")
+      .subscribe({
+        next: (res) => {
+          const d = (res?.data ?? {}) as {
+            season_calendar?: SeasonWindow[];
+            seasonCalendar?: SeasonWindow[];
+            teamTrainingDays?: { days?: number[]; time?: string } | number[];
+          };
+          const cal = d.season_calendar ?? d.seasonCalendar;
+          if (Array.isArray(cal)) this.seasonCalendar.set(cal);
+          const ttd = d.teamTrainingDays;
+          const days = Array.isArray(ttd) ? ttd : (ttd?.days ?? []);
+          this.teamTrainingDays.set(
+            days.filter((n) => Number.isInteger(n) && n >= 0 && n <= 6),
+          );
+        },
+        error: () => {
+          /* no config yet → generic build week */
+        },
+      });
+  }
+
+  /** Re-read player settings (call after the athlete edits them). */
+  refreshSettings(): void {
+    this.loadSettings();
+  }
+
+  /**
    * Today's prescription. Reactive — updates whenever the schedule, ACWR,
    * or readiness change.
    */
@@ -130,6 +159,7 @@ export class PeriodizationService {
         : null,
       seasonPhase: macroPhaseFor(now, this.seasonCalendar()),
       weather: this.weather(),
+      isTeamPractice: this.isTeamPractice(now, snap.trainingDays),
     });
   });
 
@@ -170,10 +200,23 @@ export class PeriodizationService {
               }
             : null,
           seasonPhase: macroPhaseFor(date, this.seasonCalendar()),
+          isTeamPractice: this.isTeamPractice(date, snap.trainingDays),
         }),
       );
     }
     return out;
+  }
+
+  /**
+   * Is `date` a flag-football team-practice day? True if its weekday is in the
+   * recurring set OR a one-off training event falls on it (snapshot.trainingDays).
+   */
+  private isTeamPractice(date: Date, trainingDays?: string[]): boolean {
+    if (this.teamTrainingDays().includes(date.getDay())) {
+      return true;
+    }
+    const iso = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+    return (trainingDays ?? []).includes(iso);
   }
 
   // ---------------------------------------------------------------------------
@@ -354,6 +397,32 @@ function decideBasePrescription(inputs: PeriodizationInputs): DailyPrescription 
       driverEvent,
       hoursUntilNextEvent: hoursUntilNext,
       acwrAtIssue: acwr,
+    });
+  }
+
+  // 4.6 Team practice day → practice IS the session; prescribe only light
+  // complementary work. Applies only when no event micro-phase owns the day
+  // (accumulation / transition). Competition / taper / recovery and the safety
+  // guards above take precedence (so e.g. the Monday after a tournament stays
+  // recovery, not practice).
+  if (inputs.isTeamPractice && (phase === "accumulation" || phase === "transition")) {
+    return finalize({
+      date,
+      phase,
+      intent: "mixed",
+      intentLabel: "Flag football practice",
+      targetRpe: 7,
+      targetMinutes: 90,
+      sprintReps: 0,
+      strengthSets: 0,
+      reasoning:
+        "Team practice today — that's your main session. Keep any extra individual work light (mobility / activation).",
+      recoveryEmphasis: "low",
+      nutrition: nutritionFor("mixed", bodyweight, heavyDensity),
+      driverEvent,
+      hoursUntilNextEvent: hoursUntilNext,
+      acwrAtIssue: acwr,
+      seasonPhase: seasonPhase ?? null,
     });
   }
 
@@ -783,12 +852,15 @@ function baseTargets(intent: PrescriptionIntent): {
 // =============================================================================
 
 function finalize(
-  partial: Omit<DailyPrescription, "date" | "intentLabel"> & { date: Date },
+  partial: Omit<DailyPrescription, "date" | "intentLabel"> & {
+    date: Date;
+    intentLabel?: string;
+  },
 ): DailyPrescription {
   return {
     ...partial,
     date: toIsoDate(partial.date),
-    intentLabel: INTENT_LABELS[partial.intent],
+    intentLabel: partial.intentLabel ?? INTENT_LABELS[partial.intent],
   };
 }
 

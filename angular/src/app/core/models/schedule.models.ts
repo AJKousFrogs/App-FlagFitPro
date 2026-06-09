@@ -131,6 +131,12 @@ export interface ScheduleSnapshot {
   density28d: EventDensity;
   /** Phase for *today*. Other days resolved via {@link phaseFor}. */
   currentPhase: CompetitionPhase;
+  /**
+   * ISO dates (YYYY-MM-DD) of athlete-entered one-off flag-football team
+   * practices (athlete_events kind=`training`). These are load days, not
+   * taper/recovery triggers — the periodization engine treats them as practice.
+   */
+  trainingDays?: string[];
 }
 
 /**

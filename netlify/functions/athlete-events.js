@@ -15,7 +15,14 @@ import { parseJsonObjectBody } from "./utils/input-validator.js";
 // recovers after them. CRUD, scoped to the authenticated user.
 
 const CATEGORIES = new Set(["personal", "domestic", "national"]);
-const KINDS = new Set(["gameday", "tournament", "camp", "friendly", "other"]);
+const KINDS = new Set([
+  "gameday",
+  "tournament",
+  "camp",
+  "friendly",
+  "training",
+  "other",
+]);
 const IMPORTANCE = new Set(["regular", "high", "peak"]);
 const STATUSES = new Set([
   "scheduled",

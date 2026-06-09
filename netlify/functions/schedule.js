@@ -289,9 +289,22 @@ async function getSchedule(event, _context, { userId }) {
     });
   }
 
+  // Athlete-entered events split by kind: 'training' = a flag-football team
+  // practice (a load day, NOT a taper/recovery trigger) → surfaced as
+  // trainingDays; everything else is a competition event on the timeline.
+  const athleteRows = athleteRes.data ?? [];
+  const trainingDays = [
+    ...new Set(
+      athleteRows
+        .filter((e) => e.kind === "training" && e.status !== "cancelled")
+        .map((e) => String(e.starts_at).slice(0, 10)),
+    ),
+  ];
   const rows = [
     ...(teamRes.data ?? []),
-    ...((athleteRes.data ?? []).map(athleteEventToRow)),
+    ...athleteRows
+      .filter((e) => e.kind !== "training")
+      .map(athleteEventToRow),
   ].sort((a, b) => new Date(a.starts_at) - new Date(b.starts_at));
   const upcoming = rows
     .filter((r) => new Date(r.ends_at ?? r.starts_at) >= now)
@@ -323,6 +336,7 @@ async function getSchedule(event, _context, { userId }) {
     density14d,
     density28d,
     currentPhase,
+    trainingDays,
   });
 }
 

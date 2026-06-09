@@ -61,6 +61,35 @@
       </div>
       <p class="note">Privacy-first: sharing is off by default and only applies to teams you allow.</p>
     }
+    @case ("Prefs") {
+      <div class="section-h"><h2>Flag football training</h2></div>
+      <div class="card stack">
+        <p class="muted" style="margin:0">
+          Which weekdays do you have team practice? Your plan treats these as your main
+          session and builds lighter individual work around them.
+        </p>
+        <div class="chiprow">
+          @for (d of weekdays; track d.dow) {
+            <button type="button" class="chip" [class.sel]="trainingDays().includes(d.dow)"
+                    (click)="toggleTrainingDay(d.dow)">{{ d.label }}</button>
+          }
+        </div>
+        <div class="row" style="gap:var(--s-3);align-items:center">
+          <label class="lbl">Usual time</label>
+          <input class="input" type="time" style="width:auto"
+                 [value]="trainingTime()" (change)="trainingTime.set(timeVal($event))" />
+        </div>
+        @if (trainingMsg(); as m) { <small class="muted">{{ m }}</small> }
+        <div class="row" style="justify-content:flex-end">
+          <button class="btn primary sm" type="button" [attr.aria-disabled]="savingTraining()"
+                  (click)="saveTraining()">{{ savingTraining() ? "Saving…" : "Save training days" }}</button>
+        </div>
+        <p class="note" style="margin:0">
+          For a one-off (a week that differs), add it on
+          <a routerLink="/schedule">Schedule</a> as a “Team training”.
+        </p>
+      </div>
+    }
     @default {
       <div class="empty">{{ tab() }} settings land as the rebuild continues.</div>
     }

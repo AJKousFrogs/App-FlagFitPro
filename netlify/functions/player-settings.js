@@ -138,12 +138,30 @@ function normalizeNumericFieldsPayload(payload) {
   }
 }
 
+/** Coerce {days:int[0-6], time:"HH:mm"} for recurring team-practice days. */
+function normalizeTeamTrainingDays(value) {
+  const fallback = { days: [], time: "18:00" };
+  if (!isPlainObject(value)) {
+    // also accept a bare array of weekday ints
+    if (Array.isArray(value)) {
+      return { days: coercePreferredTrainingDaysArray(value) ?? [], time: "18:00" };
+    }
+    return fallback;
+  }
+  const days = coercePreferredTrainingDaysArray(value.days) ?? [];
+  const time = isValidTimeString(value.time) ? value.time : "18:00";
+  return { days, time };
+}
+
 function normalizeSettingsPayload(payload) {
   if (!isPlainObject(payload)) {
     return;
   }
   normalizePreferredTrainingDaysPayload(payload);
   normalizeNumericFieldsPayload(payload);
+  if (payload.teamTrainingDays !== undefined) {
+    payload.teamTrainingDays = normalizeTeamTrainingDays(payload.teamTrainingDays);
+  }
 }
 
 function sanitizeDailyRoutine(value) {
@@ -367,6 +385,7 @@ async function getSettings(supabase, userId) {
           availabilityDisclaimer:
             "Availability does not schedule practice. Coaches schedule team activities.",
           preferredTrainingDays: [1, 2, 4, 5, 6],
+          teamTrainingDays: { days: [], time: "18:00" },
           maxSessionsPerWeek: 5,
           hasGymAccess: true,
           hasFieldAccess: true,
@@ -395,6 +414,7 @@ async function getSettings(supabase, userId) {
         preferredTrainingDays: coercePreferredTrainingDaysArray(
           config.preferred_training_days,
         ) ?? [1, 2, 4, 5, 6],
+        teamTrainingDays: normalizeTeamTrainingDays(config.team_training_days),
         dailyRoutine: sanitizeDailyRoutine(config.daily_routine),
         maxSessionsPerWeek: config.max_sessions_per_week || 5,
         hasGymAccess: config.has_gym_access !== false,
@@ -436,7 +456,7 @@ async function saveSettings(supabase, userId, payload, log = logger) {
   const birthDate = payload.birthDate ?? payload.dateOfBirth;
   const availableEquipment = payload.availableEquipment ?? payload.equipment;
   const seasonCalendar = payload.seasonCalendar ?? payload.season_calendar;
-  const { jerseyNumber, heightCm, weightKg } = payload;
+  const { jerseyNumber, heightCm, weightKg, teamTrainingDays } = payload;
 
   // Map availabilitySchedule back to DB field (for backward compatibility)
   const flagPracticeSchedule =
@@ -480,6 +500,11 @@ async function saveSettings(supabase, userId, payload, log = logger) {
         warmup_focus: warmupFocus || null,
         available_equipment: availableEquipment || [],
         season_calendar: Array.isArray(seasonCalendar) ? seasonCalendar : [],
+        // recurring flag-football team-practice days; omitted key (undefined) is
+        // dropped from the upsert, so unprovided → unchanged (default on insert).
+        ...(teamTrainingDays !== undefined
+          ? { team_training_days: teamTrainingDays }
+          : {}),
         current_limitations: currentLimitations || null,
         age_recovery_modifier: ageRecoveryModifier,
         acwr_target_min: acwrTargetMin,
@@ -554,6 +579,7 @@ async function saveSettings(supabase, userId, payload, log = logger) {
         availabilityDisclaimer:
           "Availability does not schedule practice. Coaches schedule team activities.",
         preferredTrainingDays: config.preferred_training_days,
+        teamTrainingDays: normalizeTeamTrainingDays(config.team_training_days),
         dailyRoutine: sanitizeDailyRoutine(config.daily_routine),
         maxSessionsPerWeek: config.max_sessions_per_week,
         hasGymAccess: config.has_gym_access,

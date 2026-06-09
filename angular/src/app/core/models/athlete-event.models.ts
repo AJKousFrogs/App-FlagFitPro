@@ -20,6 +20,7 @@ export type AthleteEventKind =
   | "tournament"
   | "camp"
   | "friendly"
+  | "training"
   | "other";
 
 /** How much the plan should peak for this event (taper/recovery depth). */
@@ -75,6 +76,7 @@ export const ATHLETE_EVENT_KIND_LABEL: Record<AthleteEventKind, string> = {
   tournament: "Tournament",
   camp: "Camp",
   friendly: "Friendly",
+  training: "Team training",
   other: "Other",
 };
 

@@ -14,6 +14,7 @@ import { ApiService } from "../core/services/api.service";
 import { SupabaseService } from "../core/services/supabase.service";
 import { LoggerService } from "../core/services/logger.service";
 import { PrivacySettingsService } from "../core/services/privacy-settings.service";
+import { PeriodizationService } from "../core/services/periodization.service";
 import { extractApiPayload } from "../core/utils/api-response-mapper";
 
 type Tab = "Notifications" | "Privacy" | "Prefs" | "Security";
@@ -40,6 +41,8 @@ type Tab = "Notifications" | "Privacy" | "Prefs" | "Security";
         color: var(--text-faint); font-weight: var(--fw-semi); font-family: var(--font-body); font-size: var(--fs-sm); }
       .st-tab.on { color: var(--text-strong); border-bottom: 2px solid var(--accent); }
       .st-tab:focus-visible { outline: none; box-shadow: var(--focus); border-radius: 4px; }
+      .lbl { font-size: var(--fs-sm); color: var(--text-muted); font-weight: var(--fw-semi); }
+      .chiprow { display: flex; flex-wrap: wrap; gap: 6px; }
     `,
   ],
 })
@@ -48,9 +51,60 @@ export class SettingsComponent {
   private readonly supabase = inject(SupabaseService);
   private readonly logger = inject(LoggerService);
   private readonly privacy = inject(PrivacySettingsService);
+  private readonly periodization = inject(PeriodizationService);
 
   readonly tabs: Tab[] = ["Notifications", "Privacy", "Prefs", "Security"];
   readonly tab = signal<Tab>("Notifications");
+
+  // Flag football team-practice days (Prefs tab). dow: 0=Sun…6=Sat.
+  readonly weekdays = [
+    { dow: 1, label: "Mon" },
+    { dow: 2, label: "Tue" },
+    { dow: 3, label: "Wed" },
+    { dow: 4, label: "Thu" },
+    { dow: 5, label: "Fri" },
+    { dow: 6, label: "Sat" },
+    { dow: 0, label: "Sun" },
+  ];
+  readonly trainingDays = signal<number[]>([]);
+  readonly trainingTime = signal("18:00");
+  readonly savingTraining = signal(false);
+  readonly trainingMsg = signal<string | null>(null);
+
+  timeVal(e: Event): string {
+    return (e.target as HTMLInputElement).value || "18:00";
+  }
+
+  toggleTrainingDay(dow: number): void {
+    const cur = this.trainingDays();
+    this.trainingDays.set(
+      cur.includes(dow) ? cur.filter((d) => d !== dow) : [...cur, dow].sort((a, b) => a - b),
+    );
+  }
+
+  async saveTraining(): Promise<void> {
+    if (this.savingTraining()) return;
+    this.savingTraining.set(true);
+    this.trainingMsg.set(null);
+    try {
+      const res = await firstValueFrom(
+        this.api.post("/api/player-settings", {
+          teamTrainingDays: { days: this.trainingDays(), time: this.trainingTime() },
+        }),
+      );
+      if (res.success) {
+        this.trainingMsg.set("Saved — your plan now builds around these days.");
+        this.periodization.refreshSettings();
+      } else {
+        this.trainingMsg.set(res.error ?? "Couldn't save — try again.");
+      }
+    } catch (e) {
+      this.logger.error("settings_training_days_save_failed", e);
+      this.trainingMsg.set("Couldn't save — try again.");
+    } finally {
+      this.savingTraining.set(false);
+    }
+  }
 
   // Real server state must load before any toggle write fires — otherwise the
   // hardcoded defaults below would be persisted over the athlete's actual consent.
@@ -85,6 +139,22 @@ export class SettingsComponent {
       this.coachMessages.set(on("team"));
     } catch (e) {
       this.logger.error("settings_notif_load_failed", e);
+    }
+    // Flag football team-practice days.
+    try {
+      const res = await firstValueFrom(
+        this.api.get<{ teamTrainingDays?: { days?: number[]; time?: string } }>(
+          "/api/player-settings",
+        ),
+      );
+      const ttd = (extractApiPayload<{ teamTrainingDays?: { days?: number[]; time?: string } }>(res) ?? {})
+        .teamTrainingDays;
+      if (ttd) {
+        if (Array.isArray(ttd.days)) this.trainingDays.set(ttd.days);
+        if (ttd.time) this.trainingTime.set(ttd.time);
+      }
+    } catch (e) {
+      this.logger.error("settings_training_days_load_failed", e);
     }
     this.prefsLoaded.set(true);
   }
