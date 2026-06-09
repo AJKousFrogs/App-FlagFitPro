@@ -47,9 +47,19 @@ export class CompetitionComponent {
 
   // post-event participation prompt
   readonly pending = signal<PendingEvent[]>([]);
+  // Slider positions are a STARTING point, not a submission. `formTouched` gates
+  // the write so we never log fabricated default actuals (5 games / RPE 8) the
+  // athlete never chose — that would feed garbage into ACWR.
   readonly games = signal(5);
   readonly avgRpe = signal(8);
+  readonly formTouched = signal(false);
   readonly logged = signal(false);
+  /** True once the pending-events fetch resolves (success or empty). */
+  readonly pendingLoaded = signal(false);
+
+  touch(): void {
+    this.formTouched.set(true);
+  }
 
   // Game format → per-game minutes. This is what makes 2x12 vs 2x20 vs 2x40 load
   // honest (a flat 40-min/game otherwise mis-scores short and World-champ formats).
@@ -61,13 +71,28 @@ export class CompetitionComponent {
   readonly minutesPerGame = signal(40);
 
   constructor() {
-    this.api.get<{ events?: PendingEvent[] } | PendingEvent[]>("/api/event-participation").subscribe({
-      next: (res) => {
-        const d = res?.data as { events?: PendingEvent[] } | PendingEvent[] | undefined;
-        this.pending.set(Array.isArray(d) ? d : (d?.events ?? []));
-      },
-      error: () => this.pending.set([]),
-    });
+    // The function returns { pending: [...] } (recent ended events awaiting a
+    // log). Read that key — the old `.events` read silently yielded [] so the
+    // prompt never showed. A failed fetch leaves the card hidden (no defaults
+    // submit possible), satisfying the "block on prefill failure" rule.
+    this.api
+      .get<{ pending?: PendingEvent[]; events?: PendingEvent[] } | PendingEvent[]>(
+        "/api/event-participation",
+      )
+      .subscribe({
+        next: (res) => {
+          const d = res?.data as
+            | { pending?: PendingEvent[]; events?: PendingEvent[] }
+            | PendingEvent[]
+            | undefined;
+          this.pending.set(Array.isArray(d) ? d : (d?.pending ?? d?.events ?? []));
+          this.pendingLoaded.set(true);
+        },
+        error: () => {
+          this.pending.set([]);
+          this.pendingLoaded.set(true);
+        },
+      });
   }
 
   daysTo(ev: CompetitionEvent): number {
@@ -103,9 +128,12 @@ export class CompetitionComponent {
   }
 
   logParticipation(): void {
-    if (this.logged()) return;
+    // Never write fabricated defaults: require the athlete to have engaged the
+    // form and require a real target event id.
+    if (this.logged() || !this.formTouched()) return;
     const p = this.pending()[0];
     const id = p?.competition_event_id ?? p?.competitionEventId;
+    if (!id) return;
     this.api
       .post("/api/event-participation", {
         competitionEventId: id,

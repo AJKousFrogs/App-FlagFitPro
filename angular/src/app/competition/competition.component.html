@@ -29,27 +29,38 @@
         <span class="band caution">in {{ daysTo(ev) }}d · {{ ev.expectedGameCount }} games</span>
       </div>
       <small>{{ ev.competitionName }}@if (ev.venue) { · {{ ev.venue }} }</small>
-      <div style="margin-top:var(--s-4)">
-        @if (rsvpState()[ev.id]; as s) {
-          <small class="inline" style="color:var(--accent)"><lucide-icon name="check" /> {{ rsvpLabel(s) }} · tap to change</small>
-        } @else {
-          <small>Will you be there?</small>
-        }
-        <div class="row" style="margin-top:var(--s-2)">
-          <button class="btn ghost sm" type="button" [attr.aria-pressed]="rsvpState()[ev.id] === 'declined'" [attr.aria-disabled]="rsvpBusy() === ev.id" (click)="rsvp(ev, 'declined')">Can't</button>
-          <button class="btn ghost sm" type="button" [attr.aria-pressed]="rsvpState()[ev.id] === 'maybe'" [attr.aria-disabled]="rsvpBusy() === ev.id" (click)="rsvp(ev, 'maybe')">Maybe</button>
-          <button class="btn primary" type="button" style="flex:1;margin-left:var(--s-2)" [attr.aria-pressed]="rsvpState()[ev.id] === 'confirmed'" [attr.aria-disabled]="rsvpBusy() === ev.id" (click)="rsvp(ev, 'confirmed')">{{ rsvpBusy() === ev.id ? "Saving…" : (rsvpState()[ev.id] === 'confirmed' ? "You're in ✓" : "I'm in") }}</button>
+      <!-- RSVP is a team-event concept; athlete-entered events are managed on Schedule. -->
+      @if (ev.source === "team") {
+        <div style="margin-top:var(--s-4)">
+          @if (rsvpState()[ev.id]; as s) {
+            <small class="inline" style="color:var(--accent)"><lucide-icon name="check" /> {{ rsvpLabel(s) }} · tap to change</small>
+          } @else {
+            <small>Will you be there?</small>
+          }
+          <div class="row" style="margin-top:var(--s-2)">
+            <button class="btn ghost sm" type="button" [attr.aria-pressed]="rsvpState()[ev.id] === 'declined'" [attr.aria-disabled]="rsvpBusy() === ev.id" (click)="rsvp(ev, 'declined')">Can't</button>
+            <button class="btn ghost sm" type="button" [attr.aria-pressed]="rsvpState()[ev.id] === 'maybe'" [attr.aria-disabled]="rsvpBusy() === ev.id" (click)="rsvp(ev, 'maybe')">Maybe</button>
+            <button class="btn primary" type="button" style="flex:1;margin-left:var(--s-2)" [attr.aria-pressed]="rsvpState()[ev.id] === 'confirmed'" [attr.aria-disabled]="rsvpBusy() === ev.id" (click)="rsvp(ev, 'confirmed')">{{ rsvpBusy() === ev.id ? "Saving…" : (rsvpState()[ev.id] === 'confirmed' ? "You're in ✓" : "I'm in") }}</button>
+          </div>
+          @if (rsvpError() === ev.id) { <small style="color:var(--danger)" role="alert">Couldn't save — try again.</small> }
         </div>
-        @if (rsvpError() === ev.id) { <small style="color:var(--danger)" role="alert">Couldn't save — try again.</small> }
-      </div>
+      } @else {
+        <div style="margin-top:var(--s-3)">
+          <a class="inline faint" routerLink="/schedule" style="font-size:var(--fs-sm)">Your event · edit on Schedule →</a>
+        </div>
+      }
     </div>
 
     @for (e of rest(); track e.id) {
       <div class="card"><div class="lrow">
         <span>{{ e.competitionShortName || e.competitionName }} · in {{ daysTo(e) }}d · {{ e.expectedGameCount }} games</span>
-        <button class="btn ghost sm" type="button" [attr.aria-disabled]="rsvpBusy() === e.id" (click)="rsvp(e, 'confirmed')">
-          @if (rsvpState()[e.id]) { <lucide-icon name="check" /> Going } @else { RSVP }
-        </button>
+        @if (e.source === "team") {
+          <button class="btn ghost sm" type="button" [attr.aria-disabled]="rsvpBusy() === e.id" (click)="rsvp(e, 'confirmed')">
+            @if (rsvpState()[e.id]) { <lucide-icon name="check" /> Going } @else { RSVP }
+          </button>
+        } @else {
+          <span class="band neutral">yours</span>
+        }
       </div></div>
     }
   } @else {
@@ -66,26 +77,28 @@
         <div class="inline" style="flex-wrap:wrap;gap:var(--s-2)">
           @for (f of formats; track f.min) {
             <button type="button" class="chip" [class.sel]="minutesPerGame() === f.min"
-                    (click)="minutesPerGame.set(f.min)">{{ f.label }}</button>
+                    (click)="minutesPerGame.set(f.min); touch()">{{ f.label }}</button>
           }
         </div>
       </div>
       <div class="slider">
         <label for="gp">Games</label>
         <input class="rng" id="gp" type="range" min="0" [max]="pendingGamesExpected()" [value]="games()"
-               (input)="games.set(+$any($event.target).value)" aria-label="Games played" />
-        <span class="val">{{ games() }}</span>
+               (input)="games.set(+$any($event.target).value); touch()" aria-label="Games played" />
+        <span class="val">{{ formTouched() ? games() : "—" }}</span>
       </div>
       <div class="slider">
         <label for="arpe">Avg RPE</label>
         <input class="rng" id="arpe" type="range" min="1" max="10" [value]="avgRpe()"
-               (input)="avgRpe.set(+$any($event.target).value)" aria-label="Average RPE 1 to 10" />
-        <span class="val">{{ avgRpe() }}</span>
+               (input)="avgRpe.set(+$any($event.target).value); touch()" aria-label="Average RPE 1 to 10" />
+        <span class="val">{{ formTouched() ? avgRpe() : "—" }}</span>
       </div>
       @if (logged()) {
         <button class="btn secondary block" type="button" disabled><lucide-icon name="check" /> Logged</button>
       } @else {
-        <button class="btn primary block" type="button" (click)="logParticipation()">Log it</button>
+        <button class="btn primary block" type="button" [disabled]="!formTouched()" (click)="logParticipation()">
+          {{ formTouched() ? "Log it" : "Set games & RPE to log" }}
+        </button>
       }
     </div>
   }
