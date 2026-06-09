@@ -147,3 +147,31 @@ Every critical write in this feature — equipment profile, self-report, recalcu
 — must check success and surface failure to the user/caller. **No silent advance, no
 swallowed error.** A failed self-report write is a P0: the athlete must not believe their
 tightness was logged when it wasn't.
+
+## Daily-Input Forms (prefill & non-destructive submit)
+
+Canonical lifecycle for every recurring user-input form (wellness check-in, supplements,
+post-event participation, self-report, RPE/session log, etc.). Daily-input forms that open
+with hardcoded default literals **and** submit via an upsert silently destroy saved data
+when the user reopens and submits without touching anything — treat that as a P0.
+
+1. **ON OPEN — fetch:** load the user's existing record for the period (today / this event)
+   from the canonical table (verified name — e.g. `daily_wellness_checkin`, not
+   `wellness_checkin`).
+2. **PREFILL:** if a record exists, populate fields from SAVED values. If none exists, use
+   a genuine empty/unset state — **never fabricated mid-range defaults that look real**.
+3. **DISTINGUISH unset from a real value:** a slider sitting at 5 must not be
+   indistinguishable from a saved 5. Track a touched/dirty flag (or null state) where a
+   default could be mistaken for a real entry, and gate submit on it.
+4. **ON SUBMIT — non-destructive:** never overwrite a saved column with an untouched
+   default. Prefer partial update of changed fields, or full prefill so the upsert carries
+   real values forward. (The `upsert_wellness_checkin` RPC already `COALESCE`s null →
+   existing, so sending only touched fields is safe there.)
+5. **FAILURE:** if the prefill fetch fails, surface it and **block the destructive submit**
+   — do not silently fall back to defaults and allow a write.
+
+Reference implementations: the wellness check-in prefill `effect()` and
+`profile-edit.component.ts` `ngOnInit()` prefill-from-GET. Append-only logs (hydration,
+training-session) must instead be **idempotent per natural key** (e.g. one
+`training_sessions` row per `user_id`+`session_date`+`session_type`) so a double submit
+updates rather than double-counts into ACWR.
