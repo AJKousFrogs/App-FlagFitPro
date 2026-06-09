@@ -13,6 +13,7 @@ import { guardMerlinRequest } from "./utils/merlin-guard.js";
 import { prepareStateTransition } from "./utils/session-state-helper.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { hasAnyRole, TEAM_OPERATIONS_ROLES } from "./utils/role-sets.js";
+import { supabaseAdmin } from "./utils/supabase-client.js";
 
 // Netlify Function: Training Sessions API
 // Handles creation and retrieval of training sessions for the Training Builder component
@@ -113,19 +114,76 @@ async function createTrainingSession(
       user_id: targetUserId, // Allow creating for another user if coach
     } = sessionData;
 
-    // If creating for another user, must be coach
+    // If creating for another user, must be staff of a team the target
+    // athlete is an active member of — never just "a coach somewhere".
     const finalUserId = targetUserId || userId;
-    if (finalUserId !== userId && !hasAnyRole(role, TEAM_OPERATIONS_ROLES)) {
-      await logViolation(
-        userId,
-        null,
-        "session",
-        "create",
-        "INSUFFICIENT_PERMISSIONS",
-        "Coach role required to create sessions for other users",
-        requestInfo,
-      );
-      throw new Error("Insufficient permissions: coach role required");
+    let sessionTeamId = sessionData.team_id || null;
+    if (finalUserId !== userId) {
+      if (!hasAnyRole(role, TEAM_OPERATIONS_ROLES)) {
+        await logViolation(
+          userId,
+          null,
+          "session",
+          "create",
+          "INSUFFICIENT_PERMISSIONS",
+          "Coach role required to create sessions for other users",
+          requestInfo,
+        );
+        throw new Error("Insufficient permissions: coach role required");
+      }
+
+      const { data: coachTeams } = await supabaseAdmin
+        .from("team_members")
+        .select("team_id")
+        .eq("user_id", userId)
+        .eq("status", "active")
+        .in("role", TEAM_OPERATIONS_ROLES);
+      const coachTeamIds = (coachTeams ?? []).map((t) => t.team_id);
+      const candidateTeamIds = sessionTeamId
+        ? coachTeamIds.filter((id) => id === sessionTeamId)
+        : coachTeamIds;
+
+      let athleteMembership = null;
+      if (candidateTeamIds.length > 0) {
+        ({ data: athleteMembership } = await supabaseAdmin
+          .from("team_members")
+          .select("team_id")
+          .eq("user_id", finalUserId)
+          .eq("status", "active")
+          .in("team_id", candidateTeamIds)
+          .limit(1)
+          .maybeSingle());
+      }
+
+      if (!athleteMembership) {
+        await logViolation(
+          userId,
+          null,
+          "session",
+          "create",
+          "TEAM_SCOPE_VIOLATION",
+          "Coach may only create sessions for athletes on a team they coach",
+          requestInfo,
+        );
+        throw new Error(
+          "Insufficient permissions: athlete is not on a team you coach",
+        );
+      }
+      sessionTeamId = athleteMembership.team_id;
+    } else if (sessionTeamId) {
+      // Self-created session pinned to a team: caller must be an active
+      // member of that team.
+      const { data: ownMembership } = await supabaseAdmin
+        .from("team_members")
+        .select("team_id")
+        .eq("user_id", userId)
+        .eq("team_id", sessionTeamId)
+        .eq("status", "active")
+        .limit(1)
+        .maybeSingle();
+      if (!ownMembership) {
+        throw new Error("Invalid team_id: you are not a member of that team");
+      }
     }
 
     // Calculate total duration if not provided
@@ -149,6 +207,7 @@ async function createTrainingSession(
     // Create session record
     const sessionRecord = {
       user_id: finalUserId,
+      team_id: sessionTeamId,
       session_date: scheduledDate || new Date().toISOString().split("T")[0],
       session_type: sessionType,
       duration_minutes: totalDuration,
@@ -431,7 +490,7 @@ async function createTrainingLogSession(
     // ACWR (workload is summed). The athlete logs one prescribed session per day.
     const { data: existing } = await supabase
       .from("training_sessions")
-      .select("id")
+      .select("id, rpe, duration_minutes")
       .eq("user_id", userId)
       .eq("session_date", cleaned.sessionDate)
       .eq("session_type", cleaned.sessionType)
@@ -442,16 +501,33 @@ async function createTrainingLogSession(
     let session;
     let error;
     if (existing?.id) {
+      // §5b non-destructive resubmit: only overwrite columns the request
+      // actually carried — an omitted rpe/notes must not null out saved
+      // values. Workload is recomputed from the merged (new ?? saved) pair.
+      const mergedRpe = hasRpe ? cleaned.rpe : existing.rpe;
+      const mergedDuration = hasDuration
+        ? cleaned.durationMinutes
+        : existing.duration_minutes;
+      const updatePayload = { updated_at: sessionRecord.updated_at };
+      if (hasDuration) {
+        updatePayload.duration_minutes = cleaned.durationMinutes;
+      }
+      if (hasRpe) {
+        updatePayload.rpe = cleaned.rpe;
+      }
+      if (mergedRpe !== null && mergedRpe !== undefined &&
+          mergedDuration !== null && mergedDuration !== undefined) {
+        updatePayload.workload = mergedRpe * mergedDuration;
+      }
+      if (cleaned.notes !== null && cleaned.notes !== undefined) {
+        updatePayload.notes = cleaned.notes;
+      }
+      if (cleaned.status) {
+        updatePayload.status = cleaned.status;
+      }
       ({ data: session, error } = await supabase
         .from("training_sessions")
-        .update({
-          duration_minutes: sessionRecord.duration_minutes,
-          rpe: sessionRecord.rpe,
-          workload: sessionRecord.workload,
-          notes: sessionRecord.notes,
-          status: sessionRecord.status,
-          updated_at: sessionRecord.updated_at,
-        })
+        .update(updatePayload)
         .eq("id", existing.id)
         .eq("user_id", userId)
         .select()

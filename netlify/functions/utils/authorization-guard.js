@@ -87,7 +87,7 @@ async function canModifySession(
   const { data: session, error } = await supabaseAdmin
     .from(TRAINING_SESSIONS_TABLE)
     .select(
-      "coach_locked, session_state, modified_by_coach_id, user_id, athlete_id",
+      "coach_locked, session_state, modified_by_coach_id, user_id, athlete_id, team_id",
     )
     .eq("id", sessionId)
     .single();
@@ -134,6 +134,37 @@ async function canModifySession(
         error: "INSUFFICIENT_PERMISSIONS",
         message: "Authorized team staff role required for structure modifications",
       };
+    }
+
+    // Team scoping: staff may only modify sessions that belong to a team
+    // they actively staff. Sessions without a team_id are personal and
+    // mutable only by their owner.
+    if (ownerId !== userId) {
+      if (!session.team_id) {
+        return {
+          authorized: false,
+          error: "TEAM_SCOPE_VIOLATION",
+          message: "Cannot modify another athlete's personal session",
+        };
+      }
+
+      const { data: staffMembership, error: staffError } = await supabaseAdmin
+        .from("team_members")
+        .select("team_id")
+        .eq("team_id", session.team_id)
+        .eq("user_id", userId)
+        .eq("status", "active")
+        .in("role", TEAM_OPERATIONS_ROLES)
+        .limit(1)
+        .maybeSingle();
+
+      if (staffError || !staffMembership) {
+        return {
+          authorized: false,
+          error: "TEAM_SCOPE_VIOLATION",
+          message: "Staff may only modify sessions of a team they coach",
+        };
+      }
     }
   }
 
