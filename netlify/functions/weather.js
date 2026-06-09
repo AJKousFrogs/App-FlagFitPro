@@ -380,6 +380,13 @@ async function handleRequest(event, _context, { userId: _userId }) {
       suitable: weatherData.suitable,
       humidity: weatherData.humidity,
       windSpeed: weatherData.windSpeed,
+      // Raw metric fields the prescription weather guard consumes — without
+      // these, the storm-stop and wet-substitute branches never fire (only
+      // heat/cold/wind survive via fallbacks in periodization.service).
+      apparentC: weatherData.apparentC,
+      weatherCode: weatherData.weatherCode,
+      precipMm: weatherData.precipMm,
+      windKmh: weatherData.windKmh,
       description: weatherData.description,
       location: weatherData.location,
       icon: weatherData.icon,

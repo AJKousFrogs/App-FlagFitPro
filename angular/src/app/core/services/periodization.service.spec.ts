@@ -558,3 +558,39 @@ describe("__periodization__ exports", () => {
     expect(typeof __periodization__.prescribeFor).toBe("function");
   });
 });
+
+// =============================================================================
+// WEATHER GUARD — end-to-end: a rainy payload moves a sprint indoors
+// =============================================================================
+
+describe("prescribeFor — weather guard moves a rainy sprint indoors", () => {
+  // 2026-05-05 is a Tuesday — accumulation picks sprint on Tue/Fri.
+  const sprintDay = new Date("2026-05-05T10:00:00Z");
+
+  function baseSprint() {
+    return prescribeFor(inputs({ phase: "accumulation", date: sprintDay }));
+  }
+
+  it("sanity: the base day is a sprint with no weather", () => {
+    expect(baseSprint().intent).toBe("sprint");
+  });
+
+  it("rain (precip + WMO rain code, benign temp) substitutes sprint → strength", () => {
+    const rainy: WeatherInput = {
+      tempC: 15,
+      apparentC: 15, // benign — only the wet branch should fire
+      condition: "rain",
+      weatherCode: 61, // WMO rain (>= RAIN_WEATHER_CODE, < storm)
+      precipMm: 3, // > RAIN_PRECIP_MM (0.5)
+      windKmh: 10,
+    };
+    const rx = prescribeFor(
+      inputs({ phase: "accumulation", date: sprintDay, weather: rainy }),
+    );
+    expect(rx.intent).toBe("strength"); // moved indoors off the wet grass
+    expect(rx.weatherAdjustment?.applied).toBe(true);
+    expect(rx.weatherAdjustment?.action).toBe("substitute");
+    expect(rx.weatherAdjustment?.originalIntent).toBe("sprint");
+    expect(rx.weatherAdjustment?.reason).toMatch(/wet|slip|indoor/i);
+  });
+});

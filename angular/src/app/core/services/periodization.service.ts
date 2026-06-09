@@ -204,6 +204,10 @@ export class PeriodizationService {
               }
             : null,
           seasonPhase: macroPhaseFor(date, this.seasonCalendar()),
+          // Weather is current-conditions only (no 7-day forecast feed), so it
+          // can only guard today; future days resolve unguarded rather than
+          // against stale "now" weather.
+          weather: i === 0 ? this.weather() : null,
           isTeamPractice: this.isTeamPractice(date, snap.trainingDays),
           activeRestrictions: this.injury.restrictions(),
         }),
