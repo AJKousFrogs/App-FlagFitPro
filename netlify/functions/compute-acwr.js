@@ -134,29 +134,31 @@ async function verifyAthleteAccess(requestUserId, athleteId) {
     return { authorized: false };
   }
 
-  const { data: requesterMembership, error: requesterError } = await supabaseAdmin
+  // Staff may read an athlete's load only when the athlete is an active
+  // member of a team the requester actively staffs — checked across ALL
+  // memberships, so multi-team users never match on an arbitrary row.
+  const { data: staffTeams, error: staffError } = await supabaseAdmin
     .from("team_members")
     .select("team_id")
     .eq("user_id", requestUserId)
-    .limit(1)
-    .maybeSingle();
+    .eq("status", "active")
+    .in("role", LOAD_MANAGEMENT_ACCESS_ROLES);
 
-  if (requesterError || !requesterMembership?.team_id) {
+  const staffTeamIds = (staffTeams ?? []).map((t) => t.team_id);
+  if (staffError || staffTeamIds.length === 0) {
     return { authorized: false };
   }
 
-  const { data: athleteMembership, error: athleteError } = await supabaseAdmin
+  const { data: sharedMembership, error: sharedError } = await supabaseAdmin
     .from("team_members")
     .select("team_id")
     .eq("user_id", athleteId)
+    .eq("status", "active")
+    .in("team_id", staffTeamIds)
     .limit(1)
     .maybeSingle();
 
-  if (athleteError || !athleteMembership?.team_id) {
-    return { authorized: false };
-  }
-
-  return { authorized: athleteMembership.team_id === requesterMembership.team_id };
+  return { authorized: !sharedError && Boolean(sharedMembership?.team_id) };
 }
 
 /**

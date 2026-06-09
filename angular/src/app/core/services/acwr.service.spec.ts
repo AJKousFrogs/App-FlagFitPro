@@ -48,7 +48,8 @@ const mockLoggerService = {
 const mockEvidenceConfigService = {
   getACWRConfig: vi.fn(() => ({
     acuteWindowDays: 7,
-    chronicWindowDays: 28,
+    // Uncoupled 21d chronic window — mirrors server utils/acwr.js
+    chronicWindowDays: 21,
     acuteLambda: 0.9,
     chronicLambda: 0.1,
     thresholds: {
@@ -516,7 +517,8 @@ describe("AcwrService", () => {
       const config = service.getConfig();
 
       expect(config.acuteWindowDays).toBe(7);
-      expect(config.chronicWindowDays).toBe(28);
+      // Uncoupled 21d chronic window — mirrors server utils/acwr.js
+      expect(config.chronicWindowDays).toBe(21);
       expect(config.thresholds.sweetSpotLow).toBe(0.8);
       expect(config.thresholds.sweetSpotHigh).toBe(1.3);
     });

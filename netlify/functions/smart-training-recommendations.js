@@ -242,29 +242,42 @@ async function getWellnessData(userId, date) {
 async function getCurrentPhase(userId, date) {
   const dateStr = date.toISOString().split("T")[0];
 
-  // Get active training program
-  const { data: program } = await supabaseAdmin
-    .from("training_programs")
+  // Resolve the athlete's OWN program assignment via player_programs —
+  // never a globally-active training_programs row, which would leak one
+  // program's phase into every athlete's plan across all teams.
+  const { data: assignments } = await supabaseAdmin
+    .from("player_programs")
     .select(
       `
-      id, name,
-      training_phases (
-        id, name, description, start_date, end_date, phase_order, focus_areas
+      current_phase_id,
+      training_programs (
+        id, name,
+        training_phases (
+          id, name, description, start_date, end_date, phase_order, focus_areas
+        )
       )
     `,
     )
+    .eq("user_id", userId)
     .eq("is_active", true)
-    .limit(1)
-    .maybeSingle();
+    .lte("start_date", dateStr)
+    .or(`end_date.is.null,end_date.gte.${dateStr}`)
+    .order("start_date", { ascending: false })
+    .limit(1);
 
-  if (!program || !program.training_phases) {
+  const assignment = assignments?.[0];
+  const phases = assignment?.training_programs?.training_phases;
+  if (!phases || phases.length === 0) {
     return null;
   }
 
-  // Find current phase
-  const currentPhase = program.training_phases.find(
-    (phase) => phase.start_date <= dateStr && phase.end_date >= dateStr,
-  );
+  // Prefer the explicitly tracked phase, else match by date.
+  const currentPhase =
+    (assignment.current_phase_id &&
+      phases.find((phase) => phase.id === assignment.current_phase_id)) ||
+    phases.find(
+      (phase) => phase.start_date <= dateStr && phase.end_date >= dateStr,
+    );
 
   return currentPhase || null;
 }

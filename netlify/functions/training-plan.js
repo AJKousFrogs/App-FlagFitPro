@@ -8,6 +8,7 @@ import { checkEnvVars as _checkEnvVars, supabaseAdmin } from "./supabase-client.
 import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { buildRequestLogContext, createLogger } from "./utils/structured-logger.js";
+import { computeAcwrAt } from "./utils/acwr.js";
 
 const logger = createLogger({ service: "netlify.training-plan" });
 
@@ -48,64 +49,52 @@ function _getTodayStartOfDay() {
  */
 async function calculateACWR(userId, date, requestLogger = logger) {
   try {
-    const _endDate = new Date(date);
-    const acuteStartDate = new Date(date);
-    acuteStartDate.setDate(acuteStartDate.getDate() - 7);
-    const chronicStartDate = new Date(date);
-    chronicStartDate.setDate(chronicStartDate.getDate() - 28);
+    const windowStart = new Date(date);
+    windowStart.setDate(windowStart.getDate() - 28);
 
-    // Get training loads up to and including date
-    const todayEndOfDay = new Date(date);
-    todayEndOfDay.setHours(23, 59, 59, 999);
-
-    // Get acute loads (last 7 days)
-    const { data: acuteSessions, error: acuteError } = await supabaseAdmin
+    const { data: sessions, error } = await supabaseAdmin
       .from("training_sessions")
-      .select("duration_minutes, intensity_level, rpe")
+      .select("session_date, duration_minutes, rpe, workload")
       .eq("user_id", userId)
-      .gte("session_date", acuteStartDate.toISOString().split("T")[0])
-      .lte("session_date", todayEndOfDay.toISOString().split("T")[0])
+      .gte("session_date", windowStart.toISOString().split("T")[0])
+      .lte("session_date", new Date(date).toISOString().split("T")[0])
       .in("status", ["completed", "in_progress"]);
 
-    if (acuteError && acuteError.code !== "42P01") {
-      throw acuteError;
+    if (error && error.code !== "42P01") {
+      throw error;
     }
 
-    // Get chronic loads (last 28 days)
-    const { data: chronicSessions, error: chronicError } = await supabaseAdmin
-      .from("training_sessions")
-      .select("duration_minutes, intensity_level, rpe")
-      .eq("user_id", userId)
-      .gte("session_date", chronicStartDate.toISOString().split("T")[0])
-      .lte("session_date", todayEndOfDay.toISOString().split("T")[0])
-      .in("status", ["completed", "in_progress"]);
-
-    if (chronicError && chronicError.code !== "42P01") {
-      throw chronicError;
+    // Canonical session load: workload column, else session-RPE (rpe × minutes).
+    // Sessions without a real load are excluded — never defaulted.
+    const dailyLoads = new Map();
+    for (const session of sessions || []) {
+      if (!session?.session_date) {
+        continue;
+      }
+      let load = Number(session.workload);
+      if (!Number.isFinite(load) || load <= 0) {
+        const rpe = Number(session.rpe);
+        const minutes = Number(session.duration_minutes);
+        load =
+          Number.isFinite(rpe) &&
+          rpe > 0 &&
+          Number.isFinite(minutes) &&
+          minutes > 0
+            ? rpe * minutes
+            : 0;
+      }
+      if (load > 0) {
+        dailyLoads.set(
+          session.session_date,
+          (dailyLoads.get(session.session_date) || 0) + load,
+        );
+      }
     }
 
-    // Calculate loads (duration × intensity × RPE)
-    const calculateLoad = (session) => {
-      const duration = session.duration_minutes || 60;
-      const intensity = session.intensity_level || 5;
-      const rpe = session.rpe || 5;
-      return duration * intensity * rpe;
-    };
+    // Delegate to the canonical engine (utils/acwr.js): EWMA, uncoupled 7/21d windows.
+    const result = computeAcwrAt(dailyLoads, date);
 
-    const acuteLoads = (acuteSessions || []).map(calculateLoad);
-    const chronicLoads = (chronicSessions || []).map(calculateLoad);
-
-    const acuteAverage =
-      acuteLoads.length > 0
-        ? acuteLoads.reduce((sum, load) => sum + load, 0) / acuteLoads.length
-        : 0;
-    const chronicAverage =
-      chronicLoads.length > 0
-        ? chronicLoads.reduce((sum, load) => sum + load, 0) /
-          chronicLoads.length
-        : 0;
-
-    if (chronicAverage === 0) {
+    if (result.acwr === null || result.daysWithData === 0) {
       return {
         acwr: 0,
         riskZone: "insufficient_data",
@@ -115,28 +104,26 @@ async function calculateACWR(userId, date, requestLogger = logger) {
       };
     }
 
-    const acwr = acuteAverage / chronicAverage;
-
     let riskZone;
-    if (acwr < 0.8) {
+    if (result.acwr < 0.8) {
       riskZone = "detraining";
-    } else if (acwr >= 0.8 && acwr <= 1.3) {
+    } else if (result.acwr <= 1.3) {
       riskZone = "safe";
-    } else if (acwr > 1.3 && acwr <= 1.5) {
+    } else if (result.acwr <= 1.5) {
       riskZone = "caution";
-    } else if (acwr > 1.5 && acwr < 1.8) {
+    } else if (result.acwr < 1.8) {
       riskZone = "danger";
     } else {
       riskZone = "critical";
     }
 
     return {
-      acwr: parseFloat(acwr.toFixed(2)),
+      acwr: parseFloat(result.acwr.toFixed(2)),
       riskZone,
-      acuteAverage: parseFloat(acuteAverage.toFixed(2)),
-      chronicAverage: parseFloat(chronicAverage.toFixed(2)),
-      acuteLoads: acuteLoads.length,
-      chronicLoads: chronicLoads.length,
+      acuteAverage: parseFloat(result.acuteLoad.toFixed(2)),
+      chronicAverage: parseFloat(result.chronicLoad.toFixed(2)),
+      lowConfidence: result.lowConfidence,
+      daysWithData: result.daysWithData,
     };
   } catch (error) {
     requestLogger.error("training_plan_acwr_calculation_failed", error, {
@@ -157,40 +144,53 @@ async function calculateACWR(userId, date, requestLogger = logger) {
  */
 async function determinePeriodizationPhase(userId, date, requestLogger = logger) {
   try {
-    // Get active training program for user
-    const { data: programs, error: programError } = await supabaseAdmin
-      .from("training_programs")
+    // Resolve the athlete's OWN program assignment via player_programs —
+    // never a globally-active training_programs row, which would leak one
+    // program's phase into every athlete's plan across all teams.
+    const dateStr = date.toISOString().split("T")[0];
+    const { data: assignments, error: assignmentError } = await supabaseAdmin
+      .from("player_programs")
       .select(
         `
-        id,
-        start_date,
-        end_date,
-        training_phases (
+        current_phase_id,
+        training_programs (
           id,
-          name,
           start_date,
           end_date,
-          phase_order,
-          focus_areas
+          training_phases (
+            id,
+            name,
+            start_date,
+            end_date,
+            phase_order,
+            focus_areas
+          )
         )
       `,
       )
+      .eq("user_id", userId)
       .eq("is_active", true)
-      .lte("start_date", date.toISOString().split("T")[0])
-      .gte("end_date", date.toISOString().split("T")[0])
+      .lte("start_date", dateStr)
+      .or(`end_date.is.null,end_date.gte.${dateStr}`)
+      .order("start_date", { ascending: false })
       .limit(1);
 
-    if (programError && programError.code !== "42P01") {
-      throw programError;
+    if (assignmentError && assignmentError.code !== "42P01") {
+      throw assignmentError;
     }
 
-    if (programs && programs.length > 0 && programs[0].training_phases) {
-      const phases = programs[0].training_phases;
-      const currentPhase = phases.find((phase) => {
-        const phaseStart = new Date(phase.start_date);
-        const phaseEnd = new Date(phase.end_date);
-        return date >= phaseStart && date <= phaseEnd;
-      });
+    const assignment = assignments?.[0];
+    const phases = assignment?.training_programs?.training_phases;
+    if (phases && phases.length > 0) {
+      // Prefer the explicitly tracked phase, else match by date.
+      const currentPhase =
+        (assignment.current_phase_id &&
+          phases.find((phase) => phase.id === assignment.current_phase_id)) ||
+        phases.find((phase) => {
+          const phaseStart = new Date(phase.start_date);
+          const phaseEnd = new Date(phase.end_date);
+          return date >= phaseStart && date <= phaseEnd;
+        });
 
       if (currentPhase) {
         return {

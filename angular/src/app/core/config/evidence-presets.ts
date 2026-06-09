@@ -111,10 +111,11 @@ export const ADULT_FLAG_COMPETITIVE_V1: EvidencePreset = {
     citations: RESEARCH_CITATIONS["gabbett2016"]
       ? [RESEARCH_CITATIONS["gabbett2016"]]
       : [],
+    // Mirrors server utils/acwr.js: uncoupled 21d chronic window, λ = 2/(N+1)
     acuteWindowDays: 7,
-    chronicWindowDays: 28,
-    acuteLambda: 0.2,
-    chronicLambda: 0.05,
+    chronicWindowDays: 21,
+    acuteLambda: 0.25,
+    chronicLambda: 0.0909,
     thresholds: {
       sweetSpotLow: 0.8,
       sweetSpotHigh: 1.3,
@@ -266,10 +267,11 @@ export const YOUTH_FLAG_V1: EvidencePreset = {
     citations: RESEARCH_CITATIONS["gabbett2016"]
       ? [RESEARCH_CITATIONS["gabbett2016"]]
       : [],
+    // Mirrors server utils/acwr.js: uncoupled 21d chronic window, λ = 2/(N+1)
     acuteWindowDays: 7,
-    chronicWindowDays: 28,
-    acuteLambda: 0.2,
-    chronicLambda: 0.05,
+    chronicWindowDays: 21,
+    acuteLambda: 0.25,
+    chronicLambda: 0.0909,
     thresholds: {
       sweetSpotLow: 0.8,
       sweetSpotHigh: 1.2, // More conservative (1.2 vs 1.3)
@@ -419,10 +421,11 @@ export const RETURN_TO_PLAY_V1: EvidencePreset = {
     citations: RESEARCH_CITATIONS["gabbett2016"]
       ? [RESEARCH_CITATIONS["gabbett2016"]]
       : [],
+    // Mirrors server utils/acwr.js: uncoupled 21d chronic window, λ = 2/(N+1)
     acuteWindowDays: 7,
-    chronicWindowDays: 28,
-    acuteLambda: 0.2,
-    chronicLambda: 0.05,
+    chronicWindowDays: 21,
+    acuteLambda: 0.25,
+    chronicLambda: 0.0909,
     thresholds: {
       sweetSpotLow: 0.7, // More conservative (0.7 vs 0.8)
       sweetSpotHigh: 1.1, // More conservative (1.1 vs 1.3)

@@ -76,14 +76,6 @@ import {
 import { getDateKey } from "../../shared/utils/date.utils";
 import { inferSessionType } from "../../shared/utils/session-type.utils";
 
-interface LoadMonitoringRecord {
-  monitoring_date?: string;
-  acute_load?: number;
-  chronic_load?: number;
-  acwr?: number;
-  risk_level?: string;
-}
-
 interface WorkoutLog {
   id?: string;
   player_id: string;
@@ -221,19 +213,11 @@ export class AcwrService {
    * Calculate EWMA (Exponentially Weighted Moving Average)
    * Formula: EWMA_today = lambda × load_today + (1 - lambda) × EWMA_yesterday
    *
-   * Uses precision utilities for consistent rounding.
-   *
-   * ⚠️ CANONICAL ACWR IS SERVER-SIDE: `netlify/functions/utils/acwr.js`
-   * (EWMA + uncoupled, used by calc-readiness + compute-acwr). This client copy
-   * exists only for dashboard display and currently DIVERGES from canonical in
-   * two ways, to be reconciled when the ACWR dashboard is rebuilt (port phase):
-   *   1. RECENCY BUG — `loads` is "most recent first" and this seeds on loads[0]
-   *      then folds older days in, so the OLDEST day ends up weighted most
-   *      (recency inverted). Should process oldest→newest.
-   *   2. COUPLED — chronic uses a 28-day window that includes the acute 7 days;
-   *      canonical is uncoupled (chronic = the 21 days preceding the acute week).
-   * Plan: make this read-through to the server value, or mirror utils/acwr.js
-   * exactly (λ = 2/(N+1), uncoupled), with the spec updated accordingly.
+   * Mirrors the CANONICAL server implementation `netlify/functions/utils/acwr.js`
+   * (the server value remains authoritative — this copy exists for dashboard
+   * display): the series is folded oldest→newest so the most recent day carries
+   * the highest weight, and the chronic window is UNCOUPLED (the days preceding
+   * the acute week — see chronicLoad below).
    *
    * @param loads - Array of daily loads (most recent first)
    * @param lambda - Decay factor (0-1), higher = more weight to recent
@@ -245,13 +229,11 @@ export class AcwrService {
     // Validate lambda is in valid range
     const validLambda = clamp(lambda, 0, 1);
 
-    // Start with first value
-    let ewma = loads[0] || 0;
-
-    // Apply EWMA formula iteratively
-    for (let i = 1; i < Math.min(loads.length, days); i++) {
-      const load = loads[i] || 0;
-      ewma = validLambda * load + (1 - validLambda) * ewma;
+    // `loads` is most-recent-first; fold oldest→newest so recency is weighted up
+    const window = loads.slice(0, days);
+    let ewma = window[window.length - 1] || 0;
+    for (let i = window.length - 2; i >= 0; i--) {
+      ewma = validLambda * (window[i] || 0) + (1 - validLambda) * ewma;
     }
 
     // Return with standard precision
@@ -288,18 +270,20 @@ export class AcwrService {
   }
 
   /**
-   * Get loads for last N days
+   * Get loads for N days, optionally offset back in time (offsetDays = 7 with
+   * days = 21 yields the 21 days preceding the acute week — uncoupled windows).
    */
   private getRecentLoads(
     dailyLoads: Map<string, number>,
     days: number,
+    offsetDays = 0,
   ): number[] {
     const loads: number[] = [];
     const today = new Date();
 
     for (let i = 0; i < days; i++) {
       const date = new Date(today);
-      date.setDate(date.getDate() - i);
+      date.setDate(date.getDate() - (i + offsetDays));
       const dateKey = this.getDateKeyLocal(date);
       loads.push(dailyLoads.get(dateKey) || 0);
     }
@@ -342,7 +326,13 @@ export class AcwrService {
     if (sessions.length === 0) return 0;
 
     const dailyLoads = this.aggregateDailyLoads(sessions);
-    const loads = this.getRecentLoads(dailyLoads, cfg.chronicWindowDays);
+    // Uncoupled: chronic = the chronicWindowDays preceding the acute window
+    // (matches server utils/acwr.js; coupling induces spurious correlation).
+    const loads = this.getRecentLoads(
+      dailyLoads,
+      cfg.chronicWindowDays,
+      cfg.acuteWindowDays,
+    );
 
     const calculatedChronic = this.calculateEWMA(
       loads,
@@ -1121,7 +1111,6 @@ export class AcwrService {
       // canonical ratio is recomputed live from the sessions below. Tolerance
       // detection therefore starts from an empty history — identical to the
       // prior behaviour, where that cache was always empty.
-      const loadMonitoringByDate = new Map<string, LoadMonitoringRecord>();
       this.historicalACWR.set([]);
 
       if (!workoutLogs || workoutLogs.length === 0) {
@@ -1130,34 +1119,44 @@ export class AcwrService {
         return;
       }
 
-      // Convert workout logs to TrainingSession format
-      const sessions: TrainingSession[] = workoutLogs.map(
-        (log: WorkoutLog) => {
-          const monitoringDateKey = log.completed_at?.slice(0, 10) ||
-            getDateKey(log.completed_at);
-          const monitoring = loadMonitoringByDate.get(monitoringDateKey);
-          const calculatedLoad = (log.rpe || 5) * (log.duration_minutes || 60);
+      // Convert workout logs to TrainingSession format. Sessions without a
+      // real (rpe × duration) load are excluded — load is never fabricated
+      // from defaults.
+      const sessions: TrainingSession[] = workoutLogs
+        .filter((log: WorkoutLog) => {
+          const hasLoad =
+            Number(log.rpe) > 0 && Number(log.duration_minutes) > 0;
+          if (!hasLoad) {
+            this.logger.warn("[ACWR] Session excluded — no load data", {
+              id: log.id,
+            });
+          }
+          return hasLoad;
+        })
+        .map((log: WorkoutLog) => {
+          const rpe = Number(log.rpe);
+          const duration = Number(log.duration_minutes);
+          const calculatedLoad = rpe * duration;
 
           return {
             playerId: log.player_id,
             date: new Date(log.completed_at),
             sessionType: inferSessionType(log),
             metrics: {
-              type: "internal",
+              type: "internal" as const,
               internal: {
-                sessionRPE: log.rpe || 5,
-                duration: log.duration_minutes || 60,
+                sessionRPE: rpe,
+                duration,
                 workload: calculatedLoad,
               },
-              calculatedLoad: Number(monitoring?.acute_load ?? calculatedLoad),
+              calculatedLoad,
             },
-            load: Number(monitoring?.acute_load ?? calculatedLoad),
+            load: calculatedLoad,
             notes: log.notes,
             completed: true,
             modifiedFromPlan: false,
           };
-        },
-      );
+        });
 
       this.addSessions(sessions);
       this.logger.success("acwr_training_sessions_loaded", {

@@ -5,6 +5,7 @@ import { guardMerlinRequest } from "./utils/merlin-guard.js";
 import { detectPainTrigger, detectACWRTrigger } from "./utils/safety-override.js";
 import { requireAuthorization, logViolation } from "./utils/authorization-guard.js";
 import { parseJsonObjectBody } from "./utils/input-validator.js";
+import { computeAcwrAt } from "./utils/acwr.js";
 
 /**
  * Netlify Function: Daily Training
@@ -188,7 +189,9 @@ async function getUserContext(userId) {
       // Get recent training sessions for ACWR calculation
       supabaseAdmin
         .from("training_sessions")
-        .select("completed_at, rpe, duration_minutes, source_session_id:id")
+        .select(
+          "completed_at, session_date, rpe, duration_minutes, workload, source_session_id:id",
+        )
         .eq("user_id", userId)
         .not("completed_at", "is", null)
         .gte("completed_at", thirtyDaysAgo.toISOString())
@@ -255,100 +258,57 @@ async function getUserContext(userId) {
  * Calculate Acute:Chronic Workload Ratio
  */
 function calculateACWR(sessions) {
-  const ACWR_CONFIG = {
-    acuteWindowDays: 7,
-    chronicWindowDays: 28,
-    acuteLambda: 2 / (7 + 1),
-    chronicLambda: 2 / (28 + 1),
-    minChronicLoad: 100,
-    minDaysForChronic: 21,
-    minSessionsForChronic: 12,
-    thresholds: {
-      sweetSpotLow: 0.8,
-      sweetSpotHigh: 1.3,
-      dangerHigh: 1.5,
-    },
+  const thresholds = {
+    sweetSpotLow: 0.8,
+    sweetSpotHigh: 1.3,
+    dangerHigh: 1.5,
   };
 
-  if (!sessions || sessions.length === 0) {
-    return { value: 0, status: "no-data" };
-  }
-
-  const withLoads = sessions
-    .map((session) => {
-      const dateKey = session.completed_at || session.session_date;
-      if (!dateKey) {
-        return null;
-      }
-      const hasRpeLoad =
-        session.rpe !== null &&
-        session.rpe !== undefined &&
-        session.duration_minutes !== null &&
-        session.duration_minutes !== undefined;
-      if (hasRpeLoad) {
-        return {
-          date: dateKey,
-          load: session.rpe * session.duration_minutes,
-        };
-      }
-      return null;
-    })
-    .filter(Boolean);
-
-  if (withLoads.length === 0) {
-    return { value: 0, status: "no-data" };
-  }
-
-  const uniqueDates = [
-    ...new Set(withLoads.map((s) => s.date.split("T")[0])),
-  ].sort((a, b) => new Date(a) - new Date(b));
-
-  const daysSpan =
-    (new Date(uniqueDates[uniqueDates.length - 1]) - new Date(uniqueDates[0])) /
-    (1000 * 60 * 60 * 24);
-
-  if (
-    uniqueDates.length < ACWR_CONFIG.minSessionsForChronic ||
-    daysSpan < ACWR_CONFIG.minDaysForChronic
-  ) {
-    return { value: 0, status: "no-data" };
-  }
-
+  // Canonical session load: workload column, else session-RPE (rpe × minutes).
+  // Sessions without a real load are excluded — never defaulted.
   const dailyLoads = new Map();
-  withLoads.forEach((s) => {
-    const dayKey = s.date.split("T")[0];
-    dailyLoads.set(dayKey, (dailyLoads.get(dayKey) || 0) + s.load);
-  });
-
-  const loadSeries = Array.from(dailyLoads.entries())
-    .map(([date, load]) => ({ date, load }))
-    .sort((a, b) => new Date(a.date) - new Date(b.date));
-
-  const calculateEwma = (series, lambda) => {
-    let ewma = series[0].load;
-    for (let i = 1; i < series.length; i++) {
-      ewma = lambda * series[i].load + (1 - lambda) * ewma;
+  for (const session of sessions || []) {
+    const rawDate = session.session_date || session.completed_at;
+    if (!rawDate) {
+      continue;
     }
-    return ewma;
-  };
+    const dayKey = String(rawDate).split("T")[0];
+    let load = Number(session.workload);
+    if (!Number.isFinite(load) || load <= 0) {
+      const rpe = Number(session.rpe);
+      const minutes = Number(session.duration_minutes);
+      load =
+        Number.isFinite(rpe) && rpe > 0 && Number.isFinite(minutes) && minutes > 0
+          ? rpe * minutes
+          : 0;
+    }
+    if (load > 0) {
+      dailyLoads.set(dayKey, (dailyLoads.get(dayKey) || 0) + load);
+    }
+  }
 
-  const acuteLoad = calculateEwma(loadSeries, ACWR_CONFIG.acuteLambda);
-  const rawChronic = calculateEwma(loadSeries, ACWR_CONFIG.chronicLambda);
-  const chronicLoad = Math.max(rawChronic, ACWR_CONFIG.minChronicLoad);
-  const acwr = acuteLoad / chronicLoad;
+  if (dailyLoads.size === 0) {
+    return { value: 0, status: "no-data" };
+  }
 
-  let status = "no-data";
-  if (acwr < ACWR_CONFIG.thresholds.sweetSpotLow) {
+  // Delegate to the canonical engine (utils/acwr.js): EWMA, uncoupled 7/21d windows.
+  const result = computeAcwrAt(dailyLoads, new Date());
+  if (result.acwr === null || result.lowConfidence) {
+    return { value: result.acwr ?? 0, status: "no-data" };
+  }
+
+  let status;
+  if (result.acwr < thresholds.sweetSpotLow) {
     status = "under-training";
-  } else if (acwr <= ACWR_CONFIG.thresholds.sweetSpotHigh) {
+  } else if (result.acwr <= thresholds.sweetSpotHigh) {
     status = "sweet-spot";
-  } else if (acwr <= ACWR_CONFIG.thresholds.dangerHigh) {
+  } else if (result.acwr <= thresholds.dangerHigh) {
     status = "elevated-risk";
   } else {
     status = "danger-zone";
   }
 
-  return { value: Math.round(acwr * 100) / 100, status };
+  return { value: Math.round(result.acwr * 100) / 100, status };
 }
 
 /**
