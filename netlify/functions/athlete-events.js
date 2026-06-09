@@ -198,10 +198,13 @@ async function deleteEvent(userId, id) {
   return Boolean(data);
 }
 
-// Pull a trailing "/<id>" off the function path, if present.
+// Pull a trailing "/<id>" off the request path. Netlify's rewrite means
+// event.path can be either the original "/api/athlete-events/<id>" or the
+// function path "/.netlify/functions/athlete-events/<id>" — match the segment
+// after "athlete-events" in both.
 function idFromPath(event) {
-  const path = event.path.replace("/.netlify/functions/athlete-events", "");
-  const m = path.match(/^\/([^/]+)\/?$/);
+  const path = event.path || event.rawUrl || "";
+  const m = path.match(/athlete-events\/([^/?#]+)/);
   return m ? decodeURIComponent(m[1]) : null;
 }
 
