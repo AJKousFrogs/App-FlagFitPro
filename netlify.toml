@@ -533,18 +533,6 @@
   status = 200
   force = true
 
-# API Routes for Research Sync (sports science research from PubMed, Europe PMC, OpenAlex)
-[[redirects]]
-  from = "/api/research/*"
-  to = "/.netlify/functions/research-sync"
-  status = 200
-  force = true
-
-[[redirects]]
-  from = "/api/research"
-  to = "/.netlify/functions/research-sync"
-  status = 200
-  force = true
 
 # API Routes for Coach
 [[redirects]]
@@ -1484,19 +1472,6 @@
 
 [[redirects]]
   from = "/api/season"
-  to = "/.netlify/functions/team"
-  status = 200
-  force = true
-
-# Season Reports API
-[[redirects]]
-  from = "/api/season-reports/*"
-  to = "/.netlify/functions/team"
-  status = 200
-  force = true
-
-[[redirects]]
-  from = "/api/season-reports"
   to = "/.netlify/functions/team"
   status = 200
   force = true

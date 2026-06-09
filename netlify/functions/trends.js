@@ -146,34 +146,21 @@ async function getSprintVolumeTrend(athleteId, weeks = 4) {
  */
 async function getGamePerformanceTrend(athleteId, games = 5) {
   try {
-    // Try to query game_stats table first (more common schema)
     let data = null;
     let error = null;
 
-    // Try game_stats table
-    const gameStatsResult = await supabaseAdmin
-      .from("game_stats")
+    // Query games table
+    const gamesResult = await supabaseAdmin
+      .from("games")
       .select("*")
-      .eq("user_id", athleteId)
+      .or(`athlete_id.eq.${athleteId},user_id.eq.${athleteId}`)
       .order("game_date", { ascending: false })
       .limit(games);
 
-    if (!gameStatsResult.error && gameStatsResult.data?.length > 0) {
-      ({ data } = gameStatsResult);
+    if (!gamesResult.error) {
+      ({ data } = gamesResult);
     } else {
-      // Try games table as fallback
-      const gamesResult = await supabaseAdmin
-        .from("games")
-        .select("*")
-        .or(`athlete_id.eq.${athleteId},user_id.eq.${athleteId}`)
-        .order("game_date", { ascending: false })
-        .limit(games);
-
-      if (!gamesResult.error) {
-        ({ data } = gamesResult);
-      } else {
-        ({ error } = gamesResult);
-      }
+      ({ error } = gamesResult);
     }
 
     if (error) {

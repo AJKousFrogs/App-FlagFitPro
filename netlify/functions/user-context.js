@@ -66,7 +66,7 @@ async function getUserContext(userId) {
         .gte("completed_at", twentyEightDaysAgo.toISOString())
         .order("completed_at", { ascending: false }),
       supabaseAdmin
-        .from("wellness_checkins")
+        .from("daily_wellness_checkin")
         .select("*")
         .eq("user_id", userId)
         .order("created_at", { ascending: false })

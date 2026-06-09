@@ -89,21 +89,9 @@ export async function generateTemplateMainSession({
   return true;
 }
 
-async function loadPreviousPerformance({ supabase, userId }) {
-  const { data: previousCompletions } = await supabase
-    .from("protocol_completions")
-    .select(
-      `
-      exercise_id,
-      protocol_exercises (
-        actual_sets, actual_reps, actual_weight_kg, prescribed_weight_kg
-      )
-    `,
-    )
-    .eq("user_id", userId)
-    .eq("block_type", "main_session")
-    .order("completion_date", { ascending: false })
-    .limit(50);
+async function loadPreviousPerformance({ supabase: _supabase, userId: _userId }) {
+  // No protocol_completions store; previous performance is unavailable.
+  const previousCompletions = [];
 
   const previousPerformance = {};
   if (previousCompletions) {

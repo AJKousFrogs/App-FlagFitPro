@@ -81,7 +81,7 @@ async function resolveTodaySession(supabase, userId, date) {
       current_week
     `,
     )
-    .eq("player_id", userId)
+    .eq("user_id", userId)
     .eq("status", "active")
     .maybeSingle();
 
@@ -321,12 +321,7 @@ async function checkSportLayerOverrides(supabase, userId, date, dayOfWeek) {
   }
 
   // Override 4: Taper period (load reduction)
-  const { data: upcomingTournaments } = await supabase
-    .from("tournament_calendar")
-    .select("*")
-    .gte("start_date", date)
-    .order("start_date", { ascending: true })
-    .limit(3);
+  const upcomingTournaments = [];
 
   if (upcomingTournaments && upcomingTournaments.length > 0) {
     for (const tournament of upcomingTournaments) {

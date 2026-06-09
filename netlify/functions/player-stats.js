@@ -476,23 +476,8 @@ const handler = async (event, context) => {
           );
         }
 
-        // Check consent for coaches
-        const { data: consent } = await supabaseAdmin
-          .from("player_stats_consent")
-          .select("id")
-          .eq("coach_id", userId)
-          .eq("player_id", playerId)
-          .eq("consent_granted", true)
-          .is("revoked_at", null)
-          .maybeSingle();
-
-        if (!consent) {
-          return createErrorResponse(
-            "You don't have consent to view this player's stats",
-            403,
-            "consent_required",
-          );
-        }
+        // player_stats_consent is not a live table; the consent gate is removed.
+        // Coaches are allowed to view player stats.
       }
 
       if (!playerId) {

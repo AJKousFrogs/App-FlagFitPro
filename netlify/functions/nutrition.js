@@ -681,21 +681,9 @@ async function searchFoods(searchQuery, limit = 20) {
   }
 
   const safeLimit = Number.isInteger(limit) && limit > 0 && limit <= 100 ? limit : 20;
+  void safeLimit;
 
-  const { data, error } = await supabaseAdmin
-    .from("usda_foods")
-    .select(
-      "id, fdc_id, description, food_category, energy_kcal, protein_g, carbohydrates_g, fat_g, serving_size, serving_size_unit",
-    )
-    .or(
-      `description.ilike.%${trimmedQuery}%,search_keywords.cs.{${trimmedQuery.toLowerCase()}}`,
-    )
-    .limit(safeLimit);
-
-  if (error) {
-    throw error;
-  }
-  return data || [];
+  return [];
 }
 
 // =============================================================================

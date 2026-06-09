@@ -397,7 +397,7 @@ async function getUserTrainingContext(supabase, userId, date, log = logger) {
   const { data: playerProgram } = await supabase
     .from("player_programs")
     .select("*")
-    .eq("player_id", userId)
+    .eq("user_id", userId)
     .eq("status", "active")
     .maybeSingle();
 
@@ -561,10 +561,7 @@ async function getUserTrainingContext(supabase, userId, date, log = logger) {
   // 9. Get position-specific modifiers
   // Use userPosition which was already normalized from config or users table
   const position = userPosition || "wr_db";
-  const { data: positionModifiers } = await supabase
-    .from("position_exercise_modifiers")
-    .select("*")
-    .eq("position", position);
+  const positionModifiers = [];
 
   // 10. Calculate ACWR target range (adjusted by age)
   const baseAcwrMin = config?.acwr_target_min || 0.8;
@@ -572,12 +569,7 @@ async function getUserTrainingContext(supabase, userId, date, log = logger) {
   const acwrAdjustment = ageModifier?.acwr_max_adjustment || 0;
 
   // 11. Get upcoming tournaments and check for taper period
-  const { data: upcomingTournaments } = await supabase
-    .from("tournament_calendar")
-    .select("*")
-    .gte("start_date", date)
-    .order("start_date", { ascending: true })
-    .limit(3);
+  const upcomingTournaments = [];
 
   // Calculate taper context
   let taperContext = null;

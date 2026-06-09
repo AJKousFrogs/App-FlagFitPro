@@ -8,7 +8,6 @@
  *   /api/team-invite, /api/team-invite/*
  *   /api/team-templates, /api/team-templates/*
  *   /api/season-archive, /api/season-archive/*
- *   /api/season-reports, /api/season-reports/*
  *   /api/attendance, /api/attendance/*
  */
 
@@ -17,7 +16,6 @@ import { dispatch } from "./utils/web-lambda-bridge.js";
 import { handler as teamInviteHandler } from "./team-invite.js";
 import { handler as teamTemplatesHandler } from "./team-templates.js";
 import { handler as seasonArchiveHandler } from "./season-archive.js";
-import { handler as seasonReportsHandler } from "./season-reports.js";
 import { handler as attendanceHandler } from "./attendance.js";
 
 import { getCorsHeaders as corsHeaders } from "./utils/cors.js";
@@ -31,7 +29,6 @@ export default async (req) => {
   if (path.includes("/team-invite")) {return dispatch(teamInviteHandler, req, url);}
   if (path.includes("/team-templates")) {return dispatch(teamTemplatesHandler, req, url);}
   if (path.includes("/season-archive")) {return dispatch(seasonArchiveHandler, req, url);}
-  if (path.includes("/season-reports")) {return dispatch(seasonReportsHandler, req, url);}
   if (path.includes("/attendance")) {return dispatch(attendanceHandler, req, url);}
 
   return new Response(

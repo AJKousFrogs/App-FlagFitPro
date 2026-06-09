@@ -820,46 +820,6 @@ function getAllProtocolsSummary() {
 // =============================================================================
 
 /**
- * Get athlete recovery profile
- */
-async function getAthleteRecoveryProfile(userId) {
-  const { data, error } = await supabaseAdmin
-    .from("athlete_recovery_profiles")
-    .select("*")
-    .eq("user_id", userId)
-    .single();
-
-  if (error && error.code !== "PGRST116") {
-    throw error;
-  }
-
-  return data;
-}
-
-/**
- * Save athlete recovery profile
- */
-async function saveAthleteRecoveryProfile(userId, profileData) {
-  const { data, error } = await supabaseAdmin
-    .from("athlete_recovery_profiles")
-    .upsert(
-      {
-        user_id: userId,
-        ...profileData,
-        updated_at: new Date().toISOString(),
-      },
-      { onConflict: "user_id" },
-    )
-    .select()
-    .single();
-
-  if (error) {
-    throw error;
-  }
-  return data;
-}
-
-/**
  * Log recovery session
  */
 async function logRecoverySession(userId, sessionData) {
@@ -981,32 +941,6 @@ async function handleRequest(event, _context, { userId }) {
       }
       const recommendations = generateRecoveryRecommendations(body);
       return createSuccessResponse(recommendations);
-    }
-
-    // Get athlete recovery profile
-    if (event.httpMethod === "GET" && path === "profile") {
-      const profile = await getAthleteRecoveryProfile(userId);
-      if (!profile) {
-        return createSuccessResponse({
-          exists: false,
-          message:
-            "No recovery profile found. Create one with POST /recovery/profile",
-        });
-      }
-      return createSuccessResponse(profile);
-    }
-
-    // Save athlete recovery profile
-    if (event.httpMethod === "POST" && path === "profile") {
-      if (body.user_id !== undefined || body.athlete_id !== undefined) {
-        return createErrorResponse(
-          "profile payload cannot include user_id or athlete_id",
-          422,
-          "validation_error",
-        );
-      }
-      const saved = await saveAthleteRecoveryProfile(userId, body);
-      return createSuccessResponse(saved, 201);
     }
 
     // Log a recovery session

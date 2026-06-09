@@ -136,12 +136,9 @@ async function resolveTeamActivityForAthleteDay(
   });
 
   // Step 4: Get athlete's participation status
-  const { data: attendance, error: attendanceError } = await supabase
-    .from("team_activity_attendance")
-    .select("participation, exclusion_reason")
-    .eq("activity_id", teamActivity.id)
-    .eq("athlete_id", athleteId)
-    .maybeSingle();
+  // team_activity_attendance is not a live table; default to no attendance record.
+  const attendance = null;
+  const attendanceError = null;
 
   let participation = "required"; // Default if no attendance record
 

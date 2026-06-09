@@ -79,21 +79,15 @@ async function getAthletePhysioOverview(teamId) {
           return null;
         }
 
-        const [{ data: injuries }, { data: loadData }] = await Promise.all([
+        const [{ data: injuries }] = await Promise.all([
           supabaseAdmin
             .from("athlete_injuries")
             .select("*")
             .eq("user_id", userId)
             .in("recovery_status", ["active", "recovering", "rehab"])
             .order("injury_date", { ascending: false }),
-          supabaseAdmin
-            .from("load_daily")
-            .select("acwr, acute_load, chronic_load, date")
-            .eq("user_id", userId)
-            .order("date", { ascending: false })
-            .limit(1)
-            .single(),
         ]);
+        const loadData = null;
 
         // Determine clearance status
         let clearanceStatus = "cleared";
@@ -144,44 +138,17 @@ async function getAthletePhysioOverview(teamId) {
  * Get detailed injury data for an athlete
  */
 async function getAthleteInjuryDetails(athleteId) {
-  // All-injuries, injury-tracking, and 28d load history all key on athleteId and are
-  // independent — fetch concurrently (3 sequential round-trips → 1).
-  const [{ data: injuries }, { data: tracking }, { data: loadHistory }] =
-    await Promise.all([
-      supabaseAdmin
-        .from("athlete_injuries")
-        .select("*")
-        .eq("user_id", athleteId)
-        .order("injury_date", { ascending: false }),
-      supabaseAdmin
-        .from("injury_tracking")
-        .select("*")
-        .or(`user_id.eq.${athleteId},player_id.eq.${athleteId}`)
-        .order("injury_date", { ascending: false }),
-      supabaseAdmin
-        .from("load_daily")
-        .select("date, acwr, acute_load, chronic_load")
-        .eq("user_id", athleteId)
-        .order("date", { ascending: false })
-        .limit(28),
-    ]);
-
-  // Rehab protocol depends on the active injury — fetch after injuries resolve
-  const activeInjury = injuries?.find((i) =>
-    ["active", "recovering", "rehab"].includes(i.recovery_status),
-  );
-
-  let rehabProtocol = null;
-  if (activeInjury) {
-    const { data: protocol } = await supabaseAdmin
-      .from("rehab_protocols")
+  const [{ data: injuries }] = await Promise.all([
+    supabaseAdmin
+      .from("athlete_injuries")
       .select("*")
-      .eq("injury_type", activeInjury.injury_type)
-      .eq("injury_severity", activeInjury.injury_grade)
-      .order("phase_number", { ascending: true });
+      .eq("user_id", athleteId)
+      .order("injury_date", { ascending: false }),
+  ]);
+  const tracking = [];
+  const loadHistory = [];
 
-    rehabProtocol = protocol;
-  }
+  const rehabProtocol = null;
 
   return {
     activeInjuries:

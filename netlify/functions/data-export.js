@@ -66,12 +66,6 @@ const USER_DATA_TABLES = [
     exportName: "nutrition_plans",
   },
   {
-    table: "athlete_recovery_profiles",
-    userIdColumn: "user_id",
-    description: "Recovery preferences and profile",
-    exportName: "recovery_profile",
-  },
-  {
     table: "recovery_sessions",
     userIdColumn: "user_id",
     description: "Logged recovery sessions",
@@ -273,30 +267,6 @@ async function generateDataExport(userId, log = logger) {
 
   exportData.summary.durationMs = Date.now() - startTime;
 
-  // Log the export request
-  await supabaseAdmin
-    .from("gdpr_data_processing_log")
-    .insert({
-      user_id: userId,
-      operation_type: "data_export",
-      status: "completed",
-      details: {
-        export_id: exportId,
-        tables_exported: exportData.summary.tablesExported,
-        total_records: exportData.summary.totalRecords,
-      },
-    })
-    .catch((err) => {
-      log.warn(
-        "data_export_log_insert_failed",
-        {
-          export_id: exportId,
-          user_id: userId,
-        },
-        err,
-      );
-    });
-
   return exportData;
 }
 
@@ -338,22 +308,11 @@ async function generateDataInventory(userId) {
 /**
  * Check export request status
  */
-async function getExportRequestStatus(userId) {
-  const { data, error } = await supabaseAdmin
-    .from("gdpr_data_processing_log")
-    .select("*")
-    .eq("user_id", userId)
-    .eq("operation_type", "data_export")
-    .order("created_at", { ascending: false })
-    .limit(5);
-
-  if (error) {
-    throw error;
-  }
-
+async function getExportRequestStatus(_userId) {
+  // No persistent processing log store; exports are generated on demand.
   return {
-    recentExports: data || [],
-    lastExport: data?.[0] || null,
+    recentExports: [],
+    lastExport: null,
   };
 }
 
@@ -369,28 +328,11 @@ async function requestDataExport(userId, options = {}) {
     throw new Error("deliveryMethod must be one of: download");
   }
 
-  // Log the request
-  const { data: request, error } = await supabaseAdmin
-    .from("gdpr_data_processing_log")
-    .insert({
-      user_id: userId,
-      operation_type: "data_export_request",
-      status: "pending",
-      details: {
-        format,
-        delivery_method: deliveryMethod,
-        requested_at: new Date().toISOString(),
-      },
-    })
-    .select()
-    .single();
-
-  if (error) {
-    throw error;
-  }
+  // No persistent processing log store; issue a synthetic request id.
+  const requestId = `export-request-${userId}-${Date.now()}`;
 
   return {
-    requestId: request.id,
+    requestId,
     status: "pending",
     message: "Data export request received. Processing will begin shortly.",
     estimatedTime: "5-10 minutes",

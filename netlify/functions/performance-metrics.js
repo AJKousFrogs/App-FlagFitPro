@@ -49,7 +49,7 @@ async function getPerformanceMetrics(userId, log = logger) {
     let performanceTests = [];
     try {
       const { data: tests, error: testsError } = await supabaseAdmin
-        .from("athlete_performance_tests")
+        .from("performance_tests")
         .select("*")
         .eq("user_id", userId)
         .order("test_date", { ascending: false })

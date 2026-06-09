@@ -171,9 +171,7 @@ async function getDecisions(userId, filters = {}) {
     .order("created_at", { ascending: false });
 
   // Apply filters
-  if (filters.athleteId) {
-    query = query.eq("athlete_id", filters.athleteId);
-  }
+  // Note: decision_ledger has no athlete_id/user_id column; athlete filter removed.
 
   if (filters.decisionType) {
     query = query.eq("decision_type", filters.decisionType);

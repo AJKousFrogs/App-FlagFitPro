@@ -109,33 +109,10 @@ class ConsentDataReader {
       return ownAccess.errorResponse;
     }
 
-    const { targetPlayerId } = ownAccess;
-    let query = this.supabase
-      .from("load_monitoring")
-      .select("*")
-      .eq("player_id", targetPlayerId);
-
-    if (filters.startDate) {
-      query = query.gte("date", filters.startDate);
-    }
-
-    if (filters.endDate) {
-      query = query.lte("date", filters.endDate);
-    }
-
-    query = query.order("date", { ascending: false });
-
-    if (filters.limit) {
-      query = query.limit(filters.limit);
-    }
-
-    const { data, error } = await query;
-
-    // load_monitoring is a never-written derived ACWR cache pending removal; a missing
-    // table means "no cached rows", not a failure — return empty rather than erroring.
-    if (error && error.code !== "42P01") {
-      return this._createErrorResponse(error, "load_monitoring");
-    }
+    // load_monitoring is not a live table (derived ACWR cache, removed); there are
+    // no cached rows to read, so return an empty result rather than querying.
+    void ownAccess;
+    const data = [];
 
     const processedData = this._processConsentResults(data || [], context);
 
@@ -247,30 +224,9 @@ class ConsentDataReader {
       );
     }
 
-    let query = this.supabase
-      .from("load_monitoring")
-      .select("*")
-      .in("player_id", access.targetUserIds);
-
-    if (filters.startDate) {
-      query = query.gte("date", filters.startDate);
-    }
-
-    if (filters.endDate) {
-      query = query.lte("date", filters.endDate);
-    }
-
-    query = query.order("date", { ascending: false });
-
-    if (filters.limit) {
-      query = query.limit(filters.limit);
-    }
-
-    const { data, error } = await query;
-
-    if (error && error.code !== "42P01") {
-      return this._createErrorResponse(error, "load_monitoring");
-    }
+    // load_monitoring is not a live table (derived ACWR cache, removed); there are
+    // no cached rows to read, so return an empty result rather than querying.
+    const data = [];
 
     await this._logCoachAccessIfEnabled({
       requesterId,

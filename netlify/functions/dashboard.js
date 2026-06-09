@@ -209,54 +209,20 @@ const getTeamChemistry = async (userId) => {
 
     const teamId = teamMemberships[0].team_id;
 
-    // Members + latest chemistry both key on teamId but are independent — run concurrently
-    const [
-      { data: members, error: membersError },
-      { data: chemistryData, error: chemistryError },
-    ] = await Promise.all([
+    const [{ data: members, error: membersError }] = await Promise.all([
       supabaseAdmin
         .from("team_members")
         .select("user_id, role, position, jersey_number, status")
         .eq("team_id", teamId)
         .eq("status", "active"),
-      supabaseAdmin
-        .from("team_chemistry")
-        .select(
-          "overall_chemistry, communication_score, trust_score, cohesion_score, leadership_score",
-        )
-        .eq("team_id", teamId)
-        .order("created_at", { ascending: false })
-        .limit(1),
     ]);
 
     if (membersError) {
       console.error("Error fetching team members:", membersError);
     }
 
-    let chemistry = null;
-    let chemistryDetails = null;
-
-    if (!chemistryError && chemistryData && chemistryData.length > 0) {
-      // Use real chemistry data from database
-      const data = chemistryData[0];
-      chemistry = data.overall_chemistry;
-      chemistryDetails = {
-        communication: data.communication_score,
-        trust: data.trust_score,
-        cohesion: data.cohesion_score,
-        leadership: data.leadership_score,
-      };
-    } else {
-      // Calculate chemistry based on team activity if no stored data
-      // This is a simple heuristic based on team size and activity
-      const memberCount = members?.length || 0;
-      if (memberCount > 0) {
-        // Base chemistry on team size (more members = more potential for chemistry)
-        // Capped at reasonable values
-        const sizeBonus = Math.min(memberCount * 2, 15);
-        chemistry = 70 + sizeBonus; // Range: 70-85 based on team size
-      }
-    }
+    const chemistry = null;
+    const chemistryDetails = null;
 
     return {
       teamId,

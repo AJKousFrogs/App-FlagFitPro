@@ -55,7 +55,7 @@ function buildSyncUrl(event) {
 async function loadAttendanceMap(supabase, teamId) {
   const records = await supabase
     .from("attendance_records")
-    .select("event_id, player_id, status, needs_ride")
+    .select("event_id, player_id:user_id, status, needs_ride")
     .eq("team_id", teamId);
 
   if (records.error) {
@@ -222,7 +222,7 @@ const handler = async (event, context) =>
           const payload = {
             event_id: body.eventId,
             team_id: teamId,
-            player_id: userId,
+            user_id: userId,
             status: toAttendanceStatus(body.status),
             guests: Number(body.guests) || 0,
             needs_ride: body.needsRide === true,
@@ -234,7 +234,7 @@ const handler = async (event, context) =>
           const { error } = await supabase
             .from("attendance_records")
             .upsert(payload, {
-              onConflict: "event_id,player_id",
+              onConflict: "event_id,user_id",
             });
 
           if (error) {

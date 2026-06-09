@@ -776,7 +776,7 @@ Touched by: `ai-chat`, `coach-alerts`, `daily-protocol`
 - `cool_down_completed_at` timestamp with time zone
 
 ### `daily_wellness_checkin`
-Touched by: `ai-chat`, `calc-readiness`, `daily-protocol`, `performance-data`, `season-reports`, `sleep-data`, `smart-training-recommendations`, `wellness-checkin`, `wellness-logs`
+Touched by: `ai-chat`, `calc-readiness`, `daily-protocol`, `performance-data`, `sleep-data`, `smart-training-recommendations`, `user-context`, `wellness-checkin`, `wellness-logs`
 
 - `id` uuid · not null
 - `user_id` uuid · not null
@@ -1578,7 +1578,7 @@ Touched by: _(no endpoint references this table)_
 - `performance_day` date · not null
 
 ### `performance_tests`
-Touched by: `analytics-core`, `performance-data`
+Touched by: `analytics-core`, `performance-data`, `performance-metrics`
 
 - `id` uuid · not null
 - `user_id` uuid · not null
@@ -2076,7 +2076,7 @@ Touched by: `ai-chat`, `games-core`, `wellness-checkin`
 - `created_at` timestamp with time zone
 
 ### `recovery_protocols`
-Touched by: `admin`, `games-core`, `recovery-core`
+Touched by: `games-core`, `recovery-core`
 
 - `id` uuid · not null
 - `name` text · not null
@@ -2406,7 +2406,7 @@ Touched by: `accept-invitation`, `team-invite`, `validate-invitation`
 - `updated_at` timestamp with time zone · not null
 
 ### `team_members`
-Touched by: `accept-invitation`, `ai-chat`, `ai-telemetry`, `analytics-core`, `attendance`, `calc-readiness`, `calibration-logs`, `chat`, `coach-activity`, `coach-analytics`, `coach-core`, `coach-inbox`, `community`, `compute-acwr`, `daily-protocol`, `dashboard`, `decisions`, `exercisedb`, `games-core`, `import-open-data`, `load-management`, `payments-core`, `performance-data`, `player-stats`, `privacy-settings`, `response-feedback`, `roster-core`, `season-reports`, `smart-training-recommendations`, `staff-nutritionist`, `staff-physiotherapist`, `staff-psychology`, `team-invite`, `team-templates`, `training-metrics`, `training-plan`, `user-context`, `wellness-checkin`
+Touched by: `accept-invitation`, `ai-chat`, `ai-telemetry`, `analytics-core`, `attendance`, `calc-readiness`, `calibration-logs`, `chat`, `coach-activity`, `coach-analytics`, `coach-core`, `coach-inbox`, `community`, `compute-acwr`, `daily-protocol`, `dashboard`, `decisions`, `exercisedb`, `games-core`, `import-open-data`, `load-management`, `payments-core`, `performance-data`, `player-stats`, `privacy-settings`, `response-feedback`, `roster-core`, `smart-training-recommendations`, `staff-nutritionist`, `staff-physiotherapist`, `staff-psychology`, `team-invite`, `team-templates`, `training-metrics`, `training-plan`, `training-sessions`, `user-context`, `wellness-checkin`
 
 - `id` uuid · not null
 - `team_id` uuid · not null

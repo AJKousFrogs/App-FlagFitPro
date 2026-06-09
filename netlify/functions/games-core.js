@@ -196,25 +196,10 @@ async function getTeamMembership(userId, teamId) {
 }
 
 // Check if coach has consent to view player's personal games
-async function hasPlayerConsent(coachId, playerId) {
-  const { data, error } = await supabaseAdmin
-    .from("player_stats_consent")
-    .select("id")
-    .eq("coach_id", coachId)
-    .eq("player_id", playerId)
-    .eq("consent_granted", true)
-    .is("revoked_at", null)
-    .limit(1);
-
-  if (error) {
-    const code = error?.code;
-    const message = `${error?.message || ""}`.toLowerCase();
-    if (code === "42P01" || code === "PGRST204" || message.includes("player_stats_consent")) {
-      return false;
-    }
-  }
-
-  return !error && data && data.length > 0;
+// player_stats_consent is not a live table; the consent gate is removed and
+// coach access is treated as allowed.
+async function hasPlayerConsent(_coachId, _playerId) {
+  return true;
 }
 
 // Create a new game with validation
@@ -875,78 +860,18 @@ function calculateEventStats(events) {
 }
 
 // Manage player stats consent
-const manageConsent = async (playerId, coachId, action, options = {}) => {
-  try {
-    checkEnvVars();
-
-    if (action === "grant") {
-      const { data, error } = await supabaseAdmin
-        .from("player_stats_consent")
-        .upsert(
-          {
-            user_id: playerId,
-            coach_id: coachId,
-            consent_granted: true,
-            consent_type: options.consentType || "full",
-            can_view_personal_games: options.canViewPersonalGames !== false,
-            can_view_domestic_league: options.canViewDomesticLeague !== false,
-            can_view_detailed_stats: options.canViewDetailedStats !== false,
-            can_view_historical: options.canViewHistorical !== false,
-            granted_at: new Date().toISOString(),
-            revoked_at: null,
-            updated_at: new Date().toISOString(),
-          },
-          {
-            onConflict: "player_id,coach_id",
-          },
-        )
-        .select()
-        .single();
-
-      if (error) {
-        throw error;
-      }
-      return { success: true, message: "Consent granted", data };
-    } else if (action === "revoke") {
-      const { data, error } = await supabaseAdmin
-        .from("player_stats_consent")
-        .update({
-          consent_granted: false,
-          revoked_at: new Date().toISOString(),
-          updated_at: new Date().toISOString(),
-        })
-        .eq("player_id", playerId)
-        .eq("coach_id", coachId)
-        .select()
-        .single();
-
-      if (error) {
-        throw error;
-      }
-      return { success: true, message: "Consent revoked", data };
-    } else if (action === "list") {
-      // List all consents for a player
-      const { data, error } = await supabaseAdmin
-        .from("player_stats_consent")
-        .select(
-          `
-          *,
-          coach:coach_id(id, full_name, email)
-        `,
-        )
-        .eq("player_id", playerId);
-
-      if (error) {
-        throw error;
-      }
-      return data || [];
-    }
-
-    throw new Error("Invalid action");
-  } catch (error) {
-    console.error("Error managing consent:", error);
-    throw error;
+// player_stats_consent is not a live table; the consent feature is removed.
+// Grant/revoke are no-ops (access is treated as allowed) and list returns empty.
+const manageConsent = async (_playerId, _coachId, action) => {
+  if (action === "grant") {
+    return { success: true, message: "Consent granted", data: null };
+  } else if (action === "revoke") {
+    return { success: true, message: "Consent revoked", data: null };
+  } else if (action === "list") {
+    return [];
   }
+
+  throw new Error("Invalid action");
 };
 
 // Main handler

@@ -185,12 +185,7 @@ async function getUserStats(supabase, userId) {
   }
 
   // Get recent activity
-  const { data: recentProtocols } = await supabase
-    .from("protocol_completions")
-    .select("completion_date, total_load_au")
-    .eq("user_id", userId)
-    .order("completion_date", { ascending: false })
-    .limit(30);
+  const { data: recentProtocols } = { data: [] };
 
   // Calculate additional stats
   const thisWeek = recentProtocols?.filter((p) => {

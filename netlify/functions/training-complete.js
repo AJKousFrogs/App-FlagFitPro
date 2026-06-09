@@ -107,50 +107,13 @@ async function awardTrainingPoints(userId, duration, intensity, log = logger) {
     return { points: 0 };
   }
 
-  try {
-    // Check if user has sponsor_rewards record
-    const { data: existing } = await supabaseAdmin
-      .from("sponsor_rewards")
-      .select("id, available_points")
-      .eq("user_id", userId)
-      .single();
-
-    if (existing) {
-      // Update existing record
-      await supabaseAdmin
-        .from("sponsor_rewards")
-        .update({
-          available_points: existing.available_points + totalPoints,
-          updated_at: new Date().toISOString(),
-        })
-        .eq("id", existing.id);
-    } else {
-      // Create new record
-      await supabaseAdmin.from("sponsor_rewards").insert({
-        user_id: userId,
-        available_points: totalPoints,
-        current_tier: "BRONZE",
-        tier_progress_percentage: 0,
-      });
-    }
-
-    log.info("training_points_awarded", {
-      user_id: userId,
-      duration_minutes: duration,
-      intensity,
-      points_awarded: totalPoints,
-    });
-    return { points: totalPoints };
-  } catch (error) {
-    log.warn(
-      "training_points_award_failed",
-      {
-        user_id: userId,
-      },
-      error,
-    );
-    return { points: 0 };
-  }
+  log.info("training_points_awarded", {
+    user_id: userId,
+    duration_minutes: duration,
+    intensity,
+    points_awarded: totalPoints,
+  });
+  return { points: totalPoints };
 }
 
 /**

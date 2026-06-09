@@ -369,14 +369,7 @@ async function getUserContext(userId) {
         .eq("user_id", userId)
         .eq("block_date", today)
         .maybeSingle(),
-      supabaseAdmin
-        .from("load_caps")
-        .select("sessions_remaining, max_load_percent, reason")
-        .eq("player_id", userId)
-        .eq("status", "active")
-        .order("created_at", { ascending: false })
-        .limit(1)
-        .maybeSingle(),
+      Promise.resolve({ data: null }),
       supabaseAdmin
         .from("users")
         .select("position, height_cm, weight_kg")

@@ -517,7 +517,7 @@ describe("ApiService", () => {
       expect(API_ENDPOINTS.admin.healthMetrics).toBe(
         "/api/admin/health-metrics",
       );
-      expect(API_ENDPOINTS.admin.syncUSDA).toBe("/api/admin/sync-usda");
+      expect(API_ENDPOINTS.admin.createBackup).toBe("/api/admin/create-backup");
     });
   });
 
