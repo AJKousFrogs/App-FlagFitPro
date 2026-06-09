@@ -58,8 +58,7 @@ async function logRecommendation(userId, data, log = logger) {
     const { data: result, error } = await supabaseAdmin
       .from("calibration_logs")
       .insert({
-        user_id: userId,
-        athlete_id: athleteId,
+        user_id: athleteId,
         timestamp: timestamp || new Date().toISOString(),
         recommendation_type: recommendation.type,
         readiness_score: recommendation.readinessScore || null,
@@ -77,15 +76,14 @@ async function logRecommendation(userId, data, log = logger) {
 
     if (error) {
       log.error("calibration_log_recommendation_insert_failed", error, {
-        athlete_id: data.athleteId,
-        user_id: userId,
+        user_id: data.athleteId,
       });
       throw error;
     }
 
     return {
       id: result.id,
-      athleteId: result.athlete_id,
+      athleteId: result.user_id,
       timestamp: result.timestamp,
       recommendationType: result.recommendation_type,
       createdAt: result.created_at,
@@ -235,7 +233,7 @@ async function logOutcome(userId, data, log = logger) {
     const { data: existingLog, error: findError } = await supabaseAdmin
       .from("calibration_logs")
       .select("id")
-      .eq("athlete_id", athleteId)
+      .eq("user_id", athleteId)
       .gte("timestamp", startDate.toISOString())
       .lte("timestamp", endDate.toISOString())
       .order("timestamp", { ascending: false })
@@ -247,7 +245,7 @@ async function logOutcome(userId, data, log = logger) {
         "calibration_log_lookup_failed",
         findError,
         {
-          athlete_id: athleteId,
+          user_id: athleteId,
         },
       );
       throw findError;
@@ -258,8 +256,7 @@ async function logOutcome(userId, data, log = logger) {
       const { data: result, error } = await supabaseAdmin
         .from("calibration_logs")
         .insert({
-          user_id: userId,
-          athlete_id: athleteId,
+          user_id: athleteId,
           timestamp,
           injury_flagged: outcomes?.injuryFlagged || false,
           injury_date: outcomes?.injuryDate || null,
@@ -275,15 +272,14 @@ async function logOutcome(userId, data, log = logger) {
 
         if (error) {
           log.error("calibration_log_outcome_insert_failed", error, {
-            athlete_id: athleteId,
-            user_id: userId,
+            user_id: athleteId,
           });
           throw error;
         }
 
       return {
         id: result.id,
-        athleteId: result.athlete_id,
+        athleteId: result.user_id,
         outcomeRecordedAt: result.outcome_recorded_at,
       };
     }
@@ -306,15 +302,14 @@ async function logOutcome(userId, data, log = logger) {
 
         if (error) {
           log.error("calibration_log_outcome_update_failed", error, {
-            athlete_id: athleteId,
-            user_id: userId,
+            user_id: athleteId,
           });
           throw error;
         }
 
     return {
       id: result.id,
-      athleteId: result.athlete_id,
+      athleteId: result.user_id,
       outcomeRecordedAt: result.outcome_recorded_at,
     };
   } catch (error) {
@@ -334,14 +329,14 @@ async function getAthleteStats(athleteId, log = logger) {
     const { data: logs, error } = await supabaseAdmin
       .from("calibration_logs")
       .select("*")
-      .eq("athlete_id", athleteId)
+      .eq("user_id", athleteId)
       .order("timestamp", { ascending: false });
 
     if (error) {
       log.error(
         "calibration_logs_fetch_failed",
         error,
-        { athlete_id: athleteId },
+        { user_id: athleteId },
       );
       throw error;
     }
@@ -422,7 +417,7 @@ async function getAthleteStats(athleteId, log = logger) {
     };
   } catch (error) {
     log.error("calibration_athlete_stats_failed", error, {
-      athlete_id: athleteId,
+      user_id: athleteId,
     });
     throw error;
   }

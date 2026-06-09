@@ -382,7 +382,6 @@ Touched by: `calibration-logs`
 
 - `id` uuid · not null
 - `user_id` uuid · not null
-- `athlete_id` uuid · not null
 - `timestamp` timestamp with time zone · not null
 - `recommendation_type` text
 - `readiness_score` numeric

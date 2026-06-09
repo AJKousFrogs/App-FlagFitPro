@@ -1417,11 +1417,6 @@
         "nullable": false
       },
       {
-        "col": "athlete_id",
-        "type": "uuid",
-        "nullable": false
-      },
-      {
         "col": "timestamp",
         "type": "timestamp with time zone",
         "nullable": false
