@@ -135,10 +135,13 @@ const handler = async (event, context) => {
 
       try {
         // Basic identity + physicals from the users table.
+        // NB: there is no `role` column on users — role comes from getUserRole()
+        // above. Selecting a non-existent column errors the whole query (this was
+        // part of why the endpoint 500'd).
         const { data: userInfo, error: userError } = await supabaseAdmin
           .from("users")
           .select(
-            "id, height_cm, weight_kg, position, birth_date, date_of_birth, role, experience_level",
+            "id, height_cm, weight_kg, position, birth_date, date_of_birth, experience_level",
           )
           .eq("id", targetUserId)
           .maybeSingle();
@@ -207,7 +210,7 @@ const handler = async (event, context) => {
           weightKg,
           position: userInfo.position || null,
           birthDate,
-          role: userInfo.role || "athlete",
+          role: userRole || "athlete",
           experienceLevel: userInfo.experience_level || "beginner",
           injuries: (injuriesRes.data ?? []).map((row) => ({
             type: row.injury_type,
