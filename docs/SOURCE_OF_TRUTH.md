@@ -70,7 +70,7 @@ Status: **LIVE** (wired end-to-end, tables exist) · **PARTIAL** (works but with
 | Program cycles | GHOST | `program-cycles.js` → `program_cycles`, `player_program_cycles` | Tables don't exist; `player_programs` does |
 | Seasons / season reports | GHOST | `season-reports.js`, `season-archive.js` → `seasons`, `season_summary_reports` | Absent; `season_archives` exists |
 | Scouting | GHOST | `scouting.js` → `scouting_reports` | Absent |
-| Privacy consent views read | GHOST/BUG | `privacy-settings.service.ts` → `v_workout_logs_consent`, `v_load_monitoring_consent` | Views don't exist → client reads fail |
+| Privacy consent views read | REMOVED | (was `privacy-settings.service.ts` → `v_workout_logs_consent`/`v_load_monitoring_consent`) | Dead code deleted 2026-06-09; views never existed live |
 | ExerciseDB lane | ORPHANED | `exercisedb.js` (`/api/exercisedb`) | No frontend ref; FE uses `exercises` lane |
 
 > The full ⚠️ ghost-table reference list (~40) is in `docs/generated/ENDPOINTS.md` and §6.
@@ -114,7 +114,7 @@ Reference implementations: the wellness check-in prefill `effect()` and `profile
 Sourced from §0 inventories + [`RECONCILIATION.md`](generated/RECONCILIATION.md). Unfixed:
 
 - **Ghost-table endpoints (TRUE-BUT-BUGGY).** ~40 `.from()`/`.rpc()` references in functions hit tables absent from live: equipment (`equipment_items/_assignments`), officials (`officials/game_officials/official_availability`), depth-chart (`depth_chart_*`), nutrition (`usda_foods`), `program_cycles`, `seasons`/`season_summary_reports`, `scouting_reports`, `team_chemistry`, `game_stats`, `load_daily`, `acwr_history`, `injury_tracking`, `rehab_protocols`, `sponsor_rewards`, `wellness_checkins`, `athlete_performance_tests`, `research_*`, etc. These error at runtime. Either build the table or retire the lane — track in the Ledger, don't silently rebuild.
-- **Privacy consent-view bug (P-class).** `privacy-settings.service.ts` reads `v_workout_logs_consent` / `v_load_monitoring_consent`; only `v_training_sessions_consent` exists. The reads fail. Repoint or remove.
+- ~~**Privacy consent-view bug.** `privacy-settings.service.ts` read `v_workout_logs_consent` / `v_load_monitoring_consent` (non-existent).~~ **Fixed 2026-06-09** — both `getConsentAware{LoadMonitoring,WorkoutLogs}` methods were dead (zero callers, dormant since the UI was removed) and queried dropped views; deleted. If consent-aware load/session reads are rebuilt, use the live `v_training_sessions_consent`.
 - **`supabase-types.ts` is stale** (37 dropped tables still present, 15 live tables missing). Regenerate.
 - **Two migration directories.** `database/migrations/` (171 files) is **100% legacy/unapplied** — 0 overlap with applied history; `supabase/migrations/` (194 files) tracks live (146 applied). Do not add new migrations to `database/migrations/`. Applied tracked-versions also diverge from `supabase/migrations` filename timestamps in 4 recent cases (e.g. applied `athlete_personal_events` = `20260609100045` vs file `20260609120000_…`).
 - **Committed secrets.** Old `BACKEND_SETUP`/`LOCAL_DEVELOPMENT` docs contained real-looking Supabase JWTs (now deleted with those docs) — rotate if they were ever real.
