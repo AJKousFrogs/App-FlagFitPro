@@ -1,15 +1,17 @@
 import { wrapHandler } from "./utils/lambda-compat.js";
 import { baseHandler } from "./utils/base-handler.js";
+import { authenticateRequest } from "./utils/auth-helper.js";
+import { supabaseAdmin } from "./utils/supabase-client.js";
 import {
   createSuccessResponse,
   handleValidationError,
 } from "./utils/error-handler.js";
 
 // Netlify Function: Weather Data
-// Provides current weather information for training planning
-const DEFAULT_LATITUDE = 37.7749;
-const DEFAULT_LONGITUDE = -122.4194;
-const DEFAULT_LOCATION_NAME = "Training Ground";
+// Provides current weather information for training planning.
+// Location resolution: query coords/city → caller's team home_city → explicit
+// "unavailable" response. NEVER a default location — fake weather driving the
+// heat/rain/storm training guards is worse than no weather (guards stay off).
 const REQUEST_TIMEOUT_MS = 6000;
 const GEO_USER_AGENT = "FlagFitPro/1.0 (weather-geocoding)";
 
@@ -56,9 +58,10 @@ async function getWeatherData(latitude, longitude, city) {
  */
 async function getOpenMeteoData(latitude, longitude, city) {
   try {
-    let lat = latitude || DEFAULT_LATITUDE;
-    let lon = longitude || DEFAULT_LONGITUDE;
-    let locationName = city || DEFAULT_LOCATION_NAME;
+    // Callers guarantee coords or a city — there is no default location.
+    let lat = latitude;
+    let lon = longitude;
+    let locationName = city;
 
     // If city provided but no coordinates, geocode the city
     if (city && !latitude && !longitude) {
@@ -351,15 +354,44 @@ function calculateOpenMeteoSuitability({
 
 
 /**
+ * Resolve the caller's location from their team's home_city — the most recent
+ * active membership whose team has one set.
+ */
+async function resolveTeamHomeCity(userId) {
+  try {
+    const { data, error } = await supabaseAdmin
+      .from("team_members")
+      .select("teams ( home_city )")
+      .eq("user_id", userId)
+      .eq("status", "active")
+      .order("updated_at", { ascending: false });
+
+    if (error) {
+      console.warn("Team home_city lookup failed:", error.message);
+      return null;
+    }
+    for (const row of data ?? []) {
+      const homeCity = row?.teams?.home_city;
+      if (typeof homeCity === "string" && homeCity.trim().length > 0) {
+        return homeCity.trim();
+      }
+    }
+  } catch (lookupError) {
+    console.warn("Team home_city lookup failed:", lookupError.message);
+  }
+  return null;
+}
+
+/**
  * Main handler function
  */
-async function handleRequest(event, _context, { userId: _userId }) {
+async function handleRequest(event, _context, { userId }) {
   try {
     const query = event.queryStringParameters || {};
 
     const latitude = parseCoordinateParam(query.lat, "lat", -90, 90);
     const longitude = parseCoordinateParam(query.lon, "lon", -180, 180);
-    const city = parseCityParam(query.city || query.location);
+    let city = parseCityParam(query.city || query.location);
 
     const hasLat = latitude !== null;
     const hasLon = longitude !== null;
@@ -369,11 +401,43 @@ async function handleRequest(event, _context, { userId: _userId }) {
       );
     }
 
+    // No explicit location: fall back to the caller's team home_city.
+    // Auth is optional on this route, so resolve the user opportunistically.
+    if (!hasLat && !city) {
+      let resolvedUserId = userId;
+      if (!resolvedUserId) {
+        try {
+          const auth = await authenticateRequest(event);
+          if (auth.success) {
+            resolvedUserId = auth.user.id;
+          }
+        } catch {
+          // anonymous caller — fine, weather just stays unavailable
+        }
+      }
+      if (resolvedUserId) {
+        city = await resolveTeamHomeCity(resolvedUserId);
+      }
+    }
+
+    // Still no location → explicit unavailable. Never a fabricated default —
+    // the client keeps its weather guard off and shows no weather.
+    if (!hasLat && !city) {
+      return createSuccessResponse({
+        available: false,
+        reason: "no_location",
+        description:
+          "No location on file. Set your team's home city (or pass lat/lon) to enable weather-aware training.",
+        timestamp: new Date().toISOString(),
+      });
+    }
+
     // Get weather data
     const weatherData = await getWeatherData(latitude, longitude, city);
 
     // Return data in format expected by Angular WeatherService
     return createSuccessResponse({
+      available: weatherData.temp !== null,
       temp: weatherData.temp,
       condition: weatherData.condition,
       suitability: weatherData.suitability,

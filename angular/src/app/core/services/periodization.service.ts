@@ -79,8 +79,12 @@ export class PeriodizationService {
     void this.loadRecentSessions();
 
     // Live weather → the prescription weather guard (metric: °C / mm / km/h).
+    // The server resolves location from the team's home_city; when it reports
+    // unavailable (no location / fetch failure) the guard simply stays off —
+    // real weather or none, never a default location's weather.
     this.api
       .get<{
+        available?: boolean;
         temp?: number; apparentC?: number; weatherCode?: number;
         precipMm?: number; windKmh?: number; windSpeed?: number;
         condition?: string; suitability?: string;
@@ -88,7 +92,7 @@ export class PeriodizationService {
       .subscribe({
         next: (res) => {
           const d = res?.data;
-          if (!d) return;
+          if (!d || d.available === false || d.temp == null) return;
           this.weather.set({
             tempC: d.temp ?? null,
             apparentC: d.apparentC ?? d.temp ?? null,
