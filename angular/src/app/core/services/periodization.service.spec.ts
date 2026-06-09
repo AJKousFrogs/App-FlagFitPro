@@ -679,3 +679,108 @@ describe("prescribeFor — sprint CNS recovery spacing", () => {
     expect(["technical", "strength", "mobility", "recovery"]).toContain(rx.intent);
   });
 });
+
+// =============================================================================
+// INJURY / PHYSIO GUARD (spec law: injury precedence over training)
+// =============================================================================
+
+describe("prescribeFor — injury guard", () => {
+  const sprintDay = new Date("2026-05-05T10:00:00Z"); // Tuesday → accumulation sprint
+  const strengthDay = new Date("2026-05-04T10:00:00Z"); // Monday → strength
+
+  const restriction = (
+    severity: "minor" | "moderate" | "severe",
+    over: Partial<{ restrictsSprint: boolean; regions: string[] }> = {},
+  ) => ({
+    restrictsSprint: true,
+    severity,
+    regions: ["hamstring"],
+    ...over,
+  });
+
+  it("severe restriction forces recovery-only (RPE 3 / 30min / no sprints)", () => {
+    const rx = prescribeFor(
+      inputs({ date: sprintDay, activeRestrictions: restriction("severe") }),
+    );
+    expect(rx.intent).toBe("recovery");
+    expect(rx.targetRpe).toBe(3);
+    expect(rx.targetMinutes).toBe(30);
+    expect(rx.sprintReps).toBe(0);
+    expect(rx.strengthSets).toBe(0);
+    expect(rx.injuryAdjustment?.severity).toBe("severe");
+    expect(rx.injuryAdjustment?.regions).toEqual(["hamstring"]);
+    expect(rx.reasoning).toMatch(/injury precedence/i);
+  });
+
+  it("moderate restriction pulls sprints and caps volume (≤40min, ≤3 sets)", () => {
+    const rx = prescribeFor(
+      inputs({ date: sprintDay, activeRestrictions: restriction("moderate") }),
+    );
+    expect(rx.intent).toBe("recovery");
+    expect(rx.targetRpe).toBe(3);
+    expect(rx.targetMinutes).toBeLessThanOrEqual(40);
+    expect(rx.strengthSets).toBeLessThanOrEqual(3);
+    expect(rx.sprintReps).toBe(0);
+    expect(rx.injuryAdjustment?.severity).toBe("moderate");
+  });
+
+  it("minor tightness on a sprint day keeps training but swaps to mobility (RPE ≤6)", () => {
+    const rx = prescribeFor(
+      inputs({ date: sprintDay, activeRestrictions: restriction("minor") }),
+    );
+    expect(rx.intent).toBe("mobility");
+    expect(rx.sprintReps).toBe(0);
+    expect(rx.targetRpe).toBeLessThanOrEqual(6);
+    expect(rx.injuryAdjustment?.severity).toBe("minor");
+  });
+
+  it("minor tightness on a day with no sprint work is a no-op", () => {
+    const rx = prescribeFor(
+      inputs({ date: strengthDay, activeRestrictions: restriction("minor") }),
+    );
+    expect(rx.intent).toBe("strength");
+    expect(rx.injuryAdjustment ?? null).toBeNull();
+  });
+
+  it("restrictions that do not restrict sprinting are a no-op", () => {
+    const rx = prescribeFor(
+      inputs({
+        date: sprintDay,
+        activeRestrictions: restriction("severe", { restrictsSprint: false }),
+      }),
+    );
+    expect(rx.intent).toBe("sprint");
+    expect(rx.injuryAdjustment ?? null).toBeNull();
+  });
+
+  it("never overrides a competition day (a game is a game)", () => {
+    const rx = prescribeFor(
+      inputs({
+        phase: "competition",
+        upcoming: [
+          event({
+            startsAt: "2026-05-09T07:00:00Z",
+            endsAt: "2026-05-09T17:00:00Z",
+          }),
+        ],
+        date: new Date("2026-05-09T12:00:00Z"),
+        activeRestrictions: restriction("severe"),
+      }),
+    );
+    expect(rx.intent).toBe("competition");
+  });
+
+  it("injury precedence beats the weather guard's substitution", () => {
+    // Rain would substitute the sprint with indoor strength; the severe
+    // restriction must still win and force recovery.
+    const rx = prescribeFor(
+      inputs({
+        date: sprintDay,
+        weather: weather({ weatherCode: 63, precipMm: 2 }),
+        activeRestrictions: restriction("severe"),
+      }),
+    );
+    expect(rx.intent).toBe("recovery");
+    expect(rx.injuryAdjustment).toBeTruthy();
+  });
+});

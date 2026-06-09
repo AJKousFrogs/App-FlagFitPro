@@ -127,9 +127,9 @@ Sourced from §0 inventories + [`RECONCILIATION.md`](generated/RECONCILIATION.md
   - ~~Client ACWR EWMA divergence~~ **Fixed**: client mirrors server (oldest→newest fold, uncoupled 21d chronic, λ=2/(N+1)); evidence presets updated.
   - ~~RPE null-overwrite on resubmit~~ **Fixed**: update branch only writes provided fields, workload recomputed from merged (new ?? saved) pair.
   - ~~`compute-acwr` multi-team `maybeSingle()`~~ **Fixed**: staff-team × athlete-membership intersection across ALL memberships.
-- **2026-06-09 audit — still open:**
-  - **Multi-team `limit(1)` in `coach-core.js getCoachTeamId` + `utils/team-activity-resolver.js`** — a multi-team coach/athlete resolves to an arbitrary team.
-  - **No spec tests** for the injury guard or the CNS 48h spacing guard in `periodization.service.ts`.
+- **2026-06-09 audit — closed out (second pass):**
+  - ~~Multi-team `limit(1)`/`maybeSingle()` in coach-core + team-activity-resolver~~ **Fixed**: `getCoachTeamId` is deterministic (most recent active membership) and accepts an explicit team — `?teamId=` on the coach GET lanes, `teamId` in POST payloads — validated against the caller's staffed memberships. `team-activity-resolver` searches activities across ALL of the athlete's active teams (old `maybeSingle()` errored on >1 membership → silent "no activity"); newest created activity wins.
+  - ~~No spec tests for injury/CNS guards~~ **Fixed**: `prescribeFor — injury guard` suite added (severe/moderate/minor scaling, no-op cases, competition-day immunity, injury-beats-weather precedence); CNS spacing suite landed with the feature commit.
   - **Orphaned ghost-lane tests removed** (officials/equipment/depth-chart/scouting/program-cycles/season-reports/tournament-calendar/push ×10 files + absence-request & research-sync cases); stale `user-profile` pg-Pool mock rewritten for the supabase client.
 
 ## 7. Runbooks & Security (operational — folded from the old RUNBOOKS, stale traps fixed)
