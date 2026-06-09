@@ -28,7 +28,7 @@
 
         <div style="margin:var(--s-4) 0">
           <app-yt-video [videoId]="sessionVideoId()" poster="assets/images/rebuild/video-session.jpg"
-                        title="Watch the full session" duration="18:30" />
+                        title="Watch the full session" [duration]="sessionVideoDuration()" />
         </div>
 
         @for (blk of blocks(); track blk.title) {

@@ -77,6 +77,11 @@ export class TrainingComponent {
     () => this.videoSvc.forIntent(this.rx()?.intent)?.youtubeId ?? SESSION_VIDEO_ID,
   );
 
+  /** Real duration of the matched library clip; "" when none matched (no fake time). */
+  readonly sessionVideoDuration = computed(
+    () => this.videoSvc.forIntent(this.rx()?.intent)?.duration ?? "",
+  );
+
   constructor() {
     if (!this.videoSvc.loaded()) void this.videoSvc.load();
     // Default the session-log RPE/duration to today's PRESCRIBED values once the

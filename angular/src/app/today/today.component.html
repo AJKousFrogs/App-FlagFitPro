@@ -68,7 +68,7 @@
       <!-- session video — real YouTube IFrame Player (no API key) -->
       <div style="margin-bottom:var(--s-4)">
         <app-yt-video [videoId]="sessionVideoId()" poster="assets/images/rebuild/video-session.jpg"
-                      title="Watch today's session" duration="18:30" />
+                      title="Watch today's session" [duration]="sessionVideoDuration()" />
       </div>
 
       <a class="btn primary block" routerLink="/training">Start session →</a>
