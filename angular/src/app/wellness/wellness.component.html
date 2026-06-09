@@ -137,7 +137,7 @@
     <label class="lbl">Where?</label>
     <div class="chiprow">
       @for (r of tightnessRegions; track r) {
-        <button type="button" class="chip" [class.sel]="tightRegion() === r" (click)="tightRegion.set(r)">{{ r }}</button>
+        <button type="button" class="chip" [class.sel]="tightRegion() === r" (click)="selectTightRegion(r)">{{ r }}</button>
       }
     </div>
     <label class="lbl">How bad?</label>

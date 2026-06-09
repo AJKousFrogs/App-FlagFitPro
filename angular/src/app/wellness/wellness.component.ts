@@ -69,6 +69,19 @@ export class WellnessComponent {
     this.tightSeverity.set(s);
   }
 
+  /** Select a region and prefill severity from its active report (so an
+   *  untouched resubmit can't downgrade a previously-reported moderate/severe). */
+  selectTightRegion(region: string): void {
+    this.tightRegion.set(region);
+    const existing = this.injurySvc
+      .active()
+      .find((i) => (i.region ?? "").toLowerCase() === region.toLowerCase());
+    const sev = existing?.severity;
+    this.tightSeverity.set(
+      sev === "moderate" || sev === "severe" || sev === "minor" ? sev : "minor",
+    );
+  }
+
   async reportTightness(): Promise<void> {
     const region = this.tightRegion();
     if (!region || this.reportingTight()) return;
