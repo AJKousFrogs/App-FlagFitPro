@@ -49,7 +49,7 @@ Status: **LIVE** (wired end-to-end, tables exist) · **PARTIAL** (works but with
 | Daily wellness check-in | LIVE | `wellness/`, `WellnessService` → RPC `upsert_wellness_checkin` → `daily_wellness_checkin` | Sliders/supplements now prefill from today's row |
 | Readiness scoring | LIVE | `calc-readiness.js` → `readiness_scores` | Fixed 2026-06-09: `sleep_score`/`wellness_score` were `numeric(4,2)`, overflowed at 100 |
 | ACWR / training load | LIVE | `compute-acwr.js`, `utils/acwr.js`, `acwr.service` → `training_sessions` | 21-day chronic EWMA |
-| Training sessions / logging | LIVE | `training/`, `/api/training-sessions` → `training_sessions` | Session-log defaults to prescribed RPE/min |
+| Training sessions / logging | LIVE | `training/`, `/api/training-sessions` → `training_sessions` | Session-log defaults to prescribed RPE/min. Coach reads/writes team-scoped 2026-06-09 (RLS `merged_select/update_training_sessions_public` + `training_sessions_staff_insert`, guard `canModifySession`): staff may only touch sessions of teams they actively staff; `team_id IS NULL` = personal, owner-only |
 | Schedule (spine + athlete events) | LIVE | `schedule.js`, `athlete-events.js` → `v_athlete_schedule`, `athlete_events` | — |
 | Competition / RSVP / availability / lineups | LIVE | `competition/`, `event-availability.js`, `event-participation.js` → `competition_events`, `event_*` | — |
 | Supplements daily log | LIVE | `supplements/`, `/api/supplements` → `supplement_logs`, `user_supplements` | — |
@@ -119,6 +119,18 @@ Sourced from §0 inventories + [`RECONCILIATION.md`](generated/RECONCILIATION.md
 - **Two migration directories.** `database/migrations/` (171 files) is **100% legacy/unapplied** — 0 overlap with applied history; `supabase/migrations/` (194 files) tracks live (146 applied). Do not add new migrations to `database/migrations/`. Applied tracked-versions also diverge from `supabase/migrations` filename timestamps in 4 recent cases (e.g. applied `athlete_personal_events` = `20260609100045` vs file `20260609120000_…`).
 - **Committed secrets.** Old `BACKEND_SETUP`/`LOCAL_DEVELOPMENT` docs contained real-looking Supabase JWTs (now deleted with those docs) — rotate if they were ever real.
 - **Auth leaked-password (HIBP) advisor** is unresolved unless the native GoTrue setting is enabled (see §7 auth hardening).
+- **2026-06-09 audit — resolved same day** (cross-team session mutation fix: see Ledger):
+  - ~~Weather fake location~~ **Fixed**: `weather.js` resolves the caller's team `home_city` (geocoded) when no coords passed; no location → explicit `available:false`, never a default city. Client guard skips on unavailable. San Francisco defaults deleted. Team home_city is set via `teams.home_city` (no settings UI yet — set via SQL/roster admin).
+  - ~~No unique constraint on training_sessions natural key~~ **Fixed**: `training_sessions_user_date_type_key` UNIQUE (user_id, session_date, session_type) + `log_training_session` RPC now ON CONFLICT upserts (COALESCE, non-destructive). Migration `20260609192100`.
+  - ~~Periodization phase from global `is_active` program~~ **Fixed**: `training-plan.js` + `smart-training-recommendations.js` resolve via the athlete's `player_programs` assignment (prefers `current_phase_id`).
+  - ~~Fabricated RPE in load math~~ **Fixed**: `training-plan.js`/`daily-training.js` ACWR now delegate to canonical `utils/acwr.js` (workload ?? rpe×min, missing → excluded). Client `acwr.service` excludes load-less sessions instead of zero-counting.
+  - ~~Client ACWR EWMA divergence~~ **Fixed**: client mirrors server (oldest→newest fold, uncoupled 21d chronic, λ=2/(N+1)); evidence presets updated.
+  - ~~RPE null-overwrite on resubmit~~ **Fixed**: update branch only writes provided fields, workload recomputed from merged (new ?? saved) pair.
+  - ~~`compute-acwr` multi-team `maybeSingle()`~~ **Fixed**: staff-team × athlete-membership intersection across ALL memberships.
+- **2026-06-09 audit — still open:**
+  - **Multi-team `limit(1)` in `coach-core.js getCoachTeamId` + `utils/team-activity-resolver.js`** — a multi-team coach/athlete resolves to an arbitrary team.
+  - **No spec tests** for the injury guard or the CNS 48h spacing guard in `periodization.service.ts`.
+  - **Orphaned ghost-lane tests removed** (officials/equipment/depth-chart/scouting/program-cycles/season-reports/tournament-calendar/push ×10 files + absence-request & research-sync cases); stale `user-profile` pg-Pool mock rewritten for the supabase client.
 
 ## 7. Runbooks & Security (operational — folded from the old RUNBOOKS, stale traps fixed)
 
