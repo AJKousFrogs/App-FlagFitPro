@@ -143,6 +143,26 @@ export interface DailyPrescription {
     severity: string;
     summary: string;
   } | null;
+  /**
+   * High-CNS recovery spacing applied on top of the base plan, if any. Present
+   * when a recent sprint/plyo session suppressed today's high-CNS intent.
+   */
+  cnsRecoveryAdjustment?: {
+    hoursSinceLastHighCns: number;
+    windowHours: number;
+    originalIntent: PrescriptionIntent;
+  } | null;
+}
+
+/**
+ * A recently-completed training session, for high-CNS recovery spacing. Sourced
+ * from `training_sessions` (completed sessions).
+ */
+export interface RecentSession {
+  /** Completion timestamp (`completed_at`) or session date. */
+  at: string | Date;
+  /** Raw `session_type` / `drill_type` — used to detect high-CNS (sprint/plyo) work. */
+  type: string;
 }
 
 /**
@@ -196,4 +216,10 @@ export interface PeriodizationInputs {
     severity: "minor" | "moderate" | "severe" | null;
     regions: string[];
   } | null;
+  /**
+   * Recently-completed sessions (last ~3 days) for high-CNS recovery spacing.
+   * After a sprint/plyo/max-velocity session the engine suppresses a new
+   * high-CNS day within the configured window. Empty/undefined → no spacing.
+   */
+  recentSessions?: RecentSession[] | null;
 }

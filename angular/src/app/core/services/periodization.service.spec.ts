@@ -594,3 +594,87 @@ describe("prescribeFor — weather guard moves a rainy sprint indoors", () => {
     expect(rx.weatherAdjustment?.reason).toMatch(/wet|slip|indoor/i);
   });
 });
+
+// =============================================================================
+// CNS RECOVERY SPACING — no back-to-back high-CNS days
+// =============================================================================
+
+describe("prescribeFor — sprint CNS recovery spacing", () => {
+  const sprintDay = new Date("2026-05-05T10:00:00Z"); // Tuesday → accumulation sprint
+
+  it("blocks a sprint within 48h of the last sprint (→ technique)", () => {
+    const rx = prescribeFor(
+      inputs({
+        phase: "accumulation",
+        date: sprintDay,
+        recentSessions: [{ at: "2026-05-04T10:00:00Z", type: "sprint" }], // 24h ago
+      }),
+    );
+    expect(rx.intent).toBe("technical");
+    expect(rx.sprintReps).toBe(0);
+    expect(rx.cnsRecoveryAdjustment?.originalIntent).toBe("sprint");
+    expect(rx.cnsRecoveryAdjustment?.hoursSinceLastHighCns).toBe(24);
+    expect(rx.reasoning).toMatch(/CNS recovery/i);
+  });
+
+  it("allows a sprint once the 48h window has passed", () => {
+    const rx = prescribeFor(
+      inputs({
+        phase: "accumulation",
+        date: sprintDay,
+        recentSessions: [{ at: "2026-05-03T08:00:00Z", type: "sprint" }], // 50h ago
+      }),
+    );
+    expect(rx.intent).toBe("sprint");
+    expect(rx.cnsRecoveryAdjustment ?? null).toBeNull();
+  });
+
+  it("a non-CNS recent session does not block a sprint", () => {
+    const rx = prescribeFor(
+      inputs({
+        phase: "accumulation",
+        date: sprintDay,
+        recentSessions: [{ at: "2026-05-04T10:00:00Z", type: "strength" }], // 24h ago, not CNS
+      }),
+    );
+    expect(rx.intent).toBe("sprint");
+  });
+
+  it("physio precedence still overrides CNS spacing", () => {
+    const rx = prescribeFor(
+      inputs({
+        phase: "accumulation",
+        date: sprintDay,
+        recentSessions: [{ at: "2026-05-04T10:00:00Z", type: "sprint" }],
+        activeRestrictions: {
+          restrictsSprint: true,
+          severity: "severe",
+          regions: ["hamstring"],
+        },
+      }),
+    );
+    expect(rx.intent).toBe("recovery"); // injury wins over CNS-spacing's "technical"
+    expect(rx.injuryAdjustment).toBeTruthy();
+  });
+
+  it("composes with weather: recent sprint + rain still ends up indoors, never a sprint", () => {
+    const rainy: WeatherInput = {
+      tempC: 15,
+      apparentC: 15,
+      condition: "rain",
+      weatherCode: 61,
+      precipMm: 3,
+      windKmh: 10,
+    };
+    const rx = prescribeFor(
+      inputs({
+        phase: "accumulation",
+        date: sprintDay,
+        recentSessions: [{ at: "2026-05-04T10:00:00Z", type: "sprint" }],
+        weather: rainy,
+      }),
+    );
+    expect(rx.intent).not.toBe("sprint");
+    expect(["technical", "strength", "mobility", "recovery"]).toContain(rx.intent);
+  });
+});

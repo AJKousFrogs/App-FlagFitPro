@@ -14,6 +14,7 @@ import {
   NutritionTargets,
   PeriodizationInputs,
   PrescriptionIntent,
+  RecentSession,
   SeasonPhase,
   SeasonWindow,
   WeatherAdjustment,
@@ -66,9 +67,16 @@ export class PeriodizationService {
    */
   readonly weather = signal<WeatherInput | null>(null);
 
+  /**
+   * Recently-completed sessions (last 4 days), fed to the CNS recovery-spacing
+   * guard so a sprint can't be prescribed within 48h of the last sprint.
+   */
+  readonly recentSessions = signal<RecentSession[]>([]);
+
   constructor() {
     this.loadSettings();
     void this.injury.load();
+    void this.loadRecentSessions();
 
     // Live weather → the prescription weather guard (metric: °C / mm / km/h).
     this.api
@@ -137,6 +145,35 @@ export class PeriodizationService {
   }
 
   /**
+   * Load the athlete's recently-completed sessions (last 4 days) for high-CNS
+   * recovery spacing. Fire-and-forget; empty on failure → no spacing (spacing is
+   * a refinement, not a safety stop, so fail-open is acceptable).
+   */
+  private async loadRecentSessions(): Promise<void> {
+    const userId = this.supabase.userId();
+    if (!userId) return;
+    const since = new Date(Date.now() - 4 * 86_400_000).toISOString();
+    try {
+      const { data, error } = await this.supabase.client
+        .from("training_sessions")
+        .select("session_type, drill_type, completed_at")
+        .eq("user_id", userId)
+        .not("completed_at", "is", null)
+        .gte("completed_at", since)
+        .order("completed_at", { ascending: false });
+      if (error || !data) return;
+      this.recentSessions.set(
+        data.map((r) => ({
+          at: r.completed_at as string,
+          type: (r.session_type as string) || (r.drill_type as string) || "",
+        })),
+      );
+    } catch {
+      /* no sessions → no spacing */
+    }
+  }
+
+  /**
    * Today's prescription. Reactive — updates whenever the schedule, ACWR,
    * or readiness change.
    */
@@ -162,6 +199,7 @@ export class PeriodizationService {
         : null,
       seasonPhase: macroPhaseFor(now, this.seasonCalendar()),
       weather: this.weather(),
+      recentSessions: this.recentSessions(),
       isTeamPractice: this.isTeamPractice(now, snap.trainingDays),
       activeRestrictions: this.injury.restrictions(),
     });
@@ -208,6 +246,7 @@ export class PeriodizationService {
           // can only guard today; future days resolve unguarded rather than
           // against stale "now" weather.
           weather: i === 0 ? this.weather() : null,
+          recentSessions: this.recentSessions(),
           isTeamPractice: this.isTeamPractice(date, snap.trainingDays),
           activeRestrictions: this.injury.restrictions(),
         }),
@@ -295,16 +334,78 @@ const INTENT_LABELS: Record<PrescriptionIntent, string> = {
   competition: "Game day",
 };
 
+/** High-CNS intents that need recovery spacing between sessions. */
+const HIGH_CNS_INTENTS: ReadonlySet<PrescriptionIntent> = new Set<PrescriptionIntent>([
+  "sprint",
+  "mixed",
+]);
+
+/**
+ * Minimum hours between high-CNS (sprint / plyometric / max-velocity) sessions.
+ * Team-configurable like the ACWR/weather thresholds; conservative default treats
+ * sprint work as max-velocity (48h). Sub-max speed could justify 24h — kept at
+ * the safe 48h default rather than guessing intensity from `session_type`.
+ */
+const CNS_RECOVERY_HOURS = 48;
+
+/** Detect a high-CNS session from its raw `session_type`/`drill_type`. */
+function isHighCnsSessionType(type: string): boolean {
+  return /sprint|plyo|speed|max.?velocity|accel|agility|bound/i.test(type || "");
+}
+
+/**
+ * CNS recovery spacing: if the engine chose a high-CNS day but the athlete did
+ * sprint/plyo work within `CNS_RECOVERY_HOURS`, downgrade to mobility + technique
+ * so back-to-back high-CNS days can't happen. Records `cnsRecoveryAdjustment`
+ * for traceability. Lowest-precedence guard — weather/physio override it.
+ */
+function applySprintRecoveryGuard(
+  p: DailyPrescription,
+  recentSessions: PeriodizationInputs["recentSessions"],
+  date: Date,
+): DailyPrescription {
+  if (!HIGH_CNS_INTENTS.has(p.intent)) return p;
+  if (!recentSessions || recentSessions.length === 0) return p;
+
+  const now = date.getTime();
+  const windowMs = CNS_RECOVERY_HOURS * 3_600_000;
+  let mostRecent: number | null = null;
+  for (const s of recentSessions) {
+    if (!isHighCnsSessionType(s.type)) continue;
+    const t = new Date(s.at).getTime();
+    if (!Number.isFinite(t) || t >= now) continue; // future / invalid ignored
+    if (now - t > windowMs) continue; // outside the recovery window
+    if (mostRecent === null || t > mostRecent) mostRecent = t;
+  }
+  if (mostRecent === null) return p; // no recent high-CNS session
+
+  const hoursSince = Math.round((now - mostRecent) / 3_600_000);
+  return {
+    ...p,
+    intent: "technical",
+    intentLabel: "Mobility & technique",
+    sprintReps: 0,
+    targetRpe: p.targetRpe != null ? Math.min(p.targetRpe, 5) : p.targetRpe,
+    reasoning: `Sprinted ${hoursSince}h ago — ${CNS_RECOVERY_HOURS}h CNS recovery; today is mobility + technique.`,
+    cnsRecoveryAdjustment: {
+      hoursSinceLastHighCns: hoursSince,
+      windowHours: CNS_RECOVERY_HOURS,
+      originalIntent: p.intent,
+    },
+  };
+}
+
 /**
  * Public entry point. Picks the base prescription (game day → taper → safety →
- * phase/season defaults), then applies the WEATHER GUARD on top — relocate /
- * substitute / scale / stop the intent for the conditions. Precedence:
- * physio ▷ coach ▷ **weather** ▷ engine (physio/coach are applied by the caller;
- * `coachOverride` here bypasses the weather guard's intent changes).
+ * phase/season defaults), then layers guards. Precedence (highest wins):
+ * physio ▷ **weather** ▷ CNS-spacing ▷ engine. CNS-spacing constrains the
+ * engine's chosen high-CNS intent but yields to weather and physio above it.
  */
 export function prescribeFor(inputs: PeriodizationInputs): DailyPrescription {
   const base = decideBasePrescription(inputs);
-  const guarded = applyWeatherGuard(base, inputs.weather ?? null, inputs.coachOverride ?? false);
+  // CNS recovery spacing (lowest-precedence guard): no back-to-back sprint days.
+  const spaced = applySprintRecoveryGuard(base, inputs.recentSessions ?? null, inputs.date);
+  const guarded = applyWeatherGuard(spaced, inputs.weather ?? null, inputs.coachOverride ?? false);
   // Injury/physio precedence over training (spec law): runs last so the affected
   // region's sprint/high-intensity work is removed regardless of the base plan.
   return applyInjuryGuard(guarded, inputs.activeRestrictions ?? null);
