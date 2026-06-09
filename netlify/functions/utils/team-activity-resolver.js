@@ -36,14 +36,17 @@ async function resolveTeamActivityForAthleteDay(
     steps: [],
   };
 
-  // Step 1: Get team_id if not provided
-  if (!teamId) {
-    const { data: teamMember, error: teamError } = await supabase
+  // Step 1: Resolve the athlete's team(s) if not provided.
+  // Athletes can belong to multiple teams — the old maybeSingle() lookup
+  // errored on >1 membership (silently resolving to "no activity"), so the
+  // activity search spans ALL active memberships.
+  let teamIds = teamId ? [teamId] : [];
+  if (teamIds.length === 0) {
+    const { data: memberships, error: teamError } = await supabase
       .from("team_members")
       .select("team_id")
       .eq("user_id", athleteId)
-      .eq("status", "active")
-      .maybeSingle();
+      .eq("status", "active");
 
     if (teamError) {
       audit.steps.push({ step: "team_lookup", error: teamError.message });
@@ -56,7 +59,8 @@ async function resolveTeamActivityForAthleteDay(
       };
     }
 
-    if (!teamMember) {
+    teamIds = (memberships ?? []).map((m) => m.team_id).filter(Boolean);
+    if (teamIds.length === 0) {
       audit.steps.push({ step: "team_lookup", result: "no_team" });
       return {
         exists: false,
@@ -67,9 +71,8 @@ async function resolveTeamActivityForAthleteDay(
       };
     }
 
-    teamId = teamMember.team_id;
-    audit.teamId = teamId;
-    audit.steps.push({ step: "team_lookup", result: "found", teamId });
+    audit.teamIds = teamIds;
+    audit.steps.push({ step: "team_lookup", result: "found", teamIds });
   }
 
   // Step 2: Check for active rehab protocol (PRIORITY 1)
@@ -96,11 +99,12 @@ async function resolveTeamActivityForAthleteDay(
     audit.steps.push({ step: "rehab_check", result: "no_rehab" });
   }
 
-  // Step 3: Get team activity for this date
+  // Step 3: Get team activity for this date across the athlete's team(s).
+  // Still ONE authoritative activity per athlete-day: newest created wins.
   const { data: teamActivity, error: activityError } = await supabase
     .from("team_activities")
     .select("*")
-    .eq("team_id", teamId)
+    .in("team_id", teamIds)
     .eq("date", dateLocal)
     .order("created_at", { ascending: false })
     .limit(1)
@@ -128,11 +132,13 @@ async function resolveTeamActivityForAthleteDay(
     };
   }
 
+  audit.teamId = teamActivity.team_id;
   audit.steps.push({
     step: "activity_lookup",
     result: "found",
     activityId: teamActivity.id,
     activityType: teamActivity.type,
+    teamId: teamActivity.team_id,
   });
 
   // Step 4: Get athlete's participation status

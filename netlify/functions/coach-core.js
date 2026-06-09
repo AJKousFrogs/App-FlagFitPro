@@ -76,26 +76,36 @@ const parseJsonBody = (body) => {
 };
 
 /**
- * Get the team ID for a coach
+ * Get the team ID for a coach.
+ *
+ * Multi-team coaches: pass `requestedTeamId` (?teamId= / payload.teamId) to
+ * operate on a specific team — it is validated against the coach's active
+ * staffed memberships, never trusted. Without it, the most recently updated
+ * membership wins (deterministic, unlike the old unordered limit(1)).
  * @private
  */
-async function getCoachTeamId(coachId) {
+async function getCoachTeamId(coachId, requestedTeamId = null) {
   const { data: teams, error } = await supabaseAdmin
     .from("team_members")
     .select("team_id")
     .eq("user_id", coachId)
     .in("role", COACH_ROLES)
     .eq("status", "active")
-    .limit(1);
+    .order("updated_at", { ascending: false });
 
   if (error || !teams || teams.length === 0) {
     return null;
   }
+  if (requestedTeamId) {
+    return teams.some((t) => t.team_id === requestedTeamId)
+      ? requestedTeamId
+      : null;
+  }
   return teams[0].team_id;
 }
 
-async function getActiveCoachTeamMembers(coachId) {
-  const teamId = await getCoachTeamId(coachId);
+async function getActiveCoachTeamMembers(coachId, requestedTeamId = null) {
+  const teamId = await getCoachTeamId(coachId, requestedTeamId);
   if (!teamId) {
     throw new Error("Not authorized");
   }
@@ -118,7 +128,10 @@ async function getActiveCoachTeamMembers(coachId) {
 
 async function createCoachTeamMessage(coachId, payload) {
   const message = parseRequiredTrimmedString(payload?.message, "message");
-  const { teamId, members } = await getActiveCoachTeamMembers(coachId);
+  const { teamId, members } = await getActiveCoachTeamMembers(
+    coachId,
+    payload?.teamId || null,
+  );
 
   const recipients = members
     .filter((member) => member.user_id && member.user_id !== coachId)
@@ -151,7 +164,10 @@ async function createCoachTeamMessage(coachId, payload) {
 async function createCoachAccessRequest(coachId, payload) {
   const playerId = parseRequiredTrimmedString(payload?.playerId, "playerId", 128);
   const message = parseRequiredTrimmedString(payload?.message, "message");
-  const { teamId, members } = await getActiveCoachTeamMembers(coachId);
+  const { teamId, members } = await getActiveCoachTeamMembers(
+    coachId,
+    payload?.teamId || null,
+  );
 
   const targetPlayer = members.find(
     (member) => member.user_id === playerId && member.role === "player",
@@ -188,11 +204,11 @@ async function createCoachAccessRequest(coachId, payload) {
  *
  * Uses ConsentDataReader for consent-protected tables (training_sessions, wellness_entries)
  */
-async function getCoachDashboard(userId) {
+async function getCoachDashboard(userId, requestedTeamId = null) {
   try {
     // Get team members (squad)
     const teamMembers = await db.teams.getUserTeams(userId);
-    const teamId = await getCoachTeamId(userId);
+    const teamId = await getCoachTeamId(userId, requestedTeamId);
 
     // Track consent info across all members
     const allBlockedPlayerIds = new Set();
@@ -417,13 +433,13 @@ async function resolveTargetCoachId(requesterId, requestedCoachId) {
  *
  * Uses ConsentDataReader for consent-protected tables (training_sessions)
  */
-async function getTeamInfo(userId, coachId) {
+async function getTeamInfo(userId, coachId, requestedTeamId = null) {
   try {
     // Use coachId if provided, otherwise use userId
     const targetCoachId = coachId || userId;
 
     // Get teams where user is coach
-    const teamId = await getCoachTeamId(targetCoachId);
+    const teamId = await getCoachTeamId(targetCoachId, requestedTeamId);
 
     if (!teamId) {
       // Return empty team if no teams found
@@ -544,12 +560,12 @@ async function getTeamInfo(userId, coachId) {
  *
  * Uses ConsentDataReader for consent-protected tables (training_sessions)
  */
-async function getTrainingAnalytics(userId, coachId) {
+async function getTrainingAnalytics(userId, coachId, requestedTeamId = null) {
   try {
     const targetCoachId = coachId || userId;
 
     // Get team ID
-    const teamId = await getCoachTeamId(targetCoachId);
+    const teamId = await getCoachTeamId(targetCoachId, requestedTeamId);
 
     if (!teamId) {
       return {
@@ -684,7 +700,10 @@ async function createTrainingSession(userId, sessionData, requestInfo = {}) {
     if (!targetUserId) {
       throw new Error("user_id is required");
     }
-    const teamId = await getCoachTeamId(userId);
+    const teamId = await getCoachTeamId(
+      userId,
+      sessionData.teamId || sessionData.team_id || null,
+    );
     if (!teamId) {
       throw new Error("No team found for coach");
     }
@@ -743,12 +762,12 @@ async function createTrainingSession(userId, sessionData, requestInfo = {}) {
 /**
  * Get games/fixtures
  */
-async function getGames(userId, coachId) {
+async function getGames(userId, coachId, requestedTeamId = null) {
   try {
     const targetCoachId = coachId || userId;
 
     // Get teams where user is coach
-    const teamId = await getCoachTeamId(targetCoachId);
+    const teamId = await getCoachTeamId(targetCoachId, requestedTeamId);
 
     if (!teamId) {
       return [];
@@ -813,7 +832,7 @@ async function handleCalendarRequest(event, userId, coachId) {
     }
   }
   const query = event.queryStringParameters || {};
-  const teamId = await getCoachTeamId(coachId);
+  const teamId = await getCoachTeamId(coachId, query.teamId || null);
 
   if (!teamId) {
     return createErrorResponse("No team found for coach", 404);
@@ -1102,6 +1121,9 @@ async function handleRequest(
     const endpoint = path.split("?")[0]; // Remove query params
     const query = event.queryStringParameters || {};
     const targetCoachId = await resolveTargetCoachId(userId, query.coachId);
+    // Multi-team coaches select a team with ?teamId= (validated against their
+    // staffed memberships); default = most recent active membership.
+    const requestedTeamId = query.teamId || null;
 
     // Route to appropriate handler
     switch (endpoint) {
@@ -1110,7 +1132,7 @@ async function handleRequest(
         if (event.httpMethod !== "GET") {
           return createErrorResponse("Method not allowed", 405);
         }
-        const dashboard = await getCoachDashboard(targetCoachId);
+        const dashboard = await getCoachDashboard(targetCoachId, requestedTeamId);
         return createSuccessResponse(dashboard);
       }
 
@@ -1118,7 +1140,7 @@ async function handleRequest(
         if (event.httpMethod !== "GET") {
           return createErrorResponse("Method not allowed", 405);
         }
-        const teamResult = await getTeamInfo(userId, targetCoachId);
+        const teamResult = await getTeamInfo(userId, targetCoachId, requestedTeamId);
         // Preserve backwards compatibility: return members array at top level
         // but include consentInfo and dataState
         return createSuccessResponse({
@@ -1132,7 +1154,7 @@ async function handleRequest(
         if (event.httpMethod !== "GET") {
           return createErrorResponse("Method not allowed", 405);
         }
-        const analytics = await getTrainingAnalytics(userId, targetCoachId);
+        const analytics = await getTrainingAnalytics(userId, targetCoachId, requestedTeamId);
         return createSuccessResponse(analytics);
       }
 
@@ -1167,7 +1189,7 @@ async function handleRequest(
         if (event.httpMethod !== "GET") {
           return createErrorResponse("Method not allowed", 405);
         }
-        const games = await getGames(userId, targetCoachId);
+        const games = await getGames(userId, targetCoachId, requestedTeamId);
         return createSuccessResponse(games);
       }
 
