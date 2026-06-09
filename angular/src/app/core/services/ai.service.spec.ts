@@ -24,8 +24,10 @@ const rawReply = {
   is_blocked: false,
 };
 
+// Untyped vi.fn() so tests can return partial payloads (the service defaults
+// missing fields) without fighting the inferred full-reply type.
 const mockApi = {
-  post: vi.fn(() => of({ success: true, data: rawReply })),
+  post: vi.fn(),
 };
 const mockPrivacy = {
   requireAiConsent: vi.fn(() => Promise.resolve()),

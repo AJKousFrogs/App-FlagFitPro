@@ -13,7 +13,6 @@ export default defineConfig({
       "node_modules",
       "dist",
       "e2e/**",
-      "src/app/playwright-tests/**",
     ],
     setupFiles: ["src/test-setup.ts"],
     coverage: {

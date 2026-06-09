@@ -1,13 +1,12 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
+// Absence-request coverage was removed with the lane itself: absence_requests
+// was a ghost table and the /absence-request routes were retired (2026-06-09).
+
 const mockCtx = vi.hoisted(() => ({
   userId: "user-1",
   role: "coach",
   state: {
-    existingPendingAbsence: null,
-    reviewRequestRow: null,
-    reviewUpdateResult: null,
-    absenceInsertError: null,
     invalidTeamPlayers: [],
   },
 }));
@@ -63,32 +62,9 @@ function createFakeSupabase(state) {
       return Promise.resolve(this.run(false)).then(resolve, reject);
     }
 
-    run(isMaybeSingle) {
+    run(_isMaybeSingle) {
       if (this.table === "team_events" && this.mode === "select") {
         return { data: { id: "event-1", team_id: "team-1" }, error: null };
-      }
-
-      if (this.table === "absence_requests" && this.mode === "select") {
-        const hasPendingFilter = this.filters.some(
-          (f) => f.field === "status" && f.value === "pending",
-        );
-
-        if (hasPendingFilter && isMaybeSingle) {
-          return { data: state.existingPendingAbsence, error: null };
-        }
-
-        return { data: state.reviewRequestRow, error: null };
-      }
-
-      if (this.table === "absence_requests" && this.mode === "update") {
-        return { data: state.reviewUpdateResult, error: null };
-      }
-
-      if (this.table === "absence_requests" && this.mode === "insert") {
-        if (state.absenceInsertError) {
-          return { data: null, error: state.absenceInsertError };
-        }
-        return { data: { id: "abs-new" }, error: null };
       }
 
       if (this.table === "team_members" && this.mode === "select") {
@@ -146,10 +122,6 @@ describe("attendance mutations validation", () => {
     vi.resetModules();
     mockCtx.role = "coach";
     mockCtx.state = {
-      existingPendingAbsence: null,
-      reviewRequestRow: null,
-      reviewUpdateResult: null,
-      absenceInsertError: null,
       invalidTeamPlayers: [],
     };
     ({ handler } = await import("../../netlify/functions/attendance.js"));
@@ -161,20 +133,6 @@ describe("attendance mutations validation", () => {
         event_id: "event-1",
         player_id: "user-1",
         status: "unknown_status",
-      }),
-      {},
-    );
-
-    expect(response.statusCode).toBe(422);
-  });
-
-  it("rejects duplicate pending absence request with 422", async () => {
-    mockCtx.state.existingPendingAbsence = { id: "abs-1" };
-
-    const response = await handler(
-      buildEvent("/api/attendance/absence-request", "POST", {
-        event_id: "event-1",
-        reason: "Family event",
       }),
       {},
     );
@@ -214,37 +172,15 @@ describe("attendance mutations validation", () => {
     expect(response.statusCode).toBe(422);
   });
 
-  it("handles DB duplicate race for absence request with 422", async () => {
-    mockCtx.state.absenceInsertError = { code: "23505" };
-
+  it("returns 404 for the retired absence-request lane", async () => {
     const response = await handler(
       buildEvent("/api/attendance/absence-request", "POST", {
         event_id: "event-1",
-        reason: "Medical appointment",
+        reason: "Family event",
       }),
       {},
     );
 
-    expect(response.statusCode).toBe(422);
-  });
-
-  it("rejects reviewing already-reviewed absence requests with 422", async () => {
-    mockCtx.state.reviewRequestRow = {
-      id: "abs-2",
-      event_id: "event-1",
-      player_id: "user-1",
-      reason: "Sick",
-      team_events: { team_id: "team-1" },
-    };
-    mockCtx.state.reviewUpdateResult = null;
-
-    const response = await handler(
-      buildEvent("/api/attendance/absence-request/abs-2", "PUT", {
-        status: "approved",
-      }),
-      {},
-    );
-
-    expect(response.statusCode).toBe(422);
+    expect(response.statusCode).toBe(404);
   });
 });

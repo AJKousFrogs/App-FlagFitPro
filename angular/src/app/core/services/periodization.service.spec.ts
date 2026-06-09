@@ -46,6 +46,7 @@ function event(overrides: Partial<CompetitionEvent> = {}): CompetitionEvent {
     competitionCountry: "SI",
     competitionSeasonYear: 2026,
     teamName: "Ljubljana Frogs",
+    source: "team",
     ...overrides,
   };
 }

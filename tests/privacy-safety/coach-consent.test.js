@@ -331,13 +331,11 @@ describe("Coach API Consent Unit Tests", () => {
         filters: { limit: 10 },
       });
 
-      const returnedPlayerIds = result.data.map((row) => row.player_id);
-
       expect(result.success).toBe(true);
-      expect(returnedPlayerIds).toContain("player-explicit-consent");
-      expect(returnedPlayerIds).toContain("player-default-consent");
-      expect(returnedPlayerIds).not.toContain("player-no-consent");
-      expect(returnedPlayerIds).not.toContain("outside-team-player");
+      // load_monitoring (the derived ACWR cache) was dropped from live —
+      // the lane now always returns empty data, but consent resolution still
+      // runs so blocked players are reported and access is auditable.
+      expect(result.data).toEqual([]);
       expect(result.consentInfo.blockedPlayerIds).toEqual([
         "player-no-consent",
       ]);
