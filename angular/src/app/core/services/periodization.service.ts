@@ -24,6 +24,7 @@ import { ReadinessService } from "./readiness.service";
 import { ScheduleService } from "./schedule.service";
 import { SupabaseService } from "./supabase.service";
 import { ApiService } from "./api.service";
+import { InjuryService } from "./injury.service";
 
 /**
  * PeriodizationService — turns the schedule into prescriptions.
@@ -43,6 +44,7 @@ export class PeriodizationService {
   private readonly readinessService = inject(ReadinessService);
   private readonly supabase = inject(SupabaseService);
   private readonly api = inject(ApiService);
+  private readonly injury = inject(InjuryService);
 
   /**
    * The athlete's declared season calendar (athlete_training_config.season_calendar),
@@ -66,6 +68,7 @@ export class PeriodizationService {
 
   constructor() {
     this.loadSettings();
+    void this.injury.load();
 
     // Live weather → the prescription weather guard (metric: °C / mm / km/h).
     this.api
@@ -160,6 +163,7 @@ export class PeriodizationService {
       seasonPhase: macroPhaseFor(now, this.seasonCalendar()),
       weather: this.weather(),
       isTeamPractice: this.isTeamPractice(now, snap.trainingDays),
+      activeRestrictions: this.injury.restrictions(),
     });
   });
 
@@ -201,6 +205,7 @@ export class PeriodizationService {
             : null,
           seasonPhase: macroPhaseFor(date, this.seasonCalendar()),
           isTeamPractice: this.isTeamPractice(date, snap.trainingDays),
+          activeRestrictions: this.injury.restrictions(),
         }),
       );
     }
@@ -295,7 +300,75 @@ const INTENT_LABELS: Record<PrescriptionIntent, string> = {
  */
 export function prescribeFor(inputs: PeriodizationInputs): DailyPrescription {
   const base = decideBasePrescription(inputs);
-  return applyWeatherGuard(base, inputs.weather ?? null, inputs.coachOverride ?? false);
+  const guarded = applyWeatherGuard(base, inputs.weather ?? null, inputs.coachOverride ?? false);
+  // Injury/physio precedence over training (spec law): runs last so the affected
+  // region's sprint/high-intensity work is removed regardless of the base plan.
+  return applyInjuryGuard(guarded, inputs.activeRestrictions ?? null);
+}
+
+/**
+ * Down-regulate the plan for an active injury / self-reported tightness affecting
+ * a region used by sprint/high-intensity work. Severity-scaled; never overrides a
+ * game day. Records `injuryAdjustment` so the change is traceable.
+ */
+function applyInjuryGuard(
+  p: DailyPrescription,
+  restr: PeriodizationInputs["activeRestrictions"],
+): DailyPrescription {
+  if (!restr || !restr.restrictsSprint) return p;
+  if (p.intent === "competition") return p; // a game is a game
+
+  const severe = restr.severity === "severe";
+  const moderate = restr.severity === "moderate";
+  const hasSprintWork = p.sprintReps > 0 || p.intent === "sprint";
+  // Minor tightness on a day with no sprint/high-intensity work: nothing to pull.
+  if (!hasSprintWork && !severe && !moderate) return p;
+
+  const regionLabel = restr.regions.length ? restr.regions.join(", ") : "soft tissue";
+  let intent = p.intent;
+  let intentLabel = p.intentLabel;
+  let targetRpe = p.targetRpe;
+  let targetMinutes = p.targetMinutes;
+  let strengthSets = p.strengthSets;
+  let reasoning = p.reasoning;
+
+  if (severe) {
+    intent = "recovery";
+    intentLabel = "Active recovery";
+    targetRpe = 3;
+    targetMinutes = 30;
+    strengthSets = 0;
+    reasoning = `Reported ${regionLabel} issue — recovery only today. Injury precedence over training.`;
+  } else if (moderate) {
+    intent = "recovery";
+    intentLabel = "Active recovery";
+    targetRpe = 3;
+    targetMinutes = Math.min(p.targetMinutes, 40);
+    strengthSets = Math.min(p.strengthSets, 3);
+    reasoning = `Reported ${regionLabel} tightness — sprints pulled, easy session only. Injury precedence over training.`;
+  } else {
+    // minor: keep the day's shape but remove the sprint/high-intensity work
+    intent = p.intent === "sprint" ? "mobility" : p.intent;
+    intentLabel = p.intent === "sprint" ? "Mobility & technique" : `${p.intentLabel} (modified)`;
+    targetRpe = p.targetRpe != null ? Math.min(p.targetRpe, 6) : p.targetRpe;
+    reasoning = `${regionLabel} tightness — sprint/high-intensity work pulled for that region; keep it controlled.`;
+  }
+
+  return {
+    ...p,
+    intent,
+    intentLabel,
+    targetRpe,
+    targetMinutes,
+    sprintReps: 0,
+    strengthSets,
+    reasoning,
+    injuryAdjustment: {
+      regions: restr.regions,
+      severity: restr.severity ?? "minor",
+      summary: `${p.intentLabel} → ${intentLabel}; sprints ${p.sprintReps}→0`,
+    },
+  };
 }
 
 /**

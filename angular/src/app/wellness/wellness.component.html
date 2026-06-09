@@ -123,6 +123,42 @@
     <div class="empty">Submit today's check-in to calculate your readiness.</div>
   }
 
+  <!-- self-reported tightness → injury precedence in the plan -->
+  <div class="section-h"><h2>Niggles &amp; tightness</h2></div>
+  <div class="card stack">
+    @if (activeInjuries().length) {
+      <div class="stack" style="gap:6px">
+        @for (inj of activeInjuries(); track inj.id) {
+          <div class="row">
+            <span class="inline">
+              <span class="band {{ inj.severity === 'severe' ? 'danger' : inj.severity === 'moderate' ? 'caution' : 'info' }}">{{ inj.severity }}</span>
+              <b style="text-transform:capitalize">{{ inj.region }}</b>
+            </span>
+            <small class="muted">plan adjusted</small>
+          </div>
+        }
+      </div>
+    }
+    <p class="muted" style="margin:0">Got a tight spot? Flag it and your plan pulls sprint work off that area.</p>
+    <label class="lbl">Where?</label>
+    <div class="chiprow">
+      @for (r of tightnessRegions; track r) {
+        <button type="button" class="chip" [class.sel]="tightRegion() === r" (click)="tightRegion.set(r)">{{ r }}</button>
+      }
+    </div>
+    <label class="lbl">How bad?</label>
+    <div class="chiprow">
+      @for (s of ['minor','moderate','severe']; track s) {
+        <button type="button" class="chip" [class.sel]="tightSeverity() === s" (click)="setTightSeverity($any(s))">{{ s }}</button>
+      }
+    </div>
+    @if (tightMsg(); as m) { <small class="muted">{{ m }}</small> }
+    <div class="row" style="justify-content:flex-end">
+      <button class="btn primary sm" type="button" [disabled]="!tightRegion()" [attr.aria-disabled]="reportingTight()"
+              (click)="reportTightness()">{{ reportingTight() ? "Logging…" : "Report tightness" }}</button>
+    </div>
+  </div>
+
   <!-- readiness trend over time -->
   <div class="card">
     <div class="row" style="margin-bottom:var(--s-2)"><b>Trend</b><small class="muted">last 14 days</small></div>

@@ -34,6 +34,9 @@
         }
       </div>
       <p style="margin:var(--s-3) 0 0;color:var(--text)">{{ p.reasoning }}</p>
+      @if (p.injuryAdjustment; as adj) {
+        <span class="band caution" style="margin-top:var(--s-3)">Adjusted for {{ adj.regions.join(', ') }} tightness</span>
+      }
 
       <div class="tiles" style="margin:var(--s-4) 0">
         <div><b>{{ rpeLabel() }}</b><small>RPE</small></div>

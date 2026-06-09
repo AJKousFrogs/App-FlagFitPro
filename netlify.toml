@@ -212,6 +212,19 @@
   status = 200
   force = true
 
+# API Routes for Athlete Injuries / self-reported tightness (drives injury precedence)
+[[redirects]]
+  from = "/api/athlete-injuries/*"
+  to = "/.netlify/functions/athlete-injuries"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/athlete-injuries"
+  to = "/.netlify/functions/athlete-injuries"
+  status = 200
+  force = true
+
 # API Routes for Athlete Events (athlete-entered personal/domestic/national schedule)
 [[redirects]]
   from = "/api/athlete-events/*"

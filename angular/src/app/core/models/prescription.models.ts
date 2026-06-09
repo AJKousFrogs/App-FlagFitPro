@@ -134,6 +134,15 @@ export interface DailyPrescription {
   seasonPhase?: SeasonPhase | null;
   /** Weather guard result, present only when weather was supplied. */
   weatherAdjustment?: WeatherAdjustment | null;
+  /**
+   * Injury/tightness down-regulation applied on top of the base plan, if any.
+   * Traceability for the self-report → recalc loop: what was changed and why.
+   */
+  injuryAdjustment?: {
+    regions: string[];
+    severity: string;
+    summary: string;
+  } | null;
 }
 
 /**
@@ -176,4 +185,15 @@ export interface PeriodizationInputs {
    * windows (competition/taper/recovery) and safety guards take precedence.
    */
   isTeamPractice?: boolean;
+  /**
+   * Active injury/tightness restrictions for `date` (from athlete_injuries via
+   * InjuryService). When `restrictsSprint`, the plan's sprint/high-intensity work
+   * for the affected region is down-regulated (severity-scaled). Injury/physio
+   * precedence over training is a spec law.
+   */
+  activeRestrictions?: {
+    restrictsSprint: boolean;
+    severity: "minor" | "moderate" | "severe" | null;
+    regions: string[];
+  } | null;
 }

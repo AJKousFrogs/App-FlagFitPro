@@ -23,6 +23,7 @@ import { WellnessService } from "../core/services/wellness.service";
 import { ReadinessService } from "../core/services/readiness.service";
 import { ApiService } from "../core/services/api.service";
 import { LoggerService } from "../core/services/logger.service";
+import { InjuryService, InjurySeverity } from "../core/services/injury.service";
 
 /**
  * Wellness — the daily check-in. Ported 1:1 from
@@ -38,6 +39,12 @@ import { LoggerService } from "../core/services/logger.service";
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: "./wellness.component.html",
+  styles: [
+    `
+      .lbl { font-size: var(--fs-sm); color: var(--text-muted); font-weight: var(--fw-semi); }
+      .chiprow { display: flex; flex-wrap: wrap; gap: 6px; }
+    `,
+  ],
 })
 export class WellnessComponent {
   private readonly wellnessSvc = inject(WellnessService);
@@ -45,6 +52,41 @@ export class WellnessComponent {
   private readonly api = inject(ApiService);
   private readonly logger = inject(LoggerService);
   private readonly router = inject(Router);
+  private readonly injurySvc = inject(InjuryService);
+
+  // --- self-reported tightness (drives injury precedence in the plan) ---
+  readonly tightnessRegions = [
+    "Achilles", "Calf", "Hamstring", "Quad", "Knee",
+    "Ankle", "Hip", "Groin", "Lower back", "Shoulder",
+  ];
+  readonly tightRegion = signal<string | null>(null);
+  readonly tightSeverity = signal<InjurySeverity>("minor");
+  readonly reportingTight = signal(false);
+  readonly tightMsg = signal<string | null>(null);
+  readonly activeInjuries = this.injurySvc.active;
+
+  setTightSeverity(s: InjurySeverity): void {
+    this.tightSeverity.set(s);
+  }
+
+  async reportTightness(): Promise<void> {
+    const region = this.tightRegion();
+    if (!region || this.reportingTight()) return;
+    this.reportingTight.set(true);
+    this.tightMsg.set(null);
+    try {
+      await this.injurySvc.report(region.toLowerCase(), this.tightSeverity());
+      // Recalculate readiness too; the plan (Today) reacts to the injury signal.
+      this.readinessSvc.calculateToday().subscribe({ error: () => undefined });
+      this.tightMsg.set(`Logged ${region} — today's plan now works around it.`);
+      this.tightRegion.set(null);
+    } catch (err) {
+      this.logger.error("tightness_report_failed", err);
+      this.tightMsg.set("Couldn't log that — try again.");
+    } finally {
+      this.reportingTight.set(false);
+    }
+  }
 
   private prefilledCheckin = false;
 
@@ -84,6 +126,9 @@ export class WellnessComponent {
       },
       error: (e) => this.logger.error("supplements_recent_load_failed", e),
     });
+
+    // Active injuries/tightness so the form can show what's currently flagged.
+    void this.injurySvc.load();
   }
 
   readonly today = new Date().toLocaleDateString("en-GB", {
