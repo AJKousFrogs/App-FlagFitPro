@@ -226,11 +226,18 @@
   /* ---- athlete-facing helper copy ---- */
   .note { font-size: var(--fs-xs); color: var(--text-faint); font-style: italic; }
 
-  /* ---- persistent app shell: centered mobile column + bottom nav + FAB ----
-     The static .phone device-mock becomes a real responsive frame: full-bleed on
-     phones, a centered 480px column on larger screens. Global (not component-
-     encapsulated) so the global svg.lucide sizing reaches Lucide-rendered SVGs. */
+  /* ---- persistent app shell: responsive across phone / tablet / desktop ----
+     Phone (<768px): full-bleed single column, bottom tab bar + quick-log FAB.
+     Tablet (≥768px): a roomier centered column, same bottom chrome.
+     Desktop (≥1024px): a fixed left sidebar nav beside a wide content region,
+     whose screens flow into multiple columns; the bottom bar + FAB are hidden.
+     Global (not component-encapsulated) so the global svg.lucide sizing reaches
+     Lucide-rendered SVGs. */
   .app-shell { max-width: 480px; margin: 0 auto; min-height: 100dvh; position: relative; background: var(--bg); }
+  .app-main { min-width: 0; }
+
+  /* sidebar is desktop-only; hidden until the ≥1024px breakpoint */
+  .sidebar { display: none; }
 
   .tabbar { position: fixed; left: 50%; transform: translateX(-50%); bottom: 0; width: 100%; max-width: 480px; z-index: 20;
     display: grid; grid-template-columns: repeat(5, 1fr);
@@ -249,4 +256,48 @@
     box-shadow: var(--e-3); border: 0; cursor: pointer; }
   .fab:focus-visible { outline: none; box-shadow: var(--focus), var(--e-3); }
   .fab svg.lucide { width: 26px; height: 26px; stroke-width: 2.25; }
+
+  /* ── tablet: a wider centered column (bottom chrome unchanged) ── */
+  @media (min-width: 768px) {
+    .app-shell { max-width: 720px; }
+    .tabbar { max-width: 720px; }
+    .fab { right: max(18px, calc(50% - 342px)); }
+  }
+
+  /* ── desktop: sidebar + wide multi-column content ── */
+  @media (min-width: 1024px) {
+    .app-shell { max-width: 1280px; display: grid; grid-template-columns: 248px minmax(0, 1fr); align-items: start; }
+
+    .sidebar { display: flex; flex-direction: column; gap: var(--s-1);
+      position: sticky; top: 0; align-self: start; height: 100dvh; overflow-y: auto;
+      padding: var(--s-5) var(--s-4); border-right: 1px solid var(--border-soft); background: var(--bg); }
+    .sidebar .brand { display: flex; align-items: center; gap: var(--s-2);
+      font-family: var(--font-display); font-weight: var(--fw-bold); font-size: var(--fs-h2);
+      color: var(--text-strong); padding: var(--s-2) var(--s-3) var(--s-5); }
+    .sidebar .brand svg.lucide { width: 26px; height: 26px; color: var(--accent); }
+    .sidebar .navlink { display: flex; align-items: center; gap: var(--s-3); padding: var(--s-3);
+      border-radius: var(--r-md); color: var(--text-muted); font-weight: var(--fw-semi); min-height: 44px;
+      transition: background var(--t-fast), color var(--t-fast); }
+    .sidebar .navlink:hover { background: var(--surface-2); color: var(--text); }
+    .sidebar .navlink.active, .sidebar .navlink[aria-current="page"] { background: var(--accent-soft); color: var(--accent); }
+    .sidebar .navlink:focus-visible { outline: none; box-shadow: var(--focus); }
+    .sidebar .navlink svg.lucide { width: 22px; height: 22px; }
+    .sidebar .sidebar-cta { margin-top: var(--s-4); }
+
+    .app-main { grid-column: 2; min-height: 100dvh; }
+    /* the topbar spans the content region; give it desktop breathing room */
+    .app-main .topbar { padding-left: var(--s-6); padding-right: var(--s-6); }
+    /* screens flow into multiple columns; the bottom-bar clearance is dropped */
+    .app-main .screen { padding: var(--s-5) var(--s-6) var(--s-6);
+      display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: var(--s-4); align-content: start; }
+    /* full-bleed elements that should never be boxed into one column */
+    .app-main .screen > .hero,
+    .app-main .screen > .section-h,
+    .app-main .screen > .strip,
+    .app-main .screen > .empty { grid-column: 1 / -1; }
+
+    /* desktop hides the phone/tablet chrome */
+    .tabbar, .fab { display: none; }
+  }
 }
