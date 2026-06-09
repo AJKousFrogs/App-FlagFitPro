@@ -1091,67 +1091,38 @@ export class AcwrService {
       const daysToLoad = cfg.chronicWindowDays + 7; // Extra buffer
       const cutoffDate = new Date();
       cutoffDate.setDate(cutoffDate.getDate() - daysToLoad);
-      const cutoffDateKey = cutoffDate.toISOString().slice(0, 10);
 
       this.logger.debug("acwr_load_player_sessions_query", {
         userId,
         daysToLoad,
       });
 
-      const [workoutLogsResult, loadMonitoringResult] = await Promise.all([
-        this.supabaseService.client
-          .from("workout_logs")
-          .select(
-            `
-            id,
-            player_id,
-            source_session_id,
-            workout_type,
-            completed_at,
-            rpe,
-            duration_minutes
-          `,
-          )
-          .eq("player_id", userId)
-          .gte("completed_at", cutoffDate.toISOString())
-          .order("completed_at", { ascending: false }),
-        this.supabaseService.client
-          .from("load_monitoring")
-          .select("monitoring_date, acute_load, chronic_load, acwr, risk_level")
-          .eq("player_id", userId)
-          .gte("monitoring_date", cutoffDateKey)
-          .order("monitoring_date", { ascending: false }),
-      ]);
-      const { data: workoutLogs, error } = workoutLogsResult;
-      const { data: loadMonitoring, error: loadMonitoringError } =
-        loadMonitoringResult;
+      // workout_logs was merged into training_sessions (Phase 9b, 2026-05-29)
+      // and load_monitoring (a never-written ACWR cache) was dropped (Phase 8).
+      // Read the canonical completed sessions from training_sessions, aliased
+      // back to the legacy WorkoutLog shape (player_id:user_id,
+      // workout_type:session_type) so the mapping below is unchanged.
+      const { data: workoutLogs, error } = await this.supabaseService.client
+        .from("training_sessions")
+        .select(
+          "id, player_id:user_id, workout_type:session_type, completed_at, rpe, duration_minutes, notes",
+        )
+        .eq("user_id", userId)
+        .not("completed_at", "is", null)
+        .gte("completed_at", cutoffDate.toISOString())
+        .order("completed_at", { ascending: false });
 
       if (error) {
         this.logger.error("acwr_workout_logs_load_failed", error, { userId });
         return;
       }
 
-      if (loadMonitoringError) {
-        this.logger.warn("acwr_load_monitoring_history_failed", {
-          userId,
-          ...toLogContext(loadMonitoringError),
-        });
-      }
-
-      const loadMonitoringByDate = new Map(
-        ((loadMonitoring as LoadMonitoringRecord[] | null) ?? [])
-          .filter((row) => row.monitoring_date)
-          .map((row) => [row.monitoring_date as string, row]),
-      );
-      const acwrHistory =
-        ((loadMonitoring as LoadMonitoringRecord[] | null) ?? [])
-          .filter((row) => row.monitoring_date && row.acwr !== null)
-          .map((row) => ({
-            date: new Date(`${row.monitoring_date}T00:00:00`),
-            ratio: Number(row.acwr ?? 0),
-            chronic: Number(row.chronic_load ?? 0),
-          })) ?? [];
-      this.historicalACWR.set(acwrHistory);
+      // No persisted ACWR history cache anymore (load_monitoring dropped); the
+      // canonical ratio is recomputed live from the sessions below. Tolerance
+      // detection therefore starts from an empty history — identical to the
+      // prior behaviour, where that cache was always empty.
+      const loadMonitoringByDate = new Map<string, LoadMonitoringRecord>();
+      this.historicalACWR.set([]);
 
       if (!workoutLogs || workoutLogs.length === 0) {
         this.trainingSessions.set([]);
@@ -1211,43 +1182,24 @@ export class AcwrService {
     this.logger.info("acwr_realtime_subscribe", { userId });
 
     this.realtimeChannel = this.supabaseService.client
-      .channel(`workout_logs:${userId}`)
+      .channel(`training_sessions:${userId}`)
       .on<WorkoutLog>(
         REALTIME_LISTEN_TYPES.POSTGRES_CHANGES,
         {
           event: REALTIME_POSTGRES_CHANGES_LISTEN_EVENT.INSERT,
           schema: "public",
-          table: "workout_logs",
-          filter: `player_id=eq.${userId}`,
+          table: "training_sessions",
+          filter: `user_id=eq.${userId}`,
         },
         (payload: RealtimePostgresInsertPayload<WorkoutLog>) => {
           this.logger.info("acwr_realtime_workout_insert", {
             userId,
             ...toLogContext(payload.new),
           });
-          const log = payload.new;
-
-          const session: TrainingSession = {
-            playerId: log.player_id,
-            date: new Date(log.completed_at),
-            sessionType: inferSessionType(log),
-            metrics: {
-              type: "internal",
-              internal: {
-                sessionRPE: log.rpe || 5,
-                duration: log.duration_minutes || 60,
-                workload: (log.rpe || 5) * (log.duration_minutes || 60),
-              },
-              calculatedLoad: (log.rpe || 5) * (log.duration_minutes || 60),
-            },
-            load: (log.rpe || 5) * (log.duration_minutes || 60),
-            notes: log.notes,
-            completed: true,
-            modifiedFromPlan: false,
-          };
-
-          this.addSession(session);
-          this.logger.success("acwr_session_added_from_realtime", { userId });
+          // training_sessions rows are frequently inserted as "scheduled" and
+          // only later marked completed, so reload (which filters to completed
+          // sessions) rather than adding the raw row directly.
+          this.loadPlayerSessions(userId);
         },
       )
       .on<WorkoutLog>(
@@ -1255,8 +1207,8 @@ export class AcwrService {
         {
           event: REALTIME_POSTGRES_CHANGES_LISTEN_EVENT.UPDATE,
           schema: "public",
-          table: "workout_logs",
-          filter: `player_id=eq.${userId}`,
+          table: "training_sessions",
+          filter: `user_id=eq.${userId}`,
         },
         (payload: RealtimePostgresUpdatePayload<WorkoutLog>) => {
           this.logger.info("acwr_realtime_workout_update", {
@@ -1310,43 +1262,14 @@ export class AcwrService {
     }
 
     try {
-      const monitoringDate = getDateKey(new Date());
-      const riskLevel = acwrData.riskZone.label;
-      const { error } = await this.supabaseService.client
-        .from("load_monitoring")
-        .upsert({
-          player_id: userId,
-          date: monitoringDate,
-          monitoring_date: monitoringDate,
-          calculated_at: new Date().toISOString(),
-          daily_load: Math.round(acwrData.acute), // Current day's load estimate
-          acute_load: acwrData.acute,
-          chronic_load: acwrData.chronic,
-          acwr: acwrRatio,
-          injury_risk_level: riskLevel,
-          risk_level: riskLevel,
-        }, { onConflict: "player_id,date" });
-
-      if (error) {
-        const msg =
-          typeof error.message === "string" && error.message.length > 0
-            ? error.message
-            : "load_monitoring upsert failed";
-        this.logger.error("acwr_load_monitoring_upsert_failed", error, {
-          userId,
-        });
-        void this.remoteTelemetry.error(msg, {
-          source: "acwr_service",
-          operation: "saveACWRToDatabase",
-          userId,
-          ...toLogContext(error),
-        });
-        return { ok: false, errorMessage: msg };
-      }
-
-      this.logger.debug("acwr_load_monitoring_upsert_ok", {
+      // load_monitoring (the ACWR/load cache) was dropped (Phase 8, 2026-05-29);
+      // it was never written and the canonical ratio is recomputed live from
+      // training_sessions. There is nothing to persist here anymore — but we
+      // still act on the live ratio for spike detection / load capping.
+      this.logger.debug("acwr_load_monitoring_persist_skipped", {
         userId,
         ratio: acwrRatio,
+        riskLevel: acwrData.riskZone.label,
       });
 
       // Check for ACWR spike and create load cap if needed
