@@ -43,6 +43,13 @@ export class TodayComponent {
 
   constructor() {
     if (!this.videoSvc.loaded()) void this.videoSvc.load();
+    // Readiness is server-canonical and was otherwise only set transiently right
+    // after a check-in submit — so a fresh load / reload of Today always showed
+    // "not logged today". Recompute from the latest check-in on each visit
+    // (calc-readiness upserts idempotently on user_id+day).
+    this.readinessSvc
+      .calculateToday()
+      .subscribe({ error: () => {/* error surfaced via readinessSvc.error signal */} });
   }
   private readonly periodization = inject(PeriodizationService);
   private readonly readinessSvc = inject(ReadinessService);
