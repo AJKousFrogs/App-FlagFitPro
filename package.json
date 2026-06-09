@@ -21,6 +21,7 @@
     "sass:watch": "node scripts/sass-watch.mjs",
     "build:css": "node scripts/build-css.js",
     "build:production": "cd angular && npx ng build --progress=false --verbose",
+    "docs:regen": "node scripts/docs-regen.mjs",
     "dev:netlify": "netlify dev --skip-wait-port",
     "test": "cd angular && npm run test",
     "test:unit": "cd angular && npm run test",
