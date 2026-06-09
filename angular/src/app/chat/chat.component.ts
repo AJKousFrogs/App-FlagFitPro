@@ -13,6 +13,44 @@ import { LucideAngularModule } from "lucide-angular";
 import { AvatarComponent } from "../shared/avatar.component";
 import { AIService, MerlinSuggestedAction } from "../core/services/ai.service";
 import { PrivacySettingsService } from "../core/services/privacy-settings.service";
+import { InjuryService, InjurySeverity } from "../core/services/injury.service";
+
+// Lightweight tightness detector: "my achilles is tight" → {region, severity}.
+// Deterministic; fires the self-report loop alongside Merlin's normal reply.
+const TIGHT_REGIONS: { re: RegExp; region: string }[] = [
+  { re: /achill/i, region: "achilles" },
+  { re: /calf|calves|gastroc/i, region: "calf" },
+  { re: /hamstring/i, region: "hamstring" },
+  { re: /quad/i, region: "quad" },
+  { re: /groin|adductor/i, region: "groin" },
+  { re: /\bhip/i, region: "hip" },
+  { re: /\bknee/i, region: "knee" },
+  { re: /ankle/i, region: "ankle" },
+  { re: /shin/i, region: "shin" },
+  { re: /glute/i, region: "glute" },
+  { re: /lower back|low back|\bback\b/i, region: "lower back" },
+  { re: /shoulder/i, region: "shoulder" },
+];
+const TIGHT_KEYWORDS =
+  /\b(tight|tightness|sore|soreness|stiff|niggl|strain|cramp|hurts?|hurting|painful|pain)\b/i;
+
+export function parseTightness(
+  text: string,
+): { region: string; severity: InjurySeverity } | null {
+  if (!TIGHT_KEYWORDS.test(text)) return null;
+  for (const { re, region } of TIGHT_REGIONS) {
+    if (re.test(text)) {
+      let severity: InjurySeverity = "minor";
+      if (/\b(severe|really bad|very bad|killing|can'?t walk|can'?t run|sharp)\b/i.test(text)) {
+        severity = "severe";
+      } else if (/\b(quite|pretty|very|bad|really)\b/i.test(text)) {
+        severity = "moderate";
+      }
+      return { region, severity };
+    }
+  }
+  return null;
+}
 
 interface Turn {
   role: "me" | "ai";
@@ -69,6 +107,7 @@ export class ChatComponent implements AfterViewChecked {
   private readonly ai = inject(AIService);
   private readonly privacy = inject(PrivacySettingsService);
   private readonly router = inject(Router);
+  private readonly injury = inject(InjuryService);
 
   private readonly threadEl = viewChild<ElementRef<HTMLElement>>("thread");
 
@@ -110,6 +149,36 @@ export class ChatComponent implements AfterViewChecked {
     this.draft.set("");
     this.busy.set(true);
     this.autoScroll = true;
+
+    // Self-report loop: if the athlete reports tightness, log it (which makes the
+    // engine pull sprint/high-intensity work off that region) and confirm — in
+    // addition to Merlin's normal coaching reply.
+    const tight = parseTightness(text);
+    if (tight) {
+      this.injury
+        .report(tight.region, tight.severity)
+        .then(() => {
+          const grade = tight.severity === "minor" ? "tightness" : `${tight.severity} tightness`;
+          this.turns.update((t) => [
+            ...t,
+            {
+              role: "ai",
+              text: `Logged your ${tight.region} ${grade} — I've pulled sprint/high-intensity work off it in today's plan. You'll see it adjusted on Today.`,
+            },
+          ]);
+          this.autoScroll = true;
+        })
+        .catch(() => {
+          this.turns.update((t) => [
+            ...t,
+            {
+              role: "ai",
+              text: "I couldn't log that tightness just now — try the Wellness → Niggles & tightness form so your plan adjusts.",
+            },
+          ]);
+          this.autoScroll = true;
+        });
+    }
 
     this.ai.sendMessage(text, this.sessionId).subscribe({
       next: (reply) => {
