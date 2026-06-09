@@ -1,177 +1,50 @@
 # FlagFit Pro
 
-FlagFit Pro is a flag football performance, wellness, and team-operations platform built with Angular, PrimeNG, Netlify Functions, and Supabase.
+A flag-football performance, wellness, and team-operations platform built with **Angular** (standalone, zoneless, signals), **Netlify Functions**, and **Supabase** (Postgres + Auth + Realtime + Storage).
 
-**Current release:** [4.0.0](docs/RELEASE_NOTES_4.0.0.md) — UI redesign, Supabase polish, and TypeScript/JavaScript fixes.
+## Start here
 
-## Start Here
+**→ [`docs/SOURCE_OF_TRUTH.md`](./docs/SOURCE_OF_TRUTH.md)** is the single authoritative doc: system map, data model, endpoint reference, the **Feature Status Ledger** (read before building anything — it says what already exists), spec laws, known drift, and runbooks.
 
-- Canonical documentation index: [docs/DOCS_INDEX.md](./docs/DOCS_INDEX.md)
-- Local development setup: [docs/LOCAL_DEVELOPMENT_SETUP.md](./docs/LOCAL_DEVELOPMENT_SETUP.md)
-- Architecture: [docs/ARCHITECTURE.md](./docs/ARCHITECTURE.md)
-- Single source of truth rules: [docs/SINGLE_SOURCE_OF_TRUTH.md](./docs/SINGLE_SOURCE_OF_TRUTH.md)
-- Angular workspace guide: [angular/README.md](./angular/README.md)
+Generated, ground-truth-anchored references it links to:
+- [`docs/generated/DATA_MODEL.md`](./docs/generated/DATA_MODEL.md) — exact live tables/columns
+- [`docs/generated/ENDPOINTS.md`](./docs/generated/ENDPOINTS.md) — every `/api/*` route, exercised vs orphaned
+- [`docs/generated/RECONCILIATION.md`](./docs/generated/RECONCILIATION.md) — audit of what the old docs got wrong
 
-## Documentation Rule
+Angular workspace guide: [`angular/README.md`](./angular/README.md).
 
-- `docs/DOCS_INDEX.md` is the canonical entry point for durable product and engineering docs.
-- Docs must describe current behavior or enforced rules.
-- One-off audits, progress reports, and temporary trackers should be deleted once their outcome is merged into durable docs or code.
-- A local README is allowed when it explains a specific subdirectory, script set, or operational area.
+## Quick start
 
-## Quick Start
-
-Prerequisites:
-
-- Node.js 22+
-- npm 11+
-
-Install and run:
+Prerequisites: Node.js 22+, npm 11+.
 
 ```bash
 npm install
 cd angular && npm install && cd ..
-npm run dev
+npm run dev          # Netlify Dev: Angular app + local functions
 ```
 
-Preferred local workflow:
+`npm run dev:angular-only` runs Angular in isolation when backend parity isn't needed.
 
-- `npm run dev` runs Netlify Dev and proxies the Angular app plus local functions.
-- `npm run dev:angular-only` is for isolated Angular work when backend parity is not needed.
-
-## Common Commands
+## Common commands
 
 ```bash
-npm run dev
-npm run build
-npm run type-check
-npm run lint
-npm run test
+npm run dev          # local dev (Netlify Dev)
+npm run build        # production build (cd angular && ng build)
+npm run docs:regen   # regenerate docs/generated/* from ground truth (see SOURCE_OF_TRUTH §8)
+cd angular && npm run type-check && npm run lint && npm run test
 ```
 
-For workspace-specific commands, use [angular/README.md](./angular/README.md).
-
-## Repository Layout
+## Repository layout
 
 ```text
-angular/              Angular application
-netlify/functions/    Serverless backend
-database/             Migrations and database support material
-docs/                 Canonical product and engineering docs
+angular/              Angular application (feature screens are direct children of src/app/)
+netlify/functions/    Serverless backend (/api/* via netlify.toml redirects)
+supabase/migrations/  Live migration history (database/migrations/ is legacy — do not add here)
+docs/                 SOURCE_OF_TRUTH.md + generated/ + ground-truth/
 tests/                Integration, privacy, and logic tests
-scripts/              Tooling, audits, and repo automation
+scripts/              Tooling and repo automation (incl. docs-regen.mjs)
 ```
 
-## Source Of Truth
+## Documentation rule
 
-The repo now uses one clear documentation hierarchy:
-
-- product, architecture, security, API, and design rules live under [docs/](./docs/)
-- Angular implementation guidance lives under [angular/](./angular/)
-- SCSS implementation guidance lives next to the style system under [angular/src/scss/](./angular/src/scss/)
-
-If two docs disagree, prefer:
-
-1. [docs/DOCS_INDEX.md](./docs/DOCS_INDEX.md)
-2. the topic-specific canonical doc linked from that index
-3. the code
-
-## Recovery Modalities & Adaptive Load
-
-Durable product spec. These are **product rules**, not implementation notes — keep them
-true in code.
-
-### Canonical engines (decided)
-
-- The athlete-facing prescription ("Today" / "This week") is owned by the **client
-  `periodization.service.ts`** (`prescribeFor` / `decideBasePrescription`). Recovery and
-  injury precedence are wired **here**, not in the legacy server-side
-  `daily_protocols` / `ai-chat` generator (which remains for coach/AI features but is not
-  the source of truth for the athlete plan).
-- The equipment inventory is stored on **`athlete_training_config.available_equipment`**
-  (jsonb array of equipment ids). We **reuse** this column; we do **not** use the
-  dead/missing `athlete_recovery_profiles` / `equipment_items` tables.
-
-### Equipment inventory model
-
-- A player owns a set of recovery equipment, stored as a jsonb array of stable ids on
-  `athlete_training_config.available_equipment`, e.g.
-  `["compression_boots","massage_gun","massage_knife","foam_roller","bands","physio_access"]`.
-- The catalogue of known equipment ids + labels lives as **data** (a reference constant),
-  never hardcoded into business logic. Adding a new modality = adding a catalogue entry.
-- **Equipment gate (LAW):** the prescription/recovery engine may only ever recommend a
-  modality the player actually owns/has access to. No Normatec recommendation for a player
-  without compression boots, ever.
-
-### Modality prescription logic (triggers)
-
-Data-driven rules. Each modality has trigger conditions; the engine emits a modality only
-when its trigger fires **and** the player owns it.
-
-- **Compression boots** → post-session on high-load days, on an ACWR spike, or during a
-  congested fixture run.
-- **Massage gun (percussion)** → pre-session activation, or post-session localized tightness.
-- **Stretching / mobility drills** → tightness reports, low-readiness days, scheduled
-  maintenance. (Always available — no equipment gate; bodyweight.)
-- **Massage knives (IASTM)** → persistent / recurring localized soft-tissue tightness.
-- **Foam roller** → general post-session, low-grade soreness.
-- **Physio referral** → triggered when a self-reported issue crosses a severity threshold
-  **or recurs** across multiple days.
-
-### Self-report → recalculation (the Merlin loop) — SPEC LAW
-
-When a player reports soft-tissue tightness / soreness for a body region (via the Wellness
-check-in region selector **or** by telling Merlin "my achilles/gastroc is tight"):
-
-1. The report is persisted to a canonical store the engine reads:
-   - structured per-region soreness → `daily_wellness_checkin.soreness_areas`, and
-   - an active restriction → `athlete_injuries` (`injury_location`, `injury_grade`,
-     `recovery_status='active'`, `activity_restrictions[]`, short auto-expiry for
-     self-reported tightness).
-2. The system **MUST recalculate** training load / RPE targets / prescription. It does not
-   silently keep the old plan.
-3. **Injury/physio precedence overrides training (LAW):** a relevant tightness/injury
-   signal for a region used by sprint/high-intensity work **down-regulates or removes that
-   work for the affected region** — regardless of what the periodization plan wanted.
-   Severity scales the response: minor tightness → substitute sprints with mobility; moderate
-   /severe → recovery/rest. This precedence sits **above** the normal plan and the
-   team-practice/accumulation defaults (but the existing competition/taper safety branches
-   still apply).
-4. The recalculation is **deterministic and traceable**: every override logs what triggered
-   it (region, severity, source) and what changed (intent before → after), so it can be
-   audited.
-
-### Write-path integrity (LAW)
-
-Every critical write in this feature — equipment profile, self-report, recalculation result
-— must check success and surface failure to the user/caller. **No silent advance, no
-swallowed error.** A failed self-report write is a P0: the athlete must not believe their
-tightness was logged when it wasn't.
-
-## Daily-Input Forms (prefill & non-destructive submit)
-
-Canonical lifecycle for every recurring user-input form (wellness check-in, supplements,
-post-event participation, self-report, RPE/session log, etc.). Daily-input forms that open
-with hardcoded default literals **and** submit via an upsert silently destroy saved data
-when the user reopens and submits without touching anything — treat that as a P0.
-
-1. **ON OPEN — fetch:** load the user's existing record for the period (today / this event)
-   from the canonical table (verified name — e.g. `daily_wellness_checkin`, not
-   `wellness_checkin`).
-2. **PREFILL:** if a record exists, populate fields from SAVED values. If none exists, use
-   a genuine empty/unset state — **never fabricated mid-range defaults that look real**.
-3. **DISTINGUISH unset from a real value:** a slider sitting at 5 must not be
-   indistinguishable from a saved 5. Track a touched/dirty flag (or null state) where a
-   default could be mistaken for a real entry, and gate submit on it.
-4. **ON SUBMIT — non-destructive:** never overwrite a saved column with an untouched
-   default. Prefer partial update of changed fields, or full prefill so the upsert carries
-   real values forward. (The `upsert_wellness_checkin` RPC already `COALESCE`s null →
-   existing, so sending only touched fields is safe there.)
-5. **FAILURE:** if the prefill fetch fails, surface it and **block the destructive submit**
-   — do not silently fall back to defaults and allow a write.
-
-Reference implementations: the wellness check-in prefill `effect()` and
-`profile-edit.component.ts` `ngOnInit()` prefill-from-GET. Append-only logs (hydration,
-training-session) must instead be **idempotent per natural key** (e.g. one
-`training_sessions` row per `user_id`+`session_date`+`session_type`) so a double submit
-updates rather than double-counts into ACWR.
+One source of truth: `docs/SOURCE_OF_TRUTH.md`. Its generated sections are produced by `npm run docs:regen` — don't hand-edit `docs/generated/*`. Any PR that adds/changes a table, endpoint, or feature **must update the Feature Status Ledger in the same commit** (SOURCE_OF_TRUTH §8). One-off audits and progress reports don't belong in `docs/` — fold them into the source of truth or delete them.
