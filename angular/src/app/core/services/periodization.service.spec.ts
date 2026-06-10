@@ -286,14 +286,14 @@ describe("prescribeFor — accumulation week shape", () => {
 // =============================================================================
 
 describe("prescribeFor — nutrition", () => {
-  it("80kg sprint day: 6×80 carbs, 1.8×80 protein, 35ml/kg base water", () => {
+  it("80kg sprint day: 4.5×80 carbs (short high-intensity, NOT glycogen-loading), 1.8×80 protein, 35ml/kg base water", () => {
     const rx = prescribeFor(
       inputs({
         date: new Date("2026-05-05T10:00:00Z"), // Tue → sprint
         bodyweightKg: 80,
       }),
     );
-    expect(rx.nutrition.carbsG).toBe(80 * 6);
+    expect(rx.nutrition.carbsG).toBe(Math.round(80 * 4.5));
     expect(rx.nutrition.proteinG).toBe(Math.round(80 * 1.8));
     expect(rx.nutrition.hydrationL).toBeCloseTo((80 * 35) / 1000, 1);
   });

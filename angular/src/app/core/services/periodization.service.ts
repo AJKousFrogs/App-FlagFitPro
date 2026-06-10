@@ -1178,22 +1178,30 @@ function pickAccumulationIntent(
 // =============================================================================
 // NUTRITION TARGETS
 //
-// Per-kg ranges from current sport-nutrition consensus (rough mid-points):
-//   Carbs:    rest 3, easy 4, moderate 5, hard/strength 6, comp/heavy 8
-//   Protein:  steady 1.8 g/kg/day across phases
-//   Fluid:    base 35 ml/kg/day; competition adds ~1.5L; heat adds ~0.5L
+// Carbohydrate is periodised to the day's ENERGY EXPENDITURE, not just its
+// intensity (IOC 2018 / ACSM-AND-DC consensus; Burke carbohydrate guidelines).
+// Flag-football sessions are SHORT (≤60–75 min) and intermittent, so even a
+// high-intensity sprint day is low-VOLUME and sits in the light–moderate band
+// (3–5 g/kg/day), NOT the 6–10 g/kg endurance/loading band. Elevated carbs are
+// reserved for genuine glycogen demand: the pre-game top-up (taper-prime, ≤24h
+// out) and game/tournament days (multiple games + between-game refuel).
+//   Light/skill     3–5 g/kg/day   ·  Moderate ~1h   5–7   ·  Endurance 6–10
+//   Protein:  steady 1.8 g/kg/day (within the 1.6–2.2 consensus range)
+//   Fluid:    base 35 ml/kg/day; competition adds ~1.5L; heat/density adds ~0.5L
+// Previously sprint/strength were a flat 6 g/kg → 480g for an 80kg athlete on a
+// 45-min sprint day, i.e. glycogen-loading carbs for a short session.
 // =============================================================================
 
 const CARB_PER_KG: Record<PrescriptionIntent, number> = {
   rest: 3,
-  recovery: 4,
-  mobility: 4,
-  technical: 4.5,
-  sprint: 6,
-  strength: 6,
-  mixed: 5.5,
-  "taper-prime": 7,
-  competition: 8,
+  recovery: 3.5,
+  mobility: 3.5,
+  technical: 4,
+  sprint: 4.5, // short, high-intensity, low-volume → light–moderate band
+  strength: 4.5,
+  mixed: 5, // skill + conditioning, more total work
+  "taper-prime": 6, // deliberate glycogen top-up, ≤24h to competition
+  competition: 7, // game/tournament day: multiple games + refuel between
 };
 
 const PROTEIN_PER_KG = 1.8;
