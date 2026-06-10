@@ -21,6 +21,27 @@ const logger = createLogger({ service: "netlify.calc-readiness" });
 // Note: authenticateRequest, applyRateLimit are handled by baseHandler
 
 /**
+ * Bounded readiness penalty (points off the 0–100 composite) for long seated
+ * travel today — a drive/journey to a tournament arrives the body stiff,
+ * dehydrated and under-slept. Conservative calibration starting points; only
+ * ever LOWERS readiness (never raises it). Tune against team history.
+ *   1–2h → −2 · 3–5h → −4 · ≥6h → −8
+ */
+function travelReadinessPenalty(hours) {
+  const h = Number(hours);
+  if (!Number.isFinite(h) || h <= 0) {
+    return 0;
+  }
+  if (h >= 6) {
+    return 8;
+  }
+  if (h >= 3) {
+    return 4;
+  }
+  return 2;
+}
+
+/**
  * Calculate readiness score for an athlete
  * Evidence-based composite score (0-100) combining:
  * - Workload (ACWR from session-RPE): 35%
@@ -638,7 +659,13 @@ const handler = async (event, context) => {
         sleepScore * sleepWeight +
         proximityScore * proximityWeight;
 
-      const score = Math.round(Math.max(0, Math.min(100, rawScore)));
+      // Travel fatigue penalty — a long seated journey today (e.g. an 8h drive
+      // to a tournament) lowers readiness. Only ever SUBTRACTS (safe direction),
+      // nudging Push → Maintain/Deload for a just-arrived, fatigued athlete.
+      const travelPenalty = travelReadinessPenalty(wellness.travel_hours);
+      const score = Math.round(
+        Math.max(0, Math.min(100, rawScore - travelPenalty)),
+      );
 
       // Evidence-based cut-points (starting points - require team calibration)
       // These thresholds are based on common athlete monitoring scales

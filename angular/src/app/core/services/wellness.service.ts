@@ -38,6 +38,8 @@ export interface WellnessData {
   timestamp?: string;
   /** Regions for soreness (canonical RPC). */
   sorenessAreas?: string[];
+  /** Hours of seated travel today (e.g. an 8h drive) — lowers readiness. */
+  travelHours?: number;
 }
 
 export interface WellnessAverages {
@@ -96,6 +98,7 @@ interface DailyWellnessCheckinEntry {
   notes?: string;
   calculated_readiness?: number;
   readiness_score?: number;
+  travel_hours?: number;
   created_at: string;
   updated_at?: string;
 }
@@ -231,6 +234,7 @@ export class WellnessService {
             readinessScore:
               entry.calculated_readiness ?? entry.readiness_score,
             notes: entry.notes,
+            travelHours: entry.travel_hours,
             timestamp: entry.created_at,
           }),
         );
@@ -399,6 +403,7 @@ export class WellnessService {
       p_motivation_level: data.motivation ?? null,
       p_mood: data.mood ?? null,
       p_hydration_level: data.hydration ?? null,
+      p_travel_hours: data.travelHours ?? null,
     };
 
     this.logger.info("wellness_upsert_rpc_start", {

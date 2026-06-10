@@ -59,6 +59,16 @@
       <span class="val">{{ stress() }}</span>
     </div>
 
+    <div style="margin-bottom:var(--s-3)">
+      <label style="display:block;margin-bottom:var(--s-2)">Travel today</label>
+      <div class="chiprow" role="group" aria-label="Hours travelled today">
+        @for (t of travelOptions; track t.h) {
+          <button type="button" class="chip" [class.sel]="travelHours() === t.h"
+                  [attr.aria-pressed]="travelHours() === t.h" (click)="travelHours.set(t.h)">{{ t.label }}</button>
+        }
+      </div>
+    </div>
+
     @if (submitted()) {
       <button class="btn secondary block" type="button" disabled>
         <lucide-icon name="check" /> Logged for today

@@ -121,6 +121,7 @@ export class WellnessComponent {
       if (entry.energy != null) this.energy.set(entry.energy);
       if (entry.mood != null) this.mood.set(entry.mood);
       if (entry.stress != null) this.stress.set(entry.stress);
+      if (entry.travelHours != null) this.travelHours.set(entry.travelHours);
     });
 
     // Reflect today's ACTUAL supplement logs rather than fabricated ON/ON/OFF —
@@ -157,6 +158,14 @@ export class WellnessComponent {
   readonly energy = signal(6);
   readonly mood = signal(7);
   readonly stress = signal(3);
+  /** Hours of seated travel today (drive/journey). Lowers readiness when high. */
+  readonly travelHours = signal(0);
+  readonly travelOptions: { label: string; h: number }[] = [
+    { label: "None", h: 0 },
+    { label: "<3h", h: 2 },
+    { label: "3–5h", h: 4 },
+    { label: "6h+", h: 6 },
+  ];
 
   readonly submitting = signal(false);
   readonly submitted = signal(false);
@@ -174,6 +183,7 @@ export class WellnessComponent {
         energy: this.energy(),
         mood: this.mood(),
         stress: this.stress(),
+        travelHours: this.travelHours(),
       })
       .subscribe({
         next: (res) => {
