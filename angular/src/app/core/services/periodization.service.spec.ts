@@ -970,3 +970,42 @@ describe("prescribeFor — position emphasis", () => {
     expect(prescribeFor(inputs({ date: sunday, position: "qb" })).positionEmphasis ?? null).toBeNull();
   });
 });
+
+// =============================================================================
+// REGION-AWARE INJURY × POSITION — a shoulder issue pulls throwing, not running
+// =============================================================================
+
+describe("prescribeFor — throwing restriction overrides QB/center emphasis", () => {
+  const tuesday = new Date("2026-05-05T10:00:00Z"); // sprint day
+
+  it("a QB shoulder issue leaves running intact but flags the throwing arm", () => {
+    const rx = prescribeFor(
+      inputs({
+        date: tuesday,
+        position: "qb",
+        activeRestrictions: { restrictsSprint: false, restrictsThrowing: true, severity: "moderate", regions: ["shoulder"] },
+      }),
+    );
+    expect(rx.intent).toBe("sprint"); // running unaffected — shoulder doesn't restrict sprinting
+    expect(rx.positionEmphasis?.restricted).toBe(true);
+    expect(rx.positionEmphasis?.note).toMatch(/skip throwing|protect/i);
+  });
+
+  it("without a throwing restriction the QB emphasis is the normal throwing-care one", () => {
+    const rx = prescribeFor(inputs({ date: tuesday, position: "qb" }));
+    expect(rx.positionEmphasis?.restricted ?? false).toBe(false);
+    expect(rx.positionEmphasis?.note).toMatch(/throwing is CNS|space it/i);
+  });
+
+  it("a center snap/shoulder issue flags snapping", () => {
+    const rx = prescribeFor(
+      inputs({
+        date: tuesday,
+        position: "center_rusher",
+        activeRestrictions: { restrictsSprint: false, restrictsThrowing: true, severity: "minor", regions: ["wrist"] },
+      }),
+    );
+    expect(rx.positionEmphasis?.restricted).toBe(true);
+    expect(rx.positionEmphasis?.note).toMatch(/snapping/i);
+  });
+});

@@ -39,6 +39,10 @@ export class InjuryService {
     "plyometric",
     "agility",
   ]);
+  private static readonly THROWING_RESTRICTING = new Set([
+    "throwing",
+    "upper_strength",
+  ]);
   private static readonly SEV_RANK: Record<string, number> = {
     minor: 1,
     moderate: 2,
@@ -50,14 +54,21 @@ export class InjuryService {
     const sprintInjuries = this.active().filter((i) =>
       (i.restrictions ?? []).some((r) => InjuryService.SPRINT_RESTRICTING.has(r)),
     );
+    const throwingInjuries = this.active().filter((i) =>
+      (i.restrictions ?? []).some((r) => InjuryService.THROWING_RESTRICTING.has(r)),
+    );
     const restrictsSprint = sprintInjuries.length > 0;
-    const regions = [...new Set(sprintInjuries.map((i) => i.region).filter(Boolean))];
-    const severity = sprintInjuries.reduce<InjurySeverity | null>((max, i) => {
+    const restrictsThrowing = throwingInjuries.length > 0;
+    // Regions span everything currently flagged (lower-limb, core, AND upper)
+    // so the plan can name a shoulder issue, not just sprint-restricting ones.
+    const flagged = [...sprintInjuries, ...throwingInjuries];
+    const regions = [...new Set(flagged.map((i) => i.region).filter(Boolean))];
+    const severity = flagged.reduce<InjurySeverity | null>((max, i) => {
       const s = (i.severity as InjurySeverity) ?? "minor";
       const rank = InjuryService.SEV_RANK[s] ?? 1;
       return !max || rank > (InjuryService.SEV_RANK[max] ?? 0) ? s : max;
     }, null);
-    return { restrictsSprint, regions, severity };
+    return { restrictsSprint, restrictsThrowing, regions, severity };
   });
 
   async load(): Promise<void> {

@@ -50,7 +50,12 @@
       @if (p.positionEmphasis; as pe) {
         <div class="card flat" style="margin-bottom:var(--s-4)">
           <div class="row" style="align-items:baseline">
-            <b>{{ pe.label }} focus</b><small>prehab & care</small>
+            <b>{{ pe.label }} focus</b>
+            @if (pe.restricted) {
+              <span class="band caution">arm flagged</span>
+            } @else {
+              <small>prehab &amp; care</small>
+            }
           </div>
           <div style="display:flex;flex-wrap:wrap;gap:var(--s-2);margin:var(--s-2) 0">
             @for (f of pe.focus; track f) { <span class="chip">{{ f }}</span> }

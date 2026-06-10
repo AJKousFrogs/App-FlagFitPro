@@ -181,6 +181,9 @@ export interface DailyPrescription {
     label: string;
     focus: string[];
     note: string;
+    /** True when a throwing/upper-body restriction has overridden the emphasis
+     * into a protect-the-arm message (e.g. a QB shoulder issue). */
+    restricted?: boolean;
   } | null;
 }
 
@@ -251,6 +254,9 @@ export interface PeriodizationInputs {
    */
   activeRestrictions?: {
     restrictsSprint: boolean;
+    /** Throwing/loaded-upper restricted (shoulder, elbow, wrist, core). Lets the
+     * engine pull throwing/snapping guidance even when running is fine. */
+    restrictsThrowing?: boolean;
     severity: "minor" | "moderate" | "severe" | null;
     regions: string[];
   } | null;

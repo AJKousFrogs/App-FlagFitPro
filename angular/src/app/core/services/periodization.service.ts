@@ -500,8 +500,13 @@ export function prescribeFor(inputs: PeriodizationInputs): DailyPrescription {
   // region's sprint/high-intensity work is removed regardless of the base plan.
   const physioGuarded = applyInjuryGuard(guarded, inputs.activeRestrictions ?? null);
   // Position-specific accessory/prehab emphasis — additive guidance only, never
-  // changes the chosen intent or load.
-  return withPositionEmphasis(physioGuarded, inputs.position ?? null);
+  // changes the chosen intent or load. Throwing/upper restrictions override the
+  // QB/center emphasis into a protect-the-arm message.
+  return withPositionEmphasis(
+    physioGuarded,
+    inputs.position ?? null,
+    inputs.activeRestrictions?.restrictsThrowing ?? false,
+  );
 }
 
 /**
@@ -526,10 +531,26 @@ function positionBucket(position: string | null): "qb" | "wr_db" | "center" | nu
 function withPositionEmphasis(
   p: DailyPrescription,
   position: string | null,
+  restrictsThrowing = false,
 ): DailyPrescription {
   const bucket = positionBucket(position);
   if (!bucket || p.intent === "rest") {
     return { ...p, positionEmphasis: null };
+  }
+  // A flagged throwing/upper-body issue overrides the QB/center emphasis into a
+  // protect-the-arm message — these are the positions that throw or snap.
+  if (restrictsThrowing && (bucket === "qb" || bucket === "center")) {
+    const verb = bucket === "qb" ? "throwing" : "snapping";
+    return {
+      ...p,
+      positionEmphasis: {
+        position: bucket,
+        label: bucket === "qb" ? "Quarterback" : "Center / Rusher",
+        focus: ["Protect the arm/shoulder", "Gentle pain-free ROM only", `No ${verb} reps today`],
+        note: `Your ${verb} arm/shoulder is flagged — skip ${verb} work today and protect it. Lower-body and trunk work is fine if pain-free.`,
+        restricted: true,
+      },
+    };
   }
   const map = {
     qb: {
