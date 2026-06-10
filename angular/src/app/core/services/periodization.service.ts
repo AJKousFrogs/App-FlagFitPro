@@ -718,12 +718,34 @@ const PRACTICE_PHASE_MODIFIERS: Record<string, PracticePhaseModifier> = {
  * when a practice day does NOT own this phase (e.g. competition / recovery),
  * so the caller falls through to the phase-driven defaults.
  */
+/**
+ * Taper timing windows + the individual (non-practice) taper session targets,
+ * centralised so taper timing/shape is tuned in ONE place rather than scattered
+ * across the taper-prime gate, the practice modifier, and the standalone taper
+ * case. Values are unchanged from the prior inline literals.
+ */
+const TAPER_CONFIG = {
+  /** ≤ this many hours to the game → taper-prime (very short, sharp). */
+  taperPrimeHours: 24,
+  /** ≤ this many days out = the lighter "final third" of a taper. */
+  finalThirdDaysOut: 2,
+  /** Default day-of-taper when hours-to-event is unknown. */
+  defaultDayOfTaper: 7,
+  /** Individual (non-practice) taper session targets. */
+  individual: {
+    regular: { intent: "sprint" as PrescriptionIntent, rpe: 6, minutes: 45, sprintReps: 6 },
+    final: { intent: "mobility" as PrescriptionIntent, rpe: 4, minutes: 30, sprintReps: 4 },
+  },
+} as const;
+
 function practiceModifierFor(
   phase: CompetitionPhase,
   daysOut: number | null,
 ): PracticePhaseModifier | null {
   const key =
-    phase === "taper" && daysOut !== null && daysOut <= 2 ? "taper_final" : phase;
+    phase === "taper" && daysOut !== null && daysOut <= TAPER_CONFIG.finalThirdDaysOut
+      ? "taper_final"
+      : phase;
   return PRACTICE_PHASE_MODIFIERS[key] ?? null;
 }
 
@@ -782,7 +804,7 @@ function decideBasePrescription(inputs: PeriodizationInputs): DailyPrescription 
   }
 
   // 2. Within 24h of a game → taper-prime (very short, sharp, no fatigue).
-  if (hoursUntilNext !== null && hoursUntilNext <= 24) {
+  if (hoursUntilNext !== null && hoursUntilNext <= TAPER_CONFIG.taperPrimeHours) {
     return finalize({
       date,
       phase,
@@ -900,19 +922,23 @@ function decideBasePrescription(inputs: PeriodizationInputs): DailyPrescription 
       });
 
     case "taper": {
-      // Inside taper window: keep CNS sharp, drop volume.
-      const dayOfTaper = hoursUntilNext !== null
-        ? Math.max(1, Math.ceil(hoursUntilNext / 24))
-        : 7;
-      // Closer to the event = lighter.
-      const isFinalThird = dayOfTaper <= 2;
+      // Inside taper window: keep CNS sharp, drop volume. Targets are config
+      // (TAPER_CONFIG.individual); closer to the event = the lighter "final" row.
+      const dayOfTaper =
+        hoursUntilNext !== null
+          ? Math.max(1, Math.ceil(hoursUntilNext / 24))
+          : TAPER_CONFIG.defaultDayOfTaper;
+      const t =
+        dayOfTaper <= TAPER_CONFIG.finalThirdDaysOut
+          ? TAPER_CONFIG.individual.final
+          : TAPER_CONFIG.individual.regular;
       return finalize({
         date,
         phase,
-        intent: isFinalThird ? "mobility" : "sprint",
-        targetRpe: isFinalThird ? 4 : 6,
-        targetMinutes: isFinalThird ? 30 : 45,
-        sprintReps: isFinalThird ? 4 : 6,
+        intent: t.intent,
+        targetRpe: t.rpe,
+        targetMinutes: t.minutes,
+        sprintReps: t.sprintReps,
         strengthSets: 0,
         reasoning: taperReasoning(driverEvent, dayOfTaper),
         recoveryEmphasis: "medium",
