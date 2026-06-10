@@ -937,7 +937,10 @@ async function getProtocol(supabase, userId, params, headers, log = logger) {
       const trainingFocus = protocol.training_focus || "strength";
       const isPracticeDay = teamActivity?.type === "practice";
       const isFilmRoomDay = teamActivity?.type === "film_room";
-      const readinessForLogic = protocol.readiness_score || 70;
+      // Conservative when unknown (S2) — not an optimistic 70; `||` also discarded
+      // a legitimate score of 0.
+      const readinessForLogic =
+        protocol.readiness_score != null ? protocol.readiness_score : 60;
 
       const fallbackExercises = await generateFallbackProtocolExercises(
         protocol.id,

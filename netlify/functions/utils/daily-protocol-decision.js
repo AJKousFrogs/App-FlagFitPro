@@ -83,8 +83,18 @@ export async function buildProtocolDecisionContext({
     },
   };
 
-  const readinessForLogic = readinessScore !== null ? readinessScore : 70;
-  const acwrForLogic = acwrValue !== null ? acwrValue : 1.0;
+  // No fabrication (SOT Spec Laws 6/7): when readiness/load is unknown, do NOT
+  // assume a healthy 70/1.0 and push a full session. Missing readiness uses a
+  // CONSERVATIVE proxy (biases the day to a lighter skill session via the <70
+  // branch and a lower load) and gates on logging; missing ACWR stays neutral
+  // (won't trip the danger thresholds, but won't flatter either).
+  const CONSERVATIVE_NO_DATA_READINESS = 60;
+  const hasReadiness = readinessScore !== null && readinessScore !== undefined;
+  const hasAcwr = acwrValue !== null && acwrValue !== undefined;
+  const readinessForLogic = hasReadiness
+    ? readinessScore
+    : CONSERVATIVE_NO_DATA_READINESS;
+  const acwrForLogic = hasAcwr ? acwrValue : 1.0;
 
   const isPracticeDay =
     context.sessionResolution?.override?.type === "flag_practice";
@@ -169,8 +179,15 @@ export async function buildProtocolDecisionContext({
   );
   aiRationale += ` 📊 Periodization: ${PERIODIZATION_PHASE_NAMES[periodizationPhase] || periodizationPhase}.`;
 
-  if (acwrForLogic > 1.3) {
+  // Only surface the ACWR-elevated warning when ACWR is actually known.
+  if (hasAcwr && acwrForLogic > 1.3) {
     aiRationale += ` ⚠️ ACWR elevated (${acwrForLogic.toFixed(2)}) - load auto-adjusted for safety.`;
+  }
+
+  // Gate: tell the athlete the day is a conservative default, not a real read.
+  if (!hasReadiness) {
+    aiRationale +=
+      " 📋 No wellness data yet — using a conservative default. Log your check-in to personalise today's session.";
   }
 
   const baseLoadTarget = Math.round(readinessForLogic * 15);
