@@ -14,6 +14,8 @@ import { SkeletonComponent } from "../shared/skeleton.component";
 import { SESSION_VIDEO_ID } from "../core/config/session-video.config";
 
 import { PeriodizationService } from "../core/services/periodization.service";
+import { ProtocolService } from "../core/services/protocol.service";
+import { ProtocolExercise } from "../core/models/protocol.models";
 import { ScheduleService } from "../core/services/schedule.service";
 import { ApiService } from "../core/services/api.service";
 import { LoggerService } from "../core/services/logger.service";
@@ -52,6 +54,8 @@ interface WeekRow {
 })
 export class TrainingComponent {
   private readonly periodization = inject(PeriodizationService);
+  /** Exercise-realization layer, composed under today's intent. */
+  readonly protocol = inject(ProtocolService);
   private readonly schedule = inject(ScheduleService);
   private readonly api = inject(ApiService);
   private readonly logger = inject(LoggerService);
@@ -98,6 +102,37 @@ export class TrainingComponent {
       if (rx.targetRpe != null) this.actualRpe.set(rx.targetRpe);
       if (rx.targetMinutes != null) this.duration.set(rx.targetMinutes);
     });
+    // COMPOSE: once today's intent resolves, ask daily-protocol to realize the
+    // EXERCISES for that intent (position from the prescription, else profile).
+    effect(() => {
+      if (this.protocolTriggered) return;
+      const rx = this.rx();
+      if (!rx) return;
+      this.protocolTriggered = true;
+      this.protocol.generateFor({
+        date: rx.date,
+        intent: rx.intent,
+        intentLabel: rx.intentLabel,
+        position: rx.positionEmphasis?.position ?? this.periodization.position(),
+      });
+    });
+  }
+
+  private protocolTriggered = false;
+
+  /** Human dose for a realized exercise (sets×reps / hold / duration). */
+  exDose(ex: ProtocolExercise): string {
+    if (ex.prescribedSets && ex.prescribedReps) {
+      return `${ex.prescribedSets}×${ex.prescribedReps}`;
+    }
+    if (ex.prescribedHoldSeconds) {
+      const sets = ex.prescribedSets ? `${ex.prescribedSets}×` : "";
+      return `${sets}${ex.prescribedHoldSeconds}s hold`;
+    }
+    if (ex.prescribedDurationSeconds) {
+      return `${Math.round(ex.prescribedDurationSeconds / 60)} min`;
+    }
+    return "";
   }
 
   readonly seasonLabel = computed(() => {

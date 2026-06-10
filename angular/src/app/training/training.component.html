@@ -42,6 +42,30 @@
           </div>
         }
 
+        <!-- Realized exercises for today's intent (daily-protocol, composed under
+             the intent layer). Only shows once the protocol resolves. -->
+        @if (protocol.loading()) {
+          <div class="row"><small class="muted">Loading today's exercises…</small></div>
+        } @else if (protocol.blocks().length) {
+          <div class="section-h" style="margin-top:var(--s-3)"><h2>Today's exercises</h2></div>
+          @for (b of protocol.blocks(); track b.type) {
+            <div class="card flat" style="margin-bottom:var(--s-3)">
+              <div class="row" style="align-items:baseline">
+                <b>{{ b.title }}</b>
+                @if (b.estimatedDurationMinutes) { <small>{{ b.estimatedDurationMinutes }} min</small> }
+              </div>
+              <ul style="margin:var(--s-2) 0 0;padding-left:var(--s-4)">
+                @for (ex of b.exercises; track $index) {
+                  <li>
+                    {{ ex.exercise?.name || "Exercise" }}
+                    @if (exDose(ex); as dose) { <small class="muted"> — {{ dose }}</small> }
+                  </li>
+                }
+              </ul>
+            </div>
+          }
+        }
+
         <div class="slider">
           <label for="rpe">Actual RPE</label>
           <input class="rng" id="rpe" type="range" min="1" max="10" [value]="actualRpe()"
