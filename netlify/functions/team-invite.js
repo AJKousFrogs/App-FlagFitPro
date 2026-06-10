@@ -340,8 +340,12 @@ const handler = async (event, context) => {
           invited_by: userId,
           token: invToken,
           role: role || "player",
-          position: position || null,
-          jersey_number: jerseyNumber || null,
+          // position / jersey_number are NOT columns on team_invitations — they
+          // live on team_members (set when the athlete joins). Including them here
+          // made EVERY invite insert fail (PGRST204), so no invite or email ever
+          // went out. Dropped so invitations work; coach pre-assignment of
+          // position/jersey at invite time is a separate feature (needs a column
+          // or accept-time carry) — the payload still accepts+validates them.
           expires_at: expiresAt.toISOString(),
         })
         .select()
