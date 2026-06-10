@@ -98,10 +98,12 @@ function restrictionsFor(region, severity) {
     out.push("upper_strength", "throwing");
   } else {
     // FAIL SAFE: an unrecognised but self-reported sore region is treated
-    // conservatively — restrict the highest-risk explosive work rather than
-    // sparing it. The previous default spared sprinting on any unmatched
-    // region (e.g. a misspelling), which is the unsafe direction.
-    out.push("sprint", "high_intensity");
+    // MAXIMALLY conservatively — we don't know if it's a leg, a shoulder or the
+    // trunk (it could be a misspelling like "sholder"/"hamstrng"), so restrict
+    // BOTH the explosive lower-body work AND throwing/loaded-upper work rather
+    // than sparing either. The previous default spared sprinting on any
+    // unmatched region, which is the unsafe direction.
+    out.push("sprint", "high_intensity", "throwing");
   }
   return out;
 }

@@ -79,7 +79,11 @@ function densityFor(events, fromDate, windowDays) {
     }
     const days = eventDayCount(ev.starts_at, ev.ends_at);
     const games = ev.expected_game_count ?? 1;
-    const perDay = days > 0 ? games / days : games;
+    // Worst-DAY estimate, biased CONSERVATIVELY — see schedule.service.ts. A flat
+    // average dilutes a real congested day in an uneven multi-day tournament;
+    // dividing by (days-1) over-estimates the peak, which only ever de-loads
+    // (safe) and never lets a congested tournament read as falsely light.
+    const perDay = days > 1 ? Math.ceil(games / (days - 1)) : games;
     totalGames += games;
     eventDays += days;
     if (perDay > peakDayGames) {

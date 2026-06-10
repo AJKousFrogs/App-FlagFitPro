@@ -62,10 +62,11 @@ describe("restrictionsFor — upper body spares running, blocks throwing", () =>
 });
 
 describe("restrictionsFor — unrecognised region FAILS SAFE", () => {
-  for (const region of ["", "hamstrng (typo)", "somewhere", "xyz"]) {
-    it(`"${region}" defaults to restricting sprint/high-intensity (never spares it)`, () => {
+  for (const region of ["", "hamstrng (typo)", "somewhere", "xyz", "sholder"]) {
+    it(`"${region}" defaults to restricting sprint AND throwing (never spares either)`, () => {
       const out = restrictionsFor(region, "moderate");
       expect(restrictsSprint(out)).toBe(true);
+      expect(out).toContain("throwing");
     });
   }
 });

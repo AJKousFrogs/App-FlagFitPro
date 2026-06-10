@@ -252,3 +252,41 @@ describe("netlify eventDayCount", () => {
     ).toBe(1);
   });
 });
+
+// =============================================================================
+// CONGESTION PEAK-DAY ESTIMATE — must not let an uneven multi-day tournament
+// read as falsely light (regression for the averaging fail-open bug).
+// =============================================================================
+
+describe("densityFor — conservative worst-day game estimate", () => {
+  const from = new Date("2026-03-01T00:00:00Z");
+  const ev = (startsOffset, endsOffset, games, importance = "high") => {
+    const d = (n) => new Date(from.getTime() + n * 86_400_000).toISOString();
+    return {
+      starts_at: d(startsOffset),
+      ends_at: endsOffset == null ? null : d(endsOffset),
+      expected_game_count: games,
+      importance,
+    };
+  };
+
+  it("a 6-game / 3-day tournament estimates a ~3-game peak day (trips ≥3), not the 2.0 average", () => {
+    const d = densityFor([ev(5, 7, 6)], from, 14); // 3 calendar days, 6 games
+    expect(d.peakDayGameCount).toBeGreaterThanOrEqual(3);
+  });
+
+  it("an 8-game / 2-day tournament estimates a heavy peak day", () => {
+    const d = densityFor([ev(5, 6, 8)], from, 14); // 2 days
+    expect(d.peakDayGameCount).toBeGreaterThanOrEqual(3);
+  });
+
+  it("a single-day 3-game league round reads 3 (trips)", () => {
+    const d = densityFor([ev(5, null, 3)], from, 14);
+    expect(d.peakDayGameCount).toBeGreaterThanOrEqual(3);
+  });
+
+  it("a genuinely light spread (1 game/day over 4 days) stays below the threshold", () => {
+    const d = densityFor([ev(5, 8, 4)], from, 14); // 4 days, 4 games
+    expect(d.peakDayGameCount).toBeLessThan(3);
+  });
+});

@@ -282,7 +282,14 @@ export function computeDensity(
     }
     const days = eventDayCount(ev.startsAt, ev.endsAt);
     const games = ev.expectedGameCount;
-    const perDay = days > 0 ? games / days : games;
+    // Worst-DAY estimate, biased CONSERVATIVELY. We only have the event's TOTAL
+    // games + day span, not the per-day split, so a flat average dilutes a real
+    // congested day (a 4-game Saturday in a 6-game/3-day tournament would read
+    // 2.0 and miss the de-load). Assume games concentrate into fewer days than
+    // the full span (multi-day tournaments have lighter days) → divide by
+    // (days-1). Over-estimating the peak is the SAFE direction (heavy density
+    // only de-loads + adds fluid); it never lets an uneven tournament read light.
+    const perDay = days > 1 ? Math.ceil(games / (days - 1)) : games;
     totalGames += games;
     eventDays += days;
     if (perDay > peakDayGames) {

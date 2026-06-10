@@ -851,7 +851,7 @@ function decideBasePrescription(inputs: PeriodizationInputs): DailyPrescription 
         reasoning:
           "Off-season window. Maintain GPP base — easy aerobic + lift.",
         recoveryEmphasis: "low",
-        nutrition: nutritionFor("transition", bodyweight, false),
+        nutrition: nutritionFor("transition", bodyweight, heavyDensity, hotDay),
         driverEvent,
         hoursUntilNextEvent: hoursUntilNext,
         acwrAtIssue: acwr,
