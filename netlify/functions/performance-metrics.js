@@ -67,17 +67,18 @@ async function getPerformanceMetrics(userId, log = logger) {
     // Calculate metrics from training data
     const metrics = [];
 
-    // Speed metric (from sprint times or speed training sessions)
-    const speedSessions = trainingSessions.filter(
-      (s) => s.session_type === "speed" || s.drill_type?.includes("sprint"),
-    );
+    // Speed metric — from measured sprint tests only.
     const speedValues = performanceTests
       .filter((t) => t.test_type === "40YardDash" || t.test_type === "sprint")
       .map((t) => t.best_result || t.average_result)
       .filter(Boolean);
 
-    let speedValue = 18.5; // Default
+    // No fabrication (Truthfulness Contract / SOT Law 7): top speed comes ONLY
+    // from measured tests. No invented 18.5 mph default, and NO estimate derived
+    // from training performance_scores (those aren't a speed measurement). No
+    // data → null + hasData:false, so the UI shows an honest empty state.
     const speedTarget = 20.0;
+    let speedValue = null;
     let speedTrend = { trend: "stable", trendValue: 0 };
 
     if (speedValues.length > 0) {
@@ -85,18 +86,13 @@ async function getPerformanceMetrics(userId, log = logger) {
       if (speedValues.length > 1) {
         speedTrend = calculateTrend(speedValues[0], speedValues[1]);
       }
-    } else if (speedSessions.length > 0) {
-      // Estimate from session performance scores
-      const avgScore =
-        speedSessions.reduce((sum, s) => sum + (s.performance_score || 75), 0) /
-        speedSessions.length;
-      speedValue = 15 + (avgScore / 100) * 5; // Scale to mph
     }
 
     metrics.push({
       id: "speed",
       label: "Top Speed",
-      value: Math.round(speedValue * 10) / 10,
+      value: speedValue != null ? Math.round(speedValue * 10) / 10 : null,
+      hasData: speedValue != null,
       unit: "mph",
       trend: speedTrend.trend,
       trendValue: Math.round(speedTrend.trendValue * 10) / 10,
@@ -110,12 +106,10 @@ async function getPerformanceMetrics(userId, log = logger) {
       (t) =>
         t.test_type === "pass_accuracy" || t.test_type === "throwing_accuracy",
     );
-    const technicalSessions = trainingSessions.filter(
-      (s) => s.session_type === "technical" || s.drill_type?.includes("pass"),
-    );
-
-    let accuracyValue = 87.3;
+    // Same rule for accuracy: only real pass/throwing-accuracy tests — no 87.3
+    // default and no estimate from technical-session scores.
     const accuracyTarget = 90.0;
+    let accuracyValue = null;
     let accuracyTrend = { trend: "stable", trendValue: 0 };
 
     if (accuracyTests.length > 0) {
@@ -127,19 +121,13 @@ async function getPerformanceMetrics(userId, log = logger) {
           accuracyTests[1].best_result,
         );
       }
-    } else if (technicalSessions.length > 0) {
-      const avgScore =
-        technicalSessions.reduce(
-          (sum, s) => sum + (s.performance_score || 75),
-          0,
-        ) / technicalSessions.length;
-      accuracyValue = 70 + (avgScore / 100) * 25; // Scale to percentage
     }
 
     metrics.push({
       id: "accuracy",
       label: "Pass Accuracy",
-      value: Math.round(accuracyValue * 10) / 10,
+      value: accuracyValue != null ? Math.round(accuracyValue * 10) / 10 : null,
+      hasData: accuracyValue != null,
       unit: "%",
       trend: accuracyTrend.trend,
       trendValue: Math.round(accuracyTrend.trendValue * 10) / 10,

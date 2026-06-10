@@ -77,9 +77,13 @@ const getDashboardData = async (userId) => {
       ) / 60;
 
     return {
-      totalGames: trainingSessions.length > 0 ? Math.floor(avgScore / 10) : 0, // Estimate games from activity
-      winRate: Math.min(Math.round(avgScore), 100) || 0,
-      totalTouchdowns: Math.floor(avgScore * 0.15) || 0,
+      // No fabrication (S8): game stats must NOT be estimated from training
+      // scores — a coach selecting/cutting players off invented win rates and
+      // touchdowns is a real harm. No real game-results source is wired here, so
+      // report honest zeros. trainingHours below IS real (summed session duration).
+      totalGames: 0,
+      winRate: 0,
+      totalTouchdowns: 0,
       trainingHours: Math.round(totalTrainingHours) || 0,
       recentActivity: recentActivity.length > 0 ? recentActivity : [],
       performanceData: {
