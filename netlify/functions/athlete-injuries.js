@@ -20,35 +20,88 @@ import { parseJsonObjectBody } from "./utils/input-validator.js";
 const SEVERITIES = new Set(["minor", "moderate", "severe"]);
 
 // Region → restricted activities + how long a self-report stays active.
-// Lower-limb regions gate sprint/plyometric/agility work; this is the data the
-// engine keys on (it checks activity_restrictions, never re-derives from region).
+// Lower-limb and core/trunk regions gate sprint/plyometric/agility work; this is
+// the data the engine keys on (it checks activity_restrictions, never re-derives
+// from region). An UNRECOGNISED region fails SAFE — see restrictionsFor().
 const LOWER_LIMB = new Set([
   "achilles",
   "gastrocnemius",
+  "soleus", // SAFETY: was missing — a soleus strain must restrict sprinting
   "calf",
   "hamstring",
   "quad",
   "quadriceps",
   "knee",
+  "patella", // patellar tendon / patellofemoral
   "ankle",
   "hip",
   "groin",
+  "adductor",
   "shin",
+  "tibialis",
   "foot",
+  "plantar", // plantar fascia
   "glute",
+  "itb", // iliotibial band
+  "it band",
+  "iliotibial",
+  "tendon", // generic lower-limb tendinopathy report
+]);
+
+// Core/trunk: braces and rotates for sprinting, jumping, throwing and snapping —
+// a core/low-back issue must pull explosive AND rotational/throwing work.
+const CORE_TRUNK = new Set([
+  "core",
+  "abdominal",
+  "abs",
+  "oblique",
+  "lumbar",
+  "low back",
+  "lower back",
+  "trunk",
+  "back",
+]);
+
+// Upper body: running is generally spared, but loaded upper work and
+// throwing/snapping are restricted.
+const UPPER_BODY = new Set([
+  "shoulder",
+  "rotator",
+  "scapula",
+  "elbow",
+  "wrist",
+  "forearm",
+  "bicep",
+  "tricep",
+  "arm",
+  "hand",
+  "neck",
+  "pec",
+  "chest",
+  "lat",
 ]);
 
 const SEVERITY_DAYS = { minor: 2, moderate: 4, severe: 7 };
 
 function restrictionsFor(region, severity) {
   const r = String(region || "").toLowerCase();
+  const hit = (set) => [...set].some((k) => r.includes(k));
   const out = [];
-  if ([...LOWER_LIMB].some((k) => r.includes(k))) {
+  if (hit(LOWER_LIMB)) {
     out.push("sprint", "plyometric", "agility", "high_intensity");
     if (severity !== "minor") out.push("strength");
-  } else {
-    // upper-body / other: spare sprints, restrict loaded upper work
+  } else if (hit(CORE_TRUNK)) {
+    out.push("sprint", "plyometric", "high_intensity", "throwing");
+    if (severity !== "minor") out.push("strength");
+  } else if (hit(UPPER_BODY)) {
+    // spare sprints, restrict loaded upper work + throwing/snapping
     out.push("upper_strength", "throwing");
+  } else {
+    // FAIL SAFE: an unrecognised but self-reported sore region is treated
+    // conservatively — restrict the highest-risk explosive work rather than
+    // sparing it. The previous default spared sprinting on any unmatched
+    // region (e.g. a misspelling), which is the unsafe direction.
+    out.push("sprint", "high_intensity");
   }
   return out;
 }
@@ -175,4 +228,4 @@ const handler = async (event, context) => {
   });
 };
 
-export { handler };
+export { handler, restrictionsFor };
