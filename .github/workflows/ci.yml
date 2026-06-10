@@ -64,6 +64,8 @@ jobs:
           cache-dependency-path: package-lock.json
       - name: Install dependencies
         run: npm ci
+      - name: Backend unit suite (pure, no DB)
+        run: npm run test:unit:backend
       - name: Backend integration suite (mocked, no DB)
         run: npm run test:backend
 
