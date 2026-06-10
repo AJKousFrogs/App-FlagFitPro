@@ -41,6 +41,78 @@ function travelReadinessPenalty(hours) {
   return 2;
 }
 
+// Estimated internal load (session-RPE AU) for ONE flag-football game. A game is
+// high-intensity intermittent; ~RPE 7 × 50 min ≈ 350 AU is a conservative
+// per-game estimate. Injected into the ACWR load map for PAST games so a
+// tournament's acute load (and ACWR) RISES instead of reading falsely safe when
+// games aren't logged as training sessions. Tunable; lower for shorter games.
+const ESTIMATED_GAME_LOAD_AU = 350;
+
+/**
+ * Build a daily estimated-load Map for PAST games in [startDate, endDate]. Pure
+ * (no I/O) so it is unit-testable. A multi-day event's total game load is spread
+ * evenly across its calendar days within the window. Only events carrying a
+ * positive expected_game_count count as games. dateKey = 'YYYY-MM-DD'.
+ */
+function estimateGameLoads(events, startDate, endDate, perGame = ESTIMATED_GAME_LOAD_AU) {
+  const out = new Map();
+  for (const ev of events || []) {
+    const games = Number(ev?.expected_game_count);
+    if (!Number.isFinite(games) || games <= 0 || !ev.starts_at) {
+      continue;
+    }
+    const start = new Date(ev.starts_at);
+    const end = ev.ends_at ? new Date(ev.ends_at) : start;
+    if (Number.isNaN(start.getTime())) {
+      continue;
+    }
+    const days = [];
+    const cur = new Date(
+      Date.UTC(start.getUTCFullYear(), start.getUTCMonth(), start.getUTCDate()),
+    );
+    const last = Number.isNaN(end.getTime())
+      ? cur
+      : new Date(Date.UTC(end.getUTCFullYear(), end.getUTCMonth(), end.getUTCDate()));
+    let guard = 0;
+    while (cur <= last && guard < 31) {
+      const key = cur.toISOString().slice(0, 10);
+      if (key >= startDate && key <= endDate) {
+        days.push(key);
+      }
+      cur.setUTCDate(cur.getUTCDate() + 1);
+      guard += 1;
+    }
+    if (days.length === 0) {
+      continue;
+    }
+    const perDay = (games * perGame) / days.length;
+    for (const key of days) {
+      out.set(key, (out.get(key) || 0) + perDay);
+    }
+  }
+  return out;
+}
+
+/** Read PAST games from the schedule spine and estimate their daily load. Fails
+ * safe (empty map) if the spine view is unavailable. */
+async function fetchPastGameLoads(athleteId, startDate, endDate) {
+  try {
+    const { data, error } = await supabaseAdmin
+      .from("v_athlete_schedule")
+      .select("starts_at, ends_at, expected_game_count")
+      .eq("user_id", athleteId)
+      .gte("starts_at", startDate)
+      .lte("starts_at", `${endDate}T23:59:59`)
+      .neq("status", "cancelled");
+    if (error || !Array.isArray(data)) {
+      return new Map();
+    }
+    return estimateGameLoads(data, startDate, endDate);
+  } catch {
+    return new Map();
+  }
+}
+
 /**
  * Calculate readiness score for an athlete
  * Evidence-based composite score (0-100) combining:
@@ -489,6 +561,21 @@ const handler = async (event, context) => {
         }
       }
 
+      // Inject estimated load for PAST games so a tournament's acute load (and
+      // ACWR) rises instead of reading falsely safe — games usually aren't
+      // logged as training sessions. Per game day take MAX(logged, game estimate):
+      // a day the athlete logged separately keeps its (higher) real load, while a
+      // game day with no/low logged load gets at least the game estimate. This
+      // never LOWERS a day's load (safe direction).
+      const gameLoads = await fetchPastGameLoads(
+        athleteId,
+        startChronic.toISOString().slice(0, 10),
+        dayStr,
+      );
+      for (const [key, gameLoad] of gameLoads) {
+        loadsByDay.set(key, Math.max(loadsByDay.get(key) || 0, gameLoad));
+      }
+
       // Canonical EWMA + uncoupled ACWR (single source of truth in utils/acwr.js).
       // EWMA is more sensitive than rolling averages (Williams 2017); the uncoupled
       // window avoids the spurious correlation of coupled ACWR (Lolli 2017).
@@ -780,4 +867,4 @@ const handler = async (event, context) => {
 };
 
 export const testHandler = handler;
-export { handler };
+export { handler, estimateGameLoads, travelReadinessPenalty };
