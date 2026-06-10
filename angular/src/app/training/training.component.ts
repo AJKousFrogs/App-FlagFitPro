@@ -49,6 +49,23 @@ interface WeekRow {
         color: var(--text-faint); font-weight: var(--fw-semi); font-size: var(--fs-sm); font-family: var(--font-body); }
       .tt-tab.on { color: var(--text-strong); border-bottom: 2px solid var(--accent); }
       .tt-tab:focus-visible { outline: none; box-shadow: var(--focus); border-radius: 4px; }
+
+      /* block-card — adapted from the redesign mockup, mapped to app tokens.
+         Mobile: single column; >=768px: two-up grid. */
+      .bc-list { display: grid; gap: var(--s-3); }
+      @media (min-width: 768px) { .bc-list { grid-template-columns: 1fr 1fr; } }
+      .bc { border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface); padding: var(--s-3); }
+      .bc__head { display: flex; align-items: center; gap: var(--s-2); }
+      .bc__idx { width: 22px; height: 22px; border-radius: 999px; background: var(--bg); color: var(--text-muted);
+        display: grid; place-items: center; font-size: var(--fs-xs); font-weight: var(--fw-bold); flex: 0 0 auto; }
+      .bc__idx.done { background: var(--accent-soft); color: var(--accent); }
+      .bc__title { font-weight: var(--fw-semi); flex: 1 1 auto; }
+      .bc__meta { color: var(--text-faint); font-size: var(--fs-xs); margin-top: var(--s-1); }
+      .bc__bar { height: 4px; border-radius: 999px; background: var(--border-soft); margin-top: var(--s-2); overflow: hidden; }
+      .bc__bar > i { display: block; height: 100%; background: var(--accent); border-radius: 999px; transition: width var(--motion, .2s); }
+      .bc__ex { margin: var(--s-2) 0 0; padding-left: var(--s-4); }
+      .bc__ex li { font-size: var(--fs-sm); margin: 2px 0; }
+      .bc__ex small { color: var(--text-faint); }
     `,
   ],
 })
@@ -119,6 +136,14 @@ export class TrainingComponent {
   }
 
   private protocolTriggered = false;
+
+  /** Status chip for a block, from its completion progress. */
+  blockStatus(b: { progressPercent?: number }): { label: string; cls: string } {
+    const p = b.progressPercent ?? 0;
+    if (p >= 100) return { label: "Done", cls: "good" };
+    if (p > 0) return { label: "Active", cls: "caution" };
+    return { label: "Up next", cls: "" };
+  }
 
   /** Human dose for a realized exercise (sets×reps / hold / duration). */
   exDose(ex: ProtocolExercise): string {

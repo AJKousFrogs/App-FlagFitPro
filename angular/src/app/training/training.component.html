@@ -48,22 +48,30 @@
           <div class="row"><small class="muted">Loading today's exercises…</small></div>
         } @else if (protocol.blocks().length) {
           <div class="section-h" style="margin-top:var(--s-3)"><h2>Today's exercises</h2></div>
-          @for (b of protocol.blocks(); track b.type) {
-            <div class="card flat" style="margin-bottom:var(--s-3)">
-              <div class="row" style="align-items:baseline">
-                <b>{{ b.title }}</b>
-                @if (b.estimatedDurationMinutes) { <small>{{ b.estimatedDurationMinutes }} min</small> }
-              </div>
-              <ul style="margin:var(--s-2) 0 0;padding-left:var(--s-4)">
-                @for (ex of b.exercises; track $index) {
-                  <li>
-                    {{ ex.exercise?.name || "Exercise" }}
-                    @if (exDose(ex); as dose) { <small class="muted"> — {{ dose }}</small> }
-                  </li>
+          <div class="bc-list">
+            @for (b of protocol.blocks(); track b.type; let i = $index) {
+              <article class="bc">
+                <div class="bc__head">
+                  <span class="bc__idx" [class.done]="(b.progressPercent ?? 0) >= 100">{{ i + 1 }}</span>
+                  <span class="bc__title">{{ b.title }}</span>
+                  @if (blockStatus(b); as st) {
+                    <span class="band {{ st.cls }}">{{ st.label }}</span>
+                  }
+                </div>
+                <div class="bc__meta">
+                  {{ b.exercises?.length || 0 }} ex@if (b.estimatedDurationMinutes) { · ~{{ b.estimatedDurationMinutes }} min }@if (b.totalCount) { · {{ b.completedCount || 0 }}/{{ b.totalCount }} }
+                </div>
+                @if ((b.progressPercent ?? 0) > 0) {
+                  <div class="bc__bar"><i [style.width.%]="b.progressPercent"></i></div>
                 }
-              </ul>
-            </div>
-          }
+                <ul class="bc__ex">
+                  @for (ex of b.exercises; track $index) {
+                    <li>{{ ex.exercise?.name || "Exercise" }}@if (exDose(ex); as dose) { <small> — {{ dose }}</small> }</li>
+                  }
+                </ul>
+              </article>
+            }
+          </div>
         }
 
         <div class="slider">

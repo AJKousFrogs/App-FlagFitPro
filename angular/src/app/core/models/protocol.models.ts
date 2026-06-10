@@ -23,6 +23,10 @@ export interface ProtocolBlock {
   title: string;
   exercises?: ProtocolExercise[];
   estimatedDurationMinutes?: number | null;
+  status?: string;
+  completedCount?: number;
+  totalCount?: number;
+  progressPercent?: number;
 }
 
 /** The /api/daily-protocol response `data`. Only the fields the client renders. */
