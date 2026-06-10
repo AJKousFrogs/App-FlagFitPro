@@ -868,7 +868,11 @@ function seasonShapedIntent(
     case "inseason": // maintain + skill
       week = ["rest", "strength", "technical", "mobility", "technical", "strength", "mixed"];
       break;
-    case "transition": // active rest / aerobic base
+    case "peak": // peaking block: sharp, low volume, high quality, fresh
+      week = ["rest", "sprint", "technical", "mobility", "technical", "sprint", "recovery"];
+      break;
+    case "postseason": // active regeneration after the competitive block
+    case "transition": // active rest / aerobic base (legacy alias)
       week = ["rest", "recovery", "mobility", "recovery", "mobility", "mixed", "recovery"];
       break;
     case "preseason":

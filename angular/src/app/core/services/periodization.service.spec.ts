@@ -891,3 +891,41 @@ describe("prescribeFor — heat adds fluid", () => {
     expect(hot.nutrition.hydrationL - cool.nutrition.hydrationL).toBeCloseTo(0.5, 1);
   });
 });
+
+// =============================================================================
+// SEASON PHASES — peak (sharp) and post-season (regeneration), split seasons
+// =============================================================================
+
+describe("prescribeFor — peak & post-season phases", () => {
+  const monday = new Date("2026-05-04T10:00:00Z"); // getDay 1
+
+  it("peak is sharp & low-volume (a Monday is a quality sprint, not strength)", () => {
+    const peak = prescribeFor(inputs({ date: monday, seasonPhase: "peak" }));
+    const inseason = prescribeFor(inputs({ date: monday, seasonPhase: "inseason" }));
+    expect(peak.intent).toBe("sprint"); // quality
+    expect(inseason.intent).toBe("strength"); // maintenance volume
+    expect(peak.seasonPhase).toBe("peak");
+  });
+
+  it("post-season is active regeneration (Tuesday → mobility), same shape as transition", () => {
+    const post = prescribeFor(inputs({ date: tuesday, seasonPhase: "postseason" }));
+    const trans = prescribeFor(inputs({ date: tuesday, seasonPhase: "transition" }));
+    expect(post.intent).toBe("mobility");
+    expect(post.intent).toBe(trans.intent);
+  });
+
+  it("a split season resolves each day to its declared window (in-season vs off-season gap)", () => {
+    const windows = [
+      { phase: "inseason" as const, from: "03-01", to: "07-15" },
+      { phase: "offseason" as const, from: "07-16", to: "08-14" }, // mid-season gap
+      { phase: "inseason" as const, from: "08-15", to: "10-31" },
+      { phase: "postseason" as const, from: "11-01", to: "11-30" },
+      { phase: "offseason" as const, from: "12-01", to: "02-28" },
+    ];
+    expect(macroPhaseFor(new Date("2026-05-10T10:00:00Z"), windows)).toBe("inseason"); // spring block
+    expect(macroPhaseFor(new Date("2026-07-25T10:00:00Z"), windows)).toBe("offseason"); // mid gap
+    expect(macroPhaseFor(new Date("2026-09-10T10:00:00Z"), windows)).toBe("inseason"); // autumn block
+    expect(macroPhaseFor(new Date("2026-11-15T10:00:00Z"), windows)).toBe("postseason");
+    expect(macroPhaseFor(new Date("2026-01-10T10:00:00Z"), windows)).toBe("offseason"); // winter
+  });
+});

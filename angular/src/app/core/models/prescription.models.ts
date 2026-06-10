@@ -29,17 +29,34 @@ export type PrescriptionIntent =
 
 /**
  * Macro season phase — the annual periodization layer that sits above the
- * event-proximity micro-phases. Athlete-declared (see SeasonWindow); off-season
- * biases toward strength & conditioning, in-season toward maintain + skill.
+ * event-proximity micro-phases. Athlete-declared (see SeasonWindow):
+ *   offseason  — general prep: build strength & conditioning base (volume-led)
+ *   preseason  — accumulation/build-up toward competition (progressive)
+ *   inseason   — in competition: maintain + skill (moderate, quality-led)
+ *   peak       — peaking block for the most important competitions: sharp, low
+ *                volume, high quality, freshness prioritised
+ *   postseason — after the competitive block: active regeneration / down-weeks
+ *   transition — legacy alias for an active-rest block (treated like postseason)
+ *
+ * Athletes can declare MULTIPLE windows — a split season (e.g. a spring in-season
+ * block, a mid-season off gap, then a second in-season block, a post-season, and
+ * a winter off-season) is just several windows; {@link macroPhaseFor} returns the
+ * first window that contains the day.
  */
-export type SeasonPhase = "offseason" | "preseason" | "inseason" | "transition";
+export type SeasonPhase =
+  | "offseason"
+  | "preseason"
+  | "inseason"
+  | "peak"
+  | "postseason"
+  | "transition";
 
 /**
  * One athlete-declared season window. `from`/`to` are either a specific span
  * ("YYYY-MM-DD") or a recurring annual one ("MM-DD"); recurring windows may wrap
  * the year end (e.g. "09-01" → "04-30"). Stored on
  * `athlete_training_config.season_calendar`. NOTHING is hardcoded — the player
- * is the source of truth.
+ * is the source of truth, and may declare several windows for a split season.
  */
 export interface SeasonWindow {
   phase: SeasonPhase;

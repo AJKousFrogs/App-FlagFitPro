@@ -39,7 +39,7 @@
         <div class="card flat" style="margin:var(--s-2) 0">
           <div class="seasonrow">
             <select class="input" [value]="w.phase" (change)="setPhase($index, $any($event.target).value)" aria-label="Phase">
-              @for (p of phases; track p) { <option [value]="p">{{ p }}</option> }
+              @for (p of phases; track p) { <option [value]="p">{{ phaseLabels[p] }}</option> }
             </select>
             <button class="btn ghost sm" type="button" (click)="removePeriod($index)" aria-label="Remove period">✕</button>
           </div>
