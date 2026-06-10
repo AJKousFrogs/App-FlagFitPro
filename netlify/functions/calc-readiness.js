@@ -41,26 +41,51 @@ function travelReadinessPenalty(hours) {
   return 2;
 }
 
-// Estimated internal load (session-RPE AU) for ONE flag-football game. A game is
-// high-intensity intermittent; ~RPE 7 × 50 min ≈ 350 AU is a conservative
-// per-game estimate. Injected into the ACWR load map for PAST games so a
-// tournament's acute load (and ACWR) RISES instead of reading falsely safe when
-// games aren't logged as training sessions. Tunable; lower for shorter games.
-const ESTIMATED_GAME_LOAD_AU = 350;
+// Per-game internal load (session-RPE AU) by GAME FORMAT. MIRROR of GAME_FORMATS
+// in angular/src/app/core/config/position-volume.config.ts (keep in sync). A
+// flag-football game is high-intensity intermittent; the heavier the format, the
+// higher the single-game load. Injected into the ACWR load map for PAST games so
+// a tournament's acute load (and ACWR) RISES instead of reading falsely safe.
+const GAME_LOAD_AU = {
+  domestic_2x12_stop: 300,
+  running_2x15: 350,
+  ifaf_2x20: 450,
+};
+
+/**
+ * Resolve a game's internal load from its format, else its competition level,
+ * else the heaviest format — an unknown game is never UNDER-counted (the safe
+ * direction). Mirrors resolveGameFormat() in the client config.
+ */
+function gameLoadAuFor(gameFormat, competitionLevel) {
+  if (gameFormat && GAME_LOAD_AU[gameFormat]) {
+    return GAME_LOAD_AU[gameFormat];
+  }
+  const lvl = String(competitionLevel || "").toLowerCase();
+  if (lvl === "international") {
+    return GAME_LOAD_AU.ifaf_2x20;
+  }
+  if (lvl === "national" || lvl === "club") {
+    return GAME_LOAD_AU.domestic_2x12_stop;
+  }
+  return GAME_LOAD_AU.ifaf_2x20; // unknown → heaviest (conservative)
+}
 
 /**
  * Build a daily estimated-load Map for PAST games in [startDate, endDate]. Pure
- * (no I/O) so it is unit-testable. A multi-day event's total game load is spread
- * evenly across its calendar days within the window. Only events carrying a
- * positive expected_game_count count as games. dateKey = 'YYYY-MM-DD'.
+ * (no I/O) so it is unit-testable. Each game's load scales with its FORMAT/level;
+ * a multi-day event's total game load is spread evenly across its calendar days
+ * within the window. Only events carrying a positive expected_game_count count.
+ * dateKey = 'YYYY-MM-DD'.
  */
-function estimateGameLoads(events, startDate, endDate, perGame = ESTIMATED_GAME_LOAD_AU) {
+function estimateGameLoads(events, startDate, endDate) {
   const out = new Map();
   for (const ev of events || []) {
     const games = Number(ev?.expected_game_count);
     if (!Number.isFinite(games) || games <= 0 || !ev.starts_at) {
       continue;
     }
+    const perGame = gameLoadAuFor(ev.game_format, ev.competition_level);
     const start = new Date(ev.starts_at);
     const end = ev.ends_at ? new Date(ev.ends_at) : start;
     if (Number.isNaN(start.getTime())) {
@@ -99,7 +124,7 @@ async function fetchPastGameLoads(athleteId, startDate, endDate) {
   try {
     const { data, error } = await supabaseAdmin
       .from("v_athlete_schedule")
-      .select("starts_at, ends_at, expected_game_count")
+      .select("starts_at, ends_at, expected_game_count, competition_level")
       .eq("user_id", athleteId)
       .gte("starts_at", startDate)
       .lte("starts_at", `${endDate}T23:59:59`)

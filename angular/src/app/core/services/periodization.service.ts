@@ -29,7 +29,8 @@ import { ApiService } from "./api.service";
 import { InjuryService } from "./injury.service";
 import {
   POSITION_VOLUME,
-  type PositionVolume,
+  type PositionKey,
+  type RangeDemand,
 } from "../config/position-volume.config";
 
 /**
@@ -514,54 +515,60 @@ export function prescribeFor(inputs: PeriodizationInputs): DailyPrescription {
 }
 
 /**
- * Position bucket from a raw primary_position string. Flag-football roles fold
- * into three load/prehab profiles: quarterback (throwing arm), receiver/defensive
- * back (sprint + change-of-direction), and center/rusher (repeated snapping).
+ * Position bucket from a raw primary_position string. Recognises the five roles
+ * (qb / wr / db / center / blitzer) plus the legacy both-ways "wr_db" combined
+ * bucket. Order matters: the combined token and specific roles are checked
+ * before broad ones.
  */
-function positionBucket(position: string | null): "qb" | "wr_db" | "center" | null {
+function positionBucket(position: string | null): PositionKey | null {
   const p = (position ?? "").toLowerCase();
   if (!p) return null;
   if (/\bqb\b|quarterback/.test(p)) return "qb";
-  if (/center|rusher|blitz|snap|line/.test(p)) return "center";
-  if (/wr|db|receiver|corner|safety|defensive.?back|hybrid/.test(p)) return "wr_db";
+  if (/center|long.?snap|snapper/.test(p)) return "center";
+  if (/blitz|rush/.test(p)) return "blitzer";
+  if (/wr.?db|wr\/db|both.?way|hybrid|two.?way/.test(p)) return "wr_db";
+  if (/\bwr\b|receiver|wide.?out|wideout/.test(p)) return "wr";
+  if (/\bdb\b|corner|safety|defensive.?back|cornerback/.test(p)) return "db";
   return null;
+}
+
+function fmtDemand(v: number | RangeDemand | undefined): string | null {
+  if (v == null) return null;
+  return typeof v === "number" ? `${v}` : `${v.min}–${v.max}`;
+}
+
+/**
+ * Worst-case volume targets for a position, read from the tunable position-volume
+ * reference (never hard-coded here). Surfaces the training demand (per-session +
+ * per-week) and the per-game worst case so the plan states what to be ready for.
+ */
+function volumeFor(
+  bucket: PositionKey,
+): { worstCase: string; targets: string[] } {
+  const v = POSITION_VOLUME[bucket];
+  const targets: string[] = [];
+  const wkCatches = fmtDemand(v.perWeek["catches"]);
+  if (wkCatches) targets.push(`~${wkCatches} catches/week`);
+  const throws = fmtDemand(v.perSession["throws"]);
+  if (throws) targets.push(`${throws} throws/session`);
+  const snaps = fmtDemand(v.perSession["snaps"]);
+  if (snaps) targets.push(`${snaps} snaps/session`);
+  const backped = fmtDemand(v.perSession["backpedals"]);
+  if (backped) targets.push(`up to ${backped} backpedals/session`);
+  const sprints = fmtDemand(v.perGameWorstCase["sprints"]);
+  if (sprints) targets.push(`up to ${sprints} sprints/game`);
+  const accels = fmtDemand(v.perGameWorstCase["explosiveSprints"]);
+  if (accels) targets.push(`~${accels} max sprints/game`);
+  if (bucket === "qb") targets.push("~320 throws/tournament");
+  return { worstCase: v.worstCase, targets };
 }
 
 /**
  * Layer the position-specific accessory/prehab focus onto the prescription.
- * Evidence-based, conservative, and additive — it informs WHAT to protect, not
- * how hard to train. On a rest day there is nothing to emphasise.
+ * Conservative and additive — it informs WHAT to protect (from the position
+ * model's primary injury risk), never the chosen intent or load. On a rest day
+ * there is nothing to emphasise.
  */
-/**
- * Worst-case on-field volume targets for a position, read from the tunable
- * position-volume reference (never hard-coded here). Surfaced so the plan can
- * state the demand the athlete must be prepared for.
- */
-function volumeFor(
-  bucket: PositionVolume["position"],
-): { worstCase: string; targets: string[] } {
-  const v = POSITION_VOLUME[bucket];
-  const targets: string[] = [];
-  if (v.weeklyCatches) {
-    targets.push(`~${v.weeklyCatches} catches/week`);
-  }
-  if (v.throwsPerTrainingDayMax) {
-    targets.push(`up to ${v.throwsPerTrainingDayMax} throws/session`);
-  }
-  if (v.snapsPerTrainingDayMax) {
-    targets.push(`up to ${v.snapsPerTrainingDayMax} snaps/session`);
-  }
-  if (v.backpedalsPerDay) {
-    targets.push(
-      `up to ${v.backpedalsPerDay.reps} backpedals (${v.backpedalsPerDay.yardsMin}–${v.backpedalsPerDay.yardsMax} yd)`,
-    );
-  }
-  if (v.sprintsPerGame) {
-    targets.push(`${v.sprintsPerGame.min}–${v.sprintsPerGame.max} sprints/game`);
-  }
-  return { worstCase: v.worstCase, targets };
-}
-
 function withPositionEmphasis(
   p: DailyPrescription,
   position: string | null,
@@ -572,6 +579,7 @@ function withPositionEmphasis(
     return { ...p, positionEmphasis: null };
   }
   const volume = volumeFor(bucket);
+  const pv = POSITION_VOLUME[bucket];
   // A flagged throwing/upper-body issue overrides the QB/center emphasis into a
   // protect-the-arm message — these are the positions that throw or snap.
   if (restrictsThrowing && (bucket === "qb" || bucket === "center")) {
@@ -580,7 +588,7 @@ function withPositionEmphasis(
       ...p,
       positionEmphasis: {
         position: bucket,
-        label: bucket === "qb" ? "Quarterback" : "Center / Rusher",
+        label: pv.label,
         focus: ["Protect the arm/shoulder", "Gentle pain-free ROM only", `No ${verb} reps today`],
         note: `Your ${verb} arm/shoulder is flagged — skip ${verb} work today and protect it. Lower-body and trunk work is fine if pain-free.`,
         restricted: true,
@@ -588,43 +596,23 @@ function withPositionEmphasis(
       },
     };
   }
-  const map = {
-    qb: {
-      label: "Quarterback",
-      focus: [
-        "Rotator-cuff & scapular control",
-        "Thoracic rotation mobility",
-        "Rotational core power",
-      ],
-      note: "Protect the throwing shoulder. Full-effort throwing is CNS + arm load — count it, and space heavy throwing like you space sprints.",
-    },
-    wr_db: {
-      label: "Receiver / Defensive back",
-      focus: [
-        "Eccentric hamstring (Nordic)",
-        "Deceleration & landing mechanics",
-        "Ankle & calf resilience",
-      ],
-      note: "Highest sprint and cutting exposure on the team — prioritise hamstring and deceleration prehab to protect the hamstrings and ACL.",
-    },
-    center: {
-      label: "Center / Rusher",
-      focus: [
-        "Wrist & forearm care",
-        "Shoulder & scapular control",
-        "Anti-rotation core brace",
-      ],
-      note: "Repeated one-arm snapping loads the wrist and shoulder — keep snap volume in check, warm the arm up, and brace the trunk.",
-    },
-  } as const;
-  const e = map[bucket];
+  // Prehab focus per role (presentation); the WHY comes from the model's
+  // primaryInjuryRisk so the numbers/risk stay single-sourced in the config.
+  const focusByPosition: Record<PositionKey, string[]> = {
+    qb: ["Rotator-cuff & scapular control", "Thoracic rotation mobility", "Rotational core power"],
+    wr: ["Eccentric hamstring (Nordic)", "Deceleration & landing mechanics", "Ankle & calf resilience"],
+    db: ["Eccentric hamstring & adductor", "Backpedal-to-sprint hip-flip control", "Deceleration mechanics"],
+    center: ["Wrist & forearm care", "Shoulder & scapular control", "Anti-rotation core brace"],
+    blitzer: ["Max-effort accel mechanics", "Eccentric hamstring & calf", "Hard-braking deceleration"],
+    wr_db: ["Eccentric hamstring & adductor", "Deceleration & cut mechanics", "Ankle & calf resilience"],
+  };
   return {
     ...p,
     positionEmphasis: {
       position: bucket,
-      label: e.label,
-      focus: [...e.focus],
-      note: e.note,
+      label: pv.label,
+      focus: focusByPosition[bucket],
+      note: pv.primaryInjuryRisk,
       volume,
     },
   };

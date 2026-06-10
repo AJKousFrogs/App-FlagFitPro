@@ -5,28 +5,48 @@ import {
 } from "../../netlify/functions/calc-readiness.js";
 
 // Per-game load injection makes a tournament show up in ACWR instead of reading
-// falsely safe. Pure estimator — these lock the distribution + window logic.
-const PER = 350; // matches ESTIMATED_GAME_LOAD_AU
+// falsely safe. Per-game AU scales with FORMAT/level (mirror of GAME_FORMATS):
+//   domestic_2x12_stop 300 · running_2x15 350 · ifaf_2x20 450 · unknown→450.
+const IFAF = 450; // unknown level defaults to the heaviest (conservative)
+const DOMESTIC = 300;
 
-describe("estimateGameLoads — past games contribute to the ACWR load map", () => {
-  it("a single-day 3-game round adds 3× the per-game load on that day", () => {
+describe("estimateGameLoads — format/level-aware, past games into the ACWR map", () => {
+  it("unknown-format single-day 3-game round defaults to the heaviest per-game AU", () => {
     const m = estimateGameLoads(
       [{ starts_at: "2026-05-10T09:00:00Z", ends_at: null, expected_game_count: 3 }],
       "2026-05-01",
       "2026-05-28",
     );
-    expect(m.get("2026-05-10")).toBeCloseTo(3 * PER, 0);
+    expect(m.get("2026-05-10")).toBeCloseTo(3 * IFAF, 0);
   });
 
-  it("spreads a multi-day tournament's total game load across its days", () => {
+  it("scales DOWN for a national (domestic) competition level", () => {
     const m = estimateGameLoads(
-      [{ starts_at: "2026-05-10T09:00:00Z", ends_at: "2026-05-11T18:00:00Z", expected_game_count: 8 }],
+      [{ starts_at: "2026-05-10T09:00:00Z", expected_game_count: 4, competition_level: "national" }],
       "2026-05-01",
       "2026-05-28",
     );
-    // 8 games × 350 over 2 days = 1400/day
-    expect(m.get("2026-05-10")).toBeCloseTo(1400, 0);
-    expect(m.get("2026-05-11")).toBeCloseTo(1400, 0);
+    expect(m.get("2026-05-10")).toBeCloseTo(4 * DOMESTIC, 0);
+  });
+
+  it("an explicit game_format wins over level", () => {
+    const m = estimateGameLoads(
+      [{ starts_at: "2026-05-10T09:00:00Z", expected_game_count: 2, game_format: "running_2x15", competition_level: "national" }],
+      "2026-05-01",
+      "2026-05-28",
+    );
+    expect(m.get("2026-05-10")).toBeCloseTo(2 * 350, 0);
+  });
+
+  it("spreads an international multi-day tournament's total load across its days", () => {
+    const m = estimateGameLoads(
+      [{ starts_at: "2026-05-10T09:00:00Z", ends_at: "2026-05-11T18:00:00Z", expected_game_count: 8, competition_level: "international" }],
+      "2026-05-01",
+      "2026-05-28",
+    );
+    // 8 games × 450 (IFAF) over 2 days = 1800/day
+    expect(m.get("2026-05-10")).toBeCloseTo(1800, 0);
+    expect(m.get("2026-05-11")).toBeCloseTo(1800, 0);
   });
 
   it("ignores non-game events (no / zero expected_game_count)", () => {

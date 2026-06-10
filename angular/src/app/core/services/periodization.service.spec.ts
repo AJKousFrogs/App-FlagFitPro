@@ -994,7 +994,7 @@ describe("prescribeFor — throwing restriction overrides QB/center emphasis", (
   it("without a throwing restriction the QB emphasis is the normal throwing-care one", () => {
     const rx = prescribeFor(inputs({ date: tuesday, position: "qb" }));
     expect(rx.positionEmphasis?.restricted ?? false).toBe(false);
-    expect(rx.positionEmphasis?.note).toMatch(/throwing is CNS|space it/i);
+    expect(rx.positionEmphasis?.note).toMatch(/throw/i);
   });
 
   it("a center snap/shoulder issue flags snapping", () => {
