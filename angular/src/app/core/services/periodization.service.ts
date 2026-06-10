@@ -994,16 +994,19 @@ function decideBasePrescription(inputs: PeriodizationInputs): DailyPrescription 
         });
       }
 
-      // Choose intent by day of week to give the week a shape.
+      // Choose intent by day of week to give the week a shape. Targets come from
+      // the BUILD table (pre-season can carry more volume on light intents than
+      // in-season — finding M1, now explicit config not inline literals).
       const intent = pickAccumulationIntent(date, acwr, heavyDensity);
+      const t = buildTargets(intent);
       return finalize({
         date,
         phase,
         intent,
-        targetRpe: intent === "strength" ? 7 : intent === "sprint" ? 8 : 6,
-        targetMinutes: intent === "rest" ? 0 : intent === "sprint" ? 60 : 75,
-        sprintReps: intent === "sprint" ? 10 : intent === "mixed" ? 6 : 0,
-        strengthSets: intent === "strength" ? 18 : intent === "mixed" ? 8 : 0,
+        targetRpe: t.targetRpe,
+        targetMinutes: t.targetMinutes,
+        sprintReps: t.sprintReps,
+        strengthSets: t.strengthSets,
         reasoning: accumulationReasoning(intent, acwr, heavyDensity),
         recoveryEmphasis: heavyDensity ? "medium" : "low",
         nutrition: nutritionFor(intent, bodyweight, heavyDensity, hotDay),
@@ -1329,6 +1332,29 @@ function baseTargets(intent: PrescriptionIntent): {
     case "competition":
       return { targetRpe: null, targetMinutes: 60, sprintReps: 0, strengthSets: 0 };
   }
+}
+
+type SessionTarget = ReturnType<typeof baseTargets>;
+
+/**
+ * Session targets for the generic / PRE-SEASON build block. Per the coach's rule,
+ * a build block (no games) can carry more volume on the LIGHTER intents than
+ * in-season — e.g. mobility RPE 6/75 in pre-season vs RPE 4/45 in-season. So the
+ * in-season baseline is {@link baseTargets}; these rows override the light intents
+ * heavier for the build week. (Resolves audit finding M1: the divergence between
+ * the season path and the old inline accumulation literals was deliberate, not
+ * accidental — it is now explicit data. Values are byte-identical to the prior
+ * inline targets: rest 6/0, mobility 6/75, technical 6/75; strength/sprint/mixed
+ * already matched baseTargets.)
+ */
+const BUILD_TARGET_OVERRIDES: Partial<Record<PrescriptionIntent, SessionTarget>> = {
+  rest: { targetRpe: 6, targetMinutes: 0, sprintReps: 0, strengthSets: 0 },
+  mobility: { targetRpe: 6, targetMinutes: 75, sprintReps: 0, strengthSets: 0 },
+  technical: { targetRpe: 6, targetMinutes: 75, sprintReps: 0, strengthSets: 0 },
+};
+
+function buildTargets(intent: PrescriptionIntent): SessionTarget {
+  return BUILD_TARGET_OVERRIDES[intent] ?? baseTargets(intent);
 }
 
 // =============================================================================
