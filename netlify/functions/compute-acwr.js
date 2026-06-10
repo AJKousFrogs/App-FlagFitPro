@@ -9,6 +9,7 @@ import { createSuccessResponse, createErrorResponse } from "./utils/error-handle
 import { baseHandler } from "./utils/base-handler.js";
 import { getUserRole } from "./utils/authorization-guard.js";
 import { hasAnyRole, LOAD_MANAGEMENT_ACCESS_ROLES } from "./utils/role-sets.js";
+import { sharesStaffedTeam } from "./utils/team-scope.js";
 import { parseJsonObjectBody } from "./utils/input-validator.js";
 import { buildRequestLogContext, createLogger } from "./utils/structured-logger.js";
 import { computeAcwrAt } from "./utils/acwr.js";
@@ -134,31 +135,12 @@ async function verifyAthleteAccess(requestUserId, athleteId) {
     return { authorized: false };
   }
 
-  // Staff may read an athlete's load only when the athlete is an active
-  // member of a team the requester actively staffs — checked across ALL
-  // memberships, so multi-team users never match on an arbitrary row.
-  const { data: staffTeams, error: staffError } = await supabaseAdmin
-    .from("team_members")
-    .select("team_id")
-    .eq("user_id", requestUserId)
-    .eq("status", "active")
-    .in("role", LOAD_MANAGEMENT_ACCESS_ROLES);
-
-  const staffTeamIds = (staffTeams ?? []).map((t) => t.team_id);
-  if (staffError || staffTeamIds.length === 0) {
-    return { authorized: false };
-  }
-
-  const { data: sharedMembership, error: sharedError } = await supabaseAdmin
-    .from("team_members")
-    .select("team_id")
-    .eq("user_id", athleteId)
-    .eq("status", "active")
-    .in("team_id", staffTeamIds)
-    .limit(1)
-    .maybeSingle();
-
-  return { authorized: !sharedError && Boolean(sharedMembership?.team_id) };
+  // Staff may read an athlete's load only when they share an active team —
+  // intersection across ALL memberships (multi-team safe).
+  const { shared } = await sharesStaffedTeam(requestUserId, athleteId, {
+    roles: LOAD_MANAGEMENT_ACCESS_ROLES,
+  });
+  return { authorized: shared };
 }
 
 /**

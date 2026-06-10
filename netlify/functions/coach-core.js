@@ -4,6 +4,7 @@ import { supabaseAdmin, db } from "./supabase-client.js";
 import { ConsentDataReader, AccessContext } from "./utils/consent-data-reader.js";
 import { DataState } from "./utils/data-state.js";
 import { getUserRole, requireRole, logViolation } from "./utils/authorization-guard.js";
+import { resolveStaffedTeam } from "./utils/team-scope.js";
 import { parseJsonObjectBody as sharedParseJsonObjectBody } from "./utils/input-validator.js";
 import { buildRequestLogContext, createLogger } from "./utils/structured-logger.js";
 
@@ -85,23 +86,7 @@ const parseJsonBody = (body) => {
  * @private
  */
 async function getCoachTeamId(coachId, requestedTeamId = null) {
-  const { data: teams, error } = await supabaseAdmin
-    .from("team_members")
-    .select("team_id")
-    .eq("user_id", coachId)
-    .in("role", COACH_ROLES)
-    .eq("status", "active")
-    .order("updated_at", { ascending: false });
-
-  if (error || !teams || teams.length === 0) {
-    return null;
-  }
-  if (requestedTeamId) {
-    return teams.some((t) => t.team_id === requestedTeamId)
-      ? requestedTeamId
-      : null;
-  }
-  return teams[0].team_id;
+  return resolveStaffedTeam(coachId, requestedTeamId, { roles: COACH_ROLES });
 }
 
 async function getActiveCoachTeamMembers(coachId, requestedTeamId = null) {

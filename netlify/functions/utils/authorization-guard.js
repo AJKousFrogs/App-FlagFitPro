@@ -1,6 +1,7 @@
 import { supabaseAdmin, supabaseService } from "../utils/supabase-client.js";
 import { createErrorResponse } from "./error-handler.js";
 import { hasAnyRole, TEAM_OPERATIONS_ROLES } from "./role-sets.js";
+import { isStaffOfTeam } from "./team-scope.js";
 const TRAINING_SESSIONS_TABLE = "training_sessions";
 
 function normalizeRequestBodyForAudit(body) {
@@ -148,17 +149,7 @@ async function canModifySession(
         };
       }
 
-      const { data: staffMembership, error: staffError } = await supabaseAdmin
-        .from("team_members")
-        .select("team_id")
-        .eq("team_id", session.team_id)
-        .eq("user_id", userId)
-        .eq("status", "active")
-        .in("role", TEAM_OPERATIONS_ROLES)
-        .limit(1)
-        .maybeSingle();
-
-      if (staffError || !staffMembership) {
+      if (!(await isStaffOfTeam(userId, session.team_id))) {
         return {
           authorized: false,
           error: "TEAM_SCOPE_VIOLATION",

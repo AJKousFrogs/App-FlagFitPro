@@ -14,6 +14,7 @@ import { parseAthleteId, parseDateParam } from "./utils/db-query-helper.js";
 import { successResponse } from "./utils/response-helper.js";
 import { getUserRole } from "./utils/authorization-guard.js";
 import { hasAnyRole, LOAD_MANAGEMENT_ACCESS_ROLES } from "./utils/role-sets.js";
+import { sharesStaffedTeam } from "./utils/team-scope.js";
 import { buildRequestLogContext, createLogger } from "./utils/structured-logger.js";
 
 function isOptionalSchemaError(error) {
@@ -132,7 +133,8 @@ const handler = async (event, context) => {
           }
         }
 
-        // Cross-athlete reads are restricted to staff with team relationship.
+        // Cross-athlete reads are restricted to staff who share an active team
+        // with the athlete (intersection across all memberships, multi-team safe).
         if (athleteId !== userId) {
           const role = await getUserRole(userId);
           if (!hasAnyRole(role, LOAD_MANAGEMENT_ACCESS_ROLES)) {
@@ -144,41 +146,10 @@ const handler = async (event, context) => {
             );
           }
 
-          const { data: actorTeamMemberships, error: actorTeamsError } =
-            await supabaseAdmin
-              .from("team_members")
-              .select("team_id")
-              .eq("user_id", userId)
-              .eq("status", "active")
-              .in("role", LOAD_MANAGEMENT_ACCESS_ROLES);
-          if (actorTeamsError) {
-            throw actorTeamsError;
-          }
-
-          const actorTeamIds = (actorTeamMemberships || [])
-            .map((m) => m.team_id)
-            .filter(Boolean);
-          if (actorTeamIds.length === 0) {
-            return createErrorResponse(
-              "Not authorized to view another athlete's metrics",
-              403,
-              "authorization_error",
-              requestId,
-            );
-          }
-
-          const { data: targetMembership, error: targetMembershipError } =
-            await supabaseAdmin
-              .from("team_members")
-              .select("team_id")
-              .eq("user_id", athleteId)
-              .in("team_id", actorTeamIds)
-              .eq("status", "active")
-              .limit(1);
-          if (targetMembershipError) {
-            throw targetMembershipError;
-          }
-          if (!targetMembership || targetMembership.length === 0) {
+          const { shared } = await sharesStaffedTeam(userId, athleteId, {
+            roles: LOAD_MANAGEMENT_ACCESS_ROLES,
+          });
+          if (!shared) {
             return createErrorResponse(
               "Not authorized to view another athlete's metrics",
               403,

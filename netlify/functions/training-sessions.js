@@ -13,7 +13,7 @@ import { guardMerlinRequest } from "./utils/merlin-guard.js";
 import { prepareStateTransition } from "./utils/session-state-helper.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { hasAnyRole, TEAM_OPERATIONS_ROLES } from "./utils/role-sets.js";
-import { supabaseAdmin } from "./utils/supabase-client.js";
+import { sharesStaffedTeam, isActiveTeamMember } from "./utils/team-scope.js";
 
 // Netlify Function: Training Sessions API
 // Handles creation and retrieval of training sessions for the Training Builder component
@@ -132,30 +132,16 @@ async function createTrainingSession(
         throw new Error("Insufficient permissions: coach role required");
       }
 
-      const { data: coachTeams } = await supabaseAdmin
-        .from("team_members")
-        .select("team_id")
-        .eq("user_id", userId)
-        .eq("status", "active")
-        .in("role", TEAM_OPERATIONS_ROLES);
-      const coachTeamIds = (coachTeams ?? []).map((t) => t.team_id);
+      // Teams the coach staffs that the target athlete also belongs to.
+      const { teamIds: sharedTeamIds } = await sharesStaffedTeam(
+        userId,
+        finalUserId,
+      );
       const candidateTeamIds = sessionTeamId
-        ? coachTeamIds.filter((id) => id === sessionTeamId)
-        : coachTeamIds;
+        ? sharedTeamIds.filter((id) => id === sessionTeamId)
+        : sharedTeamIds;
 
-      let athleteMembership = null;
-      if (candidateTeamIds.length > 0) {
-        ({ data: athleteMembership } = await supabaseAdmin
-          .from("team_members")
-          .select("team_id")
-          .eq("user_id", finalUserId)
-          .eq("status", "active")
-          .in("team_id", candidateTeamIds)
-          .limit(1)
-          .maybeSingle());
-      }
-
-      if (!athleteMembership) {
+      if (candidateTeamIds.length === 0) {
         await logViolation(
           userId,
           null,
@@ -169,19 +155,11 @@ async function createTrainingSession(
           "Insufficient permissions: athlete is not on a team you coach",
         );
       }
-      sessionTeamId = athleteMembership.team_id;
+      sessionTeamId = candidateTeamIds[0];
     } else if (sessionTeamId) {
       // Self-created session pinned to a team: caller must be an active
       // member of that team.
-      const { data: ownMembership } = await supabaseAdmin
-        .from("team_members")
-        .select("team_id")
-        .eq("user_id", userId)
-        .eq("team_id", sessionTeamId)
-        .eq("status", "active")
-        .limit(1)
-        .maybeSingle();
-      if (!ownMembership) {
+      if (!(await isActiveTeamMember(userId, sessionTeamId))) {
         throw new Error("Invalid team_id: you are not a member of that team");
       }
     }

@@ -4,6 +4,7 @@ import { detectACWRTrigger } from "./utils/safety-override.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { getUserRole } from "./utils/authorization-guard.js";
 import { hasAnyRole, LOAD_MANAGEMENT_ACCESS_ROLES } from "./utils/role-sets.js";
+import { sharesStaffedTeam } from "./utils/team-scope.js";
 import { tryParseJsonObjectBody } from "./utils/input-validator.js";
 import {
   buildRequestLogContext,
@@ -293,35 +294,13 @@ async function verifyAthleteAccess(requestUserId, athleteId) {
     };
   }
 
-  const { data: requesterMembership, error: requesterError } = await supabaseAdmin
-    .from("team_members")
-    .select("team_id")
-    .eq("user_id", requestUserId)
-    .limit(1)
-    .maybeSingle();
-
-  if (requesterError || !requesterMembership?.team_id) {
-    return {
-      authorized: false,
-      message: "Requesting user is not assigned to a team",
-    };
-  }
-
-  const { data: athleteMembership, error: athleteError } = await supabaseAdmin
-    .from("team_members")
-    .select("team_id")
-    .eq("user_id", athleteId)
-    .limit(1)
-    .maybeSingle();
-
-  if (athleteError || !athleteMembership?.team_id) {
-    return {
-      authorized: false,
-      message: "Target athlete is not assigned to a team",
-    };
-  }
-
-  if (athleteMembership.team_id !== requesterMembership.team_id) {
+  // Staff may read another athlete only when they share an active team —
+  // checked across ALL memberships (multi-team safe; the old limit(1) check
+  // picked an arbitrary team and could wrongly authorise or deny).
+  const { shared } = await sharesStaffedTeam(requestUserId, athleteId, {
+    roles: LOAD_MANAGEMENT_ACCESS_ROLES,
+  });
+  if (!shared) {
     return {
       authorized: false,
       message: "Not authorized to access athletes outside your team",
