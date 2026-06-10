@@ -66,7 +66,10 @@
         @if (completeError(); as e) { <p class="note" style="color:var(--danger)">{{ e }}</p> }
       </div>
     } @else {
-      <div class="empty">No session planned yet — log a wellness check-in to generate today's plan.</div>
+      <div class="empty">
+        No session planned yet — log a wellness check-in to generate today's plan.
+        <a class="btn primary sm" routerLink="/wellness"><lucide-icon name="clipboard-check" /> Log check-in</a>
+      </div>
     }
 
     <div class="section-h"><h2>This week</h2></div>
@@ -123,6 +126,6 @@
       </div>
     }
   } @else {
-    <div class="empty">Programs land as the rebuild continues — your coach assigns them here.</div>
+    <div class="empty">No program yet — your coach assigns training programs here.</div>
   }
 </main>
