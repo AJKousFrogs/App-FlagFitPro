@@ -222,6 +222,7 @@ export class PeriodizationService {
       seasonPhase: macroPhaseFor(now, this.seasonCalendar()),
       weather: this.weather(),
       recentSessions: this.recentSessions(),
+      ageYears: this.readAgeYears(),
       isTeamPractice: this.isTeamPractice(now, snap.trainingDays),
       activeRestrictions: this.injury.restrictions(),
     });
@@ -242,6 +243,7 @@ export class PeriodizationService {
     const acwr = this.readAcwr();
     const readiness = this.readReadiness();
     const bodyweight = this.readBodyweight();
+    const ageYears = this.readAgeYears();
 
     const out: DailyPrescription[] = [];
     for (let i = 0; i < 7; i++) {
@@ -269,6 +271,7 @@ export class PeriodizationService {
           // against stale "now" weather.
           weather: i === 0 ? this.weather() : null,
           recentSessions: this.recentSessions(),
+          ageYears,
           isTeamPractice: this.isTeamPractice(date, snap.trainingDays),
           activeRestrictions: this.injury.restrictions(),
         }),
@@ -328,6 +331,31 @@ export class PeriodizationService {
     }
     return null;
   }
+
+  /**
+   * Athlete age in whole years from date_of_birth (legacy birth_date also read).
+   * Drives the age-scaled CNS recovery window. Returns null when absent/implausible
+   * so the engine keeps the 48h base for everyone.
+   */
+  private readAgeYears(): number | null {
+    const user = this.supabase.currentUser?.();
+    const meta = (user?.user_metadata ?? {}) as Record<string, unknown>;
+    const dob = meta["date_of_birth"] ?? meta["birth_date"] ?? meta["dateOfBirth"];
+    if (typeof dob !== "string" && typeof dob !== "number") {
+      return null;
+    }
+    const born = new Date(dob);
+    if (Number.isNaN(born.getTime())) {
+      return null;
+    }
+    const now = new Date();
+    let age = now.getFullYear() - born.getFullYear();
+    const m = now.getMonth() - born.getMonth();
+    if (m < 0 || (m === 0 && now.getDate() < born.getDate())) {
+      age -= 1;
+    }
+    return age >= 16 && age <= 80 ? age : null;
+  }
 }
 
 // =============================================================================
@@ -364,11 +392,28 @@ const HIGH_CNS_INTENTS: ReadonlySet<PrescriptionIntent> = new Set<PrescriptionIn
 
 /**
  * Minimum hours between high-CNS (sprint / plyometric / max-velocity) sessions.
- * Team-configurable like the ACWR/weather thresholds; conservative default treats
- * sprint work as max-velocity (48h). Sub-max speed could justify 24h — kept at
- * the safe 48h default rather than guessing intensity from `session_type`.
+ * Conservative default treats sprint work as max-velocity (48h). Sub-max speed
+ * could justify 24h — kept at the safe 48h default rather than guessing intensity
+ * from `session_type`. Scaled UP with age (never down) — see {@link cnsRecoveryHoursForAge}.
  */
 const CNS_RECOVERY_HOURS = 48;
+
+/**
+ * Age-scaled CNS recovery window. Older athletes recover neuromuscular and
+ * connective-tissue fatigue more slowly, so the spacing between max-velocity /
+ * plyometric days lengthens with age. MONOTONIC and floored at the 48h base —
+ * a younger athlete is never told to rest *less* than before this existed.
+ * Bands (conservative calibration; masters S&C consensus): <35 → 48h, 35–39 →
+ * 60h, 40+ → 72h. A missing/implausible age falls back to the 48h base.
+ */
+function cnsRecoveryHoursForAge(ageYears?: number | null): number {
+  if (typeof ageYears !== "number" || !Number.isFinite(ageYears) || ageYears < 16) {
+    return CNS_RECOVERY_HOURS;
+  }
+  if (ageYears >= 40) return 72;
+  if (ageYears >= 35) return 60;
+  return CNS_RECOVERY_HOURS;
+}
 
 /** Detect a high-CNS session from its raw `session_type`/`drill_type`. */
 function isHighCnsSessionType(type: string): boolean {
@@ -377,20 +422,23 @@ function isHighCnsSessionType(type: string): boolean {
 
 /**
  * CNS recovery spacing: if the engine chose a high-CNS day but the athlete did
- * sprint/plyo work within `CNS_RECOVERY_HOURS`, downgrade to mobility + technique
- * so back-to-back high-CNS days can't happen. Records `cnsRecoveryAdjustment`
- * for traceability. Lowest-precedence guard — weather/physio override it.
+ * sprint/plyo work within the (age-scaled) CNS recovery window, downgrade to
+ * mobility + technique so back-to-back high-CNS days can't happen. Records
+ * `cnsRecoveryAdjustment` for traceability. Lowest-precedence guard — weather/
+ * physio override it.
  */
 function applySprintRecoveryGuard(
   p: DailyPrescription,
   recentSessions: PeriodizationInputs["recentSessions"],
   date: Date,
+  ageYears?: number | null,
 ): DailyPrescription {
   if (!HIGH_CNS_INTENTS.has(p.intent)) return p;
   if (!recentSessions || recentSessions.length === 0) return p;
 
+  const windowHours = cnsRecoveryHoursForAge(ageYears);
   const now = date.getTime();
-  const windowMs = CNS_RECOVERY_HOURS * 3_600_000;
+  const windowMs = windowHours * 3_600_000;
   let mostRecent: number | null = null;
   for (const s of recentSessions) {
     if (!isHighCnsSessionType(s.type)) continue;
@@ -408,10 +456,10 @@ function applySprintRecoveryGuard(
     intentLabel: "Mobility & technique",
     sprintReps: 0,
     targetRpe: p.targetRpe != null ? Math.min(p.targetRpe, 5) : p.targetRpe,
-    reasoning: `Sprinted ${hoursSince}h ago — ${CNS_RECOVERY_HOURS}h CNS recovery; today is mobility + technique.`,
+    reasoning: `Sprinted ${hoursSince}h ago — ${windowHours}h CNS recovery; today is mobility + technique.`,
     cnsRecoveryAdjustment: {
       hoursSinceLastHighCns: hoursSince,
-      windowHours: CNS_RECOVERY_HOURS,
+      windowHours,
       originalIntent: p.intent,
     },
   };
@@ -426,7 +474,13 @@ function applySprintRecoveryGuard(
 export function prescribeFor(inputs: PeriodizationInputs): DailyPrescription {
   const base = decideBasePrescription(inputs);
   // CNS recovery spacing (lowest-precedence guard): no back-to-back sprint days.
-  const spaced = applySprintRecoveryGuard(base, inputs.recentSessions ?? null, inputs.date);
+  // The window lengthens with the athlete's age (older = more recovery).
+  const spaced = applySprintRecoveryGuard(
+    base,
+    inputs.recentSessions ?? null,
+    inputs.date,
+    inputs.ageYears ?? null,
+  );
   const guarded = applyWeatherGuard(spaced, inputs.weather ?? null, inputs.coachOverride ?? false);
   // Injury/physio precedence over training (spec law): runs last so the affected
   // region's sprint/high-intensity work is removed regardless of the base plan.
@@ -1257,4 +1311,5 @@ export const __periodization__ = {
   seasonShapedIntent,
   baseTargets,
   CARB_PER_KG,
+  cnsRecoveryHoursForAge,
 };

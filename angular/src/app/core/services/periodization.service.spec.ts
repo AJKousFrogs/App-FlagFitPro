@@ -784,3 +784,59 @@ describe("prescribeFor — injury guard", () => {
     expect(rx.injuryAdjustment).toBeTruthy();
   });
 });
+
+// =============================================================================
+// AGE-SCALED CNS RECOVERY — older athletes get more spacing, younger unchanged
+// =============================================================================
+
+describe("cnsRecoveryHoursForAge", () => {
+  const f = __periodization__.cnsRecoveryHoursForAge;
+
+  it("keeps the 48h base for under-35s and missing/implausible ages", () => {
+    expect(f(19)).toBe(48);
+    expect(f(34)).toBe(48);
+    expect(f(null)).toBe(48);
+    expect(f(undefined)).toBe(48);
+    expect(f(NaN)).toBe(48);
+    expect(f(10)).toBe(48); // implausible → base
+  });
+
+  it("lengthens monotonically with age (35–39 → 60h, 40+ → 72h)", () => {
+    expect(f(35)).toBe(60);
+    expect(f(38)).toBe(60);
+    expect(f(40)).toBe(72);
+    expect(f(52)).toBe(72);
+    // never shorter than the base, always non-decreasing
+    expect(f(40)).toBeGreaterThanOrEqual(f(35));
+    expect(f(35)).toBeGreaterThanOrEqual(f(34));
+  });
+});
+
+describe("prescribeFor — age-scaled CNS spacing (19 vs 38)", () => {
+  const sprintDay = new Date("2026-05-05T10:00:00Z"); // Tue → accumulation sprint
+  // a sprint 60h before today: inside a 38yo's 72h window, outside a 19yo's 48h
+  const sprint60hAgo = [{ at: "2026-05-02T22:00:00Z", type: "sprint" }];
+
+  it("a 38yo is still recovering at 60h post-sprint → today downgraded", () => {
+    const rx = prescribeFor(
+      inputs({ phase: "accumulation", date: sprintDay, ageYears: 38, recentSessions: sprint60hAgo }),
+    );
+    expect(rx.intent).toBe("technical");
+    expect(rx.cnsRecoveryAdjustment?.windowHours).toBe(60);
+  });
+
+  it("a 19yo has cleared the 48h window at 60h → sprint allowed", () => {
+    const rx = prescribeFor(
+      inputs({ phase: "accumulation", date: sprintDay, ageYears: 19, recentSessions: sprint60hAgo }),
+    );
+    expect(rx.intent).toBe("sprint");
+    expect(rx.cnsRecoveryAdjustment ?? null).toBeNull();
+  });
+
+  it("no age provided behaves exactly like the 48h base (younger never under-rested)", () => {
+    const rx = prescribeFor(
+      inputs({ phase: "accumulation", date: sprintDay, recentSessions: sprint60hAgo }),
+    );
+    expect(rx.intent).toBe("sprint"); // 60h > 48h base → cleared
+  });
+});

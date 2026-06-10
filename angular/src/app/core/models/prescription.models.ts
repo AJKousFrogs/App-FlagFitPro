@@ -222,4 +222,10 @@ export interface PeriodizationInputs {
    * high-CNS day within the configured window. Empty/undefined → no spacing.
    */
   recentSessions?: RecentSession[] | null;
+  /**
+   * Athlete age in years (from date_of_birth). Lengthens the CNS recovery window
+   * for older athletes — a 38yo gets more spacing between max-velocity days than
+   * a 19yo. Never shortens it. Null/undefined → the 48h base for everyone.
+   */
+  ageYears?: number | null;
 }
