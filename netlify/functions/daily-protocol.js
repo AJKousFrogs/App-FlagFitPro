@@ -1040,6 +1040,53 @@ async function getProtocol(supabase, userId, params, headers, log = logger) {
  * POST /api/daily-protocol/generate
  * Generate a new protocol for a given date using structured training data
  */
+// ============================================================================
+// COMPOSE MODE — daily-protocol as a CONSUMER of the periodization intent layer.
+// When the client passes the day's intent (+ position) from periodization.today,
+// daily-protocol REALIZES exercises for THAT intent instead of re-deriving its
+// own session. Removes the disagreements (Saturday-sprint, month-phase, raw
+// position/isQB, independent readiness override) for the session CHOICE. Absent
+// an intent, every path below is bypassed and legacy behaviour is unchanged.
+// ============================================================================
+
+/** Position flags from the periodization canonical bucket (qb/wr/db/center/
+ * blitzer/wr_db) — fixes the isQB/center mismatch (raw 'qb' !== 'quarterback'). */
+function positionFlagsFor(bucket) {
+  const b = String(bucket || "").toLowerCase();
+  return {
+    isQB: b === "qb" || b === "quarterback",
+    isCenter: b === "center",
+    isBlitzer: b === "blitzer" || b === "rusher",
+  };
+}
+
+/** Map a periodization INTENT (+ label) to daily-protocol's session decision
+ * variables. A "Flag football practice" label is a practice day regardless of
+ * the underlying intent. */
+function mapIntentToSession(intent, intentLabel) {
+  if (/practice/i.test(String(intentLabel || ""))) {
+    return { trainingFocus: "practice_day", isSprintSession: false, isGymTrainingDay: false, isPracticeDay: true };
+  }
+  switch (intent) {
+    case "sprint":
+    case "taper-prime":
+      return { trainingFocus: "speed", isSprintSession: true, isGymTrainingDay: false, isPracticeDay: false };
+    case "strength":
+      return { trainingFocus: "strength", isSprintSession: false, isGymTrainingDay: true, isPracticeDay: false };
+    case "mixed":
+      return { trainingFocus: "conditioning", isSprintSession: false, isGymTrainingDay: true, isPracticeDay: false };
+    case "technical":
+      return { trainingFocus: "skill", isSprintSession: false, isGymTrainingDay: true, isPracticeDay: false };
+    case "mobility":
+    case "recovery":
+    case "rest":
+    case "competition":
+      return { trainingFocus: "recovery", isSprintSession: false, isGymTrainingDay: false, isPracticeDay: false };
+    default:
+      return { trainingFocus: "strength", isSprintSession: false, isGymTrainingDay: true, isPracticeDay: false };
+  }
+}
+
 async function generateProtocol(supabase, userId, payload, headers, log = logger) {
   const date = payload.date || getIsoDateString();
 
@@ -1077,6 +1124,13 @@ async function generateProtocol(supabase, userId, payload, headers, log = logger
 
   // Get user's full training context
   const context = await getUserTrainingContext(supabase, userId, date, log);
+
+  // COMPOSE: trust the intent layer's position over daily-protocol's raw read
+  // (fixes isQB/center). Applied before the decision context so downstream
+  // warmup/main-session selection uses the correct position.
+  if (payload.intent && payload.position) {
+    Object.assign(context, positionFlagsFor(payload.position));
+  }
 
   // ============================================================================
   // INJURY CHECK - Priority #1 for athlete safety
@@ -1126,7 +1180,7 @@ async function generateProtocol(supabase, userId, payload, headers, log = logger
     return await getProtocol(supabase, userId, { date }, headers, log);
   }
 
-  const {
+  let {
     readinessScore,
     acwrValue,
     confidenceMetadata,
@@ -1146,6 +1200,21 @@ async function generateProtocol(supabase, userId, payload, headers, log = logger
     computeReadinessDaysStale,
     computeTrainingDaysLogged,
   });
+
+  // COMPOSE: when the intent layer supplies the day's intent, REALIZE it —
+  // override daily-protocol's own session choice (the intent layer already
+  // resolved day-type/phase/safety). composeSprint/composeGym are applied at the
+  // isSprintSession / isGymTrainingDay sites below. Legacy path: both stay null.
+  let composeSprint = null;
+  let composeGym = null;
+  if (payload.intent) {
+    const m = mapIntentToSession(payload.intent, payload.intentLabel);
+    trainingFocus = m.trainingFocus;
+    isPracticeDay = m.isPracticeDay;
+    isFilmRoomDay = false;
+    composeSprint = m.isSprintSession;
+    composeGym = m.isGymTrainingDay;
+  }
 
   // Protocol and exercises will be created transactionally via RPC
   // We'll collect exercises first, then call RPC
@@ -1189,11 +1258,16 @@ async function generateProtocol(supabase, userId, payload, headers, log = logger
 
   // Check if it's a sprint session (Saturday or session type is speed/sprint)
   // Declare early so it can be used in both warmup and main session generation
-  const isSprintSession =
+  let isSprintSession =
     context.dayOfWeek === 6 || // Saturday
     context.sessionResolution?.override?.type === "sprint_saturday" ||
     context.sessionTemplate?.session_type?.toLowerCase() === "speed" ||
     context.sessionTemplate?.session_type?.toLowerCase() === "sprint";
+  // COMPOSE: the intent layer decides whether today is a sprint session, not the
+  // Saturday hard-rule.
+  if (composeSprint !== null) {
+    isSprintSession = composeSprint;
+  }
 
   await addWarmupBlock({
     supabase,
@@ -1224,8 +1298,12 @@ async function generateProtocol(supabase, userId, payload, headers, log = logger
   );
 
   // Skip gym blocks on practice days, film room days, or recovery days
-  const isGymTrainingDay =
+  let isGymTrainingDay =
     !isPracticeDay && !isFilmRoomDay && trainingFocus !== "recovery";
+  // COMPOSE: the intent layer decides whether today is a gym day.
+  if (composeGym !== null) {
+    isGymTrainingDay = composeGym;
+  }
 
   if (isGymTrainingDay) {
     // ============================================================================
@@ -2320,4 +2398,5 @@ export const testTransforms = {
   buildAcwrPresentation,
   transformExercise,
 };
+export const __compose__ = { positionFlagsFor, mapIntentToSession };
 export default wrapHandler(handler);
