@@ -169,6 +169,19 @@ export interface DailyPrescription {
     windowHours: number;
     originalIntent: PrescriptionIntent;
   } | null;
+  /**
+   * Position-specific accessory / prehab focus layered on the session. Does NOT
+   * change the core intent or load magnitude — it tells a QB to protect the
+   * throwing shoulder, a WR/DB to prioritise hamstring + deceleration work, a
+   * center/rusher to care for the snapping wrist/shoulder + brace the trunk.
+   * Null when no position is set.
+   */
+  positionEmphasis?: {
+    position: string;
+    label: string;
+    focus: string[];
+    note: string;
+  } | null;
 }
 
 /**
@@ -253,4 +266,10 @@ export interface PeriodizationInputs {
    * a 19yo. Never shortens it. Null/undefined → the 48h base for everyone.
    */
   ageYears?: number | null;
+  /**
+   * Athlete playing position (athlete_training_config.primary_position), e.g.
+   * "qb", "wr_db", "center_rusher". Drives position-specific accessory/prehab
+   * emphasis only — it does not change the core session intent or load.
+   */
+  position?: string | null;
 }

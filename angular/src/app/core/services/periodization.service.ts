@@ -54,6 +54,8 @@ export class PeriodizationService {
    * engine falls back to the generic build week. NOTHING hardcoded.
    */
   readonly seasonCalendar = signal<SeasonWindow[]>([]);
+  /** Athlete primary position (drives position-specific prehab emphasis). */
+  readonly position = signal<string | null>(null);
 
   /**
    * Recurring flag-football team-practice weekdays (0=Sun…6=Sat) the athlete
@@ -140,6 +142,8 @@ export class PeriodizationService {
         season_calendar?: SeasonWindow[];
         seasonCalendar?: SeasonWindow[];
         teamTrainingDays?: { days?: number[]; time?: string } | number[];
+        primaryPosition?: string;
+        primary_position?: string;
       }>("/api/player-settings")
       .subscribe({
         next: (res) => {
@@ -147,6 +151,8 @@ export class PeriodizationService {
             season_calendar?: SeasonWindow[];
             seasonCalendar?: SeasonWindow[];
             teamTrainingDays?: { days?: number[]; time?: string } | number[];
+            primaryPosition?: string;
+            primary_position?: string;
           };
           const cal = d.season_calendar ?? d.seasonCalendar;
           if (Array.isArray(cal)) this.seasonCalendar.set(cal);
@@ -155,6 +161,8 @@ export class PeriodizationService {
           this.teamTrainingDays.set(
             days.filter((n) => Number.isInteger(n) && n >= 0 && n <= 6),
           );
+          const pos = d.primaryPosition ?? d.primary_position;
+          if (typeof pos === "string" && pos) this.position.set(pos);
         },
         error: () => {
           /* no config yet → generic build week */
@@ -224,6 +232,7 @@ export class PeriodizationService {
       weather: this.weather(),
       recentSessions: this.recentSessions(),
       ageYears: this.readAgeYears(),
+      position: this.position(),
       isTeamPractice: this.isTeamPractice(now, snap.trainingDays),
       activeRestrictions: this.injury.restrictions(),
     });
@@ -274,6 +283,7 @@ export class PeriodizationService {
           weather: i === 0 ? this.weather() : null,
           recentSessions: this.recentSessions(),
           ageYears,
+          position: this.position(),
           isTeamPractice: this.isTeamPractice(date, snap.trainingDays),
           activeRestrictions: this.injury.restrictions(),
         }),
@@ -488,7 +498,78 @@ export function prescribeFor(inputs: PeriodizationInputs): DailyPrescription {
   const guarded = applyWeatherGuard(spaced, inputs.weather ?? null, inputs.coachOverride ?? false);
   // Injury/physio precedence over training (spec law): runs last so the affected
   // region's sprint/high-intensity work is removed regardless of the base plan.
-  return applyInjuryGuard(guarded, inputs.activeRestrictions ?? null);
+  const physioGuarded = applyInjuryGuard(guarded, inputs.activeRestrictions ?? null);
+  // Position-specific accessory/prehab emphasis — additive guidance only, never
+  // changes the chosen intent or load.
+  return withPositionEmphasis(physioGuarded, inputs.position ?? null);
+}
+
+/**
+ * Position bucket from a raw primary_position string. Flag-football roles fold
+ * into three load/prehab profiles: quarterback (throwing arm), receiver/defensive
+ * back (sprint + change-of-direction), and center/rusher (repeated snapping).
+ */
+function positionBucket(position: string | null): "qb" | "wr_db" | "center" | null {
+  const p = (position ?? "").toLowerCase();
+  if (!p) return null;
+  if (/\bqb\b|quarterback/.test(p)) return "qb";
+  if (/center|rusher|blitz|snap|line/.test(p)) return "center";
+  if (/wr|db|receiver|corner|safety|defensive.?back|hybrid/.test(p)) return "wr_db";
+  return null;
+}
+
+/**
+ * Layer the position-specific accessory/prehab focus onto the prescription.
+ * Evidence-based, conservative, and additive — it informs WHAT to protect, not
+ * how hard to train. On a rest day there is nothing to emphasise.
+ */
+function withPositionEmphasis(
+  p: DailyPrescription,
+  position: string | null,
+): DailyPrescription {
+  const bucket = positionBucket(position);
+  if (!bucket || p.intent === "rest") {
+    return { ...p, positionEmphasis: null };
+  }
+  const map = {
+    qb: {
+      label: "Quarterback",
+      focus: [
+        "Rotator-cuff & scapular control",
+        "Thoracic rotation mobility",
+        "Rotational core power",
+      ],
+      note: "Protect the throwing shoulder. Full-effort throwing is CNS + arm load — count it, and space heavy throwing like you space sprints.",
+    },
+    wr_db: {
+      label: "Receiver / Defensive back",
+      focus: [
+        "Eccentric hamstring (Nordic)",
+        "Deceleration & landing mechanics",
+        "Ankle & calf resilience",
+      ],
+      note: "Highest sprint and cutting exposure on the team — prioritise hamstring and deceleration prehab to protect the hamstrings and ACL.",
+    },
+    center: {
+      label: "Center / Rusher",
+      focus: [
+        "Wrist & forearm care",
+        "Shoulder & scapular control",
+        "Anti-rotation core brace",
+      ],
+      note: "Repeated one-arm snapping loads the wrist and shoulder — keep snap volume in check, warm the arm up, and brace the trunk.",
+    },
+  } as const;
+  const e = map[bucket];
+  return {
+    ...p,
+    positionEmphasis: {
+      position: bucket,
+      label: e.label,
+      focus: [...e.focus],
+      note: e.note,
+    },
+  };
 }
 
 /**

@@ -929,3 +929,44 @@ describe("prescribeFor — peak & post-season phases", () => {
     expect(macroPhaseFor(new Date("2026-01-10T10:00:00Z"), windows)).toBe("offseason"); // winter
   });
 });
+
+// =============================================================================
+// POSITION EMPHASIS — accessory/prehab focus by role (additive, not load-changing)
+// =============================================================================
+
+describe("prescribeFor — position emphasis", () => {
+  const tuesday = new Date("2026-05-05T10:00:00Z"); // sprint day (non-rest)
+  const sunday = new Date("2026-05-10T10:00:00Z"); // rest day
+
+  it("QB gets throwing-shoulder / rotational focus", () => {
+    const rx = prescribeFor(inputs({ date: tuesday, position: "qb" }));
+    expect(rx.positionEmphasis?.position).toBe("qb");
+    expect(rx.positionEmphasis?.note).toMatch(/shoulder|throw/i);
+    expect(rx.positionEmphasis?.focus.join(" ")).toMatch(/cuff|scap|rotation/i);
+  });
+
+  it("WR/DB gets hamstring + deceleration focus", () => {
+    const rx = prescribeFor(inputs({ date: tuesday, position: "wr_db" }));
+    expect(rx.positionEmphasis?.position).toBe("wr_db");
+    expect(rx.positionEmphasis?.focus.join(" ")).toMatch(/hamstring|decel/i);
+  });
+
+  it("center/rusher gets snapping wrist/shoulder + brace focus", () => {
+    const rx = prescribeFor(inputs({ date: tuesday, position: "center_rusher" }));
+    expect(rx.positionEmphasis?.position).toBe("center");
+    expect(rx.positionEmphasis?.note).toMatch(/snap/i);
+  });
+
+  it("does NOT change the core intent or load (additive only)", () => {
+    const withPos = prescribeFor(inputs({ date: tuesday, position: "qb" }));
+    const without = prescribeFor(inputs({ date: tuesday }));
+    expect(withPos.intent).toBe(without.intent);
+    expect(withPos.targetRpe).toBe(without.targetRpe);
+    expect(withPos.sprintReps).toBe(without.sprintReps);
+  });
+
+  it("no position, or a rest day, yields no emphasis", () => {
+    expect(prescribeFor(inputs({ date: tuesday })).positionEmphasis ?? null).toBeNull();
+    expect(prescribeFor(inputs({ date: sunday, position: "qb" })).positionEmphasis ?? null).toBeNull();
+  });
+});
