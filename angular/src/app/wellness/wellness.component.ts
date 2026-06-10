@@ -242,7 +242,10 @@ export class WellnessComponent {
   readonly readinessBand = computed<{ label: string; cls: string } | null>(() => {
     const pct = this.readinessPct();
     if (pct == null) return null;
-    const cls = pct < 55 ? "danger" : pct <= 75 ? "info" : "good";
+    // Band colours MUST match the Today screen's readiness mapping — the same
+    // score showed amber (caution) on Today but blue (info) here. Canonical:
+    // <55 danger, 55–75 caution, >75 good.
+    const cls = pct < 55 ? "danger" : pct <= 75 ? "caution" : "good";
     const word = pct < 55 ? "Low — deload" : pct <= 75 ? "Moderate" : "High — push";
     return { label: word, cls };
   });

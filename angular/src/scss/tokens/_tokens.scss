@@ -79,6 +79,13 @@
   --info:var(--c-blue-500);    --info-soft:var(--c-blue-200);
 
   --focus:0 0 0 3px color-mix(in srgb, var(--accent) 45%, transparent);
+
+  /* overlays — text/scrims that sit ON photos or dark gradients. Intentionally
+     theme-INDEPENDENT (white text on a dark scrim stays white in light mode). */
+  --overlay-text:var(--c-white);
+  --overlay-scrim:rgba(8,9,11,.55);   /* video poster / play-button backdrop */
+  --overlay-scrim-soft:rgba(8,9,11,.28);
+  --overlay-scrim-strong:rgba(8,9,11,.85); /* chips over imagery (duration) */
 }
 
 /* OPTIONAL light theme (token swap only — structure unchanged). Off by default. */
