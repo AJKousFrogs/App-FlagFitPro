@@ -625,6 +625,17 @@ function withPositionEmphasis(
  * a region used by sprint/high-intensity work. Severity-scaled; never overrides a
  * game day. Records `injuryAdjustment` so the change is traceable.
  */
+/**
+ * How an active injury/tightness down-regulates the session, by severity. The
+ * caps are tunable data (Class 3) rather than literals in the guard logic.
+ * Values are unchanged from the prior inline numbers.
+ */
+const INJURY_RESPONSE = {
+  severe: { rpe: 3, minutes: 30, sets: 0 },
+  moderate: { rpe: 3, maxMinutes: 40, maxSets: 3 },
+  minor: { maxRpe: 6 },
+} as const;
+
 function applyInjuryGuard(
   p: DailyPrescription,
   restr: PeriodizationInputs["activeRestrictions"],
@@ -649,22 +660,23 @@ function applyInjuryGuard(
   if (severe) {
     intent = "recovery";
     intentLabel = "Active recovery";
-    targetRpe = 3;
-    targetMinutes = 30;
-    strengthSets = 0;
+    targetRpe = INJURY_RESPONSE.severe.rpe;
+    targetMinutes = INJURY_RESPONSE.severe.minutes;
+    strengthSets = INJURY_RESPONSE.severe.sets;
     reasoning = `Reported ${regionLabel} issue — recovery only today. Injury precedence over training.`;
   } else if (moderate) {
     intent = "recovery";
     intentLabel = "Active recovery";
-    targetRpe = 3;
-    targetMinutes = Math.min(p.targetMinutes, 40);
-    strengthSets = Math.min(p.strengthSets, 3);
+    targetRpe = INJURY_RESPONSE.moderate.rpe;
+    targetMinutes = Math.min(p.targetMinutes, INJURY_RESPONSE.moderate.maxMinutes);
+    strengthSets = Math.min(p.strengthSets, INJURY_RESPONSE.moderate.maxSets);
     reasoning = `Reported ${regionLabel} tightness — sprints pulled, easy session only. Injury precedence over training.`;
   } else {
     // minor: keep the day's shape but remove the sprint/high-intensity work
     intent = p.intent === "sprint" ? "mobility" : p.intent;
     intentLabel = p.intent === "sprint" ? "Mobility & technique" : `${p.intentLabel} (modified)`;
-    targetRpe = p.targetRpe != null ? Math.min(p.targetRpe, 6) : p.targetRpe;
+    targetRpe =
+      p.targetRpe != null ? Math.min(p.targetRpe, INJURY_RESPONSE.minor.maxRpe) : p.targetRpe;
     reasoning = `${regionLabel} tightness — sprint/high-intensity work pulled for that region; keep it controlled.`;
   }
 
