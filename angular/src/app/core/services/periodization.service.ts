@@ -2,6 +2,7 @@ import {
   Injectable,
   Signal,
   computed,
+  effect,
   inject,
   signal,
 } from "@angular/core";
@@ -73,10 +74,28 @@ export class PeriodizationService {
    */
   readonly recentSessions = signal<RecentSession[]>([]);
 
+  /** Guards the recent-sessions load against re-running for the same user. */
+  private lastRecentSessionsUserId: string | null = null;
+
   constructor() {
     this.loadSettings();
     void this.injury.load();
-    void this.loadRecentSessions();
+
+    // Recent-sessions load is keyed off userId(). On a cold boot the Supabase
+    // client is lazily imported, so userId() is null at construction — a plain
+    // fire-and-forget call would return empty and the CNS recovery-spacing data
+    // would silently never load. An effect re-runs once the user resolves.
+    effect(() => {
+      const userId = this.supabase.userId();
+      if (!userId) {
+        this.lastRecentSessionsUserId = null;
+        this.recentSessions.set([]);
+        return;
+      }
+      if (this.lastRecentSessionsUserId === userId) return;
+      this.lastRecentSessionsUserId = userId;
+      void this.loadRecentSessions(userId);
+    });
 
     // Live weather → the prescription weather guard (metric: °C / mm / km/h).
     // The server resolves location from the team's home_city; when it reports
@@ -153,8 +172,7 @@ export class PeriodizationService {
    * recovery spacing. Fire-and-forget; empty on failure → no spacing (spacing is
    * a refinement, not a safety stop, so fail-open is acceptable).
    */
-  private async loadRecentSessions(): Promise<void> {
-    const userId = this.supabase.userId();
+  private async loadRecentSessions(userId: string): Promise<void> {
     if (!userId) return;
     const since = new Date(Date.now() - 4 * 86_400_000).toISOString();
     try {

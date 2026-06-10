@@ -143,6 +143,36 @@ class HttpCacheService {
     }
   }
 
+  /**
+   * Resource key for a URL: `api/<resource>` (query/host stripped).
+   * `/api/calc-readiness?x=1` → `api/calc-readiness`. Non-/api URLs fall back
+   * to their bare path. Used to scope cache invalidation to ONE resource.
+   */
+  private resourceKey(url: string): string {
+    const path = url.split(/[?#]/)[0];
+    const segments = path.split("/").filter(Boolean);
+    const apiIdx = segments.indexOf("api");
+    if (apiIdx !== -1 && segments.length > apiIdx + 1) {
+      return segments.slice(apiIdx, apiIdx + 2).join("/");
+    }
+    return path;
+  }
+
+  /**
+   * Invalidate cached GETs for the SAME resource a mutation touched — not the
+   * whole API. Previously a POST built a regex from its parent path (`/api`
+   * for `/api/calc-readiness`), which matched and wiped every cached entry, so
+   * the GET cache was effectively dead after any POST.
+   */
+  clearRelated(mutationUrl: string): void {
+    const resource = this.resourceKey(mutationUrl);
+    for (const key of this.cache.keys()) {
+      if (this.resourceKey(key) === resource) {
+        this.cache.delete(key);
+      }
+    }
+  }
+
   getTtlForUrl(url: string): number {
     // Static resources get longer cache
     if (
@@ -193,8 +223,7 @@ export const cacheInterceptor: HttpInterceptorFn = (req, next) => {
       req.method === "DELETE" ||
       req.method === "PATCH"
     ) {
-      const urlPattern = new RegExp(req.url.split("/").slice(0, -1).join("/"));
-      cacheService.clearPattern(urlPattern);
+      cacheService.clearRelated(req.url);
     }
     return next(req);
   }
