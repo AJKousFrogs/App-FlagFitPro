@@ -117,3 +117,56 @@ export function computeAcwrAt(dailyLoads, targetDate, opts = {}) {
     daysWithData,
   };
 }
+
+/**
+ * Canonical session load (session-RPE): the stored `workload` if real, else
+ * `rpe × duration_minutes`, else 0 (load is never fabricated from defaults).
+ * Was hand-written in compute-acwr / training-plan / daily-training /
+ * training-metrics; this is the single definition.
+ */
+export function computeSessionLoad(session) {
+  const workload = Number(session?.workload);
+  if (Number.isFinite(workload) && workload > 0) {
+    return Math.round(workload * 100) / 100;
+  }
+  const rpe = Number(session?.rpe);
+  const minutes = Number(session?.duration_minutes);
+  if (rpe > 0 && minutes > 0) {
+    return Math.round(rpe * minutes * 100) / 100;
+  }
+  return 0;
+}
+
+/**
+ * ACWR risk zones (evidence-based thresholds — Gabbett 2016 / Lolli 2017).
+ * `risk` = relative injury-risk multiplier; `action` = load recommendation.
+ * Single source for both the zone label and the per-zone metadata that
+ * training-plan and smart-training-recommendations previously duplicated.
+ */
+export const ACWR_RISK_ZONES = Object.freeze({
+  detraining: { min: 0, max: 0.8, label: "Detraining", action: "increase_load", risk: 1.2 },
+  safe: { min: 0.8, max: 1.3, label: "Safe", action: "maintain", risk: 1.0 },
+  caution: { min: 1.3, max: 1.5, label: "Caution", action: "reduce_slightly", risk: 1.5 },
+  danger: { min: 1.5, max: 1.8, label: "Danger", action: "reduce_significantly", risk: 2.0 },
+  critical: { min: 1.8, max: Infinity, label: "Critical", action: "rest", risk: 4.2 },
+});
+
+/** Classify an ACWR ratio into a zone key, or null if not a finite number. */
+export function classifyAcwrZone(acwr) {
+  if (!Number.isFinite(acwr)) {
+    return null;
+  }
+  if (acwr < 0.8) {
+    return "detraining";
+  }
+  if (acwr <= 1.3) {
+    return "safe";
+  }
+  if (acwr <= 1.5) {
+    return "caution";
+  }
+  if (acwr < 1.8) {
+    return "danger";
+  }
+  return "critical";
+}

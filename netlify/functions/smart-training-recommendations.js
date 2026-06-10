@@ -2,6 +2,7 @@ import { supabaseAdmin, checkEnvVars } from "./supabase-client.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
 import { getUserRole } from "./utils/authorization-guard.js";
+import { ACWR_RISK_ZONES } from "./utils/acwr.js";
 import { tryParseJsonObjectBody } from "./utils/input-validator.js";
 
 // Netlify Function: Smart Training Recommendations
@@ -42,16 +43,8 @@ const TOURNAMENT_IMPORTANCE = {
   friendly: { taperDays: 3, volumeReduction: 0.2, label: "Friendly" },
 };
 
-/**
- * ACWR risk zones with injury risk multipliers
- */
-const ACWR_ZONES = {
-  detraining: { min: 0, max: 0.8, risk: 1.2, action: "increase_load" },
-  safe: { min: 0.8, max: 1.3, risk: 1.0, action: "maintain" },
-  caution: { min: 1.3, max: 1.5, risk: 1.5, action: "reduce_slightly" },
-  danger: { min: 1.5, max: 1.8, risk: 2.0, action: "reduce_significantly" },
-  critical: { min: 1.8, max: Infinity, risk: 4.2, action: "rest" },
-};
+// ACWR risk zones (with injury-risk multipliers) — canonical, from utils/acwr.js.
+const ACWR_ZONES = ACWR_RISK_ZONES;
 
 /**
  * Injury severity impact on training

@@ -5,7 +5,7 @@ import { guardMerlinRequest } from "./utils/merlin-guard.js";
 import { detectPainTrigger, detectACWRTrigger } from "./utils/safety-override.js";
 import { requireAuthorization, logViolation } from "./utils/authorization-guard.js";
 import { parseJsonObjectBody } from "./utils/input-validator.js";
-import { computeAcwrAt } from "./utils/acwr.js";
+import { computeAcwrAt, computeSessionLoad } from "./utils/acwr.js";
 
 /**
  * Netlify Function: Daily Training
@@ -264,7 +264,7 @@ function calculateACWR(sessions) {
     dangerHigh: 1.5,
   };
 
-  // Canonical session load: workload column, else session-RPE (rpe × minutes).
+  // Canonical session load (utils/acwr.js): workload, else rpe × minutes.
   // Sessions without a real load are excluded — never defaulted.
   const dailyLoads = new Map();
   for (const session of sessions || []) {
@@ -273,15 +273,7 @@ function calculateACWR(sessions) {
       continue;
     }
     const dayKey = String(rawDate).split("T")[0];
-    let load = Number(session.workload);
-    if (!Number.isFinite(load) || load <= 0) {
-      const rpe = Number(session.rpe);
-      const minutes = Number(session.duration_minutes);
-      load =
-        Number.isFinite(rpe) && rpe > 0 && Number.isFinite(minutes) && minutes > 0
-          ? rpe * minutes
-          : 0;
-    }
+    const load = computeSessionLoad(session);
     if (load > 0) {
       dailyLoads.set(dayKey, (dailyLoads.get(dayKey) || 0) + load);
     }

@@ -15,6 +15,7 @@ import { successResponse } from "./utils/response-helper.js";
 import { getUserRole } from "./utils/authorization-guard.js";
 import { hasAnyRole, LOAD_MANAGEMENT_ACCESS_ROLES } from "./utils/role-sets.js";
 import { sharesStaffedTeam } from "./utils/team-scope.js";
+import { computeSessionLoad } from "./utils/acwr.js";
 import { buildRequestLogContext, createLogger } from "./utils/structured-logger.js";
 
 function isOptionalSchemaError(error) {
@@ -42,10 +43,7 @@ function normalizeCanonicalMetricRow(row) {
     high_speed_distance: asFiniteNumber(metrics.high_speed_distance),
     sprint_count: Math.round(asFiniteNumber(metrics.sprint_count)),
     duration_minutes: asFiniteNumber(row.duration_minutes),
-    session_load: asFiniteNumber(
-      row.workload,
-      asFiniteNumber(row.rpe) * asFiniteNumber(row.duration_minutes),
-    ),
+    session_load: computeSessionLoad(row),
     data_source: metrics.data_source || "training_session",
   };
 }

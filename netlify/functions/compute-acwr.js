@@ -12,26 +12,7 @@ import { hasAnyRole, LOAD_MANAGEMENT_ACCESS_ROLES } from "./utils/role-sets.js";
 import { sharesStaffedTeam } from "./utils/team-scope.js";
 import { parseJsonObjectBody } from "./utils/input-validator.js";
 import { buildRequestLogContext, createLogger } from "./utils/structured-logger.js";
-import { computeAcwrAt } from "./utils/acwr.js";
-
-function asFiniteNumber(value, fallback = 0) {
-  const parsed = Number(value);
-  return Number.isFinite(parsed) ? parsed : fallback;
-}
-
-function computeSessionLoad(session) {
-  if (Number.isFinite(Number(session?.workload))) {
-    return asFiniteNumber(session.workload);
-  }
-
-  const rpe = asFiniteNumber(session?.rpe);
-  const durationMinutes = asFiniteNumber(session?.duration_minutes);
-  if (rpe > 0 && durationMinutes > 0) {
-    return Math.round(rpe * durationMinutes * 100) / 100;
-  }
-
-  return 0;
-}
+import { computeAcwrAt, computeSessionLoad } from "./utils/acwr.js";
 
 function formatDate(date) {
   return date.toISOString().slice(0, 10);

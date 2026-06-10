@@ -8,7 +8,11 @@ import { checkEnvVars as _checkEnvVars, supabaseAdmin } from "./supabase-client.
 import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { buildRequestLogContext, createLogger } from "./utils/structured-logger.js";
-import { computeAcwrAt } from "./utils/acwr.js";
+import {
+  computeAcwrAt,
+  computeSessionLoad,
+  classifyAcwrZone,
+} from "./utils/acwr.js";
 
 const logger = createLogger({ service: "netlify.training-plan" });
 
@@ -71,18 +75,7 @@ async function calculateACWR(userId, date, requestLogger = logger) {
       if (!session?.session_date) {
         continue;
       }
-      let load = Number(session.workload);
-      if (!Number.isFinite(load) || load <= 0) {
-        const rpe = Number(session.rpe);
-        const minutes = Number(session.duration_minutes);
-        load =
-          Number.isFinite(rpe) &&
-          rpe > 0 &&
-          Number.isFinite(minutes) &&
-          minutes > 0
-            ? rpe * minutes
-            : 0;
-      }
+      const load = computeSessionLoad(session);
       if (load > 0) {
         dailyLoads.set(
           session.session_date,
@@ -104,18 +97,7 @@ async function calculateACWR(userId, date, requestLogger = logger) {
       };
     }
 
-    let riskZone;
-    if (result.acwr < 0.8) {
-      riskZone = "detraining";
-    } else if (result.acwr <= 1.3) {
-      riskZone = "safe";
-    } else if (result.acwr <= 1.5) {
-      riskZone = "caution";
-    } else if (result.acwr < 1.8) {
-      riskZone = "danger";
-    } else {
-      riskZone = "critical";
-    }
+    const riskZone = classifyAcwrZone(result.acwr);
 
     return {
       acwr: parseFloat(result.acwr.toFixed(2)),
