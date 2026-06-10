@@ -9,6 +9,7 @@ import {
 import { RouterLink } from "@angular/router";
 import { LucideAngularModule } from "lucide-angular";
 import { AvatarComponent } from "../shared/avatar.component";
+import { SkeletonComponent } from "../shared/skeleton.component";
 
 import { ScheduleService } from "../core/services/schedule.service";
 import { PeriodizationService } from "../core/services/periodization.service";
@@ -24,7 +25,7 @@ import { LoggerService } from "../core/services/logger.service";
 @Component({
   selector: "app-gameday",
   standalone: true,
-  imports: [AvatarComponent, RouterLink, LucideAngularModule],
+  imports: [AvatarComponent, SkeletonComponent, RouterLink, LucideAngularModule],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: "./gameday.component.html",
@@ -36,6 +37,8 @@ export class GamedayComponent {
   private readonly logger = inject(LoggerService);
 
   readonly nextEvent = this.schedule.nextEvent;
+  /** Fueling timeline gates on the schedule snapshot — skeleton until resolved. */
+  readonly loading = this.schedule.loading;
   readonly rx = this.periodization.today;
   readonly weather = computed(() => this.rx()?.weatherAdjustment ?? null);
 

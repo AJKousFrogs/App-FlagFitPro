@@ -8,6 +8,7 @@ import {
 import { RouterLink } from "@angular/router";
 import { LucideAngularModule } from "lucide-angular";
 import { AvatarComponent } from "../shared/avatar.component";
+import { SkeletonComponent } from "../shared/skeleton.component";
 
 import { ReadinessService } from "../core/services/readiness.service";
 import { AcwrService } from "../core/services/acwr.service";
@@ -29,7 +30,7 @@ const clamp = (v: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, v
 @Component({
   selector: "app-stats",
   standalone: true,
-  imports: [AvatarComponent, RouterLink, LucideAngularModule],
+  imports: [AvatarComponent, SkeletonComponent, RouterLink, LucideAngularModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: "./stats.component.html",
 })
@@ -39,11 +40,23 @@ export class StatsComponent {
 
   readonly history = this.readinessSvc.history;
   readonly daysLogged = signal(0);
+  /** True until the 28-day history fetch settles — drives the readiness chart
+   * skeleton. Without it the chart falls to its "building up" empty state on
+   * mount even when data exists but hasn't arrived (a false empty). */
+  readonly loading = signal(true);
+  /** The ACWR chart's band also needs AcwrService's independent session load,
+   * so its skeleton must stay up until BOTH the history fetch and AcwrService
+   * settle — otherwise the band half flashes "building up" mid-load. */
+  readonly acwrLoading = computed(() => this.loading() || this.acwrSvc.loading());
 
   constructor() {
     // Load 28d of readiness/ACWR history (server scopes by auth).
     this.readinessSvc.getHistory("", 28).subscribe({
-      next: (h) => this.daysLogged.set(h.length),
+      next: (h) => {
+        this.daysLogged.set(h.length);
+        this.loading.set(false);
+      },
+      error: () => this.loading.set(false),
     });
   }
 

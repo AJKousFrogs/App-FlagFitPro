@@ -25,7 +25,9 @@
   </div>
 
   <div class="section-h"><h2>Earned</h2></div>
-  @if (earned().length) {
+  @if (loading()) {
+    <app-skeleton variant="rows" [rows]="3" label="earned badges" />
+  } @else if (earned().length) {
     <div class="card">
       @for (a of earned(); track a.name) {
         <div class="lrow"><span class="inline"><lucide-icon name="medal" /> {{ a.name }}</span><span class="band good">earned</span></div>
@@ -36,7 +38,9 @@
   }
 
   <div class="section-h"><h2>Next up</h2></div>
-  @if (nextUp().length) {
+  @if (loading()) {
+    <app-skeleton variant="rows" [rows]="3" label="upcoming badges" />
+  } @else if (nextUp().length) {
     <div class="card">
       @for (a of nextUp(); track a.name) {
         <div class="lrow">

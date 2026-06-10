@@ -8,6 +8,7 @@ import {
 import { RouterLink } from "@angular/router";
 import { LucideAngularModule } from "lucide-angular";
 import { AvatarComponent } from "../shared/avatar.component";
+import { SkeletonComponent } from "../shared/skeleton.component";
 
 import { ScheduleService } from "../core/services/schedule.service";
 import { ApiService } from "../core/services/api.service";
@@ -32,7 +33,7 @@ interface PendingEvent {
 @Component({
   selector: "app-competition",
   standalone: true,
-  imports: [AvatarComponent, RouterLink, LucideAngularModule],
+  imports: [AvatarComponent, SkeletonComponent, RouterLink, LucideAngularModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: "./competition.component.html",
 })
@@ -43,6 +44,8 @@ export class CompetitionComponent {
 
   readonly upcoming = this.schedule.upcoming;
   readonly nextEvent = this.schedule.nextEvent;
+  /** Upcoming list gates on the schedule snapshot — skeleton until it resolves. */
+  readonly loading = this.schedule.loading;
   readonly rest = computed(() => this.upcoming().slice(1));
 
   // post-event participation prompt

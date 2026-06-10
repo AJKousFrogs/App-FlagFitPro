@@ -25,7 +25,9 @@
   }
 
   <!-- THE ANSWER — today's prescription (server-canonical) -->
-  @if (rx(); as p) {
+  @if (loading()) {
+    <app-skeleton variant="hero" label="today's plan" />
+  } @else if (rx(); as p) {
     <div class="hero">
       <div class="row">
         <h1>{{ p.intentLabel }}</h1>

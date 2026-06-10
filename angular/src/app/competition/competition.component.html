@@ -22,7 +22,9 @@
   </div>
 
   <div class="section-h"><h2>Upcoming</h2></div>
-  @if (nextEvent(); as ev) {
+  @if (loading()) {
+    <app-skeleton variant="hero" label="upcoming competitions" />
+  } @else if (nextEvent(); as ev) {
     <div class="hero">
       <div class="row">
         <h1 class="inline"><lucide-icon name="flag" /> {{ ev.competitionShortName || ev.competitionName }}</h1>

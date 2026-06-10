@@ -8,6 +8,7 @@ import {
 import { RouterLink } from "@angular/router";
 import { LucideAngularModule } from "lucide-angular";
 import { AvatarComponent } from "../shared/avatar.component";
+import { SkeletonComponent } from "../shared/skeleton.component";
 
 import { ApiService } from "../core/services/api.service";
 import { LoggerService } from "../core/services/logger.service";
@@ -31,7 +32,7 @@ interface AchievementsData {
 @Component({
   selector: "app-achievements",
   standalone: true,
-  imports: [AvatarComponent, RouterLink, LucideAngularModule],
+  imports: [AvatarComponent, SkeletonComponent, RouterLink, LucideAngularModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: "./achievements.component.html",
 })
@@ -41,6 +42,9 @@ export class AchievementsComponent {
 
   private readonly data = signal<AchievementsData | null>(null);
   readonly streak = signal<number | null>(null);
+  /** True until the achievements list fetch settles — drives the list
+   * skeletons so the earned/next-up lists don't flash their empty states. */
+  readonly loading = signal(true);
 
   readonly earned = computed(() => (this.data()?.achievements ?? []).filter((a) => a.earned));
   readonly nextUp = computed(() =>
@@ -51,8 +55,14 @@ export class AchievementsComponent {
 
   constructor() {
     this.api.get<AchievementsData>("/api/achievements").subscribe({
-      next: (res) => this.data.set(res?.data ?? null),
-      error: (e) => this.logger.error("achievements_load_failed", e),
+      next: (res) => {
+        this.data.set(res?.data ?? null);
+        this.loading.set(false);
+      },
+      error: (e) => {
+        this.logger.error("achievements_load_failed", e);
+        this.loading.set(false);
+      },
     });
     this.api.get<{ current_streak?: number }>("/api/achievements/streaks").subscribe({
       next: (res) => this.streak.set(res?.data?.current_streak ?? null),

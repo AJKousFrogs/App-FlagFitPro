@@ -18,7 +18,9 @@
   </nav>
 
   @if (tab() === "Today") {
-    @if (rx(); as p) {
+    @if (loading()) {
+      <app-skeleton variant="hero" label="today's session" />
+    } @else if (rx(); as p) {
       <div class="hero">
         <div class="row">
           <h1>{{ p.intentLabel }}</h1>

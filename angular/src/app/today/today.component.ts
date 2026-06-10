@@ -9,6 +9,7 @@ import { RouterLink } from "@angular/router";
 import { LucideAngularModule } from "lucide-angular";
 import { AvatarComponent } from "../shared/avatar.component";
 import { YtVideoComponent } from "../shared/yt-video.component";
+import { SkeletonComponent } from "../shared/skeleton.component";
 import { SESSION_VIDEO_ID } from "../core/config/session-video.config";
 
 import { PeriodizationService } from "../core/services/periodization.service";
@@ -29,7 +30,7 @@ import { RecoveryService } from "../core/services/recovery.service";
 @Component({
   selector: "app-today",
   standalone: true,
-  imports: [AvatarComponent, YtVideoComponent, RouterLink, LucideAngularModule],
+  imports: [AvatarComponent, YtVideoComponent, SkeletonComponent, RouterLink, LucideAngularModule],
   schemas: [CUSTOM_ELEMENTS_SCHEMA], // <iconify-icon> web component (MDI food glyphs)
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: "./today.component.html",
@@ -70,6 +71,8 @@ export class TodayComponent {
 
   /** Today's prescription (engine). Null until the schedule snapshot resolves. */
   readonly rx = this.periodization.today;
+  /** Hero gates on the schedule snapshot — show a skeleton until it resolves. */
+  readonly loading = this.schedule.loading;
 
   /** "Good morning, Joao" — time-of-day greeting + the signed-in user's first name. */
   readonly greeting = computed(() => {

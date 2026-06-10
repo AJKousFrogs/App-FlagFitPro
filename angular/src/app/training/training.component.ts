@@ -10,6 +10,7 @@ import { RouterLink } from "@angular/router";
 import { LucideAngularModule } from "lucide-angular";
 import { AvatarComponent } from "../shared/avatar.component";
 import { YtVideoComponent } from "../shared/yt-video.component";
+import { SkeletonComponent } from "../shared/skeleton.component";
 import { SESSION_VIDEO_ID } from "../core/config/session-video.config";
 
 import { PeriodizationService } from "../core/services/periodization.service";
@@ -36,7 +37,7 @@ interface WeekRow {
 @Component({
   selector: "app-training",
   standalone: true,
-  imports: [AvatarComponent, YtVideoComponent, RouterLink, LucideAngularModule],
+  imports: [AvatarComponent, YtVideoComponent, SkeletonComponent, RouterLink, LucideAngularModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: "./training.component.html",
   styles: [
@@ -68,6 +69,8 @@ export class TrainingComponent {
   readonly tab = signal<(typeof this.tabs)[number]>("Today");
 
   readonly rx = this.periodization.today;
+  /** Session hero gates on the schedule snapshot — skeleton until it resolves. */
+  readonly loading = this.schedule.loading;
 
   /** Library + session video. */
   readonly videos = this.videoSvc.videos;

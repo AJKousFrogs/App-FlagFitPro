@@ -18,7 +18,9 @@
 
   <!-- Load (ACWR) -->
   <div class="section-h"><h2>Load (ACWR)</h2></div>
-  @if (acwrBand() && acwrChart(); as _) {
+  @if (acwrLoading()) {
+    <app-skeleton variant="chart" label="load trend" />
+  } @else if (acwrBand() && acwrChart(); as _) {
     <div class="hero">
       <div class="row">
         <span class="band {{ acwrBand()!.cls }}">{{ acwrBand()!.label }}</span>
@@ -47,7 +49,9 @@
 
   <!-- Readiness history -->
   <div class="section-h"><h2>Readiness history</h2></div>
-  @if (readyChart(); as chart) {
+  @if (loading()) {
+    <app-skeleton variant="chart" label="readiness history" />
+  } @else if (readyChart(); as chart) {
     <div class="card">
       <svg width="100%" height="110" viewBox="0 0 360 110" preserveAspectRatio="none"
            role="img" aria-label="Readiness history trend over recent daily check-ins, on a 0 to 100 scale with reference lines at 55 and 75.">

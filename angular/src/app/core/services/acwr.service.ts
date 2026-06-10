@@ -185,6 +185,12 @@ export class AcwrService {
   // Track the last loaded user to prevent duplicate loads
   private lastLoadedUserId: string | null = null;
 
+  /** True until the first training-session load settles (per user). Lets
+   * consumers (e.g. the Stats ACWR chart) show a skeleton instead of the
+   * "building up" empty state while sessions are still loading. */
+  private readonly _loading = signal(true);
+  readonly loading = this._loading.asReadonly();
+
   constructor() {
     // Auto-load and subscribe to workout logs when user logs in
     effect(() => {
@@ -197,12 +203,14 @@ export class AcwrService {
 
         this.logger.info("acwr_training_data_load_start", { userId });
         this.lastLoadedUserId = userId;
+        this._loading.set(true);
         this.setPlayer(userId);
         this.loadPlayerSessions(userId);
         this.subscribeToWorkoutLogs(userId);
       } else {
         this.logger.debug("acwr_session_cleanup_no_user");
         this.lastLoadedUserId = null;
+        this._loading.set(false);
         this.unsubscribeFromWorkoutLogs();
         this.clearSessions();
       }
@@ -1166,6 +1174,7 @@ export class AcwrService {
     } catch (error) {
       this.logger.error("acwr_player_sessions_load_failed", error, { userId });
     } finally {
+      this._loading.set(false);
       this.correlation.endTrace();
     }
   }

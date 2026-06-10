@@ -8,6 +8,7 @@ import {
 } from "@angular/core";
 import { LucideAngularModule } from "lucide-angular";
 
+import { SkeletonComponent } from "../shared/skeleton.component";
 import { AthleteEventsService } from "../core/services/athlete-events.service";
 import { ScheduleService } from "../core/services/schedule.service";
 import {
@@ -43,7 +44,7 @@ const KIND_DEFAULT_IMPORTANCE: Record<AthleteEventKind, AthleteEventImportance> 
 @Component({
   selector: "app-schedule",
   standalone: true,
-  imports: [LucideAngularModule],
+  imports: [LucideAngularModule, SkeletonComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <header class="topbar">
@@ -147,7 +148,11 @@ const KIND_DEFAULT_IMPORTANCE: Record<AthleteEventKind, AthleteEventImportance> 
         </p>
 
         <div class="section-h"><h2>Your events</h2></div>
-        @if (myEvents().length === 0) {
+        @if (loading() && myEvents().length === 0) {
+          <!-- skeleton only on first load — a mutation re-runs load() but the
+               existing list should stay visible, not flash back to a skeleton -->
+          <app-skeleton variant="rows" [rows]="3" label="your events" />
+        } @else if (myEvents().length === 0) {
           <div class="empty">
             <p style="margin:0 0 var(--s-3)">No events yet. Add your next camp, tournament or gameday.</p>
             <button class="btn primary" type="button" (click)="openAdd()">
@@ -248,6 +253,8 @@ export class ScheduleComponent implements OnInit {
   ];
 
   readonly myEvents = this.athleteEvents.upcoming;
+  /** "Your events" list loading state (athlete-entered events fetch). */
+  readonly loading = this.athleteEvents.loading;
   readonly teamEvents = computed<CompetitionEvent[]>(() =>
     this.scheduleSvc.upcoming().filter((e) => e.source === "team"),
   );
