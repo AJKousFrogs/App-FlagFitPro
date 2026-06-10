@@ -9,6 +9,7 @@ import {
 
 import {
   CompetitionEvent,
+  CompetitionPhase,
 } from "../models/schedule.models";
 import {
   DailyPrescription,
@@ -16,6 +17,7 @@ import {
   PeriodizationInputs,
   PrescriptionIntent,
   RecentSession,
+  RecoveryEmphasis,
   SeasonPhase,
   SeasonWindow,
   WeatherAdjustment,
@@ -684,6 +686,48 @@ function applyInjuryGuard(
 }
 
 /**
+ * How an event/season PHASE modifies a team-practice session. Day-type
+ * (practice) is resolved first; the phase is a DATA-DRIVEN modifier looked up
+ * here — the RPE/volume values are config, not control flow. The set of keys
+ * defines WHICH phases a practice day owns; phases deliberately absent
+ * (competition, recovery) are the ones practice yields to. Adding a future
+ * phase (deload, multi-game weekend) is a NEW ROW here — never a new branch.
+ */
+interface PracticePhaseModifier {
+  rpe: number;
+  minutes: number;
+  recoveryEmphasis: RecoveryEmphasis;
+  /** Intent passed to nutritionFor — must be a valid CARB_PER_KG key. */
+  nutritionIntent: PrescriptionIntent;
+  /** "sharp" = taper-style framing/reduced volume; "own" = practice is the day. */
+  framing: "own" | "sharp";
+}
+
+const PRACTICE_PHASE_MODIFIERS: Record<string, PracticePhaseModifier> = {
+  accumulation: { rpe: 7, minutes: 90, recoveryEmphasis: "low", nutritionIntent: "mixed", framing: "own" },
+  transition: { rpe: 7, minutes: 90, recoveryEmphasis: "low", nutritionIntent: "mixed", framing: "own" },
+  // Sharp practice a few days out: still a real session → fuel as 'mixed', NOT a
+  // glycogen top-up (top-up is only the final day, handled by the taper branch).
+  taper: { rpe: 6, minutes: 60, recoveryEmphasis: "medium", nutritionIntent: "mixed", framing: "sharp" },
+  // Final 48h of a taper → lighter walkthrough/activation + begin glycogen top-up.
+  taper_final: { rpe: 5, minutes: 45, recoveryEmphasis: "medium", nutritionIntent: "taper-prime", framing: "sharp" },
+};
+
+/**
+ * Resolve the practice modifier for a phase (and taper proximity). Returns null
+ * when a practice day does NOT own this phase (e.g. competition / recovery),
+ * so the caller falls through to the phase-driven defaults.
+ */
+function practiceModifierFor(
+  phase: CompetitionPhase,
+  daysOut: number | null,
+): PracticePhaseModifier | null {
+  const key =
+    phase === "taper" && daysOut !== null && daysOut <= 2 ? "taper_final" : phase;
+  return PRACTICE_PHASE_MODIFIERS[key] ?? null;
+}
+
+/**
  * The core decision. Read top-to-bottom: highest-priority overrides first
  * (game day, taper, recovery, ACWR safety), then phase/season defaults.
  */
@@ -795,47 +839,40 @@ function decideBasePrescription(inputs: PeriodizationInputs): DailyPrescription 
     });
   }
 
-  // 4.6 Team practice day → practice IS the session (you're going to practice
-  // regardless), so the plan owns it rather than prescribing a separate session
-  // on top. In a TAPER window the practice is kept SHARP, not heavy, and framed
-  // by the game proximity — it does not get replaced by a standalone sprint.
-  // COMPETITION and RECOVERY still take precedence (the game is the session; the
-  // day after a tournament stays recovery — don't prescribe a hard practice).
-  if (
-    inputs.isTeamPractice &&
-    (phase === "accumulation" || phase === "transition" || phase === "taper")
-  ) {
-    const tapering = phase === "taper";
-    const daysOut =
-      hoursUntilNext !== null ? Math.max(1, Math.ceil(hoursUntilNext / 24)) : null;
+  // 4.6 DAY TYPE = team practice. Resolved from the calendar FIRST (you're going
+  // to practice regardless), then the event/season PHASE is applied as a
+  // data-driven modifier (PRACTICE_PHASE_MODIFIERS) — the RPE/volume/fuel are
+  // config, not control flow. A null modifier means a practice day does NOT own
+  // this phase (competition / recovery) → fall through to the phase defaults
+  // (the game is the session; the day after a tournament stays recovery).
+  const practiceDaysOut =
+    hoursUntilNext !== null ? Math.max(1, Math.ceil(hoursUntilNext / 24)) : null;
+  const practiceMod = inputs.isTeamPractice
+    ? practiceModifierFor(phase, practiceDaysOut)
+    : null;
+  if (practiceMod) {
     const eventName = driverEvent
       ? (driverEvent.competitionShortName ?? driverEvent.competitionName)
       : null;
-    // Closer to the game → lighter practice (walkthrough/activation intensity).
-    const finalThird = tapering && daysOut !== null && daysOut <= 2;
     return finalize({
       date,
       phase,
       intent: "mixed",
       intentLabel: "Flag football practice",
-      targetRpe: finalThird ? 5 : tapering ? 6 : 7,
-      targetMinutes: finalThird ? 45 : tapering ? 60 : 90,
+      targetRpe: practiceMod.rpe,
+      targetMinutes: practiceMod.minutes,
       sprintReps: 0,
       strengthSets: 0,
-      reasoning: tapering
-        ? `Practice today is your session${
-            daysOut !== null
-              ? ` — ${daysOut} day${daysOut === 1 ? "" : "s"} to ${eventName ?? "your next game"}`
-              : ""
-          }. Keep it sharp, not heavy: crisp reps, full recovery, no grinding.`
-        : "Team practice today — that's your main session. Keep any extra individual work light (mobility / activation).",
-      recoveryEmphasis: tapering ? "medium" : "low",
-      nutrition: nutritionFor(
-        tapering ? "taper" : "mixed",
-        bodyweight,
-        heavyDensity,
-        hotDay,
-      ),
+      reasoning:
+        practiceMod.framing === "sharp"
+          ? `Practice today is your session${
+              practiceDaysOut !== null
+                ? ` — ${practiceDaysOut} day${practiceDaysOut === 1 ? "" : "s"} to ${eventName ?? "your next game"}`
+                : ""
+            }. Keep it sharp, not heavy: crisp reps, full recovery, no grinding.`
+          : "Team practice today — that's your main session. Keep any extra individual work light (mobility / activation).",
+      recoveryEmphasis: practiceMod.recoveryEmphasis,
+      nutrition: nutritionFor(practiceMod.nutritionIntent, bodyweight, heavyDensity, hotDay),
       driverEvent,
       hoursUntilNextEvent: hoursUntilNext,
       acwrAtIssue: acwr,
