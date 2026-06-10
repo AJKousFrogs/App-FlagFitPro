@@ -213,6 +213,22 @@ async function getCoachDashboard(userId, requestedTeamId = null) {
     const userDataMap = new Map();
     (allUserData || []).forEach((u) => userDataMap.set(u.id, u));
 
+    // Canonical readiness for today (what each athlete sees on their own Today
+    // screen), batch-read once. Preferred over the dashboard's local wellness
+    // approximation so the coach and the athlete never see different numbers.
+    const today = new Date().toISOString().slice(0, 10);
+    const { data: readinessRows } = await supabaseAdmin
+      .from("readiness_scores")
+      .select("user_id, score")
+      .in("user_id", memberUserIds)
+      .eq("day", today);
+    const canonicalReadiness = new Map();
+    (readinessRows || []).forEach((r) => {
+      if (r.score !== null && r.score !== undefined) {
+        canonicalReadiness.set(r.user_id, Math.round(Number(r.score)));
+      }
+    });
+
     // Build each squad member's overview independently and in PARALLEL.
     // Previously this was a sequential for-loop with 2 awaits per member
     // (sessions + wellness) — a 15-player squad meant ~30 serial round trips.
@@ -330,6 +346,13 @@ async function getCoachDashboard(userId, requestedTeamId = null) {
               }
               wellnessDataState = DataState.REAL_DATA;
             }
+          }
+
+          // Canonical (server-computed) readiness wins when today's score exists.
+          const canonical = canonicalReadiness.get(member.user_id);
+          if (canonical !== undefined) {
+            readiness = canonical;
+            wellnessDataState = DataState.REAL_DATA;
           }
 
           return {

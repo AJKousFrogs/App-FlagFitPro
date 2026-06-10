@@ -179,10 +179,11 @@ async function getUserContext(userId) {
       { data: games, error: gamesError },
       { data: scheduledSessions, error: scheduledError },
     ] = await Promise.all([
-      // Get user profile
+      // Get user profile — only the fields the plan builder reads (avoids
+      // pulling the whole users row incl. email/metadata).
       supabaseAdmin
         .from("users")
-        .select("*")
+        .select("id, first_name, full_name, experience_level, position")
         .eq("id", userId)
         .single(),
 
