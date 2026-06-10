@@ -840,3 +840,40 @@ describe("prescribeFor — age-scaled CNS spacing (19 vs 38)", () => {
     expect(rx.intent).toBe("sprint"); // 60h > 48h base → cleared
   });
 });
+
+// =============================================================================
+// TOURNAMENT CONGESTION — a congested single day trips heavy-density handling
+// =============================================================================
+
+describe("prescribeFor — tournament congestion (peak-day games)", () => {
+  const tuesday = new Date("2026-05-05T10:00:00Z"); // accumulation training day
+
+  it("8 games over 2 days (4/day, total 8 < 10) still triggers heavy density", () => {
+    // Heavy density adds +0.5L fluid on a training day — use that as the signal.
+    const spread = prescribeFor(
+      inputs({
+        date: tuesday,
+        bodyweightKg: 80,
+        density14d: { totalGames: 8, hasPeakImportance: false, peakDayGameCount: 1 },
+      }),
+    );
+    const congested = prescribeFor(
+      inputs({
+        date: tuesday,
+        bodyweightKg: 80,
+        density14d: { totalGames: 8, hasPeakImportance: false, peakDayGameCount: 4 },
+      }),
+    );
+    expect(congested.nutrition.hydrationL - spread.nutrition.hydrationL).toBeCloseTo(0.5, 1);
+  });
+
+  it("a non-congested low total (peak 2/day) does NOT trip heavy density", () => {
+    const a = prescribeFor(
+      inputs({ date: tuesday, bodyweightKg: 80, density14d: { totalGames: 4, hasPeakImportance: false, peakDayGameCount: 2 } }),
+    );
+    const b = prescribeFor(
+      inputs({ date: tuesday, bodyweightKg: 80, density14d: { totalGames: 4, hasPeakImportance: false, peakDayGameCount: 1 } }),
+    );
+    expect(a.nutrition.hydrationL).toBeCloseTo(b.nutrition.hydrationL, 1);
+  });
+});

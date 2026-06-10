@@ -217,6 +217,7 @@ export class PeriodizationService {
         ? {
             totalGames: snap.density14d.totalGames,
             hasPeakImportance: snap.density14d.hasPeakImportance,
+            peakDayGameCount: snap.density14d.peakDayGameCount,
           }
         : null,
       seasonPhase: macroPhaseFor(now, this.seasonCalendar()),
@@ -263,6 +264,7 @@ export class PeriodizationService {
             ? {
                 totalGames: snap.density14d.totalGames,
                 hasPeakImportance: snap.density14d.hasPeakImportance,
+                peakDayGameCount: snap.density14d.peakDayGameCount,
               }
             : null,
           seasonPhase: macroPhaseFor(date, this.seasonCalendar()),
@@ -371,6 +373,8 @@ const ACWR_ELEVATED = 1.3;
 const ACWR_UNDER = 0.8;
 const READINESS_LOW = 55;
 const DENSITY_HEAVY_GAMES_14D = 10;
+/** Games in a single day that count as a congested (tournament) day. */
+const DENSITY_CONGESTED_DAY_GAMES = 3;
 
 const INTENT_LABELS: Record<PrescriptionIntent, string> = {
   rest: "Rest day",
@@ -573,8 +577,14 @@ function decideBasePrescription(inputs: PeriodizationInputs): DailyPrescription 
   const hoursUntilNext = nextEventHours(date, upcoming);
   const bodyweight = bodyweightKg ?? FALLBACK_BODYWEIGHT_KG;
   const effectiveReadiness = readiness ?? FALLBACK_READINESS;
+  // Heavy density = a high 14-day game total OR a single congested day. A
+  // tournament of 8 games over 2 days (4/day) never reaches the 10-games/14d
+  // total, yet it is the highest-risk congestion there is — so a peak-day game
+  // count at or above DENSITY_CONGESTED_DAY_GAMES also trips it.
   const heavyDensity =
-    !!density14d && density14d.totalGames >= DENSITY_HEAVY_GAMES_14D;
+    !!density14d &&
+    (density14d.totalGames >= DENSITY_HEAVY_GAMES_14D ||
+      (density14d.peakDayGameCount ?? 0) >= DENSITY_CONGESTED_DAY_GAMES);
 
   // 1. Currently inside a competition window → game day.
   if (phase === "competition") {

@@ -180,8 +180,16 @@ export interface PeriodizationInputs {
   readiness: number | null;
   /** Athlete bodyweight in kg. Falls back to 80kg if not set. */
   bodyweightKg: number | null;
-  /** Density of upcoming load over 14 days. Used for week-scale modulation. */
-  density14d: { totalGames: number; hasPeakImportance: boolean } | null;
+  /**
+   * Density of upcoming load over 14 days. Used for week-scale modulation.
+   * `peakDayGameCount` = the most games on any single day in the window — a
+   * tournament's congested day (e.g. 4 games/day) that the 14-day total misses.
+   */
+  density14d: {
+    totalGames: number;
+    hasPeakImportance: boolean;
+    peakDayGameCount?: number;
+  } | null;
   /**
    * Macro season phase for `date` (from `macroPhaseFor` over the athlete's
    * declared `season_calendar`). Refines the generic "build" week when no
