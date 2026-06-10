@@ -62,7 +62,11 @@ export async function generateReturnToPlayProtocol(
       user_id: userId,
       protocol_date: date,
       readiness_score: Math.max(30, 50 - painLevel * 10),
-      acwr_value: 0.5,
+      // No fabrication (SOT Law 7): a hardcoded ACWR 0.5 in the most safety-
+      // sensitive flow (return-to-play) falsely signalled 'under-training'. The
+      // RTP loading is deliberately managed by phase here, not by a real ACWR —
+      // so write null ('not computed for this protocol'), never an invented value.
+      acwr_value: null,
       training_focus: `return_to_play_phase_${rtpPhase}`,
       ai_rationale: aiRationale,
       total_load_target_au: rtpPhase * 100,

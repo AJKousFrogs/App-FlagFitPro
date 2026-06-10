@@ -607,7 +607,11 @@ const handler = async (event, context) => {
       const acwrResult = computeAcwrAt(loadsByDay, targetDate);
       const acuteLoad = acwrResult.acuteLoad;
       const chronicLoad = acwrResult.chronicLoad;
-      const acwr = acwrResult.acwr ?? 0;
+      // Do NOT coerce a null ACWR to 0 (S3): a new athlete / insufficient chronic
+      // data correctly returns null, and 0 would (a) fire the <0.7 undertraining
+      // penalty and (b) trip the acwr<0.8 safety override on day one — both false.
+      const acwr = acwrResult.acwr;
+      const hasAcwr = isFiniteNumber(acwr);
 
       // 2) Get wellness log for the day
       requestLogger.debug("readiness_wellness_fetch_started", {
@@ -690,15 +694,19 @@ const handler = async (event, context) => {
 
       // Workload score (ACWR-based)
       // Literature flags >1.5 as high risk, ~0.8-1.3 safer range (Gabbett 2016)
+      // Only score workload when ACWR is known; when null its weight is
+      // redistributed below (so an unknown load never penalises or flatters).
       let workloadScore = 100;
-      if (acwr > 1.8) {
-        workloadScore -= 40;
-      } else if (acwr > 1.5) {
-        workloadScore -= 30;
-      } else if (acwr > 1.3) {
-        workloadScore -= 15;
-      } else if (acwr < 0.7) {
-        workloadScore -= 10;
+      if (hasAcwr) {
+        if (acwr > 1.8) {
+          workloadScore -= 40;
+        } else if (acwr > 1.5) {
+          workloadScore -= 30;
+        } else if (acwr > 1.3) {
+          workloadScore -= 15;
+        } else if (acwr < 0.7) {
+          workloadScore -= 10;
+        }
       }
 
       // Wellness Index score (using calculated subscore)
@@ -746,6 +754,19 @@ const handler = async (event, context) => {
       let wellnessWeight = 0.3; // Increased from 0.25
       let sleepWeight = 0.2; // Maintained (strong evidence)
       let proximityWeight = 0.15; // Maintained
+
+      // No ACWR yet (new athlete / insufficient chronic data): drop the workload
+      // component and redistribute its weight proportionally to the others, so the
+      // composite reflects only what's actually known (mirrors the reduced-data
+      // path). Without this, a null ACWR scored as 100×0.35 silently inflates the
+      // result for an athlete we know nothing about.
+      if (!hasAcwr) {
+        const others = wellnessWeight + sleepWeight + proximityWeight;
+        wellnessWeight += workloadWeight * (wellnessWeight / others);
+        sleepWeight += workloadWeight * (sleepWeight / others);
+        proximityWeight += workloadWeight * (proximityWeight / others);
+        workloadWeight = 0;
+      }
 
       // Reduced data mode: Increase sleep weight when wellness completeness is low
       // Sleep can proxy broader wellness when resources are limited (Saw et al. 2016)
@@ -804,7 +825,7 @@ const handler = async (event, context) => {
         score,
         level,
         suggestion,
-        acwr: Math.round(acwr * 100) / 100,
+        acwr: hasAcwr ? Math.round(acwr * 100) / 100 : null,
         acute_load: Math.round(acuteLoad * 100) / 100,
         chronic_load: Math.round(chronicLoad * 100) / 100,
         workload_score: workloadScore,
@@ -833,8 +854,9 @@ const handler = async (event, context) => {
         });
       }
 
-      // Safety override: Check ACWR danger zone
-      if (acwr > 1.5 || acwr < 0.8) {
+      // Safety override: Check ACWR danger zone — only when ACWR is actually
+      // known (a null ACWR must not fire a false override on a data-less day).
+      if (hasAcwr && (acwr > 1.5 || acwr < 0.8)) {
         requestLogger.info("readiness_acwr_danger_zone_detected", {
           athlete_id: athleteId,
           acwr,
