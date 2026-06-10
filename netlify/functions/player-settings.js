@@ -411,9 +411,6 @@ async function getSettings(supabase, userId) {
         availabilitySchedule: config.flag_practice_schedule || [], // Keep DB field name for now
         availabilityDisclaimer:
           "Availability does not schedule practice. Coaches schedule team activities.",
-        preferredTrainingDays: coercePreferredTrainingDaysArray(
-          config.preferred_training_days,
-        ) ?? [1, 2, 4, 5, 6],
         teamTrainingDays: normalizeTeamTrainingDays(config.team_training_days),
         dailyRoutine: sanitizeDailyRoutine(config.daily_routine),
         maxSessionsPerWeek: config.max_sessions_per_week || 5,
@@ -492,7 +489,9 @@ async function saveSettings(supabase, userId, payload, log = logger) {
         secondary_position: secondaryPosition || null,
         birth_date: birthDate || null,
         flag_practice_schedule: flagPracticeSchedule || [],
-        preferred_training_days: preferredTrainingDays || [1, 2, 4, 5, 6],
+        // preferred_training_days: DEPRECATED legacy field — superseded by
+        // team_training_days; no engine reads it. Stopped writing ahead of the
+        // rename migration (I6). The input is still accepted/validated but ignored.
         daily_routine: sanitizeDailyRoutine(dailyRoutine),
         max_sessions_per_week: maxSessionsPerWeek ?? 5,
         has_gym_access: hasGymAccess !== false,
@@ -578,7 +577,6 @@ async function saveSettings(supabase, userId, payload, log = logger) {
         availabilitySchedule: config.flag_practice_schedule, // PROMPT 2.11: Renamed
         availabilityDisclaimer:
           "Availability does not schedule practice. Coaches schedule team activities.",
-        preferredTrainingDays: config.preferred_training_days,
         teamTrainingDays: normalizeTeamTrainingDays(config.team_training_days),
         dailyRoutine: sanitizeDailyRoutine(config.daily_routine),
         maxSessionsPerWeek: config.max_sessions_per_week,
