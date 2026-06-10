@@ -877,3 +877,17 @@ describe("prescribeFor — tournament congestion (peak-day games)", () => {
     expect(a.nutrition.hydrationL).toBeCloseTo(b.nutrition.hydrationL, 1);
   });
 });
+
+// =============================================================================
+// HEAT FLUID — a hot day adds fluid (the documented-but-unimplemented bonus)
+// =============================================================================
+
+describe("prescribeFor — heat adds fluid", () => {
+  const tuesday = new Date("2026-05-05T10:00:00Z");
+
+  it("apparent ≥ 28°C adds +0.5L over a cool day", () => {
+    const cool = prescribeFor(inputs({ date: tuesday, bodyweightKg: 80, weather: weather({ apparentC: 18 }) }));
+    const hot = prescribeFor(inputs({ date: tuesday, bodyweightKg: 80, weather: weather({ apparentC: 30, tempC: 30 }) }));
+    expect(hot.nutrition.hydrationL - cool.nutrition.hydrationL).toBeCloseTo(0.5, 1);
+  });
+});

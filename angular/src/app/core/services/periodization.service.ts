@@ -585,6 +585,10 @@ function decideBasePrescription(inputs: PeriodizationInputs): DailyPrescription 
     !!density14d &&
     (density14d.totalGames >= DENSITY_HEAVY_GAMES_14D ||
       (density14d.peakDayGameCount ?? 0) >= DENSITY_CONGESTED_DAY_GAMES);
+  // Hot day → higher sweat/fluid need. Uses the same heat threshold the weather
+  // guard does (apparent ≥ 28°C). Adds fluid to the nutrition target.
+  const apparentTemp = inputs.weather?.apparentC ?? inputs.weather?.tempC ?? null;
+  const hotDay = typeof apparentTemp === "number" && apparentTemp >= HEAT_CAUTION_C;
 
   // 1. Currently inside a competition window → game day.
   if (phase === "competition") {
@@ -599,7 +603,7 @@ function decideBasePrescription(inputs: PeriodizationInputs): DailyPrescription 
       reasoning:
         "Game day. Activate, play, refuel between games, sleep tonight.",
       recoveryEmphasis: "critical",
-      nutrition: nutritionFor("competition", bodyweight, heavyDensity),
+      nutrition: nutritionFor("competition", bodyweight, heavyDensity, hotDay),
       driverEvent,
       hoursUntilNextEvent: hoursUntilNext,
       acwrAtIssue: acwr,
@@ -619,7 +623,7 @@ function decideBasePrescription(inputs: PeriodizationInputs): DailyPrescription 
       reasoning:
         "Game inside 24 hours. Stay loose and primed — no new fatigue.",
       recoveryEmphasis: "high",
-      nutrition: nutritionFor("taper-prime", bodyweight, heavyDensity),
+      nutrition: nutritionFor("taper-prime", bodyweight, heavyDensity, hotDay),
       driverEvent,
       hoursUntilNextEvent: hoursUntilNext,
       acwrAtIssue: acwr,
@@ -638,7 +642,7 @@ function decideBasePrescription(inputs: PeriodizationInputs): DailyPrescription 
       strengthSets: 0,
       reasoning: `ACWR ${acwr.toFixed(2)} is in the danger zone. Full rest today.`,
       recoveryEmphasis: "critical",
-      nutrition: nutritionFor("rest", bodyweight, heavyDensity),
+      nutrition: nutritionFor("rest", bodyweight, heavyDensity, hotDay),
       driverEvent,
       hoursUntilNextEvent: hoursUntilNext,
       acwrAtIssue: acwr,
@@ -657,7 +661,7 @@ function decideBasePrescription(inputs: PeriodizationInputs): DailyPrescription 
       strengthSets: 0,
       reasoning: `Readiness ${Math.round(effectiveReadiness)}/100 is low. Active recovery only.`,
       recoveryEmphasis: "high",
-      nutrition: nutritionFor("recovery", bodyweight, heavyDensity),
+      nutrition: nutritionFor("recovery", bodyweight, heavyDensity, hotDay),
       driverEvent,
       hoursUntilNextEvent: hoursUntilNext,
       acwrAtIssue: acwr,
@@ -682,7 +686,7 @@ function decideBasePrescription(inputs: PeriodizationInputs): DailyPrescription 
       reasoning:
         "Team practice today — that's your main session. Keep any extra individual work light (mobility / activation).",
       recoveryEmphasis: "low",
-      nutrition: nutritionFor("mixed", bodyweight, heavyDensity),
+      nutrition: nutritionFor("mixed", bodyweight, heavyDensity, hotDay),
       driverEvent,
       hoursUntilNextEvent: hoursUntilNext,
       acwrAtIssue: acwr,
@@ -703,7 +707,7 @@ function decideBasePrescription(inputs: PeriodizationInputs): DailyPrescription 
         strengthSets: 0,
         reasoning: postEventReasoning(lastEvent),
         recoveryEmphasis: "high",
-        nutrition: nutritionFor("recovery", bodyweight, heavyDensity),
+        nutrition: nutritionFor("recovery", bodyweight, heavyDensity, hotDay),
         driverEvent,
         hoursUntilNextEvent: hoursUntilNext,
         acwrAtIssue: acwr,
@@ -726,7 +730,7 @@ function decideBasePrescription(inputs: PeriodizationInputs): DailyPrescription 
         strengthSets: 0,
         reasoning: taperReasoning(driverEvent, dayOfTaper),
         recoveryEmphasis: "medium",
-        nutrition: nutritionFor("taper", bodyweight, heavyDensity),
+        nutrition: nutritionFor("taper", bodyweight, heavyDensity, hotDay),
         driverEvent,
         hoursUntilNextEvent: hoursUntilNext,
         acwrAtIssue: acwr,
@@ -770,7 +774,7 @@ function decideBasePrescription(inputs: PeriodizationInputs): DailyPrescription 
           strengthSets: t.strengthSets,
           reasoning: seasonReasoning(seasonPhase, intent),
           recoveryEmphasis: heavyDensity ? "medium" : "low",
-          nutrition: nutritionFor(intent, bodyweight, heavyDensity),
+          nutrition: nutritionFor(intent, bodyweight, heavyDensity, hotDay),
           driverEvent,
           hoursUntilNextEvent: hoursUntilNext,
           acwrAtIssue: acwr,
@@ -790,7 +794,7 @@ function decideBasePrescription(inputs: PeriodizationInputs): DailyPrescription 
         strengthSets: intent === "strength" ? 18 : intent === "mixed" ? 8 : 0,
         reasoning: accumulationReasoning(intent, acwr, heavyDensity),
         recoveryEmphasis: heavyDensity ? "medium" : "low",
-        nutrition: nutritionFor(intent, bodyweight, heavyDensity),
+        nutrition: nutritionFor(intent, bodyweight, heavyDensity, hotDay),
         driverEvent,
         hoursUntilNextEvent: hoursUntilNext,
         acwrAtIssue: acwr,
@@ -1276,6 +1280,7 @@ function nutritionFor(
   intent: PrescriptionIntent | "taper" | "transition",
   bodyweightKg: number,
   heavyDensity: boolean,
+  hotDay = false,
 ): NutritionTargets {
   // Map non-Intent labels onto a real bucket
   const key: PrescriptionIntent =
@@ -1292,6 +1297,11 @@ function nutritionFor(
     hydrationL += FLUID_COMPETITION_BONUS_L;
   }
   if (heavyDensity && key !== "rest") {
+    hydrationL += 0.5;
+  }
+  // Heat raises sweat losses — add fluid on a hot day (the comment above
+  // promised this; it was previously never applied). Independent of density.
+  if (hotDay && key !== "rest") {
     hydrationL += 0.5;
   }
 
