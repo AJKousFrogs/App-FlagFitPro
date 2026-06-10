@@ -2,7 +2,8 @@ import { checkEnvVars, supabaseAdmin } from "./supabase-client.js";
 import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
 import { parseAthleteId } from "./utils/db-query-helper.js";
 import { baseHandler } from "./utils/base-handler.js";
-import { hasAnyRole, COACH_ROUTE_ROLES } from "./utils/role-sets.js";
+import { COACH_ROUTE_ROLES } from "./utils/role-sets.js";
+import { sharesStaffedTeam } from "./utils/team-scope.js";
 
 // Netlify Function: Player Statistics API
 // Centralized endpoint for aggregating player statistics across all games
@@ -456,28 +457,22 @@ const handler = async (event, context) => {
 
       const playerId = queryParams.playerId || athleteId;
 
-      // P0-013: IDOR Protection - Verify user can access this player's stats
+      // IDOR protection — a coach may view a player's stats ONLY if they share a
+      // staffed team with that player. The previous check accepted ANY coach role
+      // on ANY team (requester-only), letting any coach read any athlete's
+      // performance data (cross-team exposure / GDPR). sharesStaffedTeam intersects
+      // the requester's staffed teams with the target athlete's active memberships.
       if (playerId !== userId) {
-        // Check if requesting user is a coach with consent
-        const { data: teamMember } = await supabaseAdmin
-          .from("team_members")
-          .select("role")
-          .eq("user_id", userId)
-          .eq("status", "active")
-          .maybeSingle();
-
-        const isCoach = hasAnyRole(teamMember?.role, COACH_ROUTE_ROLES);
-
-        if (!isCoach) {
+        const { shared } = await sharesStaffedTeam(userId, playerId, {
+          roles: COACH_ROUTE_ROLES,
+        });
+        if (!shared) {
           return createErrorResponse(
-            "You can only view your own stats",
+            "You can only view stats for athletes on a team you staff",
             403,
             "authorization_denied",
           );
         }
-
-        // player_stats_consent is not a live table; the consent gate is removed.
-        // Coaches are allowed to view player stats.
       }
 
       if (!playerId) {
