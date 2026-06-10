@@ -1046,3 +1046,44 @@ describe("prescribeFor — position worst-case volume targets", () => {
     expect(v?.targets.length).toBeGreaterThan(0);
   });
 });
+
+// =============================================================================
+// TEAM PRACTICE DAY — practice is the session, even inside a game taper
+// (regression: a declared practice day was being overridden by a sprint taper)
+// =============================================================================
+
+describe("prescribeFor — team practice day", () => {
+  const wed = new Date("2026-05-06T10:00:00Z");
+
+  it("accumulation: a practice day is the session (light extra work)", () => {
+    const rx = prescribeFor(inputs({ date: wed, phase: "accumulation", isTeamPractice: true }));
+    expect(rx.intentLabel).toBe("Flag football practice");
+    expect(rx.reasoning).toMatch(/practice/i);
+  });
+
+  it("TAPER: a practice day stays practice, kept sharp — NOT replaced by a standalone sprint", () => {
+    const rx = prescribeFor(
+      inputs({
+        date: wed,
+        phase: "taper",
+        isTeamPractice: true,
+        upcoming: [event({ startsAt: "2026-05-09T08:00:00Z" })], // ~3 days out
+      }),
+    );
+    expect(rx.intentLabel).toBe("Flag football practice");
+    expect(rx.reasoning).toMatch(/sharp, not heavy/i);
+    expect(rx.targetRpe).toBeLessThan(7); // tapered, not a full practice
+  });
+
+  it("without a declared practice day, the taper is the normal sharp sprint", () => {
+    const rx = prescribeFor(
+      inputs({
+        date: wed,
+        phase: "taper",
+        isTeamPractice: false,
+        upcoming: [event({ startsAt: "2026-05-09T08:00:00Z" })],
+      }),
+    );
+    expect(rx.intentLabel).not.toBe("Flag football practice");
+  });
+});

@@ -795,25 +795,47 @@ function decideBasePrescription(inputs: PeriodizationInputs): DailyPrescription 
     });
   }
 
-  // 4.6 Team practice day → practice IS the session; prescribe only light
-  // complementary work. Applies only when no event micro-phase owns the day
-  // (accumulation / transition). Competition / taper / recovery and the safety
-  // guards above take precedence (so e.g. the Monday after a tournament stays
-  // recovery, not practice).
-  if (inputs.isTeamPractice && (phase === "accumulation" || phase === "transition")) {
+  // 4.6 Team practice day → practice IS the session (you're going to practice
+  // regardless), so the plan owns it rather than prescribing a separate session
+  // on top. In a TAPER window the practice is kept SHARP, not heavy, and framed
+  // by the game proximity — it does not get replaced by a standalone sprint.
+  // COMPETITION and RECOVERY still take precedence (the game is the session; the
+  // day after a tournament stays recovery — don't prescribe a hard practice).
+  if (
+    inputs.isTeamPractice &&
+    (phase === "accumulation" || phase === "transition" || phase === "taper")
+  ) {
+    const tapering = phase === "taper";
+    const daysOut =
+      hoursUntilNext !== null ? Math.max(1, Math.ceil(hoursUntilNext / 24)) : null;
+    const eventName = driverEvent
+      ? (driverEvent.competitionShortName ?? driverEvent.competitionName)
+      : null;
+    // Closer to the game → lighter practice (walkthrough/activation intensity).
+    const finalThird = tapering && daysOut !== null && daysOut <= 2;
     return finalize({
       date,
       phase,
       intent: "mixed",
       intentLabel: "Flag football practice",
-      targetRpe: 7,
-      targetMinutes: 90,
+      targetRpe: finalThird ? 5 : tapering ? 6 : 7,
+      targetMinutes: finalThird ? 45 : tapering ? 60 : 90,
       sprintReps: 0,
       strengthSets: 0,
-      reasoning:
-        "Team practice today — that's your main session. Keep any extra individual work light (mobility / activation).",
-      recoveryEmphasis: "low",
-      nutrition: nutritionFor("mixed", bodyweight, heavyDensity, hotDay),
+      reasoning: tapering
+        ? `Practice today is your session${
+            daysOut !== null
+              ? ` — ${daysOut} day${daysOut === 1 ? "" : "s"} to ${eventName ?? "your next game"}`
+              : ""
+          }. Keep it sharp, not heavy: crisp reps, full recovery, no grinding.`
+        : "Team practice today — that's your main session. Keep any extra individual work light (mobility / activation).",
+      recoveryEmphasis: tapering ? "medium" : "low",
+      nutrition: nutritionFor(
+        tapering ? "taper" : "mixed",
+        bodyweight,
+        heavyDensity,
+        hotDay,
+      ),
       driverEvent,
       hoursUntilNextEvent: hoursUntilNext,
       acwrAtIssue: acwr,
