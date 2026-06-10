@@ -1087,3 +1087,27 @@ describe("prescribeFor — team practice day", () => {
     expect(rx.intentLabel).not.toBe("Flag football practice");
   });
 });
+
+// =============================================================================
+// FINDING 1.1 — a practice day on a post-game RECOVERY phase is honoured at
+// recovery intensity, not silently dropped to a generic recovery session.
+// =============================================================================
+
+describe("prescribeFor — practice day on a recovery phase (finding 1.1)", () => {
+  const mon = new Date("2026-05-04T10:00:00Z");
+
+  it("honours the practice (label) at recovery intensity instead of dropping it", () => {
+    const rx = prescribeFor(inputs({ date: mon, phase: "recovery", isTeamPractice: true }));
+    expect(rx.intentLabel).toBe("Flag football practice");
+    expect(rx.intent).toBe("recovery");
+    expect(rx.targetRpe).toBe(3); // same intensity as the recovery default — safe
+    expect(rx.reasoning).toMatch(/recovery/i);
+    expect(rx.reasoning).toMatch(/practice/i);
+  });
+
+  it("without a declared practice, a recovery phase still emits the generic recovery session", () => {
+    const rx = prescribeFor(inputs({ date: mon, phase: "recovery", isTeamPractice: false }));
+    expect(rx.intentLabel).not.toBe("Flag football practice");
+    expect(rx.intent).toBe("recovery");
+  });
+});

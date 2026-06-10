@@ -694,23 +694,32 @@ function applyInjuryGuard(
  * phase (deload, multi-game weekend) is a NEW ROW here — never a new branch.
  */
 interface PracticePhaseModifier {
+  /** Session intent the practice is logged as (e.g. "mixed", or "recovery" on a
+   * post-game day). Data-driven so a new phase row sets it without code changes. */
+  intent: PrescriptionIntent;
   rpe: number;
   minutes: number;
   recoveryEmphasis: RecoveryEmphasis;
   /** Intent passed to nutritionFor — must be a valid CARB_PER_KG key. */
   nutritionIntent: PrescriptionIntent;
-  /** "sharp" = taper-style framing/reduced volume; "own" = practice is the day. */
-  framing: "own" | "sharp";
+  /** "own" = practice is the day; "sharp" = taper-style; "recovery" = post-game. */
+  framing: "own" | "sharp" | "recovery";
 }
 
 const PRACTICE_PHASE_MODIFIERS: Record<string, PracticePhaseModifier> = {
-  accumulation: { rpe: 7, minutes: 90, recoveryEmphasis: "low", nutritionIntent: "mixed", framing: "own" },
-  transition: { rpe: 7, minutes: 90, recoveryEmphasis: "low", nutritionIntent: "mixed", framing: "own" },
+  accumulation: { intent: "mixed", rpe: 7, minutes: 90, recoveryEmphasis: "low", nutritionIntent: "mixed", framing: "own" },
+  transition: { intent: "mixed", rpe: 7, minutes: 90, recoveryEmphasis: "low", nutritionIntent: "mixed", framing: "own" },
   // Sharp practice a few days out: still a real session → fuel as 'mixed', NOT a
   // glycogen top-up (top-up is only the final day, handled by the taper branch).
-  taper: { rpe: 6, minutes: 60, recoveryEmphasis: "medium", nutritionIntent: "mixed", framing: "sharp" },
+  taper: { intent: "mixed", rpe: 6, minutes: 60, recoveryEmphasis: "medium", nutritionIntent: "mixed", framing: "sharp" },
   // Final 48h of a taper → lighter walkthrough/activation + begin glycogen top-up.
-  taper_final: { rpe: 5, minutes: 45, recoveryEmphasis: "medium", nutritionIntent: "taper-prime", framing: "sharp" },
+  taper_final: { intent: "mixed", rpe: 5, minutes: 45, recoveryEmphasis: "medium", nutritionIntent: "taper-prime", framing: "sharp" },
+  // Post-tournament recovery day that is ALSO a declared practice day: honour the
+  // practice (the athlete is going) but at recovery intensity — the calendar fact
+  // is modified by the recovery context, not discarded (audit finding 1.1). Same
+  // RPE3/30min as the recovery default, so intensity is unchanged; only the label
+  // and framing now acknowledge the practice.
+  recovery: { intent: "recovery", rpe: 3, minutes: 30, recoveryEmphasis: "high", nutritionIntent: "recovery", framing: "recovery" },
 };
 
 /**
@@ -865,8 +874,7 @@ function decideBasePrescription(inputs: PeriodizationInputs): DailyPrescription 
   // to practice regardless), then the event/season PHASE is applied as a
   // data-driven modifier (PRACTICE_PHASE_MODIFIERS) — the RPE/volume/fuel are
   // config, not control flow. A null modifier means a practice day does NOT own
-  // this phase (competition / recovery) → fall through to the phase defaults
-  // (the game is the session; the day after a tournament stays recovery).
+  // this phase (only competition now — the game is the session) → fall through.
   const practiceDaysOut =
     hoursUntilNext !== null ? Math.max(1, Math.ceil(hoursUntilNext / 24)) : null;
   const practiceMod = inputs.isTeamPractice
@@ -876,23 +884,26 @@ function decideBasePrescription(inputs: PeriodizationInputs): DailyPrescription 
     const eventName = driverEvent
       ? (driverEvent.competitionShortName ?? driverEvent.competitionName)
       : null;
-    return finalize({
-      date,
-      phase,
-      intent: "mixed",
-      intentLabel: "Flag football practice",
-      targetRpe: practiceMod.rpe,
-      targetMinutes: practiceMod.minutes,
-      sprintReps: 0,
-      strengthSets: 0,
-      reasoning:
-        practiceMod.framing === "sharp"
+    const practiceReasoning =
+      practiceMod.framing === "recovery"
+        ? "Practice today, but you're in post-game recovery — keep it very light: active recovery and mobility only, no hard reps."
+        : practiceMod.framing === "sharp"
           ? `Practice today is your session${
               practiceDaysOut !== null
                 ? ` — ${practiceDaysOut} day${practiceDaysOut === 1 ? "" : "s"} to ${eventName ?? "your next game"}`
                 : ""
             }. Keep it sharp, not heavy: crisp reps, full recovery, no grinding.`
-          : "Team practice today — that's your main session. Keep any extra individual work light (mobility / activation).",
+          : "Team practice today — that's your main session. Keep any extra individual work light (mobility / activation).";
+    return finalize({
+      date,
+      phase,
+      intent: practiceMod.intent,
+      intentLabel: "Flag football practice",
+      targetRpe: practiceMod.rpe,
+      targetMinutes: practiceMod.minutes,
+      sprintReps: 0,
+      strengthSets: 0,
+      reasoning: practiceReasoning,
       recoveryEmphasis: practiceMod.recoveryEmphasis,
       nutrition: nutritionFor(practiceMod.nutritionIntent, bodyweight, heavyDensity, hotDay),
       driverEvent,
