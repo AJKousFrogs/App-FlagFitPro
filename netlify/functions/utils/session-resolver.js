@@ -5,6 +5,7 @@ import {
   getIsoDayOfWeek,
   parseIsoDateString,
 } from "./date-utils.js";
+import { getActiveInjuries, injuriesPainLevel } from "./active-injuries.js";
 
 /**
  * Deterministic Session Resolver
@@ -276,30 +277,26 @@ function buildBaselineProgramResolution(metadata, reason, extraMetadata = {}) {
 async function checkSportLayerOverrides(supabase, userId, date, dayOfWeek) {
   const targetDate = parseIsoDateString(date);
 
-  // Override 1: Active injury/rehab protocol (blocks all other training)
-  const { data: wellnessCheckin } = await supabase
-    .from("daily_wellness_checkin")
-    .select("*")
-    .eq("user_id", userId)
-    .lte("checkin_date", date)
-    .order("checkin_date", { ascending: false })
-    .limit(1)
-    .maybeSingle();
+  // Override 1: Active injury/rehab protocol (blocks all other training).
+  // Authority is athlete_injuries (severity + expiry), NOT the raw soreness_areas
+  // slider — that locked athletes in rehab off a stale tag and let real injuries
+  // be bypassed by one clean check-in (S7).
+  const activeInjuries = await getActiveInjuries(userId, date, {
+    client: supabase,
+  });
 
-  const hasActiveInjuries =
-    wellnessCheckin?.soreness_areas &&
-    wellnessCheckin.soreness_areas.length > 0;
-
-  if (hasActiveInjuries) {
+  if (activeInjuries.length > 0) {
+    const regions = activeInjuries
+      .map((i) => i.injury_location)
+      .filter(Boolean);
     return {
       type: "rehab_protocol",
-      reason: `Active injury protocol: ${wellnessCheckin.soreness_areas.join(", ")}`,
+      reason: `Active injury protocol: ${regions.join(", ")}`,
       replaceSession: true,
       sessionModification: {
         type: "return_to_play",
-        painLevel: wellnessCheckin.pain_level || 2,
-        injuries: wellnessCheckin.soreness_areas,
-        overallSoreness: wellnessCheckin.overall_soreness,
+        painLevel: injuriesPainLevel(activeInjuries),
+        injuries: regions,
       },
     };
   }

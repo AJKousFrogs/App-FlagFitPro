@@ -22,6 +22,8 @@
  * @param {string} dateLocal - ISO date string (YYYY-MM-DD) in athlete's local timezone
  * @returns {Promise<Object>} Resolution result
  */
+import { getActiveInjuries } from "./active-injuries.js";
+
 async function resolveTeamActivityForAthleteDay(
   supabase,
   athleteId,
@@ -75,25 +77,18 @@ async function resolveTeamActivityForAthleteDay(
     audit.steps.push({ step: "team_lookup", result: "found", teamIds });
   }
 
-  // Step 2: Check for active rehab protocol (PRIORITY 1)
-  const { data: wellnessCheckin } = await supabase
-    .from("daily_wellness_checkin")
-    .select("soreness_areas, muscle_soreness")
-    .eq("user_id", athleteId)
-    .lte("checkin_date", dateLocal)
-    .order("checkin_date", { ascending: false })
-    .limit(1)
-    .maybeSingle();
-
-  const hasActiveRehab =
-    wellnessCheckin?.soreness_areas &&
-    wellnessCheckin.soreness_areas.length > 0;
+  // Step 2: Check for active rehab protocol (PRIORITY 1). Authority is
+  // athlete_injuries (severity + expiry), not the raw soreness_areas slider (S7).
+  const activeInjuries = await getActiveInjuries(athleteId, dateLocal, {
+    client: supabase,
+  });
+  const hasActiveRehab = activeInjuries.length > 0;
 
   if (hasActiveRehab) {
     audit.steps.push({
       step: "rehab_check",
       result: "active_rehab",
-      injuries: wellnessCheckin.soreness_areas,
+      injuries: activeInjuries.map((i) => i.injury_location).filter(Boolean),
     });
   } else {
     audit.steps.push({ step: "rehab_check", result: "no_rehab" });
