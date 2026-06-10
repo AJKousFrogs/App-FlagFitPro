@@ -1009,3 +1009,40 @@ describe("prescribeFor — throwing restriction overrides QB/center emphasis", (
     expect(rx.positionEmphasis?.note).toMatch(/snapping/i);
   });
 });
+
+// =============================================================================
+// POSITION VOLUME — worst-case demands surfaced from the tunable reference
+// =============================================================================
+
+describe("prescribeFor — position worst-case volume targets", () => {
+  const tuesday = new Date("2026-05-05T10:00:00Z");
+
+  it("QB shows the throws/session worst case", () => {
+    const v = prescribeFor(inputs({ date: tuesday, position: "qb" })).positionEmphasis?.volume;
+    expect(v?.targets.join(" ")).toMatch(/throws\/session/);
+    expect(v?.worstCase).toMatch(/throw/i);
+  });
+
+  it("WR/DB shows catches/week, backpedals and sprints/game", () => {
+    const v = prescribeFor(inputs({ date: tuesday, position: "wr_db" })).positionEmphasis?.volume;
+    const s = v?.targets.join(" ") ?? "";
+    expect(s).toMatch(/catches\/week/);
+    expect(s).toMatch(/backpedals/);
+    expect(s).toMatch(/sprints\/game/);
+  });
+
+  it("center shows snaps/session + catches + sprints", () => {
+    const v = prescribeFor(inputs({ date: tuesday, position: "center_rusher" })).positionEmphasis?.volume;
+    const s = v?.targets.join(" ") ?? "";
+    expect(s).toMatch(/snaps\/session/);
+    expect(s).toMatch(/sprints\/game/);
+  });
+
+  it("volume still shows when the arm is injury-restricted (awareness)", () => {
+    const v = prescribeFor(inputs({
+      date: tuesday, position: "qb",
+      activeRestrictions: { restrictsSprint: false, restrictsThrowing: true, severity: "moderate", regions: ["shoulder"] },
+    })).positionEmphasis?.volume;
+    expect(v?.targets.length).toBeGreaterThan(0);
+  });
+});

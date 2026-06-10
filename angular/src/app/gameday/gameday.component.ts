@@ -15,6 +15,7 @@ import { ScheduleService } from "../core/services/schedule.service";
 import { PeriodizationService } from "../core/services/periodization.service";
 import { ApiService } from "../core/services/api.service";
 import { LoggerService } from "../core/services/logger.service";
+import { TOURNAMENT_DAY } from "../core/config/position-volume.config";
 
 /**
  * Game day — go-time card + heat guard + fueling timeline + hydration. Ported 1:1
@@ -41,6 +42,11 @@ export class GamedayComponent {
   readonly loading = this.schedule.loading;
   readonly rx = this.periodization.today;
   readonly weather = computed(() => this.rx()?.weatherAdjustment ?? null);
+  /** Re-warm-before-every-game protocol — a multi-game tournament day stacks
+   * games (08:00 / 11:30 / 13:00 / 15:00 / 16:00 / 19:00), each needing its own
+   * warm-up. Shown when the day carries more than one game. */
+  readonly multiGame = computed(() => (this.nextEvent()?.expectedGameCount ?? 0) > 1);
+  readonly warmupNote = TOURNAMENT_DAY.note;
 
   /**
    * Pick the conditions icon + band from the actual adjustment, not a fixed sun —

@@ -43,6 +43,13 @@
     }
   }
 
+  @if (multiGame()) {
+    <div class="card accent">
+      <div class="inline"><lucide-icon name="flag" /> <b>Warm-up before every game</b></div>
+      <small>{{ warmupNote }}</small>
+    </div>
+  }
+
   <div class="section-h"><h2>Fueling timeline</h2></div>
   @if (loading()) {
     <app-skeleton variant="rows" [rows]="3" label="fueling timeline" />

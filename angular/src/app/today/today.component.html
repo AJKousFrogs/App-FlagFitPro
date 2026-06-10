@@ -61,6 +61,14 @@
             @for (f of pe.focus; track f) { <span class="chip">{{ f }}</span> }
           </div>
           <small class="muted">{{ pe.note }}</small>
+          @if (pe.volume; as v) {
+            <div style="margin-top:var(--s-3);padding-top:var(--s-3);border-top:1px solid var(--border-soft)">
+              <small class="muted" style="display:block;margin-bottom:var(--s-2)">Prepared for (worst case):</small>
+              <div style="display:flex;flex-wrap:wrap;gap:var(--s-2)">
+                @for (t of v.targets; track t) { <span class="chip">{{ t }}</span> }
+              </div>
+            </div>
+          }
         </div>
       }
 

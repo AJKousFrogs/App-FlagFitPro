@@ -27,6 +27,10 @@ import { ScheduleService } from "./schedule.service";
 import { SupabaseService } from "./supabase.service";
 import { ApiService } from "./api.service";
 import { InjuryService } from "./injury.service";
+import {
+  POSITION_VOLUME,
+  type PositionVolume,
+} from "../config/position-volume.config";
 
 /**
  * PeriodizationService — turns the schedule into prescriptions.
@@ -528,6 +532,36 @@ function positionBucket(position: string | null): "qb" | "wr_db" | "center" | nu
  * Evidence-based, conservative, and additive — it informs WHAT to protect, not
  * how hard to train. On a rest day there is nothing to emphasise.
  */
+/**
+ * Worst-case on-field volume targets for a position, read from the tunable
+ * position-volume reference (never hard-coded here). Surfaced so the plan can
+ * state the demand the athlete must be prepared for.
+ */
+function volumeFor(
+  bucket: PositionVolume["position"],
+): { worstCase: string; targets: string[] } {
+  const v = POSITION_VOLUME[bucket];
+  const targets: string[] = [];
+  if (v.weeklyCatches) {
+    targets.push(`~${v.weeklyCatches} catches/week`);
+  }
+  if (v.throwsPerTrainingDayMax) {
+    targets.push(`up to ${v.throwsPerTrainingDayMax} throws/session`);
+  }
+  if (v.snapsPerTrainingDayMax) {
+    targets.push(`up to ${v.snapsPerTrainingDayMax} snaps/session`);
+  }
+  if (v.backpedalsPerDay) {
+    targets.push(
+      `up to ${v.backpedalsPerDay.reps} backpedals (${v.backpedalsPerDay.yardsMin}–${v.backpedalsPerDay.yardsMax} yd)`,
+    );
+  }
+  if (v.sprintsPerGame) {
+    targets.push(`${v.sprintsPerGame.min}–${v.sprintsPerGame.max} sprints/game`);
+  }
+  return { worstCase: v.worstCase, targets };
+}
+
 function withPositionEmphasis(
   p: DailyPrescription,
   position: string | null,
@@ -537,6 +571,7 @@ function withPositionEmphasis(
   if (!bucket || p.intent === "rest") {
     return { ...p, positionEmphasis: null };
   }
+  const volume = volumeFor(bucket);
   // A flagged throwing/upper-body issue overrides the QB/center emphasis into a
   // protect-the-arm message — these are the positions that throw or snap.
   if (restrictsThrowing && (bucket === "qb" || bucket === "center")) {
@@ -549,6 +584,7 @@ function withPositionEmphasis(
         focus: ["Protect the arm/shoulder", "Gentle pain-free ROM only", `No ${verb} reps today`],
         note: `Your ${verb} arm/shoulder is flagged — skip ${verb} work today and protect it. Lower-body and trunk work is fine if pain-free.`,
         restricted: true,
+        volume,
       },
     };
   }
@@ -589,6 +625,7 @@ function withPositionEmphasis(
       label: e.label,
       focus: [...e.focus],
       note: e.note,
+      volume,
     },
   };
 }

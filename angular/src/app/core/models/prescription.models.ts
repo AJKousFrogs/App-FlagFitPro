@@ -184,6 +184,10 @@ export interface DailyPrescription {
     /** True when a throwing/upper-body restriction has overridden the emphasis
      * into a protect-the-arm message (e.g. a QB shoulder issue). */
     restricted?: boolean;
+    /** Worst-case on-field volume the role must be prepared for (from the
+     * tunable position-volume reference). Surfaced so the plan states the
+     * demand, head-coach style. */
+    volume?: { worstCase: string; targets: string[] } | null;
   } | null;
 }
 
