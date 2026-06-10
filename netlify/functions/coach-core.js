@@ -213,106 +213,97 @@ async function getCoachDashboard(userId, requestedTeamId = null) {
     const userDataMap = new Map();
     (allUserData || []).forEach((u) => userDataMap.set(u.id, u));
 
-    // Get squad member details with workload and ACWR
-    const squadMembers = [];
-
-    for (const member of teamMembers) {
-      try {
-        // Get user details from pre-fetched map
-        const userData = userDataMap.get(member.user_id);
-
-        if (!userData) {
-          continue;
-        }
-
-        // Get recent training sessions for ACWR calculation using ConsentDataReader
-        const sessionsResult = await consentReader.readTrainingSessions({
-          requesterId: userId,
-          playerId: member.user_id,
-          teamId,
-          context: AccessContext.COACH_TEAM_DATA,
-          filters: {
-            limit: 28, // Last 4 weeks
-          },
-        });
-
-        const sessions = sessionsResult.data || [];
-
-        // Track blocked players
-        if (sessionsResult.consentInfo?.blockedPlayerIds?.length > 0) {
-          sessionsResult.consentInfo.blockedPlayerIds.forEach((id) =>
-            allBlockedPlayerIds.add(id),
-          );
-        }
-
-        // Calculate ACWR (Acute:Chronic Workload Ratio)
-        // CRITICAL: Use null when no data - do not use fake defaults
-        let acwr = null;
-        let workload = 0;
-        let dataState = DataState.NO_DATA;
-
-        if (sessions && sessions.length > 0) {
-          const acute = sessions
-            .slice(0, 7)
-            .reduce((sum, s) => sum + (s.workload || 0), 0);
-          const chronic =
-            sessions.length >= 14
-              ? sessions
-                  .slice(0, 14)
-                  .reduce((sum, s) => sum + (s.workload || 0), 0) / 2
-              : acute;
-
-          // Only set ACWR if we have meaningful chronic load
-          // 0/0 = undefined, use null to indicate insufficient data
-          acwr = chronic > 0 ? acute / chronic : null;
-          workload = acute; // Weekly workload
-          dataState =
-            sessions.length >= 7
-              ? DataState.REAL_DATA
-              : DataState.INSUFFICIENT_DATA;
-          totalAccessibleCount += sessions.length;
-        }
-
-        // Calculate readiness from wellness data using ConsentDataReader
-        // CRITICAL: Do NOT use fake defaults - null means no data
-        let readiness = null;
-        let wellnessDataState = DataState.NO_DATA;
-
+    // Build each squad member's overview independently and in PARALLEL.
+    // Previously this was a sequential for-loop with 2 awaits per member
+    // (sessions + wellness) — a 15-player squad meant ~30 serial round trips.
+    // Each task returns its own blocked-id/accessible tallies which are merged
+    // after, so the shared counters never race.
+    const memberResults = await Promise.all(
+      teamMembers.map(async (member) => {
+        const blockedIds = [];
+        let accessibleCount = 0;
         try {
-          const wellnessResult = await consentReader.readWellnessEntries({
-            requesterId: userId,
-            playerId: member.user_id,
-            teamId,
-            context: AccessContext.COACH_TEAM_DATA,
-            filters: {
-              limit: 1,
-            },
-          });
-
-          // Track blocked players from wellness
-          if (wellnessResult.consentInfo?.blockedPlayerIds?.length > 0) {
-            wellnessResult.consentInfo.blockedPlayerIds.forEach((id) =>
-              allBlockedPlayerIds.add(id),
-            );
+          const userData = userDataMap.get(member.user_id);
+          if (!userData) {
+            return { member: null, blockedIds, accessibleCount };
           }
 
-          const wellnessData = wellnessResult.data || [];
+          // Sessions (ACWR) and wellness are independent — fetch concurrently.
+          const [sessionsResult, wellnessResult] = await Promise.all([
+            consentReader.readTrainingSessions({
+              requesterId: userId,
+              playerId: member.user_id,
+              teamId,
+              context: AccessContext.COACH_TEAM_DATA,
+              filters: { limit: 28 }, // Last 4 weeks
+            }),
+            consentReader
+              .readWellnessEntries({
+                requesterId: userId,
+                playerId: member.user_id,
+                teamId,
+                context: AccessContext.COACH_TEAM_DATA,
+                filters: { limit: 1 },
+              })
+              .catch((wellnessErr) => {
+                logger.warn("coach_dashboard_wellness_fetch_failed", wellnessErr, {
+                  player_user_id: member.user_id,
+                });
+                return null; // readiness stays null — do NOT estimate
+              }),
+          ]);
 
+          const sessions = sessionsResult.data || [];
+          if (sessionsResult.consentInfo?.blockedPlayerIds?.length > 0) {
+            blockedIds.push(...sessionsResult.consentInfo.blockedPlayerIds);
+          }
+
+          // Calculate ACWR (Acute:Chronic Workload Ratio).
+          // CRITICAL: null when no data — do not use fake defaults.
+          let acwr = null;
+          let workload = 0;
+          let dataState = DataState.NO_DATA;
+
+          if (sessions && sessions.length > 0) {
+            const acute = sessions
+              .slice(0, 7)
+              .reduce((sum, s) => sum + (s.workload || 0), 0);
+            const chronic =
+              sessions.length >= 14
+                ? sessions
+                    .slice(0, 14)
+                    .reduce((sum, s) => sum + (s.workload || 0), 0) / 2
+                : acute;
+
+            acwr = chronic > 0 ? acute / chronic : null;
+            workload = acute; // Weekly workload
+            dataState =
+              sessions.length >= 7
+                ? DataState.REAL_DATA
+                : DataState.INSUFFICIENT_DATA;
+            accessibleCount += sessions.length;
+          }
+
+          // Calculate readiness from wellness data.
+          // CRITICAL: no fake defaults — null means no data.
+          let readiness = null;
+          let wellnessDataState = DataState.NO_DATA;
+
+          if (wellnessResult?.consentInfo?.blockedPlayerIds?.length > 0) {
+            blockedIds.push(...wellnessResult.consentInfo.blockedPlayerIds);
+          }
+
+          const wellnessData = wellnessResult?.data || [];
           if (wellnessData && wellnessData.length > 0) {
             const w = wellnessData[0];
-
-            // CRITICAL: Only calculate if we have real data (at least sleep and energy)
             const hasSleep =
               w.sleep_quality !== null && w.sleep_quality !== undefined;
             const hasEnergy =
               w.energy_level !== null && w.energy_level !== undefined;
 
             if (hasSleep && hasEnergy) {
-              // Calculate wellness score from real data only
               const sleepScore = (w.sleep_quality / 10) * 100;
               const energyScore = (w.energy_level / 10) * 100;
-
-              // Include stress and soreness only if available
               const hasStress =
                 w.stress_level !== null && w.stress_level !== undefined;
               const hasSoreness =
@@ -331,49 +322,50 @@ async function getCoachDashboard(userId, requestedTeamId = null) {
                 wellnessAvg = sleepScore * 0.55 + energyScore * 0.45;
               }
 
-              // Apply ACWR penalty only if we have ACWR data
               if (acwr !== null) {
                 const acwrPenalty = Math.abs(acwr - 1.0) * 15;
-                readiness = Math.max(
-                  30,
-                  Math.min(100, wellnessAvg - acwrPenalty),
-                );
+                readiness = Math.max(30, Math.min(100, wellnessAvg - acwrPenalty));
               } else {
                 readiness = Math.round(wellnessAvg);
               }
               wellnessDataState = DataState.REAL_DATA;
             }
-            // If we don't have required data, readiness stays null
           }
-          // If no wellness data, readiness stays null
-        } catch (wellnessErr) {
-          logger.warn(
-            "coach_dashboard_wellness_fetch_failed",
-            wellnessErr,
-            { player_user_id: member.user_id },
-          );
-          // readiness stays null - DO NOT estimate from ACWR alone
-        }
 
-        squadMembers.push({
-          id: userData.id,
-          user_id: userData.id,
-          name: userData.full_name || "Unknown",
-          full_name: userData.full_name || "Unknown",
-          position: userData.position || "N/A",
-          workload,
-          today_workload: workload / 7, // Daily average
-          acwr,
-          readiness,
-          dataState: {
-            training: dataState,
-            wellness: wellnessDataState,
-          },
-        });
-      } catch (err) {
-        logger.error("coach_dashboard_squad_member_failed", err, {
-          player_user_id: member.user_id,
-        });
+          return {
+            blockedIds,
+            accessibleCount,
+            member: {
+              id: userData.id,
+              user_id: userData.id,
+              name: userData.full_name || "Unknown",
+              full_name: userData.full_name || "Unknown",
+              position: userData.position || "N/A",
+              workload,
+              today_workload: workload / 7, // Daily average
+              acwr,
+              readiness,
+              dataState: {
+                training: dataState,
+                wellness: wellnessDataState,
+              },
+            },
+          };
+        } catch (err) {
+          logger.error("coach_dashboard_squad_member_failed", err, {
+            player_user_id: member.user_id,
+          });
+          return { member: null, blockedIds, accessibleCount };
+        }
+      }),
+    );
+
+    const squadMembers = [];
+    for (const r of memberResults) {
+      r.blockedIds.forEach((id) => allBlockedPlayerIds.add(id));
+      totalAccessibleCount += r.accessibleCount;
+      if (r.member) {
+        squadMembers.push(r.member);
       }
     }
 
