@@ -17,54 +17,23 @@ const logger = createLogger({ service: "netlify.merlin-guard" });
  * 2. Token is a JWT with role='merlin_readonly' in claims
  * 3. User agent header (secondary check)
  */
-function isMerlinRequest(headers, userMetadata, token = null) {
-  const authHeader = headers["authorization"] || headers["Authorization"] || "";
+function isMerlinRequest(headers, _userMetadata = null, _token = null) {
+  // SECURE detection ONLY: the request's bearer token must equal the secret
+  // MERLIN_READONLY_KEY (S5). The previous branches — decoding the JWT WITHOUT
+  // signature verification to read a role claim, sniffing User-Agent for
+  // "merlin", and reading user_metadata.role — were all attacker-controlled: a
+  // request could assert it is Merlin by setting a header, and a legitimate user
+  // whose UA contained "merlin" could be wrongly blocked from mutations. Identity
+  // now rests on a shared secret, never a spoofable claim. (Merlin's hard
+  // enforcement is the DB role: merlin_readonly lacks INSERT/UPDATE/DELETE — this
+  // guard is defense-in-depth on top of that.)
   const merlinKey = process.env.MERLIN_READONLY_KEY;
-
-  // Primary check: Authorization header token matches Merlin readonly key exactly
-  if (merlinKey && authHeader) {
-    const tokenFromHeader = authHeader.replace(/^Bearer\s+/i, "").trim();
-    if (tokenFromHeader === merlinKey) {
-      return true;
-    }
+  const authHeader = headers["authorization"] || headers["Authorization"] || "";
+  if (!merlinKey || !authHeader) {
+    return false;
   }
-
-  // Secondary check: If token provided, verify it's Merlin readonly JWT
-  if (token) {
-    try {
-      // Decode JWT without verification (we just need to check claims)
-      const parts = token.split(".");
-      if (parts.length === 3) {
-        const payload = JSON.parse(Buffer.from(parts[1], "base64").toString());
-        if (
-          payload.role === "merlin_readonly" ||
-          payload.aud === "merlin_readonly"
-        ) {
-          return true;
-        }
-      }
-    } catch (e) {
-      // Not a JWT or invalid, continue with other checks
-    }
-  }
-
-  const userAgent = headers["user-agent"] || "";
-
-  // Check user agent (less reliable, but additional signal)
-  if (userAgent.includes("Merlin-AI") || userAgent.includes("merlin")) {
-    return true;
-  }
-
-  // Check role metadata (if available from authenticated user)
-  if (
-    userMetadata?.role === "merlin" ||
-    userMetadata?.role === "ai" ||
-    userMetadata?.role === "merlin_readonly"
-  ) {
-    return true;
-  }
-
-  return false;
+  const tokenFromHeader = authHeader.replace(/^Bearer\s+/i, "").trim();
+  return tokenFromHeader === merlinKey;
 }
 
 /**
