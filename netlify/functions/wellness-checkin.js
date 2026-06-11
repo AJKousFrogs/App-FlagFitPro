@@ -912,15 +912,14 @@ function calculateReadiness(data) {
     return null;
   }
 
-  // Detect scale (1-5 quick check-in vs 0-10 full check-in)
-  // If max value is <= 5, assume 1-5 scale
-  const maxValue = Math.max(
-    sleepQuality || 0,
-    energyLevel || 0,
-    muscleSoreness || 0,
-    stressLevel || 0,
-  );
-  const scale = maxValue <= 5 ? 5 : 10;
+  // Scale is a property of the FORM (1–5 quick check-in vs 0–10 full check-in),
+  // passed explicitly — NEVER inferred from the values (S6). The old 'max ≤ 5 ⇒
+  // 1–5 scale' guess inverted bad days: a genuinely poor 0–10 day (sleep 4,
+  // energy 3, soreness 5) had max 5, was reinterpreted as a great 1–5 day, and
+  // scored ~70–80 instead of ~35 — the opposite of fail-safe. Default to the 0–10
+  // full scale when unspecified, which is also the SAFE direction (a 1–5 input
+  // read as 0–10 is over-conservative, never the over-optimistic inversion).
+  const scale = data.scale === 5 || data.scale === 10 ? data.scale : 10;
 
   // Normalize all values to 0-100
   const sleepScore = (sleepQuality / scale) * 100;
@@ -959,3 +958,4 @@ function calculateReadiness(data) {
 
 export const testHandler = handler;
 export { handler };
+export const __test__ = { calculateReadiness };
