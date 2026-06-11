@@ -159,11 +159,16 @@ async function getUserTeamId(userId) {
       .select("team_id")
       .eq("user_id", userId)
       .limit(1)
-      .single();
+      .maybeSingle();
 
     if (error || !data) {
-      // User might not be on a team yet, return default
-      return `TEAM_${userId}`;
+      // D8: a user with no active team membership has NO team — return null, never
+      // a fabricated `TEAM_${userId}`. The fake id was never a real team_id (it
+      // matched no row), so it only masked the "no team" state: callers that
+      // already guard `if (!teamId)` (roster-core, games-core) never fired, and
+      // scoped queries silently returned empty as if a team existed. null lets
+      // those guards work and surfaces an honest empty state.
+      return null;
     }
 
     return data.team_id;
@@ -171,7 +176,7 @@ async function getUserTeamId(userId) {
     logger.error("auth_get_user_team_failed", error, {
       user_id: userId,
     });
-    return `TEAM_${userId}`;
+    return null;
   }
 }
 
