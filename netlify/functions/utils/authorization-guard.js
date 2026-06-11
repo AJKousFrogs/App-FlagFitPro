@@ -271,51 +271,14 @@ async function requireRole(userId, requiredRoles) {
   return { authorized: true, role };
 }
 
-/**
- * Check consent for data access
- * Contract: Section 7 - Consent Enforcement
- */
-async function checkConsent(
-  viewerUserId,
-  dataOwnerUserId,
-  consentType = "wellness",
-) {
-  // Users can always view their own data
-  if (viewerUserId === dataOwnerUserId) {
-    return { authorized: true };
-  }
-
-  // Check consent settings
-  const { data: consent, error } = await supabaseAdmin
-    .from("consent_settings")
-    .select(`${consentType}_consent`)
-    .eq("user_id", dataOwnerUserId)
-    .single();
-
-  if (error || !consent) {
-    // Default to no consent if settings don't exist
-    return {
-      authorized: false,
-      error: "CONSENT_REQUIRED",
-      message: "Consent required to access this data",
-    };
-  }
-
-  const consentField = `${consentType}_consent`;
-  if (!consent[consentField]) {
-    return {
-      authorized: false,
-      error: "CONSENT_REQUIRED",
-      message: "Consent required to access this data",
-    };
-  }
-
-  return { authorized: true };
-}
+// D5: a second consent system (checkConsent) was deleted here. It queried
+// `consent_settings`, a table that does not exist live, so it failed closed
+// (permanent 403) wherever it gated — and it had NO callers (dead code that
+// implied a working second consent path). The single source of truth for consent
+// is utils/consent-guard.js (athlete_consent_settings), used by the live readers.
 
 export { getUserRole,
   canModifySession,
   logViolation,
   requireAuthorization,
-  requireRole,
-  checkConsent, };
+  requireRole, };
