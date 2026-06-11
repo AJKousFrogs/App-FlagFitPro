@@ -52,19 +52,13 @@ async function getUserRole(userId) {
     return memberships[0].role;
   }
 
-  // Fallback to auth.users metadata
-  if (!supabaseService) {
-    return null;
-  }
-
-  const { data: authUser, error: authError } =
-    await supabaseService.auth.admin.getUserById(userId);
-
-  if (authError || !authUser?.user) {
-    return null;
-  }
-
-  return authUser.user.user_metadata?.role || "player";
+  // DB membership is the ONLY authority for the role (D4). The previous fallback
+  // read user_metadata.role — which a user CAN set on themselves via
+  // auth.updateUser — so a user with no team membership could self-assign
+  // 'coach'/'admin' and escalate. Verified: every privileged user has an active
+  // team_members row, so no legitimate access depends on the metadata fallback. A
+  // user with no active membership has no privileged role.
+  return "player";
 }
 
 /**
