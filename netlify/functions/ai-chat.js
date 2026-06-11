@@ -8,6 +8,7 @@ import { authenticateRequest } from "./utils/auth-helper.js";
 import { processSmartQuery, searchKnowledgeHybrid, recordFeedbackWithLearning as _recordFeedbackWithLearning, getLearnedPreferences as _getLearnedPreferences, getPendingCheckins as _getPendingCheckins, updateCheckinStatus, buildCheckinMessage, summarizeConversation as _summarizeConversation, ROUTING_ACTIONS } from "./utils/smart-ai-service.js";
 import { isEmbeddingServiceAvailable } from "./utils/embedding-service.js";
 import { guardMerlinRequest } from "./utils/merlin-guard.js";
+import { computeAcwrAt } from "./utils/acwr.js";
 import { parseJsonObjectBody } from "./utils/input-validator.js";
 import { createLogger } from "./utils/structured-logger.js";
 
@@ -129,8 +130,6 @@ async function getOrCreateSession(userId, sessionId = null) {
  */
 async function calculateUserACWR(userId) {
   const today = new Date();
-  const acuteStartDate = new Date(today);
-  acuteStartDate.setDate(acuteStartDate.getDate() - 7);
   const chronicStartDate = new Date(today);
   chronicStartDate.setDate(chronicStartDate.getDate() - 28);
 
@@ -155,42 +154,39 @@ async function calculateUserACWR(userId) {
       };
     }
 
-    // Calculate session loads (RPE × duration)
-    const sessionsWithLoad = sessions.map((s) => ({
-      ...s,
-      load: (s.duration_minutes || 60) * (s.rpe || s.intensity_level || 5),
-      date: new Date(s.session_date),
-    }));
+    // Canonical EWMA + uncoupled ACWR (utils/acwr.js — the single source of
+    // truth, shared with calc-readiness/compute-acwr). The previous hand-rolled
+    // ratio was COUPLED (the chronic window included the acute days), which
+    // mathematically suppresses high ratios and UNDER-reports spike risk — the
+    // dangerous direction for a safety gate feeding Merlin's recommendations.
+    const loadsByDay = new Map();
+    for (const s of sessions) {
+      const rpe = s.rpe ?? s.intensity_level;
+      const dur = s.duration_minutes;
+      if (!s.session_date || !dur || rpe == null) {
+        continue;
+      }
+      loadsByDay.set(
+        s.session_date,
+        (loadsByDay.get(s.session_date) || 0) + dur * rpe,
+      );
+    }
+    const acwrResult = computeAcwrAt(loadsByDay, today);
+    const acwr = acwrResult.acwr;
+    const acuteLoad = acwrResult.acuteLoad;
+    const chronicLoad = acwrResult.chronicLoad;
 
-    // Split into acute (7 days) and chronic (28 days)
-    const acuteSessions = sessionsWithLoad.filter(
-      (s) => s.date >= acuteStartDate && s.date <= today,
-    );
-    const chronicSessions = sessionsWithLoad; // All sessions in 28-day window
-
-    // Calculate loads
-    const acuteLoad = acuteSessions.reduce((sum, s) => sum + s.load, 0);
-    const chronicLoad = chronicSessions.reduce((sum, s) => sum + s.load, 0);
-
-    // Calculate averages (weekly for acute, 4-week average for chronic)
-    const acuteAverage = acuteLoad; // Sum of 7 days
-    const chronicAverage = chronicLoad / 4; // Average per week over 4 weeks
-
-    if (chronicAverage === 0) {
+    if (acwr === null || acwr === undefined) {
       return {
-        acwr: acuteLoad > 0 ? Infinity : 0,
-        riskZone: acuteLoad > 0 ? "danger" : "insufficient_data",
+        acwr: null,
+        riskZone: "insufficient_data",
         acuteLoad,
-        chronicLoad: 0,
-        message:
-          acuteLoad > 0
-            ? "No chronic baseline - training spike detected."
-            : "No training data available.",
-        canRecommendHighIntensity: false,
+        chronicLoad,
+        sessionCount: sessions.length,
+        message: "Not enough training history yet for a reliable ACWR.",
+        canRecommendHighIntensity: true,
       };
     }
-
-    const acwr = acuteAverage / chronicAverage;
 
     // Determine risk zone and recommendation capability
     let riskZone, message, canRecommendHighIntensity;
@@ -221,7 +217,7 @@ async function calculateUserACWR(userId) {
       acwr: parseFloat(acwr.toFixed(2)),
       riskZone,
       acuteLoad,
-      chronicLoad: parseFloat(chronicAverage.toFixed(2)),
+      chronicLoad,
       sessionCount: sessions.length,
       message,
       canRecommendHighIntensity,

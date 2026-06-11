@@ -7,6 +7,7 @@ import { baseHandler } from "./utils/base-handler.js";
 
 import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
 import { supabaseAdmin } from "./supabase-client.js";
+import { computeAcwrAt } from "./utils/acwr.js";
 
 /**
  * Get comprehensive user context
@@ -105,22 +106,8 @@ async function getUserContext(userId) {
     let chronicLoad = 0;
     let acwr = null; // null = no data, not 1.0
     const last7Days = [];
-    const _last28Days = [];
 
     if (sessions && sessions.length > 0) {
-      const acuteSessions = sessions.filter(
-        (s) => new Date(s.completed_at || s.session_date) >= sevenDaysAgo,
-      );
-      acuteLoad = acuteSessions.reduce((sum, s) => sum + (s.workload || 0), 0);
-
-      const chronicSessions = sessions.slice(0, 28);
-      chronicLoad =
-        chronicSessions.length >= 14
-          ? chronicSessions.reduce((sum, s) => sum + (s.workload || 0), 0) / 4
-          : acuteLoad;
-
-      acwr = chronicLoad > 0 ? acuteLoad / chronicLoad : null;
-
       const last7DaysMap = new Map();
       const last28DaysMap = new Map();
 
@@ -135,6 +122,14 @@ async function getUserContext(userId) {
           last28DaysMap.set(dateKey, (last28DaysMap.get(dateKey) || 0) + workload);
         }
       });
+
+      // Canonical EWMA + uncoupled ACWR (utils/acwr.js — the single source of
+      // truth). Replaces the coupled hand-rolled ratio (chronic window included
+      // the acute days + a /4 weekly average), which under-reported spike risk.
+      const acwrResult = computeAcwrAt(last28DaysMap, new Date());
+      acuteLoad = acwrResult.acuteLoad;
+      chronicLoad = acwrResult.chronicLoad;
+      acwr = acwrResult.acwr;
 
       for (let i = 6; i >= 0; i--) {
         const date = new Date();
