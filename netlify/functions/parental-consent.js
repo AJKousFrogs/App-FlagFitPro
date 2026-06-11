@@ -28,8 +28,20 @@ function calculateAge(dateOfBirth) {
   return age;
 }
 
+// Per-feature consent booleans live in the parental_consent.consent_scope jsonb
+// (the live schema), NOT in dedicated *_consent columns (which never existed).
+function featuresFromScope(scope) {
+  const s = scope && typeof scope === "object" ? scope : {};
+  return {
+    healthData: s.healthData === true,
+    biometrics: s.biometrics === true,
+    location: s.location === true,
+    research: s.research === true,
+  };
+}
+
 function getRestrictedFeatures(consent) {
-  if (!consent || consent.consent_status !== "verified") {
+  if (!consent || consent.status !== "verified") {
     return {
       healthData: { restricted: true, reason: "Requires parental consent" },
       biometrics: { restricted: true, reason: "Requires parental consent" },
@@ -38,30 +50,23 @@ function getRestrictedFeatures(consent) {
     };
   }
 
+  const f = featuresFromScope(consent.consent_scope);
   return {
     healthData: {
-      restricted: !consent.health_data_consent,
-      reason: consent.health_data_consent
-        ? null
-        : "Guardian did not approve health data collection",
+      restricted: !f.healthData,
+      reason: f.healthData ? null : "Guardian did not approve health data collection",
     },
     biometrics: {
-      restricted: !consent.biometrics_consent,
-      reason: consent.biometrics_consent
-        ? null
-        : "Guardian did not approve biometrics collection",
+      restricted: !f.biometrics,
+      reason: f.biometrics ? null : "Guardian did not approve biometrics collection",
     },
     location: {
-      restricted: !consent.location_consent,
-      reason: consent.location_consent
-        ? null
-        : "Guardian did not approve location tracking",
+      restricted: !f.location,
+      reason: f.location ? null : "Guardian did not approve location tracking",
     },
     research: {
-      restricted: !consent.research_consent,
-      reason: consent.research_consent
-        ? null
-        : "Guardian did not approve research participation",
+      restricted: !f.research,
+      reason: f.research ? null : "Guardian did not approve research participation",
     },
   };
 }
@@ -115,11 +120,12 @@ async function handleAuthenticatedRequest(event, _context, { userId, supabase })
       .from("parental_consent")
       .select("*")
       .eq("minor_user_id", userId)
-      .in("consent_status", ["pending", "verified"])
+      .in("status", ["pending", "verified"])
       .order("created_at", { ascending: false })
       .limit(1)
       .maybeSingle();
 
+    const scope = featuresFromScope(consent?.consent_scope);
     return createSuccessResponse({
       isMinor: true,
       requiresConsent: true,
@@ -127,13 +133,13 @@ async function handleAuthenticatedRequest(event, _context, { userId, supabase })
       consent: consent
         ? {
             id: consent.id,
-            status: consent.consent_status,
+            status: consent.status,
             guardianEmail: consent.guardian_email,
             guardianName: consent.guardian_name,
-            healthDataConsent: consent.health_data_consent,
-            biometricsConsent: consent.biometrics_consent,
-            locationConsent: consent.location_consent,
-            researchConsent: consent.research_consent,
+            healthDataConsent: scope.healthData,
+            biometricsConsent: scope.biometrics,
+            locationConsent: scope.location,
+            researchConsent: scope.research,
             verifiedAt: consent.verified_at,
             expiresAt: consent.expires_at,
             createdAt: consent.created_at,
@@ -220,7 +226,7 @@ async function handleAuthenticatedRequest(event, _context, { userId, supabase })
       .from("parental_consent")
       .select("id")
       .eq("minor_user_id", userId)
-      .eq("consent_status", "pending")
+      .eq("status", "pending")
       .maybeSingle();
 
     if (existingRequest) {
@@ -243,10 +249,11 @@ async function handleAuthenticatedRequest(event, _context, { userId, supabase })
         minor_user_id: userId,
         guardian_email: guardianEmail,
         guardian_name: guardianName || null,
-        guardian_relationship: relationship || "parent",
+        relationship: relationship || "parent",
         verification_token: verificationToken,
         verification_sent_at: new Date().toISOString(),
-        consent_status: "pending",
+        status: "pending",
+        consent_scope: {},
         expires_at: expiresAt.toISOString(),
       })
       .select()
@@ -260,26 +267,42 @@ async function handleAuthenticatedRequest(event, _context, { userId, supabase })
       [user.first_name, user.last_name].filter(Boolean).join(" ") ||
       "A minor user";
 
+    // The guardian email is the ONLY way the minor's consent can be verified, so
+    // a swallowed failure leaves a minor stuck in 'pending' forever with no signal.
+    // Track the outcome and surface it (visibly failed, per S10).
+    let emailSent = false;
     try {
       const supabaseUrl = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
       const supabaseAnonKey =
         process.env.SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY;
 
       if (supabaseUrl && supabaseAnonKey) {
-        await fetch(`${supabaseUrl}/functions/v1/send-guardian-email`, {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${supabaseAnonKey}`,
-            "Content-Type": "application/json",
+        const emailResp = await fetch(
+          `${supabaseUrl}/functions/v1/send-guardian-email`,
+          {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${supabaseAnonKey}`,
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              guardianEmail,
+              guardianName: guardianName || null,
+              minorName,
+              verificationToken,
+              consentId: consent.id,
+            }),
           },
-          body: JSON.stringify({
-            guardianEmail,
-            guardianName: guardianName || null,
-            minorName,
-            verificationToken,
-            consentId: consent.id,
-          }),
-        });
+        );
+        emailSent = emailResp.ok;
+        if (!emailResp.ok) {
+          console.error(
+            "Guardian email send returned non-OK status:",
+            emailResp.status,
+          );
+        }
+      } else {
+        console.error("Guardian email not sent: email service not configured");
       }
     } catch (emailError) {
       console.error("Failed to send guardian email:", emailError);
@@ -298,8 +321,10 @@ async function handleAuthenticatedRequest(event, _context, { userId, supabase })
     return createSuccessResponse({
       success: true,
       consentId: consent.id,
-      message:
-        "Consent request sent to guardian. They will receive an email with verification instructions.",
+      emailSent,
+      message: emailSent
+        ? "Consent request sent to guardian. They will receive an email with verification instructions."
+        : "Consent request created, but the guardian email could not be sent. Please resend it.",
       guardianEmail,
     });
   }
@@ -386,7 +411,7 @@ async function handlePublicVerification(event) {
     }
   }
 
-  if (consent.consent_status === "revoked") {
+  if (consent.status === "revoked") {
     return createErrorResponse("This consent has been revoked", 400, "consent_revoked");
   }
 
@@ -399,9 +424,10 @@ async function handlePublicVerification(event) {
     const { data: revokedConsent, error: revokeError } = await supabaseAdmin
       .from("parental_consent")
       .update({
-        consent_status: "revoked",
-        revoked_at: new Date().toISOString(),
-        revocation_reason: reason || "Guardian revoked consent",
+        status: "revoked",
+        // revoked_at / revocation_reason have no column on the live table — the
+        // revoke is timestamped by updated_at and recorded (with reason) in
+        // privacy_audit_log below.
         verification_token: null,
       })
       .eq("id", consent.id)
@@ -421,7 +447,10 @@ async function handlePublicVerification(event) {
       user_id: consent.minor_user_id,
       action: "parental_consent_revoked",
       affected_table: "parental_consent",
-      affected_data: { consent_id: consent.id },
+      affected_data: {
+        consent_id: consent.id,
+        reason: reason || "Guardian revoked consent",
+      },
       ip_address: clientIp,
     });
 
@@ -434,14 +463,17 @@ async function handlePublicVerification(event) {
   const { data: verifiedConsent, error: updateError } = await supabaseAdmin
     .from("parental_consent")
     .update({
-      consent_status: "verified",
+      status: "verified",
       verified_at: new Date().toISOString(),
-      verification_method: "email",
-      verification_ip_address: clientIp,
-      health_data_consent: healthDataConsent ?? false,
-      biometrics_consent: biometricsConsent ?? false,
-      location_consent: locationConsent ?? false,
-      research_consent: researchConsent ?? false,
+      // Per-feature consents live in consent_scope (jsonb). verification_method /
+      // verification_ip_address have no column — the method+IP are captured in
+      // privacy_audit_log below.
+      consent_scope: {
+        healthData: healthDataConsent ?? false,
+        biometrics: biometricsConsent ?? false,
+        location: locationConsent ?? false,
+        research: researchConsent ?? false,
+      },
       verification_token: null,
     })
     .eq("id", consent.id)
@@ -506,3 +538,4 @@ const handler = async (event, context) => {
 
 export const testHandler = handler;
 export { handler };
+export const __test__ = { getRestrictedFeatures, featuresFromScope };
