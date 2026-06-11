@@ -4,6 +4,7 @@ import { getWeekStart } from "./utils/date-utils.js";
 import { DataState, MINIMUM_DATA_REQUIREMENTS, wrapWithDataState, getDataStateFromRiskZone, evaluateDataState } from "./utils/data-state.js";
 import { ConsentDataReader, AccessContext } from "./utils/consent-data-reader.js";
 import { roundToPrecision, safeDivide, average, standardDeviation, ACWR_PRECISION } from "./utils/precision.js";
+import { computeAcwrAt } from "./utils/acwr.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { LOAD_MANAGEMENT_ACCESS_ROLES } from "./utils/role-sets.js";
 import { buildRequestLogContext, createLogger } from "./utils/structured-logger.js";
@@ -401,28 +402,38 @@ async function calculateACWR(requesterId, targetUserId, date, options = {}) {
     };
   }
 
-  // Use precision utilities for consistent calculations
-  const acuteAverage = average(acuteLoads, ACWR_PRECISION);
-  const chronicAverage = average(chronicLoads, ACWR_PRECISION);
+  // Canonical EWMA + uncoupled ACWR (utils/acwr.js — the single source of truth,
+  // shared with calc-readiness/compute-acwr/ai-chat/user-context). The previous
+  // coupled simple-average ratio (chronicLoads spanned the 28d window INCLUDING
+  // the acute 7d) suppressed high ratios and under-reported spike risk. Build the
+  // daily-load map from the date-aligned 28d chronic array (index 0 =
+  // chronicStartDate); the consent-blocked / no-data branches above are unchanged.
+  const chronicMap = new Map();
+  const cursor = new Date(chronicStartDate);
+  for (let i = 0; i < chronicLoads.length; i++) {
+    if (chronicLoads[i] > 0) {
+      chronicMap.set(cursor.toISOString().split("T")[0], chronicLoads[i]);
+    }
+    cursor.setDate(cursor.getDate() + 1);
+  }
+  const acwrResult = computeAcwrAt(chronicMap, new Date(date));
+  const acuteAverage = acwrResult.acuteLoad;
+  const chronicAverage = acwrResult.chronicLoad;
+  const acwr = acwrResult.acwr;
 
-  if (chronicAverage === 0) {
+  if (acwr === null || acwr === undefined) {
     return {
-      acwr: hasAcuteData ? null : 0, // Use null instead of Infinity for JSON compatibility
-      riskZone: hasAcuteData ? "danger" : "insufficient_data",
-      injuryRiskMultiplier: hasAcuteData ? 2.0 : 1.0,
+      acwr: null,
+      riskZone: "insufficient_data",
+      injuryRiskMultiplier: 1.0,
       acuteAverage,
-      chronicAverage: 0,
+      chronicAverage,
       acuteLoads: acuteLoads.filter((l) => l > 0).length,
-      chronicLoads: 0,
-      message: hasAcuteData
-        ? "No chronic baseline established. Continue training to build chronic load."
-        : "No training data found.",
+      chronicLoads: chronicLoads.filter((l) => l > 0).length,
+      message: "Not enough training history yet for a reliable ACWR.",
       consentInfo,
     };
   }
-
-  // Use safeDivide for precision handling and division safety
-  const acwr = safeDivide(acuteAverage, chronicAverage, ACWR_PRECISION);
 
   // Risk zones based on Gabbett's research
   let riskZone, injuryRiskMultiplier, recommendation;
