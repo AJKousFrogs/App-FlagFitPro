@@ -520,42 +520,43 @@ async function getUserTrainingContext(supabase, userId, date, log = logger) {
     }
   }
 
-  // 8. Get ACWR and readiness from wellness checkin
+  // 8. Readiness + ACWR. SINGLE SOURCE OF TRUTH for the decision SCORE is the
+  // canonical composite (calc-readiness → readiness_scores). The wellness
+  // check-in has its OWN simpler readiness formula (calculated_readiness, exposed
+  // by get_athlete_readiness) — that must NOT drive the decision layer (D2); it's
+  // read only for supplementary detail (sleep/energy/soreness). When no composite
+  // exists yet, score stays null and the decision layer falls back to a
+  // conservative session (no fabrication).
   let readiness = null;
 
-  // First try to get from wellness checkin (new system)
+  const { data: composite } = await supabase
+    .from("readiness_scores")
+    .select("score, acwr")
+    .eq("user_id", userId)
+    .eq("day", date)
+    .maybeSingle();
+
   const { data: wellnessData } = await supabase.rpc("get_athlete_readiness", {
     p_user_id: userId,
     p_date: date,
   });
+  const w =
+    wellnessData && wellnessData.length > 0 && wellnessData[0].has_checkin
+      ? wellnessData[0]
+      : null;
 
-  if (wellnessData && wellnessData.length > 0 && wellnessData[0].has_checkin) {
-    const w = wellnessData[0];
+  if (composite || w) {
     readiness = {
-      score: w.readiness_score,
-      sleepQuality: w.sleep_quality,
-      energyLevel: w.energy_level,
-      muscleSoreness: w.muscle_soreness,
-      stressLevel: w.stress_level,
-      sorenessAreas: w.soreness_areas,
-      hasCheckin: true,
+      // Canonical composite only — never the check-in's parallel formula.
+      score: composite ? composite.score : null,
+      acwr: composite ? composite.acwr : null,
+      sleepQuality: w ? w.sleep_quality : null,
+      energyLevel: w ? w.energy_level : null,
+      muscleSoreness: w ? w.muscle_soreness : null,
+      stressLevel: w ? w.stress_level : null,
+      sorenessAreas: w ? w.soreness_areas : null,
+      hasCheckin: !!w,
     };
-  } else {
-    // Fallback to old readiness_scores table - may not have entry for this day
-    const { data: oldReadiness } = await supabase
-      .from("readiness_scores")
-      .select("*")
-      .eq("user_id", userId)
-      .eq("day", date)
-      .maybeSingle();
-
-    if (oldReadiness) {
-      readiness = {
-        score: oldReadiness.score,
-        acwr: oldReadiness.acwr,
-        hasCheckin: true,
-      };
-    }
   }
 
   // 9. Get position-specific modifiers
