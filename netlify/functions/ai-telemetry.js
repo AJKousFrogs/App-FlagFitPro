@@ -5,8 +5,13 @@ import {
   createSuccessResponse,
 } from "./utils/error-handler.js";
 import { requireRole } from "./utils/authorization-guard.js";
+import { STAFF_ROUTE_ROLES } from "./utils/role-sets.js";
 
-const STAFF_ROLES = ["coach", "admin", "superadmin"];
+// H7: was a local ["coach","admin","superadmin"] — which 403'd head_coach, owner
+// and every specialist (physio/nutritionist/psychologist/S&C), and keyed on a
+// "superadmin" role that isn't even a team_members role (doubly dead after D4).
+// Use the shared staff set so telemetry access matches every other staff route.
+const STAFF_ROLES = STAFF_ROUTE_ROLES;
 
 function parseBoundedInt(value, fieldName, min, max) {
   if (value === undefined || value === null || value === "") {

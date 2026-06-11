@@ -63,10 +63,21 @@ function getCorsHeaders(eventOrOrigin = null) {
       ? eventOrOrigin
       : eventOrOrigin?.headers?.origin || eventOrOrigin?.headers?.Origin || null;
 
-  return {
+  const headers = {
     ...CORS_HEADERS,
     "Access-Control-Allow-Origin": getCorsOrigin(requestOrigin),
   };
+
+  // D6: assert credentials ONLY when the caller's origin is on the explicit
+  // allowlist. getCorsOrigin reflects the request origin in dev mode, and
+  // 'Access-Control-Allow-Credentials: true' paired with a reflected/defaulted
+  // origin is the unsafe CORS combination — so drop the header otherwise
+  // (mirrors utils/cors.js, the safe implementation).
+  if (!requestOrigin || !ALLOWED_ORIGINS.includes(requestOrigin)) {
+    delete headers["Access-Control-Allow-Credentials"];
+  }
+
+  return headers;
 }
 
 const CORS_HEADERS = {
