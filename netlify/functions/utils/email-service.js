@@ -8,6 +8,11 @@ class EmailService {
   constructor() {
     this.transporter = null;
     this.isInitialized = false;
+    // @deprecated (H2) In-memory token store — does NOT persist across serverless
+    // invocations, so reset tokens minted on one instance can't be verified on
+    // another. Only auth-reset-password.js uses this, and that endpoint is itself
+    // deprecated (the live client uses Supabase's built-in resetPasswordForEmail).
+    // If reactivated, back this with a Postgres table, not a Map.
     this.resetTokens = new Map();
   }
 

@@ -11,7 +11,7 @@
  * - Readiness assessments need real data to protect athletes
  */
 
-const { describe, it, expect, beforeEach, afterEach, vi } = require("vitest");
+import { describe, it, expect } from "vitest";
 
 describe("Missing Data Handling Contracts", () => {
   // =============================================================================
@@ -316,7 +316,4 @@ function getExpectedQualityLevel(sessionCount) {
   return "high";
 }
 
-module.exports = {
-  isNotHardcodedDefault,
-  getExpectedQualityLevel,
-};
+export { isNotHardcodedDefault, getExpectedQualityLevel };

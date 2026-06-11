@@ -1,3 +1,15 @@
+/**
+ * @deprecated DO NOT WIRE THE CLIENT TO THIS ENDPOINT (H2).
+ *
+ * This custom password-reset flow is SUPERSEDED and effectively non-functional in
+ * production. The live client resets passwords via Supabase Auth's built-in
+ * `auth.resetPasswordForEmail` (SupabaseService.resetPassword), which manages
+ * tokens securely server-side. This handler instead relies on
+ * email-service.js's in-memory token Map, which does NOT survive across
+ * serverless invocations/instances — a token minted on one cold start cannot be
+ * verified on another, so verification almost always fails. Kept only to avoid a
+ * routing change; if this is ever needed, move the token store to Postgres first.
+ */
 import { emailService } from "./utils/email-service.js";
 import { validateRequestBody } from "./validation.js";
 import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
