@@ -142,7 +142,7 @@ async function fetchPastGameLoads(athleteId, startDate, endDate) {
  * Calculate readiness score for an athlete
  * Evidence-based composite score (0-100) combining:
  * - Workload (ACWR from session-RPE): 35%
- * - Wellness Index (fatigue, soreness, mood, stress): 30%
+ * - Wellness Index (sleep, soreness, energy, mood, stress): 30%
  * - Sleep quality/duration: 20%
  * - Game proximity: 15%
  *
@@ -178,25 +178,25 @@ function scaleTo1to5(value) {
  */
 function calculateWellnessIndex(wellness) {
   // Convert to 1-5 scale
-  const fatigue = scaleTo1to5(wellness.fatigue);
   const sleepQuality = scaleTo1to5(wellness.sleep_quality);
   const soreness = scaleTo1to5(wellness.soreness);
+  const energy = scaleTo1to5(wellness.energy);
   const mood = scaleTo1to5(wellness.mood);
   const stress = scaleTo1to5(wellness.stress);
-  const energy = scaleTo1to5(wellness.energy);
 
-  // Required fields (fatigue, sleepQuality, soreness)
+  // Required fields. The phantom 'fatigue' is removed (D11): it had no column and
+  // always equalled soreness, so soreness carried 65% of this subscore. ENERGY is
+  // the real recovery/fatigue signal (energy_level) and is promoted to required.
   const requiredFields = [
-    { value: fatigue, weight: 0.4, name: "fatigue" },
-    { value: sleepQuality, weight: 0.35, name: "sleepQuality" },
-    { value: soreness, weight: 0.25, name: "soreness" },
+    { value: sleepQuality, weight: 0.4, name: "sleepQuality" },
+    { value: soreness, weight: 0.3, name: "soreness" },
+    { value: energy, weight: 0.3, name: "energy" },
   ];
 
-  // Optional fields (mood, stress, energy)
+  // Optional fields (mood, stress)
   const optionalFields = [
-    { value: mood, weight: 0.4, name: "mood" },
-    { value: stress, weight: 0.35, name: "stress" },
-    { value: energy, weight: 0.25, name: "energy" },
+    { value: mood, weight: 0.5, name: "mood" },
+    { value: stress, weight: 0.5, name: "stress" },
   ];
 
   // Calculate completeness
@@ -206,15 +206,15 @@ function calculateWellnessIndex(wellness) {
   const availableFields = requiredCount + optionalCount;
   const completeness = (availableFields / totalFields) * 100;
 
-  // Calculate subscore from required fields (always available)
-  // Invert fatigue and soreness (higher = worse), keep sleepQuality as-is (higher = better)
+  // Calculate subscore from required fields (always available). Invert soreness
+  // (higher = worse); sleepQuality and energy are higher = better.
   let requiredSubscore = 0;
   let requiredWeightSum = 0;
 
   requiredFields.forEach((field) => {
     if (field.value !== null) {
       let normalizedValue;
-      if (field.name === "fatigue" || field.name === "soreness") {
+      if (field.name === "soreness") {
         // Invert: 1 (best) → 100, 5 (worst) → 20
         normalizedValue = 100 - (field.value - 1) * 20;
       } else {
@@ -263,7 +263,6 @@ function calculateWellnessIndex(wellness) {
   }
 
   return {
-    fatigue: fatigue || null,
     sleepQuality: sleepQuality || null,
     soreness: soreness || null,
     mood: mood || null,
@@ -341,7 +340,9 @@ async function fetchWellnessForReadiness(athleteId, dayStr) {
     return {
       data: {
         ...primary.data,
-        fatigue: primary.data.fatigue ?? primary.data.muscle_soreness,
+        // No 'fatigue' column exists — the old 'fatigue ?? muscle_soreness'
+        // fallback made fatigue ALWAYS equal soreness, double-counting it (D11).
+        // energy_level is the real recovery/fatigue signal and is mapped below.
         sleep_quality: primary.data.sleep_quality,
         soreness: primary.data.muscle_soreness,
         mood: primary.data.mood,
