@@ -188,7 +188,6 @@ const getTeamChemistry = async (userId) => {
     };
 
     // Calculate metrics (simplified - in real app, would use more sophisticated algorithms)
-    const _totalSessions = teamSessions.length;
     const avgScore =
       teamSessions.length > 0
         ? teamSessions.reduce((sum, s) => sum + (s.score || 70), 0) /

@@ -23,24 +23,6 @@ function isIsoDateOnly(value) {
 }
 
 /**
- * Get today's date at end of day (23:59:59) for inclusive filtering
- */
-function _getTodayEndOfDay() {
-  const today = new Date();
-  today.setHours(23, 59, 59, 999);
-  return today.toISOString();
-}
-
-/**
- * Get today's date at start of day (00:00:00)
- */
-function _getTodayStartOfDay() {
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  return today.toISOString();
-}
-
-/**
  * Calculate ACWR for a player
  */
 async function calculateACWR(userId, date, requestLogger = logger) {

@@ -82,17 +82,6 @@ const SEASONAL_CONTEXT = {
   },
 };
 
-// Session types based on day of week - fallback only
-const _SESSION_TYPES = {
-  monday: "Training",
-  tuesday: "Training",
-  wednesday: "Training",
-  thursday: "Training",
-  friday: "Training",
-  saturday: "Training",
-  sunday: "Rest",
-};
-
 // Motivational messages
 const MOTIVATIONAL_MESSAGES = [
   "Every rep counts. Let's build something great today!",
@@ -600,7 +589,6 @@ async function buildDailyTrainingPlan(userId, userContext) {
     "Friday",
     "Saturday",
   ];
-  const _dayOfWeek = dayNames[today.getDay()].toLowerCase();
   const month = today.getMonth() + 1;
 
   const seasonal = SEASONAL_CONTEXT[month];

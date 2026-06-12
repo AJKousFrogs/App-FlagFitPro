@@ -2,10 +2,10 @@ import { wrapHandler } from "./utils/lambda-compat.js";
 import { supabaseAdmin, checkEnvVars } from "./supabase-client.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
-import { classifyRiskLevel, classifyIntent as _classifyIntent, generateSafeResponse, filterContent, filterSourcesByEvidence, RISK_LEVELS, INTENT_TYPES, classifyWithConfidence, applyYouthRestrictions as _applyYouthRestrictions, generateBlockedYouthResponse, AGE_GROUPS as _AGE_GROUPS, YOUTH_RESTRICTED_TOPICS as _YOUTH_RESTRICTED_TOPICS } from "./utils/ai-safety-classifier.js";
-import { isGroqConfigured, generateCoachingResponse, generateCoachingResponseStream, generateClarifyingQuestion as _generateClarifyingQuestion } from "./utils/groq-client.js";
+import { classifyRiskLevel, generateSafeResponse, filterContent, filterSourcesByEvidence, RISK_LEVELS, INTENT_TYPES, classifyWithConfidence, generateBlockedYouthResponse } from "./utils/ai-safety-classifier.js";
+import { isGroqConfigured, generateCoachingResponse, generateCoachingResponseStream } from "./utils/groq-client.js";
 import { authenticateRequest } from "./utils/auth-helper.js";
-import { processSmartQuery, searchKnowledgeHybrid, recordFeedbackWithLearning as _recordFeedbackWithLearning, getLearnedPreferences as _getLearnedPreferences, getPendingCheckins as _getPendingCheckins, updateCheckinStatus, buildCheckinMessage, summarizeConversation as _summarizeConversation, ROUTING_ACTIONS } from "./utils/smart-ai-service.js";
+import { processSmartQuery, searchKnowledgeHybrid, updateCheckinStatus, buildCheckinMessage, ROUTING_ACTIONS } from "./utils/smart-ai-service.js";
 import { isEmbeddingServiceAvailable } from "./utils/embedding-service.js";
 import { guardMerlinRequest } from "./utils/merlin-guard.js";
 import { computeAcwrAt } from "./utils/acwr.js";
@@ -41,8 +41,6 @@ const logger = createLogger({ service: "netlify.ai-chat" });
 // =====================================================
 
 const MAX_QUERY_LENGTH = 1000;
-// const MAX_CONTEXT_MESSAGES = 10; // Reserved for future use
-// const CACHE_TTL_SECONDS = 300; // Reserved for future use (5 minutes)
 
 // ACWR Safety Thresholds (Gabbett 2016)
 const ACWR_THRESHOLDS = {
@@ -763,39 +761,6 @@ async function markFollowupTriggered(followupId) {
   }
 }
 
-/**
- * Complete a follow-up with response
- *
- * @param {string} followupId - Follow-up ID
- * @param {string} messageId - Response message ID
- * @param {string} responseSummary - Summary of user's response
- */
-async function _completeFollowup(followupId, messageId, responseSummary) {
-  try {
-    // First get current metadata to preserve it
-    const { data: current } = await supabaseAdmin
-      .from("ai_followups")
-      .select("metadata")
-      .eq("id", followupId)
-      .single();
-
-    await supabaseAdmin
-      .from("ai_followups")
-      .update({
-        status: "completed",
-        response: responseSummary,
-        metadata: {
-          ...(current?.metadata || {}),
-          response_message_id: messageId,
-        },
-      })
-      .eq("id", followupId);
-  } catch (error) {
-    logger.error("ai_chat_followup_completion_failed", error, {
-      followup_id: followupId,
-    });
-  }
-}
 
 /**
  * Build conversation memory prompt from active contexts
@@ -2070,132 +2035,6 @@ async function getCategoryBiasedKnowledge(query, categories, riskLevel, limit = 
   return filterSourcesByEvidence(sources, riskLevel).slice(0, limit);
 }
 
-/**
- * Search knowledge base for relevant content
- */
-async function _searchKnowledgeBase(query, riskLevel, limit = 5) {
-  try {
-    // Extract meaningful keywords from the query
-    const keywords = extractSearchKeywords(query);
-    logger.info("ai_chat_knowledge_search_keywords_extracted", {
-      query,
-      keywords,
-    });
-
-    // Build OR conditions for each keyword
-    const searchConditions = keywords
-      .slice(0, 5) // Limit to 5 keywords
-      .map(
-        (kw) =>
-          `topic.ilike.%${kw}%,question.ilike.%${kw}%,answer.ilike.%${kw}%,summary.ilike.%${kw}%,entry_type.ilike.%${kw}%`,
-      )
-      .join(",");
-
-    // Search curated knowledge base using correct column names
-    const { data: entries, error } = await supabaseAdmin
-      .from("knowledge_base_entries")
-      .select(
-        `
-        id,
-        entry_type,
-        topic,
-        question,
-        answer,
-        summary,
-        supporting_articles,
-        evidence_strength,
-        consensus_level,
-        safety_warnings,
-        best_practices,
-        query_count,
-        updated_at
-      `,
-      )
-      .eq("is_merlin_approved", true)
-      .or(searchConditions)
-      .order("query_count", { ascending: false, nullsFirst: false })
-      .order("updated_at", { ascending: false, nullsFirst: false })
-      .limit(limit * 3); // Get more, then filter and rank
-
-    if (error) {
-      logger.error("ai_chat_knowledge_search_failed", error, {
-        query,
-      });
-      return [];
-    }
-
-    logger.info("ai_chat_knowledge_search_results", {
-      query,
-      count: entries?.length || 0,
-    });
-
-    // Score entries by relevance (how many keywords match)
-    const scoredEntries = (entries || []).map((e) => {
-      const title = e.topic || e.question || "";
-      const content = e.answer || e.summary || "";
-      const category = e.entry_type || "";
-      const text = `${title} ${content} ${category}`.toLowerCase();
-      let matchScore = 0;
-      for (const kw of keywords) {
-        if (text.includes(kw.toLowerCase())) {
-          // Title matches are worth more
-          if (title.toLowerCase().includes(kw.toLowerCase())) {
-            matchScore += 3;
-          } else if (category.toLowerCase().includes(kw.toLowerCase())) {
-            matchScore += 2;
-          } else {
-            matchScore += 1;
-          }
-        }
-      }
-      return { ...e, matchScore };
-    });
-
-    // Sort by match score first, then by quality score
-    scoredEntries.sort((a, b) => {
-      if (b.matchScore !== a.matchScore) {
-        return b.matchScore - a.matchScore;
-      }
-      return (b.query_count || 0) - (a.query_count || 0);
-    });
-
-    // Transform to standard format
-    const sources = scoredEntries.map((e) => ({
-      id: e.id,
-      content: e.answer || e.summary || e.question || "",
-      topic: e.topic || e.question || "Knowledge Entry",
-      category: e.entry_type || "general",
-      source_type: "knowledge_base",
-      source_title: e.topic || e.question || "Knowledge Entry",
-      source_quality_score:
-        e.consensus_level === "high"
-          ? 0.9
-          : e.consensus_level === "moderate"
-            ? 0.7
-            : 0.5,
-      evidence_grade: mapEvidenceStrength(e.evidence_strength),
-      risk_level: null,
-      requires_professional: false,
-      url: Array.isArray(e.supporting_articles)
-        ? e.supporting_articles[0] || null
-        : null,
-      source_url: Array.isArray(e.supporting_articles)
-        ? e.supporting_articles[0] || null
-        : null,
-    }));
-
-    // Filter by evidence grade based on risk level
-    const filtered = filterSourcesByEvidence(sources, riskLevel);
-
-    return filtered.slice(0, limit);
-  } catch (error) {
-    logger.error("ai_chat_knowledge_base_query_failed", error, {
-      query,
-      risk_level: riskLevel,
-    });
-    return [];
-  }
-}
 
 /**
  * Map evidence strength to grade

@@ -69,8 +69,6 @@ const getCommunityFeed = async (userId, limit = 20, offset = 0) => {
         .select("team_id")
         .eq("user_id", userId);
 
-      const _userTeamIds = teamMemberships?.map((m) => m.team_id) || [];
-
       // Get blocked users (both ways)
       const { data: blockedUsers } = await supabaseAdmin
         .from("blocked_users")

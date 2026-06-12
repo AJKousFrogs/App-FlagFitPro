@@ -20,16 +20,11 @@ const logger = createLogger({ service: "netlify.coach-activity" });
 
 const createRequestLogger = makeRequestLogger(logger);
 
-// Use shared Supabase admin client
-function getSupabase() {
-  return supabaseAdmin;
-}
-
 /**
  * Get activity feed for coach
  */
 async function getActivityFeed(userId, options = {}) {
-  const supabase = getSupabase();
+  const supabase = supabaseAdmin;
 
   // Get coach's teams
   const { data: teams, error: teamError } = await supabase
@@ -101,7 +96,7 @@ async function getActivityFeed(userId, options = {}) {
  * Get unread count
  */
 async function getUnreadCount(userId) {
-  const supabase = getSupabase();
+  const supabase = supabaseAdmin;
 
   // Get coach's teams
   const { data: teams } = await supabase
@@ -135,7 +130,7 @@ async function getUnreadCount(userId) {
  * Mark activity as read
  */
 async function markActivityRead(userId, activityId) {
-  const supabase = getSupabase();
+  const supabase = supabaseAdmin;
 
   // Verify coach has access
   const { data: activity } = await supabase
@@ -180,7 +175,7 @@ async function markActivityRead(userId, activityId) {
  * Mark all activity as read
  */
 async function markAllActivityRead(userId) {
-  const supabase = getSupabase();
+  const supabase = supabaseAdmin;
 
   // Get coach's teams
   const { data: teams } = await supabase
@@ -218,7 +213,7 @@ async function markAllActivityRead(userId) {
  * Get activity summary/stats
  */
 async function getActivitySummary(userId) {
-  const supabase = getSupabase();
+  const supabase = supabaseAdmin;
 
   // Get coach's teams
   const { data: teams } = await supabase

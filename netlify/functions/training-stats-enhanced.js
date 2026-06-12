@@ -69,8 +69,6 @@ function calculateACWR(sessions, referenceDate = new Date()) {
 function calculateWeeklyVolume(sessions, referenceDate = new Date()) {
   const today =
     referenceDate instanceof Date ? referenceDate : new Date(referenceDate);
-  const _todayStr = today.toISOString().split("T")[0];
-
   // Get ISO week start (Monday)
   const getISOWeekStart = (date) => {
     const d = new Date(date);
