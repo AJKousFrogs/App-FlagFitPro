@@ -108,8 +108,19 @@ async function searchKnowledgeSemantic(query, options = {}) {
 async function searchKnowledgeKeyword(query, options = {}) {
   const { limit = 5, category = null, riskLevel = null } = options;
 
-  // Extract keywords
-  const keywords = extractKeywords(query);
+  // Extract keywords. H3: each keyword is interpolated into a PostgREST `.or()`
+  // filter string, where `,` `.` `(` `)` `%` `*` `\` are metacharacters — a raw
+  // user keyword containing them could break out of the ilike clause and inject
+  // filter conditions. Strip everything but letters/numbers/space/hyphen (ample
+  // for a keyword search) and drop any that sanitise to empty.
+  const keywords = extractKeywords(query)
+    .map((kw) => String(kw).replace(/[^\p{L}\p{N}\s-]/gu, "").trim())
+    .filter((kw) => kw.length > 0);
+
+  if (keywords.length === 0) {
+    return [];
+  }
+
   const searchCondition = keywords
     .map(
       (kw) =>
