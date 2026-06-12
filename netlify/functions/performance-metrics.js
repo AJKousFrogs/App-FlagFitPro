@@ -91,8 +91,8 @@ async function getPerformanceMetrics(userId, log = logger) {
     metrics.push({
       id: "speed",
       label: "Top Speed",
-      value: speedValue != null ? Math.round(speedValue * 10) / 10 : null,
-      hasData: speedValue != null,
+      value: speedValue !== null ? Math.round(speedValue * 10) / 10 : null,
+      hasData: speedValue !== null,
       unit: "mph",
       trend: speedTrend.trend,
       trendValue: Math.round(speedTrend.trendValue * 10) / 10,
@@ -126,8 +126,8 @@ async function getPerformanceMetrics(userId, log = logger) {
     metrics.push({
       id: "accuracy",
       label: "Pass Accuracy",
-      value: accuracyValue != null ? Math.round(accuracyValue * 10) / 10 : null,
-      hasData: accuracyValue != null,
+      value: accuracyValue !== null ? Math.round(accuracyValue * 10) / 10 : null,
+      hasData: accuracyValue !== null,
       unit: "%",
       trend: accuracyTrend.trend,
       trendValue: Math.round(accuracyTrend.trendValue * 10) / 10,

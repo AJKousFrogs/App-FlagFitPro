@@ -10,7 +10,7 @@
     @case (0) {
       <h1>Who are you on the field?</h1>
       <div class="field">
-        <label>Position</label>
+        <p style="margin:0">Position</p>
         <div class="inline" style="flex-wrap:wrap;gap:var(--s-2)">
           @for (p of positions; track p) {
             <button type="button" class="chip" [class.sel]="position() === p" (click)="position.set(p)">{{ p }}</button>
@@ -56,7 +56,7 @@
     @case (3) {
       <h1>How you train</h1>
       <div class="field">
-        <label>Equipment</label>
+        <p style="margin:0">Equipment</p>
         <div class="inline" style="flex-wrap:wrap;gap:var(--s-2)">
           @for (k of ['Gym','Field','Sled','Bands']; track k) {
             <button type="button" class="chip" [class.sel]="equipment()[k]" (click)="toggleEquip(k)">

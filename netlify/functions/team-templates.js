@@ -497,10 +497,7 @@ async function assignTemplate(
         micro_session_id: microSessionId,
       });
     } catch (error) {
-      console.error(
-        `[Team Templates] Error assigning to athlete ${athleteId}:`,
-        error,
-      );
+      logger.error("athlete_assignment_failed", error, { athlete_id: athleteId });
       results.failed.push({
         athlete_id: athleteId,
         error: "Assignment failed",
@@ -752,7 +749,7 @@ rateLimitType,
           requestId,
         );
       } catch (error) {
-        console.error("[Team Templates] Error:", error);
+        logger.error("request_handler_failed", error);
         if (error?.statusCode) {
           return createErrorResponse(
             error.message,

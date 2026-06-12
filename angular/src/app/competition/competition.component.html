@@ -75,7 +75,7 @@
       <b>{{ pending()[0].competition_name || "Last event" }} <small>recently</small></b>
       <p class="muted" style="font-size:var(--fs-sm)">You were rostered for {{ pendingGamesExpected() }} games. How many did you play?</p>
       <div style="margin:var(--s-2) 0">
-        <label style="font-size:var(--fs-sm);color:var(--text-muted);display:block;margin-bottom:var(--s-2)">Game format</label>
+        <p style="font-size:var(--fs-sm);color:var(--text-muted);margin:0 0 var(--s-2)">Game format</p>
         <div class="inline" style="flex-wrap:wrap;gap:var(--s-2)">
           @for (f of formats; track f.min) {
             <button type="button" class="chip" [class.sel]="minutesPerGame() === f.min"

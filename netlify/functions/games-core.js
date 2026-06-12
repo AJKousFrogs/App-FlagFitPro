@@ -481,9 +481,6 @@ async function triggerGameDayRecovery(playerId, gameDate) {
       }),
     ]);
 
-    console.log(
-      `[GameDayRecovery] Created 48h recovery protocol for player ${playerId}`,
-    );
   } catch (error) {
     console.error("[GameDayRecovery] Error creating recovery protocol:", error);
   }

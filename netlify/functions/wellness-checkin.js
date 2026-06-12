@@ -413,7 +413,7 @@ async function saveCheckin(supabase, userId, payload, requestId, log = logger) {
   // Check for low wellness and create next-day recovery focus. Guard against null
   // (no data): `null < 40` is truthy in JS, which would fire a false low-readiness
   // alert on an athlete who simply didn't fill the check-in.
-  if (calculatedReadiness != null && calculatedReadiness < 40) {
+  if (calculatedReadiness !== null && calculatedReadiness < 40) {
     // Schedule recovery focus for tomorrow (will be checked/created tomorrow)
     try {
       const tomorrow = new Date();
@@ -465,7 +465,7 @@ async function saveCheckin(supabase, userId, payload, requestId, log = logger) {
   }
 
   // Check for low wellness and log ownership transition (guard null — no data)
-  if (calculatedReadiness != null && calculatedReadiness < 40) {
+  if (calculatedReadiness !== null && calculatedReadiness < 40) {
     try {
       // Get player's team and coach
       const { data: teamMember } = await supabase

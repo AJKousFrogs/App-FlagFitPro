@@ -23,7 +23,7 @@
              class="input" style="width:100%" />
     </div>
     <div class="field">
-      <label style="font-size:var(--fs-sm);color:var(--text-muted);display:block;margin-bottom:var(--s-2)">Category</label>
+      <p style="font-size:var(--fs-sm);color:var(--text-muted);margin:0 0 var(--s-2)">Category</p>
       <div class="inline" style="flex-wrap:wrap;gap:var(--s-2)">
         @for (c of categories; track c) {
           <button type="button" class="chip" [class.sel]="category() === c" (click)="category.set(c)">{{ c }}</button>

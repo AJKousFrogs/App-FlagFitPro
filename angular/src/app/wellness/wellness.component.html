@@ -60,7 +60,7 @@
     </div>
 
     <div style="margin-bottom:var(--s-3)">
-      <label style="display:block;margin-bottom:var(--s-2)">Travel today</label>
+      <p style="margin:0 0 var(--s-2)">Travel today</p>
       <div class="chiprow" role="group" aria-label="Hours travelled today">
         @for (t of travelOptions; track t.h) {
           <button type="button" class="chip" [class.sel]="travelHours() === t.h"
@@ -144,13 +144,13 @@
       </div>
     }
     <p class="muted" style="margin:0">Got a tight spot? Flag it and your plan pulls sprint work off that area.</p>
-    <label class="lbl">Where?</label>
+    <p class="lbl" style="margin:0">Where?</p>
     <div class="chiprow">
       @for (r of tightnessRegions; track r) {
         <button type="button" class="chip" [class.sel]="tightRegion() === r" (click)="selectTightRegion(r)">{{ r }}</button>
       }
     </div>
-    <label class="lbl">How bad?</label>
+    <p class="lbl" style="margin:0">How bad?</p>
     <div class="chiprow">
       @for (s of ['minor','moderate','severe']; track s) {
         <button type="button" class="chip" [class.sel]="tightSeverity() === s" (click)="setTightSeverity($any(s))">{{ s }}</button>

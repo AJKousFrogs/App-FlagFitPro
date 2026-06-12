@@ -207,7 +207,7 @@ async function getCoachDashboard(userId, requestedTeamId = null) {
       .in("id", memberUserIds);
 
     if (allUserError) {
-      console.warn("[CoachCore] Error batch-fetching users:", allUserError);
+      logger.warn("batch_fetch_users_failed", { error: allUserError?.message });
     }
 
     const userDataMap = new Map();

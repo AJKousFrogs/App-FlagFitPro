@@ -163,7 +163,7 @@ async function calculateUserACWR(userId) {
     for (const s of sessions) {
       const rpe = s.rpe ?? s.intensity_level;
       const dur = s.duration_minutes;
-      if (!s.session_date || !dur || rpe == null) {
+      if (!s.session_date || !dur || rpe === null || rpe === undefined) {
         continue;
       }
       loadsByDay.set(

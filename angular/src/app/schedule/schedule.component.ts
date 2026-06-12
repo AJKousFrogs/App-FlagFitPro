@@ -70,11 +70,11 @@ const KIND_DEFAULT_IMPORTANCE: Record<AthleteEventKind, AthleteEventImportance> 
             </button>
           </div>
 
-          <label class="lbl">Title</label>
-          <input class="input" type="text" placeholder="e.g. National team camp"
+          <label class="lbl" for="sch-title">Title</label>
+          <input id="sch-title" class="input" type="text" placeholder="e.g. National team camp"
                  [value]="fTitle()" (input)="fTitle.set(val($event))" />
 
-          <label class="lbl">Level</label>
+          <p class="lbl" style="margin:0">Level</p>
           <div class="chiprow">
             @for (c of categories; track c.key) {
               <button type="button" class="chip" [class.sel]="fCategory() === c.key"
@@ -82,7 +82,7 @@ const KIND_DEFAULT_IMPORTANCE: Record<AthleteEventKind, AthleteEventImportance> 
             }
           </div>
 
-          <label class="lbl">Type</label>
+          <p class="lbl" style="margin:0">Type</p>
           <div class="chiprow">
             @for (k of kinds; track k.key) {
               <button type="button" class="chip" [class.sel]="fKind() === k.key"
@@ -92,26 +92,26 @@ const KIND_DEFAULT_IMPORTANCE: Record<AthleteEventKind, AthleteEventImportance> 
 
           <div class="grid2">
             <div>
-              <label class="lbl">Start date</label>
-              <input class="input" type="date" [value]="fStartDate()" (change)="fStartDate.set(val($event))" />
+              <label class="lbl" for="sch-start-date">Start date</label>
+              <input id="sch-start-date" class="input" type="date" [value]="fStartDate()" (change)="fStartDate.set(val($event))" />
             </div>
             <div>
-              <label class="lbl">Time</label>
-              <input class="input" type="time" [value]="fStartTime()" (change)="fStartTime.set(val($event))" />
+              <label class="lbl" for="sch-start-time">Time</label>
+              <input id="sch-start-time" class="input" type="time" [value]="fStartTime()" (change)="fStartTime.set(val($event))" />
             </div>
           </div>
 
-          <label class="lbl">End date <span class="muted">(optional — for camps / multi-day tournaments)</span></label>
-          <input class="input" type="date" [value]="fEndDate()" (change)="fEndDate.set(val($event))" />
+          <label class="lbl" for="sch-end-date">End date <span class="muted">(optional — for camps / multi-day tournaments)</span></label>
+          <input id="sch-end-date" class="input" type="date" [value]="fEndDate()" (change)="fEndDate.set(val($event))" />
 
           <div class="grid2">
             <div>
-              <label class="lbl">Expected games</label>
-              <input class="input" type="number" min="0" max="50"
+              <label class="lbl" for="sch-games">Expected games</label>
+              <input id="sch-games" class="input" type="number" min="0" max="50"
                      [value]="fGames()" (input)="fGames.set(num($event))" />
             </div>
             <div>
-              <label class="lbl">Importance</label>
+              <p class="lbl" style="margin:0">Importance</p>
               <div class="chiprow">
                 @for (i of importances; track i.key) {
                   <button type="button" class="chip" [class.sel]="fImportance() === i.key"
@@ -121,12 +121,12 @@ const KIND_DEFAULT_IMPORTANCE: Record<AthleteEventKind, AthleteEventImportance> 
             </div>
           </div>
 
-          <label class="lbl">Location <span class="muted">(optional)</span></label>
-          <input class="input" type="text" placeholder="City / venue"
+          <label class="lbl" for="sch-location">Location <span class="muted">(optional)</span></label>
+          <input id="sch-location" class="input" type="text" placeholder="City / venue"
                  [value]="fLocation()" (input)="fLocation.set(val($event))" />
 
-          <label class="lbl">Notes <span class="muted">(optional)</span></label>
-          <input class="input" type="text" placeholder="Anything worth remembering"
+          <label class="lbl" for="sch-notes">Notes <span class="muted">(optional)</span></label>
+          <input id="sch-notes" class="input" type="text" placeholder="Anything worth remembering"
                  [value]="fNotes()" (input)="fNotes.set(val($event))" />
 
           @if (formError(); as e) {

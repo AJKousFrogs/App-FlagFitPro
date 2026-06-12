@@ -75,8 +75,8 @@
           }
         </div>
         <div class="row" style="gap:var(--s-3);align-items:center">
-          <label class="lbl">Usual time</label>
-          <input class="input" type="time" style="width:auto"
+          <label class="lbl" for="st-training-time">Usual time</label>
+          <input id="st-training-time" class="input" type="time" style="width:auto"
                  [value]="trainingTime()" (change)="trainingTime.set(timeVal($event))" />
         </div>
         @if (trainingMsg(); as m) { <small class="muted">{{ m }}</small> }

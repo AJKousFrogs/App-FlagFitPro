@@ -89,10 +89,10 @@ function restrictionsFor(region, severity) {
   const out = [];
   if (hit(LOWER_LIMB)) {
     out.push("sprint", "plyometric", "agility", "high_intensity");
-    if (severity !== "minor") out.push("strength");
+    if (severity !== "minor") {out.push("strength");}
   } else if (hit(CORE_TRUNK)) {
     out.push("sprint", "plyometric", "high_intensity", "throwing");
-    if (severity !== "minor") out.push("strength");
+    if (severity !== "minor") {out.push("strength");}
   } else if (hit(UPPER_BODY)) {
     // spare sprints, restrict loaded upper work + throwing/snapping
     out.push("upper_strength", "throwing");
@@ -137,7 +137,7 @@ async function listActive(userId) {
     .eq("user_id", userId)
     .in("recovery_status", ["active", "recovering", "rehab"])
     .order("injury_date", { ascending: false });
-  if (error) throw error;
+  if (error) {throw error;}
   // Drop self-reports whose auto-expiry has passed (clinical injuries have no expiry).
   const rows = (data ?? []).filter(
     (r) =>
@@ -155,7 +155,7 @@ async function recordSelfReport(userId, body) {
   }
   const severity = SEVERITIES.has(body.severity) ? body.severity : "minor";
   const note =
-    body.note != null ? String(body.note).slice(0, 500) : null;
+    body.note !== null && body.note !== undefined ? String(body.note).slice(0, 500) : null;
 
   const today = new Date();
   const expiry = new Date(today.getTime() + SEVERITY_DAYS[severity] * 86_400_000);
@@ -169,7 +169,7 @@ async function recordSelfReport(userId, body) {
     .eq("injury_mechanism", "self_report")
     .eq("injury_location", region)
     .eq("recovery_status", "active");
-  if (clearErr) throw clearErr;
+  if (clearErr) {throw clearErr;}
 
   const row = {
     user_id: userId,
@@ -188,7 +188,7 @@ async function recordSelfReport(userId, body) {
     .insert(row)
     .select()
     .single();
-  if (error) throw error;
+  if (error) {throw error;}
   return { created: toApi(data) };
 }
 

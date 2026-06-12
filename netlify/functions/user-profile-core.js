@@ -199,10 +199,10 @@ const handler = async (event, context) => {
         const birthDate = userInfo.birth_date || userInfo.date_of_birth || null;
 
         const missingFields = [];
-        if (!heightCm) missingFields.push("height");
-        if (!weightKg) missingFields.push("weight");
-        if (!birthDate) missingFields.push("birthDate");
-        if (!userInfo.position) missingFields.push("position");
+        if (!heightCm) {missingFields.push("height");}
+        if (!weightKg) {missingFields.push("weight");}
+        if (!birthDate) {missingFields.push("birthDate");}
+        if (!userInfo.position) {missingFields.push("position");}
 
         const profile = {
           userId: userInfo.id,
@@ -221,7 +221,7 @@ const handler = async (event, context) => {
           })),
           trainingFrequency,
           typicalDuration: avgDuration ? Math.round(avgDuration) : null,
-          avgIntensity: avgIntensity != null ? avgIntensity.toFixed(1) : null,
+          avgIntensity: avgIntensity !== null ? avgIntensity.toFixed(1) : null,
           recentSessions: (recentRes.data ?? []).map((row) => ({
             type: row.session_type || "Training",
             duration: row.duration_minutes || 60,

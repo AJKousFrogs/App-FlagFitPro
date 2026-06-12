@@ -64,7 +64,7 @@ interface ProfileRead {
       </div>
 
       <div class="card stack">
-        <label class="lbl">Position</label>
+        <p class="lbl" style="margin:0">Position</p>
         <div class="chiprow">
           @for (p of positions; track p) {
             <button type="button" class="chip" [class.sel]="position() === p" (click)="position.set(p)">{{ p }}</button>
@@ -73,25 +73,25 @@ interface ProfileRead {
 
         <div class="grid2">
           <div>
-            <label class="lbl">Jersey number</label>
-            <input class="input" type="number" min="0" max="99" inputmode="numeric"
+            <label class="lbl" for="pe-jersey">Jersey number</label>
+            <input id="pe-jersey" class="input" type="number" min="0" max="99" inputmode="numeric"
                    [value]="jersey()" (input)="jersey.set(numOrEmpty($event))" />
           </div>
           <div>
-            <label class="lbl">Birth date</label>
-            <input class="input" type="date" [value]="birthDate()" (change)="birthDate.set(val($event))" />
+            <label class="lbl" for="pe-birth-date">Birth date</label>
+            <input id="pe-birth-date" class="input" type="date" [value]="birthDate()" (change)="birthDate.set(val($event))" />
           </div>
         </div>
 
         <div class="grid2">
           <div>
-            <label class="lbl">Height (cm)</label>
-            <input class="input" type="number" min="100" max="250" inputmode="numeric"
+            <label class="lbl" for="pe-height-cm">Height (cm)</label>
+            <input id="pe-height-cm" class="input" type="number" min="100" max="250" inputmode="numeric"
                    [value]="heightCm()" (input)="heightCm.set(numOrEmpty($event))" />
           </div>
           <div>
-            <label class="lbl">Weight (kg)</label>
-            <input class="input" type="number" min="30" max="200" inputmode="numeric"
+            <label class="lbl" for="pe-weight-kg">Weight (kg)</label>
+            <input id="pe-weight-kg" class="input" type="number" min="30" max="200" inputmode="numeric"
                    [value]="weightKg()" (input)="weightKg.set(numOrEmpty($event))" />
           </div>
         </div>
