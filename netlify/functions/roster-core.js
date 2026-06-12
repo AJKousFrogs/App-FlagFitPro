@@ -1,6 +1,9 @@
 import { baseHandler } from "./utils/base-handler.js";
 import { createErrorResponse, createSuccessResponse } from "./utils/error-handler.js";
 import { getUserTeamId } from "./utils/auth-helper.js";
+import { createLogger } from "./utils/structured-logger.js";
+
+const logger = createLogger({ service: "netlify.roster-core" });
 
 function getDisplayName(user, fallback = "Unknown Player") {
   const fullName =
@@ -69,7 +72,7 @@ const handler = async (event, context) =>
 
         return createSuccessResponse(players.filter((player) => !!player.id));
       } catch (error) {
-        console.error("[roster] Failed to load players:", error);
+        logger.error("roster_players_load_failed", error, {});
         return createErrorResponse(
           "Failed to load roster players",
           500,

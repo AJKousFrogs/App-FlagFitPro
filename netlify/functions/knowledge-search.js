@@ -8,6 +8,9 @@ import { parseJsonObjectBody, parseBoundedInt } from "./utils/input-validator.js
 
 import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
 import { baseHandler } from "./utils/base-handler.js";
+import { createLogger } from "./utils/structured-logger.js";
+
+const logger = createLogger({ service: "netlify.knowledge-search" });
 
 // SECURITY: Whitelist of allowed categories to prevent injection
 const ALLOWED_CATEGORIES = [
@@ -194,7 +197,7 @@ rateLimitType,
           const { data, error } = await queryBuilder;
 
           if (error) {
-            console.error("Knowledge search error:", error);
+            logger.error("knowledge_search_failed", error, {});
             return createErrorResponse(
               "Search failed",
               500,
@@ -363,7 +366,7 @@ rateLimitType,
           requestId,
         );
       } catch (error) {
-        console.error("Knowledge search error:", error);
+        logger.error("knowledge_search_unhandled_error", error, {});
         return createErrorResponse(
           "Internal server error",
           500,

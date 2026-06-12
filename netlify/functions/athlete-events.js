@@ -275,4 +275,5 @@ const handler = async (event, context) => {
   });
 };
 
+export const testHandler = handler;
 export { handler };

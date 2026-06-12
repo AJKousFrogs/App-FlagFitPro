@@ -12,6 +12,9 @@ import { supabaseAdmin } from "./supabase-client.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { createErrorResponse, handleValidationError } from "./utils/error-handler.js";
 import { isValidDateString, parseJsonObjectBody } from "./utils/input-validator.js";
+import { createLogger } from "./utils/structured-logger.js";
+
+const logger = createLogger({ service: "netlify.qb-throwing" });
 
 function isNonNegativeInteger(value) {
   return Number.isInteger(value) && value >= 0;
@@ -44,7 +47,7 @@ const handler = async (event, context) =>
 
         return await logThrowingSession(supabaseAdmin, userId, payload);
       } catch (err) {
-        console.error("QB throwing error:", err);
+        logger.error("qb_throwing_error", err, {});
         return createErrorResponse("Internal server error", 500, "server_error");
       }
     },

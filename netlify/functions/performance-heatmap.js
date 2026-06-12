@@ -1,6 +1,9 @@
 import { supabaseAdmin } from "./supabase-client.js";
 import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
 import { baseHandler } from "./utils/base-handler.js";
+import { createLogger } from "./utils/structured-logger.js";
+
+const logger = createLogger({ service: "netlify.performance-heatmap" });
 
 // Netlify Function: Performance Heatmap API
 // Returns training load data for the Training Heatmap component
@@ -81,9 +84,7 @@ async function getHeatmapData(userId, timeRange) {
   }
 
   const trainingSessions = sessions || [];
-  console.log(
-    `[performance-heatmap] Found ${trainingSessions.length} sessions for user ${userId}`,
-  );
+  logger.info("sessions_fetched", { session_count: trainingSessions.length, user_id: userId });
 
   // Group sessions by date
   const sessionsByDate = {};
@@ -190,7 +191,7 @@ const handler = async (event, context) => {
             : "No training sessions found. Log sessions to see your training heatmap.",
         });
       } catch (error) {
-        console.error("[performance-heatmap] Unexpected handler error:", error);
+        logger.error("handler_error", error, {});
         return createErrorResponse(
           "Failed to fetch performance heatmap",
           500,

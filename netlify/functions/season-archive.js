@@ -10,6 +10,9 @@ import { supabaseAdmin } from "./supabase-client.js";
 import { createErrorResponse, createSuccessResponse, handleValidationError } from "./utils/error-handler.js";
 import { tryParseJsonObjectBody, isUuid } from "./utils/input-validator.js";
 import { hasAnyRole, COACH_ROUTE_ROLES } from "./utils/role-sets.js";
+import { createLogger } from "./utils/structured-logger.js";
+
+const logger = createLogger({ service: "netlify.season-archive" });
 
 const handler = async (event, context) =>
   baseHandler(event, context, {
@@ -55,7 +58,7 @@ const handler = async (event, context) =>
 
         return createSuccessResponse({}, 200, "Season data archived successfully");
       } catch (error) {
-        console.error("[SeasonArchive] Error:", error);
+        logger.error("season_archive_failed", error, {});
         return createErrorResponse("Failed to archive season", 500, "server_error");
       }
     },

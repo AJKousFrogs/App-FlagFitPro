@@ -8,6 +8,9 @@ import { baseHandler } from "./utils/base-handler.js";
 import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
 import { supabaseAdmin } from "./supabase-client.js";
 import { computeAcwrAt } from "./utils/acwr.js";
+import { createLogger } from "./utils/structured-logger.js";
+
+const logger = createLogger({ service: "netlify.user-context" });
 
 /**
  * Get comprehensive user context
@@ -31,7 +34,7 @@ async function getUserContext(userId) {
       notFoundError.statusCode = 404;
       throw notFoundError;
     }
-    console.error("Error fetching user data:", userError);
+    logger.error("user_data_fetch_failed", userError);
     throw userError;
   }
 
@@ -88,16 +91,16 @@ async function getUserContext(userId) {
     ]);
 
     if (injuriesError) {
-      console.error("Error fetching injuries:", injuriesError); // optional
+      logger.error("injuries_fetch_failed", injuriesError); // optional
     }
     if (sessionsError) {
-      console.error("Error fetching training sessions:", sessionsError); // optional
+      logger.error("sessions_fetch_failed", sessionsError); // optional
     }
     if (wellnessError && wellnessError.code !== "PGRST116") {
-      console.error("Error fetching wellness:", wellnessError); // optional
+      logger.error("wellness_fetch_failed", wellnessError); // optional
     }
     if (supplementsError) {
-      console.error("Error fetching supplements:", supplementsError); // optional
+      logger.error("supplements_fetch_failed", supplementsError); // optional
     }
 
     // Calculate ACWR (Acute:Chronic Workload Ratio) from the sessions just fetched.
@@ -209,7 +212,7 @@ const handler = async (event, context) => {
         if (error?.statusCode === 404 || error?.code === "not_found") {
           return createErrorResponse("User not found", 404, "not_found", requestId);
         }
-        console.error("[user-context] Unexpected handler error:", error);
+        logger.error("handler_error_unexpected", error);
         return createErrorResponse(
           "Failed to fetch user context",
           500,

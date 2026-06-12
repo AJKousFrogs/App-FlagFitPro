@@ -7,6 +7,9 @@
 import { baseHandler } from "./utils/base-handler.js";
 import { createErrorResponse } from "./utils/error-handler.js";
 import { parseBoundedInt } from "./utils/input-validator.js";
+import { createLogger } from "./utils/structured-logger.js";
+
+const logger = createLogger({ service: "netlify.plyometrics" });
 
 const handler = async (event, context) =>
   baseHandler(event, context, {
@@ -41,7 +44,7 @@ const handler = async (event, context) =>
         const { data: exercises, error } = await query;
 
         if (error) {
-          console.error("Error fetching plyometric exercises:", error);
+          logger.error("exercises_fetch_failed", error, { details: "Error fetching plyometric exercises" });
           return createErrorResponse(
             "Failed to fetch exercises",
             500,
@@ -61,7 +64,7 @@ const handler = async (event, context) =>
         if (error?.isValidation) {
           return createErrorResponse(error.message, 422, "validation_error");
         }
-        console.error("Plyometrics API error:", error);
+        logger.error("plyometrics_api_error", error, {});
         return createErrorResponse("Internal server error", 500, "server_error");
       }
     },

@@ -14,6 +14,8 @@ import { prepareStateTransition } from "./utils/session-state-helper.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { hasAnyRole, TEAM_OPERATIONS_ROLES } from "./utils/role-sets.js";
 import { sharesStaffedTeam, isActiveTeamMember } from "./utils/team-scope.js";
+import { createLogger } from "./utils/structured-logger.js";
+const logger = createLogger({ service: "netlify.training-sessions" });
 
 // Netlify Function: Training Sessions API
 // Handles creation and retrieval of training sessions for the Training Builder component
@@ -221,7 +223,7 @@ async function createTrainingSession(
       },
     };
   } catch (error) {
-    console.error("Error creating training session:", error);
+    logger.error("session_create_failed", error, {});
     throw error;
   }
 }
@@ -615,7 +617,7 @@ async function getTrainingSessions(userId, queryParams, supabase) {
 
     return sessions || [];
   } catch (error) {
-    console.error("Error fetching training sessions:", error);
+    logger.error("sessions_fetch_failed", error, {});
     return [];
   }
 }

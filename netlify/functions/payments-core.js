@@ -4,6 +4,9 @@ import { baseHandler } from "./utils/base-handler.js";
 import { parseJsonObjectBody } from "./utils/input-validator.js";
 import { checkTeamMembership, getUserContext } from "./utils/auth-helper.js";
 import { hasAnyRole, TEAM_OPERATIONS_ROLES } from "./utils/role-sets.js";
+import { createLogger } from "./utils/structured-logger.js";
+
+const logger = createLogger({ service: "netlify.payments-core" });
 
 // Netlify Function: Payments API
 // Handles payment tracking for players and coaches
@@ -568,7 +571,7 @@ const handler = async (event, context) => {
 
         return createErrorResponse("Invalid endpoint", 404);
       } catch (error) {
-        console.error("Payments API error:", error);
+        logger.error("payments_api_error", error, {});
         if (
           error.message?.includes("Only coaches") ||
           error.message?.includes("Not authorized")

@@ -4,6 +4,9 @@ import { createSuccessResponse, createErrorResponse } from "./utils/error-handle
 import { getUserRole } from "./utils/authorization-guard.js";
 import { ACWR_RISK_ZONES } from "./utils/acwr.js";
 import { tryParseJsonObjectBody } from "./utils/input-validator.js";
+import { createLogger } from "./utils/structured-logger.js";
+
+const logger = createLogger({ service: "netlify.smart-training-recommendations" });
 
 // Netlify Function: Smart Training Recommendations
 // Integrates tournaments, ACWR, RPE, injuries, and periodization
@@ -699,10 +702,7 @@ const handler = async (event, context) => {
           requestId,
         );
       } catch (error) {
-        console.error(
-          "[smart-training-recommendations] Unexpected handler error:",
-          error,
-        );
+        logger.error("smart_training_recommendations_handler_error", error, {});
         return createErrorResponse(
           "Failed to generate training recommendations",
           500,

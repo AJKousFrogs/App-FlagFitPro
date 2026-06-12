@@ -3,6 +3,8 @@ import { baseHandler } from "./utils/base-handler.js";
 import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
 import { supabaseAdmin } from "./supabase-client.js";
 import { parseJsonObjectBody as sharedParseJsonObjectBody } from "./utils/input-validator.js";
+import { createLogger } from "./utils/structured-logger.js";
+const logger = createLogger({ service: "netlify.parental-consent" });
 
 function isValidEmail(email) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
@@ -296,16 +298,13 @@ async function handleAuthenticatedRequest(event, _context, { userId, supabase })
         );
         emailSent = emailResp.ok;
         if (!emailResp.ok) {
-          console.error(
-            "Guardian email send returned non-OK status:",
-            emailResp.status,
-          );
+          logger.error("guardian_email_send_failed", undefined, { http_status: emailResp.status });
         }
       } else {
-        console.error("Guardian email not sent: email service not configured");
+        logger.error("guardian_email_not_configured", undefined, { message: "Guardian email not sent: email service not configured" });
       }
     } catch (emailError) {
-      console.error("Failed to send guardian email:", emailError);
+      logger.error("guardian_email_send_error", emailError, {});
     }
 
     await supabaseAdmin.from("privacy_audit_log").insert({

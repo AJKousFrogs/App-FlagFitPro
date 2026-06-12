@@ -3,6 +3,9 @@ import { baseHandler } from "./utils/base-handler.js";
 import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
 import { getUserRole } from "./utils/authorization-guard.js";
 import { parseJsonObjectBody } from "./utils/input-validator.js";
+import { createLogger } from "./utils/structured-logger.js";
+
+const logger = createLogger({ service: "netlify.user-profile-core" });
 
 // User Profile API Endpoint
 // Returns comprehensive user profile including body metrics, injuries, and training data.
@@ -89,7 +92,7 @@ async function updateOwnProfile(userId, body) {
     .maybeSingle();
 
   if (error) {
-    console.error("[user-profile] profile update failed", error?.code ? { code: error.code } : {});
+    logger.error("profile_update_failed", error, error?.code ? { code: error.code } : {});
     return createErrorResponse("Failed to update profile", 500, "server_error");
   }
   if (!data) {
@@ -236,10 +239,7 @@ const handler = async (event, context) => {
 
         return createSuccessResponse(profile);
       } catch (error) {
-        console.error(
-          "[user-profile] Unexpected handler error",
-          error?.code ? { code: error.code } : {},
-        );
+        logger.error("profile_handler_error", error, error?.code ? { code: error.code } : {});
         return createErrorResponse("Failed to retrieve user profile", 500, "server_error");
       }
     },

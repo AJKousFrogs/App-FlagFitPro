@@ -4,6 +4,8 @@ import { parseAthleteId } from "./utils/db-query-helper.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { COACH_ROUTE_ROLES } from "./utils/role-sets.js";
 import { sharesStaffedTeam } from "./utils/team-scope.js";
+import { createLogger } from "./utils/structured-logger.js";
+const logger = createLogger({ service: "netlify.player-stats" });
 
 // Netlify Function: Player Statistics API
 // Centralized endpoint for aggregating player statistics across all games
@@ -102,7 +104,7 @@ const getPlayerAggregatedStats = async (playerId, options = {}) => {
 
     return stats;
   } catch (error) {
-    console.error("Error getting player aggregated stats:", error);
+    logger.error("player_aggregated_stats_fetch_failed", error);
     throw error;
   }
 };
@@ -427,7 +429,7 @@ const getPlayerStatsByDateRange = async (playerId, startDate, endDate) => {
 
     return aggregateStatsFromPlays(uniquePlays, games, playerId);
   } catch (error) {
-    console.error("Error getting player stats by date range:", error);
+    logger.error("player_stats_date_range_fetch_failed", error);
     throw error;
   }
 };

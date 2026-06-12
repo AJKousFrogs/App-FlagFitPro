@@ -5,6 +5,9 @@ import {
 } from "./utils/error-handler.js";
 import { supabaseAdmin } from "./supabase-client.js";
 import { parseJsonObjectBody, parseBoundedInt } from "./utils/input-validator.js";
+import { createLogger } from "./utils/structured-logger.js";
+
+const logger = createLogger({ service: "netlify.supplements" });
 
 // Netlify Function: Supplements API
 // Handles supplement logging (read-only for AI - no dosing recommendations)
@@ -113,7 +116,7 @@ async function upsertSupplements(userId, items, rawDate) {
     .select();
 
   if (error) {
-    console.error("Error upserting supplement logs:", error);
+    logger.error("supplement_logs_upsert_failed", error, {});
     throw error;
   }
 
@@ -189,7 +192,7 @@ async function upsertUserSupplement(userId, data) {
     .single();
 
   if (error) {
-    console.error("Error upserting user supplement:", error);
+    logger.error("user_supplement_upsert_failed", error, {});
     throw error;
   }
 
@@ -217,13 +220,13 @@ async function getSupplementLogs(userId, limit = 30) {
       .limit(limit);
 
     if (error) {
-      console.error("Error fetching supplement logs:", error);
+      logger.error("supplement_logs_fetch_failed", error, {});
       throw error;
     }
 
     return data || [];
   } catch (error) {
-    console.error("Error in getSupplementLogs:", error);
+    logger.error("supplement_logs_fetch_failed", error, {});
     throw error;
   }
 }
@@ -246,13 +249,13 @@ async function getRecentSupplementLogs(userId) {
       .order("date", { ascending: false });
 
     if (error) {
-      console.error("Error fetching recent supplement logs:", error);
+      logger.error("recent_supplement_logs_fetch_failed", error, {});
       throw error;
     }
 
     return data || [];
   } catch (error) {
-    console.error("Error in getRecentSupplementLogs:", error);
+    logger.error("recent_supplement_logs_fetch_failed", error, {});
     throw error;
   }
 }
@@ -307,7 +310,7 @@ async function getUserSupplements(userId) {
     // Return empty - frontend will use defaults
     return { supplements: [], todayLogs: todayLogs || [] };
   } catch (error) {
-    console.error("Error in getUserSupplements:", error);
+    logger.error("user_supplements_fetch_failed", error, {});
     return { supplements: [], todayLogs: [] };
   }
 }

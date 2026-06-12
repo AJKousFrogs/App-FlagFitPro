@@ -2,6 +2,9 @@ import { baseHandler } from "./utils/base-handler.js";
 import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
 import { parseJsonObjectBody, parseBoundedInt } from "./utils/input-validator.js";
 import { supabaseAdmin } from "./supabase-client.js";
+import { createLogger } from "./utils/structured-logger.js";
+
+const logger = createLogger({ service: "netlify.recovery-core" });
 
 // Netlify Function: Recovery Protocol API
 // Handles recovery recommendations, protocols, and athlete recovery profiles
@@ -975,7 +978,7 @@ async function handleRequest(event, _context, { userId }) {
 
     return createErrorResponse("Endpoint not found", 404, "not_found");
   } catch (error) {
-    console.error("Recovery API error:", error);
+    logger.error("recovery_api_error", error, {});
     throw error;
   }
 }

@@ -392,7 +392,7 @@ const getGameDetails = async (userId, gameId) => {
 
     return normalizedGame;
   } catch (error) {
-    console.error("Error getting game details:", error);
+    logger.error("game_details_fetch_failed", error, {});
     throw error;
   }
 };
@@ -465,11 +465,9 @@ async function triggerGameDayRecovery(playerId, gameDate) {
       }),
     ]);
 
-    console.log(
-      `[GameDayRecovery] Created 48h recovery protocol for player ${playerId}`,
-    );
+    logger.info("game_day_recovery_created", { player_id: playerId });
   } catch (error) {
-    console.error("[GameDayRecovery] Error creating recovery protocol:", error);
+    logger.error("game_day_recovery_failed", error, { player_id: playerId });
   }
 }
 
@@ -602,7 +600,7 @@ const updateGame = async (userId, gameId, updates) => {
 
     return normalizeGameRecord(updatedGame, userId);
   } catch (error) {
-    console.error("Error updating game:", error);
+    logger.error("game_update_failed", error, {});
     throw error;
   }
 };
@@ -703,7 +701,7 @@ const savePlay = async (userId, gameId, playData) => {
       recorded_by_role: recordedByRole,
     };
   } catch (error) {
-    console.error("Error saving play:", error);
+    logger.error("play_save_failed", error, {});
     throw error;
   }
 };
@@ -729,7 +727,7 @@ const getGameStats = async (userId, gameId) => {
     // Calculate statistics
     return calculateStatsFromEvents(events || []);
   } catch (error) {
-    console.error("Error getting game stats:", error);
+    logger.error("game_stats_fetch_failed", error, {});
     throw error;
   }
 };
@@ -821,7 +819,7 @@ const getPlayerAggregatedStats = async (
 
     return stats;
   } catch (error) {
-    console.error("Error getting player aggregated stats:", error);
+    logger.error("player_aggregated_stats_fetch_failed", error, {});
     throw error;
   }
 };

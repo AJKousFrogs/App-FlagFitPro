@@ -1,11 +1,14 @@
 import { wrapHandler } from "./utils/lambda-compat.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { authenticateRequest } from "./utils/auth-helper.js";
-import { supabaseAdmin } from "./utils/supabase-client.js";
+import { supabaseAdmin } from "./supabase-client.js";
 import {
   createSuccessResponse,
   handleValidationError,
 } from "./utils/error-handler.js";
+import { createLogger } from "./utils/structured-logger.js";
+
+const logger = createLogger({ service: "netlify.weather" });
 
 // Netlify Function: Weather Data
 // Provides current weather information for training planning.
@@ -48,7 +51,7 @@ async function fetchWithTimeout(url, options = {}, timeoutMs = REQUEST_TIMEOUT_M
  * Get weather data from Open-Meteo API (free, no API key required)
  */
 async function getWeatherData(latitude, longitude, city) {
-  console.log("Using Open-Meteo for weather data");
+  logger.info("weather_provider_open_meteo");
   return await getOpenMeteoData(latitude, longitude, city);
 }
 
@@ -95,7 +98,7 @@ async function getOpenMeteoData(latitude, longitude, city) {
         }
         locationName = geoData[0].display_name?.split(",")[0] || city;
       } catch (geoError) {
-        console.warn("Geocoding failed:", geoError.message);
+        logger.warn("weather_geocoding_failed", { message: geoError.message });
         return createSafetyFallback(
           city,
           "Location lookup failed. Check local weather before outdoor training.",
@@ -149,7 +152,7 @@ async function getOpenMeteoData(latitude, longitude, city) {
       safetyWarning: suitability.level === "poor" && !suitability.suitable,
     };
   } catch (error) {
-    console.error("Open-Meteo error:", error);
+    logger.error("weather_open_meteo_error", error);
     // Return conservative safety-first data on error (never optimistic).
     return createSafetyFallback(city);
   }
@@ -367,7 +370,7 @@ async function resolveTeamHomeCity(userId) {
       .order("updated_at", { ascending: false });
 
     if (error) {
-      console.warn("Team home_city lookup failed:", error.message);
+      logger.warn("weather_team_city_lookup_failed", { message: error.message });
       return null;
     }
     for (const row of data ?? []) {
@@ -377,7 +380,7 @@ async function resolveTeamHomeCity(userId) {
       }
     }
   } catch (lookupError) {
-    console.warn("Team home_city lookup failed:", lookupError.message);
+    logger.warn("weather_team_city_lookup_failed", { message: lookupError.message });
   }
   return null;
 }
@@ -465,7 +468,7 @@ async function handleRequest(event, _context, { userId }) {
     ) {
       return handleValidationError(error.message);
     }
-    console.error("Error in weather handler:", error);
+    logger.error("weather_handler_error", error);
     throw error;
   }
 }

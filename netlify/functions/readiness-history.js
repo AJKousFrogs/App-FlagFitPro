@@ -15,6 +15,9 @@ import { successResponse } from "./utils/response-helper.js";
 import { canCoachViewReadiness, filterReadinessForCoach } from "./utils/consent-guard.js";
 import { getUserRole } from "./utils/authorization-guard.js";
 import { hasAnyRole, LOAD_MANAGEMENT_ACCESS_ROLES } from "./utils/role-sets.js";
+import { createLogger } from "./utils/structured-logger.js";
+
+const logger = createLogger({ service: "netlify.readiness-history" });
 
 async function fetchReadinessHistory(athleteId, startDate, endDate) {
   // readiness_scores has no data_mode column; the previous dual-attempt fallback
@@ -105,7 +108,7 @@ const handler = async (event, context) => {
 
         return successResponse(result.data);
       } catch (error) {
-        console.error("[readiness-history] Unexpected handler error:", error);
+        logger.error("readiness_history_unexpected_error", error, {});
         return createErrorResponse(
           "Failed to retrieve readiness history",
           500,

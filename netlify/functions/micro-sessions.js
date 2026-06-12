@@ -26,6 +26,9 @@ import { supabaseAdmin } from "./supabase-client.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
 import { parseJsonObjectBody, isValidId, parseBoundedInt } from "./utils/input-validator.js";
+import { createLogger } from "./utils/structured-logger.js";
+
+const logger = createLogger({ service: "netlify.micro-sessions" });
 
 // =====================================================
 // HELPER FUNCTIONS
@@ -85,7 +88,7 @@ async function createMicroSession(sessionData, userId) {
     .single();
 
   if (error) {
-    console.error("[Micro-Sessions] Error creating session:", error);
+    logger.error("session_create_failed", error);
     throw error;
   }
 
@@ -132,7 +135,7 @@ async function getMicroSessions(userId, filters = {}) {
   const { data, error } = await query;
 
   if (error) {
-    console.error("[Micro-Sessions] Error fetching sessions:", error);
+    logger.error("sessions_fetch_failed", error);
     throw error;
   }
 
@@ -156,7 +159,7 @@ async function getTodaySessions(userId) {
     .order("created_at", { ascending: true });
 
   if (error) {
-    console.error("[Micro-Sessions] Error fetching today's sessions:", error);
+    logger.error("today_sessions_fetch_failed", error);
     throw error;
   }
 
@@ -181,7 +184,7 @@ async function getMicroSessionById(sessionId, userId) {
     if (error.code === "PGRST116") {
       return null;
     } // Not found
-    console.error("[Micro-Sessions] Error fetching session:", error);
+    logger.error("session_fetch_failed", error);
     throw error;
   }
 
@@ -231,7 +234,7 @@ async function updateMicroSession(sessionId, userId, updates) {
     .single();
 
   if (error) {
-    console.error("[Micro-Sessions] Error updating session:", error);
+    logger.error("session_update_failed", error);
     throw error;
   }
 
@@ -263,7 +266,7 @@ async function submitFollowUp(sessionId, userId, followUpData) {
     .single();
 
   if (error) {
-    console.error("[Micro-Sessions] Error submitting follow-up:", error);
+    logger.error("follow_up_submit_failed", error);
     throw error;
   }
 
@@ -290,7 +293,7 @@ async function getCompletionAnalytics(userId, options = {}) {
     .order("week_start", { ascending: false });
 
   if (statsError) {
-    console.error("[Micro-Sessions] Error fetching analytics:", statsError);
+    logger.error("analytics_fetch_failed", statsError);
     throw statsError;
   }
 
@@ -302,7 +305,7 @@ async function getCompletionAnalytics(userId, options = {}) {
     .gte("assigned_date", startDate.toISOString().split("T")[0]);
 
   if (totalsError) {
-    console.error("[Micro-Sessions] Error fetching totals:", totalsError);
+    logger.error("analytics_totals_fetch_failed", totalsError);
     throw totalsError;
   }
 
@@ -603,7 +606,7 @@ const handler = async (event, context) => {
           requestId,
         );
       } catch (error) {
-        console.error("[Micro-Sessions] Error:", error);
+        logger.error("request_failed", error);
         return createErrorResponse(
           "Failed to process request",
           500,

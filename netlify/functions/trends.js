@@ -3,6 +3,9 @@ import { createSuccessResponse, createErrorResponse } from "./utils/error-handle
 import { baseHandler } from "./utils/base-handler.js";
 import { getWeekNumber } from "./utils/date-utils.js";
 import { parseBoundedInt } from "./utils/input-validator.js";
+import { createLogger } from "./utils/structured-logger.js";
+
+const logger = createLogger({ service: "netlify.trends" });
 
 // Netlify Function: Trends
 // Provides trend data for dashboards:
@@ -154,7 +157,7 @@ async function getGamePerformanceTrend(athleteId, games = 5) {
     }
 
     if (error) {
-      console.warn("Error fetching games:", error.message);
+      logger.warn("games_fetch_failed", { message: error.message });
       // Return empty but valid response instead of throwing
       return {
         games: [],
@@ -215,7 +218,7 @@ async function getGamePerformanceTrend(athleteId, games = 5) {
       trend,
     };
   } catch (err) {
-    console.warn("Game performance trend error:", err.message);
+    logger.warn("game_performance_trend_error", { message: err.message });
     return {
       games: [],
       averagePerformance: 0,

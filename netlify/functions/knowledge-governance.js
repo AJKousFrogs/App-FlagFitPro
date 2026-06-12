@@ -3,6 +3,9 @@ import { baseHandler } from "./utils/base-handler.js";
 import { createErrorResponse, createSuccessResponse } from "./utils/error-handler.js";
 import { getUserRole } from "./utils/authorization-guard.js";
 import { parseJsonObjectBody } from "./utils/input-validator.js";
+import { createLogger } from "./utils/structured-logger.js";
+
+const logger = createLogger({ service: "netlify.knowledge-governance" });
 
 const ALLOWED_ENTRY_TYPES = new Set([
   "training_method",
@@ -431,7 +434,7 @@ const handler = async (event, context) =>
           quality_issues: action === "approve" ? getQualityIssues(existingEntry) : [],
         });
         if (auditError) {
-          console.error("[knowledge-governance] Failed to write review audit", auditError);
+          logger.error("review_audit_write_failed", auditError, { entry_id: reviewData.id });
         }
 
         return createSuccessResponse(

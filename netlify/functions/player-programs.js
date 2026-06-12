@@ -43,6 +43,9 @@ import {
   ErrorType,
 } from "./utils/error-handler.js";
 import { tryParseJsonObjectBody, isUuid, isValidDateString } from "./utils/input-validator.js";
+import { createLogger } from "./utils/structured-logger.js";
+
+const logger = createLogger({ service: "netlify.player-programs" });
 
 // Program ID constants - these match the database
 const PROGRAM_IDS = {
@@ -160,7 +163,7 @@ async function getActiveAssignment(supabase, userId) {
     if (isOptionalSchemaError(error)) {
       return null;
     }
-    console.error("[player-programs] Error fetching assignment:", error);
+    logger.error("assignment_fetch_failed", error, {});
     throw error;
   }
 
@@ -265,16 +268,11 @@ async function handlePost(event, context, { userId }) {
       .eq("id", existingAssignment.id);
 
     if (inactivateError) {
-      console.error(
-        "[player-programs] Error inactivating previous:",
-        inactivateError,
-      );
+      logger.error("assignment_inactivate_failed", inactivateError, {});
       throw inactivateError;
     }
 
-    console.log(
-      `[player-programs] Inactivated previous assignment ${existingAssignment.id} for user ${userId}`,
-    );
+    logger.info("assignment_inactivated", { assignment_id: existingAssignment.id, user_id: userId });
   }
 
   // Create new assignment
@@ -299,7 +297,7 @@ async function handlePost(event, context, { userId }) {
     .single();
 
   if (createError) {
-    console.error("[player-programs] Error creating assignment:", createError);
+    logger.error("assignment_create_failed", createError, {});
     throw createError;
   }
 
@@ -310,9 +308,7 @@ async function handlePost(event, context, { userId }) {
   );
   const assignment = mapAssignmentRecord(created, program);
 
-  console.log(
-    `[player-programs] Created assignment ${assignment.id} for user ${userId} -> program ${program_id}`,
-  );
+  logger.info("assignment_created", { assignment_id: assignment.id, user_id: userId, program_id });
 
   return createSuccessResponse(
     { assignment },
@@ -436,10 +432,7 @@ async function handlePut(event, context, { userId }) {
       .eq("id", assignmentId);
 
     if (inactivateError) {
-      console.error(
-        "[player-programs] Error inactivating for switch:",
-        inactivateError,
-      );
+      logger.error("assignment_inactivate_switch_failed", inactivateError, {});
       throw inactivateError;
     }
 
@@ -466,10 +459,7 @@ async function handlePut(event, context, { userId }) {
       .single();
 
     if (createError) {
-      console.error(
-        "[player-programs] Error creating switched assignment:",
-        createError,
-      );
+      logger.error("assignment_switch_create_failed", createError, {});
       throw createError;
     }
 
@@ -480,9 +470,7 @@ async function handlePut(event, context, { userId }) {
     );
     const assignment = mapAssignmentRecord(created, program);
 
-    console.log(
-      `[player-programs] Switched user ${userId} from ${existing.program_id} to ${program_id}`,
-    );
+    logger.info("assignment_switched", { user_id: userId, from_program_id: existing.program_id, to_program_id: program_id });
 
     return createSuccessResponse(
       { assignment },
@@ -528,7 +516,7 @@ async function handlePut(event, context, { userId }) {
     .single();
 
   if (updateError) {
-    console.error("[player-programs] Error updating assignment:", updateError);
+    logger.error("assignment_update_failed", updateError, {});
     throw updateError;
   }
 

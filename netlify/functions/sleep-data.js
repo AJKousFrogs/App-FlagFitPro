@@ -1,5 +1,8 @@
 import { baseHandler } from "./utils/base-handler.js";
 import { createErrorResponse, createSuccessResponse } from "./utils/error-handler.js";
+import { createLogger } from "./utils/structured-logger.js";
+
+const logger = createLogger({ service: "netlify.sleep-data" });
 
 function isOptionalSchemaError(error) {
   const code = error?.code;
@@ -93,7 +96,7 @@ const handler = async (event, context) =>
           userAge: calculateAge(user?.birth_date || user?.date_of_birth),
         });
       } catch (error) {
-        console.error("[sleep-data] Failed to load sleep data:", error);
+        logger.error("sleep_data_load_failed", error, { message: "[sleep-data] Failed to load sleep data" });
         return createErrorResponse(
           "Failed to load sleep data",
           500,

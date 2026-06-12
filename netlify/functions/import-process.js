@@ -1,6 +1,9 @@
 import { baseHandler } from "./utils/base-handler.js";
 import { createErrorResponse, createSuccessResponse } from "./utils/error-handler.js";
 import { parseJsonObjectBody } from "./utils/input-validator.js";
+import { createLogger } from "./utils/structured-logger.js";
+
+const logger = createLogger({ service: "netlify.import-process" });
 
 function getSubPath(path) {
   if (path.includes("/api/import/fetch-url")) {
@@ -113,7 +116,7 @@ const handler = async (event, context) =>
 
         return createErrorResponse("Endpoint not found", 404, "not_found");
       } catch (error) {
-        console.error("[import-process] Request failed:", error);
+        logger.error("import_request_failed", error);
         return createErrorResponse(
           error?.message || "Failed to process import request",
           500,

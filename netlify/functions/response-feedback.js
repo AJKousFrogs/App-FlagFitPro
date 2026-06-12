@@ -3,6 +3,9 @@ import { baseHandler } from "./utils/base-handler.js";
 import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
 import { COACH_ROUTE_ROLES } from "./utils/role-sets.js";
 import { parseJsonObjectBody } from "./utils/input-validator.js";
+import { createLogger } from "./utils/structured-logger.js";
+
+const logger = createLogger({ service: "netlify.response-feedback" });
 
 /**
  * Netlify Function: Response Feedback
@@ -69,7 +72,7 @@ async function submitAthleteFeedback(
     .single();
 
   if (error) {
-    console.error("[Response Feedback] Error creating feedback:", error);
+    logger.error("feedback_create_failed", error, {});
     throw error;
   }
 
@@ -168,7 +171,7 @@ async function submitCoachFeedback(messageId, coachId, feedbackData) {
     .single();
 
   if (error) {
-    console.error("[Response Feedback] Error creating coach feedback:", error);
+    logger.error("coach_feedback_create_failed", error, {});
     throw error;
   }
 
@@ -199,7 +202,7 @@ async function getMessageFeedback(messageId) {
     .order("created_at", { ascending: false });
 
   if (error) {
-    console.error("[Response Feedback] Error fetching feedback:", error);
+    logger.error("feedback_fetch_failed", error, {});
     throw error;
   }
 
@@ -316,7 +319,7 @@ async function getFeedbackStats(coachId, teamId = null, options = {}) {
   const { data: feedback, error } = await query;
 
   if (error) {
-    console.error("[Response Feedback] Error fetching stats:", error);
+    logger.error("stats_fetch_failed", error, {});
     throw error;
   }
 
@@ -417,10 +420,7 @@ async function updateUserPreferencesFromFeedback(userId, wasHelpful) {
     });
   } catch (error) {
     // Log but don't fail - preferences table might not exist yet
-    console.log(
-      "[Response Feedback] Could not update preferences:",
-      error.message,
-    );
+    logger.info("preferences_update_skipped", { message: error.message });
   }
 }
 
@@ -457,10 +457,7 @@ async function checkFeedbackAchievements(userId) {
       );
     }
   } catch (error) {
-    console.log(
-      "[Response Feedback] Could not check achievements:",
-      error.message,
-    );
+    logger.info("achievements_check_skipped", { message: error.message });
   }
 }
 
@@ -485,10 +482,7 @@ async function awardAchievement(
       p_context: { name, description, category, points },
     });
   } catch (error) {
-    console.log(
-      "[Response Feedback] Could not award achievement:",
-      error.message,
-    );
+    logger.info("achievement_award_skipped", { message: error.message });
   }
 }
 
@@ -733,7 +727,7 @@ const handler = async (event, context) => {
             requestId,
           );
         }
-        console.error("[Response Feedback] Error:", error);
+        logger.error("response_feedback_error", error, {});
         return createErrorResponse(
           "Failed to process feedback",
           500,

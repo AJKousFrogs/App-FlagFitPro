@@ -1,6 +1,8 @@
 import { db } from "./supabase-client.js";
 import { createSuccessResponse } from "./utils/error-handler.js";
 import { baseHandler } from "./utils/base-handler.js";
+import { createLogger } from "./utils/structured-logger.js";
+const logger = createLogger({ service: "netlify.sponsors" });
 
 // Netlify Function: Sponsors
 // Returns active sponsors with logos for display on login and other pages
@@ -18,9 +20,9 @@ const handler = async (event, context) => {
         sponsors = await db.sponsors.getActiveSponsors();
       } catch (dbError) {
         if (dbError?.code) {
-          console.error("Database error in sponsors function", { code: dbError.code });
+          logger.error("sponsors_db_error", dbError, { code: dbError.code });
         } else {
-          console.error("Database error in sponsors function");
+          logger.error("sponsors_db_error", dbError, { message: "Database error in sponsors function" });
         }
         // Return empty array if database query fails (fallback to hardcoded logos)
         sponsors = [];

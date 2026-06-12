@@ -2,6 +2,8 @@ import { baseHandler } from "./utils/base-handler.js";
 import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
 import { supabaseAdmin } from "./utils/supabase-client.js";
 import { isUuid, isValidDateString } from "./utils/input-validator.js";
+import { createLogger } from "./utils/structured-logger.js";
+const logger = createLogger({ service: "netlify.training-programs" });
 
 /**
  * Training Programs API
@@ -578,10 +580,7 @@ const handler = async (event, context) => {
           },
         });
       } catch (error) {
-        console.error(
-          `[training-programs] Error (Request ID: ${requestId}):`,
-          error,
-        );
+        logger.error("training_programs_error", error, { request_id: requestId });
         return createErrorResponse(
           "Failed to fetch training programs",
           500,

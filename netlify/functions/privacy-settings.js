@@ -2,6 +2,7 @@ import { baseHandler } from "./utils/base-handler.js";
 import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
 import { getSupabaseClient } from "./supabase-client.js";
 import { parseJsonObjectBody, isValidId } from "./utils/input-validator.js";
+import { createLogger } from "./utils/structured-logger.js";
 
 /**
  * Privacy Settings API
@@ -12,6 +13,8 @@ import { parseJsonObjectBody, isValidId } from "./utils/input-validator.js";
  *
  * Športno društvo Žabe - Athletes helping athletes since 2020
  */
+
+const logger = createLogger({ service: "netlify.privacy-settings" });
 
 const EMERGENCY_SHARING_LEVELS = new Set([
   "none",
@@ -444,7 +447,7 @@ const handler = async (event, context) => {
           affected_data: body,
         });
         if (auditError) {
-          console.warn("[privacy-settings] Failed to insert audit log:", auditError.message);
+          logger.warn("audit_log_insert_failed", { message: auditError.message });
         }
 
         return createSuccessResponse({

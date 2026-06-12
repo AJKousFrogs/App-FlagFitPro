@@ -8,11 +8,15 @@ import { supabaseAdmin } from "./supabase-client.js";
 import { computeAcwrAt, computeSessionLoad, classifyAcwrZone } from "./utils/acwr.js";
 import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
 import { baseHandler } from "./utils/base-handler.js";
+import { createLogger } from "./utils/structured-logger.js";
+
+const logger = createLogger({ service: "netlify.training-stats-enhanced" });
 
 /**
  * Get today's date for inclusive filtering
  * Returns date in YYYY-MM-DD format (UTC)
  */
+
 function getTodayDate() {
   return new Date().toISOString().split("T")[0];
 }
@@ -252,7 +256,7 @@ async function getTrainingStats(userId, options = {}) {
       },
     };
   } catch (error) {
-    console.error("Error getting training stats:", error);
+    logger.error("training_stats_fetch_failed", error);
     throw error;
   }
 }
@@ -274,7 +278,7 @@ const handler = async (event, context) => {
         const trainingStats = await getTrainingStats(userId, options);
         return createSuccessResponse(trainingStats, requestId);
       } catch (error) {
-        console.error("[training-stats-enhanced] Unexpected handler error:", error);
+        logger.error("handler_unexpected_error", error);
         return createErrorResponse(
           "Failed to fetch training stats",
           500,

@@ -2,6 +2,9 @@ import https from "https";
 import http from "http";
 import { baseHandler } from "./utils/base-handler.js";
 import { CORS_HEADERS, createErrorResponse, handleValidationError } from "./utils/error-handler.js";
+import { createLogger } from "./utils/structured-logger.js";
+
+const logger = createLogger({ service: "netlify.sponsor-logo" });
 
 // Netlify Function: Sponsor Logo Proxy
 // Proxies sponsor logo images to bypass COEP restrictions
@@ -108,7 +111,7 @@ const handler = async (event, context) =>
         try {
           urlObj = new URL(imageUrl);
         } catch (urlError) {
-          console.error("Invalid URL:", imageUrl, urlError);
+          logger.error("url_parse_failed", urlError, { url: imageUrl });
           return handleValidationError("Invalid URL format");
         }
 
@@ -165,7 +168,7 @@ const handler = async (event, context) =>
           isBase64Encoded: true,
         };
       } catch (error) {
-        console.error("Error proxying sponsor logo:", error);
+        logger.error("sponsor_logo_proxy_failed", error, {});
         return createErrorResponse(
           "Failed to proxy sponsor logo",
           500,

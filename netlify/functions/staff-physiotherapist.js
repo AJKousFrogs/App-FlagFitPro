@@ -3,6 +3,9 @@ import { createSuccessResponse, createErrorResponse, ErrorType } from "./utils/e
 import { parseJsonObjectBody } from "./utils/input-validator.js";
 import { supabaseAdmin } from "./supabase-client.js";
 import { HEALTH_DATA_ACCESS_ROLES } from "./utils/role-sets.js";
+import { createLogger } from "./utils/structured-logger.js";
+
+const logger = createLogger({ service: "netlify.staff-physiotherapist" });
 
 // Netlify Function: Staff Physiotherapist API
 // Handles physiotherapist dashboard: injury tracking, RTP protocols, risk assessment
@@ -323,10 +326,7 @@ async function updateRTPProgress(injuryId, updates) {
         }
       }
     } catch (transitionError) {
-      console.warn(
-        "[Physio] Error logging RTP completion transition:",
-        transitionError.message,
-      );
+      logger.warn("rtp_transition_log_failed", {}, transitionError);
       // Non-fatal - continue with RTP update
     }
   }
@@ -463,10 +463,7 @@ async function logInjury(
       }
     }
   } catch (transitionError) {
-    console.warn(
-      "[Physio] Error logging ownership transition:",
-      transitionError.message,
-    );
+    logger.warn("ownership_transition_log_failed", {}, transitionError);
     // Non-fatal - continue with injury logging
   }
 

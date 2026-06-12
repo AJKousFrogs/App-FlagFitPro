@@ -2,6 +2,9 @@ import { baseHandler } from "./utils/base-handler.js";
 import { createErrorResponse, createSuccessResponse } from "./utils/error-handler.js";
 import { parseJsonObjectBody } from "./utils/input-validator.js";
 import { getUserTeamId } from "./utils/auth-helper.js";
+import { createLogger } from "./utils/structured-logger.js";
+
+const logger = createLogger({ service: "netlify.team-calendar" });
 
 function isOptionalSchemaError(error) {
   const code = error?.code;
@@ -246,7 +249,7 @@ const handler = async (event, context) =>
 
         return createErrorResponse("Endpoint not found", 404, "not_found");
       } catch (error) {
-        console.error("[team-calendar] Request failed:", error);
+        logger.error("team_calendar_request_failed", error);
         return createErrorResponse(
           error?.message || "Failed to process team calendar request",
           500,
