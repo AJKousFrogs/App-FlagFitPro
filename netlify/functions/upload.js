@@ -9,7 +9,7 @@ import { createSuccessResponse, createErrorResponse } from "./utils/error-handle
 import { baseHandler } from "./utils/base-handler.js";
 import { authenticateRequest } from "./utils/auth-helper.js";
 import { parseJsonObjectBody } from "./utils/input-validator.js";
-import { buildRequestLogContext, createLogger } from "./utils/structured-logger.js";
+import { createLogger, makeRequestLogger } from "./utils/structured-logger.js";
 
 // Allowed file types
 const ALLOWED_IMAGE_TYPES = [
@@ -32,15 +32,7 @@ const createUploadValidationError = (message) => {
 
 const logger = createLogger({ service: "netlify.upload" });
 
-function createRequestLogger(event, meta = {}) {
-  return logger.child(
-    buildRequestLogContext(event, {
-      request_id: meta.requestId,
-      correlation_id: meta.correlationId,
-      trace_id: meta.traceId ?? meta.correlationId,
-    }),
-  );
-}
+const createRequestLogger = makeRequestLogger(logger);
 
 // Upload file to Supabase Storage
 const uploadFile = async (

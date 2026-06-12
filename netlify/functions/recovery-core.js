@@ -1,6 +1,6 @@
 import { baseHandler } from "./utils/base-handler.js";
 import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
-import { parseJsonObjectBody } from "./utils/input-validator.js";
+import { parseJsonObjectBody, parseBoundedInt } from "./utils/input-validator.js";
 import { supabaseAdmin } from "./supabase-client.js";
 
 // Netlify Function: Recovery Protocol API
@@ -16,21 +16,6 @@ import { supabaseAdmin } from "./supabase-client.js";
 // - Nutrition Timing for Recovery
 //
 // =============================================================================
-
-function parseBoundedInt(rawValue, fieldName, { min, max, fallback }) {
-  if (rawValue === undefined || rawValue === null || rawValue === "") {
-    return fallback;
-  }
-  const normalized = String(rawValue).trim();
-  if (!/^\d+$/.test(normalized)) {
-    throw new Error(`${fieldName} must be an integer between ${min} and ${max}`);
-  }
-  const parsed = Number.parseInt(normalized, 10);
-  if (!Number.isInteger(parsed) || parsed < min || parsed > max) {
-    throw new Error(`${fieldName} must be an integer between ${min} and ${max}`);
-  }
-  return parsed;
-}
 
 // =============================================================================
 // RECOVERY PROTOCOL DEFINITIONS

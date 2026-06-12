@@ -1,38 +1,15 @@
 import { baseHandler } from "./utils/base-handler.js";
 import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
 import { supabaseAdmin } from "./supabase-client.js";
-import { parseJsonObjectBody } from "./utils/input-validator.js";
-import { buildRequestLogContext, createLogger } from "./utils/structured-logger.js";
+import { parseJsonObjectBody, parseBoundedInt } from "./utils/input-validator.js";
+import { createLogger, makeRequestLogger } from "./utils/structured-logger.js";
 
 const logger = createLogger({ service: "netlify.hydration" });
 
-function createRequestLogger(event, meta = {}) {
-  return logger.child(
-    buildRequestLogContext(event, {
-      request_id: meta.requestId,
-      correlation_id: meta.correlationId,
-      trace_id: meta.traceId ?? meta.correlationId,
-    }),
-  );
-}
+const createRequestLogger = makeRequestLogger(logger);
 
 // Netlify Function: Hydration API
 // Handles hydration tracking for athletes
-
-function parseBoundedInt(value, fallback, { min, max, field }) {
-  if (value === undefined || value === null || value === "") {
-    return fallback;
-  }
-  const normalized = String(value).trim();
-  if (!/^-?\d+$/.test(normalized)) {
-    throw new Error(`${field} must be an integer between ${min} and ${max}`);
-  }
-  const parsed = Number.parseInt(normalized, 10);
-  if (!Number.isInteger(parsed) || parsed < min || parsed > max) {
-    throw new Error(`${field} must be an integer between ${min} and ${max}`);
-  }
-  return parsed;
-}
 
 // Canonical hydration store: public.athlete_hydration_logs
 // (id, user_id, logged_at timestamptz, amount_ml int, beverage_type text,
@@ -224,10 +201,10 @@ const handler = async (event, context) => {
         if (path.includes("/history") || path.endsWith("/history")) {
           let days;
           try {
-            days = parseBoundedInt(event.queryStringParameters?.days, 7, {
+            days = parseBoundedInt(event.queryStringParameters?.days, "days", {
               min: 1,
               max: 365,
-              field: "days",
+              fallback: 7,
             });
           } catch (validationError) {
             return createErrorResponse(

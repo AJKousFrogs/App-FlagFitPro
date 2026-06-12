@@ -5,6 +5,7 @@ import { createSuccessResponse, createErrorResponse } from "./utils/error-handle
 import { ConsentDataReader, AccessContext } from "./utils/consent-data-reader.js";
 import { DataState } from "./utils/data-state.js";
 import { baseHandler } from "./utils/base-handler.js";
+import { parseBoundedInt } from "./utils/input-validator.js";
 
 // Netlify Function: Analytics API
 // Handles all analytics endpoints for performance trends, team chemistry, training distribution, etc.
@@ -13,17 +14,6 @@ import { baseHandler } from "./utils/base-handler.js";
 
 // Initialize consent-aware data reader for team analytics
 const consentReader = new ConsentDataReader(supabaseAdmin);
-
-const parseBoundedInt = (value, fieldName, { min, max }) => {
-  const parsed = Number.parseInt(value, 10);
-  if (!Number.isFinite(parsed) || Number.isNaN(parsed) || String(parsed) !== String(value)) {
-    throw new Error(`${fieldName} must be an integer between ${min} and ${max}`);
-  }
-  if (parsed < min || parsed > max) {
-    throw new Error(`${fieldName} must be an integer between ${min} and ${max}`);
-  }
-  return parsed;
-};
 
 const parsePeriod = (value) => {
   const allowed = new Set(["7days", "30days", "90days"]);

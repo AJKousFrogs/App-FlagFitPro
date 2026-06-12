@@ -7,7 +7,7 @@ import { checkEnvVars as _checkEnvVars, supabaseAdmin } from "./supabase-client.
 
 import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
 import { baseHandler } from "./utils/base-handler.js";
-import { buildRequestLogContext, createLogger } from "./utils/structured-logger.js";
+import { createLogger, makeRequestLogger } from "./utils/structured-logger.js";
 import {
   computeAcwrAt,
   computeSessionLoad,
@@ -16,15 +16,7 @@ import {
 
 const logger = createLogger({ service: "netlify.training-plan" });
 
-function createRequestLogger(event, meta = {}) {
-  return logger.child(
-    buildRequestLogContext(event, {
-      request_id: meta.requestId,
-      correlation_id: meta.correlationId,
-      trace_id: meta.traceId ?? meta.correlationId,
-    }),
-  );
-}
+const createRequestLogger = makeRequestLogger(logger);
 
 function isIsoDateOnly(value) {
   return typeof value === "string" && /^\d{4}-\d{2}-\d{2}$/.test(value);

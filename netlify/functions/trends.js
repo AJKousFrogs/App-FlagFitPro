@@ -2,6 +2,7 @@ import { supabaseAdmin } from "./supabase-client.js";
 import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { getWeekNumber } from "./utils/date-utils.js";
+import { parseBoundedInt } from "./utils/input-validator.js";
 
 // Netlify Function: Trends
 // Provides trend data for dashboards:
@@ -9,17 +10,6 @@ import { getWeekNumber } from "./utils/date-utils.js";
 // - Sprint volume trends
 // - Game-to-game performance metrics
 // Endpoint: /api/trends/:type
-
-const parseBoundedInt = (value, fieldName, { min, max }) => {
-  const parsed = Number.parseInt(value, 10);
-  if (!Number.isFinite(parsed) || Number.isNaN(parsed) || String(parsed) !== String(value)) {
-    throw new Error(`${fieldName} must be an integer between ${min} and ${max}`);
-  }
-  if (parsed < min || parsed > max) {
-    throw new Error(`${fieldName} must be an integer between ${min} and ${max}`);
-  }
-  return parsed;
-};
 
 /**
  * Get change of direction sessions trend

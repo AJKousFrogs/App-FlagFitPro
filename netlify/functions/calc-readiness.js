@@ -5,7 +5,7 @@ import { baseHandler } from "./utils/base-handler.js";
 import { getUserRole } from "./utils/authorization-guard.js";
 import { hasAnyRole, LOAD_MANAGEMENT_ACCESS_ROLES } from "./utils/role-sets.js";
 import { sharesStaffedTeam } from "./utils/team-scope.js";
-import { tryParseJsonObjectBody } from "./utils/input-validator.js";
+import { tryParseJsonObjectBody, isFiniteNumber } from "./utils/input-validator.js";
 import {
   buildRequestLogContext,
   createLogger,
@@ -285,10 +285,6 @@ function determineDataMode(wellnessIndex, threshold = 60) {
 
 function isPlainObject(value) {
   return value !== null && typeof value === "object" && !Array.isArray(value);
-}
-
-function isFiniteNumber(value) {
-  return typeof value === "number" && Number.isFinite(value);
 }
 
 function isValidAthleteId(value) {

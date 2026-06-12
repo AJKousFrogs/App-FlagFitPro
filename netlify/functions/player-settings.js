@@ -3,10 +3,10 @@ import {
   createErrorResponse,
   handleValidationError,
 } from "./utils/error-handler.js";
-import { parseJsonObjectBody } from "./utils/input-validator.js";
+import { parseJsonObjectBody, isValidDateString } from "./utils/input-validator.js";
 import {
-  buildRequestLogContext,
   createLogger,
+  makeRequestLogger,
 } from "./utils/structured-logger.js";
 
 const DEFAULT_DAILY_ROUTINE = [
@@ -52,14 +52,6 @@ function isMissingRelationError(error) {
     message.includes("does not exist") ||
     message.includes("relation")
   );
-}
-
-function isValidDateString(value) {
-  if (typeof value !== "string") {
-    return false;
-  }
-  const parsed = new Date(value);
-  return !Number.isNaN(parsed.getTime());
 }
 
 function isValidTimeString(value) {
@@ -292,15 +284,7 @@ function validateSettingsPayload(payload) {
 
 const logger = createLogger({ service: "netlify.player-settings" });
 
-function createRequestLogger(event, meta = {}) {
-  return logger.child(
-    buildRequestLogContext(event, {
-      request_id: meta.requestId,
-      correlation_id: meta.correlationId,
-      trace_id: meta.traceId ?? meta.correlationId,
-    }),
-  );
-}
+const createRequestLogger = makeRequestLogger(logger);
 
 const handler = async (event, context) =>
   baseHandler(event, context, {

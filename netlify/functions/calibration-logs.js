@@ -4,19 +4,11 @@ import { supabaseAdmin } from "./supabase-client.js";
 import { getUserRole } from "./utils/authorization-guard.js";
 import { hasAnyRole, LOAD_MANAGEMENT_ACCESS_ROLES } from "./utils/role-sets.js";
 import { parseJsonObjectBody, isValidId } from "./utils/input-validator.js";
-import { buildRequestLogContext, createLogger } from "./utils/structured-logger.js";
+import { createLogger, makeRequestLogger } from "./utils/structured-logger.js";
 
 const logger = createLogger({ service: "netlify.calibration-logs" });
 
-function createRequestLogger(event, meta = {}) {
-  return logger.child(
-    buildRequestLogContext(event, {
-      request_id: meta.requestId,
-      correlation_id: meta.correlationId,
-      trace_id: meta.traceId ?? meta.correlationId,
-    }),
-  );
-}
+const createRequestLogger = makeRequestLogger(logger);
 
 /**
  * Netlify Function: Calibration Logs API

@@ -1,7 +1,7 @@
 import crypto from "node:crypto";
 import { checkEnvVars, supabaseAdmin } from "./supabase-client.js";
 import { validate, validateRequestBody, VALIDATION_RULES } from "./validation.js";
-import { parseJsonObjectBody, sanitizeObject } from "./utils/input-validator.js";
+import { parseJsonObjectBody, parseBoundedInt, sanitizeObject } from "./utils/input-validator.js";
 import { createSuccessResponse, createErrorResponse, handleValidationError, handleNotFoundError, handleAuthorizationError } from "./utils/error-handler.js";
 import { checkTeamMembership as _checkTeamMembership, getUserTeamId } from "./utils/auth-helper.js";
 import { baseHandler } from "./utils/base-handler.js";
@@ -167,21 +167,6 @@ function normalizeGameEventForLegacySchema(game, userId, playData, playNumber) {
     field_conditions: playData.fieldConditions || null,
     weather_conditions: playData.weather || null,
   };
-}
-
-function parseBoundedInt(value, fieldName, { min, max }) {
-  if (value === undefined || value === null || value === "") {
-    return undefined;
-  }
-  const normalized = String(value).trim();
-  if (!/^-?\d+$/.test(normalized)) {
-    throw new Error(`${fieldName} must be an integer between ${min} and ${max}`);
-  }
-  const parsed = Number.parseInt(normalized, 10);
-  if (!Number.isInteger(parsed) || parsed < min || parsed > max) {
-    throw new Error(`${fieldName} must be an integer between ${min} and ${max}`);
-  }
-  return parsed;
 }
 
 async function getTeamMembership(userId, teamId) {
@@ -481,6 +466,9 @@ async function triggerGameDayRecovery(playerId, gameDate) {
       }),
     ]);
 
+    console.log(
+      `[GameDayRecovery] Created 48h recovery protocol for player ${playerId}`,
+    );
   } catch (error) {
     console.error("[GameDayRecovery] Error creating recovery protocol:", error);
   }

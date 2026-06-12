@@ -200,10 +200,34 @@ function createLogger({ service, context = {} } = {}) {
   };
 }
 
+/**
+ * Bind a request-scoped child logger to a service logger.
+ * Returns a drop-in replacement for the 24 inline copies of:
+ *   function createRequestLogger(event, meta = {}) {
+ *     return logger.child(buildRequestLogContext(event, { request_id, ... }))
+ *   }
+ *
+ * Usage:
+ *   const logger = createLogger({ service: "netlify.foo" });
+ *   const createRequestLogger = makeRequestLogger(logger);
+ */
+function makeRequestLogger(serviceLogger) {
+  return function createRequestLogger(event, meta = {}) {
+    return serviceLogger.child(
+      buildRequestLogContext(event, {
+        request_id: meta.requestId,
+        correlation_id: meta.correlationId,
+        trace_id: meta.traceId ?? meta.correlationId,
+      }),
+    );
+  };
+}
+
 export {
   buildRequestLogContext,
   createLogger,
   extractCorrelationId,
+  makeRequestLogger,
   redact,
   serializeError,
 };

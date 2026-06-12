@@ -5,38 +5,15 @@ import { canCoachViewWellness, filterWellnessDataForCoach } from "./utils/consen
 import { detectPainTrigger } from "./utils/safety-override.js";
 import { getUserRole } from "./utils/authorization-guard.js";
 import { hasAnyRole, HEALTH_DATA_ACCESS_ROLES } from "./utils/role-sets.js";
-import { parseJsonObjectBody } from "./utils/input-validator.js";
-import { buildRequestLogContext, createLogger } from "./utils/structured-logger.js";
+import { parseJsonObjectBody, parseBoundedInt } from "./utils/input-validator.js";
+import { createLogger, makeRequestLogger } from "./utils/structured-logger.js";
 
 const logger = createLogger({ service: "netlify.wellness" });
 
-function createRequestLogger(event, meta = {}) {
-  return logger.child(
-    buildRequestLogContext(event, {
-      request_id: meta.requestId,
-      correlation_id: meta.correlationId,
-      trace_id: meta.traceId ?? meta.correlationId,
-    }),
-  );
-}
+const createRequestLogger = makeRequestLogger(logger);
 
 // Netlify Function: Wellness API
 // Handles wellness check-ins and wellness data retrieval
-
-function parseBoundedInt(value, fallback, { min, max, field }) {
-  if (value === undefined || value === null || value === "") {
-    return fallback;
-  }
-  const normalized = String(value).trim();
-  if (!/^-?\d+$/.test(normalized)) {
-    throw new Error(`${field} must be an integer between ${min} and ${max}`);
-  }
-  const parsed = Number.parseInt(normalized, 10);
-  if (!Number.isInteger(parsed) || parsed < min || parsed > max) {
-    throw new Error(`${field} must be an integer between ${min} and ${max}`);
-  }
-  return parsed;
-}
 
 /**
  * Create wellness check-in
@@ -347,10 +324,10 @@ const handler = async (event, context) => {
         if (path.includes("/checkins") || path.endsWith("/checkins")) {
           let limit;
           try {
-            limit = parseBoundedInt(event.queryStringParameters?.limit, 30, {
+            limit = parseBoundedInt(event.queryStringParameters?.limit, "limit", {
               min: 1,
               max: 200,
-              field: "limit",
+              fallback: 30,
             });
           } catch (validationError) {
             return createErrorResponse(

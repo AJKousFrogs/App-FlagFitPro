@@ -2,7 +2,7 @@ import { wrapHandler } from "./utils/lambda-compat.js";
 import { supabaseAdmin } from "./supabase-client.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { createErrorResponse, handleValidationError } from "./utils/error-handler.js";
-import { parseJsonObjectBody } from "./utils/input-validator.js";
+import { parseJsonObjectBody, parseBoundedInt } from "./utils/input-validator.js";
 import { hasAnyRole, COACH_ROUTE_ROLES } from "./utils/role-sets.js";
 
 /**
@@ -20,21 +20,6 @@ const supabase = supabaseAdmin;
 
 // ExerciseDB API configuration
 const EXERCISEDB_API_URL = "https://exercisedb-api.vercel.app/api/v1";
-
-const parseBoundedInt = (value, fieldName, { min, max }) => {
-  if (value === undefined || value === null || value === "") {
-    return null;
-  }
-  const normalized = String(value).trim();
-  if (!/^-?\d+$/.test(normalized)) {
-    throw new Error(`${fieldName} must be an integer between ${min} and ${max}`);
-  }
-  const parsed = Number.parseInt(normalized, 10);
-  if (!Number.isInteger(parsed) || parsed < min || parsed > max) {
-    throw new Error(`${fieldName} must be an integer between ${min} and ${max}`);
-  }
-  return parsed;
-};
 
 /**
  * Verify user has coach/admin role

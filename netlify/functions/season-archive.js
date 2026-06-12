@@ -8,17 +8,8 @@ import { baseHandler } from "./utils/base-handler.js";
 import { getUserRole } from "./utils/authorization-guard.js";
 import { supabaseAdmin } from "./supabase-client.js";
 import { createErrorResponse, createSuccessResponse, handleValidationError } from "./utils/error-handler.js";
-import { tryParseJsonObjectBody } from "./utils/input-validator.js";
+import { tryParseJsonObjectBody, isUuid } from "./utils/input-validator.js";
 import { hasAnyRole, COACH_ROUTE_ROLES } from "./utils/role-sets.js";
-
-function isUuid(value) {
-  return (
-    typeof value === "string" &&
-    /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(
-      value,
-    )
-  );
-}
 
 const handler = async (event, context) =>
   baseHandler(event, context, {

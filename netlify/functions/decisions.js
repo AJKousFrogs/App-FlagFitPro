@@ -2,26 +2,11 @@ import { baseHandler } from "./utils/base-handler.js";
 import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
 import { supabaseAdmin } from "./supabase-client.js";
 import { guardMerlinRequest } from "./utils/merlin-guard.js";
-import { parseJsonObjectBody } from "./utils/input-validator.js";
+import { parseJsonObjectBody, parseBoundedInt } from "./utils/input-validator.js";
 
 // Netlify Function: Decision Ledger API
 // Handles decision accountability, review triggers, and confidence scoring
 // Endpoint: /api/decisions
-
-const parseBoundedInt = (value, fieldName, { min, max }) => {
-  if (value === undefined || value === null || value === "") {
-    return null;
-  }
-  const normalized = String(value).trim();
-  if (!/^-?\d+$/.test(normalized)) {
-    throw new Error(`${fieldName} must be an integer between ${min} and ${max}`);
-  }
-  const parsed = Number.parseInt(normalized, 10);
-  if (!Number.isInteger(parsed) || parsed < min || parsed > max) {
-    throw new Error(`${fieldName} must be an integer between ${min} and ${max}`);
-  }
-  return parsed;
-};
 
 /**
  * Verify user is a staff member with decision-making access

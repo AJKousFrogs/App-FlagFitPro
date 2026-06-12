@@ -11,11 +11,7 @@
 import { supabaseAdmin } from "./supabase-client.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { createErrorResponse, handleValidationError } from "./utils/error-handler.js";
-import { parseJsonObjectBody } from "./utils/input-validator.js";
-
-function isValidDateString(value) {
-  return typeof value === "string" && !Number.isNaN(new Date(value).getTime());
-}
+import { isValidDateString, parseJsonObjectBody } from "./utils/input-validator.js";
 
 function isNonNegativeInteger(value) {
   return Number.isInteger(value) && value >= 0;

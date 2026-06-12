@@ -2,7 +2,8 @@ import { supabaseAdmin } from "./supabase-client.js";
 import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { COACH_ROUTE_ROLES } from "./utils/role-sets.js";
-import { buildRequestLogContext, createLogger } from "./utils/structured-logger.js";
+import { createLogger, makeRequestLogger } from "./utils/structured-logger.js";
+import { parseBoundedInt } from "./utils/input-validator.js";
 
 /**
  * Coach Activity API Function
@@ -17,33 +18,11 @@ import { buildRequestLogContext, createLogger } from "./utils/structured-logger.
 
 const logger = createLogger({ service: "netlify.coach-activity" });
 
-function createRequestLogger(event, meta = {}) {
-  return logger.child(
-    buildRequestLogContext(event, {
-      request_id: meta.requestId,
-      correlation_id: meta.correlationId,
-      trace_id: meta.traceId ?? meta.correlationId,
-    }),
-  );
-}
+const createRequestLogger = makeRequestLogger(logger);
 
 // Use shared Supabase admin client
 function getSupabase() {
   return supabaseAdmin;
-}
-
-function parseBoundedInt(value, fieldName, { min = 0, max = 1000 } = {}) {
-  if (value === undefined || value === null || value === "") {
-    return null;
-  }
-  if (!/^\d+$/.test(String(value))) {
-    throw new Error(`${fieldName} must be an integer between ${min} and ${max}`);
-  }
-  const parsed = Number.parseInt(String(value), 10);
-  if (!Number.isInteger(parsed) || parsed < min || parsed > max) {
-    throw new Error(`${fieldName} must be an integer between ${min} and ${max}`);
-  }
-  return parsed;
 }
 
 /**

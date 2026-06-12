@@ -4,29 +4,10 @@ import {
   createErrorResponse,
 } from "./utils/error-handler.js";
 import { supabaseAdmin } from "./supabase-client.js";
-import { parseJsonObjectBody } from "./utils/input-validator.js";
+import { parseJsonObjectBody, parseBoundedInt } from "./utils/input-validator.js";
 
 // Netlify Function: Supplements API
 // Handles supplement logging (read-only for AI - no dosing recommendations)
-
-const parseBoundedInt = (value, fieldName, { min, max }) => {
-  const parsed = Number.parseInt(value, 10);
-  if (
-    !Number.isFinite(parsed) ||
-    Number.isNaN(parsed) ||
-    String(parsed) !== String(value)
-  ) {
-    throw new Error(
-      `${fieldName} must be an integer between ${min} and ${max}`,
-    );
-  }
-  if (parsed < min || parsed > max) {
-    throw new Error(
-      `${fieldName} must be an integer between ${min} and ${max}`,
-    );
-  }
-  return parsed;
-};
 
 const NAME_MAX = 100;
 const DOSAGE_MAX = 100;

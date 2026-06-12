@@ -7,19 +7,11 @@ import { roundToPrecision, safeDivide, average, standardDeviation, ACWR_PRECISIO
 import { computeAcwrAt } from "./utils/acwr.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { LOAD_MANAGEMENT_ACCESS_ROLES } from "./utils/role-sets.js";
-import { buildRequestLogContext, createLogger } from "./utils/structured-logger.js";
+import { createLogger, makeRequestLogger } from "./utils/structured-logger.js";
 
 const logger = createLogger({ service: "netlify.load-management" });
 
-function createRequestLogger(event, meta = {}) {
-  return logger.child(
-    buildRequestLogContext(event, {
-      request_id: meta.requestId,
-      correlation_id: meta.correlationId,
-      trace_id: meta.traceId ?? meta.correlationId,
-    }),
-  );
-}
+const createRequestLogger = makeRequestLogger(logger);
 
 // Netlify Functions - Load Management & Monitoring API
 // Evidence-based training load monitoring, injury risk prediction, and fatigue management

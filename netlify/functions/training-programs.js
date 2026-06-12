@@ -1,20 +1,7 @@
 import { baseHandler } from "./utils/base-handler.js";
 import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
 import { supabaseAdmin } from "./utils/supabase-client.js";
-
-function isUuid(value) {
-  return (
-    typeof value === "string" &&
-    // Accept seeded UUID-like identifiers even when they don't encode RFC version bits.
-    /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(
-      value,
-    )
-  );
-}
-
-function isValidDateString(value) {
-  return typeof value === "string" && !Number.isNaN(new Date(value).getTime());
-}
+import { isUuid, isValidDateString } from "./utils/input-validator.js";
 
 /**
  * Training Programs API

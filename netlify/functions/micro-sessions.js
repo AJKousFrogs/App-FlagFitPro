@@ -25,7 +25,7 @@ import { supabaseAdmin, checkEnvVars } from "./supabase-client.js";
 
 import { baseHandler } from "./utils/base-handler.js";
 import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
-import { parseJsonObjectBody, isValidId } from "./utils/input-validator.js";
+import { parseJsonObjectBody, isValidId, parseBoundedInt } from "./utils/input-validator.js";
 
 // =====================================================
 // HELPER FUNCTIONS
@@ -33,17 +33,6 @@ import { parseJsonObjectBody, isValidId } from "./utils/input-validator.js";
 
 function isPlainObject(value) {
   return value !== null && typeof value === "object" && !Array.isArray(value);
-}
-
-function parseBoundedInt(value, field, min, max, defaultValue = null) {
-  if (value === undefined || value === null || value === "") {
-    return { value: defaultValue };
-  }
-  const parsed = Number.parseInt(value, 10);
-  if (!Number.isInteger(parsed) || parsed < min || parsed > max) {
-    return { error: `${field} must be an integer between ${min} and ${max}` };
-  }
-  return { value: parsed };
 }
 
 /**
@@ -424,17 +413,14 @@ const handler = async (event, context) => {
         // GET /api/micro-sessions/analytics - Completion analytics
         if (method === "GET" && subPath === "analytics") {
           const { weeks } = event.queryStringParameters || {};
-          const parsedWeeks = parseBoundedInt(weeks, "weeks", 1, 52, 4);
-          if (parsedWeeks.error) {
-            return createErrorResponse(
-              parsedWeeks.error,
-              422,
-              "validation_error",
-              requestId,
-            );
+          let parsedWeeks;
+          try {
+            parsedWeeks = parseBoundedInt(weeks, "weeks", { min: 1, max: 52, fallback: 4 });
+          } catch (err) {
+            return createErrorResponse(err.message, 422, "validation_error", requestId);
           }
           const analytics = await getCompletionAnalytics(userId, {
-            weeks: parsedWeeks.value,
+            weeks: parsedWeeks,
           });
           return createSuccessResponse(analytics, requestId);
         }
@@ -456,34 +442,17 @@ const handler = async (event, context) => {
         // GET /api/micro-sessions - List sessions
         if (method === "GET") {
           const rawFilters = event.queryStringParameters || {};
-          const parsedLimit = parseBoundedInt(rawFilters.limit, "limit", 1, 200, 50);
-          if (parsedLimit.error) {
-            return createErrorResponse(
-              parsedLimit.error,
-              422,
-              "validation_error",
-              requestId,
-            );
-          }
-          const parsedOffset = parseBoundedInt(
-            rawFilters.offset,
-            "offset",
-            0,
-            1000000,
-            0,
-          );
-          if (parsedOffset.error) {
-            return createErrorResponse(
-              parsedOffset.error,
-              422,
-              "validation_error",
-              requestId,
-            );
+          let parsedLimit, parsedOffset;
+          try {
+            parsedLimit = parseBoundedInt(rawFilters.limit, "limit", { min: 1, max: 200, fallback: 50 });
+            parsedOffset = parseBoundedInt(rawFilters.offset, "offset", { min: 0, max: 1000000, fallback: 0 });
+          } catch (err) {
+            return createErrorResponse(err.message, 422, "validation_error", requestId);
           }
           const filters = {
             ...rawFilters,
-            limit: parsedLimit.value,
-            offset: parsedOffset.value,
+            limit: parsedLimit,
+            offset: parsedOffset,
           };
           const sessions = await getMicroSessions(userId, filters);
           return createSuccessResponse(

@@ -1,7 +1,7 @@
 import { supabaseAdmin } from "./supabase-client.js";
 import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
 import { baseHandler } from "./utils/base-handler.js";
-import { buildRequestLogContext, createLogger } from "./utils/structured-logger.js";
+import { createLogger, makeRequestLogger } from "./utils/structured-logger.js";
 
 // Netlify Function: Performance Metrics API
 // Returns real-time performance metrics for the Performance Dashboard component
@@ -224,15 +224,7 @@ function getDefaultMetrics() {
 
 const logger = createLogger({ service: "netlify.performance-metrics" });
 
-function createRequestLogger(event, meta = {}) {
-  return logger.child(
-    buildRequestLogContext(event, {
-      request_id: meta.requestId,
-      correlation_id: meta.correlationId,
-      trace_id: meta.traceId ?? meta.correlationId,
-    }),
-  );
-}
+const createRequestLogger = makeRequestLogger(logger);
 
 const handler = async (event, context) => {
   return baseHandler(event, context, {

@@ -1,4 +1,4 @@
-import { parseJsonObjectBody, validateInput } from "./utils/input-validator.js";
+import { parseJsonObjectBody, parseBoundedInt, validateInput } from "./utils/input-validator.js";
 import {
   createSuccessResponse,
   createErrorResponse,
@@ -39,25 +39,6 @@ const VALID_SESSION_STATUSES = new Set([
   "skipped",
   "deleted",
 ]);
-
-function parseBoundedInt(value, fieldName, { min, max }) {
-  if (value === undefined || value === null || value === "") {
-    return undefined;
-  }
-  const normalized = String(value).trim();
-  if (!/^-?\d+$/.test(normalized)) {
-    throw new Error(
-      `${fieldName} must be an integer between ${min} and ${max}`,
-    );
-  }
-  const parsed = Number.parseInt(normalized, 10);
-  if (!Number.isInteger(parsed) || parsed < min || parsed > max) {
-    throw new Error(
-      `${fieldName} must be an integer between ${min} and ${max}`,
-    );
-  }
-  return parsed;
-}
 
 function sanitizeSessionUpdates(updates = {}) {
   const cleaned = {};

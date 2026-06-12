@@ -4,7 +4,7 @@
 // Updated to work with actual knowledge_base_entries schema
 
 import { supabaseAdmin } from "./supabase-client.js";
-import { parseJsonObjectBody } from "./utils/input-validator.js";
+import { parseJsonObjectBody, parseBoundedInt } from "./utils/input-validator.js";
 
 import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
 import { baseHandler } from "./utils/base-handler.js";
@@ -61,21 +61,6 @@ const ALLOWED_SUBCATEGORIES = [
   "hamstring",
   "prevention",
 ];
-
-const parseBoundedInt = (value, fieldName, { min, max }) => {
-  if (value === undefined || value === null || value === "") {
-    return null;
-  }
-  const normalized = String(value).trim();
-  if (!/^-?\d+$/.test(normalized)) {
-    throw new Error(`${fieldName} must be an integer between ${min} and ${max}`);
-  }
-  const parsed = Number.parseInt(normalized, 10);
-  if (!Number.isInteger(parsed) || parsed < min || parsed > max) {
-    throw new Error(`${fieldName} must be an integer between ${min} and ${max}`);
-  }
-  return parsed;
-};
 
 const normalizeKnowledgeEntry = (entry) => {
   const sourceUrl = Array.isArray(entry.supporting_articles)

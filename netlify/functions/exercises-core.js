@@ -1,21 +1,7 @@
 import { baseHandler } from "./utils/base-handler.js";
 import { createErrorResponse } from "./utils/error-handler.js";
+import { parseBoundedInt } from "./utils/input-validator.js";
 import { resolveYouTubeVideoMetadata } from "./utils/youtube.js";
-
-function parseBoundedInt(rawValue, fieldName, { min, max, fallback }) {
-  if (rawValue === undefined || rawValue === null || rawValue === "") {
-    return fallback;
-  }
-  const normalized = String(rawValue).trim();
-  if (!/^\d+$/.test(normalized)) {
-    throw new Error(`${fieldName} must be an integer between ${min} and ${max}`);
-  }
-  const parsed = Number.parseInt(normalized, 10);
-  if (!Number.isInteger(parsed) || parsed < min || parsed > max) {
-    throw new Error(`${fieldName} must be an integer between ${min} and ${max}`);
-  }
-  return parsed;
-}
 
 function parseSearch(rawValue) {
   if (rawValue === undefined || rawValue === null) {

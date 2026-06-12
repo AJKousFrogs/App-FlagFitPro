@@ -42,7 +42,7 @@ import {
   handleConflictError,
   ErrorType,
 } from "./utils/error-handler.js";
-import { tryParseJsonObjectBody } from "./utils/input-validator.js";
+import { tryParseJsonObjectBody, isUuid, isValidDateString } from "./utils/input-validator.js";
 
 // Program ID constants - these match the database
 const PROGRAM_IDS = {
@@ -70,24 +70,6 @@ const ASSIGNMENT_SELECT_COLUMNS = `
 
 function isPlainObject(value) {
   return value !== null && typeof value === "object" && !Array.isArray(value);
-}
-
-function isUuid(value) {
-  return (
-    typeof value === "string" &&
-    // Accept seeded UUID-like identifiers even when they don't encode RFC version bits.
-    /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(
-      value,
-    )
-  );
-}
-
-function isValidDateString(value) {
-  if (typeof value !== "string") {
-    return false;
-  }
-  const parsed = new Date(value);
-  return !Number.isNaN(parsed.getTime());
 }
 
 function isOptionalSchemaError(error) {

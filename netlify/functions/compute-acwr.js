@@ -11,7 +11,7 @@ import { getUserRole } from "./utils/authorization-guard.js";
 import { hasAnyRole, LOAD_MANAGEMENT_ACCESS_ROLES } from "./utils/role-sets.js";
 import { sharesStaffedTeam } from "./utils/team-scope.js";
 import { parseJsonObjectBody } from "./utils/input-validator.js";
-import { buildRequestLogContext, createLogger } from "./utils/structured-logger.js";
+import { createLogger, makeRequestLogger } from "./utils/structured-logger.js";
 import { computeAcwrAt, computeSessionLoad } from "./utils/acwr.js";
 
 function formatDate(date) {
@@ -62,15 +62,7 @@ function calculateSeriesFromSessions(sessions, rangeDays = 42) {
 
 const logger = createLogger({ service: "netlify.compute-acwr" });
 
-function createRequestLogger(event, meta = {}) {
-  return logger.child(
-    buildRequestLogContext(event, {
-      request_id: meta.requestId,
-      correlation_id: meta.correlationId,
-      trace_id: meta.traceId ?? meta.correlationId,
-    }),
-  );
-}
+const createRequestLogger = makeRequestLogger(logger);
 
 async function fetchTrainingSessionsForAcwr(athleteId) {
   const startDate = new Date();

@@ -1,6 +1,6 @@
 import { baseHandler } from "./utils/base-handler.js";
 import { createSuccessResponse, createErrorResponse, ErrorType } from "./utils/error-handler.js";
-import { parseJsonObjectBody } from "./utils/input-validator.js";
+import { parseJsonObjectBody, parseBoundedInt } from "./utils/input-validator.js";
 import { supabaseAdmin } from "./supabase-client.js";
 import { ConsentDataReader, AccessContext } from "./utils/consent-data-reader.js";
 import { NUTRITION_ACCESS_ROLES } from "./utils/role-sets.js";
@@ -446,21 +446,6 @@ function generateRecommendations(profile, weightChange, avgHydration) {
   return recommendations;
 }
 
-function parseBoundedInt(value, fallback, { min, max, field }) {
-  if (value === undefined || value === null || value === "") {
-    return fallback;
-  }
-  const normalized = String(value).trim();
-  if (!/^-?\d+$/.test(normalized)) {
-    throw new Error(`${field} must be an integer between ${min} and ${max}`);
-  }
-  const parsed = Number.parseInt(normalized, 10);
-  if (!Number.isInteger(parsed) || parsed < min || parsed > max) {
-    throw new Error(`${field} must be an integer between ${min} and ${max}`);
-  }
-  return parsed;
-}
-
 // Main handler
 async function handleRequest(event, _context, { userId }) {
     const path = event.path.replace(
@@ -494,10 +479,10 @@ async function handleRequest(event, _context, { userId }) {
       const athleteId = path.split("/")[2];
       let days;
       try {
-        days = parseBoundedInt(event.queryStringParameters?.days, 90, {
+        days = parseBoundedInt(event.queryStringParameters?.days, "days", {
           min: 1,
           max: 365,
-          field: "days",
+          fallback: 90,
         });
       } catch (validationError) {
         return createErrorResponse(

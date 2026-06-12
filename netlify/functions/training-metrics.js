@@ -16,7 +16,7 @@ import { getUserRole } from "./utils/authorization-guard.js";
 import { hasAnyRole, LOAD_MANAGEMENT_ACCESS_ROLES } from "./utils/role-sets.js";
 import { sharesStaffedTeam } from "./utils/team-scope.js";
 import { computeSessionLoad } from "./utils/acwr.js";
-import { buildRequestLogContext, createLogger } from "./utils/structured-logger.js";
+import { createLogger, makeRequestLogger } from "./utils/structured-logger.js";
 
 function isOptionalSchemaError(error) {
   const code = error?.code;
@@ -88,15 +88,7 @@ async function fetchCanonicalMetrics(athleteId, startDate) {
  */
 const logger = createLogger({ service: "netlify.training-metrics" });
 
-function createRequestLogger(event, meta = {}) {
-  return logger.child(
-    buildRequestLogContext(event, {
-      request_id: meta.requestId,
-      correlation_id: meta.correlationId,
-      trace_id: meta.traceId ?? meta.correlationId,
-    }),
-  );
-}
+const createRequestLogger = makeRequestLogger(logger);
 
 const handler = async (event, context) => {
   return baseHandler(event, context, {

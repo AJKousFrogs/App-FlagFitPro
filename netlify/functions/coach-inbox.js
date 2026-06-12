@@ -1,14 +1,12 @@
 import { supabaseAdmin, checkEnvVars } from "./supabase-client.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
-import { parseJsonObjectBody } from "./utils/input-validator.js";
-import { buildRequestLogContext, createLogger } from "./utils/structured-logger.js";
+import { parseJsonObjectBody, parseBoundedInt } from "./utils/input-validator.js";
+import { createLogger, makeRequestLogger } from "./utils/structured-logger.js";
 
 const logger = createLogger({ service: "netlify.coach-inbox" });
 
-function createRequestLogger(event, meta = {}) {
-  return logger.child(buildRequestLogContext(event, meta));
-}
+const createRequestLogger = makeRequestLogger(logger);
 
 const COACH_INBOX_ROLES = [
   "owner",
@@ -30,20 +28,6 @@ const VALID_INBOX_STATUSES = new Set([
 ]);
 const VALID_PRIORITIES = new Set(["low", "medium", "high", "critical"]);
 const VALID_ACTIONS = new Set(["approve", "add_note", "override", "save_template"]);
-
-const parseBoundedInt = (value, fieldName, { min = 0, max = 200 } = {}) => {
-  if (value === undefined || value === null || value === "") {
-    return null;
-  }
-  if (!/^\d+$/.test(String(value))) {
-    throw new Error(`${fieldName} must be an integer between ${min} and ${max}`);
-  }
-  const parsed = Number.parseInt(String(value), 10);
-  if (!Number.isInteger(parsed) || parsed < min || parsed > max) {
-    throw new Error(`${fieldName} must be an integer between ${min} and ${max}`);
-  }
-  return parsed;
-};
 
 /**
  * Netlify Function: Coach Inbox

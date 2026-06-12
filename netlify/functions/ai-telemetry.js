@@ -6,29 +6,13 @@ import {
 } from "./utils/error-handler.js";
 import { requireRole } from "./utils/authorization-guard.js";
 import { STAFF_ROUTE_ROLES } from "./utils/role-sets.js";
+import { parseBoundedInt } from "./utils/input-validator.js";
 
 // H7: was a local ["coach","admin","superadmin"] — which 403'd head_coach, owner
 // and every specialist (physio/nutritionist/psychologist/S&C), and keyed on a
 // "superadmin" role that isn't even a team_members role (doubly dead after D4).
 // Use the shared staff set so telemetry access matches every other staff route.
 const STAFF_ROLES = STAFF_ROUTE_ROLES;
-
-function parseBoundedInt(value, fieldName, min, max) {
-  if (value === undefined || value === null || value === "") {
-    return null;
-  }
-
-  const normalized = String(value).trim();
-  if (!/^-?\d+$/.test(normalized)) {
-    throw new Error(`${fieldName} must be an integer between ${min} and ${max}`);
-  }
-
-  const parsed = Number.parseInt(normalized, 10);
-  if (!Number.isInteger(parsed) || parsed < min || parsed > max) {
-    throw new Error(`${fieldName} must be an integer between ${min} and ${max}`);
-  }
-  return parsed;
-}
 
 async function getCoachTeamIds(userId) {
   const { data, error } = await supabaseAdmin
@@ -73,7 +57,7 @@ const handler = async (event, context) =>
 
       let days = 30;
       try {
-        days = parseBoundedInt(query.days, "days", 1, 90) ?? 30;
+        days = parseBoundedInt(query.days, "days", { min: 1, max: 90 }) ?? 30;
       } catch (error) {
         return createErrorResponse(
           error.message,

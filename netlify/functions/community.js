@@ -1,5 +1,5 @@
 import { checkEnvVars, supabaseAdmin } from "./supabase-client.js";
-import { parseJsonObjectBody, sanitizeObject } from "./utils/input-validator.js";
+import { parseJsonObjectBody, sanitizeObject, parseBoundedInt } from "./utils/input-validator.js";
 import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { authenticateRequest } from "./utils/auth-helper.js";
@@ -9,21 +9,6 @@ import { buildRequestLogContext, createLogger } from "./utils/structured-logger.
 // Returns community feed, posts, and leaderboard data
 
 const logger = createLogger({ service: "netlify.community" });
-
-const parseBoundedInt = (value, fieldName, { min, max }) => {
-  if (value === undefined || value === null || value === "") {
-    return null;
-  }
-  const normalized = String(value).trim();
-  if (!/^-?\d+$/.test(normalized)) {
-    throw new Error(`${fieldName} must be an integer between ${min} and ${max}`);
-  }
-  const parsed = Number.parseInt(normalized, 10);
-  if (!Number.isInteger(parsed) || parsed < min || parsed > max) {
-    throw new Error(`${fieldName} must be an integer between ${min} and ${max}`);
-  }
-  return parsed;
-};
 
 const COMMUNITY_USER_SELECT = `
   id,

@@ -1,27 +1,8 @@
 import { supabaseAdmin } from "./supabase-client.js";
 import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
 import { baseHandler } from "./utils/base-handler.js";
-import { parseJsonObjectBody } from "./utils/input-validator.js";
+import { parseJsonObjectBody, parseBoundedInt } from "./utils/input-validator.js";
 import { validate } from "./validation.js";
-
-const parseBoundedInt = (value, fieldName, { min, max }) => {
-  if (value === undefined || value === null || value === "") {
-    return null;
-  }
-  const normalized = String(value).trim();
-  if (!/^-?\d+$/.test(normalized)) {
-    const error = new Error(`${fieldName} must be an integer between ${min} and ${max}`);
-    error.isValidation = true;
-    throw error;
-  }
-  const parsed = Number.parseInt(normalized, 10);
-  if (!Number.isInteger(parsed) || parsed < min || parsed > max) {
-    const error = new Error(`${fieldName} must be an integer between ${min} and ${max}`);
-    error.isValidation = true;
-    throw error;
-  }
-  return parsed;
-};
 
 /**
  * Chat API Function
