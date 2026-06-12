@@ -2,6 +2,9 @@ import { baseHandler } from "./utils/base-handler.js";
 import { createErrorResponse } from "./utils/error-handler.js";
 import { parseBoundedInt } from "./utils/input-validator.js";
 import { resolveYouTubeVideoMetadata } from "./utils/youtube.js";
+import { createLogger } from "./utils/structured-logger.js";
+
+const logger = createLogger({ service: "netlify.exercises-core" });
 
 function parseSearch(rawValue) {
   if (rawValue === undefined || rawValue === null) {
@@ -180,7 +183,7 @@ async function getExercises(supabase, params) {
   const { data: mainExercises, error: mainError } = await mainQuery;
 
   if (mainError) {
-    console.error("Error fetching main exercises:", mainError);
+    logger.error("main_exercises_fetch_failed", mainError, {});
   } else if (mainExercises) {
     allExercises.push(...mainExercises.map(mapMainExercise));
   }
@@ -201,7 +204,7 @@ async function getExercises(supabase, params) {
     const { data: plyoExercises, error: plyoError } = await plyoQuery;
 
     if (plyoError) {
-      console.error("Error fetching plyometric exercises:", plyoError);
+      logger.error("plyometric_exercises_fetch_failed", plyoError, {});
     } else if (plyoExercises) {
       allExercises.push(...plyoExercises.map(mapPlyometricExercise));
     }
@@ -223,7 +226,7 @@ async function getExercises(supabase, params) {
     const { data: isoExercises, error: isoError } = await isoQuery;
 
     if (isoError) {
-      console.error("Error fetching isometric exercises:", isoError);
+      logger.error("isometric_exercises_fetch_failed", isoError, {});
     } else if (isoExercises) {
       allExercises.push(...isoExercises.map(mapIsometricExercise));
     }
@@ -267,7 +270,7 @@ const handler = async (event, context) =>
             "validation_error",
           );
         }
-        console.error("Exercises API error:", error);
+        logger.error("exercises_api_error", error, {});
         return createErrorResponse(
           "Internal server error",
           500,

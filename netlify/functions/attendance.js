@@ -1,4 +1,4 @@
-import { checkEnvVars, supabaseAdmin } from "./supabase-client.js";
+import { supabaseAdmin } from "./supabase-client.js";
 import { createSuccessResponse, createErrorResponse, ErrorType } from "./utils/error-handler.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { checkTeamMembership, getUserTeamId } from "./utils/auth-helper.js";
@@ -35,7 +35,6 @@ const assertActiveTeamPlayer = async (teamId, playerId) => {
 
 // Get team events with optional filters
 const getTeamEvents = async (userId, queryParams) => {
-  checkEnvVars();
 
   const { team_id, event_type, start_date, end_date, limit } = queryParams;
 
@@ -85,7 +84,6 @@ const getTeamEvents = async (userId, queryParams) => {
 
 // Create a new team event
 const createEvent = async (userId, eventData) => {
-  checkEnvVars();
 
   const {
     team_id,
@@ -128,7 +126,6 @@ const createEvent = async (userId, eventData) => {
 
 // Update an event
 const updateEvent = async (userId, eventId, updates) => {
-  checkEnvVars();
 
   // Get the event to verify ownership
   const { data: event, error: fetchError } = await supabaseAdmin
@@ -178,7 +175,6 @@ const updateEvent = async (userId, eventId, updates) => {
 
 // Delete an event
 const deleteEvent = async (userId, eventId) => {
-  checkEnvVars();
 
   const { data: event, error: fetchError } = await supabaseAdmin
     .from("team_events")
@@ -208,7 +204,6 @@ const deleteEvent = async (userId, eventId) => {
 
 // Get attendance records for an event
 const getEventAttendance = async (userId, eventId) => {
-  checkEnvVars();
 
   // Get event to verify access
   const { data: event, error: eventError } = await supabaseAdmin
@@ -254,7 +249,6 @@ const getEventAttendance = async (userId, eventId) => {
 
 // Record attendance for a player
 const recordAttendance = async (userId, attendanceData) => {
-  checkEnvVars();
 
   const { event_id, player_id, status, notes } = attendanceData;
   if (!event_id || !player_id || !status) {
@@ -317,7 +311,6 @@ const recordAttendance = async (userId, attendanceData) => {
 
 // Bulk record attendance
 const bulkRecordAttendance = async (userId, bulkData) => {
-  checkEnvVars();
 
   const { event_id, records } = bulkData;
   if (!event_id || !Array.isArray(records) || records.length === 0) {
@@ -384,7 +377,6 @@ const bulkRecordAttendance = async (userId, bulkData) => {
 
   return data;
 };
-
 
 // Main handler
 const handler = async (event, context) => {

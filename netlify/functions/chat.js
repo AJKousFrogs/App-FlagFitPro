@@ -3,6 +3,9 @@ import { createSuccessResponse, createErrorResponse } from "./utils/error-handle
 import { baseHandler } from "./utils/base-handler.js";
 import { parseJsonObjectBody, parseBoundedInt } from "./utils/input-validator.js";
 import { validate } from "./validation.js";
+import { createLogger } from "./utils/structured-logger.js";
+
+const logger = createLogger({ service: "netlify.chat" });
 
 /**
  * Chat API Function
@@ -19,11 +22,6 @@ import { validate } from "./validation.js";
  * - POST /api/chat/channels/:id/read - Mark channel as read
  */
 
-// Use shared Supabase admin client
-function getSupabase() {
-  return supabaseAdmin;
-}
-
 // ============================================================================
 // CHANNEL OPERATIONS
 // ============================================================================
@@ -32,7 +30,7 @@ function getSupabase() {
  * Get channels for user
  */
 async function getChannels(userId) {
-  const supabase = getSupabase();
+  const supabase = supabaseAdmin;
 
   // Get user's team memberships
   const { data: memberships, error: memberError } = await supabase
@@ -101,7 +99,7 @@ async function getChannels(userId) {
  * Create a new channel
  */
 async function createChannel(userId, channelData) {
-  const supabase = getSupabase();
+  const supabase = supabaseAdmin;
 
   // SECURITY: Validate channel data
   const validation = validate(channelData, "createChannel");
@@ -183,7 +181,7 @@ async function createChannel(userId, channelData) {
  * Get messages for a channel
  */
 async function getMessages(userId, channelId, options = {}) {
-  const supabase = getSupabase();
+  const supabase = supabaseAdmin;
 
   // Verify user has access to channel
   const hasAccess = await verifyChannelAccess(userId, channelId);
@@ -240,7 +238,7 @@ async function getMessages(userId, channelId, options = {}) {
  * Send a message to a channel
  */
 async function sendMessage(userId, channelId, messageData) {
-  const supabase = getSupabase();
+  const supabase = supabaseAdmin;
 
   // SECURITY: Validate message data
   const validation = validate(messageData, "chatMessage");
@@ -305,7 +303,7 @@ async function sendMessage(userId, channelId, messageData) {
  * Update a message (pin, importance, edit)
  */
 async function updateMessage(userId, messageId, updates) {
-  const supabase = getSupabase();
+  const supabase = supabaseAdmin;
 
   // Get message to check permissions
   const { data: message } = await supabase
@@ -372,7 +370,7 @@ async function updateMessage(userId, messageId, updates) {
  * Delete a message
  */
 async function deleteMessage(userId, messageId) {
-  const supabase = getSupabase();
+  const supabase = supabaseAdmin;
 
   // Get message to check permissions
   const { data: message } = await supabase
@@ -409,7 +407,7 @@ async function deleteMessage(userId, messageId) {
  * Mark channel as read
  */
 async function markChannelRead(userId, channelId) {
-  const supabase = getSupabase();
+  const supabase = supabaseAdmin;
   const hasAccess = await verifyChannelAccess(userId, channelId);
   if (!hasAccess) {
     throw new Error("Access denied to this channel");
@@ -436,7 +434,7 @@ async function markChannelRead(userId, channelId) {
 // ============================================================================
 
 async function verifyChannelAccess(userId, channelId) {
-  const supabase = getSupabase();
+  const supabase = supabaseAdmin;
 
   // Get channel info
   const { data: channel } = await supabase
@@ -483,7 +481,7 @@ async function verifyChannelAccess(userId, channelId) {
 }
 
 async function verifyCanPost(userId, channelId) {
-  const supabase = getSupabase();
+  const supabase = supabaseAdmin;
 
   const { data: channel } = await supabase
     .from("channels")
@@ -517,7 +515,7 @@ async function verifyCanPost(userId, channelId) {
 }
 
 async function verifyIsCoach(userId, channelId) {
-  const supabase = getSupabase();
+  const supabase = supabaseAdmin;
 
   const { data: channel } = await supabase
     .from("channels")
@@ -541,7 +539,7 @@ async function verifyIsCoach(userId, channelId) {
 }
 
 async function getUnreadCount(userId, channelId) {
-  const supabase = getSupabase();
+  const supabase = supabaseAdmin;
 
   // Get last read timestamp
   const { data: membership } = await supabase
@@ -662,7 +660,7 @@ const handler = async (event, context) => {
 
         return createErrorResponse("Not found", 404, "not_found");
       } catch (error) {
-        console.error("Chat API error:", error);
+        logger.error("chat_api_error", error);
 
         // SECURITY: Handle validation errors with proper 422 status
         if (error.isValidation) {

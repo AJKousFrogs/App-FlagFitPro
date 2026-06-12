@@ -3,11 +3,10 @@ import { wrapHandler } from "./utils/lambda-compat.js";
 // Netlify Function: File Upload API
 // Handles image and video uploads to Supabase Storage
 
-import { checkEnvVars, supabaseAdmin } from "./supabase-client.js";
+import { supabaseAdmin } from "./supabase-client.js";
 
 import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
 import { baseHandler } from "./utils/base-handler.js";
-import { authenticateRequest } from "./utils/auth-helper.js";
 import { parseJsonObjectBody } from "./utils/input-validator.js";
 import { createLogger, makeRequestLogger } from "./utils/structured-logger.js";
 
@@ -43,8 +42,6 @@ const uploadFile = async (
   log = logger,
 ) => {
   try {
-    checkEnvVars();
-
     // Determine bucket and validate file type
     const bucket = "community-media";
     let maxSize = MAX_IMAGE_SIZE;
@@ -123,8 +120,6 @@ const uploadFile = async (
 // Delete file from Supabase Storage
 const deleteFile = async (filePath, log = logger) => {
   try {
-    checkEnvVars();
-
     const { error } = await supabaseAdmin.storage
       .from("community-media")
       .remove([filePath]);
@@ -148,20 +143,7 @@ const handler = async (event, context) => {
     allowedMethods: ["POST", "DELETE"],
     rateLimitType: "CREATE",
     requireAuth: true,
-    handler: async (event, _context, { requestId, correlationId }) => {
-      // Authenticate request
-      const auth = await authenticateRequest(event);
-      if (!auth.success) {
-      return createErrorResponse(
-        "Authentication required",
-        401,
-        "authentication_error",
-        requestId,
-      );
-      }
-
-      const userId = auth.user.id;
-
+    handler: async (event, _context, { userId, requestId, correlationId }) => {
       const requestLogger = createRequestLogger(event, {
         requestId,
         correlationId,

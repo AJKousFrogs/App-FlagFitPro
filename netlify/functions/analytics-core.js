@@ -6,6 +6,9 @@ import { ConsentDataReader, AccessContext } from "./utils/consent-data-reader.js
 import { DataState } from "./utils/data-state.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { parseBoundedInt } from "./utils/input-validator.js";
+import { createLogger } from "./utils/structured-logger.js";
+
+const logger = createLogger({ service: "netlify.analytics-core" });
 
 // Netlify Function: Analytics API
 // Handles all analytics endpoints for performance trends, team chemistry, training distribution, etc.
@@ -115,7 +118,7 @@ const getPerformanceTrends = async (userId, weeks = 7) => {
       dataState: sessionsResult.dataState,
     };
   } catch (error) {
-    console.error("Error getting performance trends:", error);
+    logger.error("performance_trends_failed", error, {});
     // Return fallback data
     return {
       labels: [
@@ -235,7 +238,7 @@ const getTeamChemistry = async (userId) => {
       dataState: sessionsResult.dataState,
     };
   } catch (error) {
-    console.error("Error getting team chemistry:", error);
+    logger.error("team_chemistry_failed", error, {});
     return getFallbackTeamChemistry();
   }
 };
@@ -292,7 +295,7 @@ const getTrainingDistribution = async (userId, period = "30days") => {
       dataState: sessionsResult.dataState,
     };
   } catch (error) {
-    console.error("Error getting training distribution:", error);
+    logger.error("training_distribution_failed", error, {});
     return getFallbackTrainingDistribution();
   }
 };
@@ -437,7 +440,7 @@ const getPositionPerformance = async (userId) => {
       dataState: sessionsResult.dataState,
     };
   } catch (error) {
-    console.error("Error getting position performance:", error);
+    logger.error("position_performance_failed", error, {});
     return getFallbackPositionPerformance();
   }
 };
@@ -536,7 +539,7 @@ const getSpeedDevelopment = async (userId, weeks = 7) => {
       olympicTarget: "4.40",
     };
   } catch (error) {
-    console.error("Error getting speed development:", error);
+    logger.error("speed_development_failed", error, {});
     return getFallbackSpeedDevelopment();
   }
 };
@@ -587,7 +590,7 @@ const getAnalyticsSummary = async (userId) => {
       consentInfo: chemistry.consentInfo,
     };
   } catch (error) {
-    console.error("Error getting analytics summary:", error);
+    logger.error("analytics_summary_failed", error, {});
     return getFallbackAnalyticsSummary();
   }
 };

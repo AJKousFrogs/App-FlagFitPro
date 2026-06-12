@@ -1,4 +1,4 @@
-import { checkEnvVars, supabaseAdmin } from "./supabase-client.js";
+import { supabaseAdmin } from "./supabase-client.js";
 import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { parseJsonObjectBody } from "./utils/input-validator.js";
@@ -49,7 +49,6 @@ const assertActiveTeamMember = async (teamId, teamMemberId) => {
 
 // Get player payment data (player view)
 const getPlayerPayments = async (userId, queryParams) => {
-  checkEnvVars();
 
   const { team_id } = queryParams;
 
@@ -177,7 +176,6 @@ const getPlayerPayments = async (userId, queryParams) => {
 
 // Get coach payment management data
 const getCoachPayments = async (userId, queryParams) => {
-  checkEnvVars();
 
   const { team_id } = queryParams;
 
@@ -328,7 +326,6 @@ const getCoachPayments = async (userId, queryParams) => {
 
 // Create a new fee
 const createFee = async (userId, body) => {
-  checkEnvVars();
 
   const {
     team_id,
@@ -427,7 +424,6 @@ const createFee = async (userId, body) => {
 
 // Record a payment
 const recordPayment = async (userId, body) => {
-  checkEnvVars();
 
   const { team_id, player_id, amount, method, date, reference, payment_id } = body;
 

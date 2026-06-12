@@ -12,6 +12,9 @@ import {
   handleValidationError,
 } from "./utils/error-handler.js";
 import { parseJsonObjectBody } from "./utils/input-validator.js";
+import { createLogger } from "./utils/structured-logger.js";
+
+const logger = createLogger({ service: "netlify.account-pause" });
 
 const handler = async (event, context) =>
   baseHandler(event, context, {
@@ -75,7 +78,7 @@ const handler = async (event, context) =>
             "Account paused successfully",
           );
         } catch (error) {
-          console.error("[AccountPause] Error:", error);
+          logger.error("account_pause_failed", error, {});
           return createErrorResponse(
             "Failed to pause account",
             500,
@@ -103,7 +106,7 @@ const handler = async (event, context) =>
 
           return createSuccessResponse({}, 200, "Account resumed successfully");
         } catch (error) {
-          console.error("[AccountPause] Error:", error);
+          logger.error("account_resume_failed", error, {});
           return createErrorResponse(
             "Failed to resume account",
             500,

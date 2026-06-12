@@ -1467,7 +1467,7 @@ function calculateWellnessAverages(wellness) {
 
   wellness.forEach((w) => {
     metrics.forEach((metric) => {
-      if (w[metric] !== null && w[metric] !== undefined) {
+      if (w[metric] !== null) {
         sums[metric] += w[metric];
         counts[metric]++;
       }

@@ -1,4 +1,4 @@
-import { supabaseAdmin, checkEnvVars } from "./supabase-client.js";
+import { supabaseAdmin } from "./supabase-client.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
 import { parseJsonObjectBody, parseBoundedInt } from "./utils/input-validator.js";
@@ -441,8 +441,7 @@ const handler = async (event, context) => {
     rateLimitType,
     requireAuth: true,
     handler: async (event, _context, { userId, requestId, correlationId }) => {
-      checkEnvVars();
-
+  
       const requestLogger = createRequestLogger(event, {
         requestId,
         correlationId,

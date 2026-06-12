@@ -9,11 +9,6 @@ import { parseJsonObjectBody, parseBoundedInt } from "./utils/input-validator.js
 import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
 import { baseHandler } from "./utils/base-handler.js";
 
-// Use shared Supabase admin client
-function getSupabase() {
-  return supabaseAdmin;
-}
-
 // SECURITY: Whitelist of allowed categories to prevent injection
 const ALLOWED_CATEGORIES = [
   "training",
@@ -100,7 +95,7 @@ const handler = async (event, context) => {
 rateLimitType,
     requireAuth: false, // Knowledge search is public
     handler: async (event, _context, { requestId }) => {
-      const supabase = getSupabase();
+      const supabase = supabaseAdmin;
 
       try {
         if (event.httpMethod === "POST") {

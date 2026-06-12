@@ -3,6 +3,9 @@ import { supabaseAdmin } from "./supabase-client.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { createErrorResponse, handleValidationError } from "./utils/error-handler.js";
 import { tryParseJsonObjectBody } from "./utils/input-validator.js";
+import { createLogger } from "./utils/structured-logger.js";
+
+const logger = createLogger({ service: "netlify.achievements" });
 
 const handler = async (event, context) =>
   baseHandler(event, context, {
@@ -44,7 +47,7 @@ const handler = async (event, context) =>
 
         return createErrorResponse("Not found", 404, "not_found");
       } catch (error) {
-        console.error("Achievements error:", error);
+        logger.error("achievements_error", error);
         return createErrorResponse("Internal server error", 500, "server_error", requestId);
       }
     },

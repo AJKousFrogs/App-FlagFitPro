@@ -21,7 +21,7 @@
  * - Follow-up prompt
  */
 
-import { supabaseAdmin, checkEnvVars } from "./supabase-client.js";
+import { supabaseAdmin } from "./supabase-client.js";
 
 import { baseHandler } from "./utils/base-handler.js";
 import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
@@ -371,8 +371,7 @@ const handler = async (event, context) => {
     rateLimitType,
     requireAuth: true,
     handler: async (event, _context, { userId, requestId }) => {
-      checkEnvVars();
-
+  
       const { path } = event;
       const method = event.httpMethod;
 

@@ -224,7 +224,7 @@ async function getCoachDashboard(userId, requestedTeamId = null) {
       .eq("day", today);
     const canonicalReadiness = new Map();
     (readinessRows || []).forEach((r) => {
-      if (r.score !== null && r.score !== undefined) {
+      if (r.score !== null) {
         canonicalReadiness.set(r.user_id, Math.round(Number(r.score)));
       }
     });
@@ -312,18 +312,14 @@ async function getCoachDashboard(userId, requestedTeamId = null) {
           const wellnessData = wellnessResult?.data || [];
           if (wellnessData && wellnessData.length > 0) {
             const w = wellnessData[0];
-            const hasSleep =
-              w.sleep_quality !== null && w.sleep_quality !== undefined;
-            const hasEnergy =
-              w.energy_level !== null && w.energy_level !== undefined;
+            const hasSleep = w.sleep_quality !== null;
+            const hasEnergy = w.energy_level !== null;
 
             if (hasSleep && hasEnergy) {
               const sleepScore = (w.sleep_quality / 10) * 100;
               const energyScore = (w.energy_level / 10) * 100;
-              const hasStress =
-                w.stress_level !== null && w.stress_level !== undefined;
-              const hasSoreness =
-                w.muscle_soreness !== null && w.muscle_soreness !== undefined;
+              const hasStress = w.stress_level !== null;
+              const hasSoreness = w.muscle_soreness !== null;
 
               let wellnessAvg;
               if (hasStress && hasSoreness) {

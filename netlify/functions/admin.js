@@ -3,6 +3,9 @@ import { baseHandler } from "./utils/base-handler.js";
 import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
 import { supabaseAdmin } from "./supabase-client.js";
 import { getUserRole } from "./utils/authorization-guard.js";
+import { createLogger } from "./utils/structured-logger.js";
+
+const logger = createLogger({ service: "netlify.admin" });
 
 // Netlify Function: Admin API
 // Handles admin-only operations: health metrics, data syncs, backups, statistics
@@ -236,11 +239,12 @@ async function createDatabaseBackup() {
         backupResults.totalRecords += recordCount;
       } catch (tableError) {
         if (tableError?.code) {
-          console.error(`[Admin] Backup table error for ${table}`, {
+          logger.error("backup_table_failed", tableError, {
+            table,
             code: tableError.code,
           });
         } else {
-          console.error(`[Admin] Backup table error for ${table}`);
+          logger.error("backup_table_failed", tableError, { table });
         }
         backupResults.errors.push({
           table,

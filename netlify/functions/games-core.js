@@ -1,5 +1,5 @@
 import crypto from "node:crypto";
-import { checkEnvVars, supabaseAdmin } from "./supabase-client.js";
+import { supabaseAdmin } from "./supabase-client.js";
 import { validate, validateRequestBody, VALIDATION_RULES } from "./validation.js";
 import { parseJsonObjectBody, parseBoundedInt, sanitizeObject } from "./utils/input-validator.js";
 import { createSuccessResponse, createErrorResponse, handleValidationError, handleNotFoundError, handleAuthorizationError } from "./utils/error-handler.js";
@@ -7,6 +7,8 @@ import { checkTeamMembership as _checkTeamMembership, getUserTeamId } from "./ut
 import { baseHandler } from "./utils/base-handler.js";
 import { getRateLimitType } from "./utils/rate-limiter.js";
 import { hasAnyRole, TEAM_OPERATIONS_ROLES } from "./utils/role-sets.js";
+import { createLogger } from "./utils/structured-logger.js";
+const logger = createLogger({ service: "netlify.games-core" });
 
 // Netlify Function: Games API
 // Handles game creation, retrieval, and statistics
@@ -190,7 +192,6 @@ async function hasPlayerConsent(_coachId, _playerId) {
 // Create a new game with validation
 const createGame = async (userId, gameData) => {
   try {
-    checkEnvVars();
 
     // SECURITY: Validate input against schema
     const validation = validate(gameData, "createGame");
@@ -264,7 +265,7 @@ const createGame = async (userId, gameData) => {
           : "Team game created - visible to all team members",
     };
   } catch (error) {
-    console.error("Error creating game:", error);
+    logger.error("game_create_failed", error, {});
     throw error;
   }
 };
@@ -272,7 +273,6 @@ const createGame = async (userId, gameData) => {
 // Get games for a user/team with visibility filtering
 const getGames = async (userId, options = {}) => {
   try {
-    checkEnvVars();
 
     const userRole = await getUserRole(userId);
     const isCoach = isCoachOrAdmin(userRole);
@@ -347,7 +347,7 @@ const getGames = async (userId, options = {}) => {
       normalizeGameRecord(game, userId, isCoach ? "coach" : "player"),
     );
   } catch (error) {
-    console.error("Error getting games:", error);
+    logger.error("games_fetch_failed", error, {});
     throw error;
   }
 };
@@ -355,7 +355,6 @@ const getGames = async (userId, options = {}) => {
 // Get game details with permission check
 const getGameDetails = async (userId, gameId) => {
   try {
-    checkEnvVars();
 
     const userRole = await getUserRole(userId);
     const isCoach = isCoachOrAdmin(userRole);
@@ -477,7 +476,6 @@ async function triggerGameDayRecovery(playerId, gameDate) {
 // Update game with authorization check
 const updateGame = async (userId, gameId, updates) => {
   try {
-    checkEnvVars();
 
     // SECURITY: Validate input against schema
     const validation = validate(updates, "updateGame");
@@ -612,7 +610,6 @@ const updateGame = async (userId, gameId, updates) => {
 // Save a play/event with recorder tracking
 const savePlay = async (userId, gameId, playData) => {
   try {
-    checkEnvVars();
 
     // Verify game exists and user has access
     const { data: game, error: gameError } = await fetchGameByIdentifier(gameId);
@@ -714,7 +711,6 @@ const savePlay = async (userId, gameId, playData) => {
 // Get game statistics
 const getGameStats = async (userId, gameId) => {
   try {
-    checkEnvVars();
 
     // Verify access
     await getGameDetails(userId, gameId);
@@ -745,7 +741,6 @@ const getPlayerAggregatedStats = async (
   options = {},
 ) => {
   try {
-    checkEnvVars();
 
     const requestingUserRole = await getUserRole(requestingUserId);
     const isCoach = isCoachOrAdmin(requestingUserRole);

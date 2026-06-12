@@ -1,4 +1,4 @@
-import { checkEnvVars, supabaseAdmin } from "./supabase-client.js";
+import { supabaseAdmin } from "./supabase-client.js";
 import { parseJsonObjectBody, sanitizeObject, parseBoundedInt } from "./utils/input-validator.js";
 import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
 import { baseHandler } from "./utils/base-handler.js";
@@ -44,7 +44,6 @@ const getCommunityUserAvatar = (user) =>
 // Get community feed from database with privacy filtering
 const getCommunityFeed = async (userId, limit = 20, offset = 0) => {
   try {
-    checkEnvVars();
 
     // SECURITY: Build query with privacy filters
     let query = supabaseAdmin
@@ -153,7 +152,6 @@ const getCommunityFeed = async (userId, limit = 20, offset = 0) => {
 // Get community leaderboard
 const getCommunityLeaderboard = async (_category = "overall", limit = 10) => {
   try {
-    checkEnvVars();
 
     // Calculate leaderboard from posts and user engagement
     // This aggregates data from posts table
@@ -222,7 +220,6 @@ const getCommunityLeaderboard = async (_category = "overall", limit = 10) => {
 // Create a new post with validation
 const createPost = async (userId, postData) => {
   try {
-    checkEnvVars();
 
     // SECURITY: Sanitize input to prevent XSS
     const sanitizedData = sanitizeObject(postData);
@@ -320,7 +317,6 @@ const createPost = async (userId, postData) => {
 // Toggle like on a post
 const toggleLike = async (userId, postId) => {
   try {
-    checkEnvVars();
 
     // Check if user already liked this post
     const { data: existingLike } = await supabaseAdmin
@@ -362,7 +358,6 @@ const toggleLike = async (userId, postId) => {
 // Toggle bookmark on a post
 const toggleBookmark = async (userId, postId) => {
   try {
-    checkEnvVars();
 
     // Check if user already bookmarked this post
     const { data: existingBookmark } = await supabaseAdmin
@@ -401,7 +396,6 @@ const toggleBookmark = async (userId, postId) => {
 // Get comments for a post
 const getPostComments = async (postId, userId = null) => {
   try {
-    checkEnvVars();
 
     const { data: comments, error } = await supabaseAdmin
       .from("post_comments")
@@ -457,7 +451,6 @@ const getPostComments = async (postId, userId = null) => {
 // Add a comment to a post
 const addComment = async (userId, postId, content) => {
   try {
-    checkEnvVars();
 
     // SECURITY: Validate content
     if (!content || content.trim().length === 0) {
@@ -514,7 +507,6 @@ const addComment = async (userId, postId, content) => {
 // Toggle like on a comment
 const toggleCommentLike = async (userId, commentId) => {
   try {
-    checkEnvVars();
 
     // Check if user already liked this comment
     const { data: existingLike } = await supabaseAdmin
@@ -563,7 +555,6 @@ const toggleCommentLike = async (userId, commentId) => {
 // Get trending topics
 const getTrendingTopics = async (limit = 5) => {
   try {
-    checkEnvVars();
 
     const { data: topics, error } = await supabaseAdmin
       .from("trending_topics")
@@ -625,7 +616,6 @@ const getRelativeTime = (date) => {
 // Create a poll for a post (exported for future use)
 const _createPoll = async (postId, pollData) => {
   try {
-    checkEnvVars();
 
     const { question, options, endsAt } = pollData;
 
@@ -695,7 +685,6 @@ const votePoll = async (userId, optionId) => {
     "You have already voted on this poll",
   ]);
   try {
-    checkEnvVars();
 
     // Check if user already voted on this poll
     const { data: option } = await supabaseAdmin
@@ -784,7 +773,6 @@ const votePoll = async (userId, optionId) => {
 // Get poll for a post
 const getPollForPost = async (postId, userId = null) => {
   try {
-    checkEnvVars();
 
     const { data: poll, error } = await supabaseAdmin
       .from("community_polls")

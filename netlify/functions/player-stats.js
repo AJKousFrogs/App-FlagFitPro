@@ -1,4 +1,4 @@
-import { checkEnvVars, supabaseAdmin } from "./supabase-client.js";
+import { supabaseAdmin } from "./supabase-client.js";
 import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
 import { parseAthleteId } from "./utils/db-query-helper.js";
 import { baseHandler } from "./utils/base-handler.js";
@@ -39,7 +39,6 @@ function normalizePlayerStatsPath(pathname = "") {
  */
 const getPlayerAggregatedStats = async (playerId, options = {}) => {
   try {
-    checkEnvVars();
 
     const todayEndOfDay = getTodayEndOfDay();
     const { season, teamId } = options;
@@ -379,7 +378,6 @@ function getEmptyStats() {
  */
 const getPlayerStatsByDateRange = async (playerId, startDate, endDate) => {
   try {
-    checkEnvVars();
 
     // Ensure endDate includes the full day
     const endDateInclusive = new Date(endDate);

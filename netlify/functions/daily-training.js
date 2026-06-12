@@ -1,4 +1,4 @@
-import { supabaseAdmin, checkEnvVars } from "./supabase-client.js";
+import { supabaseAdmin } from "./supabase-client.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
 import { guardMerlinRequest } from "./utils/merlin-guard.js";
@@ -6,6 +6,9 @@ import { detectPainTrigger, detectACWRTrigger } from "./utils/safety-override.js
 import { requireAuthorization, logViolation } from "./utils/authorization-guard.js";
 import { parseJsonObjectBody } from "./utils/input-validator.js";
 import { computeAcwrAt, computeSessionLoad } from "./utils/acwr.js";
+import { createLogger } from "./utils/structured-logger.js";
+
+const logger = createLogger({ service: "netlify.daily-training" });
 
 /**
  * Netlify Function: Daily Training
@@ -206,22 +209,19 @@ async function getUserContext(userId) {
     ]);
 
     if (profileError && profileError.code !== "PGRST116") {
-      console.warn("[DailyTraining] Error fetching profile:", profileError);
+      logger.warn("profile_fetch_failed", {}, profileError);
     }
 
     if (sessionsError) {
-      console.warn("[DailyTraining] Error fetching sessions:", sessionsError);
+      logger.warn("sessions_fetch_failed", {}, sessionsError);
     }
 
     if (gamesError) {
-      console.warn("[DailyTraining] Error fetching games:", gamesError);
+      logger.warn("games_fetch_failed", {}, gamesError);
     }
 
     if (scheduledError) {
-      console.warn(
-        "[DailyTraining] Error fetching scheduled sessions:",
-        scheduledError,
-      );
+      logger.warn("scheduled_sessions_fetch_failed", {}, scheduledError);
     }
 
     // Calculate ACWR
@@ -235,7 +235,7 @@ async function getUserContext(userId) {
       acwr,
     };
   } catch (error) {
-    console.error("[DailyTraining] Error getting user context:", error);
+    logger.error("user_context_fetch_failed", error, {});
     return {
       profile: {},
       sessions: [],
@@ -305,7 +305,7 @@ async function getPlyometricExercises(difficulty = "intermediate", limit = 3) {
       .limit(limit);
 
     if (error) {
-      console.warn("[DailyTraining] Error fetching plyometrics:", error);
+      logger.warn("plyometrics_fetch_failed", {}, error);
       return getDefaultPlyometrics();
     }
 
@@ -328,7 +328,7 @@ async function getIsometricExercises(_category = "lower_body", limit = 3) {
       .limit(limit);
 
     if (error) {
-      console.warn("[DailyTraining] Error fetching isometrics:", error);
+      logger.warn("isometrics_fetch_failed", {}, error);
       return getDefaultIsometrics();
     }
 
@@ -787,7 +787,7 @@ async function updateTrainingProgress(userId, updates, requestInfo = {}) {
       .single();
 
     if (fetchError && fetchError.code !== "PGRST116") {
-      console.warn("[DailyTraining] Error fetching session:", fetchError);
+      logger.warn("session_fetch_failed", {}, fetchError);
     }
 
     if (existing) {
@@ -866,7 +866,7 @@ async function updateTrainingProgress(userId, updates, requestInfo = {}) {
       return { success: true, message: "Session created and progress saved" };
     }
   } catch (error) {
-    console.error("[DailyTraining] Error updating progress:", error);
+    logger.error("progress_update_failed", error, {});
     return {
       success: false,
       statusCode: 500,
@@ -902,8 +902,7 @@ const handler = async (event, context) => {
     rateLimitType: event.httpMethod === "GET" ? "READ" : "UPDATE",
     requireAuth: true,
     handler: async (event, _context, { userId, requestId }) => {
-      checkEnvVars();
-
+  
       // GET: Fetch daily training plan
       if (event.httpMethod === "GET") {
         try {
@@ -915,7 +914,7 @@ const handler = async (event, context) => {
 
           return createSuccessResponse(trainingPlan, requestId);
         } catch (error) {
-          console.error("[DailyTraining] GET error:", error);
+          logger.error("daily_training_get_failed", error, {});
           return createErrorResponse(
             "Failed to generate training plan",
             500,
@@ -963,7 +962,7 @@ const handler = async (event, context) => {
 
           return createSuccessResponse(result, requestId);
         } catch (error) {
-          console.error("[DailyTraining] POST error:", error);
+          logger.error("daily_training_post_failed", error, {});
           return createErrorResponse(
             "Failed to update training progress",
             500,

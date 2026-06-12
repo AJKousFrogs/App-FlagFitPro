@@ -4,6 +4,9 @@ import { getOrFetch, CACHE_TTL, CACHE_PREFIX } from "./cache.js";
 import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
 import { getTimeAgo } from "./utils/date-utils.js";
 import { baseHandler } from "./utils/base-handler.js";
+import { createLogger } from "./utils/structured-logger.js";
+
+const logger = createLogger({ service: "netlify.dashboard" });
 
 // Netlify Function: Dashboard Data
 // Returns user dashboard statistics and activity using Supabase
@@ -106,7 +109,7 @@ const getDashboardData = async (userId) => {
       },
     };
   } catch (error) {
-    console.error("[Dashboard] Database error in getDashboardData:", error);
+    logger.error("dashboard_data_fetch_failed", error, { context: "getDashboardData" });
     // Return fallback data with indicator flag (RISK-018 fix)
     return {
       ...getFallbackDashboardData(),
@@ -157,7 +160,7 @@ const getTrainingCalendar = async (userId) => {
       .order("session_date", { ascending: true });
 
     if (error) {
-      console.error("Error fetching training calendar:", error);
+      logger.error("training_calendar_fetch_failed", error, { context: "getTrainingCalendar" });
       throw error;
     }
 
@@ -183,7 +186,7 @@ const getTrainingCalendar = async (userId) => {
       upcomingSessions: sessions || [],
     };
   } catch (error) {
-    console.error("Error in getTrainingCalendar:", error);
+    logger.error("training_calendar_error", error, { context: "getTrainingCalendar" });
     return {
       calendar: {},
       upcomingSessions: [],
@@ -222,7 +225,7 @@ const getTeamChemistry = async (userId) => {
     ]);
 
     if (membersError) {
-      console.error("Error fetching team members:", membersError);
+      logger.error("team_members_fetch_failed", membersError, { context: "getTeamChemistry" });
     }
 
     const chemistry = null;
@@ -236,7 +239,7 @@ const getTeamChemistry = async (userId) => {
       memberCount: members?.length || 0,
     };
   } catch (error) {
-    console.error("Error in getTeamChemistry:", error);
+    logger.error("team_chemistry_error", error, { context: "getTeamChemistry" });
     return {
       teamId: null,
       chemistry: null,
@@ -307,7 +310,7 @@ const handler = async (event, context) => {
 
         return createSuccessResponse(dashboardData);
       } catch (error) {
-        console.error("[dashboard] Unexpected handler error:", error);
+        logger.error("dashboard_handler_error", error, { context: "handler" });
         return createErrorResponse(
           "Failed to load dashboard data",
           500,

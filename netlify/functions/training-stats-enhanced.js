@@ -4,7 +4,7 @@
 // Always filters data up to and including today's date
 // This is the single source of truth for training stats calculations
 
-import { checkEnvVars, supabaseAdmin } from "./supabase-client.js";
+import { supabaseAdmin } from "./supabase-client.js";
 import { computeAcwrAt, computeSessionLoad, classifyAcwrZone } from "./utils/acwr.js";
 import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
 import { baseHandler } from "./utils/base-handler.js";
@@ -125,7 +125,6 @@ function calculateWeeklyVolume(sessions, referenceDate = new Date()) {
  */
 async function getTrainingStats(userId, options = {}) {
   try {
-    checkEnvVars();
 
     const today = getTodayDate();
     const { startDate, endDate } = options;

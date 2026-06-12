@@ -3,6 +3,9 @@ import { createSuccessResponse, createErrorResponse } from "./utils/error-handle
 import { supabaseAdmin } from "./supabase-client.js";
 import { guardMerlinRequest } from "./utils/merlin-guard.js";
 import { parseJsonObjectBody, parseBoundedInt } from "./utils/input-validator.js";
+import { createLogger } from "./utils/structured-logger.js";
+
+const logger = createLogger({ service: "netlify.decisions" });
 
 // Netlify Function: Decision Ledger API
 // Handles decision accountability, review triggers, and confidence scoring
@@ -651,7 +654,7 @@ async function handleRequest(event, _context, { userId }) {
 
     return createErrorResponse("Endpoint not found", 404, "not_found");
   } catch (error) {
-    console.error("[Decisions API] Error:", error);
+    logger.error("decisions_api_error", error, {});
     if (error.message?.includes("Unauthorized")) {
       return createErrorResponse(error.message, 403, "authorization_error");
     }

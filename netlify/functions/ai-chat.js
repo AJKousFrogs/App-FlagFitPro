@@ -1,5 +1,5 @@
 import { wrapHandler } from "./utils/lambda-compat.js";
-import { supabaseAdmin, checkEnvVars } from "./supabase-client.js";
+import { supabaseAdmin } from "./supabase-client.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
 import { classifyRiskLevel, generateSafeResponse, filterContent, filterSourcesByEvidence, RISK_LEVELS, INTENT_TYPES, classifyWithConfidence, generateBlockedYouthResponse } from "./utils/ai-safety-classifier.js";
@@ -3435,8 +3435,6 @@ const handler = async (event, context) => {
     rateLimitType: "CREATE", // More restrictive rate limiting for AI
     requireAuth: true,
     handler: async (event, _context, { userId, requestId }) => {
-      checkEnvVars();
-
       if (event.httpMethod === "GET") {
         if (isSessionListFetch) {
           try {

@@ -1,4 +1,4 @@
-import { supabaseAdmin, checkEnvVars } from "./supabase-client.js";
+import { supabaseAdmin } from "./supabase-client.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
 import { COACH_ROUTE_ROLES } from "./utils/role-sets.js";
@@ -510,8 +510,7 @@ const handler = async (event, context) => {
     rateLimitType: "CREATE",
     requireAuth: true,
     handler: async (event, _context, { userId, requestId }) => {
-      checkEnvVars();
-
+  
       const { path } = event;
       const method = event.httpMethod;
 

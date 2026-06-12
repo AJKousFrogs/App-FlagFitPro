@@ -4,6 +4,9 @@ import { baseHandler } from "./utils/base-handler.js";
 import { createErrorResponse, handleValidationError } from "./utils/error-handler.js";
 import { parseJsonObjectBody, parseBoundedInt } from "./utils/input-validator.js";
 import { hasAnyRole, COACH_ROUTE_ROLES } from "./utils/role-sets.js";
+import { createLogger } from "./utils/structured-logger.js";
+
+const logger = createLogger({ service: "netlify.exercisedb" });
 
 /**
  * ExerciseDB API Integration
@@ -246,7 +249,7 @@ async function searchExerciseDB(params) {
       source: "exercisedb_api",
     };
   } catch (error) {
-    console.error("ExerciseDB API search error:", error);
+    logger.error("exercisedb_search_failed", error, {});
     throw new Error(`Failed to search ExerciseDB: ${error.message}`, { cause: error });
   }
 }
@@ -275,7 +278,7 @@ async function importExercises(params, userId) {
     .single();
 
   if (logError) {
-    console.error("Failed to create import log:", logError);
+    logger.error("import_log_create_failed", logError, {});
   }
 
   let totalFetched = 0;
@@ -332,19 +335,19 @@ async function importExercises(params, userId) {
                 });
 
               if (insertError) {
-                console.error("Insert error:", insertError);
+                logger.error("exercise_insert_failed", insertError, {});
                 totalErrors++;
               } else {
                 totalImported++;
               }
             }
           } catch (err) {
-            console.error("Exercise processing error:", err);
+            logger.error("exercise_processing_failed", err, {});
             totalErrors++;
           }
         }
       } catch (err) {
-        console.error(`Failed to fetch ${bodyPart}:`, err);
+        logger.error("bodypart_fetch_failed", err, { body_part: bodyPart });
         totalErrors++;
       }
     }
@@ -542,7 +545,7 @@ const handler = async (event, context) =>
 
         return createErrorResponse("Endpoint not found", 404, "not_found");
       } catch (error) {
-        console.error("ExerciseDB API error:", error);
+        logger.error("exercisedb_api_error", error, {});
         if (
           error.message?.includes("must be") ||
           error.message?.includes("Invalid") ||

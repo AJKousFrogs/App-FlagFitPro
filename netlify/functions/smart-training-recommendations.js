@@ -1,4 +1,4 @@
-import { supabaseAdmin, checkEnvVars } from "./supabase-client.js";
+import { supabaseAdmin } from "./supabase-client.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
 import { getUserRole } from "./utils/authorization-guard.js";
@@ -545,8 +545,7 @@ const handler = async (event, context) => {
     requireAuth: true,
     handler: async (event, _context, { userId, requestId }) => {
       try {
-        checkEnvVars();
-
+    
         // Parse request
         let athleteId = userId;
         let targetDate = new Date();

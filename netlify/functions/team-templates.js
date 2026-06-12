@@ -1,4 +1,4 @@
-import { supabaseAdmin, checkEnvVars } from "./supabase-client.js";
+import { supabaseAdmin } from "./supabase-client.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
 import { parseJsonObjectBody } from "./utils/input-validator.js";
@@ -520,8 +520,7 @@ rateLimitType,
       _context,
       { userId, requestId, correlationId },
     ) => {
-      checkEnvVars();
-
+  
       const { path } = event;
       const method = event.httpMethod;
       const requestLogger = createRequestLogger(event, {
