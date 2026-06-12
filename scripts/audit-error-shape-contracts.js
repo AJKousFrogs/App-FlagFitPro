@@ -31,6 +31,7 @@ function analyze(filePath) {
 
   const usesBaseHandler = source.includes("baseHandler(");
   const usesCreateHandler = source.includes("createHandler(");
+  const usesLambdaAdapter = source.includes("toLambdaHandler("); // v2 native handlers
   const usesCreateSuccess = source.includes("createSuccessResponse(");
   const usesCreateError = source.includes("createErrorResponse(");
   const rawStatusCodeCount = (source.match(/statusCode\s*:/g) || []).length;
@@ -38,7 +39,7 @@ function analyze(filePath) {
   const rawSuccessLiteral = /success\s*:\s*true/.test(source);
 
   const handlerType =
-    usesBaseHandler || usesCreateHandler ? "standardized" : "legacy";
+    usesBaseHandler || usesCreateHandler || usesLambdaAdapter ? "standardized" : "legacy";
 
   return {
     file: path.relative(ROOT, filePath),

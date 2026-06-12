@@ -413,7 +413,7 @@ async function handleRequest(event, context, { userId, requestId, correlationId 
 
     // Only POST is allowed for completing sessions
     if (event.httpMethod !== "POST") {
-      return createErrorResponse("Method not allowed. Use POST.", 405);
+      return createErrorResponse("Method not allowed. Use POST.", 405, "method_not_allowed");
     }
 
     // Parse and validate request body

@@ -1,5 +1,5 @@
 import { supabaseAdmin } from "./supabase-client.js";
-import { createErrorResponse, handleValidationError } from "./utils/error-handler.js";
+import { createSuccessResponse, createErrorResponse, handleValidationError } from "./utils/error-handler.js";
 import { baseHandler } from "./utils/base-handler.js";
 import {
   canCoachViewWellness,
@@ -17,35 +17,6 @@ import { buildRequestLogContext, createLogger } from "./utils/structured-logger.
 // Handles athlete performance data storage and retrieval using Supabase
 
 const logger = createLogger({ service: "netlify.performance-data" });
-
-// CORS Headers — restrict to known origins only.
-// Set ALLOWED_ORIGIN in Netlify environment variables for the production domain.
-const ALLOWED_ORIGINS = [
-  process.env.ALLOWED_ORIGIN,
-  process.env.URL,                 // Netlify injects the deploy URL automatically
-  process.env.DEPLOY_PRIME_URL,    // Netlify injects branch deploy URLs automatically
-  "http://localhost:4200",
-  "http://localhost:8888",
-].filter(Boolean);
-
-const getCorsHeaders = (requestOrigin) => {
-  const origin =
-    requestOrigin && ALLOWED_ORIGINS.includes(requestOrigin)
-      ? requestOrigin
-      : ALLOWED_ORIGINS[0] || "";
-  return {
-    "Access-Control-Allow-Origin": origin,
-    "Access-Control-Allow-Headers": "Content-Type, Authorization",
-    "Access-Control-Allow-Methods": "GET, POST, PUT, PATCH, DELETE, OPTIONS",
-    "Access-Control-Allow-Credentials": "true",
-    "Content-Type": "application/json",
-    "Vary": "Origin",
-  };
-};
-
-// Backwards-compatible alias used throughout the file — resolved per-request below.
-// Replace CORS_HEADERS usages with getCorsHeaders(requestOrigin) when refactoring handlers.
-const CORS_HEADERS = getCorsHeaders(undefined);
 
 // ============================================================================
 // DATA MAPPERS - Reusable transformation functions
@@ -358,37 +329,31 @@ async function handleMeasurements(method, userId, body, query, _resourceId, log 
         const data = measurements || [];
         const total = count || 0;
 
-        return {
-          statusCode: 200,
-          body: JSON.stringify({
-            data: data.map(dataMappers.measurement),
-            summary: calculateMeasurementsSummary(data),
-            pagination: {
-              page,
-              limit,
-              total,
-              totalPages: Math.ceil(total / limit),
-              hasMore: offset + limit < total,
-            },
-          }),
-        };
+        return createSuccessResponse({
+          data: data.map(dataMappers.measurement),
+          summary: calculateMeasurementsSummary(data),
+          pagination: {
+            page,
+            limit,
+            total,
+            totalPages: Math.ceil(total / limit),
+            hasMore: offset + limit < total,
+          },
+        });
       } catch (error) {
         log.error("performance_measurements_fetch_failed", error);
         // Return empty data if table doesn't exist
-        return {
-          statusCode: 200,
-          body: JSON.stringify({
-            data: [],
-            summary: {},
-            pagination: {
-              page,
-              limit,
-              total: 0,
-              totalPages: 0,
-              hasMore: false,
-            },
-          }),
-        };
+        return createSuccessResponse({
+          data: [],
+          summary: {},
+          pagination: {
+            page,
+            limit,
+            total: 0,
+            totalPages: 0,
+            hasMore: false,
+          },
+        });
       }
     }
 
@@ -440,55 +405,47 @@ async function handleMeasurements(method, userId, body, query, _resourceId, log 
           // If table doesn't exist, create it (simplified - in production, use migrations)
           if (error.code === "42P01") {
             // Return success but note table needs creation
-            return {
-              statusCode: 201,
-              body: JSON.stringify({
-                success: true,
-                id: `temp_${Date.now()}`,
-                data: {
-                  ...measurementData,
-                  userId,
-                  timestamp: new Date().toISOString(),
-                },
-                note: "Table needs to be created via migration",
-              }),
-            };
+            return createSuccessResponse({
+              id: `temp_${Date.now()}`,
+              data: {
+                ...measurementData,
+                userId,
+                timestamp: new Date().toISOString(),
+              },
+              note: "Table needs to be created via migration",
+            }, 201);
           }
           throw error;
         }
 
-        return {
-          statusCode: 201,
-          body: JSON.stringify({
-            success: true,
+        return createSuccessResponse({
+          id: data.id,
+          data: {
             id: data.id,
-            data: {
-              id: data.id,
-              userId: data.user_id,
-              // Basic measurements
-              weight: data.weight,
-              height: data.height,
-              bodyFat: data.body_fat,
-              muscleMass: data.muscle_mass,
-              // Enhanced body composition
-              bodyWaterMass: data.body_water_mass,
-              fatMass: data.fat_mass,
-              proteinMass: data.protein_mass,
-              boneMineralContent: data.bone_mineral_content,
-              skeletalMuscleMass: data.skeletal_muscle_mass,
-              musclePercentage: data.muscle_percentage,
-              bodyWaterPercentage: data.body_water_percentage,
-              proteinPercentage: data.protein_percentage,
-              boneMineralPercentage: data.bone_mineral_percentage,
-              visceralFatRating: data.visceral_fat_rating,
-              basalMetabolicRate: data.basal_metabolic_rate,
-              waistToHipRatio: data.waist_to_hip_ratio,
-              bodyAge: data.body_age,
-              notes: data.notes,
-              timestamp: data.created_at,
-            },
-          }),
-        };
+            userId: data.user_id,
+            // Basic measurements
+            weight: data.weight,
+            height: data.height,
+            bodyFat: data.body_fat,
+            muscleMass: data.muscle_mass,
+            // Enhanced body composition
+            bodyWaterMass: data.body_water_mass,
+            fatMass: data.fat_mass,
+            proteinMass: data.protein_mass,
+            boneMineralContent: data.bone_mineral_content,
+            skeletalMuscleMass: data.skeletal_muscle_mass,
+            musclePercentage: data.muscle_percentage,
+            bodyWaterPercentage: data.body_water_percentage,
+            proteinPercentage: data.protein_percentage,
+            boneMineralPercentage: data.bone_mineral_percentage,
+            visceralFatRating: data.visceral_fat_rating,
+            basalMetabolicRate: data.basal_metabolic_rate,
+            waistToHipRatio: data.waist_to_hip_ratio,
+            bodyAge: data.body_age,
+            notes: data.notes,
+            timestamp: data.created_at,
+          },
+        }, 201);
       } catch (error) {
         log.error("performance_measurement_save_failed", error);
         return createErrorResponse(
@@ -573,38 +530,32 @@ async function handlePerformanceTests(method, userId, body, query, _resourceId, 
 
         const total = count || mappedTests.length;
 
-        return {
-          statusCode: 200,
-          body: JSON.stringify({
-            data: mappedTests,
-            trends: calculatePerformanceTrends(mappedTests),
-            summary: calculateTestsSummary(mappedTests),
-            pagination: {
-              page,
-              limit,
-              total,
-              totalPages: Math.ceil(total / limit),
-              hasMore: offset + limit < total,
-            },
-          }),
-        };
+        return createSuccessResponse({
+          data: mappedTests,
+          trends: calculatePerformanceTrends(mappedTests),
+          summary: calculateTestsSummary(mappedTests),
+          pagination: {
+            page,
+            limit,
+            total,
+            totalPages: Math.ceil(total / limit),
+            hasMore: offset + limit < total,
+          },
+        });
       } catch (error) {
         log.error("performance_tests_fetch_failed", error);
-        return {
-          statusCode: 200,
-          body: JSON.stringify({
-            data: [],
-            trends: {},
-            summary: {},
-            pagination: {
-              page,
-              limit,
-              total: 0,
-              totalPages: 0,
-              hasMore: false,
-            },
-          }),
-        };
+        return createSuccessResponse({
+          data: [],
+          trends: {},
+          summary: {},
+          pagination: {
+            page,
+            limit,
+            total: 0,
+            totalPages: 0,
+            hasMore: false,
+          },
+        });
       }
     }
 
@@ -641,15 +592,11 @@ async function handlePerformanceTests(method, userId, body, query, _resourceId, 
         if (error) {
           if (error.code === "42P01") {
             // Table doesn't exist - return success with note
-            return {
-              statusCode: 201,
-              body: JSON.stringify({
-                success: true,
-                id: `temp_${Date.now()}`,
-                improvement: { percent: 0, trend: "no_data" },
-                note: "Table needs to be created via migration",
-              }),
-            };
+            return createSuccessResponse({
+              id: `temp_${Date.now()}`,
+              improvement: { percent: 0, trend: "no_data" },
+              note: "Table needs to be created via migration",
+            }, 201);
           }
           throw error;
         }
@@ -660,24 +607,20 @@ async function handlePerformanceTests(method, userId, body, query, _resourceId, 
           userId,
         );
 
-        return {
-          statusCode: 201,
-          body: JSON.stringify({
-            success: true,
+        return createSuccessResponse({
+          id: data.id,
+          data: {
             id: data.id,
-            data: {
-              id: data.id,
-              userId: data.user_id,
-              testType: data.test_type,
-              result: data.result_value,
-              target: data.target_value,
-              timestamp: data.test_date,
-              conditions: data.conditions,
-              notes: data.notes,
-            },
-            improvement,
-          }),
-        };
+            userId: data.user_id,
+            testType: data.test_type,
+            result: data.result_value,
+            target: data.target_value,
+            timestamp: data.test_date,
+            conditions: data.conditions,
+            notes: data.notes,
+          },
+          improvement,
+        }, 201);
       } catch (error) {
         log.error("performance_test_save_failed", error, {
           test_type: testData.testType,
@@ -775,24 +718,18 @@ async function handleWellness(method, userId, requestedAthleteId, body, query, _
           }
         }
 
-        return {
-          statusCode: 200,
-          body: JSON.stringify({
-            data: wellnessData,
-            averages: calculateWellnessAverages(wellnessData),
-            patterns: detectWellnessPatterns(wellnessData),
-          }),
-        };
+        return createSuccessResponse({
+          data: wellnessData,
+          averages: calculateWellnessAverages(wellnessData),
+          patterns: detectWellnessPatterns(wellnessData),
+        });
       } catch (error) {
         log.error("performance_wellness_fetch_failed", error);
-        return {
-          statusCode: 200,
-          body: JSON.stringify({
-            data: [],
-            averages: null,
-            patterns: { patterns: [], insights: [] },
-          }),
-        };
+        return createSuccessResponse({
+          data: [],
+          averages: null,
+          patterns: { patterns: [], insights: [] },
+        });
       }
     }
 
@@ -837,25 +774,17 @@ async function handleWellness(method, userId, requestedAthleteId, body, query, _
 
         if (error) {
           if (error.code === "42P01") {
-            return {
-              statusCode: 201,
-              body: JSON.stringify({
-                success: true,
-                id: `temp_${Date.now()}`,
-                note: "Table needs to be created via migration",
-              }),
-            };
+            return createSuccessResponse({
+              id: `temp_${Date.now()}`,
+              note: "Table needs to be created via migration",
+            }, 201);
           }
           throw error;
         }
 
-        return {
-          statusCode: 201,
-          body: JSON.stringify({
-            success: true,
-            id: data.id,
-          }),
-        };
+        return createSuccessResponse({
+          id: data.id,
+        }, 201);
       } catch (error) {
         log.error("performance_wellness_save_failed", error);
         return createErrorResponse(
@@ -906,22 +835,16 @@ async function handleSupplements(method, userId, body, query, _resourceId, log =
           timestamp: s.created_at,
         }));
 
-        return {
-          statusCode: 200,
-          body: JSON.stringify({
-            data: supplementsData,
-            compliance: calculateSupplementCompliance(supplementsData),
-          }),
-        };
+        return createSuccessResponse({
+          data: supplementsData,
+          compliance: calculateSupplementCompliance(supplementsData),
+        });
       } catch (error) {
         log.error("performance_supplements_fetch_failed", error);
-        return {
-          statusCode: 200,
-          body: JSON.stringify({
-            data: [],
-            compliance: { complianceRate: 0, totalDays: 0, missedDays: 0 },
-          }),
-        };
+        return createSuccessResponse({
+          data: [],
+          compliance: { complianceRate: 0, totalDays: 0, missedDays: 0 },
+        });
       }
     }
 
@@ -956,35 +879,27 @@ async function handleSupplements(method, userId, body, query, _resourceId, log =
 
         if (error) {
           if (error.code === "42P01") {
-            return {
-              statusCode: 201,
-              body: JSON.stringify({
-                success: true,
-                id: `temp_${Date.now()}`,
-                note: "Table needs to be created via migration",
-              }),
-            };
+            return createSuccessResponse({
+              id: `temp_${Date.now()}`,
+              note: "Table needs to be created via migration",
+            }, 201);
           }
           throw error;
         }
 
-        return {
-          statusCode: 201,
-          body: JSON.stringify({
-            success: true,
+        return createSuccessResponse({
+          id: data.id,
+          data: {
             id: data.id,
-            data: {
-              id: data.id,
-              userId: data.user_id,
-              name: data.supplement_name,
-              dosage: data.dosage,
-              taken: data.taken,
-              date: data.date,
-              timeOfDay: data.time_of_day,
-              notes: data.notes,
-            },
-          }),
-        };
+            userId: data.user_id,
+            name: data.supplement_name,
+            dosage: data.dosage,
+            taken: data.taken,
+            date: data.date,
+            timeOfDay: data.time_of_day,
+            notes: data.notes,
+          },
+        }, 201);
       } catch (error) {
         log.error("performance_supplement_save_failed", error, {
           supplement_name: supplementData.name,
@@ -1120,23 +1035,17 @@ async function handleTrends(method, userId, requestedAthleteId, body, query, _re
       ),
     };
 
-    return {
-      statusCode: 200,
-      body: JSON.stringify(trends),
-    };
+    return createSuccessResponse(trends);
   } catch (error) {
     log.error("performance_trends_fetch_failed", error);
-    return {
-      statusCode: 200,
-      body: JSON.stringify({
-        performance: {},
-        body_composition: { trend: "insufficient_data", changes: null },
-        wellness: { trend: "insufficient_data", averages: null },
-        correlations: {},
-        insights: [],
-        recommendations: [],
-      }),
-    };
+    return createSuccessResponse({
+      performance: {},
+      body_composition: { trend: "insufficient_data", changes: null },
+      wellness: { trend: "insufficient_data", averages: null },
+      correlations: {},
+      insights: [],
+      recommendations: [],
+    });
   }
 }
 
@@ -1241,11 +1150,7 @@ async function handleExport(userId, query, log = logger) {
       };
     }
 
-    return {
-      statusCode: 200,
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(allData),
-    };
+    return createSuccessResponse(allData);
   } catch (error) {
     log.error("performance_export_failed", error, {
       format,

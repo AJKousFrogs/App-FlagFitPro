@@ -1,6 +1,10 @@
 import { supabaseAdmin } from "../utils/supabase-client.js";
 import { DataState, wrapWithDataState as _wrapWithDataState, MINIMUM_DATA_REQUIREMENTS } from "./data-state.js";
 
+import { createLogger } from "./structured-logger.js";
+const logger = createLogger({ service: "netlify.consent-data-reader" });
+
+
 /**
  * Consent-Aware Data Reader
  *
@@ -955,7 +959,7 @@ class ConsentDataReader {
       }
     } catch (err) {
       // Don't fail the request on audit log failure
-      console.warn("[ConsentDataReader] Audit log failed:", err.message);
+      logger.warn("consent_audit_log_failed", { message: err.message });
     }
   }
 }

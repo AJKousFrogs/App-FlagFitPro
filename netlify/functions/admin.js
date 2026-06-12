@@ -330,7 +330,7 @@ async function handleRequest(
     case "/health-metrics":
     case "": {
       if (event.httpMethod !== "GET") {
-        return createErrorResponse("Method not allowed", 405);
+        return createErrorResponse("Method not allowed", 405, "method_not_allowed");
       }
       const metrics = await getHealthMetrics();
       return createSuccessResponse(metrics);
@@ -338,7 +338,7 @@ async function handleRequest(
 
     case "/create-backup": {
       if (event.httpMethod !== "POST") {
-        return createErrorResponse("Method not allowed", 405);
+        return createErrorResponse("Method not allowed", 405, "method_not_allowed");
       }
       const backup = await createDatabaseBackup();
       if (backup.status === "failed") {
@@ -353,14 +353,14 @@ async function handleRequest(
 
     case "/sync-status": {
       if (event.httpMethod !== "GET") {
-        return createErrorResponse("Method not allowed", 405);
+        return createErrorResponse("Method not allowed", 405, "method_not_allowed");
       }
       const syncStatus = await getSyncStatus();
       return createSuccessResponse(syncStatus);
     }
 
     default:
-      return createErrorResponse("Endpoint not found", 404);
+      return createErrorResponse("Endpoint not found", 404, "not_found");
   }
 }
 
@@ -374,7 +374,7 @@ const handler = async (event, context) => {
     handler: async (event, context, { userId }) => {
       const role = await getUserRole(userId);
       if (role !== "admin") {
-        return createErrorResponse("Forbidden - Admin access required", 403);
+        return createErrorResponse("Forbidden - Admin access required", 403, "not_authorized");
       }
 
       return handleRequest(event, context, { userId });

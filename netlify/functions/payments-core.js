@@ -569,7 +569,7 @@ const handler = async (event, context) => {
           return createSuccessResponse(result);
         }
 
-        return createErrorResponse("Invalid endpoint", 404);
+        return createErrorResponse("Invalid endpoint", 404, "not_found");
       } catch (error) {
         logger.error("payments_api_error", error, {});
         if (

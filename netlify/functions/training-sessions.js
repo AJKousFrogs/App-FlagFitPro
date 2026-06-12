@@ -952,12 +952,6 @@ const handler = async (event, context) => {
         }
       }
 
-      // Method not allowed (shouldn't reach here due to allowedMethods)
-      return createErrorResponse(
-        "Method not allowed",
-        405,
-        "method_not_allowed",
-      );
     },
   });
 };

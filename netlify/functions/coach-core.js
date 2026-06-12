@@ -831,7 +831,7 @@ async function handleCalendarRequest(event, userId, coachId) {
   const teamId = await getCoachTeamId(coachId, query.teamId || null);
 
   if (!teamId) {
-    return createErrorResponse("No team found for coach", 404);
+    return createErrorResponse("No team found for coach", 404, "not_found");
   }
 
   try {
@@ -957,7 +957,7 @@ async function handleCalendarRequest(event, userId, coachId) {
       // Update event
       const eventId = query.id || body.id;
       if (!eventId) {
-        return createErrorResponse("Event ID required", 400);
+        return createErrorResponse("Event ID required", 400, "validation_error");
       }
 
       // Verify event belongs to coach's team
@@ -968,11 +968,11 @@ async function handleCalendarRequest(event, userId, coachId) {
         .single();
 
       if (fetchError || !existingEvent) {
-        return createErrorResponse("Event not found", 404);
+        return createErrorResponse("Event not found", 404, "not_found");
       }
 
       if (existingEvent.team_id !== teamId) {
-        return createErrorResponse("Not authorized", 403);
+        return createErrorResponse("Not authorized", 403, "not_authorized");
       }
 
       const updates = {};
@@ -1057,7 +1057,7 @@ async function handleCalendarRequest(event, userId, coachId) {
       // Delete event
       const eventId = query.id || body.id;
       if (!eventId) {
-        return createErrorResponse("Event ID required", 400);
+        return createErrorResponse("Event ID required", 400, "validation_error");
       }
 
       // Verify event belongs to coach's team
@@ -1068,11 +1068,11 @@ async function handleCalendarRequest(event, userId, coachId) {
         .single();
 
       if (fetchError || !existingEvent) {
-        return createErrorResponse("Event not found", 404);
+        return createErrorResponse("Event not found", 404, "not_found");
       }
 
       if (existingEvent.team_id !== teamId) {
-        return createErrorResponse("Not authorized", 403);
+        return createErrorResponse("Not authorized", 403, "not_authorized");
       }
 
       const { error } = await supabaseAdmin
@@ -1087,7 +1087,7 @@ async function handleCalendarRequest(event, userId, coachId) {
       return createSuccessResponse({ success: true });
     }
 
-    return createErrorResponse("Method not allowed", 405);
+    return createErrorResponse("Method not allowed", 405, "method_not_allowed");
   } catch (error) {
     logger.error("coach_calendar_request_failed", error, {
       user_id: userId,
@@ -1099,6 +1099,7 @@ async function handleCalendarRequest(event, userId, coachId) {
     return createErrorResponse(
       error.message || "Failed to process calendar request",
       500,
+      "server_error",
     );
   }
 }
@@ -1126,7 +1127,7 @@ async function handleRequest(
       case "/dashboard":
       case "": {
         if (event.httpMethod !== "GET") {
-          return createErrorResponse("Method not allowed", 405);
+          return createErrorResponse("Method not allowed", 405, "method_not_allowed");
         }
         const dashboard = await getCoachDashboard(targetCoachId, requestedTeamId);
         return createSuccessResponse(dashboard);
@@ -1134,7 +1135,7 @@ async function handleRequest(
 
       case "/team": {
         if (event.httpMethod !== "GET") {
-          return createErrorResponse("Method not allowed", 405);
+          return createErrorResponse("Method not allowed", 405, "method_not_allowed");
         }
         const teamResult = await getTeamInfo(userId, targetCoachId, requestedTeamId);
         // Preserve backwards compatibility: return members array at top level
@@ -1148,7 +1149,7 @@ async function handleRequest(
 
       case "/training-analytics": {
         if (event.httpMethod !== "GET") {
-          return createErrorResponse("Method not allowed", 405);
+          return createErrorResponse("Method not allowed", 405, "method_not_allowed");
         }
         const analytics = await getTrainingAnalytics(userId, targetCoachId, requestedTeamId);
         return createSuccessResponse(analytics);
@@ -1156,7 +1157,7 @@ async function handleRequest(
 
       case "/training-session": {
         if (event.httpMethod !== "POST") {
-          return createErrorResponse("Method not allowed", 405);
+          return createErrorResponse("Method not allowed", 405, "method_not_allowed");
         }
         const body = parseJsonBody(event.body);
         const session = await createTrainingSession(userId, body);
@@ -1165,7 +1166,7 @@ async function handleRequest(
 
       case "/team-message": {
         if (event.httpMethod !== "POST") {
-          return createErrorResponse("Method not allowed", 405);
+          return createErrorResponse("Method not allowed", 405, "method_not_allowed");
         }
         const body = parseJsonBody(event.body);
         const result = await createCoachTeamMessage(userId, body);
@@ -1174,7 +1175,7 @@ async function handleRequest(
 
       case "/access-request": {
         if (event.httpMethod !== "POST") {
-          return createErrorResponse("Method not allowed", 405);
+          return createErrorResponse("Method not allowed", 405, "method_not_allowed");
         }
         const body = parseJsonBody(event.body);
         const result = await createCoachAccessRequest(userId, body);
@@ -1183,7 +1184,7 @@ async function handleRequest(
 
       case "/games": {
         if (event.httpMethod !== "GET") {
-          return createErrorResponse("Method not allowed", 405);
+          return createErrorResponse("Method not allowed", 405, "method_not_allowed");
         }
         const games = await getGames(userId, targetCoachId, requestedTeamId);
         return createSuccessResponse(games);
@@ -1195,7 +1196,7 @@ async function handleRequest(
 
       case "/health":
         if (event.httpMethod !== "GET") {
-          return createErrorResponse("Method not allowed", 405);
+          return createErrorResponse("Method not allowed", 405, "method_not_allowed");
         }
         return createSuccessResponse({
           status: "healthy",
@@ -1203,7 +1204,7 @@ async function handleRequest(
         });
 
       default:
-        return createErrorResponse("Endpoint not found", 404);
+        return createErrorResponse("Endpoint not found", 404, "not_found");
     }
   } catch (error) {
     if (error?.isInvalidJson) {

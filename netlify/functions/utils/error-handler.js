@@ -32,11 +32,14 @@ const ErrorType = Object.freeze({
  * In production, restrict to your actual domain for security
  */
 const ALLOWED_ORIGINS = [
+  process.env.ALLOWED_ORIGIN,
+  process.env.URL,              // Netlify injects the deploy URL automatically
+  process.env.DEPLOY_PRIME_URL, // Netlify injects branch deploy URLs automatically
   "https://flagfit-pro.netlify.app",
   "https://flagfitpro.com",
   "http://localhost:4200", // Angular dev server
   "http://localhost:8888", // Netlify Dev proxy
-];
+].filter(Boolean);
 
 const DEFAULT_DEV_ORIGIN = "http://localhost:4200";
 const logger = createLogger({ service: "netlify.error-handler" });

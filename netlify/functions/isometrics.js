@@ -5,7 +5,7 @@
  */
 
 import { baseHandler } from "./utils/base-handler.js";
-import { createErrorResponse } from "./utils/error-handler.js";
+import { createErrorResponse, createSuccessResponse } from "./utils/error-handler.js";
 import { parseBoundedInt } from "./utils/input-validator.js";
 import { createLogger } from "./utils/structured-logger.js";
 
@@ -52,14 +52,7 @@ const handler = async (event, context) =>
           );
         }
 
-        return {
-          statusCode: 200,
-          body: JSON.stringify({
-            success: true,
-            count: exercises.length,
-            exercises,
-          }),
-        };
+        return createSuccessResponse({ count: exercises.length, exercises });
       } catch (error) {
         if (error?.isValidation) {
           return createErrorResponse(error.message, 422, "validation_error");

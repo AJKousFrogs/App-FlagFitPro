@@ -1,3 +1,6 @@
+import { createLogger } from "./structured-logger.js";
+const logger = createLogger({ service: "netlify.daily-protocol-fallback" });
+
 export async function persistFallbackProtocolWhenExercisesMissing({
   supabase,
   userId,
@@ -28,7 +31,7 @@ export async function persistFallbackProtocolWhenExercisesMissing({
     return null;
   }
 
-  console.log("[daily-protocol] No exercises found in DB - using inline fallback");
+  logger.info("daily_protocol_inline_fallback_used", {});
 
   const dayOfYear = getIsoDayOfYear(date);
   const weekNumber = Math.ceil(dayOfYear / 7);

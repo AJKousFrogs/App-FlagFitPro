@@ -2,6 +2,10 @@ import { supabaseAdmin, supabaseService } from "../utils/supabase-client.js";
 import { createErrorResponse } from "./error-handler.js";
 import { hasAnyRole, TEAM_OPERATIONS_ROLES } from "./role-sets.js";
 import { isStaffOfTeam } from "./team-scope.js";
+
+import { createLogger } from "./structured-logger.js";
+const logger = createLogger({ service: "netlify.authorization-guard" });
+
 const TRAINING_SESSIONS_TABLE = "training_sessions";
 
 function normalizeRequestBodyForAudit(body) {
@@ -204,7 +208,7 @@ async function logViolation(
       request_body: normalizeRequestBodyForAudit(requestInfo.body),
     });
   } catch (error) {
-    console.error("[Authorization] Failed to log violation:", error);
+    logger.error("authorization_violation_log_failed", error, {});
     // Don't throw - logging failures shouldn't break the request
   }
 }

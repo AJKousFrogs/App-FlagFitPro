@@ -1,5 +1,5 @@
 import { baseHandler } from "./utils/base-handler.js";
-import { createErrorResponse, handleValidationError } from "./utils/error-handler.js";
+import { createErrorResponse, createSuccessResponse, handleValidationError } from "./utils/error-handler.js";
 import { tryParseJsonObjectBody, isFiniteNumber } from "./utils/input-validator.js";
 import { createLogger, makeRequestLogger } from "./utils/structured-logger.js";
 
@@ -250,18 +250,7 @@ const handler = async (event, context) =>
           return calculateProgression(exercise, yesterdayPerf, acwr, readiness);
         });
 
-        return {
-          statusCode: 200,
-          body: JSON.stringify({
-            success: true,
-            data: progressions,
-            context: {
-              acwr,
-              readiness,
-              targetDate,
-            },
-          }),
-        };
+        return createSuccessResponse({ progressions, context: { acwr, readiness, targetDate } });
       } catch (err) {
         requestLogger.error("exercise_progression_error", err, {
           user_id: userId,

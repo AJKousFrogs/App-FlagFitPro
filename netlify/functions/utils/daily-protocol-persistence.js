@@ -1,4 +1,7 @@
 import crypto from "crypto";
+import { createLogger } from "./structured-logger.js";
+
+const logger = createLogger({ service: "netlify.daily-protocol-persistence" });
 
 export function buildProtocolGenerationIdempotencyKey({ userId, date }) {
   const keyInputs = {
@@ -72,10 +75,9 @@ export async function createProtocolGenerationRequest(
 
     throw error;
   } catch (error) {
-    console.warn(
-      "[daily-protocol] Failed to record generation request:",
-      error.message,
-    );
+    logger.warn("daily_protocol_generation_request_record_failed", {
+      error_message: error.message,
+    });
     return { requestRecord: null, existingCompleted: null, shouldContinue: true };
   }
 }

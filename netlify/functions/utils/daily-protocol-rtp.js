@@ -1,5 +1,9 @@
 import { getIsoDayOfWeek } from "./date-utils.js";
 
+import { createLogger } from "./structured-logger.js";
+const logger = createLogger({ service: "netlify.daily-protocol-rtp" });
+
+
 export async function generateReturnToPlayProtocol(
   supabase,
   userId,
@@ -7,7 +11,7 @@ export async function generateReturnToPlayProtocol(
   wellnessCheckin,
   headers,
 ) {
-  console.log("[RTP] Generating return-to-play protocol for", date);
+  logger.info("rtp_protocol_generating", { date });
 
   const injuries = wellnessCheckin.soreness_areas || [];
   const painLevel = wellnessCheckin.pain_level || 2;
@@ -75,7 +79,7 @@ export async function generateReturnToPlayProtocol(
     .single();
 
   if (protocolError) {
-    console.error("[RTP] Error creating protocol:", protocolError);
+    logger.error("rtp_protocol_create_failed", protocolError, {});
     throw protocolError;
   }
 
@@ -221,14 +225,12 @@ export async function generateReturnToPlayProtocol(
       .insert(protocolExercises);
 
     if (insertError) {
-      console.error("[RTP] Error inserting exercises:", insertError);
+      logger.error("rtp_exercises_insert_failed", insertError, {});
       throw insertError;
     }
   }
 
-  console.log(
-    `[RTP] Generated Phase ${rtpPhase} protocol with ${protocolExercises.length} exercises`,
-  );
+  logger.info("rtp_protocol_generated", { phase: rtpPhase, exerciseCount: protocolExercises.length });
 
   return {
     statusCode: 200,

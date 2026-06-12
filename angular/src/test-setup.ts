@@ -4,7 +4,7 @@ import { vi } from "vitest";
 
 // Jasmine compatibility shim for tests that use jasmine.createSpyObj
 (globalThis as unknown as { jasmine: unknown }).jasmine = {
-  createSpyObj: (name: string, methods: string[]) => {
+  createSpyObj: (_name: string, methods: string[]) => {
     const obj: Record<string, ReturnType<typeof vi.fn>> = {};
     methods.forEach((method) => {
       obj[method] = vi.fn();

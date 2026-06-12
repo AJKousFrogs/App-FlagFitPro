@@ -201,6 +201,11 @@ const config = {
     // Property ordering (optional - helps consistency)
     "order/properties-alphabetical-order": null, // Set to true if you want alphabetical
 
+    // Empty-line formatting rules — disabled globally; handled by Prettier
+    "at-rule-empty-line-before": null,
+    "custom-property-empty-line-before": null,
+    "declaration-block-single-line-max-declarations": null,
+
     // Disable rules that conflict with Angular/SCSS patterns
     "no-empty-source": null,
     "no-descending-specificity": null,
@@ -332,6 +337,7 @@ const config = {
         "**/design-system-tokens.scss",
         "**/design-tokens.scss",
         "**/assets/styles/tokens/**/*.scss",
+        "**/scss/tokens/**/*.scss",
       ],
       rules: {
         "color-no-hex": null,
@@ -397,9 +403,21 @@ const config = {
         "**/styles.scss",
         "**/utilities/_mixins.scss",
         "**/standardized-components.scss",
+        "**/scss/system/**/*.scss",
       ],
       rules: {
         "selector-pseudo-class-disallowed-list": null,
+      },
+    },
+
+    // ====================================
+    // Allow !important in styles.scss for WCAG 2.3.3 prefers-reduced-motion
+    // These !important overrides must cascade over all layers — a11y requirement.
+    // ====================================
+    {
+      files: ["**/styles.scss"],
+      rules: {
+        "declaration-no-important": null,
       },
     },
   ],

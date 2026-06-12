@@ -6,6 +6,9 @@
  * helpers keep program lookups explicit.
  */
 
+import { createLogger } from "./structured-logger.js";
+const logger = createLogger({ service: "netlify.training-programs" });
+
 async function getTrainingProgramById(
   supabase,
   programId,
@@ -22,7 +25,7 @@ async function getTrainingProgramById(
     .maybeSingle();
 
   if (error) {
-    console.error("[training-programs] Error fetching program:", error);
+    logger.error("training_program_fetch_failed", error, {});
     throw error;
   }
 
@@ -37,9 +40,7 @@ function toProgramSummary(programId, program) {
     };
   }
 
-  console.warn(
-    `[training-programs] Missing program details for assignment ${programId}`,
-  );
+  logger.warn("training_program_missing_details", { programId });
 
   return {
     id: programId,

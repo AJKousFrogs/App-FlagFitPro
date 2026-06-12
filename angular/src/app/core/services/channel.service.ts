@@ -549,8 +549,6 @@ export class ChannelService {
       const userId = this.getCurrentUserId();
       if (!userId) throw new Error("Not authenticated");
 
-      // Parse mentions from message text (@username)
-      const _mentionMatches = request.message.match(/@(\w+)/g) || [];
       const mentions = request.mentions || [];
 
       // Add parsed mentions (would need to resolve usernames to IDs in real implementation)

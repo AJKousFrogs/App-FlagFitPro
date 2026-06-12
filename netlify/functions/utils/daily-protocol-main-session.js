@@ -1,3 +1,6 @@
+import { createLogger } from "./structured-logger.js";
+const logger = createLogger({ service: "netlify.daily-protocol-main-session" });
+
 export async function generateMainSessionFallback({
   supabase,
   protocolExercises,
@@ -32,13 +35,9 @@ export async function generateMainSessionFallback({
       sessionType = "gym";
       sessionCategory = "strength";
       mainSessionGenerated = true;
-      console.log(
-        `[daily-protocol] Gym training day - main session has ${mainSessionExercises.length} exercises from gym blocks`,
-      );
+      logger.info("daily_protocol_gym_session_generated", { exerciseCount: mainSessionExercises.length });
     } else {
-      console.warn(
-        "[daily-protocol] Gym training day but no main_session exercises found - this should not happen",
-      );
+      logger.warn("daily_protocol_gym_session_empty", {});
     }
   } else if (hasFieldAccess && !hasGymAccess) {
     sessionType = "flag";
@@ -65,9 +64,7 @@ export async function generateMainSessionFallback({
   }
 
   if (!mainSessionGenerated && trainingFocus === "recovery") {
-    console.log(
-      "[daily-protocol] Recovery day - skipping main session, generating recovery-focused protocol",
-    );
+    logger.info("daily_protocol_recovery_day", {});
   }
 
   return {
@@ -263,9 +260,7 @@ async function addSprintMainSession({
     });
   });
 
-  console.log(
-    `[daily-protocol] Generated evidence-based sprint session: phase=${sprintPhase}, protocols=${sprintProtocols.join(", ")}, hillSprints=${useHillSprints}, stairSprints=${useStairSprints}`,
-  );
+  logger.info("daily_protocol_sprint_session_generated", { sprintPhase, protocols: sprintProtocols, hillSprints: useHillSprints, stairSprints: useStairSprints });
 
   return true;
 }
@@ -296,7 +291,7 @@ async function addFlagMainSession({ supabase, protocolExercises }) {
     });
   });
 
-  console.log("[daily-protocol] Generated flag training main session");
+  logger.info("daily_protocol_flag_session_generated", {});
   return true;
 }
 
@@ -312,7 +307,7 @@ async function addFallbackMainSession({
   sessionType,
   sessionCategory,
 }) {
-  console.warn("[daily-protocol] No main session generated - attempting fallback", {
+  logger.warn("daily_protocol_main_session_fallback", {
     hasProgram: !!context.playerProgram,
     hasSessionTemplate: !!context.sessionTemplate,
     hasGymAccess,
@@ -347,7 +342,7 @@ async function addFallbackMainSession({
     });
   });
 
-  console.log("[daily-protocol] Generated fallback main session");
+  logger.info("daily_protocol_fallback_session_generated", {});
   return true;
 }
 

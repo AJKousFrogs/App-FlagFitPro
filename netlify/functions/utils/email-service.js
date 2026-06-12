@@ -1,19 +1,14 @@
 import nodemailer from "nodemailer";
-import { randomBytes } from "crypto";
 import { createLogger } from "./structured-logger.js";
 
 const logger = createLogger({ service: "netlify.email-service" });
+
+const SUPPORT_EMAIL = process.env.SUPPORT_EMAIL || "support@flagfitpro.com";
 
 class EmailService {
   constructor() {
     this.transporter = null;
     this.isInitialized = false;
-    // @deprecated (H2) In-memory token store — does NOT persist across serverless
-    // invocations, so reset tokens minted on one instance can't be verified on
-    // another. Only auth-reset-password.js uses this, and that endpoint is itself
-    // deprecated (the live client uses Supabase's built-in resetPasswordForEmail).
-    // If reactivated, back this with a Postgres table, not a Map.
-    this.resetTokens = new Map();
   }
 
   async initialize(provider = "smtp") {
@@ -89,88 +84,6 @@ class EmailService {
     });
   }
 
-  generateResetToken(email) {
-    const token = randomBytes(32).toString("hex");
-    const expiry = new Date(Date.now() + 60 * 60 * 1000);
-
-    this.resetTokens.set(token, {
-      email,
-      expiry,
-      used: false,
-    });
-
-    setTimeout(
-      () => {
-        this.resetTokens.delete(token);
-      },
-      60 * 60 * 1000,
-    );
-
-    return token;
-  }
-
-  verifyResetToken(token) {
-    const tokenData = this.resetTokens.get(token);
-
-    if (!tokenData) {
-      return { valid: false, error: "Invalid token" };
-    }
-
-    if (tokenData.used) {
-      return { valid: false, error: "Token already used" };
-    }
-
-    if (new Date() > tokenData.expiry) {
-      this.resetTokens.delete(token);
-      return { valid: false, error: "Token expired" };
-    }
-
-    return { valid: true, email: tokenData.email };
-  }
-
-  useResetToken(token) {
-    const tokenData = this.resetTokens.get(token);
-    if (tokenData) {
-      tokenData.used = true;
-    }
-  }
-
-  async sendPasswordReset(email, resetUrl) {
-    if (!this.isInitialized) {
-      throw new Error("Email service not initialized");
-    }
-
-    const token = this.generateResetToken(email);
-    const fullResetUrl = `${resetUrl}?token=${token}`;
-
-    const mailOptions = {
-      from: {
-        name: "FlagFit Pro",
-        address:
-          process.env.FROM_EMAIL ||
-          process.env.SMTP_USER ||
-          process.env.GMAIL_EMAIL,
-      },
-      to: email,
-      subject: "Reset Your FlagFit Pro Password",
-      html: this.getPasswordResetTemplate(email, fullResetUrl, token),
-      text: this.getPasswordResetTextTemplate(email, fullResetUrl),
-    };
-
-    try {
-      const result = await this.transporter.sendMail(mailOptions);
-      logger.info("password_reset_email_sent", {
-        email,
-      });
-      return { success: true, messageId: result.messageId, token };
-    } catch (error) {
-      logger.error("password_reset_email_send_failed", error, {
-        email,
-      });
-      throw error;
-    }
-  }
-
   async sendWelcomeEmail(email, name) {
     if (!this.isInitialized) {
       throw new Error("Email service not initialized");
@@ -202,86 +115,6 @@ class EmailService {
       });
       throw error;
     }
-  }
-
-  getPasswordResetTemplate(email, resetUrl, _token) {
-    return `
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reset Your Password</title>
-    <style>
-        body { font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 0; background-color: #f5f5f5; }
-        .container { max-width: 600px; margin: 40px auto; background: white; border-radius: 10px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); }
-        .header { background: linear-gradient(135deg, #10c96b 0%, #0ab85a 100%); color: white; padding: 40px; text-align: center; border-radius: 10px 10px 0 0; }
-        .content { padding: 40px; }
-        .button { display: inline-block; background: linear-gradient(135deg, #10c96b 0%, #0ab85a 100%); color: white; padding: 15px 30px; text-decoration: none; border-radius: 8px; font-weight: bold; margin: 20px 0; }
-        .footer { background: #f8f9fa; padding: 30px; text-align: center; color: #666; font-size: 14px; border-radius: 0 0 10px 10px; }
-        .warning { background: #fff3cd; border: 1px solid #ffeaa7; padding: 15px; border-radius: 5px; margin: 20px 0; color: #856404; }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <div class="header">
-            <h1>🏈 FlagFit Pro</h1>
-            <h2>Password Reset Request</h2>
-        </div>
-        <div class="content">
-            <p>Hi there,</p>
-            <p>We received a request to reset the password for your FlagFit Pro account associated with <strong>${email}</strong>.</p>
-            <p>Click the button below to reset your password:</p>
-            <p style="text-align: center;">
-                <a href="${resetUrl}" class="button">Reset My Password</a>
-            </p>
-            <div class="warning">
-                <strong>Security Notice:</strong>
-                <ul>
-                    <li>This link will expire in 1 hour</li>
-                    <li>If you didn't request this reset, please ignore this email</li>
-                    <li>Never share this link with anyone</li>
-                </ul>
-            </div>
-            <p>If the button doesn't work, copy and paste this link into your browser:</p>
-            <p style="word-break: break-all; font-family: monospace; background: #f8f9fa; padding: 10px; border-radius: 5px;">
-                ${resetUrl}
-            </p>
-            <p>Need help? Contact our support team at support@flagfitpro.com</p>
-            <p>Best regards,<br>The FlagFit Pro Team</p>
-        </div>
-        <div class="footer">
-            <p>© 2024 FlagFit Pro. All rights reserved.</p>
-            <p>You're receiving this email because you requested a password reset.</p>
-        </div>
-    </div>
-</body>
-</html>`;
-  }
-
-  getPasswordResetTextTemplate(email, resetUrl) {
-    return `
-FlagFit Pro - Password Reset Request
-
-Hi there,
-
-We received a request to reset the password for your FlagFit Pro account associated with ${email}.
-
-Click this link to reset your password:
-${resetUrl}
-
-Security Notice:
-- This link will expire in 1 hour
-- If you didn't request this reset, please ignore this email
-- Never share this link with anyone
-
-Need help? Contact our support team at support@flagfitpro.com
-
-Best regards,
-The FlagFit Pro Team
-
-© 2024 FlagFit Pro. All rights reserved.
-    `.trim();
   }
 
   getWelcomeTemplate(name) {
@@ -326,7 +159,7 @@ The FlagFit Pro Team
             <p style="text-align: center;">
                 <a href="${process.env.APP_URL || "http://localhost:4200"}/todays-practice" class="button">Get Started</a>
             </p>
-            <p>If you have any questions, our support team is here to help at support@flagfitpro.com</p>
+            <p>If you have any questions, our support team is here to help at ${SUPPORT_EMAIL}</p>
             <p>Let's elevate your game!</p>
             <p>The FlagFit Pro Team</p>
         </div>
@@ -358,7 +191,7 @@ Track your improvement over time with detailed performance metrics and insights.
 
 Get started: ${process.env.APP_URL || "http://localhost:4200"}/todays-practice
 
-If you have any questions, our support team is here to help at support@flagfitpro.com
+If you have any questions, our support team is here to help at ${SUPPORT_EMAIL}
 
 Let's elevate your game!
 The FlagFit Pro Team

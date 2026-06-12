@@ -5,7 +5,7 @@ import { SupabaseService } from "../services/supabase.service";
 import { AuthFlowDataService } from "../services/auth-flow-data.service";
 import { environment } from "../../../environments/environment";
 
-export const authGuard: CanActivateFn = async (route, state) => {
+export const authGuard: CanActivateFn = async (_route, state) => {
   // Auth enforcement is config-gated (see environment.auth.required): the guard is
   // wired on every protected route, but stays open in local dev/smoke and bites in
   // production. Bail before touching Supabase when enforcement is off.

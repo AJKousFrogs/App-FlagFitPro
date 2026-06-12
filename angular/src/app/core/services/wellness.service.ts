@@ -65,21 +65,6 @@ export interface WellnessResponse {
   patterns?: WellnessPatterns;
 }
 
-interface DatabaseWellnessEntry {
-  id: number;
-  athlete_id: string;
-  date: string;
-  sleep_quality?: number;
-  energy_level?: number;
-  stress_level?: number;
-  muscle_soreness?: number;
-  motivation_level?: number;
-  mood?: number;
-  hydration_level?: number;
-  notes?: string;
-  created_at: string;
-}
-
 // Interface for daily_wellness_checkin table (canonical source)
 interface DailyWellnessCheckinEntry {
   id: number;
@@ -766,26 +751,6 @@ export class WellnessService {
       readiness_score: Number(record["readiness_score"] ?? 0),
       created_at: String(record["created_at"] ?? new Date().toISOString()),
       updated_at: record["updated_at"] as string | undefined,
-    };
-  }
-
-  /**
-   * Transform database entry to WellnessData (legacy format)
-   */
-  private transformEntry(entry: DatabaseWellnessEntry): WellnessData {
-    return {
-      id: entry.id,
-      userId: entry.athlete_id,
-      date: entry.date,
-      sleep: entry.sleep_quality,
-      energy: entry.energy_level,
-      stress: entry.stress_level,
-      soreness: entry.muscle_soreness,
-      motivation: entry.motivation_level,
-      mood: entry.mood,
-      hydration: entry.hydration_level,
-      notes: entry.notes,
-      timestamp: entry.created_at,
     };
   }
 

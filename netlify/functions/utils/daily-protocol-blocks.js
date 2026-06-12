@@ -5,6 +5,10 @@ import {
   WARMUP_TARGET_SECONDS,
 } from "./daily-protocol-training-logic.js";
 
+import { createLogger } from "./structured-logger.js";
+const logger = createLogger({ service: "netlify.daily-protocol-blocks" });
+
+
 export async function addMorningMobilityBlock({
   supabase,
   protocolExercises,
@@ -163,9 +167,7 @@ export async function addWarmupBlock({
   );
 
   if (warmupTotalSeconds !== WARMUP_TARGET_SECONDS) {
-    console.warn(
-      `[daily-protocol] Warm-up plan totals ${warmupTotalSeconds}s (target ${WARMUP_TARGET_SECONDS}s)`,
-    );
+    logger.warn("daily_protocol_warmup_duration_mismatch", { actual: warmupTotalSeconds, target: WARMUP_TARGET_SECONDS });
   }
 
   warmupPlan.forEach((item, idx) => {

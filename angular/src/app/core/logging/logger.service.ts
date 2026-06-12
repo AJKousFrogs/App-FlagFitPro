@@ -42,8 +42,6 @@ export function toLogContext(value: unknown): LogContext {
   return { value: String(value) };
 }
 
-/** @deprecated Prefer StructuredJsonLogEntry from `./logger` */
-export type StructuredLog = StructuredJsonLogEntry;
 
 type InternalLevel = "debug" | "info" | "warning" | "error";
 

@@ -281,7 +281,7 @@ async function getSchedule(event, _context, { userId }) {
       error: teamRes.error.message,
       code: teamRes.error.code,
     });
-    return createErrorResponse("Failed to read schedule", 500);
+    return createErrorResponse("Failed to read schedule", 500, "server_error");
   }
   // Athlete-entered events are additive; a read failure there must not blank the
   // whole schedule, so log and continue with the team events alone.

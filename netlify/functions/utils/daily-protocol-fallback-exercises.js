@@ -3,6 +3,9 @@ import {
   selectWarmupVariant,
   WARMUP_TARGET_SECONDS,
 } from "./daily-protocol-training-logic.js";
+import { createLogger } from "./structured-logger.js";
+
+const logger = createLogger({ service: "netlify.daily-protocol-fallback-exercises" });
 
 const FALLBACK_EXERCISES = {
   morning_mobility: [
@@ -231,9 +234,10 @@ export async function generateFallbackProtocolExercises(
   );
 
   if (warmupTotalSeconds !== WARMUP_TARGET_SECONDS) {
-    console.warn(
-      `[daily-protocol] Warm-up plan totals ${warmupTotalSeconds}s (target ${WARMUP_TARGET_SECONDS}s)`,
-    );
+    logger.warn("daily_protocol_warmup_duration_mismatch", {
+      actual_seconds: warmupTotalSeconds,
+      target_seconds: WARMUP_TARGET_SECONDS,
+    });
   }
 
   warmupPlan.forEach((item) => {
@@ -380,9 +384,11 @@ export async function generateFallbackProtocolExercises(
       });
     });
 
-  console.log(
-    `[daily-protocol] Generated ${exercises.length} fallback exercises for day ${dayOfYear} (week ${weekNumber})`,
-  );
+  logger.info("daily_protocol_fallback_exercises_generated", {
+    exercise_count: exercises.length,
+    day_of_year: dayOfYear,
+    week_number: weekNumber,
+  });
 
   return exercises;
 }

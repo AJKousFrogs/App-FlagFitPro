@@ -7,6 +7,10 @@ import {
 } from "./date-utils.js";
 import { getActiveInjuries, injuriesPainLevel } from "./active-injuries.js";
 
+import { createLogger } from "./structured-logger.js";
+const logger = createLogger({ service: "netlify.session-resolver" });
+
+
 /**
  * Deterministic Session Resolver
  *
@@ -87,10 +91,7 @@ async function resolveTodaySession(supabase, userId, date) {
     .maybeSingle();
 
   if (programError) {
-    console.error(
-      "[session-resolver] Error fetching player program:",
-      programError,
-    );
+    logger.error("session_resolver_program_fetch_failed", programError, {});
     throw programError;
   }
 
@@ -137,7 +138,7 @@ async function resolveTodaySession(supabase, userId, date) {
     .maybeSingle();
 
   if (phaseError) {
-    console.error("[session-resolver] Error fetching phase:", phaseError);
+    logger.error("session_resolver_phase_fetch_failed", phaseError, {});
     throw phaseError;
   }
 
@@ -165,7 +166,7 @@ async function resolveTodaySession(supabase, userId, date) {
     .maybeSingle();
 
   if (weekError) {
-    console.error("[session-resolver] Error fetching week:", weekError);
+    logger.error("session_resolver_week_fetch_failed", weekError, {});
     throw weekError;
   }
 
@@ -192,10 +193,7 @@ async function resolveTodaySession(supabase, userId, date) {
     .maybeSingle();
 
   if (templateError) {
-    console.error(
-      "[session-resolver] Error fetching session template:",
-      templateError,
-    );
+    logger.error("session_resolver_template_fetch_failed", templateError, {});
     throw templateError;
   }
 

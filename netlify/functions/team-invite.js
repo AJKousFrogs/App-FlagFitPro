@@ -63,7 +63,8 @@ function getAppUrl() {
   return (
     process.env.APP_URL ||
     process.env.URL ||
-    "https://webflagfootballfrogs.netlify.app"
+    process.env.DEPLOY_PRIME_URL ||
+    "https://flagfitpro.com"
   );
 }
 

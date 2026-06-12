@@ -1,6 +1,7 @@
 import { baseHandler } from "./utils/base-handler.js";
 import {
   createErrorResponse,
+  createSuccessResponse,
   handleValidationError,
 } from "./utils/error-handler.js";
 import { parseJsonObjectBody, isValidDateString } from "./utils/input-validator.js";
@@ -355,62 +356,50 @@ async function getSettings(supabase, userId) {
       .eq("id", userId)
       .single();
 
-    return {
-      statusCode: 200,
-      body: JSON.stringify({
-        success: true,
-        data: {
-          primaryPosition: "wr_db",
-          secondaryPosition: null,
-          birthDate: userData?.date_of_birth || userData?.birth_date || null,
-          seasonCalendar: [],
-          season_calendar: [],
-          availabilitySchedule: [],
-          availabilityDisclaimer:
-            "Availability does not schedule practice. Coaches schedule team activities.",
-          preferredTrainingDays: [1, 2, 4, 5, 6],
-          teamTrainingDays: { days: [], time: "18:00" },
-          maxSessionsPerWeek: 5,
-          hasGymAccess: true,
-          hasFieldAccess: true,
-          warmupFocus: null,
-          dailyRoutine: DEFAULT_DAILY_ROUTINE,
-        },
-      }),
-    };
+    return createSuccessResponse({
+      primaryPosition: "wr_db",
+      secondaryPosition: null,
+      birthDate: userData?.date_of_birth || userData?.birth_date || null,
+      seasonCalendar: [],
+      season_calendar: [],
+      availabilitySchedule: [],
+      availabilityDisclaimer:
+        "Availability does not schedule practice. Coaches schedule team activities.",
+      preferredTrainingDays: [1, 2, 4, 5, 6],
+      teamTrainingDays: { days: [], time: "18:00" },
+      maxSessionsPerWeek: 5,
+      hasGymAccess: true,
+      hasFieldAccess: true,
+      warmupFocus: null,
+      dailyRoutine: DEFAULT_DAILY_ROUTINE,
+    });
   }
 
   // Transform to frontend format
   // PROMPT 2.11: Rename flag_practice_schedule to availability (non-authority)
-  return {
-    statusCode: 200,
-    body: JSON.stringify({
-      success: true,
-      data: {
-        primaryPosition: config.primary_position,
-        secondaryPosition: config.secondary_position,
-        birthDate: config.birth_date,
-        // DEPRECATED: flagPracticeSchedule renamed to availabilitySchedule
-        // This is for player availability notes only, NOT authority for team activities
-        availabilitySchedule: config.flag_practice_schedule || [], // Keep DB field name for now
-        availabilityDisclaimer:
-          "Availability does not schedule practice. Coaches schedule team activities.",
-        teamTrainingDays: normalizeTeamTrainingDays(config.team_training_days),
-        dailyRoutine: sanitizeDailyRoutine(config.daily_routine),
-        maxSessionsPerWeek: config.max_sessions_per_week || 5,
-        hasGymAccess: config.has_gym_access !== false,
-        hasFieldAccess: config.has_field_access !== false,
-        warmupFocus: config.warmup_focus || null,
-        availableEquipment: config.available_equipment || [
-          "bodyweight",
-          "resistance_bands",
-        ],
-        seasonCalendar: config.season_calendar || [],
-        season_calendar: config.season_calendar || [],
-        currentLimitations: config.current_limitations || [],
-      },
-    }),
-  };
+  return createSuccessResponse({
+    primaryPosition: config.primary_position,
+    secondaryPosition: config.secondary_position,
+    birthDate: config.birth_date,
+    // DEPRECATED: flagPracticeSchedule renamed to availabilitySchedule
+    // This is for player availability notes only, NOT authority for team activities
+    availabilitySchedule: config.flag_practice_schedule || [], // Keep DB field name for now
+    availabilityDisclaimer:
+      "Availability does not schedule practice. Coaches schedule team activities.",
+    teamTrainingDays: normalizeTeamTrainingDays(config.team_training_days),
+    dailyRoutine: sanitizeDailyRoutine(config.daily_routine),
+    maxSessionsPerWeek: config.max_sessions_per_week || 5,
+    hasGymAccess: config.has_gym_access !== false,
+    hasFieldAccess: config.has_field_access !== false,
+    warmupFocus: config.warmup_focus || null,
+    availableEquipment: config.available_equipment || [
+      "bodyweight",
+      "resistance_bands",
+    ],
+    seasonCalendar: config.season_calendar || [],
+    season_calendar: config.season_calendar || [],
+    currentLimitations: config.current_limitations || [],
+  });
 }
 
 /**
@@ -439,9 +428,7 @@ async function saveSettings(supabase, userId, payload, log = logger) {
   const seasonCalendar = payload.seasonCalendar ?? payload.season_calendar;
   const { jerseyNumber, heightCm, weightKg, teamTrainingDays } = payload;
 
-  // Map availabilitySchedule back to DB field (for backward compatibility)
-  const flagPracticeSchedule =
-    availabilitySchedule || payload.flagPracticeSchedule || [];
+  const flagPracticeSchedule = availabilitySchedule || [];
 
   // Calculate age recovery modifier if birth date provided
   let ageRecoveryModifier = 1.0;
@@ -548,34 +535,31 @@ async function saveSettings(supabase, userId, payload, log = logger) {
     }
   }
 
-  return {
-    statusCode: 200,
-    body: JSON.stringify({
-      success: true,
-      data: {
-        primaryPosition: config.primary_position,
-        secondaryPosition: config.secondary_position,
-        birthDate: config.birth_date,
-        seasonCalendar: config.season_calendar || [],
-        season_calendar: config.season_calendar || [],
-        availabilitySchedule: config.flag_practice_schedule, // PROMPT 2.11: Renamed
-        availabilityDisclaimer:
-          "Availability does not schedule practice. Coaches schedule team activities.",
-        teamTrainingDays: normalizeTeamTrainingDays(config.team_training_days),
-        dailyRoutine: sanitizeDailyRoutine(config.daily_routine),
-        maxSessionsPerWeek: config.max_sessions_per_week,
-        hasGymAccess: config.has_gym_access,
-        hasFieldAccess: config.has_field_access,
-        warmupFocus: config.warmup_focus || null,
-        ageRecoveryModifier: config.age_recovery_modifier,
-        acwrTargetRange: {
-          min: config.acwr_target_min,
-          max: config.acwr_target_max,
-        },
+  return createSuccessResponse(
+    {
+      primaryPosition: config.primary_position,
+      secondaryPosition: config.secondary_position,
+      birthDate: config.birth_date,
+      seasonCalendar: config.season_calendar || [],
+      season_calendar: config.season_calendar || [],
+      availabilitySchedule: config.flag_practice_schedule, // PROMPT 2.11: Renamed
+      availabilityDisclaimer:
+        "Availability does not schedule practice. Coaches schedule team activities.",
+      teamTrainingDays: normalizeTeamTrainingDays(config.team_training_days),
+      dailyRoutine: sanitizeDailyRoutine(config.daily_routine),
+      maxSessionsPerWeek: config.max_sessions_per_week,
+      hasGymAccess: config.has_gym_access,
+      hasFieldAccess: config.has_field_access,
+      warmupFocus: config.warmup_focus || null,
+      ageRecoveryModifier: config.age_recovery_modifier,
+      acwrTargetRange: {
+        min: config.acwr_target_min,
+        max: config.acwr_target_max,
       },
-      message: "Settings saved successfully",
-    }),
-  };
+    },
+    200,
+    "Settings saved successfully",
+  );
 }
 
 /**

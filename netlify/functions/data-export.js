@@ -6,6 +6,8 @@ import { createLogger, makeRequestLogger } from "./utils/structured-logger.js";
 
 const logger = createLogger({ service: "netlify.data-export" });
 
+const PRIVACY_EMAIL = process.env.PRIVACY_EMAIL || "privacy@flagfitpro.com";
+
 const createRequestLogger = makeRequestLogger(logger);
 
 // Netlify Function: GDPR Data Export API
@@ -395,8 +397,6 @@ async function handleRequest(event, _context, { userId, requestId, correlationId
         headers: {
           "Content-Type": "application/json",
           "Content-Disposition": `attachment; filename="flagfit-data-export-${userId}-${Date.now()}.json"`,
-          "Access-Control-Allow-Origin": "*",
-          "Access-Control-Allow-Headers": "Content-Type, Authorization",
         },
         body: JSON.stringify(exportData, null, 2),
       };
@@ -429,7 +429,7 @@ async function handleRequest(event, _context, { userId, requestId, correlationId
         exportFormats: ["JSON"],
         retentionPolicy:
           "Data is retained for 3 years after account deletion for legal compliance, then permanently deleted",
-        contact: "privacy@flagfitpro.com",
+        contact: PRIVACY_EMAIL,
       });
     }
 

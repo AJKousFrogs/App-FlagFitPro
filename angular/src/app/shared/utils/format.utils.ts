@@ -136,15 +136,6 @@ export function formatPercent(value: number, decimals = 2): string {
 }
 
 /**
- * Format percentage (alias for formatPercent)
- * @example
- * formatPercentage(0.1234) // '12.34%'
- */
-export function formatPercentage(value: number, decimals = 2): string {
-  return formatPercent(value, decimals);
-}
-
-/**
  * Format average value
  * @example
  * formatAverage(12.345) // '12.3'
@@ -294,41 +285,6 @@ export function unescapeHtml(str: string): string {
 }
 
 /**
- * Generate random string
- * @example
- * randomString(8) // 'a7x4m9k2'
- */
-export function randomString(length: number): string {
-  const chars = "abcdefghijklmnopqrstuvwxyz0123456789";
-  let result = "";
-  for (let i = 0; i < length; i++) {
-    result += chars.charAt(Math.floor(Math.random() * chars.length));
-  }
-  return result;
-}
-
-/**
- * Check if string contains substring (case-insensitive)
- */
-export function containsIgnoreCase(str: string, search: string): boolean {
-  return str.toLowerCase().includes(search.toLowerCase());
-}
-
-/**
- * Reverse string
- */
-export function reverse(str: string): string {
-  return str.split("").reverse().join("");
-}
-
-/**
- * Count words in string
- */
-export function wordCount(str: string): number {
-  return str.trim().split(/\s+/).length;
-}
-
-/**
  * Normalize player/user name from various formats
  * Handles full_name, first_name + last_name, email fallback
  *
@@ -379,22 +335,6 @@ export function normalizePlayerName(
 }
 
 /**
- * Mask string (e.g., credit card, email)
- * @example
- * mask('1234567890', 6, '*') // '123456****'
- */
-export function mask(
-  str: string,
-  visibleChars: number,
-  maskChar = "*",
-): string {
-  if (str.length <= visibleChars) return str;
-  return (
-    str.slice(0, visibleChars) + maskChar.repeat(str.length - visibleChars)
-  );
-}
-
-/**
  * Format seconds as MM:SS for display
  * @example
  * formatTimeMMSS(90) // '1:30'
@@ -405,18 +345,4 @@ export function formatTimeMMSS(seconds: number | null | undefined): string {
   const mins = Math.floor(seconds / 60);
   const secs = Math.floor(seconds % 60);
   return `${mins}:${secs.toString().padStart(2, "0")}`;
-}
-
-/**
- * Format date/timestamp as time of day
- * @example
- * formatTimeOfDay('2025-01-11T14:30:00Z') // '2:30 PM'
- */
-export function formatTimeOfDay(date: Date | string): string {
-  const dateObj = typeof date === "string" ? new Date(date) : date;
-  return new Intl.DateTimeFormat("en-US", {
-    hour: "numeric",
-    minute: "2-digit",
-    hour12: true,
-  }).format(dateObj);
 }

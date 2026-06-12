@@ -328,7 +328,6 @@ async function handleAuthenticatedRequest(event, _context, { userId, supabase })
     });
   }
 
-  return createErrorResponse("Method not allowed", 405, "method_not_allowed");
 }
 
 async function handlePublicVerification(event) {
@@ -528,7 +527,7 @@ const handler = async (event, context) => {
 
   return baseHandler(event, context, {
     functionName: "parental-consent",
-    allowedMethods: ["GET", "POST", "PUT"],
+    allowedMethods: ["GET", "POST"],
     rateLimitType: "CREATE",
     requireAuth: true,
     handler: handleAuthenticatedRequest,

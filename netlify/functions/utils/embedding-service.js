@@ -12,6 +12,9 @@
  * - Conversation context retrieval
  */
 
+import { createLogger } from "./structured-logger.js";
+const logger = createLogger({ service: "netlify.embedding-service" });
+
 const EMBEDDING_DIMENSION = 1536; // OpenAI default
 
 // Embedding providers configuration
@@ -207,15 +210,11 @@ async function generateEmbeddings(texts, options = {}) {
   const provider = getAvailableProvider();
 
   if (!provider) {
-    console.warn(
-      "[Embeddings] No embedding provider configured, returning null embeddings",
-    );
+    logger.warn("embeddings_no_provider", {});
     return cleanedTexts.map(() => null);
   }
 
-  console.log(
-    `[Embeddings] Using ${provider} for ${cleanedTexts.length} text(s)`,
-  );
+  logger.info("embeddings_provider_selected", { provider, count: cleanedTexts.length });
 
   let embeddings;
 
@@ -234,14 +233,14 @@ async function generateEmbeddings(texts, options = {}) {
         throw new Error(`Unknown provider: ${provider}`);
     }
   } catch (error) {
-    console.error(`[Embeddings] Error with ${provider}:`, error.message);
+    logger.error("embeddings_provider_failed", error, { provider });
 
     // Try fallback providers
     if (provider === "openai" && process.env.COHERE_API_KEY) {
-      console.log("[Embeddings] Falling back to Cohere");
+      logger.info("embeddings_fallback_cohere", {});
       embeddings = await embedWithCohere(cleanedTexts, isQuery);
     } else if (provider !== "huggingface" && process.env.HUGGINGFACE_API_KEY) {
-      console.log("[Embeddings] Falling back to HuggingFace");
+      logger.info("embeddings_fallback_huggingface", {});
       embeddings = await embedWithHuggingFace(cleanedTexts);
     } else {
       throw error;

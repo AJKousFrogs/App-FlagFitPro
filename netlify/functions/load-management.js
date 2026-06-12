@@ -741,11 +741,7 @@ function buildDataStateResponse(result, metricType, currentDataPoints) {
  * Handle ACWR endpoint
  * Now includes data state information for safety compliance
  */
-async function handleACWR(method, requesterId, query) {
-  if (method !== "GET") {
-    return createErrorResponse("Method not allowed", 405, "method_not_allowed");
-  }
-
+async function handleACWR(requesterId, query) {
   const date = query?.date ? new Date(query.date) : new Date();
   const targetUserId = query?.playerId || requesterId;
   const teamId = query?.teamId || null;
@@ -778,11 +774,7 @@ async function handleACWR(method, requesterId, query) {
 /**
  * Handle Monotony endpoint
  */
-async function handleMonotony(method, requesterId, query) {
-  if (method !== "GET") {
-    return createErrorResponse("Method not allowed", 405, "method_not_allowed");
-  }
-
+async function handleMonotony(requesterId, query) {
   const weekStart = query?.weekStart
     ? new Date(query.weekStart)
     : getWeekStart(new Date());
@@ -816,11 +808,7 @@ async function handleMonotony(method, requesterId, query) {
 /**
  * Handle TSB endpoint
  */
-async function handleTSB(method, requesterId, query) {
-  if (method !== "GET") {
-    return createErrorResponse("Method not allowed", 405, "method_not_allowed");
-  }
-
+async function handleTSB(requesterId, query) {
   const date = query?.date ? new Date(query.date) : new Date();
   const targetUserId = query?.playerId || requesterId;
   const teamId = query?.teamId || null;
@@ -852,11 +840,7 @@ async function handleTSB(method, requesterId, query) {
 /**
  * Handle Injury Risk endpoint
  */
-async function handleInjuryRisk(method, requesterId, query) {
-  if (method !== "GET") {
-    return createErrorResponse("Method not allowed", 405, "method_not_allowed");
-  }
-
+async function handleInjuryRisk(requesterId, query) {
   const date = query?.date ? new Date(query.date) : new Date();
   const targetUserId = query?.playerId || requesterId;
   const teamId = query?.teamId || null;
@@ -1019,11 +1003,7 @@ async function handleInjuryRisk(method, requesterId, query) {
 /**
  * Handle training loads endpoint
  */
-async function handleTrainingLoads(method, requesterId, query, log = logger) {
-  if (method !== "GET") {
-    return createErrorResponse("Method not allowed", 405, "method_not_allowed");
-  }
-
+async function handleTrainingLoads(requesterId, query, log = logger) {
   const startDate = query?.startDate
     ? new Date(query.startDate)
     : new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
@@ -1093,7 +1073,7 @@ const handler = async (event, context) => {
         requestId,
         correlationId,
       });
-      const { httpMethod, path, queryStringParameters } = event;
+      const { path, queryStringParameters } = event;
       const pathSegments = path.split("/").filter(Boolean);
       const endpoint = pathSegments[pathSegments.length - 1];
       const query = queryStringParameters || {};
@@ -1113,20 +1093,19 @@ const handler = async (event, context) => {
 
       switch (endpoint) {
         case "acwr":
-          response = await handleACWR(httpMethod, userId, query);
+          response = await handleACWR(userId, query);
           break;
         case "monotony":
-          response = await handleMonotony(httpMethod, userId, query);
+          response = await handleMonotony(userId, query);
           break;
         case "tsb":
-          response = await handleTSB(httpMethod, userId, query);
+          response = await handleTSB(userId, query);
           break;
         case "injury-risk":
-          response = await handleInjuryRisk(httpMethod, userId, query);
+          response = await handleInjuryRisk(userId, query);
           break;
         case "training-loads":
           response = await handleTrainingLoads(
-            httpMethod,
             userId,
             query,
             requestLogger,

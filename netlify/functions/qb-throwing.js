@@ -10,7 +10,7 @@
 
 import { supabaseAdmin } from "./supabase-client.js";
 import { baseHandler } from "./utils/base-handler.js";
-import { createErrorResponse, handleValidationError } from "./utils/error-handler.js";
+import { createErrorResponse, createSuccessResponse, handleValidationError } from "./utils/error-handler.js";
 import { isValidDateString, parseJsonObjectBody } from "./utils/input-validator.js";
 import { createLogger } from "./utils/structured-logger.js";
 
@@ -199,17 +199,7 @@ async function getThrowingData(supabase, userId) {
     fatigueLevel: s.fatigue_level,
   }));
 
-  return {
-    statusCode: 200,
-    body: JSON.stringify({
-      success: true,
-      data: {
-        progression,
-        weeklyStats: weeklyStats.slice(0, 8), // Last 8 weeks
-        recentSessions,
-      },
-    }),
-  };
+  return createSuccessResponse({ progression, weeklyStats: weeklyStats.slice(0, 8), recentSessions });
 }
 
 /**
@@ -374,15 +364,11 @@ async function logThrowingSession(supabase, userId, payload) {
       "You threw 100+ balls. Consider icing your arm for 15-20 minutes.";
   }
 
-  return {
-    statusCode: 200,
-    body: JSON.stringify({
-      success: true,
-      data: result,
-      iceReminder,
-      message: existing ? "Session updated" : "Session logged",
-    }),
-  };
+  return createSuccessResponse(
+    { ...result, iceReminder },
+    200,
+    existing ? "Session updated" : "Session logged",
+  );
 }
 
 /**
@@ -409,13 +395,7 @@ async function markArmCareDone(supabase, userId, payload) {
     throw error;
   }
 
-  return {
-    statusCode: 200,
-    body: JSON.stringify({
-      success: true,
-      message: "Arm care marked as complete",
-    }),
-  };
+  return createSuccessResponse(null, 200, "Arm care marked as complete");
 }
 
 export const testHandler = handler;

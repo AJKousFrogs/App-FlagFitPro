@@ -48,10 +48,10 @@ function typesTableNames() {
   const names = new Set();
   let section = null;
   for (const line of text.split("\n")) {
-    if (/^    Tables: \{/.test(line)) { section = "Tables"; continue; }
-    if (/^    (Views|Functions|Enums|CompositeTypes): \{/.test(line)) { section = null; continue; }
+    if (/^ {4}Tables: \{/.test(line)) { section = "Tables"; continue; }
+    if (/^ {4}(Views|Functions|Enums|CompositeTypes): \{/.test(line)) { section = null; continue; }
     if (section !== "Tables") continue;
-    const m = line.match(/^      ([A-Za-z0-9_]+): \{/);
+    const m = line.match(/^ {6}([A-Za-z0-9_]+): \{/);
     if (m) names.add(m[1]);
   }
   return names;

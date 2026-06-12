@@ -16,7 +16,7 @@
   --c-ink-900:#08090B; --c-ink-850:#0D0F12; --c-ink-800:#111317;
   --c-ink-700:#16181D; --c-ink-600:#1D2026; --c-ink-500:#272B33;
   --c-ink-400:#3A3F49; --c-ink-300:#565C68; --c-ink-250:#868D98; --c-ink-200:#8A909C;
-  --c-ink-100:#B9BEC8; --c-ink-050:#E6E9EF; --c-white:#FFFFFF;
+  --c-ink-100:#B9BEC8; --c-ink-050:#E6E9EF; --c-white:#fff;
   /* brand + state */
   --c-green-500:#00E07A; --c-green-600:#00B863; --c-green-200:#15402F;
   --c-violet-500:#8B7CFF; --c-violet-400:#A99BFF; --c-violet-200:#241F3A; /* 2nd accent for gradients */
@@ -90,7 +90,7 @@
 
 /* OPTIONAL light theme (token swap only — structure unchanged). Off by default. */
 :root[data-theme="light"] {
-  --bg:#F7F8FA; --surface:#FFFFFF; --surface-2:#F1F3F6; --surface-raised:#FFFFFF;
+  --bg:#F7F8FA; --surface:#fff; --surface-2:#F1F3F6; --surface-raised:#fff;
   --border:#E2E5EA; --border-soft:#EDEFF3;
   --text:#16181D; --text-strong:#08090B; --text-muted:#565C68; --text-faint:#8A909C;
   --on-accent:#08090B; --accent:#00B863; --e-2:0 4px 16px rgba(16,20,30,.10);

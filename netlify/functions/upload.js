@@ -23,6 +23,8 @@ const ALLOWED_VIDEO_TYPES = ["video/mp4", "video/webm", "video/quicktime"];
 const MAX_IMAGE_SIZE = 5 * 1024 * 1024; // 5MB
 const MAX_VIDEO_SIZE = 50 * 1024 * 1024; // 50MB
 
+const STORAGE_BUCKET = process.env.STORAGE_BUCKET || "community-media";
+
 const createUploadValidationError = (message) => {
   const error = new Error(message);
   error.code = "UPLOAD_VALIDATION";
@@ -43,7 +45,7 @@ const uploadFile = async (
 ) => {
   try {
     // Determine bucket and validate file type
-    const bucket = "community-media";
+    const bucket = STORAGE_BUCKET;
     let maxSize = MAX_IMAGE_SIZE;
     let mediaType = "image";
 
@@ -121,7 +123,7 @@ const uploadFile = async (
 const deleteFile = async (filePath, log = logger) => {
   try {
     const { error } = await supabaseAdmin.storage
-      .from("community-media")
+      .from(STORAGE_BUCKET)
       .remove([filePath]);
 
     if (error) {

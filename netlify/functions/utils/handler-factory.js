@@ -17,6 +17,10 @@
 import { baseHandler } from "./base-handler.js";
 import { getUserRole } from "./authorization-guard.js";
 
+import { createLogger } from "./structured-logger.js";
+const logger = createLogger({ service: "netlify.handler-factory" });
+
+
 /**
  * Create a handler with automatic authentication and role extraction
  *
@@ -52,10 +56,7 @@ function createHandler(options) {
             const resolvedRole = await getUserRole(userId);
             userRole = resolvedRole || "player";
           } catch (error) {
-            console.warn(
-              `[${functionName}] Could not get user role:`,
-              error.message,
-            );
+            logger.warn("handler_factory_role_fetch_failed", { functionName, message: error.message });
           }
         }
 

@@ -96,7 +96,7 @@ async function updateOwnProfile(userId, body) {
     return createErrorResponse("Failed to update profile", 500, "server_error");
   }
   if (!data) {
-    return createErrorResponse("User not found", 404);
+    return createErrorResponse("User not found", 404, "not_found");
   }
   return createSuccessResponse({ profile: data }, 200, "Profile updated");
 }
@@ -132,7 +132,7 @@ const handler = async (event, context) => {
 
       // SECURITY: Only allow users to access their own profile (unless admin)
       if (requestedUserId !== userId && !isAdmin) {
-        return createErrorResponse("Forbidden - Can only access your own profile", 403);
+        return createErrorResponse("Forbidden - Can only access your own profile", 403, "not_authorized");
       }
       const targetUserId = requestedUserId;
 
@@ -153,7 +153,7 @@ const handler = async (event, context) => {
           throw userError;
         }
         if (!userInfo) {
-          return createErrorResponse("User not found", 404);
+          return createErrorResponse("User not found", 404, "not_found");
         }
 
         // Injuries (clinical table) + 30-day training stats + recent sessions —

@@ -207,14 +207,6 @@ export class AIService {
     });
   }
 
-  private getDaysUntil(date: string | Date): number {
-    const gameDate = typeof date === "string" ? new Date(date) : date;
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    gameDate.setHours(0, 0, 0, 0);
-    const diffTime = gameDate.getTime() - today.getTime();
-    return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-  }
 
   /**
    * Process natural language command from voice or text input

@@ -1,12 +1,11 @@
 /**
  * Auth Domain Handler — Netlify Functions v2 (native, no adapter)
  *
- * Consolidates five legacy handlers into one native v2 function.
+ * Consolidates legacy handlers into one native v2 function.
  *
  * Routes handled:
  *   /api/auth/login, /api/auth-login
  *   /api/auth/me, /api/auth-me
- *   /api/auth/reset-password, /api/auth-reset-password
  *   /api/account/deletion, /api/account-deletion
  *   /api/account/pause, /api/account-pause
  */
@@ -14,7 +13,6 @@
 import { handler as authLoginHandler } from "./auth-login.js";
 import { dispatch } from "./utils/web-lambda-bridge.js";
 import { handler as authMeHandler } from "./auth-me.js";
-import { handler as authResetPasswordHandler } from "./auth-reset-password.js";
 import { handler as accountDeletionHandler } from "./account-deletion.js";
 import { handler as accountPauseHandler } from "./account-pause.js";
 import { handler as acceptInvitationHandler } from "./accept-invitation.js";
@@ -45,7 +43,10 @@ export default async (req) => {
     return dispatch(parentalConsentHandler, req, url);
   }
   if (path.includes("/auth/reset-password") || path.includes("/auth-reset-password")) {
-    return dispatch(authResetPasswordHandler, req, url);
+    return new Response(
+      JSON.stringify({ success: false, error: "Use Supabase Auth resetPasswordForEmail instead", code: "gone" }),
+      { status: 410, headers: { ...corsHeaders(req), "Content-Type": "application/json" } },
+    );
   }
   if (path.includes("/auth/login") || path.includes("/auth-login")) {
     return dispatch(authLoginHandler, req, url);
