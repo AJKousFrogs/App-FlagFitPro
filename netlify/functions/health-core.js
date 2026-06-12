@@ -178,17 +178,28 @@ const handler = async (event, context) => {
             ? "healthy"
             : "degraded";
 
+        // Public health is intentionally MINIMAL (H9). This endpoint is
+        // unauthenticated, so it must NOT disclose Node/platform versions, memory
+        // usage, env-config flags, or DB error messages — all of which help an
+        // attacker fingerprint and target the infrastructure. Report only liveness
+        // and coarse per-component status; detailed diagnostics (getSystemInfo /
+        // getSupabaseConfigStatus / raw check errors) stay server-side in logs.
+        requestLogger.info("health_check_detail", {
+          overall: overallStatus,
+          database: dbHealth,
+          auth: authHealth,
+          config: getSupabaseConfigStatus(),
+          system: getSystemInfo(),
+          total_latency_ms: totalLatency,
+        });
+
         const response = {
           status: overallStatus,
           timestamp: new Date().toISOString(),
-          version: "1.0.0",
-          config: getSupabaseConfigStatus(),
           checks: {
-            database: dbHealth,
-            auth: authHealth,
+            database: dbHealth.status,
+            auth: authHealth.status,
           },
-          system: getSystemInfo(),
-          totalLatency,
         };
 
         // Use appropriate status code
