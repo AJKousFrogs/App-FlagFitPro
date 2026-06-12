@@ -1116,8 +1116,26 @@ function mapIntentToSession(intent, intentLabel) {
   }
 }
 
+// Deterministic per-(athlete, day) ordering key for an exercise (H1). Replaces the
+// old random-comparator shuffle, which was BOTH nondeterministic (regenerating the
+// same day produced a different protocol — confusing, and untestable) and a biased,
+// non-uniform shuffle. Hashing seed+exercise-id gives a stable pseudo-random order:
+// same athlete+day → same selection; different exercises → different keys.
+function seededOrderKey(seed, ex) {
+  const id = ex?.id ?? ex?.name ?? ex?.exercise_name ?? "";
+  const s = `${seed}:${id}`;
+  let h = 2166136261;
+  for (let i = 0; i < s.length; i++) {
+    h ^= s.charCodeAt(i);
+    h = Math.imul(h, 16777619);
+  }
+  return h >>> 0;
+}
+
 async function generateProtocol(supabase, userId, payload, headers, log = logger) {
   const date = payload.date || getIsoDateString();
+  // Stable seed for deterministic exercise variety (H1) — see seededOrderKey.
+  const varietySeed = `${userId}:${date}`;
 
   // ============================================================================
   // IDEMPOTENCY SUPPORT
@@ -1365,7 +1383,7 @@ async function generateProtocol(supabase, userId, payload, headers, log = logger
     if (allIsometrics.length > 0) {
       // Select 4-5 isometric exercises for ~15 min block
       const selectedIsometrics = allIsometrics
-        .sort(() => Math.random() - 0.5)
+        .sort((a, b) => seededOrderKey(varietySeed, a) - seededOrderKey(varietySeed, b))
         .slice(0, 5);
 
       selectedIsometrics.forEach((ex, idx) => {
@@ -1448,7 +1466,7 @@ async function generateProtocol(supabase, userId, payload, headers, log = logger
       }
 
       const selectedPlyos = filteredPlyos
-        .sort(() => Math.random() - 0.5)
+        .sort((a, b) => seededOrderKey(varietySeed, a) - seededOrderKey(varietySeed, b))
         .slice(0, exerciseCount);
 
       selectedPlyos.forEach((ex, idx) => {
@@ -1524,7 +1542,7 @@ async function generateProtocol(supabase, userId, payload, headers, log = logger
 
       if (hipExercises.length > 0) {
         const selectedHip = hipExercises
-          .sort(() => Math.random() - 0.5)
+          .sort((a, b) => seededOrderKey(varietySeed, a) - seededOrderKey(varietySeed, b))
           .slice(0, 2);
 
         selectedHip.forEach((ex, idx) => {
@@ -1551,7 +1569,7 @@ async function generateProtocol(supabase, userId, payload, headers, log = logger
             !ex.name?.toLowerCase().includes("adduct") &&
             !ex.name?.toLowerCase().includes("copenhagen"),
         )
-        .sort(() => Math.random() - 0.5)
+        .sort((a, b) => seededOrderKey(varietySeed, a) - seededOrderKey(varietySeed, b))
         .slice(0, 3);
 
       generalStrength.forEach((ex, idx) => {
@@ -1606,7 +1624,7 @@ async function generateProtocol(supabase, userId, payload, headers, log = logger
       }
 
       const selectedConditioning = filteredConditioning
-        .sort(() => Math.random() - 0.5)
+        .sort((a, b) => seededOrderKey(varietySeed, a) - seededOrderKey(varietySeed, b))
         .slice(0, 4);
 
       selectedConditioning.forEach((ex, idx) => {
@@ -1673,7 +1691,7 @@ async function generateProtocol(supabase, userId, payload, headers, log = logger
       }
 
       const selectedSkills = filteredSkill
-        .sort(() => Math.random() - 0.5)
+        .sort((a, b) => seededOrderKey(varietySeed, a) - seededOrderKey(varietySeed, b))
         .slice(0, 4);
 
       selectedSkills.forEach((ex, idx) => {
