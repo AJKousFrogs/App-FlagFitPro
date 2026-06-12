@@ -1,3 +1,20 @@
+/**
+ * Daily Protocol — the REALIZATION engine (D10: two-engine boundary).
+ *
+ * This backend owns turning an INTENT into a concrete session: the actual
+ * exercises, sets/reps/holds, loads, and per-position work for a given day. It
+ * consumes the intent produced by the CLIENT periodization service
+ * (angular/.../core/services/periodization.service.ts), which owns the other half
+ * of the contract — WHAT the day should achieve (phase, taper, RPE/minutes
+ * targets, recovery/nutrition emphasis). That intent arrives via the `intent`
+ * payload and is mapped in the COMPOSE step (`__compose__` / mapIntentToSession).
+ *
+ * Rule of thumb: if it's a TARGET or an INTENT ("today is a taper, aim RPE 6,
+ * 45 min, emphasise recovery"), it belongs to periodization.service.ts. If it's a
+ * REALIZATION ("3×5 hill sprints, 2×30s copenhagen plank"), it belongs here. Do
+ * not re-derive periodization intent in this file, and do not pick exercises in
+ * the client — that split is what keeps the two engines from contradicting.
+ */
 import { wrapHandler } from "./utils/lambda-compat.js";
 import { supabaseAdmin } from "./utils/supabase-client.js";
 import { baseHandler } from "./utils/base-handler.js";
@@ -569,7 +586,15 @@ async function getUserTrainingContext(supabase, userId, date, log = logger) {
   const baseAcwrMax = config?.acwr_target_max || 1.3;
   const acwrAdjustment = ageModifier?.acwr_max_adjustment || 0;
 
-  // 11. Get upcoming tournaments and check for taper period
+  // 11. Tournament taper.
+  // ⚠️ D9: intentionally empty — this backend never queries tournaments, so the
+  // taper loop below is currently inert. Under the two-engine split (see header /
+  // D10), TAPER INTENT is owned by the client periodization service and arrives
+  // via the `intent` payload (COMPOSE), which this engine realizes — so computing
+  // a parallel backend taper here would double-count. The real source, if a
+  // server-authoritative taper is ever needed, is the `competitions` table (NOT
+  // `tournaments`/`upcomingTournaments`, which never existed). Kept as an explicit
+  // empty so the dead branch is visible rather than implying a working feed.
   const upcomingTournaments = [];
 
   // Calculate taper context

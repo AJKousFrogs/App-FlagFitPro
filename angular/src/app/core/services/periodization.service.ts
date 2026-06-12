@@ -1,3 +1,18 @@
+/**
+ * Periodization — the INTENT engine (D10: two-engine boundary).
+ *
+ * This client service owns WHAT a given day should achieve: the season phase,
+ * taper windows, RPE/minutes targets, recovery and nutrition emphasis, and
+ * position emphasis — i.e. the training INTENT. It does NOT pick exercises.
+ *
+ * The concrete REALIZATION of that intent (actual exercises, sets/reps/holds,
+ * loads) is owned by the backend daily-protocol engine
+ * (netlify/functions/daily-protocol.js), which consumes this intent via the
+ * `intent` payload (the COMPOSE step). Keep exercise selection out of here and
+ * keep periodization targets out of the backend — that split is what stops the
+ * two engines from contradicting each other (e.g. a taper day that still
+ * prescribes a full session).
+ */
 import {
   Injectable,
   Signal,

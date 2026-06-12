@@ -96,6 +96,16 @@ async function resolveTeamActivityForAthleteDay(
 
   // Step 3: Get team activity for this date across the athlete's team(s).
   // Still ONE authoritative activity per athlete-day: newest created wins.
+  //
+  // ⚠️ D9: `team_activities` DOES NOT EXIST as a table — this query always errors
+  // and the resolver falls through to {exists:false} below, so this whole resolver
+  // is currently INERT in daily-protocol (the `teamActivityResult.exists` branch
+  // never fires). Live practice/film detection comes from the session-resolver's
+  // `flag_practice`/`film_room` overrides, not here. The real schedule tables are
+  // `team_events` / `competition_events` / `practice_plans`. TODO: repoint to
+  // `team_events` (mapping its columns to {type,startTimeLocal,replacesSession})
+  // as a dedicated, well-tested change — it activates DB-event-based practice
+  // detection and therefore alters athletes' load, so it must not ride along here.
   const { data: teamActivity, error: activityError } = await supabase
     .from("team_activities")
     .select("*")
