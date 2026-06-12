@@ -396,6 +396,47 @@ const COMMON_SCHEMAS = {
   },
 };
 
+/** True if value is a finite JS number (excludes NaN, Infinity, non-numbers). */
+function isFiniteNumber(value) {
+  return typeof value === "number" && Number.isFinite(value);
+}
+
+/**
+ * Accepts any UUID-like 8-4-4-4-12 hex pattern (not strictly RFC 4122).
+ * Supabase and seeded-test generators may emit non-standard variant bits.
+ */
+function isUuid(value) {
+  return (
+    typeof value === "string" &&
+    /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(value)
+  );
+}
+
+/** True if the value can be parsed as a valid JS Date. */
+function isValidDateString(value) {
+  return typeof value === "string" && !Number.isNaN(new Date(value).getTime());
+}
+
+/**
+ * Parse an integer within [min, max]. Returns `fallback` (default: null) when
+ * value is missing/empty, throws a descriptive Error when out of range or
+ * non-integer. Canonical replacement for the ~25 inline copies across handlers.
+ */
+function parseBoundedInt(value, fieldName, { min, max, fallback = null } = {}) {
+  if (value === undefined || value === null || value === "") {
+    return fallback;
+  }
+  const normalized = String(value).trim();
+  if (!/^-?\d+$/.test(normalized)) {
+    throw new Error(`${fieldName} must be an integer between ${min} and ${max}`);
+  }
+  const parsed = Number.parseInt(normalized, 10);
+  if (!Number.isInteger(parsed) || parsed < min || parsed > max) {
+    throw new Error(`${fieldName} must be an integer between ${min} and ${max}`);
+  }
+  return parsed;
+}
+
 /**
  * Lightweight opaque-id validator: non-empty, ≤128 chars, [A-Za-z0-9_-].
  * Shared by handlers that accept slug/uuid-ish path or body identifiers.
@@ -410,7 +451,11 @@ function isValidId(value) {
 }
 
 export {
+  isFiniteNumber,
+  isUuid,
+  isValidDateString,
   isValidId,
+  parseBoundedInt,
   validateInput,
   sanitizeString,
   sanitizeObject,
@@ -424,7 +469,11 @@ export {
 };
 
 export default {
+  isFiniteNumber,
+  isUuid,
+  isValidDateString,
   isValidId,
+  parseBoundedInt,
   validateInput,
   sanitizeString,
   sanitizeObject,

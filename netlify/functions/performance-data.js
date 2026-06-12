@@ -18,34 +18,6 @@ import { buildRequestLogContext, createLogger } from "./utils/structured-logger.
 
 const logger = createLogger({ service: "netlify.performance-data" });
 
-// CORS Headers — restrict to known origins only.
-// Set ALLOWED_ORIGIN in Netlify environment variables for the production domain.
-const ALLOWED_ORIGINS = [
-  process.env.ALLOWED_ORIGIN,
-  process.env.URL,                 // Netlify injects the deploy URL automatically
-  process.env.DEPLOY_PRIME_URL,    // Netlify injects branch deploy URLs automatically
-  "http://localhost:4200",
-  "http://localhost:8888",
-].filter(Boolean);
-
-const getCorsHeaders = (requestOrigin) => {
-  const origin =
-    requestOrigin && ALLOWED_ORIGINS.includes(requestOrigin)
-      ? requestOrigin
-      : ALLOWED_ORIGINS[0] || "";
-  return {
-    "Access-Control-Allow-Origin": origin,
-    "Access-Control-Allow-Headers": "Content-Type, Authorization",
-    "Access-Control-Allow-Methods": "GET, POST, PUT, PATCH, DELETE, OPTIONS",
-    "Access-Control-Allow-Credentials": "true",
-    "Content-Type": "application/json",
-    "Vary": "Origin",
-  };
-};
-
-// Backwards-compatible alias used throughout the file — resolved per-request below.
-// Replace CORS_HEADERS usages with getCorsHeaders(requestOrigin) when refactoring handlers.
-const CORS_HEADERS = getCorsHeaders(undefined);
 
 // ============================================================================
 // DATA MAPPERS - Reusable transformation functions

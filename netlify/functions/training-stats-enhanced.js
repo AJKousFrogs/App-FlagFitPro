@@ -5,7 +5,7 @@
 // This is the single source of truth for training stats calculations
 
 import { checkEnvVars, supabaseAdmin } from "./supabase-client.js";
-
+import { computeAcwrAt, computeSessionLoad, classifyAcwrZone } from "./utils/acwr.js";
 import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
 import { baseHandler } from "./utils/base-handler.js";
 
@@ -17,113 +17,49 @@ function getTodayDate() {
   return new Date().toISOString().split("T")[0];
 }
 
-/**
- * Calculate session load in arbitrary units (AU)
- * Formula: Duration (minutes) × RPE (1-10)
- * Falls back to Duration × Intensity if RPE not available
- */
-function calculateSessionLoad(session) {
-  const duration = session.duration_minutes || 0;
-  const rpe = session.rpe || session.intensity_level || 5; // Default to 5 if missing
-  return duration * rpe;
-}
+const ACWR_ZONE_MESSAGES = {
+  detraining: "ACWR below optimal range - risk of detraining",
+  safe: "ACWR in optimal range",
+  caution: "ACWR elevated - monitor closely",
+  danger: "ACWR in danger zone - high injury risk, reduce load",
+  critical: "ACWR critical - immediate load reduction required",
+};
 
-/**
- * Calculate ACWR (Acute:Chronic Workload Ratio)
- * - Acute Load: Sum of last 7 days total load
- * - Chronic Load: Average weekly load over last 28 days
- * - ACWR = Acute / Chronic
- *
- * Target: 0.8-1.3 (sweet spot: 1.0-1.2)
- * Risk zones: > 1.5 (high injury risk), < 0.8 (detraining risk)
- */
 function calculateACWR(sessions, referenceDate = new Date()) {
   const today =
     referenceDate instanceof Date ? referenceDate : new Date(referenceDate);
   const todayStr = today.toISOString().split("T")[0];
 
-  // Filter sessions up to and including today
-  const validSessions = sessions.filter((s) => {
-    const sessionDate = s.session_date || s.date;
-    return sessionDate && sessionDate <= todayStr;
-  });
-
-  if (validSessions.length === 0) {
-    return {
-      acwr: null,
-      acuteLoad: 0,
-      chronicLoad: 0,
-      acuteDays: 0,
-      chronicDays: 0,
-      riskZone: "insufficient_data",
-      message: "Insufficient data to calculate ACWR (need at least 7 days)",
-    };
-  }
-
-  // Calculate acute load (last 7 days)
-  const acuteStartDate = new Date(today);
-  acuteStartDate.setDate(acuteStartDate.getDate() - 7);
-  const acuteStartStr = acuteStartDate.toISOString().split("T")[0];
-
-  const acuteSessions = validSessions.filter((s) => {
-    const sessionDate = s.session_date || s.date;
-    return sessionDate >= acuteStartStr && sessionDate <= todayStr;
-  });
-
-  const acuteLoad = acuteSessions.reduce(
-    (sum, s) => sum + calculateSessionLoad(s),
-    0,
-  );
-
-  // Calculate chronic load (last 28 days, average weekly load)
-  const chronicStartDate = new Date(today);
-  chronicStartDate.setDate(chronicStartDate.getDate() - 28);
-  const chronicStartStr = chronicStartDate.toISOString().split("T")[0];
-
-  const chronicSessions = validSessions.filter((s) => {
-    const sessionDate = s.session_date || s.date;
-    return sessionDate >= chronicStartStr && sessionDate <= todayStr;
-  });
-
-  const chronicTotalLoad = chronicSessions.reduce(
-    (sum, s) => sum + calculateSessionLoad(s),
-    0,
-  );
-  const chronicLoad = chronicTotalLoad / 4; // Average weekly load over 4 weeks
-
-  // Calculate ACWR
-  let acwr = null;
-  let riskZone = "insufficient_data";
-  let message = "";
-
-  if (chronicLoad > 0) {
-    acwr = acuteLoad / chronicLoad;
-
-    if (acwr < 0.8) {
-      riskZone = "detraining";
-      message = "ACWR below optimal range - risk of detraining";
-    } else if (acwr >= 0.8 && acwr <= 1.3) {
-      riskZone = "optimal";
-      message = "ACWR in optimal range";
-    } else if (acwr > 1.3 && acwr <= 1.5) {
-      riskZone = "elevated";
-      message = "ACWR elevated - monitor closely";
-    } else {
-      riskZone = "danger";
-      message = "ACWR in danger zone - high injury risk, reduce load";
+  const dailyLoads = new Map();
+  for (const s of sessions || []) {
+    const rawDate = s.session_date || s.date;
+    if (!rawDate || String(rawDate).split("T")[0] > todayStr) {
+      continue;
     }
-  } else {
-    message = "Insufficient chronic load data (need at least 28 days)";
+    const dayKey = String(rawDate).split("T")[0];
+    const load = computeSessionLoad(s);
+    if (load > 0) {
+      dailyLoads.set(dayKey, (dailyLoads.get(dayKey) || 0) + load);
+    }
   }
 
+  if (dailyLoads.size === 0) {
+    return { acwr: null, acuteLoad: 0, chronicLoad: 0, riskZone: "insufficient_data", message: "Insufficient data to calculate ACWR" };
+  }
+
+  const result = computeAcwrAt(dailyLoads, today);
+
+  if (result.acwr === null || result.lowConfidence) {
+    return { acwr: null, acuteLoad: Math.round(result.acuteLoad), chronicLoad: Math.round(result.chronicLoad), riskZone: "insufficient_data", message: "Insufficient data to calculate ACWR (need at least 7 days)" };
+  }
+
+  const zone = classifyAcwrZone(result.acwr);
   return {
-    acwr: acwr ? Math.round(acwr * 100) / 100 : null,
-    acuteLoad: Math.round(acuteLoad),
-    chronicLoad: Math.round(chronicLoad),
-    acuteDays: acuteSessions.length,
-    chronicDays: chronicSessions.length,
-    riskZone,
-    message,
+    acwr: Math.round(result.acwr * 100) / 100,
+    acuteLoad: Math.round(result.acuteLoad),
+    chronicLoad: Math.round(result.chronicLoad),
+    riskZone: zone ?? "insufficient_data",
+    message: ACWR_ZONE_MESSAGES[zone] ?? "",
   };
 }
 
@@ -160,7 +96,7 @@ function calculateWeeklyVolume(sessions, referenceDate = new Date()) {
   });
 
   const totalLoad = weekSessions.reduce(
-    (sum, s) => sum + calculateSessionLoad(s),
+    (sum, s) => sum + computeSessionLoad(s),
     0,
   );
   const totalDuration = weekSessions.reduce(
@@ -236,7 +172,7 @@ async function getTrainingStats(userId, options = {}) {
       0,
     );
     const totalLoad = validSessions.reduce(
-      (sum, s) => sum + calculateSessionLoad(s),
+      (sum, s) => sum + computeSessionLoad(s),
       0,
     );
     const avgDuration = totalSessions > 0 ? totalDuration / totalSessions : 0;
@@ -276,7 +212,7 @@ async function getTrainingStats(userId, options = {}) {
       }
       sessionsByType[type].count++;
       sessionsByType[type].totalDuration += session.duration_minutes || 0;
-      sessionsByType[type].totalLoad += calculateSessionLoad(session);
+      sessionsByType[type].totalLoad += computeSessionLoad(session);
     });
 
     return {
