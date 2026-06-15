@@ -1,4 +1,5 @@
 import { getIsoDayOfWeek } from "./date-utils.js";
+import { injuriesPainLevel } from "./active-injuries.js";
 
 import { createLogger } from "./structured-logger.js";
 const logger = createLogger({ service: "netlify.daily-protocol-rtp" });
@@ -10,11 +11,21 @@ export async function generateReturnToPlayProtocol(
   date,
   wellnessCheckin,
   headers,
+  { activeInjuries = null } = {},
 ) {
   logger.info("rtp_protocol_generating", { date });
 
-  const injuries = wellnessCheckin.soreness_areas || [];
-  const painLevel = wellnessCheckin.pain_level || 2;
+  // Size RTP off the injury authority (athlete_injuries: region + graded severity),
+  // not the raw soreness_areas slider — soreness_areas is an INPUT, never the
+  // trigger (SOT Law 5a / active-injuries.js). Fall back to the check-in only for
+  // legacy callers that pass no structured injuries.
+  const hasAuthority = Array.isArray(activeInjuries) && activeInjuries.length > 0;
+  const injuries = hasAuthority
+    ? activeInjuries.map((i) => i.injury_location).filter(Boolean)
+    : wellnessCheckin?.soreness_areas || [];
+  const painLevel = hasAuthority
+    ? injuriesPainLevel(activeInjuries)
+    : wellnessCheckin?.pain_level || 2;
 
   let rtpPhase = 1;
   let phaseName = "Phase 1: Foundation & Pain Management";

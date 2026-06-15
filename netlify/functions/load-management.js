@@ -14,7 +14,9 @@ const logger = createLogger({ service: "netlify.load-management" });
 const createRequestLogger = makeRequestLogger(logger);
 
 // Netlify Functions - Load Management & Monitoring API
-// Evidence-based training load monitoring, injury risk prediction, and fatigue management
+// Evidence-based training load monitoring and fatigue management. ACWR/monotony/
+// strain are treated as ONE input to the readiness composite — monitoring signals,
+// not injury-risk predictions (Impellizzeri et al. 2020; see utils/acwr.js).
 // Based on 87 peer-reviewed studies with 12,453 athletes
 //
 // CONSENT COMPLIANCE: This module uses ConsentDataReader for all coach-context access

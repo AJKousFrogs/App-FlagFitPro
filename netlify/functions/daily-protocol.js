@@ -60,6 +60,7 @@ import { buildProtocolDecisionContext } from "./utils/daily-protocol-decision.js
 import { persistFallbackProtocolWhenExercisesMissing } from "./utils/daily-protocol-fallback.js";
 import { generateMainSessionFallback } from "./utils/daily-protocol-main-session.js";
 import { generateReturnToPlayProtocol } from "./utils/daily-protocol-rtp.js";
+import { getActiveInjuries } from "./utils/active-injuries.js";
 import { generateTemplateMainSession } from "./utils/daily-protocol-template-session.js";
 import {
   buildProtocolGenerationIdempotencyKey,
@@ -1193,16 +1194,23 @@ async function generateProtocol(supabase, userId, payload, headers, log = logger
     .limit(1)
     .maybeSingle();
 
-  const hasActiveInjuries =
-    wellnessCheckin?.soreness_areas &&
-    wellnessCheckin.soreness_areas.length > 0;
+  // Authority is athlete_injuries (severity-tiered, expiry-aware), NOT the raw
+  // soreness_areas slider. The slider is an INPUT to that system, never a parallel
+  // rehab trigger (SOT Law 5a / utils/active-injuries.js): tripping RTP off it
+  // locked athletes in rehab off one stale tag AND let a real active injury be
+  // bypassed by a single clean check-in. Mirrors session-resolver.js:282 and
+  // team-activity-resolver.js so all three rehab gates agree on one source.
+  const activeInjuries = await getActiveInjuries(userId, date, {
+    client: supabase,
+  });
+  const hasActiveInjuries = activeInjuries.length > 0;
 
   // If injuries exist, generate return-to-play protocol instead
   if (hasActiveInjuries) {
     log.info("daily_protocol_return_to_play_triggered", {
       user_id: userId,
       date,
-      soreness_areas_count: wellnessCheckin.soreness_areas.length,
+      injury_count: activeInjuries.length,
     });
     return await generateReturnToPlayProtocol(
       supabase,
@@ -1210,6 +1218,7 @@ async function generateProtocol(supabase, userId, payload, headers, log = logger
       date,
       wellnessCheckin,
       headers,
+      { activeInjuries },
     );
   }
   // ============================================================================
