@@ -411,13 +411,33 @@ const config = {
     },
 
     // ====================================
+    // scss/system layer: component vocabulary primitives.
+    // This layer defines the shared UI grammar (cards, buttons, chips…) and
+    // intentionally uses some raw px values that don't yet have tokens:
+    //   - 1px/3px border widths      - 44px/64px touch-target sizes
+    //   - z-index stack assignments   - fixed pixel offsets for notification dots
+    // Token-ising these is tracked in DESIGN_TOKENS_AUDIT.md but is not
+    // blocking here: the values are stable, not scattered across components.
+    // ====================================
+    {
+      files: ["**/scss/system/**/*.scss"],
+      rules: {
+        "declaration-property-value-disallowed-list": null,
+      },
+    },
+
+    // ====================================
     // Allow !important in styles.scss for WCAG 2.3.3 prefers-reduced-motion
     // These !important overrides must cascade over all layers — a11y requirement.
+    // Also disable px-value token rule: the only hardcoded value in styles.scss is
+    // transition-duration: 0.01ms in the prefers-reduced-motion block — a browser
+    // workaround, not a design token scenario.
     // ====================================
     {
       files: ["**/styles.scss"],
       rules: {
         "declaration-no-important": null,
+        "declaration-property-value-disallowed-list": null,
       },
     },
   ],
