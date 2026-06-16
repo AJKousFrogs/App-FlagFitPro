@@ -25,7 +25,7 @@ export async function generateReturnToPlayProtocol(
     : wellnessCheckin?.soreness_areas || [];
   const painLevel = hasAuthority
     ? injuriesPainLevel(activeInjuries)
-    : wellnessCheckin?.pain_level || 2;
+    : 2;
 
   let rtpPhase = 1;
   let phaseName = "Phase 1: Foundation & Pain Management";

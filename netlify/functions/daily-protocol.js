@@ -268,7 +268,6 @@ const EVIDENCE_BASED_PROTOCOLS = {
     holdSeconds: { min: 3, max: 6 },
     restSeconds: { min: 30, max: 60 },
     frequencyPerWeek: { min: 2, max: 3 },
-    asymmetryThreshold: 0.1, // <10% ideal
     asymmetryWarning: 0.15, // >15% requires attention
   },
 
@@ -334,7 +333,6 @@ const EVIDENCE_BASED_PROTOCOLS = {
   // Hip/Groin Balance (Practitioner's Guide to Hip and Groin)
   hipGroin: {
     adductorAbductorRatioTarget: { min: 0.8, max: 1.2 },
-    asymmetryThreshold: 0.1,
   },
 
   // Calf/Achilles Return to Sport (Practitioner's Guide to Calf & Achilles)

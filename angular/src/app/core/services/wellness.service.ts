@@ -33,7 +33,6 @@ export interface WellnessData {
   hydration?: number;
   readinessScore?: number;
   weight?: number;
-  resting_hr?: number;
   notes?: string;
   timestamp?: string;
   /** Regions for soreness (canonical RPC). */
@@ -78,7 +77,6 @@ interface DailyWellnessCheckinEntry {
   motivation_level?: number;
   mood?: number;
   hydration_level?: number;
-  resting_hr?: number;
   soreness_areas?: string[];
   notes?: string;
   calculated_readiness?: number;
@@ -215,7 +213,6 @@ export class WellnessService {
             motivation: entry.motivation_level,
             mood: entry.mood,
             hydration: entry.hydration_level,
-            resting_hr: entry.resting_hr,
             readinessScore:
               entry.calculated_readiness ?? entry.readiness_score,
             notes: entry.notes,
@@ -744,7 +741,6 @@ export class WellnessService {
       motivation_level: Number(record["motivation_level"] ?? 0),
       mood: Number(record["mood"] ?? 0),
       hydration_level: Number(record["hydration_level"] ?? 0),
-      resting_hr: record["resting_hr"] !== undefined ? Number(record["resting_hr"]) : undefined,
       soreness_areas: record["soreness_areas"] as string[] | undefined,
       notes: record["notes"] as string | undefined,
       calculated_readiness: Number(record["calculated_readiness"] ?? 0),
@@ -772,7 +768,6 @@ export class WellnessService {
       motivation: entry.motivation_level,
       mood: entry.mood,
       hydration: entry.hydration_level,
-      resting_hr: entry.resting_hr,
       readinessScore: entry.calculated_readiness ?? entry.readiness_score,
       notes: entry.notes,
       timestamp: entry.created_at,
