@@ -1,9 +1,9 @@
 # Endpoint Reference (GENERATED — do not hand-edit)
 
 > Regenerate: `npm run docs:regen` (parses `netlify.toml` + `netlify/functions/*.js` + scans `angular/src`).
-> **Last verified: 2026-06-09**
+> **Last verified: 2026-06-12**
 
-**112 functions: 111 exercised, 1 orphaned.** A table name with ⚠️ is referenced in code but not a live table (possible drift/typo); _(bucket)_ = Storage bucket, not a DB table.
+**111 functions: 110 exercised, 1 orphaned.** A table name with ⚠️ is referenced in code but not a live table (possible drift/typo); _(bucket)_ = Storage bucket, not a DB table.
 
 ## Exercised
 
@@ -25,19 +25,18 @@
 | `auth` | OPTIONS | /api/auth/me<br>/api/auth-me<br>/api/auth/reset-password<br>/api/auth/login<br>/api/accept-invitation<br>/api/validate-invitation<br>/api/account/pause<br>/api/account/resume<br>/api/account/*<br>/api/account/delete<br>/api/parental-consent/*<br>/api/parental-consent | — |
 | `auth-login` | POST | _(router submodule)_ | — |
 | `auth-me` | GET | _(router submodule)_ | — |
-| `auth-reset-password` | POST | _(router submodule)_ | — |
 | `cache` | — | _(router submodule)_ | — |
-| `calc-readiness` | GET, POST | _(router submodule)_ | training_sessions, daily_wellness_checkin, v_athlete_schedule, readiness_scores, team_members |
+| `calc-readiness` | GET, POST | _(router submodule)_ | v_athlete_schedule, training_sessions, daily_wellness_checkin, readiness_scores |
 | `calibration-logs` | GET, POST | /api/calibration-logs<br>/api/calibration-logs/* | calibration_logs, team_members |
 | `chat` | GET, POST, PATCH, DELETE | _(router submodule)_ | team_members, channels, channel_members, chat_messages |
 | `coach` | OPTIONS | /api/coach-activity/*<br>/api/coach-activity<br>/api/coach/*<br>/api/coach<br>/api/coach-alerts/*<br>/api/coach-alerts<br>/api/coach-inbox/*<br>/api/coach-inbox<br>/api/coach-analytics/*<br>/api/coach-analytics<br>/api/coach/calendar/*<br>/api/coach/calendar<br>/api/film-room/*<br>/api/film-room<br>/api/playbook/*<br>/api/playbook | — |
 | `coach-activity` | GET, POST | _(router submodule)_ | team_members, coach_activity_log |
 | `coach-alerts` | POST, OPTIONS | _(router submodule)_ | daily_protocols, coach_alert_acknowledgments |
 | `coach-analytics` | GET, POST | _(router submodule)_ | team_members, ai_messages, micro_sessions, ai_response_feedback, compute_coach_analytics() |
-| `coach-core` | GET, POST, PUT, DELETE | _(router submodule)_ | team_members, notifications, users, training_sessions, games, team_events |
+| `coach-core` | GET, POST, PUT, DELETE | _(router submodule)_ | team_members, notifications, users, readiness_scores, training_sessions, games, team_events |
 | `coach-inbox` | GET, PATCH, POST | _(router submodule)_ | team_members, coach_inbox_items, users, ai_messages, teams |
 | `community` | GET, POST, DELETE | _(router submodule)_ | posts, team_members, blocked_users, post_likes, post_bookmarks, post_comments, comment_likes, trending_topics, community_polls, community_poll_options, community_poll_votes, decrement_likes_count(), increment_likes_count(), increment_comments_count(), decrement_comment_likes_count(), increment_comment_likes_count(), increment_poll_votes() |
-| `compute-acwr` | POST | _(router submodule)_ | training_sessions, team_members |
+| `compute-acwr` | POST | _(router submodule)_ | training_sessions |
 | `daily-protocol` | GET, POST | /api/daily-protocol<br>/api/daily-protocol/* | exercises, athlete_training_config, users, age_recovery_modifiers, player_programs, training_phases, training_weeks, readiness_scores, daily_protocols, protocol_exercises, daily_wellness_checkin, training_sessions, team_members, notifications, player_training_stats, get_athlete_readiness(), compute_acwr(), update_player_streak(), award_achievement() |
 | `daily-training` | GET, POST | _(router submodule)_ | users, training_sessions, games, plyometrics_exercises, isometrics_exercises |
 | `dashboard` | GET | /api/dashboard/*<br>/api/dashboard<br>/api/dashboard/overview | training_sessions, team_members |
@@ -73,7 +72,7 @@
 | `performance-metrics` | GET | _(router submodule)_ | training_sessions, performance_tests |
 | `player-programs` | GET, POST, PUT | _(router submodule)_ | player_programs, training_programs |
 | `player-settings` | GET, POST | _(router submodule)_ | athlete_training_config, users, age_recovery_modifiers |
-| `player-stats` | GET | _(router submodule)_ | games, game_events, team_members |
+| `player-stats` | GET | _(router submodule)_ | games, game_events |
 | `plyometrics` | GET | _(router submodule)_ | plyometrics_exercises |
 | `privacy-settings` | GET, PUT | _(router submodule)_ | privacy_settings, team_sharing_settings, users, parental_consent, team_members, privacy_audit_log |
 | `programs` | OPTIONS | /api/decisions/*<br>/api/decisions<br>/api/player-programs<br>/api/player-programs/*<br>/api/program-cycles<br>/api/program-cycles/*<br>/api/micro-sessions/*<br>/api/micro-sessions | — |
@@ -88,7 +87,7 @@
 | `schedule` | GET | /api/schedule/*<br>/api/schedule | v_athlete_schedule, athlete_events |
 | `season-archive` | POST | _(router submodule)_ | archive_season_data() |
 | `sleep-data` | GET | _(router submodule)_ | users, daily_wellness_checkin |
-| `smart-training-recommendations` | GET, POST | _(router submodule)_ | training_sessions, v_athlete_schedule, v_injuries_unified, daily_wellness_checkin, training_programs, team_members |
+| `smart-training-recommendations` | GET, POST | _(router submodule)_ | training_sessions, v_athlete_schedule, v_injuries_unified, daily_wellness_checkin, player_programs, team_members |
 | `social` | OPTIONS | /api/chat/*<br>/api/chat<br>/api/community/* | — |
 | `sponsor-logo` | GET | _(router submodule)_ | — |
 | `sponsors` | GET | _(router submodule)_ | — |
@@ -103,20 +102,20 @@
 | `team-templates` | GET, POST, PATCH, DELETE | _(router submodule)_ | team_members, team_templates, coach_inbox_items, ai_messages, micro_sessions, template_assignments |
 | `training` | OPTIONS | /api/training/sessions<br>/api/training-sessions<br>/api/training/sessions/*<br>/api/training-sessions/*<br>/api/training/complete<br>/api/training/complete/*<br>/api/training/suggestions<br>/api/training/suggestions/*<br>/api/training-metrics<br>/api/training-plan<br>/api/training-plan/*<br>/api/training/plan<br>/api/training/plan/*<br>/api/training/stats<br>/api/training/stats-enhanced<br>/api/training-programs<br>/api/training-programs/*<br>/api/smart-training<br>/api/smart-training/*<br>/api/training/programs<br>/api/training/programs/*<br>/api/daily-training<br>/api/daily-training/* | — |
 | `training-complete` | POST | _(router submodule)_ | notifications, training_sessions, complete_training_session() |
-| `training-metrics` | GET | _(router submodule)_ | training_sessions, team_members |
-| `training-plan` | GET | _(router submodule)_ | training_sessions, training_programs, team_members, games |
+| `training-metrics` | GET | _(router submodule)_ | training_sessions |
+| `training-plan` | GET | _(router submodule)_ | training_sessions, player_programs, team_members, games |
 | `training-programs` | GET | _(router submodule)_ | training_programs, training_weeks, training_session_templates, movement_patterns, warmup_protocols, training_phases, session_exercises |
-| `training-sessions` | GET, POST, PUT, DELETE | _(router submodule)_ | team_members, training_sessions |
+| `training-sessions` | GET, POST, PUT, DELETE | _(router submodule)_ | training_sessions |
 | `training-stats-enhanced` | GET | _(router submodule)_ | training_sessions |
 | `training-suggestions` | GET, POST | _(router submodule)_ | training_sessions |
 | `trends` | GET | /api/trends/*<br>/api/trends | training_sessions, games |
-| `upload` | POST, DELETE | /api/upload<br>/api/upload/* | community-media _(bucket)_ |
+| `upload` | POST, DELETE | /api/upload<br>/api/upload/* | — |
 | `user-context` | GET | _(router submodule)_ | users, v_injuries_unified, training_sessions, daily_wellness_checkin, supplement_logs, team_members |
 | `user-profile` | OPTIONS | /api/user/context<br>/api/user-context<br>/api/user/context/*<br>/api/user-context/*<br>/api/user/profile<br>/api/user-profile<br>/api/user/profile/*<br>/api/user-profile/*<br>/api/privacy-settings/*<br>/api/privacy-settings<br>/api/parent-dashboard/*<br>/api/parent-dashboard | — |
 | `user-profile-core` | GET, PUT | _(router submodule)_ | users, athlete_injuries, training_sessions |
 | `validate-invitation` | GET | _(router submodule)_ | team_invitations |
 | `wearables` | GET | _(router submodule)_ | — |
-| `weather` | GET | /api/weather/current<br>/api/weather/* | — |
+| `weather` | GET | /api/weather/current<br>/api/weather/* | team_members |
 | `wellness` | OPTIONS | /api/sleep-data<br>/api/nutrition/*<br>/api/wellness/checkin<br>/api/wellness/checkin/*<br>/api/wellness/*<br>/api/hydration<br>/api/hydration/*<br>/api/wellness-checkin<br>/api/wellness-checkin/* | — |
 | `wellness-checkin` | GET, POST | _(router submodule)_ | users, daily_wellness_checkin, recovery_blocks, notifications, team_members, ownership_transitions, shared_insights, event_availability, competition_events, nutrition_logs, player_streaks, upsert_wellness_checkin(), update_player_streak(), award_achievement() |
 | `wellness-logs` | GET, POST | _(router submodule)_ | daily_wellness_checkin |

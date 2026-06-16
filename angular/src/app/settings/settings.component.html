@@ -117,11 +117,11 @@
   <div class="card">
     <button type="button" class="lrow" style="width:100%;background:none;border:0;cursor:pointer;text-align:left;color:inherit;font:inherit"
             [attr.aria-disabled]="accountBusy()" (click)="changePassword()">
-      <span>{{ accountBusy() ? "Working…" : "Change password" }}</span><span class="faint">›</span>
+      <span>{{ accountBusy() ? "Working…" : "Change password" }}</span><lucide-icon name="chevron-right" class="faint" />
     </button>
     <button type="button" class="lrow" style="width:100%;background:none;border:0;cursor:pointer;text-align:left;color:inherit;font:inherit"
             [attr.aria-disabled]="accountBusy()" (click)="confirmingDelete.set(!confirmingDelete())">
-      <span style="color:var(--danger)">Delete account &amp; data</span><span class="faint">›</span>
+      <span style="color:var(--danger)">Delete account &amp; data</span><lucide-icon name="chevron-right" class="faint" />
     </button>
   </div>
 

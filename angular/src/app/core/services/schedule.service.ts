@@ -209,20 +209,13 @@ export function resolvePhase(ctx: PhaseContext): CompetitionPhase {
     if (date >= startsAt && date <= endsAt) {
       return "competition";
     }
-    if (date < startsAt) {
-      const hoursUntil = (startsAt.getTime() - date.getTime()) / 3_600_000;
-      const taperWindow =
-        next.importance === "peak"
-          ? HOURS_TAPER_PEAK
-          : next.importance === "high"
-            ? HOURS_TAPER_HIGH
-            : HOURS_TAPER_REGULAR;
-      if (hoursUntil <= taperWindow) {
-        return "taper";
-      }
-    }
   }
 
+  // Post-event recovery takes precedence over an upcoming taper window. A
+  // heavy weekend's fatigue must clear before "sharp, not heavy" taper framing
+  // makes sense — even if the next event is already close enough to taper for
+  // (e.g. games on the weekend + a peak event ~6 days out both apply on the
+  // Monday after; recovery wins so the day reads as the off/easy day it is).
   if (lastEvent) {
     const ended = new Date(lastEvent.endsAt ?? lastEvent.startsAt);
     if (ended <= date) {
@@ -236,6 +229,20 @@ export function resolvePhase(ctx: PhaseContext): CompetitionPhase {
       if (hoursSince <= recoveryWindow) {
         return "recovery";
       }
+    }
+  }
+
+  if (next && date < new Date(next.startsAt)) {
+    const startsAt = new Date(next.startsAt);
+    const hoursUntil = (startsAt.getTime() - date.getTime()) / 3_600_000;
+    const taperWindow =
+      next.importance === "peak"
+        ? HOURS_TAPER_PEAK
+        : next.importance === "high"
+          ? HOURS_TAPER_HIGH
+          : HOURS_TAPER_REGULAR;
+    if (hoursUntil <= taperWindow) {
+      return "taper";
     }
   }
 

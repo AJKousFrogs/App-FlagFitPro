@@ -1,40 +1,49 @@
 # Angular Testing Checklist
 
-Use this checklist for workspace-level verification after meaningful Angular changes.
+Use this after meaningful Angular changes. Commands marked **(root)** run from the repo root; the rest run from `angular/`.
 
 ## Minimum Verification
 
-- [ ] `npm run type-check`
-- [ ] `npm run lint`
-- [ ] `npm run build`
+- [ ] `npm run type-check` — TypeScript (no emit)
+- [ ] `npm run lint` — ESLint
+- [ ] `npm run build` — production build
 
 ## UI And Styling Changes
 
-- [ ] `npm run lint:css`
-- [ ] `npm run lint:tokens`
-- [ ] `npm run audit:scss-duplications`
-- [ ] validate affected screens in the browser
+Run from repo root:
+
+- [ ] `npm run lint:css` — Stylelint (errors block CI)
+- [ ] `npm run lint:tokens` — token usage audit
+- [ ] `npm run audit:scss-duplications` — SCSS duplication check
+- [ ] Validate affected screens in the browser
 
 ## Routing Or Navigation Changes
 
-- [ ] smoke test the changed routes
-- [ ] verify route metadata still drives shell/header behavior correctly
-- [ ] confirm there are no full page reloads for internal navigation
+- [ ] Smoke-test the changed routes end-to-end
+- [ ] Verify route metadata still drives shell/header correctly
+- [ ] Confirm no full page reloads for internal navigation
 
-## PrimeNG Or Design System Changes
+## Design System Changes
 
-- [ ] verify shared wrappers still render correctly
-- [ ] check responsive behavior on mobile and desktop
-- [ ] confirm no new raw token drift or `.p-*` leakage was introduced
+- [ ] Verify `_tokens.scss` custom properties still resolve (no undefined `var(--…)`)
+- [ ] Check responsive behavior on mobile and desktop
+- [ ] Run `npm run lint:css` (root) to catch new token drift
 
 ## Test Commands
 
 ```bash
+# From angular/
 npm run type-check
 npm run lint
 npm run build
-cd angular && npm run test
-cd angular && npm run e2e:smoke
+npm run test
+npm run e2e:smoke
+
+# From repo root
+npm run lint:css
+npm run lint:tokens
+npm run audit:scss-duplications
+npm run test:unit:backend   # backend Vitest suite (4756 tests)
 ```
 
-Use the stricter E2E or visual commands only when the change needs them.
+Use the stricter E2E suites (`e2e:critical`, `e2e:navigation`, `e2e:visual`) only when the change needs them — see [`e2e/README.md`](./e2e/README.md).

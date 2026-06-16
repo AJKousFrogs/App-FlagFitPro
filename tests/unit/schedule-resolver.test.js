@@ -160,20 +160,21 @@ describe("netlify resolvePhase", () => {
       expect(netlifyResolvePhase(now, [inEvent], last)).toBe("competition");
     });
 
-    it("upcoming taper beats a recent peak recovery", () => {
-      // Next: regular event 1 day out → taper window
+    it("a recent peak recovery beats an upcoming taper", () => {
+      // Next: regular event 1 day out → would be taper window
       const next = event({
         startsAt: new Date(now.getTime() + 1 * ONE_DAY_MS),
         importance: "regular",
       });
-      // Last: peak ended 1 day ago → would be recovery
+      // Last: peak ended 1 day ago → within the 4-day peak recovery window
       const last = event({
         startsAt: new Date(now.getTime() - 2 * ONE_DAY_MS),
         endsAt: new Date(now.getTime() - 1 * ONE_DAY_MS),
         importance: "peak",
       });
-      // Taper takes priority because the upcoming game is closer than recovery resolution
-      expect(netlifyResolvePhase(now, [next], last)).toBe("taper");
+      // Recovery takes priority: a heavy weekend's fatigue must clear before
+      // "sharp, not heavy" taper framing makes sense for the next game.
+      expect(netlifyResolvePhase(now, [next], last)).toBe("recovery");
     });
   });
 

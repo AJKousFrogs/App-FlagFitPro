@@ -111,6 +111,7 @@ export class TodayComponent {
     if (!rx) return null;
     if (this.weather()?.applied) return { label: "weather-adjusted", cls: "caution" };
     if (rx.recoveryEmphasis === "critical") return { label: "recover", cls: "danger" };
+    if (rx.recoveryEmphasis === "high") return { label: "recover", cls: "caution" };
     if (rx.intent === "competition") return { label: "game day", cls: "info" };
     return { label: "today", cls: "good" };
   });

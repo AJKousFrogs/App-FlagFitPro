@@ -32,7 +32,7 @@ Use standard browser tools first:
 - Angular DevTools for component tree, signals, and router state
 - Network tab for failed API and asset requests
 - Console for runtime errors and warnings
-- Elements panel for PrimeNG markup and CSS token inspection
+- Elements panel for component DOM structure and CSS token inspection
 
 ## Angular-Specific Debugging
 
@@ -47,7 +47,7 @@ Focus on these locations:
 
 ### Route Problems
 
-- inspect route metadata in `src/app/core/routes/groups/`
+- inspect route definitions in `src/app/core/routes/feature-routes.ts`
 - confirm the active route matches shell expectations
 - verify guards return `UrlTree`s and do not navigate imperatively where avoidable
 
@@ -55,8 +55,7 @@ Focus on these locations:
 
 - run `npm run lint`
 - run `npm run type-check`
-- inspect PrimeNG wrappers before editing `.p-*` selectors directly
-- prefer shared primitives and wrappers over one-off overrides
+- prefer shared primitives from `src/scss/system/_system.scss` over one-off overrides
 
 ### Styling Problems
 
@@ -88,4 +87,4 @@ If this guide conflicts with the code:
 
 1. trust the code
 2. update this guide
-3. update [../docs/DOCS_INDEX.md](../docs/DOCS_INDEX.md) if doc ownership changed
+3. update [../docs/SOURCE_OF_TRUTH.md](../docs/SOURCE_OF_TRUTH.md) if the issue is broader than this file

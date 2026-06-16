@@ -9,19 +9,19 @@
 - Raw inventories: [`docs/ground-truth/`](ground-truth/)
 
 Regenerate the generated sections: `npm run docs:regen` (see §8).
-Verified against live: **2026-06-09** — 177 tables, 7 views, 123 functions, 28 core services, 146 applied migrations.
+Verified against live: **2026-06-09** — 177 tables, 7 views, 111 functions, 29 core services, 146 applied migrations.
 
 ---
 
 ## 1. System Map
 
-**Stack.** Angular 22 (standalone, zoneless, signals; NO PrimeNG — the static-first rebuild removed it) → built by Netlify → Supabase (Postgres + Auth + Realtime + Storage). API is **Netlify Functions** under `netlify/functions/*.js`, exposed at `/api/*` via `netlify.toml` redirects. Functions use the **ESM** `export const handler` signature (not `exports.handler`) and the shared service-role client in `netlify/functions/supabase-client.js`. There is **no `angular/src/app/features/` directory** — feature screens are direct children of `angular/src/app/` (today, wellness, training, stats, schedule, competition, roster, settings, onboarding, …). Routing: `app/app.routes.ts` + `app/core/routes/feature-routes.ts`.
+**Stack.** Angular 21 (standalone, zoneless, signals; NO PrimeNG — the static-first rebuild removed it) → built by Netlify → Supabase (Postgres + Auth + Realtime + Storage). API is **Netlify Functions** under `netlify/functions/*.js`, exposed at `/api/*` via `netlify.toml` redirects. Functions use the **ESM** `export const handler` signature (not `exports.handler`) and the shared service-role client in `netlify/functions/supabase-client.js`. There is **no `angular/src/app/features/` directory** — feature screens are direct children of `angular/src/app/` (today, wellness, training, stats, schedule, competition, roster, settings, onboarding, …). Routing: `app/app.routes.ts` + `app/core/routes/feature-routes.ts`.
 
 **Engine (server-canonical).** Readiness, ACWR/load, and the daily prescription are computed server-side and read-through by the client — the UI renders, never re-derives. Readiness: `netlify/functions/calc-readiness.js` → `readiness_scores`. ACWR: `compute-acwr.js` + `utils/acwr.js` (21-day chronic EWMA) over `training_sessions`. Schedule spine: `v_athlete_schedule` (union across team memberships + athlete-entered `athlete_events`).
 
 **Lanes.** `/api/coach-*` and `/api/staff-*` (nutritionist/physiotherapist/psychology) are role-gated staff lanes; most athlete features hit the un-prefixed lanes. Many functions are **routers** that delegate to sub-modules via ESM import (e.g. `social.js` → `chat.js`/`community.js`; `training.js` → `training-*`); sub-modules have no own `/api` redirect but are reachable through the parent.
 
-**Realtime.** `core/services/realtime.service.ts` is the central `postgres_changes` manager (subscribes `training_sessions`, `daily_wellness_checkin`, `readiness_scores`, `chat_messages`, `channels`, `notifications`, `team_members`, `coach_activity_log`, `games`). `acwr.service` also subscribes `training_sessions`; `channel.service` delegates to `realtime.service`. (Realtime only fires for tables in the `supabase_realtime` publication — verify before relying on it.)
+**Realtime.** `core/services/realtime.service.ts` is the central `postgres_changes` manager (subscribes `training_sessions`, `daily_wellness_checkin`, `readiness_scores`, `chat_messages`, `channels`, `notifications`, `team_members`, `coach_activity_log`, `games`, `messages`, `performance_metrics`). `acwr.service` also subscribes `training_sessions`; `channel.service` delegates to `realtime.service`. (Realtime only fires for tables in the `supabase_realtime` publication — verify before relying on it.)
 
 **Auth.** Supabase Auth, localStorage + Bearer token (NOT cookies; no CSRF tokens). The route guard `core/guards/auth.guard.ts` is **config-gated** by `environment.auth.required` — open in dev/smoke, enforcing in prod. Only two guards exist: `auth.guard.ts`, `staff.guard.ts`.
 
@@ -35,7 +35,7 @@ Generated, exact live names/columns/nullability, with which endpoints touch each
 
 ## 3. Endpoint Reference
 
-Generated, every route with method / `/api` path / tables-and-RPCs touched / EXERCISED|ORPHANED: **[`docs/generated/ENDPOINTS.md`](generated/ENDPOINTS.md)**. 123 functions. Orphaned endpoints stay listed so nobody rebuilds them. Table refs marked ⚠️ are queried by code but absent from live schema (they error at runtime — see §6).
+Generated, every route with method / `/api` path / tables-and-RPCs touched / EXERCISED|ORPHANED: **[`docs/generated/ENDPOINTS.md`](generated/ENDPOINTS.md)**. 111 functions (110 exercised, 1 orphaned: `exercisedb`). Orphaned endpoints stay listed so nobody rebuilds them. Table refs marked ⚠️ are queried by code but absent from live schema (they error at runtime — see §6).
 
 ---
 
@@ -62,9 +62,9 @@ Status: **LIVE** (wired end-to-end, tables exist) · **PARTIAL** (works but with
 | Notifications / push | LIVE | `notifications.js`, `push.js` → `notifications`, `push_subscriptions` | — |
 | Knowledge base / search | LIVE | `knowledge*.js` → `knowledge_base_entries`, `knowledge_search_index`, `research_articles` | — |
 | Roster / team management | LIVE | `roster.js` → `teams`, `team_members`, `roster_audit_log` | — |
-| Coach suite (activity/inbox/analytics/film) | PARTIAL | `coach-*.js` → `coach_*` tables (exist) | Some analytics query `team_chemistry`/`game_stats` (absent) |
+| Coach suite (activity/inbox/analytics/film) | PARTIAL | `coach-*.js` → `coach_*` tables (exist) | `dashboard.js` + `analytics-core.js` reference `team_chemistry`; `data-export.js` + `games-core.js` reference `game_stats` — both absent, runtime errors |
 | Nutrition | PARTIAL | `nutrition.js` → `nutrition_logs/_plans/_reports`, `meal_templates` (exist); `usda_foods` (absent) | Food-search lane references `usda_foods` (GHOST) |
-| Equipment | GHOST | `equipment.js` → `equipment_items`, `equipment_assignments` | Tables don't exist → runtime errors |
+| Equipment | GHOST | `equipment.js` (handler file not built) | Tables `equipment_items`/`equipment_assignments` don't exist; handler file itself never created |
 | Officials | GHOST | `officials.js` → `officials`, `game_officials`, `official_availability` | Tables don't exist |
 | Depth chart | GHOST | `depth-chart.js` → `depth_chart_templates/_entries/_history` | Tables don't exist |
 | Program cycles | GHOST | `program-cycles.js` → `program_cycles`, `player_program_cycles` | Tables don't exist; `player_programs` does |
@@ -113,10 +113,12 @@ Reference implementations: the wellness check-in prefill `effect()` and `profile
 
 Sourced from §0 inventories + [`RECONCILIATION.md`](generated/RECONCILIATION.md). Unfixed:
 
+> **Deferred feature-port bugs:** code↔schema mismatches that need a product decision — not safe to fix mechanically. Tracked in [`../redesign/PORT_BUG_REGISTER.md`](../redesign/PORT_BUG_REGISTER.md). Resolve each when its feature is rebuilt (don't ship a screen over a known-broken data path).
+
 - **Ghost-table endpoints (TRUE-BUT-BUGGY).** ~40 `.from()`/`.rpc()` references in functions hit tables absent from live: equipment (`equipment_items/_assignments`), officials (`officials/game_officials/official_availability`), depth-chart (`depth_chart_*`), nutrition (`usda_foods`), `program_cycles`, `seasons`/`season_summary_reports`, `scouting_reports`, `team_chemistry`, `game_stats`, `load_daily`, `acwr_history`, `injury_tracking`, `rehab_protocols`, `sponsor_rewards`, `wellness_checkins`, `athlete_performance_tests`, `research_*`, etc. These error at runtime. Either build the table or retire the lane — track in the Ledger, don't silently rebuild.
 - ~~**Privacy consent-view bug.** `privacy-settings.service.ts` read `v_workout_logs_consent` / `v_load_monitoring_consent` (non-existent).~~ **Fixed 2026-06-09** — both `getConsentAware{LoadMonitoring,WorkoutLogs}` methods were dead (zero callers, dormant since the UI was removed) and queried dropped views; deleted. If consent-aware load/session reads are rebuilt, use the live `v_training_sessions_consent`.
 - **`supabase-types.ts` is stale** (37 dropped tables still present, 15 live tables missing). Regenerate.
-- **Two migration directories.** `database/migrations/` (171 files) is **100% legacy/unapplied** — 0 overlap with applied history; `supabase/migrations/` (194 files) tracks live (146 applied). Do not add new migrations to `database/migrations/`. Applied tracked-versions also diverge from `supabase/migrations` filename timestamps in 4 recent cases (e.g. applied `athlete_personal_events` = `20260609100045` vs file `20260609120000_…`).
+- **Two migration directories.** `database/migrations/` (171 files) is **100% legacy/unapplied** — 0 overlap with applied history; `supabase/migrations/` (202 files) tracks live (146 applied). Do not add new migrations to `database/migrations/`. Applied tracked-versions also diverge from `supabase/migrations` filename timestamps in 4 recent cases (e.g. applied `athlete_personal_events` = `20260609100045` vs file `20260609120000_…`).
 - **Committed secrets.** Old `BACKEND_SETUP`/`LOCAL_DEVELOPMENT` docs contained real-looking Supabase JWTs (now deleted with those docs) — rotate if they were ever real.
 - **Auth leaked-password (HIBP) advisor** is unresolved unless the native GoTrue setting is enabled (see §7 auth hardening).
 - **2026-06-09 audit — resolved same day** (cross-team session mutation fix: see Ledger):
@@ -154,7 +156,7 @@ Sourced from §0 inventories + [`RECONCILIATION.md`](generated/RECONCILIATION.md
 
 ## 7. Runbooks & Security (operational — folded from the old RUNBOOKS, stale traps fixed)
 
-Canonical: health = `/api/health`; env var = `SUPABASE_SERVICE_ROLE_KEY` (not `SUPABASE_SERVICE_KEY`); project ref `grfjmnjpzvknmsxrwesx`. `workout_logs` no longer exists — never reference it in ops queries.
+Canonical: health = `/api/health`; env vars = `SUPABASE_SERVICE_KEY` (primary) **or** `SUPABASE_SERVICE_ROLE_KEY` (fallback) — code checks both via `||` in `supabase-client.js`; set either one; project ref `grfjmnjpzvknmsxrwesx`. `workout_logs` no longer exists — never reference it in ops queries.
 
 **Health / triage.** `curl -s https://<site>/api/health | jq` → expect `{status:"healthy"}`; `degraded`=investigate, `unhealthy`=incident. Logs: `netlify logs:function <name> --last 50`, `netlify logs:build`. Severity: SEV-1 outage <15m, SEV-2 major feature <1h, SEV-3 degraded <4h, SEV-4 cosmetic next-day.
 

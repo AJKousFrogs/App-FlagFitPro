@@ -1,8 +1,8 @@
 # Service Inventory (angular/src/app/core/services)
 
-Last verified: 2026-06-09
+Last verified: 2026-06-12
 
-**Count: 28 services** (excludes `*.spec.ts` and `*.mock.ts`; `logger.service.ts` is a re-export barrel for `@core/logging/logger.service`).
+**Count: 29 services** (excludes `*.spec.ts` and `*.mock.ts`; `logger.service.ts` is a re-export barrel for `@core/logging/logger.service`).
 
 Grouped into: auth/identity, training/load/ACWR/readiness, wellness/recovery/injury, schedule, communication/realtime, and infra/logging/telemetry.
 

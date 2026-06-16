@@ -66,8 +66,13 @@ const MODALITIES: ModalityRule[] = [
     id: "massage_gun",
     label: "Massage gun",
     equipment: "massage_gun",
-    when: (c) => c.tightnessRegions.length > 0 || c.highLoad,
-    reason: (c) => (c.tightnessRegions.length ? `localized: ${c.tightnessRegions.join(", ")}` : "post-session release"),
+    when: (c) => c.tightnessRegions.length > 0 || c.highLoad || c.congestedFixtures,
+    reason: (c) =>
+      c.tightnessRegions.length
+        ? `localized: ${c.tightnessRegions.join(", ")}`
+        : c.congestedFixtures
+          ? "after a congested run of games — work out the accumulated soreness"
+          : "post-session release",
   },
   {
     id: "massage_knife",

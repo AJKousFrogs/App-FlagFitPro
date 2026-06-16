@@ -1,145 +1,96 @@
 # Scripts Directory
 
-This directory contains utility scripts for the FlagFit Pro application.
+Utility and tooling scripts for FlagFit Pro. All `npm run` commands below execute from the repo root.
 
-## Database Seeding Scripts
+## Development
 
-Run these via npm commands from the project root:
+| Command | Description |
+|---|---|
+| `npm run dev` | Netlify Dev — Angular app + local functions |
+| `npm run dev:angular-only` | Angular only (no functions) |
+| `npm run build` | Production build |
 
-| Command                               | Description                                           |
-| ------------------------------------- | ----------------------------------------------------- |
-| `npm run seed:isometrics`             | Seed isometric training exercises database            |
-| `npm run seed:plyometrics`            | Seed plyometrics research (Verkhoshansky methodology) |
-| `npm run seed:hydration`              | Seed hydration research studies                       |
-| `npm run seed:supplements`            | Seed supplement research data                         |
-| `npm run seed:competition`            | Seed competition protocols (European Championships)   |
-| `npm run seed:nutrition`              | Seed nutrition system data                            |
-| `npm run seed:recovery`               | Seed recovery protocols                               |
-| `npm run seed:wada`                   | Seed WADA prohibited substances list                  |
-| `npm run seed:training`               | Seed enhanced training categories                     |
-| `npm run seed:weather`                | Seed weather-based training protocols                 |
-| `npm run seed:communication`          | Seed communication training data                      |
-| `npm run seed:research`               | Seed evidence-based research database                 |
-| `npm run seed:research:advanced`      | Seed advanced 2025 research data                      |
-| `npm run seed:research:comprehensive` | Seed comprehensive research database                  |
-| `npm run seed:heat-travel`            | Seed heat treatment & travel recovery protocols       |
-| `npm run seed:dashboard`              | Seed dashboard sample data                            |
-| `npm run seed:all`                    | Run all core seeding scripts                          |
+## Testing
+
+| Command | Description |
+|---|---|
+| `npm run test:unit:backend` | Vitest backend unit suite (406 files / 4756 tests) |
+| `npm run test:unit` | Angular Vitest suite |
+| `npm run test:e2e` | Playwright E2E |
+| `npm run test:e2e:smoke` | Playwright smoke suite |
+| `npm run test:e2e:critical` | Playwright critical paths |
+| `npm run test:privacy` | Privacy/consent regression tests |
+| `npm run test:acwr` | ACWR calculation tests |
+| `npm run test:contracts` | API contract tests |
+| `npm run test:all` | All suites |
+
+## Linting & Audits
+
+| Command | Description |
+|---|---|
+| `npm run lint` | Angular ESLint |
+| `npm run lint:tooling` | ESLint on scripts/ + netlify/functions/ |
+| `npm run lint:css` | Stylelint |
+| `npm run lint:tokens` | Design token usage audit |
+| `npm run audit:error-shapes` | Error-shape contract audit (CI gate) |
+| `npm run audit:routes` | Route classification audit |
+| `npm run audit:api-contracts` | API contract audit |
+| `npm run audit:rls-boundaries` | RLS boundary audit |
+| `npm run audit:security` | Security audit |
+| `npm run audit:scss-duplications` | SCSS duplication check |
+| `npm run type-check` | Root TypeScript check (scripts/, supabase-types.ts) |
+
+## Database Seeding
+
+| Command | Description |
+|---|---|
+| `npm run seed:all` | Run all core seed scripts |
+| `npm run seed:isometrics` | Isometric training exercises |
+| `npm run seed:plyometrics` | Plyometrics research (Verkhoshansky) |
+| `npm run seed:hydration` | Hydration research studies |
+| `npm run seed:supplements` | Supplement research data |
+| `npm run seed:competition` | Competition protocols |
+| `npm run seed:nutrition` | Nutrition system data |
+| `npm run seed:recovery` | Recovery protocols |
+| `npm run seed:wada` | WADA prohibited substances |
+| `npm run seed:training` | Training categories |
 
 ## Database Utilities
 
-| Command             | Description                   |
-| ------------------- | ----------------------------- |
-| `npm run db:audit`  | Run database audit            |
-| `npm run db:tables` | List all Supabase tables      |
-| `npm run verify:db` | Verify database objects exist |
+| Command | Description |
+|---|---|
+| `npm run db:audit` | Database audit |
+| `npm run db:tables` | List all Supabase tables |
+| `npm run verify:db` | Verify database objects |
+| `npm run verify:supabase` | Supabase connection check |
 
-## Migration Scripts
+## Docs
 
-**Canonical approach:** `npm run migrate:quickstart`
+| Command | Description |
+|---|---|
+| `npm run docs:regen` | Regenerate `docs/generated/` from live schema snapshot |
 
-| Script | Purpose |
-|--------|---------|
-| `migration-quickstart.sh` | Interactive setup: .env, verify connection, run migrations, data migration |
-| `run-all-migrations-supabase.sh` | Run all SQL from canonical `supabase/migrations/` via psql (optional legacy mode available) |
-| `apply-migration.js` | Apply a single migration file: `node scripts/apply-migration.js supabase/migrations/XXX.sql` |
-| `migrate-supabase-data.js` | Migrate data from old Supabase project (`npm run migrate:data`) |
-| `open-supabase-sql-editor.sh` | Open Supabase SQL Editor; consolidated bundle is generated (not committed) via `node scripts/run-migrations-via-api.js` → `database/migration_results/all_migrations_consolidated.sql` |
+## Diagnostics & Health
 
-## Diagnostics & Health Checks
+| Command | Description |
+|---|---|
+| `npm run diagnostics` | Diagnostic system |
+| `npm run diagnostics:health` | Comprehensive health check |
+| `npm run health:check` | Health check |
+| `npm run perf:validate` | Performance validation |
+| `npm run check:consent` | Consent violation check |
 
-| Command                        | Description                |
-| ------------------------------ | -------------------------- |
-| `npm run diagnostics`          | Run diagnostic system      |
-| `npm run diagnostics:health`   | Comprehensive health check |
-| `npm run diagnostics:features` | Validate features          |
-| `npm run health:check`         | Run health check           |
+## Key Script Files
 
-## Testing Scripts
+| File | Purpose |
+|---|---|
+| `docs-regen.mjs` | Regenerates `docs/generated/` — run via `npm run docs:regen` |
+| `audit-error-shape-contracts.js` | CI gate: classifies all handlers as standardized or legacy |
+| `build-css.js` | CSS processing for the build |
+| `inject-env-into-html-angular.js` | Environment injection into Angular build output (Netlify deploy) |
+| `fix-jws-vulnerability.js` | JWS security fix (runs on `postinstall`) |
 
-| Command                 | Description                  |
-| ----------------------- | ---------------------------- |
-| `npm run test`          | Run Angular unit tests       |
-| `npm run test:e2e`      | Run Playwright E2E tests     |
-| `npm run test:privacy`  | Run privacy safety tests     |
-| `npm run perf:validate` | Performance validation       |
-| `npm run check:consent` | Check for consent violations |
+## Requirements
 
-## Build & Development
-
-| Command            | Description                        |
-| ------------------ | ---------------------------------- |
-| `npm run dev`      | Start Angular development server   |
-| `npm run dev:full` | Start both API and Angular servers |
-| `npm run build`    | Build for production               |
-| `npm run lint`     | Run ESLint                         |
-| `npm run lint:fix` | Fix linting issues                 |
-
-## Direct Script Files
-
-### Validation & Auditing
-
-- `verify-db-objects.js` - Verify database objects
-- `check-consent-violations.js` - Check GDPR consent violations
-- `performance-validation.js` - Performance benchmarks
-- `database-audit.js` - Database audit utility
-- `comprehensiveDatabaseAudit.js` - Comprehensive DB audit
-- `check-acwr-consistency.js` - ACWR (Acute:Chronic Workload Ratio) consistency
-- `audit-routes.js` - Route entry classification audit
-
-### Testing
-
-- `test-automation.js` - Automated testing suite
-- `test-all-api-endpoints.js` - API endpoint tests
-- `test-hydration-system.js` - Hydration system tests
-- `test-supabase-connection.js` - Supabase connection test
-
-### Build Tools
-
-- `build-css.js` - CSS processing
-- `build-angular.sh` - Angular build script
-- `inject-env-into-html-angular.js` - Environment injection for Angular build output (used in Netlify deploy)
-
-### Utilities
-
-- `update-packages.js` - Package update helper
-- `fix-jws-vulnerability.js` - JWS security fix (runs on postinstall)
-- `clear-service-worker.js` - Clear service worker cache
-- `setup-local-env.js` - Local environment setup
-
-### Code Quality
-
-- `fix-duplicate-imports.js` - Fix duplicate imports (one-time fix; archive after applied)
-- `fix-logger-errors.js` - Fix logger-related errors (one-time fix; archive after applied)
-- `fix-trailing-newlines.js` - Fix trailing newlines (one-time fix; archive after applied)
-- `add-security-headers.js` - Add security headers
-
-### Wireframe Processing
-
-- `process-knowledge-base.js` - Knowledge base processing
-
-### Component Updates
-
-## Environment Requirements
-
-Most scripts require:
-
-- `DATABASE_URL` - PostgreSQL connection string (Supabase)
-- Node.js 20+
-- npm 10+
-
-## Usage Examples
-
-```bash
-# Seed all core databases
-npm run seed:all
-
-# Run a single seed script
-npm run seed:hydration
-
-# Verify database is properly set up
-npm run verify:db
-
-# Run comprehensive health check
-npm run diagnostics:health
-```
+- Node.js 22+
+- `SUPABASE_SERVICE_KEY` (or `SUPABASE_SERVICE_ROLE_KEY`) and `DATABASE_URL` for DB-touching scripts

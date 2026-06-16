@@ -2,7 +2,7 @@
 
 > Regenerate: `npm run docs:regen` (reads `docs/generated/live-schema.snapshot.json`).
 > Refresh against live: re-run the Supabase introspection into that snapshot (Supabase MCP), then rerun.
-> **Schema snapshot (live): 2026-06-09** · doc regenerated: 2026-06-09
+> **Schema snapshot (live): 2026-06-09** · doc regenerated: 2026-06-12
 
 **177 base tables, 7 views.** Tables flagged `DRIFT` exist live but are not defined in any migration file.
 
@@ -1708,7 +1708,7 @@ Touched by: `payments-core`
 - `updated_at` timestamp with time zone
 
 ### `player_programs`
-Touched by: `daily-protocol`, `player-programs`
+Touched by: `daily-protocol`, `player-programs`, `smart-training-recommendations`, `training-plan`
 
 - `id` uuid · not null
 - `program_id` uuid
@@ -2020,7 +2020,7 @@ Touched by: `qb-throwing`
 - `updated_at` timestamp with time zone · not null
 
 ### `readiness_scores`
-Touched by: `calc-readiness`, `daily-protocol`, `readiness-history`
+Touched by: `calc-readiness`, `coach-core`, `daily-protocol`, `readiness-history`
 
 - `id` uuid · not null
 - `sleep_score` numeric
@@ -2406,7 +2406,7 @@ Touched by: `accept-invitation`, `team-invite`, `validate-invitation`
 - `updated_at` timestamp with time zone · not null
 
 ### `team_members`
-Touched by: `accept-invitation`, `ai-chat`, `ai-telemetry`, `analytics-core`, `attendance`, `calc-readiness`, `calibration-logs`, `chat`, `coach-activity`, `coach-analytics`, `coach-core`, `coach-inbox`, `community`, `compute-acwr`, `daily-protocol`, `dashboard`, `decisions`, `exercisedb`, `games-core`, `import-open-data`, `load-management`, `payments-core`, `performance-data`, `player-stats`, `privacy-settings`, `response-feedback`, `roster-core`, `smart-training-recommendations`, `staff-nutritionist`, `staff-physiotherapist`, `staff-psychology`, `team-invite`, `team-templates`, `training-metrics`, `training-plan`, `training-sessions`, `user-context`, `wellness-checkin`
+Touched by: `accept-invitation`, `ai-chat`, `ai-telemetry`, `analytics-core`, `attendance`, `calibration-logs`, `chat`, `coach-activity`, `coach-analytics`, `coach-core`, `coach-inbox`, `community`, `daily-protocol`, `dashboard`, `decisions`, `exercisedb`, `games-core`, `import-open-data`, `load-management`, `payments-core`, `performance-data`, `privacy-settings`, `response-feedback`, `roster-core`, `smart-training-recommendations`, `staff-nutritionist`, `staff-physiotherapist`, `staff-psychology`, `team-invite`, `team-templates`, `training-plan`, `user-context`, `weather`, `wellness-checkin`
 
 - `id` uuid · not null
 - `team_id` uuid · not null
@@ -2545,7 +2545,7 @@ Touched by: `daily-protocol`, `training-programs`
 - `updated_at` timestamp with time zone
 
 ### `training_programs`
-Touched by: `player-programs`, `smart-training-recommendations`, `training-plan`, `training-programs`
+Touched by: `player-programs`, `training-programs`
 
 - `id` uuid · not null
 - `name` character varying · not null

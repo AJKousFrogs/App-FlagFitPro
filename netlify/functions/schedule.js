@@ -121,27 +121,20 @@ function resolvePhase(now, upcoming, lastEvent) {
     if (now >= startsAt && now <= endsAt) {
       return "competition";
     }
-    if (now < startsAt) {
-      const hoursUntil = hoursBetween(startsAt, now);
-      const taperWindow =
-        next.importance === "peak"
-          ? HOURS_TAPER_PEAK
-          : next.importance === "high"
-            ? HOURS_TAPER_HIGH
-            : HOURS_TAPER_REGULAR;
-      if (hoursUntil <= taperWindow) {
-        return "taper";
-      }
-    }
   }
 
+  // Post-event recovery takes precedence over an upcoming taper window. A
+  // heavy weekend's fatigue must clear before "sharp, not heavy" taper framing
+  // makes sense — even if the next event is already close enough to taper for
+  // (e.g. games on the weekend + a peak event ~6 days out both apply on the
+  // Monday after; recovery wins so the day reads as the off/easy day it is).
+  // Mirrors `resolvePhase` in angular/.../schedule.service.ts so client and
+  // server agree on phase for a given (now, upcoming, lastEvent) tuple even if
+  // upstream filters change.
   if (lastEvent) {
     const ended = new Date(lastEvent.ends_at ?? lastEvent.starts_at);
     // Defensive: only count recovery when the event is actually in the past
-    // for the resolution moment. Mirrors `resolvePhase` in
-    // angular/.../schedule.service.ts so client and server agree on phase
-    // for a given (now, upcoming, lastEvent) tuple even if upstream filters
-    // change.
+    // for the resolution moment.
     if (ended <= now) {
       const hoursSince = hoursBetween(now, ended);
       const recoveryWindow =
@@ -153,6 +146,20 @@ function resolvePhase(now, upcoming, lastEvent) {
       if (hoursSince <= recoveryWindow) {
         return "recovery";
       }
+    }
+  }
+
+  if (next && now < new Date(next.starts_at)) {
+    const startsAt = new Date(next.starts_at);
+    const hoursUntil = hoursBetween(startsAt, now);
+    const taperWindow =
+      next.importance === "peak"
+        ? HOURS_TAPER_PEAK
+        : next.importance === "high"
+          ? HOURS_TAPER_HIGH
+          : HOURS_TAPER_REGULAR;
+    if (hoursUntil <= taperWindow) {
+      return "taper";
     }
   }
 

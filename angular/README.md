@@ -1,15 +1,8 @@
-# FlagFit Pro Angular Workspace
+# FlagFit Pro — Angular Workspace
 
-This directory contains the primary Angular application for athlete, coach, staff, and team workflows.
+The primary Angular application for athlete, coach, staff, and team workflows.
 
-**Package version:** `4.0.0` (see root [RELEASE_NOTES_4.0.0.md](../docs/RELEASE_NOTES_4.0.0.md)).
-
-## Canonical References
-
-- Documentation index: [../docs/DOCS_INDEX.md](../docs/DOCS_INDEX.md)
-- Architecture: [../docs/ARCHITECTURE.md](../docs/ARCHITECTURE.md)
-- Design system & UI patterns: being rebuilt static-first in `redesign/ground-zero/` (documented here once locked — Phase C/E).
-- Debugging index: [ANGULAR_DEBUGGING_INDEX.md](./ANGULAR_DEBUGGING_INDEX.md)
+**→ [`docs/SOURCE_OF_TRUTH.md`](../docs/SOURCE_OF_TRUTH.md)** is the single authoritative reference: system map, data model, endpoint reference, Feature Status Ledger, spec laws, and runbooks.
 
 ## Prerequisites
 
@@ -23,16 +16,15 @@ cd angular
 npm install
 ```
 
-## Local Development
+## Development
 
-Use the repo root when you need backend parity:
+Use repo root when backend parity matters (Netlify Dev + functions):
 
 ```bash
-cd ..
 npm run dev
 ```
 
-Use Angular-only mode when you are working on isolated UI or workspace logic:
+Use Angular-only mode for isolated UI work:
 
 ```bash
 cd angular
@@ -41,30 +33,53 @@ npm start
 
 ## Core Commands
 
+All from the `angular/` directory unless noted.
+
+| Command | What it does |
+|---|---|
+| `npm start` | Angular dev server only |
+| `npm run build` | Production build |
+| `npm run type-check` | TypeScript check (no emit) |
+| `npm run lint` | ESLint on `src/app/**` |
+| `npm run test` | Vitest unit suite |
+| `npm run e2e:smoke` | Playwright smoke suite |
+| `npm run e2e:critical` | Playwright critical paths |
+| `npm run bundle:check` | Bundle size analysis |
+| `npm run audit:a11y` | Accessibility audit |
+
+CSS/design-system checks run from repo root:
+
 ```bash
-npm start
-npm run build
-npm run type-check
-npm run lint
-npm run test
-npm run e2e:smoke
+npm run lint:css
+npm run lint:tokens
+npm run audit:scss-duplications
 ```
 
 ## Workspace Structure
 
 ```text
-src/app/core/       Shell, routing, guards, services, shared infrastructure
-src/app/features/   Route-backed product features
-src/app/shared/     Shared components, directives, pipes, utilities
-src/scss/           Token, primitive, foundation, and utility styling layers
-src/assets/         Legal, static, and override assets
+src/app/               Feature screens (direct children — no features/ subdirectory)
+src/app/core/          Shell, routing, guards, services, logging, shared infrastructure
+src/app/shared/        Shared components, directives, pipes, utilities
+src/scss/              Design system: tokens/, system/, and overrides/
+src/assets/            Legal docs, static assets
 ```
 
-## Current Source Of Truth
+## Design System
 
-- SCSS tokens: `src/scss/tokens/design-system-tokens.scss`
-- TS token bridge: `src/app/core/utils/design-tokens.util.ts`
-- App shell and route metadata: `src/app/core/routes` plus `src/app/core/services/route-shell.service.ts`
-- Auth and session runtime: `src/app/core/services/supabase.service.ts`
+- **Tokens** (single source of truth): `src/scss/tokens/_tokens.scss` — CSS custom properties for all colors, type, space, radii, motion.
+- **Component vocabulary**: `src/scss/system/_system.scss` — assembled via `@include system.all` in `styles.scss`.
+- **Token bridge (TS)**: `src/app/core/utils/design-tokens.util.ts`
+- **No PrimeNG** — the static-first rebuild removed it.
 
-Do not treat local compatibility shims or old examples as architecture docs. Prefer the docs linked above and the current code.
+## Auth & Routing
+
+- Auth/session runtime: `src/app/core/services/supabase.service.ts`
+- Route definitions: `src/app/core/routes/feature-routes.ts` + `app.routes.ts`
+- Guards: `core/guards/auth.guard.ts` (config-gated), `core/guards/staff.guard.ts`
+
+## Testing & Debugging
+
+- Testing checklist: [`TESTING_CHECKLIST.md`](./TESTING_CHECKLIST.md)
+- Debugging guide: [`DEBUGGING_GUIDE.md`](./DEBUGGING_GUIDE.md)
+- E2E guide: [`e2e/README.md`](./e2e/README.md)
