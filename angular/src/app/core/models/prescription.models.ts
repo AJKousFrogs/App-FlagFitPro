@@ -79,6 +79,8 @@ export interface WeatherInput {
   precipMm: number | null;
   windKmh: number | null;
   suitability?: "excellent" | "good" | "fair" | "poor" | null;
+  /** City / location name resolved by the weather endpoint (team home_city). */
+  location?: string | null;
 }
 
 /**

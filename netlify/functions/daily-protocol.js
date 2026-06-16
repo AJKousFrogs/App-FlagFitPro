@@ -1325,8 +1325,8 @@ async function generateProtocol(supabase, userId, payload, headers, log = logger
     context,
   });
 
-  // 2. Foam Roll - Standard for all positions
-  await addFoamRollBlock({ supabase, protocolExercises });
+  // 2. Foam Roll — suppressed if athlete had a sports massage in the last 24h
+  await addFoamRollBlock({ supabase, protocolExercises, userId, date });
 
   // Check if it's a sprint session (Saturday or session type is speed/sprint)
   // Declare early so it can be used in both warmup and main session generation

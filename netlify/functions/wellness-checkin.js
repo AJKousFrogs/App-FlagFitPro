@@ -860,6 +860,73 @@ async function saveCheckin(supabase, userId, payload, requestId, log = logger) {
     }, achievementError);
   }
 
+  // Coach inbox alert — high soreness with specific body areas triggers a
+  // coach_inbox_items entry so coaches can see tightness in their dashboard and
+  // schedule a physio assessment or adjust that athlete's load.
+  try {
+    const hasSevereSoreness =
+      muscleSoreness !== undefined && muscleSoreness !== null && muscleSoreness >= 6;
+    const hasAreaReport = Array.isArray(sorenessAreas) && sorenessAreas.length > 0;
+    if (hasSevereSoreness && hasAreaReport) {
+      const { data: memberRows } = await supabase
+        .from("team_members")
+        .select("team_id")
+        .eq("user_id", userId)
+        .in("role", ["player", "athlete"])
+        .eq("status", "active")
+        .limit(1);
+      const teamId = memberRows?.[0]?.team_id;
+      if (teamId) {
+        const { data: athleteRow } = await supabase
+          .from("users")
+          .select("full_name")
+          .eq("id", userId)
+          .maybeSingle();
+        const athleteName = athleteRow?.full_name || "Athlete";
+        const severityLabel =
+          muscleSoreness >= 8 ? "Severe" : muscleSoreness >= 6 ? "High" : "Moderate";
+        const areasList = sorenessAreas.join(", ");
+
+        const { data: coaches } = await supabase
+          .from("team_members")
+          .select("user_id")
+          .eq("team_id", teamId)
+          .in("role", ["owner", "admin", "head_coach", "coach", "assistant_coach"])
+          .eq("status", "active");
+
+        if (coaches && coaches.length > 0) {
+          const inboxItems = coaches.map((c) => ({
+            coach_id: c.user_id,
+            user_id: userId,
+            team_id: teamId,
+            item_type: "injury_flag",
+            title: `${severityLabel} tightness — ${athleteName}`,
+            message: `${athleteName} reported ${areasList} tightness (soreness ${muscleSoreness}/10) on ${targetDate}. Readiness: ${calculatedReadiness ?? "n/a"}%. Review protocol or schedule physio assessment.`,
+            priority: muscleSoreness >= 8 ? "high" : "normal",
+            action_required: muscleSoreness >= 8,
+            source: "wellness_checkin",
+            metadata: {
+              soreness_level: muscleSoreness,
+              soreness_areas: sorenessAreas,
+              readiness_score: calculatedReadiness,
+              checkin_date: targetDate,
+            },
+            // Alert expires after 3 days — tightness reports are time-sensitive
+            expires_at: new Date(Date.now() + 3 * 86_400_000).toISOString(),
+          }));
+          await supabase.from("coach_inbox_items").insert(inboxItems);
+        }
+      }
+    }
+  } catch (coachAlertError) {
+    log.warn("wellness_coach_tightness_alert_failed", {
+      user_id: userId,
+      target_date: targetDate,
+      soreness: muscleSoreness,
+    }, coachAlertError);
+    // Non-fatal — check-in saved; alert delivery is best-effort
+  }
+
   return {
     statusCode: 200,
     body: JSON.stringify({

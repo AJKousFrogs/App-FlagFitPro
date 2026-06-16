@@ -145,6 +145,7 @@ export class PeriodizationService {
             windKmh: d.windKmh ?? d.windSpeed ?? null,
             suitability:
               (d.suitability as "excellent" | "good" | "fair" | "poor" | undefined) ?? null,
+            location: (d as { location?: string }).location ?? null,
           });
         },
         error: () => {

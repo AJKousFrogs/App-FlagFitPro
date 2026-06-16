@@ -1194,6 +1194,204 @@ async function handleRequest(
         return await handleCalendarRequest(event, userId, targetCoachId);
       }
 
+      case "/roster/injuries": {
+        // Aggregated injury/tightness report for all athletes the coach can see.
+        // Returns active athlete_injuries rows for the team, sorted by severity.
+        // Enables the coach to see which players have what tightness/injury at a glance.
+        if (event.httpMethod !== "GET") {
+          return createErrorResponse("Method not allowed", 405, "method_not_allowed");
+        }
+        const injTeamId = event.queryStringParameters?.teamId;
+        if (!injTeamId) {
+          return createErrorResponse("teamId query param required", 422, "validation_error");
+        }
+        const resolvedInjTeamId = await getCoachTeamId(userId, injTeamId);
+        if (!resolvedInjTeamId) {
+          return createErrorResponse("Not authorized for this team", 403, "authorization_error");
+        }
+
+        // 1. Get roster player IDs for the team
+        const { data: rosterMembers } = await supabaseAdmin
+          .from("team_members")
+          .select("user_id, users(id, full_name, first_name, last_name, position)")
+          .eq("team_id", resolvedInjTeamId)
+          .in("role", ["player", "athlete"])
+          .eq("status", "active");
+
+        const playerIds = (rosterMembers || []).map((m) => m.user_id);
+        if (!playerIds.length) return createSuccessResponse({ injuries: [], summary: { total: 0 } });
+
+        const playerMap = {};
+        for (const m of rosterMembers || []) {
+          const u = m.users;
+          playerMap[m.user_id] = u?.full_name || `${u?.first_name ?? ""} ${u?.last_name ?? ""}`.trim() || "Athlete";
+        }
+
+        // 2. Active injuries across the roster
+        const { data: injuries } = await supabaseAdmin
+          .from("athlete_injuries")
+          .select("user_id, injury_location, injury_grade, recovery_status, injury_mechanism, expected_return_date, notes, created_at")
+          .in("user_id", playerIds)
+          .in("recovery_status", ["active", "recovering", "rehab"])
+          .order("created_at", { ascending: false });
+
+        // 3. Today's wellness soreness (for athletes without a formal injury record)
+        const todayStr = new Date().toISOString().slice(0, 10);
+        const { data: wellnessRows } = await supabaseAdmin
+          .from("daily_wellness_checkin")
+          .select("user_id, muscle_soreness, soreness_areas, calculated_readiness")
+          .in("user_id", playerIds)
+          .eq("checkin_date", todayStr);
+
+        const wellnessMap = {};
+        for (const w of wellnessRows || []) {
+          wellnessMap[w.user_id] = w;
+        }
+
+        const injuryReport = (injuries || []).map((i) => ({
+          athleteId: i.user_id,
+          athleteName: playerMap[i.user_id] ?? "Athlete",
+          location: i.injury_location,
+          grade: i.injury_grade,
+          status: i.recovery_status,
+          mechanism: i.injury_mechanism,
+          expectedReturn: i.expected_return_date,
+          notes: i.notes,
+          reportedAt: i.created_at,
+          todaySoreness: wellnessMap[i.user_id]?.muscle_soreness ?? null,
+          todayReadiness: wellnessMap[i.user_id]?.calculated_readiness ?? null,
+        }));
+
+        // Athletes with high soreness today but no formal injury record
+        const injuredIds = new Set((injuries || []).map((i) => i.user_id));
+        const tightnessFlags = (wellnessRows || [])
+          .filter((w) => !injuredIds.has(w.user_id) && w.muscle_soreness >= 6 && (w.soreness_areas || []).length > 0)
+          .map((w) => ({
+            athleteId: w.user_id,
+            athleteName: playerMap[w.user_id] ?? "Athlete",
+            location: (w.soreness_areas || []).join(", "),
+            grade: w.muscle_soreness >= 8 ? "severe" : "moderate",
+            status: "self_report",
+            mechanism: "self_report",
+            expectedReturn: null,
+            notes: null,
+            reportedAt: todayStr,
+            todaySoreness: w.muscle_soreness,
+            todayReadiness: w.calculated_readiness,
+          }));
+
+        const GRADE_ORDER = { severe: 0, "Grade 3": 0, moderate: 1, "Grade 2": 1, minor: 2, "Grade 1": 2 };
+        const all = [...injuryReport, ...tightnessFlags]
+          .sort((a, b) => (GRADE_ORDER[a.grade] ?? 3) - (GRADE_ORDER[b.grade] ?? 3));
+
+        return createSuccessResponse({
+          injuries: all,
+          summary: {
+            total: all.length,
+            severe: all.filter((i) => i.grade === "severe" || i.grade === "Grade 3").length,
+            moderate: all.filter((i) => i.grade === "moderate" || i.grade === "Grade 2").length,
+            selfReports: tightnessFlags.length,
+            checkinDate: todayStr,
+          },
+        });
+      }
+
+      case "/roster/training-cycle": {
+        // Per-athlete training cycle summary for the coach: current phase, ACWR,
+        // readiness trend (last 7 days), days to next event.
+        if (event.httpMethod !== "GET") {
+          return createErrorResponse("Method not allowed", 405, "method_not_allowed");
+        }
+        const tcTeamId = event.queryStringParameters?.teamId;
+        if (!tcTeamId) {
+          return createErrorResponse("teamId query param required", 422, "validation_error");
+        }
+        const resolvedTcTeamId = await getCoachTeamId(userId, tcTeamId);
+        if (!resolvedTcTeamId) {
+          return createErrorResponse("Not authorized for this team", 403, "authorization_error");
+        }
+
+        const { data: tcRoster } = await supabaseAdmin
+          .from("team_members")
+          .select("user_id, users(full_name, first_name, last_name)")
+          .eq("team_id", resolvedTcTeamId)
+          .in("role", ["player", "athlete"])
+          .eq("status", "active");
+
+        const tcPlayerIds = (tcRoster || []).map((m) => m.user_id);
+        if (!tcPlayerIds.length) return createSuccessResponse({ athletes: [] });
+
+        const tcPlayerMap = {};
+        for (const m of tcRoster || []) {
+          const u = m.users;
+          tcPlayerMap[m.user_id] = u?.full_name || `${u?.first_name ?? ""} ${u?.last_name ?? ""}`.trim() || "Athlete";
+        }
+
+        // Last 7 days readiness per athlete
+        const since7 = new Date(Date.now() - 7 * 86_400_000).toISOString().slice(0, 10);
+        const { data: readinessRows } = await supabaseAdmin
+          .from("readiness_scores")
+          .select("user_id, score, computed_at")
+          .in("user_id", tcPlayerIds)
+          .gte("computed_at", since7)
+          .order("computed_at", { ascending: false });
+
+        const readinessByPlayer = {};
+        for (const r of readinessRows || []) {
+          if (!readinessByPlayer[r.user_id]) readinessByPlayer[r.user_id] = [];
+          readinessByPlayer[r.user_id].push(r.score);
+        }
+
+        // Today's protocols (current phase)
+        const todayStr2 = new Date().toISOString().slice(0, 10);
+        const { data: protocols } = await supabaseAdmin
+          .from("daily_protocols")
+          .select("user_id, training_focus, acwr_value")
+          .in("user_id", tcPlayerIds)
+          .eq("protocol_date", todayStr2);
+
+        const protocolMap = {};
+        for (const p of protocols || []) protocolMap[p.user_id] = p;
+
+        // Upcoming events (all athletes share team events via athlete_events — use team_events)
+        const { data: upcomingEvents } = await supabaseAdmin
+          .from("team_events")
+          .select("starts_at, name, event_type")
+          .eq("team_id", resolvedTcTeamId)
+          .gte("starts_at", todayStr2)
+          .order("starts_at", { ascending: true })
+          .limit(1);
+        const nextEvent = upcomingEvents?.[0] ?? null;
+        const daysToEvent = nextEvent
+          ? Math.ceil((new Date(nextEvent.starts_at) - new Date()) / 86_400_000)
+          : null;
+
+        const athletes = tcPlayerIds.map((pid) => {
+          const scores = readinessByPlayer[pid] ?? [];
+          const avgReadiness = scores.length ? Math.round(scores.reduce((s, v) => s + v, 0) / scores.length) : null;
+          const latestReadiness = scores[0] ?? null;
+          const protocol = protocolMap[pid];
+          return {
+            athleteId: pid,
+            athleteName: tcPlayerMap[pid],
+            trainingFocus: protocol?.training_focus ?? null,
+            acwr: protocol?.acwr_value ?? null,
+            latestReadiness,
+            avgReadiness7d: avgReadiness,
+            readinessTrend: scores.slice(0, 7),
+          };
+        });
+
+        return createSuccessResponse({
+          athletes,
+          nextTeamEvent: nextEvent ? {
+            name: nextEvent.name,
+            type: nextEvent.event_type,
+            daysAway: daysToEvent,
+          } : null,
+        });
+      }
+
       case "/health":
         if (event.httpMethod !== "GET") {
           return createErrorResponse("Method not allowed", 405, "method_not_allowed");

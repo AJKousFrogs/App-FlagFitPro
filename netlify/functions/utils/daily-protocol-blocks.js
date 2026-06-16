@@ -97,7 +97,39 @@ export async function addMorningMobilityBlock({
   }
 }
 
-export async function addFoamRollBlock({ supabase, protocolExercises }) {
+export async function addFoamRollBlock({ supabase, protocolExercises, userId = null, date = null }) {
+  // Skip foam rolling when a sports massage was completed in the past 24h.
+  // Post-massage, the soft tissue is already mobilised — foam rolling adds no
+  // value and can aggravate sensitised tissue. Replace with a light active-
+  // recovery note (jogging / dynamic stretching to restore muscle tonus).
+  if (userId) {
+    const since = new Date(new Date(date ?? new Date().toISOString().slice(0, 10)).getTime() - 86_400_000).toISOString();
+    const { data: massageSession } = await supabase
+      .from("recovery_sessions")
+      .select("id, recovery_protocols!inner(category)")
+      .eq("user_id", userId)
+      .eq("status", "completed")
+      .eq("recovery_protocols.category", "massage")
+      .gte("completed_at", since)
+      .limit(1)
+      .maybeSingle();
+
+    if (massageSession) {
+      // Massage found — substitute with active recovery note block instead
+      protocolExercises.push({
+        exercise_id: null,
+        exercise_name: "Post-Massage Active Recovery",
+        block_type: "foam_roll",
+        sequence_order: 1,
+        prescribed_sets: 1,
+        prescribed_duration_seconds: 600, // 10 min
+        load_contribution_au: 0,
+        ai_note: "Sports massage received yesterday — skip foam rolling. Instead: 10 min light jog or brisk walk + dynamic leg swings and arm circles to restore muscle tonus. Foam rolling would aggravate sensitised tissue.",
+      });
+      return;
+    }
+  }
+
   const { data: foamRollExercises } = await supabase
     .from("exercises")
     .select("*")
