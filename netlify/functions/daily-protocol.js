@@ -1442,6 +1442,16 @@ async function generateProtocol(supabase, userId, payload, headers, log = logger
       });
     }
 
+    // Readiness-driven volume multiplier — scales prescribed_sets for plyometrics,
+    // strength, and conditioning blocks. Low readiness = lower volume; the
+    // taperLoadMultiplier post-pass below applies on top of this for taper weeks.
+    // Thresholds match the readiness tier labels (high/moderate/low):
+    //   ≥ 75 → full volume (3 sets)  |  55–74 → reduced (2 sets)  |  < 55 → minimal (1 set)
+    const readinessSets =
+      readinessScore != null && readinessScore < 55 ? 1
+      : readinessScore != null && readinessScore < 75 ? 2
+      : 3;
+
     // ============================================================================
     // 5. PLYOMETRICS BLOCK (15 min)
     // Evidence: Phase-appropriate contacts, landing emphasis first
@@ -1511,7 +1521,7 @@ async function generateProtocol(supabase, userId, payload, headers, log = logger
           exercise_name: ex.name,
           block_type: "plyometrics",
           sequence_order: idx + 1,
-          prescribed_sets: 3,
+          prescribed_sets: readinessSets,
           prescribed_reps: repsPerExercise,
           rest_seconds: 60,
           load_contribution_au: ex.load_contribution_au || 20,
@@ -1588,7 +1598,7 @@ async function generateProtocol(supabase, userId, payload, headers, log = logger
             exercise_name: ex.name,
             block_type: "strength",
             sequence_order: (includeNordics ? 2 : 1) + idx,
-            prescribed_sets: 3,
+            prescribed_sets: readinessSets,
             prescribed_reps: 10,
             rest_seconds: 60,
             load_contribution_au: ex.load_contribution_au || 20,
@@ -1617,7 +1627,7 @@ async function generateProtocol(supabase, userId, payload, headers, log = logger
           exercise_name: ex.name,
           block_type: "strength",
           sequence_order: sequenceStart + idx,
-          prescribed_sets: 3,
+          prescribed_sets: readinessSets,
           prescribed_reps: 8,
           rest_seconds: 90,
           load_contribution_au: ex.load_contribution_au || 20,
@@ -1670,7 +1680,7 @@ async function generateProtocol(supabase, userId, payload, headers, log = logger
           exercise_name: ex.name,
           block_type: "conditioning",
           sequence_order: idx + 1,
-          prescribed_sets: 2,
+          prescribed_sets: Math.max(1, readinessSets - 1), // conditioning: 1-2 sets
           prescribed_duration_seconds: 30,
           rest_seconds: 45,
           load_contribution_au: Math.round(
@@ -1737,7 +1747,7 @@ async function generateProtocol(supabase, userId, payload, headers, log = logger
           exercise_name: ex.name,
           block_type: "skill_drills",
           sequence_order: idx + 1,
-          prescribed_sets: 3,
+          prescribed_sets: readinessSets,
           prescribed_reps: 5,
           rest_seconds: 30,
           load_contribution_au: ex.load_contribution_au || 10,
