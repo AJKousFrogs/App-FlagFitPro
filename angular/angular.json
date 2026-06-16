@@ -40,7 +40,25 @@
               }
             ],
             "serviceWorker": "ngsw-config.json",
-            "styles": ["src/styles.scss"],
+            "styles": [
+              "@fontsource/plus-jakarta-sans/300.css",
+              "@fontsource/plus-jakarta-sans/400.css",
+              "@fontsource/plus-jakarta-sans/400-italic.css",
+              "@fontsource/plus-jakarta-sans/500.css",
+              "@fontsource/plus-jakarta-sans/500-italic.css",
+              "@fontsource/plus-jakarta-sans/600.css",
+              "@fontsource/plus-jakarta-sans/700.css",
+              "@fontsource/plus-jakarta-sans/800.css",
+              "@fontsource/space-grotesk/300.css",
+              "@fontsource/space-grotesk/400.css",
+              "@fontsource/space-grotesk/500.css",
+              "@fontsource/space-grotesk/600.css",
+              "@fontsource/space-grotesk/700.css",
+              "@fontsource/jetbrains-mono/400.css",
+              "@fontsource/jetbrains-mono/500.css",
+              "@fontsource/jetbrains-mono/700.css",
+              "src/styles.scss"
+            ],
             "scripts": [],
             "stylePreprocessorOptions": {
               "includePaths": ["src", "node_modules"]
