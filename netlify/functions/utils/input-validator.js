@@ -428,11 +428,15 @@ function parseBoundedInt(value, fieldName, { min, max, fallback = null } = {}) {
   }
   const normalized = String(value).trim();
   if (!/^-?\d+$/.test(normalized)) {
-    throw new Error(`${fieldName} must be an integer between ${min} and ${max}`);
+    const err = new Error(`${fieldName} must be an integer between ${min} and ${max}`);
+    err.isValidation = true;
+    throw err;
   }
   const parsed = Number.parseInt(normalized, 10);
   if (!Number.isInteger(parsed) || parsed < min || parsed > max) {
-    throw new Error(`${fieldName} must be an integer between ${min} and ${max}`);
+    const err = new Error(`${fieldName} must be an integer between ${min} and ${max}`);
+    err.isValidation = true;
+    throw err;
   }
   return parsed;
 }

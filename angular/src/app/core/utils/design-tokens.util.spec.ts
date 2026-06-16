@@ -1,3 +1,4 @@
+// @vitest-environment jsdom
 /**
  * Design Tokens Utility Tests
  *

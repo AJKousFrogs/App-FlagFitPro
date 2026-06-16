@@ -26,6 +26,9 @@ function createMockSupabase(mockData = {}) {
           if (operator === "gte") {
             return row[column] >= value;
           }
+          if (operator === "in") {
+            return Array.isArray(value) && value.includes(row[column]);
+          }
           return row[column] === value;
         }),
       );
@@ -46,6 +49,10 @@ function createMockSupabase(mockData = {}) {
       select: () => builder,
       eq: (column, value) => {
         filters.push({ column, value, operator: "eq" });
+        return builder;
+      },
+      in: (column, values) => {
+        filters.push({ column, value: values, operator: "in" });
         return builder;
       },
       lte: (column, value) => {
@@ -112,7 +119,7 @@ describe("Session Resolver - Player Schedule Authority Removal", () => {
     // Setup: Player has practice schedule configured
     const mockSupabase = createMockSupabase({
       player_programs: {
-        player_id: {
+        user_id: {
           "test-user": {
             id: "program-1",
             program_id: "prog-1",
@@ -187,7 +194,7 @@ describe("Session Resolver - Player Schedule Authority Removal", () => {
 
     const mockSupabase = createMockSupabase({
       player_programs: {
-        player_id: {
+        user_id: {
           "test-user": {
             id: "program-1",
             program_id: "prog-1",
@@ -259,7 +266,7 @@ describe("Session Resolver - Player Schedule Authority Removal", () => {
   test("Rehab protocol wins over any other override", async () => {
     const mockSupabase = createMockSupabase({
       player_programs: {
-        player_id: {
+        user_id: {
           "test-user": {
             id: "program-1",
             program_id: "prog-1",
@@ -308,15 +315,17 @@ describe("Session Resolver - Player Schedule Authority Removal", () => {
           },
         },
       },
-      daily_wellness_checkin: {
-        user_id: {
-          "test-user": {
-            soreness_areas: ["knee", "ankle"],
-            pain_level: 3,
-            checkin_date: "2025-02-03",
-          },
+      athlete_injuries: [
+        {
+          user_id: "test-user",
+          injury_location: "knee",
+          injury_grade: "Grade 2",
+          recovery_status: "active",
+          injury_mechanism: "contact",
+          expected_return_date: null,
+          activity_restrictions: [],
         },
-      },
+      ],
     });
 
     const result = await resolveTodaySession(

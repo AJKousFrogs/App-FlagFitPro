@@ -203,7 +203,7 @@ describe("performance-data cross-athlete authorization", () => {
 
     expect(response.statusCode).toBe(200);
     const payload = JSON.parse(response.body);
-    expect(Array.isArray(payload.data)).toBe(true);
+    expect(Array.isArray(payload.data.data)).toBe(true);
   });
 
   it("returns 422 for malformed measurements page query", async () => {

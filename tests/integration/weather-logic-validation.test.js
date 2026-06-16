@@ -8,11 +8,11 @@ vi.mock("../../netlify/functions/utils/base-handler.js", () => ({
 function openMeteoResponse(overrides = {}) {
   return {
     current: {
-      temperature_2m: 72,
-      apparent_temperature: 72,
+      temperature_2m: 22,
+      apparent_temperature: 22,
       relative_humidity_2m: 45,
       weather_code: 0,
-      wind_speed_10m: 5,
+      wind_speed_10m: 8,
       precipitation: 0,
       cloud_cover: 10,
       ...overrides,
@@ -97,9 +97,9 @@ describe("weather Open-Meteo logic regression coverage", () => {
       json: async () =>
         openMeteoResponse({
           weather_code: 0,
-          temperature_2m: 70,
-          apparent_temperature: 70,
-          wind_speed_10m: 4,
+          temperature_2m: 22,
+          apparent_temperature: 22,
+          wind_speed_10m: 6,
           precipitation: 0,
         }),
     });

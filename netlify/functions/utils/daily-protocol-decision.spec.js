@@ -40,8 +40,8 @@ describe("buildProtocolDecisionContext", () => {
       "2026-04-25",
       "training_sessions",
     );
-    expect(result.trainingFocus).toBe("speed");
-    expect(result.aiRationale).toContain("Baseline flag football plan active");
+    expect(result.trainingFocus).toBe("skill");
+    expect(result.aiRationale).toContain("No wellness data yet");
     expect(result.confidenceMetadata.acwr).toMatchObject({
       hasData: false,
       source: "training_sessions",
