@@ -218,6 +218,7 @@ export async function buildProtocolDecisionContext({
     trainingFocus,
     aiRationale,
     adjustedLoadTarget,
+    taperLoadMultiplier,
     isPracticeDay,
     isFilmRoomDay,
     periodizationPhase,

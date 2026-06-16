@@ -1252,6 +1252,7 @@ async function generateProtocol(supabase, userId, payload, headers, log = logger
     trainingFocus,
     aiRationale,
     adjustedLoadTarget,
+    taperLoadMultiplier,
     isPracticeDay,
     isFilmRoomDay,
     periodizationPhase,
@@ -1823,6 +1824,20 @@ async function generateProtocol(supabase, userId, payload, headers, log = logger
     protocolExercises,
     trainingFocus,
   });
+
+  // Graduated taper volume: when loadMultiplier < 1.0, scale prescribed_sets
+  // down proportionally so the session volume actually reflects the taper.
+  // Without this, a 40%-load taper cuts the AU budget label but still prescribes
+  // 3 full sets of Nordics, plyos and sprints — defeating the taper intent.
+  // prescribed_hold_seconds / prescribed_duration_seconds are intentionally kept
+  // (reducing hold time is not the sport-science model for taper).
+  if (taperLoadMultiplier < 1.0) {
+    for (const ex of protocolExercises) {
+      if (ex.prescribed_sets != null) {
+        ex.prescribed_sets = Math.max(1, Math.round(ex.prescribed_sets * taperLoadMultiplier));
+      }
+    }
+  }
 
   // ============================================================================
   // TRANSACTIONAL PROTOCOL GENERATION VIA RPC
