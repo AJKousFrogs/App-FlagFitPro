@@ -174,9 +174,19 @@ export async function buildProtocolDecisionContext({
     aiRationale += ` 📅 Phase: ${context.currentPhase.name}.`;
   }
 
-  const periodizationPhase = getCurrentPeriodizationPhase(
-    parseIsoDateString(date),
-  );
+  // Prefer the client's calendar-derived phase (set on context.seasonPhase by the
+  // COMPOSE path) over the backend's switch(month) approximation. Mapping covers
+  // the four macro phases; anything finer (taper, peak) comes from taperContext
+  // which is already handled above.
+  const CLIENT_PHASE_MAP = {
+    offseason: "off_season_rest",
+    preseason: "competition_prep",
+    inseason: "in_season_maintenance",
+    transition: "active_recovery",
+  };
+  const periodizationPhase = context.seasonPhase
+    ? (CLIENT_PHASE_MAP[context.seasonPhase] ?? getCurrentPeriodizationPhase(parseIsoDateString(date)))
+    : getCurrentPeriodizationPhase(parseIsoDateString(date));
   aiRationale += ` 📊 Periodization: ${PERIODIZATION_PHASE_NAMES[periodizationPhase] || periodizationPhase}.`;
 
   // Only surface the ACWR-elevated warning when ACWR is actually known.

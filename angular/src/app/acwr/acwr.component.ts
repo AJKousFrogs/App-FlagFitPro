@@ -3,6 +3,7 @@ import {
   Component,
   computed,
   inject,
+  signal,
 } from "@angular/core";
 import { RouterLink } from "@angular/router";
 import { LucideAngularModule } from "lucide-angular";
@@ -10,6 +11,7 @@ import { AvatarComponent } from "../shared/avatar.component";
 
 import { AcwrService } from "../core/services/acwr.service";
 import { ReadinessService } from "../core/services/readiness.service";
+import { ApiService, API_ENDPOINTS } from "../core/services/api.service";
 
 interface Spark {
   points: string;
@@ -33,6 +35,7 @@ const clamp = (v: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, v
 export class AcwrComponent {
   private readonly acwrSvc = inject(AcwrService);
   private readonly readinessSvc = inject(ReadinessService);
+  private readonly api = inject(ApiService);
 
   readonly history = this.readinessSvc.history;
   readonly sufficient = this.acwrSvc.sufficientDataForACWR;
@@ -41,8 +44,13 @@ export class AcwrComponent {
   readonly chronic = this.acwrSvc.chronicLoad;
   readonly weekly = this.acwrSvc.weeklyProgression;
 
+  readonly monotonyData = signal<{ monotony: number | null; strain: number | null; monotonyRisk: string } | null>(null);
+
   constructor() {
     this.readinessSvc.getHistory("", 28).subscribe();
+    this.api.get<{ monotony: number | null; strain: number | null; monotonyRisk: string }>(
+      API_ENDPOINTS.loadManagement.monotony,
+    ).subscribe({ next: (res) => { if (res?.success && res.data) this.monotonyData.set(res.data); } });
   }
 
   readonly band = computed<{ label: string; cls: string; verdict: string } | null>(() => {

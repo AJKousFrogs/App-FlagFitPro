@@ -44,6 +44,7 @@ export class ProtocolService {
     intent: string;
     intentLabel: string;
     position: string | null;
+    seasonPhase?: string | null;
   }): void {
     if (this.loading()) {
       return;
@@ -56,6 +57,7 @@ export class ProtocolService {
         intent: rx.intent,
         intentLabel: rx.intentLabel,
         position: rx.position,
+        seasonPhase: rx.seasonPhase ?? null,
       })
       .subscribe({
         next: (res) => {

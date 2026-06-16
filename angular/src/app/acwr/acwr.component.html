@@ -43,6 +43,21 @@
       <div><b>{{ weeklyPct() > 0 ? "+" : "" }}{{ weeklyPct() }}%</b><small>vs last wk</small></div>
     </div>
 
+    @if (monotonyData(); as m) {
+      <div class="tiles" style="margin-top:var(--s-2)">
+        <div>
+          <b [class.caution]="m.monotonyRisk === 'moderate'" [class.danger]="m.monotonyRisk === 'high'">
+            {{ m.monotony != null ? m.monotony.toFixed(2) : "—" }}
+          </b>
+          <small>monotony</small>
+        </div>
+        <div>
+          <b>{{ m.strain != null ? m.strain.toFixed(0) : "—" }}</b>
+          <small>weekly strain</small>
+        </div>
+      </div>
+    }
+
     <div class="card">
       <b class="inline"><lucide-icon name="check" /> {{ b.cls === "danger" ? "Rest today" : "Can train today" }}</b>
       <div class="muted" style="font-size:var(--fs-sm)">{{ b.verdict }}</div>
@@ -54,6 +69,10 @@
         <div class="muted" style="font-size:var(--fs-sm)">{{ weekly().warning || "Limit increases to <10% week-over-week." }}</div>
       </div>
     }
+
+    <p class="note" style="margin-top:var(--s-4);font-size:var(--fs-xs);color:var(--text-faint)">
+      ACWR monitors training load balance — it does not predict injury risk. Use it alongside coach judgement; no threshold guarantees safety.
+    </p>
   } @else {
     <div class="empty">
       <b style="color:var(--text)">Not enough history yet</b>

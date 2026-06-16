@@ -1179,6 +1179,13 @@ async function generateProtocol(supabase, userId, payload, headers, log = logger
   if (payload.intent && payload.position) {
     Object.assign(context, positionFlagsFor(payload.position));
   }
+  // COMPOSE: use the client's calendar-derived season phase instead of the
+  // backend's switch(month) when the intent layer sends it. The client reads
+  // the athlete's actual season_calendar JSONB; the switch(month) is a fixed
+  // league-average approximation that's wrong for any non-standard calendar.
+  if (payload.seasonPhase) {
+    context.seasonPhase = payload.seasonPhase;
+  }
 
   // ============================================================================
   // INJURY CHECK - Priority #1 for athlete safety
@@ -1340,8 +1347,9 @@ async function generateProtocol(supabase, userId, payload, headers, log = logger
   // Based on VALD Practitioner's Guides
   // ============================================================================
 
-  // Get current periodization phase for evidence-based programming
-  const currentPhase = getCurrentPeriodizationPhase(parseIsoDateString(date));
+  // Use the periodizationPhase already resolved by buildProtocolDecisionContext
+  // (which prefers the client's calendar phase over switch(month) in COMPOSE mode).
+  const currentPhase = periodizationPhase;
   const plyoIntensity = getPlyometricIntensity(currentPhase, readinessForLogic);
   const safeConditioning = getSafeConditioningIntensity(
     acwrForLogic,

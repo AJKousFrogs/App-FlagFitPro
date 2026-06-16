@@ -131,6 +131,7 @@ export class TrainingComponent {
         intent: rx.intent,
         intentLabel: rx.intentLabel,
         position: rx.positionEmphasis?.position ?? this.periodization.position(),
+        seasonPhase: rx.seasonPhase,
       });
     });
   }
@@ -170,6 +171,8 @@ export class TrainingComponent {
     };
     return s ? map[s] : "Training";
   });
+
+  readonly weather = computed(() => this.rx()?.weatherAdjustment ?? null);
 
   readonly heroBand = computed<{ label: string; cls: string } | null>(() => {
     const rx = this.rx();

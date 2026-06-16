@@ -27,6 +27,11 @@
           @if (heroBand(); as b) { <span class="band {{ b.cls }}">{{ b.label }}</span> }
         </div>
         <p style="margin:var(--s-2) 0 0;color:var(--text)">{{ p.reasoning }}</p>
+        @if (weather(); as w) {
+          <p class="faint" style="margin:var(--s-1) 0 0;font-size:var(--fs-sm)">
+            <lucide-icon name="cloud-rain" /> {{ w.reason }}
+          </p>
+        }
 
         <div style="margin:var(--s-4) 0">
           <app-yt-video [videoId]="sessionVideoId()" poster="assets/images/rebuild/video-session.jpg"
