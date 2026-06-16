@@ -23,13 +23,7 @@
     />
     <meta name="apple-mobile-web-app-title" content="FlagFit Pro" />
 
-    <!-- Preconnect to critical origins for faster loading -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400;1,500&family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap"
-    />
+    <!-- Fonts bundled via @fontsource — no external CDN dependency -->
     <link
       rel="preconnect"
       href="https://grfjmnjpzvknmsxrwesx.supabase.co"
@@ -138,12 +132,7 @@
       }
     </style>
 
-    <!-- Iconify web component — MDI food/nutrition glyphs the Lucide set lacks
-         (rice/oats/shake/egg…). Used by the fuel card via <iconify-icon>. -->
-    <script
-      src="https://code.iconify.design/iconify-icon/2.1.0/iconify-icon.min.js"
-      defer
-    ></script>
+    <!-- Iconify bundled via npm (iconify-icon) — imported in main.ts -->
   </head>
   <body>
     <app-root></app-root>

@@ -8,6 +8,24 @@
    reference ONLY these tokens — the anti-drift contract.
    ================================================================ */
 
+/* Self-hosted fonts via @fontsource — no external CDN requests */
+@use "@fontsource/plus-jakarta-sans/300";
+@use "@fontsource/plus-jakarta-sans/400";
+@use "@fontsource/plus-jakarta-sans/400-italic";
+@use "@fontsource/plus-jakarta-sans/500";
+@use "@fontsource/plus-jakarta-sans/500-italic";
+@use "@fontsource/plus-jakarta-sans/600";
+@use "@fontsource/plus-jakarta-sans/700";
+@use "@fontsource/plus-jakarta-sans/800";
+@use "@fontsource/space-grotesk/300";
+@use "@fontsource/space-grotesk/400";
+@use "@fontsource/space-grotesk/500";
+@use "@fontsource/space-grotesk/600";
+@use "@fontsource/space-grotesk/700";
+@use "@fontsource/jetbrains-mono/400";
+@use "@fontsource/jetbrains-mono/500";
+@use "@fontsource/jetbrains-mono/700";
+
 /* Design tokens + component vocabulary — Sass @use must lead the file. Tokens
    emit :root custom properties (unlayered, safe). The component system is a mixin
    (emits nothing here) so it can be included inside @layer components below, in

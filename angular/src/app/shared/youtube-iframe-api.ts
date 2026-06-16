@@ -12,11 +12,12 @@ export function loadYouTubeIframeApi(): Promise<YT> {
   if (w.YT?.Player) return Promise.resolve(w.YT);
   if (ready) return ready;
 
-  ready = new Promise<YT>((resolve) => {
+  ready = new Promise<YT>((resolve, reject) => {
     // The API invokes this global when the script finishes loading.
     w.onYouTubeIframeAPIReady = () => resolve(w.YT as YT);
     const tag = document.createElement("script");
     tag.src = "https://www.youtube.com/iframe_api";
+    tag.onerror = () => { ready = null; reject(new Error("YouTube IFrame API unavailable")); };
     document.head.appendChild(tag);
   });
   return ready;
