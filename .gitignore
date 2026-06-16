@@ -1,6 +1,9 @@
 node_modules/
 node_modules.old/
 
+# Claude Code worktree scratch files (created/destroyed by workflow agents)
+.claude/worktrees/
+
 # Local Netlify folder
 .netlify
 .netlify/functions
