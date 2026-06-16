@@ -1,4 +1,3 @@
-import { wrapHandler } from "./utils/lambda-compat.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { authenticateRequest } from "./utils/auth-helper.js";
 import { supabaseAdmin } from "./supabase-client.js";
@@ -485,4 +484,3 @@ const handler = async (event, context) => {
 
 export const testHandler = handler;
 export { handler };
-export default wrapHandler(handler);

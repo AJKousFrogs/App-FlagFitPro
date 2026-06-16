@@ -1,4 +1,3 @@
-import { wrapHandler } from "./utils/lambda-compat.js";
 import { supabaseAdmin } from "./supabase-client.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { createErrorResponse, handleValidationError } from "./utils/error-handler.js";
@@ -422,4 +421,3 @@ function checkCriteria(criteria, streakMap, stats) {
 
 export const testHandler = handler;
 export { handler };
-export default wrapHandler(handler);

@@ -1,4 +1,3 @@
-import { wrapHandler } from "./utils/lambda-compat.js";
 import { db, supabaseAdmin } from "./supabase-client.js";
 import { getOrFetch, CACHE_TTL, CACHE_PREFIX } from "./cache.js";
 import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
@@ -324,4 +323,3 @@ const handler = async (event, context) => {
 
 export const testHandler = handler;
 export { handler };
-export default wrapHandler(handler);

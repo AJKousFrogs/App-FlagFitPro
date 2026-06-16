@@ -15,7 +15,6 @@
  * not re-derive periodization intent in this file, and do not pick exercises in
  * the client — that split is what keeps the two engines from contradicting.
  */
-import { wrapHandler } from "./utils/lambda-compat.js";
 import { supabaseAdmin } from "./utils/supabase-client.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { authenticateRequest } from "./utils/auth-helper.js";
@@ -2487,4 +2486,3 @@ export const testTransforms = {
   transformExercise,
 };
 export const __compose__ = { positionFlagsFor, mapIntentToSession };
-export default wrapHandler(handler);

@@ -1,4 +1,3 @@
-import { wrapHandler } from "./utils/lambda-compat.js";
 
 // Netlify Function: File Upload API
 // Handles image and video uploads to Supabase Storage
@@ -274,4 +273,3 @@ const handler = async (event, context) => {
 
 export const testHandler = handler;
 export { handler };
-export default wrapHandler(handler);
