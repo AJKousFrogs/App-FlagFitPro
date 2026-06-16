@@ -45,6 +45,8 @@ export class ProtocolService {
     intentLabel: string;
     position: string | null;
     seasonPhase?: string | null;
+    weatherSuitability?: string | null;
+    weatherTempC?: number | null;
   }): void {
     if (this.loading()) {
       return;
@@ -58,6 +60,10 @@ export class ProtocolService {
         intentLabel: rx.intentLabel,
         position: rx.position,
         seasonPhase: rx.seasonPhase ?? null,
+        // Weather context lets the server suppress the Saturday-sprint hardcode
+        // when current conditions are already too poor for outdoor sessions.
+        weatherSuitability: rx.weatherSuitability ?? null,
+        weatherTempC: rx.weatherTempC ?? null,
       })
       .subscribe({
         next: (res) => {

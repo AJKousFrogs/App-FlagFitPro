@@ -1329,16 +1329,26 @@ async function generateProtocol(supabase, userId, payload, headers, log = logger
   await addFoamRollBlock({ supabase, protocolExercises, userId, date });
 
   // Check if it's a sprint session (Saturday or session type is speed/sprint)
-  // Declare early so it can be used in both warmup and main session generation
+  // Declare early so it can be used in both warmup and main session generation.
+  // Saturday sprint is a FALLBACK — it only fires when no client intent was sent.
+  // Weather guard: if the client reports poor suitability or sub-zero apparent
+  // temperature, suppress the Saturday-sprint fallback even when no intent overrides.
+  const weatherSuitability = payload.weatherSuitability ?? null;
+  const weatherTempC = typeof payload.weatherTempC === "number" ? payload.weatherTempC : null;
+  const weatherBlocksSprint =
+    weatherSuitability === "poor" ||
+    (weatherTempC !== null && weatherTempC < 2);
   let isSprintSession =
-    context.dayOfWeek === 6 || // Saturday
-    context.sessionResolution?.override?.type === "sprint_saturday" ||
-    context.sessionTemplate?.session_type?.toLowerCase() === "speed" ||
-    context.sessionTemplate?.session_type?.toLowerCase() === "sprint";
+    !weatherBlocksSprint && (
+      context.dayOfWeek === 6 || // Saturday fallback
+      context.sessionResolution?.override?.type === "sprint_saturday" ||
+      context.sessionTemplate?.session_type?.toLowerCase() === "speed" ||
+      context.sessionTemplate?.session_type?.toLowerCase() === "sprint"
+    );
   // COMPOSE: the intent layer decides whether today is a sprint session, not the
-  // Saturday hard-rule.
+  // Saturday hard-rule. Weather block applies even to compose path.
   if (composeSprint !== null) {
-    isSprintSession = composeSprint;
+    isSprintSession = weatherBlocksSprint ? false : composeSprint;
   }
 
   await addWarmupBlock({

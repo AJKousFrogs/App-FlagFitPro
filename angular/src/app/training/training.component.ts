@@ -126,12 +126,15 @@ export class TrainingComponent {
       const rx = this.rx();
       if (!rx) return;
       this.protocolTriggered = true;
+      const w = this.periodization.weather();
       this.protocol.generateFor({
         date: rx.date,
         intent: rx.intent,
         intentLabel: rx.intentLabel,
         position: rx.positionEmphasis?.position ?? this.periodization.position(),
         seasonPhase: rx.seasonPhase,
+        weatherSuitability: w?.suitability ?? null,
+        weatherTempC: w?.tempC ?? null,
       });
     });
   }
