@@ -793,8 +793,44 @@ const handler = async (event, context) => {
       // to a tournament) lowers readiness. Only ever SUBTRACTS (safe direction),
       // nudging Push → Maintain/Deload for a just-arrived, fatigued athlete.
       const travelPenalty = travelReadinessPenalty(wellness.travel_hours);
+
+      // Active injury/tightness penalty — self-reported or clinical.
+      // "High — push" must never be returned when an athlete has moderate/severe
+      // active injuries; the prescription engine already enforces recovery-only
+      // focus, but the readiness NUMBER must reflect reality too.
+      // Penalties: severe/Grade 3 = −20 + cap at moderate; moderate/Grade 2 = −10;
+      // minor/Grade 1 = −5. Non-fatal: if the query fails we skip the penalty.
+      let injuryPenalty = 0;
+      let injuryForcedModerate = false; // true → cap level at "moderate" max
+      try {
+        const { data: injuryRows } = await supabaseAdmin
+          .from("athlete_injuries")
+          .select("injury_grade, recovery_status, injury_mechanism, expected_return_date")
+          .eq("user_id", athleteId)
+          .in("recovery_status", ["active", "recovering", "rehab"]);
+        for (const inj of injuryRows || []) {
+          // Skip expired self-reports (clinical injuries have no expiry)
+          if (
+            inj.injury_mechanism === "self_report" &&
+            inj.expected_return_date &&
+            inj.expected_return_date < dayStr
+          ) continue;
+          const g = inj.injury_grade;
+          if (g === "severe" || g === "Grade 3") {
+            injuryPenalty = Math.max(injuryPenalty, 20);
+            injuryForcedModerate = true;
+          } else if (g === "moderate" || g === "Grade 2") {
+            injuryPenalty = Math.max(injuryPenalty, 10);
+          } else {
+            injuryPenalty = Math.max(injuryPenalty, 5);
+          }
+        }
+      } catch (_injErr) {
+        // Non-fatal: proceed without injury penalty rather than blocking readiness
+      }
+
       const score = Math.round(
-        Math.max(0, Math.min(100, rawScore - travelPenalty)),
+        Math.max(0, Math.min(100, rawScore - travelPenalty - injuryPenalty)),
       );
 
       // Evidence-based cut-points (starting points - require team calibration)
@@ -804,7 +840,7 @@ const handler = async (event, context) => {
       const MODERATE_MAX = 75; // Below this = Moderate → Maintain, Above = High → Push
 
       let level, suggestion;
-      if (score > MODERATE_MAX) {
+      if (score > MODERATE_MAX && !injuryForcedModerate) {
         level = "high";
         suggestion = "push";
       } else if (score >= LOW_MAX) {

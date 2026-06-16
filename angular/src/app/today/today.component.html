@@ -24,6 +24,22 @@
     </div>
   }
 
+  <!-- standalone weather strip — always shown when weather data is available -->
+  @if (weatherRaw(); as w) {
+    <div class="card flat" style="display:flex;align-items:center;gap:var(--s-3);padding:var(--s-3) var(--s-4)">
+      <lucide-icon name="sun" style="flex-shrink:0;color:var(--text-muted)" />
+      <span style="font-weight:var(--fw-semi)">{{ w.tempC }}°C</span>
+      @if (w.condition) {
+        <span class="muted">· {{ w.condition }}</span>
+      }
+      @if (w.suitability) {
+        <span class="band {{ w.suitability === 'excellent' || w.suitability === 'good' ? 'good' : w.suitability === 'poor' ? 'danger' : 'caution' }}" style="margin-left:auto">
+          {{ w.suitability }}
+        </span>
+      }
+    </div>
+  }
+
   <!-- THE ANSWER — today's prescription (server-canonical) -->
   @if (loading()) {
     <app-skeleton variant="hero" label="today's plan" />
@@ -84,13 +100,14 @@
         </div>
         <small class="muted" style="display:block;margin-bottom:var(--s-2)">Food ideas to hit it</small>
         <div class="fuel-foods">
-          <span class="foodchip"><iconify-icon icon="mdi:rice"></iconify-icon>rice</span>
-          <span class="foodchip"><iconify-icon icon="mdi:barley"></iconify-icon>oats</span>
-          <span class="foodchip"><iconify-icon icon="mdi:food-apple"></iconify-icon>fruit</span>
-          <span class="foodchip"><iconify-icon icon="mdi:food-drumstick"></iconify-icon>chicken</span>
-          <span class="foodchip"><iconify-icon icon="mdi:cup"></iconify-icon>shake</span>
-          <span class="foodchip"><iconify-icon icon="mdi:egg"></iconify-icon>eggs</span>
+          @for (f of foodSuggestions(); track f.label) {
+            <span class="foodchip"><iconify-icon [icon]="f.icon"></iconify-icon>{{ f.label }}</span>
+          }
         </div>
+        <a href="https://www.laprimafit.si" target="_blank" rel="noopener"
+           style="display:block;margin-top:var(--s-3);font-size:var(--fs-sm);color:var(--text-muted)">
+          Personalised meal plan → laprimafit.si
+        </a>
       </div>
 
       <!-- session video — real YouTube IFrame Player (no API key) -->

@@ -303,6 +303,21 @@ export function transformProtocolResponse(
       (e) => e.status === "complete",
     ).length;
 
+    // Compute actual block duration from exercises rather than relying on the
+    // hardcoded blockTypes lookup — that lookup has nulls for many block types,
+    // causing the UI to show nothing or a wrong fixed value.
+    const totalSeconds = blockExercises.reduce((sum, ex) => {
+      const sets = ex.prescribedSets ?? 1;
+      const reps = ex.prescribedReps ?? 0;
+      // prescribed_duration_seconds = explicit hold/duration per set
+      const dur = ex.prescribedDurationSeconds ?? ex.prescribedHoldSeconds ?? 0;
+      // Fallback: estimate 4 s/rep for movement exercises (conservative).
+      return sum + sets * (dur || reps * 4);
+    }, 0);
+    const actualMinutes = totalSeconds > 0
+      ? Math.round(totalSeconds / 60)
+      : (blockTypes[type]?.estimatedMinutes ?? null);
+
     return {
       type,
       title,
@@ -316,7 +331,7 @@ export function transformProtocolResponse(
           ? Math.round((completedCount / blockExercises.length) * 100)
           : 0,
       completedAt: protocol[`${type}_completed_at`],
-      estimatedDurationMinutes: blockTypes[type]?.estimatedMinutes,
+      estimatedDurationMinutes: actualMinutes,
     };
   };
 
@@ -328,28 +343,28 @@ export function transformProtocolResponse(
     blocksArray.push({ type: "foam_roll", title: "Pre-Training: Foam Roll" });
   }
   if (blocks.warm_up.length > 0) {
-    blocksArray.push({ type: "warm_up", title: "Warm-Up (25 min)" });
+    blocksArray.push({ type: "warm_up", title: "Warm-Up" });
   }
   if (blocks.isometrics.length > 0) {
-    blocksArray.push({ type: "isometrics", title: "Isometrics (15 min)" });
+    blocksArray.push({ type: "isometrics", title: "Isometrics" });
   }
   if (blocks.plyometrics.length > 0) {
-    blocksArray.push({ type: "plyometrics", title: "Plyometrics (15 min)" });
+    blocksArray.push({ type: "plyometrics", title: "Plyometrics" });
   }
   if (blocks.strength.length > 0) {
-    blocksArray.push({ type: "strength", title: "Strength (15 min)" });
+    blocksArray.push({ type: "strength", title: "Strength" });
   }
   if (blocks.conditioning.length > 0) {
-    blocksArray.push({ type: "conditioning", title: "Conditioning (15 min)" });
+    blocksArray.push({ type: "conditioning", title: "Conditioning" });
   }
   if (blocks.skill_drills.length > 0) {
-    blocksArray.push({ type: "skill_drills", title: "Skill Drills (15 min)" });
+    blocksArray.push({ type: "skill_drills", title: "Skill Drills" });
   }
   if (blocks.main_session.length > 0) {
     blocksArray.push({ type: "main_session", title: "Main Session" });
   }
   if (blocks.cool_down.length > 0) {
-    blocksArray.push({ type: "cool_down", title: "Cool-Down (15 min)" });
+    blocksArray.push({ type: "cool_down", title: "Cool-Down" });
   }
   if (blocks.evening_recovery.length > 0) {
     blocksArray.push({ type: "evening_recovery", title: "Evening Recovery" });
@@ -378,30 +393,30 @@ export function transformProtocolResponse(
       "Pre-Training: Foam Roll",
       "pi-circle-fill",
     ),
-    warmUp: createBlock("warm_up", "Warm-Up (25 min)", "pi-bolt"),
+    warmUp: createBlock("warm_up", "Warm-Up", "pi-bolt"),
     isometrics: createBlock(
       "isometrics",
-      "Isometrics (15 min)",
+      "Isometrics",
       "pi-pause-circle",
     ),
     plyometrics: createBlock(
       "plyometrics",
-      "Plyometrics (15 min)",
+      "Plyometrics",
       "pi-arrow-up",
     ),
-    strength: createBlock("strength", "Strength (15 min)", "pi-heart"),
+    strength: createBlock("strength", "Strength", "pi-heart"),
     conditioning: createBlock(
       "conditioning",
-      "Conditioning (15 min)",
+      "Conditioning",
       "pi-directions-run",
     ),
     skillDrills: createBlock(
       "skill_drills",
-      "Skill Drills (15 min)",
+      "Skill Drills",
       "pi-bolt",
     ),
     mainSession: createBlock("main_session", "Main Session", "pi-play"),
-    coolDown: createBlock("cool_down", "Cool-Down (15 min)", "pi-stop"),
+    coolDown: createBlock("cool_down", "Cool-Down", "pi-stop"),
     eveningRecovery: createBlock(
       "evening_recovery",
       "Evening Recovery",

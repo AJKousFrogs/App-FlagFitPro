@@ -189,20 +189,59 @@ export async function addWarmupBlock({
   });
 }
 
+// Body-region keywords that disqualify a cool-down stretch when that region is
+// injured. Matching is substring-based on the exercise name/slug (lowercase).
+const REGION_KEYWORDS = {
+  calf: ["calf", "gastrocnemius", "soleus"],
+  hamstring: ["hamstring"],
+  quad: ["quad", "quadricep"],
+  ankle: ["ankle"],
+  achilles: ["achilles"],
+  hip: ["hip", "hip flexor", "hip adductor", "iliopsoas"],
+  groin: ["groin", "adductor"],
+  knee: ["knee"],
+  "lower back": ["lower back", "lumbar"],
+  shoulder: ["shoulder", "rotator"],
+};
+
+function isExerciseSafeForInjuries(ex, injuredRegions) {
+  if (!injuredRegions || injuredRegions.length === 0) return true;
+  const name = (ex.name || "").toLowerCase();
+  const slug = (ex.slug || "").toLowerCase();
+  for (const region of injuredRegions) {
+    const keywords = REGION_KEYWORDS[region.toLowerCase()] || [region.toLowerCase()];
+    if (keywords.some((kw) => name.includes(kw) || slug.includes(kw))) {
+      return false;
+    }
+  }
+  return true;
+}
+
 export async function addRecoveryBlocks({
   supabase,
   protocolExercises,
   trainingFocus,
+  activeInjuries = [],
 }) {
+  // Build a set of injured regions so we can filter out cool-down exercises that
+  // directly target them (e.g. no Calf Stretch when calf is reported severe).
+  const injuredRegions = (activeInjuries || [])
+    .map((i) => (i.injury_location || i.region || "").toLowerCase())
+    .filter(Boolean);
+
   const { data: coolDownExercises } = await supabase
     .from("exercises")
     .select("*")
     .eq("category", "cool_down")
     .eq("active", true)
-    .limit(10);
+    .limit(20);
 
   if (coolDownExercises && coolDownExercises.length > 0) {
-    const shuffled = coolDownExercises
+    const safe = coolDownExercises.filter((ex) =>
+      isExerciseSafeForInjuries(ex, injuredRegions),
+    );
+    const pool = safe.length >= 2 ? safe : coolDownExercises;
+    const shuffled = pool
       .sort(() => Math.random() - 0.5)
       .slice(0, 5);
     shuffled.forEach((ex, idx) => {

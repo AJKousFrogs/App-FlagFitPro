@@ -1831,6 +1831,7 @@ async function generateProtocol(supabase, userId, payload, headers, log = logger
     supabase,
     protocolExercises,
     trainingFocus,
+    activeInjuries,
   });
 
   // Graduated taper volume: when loadMultiplier < 1.0, scale prescribed_sets

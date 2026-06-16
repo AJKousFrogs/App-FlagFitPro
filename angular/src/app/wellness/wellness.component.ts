@@ -122,6 +122,9 @@ export class WellnessComponent {
       if (entry.mood != null) this.mood.set(entry.mood);
       if (entry.stress != null) this.stress.set(entry.stress);
       if (entry.travelHours != null) this.travelHours.set(entry.travelHours);
+      // Form was already submitted today — lock it so the athlete can't accidentally
+      // overwrite their real check-in with stale defaults on a return visit.
+      this.submitted.set(true);
     });
 
     // Reflect today's ACTUAL supplement logs rather than fabricated ON/ON/OFF —
@@ -143,6 +146,9 @@ export class WellnessComponent {
 
     // Active injuries/tightness so the form can show what's currently flagged.
     void this.injurySvc.load();
+
+    // Fetch today's actual hydration total so the display doesn't reset to 0 on every visit.
+    this.loadTodayHydration();
   }
 
   readonly today = new Date().toLocaleDateString("en-GB", {
@@ -262,6 +268,17 @@ export class WellnessComponent {
 
   // --- hydration quick-add ---
   readonly hydrationMl = signal(0);
+
+  private loadTodayHydration(): void {
+    this.api.get<{ logs?: { amount: number }[] }>("/api/hydration").subscribe({
+      next: (res) => {
+        const total = (res?.data?.logs ?? []).reduce((sum, l) => sum + (l.amount ?? 0), 0);
+        this.hydrationMl.set(total);
+      },
+      error: (e) => this.logger.error("hydration_today_load_failed", e),
+    });
+  }
+
   addHydration(ml: number): void {
     this.hydrationMl.update((v) => v + ml);
     this.api

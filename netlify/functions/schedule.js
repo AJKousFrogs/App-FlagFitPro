@@ -118,7 +118,13 @@ function resolvePhase(now, upcoming, lastEvent) {
   if (next) {
     const startsAt = new Date(next.starts_at);
     const endsAt = next.ends_at ? new Date(next.ends_at) : startsAt;
-    if (now >= startsAt && now <= endsAt) {
+    // Protocol requests for a specific date pass midnight UTC as `now`, which
+    // falls before the event starts_at (e.g. 08:00 UTC) and breaks the check.
+    // Compare calendar dates (YYYY-MM-DD) so any time on game day works.
+    const dateStr = now.toISOString().slice(0, 10);
+    const startStr = startsAt.toISOString().slice(0, 10);
+    const endStr = endsAt.toISOString().slice(0, 10);
+    if (dateStr >= startStr && dateStr <= endStr) {
       return "competition";
     }
   }

@@ -102,8 +102,11 @@ export class TodayComponent {
   readonly nextEvent = this.schedule.nextEvent;
   readonly daysToNext = this.schedule.daysToNextEvent;
 
-  /** Weather adjustment surfaced by the engine, if any. */
+  /** Weather adjustment surfaced by the engine (adjustment warnings), if any. */
   readonly weather = computed(() => this.rx()?.weatherAdjustment ?? null);
+
+  /** Raw current conditions (temp, condition text) for the standalone weather strip. */
+  readonly weatherRaw = this.periodization.weather;
 
   /** Hero band — reflects the day's nature without fabricating a "physio block". */
   readonly heroBand = computed<{ label: string; cls: string } | null>(() => {
@@ -144,5 +147,52 @@ export class TodayComponent {
   readonly rpeLabel = computed(() => {
     const rpe = this.rx()?.targetRpe;
     return rpe == null ? "—" : String(rpe);
+  });
+
+  /** Context-aware food suggestions that change by today's intent.
+   *  Competition day → fast carbs + pre-game timing.
+   *  Recovery day → protein + anti-inflammatory foods.
+   *  Strength/gym day → protein-forward + complex carbs.
+   *  Default (practice / conditioning) → balanced carb + protein split. */
+  readonly foodSuggestions = computed(() => {
+    const intent = this.rx()?.intent;
+    if (intent === "competition") {
+      return [
+        { icon: "mdi:pasta", label: "pasta" },
+        { icon: "mdi:rice", label: "rice" },
+        { icon: "mdi:food-apple", label: "banana" },
+        { icon: "mdi:bread-slice", label: "white bread" },
+        { icon: "mdi:bottle-tonic", label: "electrolytes" },
+        { icon: "mdi:food-drumstick", label: "chicken" },
+      ];
+    }
+    if (intent === "recovery" || intent === "rest") {
+      return [
+        { icon: "mdi:fish", label: "salmon" },
+        { icon: "mdi:egg", label: "eggs" },
+        { icon: "mdi:food-apple", label: "berries" },
+        { icon: "mdi:cup", label: "greek yogurt" },
+        { icon: "mdi:leaf", label: "spinach" },
+        { icon: "mdi:peanut", label: "almonds" },
+      ];
+    }
+    if (intent === "gym" || intent === "strength") {
+      return [
+        { icon: "mdi:food-drumstick", label: "chicken" },
+        { icon: "mdi:egg", label: "eggs" },
+        { icon: "mdi:rice", label: "rice" },
+        { icon: "mdi:cup", label: "shake" },
+        { icon: "mdi:barley", label: "oats" },
+        { icon: "mdi:food-apple", label: "fruit" },
+      ];
+    }
+    return [
+      { icon: "mdi:rice", label: "rice" },
+      { icon: "mdi:barley", label: "oats" },
+      { icon: "mdi:food-apple", label: "fruit" },
+      { icon: "mdi:food-drumstick", label: "chicken" },
+      { icon: "mdi:cup", label: "shake" },
+      { icon: "mdi:egg", label: "eggs" },
+    ];
   });
 }

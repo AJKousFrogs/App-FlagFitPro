@@ -206,7 +206,16 @@ export function resolvePhase(ctx: PhaseContext): CompetitionPhase {
   if (next) {
     const startsAt = new Date(next.startsAt);
     const endsAt = next.endsAt ? new Date(next.endsAt) : startsAt;
-    if (date >= startsAt && date <= endsAt) {
+    // `date` is midnight LOCAL time; event timestamps are UTC. A straight >=/<=
+    // comparison fails on game day when midnight local is before event start UTC
+    // (e.g. UTC+2: midnight June 21 = 22:00 June 20 UTC < 08:00 June 21 UTC).
+    // Compare calendar dates instead: local YYYY-MM-DD for `date`, UTC for events.
+    const localDate = (d: Date) =>
+      `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+    const dateStr = localDate(date);
+    const startStr = startsAt.toISOString().slice(0, 10);
+    const endStr = endsAt.toISOString().slice(0, 10);
+    if (dateStr >= startStr && dateStr <= endStr) {
       return "competition";
     }
   }

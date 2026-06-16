@@ -71,21 +71,28 @@ export async function generateReturnToPlayProtocol(
   aiRationale += `\n⚕️ STOP if pain increases beyond 3/10 during any exercise.\n`;
   aiRationale += `✓ Update your wellness check-in daily to track progress.\n`;
 
+  // Upsert (not insert) so that tightness reported after the day's initial
+  // protocol generation correctly overwrites the stale normal-day prescription.
+  // Without upsert the INSERT fails on the unique (user_id, protocol_date)
+  // constraint and the athlete sees yesterday's foam-roll plan all day.
   const { data: protocol, error: protocolError } = await supabase
     .from("daily_protocols")
-    .insert({
-      user_id: userId,
-      protocol_date: date,
-      readiness_score: Math.max(30, 50 - painLevel * 10),
-      // No fabrication (SOT Law 7): a hardcoded ACWR 0.5 in the most safety-
-      // sensitive flow (return-to-play) falsely signalled 'under-training'. The
-      // RTP loading is deliberately managed by phase here, not by a real ACWR —
-      // so write null ('not computed for this protocol'), never an invented value.
-      acwr_value: null,
-      training_focus: `return_to_play_phase_${rtpPhase}`,
-      ai_rationale: aiRationale,
-      total_load_target_au: rtpPhase * 100,
-    })
+    .upsert(
+      {
+        user_id: userId,
+        protocol_date: date,
+        readiness_score: Math.max(30, 50 - painLevel * 10),
+        // No fabrication (SOT Law 7): a hardcoded ACWR 0.5 in the most safety-
+        // sensitive flow (return-to-play) falsely signalled 'under-training'. The
+        // RTP loading is deliberately managed by phase here, not by a real ACWR —
+        // so write null ('not computed for this protocol'), never an invented value.
+        acwr_value: null,
+        training_focus: `return_to_play_phase_${rtpPhase}`,
+        ai_rationale: aiRationale,
+        total_load_target_au: rtpPhase * 100,
+      },
+      { onConflict: "user_id,protocol_date" },
+    )
     .select()
     .single();
 
@@ -93,6 +100,13 @@ export async function generateReturnToPlayProtocol(
     logger.error("rtp_protocol_create_failed", protocolError, {});
     throw protocolError;
   }
+
+  // Delete stale exercises from any prior protocol for this day so the RTP
+  // exercises don't stack on top of the normal-day prescription.
+  await supabase
+    .from("protocol_exercises")
+    .delete()
+    .eq("protocol_id", protocol.id);
 
   const protocolExercises = [];
   let sequenceOrder = 0;
