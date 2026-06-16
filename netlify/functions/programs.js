@@ -18,5 +18,13 @@ export default async (req) => {
   if (path.includes("/player-programs")) {return dispatch(playerProgramsHandler, req, url);}
   if (path.includes("/micro-sessions")) {return dispatch(microSessionsHandler, req, url);}
   if (path.includes("/decisions")) {return dispatch(decisionsHandler, req, url);}
+  // program-cycles tables (program_cycles / player_program_cycles) are not yet
+  // live — player_programs exists but the cycles layer was never migrated.
+  if (path.includes("/program-cycles")) {
+    return new Response(
+      JSON.stringify({ success: false, code: "feature_not_available", message: "Program cycles feature is pending — supporting tables are not yet live." }),
+      { status: 404, headers: cors(req) },
+    );
+  }
   return new Response(JSON.stringify({ success: false, error: `Not found: ${req.method} ${path}`, code: "not_found" }), { status: 404, headers: cors(req) });
 };

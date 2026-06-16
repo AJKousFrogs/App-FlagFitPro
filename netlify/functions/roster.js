@@ -32,6 +32,15 @@ export default async (req) => {
   if (path.includes("/player-settings")) {return dispatch(playerSettingsHandler, req, url);}
   if (path.includes("/roster")) {return dispatch(rosterCoreHandler, req, url);}
 
+  // depth-chart tables (depth_chart_templates / _entries / _history) are not
+  // yet live — the migration that creates them was never applied.
+  if (path.includes("/depth-chart")) {
+    return new Response(
+      JSON.stringify({ success: false, code: "feature_not_available", message: "Depth chart feature is pending — supporting tables are not yet live." }),
+      { status: 404, headers: corsHeaders(req) },
+    );
+  }
+
   return new Response(
     JSON.stringify({ success: false, error: `Not found: ${req.method} ${path}`, code: "not_found" }),
     { status: 404, headers: corsHeaders(req) },
