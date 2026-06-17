@@ -48,10 +48,506 @@
   @include system.all;
 }
 
-/* Respect the OS "reduce motion" setting app-wide (WCAG 2.3.3). One global guard
-   instead of per-component media queries — near-instant transitions/animations
-   and no smooth-scroll for users with vestibular sensitivity. */
-@layer utilities {
+/* Reserve vertical space when cookie banner is visible so form CTAs remain tappable on phones/tablets */
+@include respond-to(lg) {
+  body.cookie-banner-visible {
+    padding-bottom: clamp(14rem, 34vh, 22rem);
+  }
+}
+
+@include respond-to(sm) {
+  body.cookie-banner-visible {
+    padding-bottom: clamp(15rem, 38vh, 24rem);
+  }
+}
+
+@supports selector(body:has(app-cookie-consent-banner .cookie-banner)) {
+  @include respond-to(lg) {
+    body:has(app-cookie-consent-banner .cookie-banner) {
+      padding-bottom: clamp(14rem, 34vh, 22rem);
+    }
+  }
+
+  @include respond-to(sm) {
+    body:has(app-cookie-consent-banner .cookie-banner) {
+      padding-bottom: clamp(15rem, 38vh, 24rem);
+    }
+  }
+}
+
+/* ================================================================
+   CROSS-BROWSER COMPATIBILITY FIXES
+   Safari, Firefox, Chrome, Brave support
+   ================================================================ */
+
+/* Safe Area Support for iOS devices (notch, home indicator) */
+/* Note: Safe area handled by specific components, not body padding */
+
+/* Overlay backdrop blur - KEPT for accessibility (indicates modal state) */
+@supports (-webkit-backdrop-filter: blur(var(--blur-md))) or
+  (backdrop-filter: blur(var(--blur-md))) {
+  .modal-backdrop {
+    -webkit-backdrop-filter: blur(var(--blur-sm));
+    backdrop-filter: blur(var(--blur-sm));
+  }
+}
+
+/* Firefox scrollbar styling */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-border-primary) transparent;
+}
+
+/* Webkit scrollbar styling (Chrome, Safari, Edge) */
+::-webkit-scrollbar {
+  width: var(--space-2);
+  height: var(--space-2);
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: var(--color-border-primary);
+  border-radius: var(--radius-full);
+  border: var(--border-2) solid transparent;
+  background-clip: padding-box;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: var(--color-text-muted);
+}
+
+/* Cross-browser text selection */
+::selection {
+  background-color: rgba(var(--ds-primary-green-rgb), 0.2);
+  color: var(--color-text-primary);
+}
+
+::-moz-selection {
+  background-color: rgba(var(--ds-primary-green-rgb), 0.2);
+  color: var(--color-text-primary);
+}
+
+/* ================================================================
+   NATIVE FORM ELEMENT NORMALIZATION
+   Ensures native inputs match PrimeNG form controls visually
+   Design Contract: 2.75rem height, 0.5rem radius, consistent states
+   
+   IMPORTANT: Excludes PrimeNG internal inputs to prevent conflicts:
+   - .p-toggleswitch-input (toggle switches)
+   - .p-checkbox-input (checkboxes)
+   - .p-radiobutton-input (radio buttons)
+   ================================================================ */
+
+input:not(.p-toggleswitch-input):not(.p-checkbox-input):not(
+    .p-radiobutton-input
+  ),
+select,
+textarea {
+  /* Reset */
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+
+  /* Geometry - Match PrimeNG form controls */
+  font-family: var(--font-family-sans);
+  font-size: var(--font-body-size);
+  font-weight: var(--font-weight-normal);
+  line-height: var(--font-body-line-height);
+
+  /* Colors */
+  background: var(--component-input-background);
+  border: var(--border-1) solid var(--component-input-border-color);
+  color: var(--color-text-primary);
+  border-radius: var(--component-input-radius);
+  box-shadow: var(--component-input-shadow-rest);
+
+  /* Transitions */
+  transition:
+    border-color var(--transition-fast) ease,
+    box-shadow var(--transition-fast) ease,
+    background-color var(--transition-fast) ease,
+    color var(--transition-fast) ease;
+}
+
+/* Single-line inputs: 2.75rem height */
+input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not(
+    [type="file"]
+  ):not(.p-toggleswitch-input):not(.p-checkbox-input):not(.p-radiobutton-input),
+select {
+  height: var(--input-height-md);
+  min-height: var(--input-height-md);
+  padding: 0 var(--component-input-padding-x);
+}
+
+/* Textarea: flexible height, consistent horizontal padding */
+textarea {
+  min-height: var(--input-height-lg);
+  padding: var(--component-input-padding-y) var(--component-input-padding-x);
+  resize: vertical;
+}
+
+/* Placeholder styling */
+input::placeholder,
+textarea::placeholder {
+  color: var(--component-input-placeholder);
+  font-size: var(--font-body-sm-size);
+  font-weight: var(--font-weight-normal);
+}
+
+/* Hover state */
+input:not(.p-toggleswitch-input):not(.p-checkbox-input):not(
+    .p-radiobutton-input
+  ):hover:not(:disabled):not(:focus-visible):not(.ng-invalid.ng-touched),
+select:hover:not(:disabled):not(:focus-visible),
+textarea:hover:not(:disabled):not(:focus-visible):not(.ng-invalid.ng-touched) {
+  border-color: var(--component-input-border-hover);
+}
+
+/* Focus state - green border + green ring */
+input:not(.p-toggleswitch-input):not(.p-checkbox-input):not(
+    .p-radiobutton-input
+  ):focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  border-color: var(--component-input-border-focus);
+  box-shadow: var(--component-input-shadow-focus);
+  outline: none;
+}
+
+/* Invalid/Error state */
+input:not(.p-toggleswitch-input):not(.p-checkbox-input):not(
+    .p-radiobutton-input
+  ).ng-invalid.ng-touched,
+textarea.ng-invalid.ng-touched,
+input:not(.p-toggleswitch-input):not(.p-checkbox-input):not(
+    .p-radiobutton-input
+  ):invalid,
+select:invalid,
+textarea:invalid {
+  border-color: var(--component-input-error);
+}
+
+input:not(.p-toggleswitch-input):not(.p-checkbox-input):not(
+    .p-radiobutton-input
+  ).ng-invalid.ng-touched:focus-visible,
+textarea.ng-invalid.ng-touched:focus-visible {
+  border-color: var(--component-input-error);
+  box-shadow: var(--component-input-error-shadow);
+}
+
+/* Disabled state */
+input:not(.p-toggleswitch-input):not(.p-checkbox-input):not(
+    .p-radiobutton-input
+  ):disabled,
+select:disabled,
+textarea:disabled {
+  background: var(--ui-surface-subtle);
+  border-color: var(--color-border-primary);
+  opacity: var(--opacity-muted);
+  cursor: not-allowed;
+}
+
+/* Button reset (not form control styling) */
+button {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+
+/* Cross-browser user-select */
+.no-select {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+/* Cross-browser touch-action for swipeable elements */
+.swipeable {
+  touch-action: pan-y;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Safari fix for 100vh on mobile */
+.full-height {
+  min-height: 100vh; /* Fallback for older browsers */
+  height: 100dvh;     /* Modern: keyboard-aware */
+}
+
+/* ================================================================
+   SAFARI-SPECIFIC RENDERING FIXES
+   Addresses rendering glitches, z-index issues, and text decoration bugs
+   ================================================================ */
+
+/* Safari: Fix for elements with absolute positioning escaping containers */
+@supports (-webkit-appearance: none) {
+  /* Ensure main layout containers create proper stacking contexts */
+  .app-shell,
+  .player-dashboard,
+  .coach-dashboard,
+  [class*="-dashboard"],
+  [class*="-section"] {
+    position: relative;
+    isolation: isolate;
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
+  }
+
+  /* Fix for badges with absolute positioning */
+  .incomplete-data-badge,
+  .risk-badge,
+  .action-required-badge,
+  .coach-override-badge {
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+  }
+
+  /* Ensure text-decoration doesn't leak in Safari */
+  .p-toolbar *,
+  .app-header *,
+  .header-end * {
+    text-decoration: inherit;
+  }
+}
+
+/* Firefox focus-visible polyfill behavior */
+:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* Default focus ring for interactive elements */
+:where(
+    button,
+    [role="button"],
+    a,
+    input,
+    select,
+    textarea,
+    [tabindex]:not([tabindex="-1"])
+  ):focus-visible {
+  outline: var(--focus-outline-width) solid var(--ds-primary-green);
+  outline-offset: var(--focus-outline-offset);
+}
+
+/* High contrast mode support */
+@media (forced-colors: active) {
+  .btn-primary,
+  .btn-secondary,
+  .btn-ghost {
+    border: var(--border-2) solid currentColor;
+  }
+
+  .card {
+    border: var(--border-1) solid currentColor;
+  }
+}
+
+:root {
+  /* Base Typography - Unified System */
+  font-family: var(--font-family-sans);
+  font-size: var(--font-body-size);
+  line-height: var(--font-body-line-height);
+  color: var(--color-text-primary);
+  background-color: var(--surface-ground);
+  color-scheme: light dark;
+}
+
+html {
+  /* Smooth theme transitions */
+  transition:
+    background-color var(--transition-slow) ease,
+    color var(--transition-slow) ease;
+}
+
+body {
+  margin: var(--space-0);
+  padding: var(--space-0);
+  min-height: 100vh;
+  min-height: 100dvh;
+  height: 100dvh;
+  background-color: var(--surface-ground);
+  color: var(--color-text-primary);
+  /* Base Typography - Unified System */
+  font-family: var(--font-family-sans);
+  font-size: var(--font-body-size);
+  font-weight: var(--font-body-weight);
+  line-height: var(--font-body-line-height);
+  transition:
+    background-color var(--transition-slow) ease,
+    color var(--transition-slow) ease;
+
+  &.dark-theme {
+    background: radial-gradient(circle at 50% -20%, #1e293b 0%, #0f172a 45%, #020617 100%);
+    background-attachment: fixed;
+  }
+}
+
+body.app-shell-active {
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+
+body.app-shell-active app-root,
+body.app-shell-active app-root > main {
+  height: 100%;
+}
+
+/* Theme transition for major elements */
+.app-header,
+.sidebar,
+.p-card,
+.p-dialog,
+.p-menu,
+.p-toast {
+  transition:
+    background-color var(--transition-slow) ease,
+    border-color var(--transition-slow) ease,
+    color var(--transition-slow) ease,
+    box-shadow var(--transition-slow) ease;
+}
+
+/* Disable transitions during initial load to prevent flash */
+@layer overrides {
+  html.no-transitions,
+  html.no-transitions * {
+    transition: none;
+  }
+}
+
+/* ================================================================
+   VIEW TRANSITION STYLES
+   Premium page transitions using View Transitions API
+   ================================================================ */
+
+/* Base View Transition Settings */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 300ms;
+  animation-timing-function: cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* Fade Transition (Default) */
+::view-transition-old(root) {
+  animation-name: vt-fade-out;
+}
+
+::view-transition-new(root) {
+  animation-name: vt-fade-in;
+}
+
+@keyframes vt-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes vt-fade-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+/* Slide Transitions */
+[data-transition-type="slide"] ::view-transition-old(root) {
+  animation-name: vt-slide-out-left;
+}
+
+[data-transition-type="slide"] ::view-transition-new(root) {
+  animation-name: vt-slide-in-right;
+}
+
+@keyframes vt-slide-in-right {
+  from {
+    opacity: 0;
+    transform: translateX(var(--motion-offset-slide));
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes vt-slide-out-left {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(calc(var(--motion-offset-slide) * -1));
+  }
+}
+
+/* Scale Transition */
+[data-transition-type="scale"] ::view-transition-old(root) {
+  animation-name: vt-scale-out;
+}
+
+[data-transition-type="scale"] ::view-transition-new(root) {
+  animation-name: vt-scale-in;
+}
+
+@keyframes vt-scale-in {
+  from {
+    opacity: 0;
+    transform: scale(var(--motion-scale-press));
+  }
+  to {
+    opacity: 1;
+    transform: scale(var(--motion-scale-base));
+  }
+}
+
+@keyframes vt-scale-out {
+  from {
+    opacity: 1;
+    transform: scale(var(--motion-scale-base));
+  }
+  to {
+    opacity: 0;
+    transform: scale(var(--motion-scale-expand));
+  }
+}
+
+/* View Transition Name Utilities */
+.vt-hero {
+  view-transition-name: hero-image;
+}
+.vt-card {
+  view-transition-name: card;
+}
+.vt-header {
+  view-transition-name: header;
+}
+.vt-sidebar {
+  view-transition-name: sidebar;
+}
+.vt-main {
+  view-transition-name: main-content;
+}
+.vt-title {
+  view-transition-name: page-title;
+}
+.vt-avatar {
+  view-transition-name: avatar;
+}
+.vt-none {
+  view-transition-name: none;
+}
+
+/* Reduced Motion Support for View Transitions */
+@layer overrides {
   @media (prefers-reduced-motion: reduce) {
     *,
     *::before,
