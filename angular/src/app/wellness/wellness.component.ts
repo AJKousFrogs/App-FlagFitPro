@@ -190,6 +190,8 @@ export class WellnessComponent {
         mood: this.mood(),
         stress: this.stress(),
         travelHours: this.travelHours(),
+        // Pass selected tightness region so coach-inbox alert includes a body area.
+        sorenessAreas: this.tightRegion() ? [this.tightRegion()!] : [],
       })
       .subscribe({
         next: (res) => {

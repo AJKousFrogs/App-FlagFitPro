@@ -6,6 +6,7 @@ import { LoggerService } from "./logger.service";
 import type { RealtimeChannel } from "@supabase/supabase-js";
 import { SupabaseService } from "./supabase.service";
 import { RealtimeBroadcastPayload } from "../models/realtime-broadcast.model";
+import { ApiService, API_ENDPOINTS } from "./api.service";
 
 /** Result shape from public.calculate_acwr (jsonb). */
 export interface AcwrCalculationResult {
@@ -105,6 +106,7 @@ const WELLNESS_MEMORY_LIMITS = {
 export class WellnessService {
   private supabaseService = inject(SupabaseService);
   private logger = inject(LoggerService);
+  private api = inject(ApiService);
   // Get current user ID reactively
   private userId = computed(() => this.supabaseService.userId());
 
@@ -422,6 +424,23 @@ export class WellnessService {
       }),
       tap((result) => {
         if (result.success) {
+          // Fire coach-inbox alert via the Netlify function (best-effort, non-blocking).
+          // The RPC already wrote the row; this call only adds the coach notification.
+          if ((data.soreness ?? 0) >= 6) {
+            this.api
+              .post(API_ENDPOINTS.wellness.checkin, {
+                muscleSoreness: data.soreness,
+                sorenessAreas: data.sorenessAreas ?? [],
+                sleepQuality: data.sleep,
+                sleepHours: data.sleepHours,
+                energyLevel: data.energy,
+                stressLevel: data.stress,
+                mood: data.mood,
+                date: checkinDate,
+              })
+              .subscribe({ error: (e) => this.logger.warn("wellness_coach_alert_failed", e) });
+          }
+
           this.getWellnessData("30d")
             .pipe(take(1))
             .subscribe({

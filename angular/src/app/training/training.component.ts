@@ -17,7 +17,7 @@ import { PeriodizationService } from "../core/services/periodization.service";
 import { ProtocolService } from "../core/services/protocol.service";
 import { ProtocolExercise } from "../core/models/protocol.models";
 import { ScheduleService } from "../core/services/schedule.service";
-import { ApiService } from "../core/services/api.service";
+import { ApiService, API_ENDPOINTS } from "../core/services/api.service";
 import { LoggerService } from "../core/services/logger.service";
 import { TrainingVideoService } from "../core/services/training-video.service";
 import { DailyPrescription } from "../core/models/prescription.models";
@@ -217,7 +217,7 @@ export class TrainingComponent {
     // row. compute-acwr derives load = rpe × duration when workload is null, so this
     // feeds ACWR. (POST /api/training/complete needs a pre-existing sessionId.)
     this.api
-      .post("/api/training-sessions", {
+      .post(API_ENDPOINTS.training.createSession, {
         date: new Date().toISOString().split("T")[0],
         sessionType: this.rx()?.intent ?? "training",
         durationMinutes: this.duration(),

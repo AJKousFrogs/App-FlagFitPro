@@ -866,8 +866,7 @@ async function saveCheckin(supabase, userId, payload, requestId, log = logger) {
   try {
     const hasSevereSoreness =
       muscleSoreness !== undefined && muscleSoreness !== null && muscleSoreness >= 6;
-    const hasAreaReport = Array.isArray(sorenessAreas) && sorenessAreas.length > 0;
-    if (hasSevereSoreness && hasAreaReport) {
+    if (hasSevereSoreness) {
       const { data: memberRows } = await supabase
         .from("team_members")
         .select("team_id")
@@ -885,7 +884,10 @@ async function saveCheckin(supabase, userId, payload, requestId, log = logger) {
         const athleteName = athleteRow?.full_name || "Athlete";
         const severityLabel =
           muscleSoreness >= 8 ? "Severe" : muscleSoreness >= 6 ? "High" : "Moderate";
-        const areasList = sorenessAreas.join(", ");
+        const areas = Array.isArray(sorenessAreas) && sorenessAreas.length > 0
+          ? sorenessAreas
+          : null;
+        const areasList = areas ? areas.join(", ") : null;
 
         const { data: coaches } = await supabase
           .from("team_members")
@@ -900,8 +902,10 @@ async function saveCheckin(supabase, userId, payload, requestId, log = logger) {
             user_id: userId,
             team_id: teamId,
             item_type: "injury_flag",
-            title: `${severityLabel} tightness — ${athleteName}`,
-            message: `${athleteName} reported ${areasList} tightness (soreness ${muscleSoreness}/10) on ${targetDate}. Readiness: ${calculatedReadiness ?? "n/a"}%. Review protocol or schedule physio assessment.`,
+            title: `${severityLabel} soreness — ${athleteName}`,
+            message: areasList
+              ? `${athleteName} reported ${areasList} tightness (soreness ${muscleSoreness}/10) on ${targetDate}. Readiness: ${calculatedReadiness ?? "n/a"}%. Review protocol or schedule physio assessment.`
+              : `${athleteName} reported high soreness (${muscleSoreness}/10) on ${targetDate}. Readiness: ${calculatedReadiness ?? "n/a"}%. Review training load.`,
             priority: muscleSoreness >= 8 ? "high" : "normal",
             action_required: muscleSoreness >= 8,
             source: "wellness_checkin",

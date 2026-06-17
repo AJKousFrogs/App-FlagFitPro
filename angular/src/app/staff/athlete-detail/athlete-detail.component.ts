@@ -137,7 +137,7 @@ export class AthleteDetailComponent {
     const s = this.readiness;
     if (s == null) return null;
     const v = Math.round(s);
-    const cls = v < 55 ? "danger" : v <= 75 ? "info" : "good";
+    const cls = v < 55 ? "danger" : v <= 75 ? "caution" : "good";
     const word = v < 55 ? "deload" : v <= 75 ? "maintain" : "push";
     return { label: `${v} · ${word}`, cls };
   });

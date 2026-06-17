@@ -176,7 +176,7 @@ export class TodayComponent {
         { icon: "mdi:peanut", label: "almonds" },
       ];
     }
-    if (intent === "gym" || intent === "strength") {
+    if (intent === "strength") {
       return [
         { icon: "mdi:food-drumstick", label: "chicken" },
         { icon: "mdi:egg", label: "eggs" },
