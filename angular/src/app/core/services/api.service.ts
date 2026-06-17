@@ -389,7 +389,6 @@ export const API_ENDPOINTS = {
   notifications: {
     list: "/api/notifications",
     count: "/api/notifications/count",
-    markRead: "/api/notifications/mark-read",
     delete: (id: string) => `/api/notifications/${id}`,
     preferences: "/api/notifications/preferences",
   },
@@ -446,6 +445,7 @@ export const API_ENDPOINTS = {
     accessRequest: "/api/coach/access-request",
     games: "/api/games", // Uses main games endpoint - coach role handled server-side
     health: "/api/coach/health",
+    // ── Forward-declared stubs — no Netlify handler yet; add handler before use ──
     tournaments: "/api/coach/tournaments",
     eventsUpcoming: "/api/coach/events/upcoming",
     programs: "/api/coach/programs",

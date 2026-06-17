@@ -189,6 +189,8 @@ export const featureRoutes: Routes = [
         title: "Merlin · FlagFit",
       },
       {
+        // Design-system gallery — intentionally not linked from any nav.
+        // Access via direct URL (/gallery) only; used for component review.
         path: "gallery",
         loadComponent: () =>
           import("../../gallery/gallery.component").then((m) => m.GalleryComponent),
