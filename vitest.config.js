@@ -14,6 +14,10 @@ export default defineConfig({
       "netlify/**/*.{spec,test}.{js,ts}",
       "tests/unit/**/*.{spec,test}.{js,ts}",
       "tests/integration/**/*.{spec,test}.{js,ts}",
+      // Privacy/RLS/consent suite — run via `npm run test:privacy` (filters to
+      // this dir). Without it in include, that filter matched nothing and vitest
+      // exited 1 ("No test files found"). The suites self-skip without DB creds.
+      "tests/privacy-safety/**/*.{spec,test}.{js,ts}",
     ],
     exclude: [
       // Legacy custom runner — defines its own test() and process.exit()
