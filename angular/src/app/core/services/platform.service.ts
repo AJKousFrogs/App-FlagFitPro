@@ -5,7 +5,7 @@
  *
  * Usage:
  * ```typescript
- * private platform = inject(PlatformService);
+ * private readonly platform = inject(PlatformService);
  *
  * // Instead of: localStorage.setItem('key', 'value')
  * this.platform.setLocalStorage('key', 'value');
@@ -25,8 +25,8 @@ import { LoggerService } from "./logger.service";
   providedIn: "root",
 })
 export class PlatformService {
-  private platformId = inject(PLATFORM_ID);
-  private logger = inject(LoggerService);
+  private readonly platformId = inject(PLATFORM_ID);
+  private readonly logger = inject(LoggerService);
   private readonly localMemory = new Map<string, string>();
   private readonly sessionMemory = new Map<string, string>();
 

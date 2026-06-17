@@ -20,8 +20,8 @@ import { SupabaseService } from "./supabase.service";
   providedIn: "root",
 })
 export class EvidenceConfigService {
-  private logger = inject(LoggerService);
-  private supabaseService = inject(SupabaseService);
+  private readonly logger = inject(LoggerService);
+  private readonly supabaseService = inject(SupabaseService);
 
   // Active preset ID
   private readonly activePresetId = signal<string>("adult_flag_competitive_v1");

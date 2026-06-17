@@ -26,7 +26,7 @@ import { SupabaseService } from "../services/supabase.service";
   providedIn: "root",
 })
 export class AuthAwarePreloadStrategy implements PreloadingStrategy {
-  private supabaseService = inject(SupabaseService);
+  private readonly supabaseService = inject(SupabaseService);
   private readonly slowNetworkTypes = new Set(["slow-2g", "2g", "3g"]);
 
   preload(route: Route, load: () => Observable<unknown>): Observable<unknown> {

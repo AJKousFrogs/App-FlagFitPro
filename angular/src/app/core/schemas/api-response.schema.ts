@@ -7,7 +7,6 @@
  * Note: Uses a lightweight custom implementation to avoid adding Zod dependency.
  * For full Zod, install: npm install zod
  *
- * @version 1.0.0
  */
 
 // ============================================================================
