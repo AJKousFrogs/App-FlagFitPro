@@ -356,7 +356,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: dist
-          path: dist
+          path: angular/dist
 
       - name: Install dependencies for audit script
         run: cd angular && npm ci --legacy-peer-deps
