@@ -5,7 +5,7 @@
   "description": "FlagFit Pro - Angular 21 + PrimeNG 21 training platform with Supabase backend",
   "main": "index.js",
   "engines": {
-    "node": ">=22.0.0"
+    "node": ">=22.22.3"
   },
   "scripts": {
     "start": "netlify dev",
@@ -35,6 +35,7 @@
     "test:coverage": "cd angular && npm run test:coverage",
     "test:all": "npm run test:unit && npm run test:e2e",
     "test:backend": "vitest run tests/integration/netlify-api.test.js",
+    "test:unit:backend": "vitest run tests/unit/",
     "test:privacy": "npx vitest run tests/privacy-safety/",
     "test:privacy:ci": "npx vitest run tests/privacy-safety/ --reporter=verbose",
     "test:acwr": "node tests/logic/acwr-regression.test.js",
@@ -61,6 +62,8 @@
     "diagnostics:health": "node scripts/comprehensive-health-check.js",
     "diagnostics:features": "node scripts/feature-validator.js",
     "audit:routes": "node scripts/audit-routes.js",
+    "audit:scss-duplications": "node scripts/audit-scss-duplications.js",
+    "audit:scss-duplications:ci": "node scripts/audit-scss-duplications.js --ci",
     "benchmark": "node scripts/app-performance-check.js",
     "audit:security": "npm audit",
     "security:check": "npm audit --audit-level high",
