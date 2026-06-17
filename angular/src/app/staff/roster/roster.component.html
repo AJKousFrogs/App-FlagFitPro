@@ -7,38 +7,173 @@
 </header>
 
 <main class="screen">
-  @if (rows() === null) {
-    <div class="empty">Loading roster…</div>
-  } @else if (rows()!.length === 0) {
-    <div class="empty">No athletes on this team yet.</div>
-  } @else {
-    <div class="card">
-      @for (r of rows()!; track r.id) {
-        <a class="lrow" [routerLink]="['/staff/athlete', r.id]"
-           [state]="{ name: r.name, position: r.position, jersey: r.jersey, acwr: r.acwr, readiness: r.readiness, shared: r.shared }"
-           style="color:inherit">
-          <span class="thumb-card">
-            <span class="avatar">{{ initials(r.name) }}</span>
-            <span>
-              <b>{{ r.name }}</b><br />
-              <small>@if (r.jersey !== null) { #{{ r.jersey }} · }{{ r.position || "—" }}</small>
-            </span>
-          </span>
-          @if (isCoach()) {
-            @if (r.shared) {
-              <span class="inline" style="gap:var(--s-2)">
-                @if (readyBand(r.readiness); as b) { <span class="band {{ b.cls }}">{{ b.label }}</span> }
-                @if (acwrBand(r.acwr); as b) { <span class="band {{ b.cls }}">{{ b.label }}</span> }
-              </span>
-            } @else {
-              <span class="band neutral">not shared</span>
-            }
-          } @else {
-            <lucide-icon name="chevron-right" class="faint" />
-          }
-        </a>
-      }
+  @if (isCoach()) {
+    <div class="tab-bar">
+      <button class="tab-btn" [class.on]="tab() === 'roster'" (click)="switchTab('roster')">Athletes</button>
+      <button class="tab-btn" [class.on]="tab() === 'injuries'" (click)="switchTab('injuries')">Injuries</button>
+      <button class="tab-btn" [class.on]="tab() === 'cycle'" (click)="switchTab('cycle')">Training Cycle</button>
     </div>
-    <p class="note">Per-athlete data is private by default — each athlete chooses what to share with staff.</p>
+  }
+
+  <!-- ── Roster tab ─────────────────────────────────────────────────────── -->
+  @if (tab() === 'roster') {
+    @if (rows() === null) {
+      <div class="empty">Loading roster…</div>
+    } @else if (rows()!.length === 0) {
+      <div class="empty">No athletes on this team yet.</div>
+    } @else {
+      <div class="card">
+        @for (r of rows()!; track r.id) {
+          <a class="lrow" [routerLink]="['/staff/athlete', r.id]"
+             [state]="{ name: r.name, position: r.position, jersey: r.jersey, acwr: r.acwr, readiness: r.readiness, shared: r.shared }"
+             style="color:inherit">
+            <span class="thumb-card">
+              <span class="avatar">{{ initials(r.name) }}</span>
+              <span>
+                <b>{{ r.name }}</b><br />
+                <small>@if (r.jersey !== null) { #{{ r.jersey }} · }{{ r.position || "—" }}</small>
+              </span>
+            </span>
+            @if (isCoach()) {
+              @if (r.shared) {
+                <span class="inline" style="gap:var(--s-2)">
+                  @if (readyBand(r.readiness); as b) { <span class="band {{ b.cls }}">{{ b.label }}</span> }
+                  @if (acwrBand(r.acwr); as b) { <span class="band {{ b.cls }}">{{ b.label }}</span> }
+                </span>
+              } @else {
+                <span class="band neutral">not shared</span>
+              }
+            } @else {
+              <lucide-icon name="chevron-right" class="faint" />
+            }
+          </a>
+        }
+      </div>
+      <p class="note">Per-athlete data is private by default — each athlete chooses what to share with staff.</p>
+    }
+  }
+
+  <!-- ── Injuries tab ───────────────────────────────────────────────────── -->
+  @if (tab() === 'injuries') {
+    @if (injuries() === null) {
+      <div class="empty">Loading injury data…</div>
+    } @else if (injuries()!.length === 0 && injurySummary() === null) {
+      <div class="empty">No injury reports or soreness alerts today.</div>
+    } @else {
+      @if (injurySummary(); as s) {
+        <div class="card" style="margin-bottom:var(--s-4)">
+          <div class="section-label">Today's snapshot · {{ s.checkinDate }}</div>
+          <div class="inline" style="gap:var(--s-3);flex-wrap:wrap;padding:var(--s-3) 0">
+            <span class="band {{ s.total > 0 ? 'caution' : 'good' }}">{{ s.total }} flagged</span>
+            @if (s.severe > 0) { <span class="band danger">{{ s.severe }} severe</span> }
+            @if (s.moderate > 0) { <span class="band caution">{{ s.moderate }} moderate</span> }
+            @if (s.selfReports > 0) { <span class="band neutral">{{ s.selfReports }} self-reports</span> }
+          </div>
+        </div>
+      }
+      @if (injuries()!.length === 0) {
+        <div class="empty">No individual injury entries.</div>
+      } @else {
+        <div class="card">
+          @for (inj of injuries()!; track inj.athleteId + inj.reportedAt) {
+            <div class="inj-row">
+              <div class="inj-meta">
+                <b>{{ inj.athleteName }}</b>
+                <span class="band {{ gradeBand(inj.grade) }}">{{ gradeLabel(inj) }}</span>
+                @if (inj.status !== 'self_report') {
+                  <span class="band neutral">{{ inj.status }}</span>
+                }
+              </div>
+              <div style="font-size:var(--fs-sm);color:var(--text-body)">
+                {{ inj.location }}
+                @if (inj.mechanism) { · {{ inj.mechanism }} }
+              </div>
+              @if (inj.expectedReturn) {
+                <div style="font-size:var(--fs-xs);color:var(--text-faint)">
+                  Expected return: {{ inj.expectedReturn }}
+                </div>
+              }
+              @if (inj.notes) {
+                <div style="font-size:var(--fs-xs);color:var(--text-faint)">{{ inj.notes }}</div>
+              }
+              @if (inj.todaySoreness !== null || inj.todayReadiness !== null) {
+                <div class="inline" style="gap:var(--s-2);margin-top:2px">
+                  @if (inj.todaySoreness !== null) {
+                    <span class="band {{ inj.todaySoreness >= 7 ? 'danger' : 'caution' }}">
+                      Soreness {{ inj.todaySoreness }}/10
+                    </span>
+                  }
+                  @if (readyBand(inj.todayReadiness); as b) {
+                    <span class="band {{ b.cls }}">Readiness {{ b.label }}</span>
+                  }
+                </div>
+              }
+            </div>
+          }
+        </div>
+      }
+    }
+  }
+
+  <!-- ── Training Cycle tab ─────────────────────────────────────────────── -->
+  @if (tab() === 'cycle') {
+    @if (cycleAthletes() === null) {
+      <div class="empty">Loading training cycle data…</div>
+    } @else {
+      @if (nextEvent(); as ev) {
+        <div class="card" style="margin-bottom:var(--s-4)">
+          <div class="section-label">Next team event</div>
+          <div style="padding:var(--s-3) 0">
+            <b>{{ ev.name }}</b>
+            <span class="band {{ ev.daysAway <= 3 ? 'danger' : ev.daysAway <= 7 ? 'caution' : 'info' }}"
+                  style="margin-left:var(--s-2)">
+              {{ ev.daysAway === 0 ? 'Today' : ev.daysAway === 1 ? 'Tomorrow' : 'In ' + ev.daysAway + ' days' }}
+            </span>
+            <div style="font-size:var(--fs-xs);color:var(--text-faint);margin-top:2px">{{ ev.type }}</div>
+          </div>
+        </div>
+      }
+      @if (cycleAthletes()!.length === 0) {
+        <div class="empty">No training cycle data for this team yet.</div>
+      } @else {
+        <div class="card">
+          @for (a of cycleAthletes()!; track a.athleteId) {
+            <div class="cycle-row">
+              <div>
+                <div class="inline" style="gap:var(--s-2);align-items:center">
+                  <b>{{ a.athleteName }}</b>
+                  @if (a.trainingFocus) {
+                    <span class="band {{ focusBand(a.trainingFocus) }}">{{ a.trainingFocus }}</span>
+                  }
+                </div>
+                <div class="inline" style="gap:var(--s-2);margin-top:4px">
+                  @if (readyBand(a.latestReadiness); as b) {
+                    <span class="band {{ b.cls }}">Ready {{ b.label }}</span>
+                  }
+                  @if (acwrBand(a.acwr); as b) {
+                    <span class="band {{ b.cls }}">ACWR {{ b.label }}</span>
+                  }
+                  @if (a.avgReadiness7d !== null) {
+                    <span style="font-size:var(--fs-xs);color:var(--text-faint)">
+                      7d avg {{ a.avgReadiness7d | number:'1.0-0' }}
+                    </span>
+                  }
+                </div>
+              </div>
+              @if (a.readinessTrend?.length) {
+                <div class="trend" title="7-day readiness trend">
+                  @for (score of a.readinessTrend; track $index) {
+                    <div class="trend-bar"
+                         [style.height]="barHeight(score)"
+                         [style.background]="barColor(score)">
+                    </div>
+                  }
+                </div>
+              }
+            </div>
+          }
+        </div>
+      }
+    }
   }
 </main>
