@@ -6,9 +6,8 @@ on:
   pull_request:
     branches: [main, master, develop]
 
-env:
-  NODE_VERSION: "22"
-  NPM_VERSION: "10"
+# Node version is pinned in a single place — .nvmrc — and every setup-node
+# step below reads it via node-version-file so CI, local dev, and Netlify never drift.
 
 jobs:
   backend-audits:
@@ -25,7 +24,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v6
         with:
-          node-version: ${{ env.NODE_VERSION }}
+          node-version-file: ".nvmrc"
           cache: "npm"
           cache-dependency-path: package-lock.json
 
@@ -59,7 +58,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4.4.0
         with:
-          node-version: ${{ env.NODE_VERSION }}
+          node-version-file: ".nvmrc"
           cache: "npm"
           cache-dependency-path: package-lock.json
       - name: Install dependencies
@@ -81,7 +80,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4.4.0
         with:
-          node-version: ${{ env.NODE_VERSION }}
+          node-version-file: ".nvmrc"
           cache: "npm"
           cache-dependency-path: package-lock.json
       - name: Install dependencies
@@ -118,7 +117,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v6
         with:
-          node-version: ${{ env.NODE_VERSION }}
+          node-version-file: ".nvmrc"
           cache: "npm"
           cache-dependency-path: |
             package-lock.json
@@ -153,7 +152,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v6
         with:
-          node-version: ${{ env.NODE_VERSION }}
+          node-version-file: ".nvmrc"
           cache: "npm"
           cache-dependency-path: |
             package-lock.json
@@ -196,7 +195,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v6
         with:
-          node-version: ${{ env.NODE_VERSION }}
+          node-version-file: ".nvmrc"
           cache: "npm"
           cache-dependency-path: |
             package-lock.json
@@ -222,7 +221,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v6
         with:
-          node-version: ${{ env.NODE_VERSION }}
+          node-version-file: ".nvmrc"
           cache: "npm"
           cache-dependency-path: |
             package-lock.json
@@ -259,7 +258,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v6
         with:
-          node-version: ${{ env.NODE_VERSION }}
+          node-version-file: ".nvmrc"
           cache: "npm"
           cache-dependency-path: |
             package-lock.json
@@ -308,7 +307,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v6
         with:
-          node-version: ${{ env.NODE_VERSION }}
+          node-version-file: ".nvmrc"
           cache: "npm"
           cache-dependency-path: |
             package-lock.json
@@ -347,7 +346,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v6
         with:
-          node-version: ${{ env.NODE_VERSION }}
+          node-version-file: ".nvmrc"
           cache: "npm"
           cache-dependency-path: |
             package-lock.json

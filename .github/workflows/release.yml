@@ -12,7 +12,6 @@ on:
         type: string
 
 env:
-  NODE_VERSION: "22"
 
 permissions:
   contents: write
@@ -31,7 +30,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v6
         with:
-          node-version: ${{ env.NODE_VERSION }}
+          node-version-file: ".nvmrc"
           cache: "npm"
 
       - name: Install root dependencies
@@ -81,7 +80,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v6
         with:
-          node-version: ${{ env.NODE_VERSION }}
+          node-version-file: ".nvmrc"
           cache: "npm"
 
       - name: Install root dependencies
@@ -161,7 +160,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v6
         with:
-          node-version: ${{ env.NODE_VERSION }}
+          node-version-file: ".nvmrc"
           cache: "npm"
 
       - name: Install root dependencies
