@@ -8,7 +8,6 @@
  * - Set VITE_ENABLE_SENTRY=true in environment
  * - Set VITE_SENTRY_DSN in environment
  *
- * @version 1.0.0
  */
 
 import { inject, Injectable } from "@angular/core";
@@ -94,8 +93,8 @@ interface SentryApi {
   providedIn: "root",
 })
 export class ErrorTrackingService {
-  private logger = inject(LoggerService);
-  private router = inject(Router);
+  private readonly logger = inject(LoggerService);
+  private readonly router = inject(Router);
 
   private breadcrumbs: Breadcrumb[] = [];
   private maxBreadcrumbs = 50;

@@ -26,7 +26,7 @@ export interface UserMetadata {
   providedIn: "root",
 })
 export class SupabaseService {
-  private logger = inject(LoggerService);
+  private readonly logger = inject(LoggerService);
   private readonly correlation = inject(CorrelationContextService);
   /** Populated after `import("@supabase/supabase-js")` resolves. */
   private supabase: SupabaseClient | null = null;

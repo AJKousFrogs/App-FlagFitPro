@@ -50,8 +50,8 @@ export interface RealtimeSubscriptionCallbacks<
   providedIn: "root",
 })
 export class RealtimeService {
-  private supabase = inject(SupabaseService);
-  private logger = inject(LoggerService);
+  private readonly supabase = inject(SupabaseService);
+  private readonly logger = inject(LoggerService);
   private channels = new Map<string, RealtimeChannel>();
   private channelMeta = new Map<string, { table: string }>();
   private tableSubscriptions = new Map<string, Set<string>>();
