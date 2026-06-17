@@ -25,25 +25,39 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "22"
+          node-version-file: ".nvmrc"
           cache: "npm"
+          cache-dependency-path: |
+            package-lock.json
+            angular/package-lock.json
 
+      # Both the root tooling (Playwright) AND the Angular app must be installed:
+      # the previous workflow only ran the root `npm ci`, so `build:production`
+      # (which runs `ng build` inside angular/) failed for lack of @angular/* deps.
       - name: Install dependencies
-        run: npm ci
+        run: |
+          npm ci
+          cd angular && npm ci
 
       - name: Install Playwright browsers
         run: npx playwright install --with-deps
 
-      - name: Build application
+      - name: Build production bundle
         run: npm run build:production
 
-      - name: Start application
+      # Serve the built bundle on :4200 and run the tests in the SAME step so the
+      # background server stays alive for the test run. (Previously the workflow
+      # started `netlify dev` on :8888 but waited on :4200 — a port mismatch that
+      # could never come up.) PW_SKIP_WEBSERVER stops Playwright double-starting it.
+      - name: Serve bundle and run responsive tests (shard ${{ matrix.shard }}/3)
         run: |
-          npm run start &
-          npx wait-on http://localhost:4200 --timeout 120000
-
-      - name: Run responsive tests (shard ${{ matrix.shard }}/3)
-        run: npx playwright test tests/responsive/mobile-devices.test.js --shard=${{ matrix.shard }}/3 --reporter=html,json
+          (cd angular && npm run serve:dist &)
+          node -e "const http=require('http');const s=Date.now();(function p(){http.get('http://127.0.0.1:4200',r=>process.exit(r.statusCode<500?0:1)).on('error',()=>Date.now()-s>120000?process.exit(1):setTimeout(p,1000));})();"
+          npx playwright test tests/responsive/mobile-devices.test.js --shard=${{ matrix.shard }}/3 --reporter=html,json
+        env:
+          PW_SKIP_WEBSERVER: "1"
+          BASE_URL: http://127.0.0.1:4200
+          CI: "true"
 
       - name: Upload test results
         if: always()
@@ -73,25 +87,32 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "22"
+          node-version-file: ".nvmrc"
           cache: "npm"
+          cache-dependency-path: |
+            package-lock.json
+            angular/package-lock.json
 
       - name: Install dependencies
-        run: npm ci
+        run: |
+          npm ci
+          cd angular && npm ci
 
       - name: Install Playwright browsers
         run: npx playwright install --with-deps
 
-      - name: Build application
+      - name: Build production bundle
         run: npm run build:production
 
-      - name: Start application
+      - name: Serve bundle and run visual regression tests
         run: |
-          npm run start &
-          npx wait-on http://localhost:4200 --timeout 120000
-
-      - name: Run visual regression tests
-        run: npx playwright test tests/responsive/visual-regression.test.js --reporter=html
+          (cd angular && npm run serve:dist &)
+          node -e "const http=require('http');const s=Date.now();(function p(){http.get('http://127.0.0.1:4200',r=>process.exit(r.statusCode<500?0:1)).on('error',()=>Date.now()-s>120000?process.exit(1):setTimeout(p,1000));})();"
+          npx playwright test tests/responsive/visual-regression.test.js --reporter=html
+        env:
+          PW_SKIP_WEBSERVER: "1"
+          BASE_URL: http://127.0.0.1:4200
+          CI: "true"
 
       - name: Upload visual test results
         if: always()
@@ -114,6 +135,9 @@ jobs:
     needs: [responsive-tests, visual-regression]
     runs-on: ubuntu-latest
     if: always()
+    # Needed for the PR comment below; without it the default token is read-only.
+    permissions:
+      pull-requests: write
 
     steps:
       - name: Download all artifacts
@@ -156,7 +180,10 @@ jobs:
           retention-days: 90
 
       - name: Comment PR
-        if: github.event_name == 'pull_request'
+        # Dependabot PRs run with a read-only GITHUB_TOKEN, so createComment would
+        # 403 and fail the job. Skip the (cosmetic) comment for those runs — the
+        # summary artifact is still uploaded above for every run.
+        if: github.event_name == 'pull_request' && github.actor != 'dependabot[bot]'
         uses: actions/github-script@v8
         with:
           script: |
@@ -181,22 +208,25 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "22"
+          node-version-file: ".nvmrc"
           cache: "npm"
+          cache-dependency-path: |
+            package-lock.json
+            angular/package-lock.json
 
       - name: Install dependencies
-        run: npm ci
+        run: |
+          npm ci
+          cd angular && npm ci
 
-      - name: Build application
+      - name: Build production bundle
         run: npm run build:production
 
+      # Lighthouse starts/stops its own server via .lighthouserc.json
+      # (collect.startServerCommand) so the URLs below are actually reachable.
       - name: Run Lighthouse CI
         uses: treosh/lighthouse-ci-action@v12
         with:
-          urls: |
-            http://localhost:4200
-            http://localhost:4200/dashboard
-            http://localhost:4200/training
           configPath: "./.lighthouserc.json"
           uploadArtifacts: true
           temporaryPublicStorage: true

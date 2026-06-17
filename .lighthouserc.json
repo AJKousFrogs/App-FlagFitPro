@@ -1,6 +1,13 @@
 {
   "ci": {
     "collect": {
+      "startServerCommand": "cd angular && npm run serve:dist",
+      "startServerReadyPattern": "Serving",
+      "url": [
+        "http://localhost:4200/",
+        "http://localhost:4200/dashboard",
+        "http://localhost:4200/training"
+      ],
       "numberOfRuns": 3,
       "settings": {
         "preset": "desktop"
