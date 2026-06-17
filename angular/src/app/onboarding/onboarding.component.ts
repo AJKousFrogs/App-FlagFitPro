@@ -7,6 +7,7 @@ import {
 import { FormsModule } from "@angular/forms";
 import { Router, RouterLink } from "@angular/router";
 import { LucideAngularModule } from "lucide-angular";
+import { retry } from "rxjs";
 
 import { ApiService } from "../core/services/api.service";
 import { LoggerService } from "../core/services/logger.service";
@@ -133,6 +134,7 @@ export class OnboardingComponent {
         preferredTime: this.preferredTime(),
         seasonCalendar: this.season().filter((w) => w.from && w.to),
       })
+      .pipe(retry({ count: 1, delay: 2000 }))
       .subscribe({
         next: () => this.router.navigate(["/today"]),
         error: (e) => {
