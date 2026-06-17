@@ -14,7 +14,7 @@
     />
 
     <!-- PWA & Mobile Meta Tags -->
-    <meta name="theme-color" content="#036d35" />
+    <meta name="theme-color" content="var(--p-highlight-text-color)" />
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta
@@ -23,7 +23,23 @@
     />
     <meta name="apple-mobile-web-app-title" content="FlagFit Pro" />
 
-    <!-- Fonts bundled via @fontsource — no external CDN dependency -->
+    <!-- Preload critical fonts to eliminate render-blocking FOUT -->
+    <link
+      rel="preload"
+      href="/assets/fonts/Poppins-Regular.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <link
+      rel="preload"
+      href="/assets/fonts/Poppins-Medium.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+
+    <!-- Preconnect to critical origins for faster loading -->
     <link
       rel="preconnect"
       href="https://grfjmnjpzvknmsxrwesx.supabase.co"
@@ -58,7 +74,7 @@
         --ds-primary-green: var(--p-highlight-text-color);
         --surface-primary: #ffffff;
         --color-text-primary: #0f1728;
-        --font-family-sans: "Plus Jakarta Sans", "Inter", system-ui, sans-serif;
+        --font-family-sans: "Poppins", system-ui, sans-serif;
       }
 
       .route-landing {
@@ -131,8 +147,6 @@
         }
       }
     </style>
-
-    <!-- Iconify bundled via npm (iconify-icon) — imported in main.ts -->
   </head>
   <body>
     <app-root></app-root>
