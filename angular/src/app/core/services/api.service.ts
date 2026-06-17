@@ -598,6 +598,8 @@ export const API_ENDPOINTS = {
   },
   roster: {
     players: "/api/roster/players",
+    injuries: (teamId: string) => `/api/coach/roster/injuries?teamId=${teamId}`,
+    trainingCycle: (teamId: string) => `/api/coach/roster/training-cycle?teamId=${teamId}`,
   },
   // Player Stats endpoints
   playerStats: {
