@@ -61,20 +61,29 @@ describe("OnboardingComponent finish() — P0 write-failure guard", () => {
   });
 
   it("clears saving flag and shows error message on write failure", async () => {
-    const apiMock = { post: vi.fn(() => throwError(() => new Error("timeout"))) };
-    const fixture = await mountComponent(apiMock);
-    const comp = fixture.componentInstance as unknown as {
-      finish(): void;
-      saving: () => boolean;
-      error: () => string | null;
-    };
+    // finish() retries the write once after a 2s delay (transient cold-start
+    // guard) before surfacing the error, so drive fake timers past the retry
+    // window before asserting the failure state is reached.
+    vi.useFakeTimers();
+    try {
+      const apiMock = { post: vi.fn(() => throwError(() => new Error("timeout"))) };
+      const fixture = await mountComponent(apiMock);
+      const comp = fixture.componentInstance as unknown as {
+        finish(): void;
+        saving: () => boolean;
+        error: () => string | null;
+      };
 
-    comp.finish?.();
-    await fixture.whenStable();
+      comp.finish?.();
+      await vi.advanceTimersByTimeAsync(2100);
+      await fixture.whenStable();
 
-    expect(comp.saving()).toBe(false);
-    expect(comp.error()).toBeTruthy();
-    expect(typeof comp.error()).toBe("string");
+      expect(comp.saving()).toBe(false);
+      expect(comp.error()).toBeTruthy();
+      expect(typeof comp.error()).toBe("string");
+    } finally {
+      vi.useRealTimers();
+    }
   });
 
   it("re-entrancy guard: double-tap does NOT make two API calls", async () => {
