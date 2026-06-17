@@ -1481,7 +1481,9 @@ async function generateProtocol(supabase, userId, payload, headers, log = logger
       const contactsPerSession = Math.round(
         (plyoContactsConfig.min + plyoContactsConfig.max) / 2 / 3,
       );
-      const repsPerExercise = 6;
+      // Contacts per rep scales with intensity: low=4, medium=6, high/very_high=8.
+      // Lower intensity = more technical focus per rep; higher = more contacts at speed.
+      const repsPerExercise = plyoIntensity === "low" ? 4 : plyoIntensity === "very_high" || plyoIntensity === "high" ? 8 : 6;
       const exerciseCount = Math.min(
         5,
         Math.ceil(contactsPerSession / repsPerExercise),
