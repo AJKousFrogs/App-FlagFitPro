@@ -19,9 +19,9 @@ interface CoachMember {
   position?: string;
   acwr?: number | null;
   readiness?: number | null;
-  workload?: number | null;
   dataState?: string;
 }
+
 interface Player {
   id?: string;
   user_id?: string;
@@ -30,6 +30,7 @@ interface Player {
   jerseyNumber?: number | null;
   jersey_number?: number | null;
 }
+
 interface Row {
   id: string;
   name: string;
@@ -40,7 +41,7 @@ interface Row {
   shared: boolean;
 }
 
-export interface InjuryRow {
+interface InjuryRow {
   athleteId: string;
   athleteName: string;
   location: string;
@@ -54,7 +55,7 @@ export interface InjuryRow {
   todayReadiness: number | null;
 }
 
-export interface InjurySummary {
+interface InjurySummary {
   total: number;
   severe: number;
   moderate: number;
@@ -62,7 +63,7 @@ export interface InjurySummary {
   checkinDate: string;
 }
 
-export interface CycleAthlete {
+interface CycleAthlete {
   athleteId: string;
   athleteName: string;
   trainingFocus: string | null;
@@ -72,53 +73,75 @@ export interface CycleAthlete {
   readinessTrend: number[];
 }
 
-export interface NextTeamEvent {
+interface NextTeamEvent {
   name: string;
   type: string;
   daysAway: number;
 }
 
 const LANE_LABEL: Record<string, string> = {
-  coach: "Coach", physio: "Physio", nutrition: "Nutrition", psych: "Psychology",
+  coach: "Coach",
+  physio: "Physio",
+  nutrition: "Nutrition",
+  psych: "Psychology",
 };
 
 const GRADE_CLS: Record<string, string> = {
-  severe: "danger", "Grade 3": "danger",
-  moderate: "caution", "Grade 2": "caution",
-  minor: "good", "Grade 1": "good",
+  severe: "danger",
+  "Grade 3": "danger",
+  moderate: "caution",
+  "Grade 2": "caution",
+  minor: "good",
+  "Grade 1": "good",
   self_report: "caution",
 };
 
 const FOCUS_CLS: Record<string, string> = {
-  sprint: "info", speed: "info",
-  strength: "good", gym: "good",
-  recovery: "neutral", rest: "neutral",
+  sprint: "info",
+  speed: "info",
+  strength: "good",
+  gym: "good",
+  recovery: "neutral",
+  rest: "neutral",
   mobility: "neutral",
-  mixed: "caution", conditioning: "caution",
+  mixed: "caution",
+  conditioning: "caution",
   competition: "danger",
 };
 
 @Component({
   selector: "app-roster",
   standalone: true,
-  imports: [RouterLink, LucideAngularModule, DecimalPipe],
+  imports: [DecimalPipe, RouterLink, LucideAngularModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: "./roster.component.html",
   styles: [`
+    a.lrow { color: inherit; }
     .tab-bar { display: flex; gap: var(--s-4); border-bottom: 1px solid var(--border-soft); margin-bottom: var(--s-4); }
     .tab-btn { background: none; border: 0; cursor: pointer; padding: var(--s-2) 0;
       color: var(--text-faint); font-weight: var(--fw-semi); font-size: var(--fs-sm);
       font-family: var(--font-body); border-bottom: 2px solid transparent; }
     .tab-btn.on { color: var(--text-strong); border-bottom-color: var(--accent); }
+    .card-mb { margin-bottom: var(--s-4); }
+    .section-label { font-size: var(--fs-xs); color: var(--text-muted); text-transform: uppercase;
+      letter-spacing: .06em; margin-bottom: var(--s-2); }
+    .summary-chips { display: flex; flex-wrap: wrap; gap: var(--s-3); padding: var(--s-3) 0; }
+    .detail { font-size: var(--fs-sm); color: var(--text-body); }
+    .sub { font-size: var(--fs-xs); color: var(--text-faint); }
     .inj-row { display: flex; flex-direction: column; gap: 2px; padding: var(--s-3) 0;
       border-bottom: 1px solid var(--border-soft); }
     .inj-row:last-child { border-bottom: 0; }
     .inj-meta { display: flex; flex-wrap: wrap; gap: var(--s-2); align-items: center; }
-    .trend { display: flex; gap: 3px; align-items: flex-end; height: 24px; }
-    .trend-bar { width: 6px; border-radius: 2px; background: var(--accent); min-height: 3px; }
+    .inj-today { display: flex; gap: var(--s-2); margin-top: 2px; }
     .cycle-row { display: grid; grid-template-columns: 1fr auto; gap: var(--s-2); padding: var(--s-3) 0;
       border-bottom: 1px solid var(--border-soft); align-items: center; }
     .cycle-row:last-child { border-bottom: 0; }
+    .bands { display: flex; gap: var(--s-2); align-items: center; }
+    .bands.mt { margin-top: 4px; }
+    .trend { display: flex; gap: 3px; align-items: flex-end; height: 24px; }
+    .trend-bar { width: 6px; border-radius: 2px; min-height: 3px; }
+    .ev-body { padding: var(--s-3) 0; }
+    .ev-type { margin-top: 2px; }
   `],
 })
 export class RosterComponent {
@@ -132,41 +155,39 @@ export class RosterComponent {
 
   readonly tab = signal<"roster" | "injuries" | "cycle">("roster");
 
-  // ── Roster tab ────────────────────────────────────────────────────────────
   readonly rows = signal<Row[] | null>(null);
-
-  // ── Injuries tab ──────────────────────────────────────────────────────────
   readonly injuries = signal<InjuryRow[] | null>(null);
   readonly injurySummary = signal<InjurySummary | null>(null);
-  private injuriesLoaded = false;
-
-  // ── Training cycle tab ────────────────────────────────────────────────────
   readonly cycleAthletes = signal<CycleAthlete[] | null>(null);
   readonly nextEvent = signal<NextTeamEvent | null>(null);
+
+  private injuriesLoaded = false;
   private cycleLoaded = false;
 
   constructor() {
     if (this.isCoach()) {
-      this.api.get<{ members?: CoachMember[]; consentInfo?: { blockedPlayerIds?: string[] } }>(
-        "/api/coach/team",
-      ).subscribe({
-        next: (res) => {
-          const d = res?.data ?? {};
-          const blocked = new Set(d.consentInfo?.blockedPlayerIds ?? []);
-          this.rows.set(
-            (d.members ?? []).map((m) => ({
-              id: m.user_id ?? "",
-              name: m.full_name ?? "Athlete",
-              position: m.position ?? "",
-              jersey: null,
-              acwr: typeof m.acwr === "number" ? m.acwr : null,
-              readiness: typeof m.readiness === "number" ? m.readiness : null,
-              shared: !blocked.has(m.user_id ?? "") && (m.dataState ?? "") !== "NO_DATA",
-            })),
-          );
-        },
-        error: () => this.rows.set([]),
-      });
+      this.api
+        .get<{ members?: CoachMember[]; consentInfo?: { blockedPlayerIds?: string[] } }>(
+          "/api/coach/team",
+        )
+        .subscribe({
+          next: (res) => {
+            const d = res?.data ?? {};
+            const blocked = new Set(d.consentInfo?.blockedPlayerIds ?? []);
+            this.rows.set(
+              (d.members ?? []).map((m) => ({
+                id: m.user_id ?? "",
+                name: m.full_name ?? "Athlete",
+                position: m.position ?? "",
+                jersey: null,
+                acwr: typeof m.acwr === "number" ? m.acwr : null,
+                readiness: typeof m.readiness === "number" ? m.readiness : null,
+                shared: !blocked.has(m.user_id ?? "") && (m.dataState ?? "") !== "NO_DATA",
+              })),
+            );
+          },
+          error: () => this.rows.set([]),
+        });
     } else {
       const teamId = this.membership.teamId();
       const url = teamId ? `/api/roster/players?teamId=${teamId}` : "/api/roster/players";
@@ -195,35 +216,45 @@ export class RosterComponent {
     this.tab.set(t);
     const teamId = this.membership.teamId();
     if (!teamId) return;
+
     if (t === "injuries" && !this.injuriesLoaded) {
       this.injuriesLoaded = true;
-      this.api.get<{ injuries: InjuryRow[]; summary: InjurySummary }>(
-        API_ENDPOINTS.roster.injuries(teamId),
-      ).subscribe({
-        next: (res) => {
-          this.injuries.set(res?.data?.injuries ?? []);
-          this.injurySummary.set(res?.data?.summary ?? null);
-        },
-        error: () => this.injuries.set([]),
-      });
+      this.api
+        .get<{ injuries: InjuryRow[]; summary: InjurySummary }>(
+          API_ENDPOINTS.roster.injuries(teamId),
+        )
+        .subscribe({
+          next: (res) => {
+            this.injuries.set(res?.data?.injuries ?? []);
+            this.injurySummary.set(res?.data?.summary ?? null);
+          },
+          error: () => this.injuries.set([]),
+        });
     }
+
     if (t === "cycle" && !this.cycleLoaded) {
       this.cycleLoaded = true;
-      this.api.get<{ athletes: CycleAthlete[]; nextTeamEvent: NextTeamEvent | null }>(
-        API_ENDPOINTS.roster.trainingCycle(teamId),
-      ).subscribe({
-        next: (res) => {
-          this.cycleAthletes.set(res?.data?.athletes ?? []);
-          this.nextEvent.set(res?.data?.nextTeamEvent ?? null);
-        },
-        error: () => this.cycleAthletes.set([]),
-      });
+      this.api
+        .get<{ athletes: CycleAthlete[]; nextTeamEvent: NextTeamEvent | null }>(
+          API_ENDPOINTS.roster.trainingCycle(teamId),
+        )
+        .subscribe({
+          next: (res) => {
+            this.cycleAthletes.set(res?.data?.athletes ?? []);
+            this.nextEvent.set(res?.data?.nextTeamEvent ?? null);
+          },
+          error: () => this.cycleAthletes.set([]),
+        });
     }
   }
 
-  // ── Helpers ───────────────────────────────────────────────────────────────
   initials(name: string): string {
-    return name.split(/\s+/).map((w) => w[0]).slice(0, 2).join("").toUpperCase();
+    return name
+      .split(/\s+/)
+      .map((w) => w[0])
+      .slice(0, 2)
+      .join("")
+      .toUpperCase();
   }
 
   acwrBand(r: number | null): { label: string; cls: string } | null {
@@ -255,7 +286,6 @@ export class RosterComponent {
     return FOCUS_CLS[focus.toLowerCase()] ?? "neutral";
   }
 
-  /** Scale a readiness score (0–100) to a bar height (3–24px). */
   barHeight(score: number): string {
     return `${Math.max(3, Math.round((score / 100) * 24))}px`;
   }

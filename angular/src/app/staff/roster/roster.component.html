@@ -15,7 +15,7 @@
     </div>
   }
 
-  <!-- ── Roster tab ─────────────────────────────────────────────────────── -->
+  <!-- Roster tab -->
   @if (tab() === 'roster') {
     @if (rows() === null) {
       <div class="empty">Loading roster…</div>
@@ -25,8 +25,7 @@
       <div class="card">
         @for (r of rows()!; track r.id) {
           <a class="lrow" [routerLink]="['/staff/athlete', r.id]"
-             [state]="{ name: r.name, position: r.position, jersey: r.jersey, acwr: r.acwr, readiness: r.readiness, shared: r.shared }"
-             style="color:inherit">
+             [state]="{ name: r.name, position: r.position, jersey: r.jersey, acwr: r.acwr, readiness: r.readiness, shared: r.shared }">
             <span class="thumb-card">
               <span class="avatar">{{ initials(r.name) }}</span>
               <span>
@@ -36,7 +35,7 @@
             </span>
             @if (isCoach()) {
               @if (r.shared) {
-                <span class="inline" style="gap:var(--s-2)">
+                <span class="inline">
                   @if (readyBand(r.readiness); as b) { <span class="band {{ b.cls }}">{{ b.label }}</span> }
                   @if (acwrBand(r.acwr); as b) { <span class="band {{ b.cls }}">{{ b.label }}</span> }
                 </span>
@@ -53,7 +52,7 @@
     }
   }
 
-  <!-- ── Injuries tab ───────────────────────────────────────────────────── -->
+  <!-- Injuries tab -->
   @if (tab() === 'injuries') {
     @if (injuries() === null) {
       <div class="empty">Loading injury data…</div>
@@ -61,9 +60,9 @@
       <div class="empty">No injury reports or soreness alerts today.</div>
     } @else {
       @if (injurySummary(); as s) {
-        <div class="card" style="margin-bottom:var(--s-4)">
+        <div class="card card-mb">
           <div class="section-label">Today's snapshot · {{ s.checkinDate }}</div>
-          <div class="inline" style="gap:var(--s-3);flex-wrap:wrap;padding:var(--s-3) 0">
+          <div class="summary-chips">
             <span class="band {{ s.total > 0 ? 'caution' : 'good' }}">{{ s.total }} flagged</span>
             @if (s.severe > 0) { <span class="band danger">{{ s.severe }} severe</span> }
             @if (s.moderate > 0) { <span class="band caution">{{ s.moderate }} moderate</span> }
@@ -84,20 +83,17 @@
                   <span class="band neutral">{{ inj.status }}</span>
                 }
               </div>
-              <div style="font-size:var(--fs-sm);color:var(--text-body)">
-                {{ inj.location }}
-                @if (inj.mechanism) { · {{ inj.mechanism }} }
+              <div class="detail">
+                {{ inj.location }}@if (inj.mechanism) { · {{ inj.mechanism }} }
               </div>
               @if (inj.expectedReturn) {
-                <div style="font-size:var(--fs-xs);color:var(--text-faint)">
-                  Expected return: {{ inj.expectedReturn }}
-                </div>
+                <div class="sub">Expected return: {{ inj.expectedReturn }}</div>
               }
               @if (inj.notes) {
-                <div style="font-size:var(--fs-xs);color:var(--text-faint)">{{ inj.notes }}</div>
+                <div class="sub">{{ inj.notes }}</div>
               }
               @if (inj.todaySoreness !== null || inj.todayReadiness !== null) {
-                <div class="inline" style="gap:var(--s-2);margin-top:2px">
+                <div class="inj-today">
                   @if (inj.todaySoreness !== null) {
                     <span class="band {{ inj.todaySoreness >= 7 ? 'danger' : 'caution' }}">
                       Soreness {{ inj.todaySoreness }}/10
@@ -115,21 +111,22 @@
     }
   }
 
-  <!-- ── Training Cycle tab ─────────────────────────────────────────────── -->
+  <!-- Training Cycle tab -->
   @if (tab() === 'cycle') {
     @if (cycleAthletes() === null) {
       <div class="empty">Loading training cycle data…</div>
     } @else {
       @if (nextEvent(); as ev) {
-        <div class="card" style="margin-bottom:var(--s-4)">
+        <div class="card card-mb">
           <div class="section-label">Next team event</div>
-          <div style="padding:var(--s-3) 0">
-            <b>{{ ev.name }}</b>
-            <span class="band {{ ev.daysAway <= 3 ? 'danger' : ev.daysAway <= 7 ? 'caution' : 'info' }}"
-                  style="margin-left:var(--s-2)">
-              {{ ev.daysAway === 0 ? 'Today' : ev.daysAway === 1 ? 'Tomorrow' : 'In ' + ev.daysAway + ' days' }}
-            </span>
-            <div style="font-size:var(--fs-xs);color:var(--text-faint);margin-top:2px">{{ ev.type }}</div>
+          <div class="ev-body">
+            <div class="inline">
+              <b>{{ ev.name }}</b>
+              <span class="band {{ ev.daysAway <= 3 ? 'danger' : ev.daysAway <= 7 ? 'caution' : 'info' }}">
+                {{ ev.daysAway === 0 ? 'Today' : ev.daysAway === 1 ? 'Tomorrow' : 'In ' + ev.daysAway + ' days' }}
+              </span>
+            </div>
+            <div class="sub ev-type">{{ ev.type }}</div>
           </div>
         </div>
       }
@@ -140,13 +137,13 @@
           @for (a of cycleAthletes()!; track a.athleteId) {
             <div class="cycle-row">
               <div>
-                <div class="inline" style="gap:var(--s-2);align-items:center">
+                <div class="bands">
                   <b>{{ a.athleteName }}</b>
                   @if (a.trainingFocus) {
                     <span class="band {{ focusBand(a.trainingFocus) }}">{{ a.trainingFocus }}</span>
                   }
                 </div>
-                <div class="inline" style="gap:var(--s-2);margin-top:4px">
+                <div class="bands mt">
                   @if (readyBand(a.latestReadiness); as b) {
                     <span class="band {{ b.cls }}">Ready {{ b.label }}</span>
                   }
@@ -154,9 +151,7 @@
                     <span class="band {{ b.cls }}">ACWR {{ b.label }}</span>
                   }
                   @if (a.avgReadiness7d !== null) {
-                    <span style="font-size:var(--fs-xs);color:var(--text-faint)">
-                      7d avg {{ a.avgReadiness7d | number:'1.0-0' }}
-                    </span>
+                    <span class="sub">7d avg {{ a.avgReadiness7d | number:'1.0-0' }}</span>
                   }
                 </div>
               </div>
