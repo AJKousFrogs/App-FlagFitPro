@@ -78,7 +78,6 @@ async function resolveTodaySession(supabase, userId, date) {
     .select(
       `
       id,
-      player_id,
       program_id,
       status,
       start_date,
