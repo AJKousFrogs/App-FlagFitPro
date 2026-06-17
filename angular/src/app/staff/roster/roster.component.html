@@ -155,7 +155,7 @@
                   }
                 </div>
               </div>
-              @if (a.readinessTrend?.length) {
+              @if (a.readinessTrend.length) {
                 <div class="trend" title="7-day readiness trend">
                   @for (score of a.readinessTrend; track $index) {
                     <div class="trend-bar"
