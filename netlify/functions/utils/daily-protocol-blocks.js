@@ -8,6 +8,23 @@ import {
 import { createLogger } from "./structured-logger.js";
 const logger = createLogger({ service: "netlify.daily-protocol-blocks" });
 
+// FNV-1a 32-bit hash — stable across calls for deterministic exercise ordering.
+// Replaces Math.random() so the same athlete+date always produces the same
+// exercise sequence (SOT non-determinism contract / Phase-B audit finding G3).
+function _fnv32(str) {
+  let h = 0x811c9dc5;
+  for (let i = 0; i < str.length; i++) {
+    h ^= str.charCodeAt(i);
+    h = (h * 0x01000193) >>> 0;
+  }
+  return h;
+}
+function deterministicSort(seed, items) {
+  return [...items].sort(
+    (a, b) => _fnv32(seed + String(a.id)) - _fnv32(seed + String(b.id)),
+  );
+}
+
 
 export async function addMorningMobilityBlock({
   supabase,
@@ -97,7 +114,7 @@ export async function addMorningMobilityBlock({
   }
 }
 
-export async function addFoamRollBlock({ supabase, protocolExercises, userId = null, date = null }) {
+export async function addFoamRollBlock({ supabase, protocolExercises, userId = null, date = null, seed = null }) {
   // Skip foam rolling when a sports massage was completed in the past 24h.
   // Post-massage, the soft tissue is already mobilised — foam rolling adds no
   // value and can aggravate sensitised tissue. Replace with a light active-
@@ -138,9 +155,8 @@ export async function addFoamRollBlock({ supabase, protocolExercises, userId = n
     .limit(10);
 
   if (foamRollExercises && foamRollExercises.length > 0) {
-    const shuffled = foamRollExercises
-      .sort(() => Math.random() - 0.5)
-      .slice(0, 5);
+    const foamSeed = seed ?? (userId ?? "") + (date ?? "");
+    const shuffled = deterministicSort(foamSeed, foamRollExercises).slice(0, 5);
     shuffled.forEach((ex, idx) => {
         protocolExercises.push({
           exercise_id: ex.id,
@@ -254,6 +270,7 @@ export async function addRecoveryBlocks({
   protocolExercises,
   trainingFocus,
   activeInjuries = [],
+  seed = null,
 }) {
   // Build a set of injured regions so we can filter out cool-down exercises that
   // directly target them (e.g. no Calf Stretch when calf is reported severe).
@@ -273,9 +290,7 @@ export async function addRecoveryBlocks({
       isExerciseSafeForInjuries(ex, injuredRegions),
     );
     const pool = safe.length >= 2 ? safe : coolDownExercises;
-    const shuffled = pool
-      .sort(() => Math.random() - 0.5)
-      .slice(0, 5);
+    const shuffled = deterministicSort(seed ?? "", pool).slice(0, 5);
     shuffled.forEach((ex, idx) => {
       protocolExercises.push({
         exercise_id: ex.id,
@@ -302,9 +317,7 @@ export async function addRecoveryBlocks({
     .limit(15);
 
   if (recoveryExercises && recoveryExercises.length > 0) {
-    const shuffled = recoveryExercises
-      .sort(() => Math.random() - 0.5)
-      .slice(0, recoveryCount);
+    const shuffled = deterministicSort(seed ?? "", recoveryExercises).slice(0, recoveryCount);
     shuffled.forEach((ex, idx) => {
       protocolExercises.push({
         exercise_id: ex.id,

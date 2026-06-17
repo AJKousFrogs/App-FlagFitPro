@@ -364,6 +364,28 @@ async function logThrowingSession(supabase, userId, payload) {
       "You threw 100+ balls. Consider icing your arm for 15-20 minutes.";
   }
 
+  // Write throw load into training_sessions so QB arm volume is included in
+  // ACWR. AU factor: 0.08 AU/throw (Fleisig 1995 elbow torque per throw;
+  // provisional starting estimate requiring physio review — flagged in
+  // training_sessions.throw_au column comment).
+  if (totalThrows > 0) {
+    const throwAu = Math.round(totalThrows * 0.08 * 100) / 100;
+    await supabase
+      .from("training_sessions")
+      .upsert(
+        {
+          user_id: userId,
+          session_date: today,
+          session_type: "qb_throwing",
+          throw_count: totalThrows,
+          throw_au: throwAu,
+          workload: throwAu,
+          status: "completed",
+        },
+        { onConflict: "user_id,session_date,session_type", ignoreDuplicates: false },
+      );
+  }
+
   return createSuccessResponse(
     { ...result, iceReminder },
     200,

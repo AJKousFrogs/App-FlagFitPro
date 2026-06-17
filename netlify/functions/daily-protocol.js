@@ -1185,6 +1185,36 @@ async function generateProtocol(supabase, userId, payload, headers, log = logger
     context.seasonPhase = payload.seasonPhase;
   }
 
+  // DB authority: query team_season_phases for the athlete's team.
+  // Only runs when the client didn't send an explicit seasonPhase — DB wins over
+  // the month-switch fallback but yields to an explicit client override.
+  if (!context.seasonPhase) {
+    try {
+      const { data: tm } = await supabase
+        .from("team_members")
+        .select("team_id")
+        .eq("user_id", userId)
+        .eq("status", "active")
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      if (tm?.team_id) {
+        const { data: tsp } = await supabase
+          .from("team_season_phases")
+          .select("phase_key")
+          .eq("team_id", tm.team_id)
+          .eq("is_active", true)
+          .lte("start_date", date)
+          .gte("end_date", date)
+          .limit(1)
+          .maybeSingle();
+        if (tsp?.phase_key) {
+          context.dbSeasonPhase = tsp.phase_key;
+        }
+      }
+    } catch (_) { /* non-fatal — month-switch fallback still applies */ }
+  }
+
   // ============================================================================
   // INJURY CHECK - Priority #1 for athlete safety
   // ============================================================================
@@ -1209,6 +1239,31 @@ async function generateProtocol(supabase, userId, payload, headers, log = logger
     client: supabase,
   });
   const hasActiveInjuries = activeInjuries.length > 0;
+
+  // Newly-injured gate: if a coach set injury_gate_active on this athlete,
+  // block prescription delivery until the gate is cleared. This covers the
+  // window between a new injury report and a confirmed RTP protocol —
+  // preventing a normal full-load prescription from reaching a freshly injured
+  // athlete before clinical review.
+  if (!hasActiveInjuries) {
+    const { data: userRow } = await supabase
+      .from("users")
+      .select("injury_gate_active, injury_gate_set_at")
+      .eq("id", userId)
+      .maybeSingle();
+    if (userRow?.injury_gate_active) {
+      log.info("daily_protocol_injury_gate_blocked", { user_id: userId, date, gate_set_at: userRow.injury_gate_set_at });
+      return {
+        statusCode: 202,
+        headers,
+        body: JSON.stringify({
+          success: true,
+          pending_approval: true,
+          message: "Your prescription is pending coach review following a recent injury report. You will be notified when it is approved.",
+        }),
+      };
+    }
+  }
 
   // If injuries exist, generate return-to-play protocol instead
   if (hasActiveInjuries) {
@@ -1326,7 +1381,7 @@ async function generateProtocol(supabase, userId, payload, headers, log = logger
   });
 
   // 2. Foam Roll — suppressed if athlete had a sports massage in the last 24h
-  await addFoamRollBlock({ supabase, protocolExercises, userId, date });
+  await addFoamRollBlock({ supabase, protocolExercises, userId, date, seed: userId + date });
 
   // Check if it's a sprint session (Saturday or session type is speed/sprint)
   // Declare early so it can be used in both warmup and main session generation.
@@ -1525,9 +1580,9 @@ async function generateProtocol(supabase, userId, payload, headers, log = logger
           sequence_order: idx + 1,
           prescribed_sets: readinessSets,
           prescribed_reps: repsPerExercise,
-          rest_seconds: 60,
+          rest_seconds: plyoIntensity === "low" ? 120 : 90,
           load_contribution_au: ex.load_contribution_au || 20,
-          ai_note: `⚡ Plyometric Phase: ${currentPhase}. Intensity: ${plyoIntensity.toUpperCase()}. Weekly contacts target: ${plyoContactsConfig.min}-${plyoContactsConfig.max}. Focus on LANDING MECHANICS first.`,
+          ai_note: `⚡ Plyometric Phase: ${currentPhase}. Intensity: ${plyoIntensity.toUpperCase()}. Weekly contacts target: ${plyoContactsConfig.min}-${plyoContactsConfig.max}. Focus on LANDING MECHANICS first. (Markovic 2007: ≥90s rest prevents fatigue-driven tendon overload.)`,
         });
       });
     }

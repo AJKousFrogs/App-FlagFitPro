@@ -83,6 +83,18 @@ export async function buildProtocolDecisionContext({
     },
   };
 
+  // Readiness thresholds: prefer readiness_gates table over hardcoded values.
+  // Conservative fall-backs (50/70/55) match the seeded rows and the prior
+  // hardcoded values — so behaviour is identical until a coach edits the table.
+  const { data: gateRows } = await supabase
+    .from("readiness_gates")
+    .select("context, threshold_low, threshold_mid")
+    .in("context", ["session_type_select", "baseline_focus"])
+    .eq("is_active", true);
+  const gateMap = Object.fromEntries((gateRows ?? []).map((g) => [g.context, g]));
+  const sessionGate = gateMap["session_type_select"] ?? { threshold_low: 50, threshold_mid: 70 };
+  const baselineGate = gateMap["baseline_focus"] ?? { threshold_low: 55 };
+
   // No fabrication (SOT Spec Laws 6/7): when readiness/load is unknown, do NOT
   // assume a healthy 70/1.0 and push a full session. Missing readiness uses a
   // CONSERVATIVE proxy (biases the day to a lighter skill session via the <70
@@ -122,13 +134,13 @@ export async function buildProtocolDecisionContext({
       trainingFocus = "practice_day";
     }
   } else if (
-    readinessForLogic < 50 ||
+    readinessForLogic < sessionGate.threshold_low ||
     acwrForLogic > context.acwrTargetRange.max
   ) {
     trainingFocus = "recovery";
     aiRationale =
       "⚠️ Readiness is low or ACWR is high. Today focuses on recovery and mobility.";
-  } else if (readinessForLogic < 70) {
+  } else if (readinessForLogic < sessionGate.threshold_mid) {
     trainingFocus = "skill";
     aiRationale =
       "Moderate readiness. Technical work recommended over high intensity.";
@@ -142,6 +154,7 @@ export async function buildProtocolDecisionContext({
       readinessForLogic,
       acwrForLogic,
       context.acwrTargetRange,
+      baselineGate.threshold_low,
     );
     aiRationale =
       "Baseline flag football plan active. Training starts from safe daily defaults and becomes more personalized as workouts, readiness, team practices, and competitions are logged.";
@@ -174,17 +187,19 @@ export async function buildProtocolDecisionContext({
     aiRationale += ` 📅 Phase: ${context.currentPhase.name}.`;
   }
 
-  // Prefer the client's calendar-derived phase (set on context.seasonPhase by the
-  // COMPOSE path) over the backend's switch(month) approximation. Mapping covers
-  // the four macro phases; anything finer (taper, peak) comes from taperContext
-  // which is already handled above.
+  // Phase resolution priority (highest → lowest):
+  // 1. context.dbSeasonPhase — team_season_phases DB row (set by daily-protocol.js)
+  // 2. context.seasonPhase   — client calendar-derived override (COMPOSE intent layer)
+  // 3. getCurrentPeriodizationPhase month-switch fallback
   const CLIENT_PHASE_MAP = {
     offseason: "off_season_rest",
     preseason: "competition_prep",
     inseason: "in_season_maintenance",
     transition: "active_recovery",
   };
-  const periodizationPhase = context.seasonPhase
+  const periodizationPhase = context.dbSeasonPhase
+    ? context.dbSeasonPhase
+    : context.seasonPhase
     ? (CLIENT_PHASE_MAP[context.seasonPhase] ?? getCurrentPeriodizationPhase(parseIsoDateString(date)))
     : getCurrentPeriodizationPhase(parseIsoDateString(date));
   aiRationale += ` 📊 Periodization: ${PERIODIZATION_PHASE_NAMES[periodizationPhase] || periodizationPhase}.`;
@@ -230,8 +245,9 @@ function resolveBaselineTrainingFocus(
   readinessForLogic,
   acwrForLogic,
   acwrTargetRange,
+  baselineThreshold = 55,
 ) {
-  if (readinessForLogic < 55 || acwrForLogic > acwrTargetRange.max) {
+  if (readinessForLogic < baselineThreshold || acwrForLogic > acwrTargetRange.max) {
     return "recovery";
   }
 

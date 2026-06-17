@@ -2,7 +2,7 @@ import { supabaseAdmin } from "./supabase-client.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
 import { getUserRole } from "./utils/authorization-guard.js";
-import { ACWR_RISK_ZONES } from "./utils/acwr.js";
+import { ACWR_RISK_ZONES, computeAcwrAt, computeSessionLoad } from "./utils/acwr.js";
 import { tryParseJsonObjectBody } from "./utils/input-validator.js";
 import { createLogger } from "./utils/structured-logger.js";
 
@@ -79,68 +79,65 @@ const COACH_ROLES = new Set(["coach", "head_coach", "assistant_coach", "admin"])
 // =====================================================
 
 /**
- * Calculate ACWR from training sessions
+ * Calculate ACWR from training sessions using the canonical EWMA engine
+ * (Williams 2017 / Gabbett 2016 uncoupled ACWR — utils/acwr.js is the single
+ * source of truth). Replaces the prior simple 7d/28d sum ratio that diverged
+ * from the authoritative implementation in load-management.js.
  */
 async function calculateACWR(userId, date) {
   const endDate = new Date(date);
-  const acuteStart = new Date(date);
-  acuteStart.setDate(acuteStart.getDate() - 7);
-  const chronicStart = new Date(date);
-  chronicStart.setDate(chronicStart.getDate() - 28);
+  // 5-week lookback gives EWMA chronic window (21d) + 7d acute + warmup buffer
+  const since = new Date(endDate);
+  since.setDate(since.getDate() - 35);
 
-  // Get training sessions
   const { data: sessions } = await supabaseAdmin
     .from("training_sessions")
-    .select("session_date, duration_minutes, rpe, intensity_level")
+    .select("session_date, workload, duration_minutes, rpe, intensity_level")
     .eq("user_id", userId)
-    .gte("session_date", chronicStart.toISOString().split("T")[0])
+    .gte("session_date", since.toISOString().split("T")[0])
     .lte("session_date", endDate.toISOString().split("T")[0])
     .in("status", ["completed", "in_progress"]);
 
   if (!sessions || sessions.length === 0) {
+    return { acwr: 0, riskZone: "insufficient_data", acuteLoad: 0, chronicLoad: 0 };
+  }
+
+  // Build daily-load Map: canonical computeSessionLoad handles workload/rpe/duration
+  const dailyLoads = new Map();
+  for (const s of sessions) {
+    const load = computeSessionLoad(s);
+    if (load > 0) {
+      const prev = dailyLoads.get(s.session_date) ?? 0;
+      dailyLoads.set(s.session_date, prev + load);
+    }
+  }
+
+  const result = computeAcwrAt(dailyLoads, endDate);
+
+  if (result.acwr === null) {
     return {
       acwr: 0,
       riskZone: "insufficient_data",
-      acuteLoad: 0,
-      chronicLoad: 0,
+      acuteLoad: Math.round(result.acuteLoad),
+      chronicLoad: Math.round(result.chronicLoad),
     };
   }
 
-  // Calculate loads (session-RPE = duration × RPE)
-  const calculateLoad = (s) => {
-    const duration = s.duration_minutes || 60;
-    const rpe = s.rpe || s.intensity_level || 5;
-    return duration * rpe;
-  };
-
-  const acuteSessions = sessions.filter(
-    (s) => s.session_date >= acuteStart.toISOString().split("T")[0],
-  );
-  const acuteLoad = acuteSessions.reduce((sum, s) => sum + calculateLoad(s), 0);
-  const chronicLoad =
-    sessions.reduce((sum, s) => sum + calculateLoad(s), 0) / 4; // Weekly average
-
-  if (chronicLoad === 0) {
-    return { acwr: 0, riskZone: "insufficient_data", acuteLoad, chronicLoad };
-  }
-
-  const acwr = acuteLoad / chronicLoad;
-
-  // Determine risk zone
   let riskZone = "safe";
   for (const [zone, config] of Object.entries(ACWR_ZONES)) {
-    if (acwr >= config.min && acwr < config.max) {
+    if (result.acwr >= config.min && result.acwr < config.max) {
       riskZone = zone;
       break;
     }
   }
 
   return {
-    acwr: Math.round(acwr * 100) / 100,
+    acwr: result.acwr,
     riskZone,
-    acuteLoad: Math.round(acuteLoad),
-    chronicLoad: Math.round(chronicLoad),
+    acuteLoad: Math.round(result.acuteLoad),
+    chronicLoad: Math.round(result.chronicLoad),
     injuryRiskMultiplier: ACWR_ZONES[riskZone]?.risk || 1.0,
+    lowConfidence: result.lowConfidence,
   };
 }
 

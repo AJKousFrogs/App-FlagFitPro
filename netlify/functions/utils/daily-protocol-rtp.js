@@ -71,6 +71,86 @@ export async function generateReturnToPlayProtocol(
   aiRationale += `\n⚕️ STOP if pain increases beyond 3/10 during any exercise.\n`;
   aiRationale += `✓ Update your wellness check-in daily to track progress.\n`;
 
+  // ── Human-in-the-loop gate ────────────────────────────────────────────────
+  // Every RTP protocol requires coach sign-off before the prescription is
+  // delivered to the athlete. On first generation we create a pending approval
+  // row and return a 202 Accepted so the app can show "Awaiting coach review."
+  // On subsequent calls (athlete re-opens the app) we check the status: if still
+  // pending → same 202; if approved → fall through to build and return the
+  // prescription; if rejected → 200 with a coach-rejected message.
+  const { data: rtpProtocol } = await supabase
+    .from("return_to_play_protocols")
+    .select("id, status")
+    .eq("user_id", userId)
+    .eq("is_active", true)
+    .order("created_at", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
+  if (rtpProtocol?.id) {
+    const { data: existingApproval } = await supabase
+      .from("rtp_prescription_approvals")
+      .select("id, status")
+      .eq("return_to_play_id", rtpProtocol.id)
+      .eq("athlete_id", userId)
+      .eq("rtp_phase", rtpPhase)
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+
+    if (!existingApproval) {
+      // First time this phase is generated — create pending gate
+      await supabase.from("rtp_prescription_approvals").insert({
+        return_to_play_id: rtpProtocol.id,
+        athlete_id: userId,
+        rtp_phase: rtpPhase,
+        trigger: "rtp_phase_entry",
+      });
+      logger.info("rtp_approval_gate_created", { phase: rtpPhase });
+      return {
+        statusCode: 202,
+        headers,
+        body: JSON.stringify({
+          success: true,
+          pending_approval: true,
+          rtp_phase: rtpPhase,
+          phase_name: phaseName,
+          message: "RTP prescription sent to coach for review. You will be notified when approved.",
+        }),
+      };
+    }
+
+    if (existingApproval.status === "pending") {
+      return {
+        statusCode: 202,
+        headers,
+        body: JSON.stringify({
+          success: true,
+          pending_approval: true,
+          rtp_phase: rtpPhase,
+          phase_name: phaseName,
+          message: "Awaiting coach approval for your RTP prescription.",
+        }),
+      };
+    }
+
+    if (existingApproval.status === "rejected") {
+      return {
+        statusCode: 200,
+        headers,
+        body: JSON.stringify({
+          success: true,
+          rejected: true,
+          rtp_phase: rtpPhase,
+          phase_name: phaseName,
+          message: "Your coach has reviewed and adjusted your RTP plan. Please contact your coach for the updated protocol.",
+        }),
+      };
+    }
+    // status === 'approved' → fall through to build and deliver the prescription
+    logger.info("rtp_approval_gate_passed", { phase: rtpPhase, approvalId: existingApproval.id });
+  }
+
   // Upsert (not insert) so that tightness reported after the day's initial
   // protocol generation correctly overwrites the stale normal-day prescription.
   // Without upsert the INSERT fails on the unique (user_id, protocol_date)

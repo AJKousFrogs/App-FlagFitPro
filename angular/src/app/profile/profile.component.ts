@@ -5,7 +5,7 @@ import {
   inject,
   signal,
 } from "@angular/core";
-import { RouterLink } from "@angular/router";
+import { Router, RouterLink } from "@angular/router";
 import { LucideAngularModule } from "lucide-angular";
 import { AvatarComponent } from "../shared/avatar.component";
 
@@ -44,11 +44,25 @@ interface Profile {
   imports: [AvatarComponent, RouterLink, LucideAngularModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: "./profile.component.html",
+  styles: [`
+    .sign-out-btn {
+      width: 100%;
+      text-align: left;
+      cursor: pointer;
+      color: var(--danger);
+      background: none;
+      border: none;
+      font: inherit;
+      padding: 0;
+    }
+    .sign-out-btn .inline { color: var(--danger); }
+  `],
 })
 export class ProfileComponent {
   private readonly supabase = inject(SupabaseService);
   private readonly api = inject(ApiService);
   private readonly identity = inject(IdentityService);
+  private readonly router = inject(Router);
 
   private readonly profile = signal<Profile | null>(null);
   private readonly meta = computed(
@@ -90,6 +104,11 @@ export class ProfileComponent {
     if (/(active|acute|out)/.test(s)) return "danger";
     if (/(recover|rehab|return)/.test(s)) return "caution";
     return "neutral";
+  }
+
+  async signOut(): Promise<void> {
+    await this.supabase.signOut();
+    this.router.navigateByUrl("/login");
   }
 
   private num(v: unknown): number | null {
