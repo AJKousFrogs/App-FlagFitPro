@@ -105,22 +105,26 @@ async function login(page: Page): Promise<void> {
 }
 
 async function navigateToScrollableShellPage(page: Page): Promise<string> {
-  const candidatePaths = ["/settings", "/game/nutrition", "/community"];
+  // Desktop sidebar shows at >=1024px wide; a 720px-tall viewport makes the
+  // mostly-static settings/menu pages overflow so the page actually scrolls.
+  await page.setViewportSize({ width: 1280, height: 720 });
+
+  // Routes that render real content from static config (no athlete data needed),
+  // so they have height even when the API has nothing to return.
+  const candidatePaths = ["/settings", "/more", "/achievements", "/stats"];
 
   for (const path of candidatePaths) {
     await page.goto(`${BASE_URL}${path}`);
     await dismissCookieBanner(page);
     await page.waitForLoadState("networkidle");
 
-    const shellMetrics = await page.locator(".app-main").evaluate((element) => {
-      const appMain = element as HTMLElement;
-      return {
-        clientHeight: appMain.clientHeight,
-        scrollHeight: appMain.scrollHeight,
-      };
-    });
+    // The rebuilt shell scrolls the document (not an inner .app-main pane).
+    const metrics = await page.evaluate(() => ({
+      scrollHeight: document.documentElement.scrollHeight,
+      innerHeight: window.innerHeight,
+    }));
 
-    if (shellMetrics.scrollHeight > shellMetrics.clientHeight + 200) {
+    if (metrics.scrollHeight > metrics.innerHeight + 200) {
       return path;
     }
   }
