@@ -50,10 +50,11 @@ export class LandingComponent {
   readonly error = signal<string | null>(null);
 
   constructor() {
-    // The authGuard redirects unauthenticated users here with ?returnUrl=… —
-    // reveal the sign-in form immediately (not the marketing CTA) since they
-    // explicitly tried to open a protected page.
-    if (this.route.snapshot.queryParamMap.has("returnUrl")) {
+    // /login is the sign-in surface (vs /landing's marketing CTA); the authGuard
+    // also redirects unauthenticated users here with ?returnUrl=… . Reveal the
+    // sign-in form immediately in both cases.
+    const onLoginRoute = this.route.snapshot.routeConfig?.path === "login";
+    if (onLoginRoute || this.route.snapshot.queryParamMap.has("returnUrl")) {
       this.showSignIn.set(true);
     }
   }
