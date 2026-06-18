@@ -266,7 +266,7 @@ test.describe("Smoke Test - App Shell", () => {
     });
   });
 
-  test("should keep header and sidebar stable while only content scrolls", async ({
+  test("should keep the sidebar pinned while the page content scrolls", async ({
     page,
   }) => {
     test.skip(
@@ -277,74 +277,54 @@ test.describe("Smoke Test - App Shell", () => {
     await login(page);
     const testedPath = await navigateToScrollableShellPage(page);
 
-    const header = page.locator("app-header");
-    const sidebar = page.locator("app-sidebar .sidebar");
+    // The rebuilt shell is a CSS grid (sidebar + content region) that scrolls with
+    // the page; the desktop sidebar is position:sticky so it stays pinned while the
+    // content scrolls. There is no separate app-header component in this design.
+    const sidebar = page.locator(".app-shell .sidebar");
     const appMain = page.locator(".app-main");
 
-    await expect(header).toBeVisible({ timeout: 10000 });
     await expect(sidebar).toBeVisible({ timeout: 10000 });
     await expect(appMain).toBeVisible({ timeout: 10000 });
 
     const before = await page.evaluate(() => {
-      const appMain = document.querySelector(".app-main") as HTMLElement | null;
-      const header = document.querySelector("app-header") as HTMLElement | null;
       const sidebar = document.querySelector(
-        "app-sidebar .sidebar",
+        ".app-shell .sidebar",
       ) as HTMLElement | null;
-
-      if (!appMain || !header || !sidebar) {
+      const appMain = document.querySelector(".app-main") as HTMLElement | null;
+      if (!sidebar || !appMain) {
         throw new Error("Shell elements were not found");
       }
-
       return {
-        bodyOverflow: getComputedStyle(document.body).overflow,
-        appMainOverflowY: getComputedStyle(appMain).overflowY,
-        headerPosition: getComputedStyle(header).position,
         sidebarPosition: getComputedStyle(sidebar).position,
-        appMainScrollTop: appMain.scrollTop,
-        appMainClientHeight: appMain.clientHeight,
-        appMainScrollHeight: appMain.scrollHeight,
-        windowScrollY: window.scrollY,
-        headerTop: header.getBoundingClientRect().top,
         sidebarTop: sidebar.getBoundingClientRect().top,
+        docScrollHeight: document.documentElement.scrollHeight,
+        viewportHeight: window.innerHeight,
+        windowScrollY: window.scrollY,
       };
     });
 
-    expect(before.bodyOverflow).toBe("hidden");
-    expect(before.appMainOverflowY).toMatch(/auto|scroll/);
-    expect(before.headerPosition).toBe("sticky");
     expect(before.sidebarPosition).toBe("sticky");
-    expect(before.appMainScrollHeight).toBeGreaterThan(
-      before.appMainClientHeight + 200,
-    );
+    expect(before.windowScrollY).toBe(0);
+    expect(before.docScrollHeight).toBeGreaterThan(before.viewportHeight + 200);
 
-    await appMain.evaluate((element) => {
-      (element as HTMLElement).scrollTop = 640;
-    });
+    await page.evaluate(() => window.scrollTo(0, 640));
     await page.waitForTimeout(200);
 
     const after = await page.evaluate(() => {
-      const appMain = document.querySelector(".app-main") as HTMLElement | null;
-      const header = document.querySelector("app-header") as HTMLElement | null;
       const sidebar = document.querySelector(
-        "app-sidebar .sidebar",
+        ".app-shell .sidebar",
       ) as HTMLElement | null;
-
-      if (!appMain || !header || !sidebar) {
+      if (!sidebar) {
         throw new Error("Shell elements were not found after scroll");
       }
-
       return {
-        appMainScrollTop: appMain.scrollTop,
         windowScrollY: window.scrollY,
-        headerTop: header.getBoundingClientRect().top,
         sidebarTop: sidebar.getBoundingClientRect().top,
       };
     });
 
-    expect(after.appMainScrollTop).toBeGreaterThan(300);
-    expect(after.windowScrollY).toBe(0);
-    expect(Math.abs(after.headerTop - before.headerTop)).toBeLessThan(2);
+    // The page scrolled, but the sticky sidebar stayed pinned in the viewport.
+    expect(after.windowScrollY).toBeGreaterThan(300);
     expect(Math.abs(after.sidebarTop - before.sidebarTop)).toBeLessThan(2);
 
     test.info().annotations.push({
