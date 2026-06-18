@@ -49,6 +49,15 @@ export class LandingComponent {
   readonly busy = signal(false);
   readonly error = signal<string | null>(null);
 
+  constructor() {
+    // The authGuard redirects unauthenticated users here with ?returnUrl=… —
+    // reveal the sign-in form immediately (not the marketing CTA) since they
+    // explicitly tried to open a protected page.
+    if (this.route.snapshot.queryParamMap.has("returnUrl")) {
+      this.showSignIn.set(true);
+    }
+  }
+
   async submitSignIn(): Promise<void> {
     if (this.busy()) return;
     this.busy.set(true);
