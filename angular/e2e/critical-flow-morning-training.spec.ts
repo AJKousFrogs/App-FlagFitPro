@@ -99,7 +99,7 @@ async function login(page: Page): Promise<void> {
     .first();
 
   await Promise.race([
-    page.waitForURL(/.*(dashboard|player-dashboard|coach-dashboard|onboarding).*/, {
+    page.waitForURL(/.*(today|staff|dashboard|player-dashboard|coach-dashboard|onboarding).*/, {
       timeout: 15000,
     }),
     (async () => {
