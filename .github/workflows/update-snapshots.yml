@@ -5,6 +5,10 @@ name: Update Visual Snapshots
 # Actions tab on the branch whose snapshots you want to refresh.
 on:
   workflow_dispatch:
+  # TEMPORARY: regenerate baselines on this branch once, then this push
+  # trigger is reverted (the snapshot commit uses [skip ci] so it can't loop).
+  push:
+    branches: [fix/ci-unify-node-repair-pipelines]
 
 permissions:
   contents: write
