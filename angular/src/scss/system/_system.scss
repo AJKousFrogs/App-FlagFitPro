@@ -79,7 +79,7 @@
   .btn.ghost { background: transparent; color: var(--text); border-color: var(--border); }
   .btn.danger { background: var(--danger-soft); color: var(--danger); }
   .btn.block { display: flex; width: 100%; }
-  .btn.sm { padding: 7px 12px; font-size: var(--fs-sm); min-height: 0; }
+  .btn.sm { padding: 7px 12px; font-size: var(--fs-sm); min-height: 44px; }
   .btn:disabled, .btn[aria-disabled="true"] { opacity: .4; }
   .btn:focus-visible { outline: none; box-shadow: var(--focus); }
 
