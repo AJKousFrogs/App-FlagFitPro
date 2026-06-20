@@ -61,8 +61,8 @@ describe("admin authorization and failure response hardening", () => {
     expect(response.statusCode).toBe(403);
   });
 
-  // The USDA/research sync lanes were retired with research-sync.js
-  // (ghost-table cleanup, 2026-06-09) — they must 404 now.
+  // The USDA/research sync admin lanes were retired (ghost-table cleanup,
+  // 2026-06-09; the research-sync stub function was since removed) — they 404 now.
   it("returns 404 for the retired sync lanes", async () => {
     authState.role = "admin";
 
