@@ -19,7 +19,9 @@
   node_bundler = "esbuild"
 
 [build.environment]
-  NODE_VERSION = "22"
+  # Keep in lockstep with .nvmrc (the single source of truth also used by every
+  # CI workflow via node-version-file) so local, CI, and Netlify never drift.
+  NODE_VERSION = "22.22.3"
   # Ensure devDependencies are installed (needed for @angular/cli, @angular-devkit/build-angular)
   NPM_CONFIG_PRODUCTION = "false"
   VITE_APP_ENVIRONMENT = "production"

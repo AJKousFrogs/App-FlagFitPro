@@ -19,18 +19,22 @@
   </div>
 
   @if (showSignIn()) {
-    <div class="card signin">
+    <form class="card signin" (submit)="$event.preventDefault(); submitSignIn()">
       <h2 style="margin-bottom:var(--s-1)">Welcome back</h2>
-      <input type="email" placeholder="Email" autocomplete="email"
-             [value]="email()" (input)="email.set($any($event.target).value)" aria-label="Email" />
-      <input type="password" placeholder="Password" autocomplete="current-password"
-             [value]="password()" (input)="password.set($any($event.target).value)" aria-label="Password" />
+      <div data-testid="email-input">
+        <input type="email" placeholder="Email" autocomplete="email"
+               [value]="email()" (input)="email.set($any($event.target).value)" aria-label="Email" />
+      </div>
+      <div data-testid="password-input">
+        <input type="password" placeholder="Password" autocomplete="current-password"
+               [value]="password()" (input)="password.set($any($event.target).value)" aria-label="Password" />
+      </div>
       @if (error(); as e) { <p class="note" style="color:var(--danger)">{{ e }}</p> }
-      <button class="btn primary block" type="button" style="margin-top:var(--s-3)"
-              [attr.aria-disabled]="busy()" (click)="submitSignIn()">
+      <button class="btn primary block" type="submit" style="margin-top:var(--s-3)"
+              [attr.aria-disabled]="busy()">
         {{ busy() ? "Signing in…" : "Sign in" }}
       </button>
-    </div>
+    </form>
   } @else {
     <button class="btn ghost block" type="button" (click)="showSignIn.set(true)">I already have an account</button>
   }

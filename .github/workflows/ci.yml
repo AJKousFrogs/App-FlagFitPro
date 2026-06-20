@@ -6,9 +6,8 @@ on:
   pull_request:
     branches: [main, master, develop]
 
-env:
-  NODE_VERSION: "22"
-  NPM_VERSION: "10"
+# Node version is pinned in a single place — .nvmrc — and every setup-node
+# step below reads it via node-version-file so CI, local dev, and Netlify never drift.
 
 jobs:
   backend-audits:
@@ -25,7 +24,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v6
         with:
-          node-version: ${{ env.NODE_VERSION }}
+          node-version-file: ".nvmrc"
           cache: "npm"
           cache-dependency-path: package-lock.json
 
@@ -59,7 +58,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4.4.0
         with:
-          node-version: ${{ env.NODE_VERSION }}
+          node-version-file: ".nvmrc"
           cache: "npm"
           cache-dependency-path: package-lock.json
       - name: Install dependencies
@@ -81,7 +80,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4.4.0
         with:
-          node-version: ${{ env.NODE_VERSION }}
+          node-version-file: ".nvmrc"
           cache: "npm"
           cache-dependency-path: package-lock.json
       - name: Install dependencies
@@ -118,7 +117,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v6
         with:
-          node-version: ${{ env.NODE_VERSION }}
+          node-version-file: ".nvmrc"
           cache: "npm"
           cache-dependency-path: |
             package-lock.json
@@ -153,7 +152,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v6
         with:
-          node-version: ${{ env.NODE_VERSION }}
+          node-version-file: ".nvmrc"
           cache: "npm"
           cache-dependency-path: |
             package-lock.json
@@ -196,7 +195,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v6
         with:
-          node-version: ${{ env.NODE_VERSION }}
+          node-version-file: ".nvmrc"
           cache: "npm"
           cache-dependency-path: |
             package-lock.json
@@ -222,7 +221,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v6
         with:
-          node-version: ${{ env.NODE_VERSION }}
+          node-version-file: ".nvmrc"
           cache: "npm"
           cache-dependency-path: |
             package-lock.json
@@ -259,7 +258,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v6
         with:
-          node-version: ${{ env.NODE_VERSION }}
+          node-version-file: ".nvmrc"
           cache: "npm"
           cache-dependency-path: |
             package-lock.json
@@ -277,11 +276,18 @@ jobs:
           CI: true
           NODE_ENV: production
 
-      - name: Run smoke tests
-        run: npm run e2e:smoke
+      - name: Serve build and run smoke tests
+        # Serve the production bundle (auth enforced) so the unauthenticated
+        # redirect to /login fires; ng serve's dev build keeps auth disabled.
+        run: |
+          node ../scripts/inject-env-into-html-angular.js
+          PORT=4200 npm run serve:dist > serve-dist.log 2>&1 &
+          node -e "const http=require('http');const s=Date.now();(function p(){http.get('http://127.0.0.1:4200',r=>process.exit(r.statusCode<500?0:1)).on('error',()=>Date.now()-s>120000?process.exit(1):setTimeout(p,1000));})();"
+          npm run e2e:smoke
         env:
           CI: true
           BASE_URL: http://localhost:4200
+          PW_SKIP_WEBSERVER: "1"
           TEST_USER_EMAIL: ${{ secrets.E2E_TEST_EMAIL }}
           TEST_USER_PASSWORD: ${{ secrets.E2E_TEST_PASSWORD }}
 
@@ -308,7 +314,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v6
         with:
-          node-version: ${{ env.NODE_VERSION }}
+          node-version-file: ".nvmrc"
           cache: "npm"
           cache-dependency-path: |
             package-lock.json
@@ -347,7 +353,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v6
         with:
-          node-version: ${{ env.NODE_VERSION }}
+          node-version-file: ".nvmrc"
           cache: "npm"
           cache-dependency-path: |
             package-lock.json
@@ -357,7 +363,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: dist
-          path: dist
+          path: angular/dist
 
       - name: Install dependencies for audit script
         run: cd angular && npm ci --legacy-peer-deps

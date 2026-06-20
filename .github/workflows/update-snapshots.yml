@@ -1,0 +1,59 @@
+name: Update Visual Snapshots
+
+# Visual/responsive PNG baselines are OS-specific. Regenerate them on the same
+# Linux runners CI uses (a local macOS regen would never match). Trigger from the
+# Actions tab on the branch whose snapshots you want to refresh.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  update-snapshots:
+    name: Regenerate snapshots (Linux)
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: ".nvmrc"
+          cache: "npm"
+          cache-dependency-path: |
+            package-lock.json
+            angular/package-lock.json
+
+      - name: Install dependencies
+        run: |
+          npm ci
+          cd angular && npm ci
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps
+
+      - name: Build, serve, and regenerate snapshots
+        run: |
+          npm run build:production
+          (cd angular && npm run serve:dist &)
+          node -e "const http=require('http');const s=Date.now();(function p(){http.get('http://127.0.0.1:4200',r=>process.exit(r.statusCode<500?0:1)).on('error',()=>Date.now()-s>120000?process.exit(1):setTimeout(p,1000));})();"
+          npx playwright test tests/responsive/mobile-devices.test.js tests/responsive/visual-regression.test.js --project=chromium --update-snapshots
+        env:
+          PW_SKIP_WEBSERVER: "1"
+          BASE_URL: http://127.0.0.1:4200
+          CI: "true"
+
+      - name: Commit refreshed snapshots
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add tests/responsive
+          if git diff --cached --quiet; then
+            echo "No snapshot changes."
+          else
+            git commit -m "test(visual): regenerate snapshots on CI Linux [skip ci]"
+            git push
+          fi

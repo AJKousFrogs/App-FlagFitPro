@@ -32,6 +32,21 @@ export const featureRoutes: Routes = [
     loadComponent: () => import("../../verify-email/verify-email.component").then((m) => m.VerifyEmailComponent),
     title: "Verify email · FlagFit",
   },
+  {
+    path: "reset-password",
+    loadComponent: () => import("../../reset-password/reset-password.component").then((m) => m.ResetPasswordComponent),
+    title: "Reset password · FlagFit",
+  },
+  {
+    path: "update-password",
+    loadComponent: () => import("../../update-password/update-password.component").then((m) => m.UpdatePasswordComponent),
+    title: "Set new password · FlagFit",
+  },
+  {
+    path: "accept-invitation",
+    loadComponent: () => import("../../accept-invitation/accept-invitation.component").then((m) => m.AcceptInvitationComponent),
+    title: "Team invitation · FlagFit",
+  },
   // Staff track (coach / physio / nutritionist / psychologist) — auth + role guarded.
   {
     path: "staff",

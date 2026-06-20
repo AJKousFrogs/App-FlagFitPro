@@ -20,7 +20,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v6
         with:
-          node-version: "22"
+          node-version-file: ".nvmrc"
           cache: "npm"
           cache-dependency-path: |
             package-lock.json
@@ -40,9 +40,13 @@ jobs:
         env:
           NODE_ENV: production
 
-      - name: Start application server
+      - name: Serve production build
+        # Serve the built bundle (auth enforced) rather than `netlify dev`, whose
+        # ng-serve dev build leaves AUTH_REQUIRED=false — so the unauthenticated
+        # redirect to /login (which the smoke suite checks) would never fire.
         run: |
-          npm run dev > netlify-dev.log 2>&1 &
+          node scripts/inject-env-into-html-angular.js
+          (cd angular && PORT=8888 npm run serve:dist > ../netlify-dev.log 2>&1 &)
           echo "Waiting for server to start..."
           timeout 180 bash -c 'until curl -fsS http://127.0.0.1:8888 >/dev/null; do sleep 2; done'
         env:

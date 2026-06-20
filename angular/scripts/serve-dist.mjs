@@ -1,6 +1,12 @@
 import { createReadStream, existsSync, statSync } from "node:fs";
 import { extname, join, normalize, resolve } from "node:path";
 import { createServer } from "node:http";
+import { createGzip } from "node:zlib";
+
+// gzip text assets so the served bundle matches production (Netlify serves
+// compressed). Without this a Lighthouse run flags "enable text compression"
+// and the perf score is misleadingly low versus the real deploy.
+const COMPRESSIBLE = /\.(css|html|js|mjs|json|svg|txt|webmanifest|map)$/;
 
 const DIST_CANDIDATES = [
   resolve(process.cwd(), "dist/flagfit-pro/browser"),
@@ -55,6 +61,18 @@ const server = createServer((req, res) => {
 
   const ext = extname(filePath).toLowerCase();
   const contentType = MIME_TYPES[ext] || "application/octet-stream";
+  const acceptsGzip = (req.headers["accept-encoding"] || "").includes("gzip");
+
+  if (acceptsGzip && COMPRESSIBLE.test(filePath)) {
+    res.writeHead(200, {
+      "Content-Type": contentType,
+      "Content-Encoding": "gzip",
+      Vary: "Accept-Encoding",
+    });
+    createReadStream(filePath).pipe(createGzip()).pipe(res);
+    return;
+  }
+
   res.writeHead(200, { "Content-Type": contentType });
   createReadStream(filePath).pipe(res);
 });

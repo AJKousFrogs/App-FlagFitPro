@@ -49,6 +49,16 @@ export class LandingComponent {
   readonly busy = signal(false);
   readonly error = signal<string | null>(null);
 
+  constructor() {
+    // /login is the sign-in surface (vs /landing's marketing CTA); the authGuard
+    // also redirects unauthenticated users here with ?returnUrl=… . Reveal the
+    // sign-in form immediately in both cases.
+    const onLoginRoute = this.route.snapshot.routeConfig?.path === "login";
+    if (onLoginRoute || this.route.snapshot.queryParamMap.has("returnUrl")) {
+      this.showSignIn.set(true);
+    }
+  }
+
   async submitSignIn(): Promise<void> {
     if (this.busy()) return;
     this.busy.set(true);
