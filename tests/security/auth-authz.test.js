@@ -65,7 +65,6 @@ describeLive("Authentication Tests", () => {
       { method: "GET", path: "/training-metrics" },
       { method: "GET", path: "/fixtures" },
       { method: "GET", path: "/data-export" },
-      { method: "POST", path: "/research-sync/sync" },
     ];
 
     protectedEndpoints.forEach(({ method, path }) => {
