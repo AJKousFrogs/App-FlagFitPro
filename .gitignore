@@ -3,6 +3,8 @@ node_modules.old/
 
 # Claude Code worktree scratch files (created/destroyed by workflow agents)
 .claude/worktrees/
+# self-correct.sh run logs
+.claude/loop-*.log
 
 # Local Netlify folder
 .netlify
