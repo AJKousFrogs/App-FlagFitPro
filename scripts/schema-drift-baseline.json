@@ -1,11 +1,1 @@
-{
-  "team_activities.created_at": [
-    "team-activity-resolver.js:114"
-  ],
-  "team_activities.date": [
-    "team-activity-resolver.js:113"
-  ],
-  "team_activities.team_id": [
-    "team-activity-resolver.js:112"
-  ]
-}
+{}
