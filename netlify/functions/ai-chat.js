@@ -359,9 +359,10 @@ async function getUserContext(userId) {
         .maybeSingle(),
       supabaseAdmin
         .from("recovery_blocks")
-        .select("protocol_type, block_date, max_load_percent, focus")
+        .select("block_type, block_start_date, block_end_date, max_load_percent, focus")
         .eq("user_id", userId)
-        .eq("block_date", today)
+        .lte("block_start_date", today)
+        .gte("block_end_date", today)
         .maybeSingle(),
       Promise.resolve({ data: null }),
       supabaseAdmin

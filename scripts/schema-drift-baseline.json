@@ -1,37 +1,4 @@
 {
-  "ai_messages.coach_reviewed_at": [
-    "response-feedback.js:187"
-  ],
-  "ai_response_feedback.feedback_source": [
-    "coach-analytics.js:184"
-  ],
-  "decision_ledger.decision_category": [
-    "decisions.js:169"
-  ],
-  "decision_ledger.review_date": [
-    "decisions.js:187",
-    "decisions.js:193",
-    "decisions.js:578",
-    "decisions.js:579"
-  ],
-  "decision_ledger.review_priority": [
-    "decisions.js:181"
-  ],
-  "exercisedb_exercises.applicable_positions": [
-    "exercisedb.js:143"
-  ],
-  "games.version": [
-    "game-events.js:93"
-  ],
-  "learned_user_preferences.confidence_score": [
-    "smart-ai-service.js:716",
-    "smart-ai-service.js:717"
-  ],
-  "merlin_violation_log.id": [],
-  "micro_session_analytics.week_start": [
-    "micro-sessions.js:292",
-    "micro-sessions.js:293"
-  ],
   "micro_sessions.assigned_date": [
     "micro-sessions.js:118",
     "micro-sessions.js:129",
@@ -57,19 +24,6 @@
   "proactive_checkins.user_id": [
     "smart-ai-service.js:572"
   ],
-  "recovery_blocks.block_date": [
-    "ai-chat.js:364",
-    "wellness-checkin.js:428"
-  ],
-  "recovery_protocols.player_id": [
-    "games-core.js:420"
-  ],
-  "recovery_protocols.protocol_type": [
-    "games-core.js:421"
-  ],
-  "recovery_protocols.start_date": [
-    "games-core.js:422"
-  ],
   "team_activities.created_at": [
     "team-activity-resolver.js:114"
   ],
@@ -78,10 +32,6 @@
   ],
   "team_activities.team_id": [
     "team-activity-resolver.js:112"
-  ],
-  "training_sessions.session_time": [
-    "training-plan.js:304",
-    "training-plan.js:344"
   ],
   "users.verification_token": [
     "supabase-client.js:345"
