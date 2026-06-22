@@ -175,7 +175,7 @@ jobs:
           NODE_ENV: production
 
       - name: Deploy to Netlify Production
-        uses: nwtgck/actions-netlify@v3
+        uses: nwtgck/actions-netlify@v4
         with:
           publish-dir: "./angular/dist/flagfit-pro/browser"
           production-deploy: true
