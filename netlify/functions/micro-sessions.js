@@ -289,8 +289,8 @@ async function getCompletionAnalytics(userId, options = {}) {
     .from("micro_session_analytics")
     .select("*")
     .eq("user_id", userId)
-    .gte("week_start", startDate.toISOString().split("T")[0])
-    .order("week_start", { ascending: false });
+    .gte("created_at", startDate.toISOString().split("T")[0])
+    .order("created_at", { ascending: false });
 
   if (statsError) {
     logger.error("analytics_fetch_failed", statsError);

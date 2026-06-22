@@ -712,9 +712,7 @@ async function getLearnedPreferences(userId) {
   const { data, error } = await supabaseAdmin
     .from("learned_user_preferences")
     .select("*")
-    .eq("user_id", userId)
-    .gte("confidence_score", 0.5)
-    .order("confidence_score", { ascending: false });
+    .eq("user_id", userId);
 
   if (error) {
     logger.error("smart_ai_preferences_fetch_failed", error, {

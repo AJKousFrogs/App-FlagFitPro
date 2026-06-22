@@ -139,9 +139,7 @@ async function getCuratedExercises(params) {
     query = query.eq("category", category);
   }
 
-  if (position) {
-    query = query.contains("applicable_positions", [position]);
-  }
+  // (position filter removed: exercisedb_exercises has no positions column)
 
   if (equipment) {
     query = query.eq("equipment", equipment);

@@ -425,7 +425,7 @@ async function saveCheckin(supabase, userId, payload, requestId, log = logger) {
         .from("recovery_blocks")
         .select("id")
         .eq("user_id", userId)
-        .eq("block_date", tomorrowStr)
+        .eq("block_start_date", tomorrowStr)
         .eq("block_type", "wellness_recovery")
         .maybeSingle();
 
@@ -433,7 +433,9 @@ async function saveCheckin(supabase, userId, payload, requestId, log = logger) {
         // Create recovery block for tomorrow
         await supabase.from("recovery_blocks").insert({
           user_id: userId,
-          block_date: tomorrowStr,
+          block_start_date: tomorrowStr,
+          block_end_date: tomorrowStr,
+          block_type: "wellness_recovery",
           max_load_percent: 50,
           focus: "recovery",
           restrictions: [
@@ -442,7 +444,6 @@ async function saveCheckin(supabase, userId, payload, requestId, log = logger) {
             "hydration_focus",
             "no_intense_work",
           ],
-          protocol_type: "wellness_recovery",
           created_at: new Date().toISOString(),
         });
 

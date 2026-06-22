@@ -415,11 +415,11 @@ async function triggerGameDayRecovery(playerId, gameDate) {
 
     // Check if recovery protocol already exists
     const { data: existing } = await supabaseAdmin
-      .from("recovery_protocols")
+      .from("recovery_blocks")
       .select("id")
-      .eq("player_id", playerId)
-      .eq("protocol_type", "game_day_recovery")
-      .eq("start_date", day1.toISOString().split("T")[0])
+      .eq("user_id", playerId)
+      .eq("block_type", "game_day_recovery")
+      .eq("block_start_date", day1.toISOString().split("T")[0])
       .maybeSingle();
 
     if (existing) {
@@ -427,11 +427,11 @@ async function triggerGameDayRecovery(playerId, gameDate) {
     }
 
     // Create recovery protocol
-    await supabaseAdmin.from("recovery_protocols").insert({
+    await supabaseAdmin.from("recovery_blocks").insert({
       user_id: playerId,
-      protocol_type: "game_day_recovery",
-      start_date: day1.toISOString().split("T")[0],
-      end_date: endDate.toISOString().split("T")[0],
+      block_type: "game_day_recovery",
+      block_start_date: day1.toISOString().split("T")[0],
+      block_end_date: endDate.toISOString().split("T")[0],
       max_load_percent: 50,
       restrictions: [
         "no_intense_work",

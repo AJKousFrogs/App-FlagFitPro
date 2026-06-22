@@ -166,7 +166,7 @@ async function getDecisions(userId, filters = {}) {
   }
 
   if (filters.decisionCategory) {
-    query = query.eq("decision_category", filters.decisionCategory);
+    query = query.eq("decision_type", filters.decisionCategory);
   }
 
   if (filters.status) {

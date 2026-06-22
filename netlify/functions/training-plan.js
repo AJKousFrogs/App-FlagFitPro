@@ -301,7 +301,7 @@ async function getTodaySessions(userId, date, requestLogger = logger) {
       .select("*")
       .eq("user_id", userId)
       .eq("session_date", dateStr)
-      .order("session_time", { ascending: true });
+      .order("created_at", { ascending: true });
 
     if (error && error.code !== "42P01") {
       throw error;
@@ -341,7 +341,7 @@ async function getTrainingHistory(userId, daysBack = 30, requestLogger = logger)
       .lte("session_date", todayStr) // Only up to and including today
       .in("status", ["completed", "in_progress"])
       .order("session_date", { ascending: false })
-      .order("session_time", { ascending: true });
+      .order("created_at", { ascending: true });
 
     if (error && error.code !== "42P01") {
       throw error;
