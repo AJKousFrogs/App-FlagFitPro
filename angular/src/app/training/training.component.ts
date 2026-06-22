@@ -66,6 +66,12 @@ interface WeekRow {
       .bc__ex { margin: var(--s-2) 0 0; padding-left: var(--s-4); }
       .bc__ex li { font-size: var(--fs-sm); margin: 2px 0; }
       .bc__ex small { color: var(--text-faint); }
+      .bc__ex li b { font-weight: var(--fw-semi); }
+      /* The how-to text always renders so the movement is clear even when the
+         video fails to load (YouTube 504 / offline) — see yt-video fallback. */
+      .ex-how { color: var(--text-muted); font-size: var(--fs-sm); line-height: var(--lh-body); margin: 2px 0 0; }
+      .ex-feel { color: var(--accent); font-size: var(--fs-xs); display: flex; align-items: center; gap: 4px; margin: 2px 0 var(--s-2); }
+      .ex-feel svg.lucide { width: 13px; height: 13px; }
     `,
   ],
 })

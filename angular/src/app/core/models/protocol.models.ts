@@ -11,6 +11,8 @@ export interface ProtocolExercise {
     category?: string;
     videoId?: string | null;
     howText?: string | null;
+    feelText?: string | null;
+    thumbnailUrl?: string | null;
   } | null;
   prescribedSets?: number | null;
   prescribedReps?: number | null;

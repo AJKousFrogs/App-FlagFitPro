@@ -71,7 +71,11 @@
                 }
                 <ul class="bc__ex">
                   @for (ex of b.exercises; track $index) {
-                    <li>{{ ex.exercise?.name || "Exercise" }}@if (exDose(ex); as dose) { <small> — {{ dose }}</small> }</li>
+                    <li>
+                      <b>{{ ex.exercise?.name || "Exercise" }}</b>@if (exDose(ex); as dose) { <small> — {{ dose }}</small> }
+                      @if (ex.exercise?.howText) { <div class="ex-how">{{ ex.exercise?.howText }}</div> }
+                      @if (ex.exercise?.feelText) { <div class="ex-feel"><lucide-icon name="activity" /> {{ ex.exercise?.feelText }}</div> }
+                    </li>
                   }
                 </ul>
               </article>
