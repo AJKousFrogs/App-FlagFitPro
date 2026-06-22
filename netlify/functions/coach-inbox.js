@@ -186,7 +186,7 @@ async function listInboxItems(coachId, teamIds, filters = {}, log = logger) {
 
   // Apply filters
   if (inbox_type) {
-    query = query.eq("inbox_type", inbox_type);
+    query = query.eq("item_type", inbox_type);
   }
   if (status) {
     query = query.eq("status", status);

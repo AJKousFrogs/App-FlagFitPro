@@ -247,7 +247,7 @@ async function listTemplates(teamIds, filters = {}, log = logger) {
     query = query.eq("team_id", team_id);
   }
   if (category) {
-    query = query.eq("category", category);
+    query = query.eq("template_type", category);
   }
   if (template_type) {
     query = query.eq("template_type", template_type);

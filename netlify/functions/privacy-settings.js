@@ -239,7 +239,7 @@ const handler = async (event, context) => {
               .from("parental_consent")
               .select("*")
               .eq("minor_user_id", userId)
-              .in("consent_status", ["pending", "verified"])
+              .in("status", ["pending", "verified"])
               .order("created_at", { ascending: false })
               .limit(1)
               .single();

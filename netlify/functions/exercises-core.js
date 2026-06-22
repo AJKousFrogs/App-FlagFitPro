@@ -215,7 +215,7 @@ async function getExercises(supabase, params) {
     let isoQuery = supabase
       .from("isometrics_exercises")
       .select("*")
-      .order("name", { ascending: true });
+      .order("exercise_name", { ascending: true });
 
     if (search && search.trim()) {
       isoQuery = isoQuery.or(

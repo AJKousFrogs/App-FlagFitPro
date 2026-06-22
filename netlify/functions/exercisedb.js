@@ -302,7 +302,7 @@ async function importExercises(params, userId) {
             const { data: existing } = await supabase
               .from("exercisedb_exercises")
               .select("id")
-              .eq("external_id", exercise.id || exercise.exerciseId)
+              .eq("exercisedb_id", exercise.id || exercise.exerciseId)
               .single();
 
             const mappedExercise = mapExerciseToSchema(exercise);
