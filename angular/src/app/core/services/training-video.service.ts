@@ -111,10 +111,11 @@ export class TrainingVideoService {
       title: (r["title"] as string) ?? "Untitled",
       description: (r["description"] as string) ?? null,
       youtubeId,
-      // real YouTube thumbnail (public, no API) when no custom one is set
-      thumbnail:
-        (r["thumbnail_url"] as string) ??
-        (youtubeId ? `https://img.youtube.com/vi/${youtubeId}/hqdefault.jpg` : null),
+      // Use a stored thumbnail when present; otherwise leave it null so the
+      // player shows the bundled local poster. We deliberately do NOT construct
+      // img.youtube.com/.../hqdefault.jpg here — that request 504s when YouTube
+      // is slow/blocked, and the video tile must never depend on it.
+      thumbnail: (r["thumbnail_url"] as string) ?? null,
       duration: fmtDuration(r["duration_seconds"] as number),
       category: (r["category"] as string) ?? "general",
       position: (r["position"] as string) ?? null,
