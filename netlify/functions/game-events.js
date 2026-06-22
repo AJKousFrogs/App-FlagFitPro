@@ -134,6 +134,34 @@ const handler = async (event, context) =>
           if (game.data.team_id !== teamId && game.data.team_id !== `TEAM_${userId}`) {
             return createErrorResponse("Not authorized", 403, "authorization_error");
           }
+          if (!body.playerId || typeof body.playerId !== "string") {
+            return createErrorResponse("playerId is required", 422, "validation_error");
+          }
+          // The check above authorizes the GAME (it belongs to the requester's
+          // team), but not the TARGET player — without this, any team member could
+          // write attendance for an arbitrary user_id. Require playerId to be an
+          // active member of this game's team. (For a solo TEAM_<uid> game the only
+          // valid target is the user themselves, since it has no team_members rows.)
+          if (game.data.team_id === `TEAM_${userId}`) {
+            if (body.playerId !== userId) {
+              return createErrorResponse("Not authorized", 403, "authorization_error");
+            }
+          } else {
+            const member = await supabase
+              .from("team_members")
+              .select("user_id")
+              .eq("team_id", game.data.team_id)
+              .eq("user_id", body.playerId)
+              .eq("status", "active")
+              .maybeSingle();
+            if (!member.data) {
+              return createErrorResponse(
+                "Player is not an active member of this team",
+                403,
+                "authorization_error",
+              );
+            }
+          }
 
           const existing = await supabase
             .from("game_participations")
