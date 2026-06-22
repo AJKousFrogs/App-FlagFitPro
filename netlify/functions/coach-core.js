@@ -384,9 +384,13 @@ async function getCoachDashboard(userId, requestedTeamId = null) {
             }
           }
 
-          // Canonical (server-computed) readiness wins when today's score exists.
+          // Canonical (server-computed) readiness wins when today's score exists —
+          // but ONLY for athletes who consented. readiness_scores is read directly
+          // (it has no consent view), so gate it by the same blocked set as the
+          // sessions/wellness reads, else a consent-blocked athlete's readiness
+          // would leak to the coach (GDPR/consent: data minimization).
           const canonical = canonicalReadiness.get(member.user_id);
-          if (canonical !== undefined) {
+          if (canonical !== undefined && !blockedIds.includes(member.user_id)) {
             readiness = canonical;
             wellnessDataState = DataState.REAL_DATA;
           }
@@ -517,22 +521,25 @@ async function getTeamInfo(userId, coachId, requestedTeamId = null) {
 
           const sessions = sessionsResult.data || [];
 
-          // Track blocked players
-          if (sessionsResult.consentInfo?.blockedPlayerIds?.length > 0) {
-            sessionsResult.consentInfo.blockedPlayerIds.forEach((id) =>
-              allBlockedPlayerIds.add(id),
-            );
-          }
+          // Track blocked players. A member blocked here also has their canonical
+          // readiness withheld below — readiness_scores has no consent view, so it
+          // must not leak for an athlete who declined to share with coaches.
+          const blockedForMember =
+            sessionsResult.consentInfo?.blockedPlayerIds || [];
+          blockedForMember.forEach((id) => allBlockedPlayerIds.add(id));
 
           // Canonical ACWR + workload (utils/acwr.js) and the canonical wellness
           // readiness the athlete actually sees — never fabricated. acwr/readiness
-          // are null (UI renders "—") when history/wellness is insufficient.
+          // are null (UI renders "—") when history/wellness is insufficient or the
+          // athlete hasn't consented to share with coaches.
           const { acwr, workload, today_workload, dataState } =
             enrichMemberLoad(sessions);
           if (sessions.length > 0) {
             totalAccessibleCount += sessions.length;
           }
-          const readiness = canonicalReadiness.get(member.user_id) ?? null;
+          const readiness = blockedForMember.includes(member.user_id)
+            ? null
+            : canonicalReadiness.get(member.user_id) ?? null;
 
           return {
             ...member,
