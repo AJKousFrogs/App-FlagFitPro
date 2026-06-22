@@ -111,11 +111,13 @@ export class TrainingVideoService {
       title: (r["title"] as string) ?? "Untitled",
       description: (r["description"] as string) ?? null,
       youtubeId,
-      // Use a stored thumbnail when present; otherwise leave it null so the
-      // player shows the bundled local poster. We deliberately do NOT construct
-      // img.youtube.com/.../hqdefault.jpg here — that request 504s when YouTube
-      // is slow/blocked, and the video tile must never depend on it.
-      thumbnail: (r["thumbnail_url"] as string) ?? null,
+      // Prefer a stored thumbnail, else the real YouTube poster. The component's
+      // <img (error)> handler falls back to the bundled local image if this 504s,
+      // so we get the genuine thumbnail when YouTube is reachable without the tile
+      // ever breaking when it isn't.
+      thumbnail:
+        (r["thumbnail_url"] as string) ??
+        (youtubeId ? `https://i.ytimg.com/vi/${youtubeId}/hqdefault.jpg` : null),
       duration: fmtDuration(r["duration_seconds"] as number),
       category: (r["category"] as string) ?? "general",
       position: (r["position"] as string) ?? null,

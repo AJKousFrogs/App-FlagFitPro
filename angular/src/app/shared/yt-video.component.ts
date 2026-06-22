@@ -84,9 +84,15 @@ export class YtVideoComponent {
   private readonly posterBroken = signal(false);
 
   /** Poster src that degrades to the bundled image once the external one errors. */
-  readonly posterSrc = computed(() =>
-    this.posterBroken() ? LOCAL_POSTER : this.poster() || LOCAL_POSTER,
-  );
+  readonly posterSrc = computed(() => {
+    if (this.posterBroken()) return LOCAL_POSTER;
+    const explicit = this.poster();
+    if (explicit) return explicit;
+    // Default to the real YouTube thumbnail; <img (error)> degrades to LOCAL_POSTER
+    // if YouTube is slow/blocked, so the genuine poster shows whenever reachable.
+    const id = this.videoId();
+    return id ? `https://i.ytimg.com/vi/${id}/hqdefault.jpg` : LOCAL_POSTER;
+  });
   readonly watchUrl = computed(() =>
     this.videoId() ? `https://www.youtube.com/watch?v=${this.videoId()}` : "",
   );
@@ -125,7 +131,7 @@ export class YtVideoComponent {
       ])) as YtCtor;
       this.player = new YT.Player(el, {
         videoId,
-        playerVars: { playsinline: 1, autoplay: 1, rel: 0, modestbranding: 1 },
+        playerVars: { playsinline: 1, autoplay: 1, controls: 1, rel: 0, modestbranding: 1 },
       });
     } catch {
       // SSR, timeout, or load failure → back to the poster + an "open on YouTube" link.
