@@ -289,8 +289,14 @@ export class PeriodizationService {
           phase,
           upcoming: snap.upcoming,
           lastEvent: snap.lastEvent,
-          acwr,
-          readiness,
+          // ACWR and readiness are TODAY's acute signals; like weather (below) they
+          // may only guard the current day. Passing them to all 7 days made a low
+          // readiness / high ACWR today collapse the whole week to recovery/rest
+          // (the readiness-collapse and ACWR-danger guards return before the phase
+          // switch), overriding each future day's real phase. Future days resolve to
+          // their phase-driven plan instead.
+          acwr: i === 0 ? acwr : null,
+          readiness: i === 0 ? readiness : null,
           bodyweightKg: bodyweight,
           density14d: snap.density14d
             ? {
