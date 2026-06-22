@@ -212,7 +212,7 @@ async function getTeamSupplementCompliance(teamId) {
       .from("user_supplements")
       .select("user_id, supplement_name")
       .in("user_id", memberIds)
-      .eq("is_active", true),
+      .eq("active", true),
   ]);
 
   const logsByUser = new Map();

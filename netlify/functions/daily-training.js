@@ -783,7 +783,7 @@ async function updateTrainingProgress(userId, updates, requestInfo = {}) {
       .from("training_sessions")
       .select("id, session_state, coach_locked")
       .eq("user_id", userId)
-      .eq("scheduled_date", today)
+      .eq("session_date", today)
       .single();
 
     if (fetchError && fetchError.code !== "PGRST116") {

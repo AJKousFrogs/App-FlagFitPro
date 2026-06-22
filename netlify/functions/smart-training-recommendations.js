@@ -606,7 +606,7 @@ const handler = async (event, context) => {
               .from("team_members")
               .select("team_id")
               .eq("user_id", userId)
-              .eq("is_active", true)
+              .eq("status", "active")
               .in("role", [...COACH_ROLES]);
           if (actorTeamsError) {
             throw actorTeamsError;
@@ -629,7 +629,7 @@ const handler = async (event, context) => {
               .from("team_members")
               .select("team_id")
               .eq("user_id", athleteId)
-              .eq("is_active", true)
+              .eq("status", "active")
               .in("team_id", actorTeamIds)
               .limit(1);
           if (targetMembershipError) {

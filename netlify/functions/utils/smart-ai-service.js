@@ -411,7 +411,7 @@ async function getConversationMemory(userId, query, options = {}) {
     .select("*")
     .eq("user_id", userId)
     .gt("expires_at", new Date().toISOString())
-    .order("last_referenced_at", { ascending: false, nullsFirst: false })
+    .order("updated_at", { ascending: false, nullsFirst: false })
     .limit(5);
 
   // Get conversation summaries if embeddings available

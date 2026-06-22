@@ -136,7 +136,7 @@ async function getCuratedExercises(params) {
   }
 
   if (category) {
-    query = query.eq("ff_category", category);
+    query = query.eq("category", category);
   }
 
   if (position) {
@@ -302,7 +302,7 @@ async function importExercises(params, userId) {
             const { data: existing } = await supabase
               .from("exercisedb_exercises")
               .select("id")
-              .eq("external_id", exercise.id || exercise.exerciseId)
+              .eq("exercisedb_id", exercise.id || exercise.exerciseId)
               .single();
 
             const mappedExercise = mapExerciseToSchema(exercise);
@@ -490,7 +490,7 @@ const handler = async (event, context) =>
             const { data: logs, error } = await supabase
               .from("exercisedb_import_logs")
               .select("*")
-              .order("created_at", { ascending: false })
+              .order("import_date", { ascending: false })
               .limit(20);
 
             if (error) {

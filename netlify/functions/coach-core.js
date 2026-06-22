@@ -774,7 +774,7 @@ async function getGames(userId, coachId, requestedTeamId = null) {
       .from("games")
       .select("*")
       .or(`home_team_id.eq.${teamId},away_team_id.eq.${teamId}`)
-      .order("game_start", { ascending: true })
+      .order("game_date", { ascending: true })
       .limit(10);
 
     if (gamesError) {
@@ -1333,8 +1333,8 @@ async function handleRequest(
           .from("readiness_scores")
           .select("user_id, score, computed_at")
           .in("user_id", tcPlayerIds)
-          .gte("computed_at", since7)
-          .order("computed_at", { ascending: false });
+          .gte("created_at", since7)
+          .order("created_at", { ascending: false });
 
         const readinessByPlayer = {};
         for (const r of readinessRows || []) {
@@ -1358,8 +1358,8 @@ async function handleRequest(
           .from("team_events")
           .select("starts_at, name, event_type")
           .eq("team_id", resolvedTcTeamId)
-          .gte("starts_at", todayStr2)
-          .order("starts_at", { ascending: true })
+          .gte("start_time", todayStr2)
+          .order("start_time", { ascending: true })
           .limit(1);
         const nextEvent = upcomingEvents?.[0] ?? null;
         const daysToEvent = nextEvent

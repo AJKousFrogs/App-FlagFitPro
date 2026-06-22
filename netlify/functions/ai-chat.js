@@ -373,7 +373,7 @@ async function getUserContext(userId) {
         .from("physical_measurements")
         .select("*")
         .eq("user_id", userId)
-        .order("measurement_date", { ascending: false })
+        .order("created_at", { ascending: false })
         .limit(1)
         .single(),
       supabaseAdmin
@@ -1557,8 +1557,8 @@ async function createYouthParentNotification(
       .select(
         "parent_id, can_view_ai_chats, alert_on_high_risk, alert_on_supplement_topics, alert_on_injury_topics",
       )
-      .eq("youth_id", youthId)
-      .eq("status", "verified");
+      .eq("user_id", youthId)
+      .eq("verified", true);
 
     if (parentsError || !parents || parents.length === 0) {
       logger.info("ai_chat_no_youth_parents_found", {

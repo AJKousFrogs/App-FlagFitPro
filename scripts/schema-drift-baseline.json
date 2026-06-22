@@ -5,17 +5,8 @@
   "ai_response_feedback.feedback_source": [
     "coach-analytics.js:184"
   ],
-  "coach_inbox_items.inbox_type": [
-    "coach-inbox.js:189"
-  ],
-  "conversation_context.last_referenced_at": [
-    "smart-ai-service.js:414"
-  ],
   "decision_ledger.decision_category": [
     "decisions.js:169"
-  ],
-  "decision_ledger.made_by": [
-    "decisions.js:177"
   ],
   "decision_ledger.review_date": [
     "decisions.js:187",
@@ -29,23 +20,8 @@
   "exercisedb_exercises.applicable_positions": [
     "exercisedb.js:143"
   ],
-  "exercisedb_exercises.external_id": [
-    "exercisedb.js:305"
-  ],
-  "exercisedb_exercises.ff_category": [
-    "exercisedb.js:139"
-  ],
-  "exercisedb_import_logs.created_at": [
-    "exercisedb.js:493"
-  ],
-  "games.game_start": [
-    "coach-core.js:777"
-  ],
   "games.version": [
     "game-events.js:93"
-  ],
-  "isometrics_exercises.name": [
-    "exercises-core.js:218"
   ],
   "learned_user_preferences.confidence_score": [
     "smart-ai-service.js:716",
@@ -68,18 +44,6 @@
     "micro-sessions.js:123",
     "micro-sessions.js:158"
   ],
-  "parent_guardian_links.status": [
-    "ai-chat.js:1561"
-  ],
-  "parent_guardian_links.youth_id": [
-    "ai-chat.js:1560"
-  ],
-  "parental_consent.consent_status": [
-    "privacy-settings.js:242"
-  ],
-  "physical_measurements.measurement_date": [
-    "ai-chat.js:376"
-  ],
   "proactive_checkins.id": [
     "smart-ai-service.js:624"
   ],
@@ -93,16 +57,9 @@
   "proactive_checkins.user_id": [
     "smart-ai-service.js:572"
   ],
-  "readiness_scores.computed_at": [
-    "coach-core.js:1336",
-    "coach-core.js:1337"
-  ],
   "recovery_blocks.block_date": [
     "ai-chat.js:364",
     "wellness-checkin.js:428"
-  ],
-  "recovery_blocks.protocol_type": [
-    "wellness-checkin.js:429"
   ],
   "recovery_protocols.player_id": [
     "games-core.js:420"
@@ -122,26 +79,9 @@
   "team_activities.team_id": [
     "team-activity-resolver.js:112"
   ],
-  "team_events.starts_at": [
-    "coach-core.js:1361",
-    "coach-core.js:1362"
-  ],
-  "team_members.is_active": [
-    "smart-training-recommendations.js:609",
-    "smart-training-recommendations.js:632"
-  ],
-  "team_templates.category": [
-    "team-templates.js:250"
-  ],
-  "training_sessions.scheduled_date": [
-    "daily-training.js:786"
-  ],
   "training_sessions.session_time": [
     "training-plan.js:304",
     "training-plan.js:344"
-  ],
-  "user_supplements.is_active": [
-    "staff-nutritionist.js:215"
   ],
   "users.verification_token": [
     "supabase-client.js:345"

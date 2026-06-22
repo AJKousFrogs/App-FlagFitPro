@@ -174,7 +174,7 @@ async function getDecisions(userId, filters = {}) {
   }
 
   if (filters.madeBy) {
-    query = query.eq("made_by", filters.madeBy);
+    query = query.eq("decision_maker", filters.madeBy);
   }
 
   if (filters.reviewPriority) {
