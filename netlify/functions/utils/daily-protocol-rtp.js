@@ -82,7 +82,7 @@ export async function generateReturnToPlayProtocol(
     .from("return_to_play_protocols")
     .select("id, status")
     .eq("user_id", userId)
-    .eq("is_active", true)
+    .eq("status", "active")
     .order("created_at", { ascending: false })
     .limit(1)
     .maybeSingle();
