@@ -64,6 +64,7 @@
     "audit:routes": "node scripts/audit-routes.js",
     "audit:scss-duplications": "node scripts/audit-scss-duplications.js",
     "audit:scss-duplications:ci": "node scripts/audit-scss-duplications.js --ci",
+    "audit:schema-drift": "node scripts/check-schema-drift.mjs",
     "benchmark": "node scripts/app-performance-check.js",
     "audit:security": "npm audit",
     "security:check": "npm audit --audit-level high",
