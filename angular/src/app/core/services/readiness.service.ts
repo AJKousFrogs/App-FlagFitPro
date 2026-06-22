@@ -28,7 +28,19 @@ import {
 } from "../utils/api-response-mapper";
 
 export type ReadinessLevel = "low" | "moderate" | "high";
-export type Suggestion = "deload" | "maintain" | "push";
+// The three training recommendations the calibration log records...
+export type TrainingRecommendation = "deload" | "maintain" | "push";
+// ...plus "log_wellness", which the API returns as a UI prompt (score=null) when
+// no wellness check-in exists yet. It is NOT a training recommendation, so it must
+// never be sent to /api/calibration-logs (the backend 422s anything outside the
+// three values above). Keeping it in the union stops the type from lying.
+export type Suggestion = TrainingRecommendation | "log_wellness";
+
+const TRAINING_RECOMMENDATIONS: readonly TrainingRecommendation[] = [
+  "deload",
+  "maintain",
+  "push",
+];
 export type DataMode = "full" | "reduced"; // Full wellness data vs sleep-proxy mode
 
 /**
@@ -134,7 +146,13 @@ export class ReadinessService {
    * server-side). Never blocks or fails the readiness calc.
    */
   private logCalibration(res: ReadinessResponse): void {
-    if (!res?.suggestion) {
+    // Only log an actual training recommendation. When wellness data is missing
+    // the API returns suggestion="log_wellness" (a UI prompt, score=null) — sending
+    // that to /api/calibration-logs returns 422, so skip it.
+    if (
+      !res?.suggestion ||
+      !TRAINING_RECOMMENDATIONS.includes(res.suggestion as TrainingRecommendation)
+    ) {
       return;
     }
     this.apiService
