@@ -98,7 +98,12 @@ async function createWellnessCheckin(userId, checkinData, log = logger) {
         {
           user_id: userId,
           checkin_date: new Date().toISOString().split("T")[0],
-          calculated_readiness: readiness,
+          // calculated_readiness is canonically 0-100 — the scale wellness-checkin.js
+          // writes and that ai-chat.js / coach-core.js read (e.g. the "< 40" low-
+          // readiness threshold and the "%" displays). `readiness` here is 1-10, so
+          // scale it up; storing the raw 1-10 made every wellness-logs check-in read
+          // as "low readiness" downstream and showed the coach a 1-10 next to 0-100s.
+          calculated_readiness: Math.round((readiness / 10) * 100),
           sleep_hours: sleep ?? null,
           energy_level: energy ?? null,
           mood: mood ?? null,
