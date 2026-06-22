@@ -1925,6 +1925,31 @@ async function generateProtocol(supabase, userId, payload, headers, log = logger
     }
   }
 
+  // De-duplicate by (exercise_id, block_type) before persisting. The unique
+  // constraint protocol_exercises_protocol_id_exercise_id_block_type_key forbids
+  // the same exercise twice in one block; a fallback/overlapping query can produce
+  // that, and the resulting duplicate-key error was thrown straight through
+  // persistGeneratedProtocol → a 500 on the whole generation (seen recurring in
+  // protocol_generation_requests). Keep the first occurrence, preserve order, and
+  // keep all rows with a null exercise_id (e.g. note/heading blocks).
+  {
+    const seen = new Set();
+    const deduped = protocolExercises.filter((ex) => {
+      if (ex?.exercise_id == null) return true;
+      const key = `${ex.exercise_id}|${ex.block_type ?? ""}`;
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+    if (deduped.length !== protocolExercises.length) {
+      log.info("daily_protocol_deduped_exercises", {
+        removed: protocolExercises.length - deduped.length,
+      });
+      protocolExercises.length = 0;
+      protocolExercises.push(...deduped);
+    }
+  }
+
   // ============================================================================
   // TRANSACTIONAL PROTOCOL GENERATION VIA RPC
   // ============================================================================
