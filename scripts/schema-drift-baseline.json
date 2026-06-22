@@ -1,29 +1,4 @@
 {
-  "micro_sessions.assigned_date": [
-    "micro-sessions.js:118",
-    "micro-sessions.js:129",
-    "micro-sessions.js:132",
-    "micro-sessions.js:157",
-    "micro-sessions.js:305",
-    "micro-sessions.js:321"
-  ],
-  "micro_sessions.status": [
-    "micro-sessions.js:123",
-    "micro-sessions.js:158"
-  ],
-  "proactive_checkins.id": [
-    "smart-ai-service.js:624"
-  ],
-  "proactive_checkins.scheduled_for": [
-    "smart-ai-service.js:574",
-    "smart-ai-service.js:575"
-  ],
-  "proactive_checkins.status": [
-    "smart-ai-service.js:573"
-  ],
-  "proactive_checkins.user_id": [
-    "smart-ai-service.js:572"
-  ],
   "team_activities.created_at": [
     "team-activity-resolver.js:114"
   ],
@@ -32,8 +7,5 @@
   ],
   "team_activities.team_id": [
     "team-activity-resolver.js:112"
-  ],
-  "users.verification_token": [
-    "supabase-client.js:345"
   ]
 }
