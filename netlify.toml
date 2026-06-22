@@ -815,6 +815,13 @@
   status = 200
   force = true
 
+# Weekend-game self-report (drives the Monday plan via training_sessions load)
+[[redirects]]
+  from = "/api/weekend-games"
+  to = "/.netlify/functions/weekend-games"
+  status = 200
+  force = true
+
 # API Routes for Readiness History
 [[redirects]]
   from = "/api/readiness-history"

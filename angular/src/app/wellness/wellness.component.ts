@@ -173,6 +173,21 @@ export class WellnessComponent {
     { label: "6h+", h: 6 },
   ];
 
+  // --- weekend games (Monday self-report → drives the week's load via ACWR) ---
+  /** Highlight the prompt on Mondays; it stays available any day. */
+  readonly isMonday = new Date().getDay() === 1;
+  readonly playedGames = signal<boolean | null>(null);
+  readonly gameCount = signal(1);
+  readonly gameFormats: { key: string; label: string; halves: number; min: number }[] = [
+    { key: "2x12", label: "2 × 12 min", halves: 2, min: 12 },
+    { key: "2x15", label: "2 × 15 min", halves: 2, min: 15 },
+    { key: "2x20", label: "2 × 20 min", halves: 2, min: 20 },
+  ];
+  readonly gameFormat = signal("2x20");
+  readonly gamesLogging = signal(false);
+  readonly gamesLogged = signal(false);
+  readonly gamesMsg = signal<string | null>(null);
+
   readonly submitting = signal(false);
   readonly submitted = signal(false);
   readonly submitError = signal<string | null>(null);
@@ -295,4 +310,38 @@ export class WellnessComponent {
       });
   }
   readonly hydrationL = computed(() => (this.hydrationMl() / 1000).toFixed(1));
+  logWeekendGames(): void {
+    if (this.gamesLogging()) return;
+    const fmt = this.gameFormats.find((f) => f.key === this.gameFormat());
+    if (!fmt) return;
+    this.gamesLogging.set(true);
+    this.gamesMsg.set(null);
+    this.api
+      .post("/api/weekend-games", {
+        played: true,
+        gameCount: this.gameCount(),
+        halves: fmt.halves,
+        minutesPerHalf: fmt.min,
+      })
+      .subscribe({
+        next: () => {
+          this.gamesLogging.set(false);
+          this.gamesLogged.set(true);
+          this.gamesMsg.set("Logged — your plan will adjust to the game load.");
+          // Recalculate readiness so Today/Training react to the added acute load.
+          this.readinessSvc.calculateToday().subscribe({ error: () => undefined });
+        },
+        error: () => {
+          this.gamesLogging.set(false);
+          this.gamesMsg.set("Couldn't log the game — try again.");
+        },
+      });
+  }
+
+  clearWeekendGames(): void {
+    this.playedGames.set(false);
+    this.gamesLogged.set(false);
+    this.api.post("/api/weekend-games", { played: false }).subscribe({ error: () => undefined });
+  }
+
 }

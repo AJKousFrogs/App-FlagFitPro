@@ -20,6 +20,53 @@
   </div>
 
   <!-- check-in form -->
+  <!-- weekend games — Monday self-report; the game load flows into ACWR so the
+       week's plan deloads after a heavy weekend. Always available; nudged Mondays. -->
+  <div class="section-h">
+    <h2>Weekend games</h2>
+    @if (isMonday) { <small class="muted">Tell us about the weekend so today adapts</small> }
+  </div>
+  <div class="card stack">
+    @if (gamesLogged()) {
+      <p class="note" style="color:var(--accent);margin:0"><lucide-icon name="check" /> {{ gamesMsg() }}</p>
+      <button class="btn ghost block" type="button" (click)="clearWeekendGames()">Edit / remove</button>
+    } @else {
+      <p style="margin:0 0 var(--s-2)">Did you play games this weekend?</p>
+      <div class="chiprow" role="group" aria-label="Played games this weekend">
+        <button type="button" class="chip" [class.sel]="playedGames() === true"
+                [attr.aria-pressed]="playedGames() === true" (click)="playedGames.set(true)">Yes</button>
+        <button type="button" class="chip" [class.sel]="playedGames() === false"
+                [attr.aria-pressed]="playedGames() === false" (click)="clearWeekendGames()">No</button>
+      </div>
+
+      @if (playedGames() === true) {
+        <div style="margin-top:var(--s-3)">
+          <p style="margin:0 0 var(--s-2)">How many games?</p>
+          <div class="chiprow" role="group" aria-label="Number of games">
+            @for (n of [1, 2, 3, 4]; track n) {
+              <button type="button" class="chip" [class.sel]="gameCount() === n"
+                      [attr.aria-pressed]="gameCount() === n" (click)="gameCount.set(n)">{{ n }}</button>
+            }
+          </div>
+        </div>
+        <div style="margin-top:var(--s-3)">
+          <p style="margin:0 0 var(--s-2)">Format</p>
+          <div class="chiprow" role="group" aria-label="Game format">
+            @for (f of gameFormats; track f.key) {
+              <button type="button" class="chip" [class.sel]="gameFormat() === f.key"
+                      [attr.aria-pressed]="gameFormat() === f.key" (click)="gameFormat.set(f.key)">{{ f.label }}</button>
+            }
+          </div>
+        </div>
+        <button class="btn primary block" type="button" style="margin-top:var(--s-3)"
+                [attr.aria-disabled]="gamesLogging()" (click)="logWeekendGames()">
+          {{ gamesLogging() ? "Saving…" : "Log weekend games" }}
+        </button>
+        @if (gamesMsg() && !gamesLogged()) { <p class="note" style="color:var(--danger)">{{ gamesMsg() }}</p> }
+      }
+    }
+  </div>
+
   <div class="section-h"><h2>How do you feel?</h2></div>
   <div class="card stack">
     <div class="slider">
