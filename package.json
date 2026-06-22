@@ -155,7 +155,7 @@
     "jws": "^4.0.1",
     "madge": "^8.0.0",
     "netlify-cli": "^23.15.1",
-    "playwright": "^1.58.2",
+    "playwright": "^1.61.0",
     "prettier": "^3.8.1",
     "sass": "^1.97.3",
     "stylelint": "^16.26.1",
