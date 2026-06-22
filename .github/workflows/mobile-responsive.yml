@@ -184,7 +184,7 @@ jobs:
         # 403 and fail the job. Skip the (cosmetic) comment for those runs — the
         # summary artifact is still uploaded above for every run.
         if: github.event_name == 'pull_request' && github.actor != 'dependabot[bot]'
-        uses: actions/github-script@v8
+        uses: actions/github-script@v9
         with:
           script: |
             const fs = require('fs');
