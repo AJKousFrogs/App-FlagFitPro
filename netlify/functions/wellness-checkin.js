@@ -426,7 +426,7 @@ async function saveCheckin(supabase, userId, payload, requestId, log = logger) {
         .select("id")
         .eq("user_id", userId)
         .eq("block_date", tomorrowStr)
-        .eq("protocol_type", "wellness_recovery")
+        .eq("block_type", "wellness_recovery")
         .maybeSingle();
 
       if (!existing) {

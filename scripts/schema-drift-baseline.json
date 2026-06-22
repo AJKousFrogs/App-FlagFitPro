@@ -5,9 +5,6 @@
   "ai_response_feedback.feedback_source": [
     "coach-analytics.js:184"
   ],
-  "conversation_context.last_referenced_at": [
-    "smart-ai-service.js:414"
-  ],
   "decision_ledger.decision_category": [
     "decisions.js:169"
   ],
@@ -22,12 +19,6 @@
   ],
   "exercisedb_exercises.applicable_positions": [
     "exercisedb.js:143"
-  ],
-  "exercisedb_exercises.ff_category": [
-    "exercisedb.js:139"
-  ],
-  "exercisedb_import_logs.created_at": [
-    "exercisedb.js:493"
   ],
   "games.version": [
     "game-events.js:93"
@@ -69,9 +60,6 @@
   "recovery_blocks.block_date": [
     "ai-chat.js:364",
     "wellness-checkin.js:428"
-  ],
-  "recovery_blocks.protocol_type": [
-    "wellness-checkin.js:429"
   ],
   "recovery_protocols.player_id": [
     "games-core.js:420"
