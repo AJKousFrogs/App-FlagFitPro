@@ -195,7 +195,7 @@ async function createCoachAccessRequest(coachId, payload) {
  */
 async function fetchCanonicalReadiness(memberUserIds) {
   const map = new Map();
-  if (!memberUserIds?.length) return map;
+  if (!memberUserIds?.length) {return map;}
   const today = new Date().toISOString().slice(0, 10);
   const { data } = await supabaseAdmin
     .from("readiness_scores")
@@ -203,7 +203,7 @@ async function fetchCanonicalReadiness(memberUserIds) {
     .in("user_id", memberUserIds)
     .eq("day", today);
   (data || []).forEach((r) => {
-    if (r.score !== null) map.set(r.user_id, Math.round(Number(r.score)));
+    if (r.score !== null) {map.set(r.user_id, Math.round(Number(r.score)));}
   });
   return map;
 }
@@ -228,7 +228,7 @@ function enrichMemberLoad(sessions) {
   const dailyLoads = new Map();
   for (const s of sessions) {
     const when = s?.session_date ?? s?.completed_at ?? s?.created_at;
-    if (!when) continue;
+    if (!when) {continue;}
     const key = acwrDateKey(when);
     dailyLoads.set(key, (dailyLoads.get(key) || 0) + computeSessionLoad(s));
   }
@@ -1253,7 +1253,7 @@ async function handleRequest(
           .eq("status", "active");
 
         const playerIds = (rosterMembers || []).map((m) => m.user_id);
-        if (!playerIds.length) return createSuccessResponse({ injuries: [], summary: { total: 0 } });
+        if (!playerIds.length) {return createSuccessResponse({ injuries: [], summary: { total: 0 } });}
 
         const playerMap = {};
         for (const m of rosterMembers || []) {
@@ -1360,7 +1360,7 @@ async function handleRequest(
           .eq("status", "active");
 
         const tcPlayerIds = (tcRoster || []).map((m) => m.user_id);
-        if (!tcPlayerIds.length) return createSuccessResponse({ athletes: [] });
+        if (!tcPlayerIds.length) {return createSuccessResponse({ athletes: [] });}
 
         const tcPlayerMap = {};
         for (const m of tcRoster || []) {
@@ -1381,7 +1381,7 @@ async function handleRequest(
 
         const readinessByPlayer = {};
         for (const r of readinessRows || []) {
-          if (!readinessByPlayer[r.user_id]) readinessByPlayer[r.user_id] = [];
+          if (!readinessByPlayer[r.user_id]) {readinessByPlayer[r.user_id] = [];}
           readinessByPlayer[r.user_id].push(r.score);
         }
 
@@ -1394,7 +1394,7 @@ async function handleRequest(
           .eq("protocol_date", todayStr2);
 
         const protocolMap = {};
-        for (const p of protocols || []) protocolMap[p.user_id] = p;
+        for (const p of protocols || []) {protocolMap[p.user_id] = p;}
 
         // Upcoming events (all athletes share team events via athlete_events — use team_events)
         const { data: upcomingEvents } = await supabaseAdmin
