@@ -3,6 +3,11 @@ import { createSuccessResponse, createErrorResponse } from "./utils/error-handle
 import { supabaseAdmin, db } from "./supabase-client.js";
 import { ConsentDataReader, AccessContext } from "./utils/consent-data-reader.js";
 import { DataState } from "./utils/data-state.js";
+import {
+  computeAcwrAt,
+  computeSessionLoad,
+  acwrDateKey,
+} from "./utils/acwr.js";
 import { getUserRole, requireRole, logViolation } from "./utils/authorization-guard.js";
 import { resolveStaffedTeam } from "./utils/team-scope.js";
 import { parseJsonObjectBody as sharedParseJsonObjectBody } from "./utils/input-validator.js";
@@ -184,6 +189,60 @@ async function createCoachAccessRequest(coachId, payload) {
 }
 
 /**
+ * Canonical readiness for today (the score each athlete sees on their own Today
+ * screen), batch-read once for a set of members. Shared by /dashboard and /team
+ * so a coach and an athlete never see different numbers.
+ */
+async function fetchCanonicalReadiness(memberUserIds) {
+  const map = new Map();
+  if (!memberUserIds?.length) return map;
+  const today = new Date().toISOString().slice(0, 10);
+  const { data } = await supabaseAdmin
+    .from("readiness_scores")
+    .select("user_id, score")
+    .in("user_id", memberUserIds)
+    .eq("day", today);
+  (data || []).forEach((r) => {
+    if (r.score !== null) map.set(r.user_id, Math.round(Number(r.score)));
+  });
+  return map;
+}
+
+/**
+ * Canonical per-member load enrichment — ONE definition shared by /dashboard and
+ * /team so a coach never sees two different ACWR/workload numbers for the same
+ * athlete. ACWR comes from the canonical EWMA / uncoupled engine (utils/acwr.js),
+ * never a hand-rolled ratio, and is null (never a fabricated 1.0) when history is
+ * insufficient. Weekly workload keeps the established acute-7-session-sum display.
+ *
+ * @param {Array} sessions - training_sessions rows, most-recent-first
+ * @returns {{acwr: number|null, workload: number, today_workload: number, dataState: string}}
+ */
+function enrichMemberLoad(sessions) {
+  if (!Array.isArray(sessions) || sessions.length === 0) {
+    return { acwr: null, workload: 0, today_workload: 0, dataState: DataState.NO_DATA };
+  }
+  const weeklyWorkload = sessions
+    .slice(0, 7)
+    .reduce((sum, s) => sum + computeSessionLoad(s), 0);
+  const dailyLoads = new Map();
+  for (const s of sessions) {
+    const when = s?.session_date ?? s?.completed_at ?? s?.created_at;
+    if (!when) continue;
+    const key = acwrDateKey(when);
+    dailyLoads.set(key, (dailyLoads.get(key) || 0) + computeSessionLoad(s));
+  }
+  const today = new Date().toISOString().slice(0, 10);
+  const { acwr, lowConfidence } = computeAcwrAt(dailyLoads, today);
+  return {
+    acwr, // null when chronic can't be established — never fabricated
+    workload: Math.round(weeklyWorkload),
+    today_workload: Math.round(weeklyWorkload / 7),
+    dataState: lowConfidence ? DataState.INSUFFICIENT_DATA : DataState.REAL_DATA,
+  };
+}
+
+/**
  * Get coach dashboard data
  * Returns squad overview, risk flags, and upcoming fixtures
  *
@@ -274,29 +333,10 @@ async function getCoachDashboard(userId, requestedTeamId = null) {
             blockedIds.push(...sessionsResult.consentInfo.blockedPlayerIds);
           }
 
-          // Calculate ACWR (Acute:Chronic Workload Ratio).
-          // CRITICAL: null when no data — do not use fake defaults.
-          let acwr = null;
-          let workload = 0;
-          let dataState = DataState.NO_DATA;
-
-          if (sessions && sessions.length > 0) {
-            const acute = sessions
-              .slice(0, 7)
-              .reduce((sum, s) => sum + (s.workload || 0), 0);
-            const chronic =
-              sessions.length >= 14
-                ? sessions
-                    .slice(0, 14)
-                    .reduce((sum, s) => sum + (s.workload || 0), 0) / 2
-                : acute;
-
-            acwr = chronic > 0 ? acute / chronic : null;
-            workload = acute; // Weekly workload
-            dataState =
-              sessions.length >= 7
-                ? DataState.REAL_DATA
-                : DataState.INSUFFICIENT_DATA;
+          // ACWR + acute workload from the canonical engine (utils/acwr.js) via
+          // the shared helper, so /dashboard and /team agree and no fake 1.0 is used.
+          const { acwr, workload, dataState } = enrichMemberLoad(sessions);
+          if (sessions.length > 0) {
             accessibleCount += sessions.length;
           }
 
@@ -452,6 +492,9 @@ async function getTeamInfo(userId, coachId, requestedTeamId = null) {
 
     // Get all team members
     const members = await db.teams.getTeamMembers(teamId);
+    const canonicalReadiness = await fetchCanonicalReadiness(
+      (members || []).map((m) => m.user_id).filter(Boolean),
+    );
 
     // Track consent info
     const allBlockedPlayerIds = new Set();
@@ -481,37 +524,21 @@ async function getTeamInfo(userId, coachId, requestedTeamId = null) {
             );
           }
 
-          let acwr = 1.0;
-          let workload = 0;
-          let dataState = DataState.NO_DATA;
-
-          if (sessions && sessions.length > 0) {
-            const acute = sessions
-              .slice(0, 7)
-              .reduce((sum, s) => sum + (s.workload || 0), 0);
-            const chronic =
-              sessions.length >= 14
-                ? sessions
-                    .slice(0, 14)
-                    .reduce((sum, s) => sum + (s.workload || 0), 0) / 2
-                : acute;
-
-            acwr = chronic > 0 ? acute / chronic : 1.0;
-            workload = acute;
-            dataState =
-              sessions.length >= 7
-                ? DataState.REAL_DATA
-                : DataState.INSUFFICIENT_DATA;
+          // Canonical ACWR + workload (utils/acwr.js) and the canonical wellness
+          // readiness the athlete actually sees — never fabricated. acwr/readiness
+          // are null (UI renders "—") when history/wellness is insufficient.
+          const { acwr, workload, today_workload, dataState } =
+            enrichMemberLoad(sessions);
+          if (sessions.length > 0) {
             totalAccessibleCount += sessions.length;
           }
-
-          const readiness = Math.max(50, Math.min(100, 85 - (acwr - 1.0) * 20));
+          const readiness = canonicalReadiness.get(member.user_id) ?? null;
 
           return {
             ...member,
             acwr,
             workload,
-            today_workload: workload / 7,
+            today_workload,
             readiness,
             dataState,
           };
@@ -521,10 +548,10 @@ async function getTeamInfo(userId, coachId, requestedTeamId = null) {
           });
           return {
             ...member,
-            acwr: 1.0,
+            acwr: null,
             workload: 0,
             today_workload: 0,
-            readiness: 75,
+            readiness: null,
             dataState: DataState.NO_DATA,
           };
         }
