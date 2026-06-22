@@ -89,7 +89,7 @@
     "@analogjs/vite-plugin-angular": "^2.3.1",
     "@analogjs/vitest-angular": "^2.3.1",
     "@angular-devkit/build-angular": "~21.2.2",
-    "@angular/build": "~21.2.2",
+    "@angular/build": "~22.0.3",
     "@angular/cli": "~21.2.2",
     "@angular/compiler-cli": "~21.2.2",
     "@angular/platform-browser-dynamic": "~21.2.2",
