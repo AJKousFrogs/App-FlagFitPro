@@ -1261,7 +1261,14 @@ async function handleRequest(
           playerMap[m.user_id] = u?.full_name || `${u?.first_name ?? ""} ${u?.last_name ?? ""}`.trim() || "Athlete";
         }
 
-        // 2. Active injuries across the roster
+        // DUTY-OF-CARE consent exception (deliberate): roster injury/soreness and
+        // the training-cycle readiness trend are shown to a team's own staff
+        // REGARDLESS of an athlete's performance-sharing preference, because staff
+        // must be able to see who is hurt or under-recovered for player safety.
+        // These reads therefore intentionally bypass ConsentDataReader. (Performance
+        // metrics elsewhere — e.g. the dashboard readiness override — DO remain
+        // consent-gated.) Scope is enforced by the team membership filter above.
+        // Active injuries across the roster
         const { data: injuries } = await supabaseAdmin
           .from("athlete_injuries")
           .select("user_id, injury_location, injury_grade, recovery_status, injury_mechanism, expected_return_date, notes, created_at")
@@ -1361,7 +1368,9 @@ async function handleRequest(
           tcPlayerMap[m.user_id] = u?.full_name || `${u?.first_name ?? ""} ${u?.last_name ?? ""}`.trim() || "Athlete";
         }
 
-        // Last 7 days readiness per athlete
+        // Last 7 days readiness per athlete. Duty-of-care exception (see
+        // /roster/injuries above): shown to the athlete's own staff regardless of
+        // performance-sharing, scoped by the team membership filter above.
         const since7 = new Date(Date.now() - 7 * 86_400_000).toISOString().slice(0, 10);
         const { data: readinessRows } = await supabaseAdmin
           .from("readiness_scores")
