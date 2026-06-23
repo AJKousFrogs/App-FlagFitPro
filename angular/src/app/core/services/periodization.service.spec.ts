@@ -282,6 +282,92 @@ describe("prescribeFor — accumulation week shape", () => {
 });
 
 // =============================================================================
+// DAY-TYPE → PHASE-MODIFIER PIPELINE (team practice)
+//
+// Locks the "resolveDayType → applyModifiers" composition: a declared team-practice
+// day is resolved FIRST (you're going to practice regardless), then the event/season
+// PHASE is applied as a data-driven modifier (PRACTICE_PHASE_MODIFIERS). This proves
+// the pipeline is data-driven (a phase = a row, not a branch) and that higher-priority
+// safety/competition overrides still win over a practice day.
+// =============================================================================
+
+describe("prescribeFor — team practice (day type) × phase modifier", () => {
+  it("accumulation phase → practice IS the session (mixed, rpe7/90min, 'own' framing)", () => {
+    const rx = prescribeFor(inputs({ isTeamPractice: true, phase: "accumulation" }));
+    expect(rx.intent).toBe("mixed");
+    expect(rx.intentLabel).toBe("Flag football practice");
+    expect(rx.targetRpe).toBe(7);
+    expect(rx.targetMinutes).toBe(90);
+    expect(rx.reasoning).toContain("main session");
+  });
+
+  it("recovery phase → practice is HONOURED but at recovery intensity (finding 1.1)", () => {
+    // The calendar fact (practice) is kept — label + framing acknowledge it — but
+    // the recovery context modifies intensity down to the recovery default (rpe3/30).
+    // Before finding 1.1 this practice day was silently dropped.
+    const rx = prescribeFor(
+      inputs({
+        isTeamPractice: true,
+        phase: "recovery",
+        lastEvent: event({ startsAt: "2026-05-02T08:00:00Z" }),
+      }),
+    );
+    expect(rx.intent).toBe("recovery");
+    expect(rx.intentLabel).toBe("Flag football practice"); // practice not discarded
+    expect(rx.targetRpe).toBe(3);
+    expect(rx.targetMinutes).toBe(30);
+    expect(rx.recoveryEmphasis).toBe("high");
+    expect(rx.reasoning).toContain("recovery");
+  });
+
+  it("taper phase, >2 days out → sharp practice (mixed, rpe6/60min, 'sharp' framing)", () => {
+    const rx = prescribeFor(
+      inputs({
+        isTeamPractice: true,
+        phase: "taper",
+        upcoming: [event({ startsAt: "2026-05-07T10:00:00Z" })], // 72h out
+      }),
+    );
+    expect(rx.intent).toBe("mixed");
+    expect(rx.targetRpe).toBe(6);
+    expect(rx.targetMinutes).toBe(60);
+    expect(rx.reasoning).toContain("sharp");
+  });
+
+  it("taper phase, ≤2 days out → taper_final practice (lighter rpe5/45min)", () => {
+    const rx = prescribeFor(
+      inputs({
+        isTeamPractice: true,
+        phase: "taper",
+        upcoming: [event({ startsAt: "2026-05-05T22:00:00Z" })], // 36h out → daysOut 2
+      }),
+    );
+    expect(rx.intent).toBe("mixed");
+    expect(rx.targetRpe).toBe(5);
+    expect(rx.targetMinutes).toBe(45);
+  });
+
+  it("competition phase → the GAME is the session; practice yields", () => {
+    const rx = prescribeFor(inputs({ isTeamPractice: true, phase: "competition" }));
+    expect(rx.intent).toBe("competition");
+  });
+
+  it("ACWR danger overrides a practice day (safety precedence)", () => {
+    const rx = prescribeFor(
+      inputs({ isTeamPractice: true, phase: "accumulation", acwr: 1.8 }),
+    );
+    expect(rx.intent).toBe("rest");
+  });
+
+  it("readiness collapse overrides a practice day (recovery precedence)", () => {
+    const rx = prescribeFor(
+      inputs({ isTeamPractice: true, phase: "accumulation", readiness: 40 }),
+    );
+    expect(rx.intent).toBe("recovery");
+  });
+});
+
+// =============================================================================
 // NUTRITION SCALING
 // =============================================================================
 

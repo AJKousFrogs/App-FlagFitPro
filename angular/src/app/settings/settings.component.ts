@@ -17,6 +17,10 @@ import { PrivacySettingsService } from "../core/services/privacy-settings.servic
 import { PeriodizationService } from "../core/services/periodization.service";
 import { RecoveryService } from "../core/services/recovery.service";
 import { RECOVERY_EQUIPMENT } from "../core/models/recovery-modalities";
+import {
+  POSITION_VOLUME,
+  type PositionKey,
+} from "../core/config/position-volume.config";
 import { extractApiPayload } from "../core/utils/api-response-mapper";
 
 type Tab = "Notifications" | "Privacy" | "Prefs" | "Security";
@@ -90,6 +94,44 @@ export class SettingsComponent {
       this.equipMsg.set("Couldn't save — try again.");
     } finally {
       this.savingEquip.set(false);
+    }
+  }
+
+  // Primary position (Prefs tab) — drives position-specific prehab emphasis and
+  // worst-case volume targets in the prescription engine. Saved to
+  // player_settings.primary_position (and users.position) via /api/player-settings;
+  // labels are single-sourced from the canonical POSITION_VOLUME model.
+  readonly positions: { key: PositionKey; label: string }[] = (
+    Object.keys(POSITION_VOLUME) as PositionKey[]
+  ).map((key) => ({ key, label: POSITION_VOLUME[key].label }));
+  readonly position = signal<PositionKey | null>(null);
+  readonly savingPosition = signal(false);
+  readonly positionMsg = signal<string | null>(null);
+
+  selectPosition(key: PositionKey): void {
+    this.position.set(this.position() === key ? null : key);
+  }
+
+  async savePosition(): Promise<void> {
+    const pos = this.position();
+    if (!pos || this.savingPosition()) return;
+    this.savingPosition.set(true);
+    this.positionMsg.set(null);
+    try {
+      const res = await firstValueFrom(
+        this.api.post("/api/player-settings", { primaryPosition: pos }),
+      );
+      if (res.success) {
+        this.positionMsg.set("Saved — your plan now emphasises this position's prehab.");
+        this.periodization.refreshSettings();
+      } else {
+        this.positionMsg.set(res.error ?? "Couldn't save — try again.");
+      }
+    } catch (e) {
+      this.logger.error("settings_position_save_failed", e);
+      this.positionMsg.set("Couldn't save — try again.");
+    } finally {
+      this.savingPosition.set(false);
     }
   }
 
@@ -186,12 +228,16 @@ export class SettingsComponent {
         this.api.get<{
           teamTrainingDays?: { days?: number[]; time?: string };
           availableEquipment?: string[];
+          primaryPosition?: string;
+          primary_position?: string;
         }>("/api/player-settings"),
       );
       const data =
         extractApiPayload<{
           teamTrainingDays?: { days?: number[]; time?: string };
           availableEquipment?: string[];
+          primaryPosition?: string;
+          primary_position?: string;
         }>(res) ?? {};
       const ttd = data.teamTrainingDays;
       if (ttd) {
@@ -200,6 +246,12 @@ export class SettingsComponent {
       }
       if (Array.isArray(data.availableEquipment)) {
         this.ownedEquipment.set(data.availableEquipment.map(String));
+      }
+      const savedPos = (data.primaryPosition ?? data.primary_position ?? "")
+        .toString()
+        .toLowerCase();
+      if (this.positions.some((p) => p.key === savedPos)) {
+        this.position.set(savedPos as PositionKey);
       }
     } catch (e) {
       this.logger.error("settings_prefs_load_failed", e);
