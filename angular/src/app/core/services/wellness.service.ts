@@ -558,26 +558,26 @@ export class WellnessService {
     if (score >= 8) {
       return {
         status: "excellent",
-        color: STATUS_HEX_COLORS.success, // var(--p-highlight-text-color) (brand green)
+        color: STATUS_HEX_COLORS.success, // var(--good) (brand mint)
         message: "Your wellness is excellent! Keep up the great work.",
       };
     } else if (score >= 6) {
       return {
         status: "good",
-        color: STATUS_HEX_COLORS.info, // var(--color-chart-tertiary) (blue)
+        color: STATUS_HEX_COLORS.info, // var(--info) (blue)
         message:
           "Your wellness is good. Small improvements can make a big difference.",
       };
     } else if (score >= 4) {
       return {
         status: "fair",
-        color: STATUS_HEX_COLORS.warning, // var(--color-chart-quaternary) (amber)
+        color: STATUS_HEX_COLORS.warning, // var(--warn) (amber)
         message: "Your wellness needs attention. Focus on recovery and rest.",
       };
     } else {
       return {
         status: "poor",
-        color: STATUS_HEX_COLORS.error, // var(--color-chart-quinary) (red)
+        color: STATUS_HEX_COLORS.error, // var(--danger) (red)
         message:
           "Your wellness is concerning. Consider taking a rest day and consulting a coach.",
       };

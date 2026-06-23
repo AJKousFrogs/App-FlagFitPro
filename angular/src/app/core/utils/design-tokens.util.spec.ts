@@ -26,12 +26,12 @@ describe("design-tokens.util", () => {
     styleEl = document.createElement("style");
     styleEl.textContent = `
       :root {
-    --ds-primary-green: #089949;
-    --space-4: 1rem;
-    --space-8: 2rem;
-        --color-status-success: #089949;
-        --color-status-warning: #f59e0b;
-        --color-status-error: #ef4444;
+    --accent: #00E07A;
+    --s-4: 1rem;
+    --s-6: 2rem;
+        --good: #00E07A;
+        --warn: #FFB020;
+        --danger: #FF4D4D;
       }
     `;
     document.head.appendChild(styleEl);
@@ -42,56 +42,48 @@ describe("design-tokens.util", () => {
   });
 
   it("getCssVariable returns token value from :root", () => {
-    const value = getCssVariable("--ds-primary-green");
+    const value = getCssVariable("--accent");
     expect(value).toBeTruthy();
     expect(value).toMatch(/#[0-9a-f]{6}/i);
   });
 
   it("getCssVariables returns multiple tokens", () => {
-    const vars = getCssVariables(["--ds-primary-green", "--space-4"]);
-    expect(vars["--ds-primary-green"]).toBeTruthy();
-    expect(vars["--space-4"]).toBe("1rem");
+    const vars = getCssVariables(["--accent", "--s-4"]);
+    expect(vars["--accent"]).toBeTruthy();
+    expect(vars["--s-4"]).toBe("1rem");
   });
 
   it("resolveCssVariable resolves var() reference", () => {
-    const resolved = resolveCssVariable("var(--ds-primary-green)");
+    const resolved = resolveCssVariable("var(--accent)");
     expect(resolved).toBeTruthy();
   });
 
   it("hexToRgba resolves var() then applies alpha", () => {
-    const rgba = hexToRgba("var(--ds-primary-green)", 0.5);
-    expect(rgba).toMatch(/^rgba\(8,\s*153,\s*73,\s*0\.5\)$/);
+    const rgba = hexToRgba("var(--accent)", 0.5);
+    expect(rgba).toMatch(/^rgba\(0,\s*224,\s*122,\s*0\.5\)$/);
   });
 
   it("getStatusColor returns correct token for thresholds", () => {
-    expect(getStatusColor(90, 70, 50)).toBe("var(--color-status-success)");
-    expect(getStatusColor(60, 70, 50)).toBe("var(--color-status-warning)");
-    expect(getStatusColor(30, 70, 50)).toBe("var(--color-status-error)");
+    expect(getStatusColor(90, 70, 50)).toBe("var(--good)");
+    expect(getStatusColor(60, 70, 50)).toBe("var(--warn)");
+    expect(getStatusColor(30, 70, 50)).toBe("var(--danger)");
   });
 
   it("SPACING constant has expected values", () => {
-    expect(SPACING[4]).toBe(cssToken("--space-4"));
-    expect(SPACING[7]).toBe(cssToken("--space-7"));
-    expect(SPACING[8]).toBe(cssToken("--space-8"));
-    expect(SPACING[11]).toBe(cssToken("--space-11"));
+    expect(SPACING[4]).toBe(cssToken("--s-4"));
+    expect(SPACING[7]).toBe("28px");
+    expect(SPACING[8]).toBe(cssToken("--s-6"));
+    expect(SPACING[11]).toBe("44px");
   });
 
   it("BREAKPOINTS.mdMax matches CSS --breakpoint-md-max (767px) for max-width media queries", () => {
     expect(BREAKPOINTS.mdMax).toBe("767px");
   });
 
-  it("LAYOUT_CSS_VARS aliases point at the same canonical width chain", () => {
-    expect(LAYOUT_CSS_VARS.appContentMaxWidth).toBe(
-      "var(--layout-app-content-max-width)",
-    );
-    expect(LAYOUT_CSS_VARS.pageMaxWidthWide).toBe(
-      "var(--layout-page-max-width-wide)",
-    );
-    expect(LAYOUT_CSS_VARS.shellContentMaxWidth).toBe(
-      "var(--app-shell-content-max-width)",
-    );
-    expect(LAYOUT_CSS_VARS.onboardingMaxWidth).toBe(
-      "var(--layout-onboarding-max-width)",
-    );
+  it("LAYOUT_CSS_VARS expose the canonical app width chain", () => {
+    expect(LAYOUT_CSS_VARS.appContentMaxWidth).toBe("1280px");
+    expect(LAYOUT_CSS_VARS.pageMaxWidthWide).toBe("1280px");
+    expect(LAYOUT_CSS_VARS.shellContentMaxWidth).toBe("480px");
+    expect(LAYOUT_CSS_VARS.onboardingMaxWidth).toBe("560px");
   });
 });

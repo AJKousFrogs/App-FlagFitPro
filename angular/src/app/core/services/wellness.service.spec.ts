@@ -255,7 +255,7 @@ describe("WellnessService", () => {
       const status = service.getWellnessStatus(8.5);
 
       expect(status.status).toBe("excellent");
-      expect(status.color).toBe("var(--p-highlight-text-color)"); // design token
+      expect(status.color).toBe("var(--good)"); // design token
       expect(status.message).toContain("excellent");
     });
 
@@ -263,14 +263,14 @@ describe("WellnessService", () => {
       const status = service.getWellnessStatus(7);
 
       expect(status.status).toBe("good");
-      expect(status.color).toBe("var(--color-chart-tertiary)"); // design token
+      expect(status.color).toBe("var(--info)"); // design token
     });
 
     it("should return fair status for score 4-6", () => {
       const status = service.getWellnessStatus(5);
 
       expect(status.status).toBe("fair");
-      expect(status.color).toBe("var(--color-chart-quaternary)"); // design token
+      expect(status.color).toBe("var(--warn)"); // design token
       expect(status.message).toContain("attention");
     });
 
@@ -278,7 +278,7 @@ describe("WellnessService", () => {
       const status = service.getWellnessStatus(2);
 
       expect(status.status).toBe("poor");
-      expect(status.color).toBe("var(--color-chart-quinary)"); // design token
+      expect(status.color).toBe("var(--danger)"); // design token
       expect(status.message).toContain("concerning");
     });
 

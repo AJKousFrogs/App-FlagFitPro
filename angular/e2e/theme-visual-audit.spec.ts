@@ -49,7 +49,9 @@ async function waitForThemeApplied(page: Page, theme: ThemeMode): Promise<void> 
   expect(state.dataTheme).toBe(theme);
   expect(state.bodyHasClass).toBe(true);
   expect(state.colorScheme.includes(theme)).toBe(true);
-  expect(state.metaThemeColor).toBe(theme === "dark" ? "#171717" : "#089949");
+  // theme-color is a static literal ink (#08090B) in index.html — the app does
+  // not swap it per theme, so it is theme-independent (Phase E dark-default ink).
+  expect(state.metaThemeColor).toBe("#08090B");
 }
 
 async function login(page: Page): Promise<void> {
