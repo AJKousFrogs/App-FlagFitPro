@@ -4,9 +4,7 @@
 
 - **Data Model** (generated, exact live names): [`docs/generated/DATA_MODEL.md`](generated/DATA_MODEL.md)
 - **Endpoint Reference** (generated): [`docs/generated/ENDPOINTS.md`](generated/ENDPOINTS.md)
-- **Reconciliation audit** (what the old docs got wrong): [`docs/generated/RECONCILIATION.md`](generated/RECONCILIATION.md)
 - **Live schema snapshot** (the offline ground-truth input): [`docs/generated/live-schema.snapshot.json`](generated/live-schema.snapshot.json)
-- Raw inventories: [`docs/ground-truth/`](ground-truth/)
 
 Regenerate the generated sections: `npm run docs:regen` (see §8).
 Verified against live: **2026-06-23** — 187 base tables, 7 views, 113 Netlify functions, 208 migration files in `supabase/migrations/`. The generated DATA_MODEL/ENDPOINTS + live snapshot were regenerated 2026-06-23.
@@ -112,7 +110,7 @@ Reference implementations: the wellness check-in prefill `effect()` and `profile
 
 ## 6. Known Drift & Open Issues
 
-Sourced from §0 inventories + [`RECONCILIATION.md`](generated/RECONCILIATION.md). Unfixed:
+Unfixed:
 
 > **Deferred feature-port bugs:** code↔schema mismatches that need a product decision — not safe to fix mechanically. Tracked in [`../redesign/PORT_BUG_REGISTER.md`](../redesign/PORT_BUG_REGISTER.md). Resolve each when its feature is rebuilt (don't ship a screen over a known-broken data path).
 
