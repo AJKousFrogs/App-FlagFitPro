@@ -62,6 +62,26 @@
       <p class="note">Privacy-first: sharing is off by default and only applies to teams you allow.</p>
     }
     @case ("Prefs") {
+      <div class="section-h"><h2>Your position</h2></div>
+      <div class="card stack">
+        <p class="muted" style="margin:0">
+          What's your primary position? Your plan emphasises this position's prehab focus
+          and gears volume to its worst-case game demands.
+        </p>
+        <div class="chiprow">
+          @for (p of positions; track p.key) {
+            <button type="button" class="chip" [class.sel]="position() === p.key"
+                    (click)="selectPosition(p.key)">{{ p.label }}</button>
+          }
+        </div>
+        @if (positionMsg(); as m) { <small class="muted">{{ m }}</small> }
+        <div class="row" style="justify-content:flex-end">
+          <button class="btn primary sm" type="button"
+                  [attr.aria-disabled]="savingPosition() || !position()"
+                  (click)="savePosition()">{{ savingPosition() ? "Saving…" : "Save position" }}</button>
+        </div>
+      </div>
+
       <div class="section-h"><h2>Flag football training</h2></div>
       <div class="card stack">
         <p class="muted" style="margin:0">

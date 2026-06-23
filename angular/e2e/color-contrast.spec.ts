@@ -1,532 +1,212 @@
 /**
- * E2E Color Contrast Tests
+ * E2E Color Contrast — Phase E design system.
  *
- * 🚨 CRITICAL: Enforces "NO BLACK TEXT ON GREEN" design system rule
+ * The LOCKED decision (angular/src/scss/tokens/_tokens.scss): `--accent` is the
+ * bright mint #00E07A and it pairs with `--on-accent` = #08090B (near-black ink).
+ * Dark ink on mint is CORRECT (~11:1); white-on-mint would FAIL WCAG AA (~1.8:1).
  *
- * Design System Rules (ABSOLUTE - NEVER OVERRIDE):
- * 1. NEVER black/dark text (#000, #1a1a1a, black) on green backgrounds (#089949)
- * 2. ALWAYS white (#ffffff) text on primary green
- * 3. WCAG AA minimum contrast enforced everywhere
+ * This spec therefore enforces WCAG AA *contrast ratios* — NOT the legacy
+ * "always white text on green" rule, which was inverted for this palette and
+ * tested PrimeNG `.p-*` selectors that no longer exist (the static-first rebuild
+ * removed PrimeNG). We test the real design-system selectors (`.btn.primary`,
+ * `.btn`, `.chip`) and lock in the ink-on-accent pairing.
  *
- * Run tests with: npx playwright test --grep "color-contrast"
+ * Run: npx playwright test e2e/color-contrast.spec.ts
  *
- * @version 1.0.0
+ * @version 2.0.0
  */
 
 import { expect, test } from "@playwright/test";
 
-// Brand green color in various formats - kept for documentation purposes
-const _GREEN_BACKGROUNDS = [
-  "rgb(8, 153, 73)", // Primary green
-  "#089949",
-  "rgb(10, 184, 90)", // Light green
-  "#0ab85a",
-  "rgb(3, 109, 53)", // Dark green (hover)
-  "#036d35",
-];
+// WCAG 2.1 thresholds.
+const AA_NORMAL = 4.5; // normal-size text
+const AA_LARGE = 3.0; // large text (≥24px, or ≥18.66px bold) and UI components
 
-// Forbidden text colors on green backgrounds - kept for documentation purposes
-const _FORBIDDEN_TEXT_COLORS = [
-  "rgb(0, 0, 0)", // Pure black
-  "#000000",
-  "#000",
-  "rgb(26, 26, 26)", // Design system black
-  "#1a1a1a",
-  "rgb(0, 0, 0)", // Black
-  "black",
-];
-
-// Helper to check if a color is "dark" (potential violation)
-function isDarkColor(color: string): boolean {
-  // Handle rgb format
-  const rgbMatch = color.match(/rgb\((\d+),\s*(\d+),\s*(\d+)\)/);
-  if (rgbMatch) {
-    const [, r, g, b] = rgbMatch.map(Number);
-    // Calculate relative luminance
-    const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
-    return luminance < 0.4; // Dark if luminance is low
-  }
-
-  // Handle hex format
-  const hexMatch = color.match(/^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i);
-  if (hexMatch) {
-    const [, r, g, b] = hexMatch.map((x) => parseInt(x, 16));
-    const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
-    return luminance < 0.4;
-  }
-
-  // Handle named colors
-  if (color === "black") return true;
-
-  return false;
+/** Parse "rgb(r, g, b)" / "rgba(r, g, b, a)" into [r,g,b] (0–255) or null. */
+function parseRgb(color: string): [number, number, number] | null {
+  const m = color.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
+  return m ? [Number(m[1]), Number(m[2]), Number(m[3])] : null;
 }
 
-// Helper to check if a background is green
-function isGreenBackground(color: string): boolean {
-  const normalized = color.toLowerCase().replace(/\s/g, "");
+/** Relative luminance per WCAG (sRGB). */
+function luminance([r, g, b]: [number, number, number]): number {
+  const [rs, gs, bs] = [r, g, b].map((c) => {
+    const s = c / 255;
+    return s <= 0.03928 ? s / 12.92 : Math.pow((s + 0.055) / 1.055, 2.4);
+  });
+  return 0.2126 * rs + 0.7152 * gs + 0.0722 * bs;
+}
 
-  // Check for exact matches
-  if (
-    normalized.includes("rgb(8,153,73)") ||
-    normalized.includes("#089949") ||
-    normalized.includes("rgb(10,184,90)") ||
-    normalized.includes("#0ab85a") ||
-    normalized.includes("rgb(3,109,53)") ||
-    normalized.includes("#036d35")
-  ) {
-    return true;
-  }
+/** WCAG contrast ratio between two parsed colors. */
+function contrastRatio(
+  a: [number, number, number],
+  b: [number, number, number],
+): number {
+  const la = luminance(a);
+  const lb = luminance(b);
+  return (Math.max(la, lb) + 0.05) / (Math.min(la, lb) + 0.05);
+}
 
-  // Check for approximate green (hue-based)
-  const rgbMatch = normalized.match(/rgb\((\d+),(\d+),(\d+)\)/);
-  if (rgbMatch) {
-    const [, r, g, b] = rgbMatch.map(Number);
-    // Green dominant with specific range
-    if (g > r && g > b && g > 100 && r < 50) {
-      return true;
+/**
+ * Resolve design tokens to concrete rgb() strings by probing the live cascade —
+ * `getComputedStyle` on a custom property can return an unresolved `var(--c-…)`
+ * reference, so we let the browser resolve it on a throwaway element instead.
+ */
+async function resolveTokens(
+  page: import("@playwright/test").Page,
+  tokens: string[],
+): Promise<Record<string, string>> {
+  return page.evaluate((names: string[]) => {
+    const probe = document.createElement("span");
+    probe.style.position = "absolute";
+    probe.style.visibility = "hidden";
+    probe.style.pointerEvents = "none";
+    document.body.appendChild(probe);
+    const out: Record<string, string> = {};
+    for (const name of names) {
+      probe.style.color = "";
+      probe.style.color = `var(${name})`;
+      out[name] = getComputedStyle(probe).color;
     }
-  }
-
-  return false;
+    probe.remove();
+    return out;
+  }, tokens);
 }
 
-// Pages to test for color contrast violations - kept for documentation purposes
-const _PAGES_TO_TEST = [
-  "/",
-  "/ai-coach", // AI Coach chat - has green message bubbles
-];
-
-test.describe("Color Contrast - NO BLACK ON GREEN", () => {
-  test.describe.configure({ mode: "parallel" });
-
-  test("Primary buttons should have white text on green background", async ({
+test.describe("Color Contrast — Phase E tokens (ink-on-accent)", () => {
+  test("the accent ↔ on-accent token pairing meets WCAG AA", async ({
     page,
   }) => {
     await page.goto("/");
     await page.waitForLoadState("networkidle");
 
-    // Find all primary buttons
-    const buttons = await page.locator(".p-button").all();
+    const t = await resolveTokens(page, ["--accent", "--on-accent"]);
+    const accent = parseRgb(t["--accent"]);
+    const onAccent = parseRgb(t["--on-accent"]);
+
+    expect(accent, `--accent did not resolve to rgb (got "${t["--accent"]}")`).not.toBeNull();
+    expect(onAccent, `--on-accent did not resolve to rgb (got "${t["--on-accent"]}")`).not.toBeNull();
+
+    const ratio = contrastRatio(accent!, onAccent!);
+    expect(
+      ratio,
+      `--on-accent (${t["--on-accent"]}) on --accent (${t["--accent"]}) is ${ratio.toFixed(2)}:1 — below WCAG AA ${AA_NORMAL}:1`,
+    ).toBeGreaterThanOrEqual(AA_NORMAL);
+
+    // Lock the decision: on-accent is the DARK ink, not white. White on this
+    // mint accent is the regression we are guarding against.
+    expect(
+      luminance(onAccent!),
+      `--on-accent should be dark ink for the mint accent, got ${t["--on-accent"]}`,
+    ).toBeLessThan(0.2);
+  });
+
+  test("body text meets WCAG AA against the page background", async ({
+    page,
+  }) => {
+    await page.goto("/");
+    await page.waitForLoadState("networkidle");
+
+    const t = await resolveTokens(page, ["--text", "--bg", "--text-muted", "--text-faint"]);
+    const bg = parseRgb(t["--bg"]);
+    expect(bg, `--bg did not resolve (got "${t["--bg"]}")`).not.toBeNull();
+
+    for (const token of ["--text", "--text-muted", "--text-faint"]) {
+      const fg = parseRgb(t[token]);
+      expect(fg, `${token} did not resolve (got "${t[token]}")`).not.toBeNull();
+      const ratio = contrastRatio(fg!, bg!);
+      expect(
+        ratio,
+        `${token} (${t[token]}) on --bg (${t["--bg"]}) is ${ratio.toFixed(2)}:1 — below WCAG AA ${AA_NORMAL}:1`,
+      ).toBeGreaterThanOrEqual(AA_NORMAL);
+    }
+  });
+
+  test("primary buttons use the dark ink-on-accent pairing (not white) and meet AA", async ({
+    page,
+  }) => {
+    await page.goto("/");
+    await page.waitForLoadState("networkidle");
+
+    // Real design-system selector (.btn.primary), not PrimeNG. Skip the route
+    // gracefully if no primary CTA is rendered on it.
+    const buttons = await page.locator("button.btn.primary, a.btn.primary").all();
+    test.skip(buttons.length === 0, "No .btn.primary rendered on this route");
 
     for (const button of buttons) {
-      const isVisible = await button.isVisible().catch(() => false);
-      if (!isVisible) continue;
+      if (!(await button.isVisible().catch(() => false))) continue;
 
-      const bgColor = await button.evaluate(
-        (el) => window.getComputedStyle(el).backgroundColor,
-      );
-      const textColor = await button.evaluate(
-        (el) => window.getComputedStyle(el).color,
-      );
-
-      // If background is green, text MUST be white
-      if (isGreenBackground(bgColor)) {
-        expect(
-          isDarkColor(textColor),
-          `Button with green background (${bgColor}) has dark text (${textColor}) - VIOLATION!`,
-        ).toBe(false);
-
-        // Additionally verify it's close to white
-        const rgbMatch = textColor.match(/rgb\((\d+),\s*(\d+),\s*(\d+)\)/);
-        if (rgbMatch) {
-          const [, r, g, b] = rgbMatch.map(Number);
-          expect(
-            r,
-            `Red channel should be >= 200 for white text, got ${r}`,
-          ).toBeGreaterThanOrEqual(200);
-          expect(
-            g,
-            `Green channel should be >= 200 for white text, got ${g}`,
-          ).toBeGreaterThanOrEqual(200);
-          expect(
-            b,
-            `Blue channel should be >= 200 for white text, got ${b}`,
-          ).toBeGreaterThanOrEqual(200);
-        }
-      }
-    }
-  });
-
-  test("Cards with green backgrounds should have white text", async ({
-    page,
-  }) => {
-    await page.goto("/");
-    await page.waitForLoadState("networkidle");
-
-    // Find all cards and panels
-    const cards = await page
-      .locator(".p-card, .p-panel, [class*='card']")
-      .all();
-
-    for (const card of cards) {
-      const isVisible = await card.isVisible().catch(() => false);
-      if (!isVisible) continue;
-
-      const bgColor = await card.evaluate(
-        (el) => window.getComputedStyle(el).backgroundColor,
-      );
-
-      if (isGreenBackground(bgColor)) {
-        // Check all text elements inside
-        const textElements = await card
-          .locator("p, span, h1, h2, h3, h4, h5, h6, label, a")
-          .all();
-
-        for (const textEl of textElements) {
-          const textColor = await textEl.evaluate(
-            (el) => window.getComputedStyle(el).color,
-          );
-          expect(
-            isDarkColor(textColor),
-            `Text element inside green card has dark color (${textColor}) - VIOLATION!`,
-          ).toBe(false);
-        }
-      }
-    }
-  });
-
-  test("Button labels inside green buttons should be white", async ({
-    page,
-  }) => {
-    await page.goto("/");
-    await page.waitForLoadState("networkidle");
-
-    const buttonLabels = await page.locator(".p-button-label").all();
-
-    for (const label of buttonLabels) {
-      const isVisible = await label.isVisible().catch(() => false);
-      if (!isVisible) continue;
-
-      // Get parent button's background
-      const parentBg = await label.evaluate((el) => {
-        const button = el.closest(".p-button");
-        return button ? window.getComputedStyle(button).backgroundColor : "";
+      const { bg, fg } = await button.evaluate((el) => {
+        const s = window.getComputedStyle(el);
+        return { bg: s.backgroundColor, fg: s.color };
       });
+      const bgRgb = parseRgb(bg);
+      const fgRgb = parseRgb(fg);
+      if (!bgRgb || !fgRgb) continue; // gradient/transparent — covered by the token test
 
-      if (isGreenBackground(parentBg)) {
-        const labelColor = await label.evaluate(
-          (el) => window.getComputedStyle(el).color,
-        );
-        expect(
-          isDarkColor(labelColor),
-          `Button label on green background has dark text (${labelColor}) - VIOLATION!`,
-        ).toBe(false);
-      }
-    }
-  });
-
-  test("Button icons inside green buttons should be white", async ({
-    page,
-  }) => {
-    await page.goto("/");
-    await page.waitForLoadState("networkidle");
-
-    const buttonIcons = await page
-      .locator(".p-button-icon, .p-button .pi")
-      .all();
-
-    for (const icon of buttonIcons) {
-      const isVisible = await icon.isVisible().catch(() => false);
-      if (!isVisible) continue;
-
-      // Get parent button's background
-      const parentBg = await icon.evaluate((el) => {
-        const button = el.closest(".p-button");
-        return button ? window.getComputedStyle(button).backgroundColor : "";
-      });
-
-      if (isGreenBackground(parentBg)) {
-        const iconColor = await icon.evaluate(
-          (el) => window.getComputedStyle(el).color,
-        );
-        expect(
-          isDarkColor(iconColor),
-          `Button icon on green background has dark color (${iconColor}) - VIOLATION!`,
-        ).toBe(false);
-      }
-    }
-  });
-
-  test("Inline styled green elements should have white text", async ({
-    page,
-  }) => {
-    await page.goto("/");
-    await page.waitForLoadState("networkidle");
-
-    // Find elements with inline green background styles
-    const greenStyled = await page
-      .locator('[style*="089949"], [style*="background"][style*="green"]')
-      .all();
-
-    for (const el of greenStyled) {
-      const isVisible = await el.isVisible().catch(() => false);
-      if (!isVisible) continue;
-
-      const textColor = await el.evaluate(
-        (el) => window.getComputedStyle(el).color,
-      );
-
+      // The text must be the dark on-accent ink, never white-on-mint.
       expect(
-        isDarkColor(textColor),
-        `Element with inline green background has dark text (${textColor}) - VIOLATION!`,
-      ).toBe(false);
+        luminance(fgRgb),
+        `Primary button text should be dark ink-on-accent, got ${fg} on ${bg}`,
+      ).toBeLessThan(0.4);
+
+      const ratio = contrastRatio(bgRgb, fgRgb);
+      expect(
+        ratio,
+        `Primary button contrast ${ratio.toFixed(2)}:1 (text ${fg} on ${bg}) is below WCAG AA ${AA_NORMAL}:1`,
+      ).toBeGreaterThanOrEqual(AA_NORMAL);
     }
   });
 
-  test("Tags and badges with green background should have white text", async ({
+  test("buttons and chips meet WCAG AA (UI-component threshold)", async ({
     page,
   }) => {
     await page.goto("/");
     await page.waitForLoadState("networkidle");
 
-    const tags = await page
-      .locator(".p-tag, .p-badge, .p-chip, [class*='tag'], [class*='badge']")
-      .all();
-
-    for (const tag of tags) {
-      const isVisible = await tag.isVisible().catch(() => false);
-      if (!isVisible) continue;
-
-      const bgColor = await tag.evaluate(
-        (el) => window.getComputedStyle(el).backgroundColor,
-      );
-
-      if (isGreenBackground(bgColor)) {
-        const textColor = await tag.evaluate(
-          (el) => window.getComputedStyle(el).color,
-        );
-        expect(
-          isDarkColor(textColor),
-          `Tag/badge with green background has dark text (${textColor}) - VIOLATION!`,
-        ).toBe(false);
-      }
-    }
-  });
-
-  test("No elements should have forbidden color combinations", async ({
-    page,
-  }) => {
-    await page.goto("/");
-    await page.waitForLoadState("networkidle");
-
-    // Get all visible elements
-    const violations = await page.evaluate(() => {
-      const violations: string[] = [];
-
-      const isGreen = (color: string): boolean => {
-        const normalized = color.toLowerCase().replace(/\s/g, "");
-        return (
-          normalized.includes("rgb(8,153,73)") ||
-          normalized.includes("#089949") ||
-          normalized.includes("rgb(10,184,90)") ||
-          normalized.includes("#0ab85a")
-        );
-      };
-
-      const isDark = (color: string): boolean => {
-        const match = color.match(/rgb\((\d+),\s*(\d+),\s*(\d+)\)/);
-        if (match) {
-          const [, r, g, b] = match.map(Number);
-          const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
-          return luminance < 0.4;
-        }
-        return color === "black" || color === "#000000" || color === "#1a1a1a";
-      };
-
-      document
-        .querySelectorAll(
-          ".p-button, .p-card, .p-tag, .p-badge, .p-chip, [class*='btn'], [class*='card']",
-        )
-        .forEach((el) => {
-          const style = window.getComputedStyle(el);
-          const bg = style.backgroundColor;
-          const text = style.color;
-
-          if (isGreen(bg) && isDark(text)) {
-            violations.push(
-              `${el.tagName}.${el.className}: bg=${bg}, text=${text}`,
-            );
-          }
-        });
-
-      return violations;
-    });
-
-    expect(
-      violations,
-      `Found ${violations.length} color contrast violations:\n${violations.join("\n")}`,
-    ).toHaveLength(0);
-  });
-
-  test("AI Coach chat bubbles should have white text on green background", async ({
-    page,
-  }) => {
-    await page.goto("/ai-coach");
-    await page.waitForLoadState("networkidle");
-
-    // Check for any elements with green gradient backgrounds
-    const violations = await page.evaluate(() => {
-      const violations: string[] = [];
-
-      const isGreenish = (color: string): boolean => {
-        const normalized = color.toLowerCase().replace(/\s/g, "");
-        // Check for our specific greens
-        if (
-          normalized.includes("rgb(8,153,73)") ||
-          normalized.includes("rgb(10,184,90)") ||
-          normalized.includes("#089949") ||
-          normalized.includes("#0ab85a")
-        ) {
-          return true;
-        }
-        // Check for green-dominant colors
-        const match = normalized.match(/rgb\((\d+),(\d+),(\d+)\)/);
-        if (match) {
-          const [, r, g, b] = match.map(Number);
-          // Green dominant with high saturation
-          if (g > r * 1.5 && g > b * 1.5 && g > 100) {
-            return true;
-          }
-        }
-        return false;
-      };
-
-      const isDark = (color: string): boolean => {
-        const match = color.match(/rgb\((\d+),\s*(\d+),\s*(\d+)\)/);
-        if (match) {
-          const [, r, g, b] = match.map(Number);
-          const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
-          return luminance < 0.5; // Stricter threshold for chat messages
-        }
-        return (
-          color === "black" ||
-          color.includes("#000") ||
-          color.includes("#1a1a1a")
-        );
-      };
-
-      // Check message bubbles and their children
-      document
-        .querySelectorAll(
-          ".message-content, .message-text, [class*='message'], [class*='chat'], [class*='bubble']",
-        )
-        .forEach((el) => {
-          const style = window.getComputedStyle(el);
-          const bg = style.backgroundColor;
-          const bgImage = style.backgroundImage;
-          const text = style.color;
-
-          // Check for green background (solid or gradient)
-          const hasGreenBg =
-            isGreenish(bg) ||
-            (bgImage &&
-              (bgImage.includes("#089949") ||
-                bgImage.includes("#0ab85a") ||
-                bgImage.includes("8, 153, 73") ||
-                bgImage.includes("10, 184, 90")));
-
-          if (hasGreenBg && isDark(text)) {
-            violations.push(
-              `${el.tagName}.${el.className}: bg=${bg || bgImage}, text=${text}`,
-            );
-          }
-
-          // Also check all child elements
-          el.querySelectorAll("*").forEach((child) => {
-            const childStyle = window.getComputedStyle(child);
-            const childText = childStyle.color;
-            if (isDark(childText)) {
-              // Check if parent has green background
-              let parent = child.parentElement;
-              while (parent) {
-                const parentStyle = window.getComputedStyle(parent);
-                const parentBg = parentStyle.backgroundColor;
-                const parentBgImage = parentStyle.backgroundImage;
-                if (
-                  isGreenish(parentBg) ||
-                  (parentBgImage &&
-                    (parentBgImage.includes("#089949") ||
-                      parentBgImage.includes("#0ab85a")))
-                ) {
-                  violations.push(
-                    `${child.tagName}.${child.className} (child of ${parent.className}): text=${childText}`,
-                  );
-                  break;
-                }
-                parent = parent.parentElement;
-              }
-            }
+    const violations = await page.evaluate(
+      ({ aaLarge }) => {
+        const parse = (c: string): [number, number, number] | null => {
+          const m = c.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
+          return m ? [Number(m[1]), Number(m[2]), Number(m[3])] : null;
+        };
+        const lum = ([r, g, b]: [number, number, number]) => {
+          const [rs, gs, bs] = [r, g, b].map((c) => {
+            const s = c / 255;
+            return s <= 0.03928 ? s / 12.92 : Math.pow((s + 0.055) / 1.055, 2.4);
           });
-        });
+          return 0.2126 * rs + 0.7152 * gs + 0.0722 * bs;
+        };
+        const ratio = (
+          a: [number, number, number],
+          b: [number, number, number],
+        ) => (Math.max(lum(a), lum(b)) + 0.05) / (Math.min(lum(a), lum(b)) + 0.05);
 
-      return [...new Set(violations)]; // Remove duplicates
-    });
+        const out: string[] = [];
+        document.querySelectorAll<HTMLElement>(".btn, .chip").forEach((el) => {
+          const r = el.getBoundingClientRect();
+          if (r.width === 0 || r.height === 0) return; // not rendered
+          const s = window.getComputedStyle(el);
+          const bg = parse(s.backgroundColor);
+          const fg = parse(s.color);
+          // Transparent backgrounds (.btn.ghost, gradients) resolve against the
+          // page surface — out of scope for this element-local check.
+          if (!bg || !fg || s.backgroundColor.includes("rgba(0, 0, 0, 0)")) return;
+          const cr = ratio(bg, fg);
+          if (cr < aaLarge) {
+            out.push(
+              `${el.className.trim()}: ${cr.toFixed(2)}:1 (text ${s.color} on ${s.backgroundColor})`,
+            );
+          }
+        });
+        return out;
+      },
+      { aaLarge: AA_LARGE },
+    );
 
     expect(
       violations,
-      `Found ${violations.length} AI Coach chat color violations:\n${violations.join("\n")}`,
+      `Found ${violations.length} button/chip contrast violations:\n${violations.join("\n")}`,
     ).toHaveLength(0);
-  });
-});
-
-test.describe("WCAG AA Contrast Compliance", () => {
-  test("All text should meet WCAG AA contrast ratio (4.5:1)", async ({
-    page,
-  }) => {
-    await page.goto("/");
-    await page.waitForLoadState("networkidle");
-
-    // Helper to calculate contrast ratio
-    const checkContrast = await page.evaluate(() => {
-      function getLuminance(r: number, g: number, b: number): number {
-        const [rs, gs, bs] = [r, g, b].map((c) => {
-          c = c / 255;
-          return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
-        });
-        return 0.2126 * rs + 0.7152 * gs + 0.0722 * bs;
-      }
-
-      function getContrastRatio(l1: number, l2: number): number {
-        const lighter = Math.max(l1, l2);
-        const darker = Math.min(l1, l2);
-        return (lighter + 0.05) / (darker + 0.05);
-      }
-
-      function parseColor(color: string): [number, number, number] | null {
-        const match = color.match(/rgb\((\d+),\s*(\d+),\s*(\d+)\)/);
-        if (match) {
-          return [parseInt(match[1]), parseInt(match[2]), parseInt(match[3])];
-        }
-        return null;
-      }
-
-      const lowContrastElements: string[] = [];
-
-      // Check buttons specifically
-      document.querySelectorAll(".p-button").forEach((el) => {
-        const style = window.getComputedStyle(el);
-        const bgColor = parseColor(style.backgroundColor);
-        const textColor = parseColor(style.color);
-
-        if (bgColor && textColor) {
-          const bgLum = getLuminance(...bgColor);
-          const textLum = getLuminance(...textColor);
-          const ratio = getContrastRatio(bgLum, textLum);
-
-          if (ratio < 4.5) {
-            lowContrastElements.push(
-              `Button: contrast ${ratio.toFixed(2)}:1 (bg: ${style.backgroundColor}, text: ${style.color})`,
-            );
-          }
-        }
-      });
-
-      return lowContrastElements;
-    });
-
-    expect(
-      checkContrast.length,
-      `Found ${checkContrast.length} elements with insufficient contrast:\n${checkContrast.join("\n")}`,
-    ).toBe(0);
   });
 });
