@@ -9,7 +9,6 @@ A flag-football performance, wellness, and team-operations platform built with *
 Generated, ground-truth-anchored references it links to:
 - [`docs/generated/DATA_MODEL.md`](./docs/generated/DATA_MODEL.md) — exact live tables/columns
 - [`docs/generated/ENDPOINTS.md`](./docs/generated/ENDPOINTS.md) — every `/api/*` route, exercised vs orphaned
-- [`docs/generated/RECONCILIATION.md`](./docs/generated/RECONCILIATION.md) — audit of what the old docs got wrong
 
 Angular workspace guide: [`angular/README.md`](./angular/README.md).
 
@@ -40,7 +39,7 @@ cd angular && npm run type-check && npm run lint && npm run test
 angular/              Angular application (feature screens are direct children of src/app/)
 netlify/functions/    Serverless backend (/api/* via netlify.toml redirects)
 supabase/migrations/  Live migration history (database/migrations/ is legacy — do not add here)
-docs/                 SOURCE_OF_TRUTH.md + generated/ + ground-truth/
+docs/                 SOURCE_OF_TRUTH.md + generated/
 tests/                Integration, privacy, and logic tests
 scripts/              Tooling and repo automation (incl. docs-regen.mjs)
 ```
