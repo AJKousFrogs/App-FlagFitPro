@@ -1,7 +1,7 @@
 /**
  * Design Tokens Utility
  *
- * Provides runtime access to CSS custom properties defined in design-system-tokens.scss
+ * Provides runtime access to CSS custom properties defined in scss/tokens/_tokens.scss
  * This is the single source of truth for accessing design tokens in TypeScript.
  *
  * Usage:
@@ -11,7 +11,7 @@
 
 /**
  * Get a CSS custom property value from the document root
- * @param propertyName - CSS variable name without 'var()' wrapper (e.g., '--ds-primary-green')
+ * @param propertyName - CSS variable name without 'var()' wrapper (e.g., '--accent')
  * @returns The computed value of the CSS variable
  */
 export function getCssVariable(propertyName: string): string {
@@ -69,15 +69,15 @@ export function cssToken(tokenName: `--${string}`): string {
  * Single numeric source: `--layout-app-content-max-width` in design-system-tokens.scss
  */
 export const LAYOUT_CSS_VARS = {
-  appContentMaxWidth: cssToken("--layout-app-content-max-width"),
-  pageMaxWidthWide: cssToken("--layout-page-max-width-wide"),
-  shellContentMaxWidth: cssToken("--app-shell-content-max-width"),
-  onboardingMaxWidth: cssToken("--layout-onboarding-max-width"),
+  appContentMaxWidth: "1280px",
+  pageMaxWidthWide: "1280px",
+  shellContentMaxWidth: "480px",
+  onboardingMaxWidth: "560px",
 } as const;
 
 // ============================================================================
 // DESIGN TOKEN CONSTANTS
-// These map directly to CSS variables in design-system-tokens.scss
+// These map directly to CSS variables in scss/tokens/_tokens.scss
 // Use CSS variable references when possible; hex values only for Chart.js/Canvas
 // ============================================================================
 
@@ -86,11 +86,11 @@ export const LAYOUT_CSS_VARS = {
  * Use CSS variable references for DOM elements
  */
 export const BRAND_COLORS = {
-  primary: "var(--ds-primary-green)",
-  primaryHover: "var(--ds-primary-green-hover)",
-  primaryLight: "var(--ds-primary-green-light)",
-  primarySubtle: "var(--ds-primary-green-subtle)",
-  secondary: "var(--color-brand-secondary)",
+  primary: "var(--accent)",
+  primaryHover: "var(--accent-press)",
+  primaryLight: "var(--accent)",
+  primarySubtle: "var(--accent-soft)",
+  secondary: "var(--accent-2)",
 } as const;
 
 /**
@@ -98,16 +98,16 @@ export const BRAND_COLORS = {
  * Use CSS variable references for DOM elements
  */
 export const STATUS_COLORS = {
-  success: "var(--color-status-success)",
-  successLight: "var(--color-success-bg)",
-  warning: "var(--color-status-warning)",
-  warningLight: "var(--color-warning-bg)",
-  error: "var(--color-status-error)",
-  errorLight: "var(--color-danger-bg)",
-  info: "var(--color-status-info)",
-  infoLight: "var(--color-info-bg)",
-  help: "var(--color-status-help)",
-  helpLight: "var(--color-status-help-light)",
+  success: "var(--good)",
+  successLight: "var(--good-soft)",
+  warning: "var(--warn)",
+  warningLight: "var(--warn-soft)",
+  error: "var(--danger)",
+  errorLight: "var(--danger-soft)",
+  info: "var(--info)",
+  infoLight: "var(--info-soft)",
+  help: "var(--accent-2)",
+  helpLight: "var(--c-violet-200)",
 } as const;
 
 /**
@@ -116,17 +116,17 @@ export const STATUS_COLORS = {
  * CSS variable references ensure theme consistency
  */
 export const BLOCK_COLORS = {
-  morning_mobility: "var(--primitive-warning-500)", // amber var(--color-chart-quaternary)
-  foam_roll: "var(--primitive-error-500)", // red var(--color-chart-quinary)
-  warm_up: "var(--color-workout-cardio)", // orange var(--color-chart-quaternary)
-  isometrics: "var(--ds-primary-green)", // green - strength work
-  plyometrics: "var(--color-workout-cardio)", // orange - explosive work
-  strength: "var(--ds-primary-green)", // green - strength work (incl. Nordic curls)
-  conditioning: "var(--primitive-error-500)", // red - cardio/conditioning
-  skill_drills: "var(--color-chart-tertiary)", // blue - skill/twitching
-  main_session: "var(--ds-primary-green)", // brand green var(--p-highlight-text-color)
-  cool_down: "var(--color-chart-tertiary)", // blue var(--color-chart-tertiary)
-  evening_recovery: "var(--color-status-help)", // purple var(--color-chart-senary)
+  morning_mobility: "var(--warn)", // amber
+  foam_roll: "var(--danger)", // red
+  warm_up: "var(--caution)", // orange
+  isometrics: "var(--accent)", // green - strength work
+  plyometrics: "var(--caution)", // orange - explosive work
+  strength: "var(--accent)", // green - strength work (incl. Nordic curls)
+  conditioning: "var(--danger)", // red - cardio/conditioning
+  skill_drills: "var(--info)", // blue - skill/twitching
+  main_session: "var(--accent)", // brand mint
+  cool_down: "var(--info)", // blue
+  evening_recovery: "var(--accent-2)", // purple
 } as const;
 
 /**
@@ -134,27 +134,27 @@ export const BLOCK_COLORS = {
  * Maps directly to CSS variables
  */
 export const WORKOUT_COLORS = {
-  strength: "var(--color-workout-strength)",
-  cardio: "var(--color-workout-cardio)",
-  mobility: "var(--color-workout-mobility)",
-  practice: "var(--color-workout-practice)",
-  game: "var(--color-workout-game)",
-  rest: "var(--color-workout-rest)",
+  strength: "var(--accent)",
+  cardio: "var(--caution)",
+  mobility: "var(--info)",
+  practice: "var(--accent-2)",
+  game: "var(--danger)",
+  rest: "var(--text-faint)",
 } as const;
 
 /**
  * Training periodization phase colors
  */
 export const PHASE_COLORS = {
-  recovery: "var(--color-phase-recovery)",
-  foundation: "var(--color-phase-foundation)",
-  strength: "var(--color-phase-strength)",
-  power: "var(--color-phase-power)",
-  speed: "var(--color-phase-speed)",
-  competition: "var(--color-phase-competition)",
-  reload: "var(--color-phase-reload)",
-  peak: "var(--color-phase-peak)",
-  lateSeason: "var(--color-phase-late-season)",
+  recovery: "var(--info)",
+  foundation: "var(--accent)",
+  strength: "var(--accent-press)",
+  power: "var(--caution)",
+  speed: "var(--warn)",
+  competition: "var(--danger)",
+  reload: "var(--accent-2)",
+  peak: "var(--good)",
+  lateSeason: "var(--c-blue-500)",
 } as const;
 
 /**
@@ -162,48 +162,48 @@ export const PHASE_COLORS = {
  * Exempt from “no hex in features” — persisted user/team data.
  */
 export const DEFAULT_TEAM_BRAND_HEX = {
-  primary: "#16a34a",
-  secondary: "#0f172a",
+  primary: "#00E07A",
+  secondary: "#8B7CFF",
 } as const;
 
 /**
  * Semantic chart color keys (CSS var references for DOM / configs that accept var()).
  */
 export const CHART_COLORS = {
-  primary: "var(--p-highlight-text-color)",
-  secondary: "var(--p-highlight-text-color)",
-  tertiary: "var(--color-chart-tertiary)",
-  quaternary: "var(--color-chart-quaternary)",
-  quinary: "var(--color-chart-quinary)",
-  senary: "var(--color-chart-senary)",
-  septenary: "var(--color-chart-septenary)",
+  primary: "var(--accent)",
+  secondary: "var(--accent-2)",
+  tertiary: "var(--info)",
+  quaternary: "var(--warn)",
+  quinary: "var(--danger)",
+  senary: "var(--accent-2)",
+  septenary: "var(--caution)",
 } as const;
 
 /**
  * Extended palette as CSS var references (multi-series charts, non-canvas).
  */
 export const CHART_PALETTE: readonly string[] = [
-  "var(--p-highlight-text-color)",
-  "var(--p-highlight-text-color)",
-  "var(--color-chart-3)",
-  "var(--color-chart-4)",
-  "var(--color-chart-5)",
-  "var(--color-chart-6)",
-  "var(--color-chart-septenary)",
-  "var(--color-phase-late-season)",
-  "var(--ds-primary-orange)",
-  "var(--color-phase-reload)",
+  "var(--accent)",
+  "var(--accent-2)",
+  "var(--info)",
+  "var(--warn)",
+  "var(--danger)",
+  "var(--c-violet-400)",
+  "var(--caution)",
+  "var(--c-blue-500)",
+  "var(--c-orange-500)",
+  "var(--good)",
 ] as const;
 
 /**
  * Status colors for charts (hex values)
  */
 export const CHART_STATUS_COLORS = {
-  success: "var(--p-highlight-text-color)",
-  warning: "var(--color-chart-quaternary)",
-  error: "var(--color-chart-quinary)",
-  info: "var(--color-chart-tertiary)",
-  neutral: "var(--color-workout-rest)",
+  success: "var(--good)",
+  warning: "var(--warn)",
+  error: "var(--danger)",
+  info: "var(--info)",
+  neutral: "var(--text-faint)",
 } as const;
 
 /**
@@ -260,11 +260,11 @@ export function getStatusColor(
   fairThreshold: number,
 ): string {
   if (value >= goodThreshold) {
-    return STATUS_COLORS.success; // var(--color-status-success)
+    return STATUS_COLORS.success; // var(--good)
   } else if (value >= fairThreshold) {
-    return STATUS_COLORS.warning; // var(--color-status-warning)
+    return STATUS_COLORS.warning; // var(--warn)
   }
-  return STATUS_COLORS.error; // var(--color-status-error)
+  return STATUS_COLORS.error; // var(--danger)
 }
 
 /**
@@ -290,15 +290,15 @@ export function getInvertedStatusColor(
  * Status colors as CSS var references (resolve with getCssVariable for canvas)
  */
 export const STATUS_HEX_COLORS = {
-  success: "var(--p-highlight-text-color)", // --ds-primary-green (brand success)
-  successLight: "var(--p-highlight-text-color)", // --color-brand-secondary
-  warning: "var(--color-chart-quaternary)", // --primitive-warning-500
-  warningLight: "var(--color-icon-notifications)", // --primitive-warning-400
-  error: "var(--color-chart-quinary)", // --primitive-error-500
-  errorLight: "var(--color-error-text-accessible-dark)", // --primitive-error-400
-  info: "var(--color-chart-tertiary)", // --color-chart-tertiary
-  infoLight: "var(--color-icon-profile)", // --primitive-info-400
-  neutral: "var(--color-workout-rest)", // --color-workout-rest
+  success: "var(--good)",
+  successLight: "var(--good-soft)",
+  warning: "var(--warn)",
+  warningLight: "var(--warn-soft)",
+  error: "var(--danger)",
+  errorLight: "var(--danger-soft)",
+  info: "var(--info)",
+  infoLight: "var(--info-soft)",
+  neutral: "var(--text-faint)",
 } as const;
 
 // ============================================================================
@@ -325,37 +325,37 @@ export const BREAKPOINTS = {
 } as const;
 
 /**
- * Spacing scale (maps to --space-* CSS variables)
- * Use these for programmatic spacing calculations
+ * Spacing scale. Phase E grid (`--s-1`…`--s-8`) where the step exists; off-grid
+ * steps fall back to their literal px value.
  */
 export const SPACING = {
   0: "0",
-  1: cssToken("--space-1"),
-  2: cssToken("--space-2"),
-  3: cssToken("--space-3"),
-  4: cssToken("--space-4"),
-  5: cssToken("--space-5"),
-  6: cssToken("--space-6"),
-  7: cssToken("--space-7"),
-  8: cssToken("--space-8"),
-  9: cssToken("--space-9"),
-  10: cssToken("--space-10"),
-  11: cssToken("--space-11"),
-  12: cssToken("--space-12"),
-  16: cssToken("--space-16"),
+  1: cssToken("--s-1"), // 4
+  2: cssToken("--s-2"), // 8
+  3: cssToken("--s-3"), // 12
+  4: cssToken("--s-4"), // 16
+  5: "20px",
+  6: cssToken("--s-5"), // 24
+  7: "28px",
+  8: cssToken("--s-6"), // 32
+  9: "36px",
+  10: "40px",
+  11: "44px",
+  12: cssToken("--s-7"), // 48
+  16: cssToken("--s-8"), // 64
 } as const;
 
 /**
- * Icon sizes (maps to --icon-* CSS variables)
+ * Icon sizes (Phase E has no --icon-* tokens; literal px)
  */
 export const ICON_SIZES = {
-  xs: cssToken("--icon-xs"),
-  sm: cssToken("--icon-sm"),
-  md: cssToken("--icon-md"),
-  lg: cssToken("--icon-lg"),
-  xl: cssToken("--icon-xl"),
-  "2xl": cssToken("--icon-2xl"),
-  "3xl": cssToken("--icon-3xl"),
+  xs: "12px",
+  sm: "16px",
+  md: "20px",
+  lg: "24px",
+  xl: "28px",
+  "2xl": "32px",
+  "3xl": "40px",
 } as const;
 
 /**
@@ -363,22 +363,22 @@ export const ICON_SIZES = {
  */
 export const COMPONENT_SIZES = {
   avatar: {
-    xs: cssToken("--avatar-size-xs"),
-    sm: cssToken("--avatar-size-sm"),
-    md: cssToken("--avatar-size-md"),
-    lg: cssToken("--avatar-size-lg"),
-    xl: cssToken("--avatar-size-xl"),
-    "2xl": cssToken("--avatar-size-2xl"),
+    xs: "24px",
+    sm: "32px",
+    md: "40px",
+    lg: "48px",
+    xl: "64px",
+    "2xl": "80px",
   },
   icon: {
-    sm: cssToken("--icon-container-sm"),
-    md: cssToken("--icon-container-md"),
-    lg: cssToken("--icon-container-lg"),
-    xl: cssToken("--icon-container-xl"),
+    sm: "32px",
+    md: "40px",
+    lg: "48px",
+    xl: "56px",
   },
   button: {
-    sm: cssToken("--button-height-sm"),
-    md: cssToken("--button-height-md"),
-    lg: cssToken("--button-height-lg"),
+    sm: "36px",
+    md: "44px",
+    lg: "52px",
   },
 } as const;

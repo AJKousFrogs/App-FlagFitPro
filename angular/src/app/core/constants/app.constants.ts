@@ -370,43 +370,42 @@ export const UI_LIMITS = {
  */
 export const COLORS = {
   // Brand colors (use BRAND_COLORS from design-tokens.util for DOM)
-  PRIMARY: "var(--p-highlight-text-color)", // --ds-primary-green
-  PRIMARY_LIGHT: "var(--p-highlight-text-color)", // --color-brand-primary-light
-  PRIMARY_DARK: "var(--hover-text-primary)", // --ds-primary-green-hover
+  PRIMARY: "var(--accent)",
+  PRIMARY_LIGHT: "var(--accent)",
+  PRIMARY_DARK: "var(--accent-press)",
 
   // Semantic status colors (use STATUS_COLORS from design-tokens.util for DOM)
-  SUCCESS: "var(--color-status-success)",
-  SUCCESS_LIGHT: "var(--color-status-success-light)",
-  WARNING: "var(--color-status-warning)",
-  WARNING_LIGHT: "var(--color-status-warning-light)",
-  ERROR: "var(--color-status-error)",
-  ERROR_LIGHT: "var(--color-status-error-light)",
-  INFO: "var(--color-status-info)",
-  INFO_LIGHT: "var(--color-status-info-light)",
+  SUCCESS: "var(--good)",
+  SUCCESS_LIGHT: "var(--good-soft)",
+  WARNING: "var(--warn)",
+  WARNING_LIGHT: "var(--warn-soft)",
+  ERROR: "var(--danger)",
+  ERROR_LIGHT: "var(--danger-soft)",
+  INFO: "var(--info)",
+  INFO_LIGHT: "var(--info-soft)",
 
-  // UI accent colors (map to design-system-tokens.scss)
-  BLUE: "var(--color-chart-tertiary)",
-  CYAN: "var(--primitive-info-500)",
-  PURPLE: "var(--color-status-help)",
-  PURPLE_LIGHT: "var(--color-status-help-light)",
-  TEAL: "var(--color-phase-late-season)",
-  GRAY: "var(--color-workout-rest)",
-  SLATE: "var(--p-surface-400)",
-  AMBER: "var(--primitive-warning-500)",
-  ORANGE: "var(--ds-primary-orange)",
-  LIME: "var(--primitive-primary-500)",
-  GREEN: "var(--primitive-primary-600)",
-  YELLOW: "var(--primitive-success-500)",
+  // UI accent colors (map to scss/tokens/_tokens.scss)
+  BLUE: "var(--info)",
+  CYAN: "var(--c-blue-500)",
+  PURPLE: "var(--accent-2)",
+  PURPLE_LIGHT: "var(--c-violet-200)",
+  TEAL: "var(--c-blue-500)",
+  GRAY: "var(--text-faint)",
+  SLATE: "var(--text-faint)",
+  AMBER: "var(--warn)",
+  ORANGE: "var(--caution)",
+  LIME: "var(--accent)",
+  GREEN: "var(--accent-press)",
+  YELLOW: "var(--good)",
 
-  // Chart-specific colors (for canvas rendering only)
-  // Maps to: --color-chart-1 through --color-chart-6
+  // Chart-specific colors (multi-series; map to chart palette)
   CHART: [
-    "var(--p-highlight-text-color)", // --color-chart-1 (ds-primary-green)
-    "var(--p-highlight-text-color)", // --color-chart-2 (brand secondary)
-    "var(--color-chart-3)", // --color-chart-3 (gold)
-    "var(--color-chart-4)", // --color-chart-4 (red)
-    "var(--color-chart-5)", // --color-chart-5 (blue)
-    "var(--color-chart-6)", // --color-chart-6 (purple)
+    "var(--accent)", // chart-1
+    "var(--accent-2)", // chart-2
+    "var(--info)", // chart-3
+    "var(--warn)", // chart-4
+    "var(--danger)", // chart-5
+    "var(--c-violet-400)", // chart-6
   ],
 } as const;
 
