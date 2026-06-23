@@ -224,6 +224,35 @@ export async function buildProtocolDecisionContext({
     adjustedLoadTarget = Math.round(adjustedLoadTarget * taperLoadMultiplier);
   }
 
+  // Recovery-block load cap (S2): a coach/system-imposed recovery block (e.g. after
+  // a heavy game weekend, set in games-core.js / wellness-checkin.js) carries a
+  // max_load_percent. ENFORCE it here so the day's prescribed load is actually
+  // capped — previously the block was only surfaced in chat, never applied to the
+  // protocol, so a deload the system ordered was silently ignored.
+  let recoveryBlockCap = null;
+  const { data: activeBlock } = await supabase
+    .from("recovery_blocks")
+    .select("max_load_percent, focus, restrictions")
+    .eq("user_id", userId)
+    .lte("block_start_date", date)
+    .gte("block_end_date", date)
+    .not("max_load_percent", "is", null)
+    .order("block_start_date", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+  if (activeBlock?.max_load_percent != null && activeBlock.max_load_percent < 100) {
+    const beforeCap = adjustedLoadTarget;
+    adjustedLoadTarget = Math.round(
+      adjustedLoadTarget * (activeBlock.max_load_percent / 100),
+    );
+    recoveryBlockCap = {
+      maxLoadPercent: activeBlock.max_load_percent,
+      focus: activeBlock.focus ?? null,
+      restrictions: activeBlock.restrictions ?? null,
+    };
+    aiRationale += ` 🛡️ Recovery block active — load capped to ${activeBlock.max_load_percent}% (${beforeCap}→${adjustedLoadTarget} AU).`;
+  }
+
   return {
     readinessScore,
     acwrValue,
@@ -234,6 +263,7 @@ export async function buildProtocolDecisionContext({
     aiRationale,
     adjustedLoadTarget,
     taperLoadMultiplier,
+    recoveryBlockCap,
     isPracticeDay,
     isFilmRoomDay,
     periodizationPhase,

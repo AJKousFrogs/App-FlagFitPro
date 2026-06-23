@@ -862,7 +862,6 @@ const handler = async (event, context) => {
         acute_load: Math.round(acuteLoad * 100) / 100,
         chronic_load: Math.round(chronicLoad * 100) / 100,
         workload_score: workloadScore,
-        wellness_score: wellnessScore,
         sleep_score: sleepScore,
         proximity_score: proximityScore,
       });
