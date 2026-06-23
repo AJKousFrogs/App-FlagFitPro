@@ -1,6 +1,6 @@
 {
-  "generatedOn": "2026-06-09",
-  "source": "live Supabase introspection (information_schema), project grfjmnjpzvknmsxrwesx",
+  "generatedOn": "2026-06-23",
+  "source": "live Supabase introspection (information_schema) via Supabase MCP",
   "tables": {
     "account_deletion_requests": [
       {
@@ -426,6 +426,21 @@
         "col": "created_at",
         "type": "timestamp with time zone",
         "nullable": false
+      },
+      {
+        "col": "coach_reviewed_at",
+        "type": "timestamp with time zone",
+        "nullable": true
+      },
+      {
+        "col": "coach_reviewed_by",
+        "type": "uuid",
+        "nullable": true
+      },
+      {
+        "col": "feedback_received",
+        "type": "boolean",
+        "nullable": false
       }
     ],
     "ai_recommendations": [
@@ -529,6 +544,21 @@
       {
         "col": "created_at",
         "type": "timestamp with time zone",
+        "nullable": true
+      },
+      {
+        "col": "feedback_source",
+        "type": "text",
+        "nullable": true
+      },
+      {
+        "col": "was_helpful",
+        "type": "boolean",
+        "nullable": true
+      },
+      {
+        "col": "knowledge_sources_used",
+        "type": "jsonb",
         "nullable": true
       }
     ],
@@ -1142,9 +1172,9 @@
         "nullable": false
       },
       {
-        "col": "preferred_training_days",
+        "col": "preferred_training_days_deprecated",
         "type": "ARRAY",
-        "nullable": false
+        "nullable": true
       },
       {
         "col": "daily_routine",
@@ -2301,6 +2331,11 @@
         "col": "updated_at",
         "type": "timestamp with time zone",
         "nullable": false
+      },
+      {
+        "col": "diagram",
+        "type": "jsonb",
+        "nullable": true
       }
     ],
     "comment_likes": [
@@ -2662,6 +2697,43 @@
         "col": "reason",
         "type": "text",
         "nullable": true
+      }
+    ],
+    "contraindication_rules": [
+      {
+        "col": "id",
+        "type": "uuid",
+        "nullable": false
+      },
+      {
+        "col": "injury_location",
+        "type": "text",
+        "nullable": false
+      },
+      {
+        "col": "blocked_modality",
+        "type": "text",
+        "nullable": false
+      },
+      {
+        "col": "rtp_phase_cleared_at",
+        "type": "integer",
+        "nullable": true
+      },
+      {
+        "col": "gate_level",
+        "type": "text",
+        "nullable": false
+      },
+      {
+        "col": "methodology_citation",
+        "type": "text",
+        "nullable": false
+      },
+      {
+        "col": "is_active",
+        "type": "boolean",
+        "nullable": false
       }
     ],
     "conversation_context": [
@@ -3048,6 +3120,11 @@
         "col": "motivation",
         "type": "integer",
         "nullable": true
+      },
+      {
+        "col": "travel_hours",
+        "type": "integer",
+        "nullable": true
       }
     ],
     "decision_ledger": [
@@ -3094,6 +3171,16 @@
       {
         "col": "updated_at",
         "type": "timestamp with time zone",
+        "nullable": true
+      },
+      {
+        "col": "review_date",
+        "type": "timestamp with time zone",
+        "nullable": true
+      },
+      {
+        "col": "review_priority",
+        "type": "text",
         "nullable": true
       }
     ],
@@ -4354,6 +4441,11 @@
         "col": "competition_event_id",
         "type": "uuid",
         "nullable": true
+      },
+      {
+        "col": "version",
+        "type": "integer",
+        "nullable": false
       }
     ],
     "isometrics_exercises": [
@@ -5154,6 +5246,16 @@
         "col": "created_at",
         "type": "timestamp with time zone",
         "nullable": true
+      },
+      {
+        "col": "assigned_date",
+        "type": "date",
+        "nullable": true
+      },
+      {
+        "col": "status",
+        "type": "text",
+        "nullable": true
       }
     ],
     "ml_training_data": [
@@ -5873,6 +5975,16 @@
         "col": "updated_at",
         "type": "timestamp with time zone",
         "nullable": false
+      },
+      {
+        "col": "verification_token",
+        "type": "text",
+        "nullable": true
+      },
+      {
+        "col": "verification_sent_at",
+        "type": "timestamp with time zone",
+        "nullable": true
       }
     ],
     "passing_stats": [
@@ -7317,6 +7429,145 @@
         "nullable": false
       }
     ],
+    "prescription_audit_log": [
+      {
+        "col": "id",
+        "type": "uuid",
+        "nullable": false
+      },
+      {
+        "col": "daily_protocol_id",
+        "type": "uuid",
+        "nullable": true
+      },
+      {
+        "col": "athlete_id",
+        "type": "uuid",
+        "nullable": false
+      },
+      {
+        "col": "exercise_slug",
+        "type": "text",
+        "nullable": true
+      },
+      {
+        "col": "field_changed",
+        "type": "text",
+        "nullable": false
+      },
+      {
+        "col": "original_value",
+        "type": "text",
+        "nullable": true
+      },
+      {
+        "col": "modified_value",
+        "type": "text",
+        "nullable": true
+      },
+      {
+        "col": "modification_reason",
+        "type": "text",
+        "nullable": false
+      },
+      {
+        "col": "modified_by",
+        "type": "text",
+        "nullable": false
+      },
+      {
+        "col": "created_at",
+        "type": "timestamp with time zone",
+        "nullable": false
+      }
+    ],
+    "prescription_templates": [
+      {
+        "col": "id",
+        "type": "uuid",
+        "nullable": false
+      },
+      {
+        "col": "modality",
+        "type": "text",
+        "nullable": false
+      },
+      {
+        "col": "intensity_zone",
+        "type": "text",
+        "nullable": true
+      },
+      {
+        "col": "position_group",
+        "type": "text",
+        "nullable": true
+      },
+      {
+        "col": "periodization_phase",
+        "type": "text",
+        "nullable": true
+      },
+      {
+        "col": "prescribed_sets",
+        "type": "integer",
+        "nullable": true
+      },
+      {
+        "col": "prescribed_reps",
+        "type": "integer",
+        "nullable": true
+      },
+      {
+        "col": "prescribed_hold_seconds",
+        "type": "integer",
+        "nullable": true
+      },
+      {
+        "col": "prescribed_distance_m",
+        "type": "integer",
+        "nullable": true
+      },
+      {
+        "col": "prescribed_duration_s",
+        "type": "integer",
+        "nullable": true
+      },
+      {
+        "col": "rest_seconds",
+        "type": "integer",
+        "nullable": true
+      },
+      {
+        "col": "load_contribution_au",
+        "type": "numeric",
+        "nullable": false
+      },
+      {
+        "col": "methodology_citation",
+        "type": "text",
+        "nullable": false
+      },
+      {
+        "col": "notes",
+        "type": "text",
+        "nullable": true
+      },
+      {
+        "col": "is_active",
+        "type": "boolean",
+        "nullable": false
+      },
+      {
+        "col": "created_at",
+        "type": "timestamp with time zone",
+        "nullable": false
+      },
+      {
+        "col": "updated_at",
+        "type": "timestamp with time zone",
+        "nullable": false
+      }
+    ],
     "privacy_audit_log": [
       {
         "col": "id",
@@ -7387,6 +7638,48 @@
       },
       {
         "col": "updated_at",
+        "type": "timestamp with time zone",
+        "nullable": false
+      }
+    ],
+    "proactive_checkins": [
+      {
+        "col": "id",
+        "type": "uuid",
+        "nullable": false
+      },
+      {
+        "col": "user_id",
+        "type": "uuid",
+        "nullable": false
+      },
+      {
+        "col": "checkin_type",
+        "type": "text",
+        "nullable": true
+      },
+      {
+        "col": "message",
+        "type": "text",
+        "nullable": true
+      },
+      {
+        "col": "status",
+        "type": "text",
+        "nullable": false
+      },
+      {
+        "col": "scheduled_for",
+        "type": "timestamp with time zone",
+        "nullable": true
+      },
+      {
+        "col": "engaged_at",
+        "type": "timestamp with time zone",
+        "nullable": true
+      },
+      {
+        "col": "created_at",
         "type": "timestamp with time zone",
         "nullable": false
       }
@@ -7833,6 +8126,58 @@
         "nullable": false
       }
     ],
+    "readiness_gates": [
+      {
+        "col": "id",
+        "type": "uuid",
+        "nullable": false
+      },
+      {
+        "col": "context",
+        "type": "text",
+        "nullable": false
+      },
+      {
+        "col": "threshold_low",
+        "type": "integer",
+        "nullable": false
+      },
+      {
+        "col": "threshold_mid",
+        "type": "integer",
+        "nullable": true
+      },
+      {
+        "col": "threshold_high",
+        "type": "integer",
+        "nullable": true
+      },
+      {
+        "col": "action_low",
+        "type": "text",
+        "nullable": false
+      },
+      {
+        "col": "action_mid",
+        "type": "text",
+        "nullable": true
+      },
+      {
+        "col": "action_high",
+        "type": "text",
+        "nullable": true
+      },
+      {
+        "col": "methodology_citation",
+        "type": "text",
+        "nullable": false
+      },
+      {
+        "col": "is_active",
+        "type": "boolean",
+        "nullable": false
+      }
+    ],
     "readiness_scores": [
       {
         "col": "id",
@@ -8056,6 +8401,21 @@
       {
         "col": "created_at",
         "type": "timestamp with time zone",
+        "nullable": true
+      },
+      {
+        "col": "max_load_percent",
+        "type": "integer",
+        "nullable": true
+      },
+      {
+        "col": "focus",
+        "type": "text",
+        "nullable": true
+      },
+      {
+        "col": "restrictions",
+        "type": "jsonb",
         "nullable": true
       }
     ],
@@ -8626,6 +8986,63 @@
         "nullable": true
       }
     ],
+    "rtp_prescription_approvals": [
+      {
+        "col": "id",
+        "type": "uuid",
+        "nullable": false
+      },
+      {
+        "col": "return_to_play_id",
+        "type": "uuid",
+        "nullable": true
+      },
+      {
+        "col": "daily_protocol_id",
+        "type": "uuid",
+        "nullable": true
+      },
+      {
+        "col": "athlete_id",
+        "type": "uuid",
+        "nullable": false
+      },
+      {
+        "col": "rtp_phase",
+        "type": "integer",
+        "nullable": true
+      },
+      {
+        "col": "trigger",
+        "type": "text",
+        "nullable": false
+      },
+      {
+        "col": "status",
+        "type": "text",
+        "nullable": false
+      },
+      {
+        "col": "approved_by",
+        "type": "uuid",
+        "nullable": true
+      },
+      {
+        "col": "reviewed_at",
+        "type": "timestamp with time zone",
+        "nullable": true
+      },
+      {
+        "col": "coach_notes",
+        "type": "text",
+        "nullable": true
+      },
+      {
+        "col": "created_at",
+        "type": "timestamp with time zone",
+        "nullable": false
+      }
+    ],
     "safety_override_log": [
       {
         "col": "override_id",
@@ -9188,6 +9605,115 @@
         "nullable": false
       }
     ],
+    "taper_rules": [
+      {
+        "col": "id",
+        "type": "uuid",
+        "nullable": false
+      },
+      {
+        "col": "tournament_level",
+        "type": "text",
+        "nullable": false
+      },
+      {
+        "col": "taper_days",
+        "type": "integer",
+        "nullable": false
+      },
+      {
+        "col": "volume_reduction_pct",
+        "type": "numeric",
+        "nullable": false
+      },
+      {
+        "col": "volume_floor_pct",
+        "type": "numeric",
+        "nullable": false
+      },
+      {
+        "col": "intensity_retention",
+        "type": "numeric",
+        "nullable": false
+      },
+      {
+        "col": "methodology_citation",
+        "type": "text",
+        "nullable": false
+      },
+      {
+        "col": "is_active",
+        "type": "boolean",
+        "nullable": false
+      }
+    ],
+    "team_activities": [
+      {
+        "col": "id",
+        "type": "uuid",
+        "nullable": false
+      },
+      {
+        "col": "team_id",
+        "type": "uuid",
+        "nullable": false
+      },
+      {
+        "col": "date",
+        "type": "date",
+        "nullable": false
+      },
+      {
+        "col": "type",
+        "type": "text",
+        "nullable": false
+      },
+      {
+        "col": "start_time_local",
+        "type": "text",
+        "nullable": true
+      },
+      {
+        "col": "end_time_local",
+        "type": "text",
+        "nullable": true
+      },
+      {
+        "col": "location",
+        "type": "text",
+        "nullable": true
+      },
+      {
+        "col": "note",
+        "type": "text",
+        "nullable": true
+      },
+      {
+        "col": "replaces_session",
+        "type": "boolean",
+        "nullable": false
+      },
+      {
+        "col": "weather_override",
+        "type": "jsonb",
+        "nullable": true
+      },
+      {
+        "col": "created_by_coach_id",
+        "type": "uuid",
+        "nullable": true
+      },
+      {
+        "col": "created_at",
+        "type": "timestamp with time zone",
+        "nullable": false
+      },
+      {
+        "col": "updated_at",
+        "type": "timestamp with time zone",
+        "nullable": false
+      }
+    ],
     "team_events": [
       {
         "col": "id",
@@ -9464,6 +9990,48 @@
       },
       {
         "col": "updated_at",
+        "type": "timestamp with time zone",
+        "nullable": false
+      }
+    ],
+    "team_season_phases": [
+      {
+        "col": "id",
+        "type": "uuid",
+        "nullable": false
+      },
+      {
+        "col": "team_id",
+        "type": "uuid",
+        "nullable": false
+      },
+      {
+        "col": "phase_key",
+        "type": "text",
+        "nullable": false
+      },
+      {
+        "col": "phase_label",
+        "type": "text",
+        "nullable": true
+      },
+      {
+        "col": "start_date",
+        "type": "date",
+        "nullable": false
+      },
+      {
+        "col": "end_date",
+        "type": "date",
+        "nullable": false
+      },
+      {
+        "col": "is_active",
+        "type": "boolean",
+        "nullable": false
+      },
+      {
+        "col": "created_at",
         "type": "timestamp with time zone",
         "nullable": false
       }
@@ -10108,7 +10676,7 @@
         "nullable": true
       },
       {
-        "col": "verification_confidence",
+        "col": "verification_confidence_deprecated",
         "type": "numeric",
         "nullable": true
       },
@@ -10235,6 +10803,16 @@
       {
         "col": "prescribed_intensity",
         "type": "integer",
+        "nullable": true
+      },
+      {
+        "col": "throw_count",
+        "type": "integer",
+        "nullable": true
+      },
+      {
+        "col": "throw_au",
+        "type": "numeric",
         "nullable": true
       }
     ],
@@ -10983,6 +11561,26 @@
         "col": "onboarding_completed_at",
         "type": "timestamp with time zone",
         "nullable": true
+      },
+      {
+        "col": "injury_gate_active",
+        "type": "boolean",
+        "nullable": false
+      },
+      {
+        "col": "injury_gate_set_at",
+        "type": "timestamp with time zone",
+        "nullable": true
+      },
+      {
+        "col": "verification_token",
+        "type": "text",
+        "nullable": true
+      },
+      {
+        "col": "verification_token_expires_at",
+        "type": "timestamp with time zone",
+        "nullable": true
       }
     ],
     "video_assignments": [
@@ -11245,6 +11843,53 @@
         "col": "updated_at",
         "type": "timestamp with time zone",
         "nullable": true
+      }
+    ],
+    "weather_substitution_rules": [
+      {
+        "col": "id",
+        "type": "uuid",
+        "nullable": false
+      },
+      {
+        "col": "original_modality",
+        "type": "text",
+        "nullable": false
+      },
+      {
+        "col": "condition",
+        "type": "text",
+        "nullable": false
+      },
+      {
+        "col": "threshold_value",
+        "type": "numeric",
+        "nullable": true
+      },
+      {
+        "col": "threshold_unit",
+        "type": "text",
+        "nullable": true
+      },
+      {
+        "col": "threshold_direction",
+        "type": "text",
+        "nullable": false
+      },
+      {
+        "col": "substitute_modality",
+        "type": "text",
+        "nullable": false
+      },
+      {
+        "col": "substitute_rationale",
+        "type": "text",
+        "nullable": false
+      },
+      {
+        "col": "is_active",
+        "type": "boolean",
+        "nullable": false
       }
     ],
     "weekly_training_analysis": [
