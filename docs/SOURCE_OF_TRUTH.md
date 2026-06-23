@@ -9,7 +9,7 @@
 - Raw inventories: [`docs/ground-truth/`](ground-truth/)
 
 Regenerate the generated sections: `npm run docs:regen` (see §8).
-Verified against live: **2026-06-09** — 177 tables, 7 views, 111 functions, 29 core services, 146 applied migrations.
+Verified against live: **2026-06-23** — 187 base tables, 7 views, 113 Netlify functions, 208 migration files in `supabase/migrations/`. The generated DATA_MODEL/ENDPOINTS + live snapshot were regenerated 2026-06-23.
 
 ---
 
@@ -29,13 +29,13 @@ Verified against live: **2026-06-09** — 177 tables, 7 views, 111 functions, 29
 
 ## 2. Data Model
 
-Generated, exact live names/columns/nullability, with which endpoints touch each table and a DRIFT flag for live tables lacking a migration file: **[`docs/generated/DATA_MODEL.md`](generated/DATA_MODEL.md)**. 177 base tables, 7 views (`physical_measurements_latest`, `user_achievements`, `v_athlete_schedule`, `v_injuries_unified`, `v_pending_event_participation`, `v_seed_integrity`, `v_training_sessions_consent`). Canonical entity names that have historically been mis-inferred: wellness = **`daily_wellness_checkin`** (not `wellness_checkins`/`wellness_logs`); injuries = **`athlete_injuries`** + `v_injuries_unified` (not `injuries`); load source = **`training_sessions`** (not `workout_logs`/`load_monitoring`).
+Generated, exact live names/columns/nullability, with which endpoints touch each table and a DRIFT flag for live tables lacking a migration file: **[`docs/generated/DATA_MODEL.md`](generated/DATA_MODEL.md)**. 187 base tables, 7 views (`physical_measurements_latest`, `user_achievements`, `v_athlete_schedule`, `v_injuries_unified`, `v_pending_event_participation`, `v_seed_integrity`, `v_training_sessions_consent`). Canonical entity names that have historically been mis-inferred: wellness = **`daily_wellness_checkin`** (not `wellness_checkins`/`wellness_logs`); injuries = **`athlete_injuries`** + `v_injuries_unified` (not `injuries`); load source = **`training_sessions`** (not `workout_logs`/`load_monitoring`).
 
 > ⚠️ `supabase-types.ts` is STALE (37 dropped tables still present, 15 live tables missing). It is NOT ground truth for the data model — the live snapshot is. Regenerate types before trusting them.
 
 ## 3. Endpoint Reference
 
-Generated, every route with method / `/api` path / tables-and-RPCs touched / EXERCISED|ORPHANED: **[`docs/generated/ENDPOINTS.md`](generated/ENDPOINTS.md)**. 111 functions (110 exercised, 1 orphaned: `exercisedb`). Orphaned endpoints stay listed so nobody rebuilds them. Table refs marked ⚠️ are queried by code but absent from live schema (they error at runtime — see §6).
+Generated, every route with method / `/api` path / tables-and-RPCs touched / EXERCISED|ORPHANED: **[`docs/generated/ENDPOINTS.md`](generated/ENDPOINTS.md)**. 113 functions (111 exercised, 2 orphaned: `auth-reset-password`, `exercisedb`). Orphaned endpoints stay listed so nobody rebuilds them. As of 2026-06-23 **no function references a non-existent table** — the ghost-table `.from()` refs were retired (see §6).
 
 ---
 
@@ -62,18 +62,19 @@ Status: **LIVE** (wired end-to-end, tables exist) · **PARTIAL** (works but with
 | Notifications / push | LIVE | `notifications.js`, `push.js` → `notifications`, `push_subscriptions` | — |
 | Knowledge base / search | LIVE | `knowledge*.js` → `knowledge_base_entries`, `knowledge_search_index`, `research_articles` | — |
 | Roster / team management | LIVE | `roster.js` → `teams`, `team_members`, `roster_audit_log` | — |
-| Coach suite (activity/inbox/analytics/film) | PARTIAL | `coach-*.js` → `coach_*` tables (exist) | `dashboard.js` + `analytics-core.js` reference `team_chemistry`; `data-export.js` + `games-core.js` reference `game_stats` — both absent, runtime errors |
-| Nutrition | PARTIAL | `nutrition.js` → `nutrition_logs/_plans/_reports`, `meal_templates` (exist); `usda_foods` (absent) | Food-search lane references `usda_foods` (GHOST) |
-| Equipment | GHOST | `equipment.js` (handler file not built) | Tables `equipment_items`/`equipment_assignments` don't exist; handler file itself never created |
-| Officials | GHOST | `officials.js` → `officials`, `game_officials`, `official_availability` | Tables don't exist |
-| Depth chart | GHOST | `depth-chart.js` → `depth_chart_templates/_entries/_history` | Tables don't exist |
-| Program cycles | GHOST | `program-cycles.js` → `program_cycles`, `player_program_cycles` | Tables don't exist; `player_programs` does |
-| Seasons / season reports | GHOST | `season-reports.js`, `season-archive.js` → `seasons`, `season_summary_reports` | Absent; `season_archives` exists |
-| Scouting | GHOST | `scouting.js` → `scouting_reports` | Absent |
+| Coach suite (activity/inbox/analytics/film) | PARTIAL | `coach-*.js` → `coach_*` tables (exist) | The `team_chemistry` / `game_stats` ghost refs were retired (2026-06-23: **0** `.from()` refs in functions) — those analytics stay unbuilt but no longer error |
+| Nutrition | PARTIAL | `nutrition.js` → `nutrition_logs/_plans/_reports`, `meal_templates` (exist) | `usda_foods` food-search ghost ref retired (no longer queried) |
+| Equipment | PLANNED | `equipment.js` (not built) | `equipment_items`/`equipment_assignments` don't exist; no live `.from()` ref |
+| Officials | PLANNED | `officials.js` | Tables don't exist; no live `.from()` ref |
+| Depth chart | PLANNED | `roster.js` `/depth-chart` → explicit `feature_not_available` 404 | `depth_chart_*` not live; guarded 404, no error |
+| Program cycles | PLANNED | `programs.js` `/program-cycles` → explicit `feature_not_available` 404 | `program_cycles`/`player_program_cycles` not live; `player_programs` does; guarded 404 |
+| Seasons / season reports | PLANNED | `season-reports.js`, `season-archive.js` | `seasons`/`season_summary_reports` not live; `season_archives` exists; no live `.from()` ref |
+| Scouting | PLANNED | `scouting.js` | `scouting_reports` not live; no live `.from()` ref |
+| Team activities (coach calendar overrides) | SCHEMA-ONLY | `team-activity-resolver.js` → `team_activities` (table created 2026-06-22) | Table + read path exist; no writer/UI yet — resolver returns empty (inert by design) |
 | Privacy consent views read | REMOVED | (was `privacy-settings.service.ts` → `v_workout_logs_consent`/`v_load_monitoring_consent`) | Dead code deleted 2026-06-09; views never existed live |
 | ExerciseDB lane | ORPHANED | `exercisedb.js` (`/api/exercisedb`) | No frontend ref; FE uses `exercises` lane |
 
-> The full ⚠️ ghost-table reference list (~40) is in `docs/generated/ENDPOINTS.md` and §6.
+> The ~40 ghost-table `.from()`/`.rpc()` references that errored at runtime have been retired — `docs/generated/ENDPOINTS.md` (regenerated 2026-06-23) now shows **no** unknown-table refs. The PLANNED lanes above are routed-but-unbuilt and return guarded 404s where wired.
 
 ---
 
@@ -115,7 +116,7 @@ Sourced from §0 inventories + [`RECONCILIATION.md`](generated/RECONCILIATION.md
 
 > **Deferred feature-port bugs:** code↔schema mismatches that need a product decision — not safe to fix mechanically. Tracked in [`../redesign/PORT_BUG_REGISTER.md`](../redesign/PORT_BUG_REGISTER.md). Resolve each when its feature is rebuilt (don't ship a screen over a known-broken data path).
 
-- **Ghost-table endpoints (TRUE-BUT-BUGGY).** ~40 `.from()`/`.rpc()` references in functions hit tables absent from live: equipment (`equipment_items/_assignments`), officials (`officials/game_officials/official_availability`), depth-chart (`depth_chart_*`), nutrition (`usda_foods`), `program_cycles`, `seasons`/`season_summary_reports`, `scouting_reports`, `team_chemistry`, `game_stats`, `load_daily`, `acwr_history`, `injury_tracking`, `rehab_protocols`, `sponsor_rewards`, `wellness_checkins`, `athlete_performance_tests`, `research_*`, etc. These error at runtime. Either build the table or retire the lane — track in the Ledger, don't silently rebuild.
+- ~~**Ghost-table endpoints (TRUE-BUT-BUGGY).** ~40 `.from()`/`.rpc()` refs hit absent tables (equipment, officials, depth-chart, `usda_foods`, `program_cycles`, `seasons`, `scouting_reports`, `team_chemistry`, `game_stats`, …) and errored at runtime.~~ **Retired 2026-06-23** — `ENDPOINTS.md` now shows **0** unknown-table refs; the routed-but-unbuilt lanes are PLANNED in §4 (depth-chart/program-cycles return explicit `feature_not_available`).
 - ~~**Privacy consent-view bug.** `privacy-settings.service.ts` read `v_workout_logs_consent` / `v_load_monitoring_consent` (non-existent).~~ **Fixed 2026-06-09** — both `getConsentAware{LoadMonitoring,WorkoutLogs}` methods were dead (zero callers, dormant since the UI was removed) and queried dropped views; deleted. If consent-aware load/session reads are rebuilt, use the live `v_training_sessions_consent`.
 - **`supabase-types.ts` is stale** (37 dropped tables still present, 15 live tables missing). Regenerate.
 - **Two migration directories.** `database/migrations/` (171 files) is **100% legacy/unapplied** — 0 overlap with applied history; `supabase/migrations/` (202 files) tracks live (146 applied). Do not add new migrations to `database/migrations/`. Applied tracked-versions also diverge from `supabase/migrations` filename timestamps in 4 recent cases (e.g. applied `athlete_personal_events` = `20260609100045` vs file `20260609120000_…`).
@@ -153,6 +154,15 @@ Sourced from §0 inventories + [`RECONCILIATION.md`](generated/RECONCILIATION.md
   - **COMPOSE backend:** `daily-protocol /generate` optionally takes `{intent, intentLabel, position}`; `mapIntentToSession` + `positionFlagsFor` realize exercises for that intent and fix the `isQB`/center bug (raw `'qb'` ≠ `'quarterback'`). **Backward-compatible** — no intent → legacy path byte-unchanged (8 legacy + 8 mapping tests).
   - **COMPOSE client:** `ProtocolService` posts the intent → Training renders the realized blocks as **block-cards** (re-skin adapted from `todays-practice-redesign-mockup.html`, mapped to app tokens, responsive 1-col→2-up@768). Render contract **verified against real data** (3 protocols / 33 exercises; block_types + exercise fields match the model).
   - **Status:** all of the above is **🔧 BUILT, NOT DEPLOYED**, and the compose stack's intent→exercise *quality* is **not yet e2e-verified** (needs a live intent-passed `/generate`). Coach guide shipped: `FlagFit-Coach-Guide.docx` (+ internal appendix). Remaining: Class 1 full `resolveDayType→applyModifiers` pipeline; Class 2 schema cleanup (migrations authored as files, not executed); Settings position-picker discoverability; deploy.
+
+- **2026-06-23 — load-domain + design-system drift sweep (this session's PRs):**
+  - **Schema-drift CI clean slate:** all 44 schema-drift findings resolved (baseline 0); the CI guard (`scripts/check-schema-drift.mjs`) blocks new drift. New tables this window: `team_activities`, `proactive_checkins`; `training_sessions.throw_au` etc.
+  - **Canonical load model unified:** `coach-core.js` no longer re-implements ACWR/readiness (was a simple-ratio + fabricated `1.0`/`85`) — both coach paths now use the canonical EWMA engine (`utils/acwr.js`) and the persisted `readiness_scores`. **Consent:** coach-facing readiness is now gated by the blocked set (no longer leaks a consent-blocked athlete's score).
+  - **Gameday/tournament load:** `record_event_participation` RPC now **distributes** a multi-day tournament's load across its days (was lumped on day 1) and dedups any same-date competition session, so the two gameday paths can't double-count acute load.
+  - **Recovery-block cap enforced:** `buildProtocolDecisionContext` now caps `adjustedLoadTarget` by an active `recovery_blocks.max_load_percent` (was set but never applied to the prescription).
+  - **`calculated_readiness` scale:** `wellness-logs.js` now writes 0–100 (was 1–10 into a 0–100 column that `ai-chat`/`coach-core` read).
+  - **Week-ahead fix:** `periodization.weekAhead()` applies today's readiness/ACWR only to today (mirrors the weather guard) — future days resolve to their phase-driven plan instead of 7 frozen recovery days.
+  - **Design system — Phase E token migration:** the TS color bridge (`design-tokens.util.ts`, `app.constants.ts`) + `index.html` were emitting the **old** CSS var names (`--ds-primary-green`, `--space-*`, …) that no stylesheet defines → empty strings at runtime (broken chart colors, white flash, Poppins). Migrated to Phase E tokens (`--accent`/`--good`/`--s-*`); `index.html` now links Space Grotesk + Plus Jakarta Sans (CSP updated for Google Fonts), dark-default boot CSS. Source of truth: `scss/tokens/_tokens.scss` (`--accent #00E07A`). Deferred: `e2e/color-contrast.spec.ts` rework (mint accent pairs with ink by design) + visual-regression baseline regen.
 
 ## 7. Runbooks & Security (operational — folded from the old RUNBOOKS, stale traps fixed)
 
