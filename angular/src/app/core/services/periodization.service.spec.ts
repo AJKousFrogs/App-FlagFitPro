@@ -5,8 +5,8 @@
  * always yield the same prescription. These tests are the contract that
  * every future change must justify breaking.
  *
- * If a test here changes, update the corresponding section in
- * `docs/CALCULATION_SPEC.md` (or the future PRESCRIPTION_SPEC).
+ * If a test here changes, the prescription algorithm contract is changing —
+ * justify the break in the PR.
  */
 
 import { describe, it, expect } from "vitest";

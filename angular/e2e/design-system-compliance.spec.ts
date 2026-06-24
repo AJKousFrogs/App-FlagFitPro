@@ -117,7 +117,7 @@ const ALLOWED_BORDER_RADIUS = new Set([
   "2px",
   "6px",
   "8px",
-  "10px", // --radius-lg (buttons / PrimeNG defaults)
+  "10px", // --radius-lg (buttons)
   "12px",
   "16px",
   "24px",
@@ -419,9 +419,8 @@ test.describe("Design System Compliance", () => {
       );
     }
 
-    // Allow some violations (PrimeNG defaults that can't be overridden, etc.)
-    // Threshold set to 100 to account for PrimeNG internal styles
-    // that are computed at runtime and may not use CSS variables directly
+    // Threshold set to 100 to account for runtime-computed styles
+    // that may not use CSS variables directly
     expect(violations.length).toBeLessThan(100); // Threshold for critical violations
   });
 
@@ -544,53 +543,6 @@ test.describe("Design System Compliance", () => {
     }
 
     console.log("Typography consistency check complete");
-  });
-
-  test("should verify PrimeNG components use theme tokens", async ({
-    page,
-  }) => {
-    await page.goto(`${BASE_URL}/dashboard`);
-    await page.waitForLoadState("networkidle");
-    await dismissCookieBanner(page);
-    await page.waitForTimeout(1000);
-
-    // Check if CSS variables are defined (design tokens)
-    const cssVariables = await page.evaluate(() => {
-      const root = document.documentElement;
-      const computedStyle = getComputedStyle(root);
-      const variables: Record<string, string> = {};
-
-      // Check for common design token variables
-      const tokenNames = [
-        "--p-primary-color",
-        "--p-primary-contrast-color",
-        "--p-surface-0",
-        "--p-surface-50",
-        "--p-border-radius",
-        "--p-content-padding",
-      ];
-
-      tokenNames.forEach((name) => {
-        const value = computedStyle.getPropertyValue(name);
-        if (value) {
-          variables[name] = value.trim();
-        }
-      });
-
-      return variables;
-    });
-
-    console.log("Design tokens found:", cssVariables);
-
-    // Verify some tokens exist
-    const hasTokens = Object.keys(cssVariables).length > 0;
-    expect(hasTokens).toBe(true);
-
-    if (!hasTokens) {
-      console.warn(
-        "⚠️  No design tokens (CSS variables) found - check theme configuration",
-      );
-    }
   });
 
   test("should check for inline styles (design system violation)", async ({

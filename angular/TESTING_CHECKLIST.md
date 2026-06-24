@@ -43,7 +43,7 @@ npm run e2e:smoke
 npm run lint:css
 npm run lint:tokens
 npm run audit:scss-duplications
-npm run test:unit:backend   # backend Vitest suite (4756 tests)
+npm run test:unit:backend   # backend Vitest suite
 ```
 
 Use the stricter E2E suites (`e2e:critical`, `e2e:navigation`, `e2e:visual`) only when the change needs them — see [`e2e/README.md`](./e2e/README.md).

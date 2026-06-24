@@ -12,8 +12,6 @@
  *   node scripts/check-consent-violations.js --strict  # Fail on violations
  *   node scripts/check-consent-violations.js --fix     # Show fix suggestions
  *   node scripts/check-consent-violations.js --ci      # CI mode (JSON output)
- *
- * @see docs/SAFETY_ACCESS_LAYER.md
  */
 
 import fs from "node:fs";
@@ -274,7 +272,6 @@ class ConsentViolationChecker {
       console.log("❌ CONSENT VIOLATIONS DETECTED\n");
       console.log("These files access protected tables directly in coach context.");
       console.log("Refactor to use consent views or ConsentDataReader.\n");
-      console.log("See: docs/SAFETY_ACCESS_LAYER.md\n");
     }
 
     if (this.ciMode) {

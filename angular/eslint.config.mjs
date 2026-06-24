@@ -9,7 +9,6 @@ import templateParser from "@angular-eslint/template-parser";
  * - No pButton directive
  * - No raw <button> unless whitelisted
  *
- * @see docs/BUTTON_STANDARDIZATION.md for migration guide
  */
 
 import js from "@eslint/js";
@@ -133,7 +132,7 @@ export default tseslint.config(
       // BUTTON STANDARDIZATION RULES
       // ============================================
       // These rules enforce the use of <app-button> and <app-icon-button>
-      // instead of direct PrimeNG or native button usage.
+      // instead of direct native button usage.
 
       "no-restricted-syntax": [
         "error",
@@ -141,7 +140,7 @@ export default tseslint.config(
         {
           selector: "TaggedTemplateExpression[tag.name='html'] TemplateLiteral",
           message:
-            "Direct <p-button> usage is not allowed. Use <app-button> instead. See docs/BUTTON_STANDARDIZATION.md",
+            "Direct <p-button> usage is not allowed. Use <app-button> instead.",
         },
       ],
 

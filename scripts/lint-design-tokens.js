@@ -226,7 +226,6 @@ const CONFIG = {
       rule: "DESIGN_SYSTEM_RULES.md 4.1",
       allowedFiles: [
         "design-system-tokens.scss",
-        "primeng-theme.scss",
         "_color-guards.scss", // Matches inline style strings (e.g. style*="#089949"), cannot use vars
       ],
     },
@@ -278,8 +277,6 @@ const CONFIG = {
   // Files where certain rules are relaxed
   relaxedFiles: {
     "design-system-tokens.scss": ["hardcodedHex", "deprecatedTokens"],
-    "primeng-theme.scss": ["hardcodedHex"],
-    "_token-mapping.scss": ["hardcodedHex"],
     "_color-guards.scss": ["hardcodedHex"], // Matches inline style strings, cannot use vars
     "color-contrast-fixes.scss": ["hardcodedHex"],
     "cascade-layers.scss": ["hardcodedHex"], // Defines tokens in CSS layers
@@ -569,7 +566,7 @@ function printResults(results) {
   if (results.totalDeprecations > 0) {
     console.log(`${colors.cyan}💡 Migration Guide:${colors.reset}`);
     console.log(
-      "   See docs/DESIGN_TOKENS_AUDIT.md section 3.7 for deprecated token replacements.",
+      "   See angular/src/scss/tokens/_tokens.scss for current token names.",
     );
     console.log("");
   }

@@ -14,7 +14,7 @@ Utility and tooling scripts for FlagFit Pro. All `npm run` commands below execut
 
 | Command | Description |
 |---|---|
-| `npm run test:unit:backend` | Vitest backend unit suite (406 files / 4756 tests) |
+| `npm run test:unit:backend` | Vitest backend unit suite |
 | `npm run test:unit` | Angular Vitest suite |
 | `npm run test:e2e` | Playwright E2E |
 | `npm run test:e2e:smoke` | Playwright smoke suite |
@@ -34,7 +34,6 @@ Utility and tooling scripts for FlagFit Pro. All `npm run` commands below execut
 | `npm run lint:tokens` | Design token usage audit |
 | `npm run audit:error-shapes` | Error-shape contract audit (CI gate) |
 | `npm run audit:routes` | Route classification audit |
-| `npm run audit:api-contracts` | API contract audit |
 | `npm run audit:rls-boundaries` | RLS boundary audit |
 | `npm run audit:security` | Security audit |
 | `npm run audit:scss-duplications` | SCSS duplication check |
@@ -44,7 +43,7 @@ Utility and tooling scripts for FlagFit Pro. All `npm run` commands below execut
 
 | Command | Description |
 |---|---|
-| `npm run seed:all` | Run all core seed scripts |
+| `npm run seed:all` | Run core seed scripts (isometrics, plyometrics, hydration, supplements, competition, nutrition, recovery — excludes `seed:wada` and `seed:training`, run those separately) |
 | `npm run seed:isometrics` | Isometric training exercises |
 | `npm run seed:plyometrics` | Plyometrics research (Verkhoshansky) |
 | `npm run seed:hydration` | Hydration research studies |

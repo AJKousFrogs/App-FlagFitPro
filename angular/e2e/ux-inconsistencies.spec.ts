@@ -116,7 +116,7 @@ test.describe("UX Inconsistencies", () => {
 
       // Check for primary action buttons
       const primaryButtons = page.locator(
-        'button.p-button-primary, button[type="submit"], .p-button-primary',
+        'button.btn.primary, button[type="submit"]',
       );
       const buttonCount = await primaryButtons.count();
 

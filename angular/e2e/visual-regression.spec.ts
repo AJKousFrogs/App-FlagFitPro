@@ -433,43 +433,6 @@ test.describe("Component Element Screenshots", () => {
     await dismissCookieBanner(page);
   });
 
-  test.skip("PrimeNG Cards styling", async ({ page }) => {
-    // SKIPPED: Card height varies based on dynamic content (wellness status, checkin streak, etc.)
-    // This test is unreliable for visual regression. Use page-level screenshots instead.
-    await page.goto(`${APP_URL}/dashboard`);
-    await page.waitForLoadState("networkidle");
-    await page.waitForTimeout(2000);
-
-    // Mask all dynamic content
-    await maskDynamicContent(page);
-
-    // Also hide welcome card personalized content (user name, greeting)
-    await page.evaluate(() => {
-      document
-        .querySelectorAll(
-          '.welcome-card h2, .welcome-card h3, .greeting, [class*="welcome"]',
-        )
-        .forEach((el) => {
-          (el as HTMLElement).style.visibility = "hidden";
-        });
-    });
-
-    // Capture first card on dashboard (skip cards with highly dynamic content)
-    const card = page
-      .locator(
-        "p-card:not(.missing-data-card):not(.welcome-card), .p-card:not(.missing-data-card):not(.welcome-card)",
-      )
-      .first();
-    if (await card.isVisible({ timeout: 5000 }).catch(() => false)) {
-      await expect(card).toHaveScreenshot("primeng-card.png", {
-        maxDiffPixels: 5000, // Allow for dynamic content within card
-      });
-    } else {
-      // Fallback: if no suitable card found, just check any card exists
-      test.skip(true, "No suitable card found for screenshot");
-    }
-  });
-
   test("Button styling in context", async ({ page }) => {
     await page.goto(`${APP_URL}/dashboard`);
     await page.waitForLoadState("networkidle");

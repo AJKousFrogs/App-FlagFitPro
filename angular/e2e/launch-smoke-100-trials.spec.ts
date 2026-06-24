@@ -283,22 +283,12 @@ async function logTrainingEntries(
     const typeSelectors = [
       'select[name="type"]',
       '[formControlName="type"]',
-      'p-dropdown[formcontrolname="type"]',
     ];
     for (const selector of typeSelectors) {
       try {
         const element = page.locator(selector).first();
         if (await element.isVisible({ timeout: 1000 })) {
-          // If it's a PrimeNG dropdown, click to open
-          if (selector.includes("p-dropdown")) {
-            await element.click();
-            await page.waitForTimeout(500);
-            // Select first option
-            await page.click(".p-dropdown-item");
-          } else {
-            // Regular select
-            await element.selectOption({ index: 1 });
-          }
+          await element.selectOption({ index: 1 });
           break;
         }
       } catch {

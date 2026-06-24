@@ -2,7 +2,7 @@
   "name": "flagfit-pro",
   "version": "1.1.0",
   "type": "module",
-  "description": "FlagFit Pro - Angular 21 + PrimeNG 21 training platform with Supabase backend",
+  "description": "FlagFit Pro - Angular 21 training platform with Supabase backend",
   "main": "index.js",
   "engines": {
     "node": ">=22.22.3"
@@ -45,7 +45,7 @@
     "test:load:logging:report": "artillery report tests/load/report.json --output tests/load/report.html && open tests/load/report.html",
     "test:load:logging:quick": "artillery quick --count 50 --num 100 http://localhost:8888/api/dashboard",
     "test:ci": "cd angular && npm run test && playwright test --reporter=github",
-    "preflight:deps": "node -e \"console.log('node', process.version)\" && cd angular && npm list primeng @primeuix/themes rxjs --depth=0",
+    "preflight:deps": "node -e \"console.log('node', process.version)\" && cd angular && npm list rxjs --depth=0",
     "verify:db": "node scripts/verify-db-objects.js",
     "check:consent": "node scripts/check-consent-violations.js",
     "check:consent:ci": "node scripts/check-consent-violations.js --ci --strict",
@@ -62,6 +62,9 @@
     "diagnostics:health": "node scripts/comprehensive-health-check.js",
     "diagnostics:features": "node scripts/feature-validator.js",
     "audit:routes": "node scripts/audit-routes.js",
+    "audit:error-shapes": "node scripts/audit-error-shape-contracts.js",
+    "audit:rls-boundaries": "node scripts/audit-rls-boundaries.js",
+    "docs:regen": "node scripts/docs-regen.mjs",
     "audit:scss-duplications": "node scripts/audit-scss-duplications.js",
     "audit:scss-duplications:ci": "node scripts/audit-scss-duplications.js --ci",
     "audit:schema-drift": "node scripts/check-schema-drift.mjs",
@@ -137,7 +140,6 @@
     "ai-coaching",
     "olympics",
     "angular",
-    "primeng",
     "supabase"
   ],
   "author": "FlagFit Pro Team",

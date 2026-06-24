@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
  * Fails the build if any template uses two-way NgModel `[(ngModel)]` on shared
- * CVA wrappers — that pattern was unsafe with WritableSignal + PrimeNG.
+ * CVA wrappers — that pattern is unsafe with WritableSignal.
  *
  * Run: node scripts/check-no-bidirectional-ngmodel.mjs
  */

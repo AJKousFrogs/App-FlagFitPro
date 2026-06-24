@@ -1,11 +1,9 @@
 /**
- * Toast notification service — signal-based, PrimeNG-free.
+ * Toast notification service — signal-based.
  *
- * The rebuilt UI does not render a PrimeNG <p-toast> (or any <p-*> component), so
- * this used to wrap a MessageService whose output went nowhere. It now holds an
- * internal `messages` signal (a future <app-toast> outlet can render it) while
- * keeping the exact public API (success/error/warn/info/show/clear) and the
- * dedup + max-visible behaviour callers rely on. No external UI dependency.
+ * Holds an internal `messages` signal (a future <app-toast> outlet can render it)
+ * with public API (success/error/warn/info/show/clear) plus dedup + max-visible
+ * behaviour.
  */
 
 import { Injectable, signal } from "@angular/core";

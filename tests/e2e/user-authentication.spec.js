@@ -4,7 +4,7 @@ import { test, expect } from "@playwright/test";
  * User Authentication E2E Tests
  *
  * Tests the complete authentication flow for the FlagFit Pro Angular application.
- * The app uses Angular 21 with PrimeNG components and Supabase authentication.
+ * The app uses Angular 21 with Supabase authentication.
  */
 test.describe("User Authentication Flow", () => {
   test.beforeEach(async ({ page }) => {

@@ -364,24 +364,6 @@ const config = {
     },
 
     // ====================================
-    // PrimeNG files: warn instead of error for hex
-    // ====================================
-    {
-      files: ["**/primeng/**/*.scss", "**/primeng-*.scss"],
-      rules: {
-        "color-no-hex": [
-          true,
-          {
-            severity: "warning",
-            message: "⚠️ Decision 1: Migrate to design token variables.",
-          },
-        ],
-        // Relax rules for PrimeNG theme files (they contain many overrides)
-        "declaration-property-value-disallowed-list": null,
-      },
-    },
-
-    // ====================================
     // Component SCSS: full enforcement
     // ====================================
     {

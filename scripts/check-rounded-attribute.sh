@@ -95,10 +95,9 @@ if [ $FAILED -eq 1 ]; then
   echo "Violations found in changed HTML files."
   echo "Fix these violations before merging:"
   echo ""
-  echo "1. Remove [rounded]=\"true\" from PrimeNG components"
+  echo "1. Remove [rounded]=\"true\" from components"
   echo "2. Use design tokens for border-radius in component SCSS"
   echo ""
-  echo "See docs/DESIGN_SYSTEM_ENFORCEMENT.md for details."
   exit 1
 else
   echo -e "${GREEN}✅ All changed HTML files pass [rounded] checks${NC}"

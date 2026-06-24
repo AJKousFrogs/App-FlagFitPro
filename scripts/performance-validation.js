@@ -9,8 +9,6 @@
  *   node scripts/performance-validation.js --explain-only     # Just EXPLAIN ANALYZE
  *   node scripts/performance-validation.js --load-test        # Just load tests
  *   node scripts/performance-validation.js --ci               # CI mode (JSON output)
- *
- * @see docs/PERFORMANCE_VALIDATION.md
  */
 
 import { createClient } from "@supabase/supabase-js";
