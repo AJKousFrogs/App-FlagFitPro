@@ -21,5 +21,3 @@ type: feedback
 6. **Double-slice in attendance events list** — `filteredEvents()` already applies `.slice(0, 10)` via computed; the template also calls `.slice(0, 5)`. Only 5 events show. The computed cap of 10 is misleading.
 
 7. **`createSession()` in coach dashboard is a stub** — logs success toast and resets form without calling any API. No actual session is created.
-
-8. **p-table in attendance has no empty state template** — when `playerStats()` is empty, PrimeNG renders an empty table with headers and no rows and no message.

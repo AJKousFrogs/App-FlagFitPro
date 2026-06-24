@@ -62,7 +62,6 @@ REMEDIATION:
    - load_monitoring → v_load_monitoring_consent
 3. Or use ConsentDataReader utility:
    import { ConsentDataReader } from './utils/consent-data-reader.js';
-4. See: docs/SAFETY_ACCESS_LAYER.md for patterns
 `,
   },
   {
@@ -96,7 +95,6 @@ REMEDIATION:
 2. If load tests fail:
    - Review query plans with EXPLAIN ANALYZE
    - Consider adding composite indexes for consent join patterns
-3. See: docs/PERFORMANCE_VALIDATION.md for optimization guide
 `,
   },
 ];

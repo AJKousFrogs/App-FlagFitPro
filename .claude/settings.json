@@ -61,9 +61,9 @@
   "workspaceSettings": {
     "projectName": "FlagFit Pro",
     "projectType": "angular-supabase-sports-app",
-    "framework": "Angular 21 + PrimeNG 21 + TypeScript",
+    "framework": "Angular 21 + TypeScript",
     "database": "Supabase (PostgreSQL)",
-    "ui": "PrimeNG 21 + SCSS + Design Tokens",
+    "ui": "SCSS + Design Tokens",
     "features": [
       "AI Coaching System",
       "Nutrition Tracking",
@@ -83,9 +83,7 @@
     "package.json",
     "angular/angular.json",
     "angular/src/main.ts",
-    "docs/ARCHITECTURE.md",
-    "docs/FEATURE_DOCUMENTATION.md",
-    "docs/DOCS_INDEX.md"
+    "docs/SOURCE_OF_TRUTH.md"
   ],
   "ignorePatterns": [
     "node_modules/**",

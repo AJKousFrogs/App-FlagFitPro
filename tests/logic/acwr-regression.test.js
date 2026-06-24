@@ -13,8 +13,6 @@
  * 6. Data state transitions
  * 7. Consent-aware view access
  *
- * Reference: docs/LOGIC_VALIDATION_DATASET.md
- *
  * @author FlagFit Pro Team
  * @version 1.0.0
  * @module ESM (migrated from CJS 2026-02)
@@ -178,8 +176,6 @@ function toWorkoutType(type) {
  *
  * Calculations use the FIXED formula: SUM(loads) / window_size
  * NOT the buggy formula: AVG(loads) which excludes rest days
- *
- * See docs/LOGIC_VALIDATION_DATASET.md for detailed calculations
  */
 const EXPECTED_VALUES = {
   // Day 0: No data yet
@@ -678,7 +674,6 @@ async function runTests() {
   console.log("ACWR REGRESSION TEST");
   console.log("═".repeat(72));
   console.log("\nValidating ACWR calculations against synthetic 28-day dataset");
-  console.log("Reference: docs/LOGIC_VALIDATION_DATASET.md");
   console.log("\nTolerance values:");
   console.log(`  - Daily Load: ${TOLERANCE.DAILY_LOAD} AU (exact)`);
   console.log(`  - Acute Load: ±${TOLERANCE.ACUTE_LOAD} AU`);

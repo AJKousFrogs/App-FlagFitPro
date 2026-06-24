@@ -20,8 +20,9 @@ This directory contains repo-level tests outside the Angular workspace.
 From the repo root:
 
 ```bash
-npm run test:unit
-npm run test:backend
+npm run test:unit:backend   # tests/unit/ — isolated utility/handler tests
+npm run test:backend        # tests/integration/ — API, auth, data-flow
+npm run test:unit           # Angular Vitest suite (cd angular)
 npm run test:e2e
 npm run test:privacy
 npm run test:acwr
@@ -30,6 +31,6 @@ npm run test:contracts
 
 ## Related Docs
 
-- [../docs/DOCS_INDEX.md](../docs/DOCS_INDEX.md)
+- [../docs/SOURCE_OF_TRUTH.md](../docs/SOURCE_OF_TRUTH.md)
 - [../angular/e2e/README.md](../angular/e2e/README.md)
 - [privacy-safety/README.md](./privacy-safety/README.md)

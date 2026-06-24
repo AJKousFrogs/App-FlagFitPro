@@ -848,7 +848,6 @@ describe.skipIf(!RUN_API_E2E)("Route Audit: Test Summary", () => {
     console.log("✅ Rate Limiting: Tested");
     console.log("✅ Security: Tested");
     console.log("✅ Performance: Tested");
-    console.log("\nFor full report, see: docs/ROUTE_AUDIT_VALIDATION.md\n");
     expect(true).toBe(true);
   });
 });

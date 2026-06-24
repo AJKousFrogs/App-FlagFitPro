@@ -21,8 +21,6 @@ const logger = createLogger({ service: "netlify.consent-data-reader" });
  * FORBIDDEN: Direct queries to workout_logs, load_monitoring, training_load_metrics,
  *            metric_entries, training_sessions (in coach contexts)
  *
- * @see docs/SAFETY_ACCESS_LAYER.md
- *
  * Športno društvo Žabe - Athletes helping athletes since 2020
  */
 

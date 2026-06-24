@@ -96,7 +96,6 @@ if [ $FAILED -eq 1 ]; then
   echo "1. Remove inline style attributes/bindings"
   echo "2. Move styles into component SCSS or global utilities"
   echo ""
-  echo "See docs/DESIGN_SYSTEM_ENFORCEMENT.md for details."
   exit 1
 else
   echo -e "${GREEN}✅ All changed HTML files pass inline style checks${NC}"

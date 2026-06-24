@@ -70,7 +70,7 @@ src/assets/            Legal docs, static assets
 - **Tokens** (single source of truth): `src/scss/tokens/_tokens.scss` — CSS custom properties for all colors, type, space, radii, motion.
 - **Component vocabulary**: `src/scss/system/_system.scss` — assembled via `@include system.all` in `styles.scss`.
 - **Token bridge (TS)**: `src/app/core/utils/design-tokens.util.ts`
-- **No PrimeNG** — the static-first rebuild removed it.
+- **No PrimeNG** — removed entirely (dependency, theme overrides, and lint guardrails).
 
 ## Auth & Routing
 

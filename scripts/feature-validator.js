@@ -795,7 +795,6 @@ class FeatureValidator {
       // Look for research data files and count actual studies
       const researchFiles = [
         "./database/research-studies.json",
-        "./docs/research-integration.md",
       ];
       let count = 0;
 

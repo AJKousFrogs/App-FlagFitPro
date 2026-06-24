@@ -96,19 +96,6 @@ if [ ${#HTML_FILES[@]} -gt 0 ]; then
 fi
 
 # ============================================================
-# Step 1.5: Check SCSS files for PrimeNG .p-* selectors
-# ============================================================
-if [ ${#SCSS_FILES[@]} -gt 0 ]; then
-  echo -e "${BLUE}🔍 Checking SCSS files for PrimeNG .p-* selectors...${NC}"
-  echo ""
-  
-  if ! bash "$SCRIPT_DIR/check-primeng-selectors.sh" "$BASE_BRANCH"; then
-    FAILED=1
-  fi
-  echo ""
-fi
-
-# ============================================================
 # Step 2: Run stylelint on SCSS/CSS files
 # ============================================================
 if [ ${#SCSS_FILES[@]} -gt 0 ]; then
@@ -151,12 +138,10 @@ if [ $FAILED -eq 1 ]; then
   echo ""
   echo "1. Run: npm run lint:css:fix"
   echo "2. Or manually fix violations using:"
-  echo "   - Replace hex colors with var(--ds-*) tokens"
-  echo "   - Replace raw spacing (px/rem) with var(--space-*) tokens"
-  echo "   - Remove PrimeNG overrides (.p-*) from component SCSS"
+  echo "   - Replace hex colors with design tokens (scss/tokens/_tokens.scss)"
+  echo "   - Replace raw spacing (px/rem) with var(--s-*) tokens"
   echo "   - Remove !important (or move to @layer overrides with ticket)"
   echo ""
-  echo "See docs/DESIGN_SYSTEM_ENFORCEMENT.md for details."
   exit 1
 else
   echo -e "${GREEN}✅ All changed files pass design system checks${NC}"

@@ -47,7 +47,6 @@ fi
 # Paths (relative to angular/ directory)
 TOKENS="src/scss/tokens/design-system-tokens.scss"
 OVERRIDES_DIR="src/assets/styles/overrides"
-PRIMENG_DIR="src/scss/components/primeng"
 
 # Change to angular directory
 cd "$(dirname "$0")/../angular"
@@ -203,36 +202,6 @@ if [ -n "$NG_DEEP" ]; then
   FAILED=1
 else
   echo -e "${GREEN}   ✓ No ::ng-deep usage (fully removed from codebase)${NC}"
-fi
-echo ""
-
-# ============================================================
-# Decision 16: .p-* classes only in primeng folder
-# ============================================================
-echo "📋 Decision 16: Checking for .p-* selectors outside primeng folder..."
-
-P_CLASSES=$(grep -RIn \
-  --include="*.scss" \
-  --exclude-dir=node_modules \
-  --exclude-dir=.angular \
-  --exclude-dir=dist \
-  --exclude-dir=primeng \
-  --exclude-dir=overrides \
-  -E "\.p-[a-z]+" src/app \
-  | grep -v "// allowed:" \
-  | grep -v "/* allowed:" \
-  || true)
-
-if [ -n "$P_CLASSES" ]; then
-  echo -e "${YELLOW}⚠️  .p-* PrimeNG selectors found in feature SCSS:${NC}"
-  echo "$P_CLASSES" | head -20
-  P_COUNT=$(echo "$P_CLASSES" | wc -l | tr -d ' ')
-  echo ""
-  echo -e "${YELLOW}   Total: $P_COUNT violations${NC}"
-  echo "   Fix: Move PrimeNG overrides to primeng/ folder or use component inputs"
-  # Warning only
-else
-  echo -e "${GREEN}   ✓ No .p-* selectors in feature SCSS${NC}"
 fi
 echo ""
 

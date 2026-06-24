@@ -11,7 +11,6 @@
  * - Touch target compliance (44px iOS / 48px Android)
  * - Layout integrity (no overflow, proper stacking)
  * - Performance metrics (CLS, LCP)
- * - PrimeNG component responsiveness
  *
  * @author FlagFit Pro Team
  * @version 1.0.0
@@ -412,85 +411,6 @@ test.describe("Settings Page - Mobile Critical Tests", () => {
       // Section titles should be at least 18px
       expect(sizeNum).toBeGreaterThanOrEqual(16);
     }
-  });
-});
-
-// ============================================================================
-// PRIMENG DIALOG TESTS
-// ============================================================================
-
-test.describe("PrimeNG Dialog - Mobile Tests", () => {
-  test.use({
-    viewport: { width: 414, height: 896 },
-    hasTouch: true,
-    isMobile: true,
-  });
-
-  test.beforeEach(async ({ page }) => {
-    await loginUser(page);
-    await page.goto("/settings");
-    await page.waitForLoadState("networkidle");
-  });
-
-  test("change password dialog fits within viewport", async ({ page }) => {
-    // Click change password button
-    const changeBtn = page.locator("text=Change").first();
-    await changeBtn.click();
-
-    // Wait for dialog
-    await page.waitForSelector(".p-dialog", {
-      state: "visible",
-      timeout: 5000,
-    });
-
-    const dialog = page.locator(".p-dialog");
-    const box = await dialog.boundingBox();
-
-    expect(box).not.toBeNull();
-    if (box) {
-      // Dialog should not exceed viewport width (414px)
-      expect(box.width).toBeLessThanOrEqual(414);
-      expect(box.x).toBeGreaterThanOrEqual(0);
-      expect(box.x + box.width).toBeLessThanOrEqual(414);
-    }
-  });
-
-  test("dialog content is scrollable if needed", async ({ page }) => {
-    // Click change password button
-    const changeBtn = page.locator("text=Change").first();
-    await changeBtn.click();
-
-    await page.waitForSelector(".p-dialog", {
-      state: "visible",
-      timeout: 5000,
-    });
-
-    const dialogContent = page.locator(".p-dialog-content");
-    const overflowY = await dialogContent.evaluate((el) => {
-      return window.getComputedStyle(el).overflowY;
-    });
-
-    // Should be auto or scroll
-    expect(["auto", "scroll"]).toContain(overflowY);
-  });
-
-  test("dialog close button is accessible", async ({ page }) => {
-    const changeBtn = page.locator("text=Change").first();
-    await changeBtn.click();
-
-    await page.waitForSelector(".p-dialog", {
-      state: "visible",
-      timeout: 5000,
-    });
-
-    const closeBtn = page.locator(".dialog-close-btn, .p-dialog-header-close");
-    const result = await checkTouchTarget(
-      page,
-      ".dialog-close-btn, .p-dialog-header-close",
-      36,
-    );
-
-    expect(result.passed).toBe(true);
   });
 });
 

@@ -1,8 +1,7 @@
 import { ChangeDetectionStrategy, Component, input, model } from "@angular/core";
 
 /**
- * Minimal labelled text input used by the auth pages. Re-introduced PrimeNG-free
- * and app-token styled after the Phase-A demolition removed the original
+ * Minimal labelled text input used by the auth pages
  * (the smoke suite selects `app-form-input input`).
  */
 @Component({

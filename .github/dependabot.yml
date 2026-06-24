@@ -56,13 +56,6 @@ updates:
         update-types:
           - "minor"
           - "patch"
-      primeng:
-        patterns:
-          - "primeng"
-          - "primeicons"
-        update-types:
-          - "minor"
-          - "patch"
       testing:
         patterns:
           - "vitest*"

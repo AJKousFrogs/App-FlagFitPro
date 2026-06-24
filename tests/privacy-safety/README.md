@@ -1,7 +1,7 @@
 # Privacy & Safety Regression Tests
 
 **Version:** 1.0.0  
-**Last Updated:** 29. December 2025  
+**Last Updated:** 23 June 2026  
 **Purpose:** Prove consent gating, AI opt-out, and deletion workflows keep working
 
 ---

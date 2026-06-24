@@ -1,9 +1,11 @@
 # Supabase migrations — authority model
 
 **The authoritative record of applied migrations is the live database table
-`supabase_migrations.schema_migrations`** (122 migrations as of 2026-06-01, each
-retaining its full SQL in `statements`). This directory is the **file mirror** of
-that history.
+`supabase_migrations.schema_migrations`**, each retaining its full SQL in
+`statements`. This directory is the **file mirror** of that history. For the
+current applied/tracked file counts, see `docs/SOURCE_OF_TRUTH.md` §6 (refreshed
+each time it's verified against live) rather than the snapshot counts below,
+which go stale.
 
 As of the 2026-06-01 reconciliation, the **tracked era is a faithful 1:1 mirror**:
 every applied migration has a file named `<version>_<name>.sql` whose contents are

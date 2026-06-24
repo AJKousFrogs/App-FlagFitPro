@@ -626,7 +626,7 @@ class HealthChecker {
       }
 
       // Check for development documentation
-      const devDocs = ["./CLAUDE.md", "./docs/DEVELOPMENT.md", "./docs/API.md"];
+      const devDocs = ["./CLAUDE.md", "./docs/SOURCE_OF_TRUTH.md", "./docs/generated/ENDPOINTS.md"];
       let foundDevDocs = 0;
 
       for (const doc of devDocs) {
@@ -858,7 +858,7 @@ class HealthChecker {
 
       // Check for API documentation
       try {
-        const apiDocs = await fs.readFile("./docs/API.md", "utf8");
+        const apiDocs = await fs.readFile("./docs/generated/ENDPOINTS.md", "utf8");
         if (apiDocs.length > 1000) {
           api.score += 15; // 15 points for API docs
         }

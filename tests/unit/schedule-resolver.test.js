@@ -1,8 +1,7 @@
 /**
  * Schedule resolver — netlify ↔ angular mirror contract.
  *
- * The phase resolver lives in two places and the architecture doc (§3,
- * docs/PRESCRIPTION_SPEC.md §8) explicitly states they MUST agree:
+ * The phase resolver lives in two places and they MUST agree:
  *
  *   - Server: netlify/functions/schedule.js → resolvePhase()
  *   - Client: angular/src/app/core/services/schedule.service.ts → resolvePhase()
