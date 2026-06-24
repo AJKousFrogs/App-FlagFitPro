@@ -901,7 +901,6 @@ export type Database = {
           has_field_access: boolean
           has_gym_access: boolean
           max_sessions_per_week: number
-          preferred_training_days_deprecated: number[] | null
           primary_position: string
           season_calendar: Json
           secondary_position: string | null
@@ -923,7 +922,6 @@ export type Database = {
           has_field_access?: boolean
           has_gym_access?: boolean
           max_sessions_per_week?: number
-          preferred_training_days_deprecated?: number[] | null
           primary_position?: string
           season_calendar?: Json
           secondary_position?: string | null
@@ -945,7 +943,6 @@ export type Database = {
           has_field_access?: boolean
           has_gym_access?: boolean
           max_sessions_per_week?: number
-          preferred_training_days_deprecated?: number[] | null
           primary_position?: string
           season_calendar?: Json
           secondary_position?: string | null
@@ -8645,7 +8642,6 @@ export type Database = {
           title: string | null
           updated_at: string | null
           user_id: string
-          verification_confidence_deprecated: number | null
           workload: number | null
           xp_earned: number | null
         }
@@ -8686,7 +8682,6 @@ export type Database = {
           title?: string | null
           updated_at?: string | null
           user_id: string
-          verification_confidence_deprecated?: number | null
           workload?: number | null
           xp_earned?: number | null
         }
@@ -8727,7 +8722,6 @@ export type Database = {
           title?: string | null
           updated_at?: string | null
           user_id?: string
-          verification_confidence_deprecated?: number | null
           workload?: number | null
           xp_earned?: number | null
         }
