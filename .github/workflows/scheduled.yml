@@ -27,7 +27,7 @@ jobs:
       contents: read
     steps:
       - name: Checkout code
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Setup Node.js
         uses: actions/setup-node@v6
@@ -46,7 +46,7 @@ jobs:
           echo "vulnerabilities=$VULNS" >> $GITHUB_OUTPUT
 
       - name: Upload audit results
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: security-audit-${{ github.run_id }}
           path: audit-results.json
@@ -54,7 +54,7 @@ jobs:
 
       - name: Create issue for vulnerabilities
         if: steps.audit.outputs.vulnerabilities > 0
-        uses: actions/github-script@v8
+        uses: actions/github-script@v9
         with:
           script: |
             const fs = require('fs');
@@ -109,7 +109,7 @@ jobs:
     if: github.event.schedule == '0 7 * * 1' || github.event.inputs.task == 'dependency-check' || github.event.inputs.task == 'all'
     steps:
       - name: Checkout code
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Setup Node.js
         uses: actions/setup-node@v6
@@ -128,7 +128,7 @@ jobs:
           echo "count=$OUTDATED_COUNT" >> $GITHUB_OUTPUT
 
       - name: Upload outdated report
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: dependency-check-${{ github.run_id }}
           path: outdated.json
