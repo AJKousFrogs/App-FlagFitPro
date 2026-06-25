@@ -1206,12 +1206,12 @@ function planWeekIntents(
     return 99;
   };
 
-  type Slot = {
+  interface Slot {
     idx: number;
     gameB: number; gameA: number;
     pracB: number; pracA: number;
     quality: number;
-  };
+  }
 
   const slots: Slot[] = freeDays.map((idx) => {
     const gameB = nearestBefore(idx, isGameDay);
@@ -1233,7 +1233,7 @@ function planWeekIntents(
   // Select training slots greedily: best quality first; avoid consecutive days
   // (Fri+Sat back-to-back after Thu practice is a common trap).
   const sorted = [...slots].sort((a, b) => b.quality - a.quality);
-  const trainingIdxs: Set<number> = new Set();
+  const trainingIdxs = new Set<number>();
 
   for (const { idx } of sorted) {
     if (trainingIdxs.size >= budget) break;
