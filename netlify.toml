@@ -265,13 +265,6 @@
   status = 200
   force = true
 
-# API Routes for Dashboard Overview (specific endpoint)
-[[redirects]]
-  from = "/api/dashboard/overview"
-  to = "/.netlify/functions/dashboard"
-  status = 200
-  force = true
-
 [[redirects]]
   from = "/api/team-calendar/*"
   to = "/.netlify/functions/team"
@@ -651,38 +644,6 @@
 
 [[redirects]]
   from = "/api/notifications/*"
-  to = "/.netlify/functions/notifications"
-  status = 200
-  force = true
-
-[[redirects]]
-  from = "/api/dashboard/notifications"
-  to = "/.netlify/functions/notifications"
-  status = 200
-  force = true
-
-[[redirects]]
-  from = "/api/dashboard/notifications/*"
-  to = "/.netlify/functions/notifications"
-  status = 200
-  force = true
-
-# Consolidated: notifications-count, notifications-create, notifications-preferences
-# all handled by the unified notifications domain function
-[[redirects]]
-  from = "/api/dashboard/notifications/count"
-  to = "/.netlify/functions/notifications"
-  status = 200
-  force = true
-
-[[redirects]]
-  from = "/api/dashboard/notifications/create"
-  to = "/.netlify/functions/notifications"
-  status = 200
-  force = true
-
-[[redirects]]
-  from = "/api/dashboard/notifications/preferences"
   to = "/.netlify/functions/notifications"
   status = 200
   force = true
@@ -1404,19 +1365,6 @@
   status = 200
   force = true
 
-# Coach Calendar API
-[[redirects]]
-  from = "/api/coach/calendar/*"
-  to = "/.netlify/functions/coach"
-  status = 200
-  force = true
-
-[[redirects]]
-  from = "/api/coach/calendar"
-  to = "/.netlify/functions/coach"
-  status = 200
-  force = true
-
 # ExerciseDB API - Exercise database manager
 [[redirects]]
   from = "/api/exercisedb/*"
@@ -1487,14 +1435,6 @@
   to = "/.netlify/functions/auth"
   status = 200
   force = true
-
-# Account Deletion API
-[[redirects]]
-  from = "/api/account/delete"
-  to = "/.netlify/functions/auth"
-  status = 200
-  force = true
-
 
 # Film Room API - Player film review
 [[redirects]]
