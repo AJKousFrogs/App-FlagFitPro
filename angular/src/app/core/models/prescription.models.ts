@@ -172,6 +172,23 @@ export interface DailyPrescription {
     originalIntent: PrescriptionIntent;
   } | null;
   /**
+   * Optional PM / afternoon session on a double-training day. Present only in
+   * pre-season accumulation or early off-season when readiness ≥ 75 and ACWR
+   * is in the safe sweet spot (≤ 1.2). Always a DIFFERENT energy system from
+   * the AM intent (strength AM → sprint or technical PM; never the same system
+   * twice). Minimum 6 h gap assumed between sessions.
+   * Null on all other days — in-season, peak, taper, competition, rest.
+   */
+  secondSession?: {
+    intent: PrescriptionIntent;
+    intentLabel: string;
+    /** Target RPE for the PM session (typically 1 lower than AM to manage fatigue). */
+    targetRpe: number;
+    /** Target duration in minutes. */
+    targetMinutes: number;
+    reasoning: string;
+  } | null;
+  /**
    * Position-specific accessory / prehab focus layered on the session. Does NOT
    * change the core intent or load magnitude — it tells a QB to protect the
    * throwing shoulder, a WR/DB to prioritise hamstring + deceleration work, a
@@ -284,4 +301,13 @@ export interface PeriodizationInputs {
    * emphasis only — it does not change the core session intent or load.
    */
   position?: string | null;
+  /**
+   * Schedule-aware intent pre-planned by weekAhead()'s planWeekIntents pass.
+   * When set, replaces the day-of-week array lookup in pickAccumulationIntent
+   * and seasonShapedIntent for free accumulation days. All higher-priority
+   * guards (competition, taper, recovery, ACWR-danger, injury, weather) still
+   * apply on top of this hint. Only used in weekAhead(); never set for the
+   * live "today" signal (which has no full-week context available).
+   */
+  weeklyIntentHint?: PrescriptionIntent | null;
 }

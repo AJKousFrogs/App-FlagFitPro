@@ -119,14 +119,25 @@
     @if (week().length) {
       <div class="card">
         @for (d of week(); track $index) {
-          <div class="lrow">
+          <div class="lrow" [style.opacity]="d.isRest ? '0.45' : '1'">
             <span>{{ d.day }} · {{ d.label }}</span>
             @if (d.isGame) {
               <span class="band caution"><lucide-icon name="flag" /> game</span>
+            } @else if (d.isRest) {
+              <span class="chip">Rest</span>
             } @else if (d.rpe !== null) {
               <span class="chip">RPE {{ d.rpe }}</span>
             }
           </div>
+          @if (d.secondSession; as pm) {
+            <div class="lrow" style="padding-left:var(--s-5);margin-top:calc(var(--s-1) * -1)">
+              <span style="font-size:var(--fs-sm);color:var(--text-muted)">
+                <span class="band info" style="font-size:var(--fs-xs);padding:1px 6px;margin-right:var(--s-1)">PM</span>
+                {{ pm.label }}
+              </span>
+              <span class="chip" style="font-size:var(--fs-xs)">RPE {{ pm.rpe }}</span>
+            </div>
+          }
         }
       </div>
     } @else {
