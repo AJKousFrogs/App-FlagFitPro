@@ -9,7 +9,10 @@ import { RouterLink } from "@angular/router";
 import { LucideAngularModule } from "lucide-angular";
 
 import { ApiService, API_ENDPOINTS } from "../core/services/api.service";
-import { SupabaseService } from "../core/services/supabase.service";
+import {
+  NutritionReportRow,
+  NutritionReportsService,
+} from "../core/services/nutrition-reports.service";
 import { extractApiPayload } from "../core/utils/api-response-mapper";
 
 interface TypeAgg {
@@ -38,17 +41,6 @@ interface TypeRow {
 interface NutritionRec {
   priority?: string;
   message?: string;
-}
-interface NutritionReportRow {
-  id: string;
-  report_type?: string;
-  period_start?: string | null;
-  period_end?: string | null;
-  created_at?: string;
-  report_data?: {
-    metrics?: Record<string, number>;
-    recommendations?: NutritionRec[];
-  };
 }
 /** GET /api/trends/{change-of-direction,sprint-volume}: current vs previous fortnight. */
 interface WeekTrend {
@@ -110,7 +102,7 @@ const TYPE_LABEL: Record<string, string> = {
 })
 export class ReportsComponent {
   private readonly api = inject(ApiService);
-  private readonly supabase = inject(SupabaseService);
+  private readonly nutritionReportsService = inject(NutritionReportsService);
 
   readonly periodDays = signal(30);
   readonly loaded = signal(false);
@@ -181,14 +173,9 @@ export class ReportsComponent {
   }
 
   private loadNutritionReports(): void {
-    void this.supabase.client
-      .from("nutrition_reports")
-      .select("id, report_type, period_start, period_end, created_at, report_data")
-      .order("created_at", { ascending: false })
-      .limit(10)
-      .then(({ data }) =>
-        this.nutritionReports.set((data as NutritionReportRow[] | null) ?? []),
-      );
+    void this.nutritionReportsService
+      .loadRecent(10)
+      .then((reports) => this.nutritionReports.set(reports));
   }
 
   metric(r: NutritionReportRow, key: string): string {
