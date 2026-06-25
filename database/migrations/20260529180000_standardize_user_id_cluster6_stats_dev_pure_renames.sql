@@ -1,7 +1,0 @@
--- Cluster 6 of the identity standardization: stats/metrics + development tables → user_id.
--- Applied via Supabase MCP 2026-05-29. PURE renames — no app code or function references
--- these columns (verified); RLS/views/FK/indexes auto-update. coach_id (author) kept on the
--- player_development_* / player_skill_assessments tables.
---   player_game_summary, situational_stats, position_specific_metrics, metric_entries,
---   player_development_goals, player_development_notes, player_skill_assessments,
---   program_assignments : player_id → user_id

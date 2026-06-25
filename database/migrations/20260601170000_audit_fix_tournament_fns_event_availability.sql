@@ -1,5 +1,0 @@
--- Backend audit fix: Phase 2a renamed player_tournament_availability → event_availability
--- (tournament_id → competition_event_id), silently breaking these two SECURITY DEFINER
--- functions (they still queried the old table). Repointed to event_availability /
--- competition_event_id (the logistics columns amount_due/status were preserved on the rename).
--- Applied via Supabase MCP 2026-06-01. Param names kept (positional/named-by-dormant-Angular).

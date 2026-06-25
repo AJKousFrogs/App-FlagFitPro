@@ -1,5 +1,0 @@
--- Final identity step: the multi-team schedule spine view v_athlete_schedule output its
--- athlete column aliased athlete_id (sourced from tm.user_id). Renamed the output to user_id
--- for full convention consistency (DROP+CREATE — CREATE OR REPLACE can't rename a view column;
--- security_invoker=true preserved; SELECT re-granted). Repointed the 2 readers
--- (calc-readiness.js, schedule.js) .eq("athlete_id") → .eq("user_id").

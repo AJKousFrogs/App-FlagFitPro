@@ -1,9 +1,0 @@
--- Consolidate legacy athlete_achievements (empty, write-only) into canonical
--- player_achievements. Applied via Supabase MCP 2026-05-29.
--- - user_achievements view simplified to canonical-only (was player_achievements UNION ALL
---   the empty legacy table); CREATE OR REPLACE keeps grants + security_invoker.
--- - award_achievement: dropped the legacy dual-write block.
--- - process_hard_deletion: dropped the athlete_achievements delete (player_achievements covers it).
--- - DROP TABLE athlete_achievements (0 rows; no remaining table/fn/view refs).
--- Code: response-feedback.js awardAchievement() now calls the award_achievement RPC
---   (was a dead direct upsert writing columns absent from the table's schema).

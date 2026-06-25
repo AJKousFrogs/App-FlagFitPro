@@ -1,9 +1,0 @@
--- Cluster 2 of the identity standardization: execution_logs, ml_training_data,
--- player_programs → user_id (= auth.uid()). Applied via Supabase MCP 2026-05-29.
---
--- execution_logs.athlete_id  → user_id  (fix get_executed_version + insert_late_execution_data bodies; kept p_athlete_id params; zero app-code refs)
--- ml_training_data.player_id → user_id  (pure rename; no fn/code refs)
--- player_programs: had user_id + a player_id duplicate kept in sync by
---   sync_player_programs_activity_state. Backfill, DROP player_id, and rewrite the
---   trigger fn to drop the id-coalesce (kept the status/is_active logic). Repointed
---   player-programs.js (player_id → user_id, ~10 refs).

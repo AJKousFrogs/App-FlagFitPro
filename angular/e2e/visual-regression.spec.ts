@@ -51,7 +51,7 @@ async function loginToApp(page: Page): Promise<void> {
   await passwordInput.fill(TEST_USER.password);
 
   await page.click('button[type="submit"]');
-  await page.waitForURL(/.*(dashboard|onboarding).*/, { timeout: 15000 });
+  await page.waitForURL(/.*(today|dashboard|onboarding).*/, { timeout: 15000 });
 }
 
 /**

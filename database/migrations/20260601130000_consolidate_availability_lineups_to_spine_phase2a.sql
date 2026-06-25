@@ -1,8 +1,0 @@
--- Consolidation Phase 2a: move availability + lineups onto the schedule spine.
--- Applied via Supabase MCP 2026-06-01. Both tables empty (0 rows).
--- - player_tournament_availability → event_availability; tournament_id → competition_event_id
---   (+ FK to competition_events, UNIQUE(user_id, competition_event_id)); RLS upgraded from
---   service-role-only to the v11 standard (self + ff_is_team_staff write, active members read).
--- - tournament_lineups → event_lineups; tournament_id → competition_event_id (+ FK). No code readers.
--- - v_pending_event_participation now LEFT JOINs event_availability (surfaces availability_status).
--- Code: wellness-checkin tournament-nutrition check repointed to event_availability + the spine.
