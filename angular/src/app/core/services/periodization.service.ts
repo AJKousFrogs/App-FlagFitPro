@@ -479,7 +479,7 @@ const DENSITY_HEAVY_GAMES_14D = 10;
 const DENSITY_CONGESTED_DAY_GAMES = 3;
 
 const INTENT_LABELS: Record<PrescriptionIntent, string> = {
-  rest: "Rest day",
+  rest: "Rest + daily mobility",
   recovery: "Active recovery",
   mobility: "Mobility & technique",
   technical: "Skills focus",
@@ -1056,11 +1056,11 @@ function decideBasePrescription(inputs: PeriodizationInputs): DailyPrescription 
       date,
       phase,
       intent: "rest",
-      targetRpe: null,
-      targetMinutes: 0,
+      targetRpe: 2,
+      targetMinutes: 15,
       sprintReps: 0,
       strengthSets: 0,
-      reasoning: `ACWR ${acwr.toFixed(2)} is in the danger zone. Full rest today.`,
+      reasoning: `ACWR ${acwr.toFixed(2)} is in the danger zone — full rest today. Gentle 15-min mobility and stretching only; no cardio or loading.`,
       recoveryEmphasis: "critical",
       nutrition: nutritionFor("rest", bodyweight, heavyDensity, hotDay),
       driverEvent,
@@ -1503,8 +1503,13 @@ function planWeekIntents(
 // =============================================================================
 
 /** Demotion priority when the weekly cap forces rest: lowest disruption first. */
+// Sessions are demoted to rest from the front of this list when the week has
+// fewer than 2 rest days. "taper-prime" leads because in a loaded week the
+// day immediately before a game is the most natural rest slot — mandatory rest
+// trumps a pre-game primer. Regular training sessions follow in ascending
+// load/disruption order (mobility first, strength last).
 const DEMOTION_PRIORITY: PrescriptionIntent[] = [
-  "mobility", "technical", "mixed", "sprint", "strength",
+  "taper-prime", "mobility", "technical", "mixed", "sprint", "strength",
 ];
 
 /**
@@ -1530,8 +1535,10 @@ function enforceWeeklyRestMinimum(
         p.intent !== "rest" &&
         p.intent !== "recovery" &&
         p.intent !== "competition" &&
-        p.intent !== "taper-prime" &&
         priority !== -1,
+      // taper-prime is no longer excluded — in a loaded week the pre-game slot
+      // is the most natural rest day. DEMOTION_PRIORITY already ranks it first,
+      // so it's only chosen when there's truly no better candidate.
     )
     .sort((a, b) => a.priority - b.priority);
 
@@ -1541,14 +1548,15 @@ function enforceWeeklyRestMinimum(
       ? {
           ...p,
           intent: "rest" as PrescriptionIntent,
-          intentLabel: "Rest day",
-          targetRpe: null,
-          targetMinutes: 0,
+          intentLabel: INTENT_LABELS["rest"],
+          targetRpe: 2,
+          targetMinutes: 15,
           sprintReps: 0,
           strengthSets: 0,
           reasoning:
-            "Rest day — 2 full days off per week are non-negotiable for adaptation and injury prevention.",
+            "Rest day — 2 full rest days per week are non-negotiable for adaptation. Complete your 15-min daily mobility and stretching routine.",
           recoveryEmphasis: "low" as RecoveryEmphasis,
+          secondSession: null,
         }
       : p,
   );
@@ -1880,7 +1888,10 @@ function baseTargets(intent: PrescriptionIntent): {
 } {
   switch (intent) {
     case "rest":
-      return { targetRpe: null, targetMinutes: 0, sprintReps: 0, strengthSets: 0 };
+      // No structured training, but daily 15-min mobility + stretching is always
+      // prescribed — it maintains range of motion and accelerates tissue recovery
+      // (Behm & Chaouachi 2011; NSCA-TSAC general prep guidelines).
+      return { targetRpe: 2, targetMinutes: 15, sprintReps: 0, strengthSets: 0 };
     case "recovery":
       return { targetRpe: 3, targetMinutes: 30, sprintReps: 0, strengthSets: 0 };
     case "mobility":
@@ -1914,7 +1925,9 @@ type SessionTarget = ReturnType<typeof baseTargets>;
  * already matched baseTargets.)
  */
 const BUILD_TARGET_OVERRIDES: Partial<Record<PrescriptionIntent, SessionTarget>> = {
-  rest: { targetRpe: 6, targetMinutes: 0, sprintReps: 0, strengthSets: 0 },
+  // rest is rest in any phase: no structured training, just daily mobility.
+  // Previous value (RPE 6) was a stale pre-refactor literal and is corrected here.
+  rest: { targetRpe: 2, targetMinutes: 15, sprintReps: 0, strengthSets: 0 },
   mobility: { targetRpe: 6, targetMinutes: 75, sprintReps: 0, strengthSets: 0 },
   technical: { targetRpe: 6, targetMinutes: 75, sprintReps: 0, strengthSets: 0 },
 };
@@ -2013,6 +2026,9 @@ function accumulationReasoning(
   }
   if (acwr !== null && acwr < ACWR_UNDER) {
     return `Under-trained (ACWR ${acwr.toFixed(2)}) — building load with a ${intent} session.`;
+  }
+  if (intent === "rest") {
+    return "Build phase rest day — no structured training. Complete your 15-min daily mobility and stretching routine.";
   }
   return `Build phase. Today is a ${intent} day.`;
 }

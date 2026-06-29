@@ -1199,6 +1199,44 @@ describe("prescribeFor — practice day on a recovery phase (finding 1.1)", () =
 });
 
 // =============================================================================
+// REST DAY — daily mobility prescription (even on rest days)
+// Behm & Chaouachi 2011: passive rest loses nothing; 15-min mobility preserves
+// ROM and accelerates structural repair. Rest = no structured training load,
+// not absence of all movement.
+// =============================================================================
+
+describe("prescribeFor — rest day includes daily mobility prescription", () => {
+  const sunday = new Date("2026-05-10T10:00:00Z"); // DOW fallback: Sunday → rest
+
+  it("rest intent has RPE 2 and 15-min target (mobility, not couch rest)", () => {
+    const rx = prescribeFor(inputs({ date: sunday, phase: "accumulation" }));
+    expect(rx.intent).toBe("rest");
+    expect(rx.targetRpe).toBe(2);
+    expect(rx.targetMinutes).toBe(15);
+  });
+
+  it("rest day intentLabel mentions mobility", () => {
+    const rx = prescribeFor(inputs({ date: sunday, phase: "accumulation" }));
+    expect(rx.intentLabel).toMatch(/mobility/i);
+  });
+
+  it("rest day reasoning mentions mobility or stretching", () => {
+    const rx = prescribeFor(inputs({ date: sunday, phase: "accumulation" }));
+    expect(rx.reasoning).toMatch(/mobility|stretching/i);
+  });
+
+  it("ACWR danger zone also prescribes gentle mobility (RPE 2 / 15 min)", () => {
+    const rx = prescribeFor(
+      inputs({ date: sunday, phase: "accumulation", acwr: 1.6 }),
+    );
+    expect(rx.intent).toBe("rest");
+    expect(rx.targetRpe).toBe(2);
+    expect(rx.targetMinutes).toBe(15);
+    expect(rx.reasoning).toMatch(/mobility|stretching/i);
+  });
+});
+
+// =============================================================================
 // POST-TOURNAMENT RECOVERY — detectTournamentRecoveryDay + prescription guard
 // Sports science: Nédélec et al. (2014); Bompa & Buzzichelli (2018);
 // NSCA-TSAC tournament load guidelines.
