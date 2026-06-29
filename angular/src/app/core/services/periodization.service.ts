@@ -1371,8 +1371,9 @@ function inSeasonWindow(
  * Plans the full 7-day intent assignment for free accumulation days, using the
  * actual schedule (practices, games, tournaments) rather than day-of-week arrays.
  * Returns null for days already owned by prescribeFor (practices, competition,
- * taper, recovery). Non-null values are passed as `weeklyIntentHint` and bypass
- * the DOW fallback while still respecting all safety guards.
+ * taper, recovery). Non-null values are passed as `weeklyIntentHint` into
+ * prescribeFor, where modulateIntentForLoad() applies ACWR / density / weekly-
+ * progression safety modulation before the intent reaches the prescription.
  */
 function planWeekIntents(
   teamPracticeFlags: boolean[],
@@ -1514,9 +1515,10 @@ const DEMOTION_PRIORITY: PrescriptionIntent[] = [
 
 /**
  * Post-processing pass: ensures ≥ 2 full rest days in the 7-day window.
- * Team-practice days, game days, and already-rest/recovery/taper days are
- * never demoted. When active days exceed 5, converts the lowest-priority
- * eligible sessions to rest, least disruptive first.
+ * Team-practice days, game days, and already-rest/recovery days are never
+ * demoted. Taper-prime IS demotable — in a loaded week the pre-game slot is
+ * the most natural rest day (see DEMOTION_PRIORITY). Converts the lowest-
+ * priority eligible session(s) to rest, least disruptive first.
  */
 function enforceWeeklyRestMinimum(
   prescriptions: DailyPrescription[],
@@ -1563,16 +1565,19 @@ function enforceWeeklyRestMinimum(
 }
 
 /**
- * Adds a PM second session to eligible days in the week view.
+ * Adds a PM second session to eligible strength days in the week view.
  *
  * Rules (Stone et al. 2007; NSCA-TSAC two-a-day guidelines):
- *  – Phase: preseason (accumulation) or early offseason only
- *  – Slot: Monday (strength AM → sprint PM) or Thursday (strength AM → technical PM)
- *  – Energy systems must differ — never strength+strength or sprint+sprint
- *  – Not on team-practice days (practice IS the day's primary session)
+ *  – Phase: preseason or early offseason only
+ *  – Slot: any strength day that is ≥ 2 days from the nearest game/taper/recovery
+ *    (schedule-aware — no longer locked to Mon/Thu)
+ *  – Energy systems must differ — strength AM drives sprint or technical PM,
+ *    never the same system twice
+ *  – PM is technical (not sprint) when a practice follows the next day, to
+ *    avoid stacking two high-CNS sessions within ~18 h
+ *  – Not on team-practice days (practice IS the primary session)
  *  – Today (i=0): gated on readiness ≥ 75 AND ACWR ≤ 1.2
- *  – Future days (i>0): shown as eligible without live readiness/ACWR gate
- *    (athlete will see it on those days when the day comes and conditions allow)
+ *  – Future days (i>0): shown as eligible without live gates
  */
 function addSecondSessions(
   prescriptions: DailyPrescription[],
@@ -2038,10 +2043,11 @@ function pickAccumulationIntent(
   acwr: number | null,
   heavyDensity: boolean,
 ): PrescriptionIntent {
-  // Fallback DOW shape — only used for the live "today" prescription where
-  // no full-week schedule context is available. weekAhead() bypasses this via
-  // weeklyIntentHint from planWeekIntents() (schedule-aware). Two rest days
-  // (Sun + Wed) per NSCA-TSAC / Bompa 2018; max 5 active days.
+  // Fallback DOW shape — reached only when planWeekIntents() returned null for
+  // this day (no schedule anchor in the 7-day window to place the session
+  // relative to). Both today and weekAhead() prefer the schedule-aware hint;
+  // this array is the last resort. Two rest days (Sun + Wed) per NSCA-TSAC /
+  // Bompa 2018; max 5 active days.
   const dow = date.getDay();
   const standard: PrescriptionIntent[] = [
     "rest",      // Sun — post-week full rest
