@@ -26,7 +26,9 @@ interface WeekRow {
   day: string;
   label: string;
   isGame: boolean;
+  isRest: boolean;
   rpe: number | null;
+  secondSession?: { label: string; rpe: number } | null;
 }
 
 /**
@@ -248,7 +250,11 @@ export class TrainingComponent {
       day: new Date(`${p.date}T00:00:00`).toLocaleDateString("en-GB", { weekday: "short" }),
       label: p.intentLabel,
       isGame: p.intent === "competition",
+      isRest: p.intent === "rest",
       rpe: p.targetRpe,
+      secondSession: p.secondSession
+        ? { label: p.secondSession.intentLabel, rpe: p.secondSession.targetRpe }
+        : null,
     })),
   );
 }

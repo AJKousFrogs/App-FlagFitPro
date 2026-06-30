@@ -172,6 +172,39 @@ export interface DailyPrescription {
     originalIntent: PrescriptionIntent;
   } | null;
   /**
+   * Post-congested-tournament recovery guard applied on day +1 and day +2 after
+   * a tournament with ≥ 4 games. Present when the engine forced recovery or
+   * mobility instead of the originally planned accumulation session.
+   *
+   * Day +1 → intent: "recovery" (RPE 3 / 30 min) — neuromuscular repair.
+   * Day +2 → intent: "mobility"  (RPE 4 / 45 min) — stiffness clearance.
+   *
+   * Evidence: Nédélec et al. (2014) post-match fatigue; Bompa & Buzzichelli (2018)
+   * congestion-week management; NSCA-TSAC tournament load guidelines.
+   */
+  tournamentRecoveryAdjustment?: {
+    dayAfterTournament: number;
+    gamesPlayed: number;
+    tournamentName: string | null;
+  } | null;
+  /**
+   * Optional PM / afternoon session on a double-training day. Present only in
+   * pre-season accumulation or early off-season when readiness ≥ 75 and ACWR
+   * is in the safe sweet spot (≤ 1.2). Always a DIFFERENT energy system from
+   * the AM intent (strength AM → sprint or technical PM; never the same system
+   * twice). Minimum 6 h gap assumed between sessions.
+   * Null on all other days — in-season, peak, taper, competition, rest.
+   */
+  secondSession?: {
+    intent: PrescriptionIntent;
+    intentLabel: string;
+    /** Target RPE for the PM session (typically 1 lower than AM to manage fatigue). */
+    targetRpe: number;
+    /** Target duration in minutes. */
+    targetMinutes: number;
+    reasoning: string;
+  } | null;
+  /**
    * Position-specific accessory / prehab focus layered on the session. Does NOT
    * change the core intent or load magnitude — it tells a QB to protect the
    * throwing shoulder, a WR/DB to prioritise hamstring + deceleration work, a
@@ -202,6 +235,13 @@ export interface RecentSession {
   at: string | Date;
   /** Raw `session_type` / `drill_type` — used to detect high-CNS (sprint/plyo) work. */
   type: string;
+  /**
+   * Actual RPE logged for this session. Used to classify flag-football-specific
+   * drill types (routes, evasion, flag pulls) as high-CNS only when performed
+   * at meaningful intensity (≥ RPE 6). Null/undefined → unknown → conservative:
+   * treat as high-CNS so the guard never under-fires due to missing data.
+   */
+  rpe?: number | null;
 }
 
 /**
@@ -284,4 +324,22 @@ export interface PeriodizationInputs {
    * emphasis only — it does not change the core session intent or load.
    */
   position?: string | null;
+  /**
+   * Schedule-aware intent pre-planned by weekAhead()'s planWeekIntents pass.
+   * When set, replaces the day-of-week array lookup in pickAccumulationIntent
+   * and seasonShapedIntent for free accumulation days. All higher-priority
+   * guards (competition, taper, recovery, ACWR-danger, injury, weather) still
+   * apply on top of this hint. The hint always passes through the same ACWR /
+   * density / weekly-progression safety modulation via modulateIntentForLoad().
+   */
+  weeklyIntentHint?: PrescriptionIntent | null;
+  /**
+   * True when the current week's cumulative training load already exceeds the
+   * safe weekly progression cap (typically 10–15%, Gabbett 2016). When set,
+   * any planned sprint / strength / mixed session is downgraded to technical
+   * or mobility to avoid spiking the ACWR further. Read from
+   * AcwrService.weeklyProgression().isSafe at the service level and passed as a
+   * boolean so the pure algorithm stays dependency-free and testable.
+   */
+  weeklyProgressionUnsafe?: boolean | null;
 }
