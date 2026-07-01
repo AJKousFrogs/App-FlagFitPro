@@ -1,0 +1,11 @@
+-- 20260701170953 (widen_physical_measurements_percentage_columns) dropped and
+-- recreated this view to widen numeric columns, but the recreated view lost the
+-- security_invoker=true option (unlike v_athlete_schedule, which has it -- see
+-- 20260508100641). Without it the view runs as its owner (postgres, which has
+-- BYPASSRLS), so it silently ignores RLS on the underlying physical_measurements
+-- table: any anon/authenticated caller hitting GET /rest/v1/physical_measurements_latest
+-- directly could read every athlete's weight/body-fat/BMR, not just their own.
+-- Confirmed unused by current app code (zero references in angular/src or
+-- netlify/functions), so this is a pure security fix with no behavior change
+-- for the app itself.
+ALTER VIEW public.physical_measurements_latest SET (security_invoker = true);
