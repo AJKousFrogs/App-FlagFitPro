@@ -2063,6 +2063,8 @@ export type Database = {
           expected_game_count: number
           external_id: string | null
           game_format: string | null
+          hotel_address: string | null
+          hotel_name: string | null
           id: string
           importance: string
           label: string | null
@@ -2084,6 +2086,8 @@ export type Database = {
           expected_game_count?: number
           external_id?: string | null
           game_format?: string | null
+          hotel_address?: string | null
+          hotel_name?: string | null
           id?: string
           importance?: string
           label?: string | null
@@ -2105,6 +2109,8 @@ export type Database = {
           expected_game_count?: number
           external_id?: string | null
           game_format?: string | null
+          hotel_address?: string | null
+          hotel_name?: string | null
           id?: string
           importance?: string
           label?: string | null
@@ -9800,6 +9806,8 @@ export type Database = {
           ends_at: string | null
           expected_game_count: number | null
           external_id: string | null
+          hotel_address: string | null
+          hotel_name: string | null
           id: string | null
           importance: string | null
           label: string | null

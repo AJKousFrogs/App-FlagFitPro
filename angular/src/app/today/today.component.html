@@ -144,6 +144,16 @@
     </div>
     <lucide-icon class="lc-go" name="chevron-right" />
   </a>
+  @if (eventHotelInfo(); as hotelEv) {
+    <!-- sibling, not nested in the linkcard <a> above — an <a> can't contain another <a> -->
+    <small class="muted inline" style="padding:0 var(--s-2)">
+      <lucide-icon name="bed" />
+      {{ hotelEv.hotelName || "Team hotel" }}
+      @if (hotelEv.hotelAddress) {
+        · <a [href]="mapUrl(hotelEv.hotelAddress)" target="_blank" rel="noopener">map</a>
+      }
+    </small>
+  }
 
   <!-- recovery modalities — gated by owned equipment -->
   @if (recovery().length) {

@@ -79,6 +79,8 @@ export interface CompetitionEvent {
   label: string | null;
   location: string | null;
   venue: string | null;
+  hotelName: string | null;
+  hotelAddress: string | null;
   notes: string | null;
   status: EventStatus;
 
