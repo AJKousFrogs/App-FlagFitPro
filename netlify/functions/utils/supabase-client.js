@@ -1183,10 +1183,16 @@ function requireSupabaseAdmin(context = "Database operation") {
 // Helper functions for notifications
 function getNotificationTitle(type, _message) {
   const titles = {
-    training: "Training Session Reminder",
+    training: "Training Update",
     achievement: "New Achievement Unlocked",
     team: "Team Update",
     game: "Game Update",
+    wellness: "Wellness Alert",
+    recovery: "Recovery Reminder",
+    readiness: "Readiness Update",
+    injury: "Injury Alert",
+    nutrition: "Nutrition Tip",
+    profile: "Profile Update",
     general: "Notification",
   };
   return titles[type] || titles.general;

@@ -73,6 +73,11 @@
                   @for (ex of b.exercises; track $index) {
                     <li>
                       <b>{{ ex.exercise?.name || "Exercise" }}</b>@if (exDose(ex); as dose) { <small> — {{ dose }}</small> }
+                      @if (ex.exercise?.videoId; as vid) {
+                        <div class="ex-vid">
+                          <app-yt-video [videoId]="vid" [title]="ex.exercise?.name || ''" />
+                        </div>
+                      }
                       @if (ex.exercise?.howText) { <div class="ex-how">{{ ex.exercise?.howText }}</div> }
                       @if (ex.exercise?.feelText) { <div class="ex-feel"><lucide-icon name="activity" /> {{ ex.exercise?.feelText }}</div> }
                     </li>
@@ -123,6 +128,8 @@
             <span>{{ d.day }} · {{ d.label }}</span>
             @if (d.isGame) {
               <span class="band caution"><lucide-icon name="flag" /> game</span>
+            } @else if (d.isTravel) {
+              <span class="band neutral"><lucide-icon name="plane" /> travel</span>
             } @else if (d.rpe !== null) {
               <span class="chip">RPE {{ d.rpe }}</span>
             }

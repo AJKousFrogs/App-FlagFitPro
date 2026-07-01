@@ -1,7 +1,8 @@
 <header class="topbar">
   <div><span class="brand">FlagFit</span> <span style="color:var(--accent)">Pro</span></div>
-  <button class="btn ghost sm" type="button" (click)="showSignIn.set(!showSignIn())">
-    {{ showSignIn() ? "Close" : "Log in" }}
+  <button class="btn ghost sm" type="button"
+          (click)="showSignIn.set(!showSignIn()); showSignUp.set(false); error.set(null)">
+    {{ showSignIn() || showSignUp() ? "Close" : "Log in" }}
   </button>
 </header>
 
@@ -14,11 +15,32 @@
       <p style="color:var(--text-strong);opacity:.92;font-weight:var(--fw-semi);margin:var(--s-3) 0 var(--s-4)">
         Find your edge. Open the app, know exactly what to train today — and why.
       </p>
-      <a class="btn primary" routerLink="/onboarding" style="background:var(--text-strong);color:var(--bg)">Start now →</a>
+      <button class="btn primary" type="button" style="background:var(--text-strong);color:var(--bg)" (click)="showSignUpForm()">Start now →</button>
     </div>
   </div>
 
-  @if (showSignIn()) {
+  @if (showSignUp()) {
+    <form class="card signin" (submit)="$event.preventDefault(); submitSignUp()">
+      <h2 style="margin-bottom:var(--s-1)">Create your account</h2>
+      <input type="text" placeholder="Full name" autocomplete="name"
+             [value]="fullName()" (input)="fullName.set($any($event.target).value)" aria-label="Full name" />
+      <input type="email" placeholder="Email" autocomplete="email"
+             [value]="email()" (input)="email.set($any($event.target).value)" aria-label="Email" />
+      <input type="password" placeholder="Password (min 8 chars)" autocomplete="new-password"
+             [value]="password()" (input)="password.set($any($event.target).value)" aria-label="Password" />
+      <input type="password" placeholder="Confirm password" autocomplete="new-password"
+             [value]="confirmPassword()" (input)="confirmPassword.set($any($event.target).value)" aria-label="Confirm password" />
+      @if (error(); as e) { <p class="note" style="color:var(--danger)">{{ e }}</p> }
+      <button class="btn primary block" type="submit" style="margin-top:var(--s-3)"
+              [attr.aria-disabled]="busy()">
+        {{ busy() ? "Creating account…" : "Create account →" }}
+      </button>
+      <button class="btn ghost block" type="button" style="margin-top:var(--s-2)"
+              (click)="showSignUp.set(false); showSignIn.set(true); error.set(null)">
+        Already have an account? Sign in
+      </button>
+    </form>
+  } @else if (showSignIn()) {
     <form class="card signin" (submit)="$event.preventDefault(); submitSignIn()">
       <h2 style="margin-bottom:var(--s-1)">Welcome back</h2>
       <div data-testid="email-input">

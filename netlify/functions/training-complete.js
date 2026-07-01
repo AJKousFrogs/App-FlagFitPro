@@ -98,13 +98,27 @@ function parseCompletionPayload(body) {
  * Points are based on duration and intensity
  */
 async function awardTrainingPoints(userId, duration, intensity, log = logger) {
-  // Base points: 5 per 15 minutes + bonus for high intensity
-  const basePoints = Math.floor(duration / 15) * 5;
+  // Duration-based points: 5pts per 15min. When duration is absent (session
+  // created without a duration field), award a minimum of 5pts so intensity
+  // still counts. Athletes who log duration always earn more.
+  const basePoints = duration > 0 ? Math.floor(duration / 15) * 5 : 5;
   const intensityBonus = intensity >= 7 ? 10 : intensity >= 5 ? 5 : 0;
   const totalPoints = basePoints + intensityBonus;
 
   if (totalPoints <= 0) {
     return { points: 0 };
+  }
+
+  try {
+    await supabaseAdmin.from("user_achievements").insert({
+      user_id: userId,
+      achievement_slug: "training_points_earned",
+      achievement_name: "Training Points",
+      category: "training",
+      metadata: { points: totalPoints, duration_minutes: duration, intensity },
+    });
+  } catch (err) {
+    log.warn("training_points_persist_failed", { user_id: userId }, err);
   }
 
   log.info("training_points_awarded", {
@@ -365,7 +379,7 @@ async function completeTrainingSession(
     // Create completion notification
     await createCompletionNotification(
       userId,
-      session.workout_type,
+      session.session_type,
       pointsResult.points,
       log,
     );

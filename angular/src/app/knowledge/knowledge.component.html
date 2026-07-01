@@ -40,11 +40,16 @@
         </div>
         <h3>{{ e.title }}</h3>
         <p>{{ e.content }}</p>
-        @if (e.sourceUrl) {
-          <a class="inline" [href]="e.sourceUrl" target="_blank" rel="noopener" style="color:var(--accent);font-size:var(--fs-sm)">
-            <lucide-icon name="arrow-up-right" /> {{ e.sourceTitle || "Source" }}
+        <div class="row" style="margin-top:var(--s-1)">
+          <a class="inline" routerLink="/chat" style="color:var(--accent);font-size:var(--fs-sm)">
+            <lucide-icon name="message-circle" /> Ask Merlin
           </a>
-        }
+          @if (e.sourceUrl) {
+            <a class="inline" [href]="e.sourceUrl" target="_blank" rel="noopener" style="color:var(--text-faint);font-size:var(--fs-sm)">
+              <lucide-icon name="arrow-up-right" /> {{ e.sourceTitle || "Source" }}
+            </a>
+          }
+        </div>
       </div>
     }
   }

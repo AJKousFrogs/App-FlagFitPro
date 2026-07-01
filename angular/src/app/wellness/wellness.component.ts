@@ -42,7 +42,7 @@ import { InjuryService, InjurySeverity } from "../core/services/injury.service";
   styles: [
     `
       .lbl { font-size: var(--fs-sm); color: var(--text-muted); font-weight: var(--fw-semi); }
-      .chiprow { display: flex; flex-wrap: wrap; gap: 6px; }
+      .chiprow { display: flex; flex-wrap: wrap; gap: var(--s-2); }
     `,
   ],
 })
