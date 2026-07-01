@@ -1,17 +1,11 @@
 #!/usr/bin/env node
 
 import dotenv from "dotenv";
-import { Pool } from "pg";
+import { createPool } from "./lib/db-pool.js";
 
 dotenv.config();
 
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-  ssl:
-    process.env.NODE_ENV === "production"
-      ? { rejectUnauthorized: false }
-      : false,
-});
+const pool = createPool();
 
 async function seedHeatTreatmentTravelRecoveryDatabase() {
   const client = await pool.connect();

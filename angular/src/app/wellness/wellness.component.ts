@@ -24,6 +24,7 @@ import { ReadinessService } from "../core/services/readiness.service";
 import { ApiService } from "../core/services/api.service";
 import { LoggerService } from "../core/services/logger.service";
 import { InjuryService, InjurySeverity } from "../core/services/injury.service";
+import { logHydrationOptimistic } from "../shared/utils/hydration-log.utils";
 
 /**
  * Wellness — the daily check-in. Ported 1:1 from
@@ -297,17 +298,7 @@ export class WellnessComponent {
   }
 
   addHydration(ml: number): void {
-    this.hydrationMl.update((v) => v + ml);
-    this.api
-      .post("/api/hydration/log", { amount: ml })
-      .subscribe({
-        // Roll the optimistic total back if the log didn't persist, so the UI
-        // never shows water that isn't actually recorded.
-        error: (err) => {
-          this.hydrationMl.update((v) => v - ml);
-          this.logger.error("hydration_log_failed", err);
-        },
-      });
+    logHydrationOptimistic(this.api, this.logger, this.hydrationMl, ml);
   }
   readonly hydrationL = computed(() => (this.hydrationMl() / 1000).toFixed(1));
   logWeekendGames(): void {

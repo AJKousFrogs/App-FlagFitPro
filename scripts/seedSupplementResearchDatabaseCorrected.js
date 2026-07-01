@@ -1,6 +1,6 @@
 import { fileURLToPath } from "node:url";
 import path from "node:path";
-import { Pool } from "pg";
+import { createPool } from "./lib/db-pool.js";
 import "dotenv/config";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -10,13 +10,7 @@ const isMain =
 
 class SupplementResearchSeederCorrected {
   constructor() {
-    this.pool = new Pool({
-      connectionString: process.env.DATABASE_URL,
-      ssl:
-        process.env.NODE_ENV === "production"
-          ? { rejectUnauthorized: false }
-          : false,
-    });
+    this.pool = createPool();
   }
 
   async seedCreatineResearch() {

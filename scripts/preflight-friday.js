@@ -44,8 +44,11 @@ REMEDIATION:
    # Apply any unapplied .sql files via Supabase dashboard or CLI
 3. If views are missing, run:
    npm run db:audit
-4. If RLS is disabled, apply RLS policies:
-   psql < database/supabase-rls-policies.sql
+4. If RLS is disabled, the canonical policies live in supabase/migrations/ —
+   re-apply the relevant migration(s) via the Supabase dashboard SQL editor
+   or CLI. There is no standalone RLS-policy snapshot file anymore (the old
+   database/supabase-rls-policies.sql was a stale, pre-2026-06 snapshot and
+   was removed).
 `,
   },
   {

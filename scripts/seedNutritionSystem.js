@@ -1,15 +1,9 @@
-import { Pool } from "pg";
+import { createPool } from "./lib/db-pool.js";
 import "dotenv/config";
 
 class NutritionSystemSeeder {
   constructor() {
-    this.pool = new Pool({
-      connectionString: process.env.DATABASE_URL,
-      ssl:
-        process.env.NODE_ENV === "production"
-          ? { rejectUnauthorized: false }
-          : false,
-    });
+    this.pool = createPool();
   }
 
   async seedNutritionPlans() {

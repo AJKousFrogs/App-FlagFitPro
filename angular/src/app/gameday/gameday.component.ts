@@ -16,6 +16,7 @@ import { PeriodizationService } from "../core/services/periodization.service";
 import { ApiService } from "../core/services/api.service";
 import { LoggerService } from "../core/services/logger.service";
 import { TOURNAMENT_DAY } from "../core/config/position-volume.config";
+import { logHydrationOptimistic } from "../shared/utils/hydration-log.utils";
 
 /**
  * Game day — go-time card + heat guard + fueling timeline + hydration. Ported 1:1
@@ -88,15 +89,6 @@ export class GamedayComponent {
   readonly hydrationMl = signal(0);
   readonly hydrationL = computed(() => (this.hydrationMl() / 1000).toFixed(1));
   addHydration(ml: number): void {
-    this.hydrationMl.update((v) => v + ml);
-    this.api
-      .post("/api/hydration/log", { amount: ml })
-      .subscribe({
-        // Roll back the optimistic total if the log didn't persist.
-        error: (e) => {
-          this.hydrationMl.update((v) => v - ml);
-          this.logger.error("hydration_log_failed", e);
-        },
-      });
+    logHydrationOptimistic(this.api, this.logger, this.hydrationMl, ml);
   }
 }

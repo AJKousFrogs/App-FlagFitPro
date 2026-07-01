@@ -1,5 +1,5 @@
 import "dotenv/config";
-import { Pool } from "pg";
+import { createPool } from "./lib/db-pool.js";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
 
@@ -10,13 +10,7 @@ const isMain =
 
 class ComprehensiveDatabaseAudit {
   constructor() {
-    this.pool = new Pool({
-      connectionString: process.env.DATABASE_URL,
-      ssl:
-        process.env.NODE_ENV === "production"
-          ? { rejectUnauthorized: false }
-          : false,
-    });
+    this.pool = createPool();
   }
 
   async auditTableStructures() {

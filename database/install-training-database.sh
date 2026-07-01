@@ -65,7 +65,7 @@ install_via_cli() {
     echo -e "${GREEN}✓${NC} Schema created successfully"
 
     echo -e "\n${BLUE}Step 2/2:${NC} Seeding QB Annual Program data..."
-    supabase db push --file "$SCRIPT_DIR/seed-qb-annual-program.sql" || {
+    supabase db push --file "$SCRIPT_DIR/seed-qb-annual-program-corrected.sql" || {
         echo -e "${RED}✗${NC} Failed to seed data"
         exit 1
     }
@@ -101,7 +101,7 @@ install_via_psql() {
     echo -e "${GREEN}✓${NC} Schema created successfully"
 
     echo -e "\n${BLUE}Step 2/2:${NC} Seeding QB Annual Program data..."
-    psql "$DB_URL" -f "$SCRIPT_DIR/seed-qb-annual-program.sql" || {
+    psql "$DB_URL" -f "$SCRIPT_DIR/seed-qb-annual-program-corrected.sql" || {
         echo -e "${RED}✗${NC} Failed to seed data"
         exit 1
     }
