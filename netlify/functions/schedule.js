@@ -125,7 +125,16 @@ function resolvePhase(now, upcoming, lastEvent) {
     const startStr = startsAt.toISOString().slice(0, 10);
     const endStr = endsAt.toISOString().slice(0, 10);
     if (dateStr >= startStr && dateStr <= endStr) {
-      return "competition";
+      // Games are Saturday (6) / Sunday (0) for club and national events.
+      // Continental / world / olympic / peak events may have games on any day.
+      const dow = now.getUTCDay(); // 0 = Sun, 6 = Sat
+      const isWeekend = dow === 0 || dow === 6;
+      const isInternational =
+        next.importance === "peak" ||
+        ["international", "continental", "world", "olympic"].includes(
+          next.competition_level,
+        );
+      return isWeekend || isInternational ? "competition" : "travel";
     }
   }
 

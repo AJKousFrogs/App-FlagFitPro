@@ -44,7 +44,7 @@ import { LoggerService } from "../core/services/logger.service";
       .ava { width: 30px; height: 30px; border-radius: var(--r-pill); flex: 0 0 auto; object-fit: cover;
         display: grid; place-items: center; background: var(--surface-2); color: var(--text-faint);
         font-size: var(--fs-xs); font-weight: var(--fw-bold); }
-      .body { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+      .body { display: flex; flex-direction: column; gap: var(--s-1); min-width: 0; }
       .meta { font-size: var(--fs-xs); color: var(--text-faint); display: flex; gap: var(--s-2); }
       .msg.me .meta { justify-content: flex-end; }
       .bubble { padding: var(--s-2) var(--s-3); border-radius: var(--r-lg); white-space: pre-wrap; word-break: break-word; line-height: var(--lh-body); }

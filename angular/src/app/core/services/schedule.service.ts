@@ -216,7 +216,16 @@ export function resolvePhase(ctx: PhaseContext): CompetitionPhase {
     const startStr = startsAt.toISOString().slice(0, 10);
     const endStr = endsAt.toISOString().slice(0, 10);
     if (dateStr >= startStr && dateStr <= endStr) {
-      return "competition";
+      // Games are on Saturday (6) and Sunday (0) for club/national events.
+      // Continental / world / olympic / peak events may have games on any day.
+      const dow = date.getDay(); // 0 = Sun, 6 = Sat
+      const isWeekend = dow === 0 || dow === 6;
+      const isInternational =
+        next.importance === "peak" ||
+        (["international", "continental", "world", "olympic"] as const).includes(
+          next.competitionLevel as "international" | "continental" | "world" | "olympic",
+        );
+      return isWeekend || isInternational ? "competition" : "travel";
     }
   }
 

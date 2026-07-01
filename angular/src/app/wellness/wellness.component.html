@@ -178,7 +178,7 @@
   <div class="section-h"><h2>Niggles &amp; tightness</h2></div>
   <div class="card stack">
     @if (activeInjuries().length) {
-      <div class="stack" style="gap:6px">
+      <div class="stack" style="gap:var(--s-2)">
         @for (inj of activeInjuries(); track inj.id) {
           <div class="row">
             <span class="inline">

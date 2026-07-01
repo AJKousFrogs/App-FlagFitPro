@@ -485,7 +485,7 @@ function generateSessionsForDay({
         {
           exercise: "10-minute mobility routine",
           type: "video",
-          link: "https://www.youtube.com/watch?v=pre-game-mobility",
+          link: "https://www.youtube.com/watch?v=7-NzseCtyAo",
           description: "Dynamic warm-up and mobility work",
         },
       ],
@@ -560,13 +560,13 @@ function generateSessionsForDay({
       {
         exercise: "10-minute mobility routine",
         type: "video",
-        link: "https://www.youtube.com/watch?v=mobility-routine",
+        link: "https://www.youtube.com/watch?v=IWNnTJFwi3s",
         description: "Full body mobility and activation",
       },
       {
         exercise: "Foam rolling",
         type: "video",
-        link: "https://www.youtube.com/watch?v=foam-rolling",
+        link: "https://www.youtube.com/watch?v=gfMZBbxLlyw",
         description: "Target: quads, hamstrings, glutes, thoracic spine",
       },
     ],
@@ -624,7 +624,7 @@ function generateSessionContent(type, phase, multiplier) {
     content.push({
       exercise: "Warm-up",
       type: "video",
-      link: "https://www.youtube.com/watch?v=gym-warmup",
+      link: "https://www.youtube.com/watch?v=X_OS_EtOHZ4",
       description: "Dynamic warm-up: 5-10 minutes",
     });
 
@@ -669,7 +669,7 @@ function generateSessionContent(type, phase, multiplier) {
     content.push({
       exercise: "Dynamic warm-up",
       type: "video",
-      link: "https://www.youtube.com/watch?v=field-warmup",
+      link: "https://www.youtube.com/watch?v=7-NzseCtyAo",
       description: "Movement prep: 10 minutes",
     });
     content.push({
@@ -689,7 +689,7 @@ function generateSessionContent(type, phase, multiplier) {
   content.push({
     exercise: "Cool-down & Stretching",
     type: "video",
-    link: "https://www.youtube.com/watch?v=cooldown",
+    link: "https://www.youtube.com/watch?v=paqAzWbLIUw",
     description: "10-minute cool-down",
   });
 

@@ -40,6 +40,7 @@ export type EventStatus =
  */
 export type CompetitionPhase =
   | "competition"
+  | "travel"
   | "taper"
   | "recovery"
   | "accumulation"

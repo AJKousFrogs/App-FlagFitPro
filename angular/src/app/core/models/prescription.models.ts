@@ -25,7 +25,8 @@ export type PrescriptionIntent =
   | "strength" // Resistance / power.
   | "mixed" // Combined sprint + technical, lower volume.
   | "taper-prime" // Pre-game opener: short, sharp, primed.
-  | "competition"; // Game day. Warm up, play, recover.
+  | "competition" // Game day. Warm up, play, recover.
+  | "travel"; // Travel day inside a tournament window. Rest, arrive fresh.
 
 /**
  * Macro season phase — the annual periodization layer that sits above the

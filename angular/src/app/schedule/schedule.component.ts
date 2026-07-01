@@ -206,7 +206,7 @@ const KIND_DEFAULT_IMPORTANCE: Record<AthleteEventKind, AthleteEventImportance> 
   styles: [
     `
       .lbl { font-size: var(--fs-sm); color: var(--text-muted); font-weight: var(--fw-semi); }
-      .chiprow { display: flex; flex-wrap: wrap; gap: 6px; }
+      .chiprow { display: flex; flex-wrap: wrap; gap: var(--s-2); }
       .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: var(--s-3); }
       .input { width: 100%; }
     `,

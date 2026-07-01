@@ -26,6 +26,7 @@ interface WeekRow {
   day: string;
   label: string;
   isGame: boolean;
+  isTravel: boolean;
   rpe: number | null;
 }
 
@@ -72,6 +73,9 @@ interface WeekRow {
       .ex-how { color: var(--text-muted); font-size: var(--fs-sm); line-height: var(--lh-body); margin: 2px 0 0; }
       .ex-feel { color: var(--accent); font-size: var(--fs-xs); display: flex; align-items: center; gap: 4px; margin: 2px 0 var(--s-2); }
       .ex-feel svg.lucide { width: 13px; height: 13px; }
+      /* Per-exercise video thumbnail — inline demo, tap to play. Only renders when
+         the server resolves a videoId for the exercise (DB or curated map fallback). */
+      .ex-vid { margin: var(--s-1) 0; border-radius: 6px; overflow: hidden; }
     `,
   ],
 })
@@ -189,6 +193,7 @@ export class TrainingComponent {
     if (rx.weatherAdjustment?.applied) return { label: "weather-adjusted", cls: "caution" };
     if (rx.recoveryEmphasis === "critical") return { label: "recover", cls: "danger" };
     if (rx.intent === "competition") return { label: "game day", cls: "info" };
+    if (rx.intent === "travel") return { label: "travel day", cls: "neutral" };
     return { label: "today", cls: "good" };
   });
 
@@ -248,6 +253,7 @@ export class TrainingComponent {
       day: new Date(`${p.date}T00:00:00`).toLocaleDateString("en-GB", { weekday: "short" }),
       label: p.intentLabel,
       isGame: p.intent === "competition",
+      isTravel: p.intent === "travel",
       rpe: p.targetRpe,
     })),
   );

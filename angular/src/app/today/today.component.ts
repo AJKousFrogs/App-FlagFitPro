@@ -116,6 +116,7 @@ export class TodayComponent {
     if (rx.recoveryEmphasis === "critical") return { label: "recover", cls: "danger" };
     if (rx.recoveryEmphasis === "high") return { label: "recover", cls: "caution" };
     if (rx.intent === "competition") return { label: "game day", cls: "info" };
+    if (rx.intent === "travel") return { label: "travel day", cls: "neutral" };
     return { label: "today", cls: "good" };
   });
 
