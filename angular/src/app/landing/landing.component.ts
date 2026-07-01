@@ -5,7 +5,7 @@ import {
   signal,
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
-import { ActivatedRoute, Router, RouterLink } from "@angular/router";
+import { ActivatedRoute, Router } from "@angular/router";
 import { LucideAngularModule } from "lucide-angular";
 
 import { SupabaseService } from "../core/services/supabase.service";
@@ -22,7 +22,7 @@ import { staffLaneFor } from "../core/guards/staff.guard";
 @Component({
   selector: "app-landing",
   standalone: true,
-  imports: [RouterLink, FormsModule, LucideAngularModule],
+  imports: [FormsModule, LucideAngularModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: "./landing.component.html",
   styles: [
