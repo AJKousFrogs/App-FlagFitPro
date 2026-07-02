@@ -606,40 +606,6 @@ describe("WellnessService", () => {
       });
     });
 
-    it("calculateAcwr returns ratio from RPC", async () => {
-      const rpc = mockSupabaseService.client.rpc as ReturnType<typeof vi.fn>;
-      const defaultImpl = () =>
-        Promise.resolve({
-          data: [{ checkin_id: "c1", legacy_entry_id: null, checkin_date: "2024-01-15" }],
-          error: null,
-        });
-      rpc.mockImplementation((name: string) => {
-        if (name === "calculate_acwr") {
-          return Promise.resolve({
-            data: {
-              acute_load: 100,
-              chronic_load: 100,
-              ratio: 1.0,
-              sufficient: true,
-              days_with_data: 22,
-              sessions_in_window: 14,
-              computed_at: "2026-01-01T00:00:00.000Z",
-            },
-            error: null,
-          });
-        }
-        return defaultImpl();
-      });
-
-      const result = await firstValueFrom(service.calculateAcwr());
-      expect(result.success).toBe(true);
-      expect(result.data?.ratio).toBe(1.0);
-      expect(mockSupabaseService.client.rpc).toHaveBeenCalledWith(
-        "calculate_acwr",
-        { p_user_id: "user-123" },
-      );
-      rpc.mockImplementation(defaultImpl);
-    });
   });
 
   describe("Wellness Data Loading", () => {

@@ -1,5 +1,5 @@
 {
-  "generatedOn": "2026-07-01",
+  "generatedOn": "2026-07-02",
   "source": "live Supabase introspection (information_schema) via Supabase MCP",
   "tables": {
     "account_deletion_requests": [
@@ -3120,11 +3120,6 @@
         "col": "updated_at",
         "nullable": true,
         "type": "timestamp with time zone"
-      },
-      {
-        "col": "motivation",
-        "nullable": true,
-        "type": "integer"
       },
       {
         "col": "travel_hours",
@@ -8195,19 +8190,9 @@
         "type": "numeric"
       },
       {
-        "col": "wellness_score",
-        "nullable": true,
-        "type": "numeric"
-      },
-      {
         "col": "acwr",
         "nullable": true,
         "type": "numeric"
-      },
-      {
-        "col": "notes",
-        "nullable": true,
-        "type": "text"
       },
       {
         "col": "created_at",

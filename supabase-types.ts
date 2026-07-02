@@ -2501,7 +2501,6 @@ export type Database = {
           hydration_level: number | null
           id: string
           mood: number | null
-          motivation: number | null
           motivation_level: number | null
           muscle_soreness: number | null
           notes: string | null
@@ -2521,7 +2520,6 @@ export type Database = {
           hydration_level?: number | null
           id?: string
           mood?: number | null
-          motivation?: number | null
           motivation_level?: number | null
           muscle_soreness?: number | null
           notes?: string | null
@@ -2541,7 +2539,6 @@ export type Database = {
           hydration_level?: number | null
           id?: string
           mood?: number | null
-          motivation?: number | null
           motivation_level?: number | null
           muscle_soreness?: number | null
           notes?: string | null
@@ -6635,14 +6632,12 @@ export type Database = {
           day: string
           id: string
           level: string | null
-          notes: string | null
           proximity_score: number | null
           score: number | null
           sleep_score: number | null
           suggestion: string | null
           updated_at: string | null
           user_id: string
-          wellness_score: number | null
           workload_score: number | null
         }
         Insert: {
@@ -6653,14 +6648,12 @@ export type Database = {
           day: string
           id?: string
           level?: string | null
-          notes?: string | null
           proximity_score?: number | null
           score?: number | null
           sleep_score?: number | null
           suggestion?: string | null
           updated_at?: string | null
           user_id: string
-          wellness_score?: number | null
           workload_score?: number | null
         }
         Update: {
@@ -6671,14 +6664,12 @@ export type Database = {
           day?: string
           id?: string
           level?: string | null
-          notes?: string | null
           proximity_score?: number | null
           score?: number | null
           sleep_score?: number | null
           suggestion?: string | null
           updated_at?: string | null
           user_id?: string
-          wellness_score?: number | null
           workload_score?: number | null
         }
         Relationships: []

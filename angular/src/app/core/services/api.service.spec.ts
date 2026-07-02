@@ -8,8 +8,9 @@
  */
 
 import { TestBed } from "@angular/core/testing";
+import { provideHttpClient } from "@angular/common/http";
 import {
-  HttpClientTestingModule,
+  provideHttpClientTesting,
   HttpTestingController,
 } from "@angular/common/http/testing";
 import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
@@ -29,8 +30,9 @@ describe("ApiService", () => {
     vi.clearAllMocks();
 
     TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule],
       providers: [
+        provideHttpClient(),
+        provideHttpClientTesting(),
         ApiService,
         { provide: LoggerService, useValue: mockLoggerService },
       ],
@@ -500,22 +502,6 @@ describe("ApiService", () => {
         "/api/admin/health-metrics",
       );
       expect(API_ENDPOINTS.admin.createBackup).toBe("/api/admin/create-backup");
-    });
-  });
-
-  // ============================================================================
-  // URL Detection Tests
-  // ============================================================================
-
-  describe("Base URL Detection", () => {
-    // in Vitest without breaking other tests. The URL detection is tested
-    // implicitly through integration tests.
-    it.skip("should detect Netlify production URL", () => {
-      // Cannot mock window.location in Vitest - tested via integration
-    });
-
-    it.skip("should detect localhost development", () => {
-      // Cannot mock window.location in Vitest - tested via integration
     });
   });
 

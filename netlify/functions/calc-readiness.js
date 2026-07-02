@@ -616,7 +616,7 @@ const handler = async (event, context) => {
         dayStr,
       });
 
-      // Query wellness_logs - handle both user_id (new) and athlete_id (legacy) columns
+      // Query daily_wellness_checkin (canonical wellness table; wellness_logs was dropped in phase7)
       const { data: wellness, error: wellErr } =
         await fetchWellnessForReadiness(athleteId, dayStr);
 

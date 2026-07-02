@@ -3,7 +3,7 @@
 > Regenerate: `npm run docs:regen` (parses `netlify.toml` + `netlify/functions/*.js` + scans `angular/src`).
 > **Last verified: 2026-07-02**
 
-**110 functions: 108 exercised, 2 orphaned.** A table name with ⚠️ is referenced in code but not a live table (possible drift/typo); _(bucket)_ = Storage bucket, not a DB table.
+**108 functions: 108 exercised, 0 orphaned.** A table name with ⚠️ is referenced in code but not a live table (possible drift/typo); _(bucket)_ = Storage bucket, not a DB table.
 
 ## Exercised
 
@@ -122,5 +122,4 @@
 
 | Function | Methods | /api path(s) | Tables / RPCs touched |
 |---|---|---|---|
-| `auth-reset-password` | — | _(no /api redirect)_ | — |
-| `exercisedb` | GET, POST | /api/exercisedb/*<br>/api/exercisedb | team_members, exercisedb_exercises, ff_exercise_mappings, exercisedb_import_logs |
+| _(none)_ | | | |

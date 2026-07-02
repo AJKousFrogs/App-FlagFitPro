@@ -60,7 +60,7 @@ import { persistFallbackProtocolWhenExercisesMissing } from "./utils/daily-proto
 import { generateMainSessionFallback } from "./utils/daily-protocol-main-session.js";
 import { generateReturnToPlayProtocol } from "./utils/daily-protocol-rtp.js";
 import { getActiveInjuries } from "./utils/active-injuries.js";
-import { getLastHighCnsSession, cnsSpacingHoursForAge } from "./utils/cns-spacing.js";
+import { getLastHighCnsSession, getLastStrengthSession, cnsSpacingHoursForAge } from "./utils/cns-spacing.js";
 import { generateTemplateMainSession } from "./utils/daily-protocol-template-session.js";
 import {
   buildProtocolGenerationIdempotencyKey,
@@ -1444,6 +1444,17 @@ async function generateProtocol(supabase, userId, payload, headers, log = logger
   // COMPOSE: the intent layer decides whether today is a gym day.
   if (composeGym !== null) {
     isGymTrainingDay = composeGym;
+  }
+  // Strength spacing guard (mirrors the client's applyStrengthRecoveryGuard):
+  // a strength session completed within the last 24h suppresses today's gym
+  // blocks unconditionally — compose path and legacy fallback alike. No two
+  // heavy strength days back-to-back; 48h-apart strength days stay allowed.
+  if (isGymTrainingDay) {
+    const strengthBlockedAt = await getLastStrengthSession(supabase, userId, date);
+    if (strengthBlockedAt) {
+      isGymTrainingDay = false;
+      aiRationale += ` 🏋️ Strength spacing guard: strength session logged ${strengthBlockedAt.slice(0, 10)} — no back-to-back heavy lifting days.`;
+    }
   }
 
   if (isGymTrainingDay) {

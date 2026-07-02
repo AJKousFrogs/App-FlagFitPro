@@ -110,31 +110,6 @@ function mapAssignmentRecord(assignmentRecord, program) {
 }
 
 /**
- * Position mapping from UI values to modifier keys
- * Maps onboarding position values to position_exercise_modifiers.position values
- */
-const POSITION_TO_MODIFIER_KEY = {
-  QB: "quarterback",
-  WR: "wr_db",
-  DB: "wr_db",
-  Center: "center",
-  Rusher: "rusher",
-  Blitzer: "blitzer",
-  LB: "linebacker",
-  Hybrid: "hybrid",
-};
-
-/**
- * Normalize position value to modifier key
- */
-function normalizePositionForModifiers(position) {
-  if (!position) {
-    return "wr_db";
-  }
-  return POSITION_TO_MODIFIER_KEY[position] || "wr_db";
-}
-
-/**
  * Map position to program ID
  * QB gets the QB program, everyone else gets WR/DB program
  * (Centers, Rushers/Blitzers, DBs, WRs, LBs, Hybrids all use WR/DB base with modifiers)
@@ -584,7 +559,5 @@ const handler = async (event, context) => {
 
 // Export for testing and reuse
 export { handler, PROGRAM_IDS };
-export { POSITION_TO_MODIFIER_KEY };
 export { getProgramIdForPosition };
-export { normalizePositionForModifiers };
 export const testHandler = handler;

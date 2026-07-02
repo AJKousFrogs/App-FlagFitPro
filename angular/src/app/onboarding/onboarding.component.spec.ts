@@ -9,7 +9,7 @@
 
 import { TestBed } from "@angular/core/testing";
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { Subject, throwError } from "rxjs";
+import { Observable, Subject, throwError } from "rxjs";
 import { provideRouter, Router } from "@angular/router";
 import { OnboardingComponent } from "./onboarding.component";
 import { ApiService } from "../core/services/api.service";
@@ -21,7 +21,13 @@ function buildApiMock(observable: Subject<unknown>) {
   return { post: vi.fn(() => observable) };
 }
 
-async function mountComponent(apiMock: ReturnType<typeof buildApiMock>) {
+/** Accepts any Observable-returning post mock (Subject for success-path tests,
+ * throwError for failure-path ones) — Subject IS an Observable. */
+interface ApiPostMock {
+  post: ReturnType<typeof vi.fn<() => Observable<unknown>>>;
+}
+
+async function mountComponent(apiMock: ApiPostMock) {
   TestBed.configureTestingModule({
     imports: [OnboardingComponent],
     providers: [

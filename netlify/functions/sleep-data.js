@@ -1,4 +1,5 @@
 import { baseHandler } from "./utils/base-handler.js";
+import { calculateAge } from "./utils/daily-protocol-context.js";
 import { createErrorResponse, createSuccessResponse } from "./utils/error-handler.js";
 import { createLogger } from "./utils/structured-logger.js";
 
@@ -13,26 +14,6 @@ function isOptionalSchemaError(error) {
     message.includes("does not exist") ||
     message.includes("schema cache")
   );
-}
-
-function calculateAge(birthDate) {
-  if (!birthDate) {
-    return null;
-  }
-  const birth = new Date(birthDate);
-  if (Number.isNaN(birth.getTime())) {
-    return null;
-  }
-  const today = new Date();
-  let age = today.getFullYear() - birth.getFullYear();
-  const monthDiff = today.getMonth() - birth.getMonth();
-  if (
-    monthDiff < 0 ||
-    (monthDiff === 0 && today.getDate() < birth.getDate())
-  ) {
-    age -= 1;
-  }
-  return age >= 0 ? age : null;
 }
 
 function normalizeSleepRows(rows, dateKey, hoursKey, qualityKey) {

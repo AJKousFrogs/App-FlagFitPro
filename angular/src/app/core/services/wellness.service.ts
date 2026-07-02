@@ -8,17 +8,6 @@ import { SupabaseService } from "./supabase.service";
 import { RealtimeBroadcastPayload } from "../models/realtime-broadcast.model";
 import { ApiService, API_ENDPOINTS } from "./api.service";
 
-/** Result shape from public.calculate_acwr (jsonb). */
-export interface AcwrCalculationResult {
-  acute_load: number;
-  chronic_load: number;
-  ratio: number;
-  sufficient: boolean;
-  days_with_data: number;
-  sessions_in_window: number;
-  computed_at: string;
-}
-
 export interface WellnessData {
   /** `daily_wellness_checkin.id` is a uuid, not a number. */
   id?: string;
@@ -83,7 +72,6 @@ interface DailyWellnessCheckinEntry {
   soreness_areas?: string[];
   notes?: string;
   calculated_readiness?: number;
-  readiness_score?: number;
   travel_hours?: number;
   created_at: string;
   updated_at?: string;
@@ -217,8 +205,7 @@ export class WellnessService {
             motivation: entry.motivation_level,
             mood: entry.mood,
             hydration: entry.hydration_level,
-            readinessScore:
-              entry.calculated_readiness ?? entry.readiness_score,
+            readinessScore: entry.calculated_readiness,
             notes: entry.notes,
             travelHours: entry.travel_hours,
             timestamp: entry.created_at,
@@ -483,47 +470,6 @@ export class WellnessService {
   }
 
   /**
-   * Server-side ACWR (EWMA) from `workout_logs`; matches default evidence preset math.
-   */
-  calculateAcwr(): Observable<{
-    success: boolean;
-    data?: AcwrCalculationResult;
-    error?: string;
-  }> {
-    const userId = this.userId();
-    if (!userId) {
-      return of({ success: false, error: "Not authenticated" });
-    }
-
-    return defer(() => this.supabaseService.waitForInit()).pipe(
-      switchMap(() =>
-        from(
-          this.supabaseService.client.rpc("calculate_acwr", {
-            p_user_id: userId,
-          }),
-        ),
-      ),
-      map(({ data, error }) => {
-        if (error) {
-          throw error;
-        }
-        return {
-          success: true as const,
-          data: data as AcwrCalculationResult,
-        };
-      }),
-      catchError((error: { message?: string; details?: string }) => {
-        const errorMessage =
-          error?.message || error?.details || JSON.stringify(error);
-        this.logger.error("wellness_calculate_acwr_failed", error, {
-          message: errorMessage,
-        });
-        return of({ success: false, error: errorMessage });
-      }),
-    );
-  }
-
-  /**
    * Get wellness score (average of all metrics)
    *
    * For a full evidence-based readiness score, use ReadinessService.calculateToday().
@@ -769,7 +715,6 @@ export class WellnessService {
       soreness_areas: record["soreness_areas"] as string[] | undefined,
       notes: record["notes"] as string | undefined,
       calculated_readiness: Number(record["calculated_readiness"] ?? 0),
-      readiness_score: Number(record["readiness_score"] ?? 0),
       created_at: String(record["created_at"] ?? new Date().toISOString()),
       updated_at: record["updated_at"] as string | undefined,
     };
@@ -793,7 +738,7 @@ export class WellnessService {
       motivation: entry.motivation_level,
       mood: entry.mood,
       hydration: entry.hydration_level,
-      readinessScore: entry.calculated_readiness ?? entry.readiness_score,
+      readinessScore: entry.calculated_readiness,
       notes: entry.notes,
       timestamp: entry.created_at,
     };

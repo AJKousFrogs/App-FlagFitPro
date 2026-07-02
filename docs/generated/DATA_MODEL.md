@@ -2,7 +2,7 @@
 
 > Regenerate: `npm run docs:regen` (reads `docs/generated/live-schema.snapshot.json`).
 > Refresh against live: re-run the Supabase introspection into that snapshot (Supabase MCP), then rerun.
-> **Schema snapshot (live): 2026-07-01** · doc regenerated: 2026-07-02
+> **Schema snapshot (live): 2026-07-02** · doc regenerated: 2026-07-02
 
 **187 base tables, 7 views.** Tables flagged `DRIFT` exist live but are not defined in any migration file.
 
@@ -811,7 +811,6 @@ Touched by: `ai-chat`, `calc-readiness`, `coach-core`, `daily-protocol`, `perfor
 - `calculated_readiness` numeric
 - `created_at` timestamp with time zone
 - `updated_at` timestamp with time zone
-- `motivation` integer
 - `travel_hours` integer
 
 ### `decision_ledger`
@@ -957,7 +956,7 @@ Touched by: _(no endpoint references this table)_
 - `updated_at` timestamp with time zone
 
 ### `exercisedb_exercises`
-Touched by: `exercisedb`
+Touched by: _(no endpoint references this table)_
 
 - `id` uuid · not null
 - `exercisedb_id` character varying · not null
@@ -979,7 +978,7 @@ Touched by: `exercisedb`
 - `is_approved` boolean
 
 ### `exercisedb_import_logs`
-Touched by: `exercisedb`
+Touched by: _(no endpoint references this table)_
 
 - `id` uuid · not null
 - `import_date` timestamp with time zone
@@ -1027,7 +1026,7 @@ Touched by: `daily-protocol`, `exercise-progression`, `exercises-core`
 - `is_high_intensity` boolean
 
 ### `ff_exercise_mappings`
-Touched by: `exercisedb`
+Touched by: _(no endpoint references this table)_
 
 - `id` uuid · not null
 - `exercisedb_exercise_id` uuid · not null
@@ -2110,9 +2109,7 @@ Touched by: `calc-readiness`, `coach-core`, `daily-protocol`, `readiness-history
 
 - `id` uuid · not null
 - `sleep_score` numeric
-- `wellness_score` numeric
 - `acwr` numeric
-- `notes` text
 - `created_at` timestamp with time zone
 - `updated_at` timestamp with time zone
 - `user_id` uuid · not null
@@ -2539,7 +2536,7 @@ Touched by: `accept-invitation`, `team-invite`, `validate-invitation`
 - `updated_at` timestamp with time zone · not null
 
 ### `team_members`
-Touched by: `accept-invitation`, `ai-chat`, `ai-telemetry`, `attendance`, `calibration-logs`, `chat`, `coach-activity`, `coach-analytics`, `coach-core`, `coach-inbox`, `community`, `daily-protocol`, `decisions`, `exercisedb`, `game-events`, `games-core`, `import-open-data`, `load-management`, `payments-core`, `performance-data`, `privacy-settings`, `response-feedback`, `roster-core`, `smart-training-recommendations`, `staff-nutritionist`, `staff-physiotherapist`, `staff-psychology`, `team-invite`, `team-templates`, `training-plan`, `user-context`, `weather`, `wellness-checkin`
+Touched by: `accept-invitation`, `ai-chat`, `ai-telemetry`, `attendance`, `calibration-logs`, `chat`, `coach-activity`, `coach-analytics`, `coach-core`, `coach-inbox`, `community`, `daily-protocol`, `decisions`, `game-events`, `games-core`, `import-open-data`, `load-management`, `payments-core`, `performance-data`, `privacy-settings`, `response-feedback`, `roster-core`, `smart-training-recommendations`, `staff-nutritionist`, `staff-physiotherapist`, `staff-psychology`, `team-invite`, `team-templates`, `training-plan`, `user-context`, `weather`, `wellness-checkin`
 
 - `id` uuid · not null
 - `team_id` uuid · not null

@@ -1358,19 +1358,6 @@
   status = 200
   force = true
 
-# ExerciseDB API - Exercise database manager
-[[redirects]]
-  from = "/api/exercisedb/*"
-  to = "/.netlify/functions/exercisedb"
-  status = 200
-  force = true
-
-[[redirects]]
-  from = "/api/exercisedb"
-  to = "/.netlify/functions/exercisedb"
-  status = 200
-  force = true
-
 # Exercises API - Exercise library for training
 [[redirects]]
   from = "/api/exercises/*"

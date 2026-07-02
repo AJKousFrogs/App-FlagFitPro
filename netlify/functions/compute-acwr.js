@@ -187,9 +187,9 @@ const handler = async (event, context) => {
       }
 
       // ACWR (current + series) comes from the canonical EWMA util so the summary
-      // and the series are always consistent. The legacy `compute_acwr` Postgres
-      // stored procedure used a coupled rolling average and is superseded; it
-      // should be dropped in a migration (tracked as a data-layer decision).
+      // and the series are always consistent. (The legacy coupled-average
+      // `compute_acwr` Postgres proc is gone — verified absent from the live
+      // schema 2026-07-02.)
       const series = calculateSeriesFromSessions(sessionsResult.data || []);
       return createSuccessResponse(
         {

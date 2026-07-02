@@ -58,3 +58,37 @@ export async function getLastHighCnsSession(supabase, userId, date, spacingHours
   if (error || !data) return null;
   return data.completed_at;
 }
+
+/**
+ * Strength-day spacing: returns the ISO timestamp of the most recent completed
+ * strength/gym session within the spacing window, or null if the athlete is
+ * clear to lift. Mirrors the client's applyStrengthRecoveryGuard: no two heavy
+ * strength days back-to-back. Window is deliberately short (24h) and NOT
+ * age-scaled — 48h-apart strength days (offseason Thu/Sat/Mon) are standard
+ * programming at all ages; age-appropriate strength adjustment is a volume
+ * lever, not a frequency one.
+ *
+ * @param {object} supabase - Supabase client
+ * @param {string} userId
+ * @param {string} date - ISO date string (YYYY-MM-DD) for "today"
+ * @param {number} [spacingHours=24] - Minimum hours between strength days
+ * @returns {string|null} completed_at of the blocking session, or null if clear
+ */
+export async function getLastStrengthSession(supabase, userId, date, spacingHours = 24) {
+  if (!userId) return null;
+  const since = new Date(
+    new Date(`${date}T00:00:00Z`).getTime() - spacingHours * 3_600_000,
+  ).toISOString();
+  const { data, error } = await supabase
+    .from("training_sessions")
+    .select("completed_at")
+    .eq("user_id", userId)
+    .in("session_type", ["strength", "gym", "resistance", "strength_training"])
+    .gte("completed_at", since)
+    .not("completed_at", "is", null)
+    .order("completed_at", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+  if (error || !data) return null;
+  return data.completed_at;
+}

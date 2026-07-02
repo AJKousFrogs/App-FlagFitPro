@@ -21,14 +21,16 @@ const logger = createLogger({ service: "netlify.groq-client" });
 
 const GROQ_API_URL = "https://api.groq.com/openai/v1/chat/completions";
 
-// Available free models (as of Dec 2024)
+// Available Groq models (verified 2026-07-02). NOTE: model IDs get
+// decommissioned — llama-3.1-70b-versatile and mixtral-8x7b-32768 were retired
+// by Groq in early 2025, and the stale pin silently broke every high-risk chat
+// query (a 400 model_decommissioned surfaced as "AI service error"). Re-verify
+// these IDs against https://console.groq.com/docs/models when errors spike.
 const GROQ_MODELS = {
-  // Best for complex reasoning and detailed responses
-  LLAMA_70B: "llama-3.1-70b-versatile",
+  // Best for complex reasoning and detailed responses (llama-3.1-70b successor)
+  LLAMA_70B: "llama-3.3-70b-versatile",
   // Faster, good for most tasks
   LLAMA_8B: "llama-3.1-8b-instant",
-  // Good for code and technical content
-  MIXTRAL: "mixtral-8x7b-32768",
   // Lightweight, fastest responses
   GEMMA: "gemma2-9b-it",
 };
