@@ -65,6 +65,16 @@ src/scss/              Design system: tokens/, system/, and overrides/
 src/assets/            Legal docs, static assets
 ```
 
+## Service Patterns: Signals vs. RxJS
+
+Both are used deliberately, for different jobs — this is not legacy drift to "clean up" by converting one into the other:
+
+- **Signals** hold state a template reads reactively: `loading`, `current`/cached-data, `error`. Expose as `readonly` (write via a private signal + public `.asReadonly()`, or just a `readonly` signal mutated only by the service itself).
+- **RxJS `Observable`** is the return type of imperative action/fetch methods (`getX()`, `calculateY()`) — it lets callers `.subscribe()`, `firstValueFrom()`, or compose with other operators. Inside the method, `tap()` writes the result into the state signals as a side effect; `catchError`/`finalize` update `error`/`loading`. See `readiness.service.ts` (`calculateToday()`) or `wellness.service.ts` (`getWellnessData()`) for the reference shape.
+- **Realtime subscriptions** (Supabase channels) are managed internally with plain callbacks/subscriptions, pushing updates into signals — never expose the raw subscription as public API.
+
+If a service's public surface is *only* synchronous reads of already-loaded state with no fetch/mutation, signals alone are fine (no RxJS needed). If you're writing a new fetch/mutate method, return `Observable`, not `Promise` — it matches every existing service and lets `ApiService`'s interceptors/dedup logic work.
+
 ## Design System
 
 - **Tokens** (single source of truth): `src/scss/tokens/_tokens.scss` — CSS custom properties for all colors, type, space, radii, motion.

@@ -36,20 +36,22 @@ export type PrescriptionIntent =
  *   peak       — peaking block for the most important competitions: sharp, low
  *                volume, high quality, freshness prioritised
  *   postseason — after the competitive block: active regeneration / down-weeks
- *   transition — legacy alias for an active-rest block (treated like postseason)
  *
  * Athletes can declare MULTIPLE windows — a split season (e.g. a spring in-season
  * block, a mid-season off gap, then a second in-season block, a post-season, and
  * a winter off-season) is just several windows; {@link macroPhaseFor} returns the
  * first window that contains the day.
+ *
+ * (The legacy "transition" alias was retired 2026-07-02 — zero live
+ * season_calendar rows used it. macroPhaseFor still normalizes a stale stored
+ * "transition" to "postseason" defensively, since the column is free JSONB.)
  */
 export type SeasonPhase =
   | "offseason"
   | "preseason"
   | "inseason"
   | "peak"
-  | "postseason"
-  | "transition";
+  | "postseason";
 
 /**
  * One athlete-declared season window. `from`/`to` are either a specific span
@@ -172,6 +174,18 @@ export interface DailyPrescription {
     originalIntent: PrescriptionIntent;
   } | null;
   /**
+   * Strength-day spacing applied on top of the base plan, if any. Present when
+   * a heavy strength session completed within the last ~24h suppressed today's
+   * strength intent — no back-to-back heavy lifting days. 48h-apart strength
+   * days (e.g. the offseason Thu/Sat pattern) remain allowed: that is standard
+   * programming, not a violation.
+   */
+  strengthRecoveryAdjustment?: {
+    hoursSinceLastStrength: number;
+    windowHours: number;
+    originalIntent: PrescriptionIntent;
+  } | null;
+  /**
    * Position-specific accessory / prehab focus layered on the session. Does NOT
    * change the core intent or load magnitude — it tells a QB to protect the
    * throwing shoulder, a WR/DB to prioritise hamstring + deceleration work, a
@@ -213,11 +227,16 @@ export interface PeriodizationInputs {
   phase: CompetitionPhase;
   upcoming: CompetitionEvent[];
   lastEvent: CompetitionEvent | null;
-  /** Most recent ACWR; falls back to safe defaults when null. */
+  /** Most recent ACWR. Null → the ACWR-danger guard is simply skipped, never assumed safe. */
   acwr: number | null;
-  /** 0–100 readiness; falls back to 70 when null. */
+  /** 0–100 readiness. Null (no check-in logged) is treated the same as low
+   * readiness — never assumed "fine" — EXCEPT on forecast days (see
+   * {@link isForecast}), where a null readiness is not a missing measurement
+   * but a not-yet-possible one. See decideBasePrescription step 4. */
   readiness: number | null;
-  /** Athlete bodyweight in kg. Falls back to 80kg if not set. */
+  /** Athlete bodyweight in kg. Null → nutrition targets fall back to a
+   * generic estimate, disclosed in the rationale text, never presented as
+   * the athlete's real weight. */
   bodyweightKg: number | null;
   /**
    * Density of upcoming load over 14 days. Used for week-scale modulation.
@@ -284,4 +303,13 @@ export interface PeriodizationInputs {
    * emphasis only — it does not change the core session intent or load.
    */
   position?: string | null;
+  /**
+   * True when this call previews a FUTURE day (the week-ahead view), not a
+   * day-of prescription. On a forecast day, missing acute signals (readiness,
+   * ACWR, weather) mean "not measurable yet", not "athlete skipped a check-in",
+   * so the missing-readiness safety gate does not fire — the day resolves to
+   * its phase-driven plan. Day-of calls (isForecast absent/false) keep the
+   * strict behavior: null readiness → recovery, never assumed fine.
+   */
+  isForecast?: boolean;
 }

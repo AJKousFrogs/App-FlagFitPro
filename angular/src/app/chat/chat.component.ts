@@ -14,6 +14,7 @@ import { AvatarComponent } from "../shared/avatar.component";
 import { AIService, MerlinSuggestedAction } from "../core/services/ai.service";
 import { PrivacySettingsService } from "../core/services/privacy-settings.service";
 import { InjuryService, InjurySeverity } from "../core/services/injury.service";
+import { ScrollToBottomController } from "../shared/utils/scroll-to-bottom.controller";
 
 // Lightweight tightness detector: "my achilles is tight" → {region, severity}.
 // Deterministic; fires the self-report loop alongside Merlin's normal reply.
@@ -121,7 +122,7 @@ export class ChatComponent implements AfterViewChecked {
   );
 
   private sessionId: string | null = null;
-  private autoScroll = false;
+  private readonly scroller = new ScrollToBottomController();
 
   constructor() {
     // Refresh privacy settings so the consent gate reflects reality (the signal
@@ -135,10 +136,7 @@ export class ChatComponent implements AfterViewChecked {
   }
 
   ngAfterViewChecked(): void {
-    if (!this.autoScroll) return;
-    this.autoScroll = false;
-    const el = this.threadEl()?.nativeElement;
-    if (el) el.scrollTop = el.scrollHeight;
+    this.scroller.flush(this.threadEl()?.nativeElement);
   }
 
   send(): void {
@@ -148,7 +146,7 @@ export class ChatComponent implements AfterViewChecked {
     this.turns.update((t) => [...t, { role: "me", text }]);
     this.draft.set("");
     this.busy.set(true);
-    this.autoScroll = true;
+    this.scroller.request();
 
     // Self-report loop: if the athlete reports tightness, log it (which makes the
     // engine pull sprint/high-intensity work off that region) and confirm — in
@@ -166,7 +164,7 @@ export class ChatComponent implements AfterViewChecked {
               text: `Logged your ${tight.region} ${grade} — I've pulled sprint/high-intensity work off it in today's plan. You'll see it adjusted on Today.`,
             },
           ]);
-          this.autoScroll = true;
+          this.scroller.request();
         })
         .catch(() => {
           this.turns.update((t) => [
@@ -176,7 +174,7 @@ export class ChatComponent implements AfterViewChecked {
               text: "I couldn't log that tightness just now — try the Wellness → Niggles & tightness form so your plan adjusts.",
             },
           ]);
-          this.autoScroll = true;
+          this.scroller.request();
         });
     }
 
@@ -195,7 +193,7 @@ export class ChatComponent implements AfterViewChecked {
           },
         ]);
         this.busy.set(false);
-        this.autoScroll = true;
+        this.scroller.request();
       },
       error: (err: unknown) => {
         const message =
@@ -204,7 +202,7 @@ export class ChatComponent implements AfterViewChecked {
             : "Merlin couldn't answer just now — try again in a moment.";
         this.turns.update((t) => [...t, { role: "ai", text: message }]);
         this.busy.set(false);
-        this.autoScroll = true;
+        this.scroller.request();
       },
     });
   }

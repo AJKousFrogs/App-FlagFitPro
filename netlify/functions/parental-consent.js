@@ -1,5 +1,6 @@
 import crypto from "node:crypto";
 import { baseHandler } from "./utils/base-handler.js";
+import { calculateAge } from "./utils/daily-protocol-context.js";
 import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
 import { supabaseAdmin } from "./supabase-client.js";
 import { parseJsonObjectBody as sharedParseJsonObjectBody } from "./utils/input-validator.js";
@@ -12,22 +13,6 @@ function isValidEmail(email) {
 
 function isValidVerificationToken(token) {
   return typeof token === "string" && /^[a-f0-9]{64}$/i.test(token);
-}
-
-function calculateAge(dateOfBirth) {
-  const birthDate = new Date(dateOfBirth);
-  const today = new Date();
-  let age = today.getFullYear() - birthDate.getFullYear();
-  const monthDelta = today.getMonth() - birthDate.getMonth();
-
-  if (
-    monthDelta < 0 ||
-    (monthDelta === 0 && today.getDate() < birthDate.getDate())
-  ) {
-    age -= 1;
-  }
-
-  return age;
 }
 
 // Per-feature consent booleans live in the parental_consent.consent_scope jsonb

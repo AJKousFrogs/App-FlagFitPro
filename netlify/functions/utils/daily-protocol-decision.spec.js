@@ -1,9 +1,30 @@
 import { describe, expect, test, vi } from "vitest";
 import { buildProtocolDecisionContext } from "./daily-protocol-decision.js";
 
+/**
+ * Minimal supabase mock: buildProtocolDecisionContext reads readiness_gates
+ * and recovery_blocks. A generic chainable builder resolving to empty rows
+ * exercises the documented fall-backs (hardcoded gate thresholds, no active
+ * recovery block), which is what these tests assert against.
+ */
+function mockSupabase() {
+  const builder = () => {
+    const b = {};
+    for (const m of ["select", "eq", "in", "lte", "gte", "not", "order", "limit"]) {
+      b[m] = () => b;
+    }
+    b.maybeSingle = () => Promise.resolve({ data: null, error: null });
+    b.single = () => Promise.resolve({ data: null, error: null });
+    b.then = (resolve, reject) =>
+      Promise.resolve({ data: [], error: null }).then(resolve, reject);
+    return b;
+  };
+  return { from: () => builder() };
+}
+
 describe("buildProtocolDecisionContext", () => {
   test("uses training_sessions for ACWR baseline counting and creates baseline day focus", async () => {
-    const supabase = {};
+    const supabase = mockSupabase();
     const computeReadinessDaysStale = vi.fn().mockResolvedValue(null);
     const computeTrainingDaysLogged = vi.fn().mockResolvedValue(5);
 
@@ -60,7 +81,7 @@ describe("buildProtocolDecisionContext", () => {
 
   test("keeps baseline athletes in recovery when ACWR exceeds target range", async () => {
     const result = await buildProtocolDecisionContext({
-      supabase: {},
+      supabase: mockSupabase(),
       userId: "athlete-1",
       date: "2026-04-23",
       context: {

@@ -58,6 +58,11 @@ pids
 coverage
 *.lcov
 
+# Generated audit/health-check reports (regenerate via their scripts, don't commit)
+/validation-report.json
+/health-check-report.json
+/docs/reports/
+
 # Playwright
 .playwright/
 playwright-report/

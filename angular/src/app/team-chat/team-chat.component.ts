@@ -19,6 +19,7 @@ import {
 } from "../core/services/channel.service";
 import { SupabaseService } from "../core/services/supabase.service";
 import { LoggerService } from "../core/services/logger.service";
+import { ScrollToBottomController } from "../shared/utils/scroll-to-bottom.controller";
 
 /**
  * Team chat — a real team channel (the read/write side of ChannelService:
@@ -63,7 +64,7 @@ export class TeamChatComponent implements AfterViewChecked, OnDestroy {
 
   private readonly threadEl = viewChild<ElementRef<HTMLElement>>("thread");
   private unsubscribe: (() => void) | null = null;
-  private autoScroll = false;
+  private readonly scroller = new ScrollToBottomController();
 
   readonly loaded = signal(false);
   readonly channelList = signal<Channel[]>([]);
@@ -103,11 +104,11 @@ export class TeamChatComponent implements AfterViewChecked, OnDestroy {
     if (this.current()?.id === channel.id) return;
     this.unsubscribe?.();
     this.current.set(channel);
-    this.autoScroll = true;
+    this.scroller.request();
     try {
       await this.channels.selectChannel(channel);
       this.unsubscribe = this.channels.subscribeToChannelMessages(channel.id, () => {
-        this.autoScroll = true;
+        this.scroller.request();
       });
     } catch (err) {
       this.logger.error("team_chat_open_failed", err);
@@ -140,17 +141,14 @@ export class TeamChatComponent implements AfterViewChecked, OnDestroy {
       .sendMessage({ channel_id: channel.id, message: text, team_id: channel.team_id ?? undefined })
       .then(() => {
         this.draft.set("");
-        this.autoScroll = true;
+        this.scroller.request();
       })
       .catch((err) => this.logger.error("team_chat_send_failed", err))
       .finally(() => this.busy.set(false));
   }
 
   ngAfterViewChecked(): void {
-    if (!this.autoScroll) return;
-    this.autoScroll = false;
-    const el = this.threadEl()?.nativeElement;
-    if (el) el.scrollTop = el.scrollHeight;
+    this.scroller.flush(this.threadEl()?.nativeElement);
   }
 
   ngOnDestroy(): void {

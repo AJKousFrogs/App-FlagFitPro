@@ -15,6 +15,7 @@ import { SupabaseService } from "../core/services/supabase.service";
 import { LoggerService } from "../core/services/logger.service";
 import { IdentityService } from "../core/services/identity.service";
 import { extractApiPayload } from "../core/utils/api-response-mapper";
+import { readFileAsDataUrl } from "../shared/utils/file.utils";
 
 interface ProfileRead {
   heightCm?: number | null;
@@ -230,7 +231,7 @@ export class ProfileEditComponent implements OnInit {
     this.photoBusy.set(true);
     this.photoMsg.set(null);
     try {
-      const dataUrl = await this.readAsDataUrl(file);
+      const dataUrl = await readFileAsDataUrl(file);
       const res = await firstValueFrom(
         this.api.post<{ url?: string }>("/api/upload", {
           file: dataUrl,
@@ -252,12 +253,4 @@ export class ProfileEditComponent implements OnInit {
     }
   }
 
-  private readAsDataUrl(file: File): Promise<string> {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = () => resolve(String(reader.result));
-      reader.onerror = () => reject(reader.error ?? new Error("read failed"));
-      reader.readAsDataURL(file);
-    });
-  }
 }

@@ -6,10 +6,8 @@ const dbState = vi.hoisted(() => ({
   secondaryPlays: [],
 }));
 
-vi.mock("../../netlify/functions/utils/base-handler.js", () => ({
-  baseHandler: async (event, context, options) =>
-    options.handler(event, context, { userId: "user-1", requestId: "req-test" }),
-}));
+import { mockBaseHandlerModule } from "../test-helpers.js";
+vi.mock("../../netlify/functions/utils/base-handler.js", () => mockBaseHandlerModule({ userId: "user-1", requestId: "req-test" }));
 
 vi.mock("../../netlify/functions/utils/db-query-helper.js", () => ({
   parseAthleteId: () => ({ valid: true, athleteId: "user-1" }),

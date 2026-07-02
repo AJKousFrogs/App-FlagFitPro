@@ -21,14 +21,16 @@ const logger = createLogger({ service: "netlify.groq-client" });
 
 const GROQ_API_URL = "https://api.groq.com/openai/v1/chat/completions";
 
-// Available free models (as of Dec 2024)
+// Available Groq models (verified 2026-07-02). NOTE: model IDs get
+// decommissioned — llama-3.1-70b-versatile and mixtral-8x7b-32768 were retired
+// by Groq in early 2025, and the stale pin silently broke every high-risk chat
+// query (a 400 model_decommissioned surfaced as "AI service error"). Re-verify
+// these IDs against https://console.groq.com/docs/models when errors spike.
 const GROQ_MODELS = {
-  // Best for complex reasoning and detailed responses
-  LLAMA_70B: "llama-3.1-70b-versatile",
+  // Best for complex reasoning and detailed responses (llama-3.1-70b successor)
+  LLAMA_70B: "llama-3.3-70b-versatile",
   // Faster, good for most tasks
   LLAMA_8B: "llama-3.1-8b-instant",
-  // Good for code and technical content
-  MIXTRAL: "mixtral-8x7b-32768",
   // Lightweight, fastest responses
   GEMMA: "gemma2-9b-it",
 };
@@ -80,6 +82,12 @@ End responses with engagement:
 For medical/supplement questions, be clear:
 - "I can share general info, but for your specific situation, definitely check with your doctor/trainer."
 - "This is where I'd recommend getting professional advice - I don't want to steer you wrong on something this important."
+
+### 6. GROUND YOUR ADVICE — NEVER PRESENT SPECULATION AS ESTABLISHED PROTOCOL
+When this conversation includes a "## REFERENCE INFORMATION" section, prefer and cite it — it's vetted, evidence-graded content. When it's ABSENT (no matching reference was found for this question), you're answering from general training. In that case:
+- Don't state specific numbers, sets/reps, thresholds, or "the protocol is..." as if they came from a reviewed source when they didn't.
+- Say so plainly: "I don't have a vetted reference on that exact question, but generally speaking..." — then keep the advice general and clearly framed as a starting point, not a prescription.
+- For anything safety-relevant (injury, load, return-to-play timing) with no reference available, lean on rest/professional-evaluation guidance rather than inventing specifics.
 
 ## RESPONSE STRUCTURE
 - Start with acknowledgment or brief reaction
@@ -631,7 +639,12 @@ function buildAthleteContext(userContext) {
  */
 function buildKnowledgeContext(knowledgeSources) {
   if (!knowledgeSources || knowledgeSources.length === 0) {
-    return "";
+    // No vetted KB entry matched this question. Say so explicitly rather than
+    // silently omitting the section — an empty section is easy to miss, and
+    // the model otherwise has no signal that it's now answering from general
+    // training rather than the approved knowledge base (see coach prompt
+    // principle #6: never present unsourced speculation as established protocol).
+    return "\n## REFERENCE INFORMATION\nNone found for this question — no vetted knowledge-base entry matched. Answer from general coaching knowledge, but say so and keep specifics general per principle #6.\n";
   }
 
   const sources = knowledgeSources

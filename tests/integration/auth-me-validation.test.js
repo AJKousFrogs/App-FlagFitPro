@@ -5,13 +5,11 @@ const state = vi.hoisted(() => ({
   authError: null,
 }));
 
-vi.mock("../../netlify/functions/utils/base-handler.js", () => ({
-  baseHandler: async (event, context, options) =>
-    options.handler(event, context, {
+import { mockBaseHandlerModule } from "../test-helpers.js";
+vi.mock("../../netlify/functions/utils/base-handler.js", () => mockBaseHandlerModule({
       userId: "user-123",
       requestId: "req-test",
-    }),
-}));
+    }));
 
 vi.mock("../../netlify/functions/utils/auth-helper.js", () => ({
   getSupabaseClient: () => ({

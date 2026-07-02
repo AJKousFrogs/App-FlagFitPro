@@ -64,8 +64,35 @@ async function getEffectiveRole(context) {
   };
 }
 
-function isNutritionistReviewer(roles) {
-  return roles.metaRole === "nutritionist" || roles.dbRole === "nutritionist";
+/**
+ * Which staff roles may approve/reject each knowledge entry_type. Until
+ * 2026-07-02 a single 'nutritionist' role gated ALL categories — functional,
+ * but a nutritionist approving plyometric-progression or rehab content is
+ * outside their discipline. Scoped per category instead (role strings from
+ * utils/role-sets.js). Trade-off accepted: a category with no matching staff
+ * user on the team leaves its entries pending (unapproved entries simply
+ * don't serve) — safer than out-of-discipline approval.
+ */
+const ENTRY_TYPE_REVIEWER_ROLES = {
+  nutrition: ["nutritionist"],
+  supplement: ["nutritionist"],
+  injury: ["physiotherapist"],
+  recovery_method: ["physiotherapist"],
+  psychology: ["psychologist"],
+  training_method: ["strength_conditioning_coach", "head_coach", "coach"],
+};
+const ALL_REVIEWER_ROLES = new Set(Object.values(ENTRY_TYPE_REVIEWER_ROLES).flat());
+
+/** Any reviewer role at all — gates reviewer-wide reads (pending list, audit). */
+function isKnowledgeReviewer(roles) {
+  return ALL_REVIEWER_ROLES.has(roles.metaRole) || ALL_REVIEWER_ROLES.has(roles.dbRole);
+}
+
+/** May this user approve/reject an entry of this specific type? */
+function canReviewEntryType(roles, entryType) {
+  const allowed =
+    ENTRY_TYPE_REVIEWER_ROLES[normalizeText(entryType).toLowerCase()] || [];
+  return allowed.includes(roles.metaRole) || allowed.includes(roles.dbRole);
 }
 
 function getQualityIssues(entry) {
@@ -132,7 +159,7 @@ const handler = async (event, context) =>
 
           if (
             targetEntry.merlin_submitted_by !== requestContext.userId &&
-            !isNutritionistReviewer(roles)
+            !isKnowledgeReviewer(roles)
           ) {
             return createErrorResponse(
               "Not allowed to read this audit timeline",
@@ -191,9 +218,9 @@ const handler = async (event, context) =>
         if (pathParts[0] !== "pending") {
           return createErrorResponse("Not found", 404, "not_found", requestId);
         }
-        if (!isNutritionistReviewer(roles)) {
+        if (!isKnowledgeReviewer(roles)) {
           return createErrorResponse(
-            "Only nutritionists can review pending knowledge entries",
+            "Only qualified staff reviewers can review pending knowledge entries",
             403,
             "authorization_error",
             requestId,
@@ -311,7 +338,7 @@ const handler = async (event, context) =>
 
         return createSuccessResponse(
           {
-            message: "Knowledge entry submitted for nutritionist review",
+            message: "Knowledge entry submitted for staff review",
             entry: insertData,
           },
           requestId,
@@ -323,9 +350,9 @@ const handler = async (event, context) =>
         pathParts[0] === "review" &&
         pathParts[1]
       ) {
-        if (!isNutritionistReviewer(roles)) {
+        if (!isKnowledgeReviewer(roles)) {
           return createErrorResponse(
-            "Only nutritionists can approve or reject knowledge entries",
+            "Only qualified staff reviewers can approve or reject knowledge entries",
             403,
             "authorization_error",
             requestId,
@@ -360,6 +387,18 @@ const handler = async (event, context) =>
             "Knowledge entry not found",
             404,
             "not_found",
+            requestId,
+          );
+        }
+
+        // Discipline gate: the reviewer's role must match this entry's category
+        // (a nutritionist can't approve rehab content, a physio can't approve
+        // supplement dosing — see ENTRY_TYPE_REVIEWER_ROLES).
+        if (!canReviewEntryType(roles, existingEntry.entry_type)) {
+          return createErrorResponse(
+            `Your role cannot review '${normalizeText(existingEntry.entry_type)}' entries`,
+            403,
+            "authorization_error",
             requestId,
           );
         }

@@ -20,8 +20,6 @@ export default defineConfig({
       "tests/privacy-safety/**/*.{spec,test}.{js,ts}",
     ],
     exclude: [
-      // Legacy custom runner — defines its own test() and process.exit()
-      "netlify/functions/utils/compute-override.spec.js",
       // Playwright tests (wrong framework for vitest)
       "tests/e2e/**",
       "tests/responsive/**",

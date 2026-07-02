@@ -828,7 +828,6 @@ class HealthChecker {
         // Check for critical functions
         const criticalFunctions = [
           "auth-me.js",
-          "dashboard.js",
           "auth-login.js",
         ];
         let criticalFound = 0;

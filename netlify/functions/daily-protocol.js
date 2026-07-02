@@ -18,7 +18,7 @@
 import { supabaseAdmin } from "./utils/supabase-client.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { authenticateRequest } from "./utils/auth-helper.js";
-import { createErrorResponse, handleValidationError } from "./utils/error-handler.js";
+import { createErrorResponse, handleValidationError, getCorsHeaders } from "./utils/error-handler.js";
 import { tryParseJsonObjectBody } from "./utils/input-validator.js";
 import {
   getIsoDateString,
@@ -60,7 +60,7 @@ import { persistFallbackProtocolWhenExercisesMissing } from "./utils/daily-proto
 import { generateMainSessionFallback } from "./utils/daily-protocol-main-session.js";
 import { generateReturnToPlayProtocol } from "./utils/daily-protocol-rtp.js";
 import { getActiveInjuries } from "./utils/active-injuries.js";
-import { getLastHighCnsSession } from "./utils/cns-spacing.js";
+import { getLastHighCnsSession, getLastStrengthSession, cnsSpacingHoursForAge } from "./utils/cns-spacing.js";
 import { generateTemplateMainSession } from "./utils/daily-protocol-template-session.js";
 import {
   buildProtocolGenerationIdempotencyKey,
@@ -703,13 +703,7 @@ function getTaperRecommendation(daysUntil, isPeakEvent) {
 const legacyDailyProtocolHandler = async (event, log = logger) => {
   const { httpMethod, path, queryStringParameters, body, headers } = event;
 
-  // CORS headers
-  const corsHeaders = {
-    "Access-Control-Allow-Origin": "*",
-    "Access-Control-Allow-Headers": "Content-Type, Authorization",
-    "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
-    "Content-Type": "application/json",
-  };
+  const corsHeaders = getCorsHeaders(event);
   const withHeaders = (response) => ({ ...response, headers: corsHeaders });
 
   // Handle preflight
@@ -1318,14 +1312,16 @@ async function generateProtocol(supabase, userId, payload, headers, log = logger
     computeTrainingDaysLogged,
   });
 
-  // CNS 72h spacing guard: never prescribe sprint/max-CNS if the athlete did
-  // one within the last 72h. Canonical window = spacingHoursHighImpact from
-  // training-modalities.config.ts. The client AcwrService.shouldSkipSprints()
-  // is a coarse proxy (riskZone + day-of-week only); this is the server authority.
-  const CNS_SPACING_HOURS = 72;
+  // CNS spacing guard: never prescribe sprint/max-CNS if the athlete did one
+  // within the age-scaled recovery window (48h base, 60h 35-39, 72h 40+ — same
+  // bands periodization.service.ts uses client-side, so the intent shown on
+  // "today" and the protocol actually generated never silently disagree). The
+  // client AcwrService.shouldSkipSprints() is a coarse proxy (riskZone +
+  // day-of-week only); this is the server authority.
+  const CNS_SPACING_HOURS = cnsSpacingHoursForAge(context.age);
   const cnsBlockedAt = await getLastHighCnsSession(supabase, userId, date, CNS_SPACING_HOURS);
   if (cnsBlockedAt) {
-    aiRationale += ` ⚡ CNS spacing guard: sprint/speed session logged ${cnsBlockedAt.slice(0, 10)} — ≥72h between max-effort sessions.`;
+    aiRationale += ` ⚡ CNS spacing guard: sprint/speed session logged ${cnsBlockedAt.slice(0, 10)} — ≥${CNS_SPACING_HOURS}h between max-effort sessions.`;
   }
 
   // COMPOSE: when the intent layer supplies the day's intent, REALIZE it —
@@ -1339,7 +1335,7 @@ async function generateProtocol(supabase, userId, payload, headers, log = logger
     trainingFocus = m.trainingFocus;
     isPracticeDay = m.isPracticeDay;
     isFilmRoomDay = false;
-    composeSprint = cnsBlockedAt ? false : m.isSprintSession;
+    composeSprint = m.isSprintSession;
     composeGym = m.isGymTrainingDay;
   }
 
@@ -1405,6 +1401,13 @@ async function generateProtocol(supabase, userId, payload, headers, log = logger
   if (composeSprint !== null) {
     isSprintSession = weatherBlocksSprint ? false : composeSprint;
   }
+  // CNS spacing guard applies unconditionally — both the compose path (intent
+  // layer) and the legacy Saturday/session-template fallback path must respect
+  // it. Previously only gated inside the compose branch (composeSprint = ...),
+  // so a request without payload.intent could silently skip the spacing check.
+  if (cnsBlockedAt) {
+    isSprintSession = false;
+  }
 
   await addWarmupBlock({
     supabase,
@@ -1441,6 +1444,17 @@ async function generateProtocol(supabase, userId, payload, headers, log = logger
   // COMPOSE: the intent layer decides whether today is a gym day.
   if (composeGym !== null) {
     isGymTrainingDay = composeGym;
+  }
+  // Strength spacing guard (mirrors the client's applyStrengthRecoveryGuard):
+  // a strength session completed within the last 24h suppresses today's gym
+  // blocks unconditionally — compose path and legacy fallback alike. No two
+  // heavy strength days back-to-back; 48h-apart strength days stay allowed.
+  if (isGymTrainingDay) {
+    const strengthBlockedAt = await getLastStrengthSession(supabase, userId, date);
+    if (strengthBlockedAt) {
+      isGymTrainingDay = false;
+      aiRationale += ` 🏋️ Strength spacing guard: strength session logged ${strengthBlockedAt.slice(0, 10)} — no back-to-back heavy lifting days.`;
+    }
   }
 
   if (isGymTrainingDay) {

@@ -67,8 +67,6 @@ export class OnboardingComponent {
     { phase: "inseason", from: "09-01", to: "04-30" },
     { phase: "offseason", from: "07-01", to: "08-15" },
   ]);
-  // Picker options (legacy "transition" stays valid in the type/engine for any
-  // already-stored windows, but athletes now choose "Post-season" instead).
   readonly phases: SeasonPhase[] = [
     "offseason",
     "preseason",
@@ -82,7 +80,6 @@ export class OnboardingComponent {
     inseason: "In-season",
     peak: "Peak",
     postseason: "Post-season",
-    transition: "Transition",
   };
 
   // step 4 — training prefs

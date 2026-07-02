@@ -791,3 +791,20 @@ export const mockDate = (dateString) => {
     global.Date = RealDate;
   };
 };
+
+// ============================================================================
+// base-handler.js mock factory
+// ============================================================================
+
+/**
+ * Shared `vi.mock("../../netlify/functions/utils/base-handler.js", ...)` factory
+ * for integration tests whose auth-context metadata is a static literal (no
+ * per-test-file local state). Use as:
+ *   vi.mock("../../netlify/functions/utils/base-handler.js", () => mockBaseHandlerModule({ userId: "user-1" }));
+ * Tests that need dynamic per-test metadata (a mutable `state` object, a
+ * `buildSupabaseMock()` factory, etc.) should keep their own inline mock —
+ * this only covers the literal-metadata case.
+ */
+export const mockBaseHandlerModule = (meta = {}) => ({
+  baseHandler: async (event, context, options) => options.handler(event, context, meta),
+});

@@ -4,10 +4,8 @@ const dbState = vi.hoisted(() => ({
   listError: null,
 }));
 
-vi.mock("../../netlify/functions/utils/base-handler.js", () => ({
-  baseHandler: async (event, context, options) =>
-    options.handler(event, context, { userId: null, requestId: "req-test" }),
-}));
+import { mockBaseHandlerModule } from "../test-helpers.js";
+vi.mock("../../netlify/functions/utils/base-handler.js", () => mockBaseHandlerModule({ userId: null, requestId: "req-test" }));
 
 vi.mock("../../netlify/functions/utils/supabase-client.js", () => ({
   supabaseAdmin: {

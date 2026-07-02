@@ -200,7 +200,6 @@
   [headers.values]
     Cache-Control = "public, max-age=0, must-revalidate"
 
-# API Routes for Dashboard (must come before page redirects)
 # API Routes for Event Participation (post-event actuals → ACWR)
 [[redirects]]
   from = "/api/event-participation/*"
@@ -250,25 +249,6 @@
 [[redirects]]
   from = "/api/event-availability"
   to = "/.netlify/functions/event-availability"
-  status = 200
-  force = true
-
-[[redirects]]
-  from = "/api/dashboard/*"
-  to = "/.netlify/functions/dashboard"
-  status = 200
-  force = true
-
-[[redirects]]
-  from = "/api/dashboard"
-  to = "/.netlify/functions/dashboard"
-  status = 200
-  force = true
-
-# API Routes for Dashboard Overview (specific endpoint)
-[[redirects]]
-  from = "/api/dashboard/overview"
-  to = "/.netlify/functions/dashboard"
   status = 200
   force = true
 
@@ -377,13 +357,6 @@
 [[redirects]]
   from = "/api/coach-activity"
   to = "/.netlify/functions/coach"
-  status = 200
-  force = true
-
-# API Routes for Analytics
-[[redirects]]
-  from = "/api/analytics/*"
-  to = "/.netlify/functions/analytics"
   status = 200
   force = true
 
@@ -651,38 +624,6 @@
 
 [[redirects]]
   from = "/api/notifications/*"
-  to = "/.netlify/functions/notifications"
-  status = 200
-  force = true
-
-[[redirects]]
-  from = "/api/dashboard/notifications"
-  to = "/.netlify/functions/notifications"
-  status = 200
-  force = true
-
-[[redirects]]
-  from = "/api/dashboard/notifications/*"
-  to = "/.netlify/functions/notifications"
-  status = 200
-  force = true
-
-# Consolidated: notifications-count, notifications-create, notifications-preferences
-# all handled by the unified notifications domain function
-[[redirects]]
-  from = "/api/dashboard/notifications/count"
-  to = "/.netlify/functions/notifications"
-  status = 200
-  force = true
-
-[[redirects]]
-  from = "/api/dashboard/notifications/create"
-  to = "/.netlify/functions/notifications"
-  status = 200
-  force = true
-
-[[redirects]]
-  from = "/api/dashboard/notifications/preferences"
   to = "/.netlify/functions/notifications"
   status = 200
   force = true
@@ -1414,19 +1355,6 @@
 [[redirects]]
   from = "/api/coach/calendar"
   to = "/.netlify/functions/coach"
-  status = 200
-  force = true
-
-# ExerciseDB API - Exercise database manager
-[[redirects]]
-  from = "/api/exercisedb/*"
-  to = "/.netlify/functions/exercisedb"
-  status = 200
-  force = true
-
-[[redirects]]
-  from = "/api/exercisedb"
-  to = "/.netlify/functions/exercisedb"
   status = 200
   force = true
 

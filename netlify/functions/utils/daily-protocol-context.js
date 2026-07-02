@@ -69,12 +69,18 @@ function calculateAge(birthDate) {
 
   const today = new Date();
   const birth = new Date(birthDate);
+  // Malformed date string → null, never NaN (a NaN age silently fails every
+  // comparison, which is how the pre-consolidation local copies misbehaved).
+  if (Number.isNaN(birth.getTime())) {
+    return null;
+  }
   let age = today.getFullYear() - birth.getFullYear();
   const monthDiff = today.getMonth() - birth.getMonth();
   if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) {
     age--;
   }
-  return age;
+  // A future birth date is garbage data, not an age of -3.
+  return age >= 0 ? age : null;
 }
 
 const POSITION_TO_MODIFIER_KEY = {

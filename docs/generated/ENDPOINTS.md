@@ -1,9 +1,9 @@
 # Endpoint Reference (GENERATED — do not hand-edit)
 
 > Regenerate: `npm run docs:regen` (parses `netlify.toml` + `netlify/functions/*.js` + scans `angular/src`).
-> **Last verified: 2026-06-23**
+> **Last verified: 2026-07-02**
 
-**113 functions: 111 exercised, 2 orphaned.** A table name with ⚠️ is referenced in code but not a live table (possible drift/typo); _(bucket)_ = Storage bucket, not a DB table.
+**108 functions: 108 exercised, 0 orphaned.** A table name with ⚠️ is referenced in code but not a live table (possible drift/typo); _(bucket)_ = Storage bucket, not a DB table.
 
 ## Exercised
 
@@ -16,8 +16,7 @@
 | `admin` | GET, POST | /api/admin/*<br>/api/admin | users, database-backups _(bucket)_ |
 | `ai-chat` | GET, POST | /api/ai/chat<br>/api/ai/chat/*<br>/api/ai-chat<br>/api/ai-chat/*<br>/api/ai/analyze-context<br>/api/ai/process-command<br>/api/ai/feedback<br>/api/ai/feedback/*<br>/api/ai-review/*<br>/api/ai-review | ai_chat_sessions, training_sessions, v_injuries_unified, daily_protocols, daily_wellness_checkin, games, nutrition_plans, recovery_blocks, users, physical_measurements, team_members, conversation_context, ai_followups, user_ai_preferences, user_age_groups, youth_athlete_settings, ai_messages, parent_guardian_links, parent_notifications, classification_history, knowledge_base_entries, ai_recommendations, coach_inbox_items, privacy_settings |
 | `ai-telemetry` | GET | /api/ai/telemetry | team_members, ai_chat_sessions, ai_messages, ai_recommendations, knowledge_base_entries |
-| `analytics` | OPTIONS | /api/analytics/*<br>/api/performance/metrics<br>/api/performance/metrics/*<br>/api/performance/heatmap<br>/api/performance/heatmap/*<br>/api/performance-data/measurements<br>/api/performance-data/performance-tests<br>/api/performance-data/wellness<br>/api/performance-data/supplements<br>/api/performance-data/injuries<br>/api/performance-data/injuries/*<br>/api/performance-data/trends<br>/api/performance-data/export<br>/api/performance/trends<br>/api/performance/trends/* | — |
-| `analytics-core` | GET | _(router submodule)_ | team_members, users, performance_tests |
+| `analytics` | OPTIONS | /api/performance/metrics<br>/api/performance/metrics/*<br>/api/performance/heatmap<br>/api/performance/heatmap/*<br>/api/performance-data/measurements<br>/api/performance-data/performance-tests<br>/api/performance-data/wellness<br>/api/performance-data/supplements<br>/api/performance-data/injuries<br>/api/performance-data/injuries/*<br>/api/performance-data/trends<br>/api/performance-data/export<br>/api/performance/trends<br>/api/performance/trends/* | — |
 | `api-docs` | GET | /api/api-docs | — |
 | `athlete-events` | GET, POST, PUT, PATCH, DELETE | /api/athlete-events/*<br>/api/athlete-events | athlete_events |
 | `athlete-injuries` | GET, POST | /api/athlete-injuries/*<br>/api/athlete-injuries | athlete_injuries |
@@ -25,7 +24,6 @@
 | `auth` | OPTIONS | /api/auth/me<br>/api/auth-me<br>/api/auth/reset-password<br>/api/auth/login<br>/api/accept-invitation<br>/api/validate-invitation<br>/api/account/pause<br>/api/account/resume<br>/api/account/*<br>/api/account/delete<br>/api/parental-consent/*<br>/api/parental-consent | — |
 | `auth-login` | POST | _(router submodule)_ | — |
 | `auth-me` | GET | _(router submodule)_ | — |
-| `cache` | — | _(router submodule)_ | — |
 | `calc-readiness` | GET, POST | _(router submodule)_ | v_athlete_schedule, training_sessions, daily_wellness_checkin, readiness_scores, athlete_injuries |
 | `calibration-logs` | GET, POST | /api/calibration-logs<br>/api/calibration-logs/* | calibration_logs, team_members |
 | `chat` | GET, POST, PATCH, DELETE | _(router submodule)_ | team_members, channels, channel_members, chat_messages |
@@ -39,7 +37,6 @@
 | `compute-acwr` | POST | _(router submodule)_ | training_sessions |
 | `daily-protocol` | GET, POST | /api/daily-protocol<br>/api/daily-protocol/* | exercises, athlete_training_config, users, age_recovery_modifiers, player_programs, training_phases, training_weeks, readiness_scores, daily_protocols, protocol_exercises, team_members, team_season_phases, daily_wellness_checkin, training_sessions, notifications, player_training_stats, get_athlete_readiness(), compute_acwr(), update_player_streak(), award_achievement() |
 | `daily-training` | GET, POST | _(router submodule)_ | users, training_sessions, games, plyometrics_exercises, isometrics_exercises |
-| `dashboard` | GET | /api/dashboard/*<br>/api/dashboard<br>/api/dashboard/overview | training_sessions, team_members |
 | `data` | OPTIONS | /api/wearables/status<br>/api/import/fetch-url<br>/api/import/process<br>/api/import-open-data<br>/api/data-export/*<br>/api/data-export | — |
 | `data-export` | GET, POST | _(router submodule)_ | — |
 | `decisions` | GET, POST | _(router submodule)_ | team_members, decision_ledger |
@@ -62,7 +59,7 @@
 | `knowledge-search` | GET, POST | _(router submodule)_ | knowledge_base_entries |
 | `load-management` | GET | _(router submodule)_ | team_members, training_sessions |
 | `micro-sessions` | GET, POST, PATCH | _(router submodule)_ | micro_sessions, micro_session_analytics |
-| `notifications` | OPTIONS | /api/notifications<br>/api/notifications/*<br>/api/dashboard/notifications<br>/api/dashboard/notifications/*<br>/api/dashboard/notifications/count<br>/api/dashboard/notifications/create<br>/api/dashboard/notifications/preferences | — |
+| `notifications` | OPTIONS | /api/notifications<br>/api/notifications/* | — |
 | `nutrition` | GET, POST, PUT | _(router submodule)_ | athlete_nutrition_profiles, nutrition_plans, meal_templates |
 | `parental-consent` | GET, POST, PUT | _(router submodule)_ | users, parental_consent, privacy_audit_log |
 | `payments` | OPTIONS | /api/payments/*<br>/api/payments<br>/api/sponsors/*<br>/api/sponsors<br>/api/sponsor-logo/* | — |
@@ -125,5 +122,4 @@
 
 | Function | Methods | /api path(s) | Tables / RPCs touched |
 |---|---|---|---|
-| `auth-reset-password` | — | _(no /api redirect)_ | — |
-| `exercisedb` | GET, POST | /api/exercisedb/*<br>/api/exercisedb | team_members, exercisedb_exercises, ff_exercise_mappings, exercisedb_import_logs |
+| _(none)_ | | | |

@@ -65,7 +65,7 @@ export class StatsComponent {
     this.spark(
       this.history()
         .map((h) => h.acwr)
-        .filter((v) => Number.isFinite(v) && v > 0),
+        .filter((v): v is number => v !== null && Number.isFinite(v) && v > 0),
       (v) => 110 - v * 50,
     ),
   );
