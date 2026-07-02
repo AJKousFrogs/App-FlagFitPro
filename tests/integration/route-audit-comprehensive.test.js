@@ -169,16 +169,6 @@ describe.skipIf(!RUN_API_E2E)("Route Audit: CRUD Operations", () => {
       expect(Array.isArray(response.body.data.sessions)).toBe(true);
     });
 
-    test("should get analytics performance trends", async () => {
-      const response = await request(API_BASE_URL)
-        .get(`/api/analytics/performance-trends?userId=${userId}&weeks=4`)
-        .set("Authorization", `Bearer ${authToken}`);
-
-      expectStandardSuccess(response);
-      expect(response.body.data).toHaveProperty("weeks");
-      expect(response.body.data).toHaveProperty("overallScores");
-    });
-
     test("should work with optional auth (no token)", async () => {
       const response = await request(API_BASE_URL).get(
         "/api/training/suggestions",
@@ -349,71 +339,6 @@ describe.skipIf(!RUN_API_E2E)("Route Audit: Input Validation", () => {
     );
   });
 
-  describe("Weeks Parameter Validation", () => {
-    test("should accept valid weeks parameter", async () => {
-      const response = await request(API_BASE_URL).get(
-        `/api/analytics/performance-trends?userId=${userId}&weeks=4`,
-      );
-
-      expectStandardSuccess(response);
-    });
-
-    test("should reject weeks out of range (0)", async () => {
-      const response = await request(API_BASE_URL).get(
-        `/api/analytics/performance-trends?userId=${userId}&weeks=0`,
-      );
-
-      expectStandardError(response, 400);
-      expect(response.body.code).toBe("INVALID_WEEKS");
-    });
-
-    test("should reject weeks out of range (100)", async () => {
-      const response = await request(API_BASE_URL).get(
-        `/api/analytics/performance-trends?userId=${userId}&weeks=100`,
-      );
-
-      expectStandardError(response, 400);
-      expect(response.body.code).toBe("INVALID_WEEKS");
-    });
-
-    test("should reject non-numeric weeks", async () => {
-      const response = await request(API_BASE_URL).get(
-        `/api/analytics/performance-trends?userId=${userId}&weeks=abc`,
-      );
-
-      expectStandardError(response, 400);
-      expect(response.body.code).toBe("INVALID_WEEKS");
-    });
-  });
-
-  describe("Period Parameter Validation", () => {
-    const validPeriods = ["7days", "30days", "90days"];
-    const invalidPeriods = ["1day", "365days", "invalid", ""];
-
-    test.each(validPeriods)(
-      "should accept valid period: %s",
-      async (period) => {
-        const response = await request(API_BASE_URL).get(
-          `/api/analytics/training-distribution?userId=${userId}&period=${period}`,
-        );
-
-        expectStandardSuccess(response);
-      },
-    );
-
-    test.each(invalidPeriods)(
-      "should reject invalid period: %s",
-      async (period) => {
-        const response = await request(API_BASE_URL).get(
-          `/api/analytics/training-distribution?userId=${userId}&period=${period}`,
-        );
-
-        expectStandardError(response, 400);
-        expect(response.body.code).toBe("INVALID_PERIOD");
-      },
-    );
-  });
-
   describe("XSS Prevention", () => {
     const xssPayloads = [
       '<script>alert("xss")</script>',
@@ -452,25 +377,6 @@ describe.skipIf(!RUN_API_E2E)("Route Audit: Input Validation", () => {
 // ============================================================================
 
 describe.skipIf(!RUN_API_E2E)("Route Audit: Error Handling", () => {
-  describe("400 - Bad Request", () => {
-    test("should return 400 for missing required userId", async () => {
-      const response = await request(API_BASE_URL).get(
-        "/api/analytics/performance-trends",
-      );
-
-      expectStandardError(response, 400);
-      expect(response.body.code).toBe("MISSING_USER_ID");
-    });
-
-    test("should return 400 for invalid parameter", async () => {
-      const response = await request(API_BASE_URL).get(
-        `/api/analytics/performance-trends?userId=${userId}&weeks=invalid`,
-      );
-
-      expectStandardError(response, 400);
-    });
-  });
-
   describe("401 - Unauthorized", () => {
     test("should return 401 for missing token", async () => {
       const response = await request(API_BASE_URL)

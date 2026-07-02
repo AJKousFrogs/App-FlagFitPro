@@ -213,11 +213,14 @@ export interface PeriodizationInputs {
   phase: CompetitionPhase;
   upcoming: CompetitionEvent[];
   lastEvent: CompetitionEvent | null;
-  /** Most recent ACWR; falls back to safe defaults when null. */
+  /** Most recent ACWR. Null → the ACWR-danger guard is simply skipped, never assumed safe. */
   acwr: number | null;
-  /** 0–100 readiness; falls back to 70 when null. */
+  /** 0–100 readiness. Null (no check-in logged) is treated the same as low
+   * readiness — never assumed "fine". See decideBasePrescription step 4. */
   readiness: number | null;
-  /** Athlete bodyweight in kg. Falls back to 80kg if not set. */
+  /** Athlete bodyweight in kg. Null → nutrition targets fall back to a
+   * generic estimate, disclosed in the rationale text, never presented as
+   * the athlete's real weight. */
   bodyweightKg: number | null;
   /**
    * Density of upcoming load over 14 days. Used for week-scale modulation.

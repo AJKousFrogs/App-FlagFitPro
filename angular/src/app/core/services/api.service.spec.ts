@@ -457,13 +457,6 @@ describe("ApiService", () => {
       expect(API_ENDPOINTS.training.sessions).toBe("/api/training/sessions");
     });
 
-    it("should have analytics endpoints", () => {
-      expect(API_ENDPOINTS.analytics.performanceTrends).toBe(
-        "/api/analytics/performance-trends",
-      );
-      expect(API_ENDPOINTS.analytics.summary).toBe("/api/analytics/summary");
-    });
-
     it("should have dynamic endpoint functions", () => {
       expect(API_ENDPOINTS.community.getComments("123")).toBe(
         "/api/community/posts/123/comments",

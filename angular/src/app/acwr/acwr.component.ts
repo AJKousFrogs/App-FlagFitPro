@@ -64,7 +64,9 @@ export class AcwrComponent {
   });
 
   readonly chart = computed<Spark | null>(() => {
-    const vals = this.history().map((h) => h.acwr).filter((v) => Number.isFinite(v) && v > 0);
+    const vals = this.history()
+      .map((h) => h.acwr)
+      .filter((v): v is number => v !== null && Number.isFinite(v) && v > 0);
     if (vals.length < 2) return null;
     const n = vals.length;
     const pts = vals.map((v, i) => ({

@@ -64,7 +64,8 @@ export interface ReadinessResponse {
   score: number;
   level: ReadinessLevel;
   suggestion: Suggestion;
-  acwr: number;
+  /** null when chronic load history is insufficient — never fabricated as 0. */
+  acwr: number | null;
   acuteLoad: number;
   chronicLoad: number;
   dataMode: DataMode;
@@ -83,7 +84,8 @@ export interface ReadinessHistory {
   score: number;
   level: ReadinessLevel;
   suggestion: Suggestion;
-  acwr: number;
+  /** null when chronic load history is insufficient — never fabricated as 0. */
+  acwr: number | null;
 }
 
 @Injectable({

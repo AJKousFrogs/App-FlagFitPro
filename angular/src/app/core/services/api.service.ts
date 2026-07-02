@@ -416,17 +416,6 @@ export const API_ENDPOINTS = {
   weather: {
     current: "/api/weather/current",
   },
-  analytics: {
-    performanceTrends: "/api/analytics/performance-trends",
-    teamChemistry: "/api/analytics/team-chemistry",
-    trainingDistribution: "/api/analytics/training-distribution",
-    positionPerformance: "/api/analytics/position-performance",
-    injuryRisk: "/api/analytics/injury-risk",
-    speedDevelopment: "/api/analytics/speed-development",
-    userEngagement: "/api/analytics/user-engagement",
-    summary: "/api/analytics/summary",
-    health: "/api/analytics/health",
-  },
   trends: {
     changeOfDirection: "/api/trends/change-of-direction",
     sprintVolume: "/api/trends/sprint-volume",

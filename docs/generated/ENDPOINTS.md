@@ -3,7 +3,7 @@
 > Regenerate: `npm run docs:regen` (parses `netlify.toml` + `netlify/functions/*.js` + scans `angular/src`).
 > **Last verified: 2026-07-02**
 
-**113 functions: 111 exercised, 2 orphaned.** A table name with ⚠️ is referenced in code but not a live table (possible drift/typo); _(bucket)_ = Storage bucket, not a DB table.
+**112 functions: 110 exercised, 2 orphaned.** A table name with ⚠️ is referenced in code but not a live table (possible drift/typo); _(bucket)_ = Storage bucket, not a DB table.
 
 ## Exercised
 
@@ -16,8 +16,7 @@
 | `admin` | GET, POST | /api/admin/*<br>/api/admin | users, database-backups _(bucket)_ |
 | `ai-chat` | GET, POST | /api/ai/chat<br>/api/ai/chat/*<br>/api/ai-chat<br>/api/ai-chat/*<br>/api/ai/analyze-context<br>/api/ai/process-command<br>/api/ai/feedback<br>/api/ai/feedback/*<br>/api/ai-review/*<br>/api/ai-review | ai_chat_sessions, training_sessions, v_injuries_unified, daily_protocols, daily_wellness_checkin, games, nutrition_plans, recovery_blocks, users, physical_measurements, team_members, conversation_context, ai_followups, user_ai_preferences, user_age_groups, youth_athlete_settings, ai_messages, parent_guardian_links, parent_notifications, classification_history, knowledge_base_entries, ai_recommendations, coach_inbox_items, privacy_settings |
 | `ai-telemetry` | GET | /api/ai/telemetry | team_members, ai_chat_sessions, ai_messages, ai_recommendations, knowledge_base_entries |
-| `analytics` | OPTIONS | /api/analytics/*<br>/api/performance/metrics<br>/api/performance/metrics/*<br>/api/performance/heatmap<br>/api/performance/heatmap/*<br>/api/performance-data/measurements<br>/api/performance-data/performance-tests<br>/api/performance-data/wellness<br>/api/performance-data/supplements<br>/api/performance-data/injuries<br>/api/performance-data/injuries/*<br>/api/performance-data/trends<br>/api/performance-data/export<br>/api/performance/trends<br>/api/performance/trends/* | — |
-| `analytics-core` | GET | _(router submodule)_ | team_members, users, performance_tests |
+| `analytics` | OPTIONS | /api/performance/metrics<br>/api/performance/metrics/*<br>/api/performance/heatmap<br>/api/performance/heatmap/*<br>/api/performance-data/measurements<br>/api/performance-data/performance-tests<br>/api/performance-data/wellness<br>/api/performance-data/supplements<br>/api/performance-data/injuries<br>/api/performance-data/injuries/*<br>/api/performance-data/trends<br>/api/performance-data/export<br>/api/performance/trends<br>/api/performance/trends/* | — |
 | `api-docs` | GET | /api/api-docs | — |
 | `athlete-events` | GET, POST, PUT, PATCH, DELETE | /api/athlete-events/*<br>/api/athlete-events | athlete_events |
 | `athlete-injuries` | GET, POST | /api/athlete-injuries/*<br>/api/athlete-injuries | athlete_injuries |

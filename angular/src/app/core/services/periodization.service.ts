@@ -405,8 +405,10 @@ export class PeriodizationService {
 // Same inputs → same output. Tested without DI. Server-mirror friendly.
 // =============================================================================
 
+/** Generic-adult-male estimate used only for the nutrition gram math when
+ * bodyweight hasn't been entered — always disclosed via bodyweightIsEstimated,
+ * never presented as the athlete's real weight. */
 const FALLBACK_BODYWEIGHT_KG = 80;
-const FALLBACK_READINESS = 70;
 const ACWR_DANGER = 1.5;
 const ACWR_ELEVATED = 1.3;
 const ACWR_UNDER = 0.8;
@@ -811,8 +813,12 @@ function decideBasePrescription(inputs: PeriodizationInputs): DailyPrescription 
 
   const driverEvent = pickDriverEvent(date, upcoming, lastEvent);
   const hoursUntilNext = nextEventHours(date, upcoming);
+  // A generic bodyweight is used for the carb/protein/fluid math when the
+  // athlete hasn't entered theirs — legitimate as a population-average
+  // estimate, but never presented as personal data: nutritionFor() caveats
+  // the rationale text whenever bodyweightIsEstimated is true (SOT Law 7).
+  const bodyweightIsEstimated = bodyweightKg === null;
   const bodyweight = bodyweightKg ?? FALLBACK_BODYWEIGHT_KG;
-  const effectiveReadiness = readiness ?? FALLBACK_READINESS;
   // Heavy density = a high 14-day game total OR a single congested day. A
   // tournament of 8 games over 2 days (4/day) never reaches the 10-games/14d
   // total, yet it is the highest-risk congestion there is — so a peak-day game
@@ -839,7 +845,7 @@ function decideBasePrescription(inputs: PeriodizationInputs): DailyPrescription 
       reasoning:
         "Game day. Activate, play, refuel between games, sleep tonight.",
       recoveryEmphasis: "critical",
-      nutrition: nutritionFor("competition", bodyweight, heavyDensity, hotDay),
+      nutrition: nutritionFor("competition", bodyweight, heavyDensity, hotDay, bodyweightIsEstimated),
       driverEvent,
       hoursUntilNextEvent: hoursUntilNext,
       acwrAtIssue: acwr,
@@ -859,7 +865,7 @@ function decideBasePrescription(inputs: PeriodizationInputs): DailyPrescription 
       reasoning:
         "Game inside 24 hours. Stay loose and primed — no new fatigue.",
       recoveryEmphasis: "high",
-      nutrition: nutritionFor("taper-prime", bodyweight, heavyDensity, hotDay),
+      nutrition: nutritionFor("taper-prime", bodyweight, heavyDensity, hotDay, bodyweightIsEstimated),
       driverEvent,
       hoursUntilNextEvent: hoursUntilNext,
       acwrAtIssue: acwr,
@@ -878,15 +884,19 @@ function decideBasePrescription(inputs: PeriodizationInputs): DailyPrescription 
       strengthSets: 0,
       reasoning: `ACWR ${acwr.toFixed(2)} is in the danger zone. Full rest today.`,
       recoveryEmphasis: "critical",
-      nutrition: nutritionFor("rest", bodyweight, heavyDensity, hotDay),
+      nutrition: nutritionFor("rest", bodyweight, heavyDensity, hotDay, bodyweightIsEstimated),
       driverEvent,
       hoursUntilNextEvent: hoursUntilNext,
       acwrAtIssue: acwr,
     });
   }
 
-  // 4. Readiness collapse → switch to recovery regardless of phase.
-  if (effectiveReadiness < READINESS_LOW) {
+  // 4. Readiness collapse → switch to recovery regardless of phase. A missing
+  // check-in is treated the same as low readiness, never as "fine" — the
+  // whole point of the readiness gate is asymmetric risk: assuming healthy
+  // when actually low costs an injury, assuming cautious when actually fine
+  // costs a lighter day. When we don't know, we don't guess (SOT Law 6/7).
+  if (readiness === null || readiness < READINESS_LOW) {
     return finalize({
       date,
       phase,
@@ -895,9 +905,12 @@ function decideBasePrescription(inputs: PeriodizationInputs): DailyPrescription 
       targetMinutes: 30,
       sprintReps: 0,
       strengthSets: 0,
-      reasoning: `Readiness ${Math.round(effectiveReadiness)}/100 is low. Active recovery only.`,
+      reasoning:
+        readiness === null
+          ? "No wellness check-in logged today — defaulting to active recovery. Log your check-in for a personalized plan."
+          : `Readiness ${Math.round(readiness)}/100 is low. Active recovery only.`,
       recoveryEmphasis: "high",
-      nutrition: nutritionFor("recovery", bodyweight, heavyDensity, hotDay),
+      nutrition: nutritionFor("recovery", bodyweight, heavyDensity, hotDay, bodyweightIsEstimated),
       driverEvent,
       hoursUntilNextEvent: hoursUntilNext,
       acwrAtIssue: acwr,
@@ -939,7 +952,7 @@ function decideBasePrescription(inputs: PeriodizationInputs): DailyPrescription 
       strengthSets: 0,
       reasoning: practiceReasoning,
       recoveryEmphasis: practiceMod.recoveryEmphasis,
-      nutrition: nutritionFor(practiceMod.nutritionIntent, bodyweight, heavyDensity, hotDay),
+      nutrition: nutritionFor(practiceMod.nutritionIntent, bodyweight, heavyDensity, hotDay, bodyweightIsEstimated),
       driverEvent,
       hoursUntilNextEvent: hoursUntilNext,
       acwrAtIssue: acwr,
@@ -960,7 +973,7 @@ function decideBasePrescription(inputs: PeriodizationInputs): DailyPrescription 
         strengthSets: 0,
         reasoning: postEventReasoning(lastEvent),
         recoveryEmphasis: "high",
-        nutrition: nutritionFor("recovery", bodyweight, heavyDensity, hotDay),
+        nutrition: nutritionFor("recovery", bodyweight, heavyDensity, hotDay, bodyweightIsEstimated),
         driverEvent,
         hoursUntilNextEvent: hoursUntilNext,
         acwrAtIssue: acwr,
@@ -987,7 +1000,7 @@ function decideBasePrescription(inputs: PeriodizationInputs): DailyPrescription 
         strengthSets: 0,
         reasoning: taperReasoning(driverEvent, dayOfTaper),
         recoveryEmphasis: "medium",
-        nutrition: nutritionFor("taper", bodyweight, heavyDensity, hotDay),
+        nutrition: nutritionFor("taper", bodyweight, heavyDensity, hotDay, bodyweightIsEstimated),
         driverEvent,
         hoursUntilNextEvent: hoursUntilNext,
         acwrAtIssue: acwr,
@@ -1006,7 +1019,7 @@ function decideBasePrescription(inputs: PeriodizationInputs): DailyPrescription 
         reasoning:
           "Off-season window. Maintain GPP base — easy aerobic + lift.",
         recoveryEmphasis: "low",
-        nutrition: nutritionFor("transition", bodyweight, heavyDensity, hotDay),
+        nutrition: nutritionFor("transition", bodyweight, heavyDensity, hotDay, bodyweightIsEstimated),
         driverEvent,
         hoursUntilNextEvent: hoursUntilNext,
         acwrAtIssue: acwr,
@@ -1031,7 +1044,7 @@ function decideBasePrescription(inputs: PeriodizationInputs): DailyPrescription 
           strengthSets: t.strengthSets,
           reasoning: seasonReasoning(seasonPhase, intent),
           recoveryEmphasis: heavyDensity ? "medium" : "low",
-          nutrition: nutritionFor(intent, bodyweight, heavyDensity, hotDay),
+          nutrition: nutritionFor(intent, bodyweight, heavyDensity, hotDay, bodyweightIsEstimated),
           driverEvent,
           hoursUntilNextEvent: hoursUntilNext,
           acwrAtIssue: acwr,
@@ -1054,7 +1067,7 @@ function decideBasePrescription(inputs: PeriodizationInputs): DailyPrescription 
         strengthSets: t.strengthSets,
         reasoning: accumulationReasoning(intent, acwr, heavyDensity),
         recoveryEmphasis: heavyDensity ? "medium" : "low",
-        nutrition: nutritionFor(intent, bodyweight, heavyDensity, hotDay),
+        nutrition: nutritionFor(intent, bodyweight, heavyDensity, hotDay, bodyweightIsEstimated),
         driverEvent,
         hoursUntilNextEvent: hoursUntilNext,
         acwrAtIssue: acwr,
@@ -1568,6 +1581,7 @@ function nutritionFor(
   bodyweightKg: number,
   heavyDensity: boolean,
   hotDay = false,
+  bodyweightIsEstimated = false,
 ): NutritionTargets {
   // Map non-Intent labels onto a real bucket
   const key: PrescriptionIntent =
@@ -1592,18 +1606,24 @@ function nutritionFor(
     hydrationL += 0.5;
   }
 
+  const rationale =
+    key === "competition"
+      ? "Game-day fueling: carbs every game, hydrate aggressively, protein after final game."
+      : key === "rest"
+        ? "Lower carb day. Protein steady to support repair."
+        : key === "taper-prime"
+          ? "Top up glycogen tonight. Hydrate well — game window opens soon."
+          : `Daily targets at ${CARB_PER_KG[key]}g/kg carbs, ${PROTEIN_PER_KG}g/kg protein.`;
+
   return {
     carbsG,
     proteinG,
     hydrationL: Math.round(hydrationL * 10) / 10,
-    rationale:
-      key === "competition"
-        ? "Game-day fueling: carbs every game, hydrate aggressively, protein after final game."
-        : key === "rest"
-          ? "Lower carb day. Protein steady to support repair."
-          : key === "taper-prime"
-            ? "Top up glycogen tonight. Hydrate well — game window opens soon."
-            : `Daily targets at ${CARB_PER_KG[key]}g/kg carbs, ${PROTEIN_PER_KG}g/kg protein.`,
+    // Never present a made-up bodyweight's numbers as the athlete's own data
+    // (SOT Law 7) — disclose the estimate so the UI can caveat it honestly.
+    rationale: bodyweightIsEstimated
+      ? `${rationale} Estimated from a generic bodyweight — add yours in Settings for personalized targets.`
+      : rationale,
   };
 }
 

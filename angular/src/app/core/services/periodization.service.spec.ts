@@ -155,11 +155,12 @@ describe("prescribeFor — readiness collapse", () => {
     expect(rx.reasoning).toMatch(/readiness/i);
   });
 
-  it("readiness null falls back to 70 (no override)", () => {
+  it("readiness null (no check-in logged) is treated as low readiness, never assumed fine", () => {
     const rx = prescribeFor(
       inputs({ phase: "accumulation", readiness: null }),
     );
-    expect(rx.intent).not.toBe("recovery");
+    expect(rx.intent).toBe("recovery");
+    expect(rx.reasoning).toMatch(/check-in/i);
   });
 });
 

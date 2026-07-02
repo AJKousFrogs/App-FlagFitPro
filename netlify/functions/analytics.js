@@ -1,16 +1,20 @@
 /**
  * Analytics Domain Handler — Netlify Functions v2 (native, no adapter)
  *
- * Consolidates four legacy handlers into one native v2 function.
+ * Consolidates three legacy handlers into one native v2 function.
  *
  * Routes handled:
- *   /api/analytics, /api/analytics/*
  *   /api/performance/data, /api/performance-data, /api/performance-data/*
  *   /api/performance/heatmap, /api/performance-heatmap, /api/performance-heatmap/*
  *   /api/performance/metrics, /api/performance-metrics, /api/performance-metrics/*
+ *
+ * The former /api/analytics/* routes (analytics-core.js) were removed
+ * 2026-07-02: zero frontend callers, and its "real" data path computed
+ * everything from a `training_sessions.score` column that doesn't exist in
+ * the schema (always fell through to a hardcoded `|| 70`), on top of its
+ * error-fallback paths fabricating entire chart series and named athletes.
  */
 
-import { handler as analyticsCoreHandler } from "./analytics-core.js";
 import { dispatch } from "./utils/web-lambda-bridge.js";
 import { toLambdaHandler } from "./utils/lambda-adapter.js";
 import { handler as performanceDataHandler } from "./performance-data.js";
@@ -31,11 +35,6 @@ const handleRequest = async (req) => {
   const url = new URL(req.url);
   const path = url.pathname;
 
-  // /analytics/* first — its sub-routes (e.g. /analytics/performance-trends) contain the
-  // substring "performance" and must not be intercepted by the generic performance match below.
-  if (path.includes("/analytics")) {
-    return dispatch(analyticsCoreHandler, req, url);
-  }
   // performance/* sub-routes — match heatmap before metrics to avoid prefix overlap
   if (path.includes("/performance/heatmap") || path.includes("/performance-heatmap")) {
     return dispatch(performanceHeatmapHandler, req, url);
