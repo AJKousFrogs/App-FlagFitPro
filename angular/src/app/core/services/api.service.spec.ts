@@ -418,10 +418,10 @@ describe("ApiService", () => {
     it("should handle /api/ prefixed endpoints", () => {
       const mockResponse: ApiResponse = { success: true };
 
-      service.get("/api/dashboard/overview").subscribe();
+      service.get("/api/training/stats").subscribe();
 
       const req = httpMock.expectOne((request) =>
-        request.url.includes("/api/dashboard/overview"),
+        request.url.includes("/api/training/stats"),
       );
       req.flush(mockResponse);
     });
@@ -445,11 +445,6 @@ describe("ApiService", () => {
   describe("API_ENDPOINTS Configuration", () => {
     it("should have auth endpoints", () => {
       expect(API_ENDPOINTS.auth.me).toBe("/api/auth/me");
-    });
-
-    it("should have dashboard endpoints", () => {
-      expect(API_ENDPOINTS.dashboard.overview).toBe("/api/dashboard/overview");
-      expect(API_ENDPOINTS.dashboard.health).toBe("/api/dashboard/health");
     });
 
     it("should have training endpoints", () => {

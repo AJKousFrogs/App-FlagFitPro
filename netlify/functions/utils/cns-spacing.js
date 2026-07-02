@@ -45,7 +45,11 @@ export async function getLastHighCnsSession(supabase, userId, date, spacingHours
     .from("training_sessions")
     .select("completed_at")
     .eq("user_id", userId)
-    .in("session_type", ["sprint", "speed", "competition", "max_velocity"])
+    // "mixed" included: a completed day is logged with session_type = the raw
+    // prescribed intent (see training.component.ts), and "mixed" carries real
+    // sprint volume (client HIGH_CNS_INTENTS) — must count as high-CNS for
+    // spacing the next one, same as the client's isHighCnsSessionType().
+    .in("session_type", ["sprint", "speed", "competition", "max_velocity", "mixed"])
     .gte("completed_at", since)
     .not("completed_at", "is", null)
     .order("completed_at", { ascending: false })

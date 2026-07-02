@@ -374,17 +374,6 @@ export const API_ENDPOINTS = {
     // logout: Use SupabaseService.signOut() directly
     // refresh/csrf: Not implemented - using Supabase session management
   },
-  dashboard: {
-    overview: "/api/dashboard/overview",
-    trainingCalendar: "/api/dashboard/training-calendar",
-    olympicQualification: "/api/dashboard/olympic-qualification",
-    sponsorRewards: "/api/dashboard/sponsor-rewards",
-    wearables: "/api/dashboard/wearables",
-    teamChemistry: "/api/dashboard/team-chemistry",
-    dailyQuote: "/api/dashboard/daily-quote",
-    health: "/api/dashboard/health",
-    // NOTE: Notifications moved to dedicated /api/notifications routes
-  },
   // Notifications (dedicated routes - consolidated from dashboard)
   notifications: {
     list: "/api/notifications",

@@ -1335,7 +1335,7 @@ async function generateProtocol(supabase, userId, payload, headers, log = logger
     trainingFocus = m.trainingFocus;
     isPracticeDay = m.isPracticeDay;
     isFilmRoomDay = false;
-    composeSprint = cnsBlockedAt ? false : m.isSprintSession;
+    composeSprint = m.isSprintSession;
     composeGym = m.isGymTrainingDay;
   }
 
@@ -1400,6 +1400,13 @@ async function generateProtocol(supabase, userId, payload, headers, log = logger
   // Saturday hard-rule. Weather block applies even to compose path.
   if (composeSprint !== null) {
     isSprintSession = weatherBlocksSprint ? false : composeSprint;
+  }
+  // CNS spacing guard applies unconditionally — both the compose path (intent
+  // layer) and the legacy Saturday/session-template fallback path must respect
+  // it. Previously only gated inside the compose branch (composeSprint = ...),
+  // so a request without payload.intent could silently skip the spacing check.
+  if (cnsBlockedAt) {
+    isSprintSession = false;
   }
 
   await addWarmupBlock({

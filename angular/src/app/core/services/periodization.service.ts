@@ -460,9 +460,13 @@ function cnsRecoveryHoursForAge(ageYears?: number | null): number {
   return CNS_RECOVERY_HOURS;
 }
 
-/** Detect a high-CNS session from its raw `session_type`/`drill_type`. */
+/** Detect a high-CNS session from its raw `session_type`/`drill_type`. Includes
+ * "mixed" — a completed day is logged with `session_type` = the raw prescribed
+ * intent (see training.component.ts), and "mixed" carries real sprint volume
+ * (HIGH_CNS_INTENTS), so a completed mixed session must count as a recent
+ * high-CNS event for spacing the next one, same as a pure sprint day. */
 function isHighCnsSessionType(type: string): boolean {
-  return /sprint|plyo|speed|max.?velocity|accel|agility|bound/i.test(type || "");
+  return /sprint|plyo|speed|max.?velocity|accel|agility|bound|mixed/i.test(type || "");
 }
 
 /**

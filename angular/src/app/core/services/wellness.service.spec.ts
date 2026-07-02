@@ -19,7 +19,7 @@ import { mockLoggerService as createMockLoggerService } from "./logger.service.m
 
 // Mock data
 const MOCK_WELLNESS_ENTRY: WellnessData = {
-  id: 1,
+  id: "checkin-1",
   userId: "user-123",
   date: "2024-01-15",
   sleep: 8,
@@ -35,7 +35,7 @@ const MOCK_WELLNESS_ENTRY: WellnessData = {
 const MOCK_WELLNESS_ENTRIES: WellnessData[] = [
   MOCK_WELLNESS_ENTRY,
   {
-    id: 2,
+    id: "checkin-2",
     userId: "user-123",
     date: "2024-01-14",
     sleep: 7,
@@ -47,7 +47,7 @@ const MOCK_WELLNESS_ENTRIES: WellnessData[] = [
     hydration: 7,
   },
   {
-    id: 3,
+    id: "checkin-3",
     userId: "user-123",
     date: "2024-01-13",
     sleep: 6,

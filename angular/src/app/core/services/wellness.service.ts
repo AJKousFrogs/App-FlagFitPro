@@ -20,7 +20,8 @@ export interface AcwrCalculationResult {
 }
 
 export interface WellnessData {
-  id?: number;
+  /** `daily_wellness_checkin.id` is a uuid, not a number. */
+  id?: string;
   userId?: string;
   date: string;
   sleep?: number;
@@ -67,7 +68,8 @@ export interface WellnessResponse {
 
 // Interface for daily_wellness_checkin table (canonical source)
 interface DailyWellnessCheckinEntry {
-  id: number;
+  /** UUID, not a number — see WellnessData.id. */
+  id: string;
   user_id: string;
   checkin_date: string;
   sleep_quality?: number;
@@ -749,7 +751,11 @@ export class WellnessService {
     record: Record<string, unknown>,
   ): DailyWellnessCheckinEntry {
     return {
-      id: Number(record["id"]),
+      // BUG FIX: was Number(record["id"]) — the id is a uuid, and Number() on a
+      // uuid string is always NaN, which broke findIndex/filter id-matching in
+      // handleWellnessUpdate/handleWellnessDelete below (NaN !== NaN), so
+      // realtime UPDATE/DELETE broadcasts silently failed to update local state.
+      id: String(record["id"]),
       user_id: String(record["user_id"]),
       checkin_date: String(record["checkin_date"] ?? record["date"] ?? ""),
       sleep_hours: Number(record["sleep_hours"] ?? record["sleep_quality"] ?? 0),

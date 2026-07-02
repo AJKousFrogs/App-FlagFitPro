@@ -174,13 +174,27 @@ rateLimitType,
             );
           }
 
+          // H3: `query` is interpolated into a PostgREST `.or()` filter string,
+          // where `,` `.` `(` `)` `%` `*` `\` are metacharacters — a raw value
+          // containing them could break out of the ilike clause and inject
+          // filter conditions (see utils/smart-ai-service.js's identical fix).
+          // Strip everything but letters/numbers/space/hyphen before building
+          // the filter; the length/type checks above still validate the original.
+          const sanitizedQuery = query.replace(/[^\p{L}\p{N}\s-]/gu, "").trim();
+          if (!sanitizedQuery) {
+            return createSuccessResponse(
+              { query, category: category || "all", results: [], total: 0 },
+              requestId,
+            );
+          }
+
           // Build query against current knowledge schema
           let queryBuilder = supabase
             .from("knowledge_base_entries")
             .select("*")
             .eq("is_merlin_approved", true)
             .or(
-              `topic.ilike.%${query}%,question.ilike.%${query}%,answer.ilike.%${query}%,summary.ilike.%${query}%`,
+              `topic.ilike.%${sanitizedQuery}%,question.ilike.%${sanitizedQuery}%,answer.ilike.%${sanitizedQuery}%,summary.ilike.%${sanitizedQuery}%`,
             )
             .order("query_count", {
               ascending: false,
