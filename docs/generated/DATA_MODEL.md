@@ -2,11 +2,9 @@
 
 > Regenerate: `npm run docs:regen` (reads `docs/generated/live-schema.snapshot.json`).
 > Refresh against live: re-run the Supabase introspection into that snapshot (Supabase MCP), then rerun.
-> **Schema snapshot (live): 2026-07-01** · doc regenerated: 2026-07-01
+> **Schema snapshot (live): 2026-07-01** · doc regenerated: 2026-07-02
 
 **187 base tables, 7 views.** Tables flagged `DRIFT` exist live but are not defined in any migration file.
-
-**DRIFT (live, no migration file):** `sponsors`, `video_bookmarks`, `weekly_training_analysis`
 
 ## Tables
 
@@ -2408,7 +2406,7 @@ Touched by: _(no endpoint references this table)_
 - `created_at` timestamp without time zone
 - `updated_at` timestamp without time zone
 
-### `sponsors` — ⚠️ DRIFT
+### `sponsors`
 Touched by: _(no endpoint references this table)_
 
 - `id` integer · not null
@@ -2982,7 +2980,7 @@ Touched by: _(no endpoint references this table)_
 - `created_at` timestamp with time zone
 - `completed_at` timestamp with time zone
 
-### `video_bookmarks` — ⚠️ DRIFT
+### `video_bookmarks`
 Touched by: _(no endpoint references this table)_
 
 - `id` uuid · not null
@@ -3054,7 +3052,7 @@ Touched by: _(no endpoint references this table)_
 - `substitute_rationale` text · not null
 - `is_active` boolean · not null
 
-### `weekly_training_analysis` — ⚠️ DRIFT
+### `weekly_training_analysis`
 Touched by: _(no endpoint references this table)_
 
 - `id` uuid · not null
