@@ -15,6 +15,7 @@ import { SupabaseService } from "./supabase.service";
 import { LoggerService } from "./logger.service";
 import { RealtimeService } from "./realtime.service";
 import { NORMAL_ATHLETE } from "../../../testing/athlete-fixtures";
+import { mockLoggerService as createMockLoggerService } from "./logger.service.mock";
 
 // Mock data
 const MOCK_WELLNESS_ENTRY: WellnessData = {
@@ -98,13 +99,7 @@ const mockSupabaseService = {
   },
 } as unknown as SupabaseService;
 
-const mockLoggerService = {
-  info: vi.fn(),
-  debug: vi.fn(),
-  error: vi.fn(),
-  warn: vi.fn(),
-  success: vi.fn(),
-};
+const mockLoggerService = createMockLoggerService();
 
 const mockRealtimeService = {
   subscribe: vi.fn(() => vi.fn()),

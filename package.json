@@ -61,7 +61,6 @@
     "migrate:quickstart": "bash scripts/migration-quickstart.sh",
     "diagnostics:health": "npm run health:check",
     "diagnostics:features": "node scripts/feature-validator.js",
-    "audit:routes": "node scripts/audit-routes.js",
     "audit:error-shapes": "node scripts/audit-error-shape-contracts.js",
     "audit:rls-boundaries": "node scripts/audit-rls-boundaries.js",
     "audit:local-persistence": "node scripts/audit-local-persistence.js",

@@ -16,15 +16,9 @@ import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 import { ApiService, API_ENDPOINTS } from "./api.service";
 import { ApiResponse } from "../models/common.models";
 import { LoggerService } from "./logger.service";
+import { mockLoggerService as createMockLoggerService } from "./logger.service.mock";
 
-// Mock LoggerService
-const mockLoggerService = {
-  info: vi.fn(),
-  debug: vi.fn(),
-  error: vi.fn(),
-  warn: vi.fn(),
-  success: vi.fn(),
-};
+const mockLoggerService = createMockLoggerService();
 
 describe("ApiService", () => {
   let service: ApiService;

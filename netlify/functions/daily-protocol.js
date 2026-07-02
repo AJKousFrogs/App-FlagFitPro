@@ -18,7 +18,7 @@
 import { supabaseAdmin } from "./utils/supabase-client.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { authenticateRequest } from "./utils/auth-helper.js";
-import { createErrorResponse, handleValidationError } from "./utils/error-handler.js";
+import { createErrorResponse, handleValidationError, getCorsHeaders } from "./utils/error-handler.js";
 import { tryParseJsonObjectBody } from "./utils/input-validator.js";
 import {
   getIsoDateString,
@@ -703,13 +703,7 @@ function getTaperRecommendation(daysUntil, isPeakEvent) {
 const legacyDailyProtocolHandler = async (event, log = logger) => {
   const { httpMethod, path, queryStringParameters, body, headers } = event;
 
-  // CORS headers
-  const corsHeaders = {
-    "Access-Control-Allow-Origin": "*",
-    "Access-Control-Allow-Headers": "Content-Type, Authorization",
-    "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
-    "Content-Type": "application/json",
-  };
+  const corsHeaders = getCorsHeaders(event);
   const withHeaders = (response) => ({ ...response, headers: corsHeaders });
 
   // Handle preflight
@@ -1319,9 +1313,8 @@ async function generateProtocol(supabase, userId, payload, headers, log = logger
   });
 
   // CNS 72h spacing guard: never prescribe sprint/max-CNS if the athlete did
-  // one within the last 72h. Canonical window = spacingHoursHighImpact from
-  // training-modalities.config.ts. The client AcwrService.shouldSkipSprints()
-  // is a coarse proxy (riskZone + day-of-week only); this is the server authority.
+  // one within the last 72h. The client AcwrService.shouldSkipSprints() is a
+  // coarse proxy (riskZone + day-of-week only); this is the server authority.
   const CNS_SPACING_HOURS = 72;
   const cnsBlockedAt = await getLastHighCnsSession(supabase, userId, date, CNS_SPACING_HOURS);
   if (cnsBlockedAt) {

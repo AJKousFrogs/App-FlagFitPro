@@ -7,10 +7,8 @@ const state = vi.hoisted(() => ({
   removedPaths: [],
 }));
 
-vi.mock("../../netlify/functions/utils/base-handler.js", () => ({
-  baseHandler: async (event, context, options) =>
-    options.handler(event, context, { requestId: "req-test", userId: "user-1" }),
-}));
+import { mockBaseHandlerModule } from "../test-helpers.js";
+vi.mock("../../netlify/functions/utils/base-handler.js", () => mockBaseHandlerModule({ requestId: "req-test", userId: "user-1" }));
 
 vi.mock("../../netlify/functions/utils/auth-helper.js", () => ({
   authenticateRequest: async () =>

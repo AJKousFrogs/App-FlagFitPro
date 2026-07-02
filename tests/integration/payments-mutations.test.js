@@ -80,9 +80,8 @@ function createFakeSupabase(state) {
   };
 }
 
-vi.mock("../../netlify/functions/utils/base-handler.js", () => ({
-  baseHandler: async (event, context, options) => options.handler(event, context, {}),
-}));
+import { mockBaseHandlerModule } from "../test-helpers.js";
+vi.mock("../../netlify/functions/utils/base-handler.js", () => mockBaseHandlerModule({}));
 
 vi.mock("../../netlify/functions/supabase-client.js", () => ({
   checkEnvVars: () => {},

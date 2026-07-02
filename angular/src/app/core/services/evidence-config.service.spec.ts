@@ -12,15 +12,9 @@ import { TestBed } from "@angular/core/testing";
 import { EvidenceConfigService } from "./evidence-config.service";
 import { LoggerService } from "./logger.service";
 import { SupabaseService } from "./supabase.service";
+import { mockLoggerService as createMockLoggerService } from "./logger.service.mock";
 
-// Mock LoggerService
-const mockLoggerService = {
-  info: vi.fn(),
-  debug: vi.fn(),
-  error: vi.fn(),
-  warn: vi.fn(),
-  success: vi.fn(),
-};
+const mockLoggerService = createMockLoggerService();
 
 // Mock SupabaseService to avoid environment dependency
 const mockUser = { id: "user-123" };

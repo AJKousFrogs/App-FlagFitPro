@@ -79,10 +79,8 @@ function createFakeSupabase() {
   };
 }
 
-vi.mock("../../netlify/functions/utils/base-handler.js", () => ({
-  baseHandler: async (event, context, options) =>
-    options.handler(event, context, { requestId: "req-test" }),
-}));
+import { mockBaseHandlerModule } from "../test-helpers.js";
+vi.mock("../../netlify/functions/utils/base-handler.js", () => mockBaseHandlerModule({ requestId: "req-test" }));
 
 vi.mock("../../netlify/functions/supabase-client.js", () => ({
   checkEnvVars: () => {},

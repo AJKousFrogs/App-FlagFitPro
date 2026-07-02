@@ -4,10 +4,8 @@ const mockCtx = vi.hoisted(() => ({
   adminAuthorized: false,
 }));
 
-vi.mock("../../netlify/functions/utils/base-handler.js", () => ({
-  baseHandler: async (event, context, options) =>
-    options.handler(event, context, { userId: "coach-1" }),
-}));
+import { mockBaseHandlerModule } from "../test-helpers.js";
+vi.mock("../../netlify/functions/utils/base-handler.js", () => mockBaseHandlerModule({ userId: "coach-1" }));
 
 vi.mock("../../netlify/functions/supabase-client.js", () => ({
   supabaseAdmin: {

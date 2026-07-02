@@ -14,6 +14,7 @@ import { EvidenceConfigService } from "./evidence-config.service";
 import { SupabaseService } from "./supabase.service";
 import { LoggerService } from "./logger.service";
 import { TrainingSession } from "../models/acwr.models";
+import { mockLoggerService as createMockLoggerService } from "./logger.service.mock";
 
 // Mock services
 const mockSupabaseService = {
@@ -37,13 +38,7 @@ const mockSupabaseService = {
   },
 };
 
-const mockLoggerService = {
-  info: vi.fn(),
-  debug: vi.fn(),
-  error: vi.fn(),
-  warn: vi.fn(),
-  success: vi.fn(),
-};
+const mockLoggerService = createMockLoggerService();
 
 const mockEvidenceConfigService = {
   getACWRConfig: vi.fn(() => ({

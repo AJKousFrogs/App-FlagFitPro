@@ -1,8 +1,7 @@
 /**
  * CNS spacing guard — prevents back-to-back max-effort sprint/speed sessions.
  *
- * Canonical spacing window = spacingHoursHighImpact (72h) from
- * training-modalities.config.ts. The client-side AcwrService.shouldSkipSprints()
+ * Canonical spacing window: 72h. The client-side AcwrService.shouldSkipSprints()
  * is a coarse proxy (riskZone + day-of-week); this is the server-side authority
  * that checks actual session recency against the DB.
  */
