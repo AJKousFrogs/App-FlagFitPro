@@ -2,13 +2,11 @@
 
 > Regenerate: `npm run docs:regen` (reads `docs/generated/live-schema.snapshot.json`).
 > Refresh against live: re-run the Supabase introspection into that snapshot (Supabase MCP), then rerun.
-> **Schema snapshot (live): 2026-06-23** · doc regenerated: 2026-06-23
+> **Schema snapshot (live): 2026-07-01** · doc regenerated: 2026-07-01
 
 **187 base tables, 7 views.** Tables flagged `DRIFT` exist live but are not defined in any migration file.
 
-> ⚠️ **`supabase-types.ts` is STALE vs live — regenerate it.** In types but dropped from live (37): `acwr_calculations`, `acwr_history`, `acwr_reports`, `analytics_aggregates`, `article_search_index`, `athlete_achievements`, `athlete_daily_state`, `chatbot_user_context`, `cycle_tracking_entries`, `cycle_tracking_symptoms`, `digest_history`, `exercise_library`, `exercise_logs`, `fixtures`, `hydration_logs`, `injuries`, `injury_risk_factors`, `load_caps`, `load_daily`, `load_management_research`, `load_metrics`, `load_monitoring`, `notification_preferences`, `player_tournament_availability`, `session_rpe_data`, `sessions`, `sponsor_contributions`, `supplements_data`, `team_players`, `tournament_lineups`, `tournaments`, `training_load_metrics`, `training_stress_balance`, `wellness_data`, `wellness_entries`, `wellness_logs`, `workout_logs`. Live but missing from types (25): `age_recovery_modifiers`, `athlete_events`, `athlete_injuries`, `athlete_nutrition_profiles`, `calibration_logs`, `contraindication_rules`, `event_availability`, `event_lineups`, `event_participation`, `meal_templates`, `mental_performance_logs`, `mental_wellness_reports`, `nutrition_plans`, `nutrition_reports`, `prescription_audit_log`, `prescription_templates`, `proactive_checkins`, `psychological_assessments`, `readiness_gates`, `rtp_prescription_approvals`, `taper_rules`, `team_activities`, `team_season_phases`, `user_supplements`, `weather_substitution_rules`.
-
-**DRIFT (live, no migration file):** `contraindication_rules`, `prescription_audit_log`, `prescription_templates`, `readiness_gates`, `rtp_prescription_approvals`, `taper_rules`, `team_season_phases`, `weather_substitution_rules`
+**DRIFT (live, no migration file):** `video_bookmarks`, `weekly_training_analysis`
 
 ## Tables
 
@@ -717,7 +715,7 @@ Touched by: _(no endpoint references this table)_
 - `changed_at` timestamp with time zone · not null
 - `reason` text
 
-### `contraindication_rules` — ⚠️ DRIFT
+### `contraindication_rules`
 Touched by: _(no endpoint references this table)_
 
 - `id` uuid · not null
@@ -1915,7 +1913,7 @@ Touched by: `team-calendar`
 - `created_at` timestamp with time zone · not null
 - `updated_at` timestamp with time zone · not null
 
-### `prescription_audit_log` — ⚠️ DRIFT
+### `prescription_audit_log`
 Touched by: _(no endpoint references this table)_
 
 - `id` uuid · not null
@@ -1929,7 +1927,7 @@ Touched by: _(no endpoint references this table)_
 - `modified_by` text · not null
 - `created_at` timestamp with time zone · not null
 
-### `prescription_templates` — ⚠️ DRIFT
+### `prescription_templates`
 Touched by: _(no endpoint references this table)_
 
 - `id` uuid · not null
@@ -2094,7 +2092,7 @@ Touched by: `qb-throwing`
 - `created_at` timestamp with time zone · not null
 - `updated_at` timestamp with time zone · not null
 
-### `readiness_gates` — ⚠️ DRIFT
+### `readiness_gates`
 Touched by: _(no endpoint references this table)_
 
 - `id` uuid · not null
@@ -2302,7 +2300,7 @@ Touched by: _(no endpoint references this table)_
 - `reason` text
 - `created_at` timestamp with time zone
 
-### `rtp_prescription_approvals` — ⚠️ DRIFT
+### `rtp_prescription_approvals`
 Touched by: _(no endpoint references this table)_
 
 - `id` uuid · not null
@@ -2469,7 +2467,7 @@ Touched by: `performance-data`, `staff-nutritionist`, `supplements`, `user-conte
 - `notes` text
 - `created_at` timestamp with time zone · not null
 
-### `taper_rules` — ⚠️ DRIFT
+### `taper_rules`
 Touched by: _(no endpoint references this table)_
 
 - `id` uuid · not null
@@ -2572,7 +2570,7 @@ Touched by: _(no endpoint references this table)_
 - `created_at` timestamp with time zone · not null
 - `updated_at` timestamp with time zone · not null
 
-### `team_season_phases` — ⚠️ DRIFT
+### `team_season_phases`
 Touched by: `daily-protocol`
 
 - `id` uuid · not null
@@ -2984,7 +2982,7 @@ Touched by: _(no endpoint references this table)_
 - `created_at` timestamp with time zone
 - `completed_at` timestamp with time zone
 
-### `video_bookmarks`
+### `video_bookmarks` — ⚠️ DRIFT
 Touched by: _(no endpoint references this table)_
 
 - `id` uuid · not null
@@ -3043,7 +3041,7 @@ Touched by: `training-programs`
 - `created_at` timestamp with time zone
 - `updated_at` timestamp with time zone
 
-### `weather_substitution_rules` — ⚠️ DRIFT
+### `weather_substitution_rules`
 Touched by: _(no endpoint references this table)_
 
 - `id` uuid · not null
@@ -3056,7 +3054,7 @@ Touched by: _(no endpoint references this table)_
 - `substitute_rationale` text · not null
 - `is_active` boolean · not null
 
-### `weekly_training_analysis`
+### `weekly_training_analysis` — ⚠️ DRIFT
 Touched by: _(no endpoint references this table)_
 
 - `id` uuid · not null

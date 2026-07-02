@@ -110,13 +110,13 @@ async function awardTrainingPoints(userId, duration, intensity, log = logger) {
   }
 
   try {
-    await supabaseAdmin.from("user_achievements").insert({
-      user_id: userId,
-      achievement_slug: "training_points_earned",
-      achievement_name: "Training Points",
-      category: "training",
-      metadata: { points: totalPoints, duration_minutes: duration, intensity },
+    const { error } = await supabaseAdmin.rpc("increment_training_points", {
+      p_user_id: userId,
+      p_points: totalPoints,
     });
+    if (error) {
+      throw error;
+    }
   } catch (err) {
     log.warn("training_points_persist_failed", { user_id: userId }, err);
   }

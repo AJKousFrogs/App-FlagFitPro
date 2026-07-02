@@ -288,7 +288,11 @@ export class PeriodizationService {
     for (let i = 0; i < 7; i++) {
       const date = new Date(today);
       date.setDate(today.getDate() + i);
-      const phase = this.schedule.phaseFor(date);
+      // Day 0 must agree with the `today` signal (server-computed
+      // `snap.currentPhase`) rather than re-resolving locally — the client
+      // and server phase resolvers key off different day-of-week sources
+      // (local vs UTC) and can disagree for a few hours around UTC midnight.
+      const phase = i === 0 ? snap.currentPhase : this.schedule.phaseFor(date);
       out.push(
         prescribeFor({
           date,
@@ -829,27 +833,7 @@ function decideBasePrescription(inputs: PeriodizationInputs): DailyPrescription 
   const apparentTemp = inputs.weather?.apparentC ?? inputs.weather?.tempC ?? null;
   const hotDay = typeof apparentTemp === "number" && apparentTemp >= HEAT_CAUTION_C;
 
-  // 1a. Travel day — inside a club/national event window but not a game day.
-  if (phase === "travel") {
-    return finalize({
-      date,
-      phase,
-      intent: "travel",
-      targetRpe: null,
-      targetMinutes: 0,
-      sprintReps: 0,
-      strengthSets: 0,
-      reasoning:
-        "Travel day. Rest, stay hydrated, keep legs moving between transit. Arrive fresh.",
-      recoveryEmphasis: "high",
-      nutrition: nutritionFor("travel", bodyweight, false, hotDay),
-      driverEvent,
-      hoursUntilNextEvent: hoursUntilNext,
-      acwrAtIssue: acwr,
-    });
-  }
-
-  // 1b. Currently inside a competition window → game day.
+  // 1a. Currently inside a competition window → game day.
   if (phase === "competition") {
     return finalize({
       date,
@@ -921,6 +905,30 @@ function decideBasePrescription(inputs: PeriodizationInputs): DailyPrescription 
       reasoning: `Readiness ${Math.round(effectiveReadiness)}/100 is low. Active recovery only.`,
       recoveryEmphasis: "high",
       nutrition: nutritionFor("recovery", bodyweight, heavyDensity, hotDay),
+      driverEvent,
+      hoursUntilNextEvent: hoursUntilNext,
+      acwrAtIssue: acwr,
+    });
+  }
+
+  // 4.5. Travel day — inside a club/national event window but not a game day.
+  // Deliberately placed AFTER the ACWR-danger and readiness-collapse guards
+  // (unlike competition/taper-prime, a travel day is not a fixed commitment —
+  // an athlete in the danger zone must still get the "critical" rest framing,
+  // not the generic travel message).
+  if (phase === "travel") {
+    return finalize({
+      date,
+      phase,
+      intent: "travel",
+      targetRpe: null,
+      targetMinutes: 0,
+      sprintReps: 0,
+      strengthSets: 0,
+      reasoning:
+        "Travel day. Rest, stay hydrated, keep legs moving between transit. Arrive fresh.",
+      recoveryEmphasis: "high",
+      nutrition: nutritionFor("travel", bodyweight, false, hotDay),
       driverEvent,
       hoursUntilNextEvent: hoursUntilNext,
       acwrAtIssue: acwr,
@@ -1415,7 +1423,9 @@ type SessionTarget = ReturnType<typeof baseTargets>;
  * a build block (no games) can carry more volume on the LIGHTER intents than
  * in-season — e.g. mobility RPE 6/75 in pre-season vs RPE 4/45 in-season. So the
  * in-season baseline is {@link baseTargets}; these rows override the light intents
- * heavier for the build week.
+ * heavier for the build week. `rest` is intentionally 0 minutes / null RPE — it
+ * always matches {@link baseTargets}'s rest case (a rest day isn't heavier in
+ * a build block); listed explicitly for symmetry with mobility/technical.
  */
 const BUILD_TARGET_OVERRIDES: Partial<Record<PrescriptionIntent, SessionTarget>> = {
   rest: { targetRpe: null, targetMinutes: 0, sprintReps: 0, strengthSets: 0 },

@@ -32,7 +32,9 @@ export type EventStatus =
 /**
  * Periodization phase for a given date, derived from the schedule.
  *
- * - `competition`: the day of an event itself
+ * - `competition`: the day of an event itself (a game day)
+ * - `travel`: inside a club/national event window, but not a game day itself
+ *   (logistics/rest day around a weekday tournament leg)
  * - `taper`: 1–7 days before a peak/high event (volume down, intensity primed)
  * - `recovery`: 1–4 days after a high-load event (active recovery, deload)
  * - `accumulation`: ordinary training window — load can build

@@ -10,7 +10,7 @@ import { SupabaseService } from "../../core/services/supabase.service";
 import { TeamMembershipService } from "../../core/services/team-membership.service";
 import { LoggerService } from "../../core/services/logger.service";
 import { googleMapsSearchUrl } from "../../core/utils/map-link.util";
-import { CompetitionKind, EventImportance } from "../../core/models/schedule.models";
+import { CompetitionKind, CompetitionLevel, EventImportance } from "../../core/models/schedule.models";
 
 interface EventRow {
   id: string;
@@ -46,6 +46,16 @@ const IMPORTANCES: { key: EventImportance; label: string }[] = [
   { key: "peak", label: "Peak" },
 ];
 
+const LEVELS: { key: CompetitionLevel; label: string }[] = [
+  { key: "club", label: "Club" },
+  { key: "regional", label: "Regional" },
+  { key: "national", label: "National" },
+  { key: "international", label: "International" },
+  { key: "continental", label: "Continental" },
+  { key: "world", label: "World" },
+  { key: "olympic", label: "Olympic" },
+];
+
 /**
  * Coach event editor. Sets each upcoming event's per-game format
  * (competition_events.minutes_per_game + game_format) so competition LOAD is
@@ -79,6 +89,7 @@ export class StaffEventsComponent {
   readonly formats = FORMATS;
   readonly kinds = KINDS;
   readonly importances = IMPORTANCES;
+  readonly levels = LEVELS;
   readonly events = signal<EventRow[] | null>(null);
   readonly saved = signal<Set<string>>(new Set());
   readonly formatError = signal<string | null>(null);
@@ -99,6 +110,7 @@ export class StaffEventsComponent {
   readonly fEndDate = signal("");
   readonly fGames = signal(1);
   readonly fImportance = signal<EventImportance>("high");
+  readonly fLevel = signal<CompetitionLevel>("national");
   readonly fLocation = signal("");
   readonly fVenue = signal("");
   readonly fHotelName = signal("");
@@ -231,6 +243,7 @@ export class StaffEventsComponent {
     this.fEndDate.set("");
     this.fGames.set(1);
     this.fImportance.set("high");
+    this.fLevel.set("national");
     this.fLocation.set("");
     this.fVenue.set("");
     this.fHotelName.set("");
@@ -281,6 +294,7 @@ export class StaffEventsComponent {
           .insert({
             name: title,
             kind: this.fKind(),
+            level: this.fLevel(),
             season_year: seasonYear,
             created_by: userId,
           })

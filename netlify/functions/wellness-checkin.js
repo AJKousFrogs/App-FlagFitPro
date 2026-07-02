@@ -372,6 +372,7 @@ async function saveCheckin(supabase, userId, payload, requestId, log = logger) {
     ["motivationLevel", motivationLevel, 1, 10],
     ["mood", mood, 1, 10],
     ["readinessScore", readinessScore, 0, 100],
+    ["travelHours", travelHours, 0, 24],
   ];
   for (const [field, value, min, max] of rangeChecks) {
     if (

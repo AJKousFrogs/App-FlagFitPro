@@ -1,5 +1,5 @@
 {
-  "generatedOn": "2026-06-23",
+  "generatedOn": "2026-07-01",
   "source": "live Supabase introspection (information_schema) via Supabase MCP",
   "tables": {
     "account_deletion_requests": [

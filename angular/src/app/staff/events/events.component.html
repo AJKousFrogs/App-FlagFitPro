@@ -35,6 +35,14 @@
         }
       </div>
 
+      <p class="lbl" style="margin:0">Level <span class="muted">(international+ allows weekday games)</span></p>
+      <div class="chiprow">
+        @for (l of levels; track l.key) {
+          <button type="button" class="chip" [class.sel]="fLevel() === l.key"
+                  (click)="fLevel.set(l.key)">{{ l.label }}</button>
+        }
+      </div>
+
       <div class="grid2">
         <div>
           <label class="lbl" for="ev-start-date">Start date</label>

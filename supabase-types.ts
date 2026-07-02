@@ -10272,6 +10272,10 @@ export type Database = {
         Returns: undefined
       }
       increment_reply_count: { Args: { message_id: string }; Returns: number }
+      increment_training_points: {
+        Args: { p_points: number; p_user_id: string }
+        Returns: number
+      }
       initiate_account_deletion: {
         Args: { p_reason?: string; p_user_id: string }
         Returns: string

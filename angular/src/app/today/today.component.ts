@@ -133,10 +133,14 @@ export class TodayComponent {
     const rx = this.rx();
     if (!rx) return null;
     if (this.weather()?.applied) return { label: "weather-adjusted", cls: "caution" };
-    if (rx.recoveryEmphasis === "critical") return { label: "recover", cls: "danger" };
-    if (rx.recoveryEmphasis === "high") return { label: "recover", cls: "caution" };
+    // Intent-specific labels take precedence over the generic recovery-emphasis
+    // badge — competition/travel always carry a "critical"/"high" emphasis
+    // (see periodization.service.ts), which would otherwise mask the more
+    // informative "game day"/"travel day" label and never render it.
     if (rx.intent === "competition") return { label: "game day", cls: "info" };
     if (rx.intent === "travel") return { label: "travel day", cls: "neutral" };
+    if (rx.recoveryEmphasis === "critical") return { label: "recover", cls: "danger" };
+    if (rx.recoveryEmphasis === "high") return { label: "recover", cls: "caution" };
     return { label: "today", cls: "good" };
   });
 
