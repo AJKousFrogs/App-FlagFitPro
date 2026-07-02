@@ -1,10 +1,30 @@
 /**
  * CNS spacing guard — prevents back-to-back max-effort sprint/speed sessions.
  *
- * Canonical spacing window: 72h. The client-side AcwrService.shouldSkipSprints()
+ * Canonical spacing window: age-scaled (see {@link cnsSpacingHoursForAge}), same
+ * bands as the client's periodization.service.ts cnsRecoveryHoursForAge() so the
+ * intent the athlete sees on "today" and the protocol the server actually
+ * generates never silently disagree. The client-side AcwrService.shouldSkipSprints()
  * is a coarse proxy (riskZone + day-of-week); this is the server-side authority
  * that checks actual session recency against the DB.
  */
+
+/**
+ * Age-scaled CNS recovery window, hours. MONOTONIC and floored at 48h — a
+ * younger athlete is never given less spacing than the base. Bands mirror
+ * periodization.service.ts's cnsRecoveryHoursForAge (masters S&C consensus):
+ * <35 → 48h, 35-39 → 60h, 40+ → 72h. Missing/implausible age → 48h base.
+ * @param {number|null|undefined} ageYears
+ * @returns {number}
+ */
+export function cnsSpacingHoursForAge(ageYears) {
+  if (typeof ageYears !== "number" || !Number.isFinite(ageYears) || ageYears < 16) {
+    return 48;
+  }
+  if (ageYears >= 40) return 72;
+  if (ageYears >= 35) return 60;
+  return 48;
+}
 
 /**
  * Returns the ISO timestamp of the most recent sprint/speed/competition session

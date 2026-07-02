@@ -60,7 +60,7 @@ import { persistFallbackProtocolWhenExercisesMissing } from "./utils/daily-proto
 import { generateMainSessionFallback } from "./utils/daily-protocol-main-session.js";
 import { generateReturnToPlayProtocol } from "./utils/daily-protocol-rtp.js";
 import { getActiveInjuries } from "./utils/active-injuries.js";
-import { getLastHighCnsSession } from "./utils/cns-spacing.js";
+import { getLastHighCnsSession, cnsSpacingHoursForAge } from "./utils/cns-spacing.js";
 import { generateTemplateMainSession } from "./utils/daily-protocol-template-session.js";
 import {
   buildProtocolGenerationIdempotencyKey,
@@ -1312,13 +1312,16 @@ async function generateProtocol(supabase, userId, payload, headers, log = logger
     computeTrainingDaysLogged,
   });
 
-  // CNS 72h spacing guard: never prescribe sprint/max-CNS if the athlete did
-  // one within the last 72h. The client AcwrService.shouldSkipSprints() is a
-  // coarse proxy (riskZone + day-of-week only); this is the server authority.
-  const CNS_SPACING_HOURS = 72;
+  // CNS spacing guard: never prescribe sprint/max-CNS if the athlete did one
+  // within the age-scaled recovery window (48h base, 60h 35-39, 72h 40+ — same
+  // bands periodization.service.ts uses client-side, so the intent shown on
+  // "today" and the protocol actually generated never silently disagree). The
+  // client AcwrService.shouldSkipSprints() is a coarse proxy (riskZone +
+  // day-of-week only); this is the server authority.
+  const CNS_SPACING_HOURS = cnsSpacingHoursForAge(context.age);
   const cnsBlockedAt = await getLastHighCnsSession(supabase, userId, date, CNS_SPACING_HOURS);
   if (cnsBlockedAt) {
-    aiRationale += ` ⚡ CNS spacing guard: sprint/speed session logged ${cnsBlockedAt.slice(0, 10)} — ≥72h between max-effort sessions.`;
+    aiRationale += ` ⚡ CNS spacing guard: sprint/speed session logged ${cnsBlockedAt.slice(0, 10)} — ≥${CNS_SPACING_HOURS}h between max-effort sessions.`;
   }
 
   // COMPOSE: when the intent layer supplies the day's intent, REALIZE it —
