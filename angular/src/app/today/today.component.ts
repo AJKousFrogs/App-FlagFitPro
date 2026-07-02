@@ -19,6 +19,8 @@ import { ScheduleService } from "../core/services/schedule.service";
 import { IdentityService } from "../core/services/identity.service";
 import { TrainingVideoService } from "../core/services/training-video.service";
 import { RecoveryService } from "../core/services/recovery.service";
+import { googleMapsSearchUrl } from "../core/utils/map-link.util";
+import { CompetitionEvent } from "../core/models/schedule.models";
 
 /**
  * Today — the answer-first home screen. Ported 1:1 from the approved hi-fi
@@ -102,6 +104,24 @@ export class TodayComponent {
   readonly nextEvent = this.schedule.nextEvent;
   readonly daysToNext = this.schedule.daysToNextEvent;
 
+  /**
+   * Hotel/lodging line under "Your schedule" — only once the athlete is
+   * actually inside the event window (not during the taper lead-up), so it
+   * doesn't show a hotel days before travel.
+   */
+  readonly eventHotelInfo = computed<CompetitionEvent | null>(() => {
+    const ev = this.nextEvent();
+    if (!ev || (!ev.hotelName && !ev.hotelAddress)) return null;
+    const now = Date.now();
+    const start = new Date(ev.startsAt).getTime();
+    const end = new Date(ev.endsAt ?? ev.startsAt).getTime();
+    return now >= start && now <= end ? ev : null;
+  });
+
+  mapUrl(address: string): string {
+    return googleMapsSearchUrl(address);
+  }
+
   /** Weather adjustment surfaced by the engine (adjustment warnings), if any. */
   readonly weather = computed(() => this.rx()?.weatherAdjustment ?? null);
 
@@ -113,10 +133,14 @@ export class TodayComponent {
     const rx = this.rx();
     if (!rx) return null;
     if (this.weather()?.applied) return { label: "weather-adjusted", cls: "caution" };
-    if (rx.recoveryEmphasis === "critical") return { label: "recover", cls: "danger" };
-    if (rx.recoveryEmphasis === "high") return { label: "recover", cls: "caution" };
+    // Intent-specific labels take precedence over the generic recovery-emphasis
+    // badge — competition/travel always carry a "critical"/"high" emphasis
+    // (see periodization.service.ts), which would otherwise mask the more
+    // informative "game day"/"travel day" label and never render it.
     if (rx.intent === "competition") return { label: "game day", cls: "info" };
     if (rx.intent === "travel") return { label: "travel day", cls: "neutral" };
+    if (rx.recoveryEmphasis === "critical") return { label: "recover", cls: "danger" };
+    if (rx.recoveryEmphasis === "high") return { label: "recover", cls: "caution" };
     return { label: "today", cls: "good" };
   });
 

@@ -35,7 +35,7 @@ function fmtDuration(sec?: number | null): string {
 const INTENT_CATEGORY: Record<PrescriptionIntent, string> = {
   sprint: "sprint", strength: "strength", mixed: "conditioning", mobility: "mobility",
   technical: "skills", recovery: "recovery", rest: "recovery",
-  "taper-prime": "warmup", competition: "skills", travel: "morning_mobility",
+  "taper-prime": "warmup", competition: "skills", travel: "mobility",
 };
 
 /**

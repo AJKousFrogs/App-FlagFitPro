@@ -1,7 +1,7 @@
 # Endpoint Reference (GENERATED — do not hand-edit)
 
 > Regenerate: `npm run docs:regen` (parses `netlify.toml` + `netlify/functions/*.js` + scans `angular/src`).
-> **Last verified: 2026-06-23**
+> **Last verified: 2026-07-01**
 
 **113 functions: 111 exercised, 2 orphaned.** A table name with ⚠️ is referenced in code but not a live table (possible drift/typo); _(bucket)_ = Storage bucket, not a DB table.
 
@@ -71,7 +71,7 @@
 | `performance-heatmap` | GET | _(router submodule)_ | training_sessions |
 | `performance-metrics` | GET | _(router submodule)_ | training_sessions, performance_tests |
 | `player-programs` | GET, POST, PUT | _(router submodule)_ | player_programs, training_programs |
-| `player-settings` | GET, POST | _(router submodule)_ | athlete_training_config, users, age_recovery_modifiers |
+| `player-settings` | GET, POST | _(router submodule)_ | athlete_training_config, users, age_recovery_modifiers, ensure_public_user_profile() |
 | `player-stats` | GET | _(router submodule)_ | games, game_events |
 | `plyometrics` | GET | _(router submodule)_ | plyometrics_exercises |
 | `privacy-settings` | GET, PUT | _(router submodule)_ | privacy_settings, team_sharing_settings, users, parental_consent, team_members, privacy_audit_log |
@@ -101,7 +101,7 @@
 | `team-invite` | POST | _(router submodule)_ | teams, team_members, team_invitations, users |
 | `team-templates` | GET, POST, PATCH, DELETE | _(router submodule)_ | team_members, team_templates, coach_inbox_items, ai_messages, micro_sessions, template_assignments |
 | `training` | OPTIONS | /api/training/sessions<br>/api/training-sessions<br>/api/training/sessions/*<br>/api/training-sessions/*<br>/api/training/complete<br>/api/training/complete/*<br>/api/training/suggestions<br>/api/training/suggestions/*<br>/api/training-metrics<br>/api/training-plan<br>/api/training-plan/*<br>/api/training/plan<br>/api/training/plan/*<br>/api/training/stats<br>/api/training/stats-enhanced<br>/api/training-programs<br>/api/training-programs/*<br>/api/smart-training<br>/api/smart-training/*<br>/api/training/programs<br>/api/training/programs/*<br>/api/daily-training<br>/api/daily-training/* | — |
-| `training-complete` | POST | _(router submodule)_ | notifications, training_sessions, complete_training_session() |
+| `training-complete` | POST | _(router submodule)_ | notifications, training_sessions, increment_training_points(), complete_training_session() |
 | `training-metrics` | GET | _(router submodule)_ | training_sessions |
 | `training-plan` | GET | _(router submodule)_ | training_sessions, player_programs, team_members, games |
 | `training-programs` | GET | _(router submodule)_ | training_programs, training_weeks, training_session_templates, movement_patterns, warmup_protocols, training_phases, session_exercises |

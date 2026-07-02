@@ -20,6 +20,7 @@ import {
   ATHLETE_EVENT_KIND_LABEL,
 } from "../core/models/athlete-event.models";
 import { CompetitionEvent } from "../core/models/schedule.models";
+import { googleMapsSearchUrl } from "../core/utils/map-link.util";
 
 /**
  * Schedule — the athlete's calendar.
@@ -194,6 +195,15 @@ const KIND_DEFAULT_IMPORTANCE: Record<AthleteEventKind, AthleteEventImportance> 
                 <div class="stack" style="gap:4px">
                   <b>{{ ev.competitionShortName || ev.competitionName }}</b>
                   <small class="muted">{{ whenLabel(ev.startsAt, ev.endsAt) }}</small>
+                  @if (ev.hotelName || ev.hotelAddress) {
+                    <small class="muted inline">
+                      <lucide-icon name="bed" />
+                      {{ ev.hotelName || "Team hotel" }}
+                      @if (ev.hotelAddress) {
+                        · <a [href]="mapUrl(ev.hotelAddress)" target="_blank" rel="noopener">map</a>
+                      }
+                    </small>
+                  }
                 </div>
                 <span class="band neutral">Team</span>
               </div>
@@ -280,6 +290,10 @@ export class ScheduleComponent implements OnInit {
   }
   importanceClass(i: AthleteEventImportance): string {
     return i === "peak" ? "danger" : i === "high" ? "caution" : "info";
+  }
+
+  mapUrl(address: string): string {
+    return googleMapsSearchUrl(address);
   }
 
   whenLabel(startsAt: string, endsAt: string | null): string {

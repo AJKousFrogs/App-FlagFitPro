@@ -1,36 +1,155 @@
 <header class="topbar">
   <div>
-    <div class="eyebrow">game format → honest load</div>
+    <div class="eyebrow">games, formats & travel</div>
     <h1>Events</h1>
   </div>
-  <span class="chip">Coach</span>
+  @if (mode() === "list") {
+    <button class="btn primary sm" type="button" (click)="openCreate()">
+      <lucide-icon name="calendar-plus" /> Add event
+    </button>
+  } @else {
+    <span class="chip">Coach</span>
+  }
 </header>
 
 <main class="screen">
-  <p class="note">Set each event's format so competition load is scored correctly — a
-    2×40 tournament counts its true spike, not a flat 40-min default.</p>
+  @if (mode() === "form") {
+    <!-- ───────── create event ───────── -->
+    <div class="card stack">
+      <div class="row">
+        <h2>Add event</h2>
+        <button class="icon-btn" type="button" aria-label="Cancel" (click)="cancelCreate()">
+          <lucide-icon name="x" />
+        </button>
+      </div>
 
-  @if (formatError(); as e) { <p class="note" style="color:var(--danger)" role="alert">{{ e }}</p> }
+      <label class="lbl" for="ev-title">Opponent / tournament name</label>
+      <input id="ev-title" class="input" type="text" placeholder="e.g. Regional Cup"
+             [value]="fTitle()" (input)="fTitle.set(val($event))" />
 
-  @if (events() === null) {
-    <div class="empty">Loading…</div>
-  } @else if (!events()!.length) {
-    <div class="empty">No upcoming events for your team.</div>
-  } @else {
-    @for (e of events()!; track e.id) {
-      <div class="card">
-        <div class="row">
-          <b class="inline"><lucide-icon name="flag" /> {{ e.name }}</b>
-          <small>{{ date(e.startsAt) }} · {{ e.games ?? "—" }} games</small>
+      <p class="lbl" style="margin:0">Type</p>
+      <div class="chiprow">
+        @for (k of kinds; track k.key) {
+          <button type="button" class="chip" [class.sel]="fKind() === k.key"
+                  (click)="fKind.set(k.key)">{{ k.label }}</button>
+        }
+      </div>
+
+      <p class="lbl" style="margin:0">Level <span class="muted">(international+ allows weekday games)</span></p>
+      <div class="chiprow">
+        @for (l of levels; track l.key) {
+          <button type="button" class="chip" [class.sel]="fLevel() === l.key"
+                  (click)="fLevel.set(l.key)">{{ l.label }}</button>
+        }
+      </div>
+
+      <div class="grid2">
+        <div>
+          <label class="lbl" for="ev-start-date">Start date</label>
+          <input id="ev-start-date" class="input" type="date" [value]="fStartDate()" (change)="fStartDate.set(val($event))" />
         </div>
-        <div class="inline" style="flex-wrap:wrap;gap:var(--s-2);margin-top:var(--s-3)">
-          @for (f of formats; track f.min) {
-            <button type="button" class="chip" [class.sel]="e.minutesPerGame === f.min"
-                    (click)="setFormat(e, f.min, f.label)">{{ f.label }}</button>
-          }
-          @if (saved().has(e.id)) { <span class="band good">saved</span> }
+        <div>
+          <label class="lbl" for="ev-start-time">Time</label>
+          <input id="ev-start-time" class="input" type="time" [value]="fStartTime()" (change)="fStartTime.set(val($event))" />
         </div>
       </div>
+
+      <label class="lbl" for="ev-end-date">End date <span class="muted">(optional — multi-day tournaments)</span></label>
+      <input id="ev-end-date" class="input" type="date" [value]="fEndDate()" (change)="fEndDate.set(val($event))" />
+
+      <div class="grid2">
+        <div>
+          <label class="lbl" for="ev-games">Expected games</label>
+          <input id="ev-games" class="input" type="number" min="0" max="50"
+                 [value]="fGames()" (input)="fGames.set(num($event))" />
+        </div>
+        <div>
+          <p class="lbl" style="margin:0">Importance</p>
+          <div class="chiprow">
+            @for (i of importances; track i.key) {
+              <button type="button" class="chip" [class.sel]="fImportance() === i.key"
+                      (click)="fImportance.set(i.key)">{{ i.label }}</button>
+            }
+          </div>
+        </div>
+      </div>
+
+      <label class="lbl" for="ev-location">Location <span class="muted">(optional)</span></label>
+      <input id="ev-location" class="input" type="text" placeholder="City"
+             [value]="fLocation()" (input)="fLocation.set(val($event))" />
+
+      <label class="lbl" for="ev-venue">Venue <span class="muted">(optional)</span></label>
+      <input id="ev-venue" class="input" type="text" placeholder="Field / stadium name"
+             [value]="fVenue()" (input)="fVenue.set(val($event))" />
+
+      <label class="lbl" for="ev-hotel-name">Hotel <span class="muted">(optional — shown to players)</span></label>
+      <input id="ev-hotel-name" class="input" type="text" placeholder="Hotel name"
+             [value]="fHotelName()" (input)="fHotelName.set(val($event))" />
+      <input id="ev-hotel-address" class="input" type="text" placeholder="Hotel address"
+             [value]="fHotelAddress()" (input)="fHotelAddress.set(val($event))" />
+
+      @if (createError(); as e) {
+        <p class="note" style="color:var(--danger)" role="alert">{{ e }}</p>
+      }
+
+      <div class="row" style="justify-content:flex-end;gap:var(--s-2)">
+        <button class="btn ghost" type="button" (click)="cancelCreate()">Cancel</button>
+        <button class="btn primary" type="button" [attr.aria-disabled]="creating()" (click)="createEvent()">
+          {{ creating() ? "Saving…" : "Add event" }}
+        </button>
+      </div>
+    </div>
+  } @else {
+    <!-- ───────── list ───────── -->
+    <p class="note">Set each event's format so competition load is scored correctly — a
+      2×40 tournament counts its true spike, not a flat 40-min default. Add hotel info
+      for away tournaments so players can see where the team is staying.</p>
+
+    @if (formatError(); as e) { <p class="note" style="color:var(--danger)" role="alert">{{ e }}</p> }
+    @if (hotelError(); as e) { <p class="note" style="color:var(--danger)" role="alert">{{ e }}</p> }
+
+    @if (events() === null) {
+      <div class="empty">Loading…</div>
+    } @else if (!events()!.length) {
+      <div class="empty">
+        <p style="margin:0 0 var(--s-3)">No upcoming events for your team.</p>
+        <button class="btn primary" type="button" (click)="openCreate()">
+          <lucide-icon name="calendar-plus" /> Add your first event
+        </button>
+      </div>
+    } @else {
+      @for (e of events()!; track e.id) {
+        <div class="card">
+          <div class="row">
+            <b class="inline"><lucide-icon name="flag" /> {{ e.name }}</b>
+            <small>{{ date(e.startsAt) }} · {{ e.games ?? "—" }} games</small>
+          </div>
+          <div class="inline" style="flex-wrap:wrap;gap:var(--s-2);margin-top:var(--s-3)">
+            @for (f of formats; track f.min) {
+              <button type="button" class="chip" [class.sel]="e.minutesPerGame === f.min"
+                      (click)="setFormat(e, f.min, f.label)">{{ f.label }}</button>
+            }
+            @if (saved().has(e.id)) { <span class="band good">saved</span> }
+          </div>
+
+          <div class="stack" style="gap:var(--s-1);margin-top:var(--s-3)">
+            <p class="lbl" style="margin:0"><lucide-icon name="bed" /> Hotel (visible to players)</p>
+            <input class="input" type="text" placeholder="Hotel name"
+                   [value]="hotelDrafts()[e.id]?.name ?? ''" (input)="updateHotelDraft(e.id, 'name', $event)" />
+            <input class="input" type="text" placeholder="Hotel address"
+                   [value]="hotelDrafts()[e.id]?.address ?? ''" (input)="updateHotelDraft(e.id, 'address', $event)" />
+            <div class="row" style="justify-content:flex-end;gap:var(--s-2)">
+              @if (e.hotelAddress) {
+                <a class="btn ghost sm" [href]="mapUrl(e.hotelAddress)" target="_blank" rel="noopener">
+                  <lucide-icon name="map-pin" /> View on map
+                </a>
+              }
+              <button class="btn ghost sm" type="button" (click)="saveHotel(e)">Save</button>
+              @if (hotelSaved().has(e.id)) { <span class="band good">saved</span> }
+            </div>
+          </div>
+        </div>
+      }
     }
   }
 </main>

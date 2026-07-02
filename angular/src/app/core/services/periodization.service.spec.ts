@@ -164,6 +164,31 @@ describe("prescribeFor — readiness collapse", () => {
 });
 
 // =============================================================================
+// PRIORITY 4.5: TRAVEL DAY (yields to ACWR/readiness safety guards)
+// =============================================================================
+
+describe("prescribeFor — travel day", () => {
+  it("travel phase with safe ACWR/readiness returns travel intent", () => {
+    const rx = prescribeFor(inputs({ phase: "travel", acwr: 1.0, readiness: 75 }));
+    expect(rx.intent).toBe("travel");
+    expect(rx.targetMinutes).toBe(0);
+  });
+
+  it("ACWR danger zone overrides travel phase, not the reverse", () => {
+    const rx = prescribeFor(inputs({ phase: "travel", acwr: 1.6, readiness: 75 }));
+    expect(rx.intent).toBe("rest");
+    expect(rx.recoveryEmphasis).toBe("critical");
+    expect(rx.reasoning).toMatch(/ACWR.*danger/i);
+  });
+
+  it("readiness collapse overrides travel phase, not the reverse", () => {
+    const rx = prescribeFor(inputs({ phase: "travel", acwr: 1.0, readiness: 45 }));
+    expect(rx.intent).toBe("recovery");
+    expect(rx.reasoning).toMatch(/readiness/i);
+  });
+});
+
+// =============================================================================
 // PRIORITY 5: PHASE-DRIVEN DEFAULTS
 // =============================================================================
 

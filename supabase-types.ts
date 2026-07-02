@@ -2063,6 +2063,8 @@ export type Database = {
           expected_game_count: number
           external_id: string | null
           game_format: string | null
+          hotel_address: string | null
+          hotel_name: string | null
           id: string
           importance: string
           label: string | null
@@ -2084,6 +2086,8 @@ export type Database = {
           expected_game_count?: number
           external_id?: string | null
           game_format?: string | null
+          hotel_address?: string | null
+          hotel_name?: string | null
           id?: string
           importance?: string
           label?: string | null
@@ -2105,6 +2109,8 @@ export type Database = {
           expected_game_count?: number
           external_id?: string | null
           game_format?: string | null
+          hotel_address?: string | null
+          hotel_name?: string | null
           id?: string
           importance?: string
           label?: string | null
@@ -9800,6 +9806,8 @@ export type Database = {
           ends_at: string | null
           expected_game_count: number | null
           external_id: string | null
+          hotel_address: string | null
+          hotel_name: string | null
           id: string | null
           importance: string | null
           label: string | null
@@ -10264,6 +10272,10 @@ export type Database = {
         Returns: undefined
       }
       increment_reply_count: { Args: { message_id: string }; Returns: number }
+      increment_training_points: {
+        Args: { p_points: number; p_user_id: string }
+        Returns: number
+      }
       initiate_account_deletion: {
         Args: { p_reason?: string; p_user_id: string }
         Returns: string

@@ -545,32 +545,24 @@ async function saveSettings(supabase, userId, payload, log = logger) {
   }
 
   try {
-    // Try update first (row may already exist from wellness-checkin's ensurePublicUserProfile).
-    const { count } = await supabaseAdmin
+    // Atomically guarantee the row exists (same RPC wellness-checkin's
+    // upsert_wellness_checkin uses) before updating it — avoids the race in a
+    // separate check-then-insert (two concurrent onboarding submits both seeing
+    // "row missing" and both inserting, the second violating the id PK).
+    const { error: ensureError } = await supabaseAdmin.rpc(
+      "ensure_public_user_profile",
+      { p_user_id: userId },
+    );
+    if (ensureError) {
+      throw ensureError;
+    }
+
+    const { error: updateError } = await supabaseAdmin
       .from("users")
       .update(userUpdate)
-      .eq("id", userId)
-      .select("id", { count: "exact", head: true });
-
-    if (count === 0) {
-      // Row doesn't exist — look up the auth user and insert with required fields.
-      const { data: { user: authUser } } = await supabaseAdmin.auth.admin.getUserById(userId);
-      if (authUser) {
-        const fullName = authUser.user_metadata?.full_name || authUser.user_metadata?.name || authUser.email || "Athlete";
-        const parts = fullName.trim().split(/\s+/);
-        await supabaseAdmin.from("users").insert({
-          id: userId,
-          email: authUser.email,
-          password_hash: null,
-          first_name: parts[0] || "Athlete",
-          last_name: parts.slice(1).join(" ") || "Account",
-          full_name: fullName,
-          name: fullName,
-          email_verified: !!authUser.email_confirmed_at,
-          is_active: true,
-          ...userUpdate,
-        });
-      }
+      .eq("id", userId);
+    if (updateError) {
+      throw updateError;
     }
   } catch (updateError) {
     log.warn("player_settings_user_update_warning", {
