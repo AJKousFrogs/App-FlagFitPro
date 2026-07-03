@@ -74,7 +74,7 @@ Status: **LIVE** (wired end-to-end, tables exist) · **BUILT, NOT DEPLOYED** (co
 | Team activities (coach calendar overrides) | SCHEMA-ONLY | `team-activity-resolver.js` → `team_activities` (table created 2026-06-22) | Table + read path exist; no writer/UI yet — resolver returns empty (inert by design) |
 | Privacy consent views read | REMOVED | (was `privacy-settings.service.ts` → `v_workout_logs_consent`/`v_load_monitoring_consent`) | Dead code deleted 2026-06-09; views never existed live |
 | ExerciseDB lane | ORPHANED | `exercisedb.js` (`/api/exercisedb`) | No frontend ref; FE uses `exercises` lane |
-| QB throw-count / arm-care lane | ORPHANED | `qb-throwing.js` (`/api/qb-throwing`) → `training_sessions.throw_au`/`throw_count`, `qb_throwing_sessions` | Backend + `api.service.ts` route table exist; zero frontend callers — no UI logs a throw count, so dosing-threshold gating has no data to act on |
+| QB throw-count / arm-care lane | PARTIAL | `qb-throwing.js` (`/api/qb-throwing`), `qb-arm-care-card.component.ts` → `qb_throwing_sessions` | V2.2: minimal frontend logger wired (self-gates on `position==='qb'`, dropped into Training). No migration needed — backend pre-existed. `QB_THROW_ADAPTATION` interception-rate dosing still has no data source (throw count ≠ interception rate); short/medium/long split and arm-care checkboxes not in the quick-log form yet. See `docs/v2/V2.2-breadth-calibration.md`. |
 
 > The ~40 ghost-table `.from()`/`.rpc()` references that errored at runtime have been retired — `docs/generated/ENDPOINTS.md` (regenerated 2026-06-23) now shows **no** unknown-table refs. The PLANNED lanes above are routed-but-unbuilt and return guarded 404s where wired.
 

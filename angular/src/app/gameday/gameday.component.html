@@ -65,7 +65,7 @@
           <label for="kickoff-times"><small>Kickoff times, comma-separated (venue-local, 24h)</small></label>
           <input id="kickoff-times" type="text" placeholder="11:00, 12:30, 15:30, 17:00"
             [value]="bulkKickoffInput()" (input)="bulkKickoffInput.set($any($event.target).value)" />
-          @if (bulkError(); as err) { <small class="text-danger">{{ err }}</small> }
+          @if (bulkError(); as err) { <p class="note" style="color:var(--danger)">{{ err }}</p> }
           <button class="btn sm" style="margin-top:var(--s-2)" type="button"
             [disabled]="bulkSaving()" (click)="saveKickoffTimes()">
             {{ bulkSaving() ? 'Saving…' : 'Save schedule' }}

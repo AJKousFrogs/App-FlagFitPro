@@ -11,6 +11,7 @@ import { LucideAngularModule } from "lucide-angular";
 import { AvatarComponent } from "../shared/avatar.component";
 import { YtVideoComponent } from "../shared/yt-video.component";
 import { SkeletonComponent } from "../shared/skeleton.component";
+import { QbArmCareCardComponent } from "../shared/qb-arm-care-card.component";
 import { SESSION_VIDEO_ID } from "../core/config/session-video.config";
 
 import { PeriodizationService } from "../core/services/periodization.service";
@@ -39,7 +40,14 @@ interface WeekRow {
 @Component({
   selector: "app-training",
   standalone: true,
-  imports: [AvatarComponent, YtVideoComponent, SkeletonComponent, RouterLink, LucideAngularModule],
+  imports: [
+    AvatarComponent,
+    YtVideoComponent,
+    SkeletonComponent,
+    QbArmCareCardComponent,
+    RouterLink,
+    LucideAngularModule,
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: "./training.component.html",
   styles: [
