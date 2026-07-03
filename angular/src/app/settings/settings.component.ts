@@ -23,6 +23,8 @@ import {
 } from "../core/config/position-volume.config";
 import { extractApiPayload } from "../core/utils/api-response-mapper";
 import { readFileAsDataUrl } from "../shared/utils/file.utils";
+import { SeasonPhase, SeasonWindow } from "../core/models/prescription.models";
+import { SEASON_CALENDAR_PRESETS } from "../core/constants/season-calendar-presets.constants";
 
 type Tab = "Notifications" | "Privacy" | "Prefs" | "Security";
 
@@ -136,6 +138,76 @@ export class SettingsComponent {
     }
   }
 
+  // Season calendar (Prefs tab) — athlete-declared, same editor pattern as
+  // onboarding step 3. No hardcoded default here either: an athlete revisiting
+  // settings sees their own saved calendar (loaded below), and an athlete who
+  // skipped/cleared it in onboarding sees the same region-shaped presets to
+  // start from, never a single one-size-fits-all default.
+  readonly seasonPresets = SEASON_CALENDAR_PRESETS;
+  readonly selectedSeasonPreset = signal<string | null>(null);
+  readonly season = signal<SeasonWindow[]>([]);
+  readonly seasonPhases: SeasonPhase[] = ["offseason", "preseason", "inseason", "peak", "postseason"];
+  readonly seasonPhaseLabels: Record<SeasonPhase, string> = {
+    offseason: "Off-season",
+    preseason: "Pre-season",
+    inseason: "In-season",
+    peak: "Peak",
+    postseason: "Post-season",
+  };
+  readonly savingSeason = signal(false);
+  readonly seasonMsg = signal<string | null>(null);
+
+  applySeasonPreset(id: string): void {
+    const preset = this.seasonPresets.find((p) => p.id === id);
+    if (!preset) return;
+    this.selectedSeasonPreset.set(id);
+    this.season.set(preset.windows.map((w) => ({ ...w })));
+  }
+  addSeasonPeriod(): void {
+    this.selectedSeasonPreset.set(null);
+    this.season.update((s) => [...s, { phase: "offseason", from: "", to: "" }]);
+  }
+  removeSeasonPeriod(i: number): void {
+    this.selectedSeasonPreset.set(null);
+    this.season.update((s) => s.filter((_, idx) => idx !== i));
+  }
+  setSeasonPhase(i: number, phase: string): void {
+    this.selectedSeasonPreset.set(null);
+    this.season.update((s) => s.map((w, idx) => (idx === i ? { ...w, phase: phase as SeasonPhase } : w)));
+  }
+  setSeasonFrom(i: number, v: string): void {
+    this.selectedSeasonPreset.set(null);
+    this.season.update((s) => s.map((w, idx) => (idx === i ? { ...w, from: v } : w)));
+  }
+  setSeasonTo(i: number, v: string): void {
+    this.selectedSeasonPreset.set(null);
+    this.season.update((s) => s.map((w, idx) => (idx === i ? { ...w, to: v } : w)));
+  }
+
+  async saveSeason(): Promise<void> {
+    if (this.savingSeason()) return;
+    this.savingSeason.set(true);
+    this.seasonMsg.set(null);
+    try {
+      const res = await firstValueFrom(
+        this.api.post("/api/player-settings", {
+          seasonCalendar: this.season().filter((w) => w.from && w.to),
+        }),
+      );
+      if (res.success) {
+        this.seasonMsg.set("Saved — your plan now follows this calendar.");
+        this.periodization.refreshSettings();
+      } else {
+        this.seasonMsg.set(res.error ?? "Couldn't save — try again.");
+      }
+    } catch (e) {
+      this.logger.error("settings_season_save_failed", e);
+      this.seasonMsg.set("Couldn't save — try again.");
+    } finally {
+      this.savingSeason.set(false);
+    }
+  }
+
   readonly tabs: Tab[] = ["Notifications", "Privacy", "Prefs", "Security"];
   readonly tab = signal<Tab>("Notifications");
 
@@ -223,7 +295,7 @@ export class SettingsComponent {
     } catch (e) {
       this.logger.error("settings_notif_load_failed", e);
     }
-    // Flag football team-practice days + owned recovery equipment.
+    // Flag football team-practice days + owned recovery equipment + season calendar.
     try {
       const res = await firstValueFrom(
         this.api.get<{
@@ -231,6 +303,8 @@ export class SettingsComponent {
           availableEquipment?: string[];
           primaryPosition?: string;
           primary_position?: string;
+          season_calendar?: SeasonWindow[];
+          seasonCalendar?: SeasonWindow[];
         }>("/api/player-settings"),
       );
       const data =
@@ -239,6 +313,8 @@ export class SettingsComponent {
           availableEquipment?: string[];
           primaryPosition?: string;
           primary_position?: string;
+          season_calendar?: SeasonWindow[];
+          seasonCalendar?: SeasonWindow[];
         }>(res) ?? {};
       const ttd = data.teamTrainingDays;
       if (ttd) {
@@ -254,6 +330,10 @@ export class SettingsComponent {
       if (this.positions.some((p) => p.key === savedPos)) {
         this.position.set(savedPos as PositionKey);
       }
+      // No default applied here if the athlete never set one — an empty
+      // calendar just shows the preset picker again, exactly like onboarding.
+      const cal = data.season_calendar ?? data.seasonCalendar;
+      if (Array.isArray(cal)) this.season.set(cal);
     } catch (e) {
       this.logger.error("settings_prefs_load_failed", e);
     }

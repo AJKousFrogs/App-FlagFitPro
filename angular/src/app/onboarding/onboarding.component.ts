@@ -12,6 +12,7 @@ import { retry } from "rxjs";
 import { ApiService } from "../core/services/api.service";
 import { LoggerService } from "../core/services/logger.service";
 import { SeasonPhase, SeasonWindow } from "../core/models/prescription.models";
+import { SEASON_CALENDAR_PRESETS } from "../core/constants/season-calendar-presets.constants";
 
 /**
  * Onboarding — the multi-step setup. Ported from
@@ -62,26 +63,25 @@ export class OnboardingComponent {
   readonly dob = signal("");
   readonly maxDob = new Date().toISOString().split("T")[0]; // no future birth dates
 
-  // step 3 — season calendar (athlete-declared). Default is the club's actual
-  // annual calendar (2026-07-03: confirmed real dates, not a proposal) — a
-  // split flag-football season with two competitive blocks (April-July,
-  // August-September) separated by a mid-year break, a full-October
-  // peak/playoff window, a November recovery window, and a Dec-Feb winter
-  // off-season — fully editable; the athlete's own calendar always wins once
-  // they touch it. Windows are contiguous ("to" of one = day before "from" of
-  // the next) so macroPhaseFor never falls through to the generic fallback
-  // for a date in the default calendar. Winter off-season's "to": "02-29"
-  // (not "02-28") deliberately covers Feb 29 in leap years while still
-  // matching correctly in non-leap years (Feb 28 <= "02-29" either way).
-  readonly season = signal<SeasonWindow[]>([
-    { phase: "preseason", from: "03-01", to: "03-31" }, // pre-season
-    { phase: "inseason", from: "04-01", to: "07-07" }, // mid-season #1
-    { phase: "offseason", from: "07-08", to: "08-14" }, // first off-season break
-    { phase: "inseason", from: "08-15", to: "09-30" }, // mid-season #2
-    { phase: "peak", from: "10-01", to: "10-31" }, // peak season (whole October)
-    { phase: "postseason", from: "11-01", to: "11-30" }, // recovery season
-    { phase: "offseason", from: "12-01", to: "02-29" }, // winter off-season (Dec-Feb, wraps year end)
-  ]);
+  // step 3 — season calendar (athlete-declared). Flag football's season
+  // shape is climate/region-dependent (a hot continental summer needs a
+  // mid-year break; a mild maritime climate doesn't; the Southern
+  // Hemisphere is offset ~6 months) so there is deliberately NO single
+  // hardcoded default here — the player picks a starting shape from
+  // SEASON_CALENDAR_PRESETS (or starts blank/custom), then edits the actual
+  // dates to match their real league. Fully editable either way; the
+  // athlete's own calendar always wins once they touch it.
+  readonly seasonPresets = SEASON_CALENDAR_PRESETS;
+  readonly selectedPreset = signal<string | null>(null);
+  readonly season = signal<SeasonWindow[]>([]);
+
+  applyPreset(id: string): void {
+    const preset = this.seasonPresets.find((p) => p.id === id);
+    if (!preset) return;
+    this.selectedPreset.set(id);
+    // Clone so editing after applying never mutates the shared preset constant.
+    this.season.set(preset.windows.map((w) => ({ ...w })));
+  }
   readonly phases: SeasonPhase[] = [
     "offseason",
     "preseason",
@@ -116,18 +116,23 @@ export class OnboardingComponent {
     this.equipment.update((e) => ({ ...e, [k]: !e[k] }));
   }
   addPeriod(): void {
+    this.selectedPreset.set(null); // manual edit diverges from the applied preset
     this.season.update((s) => [...s, { phase: "offseason", from: "", to: "" }]);
   }
   removePeriod(i: number): void {
+    this.selectedPreset.set(null);
     this.season.update((s) => s.filter((_, idx) => idx !== i));
   }
   setPhase(i: number, phase: string): void {
+    this.selectedPreset.set(null);
     this.season.update((s) => s.map((w, idx) => (idx === i ? { ...w, phase: phase as SeasonPhase } : w)));
   }
   setFrom(i: number, v: string): void {
+    this.selectedPreset.set(null);
     this.season.update((s) => s.map((w, idx) => (idx === i ? { ...w, from: v } : w)));
   }
   setTo(i: number, v: string): void {
+    this.selectedPreset.set(null);
     this.season.update((s) => s.map((w, idx) => (idx === i ? { ...w, to: v } : w)));
   }
 
