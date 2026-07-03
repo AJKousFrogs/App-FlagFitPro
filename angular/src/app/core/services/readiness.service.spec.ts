@@ -4,19 +4,14 @@ import { firstValueFrom, of } from "rxjs";
 import { ReadinessService } from "./readiness.service";
 import { ApiService } from "./api.service";
 import { LoggerService } from "./logger.service";
+import { mockLoggerService as createMockLoggerService } from "./logger.service.mock";
 
 const mockApiService = {
   post: vi.fn(),
   get: vi.fn(),
 };
 
-const mockLoggerService = {
-  info: vi.fn(),
-  warn: vi.fn(),
-  error: vi.fn(),
-  debug: vi.fn(),
-  success: vi.fn(),
-};
+const mockLoggerService = createMockLoggerService();
 
 describe("ReadinessService", () => {
   let service: ReadinessService;

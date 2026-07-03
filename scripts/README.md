@@ -33,10 +33,13 @@ Utility and tooling scripts for FlagFit Pro. All `npm run` commands below execut
 | `npm run lint:css` | Stylelint |
 | `npm run lint:tokens` | Design token usage audit |
 | `npm run audit:error-shapes` | Error-shape contract audit (CI gate) |
-| `npm run audit:routes` | Route classification audit |
 | `npm run audit:rls-boundaries` | RLS boundary audit |
 | `npm run audit:security` | Security audit |
 | `npm run audit:scss-duplications` | SCSS duplication check |
+| `npm run audit:local-persistence` | localStorage/sessionStorage allowlist audit (CI gate) |
+| `npm run audit:sql-migrations` | Migration-file hygiene (naming, SECURITY DEFINER search_path, dupes) |
+| `npm run audit:duplications:ts` | Angular TS duplicate-pattern/string scan (manual, qualitative — review output, not a pass/fail gate) |
+| `npm run audit:duplications:js` | scripts/ + netlify/functions/ duplicate-pattern scan (manual, qualitative — same caveat) |
 | `npm run type-check` | Root TypeScript check (scripts/, supabase-types.ts) |
 
 ## Database Seeding

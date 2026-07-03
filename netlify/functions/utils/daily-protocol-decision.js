@@ -191,10 +191,22 @@ export async function buildProtocolDecisionContext({
   // 1. context.dbSeasonPhase — team_season_phases DB row (set by daily-protocol.js)
   // 2. context.seasonPhase   — client calendar-derived override (COMPOSE intent layer)
   // 3. getCurrentPeriodizationPhase month-switch fallback
+  //
+  // Must cover every live client SeasonPhase (prescription.models.ts): offseason,
+  // preseason, inseason, peak, postseason. "peak"/"postseason" were previously
+  // missing here — the ?? fallback silently substituted the month-switch guess
+  // instead of respecting an athlete-declared peak/postseason window, which
+  // matters most exactly when it diverges from the guess (a split season with
+  // peak/recovery windows outside the single-season month-switch's assumptions).
+  // "transition" is dead (retired from SeasonPhase 2026-07-02; macroPhaseFor
+  // normalizes any stale stored value to "postseason" before it reaches here)
+  // but kept mapped defensively since season_calendar is free JSONB.
   const CLIENT_PHASE_MAP = {
     offseason: "off_season_rest",
     preseason: "competition_prep",
     inseason: "in_season_maintenance",
+    peak: "peak",
+    postseason: "active_recovery",
     transition: "active_recovery",
   };
   const periodizationPhase = context.dbSeasonPhase

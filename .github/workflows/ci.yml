@@ -46,6 +46,9 @@ jobs:
       - name: SCSS duplication audit
         run: npm run audit:scss-duplications:ci
 
+      - name: Local persistence audit
+        run: npm run audit:local-persistence
+
   backend-tests:
     name: Backend Tests (Netlify functions)
     runs-on: ubuntu-latest
@@ -249,61 +252,9 @@ jobs:
           if-no-files-found: ignore
           retention-days: 7
 
-  e2e-smoke:
-    name: E2E Smoke Tests
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./angular
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v7
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v6
-        with:
-          node-version-file: ".nvmrc"
-          cache: "npm"
-          cache-dependency-path: |
-            package-lock.json
-            angular/package-lock.json
-
-      - name: Install dependencies
-        run: npm ci --legacy-peer-deps
-
-      - name: Install Playwright browsers
-        run: npx playwright install --with-deps chromium
-
-      - name: Build application
-        run: npm run build
-        env:
-          CI: true
-          NODE_ENV: production
-
-      - name: Serve build and run smoke tests
-        # Serve the production bundle (auth enforced) so the unauthenticated
-        # redirect to /login fires; ng serve's dev build keeps auth disabled.
-        run: |
-          node ../scripts/inject-env-into-html-angular.js
-          PORT=4200 npm run serve:dist > serve-dist.log 2>&1 &
-          node -e "const http=require('http');const s=Date.now();(function p(){http.get('http://127.0.0.1:4200',r=>process.exit(r.statusCode<500?0:1)).on('error',()=>Date.now()-s>120000?process.exit(1):setTimeout(p,1000));})();"
-          npm run e2e:smoke
-        env:
-          CI: true
-          BASE_URL: http://localhost:4200
-          PW_SKIP_WEBSERVER: "1"
-          TEST_USER_EMAIL: ${{ secrets.E2E_TEST_EMAIL }}
-          TEST_USER_PASSWORD: ${{ secrets.E2E_TEST_PASSWORD }}
-
-      - name: Upload Playwright report
-        if: always()
-        uses: actions/upload-artifact@v7
-        with:
-          name: playwright-report
-          path: angular/playwright-report/
-          if-no-files-found: warn
-          retention-days: 7
+  # Smoke E2E coverage lives in e2e-tests.yml (which also runs the critical-flow
+  # suite on the same push/PR triggers) — a separate `e2e-smoke` job here duplicated
+  # that full build+serve+Playwright run on every PR. Removed 2026-07-01.
 
   build:
     name: Build

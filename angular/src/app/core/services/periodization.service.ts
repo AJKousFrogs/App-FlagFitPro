@@ -98,27 +98,38 @@ export class PeriodizationService {
    */
   readonly recentSessions = signal<RecentSession[]>([]);
 
-  /** Guards the recent-sessions load against re-running for the same user. */
+  /** Guards the per-user bootstrap loads below against re-running for the same user. */
   private lastRecentSessionsUserId: string | null = null;
 
   constructor() {
-    this.loadSettings();
-    void this.injury.load();
-
-    // Recent-sessions load is keyed off userId(). On a cold boot the Supabase
-    // client is lazily imported, so userId() is null at construction — a plain
-    // fire-and-forget call would return empty and the CNS recovery-spacing data
-    // would silently never load. An effect re-runs once the user resolves.
+    // Recent-sessions, injuries, and player-settings (season calendar / team
+    // training days / position) all previously loaded exactly once at
+    // construction, keyed to whichever user happened to be signed in when this
+    // root-singleton service was first instantiated. Because sign-out here is
+    // an in-SPA navigation (no full page reload — confirmed no
+    // window.location.reload() anywhere in the sign-out path), a second user
+    // signing in on the same device/tab within the app's lifetime got the
+    // FIRST user's stale injuries/settings: sprint/high-intensity work could
+    // be silently prescribed unguarded for an athlete with a real active
+    // injury (if the first user had none), or guarded against a phantom
+    // injury that isn't theirs (if the first user had one). Reload all three
+    // whenever the resolved userId changes, matching the reasoning already
+    // applied to recentSessions below (cold boot: the Supabase client is
+    // lazily imported, so userId() is null at construction — an effect
+    // re-runs once the user resolves, and again on every subsequent change).
     effect(() => {
       const userId = this.supabase.userId();
       if (!userId) {
         this.lastRecentSessionsUserId = null;
         this.recentSessions.set([]);
+        this.injury.active.set([]);
         return;
       }
       if (this.lastRecentSessionsUserId === userId) return;
       this.lastRecentSessionsUserId = userId;
       void this.loadRecentSessions(userId);
+      void this.injury.load();
+      this.loadSettings();
     });
 
     // Live weather → the prescription weather guard (metric: °C / mm / km/h).
@@ -278,45 +289,61 @@ export class PeriodizationService {
     const bodyweight = this.readBodyweight();
     const ageYears = this.readAgeYears();
 
+    // Feed-forward simulation: each previewed day's high-CNS / strength intent
+    // is appended as a synthetic "completed" session (at that day's noon) so
+    // day N+1's spacing guards see day N's planned work. The preview assumes
+    // each planned day gets completed — that's what makes it a coherent WEEK
+    // plan rather than 7 independent days that could show back-to-back sprint
+    // days the real day-of computation would then block.
+    const simulatedRecent: RecentSession[] = [...(this.recentSessions() ?? [])];
+
     const out: DailyPrescription[] = [];
     for (let i = 0; i < 7; i++) {
       const date = new Date(today);
       date.setDate(today.getDate() + i);
       const phase = this.schedule.phaseFor(date);
-      out.push(
-        prescribeFor({
-          date,
-          phase,
-          upcoming: snap.upcoming,
-          lastEvent: snap.lastEvent,
-          // ACWR and readiness are TODAY's acute signals; like weather (below) they
-          // may only guard the current day. Passing them to all 7 days made a low
-          // readiness / high ACWR today collapse the whole week to recovery/rest
-          // (the readiness-collapse and ACWR-danger guards return before the phase
-          // switch), overriding each future day's real phase. Future days resolve to
-          // their phase-driven plan instead.
-          acwr: i === 0 ? acwr : null,
-          readiness: i === 0 ? readiness : null,
-          bodyweightKg: bodyweight,
-          density14d: snap.density14d
-            ? {
-                totalGames: snap.density14d.totalGames,
-                hasPeakImportance: snap.density14d.hasPeakImportance,
-                peakDayGameCount: snap.density14d.peakDayGameCount,
-              }
-            : null,
-          seasonPhase: macroPhaseFor(date, this.seasonCalendar()),
-          // Weather is current-conditions only (no 7-day forecast feed), so it
-          // can only guard today; future days resolve unguarded rather than
-          // against stale "now" weather.
-          weather: i === 0 ? this.weather() : null,
-          recentSessions: this.recentSessions(),
-          ageYears,
-          position: this.position(),
-          isTeamPractice: this.isTeamPractice(date, snap.trainingDays),
-          activeRestrictions: this.injury.restrictions(),
-        }),
-      );
+      const rx = prescribeFor({
+        date,
+        phase,
+        upcoming: snap.upcoming,
+        lastEvent: snap.lastEvent,
+        // ACWR and readiness are TODAY's acute signals; like weather (below) they
+        // may only guard the current day. Passing them to all 7 days made a low
+        // readiness / high ACWR today collapse the whole week to recovery/rest
+        // (the readiness-collapse and ACWR-danger guards return before the phase
+        // switch), overriding each future day's real phase. Future days resolve to
+        // their phase-driven plan instead (isForecast tells the engine a null
+        // readiness there means "not measurable yet", not "check-in skipped").
+        acwr: i === 0 ? acwr : null,
+        readiness: i === 0 ? readiness : null,
+        isForecast: i > 0,
+        bodyweightKg: bodyweight,
+        density14d: snap.density14d
+          ? {
+              totalGames: snap.density14d.totalGames,
+              hasPeakImportance: snap.density14d.hasPeakImportance,
+              peakDayGameCount: snap.density14d.peakDayGameCount,
+            }
+          : null,
+        seasonPhase: macroPhaseFor(date, this.seasonCalendar()),
+        // Weather is current-conditions only (no 7-day forecast feed), so it
+        // can only guard today; future days resolve unguarded rather than
+        // against stale "now" weather.
+        weather: i === 0 ? this.weather() : null,
+        recentSessions: simulatedRecent,
+        ageYears,
+        position: this.position(),
+        isTeamPractice: this.isTeamPractice(date, snap.trainingDays),
+        activeRestrictions: this.injury.restrictions(),
+      });
+      out.push(rx);
+      // Only intents the spacing guards care about need feeding forward.
+      if (rx.intent === "sprint" || rx.intent === "mixed" || rx.intent === "strength") {
+        simulatedRecent.push({
+          at: new Date(date.getTime() + 12 * 3_600_000).toISOString(),
+          type: rx.intent,
+        });
+      }
     }
     return out;
   }
@@ -405,8 +432,10 @@ export class PeriodizationService {
 // Same inputs → same output. Tested without DI. Server-mirror friendly.
 // =============================================================================
 
+/** Generic-adult-male estimate used only for the nutrition gram math when
+ * bodyweight hasn't been entered — always disclosed via bodyweightIsEstimated,
+ * never presented as the athlete's real weight. */
 const FALLBACK_BODYWEIGHT_KG = 80;
-const FALLBACK_READINESS = 70;
 const ACWR_DANGER = 1.5;
 const ACWR_ELEVATED = 1.3;
 const ACWR_UNDER = 0.8;
@@ -458,9 +487,13 @@ function cnsRecoveryHoursForAge(ageYears?: number | null): number {
   return CNS_RECOVERY_HOURS;
 }
 
-/** Detect a high-CNS session from its raw `session_type`/`drill_type`. */
+/** Detect a high-CNS session from its raw `session_type`/`drill_type`. Includes
+ * "mixed" — a completed day is logged with `session_type` = the raw prescribed
+ * intent (see training.component.ts), and "mixed" carries real sprint volume
+ * (HIGH_CNS_INTENTS), so a completed mixed session must count as a recent
+ * high-CNS event for spacing the next one, same as a pure sprint day. */
 function isHighCnsSessionType(type: string): boolean {
-  return /sprint|plyo|speed|max.?velocity|accel|agility|bound/i.test(type || "");
+  return /sprint|plyo|speed|max.?velocity|accel|agility|bound|mixed/i.test(type || "");
 }
 
 /**
@@ -509,20 +542,86 @@ function applySprintRecoveryGuard(
 }
 
 /**
+ * Minimum hours between heavy strength days: no two on consecutive calendar
+ * days. Deliberately NOT age-scaled and much shorter than the sprint window —
+ * 48h-apart strength days (offseason Thu/Sat/Mon) are standard programming at
+ * all ages; what this guard catches is the athlete who logged a gym session
+ * yesterday evening and opens a plan that says "strength" again this morning.
+ * Age-appropriate strength adjustment is a volume lever, not a frequency one.
+ */
+const STRENGTH_RECOVERY_HOURS = 24;
+
+/** Detect a completed strength session from its raw `session_type`/`drill_type`. */
+function isStrengthSessionType(type: string): boolean {
+  return /strength|gym|lift|resistance/i.test(type || "");
+}
+
+/**
+ * Strength-day spacing: if the engine chose a strength day but the athlete
+ * completed a strength session within the last {@link STRENGTH_RECOVERY_HOURS},
+ * downgrade to technical work. Records `strengthRecoveryAdjustment` for
+ * traceability. Same precedence tier as the sprint guard (yields to weather
+ * and physio above it).
+ */
+function applyStrengthRecoveryGuard(
+  p: DailyPrescription,
+  recentSessions: PeriodizationInputs["recentSessions"],
+  date: Date,
+): DailyPrescription {
+  if (p.intent !== "strength") return p;
+  if (!recentSessions || recentSessions.length === 0) return p;
+
+  const now = date.getTime();
+  const windowMs = STRENGTH_RECOVERY_HOURS * 3_600_000;
+  let mostRecent: number | null = null;
+  for (const s of recentSessions) {
+    if (!isStrengthSessionType(s.type)) continue;
+    const t = new Date(s.at).getTime();
+    if (!Number.isFinite(t) || t >= now) continue; // future / invalid ignored
+    if (now - t > windowMs) continue; // outside the recovery window
+    if (mostRecent === null || t > mostRecent) mostRecent = t;
+  }
+  if (mostRecent === null) return p; // no strength session inside the window
+
+  const hoursSince = Math.round((now - mostRecent) / 3_600_000);
+  return {
+    ...p,
+    intent: "technical",
+    intentLabel: INTENT_LABELS.technical,
+    strengthSets: 0,
+    targetRpe: p.targetRpe != null ? Math.min(p.targetRpe, 5) : p.targetRpe,
+    reasoning: `Lifted ${hoursSince}h ago — no back-to-back heavy strength days. Today is skills + technique instead.`,
+    strengthRecoveryAdjustment: {
+      hoursSinceLastStrength: hoursSince,
+      windowHours: STRENGTH_RECOVERY_HOURS,
+      originalIntent: p.intent,
+    },
+  };
+}
+
+/**
  * Public entry point. Picks the base prescription (game day → taper → safety →
  * phase/season defaults), then layers guards. Precedence (highest wins):
- * physio ▷ **weather** ▷ CNS-spacing ▷ engine. CNS-spacing constrains the
- * engine's chosen high-CNS intent but yields to weather and physio above it.
+ * physio ▷ **weather** ▷ CNS-spacing / strength-spacing ▷ engine. The spacing
+ * guards constrain the engine's chosen intent but yield to weather and physio.
  */
 export function prescribeFor(inputs: PeriodizationInputs): DailyPrescription {
   const base = decideBasePrescription(inputs);
   // CNS recovery spacing (lowest-precedence guard): no back-to-back sprint days.
   // The window lengthens with the athlete's age (older = more recovery).
-  const spaced = applySprintRecoveryGuard(
+  const cnsSpaced = applySprintRecoveryGuard(
     base,
     inputs.recentSessions ?? null,
     inputs.date,
     inputs.ageYears ?? null,
+  );
+  // Strength spacing (same tier): no back-to-back heavy lifting days. The two
+  // guards target disjoint intents (sprint/mixed vs strength) so order between
+  // them is immaterial.
+  const spaced = applyStrengthRecoveryGuard(
+    cnsSpaced,
+    inputs.recentSessions ?? null,
+    inputs.date,
   );
   const guarded = applyWeatherGuard(spaced, inputs.weather ?? null, inputs.coachOverride ?? false);
   // Injury/physio precedence over training (spec law): runs last so the affected
@@ -811,8 +910,12 @@ function decideBasePrescription(inputs: PeriodizationInputs): DailyPrescription 
 
   const driverEvent = pickDriverEvent(date, upcoming, lastEvent);
   const hoursUntilNext = nextEventHours(date, upcoming);
+  // A generic bodyweight is used for the carb/protein/fluid math when the
+  // athlete hasn't entered theirs — legitimate as a population-average
+  // estimate, but never presented as personal data: nutritionFor() caveats
+  // the rationale text whenever bodyweightIsEstimated is true (SOT Law 7).
+  const bodyweightIsEstimated = bodyweightKg === null;
   const bodyweight = bodyweightKg ?? FALLBACK_BODYWEIGHT_KG;
-  const effectiveReadiness = readiness ?? FALLBACK_READINESS;
   // Heavy density = a high 14-day game total OR a single congested day. A
   // tournament of 8 games over 2 days (4/day) never reaches the 10-games/14d
   // total, yet it is the highest-risk congestion there is — so a peak-day game
@@ -839,7 +942,7 @@ function decideBasePrescription(inputs: PeriodizationInputs): DailyPrescription 
       reasoning:
         "Game day. Activate, play, refuel between games, sleep tonight.",
       recoveryEmphasis: "critical",
-      nutrition: nutritionFor("competition", bodyweight, heavyDensity, hotDay),
+      nutrition: nutritionFor("competition", bodyweight, heavyDensity, hotDay, bodyweightIsEstimated),
       driverEvent,
       hoursUntilNextEvent: hoursUntilNext,
       acwrAtIssue: acwr,
@@ -859,7 +962,7 @@ function decideBasePrescription(inputs: PeriodizationInputs): DailyPrescription 
       reasoning:
         "Game inside 24 hours. Stay loose and primed — no new fatigue.",
       recoveryEmphasis: "high",
-      nutrition: nutritionFor("taper-prime", bodyweight, heavyDensity, hotDay),
+      nutrition: nutritionFor("taper-prime", bodyweight, heavyDensity, hotDay, bodyweightIsEstimated),
       driverEvent,
       hoursUntilNextEvent: hoursUntilNext,
       acwrAtIssue: acwr,
@@ -878,15 +981,26 @@ function decideBasePrescription(inputs: PeriodizationInputs): DailyPrescription 
       strengthSets: 0,
       reasoning: `ACWR ${acwr.toFixed(2)} is in the danger zone. Full rest today.`,
       recoveryEmphasis: "critical",
-      nutrition: nutritionFor("rest", bodyweight, heavyDensity, hotDay),
+      nutrition: nutritionFor("rest", bodyweight, heavyDensity, hotDay, bodyweightIsEstimated),
       driverEvent,
       hoursUntilNextEvent: hoursUntilNext,
       acwrAtIssue: acwr,
     });
   }
 
-  // 4. Readiness collapse → switch to recovery regardless of phase.
-  if (effectiveReadiness < READINESS_LOW) {
+  // 4. Readiness collapse → switch to recovery regardless of phase. A missing
+  // check-in is treated the same as low readiness, never as "fine" — the
+  // whole point of the readiness gate is asymmetric risk: assuming healthy
+  // when actually low costs an injury, assuming cautious when actually fine
+  // costs a lighter day. When we don't know, we don't guess (SOT Law 6/7).
+  // EXCEPTION: forecast days (week-ahead preview). There a null readiness is
+  // not a skipped check-in but a measurement that can't exist yet — gating on
+  // it would collapse every future day to recovery. Forecast days resolve to
+  // their phase plan; the real day-of call re-applies the strict gate.
+  if (
+    (readiness === null && !inputs.isForecast) ||
+    (readiness !== null && readiness < READINESS_LOW)
+  ) {
     return finalize({
       date,
       phase,
@@ -895,9 +1009,12 @@ function decideBasePrescription(inputs: PeriodizationInputs): DailyPrescription 
       targetMinutes: 30,
       sprintReps: 0,
       strengthSets: 0,
-      reasoning: `Readiness ${Math.round(effectiveReadiness)}/100 is low. Active recovery only.`,
+      reasoning:
+        readiness === null
+          ? "No wellness check-in logged today — defaulting to active recovery. Log your check-in for a personalized plan."
+          : `Readiness ${Math.round(readiness)}/100 is low. Active recovery only.`,
       recoveryEmphasis: "high",
-      nutrition: nutritionFor("recovery", bodyweight, heavyDensity, hotDay),
+      nutrition: nutritionFor("recovery", bodyweight, heavyDensity, hotDay, bodyweightIsEstimated),
       driverEvent,
       hoursUntilNextEvent: hoursUntilNext,
       acwrAtIssue: acwr,
@@ -939,7 +1056,7 @@ function decideBasePrescription(inputs: PeriodizationInputs): DailyPrescription 
       strengthSets: 0,
       reasoning: practiceReasoning,
       recoveryEmphasis: practiceMod.recoveryEmphasis,
-      nutrition: nutritionFor(practiceMod.nutritionIntent, bodyweight, heavyDensity, hotDay),
+      nutrition: nutritionFor(practiceMod.nutritionIntent, bodyweight, heavyDensity, hotDay, bodyweightIsEstimated),
       driverEvent,
       hoursUntilNextEvent: hoursUntilNext,
       acwrAtIssue: acwr,
@@ -960,7 +1077,7 @@ function decideBasePrescription(inputs: PeriodizationInputs): DailyPrescription 
         strengthSets: 0,
         reasoning: postEventReasoning(lastEvent),
         recoveryEmphasis: "high",
-        nutrition: nutritionFor("recovery", bodyweight, heavyDensity, hotDay),
+        nutrition: nutritionFor("recovery", bodyweight, heavyDensity, hotDay, bodyweightIsEstimated),
         driverEvent,
         hoursUntilNextEvent: hoursUntilNext,
         acwrAtIssue: acwr,
@@ -987,7 +1104,7 @@ function decideBasePrescription(inputs: PeriodizationInputs): DailyPrescription 
         strengthSets: 0,
         reasoning: taperReasoning(driverEvent, dayOfTaper),
         recoveryEmphasis: "medium",
-        nutrition: nutritionFor("taper", bodyweight, heavyDensity, hotDay),
+        nutrition: nutritionFor("taper", bodyweight, heavyDensity, hotDay, bodyweightIsEstimated),
         driverEvent,
         hoursUntilNextEvent: hoursUntilNext,
         acwrAtIssue: acwr,
@@ -1006,7 +1123,7 @@ function decideBasePrescription(inputs: PeriodizationInputs): DailyPrescription 
         reasoning:
           "Off-season window. Maintain GPP base — easy aerobic + lift.",
         recoveryEmphasis: "low",
-        nutrition: nutritionFor("transition", bodyweight, heavyDensity, hotDay),
+        nutrition: nutritionFor("transition", bodyweight, heavyDensity, hotDay, bodyweightIsEstimated),
         driverEvent,
         hoursUntilNextEvent: hoursUntilNext,
         acwrAtIssue: acwr,
@@ -1031,7 +1148,7 @@ function decideBasePrescription(inputs: PeriodizationInputs): DailyPrescription 
           strengthSets: t.strengthSets,
           reasoning: seasonReasoning(seasonPhase, intent),
           recoveryEmphasis: heavyDensity ? "medium" : "low",
-          nutrition: nutritionFor(intent, bodyweight, heavyDensity, hotDay),
+          nutrition: nutritionFor(intent, bodyweight, heavyDensity, hotDay, bodyweightIsEstimated),
           driverEvent,
           hoursUntilNextEvent: hoursUntilNext,
           acwrAtIssue: acwr,
@@ -1054,7 +1171,7 @@ function decideBasePrescription(inputs: PeriodizationInputs): DailyPrescription 
         strengthSets: t.strengthSets,
         reasoning: accumulationReasoning(intent, acwr, heavyDensity),
         recoveryEmphasis: heavyDensity ? "medium" : "low",
-        nutrition: nutritionFor(intent, bodyweight, heavyDensity, hotDay),
+        nutrition: nutritionFor(intent, bodyweight, heavyDensity, hotDay, bodyweightIsEstimated),
         driverEvent,
         hoursUntilNextEvent: hoursUntilNext,
         acwrAtIssue: acwr,
@@ -1086,7 +1203,10 @@ export function macroPhaseFor(
   const md = iso.slice(5); // MM-DD
   for (const w of windows) {
     if (w && w.from && w.to && inSeasonWindow(iso, md, w.from, w.to)) {
-      return w.phase;
+      // Legacy alias normalized at the read boundary: "transition" was retired
+      // from SeasonPhase (2026-07-02, zero live rows), but season_calendar is
+      // free JSONB — an old stored row or stale client could still carry it.
+      return (w.phase as string) === "transition" ? "postseason" : w.phase;
     }
   }
   return null;
@@ -1108,10 +1228,51 @@ function inSeasonWindow(
 }
 
 /**
- * Day-of-week week shape biased by macro season phase. Off-season is
- * strength/conditioning-led; in-season maintains strength + sharpens skills;
- * transition is active-rest/base. Pre-season uses the generic build shape.
- * Safety modulation (elevated ACWR / heavy density) mirrors accumulation.
+ * Fixed day-of-week intent shape for each macro season phase (index 0 = Sunday).
+ * Single source of truth for `seasonShapedIntent` (offseason/inseason/peak/
+ * postseason), `pickAccumulationIntent` (preseason + the no-calendar generic
+ * fallback — identical shape, "pre-season == the generic progressive build"),
+ * and `previewSeasonPhaseWeek` (read-only preview for onboarding/coach-facing
+ * "what does this phase look like" copy).
+ *
+ *   offseason  — GPP: get strong, build base (strength-led)
+ *   preseason  — generic progressive build (strength + sprint alternating)
+ *   inseason   — maintain strength + sharpen skills (technical-led)
+ *   peak       — peaking block: sharp, low volume, high quality, fresh
+ *   postseason — active regeneration after the competitive block
+ */
+export const SEASON_PHASE_WEEK_SHAPE: Readonly<
+  Record<SeasonPhase, readonly PrescriptionIntent[]>
+> = {
+  //             Sun      Mon          Tue           Wed           Thu           Fri          Sat
+  offseason: ["rest", "strength", "mixed", "mobility", "strength", "mixed", "strength"],
+  preseason: ["rest", "strength", "sprint", "mobility", "strength", "sprint", "mixed"],
+  inseason: ["rest", "strength", "technical", "mobility", "technical", "strength", "mixed"],
+  peak: ["rest", "sprint", "technical", "mobility", "technical", "sprint", "recovery"],
+  postseason: ["rest", "recovery", "mobility", "recovery", "mobility", "mixed", "recovery"],
+};
+
+/** Shared ACWR/game-density safety modulation used by both week-shape lookups. */
+function modulateForSafety(
+  intent: PrescriptionIntent,
+  acwr: number | null,
+  heavyDensity: boolean,
+): PrescriptionIntent {
+  let out = intent;
+  if (acwr !== null && acwr > ACWR_ELEVATED) {
+    if (out === "sprint" || out === "strength") out = "mobility";
+    else if (out === "mixed") out = "technical";
+  }
+  if (heavyDensity && out !== "rest") {
+    if (out === "strength") out = "technical";
+    if (out === "mixed") out = "mobility";
+  }
+  return out;
+}
+
+/**
+ * Day-of-week week shape biased by macro season phase. Pre-season delegates to
+ * `pickAccumulationIntent` (same shape, shared safety modulation).
  */
 function seasonShapedIntent(
   date: Date,
@@ -1119,36 +1280,11 @@ function seasonShapedIntent(
   acwr: number | null,
   heavyDensity: boolean,
 ): PrescriptionIntent {
+  if (season === "preseason") {
+    return pickAccumulationIntent(date, acwr, heavyDensity);
+  }
   const dow = date.getDay(); // 0 = Sun
-  let week: PrescriptionIntent[];
-  switch (season) {
-    case "offseason": // GPP — get strong, build base
-      week = ["rest", "strength", "mixed", "mobility", "strength", "mixed", "strength"];
-      break;
-    case "inseason": // maintain + skill
-      week = ["rest", "strength", "technical", "mobility", "technical", "strength", "mixed"];
-      break;
-    case "peak": // peaking block: sharp, low volume, high quality, fresh
-      week = ["rest", "sprint", "technical", "mobility", "technical", "sprint", "recovery"];
-      break;
-    case "postseason": // active regeneration after the competitive block
-    case "transition": // active rest / aerobic base (legacy alias)
-      week = ["rest", "recovery", "mobility", "recovery", "mobility", "mixed", "recovery"];
-      break;
-    case "preseason":
-    default:
-      return pickAccumulationIntent(date, acwr, heavyDensity);
-  }
-  let intent = week[dow];
-  if (acwr !== null && acwr > ACWR_ELEVATED) {
-    if (intent === "sprint" || intent === "strength") intent = "mobility";
-    else if (intent === "mixed") intent = "technical";
-  }
-  if (heavyDensity && intent !== "rest") {
-    if (intent === "strength") intent = "technical";
-    if (intent === "mixed") intent = "mobility";
-  }
-  return intent;
+  return modulateForSafety(SEASON_PHASE_WEEK_SHAPE[season][dow], acwr, heavyDensity);
 }
 
 function seasonReasoning(season: SeasonPhase, intent: PrescriptionIntent): string {
@@ -1157,8 +1293,10 @@ function seasonReasoning(season: SeasonPhase, intent: PrescriptionIntent): strin
       return `Off-season · strength & conditioning block. Today is a ${intent} day.`;
     case "inseason":
       return `In-season · maintain strength and sharpen skills. Today is a ${intent} day.`;
-    case "transition":
-      return `Transition · active rest and aerobic base. Today is a ${intent} day.`;
+    case "peak":
+      return `Peaking block · sharp, low volume, high quality — freshness first. Today is a ${intent} day.`;
+    case "postseason":
+      return `Post-season · active regeneration and aerobic base. Today is a ${intent} day.`;
     case "preseason":
     default:
       return `Pre-season build — progressing load toward the season. Today is a ${intent} day.`;
@@ -1501,33 +1639,53 @@ function pickAccumulationIntent(
   acwr: number | null,
   heavyDensity: boolean,
 ): PrescriptionIntent {
-  // Standard week shape: Mon strength, Tue sprint, Wed technical/mobility,
-  // Thu strength, Fri sprint, Sat mixed, Sun rest. Day-of-week 0 = Sunday.
+  // Day-of-week 0 = Sunday. Shape lives in SEASON_PHASE_WEEK_SHAPE.preseason
+  // (shared with seasonShapedIntent — "pre-season == the generic progressive
+  // build").
   const dow = date.getDay();
-  const standard: PrescriptionIntent[] = [
-    "rest",      // Sun
-    "strength",  // Mon
-    "sprint",    // Tue
-    "mobility",  // Wed
-    "strength",  // Thu
-    "sprint",    // Fri
-    "mixed",     // Sat
-  ];
-  let intent = standard[dow];
+  return modulateForSafety(SEASON_PHASE_WEEK_SHAPE.preseason[dow], acwr, heavyDensity);
+}
 
-  // Modulate when load is elevated or density is heavy.
-  if (acwr !== null && acwr > ACWR_ELEVATED) {
-    if (intent === "sprint" || intent === "strength") {
-      intent = "mobility";
-    } else if (intent === "mixed") {
-      intent = "technical";
-    }
-  }
-  if (heavyDensity && intent !== "rest") {
-    if (intent === "strength") intent = "technical";
-    if (intent === "mixed") intent = "mobility";
-  }
-  return intent;
+const WEEK_DAY_LABELS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"] as const;
+
+/** One day of a `previewSeasonPhaseWeek` result. */
+export interface SeasonPhaseWeekPreviewDay {
+  dayOfWeek: number; // 0 = Sunday
+  dayLabel: string;
+  intent: PrescriptionIntent;
+  intentLabel: string;
+  targetRpe: number | null;
+  targetMinutes: number;
+  sprintReps: number;
+  strengthSets: number;
+}
+
+/**
+ * Read-only preview of a macro season phase's typical week — the same
+ * day-of-week shape and per-intent targets `seasonShapedIntent`/
+ * `pickAccumulationIntent` compute live, without needing a date/ACWR/game-
+ * density context. For onboarding "what to expect" copy and coach-facing
+ * phase explainers (e.g. a season-calendar editor step). Deliberately does
+ * NOT apply ACWR/game-density safety modulation — there is no live signal to
+ * modulate against in a preview, so this always shows the phase's un-derated
+ * baseline week.
+ */
+export function previewSeasonPhaseWeek(phase: SeasonPhase): SeasonPhaseWeekPreviewDay[] {
+  const shape = SEASON_PHASE_WEEK_SHAPE[phase];
+  const targetsFor = phase === "preseason" ? buildTargets : baseTargets;
+  return shape.map((intent, dayOfWeek) => {
+    const t = targetsFor(intent);
+    return {
+      dayOfWeek,
+      dayLabel: WEEK_DAY_LABELS[dayOfWeek],
+      intent,
+      intentLabel: INTENT_LABELS[intent],
+      targetRpe: t.targetRpe,
+      targetMinutes: t.targetMinutes,
+      sprintReps: t.sprintReps,
+      strengthSets: t.strengthSets,
+    };
+  });
 }
 
 // =============================================================================
@@ -1568,6 +1726,7 @@ function nutritionFor(
   bodyweightKg: number,
   heavyDensity: boolean,
   hotDay = false,
+  bodyweightIsEstimated = false,
 ): NutritionTargets {
   // Map non-Intent labels onto a real bucket
   const key: PrescriptionIntent =
@@ -1592,18 +1751,24 @@ function nutritionFor(
     hydrationL += 0.5;
   }
 
+  const rationale =
+    key === "competition"
+      ? "Game-day fueling: carbs every game, hydrate aggressively, protein after final game."
+      : key === "rest"
+        ? "Lower carb day. Protein steady to support repair."
+        : key === "taper-prime"
+          ? "Top up glycogen tonight. Hydrate well — game window opens soon."
+          : `Daily targets at ${CARB_PER_KG[key]}g/kg carbs, ${PROTEIN_PER_KG}g/kg protein.`;
+
   return {
     carbsG,
     proteinG,
     hydrationL: Math.round(hydrationL * 10) / 10,
-    rationale:
-      key === "competition"
-        ? "Game-day fueling: carbs every game, hydrate aggressively, protein after final game."
-        : key === "rest"
-          ? "Lower carb day. Protein steady to support repair."
-          : key === "taper-prime"
-            ? "Top up glycogen tonight. Hydrate well — game window opens soon."
-            : `Daily targets at ${CARB_PER_KG[key]}g/kg carbs, ${PROTEIN_PER_KG}g/kg protein.`,
+    // Never present a made-up bodyweight's numbers as the athlete's own data
+    // (SOT Law 7) — disclose the estimate so the UI can caveat it honestly.
+    rationale: bodyweightIsEstimated
+      ? `${rationale} Estimated from a generic bodyweight — add yours in Settings for personalized targets.`
+      : rationale,
   };
 }
 

@@ -82,6 +82,46 @@
         </div>
       </div>
 
+      <div class="section-h"><h2>Your season</h2></div>
+      <div class="card stack">
+        <p class="muted" style="margin:0">
+          Flag football's season shape depends on where you play — pick the closest starting
+          point, then edit the dates to match your real league.
+        </p>
+        @for (p of seasonPresets; track p.id) {
+          <button class="btn ghost sm" type="button" [class.chip]="true" [class.sel]="selectedSeasonPreset() === p.id"
+            style="display:block;width:100%;text-align:left"
+            (click)="applySeasonPreset(p.id)">
+            <strong>{{ p.label }}</strong>
+            <div class="muted" style="font-size:var(--fs-sm)">{{ p.description }}</div>
+          </button>
+        }
+        @if (season().length > 0) {
+          <p class="muted" style="font-size:var(--fs-sm);margin:var(--s-2) 0 0">Edit freely (YYYY-MM-DD for a specific span, or MM-DD for a yearly one):</p>
+        }
+        @for (w of season(); track $index) {
+          <div class="card flat" style="margin:var(--s-2) 0">
+            <div class="row" style="gap:var(--s-2);align-items:center">
+              <select class="input" [value]="w.phase" (change)="setSeasonPhase($index, $any($event.target).value)" aria-label="Phase">
+                @for (p of seasonPhases; track p) { <option [value]="p">{{ seasonPhaseLabels[p] }}</option> }
+              </select>
+              <button class="btn ghost sm" type="button" (click)="removeSeasonPeriod($index)" aria-label="Remove period">✕</button>
+            </div>
+            <div class="row" style="gap:var(--s-2);align-items:center;margin-top:var(--s-2)">
+              <input class="input" placeholder="from" [value]="w.from" (input)="setSeasonFrom($index, $any($event.target).value)" aria-label="From" />
+              <span class="faint">→</span>
+              <input class="input" placeholder="to" [value]="w.to" (input)="setSeasonTo($index, $any($event.target).value)" aria-label="To" />
+            </div>
+          </div>
+        }
+        <button class="btn ghost block sm" type="button" (click)="addSeasonPeriod()"><lucide-icon name="plus" /> Add a period</button>
+        @if (seasonMsg(); as m) { <small class="muted">{{ m }}</small> }
+        <div class="row" style="justify-content:flex-end">
+          <button class="btn primary sm" type="button" [attr.aria-disabled]="savingSeason()"
+                  (click)="saveSeason()">{{ savingSeason() ? "Saving…" : "Save season" }}</button>
+        </div>
+      </div>
+
       <div class="section-h"><h2>Flag football training</h2></div>
       <div class="card stack">
         <p class="muted" style="margin:0">

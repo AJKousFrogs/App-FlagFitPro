@@ -13,10 +13,13 @@ import { describe, it, expect } from "vitest";
 import {
   prescribeFor,
   macroPhaseFor,
+  previewSeasonPhaseWeek,
+  SEASON_PHASE_WEEK_SHAPE,
   __periodization__,
 } from "./periodization.service";
 import {
   PeriodizationInputs,
+  SeasonPhase,
   WeatherInput,
 } from "../models/prescription.models";
 import { CompetitionEvent } from "../models/schedule.models";
@@ -155,11 +158,12 @@ describe("prescribeFor — readiness collapse", () => {
     expect(rx.reasoning).toMatch(/readiness/i);
   });
 
-  it("readiness null falls back to 70 (no override)", () => {
+  it("readiness null (no check-in logged) is treated as low readiness, never assumed fine", () => {
     const rx = prescribeFor(
       inputs({ phase: "accumulation", readiness: null }),
     );
-    expect(rx.intent).not.toBe("recovery");
+    expect(rx.intent).toBe("recovery");
+    expect(rx.reasoning).toMatch(/check-in/i);
   });
 });
 
@@ -611,9 +615,16 @@ describe("prescribeFor — season macro-phase shapes the non-event week", () => 
     expect(rx.reasoning).toMatch(/in-season/i);
   });
 
-  it("transition is active rest / base", () => {
-    const rx = prescribeFor(inputs({ date: tuesday, seasonPhase: "transition" }));
-    expect(rx.intent).toBe("mobility");
+  it("a stored legacy 'transition' window normalizes to postseason at the read boundary", () => {
+    // "transition" was retired from SeasonPhase (2026-07-02, zero live rows),
+    // but season_calendar is free JSONB — macroPhaseFor still maps a stale
+    // stored value to postseason so old rows keep their active-rest shape.
+    const phase = macroPhaseFor(tuesday, [
+      { phase: "transition" as unknown as SeasonPhase, from: "01-01", to: "12-31" },
+    ]);
+    expect(phase).toBe("postseason");
+    const rx = prescribeFor(inputs({ date: tuesday, seasonPhase: phase }));
+    expect(rx.intent).toBe("mobility"); // postseason Tuesday — active rest / base
   });
 
   it("pre-season uses the generic progressive build (Tuesday → sprint)", () => {
@@ -993,11 +1004,10 @@ describe("prescribeFor — peak & post-season phases", () => {
     expect(peak.seasonPhase).toBe("peak");
   });
 
-  it("post-season is active regeneration (Tuesday → mobility), same shape as transition", () => {
+  it("post-season is active regeneration (Tuesday → mobility)", () => {
     const post = prescribeFor(inputs({ date: tuesday, seasonPhase: "postseason" }));
-    const trans = prescribeFor(inputs({ date: tuesday, seasonPhase: "transition" }));
     expect(post.intent).toBe("mobility");
-    expect(post.intent).toBe(trans.intent);
+    expect(post.reasoning).toMatch(/post-season/i);
   });
 
   it("a split season resolves each day to its declared window (in-season vs off-season gap)", () => {
@@ -1013,6 +1023,51 @@ describe("prescribeFor — peak & post-season phases", () => {
     expect(macroPhaseFor(new Date("2026-09-10T10:00:00Z"), windows)).toBe("inseason"); // autumn block
     expect(macroPhaseFor(new Date("2026-11-15T10:00:00Z"), windows)).toBe("postseason");
     expect(macroPhaseFor(new Date("2026-01-10T10:00:00Z"), windows)).toBe("offseason"); // winter
+  });
+});
+
+// =============================================================================
+// SEASON PHASE WEEK PREVIEW — read-only "what does this phase look like"
+// =============================================================================
+
+describe("previewSeasonPhaseWeek", () => {
+  const phases: SeasonPhase[] = ["offseason", "preseason", "inseason", "peak", "postseason"];
+
+  it.each(phases)("%s returns 7 days, Sunday first, matching SEASON_PHASE_WEEK_SHAPE", (phase) => {
+    const week = previewSeasonPhaseWeek(phase);
+    expect(week).toHaveLength(7);
+    expect(week.map((d) => d.intent)).toEqual(SEASON_PHASE_WEEK_SHAPE[phase]);
+    expect(week[0].dayLabel).toBe("Sun");
+    expect(week[0].dayOfWeek).toBe(0);
+    expect(week[6].dayLabel).toBe("Sat");
+  });
+
+  it("peak's preview is lower-frequency-intense than in-season's (fewer strength/mixed days)", () => {
+    const peak = previewSeasonPhaseWeek("peak");
+    const inseason = previewSeasonPhaseWeek("inseason");
+    const peakHardDays = peak.filter((d) => d.intent === "sprint" || d.intent === "strength").length;
+    const inseasonHardDays = inseason.filter((d) => d.intent === "sprint" || d.intent === "strength").length;
+    // Peak: 2 sprint days, 0 strength (sharp & fresh). In-season: 2 strength days, 0 sprint (maintain).
+    expect(peakHardDays).toBe(2);
+    expect(inseasonHardDays).toBe(2);
+    expect(peak.some((d) => d.intent === "strength")).toBe(false);
+    expect(inseason.some((d) => d.intent === "sprint")).toBe(false);
+  });
+
+  it("preseason preview uses buildTargets (mobility/technical carry RPE 6, not baseTargets' 4/5)", () => {
+    const week = previewSeasonPhaseWeek("preseason");
+    const mobilityDay = week.find((d) => d.intent === "mobility");
+    expect(mobilityDay?.targetRpe).toBe(6); // BUILD_TARGET_OVERRIDES, not baseTargets' 4
+    expect(mobilityDay?.targetMinutes).toBe(75);
+  });
+
+  it("rest day always carries zero volume regardless of phase", () => {
+    for (const phase of phases) {
+      const rest = previewSeasonPhaseWeek(phase).find((d) => d.intent === "rest");
+      expect(rest?.targetMinutes).toBe(0);
+      expect(rest?.sprintReps).toBe(0);
+      expect(rest?.strengthSets).toBe(0);
+    }
   });
 });
 
@@ -1194,6 +1249,117 @@ describe("prescribeFor — practice day on a recovery phase (finding 1.1)", () =
   it("without a declared practice, a recovery phase still emits the generic recovery session", () => {
     const rx = prescribeFor(inputs({ date: mon, phase: "recovery", isTeamPractice: false }));
     expect(rx.intentLabel).not.toBe("Flag football practice");
+    expect(rx.intent).toBe("recovery");
+  });
+});
+
+// =============================================================================
+// STRENGTH-DAY SPACING (2026-07-02): no back-to-back heavy lifting days.
+// 48h-apart strength days (offseason Thu/Sat pattern) stay allowed — standard
+// programming. The guard catches "lifted yesterday, plan says lift again".
+// =============================================================================
+
+describe("prescribeFor — strength-day spacing", () => {
+  const strengthDay = new Date("2026-05-04T10:00:00Z"); // Monday → accumulation strength
+
+  it("blocks a strength day within 24h of a completed strength session (→ technique)", () => {
+    const rx = prescribeFor(
+      inputs({
+        phase: "accumulation",
+        date: strengthDay,
+        recentSessions: [{ at: "2026-05-03T20:00:00Z", type: "strength" }], // 14h ago
+      }),
+    );
+    expect(rx.intent).toBe("technical");
+    expect(rx.strengthSets).toBe(0);
+    expect(rx.strengthRecoveryAdjustment?.originalIntent).toBe("strength");
+    expect(rx.strengthRecoveryAdjustment?.windowHours).toBe(24);
+    expect(rx.reasoning).toMatch(/back-to-back/i);
+  });
+
+  it("allows a strength day 48h after the last one (standard Thu/Sat spacing)", () => {
+    const rx = prescribeFor(
+      inputs({
+        phase: "accumulation",
+        date: strengthDay,
+        recentSessions: [{ at: "2026-05-02T10:00:00Z", type: "strength" }], // 48h ago
+      }),
+    );
+    expect(rx.intent).toBe("strength");
+    expect(rx.strengthRecoveryAdjustment ?? null).toBeNull();
+  });
+
+  it("a recent sprint session does not block a strength day", () => {
+    const rx = prescribeFor(
+      inputs({
+        phase: "accumulation",
+        date: strengthDay,
+        recentSessions: [{ at: "2026-05-03T20:00:00Z", type: "sprint" }],
+      }),
+    );
+    expect(rx.intent).toBe("strength");
+  });
+});
+
+// =============================================================================
+// COMPLETED "MIXED" SESSIONS COUNT AS HIGH-CNS (2026-07-02 regression lock).
+// A completed day is logged with session_type = the raw intent; "mixed"
+// carries real sprint volume, so it must space the next sprint/mixed day.
+// This is what closes the default week's Fri sprint → Sat mixed 24h gap.
+// =============================================================================
+
+describe("prescribeFor — completed mixed session spaces the next high-CNS day", () => {
+  it("Saturday mixed is downgraded when Friday's sprint was completed", () => {
+    const saturday = new Date("2026-05-09T10:00:00Z"); // accumulation Saturday → mixed
+    const rx = prescribeFor(
+      inputs({
+        phase: "accumulation",
+        date: saturday,
+        recentSessions: [{ at: "2026-05-08T18:00:00Z", type: "sprint" }], // Friday evening
+      }),
+    );
+    expect(rx.intent).toBe("technical");
+    expect(rx.cnsRecoveryAdjustment?.originalIntent).toBe("mixed");
+  });
+
+  it("a completed 'mixed' session blocks the next sprint day inside the window", () => {
+    const tuesday = new Date("2026-05-05T10:00:00Z"); // accumulation Tuesday → sprint
+    const rx = prescribeFor(
+      inputs({
+        phase: "accumulation",
+        date: tuesday,
+        recentSessions: [{ at: "2026-05-04T18:00:00Z", type: "mixed" }], // 16h ago
+      }),
+    );
+    expect(rx.intent).toBe("technical");
+    expect(rx.cnsRecoveryAdjustment?.originalIntent).toBe("sprint");
+  });
+});
+
+// =============================================================================
+// FORECAST DAYS (week-ahead preview): a null readiness there means "not
+// measurable yet", not "check-in skipped" — the missing-readiness recovery
+// gate must not collapse every future day (2026-07-02 regression lock).
+// =============================================================================
+
+describe("prescribeFor — forecast days vs the missing-readiness gate", () => {
+  it("day-of: readiness null (no check-in) still routes to recovery", () => {
+    const rx = prescribeFor(inputs({ phase: "accumulation", readiness: null }));
+    expect(rx.intent).toBe("recovery");
+    expect(rx.reasoning).toMatch(/check-in/i);
+  });
+
+  it("forecast day: readiness null resolves to the phase plan, not recovery", () => {
+    const rx = prescribeFor(
+      inputs({ phase: "accumulation", readiness: null, isForecast: true }),
+    );
+    expect(rx.intent).toBe("strength"); // Monday accumulation default
+  });
+
+  it("forecast day: a genuinely LOW readiness value still gates (only null is exempt)", () => {
+    const rx = prescribeFor(
+      inputs({ phase: "accumulation", readiness: 30, isForecast: true }),
+    );
     expect(rx.intent).toBe("recovery");
   });
 });

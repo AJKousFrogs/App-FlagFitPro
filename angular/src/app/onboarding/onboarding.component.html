@@ -34,7 +34,20 @@
     }
     @case (2) {
       <h1>Your season</h1>
-      <p class="muted" style="font-size:var(--fs-sm);margin:0 0 var(--s-2)">Tell us your periods (use YYYY-MM-DD for a specific span, or MM-DD for a yearly one). Edit freely.</p>
+      <p class="muted" style="font-size:var(--fs-sm);margin:0 0 var(--s-2)">Flag football's season shape depends on where you play — pick the closest starting point, then edit the dates to match your real league.</p>
+      <div class="field">
+        @for (p of seasonPresets; track p.id) {
+          <button class="btn ghost sm" type="button" [class.chip]="true" [class.sel]="selectedPreset() === p.id"
+            style="display:block;width:100%;text-align:left;margin-bottom:var(--s-2)"
+            (click)="applyPreset(p.id)">
+            <strong>{{ p.label }}</strong>
+            <div class="muted" style="font-size:var(--fs-sm)">{{ p.description }}</div>
+          </button>
+        }
+      </div>
+      @if (season().length > 0) {
+        <p class="muted" style="font-size:var(--fs-sm);margin:var(--s-3) 0 var(--s-2)">Edit freely (use YYYY-MM-DD for a specific span, or MM-DD for a yearly one):</p>
+      }
       @for (w of season(); track $index) {
         <div class="card flat" style="margin:var(--s-2) 0">
           <div class="seasonrow">

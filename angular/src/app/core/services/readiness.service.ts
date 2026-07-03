@@ -64,7 +64,8 @@ export interface ReadinessResponse {
   score: number;
   level: ReadinessLevel;
   suggestion: Suggestion;
-  acwr: number;
+  /** null when chronic load history is insufficient — never fabricated as 0. */
+  acwr: number | null;
   acuteLoad: number;
   chronicLoad: number;
   dataMode: DataMode;
@@ -83,7 +84,8 @@ export interface ReadinessHistory {
   score: number;
   level: ReadinessLevel;
   suggestion: Suggestion;
-  acwr: number;
+  /** null when chronic load history is insufficient — never fabricated as 0. */
+  acwr: number | null;
 }
 
 @Injectable({
@@ -97,6 +99,11 @@ export class ReadinessService {
   readonly current = signal<ReadinessResponse | null>(null);
   readonly error = signal<string | null>(null);
   readonly history = signal<ReadinessHistory[]>([]);
+  // Monotonic token guarding calculateToday() against out-of-order responses —
+  // today.component.ts and wellness.component.ts can both trigger a recalc in
+  // close succession; without this, a slower-but-earlier request could resolve
+  // after a newer one and overwrite the fresher readiness score with a stale one.
+  private calcRequestSeq = 0;
 
   /**
    * Calculate readiness score for today.
@@ -118,6 +125,7 @@ export class ReadinessService {
   calculateToday(_athleteId?: string): Observable<ReadinessResponse> {
     this.loading.set(true);
     this.error.set(null);
+    const requestId = ++this.calcRequestSeq;
 
     return this.apiService
       .post<ReadinessResponse>("/api/calc-readiness", {})
@@ -128,14 +136,24 @@ export class ReadinessService {
             ({} as ReadinessResponse),
         ),
         tap((res) => {
-          this.current.set(res);
+          // Only the most recently-started request may update `current` — an
+          // older, slower request must never clobber a newer response.
+          if (requestId === this.calcRequestSeq) {
+            this.current.set(res);
+          }
           this.logCalibration(res);
         }),
         catchError((error) => {
-          this.error.set(getErrorMessage(error, "Failed to calculate readiness"));
+          if (requestId === this.calcRequestSeq) {
+            this.error.set(getErrorMessage(error, "Failed to calculate readiness"));
+          }
           return throwError(() => error);
         }),
-        finalize(() => this.loading.set(false)),
+        finalize(() => {
+          if (requestId === this.calcRequestSeq) {
+            this.loading.set(false);
+          }
+        }),
       );
   }
 

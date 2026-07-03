@@ -34,7 +34,7 @@
       "name": "api-performance",
       "urls": [
         "https://*.supabase.co/rest/v1/training_sessions*",
-        "https://*.supabase.co/rest/v1/wellness_logs*"
+        "https://*.supabase.co/rest/v1/daily_wellness_checkin*"
       ],
       "cacheConfig": {
         "maxSize": 100,

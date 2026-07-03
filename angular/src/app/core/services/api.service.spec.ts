@@ -8,23 +8,18 @@
  */
 
 import { TestBed } from "@angular/core/testing";
+import { provideHttpClient } from "@angular/common/http";
 import {
-  HttpClientTestingModule,
+  provideHttpClientTesting,
   HttpTestingController,
 } from "@angular/common/http/testing";
 import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 import { ApiService, API_ENDPOINTS } from "./api.service";
 import { ApiResponse } from "../models/common.models";
 import { LoggerService } from "./logger.service";
+import { mockLoggerService as createMockLoggerService } from "./logger.service.mock";
 
-// Mock LoggerService
-const mockLoggerService = {
-  info: vi.fn(),
-  debug: vi.fn(),
-  error: vi.fn(),
-  warn: vi.fn(),
-  success: vi.fn(),
-};
+const mockLoggerService = createMockLoggerService();
 
 describe("ApiService", () => {
   let service: ApiService;
@@ -35,8 +30,9 @@ describe("ApiService", () => {
     vi.clearAllMocks();
 
     TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule],
       providers: [
+        provideHttpClient(),
+        provideHttpClientTesting(),
         ApiService,
         { provide: LoggerService, useValue: mockLoggerService },
       ],
@@ -424,10 +420,10 @@ describe("ApiService", () => {
     it("should handle /api/ prefixed endpoints", () => {
       const mockResponse: ApiResponse = { success: true };
 
-      service.get("/api/dashboard/overview").subscribe();
+      service.get("/api/training/stats").subscribe();
 
       const req = httpMock.expectOne((request) =>
-        request.url.includes("/api/dashboard/overview"),
+        request.url.includes("/api/training/stats"),
       );
       req.flush(mockResponse);
     });
@@ -453,21 +449,9 @@ describe("ApiService", () => {
       expect(API_ENDPOINTS.auth.me).toBe("/api/auth/me");
     });
 
-    it("should have dashboard endpoints", () => {
-      expect(API_ENDPOINTS.dashboard.overview).toBe("/api/dashboard/overview");
-      expect(API_ENDPOINTS.dashboard.health).toBe("/api/dashboard/health");
-    });
-
     it("should have training endpoints", () => {
       expect(API_ENDPOINTS.training.stats).toBe("/api/training/stats");
       expect(API_ENDPOINTS.training.sessions).toBe("/api/training/sessions");
-    });
-
-    it("should have analytics endpoints", () => {
-      expect(API_ENDPOINTS.analytics.performanceTrends).toBe(
-        "/api/analytics/performance-trends",
-      );
-      expect(API_ENDPOINTS.analytics.summary).toBe("/api/analytics/summary");
     });
 
     it("should have dynamic endpoint functions", () => {
@@ -518,22 +502,6 @@ describe("ApiService", () => {
         "/api/admin/health-metrics",
       );
       expect(API_ENDPOINTS.admin.createBackup).toBe("/api/admin/create-backup");
-    });
-  });
-
-  // ============================================================================
-  // URL Detection Tests
-  // ============================================================================
-
-  describe("Base URL Detection", () => {
-    // in Vitest without breaking other tests. The URL detection is tested
-    // implicitly through integration tests.
-    it.skip("should detect Netlify production URL", () => {
-      // Cannot mock window.location in Vitest - tested via integration
-    });
-
-    it.skip("should detect localhost development", () => {
-      // Cannot mock window.location in Vitest - tested via integration
     });
   });
 

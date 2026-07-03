@@ -99,8 +99,7 @@ export const appConfig: ApplicationConfig = {
       }),
     ),
 
-    // Angular 21+: Zoneless is the default change-detection mode.
-    // Explicitly enabling stable experimental zoneless for performance.
+    // Angular 21+: zoneless change detection (stable API).
     provideZonelessChangeDetection(),
 
     ...(environment.devtools.hydration ? [provideClientHydration()] : []),

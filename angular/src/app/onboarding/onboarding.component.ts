@@ -12,6 +12,7 @@ import { retry } from "rxjs";
 import { ApiService } from "../core/services/api.service";
 import { LoggerService } from "../core/services/logger.service";
 import { SeasonPhase, SeasonWindow } from "../core/models/prescription.models";
+import { SEASON_CALENDAR_PRESETS } from "../core/constants/season-calendar-presets.constants";
 
 /**
  * Onboarding — the multi-step setup. Ported from
@@ -62,13 +63,25 @@ export class OnboardingComponent {
   readonly dob = signal("");
   readonly maxDob = new Date().toISOString().split("T")[0]; // no future birth dates
 
-  // step 3 — season calendar (athlete-declared)
-  readonly season = signal<SeasonWindow[]>([
-    { phase: "inseason", from: "09-01", to: "04-30" },
-    { phase: "offseason", from: "07-01", to: "08-15" },
-  ]);
-  // Picker options (legacy "transition" stays valid in the type/engine for any
-  // already-stored windows, but athletes now choose "Post-season" instead).
+  // step 3 — season calendar (athlete-declared). Flag football's season
+  // shape is climate/region-dependent (a hot continental summer needs a
+  // mid-year break; a mild maritime climate doesn't; the Southern
+  // Hemisphere is offset ~6 months) so there is deliberately NO single
+  // hardcoded default here — the player picks a starting shape from
+  // SEASON_CALENDAR_PRESETS (or starts blank/custom), then edits the actual
+  // dates to match their real league. Fully editable either way; the
+  // athlete's own calendar always wins once they touch it.
+  readonly seasonPresets = SEASON_CALENDAR_PRESETS;
+  readonly selectedPreset = signal<string | null>(null);
+  readonly season = signal<SeasonWindow[]>([]);
+
+  applyPreset(id: string): void {
+    const preset = this.seasonPresets.find((p) => p.id === id);
+    if (!preset) return;
+    this.selectedPreset.set(id);
+    // Clone so editing after applying never mutates the shared preset constant.
+    this.season.set(preset.windows.map((w) => ({ ...w })));
+  }
   readonly phases: SeasonPhase[] = [
     "offseason",
     "preseason",
@@ -82,7 +95,6 @@ export class OnboardingComponent {
     inseason: "In-season",
     peak: "Peak",
     postseason: "Post-season",
-    transition: "Transition",
   };
 
   // step 4 — training prefs
@@ -104,18 +116,23 @@ export class OnboardingComponent {
     this.equipment.update((e) => ({ ...e, [k]: !e[k] }));
   }
   addPeriod(): void {
+    this.selectedPreset.set(null); // manual edit diverges from the applied preset
     this.season.update((s) => [...s, { phase: "offseason", from: "", to: "" }]);
   }
   removePeriod(i: number): void {
+    this.selectedPreset.set(null);
     this.season.update((s) => s.filter((_, idx) => idx !== i));
   }
   setPhase(i: number, phase: string): void {
+    this.selectedPreset.set(null);
     this.season.update((s) => s.map((w, idx) => (idx === i ? { ...w, phase: phase as SeasonPhase } : w)));
   }
   setFrom(i: number, v: string): void {
+    this.selectedPreset.set(null);
     this.season.update((s) => s.map((w, idx) => (idx === i ? { ...w, from: v } : w)));
   }
   setTo(i: number, v: string): void {
+    this.selectedPreset.set(null);
     this.season.update((s) => s.map((w, idx) => (idx === i ? { ...w, to: v } : w)));
   }
 

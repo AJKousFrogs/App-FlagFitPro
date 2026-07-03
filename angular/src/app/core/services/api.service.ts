@@ -374,17 +374,6 @@ export const API_ENDPOINTS = {
     // logout: Use SupabaseService.signOut() directly
     // refresh/csrf: Not implemented - using Supabase session management
   },
-  dashboard: {
-    overview: "/api/dashboard/overview",
-    trainingCalendar: "/api/dashboard/training-calendar",
-    olympicQualification: "/api/dashboard/olympic-qualification",
-    sponsorRewards: "/api/dashboard/sponsor-rewards",
-    wearables: "/api/dashboard/wearables",
-    teamChemistry: "/api/dashboard/team-chemistry",
-    dailyQuote: "/api/dashboard/daily-quote",
-    health: "/api/dashboard/health",
-    // NOTE: Notifications moved to dedicated /api/notifications routes
-  },
   // Notifications (dedicated routes - consolidated from dashboard)
   notifications: {
     list: "/api/notifications",
@@ -415,17 +404,6 @@ export const API_ENDPOINTS = {
   },
   weather: {
     current: "/api/weather/current",
-  },
-  analytics: {
-    performanceTrends: "/api/analytics/performance-trends",
-    teamChemistry: "/api/analytics/team-chemistry",
-    trainingDistribution: "/api/analytics/training-distribution",
-    positionPerformance: "/api/analytics/position-performance",
-    injuryRisk: "/api/analytics/injury-risk",
-    speedDevelopment: "/api/analytics/speed-development",
-    userEngagement: "/api/analytics/user-engagement",
-    summary: "/api/analytics/summary",
-    health: "/api/analytics/health",
   },
   trends: {
     changeOfDirection: "/api/trends/change-of-direction",

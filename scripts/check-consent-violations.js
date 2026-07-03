@@ -60,7 +60,6 @@ const CONFIG = {
     { file: "training-complete.js", reason: "Player-only: user completes own training session" },
     { file: "daily-training.js", reason: "Player-only: user accesses own daily training" },
     { file: "user-context.js", reason: "Player-only: user accesses own context data" },
-    { file: "dashboard.js", reason: "Player-only: user accesses own dashboard" },
     { file: "ai-chat.js", reason: "Player-only: AI uses player own data for coaching" },
     { file: "training-suggestions.js", reason: "Player-only: user gets own training suggestions" },
     { file: "training-stats-enhanced.js", reason: "Player-only: user accesses own training stats" },

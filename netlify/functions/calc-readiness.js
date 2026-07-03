@@ -616,7 +616,7 @@ const handler = async (event, context) => {
         dayStr,
       });
 
-      // Query wellness_logs - handle both user_id (new) and athlete_id (legacy) columns
+      // Query daily_wellness_checkin (canonical wellness table; wellness_logs was dropped in phase7)
       const { data: wellness, error: wellErr } =
         await fetchWellnessForReadiness(athleteId, dayStr);
 
@@ -914,14 +914,17 @@ const handler = async (event, context) => {
         athlete_id: athleteId,
         score,
         level,
-        acwr: Math.round(acwr * 100) / 100,
+        acwr: hasAcwr ? Math.round(acwr * 100) / 100 : null,
       });
 
       return createSuccessResponse({
         score,
         level,
         suggestion,
-        acwr: Math.round(acwr * 100) / 100,
+        // Do NOT coerce a null ACWR to 0 (see S3 note above) — null * 100 === 0
+        // in JS, which would silently fabricate an ACWR of 0 for a new athlete
+        // or a day with insufficient chronic history.
+        acwr: hasAcwr ? Math.round(acwr * 100) / 100 : null,
         acuteLoad: Math.round(acuteLoad * 100) / 100,
         chronicLoad: Math.round(chronicLoad * 100) / 100,
         dataMode, // 'full' or 'reduced'

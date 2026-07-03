@@ -120,7 +120,7 @@ BEGIN
     WHERE table_schema = 'public' 
     AND table_name = 'authorization_violations'
   ) THEN
-    RAISE EXCEPTION 'authorization_violations table does not exist. Run 20260106_append_only_audit_tables.sql first.';
+    RAISE EXCEPTION 'authorization_violations table does not exist. Run 20260106090900_append_only_audit_tables.sql first.';
   END IF;
 END $$;
 

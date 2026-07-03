@@ -443,27 +443,42 @@ async function triggerGameDayRecovery(playerId, gameDate) {
       created_at: new Date().toISOString(),
     });
 
-    // Create recovery blocks
-    await Promise.all([
+    // Create per-day recovery blocks. Columns must match the live schema
+    // (block_start_date/block_end_date NOT NULL, block_type) -- these two
+    // inserts previously used block_date/protocol_type, which are not real
+    // columns on recovery_blocks (confirmed live). Every insert failed
+    // silently (Promise.all with no .error check on either result), so the
+    // per-day sleep/active-recovery entries these lines exist to create never
+    // persisted; only the coarser day1-day2 block above ever landed.
+    const [day1Result, day2Result] = await Promise.all([
       supabaseAdmin.from("recovery_blocks").insert({
         user_id: playerId,
-        block_date: day1.toISOString().split("T")[0],
+        block_start_date: day1.toISOString().split("T")[0],
+        block_end_date: day1.toISOString().split("T")[0],
+        block_type: "game_day_recovery",
         max_load_percent: 30,
         focus: "sleep",
         restrictions: ["no_intense_work", "hydration_focus"],
-        protocol_type: "game_day_recovery",
         created_at: new Date().toISOString(),
       }),
       supabaseAdmin.from("recovery_blocks").insert({
         user_id: playerId,
-        block_date: day2.toISOString().split("T")[0],
+        block_start_date: day2.toISOString().split("T")[0],
+        block_end_date: day2.toISOString().split("T")[0],
+        block_type: "game_day_recovery",
         max_load_percent: 50,
         focus: "active_recovery",
         restrictions: ["light_movement_only", "no_contact"],
-        protocol_type: "game_day_recovery",
         created_at: new Date().toISOString(),
       }),
     ]);
+    if (day1Result.error || day2Result.error) {
+      logger.error(
+        "game_day_recovery_per_day_insert_failed",
+        day1Result.error || day2Result.error,
+        { player_id: playerId },
+      );
+    }
 
     logger.info("game_day_recovery_created", { player_id: playerId });
   } catch (error) {

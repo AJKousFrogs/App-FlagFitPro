@@ -8,19 +8,9 @@ import { SupabaseService } from "./supabase.service";
 import { RealtimeBroadcastPayload } from "../models/realtime-broadcast.model";
 import { ApiService, API_ENDPOINTS } from "./api.service";
 
-/** Result shape from public.calculate_acwr (jsonb). */
-export interface AcwrCalculationResult {
-  acute_load: number;
-  chronic_load: number;
-  ratio: number;
-  sufficient: boolean;
-  days_with_data: number;
-  sessions_in_window: number;
-  computed_at: string;
-}
-
 export interface WellnessData {
-  id?: number;
+  /** `daily_wellness_checkin.id` is a uuid, not a number. */
+  id?: string;
   userId?: string;
   date: string;
   sleep?: number;
@@ -67,7 +57,8 @@ export interface WellnessResponse {
 
 // Interface for daily_wellness_checkin table (canonical source)
 interface DailyWellnessCheckinEntry {
-  id: number;
+  /** UUID, not a number — see WellnessData.id. */
+  id: string;
   user_id: string;
   checkin_date: string;
   sleep_quality?: number;
@@ -81,7 +72,6 @@ interface DailyWellnessCheckinEntry {
   soreness_areas?: string[];
   notes?: string;
   calculated_readiness?: number;
-  readiness_score?: number;
   travel_hours?: number;
   created_at: string;
   updated_at?: string;
@@ -112,6 +102,11 @@ export class WellnessService {
 
   private readonly _wellnessData = signal<WellnessData[]>([]);
   private readonly _averages = signal<WellnessAverages | null>(null);
+  // Monotonic token guarding getWellnessData against out-of-order responses —
+  // login (effect), post-checkin refresh, and realtime updates can all trigger
+  // concurrent fetches; without this, a slower-but-earlier-started request can
+  // resolve after a newer one and overwrite fresher data with stale data.
+  private wellnessRequestSeq = 0;
 
   // Public readonly signals for components
   readonly wellnessData = this._wellnessData.asReadonly();
@@ -187,6 +182,8 @@ export class WellnessService {
     const cutoffDate = new Date();
     cutoffDate.setDate(cutoffDate.getDate() - days);
 
+    const requestId = ++this.wellnessRequestSeq;
+
     return from(
       (async () => {
         // Query from daily_wellness_checkin (canonical source)
@@ -215,8 +212,7 @@ export class WellnessService {
             motivation: entry.motivation_level,
             mood: entry.mood,
             hydration: entry.hydration_level,
-            readinessScore:
-              entry.calculated_readiness ?? entry.readiness_score,
+            readinessScore: entry.calculated_readiness,
             notes: entry.notes,
             travelHours: entry.travel_hours,
             timestamp: entry.created_at,
@@ -226,9 +222,12 @@ export class WellnessService {
         // Calculate averages
         const averages = this.calculateAverages(wellnessData);
 
-        // Update signals
-        this._wellnessData.set(wellnessData);
-        this._averages.set(averages);
+        // Only apply if this is still the most recently-started request — an
+        // older, slower request must never clobber a newer response.
+        if (requestId === this.wellnessRequestSeq) {
+          this._wellnessData.set(wellnessData);
+          this._averages.set(averages);
+        }
 
         return {
           success: true,
@@ -481,47 +480,6 @@ export class WellnessService {
   }
 
   /**
-   * Server-side ACWR (EWMA) from `workout_logs`; matches default evidence preset math.
-   */
-  calculateAcwr(): Observable<{
-    success: boolean;
-    data?: AcwrCalculationResult;
-    error?: string;
-  }> {
-    const userId = this.userId();
-    if (!userId) {
-      return of({ success: false, error: "Not authenticated" });
-    }
-
-    return defer(() => this.supabaseService.waitForInit()).pipe(
-      switchMap(() =>
-        from(
-          this.supabaseService.client.rpc("calculate_acwr", {
-            p_user_id: userId,
-          }),
-        ),
-      ),
-      map(({ data, error }) => {
-        if (error) {
-          throw error;
-        }
-        return {
-          success: true as const,
-          data: data as AcwrCalculationResult,
-        };
-      }),
-      catchError((error: { message?: string; details?: string }) => {
-        const errorMessage =
-          error?.message || error?.details || JSON.stringify(error);
-        this.logger.error("wellness_calculate_acwr_failed", error, {
-          message: errorMessage,
-        });
-        return of({ success: false, error: errorMessage });
-      }),
-    );
-  }
-
-  /**
    * Get wellness score (average of all metrics)
    *
    * For a full evidence-based readiness score, use ReadinessService.calculateToday().
@@ -749,7 +707,11 @@ export class WellnessService {
     record: Record<string, unknown>,
   ): DailyWellnessCheckinEntry {
     return {
-      id: Number(record["id"]),
+      // BUG FIX: was Number(record["id"]) — the id is a uuid, and Number() on a
+      // uuid string is always NaN, which broke findIndex/filter id-matching in
+      // handleWellnessUpdate/handleWellnessDelete below (NaN !== NaN), so
+      // realtime UPDATE/DELETE broadcasts silently failed to update local state.
+      id: String(record["id"]),
       user_id: String(record["user_id"]),
       checkin_date: String(record["checkin_date"] ?? record["date"] ?? ""),
       sleep_hours: Number(record["sleep_hours"] ?? record["sleep_quality"] ?? 0),
@@ -763,7 +725,6 @@ export class WellnessService {
       soreness_areas: record["soreness_areas"] as string[] | undefined,
       notes: record["notes"] as string | undefined,
       calculated_readiness: Number(record["calculated_readiness"] ?? 0),
-      readiness_score: Number(record["readiness_score"] ?? 0),
       created_at: String(record["created_at"] ?? new Date().toISOString()),
       updated_at: record["updated_at"] as string | undefined,
     };
@@ -787,7 +748,7 @@ export class WellnessService {
       motivation: entry.motivation_level,
       mood: entry.mood,
       hydration: entry.hydration_level,
-      readinessScore: entry.calculated_readiness ?? entry.readiness_score,
+      readinessScore: entry.calculated_readiness,
       notes: entry.notes,
       timestamp: entry.created_at,
     };

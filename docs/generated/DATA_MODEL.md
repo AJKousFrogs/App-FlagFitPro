@@ -2,13 +2,9 @@
 
 > Regenerate: `npm run docs:regen` (reads `docs/generated/live-schema.snapshot.json`).
 > Refresh against live: re-run the Supabase introspection into that snapshot (Supabase MCP), then rerun.
-> **Schema snapshot (live): 2026-06-23** · doc regenerated: 2026-06-23
+> **Schema snapshot (live): 2026-07-02** · doc regenerated: 2026-07-03
 
 **187 base tables, 7 views.** Tables flagged `DRIFT` exist live but are not defined in any migration file.
-
-> ⚠️ **`supabase-types.ts` is STALE vs live — regenerate it.** In types but dropped from live (37): `acwr_calculations`, `acwr_history`, `acwr_reports`, `analytics_aggregates`, `article_search_index`, `athlete_achievements`, `athlete_daily_state`, `chatbot_user_context`, `cycle_tracking_entries`, `cycle_tracking_symptoms`, `digest_history`, `exercise_library`, `exercise_logs`, `fixtures`, `hydration_logs`, `injuries`, `injury_risk_factors`, `load_caps`, `load_daily`, `load_management_research`, `load_metrics`, `load_monitoring`, `notification_preferences`, `player_tournament_availability`, `session_rpe_data`, `sessions`, `sponsor_contributions`, `supplements_data`, `team_players`, `tournament_lineups`, `tournaments`, `training_load_metrics`, `training_stress_balance`, `wellness_data`, `wellness_entries`, `wellness_logs`, `workout_logs`. Live but missing from types (25): `age_recovery_modifiers`, `athlete_events`, `athlete_injuries`, `athlete_nutrition_profiles`, `calibration_logs`, `contraindication_rules`, `event_availability`, `event_lineups`, `event_participation`, `meal_templates`, `mental_performance_logs`, `mental_wellness_reports`, `nutrition_plans`, `nutrition_reports`, `prescription_audit_log`, `prescription_templates`, `proactive_checkins`, `psychological_assessments`, `readiness_gates`, `rtp_prescription_approvals`, `taper_rules`, `team_activities`, `team_season_phases`, `user_supplements`, `weather_substitution_rules`.
-
-**DRIFT (live, no migration file):** `contraindication_rules`, `prescription_audit_log`, `prescription_templates`, `readiness_gates`, `rtp_prescription_approvals`, `taper_rules`, `team_season_phases`, `weather_substitution_rules`
 
 ## Tables
 
@@ -317,7 +313,6 @@ Touched by: `daily-protocol`, `player-settings`
 - `secondary_position` text
 - `birth_date` date
 - `flag_practice_schedule` jsonb · not null
-- `preferred_training_days_deprecated` ARRAY
 - `daily_routine` jsonb · not null
 - `max_sessions_per_week` integer · not null
 - `has_gym_access` boolean · not null
@@ -671,6 +666,8 @@ Touched by: `wellness-checkin`
 - `updated_at` timestamp with time zone · not null
 - `minutes_per_game` integer
 - `game_format` character varying
+- `hotel_name` text
+- `hotel_address` text
 
 ### `competitions`
 Touched by: _(no endpoint references this table)_
@@ -717,7 +714,7 @@ Touched by: _(no endpoint references this table)_
 - `changed_at` timestamp with time zone · not null
 - `reason` text
 
-### `contraindication_rules` — ⚠️ DRIFT
+### `contraindication_rules`
 Touched by: _(no endpoint references this table)_
 
 - `id` uuid · not null
@@ -814,7 +811,6 @@ Touched by: `ai-chat`, `calc-readiness`, `coach-core`, `daily-protocol`, `perfor
 - `calculated_readiness` numeric
 - `created_at` timestamp with time zone
 - `updated_at` timestamp with time zone
-- `motivation` integer
 - `travel_hours` integer
 
 ### `decision_ledger`
@@ -960,7 +956,7 @@ Touched by: _(no endpoint references this table)_
 - `updated_at` timestamp with time zone
 
 ### `exercisedb_exercises`
-Touched by: `exercisedb`
+Touched by: _(no endpoint references this table)_
 
 - `id` uuid · not null
 - `exercisedb_id` character varying · not null
@@ -982,7 +978,7 @@ Touched by: `exercisedb`
 - `is_approved` boolean
 
 ### `exercisedb_import_logs`
-Touched by: `exercisedb`
+Touched by: _(no endpoint references this table)_
 
 - `id` uuid · not null
 - `import_date` timestamp with time zone
@@ -1030,7 +1026,7 @@ Touched by: `daily-protocol`, `exercise-progression`, `exercises-core`
 - `is_high_intensity` boolean
 
 ### `ff_exercise_mappings`
-Touched by: `exercisedb`
+Touched by: _(no endpoint references this table)_
 
 - `id` uuid · not null
 - `exercisedb_exercise_id` uuid · not null
@@ -1606,7 +1602,7 @@ Touched by: _(no endpoint references this table)_
 - `performance_day` date · not null
 
 ### `performance_tests`
-Touched by: `analytics-core`, `performance-data`, `performance-metrics`
+Touched by: `performance-data`, `performance-metrics`
 
 - `id` uuid · not null
 - `user_id` uuid · not null
@@ -1915,7 +1911,7 @@ Touched by: `team-calendar`
 - `created_at` timestamp with time zone · not null
 - `updated_at` timestamp with time zone · not null
 
-### `prescription_audit_log` — ⚠️ DRIFT
+### `prescription_audit_log`
 Touched by: _(no endpoint references this table)_
 
 - `id` uuid · not null
@@ -1929,7 +1925,7 @@ Touched by: _(no endpoint references this table)_
 - `modified_by` text · not null
 - `created_at` timestamp with time zone · not null
 
-### `prescription_templates` — ⚠️ DRIFT
+### `prescription_templates`
 Touched by: _(no endpoint references this table)_
 
 - `id` uuid · not null
@@ -2094,7 +2090,7 @@ Touched by: `qb-throwing`
 - `created_at` timestamp with time zone · not null
 - `updated_at` timestamp with time zone · not null
 
-### `readiness_gates` — ⚠️ DRIFT
+### `readiness_gates`
 Touched by: _(no endpoint references this table)_
 
 - `id` uuid · not null
@@ -2113,9 +2109,7 @@ Touched by: `calc-readiness`, `coach-core`, `daily-protocol`, `readiness-history
 
 - `id` uuid · not null
 - `sleep_score` numeric
-- `wellness_score` numeric
 - `acwr` numeric
-- `notes` text
 - `created_at` timestamp with time zone
 - `updated_at` timestamp with time zone
 - `user_id` uuid · not null
@@ -2302,7 +2296,7 @@ Touched by: _(no endpoint references this table)_
 - `reason` text
 - `created_at` timestamp with time zone
 
-### `rtp_prescription_approvals` — ⚠️ DRIFT
+### `rtp_prescription_approvals`
 Touched by: _(no endpoint references this table)_
 
 - `id` uuid · not null
@@ -2469,7 +2463,7 @@ Touched by: `performance-data`, `staff-nutritionist`, `supplements`, `user-conte
 - `notes` text
 - `created_at` timestamp with time zone · not null
 
-### `taper_rules` — ⚠️ DRIFT
+### `taper_rules`
 Touched by: _(no endpoint references this table)_
 
 - `id` uuid · not null
@@ -2542,7 +2536,7 @@ Touched by: `accept-invitation`, `team-invite`, `validate-invitation`
 - `updated_at` timestamp with time zone · not null
 
 ### `team_members`
-Touched by: `accept-invitation`, `ai-chat`, `ai-telemetry`, `analytics-core`, `attendance`, `calibration-logs`, `chat`, `coach-activity`, `coach-analytics`, `coach-core`, `coach-inbox`, `community`, `daily-protocol`, `dashboard`, `decisions`, `exercisedb`, `game-events`, `games-core`, `import-open-data`, `load-management`, `payments-core`, `performance-data`, `privacy-settings`, `response-feedback`, `roster-core`, `smart-training-recommendations`, `staff-nutritionist`, `staff-physiotherapist`, `staff-psychology`, `team-invite`, `team-templates`, `training-plan`, `user-context`, `weather`, `wellness-checkin`
+Touched by: `accept-invitation`, `ai-chat`, `ai-telemetry`, `attendance`, `calibration-logs`, `chat`, `coach-activity`, `coach-analytics`, `coach-core`, `coach-inbox`, `community`, `daily-protocol`, `decisions`, `game-events`, `games-core`, `import-open-data`, `load-management`, `payments-core`, `performance-data`, `privacy-settings`, `response-feedback`, `roster-core`, `smart-training-recommendations`, `staff-nutritionist`, `staff-physiotherapist`, `staff-psychology`, `team-invite`, `team-templates`, `training-plan`, `user-context`, `weather`, `wellness-checkin`
 
 - `id` uuid · not null
 - `team_id` uuid · not null
@@ -2572,7 +2566,7 @@ Touched by: _(no endpoint references this table)_
 - `created_at` timestamp with time zone · not null
 - `updated_at` timestamp with time zone · not null
 
-### `team_season_phases` — ⚠️ DRIFT
+### `team_season_phases`
 Touched by: `daily-protocol`
 
 - `id` uuid · not null
@@ -2734,7 +2728,7 @@ Touched by: `training-programs`
 - `updated_at` timestamp with time zone
 
 ### `training_sessions`
-Touched by: `ai-chat`, `calc-readiness`, `coach-core`, `compute-acwr`, `daily-protocol`, `daily-training`, `dashboard`, `import-open-data`, `load-management`, `performance-heatmap`, `performance-metrics`, `qb-throwing`, `smart-training-recommendations`, `training-complete`, `training-metrics`, `training-plan`, `training-sessions`, `training-stats-enhanced`, `training-suggestions`, `trends`, `user-context`, `user-profile-core`, `weekend-games`
+Touched by: `ai-chat`, `calc-readiness`, `coach-core`, `compute-acwr`, `daily-protocol`, `daily-training`, `import-open-data`, `load-management`, `performance-heatmap`, `performance-metrics`, `qb-throwing`, `smart-training-recommendations`, `training-complete`, `training-metrics`, `training-plan`, `training-sessions`, `training-stats-enhanced`, `training-suggestions`, `trends`, `user-context`, `user-profile-core`, `weekend-games`
 
 - `id` uuid · not null
 - `user_id` uuid · not null
@@ -2747,7 +2741,6 @@ Touched by: `ai-chat`, `calc-readiness`, `coach-core`, `compute-acwr`, `daily-pr
 - `completion_rate` numeric
 - `performance_score` numeric
 - `xp_earned` integer
-- `verification_confidence_deprecated` numeric
 - `notes` text
 - `coach_feedback` text
 - `status` character varying
@@ -2928,7 +2921,7 @@ Touched by: `staff-nutritionist`, `supplements`
 - `updated_at` timestamp with time zone · not null
 
 ### `users`
-Touched by: `accept-invitation`, `admin`, `ai-chat`, `analytics-core`, `coach-core`, `coach-inbox`, `daily-protocol`, `daily-training`, `parental-consent`, `player-settings`, `privacy-settings`, `sleep-data`, `team-invite`, `user-context`, `user-profile-core`, `wellness-checkin`
+Touched by: `accept-invitation`, `admin`, `ai-chat`, `coach-core`, `coach-inbox`, `daily-protocol`, `daily-training`, `parental-consent`, `player-settings`, `privacy-settings`, `sleep-data`, `team-invite`, `user-context`, `user-profile-core`, `wellness-checkin`
 
 - `id` uuid · not null
 - `email` character varying · not null
@@ -3043,7 +3036,7 @@ Touched by: `training-programs`
 - `created_at` timestamp with time zone
 - `updated_at` timestamp with time zone
 
-### `weather_substitution_rules` — ⚠️ DRIFT
+### `weather_substitution_rules`
 Touched by: _(no endpoint references this table)_
 
 - `id` uuid · not null
@@ -3161,6 +3154,8 @@ Touched by: `ai-chat`
 - `competition_season_year` integer
 - `team_name` character varying
 - `user_id` uuid
+- `hotel_name` text
+- `hotel_address` text
 
 ### `v_injuries_unified` (view)
 - `id` uuid

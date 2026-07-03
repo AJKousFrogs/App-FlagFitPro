@@ -12,6 +12,7 @@ import { describe, it, expect, beforeEach, vi, afterEach } from "vitest";
 import { RealtimeService, RealtimeCallback } from "./realtime.service";
 import { SupabaseService } from "./supabase.service";
 import { LoggerService } from "./logger.service";
+import { mockLoggerService as createMockLoggerService } from "./logger.service.mock";
 
 // Mock channel
 const createMockChannel = () => ({
@@ -32,13 +33,7 @@ const mockSupabaseService = {
   },
 } as unknown as SupabaseService;
 
-const mockLoggerService = {
-  info: vi.fn(),
-  debug: vi.fn(),
-  error: vi.fn(),
-  warn: vi.fn(),
-  success: vi.fn(),
-};
+const mockLoggerService = createMockLoggerService();
 
 describe("RealtimeService", () => {
   let service: RealtimeService;

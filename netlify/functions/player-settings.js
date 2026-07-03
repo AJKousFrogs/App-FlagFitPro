@@ -1,4 +1,5 @@
 import { baseHandler } from "./utils/base-handler.js";
+import { calculateAge } from "./utils/daily-protocol-context.js";
 import {
   createErrorResponse,
   createSuccessResponse,
@@ -450,35 +451,63 @@ async function saveSettings(supabase, userId, payload, log = logger) {
     }
   }
 
-  // Upsert config
+  // Upsert config. Every optional field below is included ONLY when present
+  // in this request's payload (the `x !== undefined` guards) — an omitted
+  // key is left out of the upsert object entirely, which Postgres leaves
+  // untouched on UPDATE and falls through to the column's own DEFAULT on
+  // INSERT (verified live: primary_position 'wr_db', available_equipment/
+  // season_calendar/flag_practice_schedule/daily_routine '[]',
+  // has_gym_access/has_field_access true, max_sessions_per_week 5).
+  //
+  // Previously every field used a bare `value || default` fallback and was
+  // written UNCONDITIONALLY on every call — so any partial settings save
+  // (e.g. Settings' savePosition() sending only { primaryPosition }, or
+  // saveEquipment() sending only { availableEquipment }) silently reset
+  // EVERY other field back to its default: season_calendar and
+  // available_equipment to [], birth_date/warmup_focus/current_limitations
+  // to null, daily_routine to the canned DEFAULT_DAILY_ROUTINE,
+  // has_gym_access/has_field_access to true, primary_position to 'wr_db'.
+  // This directly broke the season-calendar-in-settings feature it was
+  // fixed alongside — saving a season calendar would have been wiped out
+  // by the very next unrelated settings save.
   const { data: config, error } = await supabase
     .from("athlete_training_config")
     .upsert(
       {
         user_id: userId,
-        primary_position: primaryPosition || "wr_db",
-        secondary_position: secondaryPosition || null,
-        birth_date: birthDate || null,
-        flag_practice_schedule: flagPracticeSchedule || [],
+        ...(primaryPosition !== undefined ? { primary_position: primaryPosition || "wr_db" } : {}),
+        ...(secondaryPosition !== undefined ? { secondary_position: secondaryPosition || null } : {}),
+        ...(birthDate !== undefined ? { birth_date: birthDate || null } : {}),
+        ...(availabilitySchedule !== undefined ? { flag_practice_schedule: flagPracticeSchedule } : {}),
         // preferred_training_days: DEPRECATED legacy field — superseded by
         // team_training_days; no engine reads it. Stopped writing ahead of the
         // rename migration (I6). The input is still accepted/validated but ignored.
-        daily_routine: sanitizeDailyRoutine(dailyRoutine),
-        max_sessions_per_week: maxSessionsPerWeek ?? 5,
-        has_gym_access: hasGymAccess !== false,
-        has_field_access: hasFieldAccess !== false,
-        warmup_focus: warmupFocus || null,
-        available_equipment: availableEquipment || [],
-        season_calendar: Array.isArray(seasonCalendar) ? seasonCalendar : [],
+        ...(dailyRoutine !== undefined ? { daily_routine: sanitizeDailyRoutine(dailyRoutine) } : {}),
+        ...(maxSessionsPerWeek !== undefined ? { max_sessions_per_week: maxSessionsPerWeek ?? 5 } : {}),
+        ...(hasGymAccess !== undefined ? { has_gym_access: hasGymAccess !== false } : {}),
+        ...(hasFieldAccess !== undefined ? { has_field_access: hasFieldAccess !== false } : {}),
+        ...(warmupFocus !== undefined ? { warmup_focus: warmupFocus || null } : {}),
+        ...(availableEquipment !== undefined ? { available_equipment: availableEquipment || [] } : {}),
+        ...(seasonCalendar !== undefined
+          ? { season_calendar: Array.isArray(seasonCalendar) ? seasonCalendar : [] }
+          : {}),
         // recurring flag-football team-practice days; omitted key (undefined) is
         // dropped from the upsert, so unprovided → unchanged (default on insert).
         ...(teamTrainingDays !== undefined
           ? { team_training_days: teamTrainingDays }
           : {}),
-        current_limitations: currentLimitations || null,
-        age_recovery_modifier: ageRecoveryModifier,
-        acwr_target_min: acwrTargetMin,
-        acwr_target_max: acwrTargetMax,
+        ...(currentLimitations !== undefined ? { current_limitations: currentLimitations || null } : {}),
+        // Age-derived fields only recompute (and only overwrite) when birthDate
+        // is actually part of this call -- otherwise a previously-computed
+        // age_recovery_modifier/acwr_target_max would reset to the generic
+        // default (1.0 / 1.3) on every unrelated settings save.
+        ...(birthDate !== undefined
+          ? {
+              age_recovery_modifier: ageRecoveryModifier,
+              acwr_target_min: acwrTargetMin,
+              acwr_target_max: acwrTargetMax,
+            }
+          : {}),
         updated_at: new Date().toISOString(),
       },
       {
@@ -560,20 +589,6 @@ async function saveSettings(supabase, userId, payload, log = logger) {
     200,
     "Settings saved successfully",
   );
-}
-
-/**
- * Calculate age from birth date
- */
-function calculateAge(birthDateStr) {
-  const today = new Date();
-  const birth = new Date(birthDateStr);
-  let age = today.getFullYear() - birth.getFullYear();
-  const monthDiff = today.getMonth() - birth.getMonth();
-  if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) {
-    age--;
-  }
-  return age;
 }
 
 export const testHandler = handler;

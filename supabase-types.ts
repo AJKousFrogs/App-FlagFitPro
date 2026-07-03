@@ -2063,6 +2063,8 @@ export type Database = {
           expected_game_count: number
           external_id: string | null
           game_format: string | null
+          hotel_address: string | null
+          hotel_name: string | null
           id: string
           importance: string
           label: string | null
@@ -2084,6 +2086,8 @@ export type Database = {
           expected_game_count?: number
           external_id?: string | null
           game_format?: string | null
+          hotel_address?: string | null
+          hotel_name?: string | null
           id?: string
           importance?: string
           label?: string | null
@@ -2105,6 +2109,8 @@ export type Database = {
           expected_game_count?: number
           external_id?: string | null
           game_format?: string | null
+          hotel_address?: string | null
+          hotel_name?: string | null
           id?: string
           importance?: string
           label?: string | null
@@ -2495,7 +2501,6 @@ export type Database = {
           hydration_level: number | null
           id: string
           mood: number | null
-          motivation: number | null
           motivation_level: number | null
           muscle_soreness: number | null
           notes: string | null
@@ -2515,7 +2520,6 @@ export type Database = {
           hydration_level?: number | null
           id?: string
           mood?: number | null
-          motivation?: number | null
           motivation_level?: number | null
           muscle_soreness?: number | null
           notes?: string | null
@@ -2535,7 +2539,6 @@ export type Database = {
           hydration_level?: number | null
           id?: string
           mood?: number | null
-          motivation?: number | null
           motivation_level?: number | null
           muscle_soreness?: number | null
           notes?: string | null
@@ -6629,14 +6632,12 @@ export type Database = {
           day: string
           id: string
           level: string | null
-          notes: string | null
           proximity_score: number | null
           score: number | null
           sleep_score: number | null
           suggestion: string | null
           updated_at: string | null
           user_id: string
-          wellness_score: number | null
           workload_score: number | null
         }
         Insert: {
@@ -6647,14 +6648,12 @@ export type Database = {
           day: string
           id?: string
           level?: string | null
-          notes?: string | null
           proximity_score?: number | null
           score?: number | null
           sleep_score?: number | null
           suggestion?: string | null
           updated_at?: string | null
           user_id: string
-          wellness_score?: number | null
           workload_score?: number | null
         }
         Update: {
@@ -6665,14 +6664,12 @@ export type Database = {
           day?: string
           id?: string
           level?: string | null
-          notes?: string | null
           proximity_score?: number | null
           score?: number | null
           sleep_score?: number | null
           suggestion?: string | null
           updated_at?: string | null
           user_id?: string
-          wellness_score?: number | null
           workload_score?: number | null
         }
         Relationships: []
@@ -9800,6 +9797,8 @@ export type Database = {
           ends_at: string | null
           expected_game_count: number | null
           external_id: string | null
+          hotel_address: string | null
+          hotel_name: string | null
           id: string | null
           importance: string | null
           label: string | null
@@ -10264,6 +10263,10 @@ export type Database = {
         Returns: undefined
       }
       increment_reply_count: { Args: { message_id: string }; Returns: number }
+      increment_training_points: {
+        Args: { p_points: number; p_user_id: string }
+        Returns: number
+      }
       initiate_account_deletion: {
         Args: { p_reason?: string; p_user_id: string }
         Returns: string

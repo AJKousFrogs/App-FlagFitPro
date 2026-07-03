@@ -1,9 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-vi.mock("../../netlify/functions/utils/base-handler.js", () => ({
-  baseHandler: async (event, context, options) =>
-    options.handler(event, context, { userId: "athlete-1" }),
-}));
+import { mockBaseHandlerModule } from "../test-helpers.js";
+vi.mock("../../netlify/functions/utils/base-handler.js", () => mockBaseHandlerModule({ userId: "athlete-1" }));
 
 describe("weather validation and safety fallback", () => {
   let handler;

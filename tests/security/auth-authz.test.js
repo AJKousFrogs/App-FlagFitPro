@@ -115,7 +115,6 @@ describeLive("Authentication Tests", () => {
       { method: "GET", path: "/weather?lat=40&lon=-74" },
       { method: "GET", path: "/training-programs" },
       { method: "POST", path: "/auth-login" },
-      { method: "POST", path: "/auth-reset-password" },
       { method: "GET", path: "/validate-invitation?token=test" },
     ];
 

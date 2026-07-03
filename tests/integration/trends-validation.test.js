@@ -1,9 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-vi.mock("../../netlify/functions/utils/base-handler.js", () => ({
-  baseHandler: async (event, context, options) =>
-    options.handler(event, context, { userId: "athlete-1", requestId: "req-test" }),
-}));
+import { mockBaseHandlerModule } from "../test-helpers.js";
+vi.mock("../../netlify/functions/utils/base-handler.js", () => mockBaseHandlerModule({ userId: "athlete-1", requestId: "req-test" }));
 
 vi.mock("../../netlify/functions/supabase-client.js", () => ({
   supabaseAdmin: {
