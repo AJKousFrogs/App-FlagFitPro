@@ -62,22 +62,25 @@ export class OnboardingComponent {
   readonly dob = signal("");
   readonly maxDob = new Date().toISOString().split("T")[0]; // no future birth dates
 
-  // step 3 — season calendar (athlete-declared). Default is a starting-point
-  // template for a split flag-football season with two competitive blocks
-  // (spring + late-summer) separated by a short mid-year break, a peak/playoff
-  // window, a post-season regeneration window, and a long winter off-season —
-  // fully editable; the athlete's own calendar always wins once they touch it.
-  // Windows are contiguous ("to" of one = day before "from" of the next) so
-  // macroPhaseFor never falls through to the generic fallback for a date in
-  // the default calendar.
+  // step 3 — season calendar (athlete-declared). Default is the club's actual
+  // annual calendar (2026-07-03: confirmed real dates, not a proposal) — a
+  // split flag-football season with two competitive blocks (April-July,
+  // August-September) separated by a mid-year break, a full-October
+  // peak/playoff window, a November recovery window, and a Dec-Feb winter
+  // off-season — fully editable; the athlete's own calendar always wins once
+  // they touch it. Windows are contiguous ("to" of one = day before "from" of
+  // the next) so macroPhaseFor never falls through to the generic fallback
+  // for a date in the default calendar. Winter off-season's "to": "02-29"
+  // (not "02-28") deliberately covers Feb 29 in leap years while still
+  // matching correctly in non-leap years (Feb 28 <= "02-29" either way).
   readonly season = signal<SeasonWindow[]>([
-    { phase: "preseason", from: "02-15", to: "03-31" }, // pre-season
-    { phase: "inseason", from: "04-01", to: "06-15" }, // mid-season (spring)
-    { phase: "offseason", from: "06-16", to: "07-31" }, // first off-season break
-    { phase: "inseason", from: "08-01", to: "10-15" }, // mid-season (late summer)
-    { phase: "peak", from: "10-16", to: "11-15" }, // peak season
-    { phase: "postseason", from: "11-16", to: "12-15" }, // recovery season
-    { phase: "offseason", from: "12-16", to: "02-14" }, // winter off-season (wraps year end)
+    { phase: "preseason", from: "03-01", to: "03-31" }, // pre-season
+    { phase: "inseason", from: "04-01", to: "07-07" }, // mid-season #1
+    { phase: "offseason", from: "07-08", to: "08-14" }, // first off-season break
+    { phase: "inseason", from: "08-15", to: "09-30" }, // mid-season #2
+    { phase: "peak", from: "10-01", to: "10-31" }, // peak season (whole October)
+    { phase: "postseason", from: "11-01", to: "11-30" }, // recovery season
+    { phase: "offseason", from: "12-01", to: "02-29" }, // winter off-season (Dec-Feb, wraps year end)
   ]);
   readonly phases: SeasonPhase[] = [
     "offseason",
