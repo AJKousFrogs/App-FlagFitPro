@@ -46,13 +46,36 @@ export function classifyGap(gapMinutes: number): GapClass {
   return "long";
 }
 
-function toMinutes(date: string, time: string): number {
-  return new Date(`${date}T${time}`).getTime() / 60_000;
+// `kickoff_time` is deliberately venue-local wall-clock with no timezone (see
+// the event_games migration comment) — the gap engine only needs local
+// wall-clock deltas, never a real instant in time. Bug fixed in V2.3: the
+// original implementation round-tripped through `new Date(...)` (which
+// parses a date+time-without-zone string as the HOST's local time) then read
+// it back with `getUTCHours()` — those two are only the same clock when the
+// host happens to run in UTC (true in this sandbox, false in a browser in
+// Ljubljana at UTC+1/+2), so every generated time would have silently
+// drifted by the viewer's UTC offset. Fixed to pure integer day/minute
+// arithmetic with zero Date-object involvement.
+function dayIndex(dateStr: string): number {
+  const [y, m, d] = dateStr.split("-").map(Number);
+  // Date.UTC with explicit numeric Y/M/D components is timezone-safe — unlike
+  // parsing a string, it never consults the host's local offset.
+  return Date.UTC(y, m - 1, d) / 86_400_000;
 }
 
-function fromMinutes(baseDate: string, minutes: number): string {
-  const d = new Date(minutes * 60_000);
-  return `${String(d.getUTCHours()).padStart(2, "0")}:${String(d.getUTCMinutes()).padStart(2, "0")}`;
+function timeToMinutes(timeStr: string): number {
+  const [h, m] = timeStr.split(":").map(Number);
+  return h * 60 + m;
+}
+
+function toMinutes(date: string, time: string): number {
+  return dayIndex(date) * 1_440 + timeToMinutes(time);
+}
+
+/** Render absolute day-minutes back to "HH:MM" wall-clock (wraps within its day). */
+function fromMinutes(minutes: number): string {
+  const m = ((Math.round(minutes) % 1_440) + 1_440) % 1_440;
+  return `${String(Math.floor(m / 60)).padStart(2, "0")}:${String(m % 60).padStart(2, "0")}`;
 }
 
 /** Compute the gaps between consecutive scheduled games, oldest-first. */
@@ -165,25 +188,25 @@ export function buildTournamentDayPlan(
   const wakeMin = firstKickoff - PRE_GAME_BREAKFAST_LEAD_MIN - 30;
   blocks.push({
     kind: "wake",
-    time: fromMinutes(day, wakeMin),
+    time: fromMinutes(wakeMin),
     label: "Wake / hydrate",
     detail: "500ml water + electrolytes on waking.",
   });
   blocks.push({
     kind: "meal",
-    time: fromMinutes(day, firstKickoff - PRE_GAME_BREAKFAST_LEAD_MIN),
+    time: fromMinutes(firstKickoff - PRE_GAME_BREAKFAST_LEAD_MIN),
     label: "Breakfast",
     detail: `~${Math.round(2 * bodyweightKg)}g carbs, low fat/fiber — finish at least 2.5h before kickoff.`,
   });
   blocks.push({
     kind: "arrival",
-    time: fromMinutes(day, firstKickoff - PRE_GAME_ARRIVAL_BUFFER_MIN),
+    time: fromMinutes(firstKickoff - PRE_GAME_ARRIVAL_BUFFER_MIN),
     label: "Arrive, kit check",
     detail: "Get settled before the pre-game warm-up starts.",
   });
   blocks.push({
     kind: "warmup",
-    time: fromMinutes(day, firstKickoff - FULL_WARMUP_LEAD_MIN),
+    time: fromMinutes(firstKickoff - FULL_WARMUP_LEAD_MIN),
     label: "Full warm-up",
     detail: "20–25 min RAMP (Raise, Activate, Mobilize, Potentiate) before game 1.",
     gameNumber: sorted[0].gameNumber,
@@ -195,7 +218,7 @@ export function buildTournamentDayPlan(
     const isLast = i === sorted.length - 1;
     blocks.push({
       kind: "game",
-      time: fromMinutes(day, kickoff),
+      time: fromMinutes(kickoff),
       label: `Game ${game.gameNumber}${game.opponent ? ` vs ${game.opponent}` : ""}`,
       detail: game.isProvisional
         ? "Provisional kickoff — bracket-dependent, confirm on the day."
@@ -212,7 +235,7 @@ export function buildTournamentDayPlan(
       const plan = gapPlanFor(gap.gapClass, bodyweightKg, hotDay);
       blocks.push({
         kind: "fuel",
-        time: fromMinutes(day, gapEnd + 5),
+        time: fromMinutes(gapEnd + 5),
         label: plan.fuelLabel,
         detail: plan.fuelDetail,
         gameNumber: game.gameNumber,
@@ -220,7 +243,7 @@ export function buildTournamentDayPlan(
       const nextKickoff = toMinutes(sorted[i + 1].gameDate, sorted[i + 1].kickoffTime);
       blocks.push({
         kind: "warmup",
-        time: fromMinutes(day, nextKickoff - plan.warmupLeadMin),
+        time: fromMinutes(nextKickoff - plan.warmupLeadMin),
         label: plan.warmupLabel,
         detail: plan.warmupDetail,
         gameNumber: sorted[i + 1].gameNumber,
@@ -236,7 +259,7 @@ export function buildTournamentDayPlan(
     toMinutes(lastGame.gameDate, lastGame.kickoffTime) + lastGame.expectedDurationMinutes;
   blocks.push({
     kind: "recovery",
-    time: fromMinutes(day, lastEnd + 15),
+    time: fromMinutes(lastEnd + 15),
     label: "Recovery block",
     detail: `${Math.round(1.2 * bodyweightKg)}g carbs + ${Math.round(0.3 * bodyweightKg)}g protein within 60 min, rehydrate, 10 min cooldown + mobility.`,
   });

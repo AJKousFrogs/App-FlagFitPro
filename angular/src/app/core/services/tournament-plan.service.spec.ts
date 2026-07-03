@@ -115,6 +115,21 @@ describe("buildTournamentDayPlan — Capital Bowl day 1", () => {
     expect(firstWarmup?.time).toBe("10:20"); // 40min lead before 11:00
   });
 
+  it("kickoff_time is venue-local wall-clock and must render identically regardless of the host's timezone (regression: V2.3 fixed a bug where round-tripping through new Date() silently shifted every generated time by the viewer's UTC offset)", () => {
+    const originalTZ = process.env["TZ"];
+    try {
+      // A non-UTC, non-DST-ambiguous zone — if the engine were still
+      // Date-object-based, this would shift every "HH:MM" by hours.
+      process.env["TZ"] = "Pacific/Kiritimati"; // UTC+14
+      const shifted = buildTournamentDayPlan(CAPITAL_BOWL_DAY1, 80, 22);
+      const gameBlocks = shifted.blocks.filter((b) => b.kind === "game");
+      expect(gameBlocks.map((b) => b.time)).toEqual(["11:00", "12:30", "15:30", "17:00"]);
+    } finally {
+      if (originalTZ === undefined) delete process.env["TZ"];
+      else process.env["TZ"] = originalTZ;
+    }
+  });
+
   it("gives a re-prime (short-gap) warm-up before game 2, not a full warm-up", () => {
     const warmups = plan.blocks.filter((b) => b.kind === "warmup");
     const beforeGame2 = warmups.find((b) => b.gameNumber === 2);
@@ -188,5 +203,16 @@ describe("buildTournamentDayPlan — Capital Bowl day 1", () => {
     const p = buildTournamentDayPlan(withProvisional, 80, null);
     const g3 = p.blocks.find((b) => b.kind === "game" && b.gameNumber === 3);
     expect(g3?.detail).toMatch(/provisional/i);
+  });
+
+  it("correctly spans a day boundary in a two-day tournament (late day-1 game → early day-2 game)", () => {
+    const twoDay = [
+      game({ id: "d1g1", gameNumber: 1, gameDate: "2026-07-04", kickoffTime: "20:00:00" }),
+      game({ id: "d2g1", gameNumber: 2, gameDate: "2026-07-05", kickoffTime: "09:00:00" }),
+    ];
+    const g = computeGaps(twoDay);
+    // day1 game ends 20:40; day2 game starts 09:00 next day = 12h20 = 740min gap.
+    expect(g[0].gapMinutes).toBe(740);
+    expect(g[0].gapClass).toBe("long");
   });
 });
