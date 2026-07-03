@@ -252,7 +252,7 @@ const REGION_KEYWORDS = {
   shoulder: ["shoulder", "rotator"],
 };
 
-function isExerciseSafeForInjuries(ex, injuredRegions) {
+export function isExerciseSafeForInjuries(ex, injuredRegions) {
   if (!injuredRegions || injuredRegions.length === 0) return true;
   const name = (ex.name || "").toLowerCase();
   const slug = (ex.slug || "").toLowerCase();

@@ -88,6 +88,20 @@ export class GamedayComponent {
 
   readonly hydrationMl = signal(0);
   readonly hydrationL = computed(() => (this.hydrationMl() / 1000).toFixed(1));
+
+  constructor() {
+    // Without this the counter silently resets to 0 on every visit/reload even
+    // though earlier logs today already persisted server-side (mirrors
+    // wellness.component.ts's loadTodayHydration()).
+    this.api.get<{ logs?: { amount: number }[] }>("/api/hydration").subscribe({
+      next: (res) => {
+        const total = (res?.data?.logs ?? []).reduce((sum, l) => sum + (l.amount ?? 0), 0);
+        this.hydrationMl.set(total);
+      },
+      error: (e) => this.logger.error("hydration_today_load_failed", e),
+    });
+  }
+
   addHydration(ml: number): void {
     logHydrationOptimistic(this.api, this.logger, this.hydrationMl, ml);
   }

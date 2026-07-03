@@ -79,7 +79,7 @@
         <div class="inline" style="flex-wrap:wrap;gap:var(--s-2)">
           @for (f of formats; track f.min) {
             <button type="button" class="chip" [class.sel]="minutesPerGame() === f.min"
-                    (click)="minutesPerGame.set(f.min); touch()">{{ f.label }}</button>
+                    (click)="minutesPerGame.set(f.min)">{{ f.label }}</button>
           }
         </div>
       </div>

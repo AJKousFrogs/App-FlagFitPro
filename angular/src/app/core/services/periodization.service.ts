@@ -98,27 +98,38 @@ export class PeriodizationService {
    */
   readonly recentSessions = signal<RecentSession[]>([]);
 
-  /** Guards the recent-sessions load against re-running for the same user. */
+  /** Guards the per-user bootstrap loads below against re-running for the same user. */
   private lastRecentSessionsUserId: string | null = null;
 
   constructor() {
-    this.loadSettings();
-    void this.injury.load();
-
-    // Recent-sessions load is keyed off userId(). On a cold boot the Supabase
-    // client is lazily imported, so userId() is null at construction — a plain
-    // fire-and-forget call would return empty and the CNS recovery-spacing data
-    // would silently never load. An effect re-runs once the user resolves.
+    // Recent-sessions, injuries, and player-settings (season calendar / team
+    // training days / position) all previously loaded exactly once at
+    // construction, keyed to whichever user happened to be signed in when this
+    // root-singleton service was first instantiated. Because sign-out here is
+    // an in-SPA navigation (no full page reload — confirmed no
+    // window.location.reload() anywhere in the sign-out path), a second user
+    // signing in on the same device/tab within the app's lifetime got the
+    // FIRST user's stale injuries/settings: sprint/high-intensity work could
+    // be silently prescribed unguarded for an athlete with a real active
+    // injury (if the first user had none), or guarded against a phantom
+    // injury that isn't theirs (if the first user had one). Reload all three
+    // whenever the resolved userId changes, matching the reasoning already
+    // applied to recentSessions below (cold boot: the Supabase client is
+    // lazily imported, so userId() is null at construction — an effect
+    // re-runs once the user resolves, and again on every subsequent change).
     effect(() => {
       const userId = this.supabase.userId();
       if (!userId) {
         this.lastRecentSessionsUserId = null;
         this.recentSessions.set([]);
+        this.injury.active.set([]);
         return;
       }
       if (this.lastRecentSessionsUserId === userId) return;
       this.lastRecentSessionsUserId = userId;
       void this.loadRecentSessions(userId);
+      void this.injury.load();
+      this.loadSettings();
     });
 
     // Live weather → the prescription weather guard (metric: °C / mm / km/h).

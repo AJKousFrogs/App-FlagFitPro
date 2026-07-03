@@ -1725,8 +1725,15 @@ async function generateProtocol(supabase, userId, payload, headers, log = logger
       // Filter based on safe intensity
       let filteredConditioning = conditioningExercises;
 
-      // If max intensity is low, exclude high-intensity exercises
-      if (safeConditioning.maxIntensity <= 60) {
+      // If max intensity is low, exclude high-intensity exercises. Also exclude
+      // them when the CNS spacing guard is active (cnsBlockedAt) — that guard is
+      // a time-based "no max-effort work within N hours of the last one" rule,
+      // independent of getSafeConditioningIntensity's ACWR/phase-based
+      // maxIntensity, which has no awareness of it. Without this, a "mixed"
+      // intent day (mapIntentToSession never sets isSprintSession for "mixed")
+      // could still surface named sprint exercises here whenever ACWR/phase
+      // alone didn't also happen to cap intensity <=60.
+      if (safeConditioning.maxIntensity <= 60 || cnsBlockedAt) {
         filteredConditioning = conditioningExercises.filter(
           (ex) =>
             !ex.name?.toLowerCase().includes("sprint") &&
