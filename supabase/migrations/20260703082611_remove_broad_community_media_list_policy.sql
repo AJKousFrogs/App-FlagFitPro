@@ -1,0 +1,15 @@
+-- Fixes advisor finding "public_bucket_allows_listing" for the community-media
+-- bucket: the "public_read_community_media" policy was `for select to public
+-- using (bucket_id = 'community-media')` with no path restriction, which lets
+-- anyone (including unauthenticated) enumerate every file in the bucket via
+-- the storage list/browse API -- not just fetch a specific known object.
+--
+-- Verified this policy is unnecessary for the app's actual access pattern:
+-- storage.buckets.community-media.public = true, and uploads/reads happen
+-- exclusively via upload.js's supabaseAdmin (service-role, bypasses RLS
+-- entirely) + getPublicUrl() (Supabase serves public-bucket objects by
+-- direct URL independent of storage.objects RLS). No code anywhere in the
+-- repo calls .storage.from('community-media').list(), so there is no
+-- legitimate client-side browsing feature this policy is serving -- it only
+-- ever enabled the unintended enumeration the linter flagged.
+drop policy if exists "public_read_community_media" on storage.objects;
