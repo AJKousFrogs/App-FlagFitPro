@@ -39,7 +39,7 @@ Generated, every route with method / `/api` path / tables-and-RPCs touched / EXE
 
 ## 4. Feature Status Ledger  ← READ THIS BEFORE BUILDING ANYTHING
 
-Status: **LIVE** (wired end-to-end, tables exist) · **PARTIAL** (works but with gaps/bugs) · **GHOST** (routed/coded but queries non-existent tables — effectively broken) · **ORPHANED** (exists, no frontend) · **PLANNED** (not built).
+Status: **LIVE** (wired end-to-end, tables exist) · **BUILT, NOT DEPLOYED** (code + tests complete and verified locally; migration not yet applied to the live DB) · **PARTIAL** (works but with gaps/bugs) · **GHOST** (routed/coded but queries non-existent tables — effectively broken) · **ORPHANED** (exists, no frontend) · **PLANNED** (not built).
 
 | Feature | Status | Where it lives (files → tables) | Notes / known bugs |
 |---|---|---|---|
@@ -50,6 +50,7 @@ Status: **LIVE** (wired end-to-end, tables exist) · **PARTIAL** (works but with
 | Training sessions / logging | LIVE | `training/`, `/api/training-sessions` → `training_sessions` | Session-log defaults to prescribed RPE/min. Coach reads/writes team-scoped 2026-06-09 (RLS `merged_select/update_training_sessions_public` + `training_sessions_staff_insert`, guard `canModifySession`): staff may only touch sessions of teams they actively staff; `team_id IS NULL` = personal, owner-only |
 | Schedule (spine + athlete events) | LIVE | `schedule.js`, `athlete-events.js` → `v_athlete_schedule`, `athlete_events` | — |
 | Competition / RSVP / availability / lineups | LIVE | `competition/`, `event-availability.js`, `event-participation.js` → `competition_events`, `event_*` | — |
+| Tournament Mode (V2.0 per-game gap-classified timeline) | BUILT, NOT DEPLOYED | `event-games.js`, `tournament-plan.service.ts`, `gameday/` → `event_games` | Coach bulk-enters kickoff times → gap-classified warm-up/fueling timeline replaces the flat day-level split. Migration `20260702120000` not applied to live DB in this session — see `docs/v2/V2.0-tournament-mode.md`. Per-game actuals logging (`event_participation.game_id`) not yet wired. |
 | Supplements daily log | LIVE | `supplements/`, `/api/supplements` → `supplement_logs`, `user_supplements` | — |
 | Hydration | LIVE | `/api/hydration` → `athlete_hydration_logs` | — |
 | Recovery modalities (equipment-gated) | LIVE | `recovery.service`, `recovery-core.js` → `recovery_protocols/_blocks/_sessions` | — |
@@ -112,6 +113,8 @@ Reference implementations: the wellness check-in prefill `effect()` and `profile
 ## 6. Known Drift & Open Issues
 
 Unfixed:
+
+- **V2.0 migration pending live application.** `supabase/migrations/20260702120000_create_event_games.sql` (`event_games` table + `event_participation.game_id`) is committed but not applied to the live Supabase project — no authenticated Supabase MCP access in the session that wrote it. `docs/generated/DATA_MODEL.md`/`ENDPOINTS.md` (and the table/function counts in §0/§3 above) won't reflect `event_games` or `/api/event-games` until it's applied and `npm run docs:regen` is re-run. See `docs/v2/V2.0-tournament-mode.md`.
 
 > **Deferred feature-port bugs:** code↔schema mismatches that need a product decision — not safe to fix mechanically. These ARE the **PLANNED lanes in §4** (equipment, officials, depth-chart, program-cycles, seasons, scouting): resolve each when its feature is rebuilt (don't ship a screen over a known-broken data path). *(The standalone `redesign/PORT_BUG_REGISTER.md` was retired in the 2026-06-23 doc clean-slate; the §4 Ledger is now the single tracker.)*
 

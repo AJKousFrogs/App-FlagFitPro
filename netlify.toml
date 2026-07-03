@@ -253,6 +253,19 @@
   status = 200
   force = true
 
+# API Routes for Event Games (V2.0 Tournament Mode — per-game kickoff times)
+[[redirects]]
+  from = "/api/event-games/*"
+  to = "/.netlify/functions/event-games"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/event-games"
+  to = "/.netlify/functions/event-games"
+  status = 200
+  force = true
+
 [[redirects]]
   from = "/api/dashboard/*"
   to = "/.netlify/functions/dashboard"

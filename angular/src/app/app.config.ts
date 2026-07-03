@@ -54,6 +54,9 @@ import {
   MapPin,
   X,
   ClipboardCheck,
+  Apple,
+  Utensils,
+  Clock,
 } from "lucide-angular";
 import { provideClientHydration } from "@angular/platform-browser";
 import { provideAnimations } from "@angular/platform-browser/animations";
@@ -96,6 +99,7 @@ export const appConfig: ApplicationConfig = {
         User, Medal, Flame, Settings, Camera, Lock, Sun, TrendingUp, Video, Mail,
         ThumbsUp, ThumbsDown,
         Calendar, CalendarPlus, Pencil, Trash2, MapPin, X, ClipboardCheck,
+        Apple, Utensils, Clock,
       }),
     ),
 
