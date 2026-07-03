@@ -1,9 +1,9 @@
 # Endpoint Reference (GENERATED — do not hand-edit)
 
 > Regenerate: `npm run docs:regen` (parses `netlify.toml` + `netlify/functions/*.js` + scans `angular/src`).
-> **Last verified: 2026-06-23**
+> **Last verified: 2026-07-03**
 
-**113 functions: 111 exercised, 2 orphaned.** A table name with ⚠️ is referenced in code but not a live table (possible drift/typo); _(bucket)_ = Storage bucket, not a DB table.
+**115 functions: 113 exercised, 2 orphaned.** A table name with ⚠️ is referenced in code but not a live table (possible drift/typo); _(bucket)_ = Storage bucket, not a DB table.
 
 ## Exercised
 
@@ -44,7 +44,9 @@
 | `data-export` | GET, POST | _(router submodule)_ | — |
 | `decisions` | GET, POST | _(router submodule)_ | team_members, decision_ledger |
 | `event-availability` | GET, POST | /api/event-availability/*<br>/api/event-availability | event_availability, set_event_availability() |
+| `event-games` | GET, POST, PATCH, DELETE | /api/event-games/*<br>/api/event-games | competition_events, event_games |
 | `event-participation` | GET, POST | /api/event-participation/*<br>/api/event-participation | v_pending_event_participation, record_event_participation() |
+| `event-travel` | GET, POST, PUT, PATCH, DELETE | /api/event-travel/*<br>/api/event-travel | athlete_travel_log |
 | `exercise-progression` | POST | _(router submodule)_ | protocol_exercises, exercises |
 | `exercises` | OPTIONS | /api/exercise-progression<br>/api/exercise-progression/*<br>/api/qb-throwing<br>/api/qb-throwing/*<br>/api/exercises/*<br>/api/exercises<br>/api/isometrics/*<br>/api/isometrics<br>/api/plyometrics/*<br>/api/plyometrics | — |
 | `exercises-core` | GET | _(router submodule)_ | exercises, plyometrics_exercises, isometrics_exercises |

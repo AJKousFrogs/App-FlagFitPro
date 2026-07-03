@@ -114,6 +114,33 @@ describe("event-travel validation", () => {
     expect(res.statusCode).toBe(201);
   });
 
+  it("rejects an out-of-range adaptationDay", async () => {
+    const res = await handler(
+      req("POST", {
+        mode: "plane",
+        departAt: "2026-07-03T08:00:00Z",
+        arriveAt: "2026-07-03T20:00:00Z",
+        adaptationDay: -1,
+      }),
+      {},
+    );
+    expect(res.statusCode).toBe(422);
+  });
+
+  it("accepts adaptationDay and timezoneDeltaHours together (long-haul international trip)", async () => {
+    const res = await handler(
+      req("POST", {
+        mode: "plane",
+        departAt: "2026-07-03T08:00:00Z",
+        arriveAt: "2026-07-04T02:00:00Z",
+        timezoneDeltaHours: 11,
+        adaptationDay: 0,
+      }),
+      {},
+    );
+    expect(res.statusCode).toBe(201);
+  });
+
   it("DELETE without an id returns 400", async () => {
     const res = await handler(req("DELETE"), {});
     expect(res.statusCode).toBe(400);

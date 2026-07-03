@@ -6,16 +6,22 @@ import {
 import { supabaseAdmin } from "./supabase-client.js";
 import { parseJsonObjectBody } from "./utils/input-validator.js";
 
-// Netlify Function: Event Travel (V2.1)
+// Netlify Function: Event Travel (V2.1, consolidated in V2.4)
 // Endpoint: /api/event-travel
+// Table: athlete_travel_log
 //
 // Athlete-declared travel legs, optionally linked to a competition_event
-// (team trip). Feeds a proactive travel card client-side — the reactive
-// same-day `daily_wellness_checkin.travel_hours` readiness penalty in
-// calc-readiness.js is unchanged and stays the safety backstop when no leg
-// is declared. Owner-scoped CRUD (mirrors athlete-events.js); optional
-// `competitionEventId` link lets a coach's shared team trip surface for
-// every athlete who declares it.
+// (team trip). V2.1 shipped a new `event_travel` table for this; a V2.4
+// live-schema check (Supabase MCP) found `athlete_travel_log` already
+// existed — same concept, unwired, zero rows — so this was consolidated
+// onto it instead of shipping a duplicate (see
+// supabase/migrations/20260704080000_extend_athlete_travel_log.sql and
+// docs/v2/V2.4-global-tiers.md). API contract (endpoint path, JSON field
+// names) is unchanged from V2.1 — only the underlying table changed.
+//
+// `adaptationDay` (days since arrival, 0 = arrival day) and
+// `timezoneDifference` (signed hours, east=positive) feed the V2.4
+// heat/cold/jet-lag acclimatization guard in periodization.service.ts.
 
 const MODES = new Set(["bus", "car", "plane", "train", "other"]);
 
@@ -53,16 +59,28 @@ function buildRow(body, { partial }) {
   if (row.depart_at && row.arrive_at && row.arrive_at < row.depart_at) {
     throw validationError("arriveAt must be on or after departAt");
   }
-  if (!partial || has("timezoneDeltaHours") || has("timezone_delta_hours")) {
-    const raw = body.timezoneDeltaHours ?? body.timezone_delta_hours;
+  if (!partial || has("timezoneDeltaHours") || has("timezoneDifference") || has("timezone_difference")) {
+    const raw = body.timezoneDeltaHours ?? body.timezoneDifference ?? body.timezone_difference;
     if (raw === undefined || raw === null || raw === "") {
-      row.timezone_delta_hours = null;
+      row.timezone_difference = null;
     } else {
       const n = Number(raw);
       if (!Number.isFinite(n) || Math.abs(n) > 14) {
         throw validationError("timezoneDeltaHours must be between -14 and 14");
       }
-      row.timezone_delta_hours = n;
+      row.timezone_difference = Math.round(n);
+    }
+  }
+  if (!partial || has("adaptationDay") || has("adaptation_day")) {
+    const raw = body.adaptationDay ?? body.adaptation_day;
+    if (raw === undefined || raw === null || raw === "") {
+      row.adaptation_day = null;
+    } else {
+      const n = Number.parseInt(raw, 10);
+      if (!Number.isFinite(n) || n < 0 || n > 90) {
+        throw validationError("adaptationDay must be between 0 and 90");
+      }
+      row.adaptation_day = n;
     }
   }
   if (!partial || has("overnightStay") || has("overnight_stay")) {
@@ -87,7 +105,8 @@ function toApi(r) {
     mode: r.mode,
     departAt: r.depart_at,
     arriveAt: r.arrive_at,
-    timezoneDeltaHours: r.timezone_delta_hours,
+    timezoneDeltaHours: r.timezone_difference,
+    adaptationDay: r.adaptation_day,
     overnightStay: r.overnight_stay,
     notes: r.notes,
     createdAt: r.created_at,
@@ -97,7 +116,7 @@ function toApi(r) {
 
 async function listLegs(userId, params) {
   let q = supabaseAdmin
-    .from("event_travel")
+    .from("athlete_travel_log")
     .select("*")
     .eq("user_id", userId)
     .order("depart_at", { ascending: true });
@@ -112,7 +131,7 @@ async function createLeg(userId, body) {
   const row = buildRow(body, { partial: false });
   row.user_id = userId;
   const { data, error } = await supabaseAdmin
-    .from("event_travel")
+    .from("athlete_travel_log")
     .insert(row)
     .select()
     .single();
@@ -124,7 +143,7 @@ async function updateLeg(userId, id, body) {
   const row = buildRow(body, { partial: true });
   if (Object.keys(row).length === 0) {throw validationError("no fields to update");}
   const { data, error } = await supabaseAdmin
-    .from("event_travel")
+    .from("athlete_travel_log")
     .update(row)
     .eq("id", id)
     .eq("user_id", userId)
@@ -137,7 +156,7 @@ async function updateLeg(userId, id, body) {
 
 async function deleteLeg(userId, id) {
   const { data, error } = await supabaseAdmin
-    .from("event_travel")
+    .from("athlete_travel_log")
     .delete()
     .eq("id", id)
     .eq("user_id", userId)

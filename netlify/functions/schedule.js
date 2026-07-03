@@ -34,6 +34,58 @@ const HOURS_RECOVERY_HIGH = 2 * 24; // recovery window after high
 const HOURS_RECOVERY_REGULAR = 1 * 24; // recovery window after regular
 const HOURS_TRANSITION = 14 * 24; // beyond this with nothing scheduled = transition
 
+// V2.4 — competition-tier taper/recovery. `competitions.level` (and, for
+// athlete-entered national-team events, the new `athlete_events.tier`) is a
+// SEPARATE axis from the coach/athlete-set `importance` flag: importance can
+// be forgotten or under-set, but a World Championship or the Olympics must
+// never taper like a domestic league game just because nobody clicked
+// "peak". `LEVEL_IMPORTANCE_FLOOR` guarantees a minimum importance for a
+// tier; `LEVEL_*_BONUS_HOURS` then extends the window further for world/
+// olympic specifically — a continental championship (most players have one
+// every year) gets standard "peak" treatment, but Worlds (every ~2 years)
+// and the Olympics (every 4) carry more travel, more stakes, and warrant a
+// materially deeper taper and longer recovery on top of that.
+const LEVEL_IMPORTANCE_FLOOR = {
+  club: null,
+  regional: null,
+  national: null,
+  international: "high",
+  continental: "high",
+  world: "peak",
+  olympic: "peak",
+};
+const LEVEL_TAPER_BONUS_HOURS = {
+  club: 0,
+  regional: 0,
+  national: 0,
+  international: 0,
+  continental: 0,
+  world: 3 * 24,
+  olympic: 7 * 24,
+};
+const LEVEL_RECOVERY_BONUS_HOURS = {
+  club: 0,
+  regional: 0,
+  national: 0,
+  international: 0,
+  continental: 0,
+  world: 1 * 24,
+  olympic: 3 * 24,
+};
+const IMPORTANCE_RANK = { regular: 0, high: 1, peak: 2 };
+
+/**
+ * The importance actually used for taper/recovery window selection: the
+ * higher of the declared `importance` and the tier's guaranteed floor.
+ * Never LOWERS a coach-declared importance — only raises it.
+ */
+function effectiveImportance(importance, competitionLevel) {
+  const floor = LEVEL_IMPORTANCE_FLOOR[competitionLevel] ?? null;
+  const declared = importance ?? "regular";
+  if (!floor) {return declared;}
+  return IMPORTANCE_RANK[floor] > IMPORTANCE_RANK[declared] ? floor : declared;
+}
+
 function parseIsoDate(value, fallback) {
   if (!value) {
     return fallback;
@@ -143,12 +195,14 @@ function resolvePhase(now, upcoming, lastEvent) {
     // for the resolution moment.
     if (ended <= now) {
       const hoursSince = hoursBetween(now, ended);
+      const effImportance = effectiveImportance(lastEvent.importance, lastEvent.competition_level);
       const recoveryWindow =
-        lastEvent.importance === "peak"
+        (effImportance === "peak"
           ? HOURS_RECOVERY_PEAK
-          : lastEvent.importance === "high"
+          : effImportance === "high"
             ? HOURS_RECOVERY_HIGH
-            : HOURS_RECOVERY_REGULAR;
+            : HOURS_RECOVERY_REGULAR) +
+        (LEVEL_RECOVERY_BONUS_HOURS[lastEvent.competition_level] ?? 0);
       if (hoursSince <= recoveryWindow) {
         return "recovery";
       }
@@ -158,12 +212,14 @@ function resolvePhase(now, upcoming, lastEvent) {
   if (next && now < new Date(next.starts_at)) {
     const startsAt = new Date(next.starts_at);
     const hoursUntil = hoursBetween(startsAt, now);
+    const effImportance = effectiveImportance(next.importance, next.competition_level);
     const taperWindow =
-      next.importance === "peak"
+      (effImportance === "peak"
         ? HOURS_TAPER_PEAK
-        : next.importance === "high"
+        : effImportance === "high"
           ? HOURS_TAPER_HIGH
-          : HOURS_TAPER_REGULAR;
+          : HOURS_TAPER_REGULAR) +
+      (LEVEL_TAPER_BONUS_HOURS[next.competition_level] ?? 0);
     if (hoursUntil <= taperWindow) {
       return "taper";
     }
@@ -219,7 +275,12 @@ function athleteEventToRow(ev) {
     competition_name: ev.title,
     competition_short_name: null,
     competition_kind: ATHLETE_EVENT_KIND[ev.kind] ?? "friendly",
-    competition_level: ATHLETE_EVENT_LEVEL[ev.category] ?? "club",
+    // A national-team commitment's real tier (continental/world/olympic,
+    // V2.4) overrides the flat category-based default — an athlete entering
+    // "World Championship 2027" must taper deeper than "just" a national
+    // camp, and ATHLETE_EVENT_LEVEL alone can't tell them apart (both are
+    // category:'national').
+    competition_level: ev.tier ?? ATHLETE_EVENT_LEVEL[ev.category] ?? "club",
     competition_country: null,
     competition_season_year: null,
     team_name: ATHLETE_EVENT_TEAM_LABEL[ev.category] ?? "Personal",
@@ -371,4 +432,5 @@ export const __test__ = {
   resolvePhase,
   densityFor,
   eventDayCount,
+  effectiveImportance,
 };

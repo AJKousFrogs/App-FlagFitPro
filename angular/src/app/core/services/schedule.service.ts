@@ -11,8 +11,10 @@ import { LoggerService } from "./logger.service";
 import { SupabaseService } from "./supabase.service";
 import {
   CompetitionEvent,
+  CompetitionLevel,
   CompetitionPhase,
   EventDensity,
+  EventImportance,
   PhaseContext,
   ScheduleSnapshot,
 } from "../models/schedule.models";
@@ -193,6 +195,39 @@ const HOURS_RECOVERY_HIGH = 2 * 24;
 const HOURS_RECOVERY_REGULAR = 1 * 24;
 const HOURS_TRANSITION = 14 * 24;
 
+// V2.4 — competition-tier taper/recovery. Mirrors netlify/functions/schedule.js
+// byte-for-byte (same constants, same effectiveImportance formula) — if one
+// changes, change both. See that file's comment for the full rationale:
+// importance can be forgotten; a World/Olympic tier must never taper like a
+// domestic game regardless.
+const LEVEL_IMPORTANCE_FLOOR: Partial<Record<CompetitionLevel, EventImportance>> = {
+  international: "high",
+  continental: "high",
+  world: "peak",
+  olympic: "peak",
+};
+const LEVEL_TAPER_BONUS_HOURS: Partial<Record<CompetitionLevel, number>> = {
+  world: 3 * 24,
+  olympic: 7 * 24,
+};
+const LEVEL_RECOVERY_BONUS_HOURS: Partial<Record<CompetitionLevel, number>> = {
+  world: 1 * 24,
+  olympic: 3 * 24,
+};
+const IMPORTANCE_RANK: Record<EventImportance, number> = { regular: 0, high: 1, peak: 2 };
+
+/** The importance actually used for taper/recovery windows — the higher of
+ * the declared importance and the tier's guaranteed floor. Never lowers a
+ * coach-declared importance, only raises it. */
+export function effectiveImportance(
+  importance: EventImportance,
+  competitionLevel: CompetitionLevel,
+): EventImportance {
+  const floor = LEVEL_IMPORTANCE_FLOOR[competitionLevel];
+  if (!floor) return importance;
+  return IMPORTANCE_RANK[floor] > IMPORTANCE_RANK[importance] ? floor : importance;
+}
+
 /**
  * Pure phase resolver — must mirror `netlify/functions/schedule.js`.
  * If you change one, change both.
@@ -229,12 +264,14 @@ export function resolvePhase(ctx: PhaseContext): CompetitionPhase {
     const ended = new Date(lastEvent.endsAt ?? lastEvent.startsAt);
     if (ended <= date) {
       const hoursSince = (date.getTime() - ended.getTime()) / 3_600_000;
+      const effImportance = effectiveImportance(lastEvent.importance, lastEvent.competitionLevel);
       const recoveryWindow =
-        lastEvent.importance === "peak"
+        (effImportance === "peak"
           ? HOURS_RECOVERY_PEAK
-          : lastEvent.importance === "high"
+          : effImportance === "high"
             ? HOURS_RECOVERY_HIGH
-            : HOURS_RECOVERY_REGULAR;
+            : HOURS_RECOVERY_REGULAR) +
+        (LEVEL_RECOVERY_BONUS_HOURS[lastEvent.competitionLevel] ?? 0);
       if (hoursSince <= recoveryWindow) {
         return "recovery";
       }
@@ -244,12 +281,14 @@ export function resolvePhase(ctx: PhaseContext): CompetitionPhase {
   if (next && date < new Date(next.startsAt)) {
     const startsAt = new Date(next.startsAt);
     const hoursUntil = (startsAt.getTime() - date.getTime()) / 3_600_000;
+    const effImportance = effectiveImportance(next.importance, next.competitionLevel);
     const taperWindow =
-      next.importance === "peak"
+      (effImportance === "peak"
         ? HOURS_TAPER_PEAK
-        : next.importance === "high"
+        : effImportance === "high"
           ? HOURS_TAPER_HIGH
-          : HOURS_TAPER_REGULAR;
+          : HOURS_TAPER_REGULAR) +
+      (LEVEL_TAPER_BONUS_HOURS[next.competitionLevel] ?? 0);
     if (hoursUntil <= taperWindow) {
       return "taper";
     }

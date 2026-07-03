@@ -1,5 +1,5 @@
 {
-  "generatedOn": "2026-06-23",
+  "generatedOn": "2026-07-03",
   "source": "live Supabase introspection (information_schema) via Supabase MCP",
   "tables": {
     "account_deletion_requests": [
@@ -912,6 +912,11 @@
         "col": "updated_at",
         "type": "timestamp with time zone",
         "nullable": false
+      },
+      {
+        "col": "tier",
+        "type": "text",
+        "nullable": true
       }
     ],
     "athlete_hydration_logs": [
@@ -1172,11 +1177,6 @@
         "nullable": false
       },
       {
-        "col": "preferred_training_days_deprecated",
-        "type": "ARRAY",
-        "nullable": true
-      },
-      {
         "col": "daily_routine",
         "type": "jsonb",
         "nullable": false
@@ -1261,7 +1261,7 @@
       {
         "col": "arrival_date",
         "type": "date",
-        "nullable": false
+        "nullable": true
       },
       {
         "col": "adaptation_day",
@@ -1286,6 +1286,36 @@
       {
         "col": "updated_at",
         "type": "timestamp with time zone",
+        "nullable": false
+      },
+      {
+        "col": "competition_event_id",
+        "type": "uuid",
+        "nullable": true
+      },
+      {
+        "col": "team_id",
+        "type": "uuid",
+        "nullable": true
+      },
+      {
+        "col": "mode",
+        "type": "text",
+        "nullable": false
+      },
+      {
+        "col": "depart_at",
+        "type": "timestamp with time zone",
+        "nullable": false
+      },
+      {
+        "col": "arrive_at",
+        "type": "timestamp with time zone",
+        "nullable": false
+      },
+      {
+        "col": "overnight_stay",
+        "type": "boolean",
         "nullable": false
       }
     ],
@@ -2526,6 +2556,16 @@
         "col": "game_format",
         "type": "character varying",
         "nullable": true
+      },
+      {
+        "col": "hotel_name",
+        "type": "text",
+        "nullable": true
+      },
+      {
+        "col": "hotel_address",
+        "type": "text",
+        "nullable": true
       }
     ],
     "competitions": [
@@ -3117,11 +3157,6 @@
         "nullable": true
       },
       {
-        "col": "motivation",
-        "type": "integer",
-        "nullable": true
-      },
-      {
         "col": "travel_hours",
         "type": "integer",
         "nullable": true
@@ -3370,6 +3405,88 @@
         "nullable": true
       }
     ],
+    "event_games": [
+      {
+        "col": "id",
+        "type": "uuid",
+        "nullable": false
+      },
+      {
+        "col": "competition_event_id",
+        "type": "uuid",
+        "nullable": false
+      },
+      {
+        "col": "team_id",
+        "type": "uuid",
+        "nullable": false
+      },
+      {
+        "col": "game_number",
+        "type": "integer",
+        "nullable": false
+      },
+      {
+        "col": "game_date",
+        "type": "date",
+        "nullable": false
+      },
+      {
+        "col": "kickoff_time",
+        "type": "time without time zone",
+        "nullable": false
+      },
+      {
+        "col": "expected_duration_minutes",
+        "type": "integer",
+        "nullable": false
+      },
+      {
+        "col": "opponent",
+        "type": "text",
+        "nullable": true
+      },
+      {
+        "col": "field",
+        "type": "text",
+        "nullable": true
+      },
+      {
+        "col": "bracket_stage",
+        "type": "text",
+        "nullable": true
+      },
+      {
+        "col": "is_provisional",
+        "type": "boolean",
+        "nullable": false
+      },
+      {
+        "col": "status",
+        "type": "text",
+        "nullable": false
+      },
+      {
+        "col": "result",
+        "type": "jsonb",
+        "nullable": true
+      },
+      {
+        "col": "created_by",
+        "type": "uuid",
+        "nullable": true
+      },
+      {
+        "col": "created_at",
+        "type": "timestamp with time zone",
+        "nullable": false
+      },
+      {
+        "col": "updated_at",
+        "type": "timestamp with time zone",
+        "nullable": false
+      }
+    ],
     "event_lineups": [
       {
         "col": "id",
@@ -3496,6 +3613,11 @@
       {
         "col": "updated_at",
         "type": "timestamp with time zone",
+        "nullable": true
+      },
+      {
+        "col": "game_id",
+        "type": "uuid",
         "nullable": true
       }
     ],
@@ -8190,18 +8312,8 @@
         "nullable": true
       },
       {
-        "col": "wellness_score",
-        "type": "numeric",
-        "nullable": true
-      },
-      {
         "col": "acwr",
         "type": "numeric",
-        "nullable": true
-      },
-      {
-        "col": "notes",
-        "type": "text",
         "nullable": true
       },
       {
@@ -10676,11 +10788,6 @@
         "nullable": true
       },
       {
-        "col": "verification_confidence_deprecated",
-        "type": "numeric",
-        "nullable": true
-      },
-      {
         "col": "notes",
         "type": "text",
         "nullable": true
@@ -12351,6 +12458,16 @@
       {
         "col": "user_id",
         "type": "uuid",
+        "nullable": true
+      },
+      {
+        "col": "hotel_name",
+        "type": "text",
+        "nullable": true
+      },
+      {
+        "col": "hotel_address",
+        "type": "text",
         "nullable": true
       }
     ],

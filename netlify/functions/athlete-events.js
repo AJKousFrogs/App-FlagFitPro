@@ -24,6 +24,9 @@ const KINDS = new Set([
   "other",
 ]);
 const IMPORTANCE = new Set(["regular", "high", "peak"]);
+// V2.4 — real competition tier for a national-team commitment, independent
+// of the coarser category. See the athlete_events.tier migration comment.
+const TIERS = new Set(["continental", "world", "olympic"]);
 const STATUSES = new Set([
   "scheduled",
   "live",
@@ -112,6 +115,18 @@ function buildRow(body, { partial }) {
     }
     row.importance = importance;
   }
+  if (!partial || has("tier")) {
+    const raw = body.tier;
+    if (raw === undefined || raw === null || raw === "") {
+      row.tier = null;
+    } else {
+      const tier = String(raw);
+      if (!TIERS.has(tier)) {
+        throw validationError("tier must be continental, world, or olympic");
+      }
+      row.tier = tier;
+    }
+  }
   if (!partial || has("location")) {row.location = str(body.location, "location", 200);}
   if (!partial || has("venue")) {row.venue = str(body.venue, "venue", 200);}
   if (!partial || has("notes")) {row.notes = str(body.notes, "notes", 2000);}
@@ -140,6 +155,7 @@ function toApi(r) {
     endsAt: r.ends_at,
     expectedGameCount: r.expected_game_count,
     importance: r.importance,
+    tier: r.tier,
     location: r.location,
     venue: r.venue,
     notes: r.notes,

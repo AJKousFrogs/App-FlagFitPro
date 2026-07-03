@@ -16,7 +16,7 @@
 import { describe, it, expect } from "vitest";
 import { __test__ as netlifyResolver } from "../../netlify/functions/schedule.js";
 
-const { resolvePhase: netlifyResolvePhase, densityFor, eventDayCount } =
+const { resolvePhase: netlifyResolvePhase, densityFor, eventDayCount, effectiveImportance } =
   netlifyResolver;
 
 // Hours window thresholds (mirrored from both implementations).
@@ -30,6 +30,7 @@ function event({
   importance = "regular",
   expectedGameCount = 1,
   status = "scheduled",
+  competitionLevel = "national",
 }) {
   return {
     id: "ev-1",
@@ -39,6 +40,7 @@ function event({
     importance,
     expected_game_count: expectedGameCount,
     status,
+    competition_level: competitionLevel,
   };
 }
 
@@ -188,6 +190,109 @@ describe("netlify resolvePhase", () => {
       });
       // No upcoming, just the bogus future "lastEvent" → should be transition
       expect(netlifyResolvePhase(now, [], futurePast)).toBe("transition");
+    });
+  });
+
+  // ===========================================================================
+  // V2.4 — competition-tier taper/recovery. A World Championship (every ~2
+  // years) or the Olympics (every 4) must taper deeper than a domestic game
+  // EVEN IF nobody set importance="peak" — the tier itself guarantees a floor
+  // and, for world/olympic specifically, extends the window further still.
+  // ===========================================================================
+  describe("effectiveImportance — level floor never lowers a declared importance", () => {
+    it("club/regional/national/international levels don't raise a regular importance", () => {
+      expect(effectiveImportance("regular", "club")).toBe("regular");
+      expect(effectiveImportance("regular", "national")).toBe("regular");
+    });
+    it("continental floors a regular event up to 'high'", () => {
+      expect(effectiveImportance("regular", "continental")).toBe("high");
+    });
+    it("continental never LOWERS an already-peak event", () => {
+      expect(effectiveImportance("peak", "continental")).toBe("peak");
+    });
+    it("world/olympic floor a regular event all the way up to 'peak'", () => {
+      expect(effectiveImportance("regular", "world")).toBe("peak");
+      expect(effectiveImportance("regular", "olympic")).toBe("peak");
+    });
+    it("world floors a 'high' event up to 'peak' too", () => {
+      expect(effectiveImportance("high", "world")).toBe("peak");
+    });
+  });
+
+  describe("tier-aware taper window", () => {
+    it("a continental event left at regular importance still tapers 3 days out (high floor, not the 2-day regular window)", () => {
+      const ev = event({
+        startsAt: new Date(now.getTime() + 3 * ONE_DAY_MS),
+        importance: "regular",
+        competitionLevel: "continental",
+      });
+      expect(netlifyResolvePhase(now, [ev], null)).toBe("taper");
+      // Sanity: the SAME event at "national" level (no floor) is still just accumulation this far out.
+      const noFloor = event({
+        startsAt: new Date(now.getTime() + 3 * ONE_DAY_MS),
+        importance: "regular",
+        competitionLevel: "national",
+      });
+      expect(netlifyResolvePhase(now, [noFloor], null)).toBe("accumulation");
+    });
+
+    it("a world championship left at regular importance tapers 9 days out (peak floor + 3-day world bonus = 10-day window)", () => {
+      const ev = event({
+        startsAt: new Date(now.getTime() + 9 * ONE_DAY_MS),
+        importance: "regular",
+        competitionLevel: "world",
+      });
+      expect(netlifyResolvePhase(now, [ev], null)).toBe("taper");
+    });
+
+    it("an olympic event tapers 12 days out (peak floor + 7-day olympic bonus = 14-day window) even at only 'high' importance", () => {
+      const ev = event({
+        startsAt: new Date(now.getTime() + 12 * ONE_DAY_MS),
+        importance: "high",
+        competitionLevel: "olympic",
+      });
+      expect(netlifyResolvePhase(now, [ev], null)).toBe("taper");
+    });
+
+    it("a world event 11 days out is still beyond even the extended 10-day window", () => {
+      const ev = event({
+        startsAt: new Date(now.getTime() + 11 * ONE_DAY_MS),
+        importance: "regular",
+        competitionLevel: "world",
+      });
+      expect(netlifyResolvePhase(now, [ev], null)).toBe("accumulation");
+    });
+  });
+
+  describe("tier-aware recovery window", () => {
+    it("recovers 4.5 days (108h) after a world event ended (peak floor 96h + 24h world bonus = 120h)", () => {
+      const past = event({
+        startsAt: new Date(now.getTime() - 108 * ONE_HOUR_MS),
+        endsAt: new Date(now.getTime() - 108 * ONE_HOUR_MS),
+        importance: "regular",
+        competitionLevel: "world",
+      });
+      expect(netlifyResolvePhase(now, [], past)).toBe("recovery");
+    });
+
+    it("recovers 6 days (144h) after an olympic event ended (peak floor 96h + 72h olympic bonus = 168h)", () => {
+      const past = event({
+        startsAt: new Date(now.getTime() - 144 * ONE_HOUR_MS),
+        endsAt: new Date(now.getTime() - 144 * ONE_HOUR_MS),
+        importance: "regular",
+        competitionLevel: "olympic",
+      });
+      expect(netlifyResolvePhase(now, [], past)).toBe("recovery");
+    });
+
+    it("the SAME 108h-ago event at 'national' level (no floor, regular importance) has already left recovery", () => {
+      const past = event({
+        startsAt: new Date(now.getTime() - 108 * ONE_HOUR_MS),
+        endsAt: new Date(now.getTime() - 108 * ONE_HOUR_MS),
+        importance: "regular",
+        competitionLevel: "national",
+      });
+      expect(netlifyResolvePhase(now, [], past)).not.toBe("recovery");
     });
   });
 });

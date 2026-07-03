@@ -684,6 +684,7 @@ export type Database = {
           notes: string | null
           starts_at: string
           status: string
+          tier: string | null
           title: string
           updated_at: string
           user_id: string
@@ -701,6 +702,7 @@ export type Database = {
           notes?: string | null
           starts_at: string
           status?: string
+          tier?: string | null
           title: string
           updated_at?: string
           user_id: string
@@ -718,6 +720,7 @@ export type Database = {
           notes?: string | null
           starts_at?: string
           status?: string
+          tier?: string | null
           title?: string
           updated_at?: string
           user_id?: string
@@ -956,35 +959,82 @@ export type Database = {
       athlete_travel_log: {
         Row: {
           adaptation_day: number | null
-          arrival_date: string
+          arrival_date: string | null
+          arrive_at: string
+          competition_event_id: string | null
           created_at: string
+          depart_at: string
           id: string
+          mode: string
           notes: string | null
+          overnight_stay: boolean
+          team_id: string | null
           timezone_difference: number | null
           updated_at: string
           user_id: string
         }
         Insert: {
           adaptation_day?: number | null
-          arrival_date: string
+          arrival_date?: string | null
+          arrive_at: string
+          competition_event_id?: string | null
           created_at?: string
+          depart_at: string
           id?: string
+          mode?: string
           notes?: string | null
+          overnight_stay?: boolean
+          team_id?: string | null
           timezone_difference?: number | null
           updated_at?: string
           user_id: string
         }
         Update: {
           adaptation_day?: number | null
-          arrival_date?: string
+          arrival_date?: string | null
+          arrive_at?: string
+          competition_event_id?: string | null
           created_at?: string
+          depart_at?: string
           id?: string
+          mode?: string
           notes?: string | null
+          overnight_stay?: boolean
+          team_id?: string | null
           timezone_difference?: number | null
           updated_at?: string
           user_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "athlete_travel_log_competition_event_id_fkey"
+            columns: ["competition_event_id"]
+            isOneToOne: false
+            referencedRelation: "competition_events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "athlete_travel_log_competition_event_id_fkey"
+            columns: ["competition_event_id"]
+            isOneToOne: false
+            referencedRelation: "v_athlete_schedule"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "athlete_travel_log_competition_event_id_fkey"
+            columns: ["competition_event_id"]
+            isOneToOne: false
+            referencedRelation: "v_pending_event_participation"
+            referencedColumns: ["competition_event_id"]
+          },
+          {
+            foreignKeyName: "athlete_travel_log_team_id_fkey"
+            columns: ["team_id"]
+            isOneToOne: false
+            referencedRelation: "teams"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       attendance_records: {
         Row: {
@@ -2063,6 +2113,8 @@ export type Database = {
           expected_game_count: number
           external_id: string | null
           game_format: string | null
+          hotel_address: string | null
+          hotel_name: string | null
           id: string
           importance: string
           label: string | null
@@ -2084,6 +2136,8 @@ export type Database = {
           expected_game_count?: number
           external_id?: string | null
           game_format?: string | null
+          hotel_address?: string | null
+          hotel_name?: string | null
           id?: string
           importance?: string
           label?: string | null
@@ -2105,6 +2159,8 @@ export type Database = {
           expected_game_count?: number
           external_id?: string | null
           game_format?: string | null
+          hotel_address?: string | null
+          hotel_name?: string | null
           id?: string
           importance?: string
           label?: string | null
@@ -2495,7 +2551,6 @@ export type Database = {
           hydration_level: number | null
           id: string
           mood: number | null
-          motivation: number | null
           motivation_level: number | null
           muscle_soreness: number | null
           notes: string | null
@@ -2515,7 +2570,6 @@ export type Database = {
           hydration_level?: number | null
           id?: string
           mood?: number | null
-          motivation?: number | null
           motivation_level?: number | null
           muscle_soreness?: number | null
           notes?: string | null
@@ -2535,7 +2589,6 @@ export type Database = {
           hydration_level?: number | null
           id?: string
           mood?: number | null
-          motivation?: number | null
           motivation_level?: number | null
           muscle_soreness?: number | null
           notes?: string | null
@@ -2771,6 +2824,92 @@ export type Database = {
           },
         ]
       }
+      event_games: {
+        Row: {
+          bracket_stage: string | null
+          competition_event_id: string
+          created_at: string
+          created_by: string | null
+          expected_duration_minutes: number
+          field: string | null
+          game_date: string
+          game_number: number
+          id: string
+          is_provisional: boolean
+          kickoff_time: string
+          opponent: string | null
+          result: Json | null
+          status: string
+          team_id: string
+          updated_at: string
+        }
+        Insert: {
+          bracket_stage?: string | null
+          competition_event_id: string
+          created_at?: string
+          created_by?: string | null
+          expected_duration_minutes?: number
+          field?: string | null
+          game_date: string
+          game_number: number
+          id?: string
+          is_provisional?: boolean
+          kickoff_time: string
+          opponent?: string | null
+          result?: Json | null
+          status?: string
+          team_id: string
+          updated_at?: string
+        }
+        Update: {
+          bracket_stage?: string | null
+          competition_event_id?: string
+          created_at?: string
+          created_by?: string | null
+          expected_duration_minutes?: number
+          field?: string | null
+          game_date?: string
+          game_number?: number
+          id?: string
+          is_provisional?: boolean
+          kickoff_time?: string
+          opponent?: string | null
+          result?: Json | null
+          status?: string
+          team_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "event_games_competition_event_id_fkey"
+            columns: ["competition_event_id"]
+            isOneToOne: false
+            referencedRelation: "competition_events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "event_games_competition_event_id_fkey"
+            columns: ["competition_event_id"]
+            isOneToOne: false
+            referencedRelation: "v_athlete_schedule"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "event_games_competition_event_id_fkey"
+            columns: ["competition_event_id"]
+            isOneToOne: false
+            referencedRelation: "v_pending_event_participation"
+            referencedColumns: ["competition_event_id"]
+          },
+          {
+            foreignKeyName: "event_games_team_id_fkey"
+            columns: ["team_id"]
+            isOneToOne: false
+            referencedRelation: "teams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       event_lineups: {
         Row: {
           competition_event_id: string
@@ -2839,6 +2978,7 @@ export type Database = {
           avg_rpe: number | null
           competition_event_id: string
           created_at: string | null
+          game_id: string | null
           games_expected: number | null
           games_played: number
           id: string
@@ -2858,6 +2998,7 @@ export type Database = {
           avg_rpe?: number | null
           competition_event_id: string
           created_at?: string | null
+          game_id?: string | null
           games_expected?: number | null
           games_played?: number
           id?: string
@@ -2877,6 +3018,7 @@ export type Database = {
           avg_rpe?: number | null
           competition_event_id?: string
           created_at?: string | null
+          game_id?: string | null
           games_expected?: number | null
           games_played?: number
           id?: string
@@ -2912,6 +3054,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "v_pending_event_participation"
             referencedColumns: ["competition_event_id"]
+          },
+          {
+            foreignKeyName: "event_participation_game_id_fkey"
+            columns: ["game_id"]
+            isOneToOne: false
+            referencedRelation: "event_games"
+            referencedColumns: ["id"]
           },
           {
             foreignKeyName: "event_participation_team_id_fkey"
@@ -6629,14 +6778,12 @@ export type Database = {
           day: string
           id: string
           level: string | null
-          notes: string | null
           proximity_score: number | null
           score: number | null
           sleep_score: number | null
           suggestion: string | null
           updated_at: string | null
           user_id: string
-          wellness_score: number | null
           workload_score: number | null
         }
         Insert: {
@@ -6647,14 +6794,12 @@ export type Database = {
           day: string
           id?: string
           level?: string | null
-          notes?: string | null
           proximity_score?: number | null
           score?: number | null
           sleep_score?: number | null
           suggestion?: string | null
           updated_at?: string | null
           user_id: string
-          wellness_score?: number | null
           workload_score?: number | null
         }
         Update: {
@@ -6665,14 +6810,12 @@ export type Database = {
           day?: string
           id?: string
           level?: string | null
-          notes?: string | null
           proximity_score?: number | null
           score?: number | null
           sleep_score?: number | null
           suggestion?: string | null
           updated_at?: string | null
           user_id?: string
-          wellness_score?: number | null
           workload_score?: number | null
         }
         Relationships: []
@@ -9800,6 +9943,8 @@ export type Database = {
           ends_at: string | null
           expected_game_count: number | null
           external_id: string | null
+          hotel_address: string | null
+          hotel_name: string | null
           id: string | null
           importance: string | null
           label: string | null
@@ -10264,6 +10409,10 @@ export type Database = {
         Returns: undefined
       }
       increment_reply_count: { Args: { message_id: string }; Returns: number }
+      increment_training_points: {
+        Args: { p_points: number; p_user_id: string }
+        Returns: number
+      }
       initiate_account_deletion: {
         Args: { p_reason?: string; p_user_id: string }
         Returns: string

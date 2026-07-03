@@ -14,6 +14,8 @@ export interface EventTravelLeg {
   departAt: string;
   arriveAt: string;
   timezoneDeltaHours: number | null;
+  /** Days since arrival (0 = arrival day) — drives the V2.4 acclimatization guard. */
+  adaptationDay: number | null;
   overnightStay: boolean;
   notes: string | null;
   createdAt: string;
@@ -25,6 +27,7 @@ export interface EventTravelInput {
   departAt: string;
   arriveAt: string;
   timezoneDeltaHours?: number | null;
+  adaptationDay?: number | null;
   overnightStay?: boolean;
   notes?: string | null;
   competitionEventId?: string | null;
@@ -61,9 +64,54 @@ export class EventTravelService {
     );
   });
 
+  /**
+   * The most recently arrived-at leg (arriveAt in the past), most recent
+   * first — "where is the athlete right now, and since when". Self-
+   * maintaining from the real arrival timestamp rather than a manually-
+   * ticked counter, so it stays correct without the athlete updating
+   * anything daily.
+   */
+  readonly mostRecentArrival = computed(() => {
+    const now = Date.now();
+    const past = this._legs()
+      .filter((leg) => new Date(leg.arriveAt).getTime() <= now)
+      .sort((a, b) => new Date(b.arriveAt).getTime() - new Date(a.arriveAt).getTime());
+    return past[0] ?? null;
+  });
+
+  /**
+   * Days since the athlete's most recent arrival (0 = arrival day), or null
+   * if no travel is on record. Feeds the V2.4 heat/cold acclimatization
+   * guard in periodization.service.ts — computed from the real `arriveAt`
+   * timestamp, not the DB's static `adaptationDay` field (which would need
+   * manual daily updates to stay accurate).
+   */
+  readonly daysSinceArrival = computed(() => {
+    const leg = this.mostRecentArrival();
+    if (!leg) return null;
+    return Math.floor((Date.now() - new Date(leg.arriveAt).getTime()) / 86_400_000);
+  });
+
   /** Rounded seated-travel hours for today's leg, or null if none. */
   readonly todayTravelHours = computed(() => {
     const leg = this.legToday();
+    if (!leg) return null;
+    const hours =
+      (new Date(leg.arriveAt).getTime() - new Date(leg.departAt).getTime()) / 3_600_000;
+    return Math.round(hours);
+  });
+
+  /**
+   * Seated-travel hours for the leg that arrived TODAY specifically (not
+   * "currently in transit" like {@link todayTravelHours}, and not any past
+   * arrival like {@link daysSinceArrival}). Null if the athlete didn't land
+   * today. Feeds the V2.4 arrival-day load cap — a same-day arrival ≥3h
+   * caps the day's session to activation only, no new fatigue on top of the
+   * travel itself.
+   */
+  readonly arrivalDayTravelHours = computed(() => {
+    if (this.daysSinceArrival() !== 0) return null;
+    const leg = this.mostRecentArrival();
     if (!leg) return null;
     const hours =
       (new Date(leg.arriveAt).getTime() - new Date(leg.departAt).getTime()) / 3_600_000;

@@ -241,6 +241,23 @@ export interface PeriodizationInputs {
    */
   weather?: WeatherInput | null;
   /**
+   * Days since arrival at the current travel destination (0 = arrival day),
+   * from the athlete's most recent `athlete_travel_log` leg covering today
+   * (V2.4). Heat/cold acclimatization takes ~10-14 days — an athlete from
+   * Ljubljana landing in American Samoa (or from Samoa landing in Mongolia
+   * in January) is at materially higher heat/cold-illness risk in the first
+   * days after arrival than the raw apparent temperature alone would
+   * suggest. Null/undefined → no acclimatization adjustment (same as V1).
+   */
+  acclimatizationDay?: number | null;
+  /**
+   * Seated-travel hours for a leg that arrived TODAY specifically (V2.4,
+   * from `EventTravelService.arrivalDayTravelHours`). ≥3h caps the day's
+   * session to activation only — no new fatigue stacked on top of a long
+   * trip. Null/undefined → no cap (same as V1/no travel declared).
+   */
+  arrivalDayTravelHours?: number | null;
+  /**
    * Coach "we train/play regardless" — bypasses the weather guard's
    * intent changes (a thunderstorm still warns). Default false.
    */

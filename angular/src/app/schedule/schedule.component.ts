@@ -16,8 +16,10 @@ import {
   AthleteEventCategory,
   AthleteEventImportance,
   AthleteEventKind,
+  AthleteEventTier,
   ATHLETE_EVENT_CATEGORY_LABEL,
   ATHLETE_EVENT_KIND_LABEL,
+  ATHLETE_EVENT_TIER_LABEL,
 } from "../core/models/athlete-event.models";
 import { CompetitionEvent } from "../core/models/schedule.models";
 
@@ -81,6 +83,16 @@ const KIND_DEFAULT_IMPORTANCE: Record<AthleteEventKind, AthleteEventImportance> 
                       (click)="fCategory.set(c.key)">{{ c.label }}</button>
             }
           </div>
+
+          @if (fCategory() === 'national') {
+            <p class="lbl" style="margin:0">Competition tier <span class="muted">(a Continental/World/Olympic commitment tapers deeper than a routine camp)</span></p>
+            <div class="chiprow">
+              @for (t of tiers; track t.key ?? 'none') {
+                <button type="button" class="chip" [class.sel]="fTier() === t.key"
+                        (click)="fTier.set(t.key)">{{ t.label }}</button>
+              }
+            </div>
+          }
 
           <p class="lbl" style="margin:0">Type</p>
           <div class="chiprow">
@@ -165,7 +177,7 @@ const KIND_DEFAULT_IMPORTANCE: Record<AthleteEventKind, AthleteEventImportance> 
               <div class="row" style="align-items:flex-start">
                 <div class="stack" style="gap:4px">
                   <div class="inline">
-                    <span class="band {{ importanceClass(ev.importance) }}">{{ catLabel(ev.category) }}</span>
+                    <span class="band {{ importanceClass(ev.importance) }}">{{ tierLabel(ev) }}</span>
                     <b>{{ ev.title }}</b>
                   </div>
                   <small class="muted">{{ whenLabel(ev.startsAt, ev.endsAt) }} · {{ kindLabel(ev.kind) }}</small>
@@ -230,6 +242,7 @@ export class ScheduleComponent implements OnInit {
   readonly fEndDate = signal("");
   readonly fGames = signal(1);
   readonly fImportance = signal<AthleteEventImportance>("high");
+  readonly fTier = signal<AthleteEventTier>(null);
   readonly fLocation = signal("");
   readonly fNotes = signal("");
 
@@ -250,6 +263,12 @@ export class ScheduleComponent implements OnInit {
     { key: "regular", label: "Regular" },
     { key: "high", label: "High" },
     { key: "peak", label: "Peak" },
+  ];
+  readonly tiers: { key: AthleteEventTier; label: string }[] = [
+    { key: null, label: "Camp / not applicable" },
+    { key: "continental", label: ATHLETE_EVENT_TIER_LABEL.continental },
+    { key: "world", label: ATHLETE_EVENT_TIER_LABEL.world },
+    { key: "olympic", label: ATHLETE_EVENT_TIER_LABEL.olympic },
   ];
 
   readonly myEvents = this.athleteEvents.upcoming;
@@ -274,6 +293,11 @@ export class ScheduleComponent implements OnInit {
 
   catLabel(c: AthleteEventCategory): string {
     return ATHLETE_EVENT_CATEGORY_LABEL[c];
+  }
+  /** Prefer the specific tier ("World Championship") over the generic
+   *  category label ("National team") when one is set. */
+  tierLabel(ev: AthleteEvent): string {
+    return ev.tier ? ATHLETE_EVENT_TIER_LABEL[ev.tier] : this.catLabel(ev.category);
   }
   kindLabel(k: AthleteEventKind): string {
     return ATHLETE_EVENT_KIND_LABEL[k];
@@ -321,6 +345,7 @@ export class ScheduleComponent implements OnInit {
     this.fEndDate.set(ev.endsAt ? this.toDateInput(ev.endsAt) : "");
     this.fGames.set(ev.expectedGameCount);
     this.fImportance.set(ev.importance);
+    this.fTier.set(ev.tier ?? null);
     this.fLocation.set(ev.location ?? "");
     this.fNotes.set(ev.notes ?? "");
     this.formError.set(null);
@@ -360,6 +385,10 @@ export class ScheduleComponent implements OnInit {
       endsAt,
       expectedGameCount: this.fGames(),
       importance: this.fImportance(),
+      // Tier only means something for a national-team commitment — clear it
+      // if the athlete switches category away from "national" without
+      // remembering to reset the chip.
+      tier: this.fCategory() === "national" ? this.fTier() : null,
       location: this.fLocation().trim() || null,
       notes: this.fNotes().trim() || null,
     };
@@ -402,6 +431,7 @@ export class ScheduleComponent implements OnInit {
     this.fEndDate.set("");
     this.fGames.set(1);
     this.fImportance.set("high");
+    this.fTier.set(null);
     this.fLocation.set("");
     this.fNotes.set("");
     this.formError.set(null);

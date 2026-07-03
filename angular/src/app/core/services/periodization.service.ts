@@ -44,6 +44,7 @@ import { ScheduleService } from "./schedule.service";
 import { SupabaseService } from "./supabase.service";
 import { ApiService } from "./api.service";
 import { InjuryService } from "./injury.service";
+import { EventTravelService } from "./event-travel.service";
 import {
   POSITION_VOLUME,
   type PositionKey,
@@ -69,6 +70,7 @@ export class PeriodizationService {
   private readonly supabase = inject(SupabaseService);
   private readonly api = inject(ApiService);
   private readonly injury = inject(InjuryService);
+  private readonly eventTravel = inject(EventTravelService);
 
   /**
    * The athlete's declared season calendar (athlete_training_config.season_calendar),
@@ -104,6 +106,9 @@ export class PeriodizationService {
   constructor() {
     this.loadSettings();
     void this.injury.load();
+    // V2.4 acclimatization guard needs to know if/when the athlete last
+    // arrived somewhere new — see eventTravel.daysSinceArrival() below.
+    void this.eventTravel.load();
 
     // Recent-sessions load is keyed off userId(). On a cold boot the Supabase
     // client is lazily imported, so userId() is null at construction — a plain
@@ -258,6 +263,8 @@ export class PeriodizationService {
       position: this.position(),
       isTeamPractice: this.isTeamPractice(now, snap.trainingDays),
       activeRestrictions: this.injury.restrictions(),
+      acclimatizationDay: this.eventTravel.daysSinceArrival(),
+      arrivalDayTravelHours: this.eventTravel.arrivalDayTravelHours(),
     });
   });
 
@@ -277,6 +284,11 @@ export class PeriodizationService {
     const readiness = this.readReadiness();
     const bodyweight = this.readBodyweight();
     const ageYears = this.readAgeYears();
+    // Unlike weather/ACWR/readiness (current-moment, not forecastable), days
+    // since arrival is simple arithmetic — day i is `acclimBase + i` if the
+    // athlete is mid-acclimatization, so the week view correctly shows the
+    // guard easing across the week instead of freezing at today's value.
+    const acclimBase = this.eventTravel.daysSinceArrival();
 
     const out: DailyPrescription[] = [];
     for (let i = 0; i < 7; i++) {
@@ -310,11 +322,15 @@ export class PeriodizationService {
           // can only guard today; future days resolve unguarded rather than
           // against stale "now" weather.
           weather: i === 0 ? this.weather() : null,
+          // Arrival day is a one-off fact about TODAY specifically, not a
+          // forecastable offset like acclimatizationDay above.
+          arrivalDayTravelHours: i === 0 ? this.eventTravel.arrivalDayTravelHours() : null,
           recentSessions: this.recentSessions(),
           ageYears,
           position: this.position(),
           isTeamPractice: this.isTeamPractice(date, snap.trainingDays),
           activeRestrictions: this.injury.restrictions(),
+          acclimatizationDay: acclimBase === null ? null : acclimBase + i,
         }),
       );
     }
@@ -524,10 +540,20 @@ export function prescribeFor(inputs: PeriodizationInputs): DailyPrescription {
     inputs.date,
     inputs.ageYears ?? null,
   );
-  const guarded = applyWeatherGuard(spaced, inputs.weather ?? null, inputs.coachOverride ?? false);
+  const guarded = applyWeatherGuard(
+    spaced,
+    inputs.weather ?? null,
+    inputs.coachOverride ?? false,
+    inputs.acclimatizationDay ?? null,
+  );
+  // V2.4 — a ≥3h same-day arrival caps the session to activation only, no
+  // new fatigue stacked on top of the travel itself. Runs after weather (a
+  // storm's "stop" is more restrictive and should win outright) but before
+  // injury/physio, which stays the highest-precedence guard.
+  const arrivalGuarded = applyArrivalDayGuard(guarded, inputs.arrivalDayTravelHours ?? null);
   // Injury/physio precedence over training (spec law): runs last so the affected
   // region's sprint/high-intensity work is removed regardless of the base plan.
-  const physioGuarded = applyInjuryGuard(guarded, inputs.activeRestrictions ?? null);
+  const physioGuarded = applyInjuryGuard(arrivalGuarded, inputs.activeRestrictions ?? null);
   // Position-specific accessory/prehab emphasis — additive guidance only, never
   // changes the chosen intent or load. Throwing/upper restrictions override the
   // QB/center emphasis into a protect-the-arm message.
@@ -639,6 +665,51 @@ function withPositionEmphasis(
       note: pv.primaryInjuryRisk,
       volume,
     },
+  };
+}
+
+// =============================================================================
+// ARRIVAL-DAY LOAD CAP (V2.4) — long-haul travel is itself a fatigue cost
+// =============================================================================
+
+/** Hours of same-day seated travel that triggers the arrival-day cap. */
+const ARRIVAL_DAY_LOAD_CAP_HOURS = 3;
+/** Session already at/below activation level, or organiser/taper-owned — leave alone. */
+const ARRIVAL_DAY_EXEMPT_INTENTS: ReadonlySet<PrescriptionIntent> = new Set<PrescriptionIntent>([
+  "rest",
+  "recovery",
+  "mobility",
+  "taper-prime",
+  "competition",
+]);
+
+/**
+ * A ≥3h same-day arrival (from `EventTravelService.arrivalDayTravelHours`,
+ * V2.4) caps the day's session to activation only — the travel itself is a
+ * fatigue cost the plan hasn't otherwise accounted for. Exempt intents are
+ * already at/below activation level or owned by a higher-precedence guard
+ * (game day, the taper-prime opener). Returns `rx` unchanged when there was
+ * no long same-day arrival.
+ */
+function applyArrivalDayGuard(
+  rx: DailyPrescription,
+  arrivalDayTravelHours: number | null,
+): DailyPrescription {
+  if (arrivalDayTravelHours === null || arrivalDayTravelHours < ARRIVAL_DAY_LOAD_CAP_HOURS) {
+    return rx;
+  }
+  if (ARRIVAL_DAY_EXEMPT_INTENTS.has(rx.intent)) {
+    return rx;
+  }
+  return {
+    ...rx,
+    intent: "mobility",
+    intentLabel: "Arrival-day activation",
+    targetRpe: rx.targetRpe === null ? null : Math.min(rx.targetRpe, 4),
+    targetMinutes: Math.min(rx.targetMinutes, 30),
+    sprintReps: 0,
+    strengthSets: 0,
+    reasoning: `${Math.round(arrivalDayTravelHours)}h of travel today — activation only, no new fatigue on top of the trip. ${rx.reasoning}`,
   };
 }
 
@@ -1186,6 +1257,32 @@ const HEAT_LOAD_FACTOR_REDUCE = 1.1;
 const HEAT_LOAD_FACTOR_AVOID = 1.2;
 const HEAT_VOLUME_CUT = 0.8;
 
+// V2.4 — heat/cold ACCLIMATIZATION. The same 32°C affects a Ljubljana athlete
+// landing in American Samoa yesterday very differently than a Samoan native —
+// unacclimatized athletes carry materially higher heat/cold-illness risk in
+// the first ~10-14 days at a new climate (evidence-based: heat acclimatization
+// is largely complete by ~14 days, most benefit in the first week). Rather
+// than requiring a computed home-vs-destination temperature delta (data this
+// app doesn't have — no "home climate baseline"), the guard tightens EVERY
+// threshold symmetrically (heat thresholds down, cold thresholds up) while
+// `acclimatizationDay` (days since arrival, from athlete_travel_log) is
+// inside the window — this correctly protects a hot-destination arrival AND
+// a cold-destination arrival with one mechanism, and decays linearly to zero
+// adjustment by day 14 (fully acclimatized, matches raw V1 behaviour).
+const ACCLIMATIZATION_WINDOW_DAYS = 14;
+const ACCLIMATIZATION_MAX_SHIFT_C = 4;
+
+function acclimatizationShiftC(acclimatizationDay: number | null): number {
+  if (
+    acclimatizationDay === null ||
+    acclimatizationDay < 0 ||
+    acclimatizationDay >= ACCLIMATIZATION_WINDOW_DAYS
+  ) {
+    return 0;
+  }
+  return ACCLIMATIZATION_MAX_SHIFT_C * (1 - acclimatizationDay / ACCLIMATIZATION_WINDOW_DAYS);
+}
+
 // Intense + outdoor intents → subject to the guard. Strength (indoor), mobility,
 // technical, recovery, rest, and competition (organiser's call) are agnostic.
 const OUTDOOR_INTENSE: ReadonlySet<PrescriptionIntent> = new Set<PrescriptionIntent>([
@@ -1209,6 +1306,7 @@ export function applyWeatherGuard(
   rx: DailyPrescription,
   weather: WeatherInput | null,
   coachOverride: boolean,
+  acclimatizationDay: number | null = null,
 ): DailyPrescription {
   if (!weather || !OUTDOOR_INTENSE.has(rx.intent)) {
     return rx;
@@ -1227,13 +1325,28 @@ export function applyWeatherGuard(
     (weather.precipMm !== null && weather.precipMm > RAIN_PRECIP_MM);
   const wind = weather.windKmh;
 
+  // Unacclimatized shift: tightens heat thresholds down and cold thresholds
+  // up while the athlete is newly arrived at a different climate (0 once
+  // acclimatized/no travel declared — byte-identical to V1 behaviour then).
+  const shift = acclimatizationShiftC(acclimatizationDay);
+  const acclimatizing = shift > 0;
+  const heatStopEff = HEAT_STOP_C - shift;
+  const heatAvoidEff = HEAT_AVOID_C - shift;
+  const heatReduceEff = HEAT_REDUCE_C - shift;
+  const heatCautionEff = HEAT_CAUTION_C - shift;
+  const coldAvoidEff = COLD_AVOID_C + shift;
+  const coldCautionEff = COLD_CAUTION_C + shift;
+  const acclimNote = acclimatizing
+    ? ` Still acclimatizing (day ${acclimatizationDay} at this climate) — extra caution applied.`
+    : "";
+
   const original = rx.intent;
   const heatLoadFactor =
     apparent === null
       ? 1
-      : apparent >= HEAT_AVOID_C
+      : apparent >= heatAvoidEff
         ? HEAT_LOAD_FACTOR_AVOID
-        : apparent >= HEAT_REDUCE_C
+        : apparent >= heatReduceEff
           ? HEAT_LOAD_FACTOR_REDUCE
           : 1;
   const t = (n: number) => Math.round(n);
@@ -1247,30 +1360,30 @@ export function applyWeatherGuard(
     adjusted = "recovery";
     reason =
       "Thunderstorm — lightning risk. Outdoor training stopped; move indoors or rest.";
-  } else if (apparent !== null && apparent >= HEAT_STOP_C) {
+  } else if (apparent !== null && apparent >= heatStopEff) {
     action = "stop";
     adjusted = "recovery";
-    reason = `${t(apparent)}°C feels-like — too hot to train outdoors. Indoor recovery or rest today.`;
-  } else if (apparent !== null && apparent >= HEAT_AVOID_C) {
+    reason = `${t(apparent)}°C feels-like — too hot to train outdoors. Indoor recovery or rest today.${acclimNote}`;
+  } else if (apparent !== null && apparent >= heatAvoidEff) {
     action = "relocate";
     adjusted = "mobility";
-    reason = `${t(apparent)}°C feels-like — no intense outdoor work. Moved to indoor mobility & skills; hydrate hard.`;
+    reason = `${t(apparent)}°C feels-like — no intense outdoor work. Moved to indoor mobility & skills; hydrate hard.${acclimNote}`;
   } else if (wet) {
     action = "substitute";
     adjusted = substituteForWet(original);
     reason =
       "Wet grass — slip/ACL risk on sprints & cuts. Moved indoors to a tempo + strength session.";
-  } else if (apparent !== null && apparent <= COLD_AVOID_C) {
+  } else if (apparent !== null && apparent <= coldAvoidEff) {
     action = "substitute";
     adjusted = "mobility";
-    reason = `${t(apparent)}°C feels-like — no outdoor max-effort in the cold. Indoor low-intensity mobility instead.`;
-  } else if (apparent !== null && apparent >= HEAT_REDUCE_C) {
+    reason = `${t(apparent)}°C feels-like — no outdoor max-effort in the cold. Indoor low-intensity mobility instead.${acclimNote}`;
+  } else if (apparent !== null && apparent >= heatReduceEff) {
     action = "scale";
-    reason = `${t(apparent)}°C feels-like — cut intense volume ~20%, train in the cooler hour, hydrate. Expect RPE to feel ~1 higher; log what you actually felt.`;
-  } else if (apparent !== null && apparent >= HEAT_CAUTION_C) {
-    reason = `${t(apparent)}°C — warm. Add hydration and breaks; session unchanged.`;
-  } else if (apparent !== null && apparent <= COLD_CAUTION_C) {
-    reason = `${t(apparent)}°C — cold muscles. Extend your warm-up; ease into max-velocity work.`;
+    reason = `${t(apparent)}°C feels-like — cut intense volume ~20%, train in the cooler hour, hydrate. Expect RPE to feel ~1 higher; log what you actually felt.${acclimNote}`;
+  } else if (apparent !== null && apparent >= heatCautionEff) {
+    reason = `${t(apparent)}°C — warm. Add hydration and breaks; session unchanged.${acclimNote}`;
+  } else if (apparent !== null && apparent <= coldCautionEff) {
+    reason = `${t(apparent)}°C — cold muscles. Extend your warm-up; ease into max-velocity work.${acclimNote}`;
   } else if (wind !== null && wind >= WIND_UNRELIABLE_KMH) {
     reason = `${t(wind)} km/h wind — throwing accuracy and sprint timing are unreliable; deprioritise testing.`;
   } else {
