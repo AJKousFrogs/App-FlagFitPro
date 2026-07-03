@@ -62,10 +62,22 @@ export class OnboardingComponent {
   readonly dob = signal("");
   readonly maxDob = new Date().toISOString().split("T")[0]; // no future birth dates
 
-  // step 3 — season calendar (athlete-declared)
+  // step 3 — season calendar (athlete-declared). Default is a starting-point
+  // template for a split flag-football season with two competitive blocks
+  // (spring + late-summer) separated by a short mid-year break, a peak/playoff
+  // window, a post-season regeneration window, and a long winter off-season —
+  // fully editable; the athlete's own calendar always wins once they touch it.
+  // Windows are contiguous ("to" of one = day before "from" of the next) so
+  // macroPhaseFor never falls through to the generic fallback for a date in
+  // the default calendar.
   readonly season = signal<SeasonWindow[]>([
-    { phase: "inseason", from: "09-01", to: "04-30" },
-    { phase: "offseason", from: "07-01", to: "08-15" },
+    { phase: "preseason", from: "02-15", to: "03-31" }, // pre-season
+    { phase: "inseason", from: "04-01", to: "06-15" }, // mid-season (spring)
+    { phase: "offseason", from: "06-16", to: "07-31" }, // first off-season break
+    { phase: "inseason", from: "08-01", to: "10-15" }, // mid-season (late summer)
+    { phase: "peak", from: "10-16", to: "11-15" }, // peak season
+    { phase: "postseason", from: "11-16", to: "12-15" }, // recovery season
+    { phase: "offseason", from: "12-16", to: "02-14" }, // winter off-season (wraps year end)
   ]);
   readonly phases: SeasonPhase[] = [
     "offseason",

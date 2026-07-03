@@ -1,7 +1,7 @@
 # Endpoint Reference (GENERATED — do not hand-edit)
 
 > Regenerate: `npm run docs:regen` (parses `netlify.toml` + `netlify/functions/*.js` + scans `angular/src`).
-> **Last verified: 2026-07-02**
+> **Last verified: 2026-07-03**
 
 **108 functions: 108 exercised, 0 orphaned.** A table name with ⚠️ is referenced in code but not a live table (possible drift/typo); _(bucket)_ = Storage bucket, not a DB table.
 

@@ -1217,10 +1217,51 @@ function inSeasonWindow(
 }
 
 /**
- * Day-of-week week shape biased by macro season phase. Off-season is
- * strength/conditioning-led; in-season maintains strength + sharpens skills;
- * transition is active-rest/base. Pre-season uses the generic build shape.
- * Safety modulation (elevated ACWR / heavy density) mirrors accumulation.
+ * Fixed day-of-week intent shape for each macro season phase (index 0 = Sunday).
+ * Single source of truth for `seasonShapedIntent` (offseason/inseason/peak/
+ * postseason), `pickAccumulationIntent` (preseason + the no-calendar generic
+ * fallback — identical shape, "pre-season == the generic progressive build"),
+ * and `previewSeasonPhaseWeek` (read-only preview for onboarding/coach-facing
+ * "what does this phase look like" copy).
+ *
+ *   offseason  — GPP: get strong, build base (strength-led)
+ *   preseason  — generic progressive build (strength + sprint alternating)
+ *   inseason   — maintain strength + sharpen skills (technical-led)
+ *   peak       — peaking block: sharp, low volume, high quality, fresh
+ *   postseason — active regeneration after the competitive block
+ */
+export const SEASON_PHASE_WEEK_SHAPE: Readonly<
+  Record<SeasonPhase, readonly PrescriptionIntent[]>
+> = {
+  //             Sun      Mon          Tue           Wed           Thu           Fri          Sat
+  offseason: ["rest", "strength", "mixed", "mobility", "strength", "mixed", "strength"],
+  preseason: ["rest", "strength", "sprint", "mobility", "strength", "sprint", "mixed"],
+  inseason: ["rest", "strength", "technical", "mobility", "technical", "strength", "mixed"],
+  peak: ["rest", "sprint", "technical", "mobility", "technical", "sprint", "recovery"],
+  postseason: ["rest", "recovery", "mobility", "recovery", "mobility", "mixed", "recovery"],
+};
+
+/** Shared ACWR/game-density safety modulation used by both week-shape lookups. */
+function modulateForSafety(
+  intent: PrescriptionIntent,
+  acwr: number | null,
+  heavyDensity: boolean,
+): PrescriptionIntent {
+  let out = intent;
+  if (acwr !== null && acwr > ACWR_ELEVATED) {
+    if (out === "sprint" || out === "strength") out = "mobility";
+    else if (out === "mixed") out = "technical";
+  }
+  if (heavyDensity && out !== "rest") {
+    if (out === "strength") out = "technical";
+    if (out === "mixed") out = "mobility";
+  }
+  return out;
+}
+
+/**
+ * Day-of-week week shape biased by macro season phase. Pre-season delegates to
+ * `pickAccumulationIntent` (same shape, shared safety modulation).
  */
 function seasonShapedIntent(
   date: Date,
@@ -1228,35 +1269,11 @@ function seasonShapedIntent(
   acwr: number | null,
   heavyDensity: boolean,
 ): PrescriptionIntent {
+  if (season === "preseason") {
+    return pickAccumulationIntent(date, acwr, heavyDensity);
+  }
   const dow = date.getDay(); // 0 = Sun
-  let week: PrescriptionIntent[];
-  switch (season) {
-    case "offseason": // GPP — get strong, build base
-      week = ["rest", "strength", "mixed", "mobility", "strength", "mixed", "strength"];
-      break;
-    case "inseason": // maintain + skill
-      week = ["rest", "strength", "technical", "mobility", "technical", "strength", "mixed"];
-      break;
-    case "peak": // peaking block: sharp, low volume, high quality, fresh
-      week = ["rest", "sprint", "technical", "mobility", "technical", "sprint", "recovery"];
-      break;
-    case "postseason": // active regeneration after the competitive block
-      week = ["rest", "recovery", "mobility", "recovery", "mobility", "mixed", "recovery"];
-      break;
-    case "preseason":
-    default:
-      return pickAccumulationIntent(date, acwr, heavyDensity);
-  }
-  let intent = week[dow];
-  if (acwr !== null && acwr > ACWR_ELEVATED) {
-    if (intent === "sprint" || intent === "strength") intent = "mobility";
-    else if (intent === "mixed") intent = "technical";
-  }
-  if (heavyDensity && intent !== "rest") {
-    if (intent === "strength") intent = "technical";
-    if (intent === "mixed") intent = "mobility";
-  }
-  return intent;
+  return modulateForSafety(SEASON_PHASE_WEEK_SHAPE[season][dow], acwr, heavyDensity);
 }
 
 function seasonReasoning(season: SeasonPhase, intent: PrescriptionIntent): string {
@@ -1611,33 +1628,53 @@ function pickAccumulationIntent(
   acwr: number | null,
   heavyDensity: boolean,
 ): PrescriptionIntent {
-  // Standard week shape: Mon strength, Tue sprint, Wed technical/mobility,
-  // Thu strength, Fri sprint, Sat mixed, Sun rest. Day-of-week 0 = Sunday.
+  // Day-of-week 0 = Sunday. Shape lives in SEASON_PHASE_WEEK_SHAPE.preseason
+  // (shared with seasonShapedIntent — "pre-season == the generic progressive
+  // build").
   const dow = date.getDay();
-  const standard: PrescriptionIntent[] = [
-    "rest",      // Sun
-    "strength",  // Mon
-    "sprint",    // Tue
-    "mobility",  // Wed
-    "strength",  // Thu
-    "sprint",    // Fri
-    "mixed",     // Sat
-  ];
-  let intent = standard[dow];
+  return modulateForSafety(SEASON_PHASE_WEEK_SHAPE.preseason[dow], acwr, heavyDensity);
+}
 
-  // Modulate when load is elevated or density is heavy.
-  if (acwr !== null && acwr > ACWR_ELEVATED) {
-    if (intent === "sprint" || intent === "strength") {
-      intent = "mobility";
-    } else if (intent === "mixed") {
-      intent = "technical";
-    }
-  }
-  if (heavyDensity && intent !== "rest") {
-    if (intent === "strength") intent = "technical";
-    if (intent === "mixed") intent = "mobility";
-  }
-  return intent;
+const WEEK_DAY_LABELS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"] as const;
+
+/** One day of a `previewSeasonPhaseWeek` result. */
+export interface SeasonPhaseWeekPreviewDay {
+  dayOfWeek: number; // 0 = Sunday
+  dayLabel: string;
+  intent: PrescriptionIntent;
+  intentLabel: string;
+  targetRpe: number | null;
+  targetMinutes: number;
+  sprintReps: number;
+  strengthSets: number;
+}
+
+/**
+ * Read-only preview of a macro season phase's typical week — the same
+ * day-of-week shape and per-intent targets `seasonShapedIntent`/
+ * `pickAccumulationIntent` compute live, without needing a date/ACWR/game-
+ * density context. For onboarding "what to expect" copy and coach-facing
+ * phase explainers (e.g. a season-calendar editor step). Deliberately does
+ * NOT apply ACWR/game-density safety modulation — there is no live signal to
+ * modulate against in a preview, so this always shows the phase's un-derated
+ * baseline week.
+ */
+export function previewSeasonPhaseWeek(phase: SeasonPhase): SeasonPhaseWeekPreviewDay[] {
+  const shape = SEASON_PHASE_WEEK_SHAPE[phase];
+  const targetsFor = phase === "preseason" ? buildTargets : baseTargets;
+  return shape.map((intent, dayOfWeek) => {
+    const t = targetsFor(intent);
+    return {
+      dayOfWeek,
+      dayLabel: WEEK_DAY_LABELS[dayOfWeek],
+      intent,
+      intentLabel: INTENT_LABELS[intent],
+      targetRpe: t.targetRpe,
+      targetMinutes: t.targetMinutes,
+      sprintReps: t.sprintReps,
+      strengthSets: t.strengthSets,
+    };
+  });
 }
 
 // =============================================================================

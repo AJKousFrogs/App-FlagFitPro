@@ -13,6 +13,8 @@ import { describe, it, expect } from "vitest";
 import {
   prescribeFor,
   macroPhaseFor,
+  previewSeasonPhaseWeek,
+  SEASON_PHASE_WEEK_SHAPE,
   __periodization__,
 } from "./periodization.service";
 import {
@@ -1021,6 +1023,51 @@ describe("prescribeFor — peak & post-season phases", () => {
     expect(macroPhaseFor(new Date("2026-09-10T10:00:00Z"), windows)).toBe("inseason"); // autumn block
     expect(macroPhaseFor(new Date("2026-11-15T10:00:00Z"), windows)).toBe("postseason");
     expect(macroPhaseFor(new Date("2026-01-10T10:00:00Z"), windows)).toBe("offseason"); // winter
+  });
+});
+
+// =============================================================================
+// SEASON PHASE WEEK PREVIEW — read-only "what does this phase look like"
+// =============================================================================
+
+describe("previewSeasonPhaseWeek", () => {
+  const phases: SeasonPhase[] = ["offseason", "preseason", "inseason", "peak", "postseason"];
+
+  it.each(phases)("%s returns 7 days, Sunday first, matching SEASON_PHASE_WEEK_SHAPE", (phase) => {
+    const week = previewSeasonPhaseWeek(phase);
+    expect(week).toHaveLength(7);
+    expect(week.map((d) => d.intent)).toEqual(SEASON_PHASE_WEEK_SHAPE[phase]);
+    expect(week[0].dayLabel).toBe("Sun");
+    expect(week[0].dayOfWeek).toBe(0);
+    expect(week[6].dayLabel).toBe("Sat");
+  });
+
+  it("peak's preview is lower-frequency-intense than in-season's (fewer strength/mixed days)", () => {
+    const peak = previewSeasonPhaseWeek("peak");
+    const inseason = previewSeasonPhaseWeek("inseason");
+    const peakHardDays = peak.filter((d) => d.intent === "sprint" || d.intent === "strength").length;
+    const inseasonHardDays = inseason.filter((d) => d.intent === "sprint" || d.intent === "strength").length;
+    // Peak: 2 sprint days, 0 strength (sharp & fresh). In-season: 2 strength days, 0 sprint (maintain).
+    expect(peakHardDays).toBe(2);
+    expect(inseasonHardDays).toBe(2);
+    expect(peak.some((d) => d.intent === "strength")).toBe(false);
+    expect(inseason.some((d) => d.intent === "sprint")).toBe(false);
+  });
+
+  it("preseason preview uses buildTargets (mobility/technical carry RPE 6, not baseTargets' 4/5)", () => {
+    const week = previewSeasonPhaseWeek("preseason");
+    const mobilityDay = week.find((d) => d.intent === "mobility");
+    expect(mobilityDay?.targetRpe).toBe(6); // BUILD_TARGET_OVERRIDES, not baseTargets' 4
+    expect(mobilityDay?.targetMinutes).toBe(75);
+  });
+
+  it("rest day always carries zero volume regardless of phase", () => {
+    for (const phase of phases) {
+      const rest = previewSeasonPhaseWeek(phase).find((d) => d.intent === "rest");
+      expect(rest?.targetMinutes).toBe(0);
+      expect(rest?.sprintReps).toBe(0);
+      expect(rest?.strengthSets).toBe(0);
+    }
   });
 });
 
