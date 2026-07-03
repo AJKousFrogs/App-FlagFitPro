@@ -7,7 +7,7 @@ Status legend: **BUILT** (code + tests exist, verified locally) · **BUILT, NOT 
 | Phase | Doc | Status |
 |---|---|---|
 | V2.0 — Tournament Mode (per-game timeline) | [`V2.0-tournament-mode.md`](V2.0-tournament-mode.md) | BUILT, NOT DEPLOYED |
-| V2.1 — Travel, supplement timing, season plan | [`V2.1-plan-travel.md`](V2.1-plan-travel.md) | PARTIAL |
+| V2.1 — Travel, supplement timing, season plan | [`V2.1-plan-travel.md`](V2.1-plan-travel.md) | PARTIAL — travel legs + caffeine timing built; season plan builder + KB context tags not started |
 | V2.2 — Breadth & calibration (coach console, session library) | [`V2.2-breadth-calibration.md`](V2.2-breadth-calibration.md) | PARTIAL |
 | V2.3 — Bug sweep | [`V2.3-bugfixes.md`](V2.3-bugfixes.md) | tracked as findings land |
 

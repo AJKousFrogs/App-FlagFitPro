@@ -266,6 +266,19 @@
   status = 200
   force = true
 
+# API Routes for Event Travel (V2.1 — declared travel legs)
+[[redirects]]
+  from = "/api/event-travel/*"
+  to = "/.netlify/functions/event-travel"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/event-travel"
+  to = "/.netlify/functions/event-travel"
+  status = 200
+  force = true
+
 [[redirects]]
   from = "/api/dashboard/*"
   to = "/.netlify/functions/dashboard"

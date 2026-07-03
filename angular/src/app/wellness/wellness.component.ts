@@ -24,6 +24,7 @@ import { ReadinessService } from "../core/services/readiness.service";
 import { ApiService } from "../core/services/api.service";
 import { LoggerService } from "../core/services/logger.service";
 import { InjuryService, InjurySeverity } from "../core/services/injury.service";
+import { EventTravelService } from "../core/services/event-travel.service";
 
 /**
  * Wellness — the daily check-in. Ported 1:1 from
@@ -53,6 +54,7 @@ export class WellnessComponent {
   private readonly logger = inject(LoggerService);
   private readonly router = inject(Router);
   private readonly injurySvc = inject(InjuryService);
+  private readonly eventTravel = inject(EventTravelService);
 
   // --- self-reported tightness (drives injury precedence in the plan) ---
   readonly tightnessRegions = [
@@ -149,6 +151,31 @@ export class WellnessComponent {
 
     // Fetch today's actual hydration total so the display doesn't reset to 0 on every visit.
     this.loadTodayHydration();
+
+    // V2.1: a declared travel leg (event-travel.service) covering today lets
+    // the check-in SUGGEST a travel-hours value instead of waiting for the
+    // athlete to notice and pick a chip — but it never silently sets the
+    // signal (that would violate the non-destructive-prefill law); the
+    // athlete taps "Apply" explicitly. See docs/v2/V2.1-plan-travel.md.
+    void this.eventTravel.load();
+  }
+
+  /** Suggested travel-hours from a declared leg — only while the chip is still
+   *  at its untouched default (0), so it never overrides a real choice. */
+  readonly travelSuggestion = computed(() => {
+    if (this.travelHours() !== 0) return null;
+    return this.eventTravel.todayTravelHours();
+  });
+
+  applyTravelSuggestion(): void {
+    const hours = this.travelSuggestion();
+    if (hours == null) return;
+    // Snap to the nearest declared chip bucket rather than an arbitrary number,
+    // so the value stays consistent with what calc-readiness expects.
+    const nearest = this.travelOptions.reduce((best, opt) =>
+      Math.abs(opt.h - hours) < Math.abs(best.h - hours) ? opt : best,
+    );
+    this.travelHours.set(nearest.h);
   }
 
   readonly today = new Date().toLocaleDateString("en-GB", {

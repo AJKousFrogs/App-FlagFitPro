@@ -108,6 +108,14 @@
 
     <div style="margin-bottom:var(--s-3)">
       <p style="margin:0 0 var(--s-2)">Travel today</p>
+      @if (travelSuggestion(); as h) {
+        <div class="card accent" style="margin-bottom:var(--s-2)">
+          <div class="row">
+            <small>You declared a trip today (~{{ h }}h) — apply it?</small>
+            <button class="btn secondary sm" type="button" (click)="applyTravelSuggestion()">Apply</button>
+          </div>
+        </div>
+      }
       <div class="chiprow" role="group" aria-label="Hours travelled today">
         @for (t of travelOptions; track t.h) {
           <button type="button" class="chip" [class.sel]="travelHours() === t.h"

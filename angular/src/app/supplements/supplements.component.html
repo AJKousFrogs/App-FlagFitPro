@@ -43,6 +43,19 @@
     }
   </div>
 
+  <!-- V2.1 game-day caffeine timing -->
+  @if (caffeineTiming(); as ct) {
+    <div class="section-h"><h2>Caffeine timing — today</h2></div>
+    <div class="card accent">
+      <div class="inline"><iconify-icon icon="mdi:coffee"></iconify-icon>
+        <b>~{{ ct.doseMg }}mg, {{ ct.leadMinutes }} min before {{ ct.firstKickoff ? 'kickoff (' + ct.firstKickoff + ')' : 'your game' }}</b></div>
+      <small>3mg/kg pre-game dose, scaled to your logged bodyweight.</small>
+      @if (ct.topUpWarning) {
+        <div class="band danger" style="margin-top:var(--s-2)">{{ ct.topUpWarning }}</div>
+      }
+    </div>
+  }
+
   <!-- RPE/ACWR honesty note -->
   <div class="card warn">
     <b class="inline"><lucide-icon name="info" /> Caffeine &amp; today's load</b>
