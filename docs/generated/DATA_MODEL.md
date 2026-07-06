@@ -2,13 +2,13 @@
 
 > Regenerate: `npm run docs:regen` (reads `docs/generated/live-schema.snapshot.json`).
 > Refresh against live: re-run the Supabase introspection into that snapshot (Supabase MCP), then rerun.
-> **Schema snapshot (live): 2026-06-23** · doc regenerated: 2026-06-23
+> **Schema snapshot (live): 2026-07-06** · doc regenerated: 2026-07-06
 
-**187 base tables, 7 views.** Tables flagged `DRIFT` exist live but are not defined in any migration file.
+**168 base tables, 7 views.** Tables flagged `DRIFT` exist live but are not defined in any migration file.
 
-> ⚠️ **`supabase-types.ts` is STALE vs live — regenerate it.** In types but dropped from live (37): `acwr_calculations`, `acwr_history`, `acwr_reports`, `analytics_aggregates`, `article_search_index`, `athlete_achievements`, `athlete_daily_state`, `chatbot_user_context`, `cycle_tracking_entries`, `cycle_tracking_symptoms`, `digest_history`, `exercise_library`, `exercise_logs`, `fixtures`, `hydration_logs`, `injuries`, `injury_risk_factors`, `load_caps`, `load_daily`, `load_management_research`, `load_metrics`, `load_monitoring`, `notification_preferences`, `player_tournament_availability`, `session_rpe_data`, `sessions`, `sponsor_contributions`, `supplements_data`, `team_players`, `tournament_lineups`, `tournaments`, `training_load_metrics`, `training_stress_balance`, `wellness_data`, `wellness_entries`, `wellness_logs`, `workout_logs`. Live but missing from types (25): `age_recovery_modifiers`, `athlete_events`, `athlete_injuries`, `athlete_nutrition_profiles`, `calibration_logs`, `contraindication_rules`, `event_availability`, `event_lineups`, `event_participation`, `meal_templates`, `mental_performance_logs`, `mental_wellness_reports`, `nutrition_plans`, `nutrition_reports`, `prescription_audit_log`, `prescription_templates`, `proactive_checkins`, `psychological_assessments`, `readiness_gates`, `rtp_prescription_approvals`, `taper_rules`, `team_activities`, `team_season_phases`, `user_supplements`, `weather_substitution_rules`.
+> ⚠️ **`supabase-types.ts` is STALE vs live — regenerate it.** In types but dropped from live (19): `ai_feedback`, `ai_review_queue`, `coach_athlete_assignments`, `coach_film_sessions`, `coach_film_tags`, `coach_playbook_plays`, `consent_change_log`, `event_lineups`, `player_development_goals`, `player_development_notes`, `player_game_summary`, `player_skill_assessments`, `team_preferences`, `video_assignments`, `video_bookmarks`, `video_curation_status`, `video_playlists`, `video_watch_history`, `weekly_training_analysis`. Live but missing from types (0): —.
 
-**DRIFT (live, no migration file):** `contraindication_rules`, `prescription_audit_log`, `prescription_templates`, `readiness_gates`, `rtp_prescription_approvals`, `taper_rules`, `team_season_phases`, `weather_substitution_rules`
+**DRIFT (live, no migration file):** `sponsors`
 
 ## Tables
 
@@ -86,22 +86,6 @@ Touched by: `ai-chat`, `ai-telemetry`
 - `created_at` timestamp with time zone · not null
 - `updated_at` timestamp with time zone · not null
 
-### `ai_feedback`
-
-Touched by: _(no endpoint references this table)_
-
-- `id` uuid · not null
-- `chat_session_id` uuid
-- `message_id` uuid
-- `user_id` uuid · not null
-- `feedback_type` character varying · not null
-- `feedback_reason` text
-- `outcome` text
-- `flagged_for_review` boolean
-- `reviewed_at` timestamp with time zone
-- `reviewed_by` uuid
-- `created_at` timestamp with time zone · not null
-
 ### `ai_followups`
 
 Touched by: `ai-chat`
@@ -169,21 +153,6 @@ Touched by: `coach-analytics`, `response-feedback`
 - `feedback_source` text
 - `was_helpful` boolean
 - `knowledge_sources_used` jsonb
-
-### `ai_review_queue`
-
-Touched by: _(no endpoint references this table)_
-
-- `id` uuid · not null
-- `interaction_id` uuid · not null
-- `review_type` character varying · not null
-- `priority` character varying
-- `status` character varying
-- `reviewer_id` uuid
-- `review_notes` text
-- `reviewed_at` timestamp with time zone
-- `auto_flagged_reasons` ARRAY
-- `created_at` timestamp with time zone
 
 ### `ai_training_suggestions`
 
@@ -550,56 +519,6 @@ Touched by: _(no endpoint references this table)_
 - `expires_at` timestamp with time zone · not null
 - `created_at` timestamp with time zone
 
-### `coach_athlete_assignments`
-
-Touched by: _(no endpoint references this table)_
-
-- `assignment_id` uuid · not null
-- `coach_id` uuid · not null
-- `user_id` uuid · not null
-- `assigned_at` timestamp with time zone · not null
-
-### `coach_film_sessions`
-
-Touched by: _(no endpoint references this table)_
-
-- `id` uuid · not null
-- `team_id` uuid · not null
-- `created_by` uuid · not null
-- `title` text · not null
-- `film_type` text · not null
-- `duration` text · not null
-- `upload_date` date · not null
-- `thumbnail_url` text
-- `video_url` text · not null
-- `description` text
-- `tag_count` integer · not null
-- `assignment` text · not null
-- `due_date` date
-- `watched_count` integer · not null
-- `total_assigned` integer · not null
-- `not_watched` jsonb · not null
-- `created_at` timestamp with time zone · not null
-- `updated_at` timestamp with time zone · not null
-
-### `coach_film_tags`
-
-Touched by: _(no endpoint references this table)_
-
-- `id` uuid · not null
-- `session_id` uuid · not null
-- `team_id` uuid · not null
-- `coach_id` uuid · not null
-- `timestamp_label` text · not null
-- `timestamp_seconds` integer · not null
-- `tag_type` text · not null
-- `target` text · not null
-- `player_ids` ARRAY · not null
-- `play_id` uuid
-- `comment` text · not null
-- `created_at` timestamp with time zone · not null
-- `updated_at` timestamp with time zone · not null
-
 ### `coach_inbox_items`
 
 Touched by: `ai-chat`, `coach-inbox`, `team-templates`, `wellness-checkin`
@@ -634,25 +553,6 @@ Touched by: _(no endpoint references this table)_
 - `reason` text
 - `expires_at` timestamp with time zone
 - `created_at` timestamp with time zone
-
-### `coach_playbook_plays`
-
-Touched by: _(no endpoint references this table)_
-
-- `id` uuid · not null
-- `team_id` uuid · not null
-- `created_by` uuid · not null
-- `name` text · not null
-- `formation` text · not null
-- `situation` text · not null
-- `type` text · not null
-- `assignments` jsonb · not null
-- `coach_notes` text
-- `team_memorized` integer · not null
-- `status` text · not null
-- `created_at` timestamp with time zone · not null
-- `updated_at` timestamp with time zone · not null
-- `diagram` jsonb
 
 ### `comment_likes`
 
@@ -750,20 +650,7 @@ Touched by: _(no endpoint references this table)_
 - `reason` text
 - `consent_given` boolean
 
-### `consent_change_log`
-
-Touched by: _(no endpoint references this table)_
-
-- `change_id` uuid · not null
-- `user_id` uuid · not null
-- `setting_name` text · not null
-- `previous_value` boolean · not null
-- `new_value` boolean · not null
-- `changed_by` uuid · not null
-- `changed_at` timestamp with time zone · not null
-- `reason` text
-
-### `contraindication_rules` — ⚠️ DRIFT
+### `contraindication_rules`
 
 Touched by: _(no endpoint references this table)_
 
@@ -933,19 +820,6 @@ Touched by: `event-availability`, `wellness-checkin`
 - `responded_at` timestamp with time zone
 - `created_at` timestamp with time zone
 - `updated_at` timestamp with time zone
-
-### `event_lineups`
-
-Touched by: _(no endpoint references this table)_
-
-- `id` uuid · not null
-- `team_id` uuid · not null
-- `competition_event_id` uuid · not null
-- `slots` jsonb · not null
-- `notes` text
-- `saved_by` uuid · not null
-- `created_at` timestamp with time zone · not null
-- `updated_at` timestamp with time zone · not null
 
 ### `event_participation`
 
@@ -1754,74 +1628,6 @@ Touched by: `achievements`
 - `context_data` jsonb · not null
 - `created_at` timestamp with time zone · not null
 
-### `player_development_goals`
-
-Touched by: _(no endpoint references this table)_
-
-- `id` uuid · not null
-- `team_id` uuid · not null
-- `user_id` uuid · not null
-- `coach_id` uuid · not null
-- `category` text · not null
-- `metric` text · not null
-- `current_value` text
-- `target_value` text · not null
-- `start_value` text
-- `due_date` date
-- `progress` integer · not null
-- `status` text · not null
-- `notes` text
-- `created_at` timestamp with time zone · not null
-- `updated_at` timestamp with time zone · not null
-
-### `player_development_notes`
-
-Touched by: _(no endpoint references this table)_
-
-- `id` uuid · not null
-- `team_id` uuid · not null
-- `user_id` uuid · not null
-- `coach_id` uuid · not null
-- `content` text · not null
-- `created_at` timestamp with time zone · not null
-- `updated_at` timestamp with time zone · not null
-
-### `player_game_summary`
-
-Touched by: _(no endpoint references this table)_
-
-- `id` integer · not null
-- `game_id` character varying · not null
-- `user_id` character varying · not null
-- `position` character varying
-- `passing_yards` integer
-- `passing_touchdowns` integer
-- `interceptions` integer
-- `rushing_yards` integer
-- `rushing_touchdowns` integer
-- `receiving_yards` integer
-- `receiving_touchdowns` integer
-- `receptions` integer
-- `targets` integer
-- `drops` integer
-- `flag_pulls` integer
-- `missed_flag_pulls` integer
-- `tackles` integer
-- `sacks` integer
-- `third_down_conversions` integer
-- `third_down_attempts` integer
-- `red_zone_scores` integer
-- `red_zone_attempts` integer
-- `offensive_epa` numeric
-- `defensive_epa` numeric
-- `win_probability_added` numeric
-- `performance_decline_2nd_half` boolean
-- `stamina_score` numeric
-- `plays_participated` integer
-- `performance_notes` text
-- `created_at` timestamp without time zone
-- `updated_at` timestamp without time zone
-
 ### `player_payments`
 
 Touched by: `payments-core`
@@ -1863,21 +1669,6 @@ Touched by: `daily-protocol`, `player-programs`, `smart-training-recommendations
 - `current_phase_id` uuid
 - `completion_percentage` numeric
 - `modifications` jsonb
-
-### `player_skill_assessments`
-
-Touched by: _(no endpoint references this table)_
-
-- `id` uuid · not null
-- `team_id` uuid · not null
-- `user_id` uuid · not null
-- `coach_id` uuid · not null
-- `skill` text · not null
-- `skill_key` text · not null
-- `score` integer · not null
-- `grade` text · not null
-- `created_at` timestamp with time zone · not null
-- `updated_at` timestamp with time zone · not null
 
 ### `player_streaks`
 
@@ -2031,7 +1822,7 @@ Touched by: `team-calendar`
 - `created_at` timestamp with time zone · not null
 - `updated_at` timestamp with time zone · not null
 
-### `prescription_audit_log` — ⚠️ DRIFT
+### `prescription_audit_log`
 
 Touched by: _(no endpoint references this table)_
 
@@ -2046,7 +1837,7 @@ Touched by: _(no endpoint references this table)_
 - `modified_by` text · not null
 - `created_at` timestamp with time zone · not null
 
-### `prescription_templates` — ⚠️ DRIFT
+### `prescription_templates`
 
 Touched by: _(no endpoint references this table)_
 
@@ -2221,7 +2012,7 @@ Touched by: `qb-throwing`
 - `created_at` timestamp with time zone · not null
 - `updated_at` timestamp with time zone · not null
 
-### `readiness_gates` — ⚠️ DRIFT
+### `readiness_gates`
 
 Touched by: _(no endpoint references this table)_
 
@@ -2439,7 +2230,7 @@ Touched by: _(no endpoint references this table)_
 - `reason` text
 - `created_at` timestamp with time zone
 
-### `rtp_prescription_approvals` — ⚠️ DRIFT
+### `rtp_prescription_approvals`
 
 Touched by: _(no endpoint references this table)_
 
@@ -2553,7 +2344,7 @@ Touched by: _(no endpoint references this table)_
 - `created_at` timestamp without time zone
 - `updated_at` timestamp without time zone
 
-### `sponsors`
+### `sponsors` — ⚠️ DRIFT
 
 Touched by: _(no endpoint references this table)_
 
@@ -2618,7 +2409,7 @@ Touched by: `performance-data`, `staff-nutritionist`, `supplements`, `user-conte
 - `notes` text
 - `created_at` timestamp with time zone · not null
 
-### `taper_rules` — ⚠️ DRIFT
+### `taper_rules`
 
 Touched by: _(no endpoint references this table)_
 
@@ -2715,20 +2506,7 @@ Touched by: `accept-invitation`, `ai-chat`, `ai-telemetry`, `analytics-core`, `a
 - `role_approved_at` timestamp with time zone
 - `role_rejection_reason` text
 
-### `team_preferences`
-
-Touched by: _(no endpoint references this table)_
-
-- `team_id` uuid · not null
-- `require_wellness_checkin` boolean · not null
-- `auto_send_rsvp_reminders` boolean · not null
-- `allow_players_view_analytics` boolean · not null
-- `require_coach_approval_posts` boolean · not null
-- `created_by` uuid
-- `created_at` timestamp with time zone · not null
-- `updated_at` timestamp with time zone · not null
-
-### `team_season_phases` — ⚠️ DRIFT
+### `team_season_phases`
 
 Touched by: `daily-protocol`
 
@@ -3147,75 +2925,6 @@ Touched by: `accept-invitation`, `admin`, `ai-chat`, `analytics-core`, `coach-co
 - `verification_token` text
 - `verification_token_expires_at` timestamp with time zone
 
-### `video_assignments`
-
-Touched by: _(no endpoint references this table)_
-
-- `id` uuid · not null
-- `team_id` uuid · not null
-- `assigned_by` uuid · not null
-- `assigned_to` uuid · not null
-- `video_id` text · not null
-- `playlist_id` uuid
-- `due_date` date
-- `status` text
-- `notes` text
-- `created_at` timestamp with time zone
-- `completed_at` timestamp with time zone
-
-### `video_bookmarks`
-
-Touched by: _(no endpoint references this table)_
-
-- `id` uuid · not null
-- `user_id` uuid · not null
-- `video_id` text · not null
-- `video_title` text · not null
-- `video_url` text · not null
-- `creator_username` text
-- `saved_at` timestamp with time zone
-- `notes` text
-
-### `video_curation_status`
-
-Touched by: _(no endpoint references this table)_
-
-- `id` uuid · not null
-- `team_id` uuid · not null
-- `video_id` text · not null
-- `status` text · not null
-- `notes` text
-- `updated_by` uuid
-- `updated_at` timestamp with time zone
-- `created_at` timestamp with time zone
-
-### `video_playlists`
-
-Touched by: _(no endpoint references this table)_
-
-- `id` uuid · not null
-- `team_id` uuid
-- `created_by` uuid · not null
-- `name` text · not null
-- `description` text
-- `position` text
-- `focus_areas` ARRAY
-- `video_ids` ARRAY · not null
-- `is_public` boolean
-- `created_at` timestamp with time zone
-- `updated_at` timestamp with time zone
-
-### `video_watch_history`
-
-Touched by: _(no endpoint references this table)_
-
-- `id` uuid · not null
-- `user_id` uuid · not null
-- `video_id` text · not null
-- `watched_at` timestamp with time zone
-- `watch_duration_seconds` integer
-- `completed` boolean
-
 ### `warmup_protocols`
 
 Touched by: `training-programs`
@@ -3227,7 +2936,7 @@ Touched by: `training-programs`
 - `created_at` timestamp with time zone
 - `updated_at` timestamp with time zone
 
-### `weather_substitution_rules` — ⚠️ DRIFT
+### `weather_substitution_rules`
 
 Touched by: _(no endpoint references this table)_
 
@@ -3240,41 +2949,6 @@ Touched by: _(no endpoint references this table)_
 - `substitute_modality` text · not null
 - `substitute_rationale` text · not null
 - `is_active` boolean · not null
-
-### `weekly_training_analysis`
-
-Touched by: _(no endpoint references this table)_
-
-- `id` uuid · not null
-- `user_id` uuid · not null
-- `week_start_date` date · not null
-- `week_end_date` date · not null
-- `total_training_sessions` integer
-- `total_training_duration_minutes` integer
-- `total_training_load` integer
-- `daily_loads` ARRAY
-- `mean_daily_load` numeric
-- `standard_deviation` numeric
-- `training_monotony` numeric
-- `monotony_interpretation` character varying
-- `training_strain` numeric
-- `strain_interpretation` character varying
-- `monotony_injury_risk` numeric
-- `strain_injury_risk` numeric
-- `load_distribution_quality` numeric
-- `rest_days_count` integer
-- `consecutive_high_load_days` integer
-- `load_change_from_previous_week` numeric
-- `load_progression_safety` character varying
-- `recommended_rest_days` integer
-- `recommended_load_variation` numeric
-- `next_week_load_target` integer
-- `high_load_days` ARRAY
-- `recovery_day_adequacy` numeric
-- `exceeds_monotony_threshold` boolean
-- `exceeds_strain_threshold` boolean
-- `weeks_consecutive_high_monotony` integer
-- `created_at` timestamp without time zone
 
 ### `youth_athlete_settings`
 

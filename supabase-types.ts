@@ -222,48 +222,6 @@ export type Database = {
           },
         ]
       }
-      ai_feedback: {
-        Row: {
-          chat_session_id: string | null
-          created_at: string
-          feedback_reason: string | null
-          feedback_type: string
-          flagged_for_review: boolean | null
-          id: string
-          message_id: string | null
-          outcome: string | null
-          reviewed_at: string | null
-          reviewed_by: string | null
-          user_id: string
-        }
-        Insert: {
-          chat_session_id?: string | null
-          created_at?: string
-          feedback_reason?: string | null
-          feedback_type: string
-          flagged_for_review?: boolean | null
-          id?: string
-          message_id?: string | null
-          outcome?: string | null
-          reviewed_at?: string | null
-          reviewed_by?: string | null
-          user_id: string
-        }
-        Update: {
-          chat_session_id?: string | null
-          created_at?: string
-          feedback_reason?: string | null
-          feedback_type?: string
-          flagged_for_review?: boolean | null
-          id?: string
-          message_id?: string | null
-          outcome?: string | null
-          reviewed_at?: string | null
-          reviewed_by?: string | null
-          user_id?: string
-        }
-        Relationships: []
-      }
       ai_followups: {
         Row: {
           created_at: string | null
@@ -441,45 +399,6 @@ export type Database = {
           session_id?: string | null
           user_id?: string
           was_helpful?: boolean | null
-        }
-        Relationships: []
-      }
-      ai_review_queue: {
-        Row: {
-          auto_flagged_reasons: string[] | null
-          created_at: string | null
-          id: string
-          interaction_id: string
-          priority: string | null
-          review_notes: string | null
-          review_type: string
-          reviewed_at: string | null
-          reviewer_id: string | null
-          status: string | null
-        }
-        Insert: {
-          auto_flagged_reasons?: string[] | null
-          created_at?: string | null
-          id?: string
-          interaction_id: string
-          priority?: string | null
-          review_notes?: string | null
-          review_type: string
-          reviewed_at?: string | null
-          reviewer_id?: string | null
-          status?: string | null
-        }
-        Update: {
-          auto_flagged_reasons?: string[] | null
-          created_at?: string | null
-          id?: string
-          interaction_id?: string
-          priority?: string | null
-          review_notes?: string | null
-          review_type?: string
-          reviewed_at?: string | null
-          reviewer_id?: string | null
-          status?: string | null
         }
         Relationships: []
       }
@@ -684,6 +603,7 @@ export type Database = {
           notes: string | null
           starts_at: string
           status: string
+          tier: string | null
           title: string
           updated_at: string
           user_id: string
@@ -701,6 +621,7 @@ export type Database = {
           notes?: string | null
           starts_at: string
           status?: string
+          tier?: string | null
           title: string
           updated_at?: string
           user_id: string
@@ -718,6 +639,7 @@ export type Database = {
           notes?: string | null
           starts_at?: string
           status?: string
+          tier?: string | null
           title?: string
           updated_at?: string
           user_id?: string
@@ -956,35 +878,82 @@ export type Database = {
       athlete_travel_log: {
         Row: {
           adaptation_day: number | null
-          arrival_date: string
+          arrival_date: string | null
+          arrive_at: string
+          competition_event_id: string | null
           created_at: string
+          depart_at: string
           id: string
+          mode: string
           notes: string | null
+          overnight_stay: boolean
+          team_id: string | null
           timezone_difference: number | null
           updated_at: string
           user_id: string
         }
         Insert: {
           adaptation_day?: number | null
-          arrival_date: string
+          arrival_date?: string | null
+          arrive_at: string
+          competition_event_id?: string | null
           created_at?: string
+          depart_at: string
           id?: string
+          mode?: string
           notes?: string | null
+          overnight_stay?: boolean
+          team_id?: string | null
           timezone_difference?: number | null
           updated_at?: string
           user_id: string
         }
         Update: {
           adaptation_day?: number | null
-          arrival_date?: string
+          arrival_date?: string | null
+          arrive_at?: string
+          competition_event_id?: string | null
           created_at?: string
+          depart_at?: string
           id?: string
+          mode?: string
           notes?: string | null
+          overnight_stay?: boolean
+          team_id?: string | null
           timezone_difference?: number | null
           updated_at?: string
           user_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "athlete_travel_log_competition_event_id_fkey"
+            columns: ["competition_event_id"]
+            isOneToOne: false
+            referencedRelation: "competition_events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "athlete_travel_log_competition_event_id_fkey"
+            columns: ["competition_event_id"]
+            isOneToOne: false
+            referencedRelation: "v_athlete_schedule"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "athlete_travel_log_competition_event_id_fkey"
+            columns: ["competition_event_id"]
+            isOneToOne: false
+            referencedRelation: "v_pending_event_participation"
+            referencedColumns: ["competition_event_id"]
+          },
+          {
+            foreignKeyName: "athlete_travel_log_team_id_fkey"
+            columns: ["team_id"]
+            isOneToOne: false
+            referencedRelation: "teams"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       attendance_records: {
         Row: {
@@ -1599,168 +1568,6 @@ export type Database = {
           },
         ]
       }
-      coach_athlete_assignments: {
-        Row: {
-          assigned_at: string
-          assignment_id: string
-          coach_id: string
-          user_id: string
-        }
-        Insert: {
-          assigned_at?: string
-          assignment_id?: string
-          coach_id: string
-          user_id: string
-        }
-        Update: {
-          assigned_at?: string
-          assignment_id?: string
-          coach_id?: string
-          user_id?: string
-        }
-        Relationships: []
-      }
-      coach_film_sessions: {
-        Row: {
-          assignment: string
-          created_at: string
-          created_by: string
-          description: string | null
-          due_date: string | null
-          duration: string
-          film_type: string
-          id: string
-          not_watched: Json
-          tag_count: number
-          team_id: string
-          thumbnail_url: string | null
-          title: string
-          total_assigned: number
-          updated_at: string
-          upload_date: string
-          video_url: string
-          watched_count: number
-        }
-        Insert: {
-          assignment?: string
-          created_at?: string
-          created_by: string
-          description?: string | null
-          due_date?: string | null
-          duration?: string
-          film_type: string
-          id?: string
-          not_watched?: Json
-          tag_count?: number
-          team_id: string
-          thumbnail_url?: string | null
-          title: string
-          total_assigned?: number
-          updated_at?: string
-          upload_date?: string
-          video_url: string
-          watched_count?: number
-        }
-        Update: {
-          assignment?: string
-          created_at?: string
-          created_by?: string
-          description?: string | null
-          due_date?: string | null
-          duration?: string
-          film_type?: string
-          id?: string
-          not_watched?: Json
-          tag_count?: number
-          team_id?: string
-          thumbnail_url?: string | null
-          title?: string
-          total_assigned?: number
-          updated_at?: string
-          upload_date?: string
-          video_url?: string
-          watched_count?: number
-        }
-        Relationships: [
-          {
-            foreignKeyName: "coach_film_sessions_team_id_fkey"
-            columns: ["team_id"]
-            isOneToOne: false
-            referencedRelation: "teams"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      coach_film_tags: {
-        Row: {
-          coach_id: string
-          comment: string
-          created_at: string
-          id: string
-          play_id: string | null
-          player_ids: string[]
-          session_id: string
-          tag_type: string
-          target: string
-          team_id: string
-          timestamp_label: string
-          timestamp_seconds: number
-          updated_at: string
-        }
-        Insert: {
-          coach_id: string
-          comment: string
-          created_at?: string
-          id?: string
-          play_id?: string | null
-          player_ids?: string[]
-          session_id: string
-          tag_type: string
-          target: string
-          team_id: string
-          timestamp_label: string
-          timestamp_seconds?: number
-          updated_at?: string
-        }
-        Update: {
-          coach_id?: string
-          comment?: string
-          created_at?: string
-          id?: string
-          play_id?: string | null
-          player_ids?: string[]
-          session_id?: string
-          tag_type?: string
-          target?: string
-          team_id?: string
-          timestamp_label?: string
-          timestamp_seconds?: number
-          updated_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "coach_film_tags_play_id_fkey"
-            columns: ["play_id"]
-            isOneToOne: false
-            referencedRelation: "coach_playbook_plays"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "coach_film_tags_session_id_fkey"
-            columns: ["session_id"]
-            isOneToOne: false
-            referencedRelation: "coach_film_sessions"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "coach_film_tags_team_id_fkey"
-            columns: ["team_id"]
-            isOneToOne: false
-            referencedRelation: "teams"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       coach_inbox_items: {
         Row: {
           action_required: boolean | null
@@ -1861,65 +1668,6 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
-      }
-      coach_playbook_plays: {
-        Row: {
-          assignments: Json
-          coach_notes: string | null
-          created_at: string
-          created_by: string
-          diagram: Json | null
-          formation: string
-          id: string
-          name: string
-          situation: string
-          status: string
-          team_id: string
-          team_memorized: number
-          type: string
-          updated_at: string
-        }
-        Insert: {
-          assignments?: Json
-          coach_notes?: string | null
-          created_at?: string
-          created_by: string
-          diagram?: Json | null
-          formation: string
-          id?: string
-          name: string
-          situation: string
-          status?: string
-          team_id: string
-          team_memorized?: number
-          type: string
-          updated_at?: string
-        }
-        Update: {
-          assignments?: Json
-          coach_notes?: string | null
-          created_at?: string
-          created_by?: string
-          diagram?: Json | null
-          formation?: string
-          id?: string
-          name?: string
-          situation?: string
-          status?: string
-          team_id?: string
-          team_memorized?: number
-          type?: string
-          updated_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "coach_playbook_plays_team_id_fkey"
-            columns: ["team_id"]
-            isOneToOne: false
-            referencedRelation: "teams"
-            referencedColumns: ["id"]
-          },
-        ]
       }
       comment_likes: {
         Row: {
@@ -2063,6 +1811,8 @@ export type Database = {
           expected_game_count: number
           external_id: string | null
           game_format: string | null
+          hotel_address: string | null
+          hotel_name: string | null
           id: string
           importance: string
           label: string | null
@@ -2084,6 +1834,8 @@ export type Database = {
           expected_game_count?: number
           external_id?: string | null
           game_format?: string | null
+          hotel_address?: string | null
+          hotel_name?: string | null
           id?: string
           importance?: string
           label?: string | null
@@ -2105,6 +1857,8 @@ export type Database = {
           expected_game_count?: number
           external_id?: string | null
           game_format?: string | null
+          hotel_address?: string | null
+          hotel_name?: string | null
           id?: string
           importance?: string
           label?: string | null
@@ -2224,39 +1978,6 @@ export type Database = {
           data_category?: string | null
           id?: string
           reason?: string | null
-          user_id?: string
-        }
-        Relationships: []
-      }
-      consent_change_log: {
-        Row: {
-          change_id: string
-          changed_at: string
-          changed_by: string
-          new_value: boolean
-          previous_value: boolean
-          reason: string | null
-          setting_name: string
-          user_id: string
-        }
-        Insert: {
-          change_id?: string
-          changed_at?: string
-          changed_by: string
-          new_value: boolean
-          previous_value: boolean
-          reason?: string | null
-          setting_name: string
-          user_id: string
-        }
-        Update: {
-          change_id?: string
-          changed_at?: string
-          changed_by?: string
-          new_value?: boolean
-          previous_value?: boolean
-          reason?: string | null
-          setting_name?: string
           user_id?: string
         }
         Relationships: []
@@ -2495,7 +2216,6 @@ export type Database = {
           hydration_level: number | null
           id: string
           mood: number | null
-          motivation: number | null
           motivation_level: number | null
           muscle_soreness: number | null
           notes: string | null
@@ -2515,7 +2235,6 @@ export type Database = {
           hydration_level?: number | null
           id?: string
           mood?: number | null
-          motivation?: number | null
           motivation_level?: number | null
           muscle_soreness?: number | null
           notes?: string | null
@@ -2535,7 +2254,6 @@ export type Database = {
           hydration_level?: number | null
           id?: string
           mood?: number | null
-          motivation?: number | null
           motivation_level?: number | null
           muscle_soreness?: number | null
           notes?: string | null
@@ -2763,6 +2481,13 @@ export type Database = {
             referencedColumns: ["competition_event_id"]
           },
           {
+            foreignKeyName: "event_availability_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "player_tournament_availability_team_id_fkey"
             columns: ["team_id"]
             isOneToOne: false
@@ -2771,61 +2496,85 @@ export type Database = {
           },
         ]
       }
-      event_lineups: {
+      event_games: {
         Row: {
+          bracket_stage: string | null
           competition_event_id: string
           created_at: string
+          created_by: string | null
+          expected_duration_minutes: number
+          field: string | null
+          game_date: string
+          game_number: number
           id: string
-          notes: string | null
-          saved_by: string
-          slots: Json
+          is_provisional: boolean
+          kickoff_time: string
+          opponent: string | null
+          result: Json | null
+          status: string
           team_id: string
           updated_at: string
         }
         Insert: {
+          bracket_stage?: string | null
           competition_event_id: string
           created_at?: string
+          created_by?: string | null
+          expected_duration_minutes?: number
+          field?: string | null
+          game_date: string
+          game_number: number
           id?: string
-          notes?: string | null
-          saved_by: string
-          slots?: Json
+          is_provisional?: boolean
+          kickoff_time: string
+          opponent?: string | null
+          result?: Json | null
+          status?: string
           team_id: string
           updated_at?: string
         }
         Update: {
+          bracket_stage?: string | null
           competition_event_id?: string
           created_at?: string
+          created_by?: string | null
+          expected_duration_minutes?: number
+          field?: string | null
+          game_date?: string
+          game_number?: number
           id?: string
-          notes?: string | null
-          saved_by?: string
-          slots?: Json
+          is_provisional?: boolean
+          kickoff_time?: string
+          opponent?: string | null
+          result?: Json | null
+          status?: string
           team_id?: string
           updated_at?: string
         }
         Relationships: [
           {
-            foreignKeyName: "event_lineups_event_fkey"
+            foreignKeyName: "event_games_competition_event_id_fkey"
             columns: ["competition_event_id"]
             isOneToOne: false
             referencedRelation: "competition_events"
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "event_lineups_event_fkey"
+            foreignKeyName: "event_games_competition_event_id_fkey"
             columns: ["competition_event_id"]
             isOneToOne: false
             referencedRelation: "v_athlete_schedule"
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "event_lineups_event_fkey"
+            foreignKeyName: "event_games_competition_event_id_fkey"
             columns: ["competition_event_id"]
             isOneToOne: false
             referencedRelation: "v_pending_event_participation"
             referencedColumns: ["competition_event_id"]
           },
           {
-            foreignKeyName: "tournament_lineups_team_id_fkey"
+            foreignKeyName: "event_games_team_id_fkey"
             columns: ["team_id"]
             isOneToOne: false
             referencedRelation: "teams"
@@ -2839,6 +2588,7 @@ export type Database = {
           avg_rpe: number | null
           competition_event_id: string
           created_at: string | null
+          game_id: string | null
           games_expected: number | null
           games_played: number
           id: string
@@ -2858,6 +2608,7 @@ export type Database = {
           avg_rpe?: number | null
           competition_event_id: string
           created_at?: string | null
+          game_id?: string | null
           games_expected?: number | null
           games_played?: number
           id?: string
@@ -2877,6 +2628,7 @@ export type Database = {
           avg_rpe?: number | null
           competition_event_id?: string
           created_at?: string | null
+          game_id?: string | null
           games_expected?: number | null
           games_played?: number
           id?: string
@@ -2912,6 +2664,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "v_pending_event_participation"
             referencedColumns: ["competition_event_id"]
+          },
+          {
+            foreignKeyName: "event_participation_game_id_fkey"
+            columns: ["game_id"]
+            isOneToOne: false
+            referencedRelation: "event_games"
+            referencedColumns: ["id"]
           },
           {
             foreignKeyName: "event_participation_team_id_fkey"
@@ -2983,6 +2742,13 @@ export type Database = {
           user_id?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "execution_logs_exercise_id_fkey"
+            columns: ["exercise_id"]
+            isOneToOne: false
+            referencedRelation: "exercises"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "execution_logs_session_id_fkey"
             columns: ["session_id"]
@@ -3314,7 +3080,15 @@ export type Database = {
           id?: string
           mapping_type?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "ff_exercise_mappings_exercisedb_exercise_id_fkey"
+            columns: ["exercisedb_exercise_id"]
+            isOneToOne: false
+            referencedRelation: "exercisedb_exercises"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       flag_pull_stats: {
         Row: {
@@ -3380,7 +3154,15 @@ export type Database = {
           yards_after_miss?: number | null
           yards_before_pull?: number | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "flag_pull_stats_game_event_id_fkey"
+            columns: ["game_event_id"]
+            isOneToOne: false
+            referencedRelation: "game_events"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       frontend_logs: {
         Row: {
@@ -4611,7 +4393,15 @@ export type Database = {
           team_id?: string | null
           user_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "nutrition_reports_team_id_fkey"
+            columns: ["team_id"]
+            isOneToOne: false
+            referencedRelation: "teams"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       opponent_analysis: {
         Row: {
@@ -4931,7 +4721,15 @@ export type Database = {
           video_end_time?: number | null
           video_start_time?: number | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "passing_stats_game_event_id_fkey"
+            columns: ["game_event_id"]
+            isOneToOne: false
+            referencedRelation: "game_events"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       performance_records: {
         Row: {
@@ -5158,208 +4956,6 @@ export type Database = {
           },
         ]
       }
-      player_development_goals: {
-        Row: {
-          category: string
-          coach_id: string
-          created_at: string
-          current_value: string | null
-          due_date: string | null
-          id: string
-          metric: string
-          notes: string | null
-          progress: number
-          start_value: string | null
-          status: string
-          target_value: string
-          team_id: string
-          updated_at: string
-          user_id: string
-        }
-        Insert: {
-          category: string
-          coach_id: string
-          created_at?: string
-          current_value?: string | null
-          due_date?: string | null
-          id?: string
-          metric: string
-          notes?: string | null
-          progress?: number
-          start_value?: string | null
-          status?: string
-          target_value: string
-          team_id: string
-          updated_at?: string
-          user_id: string
-        }
-        Update: {
-          category?: string
-          coach_id?: string
-          created_at?: string
-          current_value?: string | null
-          due_date?: string | null
-          id?: string
-          metric?: string
-          notes?: string | null
-          progress?: number
-          start_value?: string | null
-          status?: string
-          target_value?: string
-          team_id?: string
-          updated_at?: string
-          user_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "player_development_goals_team_id_fkey"
-            columns: ["team_id"]
-            isOneToOne: false
-            referencedRelation: "teams"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      player_development_notes: {
-        Row: {
-          coach_id: string
-          content: string
-          created_at: string
-          id: string
-          team_id: string
-          updated_at: string
-          user_id: string
-        }
-        Insert: {
-          coach_id: string
-          content: string
-          created_at?: string
-          id?: string
-          team_id: string
-          updated_at?: string
-          user_id: string
-        }
-        Update: {
-          coach_id?: string
-          content?: string
-          created_at?: string
-          id?: string
-          team_id?: string
-          updated_at?: string
-          user_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "player_development_notes_team_id_fkey"
-            columns: ["team_id"]
-            isOneToOne: false
-            referencedRelation: "teams"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      player_game_summary: {
-        Row: {
-          created_at: string | null
-          defensive_epa: number | null
-          drops: number | null
-          flag_pulls: number | null
-          game_id: string
-          id: number
-          interceptions: number | null
-          missed_flag_pulls: number | null
-          offensive_epa: number | null
-          passing_touchdowns: number | null
-          passing_yards: number | null
-          performance_decline_2nd_half: boolean | null
-          performance_notes: string | null
-          plays_participated: number | null
-          position: string | null
-          receiving_touchdowns: number | null
-          receiving_yards: number | null
-          receptions: number | null
-          red_zone_attempts: number | null
-          red_zone_scores: number | null
-          rushing_touchdowns: number | null
-          rushing_yards: number | null
-          sacks: number | null
-          stamina_score: number | null
-          tackles: number | null
-          targets: number | null
-          third_down_attempts: number | null
-          third_down_conversions: number | null
-          updated_at: string | null
-          user_id: string
-          win_probability_added: number | null
-        }
-        Insert: {
-          created_at?: string | null
-          defensive_epa?: number | null
-          drops?: number | null
-          flag_pulls?: number | null
-          game_id: string
-          id?: number
-          interceptions?: number | null
-          missed_flag_pulls?: number | null
-          offensive_epa?: number | null
-          passing_touchdowns?: number | null
-          passing_yards?: number | null
-          performance_decline_2nd_half?: boolean | null
-          performance_notes?: string | null
-          plays_participated?: number | null
-          position?: string | null
-          receiving_touchdowns?: number | null
-          receiving_yards?: number | null
-          receptions?: number | null
-          red_zone_attempts?: number | null
-          red_zone_scores?: number | null
-          rushing_touchdowns?: number | null
-          rushing_yards?: number | null
-          sacks?: number | null
-          stamina_score?: number | null
-          tackles?: number | null
-          targets?: number | null
-          third_down_attempts?: number | null
-          third_down_conversions?: number | null
-          updated_at?: string | null
-          user_id: string
-          win_probability_added?: number | null
-        }
-        Update: {
-          created_at?: string | null
-          defensive_epa?: number | null
-          drops?: number | null
-          flag_pulls?: number | null
-          game_id?: string
-          id?: number
-          interceptions?: number | null
-          missed_flag_pulls?: number | null
-          offensive_epa?: number | null
-          passing_touchdowns?: number | null
-          passing_yards?: number | null
-          performance_decline_2nd_half?: boolean | null
-          performance_notes?: string | null
-          plays_participated?: number | null
-          position?: string | null
-          receiving_touchdowns?: number | null
-          receiving_yards?: number | null
-          receptions?: number | null
-          red_zone_attempts?: number | null
-          red_zone_scores?: number | null
-          rushing_touchdowns?: number | null
-          rushing_yards?: number | null
-          sacks?: number | null
-          stamina_score?: number | null
-          tackles?: number | null
-          targets?: number | null
-          third_down_attempts?: number | null
-          third_down_conversions?: number | null
-          updated_at?: string | null
-          user_id?: string
-          win_probability_added?: number | null
-        }
-        Relationships: []
-      }
       player_payments: {
         Row: {
           amount: number
@@ -5500,53 +5096,6 @@ export type Database = {
             columns: ["program_id"]
             isOneToOne: false
             referencedRelation: "training_programs"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      player_skill_assessments: {
-        Row: {
-          coach_id: string
-          created_at: string
-          grade: string
-          id: string
-          score: number
-          skill: string
-          skill_key: string
-          team_id: string
-          updated_at: string
-          user_id: string
-        }
-        Insert: {
-          coach_id: string
-          created_at?: string
-          grade: string
-          id?: string
-          score: number
-          skill: string
-          skill_key: string
-          team_id: string
-          updated_at?: string
-          user_id: string
-        }
-        Update: {
-          coach_id?: string
-          created_at?: string
-          grade?: string
-          id?: string
-          score?: number
-          skill?: string
-          skill_key?: string
-          team_id?: string
-          updated_at?: string
-          user_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "player_skill_assessments_team_id_fkey"
-            columns: ["team_id"]
-            isOneToOne: false
-            referencedRelation: "teams"
             referencedColumns: ["id"]
           },
         ]
@@ -6236,7 +5785,15 @@ export type Database = {
           status?: string
           user_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "proactive_checkins_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       program_assignments: {
         Row: {
@@ -6629,14 +6186,12 @@ export type Database = {
           day: string
           id: string
           level: string | null
-          notes: string | null
           proximity_score: number | null
           score: number | null
           sleep_score: number | null
           suggestion: string | null
           updated_at: string | null
           user_id: string
-          wellness_score: number | null
           workload_score: number | null
         }
         Insert: {
@@ -6647,14 +6202,12 @@ export type Database = {
           day: string
           id?: string
           level?: string | null
-          notes?: string | null
           proximity_score?: number | null
           score?: number | null
           sleep_score?: number | null
           suggestion?: string | null
           updated_at?: string | null
           user_id: string
-          wellness_score?: number | null
           workload_score?: number | null
         }
         Update: {
@@ -6665,17 +6218,23 @@ export type Database = {
           day?: string
           id?: string
           level?: string | null
-          notes?: string | null
           proximity_score?: number | null
           score?: number | null
           sleep_score?: number | null
           suggestion?: string | null
           updated_at?: string | null
           user_id?: string
-          wellness_score?: number | null
           workload_score?: number | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "readiness_scores_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       receiving_stats: {
         Row: {
@@ -6747,7 +6306,15 @@ export type Database = {
           yards_after_catch?: number | null
           yards_gained?: number | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "receiving_stats_game_event_id_fkey"
+            columns: ["game_event_id"]
+            isOneToOne: false
+            referencedRelation: "game_events"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       recovery_blocks: {
         Row: {
@@ -7823,7 +7390,15 @@ export type Database = {
           updated_at?: string
           weather_override?: Json | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "team_activities_team_id_fkey"
+            columns: ["team_id"]
+            isOneToOne: false
+            referencedRelation: "teams"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       team_events: {
         Row: {
@@ -8026,47 +7601,6 @@ export type Database = {
             foreignKeyName: "team_members_team_id_fkey"
             columns: ["team_id"]
             isOneToOne: false
-            referencedRelation: "teams"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      team_preferences: {
-        Row: {
-          allow_players_view_analytics: boolean
-          auto_send_rsvp_reminders: boolean
-          created_at: string
-          created_by: string | null
-          require_coach_approval_posts: boolean
-          require_wellness_checkin: boolean
-          team_id: string
-          updated_at: string
-        }
-        Insert: {
-          allow_players_view_analytics?: boolean
-          auto_send_rsvp_reminders?: boolean
-          created_at?: string
-          created_by?: string | null
-          require_coach_approval_posts?: boolean
-          require_wellness_checkin?: boolean
-          team_id: string
-          updated_at?: string
-        }
-        Update: {
-          allow_players_view_analytics?: boolean
-          auto_send_rsvp_reminders?: boolean
-          created_at?: string
-          created_by?: string | null
-          require_coach_approval_posts?: boolean
-          require_wellness_checkin?: boolean
-          team_id?: string
-          updated_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "team_preferences_team_id_fkey"
-            columns: ["team_id"]
-            isOneToOne: true
             referencedRelation: "teams"
             referencedColumns: ["id"]
           },
@@ -9304,214 +8838,6 @@ export type Database = {
         }
         Relationships: []
       }
-      video_assignments: {
-        Row: {
-          assigned_by: string
-          assigned_to: string
-          completed_at: string | null
-          created_at: string | null
-          due_date: string | null
-          id: string
-          notes: string | null
-          playlist_id: string | null
-          status: string | null
-          team_id: string
-          video_id: string
-        }
-        Insert: {
-          assigned_by: string
-          assigned_to: string
-          completed_at?: string | null
-          created_at?: string | null
-          due_date?: string | null
-          id?: string
-          notes?: string | null
-          playlist_id?: string | null
-          status?: string | null
-          team_id: string
-          video_id: string
-        }
-        Update: {
-          assigned_by?: string
-          assigned_to?: string
-          completed_at?: string | null
-          created_at?: string | null
-          due_date?: string | null
-          id?: string
-          notes?: string | null
-          playlist_id?: string | null
-          status?: string | null
-          team_id?: string
-          video_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "video_assignments_playlist_id_fkey"
-            columns: ["playlist_id"]
-            isOneToOne: false
-            referencedRelation: "video_playlists"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "video_assignments_team_id_fkey"
-            columns: ["team_id"]
-            isOneToOne: false
-            referencedRelation: "teams"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      video_bookmarks: {
-        Row: {
-          creator_username: string | null
-          id: string
-          notes: string | null
-          saved_at: string | null
-          user_id: string
-          video_id: string
-          video_title: string
-          video_url: string
-        }
-        Insert: {
-          creator_username?: string | null
-          id?: string
-          notes?: string | null
-          saved_at?: string | null
-          user_id: string
-          video_id: string
-          video_title: string
-          video_url: string
-        }
-        Update: {
-          creator_username?: string | null
-          id?: string
-          notes?: string | null
-          saved_at?: string | null
-          user_id?: string
-          video_id?: string
-          video_title?: string
-          video_url?: string
-        }
-        Relationships: []
-      }
-      video_curation_status: {
-        Row: {
-          created_at: string | null
-          id: string
-          notes: string | null
-          status: string
-          team_id: string
-          updated_at: string | null
-          updated_by: string | null
-          video_id: string
-        }
-        Insert: {
-          created_at?: string | null
-          id?: string
-          notes?: string | null
-          status: string
-          team_id: string
-          updated_at?: string | null
-          updated_by?: string | null
-          video_id: string
-        }
-        Update: {
-          created_at?: string | null
-          id?: string
-          notes?: string | null
-          status?: string
-          team_id?: string
-          updated_at?: string | null
-          updated_by?: string | null
-          video_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "video_curation_status_team_id_fkey"
-            columns: ["team_id"]
-            isOneToOne: false
-            referencedRelation: "teams"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      video_playlists: {
-        Row: {
-          created_at: string | null
-          created_by: string
-          description: string | null
-          focus_areas: string[] | null
-          id: string
-          is_public: boolean | null
-          name: string
-          position: string | null
-          team_id: string | null
-          updated_at: string | null
-          video_ids: string[]
-        }
-        Insert: {
-          created_at?: string | null
-          created_by: string
-          description?: string | null
-          focus_areas?: string[] | null
-          id?: string
-          is_public?: boolean | null
-          name: string
-          position?: string | null
-          team_id?: string | null
-          updated_at?: string | null
-          video_ids?: string[]
-        }
-        Update: {
-          created_at?: string | null
-          created_by?: string
-          description?: string | null
-          focus_areas?: string[] | null
-          id?: string
-          is_public?: boolean | null
-          name?: string
-          position?: string | null
-          team_id?: string | null
-          updated_at?: string | null
-          video_ids?: string[]
-        }
-        Relationships: [
-          {
-            foreignKeyName: "video_playlists_team_id_fkey"
-            columns: ["team_id"]
-            isOneToOne: false
-            referencedRelation: "teams"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      video_watch_history: {
-        Row: {
-          completed: boolean | null
-          id: string
-          user_id: string
-          video_id: string
-          watch_duration_seconds: number | null
-          watched_at: string | null
-        }
-        Insert: {
-          completed?: boolean | null
-          id?: string
-          user_id: string
-          video_id: string
-          watch_duration_seconds?: number | null
-          watched_at?: string | null
-        }
-        Update: {
-          completed?: boolean | null
-          id?: string
-          user_id?: string
-          video_id?: string
-          watch_duration_seconds?: number | null
-          watched_at?: string | null
-        }
-        Relationships: []
-      }
       warmup_protocols: {
         Row: {
           created_at: string | null
@@ -9582,113 +8908,6 @@ export type Database = {
           threshold_value?: number | null
         }
         Relationships: []
-      }
-      weekly_training_analysis: {
-        Row: {
-          consecutive_high_load_days: number | null
-          created_at: string | null
-          daily_loads: number[] | null
-          exceeds_monotony_threshold: boolean | null
-          exceeds_strain_threshold: boolean | null
-          high_load_days: string[] | null
-          id: string
-          load_change_from_previous_week: number | null
-          load_distribution_quality: number | null
-          load_progression_safety: string | null
-          mean_daily_load: number | null
-          monotony_injury_risk: number | null
-          monotony_interpretation: string | null
-          next_week_load_target: number | null
-          recommended_load_variation: number | null
-          recommended_rest_days: number | null
-          recovery_day_adequacy: number | null
-          rest_days_count: number | null
-          standard_deviation: number | null
-          strain_injury_risk: number | null
-          strain_interpretation: string | null
-          total_training_duration_minutes: number | null
-          total_training_load: number | null
-          total_training_sessions: number | null
-          training_monotony: number | null
-          training_strain: number | null
-          user_id: string
-          week_end_date: string
-          week_start_date: string
-          weeks_consecutive_high_monotony: number | null
-        }
-        Insert: {
-          consecutive_high_load_days?: number | null
-          created_at?: string | null
-          daily_loads?: number[] | null
-          exceeds_monotony_threshold?: boolean | null
-          exceeds_strain_threshold?: boolean | null
-          high_load_days?: string[] | null
-          id?: string
-          load_change_from_previous_week?: number | null
-          load_distribution_quality?: number | null
-          load_progression_safety?: string | null
-          mean_daily_load?: number | null
-          monotony_injury_risk?: number | null
-          monotony_interpretation?: string | null
-          next_week_load_target?: number | null
-          recommended_load_variation?: number | null
-          recommended_rest_days?: number | null
-          recovery_day_adequacy?: number | null
-          rest_days_count?: number | null
-          standard_deviation?: number | null
-          strain_injury_risk?: number | null
-          strain_interpretation?: string | null
-          total_training_duration_minutes?: number | null
-          total_training_load?: number | null
-          total_training_sessions?: number | null
-          training_monotony?: number | null
-          training_strain?: number | null
-          user_id: string
-          week_end_date: string
-          week_start_date: string
-          weeks_consecutive_high_monotony?: number | null
-        }
-        Update: {
-          consecutive_high_load_days?: number | null
-          created_at?: string | null
-          daily_loads?: number[] | null
-          exceeds_monotony_threshold?: boolean | null
-          exceeds_strain_threshold?: boolean | null
-          high_load_days?: string[] | null
-          id?: string
-          load_change_from_previous_week?: number | null
-          load_distribution_quality?: number | null
-          load_progression_safety?: string | null
-          mean_daily_load?: number | null
-          monotony_injury_risk?: number | null
-          monotony_interpretation?: string | null
-          next_week_load_target?: number | null
-          recommended_load_variation?: number | null
-          recommended_rest_days?: number | null
-          recovery_day_adequacy?: number | null
-          rest_days_count?: number | null
-          standard_deviation?: number | null
-          strain_injury_risk?: number | null
-          strain_interpretation?: string | null
-          total_training_duration_minutes?: number | null
-          total_training_load?: number | null
-          total_training_sessions?: number | null
-          training_monotony?: number | null
-          training_strain?: number | null
-          user_id?: string
-          week_end_date?: string
-          week_start_date?: string
-          weeks_consecutive_high_monotony?: number | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "weekly_training_analysis_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
-        ]
       }
       youth_athlete_settings: {
         Row: {
@@ -9800,6 +9019,8 @@ export type Database = {
           ends_at: string | null
           expected_game_count: number | null
           external_id: string | null
+          hotel_address: string | null
+          hotel_name: string | null
           id: string | null
           importance: string | null
           label: string | null
@@ -10264,6 +9485,10 @@ export type Database = {
         Returns: undefined
       }
       increment_reply_count: { Args: { message_id: string }; Returns: number }
+      increment_training_points: {
+        Args: { p_points: number; p_user_id: string }
+        Returns: number
+      }
       initiate_account_deletion: {
         Args: { p_reason?: string; p_user_id: string }
         Returns: string
