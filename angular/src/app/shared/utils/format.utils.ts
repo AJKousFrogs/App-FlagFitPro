@@ -65,11 +65,7 @@ export function snakeCase(str: string): string {
  * @example
  * truncate('Hello World', 5) // 'Hello...'
  */
-export function truncate(
-  str: string,
-  length: number,
-  suffix = "...",
-): string {
+export function truncate(str: string, length: number, suffix = "..."): string {
   if (str.length <= length) return str;
   return str.slice(0, length) + suffix;
 }
@@ -238,22 +234,14 @@ export function getInitials(name: string, maxLength = 2): string {
  * @example
  * padStart('5', 3, '0') // '005'
  */
-export function padStart(
-  str: string,
-  length: number,
-  char = " ",
-): string {
+export function padStart(str: string, length: number, char = " "): string {
   return str.padStart(length, char);
 }
 
 /**
  * Pad string end to specific length
  */
-export function padEnd(
-  str: string,
-  length: number,
-  char = " ",
-): string {
+export function padEnd(str: string, length: number, char = " "): string {
   return str.padEnd(length, char);
 }
 

@@ -144,11 +144,35 @@ export function computeSessionLoad(session) {
  * training-plan and smart-training-recommendations previously duplicated.
  */
 export const ACWR_RISK_ZONES = Object.freeze({
-  detraining: { min: 0, max: 0.8, label: "Detraining", action: "increase_load", risk: 1.2 },
+  detraining: {
+    min: 0,
+    max: 0.8,
+    label: "Detraining",
+    action: "increase_load",
+    risk: 1.2,
+  },
   safe: { min: 0.8, max: 1.3, label: "Safe", action: "maintain", risk: 1.0 },
-  caution: { min: 1.3, max: 1.5, label: "Caution", action: "reduce_slightly", risk: 1.5 },
-  danger: { min: 1.5, max: 1.8, label: "Danger", action: "reduce_significantly", risk: 2.0 },
-  critical: { min: 1.8, max: Infinity, label: "Critical", action: "rest", risk: 4.2 },
+  caution: {
+    min: 1.3,
+    max: 1.5,
+    label: "Caution",
+    action: "reduce_slightly",
+    risk: 1.5,
+  },
+  danger: {
+    min: 1.5,
+    max: 1.8,
+    label: "Danger",
+    action: "reduce_significantly",
+    risk: 2.0,
+  },
+  critical: {
+    min: 1.8,
+    max: Infinity,
+    label: "Critical",
+    action: "rest",
+    risk: 4.2,
+  },
 });
 
 /** Classify an ACWR ratio into a zone key, or null if not a finite number. */

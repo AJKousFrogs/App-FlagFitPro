@@ -1,4 +1,3 @@
-
 // Netlify Function: Training Metrics
 // Retrieves flag-football metrics for an athlete
 // Endpoint: /api/training-metrics
@@ -151,8 +150,14 @@ const handler = async (event, context) => {
 
         const startDate = parseDateParam(event, "startDate", null);
 
-        const canonicalResult = await fetchCanonicalMetrics(athleteId, startDate);
-        if (canonicalResult.error && !isOptionalSchemaError(canonicalResult.error)) {
+        const canonicalResult = await fetchCanonicalMetrics(
+          athleteId,
+          startDate,
+        );
+        if (
+          canonicalResult.error &&
+          !isOptionalSchemaError(canonicalResult.error)
+        ) {
           return createErrorResponse(
             "Failed to retrieve metrics",
             500,
@@ -167,8 +172,8 @@ const handler = async (event, context) => {
         }
 
         return successResponse(
-          Array.from(mergedByDate.values()).sort(
-            (left, right) => right.date.localeCompare(left.date),
+          Array.from(mergedByDate.values()).sort((left, right) =>
+            right.date.localeCompare(left.date),
           ),
         );
       } catch (error) {

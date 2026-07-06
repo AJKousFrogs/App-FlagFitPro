@@ -1,14 +1,22 @@
 <header class="topbar">
   <div>
     <div class="eyebrow">
-      @if (nextEvent(); as ev) { {{ ev.competitionShortName || ev.competitionName }} · {{ ev.expectedGameCount }} games }
-      @else { Game day }
+      @if (nextEvent(); as ev) {
+        {{ ev.competitionShortName || ev.competitionName }} ·
+        {{ ev.expectedGameCount }} games
+      } @else {
+        Game day
+      }
     </div>
     <h1 class="inline"><lucide-icon name="flag" /> Game day</h1>
   </div>
   <div class="inline">
-    <a class="icon-btn" routerLink="/notifications" aria-label="Notifications"><lucide-icon name="bell" /><span class="dot"></span></a>
-    <a class="avatar" routerLink="/profile" aria-label="Profile"><app-avatar /></a>
+    <a class="icon-btn" routerLink="/notifications" aria-label="Notifications"
+      ><lucide-icon name="bell" /><span class="dot"></span
+    ></a>
+    <a class="avatar" routerLink="/profile" aria-label="Profile"
+      ><app-avatar
+    /></a>
   </div>
 </header>
 
@@ -18,14 +26,20 @@
     <div class="scrim"></div>
     <div class="content">
       <div class="eyebrow">Game day</div>
-      <h2>@if (nextEvent(); as ev) { {{ ev.competitionShortName || ev.competitionName }} — go time } @else { Go time }</h2>
+      <h2>
+        @if (nextEvent(); as ev) {
+          {{ ev.competitionShortName || ev.competitionName }} — go time
+        } @else {
+          Go time
+        }
+      </h2>
     </div>
   </div>
 
   <div class="hero">
     <h1>Game day</h1>
-    <p style="margin:var(--s-2) 0 0;color:var(--text)">{{ reasoning() }}</p>
-    <div class="tiles" style="margin-top:var(--s-4)">
+    <p style="margin: var(--s-2) 0 0; color: var(--text)">{{ reasoning() }}</p>
+    <div class="tiles" style="margin-top: var(--s-4)">
       <div><b>activate</b><small>warm-up</small></div>
       <div><b>refuel</b><small>between</small></div>
       <div><b>critical</b><small>recovery</small></div>
@@ -34,9 +48,16 @@
 
   @if (weather(); as w) {
     @if (conditions(); as c) {
-      <div class="card" [class.warn]="c.band !== 'info'" [class.info]="c.band === 'info'">
-        <div class="inline"><lucide-icon [name]="c.icon" /> <b>Conditions</b>
-          @if (c.label) { <span class="band {{ c.band }}">{{ c.label }}</span> }
+      <div
+        class="card"
+        [class.warn]="c.band !== 'info'"
+        [class.info]="c.band === 'info'"
+      >
+        <div class="inline">
+          <lucide-icon [name]="c.icon" /> <b>Conditions</b>
+          @if (c.label) {
+            <span class="band {{ c.band }}">{{ c.label }}</span>
+          }
         </div>
         <small>{{ w.reason }}</small>
       </div>
@@ -45,7 +66,9 @@
 
   @if (multiGame()) {
     <div class="card accent">
-      <div class="inline"><lucide-icon name="flag" /> <b>Warm-up before every game</b></div>
+      <div class="inline">
+        <lucide-icon name="flag" /> <b>Warm-up before every game</b>
+      </div>
       <small>{{ warmupNote }}</small>
     </div>
   }
@@ -53,22 +76,55 @@
   @if (isCoach()) {
     <div class="card">
       <div class="row">
-        <div><b>Game schedule</b>
-          <small>@if (tournamentPlan.isTournamentDay()) { {{ tournamentPlan.games().length }} games entered } @else { No per-game kickoff times yet }</small>
+        <div>
+          <b>Game schedule</b>
+          <small>
+            @if (tournamentPlan.isTournamentDay()) {
+              {{ tournamentPlan.games().length }} games entered
+            } @else {
+              No per-game kickoff times yet
+            }
+          </small>
         </div>
-        <button class="btn secondary sm" type="button" (click)="toggleScheduleEditor()">
-          {{ showScheduleEditor() ? 'Cancel' : (tournamentPlan.isTournamentDay() ? 'Edit' : 'Add kickoff times') }}
+        <button
+          class="btn secondary sm"
+          type="button"
+          (click)="toggleScheduleEditor()"
+        >
+          {{
+            showScheduleEditor()
+              ? "Cancel"
+              : tournamentPlan.isTournamentDay()
+                ? "Edit"
+                : "Add kickoff times"
+          }}
         </button>
       </div>
       @if (showScheduleEditor()) {
-        <div style="margin-top:var(--s-3)">
-          <label for="kickoff-times"><small>Kickoff times, comma-separated (venue-local, 24h)</small></label>
-          <input id="kickoff-times" type="text" placeholder="11:00, 12:30, 15:30, 17:00"
-            [value]="bulkKickoffInput()" (input)="bulkKickoffInput.set($any($event.target).value)" />
-          @if (bulkError(); as err) { <p class="note" style="color:var(--danger)">{{ err }}</p> }
-          <button class="btn sm" style="margin-top:var(--s-2)" type="button"
-            [disabled]="bulkSaving()" (click)="saveKickoffTimes()">
-            {{ bulkSaving() ? 'Saving…' : 'Save schedule' }}
+        <div style="margin-top: var(--s-3)">
+          <label for="kickoff-times"
+            ><small
+              >Kickoff times, comma-separated (venue-local, 24h)</small
+            ></label
+          >
+          <input
+            id="kickoff-times"
+            type="text"
+            placeholder="11:00, 12:30, 15:30, 17:00"
+            [value]="bulkKickoffInput()"
+            (input)="bulkKickoffInput.set($any($event.target).value)"
+          />
+          @if (bulkError(); as err) {
+            <p class="note" style="color: var(--danger)">{{ err }}</p>
+          }
+          <button
+            class="btn sm"
+            style="margin-top: var(--s-2)"
+            type="button"
+            [disabled]="bulkSaving()"
+            (click)="saveKickoffTimes()"
+          >
+            {{ bulkSaving() ? "Saving…" : "Save schedule" }}
           </button>
         </div>
       }
@@ -80,24 +136,42 @@
     @if (tournamentPlan.loading()) {
       <app-skeleton variant="rows" [rows]="4" label="tournament timeline" />
     } @else {
-      @for (block of timelineBlocks(); track block.time + block.label; let i = $index) {
+      @for (
+        block of timelineBlocks();
+        track block.time + block.label;
+        let i = $index
+      ) {
         <div class="card" [class.accent]="i === nextBlockIndex()">
           <div class="row">
             <div>
               <div class="inline">
                 @switch (block.kind) {
-                  @case ("game") { <lucide-icon name="flag" /> }
-                  @case ("warmup") { <lucide-icon name="flame" /> }
-                  @case ("fuel") { <lucide-icon name="apple" /> }
-                  @case ("recovery") { <lucide-icon name="moon" /> }
-                  @case ("meal") { <lucide-icon name="utensils" /> }
-                  @default { <lucide-icon name="clock" /> }
+                  @case ("game") {
+                    <lucide-icon name="flag" />
+                  }
+                  @case ("warmup") {
+                    <lucide-icon name="flame" />
+                  }
+                  @case ("fuel") {
+                    <lucide-icon name="apple" />
+                  }
+                  @case ("recovery") {
+                    <lucide-icon name="moon" />
+                  }
+                  @case ("meal") {
+                    <lucide-icon name="utensils" />
+                  }
+                  @default {
+                    <lucide-icon name="clock" />
+                  }
                 }
                 <b>{{ block.label }}</b>
               </div>
               <small>{{ block.detail }}</small>
               @if (block.warning) {
-                <div class="band danger" style="margin-top:var(--s-1)">{{ block.warning }}</div>
+                <div class="band danger" style="margin-top: var(--s-1)">
+                  {{ block.warning }}
+                </div>
               }
             </div>
             <div class="eyebrow">{{ block.time }}</div>
@@ -111,24 +185,56 @@
       <app-skeleton variant="rows" [rows]="3" label="fueling timeline" />
     } @else if (fuel(); as f) {
       <div class="card">
-        <div class="lrow"><span>2–3h before G1</span>
-          <b class="inline"><iconify-icon icon="mdi:rice"></iconify-icon> {{ f.before }}g carbs</b></div>
-        <div class="lrow"><span>Between games</span>
-          <b class="inline"><iconify-icon icon="mdi:food-apple"></iconify-icon> {{ f.betweenCarb }}g + <iconify-icon icon="mdi:cup-water"></iconify-icon> 250ml/15min</b></div>
-        <div class="lrow"><span>After final game</span>
-          <b class="inline"><iconify-icon icon="mdi:food-drumstick"></iconify-icon> {{ f.afterCarb }}g carbs + {{ f.afterProtein }}g protein</b></div>
+        <div class="lrow">
+          <span>2–3h before G1</span>
+          <b class="inline"
+            ><iconify-icon icon="mdi:rice"></iconify-icon> {{ f.before }}g
+            carbs</b
+          >
+        </div>
+        <div class="lrow">
+          <span>Between games</span>
+          <b class="inline"
+            ><iconify-icon icon="mdi:food-apple"></iconify-icon>
+            {{ f.betweenCarb }}g +
+            <iconify-icon icon="mdi:cup-water"></iconify-icon> 250ml/15min</b
+          >
+        </div>
+        <div class="lrow">
+          <span>After final game</span>
+          <b class="inline"
+            ><iconify-icon icon="mdi:food-drumstick"></iconify-icon>
+            {{ f.afterCarb }}g carbs + {{ f.afterProtein }}g protein</b
+          >
+        </div>
       </div>
     } @else {
-      <div class="empty">Fueling plan appears once today's prescription is generated.</div>
+      <div class="empty">
+        Fueling plan appears once today's prescription is generated.
+      </div>
     }
   }
 
   <div class="card">
     <div class="row">
-      <div><b>Hydration</b> <small>{{ hydrationL() }} L today</small></div>
+      <div>
+        <b>Hydration</b> <small>{{ hydrationL() }} L today</small>
+      </div>
       <div class="inline">
-        <button class="btn secondary sm" type="button" (click)="addHydration(250)">+250</button>
-        <button class="btn secondary sm" type="button" (click)="addHydration(500)">+500</button>
+        <button
+          class="btn secondary sm"
+          type="button"
+          (click)="addHydration(250)"
+        >
+          +250
+        </button>
+        <button
+          class="btn secondary sm"
+          type="button"
+          (click)="addHydration(500)"
+        >
+          +500
+        </button>
       </div>
     </div>
   </div>

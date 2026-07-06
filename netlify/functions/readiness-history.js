@@ -1,4 +1,3 @@
-
 // Netlify Function: Readiness History
 // Retrieves historical readiness scores for an athlete
 // Endpoint: /api/readiness-history
@@ -10,9 +9,16 @@ import { supabaseAdmin } from "./supabase-client.js";
 
 import { baseHandler } from "./utils/base-handler.js";
 import { createErrorResponse } from "./utils/error-handler.js";
-import { parseAthleteId, parseIntParam, calculateDateRange } from "./utils/db-query-helper.js";
+import {
+  parseAthleteId,
+  parseIntParam,
+  calculateDateRange,
+} from "./utils/db-query-helper.js";
 import { successResponse } from "./utils/response-helper.js";
-import { canCoachViewReadiness, filterReadinessForCoach } from "./utils/consent-guard.js";
+import {
+  canCoachViewReadiness,
+  filterReadinessForCoach,
+} from "./utils/consent-guard.js";
 import { getUserRole } from "./utils/authorization-guard.js";
 import { hasAnyRole, LOAD_MANAGEMENT_ACCESS_ROLES } from "./utils/role-sets.js";
 import { createLogger } from "./utils/structured-logger.js";

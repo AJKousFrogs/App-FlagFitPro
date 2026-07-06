@@ -22,7 +22,9 @@ const handler = async (event, context) => {
         if (dbError?.code) {
           logger.error("sponsors_db_error", dbError, { code: dbError.code });
         } else {
-          logger.error("sponsors_db_error", dbError, { message: "Database error in sponsors function" });
+          logger.error("sponsors_db_error", dbError, {
+            message: "Database error in sponsors function",
+          });
         }
         // Return empty array if database query fails (fallback to hardcoded logos)
         sponsors = [];

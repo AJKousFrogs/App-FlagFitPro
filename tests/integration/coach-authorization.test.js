@@ -17,7 +17,10 @@ vi.mock("../../netlify/functions/supabase-client.js", () => ({
           eq: () => ({
             limit: async () => ({ data: [{ team_id: "team-1" }], error: null }),
           }),
-          single: async () => ({ data: { id: "coach-1", name: "Coach One" }, error: null }),
+          single: async () => ({
+            data: { id: "coach-1", name: "Coach One" },
+            error: null,
+          }),
         }),
       }),
     }),
@@ -32,8 +35,14 @@ vi.mock("../../netlify/functions/supabase-client.js", () => ({
 
 vi.mock("../../netlify/functions/utils/consent-data-reader.js", () => ({
   ConsentDataReader: class {
-    readTrainingSessions = async () => ({ data: [], consentInfo: { blockedPlayerIds: [] } });
-    readWellnessEntries = async () => ({ data: [], consentInfo: { blockedPlayerIds: [] } });
+    readTrainingSessions = async () => ({
+      data: [],
+      consentInfo: { blockedPlayerIds: [] },
+    });
+    readWellnessEntries = async () => ({
+      data: [],
+      consentInfo: { blockedPlayerIds: [] },
+    });
   },
   AccessContext: {
     COACH_TEAM_DATA: "COACH_TEAM_DATA",

@@ -33,7 +33,6 @@ vi.mock("../../netlify/functions/supabase-client.js", () => ({
   },
 }));
 
-
 describe("admin authorization and failure response hardening", () => {
   let handler;
   const originalEnv = { ...process.env };

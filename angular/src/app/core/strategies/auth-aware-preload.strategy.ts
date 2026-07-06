@@ -34,7 +34,8 @@ export class AuthAwarePreloadStrategy implements PreloadingStrategy {
     const priority = route.data?.["priority"];
     const entry = route.data?.["entry"];
     const isAuthenticated =
-      this.supabaseService.isAuthenticated() || !!this.supabaseService.session();
+      this.supabaseService.isAuthenticated() ||
+      !!this.supabaseService.session();
 
     // v4.0: only explicitly opted-in routes should preload.
     if (preload !== true) {
@@ -67,15 +68,19 @@ export class AuthAwarePreloadStrategy implements PreloadingStrategy {
       return false;
     }
 
-    const connection = (navigator as Navigator & {
-      connection?: { saveData?: boolean; effectiveType?: string };
-    }).connection;
+    const connection = (
+      navigator as Navigator & {
+        connection?: { saveData?: boolean; effectiveType?: string };
+      }
+    ).connection;
 
     if (!connection) {
       return false;
     }
 
-    return connection.saveData === true ||
-      this.slowNetworkTypes.has(connection.effectiveType ?? "");
+    return (
+      connection.saveData === true ||
+      this.slowNetworkTypes.has(connection.effectiveType ?? "")
+    );
   }
 }

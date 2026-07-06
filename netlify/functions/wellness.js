@@ -38,7 +38,10 @@ const handleRequest = async (req) => {
   const path = url.pathname;
 
   // Check-in: /api/wellness/checkin, /api/wellness-checkin — MUST match before generic /wellness/*
-  if (path.includes("/wellness/checkin") || path.includes("/wellness-checkin")) {
+  if (
+    path.includes("/wellness/checkin") ||
+    path.includes("/wellness-checkin")
+  ) {
     return dispatch(wellnessCheckinHandler, req, url);
   }
 
@@ -63,7 +66,11 @@ const handleRequest = async (req) => {
   }
 
   return new Response(
-    JSON.stringify({ success: false, error: `Not found: ${req.method} ${path}`, code: "not_found" }),
+    JSON.stringify({
+      success: false,
+      error: `Not found: ${req.method} ${path}`,
+      code: "not_found",
+    }),
     { status: 404, headers: corsHeaders(req) },
   );
 };

@@ -7,6 +7,7 @@ A flag-football performance, wellness, and team-operations platform built with *
 **→ [`docs/SOURCE_OF_TRUTH.md`](./docs/SOURCE_OF_TRUTH.md)** is the single authoritative doc: system map, data model, endpoint reference, the **Feature Status Ledger** (read before building anything — it says what already exists), spec laws, known drift, and runbooks.
 
 Generated, ground-truth-anchored references it links to:
+
 - [`docs/generated/DATA_MODEL.md`](./docs/generated/DATA_MODEL.md) — exact live tables/columns
 - [`docs/generated/ENDPOINTS.md`](./docs/generated/ENDPOINTS.md) — every `/api/*` route, exercised vs orphaned
 

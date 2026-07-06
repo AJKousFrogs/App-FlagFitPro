@@ -164,11 +164,17 @@ describe("ApiService", () => {
       let secondResult: ApiResponse<{ id: number }> | undefined;
 
       // Two simultaneous subscriptions before the request resolves
-      service.get<{ id: number }>("/dedup-endpoint").subscribe((r) => { firstResult = r; });
-      service.get<{ id: number }>("/dedup-endpoint").subscribe((r) => { secondResult = r; });
+      service.get<{ id: number }>("/dedup-endpoint").subscribe((r) => {
+        firstResult = r;
+      });
+      service.get<{ id: number }>("/dedup-endpoint").subscribe((r) => {
+        secondResult = r;
+      });
 
       // Only ONE network request should be outstanding
-      const requests = httpMock.match((req) => req.url.includes("/dedup-endpoint"));
+      const requests = httpMock.match((req) =>
+        req.url.includes("/dedup-endpoint"),
+      );
       expect(requests.length).toBe(1);
 
       // Flush the single request — both subscribers should receive the value
@@ -183,11 +189,15 @@ describe("ApiService", () => {
 
       // First request — subscribe and flush immediately
       service.get("/unique-endpoint").subscribe();
-      httpMock.expectOne((req) => req.url.includes("/unique-endpoint")).flush(mockResponse);
+      httpMock
+        .expectOne((req) => req.url.includes("/unique-endpoint"))
+        .flush(mockResponse);
 
       // Second request after the first has fully completed
       service.get("/unique-endpoint").subscribe();
-      const req2 = httpMock.expectOne((req) => req.url.includes("/unique-endpoint"));
+      const req2 = httpMock.expectOne((req) =>
+        req.url.includes("/unique-endpoint"),
+      );
       expect(req2).toBeTruthy();
       req2.flush(mockResponse);
     });

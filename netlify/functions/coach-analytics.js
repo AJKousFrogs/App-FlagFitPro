@@ -1,6 +1,9 @@
 import { supabaseAdmin } from "./supabase-client.js";
 import { baseHandler } from "./utils/base-handler.js";
-import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
+import {
+  createSuccessResponse,
+  createErrorResponse,
+} from "./utils/error-handler.js";
 import { parseJsonObjectBody } from "./utils/input-validator.js";
 import { createLogger, makeRequestLogger } from "./utils/structured-logger.js";
 
@@ -19,16 +22,24 @@ const COACH_ANALYTICS_ROLES = [
   "defense_coordinator",
 ];
 
-const parseBoundedPositiveInt = (value, fieldName, { min = 1, max = 365 } = {}) => {
+const parseBoundedPositiveInt = (
+  value,
+  fieldName,
+  { min = 1, max = 365 } = {},
+) => {
   if (value === undefined || value === null || value === "") {
     return null;
   }
   if (!/^\d+$/.test(String(value))) {
-    throw new Error(`${fieldName} must be an integer between ${min} and ${max}`);
+    throw new Error(
+      `${fieldName} must be an integer between ${min} and ${max}`,
+    );
   }
   const parsed = Number.parseInt(String(value), 10);
   if (!Number.isInteger(parsed) || parsed < min || parsed > max) {
-    throw new Error(`${fieldName} must be an integer between ${min} and ${max}`);
+    throw new Error(
+      `${fieldName} must be an integer between ${min} and ${max}`,
+    );
   }
   return parsed;
 };
@@ -66,11 +77,9 @@ async function verifyCoachAccess(userId, log = logger) {
     .in("role", COACH_ANALYTICS_ROLES);
 
   if (error) {
-    log.error(
-      "coach_analytics_verify_coach_failed",
-      error,
-      { user_id: userId },
-    );
+    log.error("coach_analytics_verify_coach_failed", error, {
+      user_id: userId,
+    });
     return { isCoach: false, teamIds: [] };
   }
 
@@ -97,13 +106,9 @@ async function getTeamMemberIds(teamIds, log = logger) {
     .eq("status", "active");
 
   if (error) {
-    log.error(
-      "coach_analytics_team_members_fetch_failed",
-      error,
-      {
-        team_count: teamIds.length,
-      },
-    );
+    log.error("coach_analytics_team_members_fetch_failed", error, {
+      team_count: teamIds.length,
+    });
     return [];
   }
 
@@ -210,7 +215,11 @@ async function getOverviewMetrics(
  * @param {Object} options - Query options
  * @returns {Object} - Classification breakdown
  */
-async function getClassificationBreakdown(memberIds, options = {}, log = logger) {
+async function getClassificationBreakdown(
+  memberIds,
+  options = {},
+  log = logger,
+) {
   const { dateFrom, dateTo } = options;
 
   let query = supabaseAdmin
@@ -231,13 +240,9 @@ async function getClassificationBreakdown(memberIds, options = {}, log = logger)
   const { data, error } = await query;
 
   if (error) {
-    log.error(
-      "coach_analytics_classification_fetch_failed",
-      error,
-      {
-        member_count: memberIds.length,
-      },
-    );
+    log.error("coach_analytics_classification_fetch_failed", error, {
+      member_count: memberIds.length,
+    });
     return null;
   }
 
@@ -639,16 +644,19 @@ const handler = async (event, context) => {
   return baseHandler(event, context, {
     functionName: "coach-analytics",
     allowedMethods: ["GET", "POST"],
-rateLimitType,
+    rateLimitType,
     requireAuth: true,
     handler: async (event, _context, { userId, requestId, correlationId }) => {
-        const requestLogger = createRequestLogger(event, {
+      const requestLogger = createRequestLogger(event, {
         requestId,
         correlationId,
       });
 
       // Verify coach access
-      const { isCoach, teamIds } = await verifyCoachAccess(userId, requestLogger);
+      const { isCoach, teamIds } = await verifyCoachAccess(
+        userId,
+        requestLogger,
+      );
       if (!isCoach) {
         return createErrorResponse(
           "Only coaches can access analytics",
@@ -697,10 +705,11 @@ rateLimitType,
         if (method === "GET" && resource === "trends") {
           const memberIds = await getTeamMemberIds(teamIds, requestLogger);
           const trends = await getTrends(memberIds, {
-            days: parseBoundedPositiveInt(params.days, "days", {
-              min: 1,
-              max: 365,
-            }) ?? 30,
+            days:
+              parseBoundedPositiveInt(params.days, "days", {
+                min: 1,
+                max: 365,
+              }) ?? 30,
           });
           return createSuccessResponse(trends, requestId);
         }
@@ -733,14 +742,16 @@ rateLimitType,
           }
 
           const leaderboard = await getTeamLeaderboard(resourceId, {
-            limit: parseBoundedPositiveInt(params.limit, "limit", {
-              min: 1,
-              max: 100,
-            }) ?? 10,
-            days: parseBoundedPositiveInt(params.days, "days", {
-              min: 1,
-              max: 365,
-            }) ?? 30,
+            limit:
+              parseBoundedPositiveInt(params.limit, "limit", {
+                min: 1,
+                max: 100,
+              }) ?? 10,
+            days:
+              parseBoundedPositiveInt(params.days, "days", {
+                min: 1,
+                max: 365,
+              }) ?? 30,
           });
           return createSuccessResponse({ leaderboard }, requestId);
         }
@@ -807,7 +818,12 @@ rateLimitType,
           return createSuccessResponse(overview, requestId);
         }
 
-        return createErrorResponse("Endpoint not found", 404, "not_found", requestId);
+        return createErrorResponse(
+          "Endpoint not found",
+          404,
+          "not_found",
+          requestId,
+        );
       } catch (error) {
         if (error.code === "invalid_json") {
           return createErrorResponse(
@@ -828,15 +844,11 @@ rateLimitType,
             requestId,
           );
         }
-        requestLogger.error(
-          "coach_analytics_handler_failed",
-          error,
-          {
-            http_method: method,
-            path,
-            user_id: userId,
-          },
-        );
+        requestLogger.error("coach_analytics_handler_failed", error, {
+          http_method: method,
+          path,
+          user_id: userId,
+        });
         return createErrorResponse(
           error.message || "Failed to fetch analytics",
           500,

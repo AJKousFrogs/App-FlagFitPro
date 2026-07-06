@@ -1,110 +1,229 @@
 <header class="topbar">
   <div><h1>Settings</h1></div>
-  <a class="avatar" routerLink="/profile" aria-label="Profile"><app-avatar /></a>
+  <a class="avatar" routerLink="/profile" aria-label="Profile"
+    ><app-avatar
+  /></a>
 </header>
 
 <main class="screen">
   <!-- profile -->
-  <div class="card" style="display:flex;align-items:center;gap:var(--s-4)">
+  <div class="card" style="display: flex; align-items: center; gap: var(--s-4)">
     <span class="avatar lg"><app-avatar /></span>
-    <div style="flex:1">
-      <b style="font-family:var(--font-display);font-size:var(--fs-h3)">{{ name() }}</b>
-      <div class="muted" style="font-size:var(--fs-sm)">{{ subtitle() }}</div>
+    <div style="flex: 1">
+      <b style="font-family: var(--font-display); font-size: var(--fs-h3)">{{
+        name()
+      }}</b>
+      <div class="muted" style="font-size: var(--fs-sm)">{{ subtitle() }}</div>
     </div>
-    <button class="btn ghost sm" type="button" [attr.aria-disabled]="photoBusy()"
-            (click)="!photoBusy() && photoInput.click()">
-      <lucide-icon name="camera" aria-hidden="true" /> {{ photoBusy() ? "Uploading…" : "Change photo" }}
+    <button
+      class="btn ghost sm"
+      type="button"
+      [attr.aria-disabled]="photoBusy()"
+      (click)="!photoBusy() && photoInput.click()"
+    >
+      <lucide-icon name="camera" aria-hidden="true" />
+      {{ photoBusy() ? "Uploading…" : "Change photo" }}
     </button>
-    <input #photoInput type="file" accept="image/jpeg,image/png,image/webp,image/gif"
-           hidden (change)="onPhotoSelected($event)" />
+    <input
+      #photoInput
+      type="file"
+      accept="image/jpeg,image/png,image/webp,image/gif"
+      hidden
+      (change)="onPhotoSelected($event)"
+    />
   </div>
-  @if (photoMsg(); as m) { <p class="note" style="margin-top:calc(-1 * var(--s-2))" role="status" aria-live="polite">{{ m }}</p> }
+  @if (photoMsg(); as m) {
+    <p
+      class="note"
+      style="margin-top: calc(-1 * var(--s-2))"
+      role="status"
+      aria-live="polite"
+    >
+      {{ m }}
+    </p>
+  }
 
   <nav class="st-tabs" aria-label="Settings sections">
     @for (t of tabs; track t) {
-      <button type="button" class="st-tab" [class.on]="tab() === t" (click)="tab.set(t)">{{ t }}</button>
+      <button
+        type="button"
+        class="st-tab"
+        [class.on]="tab() === t"
+        (click)="tab.set(t)"
+      >
+        {{ t }}
+      </button>
     }
   </nav>
 
-  @if (prefsMsg(); as m) { <p class="note" style="color:var(--danger)" role="alert">{{ m }}</p> }
+  @if (prefsMsg(); as m) {
+    <p class="note" style="color: var(--danger)" role="alert">{{ m }}</p>
+  }
 
   @switch (tab()) {
     @case ("Notifications") {
       <div class="section-h"><h2>Notifications</h2></div>
       <div class="card">
-        <div class="lrow"><span id="l-tr">Training reminders</span>
-          <button class="sw" role="switch" [attr.aria-checked]="trainingReminders()" aria-labelledby="l-tr"
-                  (click)="trainingReminders.set(!trainingReminders()); saveNotifications()"></button></div>
-        <div class="lrow"><span id="l-gd">Game-day alerts</span>
-          <button class="sw" role="switch" [attr.aria-checked]="gameDayAlerts()" aria-labelledby="l-gd"
-                  (click)="gameDayAlerts.set(!gameDayAlerts()); saveNotifications()"></button></div>
-        <div class="lrow"><span id="l-ac">ACWR / safety alerts</span>
-          <button class="sw" role="switch" [attr.aria-checked]="acwrAlerts()" aria-labelledby="l-ac"
-                  (click)="acwrAlerts.set(!acwrAlerts()); saveNotifications()"></button></div>
-        <div class="lrow"><span id="l-cm">Coach messages</span>
-          <button class="sw" role="switch" [attr.aria-checked]="coachMessages()" aria-labelledby="l-cm"
-                  (click)="coachMessages.set(!coachMessages()); saveNotifications()"></button></div>
+        <div class="lrow">
+          <span id="l-tr">Training reminders</span>
+          <button
+            class="sw"
+            role="switch"
+            [attr.aria-checked]="trainingReminders()"
+            aria-labelledby="l-tr"
+            (click)="
+              trainingReminders.set(!trainingReminders()); saveNotifications()
+            "
+          ></button>
+        </div>
+        <div class="lrow">
+          <span id="l-gd">Game-day alerts</span>
+          <button
+            class="sw"
+            role="switch"
+            [attr.aria-checked]="gameDayAlerts()"
+            aria-labelledby="l-gd"
+            (click)="gameDayAlerts.set(!gameDayAlerts()); saveNotifications()"
+          ></button>
+        </div>
+        <div class="lrow">
+          <span id="l-ac">ACWR / safety alerts</span>
+          <button
+            class="sw"
+            role="switch"
+            [attr.aria-checked]="acwrAlerts()"
+            aria-labelledby="l-ac"
+            (click)="acwrAlerts.set(!acwrAlerts()); saveNotifications()"
+          ></button>
+        </div>
+        <div class="lrow">
+          <span id="l-cm">Coach messages</span>
+          <button
+            class="sw"
+            role="switch"
+            [attr.aria-checked]="coachMessages()"
+            aria-labelledby="l-cm"
+            (click)="coachMessages.set(!coachMessages()); saveNotifications()"
+          ></button>
+        </div>
       </div>
     }
     @case ("Privacy") {
       <div class="section-h"><h2>Privacy &amp; consent</h2></div>
       <div class="card">
-        <div class="lrow"><span id="l-ai">AI personalisation (Merlin)</span>
-          <button class="sw" role="switch" [attr.aria-checked]="aiPersonalisation()" aria-labelledby="l-ai"
-                  (click)="aiPersonalisation.set(!aiPersonalisation()); savePrivacy()"></button></div>
-        <div class="lrow"><span id="l-sp">Share performance with coaches</span>
-          <button class="sw" role="switch" [attr.aria-checked]="sharePerformance()" aria-labelledby="l-sp"
-                  (click)="sharePerformance.set(!sharePerformance()); savePrivacy()"></button></div>
-        <div class="lrow"><span id="l-sh">Share health with medical staff</span>
-          <button class="sw" role="switch" [attr.aria-checked]="shareHealth()" aria-labelledby="l-sh"
-                  (click)="shareHealth.set(!shareHealth()); savePrivacy()"></button></div>
+        <div class="lrow">
+          <span id="l-ai">AI personalisation (Merlin)</span>
+          <button
+            class="sw"
+            role="switch"
+            [attr.aria-checked]="aiPersonalisation()"
+            aria-labelledby="l-ai"
+            (click)="aiPersonalisation.set(!aiPersonalisation()); savePrivacy()"
+          ></button>
+        </div>
+        <div class="lrow">
+          <span id="l-sp">Share performance with coaches</span>
+          <button
+            class="sw"
+            role="switch"
+            [attr.aria-checked]="sharePerformance()"
+            aria-labelledby="l-sp"
+            (click)="sharePerformance.set(!sharePerformance()); savePrivacy()"
+          ></button>
+        </div>
+        <div class="lrow">
+          <span id="l-sh">Share health with medical staff</span>
+          <button
+            class="sw"
+            role="switch"
+            [attr.aria-checked]="shareHealth()"
+            aria-labelledby="l-sh"
+            (click)="shareHealth.set(!shareHealth()); savePrivacy()"
+          ></button>
+        </div>
       </div>
-      <p class="note">Privacy-first: sharing is off by default and only applies to teams you allow.</p>
+      <p class="note">
+        Privacy-first: sharing is off by default and only applies to teams you
+        allow.
+      </p>
     }
     @case ("Prefs") {
       <div class="section-h"><h2>Your position</h2></div>
       <div class="card stack">
-        <p class="muted" style="margin:0">
-          What's your primary position? Your plan emphasises this position's prehab focus
-          and gears volume to its worst-case game demands.
+        <p class="muted" style="margin: 0">
+          What's your primary position? Your plan emphasises this position's
+          prehab focus and gears volume to its worst-case game demands.
         </p>
         <div class="chiprow">
           @for (p of positions; track p.key) {
-            <button type="button" class="chip" [class.sel]="position() === p.key"
-                    (click)="selectPosition(p.key)">{{ p.label }}</button>
+            <button
+              type="button"
+              class="chip"
+              [class.sel]="position() === p.key"
+              (click)="selectPosition(p.key)"
+            >
+              {{ p.label }}
+            </button>
           }
         </div>
-        @if (positionMsg(); as m) { <small class="muted">{{ m }}</small> }
-        <div class="row" style="justify-content:flex-end">
-          <button class="btn primary sm" type="button"
-                  [attr.aria-disabled]="savingPosition() || !position()"
-                  (click)="savePosition()">{{ savingPosition() ? "Saving…" : "Save position" }}</button>
+        @if (positionMsg(); as m) {
+          <small class="muted">{{ m }}</small>
+        }
+        <div class="row" style="justify-content: flex-end">
+          <button
+            class="btn primary sm"
+            type="button"
+            [attr.aria-disabled]="savingPosition() || !position()"
+            (click)="savePosition()"
+          >
+            {{ savingPosition() ? "Saving…" : "Save position" }}
+          </button>
         </div>
       </div>
 
       <div class="section-h"><h2>Flag football training</h2></div>
       <div class="card stack">
-        <p class="muted" style="margin:0">
-          Which weekdays do you have team practice? Your plan treats these as your main
-          session and builds lighter individual work around them.
+        <p class="muted" style="margin: 0">
+          Which weekdays do you have team practice? Your plan treats these as
+          your main session and builds lighter individual work around them.
         </p>
         <div class="chiprow">
           @for (d of weekdays; track d.dow) {
-            <button type="button" class="chip" [class.sel]="trainingDays().includes(d.dow)"
-                    (click)="toggleTrainingDay(d.dow)">{{ d.label }}</button>
+            <button
+              type="button"
+              class="chip"
+              [class.sel]="trainingDays().includes(d.dow)"
+              (click)="toggleTrainingDay(d.dow)"
+            >
+              {{ d.label }}
+            </button>
           }
         </div>
-        <div class="row" style="gap:var(--s-3);align-items:center">
+        <div class="row" style="gap: var(--s-3); align-items: center">
           <label class="lbl" for="st-training-time">Usual time</label>
-          <input id="st-training-time" class="input" type="time" style="width:auto"
-                 [value]="trainingTime()" (change)="trainingTime.set(timeVal($event))" />
+          <input
+            id="st-training-time"
+            class="input"
+            type="time"
+            style="width: auto"
+            [value]="trainingTime()"
+            (change)="trainingTime.set(timeVal($event))"
+          />
         </div>
-        @if (trainingMsg(); as m) { <small class="muted">{{ m }}</small> }
-        <div class="row" style="justify-content:flex-end">
-          <button class="btn primary sm" type="button" [attr.aria-disabled]="savingTraining()"
-                  (click)="saveTraining()">{{ savingTraining() ? "Saving…" : "Save training days" }}</button>
+        @if (trainingMsg(); as m) {
+          <small class="muted">{{ m }}</small>
+        }
+        <div class="row" style="justify-content: flex-end">
+          <button
+            class="btn primary sm"
+            type="button"
+            [attr.aria-disabled]="savingTraining()"
+            (click)="saveTraining()"
+          >
+            {{ savingTraining() ? "Saving…" : "Save training days" }}
+          </button>
         </div>
-        <p class="note" style="margin:0">
+        <p class="note" style="margin: 0">
           For a one-off (a week that differs), add it on
           <a routerLink="/schedule">Schedule</a> as a “Team training”.
         </p>
@@ -112,19 +231,34 @@
 
       <div class="section-h"><h2>Recovery equipment</h2></div>
       <div class="card stack">
-        <p class="muted" style="margin:0">
-          What recovery gear do you have? We only ever suggest modalities you actually own.
+        <p class="muted" style="margin: 0">
+          What recovery gear do you have? We only ever suggest modalities you
+          actually own.
         </p>
         <div class="chiprow">
           @for (e of recoveryEquipment; track e.id) {
-            <button type="button" class="chip" [class.sel]="ownedEquipment().includes(e.id)"
-                    (click)="toggleEquipment(e.id)">{{ e.label }}</button>
+            <button
+              type="button"
+              class="chip"
+              [class.sel]="ownedEquipment().includes(e.id)"
+              (click)="toggleEquipment(e.id)"
+            >
+              {{ e.label }}
+            </button>
           }
         </div>
-        @if (equipMsg(); as m) { <small class="muted">{{ m }}</small> }
-        <div class="row" style="justify-content:flex-end">
-          <button class="btn primary sm" type="button" [attr.aria-disabled]="savingEquip()"
-                  (click)="saveEquipment()">{{ savingEquip() ? "Saving…" : "Save equipment" }}</button>
+        @if (equipMsg(); as m) {
+          <small class="muted">{{ m }}</small>
+        }
+        <div class="row" style="justify-content: flex-end">
+          <button
+            class="btn primary sm"
+            type="button"
+            [attr.aria-disabled]="savingEquip()"
+            (click)="saveEquipment()"
+          >
+            {{ savingEquip() ? "Saving…" : "Save equipment" }}
+          </button>
         </div>
       </div>
     }
@@ -135,28 +269,73 @@
 
   <div class="section-h"><h2>Account</h2></div>
   <div class="card">
-    <button type="button" class="lrow" style="width:100%;background:none;border:0;cursor:pointer;text-align:left;color:inherit;font:inherit"
-            [attr.aria-disabled]="accountBusy()" (click)="changePassword()">
-      <span>{{ accountBusy() ? "Working…" : "Change password" }}</span><lucide-icon name="chevron-right" class="faint" />
+    <button
+      type="button"
+      class="lrow"
+      style="
+        width: 100%;
+        background: none;
+        border: 0;
+        cursor: pointer;
+        text-align: left;
+        color: inherit;
+        font: inherit;
+      "
+      [attr.aria-disabled]="accountBusy()"
+      (click)="changePassword()"
+    >
+      <span>{{ accountBusy() ? "Working…" : "Change password" }}</span
+      ><lucide-icon name="chevron-right" class="faint" />
     </button>
-    <button type="button" class="lrow" style="width:100%;background:none;border:0;cursor:pointer;text-align:left;color:inherit;font:inherit"
-            [attr.aria-disabled]="accountBusy()" (click)="confirmingDelete.set(!confirmingDelete())">
-      <span style="color:var(--danger)">Delete account &amp; data</span><lucide-icon name="chevron-right" class="faint" />
+    <button
+      type="button"
+      class="lrow"
+      style="
+        width: 100%;
+        background: none;
+        border: 0;
+        cursor: pointer;
+        text-align: left;
+        color: inherit;
+        font: inherit;
+      "
+      [attr.aria-disabled]="accountBusy()"
+      (click)="confirmingDelete.set(!confirmingDelete())"
+    >
+      <span style="color: var(--danger)">Delete account &amp; data</span
+      ><lucide-icon name="chevron-right" class="faint" />
     </button>
   </div>
 
   @if (confirmingDelete()) {
     <div class="card stack danger">
-      <b style="color:var(--danger)">Delete your account &amp; data?</b>
-      <p class="note">Your account is deactivated now and permanently erased after a 30-day grace period. Sign back in before then to cancel. This affects only your data.</p>
-      <div class="inline" style="gap:var(--s-2)">
-        <button class="btn danger sm" type="button" [attr.aria-disabled]="accountBusy()" (click)="confirmDeletion()">
+      <b style="color: var(--danger)">Delete your account &amp; data?</b>
+      <p class="note">
+        Your account is deactivated now and permanently erased after a 30-day
+        grace period. Sign back in before then to cancel. This affects only your
+        data.
+      </p>
+      <div class="inline" style="gap: var(--s-2)">
+        <button
+          class="btn danger sm"
+          type="button"
+          [attr.aria-disabled]="accountBusy()"
+          (click)="confirmDeletion()"
+        >
           {{ accountBusy() ? "Scheduling…" : "Yes, delete my account" }}
         </button>
-        <button class="btn ghost sm" type="button" (click)="confirmingDelete.set(false)">Cancel</button>
+        <button
+          class="btn ghost sm"
+          type="button"
+          (click)="confirmingDelete.set(false)"
+        >
+          Cancel
+        </button>
       </div>
     </div>
   }
 
-  @if (accountMsg(); as m) { <p class="note" role="status" aria-live="polite">{{ m }}</p> }
+  @if (accountMsg(); as m) {
+    <p class="note" role="status" aria-live="polite">{{ m }}</p>
+  }
 </main>

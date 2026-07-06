@@ -9,19 +9,19 @@ const CURATED_DRILL_VIDEO_IDS = {
   // ── Morning Mobility (day-specific, Mon–Sun) ──────────────────────────────
   "morning mobility": "IWNnTJFwi3s",
   "morning mobility monday": "IWNnTJFwi3s",
-  "morning mobility day 1": "IWNnTJFwi3s",   // Monday  — full body activation
+  "morning mobility day 1": "IWNnTJFwi3s", // Monday  — full body activation
   "morning mobility tuesday": "eFgqVbDe5Ps",
-  "morning mobility day 2": "eFgqVbDe5Ps",   // Tuesday — hip & groin (pre-speed)
+  "morning mobility day 2": "eFgqVbDe5Ps", // Tuesday — hip & groin (pre-speed)
   "morning mobility wednesday": "FGIGlBUFbKc",
-  "morning mobility day 3": "FGIGlBUFbKc",   // Wednesday — thoracic & shoulder
+  "morning mobility day 3": "FGIGlBUFbKc", // Wednesday — thoracic & shoulder
   "morning mobility thursday": "ghwdVE4xn-U",
-  "morning mobility day 4": "ghwdVE4xn-U",   // Thursday — ankle & calf (pre-practice)
+  "morning mobility day 4": "ghwdVE4xn-U", // Thursday — ankle & calf (pre-practice)
   "morning mobility friday": "v_ZnFMgCiAg",
-  "morning mobility day 5": "v_ZnFMgCiAg",   // Friday — hip 90/90 active recovery
+  "morning mobility day 5": "v_ZnFMgCiAg", // Friday — hip 90/90 active recovery
   "morning mobility saturday": "8dIHS_UVfQ4",
-  "morning mobility day 6": "8dIHS_UVfQ4",   // Saturday — dynamic sprint prep
+  "morning mobility day 6": "8dIHS_UVfQ4", // Saturday — dynamic sprint prep
   "morning mobility sunday": "qZ_KgFnRlhI",
-  "morning mobility day 7": "qZ_KgFnRlhI",   // Sunday — restorative parasympathetic
+  "morning mobility day 7": "qZ_KgFnRlhI", // Sunday — restorative parasympathetic
 
   // ── Warm-up drills ────────────────────────────────────────────────────────
   "a skips": "pWe7vofsMaU",
@@ -35,7 +35,7 @@ const CURATED_DRILL_VIDEO_IDS = {
   "arm circles": "ZwKYdXQvk6U",
   "high knees": "pWe7vofsMaU",
   "butt kicks": "pWe7vofsMaU",
-  "inchworm": "8dIHS_UVfQ4",
+  inchworm: "8dIHS_UVfQ4",
   "walking lunge": "8dIHS_UVfQ4",
   "ramp protocol": "7-NzseCtyAo",
   "dynamic warm up": "X_OS_EtOHZ4",
@@ -75,11 +75,11 @@ const CURATED_DRILL_VIDEO_IDS = {
   // ── Strength ──────────────────────────────────────────────────────────────
   "nordic hamstring curl": "GUg_MHqxFZ8",
   "nordic curl": "GUg_MHqxFZ8",
-  "nordic": "GUg_MHqxFZ8",
+  nordic: "GUg_MHqxFZ8",
   "bulgarian split squat": "2C-uNgKwPLE",
   "split squat": "2C-uNgKwPLE",
   "copenhagen plank": "Pk6P-q1UYYI",
-  "copenhagen": "Pk6P-q1UYYI",
+  copenhagen: "Pk6P-q1UYYI",
   "front squat": "jWMzLJzYqUE",
   "glute activation circuit": "eIcIJ5oq_9U",
   "glute bridge": "eIcIJ5oq_9U",
@@ -92,9 +92,9 @@ const CURATED_DRILL_VIDEO_IDS = {
   "scapular activation": "zJiNB0cFyuI",
   "single leg romanian deadlift": "G9GTnSmBpC8",
   "single leg rdl": "G9GTnSmBpC8",
-  "rdl": "G9GTnSmBpC8",
+  rdl: "G9GTnSmBpC8",
   "trap bar deadlift": "JtNQYfOGLYo",
-  "deadlift": "JtNQYfOGLYo",
+  deadlift: "JtNQYfOGLYo",
 
   // ── Plyometrics / power ───────────────────────────────────────────────────
   "lateral bound": "XFEjeiQfhOs",
@@ -138,7 +138,7 @@ const CURATED_DRILL_VIDEO_IDS = {
 
   // ── Position-specific ─────────────────────────────────────────────────────
   "backpedal technique drill": "JnCFxNrK4OA",
-  "backpedal": "JnCFxNrK4OA",
+  backpedal: "JnCFxNrK4OA",
   "progressive throwing sequence": "k5E-L8CLQLQ",
   "throwing volume session": "k5E-L8CLQLQ",
   "throwing volume": "k5E-L8CLQLQ",
@@ -219,7 +219,9 @@ export function resolveYouTubeVideoMetadata({
   exerciseName = null,
 } = {}) {
   const resolvedVideoId =
-    videoId || extractYouTubeVideoId(videoUrl) || resolveCuratedDrillVideoId(exerciseName);
+    videoId ||
+    extractYouTubeVideoId(videoUrl) ||
+    resolveCuratedDrillVideoId(exerciseName);
   const resolvedVideoUrl = videoUrl || buildYouTubeWatchUrl(resolvedVideoId);
   const resolvedThumbnailUrl =
     thumbnailUrl || buildYouTubeThumbnailUrl(resolvedVideoId);

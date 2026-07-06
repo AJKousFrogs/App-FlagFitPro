@@ -130,8 +130,7 @@ serve(async (req) => {
         return new Response(
           JSON.stringify({
             enabled: true,
-            message:
-              "Application-level leaked password protection is active.",
+            message: "Application-level leaked password protection is active.",
             provider: "Have I Been Pwned API",
           }),
           {

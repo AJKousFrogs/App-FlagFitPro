@@ -1,9 +1,26 @@
 import crypto from "node:crypto";
 import { supabaseAdmin } from "./supabase-client.js";
-import { validate, validateRequestBody, VALIDATION_RULES } from "./validation.js";
-import { parseJsonObjectBody, parseBoundedInt, sanitizeObject } from "./utils/input-validator.js";
-import { createSuccessResponse, createErrorResponse, handleValidationError, handleNotFoundError, handleAuthorizationError } from "./utils/error-handler.js";
-import { checkTeamMembership as _checkTeamMembership, getUserTeamId } from "./utils/auth-helper.js";
+import {
+  validate,
+  validateRequestBody,
+  VALIDATION_RULES,
+} from "./validation.js";
+import {
+  parseJsonObjectBody,
+  parseBoundedInt,
+  sanitizeObject,
+} from "./utils/input-validator.js";
+import {
+  createSuccessResponse,
+  createErrorResponse,
+  handleValidationError,
+  handleNotFoundError,
+  handleAuthorizationError,
+} from "./utils/error-handler.js";
+import {
+  checkTeamMembership as _checkTeamMembership,
+  getUserTeamId,
+} from "./utils/auth-helper.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { getRateLimitType } from "./utils/rate-limiter.js";
 import { hasAnyRole, TEAM_OPERATIONS_ROLES } from "./utils/role-sets.js";
@@ -102,7 +119,11 @@ async function fetchGameByIdentifier(identifier) {
   const normalized = `${identifier || ""}`.trim();
 
   if (/^\d+$/.test(normalized)) {
-    return supabaseAdmin.from("games").select("*").eq("id", Number(normalized)).single();
+    return supabaseAdmin
+      .from("games")
+      .select("*")
+      .eq("id", Number(normalized))
+      .single();
   }
 
   const byGameId = await supabaseAdmin
@@ -120,8 +141,7 @@ async function fetchGameByIdentifier(identifier) {
 
 function canAccessLegacyPersonalGame(game, userId) {
   return (
-    game?.visibility_scope === "personal" ||
-    isPersonalGameRecord(game, userId)
+    game?.visibility_scope === "personal" || isPersonalGameRecord(game, userId)
   );
 }
 
@@ -134,7 +154,9 @@ function isGameOwner(game, userId) {
 }
 
 function mapGameEventType(record) {
-  return record.event_type || record.play_type || record.play_category || "unknown";
+  return (
+    record.event_type || record.play_type || record.play_category || "unknown"
+  );
 }
 
 function mapGameEventYards(record) {
@@ -144,12 +166,16 @@ function mapGameEventYards(record) {
 function calculateStatsFromEvents(events) {
   return {
     totalPlays: events.length,
-    completions: events.filter((e) => mapGameEventType(e) === "completion").length,
-    receptions: events.filter((e) => mapGameEventType(e) === "reception").length,
+    completions: events.filter((e) => mapGameEventType(e) === "completion")
+      .length,
+    receptions: events.filter((e) => mapGameEventType(e) === "reception")
+      .length,
     drops: events.filter((e) => mapGameEventType(e) === "drop").length,
     flagPulls: events.filter((e) => mapGameEventType(e) === "flag_pull").length,
-    touchdowns: events.filter((e) => mapGameEventType(e) === "touchdown").length,
-    interceptions: events.filter((e) => mapGameEventType(e) === "interception").length,
+    touchdowns: events.filter((e) => mapGameEventType(e) === "touchdown")
+      .length,
+    interceptions: events.filter((e) => mapGameEventType(e) === "interception")
+      .length,
     totalYards: events.reduce((sum, e) => sum + mapGameEventYards(e), 0),
   };
 }
@@ -192,7 +218,6 @@ async function hasPlayerConsent(_coachId, _playerId) {
 // Create a new game with validation
 const createGame = async (userId, gameData) => {
   try {
-
     // SECURITY: Validate input against schema
     const validation = validate(gameData, "createGame");
     if (!validation.valid) {
@@ -273,7 +298,6 @@ const createGame = async (userId, gameData) => {
 // Get games for a user/team with visibility filtering
 const getGames = async (userId, options = {}) => {
   try {
-
     const userRole = await getUserRole(userId);
     const isCoach = isCoachOrAdmin(userRole);
 
@@ -338,7 +362,7 @@ const getGames = async (userId, options = {}) => {
       if (game.team_id === personalTeamId) {
         filteredGames.push(game);
       } else if (teamId && game.team_id === teamId) {
-          filteredGames.push(game);
+        filteredGames.push(game);
       }
     }
 
@@ -355,7 +379,6 @@ const getGames = async (userId, options = {}) => {
 // Get game details with permission check
 const getGameDetails = async (userId, gameId) => {
   try {
-
     const userRole = await getUserRole(userId);
     const isCoach = isCoachOrAdmin(userRole);
 
@@ -369,13 +392,20 @@ const getGameDetails = async (userId, gameId) => {
     }
 
     // Check visibility permissions
-    const normalizedGame = normalizeGameRecord(game, userId, isCoach ? "coach" : "player");
+    const normalizedGame = normalizeGameRecord(
+      game,
+      userId,
+      isCoach ? "coach" : "player",
+    );
 
     if (normalizedGame.visibility_scope === "personal") {
       const isOwner = isGameOwner(game, userId);
       if (!isOwner) {
         if (isCoach && game.player_owner_id) {
-          const hasConsent = await hasPlayerConsent(userId, game.player_owner_id);
+          const hasConsent = await hasPlayerConsent(
+            userId,
+            game.player_owner_id,
+          );
           if (!hasConsent) {
             throw new Error("You don't have permission to view this game");
           }
@@ -474,7 +504,6 @@ async function triggerGameDayRecovery(playerId, gameDate) {
 // Update game with authorization check
 const updateGame = async (userId, gameId, updates) => {
   try {
-
     // SECURITY: Validate input against schema
     const validation = validate(updates, "updateGame");
     if (!validation.valid) {
@@ -487,7 +516,8 @@ const updateGame = async (userId, gameId, updates) => {
     }
 
     // First, get the game to verify ownership
-    const { data: game, error: fetchError } = await fetchGameByIdentifier(gameId);
+    const { data: game, error: fetchError } =
+      await fetchGameByIdentifier(gameId);
 
     if (fetchError || !game) {
       throw new Error(`Game with ID ${gameId} not found`);
@@ -608,9 +638,9 @@ const updateGame = async (userId, gameId, updates) => {
 // Save a play/event with recorder tracking
 const savePlay = async (userId, gameId, playData) => {
   try {
-
     // Verify game exists and user has access
-    const { data: game, error: gameError } = await fetchGameByIdentifier(gameId);
+    const { data: game, error: gameError } =
+      await fetchGameByIdentifier(gameId);
 
     if (gameError || !game) {
       throw new Error(`Game with ID ${gameId} not found`);
@@ -626,11 +656,15 @@ const savePlay = async (userId, gameId, playData) => {
         const userRole = await getUserRole(userId);
         const isCoach = isCoachOrAdmin(userRole);
         if (!isCoach || !game.player_owner_id) {
-          throw new Error("You don't have permission to add stats to this game");
+          throw new Error(
+            "You don't have permission to add stats to this game",
+          );
         }
         const hasConsent = await hasPlayerConsent(userId, game.player_owner_id);
         if (!hasConsent) {
-          throw new Error("You don't have permission to add stats to this game");
+          throw new Error(
+            "You don't have permission to add stats to this game",
+          );
         }
         recordedByRole = "coach";
       }
@@ -709,7 +743,6 @@ const savePlay = async (userId, gameId, playData) => {
 // Get game statistics
 const getGameStats = async (userId, gameId) => {
   try {
-
     // Verify access
     await getGameDetails(userId, gameId);
 
@@ -739,7 +772,6 @@ const getPlayerAggregatedStats = async (
   options = {},
 ) => {
   try {
-
     const requestingUserRole = await getUserRole(requestingUserId);
     const isCoach = isCoachOrAdmin(requestingUserRole);
     const isSelf = requestingUserId === playerId;
@@ -791,19 +823,27 @@ const getPlayerAggregatedStats = async (
     const stats = {
       totalGames: new Set(filteredEvents.map((e) => e.game_id)).size,
       totalEvents: filteredEvents.length,
-      completions: filteredEvents.filter((e) => mapGameEventType(e) === "completion")
+      completions: filteredEvents.filter(
+        (e) => mapGameEventType(e) === "completion",
+      ).length,
+      receptions: filteredEvents.filter(
+        (e) => mapGameEventType(e) === "reception",
+      ).length,
+      drops: filteredEvents.filter((e) => mapGameEventType(e) === "drop")
         .length,
-      receptions: filteredEvents.filter((e) => mapGameEventType(e) === "reception")
-        .length,
-      drops: filteredEvents.filter((e) => mapGameEventType(e) === "drop").length,
-      flagPulls: filteredEvents.filter((e) => mapGameEventType(e) === "flag_pull")
-        .length,
-      touchdowns: filteredEvents.filter((e) => mapGameEventType(e) === "touchdown")
-        .length,
+      flagPulls: filteredEvents.filter(
+        (e) => mapGameEventType(e) === "flag_pull",
+      ).length,
+      touchdowns: filteredEvents.filter(
+        (e) => mapGameEventType(e) === "touchdown",
+      ).length,
       interceptions: filteredEvents.filter(
         (e) => mapGameEventType(e) === "interception",
       ).length,
-      totalYards: filteredEvents.reduce((sum, e) => sum + mapGameEventYards(e), 0),
+      totalYards: filteredEvents.reduce(
+        (sum, e) => sum + mapGameEventYards(e),
+        0,
+      ),
       // Breakdown by game type
       teamGameStats: calculateEventStats(
         filteredEvents.filter(
@@ -828,11 +868,14 @@ const getPlayerAggregatedStats = async (
 function calculateEventStats(events) {
   return {
     games: new Set(events.map((e) => e.game_id)).size,
-    completions: events.filter((e) => mapGameEventType(e) === "completion").length,
-    receptions: events.filter((e) => mapGameEventType(e) === "reception").length,
+    completions: events.filter((e) => mapGameEventType(e) === "completion")
+      .length,
+    receptions: events.filter((e) => mapGameEventType(e) === "reception")
+      .length,
     drops: events.filter((e) => mapGameEventType(e) === "drop").length,
     flagPulls: events.filter((e) => mapGameEventType(e) === "flag_pull").length,
-    touchdowns: events.filter((e) => mapGameEventType(e) === "touchdown").length,
+    touchdowns: events.filter((e) => mapGameEventType(e) === "touchdown")
+      .length,
     yards: events.reduce((sum, e) => sum + mapGameEventYards(e), 0),
   };
 }

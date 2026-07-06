@@ -6,7 +6,9 @@ import { test, expect } from "@playwright/test";
  * failures (no backend/auth in this harness) are expected and ignored — we assert
  * on uncaught JS exceptions only.
  */
-test("boots, navigates the 5 tabs, renders each screen, no uncaught errors", async ({ page }) => {
+test("boots, navigates the 5 tabs, renders each screen, no uncaught errors", async ({
+  page,
+}) => {
   const errors: string[] = [];
   page.on("pageerror", (e) => errors.push(String(e)));
 
@@ -36,7 +38,9 @@ test("boots, navigates the 5 tabs, renders each screen, no uncaught errors", asy
   expect(errors, `uncaught errors:\n${errors.join("\n")}`).toEqual([]);
 });
 
-test("secondary screens reachable from More render without uncaught errors", async ({ page }) => {
+test("secondary screens reachable from More render without uncaught errors", async ({
+  page,
+}) => {
   const errors: string[] = [];
   page.on("pageerror", (e) => errors.push(String(e)));
 
@@ -44,7 +48,10 @@ test("secondary screens reachable from More render without uncaught errors", asy
   for (const dest of [/\/supplements/, /\/settings/]) {
     await page.locator(".tabbar a", { hasText: "More" }).click();
     await expect(page).toHaveURL(/\/more/);
-    await page.locator(`a[href="${dest.source.replace(/\\\//g, "/")}"]`).first().click();
+    await page
+      .locator(`a[href="${dest.source.replace(/\\\//g, "/")}"]`)
+      .first()
+      .click();
     await expect(page).toHaveURL(dest);
     await expect(page.locator("main.screen")).toBeVisible();
     await expect(page.locator(".topbar h1")).toBeVisible();
@@ -52,10 +59,14 @@ test("secondary screens reachable from More render without uncaught errors", asy
   expect(errors, `uncaught errors:\n${errors.join("\n")}`).toEqual([]);
 });
 
-test("design system applied: dark canvas + brand accent token resolve", async ({ page }) => {
+test("design system applied: dark canvas + brand accent token resolve", async ({
+  page,
+}) => {
   await page.goto("/");
   // body uses the --bg token (dark #08090B → rgb(8, 9, 11))
-  const bg = await page.evaluate(() => getComputedStyle(document.body).backgroundColor);
+  const bg = await page.evaluate(
+    () => getComputedStyle(document.body).backgroundColor,
+  );
   expect(bg).toBe("rgb(8, 9, 11)");
   // the FAB renders with the brand gradient (a token-driven element)
   await expect(page.locator(".fab")).toBeVisible();

@@ -138,7 +138,11 @@ describe("data-export validation", () => {
     expect(response.statusCode).toBe(200);
     const payload = JSON.parse(response.body);
     expect(payload.data?.sections?.training_sessions?.status).toBe("error");
-    expect(payload.data?.sections?.training_sessions?.error).toBe("Section export failed");
-    expect(JSON.stringify(payload)).not.toContain("sensitive execution plan details");
+    expect(payload.data?.sections?.training_sessions?.error).toBe(
+      "Section export failed",
+    );
+    expect(JSON.stringify(payload)).not.toContain(
+      "sensitive execution plan details",
+    );
   });
 });

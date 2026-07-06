@@ -55,15 +55,48 @@ const CATEGORY_LABELS: Record<string, string> = {
   templateUrl: "./knowledge.component.html",
   styles: [
     `
-      .search { display: flex; gap: var(--s-2); }
-      .search input { flex: 1; background: var(--surface-2); border: 1px solid var(--border-soft);
-        border-radius: var(--r-pill); padding: var(--s-3) var(--s-4); color: var(--text-strong); font-family: var(--font-body); }
-      .chips { display: flex; gap: var(--s-2); overflow-x: auto; padding-bottom: var(--s-1); }
-      .entry { display: flex; flex-direction: column; gap: var(--s-2); }
-      .entry h3 { margin: 0; font-size: var(--fs-h3); }
-      .entry p { margin: 0; color: var(--text-muted); font-size: var(--fs-sm); line-height: var(--lh-body); }
-      .ev { font-size: var(--fs-xs); font-weight: var(--fw-bold); padding: 2px var(--s-2); border-radius: var(--r-pill);
-        background: var(--surface-2); color: var(--text-faint); }
+      .search {
+        display: flex;
+        gap: var(--s-2);
+      }
+      .search input {
+        flex: 1;
+        background: var(--surface-2);
+        border: 1px solid var(--border-soft);
+        border-radius: var(--r-pill);
+        padding: var(--s-3) var(--s-4);
+        color: var(--text-strong);
+        font-family: var(--font-body);
+      }
+      .chips {
+        display: flex;
+        gap: var(--s-2);
+        overflow-x: auto;
+        padding-bottom: var(--s-1);
+      }
+      .entry {
+        display: flex;
+        flex-direction: column;
+        gap: var(--s-2);
+      }
+      .entry h3 {
+        margin: 0;
+        font-size: var(--fs-h3);
+      }
+      .entry p {
+        margin: 0;
+        color: var(--text-muted);
+        font-size: var(--fs-sm);
+        line-height: var(--lh-body);
+      }
+      .ev {
+        font-size: var(--fs-xs);
+        font-weight: var(--fw-bold);
+        padding: 2px var(--s-2);
+        border-radius: var(--r-pill);
+        background: var(--surface-2);
+        color: var(--text-faint);
+      }
     `,
   ],
 })
@@ -79,7 +112,11 @@ export class KnowledgeComponent {
   readonly searchMode = signal(false);
 
   readonly categories = computed(() => {
-    const set = new Set(this.all().map((e) => e.category).filter(Boolean));
+    const set = new Set(
+      this.all()
+        .map((e) => e.category)
+        .filter(Boolean),
+    );
     return Array.from(set).sort();
   });
   readonly entries = computed(() => {
@@ -113,19 +150,23 @@ export class KnowledgeComponent {
     }
     this.busy.set(true);
     this.activeCat.set(null);
-    this.api.post<{ results?: Entry[] }>("/api/knowledge/search", { query: q, limit: 20 }).subscribe({
-      next: (res) => {
-        const d = extractApiPayload<{ results?: Entry[] }>(res);
-        this.all.set(Array.isArray(d?.results) ? d!.results : []);
-        this.searchMode.set(true);
-        this.busy.set(false);
-        this.loaded.set(true);
-      },
-      error: (e) => {
-        this.logger.error("knowledge_search_failed", e);
-        this.busy.set(false);
-      },
-    });
+    this.api
+      .post<{
+        results?: Entry[];
+      }>("/api/knowledge/search", { query: q, limit: 20 })
+      .subscribe({
+        next: (res) => {
+          const d = extractApiPayload<{ results?: Entry[] }>(res);
+          this.all.set(Array.isArray(d?.results) ? d!.results : []);
+          this.searchMode.set(true);
+          this.busy.set(false);
+          this.loaded.set(true);
+        },
+        error: (e) => {
+          this.logger.error("knowledge_search_failed", e);
+          this.busy.set(false);
+        },
+      });
   }
 
   toggleCat(cat: string): void {

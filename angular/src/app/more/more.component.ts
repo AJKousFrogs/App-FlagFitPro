@@ -28,7 +28,12 @@ import { staffLaneFor } from "../core/guards/staff.guard";
   styles: [
     // Planned-but-unbuilt rows: muted + a "Soon" tag, no chevron — so they read as
     // not-yet-available rather than masquerading as working navigation.
-    `.lrow.soon { opacity: 0.55; cursor: default; }`,
+    `
+      .lrow.soon {
+        opacity: 0.55;
+        cursor: default;
+      }
+    `,
   ],
 })
 export class MoreComponent {
@@ -37,7 +42,9 @@ export class MoreComponent {
   private readonly identitySvc = inject(IdentityService);
 
   /** Staff (coach/physio/nutritionist/psychologist) can jump to the staff track. */
-  readonly isStaff = computed(() => staffLaneFor(this.membership.role()) !== null);
+  readonly isStaff = computed(
+    () => staffLaneFor(this.membership.role()) !== null,
+  );
 
   constructor() {
     this.membership.loadMembership().catch(() => null);
@@ -48,7 +55,12 @@ export class MoreComponent {
     const id = this.identitySvc;
     const name = id.displayName();
     const j = id.jersey();
-    return [name, j != null ? `#${j}` : null, id.position() || null, id.teamName() || null]
+    return [
+      name,
+      j != null ? `#${j}` : null,
+      id.position() || null,
+      id.teamName() || null,
+    ]
       .filter(Boolean)
       .join(" · ");
   });

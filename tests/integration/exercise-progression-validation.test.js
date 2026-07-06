@@ -23,7 +23,14 @@ function buildSupabaseMock() {
         return {
           select: () => ({
             in: async () => ({
-              data: [{ id: "ex-1", name: "Push Up", default_sets: 3, default_reps: 10 }],
+              data: [
+                {
+                  id: "ex-1",
+                  name: "Push Up",
+                  default_sets: 3,
+                  default_reps: 10,
+                },
+              ],
               error: mockState.exercisesError,
             }),
           }),
@@ -53,7 +60,8 @@ describe("exercise-progression validation hardening", () => {
   beforeEach(async () => {
     vi.resetModules();
     mockState.exercisesError = null;
-    ({ handler } = await import("../../netlify/functions/exercise-progression.js"));
+    ({ handler } =
+      await import("../../netlify/functions/exercise-progression.js"));
   });
 
   it("returns 422 for non-object JSON payload", async () => {

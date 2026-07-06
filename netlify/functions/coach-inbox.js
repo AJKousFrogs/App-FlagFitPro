@@ -1,7 +1,13 @@
 import { supabaseAdmin } from "./supabase-client.js";
 import { baseHandler } from "./utils/base-handler.js";
-import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
-import { parseJsonObjectBody, parseBoundedInt } from "./utils/input-validator.js";
+import {
+  createSuccessResponse,
+  createErrorResponse,
+} from "./utils/error-handler.js";
+import {
+  parseJsonObjectBody,
+  parseBoundedInt,
+} from "./utils/input-validator.js";
 import { createLogger, makeRequestLogger } from "./utils/structured-logger.js";
 
 const logger = createLogger({ service: "netlify.coach-inbox" });
@@ -27,7 +33,12 @@ const VALID_INBOX_STATUSES = new Set([
   "saved_template",
 ]);
 const VALID_PRIORITIES = new Set(["low", "medium", "high", "critical"]);
-const VALID_ACTIONS = new Set(["approve", "add_note", "override", "save_template"]);
+const VALID_ACTIONS = new Set([
+  "approve",
+  "add_note",
+  "override",
+  "save_template",
+]);
 
 /**
  * Netlify Function: Coach Inbox
@@ -64,11 +75,7 @@ async function verifyCoachAndGetTeams(userId, log = logger) {
     .eq("status", "active");
 
   if (error) {
-    log.error(
-      "coach_inbox_verify_coach_failed",
-      error,
-      { user_id: userId },
-    );
+    log.error("coach_inbox_verify_coach_failed", error, { user_id: userId });
     return { isCoach: false, teamIds: [] };
   }
 
@@ -96,14 +103,10 @@ async function getInboxStats(coachId, teamIds, log = logger) {
     .in("team_id", teamIds);
 
   if (error) {
-    log.error(
-      "coach_inbox_stats_fetch_failed",
-      error,
-      {
-        coach_id: coachId,
-        team_count: teamIds.length,
-      },
-    );
+    log.error("coach_inbox_stats_fetch_failed", error, {
+      coach_id: coachId,
+      team_count: teamIds.length,
+    });
     return {
       safety_alerts: 0,
       review_needed: 0,
@@ -198,14 +201,10 @@ async function listInboxItems(coachId, teamIds, filters = {}, log = logger) {
   const { data: items, error } = await query;
 
   if (error) {
-    log.error(
-      "coach_inbox_list_items_failed",
-      error,
-      {
-        coach_id: coachId,
-        filters,
-      },
-    );
+    log.error("coach_inbox_list_items_failed", error, {
+      coach_id: coachId,
+      filters,
+    });
     throw error;
   }
 
@@ -292,14 +291,10 @@ async function updateInboxItem(itemId, coachId, updates, log = logger) {
     if (!data) {
       throw new Error("Inbox item not found");
     }
-    log.error(
-      "coach_inbox_update_failed",
-      error,
-      {
-        coach_id: coachId,
-        item_id: itemId,
-      },
-    );
+    log.error("coach_inbox_update_failed", error, {
+      coach_id: coachId,
+      item_id: itemId,
+    });
     throw error;
   }
 
@@ -355,14 +350,10 @@ async function markItemViewed(itemId, coachId, log = logger) {
     if (!data) {
       throw new Error("Inbox item not found");
     }
-    log.error(
-      "coach_inbox_mark_viewed_failed",
-      error,
-      {
-        coach_id: coachId,
-        item_id: itemId,
-      },
-    );
+    log.error("coach_inbox_mark_viewed_failed", error, {
+      coach_id: coachId,
+      item_id: itemId,
+    });
     throw error;
   }
 
@@ -441,7 +432,6 @@ const handler = async (event, context) => {
     rateLimitType,
     requireAuth: true,
     handler: async (event, _context, { userId, requestId, correlationId }) => {
-  
       const requestLogger = createRequestLogger(event, {
         requestId,
         correlationId,
@@ -499,7 +489,10 @@ const handler = async (event, context) => {
         // GET /api/coach-inbox - List inbox items
         if (method === "GET") {
           const filters = event.queryStringParameters || {};
-          if (filters.inbox_type && !VALID_INBOX_TYPES.has(filters.inbox_type)) {
+          if (
+            filters.inbox_type &&
+            !VALID_INBOX_TYPES.has(filters.inbox_type)
+          ) {
             return createErrorResponse(
               `Invalid inbox_type. Must be one of: ${Array.from(VALID_INBOX_TYPES).join(", ")}`,
               422,
@@ -689,16 +682,17 @@ const handler = async (event, context) => {
           );
         }
         if (error.message?.includes("Inbox item not found")) {
-          return createErrorResponse(error.message, 404, "not_found", requestId);
+          return createErrorResponse(
+            error.message,
+            404,
+            "not_found",
+            requestId,
+          );
         }
-        requestLogger.error(
-          "coach_inbox_handler_failed",
-          error,
-          {
-            http_method: event.httpMethod,
-            path,
-          },
-        );
+        requestLogger.error("coach_inbox_handler_failed", error, {
+          http_method: event.httpMethod,
+          path,
+        });
         return createErrorResponse(
           error.message || "Failed to process request",
           500,

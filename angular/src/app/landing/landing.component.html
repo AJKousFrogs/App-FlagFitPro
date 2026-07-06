@@ -1,57 +1,131 @@
 <header class="topbar">
-  <div><span class="brand">FlagFit</span> <span style="color:var(--accent)">Pro</span></div>
-  <button class="btn ghost sm" type="button" (click)="showSignIn.set(!showSignIn())">
+  <div>
+    <span class="brand">FlagFit</span>
+    <span style="color: var(--accent)">Pro</span>
+  </div>
+  <button
+    class="btn ghost sm"
+    type="button"
+    (click)="showSignIn.set(!showSignIn())"
+  >
     {{ showSignIn() ? "Close" : "Log in" }}
   </button>
 </header>
 
-<main class="screen" style="padding-top:var(--s-3)">
-  <div class="hero-photo" style="min-height:450px">
-    <img src="assets/images/rebuild/hero-landing.jpg" alt="Ljubljana Frogs player in action" />
+<main class="screen" style="padding-top: var(--s-3)">
+  <div class="hero-photo" style="min-height: 450px">
+    <img
+      src="assets/images/rebuild/hero-landing.jpg"
+      alt="Ljubljana Frogs player in action"
+    />
     <div class="scrim"></div>
     <div class="content">
       <div class="ovr-title">FLAG<br />FIT</div>
-      <p style="color:var(--text-strong);opacity:.92;font-weight:var(--fw-semi);margin:var(--s-3) 0 var(--s-4)">
-        Find your edge. Open the app, know exactly what to train today — and why.
+      <p
+        style="
+          color: var(--text-strong);
+          opacity: 0.92;
+          font-weight: var(--fw-semi);
+          margin: var(--s-3) 0 var(--s-4);
+        "
+      >
+        Find your edge. Open the app, know exactly what to train today — and
+        why.
       </p>
-      <a class="btn primary" routerLink="/onboarding" style="background:var(--text-strong);color:var(--bg)">Start now →</a>
+      <a
+        class="btn primary"
+        routerLink="/onboarding"
+        style="background: var(--text-strong); color: var(--bg)"
+        >Start now →</a
+      >
     </div>
   </div>
 
   @if (showSignIn()) {
-    <form class="card signin" (submit)="$event.preventDefault(); submitSignIn()">
-      <h2 style="margin-bottom:var(--s-1)">Welcome back</h2>
+    <form
+      class="card signin"
+      (submit)="$event.preventDefault(); submitSignIn()"
+    >
+      <h2 style="margin-bottom: var(--s-1)">Welcome back</h2>
       <div data-testid="email-input">
-        <input type="email" placeholder="Email" autocomplete="email"
-               [value]="email()" (input)="email.set($any($event.target).value)" aria-label="Email" />
+        <input
+          type="email"
+          placeholder="Email"
+          autocomplete="email"
+          [value]="email()"
+          (input)="email.set($any($event.target).value)"
+          aria-label="Email"
+        />
       </div>
       <div data-testid="password-input">
-        <input type="password" placeholder="Password" autocomplete="current-password"
-               [value]="password()" (input)="password.set($any($event.target).value)" aria-label="Password" />
+        <input
+          type="password"
+          placeholder="Password"
+          autocomplete="current-password"
+          [value]="password()"
+          (input)="password.set($any($event.target).value)"
+          aria-label="Password"
+        />
       </div>
-      @if (error(); as e) { <p class="note" style="color:var(--danger)">{{ e }}</p> }
-      <button class="btn primary block" type="submit" style="margin-top:var(--s-3)"
-              [attr.aria-disabled]="busy()">
+      @if (error(); as e) {
+        <p class="note" style="color: var(--danger)">{{ e }}</p>
+      }
+      <button
+        class="btn primary block"
+        type="submit"
+        style="margin-top: var(--s-3)"
+        [attr.aria-disabled]="busy()"
+      >
         {{ busy() ? "Signing in…" : "Sign in" }}
       </button>
     </form>
   } @else {
-    <button class="btn ghost block" type="button" (click)="showSignIn.set(true)">I already have an account</button>
+    <button
+      class="btn ghost block"
+      type="button"
+      (click)="showSignIn.set(true)"
+    >
+      I already have an account
+    </button>
   }
 
   <div class="card thumb-card">
-    <div class="thumb"><img src="assets/images/rebuild/thumb-a.jpg" alt="" /></div>
-    <div><b class="inline"><lucide-icon name="flag" /> Your schedule is the spine</b>
-      <div class="muted" style="font-size:var(--fs-sm)">Games drive one daily plan — taper before, recover after.</div></div>
+    <div class="thumb">
+      <img src="assets/images/rebuild/thumb-a.jpg" alt="" />
+    </div>
+    <div>
+      <b class="inline"
+        ><lucide-icon name="flag" /> Your schedule is the spine</b
+      >
+      <div class="muted" style="font-size: var(--fs-sm)">
+        Games drive one daily plan — taper before, recover after.
+      </div>
+    </div>
   </div>
   <div class="card thumb-card">
-    <div class="thumb"><img src="assets/images/rebuild/thumb-b.jpg" alt="" /></div>
-    <div><b class="inline"><lucide-icon name="trending-up" /> Load you can trust</b>
-      <div class="muted" style="font-size:var(--fs-sm)">ACWR flags injury risk before it bites.</div></div>
+    <div class="thumb">
+      <img src="assets/images/rebuild/thumb-b.jpg" alt="" />
+    </div>
+    <div>
+      <b class="inline"
+        ><lucide-icon name="trending-up" /> Load you can trust</b
+      >
+      <div class="muted" style="font-size: var(--fs-sm)">
+        ACWR flags injury risk before it bites.
+      </div>
+    </div>
   </div>
   <div class="card thumb-card">
-    <div class="thumb"><img src="assets/images/rebuild/thumb-c.jpg" alt="" /></div>
-    <div><b class="inline"><lucide-icon name="heart-pulse" /> One 20-second check-in</b>
-      <div class="muted" style="font-size:var(--fs-sm)">→ today's readiness: push / maintain / deload.</div></div>
+    <div class="thumb">
+      <img src="assets/images/rebuild/thumb-c.jpg" alt="" />
+    </div>
+    <div>
+      <b class="inline"
+        ><lucide-icon name="heart-pulse" /> One 20-second check-in</b
+      >
+      <div class="muted" style="font-size: var(--fs-sm)">
+        → today's readiness: push / maintain / deload.
+      </div>
+    </div>
   </div>
 </main>

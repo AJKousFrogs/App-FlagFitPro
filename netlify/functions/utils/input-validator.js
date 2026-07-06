@@ -408,7 +408,9 @@ function isFiniteNumber(value) {
 function isUuid(value) {
   return (
     typeof value === "string" &&
-    /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(value)
+    /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(
+      value,
+    )
   );
 }
 
@@ -428,13 +430,17 @@ function parseBoundedInt(value, fieldName, { min, max, fallback = null } = {}) {
   }
   const normalized = String(value).trim();
   if (!/^-?\d+$/.test(normalized)) {
-    const err = new Error(`${fieldName} must be an integer between ${min} and ${max}`);
+    const err = new Error(
+      `${fieldName} must be an integer between ${min} and ${max}`,
+    );
     err.isValidation = true;
     throw err;
   }
   const parsed = Number.parseInt(normalized, 10);
   if (!Number.isInteger(parsed) || parsed < min || parsed > max) {
-    const err = new Error(`${fieldName} must be an integer between ${min} and ${max}`);
+    const err = new Error(
+      `${fieldName} must be an integer between ${min} and ${max}`,
+    );
     err.isValidation = true;
     throw err;
   }

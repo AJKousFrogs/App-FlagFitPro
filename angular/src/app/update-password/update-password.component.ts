@@ -1,4 +1,9 @@
-import { ChangeDetectionStrategy, Component, inject, signal } from "@angular/core";
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  signal,
+} from "@angular/core";
 import { Router, RouterLink } from "@angular/router";
 
 import { FormInputComponent } from "../shared/components/form-input/form-input.component";
@@ -15,7 +20,16 @@ import { LoggerService } from "../core/services/logger.service";
   standalone: true,
   imports: [FormInputComponent, RouterLink],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  styles: [`:host { display: block; max-width: 480px; margin: 0 auto; min-height: 100dvh; }`],
+  styles: [
+    `
+      :host {
+        display: block;
+        max-width: 480px;
+        margin: 0 auto;
+        min-height: 100dvh;
+      }
+    `,
+  ],
   template: `
     <main class="screen" style="padding-top:var(--s-5)">
       <h1>Set new password</h1>
@@ -23,11 +37,18 @@ import { LoggerService } from "../core/services/logger.service";
         <p class="note" style="color:var(--danger)">
           This password reset link is invalid or has expired.
         </p>
-        <a routerLink="/reset-password" class="btn primary block" style="margin-top:var(--s-3)">
+        <a
+          routerLink="/reset-password"
+          class="btn primary block"
+          style="margin-top:var(--s-3)"
+        >
           Request new reset link
         </a>
       } @else {
-        <form class="elite-auth-form card" (submit)="$event.preventDefault(); submit()">
+        <form
+          class="elite-auth-form card"
+          (submit)="$event.preventDefault(); submit()"
+        >
           <app-form-input
             label="New password"
             type="password"
@@ -35,10 +56,20 @@ import { LoggerService } from "../core/services/logger.service";
             [value]="password()"
             (valueChange)="password.set($event)"
           />
-          @if (done()) { <p class="note" style="color:var(--accent)">Password updated. Redirecting…</p> }
-          @if (error(); as e) { <p class="note" style="color:var(--danger)">{{ e }}</p> }
-          <button type="submit" class="btn primary block" style="margin-top:var(--s-3)"
-                  [attr.aria-disabled]="busy()">
+          @if (done()) {
+            <p class="note" style="color:var(--accent)">
+              Password updated. Redirecting…
+            </p>
+          }
+          @if (error(); as e) {
+            <p class="note" style="color:var(--danger)">{{ e }}</p>
+          }
+          <button
+            type="submit"
+            class="btn primary block"
+            style="margin-top:var(--s-3)"
+            [attr.aria-disabled]="busy()"
+          >
             {{ busy() ? "Updating…" : "Update password" }}
           </button>
         </form>
@@ -74,9 +105,9 @@ export class UpdatePasswordComponent {
     this.busy.set(true);
     this.error.set(null);
     try {
-      const result = (await this.authFlow.updateAuthUser({ password })) as
-        | { error?: { message?: string } | null }
-        | null;
+      const result = (await this.authFlow.updateAuthUser({ password })) as {
+        error?: { message?: string } | null;
+      } | null;
       const err = result?.error;
       if (err) {
         this.error.set(err.message ?? "Couldn't update your password.");

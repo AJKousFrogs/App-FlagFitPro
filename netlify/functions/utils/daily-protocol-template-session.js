@@ -34,7 +34,8 @@ export async function generateTemplateMainSession({
   });
 
   sessionExercises.forEach((sessionExercise, idx) => {
-    const exerciseId = sessionExercise.exercise_id || sessionExercise.exercises?.id;
+    const exerciseId =
+      sessionExercise.exercise_id || sessionExercise.exercises?.id;
     const prev = previousPerformance[exerciseId];
 
     let prescribedSets = sessionExercise.sets || 3;
@@ -82,14 +83,18 @@ export async function generateTemplateMainSession({
       yesterday_reps: prev?.reps,
       progression_note: progressionNote,
       ai_note: sessionExercise.notes || context.sessionTemplate.description,
-      load_contribution_au: sessionExercise.exercises?.load_contribution_au || 10,
+      load_contribution_au:
+        sessionExercise.exercises?.load_contribution_au || 10,
     });
   });
 
   return true;
 }
 
-async function loadPreviousPerformance({ supabase: _supabase, userId: _userId }) {
+async function loadPreviousPerformance({
+  supabase: _supabase,
+  userId: _userId,
+}) {
   // No protocol_completions store; previous performance is unavailable.
   const previousCompletions = [];
 

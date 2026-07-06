@@ -35,7 +35,10 @@ const MIME_TYPES = {
 };
 
 function getFilePath(urlPath) {
-  const safePath = normalize(decodeURIComponent(urlPath)).replace(/^(\.\.[/\\])+/, "");
+  const safePath = normalize(decodeURIComponent(urlPath)).replace(
+    /^(\.\.[/\\])+/,
+    "",
+  );
   const requested = resolve(DIST_ROOT, `.${safePath}`);
   if (!requested.startsWith(DIST_ROOT)) {
     return null;

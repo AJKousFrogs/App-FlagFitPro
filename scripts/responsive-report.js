@@ -136,9 +136,7 @@ configs.forEach(([path, desc]) => {
 
 // Check responsive styles
 printHeader("🎨 Responsive Styles");
-const styles = [
-  ["angular/src/styles.scss", "Main styles"],
-];
+const styles = [["angular/src/styles.scss", "Main styles"]];
 
 let stylesOk = 0;
 styles.forEach(([path, desc]) => {

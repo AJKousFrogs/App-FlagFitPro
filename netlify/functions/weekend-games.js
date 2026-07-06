@@ -40,7 +40,11 @@ const handler = async (event, context) =>
     handler: async (evt, _ctx, meta) => {
       const userId = meta?.userId;
       if (!userId) {
-        return createErrorResponse("Authentication required", 401, "auth_required");
+        return createErrorResponse(
+          "Authentication required",
+          401,
+          "auth_required",
+        );
       }
 
       // ── GET: this weekend's logged game (for prefill) ──────────────────────
@@ -59,20 +63,32 @@ const handler = async (event, context) =>
           .maybeSingle();
         if (error) {
           logger.error("weekend_games_fetch_failed", error, {});
-          return createErrorResponse("Failed to load weekend games", 500, "database_error");
+          return createErrorResponse(
+            "Failed to load weekend games",
+            500,
+            "database_error",
+          );
         }
         return createSuccessResponse({ game: data ?? null });
       }
 
       if (evt.httpMethod !== "POST") {
-        return createErrorResponse("Method not allowed", 405, "method_not_allowed");
+        return createErrorResponse(
+          "Method not allowed",
+          405,
+          "method_not_allowed",
+        );
       }
 
       let body;
       try {
         body = parseJsonObjectBody(evt.body);
       } catch {
-        return createErrorResponse("Invalid request body", 422, "validation_error");
+        return createErrorResponse(
+          "Invalid request body",
+          422,
+          "validation_error",
+        );
       }
 
       // played:false clears any previously-logged weekend game (athlete corrected
@@ -93,7 +109,12 @@ const handler = async (event, context) =>
       const gameCount = toInt(body.gameCount) ?? 1;
       const halves = toInt(body.halves) ?? 2;
       const minutesPerHalf = toInt(body.minutesPerHalf);
-      if (!minutesPerHalf || minutesPerHalf <= 0 || gameCount <= 0 || halves <= 0) {
+      if (
+        !minutesPerHalf ||
+        minutesPerHalf <= 0 ||
+        gameCount <= 0 ||
+        halves <= 0
+      ) {
         return createErrorResponse(
           "gameCount, halves and minutesPerHalf must be positive numbers",
           422,
@@ -101,9 +122,16 @@ const handler = async (event, context) =>
         );
       }
 
-      let rpe = body.avgRpe == null ? DEFAULT_GAME_RPE : Number(body.avgRpe);
+      let rpe =
+        body.avgRpe === null || body.avgRpe === undefined
+          ? DEFAULT_GAME_RPE
+          : Number(body.avgRpe);
       if (!Number.isFinite(rpe) || rpe < 1 || rpe > 10) {
-        return createErrorResponse("avgRpe must be between 1 and 10", 422, "validation_error");
+        return createErrorResponse(
+          "avgRpe must be between 1 and 10",
+          422,
+          "validation_error",
+        );
       }
 
       const totalMinutes = gameCount * halves * minutesPerHalf;
@@ -118,7 +146,8 @@ const handler = async (event, context) =>
 
       // Default the game date to the most recent Saturday (the typical game day);
       // accept an explicit ISO date if provided.
-      let gameDate = typeof body.date === "string" ? body.date.slice(0, 10) : null;
+      let gameDate =
+        typeof body.date === "string" ? body.date.slice(0, 10) : null;
       if (!/^\d{4}-\d{2}-\d{2}$/.test(gameDate || "")) {
         const d = new Date();
         d.setDate(d.getDate() - ((d.getDay() + 1) % 7)); // back to last Saturday
@@ -166,7 +195,11 @@ const handler = async (event, context) =>
       }
       if (result.error) {
         logger.error("weekend_games_log_failed", result.error, {});
-        return createErrorResponse("Failed to log weekend game", 500, "database_error");
+        return createErrorResponse(
+          "Failed to log weekend game",
+          500,
+          "database_error",
+        );
       }
 
       logger.info("weekend_game_logged", { gameDate, totalMinutes, workload });

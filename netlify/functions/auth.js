@@ -33,19 +33,38 @@ export default async (req) => {
   const url = new URL(req.url);
   const path = url.pathname;
 
-  if (path.includes("/accept-invitation") || path.includes("/auth/accept-invitation")) {
+  if (
+    path.includes("/accept-invitation") ||
+    path.includes("/auth/accept-invitation")
+  ) {
     return dispatch(acceptInvitationHandler, req, url);
   }
-  if (path.includes("/validate-invitation") || path.includes("/auth/validate-invitation")) {
+  if (
+    path.includes("/validate-invitation") ||
+    path.includes("/auth/validate-invitation")
+  ) {
     return dispatch(validateInvitationHandler, req, url);
   }
-  if (path.includes("/parental-consent") || path.includes("/auth/parental-consent")) {
+  if (
+    path.includes("/parental-consent") ||
+    path.includes("/auth/parental-consent")
+  ) {
     return dispatch(parentalConsentHandler, req, url);
   }
-  if (path.includes("/auth/reset-password") || path.includes("/auth-reset-password")) {
+  if (
+    path.includes("/auth/reset-password") ||
+    path.includes("/auth-reset-password")
+  ) {
     return new Response(
-      JSON.stringify({ success: false, error: "Use Supabase Auth resetPasswordForEmail instead", code: "gone" }),
-      { status: 410, headers: { ...corsHeaders(req), "Content-Type": "application/json" } },
+      JSON.stringify({
+        success: false,
+        error: "Use Supabase Auth resetPasswordForEmail instead",
+        code: "gone",
+      }),
+      {
+        status: 410,
+        headers: { ...corsHeaders(req), "Content-Type": "application/json" },
+      },
     );
   }
   if (path.includes("/auth/login") || path.includes("/auth-login")) {
@@ -64,7 +83,11 @@ export default async (req) => {
   }
 
   return new Response(
-    JSON.stringify({ success: false, error: `Not found: ${req.method} ${path}`, code: "not_found" }),
+    JSON.stringify({
+      success: false,
+      error: `Not found: ${req.method} ${path}`,
+      code: "not_found",
+    }),
     { status: 404, headers: corsHeaders(req) },
   );
 };

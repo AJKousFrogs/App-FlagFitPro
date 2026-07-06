@@ -92,14 +92,56 @@ export const appConfig: ApplicationConfig = {
     // <lucide-icon name="…">). Add new glyphs here as screens are ported.
     importProvidersFrom(
       LucideAngularModule.pick({
-        Home, Dumbbell, HeartPulse, LineChart, Menu, Plus, Bell, Flag,
-        CloudRain, Play, Info, Pill, ArrowUpRight, ChevronDown, ChevronRight,
-        Droplet, Moon, Activity, Check, Coffee, ShieldHalf,
-        Trophy, Users, MessageCircle, BarChart3, Sparkles, BookOpen, FileText,
-        User, Medal, Flame, Settings, Camera, Lock, Sun, TrendingUp, Video, Mail,
-        ThumbsUp, ThumbsDown,
-        Calendar, CalendarPlus, Pencil, Trash2, MapPin, X, ClipboardCheck,
-        Apple, Utensils, Clock,
+        Home,
+        Dumbbell,
+        HeartPulse,
+        LineChart,
+        Menu,
+        Plus,
+        Bell,
+        Flag,
+        CloudRain,
+        Play,
+        Info,
+        Pill,
+        ArrowUpRight,
+        ChevronDown,
+        ChevronRight,
+        Droplet,
+        Moon,
+        Activity,
+        Check,
+        Coffee,
+        ShieldHalf,
+        Trophy,
+        Users,
+        MessageCircle,
+        BarChart3,
+        Sparkles,
+        BookOpen,
+        FileText,
+        User,
+        Medal,
+        Flame,
+        Settings,
+        Camera,
+        Lock,
+        Sun,
+        TrendingUp,
+        Video,
+        Mail,
+        ThumbsUp,
+        ThumbsDown,
+        Calendar,
+        CalendarPlus,
+        Pencil,
+        Trash2,
+        MapPin,
+        X,
+        ClipboardCheck,
+        Apple,
+        Utensils,
+        Clock,
       }),
     ),
 
@@ -119,9 +161,7 @@ export const appConfig: ApplicationConfig = {
           if (typeof window === "undefined") {
             return;
           }
-          if (
-            window.matchMedia("(prefers-reduced-motion: reduce)").matches
-          ) {
+          if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
             transition.skipTransition();
           }
         },

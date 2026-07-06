@@ -181,12 +181,13 @@ export class AuthFlowDataService {
     email: string;
     redirectTo: string;
   }): Promise<{ error: { message?: string } | null }> {
-    const { error } = await this.supabaseService.client.auth.resetPasswordForEmail(
-      input.email,
-      {
-        redirectTo: input.redirectTo,
-      },
-    );
+    const { error } =
+      await this.supabaseService.client.auth.resetPasswordForEmail(
+        input.email,
+        {
+          redirectTo: input.redirectTo,
+        },
+      );
 
     return { error };
   }
@@ -285,10 +286,16 @@ export class AuthFlowDataService {
     }
 
     // Match PostgREST table-not-found message patterns
-    const message = typeof e.message === "string" ? e.message.toLowerCase() : "";
-    const details = typeof e.details === "string" ? e.details.toLowerCase() : "";
+    const message =
+      typeof e.message === "string" ? e.message.toLowerCase() : "";
+    const details =
+      typeof e.details === "string" ? e.details.toLowerCase() : "";
     const tableNotFoundPatterns = ["schema cache", "could not find the table"];
-    if (tableNotFoundPatterns.some((p) => message.includes(p) || details.includes(p))) {
+    if (
+      tableNotFoundPatterns.some(
+        (p) => message.includes(p) || details.includes(p),
+      )
+    ) {
       return true;
     }
 

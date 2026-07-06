@@ -1,4 +1,9 @@
-import { ChangeDetectionStrategy, Component, computed, inject } from "@angular/core";
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+} from "@angular/core";
 import { Router, RouterLink } from "@angular/router";
 import { LucideAngularModule } from "lucide-angular";
 
@@ -7,7 +12,10 @@ import { SupabaseService } from "../../core/services/supabase.service";
 import { staffLaneFor } from "../../core/guards/staff.guard";
 
 const LANE_LABEL: Record<string, string> = {
-  coach: "Coach", physio: "Physiotherapist", nutrition: "Nutritionist", psych: "Psychologist",
+  coach: "Coach",
+  physio: "Physiotherapist",
+  nutrition: "Nutritionist",
+  psych: "Psychologist",
 };
 
 /** Staff More — team + role, switch to the athlete view (if also a player), sign out. */

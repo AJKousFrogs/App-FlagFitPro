@@ -76,18 +76,15 @@
         --boot-accent: #00e07a;
         --boot-surface: #111317;
         --boot-border: #262a33;
-        --font-family-sans: "Plus Jakarta Sans", system-ui, -apple-system, sans-serif;
+        --font-family-sans:
+          "Plus Jakarta Sans", system-ui, -apple-system, sans-serif;
         --font-family-display: "Space Grotesk", system-ui, sans-serif;
       }
 
       .route-landing {
         --font-family-sans:
-          "SF Pro Display",
-          -apple-system,
-          BlinkMacSystemFont,
-          "Segoe UI",
-          system-ui,
-          sans-serif;
+          "SF Pro Display", -apple-system, BlinkMacSystemFont, "Segoe UI",
+          system-ui, sans-serif;
       }
 
       /* Prevent FOUC (Flash of Unstyled Content) — dark by default */
@@ -111,7 +108,11 @@
         align-items: center;
         height: 100vh;
         width: 100%;
-        background: linear-gradient(135deg, var(--boot-surface) 0%, var(--boot-bg) 100%);
+        background: linear-gradient(
+          135deg,
+          var(--boot-surface) 0%,
+          var(--boot-bg) 100%
+        );
       }
 
       /* Loading spinner for app-root */

@@ -44,24 +44,30 @@ function createFakeSupabase(state) {
         if (!state.paymentUpdateResult) {
           return Promise.resolve({ data: null, error: null });
         }
-        return Promise.resolve({ data: state.paymentUpdateResult, error: null });
+        return Promise.resolve({
+          data: state.paymentUpdateResult,
+          error: null,
+        });
       }
       return Promise.resolve({ data: null, error: null });
     }
 
     maybeSingle() {
       if (this.table === "player_payments" && this.mode === "update") {
-        return Promise.resolve({ data: state.paymentUpdateResult, error: null });
+        return Promise.resolve({
+          data: state.paymentUpdateResult,
+          error: null,
+        });
       }
       return Promise.resolve({ data: null, error: null });
     }
 
     then(resolve, reject) {
       if (this.table === "team_members" && this.mode === "select") {
-        return Promise.resolve({ data: state.selectedMembers, error: null }).then(
-          resolve,
-          reject,
-        );
+        return Promise.resolve({
+          data: state.selectedMembers,
+          error: null,
+        }).then(resolve, reject);
       }
       if (this.table === "player_payments" && this.mode === "insert") {
         return Promise.resolve({ data: [{ id: "pay-1" }], error: null }).then(
@@ -81,7 +87,8 @@ function createFakeSupabase(state) {
 }
 
 vi.mock("../../netlify/functions/utils/base-handler.js", () => ({
-  baseHandler: async (event, context, options) => options.handler(event, context, {}),
+  baseHandler: async (event, context, options) =>
+    options.handler(event, context, {}),
 }));
 
 vi.mock("../../netlify/functions/supabase-client.js", () => ({
@@ -246,6 +253,8 @@ describe("payments mutations validation", () => {
     expect(response.statusCode).toBe(500);
     const payload = JSON.parse(response.body);
     expect(payload.error?.message).toBe("Internal server error");
-    expect(JSON.stringify(payload)).not.toContain("sensitive auth service detail");
+    expect(JSON.stringify(payload)).not.toContain(
+      "sensitive auth service detail",
+    );
   });
 });

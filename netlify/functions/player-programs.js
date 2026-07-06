@@ -1,4 +1,3 @@
-
 /**
  * Player Programs API
  *
@@ -42,7 +41,11 @@ import {
   handleConflictError,
   ErrorType,
 } from "./utils/error-handler.js";
-import { tryParseJsonObjectBody, isUuid, isValidDateString } from "./utils/input-validator.js";
+import {
+  tryParseJsonObjectBody,
+  isUuid,
+  isValidDateString,
+} from "./utils/input-validator.js";
 import { createLogger } from "./utils/structured-logger.js";
 
 const logger = createLogger({ service: "netlify.player-programs" });
@@ -217,7 +220,11 @@ async function handlePost(event, context, { userId }) {
       `status must be one of: ${Array.from(VALID_STATUSES).join(", ")}`,
     );
   }
-  if (start_date !== undefined && start_date !== null && !isValidDateString(start_date)) {
+  if (
+    start_date !== undefined &&
+    start_date !== null &&
+    !isValidDateString(start_date)
+  ) {
     return handleValidationError("start_date must be a valid date string");
   }
   if (typeof force !== "boolean") {
@@ -272,7 +279,10 @@ async function handlePost(event, context, { userId }) {
       throw inactivateError;
     }
 
-    logger.info("assignment_inactivated", { assignment_id: existingAssignment.id, user_id: userId });
+    logger.info("assignment_inactivated", {
+      assignment_id: existingAssignment.id,
+      user_id: userId,
+    });
   }
 
   // Create new assignment
@@ -308,7 +318,11 @@ async function handlePost(event, context, { userId }) {
   );
   const assignment = mapAssignmentRecord(created, program);
 
-  logger.info("assignment_created", { assignment_id: assignment.id, user_id: userId, program_id });
+  logger.info("assignment_created", {
+    assignment_id: assignment.id,
+    user_id: userId,
+    program_id,
+  });
 
   return createSuccessResponse(
     { assignment },
@@ -382,15 +396,25 @@ async function handlePut(event, context, { userId }) {
   if (program_id !== undefined && !isUuid(program_id)) {
     return handleValidationError("program_id must be a valid UUID");
   }
-  if (end_date !== undefined && end_date !== null && !isValidDateString(end_date)) {
+  if (
+    end_date !== undefined &&
+    end_date !== null &&
+    !isValidDateString(end_date)
+  ) {
     return handleValidationError("end_date must be a valid date string");
   }
   if (notes !== undefined && notes !== null) {
     if (typeof notes !== "string" || notes.length > 2000) {
-      return handleValidationError("notes must be a string up to 2000 characters");
+      return handleValidationError(
+        "notes must be a string up to 2000 characters",
+      );
     }
   }
-  if (modifications !== undefined && modifications !== null && !isPlainObject(modifications)) {
+  if (
+    modifications !== undefined &&
+    modifications !== null &&
+    !isPlainObject(modifications)
+  ) {
     return handleValidationError("modifications must be an object");
   }
 
@@ -470,7 +494,11 @@ async function handlePut(event, context, { userId }) {
     );
     const assignment = mapAssignmentRecord(created, program);
 
-    logger.info("assignment_switched", { user_id: userId, from_program_id: existing.program_id, to_program_id: program_id });
+    logger.info("assignment_switched", {
+      user_id: userId,
+      from_program_id: existing.program_id,
+      to_program_id: program_id,
+    });
 
     return createSuccessResponse(
       { assignment },

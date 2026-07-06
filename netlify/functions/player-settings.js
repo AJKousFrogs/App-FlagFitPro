@@ -4,11 +4,11 @@ import {
   createSuccessResponse,
   handleValidationError,
 } from "./utils/error-handler.js";
-import { parseJsonObjectBody, isValidDateString } from "./utils/input-validator.js";
 import {
-  createLogger,
-  makeRequestLogger,
-} from "./utils/structured-logger.js";
+  parseJsonObjectBody,
+  isValidDateString,
+} from "./utils/input-validator.js";
+import { createLogger, makeRequestLogger } from "./utils/structured-logger.js";
 
 const DEFAULT_DAILY_ROUTINE = [
   { id: "wake", label: "Wake Up", time: "07:00", icon: "pi-sun" },
@@ -137,7 +137,10 @@ function normalizeTeamTrainingDays(value) {
   if (!isPlainObject(value)) {
     // also accept a bare array of weekday ints
     if (Array.isArray(value)) {
-      return { days: coercePreferredTrainingDaysArray(value) ?? [], time: "18:00" };
+      return {
+        days: coercePreferredTrainingDaysArray(value) ?? [],
+        time: "18:00",
+      };
     }
     return fallback;
   }
@@ -153,7 +156,9 @@ function normalizeSettingsPayload(payload) {
   normalizePreferredTrainingDaysPayload(payload);
   normalizeNumericFieldsPayload(payload);
   if (payload.teamTrainingDays !== undefined) {
-    payload.teamTrainingDays = normalizeTeamTrainingDays(payload.teamTrainingDays);
+    payload.teamTrainingDays = normalizeTeamTrainingDays(
+      payload.teamTrainingDays,
+    );
   }
 }
 

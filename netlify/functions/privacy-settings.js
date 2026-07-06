@@ -1,5 +1,8 @@
 import { baseHandler } from "./utils/base-handler.js";
-import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
+import {
+  createSuccessResponse,
+  createErrorResponse,
+} from "./utils/error-handler.js";
 import { getSupabaseClient } from "./supabase-client.js";
 import { parseJsonObjectBody, isValidId } from "./utils/input-validator.js";
 import { createLogger } from "./utils/structured-logger.js";
@@ -90,7 +93,10 @@ function validateSettingsPayload(settings) {
   ) {
     return "aiProcessingEnabled must be a boolean";
   }
-  if (settings.researchOptIn !== undefined && !isBoolean(settings.researchOptIn)) {
+  if (
+    settings.researchOptIn !== undefined &&
+    !isBoolean(settings.researchOptIn)
+  ) {
     return "researchOptIn must be a boolean";
   }
   if (
@@ -151,7 +157,8 @@ function validateTeamSettingsPayload(teamSettings) {
     }
     const invalid = teamSettings.allowedMetricCategories.find(
       (category) =>
-        typeof category !== "string" || !ALLOWED_METRIC_CATEGORIES.has(category),
+        typeof category !== "string" ||
+        !ALLOWED_METRIC_CATEGORIES.has(category),
     );
     if (invalid) {
       return "allowedMetricCategories contains invalid category";
@@ -274,7 +281,10 @@ const handler = async (event, context) => {
         }
 
         const { settings: newSettings, teamId, teamSettings } = body;
-        if (newSettings === undefined && (teamId === undefined || teamSettings === undefined)) {
+        if (
+          newSettings === undefined &&
+          (teamId === undefined || teamSettings === undefined)
+        ) {
           return createErrorResponse(
             "Provide settings and/or teamId with teamSettings",
             422,
@@ -335,15 +345,13 @@ const handler = async (event, context) => {
           }
 
           if (Object.keys(updateData).length > 0) {
-            const { error } = await supabase
-              .from("privacy_settings")
-              .upsert(
-                {
-                  user_id: userId,
-                  ...updateData,
-                },
-                { onConflict: "user_id" },
-              );
+            const { error } = await supabase.from("privacy_settings").upsert(
+              {
+                user_id: userId,
+                ...updateData,
+              },
+              { onConflict: "user_id" },
+            );
 
             if (error) {
               return createErrorResponse(
@@ -359,7 +367,11 @@ const handler = async (event, context) => {
         // Update team-specific settings
         if (teamId && teamSettings) {
           if (!isValidId(teamId)) {
-            return createErrorResponse("teamId is invalid", 422, "validation_error");
+            return createErrorResponse(
+              "teamId is invalid",
+              422,
+              "validation_error",
+            );
           }
 
           const teamSettingsValidationError =
@@ -440,14 +452,20 @@ const handler = async (event, context) => {
         }
 
         // Log the privacy change
-        const { error: auditError } = await supabase.from("privacy_audit_log").insert({
-          user_id: userId,
-          action: "settings_updated",
-          affected_table: teamId ? "team_sharing_settings" : "privacy_settings",
-          affected_data: body,
-        });
+        const { error: auditError } = await supabase
+          .from("privacy_audit_log")
+          .insert({
+            user_id: userId,
+            action: "settings_updated",
+            affected_table: teamId
+              ? "team_sharing_settings"
+              : "privacy_settings",
+            affected_data: body,
+          });
         if (auditError) {
-          logger.warn("audit_log_insert_failed", { message: auditError.message });
+          logger.warn("audit_log_insert_failed", {
+            message: auditError.message,
+          });
         }
 
         return createSuccessResponse({

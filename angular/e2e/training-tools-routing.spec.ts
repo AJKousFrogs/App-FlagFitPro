@@ -87,7 +87,8 @@ test.describe("Training Tool Routes", () => {
       },
       {
         path: "/training/load-analysis",
-        heading: /acwr analysis|training load data|4-week flag football metrics/i,
+        heading:
+          /acwr analysis|training load data|4-week flag football metrics/i,
       },
     ];
 
@@ -95,7 +96,9 @@ test.describe("Training Tool Routes", () => {
       await page.goto(`${BASE_URL}${route.path}`);
       await dismissCookieBanner(page);
       await page.waitForLoadState("networkidle");
-      await expect(page).toHaveURL(new RegExp(route.path.replace(/\//g, "\\/")));
+      await expect(page).toHaveURL(
+        new RegExp(route.path.replace(/\//g, "\\/")),
+      );
       await expect(
         page.locator("h1, h2, h3").filter({ hasText: route.heading }).first(),
       ).toBeVisible({ timeout: 10000 });

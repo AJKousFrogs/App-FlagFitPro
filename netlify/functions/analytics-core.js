@@ -1,8 +1,14 @@
 import { supabaseAdmin } from "./supabase-client.js";
 import { validateQueryParams } from "./validation.js";
 import { getOrFetch, CACHE_TTL, CACHE_PREFIX } from "./cache.js";
-import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
-import { ConsentDataReader, AccessContext } from "./utils/consent-data-reader.js";
+import {
+  createSuccessResponse,
+  createErrorResponse,
+} from "./utils/error-handler.js";
+import {
+  ConsentDataReader,
+  AccessContext,
+} from "./utils/consent-data-reader.js";
 import { DataState } from "./utils/data-state.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { parseBoundedInt } from "./utils/input-validator.js";
@@ -753,16 +759,13 @@ const handler = async (event, context) => {
         }
 
         const sanitizedQuery = validation.sanitized || {};
-        const hasWeeks = Object.hasOwn(
-          sanitizedQuery,
-          "weeks",
-        );
-        const hasPeriod = Object.hasOwn(
-          sanitizedQuery,
-          "period",
-        );
+        const hasWeeks = Object.hasOwn(sanitizedQuery, "weeks");
+        const hasPeriod = Object.hasOwn(sanitizedQuery, "period");
         const weeks = hasWeeks
-          ? parseBoundedInt(String(sanitizedQuery.weeks), "weeks", { min: 1, max: 52 })
+          ? parseBoundedInt(String(sanitizedQuery.weeks), "weeks", {
+              min: 1,
+              max: 52,
+            })
           : 7;
         const period = hasPeriod
           ? parsePeriod(String(sanitizedQuery.period))

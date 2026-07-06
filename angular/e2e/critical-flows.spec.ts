@@ -136,7 +136,9 @@ test.describe("Authentication Flow", () => {
     await expect(page.locator("h1, h2").first()).toContainText(
       /login|sign in/i,
     );
-    await expect(page.getByTestId("email-input").locator("input")).toBeVisible();
+    await expect(
+      page.getByTestId("email-input").locator("input"),
+    ).toBeVisible();
     await expect(
       page.getByTestId("password-input").locator("input"),
     ).toBeVisible();

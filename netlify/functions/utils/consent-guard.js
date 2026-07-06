@@ -128,7 +128,9 @@ function filterReadinessForCoach(readinessData, hasConsent, safetyOverride) {
   };
 }
 
-export { canCoachViewReadiness,
+export {
+  canCoachViewReadiness,
   canCoachViewWellness,
   filterWellnessDataForCoach,
-  filterReadinessForCoach, };
+  filterReadinessForCoach,
+};

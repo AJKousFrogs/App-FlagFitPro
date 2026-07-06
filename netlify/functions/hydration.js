@@ -1,7 +1,13 @@
 import { baseHandler } from "./utils/base-handler.js";
-import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
+import {
+  createSuccessResponse,
+  createErrorResponse,
+} from "./utils/error-handler.js";
 import { supabaseAdmin } from "./supabase-client.js";
-import { parseJsonObjectBody, parseBoundedInt } from "./utils/input-validator.js";
+import {
+  parseJsonObjectBody,
+  parseBoundedInt,
+} from "./utils/input-validator.js";
 import { createLogger, makeRequestLogger } from "./utils/structured-logger.js";
 
 const logger = createLogger({ service: "netlify.hydration" });
@@ -190,7 +196,11 @@ const handler = async (event, context) => {
               );
             }
 
-            const result = await logHydration(userId, hydrationData, requestLogger);
+            const result = await logHydration(
+              userId,
+              hydrationData,
+              requestLogger,
+            );
             return createSuccessResponse(result, 201, "Hydration logged");
           }
 
@@ -208,16 +218,13 @@ const handler = async (event, context) => {
             });
           } catch (validationError) {
             return createErrorResponse(
-              validationError.message || "days must be an integer between 1 and 365",
+              validationError.message ||
+                "days must be an integer between 1 and 365",
               422,
               "validation_error",
             );
           }
-          const result = await getHydrationHistory(
-            userId,
-            days,
-            requestLogger,
-          );
+          const result = await getHydrationHistory(userId, days, requestLogger);
           return createSuccessResponse({ logs: result });
         }
 
@@ -231,15 +238,11 @@ const handler = async (event, context) => {
         ) {
           return createErrorResponse(error.message, 422, "validation_error");
         }
-        requestLogger.error(
-          "hydration_handler_failed",
-          error,
-          {
-            http_method: event.httpMethod,
-            path,
-            user_id: userId,
-          },
-        );
+        requestLogger.error("hydration_handler_failed", error, {
+          http_method: event.httpMethod,
+          path,
+          user_id: userId,
+        });
         throw error;
       }
     },

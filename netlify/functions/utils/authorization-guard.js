@@ -131,7 +131,8 @@ async function canModifySession(
       return {
         authorized: false,
         error: "INSUFFICIENT_PERMISSIONS",
-        message: "Authorized team staff role required for structure modifications",
+        message:
+          "Authorized team staff role required for structure modifications",
       };
     }
 
@@ -275,8 +276,10 @@ async function requireRole(userId, requiredRoles) {
 // implied a working second consent path). The single source of truth for consent
 // is utils/consent-guard.js (athlete_consent_settings), used by the live readers.
 
-export { getUserRole,
+export {
+  getUserRole,
   canModifySession,
   logViolation,
   requireAuthorization,
-  requireRole, };
+  requireRole,
+};

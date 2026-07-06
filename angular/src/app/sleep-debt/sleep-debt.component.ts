@@ -32,12 +32,43 @@ interface SleepNight {
   templateUrl: "./sleep-debt.component.html",
   styles: [
     `
-      .bar { height: 8px; border-radius: var(--r-pill); background: var(--surface-2); overflow: hidden; flex: 1; }
-      .bar > i { display: block; height: 100%; border-radius: var(--r-pill); }
-      .nrow { display: flex; align-items: center; gap: var(--s-3); padding: var(--s-2) 0; }
-      .nrow .d { width: 52px; font-size: var(--fs-sm); color: var(--text-muted); flex: 0 0 auto; }
-      .nrow .h { width: 58px; text-align: right; font-size: var(--fs-sm); font-weight: var(--fw-bold); flex: 0 0 auto; }
-      .big { font-family: var(--font-display); font-size: 40px; line-height: 1; font-weight: var(--fw-bold); }
+      .bar {
+        height: 8px;
+        border-radius: var(--r-pill);
+        background: var(--surface-2);
+        overflow: hidden;
+        flex: 1;
+      }
+      .bar > i {
+        display: block;
+        height: 100%;
+        border-radius: var(--r-pill);
+      }
+      .nrow {
+        display: flex;
+        align-items: center;
+        gap: var(--s-3);
+        padding: var(--s-2) 0;
+      }
+      .nrow .d {
+        width: 52px;
+        font-size: var(--fs-sm);
+        color: var(--text-muted);
+        flex: 0 0 auto;
+      }
+      .nrow .h {
+        width: 58px;
+        text-align: right;
+        font-size: var(--fs-sm);
+        font-weight: var(--fw-bold);
+        flex: 0 0 auto;
+      }
+      .big {
+        font-family: var(--font-display);
+        font-size: 40px;
+        line-height: 1;
+        font-weight: var(--fw-bold);
+      }
     `,
   ],
 })
@@ -49,18 +80,26 @@ export class SleepDebtComponent {
   readonly age = signal<number | null>(null);
 
   constructor() {
-    this.api.get<{ sleepHistory: SleepNight[]; userAge: number | null }>("/api/sleep-data").subscribe({
-      next: (res) => {
-        const d = extractApiPayload<{ sleepHistory: SleepNight[]; userAge: number | null }>(res) ?? {
-          sleepHistory: [],
-          userAge: null,
-        };
-        this.history.set(Array.isArray(d.sleepHistory) ? d.sleepHistory : []);
-        this.age.set(d.userAge ?? null);
-        this.loaded.set(true);
-      },
-      error: () => this.loaded.set(true),
-    });
+    this.api
+      .get<{
+        sleepHistory: SleepNight[];
+        userAge: number | null;
+      }>("/api/sleep-data")
+      .subscribe({
+        next: (res) => {
+          const d = extractApiPayload<{
+            sleepHistory: SleepNight[];
+            userAge: number | null;
+          }>(res) ?? {
+            sleepHistory: [],
+            userAge: null,
+          };
+          this.history.set(Array.isArray(d.sleepHistory) ? d.sleepHistory : []);
+          this.age.set(d.userAge ?? null);
+          this.loaded.set(true);
+        },
+        error: () => this.loaded.set(true),
+      });
   }
 
   /** National Sleep Foundation: 14–17y → ~9h, adults → ~8h. */
@@ -73,7 +112,10 @@ export class SleepDebtComponent {
 
   readonly debtHours = computed(() => {
     const t = this.targetHours();
-    return this.last7().reduce((sum, n) => sum + Math.max(0, t - n.hoursSlept), 0);
+    return this.last7().reduce(
+      (sum, n) => sum + Math.max(0, t - n.hoursSlept),
+      0,
+    );
   });
 
   readonly avgHours = computed(() => {

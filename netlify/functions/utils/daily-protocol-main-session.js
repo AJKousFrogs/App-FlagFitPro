@@ -36,7 +36,9 @@ export async function generateMainSessionFallback({
       sessionType = "gym";
       sessionCategory = "strength";
       mainSessionGenerated = true;
-      logger.info("daily_protocol_gym_session_generated", { exerciseCount: mainSessionExercises.length });
+      logger.info("daily_protocol_gym_session_generated", {
+        exerciseCount: mainSessionExercises.length,
+      });
     } else {
       logger.warn("daily_protocol_gym_session_empty", {});
     }
@@ -182,7 +184,9 @@ async function addSprintMainSession({
       supabase
         .from("exercises")
         .select("*")
-        .or("name.ilike.%flying%,name.ilike.%max velocity%,name.ilike.%top speed%")
+        .or(
+          "name.ilike.%flying%,name.ilike.%max velocity%,name.ilike.%top speed%",
+        )
         .eq("active", true)
         .limit(2),
     );
@@ -246,7 +250,11 @@ async function addSprintMainSession({
       : 4;
 
   for (const [idx, exercise] of prioritized.slice(0, exerciseCount).entries()) {
-    const config = await getSprintExerciseConfigFromDB(supabase, exercise, sprintPhase);
+    const config = await getSprintExerciseConfigFromDB(
+      supabase,
+      exercise,
+      sprintPhase,
+    );
     protocolExercises.push({
       exercise_id: exercise.id,
       exercise_name: exercise.name,
@@ -261,7 +269,12 @@ async function addSprintMainSession({
     });
   }
 
-  logger.info("daily_protocol_sprint_session_generated", { sprintPhase, protocols: sprintProtocols, hillSprints: useHillSprints, stairSprints: useStairSprints });
+  logger.info("daily_protocol_sprint_session_generated", {
+    sprintPhase,
+    protocols: sprintProtocols,
+    hillSprints: useHillSprints,
+    stairSprints: useStairSprints,
+  });
 
   return true;
 }
@@ -357,9 +370,13 @@ async function getSprintExerciseConfigFromDB(supabase, exercise, sprintPhase) {
 
   // Map name keywords → modality slugs that exist in prescription_templates
   let modality = "sprint";
-  if (name.includes("hill") || name.includes("uphill")) modality = "uphill_sprint";
-  else if (name.includes("flying") || name.includes("max velocity")) modality = "flying_sprint";
-  else if (name.includes("deceleration") || name.includes("braking")) modality = "deceleration";
+  if (name.includes("hill") || name.includes("uphill")) {
+    modality = "uphill_sprint";
+  } else if (name.includes("flying") || name.includes("max velocity")) {
+    modality = "flying_sprint";
+  } else if (name.includes("deceleration") || name.includes("braking")) {
+    modality = "deceleration";
+  }
 
   const tpl = await getPrescriptionTemplate(supabase, {
     modality,
@@ -377,16 +394,45 @@ async function getSprintExerciseConfigFromDB(supabase, exercise, sprintPhase) {
 
   // Fallback: corrected hardcoded values (audit findings P0 #5-8)
   if (modality === "uphill_sprint") {
-    return { sets: 3, reps: 4, restSeconds: 90, aiNote: "Hill Sprints - Develops horizontal force and acceleration (Paradisis & Cooke 2006)" };
+    return {
+      sets: 3,
+      reps: 4,
+      restSeconds: 90,
+      aiNote:
+        "Hill Sprints - Develops horizontal force and acceleration (Paradisis & Cooke 2006)",
+    };
   }
   if (name.includes("stair") || name.includes("step")) {
-    return { sets: 3, reps: 4, restSeconds: 90, aiNote: "Stair Sprints - ADVANCED: Explosive hip flexor power. Only for well-conditioned athletes (ACWR >= 0.8)" };
+    return {
+      sets: 3,
+      reps: 4,
+      restSeconds: 90,
+      aiNote:
+        "Stair Sprints - ADVANCED: Explosive hip flexor power. Only for well-conditioned athletes (ACWR >= 0.8)",
+    };
   }
   if (modality === "flying_sprint") {
-    return { sets: 2, reps: 3, restSeconds: 180, aiNote: "Flying Sprints - Maximum velocity development. Full recovery required (Morin 2015)" };
+    return {
+      sets: 2,
+      reps: 3,
+      restSeconds: 180,
+      aiNote:
+        "Flying Sprints - Maximum velocity development. Full recovery required (Morin 2015)",
+    };
   }
   if (modality === "deceleration") {
-    return { sets: 3, reps: 4, restSeconds: 90, aiNote: "Deceleration Training - CRITICAL for flag football. ≥90s recovery (Komi 2000)" };
+    return {
+      sets: 3,
+      reps: 4,
+      restSeconds: 90,
+      aiNote:
+        "Deceleration Training - CRITICAL for flag football. ≥90s recovery (Komi 2000)",
+    };
   }
-  return { sets: 3, reps: 4, restSeconds: 90, aiNote: `Acceleration Sprints - ${sprintPhase} phase. Focus on first 10m burst (most critical for flag football)` };
+  return {
+    sets: 3,
+    reps: 4,
+    restSeconds: 90,
+    aiNote: `Acceleration Sprints - ${sprintPhase} phase. Focus on first 10m burst (most critical for flag football)`,
+  };
 }

@@ -17,8 +17,7 @@ import { test, expect, Page } from "@playwright/test";
 const BASE_URL = process.env["BASE_URL"] || "http://localhost:4200";
 
 const TEST_USER = {
-  email:
-    process.env["TEST_USER_EMAIL"] || process.env["E2E_TEST_EMAIL"] || "",
+  email: process.env["TEST_USER_EMAIL"] || process.env["E2E_TEST_EMAIL"] || "",
   password:
     process.env["TEST_USER_PASSWORD"] || process.env["E2E_TEST_PASSWORD"] || "",
 };
@@ -95,21 +94,27 @@ async function login(page: Page): Promise<void> {
     .locator(
       ".form-error-summary, app-alert, [role='alert'], .p-message-error, .error-message",
     )
-    .filter({ hasText: /unable to sign in|invalid email|invalid password|invalid email or password/i })
+    .filter({
+      hasText:
+        /unable to sign in|invalid email|invalid password|invalid email or password/i,
+    })
     .first();
 
   await Promise.race([
-    page.waitForURL(/.*(today|staff|dashboard|player-dashboard|coach-dashboard|onboarding).*/, {
-      timeout: 15000,
-    }),
+    page.waitForURL(
+      /.*(today|staff|dashboard|player-dashboard|coach-dashboard|onboarding).*/,
+      {
+        timeout: 15000,
+      },
+    ),
     (async () => {
       await authError.waitFor({ state: "visible", timeout: 15000 });
-      const errorText = (await authError.textContent())?.trim() || "unknown auth error";
+      const errorText =
+        (await authError.textContent())?.trim() || "unknown auth error";
       throw new Error(`Login failed before navigation: ${errorText}`);
     })(),
   ]);
 }
-
 
 test.describe("Critical Flow - Morning Training Block", () => {
   test.skip(

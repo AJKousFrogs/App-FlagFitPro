@@ -21,18 +21,34 @@ import { handler as attendanceHandler } from "./attendance.js";
 import { getCorsHeaders as corsHeaders } from "./utils/cors.js";
 
 export default async (req) => {
-  if (req.method === "OPTIONS") {return new Response(null, { status: 204, headers: corsHeaders(req) });}
+  if (req.method === "OPTIONS") {
+    return new Response(null, { status: 204, headers: corsHeaders(req) });
+  }
   const url = new URL(req.url);
   const path = url.pathname;
 
-  if (path.includes("/team-calendar")) {return dispatch(teamCalendarHandler, req, url);}
-  if (path.includes("/team-invite")) {return dispatch(teamInviteHandler, req, url);}
-  if (path.includes("/team-templates")) {return dispatch(teamTemplatesHandler, req, url);}
-  if (path.includes("/season-archive")) {return dispatch(seasonArchiveHandler, req, url);}
-  if (path.includes("/attendance")) {return dispatch(attendanceHandler, req, url);}
+  if (path.includes("/team-calendar")) {
+    return dispatch(teamCalendarHandler, req, url);
+  }
+  if (path.includes("/team-invite")) {
+    return dispatch(teamInviteHandler, req, url);
+  }
+  if (path.includes("/team-templates")) {
+    return dispatch(teamTemplatesHandler, req, url);
+  }
+  if (path.includes("/season-archive")) {
+    return dispatch(seasonArchiveHandler, req, url);
+  }
+  if (path.includes("/attendance")) {
+    return dispatch(attendanceHandler, req, url);
+  }
 
   return new Response(
-    JSON.stringify({ success: false, error: `Not found: ${req.method} ${path}`, code: "not_found" }),
+    JSON.stringify({
+      success: false,
+      error: `Not found: ${req.method} ${path}`,
+      code: "not_found",
+    }),
     { status: 404, headers: corsHeaders(req) },
   );
 };

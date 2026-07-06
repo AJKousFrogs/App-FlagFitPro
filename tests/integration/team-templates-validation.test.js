@@ -2,7 +2,12 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const state = vi.hoisted(() => ({
   coachTeams: [{ team_id: "team-1", role: "coach" }],
-  inboxItem: { id: "inbox-1", team_id: "team-2", title: "Alert", summary: "Summary" },
+  inboxItem: {
+    id: "inbox-1",
+    team_id: "team-2",
+    title: "Alert",
+    summary: "Summary",
+  },
   template: {
     id: "template-1",
     team_id: "team-2",
@@ -20,7 +25,10 @@ const state = vi.hoisted(() => ({
 
 vi.mock("../../netlify/functions/utils/base-handler.js", () => ({
   baseHandler: async (event, context, options) =>
-    options.handler(event, context, { userId: "coach-1", requestId: "req-test" }),
+    options.handler(event, context, {
+      userId: "coach-1",
+      requestId: "req-test",
+    }),
 }));
 
 vi.mock("../../netlify/functions/supabase-client.js", () => ({
@@ -105,7 +113,11 @@ vi.mock("../../netlify/functions/supabase-client.js", () => ({
         };
       }
 
-      if (table === "micro_sessions" || table === "template_assignments" || table === "ai_messages") {
+      if (
+        table === "micro_sessions" ||
+        table === "template_assignments" ||
+        table === "ai_messages"
+      ) {
         const queryState = { mode: null };
         return {
           insert() {
@@ -116,7 +128,11 @@ vi.mock("../../netlify/functions/supabase-client.js", () => ({
             return this;
           },
           single: async () => {
-            if (table === "template_assignments" && queryState.mode === "insert" && state.assignmentError) {
+            if (
+              table === "template_assignments" &&
+              queryState.mode === "insert" &&
+              state.assignmentError
+            ) {
               return { data: null, error: { message: state.assignmentError } };
             }
             return { data: { id: "row-1" }, error: null };
@@ -138,7 +154,12 @@ describe("team-templates authorization and error hardening", () => {
   beforeEach(async () => {
     vi.resetModules();
     state.coachTeams = [{ team_id: "team-1", role: "coach" }];
-    state.inboxItem = { id: "inbox-1", team_id: "team-2", title: "Alert", summary: "Summary" };
+    state.inboxItem = {
+      id: "inbox-1",
+      team_id: "team-2",
+      title: "Alert",
+      summary: "Summary",
+    };
     state.template = {
       id: "template-1",
       team_id: "team-2",
@@ -173,7 +194,11 @@ describe("team-templates authorization and error hardening", () => {
       {
         httpMethod: "POST",
         path: "/.netlify/functions/team-templates/from-inbox",
-        body: JSON.stringify({ inbox_item_id: "inbox-1", template_type: "micro_session", content: {} }),
+        body: JSON.stringify({
+          inbox_item_id: "inbox-1",
+          template_type: "micro_session",
+          content: {},
+        }),
       },
       {},
     );
@@ -213,6 +238,8 @@ describe("team-templates authorization and error hardening", () => {
     expect(response.statusCode).toBe(200);
     const body = JSON.parse(response.body);
     expect(body.data?.failed?.[0]?.error).toBe("Assignment failed");
-    expect(JSON.stringify(body)).not.toContain("duplicate key value violates unique constraint");
+    expect(JSON.stringify(body)).not.toContain(
+      "duplicate key value violates unique constraint",
+    );
   });
 });

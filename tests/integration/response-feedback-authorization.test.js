@@ -84,16 +84,16 @@ function createSupabase() {
       if (this.table === "team_members") {
         const userId = this.filters.find((f) => f.field === "user_id")?.value;
         if (userId === "user-1") {
-          return Promise.resolve({ data: state.requesterTeams, error: null }).then(
-            resolve,
-            reject,
-          );
+          return Promise.resolve({
+            data: state.requesterTeams,
+            error: null,
+          }).then(resolve, reject);
         }
         if (userId === state.messageOwnerId) {
-          return Promise.resolve({ data: state.athleteTeams, error: null }).then(
-            resolve,
-            reject,
-          );
+          return Promise.resolve({
+            data: state.athleteTeams,
+            error: null,
+          }).then(resolve, reject);
         }
       }
       if (this.table === "ai_response_feedback") {
@@ -119,7 +119,10 @@ function createSupabase() {
 
 vi.mock("../../netlify/functions/utils/base-handler.js", () => ({
   baseHandler: async (event, context, options) =>
-    options.handler(event, context, { userId: "user-1", requestId: "req-test" }),
+    options.handler(event, context, {
+      userId: "user-1",
+      requestId: "req-test",
+    }),
 }));
 
 vi.mock("../../netlify/functions/supabase-client.js", () => ({
@@ -138,7 +141,8 @@ describe("response-feedback authorization", () => {
     state.coachMembershipExists = false;
     state.messageMissing = false;
     state.feedbackQueryErrorMessage = null;
-    ({ handler } = await import("../../netlify/functions/response-feedback.js"));
+    ({ handler } =
+      await import("../../netlify/functions/response-feedback.js"));
   });
 
   it("blocks athlete feedback submission for another user's message", async () => {

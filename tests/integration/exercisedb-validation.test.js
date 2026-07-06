@@ -48,7 +48,11 @@ function createFakeSupabase() {
     maybeSingle() {
       if (this.table === "team_members") {
         return Promise.resolve({
-          data: { role: "coach", team_id: "team-1", users: { full_name: "Coach One" } },
+          data: {
+            role: "coach",
+            team_id: "team-1",
+            users: { full_name: "Coach One" },
+          },
           error: null,
         });
       }
@@ -152,6 +156,8 @@ describe("exercisedb validation hardening", () => {
     expect(response.statusCode).toBe(500);
     const payload = JSON.parse(response.body);
     expect(payload.error?.message).toBe("Internal server error");
-    expect(JSON.stringify(payload)).not.toContain("sensitive partner api token");
+    expect(JSON.stringify(payload)).not.toContain(
+      "sensitive partner api token",
+    );
   });
 });

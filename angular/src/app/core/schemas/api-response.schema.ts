@@ -499,7 +499,9 @@ export const NotificationCountSchema = z.object({
   unreadCount: z.number(),
 });
 
-export type NotificationCountDTO = ReturnType<typeof NotificationCountSchema.parse>;
+export type NotificationCountDTO = ReturnType<
+  typeof NotificationCountSchema.parse
+>;
 
 // ============================================================================
 // Coach Inbox Schemas
@@ -543,7 +545,9 @@ export const InboxStatsSchema = z.object({
 });
 
 export type InboxItemDTO = ReturnType<typeof InboxItemSchema.parse>;
-export type CoachInboxListResponseDTO = ReturnType<typeof CoachInboxListResponseSchema.parse>;
+export type CoachInboxListResponseDTO = ReturnType<
+  typeof CoachInboxListResponseSchema.parse
+>;
 export type InboxStatsDTO = ReturnType<typeof InboxStatsSchema.parse>;
 
 // ============================================================================

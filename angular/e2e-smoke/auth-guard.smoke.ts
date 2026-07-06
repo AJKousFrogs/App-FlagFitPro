@@ -15,7 +15,9 @@ test.beforeEach(async ({ page }) => {
   });
 });
 
-test("with auth required, an unauthenticated visit to /today redirects to /login", async ({ page }) => {
+test("with auth required, an unauthenticated visit to /today redirects to /login", async ({
+  page,
+}) => {
   const errors: string[] = [];
   page.on("pageerror", (e) => errors.push(String(e)));
 
@@ -31,13 +33,17 @@ test("with auth required, an unauthenticated visit to /today redirects to /login
   expect(errors, `uncaught errors:\n${errors.join("\n")}`).toEqual([]);
 });
 
-test("with auth required, the bare root also lands on /login", async ({ page }) => {
+test("with auth required, the bare root also lands on /login", async ({
+  page,
+}) => {
   await page.goto("/");
   await expect(page).toHaveURL(/\/login/);
   await expect(page.locator(".tabbar")).toHaveCount(0);
 });
 
-test("the /verify-email parking route renders standalone (resend CTA present)", async ({ page }) => {
+test("the /verify-email parking route renders standalone (resend CTA present)", async ({
+  page,
+}) => {
   const errors: string[] = [];
   page.on("pageerror", (e) => errors.push(String(e)));
 

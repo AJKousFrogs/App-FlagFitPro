@@ -1,17 +1,30 @@
 import { supabaseAdmin } from "./supabase-client.js";
-import { createSuccessResponse, createErrorResponse, handleValidationError } from "./utils/error-handler.js";
+import {
+  createSuccessResponse,
+  createErrorResponse,
+  handleValidationError,
+} from "./utils/error-handler.js";
 import { baseHandler } from "./utils/base-handler.js";
 import {
   canCoachViewWellness,
   filterWellnessDataForCoach,
 } from "./utils/consent-guard.js";
-import { ConsentDataReader, AccessContext } from "./utils/consent-data-reader.js";
+import {
+  ConsentDataReader,
+  AccessContext,
+} from "./utils/consent-data-reader.js";
 import { detectPainTrigger } from "./utils/safety-override.js";
 import { getUserRole } from "./utils/authorization-guard.js";
 import { guardMerlinRequest } from "./utils/merlin-guard.js";
 import { hasAnyRole, HEALTH_DATA_ACCESS_ROLES } from "./utils/role-sets.js";
-import { parseJsonObjectBody as sharedParseJsonObjectBody, parseBoundedInt } from "./utils/input-validator.js";
-import { buildRequestLogContext, createLogger } from "./utils/structured-logger.js";
+import {
+  parseJsonObjectBody as sharedParseJsonObjectBody,
+  parseBoundedInt,
+} from "./utils/input-validator.js";
+import {
+  buildRequestLogContext,
+  createLogger,
+} from "./utils/structured-logger.js";
 
 // Netlify Functions - Performance Data API
 // Handles athlete performance data storage and retrieval using Supabase
@@ -82,7 +95,6 @@ const ENDPOINT_HANDLERS = {
 };
 
 const consentReader = new ConsentDataReader(supabaseAdmin);
-
 
 function parseJsonObjectBody(rawBody) {
   try {
@@ -277,7 +289,14 @@ const handler = async (event, context) => {
 };
 
 // Physical Measurements Handler
-async function handleMeasurements(method, userId, body, query, _resourceId, log = logger) {
+async function handleMeasurements(
+  method,
+  userId,
+  body,
+  query,
+  _resourceId,
+  log = logger,
+) {
   switch (method) {
     case "GET": {
       const timeframe = query?.timeframe || "6m";
@@ -405,47 +424,53 @@ async function handleMeasurements(method, userId, body, query, _resourceId, log 
           // If table doesn't exist, create it (simplified - in production, use migrations)
           if (error.code === "42P01") {
             // Return success but note table needs creation
-            return createSuccessResponse({
-              id: `temp_${Date.now()}`,
-              data: {
-                ...measurementData,
-                userId,
-                timestamp: new Date().toISOString(),
+            return createSuccessResponse(
+              {
+                id: `temp_${Date.now()}`,
+                data: {
+                  ...measurementData,
+                  userId,
+                  timestamp: new Date().toISOString(),
+                },
+                note: "Table needs to be created via migration",
               },
-              note: "Table needs to be created via migration",
-            }, 201);
+              201,
+            );
           }
           throw error;
         }
 
-        return createSuccessResponse({
-          id: data.id,
-          data: {
+        return createSuccessResponse(
+          {
             id: data.id,
-            userId: data.user_id,
-            // Basic measurements
-            weight: data.weight,
-            height: data.height,
-            bodyFat: data.body_fat,
-            muscleMass: data.muscle_mass,
-            // Enhanced body composition
-            bodyWaterMass: data.body_water_mass,
-            fatMass: data.fat_mass,
-            proteinMass: data.protein_mass,
-            boneMineralContent: data.bone_mineral_content,
-            skeletalMuscleMass: data.skeletal_muscle_mass,
-            musclePercentage: data.muscle_percentage,
-            bodyWaterPercentage: data.body_water_percentage,
-            proteinPercentage: data.protein_percentage,
-            boneMineralPercentage: data.bone_mineral_percentage,
-            visceralFatRating: data.visceral_fat_rating,
-            basalMetabolicRate: data.basal_metabolic_rate,
-            waistToHipRatio: data.waist_to_hip_ratio,
-            bodyAge: data.body_age,
-            notes: data.notes,
-            timestamp: data.created_at,
+            data: {
+              id: data.id,
+              userId: data.user_id,
+              // Basic measurements
+              weight: data.weight,
+              height: data.height,
+              bodyFat: data.body_fat,
+              muscleMass: data.muscle_mass,
+              // Enhanced body composition
+              bodyWaterMass: data.body_water_mass,
+              fatMass: data.fat_mass,
+              proteinMass: data.protein_mass,
+              boneMineralContent: data.bone_mineral_content,
+              skeletalMuscleMass: data.skeletal_muscle_mass,
+              musclePercentage: data.muscle_percentage,
+              bodyWaterPercentage: data.body_water_percentage,
+              proteinPercentage: data.protein_percentage,
+              boneMineralPercentage: data.bone_mineral_percentage,
+              visceralFatRating: data.visceral_fat_rating,
+              basalMetabolicRate: data.basal_metabolic_rate,
+              waistToHipRatio: data.waist_to_hip_ratio,
+              bodyAge: data.body_age,
+              notes: data.notes,
+              timestamp: data.created_at,
+            },
           },
-        }, 201);
+          201,
+        );
       } catch (error) {
         log.error("performance_measurement_save_failed", error);
         return createErrorResponse(
@@ -467,7 +492,14 @@ async function handleMeasurements(method, userId, body, query, _resourceId, log 
 
 // Performance Tests Handler
 // Uses 'performance_tests' table (aligned with frontend) - UUID-based with auth.users FK
-async function handlePerformanceTests(method, userId, body, query, _resourceId, log = logger) {
+async function handlePerformanceTests(
+  method,
+  userId,
+  body,
+  query,
+  _resourceId,
+  log = logger,
+) {
   switch (method) {
     case "GET": {
       const testType = query?.testType;
@@ -592,11 +624,14 @@ async function handlePerformanceTests(method, userId, body, query, _resourceId, 
         if (error) {
           if (error.code === "42P01") {
             // Table doesn't exist - return success with note
-            return createSuccessResponse({
-              id: `temp_${Date.now()}`,
-              improvement: { percent: 0, trend: "no_data" },
-              note: "Table needs to be created via migration",
-            }, 201);
+            return createSuccessResponse(
+              {
+                id: `temp_${Date.now()}`,
+                improvement: { percent: 0, trend: "no_data" },
+                note: "Table needs to be created via migration",
+              },
+              201,
+            );
           }
           throw error;
         }
@@ -607,20 +642,23 @@ async function handlePerformanceTests(method, userId, body, query, _resourceId, 
           userId,
         );
 
-        return createSuccessResponse({
-          id: data.id,
-          data: {
+        return createSuccessResponse(
+          {
             id: data.id,
-            userId: data.user_id,
-            testType: data.test_type,
-            result: data.result_value,
-            target: data.target_value,
-            timestamp: data.test_date,
-            conditions: data.conditions,
-            notes: data.notes,
+            data: {
+              id: data.id,
+              userId: data.user_id,
+              testType: data.test_type,
+              result: data.result_value,
+              target: data.target_value,
+              timestamp: data.test_date,
+              conditions: data.conditions,
+              notes: data.notes,
+            },
+            improvement,
           },
-          improvement,
-        }, 201);
+          201,
+        );
       } catch (error) {
         log.error("performance_test_save_failed", error, {
           test_type: testData.testType,
@@ -643,7 +681,15 @@ async function handlePerformanceTests(method, userId, body, query, _resourceId, 
 }
 
 // Wellness Data Handler
-async function handleWellness(method, userId, requestedAthleteId, body, query, _resourceId, log = logger) {
+async function handleWellness(
+  method,
+  userId,
+  requestedAthleteId,
+  body,
+  query,
+  _resourceId,
+  log = logger,
+) {
   const targetAthleteId = requestedAthleteId || userId;
   const role = await getUserRole(userId);
   const isCoach = hasAnyRole(role, HEALTH_DATA_ACCESS_ROLES);
@@ -692,7 +738,9 @@ async function handleWellness(method, userId, requestedAthleteId, body, query, _
           },
         });
 
-        let wellnessData = (wellnessResult.data || []).map(dataMappers.wellness);
+        let wellnessData = (wellnessResult.data || []).map(
+          dataMappers.wellness,
+        );
 
         // Filter data for coach if consent not granted
         if (isCoach && targetAthleteId !== userId && wellnessData.length > 0) {
@@ -774,17 +822,23 @@ async function handleWellness(method, userId, requestedAthleteId, body, query, _
 
         if (error) {
           if (error.code === "42P01") {
-            return createSuccessResponse({
-              id: `temp_${Date.now()}`,
-              note: "Table needs to be created via migration",
-            }, 201);
+            return createSuccessResponse(
+              {
+                id: `temp_${Date.now()}`,
+                note: "Table needs to be created via migration",
+              },
+              201,
+            );
           }
           throw error;
         }
 
-        return createSuccessResponse({
-          id: data.id,
-        }, 201);
+        return createSuccessResponse(
+          {
+            id: data.id,
+          },
+          201,
+        );
       } catch (error) {
         log.error("performance_wellness_save_failed", error);
         return createErrorResponse(
@@ -805,7 +859,14 @@ async function handleWellness(method, userId, requestedAthleteId, body, query, _
 }
 
 // Supplements Handler
-async function handleSupplements(method, userId, body, query, _resourceId, log = logger) {
+async function handleSupplements(
+  method,
+  userId,
+  body,
+  query,
+  _resourceId,
+  log = logger,
+) {
   switch (method) {
     case "GET": {
       const timeframe = query?.timeframe || "30d";
@@ -879,27 +940,33 @@ async function handleSupplements(method, userId, body, query, _resourceId, log =
 
         if (error) {
           if (error.code === "42P01") {
-            return createSuccessResponse({
-              id: `temp_${Date.now()}`,
-              note: "Table needs to be created via migration",
-            }, 201);
+            return createSuccessResponse(
+              {
+                id: `temp_${Date.now()}`,
+                note: "Table needs to be created via migration",
+              },
+              201,
+            );
           }
           throw error;
         }
 
-        return createSuccessResponse({
-          id: data.id,
-          data: {
+        return createSuccessResponse(
+          {
             id: data.id,
-            userId: data.user_id,
-            name: data.supplement_name,
-            dosage: data.dosage,
-            taken: data.taken,
-            date: data.date,
-            timeOfDay: data.time_of_day,
-            notes: data.notes,
+            data: {
+              id: data.id,
+              userId: data.user_id,
+              name: data.supplement_name,
+              dosage: data.dosage,
+              taken: data.taken,
+              date: data.date,
+              timeOfDay: data.time_of_day,
+              notes: data.notes,
+            },
           },
-        }, 201);
+          201,
+        );
       } catch (error) {
         log.error("performance_supplement_save_failed", error, {
           supplement_name: supplementData.name,
@@ -922,7 +989,15 @@ async function handleSupplements(method, userId, body, query, _resourceId, log =
 }
 
 // Trends Analysis Handler
-async function handleTrends(method, userId, requestedAthleteId, body, query, _resourceId, log = logger) {
+async function handleTrends(
+  method,
+  userId,
+  requestedAthleteId,
+  body,
+  query,
+  _resourceId,
+  log = logger,
+) {
   const targetAthleteId = requestedAthleteId || userId;
   if (method !== "GET") {
     return createErrorResponse("Method not allowed", 405, "method_not_allowed");
@@ -1093,7 +1168,10 @@ async function handleExport(userId, query, log = logger) {
       // (GDPR right-to-access) reflects the single source (athlete_injuries), not the
       // empty legacy injuries table. Mapping below uses the legacy field names the view
       // provides; recovery_date is absent in the clinical model (tracked via phases).
-      supabaseAdmin.from("v_injuries_unified").select("*").eq("user_id", userId),
+      supabaseAdmin
+        .from("v_injuries_unified")
+        .select("*")
+        .eq("user_id", userId),
     ]);
 
     const allData = {

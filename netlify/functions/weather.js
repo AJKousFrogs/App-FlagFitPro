@@ -35,7 +35,11 @@ function createSafetyFallback(location, description) {
   };
 }
 
-async function fetchWithTimeout(url, options = {}, timeoutMs = REQUEST_TIMEOUT_MS) {
+async function fetchWithTimeout(
+  url,
+  options = {},
+  timeoutMs = REQUEST_TIMEOUT_MS,
+) {
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
 
@@ -315,7 +319,12 @@ function calculateOpenMeteoSuitability({
   if (weatherCode === 95 || weatherCode === 96 || weatherCode === 99) {
     return { suitable: false, level: "poor" };
   }
-  if (weatherCode === 65 || weatherCode === 82 || weatherCode === 66 || weatherCode === 67) {
+  if (
+    weatherCode === 65 ||
+    weatherCode === 82 ||
+    weatherCode === 66 ||
+    weatherCode === 67
+  ) {
     return { suitable: false, level: "poor" };
   }
   // Thresholds are METRIC (°C, km/h, mm) — converted from the prior °F/mph/inch.
@@ -336,7 +345,13 @@ function calculateOpenMeteoSuitability({
   if ((precipitation || 0) >= 0.8) {
     return { suitable: true, level: "fair" };
   }
-  if (weatherCode === 45 || weatherCode === 48 || weatherCode === 51 || weatherCode === 53 || weatherCode === 55) {
+  if (
+    weatherCode === 45 ||
+    weatherCode === 48 ||
+    weatherCode === 51 ||
+    weatherCode === 53 ||
+    weatherCode === 55
+  ) {
     return { suitable: true, level: "fair" };
   }
   if (effectiveTemp < 4 || effectiveTemp > 29 || windSpeed >= 32) {
@@ -354,7 +369,6 @@ function calculateOpenMeteoSuitability({
   return { suitable: true, level: "excellent" };
 }
 
-
 /**
  * Resolve the caller's location from their team's home_city — the most recent
  * active membership whose team has one set.
@@ -369,7 +383,9 @@ async function resolveTeamHomeCity(userId) {
       .order("updated_at", { ascending: false });
 
     if (error) {
-      logger.warn("weather_team_city_lookup_failed", { message: error.message });
+      logger.warn("weather_team_city_lookup_failed", {
+        message: error.message,
+      });
       return null;
     }
     for (const row of data ?? []) {
@@ -379,7 +395,9 @@ async function resolveTeamHomeCity(userId) {
       }
     }
   } catch (lookupError) {
-    logger.warn("weather_team_city_lookup_failed", { message: lookupError.message });
+    logger.warn("weather_team_city_lookup_failed", {
+      message: lookupError.message,
+    });
   }
   return null;
 }

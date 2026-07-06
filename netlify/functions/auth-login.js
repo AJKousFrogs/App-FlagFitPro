@@ -1,6 +1,9 @@
 import { getSupabaseClient } from "./utils/auth-helper.js";
 import { validateRequestBody } from "./validation.js";
-import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
+import {
+  createSuccessResponse,
+  createErrorResponse,
+} from "./utils/error-handler.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { createLogger, makeRequestLogger } from "./utils/structured-logger.js";
 
@@ -18,7 +21,10 @@ const handler = async (event, context) => {
     rateLimitType: "AUTH",
     requireAuth: false, // Login doesn't require prior auth
     handler: async (event, _context, { requestId, correlationId }) => {
-      const requestLogger = createRequestLogger(event, { requestId, correlationId });
+      const requestLogger = createRequestLogger(event, {
+        requestId,
+        correlationId,
+      });
       // Validate request body
       const validation = validateRequestBody(event.body, "login");
       if (!validation.valid) {

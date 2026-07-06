@@ -62,19 +62,69 @@ const STAGES = [
   templateUrl: "./return-to-play.component.html",
   styles: [
     `
-      .bar { height: 8px; border-radius: var(--r-pill); background: var(--surface-2); overflow: hidden; }
-      .bar > i { display: block; height: 100%; background: var(--accent); border-radius: var(--r-pill); }
-      .steps { display: flex; flex-direction: column; gap: 0; }
-      .step { display: flex; align-items: center; gap: var(--s-3); padding: var(--s-2) 0; }
-      .step .pip { width: 22px; height: 22px; border-radius: var(--r-pill); flex: 0 0 auto;
-        display: grid; place-items: center; font-size: var(--fs-xs); font-weight: var(--fw-bold);
-        background: var(--surface-2); color: var(--text-faint); border: 1px solid var(--border-soft); }
-      .step.done .pip { background: var(--good-soft); color: var(--good); border-color: transparent; }
-      .step.now .pip { background: var(--accent); color: var(--on-accent); border-color: transparent; }
-      .step .lbl { font-size: var(--fs-sm); color: var(--text-muted); }
-      .step.now .lbl { color: var(--text-strong); font-weight: var(--fw-bold); }
-      .ci-note { width: 100%; background: var(--surface-2); border: 1px solid var(--border-soft);
-        border-radius: var(--r-sm); padding: var(--s-3) var(--s-3); color: var(--text-strong); font-family: var(--font-body); }
+      .bar {
+        height: 8px;
+        border-radius: var(--r-pill);
+        background: var(--surface-2);
+        overflow: hidden;
+      }
+      .bar > i {
+        display: block;
+        height: 100%;
+        background: var(--accent);
+        border-radius: var(--r-pill);
+      }
+      .steps {
+        display: flex;
+        flex-direction: column;
+        gap: 0;
+      }
+      .step {
+        display: flex;
+        align-items: center;
+        gap: var(--s-3);
+        padding: var(--s-2) 0;
+      }
+      .step .pip {
+        width: 22px;
+        height: 22px;
+        border-radius: var(--r-pill);
+        flex: 0 0 auto;
+        display: grid;
+        place-items: center;
+        font-size: var(--fs-xs);
+        font-weight: var(--fw-bold);
+        background: var(--surface-2);
+        color: var(--text-faint);
+        border: 1px solid var(--border-soft);
+      }
+      .step.done .pip {
+        background: var(--good-soft);
+        color: var(--good);
+        border-color: transparent;
+      }
+      .step.now .pip {
+        background: var(--accent);
+        color: var(--on-accent);
+        border-color: transparent;
+      }
+      .step .lbl {
+        font-size: var(--fs-sm);
+        color: var(--text-muted);
+      }
+      .step.now .lbl {
+        color: var(--text-strong);
+        font-weight: var(--fw-bold);
+      }
+      .ci-note {
+        width: 100%;
+        background: var(--surface-2);
+        border: 1px solid var(--border-soft);
+        border-radius: var(--r-sm);
+        padding: var(--s-3) var(--s-3);
+        color: var(--text-strong);
+        font-family: var(--font-body);
+      }
     `,
   ],
 })
@@ -101,18 +151,26 @@ export class ReturnToPlayComponent {
   }
 
   private fetch(): void {
-    this.api.get<{ activeProtocol: RtpProtocol | null; checkins: Checkin[] }>("/api/return-to-play").subscribe({
-      next: (res) => {
-        const d = extractApiPayload<{ activeProtocol: RtpProtocol | null; checkins: Checkin[] }>(res) ?? {
-          activeProtocol: null,
-          checkins: [],
-        };
-        this.protocol.set(d.activeProtocol ?? null);
-        this.checkins.set(Array.isArray(d.checkins) ? d.checkins : []);
-        this.loaded.set(true);
-      },
-      error: () => this.loaded.set(true),
-    });
+    this.api
+      .get<{
+        activeProtocol: RtpProtocol | null;
+        checkins: Checkin[];
+      }>("/api/return-to-play")
+      .subscribe({
+        next: (res) => {
+          const d = extractApiPayload<{
+            activeProtocol: RtpProtocol | null;
+            checkins: Checkin[];
+          }>(res) ?? {
+            activeProtocol: null,
+            checkins: [],
+          };
+          this.protocol.set(d.activeProtocol ?? null);
+          this.checkins.set(Array.isArray(d.checkins) ? d.checkins : []);
+          this.loaded.set(true);
+        },
+        error: () => this.loaded.set(true),
+      });
   }
 
   stageName(stage: number): string {
@@ -120,8 +178,10 @@ export class ReturnToPlayComponent {
   }
   readonly severityBand = computed(() => {
     const s = (this.protocol()?.severity ?? "").toLowerCase();
-    if (/sever|high|grade ?3/.test(s)) return { label: s || "severe", cls: "danger" };
-    if (/moder|medium|grade ?2/.test(s)) return { label: s || "moderate", cls: "caution" };
+    if (/sever|high|grade ?3/.test(s))
+      return { label: s || "severe", cls: "danger" };
+    if (/moder|medium|grade ?2/.test(s))
+      return { label: s || "moderate", cls: "caution" };
     return { label: s || "mild", cls: "info" };
   });
 

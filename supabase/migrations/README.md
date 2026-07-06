@@ -24,7 +24,7 @@ where version = '<version>';
    Generated from `schema_migrations`; file version == applied version.
 
 2. **Genesis (`< 20260130125835`) — 40 files, disk-only.**
-   The dashboard/SQL-editor-era baseline applied *before* migration tracking was
+   The dashboard/SQL-editor-era baseline applied _before_ migration tracking was
    adopted (`001_role_enforcement.sql`, `20250108…_chatbot…`,
    `20251208154517_remote_schema.sql` (a `db pull` snapshot), …). **Not** in
    `schema_migrations`. A from-scratch rebuild replays these first, then the

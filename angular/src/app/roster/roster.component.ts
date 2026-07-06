@@ -42,11 +42,34 @@ interface Mate {
   templateUrl: "./roster.component.html",
   styles: [
     `
-      .mate { display: flex; align-items: center; gap: var(--s-3); padding: var(--s-3) 0; }
-      .ava { width: 38px; height: 38px; border-radius: var(--r-pill); flex: 0 0 auto; display: grid;
-        place-items: center; background: var(--surface-2); color: var(--text-faint); font-size: var(--fs-sm); font-weight: var(--fw-bold); }
-      .mate.me .ava { background: var(--accent); color: var(--on-accent); }
-      .jersey { margin-left: auto; font-family: var(--font-display); font-weight: var(--fw-bold); color: var(--text-muted); }
+      .mate {
+        display: flex;
+        align-items: center;
+        gap: var(--s-3);
+        padding: var(--s-3) 0;
+      }
+      .ava {
+        width: 38px;
+        height: 38px;
+        border-radius: var(--r-pill);
+        flex: 0 0 auto;
+        display: grid;
+        place-items: center;
+        background: var(--surface-2);
+        color: var(--text-faint);
+        font-size: var(--fs-sm);
+        font-weight: var(--fw-bold);
+      }
+      .mate.me .ava {
+        background: var(--accent);
+        color: var(--on-accent);
+      }
+      .jersey {
+        margin-left: auto;
+        font-family: var(--font-display);
+        font-weight: var(--fw-bold);
+        color: var(--text-muted);
+      }
     `,
   ],
 })
@@ -68,28 +91,36 @@ export class RosterComponent {
     try {
       await this.membership.loadMembership().catch(() => null);
       const teamId = this.membership.teamId();
-      const url = teamId ? `/api/roster/players?teamId=${teamId}` : "/api/roster/players";
+      const url = teamId
+        ? `/api/roster/players?teamId=${teamId}`
+        : "/api/roster/players";
       const myId = this.supabase.currentUser()?.id ?? null;
-      this.api.get<{ players?: RosterPlayer[] } | RosterPlayer[]>(url).subscribe({
-        next: (res) => {
-          const payload = extractApiPayload<{ players?: RosterPlayer[] } | RosterPlayer[]>(res);
-          const list = Array.isArray(payload) ? payload : (payload?.players ?? []);
-          this.mates.set(
-            list
-              .filter((p) => !!p.id)
-              .map((p) => ({
-                id: p.id,
-                name: p.name ?? "Athlete",
-                position: p.position ?? "",
-                jersey: p.jerseyNumber ?? p.jersey_number ?? null,
-                me: !!myId && p.id === myId,
-              }))
-              .sort((a, b) => (a.jersey ?? 999) - (b.jersey ?? 999)),
-          );
-          this.loaded.set(true);
-        },
-        error: () => this.loaded.set(true),
-      });
+      this.api
+        .get<{ players?: RosterPlayer[] } | RosterPlayer[]>(url)
+        .subscribe({
+          next: (res) => {
+            const payload = extractApiPayload<
+              { players?: RosterPlayer[] } | RosterPlayer[]
+            >(res);
+            const list = Array.isArray(payload)
+              ? payload
+              : (payload?.players ?? []);
+            this.mates.set(
+              list
+                .filter((p) => !!p.id)
+                .map((p) => ({
+                  id: p.id,
+                  name: p.name ?? "Athlete",
+                  position: p.position ?? "",
+                  jersey: p.jerseyNumber ?? p.jersey_number ?? null,
+                  me: !!myId && p.id === myId,
+                }))
+                .sort((a, b) => (a.jersey ?? 999) - (b.jersey ?? 999)),
+            );
+            this.loaded.set(true);
+          },
+          error: () => this.loaded.set(true),
+        });
     } catch {
       this.loaded.set(true);
     }

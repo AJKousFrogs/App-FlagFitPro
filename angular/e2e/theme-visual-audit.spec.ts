@@ -28,7 +28,10 @@ async function setThemePreference(page: Page, theme: ThemeMode): Promise<void> {
   }, theme);
 }
 
-async function waitForThemeApplied(page: Page, theme: ThemeMode): Promise<void> {
+async function waitForThemeApplied(
+  page: Page,
+  theme: ThemeMode,
+): Promise<void> {
   await page.waitForSelector(`[data-theme-ready='${theme}']`, {
     timeout: 15000,
   });
@@ -40,7 +43,9 @@ async function waitForThemeApplied(page: Page, theme: ThemeMode): Promise<void> 
     const computed = getComputedStyle(html);
     return {
       dataTheme: html.getAttribute("data-theme"),
-      bodyHasClass: body.classList.contains(`${html.getAttribute("data-theme")}-theme`),
+      bodyHasClass: body.classList.contains(
+        `${html.getAttribute("data-theme")}-theme`,
+      ),
       colorScheme: computed.colorScheme,
       metaThemeColor: meta?.getAttribute("content") ?? null,
     };
@@ -71,7 +76,9 @@ async function login(page: Page): Promise<void> {
 }
 
 test.describe("Theme Visual Audit", () => {
-  test("captures login page in light and dark modes", async ({ page }, testInfo) => {
+  test("captures login page in light and dark modes", async ({
+    page,
+  }, testInfo) => {
     await seedCookieConsent(page);
 
     for (const theme of ["light", "dark"] as const) {
@@ -101,7 +108,9 @@ test.describe("Theme Visual Audit", () => {
       await setThemePreference(page, theme);
 
       for (const route of routes) {
-        await page.goto(`${APP_URL}${route}`, { waitUntil: "domcontentloaded" });
+        await page.goto(`${APP_URL}${route}`, {
+          waitUntil: "domcontentloaded",
+        });
         await page.waitForLoadState("networkidle");
         await waitForThemeApplied(page, theme);
         await page.waitForTimeout(700);

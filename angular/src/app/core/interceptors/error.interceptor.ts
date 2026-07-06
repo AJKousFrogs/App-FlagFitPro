@@ -19,13 +19,9 @@ const SKIP_401_SESSION_RECOVERY: string[] = [
   "/assets/",
 ];
 
-function shouldAttempt401SessionRecovery(req: {
-  url: string | null;
-}): boolean {
+function shouldAttempt401SessionRecovery(req: { url: string | null }): boolean {
   const url = req.url || "";
-  return !SKIP_401_SESSION_RECOVERY.some((fragment) =>
-    url.includes(fragment),
-  );
+  return !SKIP_401_SESSION_RECOVERY.some((fragment) => url.includes(fragment));
 }
 
 export const errorInterceptor: HttpInterceptorFn = (req, next) => {
@@ -60,9 +56,9 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
           switchMap((refreshed) => {
             if (!refreshed) {
               logger.warn("http_401_session_refresh_failed_signing_out");
-              return from(signOutExpiredSession(router, supabaseService, logger)).pipe(
-                switchMap(() => throwError(() => error)),
-              );
+              return from(
+                signOutExpiredSession(router, supabaseService, logger),
+              ).pipe(switchMap(() => throwError(() => error)));
             }
 
             // This interceptor is last: replay must attach a fresh Bearer token.

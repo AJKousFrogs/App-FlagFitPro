@@ -1,12 +1,18 @@
 import { supabaseAdmin } from "./supabase-client.js";
-import { canCoachViewWellness, filterWellnessDataForCoach } from "./utils/consent-guard.js";
+import {
+  canCoachViewWellness,
+  filterWellnessDataForCoach,
+} from "./utils/consent-guard.js";
 import { detectPainTrigger } from "./utils/safety-override.js";
 import { getUserRole } from "./utils/authorization-guard.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { createErrorResponse } from "./utils/error-handler.js";
 import { parseJsonObjectBody } from "./utils/input-validator.js";
 import { hasAnyRole, HEALTH_DATA_ACCESS_ROLES } from "./utils/role-sets.js";
-import { buildRequestLogContext, createLogger } from "./utils/structured-logger.js";
+import {
+  buildRequestLogContext,
+  createLogger,
+} from "./utils/structured-logger.js";
 
 const logger = createLogger({ service: "netlify.wellness-checkin" });
 
@@ -49,14 +55,22 @@ async function ensurePublicUserProfile(supabase, userId, log = logger) {
     .eq("id", userId)
     .maybeSingle();
 
-  if (existingProfile.data || !existingProfile.error || existingProfile.error.code === "PGRST116") {
+  if (
+    existingProfile.data ||
+    !existingProfile.error ||
+    existingProfile.error.code === "PGRST116"
+  ) {
     if (existingProfile.data) {
       return;
     }
   } else {
-    log.warn("wellness_public_user_profile_lookup_failed", {
-      user_id: userId,
-    }, existingProfile.error);
+    log.warn(
+      "wellness_public_user_profile_lookup_failed",
+      {
+        user_id: userId,
+      },
+      existingProfile.error,
+    );
     return;
   }
 
@@ -67,10 +81,14 @@ async function ensurePublicUserProfile(supabase, userId, log = logger) {
     } = await supabase.auth.admin.getUserById(userId);
 
     if (authError || !user) {
-      log.warn("wellness_auth_user_lookup_failed_for_profile_sync", {
-        user_id: userId,
-        has_user: Boolean(user),
-      }, authError || new Error("missing auth user"));
+      log.warn(
+        "wellness_auth_user_lookup_failed_for_profile_sync",
+        {
+          user_id: userId,
+          has_user: Boolean(user),
+        },
+        authError || new Error("missing auth user"),
+      );
       return;
     }
 
@@ -100,9 +118,13 @@ async function ensurePublicUserProfile(supabase, userId, log = logger) {
 
     await supabase.from("users").upsert(profilePayload, { onConflict: "id" });
   } catch (error) {
-    log.warn("wellness_public_user_profile_backfill_failed", {
-      user_id: userId,
-    }, error);
+    log.warn(
+      "wellness_public_user_profile_backfill_failed",
+      {
+        user_id: userId,
+      },
+      error,
+    );
   }
 }
 
@@ -138,7 +160,12 @@ async function fetchWellnessCheckinRecord(supabase, athleteId, date) {
   return primary;
 }
 
-async function savePrimaryWellnessCheckin(supabase, userId, targetDate, payload) {
+async function savePrimaryWellnessCheckin(
+  supabase,
+  userId,
+  targetDate,
+  payload,
+) {
   const primaryPayload = {
     user_id: userId,
     checkin_date: targetDate,
@@ -167,7 +194,12 @@ async function savePrimaryWellnessCheckin(supabase, userId, targetDate, payload)
   return primaryResult;
 }
 
-async function saveWellnessCheckinTransactional(supabase, userId, targetDate, payload) {
+async function saveWellnessCheckinTransactional(
+  supabase,
+  userId,
+  targetDate,
+  payload,
+) {
   const { error: rpcError } = await supabase.rpc("upsert_wellness_checkin", {
     p_user_id: userId,
     p_checkin_date: targetDate,
@@ -203,7 +235,11 @@ async function saveWellnessCheckinTransactional(supabase, userId, targetDate, pa
     };
   }
 
-  const persisted = await fetchWellnessCheckinRecord(supabase, userId, targetDate);
+  const persisted = await fetchWellnessCheckinRecord(
+    supabase,
+    userId,
+    targetDate,
+  );
   return {
     data: persisted.data,
     error: persisted.error,
@@ -264,7 +300,13 @@ const handler = async (event, context) =>
             requestId,
           );
         }
-        return saveCheckin(supabaseAdmin, userId, payload, requestId, requestLogger);
+        return saveCheckin(
+          supabaseAdmin,
+          userId,
+          payload,
+          requestId,
+          requestLogger,
+        );
       } catch (error) {
         requestLogger.error("wellness_checkin_request_failed", error, {
           http_method: evt.httpMethod,
@@ -279,7 +321,13 @@ const handler = async (event, context) =>
     },
   });
 
-async function getCheckin(supabase, userId, requestedAthleteId, date, requestId) {
+async function getCheckin(
+  supabase,
+  userId,
+  requestedAthleteId,
+  date,
+  requestId,
+) {
   const targetAthleteId = requestedAthleteId || userId;
   const role = await getUserRole(userId);
   const isCoach = hasAnyRole(role, HEALTH_DATA_ACCESS_ROLES);
@@ -375,7 +423,10 @@ async function saveCheckin(supabase, userId, payload, requestId, log = logger) {
     if (
       value !== undefined &&
       value !== null &&
-      (typeof value !== "number" || Number.isNaN(value) || value < min || value > max)
+      (typeof value !== "number" ||
+        Number.isNaN(value) ||
+        value < min ||
+        value > max)
     ) {
       return createErrorResponse(
         `${field} must be a number between ${min} and ${max}`,
@@ -456,11 +507,15 @@ async function saveCheckin(supabase, userId, payload, requestId, log = logger) {
         });
       }
     } catch (recoveryError) {
-      log.warn("wellness_recovery_focus_creation_failed", {
-        user_id: userId,
-        target_date: targetDate,
-        calculated_readiness: calculatedReadiness,
-      }, recoveryError);
+      log.warn(
+        "wellness_recovery_focus_creation_failed",
+        {
+          user_id: userId,
+          target_date: targetDate,
+          calculated_readiness: calculatedReadiness,
+        },
+        recoveryError,
+      );
       // Non-fatal - continue with check-in
     }
   }
@@ -507,11 +562,15 @@ async function saveCheckin(supabase, userId, payload, requestId, log = logger) {
         }
       }
     } catch (transitionError) {
-      log.warn("wellness_ownership_transition_logging_failed", {
-        user_id: userId,
-        target_date: targetDate,
-        calculated_readiness: calculatedReadiness,
-      }, transitionError);
+      log.warn(
+        "wellness_ownership_transition_logging_failed",
+        {
+          user_id: userId,
+          target_date: targetDate,
+          calculated_readiness: calculatedReadiness,
+        },
+        transitionError,
+      );
       // Non-fatal - continue with check-in
     }
   }
@@ -556,10 +615,14 @@ async function saveCheckin(supabase, userId, payload, requestId, log = logger) {
       p_activity_date: targetDate,
     });
   } catch (streakError) {
-    log.warn("wellness_streak_update_failed", {
-      user_id: userId,
-      target_date: targetDate,
-    }, streakError);
+    log.warn(
+      "wellness_streak_update_failed",
+      {
+        user_id: userId,
+        target_date: targetDate,
+      },
+      streakError,
+    );
   }
 
   // Check for mental fatigue indicators
@@ -658,10 +721,14 @@ async function saveCheckin(supabase, userId, payload, requestId, log = logger) {
       }
     }
   } catch (mentalFatigueError) {
-    log.warn("wellness_mental_fatigue_detection_failed", {
-      user_id: userId,
-      target_date: targetDate,
-    }, mentalFatigueError);
+    log.warn(
+      "wellness_mental_fatigue_detection_failed",
+      {
+        user_id: userId,
+        target_date: targetDate,
+      },
+      mentalFatigueError,
+    );
     // Non-fatal - continue
   }
 
@@ -697,7 +764,9 @@ async function saveCheckin(supabase, userId, payload, requestId, log = logger) {
           .in("id", confirmedEventIds);
         const active = (events || []).find((e) => {
           const checkin = new Date(targetDate);
-          return checkin >= new Date(e.starts_at) && checkin <= new Date(e.ends_at);
+          return (
+            checkin >= new Date(e.starts_at) && checkin <= new Date(e.ends_at)
+          );
         });
         const tournament = active
           ? {
@@ -813,10 +882,14 @@ async function saveCheckin(supabase, userId, payload, requestId, log = logger) {
       }
     }
   } catch (nutritionError) {
-    log.warn("wellness_tournament_nutrition_detection_failed", {
-      user_id: userId,
-      target_date: targetDate,
-    }, nutritionError);
+    log.warn(
+      "wellness_tournament_nutrition_detection_failed",
+      {
+        user_id: userId,
+        target_date: targetDate,
+      },
+      nutritionError,
+    );
     // Non-fatal - continue
   }
 
@@ -855,10 +928,14 @@ async function saveCheckin(supabase, userId, payload, requestId, log = logger) {
       });
     }
   } catch (achievementError) {
-    log.warn("wellness_achievement_check_failed", {
-      user_id: userId,
-      target_date: targetDate,
-    }, achievementError);
+    log.warn(
+      "wellness_achievement_check_failed",
+      {
+        user_id: userId,
+        target_date: targetDate,
+      },
+      achievementError,
+    );
   }
 
   // Coach inbox alert — high soreness with specific body areas triggers a
@@ -866,7 +943,9 @@ async function saveCheckin(supabase, userId, payload, requestId, log = logger) {
   // schedule a physio assessment or adjust that athlete's load.
   try {
     const hasSevereSoreness =
-      muscleSoreness !== undefined && muscleSoreness !== null && muscleSoreness >= 6;
+      muscleSoreness !== undefined &&
+      muscleSoreness !== null &&
+      muscleSoreness >= 6;
     if (hasSevereSoreness) {
       const { data: memberRows } = await supabase
         .from("team_members")
@@ -884,17 +963,28 @@ async function saveCheckin(supabase, userId, payload, requestId, log = logger) {
           .maybeSingle();
         const athleteName = athleteRow?.full_name || "Athlete";
         const severityLabel =
-          muscleSoreness >= 8 ? "Severe" : muscleSoreness >= 6 ? "High" : "Moderate";
-        const areas = Array.isArray(sorenessAreas) && sorenessAreas.length > 0
-          ? sorenessAreas
-          : null;
+          muscleSoreness >= 8
+            ? "Severe"
+            : muscleSoreness >= 6
+              ? "High"
+              : "Moderate";
+        const areas =
+          Array.isArray(sorenessAreas) && sorenessAreas.length > 0
+            ? sorenessAreas
+            : null;
         const areasList = areas ? areas.join(", ") : null;
 
         const { data: coaches } = await supabase
           .from("team_members")
           .select("user_id")
           .eq("team_id", teamId)
-          .in("role", ["owner", "admin", "head_coach", "coach", "assistant_coach"])
+          .in("role", [
+            "owner",
+            "admin",
+            "head_coach",
+            "coach",
+            "assistant_coach",
+          ])
           .eq("status", "active");
 
         if (coaches && coaches.length > 0) {
@@ -924,11 +1014,15 @@ async function saveCheckin(supabase, userId, payload, requestId, log = logger) {
       }
     }
   } catch (coachAlertError) {
-    log.warn("wellness_coach_tightness_alert_failed", {
-      user_id: userId,
-      target_date: targetDate,
-      soreness: muscleSoreness,
-    }, coachAlertError);
+    log.warn(
+      "wellness_coach_tightness_alert_failed",
+      {
+        user_id: userId,
+        target_date: targetDate,
+        soreness: muscleSoreness,
+      },
+      coachAlertError,
+    );
     // Non-fatal — check-in saved; alert delivery is best-effort
   }
 

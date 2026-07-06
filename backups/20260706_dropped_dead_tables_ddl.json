@@ -1,0 +1,636 @@
+{
+  "generated_on": "2026-07-06 18:52:42+00",
+  "purpose": "DDL snapshot of dead tables dropped by cleanup migration 2026-07-06 (all had 0 rows; these 10 tables lacked local CREATE TABLE migration files — the other 11 dropped tables have their DDL in git-tracked supabase/migrations/). Reconstructable from this file if ever needed.",
+  "tables": {
+    "video_assignments": {
+      "columns": [
+        {
+          "name": "id",
+          "type": "uuid",
+          "nullable": "NO",
+          "default": "gen_random_uuid()"
+        },
+        {
+          "name": "team_id",
+          "type": "uuid",
+          "nullable": "NO",
+          "default": null
+        },
+        {
+          "name": "assigned_by",
+          "type": "uuid",
+          "nullable": "NO",
+          "default": null
+        },
+        {
+          "name": "assigned_to",
+          "type": "uuid",
+          "nullable": "NO",
+          "default": null
+        },
+        {
+          "name": "video_id",
+          "type": "text",
+          "nullable": "NO",
+          "default": null
+        },
+        {
+          "name": "playlist_id",
+          "type": "uuid",
+          "nullable": "YES",
+          "default": null
+        },
+        {
+          "name": "due_date",
+          "type": "date",
+          "nullable": "YES",
+          "default": null
+        },
+        {
+          "name": "status",
+          "type": "text",
+          "nullable": "YES",
+          "default": "'pending'::text"
+        },
+        { "name": "notes", "type": "text", "nullable": "YES", "default": null },
+        {
+          "name": "created_at",
+          "type": "timestamptz",
+          "nullable": "YES",
+          "default": "now()"
+        },
+        {
+          "name": "completed_at",
+          "type": "timestamptz",
+          "nullable": "YES",
+          "default": null
+        }
+      ],
+      "constraints": [
+        "FOREIGN KEY (assigned_by) REFERENCES auth.users(id)",
+        "FOREIGN KEY (assigned_to) REFERENCES auth.users(id) ON DELETE CASCADE",
+        "PRIMARY KEY (id)",
+        "FOREIGN KEY (playlist_id) REFERENCES video_playlists(id) ON DELETE SET NULL",
+        "CHECK ((status = ANY (ARRAY['pending'::text, 'in_progress'::text, 'completed'::text])))",
+        "FOREIGN KEY (team_id) REFERENCES teams(id) ON DELETE CASCADE"
+      ],
+      "indexes": [
+        "CREATE UNIQUE INDEX video_assignments_pkey ON public.video_assignments USING btree (id)",
+        "CREATE INDEX idx_video_assignments_assigned_by_fk_cov ON public.video_assignments USING btree (assigned_by)",
+        "CREATE INDEX idx_video_assignments_assigned_to_fk_cov ON public.video_assignments USING btree (assigned_to)",
+        "CREATE INDEX idx_video_assignments_playlist_id_fk_cov ON public.video_assignments USING btree (playlist_id)",
+        "CREATE INDEX idx_video_assignments_team_id_fk_cov ON public.video_assignments USING btree (team_id)"
+      ],
+      "policies": [
+        {
+          "name": "Assigned users can view assignments",
+          "cmd": "SELECT",
+          "roles": "{public}",
+          "qual": "(assigned_to = ( SELECT auth.uid() AS uid))"
+        },
+        {
+          "name": "Coaches can delete video assignments",
+          "cmd": "DELETE",
+          "roles": "{public}",
+          "qual": "EXISTS team_members coach/head_coach/admin for video_assignments.team_id"
+        },
+        {
+          "name": "Coaches can insert video assignments",
+          "cmd": "INSERT",
+          "roles": "{public}",
+          "with_check": "EXISTS team_members coach/head_coach/admin for video_assignments.team_id"
+        },
+        {
+          "name": "Coaches can update video assignments",
+          "cmd": "UPDATE",
+          "roles": "{public}",
+          "qual": "EXISTS team_members coach/head_coach/admin for video_assignments.team_id",
+          "with_check": "same"
+        }
+      ]
+    },
+    "video_bookmarks": {
+      "columns": [
+        {
+          "name": "id",
+          "type": "uuid",
+          "nullable": "NO",
+          "default": "gen_random_uuid()"
+        },
+        {
+          "name": "user_id",
+          "type": "uuid",
+          "nullable": "NO",
+          "default": null
+        },
+        {
+          "name": "video_id",
+          "type": "text",
+          "nullable": "NO",
+          "default": null
+        },
+        {
+          "name": "video_title",
+          "type": "text",
+          "nullable": "NO",
+          "default": null
+        },
+        {
+          "name": "video_url",
+          "type": "text",
+          "nullable": "NO",
+          "default": null
+        },
+        {
+          "name": "creator_username",
+          "type": "text",
+          "nullable": "YES",
+          "default": null
+        },
+        {
+          "name": "saved_at",
+          "type": "timestamptz",
+          "nullable": "YES",
+          "default": "now()"
+        },
+        { "name": "notes", "type": "text", "nullable": "YES", "default": null }
+      ],
+      "constraints": [
+        "PRIMARY KEY (id)",
+        "FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE",
+        "UNIQUE (user_id, video_id)"
+      ],
+      "policies": "own-rows only (user_id = auth.uid()) for SELECT/INSERT/UPDATE/DELETE, roles {public}"
+    },
+    "video_curation_status": {
+      "columns": [
+        {
+          "name": "id",
+          "type": "uuid",
+          "nullable": "NO",
+          "default": "gen_random_uuid()"
+        },
+        {
+          "name": "team_id",
+          "type": "uuid",
+          "nullable": "NO",
+          "default": null
+        },
+        {
+          "name": "video_id",
+          "type": "text",
+          "nullable": "NO",
+          "default": null
+        },
+        { "name": "status", "type": "text", "nullable": "NO", "default": null },
+        { "name": "notes", "type": "text", "nullable": "YES", "default": null },
+        {
+          "name": "updated_by",
+          "type": "uuid",
+          "nullable": "YES",
+          "default": null
+        },
+        {
+          "name": "updated_at",
+          "type": "timestamptz",
+          "nullable": "YES",
+          "default": "now()"
+        },
+        {
+          "name": "created_at",
+          "type": "timestamptz",
+          "nullable": "YES",
+          "default": "now()"
+        }
+      ],
+      "constraints": [
+        "PRIMARY KEY (id)",
+        "CHECK ((status = ANY (ARRAY['pending'::text, 'approved'::text, 'rejected'::text])))",
+        "FOREIGN KEY (team_id) REFERENCES teams(id) ON DELETE CASCADE",
+        "UNIQUE (team_id, video_id)",
+        "FOREIGN KEY (updated_by) REFERENCES auth.users(id)"
+      ],
+      "indexes": [
+        "CREATE INDEX idx_video_curation_status_team_updated_at ON public.video_curation_status USING btree (team_id, updated_at DESC)"
+      ],
+      "policies": [
+        {
+          "name": "Team coaches can manage video curation",
+          "cmd": "ALL",
+          "roles": "{authenticated}",
+          "qual": "team_id IS NOT NULL AND ff_is_team_staff(team_id, auth.uid())"
+        }
+      ]
+    },
+    "video_watch_history": {
+      "columns": [
+        {
+          "name": "id",
+          "type": "uuid",
+          "nullable": "NO",
+          "default": "gen_random_uuid()"
+        },
+        {
+          "name": "user_id",
+          "type": "uuid",
+          "nullable": "NO",
+          "default": null
+        },
+        {
+          "name": "video_id",
+          "type": "text",
+          "nullable": "NO",
+          "default": null
+        },
+        {
+          "name": "watched_at",
+          "type": "timestamptz",
+          "nullable": "YES",
+          "default": "now()"
+        },
+        {
+          "name": "watch_duration_seconds",
+          "type": "int4",
+          "nullable": "YES",
+          "default": null
+        },
+        {
+          "name": "completed",
+          "type": "bool",
+          "nullable": "YES",
+          "default": "false"
+        }
+      ],
+      "constraints": [
+        "UNIQUE (user_id, video_id, watched_at)",
+        "PRIMARY KEY (id)",
+        "FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE"
+      ],
+      "policies": [
+        {
+          "name": "Users can manage own watch history",
+          "cmd": "ALL",
+          "roles": "{authenticated}",
+          "qual": "user_id = auth.uid()"
+        }
+      ]
+    },
+    "video_playlists": {
+      "columns": [
+        {
+          "name": "id",
+          "type": "uuid",
+          "nullable": "NO",
+          "default": "gen_random_uuid()"
+        },
+        {
+          "name": "team_id",
+          "type": "uuid",
+          "nullable": "YES",
+          "default": null
+        },
+        {
+          "name": "created_by",
+          "type": "uuid",
+          "nullable": "NO",
+          "default": null
+        },
+        { "name": "name", "type": "text", "nullable": "NO", "default": null },
+        {
+          "name": "description",
+          "type": "text",
+          "nullable": "YES",
+          "default": null
+        },
+        {
+          "name": "position",
+          "type": "text",
+          "nullable": "YES",
+          "default": null
+        },
+        {
+          "name": "focus_areas",
+          "type": "text[]",
+          "nullable": "YES",
+          "default": null
+        },
+        {
+          "name": "video_ids",
+          "type": "text[]",
+          "nullable": "NO",
+          "default": "'{}'::text[]"
+        },
+        {
+          "name": "is_public",
+          "type": "bool",
+          "nullable": "YES",
+          "default": "false"
+        },
+        {
+          "name": "created_at",
+          "type": "timestamptz",
+          "nullable": "YES",
+          "default": "now()"
+        },
+        {
+          "name": "updated_at",
+          "type": "timestamptz",
+          "nullable": "YES",
+          "default": "now()"
+        }
+      ],
+      "constraints": [
+        "FOREIGN KEY (created_by) REFERENCES auth.users(id)",
+        "PRIMARY KEY (id)",
+        "FOREIGN KEY (team_id) REFERENCES teams(id) ON DELETE CASCADE"
+      ],
+      "indexes": [
+        "CREATE INDEX idx_video_playlists_team_created_at ON public.video_playlists USING btree (team_id, created_at DESC)"
+      ],
+      "policies": "staff-manage via ff_is_team_staff; members view via ff_is_active_team_member or created_by = auth.uid(); roles {authenticated}"
+    },
+    "event_games": {
+      "columns": [
+        {
+          "name": "id",
+          "type": "uuid",
+          "nullable": "NO",
+          "default": "gen_random_uuid()"
+        },
+        {
+          "name": "competition_event_id",
+          "type": "uuid",
+          "nullable": "NO",
+          "default": null
+        },
+        {
+          "name": "team_id",
+          "type": "uuid",
+          "nullable": "NO",
+          "default": null
+        },
+        {
+          "name": "game_number",
+          "type": "int4",
+          "nullable": "NO",
+          "default": null
+        },
+        {
+          "name": "game_date",
+          "type": "date",
+          "nullable": "NO",
+          "default": null
+        },
+        {
+          "name": "kickoff_time",
+          "type": "time",
+          "nullable": "NO",
+          "default": null
+        },
+        {
+          "name": "expected_duration_minutes",
+          "type": "int4",
+          "nullable": "NO",
+          "default": "40"
+        },
+        {
+          "name": "opponent",
+          "type": "text",
+          "nullable": "YES",
+          "default": null
+        },
+        { "name": "field", "type": "text", "nullable": "YES", "default": null },
+        {
+          "name": "bracket_stage",
+          "type": "text",
+          "nullable": "YES",
+          "default": null
+        },
+        {
+          "name": "is_provisional",
+          "type": "bool",
+          "nullable": "NO",
+          "default": "false"
+        },
+        {
+          "name": "status",
+          "type": "text",
+          "nullable": "NO",
+          "default": "'scheduled'::text"
+        },
+        {
+          "name": "result",
+          "type": "jsonb",
+          "nullable": "YES",
+          "default": null
+        },
+        {
+          "name": "created_by",
+          "type": "uuid",
+          "nullable": "YES",
+          "default": null
+        },
+        {
+          "name": "created_at",
+          "type": "timestamptz",
+          "nullable": "NO",
+          "default": "now()"
+        },
+        {
+          "name": "updated_at",
+          "type": "timestamptz",
+          "nullable": "NO",
+          "default": "now()"
+        }
+      ],
+      "constraints": [
+        "CHECK (bracket_stage IS NULL OR bracket_stage IN ('group','pool','quarterfinal','semifinal','final','placement','friendly'))",
+        "FOREIGN KEY (competition_event_id) REFERENCES competition_events(id) ON DELETE CASCADE",
+        "FOREIGN KEY (created_by) REFERENCES auth.users(id) ON DELETE SET NULL",
+        "CHECK (expected_duration_minutes BETWEEN 10 AND 120)",
+        "CHECK (game_number BETWEEN 1 AND 20)",
+        "PRIMARY KEY (id)",
+        "CHECK (status IN ('scheduled','in_progress','final','cancelled'))",
+        "FOREIGN KEY (team_id) REFERENCES teams(id) ON DELETE CASCADE",
+        "UNIQUE (competition_event_id, game_number)"
+      ],
+      "indexes": [
+        "CREATE INDEX idx_event_games_event ON public.event_games USING btree (competition_event_id, kickoff_time)",
+        "CREATE INDEX idx_event_games_team_date ON public.event_games USING btree (team_id, game_date)"
+      ],
+      "policies": "select via ff_is_active_team_member; insert/update/delete via ff_is_team_staff; roles {authenticated}",
+      "note": "Inbound FK event_participation.game_id -> event_games(id) existed; that column was all-NULL and was dropped in the same migration."
+    },
+    "weekly_training_analysis": {
+      "columns_summary": "30 cols: id uuid pk, user_id uuid NOT NULL, week_start_date/week_end_date date NOT NULL, total_training_sessions/duration/load int4, daily_loads int4[], mean_daily_load/standard_deviation/training_monotony numeric, monotony_interpretation varchar, training_strain numeric, strain_interpretation varchar, monotony_injury_risk/strain_injury_risk/load_distribution_quality numeric, rest_days_count/consecutive_high_load_days int4, load_change_from_previous_week numeric, load_progression_safety varchar, recommended_rest_days int4, recommended_load_variation numeric, next_week_load_target int4, high_load_days text[], recovery_day_adequacy numeric, exceeds_monotony_threshold/exceeds_strain_threshold bool, weeks_consecutive_high_monotony int4, created_at timestamp default now()",
+      "constraints": [
+        "PRIMARY KEY (id)",
+        "FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE",
+        "UNIQUE (user_id, week_start_date)"
+      ],
+      "policies": [
+        {
+          "name": "Users can view own weekly analysis",
+          "cmd": "SELECT",
+          "roles": "{public}",
+          "qual": "user_id = auth.uid()"
+        }
+      ],
+      "note": "Foster monotony/strain analytics schema; never computed or read by any code. The live monotony/strain feature computes on the fly in acwr paths instead."
+    },
+    "player_game_summary": {
+      "columns_summary": "31 cols: id serial pk, game_id varchar NOT NULL, user_id varchar NOT NULL, position varchar, passing_yards/passing_touchdowns/interceptions/rushing_yards/rushing_touchdowns/receiving_yards/receiving_touchdowns/receptions/targets/drops/flag_pulls/missed_flag_pulls/tackles/sacks/third_down_conversions/third_down_attempts/red_zone_scores/red_zone_attempts int4 default 0, offensive_epa/defensive_epa/win_probability_added numeric, performance_decline_2nd_half bool default false, stamina_score numeric, plays_participated int4 default 0, performance_notes text, created_at/updated_at timestamp default now()",
+      "constraints": ["UNIQUE (game_id, user_id)", "PRIMARY KEY (id)"],
+      "policies": [
+        {
+          "name": "Players can view own game summaries",
+          "cmd": "SELECT",
+          "roles": "{public}",
+          "qual": "user_id::text = auth.uid()::text"
+        }
+      ],
+      "note": "varchar-keyed legacy game-stats family; no FKs; never referenced by code."
+    },
+    "ai_feedback": {
+      "columns": [
+        {
+          "name": "id",
+          "type": "uuid",
+          "nullable": "NO",
+          "default": "gen_random_uuid()"
+        },
+        {
+          "name": "chat_session_id",
+          "type": "uuid",
+          "nullable": "YES",
+          "default": null
+        },
+        {
+          "name": "message_id",
+          "type": "uuid",
+          "nullable": "YES",
+          "default": null
+        },
+        {
+          "name": "user_id",
+          "type": "uuid",
+          "nullable": "NO",
+          "default": null
+        },
+        {
+          "name": "feedback_type",
+          "type": "varchar",
+          "nullable": "NO",
+          "default": null
+        },
+        {
+          "name": "feedback_reason",
+          "type": "text",
+          "nullable": "YES",
+          "default": null
+        },
+        {
+          "name": "outcome",
+          "type": "text",
+          "nullable": "YES",
+          "default": null
+        },
+        {
+          "name": "flagged_for_review",
+          "type": "bool",
+          "nullable": "YES",
+          "default": "false"
+        },
+        {
+          "name": "reviewed_at",
+          "type": "timestamptz",
+          "nullable": "YES",
+          "default": null
+        },
+        {
+          "name": "reviewed_by",
+          "type": "uuid",
+          "nullable": "YES",
+          "default": null
+        },
+        {
+          "name": "created_at",
+          "type": "timestamptz",
+          "nullable": "NO",
+          "default": "now()"
+        }
+      ],
+      "constraints": [
+        "CHECK (feedback_type IN ('thumbs_up','thumbs_down','helpful','not_helpful','incorrect','unsafe','too_generic','too_specific'))",
+        "PRIMARY KEY (id)",
+        "FOREIGN KEY (reviewed_by) REFERENCES auth.users(id)",
+        "FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE"
+      ],
+      "policies": [
+        {
+          "name": "Users can manage own AI feedback",
+          "cmd": "ALL",
+          "roles": "{authenticated}",
+          "qual": "user_id = auth.uid()"
+        }
+      ],
+      "note": "Superseded by the live ai_response_feedback table (which IS code-referenced via response-feedback.js)."
+    },
+    "event_lineups": {
+      "columns": [
+        {
+          "name": "id",
+          "type": "uuid",
+          "nullable": "NO",
+          "default": "gen_random_uuid()"
+        },
+        {
+          "name": "team_id",
+          "type": "uuid",
+          "nullable": "NO",
+          "default": null
+        },
+        {
+          "name": "competition_event_id",
+          "type": "uuid",
+          "nullable": "NO",
+          "default": null
+        },
+        {
+          "name": "slots",
+          "type": "jsonb",
+          "nullable": "NO",
+          "default": "'[]'::jsonb"
+        },
+        { "name": "notes", "type": "text", "nullable": "YES", "default": null },
+        {
+          "name": "saved_by",
+          "type": "uuid",
+          "nullable": "NO",
+          "default": null
+        },
+        {
+          "name": "created_at",
+          "type": "timestamptz",
+          "nullable": "NO",
+          "default": "now()"
+        },
+        {
+          "name": "updated_at",
+          "type": "timestamptz",
+          "nullable": "NO",
+          "default": "now()"
+        }
+      ],
+      "constraints": [
+        "FOREIGN KEY (competition_event_id) REFERENCES competition_events(id) ON DELETE CASCADE",
+        "PRIMARY KEY (id) [tournament_lineups_pkey]",
+        "FOREIGN KEY (saved_by) REFERENCES auth.users(id)",
+        "FOREIGN KEY (team_id) REFERENCES teams(id) ON DELETE CASCADE",
+        "UNIQUE (team_id, competition_event_id)"
+      ],
+      "policies": "select via superadmin or ff_is_active_team_member; insert/update/delete via superadmin or ff_is_team_staff; roles {authenticated}",
+      "note": "SOURCE_OF_TRUTH §4 previously claimed lineups LIVE — no code references exist; SOT corrected in the same commit."
+    }
+  }
+}

@@ -175,10 +175,10 @@ async function runTests() {
       if (!testId) {
         // Use a real training session to guarantee FK validity
         const { data: session, error: sessionError } = await supabase
-        .from("training_sessions")
-        .select("id, session_state")
-        .limit(1)
-        .maybeSingle();
+          .from("training_sessions")
+          .select("id, session_state")
+          .limit(1)
+          .maybeSingle();
 
         let sessionId = session?.id;
         let sessionState = session?.session_state || "PLANNED";
@@ -242,7 +242,9 @@ async function runTests() {
           });
 
         if (insertError) {
-          throw new Error(`Cannot insert test history row: ${insertError.message}`);
+          throw new Error(
+            `Cannot insert test history row: ${insertError.message}`,
+          );
         }
       }
 
@@ -276,7 +278,10 @@ async function runTests() {
 
       // Best-effort cleanup for any temporary seeded parent session.
       if (tempSessionId) {
-        await supabase.from("training_sessions").delete().eq("id", tempSessionId);
+        await supabase
+          .from("training_sessions")
+          .delete()
+          .eq("id", tempSessionId);
       }
 
       return true;

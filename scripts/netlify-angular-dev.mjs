@@ -40,7 +40,10 @@ process.on("SIGTERM", () => forwardSignal("SIGTERM"));
 process.on("SIGHUP", () => forwardSignal("SIGHUP"));
 
 child.on("error", (error) => {
-  console.error("[netlify-angular-dev] Failed to start Angular dev server.", error);
+  console.error(
+    "[netlify-angular-dev] Failed to start Angular dev server.",
+    error,
+  );
   process.exit(1);
 });
 

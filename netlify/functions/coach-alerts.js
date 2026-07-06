@@ -1,4 +1,3 @@
-
 /**
  * Coach Alerts API
  *
@@ -14,7 +13,10 @@
 import { supabaseAdmin } from "./supabase-client.js";
 
 import { baseHandler } from "./utils/base-handler.js";
-import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
+import {
+  createSuccessResponse,
+  createErrorResponse,
+} from "./utils/error-handler.js";
 import { parseJsonObjectBody } from "./utils/input-validator.js";
 import { createLogger, makeRequestLogger } from "./utils/structured-logger.js";
 
@@ -28,7 +30,10 @@ const isValidDateOnly = (value) => {
   }
 
   const candidate = new Date(`${value}T00:00:00.000Z`);
-  return !Number.isNaN(candidate.getTime()) && candidate.toISOString().startsWith(value);
+  return (
+    !Number.isNaN(candidate.getTime()) &&
+    candidate.toISOString().startsWith(value)
+  );
 };
 
 /**
@@ -114,14 +119,10 @@ async function acknowledgeCoachAlert(
     .single();
 
   if (updateError) {
-    log.error(
-      "coach_alerts_update_failed",
-      updateError,
-      {
-        alert_id: alertId,
-        user_id: userId,
-      },
-    );
+    log.error("coach_alerts_update_failed", updateError, {
+      alert_id: alertId,
+      user_id: userId,
+    });
     return {
       success: false,
       error: "Failed to acknowledge alert",
@@ -226,7 +227,8 @@ const handler = async (event, context) => {
         const acknowledgeMatch = path.match(/^([^/]+)\/acknowledge$/);
         if (method === "POST" && acknowledgeMatch) {
           const alertId = acknowledgeMatch[1];
-          const sessionDate = body.sessionDate || new Date().toISOString().split("T")[0];
+          const sessionDate =
+            body.sessionDate || new Date().toISOString().split("T")[0];
           if (!isValidDateOnly(sessionDate)) {
             return createErrorResponse(
               "sessionDate must be in YYYY-MM-DD format",
@@ -265,14 +267,10 @@ const handler = async (event, context) => {
 
         return createErrorResponse("Endpoint not found", 404, "not_found");
       } catch (error) {
-        requestLogger.error(
-          "coach_alerts_handler_error",
-          error,
-          {
-            http_method: event.httpMethod,
-            path: event.path,
-          },
-        );
+        requestLogger.error("coach_alerts_handler_error", error, {
+          http_method: event.httpMethod,
+          path: event.path,
+        });
         return createErrorResponse(
           "Internal server error",
           500,

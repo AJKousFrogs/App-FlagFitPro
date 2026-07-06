@@ -1,9 +1,12 @@
 import { supabaseAdmin } from "../utils/supabase-client.js";
-import { DataState, wrapWithDataState as _wrapWithDataState, MINIMUM_DATA_REQUIREMENTS } from "./data-state.js";
+import {
+  DataState,
+  wrapWithDataState as _wrapWithDataState,
+  MINIMUM_DATA_REQUIREMENTS,
+} from "./data-state.js";
 
 import { createLogger } from "./structured-logger.js";
 const logger = createLogger({ service: "netlify.consent-data-reader" });
-
 
 /**
  * Consent-Aware Data Reader
@@ -366,9 +369,7 @@ class ConsentDataReader {
     let query = this.supabase
       .from("training_sessions")
       .select("*")
-      .or(
-        `user_id.eq.${ownAccess.targetPlayerId}`,
-      );
+      .or(`user_id.eq.${ownAccess.targetPlayerId}`);
 
     if (filters.startDate) {
       query = query.gte("session_date", filters.startDate);
@@ -434,13 +435,9 @@ class ConsentDataReader {
     let query = this.supabase.from("training_sessions").select("*");
 
     if (access.targetUserIds.length === 1) {
-      query = query.or(
-        `user_id.eq.${access.targetUserIds[0]}`,
-      );
+      query = query.or(`user_id.eq.${access.targetUserIds[0]}`);
     } else {
-      query = query.or(
-        `user_id.in.(${access.targetUserIds.join(",")})`,
-      );
+      query = query.or(`user_id.in.(${access.targetUserIds.join(",")})`);
     }
 
     if (filters.startDate) {
@@ -1014,10 +1011,12 @@ function findConsentViolations(codeString, context = "coach") {
 // EXPORTS
 // ============================================================================
 
-export { ConsentDataReader,
+export {
+  ConsentDataReader,
   AccessContext,
   CONSENT_PROTECTED_TABLES,
   CONSENT_VIEWS,
   isConsentProtectedTable,
   getConsentView,
-  findConsentViolations, };
+  findConsentViolations,
+};

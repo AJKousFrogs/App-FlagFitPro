@@ -22,7 +22,11 @@ function createFakeSupabase(state) {
     }
 
     select(columns) {
-      if (this.mode !== "insert" && this.mode !== "update" && this.mode !== "upsert") {
+      if (
+        this.mode !== "insert" &&
+        this.mode !== "update" &&
+        this.mode !== "upsert"
+      ) {
         this.mode = "select";
       }
       this.selectColumns = columns;
@@ -88,7 +92,8 @@ function createFakeSupabase(state) {
 }
 
 vi.mock("../../netlify/functions/utils/base-handler.js", () => ({
-  baseHandler: async (event, context, options) => options.handler(event, context, {}),
+  baseHandler: async (event, context, options) =>
+    options.handler(event, context, {}),
 }));
 
 vi.mock("../../netlify/functions/supabase-client.js", () => ({
@@ -107,7 +112,12 @@ vi.mock("../../netlify/functions/utils/auth-helper.js", () => ({
   getUserTeamId: async () => "team-1",
 }));
 
-const buildEvent = (path, method, payload = null, queryStringParameters = {}) => ({
+const buildEvent = (
+  path,
+  method,
+  payload = null,
+  queryStringParameters = {},
+) => ({
   httpMethod: method,
   path,
   headers: { authorization: "Bearer test-token" },

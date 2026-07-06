@@ -1,4 +1,3 @@
-
 /**
  * Netlify Function: Micro-Sessions
  *
@@ -24,8 +23,15 @@
 import { supabaseAdmin } from "./supabase-client.js";
 
 import { baseHandler } from "./utils/base-handler.js";
-import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
-import { parseJsonObjectBody, isValidId, parseBoundedInt } from "./utils/input-validator.js";
+import {
+  createSuccessResponse,
+  createErrorResponse,
+} from "./utils/error-handler.js";
+import {
+  parseJsonObjectBody,
+  isValidId,
+  parseBoundedInt,
+} from "./utils/input-validator.js";
 import { createLogger } from "./utils/structured-logger.js";
 
 const logger = createLogger({ service: "netlify.micro-sessions" });
@@ -374,7 +380,6 @@ const handler = async (event, context) => {
     rateLimitType,
     requireAuth: true,
     handler: async (event, _context, { userId, requestId }) => {
-  
       const { path } = event;
       const method = event.httpMethod;
 
@@ -417,9 +422,18 @@ const handler = async (event, context) => {
           const { weeks } = event.queryStringParameters || {};
           let parsedWeeks;
           try {
-            parsedWeeks = parseBoundedInt(weeks, "weeks", { min: 1, max: 52, fallback: 4 });
+            parsedWeeks = parseBoundedInt(weeks, "weeks", {
+              min: 1,
+              max: 52,
+              fallback: 4,
+            });
           } catch (err) {
-            return createErrorResponse(err.message, 422, "validation_error", requestId);
+            return createErrorResponse(
+              err.message,
+              422,
+              "validation_error",
+              requestId,
+            );
           }
           const analytics = await getCompletionAnalytics(userId, {
             weeks: parsedWeeks,
@@ -446,10 +460,23 @@ const handler = async (event, context) => {
           const rawFilters = event.queryStringParameters || {};
           let parsedLimit, parsedOffset;
           try {
-            parsedLimit = parseBoundedInt(rawFilters.limit, "limit", { min: 1, max: 200, fallback: 50 });
-            parsedOffset = parseBoundedInt(rawFilters.offset, "offset", { min: 0, max: 1000000, fallback: 0 });
+            parsedLimit = parseBoundedInt(rawFilters.limit, "limit", {
+              min: 1,
+              max: 200,
+              fallback: 50,
+            });
+            parsedOffset = parseBoundedInt(rawFilters.offset, "offset", {
+              min: 0,
+              max: 1000000,
+              fallback: 0,
+            });
           } catch (err) {
-            return createErrorResponse(err.message, 422, "validation_error", requestId);
+            return createErrorResponse(
+              err.message,
+              422,
+              "validation_error",
+              requestId,
+            );
           }
           const filters = {
             ...rawFilters,
@@ -473,7 +500,8 @@ const handler = async (event, context) => {
           try {
             body = parseJsonObjectBody(event.body);
           } catch (error) {
-            const isObjectError = error.message === "Request body must be an object";
+            const isObjectError =
+              error.message === "Request body must be an object";
             return createErrorResponse(
               isObjectError ? error.message : "Invalid JSON in request body",
               isObjectError ? 422 : 400,
@@ -508,7 +536,8 @@ const handler = async (event, context) => {
           try {
             body = parseJsonObjectBody(event.body);
           } catch (error) {
-            const isObjectError = error.message === "Request body must be an object";
+            const isObjectError =
+              error.message === "Request body must be an object";
             return createErrorResponse(
               isObjectError ? error.message : "Invalid JSON in request body",
               isObjectError ? 422 : 400,
@@ -541,7 +570,8 @@ const handler = async (event, context) => {
           try {
             body = parseJsonObjectBody(event.body);
           } catch (error) {
-            const isObjectError = error.message === "Request body must be an object";
+            const isObjectError =
+              error.message === "Request body must be an object";
             return createErrorResponse(
               isObjectError ? error.message : "Invalid JSON in request body",
               isObjectError ? 422 : 400,

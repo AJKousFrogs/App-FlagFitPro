@@ -30,7 +30,10 @@ function createFakeSupabase() {
       if (this.table === "daily_wellness_checkin" && this.mode === "select") {
         return Promise.resolve({ data: null, error: state.getError });
       }
-      if (this.table === "daily_wellness_checkin" && this.mode === "upsert-select") {
+      if (
+        this.table === "daily_wellness_checkin" &&
+        this.mode === "upsert-select"
+      ) {
         return Promise.resolve({ data: null, error: state.upsertError });
       }
       return Promise.resolve({ data: null, error: null });
@@ -74,7 +77,10 @@ function createFakeSupabase() {
 
 vi.mock("../../netlify/functions/utils/base-handler.js", () => ({
   baseHandler: async (event, context, options) =>
-    options.handler(event, context, { userId: "user-1", requestId: "req-test" }),
+    options.handler(event, context, {
+      userId: "user-1",
+      requestId: "req-test",
+    }),
 }));
 
 vi.mock("../../netlify/functions/supabase-client.js", () => ({

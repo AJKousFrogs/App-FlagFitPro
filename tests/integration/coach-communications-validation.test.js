@@ -106,7 +106,10 @@ function createFakeSupabase() {
 
 vi.mock("../../netlify/functions/utils/base-handler.js", () => ({
   baseHandler: async (event, context, options) =>
-    options.handler(event, context, { userId: "coach-1", requestId: "req-test" }),
+    options.handler(event, context, {
+      userId: "coach-1",
+      requestId: "req-test",
+    }),
 }));
 
 vi.mock("../../netlify/functions/supabase-client.js", () => ({
@@ -121,8 +124,14 @@ vi.mock("../../netlify/functions/supabase-client.js", () => ({
 
 vi.mock("../../netlify/functions/utils/consent-data-reader.js", () => ({
   ConsentDataReader: class {
-    readTrainingSessions = async () => ({ data: [], consentInfo: { blockedPlayerIds: [] } });
-    readWellnessEntries = async () => ({ data: [], consentInfo: { blockedPlayerIds: [] } });
+    readTrainingSessions = async () => ({
+      data: [],
+      consentInfo: { blockedPlayerIds: [] },
+    });
+    readWellnessEntries = async () => ({
+      data: [],
+      consentInfo: { blockedPlayerIds: [] },
+    });
   },
   AccessContext: {
     COACH_TEAM_DATA: "COACH_TEAM_DATA",

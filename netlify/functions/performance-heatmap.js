@@ -1,5 +1,8 @@
 import { supabaseAdmin } from "./supabase-client.js";
-import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
+import {
+  createSuccessResponse,
+  createErrorResponse,
+} from "./utils/error-handler.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { createLogger } from "./utils/structured-logger.js";
 
@@ -84,7 +87,10 @@ async function getHeatmapData(userId, timeRange) {
   }
 
   const trainingSessions = sessions || [];
-  logger.info("sessions_fetched", { session_count: trainingSessions.length, user_id: userId });
+  logger.info("sessions_fetched", {
+    session_count: trainingSessions.length,
+    user_id: userId,
+  });
 
   // Group sessions by date
   const sessionsByDate = {};

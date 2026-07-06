@@ -62,7 +62,7 @@ describe("getActiveInjuries — uses athlete_injuries, not soreness_areas", () =
     injury_location: "hamstring",
     injury_grade: "Grade 2",
     recovery_status: "active",
-    injury_mechanism: "contact",       // not self_report → never expires
+    injury_mechanism: "contact", // not self_report → never expires
     activity_restrictions: ["sprint"],
     expected_return_date: null,
   };
@@ -74,7 +74,7 @@ describe("getActiveInjuries — uses athlete_injuries, not soreness_areas", () =
     recovery_status: "recovering",
     injury_mechanism: "self_report",
     activity_restrictions: ["sprint"],
-    expected_return_date: TODAY,        // expiry = today → still active
+    expected_return_date: TODAY, // expiry = today → still active
   };
 
   const expiredSelfReport = {
@@ -102,7 +102,9 @@ describe("getActiveInjuries — uses athlete_injuries, not soreness_areas", () =
   });
 
   it("filters out an EXPIRED self-report (expected_return_date in the past)", async () => {
-    const client = createSupabaseMock({ athlete_injuries: [expiredSelfReport] });
+    const client = createSupabaseMock({
+      athlete_injuries: [expiredSelfReport],
+    });
     const result = await getActiveInjuries("u1", TODAY, { client });
     // The expired self-report must not trigger RTP — this was the "stale tag locks
     // athlete in rehab forever" bug the authority was written to prevent.
@@ -154,15 +156,17 @@ describe("authority + injuriesPainLevel compose — replaces the soreness_areas 
 
   it("Grade 3 active injury → pain level 4 (most restrictive RTP phase)", async () => {
     const client = createSupabaseMock({
-      athlete_injuries: [{
-        user_id: "u1",
-        injury_location: "hamstring",
-        injury_grade: "Grade 3",
-        recovery_status: "active",
-        injury_mechanism: "contact",
-        activity_restrictions: ["sprint"],
-        expected_return_date: null,
-      }],
+      athlete_injuries: [
+        {
+          user_id: "u1",
+          injury_location: "hamstring",
+          injury_grade: "Grade 3",
+          recovery_status: "active",
+          injury_mechanism: "contact",
+          activity_restrictions: ["sprint"],
+          expected_return_date: null,
+        },
+      ],
     });
     const injuries = await getActiveInjuries("u1", TODAY, { client });
     expect(injuries.length).toBeGreaterThan(0);

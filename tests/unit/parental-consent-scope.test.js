@@ -17,7 +17,12 @@ describe("parental consent — feature restriction from status + consent_scope",
   it("pending (not verified) → everything restricted regardless of scope", () => {
     const r = getRestrictedFeatures({
       status: "pending",
-      consent_scope: { healthData: true, biometrics: true, location: true, research: true },
+      consent_scope: {
+        healthData: true,
+        biometrics: true,
+        location: true,
+        research: true,
+      },
     });
     for (const k of ["healthData", "biometrics", "location", "research"]) {
       expect(r[k].restricted).toBe(true);
@@ -27,7 +32,12 @@ describe("parental consent — feature restriction from status + consent_scope",
   it("verified → only the features NOT in scope are restricted", () => {
     const r = getRestrictedFeatures({
       status: "verified",
-      consent_scope: { healthData: true, biometrics: false, location: true, research: false },
+      consent_scope: {
+        healthData: true,
+        biometrics: false,
+        location: true,
+        research: false,
+      },
     });
     expect(r.healthData.restricted).toBe(false);
     expect(r.biometrics.restricted).toBe(true);

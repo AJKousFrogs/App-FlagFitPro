@@ -1,12 +1,21 @@
 import { supabaseAdmin } from "./supabase-client.js";
 import { baseHandler } from "./utils/base-handler.js";
-import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
+import {
+  createSuccessResponse,
+  createErrorResponse,
+} from "./utils/error-handler.js";
 import { getUserRole } from "./utils/authorization-guard.js";
-import { ACWR_RISK_ZONES, computeAcwrAt, computeSessionLoad } from "./utils/acwr.js";
+import {
+  ACWR_RISK_ZONES,
+  computeAcwrAt,
+  computeSessionLoad,
+} from "./utils/acwr.js";
 import { tryParseJsonObjectBody } from "./utils/input-validator.js";
 import { createLogger } from "./utils/structured-logger.js";
 
-const logger = createLogger({ service: "netlify.smart-training-recommendations" });
+const logger = createLogger({
+  service: "netlify.smart-training-recommendations",
+});
 
 // Netlify Function: Smart Training Recommendations
 // Integrates tournaments, ACWR, RPE, injuries, and periodization
@@ -72,7 +81,12 @@ const INJURY_IMPACT = {
   5: { volumeModifier: 0, intensityModifier: 0, description: "Rest required" },
 };
 
-const COACH_ROLES = new Set(["coach", "head_coach", "assistant_coach", "admin"]);
+const COACH_ROLES = new Set([
+  "coach",
+  "head_coach",
+  "assistant_coach",
+  "admin",
+]);
 
 // =====================================================
 // HELPER FUNCTIONS
@@ -99,7 +113,12 @@ async function calculateACWR(userId, date) {
     .in("status", ["completed", "in_progress"]);
 
   if (!sessions || sessions.length === 0) {
-    return { acwr: 0, riskZone: "insufficient_data", acuteLoad: 0, chronicLoad: 0 };
+    return {
+      acwr: 0,
+      riskZone: "insufficient_data",
+      acuteLoad: 0,
+      chronicLoad: 0,
+    };
   }
 
   // Build daily-load Map: canonical computeSessionLoad handles workload/rpe/duration
@@ -545,7 +564,6 @@ const handler = async (event, context) => {
     requireAuth: true,
     handler: async (event, _context, { userId, requestId }) => {
       try {
-    
         // Parse request
         let athleteId = userId;
         let targetDate = new Date();

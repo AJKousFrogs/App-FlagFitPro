@@ -243,7 +243,9 @@ test.describe("Design System Compliance", () => {
     await page.emulateMedia({ colorScheme: "light" });
     await page.goto(`${BASE_URL}/`);
     await page.waitForLoadState("networkidle");
-    await page.waitForSelector("[data-theme-ready='light']", { timeout: 10000 });
+    await page.waitForSelector("[data-theme-ready='light']", {
+      timeout: 10000,
+    });
 
     const tokens = await page.evaluate(() => {
       const root = document.documentElement;
@@ -285,9 +287,7 @@ test.describe("Design System Compliance", () => {
         hasDarkClass: body.classList.contains("dark-theme"),
         dataTheme: html.getAttribute("data-theme"),
         surface0: style.getPropertyValue("--p-surface-0").trim(),
-        colorTextPrimary: style
-          .getPropertyValue("--color-text-primary")
-          .trim(),
+        colorTextPrimary: style.getPropertyValue("--color-text-primary").trim(),
       };
     });
 
@@ -575,12 +575,18 @@ test.describe("Design System Compliance", () => {
           const style = el.getAttribute("style");
           if (style && style.length > 0) {
             // Filter out dynamic/necessary inline styles
-            const isLayout = style.includes("display") || style.includes("visibility") || style.includes("position");
+            const isLayout =
+              style.includes("display") ||
+              style.includes("visibility") ||
+              style.includes("position");
             const isShort = style.length <= 20;
             // Exempt: CSS custom props only (ThemeService, dynamic theming) - matches --var: value
-            const isCssVarsOnly = /^(\s*--[\w-]+\s*:\s*[^;]+;?\s*)+$/.test(style);
+            const isCssVarsOnly = /^(\s*--[\w-]+\s*:\s*[^;]+;?\s*)+$/.test(
+              style,
+            );
             // Exempt: design token usage (color/background with var())
-            const isDesignToken = /^\s*(color|background(-color)?)\s*:\s*var\(/.test(style);
+            const isDesignToken =
+              /^\s*(color|background(-color)?)\s*:\s*var\(/.test(style);
             if (!isLayout && !isShort && !isCssVarsOnly && !isDesignToken) {
               results.push({
                 tag: el.tagName.toLowerCase(),

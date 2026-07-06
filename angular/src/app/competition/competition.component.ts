@@ -33,7 +33,12 @@ interface PendingEvent {
 @Component({
   selector: "app-competition",
   standalone: true,
-  imports: [AvatarComponent, SkeletonComponent, RouterLink, LucideAngularModule],
+  imports: [
+    AvatarComponent,
+    SkeletonComponent,
+    RouterLink,
+    LucideAngularModule,
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: "./competition.component.html",
 })
@@ -79,16 +84,18 @@ export class CompetitionComponent {
     // prompt never showed. A failed fetch leaves the card hidden (no defaults
     // submit possible), satisfying the "block on prefill failure" rule.
     this.api
-      .get<{ pending?: PendingEvent[]; events?: PendingEvent[] } | PendingEvent[]>(
-        "/api/event-participation",
-      )
+      .get<
+        { pending?: PendingEvent[]; events?: PendingEvent[] } | PendingEvent[]
+      >("/api/event-participation")
       .subscribe({
         next: (res) => {
           const d = res?.data as
             | { pending?: PendingEvent[]; events?: PendingEvent[] }
             | PendingEvent[]
             | undefined;
-          this.pending.set(Array.isArray(d) ? d : (d?.pending ?? d?.events ?? []));
+          this.pending.set(
+            Array.isArray(d) ? d : (d?.pending ?? d?.events ?? []),
+          );
           this.pendingLoaded.set(true);
         },
         error: () => {
@@ -104,7 +111,9 @@ export class CompetitionComponent {
   }
 
   // RSVP feedback: chosen status per event, which is in-flight, and which errored.
-  readonly rsvpState = signal<Record<string, "declined" | "maybe" | "confirmed">>({});
+  readonly rsvpState = signal<
+    Record<string, "declined" | "maybe" | "confirmed">
+  >({});
   readonly rsvpBusy = signal<string | null>(null);
   readonly rsvpError = signal<string | null>(null);
 
@@ -127,7 +136,11 @@ export class CompetitionComponent {
       });
   }
   rsvpLabel(status: string): string {
-    return status === "confirmed" ? "You're in" : status === "maybe" ? "Maybe" : "Can't make it";
+    return status === "confirmed"
+      ? "You're in"
+      : status === "maybe"
+        ? "Maybe"
+        : "Can't make it";
   }
 
   logParticipation(): void {

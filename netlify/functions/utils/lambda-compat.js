@@ -30,16 +30,24 @@ function normalizeBody(result) {
   if (result?.isBase64Encoded && typeof result.body === "string") {
     return Buffer.from(result.body, "base64");
   }
-  if (typeof result?.body === "string") {return result.body;}
-  if (result?.body === null || result?.body === undefined) {return "";}
+  if (typeof result?.body === "string") {
+    return result.body;
+  }
+  if (result?.body === null || result?.body === undefined) {
+    return "";
+  }
   return JSON.stringify(result.body);
 }
 
 function toWebResponse(result) {
-  if (result instanceof Response) {return result;}
+  if (result instanceof Response) {
+    return result;
+  }
   const headers = new Headers(result?.headers || {});
   for (const [k, vals] of Object.entries(result?.multiValueHeaders || {})) {
-    if (Array.isArray(vals)) {vals.forEach((v) => headers.append(k, v));}
+    if (Array.isArray(vals)) {
+      vals.forEach((v) => headers.append(k, v));
+    }
   }
   return new Response(normalizeBody(result), {
     status: Number(result?.statusCode) || 200,
@@ -57,7 +65,8 @@ export function wrapHandler(handler) {
       const url = new URL(req.url);
       const method = req.method || "GET";
       const hasBody = method !== "GET" && method !== "HEAD";
-      const { queryStringParameters, multiValueQueryStringParameters } = buildQueryParams(url);
+      const { queryStringParameters, multiValueQueryStringParameters } =
+        buildQueryParams(url);
       const event = {
         httpMethod: method,
         path: url.pathname,
@@ -74,7 +83,11 @@ export function wrapHandler(handler) {
     } catch (err) {
       console.error("[lambda-compat] unhandled error", err?.message ?? err);
       return Response.json(
-        { success: false, error: err?.message || "Internal server error", code: "server_error" },
+        {
+          success: false,
+          error: err?.message || "Internal server error",
+          code: "server_error",
+        },
         { status: 500 },
       );
     }

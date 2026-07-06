@@ -89,8 +89,6 @@ describe("buildProtocolDecisionContext", () => {
     });
 
     expect(result.trainingFocus).toBe("recovery");
-    expect(result.aiRationale).toContain(
-      "Readiness is low or ACWR is high",
-    );
+    expect(result.aiRationale).toContain("Readiness is low or ACWR is high");
   });
 });

@@ -4,7 +4,10 @@ let mockSupabase = {};
 
 vi.mock("../../netlify/functions/utils/base-handler.js", () => ({
   baseHandler: async (event, context, options) =>
-    options.handler(event, context, { userId: "user-1", supabase: mockSupabase }),
+    options.handler(event, context, {
+      userId: "user-1",
+      supabase: mockSupabase,
+    }),
 }));
 
 describe("player-settings validation hardening", () => {
@@ -67,7 +70,10 @@ describe("player-settings validation hardening", () => {
               lte: vi.fn(() => ({
                 gte: vi.fn(() => ({
                   single: vi.fn(() =>
-                    Promise.resolve({ data: null, error: { code: "PGRST116" } }),
+                    Promise.resolve({
+                      data: null,
+                      error: { code: "PGRST116" },
+                    }),
                   ),
                 })),
               })),
@@ -169,7 +175,10 @@ describe("player-settings validation hardening", () => {
               lte: vi.fn(() => ({
                 gte: vi.fn(() => ({
                   single: vi.fn(() =>
-                    Promise.resolve({ data: null, error: { code: "PGRST116" } }),
+                    Promise.resolve({
+                      data: null,
+                      error: { code: "PGRST116" },
+                    }),
                   ),
                 })),
               })),

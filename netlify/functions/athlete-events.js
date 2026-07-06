@@ -43,7 +43,9 @@ const validationError = (message) => {
 
 function parseIso(value, field, { required }) {
   if (value === undefined || value === null || value === "") {
-    if (required) {throw validationError(`${field} is required`);}
+    if (required) {
+      throw validationError(`${field} is required`);
+    }
     return null;
   }
   const d = new Date(value);
@@ -54,9 +56,13 @@ function parseIso(value, field, { required }) {
 }
 
 function str(value, field, max) {
-  if (value === undefined || value === null || value === "") {return null;}
+  if (value === undefined || value === null || value === "") {
+    return null;
+  }
   const s = String(value).trim();
-  if (s.length === 0) {return null;}
+  if (s.length === 0) {
+    return null;
+  }
   if (s.length > max) {
     throw validationError(`${field} must be ${max} characters or less`);
   }
@@ -71,7 +77,9 @@ function buildRow(body, { partial }) {
 
   if (!partial || has("title")) {
     const title = str(body.title, "title", 160);
-    if (!title) {throw validationError("title is required");}
+    if (!title) {
+      throw validationError("title is required");
+    }
     row.title = title;
   }
   if (!partial || has("category")) {
@@ -127,9 +135,15 @@ function buildRow(body, { partial }) {
       row.tier = tier;
     }
   }
-  if (!partial || has("location")) {row.location = str(body.location, "location", 200);}
-  if (!partial || has("venue")) {row.venue = str(body.venue, "venue", 200);}
-  if (!partial || has("notes")) {row.notes = str(body.notes, "notes", 2000);}
+  if (!partial || has("location")) {
+    row.location = str(body.location, "location", 200);
+  }
+  if (!partial || has("venue")) {
+    row.venue = str(body.venue, "venue", 200);
+  }
+  if (!partial || has("notes")) {
+    row.notes = str(body.notes, "notes", 2000);
+  }
   if (!partial || has("status")) {
     const status = (body.status ?? "scheduled").toString();
     if (!STATUSES.has(status)) {
@@ -172,11 +186,17 @@ async function listEvents(userId, params) {
     .eq("user_id", userId)
     .order("starts_at", { ascending: true });
 
-  if (params?.from) {q = q.gte("starts_at", new Date(params.from).toISOString());}
-  if (params?.to) {q = q.lte("starts_at", new Date(params.to).toISOString());}
+  if (params?.from) {
+    q = q.gte("starts_at", new Date(params.from).toISOString());
+  }
+  if (params?.to) {
+    q = q.lte("starts_at", new Date(params.to).toISOString());
+  }
 
   const { data, error } = await q;
-  if (error) {throw error;}
+  if (error) {
+    throw error;
+  }
   return (data ?? []).map(toApi);
 }
 
@@ -188,7 +208,9 @@ async function createEvent(userId, body) {
     .insert(row)
     .select()
     .single();
-  if (error) {throw error;}
+  if (error) {
+    throw error;
+  }
   return toApi(data);
 }
 
@@ -204,8 +226,12 @@ async function updateEvent(userId, id, body) {
     .eq("user_id", userId)
     .select()
     .single();
-  if (error) {throw error;}
-  if (!data) {return null;}
+  if (error) {
+    throw error;
+  }
+  if (!data) {
+    return null;
+  }
   return toApi(data);
 }
 
@@ -217,7 +243,9 @@ async function deleteEvent(userId, id) {
     .eq("user_id", userId)
     .select("id")
     .maybeSingle();
-  if (error) {throw error;}
+  if (error) {
+    throw error;
+  }
   return Boolean(data);
 }
 
@@ -248,9 +276,17 @@ const handler = async (event, context) => {
 
         if (method === "DELETE") {
           const id = idFromPath(event) || event.queryStringParameters?.id;
-          if (!id) {return createErrorResponse("event id is required", 400, "missing_id");}
+          if (!id) {
+            return createErrorResponse(
+              "event id is required",
+              400,
+              "missing_id",
+            );
+          }
           const ok = await deleteEvent(userId, id);
-          if (!ok) {return createErrorResponse("Event not found", 404, "not_found");}
+          if (!ok) {
+            return createErrorResponse("Event not found", 404, "not_found");
+          }
           return createSuccessResponse({ id, deleted: true });
         }
 
@@ -273,9 +309,13 @@ const handler = async (event, context) => {
 
         // PUT / PATCH — update
         const id = idFromPath(event) || body.id;
-        if (!id) {return createErrorResponse("event id is required", 400, "missing_id");}
+        if (!id) {
+          return createErrorResponse("event id is required", 400, "missing_id");
+        }
         const updated = await updateEvent(userId, id, body);
-        if (!updated) {return createErrorResponse("Event not found", 404, "not_found");}
+        if (!updated) {
+          return createErrorResponse("Event not found", 404, "not_found");
+        }
         return createSuccessResponse(updated, 200, "Event updated");
       } catch (error) {
         if (error?.isValidation) {

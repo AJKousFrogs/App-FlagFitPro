@@ -4,7 +4,10 @@ import {
   createErrorResponse,
 } from "./utils/error-handler.js";
 import { supabaseAdmin } from "./supabase-client.js";
-import { parseJsonObjectBody, parseBoundedInt } from "./utils/input-validator.js";
+import {
+  parseJsonObjectBody,
+  parseBoundedInt,
+} from "./utils/input-validator.js";
 import { createLogger } from "./utils/structured-logger.js";
 
 const logger = createLogger({ service: "netlify.supplements" });

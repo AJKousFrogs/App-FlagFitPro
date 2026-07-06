@@ -1,8 +1,12 @@
 <header class="topbar">
   <div><h1>More</h1></div>
   <div class="inline">
-    <a class="icon-btn" routerLink="/notifications" aria-label="Notifications"><lucide-icon name="bell" /><span class="dot"></span></a>
-    <a class="avatar" routerLink="/profile" aria-label="Profile"><app-avatar /></a>
+    <a class="icon-btn" routerLink="/notifications" aria-label="Notifications"
+      ><lucide-icon name="bell" /><span class="dot"></span
+    ></a>
+    <a class="avatar" routerLink="/profile" aria-label="Profile"
+      ><app-avatar
+    /></a>
   </div>
 </header>
 
@@ -10,75 +14,106 @@
   <div class="screen-hero">
     <img src="assets/images/rebuild/hero-team.jpg" alt="Ljubljana Frogs" />
     <div class="scrim"></div>
-    <div class="content"><div class="eyebrow">{{ identity() }}</div><h2>Your hub</h2></div>
+    <div class="content">
+      <div class="eyebrow">{{ identity() }}</div>
+      <h2>Your hub</h2>
+    </div>
   </div>
 
   @if (isStaff()) {
-    <a class="card linkcard" routerLink="/staff" style="margin-bottom:var(--s-1)">
+    <a
+      class="card linkcard"
+      routerLink="/staff"
+      style="margin-bottom: var(--s-1)"
+    >
       <span class="lc-ic"><lucide-icon name="users" /></span>
-      <div style="flex:1"><b>Staff view</b><div class="muted" style="font-size:var(--fs-sm)">Roster, alerts &amp; athlete monitoring</div></div>
+      <div style="flex: 1">
+        <b>Staff view</b>
+        <div class="muted" style="font-size: var(--fs-sm)">
+          Roster, alerts &amp; athlete monitoring
+        </div>
+      </div>
       <lucide-icon name="chevron-right" class="lc-go" />
     </a>
   }
 
   <div class="section-h"><h2>Compete</h2></div>
   <div class="card">
-    <a class="lrow" routerLink="/competition" style="color:inherit">
-      <span class="inline"><lucide-icon name="trophy" /> Competition</span><small>events · RSVP · actuals</small>
+    <a class="lrow" routerLink="/competition" style="color: inherit">
+      <span class="inline"><lucide-icon name="trophy" /> Competition</span
+      ><small>events · RSVP · actuals</small>
     </a>
-    <a class="lrow" routerLink="/gameday" style="color:inherit">
-      <span class="inline"><lucide-icon name="flag" /> Game day</span><small>readiness + fueling</small>
+    <a class="lrow" routerLink="/gameday" style="color: inherit">
+      <span class="inline"><lucide-icon name="flag" /> Game day</span
+      ><small>readiness + fueling</small>
     </a>
-    <a class="lrow" routerLink="/roster" style="color:inherit">
-      <span class="inline"><lucide-icon name="users" /> Team / Roster</span><lucide-icon name="chevron-right" class="faint" />
+    <a class="lrow" routerLink="/roster" style="color: inherit">
+      <span class="inline"><lucide-icon name="users" /> Team / Roster</span
+      ><lucide-icon name="chevron-right" class="faint" />
     </a>
-    <div class="lrow soon"><span class="inline"><lucide-icon name="message-circle" /> Team chat</span><span class="band neutral">Soon</span></div>
+    <div class="lrow soon">
+      <span class="inline"><lucide-icon name="message-circle" /> Team chat</span
+      ><span class="band neutral">Soon</span>
+    </div>
   </div>
 
   <div class="section-h"><h2>Recovery &amp; health</h2></div>
   <div class="card">
-    <a class="lrow" routerLink="/acwr" style="color:inherit">
+    <a class="lrow" routerLink="/acwr" style="color: inherit">
       <span class="inline"><lucide-icon name="bar-chart-3" /> Load / ACWR</span>
-      @if (acwrBand(); as b) { <span class="band {{ b.cls }}">{{ b.label }}</span> }
-      @else { <lucide-icon name="chevron-right" class="faint" /> }
+      @if (acwrBand(); as b) {
+        <span class="band {{ b.cls }}">{{ b.label }}</span>
+      } @else {
+        <lucide-icon name="chevron-right" class="faint" />
+      }
     </a>
-    <a class="lrow" routerLink="/return-to-play" style="color:inherit">
-      <span class="inline"><lucide-icon name="activity" /> Return to play</span><lucide-icon name="chevron-right" class="faint" />
+    <a class="lrow" routerLink="/return-to-play" style="color: inherit">
+      <span class="inline"><lucide-icon name="activity" /> Return to play</span
+      ><lucide-icon name="chevron-right" class="faint" />
     </a>
-    <a class="lrow" routerLink="/sleep-debt" style="color:inherit">
-      <span class="inline"><lucide-icon name="moon" /> Sleep debt</span><lucide-icon name="chevron-right" class="faint" />
+    <a class="lrow" routerLink="/sleep-debt" style="color: inherit">
+      <span class="inline"><lucide-icon name="moon" /> Sleep debt</span
+      ><lucide-icon name="chevron-right" class="faint" />
     </a>
-    <a class="lrow" routerLink="/supplements" style="color:inherit">
-      <span class="inline"><lucide-icon name="pill" /> Supplements</span><lucide-icon name="chevron-right" class="faint" />
+    <a class="lrow" routerLink="/supplements" style="color: inherit">
+      <span class="inline"><lucide-icon name="pill" /> Supplements</span
+      ><lucide-icon name="chevron-right" class="faint" />
     </a>
   </div>
 
   <div class="section-h"><h2>Tools</h2></div>
   <div class="card">
-    <a class="lrow" routerLink="/chat" style="color:inherit">
-      <span class="inline"><lucide-icon name="sparkles" /> Merlin AI</span><small>context-aware coach</small>
+    <a class="lrow" routerLink="/chat" style="color: inherit">
+      <span class="inline"><lucide-icon name="sparkles" /> Merlin AI</span
+      ><small>context-aware coach</small>
     </a>
-    <a class="lrow" routerLink="/knowledge" style="color:inherit">
-      <span class="inline"><lucide-icon name="book-open" /> Knowledge</span><lucide-icon name="chevron-right" class="faint" />
+    <a class="lrow" routerLink="/knowledge" style="color: inherit">
+      <span class="inline"><lucide-icon name="book-open" /> Knowledge</span
+      ><lucide-icon name="chevron-right" class="faint" />
     </a>
-    <a class="lrow" routerLink="/reports" style="color:inherit">
-      <span class="inline"><lucide-icon name="file-text" /> Reports</span><lucide-icon name="chevron-right" class="faint" />
+    <a class="lrow" routerLink="/reports" style="color: inherit">
+      <span class="inline"><lucide-icon name="file-text" /> Reports</span
+      ><lucide-icon name="chevron-right" class="faint" />
     </a>
   </div>
 
   <div class="section-h"><h2>Me</h2></div>
   <div class="card">
-    <a class="lrow" routerLink="/profile" style="color:inherit">
-      <span class="inline"><lucide-icon name="user" /> Profile</span><lucide-icon name="chevron-right" class="faint" />
+    <a class="lrow" routerLink="/profile" style="color: inherit">
+      <span class="inline"><lucide-icon name="user" /> Profile</span
+      ><lucide-icon name="chevron-right" class="faint" />
     </a>
-    <a class="lrow" routerLink="/achievements" style="color:inherit">
-      <span class="inline"><lucide-icon name="medal" /> Achievements</span><lucide-icon name="chevron-right" class="faint" />
+    <a class="lrow" routerLink="/achievements" style="color: inherit">
+      <span class="inline"><lucide-icon name="medal" /> Achievements</span
+      ><lucide-icon name="chevron-right" class="faint" />
     </a>
-    <a class="lrow" routerLink="/notifications" style="color:inherit">
-      <span class="inline"><lucide-icon name="bell" /> Notifications</span><lucide-icon name="chevron-right" class="faint" />
+    <a class="lrow" routerLink="/notifications" style="color: inherit">
+      <span class="inline"><lucide-icon name="bell" /> Notifications</span
+      ><lucide-icon name="chevron-right" class="faint" />
     </a>
-    <a class="lrow" routerLink="/settings" style="color:inherit">
-      <span class="inline"><lucide-icon name="settings" /> Settings</span><lucide-icon name="chevron-right" class="faint" />
+    <a class="lrow" routerLink="/settings" style="color: inherit">
+      <span class="inline"><lucide-icon name="settings" /> Settings</span
+      ><lucide-icon name="chevron-right" class="faint" />
     </a>
   </div>
 

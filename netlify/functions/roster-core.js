@@ -1,5 +1,8 @@
 import { baseHandler } from "./utils/base-handler.js";
-import { createErrorResponse, createSuccessResponse } from "./utils/error-handler.js";
+import {
+  createErrorResponse,
+  createSuccessResponse,
+} from "./utils/error-handler.js";
 import { getUserTeamId } from "./utils/auth-helper.js";
 import { createLogger } from "./utils/structured-logger.js";
 

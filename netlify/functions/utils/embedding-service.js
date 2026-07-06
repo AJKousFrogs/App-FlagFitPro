@@ -214,7 +214,10 @@ async function generateEmbeddings(texts, options = {}) {
     return cleanedTexts.map(() => null);
   }
 
-  logger.info("embeddings_provider_selected", { provider, count: cleanedTexts.length });
+  logger.info("embeddings_provider_selected", {
+    provider,
+    count: cleanedTexts.length,
+  });
 
   let embeddings;
 
@@ -296,10 +299,12 @@ function isEmbeddingServiceAvailable() {
   return getAvailableProvider() !== null;
 }
 
-export { generateEmbedding,
+export {
+  generateEmbedding,
   generateEmbeddings,
   cosineSimilarity,
   normalizeEmbedding,
   isEmbeddingServiceAvailable,
   getAvailableProvider,
-  EMBEDDING_DIMENSION, };
+  EMBEDDING_DIMENSION,
+};

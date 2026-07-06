@@ -73,7 +73,9 @@ function createSupabase() {
       }
       if (this.table === "team_members" && this.mode === "select") {
         return Promise.resolve({
-          data: state.inviterRole ? { role: state.inviterRole, status: "active" } : null,
+          data: state.inviterRole
+            ? { role: state.inviterRole, status: "active" }
+            : null,
           error: null,
         });
       }

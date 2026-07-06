@@ -36,14 +36,27 @@ import { EventTravelService } from "../core/services/event-travel.service";
 @Component({
   selector: "app-wellness",
   standalone: true,
-  imports: [AvatarComponent, ReadinessTrendComponent, RouterLink, LucideAngularModule],
+  imports: [
+    AvatarComponent,
+    ReadinessTrendComponent,
+    RouterLink,
+    LucideAngularModule,
+  ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: "./wellness.component.html",
   styles: [
     `
-      .lbl { font-size: var(--fs-sm); color: var(--text-muted); font-weight: var(--fw-semi); }
-      .chiprow { display: flex; flex-wrap: wrap; gap: 6px; }
+      .lbl {
+        font-size: var(--fs-sm);
+        color: var(--text-muted);
+        font-weight: var(--fw-semi);
+      }
+      .chiprow {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+      }
     `,
   ],
 })
@@ -58,8 +71,16 @@ export class WellnessComponent {
 
   // --- self-reported tightness (drives injury precedence in the plan) ---
   readonly tightnessRegions = [
-    "Achilles", "Calf", "Hamstring", "Quad", "Knee",
-    "Ankle", "Hip", "Groin", "Lower back", "Shoulder",
+    "Achilles",
+    "Calf",
+    "Hamstring",
+    "Quad",
+    "Knee",
+    "Ankle",
+    "Hip",
+    "Groin",
+    "Lower back",
+    "Shoulder",
   ];
   readonly tightRegion = signal<string | null>(null);
   readonly tightSeverity = signal<InjurySeverity>("minor");
@@ -114,7 +135,9 @@ export class WellnessComponent {
     effect(() => {
       if (this.prefilledCheckin) return;
       const todayKey = new Date().toISOString().slice(0, 10);
-      const entry = this.wellnessSvc.wellnessData().find((e) => e.date === todayKey);
+      const entry = this.wellnessSvc
+        .wellnessData()
+        .find((e) => e.date === todayKey);
       if (!entry) return;
       this.prefilledCheckin = true;
       if (entry.sleep != null) this.sleepQuality.set(entry.sleep);
@@ -137,7 +160,10 @@ export class WellnessComponent {
         const todayKey = new Date().toISOString().slice(0, 10);
         const takenToday = (re: RegExp): boolean =>
           logs.some(
-            (l) => l.date === todayKey && !!l.taken && re.test(l.supplement_name ?? ""),
+            (l) =>
+              l.date === todayKey &&
+              !!l.taken &&
+              re.test(l.supplement_name ?? ""),
           );
         this.creatine.set(takenToday(/creatine/i));
         this.caffeine.set(takenToday(/caffeine/i));
@@ -205,7 +231,12 @@ export class WellnessComponent {
   readonly isMonday = new Date().getDay() === 1;
   readonly playedGames = signal<boolean | null>(null);
   readonly gameCount = signal(1);
-  readonly gameFormats: { key: string; label: string; halves: number; min: number }[] = [
+  readonly gameFormats: {
+    key: string;
+    label: string;
+    halves: number;
+    min: number;
+  }[] = [
     { key: "2x12", label: "2 × 12 min", halves: 2, min: 12 },
     { key: "2x15", label: "2 × 15 min", halves: 2, min: 15 },
     { key: "2x20", label: "2 × 20 min", halves: 2, min: 20 },
@@ -272,14 +303,23 @@ export class WellnessComponent {
   readonly beta = signal(false);
 
   toggleSupplement(which: "creatine" | "caffeine" | "beta"): void {
-    const sig = { creatine: this.creatine, caffeine: this.caffeine, beta: this.beta }[which];
+    const sig = {
+      creatine: this.creatine,
+      caffeine: this.caffeine,
+      beta: this.beta,
+    }[which];
     const prev = sig();
     sig.set(!prev);
     this.api
       .post("/api/supplements", {
         supplements: [
           { name: "Creatine", taken: this.creatine(), dosage: "5 g" },
-          { name: "Caffeine", taken: this.caffeine(), dosage: "200 mg", timeOfDay: "pre-session" },
+          {
+            name: "Caffeine",
+            taken: this.caffeine(),
+            dosage: "200 mg",
+            timeOfDay: "pre-session",
+          },
           { name: "Beta-alanine", taken: this.beta(), dosage: "4 g" },
         ],
       })
@@ -299,16 +339,19 @@ export class WellnessComponent {
     const s = this.readiness()?.score;
     return typeof s === "number" ? Math.round(s) : null;
   });
-  readonly readinessBand = computed<{ label: string; cls: string } | null>(() => {
-    const pct = this.readinessPct();
-    if (pct == null) return null;
-    // Band colours MUST match the Today screen's readiness mapping — the same
-    // score showed amber (caution) on Today but blue (info) here. Canonical:
-    // <55 danger, 55–75 caution, >75 good.
-    const cls = pct < 55 ? "danger" : pct <= 75 ? "caution" : "good";
-    const word = pct < 55 ? "Low — deload" : pct <= 75 ? "Moderate" : "High — push";
-    return { label: word, cls };
-  });
+  readonly readinessBand = computed<{ label: string; cls: string } | null>(
+    () => {
+      const pct = this.readinessPct();
+      if (pct == null) return null;
+      // Band colours MUST match the Today screen's readiness mapping — the same
+      // score showed amber (caution) on Today but blue (info) here. Canonical:
+      // <55 danger, 55–75 caution, >75 good.
+      const cls = pct < 55 ? "danger" : pct <= 75 ? "caution" : "good";
+      const word =
+        pct < 55 ? "Low — deload" : pct <= 75 ? "Moderate" : "High — push";
+      return { label: word, cls };
+    },
+  );
 
   // --- hydration quick-add ---
   readonly hydrationMl = signal(0);
@@ -316,7 +359,10 @@ export class WellnessComponent {
   private loadTodayHydration(): void {
     this.api.get<{ logs?: { amount: number }[] }>("/api/hydration").subscribe({
       next: (res) => {
-        const total = (res?.data?.logs ?? []).reduce((sum, l) => sum + (l.amount ?? 0), 0);
+        const total = (res?.data?.logs ?? []).reduce(
+          (sum, l) => sum + (l.amount ?? 0),
+          0,
+        );
         this.hydrationMl.set(total);
       },
       error: (e) => this.logger.error("hydration_today_load_failed", e),
@@ -325,16 +371,14 @@ export class WellnessComponent {
 
   addHydration(ml: number): void {
     this.hydrationMl.update((v) => v + ml);
-    this.api
-      .post("/api/hydration/log", { amount: ml })
-      .subscribe({
-        // Roll the optimistic total back if the log didn't persist, so the UI
-        // never shows water that isn't actually recorded.
-        error: (err) => {
-          this.hydrationMl.update((v) => v - ml);
-          this.logger.error("hydration_log_failed", err);
-        },
-      });
+    this.api.post("/api/hydration/log", { amount: ml }).subscribe({
+      // Roll the optimistic total back if the log didn't persist, so the UI
+      // never shows water that isn't actually recorded.
+      error: (err) => {
+        this.hydrationMl.update((v) => v - ml);
+        this.logger.error("hydration_log_failed", err);
+      },
+    });
   }
   readonly hydrationL = computed(() => (this.hydrationMl() / 1000).toFixed(1));
   logWeekendGames(): void {
@@ -356,7 +400,9 @@ export class WellnessComponent {
           this.gamesLogged.set(true);
           this.gamesMsg.set("Logged — your plan will adjust to the game load.");
           // Recalculate readiness so Today/Training react to the added acute load.
-          this.readinessSvc.calculateToday().subscribe({ error: () => undefined });
+          this.readinessSvc
+            .calculateToday()
+            .subscribe({ error: () => undefined });
         },
         error: () => {
           this.gamesLogging.set(false);
@@ -368,7 +414,8 @@ export class WellnessComponent {
   clearWeekendGames(): void {
     this.playedGames.set(false);
     this.gamesLogged.set(false);
-    this.api.post("/api/weekend-games", { played: false }).subscribe({ error: () => undefined });
+    this.api
+      .post("/api/weekend-games", { played: false })
+      .subscribe({ error: () => undefined });
   }
-
 }

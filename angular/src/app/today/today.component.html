@@ -4,8 +4,12 @@
     <h1>{{ greeting() }}</h1>
   </div>
   <div class="inline">
-    <a class="icon-btn" routerLink="/notifications" aria-label="Notifications"><lucide-icon name="bell" /><span class="dot"></span></a>
-    <a class="avatar" routerLink="/profile" aria-label="Profile"><app-avatar /></a>
+    <a class="icon-btn" routerLink="/notifications" aria-label="Notifications"
+      ><lucide-icon name="bell" /><span class="dot"></span
+    ></a>
+    <a class="avatar" routerLink="/profile" aria-label="Profile"
+      ><app-avatar
+    /></a>
   </div>
 </header>
 
@@ -15,7 +19,8 @@
     <div class="strip">
       <span class="inline">
         <lucide-icon name="flag" />
-        {{ daysToNext() }}d → {{ ev.competitionShortName || ev.competitionName }}
+        {{ daysToNext() }}d →
+        {{ ev.competitionShortName || ev.competitionName }}
         @if (weather(); as w) {
           · <lucide-icon name="cloud-rain" /> {{ w.reason }}
         }
@@ -26,9 +31,20 @@
 
   <!-- standalone weather strip — always shown when weather data is available -->
   @if (weatherRaw(); as w) {
-    <div class="card flat" style="display:flex;align-items:center;gap:var(--s-3);padding:var(--s-3) var(--s-4)">
-      <lucide-icon name="sun" style="flex-shrink:0;color:var(--text-muted)" />
-      <span style="font-weight:var(--fw-semi)">{{ w.tempC }}°C</span>
+    <div
+      class="card flat"
+      style="
+        display: flex;
+        align-items: center;
+        gap: var(--s-3);
+        padding: var(--s-3) var(--s-4);
+      "
+    >
+      <lucide-icon
+        name="sun"
+        style="flex-shrink: 0; color: var(--text-muted)"
+      />
+      <span style="font-weight: var(--fw-semi)">{{ w.tempC }}°C</span>
       @if (w.location) {
         <span class="muted">{{ w.location }}</span>
       }
@@ -36,7 +52,16 @@
         <span class="muted">· {{ w.condition }}</span>
       }
       @if (w.suitability) {
-        <span class="band {{ w.suitability === 'excellent' || w.suitability === 'good' ? 'good' : w.suitability === 'poor' ? 'danger' : 'caution' }}" style="margin-left:auto">
+        <span
+          class="band {{
+            w.suitability === 'excellent' || w.suitability === 'good'
+              ? 'good'
+              : w.suitability === 'poor'
+                ? 'danger'
+                : 'caution'
+          }}"
+          style="margin-left: auto"
+        >
           {{ w.suitability }}
         </span>
       }
@@ -54,21 +79,34 @@
           <span class="band {{ b.cls }}">{{ b.label }}</span>
         }
       </div>
-      <p style="margin:var(--s-3) 0 0;color:var(--text)">{{ p.reasoning }}</p>
+      <p style="margin: var(--s-3) 0 0; color: var(--text)">
+        {{ p.reasoning }}
+      </p>
       @if (p.injuryAdjustment; as adj) {
-        <span class="band caution" style="margin-top:var(--s-3)">Adjusted for {{ adj.regions.join(', ') }} tightness</span>
+        <span class="band caution" style="margin-top: var(--s-3)"
+          >Adjusted for {{ adj.regions.join(", ") }} tightness</span
+        >
       }
 
-      <div class="tiles" style="margin:var(--s-4) 0">
-        <div><b>{{ rpeLabel() }}</b><small>RPE</small></div>
-        <div><b>{{ p.targetMinutes }}</b><small>min</small></div>
-        <div><b>{{ p.sprintReps }}</b><small>sprints</small></div>
+      <div class="tiles" style="margin: var(--s-4) 0">
+        <div>
+          <b>{{ rpeLabel() }}</b
+          ><small>RPE</small>
+        </div>
+        <div>
+          <b>{{ p.targetMinutes }}</b
+          ><small>min</small>
+        </div>
+        <div>
+          <b>{{ p.sprintReps }}</b
+          ><small>sprints</small>
+        </div>
       </div>
 
       <!-- position-specific accessory / prehab focus (guidance, not load) -->
       @if (p.positionEmphasis; as pe) {
-        <div class="card flat" style="margin-bottom:var(--s-4)">
-          <div class="row" style="align-items:baseline">
+        <div class="card flat" style="margin-bottom: var(--s-4)">
+          <div class="row" style="align-items: baseline">
             <b>{{ pe.label }} focus</b>
             @if (pe.restricted) {
               <span class="band caution">arm flagged</span>
@@ -76,15 +114,36 @@
               <small>prehab &amp; care</small>
             }
           </div>
-          <div style="display:flex;flex-wrap:wrap;gap:var(--s-2);margin:var(--s-2) 0">
-            @for (f of pe.focus; track f) { <span class="chip">{{ f }}</span> }
+          <div
+            style="
+              display: flex;
+              flex-wrap: wrap;
+              gap: var(--s-2);
+              margin: var(--s-2) 0;
+            "
+          >
+            @for (f of pe.focus; track f) {
+              <span class="chip">{{ f }}</span>
+            }
           </div>
           <small class="muted">{{ pe.note }}</small>
           @if (pe.volume; as v) {
-            <div style="margin-top:var(--s-3);padding-top:var(--s-3);border-top:1px solid var(--border-soft)">
-              <small class="muted" style="display:block;margin-bottom:var(--s-2)">Prepared for (worst case):</small>
-              <div style="display:flex;flex-wrap:wrap;gap:var(--s-2)">
-                @for (t of v.targets; track t) { <span class="chip">{{ t }}</span> }
+            <div
+              style="
+                margin-top: var(--s-3);
+                padding-top: var(--s-3);
+                border-top: 1px solid var(--border-soft);
+              "
+            >
+              <small
+                class="muted"
+                style="display: block; margin-bottom: var(--s-2)"
+                >Prepared for (worst case):</small
+              >
+              <div style="display: flex; flex-wrap: wrap; gap: var(--s-2)">
+                @for (t of v.targets; track t) {
+                  <span class="chip">{{ t }}</span>
+                }
               </div>
             </div>
           }
@@ -92,31 +151,56 @@
       }
 
       <!-- fuel: engine-derived macros + illustrative food chips -->
-      <div class="card flat" style="margin-bottom:var(--s-4)">
-        <div class="row" style="align-items:baseline">
+      <div class="card flat" style="margin-bottom: var(--s-4)">
+        <div class="row" style="align-items: baseline">
           <b>Fuel today</b><small>{{ p.nutrition.rationale }}</small>
         </div>
         <div class="fuel-macros">
-          <div><iconify-icon icon="mdi:barley"></iconify-icon><b>{{ p.nutrition.carbsG }}g</b><small>carbs</small></div>
-          <div><iconify-icon icon="mdi:food-drumstick"></iconify-icon><b>{{ p.nutrition.proteinG }}g</b><small>protein</small></div>
-          <div><iconify-icon icon="mdi:cup-water"></iconify-icon><b>{{ p.nutrition.hydrationL }}L</b><small>fluid</small></div>
+          <div>
+            <iconify-icon icon="mdi:barley"></iconify-icon
+            ><b>{{ p.nutrition.carbsG }}g</b><small>carbs</small>
+          </div>
+          <div>
+            <iconify-icon icon="mdi:food-drumstick"></iconify-icon
+            ><b>{{ p.nutrition.proteinG }}g</b><small>protein</small>
+          </div>
+          <div>
+            <iconify-icon icon="mdi:cup-water"></iconify-icon
+            ><b>{{ p.nutrition.hydrationL }}L</b><small>fluid</small>
+          </div>
         </div>
-        <small class="muted" style="display:block;margin-bottom:var(--s-2)">Food ideas to hit it</small>
+        <small class="muted" style="display: block; margin-bottom: var(--s-2)"
+          >Food ideas to hit it</small
+        >
         <div class="fuel-foods">
           @for (f of foodSuggestions(); track f.label) {
-            <span class="foodchip"><iconify-icon [icon]="f.icon"></iconify-icon>{{ f.label }}</span>
+            <span class="foodchip"
+              ><iconify-icon [icon]="f.icon"></iconify-icon>{{ f.label }}</span
+            >
           }
         </div>
-        <a href="https://www.laprimafit.si" target="_blank" rel="noopener"
-           style="display:block;margin-top:var(--s-3);font-size:var(--fs-sm);color:var(--text-muted)">
+        <a
+          href="https://www.laprimafit.si"
+          target="_blank"
+          rel="noopener"
+          style="
+            display: block;
+            margin-top: var(--s-3);
+            font-size: var(--fs-sm);
+            color: var(--text-muted);
+          "
+        >
           Personalised meal plan → laprimafit.si
         </a>
       </div>
 
       <!-- session video — real YouTube IFrame Player (no API key) -->
-      <div style="margin-bottom:var(--s-4)">
-        <app-yt-video [videoId]="sessionVideoId()"
-                      title="Watch today's session" [duration]="sessionVideoDuration()" />
+      <div style="margin-bottom: var(--s-4)">
+        <app-yt-video
+          [videoId]="sessionVideoId()"
+          title="Watch today's session"
+          [duration]="sessionVideoDuration()"
+        />
       </div>
 
       <a class="btn primary block" routerLink="/training">Start session →</a>
@@ -124,8 +208,10 @@
   } @else {
     <!-- data-state: no plan yet (no schedule / not logged in) -->
     <div class="empty">
-      <p style="margin:0 0 var(--s-3)">No plan yet. Log today's wellness check-in and we'll
-        calculate your readiness and what to train.</p>
+      <p style="margin: 0 0 var(--s-3)">
+        No plan yet. Log today's wellness check-in and we'll calculate your
+        readiness and what to train.
+      </p>
       <a class="btn primary" routerLink="/wellness">Check in →</a>
     </div>
   }
@@ -133,12 +219,17 @@
   <!-- schedule entry — athlete-entered camps / tournaments / gamedays drive the plan -->
   <a class="card linkcard" routerLink="/schedule">
     <span class="lc-ic"><lucide-icon name="calendar" /></span>
-    <div class="stack" style="gap:2px;flex:1">
+    <div class="stack" style="gap: 2px; flex: 1">
       <b>Your schedule</b>
       @if (nextEvent(); as ev) {
-        <small class="muted">Next: {{ ev.competitionShortName || ev.competitionName }} · in {{ daysToNext() }}d</small>
+        <small class="muted"
+          >Next: {{ ev.competitionShortName || ev.competitionName }} · in
+          {{ daysToNext() }}d</small
+        >
       } @else {
-        <small class="muted">Add camps, tournaments &amp; gamedays so your plan adapts</small>
+        <small class="muted"
+          >Add camps, tournaments &amp; gamedays so your plan adapts</small
+        >
       }
     </div>
     <lucide-icon class="lc-go" name="chevron-right" />
@@ -150,7 +241,9 @@
     <div class="card stack">
       @for (r of recovery(); track r.id) {
         <div class="row">
-          <span class="inline"><lucide-icon name="heart-pulse" /> {{ r.label }}</span>
+          <span class="inline"
+            ><lucide-icon name="heart-pulse" /> {{ r.label }}</span
+          >
           <small class="muted">{{ r.reason }}</small>
         </div>
       }
@@ -158,9 +251,11 @@
   } @else if (!hasEquipment()) {
     <a class="card linkcard" routerLink="/settings">
       <span class="lc-ic"><lucide-icon name="heart-pulse" /></span>
-      <div class="stack" style="gap:2px;flex:1">
+      <div class="stack" style="gap: 2px; flex: 1">
         <b>Recovery</b>
-        <small class="muted">Add your recovery gear in Settings for tailored modalities</small>
+        <small class="muted"
+          >Add your recovery gear in Settings for tailored modalities</small
+        >
       </div>
       <lucide-icon class="lc-go" name="chevron-right" />
     </a>
@@ -179,22 +274,35 @@
           <span class="band neutral">not logged today</span>
         }
       </div>
-      <a class="faint" style="font-size:var(--fs-sm)" routerLink="/wellness">breakdown →</a>
+      <a class="faint" style="font-size: var(--fs-sm)" routerLink="/wellness"
+        >breakdown →</a
+      >
     </div>
   </div>
 
   @if (acwrBand(); as b) {
     <div class="card">
       <div class="row">
-        <div class="inline"><span>Load (ACWR)</span><span class="band {{ b.cls }}">{{ b.label }}</span></div>
-        <a class="faint" style="font-size:var(--fs-sm)" routerLink="/stats">trend →</a>
+        <div class="inline">
+          <span>Load (ACWR)</span
+          ><span class="band {{ b.cls }}">{{ b.label }}</span>
+        </div>
+        <a class="faint" style="font-size: var(--fs-sm)" routerLink="/stats"
+          >trend →</a
+        >
       </div>
     </div>
   } @else {
     <!-- insufficient history: guarded, no fake number -->
     <div class="card flat">
-      <div class="row"><span>Load (ACWR)</span><span class="band neutral">building · need ~21 days</span></div>
-      <p class="note" style="margin-top:var(--s-2)">Keep logging sessions — a reliable ratio needs ~21 days &amp; 12 sessions.</p>
+      <div class="row">
+        <span>Load (ACWR)</span
+        ><span class="band neutral">building · need ~21 days</span>
+      </div>
+      <p class="note" style="margin-top: var(--s-2)">
+        Keep logging sessions — a reliable ratio needs ~21 days &amp; 12
+        sessions.
+      </p>
     </div>
   }
 </main>

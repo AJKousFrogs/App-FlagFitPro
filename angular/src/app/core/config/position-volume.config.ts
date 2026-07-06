@@ -26,10 +26,7 @@ export interface RangeDemand {
   max: number;
 }
 
-export type GameFormatKey =
-  | "domestic_2x12_stop"
-  | "running_2x15"
-  | "ifaf_2x20";
+export type GameFormatKey = "domestic_2x12_stop" | "running_2x15" | "ifaf_2x20";
 
 export interface GameFormat {
   key: GameFormatKey;
@@ -168,7 +165,10 @@ export const POSITION_VOLUME: Record<PositionKey, PositionVolume> = {
     label: "Defensive Back",
     perSession: { backpedals: { min: 200, max: 320 }, sprints: 25 },
     perGameWorstCase: { sprints: 35, backpedals: 70, decels: 40 },
-    perWeek: { backpedals: { min: 800, max: 1200 }, sprints: { min: 150, max: 200 } },
+    perWeek: {
+      backpedals: { min: 800, max: 1200 },
+      sprints: { min: 150, max: 200 },
+    },
     worstCase:
       "Up to ~320 backpedals/session (5–10 yd) plus WR-like 30–35 sprints/game. The backpedal-to-sprint hip-flip transition is the highest-strain action — count transitions, not just backpedals.",
     periodization:
@@ -179,7 +179,11 @@ export const POSITION_VOLUME: Record<PositionKey, PositionVolume> = {
   center: {
     position: "center",
     label: "Center (snapper)",
-    perSession: { catches: { min: 120, max: 180 }, snaps: { min: 50, max: 80 }, sprints: 22 },
+    perSession: {
+      catches: { min: 120, max: 180 },
+      snaps: { min: 50, max: 80 },
+      sprints: 22,
+    },
     perGameWorstCase: { snaps: 55, sprints: 35, catches: 12 },
     perWeek: { catches: 1000, snaps: { min: 300, max: 450 } },
     worstCase:
@@ -192,7 +196,10 @@ export const POSITION_VOLUME: Record<PositionKey, PositionVolume> = {
   blitzer: {
     position: "blitzer",
     label: "Blitzer / Rusher",
-    perSession: { explosiveSprints: { min: 25, max: 35 }, changeOfDirection: 50 },
+    perSession: {
+      explosiveSprints: { min: 25, max: 35 },
+      changeOfDirection: 50,
+    },
     perGameWorstCase: { explosiveSprints: 42, decels: 45, maxAccels: 42 },
     perWeek: { explosiveSprints: { min: 120, max: 180 } },
     worstCase:
@@ -205,9 +212,17 @@ export const POSITION_VOLUME: Record<PositionKey, PositionVolume> = {
   wr_db: {
     position: "wr_db",
     label: "Receiver / Defensive back (both ways)",
-    perSession: { catches: { min: 120, max: 180 }, backpedals: { min: 200, max: 320 }, sprints: 25 },
+    perSession: {
+      catches: { min: 120, max: 180 },
+      backpedals: { min: 200, max: 320 },
+      sprints: 25,
+    },
     perGameWorstCase: { sprints: 35, catches: 14, backpedals: 70, decels: 40 },
-    perWeek: { catches: 1000, backpedals: { min: 800, max: 1200 }, sprints: { min: 150, max: 200 } },
+    perWeek: {
+      catches: 1000,
+      backpedals: { min: 800, max: 1200 },
+      sprints: { min: 150, max: 200 },
+    },
     worstCase:
       "Plays BOTH ways: ~1000 catches/week, up to ~320 backpedals/session, and 30–35 sprints/game × up to 8 games/day. The most running- and cutting-loaded role.",
     periodization:

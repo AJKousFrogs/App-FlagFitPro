@@ -99,12 +99,42 @@ const TYPE_LABEL: Record<string, string> = {
   templateUrl: "./reports.component.html",
   styles: [
     `
-      .chips { display: flex; gap: var(--s-2); margin-bottom: var(--s-3); }
-      .trow { display: flex; align-items: center; gap: var(--s-3); padding: var(--s-2) 0; }
-      .trow .t { width: 96px; font-size: var(--fs-sm); color: var(--text-muted); flex: 0 0 auto; }
-      .bar { height: 8px; border-radius: var(--r-pill); background: var(--surface-2); overflow: hidden; flex: 1; }
-      .bar > i { display: block; height: 100%; background: var(--accent); border-radius: var(--r-pill); }
-      .trow .v { width: 84px; text-align: right; font-size: var(--fs-sm); flex: 0 0 auto; }
+      .chips {
+        display: flex;
+        gap: var(--s-2);
+        margin-bottom: var(--s-3);
+      }
+      .trow {
+        display: flex;
+        align-items: center;
+        gap: var(--s-3);
+        padding: var(--s-2) 0;
+      }
+      .trow .t {
+        width: 96px;
+        font-size: var(--fs-sm);
+        color: var(--text-muted);
+        flex: 0 0 auto;
+      }
+      .bar {
+        height: 8px;
+        border-radius: var(--r-pill);
+        background: var(--surface-2);
+        overflow: hidden;
+        flex: 1;
+      }
+      .bar > i {
+        display: block;
+        height: 100%;
+        background: var(--accent);
+        border-radius: var(--r-pill);
+      }
+      .trow .v {
+        width: 84px;
+        text-align: right;
+        font-size: var(--fs-sm);
+        flex: 0 0 auto;
+      }
     `,
   ],
 })
@@ -177,13 +207,18 @@ export class ReportsComponent {
         : t.trend === "declining"
           ? "caution"
           : "neutral";
-    return { label: `${t.trend} · avg ${Math.round(t.averagePerformance)}`, cls };
+    return {
+      label: `${t.trend} · avg ${Math.round(t.averagePerformance)}`,
+      cls,
+    };
   }
 
   private loadNutritionReports(): void {
     void this.supabase.client
       .from("nutrition_reports")
-      .select("id, report_type, period_start, period_end, created_at, report_data")
+      .select(
+        "id, report_type, period_start, period_end, created_at, report_data",
+      )
       .order("created_at", { ascending: false })
       .limit(10)
       .then(({ data }) =>
@@ -199,7 +234,11 @@ export class ReportsComponent {
     return r.report_data?.recommendations ?? [];
   }
   recBand(priority?: string): string {
-    return priority === "high" ? "danger" : priority === "medium" ? "caution" : "info";
+    return priority === "high"
+      ? "danger"
+      : priority === "medium"
+        ? "caution"
+        : "info";
   }
 
   setPeriod(days: number): void {

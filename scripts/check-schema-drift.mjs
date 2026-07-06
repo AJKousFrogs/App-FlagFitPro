@@ -95,7 +95,9 @@ async function fetchSchema() {
     body: "{}",
   });
   if (!res.ok) {
-    throw new Error(`app_schema_columns RPC returned ${res.status} ${await res.text()}`);
+    throw new Error(
+      `app_schema_columns RPC returned ${res.status} ${await res.text()}`,
+    );
   }
   return res.json();
 }
@@ -139,7 +141,9 @@ async function main() {
 
   const baseline = JSON.parse(readFileSync(BASELINE_PATH, "utf8"));
   const newDrift = drift.filter((d) => !(d.key in baseline));
-  const fixed = Object.keys(baseline).filter((k) => !drift.some((d) => d.key === k));
+  const fixed = Object.keys(baseline).filter(
+    (k) => !drift.some((d) => d.key === k),
+  );
 
   if (fixed.length) {
     console.log(
@@ -149,9 +153,13 @@ async function main() {
   }
 
   if (newDrift.length) {
-    console.error("\n✘ NEW schema drift — code references columns/tables that do not exist:\n");
+    console.error(
+      "\n✘ NEW schema drift — code references columns/tables that do not exist:\n",
+    );
     for (const d of newDrift) {
-      console.error(`  [${d.kind}] ${d.key}\n      ${d.sites.join("\n      ")}`);
+      console.error(
+        `  [${d.kind}] ${d.key}\n      ${d.sites.join("\n      ")}`,
+      );
     }
     console.error(
       `\n${newDrift.length} new drift(s). Fix the query to match the live schema, ` +

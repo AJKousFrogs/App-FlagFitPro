@@ -26,7 +26,7 @@ const _TEST_USER = {
 };
 const HAS_EXPLICIT_TEST_CREDENTIALS = Boolean(
   (process.env["TEST_USER_EMAIL"] && process.env["TEST_USER_PASSWORD"]) ||
-    (process.env["E2E_TEST_EMAIL"] && process.env["E2E_TEST_PASSWORD"]),
+  (process.env["E2E_TEST_EMAIL"] && process.env["E2E_TEST_PASSWORD"]),
 );
 
 async function primeCookieConsent(page: Page): Promise<void> {
@@ -179,10 +179,14 @@ test.describe("Smoke Test - App Shell", () => {
     await expect(page).toHaveURL(/.*login.*/, { timeout: 10000 });
 
     // Login page should have email and password inputs (app-form-input defaults email to type="text")
-    await expect(page.locator('[data-testid="email-input"] input')).toBeVisible({
-      timeout: 5000,
-    });
-    await expect(page.locator('[data-testid="password-input"] input')).toBeVisible({
+    await expect(page.locator('[data-testid="email-input"] input')).toBeVisible(
+      {
+        timeout: 5000,
+      },
+    );
+    await expect(
+      page.locator('[data-testid="password-input"] input'),
+    ).toBeVisible({
       timeout: 5000,
     });
   });
@@ -192,10 +196,14 @@ test.describe("Smoke Test - App Shell", () => {
     await dismissCookieBanner(page);
 
     // Verify login form elements
-    await expect(page.locator('[data-testid="email-input"] input')).toBeVisible({
-      timeout: 5000,
-    });
-    await expect(page.locator('[data-testid="password-input"] input')).toBeVisible({
+    await expect(page.locator('[data-testid="email-input"] input')).toBeVisible(
+      {
+        timeout: 5000,
+      },
+    );
+    await expect(
+      page.locator('[data-testid="password-input"] input'),
+    ).toBeVisible({
       timeout: 5000,
     });
     await expect(page.locator('button[type="submit"]')).toBeVisible({
@@ -231,10 +239,11 @@ test.describe("Smoke Test - App Shell", () => {
     await expect(page.locator("h1")).toContainText(/verify your email/i, {
       timeout: 5000,
     });
-    await expect(page.getByRole("button", { name: /resend verification/i }))
-      .toBeVisible({
-        timeout: 5000,
-      });
+    await expect(
+      page.getByRole("button", { name: /resend verification/i }),
+    ).toBeVisible({
+      timeout: 5000,
+    });
   });
 
   test("should show update-password invalid state without recovery tokens", async ({

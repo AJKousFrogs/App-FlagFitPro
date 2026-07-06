@@ -3,20 +3,42 @@
     <div class="eyebrow">evidence base</div>
     <h1 class="inline"><lucide-icon name="book-open" /> Knowledge</h1>
   </div>
-  <a class="icon-btn" routerLink="/more" aria-label="Back"><lucide-icon name="chevron-right" style="transform:rotate(180deg)" /></a>
+  <a class="icon-btn" routerLink="/more" aria-label="Back"
+    ><lucide-icon name="chevron-right" style="transform: rotate(180deg)"
+  /></a>
 </header>
 
 <main class="screen">
   <div class="search">
-    <input type="text" [value]="query()" (input)="query.set($any($event.target).value)"
-           (keydown.enter)="search()" placeholder="Search training, recovery, nutrition…" aria-label="Search knowledge" />
-    <button class="btn primary sm" type="button" [attr.aria-disabled]="busy()" (click)="search()">{{ busy() ? "…" : "Search" }}</button>
+    <input
+      type="text"
+      [value]="query()"
+      (input)="query.set($any($event.target).value)"
+      (keydown.enter)="search()"
+      placeholder="Search training, recovery, nutrition…"
+      aria-label="Search knowledge"
+    />
+    <button
+      class="btn primary sm"
+      type="button"
+      [attr.aria-disabled]="busy()"
+      (click)="search()"
+    >
+      {{ busy() ? "…" : "Search" }}
+    </button>
   </div>
 
   @if (!searchMode() && categories().length) {
     <div class="chips">
       @for (c of categories(); track c) {
-        <button type="button" class="chip" [class.sel]="activeCat() === c" (click)="toggleCat(c)">{{ label(c) }}</button>
+        <button
+          type="button"
+          class="chip"
+          [class.sel]="activeCat() === c"
+          (click)="toggleCat(c)"
+        >
+          {{ label(c) }}
+        </button>
       }
     </div>
   }
@@ -25,24 +47,57 @@
     <div class="empty">Loading…</div>
   } @else if (!entries().length) {
     <div class="empty">
-      <b style="color:var(--text)">{{ searchMode() ? "Nothing found" : "No entries yet" }}</b>
-      <p class="note" style="margin-top:var(--s-2)">{{ searchMode() ? "Try a different search — or ask " : "Knowledge entries appear here once approved. In the meantime, ask " }}<a routerLink="/chat" style="color:var(--accent)">Merlin</a>.</p>
+      <b style="color: var(--text)">{{
+        searchMode() ? "Nothing found" : "No entries yet"
+      }}</b>
+      <p class="note" style="margin-top: var(--s-2)">
+        {{
+          searchMode()
+            ? "Try a different search — or ask "
+            : "Knowledge entries appear here once approved. In the meantime, ask "
+        }}<a routerLink="/chat" style="color: var(--accent)">Merlin</a>.
+      </p>
     </div>
   } @else {
     @if (searchMode()) {
-      <p class="note">{{ entries().length }} result(s) for "{{ query() }}" · <button type="button" (click)="query.set(''); search()" style="background:none;border:0;padding:0;color:var(--accent);cursor:pointer;font:inherit">clear</button></p>
+      <p class="note">
+        {{ entries().length }} result(s) for "{{ query() }}" ·
+        <button
+          type="button"
+          (click)="query.set(''); search()"
+          style="
+            background: none;
+            border: 0;
+            padding: 0;
+            color: var(--accent);
+            cursor: pointer;
+            font: inherit;
+          "
+        >
+          clear
+        </button>
+      </p>
     }
     @for (e of entries(); track e.id) {
       <div class="card entry">
         <div class="row">
           <span class="band neutral">{{ label(e.category) }}</span>
-          @if (e.evidenceGrade) { <span class="ev">Evidence {{ e.evidenceGrade }}</span> }
+          @if (e.evidenceGrade) {
+            <span class="ev">Evidence {{ e.evidenceGrade }}</span>
+          }
         </div>
         <h3>{{ e.title }}</h3>
         <p>{{ e.content }}</p>
         @if (e.sourceUrl) {
-          <a class="inline" [href]="e.sourceUrl" target="_blank" rel="noopener" style="color:var(--accent);font-size:var(--fs-sm)">
-            <lucide-icon name="arrow-up-right" /> {{ e.sourceTitle || "Source" }}
+          <a
+            class="inline"
+            [href]="e.sourceUrl"
+            target="_blank"
+            rel="noopener"
+            style="color: var(--accent); font-size: var(--fs-sm)"
+          >
+            <lucide-icon name="arrow-up-right" />
+            {{ e.sourceTitle || "Source" }}
           </a>
         }
       </div>

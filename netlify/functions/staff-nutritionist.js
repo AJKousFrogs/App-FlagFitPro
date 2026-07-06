@@ -1,8 +1,18 @@
 import { baseHandler } from "./utils/base-handler.js";
-import { createSuccessResponse, createErrorResponse, ErrorType } from "./utils/error-handler.js";
-import { parseJsonObjectBody, parseBoundedInt } from "./utils/input-validator.js";
+import {
+  createSuccessResponse,
+  createErrorResponse,
+  ErrorType,
+} from "./utils/error-handler.js";
+import {
+  parseJsonObjectBody,
+  parseBoundedInt,
+} from "./utils/input-validator.js";
 import { supabaseAdmin } from "./supabase-client.js";
-import { ConsentDataReader, AccessContext } from "./utils/consent-data-reader.js";
+import {
+  ConsentDataReader,
+  AccessContext,
+} from "./utils/consent-data-reader.js";
 import { NUTRITION_ACCESS_ROLES } from "./utils/role-sets.js";
 
 // Netlify Function: Staff Nutritionist API
@@ -276,7 +286,11 @@ async function getTeamHydrationSummary(teamId, requesterId) {
         context: AccessContext.COACH_TEAM_DATA,
         filters: { limit: 1 },
       });
-      if (!result.success || !Array.isArray(result.data) || result.data.length === 0) {
+      if (
+        !result.success ||
+        !Array.isArray(result.data) ||
+        result.data.length === 0
+      ) {
         return null;
       }
       return result.data[0];
@@ -360,8 +374,7 @@ async function generateNutritionReport(userId, reportType = "weekly") {
 
   const weightChange =
     measurements?.length >= 2
-      ? measurements[measurements.length - 1].weight -
-        measurements[0].weight
+      ? measurements[measurements.length - 1].weight - measurements[0].weight
       : 0;
 
   return {
@@ -371,8 +384,7 @@ async function generateNutritionReport(userId, reportType = "weekly") {
     profile: profile || {},
     metrics: {
       currentWeight:
-        measurements?.[measurements.length - 1]?.weight ||
-        profile?.weight_kg,
+        measurements?.[measurements.length - 1]?.weight || profile?.weight_kg,
       weightChange,
       bodyFatChange:
         measurements?.length >= 2
@@ -448,155 +460,153 @@ function generateRecommendations(profile, weightChange, avgHydration) {
 
 // Main handler
 async function handleRequest(event, _context, { userId }) {
-    const path = event.path.replace(
-      "/.netlify/functions/staff-nutritionist",
-      "",
-    );
-    const method = event.httpMethod;
+  const path = event.path.replace("/.netlify/functions/staff-nutritionist", "");
+  const method = event.httpMethod;
 
-    // Verify nutritionist access
-    const access = await verifyNutritionistAccess(userId);
-    if (!access) {
+  // Verify nutritionist access
+  const access = await verifyNutritionistAccess(userId);
+  if (!access) {
+    return createErrorResponse(
+      403,
+      "Access denied. Nutritionist role required.",
+    );
+  }
+
+  const teamId = access.team_id;
+
+  // GET /athletes - Get all athletes with nutrition data
+  if (
+    method === "GET" &&
+    (path === "" || path === "/" || path === "/athletes")
+  ) {
+    const athletes = await getAthleteNutritionOverview(teamId, userId);
+    return createSuccessResponse({ athletes });
+  }
+
+  // GET /athletes/:id/trends - Get body composition trends
+  if (method === "GET" && path.match(/^\/athletes\/[\w-]+\/trends$/)) {
+    const athleteId = path.split("/")[2];
+    let days;
+    try {
+      days = parseBoundedInt(event.queryStringParameters?.days, "days", {
+        min: 1,
+        max: 365,
+        fallback: 90,
+      });
+    } catch (validationError) {
       return createErrorResponse(
-        403,
-        "Access denied. Nutritionist role required.",
+        validationError.message || "days must be an integer between 1 and 365",
+        422,
+        "validation_error",
       );
     }
-
-    const teamId = access.team_id;
-
-    // GET /athletes - Get all athletes with nutrition data
-    if (
-      method === "GET" &&
-      (path === "" || path === "/" || path === "/athletes")
-    ) {
-      const athletes = await getAthleteNutritionOverview(teamId, userId);
-      return createSuccessResponse({ athletes });
+    const canAccessAthlete = await verifyAthleteOnTeam(teamId, athleteId);
+    if (!canAccessAthlete) {
+      return createErrorResponse(
+        "Access denied to athlete data",
+        403,
+        ErrorType.AUTHORIZATION,
+      );
     }
+    const trends = await getBodyCompositionTrends(athleteId, days);
+    return createSuccessResponse({ trends });
+  }
 
-    // GET /athletes/:id/trends - Get body composition trends
-    if (method === "GET" && path.match(/^\/athletes\/[\w-]+\/trends$/)) {
-      const athleteId = path.split("/")[2];
-      let days;
-      try {
-        days = parseBoundedInt(event.queryStringParameters?.days, "days", {
-          min: 1,
-          max: 365,
-          fallback: 90,
-        });
-      } catch (validationError) {
-        return createErrorResponse(
-          validationError.message || "days must be an integer between 1 and 365",
-          422,
-          "validation_error",
-        );
-      }
-      const canAccessAthlete = await verifyAthleteOnTeam(teamId, athleteId);
-      if (!canAccessAthlete) {
-        return createErrorResponse(
-          "Access denied to athlete data",
-          403,
-          ErrorType.AUTHORIZATION,
-        );
-      }
-      const trends = await getBodyCompositionTrends(athleteId, days);
-      return createSuccessResponse({ trends });
+  // GET /supplements - Get team supplement compliance
+  if (method === "GET" && path === "/supplements") {
+    const compliance = await getTeamSupplementCompliance(teamId);
+    return createSuccessResponse({ compliance });
+  }
+
+  // GET /hydration - Get team hydration summary
+  if (method === "GET" && path === "/hydration") {
+    const summary = await getTeamHydrationSummary(teamId, userId);
+    return createSuccessResponse({ summary });
+  }
+
+  // POST /reports/:athleteId - Generate nutrition report
+  if (method === "POST" && path.match(/^\/reports\/[\w-]+$/)) {
+    const athleteId = path.split("/")[2];
+    let body = {};
+    try {
+      body = parseJsonObjectBody(event.body);
+    } catch (error) {
+      const isObjectError = error.message === "Request body must be an object";
+      return createErrorResponse(
+        isObjectError ? error.message : "Invalid JSON in request body",
+        isObjectError ? 422 : 400,
+        isObjectError ? "validation_error" : "invalid_json",
+      );
     }
-
-    // GET /supplements - Get team supplement compliance
-    if (method === "GET" && path === "/supplements") {
-      const compliance = await getTeamSupplementCompliance(teamId);
-      return createSuccessResponse({ compliance });
+    const reportType = body.type || "weekly";
+    if (!["weekly", "monthly"].includes(reportType)) {
+      return createErrorResponse(
+        "type must be one of: weekly, monthly",
+        422,
+        "validation_error",
+      );
     }
-
-    // GET /hydration - Get team hydration summary
-    if (method === "GET" && path === "/hydration") {
-      const summary = await getTeamHydrationSummary(teamId, userId);
-      return createSuccessResponse({ summary });
+    const canAccessAthlete = await verifyAthleteOnTeam(teamId, athleteId);
+    if (!canAccessAthlete) {
+      return createErrorResponse(
+        "Access denied to athlete data",
+        403,
+        ErrorType.AUTHORIZATION,
+      );
     }
-
-    // POST /reports/:athleteId - Generate nutrition report
-    if (method === "POST" && path.match(/^\/reports\/[\w-]+$/)) {
-      const athleteId = path.split("/")[2];
-      let body = {};
-      try {
-        body = parseJsonObjectBody(event.body);
-      } catch (error) {
-        const isObjectError = error.message === "Request body must be an object";
-        return createErrorResponse(
-          isObjectError ? error.message : "Invalid JSON in request body",
-          isObjectError ? 422 : 400,
-          isObjectError ? "validation_error" : "invalid_json",
-        );
-      }
-      const reportType = body.type || "weekly";
-      if (!["weekly", "monthly"].includes(reportType)) {
-        return createErrorResponse(
-          "type must be one of: weekly, monthly",
-          422,
-          "validation_error",
-        );
-      }
-      const canAccessAthlete = await verifyAthleteOnTeam(teamId, athleteId);
-      if (!canAccessAthlete) {
-        return createErrorResponse(
-          "Access denied to athlete data",
-          403,
-          ErrorType.AUTHORIZATION,
-        );
-      }
-      const report = await generateNutritionReport(athleteId, reportType);
-      // Persist so the athlete can read it in their Reports screen (staff→athlete
-      // loop). Best-effort: a storage hiccup shouldn't fail the generation itself.
-      let reportId = null;
-      try {
-        const { data: saved } = await supabaseAdmin
-          .from("nutrition_reports")
-          .insert({
-            user_id: athleteId,
-            created_by: userId,
-            team_id: teamId,
-            report_type: reportType,
-            report_data: report,
-            period_start: report.startDate ? report.startDate.split("T")[0] : null,
-            period_end: report.endDate ? report.endDate.split("T")[0] : null,
-          })
-          .select("id")
-          .single();
-        reportId = saved?.id ?? null;
-      } catch {
-        // swallow — report is still returned to the requester
-      }
-      return createSuccessResponse({ report, reportId });
+    const report = await generateNutritionReport(athleteId, reportType);
+    // Persist so the athlete can read it in their Reports screen (staff→athlete
+    // loop). Best-effort: a storage hiccup shouldn't fail the generation itself.
+    let reportId = null;
+    try {
+      const { data: saved } = await supabaseAdmin
+        .from("nutrition_reports")
+        .insert({
+          user_id: athleteId,
+          created_by: userId,
+          team_id: teamId,
+          report_type: reportType,
+          report_data: report,
+          period_start: report.startDate
+            ? report.startDate.split("T")[0]
+            : null,
+          period_end: report.endDate ? report.endDate.split("T")[0] : null,
+        })
+        .select("id")
+        .single();
+      reportId = saved?.id ?? null;
+    } catch {
+      // swallow — report is still returned to the requester
     }
+    return createSuccessResponse({ report, reportId });
+  }
 
-    // GET /summary - Dashboard summary
-    if (method === "GET" && path === "/summary") {
-      const [athletes, hydration, supplements] = await Promise.all([
-        getAthleteNutritionOverview(teamId, userId),
-        getTeamHydrationSummary(teamId, userId),
-        getTeamSupplementCompliance(teamId),
-      ]);
+  // GET /summary - Dashboard summary
+  if (method === "GET" && path === "/summary") {
+    const [athletes, hydration, supplements] = await Promise.all([
+      getAthleteNutritionOverview(teamId, userId),
+      getTeamHydrationSummary(teamId, userId),
+      getTeamSupplementCompliance(teamId),
+    ]);
 
-      const avgCompliance = supplements.length
-        ? Math.round(
-            supplements.reduce((sum, s) => sum + s.compliance, 0) /
-              supplements.length,
-          )
-        : 0;
+    const avgCompliance = supplements.length
+      ? Math.round(
+          supplements.reduce((sum, s) => sum + s.compliance, 0) /
+            supplements.length,
+        )
+      : 0;
 
-      return createSuccessResponse({
-        totalAthletes: athletes.length,
-        hydrationStatus: hydration,
-        avgSupplementCompliance: avgCompliance,
-        athletesNeedingAttention: athletes.filter(
-          (a) =>
-            a.hydrationStatus === "critical" || a.supplementCompliance < 50,
-        ).length,
-      });
-    }
+    return createSuccessResponse({
+      totalAthletes: athletes.length,
+      hydrationStatus: hydration,
+      avgSupplementCompliance: avgCompliance,
+      athletesNeedingAttention: athletes.filter(
+        (a) => a.hydrationStatus === "critical" || a.supplementCompliance < 50,
+      ).length,
+    });
+  }
 
-    return createErrorResponse("Endpoint not found", 404, ErrorType.NOT_FOUND);
+  return createErrorResponse("Endpoint not found", 404, ErrorType.NOT_FOUND);
 }
 
 const handler = async (event, context) => {

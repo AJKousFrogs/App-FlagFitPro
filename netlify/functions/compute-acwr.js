@@ -1,11 +1,13 @@
-
 // Netlify Function: Compute ACWR
 // Computes ACWR using the stored procedure
 // Endpoint: /api/compute-acwr
 
 import { supabaseAdmin } from "./supabase-client.js";
 
-import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
+import {
+  createSuccessResponse,
+  createErrorResponse,
+} from "./utils/error-handler.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { getUserRole } from "./utils/authorization-guard.js";
 import { hasAnyRole, LOAD_MANAGEMENT_ACCESS_ROLES } from "./utils/role-sets.js";
@@ -175,9 +177,13 @@ const handler = async (event, context) => {
 
       const sessionsResult = await fetchTrainingSessionsForAcwr(athleteId);
       if (sessionsResult.error) {
-        requestLogger.error("acwr_training_sessions_fetch_failed", sessionsResult.error, {
-          athlete_id: athleteId,
-        });
+        requestLogger.error(
+          "acwr_training_sessions_fetch_failed",
+          sessionsResult.error,
+          {
+            athlete_id: athleteId,
+          },
+        );
         return createErrorResponse(
           "Failed to compute ACWR",
           500,

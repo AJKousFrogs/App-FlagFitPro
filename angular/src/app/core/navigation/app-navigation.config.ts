@@ -107,7 +107,8 @@ const ATHLETE_NAV_ITEMS: readonly AppNavigationItem[] = [
     label: "Reports",
     route: "/reports",
     icon: "pi-chart-bar",
-    ariaLabel: "Reports - Performance, workload, and generated report workspaces",
+    ariaLabel:
+      "Reports - Performance, workload, and generated report workspaces",
     group: "tools",
   },
   {
@@ -121,7 +122,8 @@ const ATHLETE_NAV_ITEMS: readonly AppNavigationItem[] = [
     label: "Notifications",
     route: "/notifications",
     icon: "pi-bell",
-    ariaLabel: "Notifications - Review alerts, coach messages, and system updates",
+    ariaLabel:
+      "Notifications - Review alerts, coach messages, and system updates",
     group: "me",
   },
   {
@@ -176,7 +178,8 @@ const COACH_NAV_ITEMS: readonly AppNavigationItem[] = [
     label: "Performance",
     route: "/coach/analytics",
     icon: "pi-chart-line",
-    ariaLabel: "Performance - Team metrics, readiness, and performance insights",
+    ariaLabel:
+      "Performance - Team metrics, readiness, and performance insights",
     group: "primary",
     mobilePrimary: true,
   },
@@ -216,14 +219,16 @@ const COACH_NAV_ITEMS: readonly AppNavigationItem[] = [
     label: "Knowledge Base",
     route: "/knowledge",
     icon: "pi-bookmark",
-    ariaLabel: "Knowledge Base - Training resources, guides, and shared knowledge",
+    ariaLabel:
+      "Knowledge Base - Training resources, guides, and shared knowledge",
     group: "secondary",
   },
   {
     label: "Reports",
     route: "/reports",
     icon: "pi-chart-bar",
-    ariaLabel: "Reports - Performance, scouting, and specialist reporting surfaces",
+    ariaLabel:
+      "Reports - Performance, scouting, and specialist reporting surfaces",
     group: "secondary",
   },
   {
@@ -327,7 +332,8 @@ const COACH_NAV_ITEMS: readonly AppNavigationItem[] = [
     label: "Notifications",
     route: "/notifications",
     icon: "pi-bell",
-    ariaLabel: "Notifications - Review alerts, coach messages, and system updates",
+    ariaLabel:
+      "Notifications - Review alerts, coach messages, and system updates",
     group: "me",
   },
   {
@@ -369,7 +375,9 @@ const COACH_NAV_ROLES = [
 ] as const;
 
 export function isCoachNavigationRole(role: string | undefined): boolean {
-  return COACH_NAV_ROLES.includes((role ?? "") as (typeof COACH_NAV_ROLES)[number]);
+  return COACH_NAV_ROLES.includes(
+    (role ?? "") as (typeof COACH_NAV_ROLES)[number],
+  );
 }
 
 function filterByRole(
@@ -379,8 +387,12 @@ function filterByRole(
   return items.filter((item) => !item.roles || item.roles.includes(role ?? ""));
 }
 
-export function getRoleNavigationItems(role: string | undefined): AppNavigationItem[] {
-  const items = isCoachNavigationRole(role) ? COACH_NAV_ITEMS : ATHLETE_NAV_ITEMS;
+export function getRoleNavigationItems(
+  role: string | undefined,
+): AppNavigationItem[] {
+  const items = isCoachNavigationRole(role)
+    ? COACH_NAV_ITEMS
+    : ATHLETE_NAV_ITEMS;
   return filterByRole(items, role);
 }
 
@@ -389,10 +401,14 @@ export function getPrimaryNavigationItems(
 ): AppNavigationItem[] {
   // Coaches use legacy "primary" group; athletes use semantic groups.
   if (isCoachNavigationRole(role)) {
-    return getRoleNavigationItems(role).filter((item) => item.group === "primary");
+    return getRoleNavigationItems(role).filter(
+      (item) => item.group === "primary",
+    );
   }
   return getRoleNavigationItems(role).filter((item) =>
-    (["home", "athlete", "team", "tools"] as NavigationGroup[]).includes(item.group),
+    (["home", "athlete", "team", "tools"] as NavigationGroup[]).includes(
+      item.group,
+    ),
   );
 }
 
@@ -404,7 +420,9 @@ export function getSecondaryNavigationItems(
   );
 }
 
-export function getMeNavigationItems(role: string | undefined): AppNavigationItem[] {
+export function getMeNavigationItems(
+  role: string | undefined,
+): AppNavigationItem[] {
   return getRoleNavigationItems(role).filter((item) => item.group === "me");
 }
 
@@ -427,15 +445,31 @@ export function getNavGroupsForRole(
   const all = getRoleNavigationItems(role);
   if (isCoachNavigationRole(role)) {
     return [
-      { id: "primary", label: "Main", items: all.filter((i) => i.group === "primary") },
-      { id: "secondary", label: "Tools", items: all.filter((i) => i.group === "secondary") },
+      {
+        id: "primary",
+        label: "Main",
+        items: all.filter((i) => i.group === "primary"),
+      },
+      {
+        id: "secondary",
+        label: "Tools",
+        items: all.filter((i) => i.group === "secondary"),
+      },
     ].filter((g) => g.items.length > 0);
   }
   return [
-    { id: "home",    label: "Home",    items: all.filter((i) => i.group === "home") },
-    { id: "athlete", label: "Athlete", items: all.filter((i) => i.group === "athlete") },
-    { id: "team",    label: "Team",    items: all.filter((i) => i.group === "team") },
-    { id: "tools",   label: "Tools",   items: all.filter((i) => i.group === "tools") },
+    { id: "home", label: "Home", items: all.filter((i) => i.group === "home") },
+    {
+      id: "athlete",
+      label: "Athlete",
+      items: all.filter((i) => i.group === "athlete"),
+    },
+    { id: "team", label: "Team", items: all.filter((i) => i.group === "team") },
+    {
+      id: "tools",
+      label: "Tools",
+      items: all.filter((i) => i.group === "tools"),
+    },
   ].filter((g) => g.items.length > 0);
 }
 

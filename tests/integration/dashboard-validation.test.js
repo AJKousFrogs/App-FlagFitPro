@@ -31,7 +31,8 @@ function createFakeSupabase() {
     run() {
       if (this.table === "team_members") {
         const hasActive = this.filters.some(
-          (f) => f.type === "eq" && f.field === "status" && f.value === "active",
+          (f) =>
+            f.type === "eq" && f.field === "status" && f.value === "active",
         );
 
         if (!hasActive) {
@@ -81,7 +82,10 @@ function createFakeSupabase() {
 
 vi.mock("../../netlify/functions/utils/base-handler.js", () => ({
   baseHandler: async (event, context, options) =>
-    options.handler(event, context, { userId: "user-1", requestId: "req-test" }),
+    options.handler(event, context, {
+      userId: "user-1",
+      requestId: "req-test",
+    }),
 }));
 
 vi.mock("../../netlify/functions/cache.js", () => ({

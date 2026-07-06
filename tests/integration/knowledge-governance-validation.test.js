@@ -163,9 +163,14 @@ describe("knowledge-governance validation", () => {
   });
 
   it("rejects pending queue access for non-nutritionist", async () => {
-    const { handler } = await import("../../netlify/functions/knowledge-governance.js");
+    const { handler } =
+      await import("../../netlify/functions/knowledge-governance.js");
     const response = await handler(
-      { httpMethod: "GET", path: "/.netlify/functions/knowledge-governance/pending", queryStringParameters: {} },
+      {
+        httpMethod: "GET",
+        path: "/.netlify/functions/knowledge-governance/pending",
+        queryStringParameters: {},
+      },
       {},
     );
     expect(response.statusCode).toBe(403);
@@ -173,9 +178,14 @@ describe("knowledge-governance validation", () => {
 
   it("allows nutritionist to fetch pending queue", async () => {
     state.metaRole = "nutritionist";
-    const { handler } = await import("../../netlify/functions/knowledge-governance.js");
+    const { handler } =
+      await import("../../netlify/functions/knowledge-governance.js");
     const response = await handler(
-      { httpMethod: "GET", path: "/.netlify/functions/knowledge-governance/pending", queryStringParameters: {} },
+      {
+        httpMethod: "GET",
+        path: "/.netlify/functions/knowledge-governance/pending",
+        queryStringParameters: {},
+      },
       {},
     );
     expect(response.statusCode).toBe(200);
@@ -185,9 +195,14 @@ describe("knowledge-governance validation", () => {
   });
 
   it("allows users to fetch their own submissions", async () => {
-    const { handler } = await import("../../netlify/functions/knowledge-governance.js");
+    const { handler } =
+      await import("../../netlify/functions/knowledge-governance.js");
     const response = await handler(
-      { httpMethod: "GET", path: "/.netlify/functions/knowledge-governance/my", queryStringParameters: {} },
+      {
+        httpMethod: "GET",
+        path: "/.netlify/functions/knowledge-governance/my",
+        queryStringParameters: {},
+      },
       {},
     );
     expect(response.statusCode).toBe(200);
@@ -198,9 +213,14 @@ describe("knowledge-governance validation", () => {
 
   it("blocks audit timeline for non-owner non-nutritionist", async () => {
     state.pendingEntries[0].merlin_submitted_by = "someone-else";
-    const { handler } = await import("../../netlify/functions/knowledge-governance.js");
+    const { handler } =
+      await import("../../netlify/functions/knowledge-governance.js");
     const response = await handler(
-      { httpMethod: "GET", path: "/.netlify/functions/knowledge-governance/audit/kb-1", queryStringParameters: {} },
+      {
+        httpMethod: "GET",
+        path: "/.netlify/functions/knowledge-governance/audit/kb-1",
+        queryStringParameters: {},
+      },
       {},
     );
     expect(response.statusCode).toBe(403);
@@ -208,9 +228,14 @@ describe("knowledge-governance validation", () => {
 
   it("allows audit timeline for submission owner", async () => {
     state.pendingEntries[0].merlin_submitted_by = "user-1";
-    const { handler } = await import("../../netlify/functions/knowledge-governance.js");
+    const { handler } =
+      await import("../../netlify/functions/knowledge-governance.js");
     const response = await handler(
-      { httpMethod: "GET", path: "/.netlify/functions/knowledge-governance/audit/kb-1", queryStringParameters: {} },
+      {
+        httpMethod: "GET",
+        path: "/.netlify/functions/knowledge-governance/audit/kb-1",
+        queryStringParameters: {},
+      },
       {},
     );
     expect(response.statusCode).toBe(200);
@@ -220,7 +245,8 @@ describe("knowledge-governance validation", () => {
   });
 
   it("submits new knowledge as pending and unapproved", async () => {
-    const { handler } = await import("../../netlify/functions/knowledge-governance.js");
+    const { handler } =
+      await import("../../netlify/functions/knowledge-governance.js");
     const response = await handler(
       {
         httpMethod: "POST",
@@ -242,12 +268,16 @@ describe("knowledge-governance validation", () => {
 
   it("allows nutritionist approval action", async () => {
     state.metaRole = "nutritionist";
-    const { handler } = await import("../../netlify/functions/knowledge-governance.js");
+    const { handler } =
+      await import("../../netlify/functions/knowledge-governance.js");
     const response = await handler(
       {
         httpMethod: "POST",
         path: "/.netlify/functions/knowledge-governance/review/kb-1",
-        body: JSON.stringify({ action: "approve", notes: "approved by nutritionist" }),
+        body: JSON.stringify({
+          action: "approve",
+          notes: "approved by nutritionist",
+        }),
       },
       {},
     );
@@ -261,7 +291,8 @@ describe("knowledge-governance validation", () => {
     state.metaRole = "nutritionist";
     state.pendingEntries[0].answer = "Too short answer";
     state.pendingEntries[0].summary = "Too short";
-    const { handler } = await import("../../netlify/functions/knowledge-governance.js");
+    const { handler } =
+      await import("../../netlify/functions/knowledge-governance.js");
     const response = await handler(
       {
         httpMethod: "POST",
@@ -277,7 +308,8 @@ describe("knowledge-governance validation", () => {
     state.metaRole = "nutritionist";
     state.pendingEntries[0].answer = "Too short answer";
     state.pendingEntries[0].summary = "Too short";
-    const { handler } = await import("../../netlify/functions/knowledge-governance.js");
+    const { handler } =
+      await import("../../netlify/functions/knowledge-governance.js");
     const response = await handler(
       {
         httpMethod: "POST",

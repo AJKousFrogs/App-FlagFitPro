@@ -1,10 +1,12 @@
-
 // Netlify Function: File Upload API
 // Handles image and video uploads to Supabase Storage
 
 import { supabaseAdmin } from "./supabase-client.js";
 
-import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
+import {
+  createSuccessResponse,
+  createErrorResponse,
+} from "./utils/error-handler.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { parseJsonObjectBody } from "./utils/input-validator.js";
 import { createLogger, makeRequestLogger } from "./utils/structured-logger.js";
@@ -58,7 +60,9 @@ const uploadFile = async (
     }
 
     if (typeof fileData !== "string" || fileData.trim().length === 0) {
-      throw createUploadValidationError("file must be a non-empty base64 string");
+      throw createUploadValidationError(
+        "file must be a non-empty base64 string",
+      );
     }
     if (typeof fileName !== "string" || fileName.trim().length === 0) {
       throw createUploadValidationError("fileName must be a non-empty string");
@@ -68,7 +72,9 @@ const uploadFile = async (
     const base64Data = fileData.replace(/^data:[^;]+;base64,/, "");
     const buffer = Buffer.from(base64Data, "base64");
     if (!buffer || buffer.length === 0) {
-      throw createUploadValidationError("file must contain decodable base64 data");
+      throw createUploadValidationError(
+        "file must contain decodable base64 data",
+      );
     }
 
     // Validate file size
@@ -156,7 +162,8 @@ const handler = async (event, context) => {
         try {
           body = parseJsonObjectBody(event.body);
         } catch (error) {
-          const isObjectError = error.message === "Request body must be an object";
+          const isObjectError =
+            error.message === "Request body must be an object";
           return createErrorResponse(
             isObjectError ? error.message : "Invalid JSON in request body",
             isObjectError ? 422 : 400,

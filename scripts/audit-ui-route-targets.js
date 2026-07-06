@@ -99,7 +99,10 @@ function collectStaticTargets(filePath) {
       if (!route || route === "/") {
         continue;
       }
-      if (pattern.source.includes('\\bnavigate\\(\\["') && match[0].includes(",")) {
+      if (
+        pattern.source.includes('\\bnavigate\\(\\["') &&
+        match[0].includes(",")
+      ) {
         targets.push(`${route}/*`);
         continue;
       }
@@ -139,7 +142,9 @@ function main() {
     process.exit(1);
   }
 
-  console.log("\nAll static CTA/navigation route targets map to registered routes.");
+  console.log(
+    "\nAll static CTA/navigation route targets map to registered routes.",
+  );
 }
 
 main();

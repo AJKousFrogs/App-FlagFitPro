@@ -264,11 +264,7 @@ const handler = async (event, context) =>
             error.message || "",
           )
         ) {
-          return createErrorResponse(
-            error.message,
-            422,
-            "validation_error",
-          );
+          return createErrorResponse(error.message, 422, "validation_error");
         }
         logger.error("exercises_api_error", error, {});
         return createErrorResponse(

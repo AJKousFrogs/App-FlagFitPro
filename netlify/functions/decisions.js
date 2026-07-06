@@ -1,8 +1,14 @@
 import { baseHandler } from "./utils/base-handler.js";
-import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
+import {
+  createSuccessResponse,
+  createErrorResponse,
+} from "./utils/error-handler.js";
 import { supabaseAdmin } from "./supabase-client.js";
 import { guardMerlinRequest } from "./utils/merlin-guard.js";
-import { parseJsonObjectBody, parseBoundedInt } from "./utils/input-validator.js";
+import {
+  parseJsonObjectBody,
+  parseBoundedInt,
+} from "./utils/input-validator.js";
 import { createLogger } from "./utils/structured-logger.js";
 
 const logger = createLogger({ service: "netlify.decisions" });
@@ -206,7 +212,8 @@ async function getDecisions(userId, filters = {}) {
   }
 
   // Pagination
-  const limit = parseBoundedInt(filters.limit, "limit", { min: 1, max: 200 }) ?? 50;
+  const limit =
+    parseBoundedInt(filters.limit, "limit", { min: 1, max: 200 }) ?? 50;
   const offset =
     parseBoundedInt(filters.offset, "offset", { min: 0, max: 1000000 }) ?? 0;
   query = query.range(offset, offset + limit - 1);
@@ -668,11 +675,7 @@ async function handleRequest(event, _context, { userId }) {
     ) {
       return createErrorResponse(error.message, 422, "validation_error");
     }
-    return createErrorResponse(
-      "Internal server error",
-      500,
-      "server_error",
-    );
+    return createErrorResponse("Internal server error", 500, "server_error");
   }
 }
 

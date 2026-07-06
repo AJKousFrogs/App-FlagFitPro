@@ -32,7 +32,9 @@ function isPlainObject(value) {
 
 function isSensitiveKey(key) {
   const normalized = String(key).toLowerCase();
-  return SENSITIVE_KEY_FRAGMENTS.some((fragment) => normalized.includes(fragment));
+  return SENSITIVE_KEY_FRAGMENTS.some((fragment) =>
+    normalized.includes(fragment),
+  );
 }
 
 function maskString(value) {
@@ -86,7 +88,7 @@ function redact(value, depth = 0, seen = new WeakSet()) {
     seen.add(value);
 
     const output = {};
-    const source = isPlainObject(value) ? value : ({ ...value});
+    const source = isPlainObject(value) ? value : { ...value };
     for (const [key, nestedValue] of Object.entries(source)) {
       output[key] = isSensitiveKey(key)
         ? REDACTED
@@ -104,10 +106,20 @@ function readHeader(source, key) {
   }
 
   if (typeof source.get === "function") {
-    return source.get(key) ?? source.get(key.toLowerCase()) ?? source.get(key.toUpperCase()) ?? null;
+    return (
+      source.get(key) ??
+      source.get(key.toLowerCase()) ??
+      source.get(key.toUpperCase()) ??
+      null
+    );
   }
 
-  return source[key] ?? source[key.toLowerCase()] ?? source[key.toUpperCase()] ?? null;
+  return (
+    source[key] ??
+    source[key.toLowerCase()] ??
+    source[key.toUpperCase()] ??
+    null
+  );
 }
 
 function extractCorrelationId(source) {

@@ -1,5 +1,8 @@
 import { baseHandler } from "./utils/base-handler.js";
-import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
+import {
+  createSuccessResponse,
+  createErrorResponse,
+} from "./utils/error-handler.js";
 import { supabaseAdmin } from "./supabase-client.js";
 import { parseJsonObjectBody } from "./utils/input-validator.js";
 import { createLogger, makeRequestLogger } from "./utils/structured-logger.js";
@@ -199,15 +202,11 @@ async function exportTableData(tableConfig, userId, log = logger) {
       data: sanitizedData,
     };
   } catch (error) {
-    log.error(
-      "data_export_section_failed",
-      error,
-      {
-        table,
-        export_name: exportName,
-        user_id: userId,
-      },
-    );
+    log.error("data_export_section_failed", error, {
+      table,
+      export_name: exportName,
+      user_id: userId,
+    });
     return {
       name: exportName,
       description,
@@ -337,7 +336,11 @@ async function requestDataExport(userId, options = {}) {
 // REQUEST HANDLER
 // =============================================================================
 
-async function handleRequest(event, _context, { userId, requestId, correlationId }) {
+async function handleRequest(
+  event,
+  _context,
+  { userId, requestId, correlationId },
+) {
   const path =
     event.path
       .replace("/.netlify/functions/data-export", "")
@@ -435,15 +438,11 @@ async function handleRequest(event, _context, { userId, requestId, correlationId
 
     return createErrorResponse("Endpoint not found", 404, "not_found");
   } catch (error) {
-    requestLogger.error(
-      "data_export_handler_failed",
-      error,
-      {
-        http_method: event.httpMethod,
-        path,
-        user_id: userId,
-      },
-    );
+    requestLogger.error("data_export_handler_failed", error, {
+      http_method: event.httpMethod,
+      path,
+      user_id: userId,
+    });
     if (error.message?.includes("must be one of")) {
       return createErrorResponse(error.message, 422, "validation_error");
     }

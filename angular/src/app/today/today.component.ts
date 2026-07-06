@@ -30,7 +30,13 @@ import { RecoveryService } from "../core/services/recovery.service";
 @Component({
   selector: "app-today",
   standalone: true,
-  imports: [AvatarComponent, YtVideoComponent, SkeletonComponent, RouterLink, LucideAngularModule],
+  imports: [
+    AvatarComponent,
+    YtVideoComponent,
+    SkeletonComponent,
+    RouterLink,
+    LucideAngularModule,
+  ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA], // <iconify-icon> web component (MDI food glyphs)
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: "./today.component.html",
@@ -40,7 +46,8 @@ export class TodayComponent {
 
   /** Session video = a library clip matching today's intent, else the placeholder. */
   readonly sessionVideoId = computed(
-    () => this.videoSvc.forIntent(this.rx()?.intent)?.youtubeId ?? SESSION_VIDEO_ID,
+    () =>
+      this.videoSvc.forIntent(this.rx()?.intent)?.youtubeId ?? SESSION_VIDEO_ID,
   );
 
   /** Real duration of the matched library clip; "" when none matched (no fake time). */
@@ -54,9 +61,11 @@ export class TodayComponent {
     // after a check-in submit — so a fresh load / reload of Today always showed
     // "not logged today". Recompute from the latest check-in on each visit
     // (calc-readiness upserts idempotently on user_id+day).
-    this.readinessSvc
-      .calculateToday()
-      .subscribe({ error: () => {/* error surfaced via readinessSvc.error signal */} });
+    this.readinessSvc.calculateToday().subscribe({
+      error: () => {
+        /* error surfaced via readinessSvc.error signal */
+      },
+    });
   }
   private readonly periodization = inject(PeriodizationService);
   private readonly readinessSvc = inject(ReadinessService);
@@ -67,7 +76,9 @@ export class TodayComponent {
 
   /** Recovery modalities recommended for today, gated by owned equipment. */
   readonly recovery = this.recoverySvc.recommendations;
-  readonly hasEquipment = computed(() => this.recoverySvc.ownedEquipment().length > 0);
+  readonly hasEquipment = computed(
+    () => this.recoverySvc.ownedEquipment().length > 0,
+  );
 
   /** Today's prescription (engine). Null until the schedule snapshot resolves. */
   readonly rx = this.periodization.today;
@@ -112,23 +123,28 @@ export class TodayComponent {
   readonly heroBand = computed<{ label: string; cls: string } | null>(() => {
     const rx = this.rx();
     if (!rx) return null;
-    if (this.weather()?.applied) return { label: "weather-adjusted", cls: "caution" };
-    if (rx.recoveryEmphasis === "critical") return { label: "recover", cls: "danger" };
-    if (rx.recoveryEmphasis === "high") return { label: "recover", cls: "caution" };
+    if (this.weather()?.applied)
+      return { label: "weather-adjusted", cls: "caution" };
+    if (rx.recoveryEmphasis === "critical")
+      return { label: "recover", cls: "danger" };
+    if (rx.recoveryEmphasis === "high")
+      return { label: "recover", cls: "caution" };
     if (rx.intent === "competition") return { label: "game day", cls: "info" };
     return { label: "today", cls: "good" };
   });
 
   /** Readiness band from the server score. */
   readonly readiness = this.readinessSvc.current;
-  readonly readinessBand = computed<{ label: string; cls: string } | null>(() => {
-    const r = this.readiness();
-    if (!r || typeof r.score !== "number") return null;
-    const score = Math.round(r.score);
-    const cls = score < 55 ? "danger" : score <= 75 ? "caution" : "good";
-    const word = score < 55 ? "deload" : score <= 75 ? "maintain" : "ready";
-    return { label: `${score} · ${word}`, cls };
-  });
+  readonly readinessBand = computed<{ label: string; cls: string } | null>(
+    () => {
+      const r = this.readiness();
+      if (!r || typeof r.score !== "number") return null;
+      const score = Math.round(r.score);
+      const cls = score < 55 ? "danger" : score <= 75 ? "caution" : "good";
+      const word = score < 55 ? "deload" : score <= 75 ? "maintain" : "ready";
+      return { label: `${score} · ${word}`, cls };
+    },
+  );
 
   /** ACWR band from the server ratio, or null when there's insufficient history. */
   readonly acwrSufficient = this.acwrSvc.sufficientDataForACWR;

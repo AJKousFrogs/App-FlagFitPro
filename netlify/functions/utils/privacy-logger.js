@@ -364,7 +364,8 @@ function logDataState(requestId, userId, feature, dataState, dataPoints) {
 // EXPORTS
 // ============================================================================
 
-export { // Core logging
+export {
+  // Core logging
   logPrivacyEvent,
 
   // Specific event loggers
@@ -382,4 +383,5 @@ export { // Core logging
   redactEmail,
   redactPhone,
   redactName,
-  redactToken, };
+  redactToken,
+};

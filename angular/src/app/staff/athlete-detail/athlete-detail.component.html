@@ -11,34 +11,81 @@
     <div class="row">
       <span class="avatar lg">{{ initials() }}</span>
       <div>
-        <h1 style="margin:0">{{ name }}@if (jersey !== null) { · #{{ jersey }} }</h1>
+        <h1 style="margin: 0">
+          {{ name }}
+          @if (jersey !== null) {
+            · #{{ jersey }}
+          }
+        </h1>
         <small>{{ position || "Athlete" }}</small>
       </div>
     </div>
   </div>
 
-  @if (toast(); as t) { <div class="card" [class.accent]="!toastError()" [class.danger]="toastError()" role="status" aria-live="polite"><b class="inline"><lucide-icon [name]="toastError() ? 'info' : 'check'" /> {{ t }}</b></div> }
+  @if (toast(); as t) {
+    <div
+      class="card"
+      [class.accent]="!toastError()"
+      [class.danger]="toastError()"
+      role="status"
+      aria-live="polite"
+    >
+      <b class="inline"
+        ><lucide-icon [name]="toastError() ? 'info' : 'check'" /> {{ t }}</b
+      >
+    </div>
+  }
 
-  <div class="section-h"><h2>{{ title() }}</h2></div>
+  <div class="section-h">
+    <h2>{{ title() }}</h2>
+  </div>
 
   @if (!loaded()) {
     <div class="empty">Loading…</div>
   } @else if (!hasData() && lane() !== "physio" && lane() !== "psych") {
     <div class="empty">
-      <b style="color:var(--text)">Not shared</b>
-      <p class="note" style="margin-top:var(--s-2)">{{ name }} hasn't shared their {{ consent() }} data with staff yet, or there's nothing logged.</p>
+      <b style="color: var(--text)">Not shared</b>
+      <p class="note" style="margin-top: var(--s-2)">
+        {{ name }} hasn't shared their {{ consent() }} data with staff yet, or
+        there's nothing logged.
+      </p>
     </div>
   } @else {
     @switch (lane()) {
       <!-- COACH -->
       @case ("coach") {
         @if (hasData()) {
-          <div class="card"><div class="row"><div class="inline"><span>Readiness</span>
-            @if (readyBand(); as b) { <span class="band {{ b.cls }}">{{ b.label }}</span> } @else { <span class="band neutral">—</span> }</div></div></div>
-          <div class="card"><div class="row"><div class="inline"><span>Load (ACWR)</span>
-            @if (acwrBand(); as b) { <span class="band {{ b.cls }}">{{ b.label }}</span> } @else { <span class="band neutral">building</span> }</div></div></div>
+          <div class="card">
+            <div class="row">
+              <div class="inline">
+                <span>Readiness</span>
+                @if (readyBand(); as b) {
+                  <span class="band {{ b.cls }}">{{ b.label }}</span>
+                } @else {
+                  <span class="band neutral">—</span>
+                }
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="row">
+              <div class="inline">
+                <span>Load (ACWR)</span>
+                @if (acwrBand(); as b) {
+                  <span class="band {{ b.cls }}">{{ b.label }}</span>
+                } @else {
+                  <span class="band neutral">building</span>
+                }
+              </div>
+            </div>
+          </div>
         } @else {
-          <div class="empty"><b style="color:var(--text)">Not shared</b><p class="note" style="margin-top:var(--s-2)">{{ name }} hasn't shared performance data with staff.</p></div>
+          <div class="empty">
+            <b style="color: var(--text)">Not shared</b>
+            <p class="note" style="margin-top: var(--s-2)">
+              {{ name }} hasn't shared performance data with staff.
+            </p>
+          </div>
         }
       }
 
@@ -49,10 +96,29 @@
             @for (inj of injuries(); track $index) {
               <div class="lrow">
                 <div>
-                  <b>{{ inj.injury_type || "Injury" }}@if (inj.injury_location) { · {{ inj.injury_location }} }</b>
-                  <div class="muted" style="font-size:var(--fs-sm)">@if (inj.injury_grade) { {{ inj.injury_grade }} · }@if (inj.rtp_progress != null) { RTP {{ inj.rtp_progress }}% · }{{ inj.current_phase || "—" }}</div>
+                  <b
+                    >{{ inj.injury_type || "Injury" }}
+                    @if (inj.injury_location) {
+                      · {{ inj.injury_location }}
+                    }
+                  </b>
+                  <div class="muted" style="font-size: var(--fs-sm)">
+                    @if (inj.injury_grade) {
+                      {{ inj.injury_grade }} ·
+                    }
+                    @if (inj.rtp_progress != null) {
+                      RTP {{ inj.rtp_progress }}% ·
+                    }
+                    {{ inj.current_phase || "—" }}
+                  </div>
                 </div>
-                <button class="btn ghost sm" type="button" (click)="openRtp(inj)">Update</button>
+                <button
+                  class="btn ghost sm"
+                  type="button"
+                  (click)="openRtp(inj)"
+                >
+                  Update
+                </button>
               </div>
             }
           </div>
@@ -63,17 +129,52 @@
         @if (editingRtp()) {
           <div class="card stack">
             <b>Update return-to-play</b>
-            <div class="slider"><label for="rp">Progress</label>
-              <input id="rp" class="rng" type="range" min="0" max="100" step="5" [value]="rtpProgress()" (input)="rtpProgress.set(+$any($event.target).value)" />
-              <span class="val">{{ rtpProgress() }}%</span></div>
-            <div class="inline" style="flex-wrap:wrap;gap:var(--s-2)">
-              @for (p of rtpPhases; track p) { <button type="button" class="chip" [class.sel]="rtpNewPhase() === p" (click)="rtpNewPhase.set(p)">{{ p }}</button> }
+            <div class="slider">
+              <label for="rp">Progress</label>
+              <input
+                id="rp"
+                class="rng"
+                type="range"
+                min="0"
+                max="100"
+                step="5"
+                [value]="rtpProgress()"
+                (input)="rtpProgress.set(+$any($event.target).value)"
+              />
+              <span class="val">{{ rtpProgress() }}%</span>
             </div>
-            <input type="text" placeholder="Notes (optional)" [value]="rtpNotes()" (input)="rtpNotes.set($any($event.target).value)"
-                   class="input" />
-            <div class="inline" style="gap:var(--s-2)">
-              <button class="btn ghost sm" type="button" (click)="cancelRtp()">Cancel</button>
-              <button class="btn primary block" type="button" style="flex:1" [attr.aria-disabled]="busy()" (click)="saveRtp()">{{ busy() ? "Saving…" : "Save RTP" }}</button>
+            <div class="inline" style="flex-wrap: wrap; gap: var(--s-2)">
+              @for (p of rtpPhases; track p) {
+                <button
+                  type="button"
+                  class="chip"
+                  [class.sel]="rtpNewPhase() === p"
+                  (click)="rtpNewPhase.set(p)"
+                >
+                  {{ p }}
+                </button>
+              }
+            </div>
+            <input
+              type="text"
+              placeholder="Notes (optional)"
+              [value]="rtpNotes()"
+              (input)="rtpNotes.set($any($event.target).value)"
+              class="input"
+            />
+            <div class="inline" style="gap: var(--s-2)">
+              <button class="btn ghost sm" type="button" (click)="cancelRtp()">
+                Cancel
+              </button>
+              <button
+                class="btn primary block"
+                type="button"
+                style="flex: 1"
+                [attr.aria-disabled]="busy()"
+                (click)="saveRtp()"
+              >
+                {{ busy() ? "Saving…" : "Save RTP" }}
+              </button>
             </div>
           </div>
         }
@@ -81,37 +182,106 @@
         @if (addingInjury()) {
           <div class="card stack">
             <b>Log injury</b>
-            <input type="text" placeholder="Type (e.g. hamstring strain)" [value]="injType()" (input)="injType.set($any($event.target).value)"
-                   class="input" />
-            <input type="text" placeholder="Location (e.g. right)" [value]="injLocation()" (input)="injLocation.set($any($event.target).value)"
-                   class="input" />
-            <div class="inline" style="gap:var(--s-2)">@for (g of grades; track g) { <button type="button" class="chip" [class.sel]="injGrade() === g" (click)="injGrade.set(g)">{{ g }}</button> }</div>
-            <div class="inline" style="gap:var(--s-2)">
-              <button class="btn ghost sm" type="button" (click)="cancelInjury()">Cancel</button>
-              <button class="btn primary block" type="button" style="flex:1" [attr.aria-disabled]="busy()" (click)="logInjury()">{{ busy() ? "Saving…" : "Log injury" }}</button>
+            <input
+              type="text"
+              placeholder="Type (e.g. hamstring strain)"
+              [value]="injType()"
+              (input)="injType.set($any($event.target).value)"
+              class="input"
+            />
+            <input
+              type="text"
+              placeholder="Location (e.g. right)"
+              [value]="injLocation()"
+              (input)="injLocation.set($any($event.target).value)"
+              class="input"
+            />
+            <div class="inline" style="gap: var(--s-2)">
+              @for (g of grades; track g) {
+                <button
+                  type="button"
+                  class="chip"
+                  [class.sel]="injGrade() === g"
+                  (click)="injGrade.set(g)"
+                >
+                  {{ g }}
+                </button>
+              }
+            </div>
+            <div class="inline" style="gap: var(--s-2)">
+              <button
+                class="btn ghost sm"
+                type="button"
+                (click)="cancelInjury()"
+              >
+                Cancel
+              </button>
+              <button
+                class="btn primary block"
+                type="button"
+                style="flex: 1"
+                [attr.aria-disabled]="busy()"
+                (click)="logInjury()"
+              >
+                {{ busy() ? "Saving…" : "Log injury" }}
+              </button>
             </div>
           </div>
         } @else {
-          <button class="btn ghost block sm" type="button" (click)="addingInjury.set(true)"><lucide-icon name="plus" /> Log injury</button>
+          <button
+            class="btn ghost block sm"
+            type="button"
+            (click)="addingInjury.set(true)"
+          >
+            <lucide-icon name="plus" /> Log injury
+          </button>
         }
       }
 
       <!-- NUTRITION: body comp + generate report -->
       @case ("nutrition") {
         @if (latestBody(); as b) {
-          <div class="card"><div class="tiles">
-            <div><b>{{ b.weight ?? "—" }}</b><small>kg</small></div>
-            <div><b>{{ b.bodyFat ?? "—" }}</b><small>% fat</small></div>
-            <div><b>{{ b.leanMass ?? "—" }}</b><small>lean kg</small></div>
-          </div></div>
+          <div class="card">
+            <div class="tiles">
+              <div>
+                <b>{{ b.weight ?? "—" }}</b
+                ><small>kg</small>
+              </div>
+              <div>
+                <b>{{ b.bodyFat ?? "—" }}</b
+                ><small>% fat</small>
+              </div>
+              <div>
+                <b>{{ b.leanMass ?? "—" }}</b
+                ><small>lean kg</small>
+              </div>
+            </div>
+          </div>
         } @else {
-          <div class="empty">{{ name }} hasn't shared body-composition data, or there's nothing logged.</div>
+          <div class="empty">
+            {{ name }} hasn't shared body-composition data, or there's nothing
+            logged.
+          </div>
         }
         <div class="card stack">
           <b>Generate report</b>
-          <div class="inline" style="gap:var(--s-2)">
-            <button class="btn secondary sm" type="button" [attr.aria-disabled]="busy()" (click)="generateReport('weekly')">Weekly</button>
-            <button class="btn secondary sm" type="button" [attr.aria-disabled]="busy()" (click)="generateReport('monthly')">Monthly</button>
+          <div class="inline" style="gap: var(--s-2)">
+            <button
+              class="btn secondary sm"
+              type="button"
+              [attr.aria-disabled]="busy()"
+              (click)="generateReport('weekly')"
+            >
+              Weekly
+            </button>
+            <button
+              class="btn secondary sm"
+              type="button"
+              [attr.aria-disabled]="busy()"
+              (click)="generateReport('monthly')"
+            >
+              Monthly
+            </button>
           </div>
         </div>
       }
@@ -119,32 +289,94 @@
       <!-- PSYCH: mental wellness + log assessment -->
       @case ("psych") {
         @if (mental().length || wellness().length) {
-          <div class="card"><div class="tiles">
-            <div><b>{{ latestMental() ?? "—" }}</b><small>mental readiness</small></div>
-            <div><b>{{ latestWellness()?.mood ?? "—" }}</b><small>mood</small></div>
-            <div><b>{{ latestWellness()?.stress_level ?? "—" }}</b><small>stress</small></div>
-          </div></div>
+          <div class="card">
+            <div class="tiles">
+              <div>
+                <b>{{ latestMental() ?? "—" }}</b
+                ><small>mental readiness</small>
+              </div>
+              <div>
+                <b>{{ latestWellness()?.mood ?? "—" }}</b
+                ><small>mood</small>
+              </div>
+              <div>
+                <b>{{ latestWellness()?.stress_level ?? "—" }}</b
+                ><small>stress</small>
+              </div>
+            </div>
+          </div>
         } @else {
-          <div class="empty">{{ name }} hasn't shared mental-wellness data, or there's nothing logged.</div>
+          <div class="empty">
+            {{ name }} hasn't shared mental-wellness data, or there's nothing
+            logged.
+          </div>
         }
         @if (addingAssessment()) {
           <div class="card stack">
             <b>Log assessment</b>
-            <input type="text" placeholder="Type (e.g. pre-competition anxiety)" [value]="asmtType()" (input)="asmtType.set($any($event.target).value)"
-                   class="input" />
-            <div class="slider"><label for="as">Score</label>
-              <input id="as" class="rng" type="range" min="1" max="10" [value]="asmtScore()" (input)="asmtScore.set(+$any($event.target).value)" /><span class="val">{{ asmtScore() }}</span></div>
-            <input type="text" placeholder="Interpretation / note" [value]="asmtNote()" (input)="asmtNote.set($any($event.target).value)"
-                   class="input" />
-            <div class="lrow"><span id="rev">Requires professional review</span>
-              <button class="sw" role="switch" [attr.aria-checked]="asmtReview()" aria-labelledby="rev" (click)="asmtReview.set(!asmtReview())"></button></div>
-            <div class="inline" style="gap:var(--s-2)">
-              <button class="btn ghost sm" type="button" (click)="cancelAssessment()">Cancel</button>
-              <button class="btn primary block" type="button" style="flex:1" [attr.aria-disabled]="busy()" (click)="logAssessment()">{{ busy() ? "Saving…" : "Log assessment" }}</button>
+            <input
+              type="text"
+              placeholder="Type (e.g. pre-competition anxiety)"
+              [value]="asmtType()"
+              (input)="asmtType.set($any($event.target).value)"
+              class="input"
+            />
+            <div class="slider">
+              <label for="as">Score</label>
+              <input
+                id="as"
+                class="rng"
+                type="range"
+                min="1"
+                max="10"
+                [value]="asmtScore()"
+                (input)="asmtScore.set(+$any($event.target).value)"
+              /><span class="val">{{ asmtScore() }}</span>
+            </div>
+            <input
+              type="text"
+              placeholder="Interpretation / note"
+              [value]="asmtNote()"
+              (input)="asmtNote.set($any($event.target).value)"
+              class="input"
+            />
+            <div class="lrow">
+              <span id="rev">Requires professional review</span>
+              <button
+                class="sw"
+                role="switch"
+                [attr.aria-checked]="asmtReview()"
+                aria-labelledby="rev"
+                (click)="asmtReview.set(!asmtReview())"
+              ></button>
+            </div>
+            <div class="inline" style="gap: var(--s-2)">
+              <button
+                class="btn ghost sm"
+                type="button"
+                (click)="cancelAssessment()"
+              >
+                Cancel
+              </button>
+              <button
+                class="btn primary block"
+                type="button"
+                style="flex: 1"
+                [attr.aria-disabled]="busy()"
+                (click)="logAssessment()"
+              >
+                {{ busy() ? "Saving…" : "Log assessment" }}
+              </button>
             </div>
           </div>
         } @else {
-          <button class="btn ghost block sm" type="button" (click)="addingAssessment.set(true)"><lucide-icon name="plus" /> Log assessment</button>
+          <button
+            class="btn ghost block sm"
+            type="button"
+            (click)="addingAssessment.set(true)"
+          >
+            <lucide-icon name="plus" /> Log assessment
+          </button>
         }
       }
     }

@@ -66,7 +66,13 @@ const mockSupabaseService = {
   client: {
     rpc: vi.fn(() =>
       Promise.resolve({
-        data: [{ checkin_id: "c1", legacy_entry_id: null, checkin_date: "2024-01-15" }],
+        data: [
+          {
+            checkin_id: "c1",
+            legacy_entry_id: null,
+            checkin_date: "2024-01-15",
+          },
+        ],
         error: null,
       }),
     ),
@@ -574,8 +580,8 @@ describe("WellnessService", () => {
       await firstValueFrom(service.logWellness({ sleep: 8 }));
 
       expect(mockSupabaseService.client.rpc).toHaveBeenCalled();
-      const call = (mockSupabaseService.client.rpc as ReturnType<typeof vi.fn>).mock
-        .calls[0];
+      const call = (mockSupabaseService.client.rpc as ReturnType<typeof vi.fn>)
+        .mock.calls[0];
       expect(call[1]).toMatchObject({
         p_checkin_date: today,
       });
@@ -596,8 +602,8 @@ describe("WellnessService", () => {
         }),
       );
 
-      const call = (mockSupabaseService.client.rpc as ReturnType<typeof vi.fn>).mock
-        .calls[0];
+      const call = (mockSupabaseService.client.rpc as ReturnType<typeof vi.fn>)
+        .mock.calls[0];
       expect(call[1]).toMatchObject({
         p_sleep_quality: 8,
         p_sleep_hours: 7.5,
@@ -615,7 +621,13 @@ describe("WellnessService", () => {
       const rpc = mockSupabaseService.client.rpc as ReturnType<typeof vi.fn>;
       const defaultImpl = () =>
         Promise.resolve({
-          data: [{ checkin_id: "c1", legacy_entry_id: null, checkin_date: "2024-01-15" }],
+          data: [
+            {
+              checkin_id: "c1",
+              legacy_entry_id: null,
+              checkin_date: "2024-01-15",
+            },
+          ],
           error: null,
         });
       rpc.mockImplementation((name: string) => {
@@ -649,7 +661,9 @@ describe("WellnessService", () => {
 
   describe("Wellness Data Loading", () => {
     it("maps extended daily_wellness_checkin fields from the database", async () => {
-      (mockSupabaseService.client.from as ReturnType<typeof vi.fn>).mockReturnValueOnce({
+      (
+        mockSupabaseService.client.from as ReturnType<typeof vi.fn>
+      ).mockReturnValueOnce({
         select: vi.fn(() => ({
           eq: vi.fn(() => ({
             gte: vi.fn(() => ({

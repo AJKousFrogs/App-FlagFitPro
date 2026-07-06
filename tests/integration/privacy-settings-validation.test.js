@@ -24,7 +24,9 @@ vi.mock("../../netlify/functions/supabase-client.js", () => {
               eq: () => ({
                 limit: () => ({
                   maybeSingle: async () => ({
-                    data: dbState.hasTeamMembership ? { team_id: "team-1" } : null,
+                    data: dbState.hasTeamMembership
+                      ? { team_id: "team-1" }
+                      : null,
                     error: null,
                   }),
                 }),

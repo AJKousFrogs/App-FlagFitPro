@@ -1,30 +1,56 @@
-<main class="screen" style="display:flex;flex-direction:column;justify-content:center;gap:var(--s-4);min-height:100dvh">
+<main
+  class="screen"
+  style="
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: var(--s-4);
+    min-height: 100dvh;
+  "
+>
   <div class="hero">
     <span class="avatar lg"><lucide-icon name="mail" /></span>
-    <h1 class="brand" style="margin:var(--s-4) 0 var(--s-1)">Verify your email</h1>
+    <h1 class="brand" style="margin: var(--s-4) 0 var(--s-1)">
+      Verify your email
+    </h1>
     <p class="note">
       @if (email()) {
-        We sent a verification link to <b style="color:var(--text-strong)">{{ email() }}</b>.
-        Tap it to confirm your account, then sign in.
+        We sent a verification link to
+        <b style="color: var(--text-strong)">{{ email() }}</b
+        >. Tap it to confirm your account, then sign in.
       } @else {
-        We need to verify your email before you can sign in. Enter your address to get a fresh link.
+        We need to verify your email before you can sign in. Enter your address
+        to get a fresh link.
       }
     </p>
   </div>
 
   <div class="card stack">
     @if (!email()) {
-      <input type="email" inputmode="email" placeholder="you@email.com" [value]="email()"
-             (input)="email.set($any($event.target).value)"
-             class="input" style="width:100%" />
+      <input
+        type="email"
+        inputmode="email"
+        placeholder="you@email.com"
+        [value]="email()"
+        (input)="email.set($any($event.target).value)"
+        class="input"
+        style="width: 100%"
+      />
     }
     @if (sent()) {
-      <b class="inline" style="color:var(--accent)"><lucide-icon name="check" /> Link sent — check your inbox.</b>
+      <b class="inline" style="color: var(--accent)"
+        ><lucide-icon name="check" /> Link sent — check your inbox.</b
+      >
     }
     @if (error(); as e) {
-      <small style="color:var(--danger)" role="alert">{{ e }}</small>
+      <small style="color: var(--danger)" role="alert">{{ e }}</small>
     }
-    <button class="btn primary block" type="button" [attr.aria-disabled]="busy()" (click)="resend()">
+    <button
+      class="btn primary block"
+      type="button"
+      [attr.aria-disabled]="busy()"
+      (click)="resend()"
+    >
       {{ busy() ? "Sending…" : "Resend verification email" }}
     </button>
     <a class="btn ghost block" routerLink="/login">Back to sign in</a>

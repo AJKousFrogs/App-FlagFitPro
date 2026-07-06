@@ -1,17 +1,30 @@
 import { baseHandler } from "./utils/base-handler.js";
-import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
+import {
+  createSuccessResponse,
+  createErrorResponse,
+} from "./utils/error-handler.js";
 import { supabaseAdmin, db } from "./supabase-client.js";
-import { ConsentDataReader, AccessContext } from "./utils/consent-data-reader.js";
+import {
+  ConsentDataReader,
+  AccessContext,
+} from "./utils/consent-data-reader.js";
 import { DataState } from "./utils/data-state.js";
 import {
   computeAcwrAt,
   computeSessionLoad,
   acwrDateKey,
 } from "./utils/acwr.js";
-import { getUserRole, requireRole, logViolation } from "./utils/authorization-guard.js";
+import {
+  getUserRole,
+  requireRole,
+  logViolation,
+} from "./utils/authorization-guard.js";
 import { resolveStaffedTeam } from "./utils/team-scope.js";
 import { parseJsonObjectBody as sharedParseJsonObjectBody } from "./utils/input-validator.js";
-import { buildRequestLogContext, createLogger } from "./utils/structured-logger.js";
+import {
+  buildRequestLogContext,
+  createLogger,
+} from "./utils/structured-logger.js";
 
 // Netlify Function: Coach API
 // Handles coach-specific operations: dashboard, team management, training analytics
@@ -30,7 +43,8 @@ const COACH_ROLES = [
   "defense_coordinator",
 ];
 
-const isValidTime = (value) => typeof value === "string" && /^([01]\d|2[0-3]):[0-5]\d$/.test(value);
+const isValidTime = (value) =>
+  typeof value === "string" && /^([01]\d|2[0-3]):[0-5]\d$/.test(value);
 
 const isValidDate = (value) => {
   if (!value || typeof value !== "string") {
@@ -52,7 +66,11 @@ const buildDateTime = (date, time) => {
 
 const MAX_COACH_MESSAGE_LENGTH = 1000;
 
-const parseRequiredTrimmedString = (value, fieldName, maxLength = MAX_COACH_MESSAGE_LENGTH) => {
+const parseRequiredTrimmedString = (
+  value,
+  fieldName,
+  maxLength = MAX_COACH_MESSAGE_LENGTH,
+) => {
   if (typeof value !== "string" || value.trim().length === 0) {
     throw new Error(`${fieldName} is required`);
   }
@@ -143,7 +161,9 @@ async function createCoachTeamMessage(coachId, payload) {
     return { sent: 0 };
   }
 
-  const { error } = await supabaseAdmin.from("notifications").insert(recipients);
+  const { error } = await supabaseAdmin
+    .from("notifications")
+    .insert(recipients);
   if (error) {
     throw error;
   }
@@ -152,7 +172,11 @@ async function createCoachTeamMessage(coachId, payload) {
 }
 
 async function createCoachAccessRequest(coachId, payload) {
-  const playerId = parseRequiredTrimmedString(payload?.playerId, "playerId", 128);
+  const playerId = parseRequiredTrimmedString(
+    payload?.playerId,
+    "playerId",
+    128,
+  );
   const message = parseRequiredTrimmedString(payload?.message, "message");
   const { teamId, members } = await getActiveCoachTeamMembers(
     coachId,
@@ -195,7 +219,9 @@ async function createCoachAccessRequest(coachId, payload) {
  */
 async function fetchCanonicalReadiness(memberUserIds) {
   const map = new Map();
-  if (!memberUserIds?.length) {return map;}
+  if (!memberUserIds?.length) {
+    return map;
+  }
   const today = new Date().toISOString().slice(0, 10);
   const { data } = await supabaseAdmin
     .from("readiness_scores")
@@ -203,7 +229,9 @@ async function fetchCanonicalReadiness(memberUserIds) {
     .in("user_id", memberUserIds)
     .eq("day", today);
   (data || []).forEach((r) => {
-    if (r.score !== null) {map.set(r.user_id, Math.round(Number(r.score)));}
+    if (r.score !== null) {
+      map.set(r.user_id, Math.round(Number(r.score)));
+    }
   });
   return map;
 }
@@ -220,7 +248,12 @@ async function fetchCanonicalReadiness(memberUserIds) {
  */
 function enrichMemberLoad(sessions) {
   if (!Array.isArray(sessions) || sessions.length === 0) {
-    return { acwr: null, workload: 0, today_workload: 0, dataState: DataState.NO_DATA };
+    return {
+      acwr: null,
+      workload: 0,
+      today_workload: 0,
+      dataState: DataState.NO_DATA,
+    };
   }
   const weeklyWorkload = sessions
     .slice(0, 7)
@@ -228,7 +261,9 @@ function enrichMemberLoad(sessions) {
   const dailyLoads = new Map();
   for (const s of sessions) {
     const when = s?.session_date ?? s?.completed_at ?? s?.created_at;
-    if (!when) {continue;}
+    if (!when) {
+      continue;
+    }
     const key = acwrDateKey(when);
     dailyLoads.set(key, (dailyLoads.get(key) || 0) + computeSessionLoad(s));
   }
@@ -238,7 +273,9 @@ function enrichMemberLoad(sessions) {
     acwr, // null when chronic can't be established — never fabricated
     workload: Math.round(weeklyWorkload),
     today_workload: Math.round(weeklyWorkload / 7),
-    dataState: lowConfidence ? DataState.INSUFFICIENT_DATA : DataState.REAL_DATA,
+    dataState: lowConfidence
+      ? DataState.INSUFFICIENT_DATA
+      : DataState.REAL_DATA,
   };
 }
 
@@ -321,9 +358,13 @@ async function getCoachDashboard(userId, requestedTeamId = null) {
                 filters: { limit: 1 },
               })
               .catch((wellnessErr) => {
-                logger.warn("coach_dashboard_wellness_fetch_failed", wellnessErr, {
-                  player_user_id: member.user_id,
-                });
+                logger.warn(
+                  "coach_dashboard_wellness_fetch_failed",
+                  wellnessErr,
+                  {
+                    player_user_id: member.user_id,
+                  },
+                );
                 return null; // readiness stays null — do NOT estimate
               }),
           ]);
@@ -376,7 +417,10 @@ async function getCoachDashboard(userId, requestedTeamId = null) {
 
               if (acwr !== null) {
                 const acwrPenalty = Math.abs(acwr - 1.0) * 15;
-                readiness = Math.max(30, Math.min(100, wellnessAvg - acwrPenalty));
+                readiness = Math.max(
+                  30,
+                  Math.min(100, wellnessAvg - acwrPenalty),
+                );
               } else {
                 readiness = Math.round(wellnessAvg);
               }
@@ -539,7 +583,7 @@ async function getTeamInfo(userId, coachId, requestedTeamId = null) {
           }
           const readiness = blockedForMember.includes(member.user_id)
             ? null
-            : canonicalReadiness.get(member.user_id) ?? null;
+            : (canonicalReadiness.get(member.user_id) ?? null);
 
           return {
             ...member,
@@ -750,7 +794,9 @@ async function createTrainingSession(userId, sessionData, requestInfo = {}) {
       throw memberError;
     }
     if (!targetMember) {
-      throw new Error("user_id must reference an active team member in coach team");
+      throw new Error(
+        "user_id must reference an active team member in coach team",
+      );
     }
 
     const session = {
@@ -778,13 +824,17 @@ async function createTrainingSession(userId, sessionData, requestInfo = {}) {
       .single();
 
     if (error) {
-      logger.error("coach_training_session_insert_failed", error, { user_id: userId });
+      logger.error("coach_training_session_insert_failed", error, {
+        user_id: userId,
+      });
       throw error;
     }
 
     return data;
   } catch (error) {
-    logger.error("coach_training_session_creation_failed", error, { user_id: userId });
+    logger.error("coach_training_session_creation_failed", error, {
+      user_id: userId,
+    });
     throw error;
   }
 }
@@ -858,7 +908,11 @@ async function handleCalendarRequest(event, userId, coachId) {
       if (error?.isValidation) {
         return createErrorResponse(error.message, 422, "validation_error");
       }
-      return createErrorResponse("Invalid JSON in request body", 400, "invalid_json");
+      return createErrorResponse(
+        "Invalid JSON in request body",
+        400,
+        "invalid_json",
+      );
     }
   }
   const query = event.queryStringParameters || {};
@@ -930,19 +984,39 @@ async function handleCalendarRequest(event, userId, coachId) {
       } = body;
 
       if (!title || !String(title).trim()) {
-        return createErrorResponse("title is required", 422, "validation_error");
+        return createErrorResponse(
+          "title is required",
+          422,
+          "validation_error",
+        );
       }
       if (!date || !isValidDate(date)) {
-        return createErrorResponse("date must be a valid date", 422, "validation_error");
+        return createErrorResponse(
+          "date must be a valid date",
+          422,
+          "validation_error",
+        );
       }
       if (!startTime || !isValidTime(startTime)) {
-        return createErrorResponse("startTime must be in HH:MM format", 422, "validation_error");
+        return createErrorResponse(
+          "startTime must be in HH:MM format",
+          422,
+          "validation_error",
+        );
       }
       if (!endTime || !isValidTime(endTime)) {
-        return createErrorResponse("endTime must be in HH:MM format", 422, "validation_error");
+        return createErrorResponse(
+          "endTime must be in HH:MM format",
+          422,
+          "validation_error",
+        );
       }
       if (buildDateTime(date, startTime) >= buildDateTime(date, endTime)) {
-        return createErrorResponse("endTime must be after startTime", 422, "validation_error");
+        return createErrorResponse(
+          "endTime must be after startTime",
+          422,
+          "validation_error",
+        );
       }
       if (type && !CALENDAR_EVENT_TYPES.has(type)) {
         return createErrorResponse(
@@ -991,7 +1065,11 @@ async function handleCalendarRequest(event, userId, coachId) {
       // Update event
       const eventId = query.id || body.id;
       if (!eventId) {
-        return createErrorResponse("Event ID required", 400, "validation_error");
+        return createErrorResponse(
+          "Event ID required",
+          400,
+          "validation_error",
+        );
       }
 
       // Verify event belongs to coach's team
@@ -1018,13 +1096,25 @@ async function handleCalendarRequest(event, userId, coachId) {
         );
       }
       if (body.date && !isValidDate(body.date)) {
-        return createErrorResponse("date must be a valid date", 422, "validation_error");
+        return createErrorResponse(
+          "date must be a valid date",
+          422,
+          "validation_error",
+        );
       }
       if (body.startTime && !isValidTime(body.startTime)) {
-        return createErrorResponse("startTime must be in HH:MM format", 422, "validation_error");
+        return createErrorResponse(
+          "startTime must be in HH:MM format",
+          422,
+          "validation_error",
+        );
       }
       if (body.endTime && !isValidTime(body.endTime)) {
-        return createErrorResponse("endTime must be in HH:MM format", 422, "validation_error");
+        return createErrorResponse(
+          "endTime must be in HH:MM format",
+          422,
+          "validation_error",
+        );
       }
       if ((body.startTime || body.endTime) && !body.date) {
         return createErrorResponse(
@@ -1037,11 +1127,20 @@ async function handleCalendarRequest(event, userId, coachId) {
         body.date &&
         body.startTime &&
         body.endTime &&
-        buildDateTime(body.date, body.startTime) >= buildDateTime(body.date, body.endTime)
+        buildDateTime(body.date, body.startTime) >=
+          buildDateTime(body.date, body.endTime)
       ) {
-        return createErrorResponse("endTime must be after startTime", 422, "validation_error");
+        return createErrorResponse(
+          "endTime must be after startTime",
+          422,
+          "validation_error",
+        );
       }
-      if (body.rsvpDeadline !== undefined && body.rsvpDeadline !== null && !isValidDate(body.rsvpDeadline)) {
+      if (
+        body.rsvpDeadline !== undefined &&
+        body.rsvpDeadline !== null &&
+        !isValidDate(body.rsvpDeadline)
+      ) {
         return createErrorResponse(
           "rsvpDeadline must be a valid date",
           422,
@@ -1070,7 +1169,11 @@ async function handleCalendarRequest(event, userId, coachId) {
         updates.rsvp_deadline = body.rsvpDeadline;
       }
       if (Object.keys(updates).length === 0) {
-        return createErrorResponse("No updatable fields provided", 422, "validation_error");
+        return createErrorResponse(
+          "No updatable fields provided",
+          422,
+          "validation_error",
+        );
       }
 
       const { data, error } = await supabaseAdmin
@@ -1091,7 +1194,11 @@ async function handleCalendarRequest(event, userId, coachId) {
       // Delete event
       const eventId = query.id || body.id;
       if (!eventId) {
-        return createErrorResponse("Event ID required", 400, "validation_error");
+        return createErrorResponse(
+          "Event ID required",
+          400,
+          "validation_error",
+        );
       }
 
       // Verify event belongs to coach's team
@@ -1161,17 +1268,32 @@ async function handleRequest(
       case "/dashboard":
       case "": {
         if (event.httpMethod !== "GET") {
-          return createErrorResponse("Method not allowed", 405, "method_not_allowed");
+          return createErrorResponse(
+            "Method not allowed",
+            405,
+            "method_not_allowed",
+          );
         }
-        const dashboard = await getCoachDashboard(targetCoachId, requestedTeamId);
+        const dashboard = await getCoachDashboard(
+          targetCoachId,
+          requestedTeamId,
+        );
         return createSuccessResponse(dashboard);
       }
 
       case "/team": {
         if (event.httpMethod !== "GET") {
-          return createErrorResponse("Method not allowed", 405, "method_not_allowed");
+          return createErrorResponse(
+            "Method not allowed",
+            405,
+            "method_not_allowed",
+          );
         }
-        const teamResult = await getTeamInfo(userId, targetCoachId, requestedTeamId);
+        const teamResult = await getTeamInfo(
+          userId,
+          targetCoachId,
+          requestedTeamId,
+        );
         // Preserve backwards compatibility: return members array at top level
         // but include consentInfo and dataState
         return createSuccessResponse({
@@ -1183,15 +1305,27 @@ async function handleRequest(
 
       case "/training-analytics": {
         if (event.httpMethod !== "GET") {
-          return createErrorResponse("Method not allowed", 405, "method_not_allowed");
+          return createErrorResponse(
+            "Method not allowed",
+            405,
+            "method_not_allowed",
+          );
         }
-        const analytics = await getTrainingAnalytics(userId, targetCoachId, requestedTeamId);
+        const analytics = await getTrainingAnalytics(
+          userId,
+          targetCoachId,
+          requestedTeamId,
+        );
         return createSuccessResponse(analytics);
       }
 
       case "/training-session": {
         if (event.httpMethod !== "POST") {
-          return createErrorResponse("Method not allowed", 405, "method_not_allowed");
+          return createErrorResponse(
+            "Method not allowed",
+            405,
+            "method_not_allowed",
+          );
         }
         const body = parseJsonBody(event.body);
         const session = await createTrainingSession(userId, body);
@@ -1200,7 +1334,11 @@ async function handleRequest(
 
       case "/team-message": {
         if (event.httpMethod !== "POST") {
-          return createErrorResponse("Method not allowed", 405, "method_not_allowed");
+          return createErrorResponse(
+            "Method not allowed",
+            405,
+            "method_not_allowed",
+          );
         }
         const body = parseJsonBody(event.body);
         const result = await createCoachTeamMessage(userId, body);
@@ -1209,7 +1347,11 @@ async function handleRequest(
 
       case "/access-request": {
         if (event.httpMethod !== "POST") {
-          return createErrorResponse("Method not allowed", 405, "method_not_allowed");
+          return createErrorResponse(
+            "Method not allowed",
+            405,
+            "method_not_allowed",
+          );
         }
         const body = parseJsonBody(event.body);
         const result = await createCoachAccessRequest(userId, body);
@@ -1218,7 +1360,11 @@ async function handleRequest(
 
       case "/games": {
         if (event.httpMethod !== "GET") {
-          return createErrorResponse("Method not allowed", 405, "method_not_allowed");
+          return createErrorResponse(
+            "Method not allowed",
+            405,
+            "method_not_allowed",
+          );
         }
         const games = await getGames(userId, targetCoachId, requestedTeamId);
         return createSuccessResponse(games);
@@ -1233,32 +1379,51 @@ async function handleRequest(
         // Returns active athlete_injuries rows for the team, sorted by severity.
         // Enables the coach to see which players have what tightness/injury at a glance.
         if (event.httpMethod !== "GET") {
-          return createErrorResponse("Method not allowed", 405, "method_not_allowed");
+          return createErrorResponse(
+            "Method not allowed",
+            405,
+            "method_not_allowed",
+          );
         }
         const injTeamId = event.queryStringParameters?.teamId;
         if (!injTeamId) {
-          return createErrorResponse("teamId query param required", 422, "validation_error");
+          return createErrorResponse(
+            "teamId query param required",
+            422,
+            "validation_error",
+          );
         }
         const resolvedInjTeamId = await getCoachTeamId(userId, injTeamId);
         if (!resolvedInjTeamId) {
-          return createErrorResponse("Not authorized for this team", 403, "authorization_error");
+          return createErrorResponse(
+            "Not authorized for this team",
+            403,
+            "authorization_error",
+          );
         }
 
         // 1. Get roster player IDs for the team
         const { data: rosterMembers } = await supabaseAdmin
           .from("team_members")
-          .select("user_id, users(id, full_name, first_name, last_name, position)")
+          .select(
+            "user_id, users(id, full_name, first_name, last_name, position)",
+          )
           .eq("team_id", resolvedInjTeamId)
           .in("role", ["player", "athlete"])
           .eq("status", "active");
 
         const playerIds = (rosterMembers || []).map((m) => m.user_id);
-        if (!playerIds.length) {return createSuccessResponse({ injuries: [], summary: { total: 0 } });}
+        if (!playerIds.length) {
+          return createSuccessResponse({ injuries: [], summary: { total: 0 } });
+        }
 
         const playerMap = {};
         for (const m of rosterMembers || []) {
           const u = m.users;
-          playerMap[m.user_id] = u?.full_name || `${u?.first_name ?? ""} ${u?.last_name ?? ""}`.trim() || "Athlete";
+          playerMap[m.user_id] =
+            u?.full_name ||
+            `${u?.first_name ?? ""} ${u?.last_name ?? ""}`.trim() ||
+            "Athlete";
         }
 
         // DUTY-OF-CARE consent exception (deliberate): roster injury/soreness and
@@ -1271,7 +1436,9 @@ async function handleRequest(
         // Active injuries across the roster
         const { data: injuries } = await supabaseAdmin
           .from("athlete_injuries")
-          .select("user_id, injury_location, injury_grade, recovery_status, injury_mechanism, expected_return_date, notes, created_at")
+          .select(
+            "user_id, injury_location, injury_grade, recovery_status, injury_mechanism, expected_return_date, notes, created_at",
+          )
           .in("user_id", playerIds)
           .in("recovery_status", ["active", "recovering", "rehab"])
           .order("created_at", { ascending: false });
@@ -1280,7 +1447,9 @@ async function handleRequest(
         const todayStr = new Date().toISOString().slice(0, 10);
         const { data: wellnessRows } = await supabaseAdmin
           .from("daily_wellness_checkin")
-          .select("user_id, muscle_soreness, soreness_areas, calculated_readiness")
+          .select(
+            "user_id, muscle_soreness, soreness_areas, calculated_readiness",
+          )
           .in("user_id", playerIds)
           .eq("checkin_date", todayStr);
 
@@ -1306,7 +1475,12 @@ async function handleRequest(
         // Athletes with high soreness today but no formal injury record
         const injuredIds = new Set((injuries || []).map((i) => i.user_id));
         const tightnessFlags = (wellnessRows || [])
-          .filter((w) => !injuredIds.has(w.user_id) && w.muscle_soreness >= 6 && (w.soreness_areas || []).length > 0)
+          .filter(
+            (w) =>
+              !injuredIds.has(w.user_id) &&
+              w.muscle_soreness >= 6 &&
+              (w.soreness_areas || []).length > 0,
+          )
           .map((w) => ({
             athleteId: w.user_id,
             athleteName: playerMap[w.user_id] ?? "Athlete",
@@ -1321,16 +1495,28 @@ async function handleRequest(
             todayReadiness: w.calculated_readiness,
           }));
 
-        const GRADE_ORDER = { severe: 0, "Grade 3": 0, moderate: 1, "Grade 2": 1, minor: 2, "Grade 1": 2 };
-        const all = [...injuryReport, ...tightnessFlags]
-          .sort((a, b) => (GRADE_ORDER[a.grade] ?? 3) - (GRADE_ORDER[b.grade] ?? 3));
+        const GRADE_ORDER = {
+          severe: 0,
+          "Grade 3": 0,
+          moderate: 1,
+          "Grade 2": 1,
+          minor: 2,
+          "Grade 1": 2,
+        };
+        const all = [...injuryReport, ...tightnessFlags].sort(
+          (a, b) => (GRADE_ORDER[a.grade] ?? 3) - (GRADE_ORDER[b.grade] ?? 3),
+        );
 
         return createSuccessResponse({
           injuries: all,
           summary: {
             total: all.length,
-            severe: all.filter((i) => i.grade === "severe" || i.grade === "Grade 3").length,
-            moderate: all.filter((i) => i.grade === "moderate" || i.grade === "Grade 2").length,
+            severe: all.filter(
+              (i) => i.grade === "severe" || i.grade === "Grade 3",
+            ).length,
+            moderate: all.filter(
+              (i) => i.grade === "moderate" || i.grade === "Grade 2",
+            ).length,
             selfReports: tightnessFlags.length,
             checkinDate: todayStr,
           },
@@ -1341,15 +1527,27 @@ async function handleRequest(
         // Per-athlete training cycle summary for the coach: current phase, ACWR,
         // readiness trend (last 7 days), days to next event.
         if (event.httpMethod !== "GET") {
-          return createErrorResponse("Method not allowed", 405, "method_not_allowed");
+          return createErrorResponse(
+            "Method not allowed",
+            405,
+            "method_not_allowed",
+          );
         }
         const tcTeamId = event.queryStringParameters?.teamId;
         if (!tcTeamId) {
-          return createErrorResponse("teamId query param required", 422, "validation_error");
+          return createErrorResponse(
+            "teamId query param required",
+            422,
+            "validation_error",
+          );
         }
         const resolvedTcTeamId = await getCoachTeamId(userId, tcTeamId);
         if (!resolvedTcTeamId) {
-          return createErrorResponse("Not authorized for this team", 403, "authorization_error");
+          return createErrorResponse(
+            "Not authorized for this team",
+            403,
+            "authorization_error",
+          );
         }
 
         const { data: tcRoster } = await supabaseAdmin
@@ -1360,18 +1558,25 @@ async function handleRequest(
           .eq("status", "active");
 
         const tcPlayerIds = (tcRoster || []).map((m) => m.user_id);
-        if (!tcPlayerIds.length) {return createSuccessResponse({ athletes: [] });}
+        if (!tcPlayerIds.length) {
+          return createSuccessResponse({ athletes: [] });
+        }
 
         const tcPlayerMap = {};
         for (const m of tcRoster || []) {
           const u = m.users;
-          tcPlayerMap[m.user_id] = u?.full_name || `${u?.first_name ?? ""} ${u?.last_name ?? ""}`.trim() || "Athlete";
+          tcPlayerMap[m.user_id] =
+            u?.full_name ||
+            `${u?.first_name ?? ""} ${u?.last_name ?? ""}`.trim() ||
+            "Athlete";
         }
 
         // Last 7 days readiness per athlete. Duty-of-care exception (see
         // /roster/injuries above): shown to the athlete's own staff regardless of
         // performance-sharing, scoped by the team membership filter above.
-        const since7 = new Date(Date.now() - 7 * 86_400_000).toISOString().slice(0, 10);
+        const since7 = new Date(Date.now() - 7 * 86_400_000)
+          .toISOString()
+          .slice(0, 10);
         const { data: readinessRows } = await supabaseAdmin
           .from("readiness_scores")
           .select("user_id, score, computed_at")
@@ -1381,7 +1586,9 @@ async function handleRequest(
 
         const readinessByPlayer = {};
         for (const r of readinessRows || []) {
-          if (!readinessByPlayer[r.user_id]) {readinessByPlayer[r.user_id] = [];}
+          if (!readinessByPlayer[r.user_id]) {
+            readinessByPlayer[r.user_id] = [];
+          }
           readinessByPlayer[r.user_id].push(r.score);
         }
 
@@ -1394,7 +1601,9 @@ async function handleRequest(
           .eq("protocol_date", todayStr2);
 
         const protocolMap = {};
-        for (const p of protocols || []) {protocolMap[p.user_id] = p;}
+        for (const p of protocols || []) {
+          protocolMap[p.user_id] = p;
+        }
 
         // Upcoming events (all athletes share team events via athlete_events — use team_events)
         const { data: upcomingEvents } = await supabaseAdmin
@@ -1411,7 +1620,9 @@ async function handleRequest(
 
         const athletes = tcPlayerIds.map((pid) => {
           const scores = readinessByPlayer[pid] ?? [];
-          const avgReadiness = scores.length ? Math.round(scores.reduce((s, v) => s + v, 0) / scores.length) : null;
+          const avgReadiness = scores.length
+            ? Math.round(scores.reduce((s, v) => s + v, 0) / scores.length)
+            : null;
           const latestReadiness = scores[0] ?? null;
           const protocol = protocolMap[pid];
           return {
@@ -1427,17 +1638,23 @@ async function handleRequest(
 
         return createSuccessResponse({
           athletes,
-          nextTeamEvent: nextEvent ? {
-            name: nextEvent.name,
-            type: nextEvent.event_type,
-            daysAway: daysToEvent,
-          } : null,
+          nextTeamEvent: nextEvent
+            ? {
+                name: nextEvent.name,
+                type: nextEvent.event_type,
+                daysAway: daysToEvent,
+              }
+            : null,
         });
       }
 
       case "/health":
         if (event.httpMethod !== "GET") {
-          return createErrorResponse("Method not allowed", 405, "method_not_allowed");
+          return createErrorResponse(
+            "Method not allowed",
+            405,
+            "method_not_allowed",
+          );
         }
         return createSuccessResponse({
           status: "healthy",
@@ -1483,15 +1700,16 @@ async function handleRequest(
 }
 
 const handler = async (event, context) => {
-  const rateLimitType = event.httpMethod === "GET"
-    ? "READ"
-    : event.httpMethod === "DELETE"
-      ? "DELETE"
-      : "UPDATE";
+  const rateLimitType =
+    event.httpMethod === "GET"
+      ? "READ"
+      : event.httpMethod === "DELETE"
+        ? "DELETE"
+        : "UPDATE";
   return baseHandler(event, context, {
     functionName: "Coach",
     allowedMethods: ["GET", "POST", "PUT", "DELETE"],
-rateLimitType,
+    rateLimitType,
     requireAuth: true,
     handler: async (event, _context, { userId, requestId, correlationId }) => {
       const requestLogger = logger.child(

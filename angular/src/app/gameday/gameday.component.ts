@@ -38,7 +38,12 @@ import { TournamentPlanBlock } from "../core/models/tournament-plan.models";
 @Component({
   selector: "app-gameday",
   standalone: true,
-  imports: [AvatarComponent, SkeletonComponent, RouterLink, LucideAngularModule],
+  imports: [
+    AvatarComponent,
+    SkeletonComponent,
+    RouterLink,
+    LucideAngularModule,
+  ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: "./gameday.component.html",
@@ -63,7 +68,9 @@ export class GamedayComponent {
    * hasn't entered real kickoff times yet (Tournament Mode replaces this once
    * they have). */
   readonly multiGame = computed(
-    () => (this.nextEvent()?.expectedGameCount ?? 0) > 1 && !this.tournamentPlan.isTournamentDay(),
+    () =>
+      (this.nextEvent()?.expectedGameCount ?? 0) > 1 &&
+      !this.tournamentPlan.isTournamentDay(),
   );
   readonly warmupNote = TOURNAMENT_DAY.note;
 
@@ -102,12 +109,20 @@ export class GamedayComponent {
     const r = (w.reason ?? "").toLowerCase();
     if (w.heatLoadFactor > 1 || /too hot|feels-like.*hot|heat/.test(r))
       return { icon: "flame", band: "danger", label: "heat" };
-    if (/storm|lightning/.test(r)) return { icon: "cloud-rain", band: "danger", label: "storm" };
+    if (/storm|lightning/.test(r))
+      return { icon: "cloud-rain", band: "danger", label: "storm" };
     if (/warm/.test(r)) return { icon: "sun", band: "caution", label: "warm" };
-    if (/cold/.test(r)) return { icon: "cloud-rain", band: "info", label: "cold" };
-    if (/wind/.test(r)) return { icon: "cloud-rain", band: "info", label: "wind" };
-    if (/rain|wet/.test(r)) return { icon: "cloud-rain", band: "info", label: "wet" };
-    return { icon: "sun", band: null as string | null, label: null as string | null };
+    if (/cold/.test(r))
+      return { icon: "cloud-rain", band: "info", label: "cold" };
+    if (/wind/.test(r))
+      return { icon: "cloud-rain", band: "info", label: "wind" };
+    if (/rain|wet/.test(r))
+      return { icon: "cloud-rain", band: "info", label: "wet" };
+    return {
+      icon: "sun",
+      band: null as string | null,
+      label: null as string | null,
+    };
   });
 
   readonly reasoning = computed(
@@ -132,7 +147,9 @@ export class GamedayComponent {
   // V2.0 Tournament Mode
   // ---------------------------------------------------------------------------
 
-  readonly timelineBlocks = computed(() => this.tournamentPlan.plan()?.blocks ?? []);
+  readonly timelineBlocks = computed(
+    () => this.tournamentPlan.plan()?.blocks ?? [],
+  );
 
   /** Index of the next block that hasn't started yet, for "you are here" styling. */
   readonly nextBlockIndex = computed(() => {
@@ -157,7 +174,9 @@ export class GamedayComponent {
     if (!this.bulkKickoffInput()) {
       const existing = this.eventGames.sortedGames();
       if (existing.length > 0) {
-        this.bulkKickoffInput.set(existing.map((g) => g.kickoffTime.slice(0, 5)).join(", "));
+        this.bulkKickoffInput.set(
+          existing.map((g) => g.kickoffTime.slice(0, 5)).join(", "),
+        );
       }
     }
   }
@@ -171,12 +190,16 @@ export class GamedayComponent {
       .map((t) => t.trim())
       .filter(Boolean);
     if (times.length === 0) {
-      this.bulkError.set("Enter at least one kickoff time (e.g. 11:00, 12:30).");
+      this.bulkError.set(
+        "Enter at least one kickoff time (e.g. 11:00, 12:30).",
+      );
       return;
     }
     const timePattern = /^\d{1,2}:\d{2}$/;
     if (times.some((t) => !timePattern.test(t))) {
-      this.bulkError.set("Times must be HH:MM, comma-separated (e.g. 11:00, 12:30, 15:30).");
+      this.bulkError.set(
+        "Times must be HH:MM, comma-separated (e.g. 11:00, 12:30, 15:30).",
+      );
       return;
     }
     const gameDate = ev.startsAt.slice(0, 10);
@@ -193,7 +216,9 @@ export class GamedayComponent {
       );
       this.showScheduleEditor.set(false);
     } catch (err) {
-      this.bulkError.set(err instanceof Error ? err.message : "Could not save the schedule");
+      this.bulkError.set(
+        err instanceof Error ? err.message : "Could not save the schedule",
+      );
       this.logger.error("event_games_bulk_save_failed", err);
     } finally {
       this.bulkSaving.set(false);
@@ -204,14 +229,12 @@ export class GamedayComponent {
   readonly hydrationL = computed(() => (this.hydrationMl() / 1000).toFixed(1));
   addHydration(ml: number): void {
     this.hydrationMl.update((v) => v + ml);
-    this.api
-      .post("/api/hydration/log", { amount: ml })
-      .subscribe({
-        // Roll back the optimistic total if the log didn't persist.
-        error: (e) => {
-          this.hydrationMl.update((v) => v - ml);
-          this.logger.error("hydration_log_failed", e);
-        },
-      });
+    this.api.post("/api/hydration/log", { amount: ml }).subscribe({
+      // Roll back the optimistic total if the log didn't persist.
+      error: (e) => {
+        this.hydrationMl.update((v) => v - ml);
+        this.logger.error("hydration_log_failed", e);
+      },
+    });
   }
 }

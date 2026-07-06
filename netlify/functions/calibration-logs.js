@@ -1,5 +1,8 @@
 import { baseHandler } from "./utils/base-handler.js";
-import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
+import {
+  createSuccessResponse,
+  createErrorResponse,
+} from "./utils/error-handler.js";
 import { supabaseAdmin } from "./supabase-client.js";
 import { getUserRole } from "./utils/authorization-guard.js";
 import { hasAnyRole, LOAD_MANAGEMENT_ACCESS_ROLES } from "./utils/role-sets.js";
@@ -102,13 +105,14 @@ async function verifyAthleteAccess(requestUserId, athleteId) {
     return { authorized: false };
   }
 
-  const { data: requesterMembership, error: requesterError } = await supabaseAdmin
-    .from("team_members")
-    .select("team_id")
-    .eq("user_id", requestUserId)
-    .eq("status", "active")
-    .limit(1)
-    .maybeSingle();
+  const { data: requesterMembership, error: requesterError } =
+    await supabaseAdmin
+      .from("team_members")
+      .select("team_id")
+      .eq("user_id", requestUserId)
+      .eq("status", "active")
+      .limit(1)
+      .maybeSingle();
 
   if (requesterError || !requesterMembership?.team_id) {
     return { authorized: false };
@@ -126,7 +130,9 @@ async function verifyAthleteAccess(requestUserId, athleteId) {
     return { authorized: false };
   }
 
-  return { authorized: athleteMembership.team_id === requesterMembership.team_id };
+  return {
+    authorized: athleteMembership.team_id === requesterMembership.team_id,
+  };
 }
 
 function validateRecommendationPayload(data) {
@@ -168,7 +174,10 @@ function validateOutcomePayload(data) {
   if (!isValidId(data.athleteId)) {
     return "athleteId must be a non-empty alphanumeric identifier";
   }
-  if (typeof data.timestamp !== "string" || Number.isNaN(new Date(data.timestamp).getTime())) {
+  if (
+    typeof data.timestamp !== "string" ||
+    Number.isNaN(new Date(data.timestamp).getTime())
+  ) {
     return "timestamp must be a valid ISO date-time string";
   }
   if (data.outcomes !== undefined && !isPlainObject(data.outcomes)) {
@@ -233,13 +242,9 @@ async function logOutcome(userId, data, log = logger) {
       .single();
 
     if (findError && findError.code !== "PGRST116") {
-      log.error(
-        "calibration_log_lookup_failed",
-        findError,
-        {
-          user_id: athleteId,
-        },
-      );
+      log.error("calibration_log_lookup_failed", findError, {
+        user_id: athleteId,
+      });
       throw findError;
     }
 
@@ -262,12 +267,12 @@ async function logOutcome(userId, data, log = logger) {
         .select()
         .single();
 
-        if (error) {
-          log.error("calibration_log_outcome_insert_failed", error, {
-            user_id: athleteId,
-          });
-          throw error;
-        }
+      if (error) {
+        log.error("calibration_log_outcome_insert_failed", error, {
+          user_id: athleteId,
+        });
+        throw error;
+      }
 
       return {
         id: result.id,
@@ -292,12 +297,12 @@ async function logOutcome(userId, data, log = logger) {
       .select()
       .single();
 
-        if (error) {
-          log.error("calibration_log_outcome_update_failed", error, {
-            user_id: athleteId,
-          });
-          throw error;
-        }
+    if (error) {
+      log.error("calibration_log_outcome_update_failed", error, {
+        user_id: athleteId,
+      });
+      throw error;
+    }
 
     return {
       id: result.id,
@@ -325,11 +330,7 @@ async function getAthleteStats(athleteId, log = logger) {
       .order("timestamp", { ascending: false });
 
     if (error) {
-      log.error(
-        "calibration_logs_fetch_failed",
-        error,
-        { user_id: athleteId },
-      );
+      log.error("calibration_logs_fetch_failed", error, { user_id: athleteId });
       throw error;
     }
 
@@ -429,11 +430,9 @@ async function getPresetStats(presetId, log = logger) {
       .order("timestamp", { ascending: false });
 
     if (error) {
-      log.error(
-        "calibration_preset_logs_fetch_failed",
-        error,
-        { preset_id: presetId },
-      );
+      log.error("calibration_preset_logs_fetch_failed", error, {
+        preset_id: presetId,
+      });
       throw error;
     }
 
@@ -532,9 +531,67 @@ const handler = async (event, context) => {
         if (event.httpMethod === "POST") {
           // Handle POST /api/calibration-logs/outcome
           if (path.includes("/outcome")) {
-          let outcomeData;
+            let outcomeData;
+            try {
+              outcomeData = parseJsonObjectBody(event.body);
+            } catch (error) {
+              if (error?.message === "Request body must be an object") {
+                return createErrorResponse(
+                  "Request body must be an object",
+                  422,
+                  "validation_error",
+                  requestId,
+                );
+              }
+              return createErrorResponse(
+                "Invalid JSON in request body",
+                400,
+                "invalid_json",
+                requestId,
+              );
+            }
+
+            // Default to the authenticated athlete for self-logging (see POST handler below).
+            if (!outcomeData.athleteId) {
+              outcomeData.athleteId = userId;
+            }
+
+            const outcomeValidationError = validateOutcomePayload(outcomeData);
+            if (outcomeValidationError) {
+              return createErrorResponse(
+                outcomeValidationError,
+                422,
+                "validation_error",
+                requestId,
+              );
+            }
+
+            const access = await verifyAthleteAccess(
+              userId,
+              outcomeData.athleteId,
+              requestLogger,
+            );
+            if (!access.authorized) {
+              return createErrorResponse(
+                "Not authorized to log outcomes for this athlete",
+                403,
+                "authorization_error",
+                requestId,
+              );
+            }
+
+            const result = await logOutcome(userId, outcomeData, requestLogger);
+            return createSuccessResponse(
+              result,
+              requestId,
+              "Outcome logged successfully",
+            );
+          }
+
+          // Handle POST /api/calibration-logs (log recommendation)
+          let recommendationData;
           try {
-            outcomeData = parseJsonObjectBody(event.body);
+            recommendationData = parseJsonObjectBody(event.body);
           } catch (error) {
             if (error?.message === "Request body must be an object") {
               return createErrorResponse(
@@ -552,15 +609,17 @@ const handler = async (event, context) => {
             );
           }
 
-          // Default to the authenticated athlete for self-logging (see POST handler below).
-          if (!outcomeData.athleteId) {
-            outcomeData.athleteId = userId;
+          // Default to the authenticated athlete for self-logging; coaches still pass
+          // athleteId explicitly to log a recommendation for one of their athletes.
+          if (!recommendationData.athleteId) {
+            recommendationData.athleteId = userId;
           }
 
-          const outcomeValidationError = validateOutcomePayload(outcomeData);
-          if (outcomeValidationError) {
+          const recommendationValidationError =
+            validateRecommendationPayload(recommendationData);
+          if (recommendationValidationError) {
             return createErrorResponse(
-              outcomeValidationError,
+              recommendationValidationError,
               422,
               "validation_error",
               requestId,
@@ -569,145 +628,85 @@ const handler = async (event, context) => {
 
           const access = await verifyAthleteAccess(
             userId,
-            outcomeData.athleteId,
+            recommendationData.athleteId,
             requestLogger,
           );
           if (!access.authorized) {
             return createErrorResponse(
-              "Not authorized to log outcomes for this athlete",
+              "Not authorized to log recommendations for this athlete",
               403,
               "authorization_error",
               requestId,
             );
           }
 
-          const result = await logOutcome(userId, outcomeData, requestLogger);
+          const result = await logRecommendation(
+            userId,
+            recommendationData,
+            requestLogger,
+          );
           return createSuccessResponse(
             result,
             requestId,
-            "Outcome logged successfully",
+            "Recommendation logged successfully",
           );
-        }
-
-        // Handle POST /api/calibration-logs (log recommendation)
-        let recommendationData;
-        try {
-          recommendationData = parseJsonObjectBody(event.body);
-        } catch (error) {
-          if (error?.message === "Request body must be an object") {
-            return createErrorResponse(
-              "Request body must be an object",
-              422,
-              "validation_error",
-              requestId,
-            );
-          }
-          return createErrorResponse(
-            "Invalid JSON in request body",
-            400,
-            "invalid_json",
-            requestId,
-          );
-        }
-
-        // Default to the authenticated athlete for self-logging; coaches still pass
-        // athleteId explicitly to log a recommendation for one of their athletes.
-        if (!recommendationData.athleteId) {
-          recommendationData.athleteId = userId;
-        }
-
-        const recommendationValidationError =
-          validateRecommendationPayload(recommendationData);
-        if (recommendationValidationError) {
-          return createErrorResponse(
-            recommendationValidationError,
-            422,
-            "validation_error",
-            requestId,
-          );
-        }
-
-        const access = await verifyAthleteAccess(
-          userId,
-          recommendationData.athleteId,
-          requestLogger,
-        );
-        if (!access.authorized) {
-          return createErrorResponse(
-            "Not authorized to log recommendations for this athlete",
-            403,
-            "authorization_error",
-            requestId,
-          );
-        }
-
-        const result = await logRecommendation(
-          userId,
-          recommendationData,
-          requestLogger,
-        );
-        return createSuccessResponse(
-          result,
-          requestId,
-          "Recommendation logged successfully",
-        );
         }
 
         // Handle GET requests
         // GET /api/calibration-logs/stats/:athleteId
         if (path.includes("/stats/")) {
-        const athleteId = path.split("/stats/")[1]?.split("/")[0];
-        if (!isValidId(athleteId)) {
-          return createErrorResponse(
-            "athleteId must be a non-empty alphanumeric identifier",
-            422,
-            "validation_error",
-            requestId,
-          );
-        }
+          const athleteId = path.split("/stats/")[1]?.split("/")[0];
+          if (!isValidId(athleteId)) {
+            return createErrorResponse(
+              "athleteId must be a non-empty alphanumeric identifier",
+              422,
+              "validation_error",
+              requestId,
+            );
+          }
 
-        const access = await verifyAthleteAccess(
-          userId,
-          athleteId,
-          requestLogger,
-        );
-        if (!access.authorized) {
-          return createErrorResponse(
-            "Not authorized to view calibration stats for this athlete",
-            403,
-            "authorization_error",
-            requestId,
+          const access = await verifyAthleteAccess(
+            userId,
+            athleteId,
+            requestLogger,
           );
-        }
+          if (!access.authorized) {
+            return createErrorResponse(
+              "Not authorized to view calibration stats for this athlete",
+              403,
+              "authorization_error",
+              requestId,
+            );
+          }
 
-        const result = await getAthleteStats(athleteId, requestLogger);
-        return createSuccessResponse(result, requestId);
+          const result = await getAthleteStats(athleteId, requestLogger);
+          return createSuccessResponse(result, requestId);
         }
 
         // GET /api/calibration-logs/preset-stats/:presetId
         if (path.includes("/preset-stats/")) {
-        const presetId = path.split("/preset-stats/")[1]?.split("/")[0];
-        if (!isValidId(presetId)) {
-          return createErrorResponse(
-            "presetId must be a non-empty alphanumeric identifier",
-            422,
-            "validation_error",
-            requestId,
-          );
-        }
+          const presetId = path.split("/preset-stats/")[1]?.split("/")[0];
+          if (!isValidId(presetId)) {
+            return createErrorResponse(
+              "presetId must be a non-empty alphanumeric identifier",
+              422,
+              "validation_error",
+              requestId,
+            );
+          }
 
-        const role = await getUserRole(userId);
-        if (!hasAnyRole(role, LOAD_MANAGEMENT_ACCESS_ROLES)) {
-          return createErrorResponse(
-            "Not authorized to view preset calibration stats",
-            403,
-            "authorization_error",
-            requestId,
-          );
-        }
+          const role = await getUserRole(userId);
+          if (!hasAnyRole(role, LOAD_MANAGEMENT_ACCESS_ROLES)) {
+            return createErrorResponse(
+              "Not authorized to view preset calibration stats",
+              403,
+              "authorization_error",
+              requestId,
+            );
+          }
 
-        const result = await getPresetStats(presetId, requestLogger);
-        return createSuccessResponse(result, requestId);
+          const result = await getPresetStats(presetId, requestLogger);
+          return createSuccessResponse(result, requestId);
         }
         return createErrorResponse(
           "Endpoint not found",
@@ -716,15 +715,11 @@ const handler = async (event, context) => {
           requestId,
         );
       } catch (error) {
-        requestLogger.error(
-          "calibration_logs_handler_failed",
-          error,
-          {
-            http_method: event.httpMethod,
-            path,
-            user_id: userId,
-          },
-        );
+        requestLogger.error("calibration_logs_handler_failed", error, {
+          http_method: event.httpMethod,
+          path,
+          user_id: userId,
+        });
         if (
           error?.message?.includes("must be") ||
           error?.message?.includes("Request body must be an object")

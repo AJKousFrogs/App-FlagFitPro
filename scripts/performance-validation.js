@@ -23,18 +23,59 @@ const CONFIG = {
   },
   consentViews: ["v_load_monitoring_consent", "v_workout_logs_consent"],
   consentJoinTables: [
-    { table: "team_sharing_settings", columns: ["user_id", "team_id", "performance_sharing_enabled"] },
-    { table: "team_members", columns: ["user_id", "team_id", "role", "status"] },
-    { table: "privacy_settings", columns: ["user_id", "performance_sharing_default"] },
+    {
+      table: "team_sharing_settings",
+      columns: ["user_id", "team_id", "performance_sharing_enabled"],
+    },
+    {
+      table: "team_members",
+      columns: ["user_id", "team_id", "role", "status"],
+    },
+    {
+      table: "privacy_settings",
+      columns: ["user_id", "performance_sharing_default"],
+    },
     { table: "load_monitoring", columns: ["player_id", "calculated_at"] },
     { table: "workout_logs", columns: ["player_id", "created_at"] },
   ],
   recommendedIndexes: [
-    { name: "idx_team_sharing_settings_consent_lookup", table: "team_sharing_settings", columns: ["user_id", "team_id"], where: "performance_sharing_enabled = true", reason: "Fast consent lookup for coach queries" },
-    { name: "idx_team_members_active_coaches", table: "team_members", columns: ["team_id", "user_id"], where: "role IN ('coach', 'assistant_coach', 'head_coach', 'admin') AND status = 'active'", reason: "Fast coach membership lookup" },
-    { name: "idx_load_monitoring_player_date", table: "load_monitoring", columns: ["player_id", "calculated_at DESC"], reason: "Fast player load history queries" },
-    { name: "idx_workout_logs_player_date", table: "workout_logs", columns: ["player_id", "created_at DESC"], reason: "Fast player workout history queries" },
-    { name: "idx_privacy_settings_sharing_defaults", table: "privacy_settings", columns: ["user_id", "performance_sharing_default", "health_sharing_default"], reason: "Fast privacy settings lookup" },
+    {
+      name: "idx_team_sharing_settings_consent_lookup",
+      table: "team_sharing_settings",
+      columns: ["user_id", "team_id"],
+      where: "performance_sharing_enabled = true",
+      reason: "Fast consent lookup for coach queries",
+    },
+    {
+      name: "idx_team_members_active_coaches",
+      table: "team_members",
+      columns: ["team_id", "user_id"],
+      where:
+        "role IN ('coach', 'assistant_coach', 'head_coach', 'admin') AND status = 'active'",
+      reason: "Fast coach membership lookup",
+    },
+    {
+      name: "idx_load_monitoring_player_date",
+      table: "load_monitoring",
+      columns: ["player_id", "calculated_at DESC"],
+      reason: "Fast player load history queries",
+    },
+    {
+      name: "idx_workout_logs_player_date",
+      table: "workout_logs",
+      columns: ["player_id", "created_at DESC"],
+      reason: "Fast player workout history queries",
+    },
+    {
+      name: "idx_privacy_settings_sharing_defaults",
+      table: "privacy_settings",
+      columns: [
+        "user_id",
+        "performance_sharing_default",
+        "health_sharing_default",
+      ],
+      reason: "Fast privacy settings lookup",
+    },
   ],
 };
 
@@ -61,7 +102,9 @@ async function main() {
   const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
   if (!supabaseUrl || !supabaseKey) {
-    console.error("❌ ERROR: SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY must be set");
+    console.error(
+      "❌ ERROR: SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY must be set",
+    );
     process.exit(1);
   }
 
@@ -109,7 +152,8 @@ async function runExplainAnalyze(supabase) {
       }
 
       const plan = data?.[0]?.["QUERY PLAN"]?.[0] || data?.[0];
-      const executionTime = plan?.["Execution Time"] || plan?.["Planning Time"] || 0;
+      const executionTime =
+        plan?.["Execution Time"] || plan?.["Planning Time"] || 0;
       const planningTime = plan?.["Planning Time"] || 0;
       const totalTime = executionTime + planningTime;
 
@@ -126,16 +170,22 @@ async function runExplainAnalyze(supabase) {
       results.explainAnalyze.push(result);
 
       if (result.passed) {
-        console.log(`   ✅ ${viewName}: ${totalTime.toFixed(2)}ms (target: ${CONFIG.targets.consentViewRead}ms)`);
+        console.log(
+          `   ✅ ${viewName}: ${totalTime.toFixed(2)}ms (target: ${CONFIG.targets.consentViewRead}ms)`,
+        );
         results.passed++;
       } else {
-        console.log(`   ❌ ${viewName}: ${totalTime.toFixed(2)}ms EXCEEDS target ${CONFIG.targets.consentViewRead}ms`);
+        console.log(
+          `   ❌ ${viewName}: ${totalTime.toFixed(2)}ms EXCEEDS target ${CONFIG.targets.consentViewRead}ms`,
+        );
         results.failed++;
       }
 
       const planStr = JSON.stringify(plan);
       if (planStr.includes("Seq Scan") && !planStr.includes("Index")) {
-        console.log(`   ⚠️  Sequential scan detected - consider adding indexes`);
+        console.log(
+          `   ⚠️  Sequential scan detected - consider adding indexes`,
+        );
         results.warnings++;
       }
     } catch (err) {
@@ -193,10 +243,14 @@ async function reviewIndexes(supabase) {
     results.indexReview.push(result);
 
     if (hasIndex) {
-      console.log(`   ✅ ${rec.table}: Index exists for [${rec.columns.join(", ")}]`);
+      console.log(
+        `   ✅ ${rec.table}: Index exists for [${rec.columns.join(", ")}]`,
+      );
       results.passed++;
     } else {
-      console.log(`   ⚠️  ${rec.table}: Missing index for [${rec.columns.join(", ")}]`);
+      console.log(
+        `   ⚠️  ${rec.table}: Missing index for [${rec.columns.join(", ")}]`,
+      );
       console.log(`      Reason: ${rec.reason}`);
       results.warnings++;
     }
@@ -222,7 +276,10 @@ async function testCoachDashboardLoad(supabase, playerCount) {
 
   const startTime = Date.now();
   try {
-    const { data, error } = await supabase.from("v_load_monitoring_consent").select("*").limit(playerCount);
+    const { data, error } = await supabase
+      .from("v_load_monitoring_consent")
+      .select("*")
+      .limit(playerCount);
 
     const duration = Date.now() - startTime;
     const target = CONFIG.targets.batchPlayerRead * (playerCount / 20);
@@ -239,10 +296,14 @@ async function testCoachDashboardLoad(supabase, playerCount) {
     results.loadTests.push(result);
 
     if (result.passed) {
-      console.log(`   ✅ ${playerCount} players: ${duration}ms (target: ${target}ms)`);
+      console.log(
+        `   ✅ ${playerCount} players: ${duration}ms (target: ${target}ms)`,
+      );
       results.passed++;
     } else {
-      console.log(`   ❌ ${playerCount} players: ${duration}ms EXCEEDS target ${target}ms`);
+      console.log(
+        `   ❌ ${playerCount} players: ${duration}ms EXCEEDS target ${target}ms`,
+      );
       results.failed++;
     }
   } catch (err) {
@@ -278,10 +339,14 @@ async function testPlayerDashboardLoad(supabase) {
     results.loadTests.push(result);
 
     if (result.passed) {
-      console.log(`   ✅ Player dashboard: ${duration}ms (target: ${target}ms)`);
+      console.log(
+        `   ✅ Player dashboard: ${duration}ms (target: ${target}ms)`,
+      );
       results.passed++;
     } else {
-      console.log(`   ❌ Player dashboard: ${duration}ms EXCEEDS target ${target}ms`);
+      console.log(
+        `   ❌ Player dashboard: ${duration}ms EXCEEDS target ${target}ms`,
+      );
       results.failed++;
     }
   } catch (err) {
@@ -320,7 +385,9 @@ async function testDeletionQueueProcessing(supabase) {
       console.log(`   ✅ Deletion queue: ${duration}ms (target: ${target}ms)`);
       results.passed++;
     } else {
-      console.log(`   ❌ Deletion queue: ${duration}ms EXCEEDS target ${target}ms`);
+      console.log(
+        `   ❌ Deletion queue: ${duration}ms EXCEEDS target ${target}ms`,
+      );
       results.failed++;
     }
   } catch (err) {
@@ -336,7 +403,10 @@ function generateRecommendations() {
       type: "index",
       priority: "high",
       message: `Add ${missingIndexes.length} missing indexes for consent join patterns`,
-      details: missingIndexes.map((idx) => ({ sql: generateIndexSQL(idx), reason: idx.reason })),
+      details: missingIndexes.map((idx) => ({
+        sql: generateIndexSQL(idx),
+        reason: idx.reason,
+      })),
     });
   }
 
@@ -346,7 +416,11 @@ function generateRecommendations() {
       type: "query",
       priority: "high",
       message: `${slowQueries.length} consent views exceed performance targets`,
-      details: slowQueries.map((q) => ({ view: q.view, actual: q.totalTimeMs, target: q.target })),
+      details: slowQueries.map((q) => ({
+        view: q.view,
+        actual: q.totalTimeMs,
+        target: q.target,
+      })),
     });
   }
 
@@ -356,7 +430,11 @@ function generateRecommendations() {
       type: "load",
       priority: "medium",
       message: `${failedLoadTests.length} load tests exceeded targets`,
-      details: failedLoadTests.map((t) => ({ test: t.test, actual: t.duration, target: t.target })),
+      details: failedLoadTests.map((t) => ({
+        test: t.test,
+        actual: t.duration,
+        target: t.target,
+      })),
     });
   }
 }
@@ -380,8 +458,15 @@ function printResults() {
   if (results.recommendations.length > 0) {
     console.log("📋 RECOMMENDATIONS\n");
     for (const rec of results.recommendations) {
-      const priority = rec.priority === "high" ? "🔴" : rec.priority === "medium" ? "🟡" : "🟢";
-      console.log(`   ${priority} [${rec.priority.toUpperCase()}] ${rec.message}`);
+      const priority =
+        rec.priority === "high"
+          ? "🔴"
+          : rec.priority === "medium"
+            ? "🟡"
+            : "🟢";
+      console.log(
+        `   ${priority} [${rec.priority.toUpperCase()}] ${rec.message}`,
+      );
       if (rec.type === "index") {
         console.log("\n   Suggested index migrations:\n");
         for (const detail of rec.details) {
@@ -395,15 +480,21 @@ function printResults() {
   console.log("📏 PERFORMANCE TARGETS\n");
   console.log(`   Consent view read:     ${CONFIG.targets.consentViewRead}ms`);
   console.log(`   Dashboard load:        ${CONFIG.targets.dashboardLoad}ms`);
-  console.log(`   Batch player read:     ${CONFIG.targets.batchPlayerRead}ms (per 20 players)`);
-  console.log(`   Deletion processing:   ${CONFIG.targets.deletionQueueProcess}ms`);
+  console.log(
+    `   Batch player read:     ${CONFIG.targets.batchPlayerRead}ms (per 20 players)`,
+  );
+  console.log(
+    `   Deletion processing:   ${CONFIG.targets.deletionQueueProcess}ms`,
+  );
   console.log();
 
   if (results.failed === 0) {
     console.log("✅ ALL PERFORMANCE CHECKS PASSED\n");
   } else {
     console.log("❌ PERFORMANCE VALIDATION FAILED\n");
-    console.log("Review recommendations above and apply suggested optimizations.\n");
+    console.log(
+      "Review recommendations above and apply suggested optimizations.\n",
+    );
   }
 
   if (ciMode) {

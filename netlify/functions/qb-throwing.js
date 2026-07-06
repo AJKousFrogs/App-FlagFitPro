@@ -1,4 +1,3 @@
-
 /**
  * QB Throwing Tracker API
  *
@@ -10,8 +9,15 @@
 
 import { supabaseAdmin } from "./supabase-client.js";
 import { baseHandler } from "./utils/base-handler.js";
-import { createErrorResponse, createSuccessResponse, handleValidationError } from "./utils/error-handler.js";
-import { isValidDateString, parseJsonObjectBody } from "./utils/input-validator.js";
+import {
+  createErrorResponse,
+  createSuccessResponse,
+  handleValidationError,
+} from "./utils/error-handler.js";
+import {
+  isValidDateString,
+  parseJsonObjectBody,
+} from "./utils/input-validator.js";
 import { createLogger } from "./utils/structured-logger.js";
 
 const logger = createLogger({ service: "netlify.qb-throwing" });
@@ -48,7 +54,11 @@ const handler = async (event, context) =>
         return await logThrowingSession(supabaseAdmin, userId, payload);
       } catch (err) {
         logger.error("qb_throwing_error", err, {});
-        return createErrorResponse("Internal server error", 500, "server_error");
+        return createErrorResponse(
+          "Internal server error",
+          500,
+          "server_error",
+        );
       }
     },
   });
@@ -199,7 +209,11 @@ async function getThrowingData(supabase, userId) {
     fatigueLevel: s.fatigue_level,
   }));
 
-  return createSuccessResponse({ progression, weeklyStats: weeklyStats.slice(0, 8), recentSessions });
+  return createSuccessResponse({
+    progression,
+    weeklyStats: weeklyStats.slice(0, 8),
+    recentSessions,
+  });
 }
 
 /**
@@ -232,7 +246,9 @@ async function logThrowingSession(supabase, userId, payload) {
     return handleValidationError("sessionType is required");
   }
   if (!Number.isInteger(totalThrows) || totalThrows < 1 || totalThrows > 1000) {
-    return handleValidationError("totalThrows must be an integer between 1 and 1000");
+    return handleValidationError(
+      "totalThrows must be an integer between 1 and 1000",
+    );
   }
   if (shortThrows !== undefined && !isNonNegativeInteger(shortThrows)) {
     return handleValidationError("shortThrows must be a non-negative integer");
@@ -272,7 +288,9 @@ async function logThrowingSession(supabase, userId, payload) {
     fatigueLevel !== undefined &&
     (!Number.isInteger(fatigueLevel) || fatigueLevel < 1 || fatigueLevel > 10)
   ) {
-    return handleValidationError("fatigueLevel must be an integer between 1 and 10");
+    return handleValidationError(
+      "fatigueLevel must be an integer between 1 and 10",
+    );
   }
 
   const today = sessionDate || new Date().toISOString().split("T")[0];
@@ -370,20 +388,21 @@ async function logThrowingSession(supabase, userId, payload) {
   // training_sessions.throw_au column comment).
   if (totalThrows > 0) {
     const throwAu = Math.round(totalThrows * 0.08 * 100) / 100;
-    await supabase
-      .from("training_sessions")
-      .upsert(
-        {
-          user_id: userId,
-          session_date: today,
-          session_type: "qb_throwing",
-          throw_count: totalThrows,
-          throw_au: throwAu,
-          workload: throwAu,
-          status: "completed",
-        },
-        { onConflict: "user_id,session_date,session_type", ignoreDuplicates: false },
-      );
+    await supabase.from("training_sessions").upsert(
+      {
+        user_id: userId,
+        session_date: today,
+        session_type: "qb_throwing",
+        throw_count: totalThrows,
+        throw_au: throwAu,
+        workload: throwAu,
+        status: "completed",
+      },
+      {
+        onConflict: "user_id,session_date,session_type",
+        ignoreDuplicates: false,
+      },
+    );
   }
 
   return createSuccessResponse(

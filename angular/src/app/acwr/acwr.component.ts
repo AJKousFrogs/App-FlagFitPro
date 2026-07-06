@@ -17,7 +17,8 @@ interface Spark {
   points: string;
   last: { x: number; y: number };
 }
-const clamp = (v: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, v));
+const clamp = (v: number, lo: number, hi: number) =>
+  Math.min(hi, Math.max(lo, v));
 
 /**
  * Load / ACWR — the deep load-monitoring screen. Ported 1:1 from
@@ -44,34 +45,74 @@ export class AcwrComponent {
   readonly chronic = this.acwrSvc.chronicLoad;
   readonly weekly = this.acwrSvc.weeklyProgression;
 
-  readonly monotonyData = signal<{ monotony: number | null; strain: number | null; monotonyRisk: string } | null>(null);
+  readonly monotonyData = signal<{
+    monotony: number | null;
+    strain: number | null;
+    monotonyRisk: string;
+  } | null>(null);
 
   constructor() {
     this.readinessSvc.getHistory("", 28).subscribe();
-    this.api.get<{ monotony: number | null; strain: number | null; monotonyRisk: string }>(
-      API_ENDPOINTS.loadManagement.monotony,
-    ).subscribe({ next: (res) => { if (res?.success && res.data) this.monotonyData.set(res.data); } });
+    this.api
+      .get<{
+        monotony: number | null;
+        strain: number | null;
+        monotonyRisk: string;
+      }>(API_ENDPOINTS.loadManagement.monotony)
+      .subscribe({
+        next: (res) => {
+          if (res?.success && res.data) this.monotonyData.set(res.data);
+        },
+      });
   }
 
-  readonly band = computed<{ label: string; cls: string; verdict: string } | null>(() => {
+  readonly band = computed<{
+    label: string;
+    cls: string;
+    verdict: string;
+  } | null>(() => {
     if (!this.sufficient()) return null;
     const r = this.ratio();
     if (r == null) return null;
-    if (r > 1.5) return { label: "Danger zone", cls: "danger", verdict: "Reduce 20–30%, skip sprints, recover." };
-    if (r > 1.3) return { label: "Elevated", cls: "caution", verdict: "Approaching danger — cut high-intensity 15–20%." };
-    if (r < 0.8) return { label: "Under-training", cls: "caution", verdict: "Building base — add 5–10%/week." };
-    return { label: "Sweet spot", cls: "good", verdict: "Optimal load — lowest injury risk. Keep it here." };
+    if (r > 1.5)
+      return {
+        label: "Danger zone",
+        cls: "danger",
+        verdict: "Reduce 20–30%, skip sprints, recover.",
+      };
+    if (r > 1.3)
+      return {
+        label: "Elevated",
+        cls: "caution",
+        verdict: "Approaching danger — cut high-intensity 15–20%.",
+      };
+    if (r < 0.8)
+      return {
+        label: "Under-training",
+        cls: "caution",
+        verdict: "Building base — add 5–10%/week.",
+      };
+    return {
+      label: "Sweet spot",
+      cls: "good",
+      verdict: "Optimal load — lowest injury risk. Keep it here.",
+    };
   });
 
   readonly chart = computed<Spark | null>(() => {
-    const vals = this.history().map((h) => h.acwr).filter((v) => Number.isFinite(v) && v > 0);
+    const vals = this.history()
+      .map((h) => h.acwr)
+      .filter((v) => Number.isFinite(v) && v > 0);
     if (vals.length < 2) return null;
     const n = vals.length;
     const pts = vals.map((v, i) => ({
       x: +((i / (n - 1)) * 359).toFixed(1),
       y: +clamp(110 - v * 50, 8, 116).toFixed(1),
     }));
-    return { points: pts.map((p) => `${p.x},${p.y}`).join(" "), last: pts[n - 1] };
+    return {
+      points: pts.map((p) => `${p.x},${p.y}`).join(" "),
+      last: pts[n - 1],
+    };
   });
 
   readonly weeklyPct = computed(() => Math.round(this.weekly().changePercent));

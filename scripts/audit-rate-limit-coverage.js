@@ -35,14 +35,17 @@ function isMutating(methods) {
 }
 
 function parseHandlerConfigs(source) {
-  const allowedMatches = [...source.matchAll(/allowedMethods\s*:\s*\[([^\]]+)\]/g)];
+  const allowedMatches = [
+    ...source.matchAll(/allowedMethods\s*:\s*\[([^\]]+)\]/g),
+  ];
 
   return allowedMatches.map((match, index) => {
     const methods = [
       ...match[1].matchAll(/"(GET|POST|PUT|PATCH|DELETE)"/g),
     ].map((methodMatch) => methodMatch[1]);
     const currentIndex = match.index ?? 0;
-    const nextIndex = allowedMatches[index + 1]?.index ?? Number.POSITIVE_INFINITY;
+    const nextIndex =
+      allowedMatches[index + 1]?.index ?? Number.POSITIVE_INFINITY;
     const blockSource = source.slice(currentIndex, nextIndex);
     const rateLiteralMatch = blockSource.match(
       /rateLimitType\s*:\s*"([A-Z_]+)"/,
@@ -87,7 +90,9 @@ function main() {
   for (const item of findings) {
     const wrapped = item.usesBase || item.usesFactory;
     if (!wrapped) {
-      warnings.push(`${item.file}: legacy handler (rate-limit coverage manual)`);
+      warnings.push(
+        `${item.file}: legacy handler (rate-limit coverage manual)`,
+      );
       continue;
     }
 
@@ -114,10 +119,7 @@ function main() {
         );
       }
 
-      if (
-        isMutating(config.allowedMethods) &&
-        config.rateLiteral === "READ"
-      ) {
+      if (isMutating(config.allowedMethods) && config.rateLiteral === "READ") {
         warnings.push(
           `${item.file}: mutating allowedMethods [${config.allowedMethods.join(", ")}] with READ rateLimitType`,
         );

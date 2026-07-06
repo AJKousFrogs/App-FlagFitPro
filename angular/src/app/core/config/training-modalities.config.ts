@@ -68,9 +68,18 @@ export const TRAINING_MODALITIES: Record<string, TrainingModality> = {
     typicalRpe: { min: 4, max: 7 },
     dosing:
       "Capacity/analgesic: 5×30–45s holds ~60–70% MVC, rest 60–120s (Spanish squat, wall-sit ~60°, seated soleus + standing gastroc iso, hamstring-bridge iso, Copenhagen squeeze). Or neural: 3–5×3–6s near-max, rest 30–60s. 3–5×/week (daily ok at low intensity for analgesia); ≥48h between heavy holds, same tendon.",
-    tissuesLoaded: ["patellar_tendon", "achilles_tendon", "soleus", "gastrocnemius", "quadriceps", "hamstring", "adductor"],
+    tissuesLoaded: [
+      "patellar_tendon",
+      "achilles_tendon",
+      "soleus",
+      "gastrocnemius",
+      "quadriceps",
+      "hamstring",
+      "adductor",
+    ],
     recoveryHours: 24,
-    prerequisite: "None — entry rung, always available. Usable through stable non-reactive tendon pain ≤3/10 that isn't worse next morning.",
+    prerequisite:
+      "None — entry rung, always available. Usable through stable non-reactive tendon pain ≤3/10 that isn't worse next morning.",
     loadFactor: 0.8,
   },
   eccentric_tempo: {
@@ -80,9 +89,18 @@ export const TRAINING_MODALITIES: Record<string, TrainingModality> = {
     typicalRpe: { min: 5, max: 8 },
     dosing:
       "Tempo/HSR 3–4×6–8, 3–4s eccentric (tempo squat, RDL, heel-drop calf 3×12–15). Nordic hamstring 1×5→2×8→3×12 over 6–8wk, 2–3×/week. Copenhagen 1×3→3×10. Rest 90–180s; ≥48h same tissue; never the day before high plyo or max-V.",
-    tissuesLoaded: ["hamstring", "quadriceps", "patellar_tendon", "achilles_tendon", "soleus", "gastrocnemius", "adductor"],
+    tissuesLoaded: [
+      "hamstring",
+      "quadriceps",
+      "patellar_tendon",
+      "achilles_tendon",
+      "soleus",
+      "gastrocnemius",
+      "adductor",
+    ],
     recoveryHours: 48,
-    prerequisite: "Pain-free isometric loading at target intensity/ROM ≥1 week; no acute strain in target tissue within 14 days.",
+    prerequisite:
+      "Pain-free isometric loading at target intensity/ROM ≥1 week; no acute strain in target tissue within 14 days.",
     loadFactor: 1.1,
   },
   bodyweight_circuit: {
@@ -92,9 +110,16 @@ export const TRAINING_MODALITIES: Record<string, TrainingModality> = {
     typicalRpe: { min: 4, max: 7 },
     dosing:
       "Intent selects the variant, never a downgrade. Strength: 3–4 rounds RIR 1–2 via tempo+unilateral+leverage (split squat→RFE→single-leg sit-to-stand, single-leg RDL, banded/assisted Nordic, Copenhagen). Conditioning: EMOM/AMRAP 1:1–1:2, 15–25 min. Plyo/iso intents run the EARNED rung with bodyweight. 2–4×/week.",
-    tissuesLoaded: ["quadriceps", "hamstring", "adductor", "soleus", "gastrocnemius"],
+    tissuesLoaded: [
+      "quadriceps",
+      "hamstring",
+      "adductor",
+      "soleus",
+      "gastrocnemius",
+    ],
     recoveryHours: 24,
-    prerequisite: "None — universal fallback when no equipment/facility. Tissue gating + contact cap apply identically; the ladder never stalls for lack of a gym.",
+    prerequisite:
+      "None — universal fallback when no equipment/facility. Tissue gating + contact cap apply identically; the ladder never stalls for lack of a gym.",
     loadFactor: 1.0,
   },
   plyo_bilateral_low: {
@@ -104,9 +129,16 @@ export const TRAINING_MODALITIES: Record<string, TrainingModality> = {
     typicalRpe: { min: 5, max: 7 },
     dosing:
       "Sub-maximal, on grass/turf. Line hops, low hurdle hops ≤15–20cm, submax CMJ to soft landing, snap-downs. NOVICE start 40–50 contacts at 1×/week (stay under the foundation phase cap), build to ~80–100 over weeks; sets of 8–12, rest 60–90s; 2×/week max, ≥48h, ≥48h from lower-body max strength.",
-    tissuesLoaded: ["achilles_tendon", "soleus", "gastrocnemius", "patellar_tendon", "quadriceps"],
+    tissuesLoaded: [
+      "achilles_tendon",
+      "soleus",
+      "gastrocnemius",
+      "patellar_tendon",
+      "quadriceps",
+    ],
     recoveryHours: 48,
-    prerequisite: "4+ weeks eccentric/tempo with no morning tendon stiffness; quiet stick-2s bilateral landing (knee-over-toe, no valgus); pain-free isometrics. Floor of the plyo ladder — earn before ANY pogo.",
+    prerequisite:
+      "4+ weeks eccentric/tempo with no morning tendon stiffness; quiet stick-2s bilateral landing (knee-over-toe, no valgus); pain-free isometrics. Floor of the plyo ladder — earn before ANY pogo.",
     loadFactor: 1.3,
     contactWeight: 1.0,
   },
@@ -117,9 +149,15 @@ export const TRAINING_MODALITIES: Record<string, TrainingModality> = {
     typicalRpe: { min: 5, max: 7 },
     dosing:
       "Stiff-ankle rebound hops, minimal knee bend, short ground contact ('short and stiff'). 4–6×10–15 = 40–90 contacts, rest 60–90s; STOP the set the moment ground-contact lengthens. 2×/week, ≥48h.",
-    tissuesLoaded: ["achilles_tendon", "soleus", "gastrocnemius", "patellar_tendon"],
+    tissuesLoaded: [
+      "achilles_tendon",
+      "soleus",
+      "gastrocnemius",
+      "patellar_tendon",
+    ],
     recoveryHours: 48,
-    prerequisite: "~80 low-plyo contacts pain-free, no next-morning Achilles/soleus stiffness; stiff quiet landings; bilateral calf-raise ≥20 reps.",
+    prerequisite:
+      "~80 low-plyo contacts pain-free, no next-morning Achilles/soleus stiffness; stiff quiet landings; bilateral calf-raise ≥20 reps.",
     loadFactor: 1.3,
     contactWeight: 1.0,
   },
@@ -130,9 +168,16 @@ export const TRAINING_MODALITIES: Record<string, TrainingModality> = {
     typicalRpe: { min: 6, max: 8 },
     dosing:
       "Single-leg stiff rebound hops, stable knee. 3–4×6–8 PER LEG, full rest ~2min; track L/R symmetry. 1×/week, ≥72h. Counts 2× per limb toward the weekly single-leg contact cap (≤400 weighted/wk authoritative — regress when reached).",
-    tissuesLoaded: ["achilles_tendon", "soleus", "gastrocnemius", "patellar_tendon", "adductor"],
+    tissuesLoaded: [
+      "achilles_tendon",
+      "soleus",
+      "gastrocnemius",
+      "patellar_tendon",
+      "adductor",
+    ],
     recoveryHours: 72,
-    prerequisite: "Bilateral pogo clean at full dose ≥2 weeks, pain-free morning; single-leg calf-raise ≥15–20 each side; single-leg landing held 3s; <10% L/R asymmetry.",
+    prerequisite:
+      "Bilateral pogo clean at full dose ≥2 weeks, pain-free morning; single-leg calf-raise ≥15–20 each side; single-leg landing held 3s; <10% L/R asymmetry.",
     loadFactor: 1.6,
     contactWeight: 2.0,
   },
@@ -143,9 +188,18 @@ export const TRAINING_MODALITIES: Record<string, TrainingModality> = {
     typicalRpe: { min: 6, max: 8 },
     dosing:
       "Forward hops, lateral bounds, skaters. 3–4×4–6 PER LEG, controlled landing each rep early; rest 90–120s. 2×/week max, ≥72h. Counts 2× per limb toward the single-leg cap (≤400 weighted/wk).",
-    tissuesLoaded: ["achilles_tendon", "soleus", "gastrocnemius", "patellar_tendon", "quadriceps", "hamstring", "adductor"],
+    tissuesLoaded: [
+      "achilles_tendon",
+      "soleus",
+      "gastrocnemius",
+      "patellar_tendon",
+      "quadriceps",
+      "hamstring",
+      "adductor",
+    ],
     recoveryHours: 72,
-    prerequisite: "Single-leg pogo competency pain-free; bilateral plyo mastery; multidirectional single-leg landing control; no ankle instability; <10% asymmetry; ACLR ≥12 months if applicable.",
+    prerequisite:
+      "Single-leg pogo competency pain-free; bilateral plyo mastery; multidirectional single-leg landing control; no ankle instability; <10% asymmetry; ACLR ≥12 months if applicable.",
     loadFactor: 1.7,
     contactWeight: 2.0,
   },
@@ -156,9 +210,16 @@ export const TRAINING_MODALITIES: Record<string, TrainingModality> = {
     typicalRpe: { min: 7, max: 9 },
     dosing:
       "True high-intensity, capped LOW: ≤40 contacts/session TOTAL, 3–6×4–6, drop 20–40cm (start 20–30), progress by ground-contact/RSI not height. Full rest 2–3min, quality-gated. 1×/week in-season (2× peak only), never consecutive days, never <72h from prior high-impact/max-CNS.",
-    tissuesLoaded: ["achilles_tendon", "soleus", "gastrocnemius", "patellar_tendon", "quadriceps"],
+    tissuesLoaded: [
+      "achilles_tendon",
+      "soleus",
+      "gastrocnemius",
+      "patellar_tendon",
+      "quadriceps",
+    ],
     recoveryHours: 72,
-    prerequisite: "All prior plyo rungs incl. single-leg mastered; ≥12 weeks plyo history; short ground-contact/adequate RSI; ~1.5×BW squat or robust BW equivalent; ACLR ≥12 months; readiness green. Never entered cold — top rung.",
+    prerequisite:
+      "All prior plyo rungs incl. single-leg mastered; ≥12 weeks plyo history; short ground-contact/adequate RSI; ~1.5×BW squat or robust BW equivalent; ACLR ≥12 months; readiness green. Never entered cold — top rung.",
     loadFactor: 2.0,
     contactWeight: 3.0,
   },
@@ -169,9 +230,16 @@ export const TRAINING_MODALITIES: Record<string, TrainingModality> = {
     typicalRpe: { min: 5, max: 7 },
     dosing:
       "Build-ups/strides 6–10×30–60m at 70–90% rising effort, full walk-back rest (~1min/10m). 1–2×/week. The on-ramp that builds high-speed tolerance before any hill or max-V.",
-    tissuesLoaded: ["hamstring", "soleus", "gastrocnemius", "achilles_tendon", "quadriceps"],
+    tissuesLoaded: [
+      "hamstring",
+      "soleus",
+      "gastrocnemius",
+      "achilles_tendon",
+      "quadriceps",
+    ],
     recoveryHours: 48,
-    prerequisite: "General running capacity; pain-free jogging/tempo; hamstring/calf symptom-free; completed dynamic sprint warm-up incl. progressive accelerations.",
+    prerequisite:
+      "General running capacity; pain-free jogging/tempo; hamstring/calf symptom-free; completed dynamic sprint warm-up incl. progressive accelerations.",
     loadFactor: 1.2,
   },
   hill_sprint: {
@@ -181,9 +249,16 @@ export const TRAINING_MODALITIES: Record<string, TrainingModality> = {
     typicalRpe: { min: 7, max: 9 },
     dosing:
       "Gradient 5–12% (default 6–10%). 4–8×20–40m, full recovery (2–3min). 1×/week. Mandatory bridge AFTER flat build-ups, BEFORE flat max-V — incline caps top speed → lower peak hamstring eccentric strain than flat max-V, while overloading accel mechanics.",
-    tissuesLoaded: ["hamstring", "soleus", "gastrocnemius", "achilles_tendon", "glute"],
+    tissuesLoaded: [
+      "hamstring",
+      "soleus",
+      "gastrocnemius",
+      "achilles_tendon",
+      "glute",
+    ],
     recoveryHours: 72,
-    prerequisite: "2–4 weeks flat build-ups pain-free; eccentric-hamstring base (Nordic progressed); no hamstring strain within 21 days; full sprint-specific warm-up; <10% asymmetry.",
+    prerequisite:
+      "2–4 weeks flat build-ups pain-free; eccentric-hamstring base (Nordic progressed); no hamstring strain within 21 days; full sprint-specific warm-up; <10% asymmetry.",
     loadFactor: 1.7,
   },
   sprint_flat_maxv: {
@@ -193,9 +268,16 @@ export const TRAINING_MODALITIES: Record<string, TrainingModality> = {
     typicalRpe: { min: 8, max: 10 },
     dosing:
       "Short max-V: 4–6×20–40m fly/build-to-max, FULL recovery (~1min per 10m, ≥3–4min at true max-V). 1×/week (2× peak). Weekly max-V distance cap ≤600m, +≤10%/wk. Never cold, never <72h from prior high-impact/max-CNS.",
-    tissuesLoaded: ["hamstring", "soleus", "gastrocnemius", "achilles_tendon", "glute"],
+    tissuesLoaded: [
+      "hamstring",
+      "soleus",
+      "gastrocnemius",
+      "achilles_tendon",
+      "glute",
+    ],
     recoveryHours: 72,
-    prerequisite: "Earned via flat build-ups AND hill sprints pain-free ≥3–4 weeks; ≥90% running exposure with no hamstring symptoms; eccentric-hamstring base; <10% asymmetry; readiness green; full warm-up.",
+    prerequisite:
+      "Earned via flat build-ups AND hill sprints pain-free ≥3–4 weeks; ≥90% running exposure with no hamstring symptoms; eccentric-hamstring base; <10% asymmetry; readiness green; full warm-up.",
     loadFactor: 2.0,
   },
 };

@@ -39,16 +39,21 @@ export class NotificationsComponent {
   readonly items = signal<Notif[] | null>(null);
 
   constructor() {
-    this.api.get<{ notifications?: Notif[] } | Notif[]>("/api/notifications").subscribe({
-      next: (res) => {
-        const d = res?.data as { notifications?: Notif[] } | Notif[] | undefined;
-        this.items.set(Array.isArray(d) ? d : (d?.notifications ?? []));
-      },
-      error: (e) => {
-        this.logger.error("notifications_load_failed", e);
-        this.items.set([]);
-      },
-    });
+    this.api
+      .get<{ notifications?: Notif[] } | Notif[]>("/api/notifications")
+      .subscribe({
+        next: (res) => {
+          const d = res?.data as
+            | { notifications?: Notif[] }
+            | Notif[]
+            | undefined;
+          this.items.set(Array.isArray(d) ? d : (d?.notifications ?? []));
+        },
+        error: (e) => {
+          this.logger.error("notifications_load_failed", e);
+          this.items.set([]);
+        },
+      });
   }
 
   markAllRead(): void {

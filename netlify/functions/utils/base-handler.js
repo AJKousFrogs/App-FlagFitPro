@@ -1,6 +1,15 @@
 import crypto from "node:crypto";
-import { checkEnvVars, getSupabaseClient, runWithAuthContext } from "../utils/supabase-client.js";
-import { createErrorResponse, handleServerError, logFunctionCall, getCorsHeaders } from "./error-handler.js";
+import {
+  checkEnvVars,
+  getSupabaseClient,
+  runWithAuthContext,
+} from "../utils/supabase-client.js";
+import {
+  createErrorResponse,
+  handleServerError,
+  logFunctionCall,
+  getCorsHeaders,
+} from "./error-handler.js";
 import { authenticateRequest } from "./auth-helper.js";
 import { applyRateLimit, getRateLimitHeaders } from "./rate-limiter.js";
 import { createLogger, extractCorrelationId } from "./structured-logger.js";
@@ -37,7 +46,7 @@ import { createLogger, extractCorrelationId } from "./structured-logger.js";
  * };
  */
 
-"use strict";
+("use strict");
 
 const logger = createLogger({ service: "netlify.base-handler" });
 
@@ -95,7 +104,8 @@ async function baseHandler(event, context, options = {}) {
   } = options;
 
   // Generate unique request ID for tracking
-  const correlationId = extractCorrelationId(event.headers) || generateRequestId();
+  const correlationId =
+    extractCorrelationId(event.headers) || generateRequestId();
   const requestId = correlationId;
   const corsHeaders = getCorsHeaders(event);
 

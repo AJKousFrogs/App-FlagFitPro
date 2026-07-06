@@ -1,4 +1,3 @@
-
 /**
  * Account Deletion API
  *
@@ -12,7 +11,10 @@
 
 import { baseHandler } from "./utils/base-handler.js";
 
-import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
+import {
+  createSuccessResponse,
+  createErrorResponse,
+} from "./utils/error-handler.js";
 import { getSupabaseClient, supabaseAdmin } from "./supabase-client.js";
 import { parseJsonObjectBody } from "./utils/input-validator.js";
 
@@ -111,11 +113,11 @@ const handler = async (event, context) => {
         // Check for existing pending request
         const { data: existingRequest, error: existingRequestError } =
           await supabase
-          .from("account_deletion_requests")
-          .select("id, status")
-          .eq("user_id", userId)
-          .eq("status", "pending")
-          .maybeSingle();
+            .from("account_deletion_requests")
+            .select("id, status")
+            .eq("user_id", userId)
+            .eq("status", "pending")
+            .maybeSingle();
         if (existingRequestError) {
           return createErrorResponse(
             "Failed to verify existing deletion request",
@@ -175,11 +177,11 @@ const handler = async (event, context) => {
         // Get the pending request
         const { data: pendingRequest, error: pendingRequestError } =
           await supabase
-          .from("account_deletion_requests")
-          .select("id")
-          .eq("user_id", userId)
-          .eq("status", "pending")
-          .maybeSingle();
+            .from("account_deletion_requests")
+            .select("id")
+            .eq("user_id", userId)
+            .eq("status", "pending")
+            .maybeSingle();
         if (pendingRequestError) {
           return createErrorResponse(
             "Failed to retrieve pending deletion request",

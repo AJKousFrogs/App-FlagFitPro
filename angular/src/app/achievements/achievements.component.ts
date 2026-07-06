@@ -21,7 +21,11 @@ interface Achievement {
 }
 interface AchievementsData {
   achievements?: Achievement[];
-  summary?: { totalEarned?: number; totalAvailable?: number; totalPoints?: number };
+  summary?: {
+    totalEarned?: number;
+    totalAvailable?: number;
+    totalPoints?: number;
+  };
 }
 
 /**
@@ -32,7 +36,12 @@ interface AchievementsData {
 @Component({
   selector: "app-achievements",
   standalone: true,
-  imports: [AvatarComponent, SkeletonComponent, RouterLink, LucideAngularModule],
+  imports: [
+    AvatarComponent,
+    SkeletonComponent,
+    RouterLink,
+    LucideAngularModule,
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: "./achievements.component.html",
 })
@@ -46,12 +55,16 @@ export class AchievementsComponent {
    * skeletons so the earned/next-up lists don't flash their empty states. */
   readonly loading = signal(true);
 
-  readonly earned = computed(() => (this.data()?.achievements ?? []).filter((a) => a.earned));
+  readonly earned = computed(() =>
+    (this.data()?.achievements ?? []).filter((a) => a.earned),
+  );
   readonly nextUp = computed(() =>
     (this.data()?.achievements ?? []).filter((a) => !a.earned).slice(0, 4),
   );
   readonly points = computed(() => this.data()?.summary?.totalPoints ?? null);
-  readonly earnedCount = computed(() => this.data()?.summary?.totalEarned ?? null);
+  readonly earnedCount = computed(
+    () => this.data()?.summary?.totalEarned ?? null,
+  );
 
   constructor() {
     this.api.get<AchievementsData>("/api/achievements").subscribe({
@@ -64,9 +77,11 @@ export class AchievementsComponent {
         this.loading.set(false);
       },
     });
-    this.api.get<{ current_streak?: number }>("/api/achievements/streaks").subscribe({
-      next: (res) => this.streak.set(res?.data?.current_streak ?? null),
-      error: () => this.streak.set(null),
-    });
+    this.api
+      .get<{ current_streak?: number }>("/api/achievements/streaks")
+      .subscribe({
+        next: (res) => this.streak.set(res?.data?.current_streak ?? null),
+        error: () => this.streak.set(null),
+      });
   }
 }

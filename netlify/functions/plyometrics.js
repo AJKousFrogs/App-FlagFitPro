@@ -1,4 +1,3 @@
-
 /**
  * Plyometrics Exercises API
  * Provides plyometric exercises from the database for training plans
@@ -22,10 +21,11 @@ const handler = async (event, context) =>
         const params = evt.queryStringParameters || {};
         const { difficulty } = params;
         const { category } = params;
-        const limit = parseBoundedInt(params.limit, "limit", {
-          min: 1,
-          max: 100,
-        }) ?? 10;
+        const limit =
+          parseBoundedInt(params.limit, "limit", {
+            min: 1,
+            max: 100,
+          }) ?? 10;
 
         let query = supabase
           .from("plyometrics_exercises")
@@ -44,7 +44,9 @@ const handler = async (event, context) =>
         const { data: exercises, error } = await query;
 
         if (error) {
-          logger.error("exercises_fetch_failed", error, { details: "Error fetching plyometric exercises" });
+          logger.error("exercises_fetch_failed", error, {
+            details: "Error fetching plyometric exercises",
+          });
           return createErrorResponse(
             "Failed to fetch exercises",
             500,
@@ -65,7 +67,11 @@ const handler = async (event, context) =>
           return createErrorResponse(error.message, 422, "validation_error");
         }
         logger.error("plyometrics_api_error", error, {});
-        return createErrorResponse("Internal server error", 500, "server_error");
+        return createErrorResponse(
+          "Internal server error",
+          500,
+          "server_error",
+        );
       }
     },
   });

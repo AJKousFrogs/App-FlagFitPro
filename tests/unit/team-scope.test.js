@@ -24,13 +24,49 @@ const TEAM_C = "team-c";
 const members = (rows) => createSupabaseMock({ team_members: rows });
 
 const ROSTER = [
-  { user_id: COACH, team_id: TEAM_A, role: "coach", status: "active", updated_at: "2026-06-02" },
-  { user_id: COACH, team_id: TEAM_B, role: "head_coach", status: "active", updated_at: "2026-06-09" },
-  { user_id: ATHLETE, team_id: TEAM_B, role: "player", status: "active", updated_at: "2026-06-01" },
-  { user_id: ATHLETE, team_id: TEAM_C, role: "player", status: "active", updated_at: "2026-06-05" },
-  { user_id: OUTSIDER, team_id: TEAM_C, role: "coach", status: "active", updated_at: "2026-06-03" },
+  {
+    user_id: COACH,
+    team_id: TEAM_A,
+    role: "coach",
+    status: "active",
+    updated_at: "2026-06-02",
+  },
+  {
+    user_id: COACH,
+    team_id: TEAM_B,
+    role: "head_coach",
+    status: "active",
+    updated_at: "2026-06-09",
+  },
+  {
+    user_id: ATHLETE,
+    team_id: TEAM_B,
+    role: "player",
+    status: "active",
+    updated_at: "2026-06-01",
+  },
+  {
+    user_id: ATHLETE,
+    team_id: TEAM_C,
+    role: "player",
+    status: "active",
+    updated_at: "2026-06-05",
+  },
+  {
+    user_id: OUTSIDER,
+    team_id: TEAM_C,
+    role: "coach",
+    status: "active",
+    updated_at: "2026-06-03",
+  },
   // an inactive membership that must never count
-  { user_id: COACH, team_id: "team-old", role: "coach", status: "inactive", updated_at: "2026-06-10" },
+  {
+    user_id: COACH,
+    team_id: "team-old",
+    role: "coach",
+    status: "inactive",
+    updated_at: "2026-06-10",
+  },
 ];
 
 describe("getStaffedTeamIds", () => {
@@ -45,7 +81,9 @@ describe("getStaffedTeamIds", () => {
   });
 
   it("returns [] for a falsy user", async () => {
-    expect(await getStaffedTeamIds(null, { client: members(ROSTER) })).toEqual([]);
+    expect(await getStaffedTeamIds(null, { client: members(ROSTER) })).toEqual(
+      [],
+    );
   });
 });
 
@@ -69,9 +107,27 @@ describe("sharesStaffedTeam", () => {
     // OUTSIDER staffs only C; athlete is on C too → they DO share C. Flip it:
     // a coach of A only, athlete on B+C → no shared team.
     const roster = [
-      { user_id: "coach-a-only", team_id: TEAM_A, role: "coach", status: "active", updated_at: "2026-06-01" },
-      { user_id: ATHLETE, team_id: TEAM_B, role: "player", status: "active", updated_at: "2026-06-01" },
-      { user_id: ATHLETE, team_id: TEAM_C, role: "player", status: "active", updated_at: "2026-06-01" },
+      {
+        user_id: "coach-a-only",
+        team_id: TEAM_A,
+        role: "coach",
+        status: "active",
+        updated_at: "2026-06-01",
+      },
+      {
+        user_id: ATHLETE,
+        team_id: TEAM_B,
+        role: "player",
+        status: "active",
+        updated_at: "2026-06-01",
+      },
+      {
+        user_id: ATHLETE,
+        team_id: TEAM_C,
+        role: "player",
+        status: "active",
+        updated_at: "2026-06-01",
+      },
     ];
     const { shared } = await sharesStaffedTeam("coach-a-only", ATHLETE, {
       client: members(roster),
@@ -89,27 +145,43 @@ describe("sharesStaffedTeam", () => {
 
 describe("resolveStaffedTeam", () => {
   it("defaults to the most-recent staffed team", async () => {
-    expect(await resolveStaffedTeam(COACH, null, { client: members(ROSTER) })).toBe(TEAM_B);
+    expect(
+      await resolveStaffedTeam(COACH, null, { client: members(ROSTER) }),
+    ).toBe(TEAM_B);
   });
 
   it("honours an explicit team the user staffs", async () => {
-    expect(await resolveStaffedTeam(COACH, TEAM_A, { client: members(ROSTER) })).toBe(TEAM_A);
+    expect(
+      await resolveStaffedTeam(COACH, TEAM_A, { client: members(ROSTER) }),
+    ).toBe(TEAM_A);
   });
 
   it("rejects (null) a requested team the user does NOT staff", async () => {
-    expect(await resolveStaffedTeam(COACH, TEAM_C, { client: members(ROSTER) })).toBeNull();
+    expect(
+      await resolveStaffedTeam(COACH, TEAM_C, { client: members(ROSTER) }),
+    ).toBeNull();
   });
 });
 
 describe("isStaffOfTeam / isActiveTeamMember", () => {
   it("isStaffOfTeam true for a staffed team, false otherwise", async () => {
-    expect(await isStaffOfTeam(COACH, TEAM_A, { client: members(ROSTER) })).toBe(true);
-    expect(await isStaffOfTeam(COACH, TEAM_C, { client: members(ROSTER) })).toBe(false);
-    expect(await isStaffOfTeam(ATHLETE, TEAM_B, { client: members(ROSTER) })).toBe(false); // player, not staff
+    expect(
+      await isStaffOfTeam(COACH, TEAM_A, { client: members(ROSTER) }),
+    ).toBe(true);
+    expect(
+      await isStaffOfTeam(COACH, TEAM_C, { client: members(ROSTER) }),
+    ).toBe(false);
+    expect(
+      await isStaffOfTeam(ATHLETE, TEAM_B, { client: members(ROSTER) }),
+    ).toBe(false); // player, not staff
   });
 
   it("isActiveTeamMember true for any active membership", async () => {
-    expect(await isActiveTeamMember(ATHLETE, TEAM_C, { client: members(ROSTER) })).toBe(true);
-    expect(await isActiveTeamMember(ATHLETE, TEAM_A, { client: members(ROSTER) })).toBe(false);
+    expect(
+      await isActiveTeamMember(ATHLETE, TEAM_C, { client: members(ROSTER) }),
+    ).toBe(true);
+    expect(
+      await isActiveTeamMember(ATHLETE, TEAM_A, { client: members(ROSTER) }),
+    ).toBe(false);
   });
 });

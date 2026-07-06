@@ -4,8 +4,12 @@
     <h1>Load monitoring</h1>
   </div>
   <div class="inline">
-    <a class="icon-btn" routerLink="/notifications" aria-label="Notifications"><lucide-icon name="bell" /><span class="dot"></span></a>
-    <a class="avatar" routerLink="/profile" aria-label="Profile"><app-avatar /></a>
+    <a class="icon-btn" routerLink="/notifications" aria-label="Notifications"
+      ><lucide-icon name="bell" /><span class="dot"></span
+    ></a>
+    <a class="avatar" routerLink="/profile" aria-label="Profile"
+      ><app-avatar
+    /></a>
   </div>
 </header>
 
@@ -13,40 +17,90 @@
   <div class="screen-hero">
     <img src="assets/images/rebuild/hero-acwr.jpg" alt="Ljubljana Frogs" />
     <div class="scrim"></div>
-    <div class="content"><div class="eyebrow">Load monitoring</div><h2>Stay in the sweet spot</h2></div>
+    <div class="content">
+      <div class="eyebrow">Load monitoring</div>
+      <h2>Stay in the sweet spot</h2>
+    </div>
   </div>
 
   @if (band(); as b) {
     <div class="hero">
       <div class="row">
-        <div class="metric"><div class="num">{{ ratio()!.toFixed(2) }}</div><span class="band {{ b.cls }}">{{ b.label }}</span></div>
-        <div style="text-align:right;max-width:55%">
-          <b style="color:var(--text-strong)">{{ b.cls === "good" ? "Train as planned" : "Adjust today" }}</b>
-          <div class="muted" style="font-size:var(--fs-sm)">{{ b.verdict }}</div>
+        <div class="metric">
+          <div class="num">{{ ratio()!.toFixed(2) }}</div>
+          <span class="band {{ b.cls }}">{{ b.label }}</span>
+        </div>
+        <div style="text-align: right; max-width: 55%">
+          <b style="color: var(--text-strong)">{{
+            b.cls === "good" ? "Train as planned" : "Adjust today"
+          }}</b>
+          <div class="muted" style="font-size: var(--fs-sm)">
+            {{ b.verdict }}
+          </div>
         </div>
       </div>
       @if (chart(); as c) {
-        <svg width="100%" height="120" viewBox="0 0 360 120" preserveAspectRatio="none" style="margin-top:var(--s-4)">
+        <svg
+          width="100%"
+          height="120"
+          viewBox="0 0 360 120"
+          preserveAspectRatio="none"
+          style="margin-top: var(--s-4)"
+        >
           <rect x="0" y="45" width="360" height="25" fill="var(--good-soft)" />
-          <text x="6" y="59" font-size="10" fill="var(--text-faint)">sweet 0.8–1.3</text>
-          <line x1="0" y1="35" x2="360" y2="35" stroke="var(--danger)" stroke-dasharray="5 3" opacity=".7" />
-          <text x="6" y="31" font-size="10" fill="var(--text-faint)">danger 1.5</text>
-          <polyline fill="none" stroke="var(--accent)" stroke-width="2.5" [attr.points]="c.points" />
-          <circle [attr.cx]="c.last.x" [attr.cy]="c.last.y" r="4" fill="var(--accent)" />
+          <text x="6" y="59" font-size="10" fill="var(--text-faint)">
+            sweet 0.8–1.3
+          </text>
+          <line
+            x1="0"
+            y1="35"
+            x2="360"
+            y2="35"
+            stroke="var(--danger)"
+            stroke-dasharray="5 3"
+            opacity=".7"
+          />
+          <text x="6" y="31" font-size="10" fill="var(--text-faint)">
+            danger 1.5
+          </text>
+          <polyline
+            fill="none"
+            stroke="var(--accent)"
+            stroke-width="2.5"
+            [attr.points]="c.points"
+          />
+          <circle
+            [attr.cx]="c.last.x"
+            [attr.cy]="c.last.y"
+            r="4"
+            fill="var(--accent)"
+          />
         </svg>
       }
     </div>
 
     <div class="tiles">
-      <div><b>{{ acute() }}</b><small>acute AU</small></div>
-      <div><b>{{ chronic() }}</b><small>chronic AU</small></div>
-      <div><b>{{ weeklyPct() > 0 ? "+" : "" }}{{ weeklyPct() }}%</b><small>vs last wk</small></div>
+      <div>
+        <b>{{ acute() }}</b
+        ><small>acute AU</small>
+      </div>
+      <div>
+        <b>{{ chronic() }}</b
+        ><small>chronic AU</small>
+      </div>
+      <div>
+        <b>{{ weeklyPct() > 0 ? "+" : "" }}{{ weeklyPct() }}%</b
+        ><small>vs last wk</small>
+      </div>
     </div>
 
     @if (monotonyData(); as m) {
-      <div class="tiles" style="margin-top:var(--s-2)">
+      <div class="tiles" style="margin-top: var(--s-2)">
         <div>
-          <b [class.caution]="m.monotonyRisk === 'moderate'" [class.danger]="m.monotonyRisk === 'high'">
+          <b
+            [class.caution]="m.monotonyRisk === 'moderate'"
+            [class.danger]="m.monotonyRisk === 'high'"
+          >
             {{ m.monotony != null ? m.monotony.toFixed(2) : "—" }}
           </b>
           <small>monotony</small>
@@ -59,24 +113,40 @@
     }
 
     <div class="card">
-      <b class="inline"><lucide-icon name="check" /> {{ b.cls === "danger" ? "Rest today" : "Can train today" }}</b>
-      <div class="muted" style="font-size:var(--fs-sm)">{{ b.verdict }}</div>
+      <b class="inline"
+        ><lucide-icon name="check" />
+        {{ b.cls === "danger" ? "Rest today" : "Can train today" }}</b
+      >
+      <div class="muted" style="font-size: var(--fs-sm)">{{ b.verdict }}</div>
     </div>
 
     @if (!weekly().isSafe) {
       <div class="card warn">
         <b>Weekly load {{ weeklyPct() > 0 ? "+" : "" }}{{ weeklyPct() }}%</b>
-        <div class="muted" style="font-size:var(--fs-sm)">{{ weekly().warning || "Limit increases to <10% week-over-week." }}</div>
+        <div class="muted" style="font-size: var(--fs-sm)">
+          {{ weekly().warning || "Limit increases to <10% week-over-week." }}
+        </div>
       </div>
     }
 
-    <p class="note" style="margin-top:var(--s-4);font-size:var(--fs-xs);color:var(--text-faint)">
-      ACWR monitors training load balance — it does not predict injury risk. Use it alongside coach judgement; no threshold guarantees safety.
+    <p
+      class="note"
+      style="
+        margin-top: var(--s-4);
+        font-size: var(--fs-xs);
+        color: var(--text-faint);
+      "
+    >
+      ACWR monitors training load balance — it does not predict injury risk. Use
+      it alongside coach judgement; no threshold guarantees safety.
     </p>
   } @else {
     <div class="empty">
-      <b style="color:var(--text)">Not enough history yet</b>
-      <p class="note" style="margin-top:var(--s-2)">A reliable ratio needs ~21 days &amp; 12 sessions (&lt;14 days = low-confidence). Keep logging — null ≠ under-training.</p>
+      <b style="color: var(--text)">Not enough history yet</b>
+      <p class="note" style="margin-top: var(--s-2)">
+        A reliable ratio needs ~21 days &amp; 12 sessions (&lt;14 days =
+        low-confidence). Keep logging — null ≠ under-training.
+      </p>
     </div>
   }
 </main>

@@ -1,6 +1,9 @@
 import { supabaseAdmin } from "./supabase-client.js";
 import { baseHandler } from "./utils/base-handler.js";
-import { createErrorResponse, handleValidationError } from "./utils/error-handler.js";
+import {
+  createErrorResponse,
+  handleValidationError,
+} from "./utils/error-handler.js";
 import { tryParseJsonObjectBody } from "./utils/input-validator.js";
 import { createLogger } from "./utils/structured-logger.js";
 
@@ -47,7 +50,12 @@ const handler = async (event, context) =>
         return createErrorResponse("Not found", 404, "not_found");
       } catch (error) {
         logger.error("achievements_error", error);
-        return createErrorResponse("Internal server error", 500, "server_error", requestId);
+        return createErrorResponse(
+          "Internal server error",
+          500,
+          "server_error",
+          requestId,
+        );
       }
     },
   });
@@ -61,7 +69,11 @@ async function getAchievements(supabase, userId) {
     .order("display_order");
 
   if (defError) {
-    return createErrorResponse("Failed to load achievements", 500, "database_error");
+    return createErrorResponse(
+      "Failed to load achievements",
+      500,
+      "database_error",
+    );
   }
 
   // Get user's earned achievements
@@ -183,7 +195,11 @@ async function getUserStats(supabase, userId) {
     .single();
 
   if (error && error.code !== "PGRST116") {
-    return createErrorResponse("Failed to load user stats", 500, "database_error");
+    return createErrorResponse(
+      "Failed to load user stats",
+      500,
+      "database_error",
+    );
   }
 
   // Get recent activity
@@ -282,7 +298,11 @@ async function updateStreak(supabase, userId, payload) {
   });
 
   if (error) {
-    return createErrorResponse("Failed to update streak", 500, "database_error");
+    return createErrorResponse(
+      "Failed to update streak",
+      500,
+      "database_error",
+    );
   }
 
   // Award any unlocked achievements
@@ -362,7 +382,8 @@ async function checkAchievements(supabase, userId) {
 
   // Determine which definitions should be awarded
   const toAward = (definitions || []).filter(
-    (def) => !earnedSet.has(def.id) && checkCriteria(def.criteria, streakMap, stats),
+    (def) =>
+      !earnedSet.has(def.id) && checkCriteria(def.criteria, streakMap, stats),
   );
 
   if (toAward.length > 0) {

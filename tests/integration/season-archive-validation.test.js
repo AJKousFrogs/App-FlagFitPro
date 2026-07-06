@@ -7,7 +7,10 @@ const state = vi.hoisted(() => ({
 
 vi.mock("../../netlify/functions/utils/base-handler.js", () => ({
   baseHandler: async (event, context, options) =>
-    options.handler(event, context, { userId: "user-1", requestId: "req-test" }),
+    options.handler(event, context, {
+      userId: "user-1",
+      requestId: "req-test",
+    }),
 }));
 
 vi.mock("../../netlify/functions/utils/authorization-guard.js", () => ({
@@ -65,7 +68,9 @@ describe("season-archive validation hardening", () => {
         httpMethod: "POST",
         path: "/.netlify/functions/season-archive",
         headers: { authorization: "Bearer test-token" },
-        body: JSON.stringify({ season_id: "123e4567-e89b-12d3-a456-426614174000" }),
+        body: JSON.stringify({
+          season_id: "123e4567-e89b-12d3-a456-426614174000",
+        }),
       },
       {},
     );

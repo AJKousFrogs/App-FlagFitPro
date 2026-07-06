@@ -35,9 +35,7 @@ import {
             <div class="sk-chip"></div>
           </div>
           <div class="sk-line w80"></div>
-          <div class="sk-tiles">
-            <span></span><span></span><span></span>
-          </div>
+          <div class="sk-tiles"><span></span><span></span><span></span></div>
           <div class="sk-block media"></div>
           <div class="sk-block btn"></div>
         </div>
@@ -62,14 +60,35 @@ import {
   `,
   styles: [
     `
-      :host { display: block; }
-      .sk-sr {
-        position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
-        overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0;
+      :host {
+        display: block;
       }
-      .sk-stack { display: flex; flex-direction: column; gap: var(--s-3); }
-      .sk-row { display: flex; align-items: center; justify-content: space-between; gap: var(--s-3); }
-      .sk-line, .sk-chip, .sk-block, .sk-tiles > span {
+      .sk-sr {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border: 0;
+      }
+      .sk-stack {
+        display: flex;
+        flex-direction: column;
+        gap: var(--s-3);
+      }
+      .sk-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: var(--s-3);
+      }
+      .sk-line,
+      .sk-chip,
+      .sk-block,
+      .sk-tiles > span {
         background: linear-gradient(
           100deg,
           var(--surface-2) 30%,
@@ -80,24 +99,66 @@ import {
         animation: sk-shimmer 1.4s ease-in-out infinite;
         border-radius: var(--r-sm);
       }
-      .sk-line { height: 12px; flex: 0 0 auto; }
-      .sk-line.w40 { width: 40%; }
-      .sk-line.w60 { width: 60%; }
-      .sk-line.w80 { width: 80%; }
-      .sk-chip { width: 88px; height: 22px; border-radius: var(--r-pill); flex: 0 0 auto; }
-      .sk-chip.sm { width: 44px; height: 18px; }
-      .sk-block { width: 100%; border-radius: var(--r-md); }
-      .sk-block.media { height: 176px; }
-      .sk-block.chart { height: 120px; }
-      .sk-block.btn { height: 44px; border-radius: var(--r-pill); }
-      .sk-tiles { display: flex; gap: var(--s-3); }
-      .sk-tiles > span { flex: 1; height: 48px; }
+      .sk-line {
+        height: 12px;
+        flex: 0 0 auto;
+      }
+      .sk-line.w40 {
+        width: 40%;
+      }
+      .sk-line.w60 {
+        width: 60%;
+      }
+      .sk-line.w80 {
+        width: 80%;
+      }
+      .sk-chip {
+        width: 88px;
+        height: 22px;
+        border-radius: var(--r-pill);
+        flex: 0 0 auto;
+      }
+      .sk-chip.sm {
+        width: 44px;
+        height: 18px;
+      }
+      .sk-block {
+        width: 100%;
+        border-radius: var(--r-md);
+      }
+      .sk-block.media {
+        height: 176px;
+      }
+      .sk-block.chart {
+        height: 120px;
+      }
+      .sk-block.btn {
+        height: 44px;
+        border-radius: var(--r-pill);
+      }
+      .sk-tiles {
+        display: flex;
+        gap: var(--s-3);
+      }
+      .sk-tiles > span {
+        flex: 1;
+        height: 48px;
+      }
       @keyframes sk-shimmer {
-        0% { background-position: 200% 0; }
-        100% { background-position: -200% 0; }
+        0% {
+          background-position: 200% 0;
+        }
+        100% {
+          background-position: -200% 0;
+        }
       }
       @media (prefers-reduced-motion: reduce) {
-        .sk-line, .sk-chip, .sk-block, .sk-tiles > span { animation: none; }
+        .sk-line,
+        .sk-chip,
+        .sk-block,
+        .sk-tiles > span {
+          animation: none;
+        }
       }
     `,
   ],

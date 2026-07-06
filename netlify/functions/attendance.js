@@ -1,5 +1,9 @@
 import { supabaseAdmin } from "./supabase-client.js";
-import { createSuccessResponse, createErrorResponse, ErrorType } from "./utils/error-handler.js";
+import {
+  createSuccessResponse,
+  createErrorResponse,
+  ErrorType,
+} from "./utils/error-handler.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { checkTeamMembership, getUserTeamId } from "./utils/auth-helper.js";
 import { hasAnyRole, TEAM_OPERATIONS_ROLES } from "./utils/role-sets.js";
@@ -29,13 +33,14 @@ const assertActiveTeamPlayer = async (teamId, playerId) => {
     throw error;
   }
   if (!member) {
-    throw new Error("player_id must reference an active team player in this team");
+    throw new Error(
+      "player_id must reference an active team player in this team",
+    );
   }
 };
 
 // Get team events with optional filters
 const getTeamEvents = async (userId, queryParams) => {
-
   const { team_id, event_type, start_date, end_date, limit } = queryParams;
 
   // Verify user is part of the team
@@ -84,7 +89,6 @@ const getTeamEvents = async (userId, queryParams) => {
 
 // Create a new team event
 const createEvent = async (userId, eventData) => {
-
   const {
     team_id,
     event_type,
@@ -126,7 +130,6 @@ const createEvent = async (userId, eventData) => {
 
 // Update an event
 const updateEvent = async (userId, eventId, updates) => {
-
   // Get the event to verify ownership
   const { data: event, error: fetchError } = await supabaseAdmin
     .from("team_events")
@@ -175,7 +178,6 @@ const updateEvent = async (userId, eventId, updates) => {
 
 // Delete an event
 const deleteEvent = async (userId, eventId) => {
-
   const { data: event, error: fetchError } = await supabaseAdmin
     .from("team_events")
     .select("team_id")
@@ -204,7 +206,6 @@ const deleteEvent = async (userId, eventId) => {
 
 // Get attendance records for an event
 const getEventAttendance = async (userId, eventId) => {
-
   // Get event to verify access
   const { data: event, error: eventError } = await supabaseAdmin
     .from("team_events")
@@ -249,7 +250,6 @@ const getEventAttendance = async (userId, eventId) => {
 
 // Record attendance for a player
 const recordAttendance = async (userId, attendanceData) => {
-
   const { event_id, player_id, status, notes } = attendanceData;
   if (!event_id || !player_id || !status) {
     throw new Error("event_id, player_id, and status are required");
@@ -311,7 +311,6 @@ const recordAttendance = async (userId, attendanceData) => {
 
 // Bulk record attendance
 const bulkRecordAttendance = async (userId, bulkData) => {
-
   const { event_id, records } = bulkData;
   if (!event_id || !Array.isArray(records) || records.length === 0) {
     throw new Error("event_id and non-empty records array are required");
@@ -335,7 +334,9 @@ const bulkRecordAttendance = async (userId, bulkData) => {
   const dedupedRecords = new Map();
   for (const record of records) {
     if (!record?.player_id || !record?.status) {
-      throw new Error("Each attendance record must include player_id and status");
+      throw new Error(
+        "Each attendance record must include player_id and status",
+      );
     }
     if (!VALID_ATTENDANCE_STATUSES.has(record.status)) {
       throw new Error(
@@ -470,11 +471,7 @@ const handler = async (event, context) => {
           error.message.includes("already pending") ||
           error.message.includes("already been reviewed")
         ) {
-          return createErrorResponse(
-            error.message,
-            422,
-            ErrorType.VALIDATION,
-          );
+          return createErrorResponse(error.message, 422, ErrorType.VALIDATION);
         }
         throw error;
       }

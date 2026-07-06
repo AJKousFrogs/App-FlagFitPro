@@ -52,34 +52,127 @@ interface WeekRow {
   templateUrl: "./training.component.html",
   styles: [
     `
-      .tt-tabs { display: flex; gap: var(--s-4); border-bottom: 1px solid var(--border-soft); padding-bottom: var(--s-2); }
-      .tt-tab { background: none; border: 0; cursor: pointer; padding: 0 0 var(--s-2);
-        color: var(--text-faint); font-weight: var(--fw-semi); font-size: var(--fs-sm); font-family: var(--font-body); }
-      .tt-tab.on { color: var(--text-strong); border-bottom: 2px solid var(--accent); }
-      .tt-tab:focus-visible { outline: none; box-shadow: var(--focus); border-radius: 4px; }
+      .tt-tabs {
+        display: flex;
+        gap: var(--s-4);
+        border-bottom: 1px solid var(--border-soft);
+        padding-bottom: var(--s-2);
+      }
+      .tt-tab {
+        background: none;
+        border: 0;
+        cursor: pointer;
+        padding: 0 0 var(--s-2);
+        color: var(--text-faint);
+        font-weight: var(--fw-semi);
+        font-size: var(--fs-sm);
+        font-family: var(--font-body);
+      }
+      .tt-tab.on {
+        color: var(--text-strong);
+        border-bottom: 2px solid var(--accent);
+      }
+      .tt-tab:focus-visible {
+        outline: none;
+        box-shadow: var(--focus);
+        border-radius: 4px;
+      }
 
       /* block-card — adapted from the redesign mockup, mapped to app tokens.
          Mobile: single column; >=768px: two-up grid. */
-      .bc-list { display: grid; gap: var(--s-3); }
-      @media (min-width: 768px) { .bc-list { grid-template-columns: 1fr 1fr; } }
-      .bc { border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface); padding: var(--s-3); }
-      .bc__head { display: flex; align-items: center; gap: var(--s-2); }
-      .bc__idx { width: 22px; height: 22px; border-radius: 999px; background: var(--bg); color: var(--text-muted);
-        display: grid; place-items: center; font-size: var(--fs-xs); font-weight: var(--fw-bold); flex: 0 0 auto; }
-      .bc__idx.done { background: var(--accent-soft); color: var(--accent); }
-      .bc__title { font-weight: var(--fw-semi); flex: 1 1 auto; }
-      .bc__meta { color: var(--text-faint); font-size: var(--fs-xs); margin-top: var(--s-1); }
-      .bc__bar { height: 4px; border-radius: 999px; background: var(--border-soft); margin-top: var(--s-2); overflow: hidden; }
-      .bc__bar > i { display: block; height: 100%; background: var(--accent); border-radius: 999px; transition: width var(--motion, .2s); }
-      .bc__ex { margin: var(--s-2) 0 0; padding-left: var(--s-4); }
-      .bc__ex li { font-size: var(--fs-sm); margin: 2px 0; }
-      .bc__ex small { color: var(--text-faint); }
-      .bc__ex li b { font-weight: var(--fw-semi); }
+      .bc-list {
+        display: grid;
+        gap: var(--s-3);
+      }
+      @media (min-width: 768px) {
+        .bc-list {
+          grid-template-columns: 1fr 1fr;
+        }
+      }
+      .bc {
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        background: var(--surface);
+        padding: var(--s-3);
+      }
+      .bc__head {
+        display: flex;
+        align-items: center;
+        gap: var(--s-2);
+      }
+      .bc__idx {
+        width: 22px;
+        height: 22px;
+        border-radius: 999px;
+        background: var(--bg);
+        color: var(--text-muted);
+        display: grid;
+        place-items: center;
+        font-size: var(--fs-xs);
+        font-weight: var(--fw-bold);
+        flex: 0 0 auto;
+      }
+      .bc__idx.done {
+        background: var(--accent-soft);
+        color: var(--accent);
+      }
+      .bc__title {
+        font-weight: var(--fw-semi);
+        flex: 1 1 auto;
+      }
+      .bc__meta {
+        color: var(--text-faint);
+        font-size: var(--fs-xs);
+        margin-top: var(--s-1);
+      }
+      .bc__bar {
+        height: 4px;
+        border-radius: 999px;
+        background: var(--border-soft);
+        margin-top: var(--s-2);
+        overflow: hidden;
+      }
+      .bc__bar > i {
+        display: block;
+        height: 100%;
+        background: var(--accent);
+        border-radius: 999px;
+        transition: width var(--motion, 0.2s);
+      }
+      .bc__ex {
+        margin: var(--s-2) 0 0;
+        padding-left: var(--s-4);
+      }
+      .bc__ex li {
+        font-size: var(--fs-sm);
+        margin: 2px 0;
+      }
+      .bc__ex small {
+        color: var(--text-faint);
+      }
+      .bc__ex li b {
+        font-weight: var(--fw-semi);
+      }
       /* The how-to text always renders so the movement is clear even when the
          video fails to load (YouTube 504 / offline) — see yt-video fallback. */
-      .ex-how { color: var(--text-muted); font-size: var(--fs-sm); line-height: var(--lh-body); margin: 2px 0 0; }
-      .ex-feel { color: var(--accent); font-size: var(--fs-xs); display: flex; align-items: center; gap: 4px; margin: 2px 0 var(--s-2); }
-      .ex-feel svg.lucide { width: 13px; height: 13px; }
+      .ex-how {
+        color: var(--text-muted);
+        font-size: var(--fs-sm);
+        line-height: var(--lh-body);
+        margin: 2px 0 0;
+      }
+      .ex-feel {
+        color: var(--accent);
+        font-size: var(--fs-xs);
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        margin: 2px 0 var(--s-2);
+      }
+      .ex-feel svg.lucide {
+        width: 13px;
+        height: 13px;
+      }
     `,
   ],
 })
@@ -97,7 +190,10 @@ export class TrainingComponent {
   /** Upcoming events (the spine) for the Schedule tab. */
   readonly upcoming = this.schedule.upcoming;
   daysTo(iso: string): number {
-    return Math.max(0, Math.round((new Date(iso).getTime() - Date.now()) / 864e5));
+    return Math.max(
+      0,
+      Math.round((new Date(iso).getTime() - Date.now()) / 864e5),
+    );
   }
 
   readonly tabs = ["Today", "Schedule", "Programs", "Library"] as const;
@@ -112,7 +208,8 @@ export class TrainingComponent {
   readonly categories = this.videoSvc.categories;
   /** Session video = a library clip matching today's intent, else the placeholder. */
   readonly sessionVideoId = computed(
-    () => this.videoSvc.forIntent(this.rx()?.intent)?.youtubeId ?? SESSION_VIDEO_ID,
+    () =>
+      this.videoSvc.forIntent(this.rx()?.intent)?.youtubeId ?? SESSION_VIDEO_ID,
   );
 
   /** Real duration of the matched library clip; "" when none matched (no fake time). */
@@ -145,7 +242,8 @@ export class TrainingComponent {
         date: rx.date,
         intent: rx.intent,
         intentLabel: rx.intentLabel,
-        position: rx.positionEmphasis?.position ?? this.periodization.position(),
+        position:
+          rx.positionEmphasis?.position ?? this.periodization.position(),
         seasonPhase: rx.seasonPhase,
         weatherSuitability: w?.suitability ?? null,
         weatherTempC: w?.tempC ?? null,
@@ -194,8 +292,10 @@ export class TrainingComponent {
   readonly heroBand = computed<{ label: string; cls: string } | null>(() => {
     const rx = this.rx();
     if (!rx) return null;
-    if (rx.weatherAdjustment?.applied) return { label: "weather-adjusted", cls: "caution" };
-    if (rx.recoveryEmphasis === "critical") return { label: "recover", cls: "danger" };
+    if (rx.weatherAdjustment?.applied)
+      return { label: "weather-adjusted", cls: "caution" };
+    if (rx.recoveryEmphasis === "critical")
+      return { label: "recover", cls: "danger" };
     if (rx.intent === "competition") return { label: "game day", cls: "info" };
     return { label: "today", cls: "good" };
   });
@@ -205,13 +305,21 @@ export class TrainingComponent {
   readonly blocks = computed(() => {
     const rx = this.rx();
     return [
-      { title: "Warm-up — RAMP", meta: "10 min · no max effort", video: this.videoSvc.first("warmup") },
+      {
+        title: "Warm-up — RAMP",
+        meta: "10 min · no max effort",
+        video: this.videoSvc.first("warmup"),
+      },
       {
         title: rx?.intentLabel ?? "Main block",
         meta: `RPE ${rx?.targetRpe ?? "—"} · ${rx?.targetMinutes ?? "—"} min`,
         video: this.videoSvc.forIntent(rx?.intent),
       },
-      { title: "Cooldown & mobility", meta: "easy", video: this.videoSvc.first("recovery") },
+      {
+        title: "Cooldown & mobility",
+        meta: "easy",
+        video: this.videoSvc.first("recovery"),
+      },
     ];
   });
 
@@ -253,7 +361,9 @@ export class TrainingComponent {
   // --- this week (engine) ---
   readonly week = computed<WeekRow[]>(() =>
     this.periodization.weekAhead().map((p: DailyPrescription) => ({
-      day: new Date(`${p.date}T00:00:00`).toLocaleDateString("en-GB", { weekday: "short" }),
+      day: new Date(`${p.date}T00:00:00`).toLocaleDateString("en-GB", {
+        weekday: "short",
+      }),
       label: p.intentLabel,
       isGame: p.intent === "competition",
       rpe: p.targetRpe,

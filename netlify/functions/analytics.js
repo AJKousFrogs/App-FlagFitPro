@@ -37,18 +37,32 @@ const handleRequest = async (req) => {
     return dispatch(analyticsCoreHandler, req, url);
   }
   // performance/* sub-routes — match heatmap before metrics to avoid prefix overlap
-  if (path.includes("/performance/heatmap") || path.includes("/performance-heatmap")) {
+  if (
+    path.includes("/performance/heatmap") ||
+    path.includes("/performance-heatmap")
+  ) {
     return dispatch(performanceHeatmapHandler, req, url);
   }
-  if (path.includes("/performance/metrics") || path.includes("/performance-metrics")) {
+  if (
+    path.includes("/performance/metrics") ||
+    path.includes("/performance-metrics")
+  ) {
     return dispatch(performanceMetricsHandler, req, url);
   }
-  if (path.includes("/performance/data") || path.includes("/performance-data") || path.includes("/performance")) {
+  if (
+    path.includes("/performance/data") ||
+    path.includes("/performance-data") ||
+    path.includes("/performance")
+  ) {
     return dispatch(performanceDataHandler, req, url);
   }
 
   return new Response(
-    JSON.stringify({ success: false, error: `Not found: ${req.method} ${path}`, code: "not_found" }),
+    JSON.stringify({
+      success: false,
+      error: `Not found: ${req.method} ${path}`,
+      code: "not_found",
+    }),
     { status: 404, headers: corsHeaders(req) },
   );
 };

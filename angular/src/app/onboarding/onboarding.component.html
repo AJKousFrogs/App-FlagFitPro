@@ -1,6 +1,8 @@
 <header class="topbar">
   <div class="dots">
-    @for (s of [0,1,2,3]; track s) { <i [class.on]="step() >= s"></i> }
+    @for (s of [0, 1, 2, 3]; track s) {
+      <i [class.on]="step() >= s"></i>
+    }
   </div>
   <a class="icon-btn" routerLink="/landing" aria-label="Exit onboarding">✕</a>
 </header>
@@ -10,77 +12,188 @@
     @case (0) {
       <h1>Who are you on the field?</h1>
       <div class="field">
-        <p style="margin:0">Position</p>
-        <div class="inline" style="flex-wrap:wrap;gap:var(--s-2)">
+        <p style="margin: 0">Position</p>
+        <div class="inline" style="flex-wrap: wrap; gap: var(--s-2)">
           @for (p of positions; track p) {
-            <button type="button" class="chip" [class.sel]="position() === p" (click)="position.set(p)">{{ p }}</button>
+            <button
+              type="button"
+              class="chip"
+              [class.sel]="position() === p"
+              (click)="position.set(p)"
+            >
+              {{ p }}
+            </button>
           }
         </div>
       </div>
       <div class="field">
         <label for="jersey">Jersey number</label>
-        <input id="jersey" class="input" type="number" min="0" max="99" [value]="jersey() ?? ''"
-               (input)="jersey.set($any($event.target).valueAsNumber)" />
+        <input
+          id="jersey"
+          class="input"
+          type="number"
+          min="0"
+          max="99"
+          [value]="jersey() ?? ''"
+          (input)="jersey.set($any($event.target).valueAsNumber)"
+        />
       </div>
     }
     @case (1) {
       <h1>Your physicals</h1>
-      <div class="field"><label for="h">Height (cm)</label>
-        <input id="h" class="input" type="number" min="120" max="230" step="1" inputmode="numeric" [value]="heightCm() ?? ''" (input)="heightCm.set($any($event.target).valueAsNumber)" /></div>
-      <div class="field"><label for="w">Weight (kg)</label>
-        <input id="w" class="input" type="number" min="30" max="200" step="0.1" inputmode="decimal" [value]="weightKg() ?? ''" (input)="weightKg.set($any($event.target).valueAsNumber)" /></div>
-      <div class="field"><label for="dob">Date of birth</label>
-        <input id="dob" class="input" type="date" min="1940-01-01" [max]="maxDob" [value]="dob()" (input)="dob.set($any($event.target).value)" /></div>
+      <div class="field">
+        <label for="h">Height (cm)</label>
+        <input
+          id="h"
+          class="input"
+          type="number"
+          min="120"
+          max="230"
+          step="1"
+          inputmode="numeric"
+          [value]="heightCm() ?? ''"
+          (input)="heightCm.set($any($event.target).valueAsNumber)"
+        />
+      </div>
+      <div class="field">
+        <label for="w">Weight (kg)</label>
+        <input
+          id="w"
+          class="input"
+          type="number"
+          min="30"
+          max="200"
+          step="0.1"
+          inputmode="decimal"
+          [value]="weightKg() ?? ''"
+          (input)="weightKg.set($any($event.target).valueAsNumber)"
+        />
+      </div>
+      <div class="field">
+        <label for="dob">Date of birth</label>
+        <input
+          id="dob"
+          class="input"
+          type="date"
+          min="1940-01-01"
+          [max]="maxDob"
+          [value]="dob()"
+          (input)="dob.set($any($event.target).value)"
+        />
+      </div>
     }
     @case (2) {
       <h1>Your season</h1>
-      <p class="muted" style="font-size:var(--fs-sm);margin:0 0 var(--s-2)">Tell us your periods (use YYYY-MM-DD for a specific span, or MM-DD for a yearly one). Edit freely.</p>
+      <p class="muted" style="font-size: var(--fs-sm); margin: 0 0 var(--s-2)">
+        Tell us your periods (use YYYY-MM-DD for a specific span, or MM-DD for a
+        yearly one). Edit freely.
+      </p>
       @for (w of season(); track $index) {
-        <div class="card flat" style="margin:var(--s-2) 0">
+        <div class="card flat" style="margin: var(--s-2) 0">
           <div class="seasonrow">
-            <select class="input" [value]="w.phase" (change)="setPhase($index, $any($event.target).value)" aria-label="Phase">
-              @for (p of phases; track p) { <option [value]="p">{{ phaseLabels[p] }}</option> }
+            <select
+              class="input"
+              [value]="w.phase"
+              (change)="setPhase($index, $any($event.target).value)"
+              aria-label="Phase"
+            >
+              @for (p of phases; track p) {
+                <option [value]="p">{{ phaseLabels[p] }}</option>
+              }
             </select>
-            <button class="btn ghost sm" type="button" (click)="removePeriod($index)" aria-label="Remove period">✕</button>
+            <button
+              class="btn ghost sm"
+              type="button"
+              (click)="removePeriod($index)"
+              aria-label="Remove period"
+            >
+              ✕
+            </button>
           </div>
-          <div class="seasonrow" style="margin-top:var(--s-2)">
-            <input class="input" placeholder="from" [value]="w.from" (input)="setFrom($index, $any($event.target).value)" aria-label="From" />
+          <div class="seasonrow" style="margin-top: var(--s-2)">
+            <input
+              class="input"
+              placeholder="from"
+              [value]="w.from"
+              (input)="setFrom($index, $any($event.target).value)"
+              aria-label="From"
+            />
             <span class="faint">→</span>
-            <input class="input" placeholder="to" [value]="w.to" (input)="setTo($index, $any($event.target).value)" aria-label="To" />
+            <input
+              class="input"
+              placeholder="to"
+              [value]="w.to"
+              (input)="setTo($index, $any($event.target).value)"
+              aria-label="To"
+            />
           </div>
         </div>
       }
-      <button class="btn ghost block sm" type="button" (click)="addPeriod()"><lucide-icon name="plus" /> Add a period</button>
-      <p class="note">Off-season biases toward strength &amp; conditioning; in-season maintains + skill. Nothing hardcoded — you declare it.</p>
+      <button class="btn ghost block sm" type="button" (click)="addPeriod()">
+        <lucide-icon name="plus" /> Add a period
+      </button>
+      <p class="note">
+        Off-season biases toward strength &amp; conditioning; in-season
+        maintains + skill. Nothing hardcoded — you declare it.
+      </p>
     }
     @case (3) {
       <h1>How you train</h1>
       <div class="field">
-        <p style="margin:0">Equipment</p>
-        <div class="inline" style="flex-wrap:wrap;gap:var(--s-2)">
-          @for (k of ['Gym','Field','Sled','Bands']; track k) {
-            <button type="button" class="chip" [class.sel]="equipment()[k]" (click)="toggleEquip(k)">
-              @if (equipment()[k]) { ✓ }{{ k }}
+        <p style="margin: 0">Equipment</p>
+        <div class="inline" style="flex-wrap: wrap; gap: var(--s-2)">
+          @for (k of ["Gym", "Field", "Sled", "Bands"]; track k) {
+            <button
+              type="button"
+              class="chip"
+              [class.sel]="equipment()[k]"
+              (click)="toggleEquip(k)"
+            >
+              @if (equipment()[k]) {
+                ✓
+              }
+              {{ k }}
             </button>
           }
         </div>
       </div>
       <div class="field">
         <label for="time">Preferred time</label>
-        <select id="time" class="input" [value]="preferredTime()" (change)="preferredTime.set($any($event.target).value)">
+        <select
+          id="time"
+          class="input"
+          [value]="preferredTime()"
+          (change)="preferredTime.set($any($event.target).value)"
+        >
           <option value="morning">Morning</option>
           <option value="afternoon">Afternoon</option>
           <option value="evening">Evening</option>
         </select>
       </div>
-      @if (error(); as e) { <p class="note" style="color:var(--danger)">{{ e }}</p> }
+      @if (error(); as e) {
+        <p class="note" style="color: var(--danger)">{{ e }}</p>
+      }
     }
   }
 
-  <div class="row" style="margin-top:var(--s-4)">
-    @if (step() > 0) { <button class="btn ghost" type="button" (click)="back()">← Back</button> }
-    <button class="btn primary" type="button" style="flex:1;margin-left:var(--s-3)" [attr.aria-disabled]="saving()" (click)="next()">
-      {{ step() === STEPS - 1 ? (saving() ? "Saving…" : "Finish →") : "Continue →" }}
+  <div class="row" style="margin-top: var(--s-4)">
+    @if (step() > 0) {
+      <button class="btn ghost" type="button" (click)="back()">← Back</button>
+    }
+    <button
+      class="btn primary"
+      type="button"
+      style="flex: 1; margin-left: var(--s-3)"
+      [attr.aria-disabled]="saving()"
+      (click)="next()"
+    >
+      {{
+        step() === STEPS - 1
+          ? saving()
+            ? "Saving…"
+            : "Finish →"
+          : "Continue →"
+      }}
     </button>
   </div>
 </main>

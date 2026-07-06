@@ -84,7 +84,11 @@ vi.mock("../../netlify/functions/utils/consent-data-reader.js", () => ({
 }));
 
 vi.mock("../../netlify/functions/utils/data-state.js", () => ({
-  DataState: { NO_DATA: "NO_DATA", REAL_DATA: "REAL_DATA", INSUFFICIENT_DATA: "INSUFFICIENT_DATA" },
+  DataState: {
+    NO_DATA: "NO_DATA",
+    REAL_DATA: "REAL_DATA",
+    INSUFFICIENT_DATA: "INSUFFICIENT_DATA",
+  },
 }));
 
 vi.mock("../../netlify/functions/utils/authorization-guard.js", () => ({

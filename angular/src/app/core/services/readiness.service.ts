@@ -132,7 +132,9 @@ export class ReadinessService {
           this.logCalibration(res);
         }),
         catchError((error) => {
-          this.error.set(getErrorMessage(error, "Failed to calculate readiness"));
+          this.error.set(
+            getErrorMessage(error, "Failed to calculate readiness"),
+          );
           return throwError(() => error);
         }),
         finalize(() => this.loading.set(false)),
@@ -151,7 +153,9 @@ export class ReadinessService {
     // that to /api/calibration-logs returns 422, so skip it.
     if (
       !res?.suggestion ||
-      !TRAINING_RECOMMENDATIONS.includes(res.suggestion as TrainingRecommendation)
+      !TRAINING_RECOMMENDATIONS.includes(
+        res.suggestion as TrainingRecommendation,
+      )
     ) {
       return;
     }

@@ -1,4 +1,3 @@
-
 // Netlify Function: Nutrition API
 // Handles nutrition calculations, meal planning, and athlete nutrition profiles
 //
@@ -12,7 +11,10 @@
 
 import { baseHandler } from "./utils/base-handler.js";
 
-import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
+import {
+  createSuccessResponse,
+  createErrorResponse,
+} from "./utils/error-handler.js";
 import { parseJsonObjectBody } from "./utils/input-validator.js";
 import { supabaseAdmin } from "./supabase-client.js";
 import { createLogger, makeRequestLogger } from "./utils/structured-logger.js";
@@ -143,11 +145,15 @@ function parseOptionalBoundedFloat(value, { min, max, field }) {
   }
   const normalized = String(value).trim();
   if (!/^-?\d+(?:\.\d+)?$/.test(normalized)) {
-    throw createValidationError(`${field} must be a number between ${min} and ${max}`);
+    throw createValidationError(
+      `${field} must be a number between ${min} and ${max}`,
+    );
   }
   const parsed = Number.parseFloat(normalized);
   if (!Number.isFinite(parsed) || parsed < min || parsed > max) {
-    throw createValidationError(`${field} must be a number between ${min} and ${max}`);
+    throw createValidationError(
+      `${field} must be a number between ${min} and ${max}`,
+    );
   }
   return parsed;
 }
@@ -672,7 +678,8 @@ async function searchFoods(searchQuery, limit = 20) {
     throw error;
   }
 
-  const safeLimit = Number.isInteger(limit) && limit > 0 && limit <= 100 ? limit : 20;
+  const safeLimit =
+    Number.isInteger(limit) && limit > 0 && limit <= 100 ? limit : 20;
   void safeLimit;
 
   return [];
@@ -682,7 +689,11 @@ async function searchFoods(searchQuery, limit = 20) {
 // REQUEST HANDLER
 // =============================================================================
 
-async function handleRequest(event, _context, { userId, requestId, correlationId }) {
+async function handleRequest(
+  event,
+  _context,
+  { userId, requestId, correlationId },
+) {
   const path =
     event.path
       .replace("/.netlify/functions/nutrition", "")
@@ -833,7 +844,8 @@ async function handleRequest(event, _context, { userId, requestId, correlationId
         });
       } catch (validationError) {
         return createErrorResponse(
-          validationError.message || "limit must be an integer between 1 and 100",
+          validationError.message ||
+            "limit must be an integer between 1 and 100",
           422,
           "validation_error",
         );

@@ -28,11 +28,17 @@ const THRESHOLDS = {
 const KEYFRAME_SELECTORS = new Set(["from", "to"]);
 
 function walkDir(dir, ext, files = []) {
-  if (!fs.existsSync(dir)) {return files;}
+  if (!fs.existsSync(dir)) {
+    return files;
+  }
   const entries = fs.readdirSync(dir, { withFileTypes: true });
   for (const e of entries) {
     const full = path.join(dir, e.name);
-    if (e.isDirectory() && !e.name.startsWith(".") && e.name !== "node_modules") {
+    if (
+      e.isDirectory() &&
+      !e.name.startsWith(".") &&
+      e.name !== "node_modules"
+    ) {
       walkDir(full, ext, files);
     } else if (e.isFile() && (ext ? e.name.endsWith(ext) : true)) {
       files.push(full);
@@ -42,7 +48,10 @@ function walkDir(dir, ext, files = []) {
 }
 
 function normalizeWhitespace(s) {
-  return s.replace(/\s+/g, " ").replace(/\s*\{\s*/g, " { ").trim();
+  return s
+    .replace(/\s+/g, " ")
+    .replace(/\s*\{\s*/g, " { ")
+    .trim();
 }
 
 function extractRuleSignatures(content) {
@@ -65,12 +74,16 @@ function findDuplicateSelectors(files) {
     const content = fs.readFileSync(file, "utf8");
     const selectors = extractRuleSignatures(content);
     const rel = path.relative(ANGULAR_SRC, file);
-  for (const sel of selectors) {
-    const trimmed = sel.trim();
-    if (trimmed.length > 2 && !KEYFRAME_SELECTORS.has(trimmed)) {
-      selectorCounts.set(trimmed, (selectorCounts.get(trimmed) || 0) + 1);
-        if (!selectorFiles.has(trimmed)) {selectorFiles.set(trimmed, []);}
-        if (!selectorFiles.get(trimmed).includes(rel)) {selectorFiles.get(trimmed).push(rel);}
+    for (const sel of selectors) {
+      const trimmed = sel.trim();
+      if (trimmed.length > 2 && !KEYFRAME_SELECTORS.has(trimmed)) {
+        selectorCounts.set(trimmed, (selectorCounts.get(trimmed) || 0) + 1);
+        if (!selectorFiles.has(trimmed)) {
+          selectorFiles.set(trimmed, []);
+        }
+        if (!selectorFiles.get(trimmed).includes(rel)) {
+          selectorFiles.get(trimmed).push(rel);
+        }
       }
     }
   }
@@ -102,9 +115,15 @@ function findDuplicateValueBlocks(files) {
     let m;
     while ((m = blockRegex.exec(content)) !== null) {
       const sig = normalizeWhitespace(m[2]);
-      if (sig.includes("var(--") || sig.includes("font-size") || sig.includes("padding")) {
+      if (
+        sig.includes("var(--") ||
+        sig.includes("font-size") ||
+        sig.includes("padding")
+      ) {
         const key = `${m[1].trim()}|${sig.slice(0, 80)}`;
-        if (!valueBlocks.has(key)) {valueBlocks.set(key, []);}
+        if (!valueBlocks.has(key)) {
+          valueBlocks.set(key, []);
+        }
         valueBlocks.get(key).push(path.relative(ANGULAR_SRC, file));
       }
     }
@@ -133,22 +152,22 @@ function main() {
     const focusVisibleCount = selectorCounts.get(":focus-visible") || 0;
     if (formFieldCount > THRESHOLDS.formFieldMax) {
       violations.push(
-        `.form-field: ${formFieldCount} occurrences (max ${THRESHOLDS.formFieldMax}). Use primitives/_forms.scss.`
+        `.form-field: ${formFieldCount} occurrences (max ${THRESHOLDS.formFieldMax}). Use primitives/_forms.scss.`,
       );
     }
     if (formRowCount > THRESHOLDS.formRowMax) {
       violations.push(
-        `.form-row: ${formRowCount} occurrences (max ${THRESHOLDS.formRowMax}). Use primitives/_forms.scss.`
+        `.form-row: ${formRowCount} occurrences (max ${THRESHOLDS.formRowMax}). Use primitives/_forms.scss.`,
       );
     }
     if (hoverCount > THRESHOLDS.hoverGlobalMax) {
       violations.push(
-        `:hover: ${hoverCount} occurrences (max ${THRESHOLDS.hoverGlobalMax}). Use @include interactive or foundations/_states.scss.`
+        `:hover: ${hoverCount} occurrences (max ${THRESHOLDS.hoverGlobalMax}). Use @include interactive or foundations/_states.scss.`,
       );
     }
     if (focusVisibleCount > THRESHOLDS.focusVisibleGlobalMax) {
       violations.push(
-        `:focus-visible: ${focusVisibleCount} occurrences (max ${THRESHOLDS.focusVisibleGlobalMax}). Use @include interactive or focus-visible mixin.`
+        `:focus-visible: ${focusVisibleCount} occurrences (max ${THRESHOLDS.focusVisibleGlobalMax}). Use @include interactive or focus-visible mixin.`,
       );
     }
   }
@@ -165,7 +184,7 @@ function main() {
   } else {
     highDupes.forEach(([sel, count]) => {
       const files = selectorFiles.get(sel);
-      const preview = sel.length > 60 ? `${sel.slice(0, 57)  }...` : sel;
+      const preview = sel.length > 60 ? `${sel.slice(0, 57)}...` : sel;
       console.log(`   ${count}x  ${preview}`);
       if (files && files.length <= 5) {
         files.forEach((f) => console.log(`         └ ${f}`));
@@ -178,10 +197,12 @@ function main() {
 
   const repeatedPatterns = findRepeatedPatterns(allFiles);
   if (CI_MODE) {
-    const overLimit = repeatedPatterns.filter((p) => p.count > THRESHOLDS.respondToPerFileMax);
+    const overLimit = repeatedPatterns.filter(
+      (p) => p.count > THRESHOLDS.respondToPerFileMax,
+    );
     overLimit.forEach((p) => {
       violations.push(
-        `${p.file}: ${p.count} respond-to blocks (max ${THRESHOLDS.respondToPerFileMax}). Consolidate or use layout primitives.`
+        `${p.file}: ${p.count} respond-to blocks (max ${THRESHOLDS.respondToPerFileMax}). Consolidate or use layout primitives.`,
       );
     });
   }
@@ -217,7 +238,9 @@ function main() {
   if (CI_MODE && violations.length > 0) {
     console.error("❌ SCSS duplication thresholds exceeded:\n");
     violations.forEach((v) => console.error(`   • ${v}`));
-    console.error("\nSee angular/src/scss/SCSS_PRIMITIVES.md for guidelines.\n");
+    console.error(
+      "\nSee angular/src/scss/SCSS_PRIMITIVES.md for guidelines.\n",
+    );
     process.exit(1);
   }
 }

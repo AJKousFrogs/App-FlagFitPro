@@ -1,5 +1,8 @@
 import { baseHandler } from "./utils/base-handler.js";
-import { createErrorResponse, createSuccessResponse } from "./utils/error-handler.js";
+import {
+  createErrorResponse,
+  createSuccessResponse,
+} from "./utils/error-handler.js";
 import { createLogger } from "./utils/structured-logger.js";
 
 const logger = createLogger({ service: "netlify.sleep-data" });
@@ -26,10 +29,7 @@ function calculateAge(birthDate) {
   const today = new Date();
   let age = today.getFullYear() - birth.getFullYear();
   const monthDiff = today.getMonth() - birth.getMonth();
-  if (
-    monthDiff < 0 ||
-    (monthDiff === 0 && today.getDate() < birth.getDate())
-  ) {
+  if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) {
     age -= 1;
   }
   return age >= 0 ? age : null;
@@ -50,7 +50,10 @@ function normalizeSleepRows(rows, dateKey, hoursKey, qualityKey) {
             ? Number(row[qualityKey])
             : null,
     }))
-    .filter((row) => row.date && Number.isFinite(row.hoursSlept) && row.hoursSlept > 0);
+    .filter(
+      (row) =>
+        row.date && Number.isFinite(row.hoursSlept) && row.hoursSlept > 0,
+    );
 }
 
 const handler = async (event, context) =>
@@ -96,7 +99,9 @@ const handler = async (event, context) =>
           userAge: calculateAge(user?.birth_date || user?.date_of_birth),
         });
       } catch (error) {
-        logger.error("sleep_data_load_failed", error, { message: "[sleep-data] Failed to load sleep data" });
+        logger.error("sleep_data_load_failed", error, {
+          message: "[sleep-data] Failed to load sleep data",
+        });
         return createErrorResponse(
           "Failed to load sleep data",
           500,

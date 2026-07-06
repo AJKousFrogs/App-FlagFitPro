@@ -1,5 +1,8 @@
 import { baseHandler } from "./utils/base-handler.js";
-import { createErrorResponse, createSuccessResponse } from "./utils/error-handler.js";
+import {
+  createErrorResponse,
+  createSuccessResponse,
+} from "./utils/error-handler.js";
 import { parseJsonObjectBody } from "./utils/input-validator.js";
 import { createLogger } from "./utils/structured-logger.js";
 
@@ -44,7 +47,8 @@ async function persistMappedRows(supabase, userId, rows, mappings) {
     const row = buildMappedRow(rawRow, mappings);
     const duration = normalizeDuration(row.duration);
     const rpe = normalizeRpe(row.rpe);
-    const sessionDate = `${row.date || ""}`.trim() || new Date().toISOString().split("T")[0];
+    const sessionDate =
+      `${row.date || ""}`.trim() || new Date().toISOString().split("T")[0];
     const sessionType = `${row.trainingType || "imported_session"}`.trim();
     const workload = Math.round(duration * rpe);
 
@@ -87,7 +91,11 @@ const handler = async (event, context) =>
           try {
             parsedUrl = new URL(body.url);
           } catch {
-            return createErrorResponse("url must be a valid URL", 422, "validation_error");
+            return createErrorResponse(
+              "url must be a valid URL",
+              422,
+              "validation_error",
+            );
           }
 
           return createSuccessResponse({
@@ -100,7 +108,12 @@ const handler = async (event, context) =>
         if (subPath === "/process") {
           const rows = Array.isArray(body.data) ? body.data : [];
           const mappings = Array.isArray(body.mappings) ? body.mappings : [];
-          const persisted = await persistMappedRows(supabase, userId, rows, mappings);
+          const persisted = await persistMappedRows(
+            supabase,
+            userId,
+            rows,
+            mappings,
+          );
 
           return createSuccessResponse({
             success: true,

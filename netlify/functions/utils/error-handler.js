@@ -33,7 +33,7 @@ const ErrorType = Object.freeze({
  */
 const ALLOWED_ORIGINS = [
   process.env.ALLOWED_ORIGIN,
-  process.env.URL,              // Netlify injects the deploy URL automatically
+  process.env.URL, // Netlify injects the deploy URL automatically
   process.env.DEPLOY_PRIME_URL, // Netlify injects branch deploy URLs automatically
   "https://flagfit-pro.netlify.app",
   "https://flagfitpro.com",
@@ -64,7 +64,9 @@ function getCorsHeaders(eventOrOrigin = null) {
   const requestOrigin =
     typeof eventOrOrigin === "string"
       ? eventOrOrigin
-      : eventOrOrigin?.headers?.origin || eventOrOrigin?.headers?.Origin || null;
+      : eventOrOrigin?.headers?.origin ||
+        eventOrOrigin?.headers?.Origin ||
+        null;
 
   const headers = {
     ...CORS_HEADERS,
@@ -568,7 +570,8 @@ function logFunctionCall(functionName, event, extraContext = {}) {
 }
 
 // Export functions for use in other Netlify functions
-export { ErrorType,
+export {
+  ErrorType,
   CORS_HEADERS,
   ALLOWED_ORIGINS,
   getCorsOrigin,
@@ -586,4 +589,5 @@ export { ErrorType,
   withErrorHandling,
   tryCatch,
   validateJWT,
-  logFunctionCall, };
+  logFunctionCall,
+};

@@ -95,9 +95,13 @@ export class SupabaseService {
           persistSession: true,
         },
         global: {
-          fetch: (input: RequestInfo | URL, init?: RequestInit): Promise<Response> => {
+          fetch: (
+            input: RequestInfo | URL,
+            init?: RequestInit,
+          ): Promise<Response> => {
             const traceId =
-              this.correlation.traceId() ?? this.correlation.getOrCreateForRequest();
+              this.correlation.traceId() ??
+              this.correlation.getOrCreateForRequest();
             const headers = new Headers(init?.headers ?? undefined);
             headers.set("x-trace-id", traceId);
             return fetch(input, { ...init, headers });
@@ -112,7 +116,9 @@ export class SupabaseService {
     try {
       const client = this.supabase;
       if (!client) {
-        throw new Error("[SupabaseService] Client missing during initializeAuth");
+        throw new Error(
+          "[SupabaseService] Client missing during initializeAuth",
+        );
       }
       // Get initial session
       const { data } = await client.auth.getSession();
@@ -204,7 +210,10 @@ export class SupabaseService {
       if (typeof atob !== "function") return false;
       const payload = key.split(".")[1];
       if (!payload) return false;
-      const padded = payload.padEnd(payload.length + (4 - (payload.length % 4)) % 4, "=");
+      const padded = payload.padEnd(
+        payload.length + ((4 - (payload.length % 4)) % 4),
+        "=",
+      );
       const decoded = atob(padded.replace(/-/g, "+").replace(/_/g, "/"));
       const data = JSON.parse(decoded) as { role?: string };
       return data?.role === "service_role";
@@ -369,7 +378,10 @@ export class SupabaseService {
       const { data, error } = await this.client.auth.getSession();
 
       if (error) {
-        this.logger.warn("supabase_get_session_token_failed", toLogContext(error));
+        this.logger.warn(
+          "supabase_get_session_token_failed",
+          toLogContext(error),
+        );
         return null;
       }
 

@@ -19,24 +19,45 @@ export class IdentityService {
   }
 
   private readonly meta = computed(
-    () => (this.supabase.currentUser()?.user_metadata ?? {}) as Record<string, unknown>,
+    () =>
+      (this.supabase.currentUser()?.user_metadata ?? {}) as Record<
+        string,
+        unknown
+      >,
   );
 
   readonly displayName = computed(
-    () => ((this.meta()["full_name"] ?? this.meta()["name"] ?? "") as string).trim() || "Athlete",
+    () =>
+      (
+        (this.meta()["full_name"] ?? this.meta()["name"] ?? "") as string
+      ).trim() || "Athlete",
   );
   readonly firstName = computed(() => this.displayName().split(/\s+/)[0]);
   readonly initials = computed(() =>
-    this.displayName().split(/\s+/).map((w) => w[0]).slice(0, 2).join("").toUpperCase(),
+    this.displayName()
+      .split(/\s+/)
+      .map((w) => w[0])
+      .slice(0, 2)
+      .join("")
+      .toUpperCase(),
   );
   readonly avatarUrl = computed(
-    () => (this.meta()["avatar_url"] ?? this.meta()["avatarUrl"] ?? null) as string | null,
+    () =>
+      (this.meta()["avatar_url"] ?? this.meta()["avatarUrl"] ?? null) as
+        | string
+        | null,
   );
   readonly jersey = computed(
-    () => this.membership.jerseyNumber() ?? (this.meta()["jersey_number"] as number | undefined) ?? null,
+    () =>
+      this.membership.jerseyNumber() ??
+      (this.meta()["jersey_number"] as number | undefined) ??
+      null,
   );
   readonly position = computed(
-    () => this.membership.position() ?? ((this.meta()["position"] as string | undefined) ?? ""),
+    () =>
+      this.membership.position() ??
+      (this.meta()["position"] as string | undefined) ??
+      "",
   );
   readonly teamName = this.membership.teamName;
 }

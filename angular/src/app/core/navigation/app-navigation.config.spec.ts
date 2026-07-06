@@ -14,12 +14,7 @@ function toRouteSet(routes: { route: string }[]): Set<string> {
 }
 
 describe("app-navigation.config", () => {
-  it.each([
-    ["player"],
-    ["coach"],
-    ["assistant_coach"],
-    ["admin"],
-  ])(
+  it.each([["player"], ["coach"], ["assistant_coach"], ["admin"]])(
     "keeps sidebar and bottom-nav route sources in parity for %s",
     (role) => {
       const sidebarRoutes = toRouteSet([

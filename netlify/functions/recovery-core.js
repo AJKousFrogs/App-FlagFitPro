@@ -1,6 +1,12 @@
 import { baseHandler } from "./utils/base-handler.js";
-import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
-import { parseJsonObjectBody, parseBoundedInt } from "./utils/input-validator.js";
+import {
+  createSuccessResponse,
+  createErrorResponse,
+} from "./utils/error-handler.js";
+import {
+  parseJsonObjectBody,
+  parseBoundedInt,
+} from "./utils/input-validator.js";
 import { supabaseAdmin } from "./supabase-client.js";
 import { createLogger } from "./utils/structured-logger.js";
 
@@ -554,7 +560,10 @@ function validateRecommendPayload(payload = {}) {
       errors.push("timeAvailable must be a number between 0 and 600");
     }
   }
-  if (payload.muscleGroups !== undefined && !Array.isArray(payload.muscleGroups)) {
+  if (
+    payload.muscleGroups !== undefined &&
+    !Array.isArray(payload.muscleGroups)
+  ) {
     errors.push("muscleGroups must be an array when provided");
   }
   if (payload.equipment !== undefined && !Array.isArray(payload.equipment)) {
@@ -574,7 +583,11 @@ function validateRecoveryLogPayload(payload = {}) {
   if (!payload.started_at || !isValidIsoDateTime(payload.started_at)) {
     errors.push("started_at must be a valid datetime");
   }
-  if (payload.completed_at !== undefined && payload.completed_at !== null && !isValidIsoDateTime(payload.completed_at)) {
+  if (
+    payload.completed_at !== undefined &&
+    payload.completed_at !== null &&
+    !isValidIsoDateTime(payload.completed_at)
+  ) {
     errors.push("completed_at must be a valid datetime when provided");
   }
   if (payload.duration_planned !== undefined) {

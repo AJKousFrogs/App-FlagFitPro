@@ -17,20 +17,43 @@ type Lane = "coach" | "physio" | "nutrition" | "psych";
 
 interface Injury {
   id?: string;
-  injury_type?: string; injury_location?: string; injury_grade?: string;
-  recovery_status?: string; current_phase?: string; rtp_progress?: number;
-  injury_date?: string; expected_return_date?: string | null;
+  injury_type?: string;
+  injury_location?: string;
+  injury_grade?: string;
+  recovery_status?: string;
+  current_phase?: string;
+  rtp_progress?: number;
+  injury_date?: string;
+  expected_return_date?: string | null;
 }
-interface BodyTrend { date?: string; weight?: number; bodyFat?: number; leanMass?: number; }
-interface MentalLog { log_date?: string; mental_readiness_score?: number; }
-interface WellnessPt { date?: string; mood?: number; stress_level?: number; sleep_quality?: number; }
+interface BodyTrend {
+  date?: string;
+  weight?: number;
+  bodyFat?: number;
+  leanMass?: number;
+}
+interface MentalLog {
+  log_date?: string;
+  mental_readiness_score?: number;
+}
+interface WellnessPt {
+  date?: string;
+  mood?: number;
+  stress_level?: number;
+  sleep_quality?: number;
+}
 
 const TITLE: Record<Lane, string> = {
-  coach: "Load & readiness", physio: "Injuries & return-to-play",
-  nutrition: "Body composition", psych: "Mental wellness",
+  coach: "Load & readiness",
+  physio: "Injuries & return-to-play",
+  nutrition: "Body composition",
+  psych: "Mental wellness",
 };
 const CONSENT: Record<Lane, "performance" | "health"> = {
-  coach: "performance", physio: "health", nutrition: "health", psych: "health",
+  coach: "performance",
+  physio: "health",
+  nutrition: "health",
+  psych: "health",
 };
 const RTP_PHASES = ["Phase 1", "Phase 2", "Phase 3", "Phase 4", "Cleared"];
 
@@ -54,12 +77,16 @@ export class AthleteDetailComponent {
   private readonly logger = inject(LoggerService);
 
   readonly id = this.route.snapshot.paramMap.get("id") ?? "";
-  private readonly nav = (inject(Router).getCurrentNavigation()?.extras.state ?? history.state ?? {}) as Record<string, unknown>;
+  private readonly nav = (inject(Router).getCurrentNavigation()?.extras.state ??
+    history.state ??
+    {}) as Record<string, unknown>;
   readonly name = (this.nav["name"] as string) || "Athlete";
   readonly jersey = (this.nav["jersey"] as number | null) ?? null;
   readonly position = (this.nav["position"] as string) || "";
 
-  readonly lane = computed<Lane>(() => (staffLaneFor(this.membership.role()) ?? "coach") as Lane);
+  readonly lane = computed<Lane>(
+    () => (staffLaneFor(this.membership.role()) ?? "coach") as Lane,
+  );
   readonly title = computed(() => TITLE[this.lane()]);
   readonly consent = computed(() => CONSENT[this.lane()]);
   readonly rtpPhases = RTP_PHASES;
@@ -89,16 +116,23 @@ export class AthleteDetailComponent {
   private fetch(): void {
     const lane = this.lane();
     const url =
-      lane === "physio" ? `/api/staff-physiotherapist/athletes/${this.id}` :
-      lane === "nutrition" ? `/api/staff-nutritionist/athletes/${this.id}/trends` :
-      `/api/staff-psychology/athletes/${this.id}`;
+      lane === "physio"
+        ? `/api/staff-physiotherapist/athletes/${this.id}`
+        : lane === "nutrition"
+          ? `/api/staff-nutritionist/athletes/${this.id}/trends`
+          : `/api/staff-psychology/athletes/${this.id}`;
     this.api.get<Record<string, unknown>>(url).subscribe({
       next: (res) => {
         const d = (res?.data ?? {}) as Record<string, unknown>;
         if (lane === "physio") {
           this.injuries.set((d["activeInjuries"] as Injury[]) ?? []);
-          const proto = (d["rehabProtocol"] as { phase_number?: number }[] | null) ?? null;
-          this.rtpPhase.set(proto?.[0]?.phase_number != null ? `Phase ${proto[0].phase_number}` : null);
+          const proto =
+            (d["rehabProtocol"] as { phase_number?: number }[] | null) ?? null;
+          this.rtpPhase.set(
+            proto?.[0]?.phase_number != null
+              ? `Phase ${proto[0].phase_number}`
+              : null,
+          );
         } else if (lane === "nutrition") {
           this.body.set((d["trends"] as BodyTrend[]) ?? []);
         } else {
@@ -113,16 +147,22 @@ export class AthleteDetailComponent {
 
   readonly hasData = computed(() => {
     switch (this.lane()) {
-      case "coach": return this.coachShared;
-      case "physio": return this.injuries().length > 0;
-      case "nutrition": return this.body().length > 0;
-      case "psych": return this.mental().length > 0 || this.wellness().length > 0;
+      case "coach":
+        return this.coachShared;
+      case "physio":
+        return this.injuries().length > 0;
+      case "nutrition":
+        return this.body().length > 0;
+      case "psych":
+        return this.mental().length > 0 || this.wellness().length > 0;
     }
   });
 
   readonly latestBody = computed(() => this.body().at(-1) ?? null);
   readonly latestWellness = computed(() => this.wellness().at(-1) ?? null);
-  readonly latestMental = computed(() => this.mental().at(-1)?.mental_readiness_score ?? null);
+  readonly latestMental = computed(
+    () => this.mental().at(-1)?.mental_readiness_score ?? null,
+  );
 
   readonly acwrBand = computed(() => {
     const r = this.acwr;
@@ -148,7 +188,12 @@ export class AthleteDetailComponent {
     return "neutral";
   }
   readonly initials = computed(() =>
-    this.name.split(/\s+/).map((w) => w[0]).slice(0, 2).join("").toUpperCase(),
+    this.name
+      .split(/\s+/)
+      .map((w) => w[0])
+      .slice(0, 2)
+      .join("")
+      .toUpperCase(),
   );
 
   // ---- WRITE: physio RTP update ----
@@ -173,11 +218,22 @@ export class AthleteDetailComponent {
     this.busy.set(true);
     this.api
       .put(`/api/staff-physiotherapist/rtp/${injuryId}`, {
-        progress: this.rtpProgress(), phase: this.rtpNewPhase(), notes: this.rtpNotes() || undefined,
+        progress: this.rtpProgress(),
+        phase: this.rtpNewPhase(),
+        notes: this.rtpNotes() || undefined,
       })
       .subscribe({
-        next: () => { this.busy.set(false); this.editingRtp.set(null); this.flash("RTP updated"); this.fetch(); },
-        error: (e) => { this.busy.set(false); this.logger.error("rtp_update_failed", e); this.flash("Couldn't update RTP", true); },
+        next: () => {
+          this.busy.set(false);
+          this.editingRtp.set(null);
+          this.flash("RTP updated");
+          this.fetch();
+        },
+        error: (e) => {
+          this.busy.set(false);
+          this.logger.error("rtp_update_failed", e);
+          this.flash("Couldn't update RTP", true);
+        },
       });
   }
 
@@ -188,15 +244,30 @@ export class AthleteDetailComponent {
   readonly injGrade = signal("Grade 1");
   readonly grades = ["Grade 1", "Grade 2", "Grade 3"];
   logInjury(): void {
-    if (this.busy() || !this.injType().trim() || !this.injLocation().trim()) return;
+    if (this.busy() || !this.injType().trim() || !this.injLocation().trim())
+      return;
     this.busy.set(true);
     this.api
       .post("/api/staff-physiotherapist/injuries", {
-        userId: this.id, type: this.injType().trim(), location: this.injLocation().trim(), grade: this.injGrade(),
+        userId: this.id,
+        type: this.injType().trim(),
+        location: this.injLocation().trim(),
+        grade: this.injGrade(),
       })
       .subscribe({
-        next: () => { this.busy.set(false); this.addingInjury.set(false); this.injType.set(""); this.injLocation.set(""); this.flash("Injury logged"); this.fetch(); },
-        error: (e) => { this.busy.set(false); this.logger.error("log_injury_failed", e); this.flash("Couldn't log injury", true); },
+        next: () => {
+          this.busy.set(false);
+          this.addingInjury.set(false);
+          this.injType.set("");
+          this.injLocation.set("");
+          this.flash("Injury logged");
+          this.fetch();
+        },
+        error: (e) => {
+          this.busy.set(false);
+          this.logger.error("log_injury_failed", e);
+          this.flash("Couldn't log injury", true);
+        },
       });
   }
 
@@ -207,8 +278,15 @@ export class AthleteDetailComponent {
     this.api
       .post(`/api/staff-nutritionist/reports/${this.id}`, { type })
       .subscribe({
-        next: () => { this.busy.set(false); this.flash(`${type} report generated`); },
-        error: (e) => { this.busy.set(false); this.logger.error("nutrition_report_failed", e); this.flash("Couldn't generate report", true); },
+        next: () => {
+          this.busy.set(false);
+          this.flash(`${type} report generated`);
+        },
+        error: (e) => {
+          this.busy.set(false);
+          this.logger.error("nutrition_report_failed", e);
+          this.flash("Couldn't generate report", true);
+        },
       });
   }
 
@@ -223,12 +301,25 @@ export class AthleteDetailComponent {
     this.busy.set(true);
     this.api
       .post("/api/staff-psychology/assessments", {
-        athleteId: this.id, type: this.asmtType().trim(), score: this.asmtScore(),
-        interpretation: this.asmtNote() || undefined, requiresReview: this.asmtReview(),
+        athleteId: this.id,
+        type: this.asmtType().trim(),
+        score: this.asmtScore(),
+        interpretation: this.asmtNote() || undefined,
+        requiresReview: this.asmtReview(),
       })
       .subscribe({
-        next: () => { this.busy.set(false); this.addingAssessment.set(false); this.asmtType.set(""); this.asmtNote.set(""); this.flash("Assessment logged"); },
-        error: (e) => { this.busy.set(false); this.logger.error("assessment_failed", e); this.flash("Couldn't log assessment", true); },
+        next: () => {
+          this.busy.set(false);
+          this.addingAssessment.set(false);
+          this.asmtType.set("");
+          this.asmtNote.set("");
+          this.flash("Assessment logged");
+        },
+        error: (e) => {
+          this.busy.set(false);
+          this.logger.error("assessment_failed", e);
+          this.flash("Couldn't log assessment", true);
+        },
       });
   }
 

@@ -14,7 +14,9 @@ const state = {
       metadata: { source: "fallback" },
     },
   ],
-  recommendations: [{ id: "rec-1", status: "accepted", created_at: "2026-02-20" }],
+  recommendations: [
+    { id: "rec-1", status: "accepted", created_at: "2026-02-20" },
+  ],
   kb: [{ id: "kb-1", entry_type: "training_method" }],
 };
 
@@ -61,7 +63,10 @@ class Query {
 
 vi.mock("../../netlify/functions/utils/base-handler.js", () => ({
   baseHandler: async (event, context, options) =>
-    options.handler(event, context, { userId: "coach-1", requestId: "req-test" }),
+    options.handler(event, context, {
+      userId: "coach-1",
+      requestId: "req-test",
+    }),
 }));
 
 vi.mock("../../netlify/functions/utils/authorization-guard.js", () => ({
@@ -84,7 +89,9 @@ describe("ai-telemetry validation", () => {
     state.roleAuthorized = true;
     state.role = "coach";
     state.teamMembers = [{ team_id: "team-1" }];
-    state.sessions = [{ id: "session-1", user_id: "athlete-1", team_id: "team-1" }];
+    state.sessions = [
+      { id: "session-1", user_id: "athlete-1", team_id: "team-1" },
+    ];
     state.messages = [
       {
         id: "msg-1",
@@ -104,7 +111,10 @@ describe("ai-telemetry validation", () => {
     state.roleAuthorized = false;
 
     const { handler } = await import("../../netlify/functions/ai-telemetry.js");
-    const response = await handler({ httpMethod: "GET", queryStringParameters: {} }, {});
+    const response = await handler(
+      { httpMethod: "GET", queryStringParameters: {} },
+      {},
+    );
 
     expect(response.statusCode).toBe(403);
     const payload = JSON.parse(response.body);

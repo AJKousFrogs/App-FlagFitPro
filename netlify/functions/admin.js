@@ -1,5 +1,8 @@
 import { baseHandler } from "./utils/base-handler.js";
-import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
+import {
+  createSuccessResponse,
+  createErrorResponse,
+} from "./utils/error-handler.js";
 import { supabaseAdmin } from "./supabase-client.js";
 import { getUserRole } from "./utils/authorization-guard.js";
 import { createLogger } from "./utils/structured-logger.js";
@@ -33,13 +36,7 @@ async function getHealthMetrics() {
   const isConnected = !connError && connectionTest !== null;
 
   // Get table counts
-  const tables = [
-    "users",
-    "training_sessions",
-    "teams",
-    "posts",
-    "games",
-  ];
+  const tables = ["users", "training_sessions", "teams", "posts", "games"];
   const tableStats = {};
 
   await Promise.all(
@@ -315,11 +312,7 @@ async function getSyncStatus() {
 /**
  * Main handler function
  */
-async function handleRequest(
-  event,
-  _context,
-  { userId: _userId },
-) {
+async function handleRequest(event, _context, { userId: _userId }) {
   // Extract endpoint from path
   const path = event.path.replace("/.netlify/functions/admin", "") || "/";
   const endpoint = path.split("?")[0]; // Remove query params
@@ -329,7 +322,11 @@ async function handleRequest(
     case "/health-metrics":
     case "": {
       if (event.httpMethod !== "GET") {
-        return createErrorResponse("Method not allowed", 405, "method_not_allowed");
+        return createErrorResponse(
+          "Method not allowed",
+          405,
+          "method_not_allowed",
+        );
       }
       const metrics = await getHealthMetrics();
       return createSuccessResponse(metrics);
@@ -337,7 +334,11 @@ async function handleRequest(
 
     case "/create-backup": {
       if (event.httpMethod !== "POST") {
-        return createErrorResponse("Method not allowed", 405, "method_not_allowed");
+        return createErrorResponse(
+          "Method not allowed",
+          405,
+          "method_not_allowed",
+        );
       }
       const backup = await createDatabaseBackup();
       if (backup.status === "failed") {
@@ -352,7 +353,11 @@ async function handleRequest(
 
     case "/sync-status": {
       if (event.httpMethod !== "GET") {
-        return createErrorResponse("Method not allowed", 405, "method_not_allowed");
+        return createErrorResponse(
+          "Method not allowed",
+          405,
+          "method_not_allowed",
+        );
       }
       const syncStatus = await getSyncStatus();
       return createSuccessResponse(syncStatus);
@@ -373,7 +378,11 @@ const handler = async (event, context) => {
     handler: async (event, context, { userId }) => {
       const role = await getUserRole(userId);
       if (role !== "admin") {
-        return createErrorResponse("Forbidden - Admin access required", 403, "not_authorized");
+        return createErrorResponse(
+          "Forbidden - Admin access required",
+          403,
+          "not_authorized",
+        );
       }
 
       return handleRequest(event, context, { userId });

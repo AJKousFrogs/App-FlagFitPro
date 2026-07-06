@@ -7,7 +7,10 @@ const state = vi.hoisted(() => ({
 
 vi.mock("../../netlify/functions/utils/base-handler.js", () => ({
   baseHandler: async (event, context, options) =>
-    options.handler(event, context, { userId: "user-1", requestId: "req-test" }),
+    options.handler(event, context, {
+      userId: "user-1",
+      requestId: "req-test",
+    }),
 }));
 
 vi.mock("../../netlify/functions/utils/authorization-guard.js", () => ({
@@ -134,9 +137,8 @@ describe("smart-training-recommendations authorization and validation hardening"
     vi.resetModules();
     state.role = "player";
     state.throwTrainingProgramError = false;
-    ({ handler } = await import(
-      "../../netlify/functions/smart-training-recommendations.js"
-    ));
+    ({ handler } =
+      await import("../../netlify/functions/smart-training-recommendations.js"));
   });
 
   it("returns 422 for malformed POST JSON", async () => {
@@ -208,7 +210,9 @@ describe("smart-training-recommendations authorization and validation hardening"
 
     expect(response.statusCode).toBe(500);
     const body = JSON.parse(response.body);
-    expect(body.error.message).toBe("Failed to generate training recommendations");
+    expect(body.error.message).toBe(
+      "Failed to generate training recommendations",
+    );
     expect(body.error.details).toBeFalsy();
   });
 });

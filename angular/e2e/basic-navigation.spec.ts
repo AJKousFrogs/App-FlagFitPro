@@ -6,7 +6,9 @@ test.describe("Basic Navigation", () => {
     await expect(page).toHaveURL(/\/($|login|register|todays-practice)/);
   });
 
-  test("should navigate to login page when not authenticated", async ({ page }) => {
+  test("should navigate to login page when not authenticated", async ({
+    page,
+  }) => {
     await page.goto("/todays-practice");
     await expect(page).toHaveURL(/\/login(\?.*)?$/);
   });

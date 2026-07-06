@@ -54,6 +54,8 @@ sw.js
 
 # Angular build files
 angular/dist/
+angular/.angular/
+*/.angular/
 
 # Netlify
 .netlify/

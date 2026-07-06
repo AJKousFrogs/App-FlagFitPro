@@ -66,7 +66,8 @@ describe("account-deletion validation hardening", () => {
   });
 
   it("returns 422 for non-object POST payload", async () => {
-    const { handler } = await import("../../netlify/functions/account-deletion.js");
+    const { handler } =
+      await import("../../netlify/functions/account-deletion.js");
     const response = await handler(
       {
         httpMethod: "POST",
@@ -82,7 +83,8 @@ describe("account-deletion validation hardening", () => {
   });
 
   it("returns 422 for invalid reason type", async () => {
-    const { handler } = await import("../../netlify/functions/account-deletion.js");
+    const { handler } =
+      await import("../../netlify/functions/account-deletion.js");
     const response = await handler(
       {
         httpMethod: "POST",
@@ -99,7 +101,8 @@ describe("account-deletion validation hardening", () => {
 
   it("returns 500 when pending request lookup fails in DELETE", async () => {
     state.pendingLookupError = { message: "db offline" };
-    const { handler } = await import("../../netlify/functions/account-deletion.js");
+    const { handler } =
+      await import("../../netlify/functions/account-deletion.js");
     const response = await handler(
       {
         httpMethod: "DELETE",

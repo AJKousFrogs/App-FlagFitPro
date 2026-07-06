@@ -41,20 +41,24 @@ export class AlertsComponent {
   readonly alerts = signal<Alert[] | null>(null);
 
   constructor() {
-    this.api.get<{ alerts?: Alert[] } | Alert[]>("/api/coach-alerts").subscribe({
-      next: (res) => {
-        const d = res?.data as { alerts?: Alert[] } | Alert[] | undefined;
-        this.alerts.set(Array.isArray(d) ? d : (d?.alerts ?? []));
-      },
-      error: () => this.alerts.set([]),
-    });
+    this.api
+      .get<{ alerts?: Alert[] } | Alert[]>("/api/coach-alerts")
+      .subscribe({
+        next: (res) => {
+          const d = res?.data as { alerts?: Alert[] } | Alert[] | undefined;
+          this.alerts.set(Array.isArray(d) ? d : (d?.alerts ?? []));
+        },
+        error: () => this.alerts.set([]),
+      });
   }
 
   acknowledge(a: Alert): void {
     this.alerts.update((list) => (list ?? []).filter((x) => x !== a));
     this.api
       .post("/api/coach-alerts", { alertId: a.id, acknowledged: true })
-      .subscribe({ error: (e) => this.logger.error("coach_alert_ack_failed", e) });
+      .subscribe({
+        error: (e) => this.logger.error("coach_alert_ack_failed", e),
+      });
   }
 
   athleteId(a: Alert): string {

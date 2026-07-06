@@ -36,21 +36,25 @@ export class RemoteTelemetryService {
       const traceId =
         this.correlation.traceId() ?? this.correlation.getOrCreateForRequest();
 
-      const { error } = await this.supabase.client.from("frontend_logs").insert({
-        level,
-        trace_id: traceId,
-        user_id: user.id,
-        message,
-        context: {
-          ...(context ?? {}),
-          userAgent:
-            typeof navigator !== "undefined" ? navigator.userAgent : undefined,
-          path:
-            typeof window !== "undefined"
-              ? window.location?.pathname
-              : undefined,
-        },
-      });
+      const { error } = await this.supabase.client
+        .from("frontend_logs")
+        .insert({
+          level,
+          trace_id: traceId,
+          user_id: user.id,
+          message,
+          context: {
+            ...(context ?? {}),
+            userAgent:
+              typeof navigator !== "undefined"
+                ? navigator.userAgent
+                : undefined,
+            path:
+              typeof window !== "undefined"
+                ? window.location?.pathname
+                : undefined,
+          },
+        });
 
       if (error) {
         // Intentionally silent — logging must never break the app

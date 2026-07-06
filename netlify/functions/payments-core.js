@@ -1,5 +1,8 @@
 import { supabaseAdmin } from "./supabase-client.js";
-import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
+import {
+  createSuccessResponse,
+  createErrorResponse,
+} from "./utils/error-handler.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { parseJsonObjectBody } from "./utils/input-validator.js";
 import { checkTeamMembership, getUserContext } from "./utils/auth-helper.js";
@@ -46,13 +49,14 @@ const assertActiveTeamMember = async (teamId, teamMemberId) => {
     throw error;
   }
   if (!member) {
-    throw new Error("player_id must reference an active team member in this team");
+    throw new Error(
+      "player_id must reference an active team member in this team",
+    );
   }
 };
 
 // Get player payment data (player view)
 const getPlayerPayments = async (userId, queryParams) => {
-
   const { team_id } = queryParams;
 
   // Get user context to find player_id
@@ -179,7 +183,6 @@ const getPlayerPayments = async (userId, queryParams) => {
 
 // Get coach payment management data
 const getCoachPayments = async (userId, queryParams) => {
-
   const { team_id } = queryParams;
 
   if (!team_id) {
@@ -329,7 +332,6 @@ const getCoachPayments = async (userId, queryParams) => {
 
 // Create a new fee
 const createFee = async (userId, body) => {
-
   const {
     team_id,
     name,
@@ -387,7 +389,9 @@ const createFee = async (userId, body) => {
       throw error;
     }
     if (!members || members.length !== uniqueIds.length) {
-      throw new Error("One or more selected players are not active team members");
+      throw new Error(
+        "One or more selected players are not active team members",
+      );
     }
     membersToApply = members;
   } else {
@@ -427,8 +431,8 @@ const createFee = async (userId, body) => {
 
 // Record a payment
 const recordPayment = async (userId, body) => {
-
-  const { team_id, player_id, amount, method, date, reference, payment_id } = body;
+  const { team_id, player_id, amount, method, date, reference, payment_id } =
+    body;
 
   if (!team_id) {
     throw new Error("Missing required field: team_id");

@@ -1,9 +1,18 @@
 import { supabaseAdmin } from "./supabase-client.js";
 import { baseHandler } from "./utils/base-handler.js";
-import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
+import {
+  createSuccessResponse,
+  createErrorResponse,
+} from "./utils/error-handler.js";
 import { guardMerlinRequest } from "./utils/merlin-guard.js";
-import { detectPainTrigger, detectACWRTrigger } from "./utils/safety-override.js";
-import { requireAuthorization, logViolation } from "./utils/authorization-guard.js";
+import {
+  detectPainTrigger,
+  detectACWRTrigger,
+} from "./utils/safety-override.js";
+import {
+  requireAuthorization,
+  logViolation,
+} from "./utils/authorization-guard.js";
 import { parseJsonObjectBody } from "./utils/input-validator.js";
 import { computeAcwrAt, computeSessionLoad } from "./utils/acwr.js";
 import { createLogger } from "./utils/structured-logger.js";
@@ -902,7 +911,6 @@ const handler = async (event, context) => {
     rateLimitType: event.httpMethod === "GET" ? "READ" : "UPDATE",
     requireAuth: true,
     handler: async (event, _context, { userId, requestId }) => {
-  
       // GET: Fetch daily training plan
       if (event.httpMethod === "GET") {
         try {
@@ -930,7 +938,8 @@ const handler = async (event, context) => {
         try {
           body = parseJsonObjectBody(event.body);
         } catch (error) {
-          const isObjectError = error.message === "Request body must be an object";
+          const isObjectError =
+            error.message === "Request body must be an object";
           return createErrorResponse(
             isObjectError ? error.message : "Invalid JSON in request body",
             isObjectError ? 422 : 400,
@@ -949,7 +958,11 @@ const handler = async (event, context) => {
             userAgent: event.headers?.["user-agent"],
             body: event.body,
           };
-          const result = await updateTrainingProgress(userId, body, requestInfo);
+          const result = await updateTrainingProgress(
+            userId,
+            body,
+            requestInfo,
+          );
 
           if (!result.success) {
             return createErrorResponse(

@@ -4,8 +4,12 @@
     <h1>Wellness</h1>
   </div>
   <div class="inline">
-    <a class="icon-btn" routerLink="/notifications" aria-label="Notifications"><lucide-icon name="bell" /><span class="dot"></span></a>
-    <a class="avatar" routerLink="/profile" aria-label="Profile"><app-avatar /></a>
+    <a class="icon-btn" routerLink="/notifications" aria-label="Notifications"
+      ><lucide-icon name="bell" /><span class="dot"></span
+    ></a>
+    <a class="avatar" routerLink="/profile" aria-label="Profile"
+      ><app-avatar
+    /></a>
   </div>
 </header>
 
@@ -24,45 +28,90 @@
        week's plan deloads after a heavy weekend. Always available; nudged Mondays. -->
   <div class="section-h">
     <h2>Weekend games</h2>
-    @if (isMonday) { <small class="muted">Tell us about the weekend so today adapts</small> }
+    @if (isMonday) {
+      <small class="muted">Tell us about the weekend so today adapts</small>
+    }
   </div>
   <div class="card stack">
     @if (gamesLogged()) {
-      <p class="note" style="color:var(--accent);margin:0"><lucide-icon name="check" /> {{ gamesMsg() }}</p>
-      <button class="btn ghost block" type="button" (click)="clearWeekendGames()">Edit / remove</button>
+      <p class="note" style="color: var(--accent); margin: 0">
+        <lucide-icon name="check" /> {{ gamesMsg() }}
+      </p>
+      <button
+        class="btn ghost block"
+        type="button"
+        (click)="clearWeekendGames()"
+      >
+        Edit / remove
+      </button>
     } @else {
-      <p style="margin:0 0 var(--s-2)">Did you play games this weekend?</p>
+      <p style="margin: 0 0 var(--s-2)">Did you play games this weekend?</p>
       <div class="chiprow" role="group" aria-label="Played games this weekend">
-        <button type="button" class="chip" [class.sel]="playedGames() === true"
-                [attr.aria-pressed]="playedGames() === true" (click)="playedGames.set(true)">Yes</button>
-        <button type="button" class="chip" [class.sel]="playedGames() === false"
-                [attr.aria-pressed]="playedGames() === false" (click)="clearWeekendGames()">No</button>
+        <button
+          type="button"
+          class="chip"
+          [class.sel]="playedGames() === true"
+          [attr.aria-pressed]="playedGames() === true"
+          (click)="playedGames.set(true)"
+        >
+          Yes
+        </button>
+        <button
+          type="button"
+          class="chip"
+          [class.sel]="playedGames() === false"
+          [attr.aria-pressed]="playedGames() === false"
+          (click)="clearWeekendGames()"
+        >
+          No
+        </button>
       </div>
 
       @if (playedGames() === true) {
-        <div style="margin-top:var(--s-3)">
-          <p style="margin:0 0 var(--s-2)">How many games?</p>
+        <div style="margin-top: var(--s-3)">
+          <p style="margin: 0 0 var(--s-2)">How many games?</p>
           <div class="chiprow" role="group" aria-label="Number of games">
             @for (n of [1, 2, 3, 4]; track n) {
-              <button type="button" class="chip" [class.sel]="gameCount() === n"
-                      [attr.aria-pressed]="gameCount() === n" (click)="gameCount.set(n)">{{ n }}</button>
+              <button
+                type="button"
+                class="chip"
+                [class.sel]="gameCount() === n"
+                [attr.aria-pressed]="gameCount() === n"
+                (click)="gameCount.set(n)"
+              >
+                {{ n }}
+              </button>
             }
           </div>
         </div>
-        <div style="margin-top:var(--s-3)">
-          <p style="margin:0 0 var(--s-2)">Format</p>
+        <div style="margin-top: var(--s-3)">
+          <p style="margin: 0 0 var(--s-2)">Format</p>
           <div class="chiprow" role="group" aria-label="Game format">
             @for (f of gameFormats; track f.key) {
-              <button type="button" class="chip" [class.sel]="gameFormat() === f.key"
-                      [attr.aria-pressed]="gameFormat() === f.key" (click)="gameFormat.set(f.key)">{{ f.label }}</button>
+              <button
+                type="button"
+                class="chip"
+                [class.sel]="gameFormat() === f.key"
+                [attr.aria-pressed]="gameFormat() === f.key"
+                (click)="gameFormat.set(f.key)"
+              >
+                {{ f.label }}
+              </button>
             }
           </div>
         </div>
-        <button class="btn primary block" type="button" style="margin-top:var(--s-3)"
-                [attr.aria-disabled]="gamesLogging()" (click)="logWeekendGames()">
+        <button
+          class="btn primary block"
+          type="button"
+          style="margin-top: var(--s-3)"
+          [attr.aria-disabled]="gamesLogging()"
+          (click)="logWeekendGames()"
+        >
           {{ gamesLogging() ? "Saving…" : "Log weekend games" }}
         </button>
-        @if (gamesMsg() && !gamesLogged()) { <p class="note" style="color:var(--danger)">{{ gamesMsg() }}</p> }
+        @if (gamesMsg() && !gamesLogged()) {
+          <p class="note" style="color: var(--danger)">{{ gamesMsg() }}</p>
+        }
       }
     }
   </div>
@@ -71,55 +120,117 @@
   <div class="card stack">
     <div class="slider">
       <label for="sq">Sleep quality</label>
-      <input class="rng" id="sq" type="range" min="1" max="10" [value]="sleepQuality()"
-             (input)="sleepQuality.set(+$any($event.target).value)" aria-label="Sleep quality 1 to 10" />
+      <input
+        class="rng"
+        id="sq"
+        type="range"
+        min="1"
+        max="10"
+        [value]="sleepQuality()"
+        (input)="sleepQuality.set(+$any($event.target).value)"
+        aria-label="Sleep quality 1 to 10"
+      />
       <span class="val">{{ sleepQuality() }}</span>
     </div>
     <div class="slider">
       <label for="sh">Sleep hours</label>
-      <input class="rng" id="sh" type="range" min="0" max="12" step="0.5" [value]="sleepHours()"
-             (input)="sleepHours.set(+$any($event.target).value)" aria-label="Sleep hours 0 to 12" />
+      <input
+        class="rng"
+        id="sh"
+        type="range"
+        min="0"
+        max="12"
+        step="0.5"
+        [value]="sleepHours()"
+        (input)="sleepHours.set(+$any($event.target).value)"
+        aria-label="Sleep hours 0 to 12"
+      />
       <span class="val">{{ sleepHours() }}</span>
     </div>
     <div class="slider">
       <label for="so">Soreness</label>
-      <input class="rng" id="so" type="range" min="1" max="10" [value]="soreness()"
-             (input)="soreness.set(+$any($event.target).value)" aria-label="Soreness 1 to 10" />
+      <input
+        class="rng"
+        id="so"
+        type="range"
+        min="1"
+        max="10"
+        [value]="soreness()"
+        (input)="soreness.set(+$any($event.target).value)"
+        aria-label="Soreness 1 to 10"
+      />
       <span class="val">{{ soreness() }}</span>
     </div>
     <div class="slider">
       <label for="en">Energy</label>
-      <input class="rng" id="en" type="range" min="1" max="10" [value]="energy()"
-             (input)="energy.set(+$any($event.target).value)" aria-label="Energy 1 to 10" />
+      <input
+        class="rng"
+        id="en"
+        type="range"
+        min="1"
+        max="10"
+        [value]="energy()"
+        (input)="energy.set(+$any($event.target).value)"
+        aria-label="Energy 1 to 10"
+      />
       <span class="val">{{ energy() }}</span>
     </div>
     <div class="slider">
       <label for="mo">Mood</label>
-      <input class="rng" id="mo" type="range" min="1" max="10" [value]="mood()"
-             (input)="mood.set(+$any($event.target).value)" aria-label="Mood 1 to 10" />
+      <input
+        class="rng"
+        id="mo"
+        type="range"
+        min="1"
+        max="10"
+        [value]="mood()"
+        (input)="mood.set(+$any($event.target).value)"
+        aria-label="Mood 1 to 10"
+      />
       <span class="val">{{ mood() }}</span>
     </div>
     <div class="slider">
       <label for="st">Stress</label>
-      <input class="rng" id="st" type="range" min="1" max="10" [value]="stress()"
-             (input)="stress.set(+$any($event.target).value)" aria-label="Stress 1 to 10" />
+      <input
+        class="rng"
+        id="st"
+        type="range"
+        min="1"
+        max="10"
+        [value]="stress()"
+        (input)="stress.set(+$any($event.target).value)"
+        aria-label="Stress 1 to 10"
+      />
       <span class="val">{{ stress() }}</span>
     </div>
 
-    <div style="margin-bottom:var(--s-3)">
-      <p style="margin:0 0 var(--s-2)">Travel today</p>
+    <div style="margin-bottom: var(--s-3)">
+      <p style="margin: 0 0 var(--s-2)">Travel today</p>
       @if (travelSuggestion(); as h) {
-        <div class="card accent" style="margin-bottom:var(--s-2)">
+        <div class="card accent" style="margin-bottom: var(--s-2)">
           <div class="row">
             <small>You declared a trip today (~{{ h }}h) — apply it?</small>
-            <button class="btn secondary sm" type="button" (click)="applyTravelSuggestion()">Apply</button>
+            <button
+              class="btn secondary sm"
+              type="button"
+              (click)="applyTravelSuggestion()"
+            >
+              Apply
+            </button>
           </div>
         </div>
       }
       <div class="chiprow" role="group" aria-label="Hours travelled today">
         @for (t of travelOptions; track t.h) {
-          <button type="button" class="chip" [class.sel]="travelHours() === t.h"
-                  [attr.aria-pressed]="travelHours() === t.h" (click)="travelHours.set(t.h)">{{ t.label }}</button>
+          <button
+            type="button"
+            class="chip"
+            [class.sel]="travelHours() === t.h"
+            [attr.aria-pressed]="travelHours() === t.h"
+            (click)="travelHours.set(t.h)"
+          >
+            {{ t.label }}
+          </button>
         }
       </div>
     </div>
@@ -129,35 +240,71 @@
         <lucide-icon name="check" /> Logged for today
       </button>
     } @else {
-      <button class="btn primary block" type="button" [attr.aria-disabled]="submitting()"
-              (click)="submitCheckin()">
+      <button
+        class="btn primary block"
+        type="button"
+        [attr.aria-disabled]="submitting()"
+        (click)="submitCheckin()"
+      >
         {{ submitting() ? "Saving…" : "Submit check-in" }}
       </button>
     }
     @if (submitError(); as e) {
-      <p class="note" style="color:var(--danger)">{{ e }}</p>
+      <p class="note" style="color: var(--danger)">{{ e }}</p>
     }
   </div>
 
   <!-- supplements daily log -->
   <div class="section-h">
     <h2>Today's supplements</h2>
-    <a class="faint" routerLink="/supplements" style="font-size:var(--fs-sm)">stack →</a>
+    <a class="faint" routerLink="/supplements" style="font-size: var(--fs-sm)"
+      >stack →</a
+    >
   </div>
   <div class="card">
     <div class="lrow">
-      <span id="s-cr"><iconify-icon icon="mdi:lightning-bolt" class="suppi"></iconify-icon>Creatine <small>5 g</small></span>
-      <button class="sw" role="switch" [attr.aria-checked]="creatine()" aria-labelledby="s-cr" (click)="toggleSupplement('creatine')"></button>
+      <span id="s-cr"
+        ><iconify-icon icon="mdi:lightning-bolt" class="suppi"></iconify-icon
+        >Creatine <small>5 g</small></span
+      >
+      <button
+        class="sw"
+        role="switch"
+        [attr.aria-checked]="creatine()"
+        aria-labelledby="s-cr"
+        (click)="toggleSupplement('creatine')"
+      ></button>
     </div>
     <div class="lrow">
-      <span id="s-cf"><iconify-icon icon="mdi:coffee" class="suppi"></iconify-icon>Caffeine <small>200 mg · pre-session</small></span>
-      <button class="sw" role="switch" [attr.aria-checked]="caffeine()" aria-labelledby="s-cf" (click)="toggleSupplement('caffeine')"></button>
+      <span id="s-cf"
+        ><iconify-icon icon="mdi:coffee" class="suppi"></iconify-icon>Caffeine
+        <small>200 mg · pre-session</small></span
+      >
+      <button
+        class="sw"
+        role="switch"
+        [attr.aria-checked]="caffeine()"
+        aria-labelledby="s-cf"
+        (click)="toggleSupplement('caffeine')"
+      ></button>
     </div>
     <div class="lrow">
-      <span id="s-ba"><iconify-icon icon="mdi:shield-half-full" class="suppi"></iconify-icon>Beta-alanine <small>4 g</small></span>
-      <button class="sw" role="switch" [attr.aria-checked]="beta()" aria-labelledby="s-ba" (click)="toggleSupplement('beta')"></button>
+      <span id="s-ba"
+        ><iconify-icon icon="mdi:shield-half-full" class="suppi"></iconify-icon
+        >Beta-alanine <small>4 g</small></span
+      >
+      <button
+        class="sw"
+        role="switch"
+        [attr.aria-checked]="beta()"
+        aria-labelledby="s-ba"
+        (click)="toggleSupplement('beta')"
+      ></button>
     </div>
-    <p class="note">Logged daily, like your check-in. Caffeine before a session makes effort feel easier — we account for that so your load stays honest.</p>
+    <p class="note">
+      Logged daily, like your check-in. Caffeine before a session makes effort
+      feel easier — we account for that so your load stays honest.
+    </p>
   </div>
 
   <!-- readiness (server-canonical) -->
@@ -165,72 +312,135 @@
   @if (readinessPct(); as pct) {
     <div class="hero">
       <div class="row">
-        <div class="gauge grad" [style.--p]="pct"><div class="inner"><b>{{ pct }}</b><small>/100</small></div></div>
-        <div style="text-align:right">
-          @if (readinessBand(); as b) { <span class="band {{ b.cls }}">{{ b.label }}</span> }
+        <div class="gauge grad" [style.--p]="pct">
+          <div class="inner">
+            <b>{{ pct }}</b
+            ><small>/100</small>
+          </div>
+        </div>
+        <div style="text-align: right">
+          @if (readinessBand(); as b) {
+            <span class="band {{ b.cls }}">{{ b.label }}</span>
+          }
         </div>
       </div>
-      <div class="tiles" style="margin-top:var(--s-4)">
+      <div class="tiles" style="margin-top: var(--s-4)">
         <div><b>35%</b><small>Load</small></div>
         <div><b>30%</b><small>Wellness</small></div>
         <div><b>20%</b><small>Sleep</small></div>
         <div><b>15%</b><small>Game</small></div>
       </div>
-      <p class="note">Fixed model weights — how your readiness score is composed.</p>
+      <p class="note">
+        Fixed model weights — how your readiness score is composed.
+      </p>
     </div>
   } @else {
-    <div class="empty">Submit today's check-in to calculate your readiness.</div>
+    <div class="empty">
+      Submit today's check-in to calculate your readiness.
+    </div>
   }
 
   <!-- self-reported tightness → injury precedence in the plan -->
   <div class="section-h"><h2>Niggles &amp; tightness</h2></div>
   <div class="card stack">
     @if (activeInjuries().length) {
-      <div class="stack" style="gap:6px">
+      <div class="stack" style="gap: 6px">
         @for (inj of activeInjuries(); track inj.id) {
           <div class="row">
             <span class="inline">
-              <span class="band {{ inj.severity === 'severe' ? 'danger' : inj.severity === 'moderate' ? 'caution' : 'info' }}">{{ inj.severity }}</span>
-              <b style="text-transform:capitalize">{{ inj.region }}</b>
+              <span
+                class="band {{
+                  inj.severity === 'severe'
+                    ? 'danger'
+                    : inj.severity === 'moderate'
+                      ? 'caution'
+                      : 'info'
+                }}"
+                >{{ inj.severity }}</span
+              >
+              <b style="text-transform: capitalize">{{ inj.region }}</b>
             </span>
             <small class="muted">plan adjusted</small>
           </div>
         }
       </div>
     }
-    <p class="muted" style="margin:0">Got a tight spot? Flag it and your plan pulls sprint work off that area.</p>
-    <p class="lbl" style="margin:0">Where?</p>
+    <p class="muted" style="margin: 0">
+      Got a tight spot? Flag it and your plan pulls sprint work off that area.
+    </p>
+    <p class="lbl" style="margin: 0">Where?</p>
     <div class="chiprow">
       @for (r of tightnessRegions; track r) {
-        <button type="button" class="chip" [class.sel]="tightRegion() === r" (click)="selectTightRegion(r)">{{ r }}</button>
+        <button
+          type="button"
+          class="chip"
+          [class.sel]="tightRegion() === r"
+          (click)="selectTightRegion(r)"
+        >
+          {{ r }}
+        </button>
       }
     </div>
-    <p class="lbl" style="margin:0">How bad?</p>
+    <p class="lbl" style="margin: 0">How bad?</p>
     <div class="chiprow">
-      @for (s of ['minor','moderate','severe']; track s) {
-        <button type="button" class="chip" [class.sel]="tightSeverity() === s" (click)="setTightSeverity($any(s))">{{ s }}</button>
+      @for (s of ["minor", "moderate", "severe"]; track s) {
+        <button
+          type="button"
+          class="chip"
+          [class.sel]="tightSeverity() === s"
+          (click)="setTightSeverity($any(s))"
+        >
+          {{ s }}
+        </button>
       }
     </div>
-    @if (tightMsg(); as m) { <small class="muted">{{ m }}</small> }
-    <div class="row" style="justify-content:flex-end">
-      <button class="btn primary sm" type="button" [disabled]="!tightRegion()" [attr.aria-disabled]="reportingTight()"
-              (click)="reportTightness()">{{ reportingTight() ? "Logging…" : "Report tightness" }}</button>
+    @if (tightMsg(); as m) {
+      <small class="muted">{{ m }}</small>
+    }
+    <div class="row" style="justify-content: flex-end">
+      <button
+        class="btn primary sm"
+        type="button"
+        [disabled]="!tightRegion()"
+        [attr.aria-disabled]="reportingTight()"
+        (click)="reportTightness()"
+      >
+        {{ reportingTight() ? "Logging…" : "Report tightness" }}
+      </button>
     </div>
   </div>
 
   <!-- readiness trend over time -->
   <div class="card">
-    <div class="row" style="margin-bottom:var(--s-2)"><b>Trend</b><small class="muted">last 14 days</small></div>
+    <div class="row" style="margin-bottom: var(--s-2)">
+      <b>Trend</b><small class="muted">last 14 days</small>
+    </div>
     <app-readiness-trend />
   </div>
 
   <!-- hydration quick-add -->
   <div class="card">
     <div class="row">
-      <div><b>Hydration</b>&ensp;<small class="muted">{{ hydrationL() }} L today</small></div>
+      <div>
+        <b>Hydration</b>&ensp;<small class="muted"
+          >{{ hydrationL() }} L today</small
+        >
+      </div>
       <div class="inline">
-        <button class="btn secondary sm" type="button" (click)="addHydration(250)">+250</button>
-        <button class="btn secondary sm" type="button" (click)="addHydration(500)">+500</button>
+        <button
+          class="btn secondary sm"
+          type="button"
+          (click)="addHydration(250)"
+        >
+          +250
+        </button>
+        <button
+          class="btn secondary sm"
+          type="button"
+          (click)="addHydration(500)"
+        >
+          +500
+        </button>
       </div>
     </div>
   </div>

@@ -3,13 +3,29 @@
     <div class="eyebrow">training report</div>
     <h1 class="inline"><lucide-icon name="file-text" /> Reports</h1>
   </div>
-  <a class="icon-btn" routerLink="/more" aria-label="Back"><lucide-icon name="chevron-right" style="transform:rotate(180deg)" /></a>
+  <a class="icon-btn" routerLink="/more" aria-label="Back"
+    ><lucide-icon name="chevron-right" style="transform: rotate(180deg)"
+  /></a>
 </header>
 
 <main class="screen">
   <div class="chips">
-    <button type="button" class="chip" [class.sel]="periodDays() === 7" (click)="setPeriod(7)">This week</button>
-    <button type="button" class="chip" [class.sel]="periodDays() === 30" (click)="setPeriod(30)">This month</button>
+    <button
+      type="button"
+      class="chip"
+      [class.sel]="periodDays() === 7"
+      (click)="setPeriod(7)"
+    >
+      This week
+    </button>
+    <button
+      type="button"
+      class="chip"
+      [class.sel]="periodDays() === 30"
+      (click)="setPeriod(30)"
+    >
+      This month
+    </button>
   </div>
 
   @if (!loaded()) {
@@ -18,22 +34,51 @@
     <!-- training report (period-windowed) -->
     @if (hasData()) {
       @if (stats(); as s) {
-        <div class="card"><div class="tiles">
-          <div><b>{{ s.totalSessions }}</b><small>sessions</small></div>
-          <div><b>{{ s.totalLoad }}</b><small>load (AU)</small></div>
-          <div><b>{{ hours(s.totalDuration) }}</b><small>trained</small></div>
-        </div></div>
+        <div class="card">
+          <div class="tiles">
+            <div>
+              <b>{{ s.totalSessions }}</b
+              ><small>sessions</small>
+            </div>
+            <div>
+              <b>{{ s.totalLoad }}</b
+              ><small>load (AU)</small>
+            </div>
+            <div>
+              <b>{{ hours(s.totalDuration) }}</b
+              ><small>trained</small>
+            </div>
+          </div>
+        </div>
 
-        <div class="card"><div class="tiles">
-          <div><b>{{ s.avgLoad }}</b><small>avg / session</small></div>
-          <div><b>{{ hours(s.avgDuration) }}</b><small>avg length</small></div>
-          <div><b>{{ s.currentStreak ?? 0 }}</b><small>day streak</small></div>
-        </div></div>
+        <div class="card">
+          <div class="tiles">
+            <div>
+              <b>{{ s.avgLoad }}</b
+              ><small>avg / session</small>
+            </div>
+            <div>
+              <b>{{ hours(s.avgDuration) }}</b
+              ><small>avg length</small>
+            </div>
+            <div>
+              <b>{{ s.currentStreak ?? 0 }}</b
+              ><small>day streak</small>
+            </div>
+          </div>
+        </div>
 
         <div class="section-h"><h2>Load &amp; risk</h2></div>
         <div class="card stack">
-          <div class="row"><span>ACWR</span><span class="band {{ acwrBand().cls }}">{{ acwrBand().label }}</span></div>
-          @if (s.acwrMessage) { <small class="muted">{{ s.acwrMessage }}</small> }
+          <div class="row">
+            <span>ACWR</span
+            ><span class="band {{ acwrBand().cls }}">{{
+              acwrBand().label
+            }}</span>
+          </div>
+          @if (s.acwrMessage) {
+            <small class="muted">{{ s.acwrMessage }}</small>
+          }
         </div>
 
         @if (typeRows().length) {
@@ -49,12 +94,23 @@
           </div>
         }
 
-        <p class="note">Live summary of your logged sessions over the {{ periodDays() === 7 ? "last 7 days" : "last 30 days" }} — load is RPE × minutes (arbitrary units).</p>
+        <p class="note">
+          Live summary of your logged sessions over the
+          {{ periodDays() === 7 ? "last 7 days" : "last 30 days" }} — load is
+          RPE × minutes (arbitrary units).
+        </p>
       }
     } @else {
       <div class="empty">
-        <b style="color:var(--text)">No sessions {{ periodDays() === 7 ? "this week" : "this month" }}</b>
-        <p class="note" style="margin-top:var(--s-2)">Log training in <a routerLink="/training" style="color:var(--accent)">Training</a> and your report builds here — volume, load, streak and a by-type breakdown.</p>
+        <b style="color: var(--text)"
+          >No sessions {{ periodDays() === 7 ? "this week" : "this month" }}</b
+        >
+        <p class="note" style="margin-top: var(--s-2)">
+          Log training in
+          <a routerLink="/training" style="color: var(--accent)">Training</a>
+          and your report builds here — volume, load, streak and a by-type
+          breakdown.
+        </p>
       </div>
     }
 
@@ -64,17 +120,28 @@
       <div class="card stack">
         <div class="row">
           <span>Agility / change-of-direction</span>
-          <span class="band {{ trendDir(t.cod?.change).cls }}">{{ trendDir(t.cod?.change).arrow }} {{ weekTrendLabel(t.cod) }}</span>
+          <span class="band {{ trendDir(t.cod?.change).cls }}"
+            >{{ trendDir(t.cod?.change).arrow }}
+            {{ weekTrendLabel(t.cod) }}</span
+          >
         </div>
         <div class="row">
           <span>Sprint / speed sessions</span>
-          <span class="band {{ trendDir(t.sprint?.change).cls }}">{{ trendDir(t.sprint?.change).arrow }} {{ weekTrendLabel(t.sprint) }}</span>
+          <span class="band {{ trendDir(t.sprint?.change).cls }}"
+            >{{ trendDir(t.sprint?.change).arrow }}
+            {{ weekTrendLabel(t.sprint) }}</span
+          >
         </div>
         <div class="row">
           <span>Game performance</span>
-          <span class="band {{ gamePerf(t.game).cls }}">{{ gamePerf(t.game).label }}</span>
+          <span class="band {{ gamePerf(t.game).cls }}">{{
+            gamePerf(t.game).label
+          }}</span>
         </div>
-        <small class="muted">Sessions/week this fortnight vs the previous one, from your logged training. Game performance trends across your recent games.</small>
+        <small class="muted"
+          >Sessions/week this fortnight vs the previous one, from your logged
+          training. Game performance trends across your recent games.</small
+        >
       </div>
     }
 
@@ -84,17 +151,35 @@
       @for (r of nutritionReports(); track r.id) {
         <div class="card stack">
           <div class="row">
-            <b style="text-transform:capitalize">{{ r.report_type || "report" }} report</b>
-            <small class="muted">{{ r.period_start }} → {{ r.period_end }}</small>
+            <b style="text-transform: capitalize"
+              >{{ r.report_type || "report" }} report</b
+            >
+            <small class="muted"
+              >{{ r.period_start }} → {{ r.period_end }}</small
+            >
           </div>
           <div class="tiles">
-            <div><b>{{ metric(r, 'weightChange') }}</b><small>kg change</small></div>
-            <div><b>{{ metric(r, 'supplementCompliance') }}%</b><small>supps</small></div>
-            <div><b>{{ metric(r, 'avgDailyHydration') }}</b><small>ml/day</small></div>
+            <div>
+              <b>{{ metric(r, "weightChange") }}</b
+              ><small>kg change</small>
+            </div>
+            <div>
+              <b>{{ metric(r, "supplementCompliance") }}%</b
+              ><small>supps</small>
+            </div>
+            <div>
+              <b>{{ metric(r, "avgDailyHydration") }}</b
+              ><small>ml/day</small>
+            </div>
           </div>
           @for (rec of recs(r); track $index) {
-            <div class="inline" style="gap:var(--s-2);align-items:flex-start">
-              <span class="band {{ recBand(rec.priority) }}">{{ rec.priority || "note" }}</span>
+            <div
+              class="inline"
+              style="gap: var(--s-2); align-items: flex-start"
+            >
+              <span class="band {{ recBand(rec.priority) }}">{{
+                rec.priority || "note"
+              }}</span>
               <small class="muted">{{ rec.message }}</small>
             </div>
           }

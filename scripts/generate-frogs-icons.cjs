@@ -1,13 +1,9 @@
 const fs = require("fs");
 const path = require("path");
 
-const { encode } = require(path.join(
-  __dirname,
-  "..",
-  "angular",
-  "node_modules",
-  "fast-png",
-));
+const { encode } = require(
+  path.join(__dirname, "..", "angular", "node_modules", "fast-png"),
+);
 
 const OUTPUT_DIR = path.join(
   __dirname,
@@ -127,7 +123,15 @@ function inShapeSet(x, y, shapeSet) {
   return shapeSet.some(
     (shape) =>
       shape.kind === "ellipse" &&
-      inEllipse(x, y, shape.args[0], shape.args[1], shape.args[2], shape.args[3], shape.args[4]),
+      inEllipse(
+        x,
+        y,
+        shape.args[0],
+        shape.args[1],
+        shape.args[2],
+        shape.args[3],
+        shape.args[4],
+      ),
   );
 }
 
@@ -142,28 +146,79 @@ function colorAt(x, y, size) {
     }
   };
 
-  paint(inEllipse(x, y, scaled(256), scaled(320), scaled(146), scaled(78)), PALETTE.jawBase);
-  paint(inEllipse(x, y, scaled(256), scaled(312), scaled(132), scaled(62)), PALETTE.jawLight);
-  paint(inEllipse(x, y, scaled(228), scaled(312), scaled(116), scaled(48)), PALETTE.jawShade);
-  paint(inEllipse(x, y, scaled(286), scaled(294), scaled(62), scaled(20), 8), [255, 255, 255, 0.2]);
+  paint(
+    inEllipse(x, y, scaled(256), scaled(320), scaled(146), scaled(78)),
+    PALETTE.jawBase,
+  );
+  paint(
+    inEllipse(x, y, scaled(256), scaled(312), scaled(132), scaled(62)),
+    PALETTE.jawLight,
+  );
+  paint(
+    inEllipse(x, y, scaled(228), scaled(312), scaled(116), scaled(48)),
+    PALETTE.jawShade,
+  );
+  paint(
+    inEllipse(x, y, scaled(286), scaled(294), scaled(62), scaled(20), 8),
+    [255, 255, 255, 0.2],
+  );
 
   paint(inShapeSet(x, y, headOuter), PALETTE.darkGreen);
   paint(inShapeSet(x, y, headInner), PALETTE.green);
-  paint(inEllipse(x, y, scaled(152), scaled(252), scaled(54), scaled(42), -10), PALETTE.greenHighlight);
-  paint(inEllipse(x, y, scaled(360), scaled(252), scaled(54), scaled(42), 10), PALETTE.greenHighlight);
-  paint(inEllipse(x, y, scaled(256), scaled(216), scaled(52), scaled(42)), [255, 255, 255, 0.08]);
+  paint(
+    inEllipse(x, y, scaled(152), scaled(252), scaled(54), scaled(42), -10),
+    PALETTE.greenHighlight,
+  );
+  paint(
+    inEllipse(x, y, scaled(360), scaled(252), scaled(54), scaled(42), 10),
+    PALETTE.greenHighlight,
+  );
+  paint(
+    inEllipse(x, y, scaled(256), scaled(216), scaled(52), scaled(42)),
+    [255, 255, 255, 0.08],
+  );
 
-  paint(inEllipse(x, y, scaled(196), scaled(206), scaled(40), scaled(28), -10), PALETTE.white);
-  paint(inEllipse(x, y, scaled(316), scaled(206), scaled(40), scaled(28), 10), PALETTE.white);
-  paint(inEllipse(x, y, scaled(196), scaled(190), scaled(46), scaled(18), -10), PALETTE.black);
-  paint(inEllipse(x, y, scaled(316), scaled(190), scaled(46), scaled(18), 10), PALETTE.black);
-  paint(inEllipse(x, y, scaled(208), scaled(212), scaled(18), scaled(18)), PALETTE.black);
-  paint(inEllipse(x, y, scaled(304), scaled(212), scaled(18), scaled(18)), PALETTE.black);
-  paint(inEllipse(x, y, scaled(192), scaled(210), scaled(6), scaled(6)), PALETTE.white);
-  paint(inEllipse(x, y, scaled(320), scaled(210), scaled(6), scaled(6)), PALETTE.white);
+  paint(
+    inEllipse(x, y, scaled(196), scaled(206), scaled(40), scaled(28), -10),
+    PALETTE.white,
+  );
+  paint(
+    inEllipse(x, y, scaled(316), scaled(206), scaled(40), scaled(28), 10),
+    PALETTE.white,
+  );
+  paint(
+    inEllipse(x, y, scaled(196), scaled(190), scaled(46), scaled(18), -10),
+    PALETTE.black,
+  );
+  paint(
+    inEllipse(x, y, scaled(316), scaled(190), scaled(46), scaled(18), 10),
+    PALETTE.black,
+  );
+  paint(
+    inEllipse(x, y, scaled(208), scaled(212), scaled(18), scaled(18)),
+    PALETTE.black,
+  );
+  paint(
+    inEllipse(x, y, scaled(304), scaled(212), scaled(18), scaled(18)),
+    PALETTE.black,
+  );
+  paint(
+    inEllipse(x, y, scaled(192), scaled(210), scaled(6), scaled(6)),
+    PALETTE.white,
+  );
+  paint(
+    inEllipse(x, y, scaled(320), scaled(210), scaled(6), scaled(6)),
+    PALETTE.white,
+  );
 
-  paint(inEllipse(x, y, scaled(232), scaled(252), scaled(7), scaled(4), 18), PALETTE.black);
-  paint(inEllipse(x, y, scaled(280), scaled(252), scaled(7), scaled(4), -18), PALETTE.black);
+  paint(
+    inEllipse(x, y, scaled(232), scaled(252), scaled(7), scaled(4), 18),
+    PALETTE.black,
+  );
+  paint(
+    inEllipse(x, y, scaled(280), scaled(252), scaled(7), scaled(4), -18),
+    PALETTE.black,
+  );
   paint(
     inPolyline(
       x,

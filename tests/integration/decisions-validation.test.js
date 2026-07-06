@@ -185,6 +185,8 @@ describe("decisions validation and authorization hardening", () => {
     expect(response.statusCode).toBe(500);
     const payload = JSON.parse(response.body);
     expect(payload.error?.message).toBe("Internal server error");
-    expect(JSON.stringify(payload)).not.toContain("sensitive connection fingerprint");
+    expect(JSON.stringify(payload)).not.toContain(
+      "sensitive connection fingerprint",
+    );
   });
 });

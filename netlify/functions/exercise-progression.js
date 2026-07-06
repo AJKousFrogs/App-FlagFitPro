@@ -1,6 +1,13 @@
 import { baseHandler } from "./utils/base-handler.js";
-import { createErrorResponse, createSuccessResponse, handleValidationError } from "./utils/error-handler.js";
-import { tryParseJsonObjectBody, isFiniteNumber } from "./utils/input-validator.js";
+import {
+  createErrorResponse,
+  createSuccessResponse,
+  handleValidationError,
+} from "./utils/error-handler.js";
+import {
+  tryParseJsonObjectBody,
+  isFiniteNumber,
+} from "./utils/input-validator.js";
 import { createLogger, makeRequestLogger } from "./utils/structured-logger.js";
 
 const logger = createLogger({ service: "netlify.exercise-progression" });
@@ -121,13 +128,19 @@ function validatePayload(payload) {
     return "exerciseIds must contain only non-empty ids";
   }
 
-  if (payload.date !== undefined && payload.date !== null && !isValidIsoDate(payload.date)) {
+  if (
+    payload.date !== undefined &&
+    payload.date !== null &&
+    !isValidIsoDate(payload.date)
+  ) {
     return "date must be a valid date string";
   }
   if (
     payload.acwrValue !== undefined &&
     payload.acwrValue !== null &&
-    (!isFiniteNumber(payload.acwrValue) || payload.acwrValue < 0 || payload.acwrValue > 10)
+    (!isFiniteNumber(payload.acwrValue) ||
+      payload.acwrValue < 0 ||
+      payload.acwrValue > 10)
   ) {
     return "acwrValue must be a number between 0 and 10";
   }
@@ -149,7 +162,11 @@ const handler = async (event, context) =>
     allowedMethods: ["POST"],
     rateLimitType: "UPDATE",
     requireAuth: true,
-    handler: async (evt, _ctx, { userId, supabase, requestId, correlationId }) => {
+    handler: async (
+      evt,
+      _ctx,
+      { userId, supabase, requestId, correlationId },
+    ) => {
       const requestLogger = createRequestLogger(evt, {
         requestId,
         correlationId,
@@ -186,10 +203,11 @@ const handler = async (event, context) =>
         const yesterdayStr = yesterday.toISOString().split("T")[0];
 
         // Fetch yesterday's protocol exercises for these exercises
-        const { data: yesterdayExercises, error: yesterdayError } = await supabase
-          .from("protocol_exercises")
-          .select(
-            `
+        const { data: yesterdayExercises, error: yesterdayError } =
+          await supabase
+            .from("protocol_exercises")
+            .select(
+              `
         exercise_id,
         prescribed_sets,
         prescribed_reps,
@@ -201,10 +219,10 @@ const handler = async (event, context) =>
         status,
         daily_protocols!inner(protocol_date, user_id)
       `,
-          )
-          .eq("daily_protocols.user_id", userId)
-          .eq("daily_protocols.protocol_date", yesterdayStr)
-          .in("exercise_id", exerciseIds);
+            )
+            .eq("daily_protocols.user_id", userId)
+            .eq("daily_protocols.protocol_date", yesterdayStr)
+            .in("exercise_id", exerciseIds);
         if (yesterdayError) {
           return createErrorResponse(
             "Failed to fetch previous exercise performance",
@@ -250,12 +268,19 @@ const handler = async (event, context) =>
           return calculateProgression(exercise, yesterdayPerf, acwr, readiness);
         });
 
-        return createSuccessResponse({ progressions, context: { acwr, readiness, targetDate } });
+        return createSuccessResponse({
+          progressions,
+          context: { acwr, readiness, targetDate },
+        });
       } catch (err) {
         requestLogger.error("exercise_progression_error", err, {
           user_id: userId,
         });
-        return createErrorResponse("Internal server error", 500, "server_error");
+        return createErrorResponse(
+          "Internal server error",
+          500,
+          "server_error",
+        );
       }
     },
   });

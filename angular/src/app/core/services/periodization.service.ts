@@ -22,10 +22,7 @@ import {
   signal,
 } from "@angular/core";
 
-import {
-  CompetitionEvent,
-  CompetitionPhase,
-} from "../models/schedule.models";
+import { CompetitionEvent, CompetitionPhase } from "../models/schedule.models";
 import {
   DailyPrescription,
   NutritionTargets,
@@ -133,9 +130,14 @@ export class PeriodizationService {
     this.api
       .get<{
         available?: boolean;
-        temp?: number; apparentC?: number; weatherCode?: number;
-        precipMm?: number; windKmh?: number; windSpeed?: number;
-        condition?: string; suitability?: string;
+        temp?: number;
+        apparentC?: number;
+        weatherCode?: number;
+        precipMm?: number;
+        windKmh?: number;
+        windSpeed?: number;
+        condition?: string;
+        suitability?: string;
       }>("/api/weather")
       .subscribe({
         next: (res) => {
@@ -149,7 +151,12 @@ export class PeriodizationService {
             precipMm: d.precipMm ?? null,
             windKmh: d.windKmh ?? d.windSpeed ?? null,
             suitability:
-              (d.suitability as "excellent" | "good" | "fair" | "poor" | undefined) ?? null,
+              (d.suitability as
+                | "excellent"
+                | "good"
+                | "fair"
+                | "poor"
+                | undefined) ?? null,
             location: (d as { location?: string }).location ?? null,
           });
         },
@@ -324,7 +331,8 @@ export class PeriodizationService {
           weather: i === 0 ? this.weather() : null,
           // Arrival day is a one-off fact about TODAY specifically, not a
           // forecastable offset like acclimatizationDay above.
-          arrivalDayTravelHours: i === 0 ? this.eventTravel.arrivalDayTravelHours() : null,
+          arrivalDayTravelHours:
+            i === 0 ? this.eventTravel.arrivalDayTravelHours() : null,
           recentSessions: this.recentSessions(),
           ageYears,
           position: this.position(),
@@ -356,11 +364,17 @@ export class PeriodizationService {
     // Prefer the server's ACWR (already embedded in the readiness response);
     // fall back to the local EWMA when no server check-in exists yet.
     const serverAcwr = this.readinessService.current?.()?.acwr;
-    if (typeof serverAcwr === "number" && Number.isFinite(serverAcwr) && serverAcwr > 0) {
+    if (
+      typeof serverAcwr === "number" &&
+      Number.isFinite(serverAcwr) &&
+      serverAcwr > 0
+    ) {
       return serverAcwr;
     }
     const localAcwr = this.acwrService.acwrRatio?.();
-    return typeof localAcwr === "number" && Number.isFinite(localAcwr) && localAcwr > 0
+    return typeof localAcwr === "number" &&
+      Number.isFinite(localAcwr) &&
+      localAcwr > 0
       ? localAcwr
       : null;
   }
@@ -397,7 +411,8 @@ export class PeriodizationService {
   private readAgeYears(): number | null {
     const user = this.supabase.currentUser?.();
     const meta = (user?.user_metadata ?? {}) as Record<string, unknown>;
-    const dob = meta["date_of_birth"] ?? meta["birth_date"] ?? meta["dateOfBirth"];
+    const dob =
+      meta["date_of_birth"] ?? meta["birth_date"] ?? meta["dateOfBirth"];
     if (typeof dob !== "string" && typeof dob !== "number") {
       return null;
     }
@@ -444,10 +459,8 @@ const INTENT_LABELS: Record<PrescriptionIntent, string> = {
 };
 
 /** High-CNS intents that need recovery spacing between sessions. */
-const HIGH_CNS_INTENTS: ReadonlySet<PrescriptionIntent> = new Set<PrescriptionIntent>([
-  "sprint",
-  "mixed",
-]);
+const HIGH_CNS_INTENTS: ReadonlySet<PrescriptionIntent> =
+  new Set<PrescriptionIntent>(["sprint", "mixed"]);
 
 /**
  * Minimum hours between high-CNS (sprint / plyometric / max-velocity) sessions.
@@ -466,7 +479,11 @@ const CNS_RECOVERY_HOURS = 48;
  * 60h, 40+ → 72h. A missing/implausible age falls back to the 48h base.
  */
 function cnsRecoveryHoursForAge(ageYears?: number | null): number {
-  if (typeof ageYears !== "number" || !Number.isFinite(ageYears) || ageYears < 16) {
+  if (
+    typeof ageYears !== "number" ||
+    !Number.isFinite(ageYears) ||
+    ageYears < 16
+  ) {
     return CNS_RECOVERY_HOURS;
   }
   if (ageYears >= 40) return 72;
@@ -476,7 +493,9 @@ function cnsRecoveryHoursForAge(ageYears?: number | null): number {
 
 /** Detect a high-CNS session from its raw `session_type`/`drill_type`. */
 function isHighCnsSessionType(type: string): boolean {
-  return /sprint|plyo|speed|max.?velocity|accel|agility|bound/i.test(type || "");
+  return /sprint|plyo|speed|max.?velocity|accel|agility|bound/i.test(
+    type || "",
+  );
 }
 
 /**
@@ -550,10 +569,16 @@ export function prescribeFor(inputs: PeriodizationInputs): DailyPrescription {
   // new fatigue stacked on top of the travel itself. Runs after weather (a
   // storm's "stop" is more restrictive and should win outright) but before
   // injury/physio, which stays the highest-precedence guard.
-  const arrivalGuarded = applyArrivalDayGuard(guarded, inputs.arrivalDayTravelHours ?? null);
+  const arrivalGuarded = applyArrivalDayGuard(
+    guarded,
+    inputs.arrivalDayTravelHours ?? null,
+  );
   // Injury/physio precedence over training (spec law): runs last so the affected
   // region's sprint/high-intensity work is removed regardless of the base plan.
-  const physioGuarded = applyInjuryGuard(arrivalGuarded, inputs.activeRestrictions ?? null);
+  const physioGuarded = applyInjuryGuard(
+    arrivalGuarded,
+    inputs.activeRestrictions ?? null,
+  );
   // Position-specific accessory/prehab emphasis — additive guidance only, never
   // changes the chosen intent or load. Throwing/upper restrictions override the
   // QB/center emphasis into a protect-the-arm message.
@@ -592,9 +617,10 @@ function fmtDemand(v: number | RangeDemand | undefined): string | null {
  * reference (never hard-coded here). Surfaces the training demand (per-session +
  * per-week) and the per-game worst case so the plan states what to be ready for.
  */
-function volumeFor(
-  bucket: PositionKey,
-): { worstCase: string; targets: string[] } {
+function volumeFor(bucket: PositionKey): {
+  worstCase: string;
+  targets: string[];
+} {
   const v = POSITION_VOLUME[bucket];
   const targets: string[] = [];
   const wkCatches = fmtDemand(v.perWeek["catches"]);
@@ -639,7 +665,11 @@ function withPositionEmphasis(
       positionEmphasis: {
         position: bucket,
         label: pv.label,
-        focus: ["Protect the arm/shoulder", "Gentle pain-free ROM only", `No ${verb} reps today`],
+        focus: [
+          "Protect the arm/shoulder",
+          "Gentle pain-free ROM only",
+          `No ${verb} reps today`,
+        ],
         note: `Your ${verb} arm/shoulder is flagged — skip ${verb} work today and protect it. Lower-body and trunk work is fine if pain-free.`,
         restricted: true,
         volume,
@@ -649,12 +679,36 @@ function withPositionEmphasis(
   // Prehab focus per role (presentation); the WHY comes from the model's
   // primaryInjuryRisk so the numbers/risk stay single-sourced in the config.
   const focusByPosition: Record<PositionKey, string[]> = {
-    qb: ["Rotator-cuff & scapular control", "Thoracic rotation mobility", "Rotational core power"],
-    wr: ["Eccentric hamstring (Nordic)", "Deceleration & landing mechanics", "Ankle & calf resilience"],
-    db: ["Eccentric hamstring & adductor", "Backpedal-to-sprint hip-flip control", "Deceleration mechanics"],
-    center: ["Wrist & forearm care", "Shoulder & scapular control", "Anti-rotation core brace"],
-    blitzer: ["Max-effort accel mechanics", "Eccentric hamstring & calf", "Hard-braking deceleration"],
-    wr_db: ["Eccentric hamstring & adductor", "Deceleration & cut mechanics", "Ankle & calf resilience"],
+    qb: [
+      "Rotator-cuff & scapular control",
+      "Thoracic rotation mobility",
+      "Rotational core power",
+    ],
+    wr: [
+      "Eccentric hamstring (Nordic)",
+      "Deceleration & landing mechanics",
+      "Ankle & calf resilience",
+    ],
+    db: [
+      "Eccentric hamstring & adductor",
+      "Backpedal-to-sprint hip-flip control",
+      "Deceleration mechanics",
+    ],
+    center: [
+      "Wrist & forearm care",
+      "Shoulder & scapular control",
+      "Anti-rotation core brace",
+    ],
+    blitzer: [
+      "Max-effort accel mechanics",
+      "Eccentric hamstring & calf",
+      "Hard-braking deceleration",
+    ],
+    wr_db: [
+      "Eccentric hamstring & adductor",
+      "Deceleration & cut mechanics",
+      "Ankle & calf resilience",
+    ],
   };
   return {
     ...p,
@@ -675,13 +729,14 @@ function withPositionEmphasis(
 /** Hours of same-day seated travel that triggers the arrival-day cap. */
 const ARRIVAL_DAY_LOAD_CAP_HOURS = 3;
 /** Session already at/below activation level, or organiser/taper-owned — leave alone. */
-const ARRIVAL_DAY_EXEMPT_INTENTS: ReadonlySet<PrescriptionIntent> = new Set<PrescriptionIntent>([
-  "rest",
-  "recovery",
-  "mobility",
-  "taper-prime",
-  "competition",
-]);
+const ARRIVAL_DAY_EXEMPT_INTENTS: ReadonlySet<PrescriptionIntent> =
+  new Set<PrescriptionIntent>([
+    "rest",
+    "recovery",
+    "mobility",
+    "taper-prime",
+    "competition",
+  ]);
 
 /**
  * A ≥3h same-day arrival (from `EventTravelService.arrivalDayTravelHours`,
@@ -695,7 +750,10 @@ function applyArrivalDayGuard(
   rx: DailyPrescription,
   arrivalDayTravelHours: number | null,
 ): DailyPrescription {
-  if (arrivalDayTravelHours === null || arrivalDayTravelHours < ARRIVAL_DAY_LOAD_CAP_HOURS) {
+  if (
+    arrivalDayTravelHours === null ||
+    arrivalDayTravelHours < ARRIVAL_DAY_LOAD_CAP_HOURS
+  ) {
     return rx;
   }
   if (ARRIVAL_DAY_EXEMPT_INTENTS.has(rx.intent)) {
@@ -742,7 +800,9 @@ function applyInjuryGuard(
   // Minor tightness on a day with no sprint/high-intensity work: nothing to pull.
   if (!hasSprintWork && !severe && !moderate) return p;
 
-  const regionLabel = restr.regions.length ? restr.regions.join(", ") : "soft tissue";
+  const regionLabel = restr.regions.length
+    ? restr.regions.join(", ")
+    : "soft tissue";
   let intent = p.intent;
   let intentLabel = p.intentLabel;
   let targetRpe = p.targetRpe;
@@ -761,15 +821,23 @@ function applyInjuryGuard(
     intent = "recovery";
     intentLabel = "Active recovery";
     targetRpe = INJURY_RESPONSE.moderate.rpe;
-    targetMinutes = Math.min(p.targetMinutes, INJURY_RESPONSE.moderate.maxMinutes);
+    targetMinutes = Math.min(
+      p.targetMinutes,
+      INJURY_RESPONSE.moderate.maxMinutes,
+    );
     strengthSets = Math.min(p.strengthSets, INJURY_RESPONSE.moderate.maxSets);
     reasoning = `Reported ${regionLabel} tightness — sprints pulled, easy session only. Injury precedence over training.`;
   } else {
     // minor: keep the day's shape but remove the sprint/high-intensity work
     intent = p.intent === "sprint" ? "mobility" : p.intent;
-    intentLabel = p.intent === "sprint" ? "Mobility & technique" : `${p.intentLabel} (modified)`;
+    intentLabel =
+      p.intent === "sprint"
+        ? "Mobility & technique"
+        : `${p.intentLabel} (modified)`;
     targetRpe =
-      p.targetRpe != null ? Math.min(p.targetRpe, INJURY_RESPONSE.minor.maxRpe) : p.targetRpe;
+      p.targetRpe != null
+        ? Math.min(p.targetRpe, INJURY_RESPONSE.minor.maxRpe)
+        : p.targetRpe;
     reasoning = `${regionLabel} tightness — sprint/high-intensity work pulled for that region; keep it controlled.`;
   }
 
@@ -812,19 +880,54 @@ interface PracticePhaseModifier {
 }
 
 const PRACTICE_PHASE_MODIFIERS: Record<string, PracticePhaseModifier> = {
-  accumulation: { intent: "mixed", rpe: 7, minutes: 90, recoveryEmphasis: "low", nutritionIntent: "mixed", framing: "own" },
-  transition: { intent: "mixed", rpe: 7, minutes: 90, recoveryEmphasis: "low", nutritionIntent: "mixed", framing: "own" },
+  accumulation: {
+    intent: "mixed",
+    rpe: 7,
+    minutes: 90,
+    recoveryEmphasis: "low",
+    nutritionIntent: "mixed",
+    framing: "own",
+  },
+  transition: {
+    intent: "mixed",
+    rpe: 7,
+    minutes: 90,
+    recoveryEmphasis: "low",
+    nutritionIntent: "mixed",
+    framing: "own",
+  },
   // Sharp practice a few days out: still a real session → fuel as 'mixed', NOT a
   // glycogen top-up (top-up is only the final day, handled by the taper branch).
-  taper: { intent: "mixed", rpe: 6, minutes: 60, recoveryEmphasis: "medium", nutritionIntent: "mixed", framing: "sharp" },
+  taper: {
+    intent: "mixed",
+    rpe: 6,
+    minutes: 60,
+    recoveryEmphasis: "medium",
+    nutritionIntent: "mixed",
+    framing: "sharp",
+  },
   // Final 48h of a taper → lighter walkthrough/activation + begin glycogen top-up.
-  taper_final: { intent: "mixed", rpe: 5, minutes: 45, recoveryEmphasis: "medium", nutritionIntent: "taper-prime", framing: "sharp" },
+  taper_final: {
+    intent: "mixed",
+    rpe: 5,
+    minutes: 45,
+    recoveryEmphasis: "medium",
+    nutritionIntent: "taper-prime",
+    framing: "sharp",
+  },
   // Post-tournament recovery day that is ALSO a declared practice day: honour the
   // practice (the athlete is going) but at recovery intensity — the calendar fact
   // is modified by the recovery context, not discarded (audit finding 1.1). Same
   // RPE3/30min as the recovery default, so intensity is unchanged; only the label
   // and framing now acknowledge the practice.
-  recovery: { intent: "recovery", rpe: 3, minutes: 30, recoveryEmphasis: "high", nutritionIntent: "recovery", framing: "recovery" },
+  recovery: {
+    intent: "recovery",
+    rpe: 3,
+    minutes: 30,
+    recoveryEmphasis: "high",
+    nutritionIntent: "recovery",
+    framing: "recovery",
+  },
 };
 
 /**
@@ -847,8 +950,18 @@ const TAPER_CONFIG = {
   defaultDayOfTaper: 7,
   /** Individual (non-practice) taper session targets. */
   individual: {
-    regular: { intent: "sprint" as PrescriptionIntent, rpe: 6, minutes: 45, sprintReps: 6 },
-    final: { intent: "mobility" as PrescriptionIntent, rpe: 4, minutes: 30, sprintReps: 4 },
+    regular: {
+      intent: "sprint" as PrescriptionIntent,
+      rpe: 6,
+      minutes: 45,
+      sprintReps: 6,
+    },
+    final: {
+      intent: "mobility" as PrescriptionIntent,
+      rpe: 4,
+      minutes: 30,
+      sprintReps: 4,
+    },
   },
 } as const;
 
@@ -857,7 +970,9 @@ function practiceModifierFor(
   daysOut: number | null,
 ): PracticePhaseModifier | null {
   const key =
-    phase === "taper" && daysOut !== null && daysOut <= TAPER_CONFIG.finalThirdDaysOut
+    phase === "taper" &&
+    daysOut !== null &&
+    daysOut <= TAPER_CONFIG.finalThirdDaysOut
       ? "taper_final"
       : phase;
   return PRACTICE_PHASE_MODIFIERS[key] ?? null;
@@ -867,7 +982,9 @@ function practiceModifierFor(
  * The core decision. Read top-to-bottom: highest-priority overrides first
  * (game day, taper, recovery, ACWR safety), then phase/season defaults.
  */
-function decideBasePrescription(inputs: PeriodizationInputs): DailyPrescription {
+function decideBasePrescription(
+  inputs: PeriodizationInputs,
+): DailyPrescription {
   const {
     date,
     phase,
@@ -894,8 +1011,10 @@ function decideBasePrescription(inputs: PeriodizationInputs): DailyPrescription 
       (density14d.peakDayGameCount ?? 0) >= DENSITY_CONGESTED_DAY_GAMES);
   // Hot day → higher sweat/fluid need. Uses the same heat threshold the weather
   // guard does (apparent ≥ 28°C). Adds fluid to the nutrition target.
-  const apparentTemp = inputs.weather?.apparentC ?? inputs.weather?.tempC ?? null;
-  const hotDay = typeof apparentTemp === "number" && apparentTemp >= HEAT_CAUTION_C;
+  const apparentTemp =
+    inputs.weather?.apparentC ?? inputs.weather?.tempC ?? null;
+  const hotDay =
+    typeof apparentTemp === "number" && apparentTemp >= HEAT_CAUTION_C;
 
   // 1. Currently inside a competition window → game day.
   if (phase === "competition") {
@@ -918,7 +1037,10 @@ function decideBasePrescription(inputs: PeriodizationInputs): DailyPrescription 
   }
 
   // 2. Within 24h of a game → taper-prime (very short, sharp, no fatigue).
-  if (hoursUntilNext !== null && hoursUntilNext <= TAPER_CONFIG.taperPrimeHours) {
+  if (
+    hoursUntilNext !== null &&
+    hoursUntilNext <= TAPER_CONFIG.taperPrimeHours
+  ) {
     return finalize({
       date,
       phase,
@@ -981,7 +1103,9 @@ function decideBasePrescription(inputs: PeriodizationInputs): DailyPrescription 
   // config, not control flow. A null modifier means a practice day does NOT own
   // this phase (only competition now — the game is the session) → fall through.
   const practiceDaysOut =
-    hoursUntilNext !== null ? Math.max(1, Math.ceil(hoursUntilNext / 24)) : null;
+    hoursUntilNext !== null
+      ? Math.max(1, Math.ceil(hoursUntilNext / 24))
+      : null;
   const practiceMod = inputs.isTeamPractice
     ? practiceModifierFor(phase, practiceDaysOut)
     : null;
@@ -1010,7 +1134,12 @@ function decideBasePrescription(inputs: PeriodizationInputs): DailyPrescription 
       strengthSets: 0,
       reasoning: practiceReasoning,
       recoveryEmphasis: practiceMod.recoveryEmphasis,
-      nutrition: nutritionFor(practiceMod.nutritionIntent, bodyweight, heavyDensity, hotDay),
+      nutrition: nutritionFor(
+        practiceMod.nutritionIntent,
+        bodyweight,
+        heavyDensity,
+        hotDay,
+      ),
       driverEvent,
       hoursUntilNextEvent: hoursUntilNext,
       acwrAtIssue: acwr,
@@ -1090,7 +1219,12 @@ function decideBasePrescription(inputs: PeriodizationInputs): DailyPrescription 
       // in-season = maintain + skill, transition = base); otherwise fall back to
       // the generic build shape. Pre-season == the generic progressive build.
       if (seasonPhase && seasonPhase !== "preseason") {
-        const intent = seasonShapedIntent(date, seasonPhase, acwr, heavyDensity);
+        const intent = seasonShapedIntent(
+          date,
+          seasonPhase,
+          acwr,
+          heavyDensity,
+        );
         const t = baseTargets(intent);
         return finalize({
           date,
@@ -1194,17 +1328,49 @@ function seasonShapedIntent(
   let week: PrescriptionIntent[];
   switch (season) {
     case "offseason": // GPP — get strong, build base
-      week = ["rest", "strength", "mixed", "mobility", "strength", "mixed", "strength"];
+      week = [
+        "rest",
+        "strength",
+        "mixed",
+        "mobility",
+        "strength",
+        "mixed",
+        "strength",
+      ];
       break;
     case "inseason": // maintain + skill
-      week = ["rest", "strength", "technical", "mobility", "technical", "strength", "mixed"];
+      week = [
+        "rest",
+        "strength",
+        "technical",
+        "mobility",
+        "technical",
+        "strength",
+        "mixed",
+      ];
       break;
     case "peak": // peaking block: sharp, low volume, high quality, fresh
-      week = ["rest", "sprint", "technical", "mobility", "technical", "sprint", "recovery"];
+      week = [
+        "rest",
+        "sprint",
+        "technical",
+        "mobility",
+        "technical",
+        "sprint",
+        "recovery",
+      ];
       break;
     case "postseason": // active regeneration after the competitive block
     case "transition": // active rest / aerobic base (legacy alias)
-      week = ["rest", "recovery", "mobility", "recovery", "mobility", "mixed", "recovery"];
+      week = [
+        "rest",
+        "recovery",
+        "mobility",
+        "recovery",
+        "mobility",
+        "mixed",
+        "recovery",
+      ];
       break;
     case "preseason":
     default:
@@ -1222,7 +1388,10 @@ function seasonShapedIntent(
   return intent;
 }
 
-function seasonReasoning(season: SeasonPhase, intent: PrescriptionIntent): string {
+function seasonReasoning(
+  season: SeasonPhase,
+  intent: PrescriptionIntent,
+): string {
   switch (season) {
     case "offseason":
       return `Off-season · strength & conditioning block. Today is a ${intent} day.`;
@@ -1280,16 +1449,16 @@ function acclimatizationShiftC(acclimatizationDay: number | null): number {
   ) {
     return 0;
   }
-  return ACCLIMATIZATION_MAX_SHIFT_C * (1 - acclimatizationDay / ACCLIMATIZATION_WINDOW_DAYS);
+  return (
+    ACCLIMATIZATION_MAX_SHIFT_C *
+    (1 - acclimatizationDay / ACCLIMATIZATION_WINDOW_DAYS)
+  );
 }
 
 // Intense + outdoor intents → subject to the guard. Strength (indoor), mobility,
 // technical, recovery, rest, and competition (organiser's call) are agnostic.
-const OUTDOOR_INTENSE: ReadonlySet<PrescriptionIntent> = new Set<PrescriptionIntent>([
-  "sprint",
-  "mixed",
-  "taper-prime",
-]);
+const OUTDOOR_INTENSE: ReadonlySet<PrescriptionIntent> =
+  new Set<PrescriptionIntent>(["sprint", "mixed", "taper-prime"]);
 
 function substituteForWet(intent: PrescriptionIntent): PrescriptionIntent {
   // Wet grass kills sprints/cuts; move to an indoor session.
@@ -1319,7 +1488,8 @@ export function applyWeatherGuard(
         ? weather.tempC
         : null;
   const code = weather.weatherCode;
-  const storm = code !== null && code >= STORM_CODE_MIN && code <= STORM_CODE_MAX;
+  const storm =
+    code !== null && code >= STORM_CODE_MIN && code <= STORM_CODE_MAX;
   const wet =
     (code !== null && code >= RAIN_WEATHER_CODE && code < STORM_CODE_MIN) ||
     (weather.precipMm !== null && weather.precipMm > RAIN_PRECIP_MM);
@@ -1472,23 +1642,68 @@ function baseTargets(intent: PrescriptionIntent): {
 } {
   switch (intent) {
     case "rest":
-      return { targetRpe: null, targetMinutes: 0, sprintReps: 0, strengthSets: 0 };
+      return {
+        targetRpe: null,
+        targetMinutes: 0,
+        sprintReps: 0,
+        strengthSets: 0,
+      };
     case "recovery":
-      return { targetRpe: 3, targetMinutes: 30, sprintReps: 0, strengthSets: 0 };
+      return {
+        targetRpe: 3,
+        targetMinutes: 30,
+        sprintReps: 0,
+        strengthSets: 0,
+      };
     case "mobility":
-      return { targetRpe: 4, targetMinutes: 45, sprintReps: 0, strengthSets: 0 };
+      return {
+        targetRpe: 4,
+        targetMinutes: 45,
+        sprintReps: 0,
+        strengthSets: 0,
+      };
     case "technical":
-      return { targetRpe: 5, targetMinutes: 60, sprintReps: 0, strengthSets: 0 };
+      return {
+        targetRpe: 5,
+        targetMinutes: 60,
+        sprintReps: 0,
+        strengthSets: 0,
+      };
     case "sprint":
-      return { targetRpe: 8, targetMinutes: 60, sprintReps: 10, strengthSets: 0 };
+      return {
+        targetRpe: 8,
+        targetMinutes: 60,
+        sprintReps: 10,
+        strengthSets: 0,
+      };
     case "strength":
-      return { targetRpe: 7, targetMinutes: 75, sprintReps: 0, strengthSets: 18 };
+      return {
+        targetRpe: 7,
+        targetMinutes: 75,
+        sprintReps: 0,
+        strengthSets: 18,
+      };
     case "mixed":
-      return { targetRpe: 6, targetMinutes: 75, sprintReps: 6, strengthSets: 8 };
+      return {
+        targetRpe: 6,
+        targetMinutes: 75,
+        sprintReps: 6,
+        strengthSets: 8,
+      };
     case "taper-prime":
-      return { targetRpe: 4, targetMinutes: 25, sprintReps: 4, strengthSets: 0 };
+      return {
+        targetRpe: 4,
+        targetMinutes: 25,
+        sprintReps: 4,
+        strengthSets: 0,
+      };
     case "competition":
-      return { targetRpe: null, targetMinutes: 60, sprintReps: 0, strengthSets: 0 };
+      return {
+        targetRpe: null,
+        targetMinutes: 60,
+        sprintReps: 0,
+        strengthSets: 0,
+      };
   }
 }
 
@@ -1505,10 +1720,17 @@ type SessionTarget = ReturnType<typeof baseTargets>;
  * inline targets: rest 6/0, mobility 6/75, technical 6/75; strength/sprint/mixed
  * already matched baseTargets.)
  */
-const BUILD_TARGET_OVERRIDES: Partial<Record<PrescriptionIntent, SessionTarget>> = {
+const BUILD_TARGET_OVERRIDES: Partial<
+  Record<PrescriptionIntent, SessionTarget>
+> = {
   rest: { targetRpe: 6, targetMinutes: 0, sprintReps: 0, strengthSets: 0 },
   mobility: { targetRpe: 6, targetMinutes: 75, sprintReps: 0, strengthSets: 0 },
-  technical: { targetRpe: 6, targetMinutes: 75, sprintReps: 0, strengthSets: 0 },
+  technical: {
+    targetRpe: 6,
+    targetMinutes: 75,
+    sprintReps: 0,
+    strengthSets: 0,
+  },
 };
 
 function buildTargets(intent: PrescriptionIntent): SessionTarget {
@@ -1618,13 +1840,13 @@ function pickAccumulationIntent(
   // Thu strength, Fri sprint, Sat mixed, Sun rest. Day-of-week 0 = Sunday.
   const dow = date.getDay();
   const standard: PrescriptionIntent[] = [
-    "rest",      // Sun
-    "strength",  // Mon
-    "sprint",    // Tue
-    "mobility",  // Wed
-    "strength",  // Thu
-    "sprint",    // Fri
-    "mixed",     // Sat
+    "rest", // Sun
+    "strength", // Mon
+    "sprint", // Tue
+    "mobility", // Wed
+    "strength", // Thu
+    "sprint", // Fri
+    "mixed", // Sat
   ];
   let intent = standard[dow];
 

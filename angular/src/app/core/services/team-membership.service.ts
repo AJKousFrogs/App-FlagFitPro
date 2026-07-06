@@ -203,7 +203,11 @@ export class TeamMembershipService {
     if (!forceRefresh) {
       const last = this._lastUpdated();
       const cached = this._membership();
-      if (cached && last && Date.now() - last.getTime() < TeamMembershipService.CACHE_TTL_MS) {
+      if (
+        cached &&
+        last &&
+        Date.now() - last.getTime() < TeamMembershipService.CACHE_TTL_MS
+      ) {
         return cached;
       }
       if (this._loadPromise) {
@@ -219,7 +223,9 @@ export class TeamMembershipService {
     }
   }
 
-  private async fetchMembership(userId: string): Promise<TeamMembership | null> {
+  private async fetchMembership(
+    userId: string,
+  ): Promise<TeamMembership | null> {
     this._isLoading.set(true);
     try {
       const { data: teamMember, error } = await this.supabaseService.client
@@ -257,7 +263,10 @@ export class TeamMembershipService {
       }
 
       // Extract team name from joined data
-      const teamsData = teamMember.teams as { name?: string } | null | undefined;
+      const teamsData = teamMember.teams as
+        | { name?: string }
+        | null
+        | undefined;
       const teamName = teamsData?.name || null;
 
       const membership: TeamMembership = {
@@ -505,7 +514,14 @@ export class TeamMembershipService {
         .select("role")
         .eq("user_id", userId)
         .eq("team_id", teamId)
-        .in("role", ["coach", "head_coach", "assistant_coach", "offense_coordinator", "defense_coordinator", "manager"])
+        .in("role", [
+          "coach",
+          "head_coach",
+          "assistant_coach",
+          "offense_coordinator",
+          "defense_coordinator",
+          "manager",
+        ])
         .maybeSingle();
 
       return !!data;

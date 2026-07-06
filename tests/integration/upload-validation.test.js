@@ -9,12 +9,17 @@ const state = vi.hoisted(() => ({
 
 vi.mock("../../netlify/functions/utils/base-handler.js", () => ({
   baseHandler: async (event, context, options) =>
-    options.handler(event, context, { requestId: "req-test", userId: "user-1" }),
+    options.handler(event, context, {
+      requestId: "req-test",
+      userId: "user-1",
+    }),
 }));
 
 vi.mock("../../netlify/functions/utils/auth-helper.js", () => ({
   authenticateRequest: async () =>
-    state.authSuccess ? { success: true, user: { id: "user-1" } } : { success: false },
+    state.authSuccess
+      ? { success: true, user: { id: "user-1" } }
+      : { success: false },
 }));
 
 vi.mock("../../netlify/functions/supabase-client.js", () => ({

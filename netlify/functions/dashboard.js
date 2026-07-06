@@ -1,6 +1,9 @@
 import { db, supabaseAdmin } from "./supabase-client.js";
 import { getOrFetch, CACHE_TTL, CACHE_PREFIX } from "./cache.js";
-import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
+import {
+  createSuccessResponse,
+  createErrorResponse,
+} from "./utils/error-handler.js";
 import { getTimeAgo } from "./utils/date-utils.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { createLogger } from "./utils/structured-logger.js";
@@ -108,7 +111,9 @@ const getDashboardData = async (userId) => {
       },
     };
   } catch (error) {
-    logger.error("dashboard_data_fetch_failed", error, { context: "getDashboardData" });
+    logger.error("dashboard_data_fetch_failed", error, {
+      context: "getDashboardData",
+    });
     // Return fallback data with indicator flag (RISK-018 fix)
     return {
       ...getFallbackDashboardData(),
@@ -159,7 +164,9 @@ const getTrainingCalendar = async (userId) => {
       .order("session_date", { ascending: true });
 
     if (error) {
-      logger.error("training_calendar_fetch_failed", error, { context: "getTrainingCalendar" });
+      logger.error("training_calendar_fetch_failed", error, {
+        context: "getTrainingCalendar",
+      });
       throw error;
     }
 
@@ -185,7 +192,9 @@ const getTrainingCalendar = async (userId) => {
       upcomingSessions: sessions || [],
     };
   } catch (error) {
-    logger.error("training_calendar_error", error, { context: "getTrainingCalendar" });
+    logger.error("training_calendar_error", error, {
+      context: "getTrainingCalendar",
+    });
     return {
       calendar: {},
       upcomingSessions: [],
@@ -224,7 +233,9 @@ const getTeamChemistry = async (userId) => {
     ]);
 
     if (membersError) {
-      logger.error("team_members_fetch_failed", membersError, { context: "getTeamChemistry" });
+      logger.error("team_members_fetch_failed", membersError, {
+        context: "getTeamChemistry",
+      });
     }
 
     const chemistry = null;
@@ -238,7 +249,9 @@ const getTeamChemistry = async (userId) => {
       memberCount: members?.length || 0,
     };
   } catch (error) {
-    logger.error("team_chemistry_error", error, { context: "getTeamChemistry" });
+    logger.error("team_chemistry_error", error, {
+      context: "getTeamChemistry",
+    });
     return {
       teamId: null,
       chemistry: null,

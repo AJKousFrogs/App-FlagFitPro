@@ -16,8 +16,12 @@
 import { describe, it, expect } from "vitest";
 import { __test__ as netlifyResolver } from "../../netlify/functions/schedule.js";
 
-const { resolvePhase: netlifyResolvePhase, densityFor, eventDayCount, effectiveImportance } =
-  netlifyResolver;
+const {
+  resolvePhase: netlifyResolvePhase,
+  densityFor,
+  eventDayCount,
+  effectiveImportance,
+} = netlifyResolver;
 
 // Hours window thresholds (mirrored from both implementations).
 const ONE_HOUR_MS = 3_600_000;
@@ -35,8 +39,7 @@ function event({
   return {
     id: "ev-1",
     starts_at: startsAt instanceof Date ? startsAt.toISOString() : startsAt,
-    ends_at:
-      endsAt instanceof Date ? endsAt.toISOString() : endsAt,
+    ends_at: endsAt instanceof Date ? endsAt.toISOString() : endsAt,
     importance,
     expected_game_count: expectedGameCount,
     status,
@@ -340,21 +343,21 @@ describe("netlify eventDayCount", () => {
   });
 
   it("returns 1 for an event that ends the same UTC day", () => {
-    expect(
-      eventDayCount("2026-05-08T08:00:00Z", "2026-05-08T18:00:00Z"),
-    ).toBe(1);
+    expect(eventDayCount("2026-05-08T08:00:00Z", "2026-05-08T18:00:00Z")).toBe(
+      1,
+    );
   });
 
   it("returns 2 for a two-day tournament", () => {
-    expect(
-      eventDayCount("2026-05-08T08:00:00Z", "2026-05-09T18:00:00Z"),
-    ).toBe(2);
+    expect(eventDayCount("2026-05-08T08:00:00Z", "2026-05-09T18:00:00Z")).toBe(
+      2,
+    );
   });
 
   it("returns at least 1 even if dates are reversed", () => {
-    expect(
-      eventDayCount("2026-05-09T08:00:00Z", "2026-05-08T08:00:00Z"),
-    ).toBe(1);
+    expect(eventDayCount("2026-05-09T08:00:00Z", "2026-05-08T08:00:00Z")).toBe(
+      1,
+    );
   });
 });
 

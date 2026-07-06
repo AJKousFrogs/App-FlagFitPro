@@ -1,18 +1,17 @@
 #!/usr/bin/env node
 
-import { readFileSync, readdirSync, existsSync, mkdirSync, writeFileSync } from "node:fs";
+import {
+  readFileSync,
+  readdirSync,
+  existsSync,
+  mkdirSync,
+  writeFileSync,
+} from "node:fs";
 import { join } from "node:path";
 
 const PROJECT_DIR = process.cwd();
-const TARGETS = [
-  "supabase/migrations",
-  "database/migrations",
-  "database",
-];
-const EXCLUDE_PREFIXES = [
-  "database/migration_results/",
-  "database/schemas/",
-];
+const TARGETS = ["supabase/migrations", "database/migrations", "database"];
+const EXCLUDE_PREFIXES = ["database/migration_results/", "database/schemas/"];
 
 function listSqlFiles() {
   const files = [];
@@ -43,28 +42,61 @@ function collectFindings(filePath, sql) {
   const findings = [];
 
   if (/\bDROP\s+TABLE\b[\s\S]*\bCASCADE\b/i.test(sql)) {
-    findings.push({ severity: "high", type: "destructive_drop_table", detail: "DROP TABLE ... CASCADE found" });
+    findings.push({
+      severity: "high",
+      type: "destructive_drop_table",
+      detail: "DROP TABLE ... CASCADE found",
+    });
   }
 
   if (/\bCREATE\s+TABLE\s+(?!IF\s+NOT\s+EXISTS)/i.test(sql)) {
-    findings.push({ severity: "medium", type: "non_idempotent_create_table", detail: "CREATE TABLE without IF NOT EXISTS" });
+    findings.push({
+      severity: "medium",
+      type: "non_idempotent_create_table",
+      detail: "CREATE TABLE without IF NOT EXISTS",
+    });
   }
 
   if (/\bCREATE\s+(UNIQUE\s+)?INDEX\s+(?!IF\s+NOT\s+EXISTS)/i.test(sql)) {
-    findings.push({ severity: "medium", type: "non_idempotent_create_index", detail: "CREATE INDEX without IF NOT EXISTS" });
+    findings.push({
+      severity: "medium",
+      type: "non_idempotent_create_index",
+      detail: "CREATE INDEX without IF NOT EXISTS",
+    });
   }
 
-  if (/\bCREATE\s+POLICY\b/i.test(sql) && !/\bDROP\s+POLICY\s+IF\s+EXISTS\b/i.test(sql)) {
-    findings.push({ severity: "low", type: "policy_recreate_risk", detail: "CREATE POLICY without DROP POLICY IF EXISTS" });
+  if (
+    /\bCREATE\s+POLICY\b/i.test(sql) &&
+    !/\bDROP\s+POLICY\s+IF\s+EXISTS\b/i.test(sql)
+  ) {
+    findings.push({
+      severity: "low",
+      type: "policy_recreate_risk",
+      detail: "CREATE POLICY without DROP POLICY IF EXISTS",
+    });
   }
 
   const definerMatches = [...sql.matchAll(/SECURITY\s+DEFINER/gi)];
-  if (definerMatches.length > 0 && !/SET\s+search_path\s*=|SET\s+search_path\s*=\s*''/i.test(sql)) {
-    findings.push({ severity: "high", type: "definer_missing_search_path", detail: "SECURITY DEFINER found without explicit SET search_path" });
+  if (
+    definerMatches.length > 0 &&
+    !/SET\s+search_path\s*=|SET\s+search_path\s*=\s*''/i.test(sql)
+  ) {
+    findings.push({
+      severity: "high",
+      type: "definer_missing_search_path",
+      detail: "SECURITY DEFINER found without explicit SET search_path",
+    });
   }
 
-  if (/^\s*CREATE\s+OR\s+REPLACE\s+VIEW\s+/im.test(sql) && !/security_invoker\s*=\s*true/i.test(sql)) {
-    findings.push({ severity: "low", type: "view_not_security_invoker", detail: "VIEW does not declare security_invoker=true" });
+  if (
+    /^\s*CREATE\s+OR\s+REPLACE\s+VIEW\s+/im.test(sql) &&
+    !/security_invoker\s*=\s*true/i.test(sql)
+  ) {
+    findings.push({
+      severity: "low",
+      type: "view_not_security_invoker",
+      detail: "VIEW does not declare security_invoker=true",
+    });
   }
 
   return findings;
@@ -84,7 +116,9 @@ function scoreSeverity(findings) {
 function main() {
   const files = listSqlFiles();
   const results = [];
-  const supabaseFiles = files.filter((f) => f.startsWith("supabase/migrations/"));
+  const supabaseFiles = files.filter((f) =>
+    f.startsWith("supabase/migrations/"),
+  );
   const legacyFiles = files.filter((f) => f.startsWith("database/migrations/"));
 
   const supabaseByBase = new Set(supabaseFiles.map((f) => f.split("/").pop()));
@@ -110,10 +144,14 @@ function main() {
   reportLines.push(`Generated: ${new Date().toISOString()}`);
   reportLines.push(`SQL files scanned: ${files.length}`);
   reportLines.push(`Files with findings: ${results.length}`);
-  reportLines.push(`Findings: high=${summary.high}, medium=${summary.medium}, low=${summary.low}, total=${summary.total}`);
+  reportLines.push(
+    `Findings: high=${summary.high}, medium=${summary.medium}, low=${summary.low}, total=${summary.total}`,
+  );
   reportLines.push(`Supabase migrations: ${supabaseFiles.length}`);
   reportLines.push(`Legacy database migrations: ${legacyFiles.length}`);
-  reportLines.push(`Overlapping migration basenames: ${overlappingBasenames.length}`);
+  reportLines.push(
+    `Overlapping migration basenames: ${overlappingBasenames.length}`,
+  );
   if (overlappingBasenames.length > 0) {
     reportLines.push("");
     reportLines.push("## Overlapping Basenames");
@@ -149,10 +187,14 @@ function main() {
   console.log("===================");
   console.log(`SQL files scanned: ${files.length}`);
   console.log(`Files with findings: ${results.length}`);
-  console.log(`Findings -> high: ${summary.high}, medium: ${summary.medium}, low: ${summary.low}, total: ${summary.total}`);
+  console.log(
+    `Findings -> high: ${summary.high}, medium: ${summary.medium}, low: ${summary.low}, total: ${summary.total}`,
+  );
   console.log(`Supabase migrations: ${supabaseFiles.length}`);
   console.log(`Legacy database migrations: ${legacyFiles.length}`);
-  console.log(`Overlapping migration basenames: ${overlappingBasenames.length}`);
+  console.log(
+    `Overlapping migration basenames: ${overlappingBasenames.length}`,
+  );
   console.log(`Report: ${outPath}`);
 }
 

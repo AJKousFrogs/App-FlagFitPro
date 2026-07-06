@@ -34,7 +34,11 @@ function createFakeSupabase() {
     run() {
       if (this.table === "team_members" && this.filters.user_id === "user-1") {
         return {
-          data: { role: "sports_psychologist", team_id: "team-1", status: "active" },
+          data: {
+            role: "sports_psychologist",
+            team_id: "team-1",
+            status: "active",
+          },
           error: null,
         };
       }

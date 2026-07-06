@@ -125,10 +125,10 @@ Without DB secrets the suites self-skip (`describe.skipIf`), so the job is safe 
 forks and untrusted PRs. To make them actually execute, set two **repository
 secrets**:
 
-| Secret | Value |
-| --- | --- |
-| `DEV_SUPABASE_URL` | URL of a **dev / branch** Supabase project |
-| `DEV_SUPABASE_SERVICE_ROLE_KEY` | that project's service-role key |
+| Secret                          | Value                                      |
+| ------------------------------- | ------------------------------------------ |
+| `DEV_SUPABASE_URL`              | URL of a **dev / branch** Supabase project |
+| `DEV_SUPABASE_SERVICE_ROLE_KEY` | that project's service-role key            |
 
 > **Never point these at production.** The RLS matrix creates and tears down real
 > `auth.users` + teams, and seed-integrity reads the whole DB. Use a dedicated dev

@@ -34,7 +34,10 @@ import { CompetitionEvent } from "../core/models/schedule.models";
  */
 type Mode = "list" | "form";
 
-const KIND_DEFAULT_IMPORTANCE: Record<AthleteEventKind, AthleteEventImportance> = {
+const KIND_DEFAULT_IMPORTANCE: Record<
+  AthleteEventKind,
+  AthleteEventImportance
+> = {
   gameday: "high",
   tournament: "peak",
   camp: "regular",
@@ -67,29 +70,58 @@ const KIND_DEFAULT_IMPORTANCE: Record<AthleteEventKind, AthleteEventImportance> 
         <div class="card stack">
           <div class="row">
             <h2>{{ editingId() ? "Edit event" : "Add event" }}</h2>
-            <button class="icon-btn" type="button" aria-label="Cancel" (click)="cancel()">
+            <button
+              class="icon-btn"
+              type="button"
+              aria-label="Cancel"
+              (click)="cancel()"
+            >
               <lucide-icon name="x" />
             </button>
           </div>
 
           <label class="lbl" for="sch-title">Title</label>
-          <input id="sch-title" class="input" type="text" placeholder="e.g. National team camp"
-                 [value]="fTitle()" (input)="fTitle.set(val($event))" />
+          <input
+            id="sch-title"
+            class="input"
+            type="text"
+            placeholder="e.g. National team camp"
+            [value]="fTitle()"
+            (input)="fTitle.set(val($event))"
+          />
 
           <p class="lbl" style="margin:0">Level</p>
           <div class="chiprow">
             @for (c of categories; track c.key) {
-              <button type="button" class="chip" [class.sel]="fCategory() === c.key"
-                      (click)="fCategory.set(c.key)">{{ c.label }}</button>
+              <button
+                type="button"
+                class="chip"
+                [class.sel]="fCategory() === c.key"
+                (click)="fCategory.set(c.key)"
+              >
+                {{ c.label }}
+              </button>
             }
           </div>
 
-          @if (fCategory() === 'national') {
-            <p class="lbl" style="margin:0">Competition tier <span class="muted">(a Continental/World/Olympic commitment tapers deeper than a routine camp)</span></p>
+          @if (fCategory() === "national") {
+            <p class="lbl" style="margin:0">
+              Competition tier
+              <span class="muted"
+                >(a Continental/World/Olympic commitment tapers deeper than a
+                routine camp)</span
+              >
+            </p>
             <div class="chiprow">
-              @for (t of tiers; track t.key ?? 'none') {
-                <button type="button" class="chip" [class.sel]="fTier() === t.key"
-                        (click)="fTier.set(t.key)">{{ t.label }}</button>
+              @for (t of tiers; track t.key ?? "none") {
+                <button
+                  type="button"
+                  class="chip"
+                  [class.sel]="fTier() === t.key"
+                  (click)="fTier.set(t.key)"
+                >
+                  {{ t.label }}
+                </button>
               }
             </div>
           }
@@ -97,66 +129,138 @@ const KIND_DEFAULT_IMPORTANCE: Record<AthleteEventKind, AthleteEventImportance> 
           <p class="lbl" style="margin:0">Type</p>
           <div class="chiprow">
             @for (k of kinds; track k.key) {
-              <button type="button" class="chip" [class.sel]="fKind() === k.key"
-                      (click)="onKind(k.key)">{{ k.label }}</button>
+              <button
+                type="button"
+                class="chip"
+                [class.sel]="fKind() === k.key"
+                (click)="onKind(k.key)"
+              >
+                {{ k.label }}
+              </button>
             }
           </div>
 
           <div class="grid2">
             <div>
               <label class="lbl" for="sch-start-date">Start date</label>
-              <input id="sch-start-date" class="input" type="date" [value]="fStartDate()" (change)="fStartDate.set(val($event))" />
+              <input
+                id="sch-start-date"
+                class="input"
+                type="date"
+                [value]="fStartDate()"
+                (change)="fStartDate.set(val($event))"
+              />
             </div>
             <div>
               <label class="lbl" for="sch-start-time">Time</label>
-              <input id="sch-start-time" class="input" type="time" [value]="fStartTime()" (change)="fStartTime.set(val($event))" />
+              <input
+                id="sch-start-time"
+                class="input"
+                type="time"
+                [value]="fStartTime()"
+                (change)="fStartTime.set(val($event))"
+              />
             </div>
           </div>
 
-          <label class="lbl" for="sch-end-date">End date <span class="muted">(optional — for camps / multi-day tournaments)</span></label>
-          <input id="sch-end-date" class="input" type="date" [value]="fEndDate()" (change)="fEndDate.set(val($event))" />
+          <label class="lbl" for="sch-end-date"
+            >End date
+            <span class="muted"
+              >(optional — for camps / multi-day tournaments)</span
+            ></label
+          >
+          <input
+            id="sch-end-date"
+            class="input"
+            type="date"
+            [value]="fEndDate()"
+            (change)="fEndDate.set(val($event))"
+          />
 
           <div class="grid2">
             <div>
               <label class="lbl" for="sch-games">Expected games</label>
-              <input id="sch-games" class="input" type="number" min="0" max="50"
-                     [value]="fGames()" (input)="fGames.set(num($event))" />
+              <input
+                id="sch-games"
+                class="input"
+                type="number"
+                min="0"
+                max="50"
+                [value]="fGames()"
+                (input)="fGames.set(num($event))"
+              />
             </div>
             <div>
               <p class="lbl" style="margin:0">Importance</p>
               <div class="chiprow">
                 @for (i of importances; track i.key) {
-                  <button type="button" class="chip" [class.sel]="fImportance() === i.key"
-                          (click)="fImportance.set(i.key)">{{ i.label }}</button>
+                  <button
+                    type="button"
+                    class="chip"
+                    [class.sel]="fImportance() === i.key"
+                    (click)="fImportance.set(i.key)"
+                  >
+                    {{ i.label }}
+                  </button>
                 }
               </div>
             </div>
           </div>
 
-          <label class="lbl" for="sch-location">Location <span class="muted">(optional)</span></label>
-          <input id="sch-location" class="input" type="text" placeholder="City / venue"
-                 [value]="fLocation()" (input)="fLocation.set(val($event))" />
+          <label class="lbl" for="sch-location"
+            >Location <span class="muted">(optional)</span></label
+          >
+          <input
+            id="sch-location"
+            class="input"
+            type="text"
+            placeholder="City / venue"
+            [value]="fLocation()"
+            (input)="fLocation.set(val($event))"
+          />
 
-          <label class="lbl" for="sch-notes">Notes <span class="muted">(optional)</span></label>
-          <input id="sch-notes" class="input" type="text" placeholder="Anything worth remembering"
-                 [value]="fNotes()" (input)="fNotes.set(val($event))" />
+          <label class="lbl" for="sch-notes"
+            >Notes <span class="muted">(optional)</span></label
+          >
+          <input
+            id="sch-notes"
+            class="input"
+            type="text"
+            placeholder="Anything worth remembering"
+            [value]="fNotes()"
+            (input)="fNotes.set(val($event))"
+          />
 
           @if (formError(); as e) {
             <p class="note" style="color:var(--danger)">{{ e }}</p>
           }
 
           <div class="row" style="justify-content:flex-end;gap:var(--s-2)">
-            <button class="btn ghost" type="button" (click)="cancel()">Cancel</button>
-            <button class="btn primary" type="button" [attr.aria-disabled]="saving()" (click)="save()">
-              {{ saving() ? "Saving…" : editingId() ? "Save changes" : "Add event" }}
+            <button class="btn ghost" type="button" (click)="cancel()">
+              Cancel
+            </button>
+            <button
+              class="btn primary"
+              type="button"
+              [attr.aria-disabled]="saving()"
+              (click)="save()"
+            >
+              {{
+                saving()
+                  ? "Saving…"
+                  : editingId()
+                    ? "Save changes"
+                    : "Add event"
+              }}
             </button>
           </div>
         </div>
       } @else {
         <!-- ───────── list ───────── -->
         <p class="muted" style="margin:0">
-          Add your camps, tournaments and gamedays so your plan tapers before them and
-          builds recovery after — instead of prescribing the same session every day.
+          Add your camps, tournaments and gamedays so your plan tapers before
+          them and builds recovery after — instead of prescribing the same
+          session every day.
         </p>
 
         <div class="section-h"><h2>Your events</h2></div>
@@ -166,7 +270,9 @@ const KIND_DEFAULT_IMPORTANCE: Record<AthleteEventKind, AthleteEventImportance> 
           <app-skeleton variant="rows" [rows]="3" label="your events" />
         } @else if (myEvents().length === 0) {
           <div class="empty">
-            <p style="margin:0 0 var(--s-3)">No events yet. Add your next camp, tournament or gameday.</p>
+            <p style="margin:0 0 var(--s-3)">
+              No events yet. Add your next camp, tournament or gameday.
+            </p>
             <button class="btn primary" type="button" (click)="openAdd()">
               <lucide-icon name="calendar-plus" /> Add your first event
             </button>
@@ -177,19 +283,36 @@ const KIND_DEFAULT_IMPORTANCE: Record<AthleteEventKind, AthleteEventImportance> 
               <div class="row" style="align-items:flex-start">
                 <div class="stack" style="gap:4px">
                   <div class="inline">
-                    <span class="band {{ importanceClass(ev.importance) }}">{{ tierLabel(ev) }}</span>
+                    <span class="band {{ importanceClass(ev.importance) }}">{{
+                      tierLabel(ev)
+                    }}</span>
                     <b>{{ ev.title }}</b>
                   </div>
-                  <small class="muted">{{ whenLabel(ev.startsAt, ev.endsAt) }} · {{ kindLabel(ev.kind) }}</small>
+                  <small class="muted"
+                    >{{ whenLabel(ev.startsAt, ev.endsAt) }} ·
+                    {{ kindLabel(ev.kind) }}</small
+                  >
                   @if (ev.location) {
-                    <small class="muted inline"><lucide-icon name="map-pin" /> {{ ev.location }}</small>
+                    <small class="muted inline"
+                      ><lucide-icon name="map-pin" /> {{ ev.location }}</small
+                    >
                   }
                 </div>
                 <div class="inline" style="gap:var(--s-1)">
-                  <button class="icon-btn" type="button" aria-label="Edit" (click)="openEdit(ev)">
+                  <button
+                    class="icon-btn"
+                    type="button"
+                    aria-label="Edit"
+                    (click)="openEdit(ev)"
+                  >
                     <lucide-icon name="pencil" />
                   </button>
-                  <button class="icon-btn" type="button" aria-label="Delete" (click)="remove(ev)">
+                  <button
+                    class="icon-btn"
+                    type="button"
+                    aria-label="Delete"
+                    (click)="remove(ev)"
+                  >
                     <lucide-icon name="trash-2" />
                   </button>
                 </div>
@@ -205,7 +328,9 @@ const KIND_DEFAULT_IMPORTANCE: Record<AthleteEventKind, AthleteEventImportance> 
               <div class="row">
                 <div class="stack" style="gap:4px">
                   <b>{{ ev.competitionShortName || ev.competitionName }}</b>
-                  <small class="muted">{{ whenLabel(ev.startsAt, ev.endsAt) }}</small>
+                  <small class="muted">{{
+                    whenLabel(ev.startsAt, ev.endsAt)
+                  }}</small>
                 </div>
                 <span class="band neutral">Team</span>
               </div>
@@ -217,10 +342,24 @@ const KIND_DEFAULT_IMPORTANCE: Record<AthleteEventKind, AthleteEventImportance> 
   `,
   styles: [
     `
-      .lbl { font-size: var(--fs-sm); color: var(--text-muted); font-weight: var(--fw-semi); }
-      .chiprow { display: flex; flex-wrap: wrap; gap: 6px; }
-      .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: var(--s-3); }
-      .input { width: 100%; }
+      .lbl {
+        font-size: var(--fs-sm);
+        color: var(--text-muted);
+        font-weight: var(--fw-semi);
+      }
+      .chiprow {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+      }
+      .grid2 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: var(--s-3);
+      }
+      .input {
+        width: 100%;
+      }
     `,
   ],
 })
@@ -297,7 +436,9 @@ export class ScheduleComponent implements OnInit {
   /** Prefer the specific tier ("World Championship") over the generic
    *  category label ("National team") when one is set. */
   tierLabel(ev: AthleteEvent): string {
-    return ev.tier ? ATHLETE_EVENT_TIER_LABEL[ev.tier] : this.catLabel(ev.category);
+    return ev.tier
+      ? ATHLETE_EVENT_TIER_LABEL[ev.tier]
+      : this.catLabel(ev.category);
   }
   kindLabel(k: AthleteEventKind): string {
     return ATHLETE_EVENT_KIND_LABEL[k];
@@ -368,7 +509,10 @@ export class ScheduleComponent implements OnInit {
       this.formError.set("Pick a start date.");
       return;
     }
-    const startsAt = this.combine(this.fStartDate(), this.fStartTime() || "18:00");
+    const startsAt = this.combine(
+      this.fStartDate(),
+      this.fStartTime() || "18:00",
+    );
     const endsAt = this.fEndDate()
       ? this.combine(this.fEndDate(), "23:59")
       : null;

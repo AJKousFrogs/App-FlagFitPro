@@ -121,7 +121,9 @@ export class AIService {
       switchMap(() => {
         // Try API first (only after consent verified)
         return this.apiService
-          .post<TrainingSuggestion[]>(API_ENDPOINTS.training.suggestions, params)
+          .post<
+            TrainingSuggestion[]
+          >(API_ENDPOINTS.training.suggestions, params)
           .pipe(
             map((response) => {
               const suggestions =
@@ -159,31 +161,36 @@ export class AIService {
    * override, and returns the answer plus any suggested actions. GDPR Article 22:
    * gated on explicit AI-processing consent — rejects if consent isn't granted.
    */
-  sendMessage(message: string, sessionId?: string | null): Observable<MerlinReply> {
+  sendMessage(
+    message: string,
+    sessionId?: string | null,
+  ): Observable<MerlinReply> {
     const body: Record<string, unknown> = { message };
     if (sessionId) body["session_id"] = sessionId;
     return from(this.privacySettingsService.requireAiConsent()).pipe(
       switchMap(() =>
-        this.apiService.post<RawMerlinReply>(API_ENDPOINTS.aiChat.send, body).pipe(
-          map((response): MerlinReply => {
-            const raw = extractApiPayload<RawMerlinReply>(response) ?? {};
-            const answer = (raw.answer_markdown ?? "").trim();
-            if (!answer) {
-              throw new Error("Merlin returned an empty response");
-            }
-            return {
-              chatSessionId: raw.chat_session_id ?? null,
-              messageId: raw.message_id ?? null,
-              answer,
-              riskLevel: raw.risk_level ?? null,
-              disclaimer: raw.disclaimer ?? null,
-              suggestedActions: Array.isArray(raw.suggested_actions)
-                ? raw.suggested_actions
-                : [],
-              isBlocked: !!raw.is_blocked,
-            };
-          }),
-        ),
+        this.apiService
+          .post<RawMerlinReply>(API_ENDPOINTS.aiChat.send, body)
+          .pipe(
+            map((response): MerlinReply => {
+              const raw = extractApiPayload<RawMerlinReply>(response) ?? {};
+              const answer = (raw.answer_markdown ?? "").trim();
+              if (!answer) {
+                throw new Error("Merlin returned an empty response");
+              }
+              return {
+                chatSessionId: raw.chat_session_id ?? null,
+                messageId: raw.message_id ?? null,
+                answer,
+                riskLevel: raw.risk_level ?? null,
+                disclaimer: raw.disclaimer ?? null,
+                suggestedActions: Array.isArray(raw.suggested_actions)
+                  ? raw.suggested_actions
+                  : [],
+                isBlocked: !!raw.is_blocked,
+              };
+            }),
+          ),
       ),
       catchError((error: unknown) => {
         this.logger.error("merlin_send_failed", error);
@@ -206,7 +213,6 @@ export class AIService {
       wasHelpful,
     });
   }
-
 
   /**
    * Process natural language command from voice or text input

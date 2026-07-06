@@ -1,4 +1,8 @@
-import { parseJsonObjectBody, parseBoundedInt, validateInput } from "./utils/input-validator.js";
+import {
+  parseJsonObjectBody,
+  parseBoundedInt,
+  validateInput,
+} from "./utils/input-validator.js";
 import {
   createSuccessResponse,
   createErrorResponse,
@@ -476,8 +480,12 @@ async function createTrainingLogSession(
       if (hasRpe) {
         updatePayload.rpe = cleaned.rpe;
       }
-      if (mergedRpe !== null && mergedRpe !== undefined &&
-          mergedDuration !== null && mergedDuration !== undefined) {
+      if (
+        mergedRpe !== null &&
+        mergedRpe !== undefined &&
+        mergedDuration !== null &&
+        mergedDuration !== undefined
+      ) {
         updatePayload.workload = mergedRpe * mergedDuration;
       }
       if (cleaned.notes !== null && cleaned.notes !== undefined) {
@@ -951,7 +959,6 @@ const handler = async (event, context) => {
           );
         }
       }
-
     },
   });
 };

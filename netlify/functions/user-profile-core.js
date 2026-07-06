@@ -1,6 +1,9 @@
 import { supabaseAdmin } from "./supabase-client.js";
 import { baseHandler } from "./utils/base-handler.js";
-import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
+import {
+  createSuccessResponse,
+  createErrorResponse,
+} from "./utils/error-handler.js";
 import { getUserRole } from "./utils/authorization-guard.js";
 import { parseJsonObjectBody } from "./utils/input-validator.js";
 import { createLogger } from "./utils/structured-logger.js";
@@ -92,7 +95,11 @@ async function updateOwnProfile(userId, body) {
     .maybeSingle();
 
   if (error) {
-    logger.error("profile_update_failed", error, error?.code ? { code: error.code } : {});
+    logger.error(
+      "profile_update_failed",
+      error,
+      error?.code ? { code: error.code } : {},
+    );
     return createErrorResponse("Failed to update profile", 500, "server_error");
   }
   if (!data) {
@@ -119,9 +126,17 @@ const handler = async (event, context) => {
           body = parseJsonObjectBody(event.body);
         } catch (parseError) {
           if (parseError?.message === "Request body must be an object") {
-            return createErrorResponse("Request body must be an object", 422, "validation_error");
+            return createErrorResponse(
+              "Request body must be an object",
+              422,
+              "validation_error",
+            );
           }
-          return createErrorResponse("Invalid JSON in request body", 400, "invalid_json");
+          return createErrorResponse(
+            "Invalid JSON in request body",
+            400,
+            "invalid_json",
+          );
         }
         return updateOwnProfile(userId, body);
       }
@@ -132,7 +147,11 @@ const handler = async (event, context) => {
 
       // SECURITY: Only allow users to access their own profile (unless admin)
       if (requestedUserId !== userId && !isAdmin) {
-        return createErrorResponse("Forbidden - Can only access your own profile", 403, "not_authorized");
+        return createErrorResponse(
+          "Forbidden - Can only access your own profile",
+          403,
+          "not_authorized",
+        );
       }
       const targetUserId = requestedUserId;
 
@@ -162,7 +181,9 @@ const handler = async (event, context) => {
         const [injuriesRes, training30Res, recentRes] = await Promise.all([
           supabaseAdmin
             .from("athlete_injuries")
-            .select("injury_type, injury_grade, recovery_status, injury_date, diagnosis")
+            .select(
+              "injury_type, injury_grade, recovery_status, injury_date, diagnosis",
+            )
             .eq("user_id", targetUserId)
             .in("recovery_status", ["active", "recovering", "rehab"])
             .order("injury_date", { ascending: false })
@@ -175,7 +196,9 @@ const handler = async (event, context) => {
             .gte("session_date", isoDaysAgo(30)),
           supabaseAdmin
             .from("training_sessions")
-            .select("session_type, duration_minutes, intensity_level, session_date")
+            .select(
+              "session_type, duration_minutes, intensity_level, session_date",
+            )
             .eq("user_id", targetUserId)
             .eq("status", "completed")
             .gte("session_date", isoDaysAgo(7))
@@ -187,8 +210,12 @@ const handler = async (event, context) => {
         const sessionCount = t30.length;
         const trainingFrequency = Math.round((sessionCount / 30) * 7);
         const avg = (rows, key) => {
-          const nums = rows.map((r) => Number(r[key])).filter((n) => Number.isFinite(n));
-          return nums.length ? nums.reduce((a, b) => a + b, 0) / nums.length : null;
+          const nums = rows
+            .map((r) => Number(r[key]))
+            .filter((n) => Number.isFinite(n));
+          return nums.length
+            ? nums.reduce((a, b) => a + b, 0) / nums.length
+            : null;
         };
         const avgDuration = avg(t30, "duration_minutes");
         const avgIntensity = avg(t30, "intensity_level");
@@ -196,16 +223,28 @@ const handler = async (event, context) => {
           ...new Set(t30.map((r) => r.session_type).filter(Boolean)),
         ];
 
-        const heightCm = userInfo.height_cm ? parseFloat(userInfo.height_cm) : null;
-        const weightKg = userInfo.weight_kg ? parseFloat(userInfo.weight_kg) : null;
+        const heightCm = userInfo.height_cm
+          ? parseFloat(userInfo.height_cm)
+          : null;
+        const weightKg = userInfo.weight_kg
+          ? parseFloat(userInfo.weight_kg)
+          : null;
         // users.birth_date is legacy; onboarding/player-settings write date_of_birth.
         const birthDate = userInfo.birth_date || userInfo.date_of_birth || null;
 
         const missingFields = [];
-        if (!heightCm) {missingFields.push("height");}
-        if (!weightKg) {missingFields.push("weight");}
-        if (!birthDate) {missingFields.push("birthDate");}
-        if (!userInfo.position) {missingFields.push("position");}
+        if (!heightCm) {
+          missingFields.push("height");
+        }
+        if (!weightKg) {
+          missingFields.push("weight");
+        }
+        if (!birthDate) {
+          missingFields.push("birthDate");
+        }
+        if (!userInfo.position) {
+          missingFields.push("position");
+        }
 
         const profile = {
           userId: userInfo.id,
@@ -233,14 +272,27 @@ const handler = async (event, context) => {
           })),
           sessionTypes,
           // Profile completeness indicators for UI
-          _profileComplete: !!(heightCm && weightKg && birthDate && userInfo.position),
+          _profileComplete: !!(
+            heightCm &&
+            weightKg &&
+            birthDate &&
+            userInfo.position
+          ),
           _missingFields: missingFields,
         };
 
         return createSuccessResponse(profile);
       } catch (error) {
-        logger.error("profile_handler_error", error, error?.code ? { code: error.code } : {});
-        return createErrorResponse("Failed to retrieve user profile", 500, "server_error");
+        logger.error(
+          "profile_handler_error",
+          error,
+          error?.code ? { code: error.code } : {},
+        );
+        return createErrorResponse(
+          "Failed to retrieve user profile",
+          500,
+          "server_error",
+        );
       }
     },
   });

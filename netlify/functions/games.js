@@ -28,11 +28,19 @@ const handleRequest = async (req) => {
   const path = url.pathname;
 
   // More-specific paths first to avoid prefix collision
-  if (path.includes("/game-events")) {return dispatch(gameEventsHandler, req, url);}
-  if (path.includes("/games")) {return dispatch(gamesCoreHandler, req, url);}
+  if (path.includes("/game-events")) {
+    return dispatch(gameEventsHandler, req, url);
+  }
+  if (path.includes("/games")) {
+    return dispatch(gamesCoreHandler, req, url);
+  }
 
   return new Response(
-    JSON.stringify({ success: false, error: `Not found: ${req.method} ${path}`, code: "not_found" }),
+    JSON.stringify({
+      success: false,
+      error: `Not found: ${req.method} ${path}`,
+      code: "not_found",
+    }),
     { status: 404, headers: corsHeaders(req) },
   );
 };

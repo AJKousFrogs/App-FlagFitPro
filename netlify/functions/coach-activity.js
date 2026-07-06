@@ -1,5 +1,8 @@
 import { supabaseAdmin } from "./supabase-client.js";
-import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
+import {
+  createSuccessResponse,
+  createErrorResponse,
+} from "./utils/error-handler.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { COACH_ROUTE_ROLES } from "./utils/role-sets.js";
 import { createLogger, makeRequestLogger } from "./utils/structured-logger.js";
@@ -266,7 +269,7 @@ const handler = async (event, context) => {
   return baseHandler(event, context, {
     functionName: "coach-activity",
     allowedMethods: ["GET", "POST"],
-rateLimitType,
+    rateLimitType,
     requireAuth: true,
     handler: async (event, _context, { userId, requestId, correlationId }) => {
       const path = event.path
@@ -331,9 +334,7 @@ rateLimitType,
           method,
           user_id: userId,
         });
-        if (
-          error.message?.includes("must be an integer between")
-        ) {
+        if (error.message?.includes("must be an integer between")) {
           return createErrorResponse(
             error.message,
             422,
@@ -351,7 +352,9 @@ rateLimitType,
         }
         const statusCode = error.message?.includes("denied") ? 403 : 500;
         return createErrorResponse(
-          statusCode === 500 ? "Internal server error" : error.message || "Access denied",
+          statusCode === 500
+            ? "Internal server error"
+            : error.message || "Access denied",
           statusCode,
           statusCode === 500 ? "server_error" : "activity_error",
           requestId,

@@ -18,12 +18,18 @@ import { handler as privacySettingsHandler } from "./privacy-settings.js";
 import { getCorsHeaders as corsHeaders } from "./utils/cors.js";
 
 const handleRequest = async (req) => {
-  if (req.method === "OPTIONS") {return new Response(null, { status: 204, headers: corsHeaders(req) });}
+  if (req.method === "OPTIONS") {
+    return new Response(null, { status: 204, headers: corsHeaders(req) });
+  }
   const url = new URL(req.url);
   const path = url.pathname;
 
-  if (path.includes("/privacy-settings")) {return dispatch(privacySettingsHandler, req, url);}
-  if (path.includes("/user-context") || path.includes("/user/context")) {return dispatch(userContextHandler, req, url);}
+  if (path.includes("/privacy-settings")) {
+    return dispatch(privacySettingsHandler, req, url);
+  }
+  if (path.includes("/user-context") || path.includes("/user/context")) {
+    return dispatch(userContextHandler, req, url);
+  }
   // user-profile and user/profile both handled by core handler
   return dispatch(userProfileCoreHandler, req, url);
 };

@@ -1,6 +1,8 @@
 <header class="topbar">
   <div><h1>Notifications</h1></div>
-  <button class="btn ghost sm" type="button" (click)="markAllRead()">Mark all read</button>
+  <button class="btn ghost sm" type="button" (click)="markAllRead()">
+    Mark all read
+  </button>
 </header>
 
 <main class="screen">
@@ -12,7 +14,10 @@
     @for (n of items()!; track n.id) {
       <div class="card {{ accentClass(n) }}">
         <div class="row">
-          <b class="inline"><lucide-icon [name]="icon(n)" /> {{ n.title || n.type || "Update" }}</b>
+          <b class="inline"
+            ><lucide-icon [name]="icon(n)" />
+            {{ n.title || n.type || "Update" }}</b
+          >
           <small>{{ ago(n.created_at) }}</small>
         </div>
         @if (n.message || n.body) {

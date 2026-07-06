@@ -39,7 +39,9 @@ function analyze(filePath) {
   const rawSuccessLiteral = /success\s*:\s*true/.test(source);
 
   const handlerType =
-    usesBaseHandler || usesCreateHandler || usesLambdaAdapter ? "standardized" : "legacy";
+    usesBaseHandler || usesCreateHandler || usesLambdaAdapter
+      ? "standardized"
+      : "legacy";
 
   return {
     file: path.relative(ROOT, filePath),

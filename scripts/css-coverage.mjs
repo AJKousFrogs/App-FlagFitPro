@@ -88,7 +88,10 @@ async function tryLogin(page) {
       .fill('input[type="email"], input[name="email"], #email', EMAIL)
       .catch(() => {});
     await page
-      .fill('input[type="password"], input[name="password"], #password', PASSWORD)
+      .fill(
+        'input[type="password"], input[name="password"], #password',
+        PASSWORD,
+      )
       .catch(() => {});
     await page
       .click('button[type="submit"], .p-button, app-button')

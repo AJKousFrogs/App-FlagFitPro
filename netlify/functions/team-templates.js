@@ -1,6 +1,9 @@
 import { supabaseAdmin } from "./supabase-client.js";
 import { baseHandler } from "./utils/base-handler.js";
-import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
+import {
+  createSuccessResponse,
+  createErrorResponse,
+} from "./utils/error-handler.js";
 import { parseJsonObjectBody } from "./utils/input-validator.js";
 import { createLogger, makeRequestLogger } from "./utils/structured-logger.js";
 
@@ -390,7 +393,9 @@ async function assignTemplate(
   // Get the template
   const { data: template, error: templateError } = await supabaseAdmin
     .from("team_templates")
-    .select("id, team_id, template_type, content, name, description, category, position_filter")
+    .select(
+      "id, team_id, template_type, content, name, description, category, position_filter",
+    )
     .eq("id", templateId)
     .single();
 
@@ -415,7 +420,9 @@ async function assignTemplate(
   if (athleteMembershipsError) {
     throw athleteMembershipsError;
   }
-  const eligibleAthleteIds = new Set((athleteMemberships || []).map((a) => a.user_id));
+  const eligibleAthleteIds = new Set(
+    (athleteMemberships || []).map((a) => a.user_id),
+  );
 
   const results = {
     assigned: [],
@@ -489,7 +496,9 @@ async function assignTemplate(
         micro_session_id: microSessionId,
       });
     } catch (error) {
-      logger.error("athlete_assignment_failed", error, { athlete_id: athleteId });
+      logger.error("athlete_assignment_failed", error, {
+        athlete_id: athleteId,
+      });
       results.failed.push({
         athlete_id: athleteId,
         error: "Assignment failed",
@@ -505,22 +514,18 @@ async function assignTemplate(
 // =====================================================
 
 const handler = async (event, context) => {
-  const rateLimitType = event.httpMethod === "GET"
-    ? "READ"
-    : event.httpMethod === "DELETE"
-      ? "DELETE"
-      : "UPDATE";
+  const rateLimitType =
+    event.httpMethod === "GET"
+      ? "READ"
+      : event.httpMethod === "DELETE"
+        ? "DELETE"
+        : "UPDATE";
   return baseHandler(event, context, {
     functionName: "team-templates",
     allowedMethods: ["GET", "POST", "PATCH", "DELETE"],
-rateLimitType,
+    rateLimitType,
     requireAuth: true,
-    handler: async (
-      event,
-      _context,
-      { userId, requestId, correlationId },
-    ) => {
-  
+    handler: async (event, _context, { userId, requestId, correlationId }) => {
       const { path } = event;
       const method = event.httpMethod;
       const requestLogger = createRequestLogger(event, {

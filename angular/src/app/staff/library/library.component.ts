@@ -13,7 +13,16 @@ import {
 } from "../../core/services/training-video.service";
 import { YtVideoComponent } from "../../shared/yt-video.component";
 
-const CATEGORIES = ["warmup", "sprint", "agility", "strength", "mobility", "skills", "conditioning", "recovery"];
+const CATEGORIES = [
+  "warmup",
+  "sprint",
+  "agility",
+  "strength",
+  "mobility",
+  "skills",
+  "conditioning",
+  "recovery",
+];
 
 /**
  * Coach video library manager — list the team's videos + add new ones (paste a
@@ -42,7 +51,9 @@ export class StaffLibraryComponent {
   readonly error = signal<string | null>(null);
 
   readonly previewId = computed(() => parseYouTubeId(this.url()));
-  readonly canSave = computed(() => !!this.previewId() && this.title().trim().length > 1);
+  readonly canSave = computed(
+    () => !!this.previewId() && this.title().trim().length > 1,
+  );
 
   constructor() {
     if (!this.videoSvc.loaded()) void this.videoSvc.load();
@@ -62,7 +73,9 @@ export class StaffLibraryComponent {
       this.url.set("");
       this.title.set("");
     } else {
-      this.error.set("Couldn't add — you must be team staff, and the link must be a valid YouTube video.");
+      this.error.set(
+        "Couldn't add — you must be team staff, and the link must be a valid YouTube video.",
+      );
     }
   }
 }

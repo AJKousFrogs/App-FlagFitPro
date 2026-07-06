@@ -11,22 +11,69 @@
   <div class="section-h"><h2>Add a video</h2></div>
   <div class="card stack">
     <div class="field">
-      <label for="url" style="font-size:var(--fs-sm);color:var(--text-muted);display:block;margin-bottom:var(--s-1)">YouTube link or ID</label>
-      <input id="url" class="input" type="text" placeholder="https://youtu.be/… or video ID"
-             [value]="url()" (input)="url.set($any($event.target).value)"
-             class="input" style="width:100%" />
+      <label
+        for="url"
+        style="
+          font-size: var(--fs-sm);
+          color: var(--text-muted);
+          display: block;
+          margin-bottom: var(--s-1);
+        "
+        >YouTube link or ID</label
+      >
+      <input
+        id="url"
+        class="input"
+        type="text"
+        placeholder="https://youtu.be/… or video ID"
+        [value]="url()"
+        (input)="url.set($any($event.target).value)"
+        class="input"
+        style="width: 100%"
+      />
     </div>
     <div class="field">
-      <label for="vtitle" style="font-size:var(--fs-sm);color:var(--text-muted);display:block;margin-bottom:var(--s-1)">Title</label>
-      <input id="vtitle" class="input" type="text" placeholder="e.g. Sprint mechanics — wall drill"
-             [value]="title()" (input)="title.set($any($event.target).value)"
-             class="input" style="width:100%" />
+      <label
+        for="vtitle"
+        style="
+          font-size: var(--fs-sm);
+          color: var(--text-muted);
+          display: block;
+          margin-bottom: var(--s-1);
+        "
+        >Title</label
+      >
+      <input
+        id="vtitle"
+        class="input"
+        type="text"
+        placeholder="e.g. Sprint mechanics — wall drill"
+        [value]="title()"
+        (input)="title.set($any($event.target).value)"
+        class="input"
+        style="width: 100%"
+      />
     </div>
     <div class="field">
-      <p style="font-size:var(--fs-sm);color:var(--text-muted);margin:0 0 var(--s-2)">Category</p>
-      <div class="inline" style="flex-wrap:wrap;gap:var(--s-2)">
+      <p
+        style="
+          font-size: var(--fs-sm);
+          color: var(--text-muted);
+          margin: 0 0 var(--s-2);
+        "
+      >
+        Category
+      </p>
+      <div class="inline" style="flex-wrap: wrap; gap: var(--s-2)">
         @for (c of categories; track c) {
-          <button type="button" class="chip" [class.sel]="category() === c" (click)="category.set(c)">{{ c }}</button>
+          <button
+            type="button"
+            class="chip"
+            [class.sel]="category() === c"
+            (click)="category.set(c)"
+          >
+            {{ c }}
+          </button>
         }
       </div>
     </div>
@@ -34,9 +81,17 @@
     @if (previewId(); as pid) {
       <app-yt-video [videoId]="pid" title="Preview" />
     }
-    @if (error(); as e) { <p class="note" style="color:var(--danger)">{{ e }}</p> }
-    <button class="btn primary block" type="button" [attr.aria-disabled]="!canSave() || saving()"
-            (click)="save()">{{ saving() ? "Adding…" : "Add to library" }}</button>
+    @if (error(); as e) {
+      <p class="note" style="color: var(--danger)">{{ e }}</p>
+    }
+    <button
+      class="btn primary block"
+      type="button"
+      [attr.aria-disabled]="!canSave() || saving()"
+      (click)="save()"
+    >
+      {{ saving() ? "Adding…" : "Add to library" }}
+    </button>
   </div>
 
   <!-- current library -->

@@ -41,14 +41,43 @@ type Tab = "Notifications" | "Privacy" | "Prefs" | "Security";
   templateUrl: "./settings.component.html",
   styles: [
     `
-      .st-tabs { display: flex; gap: var(--s-4); border-bottom: 1px solid var(--border-soft);
-        padding-bottom: var(--s-2); font-size: var(--fs-sm); font-weight: var(--fw-semi); }
-      .st-tab { background: none; border: 0; cursor: pointer; padding: 0 0 var(--s-2);
-        color: var(--text-faint); font-weight: var(--fw-semi); font-family: var(--font-body); font-size: var(--fs-sm); }
-      .st-tab.on { color: var(--text-strong); border-bottom: 2px solid var(--accent); }
-      .st-tab:focus-visible { outline: none; box-shadow: var(--focus); border-radius: 4px; }
-      .lbl { font-size: var(--fs-sm); color: var(--text-muted); font-weight: var(--fw-semi); }
-      .chiprow { display: flex; flex-wrap: wrap; gap: 6px; }
+      .st-tabs {
+        display: flex;
+        gap: var(--s-4);
+        border-bottom: 1px solid var(--border-soft);
+        padding-bottom: var(--s-2);
+        font-size: var(--fs-sm);
+        font-weight: var(--fw-semi);
+      }
+      .st-tab {
+        background: none;
+        border: 0;
+        cursor: pointer;
+        padding: 0 0 var(--s-2);
+        color: var(--text-faint);
+        font-weight: var(--fw-semi);
+        font-family: var(--font-body);
+        font-size: var(--fs-sm);
+      }
+      .st-tab.on {
+        color: var(--text-strong);
+        border-bottom: 2px solid var(--accent);
+      }
+      .st-tab:focus-visible {
+        outline: none;
+        box-shadow: var(--focus);
+        border-radius: 4px;
+      }
+      .lbl {
+        font-size: var(--fs-sm);
+        color: var(--text-muted);
+        font-weight: var(--fw-semi);
+      }
+      .chiprow {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+      }
     `,
   ],
 })
@@ -122,7 +151,9 @@ export class SettingsComponent {
         this.api.post("/api/player-settings", { primaryPosition: pos }),
       );
       if (res.success) {
-        this.positionMsg.set("Saved — your plan now emphasises this position's prehab.");
+        this.positionMsg.set(
+          "Saved — your plan now emphasises this position's prehab.",
+        );
         this.periodization.refreshSettings();
       } else {
         this.positionMsg.set(res.error ?? "Couldn't save — try again.");
@@ -160,7 +191,9 @@ export class SettingsComponent {
   toggleTrainingDay(dow: number): void {
     const cur = this.trainingDays();
     this.trainingDays.set(
-      cur.includes(dow) ? cur.filter((d) => d !== dow) : [...cur, dow].sort((a, b) => a - b),
+      cur.includes(dow)
+        ? cur.filter((d) => d !== dow)
+        : [...cur, dow].sort((a, b) => a - b),
     );
   }
 
@@ -171,7 +204,10 @@ export class SettingsComponent {
     try {
       const res = await firstValueFrom(
         this.api.post("/api/player-settings", {
-          teamTrainingDays: { days: this.trainingDays(), time: this.trainingTime() },
+          teamTrainingDays: {
+            days: this.trainingDays(),
+            time: this.trainingTime(),
+          },
         }),
       );
       if (res.success) {
@@ -212,8 +248,12 @@ export class SettingsComponent {
       const res = await firstValueFrom(
         this.api.get<Record<string, unknown>>("/api/notifications/preferences"),
       );
-      const payload = (extractApiPayload<Record<string, unknown>>(res) ?? {}) as Record<string, unknown>;
-      const prefs = ((payload["preferences"] ?? payload) ?? {}) as Record<string, { muted?: boolean }>;
+      const payload = (extractApiPayload<Record<string, unknown>>(res) ??
+        {}) as Record<string, unknown>;
+      const prefs = (payload["preferences"] ?? payload ?? {}) as Record<
+        string,
+        { muted?: boolean }
+      >;
       const on = (type: string) => prefs[type]?.muted !== true;
       this.trainingReminders.set(on("training"));
       this.gameDayAlerts.set(on("game"));
@@ -260,21 +300,38 @@ export class SettingsComponent {
   }
 
   readonly name = computed(() => {
-    const meta = (this.supabase.currentUser()?.user_metadata ?? {}) as Record<string, unknown>;
-    return ((meta["full_name"] ?? meta["name"] ?? "Athlete") as string).trim() || "Athlete";
+    const meta = (this.supabase.currentUser()?.user_metadata ?? {}) as Record<
+      string,
+      unknown
+    >;
+    return (
+      ((meta["full_name"] ?? meta["name"] ?? "Athlete") as string).trim() ||
+      "Athlete"
+    );
   });
   readonly subtitle = computed(() => {
-    const meta = (this.supabase.currentUser()?.user_metadata ?? {}) as Record<string, unknown>;
+    const meta = (this.supabase.currentUser()?.user_metadata ?? {}) as Record<
+      string,
+      unknown
+    >;
     const j = meta["jersey_number"];
     const pos = (meta["position"] ?? "") as string;
-    return [j != null ? `#${j}` : null, pos || null].filter(Boolean).join(" · ") || "Your profile";
+    return (
+      [j != null ? `#${j}` : null, pos || null].filter(Boolean).join(" · ") ||
+      "Your profile"
+    );
   });
 
   // profile photo upload
   readonly photoBusy = signal(false);
   readonly photoMsg = signal<string | null>(null);
   private static readonly MAX_PHOTO_BYTES = 5 * 1024 * 1024; // 5MB
-  private static readonly PHOTO_TYPES = ["image/jpeg", "image/png", "image/webp", "image/gif"];
+  private static readonly PHOTO_TYPES = [
+    "image/jpeg",
+    "image/png",
+    "image/webp",
+    "image/gif",
+  ];
 
   async onPhotoSelected(event: Event): Promise<void> {
     const input = event.target as HTMLInputElement;
@@ -305,7 +362,9 @@ export class SettingsComponent {
       const url = extractApiPayload<{ url?: string }>(res)?.url;
       if (!url) throw new Error("Upload returned no URL");
 
-      const { error } = await this.supabase.updateUser({ data: { avatar_url: url } });
+      const { error } = await this.supabase.updateUser({
+        data: { avatar_url: url },
+      });
       if (error) throw error;
       // updateUser doesn't always push a fresh currentUser() into the signal, so
       // pull it explicitly — that's what makes every <app-avatar> re-render.
@@ -396,7 +455,11 @@ export class SettingsComponent {
     this.prefsMsg.set(null);
     // Endpoint expects { preferences: { <type>: { muted, pushEnabled, inAppEnabled } } }
     // with backend notification types. A toggle ON = delivered, OFF = muted.
-    const cfg = (on: boolean) => ({ muted: !on, pushEnabled: on, inAppEnabled: on });
+    const cfg = (on: boolean) => ({
+      muted: !on,
+      pushEnabled: on,
+      inAppEnabled: on,
+    });
     this.api
       .put("/api/notifications/preferences", {
         preferences: {

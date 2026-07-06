@@ -1,5 +1,9 @@
 import { getSupabaseClient } from "./utils/auth-helper.js";
-import { createSuccessResponse, createErrorResponse, handleNotFoundError } from "./utils/error-handler.js";
+import {
+  createSuccessResponse,
+  createErrorResponse,
+  handleNotFoundError,
+} from "./utils/error-handler.js";
 import { baseHandler } from "./utils/base-handler.js";
 
 // Netlify Function: Validate Invitation Token

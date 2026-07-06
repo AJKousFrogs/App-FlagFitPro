@@ -38,19 +38,44 @@ import { LucideAngularModule } from "lucide-angular";
         <a class="brand" routerLink="/today" aria-label="FlagFit Pro — Today">
           <lucide-icon name="flag" />FlagFit
         </a>
-        <a class="navlink" routerLink="/today" routerLinkActive="active" ariaCurrentWhenActive="page">
+        <a
+          class="navlink"
+          routerLink="/today"
+          routerLinkActive="active"
+          ariaCurrentWhenActive="page"
+        >
           <lucide-icon name="home" />Today
         </a>
-        <a class="navlink" routerLink="/training" routerLinkActive="active" ariaCurrentWhenActive="page">
+        <a
+          class="navlink"
+          routerLink="/training"
+          routerLinkActive="active"
+          ariaCurrentWhenActive="page"
+        >
           <lucide-icon name="dumbbell" />Training
         </a>
-        <a class="navlink" routerLink="/wellness" routerLinkActive="active" ariaCurrentWhenActive="page">
+        <a
+          class="navlink"
+          routerLink="/wellness"
+          routerLinkActive="active"
+          ariaCurrentWhenActive="page"
+        >
           <lucide-icon name="heart-pulse" />Wellness
         </a>
-        <a class="navlink" routerLink="/stats" routerLinkActive="active" ariaCurrentWhenActive="page">
+        <a
+          class="navlink"
+          routerLink="/stats"
+          routerLinkActive="active"
+          ariaCurrentWhenActive="page"
+        >
           <lucide-icon name="line-chart" />Stats
         </a>
-        <a class="navlink" routerLink="/more" routerLinkActive="active" ariaCurrentWhenActive="page">
+        <a
+          class="navlink"
+          routerLink="/more"
+          routerLinkActive="active"
+          ariaCurrentWhenActive="page"
+        >
           <lucide-icon name="menu" />More
         </a>
         <a class="btn primary block sidebar-cta" routerLink="/wellness">
@@ -71,19 +96,39 @@ import { LucideAngularModule } from "lucide-angular";
 
       <!-- phone/tablet bottom tab bar (hidden ≥1024px via CSS) -->
       <nav class="tabbar" aria-label="Primary">
-        <a routerLink="/today" routerLinkActive="active" ariaCurrentWhenActive="page">
+        <a
+          routerLink="/today"
+          routerLinkActive="active"
+          ariaCurrentWhenActive="page"
+        >
           <lucide-icon name="home" />Today
         </a>
-        <a routerLink="/training" routerLinkActive="active" ariaCurrentWhenActive="page">
+        <a
+          routerLink="/training"
+          routerLinkActive="active"
+          ariaCurrentWhenActive="page"
+        >
           <lucide-icon name="dumbbell" />Training
         </a>
-        <a routerLink="/wellness" routerLinkActive="active" ariaCurrentWhenActive="page">
+        <a
+          routerLink="/wellness"
+          routerLinkActive="active"
+          ariaCurrentWhenActive="page"
+        >
           <lucide-icon name="heart-pulse" />Wellness
         </a>
-        <a routerLink="/stats" routerLinkActive="active" ariaCurrentWhenActive="page">
+        <a
+          routerLink="/stats"
+          routerLinkActive="active"
+          ariaCurrentWhenActive="page"
+        >
           <lucide-icon name="line-chart" />Stats
         </a>
-        <a routerLink="/more" routerLinkActive="active" ariaCurrentWhenActive="page">
+        <a
+          routerLink="/more"
+          routerLinkActive="active"
+          ariaCurrentWhenActive="page"
+        >
           <lucide-icon name="menu" />More
         </a>
       </nav>
@@ -107,7 +152,11 @@ export class ShellComponent {
   readonly fab = computed(() => {
     const u = this.url();
     if (u.startsWith("/schedule") || u.startsWith("/training")) {
-      return { link: "/schedule", label: "Add a schedule event", icon: "calendar-plus" };
+      return {
+        link: "/schedule",
+        label: "Add a schedule event",
+        icon: "calendar-plus",
+      };
     }
     return { link: "/wellness", label: "Log today's check-in", icon: "plus" };
   });
