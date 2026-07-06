@@ -3,7 +3,10 @@ import { firstValueFrom } from "rxjs";
 
 import { ApiService } from "./api.service";
 import { LoggerService } from "./logger.service";
-import { QbThrowingData, QbThrowingSessionInput } from "../models/qb-throwing.models";
+import {
+  QbThrowingData,
+  QbThrowingSessionInput,
+} from "../models/qb-throwing.models";
 
 /**
  * QB Throwing Service — thin client for the previously-orphaned
@@ -29,7 +32,9 @@ export class QbThrowingService {
     this._loading.set(true);
     this._error.set(null);
     try {
-      const res = await firstValueFrom(this.api.get<QbThrowingData>("/api/qb-throwing"));
+      const res = await firstValueFrom(
+        this.api.get<QbThrowingData>("/api/qb-throwing"),
+      );
       if (res.success && res.data) {
         this._data.set(res.data);
       } else {
@@ -47,13 +52,16 @@ export class QbThrowingService {
     this._saving.set(true);
     this._error.set(null);
     try {
-      const res = await firstValueFrom(this.api.post("/api/qb-throwing", input));
+      const res = await firstValueFrom(
+        this.api.post("/api/qb-throwing", input),
+      );
       if (!res.success) {
         throw new Error(res.error ?? "Could not log throwing session");
       }
       await this.load();
     } catch (err) {
-      const message = err instanceof Error ? err.message : "Could not log throwing session";
+      const message =
+        err instanceof Error ? err.message : "Could not log throwing session";
       this._error.set(message);
       this.logger.error("qb_throwing_log_failed", err);
       throw err;

@@ -10,7 +10,10 @@ const state = vi.hoisted(() => ({
 
 vi.mock("../../netlify/functions/utils/base-handler.js", () => ({
   baseHandler: async (event, context, options) =>
-    options.handler(event, context, { userId: "user-1", requestId: "req-test" }),
+    options.handler(event, context, {
+      userId: "user-1",
+      requestId: "req-test",
+    }),
 }));
 
 vi.mock("../../netlify/functions/utils/team-scope.js", () => ({
@@ -31,8 +34,20 @@ function eventGamesTable() {
   const q = {
     select: () => q,
     eq: () => q,
-    order: () => Promise.resolve({ data: [{ id: "g-1", competition_event_id: "ev-1", game_number: 1, team_id: "team-1" }], error: null }),
-    maybeSingle: () => Promise.resolve({ data: state.existingGame, error: null }),
+    order: () =>
+      Promise.resolve({
+        data: [
+          {
+            id: "g-1",
+            competition_event_id: "ev-1",
+            game_number: 1,
+            team_id: "team-1",
+          },
+        ],
+        error: null,
+      }),
+    maybeSingle: () =>
+      Promise.resolve({ data: state.existingGame, error: null }),
     insert: (rows) => {
       state.insertedRows = Array.isArray(rows) ? rows : [rows];
       return q;
@@ -49,7 +64,10 @@ function eventGamesTable() {
       }),
     then: (resolve) =>
       resolve({
-        data: (state.insertedRows ?? []).map((r, i) => ({ id: `g-${i}`, ...r })),
+        data: (state.insertedRows ?? []).map((r, i) => ({
+          id: `g-${i}`,
+          ...r,
+        })),
         error: null,
       }),
   };
@@ -58,7 +76,10 @@ function eventGamesTable() {
 
 vi.mock("../../netlify/functions/supabase-client.js", () => ({
   supabaseAdmin: {
-    from: (table) => (table === "competition_events" ? competitionEventsTable() : eventGamesTable()),
+    from: (table) =>
+      table === "competition_events"
+        ? competitionEventsTable()
+        : eventGamesTable(),
   },
 }));
 
@@ -67,7 +88,12 @@ const req = (method, body, path = "/.netlify/functions/event-games") => ({
   path,
   headers: { authorization: "Bearer t" },
   queryStringParameters: {},
-  body: body === undefined ? undefined : typeof body === "string" ? body : JSON.stringify(body),
+  body:
+    body === undefined
+      ? undefined
+      : typeof body === "string"
+        ? body
+        : JSON.stringify(body),
 });
 
 describe("event-games validation", () => {
@@ -109,7 +135,14 @@ describe("event-games validation", () => {
   });
 
   it("POST without competitionEventId returns 400", async () => {
-    const res = await handler(req("POST", { gameNumber: 1, gameDate: "2026-07-04", kickoffTime: "11:00" }), {});
+    const res = await handler(
+      req("POST", {
+        gameNumber: 1,
+        gameDate: "2026-07-04",
+        kickoffTime: "11:00",
+      }),
+      {},
+    );
     expect(res.statusCode).toBe(400);
   });
 
@@ -193,19 +226,29 @@ describe("event-games validation", () => {
 
   it("DELETE rejects when the caller isn't staff", async () => {
     state.isStaff = false;
-    const res = await handler(req("DELETE", undefined, "/.netlify/functions/event-games/game-1"), {});
+    const res = await handler(
+      req("DELETE", undefined, "/.netlify/functions/event-games/game-1"),
+      {},
+    );
     expect(res.statusCode).toBe(403);
   });
 
   it("DELETE removes a game the caller staffs", async () => {
-    const res = await handler(req("DELETE", undefined, "/.netlify/functions/event-games/game-1"), {});
+    const res = await handler(
+      req("DELETE", undefined, "/.netlify/functions/event-games/game-1"),
+      {},
+    );
     expect(res.statusCode).toBe(200);
     expect(JSON.parse(res.body).data.deleted).toBe(true);
   });
 
   it("PATCH updates a game the caller staffs", async () => {
     const res = await handler(
-      req("PATCH", { kickoffTime: "11:30" }, "/.netlify/functions/event-games/game-1"),
+      req(
+        "PATCH",
+        { kickoffTime: "11:30" },
+        "/.netlify/functions/event-games/game-1",
+      ),
       {},
     );
     expect(res.statusCode).toBe(200);

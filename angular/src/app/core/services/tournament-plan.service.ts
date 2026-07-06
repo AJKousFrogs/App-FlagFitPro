@@ -84,13 +84,15 @@ export function computeGaps(games: EventGame[]): GameGap[] {
     .filter((g) => g.status !== "cancelled")
     .sort(
       (a, b) =>
-        toMinutes(a.gameDate, a.kickoffTime) - toMinutes(b.gameDate, b.kickoffTime),
+        toMinutes(a.gameDate, a.kickoffTime) -
+        toMinutes(b.gameDate, b.kickoffTime),
     );
   const gaps: GameGap[] = [];
   for (let i = 1; i < sorted.length; i++) {
     const prev = sorted[i - 1];
     const next = sorted[i];
-    const prevEnd = toMinutes(prev.gameDate, prev.kickoffTime) + prev.expectedDurationMinutes;
+    const prevEnd =
+      toMinutes(prev.gameDate, prev.kickoffTime) + prev.expectedDurationMinutes;
     const nextStart = toMinutes(next.gameDate, next.kickoffTime);
     const gapMinutes = Math.max(0, Math.round(nextStart - prevEnd));
     gaps.push({
@@ -112,7 +114,11 @@ interface GapPlan {
   warmupDurationMin: number;
 }
 
-function gapPlanFor(gapClass: GapClass, bodyweightKg: number, hotDay: boolean): GapPlan {
+function gapPlanFor(
+  gapClass: GapClass,
+  bodyweightKg: number,
+  hotDay: boolean,
+): GapPlan {
   const fluidNote = hotDay
     ? " Hot day — add 250–500ml extra fluid and top up sodium."
     : "";
@@ -122,7 +128,8 @@ function gapPlanFor(gapClass: GapClass, bodyweightKg: number, hotDay: boolean): 
         fuelLabel: "Fluids + optional half gel",
         fuelDetail: `Sip fluids, ~12g fast carbs if needed (half a gel). Stay warm — no full cooldown.${fluidNote}`,
         warmupLabel: "Stay warm",
-        warmupDetail: "3–4 accelerations to stay primed — no re-warm-up needed for this gap.",
+        warmupDetail:
+          "3–4 accelerations to stay primed — no re-warm-up needed for this gap.",
         warmupLeadMin: 5,
         warmupDurationMin: 3,
       };
@@ -150,7 +157,8 @@ function gapPlanFor(gapClass: GapClass, bodyweightKg: number, hotDay: boolean): 
         fuelLabel: "Real meal",
         fuelDetail: `${Math.round(1.25 * bodyweightKg)}g carbs + ${Math.round(0.3 * bodyweightKg)}g protein, low fat/fiber, finished ≥75 min before the next kickoff. Optional carb top-up ~45 min out if needed.${fluidNote}`,
         warmupLabel: "Near-full warm-up",
-        warmupDetail: "12–15 min RAMP warm-up — the body has fully cooled after this long a gap.",
+        warmupDetail:
+          "12–15 min RAMP warm-up — the body has fully cooled after this long a gap.",
         warmupLeadMin: 25,
         warmupDurationMin: 14,
       };
@@ -171,9 +179,11 @@ export function buildTournamentDayPlan(
     .filter((g) => g.status !== "cancelled")
     .sort(
       (a, b) =>
-        toMinutes(a.gameDate, a.kickoffTime) - toMinutes(b.gameDate, b.kickoffTime),
+        toMinutes(a.gameDate, a.kickoffTime) -
+        toMinutes(b.gameDate, b.kickoffTime),
     );
-  const hotDay = typeof apparentTempC === "number" && apparentTempC >= HEAT_CAUTION_C;
+  const hotDay =
+    typeof apparentTempC === "number" && apparentTempC >= HEAT_CAUTION_C;
   const gaps = computeGaps(sorted);
   const blocks: TournamentPlanBlock[] = [];
 
@@ -208,7 +218,8 @@ export function buildTournamentDayPlan(
     kind: "warmup",
     time: fromMinutes(firstKickoff - FULL_WARMUP_LEAD_MIN),
     label: "Full warm-up",
-    detail: "20–25 min RAMP (Raise, Activate, Mobilize, Potentiate) before game 1.",
+    detail:
+      "20–25 min RAMP (Raise, Activate, Mobilize, Potentiate) before game 1.",
     gameNumber: sorted[0].gameNumber,
     minutesDuration: 25,
   });
@@ -240,7 +251,10 @@ export function buildTournamentDayPlan(
         detail: plan.fuelDetail,
         gameNumber: game.gameNumber,
       });
-      const nextKickoff = toMinutes(sorted[i + 1].gameDate, sorted[i + 1].kickoffTime);
+      const nextKickoff = toMinutes(
+        sorted[i + 1].gameDate,
+        sorted[i + 1].kickoffTime,
+      );
       blocks.push({
         kind: "warmup",
         time: fromMinutes(nextKickoff - plan.warmupLeadMin),
@@ -249,14 +263,17 @@ export function buildTournamentDayPlan(
         gameNumber: sorted[i + 1].gameNumber,
         minutesDuration: plan.warmupDurationMin,
         warning:
-          i + 1 === sorted.length - 1 ? TOURNAMENT_DAY.lateGameWarning : undefined,
+          i + 1 === sorted.length - 1
+            ? TOURNAMENT_DAY.lateGameWarning
+            : undefined,
       });
     }
   });
 
   const lastGame = sorted[sorted.length - 1];
   const lastEnd =
-    toMinutes(lastGame.gameDate, lastGame.kickoffTime) + lastGame.expectedDurationMinutes;
+    toMinutes(lastGame.gameDate, lastGame.kickoffTime) +
+    lastGame.expectedDurationMinutes;
   blocks.push({
     kind: "recovery",
     time: fromMinutes(lastEnd + 15),
@@ -292,7 +309,11 @@ export class TournamentPlanService {
   private readBodyweight(): number {
     const user = this.supabase.currentUser?.();
     const meta = (user?.user_metadata ?? {}) as Record<string, unknown>;
-    const candidates = [meta["weight_kg"], meta["bodyweight_kg"], meta["weight"]];
+    const candidates = [
+      meta["weight_kg"],
+      meta["bodyweight_kg"],
+      meta["weight"],
+    ];
     for (const c of candidates) {
       const n = typeof c === "number" ? c : Number(c);
       if (Number.isFinite(n) && n > 30 && n < 200) return n;

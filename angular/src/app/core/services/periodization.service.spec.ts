@@ -587,10 +587,16 @@ describe("prescribeFor — V2.4 acclimatization guard", () => {
     expect(acclimatized.weatherAdjustment?.action).toBe("none");
 
     const justArrived = prescribeFor(
-      inputs({ date: tuesday, weather: weather({ apparentC: 30 }), acclimatizationDay: 0 }),
+      inputs({
+        date: tuesday,
+        weather: weather({ apparentC: 30 }),
+        acclimatizationDay: 0,
+      }),
     );
     expect(justArrived.weatherAdjustment?.action).toBe("scale");
-    expect(justArrived.weatherAdjustment?.reason).toMatch(/still acclimatizing/i);
+    expect(justArrived.weatherAdjustment?.reason).toMatch(
+      /still acclimatizing/i,
+    );
   });
 
   it("day-0 arrival: 32°C (normally 'scale') now relocates indoors (heatAvoidEff = 35-4 = 31)", () => {
@@ -601,7 +607,11 @@ describe("prescribeFor — V2.4 acclimatization guard", () => {
     expect(acclimatized.intent).toBe("sprint");
 
     const justArrived = prescribeFor(
-      inputs({ date: tuesday, weather: weather({ apparentC: 32 }), acclimatizationDay: 0 }),
+      inputs({
+        date: tuesday,
+        weather: weather({ apparentC: 32 }),
+        acclimatizationDay: 0,
+      }),
     );
     expect(justArrived.weatherAdjustment?.action).toBe("relocate");
     expect(justArrived.intent).toBe("mobility");
@@ -623,14 +633,20 @@ describe("prescribeFor — V2.4 acclimatization guard", () => {
     );
     expect(justArrived.weatherAdjustment?.action).toBe("substitute");
     expect(justArrived.intent).toBe("mobility");
-    expect(justArrived.weatherAdjustment?.reason).toMatch(/still acclimatizing/i);
+    expect(justArrived.weatherAdjustment?.reason).toMatch(
+      /still acclimatizing/i,
+    );
   });
 
   it("the shift decays with adaptation — day 7 is intermediate, day 14 is fully acclimatized (== V1)", () => {
     // 30°C: day-0 scales (see above). By day 14 the shift is fully gone —
     // identical to the no-acclimatization-data baseline.
     const day14 = prescribeFor(
-      inputs({ date: tuesday, weather: weather({ apparentC: 30 }), acclimatizationDay: 14 }),
+      inputs({
+        date: tuesday,
+        weather: weather({ apparentC: 30 }),
+        acclimatizationDay: 14,
+      }),
     );
     expect(day14.weatherAdjustment?.action).toBe("none");
 
@@ -639,17 +655,29 @@ describe("prescribeFor — V2.4 acclimatization guard", () => {
     // territory at exactly the boundary — assert the boundary math directly
     // via a value that only trips with the larger day-0 shift.
     const day7 = prescribeFor(
-      inputs({ date: tuesday, weather: weather({ apparentC: 30 }), acclimatizationDay: 7 }),
+      inputs({
+        date: tuesday,
+        weather: weather({ apparentC: 30 }),
+        acclimatizationDay: 7,
+      }),
     );
     expect(day7.weatherAdjustment?.action).toBe("scale");
   });
 
   it("null/undefined acclimatizationDay is a no-op (identical to omitting it entirely)", () => {
-    const omitted = prescribeFor(inputs({ date: tuesday, weather: weather({ apparentC: 30 }) }));
-    const explicitNull = prescribeFor(
-      inputs({ date: tuesday, weather: weather({ apparentC: 30 }), acclimatizationDay: null }),
+    const omitted = prescribeFor(
+      inputs({ date: tuesday, weather: weather({ apparentC: 30 }) }),
     );
-    expect(explicitNull.weatherAdjustment?.action).toBe(omitted.weatherAdjustment?.action);
+    const explicitNull = prescribeFor(
+      inputs({
+        date: tuesday,
+        weather: weather({ apparentC: 30 }),
+        acclimatizationDay: null,
+      }),
+    );
+    expect(explicitNull.weatherAdjustment?.action).toBe(
+      omitted.weatherAdjustment?.action,
+    );
   });
 });
 
@@ -663,7 +691,9 @@ describe("prescribeFor — V2.4 acclimatization guard", () => {
 // =============================================================================
 describe("prescribeFor — V2.4 arrival-day load cap", () => {
   it("a ≥3h same-day arrival caps a sprint day to activation-only mobility", () => {
-    const rx = prescribeFor(inputs({ date: tuesday, arrivalDayTravelHours: 5 }));
+    const rx = prescribeFor(
+      inputs({ date: tuesday, arrivalDayTravelHours: 5 }),
+    );
     expect(rx.intent).toBe("mobility");
     expect(rx.intentLabel).toBe("Arrival-day activation");
     expect(rx.targetRpe).toBeLessThanOrEqual(4);
@@ -673,12 +703,16 @@ describe("prescribeFor — V2.4 arrival-day load cap", () => {
   });
 
   it("exactly 3h triggers the cap (boundary is inclusive)", () => {
-    const rx = prescribeFor(inputs({ date: tuesday, arrivalDayTravelHours: 3 }));
+    const rx = prescribeFor(
+      inputs({ date: tuesday, arrivalDayTravelHours: 3 }),
+    );
     expect(rx.intent).toBe("mobility");
   });
 
   it("under 3h of travel does not trigger the cap", () => {
-    const rx = prescribeFor(inputs({ date: tuesday, arrivalDayTravelHours: 2 }));
+    const rx = prescribeFor(
+      inputs({ date: tuesday, arrivalDayTravelHours: 2 }),
+    );
     expect(rx.intent).toBe("sprint");
   });
 
@@ -692,7 +726,10 @@ describe("prescribeFor — V2.4 arrival-day load cap", () => {
       inputs({
         phase: "competition",
         upcoming: [
-          event({ startsAt: "2026-05-05T07:00:00Z", endsAt: "2026-05-05T17:00:00Z" }),
+          event({
+            startsAt: "2026-05-05T07:00:00Z",
+            endsAt: "2026-05-05T17:00:00Z",
+          }),
         ],
         date: tuesday,
         arrivalDayTravelHours: 10,

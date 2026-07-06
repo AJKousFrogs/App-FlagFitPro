@@ -34,21 +34,34 @@ import { QbSessionType } from "../core/models/qb-throwing.models";
         @if (progression(); as p) {
           <div class="lrow">
             <span>This week</span>
-            <b>{{ p.currentWeekAvg }} / {{ p.targetThrows }} throws · {{ p.progressionPhase }}</b>
+            <b
+              >{{ p.currentWeekAvg }} / {{ p.targetThrows }} throws ·
+              {{ p.progressionPhase }}</b
+            >
           </div>
           <small class="muted">{{ p.recommendation }}</small>
         }
 
         @if (!logging()) {
-          <button class="btn secondary block sm" style="margin-top:var(--s-2)" type="button"
-                  (click)="logging.set(true)">
+          <button
+            class="btn secondary block sm"
+            style="margin-top:var(--s-2)"
+            type="button"
+            (click)="logging.set(true)"
+          >
             <lucide-icon name="pencil" /> Log a throwing session
           </button>
         } @else {
-          <div style="margin-top:var(--s-3);display:flex;flex-direction:column;gap:var(--s-2)">
+          <div
+            style="margin-top:var(--s-3);display:flex;flex-direction:column;gap:var(--s-2)"
+          >
             <label for="qb-session-type"><small>Session type</small></label>
-            <select id="qb-session-type" class="input" [value]="sessionType()"
-                    (change)="sessionType.set($any($event.target).value)">
+            <select
+              id="qb-session-type"
+              class="input"
+              [value]="sessionType()"
+              (change)="sessionType.set($any($event.target).value)"
+            >
               <option value="practice">Practice</option>
               <option value="game">Game</option>
               <option value="individual">Individual</option>
@@ -56,21 +69,50 @@ import { QbSessionType } from "../core/models/qb-throwing.models";
             </select>
 
             <label for="qb-total-throws"><small>Total throws</small></label>
-            <input id="qb-total-throws" class="input" type="number" min="1" max="1000"
-                   [value]="totalThrows()" (input)="totalThrows.set(+$any($event.target).value)" />
+            <input
+              id="qb-total-throws"
+              class="input"
+              type="number"
+              min="1"
+              max="1000"
+              [value]="totalThrows()"
+              (input)="totalThrows.set(+$any($event.target).value)"
+            />
 
-            <label for="qb-arm-feeling"><small>Arm feeling after (1–10)</small></label>
-            <input id="qb-arm-feeling" class="rng" type="range" min="1" max="10"
-                   [value]="armFeelingAfter()" (input)="armFeelingAfter.set(+$any($event.target).value)" />
+            <label for="qb-arm-feeling"
+              ><small>Arm feeling after (1–10)</small></label
+            >
+            <input
+              id="qb-arm-feeling"
+              class="rng"
+              type="range"
+              min="1"
+              max="10"
+              [value]="armFeelingAfter()"
+              (input)="armFeelingAfter.set(+$any($event.target).value)"
+            />
             <span class="val">{{ armFeelingAfter() }}</span>
 
-            @if (error(); as e) { <p class="note" style="color:var(--danger)">{{ e }}</p> }
+            @if (error(); as e) {
+              <p class="note" style="color:var(--danger)">{{ e }}</p>
+            }
 
             <div class="inline">
-              <button class="btn sm" type="button" [disabled]="saving()" (click)="submit()">
-                {{ saving() ? 'Saving…' : 'Save' }}
+              <button
+                class="btn sm"
+                type="button"
+                [disabled]="saving()"
+                (click)="submit()"
+              >
+                {{ saving() ? "Saving…" : "Save" }}
               </button>
-              <button class="btn secondary sm" type="button" (click)="logging.set(false)">Cancel</button>
+              <button
+                class="btn secondary sm"
+                type="button"
+                (click)="logging.set(false)"
+              >
+                Cancel
+              </button>
             </div>
           </div>
         }
@@ -83,7 +125,9 @@ export class QbArmCareCardComponent {
   private readonly qbThrowing = inject(QbThrowingService);
 
   readonly isQb = computed(() => this.periodization.position() === "qb");
-  readonly progression = computed(() => this.qbThrowing.data()?.progression ?? null);
+  readonly progression = computed(
+    () => this.qbThrowing.data()?.progression ?? null,
+  );
   readonly saving = this.qbThrowing.saving;
   readonly error = this.qbThrowing.error;
 

@@ -199,7 +199,9 @@ const HOURS_TRANSITION = 14 * 24;
 // changes, change both. See that file's comment for the full rationale:
 // importance can be forgotten; a World/Olympic tier must never taper like a
 // domestic game regardless.
-const LEVEL_IMPORTANCE_FLOOR: Partial<Record<CompetitionLevel, EventImportance>> = {
+const LEVEL_IMPORTANCE_FLOOR: Partial<
+  Record<CompetitionLevel, EventImportance>
+> = {
   international: "high",
   continental: "high",
   world: "peak",
@@ -213,7 +215,11 @@ const LEVEL_RECOVERY_BONUS_HOURS: Partial<Record<CompetitionLevel, number>> = {
   world: 1 * 24,
   olympic: 3 * 24,
 };
-const IMPORTANCE_RANK: Record<EventImportance, number> = { regular: 0, high: 1, peak: 2 };
+const IMPORTANCE_RANK: Record<EventImportance, number> = {
+  regular: 0,
+  high: 1,
+  peak: 2,
+};
 
 /** The importance actually used for taper/recovery windows — the higher of
  * the declared importance and the tier's guaranteed floor. Never lowers a
@@ -224,7 +230,9 @@ export function effectiveImportance(
 ): EventImportance {
   const floor = LEVEL_IMPORTANCE_FLOOR[competitionLevel];
   if (!floor) return importance;
-  return IMPORTANCE_RANK[floor] > IMPORTANCE_RANK[importance] ? floor : importance;
+  return IMPORTANCE_RANK[floor] > IMPORTANCE_RANK[importance]
+    ? floor
+    : importance;
 }
 
 /**
@@ -263,7 +271,10 @@ export function resolvePhase(ctx: PhaseContext): CompetitionPhase {
     const ended = new Date(lastEvent.endsAt ?? lastEvent.startsAt);
     if (ended <= date) {
       const hoursSince = (date.getTime() - ended.getTime()) / 3_600_000;
-      const effImportance = effectiveImportance(lastEvent.importance, lastEvent.competitionLevel);
+      const effImportance = effectiveImportance(
+        lastEvent.importance,
+        lastEvent.competitionLevel,
+      );
       const recoveryWindow =
         (effImportance === "peak"
           ? HOURS_RECOVERY_PEAK
@@ -280,7 +291,10 @@ export function resolvePhase(ctx: PhaseContext): CompetitionPhase {
   if (next && date < new Date(next.startsAt)) {
     const startsAt = new Date(next.startsAt);
     const hoursUntil = (startsAt.getTime() - date.getTime()) / 3_600_000;
-    const effImportance = effectiveImportance(next.importance, next.competitionLevel);
+    const effImportance = effectiveImportance(
+      next.importance,
+      next.competitionLevel,
+    );
     const taperWindow =
       (effImportance === "peak"
         ? HOURS_TAPER_PEAK

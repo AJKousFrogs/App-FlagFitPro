@@ -2,7 +2,7 @@
 
 **Status:** proposal / roadmap (living document — not a one-off drift audit; drift tracking stays in `SOURCE_OF_TRUTH.md` §6).
 **Audited:** 2026-07-02, against `main` (`8d6604e`).
-**Scope requested:** UI/UX, functionality, calculations, knowledge base, training variety, periodization, travel & recovery time, gels & supplements between games, warming up — anchored on the real tournament-day scenario: *Capital Bowl, day 1, games at 11:00, 12:30, 15:30 and 17:00.*
+**Scope requested:** UI/UX, functionality, calculations, knowledge base, training variety, periodization, travel & recovery time, gels & supplements between games, warming up — anchored on the real tournament-day scenario: _Capital Bowl, day 1, games at 11:00, 12:30, 15:30 and 17:00._
 
 ---
 
@@ -10,7 +10,7 @@
 
 V1 is in unusually good shape for a first version: a server-canonical readiness/ACWR/prescription engine, a disciplined data model (187 tables, documented ledger), spec laws that prevent data fabrication, and a clean Angular 21 signals frontend. The engineering hygiene (SOURCE_OF_TRUTH, generated docs, schema-drift CI) is a real asset — V2 should build on it, not around it.
 
-**The single biggest product gap, and the organizing idea for V2:** the app knows a tournament day only as a *count* (`expected_game_count = 4`). It does not know **when** the games are. Everything the athlete actually needs on the day — when to warm up again, what to eat in a 90-minute gap vs. a 3-hour gap, when the caffeine goes in, when to get off their feet — is a function of the **kickoff times and the gaps between them**. V2's flagship is **Tournament Mode**: per-game schedules and a generated, minute-by-minute day plan.
+**The single biggest product gap, and the organizing idea for V2:** the app knows a tournament day only as a _count_ (`expected_game_count = 4`). It does not know **when** the games are. Everything the athlete actually needs on the day — when to warm up again, what to eat in a 90-minute gap vs. a 3-hour gap, when the caffeine goes in, when to get off their feet — is a function of the **kickoff times and the gaps between them**. V2's flagship is **Tournament Mode**: per-game schedules and a generated, minute-by-minute day plan.
 
 Everything else in this proposal (warm-up engine, between-game fueling, travel, periodization, coach console) either feeds that timeline or benefits from it.
 
@@ -20,13 +20,13 @@ Everything else in this proposal (warm-up engine, between-game fueling, travel, 
 
 ### 2.1 Architecture (healthy — keep)
 
-| Area | State |
-|---|---|
-| Frontend | Angular 21, standalone + zoneless + signals, OnPush, no UI-kit dependency. Feature screens as direct children of `app/`. Clean. |
-| Backend | 113 Netlify functions (111 exercised), ESM, shared service-role client, `/api/*` redirects. |
-| Database | Supabase Postgres, 187 tables, RLS throughout, single reconciled migration tracker. |
-| Engine | Server-canonical (Spec Law 6): readiness `calc-readiness.js`, ACWR `utils/acwr.js` (21-day uncoupled EWMA), intent engine `periodization.service.ts` (1,622 lines) composed with exercise realization `daily-protocol.js`. |
-| Docs/CI | `SOURCE_OF_TRUTH.md` + generated DATA_MODEL/ENDPOINTS, schema-drift CI at baseline 0, 94/94 periodization spec tests. |
+| Area     | State                                                                                                                                                                                                                      |
+| -------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Frontend | Angular 21, standalone + zoneless + signals, OnPush, no UI-kit dependency. Feature screens as direct children of `app/`. Clean.                                                                                            |
+| Backend  | 113 Netlify functions (111 exercised), ESM, shared service-role client, `/api/*` redirects.                                                                                                                                |
+| Database | Supabase Postgres, 187 tables, RLS throughout, single reconciled migration tracker.                                                                                                                                        |
+| Engine   | Server-canonical (Spec Law 6): readiness `calc-readiness.js`, ACWR `utils/acwr.js` (21-day uncoupled EWMA), intent engine `periodization.service.ts` (1,622 lines) composed with exercise realization `daily-protocol.js`. |
+| Docs/CI  | `SOURCE_OF_TRUTH.md` + generated DATA_MODEL/ENDPOINTS, schema-drift CI at baseline 0, 94/94 periodization spec tests.                                                                                                      |
 
 ### 2.2 What the engine already gets right (calculations)
 
@@ -46,15 +46,15 @@ What exists: a go-time card, heat guard, hydration quick-log, a fueling split de
 
 ### 2.4 Dormant assets worth harvesting in V2 (build on, don't rebuild)
 
-| Asset | State | V2 use |
-|---|---|---|
-| `qb-throwing.js` (424 lines, `throw_au`/`throw_count`) | ORPHANED — zero UI callers | Wire a throw-count logger → arm-load gating (the engine hook already exists) |
-| `prescription_templates`, `readiness_gates`, `taper_rules`, `contraindication_rules`, `weather_substitution_rules` tables | Live, schema-only | Coach-tunable engine config UI (§8) |
-| `team_activities` + resolver | Schema + read path, no writer/UI | Coach calendar overrides (practice/session pushed to the team) |
-| `team_season_phases` table | Live (DRIFT), unbuilt | Season plan builder backbone (§8) |
-| `event_participation` + multi-day load distribution RPC | LIVE | Extend to **per-game** actuals (§3.4) |
-| `calibration_logs` | Live | Close the loop on tunables (350 AU/game, carb g/kg, travel penalty) |
-| Program cycles / seasons / depth chart / scouting lanes | PLANNED (guarded 404s) | Periodization V2 + coach console candidates |
+| Asset                                                                                                                     | State                            | V2 use                                                                       |
+| ------------------------------------------------------------------------------------------------------------------------- | -------------------------------- | ---------------------------------------------------------------------------- |
+| `qb-throwing.js` (424 lines, `throw_au`/`throw_count`)                                                                    | ORPHANED — zero UI callers       | Wire a throw-count logger → arm-load gating (the engine hook already exists) |
+| `prescription_templates`, `readiness_gates`, `taper_rules`, `contraindication_rules`, `weather_substitution_rules` tables | Live, schema-only                | Coach-tunable engine config UI (§8)                                          |
+| `team_activities` + resolver                                                                                              | Schema + read path, no writer/UI | Coach calendar overrides (practice/session pushed to the team)               |
+| `team_season_phases` table                                                                                                | Live (DRIFT), unbuilt            | Season plan builder backbone (§8)                                            |
+| `event_participation` + multi-day load distribution RPC                                                                   | LIVE                             | Extend to **per-game** actuals (§3.4)                                        |
+| `calibration_logs`                                                                                                        | Live                             | Close the loop on tunables (350 AU/game, carb g/kg, travel penalty)          |
+| Program cycles / seasons / depth chart / scouting lanes                                                                   | PLANNED (guarded 404s)           | Periodization V2 + coach console candidates                                  |
 
 ---
 
@@ -85,28 +85,28 @@ Bracket reality: game 3 and 4 times are often "if we win, ~15:30". Support `is_p
 
 Input: bodyweight 80 kg, games 11:00 / 12:30 / 15:30 / 17:00, ~40 min each, warm day.
 
-| Time | Block | Engine reasoning |
-|---|---|---|
-| 07:30 | Wake / hydrate 500 ml + electrolytes | ≥3 h before G1 |
-| 08:00 | **Breakfast** ~2 g/kg carbs, low fat/fiber | finish ≥2.5 h pre-kickoff |
-| 09:45 | Arrive, kit check | from event `arrival_buffer` |
-| 10:20 | **Full warm-up A (20–25 min)** — RAMP | game 1 gets the full protocol |
-| 10:55 | Caffeine already on board (3 mg/kg taken ~10:15) | once, before G1; §5 |
-| **11:00** | **GAME 1** | |
-| 11:45 | Post-game: 30 s log (min played, RPE, flags) + fluids | gap to G2 ≈ 45 min → **short gap protocol** |
-| 11:50 | 30–40 g fast carbs (gel or sports drink + banana), stay warm, off feet 15 min | no solids beyond that; no full cooldown |
-| 12:15 | **Re-prime warm-up B (8–10 min)** | |
-| **12:30** | **GAME 2** | |
-| 13:15 | Post-game log + begin **long gap protocol** (gap ≈ 2 h 15) | |
-| 13:25 | **Real meal**: 1–1.5 g/kg carbs + 20–30 g protein, low fat/fiber; finish by 14:15 (≥75 min pre-G3) | |
-| 14:15–14:45 | Off feet, shade, legs up; optional 10–15 min eyes-closed rest | |
-| 15:00 | **Re-warm-up A′ (12–15 min)** — long gap = closer to full warm-up | body fully cooled after >90 min |
-| **15:30** | **GAME 3** | |
-| 16:10 | Short gap protocol again: 30–40 g fast carbs + fluids, stay moving | gap ≈ 50 min |
-| 16:45 | **Re-prime B (8–10 min)** + late-game hamstring cue | last game on tired legs = highest hamstring window (existing `TOURNAMENT_DAY.lateGameWarning`, now placed *where it matters*) |
-| **17:00** | **GAME 4** | |
-| 17:45 | **Recovery block**: 1.2 g/kg carbs + 0.3 g/kg protein within 60 min; rehydrate 150% of mass lost; 10 min cooldown walk + mobility | day ends with tomorrow's readiness in mind |
-| evening | Sleep priority card; next-day auto-set to recovery phase | already handled by phase engine |
+| Time        | Block                                                                                                                             | Engine reasoning                                                                                                              |
+| ----------- | --------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| 07:30       | Wake / hydrate 500 ml + electrolytes                                                                                              | ≥3 h before G1                                                                                                                |
+| 08:00       | **Breakfast** ~2 g/kg carbs, low fat/fiber                                                                                        | finish ≥2.5 h pre-kickoff                                                                                                     |
+| 09:45       | Arrive, kit check                                                                                                                 | from event `arrival_buffer`                                                                                                   |
+| 10:20       | **Full warm-up A (20–25 min)** — RAMP                                                                                             | game 1 gets the full protocol                                                                                                 |
+| 10:55       | Caffeine already on board (3 mg/kg taken ~10:15)                                                                                  | once, before G1; §5                                                                                                           |
+| **11:00**   | **GAME 1**                                                                                                                        |                                                                                                                               |
+| 11:45       | Post-game: 30 s log (min played, RPE, flags) + fluids                                                                             | gap to G2 ≈ 45 min → **short gap protocol**                                                                                   |
+| 11:50       | 30–40 g fast carbs (gel or sports drink + banana), stay warm, off feet 15 min                                                     | no solids beyond that; no full cooldown                                                                                       |
+| 12:15       | **Re-prime warm-up B (8–10 min)**                                                                                                 |                                                                                                                               |
+| **12:30**   | **GAME 2**                                                                                                                        |                                                                                                                               |
+| 13:15       | Post-game log + begin **long gap protocol** (gap ≈ 2 h 15)                                                                        |                                                                                                                               |
+| 13:25       | **Real meal**: 1–1.5 g/kg carbs + 20–30 g protein, low fat/fiber; finish by 14:15 (≥75 min pre-G3)                                |                                                                                                                               |
+| 14:15–14:45 | Off feet, shade, legs up; optional 10–15 min eyes-closed rest                                                                     |                                                                                                                               |
+| 15:00       | **Re-warm-up A′ (12–15 min)** — long gap = closer to full warm-up                                                                 | body fully cooled after >90 min                                                                                               |
+| **15:30**   | **GAME 3**                                                                                                                        |                                                                                                                               |
+| 16:10       | Short gap protocol again: 30–40 g fast carbs + fluids, stay moving                                                                | gap ≈ 50 min                                                                                                                  |
+| 16:45       | **Re-prime B (8–10 min)** + late-game hamstring cue                                                                               | last game on tired legs = highest hamstring window (existing `TOURNAMENT_DAY.lateGameWarning`, now placed _where it matters_) |
+| **17:00**   | **GAME 4**                                                                                                                        |                                                                                                                               |
+| 17:45       | **Recovery block**: 1.2 g/kg carbs + 0.3 g/kg protein within 60 min; rehydrate 150% of mass lost; 10 min cooldown walk + mobility | day ends with tomorrow's readiness in mind                                                                                    |
+| evening     | Sleep priority card; next-day auto-set to recovery phase                                                                          | already handled by phase engine                                                                                               |
 
 Every row is computed from four inputs: kickoff times, expected duration, bodyweight, and weather. This is deterministic and testable — same style of spec tests as `periodization.service.spec.ts`.
 
@@ -114,12 +114,12 @@ Every row is computed from four inputs: kickoff times, expected duration, bodywe
 
 Effective gap = next kickoff − (previous kickoff + expected duration).
 
-| Effective gap | Class | Fueling | Warm-up before next game |
-|---|---|---|---|
-| < 30 min | `turnaround` | fluids + optional half gel (~12 g) | stay warm — no re-warm-up needed, 3–4 accelerations |
-| 30–75 min | `short` | 30–45 g fast carbs (gel / sports drink / ripe banana) + 400–600 ml fluid | re-prime 8–10 min starting T−15 |
-| 75–150 min | `medium` | 1 g/kg light solid carbs + fluids, finish ≥60 min pre-kickoff | re-warm-up 10–12 min starting T−20 |
-| > 150 min | `long` | real meal 1–1.5 g/kg + 20–30 g protein, finish ≥75 min pre-kickoff; top-up carbs T−45 if needed | near-full warm-up 12–15 min starting T−25 (body fully cooled) |
+| Effective gap | Class        | Fueling                                                                                         | Warm-up before next game                                      |
+| ------------- | ------------ | ----------------------------------------------------------------------------------------------- | ------------------------------------------------------------- |
+| < 30 min      | `turnaround` | fluids + optional half gel (~12 g)                                                              | stay warm — no re-warm-up needed, 3–4 accelerations           |
+| 30–75 min     | `short`      | 30–45 g fast carbs (gel / sports drink / ripe banana) + 400–600 ml fluid                        | re-prime 8–10 min starting T−15                               |
+| 75–150 min    | `medium`     | 1 g/kg light solid carbs + fluids, finish ≥60 min pre-kickoff                                   | re-warm-up 10–12 min starting T−20                            |
+| > 150 min     | `long`       | real meal 1–1.5 g/kg + 20–30 g protein, finish ≥75 min pre-kickoff; top-up carbs T−45 if needed | near-full warm-up 12–15 min starting T−25 (body fully cooled) |
 
 Heat modifier (existing `HEAT_CAUTION_C` threshold): +250–500 ml per gap, sodium 300–600 mg/h, shade/soak cues. Cold modifier: lengthen every re-warm-up +5 min, "stay layered" cue.
 
@@ -172,7 +172,7 @@ V1 has daily creatine/caffeine/beta-alanine toggles with adherence. V2 adds **ti
 - **Creatine:** timing-agnostic — keep the daily toggle, add a "take it post-day with the recovery meal on tournament days" nudge.
 - **Beta-alanine / others:** chronic dosing notes only; no acute-day claims (evidence-graded per existing KB standards).
 - **Electrolytes:** promoted from a KB mention to a timeline item on hot days (weather guard already computes the trigger).
-- **Pack list generator:** the evening-before checklist (§9) computes quantities from the schedule — 4 games → *"3–4 gels or equivalents, 2×750 ml bottles + electrolyte tabs, lunch that travels (rice + chicken), recovery shake for 17:45"*.
+- **Pack list generator:** the evening-before checklist (§9) computes quantities from the schedule — 4 games → _"3–4 gels or equivalents, 2×750 ml bottles + electrolyte tabs, lunch that travels (rice + chicken), recovery shake for 17:45"_.
 
 All of it stays advisory and adult-athlete-scoped (existing adult-male-16+ KB constraint; keep the medical-disclaimer framing the KB already uses).
 
@@ -192,7 +192,7 @@ event_travel  (child of competition_events / athlete_events)
 
 - **Pre-travel card (day before):** hydration loading, pack list, sleep target, "board with a bottle".
 - **In-transit:** every 60–90 min bus/plane micro-mobility (hips/hamstrings/ankles — 3 moves, doable in an aisle), hydration cadence, compression option (equipment-gated via existing `available_equipment`).
-- **Arrival-day rule:** travel ≥3 h same-day → arrival session capped at activation intent (no new fatigue); the existing readiness penalty stays as the *reactive* backstop but the *plan* now anticipates it.
+- **Arrival-day rule:** travel ≥3 h same-day → arrival session capped at activation intent (no new fatigue); the existing readiness penalty stays as the _reactive_ backstop but the _plan_ now anticipates it.
 - **Timezone Δ ≥ 2 h:** simple jet-lag protocol (light exposure timing, meal anchoring, melatonin KB entry — advisory) for internationals/Euro tournaments.
 - **Return leg:** the post-tournament recovery day (already auto-set by the phase engine) gains a "you also sat on a bus for 5 h" mobility block.
 
@@ -221,10 +221,10 @@ Keep the existing evidence-grade / merlin-approval pipeline and the secrets/vali
 
 ## 8. Periodization V2 (from reactive to planned)
 
-V1 periodizes **around events** (taper windows, competition/recovery phases, season macro-phases, ACWR safety) — genuinely good, but there is no *plan object*: no coach-facing season builder, no mesocycles, and `program_cycles` is a guarded 404.
+V1 periodizes **around events** (taper windows, competition/recovery phases, season macro-phases, ACWR safety) — genuinely good, but there is no _plan object_: no coach-facing season builder, no mesocycles, and `program_cycles` is a guarded 404.
 
 - **Season plan builder (coach):** coach enters the season's tournaments/matchdays once (the schedule spine already exists) + season windows (the live `team_season_phases` table is the backbone — currently DRIFT/unbuilt). The engine **back-fills the mesocycle skeleton by reverse periodization from the priority tournaments**: accumulation → intensification → taper into each A-event, deload after, maintenance between clustered events. Coach sees and can drag the phase boundaries; athletes' `decideBasePrescription` reads the resulting phase instead of inferring only from event proximity.
-- **Mesocycle loading:** 3:1 load:deload as the default wave inside accumulation blocks; the existing ACWR guard becomes the *enforcer* of the plan rather than the only shaper.
+- **Mesocycle loading:** 3:1 load:deload as the default wave inside accumulation blocks; the existing ACWR guard becomes the _enforcer_ of the plan rather than the only shaper.
 - **Event priority (A/B/C):** Capital Bowl = A (full taper + peak); a friendly = C (train through it). One column on events; the taper engine branches on it. This is the single highest-leverage periodization change for a tournament-based season.
 - **Individual weak-point blocks:** athlete goal (speed / conditioning / robustness) biases the realized sessions inside team constraints — reuse `BUILD_TARGET_OVERRIDES` machinery.
 - **Coach-tunable engine constants:** surface the documented tunables (350 AU/game, carb g/kg table, congestion thresholds, travel penalties, taper windows) in a staff settings screen writing to the live `prescription_templates`/`taper_rules` tables, with `calibration_logs` showing estimate-vs-actual so tuning is informed. Guardrails: coach can tighten, only warn-and-log when loosening past evidence bounds.
@@ -250,7 +250,7 @@ The COMPOSE path (intent → realized blocks) is the right architecture; V2 wide
 
 1. **Per-game internal load from actuals** (§3.4) replacing the flat estimate, with calibration logging.
 2. **Monotony & strain (Foster):** weekly load/SD and load×monotony next to ACWR — catches the "same moderate load every day" trap ACWR misses. Cheap: same `training_sessions` data.
-3. **Readiness-modulated prescription is subtractive today — keep it** (safe direction), but add a small *positive* branch: sustained high readiness + under-plan chronic load → nudge volume up within phase caps (currently the engine only ever pulls down, which undertrains high responders).
+3. **Readiness-modulated prescription is subtractive today — keep it** (safe direction), but add a small _positive_ branch: sustained high readiness + under-plan chronic load → nudge volume up within phase caps (currently the engine only ever pulls down, which undertrains high responders).
 4. **Sleep debt integration:** `sleep-debt/` feature exists; feed cumulative debt into the tournament-eve card ("bank sleep — two nights ≥8 h before Capital Bowl") rather than only same-day readiness.
 5. **Hydration math on the day:** pre/post weigh-in option on tournament days → true sweat-rate per athlete (stored, reused for future heat plans); otherwise keep the ml/kg heuristic.
 6. **Uncertainty honesty (extends Spec Law 6/7):** every derived number on the timeline carries its basis — "estimated (no per-game log yet)" vs "from your logged 38 min" — in the small print, so trust survives wrong estimates.
@@ -261,7 +261,7 @@ The COMPOSE path (intent → realized blocks) is the right architecture; V2 wide
 
 ### 11.1 Tournament Mode UI (the flagship screen)
 
-- On a multi-game day, **Today *becomes* the timeline** (answer-first law): a vertical now-line with the next action pinned at top as a big card — *"Re-prime warm-up · starts in 12 min · 8 min routine"* — with a single primary CTA. Everything else scrolls below.
+- On a multi-game day, **Today _becomes_ the timeline** (answer-first law): a vertical now-line with the next action pinned at top as a big card — _"Re-prime warm-up · starts in 12 min · 8 min routine"_ — with a single primary CTA. Everything else scrolls below.
 - **Between-game quick-log:** one thumb-reach card, 30 seconds, sliders prefilled per the non-destructive-form law (Spec Law 5b).
 - **Sideline-glanceable:** huge type for countdowns, high-contrast (the WCAG AA work is done), one-hand reach, works in sunlight (existing dark default + a high-contrast outdoor toggle).
 - **Notifications tied to kickoffs:** T−40 "start warm-up", T−15 "re-prime", post-final "log + recovery meal". Local scheduling (push infra exists in `push.js`) — computed on-device from the timeline so it works offline.
@@ -285,16 +285,16 @@ The COMPOSE path (intent → realized blocks) is the right architecture; V2 wide
 
 ## 12. Schema change summary
 
-| Change | Kind | Referenced in |
-|---|---|---|
-| `event_games` (+ `is_provisional`, `bracket_stage`) | new table | §3.1 |
-| `event_participation` per-game rows (`game_id` FK, minutes, rpe, flags) | extend | §3.4 |
-| `event_travel` | new table | §6.1 |
-| `events.priority` (A/B/C) | column | §8 |
-| `fueling_products` + athlete tolerances | new reference table | §5.1 |
-| `knowledge_context_tags` + `knowledge_base_entries.language` | extend | §7 |
-| Warm-up templates as protocol content (`block_type='warm_up'` variants) | content, existing tables | §4 |
-| Build UI/wiring for existing `team_season_phases`, `readiness_gates`, `taper_rules`, `prescription_templates`, `team_activities` | no new schema | §6.2, §8, §9 |
+| Change                                                                                                                           | Kind                     | Referenced in |
+| -------------------------------------------------------------------------------------------------------------------------------- | ------------------------ | ------------- |
+| `event_games` (+ `is_provisional`, `bracket_stage`)                                                                              | new table                | §3.1          |
+| `event_participation` per-game rows (`game_id` FK, minutes, rpe, flags)                                                          | extend                   | §3.4          |
+| `event_travel`                                                                                                                   | new table                | §6.1          |
+| `events.priority` (A/B/C)                                                                                                        | column                   | §8            |
+| `fueling_products` + athlete tolerances                                                                                          | new reference table      | §5.1          |
+| `knowledge_context_tags` + `knowledge_base_entries.language`                                                                     | extend                   | §7            |
+| Warm-up templates as protocol content (`block_type='warm_up'` variants)                                                          | content, existing tables | §4            |
+| Build UI/wiring for existing `team_season_phases`, `readiness_gates`, `taper_rules`, `prescription_templates`, `team_activities` | no new schema            | §6.2, §8, §9  |
 
 Per repo law: each lands with its migration, regenerated docs, and a Feature Status Ledger row in the same PR.
 

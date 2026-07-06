@@ -57,14 +57,20 @@ export class SupplementsComponent {
 
   // --- V2.1 caffeine timing (game-day only) ---
   readonly nextEvent = this.schedule.nextEvent;
-  readonly isGameDay = computed(() => this.schedule.currentPhase() === "competition");
+  readonly isGameDay = computed(
+    () => this.schedule.currentPhase() === "competition",
+  );
 
   private readBodyweight(): number {
     // Mirrors PeriodizationService's private readBodyweight (see also
     // tournament-plan.service.ts) — no dedicated profile signal exists yet.
     const user = this.supabase.currentUser?.();
     const meta = (user?.user_metadata ?? {}) as Record<string, unknown>;
-    const candidates = [meta["weight_kg"], meta["bodyweight_kg"], meta["weight"]];
+    const candidates = [
+      meta["weight_kg"],
+      meta["bodyweight_kg"],
+      meta["weight"],
+    ];
     for (const c of candidates) {
       const n = typeof c === "number" ? c : Number(c);
       if (Number.isFinite(n) && n > 30 && n < 200) return n;
@@ -81,7 +87,8 @@ export class SupplementsComponent {
     const doseMg = Math.round(CAFFEINE_MG_PER_KG * bodyweight);
 
     const games = this.eventGames.sortedGames();
-    const firstKickoff = games.length > 0 ? games[0].kickoffTime.slice(0, 5) : null;
+    const firstKickoff =
+      games.length > 0 ? games[0].kickoffTime.slice(0, 5) : null;
     const lastGame = games.length > 0 ? games[games.length - 1] : null;
 
     let topUpWarning: string | null = null;

@@ -75,7 +75,10 @@ export class EventTravelService {
     const now = Date.now();
     const past = this._legs()
       .filter((leg) => new Date(leg.arriveAt).getTime() <= now)
-      .sort((a, b) => new Date(b.arriveAt).getTime() - new Date(a.arriveAt).getTime());
+      .sort(
+        (a, b) =>
+          new Date(b.arriveAt).getTime() - new Date(a.arriveAt).getTime(),
+      );
     return past[0] ?? null;
   });
 
@@ -89,7 +92,9 @@ export class EventTravelService {
   readonly daysSinceArrival = computed(() => {
     const leg = this.mostRecentArrival();
     if (!leg) return null;
-    return Math.floor((Date.now() - new Date(leg.arriveAt).getTime()) / 86_400_000);
+    return Math.floor(
+      (Date.now() - new Date(leg.arriveAt).getTime()) / 86_400_000,
+    );
   });
 
   /** Rounded seated-travel hours for today's leg, or null if none. */
@@ -97,7 +102,8 @@ export class EventTravelService {
     const leg = this.legToday();
     if (!leg) return null;
     const hours =
-      (new Date(leg.arriveAt).getTime() - new Date(leg.departAt).getTime()) / 3_600_000;
+      (new Date(leg.arriveAt).getTime() - new Date(leg.departAt).getTime()) /
+      3_600_000;
     return Math.round(hours);
   });
 
@@ -114,7 +120,8 @@ export class EventTravelService {
     const leg = this.mostRecentArrival();
     if (!leg) return null;
     const hours =
-      (new Date(leg.arriveAt).getTime() - new Date(leg.departAt).getTime()) / 3_600_000;
+      (new Date(leg.arriveAt).getTime() - new Date(leg.departAt).getTime()) /
+      3_600_000;
     return Math.round(hours);
   });
 
@@ -151,7 +158,9 @@ export class EventTravelService {
 
   async remove(id: string): Promise<void> {
     const res = await firstValueFrom(
-      this.api.delete<{ id: string; deleted: boolean }>(`/api/event-travel/${id}`),
+      this.api.delete<{ id: string; deleted: boolean }>(
+        `/api/event-travel/${id}`,
+      ),
     );
     if (res.success) {
       await this.load();

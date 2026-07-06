@@ -50,10 +50,16 @@ function parseDate(value, field) {
 }
 
 function str(value, field, max) {
-  if (value === undefined || value === null || value === "") {return null;}
+  if (value === undefined || value === null || value === "") {
+    return null;
+  }
   const s = String(value).trim();
-  if (s.length === 0) {return null;}
-  if (s.length > max) {throw validationError(`${field} must be ${max} characters or less`);}
+  if (s.length === 0) {
+    return null;
+  }
+  if (s.length > max) {
+    throw validationError(`${field} must be ${max} characters or less`);
+  }
   return s;
 }
 
@@ -80,16 +86,27 @@ function buildRow(body, { partial }) {
       "kickoffTime",
     );
   }
-  if (!partial || has("expectedDurationMinutes") || has("expected_duration_minutes")) {
-    const raw = body.expectedDurationMinutes ?? body.expected_duration_minutes ?? 40;
+  if (
+    !partial ||
+    has("expectedDurationMinutes") ||
+    has("expected_duration_minutes")
+  ) {
+    const raw =
+      body.expectedDurationMinutes ?? body.expected_duration_minutes ?? 40;
     const n = Number.parseInt(raw, 10);
     if (!Number.isFinite(n) || n < 10 || n > 120) {
-      throw validationError("expectedDurationMinutes must be between 10 and 120");
+      throw validationError(
+        "expectedDurationMinutes must be between 10 and 120",
+      );
     }
     row.expected_duration_minutes = n;
   }
-  if (!partial || has("opponent")) {row.opponent = str(body.opponent, "opponent", 160);}
-  if (!partial || has("field")) {row.field = str(body.field, "field", 60);}
+  if (!partial || has("opponent")) {
+    row.opponent = str(body.opponent, "opponent", 160);
+  }
+  if (!partial || has("field")) {
+    row.field = str(body.field, "field", 60);
+  }
   if (!partial || has("bracketStage") || has("bracket_stage")) {
     const raw = body.bracketStage ?? body.bracket_stage;
     if (raw === undefined || raw === null || raw === "") {
@@ -105,12 +122,16 @@ function buildRow(body, { partial }) {
     }
   }
   if (!partial || has("isProvisional") || has("is_provisional")) {
-    row.is_provisional = Boolean(body.isProvisional ?? body.is_provisional ?? false);
+    row.is_provisional = Boolean(
+      body.isProvisional ?? body.is_provisional ?? false,
+    );
   }
   if (!partial || has("status")) {
     const status = (body.status ?? "scheduled").toString();
     if (!STATUSES.has(status)) {
-      throw validationError("status must be scheduled, in_progress, final, or cancelled");
+      throw validationError(
+        "status must be scheduled, in_progress, final, or cancelled",
+      );
     }
     row.status = status;
   }
@@ -146,14 +167,20 @@ async function requireEventAccess(userId, competitionEventId, { staff }) {
     .select("id, team_id")
     .eq("id", competitionEventId)
     .maybeSingle();
-  if (error) {throw error;}
-  if (!ev) {throw validationError("competitionEventId not found");}
+  if (error) {
+    throw error;
+  }
+  if (!ev) {
+    throw validationError("competitionEventId not found");
+  }
   const ok = staff
     ? await isStaffOfTeam(userId, ev.team_id)
     : await isActiveTeamMember(userId, ev.team_id);
   if (!ok) {
     const denied = new Error(
-      staff ? "Not authorized to edit this event's games" : "Not a member of this event's team",
+      staff
+        ? "Not authorized to edit this event's games"
+        : "Not a member of this event's team",
     );
     denied.isAuthorization = true;
     throw denied;
@@ -168,7 +195,9 @@ async function listGames(userId, competitionEventId) {
     .select("*")
     .eq("competition_event_id", competitionEventId)
     .order("game_number", { ascending: true });
-  if (error) {throw error;}
+  if (error) {
+    throw error;
+  }
   return (data ?? []).map(toApi);
 }
 
@@ -182,7 +211,9 @@ async function createGame(userId, competitionEventId, body) {
     .insert(row)
     .select()
     .single();
-  if (error) {throw error;}
+  if (error) {
+    throw error;
+  }
   return toApi(data);
 }
 
@@ -191,10 +222,16 @@ async function createGame(userId, competitionEventId, body) {
 // four separate creates. Existing games for the event are deleted and
 // replaced; game_number is assigned by array order.
 async function bulkSetGames(userId, competitionEventId, body) {
-  const ev = await requireEventAccess(userId, competitionEventId, { staff: true });
+  const ev = await requireEventAccess(userId, competitionEventId, {
+    staff: true,
+  });
   const games = Array.isArray(body.games) ? body.games : [];
-  if (games.length === 0) {throw validationError("games must be a non-empty array");}
-  if (games.length > 20) {throw validationError("games must be 20 or fewer");}
+  if (games.length === 0) {
+    throw validationError("games must be a non-empty array");
+  }
+  if (games.length > 20) {
+    throw validationError("games must be 20 or fewer");
+  }
 
   const rows = games.map((g, i) => {
     const row = buildRow(
@@ -211,16 +248,18 @@ async function bulkSetGames(userId, competitionEventId, body) {
     .from("event_games")
     .delete()
     .eq("competition_event_id", competitionEventId);
-  if (delErr) {throw delErr;}
+  if (delErr) {
+    throw delErr;
+  }
 
   const { data, error } = await supabaseAdmin
     .from("event_games")
     .insert(rows)
     .select();
-  if (error) {throw error;}
-  return (data ?? [])
-    .sort((a, b) => a.game_number - b.game_number)
-    .map(toApi);
+  if (error) {
+    throw error;
+  }
+  return (data ?? []).sort((a, b) => a.game_number - b.game_number).map(toApi);
 }
 
 async function updateGame(userId, id, body) {
@@ -229,8 +268,12 @@ async function updateGame(userId, id, body) {
     .select("id, team_id")
     .eq("id", id)
     .maybeSingle();
-  if (fetchErr) {throw fetchErr;}
-  if (!existing) {return null;}
+  if (fetchErr) {
+    throw fetchErr;
+  }
+  if (!existing) {
+    return null;
+  }
   const ok = await isStaffOfTeam(userId, existing.team_id);
   if (!ok) {
     const denied = new Error("Not authorized to edit this game");
@@ -238,14 +281,18 @@ async function updateGame(userId, id, body) {
     throw denied;
   }
   const row = buildRow(body, { partial: true });
-  if (Object.keys(row).length === 0) {throw validationError("no fields to update");}
+  if (Object.keys(row).length === 0) {
+    throw validationError("no fields to update");
+  }
   const { data, error } = await supabaseAdmin
     .from("event_games")
     .update(row)
     .eq("id", id)
     .select()
     .single();
-  if (error) {throw error;}
+  if (error) {
+    throw error;
+  }
   return toApi(data);
 }
 
@@ -255,16 +302,25 @@ async function deleteGame(userId, id) {
     .select("id, team_id")
     .eq("id", id)
     .maybeSingle();
-  if (fetchErr) {throw fetchErr;}
-  if (!existing) {return false;}
+  if (fetchErr) {
+    throw fetchErr;
+  }
+  if (!existing) {
+    return false;
+  }
   const ok = await isStaffOfTeam(userId, existing.team_id);
   if (!ok) {
     const denied = new Error("Not authorized to delete this game");
     denied.isAuthorization = true;
     throw denied;
   }
-  const { error } = await supabaseAdmin.from("event_games").delete().eq("id", id);
-  if (error) {throw error;}
+  const { error } = await supabaseAdmin
+    .from("event_games")
+    .delete()
+    .eq("id", id);
+  if (error) {
+    throw error;
+  }
   return true;
 }
 
@@ -289,7 +345,8 @@ const handler = async (event, context) => {
         const segment = segmentFromPath(event);
 
         if (method === "GET") {
-          const competitionEventId = event.queryStringParameters?.competitionEventId;
+          const competitionEventId =
+            event.queryStringParameters?.competitionEventId;
           if (!competitionEventId) {
             return createErrorResponse(
               "competitionEventId query param is required",
@@ -303,9 +360,17 @@ const handler = async (event, context) => {
 
         if (method === "DELETE") {
           const id = segment || event.queryStringParameters?.id;
-          if (!id) {return createErrorResponse("game id is required", 400, "missing_id");}
+          if (!id) {
+            return createErrorResponse(
+              "game id is required",
+              400,
+              "missing_id",
+            );
+          }
           const ok = await deleteGame(userId, id);
-          if (!ok) {return createErrorResponse("Game not found", 404, "not_found");}
+          if (!ok) {
+            return createErrorResponse("Game not found", 404, "not_found");
+          }
           return createSuccessResponse({ id, deleted: true });
         }
 
@@ -321,7 +386,8 @@ const handler = async (event, context) => {
         }
 
         if (method === "POST" && segment === "bulk") {
-          const competitionEventId = body.competitionEventId ?? body.competition_event_id;
+          const competitionEventId =
+            body.competitionEventId ?? body.competition_event_id;
           if (!competitionEventId) {
             return createErrorResponse(
               "competitionEventId is required",
@@ -334,7 +400,8 @@ const handler = async (event, context) => {
         }
 
         if (method === "POST") {
-          const competitionEventId = body.competitionEventId ?? body.competition_event_id;
+          const competitionEventId =
+            body.competitionEventId ?? body.competition_event_id;
           if (!competitionEventId) {
             return createErrorResponse(
               "competitionEventId is required",
@@ -348,9 +415,13 @@ const handler = async (event, context) => {
 
         // PATCH — update
         const id = segment || body.id;
-        if (!id) {return createErrorResponse("game id is required", 400, "missing_id");}
+        if (!id) {
+          return createErrorResponse("game id is required", 400, "missing_id");
+        }
         const updated = await updateGame(userId, id, body);
-        if (!updated) {return createErrorResponse("Game not found", 404, "not_found");}
+        if (!updated) {
+          return createErrorResponse("Game not found", 404, "not_found");
+        }
         return createSuccessResponse(updated, 200, "Game updated");
       } catch (error) {
         if (error?.isValidation) {

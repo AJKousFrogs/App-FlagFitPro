@@ -113,7 +113,9 @@ export class EventGamesService {
 
   async remove(id: string): Promise<void> {
     const res = await firstValueFrom(
-      this.api.delete<{ id: string; deleted: boolean }>(`/api/event-games/${id}`),
+      this.api.delete<{ id: string; deleted: boolean }>(
+        `/api/event-games/${id}`,
+      ),
     );
     if (res.success) {
       const eventId = this._competitionEventId();

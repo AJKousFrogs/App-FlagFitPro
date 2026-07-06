@@ -2,10 +2,15 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 vi.mock("../../netlify/functions/utils/base-handler.js", () => ({
   baseHandler: async (event, context, options) =>
-    options.handler(event, context, { userId: "user-1", requestId: "req-test" }),
+    options.handler(event, context, {
+      userId: "user-1",
+      requestId: "req-test",
+    }),
 }));
 
-const state = vi.hoisted(() => ({ rows: [{ id: "leg-1", user_id: "user-1" }] }));
+const state = vi.hoisted(() => ({
+  rows: [{ id: "leg-1", user_id: "user-1" }],
+}));
 
 vi.mock("../../netlify/functions/supabase-client.js", () => ({
   supabaseAdmin: {
@@ -26,7 +31,8 @@ vi.mock("../../netlify/functions/supabase-client.js", () => ({
         },
         delete: () => q,
         single: () => Promise.resolve({ data: state.rows[0], error: null }),
-        maybeSingle: () => Promise.resolve({ data: state.rows[0], error: null }),
+        maybeSingle: () =>
+          Promise.resolve({ data: state.rows[0], error: null }),
       };
       return q;
     },
@@ -38,7 +44,12 @@ const req = (method, body, path = "/.netlify/functions/event-travel") => ({
   path,
   headers: { authorization: "Bearer t" },
   queryStringParameters: {},
-  body: body === undefined ? undefined : typeof body === "string" ? body : JSON.stringify(body),
+  body:
+    body === undefined
+      ? undefined
+      : typeof body === "string"
+        ? body
+        : JSON.stringify(body),
 });
 
 describe("event-travel validation", () => {
@@ -73,7 +84,10 @@ describe("event-travel validation", () => {
   });
 
   it("rejects a missing departAt", async () => {
-    const res = await handler(req("POST", { mode: "car", arriveAt: "2026-07-03T12:00:00Z" }), {});
+    const res = await handler(
+      req("POST", { mode: "car", arriveAt: "2026-07-03T12:00:00Z" }),
+      {},
+    );
     expect(res.statusCode).toBe(422);
   });
 
@@ -147,14 +161,21 @@ describe("event-travel validation", () => {
   });
 
   it("DELETE removes a leg by id", async () => {
-    const res = await handler(req("DELETE", undefined, "/.netlify/functions/event-travel/leg-1"), {});
+    const res = await handler(
+      req("DELETE", undefined, "/.netlify/functions/event-travel/leg-1"),
+      {},
+    );
     expect(res.statusCode).toBe(200);
     expect(JSON.parse(res.body).data.deleted).toBe(true);
   });
 
   it("PATCH updates a leg", async () => {
     const res = await handler(
-      req("PATCH", { overnightStay: true }, "/.netlify/functions/event-travel/leg-1"),
+      req(
+        "PATCH",
+        { overnightStay: true },
+        "/.netlify/functions/event-travel/leg-1",
+      ),
       {},
     );
     expect(res.statusCode).toBe(200);

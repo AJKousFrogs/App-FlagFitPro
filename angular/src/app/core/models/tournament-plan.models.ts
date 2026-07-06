@@ -11,7 +11,11 @@
  * day plan. See docs/v2/V2.0-tournament-mode.md.
  */
 
-export type EventGameStatus = "scheduled" | "in_progress" | "final" | "cancelled";
+export type EventGameStatus =
+  | "scheduled"
+  | "in_progress"
+  | "final"
+  | "cancelled";
 
 export type BracketStage =
   | "group"

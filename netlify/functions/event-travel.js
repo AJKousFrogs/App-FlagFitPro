@@ -33,11 +33,15 @@ const validationError = (message) => {
 
 function parseIso(value, field, { required }) {
   if (value === undefined || value === null || value === "") {
-    if (required) {throw validationError(`${field} is required`);}
+    if (required) {
+      throw validationError(`${field} is required`);
+    }
     return null;
   }
   const d = new Date(value);
-  if (Number.isNaN(d.getTime())) {throw validationError(`${field} must be a valid date/time`);}
+  if (Number.isNaN(d.getTime())) {
+    throw validationError(`${field} must be a valid date/time`);
+  }
   return d.toISOString();
 }
 
@@ -47,20 +51,34 @@ function buildRow(body, { partial }) {
 
   if (!partial || has("mode")) {
     const mode = (body.mode ?? "car").toString();
-    if (!MODES.has(mode)) {throw validationError("mode must be bus, car, plane, train, or other");}
+    if (!MODES.has(mode)) {
+      throw validationError("mode must be bus, car, plane, train, or other");
+    }
     row.mode = mode;
   }
   if (!partial || has("departAt") || has("depart_at")) {
-    row.depart_at = parseIso(body.departAt ?? body.depart_at, "departAt", { required: true });
+    row.depart_at = parseIso(body.departAt ?? body.depart_at, "departAt", {
+      required: true,
+    });
   }
   if (!partial || has("arriveAt") || has("arrive_at")) {
-    row.arrive_at = parseIso(body.arriveAt ?? body.arrive_at, "arriveAt", { required: true });
+    row.arrive_at = parseIso(body.arriveAt ?? body.arrive_at, "arriveAt", {
+      required: true,
+    });
   }
   if (row.depart_at && row.arrive_at && row.arrive_at < row.depart_at) {
     throw validationError("arriveAt must be on or after departAt");
   }
-  if (!partial || has("timezoneDeltaHours") || has("timezoneDifference") || has("timezone_difference")) {
-    const raw = body.timezoneDeltaHours ?? body.timezoneDifference ?? body.timezone_difference;
+  if (
+    !partial ||
+    has("timezoneDeltaHours") ||
+    has("timezoneDifference") ||
+    has("timezone_difference")
+  ) {
+    const raw =
+      body.timezoneDeltaHours ??
+      body.timezoneDifference ??
+      body.timezone_difference;
     if (raw === undefined || raw === null || raw === "") {
       row.timezone_difference = null;
     } else {
@@ -84,15 +102,20 @@ function buildRow(body, { partial }) {
     }
   }
   if (!partial || has("overnightStay") || has("overnight_stay")) {
-    row.overnight_stay = Boolean(body.overnightStay ?? body.overnight_stay ?? false);
+    row.overnight_stay = Boolean(
+      body.overnightStay ?? body.overnight_stay ?? false,
+    );
   }
   if (!partial || has("notes")) {
     const notes = body.notes;
     row.notes =
-      notes === undefined || notes === null || notes === "" ? null : String(notes).trim().slice(0, 500);
+      notes === undefined || notes === null || notes === ""
+        ? null
+        : String(notes).trim().slice(0, 500);
   }
   if (!partial || has("competitionEventId") || has("competition_event_id")) {
-    row.competition_event_id = body.competitionEventId ?? body.competition_event_id ?? null;
+    row.competition_event_id =
+      body.competitionEventId ?? body.competition_event_id ?? null;
   }
   return row;
 }
@@ -120,10 +143,16 @@ async function listLegs(userId, params) {
     .select("*")
     .eq("user_id", userId)
     .order("depart_at", { ascending: true });
-  if (params?.from) {q = q.gte("depart_at", new Date(params.from).toISOString());}
-  if (params?.to) {q = q.lte("depart_at", new Date(params.to).toISOString());}
+  if (params?.from) {
+    q = q.gte("depart_at", new Date(params.from).toISOString());
+  }
+  if (params?.to) {
+    q = q.lte("depart_at", new Date(params.to).toISOString());
+  }
   const { data, error } = await q;
-  if (error) {throw error;}
+  if (error) {
+    throw error;
+  }
   return (data ?? []).map(toApi);
 }
 
@@ -135,13 +164,17 @@ async function createLeg(userId, body) {
     .insert(row)
     .select()
     .single();
-  if (error) {throw error;}
+  if (error) {
+    throw error;
+  }
   return toApi(data);
 }
 
 async function updateLeg(userId, id, body) {
   const row = buildRow(body, { partial: true });
-  if (Object.keys(row).length === 0) {throw validationError("no fields to update");}
+  if (Object.keys(row).length === 0) {
+    throw validationError("no fields to update");
+  }
   const { data, error } = await supabaseAdmin
     .from("athlete_travel_log")
     .update(row)
@@ -149,8 +182,12 @@ async function updateLeg(userId, id, body) {
     .eq("user_id", userId)
     .select()
     .single();
-  if (error) {throw error;}
-  if (!data) {return null;}
+  if (error) {
+    throw error;
+  }
+  if (!data) {
+    return null;
+  }
   return toApi(data);
 }
 
@@ -162,7 +199,9 @@ async function deleteLeg(userId, id) {
     .eq("user_id", userId)
     .select("id")
     .maybeSingle();
-  if (error) {throw error;}
+  if (error) {
+    throw error;
+  }
   return Boolean(data);
 }
 
@@ -189,9 +228,13 @@ const handler = async (event, context) => {
 
         if (method === "DELETE") {
           const id = idFromPath(event) || event.queryStringParameters?.id;
-          if (!id) {return createErrorResponse("leg id is required", 400, "missing_id");}
+          if (!id) {
+            return createErrorResponse("leg id is required", 400, "missing_id");
+          }
           const ok = await deleteLeg(userId, id);
-          if (!ok) {return createErrorResponse("Leg not found", 404, "not_found");}
+          if (!ok) {
+            return createErrorResponse("Leg not found", 404, "not_found");
+          }
           return createSuccessResponse({ id, deleted: true });
         }
 
@@ -199,7 +242,11 @@ const handler = async (event, context) => {
         try {
           body = parseJsonObjectBody(event.body);
         } catch (_e) {
-          return createErrorResponse("Request body must be a JSON object", 422, "validation_error");
+          return createErrorResponse(
+            "Request body must be a JSON object",
+            422,
+            "validation_error",
+          );
         }
 
         if (method === "POST") {
@@ -208,15 +255,23 @@ const handler = async (event, context) => {
         }
 
         const id = idFromPath(event) || body.id;
-        if (!id) {return createErrorResponse("leg id is required", 400, "missing_id");}
+        if (!id) {
+          return createErrorResponse("leg id is required", 400, "missing_id");
+        }
         const updated = await updateLeg(userId, id, body);
-        if (!updated) {return createErrorResponse("Leg not found", 404, "not_found");}
+        if (!updated) {
+          return createErrorResponse("Leg not found", 404, "not_found");
+        }
         return createSuccessResponse(updated, 200, "Travel leg updated");
       } catch (error) {
         if (error?.isValidation) {
           return createErrorResponse(error.message, 422, "validation_error");
         }
-        return createErrorResponse("Failed to process event-travel request", 500, "internal_error");
+        return createErrorResponse(
+          "Failed to process event-travel request",
+          500,
+          "internal_error",
+        );
       }
     },
   });

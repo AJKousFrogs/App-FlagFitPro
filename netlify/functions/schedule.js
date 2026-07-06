@@ -82,7 +82,9 @@ const IMPORTANCE_RANK = { regular: 0, high: 1, peak: 2 };
 function effectiveImportance(importance, competitionLevel) {
   const floor = LEVEL_IMPORTANCE_FLOOR[competitionLevel] ?? null;
   const declared = importance ?? "regular";
-  if (!floor) {return declared;}
+  if (!floor) {
+    return declared;
+  }
   return IMPORTANCE_RANK[floor] > IMPORTANCE_RANK[declared] ? floor : declared;
 }
 
@@ -195,7 +197,10 @@ function resolvePhase(now, upcoming, lastEvent) {
     // for the resolution moment.
     if (ended <= now) {
       const hoursSince = hoursBetween(now, ended);
-      const effImportance = effectiveImportance(lastEvent.importance, lastEvent.competition_level);
+      const effImportance = effectiveImportance(
+        lastEvent.importance,
+        lastEvent.competition_level,
+      );
       const recoveryWindow =
         (effImportance === "peak"
           ? HOURS_RECOVERY_PEAK
@@ -212,7 +217,10 @@ function resolvePhase(now, upcoming, lastEvent) {
   if (next && now < new Date(next.starts_at)) {
     const startsAt = new Date(next.starts_at);
     const hoursUntil = hoursBetween(startsAt, now);
-    const effImportance = effectiveImportance(next.importance, next.competition_level);
+    const effImportance = effectiveImportance(
+      next.importance,
+      next.competition_level,
+    );
     const taperWindow =
       (effImportance === "peak"
         ? HOURS_TAPER_PEAK

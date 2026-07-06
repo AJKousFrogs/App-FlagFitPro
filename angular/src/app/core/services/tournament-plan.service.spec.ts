@@ -87,13 +87,23 @@ describe("computeGaps — Capital Bowl day 1 (11:00/12:30/15:30/17:00, 40min gam
   it("ignores cancelled games when computing gaps", () => {
     const withCancelled = [
       ...CAPITAL_BOWL_DAY1,
-      game({ id: "g5", gameNumber: 5, kickoffTime: "18:00:00", status: "cancelled" }),
+      game({
+        id: "g5",
+        gameNumber: 5,
+        kickoffTime: "18:00:00",
+        status: "cancelled",
+      }),
     ];
     expect(computeGaps(withCancelled)).toHaveLength(3);
   });
 
   it("sorts by kickoff time regardless of input order", () => {
-    const shuffled = [CAPITAL_BOWL_DAY1[2], CAPITAL_BOWL_DAY1[0], CAPITAL_BOWL_DAY1[3], CAPITAL_BOWL_DAY1[1]];
+    const shuffled = [
+      CAPITAL_BOWL_DAY1[2],
+      CAPITAL_BOWL_DAY1[0],
+      CAPITAL_BOWL_DAY1[3],
+      CAPITAL_BOWL_DAY1[1],
+    ];
     const g = computeGaps(shuffled);
     expect(g.map((x) => x.beforeGame.gameNumber)).toEqual([2, 3, 4]);
   });
@@ -105,7 +115,12 @@ describe("buildTournamentDayPlan — Capital Bowl day 1", () => {
   it("includes one game block per kickoff, in order", () => {
     const gameBlocks = plan.blocks.filter((b) => b.kind === "game");
     expect(gameBlocks).toHaveLength(4);
-    expect(gameBlocks.map((b) => b.time)).toEqual(["11:00", "12:30", "15:30", "17:00"]);
+    expect(gameBlocks.map((b) => b.time)).toEqual([
+      "11:00",
+      "12:30",
+      "15:30",
+      "17:00",
+    ]);
   });
 
   it("gives a full warm-up before game 1", () => {
@@ -123,7 +138,12 @@ describe("buildTournamentDayPlan — Capital Bowl day 1", () => {
       process.env["TZ"] = "Pacific/Kiritimati"; // UTC+14
       const shifted = buildTournamentDayPlan(CAPITAL_BOWL_DAY1, 80, 22);
       const gameBlocks = shifted.blocks.filter((b) => b.kind === "game");
-      expect(gameBlocks.map((b) => b.time)).toEqual(["11:00", "12:30", "15:30", "17:00"]);
+      expect(gameBlocks.map((b) => b.time)).toEqual([
+        "11:00",
+        "12:30",
+        "15:30",
+        "17:00",
+      ]);
     } finally {
       if (originalTZ === undefined) delete process.env["TZ"];
       else process.env["TZ"] = originalTZ;
@@ -198,7 +218,12 @@ describe("buildTournamentDayPlan — Capital Bowl day 1", () => {
   it("marks a provisional (bracket-dependent) game's detail accordingly", () => {
     const withProvisional = [
       ...CAPITAL_BOWL_DAY1.slice(0, 2),
-      game({ id: "g3", gameNumber: 3, kickoffTime: "15:30:00", isProvisional: true }),
+      game({
+        id: "g3",
+        gameNumber: 3,
+        kickoffTime: "15:30:00",
+        isProvisional: true,
+      }),
     ];
     const p = buildTournamentDayPlan(withProvisional, 80, null);
     const g3 = p.blocks.find((b) => b.kind === "game" && b.gameNumber === 3);
@@ -207,8 +232,18 @@ describe("buildTournamentDayPlan — Capital Bowl day 1", () => {
 
   it("correctly spans a day boundary in a two-day tournament (late day-1 game → early day-2 game)", () => {
     const twoDay = [
-      game({ id: "d1g1", gameNumber: 1, gameDate: "2026-07-04", kickoffTime: "20:00:00" }),
-      game({ id: "d2g1", gameNumber: 2, gameDate: "2026-07-05", kickoffTime: "09:00:00" }),
+      game({
+        id: "d1g1",
+        gameNumber: 1,
+        gameDate: "2026-07-04",
+        kickoffTime: "20:00:00",
+      }),
+      game({
+        id: "d2g1",
+        gameNumber: 2,
+        gameDate: "2026-07-05",
+        kickoffTime: "09:00:00",
+      }),
     ];
     const g = computeGaps(twoDay);
     // day1 game ends 20:40; day2 game starts 09:00 next day = 12h20 = 740min gap.

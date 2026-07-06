@@ -68,16 +68,18 @@ describe("resolvePhase — tier-aware taper window (mirrors netlify schedule.js)
       importance: "regular",
       competitionLevel: "continental",
     });
-    expect(resolvePhase({ date: now, upcoming: [ev], lastEvent: null })).toBe("taper");
+    expect(resolvePhase({ date: now, upcoming: [ev], lastEvent: null })).toBe(
+      "taper",
+    );
 
     const noFloor = event({
       startsAt: new Date(now.getTime() + 3 * ONE_DAY_MS).toISOString(),
       importance: "regular",
       competitionLevel: "national",
     });
-    expect(resolvePhase({ date: now, upcoming: [noFloor], lastEvent: null })).toBe(
-      "accumulation",
-    );
+    expect(
+      resolvePhase({ date: now, upcoming: [noFloor], lastEvent: null }),
+    ).toBe("accumulation");
   });
 
   it("a world championship at regular importance tapers 9 days out (peak floor + 3-day bonus)", () => {
@@ -86,7 +88,9 @@ describe("resolvePhase — tier-aware taper window (mirrors netlify schedule.js)
       importance: "regular",
       competitionLevel: "world",
     });
-    expect(resolvePhase({ date: now, upcoming: [ev], lastEvent: null })).toBe("taper");
+    expect(resolvePhase({ date: now, upcoming: [ev], lastEvent: null })).toBe(
+      "taper",
+    );
   });
 
   it("an olympic event tapers 12 days out at only 'high' importance (peak floor + 7-day bonus)", () => {
@@ -95,26 +99,49 @@ describe("resolvePhase — tier-aware taper window (mirrors netlify schedule.js)
       importance: "high",
       competitionLevel: "olympic",
     });
-    expect(resolvePhase({ date: now, upcoming: [ev], lastEvent: null })).toBe("taper");
+    expect(resolvePhase({ date: now, upcoming: [ev], lastEvent: null })).toBe(
+      "taper",
+    );
   });
 });
 
 describe("resolvePhase — tier-aware recovery window (mirrors netlify schedule.js)", () => {
   it("recovers 4.5 days (108h) after a world event ended", () => {
     const pastEnd = new Date(now.getTime() - 108 * ONE_HOUR_MS).toISOString();
-    const past = event({ startsAt: pastEnd, endsAt: pastEnd, importance: "regular", competitionLevel: "world" });
-    expect(resolvePhase({ date: now, upcoming: [], lastEvent: past })).toBe("recovery");
+    const past = event({
+      startsAt: pastEnd,
+      endsAt: pastEnd,
+      importance: "regular",
+      competitionLevel: "world",
+    });
+    expect(resolvePhase({ date: now, upcoming: [], lastEvent: past })).toBe(
+      "recovery",
+    );
   });
 
   it("recovers 6 days (144h) after an olympic event ended", () => {
     const pastEnd = new Date(now.getTime() - 144 * ONE_HOUR_MS).toISOString();
-    const past = event({ startsAt: pastEnd, endsAt: pastEnd, importance: "regular", competitionLevel: "olympic" });
-    expect(resolvePhase({ date: now, upcoming: [], lastEvent: past })).toBe("recovery");
+    const past = event({
+      startsAt: pastEnd,
+      endsAt: pastEnd,
+      importance: "regular",
+      competitionLevel: "olympic",
+    });
+    expect(resolvePhase({ date: now, upcoming: [], lastEvent: past })).toBe(
+      "recovery",
+    );
   });
 
   it("the same 108h-ago event at 'national' level has already left recovery", () => {
     const pastEnd = new Date(now.getTime() - 108 * ONE_HOUR_MS).toISOString();
-    const past = event({ startsAt: pastEnd, endsAt: pastEnd, importance: "regular", competitionLevel: "national" });
-    expect(resolvePhase({ date: now, upcoming: [], lastEvent: past })).not.toBe("recovery");
+    const past = event({
+      startsAt: pastEnd,
+      endsAt: pastEnd,
+      importance: "regular",
+      competitionLevel: "national",
+    });
+    expect(resolvePhase({ date: now, upcoming: [], lastEvent: past })).not.toBe(
+      "recovery",
+    );
   });
 });
